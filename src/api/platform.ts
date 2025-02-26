@@ -1,4 +1,8 @@
 import http from './request';
+import { Pagination } from './types';
+import { HotTopic } from './types/hotTopic';
+import { Topic } from './types/topic';
+import { ViralTitle } from './types/viralTitles';
 
 export interface Platform {
   id: string;
@@ -105,6 +109,11 @@ export interface RankingContentsResponse {
   meta: PaginationMeta;
 }
 
+export interface RankingContentsResponse {
+  items: RankingContent[];
+  meta: PaginationMeta;
+}
+
 export const platformApi = {
   // 获取平台列表
   getPlatformList() {
@@ -142,5 +151,96 @@ export const platformApi = {
     return http.get<any[]>(`/ranking/${rankingId}/categories`, {
       isToken: false,
     });
+  },
+
+  // 获取所有热点事件
+  getAllHotTopics() {
+    return http.get<
+      {
+        platform: Platform;
+        hotTopic: HotTopic;
+      }[]
+    >(`/hot-topics/all`, {
+      isToken: false,
+    });
+  },
+
+  // ---- 热门专题 ----
+
+  // 获取所有专题分类
+  getTopicCategories() {
+    return http.get<string[]>(`/topics/categories`, {
+      isToken: false,
+    });
+  },
+
+  // 获取子分类列表
+  getSubCategories(category?: string) {
+    return http.get<string[]>(`/topics/sub-categories`, {
+      isToken: false,
+      params: {
+        category,
+      },
+    });
+  },
+  // 获取所有热点事件
+  getAllTopics(params: {
+    category?: string;
+    subCategory?: string;
+    startTime?: string;
+    endTime?: string;
+    topic?: string;
+  }) {
+    return http.get<Pagination<Topic>>(`/topics`, {
+      isToken: false,
+      params,
+    });
+  },
+
+  // 获取所有话题标签
+  getTopics() {
+    return http.get<string[]>(`/topics/topics`, {
+      isToken: false,
+    });
+  },
+
+  // ---- 爆款标题 ----
+  // 获取有数据的平台列表
+  findPlatformsWithData() {
+    return http.get<Platform[]>(`/viral-titles/platforms`, {
+      isToken: false,
+    });
+  },
+
+  // 获取指定平台的分类列表
+  findCategoriesByPlatform(platformId: string) {
+    return http.get<string[]>(
+      `/viral-titles/platforms/${platformId}/categories`,
+      {
+        isToken: false,
+      },
+    );
+  },
+
+  // 获取平台下所有分类的前五条数据
+  findTopByPlatformAndCategories(platformId: string) {
+    return http.get<
+      {
+        category: string;
+        titles: ViralTitle[];
+      }[]
+    >(`/viral-titles/platforms/${platformId}/top-by-categories`, {
+      isToken: false,
+    });
+  },
+
+  // 获取平台下指定分类的数据列表（分页）
+  findByPlatformAndCategory(platformId: string) {
+    return http.get<Pagination<ViralTitle>>(
+      `/viral-titles/platforms/${platformId}/top-by-categories`,
+      {
+        isToken: false,
+      },
+    );
   },
 };

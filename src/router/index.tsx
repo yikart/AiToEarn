@@ -40,6 +40,7 @@ import Statistics from '@/views/statistics';
 import Test from '@/views/test/index';
 import TestVideo from '@/views/test/video';
 import Task from '@/views/task';
+import HotTopic from '@/views/trending/hotTopic';
 
 interface IRouterMeta {
   // 路由名称
@@ -176,6 +177,10 @@ export const router: CustomRouteObject[] = [
           {
             path: 'xiaohongshu',
             element: <Xiaohongshu />,
+          },
+          {
+            path: 'hotTopic',
+            element: <HotTopic />,
           },
         ],
       },
