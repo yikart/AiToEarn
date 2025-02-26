@@ -9,6 +9,7 @@ import App from './app';
 import { getAssetPath } from '../util/index';
 import windowOperate from '../util/windowOperate';
 import { logger } from '../global/log';
+import { SplashWindow } from './splash';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -33,10 +34,19 @@ if (!app.requestSingleInstanceLock()) {
 }
 
 let win: BrowserWindow | null = null;
+let splashWindow: SplashWindow | null = null;
 const preload = path.join(__dirname, '../preload/index.mjs');
 const indexHtml = path.join(RENDERER_DIST, 'index.html');
 
 async function createWindow() {
+  // 创建启动窗口
+  splashWindow = new SplashWindow();
+  splashWindow.create();
+
+  // 等待一会儿确保启动窗口显示
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  // 创建主窗口但先不显示
   win = new BrowserWindow({
     title: '爱团团AiToEarn',
     icon: path.join(getAssetPath('favicon.ico')),
@@ -44,7 +54,7 @@ async function createWindow() {
     height: 1080,
     minWidth: 1280,
     minHeight: 800,
-    // show: false, // 最小化显示
+    show: false,
     webPreferences: {
       preload,
       webviewTag: true,
@@ -60,20 +70,29 @@ async function createWindow() {
     logger.error('系统托盘启动失败', error);
   }
 
+  // 等待主窗口加载完成
   if (VITE_DEV_SERVER_URL) {
-
-    win.webContents.openDevTools({ mode: 'right' });
-    // #298
-    win.loadURL(VITE_DEV_SERVER_URL);
-    // Open devTool if the app is not packaged
-    
-
-    ipcMain.handle('OPEN_DEV_TOOLS', (_, mode) => {
-      win!.webContents.openDevTools({ mode: mode || 'right' });
-    });
+    await win.loadURL(VITE_DEV_SERVER_URL);
   } else {
-    win.loadFile(indexHtml);
+    await win.loadFile(indexHtml);
   }
+
+  // 延长启动窗口显示时间
+  setTimeout(() => {
+    if (splashWindow) {
+      win?.show();
+      // 在主窗口显示后再打开开发者工具
+      if (VITE_DEV_SERVER_URL) {
+        win?.webContents.openDevTools({ mode: 'right' });
+      }
+      setTimeout(() => {
+        if (splashWindow) {
+          splashWindow.close();
+          splashWindow = null;
+        }
+      }, 500);
+    }
+  }, 2000);
 
   // 隐藏菜单栏
   win.setMenu(null);
