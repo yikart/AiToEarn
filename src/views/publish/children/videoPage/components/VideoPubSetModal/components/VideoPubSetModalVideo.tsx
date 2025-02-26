@@ -19,6 +19,42 @@ export interface IVideoPubSetModalVideoProps {
   chooseAccountItem: IVideoChooseItem;
 }
 
+const CoverPreview = ({
+  avatar,
+  nickname,
+  height,
+  coverUrl,
+}: {
+  avatar?: string;
+  nickname?: string;
+  height?: number;
+  coverUrl?: string;
+}) => {
+  return (
+    <div className="videoPubSetModalVideo-coverPreview-box">
+      <div
+        className="videoPubSetModalVideo-coverPreview-box-img"
+        style={{ height: `${height || 100}px` }}
+      >
+        {coverUrl && <img src={coverUrl} />}
+      </div>
+      <div className="videoPubSetModalVideo-coverPreview-box-bottom">
+        <p>***********</p>
+        <ul className="videoPubSetModalVideo-coverPreview-box-info">
+          <li>
+            <Avatar size="small" src={avatar} />
+            <span>{nickname}</span>
+          </li>
+          <li>
+            <HeartFilled />
+            <span>1</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  );
+};
+
 const VideoPubSetModalVideo = memo(
   forwardRef(
     (
@@ -51,7 +87,16 @@ const VideoPubSetModalVideo = memo(
           />
 
           <div className="videoPubSetModalVideo-video">
-            <div className="videoPubSetModalVideo-video-wrapper">
+            <div
+              className="videoPubSetModalVideo-video-wrapper"
+              style={
+                active !== 1
+                  ? {
+                      justifyContent: 'left',
+                    }
+                  : {}
+              }
+            >
               {active === 1 ? (
                 <>
                   <div className="videoPubSetModalVideo-video-top" />
@@ -65,25 +110,19 @@ const VideoPubSetModalVideo = memo(
                 chooseAccountItem.account && (
                   <div className="videoPubSetModalVideo-coverPreview">
                     <div className="videoPubSetModalVideo-coverPreview-con">
-                      <div className="videoPubSetModalVideo-coverPreview-box">
-                        <div className="videoPubSetModalVideo-coverPreview-box-img"></div>
-                        <div className="videoPubSetModalVideo-coverPreview-box-bottom">
-                          <p>***********</p>
-                          <ul className="videoPubSetModalVideo-coverPreview-box-info">
-                            <li>
-                              <Avatar
-                                src={chooseAccountItem.account.avatar}
-                                size="small"
-                              />
-                              <span>{chooseAccountItem.account.nickname}</span>
-                            </li>
-                            <li>
-                              <span>0</span>
-                              <HeartFilled />
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
+                      <CoverPreview height={150} />
+                      <CoverPreview
+                        height={150}
+                        avatar={chooseAccountItem.account.avatar}
+                        nickname={chooseAccountItem.account.nickname}
+                        coverUrl={chooseAccountItem.video?.cover.imgUrl}
+                      />
+                      <CoverPreview />
+                    </div>
+                    <div className="videoPubSetModalVideo-coverPreview-con">
+                      <CoverPreview height={120} />
+                      <CoverPreview height={110} />
+                      <CoverPreview height={120} />
                     </div>
                   </div>
                 )
