@@ -6,7 +6,7 @@
  * @Description:
 -->
 
-# AttAiToEarn 爱团团AiToEarn
+# AiToEarn 爱团团
 
 ![GitHub stars](https://img.shields.io/github/stars/yikart/AttAiToEarn?color=fa6470)
 ![GitHub issues](https://img.shields.io/github/issues/yikart/AttAiToEarn?color=d8b22d)
