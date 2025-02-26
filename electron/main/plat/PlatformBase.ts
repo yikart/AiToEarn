@@ -1,0 +1,82 @@
+/*
+ * @Author: nevin
+ * @Date: 2025-02-07 09:48:29
+ * @LastEditTime: 2025-02-19 22:03:27
+ * @LastEditors: nevin
+ * @Description: 平台主类
+ */
+import {
+  AccountInfoTypeRV,
+  DashboardData,
+  IAccountInfoParams,
+  IGetTopicsParams,
+  IGetTopicsResponse,
+  IVideoPublishParams,
+  StatisticsData,
+  WorkData,
+} from './plat.type';
+import { PublishVideoResult } from './module';
+import { AccountType } from '../../../commont/AccountEnum';
+import { AccountModel } from '../../db/models/account';
+
+/**
+ * 平台基类，所有平台都该继承这个类
+ */
+export abstract class PlatformBase {
+  // 平台类型
+  protected readonly type: AccountType;
+
+  constructor(type: AccountType) {
+    this.type = type;
+  }
+
+  /**
+   * 平台登录
+   * @param params
+   */
+  abstract login(params?: any): Promise<AccountInfoTypeRV>;
+
+  /**
+   * 登录状态检测
+   * @param account
+   */
+  abstract loginCheck(account: AccountModel): Promise<boolean>;
+
+  /**
+   * 获取该平台的用户信息
+   * @param params
+   */
+  abstract getAccountInfo(
+    params: IAccountInfoParams,
+  ): Promise<AccountInfoTypeRV>;
+
+  /**
+   * 获取统计数据
+   * @param account 账号
+   */
+  abstract getStatistics(account: AccountModel): Promise<StatisticsData>;
+
+  /**
+   * 获取账户的看板数据
+   * @param account 账号
+   * @param time
+   */
+  abstract getDashboard(
+    account: AccountModel,
+    time: string[],
+  ): Promise<DashboardData[]>;
+
+  /**
+   * 获取某个作品的数据
+   * @param dataId 作品的唯一标识
+   */
+  abstract getWorkData(dataId: string): Promise<WorkData>;
+
+  // 在该平台发布视频
+  abstract videoPublish(
+    params: IVideoPublishParams,
+  ): Promise<PublishVideoResult>;
+
+  // 获取这个平台的话题
+  abstract getTopics(params: IGetTopicsParams): Promise<IGetTopicsResponse>;
+}

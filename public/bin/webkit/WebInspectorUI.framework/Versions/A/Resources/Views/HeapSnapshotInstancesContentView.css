@@ -1,0 +1,249 @@
+/*
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.heap-snapshot > .data-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.heap-snapshot > .data-grid td .sub-retained {
+    color: hsl(0, 0%, 60%);
+}
+
+.heap-snapshot > .data-grid td .percentage {
+    width: 45px;
+    margin-left: 4px;
+    display: inline-block;
+}
+
+.heap-snapshot .object-id {
+    color: gray;
+}
+
+.heap-snapshot .object-id:hover {
+    text-decoration: underline;
+}
+
+.heap-snapshot > .data-grid:focus tr.selected > td .sub-retained {
+    color: var(--selected-secondary-text-color);
+}
+
+.heap-snapshot > .data-grid:focus tr.selected .object-id,
+.heap-snapshot > .data-grid:focus tr.selected .object-preview > .size {
+    color: var(--selected-secondary-text-color);
+}
+
+.heap-snapshot > .data-grid:focus tr.selected .formatted-string,
+.heap-snapshot > .data-grid:focus tr.selected .object-preview span {
+    color: var(--selected-foreground-color);
+}
+
+.heap-snapshot > .data-grid td .location {
+    margin-left: 1ex;
+    color: hsl(0, 0%, 60%);
+}
+
+.heap-snapshot > .data-grid:focus tr.selected td .location {
+    color: hsl(0, 0%, 85%);
+}
+
+.heap-snapshot > .data-grid tr:is(.selected, :hover) td .go-to-arrow {
+    float: none;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    width: 16px;
+    height: 16px;
+    margin-left: 2px;
+}
+
+.heap-snapshot > .data-grid td .more {
+    text-decoration: underline;
+    margin-right: 1ex;
+}
+
+.heap-snapshot .icon {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+    content: url(../Images/TypeIcons.svg#TypeUndefined-light);
+}
+
+.heap-snapshot .icon.native {
+    content: url(../Images/TypeIcons.svg#Native-light);
+}
+
+.heap-snapshot .icon.boolean {
+    content: url(../Images/TypeIcons.svg#TypeBoolean-light);
+}
+
+.heap-snapshot .icon.function {
+    content: url(../Images/TypeIcons.svg#Function-light);
+}
+
+.heap-snapshot .icon.number {
+    content: url(../Images/TypeIcons.svg#TypeNumber-light);
+}
+
+.heap-snapshot .icon.bigint {
+    content: url(../Images/TypeIcons.svg#TypeBigInt-light);
+}
+
+.heap-snapshot .icon.object {
+    content: url(../Images/TypeIcons.svg#TypeObject-light);
+}
+
+.heap-snapshot .icon.node {
+    content: url(../Images/TypeIcons.svg#DOMElement-light);
+}
+
+.heap-snapshot .icon.regex {
+    content: url(../Images/TypeIcons.svg#TypeRegex-light);
+}
+
+.heap-snapshot .icon.string {
+    content: url(../Images/TypeIcons.svg#TypeString-light);
+}
+
+.heap-snapshot .icon.symbol {
+    content: url(../Images/TypeIcons.svg#TypeSymbol-light);
+}
+
+.heap-snapshot > .data-grid td .formatted-node-preview,
+.heap-snapshot > .data-grid td .object-preview {
+    text-indent: 0; /* Do not inherit the DataGrid's indent. */
+    line-height: initial;
+}
+
+.heap-snapshot-instance-popover-content > .title {
+    font-family: -webkit-system-font, sans-serif;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 5px 2px 5px;
+    margin-bottom: 3px;
+}
+
+.heap-snapshot-instance-popover-content {
+    white-space: pre;
+    padding: 5px 0px;
+}
+
+.heap-snapshot-instance-popover-content > .table-container {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.heap-snapshot-instance-popover-content table {
+    border-collapse: collapse;
+}
+
+.heap-snapshot-instance-popover-content tr {
+    margin: 0;
+    padding: 1px 0;
+}
+
+.heap-snapshot-instance-popover-content td {
+    margin: 0;
+    padding: 0;
+}
+
+.heap-snapshot-instance-popover-content td.edge-name {
+    text-align: right;
+    max-width: 110px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    border-right: 1px solid var(--border-color);
+    padding-right: 5px;
+}
+
+.heap-snapshot-instance-popover-content td.object-data {
+    padding-left: 5px;
+}
+
+.heap-snapshot-instance-popover-content .node {
+    height: 17px;
+    line-height: 17px;
+}
+
+.heap-snapshot-instance-popover-content .node * {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.heap-snapshot-instance-popover-content .node .go-to-link {
+    position: relative;
+    top: 1px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .heap-snapshot .icon {
+        content: url(../Images/TypeIcons.svg#TypeUndefined-dark);
+    }
+
+    .heap-snapshot .icon.native {
+        content: url(../Images/TypeIcons.svg#Native-dark);
+    }
+
+    .heap-snapshot .icon.boolean {
+        content: url(../Images/TypeIcons.svg#TypeBoolean-dark);
+    }
+
+    .heap-snapshot .icon.function {
+        content: url(../Images/TypeIcons.svg#Function-dark);
+    }
+
+    .heap-snapshot .icon.number {
+        content: url(../Images/TypeIcons.svg#TypeNumber-dark);
+    }
+
+    .heap-snapshot .icon.bigint {
+        content: url(../Images/TypeIcons.svg#TypeBigInt-dark);
+    }
+
+    .heap-snapshot .icon.object {
+        content: url(../Images/TypeIcons.svg#TypeObject-dark);
+    }
+
+    .heap-snapshot .icon.node {
+        content: url(../Images/TypeIcons.svg#DOMElement-dark);
+    }
+
+    .heap-snapshot .icon.regex {
+        content: url(../Images/TypeIcons.svg#TypeRegex-dark);
+    }
+
+    .heap-snapshot .icon.string {
+        content: url(../Images/TypeIcons.svg#TypeString-dark);
+    }
+
+    .heap-snapshot .icon.symbol {
+        content: url(../Images/TypeIcons.svg#TypeSymbol-dark);
+    }
+}

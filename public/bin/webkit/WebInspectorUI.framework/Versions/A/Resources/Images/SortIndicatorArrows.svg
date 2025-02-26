@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 9 8">
+    <style>
+        svg[id] {
+            display: none;
+        }
+
+        svg[id]:target {
+            display: initial;
+        }
+
+        path {
+            fill: none;
+            stroke: inherit;
+        }
+
+        svg[id $= "-normal"] {
+            stroke: hsl(0, 0%, 33%);
+        }
+    </style>
+
+    <defs>
+        <path id="up-arrow-path" stroke-linecap="square" d="M 1.5 5.5 L 4.5 2.5 L 7.5 5.5"/>
+        <path id="down-arrow-path" stroke-linecap="square" d="M 1.5 2.5 L 4.5 5.5 L 7.5 2.5"/>
+    </defs>
+
+    <svg id="up-arrow-normal"><use xlink:href="#up-arrow-path"/></svg>
+    <svg id="down-arrow-normal"><use xlink:href="#down-arrow-path"/></svg>
+</svg>

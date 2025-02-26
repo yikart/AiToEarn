@@ -1,0 +1,2165 @@
+/* accessibility help text for media controller time value >= 1 day */
+"%1$d days %2$d hours %3$d minutes %4$d seconds" = "%1$d days %2$d hours %3$d minutes %4$d seconds";
+
+/* accessibility help text for media controller time value >= 60 minutes */
+"%1$d hours %2$d minutes %3$d seconds" = "%1$d hours %2$d minutes %3$d seconds";
+
+/* accessibility help text for media controller time value >= 60 seconds */
+"%1$d minutes %2$d seconds" = "%1$d minutes %2$d seconds";
+
+/* accessibility help text for media controller time value < 60 seconds */
+"%1$d seconds" = "%1$d seconds";
+
+/* window title for a standalone image (uses multiplication symbol, not x) */
+"%@ %@×%@ pixels" = "%@ %@×%@ pixels";
+
+/* Audio/Text track display name format that includes the label and language of the track, in the form of 'Language (Label)'. */
+"%@ (%@) (audio/text track)" = "%@ (%@)";
+
+/* Closed captions text track display name format that includes the language and/or locale (e.g. 'English CC'). */
+"%@ CC (text track)" = "%@ CC";
+
+/* Captions text track display name format that includes the language and/or locale (e.g. 'English Captions'). */
+"%@ Captions (text track)" = "%@ Captions";
+
+/* Chapters text track display name format that includes the language and/or locale (e.g. 'English Chapters'). */
+"%@ Chapters (text track)" = "%@ Chapters";
+
+/* Commentary audio track display name format that includes the language and/or locale (e.g. 'English Commentary'). */
+"%@ Commentary (audio track)" = "%@ Commentary";
+
+/* Descriptions audio track display name format that includes the language and/or locale (e.g. 'English Descriptions'). */
+"%@ Descriptions (audio track)" = "%@ Descriptions";
+
+/* Descriptions text track display name format that includes the language and/or locale (e.g. 'English Descriptions'). */
+"%@ Descriptions (text track)" = "%@ Descriptions";
+
+/* Easy Reader (i.e. 3rd-grade level) text track display name format that includes the language and/or locale (e.g. 'English Easy Reader'). */
+"%@ Easy Reader (text track)" = "%@ Easy Reader";
+
+/* Forced text track display name format that includes the language and/or locale (e.g. 'English Forced'). */
+"%@ Forced (text track)" = "%@ Forced";
+
+/* visible name of the GPU process. The argument is the application name. */
+"%@ Graphics and Media" = "%@ Graphics and Media";
+
+/* Metadata text track display name format that includes the language and/or locale (e.g. 'English Metadata'). */
+"%@ Metadata (text track)" = "%@ Metadata";
+
+/* visible name of the network process. The argument is the application name. */
+"%@ Networking" = "%@ Networking";
+
+/* SDH (i.e. deaf and/or hard of hearing) text track display name format that includes the language and/or locale (e.g. 'English SDH'). */
+"%@ SDH (text track)" = "%@ SDH";
+
+/* Visible name of Service Worker process. The argument is the application name. */
+"%@ Service Worker (%@)" = "%@ Service Worker (%@)";
+
+/* Visible name of the web process. The argument is the application name. */
+"%@ Web Content" = "%@ Web Content";
+
+/* Visible name of the web process. The argument is the application name. */
+"%@ Web Content (Cached)" = "%@ Web Content (Cached)";
+
+/* Visible name of the web process. The argument is the application name. */
+"%@ Web Content (Prewarmed)" = "%@ Web Content (Prewarmed)";
+
+/* Extension's process name that appears in Activity Monitor where the parameter is the name of the extension */
+"%@ Web Extension" = "%@ Web Extension";
+
+/* Visible name of Web Inspector's web process. The argument is the application name. */
+"%@ Web Inspector" = "%@ Web Inspector";
+
+/* Name of application's single WebCrypto master key in Keychain */
+"%@ WebCrypto Master Key" = "%@ WebCrypto Master Key";
+
+/* The domain and application using the camera and/or microphone. The first argument is domain, the second is the application name (iOS only). */
+"%@ in %%@" = "%@ in %%@";
+
+/* Label for an inspectable Web Extension background page */
+"%@ — Extension Background Page" = "%@ — Extension Background Page";
+
+/* Label for an inspectable Web Extension popup page */
+"%@ — Extension Popup Page" = "%@ — Extension Popup Page";
+
+/* Label for an inspectable Web Extension service worker */
+"%@ — Extension Service Worker" = "%@ — Extension Service Worker";
+
+/* Label to describe the number of files selected in a file upload control that allows multiple files */
+"%d files" = "%d files";
+
+/* Codec Level (Codec Strings) */
+"%d.%d" = "%d.%d";
+
+/* label next to file upload control; parameters are the number of photos and the number of videos */
+"%lu photo(s) and %lu video(s)" = "%lu photo(s) and %lu video(s)";
+
+/* window title for a standalone image (uses multiplication symbol, not x) */
+"%s %d×%d pixels" = "%s %d×%d pixels";
+
+/* Present the number of selected <option> items in a <select multiple> element (iOS only) */
+"%zu Items" = "%zu Items";
+
+/* Present the element <select multiple> when no <option> items are selected (iOS only) */
+"0 Items" = "0 Items";
+
+/* 0.5× media controls context menu playback speed label */
+"0.5× (Media Controls Menu Playback Speed)" = "0.5×";
+
+/* Present the element <select multiple> when a single <option> is selected (iOS only) */
+"1 Item" = "1 Item";
+
+/* Option in segmented control for choosing list type in text editing */
+"1. 2. 3." = "1. 2. 3.";
+
+/* 1.25× media controls context menu playback speed label */
+"1.25× (Media Controls Menu Playback Speed)" = "1.25×";
+
+/* 1.5× media controls context menu playback speed label */
+"1.5× (Media Controls Menu Playback Speed)" = "1.5×";
+
+/* 1× media controls context menu playback speed label */
+"1× (Media Controls Menu Playback Speed)" = "1×";
+
+/* 2× media controls context menu playback speed label */
+"2× (Media Controls Menu Playback Speed)" = "2×";
+
+/* window title for a standalone image (uses multiplication symbol, not x) */
+"<filename> %d×%d pixels" = "<filename> %d×%d pixels";
+
+/* WKErrorJavaScriptExceptionOccurred description */
+"A JavaScript exception occurred" = "A JavaScript exception occurred";
+
+/* Codec Strings */
+"AAC-LC Codec String" = "AAC-LC";
+
+/* Codec Strings */
+"AV1 (Codec String)" = "AV1";
+
+/* Codec Strings */
+"AVC (Codec String)" = "AVC";
+
+/* Actual Size context menu item */
+"Actual Size" = "Actual Size";
+
+/* Label for the add money with Apple Pay button. */
+"Add money with Apple Pay" = "Add money with Apple Pay";
+
+/* Add to Quick Note context menu item. */
+"Add to Quick Note" = "Add to Quick Note";
+
+/* Title for Add to Reading List action button */
+"Add to Reading List" = "Add to Reading List";
+
+/* Undo action name */
+"Align Left (Undo action name)" = "Align Left";
+
+/* Undo action name */
+"Align Right (Undo action name)" = "Align Right";
+
+/* Action authorizing a webpage to access the user’s location. */
+"Allow" = "Allow";
+
+/* Button title in Storage Access API prompt */
+"Allow (cross-site cookie and website data access)" = "Allow";
+
+/* Button title in Device Orientation Permission API prompt */
+"Allow (device motion and orientation access)" = "Allow";
+
+/* Allow button title in geolocation prompt */
+"Allow (geolocation)" = "Allow";
+
+/* Allow button title in screen sharing prompt */
+"Allow (screensharing)" = "Allow";
+
+/* Allow button title in speech recognition prompt */
+"Allow (speechrecognition)" = "Allow";
+
+/* Allow displaying QuickLook Preview of 3D model */
+"Allow (usdz QuickLook Preview)" = "Allow";
+
+/* Allow button title in user media prompt */
+"Allow (usermedia)" = "Allow";
+
+/* Message for requesting cross-site cookie and website data access. */
+"Allow related %@ websites to share cookies and website data?" = "Allow related %@ websites to share cookies and website data?";
+
+/* Allow screen button title in window and screen sharing prompt */
+"Allow to Share Screen" = "Allow to Share Screen";
+
+/* Allow window button title in window and screen sharing prompt */
+"Allow to Share Window" = "Allow to Share Window";
+
+/* Message for requesting cross-site cookie and website data access. */
+"Allow “%@” and “%@” to use cookies and website data while browsing “%@”?" = "Allow “%@” and “%@” to use cookies and website data while browsing “%@”?";
+
+/* Message for spechrecognition prompt */
+"Allow “%@” to capture your audio and use it for speech recognition?" = "Allow “%@” to capture your audio and use it for speech recognition?";
+
+/* Message for window and screen sharing prompt */
+"Allow “%@” to observe one of your windows or screens?" = "Allow “%@” to observe one of your windows or screens?";
+
+/* Message for screen sharing prompt */
+"Allow “%@” to observe your screen?" = "Allow “%@” to observe your screen?";
+
+/* Message for requesting cross-site cookie and website data access. */
+"Allow “%@” to use cookies and website data while browsing “%@”?" = "Allow “%@” to use cookies and website data while browsing “%@”?";
+
+/* Message for user media prompt */
+"Allow “%@” to use your camera and microphone?" = "Allow “%@” to use your camera and microphone?";
+
+/* Message for user camera access prompt */
+"Allow “%@” to use your camera?" = "Allow “%@” to use your camera?";
+
+/* Message for geolocation prompt */
+"Allow “%@” to use your current location?" = "Allow “%@” to use your current location?";
+
+/* Message for user microphone access prompt */
+"Allow “%@” to use your microphone?" = "Allow “%@” to use your microphone?";
+
+/* WKWebExtensionErrorUnknown description */
+"An unknown error has occurred." = "An unknown error has occurred.";
+
+/* WKWebExtensionContextErrorUnknown description */
+"An unknown error has occurred. (WKWebExtensionContext)" = "An unknown error has occurred.";
+
+/* WKErrorUnknown description */
+"An unknown error occurred" = "An unknown error occurred";
+
+/* WKWebExtensionErrorUnsupportedManifestVersion description */
+"An unsupported `manifest_version` was specified." = "An unsupported `manifest_version` was specified.";
+
+/* WKWebExtensionContextErrorBaseURLAlreadyInUse description */
+"Another extension context is loaded with the same base URL." = "Another extension context is loaded with the same base URL.";
+
+/* Label for the plain Apple Pay button. */
+"Apple Pay" = "Apple Pay";
+
+/* Malware confirmation dialog title */
+"Are you sure you wish to go to this site?" = "Are you sure you wish to go to this site?";
+
+/* WKErrorNavigationAppBoundDomain description */
+"Attempted to navigate away from an app-bound domain or navigate after using restricted APIs" = "Attempted to navigate away from an app-bound domain or navigate after using restricted APIs";
+
+/* WKErrorAttributedStringContentFailedToLoad description */
+"Attributed string content failed to load" = "Attributed string content failed to load";
+
+/* Menu item label for automatic track selection behavior. */
+"Auto (Recommended) (text track)" = "Auto (Recommended)";
+
+/* Menu item label to toggle automatic scene dimming in fullscreen (visionOS only) */
+"Auto Dimming" = "Auto Dimming";
+
+/* Automatically Resize context menu item */
+"Automatically Resize" = "Automatically Resize";
+
+/* Back context menu item */
+"Back" = "Back";
+
+/* Codec Strings */
+"Baseline Profile (AVC Codec Profile)" = "Baseline Profile";
+
+/* Label text to be used if plugin is blocked by a page's Content Security Policy */
+"Blocked Plug-In (Blocked by page's Content Security Policy)" = "Blocked Plug-in";
+
+/* Label text to be used when an insecure plug-in version was blocked from loading */
+"Blocked Plug-In (Insecure plug-in)" = "Blocked Plug-in";
+
+/* Bold context menu item */
+"Bold" = "Bold";
+
+/* Undo action name */
+"Bold (Undo action name)" = "Bold";
+
+/* Label for the book with Apple Pay button. */
+"Book with Apple Pay" = "Book with Apple Pay";
+
+/* Option in segmented control for inserting a bulleted list in text editing */
+"Bulleted list" = "Bulleted list";
+
+/* Label for the buy with Apple Pay button. */
+"Buy with Apple Pay" = "Buy with Apple Pay";
+
+/* Display name for closed captions text tracks. */
+"CC (text track)" = "CC";
+
+/* Cancel */
+"Cancel" = "Cancel";
+
+/* Button title in Device Orientation Permission API prompt */
+"Cancel (device motion and orientation access)" = "Cancel";
+
+/* Cancel displaying QuickLook Preview of 3D model */
+"Cancel (usdz QuickLook Preview)" = "Cancel";
+
+/* Title for Cancel button label in button bar */
+"Cancel button label in button bar" = "Cancel";
+
+/* Capitalize context menu item */
+"Capitalize" = "Capitalize";
+
+/* Display name for text track kind 'captions'. */
+"Captions (text track)" = "Captions";
+
+/* Undo action name */
+"Center (Undo action name)" = "Center";
+
+/* Lockdown Mode alert message (MacCatalyst) */
+"Certain experiences and features may not function as expected. You can manage Lockdown Mode in Settings." = "Certain experiences and features may not function as expected. You can manage Lockdown Mode in Settings.";
+
+/* Lockdown Mode alert message */
+"Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings." = "Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings.";
+
+/* Undo action name */
+"Change Attributes (Undo action name)" = "Change Attributes";
+
+/* Display name for text track kind 'chapters'. */
+"Chapters (text track)" = "Chapters";
+
+/* Check spelling context menu item */
+"Check Document Now" = "Check Document Now";
+
+/* Check grammar with spelling context menu item */
+"Check Grammar With Spelling" = "Check Grammar With Spelling";
+
+/* Check spelling while typing context menu item */
+"Check Spelling While Typing" = "Check Spelling While Typing";
+
+/* Label for the check out with Apple Pay button. */
+"Check out with Apple Pay" = "Check out with Apple Pay";
+
+/* title for a single file chooser button used in HTML forms */
+"Choose File" = "Choose File";
+
+/* title for a multiple file chooser button used in HTML forms. This title should be as short as possible. */
+"Choose Files" = "Choose Files";
+
+/* Title for file button used in HTML5 forms for multiple media files */
+"Choose Media (Multiple)" = "Choose Media (Multiple)";
+
+/* Title for file button used in HTML forms for media files */
+"Choose Media (Single)" = "Choose Media (Single)";
+
+/* menu item in Recent Searches menu that empties menu's contents */
+"Clear Recent Searches" = "Clear Recent Searches";
+
+/* Message to display in browser window when in webkit full screen mode. */
+"Click to Exit Full Screen" = "Click to Exit Full Screen";
+
+/* Subtitle of the label to show on a snapshotted plug-in */
+"Click to restart" = "Click to restart";
+
+/* Display name for audio track kind 'commentary'. */
+"Commentary (audio track)" = "Commentary";
+
+/* WKErrorContentRuleListStoreCompileFailed description */
+"Compiling a WKContentRuleList failed" = "Compiling a WKContentRuleList failed";
+
+/* WebKitErrorCannotShowMIMEType description */
+"Content with specified MIME type can’t be shown" = "Content with specified MIME type can’t be shown";
+
+/* Continue */
+"Continue" = "Continue";
+
+/* Continue with Touch ID. */
+"Continue with Touch ID." = "Continue with Touch ID.";
+
+/* Label for the contribute with Apple Pay button. */
+"Contribute with Apple Pay" = "Contribute with Apple Pay";
+
+/* Media Controls context menu item */
+"Controls" = "Controls";
+
+/* Undo action name */
+"Convert to Ordered List (Undo action name)" = "Convert to Ordered List";
+
+/* Undo action name */
+"Convert to Unordered List (Undo action name)" = "Convert to Unordered List";
+
+/* Copy context menu item */
+"Copy" = "Copy";
+
+/* Title for Copy Link and Image or Copy Image action button */
+"Copy (ActionSheet)" = "Copy";
+
+/* Copy Audio Address Location context menu item */
+"Copy Audio Address" = "Copy Audio Address";
+
+/* Copy Image context menu item */
+"Copy Image" = "Copy Image";
+
+/* Copy Link context menu item */
+"Copy Link" = "Copy Link";
+
+/* Title for Copy Link button */
+"Copy Link (ActionSheet)" = "Copy Link";
+
+/* Copy link with highlight context menu item */
+"Copy Link with Highlight" = "Copy Link with Highlight";
+
+/* Title for Copy Subject */
+"Copy Subject" = "Copy Subject";
+
+/* Copy Video Address Location context menu item */
+"Copy Video Address" = "Copy Video Address";
+
+/* Correct Spelling Automatically context menu item */
+"Correct Spelling Automatically" = "Correct Spelling Automatically";
+
+/* Undo action name */
+"Create Link (Undo action name)" = "Create Link";
+
+/* WKErrorCredentialNotFound description */
+"Credential could not be found" = "Credential could not be found";
+
+/* Cut context menu item */
+"Cut" = "Cut";
+
+/* Undo action name */
+"Cut (Undo action name)" = "Cut";
+
+/* Day label in date picker */
+"DAY (Date picker for extra zoom mode)" = "DAY";
+
+/* Phishing warning title */
+"Deceptive Website Warning" = "Deceptive Website Warning";
+
+/* Default writing direction context menu item */
+"Default" = "Default";
+
+/* Undo action name */
+"Delete (Undo action name)" = "Delete";
+
+/* Display name for audio track kind 'descriptions'. */
+"Descriptions (audio track)" = "Descriptions";
+
+/* Display name for text track kind 'descriptions'. */
+"Descriptions (text track)" = "Descriptions";
+
+/* text to display in <details> tag when it has no <summary> child */
+"Details" = "Details";
+
+/* Undo action name */
+"Dictation (Undo action name)" = "Dictation";
+
+/* Message for requesting cross-site cookie and website data access. */
+"Do you want to allow “%@” and “%@” to use cookies and website data while browsing “%@”?" = "Do you want to allow “%@” and “%@” to use cookies and website data while browsing “%@”?";
+
+/* Message for requesting cross-site cookie and website data access. */
+"Do you want to allow “%@” to use cookies and website data while browsing “%@”?" = "Do you want to allow “%@” to use cookies and website data while browsing “%@”?";
+
+/* Codec Strings */
+"Dolby Vision Codec String" = "Dolby Vision";
+
+/* Label for the donate with Apple Pay button. */
+"Donate with Apple Pay" = "Donate with Apple Pay";
+
+/* Title of the Done button for form controls. */
+"Done" = "Done";
+
+/* Button title in Storage Access API prompt */
+"Don’t Allow (cross-site cookie and website data access)" = "Don’t Allow";
+
+/* Disallow button title in geolocation prompt */
+"Don’t Allow (geolocation)" = "Don’t Allow";
+
+/* Disallow button title in screen sharing prompt */
+"Don’t Allow (screensharing)" = "Don’t Allow";
+
+/* Disallow button title in speech recognition prompt */
+"Don’t Allow (speechrecognition)" = "Don’t Allow";
+
+/* Disallow button title in user media prompt */
+"Don’t Allow (usermedia)" = "Don’t Allow";
+
+/* Action denying a webpage access to the user’s location. */
+"Don’t Allow (website location dialog)" = "Don’t Allow";
+
+/* Disallow button title in window and screen sharing prompt */
+"Don’t Allow (window and screen sharing)" = "Don’t Allow";
+
+/* Download Audio To Disk context menu item */
+"Download Audio" = "Download Audio";
+
+/* Download Image context menu item */
+"Download Image" = "Download Image";
+
+/* Download Linked File context menu item */
+"Download Linked File" = "Download Linked File";
+
+/* Download Video To Disk context menu item */
+"Download Video" = "Download Video";
+
+/* Undo action name */
+"Drag (Undo action name)" = "Drag";
+
+/* Display name for easy reader (i.e. 3rd-grade level) text tracks. */
+"Easy Reader (text track)" = "Easy Reader";
+
+/* Fallback label text for unlabeled email address field. */
+"Email address" = "Email address";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for background */
+"Empty or invalid `background` manifest entry." = "Empty or invalid `background` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for browser URL overrides */
+"Empty or invalid `browser_url_overrides` manifest entry" = "Empty or invalid `browser_url_overrides` manifest entry";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for chrome URL overrides */
+"Empty or invalid `chrome_url_overrides` manifest entry" = "Empty or invalid `chrome_url_overrides` manifest entry";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for content_scripts */
+"Empty or invalid `content_scripts` manifest entry." = "Empty or invalid `content_scripts` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for content_security_policy */
+"Empty or invalid `content_security_policy` manifest entry." = "Empty or invalid `content_security_policy` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for default_icon in action only */
+"Empty or invalid `default_icon` for the `action` manifest entry." = "Empty or invalid `default_icon` for the `action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for default_icon in browser_action or page_action */
+"Empty or invalid `default_icon` for the `browser_action` or `page_action` manifest entry." = "Empty or invalid `default_icon` for the `browser_action` or `page_action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for default_locale */
+"Empty or invalid `default_locale` manifest entry." = "Empty or invalid `default_locale` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for invalid command description */
+"Empty or invalid `description` in the `commands` manifest entry." = "Empty or invalid `description` in the `commands` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for externally_connectable */
+"Empty or invalid `externally_connectable` manifest entry." = "Empty or invalid `externally_connectable` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for icon_variants in action only */
+"Empty or invalid `icon_variants` for the `action` manifest entry." = "Empty or invalid `icon_variants` for the `action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for icon_variants in browser_action or page_action */
+"Empty or invalid `icon_variants` for the `browser_action` or `page_action` manifest entry." = "Empty or invalid `icon_variants` for the `browser_action` or `page_action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for icon_variants */
+"Empty or invalid `icon_variants` manifest entry." = "Empty or invalid `icon_variants` manifest entry.";
+
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty or invalid id in declarative_net_request manifest entry */
+"Empty or invalid `id` in `declarative_net_request` manifest entry." = "Empty or invalid `id` in `declarative_net_request` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for invalid new tab entry */
+"Empty or invalid `newtab` manifest entry." = "Empty or invalid `newtab` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for options page */
+"Empty or invalid `options_page` manifest entry" = "Empty or invalid `options_page` manifest entry";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for options UI */
+"Empty or invalid `options_ui` manifest entry" = "Empty or invalid `options_ui` manifest entry";
+
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty or invalid path in declarative_net_request manifest entry */
+"Empty or invalid `path` in `declarative_net_request` manifest entry." = "Empty or invalid `path` in `declarative_net_request` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for invalid command */
+"Empty or invalid command in the `commands` manifest entry." = "Empty or invalid command in the `commands` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for invalid command identifier */
+"Empty or invalid identifier in the `commands` manifest entry." = "Empty or invalid identifier in the `commands` manifest entry.";
+
+/* Video Enter Full Screen context menu item */
+"Enter Full Screen" = "Enter Full Screen";
+
+/* menu item */
+"Enter Picture in Picture" = "Enter Picture in Picture";
+
+/* Enter Video Viewer context menu item */
+"Enter Viewer" = "Enter Viewer";
+
+/* Validation message for input form controls of type 'url' that have an invalid value */
+"Enter a URL" = "Enter a URL";
+
+/* Validation message for number fields where the user entered a non-number string */
+"Enter a number" = "Enter a number";
+
+/* Validation message for input form controls with value not respecting the step attribute */
+"Enter a valid value" = "Enter a valid value";
+
+/* Validation message for input form controls of type 'email' that have an invalid value */
+"Enter an email address" = "Enter an email address";
+
+/* Fallback label text for unlabeled text field. */
+"Enter text" = "Enter text";
+
+/* Custom protocol synchronous load failure description */
+"Error handling synchronous load with custom protocol" = "Error handling synchronous load with custom protocol";
+
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many rulesets */
+"Exceeded maximum number of `declarative_net_request` rulesets. Ignoring extra rulesets." = "Exceeded maximum number of `declarative_net_request` rulesets. Ignoring extra rulesets.";
+
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many enabled static rulesets */
+"Exceeded maximum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored." = "Exceeded maximum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored.";
+
+/* Button for exiting full screen when in full screen media playback */
+"Exit Full Screen" = "Exit Full Screen";
+
+/* Full Screen Deceptive Website Exit Action */
+"Exit Full Screen (Element Full Screen)" = "Exit Full Screen";
+
+/* Video Exit Full Screen context menu item */
+"Exit Full Screen (context menu)" = "Exit Full Screen";
+
+/* menu item */
+"Exit Picture in Picture" = "Exit Picture in Picture";
+
+/* Exit Video Viewer context menu item */
+"Exit Viewer" = "Exit Viewer";
+
+/* Codec Strings */
+"Extended Profile (AVC Codec Profile)" = "Extended Profile";
+
+/* WKWebExtensionContextErrorAlreadyLoaded description */
+"Extension context is already loaded." = "Extension context is already loaded.";
+
+/* WKWebExtensionContextErrorNotLoaded description */
+"Extension context is not loaded." = "Extension context is not loaded.";
+
+/* WKWebExtensionErrorInvalidActionIcon description for failing to load single image for action */
+"Failed to load image for `default_icon` in the `action` manifest entry." = "Failed to load image for `default_icon` in the `action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidActionIcon description for failing to load single image for browser_action or page_action */
+"Failed to load image for `default_icon` in the `browser_action` or `page_action` manifest entry." = "Failed to load image for `default_icon` in the `browser_action` or `page_action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidActionIcon description for failing to load images for action only */
+"Failed to load images in `default_icon` for the `action` manifest entry." = "Failed to load images in `default_icon` for the `action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidActionIcon description for failing to load images for browser_action or page_action */
+"Failed to load images in `default_icon` for the `browser_action` or `page_action` manifest entry." = "Failed to load images in `default_icon` for the `browser_action` or `page_action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidActionIcon description for failing to load image variants for action */
+"Failed to load images in `icon_variants` for the `action` manifest entry." = "Failed to load images in `icon_variants` for the `action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidIcon description for failing to load image variants */
+"Failed to load images in `icon_variants` manifest entry." = "Failed to load images in `icon_variants` manifest entry.";
+
+/* WKWebExtensionErrorInvalidIcon description for failing to load images */
+"Failed to load images in `icons` manifest entry." = "Failed to load images in `icons` manifest entry.";
+
+/* Media Element Source Type */
+"File (Media Element Source Type)" = "File";
+
+/* The requested file doesn't exist */
+"File does not exist" = "File does not exist";
+
+/* Validation message for required form control elements that have no value */
+"Fill out this field" = "Fill out this field";
+
+/* Default application name for Open With context menu */
+"Finder" = "Finder";
+
+/* Inspector element selection tooltip text for Flexbox containers. */
+"Flex (Inspector Element Selection)" = "Flex";
+
+/* Inspector element selection tooltip text for items inside a Flexbox Container. */
+"Flex Item (Inspector Element Selection)" = "Flex Item";
+
+/* Font context sub-menu item */
+"Font" = "Font";
+
+/* Display name for text track kind 'forced'. */
+"Forced (text track)" = "Forced";
+
+/* Undo action name */
+"Format Block (Undo action name)" = "Formatting";
+
+/* Label for the save data format selector when saving data in Web Inspector */
+"Format:" = "Format:";
+
+/* Forward context menu item */
+"Forward" = "Forward";
+
+/* WebKitErrorFrameLoadInterruptedByPolicyChange description */
+"Frame load interrupted" = "Frame load interrupted";
+
+/* Title of the Go button for zoomed form controls. */
+"Go" = "Go";
+
+/* Action from safe browsing warning */
+"Go Back" = "Go Back";
+
+/* Google Safe Browsing */
+"Google Safe Browsing" = "Google Safe Browsing";
+
+/* Inspector element selection tooltip text for Grid containers. */
+"Grid (Inspector Element Selection)" = "Grid";
+
+/* Inspector element selection tooltip text for items inside a Grid Container. */
+"Grid Item (Inspector Element Selection)" = "Grid Item";
+
+/* Codec Strings */
+"HEVC (Codec String)" = "HEVC";
+
+/* Media Element Source Type */
+"HLS (Media Element Source Type)" = "HLS";
+
+/* accessibility role description for web area */
+"HTML content" = "HTML content";
+
+/* WebKitErrorHTTPSUpgradeRedirectLoop description */
+"HTTPS Upgrade redirect loop detected" = "HTTPS Upgrade redirect loop detected";
+
+/* Title of the Hide button for zoomed form controls. */
+"Hide" = "Hide";
+
+/* Hide Media Controls context menu item */
+"Hide Controls" = "Hide Controls";
+
+/* menu item title */
+"Hide Spelling and Grammar" = "Hide Spelling and Grammar";
+
+/* menu item title */
+"Hide Substitutions" = "Hide Substitutions";
+
+/* Codec Strings */
+"High 10 Profile (AVC Codec Profile)" = "High 10 Profile";
+
+/* Codec Strings */
+"High 422 Profile (AVC Codec Profile)" = "High 422 Profile";
+
+/* Codec Strings */
+"High 444 Predictive Profile (AVC Codec Profile)" = "High 444 Predictive Profile";
+
+/* Codec Strings */
+"High Profile (AV1 Codec Profile)" = "High Profile, ";
+
+/* Codec Strings */
+"High Profile (AVC Codec Profile)" = "High Profile";
+
+/* Codec Strings */
+"High Tier (HEVC Codec Tier" = "High Tier";
+
+/* WKWebExtensionMatchPatternErrorInvalidHost description for invalid or missing host */
+"Host \"%s\" is invalid." = "Host \"%s\" is invalid.";
+
+/* Phishing warning description */
+"If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%." = "If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%.";
+
+/* Action from safe browsing warning */
+"If you understand the risks involved, you can %visit-this-unsafe-site-link%." = "If you understand the risks involved, you can %visit-this-unsafe-site-link%.";
+
+/* Ignore Grammar context menu item */
+"Ignore Grammar" = "Ignore Grammar";
+
+/* Ignore Spelling context menu item */
+"Ignore Spelling" = "Ignore Spelling";
+
+/* Fallback title for images in the share sheet */
+"Image" = "Image";
+
+/* Undo action name */
+"Indent (Undo action name)" = "Indent";
+
+/* Undo action name */
+"Insert List (Undo action name)" = "Insert List";
+
+/* Inspect Element context menu item */
+"Inspect Element" = "Inspect Element";
+
+/* Message when a PDF fails to unlock with the given password */
+"Invalid Password" = "Invalid Password";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for commands */
+"Invalid `commands` manifest entry." = "Invalid `commands` manifest entry.";
+
+/* WKWebExtensionErrorInvalidBackgroundPersistence description */
+"Invalid `persistent` manifest entry." = "Invalid `persistent` manifest entry.";
+
+/* WKWebExtensionErrorInvalidBackgroundPersistence description for manifest v3 */
+"Invalid `persistent` manifest entry. A `manifest_version` greater-than or equal to `3` must be non-persistent." = "Invalid `persistent` manifest entry. A `manifest_version` greater-than or equal to `3` must be non-persistent.";
+
+/* WKWebExtensionErrorInvalidBackgroundPersistence description for service worker */
+"Invalid `persistent` manifest entry. A `service_worker` must be non-persistent." = "Invalid `persistent` manifest entry. A `service_worker` must be non-persistent.";
+
+/* WKWebExtensionErrorInvalidBackgroundPersistence description for iOS */
+"Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS." = "Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS.";
+
+/* WKWebExtensionErrorInvalidBackgroundPersistence description for visionOS */
+"Invalid `persistent` manifest entry. A non-persistent background is required on visionOS." = "Invalid `persistent` manifest entry. A non-persistent background is required on visionOS.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for invalid command shortcut */
+"Invalid `suggested_key` in the `commands` manifest entry." = "Invalid `suggested_key` in the `commands` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for web_accessible_resources */
+"Invalid `web_accessible_resources` manifest entry." = "Invalid `web_accessible_resources` manifest entry.";
+
+/* WKWebExtensionErrorInvalidArchive description */
+"Invalid or corrupt extension archive." = "Invalid or corrupt extension archive.";
+
+/* Validation message for input form controls with a value not matching type */
+"Invalid value" = "Invalid value";
+
+/* Full Screen Deceptive Website Warning Sheet Title */
+"It looks like you are typing while in full screen" = "It looks like you are typing while in full screen";
+
+/* Italic context menu item */
+"Italic" = "Italic";
+
+/* Undo action name */
+"Italics (Undo action name)" = "Italics";
+
+/* WebKitErrorJavaUnavailable description */
+"Java is unavailable" = "Java is unavailable";
+
+/* Title for action sheet for JavaScript link */
+"JavaScript Action Sheet Title" = "JavaScript";
+
+/* WKErrorJavaScriptResultTypeIsUnsupported description */
+"JavaScript execution returned a result of an unsupported type" = "JavaScript execution returned a result of an unsupported type";
+
+/* WKErrorJavaScriptAppBoundDomain description */
+"JavaScript execution targeted a frame that is not in an app-bound domain" = "JavaScript execution targeted a frame that is not in an app-bound domain";
+
+/* WKErrorJavaScriptInvalidFrameTarget description */
+"JavaScript execution targeted an invalid frame" = "JavaScript execution targeted an invalid frame";
+
+/* Undo action name */
+"Justify (Undo action name)" = "Justify";
+
+/* Languages media controls context menu title */
+"Languages (Media Controls Menu)" = "Languages";
+
+/* Learn Spelling context menu item */
+"Learn Spelling" = "Learn Spelling";
+
+/* Action from safe browsing warning */
+"Learn more…" = "Learn more…";
+
+/* Left to Right context menu item */
+"Left to Right" = "Left to Right";
+
+/* Level %d (AVC Codec Level) */
+"Level %d" = "Level %d";
+
+/* Level %d.%d (AVC Codec Level) */
+"Level %d.%d" = "Level %d.%d";
+
+/* Codec Strings */
+"Level 1b (AVC Codec Level)" = "Level 1b";
+
+/* Codec Strings */
+"Level 2.0 (AV1 Codec Level)" = "Level 2.0";
+
+/* Codec Strings */
+"Level 2.1 (AV1 Codec Level)" = "Level 2.1";
+
+/* Codec Strings */
+"Level 2.2 (AV1 Codec Level)" = "Level 2.2";
+
+/* Codec Strings */
+"Level 2.3 (AV1 Codec Level)" = "Level 2.3";
+
+/* Codec Strings */
+"Level 3.0 (AV1 Codec Level)" = "Level 3.0";
+
+/* Codec Strings */
+"Level 3.1 (AV1 Codec Level)" = "Level 3.1";
+
+/* Codec Strings */
+"Level 3.2 (AV1 Codec Level)" = "Level 3.2";
+
+/* Codec Strings */
+"Level 3.3 (AV1 Codec Level)" = "Level 3.3";
+
+/* Codec Strings */
+"Level 4.0 (AV1 Codec Level)" = "Level 4.0";
+
+/* Codec Strings */
+"Level 4.1 (AV1 Codec Level)" = "Level 4.1";
+
+/* Codec Strings */
+"Level 4.2 (AV1 Codec Level)" = "Level 4.2";
+
+/* Codec Strings */
+"Level 4.3 (AV1 Codec Level)" = "Level 4.3";
+
+/* Codec Strings */
+"Level 5.0 (AV1 Codec Level)" = "Level 5.0";
+
+/* Codec Strings */
+"Level 5.1 (AV1 Codec Level)" = "Level 5.1";
+
+/* Codec Strings */
+"Level 5.2 (AV1 Codec Level)" = "Level 5.2";
+
+/* Codec Strings */
+"Level 5.3 (AV1 Codec Level)" = "Level 5.3";
+
+/* Codec Strings */
+"Level 6.0 (AV1 Codec Level)" = "Level 6.0";
+
+/* Codec Strings */
+"Level 6.1 (AV1 Codec Level)" = "Level 6.1";
+
+/* Codec Strings */
+"Level 6.2 (AV1 Codec Level)" = "Level 6.2";
+
+/* Codec Strings */
+"Level 6.3 (AV1 Codec Level)" = "Level 6.3";
+
+/* Codec Strings */
+"Level 7.0 (AV1 Codec Level)" = "Level 7.0";
+
+/* Codec Strings */
+"Level 7.1 (AV1 Codec Level)" = "Level 7.1";
+
+/* Codec Strings */
+"Level 7.2 (AV1 Codec Level)" = "Level 7.2";
+
+/* Codec Strings */
+"Level 7.3 (AV1 Codec Level)" = "Level 7.3";
+
+/* Media controller status message when watching a live broadcast */
+"Live Broadcast" = "Live Broadcast";
+
+/* Media Element Source Type */
+"LiveStream (Media Element Source Type)" = "Live Stream";
+
+/* Load request cancelled */
+"Load request cancelled" = "Load request cancelled";
+
+/* Media controller status message when the media is loading */
+"Loading…" = "Loading…";
+
+/* 'Website' name displayed when local documents have stored local data */
+"Local documents on your computer" = "Local documents on your computer";
+
+/* Lockdown Mode alert title */
+"Lockdown Mode is Turned On For “%@“" = "Lockdown Mode is Turned On For “%@“";
+
+/* Title for Look Up action button */
+"Look Up" = "Look Up";
+
+/* Look Up in Dictionary context menu item */
+"Look Up in Dictionary" = "Look Up in Dictionary";
+
+/* Look Up context menu item with selected word */
+"Look Up “%@”" = "Look Up “%@”";
+
+/* WKErrorContentRuleListStoreLookupFailed description */
+"Looking up a WKContentRuleList failed" = "Looking up a WKContentRuleList failed";
+
+/* WKErrorContentRuleListStoreVersionMismatch description */
+"Looking up a WKContentRuleList found a binary that is incompatible" = "Looking up a WKContentRuleList found a binary that is incompatible";
+
+/* Media Loop context menu item */
+"Loop" = "Loop";
+
+/* Undo action name */
+"Loosen Kerning (Undo action name)" = "Loosen Kerning";
+
+/* Undo action name */
+"Lower Baseline (Undo action name)" = "Lower Baseline";
+
+/* Month label in date picker */
+"MONTH (Date picker for extra zoom mode)" = "MONTH";
+
+/* Codec Strings */
+"MP3 Codec String" = "MP3";
+
+/* Codec Strings */
+"MPEG-4 AAC Codec String" = "MPEG-4 AAC";
+
+/* Codec Strings */
+"Main 10 Profile (HEVC Codec Profile)" = "Main 10 Profile";
+
+/* Codec Strings */
+"Main Profile (AV1 Codec Profile)" = "Main Profile, ";
+
+/* Codec Strings */
+"Main Profile (AVC Codec Profile)" = "Main Profile";
+
+/* Codec Strings */
+"Main Profile (HEVC Codec Profile)" = "Main Profile";
+
+/* Codec Strings */
+"Main Tier (HEVC Codec Tier" = "Main Tier";
+
+/* Make Lower Case context menu item */
+"Make Lower Case" = "Make Lower Case";
+
+/* Make Upper Case context menu item */
+"Make Upper Case" = "Make Upper Case";
+
+/* Malware warning title */
+"Malware Website Warning" = "Malware Website Warning";
+
+/* Media Element Source Type */
+"ManagedMediaSource (Media Element Source Type)" = "Managed Media Source";
+
+/* WKWebExtensionErrorInvalidBackgroundContent description for empty or invalid preferred environment key */
+"Manifest `background` entry has an empty or invalid `preferred_environment` key." = "Manifest `background` entry has an empty or invalid `preferred_environment` key.";
+
+/* WKWebExtensionErrorInvalidBackgroundContent description for missing background page or scripts keys */
+"Manifest `background` entry has missing or empty required `page` or `scripts` key for `preferred_environment` of `document`." = "Manifest `background` entry has missing or empty required `page` or `scripts` key for `preferred_environment` of `document`.";
+
+/* WKWebExtensionErrorInvalidBackgroundContent description for missing background required keys */
+"Manifest `background` entry has missing or empty required `scripts`, `page`, or `service_worker` key." = "Manifest `background` entry has missing or empty required `scripts`, `page`, or `service_worker` key.";
+
+/* WKWebExtensionErrorInvalidBackgroundContent description for missing background service_worker or scripts keys */
+"Manifest `background` entry has missing or empty required `service_worker` or `scripts` key for `preferred_environment` of `service_worker`." = "Manifest `background` entry has missing or empty required `service_worker` or `scripts` key for `preferred_environment` of `service_worker`.";
+
+/* WKWebExtensionErrorInvalidContentScripts description for missing or empty 'js' and 'css' arrays */
+"Manifest `content_scripts` entry has missing or empty 'js' and 'css' arrays." = "Manifest `content_scripts` entry has missing or empty 'js' and 'css' arrays.";
+
+/* WKWebExtensionErrorInvalidContentScripts description for missing matches entry */
+"Manifest `content_scripts` entry has no specified `matches` entry." = "Manifest `content_scripts` entry has no specified `matches` entry.";
+
+/* WKWebExtensionErrorInvalidContentScripts description for unknown 'css_origin' value */
+"Manifest `content_scripts` entry has unknown `css_origin` value." = "Manifest `content_scripts` entry has unknown `css_origin` value.";
+
+/* WKWebExtensionErrorInvalidContentScripts description for unknown 'run_at' value */
+"Manifest `content_scripts` entry has unknown `run_at` value." = "Manifest `content_scripts` entry has unknown `run_at` value.";
+
+/* WKWebExtensionErrorInvalidContentScripts description for unknown 'world' value */
+"Manifest `content_scripts` entry has unknown `world` value." = "Manifest `content_scripts` entry has unknown `world` value.";
+
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for missing declarativeNetRequest permission */
+"Manifest has no `declarativeNetRequest` permission." = "Manifest has no `declarativeNetRequest` permission.";
+
+/* Validation message for input form controls requiring a constrained value according to pattern */
+"Match the requested format" = "Match the requested format";
+
+/* Validation message for input form controls requiring a constrained value according to pattern followed by a website-provided description of the pattern */
+"Match the requested format: %@" = "Match the requested format: %@";
+
+/* Validation message for input form controls requiring a constrained value according to pattern followed by a website-provided description of the pattern */
+"Match the requested format: %s" = "Match the requested format: %s";
+
+/* Media Element Source Type */
+"MediaSource (Media Element Source Type)" = "Media Source";
+
+/* Media Element Source Type */
+"MediaStream (Media Element Source Type)" = "Media Stream";
+
+/* Malware confirmation dialog */
+"Merely visiting a site is sufficient for malware to install itself and harm your computer." = "Merely visiting a site is sufficient for malware to install itself and harm your computer.";
+
+/* Display name for text track kind 'metadata'. */
+"Metadata (text track)" = "Metadata";
+
+/* Label text to be used when a plugin is missing */
+"Missing Plug-in" = "Missing Plug-in";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for action only */
+"Missing or empty `action` manifest entry." = "Missing or empty `action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for browser_action or page_action */
+"Missing or empty `browser_action` or `page_action` manifest entry." = "Missing or empty `browser_action` or `page_action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for description */
+"Missing or empty `description` manifest entry." = "Missing or empty `description` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for icons */
+"Missing or empty `icons` manifest entry." = "Missing or empty `icons` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for name */
+"Missing or empty `name` manifest entry." = "Missing or empty `name` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for version */
+"Missing or empty `version` manifest entry." = "Missing or empty `version` manifest entry.";
+
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for missing enabled boolean */
+"Missing or invalid `enabled` boolean for the `declarative_net_request` manifest entry." = "Missing or invalid `enabled` boolean for the `declarative_net_request` manifest entry.";
+
+/* Media Mute context menu item */
+"Mute" = "Mute";
+
+/* WebKitErrorHTTPSOnlyHTTPURL description */
+"Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled" = "Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled";
+
+/* New Quick Note context menu item. */
+"New Quick Note" = "New Quick Note";
+
+/* Next Page context menu item */
+"Next Page" = "Next Page";
+
+/* No Guesses Found context menu item */
+"No Guesses Found" = "No Guesses Found";
+
+/* Empty select list */
+"No Options Select Popover" = "No Options";
+
+/* WKWebExtensionContextErrorNoBackgroundContent description */
+"No background content is available to load." = "No background content is available to load.";
+
+/* Label for only item in menu that appears when clicking on the search field image, when no searches have been performed */
+"No recent searches" = "No recent searches";
+
+/* WKWebExtensionErrorInvalidBackgroundPersistence description for webRequest events */
+"Non-persistent background content cannot listen to `webRequest` events." = "Non-persistent background content cannot listen to `webRequest` events.";
+
+/* Option in segmented control for choosing list type in text editing */
+"None" = "None";
+
+/* WebKitErrorCannotUseRestrictedPort description */
+"Not allowed to use restricted network port" = "Not allowed to use restricted network port";
+
+/* Option in segmented control for inserting a numbered list in text editing */
+"Numbered list" = "Numbered list";
+
+/* Lockdown Mode alert OK button */
+"OK" = "OK";
+
+/* Title of the OK button for the number pad in zoomed form controls. */
+"OK (OK button title in extra zoomed number pad)" = "OK";
+
+/* OK button label in document password failure alert */
+"OK (password failure alert)" = "OK";
+
+/* Menu item label for the track that represents disabling closed captions. */
+"Off (text track)" = "Off";
+
+/* Title for Open Link action button */
+"Open" = "Open";
+
+/* Open Audio in New Window context menu item */
+"Open Audio in New Window" = "Open Audio in New Window";
+
+/* Open Frame in New Window context menu item */
+"Open Frame in New Window" = "Open Frame in New Window";
+
+/* Open Image in New Window context menu item */
+"Open Image in New Window" = "Open Image in New Window";
+
+/* Open Link context menu item */
+"Open Link" = "Open Link";
+
+/* Open in New Window context menu item */
+"Open Link in New Window" = "Open Link in New Window";
+
+/* Open Video in New Window context menu item */
+"Open Video in New Window" = "Open Video in New Window";
+
+/* Title for Open in Safari Link action button */
+"Open in Safari" = "Open in Safari";
+
+/* Title for Open in External Application Link action button */
+"Open in “%@”" = "Open in “%@”";
+
+/* Open this 3D model? */
+"Open this 3D model?" = "Open this 3D model?";
+
+/* context menu item for PDF */
+"Open with %@" = "Open with %@";
+
+/* Open with Preview context menu item */
+"Open with Preview" = "Open with Preview";
+
+/* Codec Strings */
+"Opus Codec String" = "Opus";
+
+/* Label for the order with Apple Pay button. */
+"Order with Apple Pay" = "Order with Apple Pay";
+
+/* Undo action name */
+"Outdent (Undo action name)" = "Outdent";
+
+/* Outline context menu item */
+"Outline" = "Outline";
+
+/* Undo action name */
+"Outline (Undo action name)" = "Outline";
+
+/* Paragraph direction context sub-menu item */
+"Paragraph Direction" = "Paragraph Direction";
+
+/* Fallback label text for unlabeled password field. */
+"Password" = "Password";
+
+/* Paste context menu item */
+"Paste" = "Paste";
+
+/* Undo action name */
+"Paste (Undo action name)" = "Paste";
+
+/* Undo action name */
+"Paste Font (Undo action name)" = "Paste Font";
+
+/* Undo action name */
+"Paste Ruler (Undo action name)" = "Paste Ruler";
+
+/* WKWebExtensionMatchPatternErrorInvalidPath description for missing path */
+"Path \"%s\" is invalid." = "Path \"%s\" is invalid.";
+
+/* Media Pause context menu item */
+"Pause" = "Pause";
+
+/* Pause All Animations context menu item */
+"Pause All Animations" = "Pause All Animations";
+
+/* Title for pause animation action button or context menu item */
+"Pause Animation" = "Pause Animation";
+
+/* Fallback label text for unlabeled telephone number input field. */
+"Phone number" = "Phone number";
+
+/* File Upload alert sheet button string for choosing an existing media item from the Photo Library */
+"Photo Library (file upload action sheet)" = "Photo Library";
+
+/* Picture in Picture media controls context menu title */
+"Picture in Picture (Media Controls Menu)" = "Picture in Picture";
+
+/* Media Play context menu item */
+"Play" = "Play";
+
+/* Play All Animations context menu item */
+"Play All Animations" = "Play All Animations";
+
+/* Title for play animation action button or context menu item */
+"Play Animation" = "Play Animation";
+
+/* accessibility help text for enter full screen button */
+"Play movie in full screen mode" = "Play movie in full screen mode";
+
+/* Playback Speed media controls context menu title */
+"Playback Speed (Media Controls Menu)" = "Playback Speed";
+
+/* Subtitle when a PDF needs a password to be unlocked */
+"Please enter the password below." = "Please enter the password below.";
+
+/* Label text to be used when a plug-in was blocked from loading because it was too small */
+"Plug-In too small" = "Plug-In too small";
+
+/* Label text to be used if plugin host process has crashed */
+"Plug-in Failure" = "Plug-in Failure";
+
+/* WebKitErrorPlugInCancelledConnection description */
+"Plug-in cancelled" = "Plug-in cancelled";
+
+/* WebKitErrorPlugInWillHandleLoad description */
+"Plug-in handled load" = "Plug-in handled load";
+
+/* Description of the primary type supported by the PDF pseudo plug-in. */
+"Portable Document Format" = "Portable Document Format";
+
+/* Description of the primary type supported by the PDF pseudo plug-in. Visible in the Installed Plug-ins page in Safari. */
+"Portable Document Format (Safari)" = "Portable Document Format";
+
+/* Title for file upload progress view */
+"Preparing (file upload)" = "Preparing…";
+
+/* Previous Page context menu item */
+"Previous Page" = "Previous Page";
+
+/* Title for the webarea while the accessibility tree is being built. */
+"Processing page %@" = "Processing page %@";
+
+/* Codec Strings */
+"Professional Profile (AV1 Codec Profile)" = "Professional Profile, ";
+
+/* VP8/9 Codec Level & Profile (Codec Strings) */
+"Profile %d, Level %s" = "Profile %d, Level %s";
+
+/* Undo action name */
+"Raise Baseline (Undo action name)" = "Raise Baseline";
+
+/* label for first item in the menu that appears when clicking on the search field image, used as embedded menu title */
+"Recent Searches" = "Recent Searches";
+
+/* Label describing the list of related websites controlled by the same organization */
+"Related %@ websites" = "Related %@ websites";
+
+/* Reload context menu item */
+"Reload" = "Reload";
+
+/* Label for the reload with Apple Pay button. */
+"Reload with Apple Pay" = "Reload with Apple Pay";
+
+/* Remove Background menu item */
+"Remove Background" = "Remove Background";
+
+/* Undo action name */
+"Remove Background (Undo action name)" = "Remove Background";
+
+/* WKErrorContentRuleListStoreRemoveFailed description */
+"Removing a WKContentRuleList failed" = "Removing a WKContentRuleList failed";
+
+/* Label for the rent with Apple Pay button. */
+"Rent with Apple Pay" = "Rent with Apple Pay";
+
+/* default label for Reset buttons in forms on web pages */
+"Reset" = "Reset";
+
+/* Reset button in date input context menu */
+"Reset Button Date/Time Context Menu" = "Reset";
+
+/* Right to Left context menu item */
+"Right to Left" = "Right to Left";
+
+/* Display name for SDH (i.e. deaf and/or hard of hearing) text tracks. */
+"SDH (text track)" = "SDH";
+
+/* Title for Save to Photos action button */
+"Save to Photos" = "Save to Photos";
+
+/* WKWebExtensionMatchPatternErrorInvalidScheme description for invalid scheme */
+"Scheme \"%s\" is invalid." = "Scheme \"%s\" is invalid.";
+
+/* Title of the Search button for zoomed form controls. */
+"Search" = "Search";
+
+/* Search the Web context menu item */
+"Search the Web" = "Search the Web";
+
+/* Search with search provider context menu item with provider name inserted */
+"Search with %@" = "Search with %@";
+
+/* Validation message for required file inputs that have no value */
+"Select a file" = "Select a file";
+
+/* Validation message for required menu list controls that have no selection */
+"Select an item in the list" = "Select an item in the list";
+
+/* Validation message for required radio boxes that have no selection */
+"Select one of these options" = "Select one of these options";
+
+/* Validation message for required checkboxes that have not been selected */
+"Select this checkbox" = "Select this checkbox";
+
+/* Selection direction context sub-menu item */
+"Selection Direction" = "Selection Direction";
+
+/* Set button below date picker */
+"Set (Button below date picker for extra zoom mode)" = "Set";
+
+/* Undo action name */
+"Set Background Color (Undo action name)" = "Set Background Color";
+
+/* Undo action name */
+"Set Color (Undo action name)" = "Set Color";
+
+/* Undo action name */
+"Set Font (Undo action name)" = "Set Font";
+
+/* Undo action name */
+"Set Traditional Character Shape (Undo action name)" = "Set Traditional Character Shape";
+
+/* Undo action name */
+"Set Writing Direction (Undo action name)" = "Set Writing Direction";
+
+/* Label for the set up with Apple Pay button. */
+"Set up with Apple Pay" = "Set up with Apple Pay";
+
+/* Default name for the file created for a shared image with no explicit name. */
+"Shared Image" = "Shared Image";
+
+/* Title for Share action button */
+"Share…" = "Share…";
+
+/* Show colors context menu item */
+"Show Colors" = "Show Colors";
+
+/* Show Media Controls context menu item */
+"Show Controls" = "Show Controls";
+
+/* Action from safe browsing warning */
+"Show Details" = "Show Details";
+
+/* Show fonts context menu item */
+"Show Fonts" = "Show Fonts";
+
+/* Media stats context menu item */
+"Show Media Stats" = "Show Media Stats";
+
+/* menu item title */
+"Show Spelling and Grammar" = "Show Spelling and Grammar";
+
+/* menu item title */
+"Show Substitutions" = "Show Substitutions";
+
+/* Title for Show Text action button */
+"Show Text" = "Show Text";
+
+/* Title of the context menu item to show when PDFPlugin was used instead of a blocked plugin */
+"Show in blocked plug-in" = "Show in blocked plug-in";
+
+/* Single Page context menu item */
+"Single Page" = "Single Page";
+
+/* Single Page Continuous context menu item */
+"Single Page Continuous" = "Single Page Continuous";
+
+/* Smart Copy/Paste context menu item */
+"Smart Copy/Paste" = "Smart Copy/Paste";
+
+/* Smart Dashes context menu item */
+"Smart Dashes" = "Smart Dashes";
+
+/* Smart Links context menu item */
+"Smart Links" = "Smart Links";
+
+/* Smart Quotes context menu item */
+"Smart Quotes" = "Smart Quotes";
+
+/* Title of the label to show on a snapshotted plug-in */
+"Snapshotted Plug-In" = "Snapshotted Plug-In";
+
+/* Speech context sub-menu item */
+"Speech" = "Speech";
+
+/* Spelling and Grammar context sub-menu item */
+"Spelling and Grammar" = "Spelling and Grammar";
+
+/* title for Start Debugging JavaScript menu item */
+"Start Debugging JavaScript" = "Start Debugging JavaScript";
+
+/* title for Start Profiling JavaScript menu item */
+"Start Profiling JavaScript" = "Start Profiling JavaScript";
+
+/* Start speaking context menu item */
+"Start Speaking" = "Start Speaking";
+
+/* Full Screen Deceptive Website Stay Action */
+"Stay in Full Screen (Element Full Screen)" = "Stay in Full Screen";
+
+/* Stop context menu item */
+"Stop" = "Stop";
+
+/* title for Stop Debugging JavaScript menu item */
+"Stop Debugging JavaScript" = "Stop Debugging JavaScript";
+
+/* title for Stop Profiling JavaScript menu item */
+"Stop Profiling JavaScript" = "Stop Profiling JavaScript";
+
+/* Stop speaking context menu item */
+"Stop Speaking" = "Stop Speaking";
+
+/* Media Element Source Type */
+"StoredStream (Media Element Source Type)" = "Stored Stream";
+
+/* Undo action name */
+"StrikeThrough (Undo action name)" = "StrikeThrough";
+
+/* Label for strong password. */
+"Strong Password" = "Strong Password";
+
+/* Styles context menu item */
+"Styles…" = "Styles…";
+
+/* default label for Submit buttons in forms on web pages */
+"Submit" = "Submit";
+
+/* alt text for <input> elements with no alt, title, or value */
+"Submit (input element)" = "Submit";
+
+/* Label for the subcribe with Apple Pay button. */
+"Subscribe with Apple Pay" = "Subscribe with Apple Pay";
+
+/* Undo action name */
+"Subscript (Undo action name)" = "Subscript";
+
+/* Substitutions context sub-menu item */
+"Substitutions" = "Substitutions";
+
+/* Subtitles media controls context menu title */
+"Subtitles (Media Controls Menu)" = "Subtitles";
+
+/* Accessibility announcement for the data list suggestions dropdown going away. */
+"Suggestions list hidden." = "Suggestions list hidden.";
+
+/* Accessibility announcement that the suggestions list became visible. The format argument is for the first option in the list. */
+"Suggestions list visible, %@" = "Suggestions list visible, %@";
+
+/* Undo action name */
+"Superscript (Undo action name)" = "Superscript";
+
+/* Label for the support with Apple Pay button. */
+"Support with Apple Pay" = "Support with Apple Pay";
+
+/* File Upload alert sheet camera button string for taking only photos */
+"Take Photo (file upload action sheet)" = "Take Photo";
+
+/* File Upload alert sheet camera button string for taking photos or videos */
+"Take Photo or Video (file upload action sheet)" = "Take Photo or Video";
+
+/* File Upload alert sheet camera button string for taking only videos */
+"Take Video (file upload action sheet)" = "Take Video";
+
+/* Validation message for required switches that are not on */
+"Tap this switch" = "Tap this switch";
+
+/* Tencent Safe Browsing */
+"Tencent Safe Browsing" = "Tencent Safe Browsing";
+
+/* Text Replacement context menu item */
+"Text Replacement" = "Text Replacement";
+
+/* WebKitErrorCannotShowURL description */
+"The URL can’t be shown" = "The URL can’t be shown";
+
+/* WebKitErrorBlockedByContentBlocker description */
+"The URL was blocked by a content blocker" = "The URL was blocked by a content blocker";
+
+/* WebKitErrorFrameLoadBlockedByContentFilter description */
+"The URL was blocked by a content filter" = "The URL was blocked by a content filter";
+
+/* WebKitErrorFrameLoadBlockedByRestrictions description */
+"The URL was blocked by device restrictions" = "The URL was blocked by device restrictions";
+
+/* WKErrorWebViewInvalidated description */
+"The WKWebView was invalidated" = "The WKWebView was invalidated";
+
+/* WKErrorWebContentProcessTerminated description */
+"The Web Content process was terminated" = "The Web Content process was terminated";
+
+/* WKWebExtensionContextErrorBackgroundContentFailedToLoad description */
+"The background content failed to load due to an error." = "The background content failed to load due to an error.";
+
+/* WebKitErrorGeolocationLocationUnknown description */
+"The current location cannot be found." = "The current location cannot be found.";
+
+/* document password failure alert message */
+"The document could not be opened with that password." = "The document could not be opened with that password.";
+
+/* WebKitErrorCannotFindPlugin description */
+"The plug-in can’t be found" = "The plug-in can’t be found";
+
+/* WebKitErrorCannotLoadPlugin description */
+"The plug-in can’t be loaded" = "The plug-in can’t be loaded";
+
+/* prompt string in authentication panel */
+"The user name or password you entered for area “%@” on %@ was incorrect. Make sure you’re entering them correctly, and then try again." = "The user name or password you entered for area “%@” on %@ was incorrect. Make sure you’re entering them correctly, and then try again.";
+
+/* prompt string in authentication panel */
+"The user name or password you entered for the %@ proxy server %@ was incorrect. Make sure you’re entering them correctly, and then try again." = "The user name or password you entered for the %@ proxy server %@ was incorrect. Make sure you’re entering them correctly, and then try again.";
+
+/* prompt string in authentication panel */
+"The user name or password you entered for this area on %@ was incorrect. Make sure you’re entering them correctly, and then try again." = "The user name or password you entered for this area on %@ was incorrect. Make sure you’re entering them correctly, and then try again.";
+
+/* Not Secure Connection warning page title */
+"This Connection Is Not Secure" = "This Connection Is Not Secure";
+
+/* WKErrorDuplicateCredential description */
+"This credential is already present" = "This credential is already present";
+
+/* WKErrorMalformedCredential description */
+"This credential is malformed" = "This credential is malformed";
+
+/* Title when a PDF needs a password to be unlocked */
+"This document is password protected." = "This document is password protected.";
+
+/* text that appears at the start of nearly-obsolete web pages in the form of a 'searchable index' */
+"This is a searchable index. Enter search keywords: " = "This is a searchable index. Enter search keywords: ";
+
+/* Not Secure Connection warning text */
+"This website does not support connecting securely over HTTPS. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people." = "This website does not support connecting securely over HTTPS. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people.";
+
+/* Malware warning */
+"This website may attempt to install dangerous software, which could harm your computer or steal your personal or financial information, like passwords, photos, or credit cards." = "This website may attempt to install dangerous software, which could harm your computer or steal your personal or financial information, like passwords, photos, or credit cards.";
+
+/* Phishing warning */
+"This website may try to trick you into doing something dangerous, like installing software or disclosing personal or financial information, like passwords, phone numbers, or credit cards." = "This website may try to trick you into doing something dangerous, like installing software or disclosing personal or financial information, like passwords, phone numbers, or credit cards.";
+
+/* Unwanted software warning */
+"This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove." = "This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove.";
+
+/* Message informing the user that the website will have approximate location data */
+"This website will use your approximate location because “%@” currently has access to your approximate location." = "This website will use your approximate location because “%@” currently has access to your approximate location.";
+
+/* Message informing the user that the website will have precise location data */
+"This website will use your precise location because “%@” currently has access to your precise location." = "This website will use your precise location because “%@” currently has access to your precise location.";
+
+/* Informative text for requesting cross-site cookie and website data access. */
+"This will allow “%@” and “%@” to track your activity." = "This will allow “%@” and “%@” to track your activity.";
+
+/* Informative text for requesting cross-site cookie and website data access. */
+"This will allow “%@” to track your activity." = "This will allow “%@” to track your activity.";
+
+/* Undo action name */
+"Tighten Kerning (Undo action name)" = "Tighten Kerning";
+
+/* WKErrorAttributedStringContentLoadTimedOut description */
+"Timed out while loading attributed string content" = "Timed out while loading attributed string content";
+
+/* Label for the tip with Apple Pay button. */
+"Tip with Apple Pay" = "Tip with Apple Pay";
+
+/* prompt string in authentication panel */
+"To view this page, you must log in to area “%@” on %@." = "To view this page, you must log in to area “%@” on %@.";
+
+/* prompt string in authentication panel */
+"To view this page, you must log in to the %@ proxy server %@." = "To view this page, you must log in to the %@ proxy server %@.";
+
+/* prompt string in authentication panel */
+"To view this page, you must log in to this area on %@:" = "To view this page, you must log in to this area on %@:";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for too many command shortcuts */
+"Too many shortcuts specified for `commands`, only 4 shortcuts are allowed." = "Too many shortcuts specified for `commands`, only 4 shortcuts are allowed.";
+
+/* Label for the top up with Apple Pay button. */
+"Top up with Apple Pay" = "Top up with Apple Pay";
+
+/* Transformations context sub-menu item */
+"Transformations" = "Transformations";
+
+/* Translate context menu item with selected word */
+"Translate “%@”" = "Translate “%@”";
+
+/* Undo action name */
+"Turn Off Kerning (Undo action name)" = "Turn Off Kerning";
+
+/* Undo action name */
+"Turn Off Ligatures (Undo action name)" = "Turn Off Ligatures";
+
+/* Two Pages context menu item */
+"Two Pages" = "Two Pages";
+
+/* Two Pages Continuous context menu item */
+"Two Pages Continuous" = "Two Pages Continuous";
+
+/* Undo action name */
+"Typing (Undo action name)" = "Typing";
+
+/* Full Screen Deceptive Website Warning Sheet Content Text */
+"Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information." = "Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information.";
+
+/* Fallback label text for unlabeled URL input field. */
+"URL" = "URL";
+
+/* accessibility role description for a URL field. */
+"URL field" = "URL field";
+
+/* WKWebExtensionErrorResourceNotFound description with file name */
+"Unable to find \"%@\" in the extension’s resources." = "Unable to find \"%@\" in the extension’s resources.";
+
+/* WKWebExtensionErrorResourceNotFound description with invalid file path */
+"Unable to find \"%@\" in the extension’s resources. It is an invalid path." = "Unable to find \"%@\" in the extension’s resources. It is an invalid path.";
+
+/* Error description for missing default_locale */
+"Unable to find `default_locale` in “_locales” folder." = "Unable to find `default_locale` in “_locales” folder.";
+
+/* WKWebExtensionErrorInvalidDeclarativeNetRequest description */
+"Unable to parse `declarativeNetRequest` rules because of an unexpected error." = "Unable to parse `declarativeNetRequest` rules because of an unexpected error.";
+
+/* WKWebExtensionErrorInvalidDeclarativeNetRequest description, because of a JSON error */
+"Unable to parse `declarativeNetRequest` rules: %s" = "Unable to parse `declarativeNetRequest` rules: %s";
+
+/* WKWebExtensionErrorInvalidManifest description */
+"Unable to parse manifest because of an unexpected format." = "Unable to parse manifest because of an unexpected format.";
+
+/* WKWebExtensionErrorInvalidManifest description, because of a JSON error */
+"Unable to parse manifest: %s" = "Unable to parse manifest: %s";
+
+/* WKWebExtensionErrorInvalidResourceCodeSignature description with file name */
+"Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built." = "Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built.";
+
+/* Unacceptable TLS certificate error */
+"Unacceptable TLS certificate" = "Unacceptable TLS certificate";
+
+/* Underline context menu item */
+"Underline" = "Underline";
+
+/* Undo action name */
+"Underline (Undo action name)" = "Underline";
+
+/* Menu item label for a audio/text track that has no other name. */
+"Unknown (audio/text track)" = "Unknown";
+
+/* Unknown filesize FTP directory listing item */
+"Unknown (filesize)" = "Unknown";
+
+/* Undo action name */
+"Unlink (Undo action name)" = "Unlink";
+
+/* Undo action name */
+"Unscript (Undo action name)" = "Unscript";
+
+/* Label text to be used when an unsupported plug-in was blocked from loading */
+"Unsupported Plug-In" = "Unsupported Plug-in";
+
+/* Undo action name */
+"Use All Ligatures (Undo action name)" = "Use All Ligatures";
+
+/* Undo action name */
+"Use Standard Kerning (Undo action name)" = "Use Standard Kerning";
+
+/* Undo action name */
+"Use Standard Ligatures (Undo action name)" = "Use Standard Ligatures";
+
+/* Validation message for form control elements with a value shorter than minimum allowed length */
+"Use at least %d characters" = "Use at least %d characters";
+
+/* Validation message for form control elements with a value shorter than maximum allowed length */
+"Use no more than %d character(s)" = "Use no more than %d character(s)";
+
+/* Validation message for form control elements with a value shorter than maximum allowed length */
+"Use no more than %d characters" = "Use no more than %d characters";
+
+/* Description of WebCrypto master keys in Keychain */
+"Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB" = "Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB";
+
+/* The download was cancelled by the user */
+"User cancelled the download" = "User cancelled the download";
+
+/* Informative text for requesting cross-site cookie and website data access for two sites */
+"Using the same cookies and website data is required for %s and %s to work correctly, but could make it easier to track your browsing across these websites." = "Using the same cookies and website data is required for %s and %s to work correctly, but could make it easier to track your browsing across these websites.";
+
+/* Informative text for requesting cross-site cookie and website data access for four or more sites. */
+"Using the same cookies and website data is required for %s, %s, and %lu other websites to work correctly, but could make it easier to track your browsing across these websites." = "Using the same cookies and website data is required for %s, %s, and %lu other websites to work correctly, but could make it easier to track your browsing across these websites.";
+
+/* Codec Strings */
+"VP8 (Codec String)" = "VP8";
+
+/* Codec Strings */
+"VP9 (Codec String)" = "VP9";
+
+/* Validation message for input form controls with value lower than allowed minimum */
+"Value must be greater than or equal to %@" = "Value must be greater than or equal to %@";
+
+/* Validation message for input form controls with value lower than allowed minimum */
+"Value must be greater than or equal to %s" = "Value must be greater than or equal to %s";
+
+/* Validation message for input form controls with value higher than allowed maximum */
+"Value must be less than or equal to %@" = "Value must be less than or equal to %@";
+
+/* Validation message for input form controls with value higher than allowed maximum */
+"Value must be less than or equal to %s" = "Value must be less than or equal to %s";
+
+/* Title for View Spatial action button while in fullscreen */
+"View Spatial" = "View Spatial";
+
+/* Title for View Spatial Photo action button */
+"View Spatial Photo" = "View Spatial Photo";
+
+/* Codec Strings */
+"Vorbis Codec String" = "Vorbis";
+
+/* Phishing warning description */
+"Warnings are shown for websites that have been reported as deceptive. Deceptive websites try to trick you into believing they are legitimate websites you trust." = "Warnings are shown for websites that have been reported as deceptive. Deceptive websites try to trick you into believing they are legitimate websites you trust.";
+
+/* Unwanted software warning description */
+"Warnings are shown for websites where harmful software has been detected. You can check %the-status-of-site% on the %safeBrowsingProvider% diagnostic page." = "Warnings are shown for websites where harmful software has been detected. You can check %the-status-of-site% on the %safeBrowsingProvider% diagnostic page.";
+
+/* Malware warning description */
+"Warnings are shown for websites where malicious software has been detected. You can check the %status-link% on the %safeBrowsingProvider% diagnostic page." = "Warnings are shown for websites where malicious software has been detected. You can check the %status-link% on the %safeBrowsingProvider% diagnostic page.";
+
+/* Web Inspector window title when inspecting Web Inspector */
+"Web Inspector [%d] — %@" = "Web Inspector [%d] — %@";
+
+/* Web Inspector window title */
+"Web Inspector — %@" = "Web Inspector — %@";
+
+/* WebKitErrorInternal description */
+"WebKit encountered an internal error" = "WebKit encountered an internal error";
+
+/* Unwanted software warning title */
+"Website With Harmful Software Warning" = "Website With Harmful Software Warning";
+
+/* Week of year input type label with week number and year */
+"Week %1$d, %2$d" = "Week %1$d, %2$d";
+
+/* Writing Tools context menu item */
+"Writing Tools" = "Writing Tools";
+
+/* Year label in date picker */
+"YEAR (Date picker for extra zoom mode)" = "YEAR";
+
+/* message in authentication panel */
+"Your login information will be sent securely." = "Your login information will be sent securely.";
+
+/* message in authentication panel */
+"Your password will be sent unencrypted." = "Your password will be sent unencrypted.";
+
+/* Zoom In Continuous context menu item */
+"Zoom In" = "Zoom In";
+
+/* Zoom Out context menu item */
+"Zoom Out" = "Zoom Out";
+
+/* WKWebExtensionMatchPatternErrorInvalidHost description for missing host in the pattern */
+"\"%s\" cannot be parsed because it doesn't have a host." = "\"%s\" cannot be parsed because it doesn't have a host.";
+
+/* WKWebExtensionMatchPatternErrorInvalidPath description for missing path in the pattern */
+"\"%s\" cannot be parsed because it doesn't have a path." = "\"%s\" cannot be parsed because it doesn't have a path.";
+
+/* WKWebExtensionMatchPatternErrorInvalidScheme description for missing scheme in the pattern */
+"\"%s\" cannot be parsed because it doesn't have a scheme." = "\"%s\" cannot be parsed because it doesn't have a scheme.";
+
+/* WKWebExtensionMatchPatternErrorInvalidHost description for invalid host in the pattern */
+"\"%s\" cannot be parsed because the host \"%s\" is invalid." = "\"%s\" cannot be parsed because the host \"%s\" is invalid.";
+
+/* WKWebExtensionMatchPatternErrorInvalidScheme description for invalid scheme in the pattern */
+"\"%s\" cannot be parsed because the scheme \"%s\" is invalid." = "\"%s\" cannot be parsed because the scheme \"%s\" is invalid.";
+
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for duplicate ruleset id */
+"`declarative_net_request` ruleset with id \"%s\" is invalid. Ruleset id must be unique." = "`declarative_net_request` ruleset with id \"%s\" is invalid. Ruleset id must be unique.";
+
+/* Verb stating the action that will occur when a text field is selected, as used by accessibility */
+"activate" = "activate";
+
+/* An ARIA accessibility group that acts as an alert. */
+"alert" = "alert";
+
+/* An ARIA accessibility group that acts as a status update. */
+"application status" = "application status";
+
+/* An ARIA accessibility group that acts as an article. */
+"article" = "article";
+
+/* accessibility role description for an attachment element */
+"attachment" = "attachment";
+
+/* accessibility help text for audio element controller */
+"audio element playback controls and status display" = "audio element playback controls and status display";
+
+/* accessibility label for audio element controller */
+"audio playback" = "audio playback";
+
+/* accessibility label for seek back 30 seconds button */
+"back 30 seconds" = "back 30 seconds";
+
+/* An ARIA accessibility group that acts as a banner. */
+"banner" = "banner";
+
+/* accessibility help text for play button */
+"begin playback" = "begin playback";
+
+/* accessibility description for a search field cancel button */
+"cancel" = "cancel";
+
+/* Verb stating the action that will occur when an unchecked checkbox is clicked, as used by accessibility */
+"check" = "check";
+
+/* accessibility role description for a color well */
+"color well" = "color well";
+
+/* An ARIA accessibility group that acts as a region of complementary information. */
+"complementary" = "complementary";
+
+/* Label for the AutoFill contacts button inside a text field. */
+"contact info AutoFill" = "contact info AutoFill";
+
+/* An ARIA accessibility group that contains content. */
+"content information" = "content information";
+
+/* Label for the credit card AutoFill button inside a text field. */
+"credit card AutoFill" = "credit card AutoFill";
+
+/* The less good value description for a meter element. */
+"critical value" = "critical value";
+
+/* accessibility help text for movie status display */
+"current movie status" = "current movie status";
+
+/* accessibility help text for elapsed time display */
+"current movie time in seconds" = "current movie time in seconds";
+
+/* accessibility role description for a date and time field. */
+"date and time field" = "date and time field";
+
+/* accessibility role description for a date field. */
+"date field" = "date field";
+
+/* accessibility label for a date field day input. */
+"day" = "day";
+
+/* role description of ARIA definition role */
+"definition" = "definition";
+
+/* description detail */
+"description" = "description";
+
+/* accessibility role description of a description list */
+"description list" = "description list";
+
+/* accessibility role description for a details element */
+"details" = "details";
+
+/* An ARIA accessibility group that acts as a document. */
+"document" = "document";
+
+/* accessibility label for elapsed time display */
+"elapsed time" = "elapsed time";
+
+/* accessibility role description for an email field. */
+"email field" = "email field";
+
+/* accessibility label for enter full screen button */
+"enter full screen" = "enter full screen";
+
+/* accessibility label for exit full screen button */
+"exit full screen" = "exit full screen";
+
+/* accessibility label for fast forward button */
+"fast forward" = "fast forward";
+
+/* accessibility label for fast reverse button */
+"fast reverse" = "fast reverse";
+
+/* accessibility role description for a group containing a scrollable list of articles. */
+"feed" = "feed";
+
+/* accessibility role description for a figure element. */
+"figure" = "figure";
+
+/* accessibility role description for a file upload button */
+"file upload button" = "file upload button";
+
+/* accessibility role description for a footer */
+"footer" = "footer";
+
+/* Web Push Notification string to indicate the name of the Web App/Web Site a notification was sent from, such as 'from Wikipedia' */
+"from %@" = "from %@";
+
+/* accessibility role description for headings */
+"heading" = "heading";
+
+/* accessibility label for hide closed captions button */
+"hide closed captions" = "hide closed captions";
+
+/* accessibility role description for a mark element */
+"highlighted" = "highlighted";
+
+/* accessibility label for hour fields. */
+"hour" = "hour";
+
+/* accessibility role description for image map */
+"image map" = "image map";
+
+/* accessibility help text for an indefinite media controller time value */
+"indefinite time" = "indefinite time";
+
+/* Verb stating the action that will occur when a link is clicked, as used by accessibility */
+"jump" = "jump";
+
+/* accessibility role description for link */
+"link" = "link";
+
+/* accessibility role description for list marker */
+"list marker" = "list marker";
+
+/* Label for the loading AutoFill button inside a text field. */
+"loading AutoFill" = "loading AutoFill";
+
+/* An ARIA accessibility group that acts as a console log. */
+"log" = "log";
+
+/* An ARIA accessibility group that is the main portion of the website. */
+"main" = "main";
+
+/* An ARIA accessibility group that acts as a marquee. */
+"marquee" = "marquee";
+
+/* An ARIA accessibility group that contains mathematical symbols. */
+"math" = "math";
+
+/* accessibility label for milliseconds fields. */
+"milliseconds" = "milliseconds";
+
+/* accessibility label for minutes fields. */
+"minutes" = "minutes";
+
+/* accessibility label for a date field month input. */
+"month" = "month";
+
+/* accessibility role description for a month field. */
+"month and year field" = "month and year field";
+
+/* accessibility label for timeline slider */
+"movie time" = "movie time";
+
+/* accessibility help text for timeline slider */
+"movie time scrubber" = "movie time scrubber";
+
+/* accessibility help text for timeline slider thumb */
+"movie time scrubber thumb" = "movie time scrubber thumb";
+
+/* accessibility label for mute button */
+"mute" = "mute";
+
+/* accessibility help text for mute button */
+"mute audio tracks" = "mute audio tracks";
+
+/* An ARIA accessibility group that contains the main navigation elements of a website. */
+"navigation" = "navigation";
+
+/* text to display in file button used in HTML forms when no file is selected */
+"no file selected" = "no file selected";
+
+/* text to display in file button used in HTML forms when no files are selected and the button allows multiple files to be selected */
+"no files selected" = "no files selected";
+
+/* Text to display in file button used in HTML forms for media files when no media files are selected and the button allows multiple files to be selected */
+"no media selected (multiple)" = "no media selected (multiple)";
+
+/* Text to display in file button used in HTML forms for media files when no media file is selected */
+"no media selected (single)" = "no media selected (single)";
+
+/* An ARIA accessibility group that acts as a note in a document. */
+"note" = "note";
+
+/* accessibility role description for a number field. */
+"number field" = "number field";
+
+/* accessibility help text for remaining time display */
+"number of seconds of movie remaining" = "number of seconds of movie remaining";
+
+/* The optimum value description for a meter element. */
+"optimal value" = "optimal value";
+
+/* accessibility role description for an output element */
+"output" = "output";
+
+/* Label for the AutoFill credentials button inside a text field. */
+"password AutoFill" = "password AutoFill";
+
+/* accessibility label for pause button */
+"pause" = "pause";
+
+/* accessibility help text for pause button */
+"pause playback" = "pause playback";
+
+/* accessibility label for play button */
+"play" = "play";
+
+/* Verb stating the action that will occur when a button is pressed, as used by accessibility */
+"press" = "press";
+
+/* Validation message for input form controls with value higher than allowed maximum */
+"range overflow" = "range overflow";
+
+/* Validation message for input form controls with value lower than allowed minimum */
+"range underflow" = "range underflow";
+
+/* An ARIA accessibility group that acts as a distinct region in a document. */
+"region" = "region";
+
+/* accessibility label for time remaining display */
+"remaining time" = "remaining time";
+
+/* Action from safe browsing warning */
+"report an error" = "report an error";
+
+/* accessibility help text for return streaming movie to real time button */
+"resume real time streaming" = "resume real time streaming";
+
+/* accessibility label for return to real time button */
+"return to real time" = "return to real time";
+
+/* An ARIA accessibility group that contains a search feature of a website. */
+"search" = "search";
+
+/* accessibility label for seconds fields. */
+"seconds" = "seconds";
+
+/* accessibility help text for jump back 30 seconds button */
+"seek movie back 30 seconds" = "seek movie back 30 seconds";
+
+/* accessibility help text for fast rewind button */
+"seek quickly back" = "seek quickly back";
+
+/* accessibility help text for fast forward button */
+"seek quickly forward" = "seek quickly forward";
+
+/* Verb stating the action that will occur when a radio button is clicked, as used by accessibility */
+"select" = "select";
+
+/* accessibility role description for a horizontal rule [<hr>] */
+"separator" = "separator";
+
+/* accessibility label for show closed captions button */
+"show closed captions" = "show closed captions";
+
+/* accessibility help text for show closed captions button */
+"start displaying closed captions" = "start displaying closed captions";
+
+/* accessibility label for movie status */
+"status" = "status";
+
+/* accessibility help text for hide closed captions button */
+"stop displaying closed captions" = "stop displaying closed captions";
+
+/* Label for the strong password AutoFill button inside a text field. */
+"strong password AutoFill" = "strong password AutoFill";
+
+/* The suboptimal value description for a meter element. */
+"suboptimal value" = "suboptimal value";
+
+/* accessibility role description for a suggestion element */
+"suggestion" = "suggestion";
+
+/* accessibility role description for a summary element */
+"summary" = "summary";
+
+/* An ARIA accessibility group that contains the content of a tab. */
+"tab panel" = "tab panel";
+
+/* accessibility role description for a telephone number field. */
+"telephone number field" = "telephone number field";
+
+/* term word of a description list */
+"term" = "term";
+
+/* Part of malware description */
+"the status of “%site%”" = "the status of “%site%”";
+
+/* accessibility role description for a time field. */
+"time field" = "time field";
+
+/* accessibility label for timeline thumb */
+"timeline slider thumb" = "timeline slider thumb";
+
+/* An ARIA accessibility group that acts as an updating timer. */
+"timer" = "timer";
+
+/* An ARIA accessibility group that acts as a tooltip. */
+"tooltip" = "tooltip";
+
+/* Verb stating the action that will occur when a checked checkbox is clicked, as used by accessibility */
+"uncheck" = "uncheck";
+
+/* Unknown filename */
+"unknown" = "unknown";
+
+/* accessibility label for turn mute off button */
+"unmute" = "unmute";
+
+/* accessibility help text for un mute button */
+"unmute audio tracks" = "unmute audio tracks";
+
+/* accessibility help text for video element controller */
+"video element playback controls and status display" = "video element playback controls and status display";
+
+/* accessibility label for video element controller */
+"video playback" = "video playback";
+
+/* Action from safe browsing warning */
+"visit this unsafe website" = "visit this unsafe website";
+
+/* An ARIA accessibility group that acts as an alert dialog. */
+"web alert dialog" = "web alert dialog";
+
+/* An ARIA accessibility group that acts as an application. */
+"web application" = "web application";
+
+/* An ARIA accessibility group that acts as an dialog. */
+"web dialog" = "web dialog";
+
+/* accessibility role description for a time field. */
+"week and year field" = "week and year field";
+
+/* accessibility label for a date field year input. */
+"year" = "year";
+
+/* Message for requesting access to the device motion and orientation */
+"“%@” Would Like to Access Motion and Orientation" = "“%@” Would Like to Access Motion and Orientation";
+
+/* Allow the specified bundle to sign in to the specified website */
+"“%@” would like to sign in to “%@”." = "“%@” would like to sign in to “%@”.";
+
+/* Allow the specified bundle to use Touch ID to sign in to the specified website on this device */
+"“%@” would like to use Touch ID for “%@”." = "“%@” would like to use Touch ID for “%@”.";
+
+/* Prompt for a webpage to request location access. The parameter is the domain for the webpage. */
+"“%@” would like to use your current location." = "“%@” would like to use your current location.";
+
+/* Full Screen Warning Banner Content Text */
+"”%@” is in full screen.\nSwipe down to exit." = "”%@” is in full screen.\nSwipe down to exit.";
+
+/* Option in segmented control for choosing list type in text editing */
+"•" = "•";
+
+/* Description HTML for frame unloaded by ResourceMonitor */
+"This frame is hidden for using too many system resources." = "This frame is hidden for using too many system resources.";

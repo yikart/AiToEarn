@@ -1,0 +1,114 @@
+/*
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.settings-view.blackbox > :is(p, table) {
+    width: 100%;
+    max-width: calc(min(50em, 100% - 40px));
+    margin: 1em auto 2em;
+}
+
+.settings-view.blackbox > p {
+    font-size: 12px;
+}
+
+.settings-view.blackbox > * + p {
+    margin-top: 2em;
+}
+
+.settings-view.blackbox > p:last-child {
+    margin-bottom: 0;
+}
+
+.settings-view.blackbox > p > .toggle-script-blackbox {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
+
+.settings-view.blackbox > p > label {
+    display: flex;
+}
+
+.settings-view.blackbox > p > label > input {
+    flex-shrink: 0;
+    margin-inline: 0.5px 4px;
+}
+
+.settings-view.blackbox > p > label > input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    margin-top: 1px;
+}
+
+.settings-view.blackbox > p > label > span {
+    margin-top: 1.5px;
+}
+
+.settings-view.blackbox > table {
+    border-collapse: collapse;
+}
+
+.settings-view.blackbox > table > thead th {
+    padding: 0 4px 4px;
+}
+
+.settings-view.blackbox > table > tbody td {
+    padding: 2px 0;
+}
+
+.settings-view.blackbox > table > tbody td:not(.remove-blackbox) {
+    border: 1px solid var(--border-color);
+}
+
+.settings-view.blackbox > table :is(th, td).url {
+    text-align: start;
+}
+
+.settings-view.blackbox > table > tbody td.url {
+    background-color: var(--background-color-content);
+}
+
+.settings-view.blackbox > table > tbody td.url > .CodeMirror {
+    min-width: 110px;
+    height: auto;
+    background-color: transparent;
+}
+
+.settings-view.blackbox > table :is(th, td):is(.case-sensitive, .remove-blackbox) {
+    width: 1px;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.settings-view.blackbox > table > tbody > tr:not(:hover) > td.remove-blackbox {
+    opacity: 0;
+}
+
+.settings-view.blackbox > table > tbody td.remove-blackbox > .remove-blackbox-button {
+    width: 15px;
+    height: 15px;
+    margin-inline-start: 4px;
+}

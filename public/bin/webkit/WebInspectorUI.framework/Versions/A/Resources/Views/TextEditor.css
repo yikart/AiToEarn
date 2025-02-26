@@ -1,0 +1,157 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.text-editor {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.text-editor > .CodeMirror {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: auto;
+}
+
+.text-editor > .CodeMirror .has-breakpoint:not(.breakpoint-disabled) .CodeMirror-linenumber {
+    color: white;
+}
+
+.text-editor > .CodeMirror .has-breakpoint.multiple-breakpoints .CodeMirror-linenumber {
+    color: transparent;
+}
+
+.text-editor > .CodeMirror .has-breakpoint .CodeMirror-linenumber::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: -7px;
+
+    content: "";
+
+    z-index: -2;
+
+    clip-path: polygon(0% 50%, 5px 100%, 100% 100%, 100% 0, 5px 0);
+    transform: scaleX(-1);
+    background-color: var(--breakpoint-color);
+    filter: grayscale();
+}
+
+.text-editor > .CodeMirror .breakpoint-resolved .CodeMirror-linenumber::before {
+    filter: none;
+}
+
+.text-editor > .CodeMirror .breakpoint-auto-continue:not(.execution-line.primary) .CodeMirror-linenumber::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: -7px;
+    content: "";
+    z-index: -1;
+    clip-path: polygon(5px 20%, 5px 80%, 2px 50%);
+    background-color: var(--selected-foreground-color);
+    transform: scaleX(-1);
+}
+
+.text-editor > .CodeMirror .breakpoint-disabled .CodeMirror-linenumber::before {
+    background-color: var(--breakpoint-color-disabled);
+}
+
+.text-editor > .CodeMirror .has-breakpoint.multiple-breakpoints .CodeMirror-linenumber::before {
+    content: "\2022\2022\2022"; /* &middot;&middot;&middot; */
+    color: white;
+    line-height: 13px;
+    text-align: center;
+    text-indent: -1px;
+}
+
+.text-editor > .CodeMirror .execution-line.primary .CodeMirror-linenumber::after {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: -9px;
+    width: 9px;
+
+    content: "";
+
+    z-index: -1;
+
+    background-image: image-set(url(../Images/InstructionPointer.png) 1x, url(../Images/InstructionPointer@2x.png) 2x);
+    background-size: 9px 100%;
+    background-repeat: no-repeat;
+}
+
+.text-editor > .CodeMirror .execution-line {
+    background-color: hsla(99, 38%, 86%, 0.5) !important;
+}
+
+.text-editor > .CodeMirror .execution-line .CodeMirror-matchingbracket {
+    background-color: hsla(90, 30%, 82%, 0.7);
+    border-bottom: 1px dotted hsl(78, 18%, 58%);
+}
+
+.text-editor > .CodeMirror .execution-range-highlight:not(.CodeMirror-selectedtext),
+.text-editor > .CodeMirror .execution-range-highlight:not(.CodeMirror-selectedtext) + .CodeMirror-widget {
+    background-color: hsl(90, 30%, 82%);
+}
+
+.text-editor > .CodeMirror .highlighted {
+    animation: text-editor-highlight-fadeout 2s;
+}
+
+@keyframes text-editor-highlight-fadeout {
+    from { background-color: var(--selected-text-background-color); }
+}
+
+.text-editor > .CodeMirror .hovered-expression-highlight {
+    animation: text-editor-hovered-expression-highlight-fadeout 2s;
+    background-color: hsla(0, 0%, 0%, 0.1);
+}
+
+@keyframes text-editor-hovered-expression-highlight-fadeout {
+    from { background-color: var(--selected-text-background-color); }
+    to { background-color: hsla(0, 0%, 0%, 0.1); }
+}
+
+@media (prefers-color-scheme: dark) {
+    .text-editor > .CodeMirror .execution-line {
+        background-color: hsla(89, 100%, 51%, 0.25) !important;
+    }
+
+    .text-editor > .CodeMirror .execution-range-highlight:not(.CodeMirror-selectedtext),
+    .text-editor > .CodeMirror .execution-range-highlight:not(.CodeMirror-selectedtext) + .CodeMirror-widget {
+        background-color: hsl(99, 85%, 30%);
+    }
+
+    .text-editor > .CodeMirror .execution-line.primary .CodeMirror-linenumber::after {
+        filter: brightness(0.9) saturate(2.8);
+    }
+}

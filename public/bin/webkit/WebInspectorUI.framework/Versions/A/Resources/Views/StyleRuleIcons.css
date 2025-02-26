@@ -1,0 +1,106 @@
+/*
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.author-style-rule-icon .icon {
+    content: url(../Images/TypeIcons.svg#StyleRuleAuthor-light);
+}
+
+.author-style-rule-icon.pseudo-selector .icon {
+    content: url(../Images/TypeIcons.svg#StyleRulePseudoAuthor-light);
+}
+
+.user-style-rule-icon .icon {
+    content: url(../Images/TypeIcons.svg#StyleRuleUser-light);
+}
+
+.user-style-rule-icon.pseudo-selector .icon {
+    content: url(../Images/TypeIcons.svg#StyleRulePseudoUser-light);
+}
+
+.user-agent-style-rule-icon .icon {
+    content: url(../Images/TypeIcons.svg#StyleRuleUserAgent-light);
+}
+
+.user-agent-style-rule-icon.pseudo-selector .icon {
+    content: url(../Images/TypeIcons.svg#StyleRulePseudoUserAgent-light);
+}
+
+.inspector-style-rule-icon .icon {
+    content: url(../Images/TypeIcons.svg#StyleRuleInspector-light);
+}
+
+.inspector-style-rule-icon.pseudo-selector .icon {
+    content: url(../Images/TypeIcons.svg#StyleRulePseudoInspector-light);
+}
+
+.inherited-style-rule-icon .icon {
+    content: url(../Images/TypeIcons.svg#StyleRuleInherited-light);
+}
+
+.inherited-element-style-rule-icon .icon {
+    content: url(../Images/TypeIcons.svg#StyleRuleInheritedElement-light);
+}
+
+@media (prefers-color-scheme: dark) {
+    .author-style-rule-icon .icon {
+        content: url(../Images/TypeIcons.svg#StyleRuleAuthor-dark);
+    }
+
+    .author-style-rule-icon.pseudo-selector .icon {
+        content: url(../Images/TypeIcons.svg#StyleRulePseudoAuthor-dark);
+    }
+
+    .user-style-rule-icon .icon {
+        content: url(../Images/TypeIcons.svg#StyleRuleUser-dark);
+    }
+
+    .user-style-rule-icon.pseudo-selector .icon {
+        content: url(../Images/TypeIcons.svg#StyleRulePseudoUser-dark);
+    }
+
+    .user-agent-style-rule-icon .icon {
+        content: url(../Images/TypeIcons.svg#StyleRuleUserAgent-dark);
+    }
+
+    .user-agent-style-rule-icon.pseudo-selector .icon {
+        content: url(../Images/TypeIcons.svg#StyleRulePseudoUserAgent-dark);
+    }
+
+    .inspector-style-rule-icon .icon {
+        content: url(../Images/TypeIcons.svg#StyleRuleInspector-dark);
+    }
+
+    .inspector-style-rule-icon.pseudo-selector .icon {
+        content: url(../Images/TypeIcons.svg#StyleRulePseudoInspector-dark);
+    }
+
+    .inherited-style-rule-icon .icon {
+        content: url(../Images/TypeIcons.svg#StyleRuleInherited-dark);
+    }
+
+    .inherited-element-style-rule-icon .icon {
+        content: url(../Images/TypeIcons.svg#StyleRuleInheritedElement-dark);
+    }
+}

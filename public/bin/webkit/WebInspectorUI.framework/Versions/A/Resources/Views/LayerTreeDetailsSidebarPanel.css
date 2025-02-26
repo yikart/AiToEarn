@@ -1,0 +1,117 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.sidebar > .panel.details.layer-tree > .content {
+    bottom: var(--console-prompt-min-height);
+}
+
+.panel.details.layer-tree .data-grid {
+    border-right: none;
+    border-left: none;
+    border-bottom: none;
+}
+
+.panel.details.layer-tree .name-column .icon {
+    content: url(../Images/TypeIcons.svg#DOMElement-light);
+}
+
+.panel.details.layer-tree tr.reflection .name-column .icon {
+    content: url(../Images/TypeIcons.svg#Reflection-light);
+}
+
+.panel.details.layer-tree tr.pseudo-element .name-column .icon {
+    content: url(../Images/TypeIcons.svg#PseudoElement-light);
+}
+
+.panel.details.layer-tree .name-column :is(.pseudo-element, .reflection) {
+    color: hsl(0, 0%, 50%);
+}
+
+.panel.details.layer-tree tr.selected .name-column :is(.pseudo-element, .reflection) {
+    color: hsla(0, 0%, 100%, 0.75);
+}
+
+.panel.details.layer-tree .bottom-bar {
+    position: absolute;
+    display: flex;
+    bottom: 0;
+    height: var(--console-prompt-min-height);
+    width: 100%;
+    border-top: 1px solid var(--border-color);
+}
+
+.panel.details.layer-tree .bottom-bar > div {
+    padding: 4px 6px;
+
+    line-height: 20px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    display: flex;
+    flex: 1;
+}
+
+.panel.details.layer-tree .layers-memory-label {
+    justify-content: flex-end;
+}
+
+.layer-tree-popover {
+    max-width: 300px;
+    padding: 5px;
+}
+
+.layer-tree-popover p {
+    margin: 0;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.layer-tree-popover ul {
+    margin: 10px 0 0;
+    padding: 0;
+
+    margin-inline-start: 1em;
+    padding-inline-start: 1em;
+}
+
+.layer-tree-popover li {
+    line-height: 1.3em;
+}
+
+@media (prefers-color-scheme: dark) {
+    .panel.details.layer-tree .name-column .icon {
+        content: url(../Images/TypeIcons.svg#DOMElement-dark);
+    }
+
+    .panel.details.layer-tree tr.reflection .name-column .icon {
+        content: url(../Images/TypeIcons.svg#Reflection-dark);
+    }
+
+    .panel.details.layer-tree tr.pseudo-element .name-column .icon {
+        content: url(../Images/TypeIcons.svg#PseudoElement-dark);
+    }
+}

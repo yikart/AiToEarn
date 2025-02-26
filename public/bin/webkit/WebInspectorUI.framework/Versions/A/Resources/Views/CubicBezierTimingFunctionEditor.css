@@ -1,0 +1,114 @@
+/*
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.cubic-bezier-timing-function-editor {
+    width: 200px;
+    height: 258px;
+
+    --cubic-bezier-timing-function-editor-preview-translateX: 170px;
+}
+
+.cubic-bezier-timing-function-editor > .preview {
+    width: calc(100% - 10px);
+    height: 25px;
+    margin: 5px 5px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.cubic-bezier-timing-function-editor > .preview > div {
+    width: 20px;
+    height: 20px;
+    background-color: var(--glyph-color-active);
+    border-radius: 50%;
+}
+
+.cubic-bezier-timing-function-editor > .timing {
+    position: absolute;
+    top: 34px;
+    margin-inline-start: 11px;
+    border-inline: 4px solid transparent;
+    border-top: 4px solid var(--text-color);
+}
+
+.cubic-bezier-timing-function-editor > .preview.animate > div,
+.cubic-bezier-timing-function-editor > .timing.animate {
+    animation: CubicBezierTimingFunctionPreview 2.5s linear 250ms infinite;
+}
+
+@keyframes CubicBezierTimingFunctionPreview {
+    from { transform: translateX(0); }
+    10% { transform: translateX(0); }
+    90% { transform: translateX(var(--cubic-bezier-timing-function-editor-preview-translateX)); }
+    to { transform: translateX(var(--cubic-bezier-timing-function-editor-preview-translateX)); }
+}
+
+.cubic-bezier-timing-function-editor > .curve {
+    margin: 0 8px;
+}
+
+.cubic-bezier-timing-function-editor > .curve .linear {
+    fill: none;
+    stroke: var(--text-color-quaternary);
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.cubic-bezier-timing-function-editor > .curve .cubic-bezier {
+    fill: none;
+    stroke: var(--text-color);
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.cubic-bezier-timing-function-editor > .curve .control-line {
+    fill: none;
+    stroke: var(--glyph-color-active);
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.cubic-bezier-timing-function-editor > .curve .control-handle {
+    r: 5px;
+    fill: var(--glyph-color-active);
+}
+
+.cubic-bezier-timing-function-editor > .curve .control-handle.selected {
+    r: 7px;
+}
+
+.cubic-bezier-timing-function-editor > .number-input-container {
+    display: flex;
+    width: calc(100% - 10px);
+    margin: 0 5px;
+    padding-top: 7px;
+    border-top: 1px solid var(--border-color);
+}
+
+.cubic-bezier-timing-function-editor > .number-input-container > input {
+    width: 100%;
+    margin: 0 2px;
+    padding: 1px 0 1px;
+    text-align: end;
+}

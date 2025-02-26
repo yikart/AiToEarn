@@ -1,0 +1,280 @@
+/*
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.spreadsheet-style-declaration-editor {
+    position: relative;
+    clear: both;
+    font-family: Menlo, monospace;
+    font-size: 11px;
+    color: var(--text-color-tertiary);
+    -webkit-user-select: text;
+
+    --background-color-selected: var(--selected-text-background-color);
+    --border-color-selected: var(--selected-background-color);
+    --property-checkbox-width: 17px;
+    --property-indentation: calc(var(--css-declaration-horizontal-padding) + var(--property-checkbox-width));
+}
+
+.spreadsheet-style-declaration-editor:empty {
+    height: 2px;
+}
+
+.spreadsheet-style-declaration-editor .property {
+    padding-right: var(--css-declaration-horizontal-padding);
+    padding-left: var(--property-indentation);
+    border-right: 2px solid transparent;
+    border-left: 1px solid transparent;
+    outline: none;
+}
+
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .name:not(.editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .name:not(:hover, .editing) {
+    color: var(--syntax-highlight-boolean-color);
+}
+
+.spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value {
+    white-space: pre-wrap;
+}
+
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(.editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(:hover, .editing) {
+    color: var(--text-color);
+}
+
+.spreadsheet-style-declaration-editor .property:not(.disabled).has-newline .value-container {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.spreadsheet-style-declaration-editor .property:not(.disabled).has-newline .semicolon {
+    vertical-align: bottom;
+}
+
+.spreadsheet-style-declaration-editor :is(.name, .value):not(.editing) {
+    outline: none;
+}
+
+.spreadsheet-style-declaration-editor :is(.name, .value).editing {
+    outline: 1px solid white !important;
+    box-shadow: 0 1px 2px 1px hsla(0, 0%, 0%, 0.6);
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.spreadsheet-style-declaration-editor .value.editing {
+    display: inline-block;
+    position: relative;
+    z-index: 1;
+    max-width: 100%;
+}
+
+.spreadsheet-style-declaration-editor > .property:not(:hover) > .content > .css-documentation-button,
+.spreadsheet-style-declaration-editor > .property > .content > .name.editing ~ .css-documentation-button {
+    display: none;
+}
+
+.spreadsheet-style-declaration-editor .property-toggle {
+    visibility: hidden;
+    position: absolute;
+    left: calc(var(--css-declaration-horizontal-padding) + 1px);
+    width: 10px;
+    height: 10px;
+    margin: 0;
+}
+
+.spreadsheet-css-declaration:is(:hover, :focus) .property:not(:is(.invalid-name, .invalid-value)) .property-toggle,
+.spreadsheet-style-declaration-editor .property.disabled .property-toggle {
+    visibility: visible;
+}
+
+.spreadsheet-style-declaration-editor .property.disabled {
+    color: var(--syntax-highlight-comment-color);
+}
+
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled):is(.invalid-name, .invalid-value, .other-vendor, .overridden) > .content > .name:not(.editing),
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled):is(.invalid-name, .invalid-value, .other-vendor, .overridden) > .content > .value-container > .value:not(.editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled):is(.invalid-name, .invalid-value, .other-vendor, .overridden) > .content > .name:not(:hover, .editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled):is(.invalid-name, .invalid-value, .other-vendor, .overridden) > .content > .value-container > .value:not(:hover, .editing) {
+    color: var(--text-color-secondary);
+}
+
+.spreadsheet-style-declaration-editor > .property:is(.invalid-name, .other-vendor, .overridden):not(.disabled) > .content > *:not(.name, .value-container),
+.spreadsheet-style-declaration-editor > .property:is(.invalid-name, .other-vendor, .overridden):not(.disabled) > .content > .value-container > *:not(.value),
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:is(.invalid-name, .other-vendor, .overridden):not(.disabled) > .content > :is(.name, .value-container):not(.editing),
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:is(.invalid-name, .other-vendor, .overridden):not(.disabled) > .content > .value-container > .value:not(.editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:is(.invalid-name, .other-vendor, .overridden):not(.disabled) > .content > :is(.name, .value-container):not(:hover, .editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:is(.invalid-name, .other-vendor, .overridden):not(.disabled) > .content > .value-container > .value:not(:hover, .editing) {
+    text-decoration: line-through;
+    text-decoration-color: hsla(0, 0%, var(--foreground-lightness), 0.6);
+}
+
+.spreadsheet-style-declaration-editor > .property.invalid-name:not(.disabled) > .content > *:not(.name, .value-container),
+.spreadsheet-style-declaration-editor > .property.invalid-name:not(.disabled) > .content > .value-container > *:not(.value),
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property.invalid-name:not(.disabled) > .content > :is(.name, .value-container):not(.editing),
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property.invalid-name:not(.disabled) > .content > .value-container > .value:not(.editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property.invalid-name:not(.disabled) > .content > :is(.name, .value-container):not(:hover, .editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property.invalid-name:not(.disabled) > .content > .value-container > .value:not(:hover, .editing) {
+    text-decoration-color: hsla(0, 100%, 50%, 0.5);
+}
+
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property.invalid-value:not(.disabled) > .content .value:not(.editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property.invalid-value:not(.disabled) > .content .value:not(:hover, .editing) {
+    text-decoration: line-through;
+    text-decoration-color: hsla(0, 100%, 50%, 0.5);
+}
+
+.spreadsheet-style-declaration-editor .property.has-warning {
+    background-color: var(--warning-background-color-secondary);
+}
+
+.spreadsheet-style-declaration-editor .property .warning {
+    display: none;
+}
+
+.spreadsheet-style-declaration-editor .property.has-warning .warning {
+    position: absolute;
+    right: 0;
+    display: inline-block;
+    width: calc(20px + var(--css-declaration-horizontal-padding));
+    height: 13px;
+
+    background-image: url(../Images/Warning.svg);
+    background-color: var(--warning-background-color);
+    background-repeat: no-repeat;
+    background-size: 9px 9px;
+    background-position-y: center;
+    background-position-x: 7px;
+
+    clip-path: polygon(0% 50%, 6px 0%, 100% 0%, 100% 100%, 6px 100%);
+}
+
+.spreadsheet-style-declaration-editor .property.modified {
+    border-right-color: var(--diff-addition-border-color);
+}
+
+.spreadsheet-style-declaration-editor .property.modified:not(.selected) {
+    background-color: var(--diff-addition-background-color);
+}
+
+.spreadsheet-style-declaration-editor .property.selected {
+    background-color: var(--background-color-selected);
+}
+
+body:is(.window-docked-inactive, .window-inactive) .spreadsheet-style-declaration-editor .property.selected {
+    background-color: var(--selected-background-color-unfocused);
+}
+
+.spreadsheet-style-declaration-editor .property.selected:focus {
+    border-left-color: var(--border-color-selected);
+}
+
+.spreadsheet-style-declaration-editor .property:is(.implicit, .not-inherited) .content > * {
+    opacity: 0.5;
+}
+
+.spreadsheet-style-declaration-editor .completion-hint {
+    color: hsl(0, 0%, 50%) !important;
+}
+
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(.editing) .token-link,
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(:hover, .editing) .token-link {
+    color: var(--syntax-highlight-link-color);
+}
+
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(.editing) .token-string,
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(:hover, .editing) .token-string {
+    color: var(--syntax-highlight-string-color);
+}
+
+.spreadsheet-style-declaration-editor .property .select-variable-property {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-inline-start: 2px;
+    vertical-align: -1px;
+    cursor: pointer;
+}
+
+.spreadsheet-style-declaration-editor .property .select-effective-property {
+    display: none;
+    height: 10px;
+    line-height: 10px;
+    vertical-align: middle;
+    color: var(--text-color-secondary);
+    cursor: pointer;
+}
+
+.spreadsheet-style-declaration-editor .property.overridden:hover .select-effective-property,
+.spreadsheet-style-declaration-editor .property.overridden:focus-within .select-effective-property {
+    display: inline-block;
+}
+
+.spreadsheet-style-declaration-editor .property.overridden:hover .select-effective-property::after,
+.spreadsheet-style-declaration-editor .property.overridden:focus-within .select-effective-property::after {
+    content: attr(data-value);
+    display: inline-block;
+    position: relative;
+    left: 16px;
+    white-space: nowrap;
+}
+
+.spreadsheet-style-declaration-editor > .hidden-variables-button {
+    margin-left: var(--property-indentation);
+}
+
+body.meta-key-pressed .spreadsheet-css-declaration:not(.locked) > .spreadsheet-style-declaration-editor > .property > .content :is(.name, .value):not(.editing):hover {
+    color: var(--syntax-highlight-link-color) !important;
+    text-decoration: underline !important;
+    cursor: pointer !important;
+    -webkit-text-stroke-width: 0 !important;
+}
+
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(.editing) .token-comment,
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(:hover, .editing) .token-comment {
+    color: var(--syntax-highlight-comment-color);
+}
+
+.spreadsheet-style-declaration-editor.debug-style-locked::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 2px;
+    background-color: red;
+    pointer-events: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    .spreadsheet-style-declaration-editor :is(.name, .value).editing {
+        outline-color: var(--background-color-secondary) !important;
+    }
+
+    .spreadsheet-style-declaration-editor .property.overridden:hover .select-effective-property::after,
+    .spreadsheet-style-declaration-editor .property.overridden:focus-within .select-effective-property::after {
+        /* .select-effective-property has inverted colors. Invert the pseudo-element again to restore the original text color. */
+        filter: invert();
+    }
+}

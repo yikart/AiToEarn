@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2020 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs>
+        <style>
+            g:not(:target) {
+                display: none;
+            }
+
+            #light {
+                color: black;
+            }
+
+            #dark {
+                color: white;
+            }
+        </style>
+    </defs>
+    <symbol id="i" stroke="none" stroke-width="1" fill="currentColor" opacity="0.6" viewBox="0 0 32 32">
+        <path fill-opacity="0.05" d="M 1.012 4.495 L 10.491 4.495 C 11.064 4.495 11.616 4.71 12.038 5.098 L 20.717 13.069 C 21.189 13.502 21.458 14.113 21.458 14.754 L 21.458 31.424 L 1.012 31.424 L 1.012 4.495 Z" fill="currentColor" stroke="currentColor"/>
+        <path fill-opacity="0.1" d="M 7.827 4.495 C 10.986 4.495 11.382 4.495 11.382 6.988 L 11.382 13.749 L 18.856 13.749 C 21.349 13.749 21.458 15.452 21.458 17.959 L 21.458 31.424 L 1.012 31.424 L 1.012 4.495 L 7.827 4.495 Z" fill="currentColor" stroke="currentColor"/>
+        <path fill-opacity="0.05" d="M 21.458 27.429 L 21.458 14.77 C 21.458 14.119 21.185 13.498 20.705 13.058 L 12.049 5.108 C 11.623 4.717 11.068 4.499 10.491 4.495 L 10.491 0.5 L 19.955 0.5 C 20.538 0.5 21.099 0.719 21.528 1.113 L 30.185 9.063 C 30.664 9.503 30.937 10.124 30.937 10.775 L 30.937 27.429 L 21.458 27.429 Z" fill="currentColor" stroke="currentColor"/>
+        <path fill-opacity="0.4" d="M 21.458 27.429 L 21.458 14.77 C 21.458 14.119 21.185 13.498 20.705 13.058 L 12.049 5.108 C 11.623 4.717 11.068 4.499 10.491 4.495 L 10.491 0.5 L 17.306 0.5 C 20.465 0.5 20.861 0.5 20.861 2.993 L 20.861 9.754 L 28.335 9.754 C 30.828 9.754 30.937 11.457 30.937 13.964 L 30.937 27.429 L 21.458 27.429 Z" fill="currentColor" stroke="currentColor"/>
+    </symbol>
+    <g id="light"><use href="#i"/></g>
+    <g id="dark"><use href="#i"/></g>
+</svg>

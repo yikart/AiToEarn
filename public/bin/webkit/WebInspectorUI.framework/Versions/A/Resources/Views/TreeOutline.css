@@ -1,0 +1,256 @@
+/*
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.tree-outline,
+.tree-outline .children {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    outline: none;
+
+    --tree-outline-item-padding: 5px;
+
+    --tree-outline-icon-margin-start: 16px;
+    --tree-outline-icon-margin-end: 3px;
+}
+
+.tree-outline .children {
+    display: none;
+}
+
+.tree-outline .children.expanded:not([hidden]) {
+    display: block;
+}
+
+.tree-outline .item {
+    height: 20px;
+
+    padding: 0 var(--tree-outline-item-padding);
+
+    border-top: 1px solid transparent;
+
+    white-space: nowrap;
+    outline: none;
+}
+
+.tree-outline.compact .item {
+    height: inherit;
+}
+
+.tree-outline.large .item {
+    height: 36px;
+    line-height: 34px;
+
+    --tree-outline-icon-margin-end: 6px;
+}
+
+.tree-outline.non-selectable .item:not(.non-selectable):hover {
+    background-color: var(--selected-background-color-unfocused);
+}
+
+body[dir=ltr] .tree-outline .item :is(.disclosure-button, .icon),
+body[dir=rtl] [dir=ltr] .tree-outline .item :is(.disclosure-button, .icon) {
+    float: left;
+}
+
+body[dir=rtl] .tree-outline .item :is(.disclosure-button, .icon) {
+    float: right;
+}
+
+.tree-outline.hide-disclosure-buttons > .children {
+    display: none;
+}
+
+.tree-outline > .children.hide-disclosure-buttons > .children {
+    display: none;
+}
+
+.tree-outline:not(.hide-disclosure-buttons) .item:not(.parent) > .icon {
+    margin-inline-start: var(--tree-outline-icon-margin-start);
+}
+
+.tree-outline .item .disclosure-button {
+    display: none;
+    width: 16px;
+    height: 16px;
+    background-color: transparent;
+    background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 13px 13px;
+    border: none;
+    appearance: none;
+}
+
+body[dir=rtl] .tree-outline .item .disclosure-button {
+    transform: scaleX(-1);
+}
+
+body[dir=rtl] [dir=ltr] .tree-outline .item .disclosure-button {
+    transform: unset;
+}
+
+.tree-outline.hide-disclosure-buttons .item .disclosure-button {
+    display: none;
+}
+
+.tree-outline .item.parent .disclosure-button {
+    display: block;
+}
+
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.selected .disclosure-button {
+    background-image: url(../Images/DisclosureTriangles.svg#closed-selected) !important;
+}
+
+.tree-outline .item.expanded .disclosure-button {
+    background-image: url(../Images/DisclosureTriangles.svg#open-normal);
+}
+
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.selected.expanded .disclosure-button {
+    background-image: url(../Images/DisclosureTriangles.svg#open-selected) !important;
+}
+
+.tree-outline .item .icon {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    margin-top: 1px;
+    margin-inline-end: var(--tree-outline-icon-margin-end);
+}
+
+.tree-outline.compact .item .icon {
+    margin-top: 0;
+}
+
+.tree-outline.large .item .icon {
+    width: 24px;
+    height: 24px;
+    margin-top: 5px;
+}
+
+.tree-outline .item .status {
+    margin-top: 1px;
+    margin-inline-start: 4px;
+    line-height: 1em;
+}
+
+body[dir=ltr] .tree-outline .item .status {
+    float: right;
+}
+
+body[dir=rtl] .tree-outline .item .status {
+    float: left;
+}
+
+.tree-outline.large .item .status {
+    margin-top: 9px;
+}
+
+.tree-outline .item .status:empty {
+    display: none;
+}
+
+.tree-outline .item.selected {
+    background-color: var(--selected-background-color-unfocused);
+}
+
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.selected {
+    color: var(--selected-foreground-color);
+    background-color: var(--selected-background-color);
+}
+
+.tree-outline .item .titles {
+    position: relative;
+    top: 2px;
+
+    line-height: normal;
+
+    padding-bottom: 1px;
+
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.tree-outline.compact .item .titles {
+    top: 0;
+}
+
+.tree-outline.large .item .titles {
+    top: 10px;
+}
+
+.tree-outline .item .highlighted {
+    background-color: hsla(53, 83%, 53%, 0.2);
+    border-bottom: 1px solid hsl(47, 82%, 60%);
+}
+
+.tree-outline .item .title::after {
+    content: "\A"; /* Newline */
+    white-space: pre;
+}
+
+.tree-outline .item .subtitle {
+    font-size: inherit;
+    color: hsla(0, 0%, 0%, 0.7);
+}
+
+.tree-outline.large .item .subtitle {
+    font-size: 9px;
+}
+
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.selected .subtitle {
+    color: hsla(0, 0%, 100%, 0.9);
+}
+
+.tree-outline .item .titles.no-subtitle .subtitle,
+.tree-outline .item .subtitle:empty {
+    display: none;
+}
+
+.tree-outline:not(.large) .item .status .indeterminate-progress-spinner {
+    margin-top: 1px;
+    width: 14px;
+    height: 14px;
+}
+
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:not(.large):focus-within .item.selected .status .indeterminate-progress-spinner {
+    filter: invert();
+}
+
+.tree-outline .item .title::after {
+    content: "";
+}
+
+.tree-outline .item .subtitle::before,
+.tree-outline .item .alternate-subtitle::before {
+    content: "\00A0\2014\00A0"; /* &nbsp;&mdash;&nbsp; */;
+}
+
+@media (prefers-color-scheme: dark) {
+    .tree-outline .item .subtitle {
+        color: var(--text-color-secondary);
+    }
+}

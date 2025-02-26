@@ -1,0 +1,87 @@
+/*
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.content-view.shader-program > .shader {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+}
+
+.content-view.shader-program > .shader.compute,
+.content-view.shader-program > .shader.vertex {
+    inset-inline-start: 0;
+}
+
+.content-view.shader-program > .shader.compute,
+.content-view.shader-program > .shader.vertex.shares-vertex-fragment-shader,
+.content-view.shader-program > .shader.fragment {
+    inset-inline-end: 0;
+}
+
+body[dir=ltr] .content-view.shader-program > .shader.vertex:not(.shares-vertex-fragment-shader),
+body[dir=rtl] .content-view.shader-program > .shader.fragment {
+    width: calc(50% - 1px);
+}
+
+body[dir=ltr] .content-view.shader-program > .shader.fragment,
+body[dir=rtl] .content-view.shader-program > .shader.vertex:not(.shares-vertex-fragment-shader) {
+    width: calc(50% + 1px);
+}
+
+.content-view.shader-program > .shader + .shader {
+    border-left: 1px solid var(--border-color);
+}
+
+.content-view.shader-program > .shader > header > .shader-type {
+    padding: 2px 4px;
+    background-color: hsl(0, 0%, 95%);
+    border-bottom: 1px solid lightgrey;
+}
+
+.content-view.shader-program > .spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--background-color-content);
+}
+
+.content-view.shader-program > .spinner-container > .indeterminate-progress-spinner {
+    width: 32px;
+    height: 32px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .content-view.shader-program > .shader > header > .shader-type {
+        background-color: var(--background-color);
+        border-bottom-color: var(--text-color-quaternary);
+    }
+}

@@ -1,0 +1,73 @@
+.videoCoverSeting {
+  width: 70px;
+  height: 100px;
+  background: rgb(103, 105, 105);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  :global {
+    .imgChoose {
+      height: 100%;
+    }
+    .videoCoverSeting-img, img {
+      width: 100%;
+      height: 100%;
+    }
+    .videoCoverSeting-choosed {
+      height: 100%;
+      position: relative;
+
+      .anticon {
+        position: absolute;
+        z-index: 10;
+        color: red;
+        right: 3px;
+        top: 3px;
+        display: none;
+      }
+
+      &:hover {
+        .anticon {
+          display: block;
+        }
+      }
+    }
+    img {
+      object-fit: contain;
+    }
+    .videoCoverSeting-text {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      font-size: var(--fs-xs);
+      color: #fff;
+      padding: 5px 0;
+      text-align: center;
+    }
+  }
+}
+
+.videoCoverSetingModal {
+  :global {
+    .videoCoverSetingModal-top {
+      display: flex;
+      align-items: center;
+      margin: 20px 0;
+      .ant-alert {
+        margin-right: 30px;
+      }
+    }
+
+    .videoCoverSetingModal-cropper {
+      img {
+        height: 300px;
+        object-fit: contain;
+      }
+    }
+
+    #videoCoverSetingModal--cropper {
+    }
+  }
+}

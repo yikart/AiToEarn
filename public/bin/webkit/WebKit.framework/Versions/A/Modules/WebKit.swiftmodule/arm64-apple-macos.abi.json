@@ -1,0 +1,1370 @@
+{
+  "ABIRoot": {
+    "kind": "Root",
+    "name": "WebKit",
+    "printedName": "WebKit",
+    "children": [
+      {
+        "kind": "TypeDecl",
+        "name": "WKPDFConfiguration",
+        "printedName": "WKPDFConfiguration",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "rect",
+            "printedName": "rect",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "CoreFoundation.CGRect?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CGRect",
+                    "printedName": "CoreFoundation.CGRect",
+                    "usr": "c:@S@CGRect"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:So18WKPDFConfigurationC6WebKitE4rectSo6CGRectVSgvp",
+            "mangledName": "$sSo18WKPDFConfigurationC6WebKitE4rectSo6CGRectVSgvp",
+            "moduleName": "WebKit",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "CoreFoundation.CGRect?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "CGRect",
+                        "printedName": "CoreFoundation.CGRect",
+                        "usr": "c:@S@CGRect"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:So18WKPDFConfigurationC6WebKitE4rectSo6CGRectVSgvg",
+                "mangledName": "$sSo18WKPDFConfigurationC6WebKitE4rectSo6CGRectVSgvg",
+                "moduleName": "WebKit",
+                "isFromExtension": true,
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "CoreFoundation.CGRect?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "CGRect",
+                        "printedName": "CoreFoundation.CGRect",
+                        "usr": "c:@S@CGRect"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:So18WKPDFConfigurationC6WebKitE4rectSo6CGRectVSgvs",
+                "mangledName": "$sSo18WKPDFConfigurationC6WebKitE4rectSo6CGRectVSgvs",
+                "moduleName": "WebKit",
+                "isFromExtension": true,
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:So18WKPDFConfigurationC6WebKitE4rectSo6CGRectVSgvM",
+                "mangledName": "$sSo18WKPDFConfigurationC6WebKitE4rectSo6CGRectVSgvM",
+                "moduleName": "WebKit",
+                "implicit": true,
+                "intro_Macosx": "11.0",
+                "intro_iOS": "14.0",
+                "declAttributes": [
+                  "Available",
+                  "Available"
+                ],
+                "isFromExtension": true,
+                "accessorKind": "_modify"
+              }
+            ]
+          }
+        ],
+        "declKind": "Class",
+        "usr": "c:objc(cs)WKPDFConfiguration",
+        "moduleName": "WebKit",
+        "isOpen": true,
+        "objc_name": "WKPDFConfiguration",
+        "declAttributes": [
+          "Preconcurrency",
+          "ObjC",
+          "Custom",
+          "Dynamic"
+        ],
+        "superclassUsr": "c:objc(cs)NSObject",
+        "isExternal": true,
+        "inheritsConvenienceInitializers": true,
+        "superclassNames": [
+          "ObjectiveC.NSObject"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVarArg",
+            "printedName": "CVarArg",
+            "usr": "s:s7CVarArgP",
+            "mangledName": "$ss7CVarArgP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObservingPublishing",
+            "printedName": "_KeyValueCodingAndObservingPublishing",
+            "usr": "s:10Foundation37_KeyValueCodingAndObservingPublishingP",
+            "mangledName": "$s10Foundation37_KeyValueCodingAndObservingPublishingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObserving",
+            "printedName": "_KeyValueCodingAndObserving",
+            "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
+            "mangledName": "$s10Foundation27_KeyValueCodingAndObservingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomDebugStringConvertible",
+            "printedName": "CustomDebugStringConvertible",
+            "usr": "s:s28CustomDebugStringConvertibleP",
+            "mangledName": "$ss28CustomDebugStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "WKWebView",
+        "printedName": "WKWebView",
+        "children": [
+          {
+            "kind": "Function",
+            "name": "callAsyncJavaScript",
+            "printedName": "callAsyncJavaScript(_:arguments:in:in:completionHandler:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Dictionary",
+                "printedName": "[Swift.String : Any]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ProtocolComposition",
+                    "printedName": "Any"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:SD"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "WebKit.WKFrameInfo?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "WKFrameInfo",
+                    "printedName": "WebKit.WKFrameInfo",
+                    "usr": "c:objc(cs)WKFrameInfo"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "WKContentWorld",
+                "printedName": "WebKit.WKContentWorld",
+                "usr": "c:objc(cs)WKContentWorld"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "((Swift.Result<Any, any Swift.Error>) -> ())?",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.Result<Any, any Swift.Error>) -> ()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Result",
+                        "printedName": "Swift.Result<Any, any Swift.Error>",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "ProtocolComposition",
+                            "printedName": "Any"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Error",
+                            "printedName": "any Swift.Error",
+                            "usr": "s:s5ErrorP"
+                          }
+                        ],
+                        "usr": "s:s6ResultO"
+                      }
+                    ]
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So9WKWebViewC6WebKitE19callAsyncJavaScript_9arguments2inAF17completionHandlerySS_SDySSypGSo11WKFrameInfoCSgSo14WKContentWorldCys6ResultOyyps5Error_pGcSgtF",
+            "mangledName": "$sSo9WKWebViewC6WebKitE19callAsyncJavaScript_9arguments2inAF17completionHandlerySS_SDySSypGSo11WKFrameInfoCSgSo14WKContentWorldCys6ResultOyyps5Error_pGcSgtF",
+            "moduleName": "WebKit",
+            "declAttributes": [
+              "Custom",
+              "AccessControl",
+              "Preconcurrency"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "createPDF",
+            "printedName": "createPDF(configuration:completionHandler:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "WKPDFConfiguration",
+                "printedName": "WebKit.WKPDFConfiguration",
+                "hasDefaultArg": true,
+                "usr": "c:objc(cs)WKPDFConfiguration"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(Swift.Result<Foundation.Data, any Swift.Error>) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Result",
+                    "printedName": "Swift.Result<Foundation.Data, any Swift.Error>",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Data",
+                        "printedName": "Foundation.Data",
+                        "usr": "s:10Foundation4DataV"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Error",
+                        "printedName": "any Swift.Error",
+                        "usr": "s:s5ErrorP"
+                      }
+                    ],
+                    "usr": "s:s6ResultO"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So9WKWebViewC6WebKitE9createPDF13configuration17completionHandlerySo18WKPDFConfigurationC_ys6ResultOy10Foundation4DataVs5Error_pGctF",
+            "mangledName": "$sSo9WKWebViewC6WebKitE9createPDF13configuration17completionHandlerySo18WKPDFConfigurationC_ys6ResultOy10Foundation4DataVs5Error_pGctF",
+            "moduleName": "WebKit",
+            "declAttributes": [
+              "Custom",
+              "AccessControl",
+              "Preconcurrency"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "createWebArchiveData",
+            "printedName": "createWebArchiveData(completionHandler:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(Swift.Result<Foundation.Data, any Swift.Error>) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Result",
+                    "printedName": "Swift.Result<Foundation.Data, any Swift.Error>",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Data",
+                        "printedName": "Foundation.Data",
+                        "usr": "s:10Foundation4DataV"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Error",
+                        "printedName": "any Swift.Error",
+                        "usr": "s:s5ErrorP"
+                      }
+                    ],
+                    "usr": "s:s6ResultO"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So9WKWebViewC6WebKitE06createC11ArchiveData17completionHandleryys6ResultOy10Foundation0G0Vs5Error_pGc_tF",
+            "mangledName": "$sSo9WKWebViewC6WebKitE06createC11ArchiveData17completionHandleryys6ResultOy10Foundation0G0Vs5Error_pGc_tF",
+            "moduleName": "WebKit",
+            "declAttributes": [
+              "Custom",
+              "AccessControl",
+              "Preconcurrency"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "evaluateJavaScript",
+            "printedName": "evaluateJavaScript(_:in:in:completionHandler:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "WebKit.WKFrameInfo?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "WKFrameInfo",
+                    "printedName": "WebKit.WKFrameInfo",
+                    "usr": "c:objc(cs)WKFrameInfo"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "WKContentWorld",
+                "printedName": "WebKit.WKContentWorld",
+                "usr": "c:objc(cs)WKContentWorld"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "((Swift.Result<Any, any Swift.Error>) -> ())?",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.Result<Any, any Swift.Error>) -> ()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Result",
+                        "printedName": "Swift.Result<Any, any Swift.Error>",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "ProtocolComposition",
+                            "printedName": "Any"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Error",
+                            "printedName": "any Swift.Error",
+                            "usr": "s:s5ErrorP"
+                          }
+                        ],
+                        "usr": "s:s6ResultO"
+                      }
+                    ]
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So9WKWebViewC6WebKitE18evaluateJavaScript_2inAE17completionHandlerySS_So11WKFrameInfoCSgSo14WKContentWorldCys6ResultOyyps5Error_pGcSgtF",
+            "mangledName": "$sSo9WKWebViewC6WebKitE18evaluateJavaScript_2inAE17completionHandlerySS_So11WKFrameInfoCSgSo14WKContentWorldCys6ResultOyyps5Error_pGcSgtF",
+            "moduleName": "WebKit",
+            "declAttributes": [
+              "Custom",
+              "AccessControl",
+              "Preconcurrency"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "find",
+            "printedName": "find(_:configuration:completionHandler:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "WKFindConfiguration",
+                "printedName": "WebKit.WKFindConfiguration",
+                "hasDefaultArg": true,
+                "usr": "c:objc(cs)WKFindConfiguration"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(WebKit.WKFindResult) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "WKFindResult",
+                    "printedName": "WebKit.WKFindResult",
+                    "usr": "c:objc(cs)WKFindResult"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So9WKWebViewC6WebKitE4find_13configuration17completionHandlerySS_So19WKFindConfigurationCySo0I6ResultCctF",
+            "mangledName": "$sSo9WKWebViewC6WebKitE4find_13configuration17completionHandlerySS_So19WKFindConfigurationCySo0I6ResultCctF",
+            "moduleName": "WebKit",
+            "declAttributes": [
+              "Custom",
+              "AccessControl",
+              "Preconcurrency"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "callAsyncJavaScript",
+            "printedName": "callAsyncJavaScript(_:arguments:in:contentWorld:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Any?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ProtocolComposition",
+                    "printedName": "Any"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Dictionary",
+                "printedName": "[Swift.String : Any]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ProtocolComposition",
+                    "printedName": "Any"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:SD"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "WebKit.WKFrameInfo?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "WKFrameInfo",
+                    "printedName": "WebKit.WKFrameInfo",
+                    "usr": "c:objc(cs)WKFrameInfo"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "WKContentWorld",
+                "printedName": "WebKit.WKContentWorld",
+                "usr": "c:objc(cs)WKContentWorld"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So9WKWebViewC6WebKitE19callAsyncJavaScript_9arguments2in12contentWorldypSgSS_SDySSypGSo11WKFrameInfoCSgSo09WKContentL0CtYaKF",
+            "mangledName": "$sSo9WKWebViewC6WebKitE19callAsyncJavaScript_9arguments2in12contentWorldypSgSS_SDySSypGSo11WKFrameInfoCSgSo09WKContentL0CtYaKF",
+            "moduleName": "WebKit",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "pdf",
+            "printedName": "pdf(configuration:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "WKPDFConfiguration",
+                "printedName": "WebKit.WKPDFConfiguration",
+                "hasDefaultArg": true,
+                "usr": "c:objc(cs)WKPDFConfiguration"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So9WKWebViewC6WebKitE3pdf13configuration10Foundation4DataVSo18WKPDFConfigurationC_tYaKF",
+            "mangledName": "$sSo9WKWebViewC6WebKitE3pdf13configuration10Foundation4DataVSo18WKPDFConfigurationC_tYaKF",
+            "moduleName": "WebKit",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "evaluateJavaScript",
+            "printedName": "evaluateJavaScript(_:in:contentWorld:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Any?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ProtocolComposition",
+                    "printedName": "Any"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "WebKit.WKFrameInfo?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "WKFrameInfo",
+                    "printedName": "WebKit.WKFrameInfo",
+                    "usr": "c:objc(cs)WKFrameInfo"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "WKContentWorld",
+                "printedName": "WebKit.WKContentWorld",
+                "usr": "c:objc(cs)WKContentWorld"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So9WKWebViewC6WebKitE18evaluateJavaScript_2in12contentWorldypSgSS_So11WKFrameInfoCSgSo09WKContentJ0CtYaKF",
+            "mangledName": "$sSo9WKWebViewC6WebKitE18evaluateJavaScript_2in12contentWorldypSgSS_So11WKFrameInfoCSgSo09WKContentJ0CtYaKF",
+            "moduleName": "WebKit",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "find",
+            "printedName": "find(_:configuration:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "WKFindResult",
+                "printedName": "WebKit.WKFindResult",
+                "usr": "c:objc(cs)WKFindResult"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "WKFindConfiguration",
+                "printedName": "WebKit.WKFindConfiguration",
+                "hasDefaultArg": true,
+                "usr": "c:objc(cs)WKFindConfiguration"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So9WKWebViewC6WebKitE4find_13configurationSo12WKFindResultCSS_So0G13ConfigurationCtYaKF",
+            "mangledName": "$sSo9WKWebViewC6WebKitE4find_13configurationSo12WKFindResultCSS_So0G13ConfigurationCtYaKF",
+            "moduleName": "WebKit",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "c:objc(cs)WKWebView",
+        "moduleName": "WebKit",
+        "isOpen": true,
+        "objc_name": "WKWebView",
+        "declAttributes": [
+          "Preconcurrency",
+          "ObjC",
+          "Custom",
+          "Dynamic"
+        ],
+        "superclassUsr": "c:objc(cs)NSView",
+        "isExternal": true,
+        "inheritsConvenienceInitializers": true,
+        "superclassNames": [
+          "AppKit.NSView",
+          "AppKit.NSResponder",
+          "ObjectiveC.NSObject"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVarArg",
+            "printedName": "CVarArg",
+            "usr": "s:s7CVarArgP",
+            "mangledName": "$ss7CVarArgP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObservingPublishing",
+            "printedName": "_KeyValueCodingAndObservingPublishing",
+            "usr": "s:10Foundation37_KeyValueCodingAndObservingPublishingP",
+            "mangledName": "$s10Foundation37_KeyValueCodingAndObservingPublishingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObserving",
+            "printedName": "_KeyValueCodingAndObserving",
+            "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
+            "mangledName": "$s10Foundation27_KeyValueCodingAndObservingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomDebugStringConvertible",
+            "printedName": "CustomDebugStringConvertible",
+            "usr": "s:s28CustomDebugStringConvertibleP",
+            "mangledName": "$ss28CustomDebugStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "__DefaultCustomPlaygroundQuickLookable",
+            "printedName": "__DefaultCustomPlaygroundQuickLookable",
+            "usr": "s:s38__DefaultCustomPlaygroundQuickLookableP",
+            "mangledName": "$ss38__DefaultCustomPlaygroundQuickLookableP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "WKWebExtensionController",
+        "printedName": "WKWebExtensionController",
+        "children": [
+          {
+            "kind": "Function",
+            "name": "didCloseTab",
+            "printedName": "didCloseTab(_:windowIsClosing:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "WKWebExtensionTab",
+                "printedName": "any WebKit.WKWebExtensionTab",
+                "usr": "c:objc(pl)WKWebExtensionTab"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "hasDefaultArg": true,
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So24WKWebExtensionControllerC6WebKitE11didCloseTab_15windowIsClosingySo0abH0_p_SbtF",
+            "mangledName": "$sSo24WKWebExtensionControllerC6WebKitE11didCloseTab_15windowIsClosingySo0abH0_p_SbtF",
+            "moduleName": "WebKit",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "didActivateTab",
+            "printedName": "didActivateTab(_:previousActiveTab:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "WKWebExtensionTab",
+                "printedName": "any WebKit.WKWebExtensionTab",
+                "usr": "c:objc(pl)WKWebExtensionTab"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "(any WebKit.WKWebExtensionTab)?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "WKWebExtensionTab",
+                    "printedName": "any WebKit.WKWebExtensionTab",
+                    "usr": "c:objc(pl)WKWebExtensionTab"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So24WKWebExtensionControllerC6WebKitE14didActivateTab_014previousActiveH0ySo0abH0_p_SoAF_pSgtF",
+            "mangledName": "$sSo24WKWebExtensionControllerC6WebKitE14didActivateTab_014previousActiveH0ySo0abH0_p_SoAF_pSgtF",
+            "moduleName": "WebKit",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "didMoveTab",
+            "printedName": "didMoveTab(_:from:in:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "WKWebExtensionTab",
+                "printedName": "any WebKit.WKWebExtensionTab",
+                "usr": "c:objc(pl)WKWebExtensionTab"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "(any WebKit.WKWebExtensionWindow)?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "WKWebExtensionWindow",
+                    "printedName": "any WebKit.WKWebExtensionWindow",
+                    "usr": "c:objc(pl)WKWebExtensionWindow"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So24WKWebExtensionControllerC6WebKitE10didMoveTab_4from2inySo0abH0_p_SiSo0aB6Window_pSgtF",
+            "mangledName": "$sSo24WKWebExtensionControllerC6WebKitE10didMoveTab_4from2inySo0abH0_p_SiSo0aB6Window_pSgtF",
+            "moduleName": "WebKit",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "c:objc(cs)WKWebExtensionController",
+        "moduleName": "WebKit",
+        "isOpen": true,
+        "objc_name": "WKWebExtensionController",
+        "declAttributes": [
+          "Preconcurrency",
+          "ObjC",
+          "NonSendable",
+          "Custom",
+          "Dynamic"
+        ],
+        "superclassUsr": "c:objc(cs)NSObject",
+        "isExternal": true,
+        "inheritsConvenienceInitializers": true,
+        "superclassNames": [
+          "ObjectiveC.NSObject"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVarArg",
+            "printedName": "CVarArg",
+            "usr": "s:s7CVarArgP",
+            "mangledName": "$ss7CVarArgP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObservingPublishing",
+            "printedName": "_KeyValueCodingAndObservingPublishing",
+            "usr": "s:10Foundation37_KeyValueCodingAndObservingPublishingP",
+            "mangledName": "$s10Foundation37_KeyValueCodingAndObservingPublishingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObserving",
+            "printedName": "_KeyValueCodingAndObserving",
+            "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
+            "mangledName": "$s10Foundation27_KeyValueCodingAndObservingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomDebugStringConvertible",
+            "printedName": "CustomDebugStringConvertible",
+            "usr": "s:s28CustomDebugStringConvertibleP",
+            "mangledName": "$ss28CustomDebugStringConvertibleP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "WKWebExtensionContext",
+        "printedName": "WKWebExtensionContext",
+        "children": [
+          {
+            "kind": "Function",
+            "name": "didCloseTab",
+            "printedName": "didCloseTab(_:windowIsClosing:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "WKWebExtensionTab",
+                "printedName": "any WebKit.WKWebExtensionTab",
+                "usr": "c:objc(pl)WKWebExtensionTab"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "hasDefaultArg": true,
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So21WKWebExtensionContextC6WebKitE11didCloseTab_15windowIsClosingySo0abH0_p_SbtF",
+            "mangledName": "$sSo21WKWebExtensionContextC6WebKitE11didCloseTab_15windowIsClosingySo0abH0_p_SbtF",
+            "moduleName": "WebKit",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "didActivateTab",
+            "printedName": "didActivateTab(_:previousActiveTab:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "WKWebExtensionTab",
+                "printedName": "any WebKit.WKWebExtensionTab",
+                "usr": "c:objc(pl)WKWebExtensionTab"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "(any WebKit.WKWebExtensionTab)?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "WKWebExtensionTab",
+                    "printedName": "any WebKit.WKWebExtensionTab",
+                    "usr": "c:objc(pl)WKWebExtensionTab"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So21WKWebExtensionContextC6WebKitE14didActivateTab_014previousActiveH0ySo0abH0_p_SoAF_pSgtF",
+            "mangledName": "$sSo21WKWebExtensionContextC6WebKitE14didActivateTab_014previousActiveH0ySo0abH0_p_SoAF_pSgtF",
+            "moduleName": "WebKit",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "didMoveTab",
+            "printedName": "didMoveTab(_:from:in:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "WKWebExtensionTab",
+                "printedName": "any WebKit.WKWebExtensionTab",
+                "usr": "c:objc(pl)WKWebExtensionTab"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "(any WebKit.WKWebExtensionWindow)?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "WKWebExtensionWindow",
+                    "printedName": "any WebKit.WKWebExtensionWindow",
+                    "usr": "c:objc(pl)WKWebExtensionWindow"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:So21WKWebExtensionContextC6WebKitE10didMoveTab_4from2inySo0abH0_p_SiSo0aB6Window_pSgtF",
+            "mangledName": "$sSo21WKWebExtensionContextC6WebKitE10didMoveTab_4from2inySo0abH0_p_SiSo0aB6Window_pSgtF",
+            "moduleName": "WebKit",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom",
+              "AccessControl"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "c:objc(cs)WKWebExtensionContext",
+        "moduleName": "WebKit",
+        "isOpen": true,
+        "objc_name": "WKWebExtensionContext",
+        "declAttributes": [
+          "Preconcurrency",
+          "ObjC",
+          "NonSendable",
+          "Custom",
+          "Dynamic"
+        ],
+        "superclassUsr": "c:objc(cs)NSObject",
+        "isExternal": true,
+        "inheritsConvenienceInitializers": true,
+        "superclassNames": [
+          "ObjectiveC.NSObject"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVarArg",
+            "printedName": "CVarArg",
+            "usr": "s:s7CVarArgP",
+            "mangledName": "$ss7CVarArgP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObservingPublishing",
+            "printedName": "_KeyValueCodingAndObservingPublishing",
+            "usr": "s:10Foundation37_KeyValueCodingAndObservingPublishingP",
+            "mangledName": "$s10Foundation37_KeyValueCodingAndObservingPublishingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObserving",
+            "printedName": "_KeyValueCodingAndObserving",
+            "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
+            "mangledName": "$s10Foundation27_KeyValueCodingAndObservingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomDebugStringConvertible",
+            "printedName": "CustomDebugStringConvertible",
+            "usr": "s:s28CustomDebugStringConvertibleP",
+            "mangledName": "$ss28CustomDebugStringConvertibleP"
+          }
+        ]
+      }
+    ],
+    "json_format_version": 8
+  },
+  "ConstValues": [
+    {
+      "filePath": "\/Users\/runner\/webkit\/Source\/WebKit\/UIProcess\/API\/Cocoa\/WebKitSwiftOverlay.swift",
+      "kind": "Dictionary",
+      "offset": 1837,
+      "length": 3,
+      "value": "[]"
+    },
+    {
+      "filePath": "\/Users\/runner\/webkit\/Source\/WebKit\/UIProcess\/API\/Cocoa\/WebKitSwiftOverlay.swift",
+      "kind": "Dictionary",
+      "offset": 3758,
+      "length": 3,
+      "value": "[]"
+    },
+    {
+      "filePath": "\/Users\/runner\/webkit\/Source\/WebKit\/UIProcess\/API\/Cocoa\/WebKitSwiftOverlay.swift",
+      "kind": "BooleanLiteral",
+      "offset": 4701,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/Users\/runner\/webkit\/Source\/WebKit\/UIProcess\/API\/Cocoa\/WebKitSwiftOverlay.swift",
+      "kind": "BooleanLiteral",
+      "offset": 5354,
+      "length": 5,
+      "value": "false"
+    }
+  ]
+}

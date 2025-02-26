@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2019 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+    <rect x="0.5" y="2.5" width="13" height="10" fill="none" stroke="currentColor"/>
+    <polyline points="2 14.5 15.5 14.5 15.5 4" fill="none" stroke="currentColor"/>
+    <line x1="2.5" y1="5.5" x2="11.5" y2="5.5" fill="none" stroke="currentColor"/>
+    <line x1="2.5" y1="9.5" x2="11.5" y2="9.5" fill="none" stroke="currentColor"/>
+</svg>

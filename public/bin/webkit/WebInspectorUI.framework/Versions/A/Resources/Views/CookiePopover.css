@@ -1,0 +1,65 @@
+/*
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.popover .cookie-popover-content {
+    max-width: 420px;
+    padding: 4px 8px;
+}
+
+.popover .cookie-popover-content > table {
+    width: 100%;
+}
+
+.popover .cookie-popover-content > table > tr > th {
+    font-weight: bold;
+    text-align: end;
+    line-height: 23px;
+    vertical-align: top;
+    white-space: nowrap;
+    color: hsl(0, 0%, 34%);
+}
+
+.popover .cookie-popover-content > table > tr > td {
+    padding-inline-start: 4px;
+}
+
+.popover .cookie-popover-content > table > tr > td > input:is([type="text"], [type="datetime-local"]) {
+    width: 100%;
+    padding: 3px 4px 2px;
+    font-family: Menlo, monospace;
+    background-color: var(--background-color-content);
+    border: 1px solid var(--text-color-quaternary);
+    appearance: none;
+}
+
+.popover .cookie-popover-content > table > tr > td > input:is([type="text"], [type="datetime-local"]):is(:invalid, .invalid) {
+    border-color: var(--error-text-color);
+}
+
+@media (prefers-color-scheme: dark) {
+    .popover .cookie-popover-content > table > tr > th {
+        color: var(--text-color-secondary);
+    }
+}

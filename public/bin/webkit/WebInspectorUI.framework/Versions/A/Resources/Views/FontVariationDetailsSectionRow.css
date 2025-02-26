@@ -1,0 +1,142 @@
+/*
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+ .details-section > .content > .group > .row.font-variation {
+    --axis-value-width: 42px;
+    --axis-tag-width: 36px;
+    --axis-min-max-label-height: 10px;
+    --warning-icon-size: 11px;
+
+    display: grid;
+    column-gap: 6px;
+    grid-template-columns: [axis-tag] var(--axis-tag-width) [slider] 1fr [axis-value] var(--axis-value-width) [warning-icon] var(--warning-icon-size);
+    padding: 5px 8px calc(5px + var(--axis-min-max-label-height)) 12px;
+    align-items: center;
+}
+
+.details-section > .content > .group > .row.font-variation > .label:not(:empty) {
+    grid-column: 1 / -1;
+}
+
+.details-section > .content > .group > .row.font-variation > .tag {
+    grid-column: axis-tag;
+    color: var(--text-color-secondary);
+}
+
+.details-section > .content > .group > .row.font-variation > input.value {
+    grid-column: axis-value;
+    height: max-content;
+    width: var(--axis-value-width);
+    padding: 4px;
+    border: 1px solid var(--border-color);
+    font-variant-numeric: tabular-nums;
+}
+
+.details-section > .content > .group > .row.font-variation > .variation-range {
+    position: relative;
+    display: grid;
+    grid-column: slider;
+    grid-template-columns: [min-value] 1fr [max-value] 1fr;
+}
+
+.details-section > .content > .group > .row.font-variation > .variation-range > input[type="range"] {
+    appearance: none;
+    grid-column: 1 / -1;
+    position: relative;
+    height: var(--slider-height);
+    margin-inline: 0;
+    background-color: transparent;
+}
+
+.details-section > .content > .group > .row.font-variation > .variation-range > input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    position: relative;
+    z-index: 2;
+    margin-top: -9px;
+    width: var(--slider-thumb-width);
+    height: var(--slider-thumb-height);
+    border-radius: 6px;
+    background: var(--slider-thumb-background);
+    box-shadow: var(--slider-thumb-box-shadow);
+}
+
+.details-section > .content > .group > .row.font-variation > .variation-range > input[type="range"]::-webkit-slider-thumb:active {
+    background: var(--slider-thumb-background-active);
+}
+
+.details-section > .content > .group > .row.font-variation > .variation-range > input[type="range"]::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 4px;
+    box-shadow: var(--slider-track-box-shadow);
+    background: var(--slider-track-background);
+}
+
+.details-section > .content > .group > .row.font-variation > .variation-range > input[type="range"]::before,
+.details-section > .content > .group > .row.font-variation > .variation-range > input[type="range"]::after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    top: calc((var(--slider-height) - var(--slider-track-tick-height)) / 2);
+    width: var(--slider-track-tick-width);
+    height: var(--slider-track-tick-height);
+    border-radius: 4px;
+    background-color: var(--slider-track-tick-background);
+}
+
+.details-section > .content > .group > .row.font-variation > .variation-range > input[type="range"]::after {
+    right: 0;
+}
+
+.details-section > .content > .group > .row.font-variation > .variation-range > .variation-minvalue {
+    grid-column: min-value;
+    color: var(--text-color-secondary);
+}
+
+.details-section > .content > .group > .row.font-variation > .variation-range > .variation-maxvalue {
+    grid-column: max-value;
+    text-align: end;
+    color: var(--text-color-secondary);
+}
+
+.details-section > .content > .group > .row.font-variation > .variation-range > :is(.variation-maxvalue, .variation-minvalue) {
+    position: absolute;
+    width: 100%;
+    bottom: calc(-1 * var(--axis-min-max-label-height));
+}
+
+.details-section > .content > .group > .row.font-variation:has(.warning) {
+    background-color: var(--warning-background-color-secondary);
+}
+
+.details-section > .content > .group > .row.font-variation > .warning {
+    grid-column: warning-icon;
+    display: inline-block;
+    width: var(--warning-icon-size);
+    height: var(--warning-icon-size);
+    background-image: url(/Images/Warning.svg);
+    background-repeat: no-repeat;
+    background-size: var(--warning-icon-size) var(--warning-icon-size);
+    background-position: center;
+}

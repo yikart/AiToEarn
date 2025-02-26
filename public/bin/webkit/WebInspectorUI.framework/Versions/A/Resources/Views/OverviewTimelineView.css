@@ -1,0 +1,103 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.timeline-view.overview > .data-grid th.graph-column > .timeline-ruler {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+}
+
+.timeline-view.overview > .data-grid th.graph-column > .timeline-ruler > .header {
+    border: none;
+    height: 22px;
+}
+
+.timeline-view.overview > .data-grid th.graph-column > .timeline-ruler > .event-markers {
+    top: 22px;
+}
+
+.timeline-view.overview > .data-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.timeline-view.overview > .data-grid td.graph-column {
+    padding: 2px 0;
+}
+
+.timeline-view.overview > .data-grid td.graph-column > div {
+    position: relative;
+    height: 16px;
+}
+
+.timeline-view.overview > .data-grid td.graph-column .timeline-record-bar {
+    top: 2px;
+}
+
+.timeline-view.overview > .data-grid tr {
+    --timeline-record-bar-box-shadow-color: var(--odd-zebra-stripe-row-background-color);
+    --timeline-record-bar-selected-inactive-box-shadow-color: var(--selected-background-color-unfocused);
+}
+
+.timeline-view.overview > .data-grid tr:nth-child(even) {
+    --timeline-record-bar-box-shadow-color: var(--even-zebra-stripe-row-background-color);
+}
+
+.timeline-view.overview > .data-grid tr.parent:not(.expanded) td.graph-column .timeline-record-bar:not(.has-inactive-segment) > .segment {
+    box-shadow: var(--timeline-record-bar-box-shadow-color) 0 0 0 1px;
+}
+
+.timeline-view.overview > .data-grid tr.parent:not(.expanded).selected td.graph-column .timeline-record-bar:not(.has-inactive-segment) > .segment {
+    box-shadow: var(--timeline-record-bar-selected-inactive-box-shadow-color) 0 0 0 1px;
+}
+
+.timeline-view.overview > .data-grid:focus tr.parent:not(.expanded).selected td.graph-column .timeline-record-bar:not(.has-inactive-segment) > .segment {
+    box-shadow: hsl(215, 67%, 53%) 0 0 0 1px;
+}
+
+.timeline-view.overview > .data-grid tr.parent:not(.expanded) td.graph-column .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
+    box-shadow: var(--timeline-record-bar-box-shadow-color) 1px 0 0;
+}
+
+.timeline-view.overview > .data-grid tr.parent:not(.expanded).selected td.graph-column .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
+    box-shadow: var(--timeline-record-bar-selected-inactive-box-shadow-color) 1px 0 0;
+}
+
+.timeline-view.overview > .data-grid:focus tr.parent:not(.expanded).selected td.graph-column .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
+    box-shadow: hsl(215, 67%, 53%) 1px 0 0;
+}
+
+@media (prefers-color-scheme: dark) {
+    .timeline-view.overview > .data-grid tr {
+        --timeline-record-bar-selected-inactive-box-shadow-color: hsl(0, 0%, 35%);
+    }
+
+    .timeline-view.overview > .data-grid tr:nth-child(even) {
+        --timeline-record-bar-selected-inactive-box-shadow-color: hsl(0, 0%, 38%);
+    }
+}

@@ -1,0 +1,130 @@
+/*
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.tree-outline .item.audit > .status {
+    display: flex;
+    align-items: center;
+    width: 16px;
+    height: 16px;
+}
+
+.tree-outline .item.audit > .status > img {
+    width: 100%;
+    height: 100%;
+}
+
+.tree-outline .item.audit:is(.test-case, .test-group):not(.unsupported, .manager-active):hover > .status > img {
+    width: 75%;
+    height: 75%;
+    margin: 0 auto;
+    content: url(../Images/AuditStart.svg) !important;
+}
+
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.audit:is(.test-case, .test-group):not(.unsupported, .manager-active).selected:hover > .status > img,
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.audit.test-case.selected > .status > .indeterminate-progress-spinner,
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.audit.test-group.selected > .status > progress {
+    filter: var(--filter-invert);
+}
+
+.tree-outline .item.audit:not(:hover) > .status > img.show-on-hover,
+.tree-outline .item.audit.test-group.expanded:not(.unsupported, .editing-audits):not(:hover) > .status {
+    opacity: 0;
+}
+
+.tree-outline .item.audit.manager-active > .status > img.show-on-hover,
+.tree-outline .item.audit.test-group.expanded:not(.editing-audits):hover > .status > :not(img),
+.tree-outline .item.audit.test-group-result.expanded > .status,
+.tree-outline .item.audit.unsupported + .children .item.audit.unsupported  > .status > img {
+    display: none;
+}
+
+.tree-outline .item.audit.unsupported:not(.selected) > :is(.icon, .titles) {
+    opacity: 0.5;
+}
+
+.tree-outline .item.audit.unsupported > .status > img {
+    width: 75%;
+    height: 75%;
+    margin: 0 auto;
+    content: url(../Images/Warning.svg);
+}
+
+.tree-outline .item.audit > .status > img.pass {
+    content: url(../Images/AuditTestPass.svg);
+}
+
+.tree-outline .item.audit > .status > img.warn {
+    content: url(../Images/AuditTestWarn.svg);
+}
+
+.tree-outline .item.audit > .status > img.fail {
+    content: url(../Images/AuditTestFail.svg);
+}
+
+.tree-outline .item.audit > .status > img.error {
+    content: url(../Images/AuditTestError.svg);
+}
+
+.tree-outline .item.audit > .status > img.unsupported {
+    content: url(../Images/AuditTestUnsupported.svg);
+}
+
+.audit.test-case .icon {
+    content: url(../Images/TypeIcons.svg#AuditTestCase-light);
+}
+
+.audit.test-group .icon {
+    content: url(../Images/TypeIcons.svg#AuditTestGroup-light);
+}
+
+.audit.test-case-result .icon {
+    content: url(../Images/TypeIcons.svg#AuditTestCaseResult-light);
+}
+
+.audit.test-group-result .icon {
+    content: url(../Images/TypeIcons.svg#AuditTestGroupResult-light);
+}
+
+@media (prefers-color-scheme: dark) {
+    .tree-outline .item.audit:is(.test-case, .test-group):not(.unsupported, .manager-active):hover > .status > img {
+        filter: var(--filter-invert) brightness(90%);
+    }
+
+    .audit.test-case .icon {
+        content: url(../Images/TypeIcons.svg#AuditTestCase-dark);
+    }
+
+    .audit.test-group .icon {
+        content: url(../Images/TypeIcons.svg#AuditTestGroup-dark);
+    }
+
+    .audit.test-case-result .icon {
+        content: url(../Images/TypeIcons.svg#AuditTestCaseResult-dark);
+    }
+
+    .audit.test-group-result .icon {
+        content: url(../Images/TypeIcons.svg#AuditTestGroupResult-dark);
+    }
+}

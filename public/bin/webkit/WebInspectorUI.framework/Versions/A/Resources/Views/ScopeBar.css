@@ -1,0 +1,121 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.scope-bar {
+    padding: 0 3px;
+
+    --scope-bar-margin-default: 2px;
+    --scope-bar-padding-default: 6px;
+    --scope-bar-text-color-default: var(--text-color);
+    --scope-bar-background-color-default: unset;
+    --scope-bar-background-opacity-default: var(--glyph-opacity);
+    --scope-bar-border-color-default: unset;
+}
+
+.scope-bar > li {
+    position: relative;
+    z-index: 0;
+    display: inline-block;
+    margin: 0 var(--scope-bar-margin);
+    padding: 2px var(--scope-bar-padding) 4px;
+    font-size: 11px;
+    line-height: 11px;
+    color: var(--scope-bar-text-color);
+    text-align: center;
+
+    --scope-bar-margin: var(--scope-bar-margin-override, var(--scope-bar-margin-default));
+    --scope-bar-padding: var(--scope-bar-padding-override, var(--scope-bar-padding-default));
+    --scope-bar-text-color: var(--scope-bar-text-color-override, var(--scope-bar-text-color-default));
+    --scope-bar-background-color: var(--scope-bar-background-color-override, var(--scope-bar-background-color-default));
+    --scope-bar-background-opacity: var(--scope-bar-background-opacity-override, var(--scope-bar-background-opacity-default));
+    --scope-bar-border-color: var(--scope-bar-border-color-override, var(--scope-bar-border-color-default));
+}
+
+.scope-bar > li::after {
+    position: absolute;
+    content: "";
+    left: 0;
+    top: 0;
+    z-index: -1;
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
+    background-color: var(--scope-bar-background-color);
+    border: 1px solid var(--scope-bar-border-color);
+    border-radius: 3px;
+    opacity: var(--scope-bar-background-opacity);
+}
+
+.scope-bar > li:focus {
+    outline: none;
+}
+
+.scope-bar > li:is(.selected, :hover) {
+    --scope-bar-text-color-default: var(--selected-foreground-color);
+    --scope-bar-background-color-default: var(--glyph-color-active);
+    --scope-bar-border-color-default: var(--glyph-color-active);
+}
+
+.scope-bar > li:not(.selected):hover {
+    --scope-bar-background-opacity-default: 0.5;
+}
+
+.scope-bar > li.selected:active::after {
+    filter: brightness(0.8);
+}
+
+.scope-bar > li.multiple {
+    position: relative;
+}
+
+.scope-bar > li.multiple > select {
+    position: absolute;
+    top: -1px;
+    inset-inline-start: calc(var(--scope-bar-padding) - var(--scope-bar-padding-default) - 2px);
+    width: 0;
+    height: 0;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.scope-bar > li:focus::after,
+.scope-bar > li.multiple > select:focus {
+    outline: auto -webkit-focus-ring-color;
+    outline-offset: -1px;
+}
+
+.scope-bar > li.multiple:not(.selected) > select {
+    display: none;
+}
+
+.scope-bar > li.multiple > .arrows {
+    width: 5px;
+    height: 12px;
+    display: inline-block;
+    vertical-align: -2px;
+    margin-top: -1px;
+    margin-bottom: -1px;
+    margin-inline: 6px 2px;
+}

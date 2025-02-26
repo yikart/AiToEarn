@@ -1,0 +1,117 @@
+.accountSidebar {
+  border-right: 1px solid var(--lightGreyColor);
+  width: 200px;
+  flex-shrink: 0;
+
+  p {
+    margin: 0;
+  }
+
+  :global {
+    .accountList {
+      width: 100%;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      &-item {
+        width: 100%;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        box-sizing: border-box;
+        cursor: pointer;
+        background: #fff;
+        transition: 0.3s;
+        color: #333;
+        .ant-avatar {
+          flex-shrink: 0;
+        }
+        &-right {
+          margin-left: 10px;
+          box-sizing: border-box;
+          width: 100%;
+          overflow: hidden;
+          &-name {
+            text-align: left;
+            margin-bottom: 5px;
+            font-size: var(--fs-sm);
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          &-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--fs-sm);
+          }
+          &-plat {
+            display: flex;
+            align-items: center;
+            img {
+              width: 15px;
+              margin-right: 5px;
+            }
+            span {
+              font-size: var(--fs-xs);
+            }
+          }
+        }
+
+        &:hover {
+          color: var(--colorPrimary5);
+          background: var(--colorPrimary1);
+        }
+
+        &--active {
+          background: var(--colorPrimary1);
+        }
+
+        &--disable {
+          filter: grayscale(100%);
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+}
+
+.accountPopoverInfo {
+  padding: 10px;
+  width: 250px;
+  :global {
+    .accountPopoverInfo_top {
+      display: flex;
+      font-size: var(--fs-sm);
+      padding: 5px 0 10px 0;
+      border-bottom: 1px solid #dedede;
+      margin-bottom: 15px;
+      color: var(--lightGreyColor);
+      &-right {
+        margin-left: 10px;
+      }
+    }
+    .accountPopoverInfo-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+      p {
+        display: flex;
+        align-items: center;
+        &:nth-of-type(1) {
+          color: var(--lightGreyColor);
+        }
+        img {
+          width: 15px;
+          margin-right: 5px;
+        }
+
+        .anticon {
+          margin-right: 3px;
+        }
+      }
+    }
+  }
+}

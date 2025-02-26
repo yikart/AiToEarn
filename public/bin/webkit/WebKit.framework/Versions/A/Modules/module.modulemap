@@ -1,0 +1,10 @@
+framework module WebKit [system] [extern_c] {
+  umbrella header "WebKit.h"
+  module * { export * }
+  export *
+
+  explicit module DOMProgressEvent {
+    header "DOMProgressEvent.h"
+    export *
+  }
+}

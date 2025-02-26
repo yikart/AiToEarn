@@ -1,0 +1,218 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.resource-icon .icon {
+    content: url(../Images/DocumentIcons.svg#generic-light);
+}
+
+.resource-icon.override .icon {
+    content: url(../Images/DocumentIcons.svg#generic-light-override);
+}
+
+.resource-icon.resource-type-document .icon {
+    content: url(../Images/DocumentIcons.svg#markup-light);
+}
+
+.resource-icon.resource-type-document.override .icon {
+    content: url(../Images/DocumentIcons.svg#markup-light-override);
+}
+
+.resource-icon.resource-type-image .icon {
+    content: url(../Images/DocumentIcons.svg#image-light);
+}
+
+.resource-icon.resource-type-image.override .icon {
+    content: url(../Images/DocumentIcons.svg#image-light-override);
+}
+
+.resource-icon.resource-type-font .icon {
+    content: url(../Images/DocumentIcons.svg#font-light);
+}
+
+.resource-icon.resource-type-font.override .icon {
+    content: url(../Images/DocumentIcons.svg#font-light-override);
+}
+
+:is(.resource-icon.resource-type-style-sheet, .style-sheet-icon) .icon {
+    content: url(../Images/DocumentIcons.svg#css-light);
+}
+
+:is(.resource-icon.resource-type-style-sheet.override, .style-sheet-icon.override) .icon {
+    content: url(../Images/DocumentIcons.svg#css-light-override);
+}
+
+.resource-icon.resource-type-script .icon {
+    content: url(../Images/DocumentIcons.svg#js-light);
+}
+
+.resource-icon.resource-type-script.override .icon {
+    content: url(../Images/DocumentIcons.svg#js-light-override);
+}
+
+:is(.anonymous-script-icon, .resource-icon.resource-type-script.console-snippet) .icon {
+    content: url(../Images/ClippingIcons.svg#js-light);
+}
+
+.source-map-resource.resource-icon .icon {
+    content: url(../Images/ClippingIcons.svg#generic-light);
+}
+
+.source-map-resource.resource-icon.resource-type-style-sheet .icon {
+    content: url(../Images/ClippingIcons.svg#css-light);
+}
+
+.source-map-resource.resource-icon.resource-type-script .icon {
+    content: url(../Images/ClippingIcons.svg#js-light);
+}
+
+.script.worker-icon .icon {
+    content: url(../Images/DocumentIcons.svg#worker-light);
+}
+
+.script.worker-icon.override .icon {
+    content: url(../Images/DocumentIcons.svg#worker-light-override);
+}
+
+.resource-icon.resource-type-websocket .icon {
+    content: url(../Images/DocumentIcons.svg#websocket-light);
+}
+
+.resource-icon.resource-type-ping .icon,
+.resource-icon.resource-type-beacon .icon {
+    content: url(../Images/Beacon.svg#light);
+}
+
+.resource-icon.resource-type-range .icon {
+    content: url(../Images/ClippingIcons.svg#range-light);
+}
+
+.resource-icon.override.mapped-file .icon {
+    content: url(../Images/Disk.svg#light);
+}
+
+body:not(.window-inactive, .window-docked-inactive) :is(.table, .data-grid):focus-within .selected .resource-icon.override.mapped-file .icon,
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .selected.resource-icon.override.mapped-file .icon {
+    content: url(../Images/Disk.svg#dark);
+}
+
+.resource-icon.override.skip-network .icon {
+    content: url(../Images/SkipNetwork.svg#light);
+}
+
+body:not(.window-inactive, .window-docked-inactive) :is(.table, .data-grid):focus-within .selected .resource-icon.override.skip-network .icon,
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .selected.resource-icon.override.skip-network .icon {
+    content: url(../Images/SkipNetwork.svg#dark);
+}
+
+@media (prefers-color-scheme: dark) {
+    .resource-icon .icon {
+        content: url(../Images/DocumentIcons.svg#generic-dark);
+    }
+
+    .resource-icon.override .icon {
+        content: url(../Images/DocumentIcons.svg#generic-dark-override);
+    }
+
+    .resource-icon.resource-type-document .icon {
+        content: url(../Images/DocumentIcons.svg#markup-dark);
+    }
+
+    .resource-icon.resource-type-document.override .icon {
+        content: url(../Images/DocumentIcons.svg#markup-dark-override);
+    }
+
+    .resource-icon.resource-type-image .icon {
+        content: url(../Images/DocumentIcons.svg#image-dark);
+    }
+    .resource-icon.resource-type-image.override .icon {
+        content: url(../Images/DocumentIcons.svg#image-dark-override);
+    }
+
+    .resource-icon.resource-type-font .icon {
+        content: url(../Images/DocumentIcons.svg#font-dark);
+    }
+    .resource-icon.resource-type-font.override .icon {
+        content: url(../Images/DocumentIcons.svg#font-dark-override);
+    }
+
+    :is(.resource-icon.resource-type-style-sheet, .style-sheet-icon) .icon {
+        content: url(../Images/DocumentIcons.svg#css-dark);
+    }
+    :is(.resource-icon.resource-type-style-sheet.override, .style-sheet-icon.override) .icon {
+        content: url(../Images/DocumentIcons.svg#css-dark-override);
+    }
+
+    .resource-icon.resource-type-script .icon {
+        content: url(../Images/DocumentIcons.svg#js-dark);
+    }
+    .resource-icon.resource-type-script.override .icon {
+        content: url(../Images/DocumentIcons.svg#js-dark-override);
+    }
+
+    :is(.anonymous-script-icon, .resource-icon.resource-type-script.console-snippet) .icon {
+        content: url(../Images/ClippingIcons.svg#js-dark);
+    }
+
+    .source-map-resource.resource-icon .icon {
+        content: url(../Images/ClippingIcons.svg#generic-dark);
+    }
+
+    .source-map-resource.resource-icon.resource-type-style-sheet .icon {
+        content: url(../Images/ClippingIcons.svg#css-dark);
+    }
+
+    .source-map-resource.resource-icon.resource-type-script .icon {
+        content: url(../Images/ClippingIcons.svg#js-dark);
+    }
+
+    .script.worker-icon .icon {
+        content: url(../Images/DocumentIcons.svg#worker-dark);
+    }
+
+    .script.worker-icon.override .icon {
+        content: url(../Images/DocumentIcons.svg#worker-dark-override);
+    }
+
+    .resource-icon.resource-type-websocket .icon {
+        content: url(../Images/DocumentIcons.svg#websocket-dark);
+    }
+
+    .resource-icon.resource-type-ping .icon,
+    .resource-icon.resource-type-beacon .icon {
+        content: url(../Images/Beacon.svg#dark);
+    }
+
+    .resource-icon.resource-type-range .icon {
+        content: url(../Images/ClippingIcons.svg#range-dark);
+    }
+
+    .resource-icon.override.mapped-file .icon {
+        content: url(../Images/Disk.svg#dark);
+    }
+
+    .resource-icon.override.skip-network .icon {
+        content: url(../Images/SkipNetwork.svg#dark);
+    }
+}

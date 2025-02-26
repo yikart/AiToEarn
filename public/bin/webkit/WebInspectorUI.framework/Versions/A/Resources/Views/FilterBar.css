@@ -1,0 +1,118 @@
+/*
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.filter-bar {
+    display: flex;
+    height: var(--navigation-bar-height);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.filter-bar > .navigation-bar {
+    margin-top: 1px;
+}
+
+.filter-bar > .navigation-bar > .item {
+    padding: 0 0 2px;
+}
+
+.filter-bar > .navigation-bar > .item.button {
+    padding-bottom: 3px;
+}
+
+.filter-bar > .navigation-bar > .item.scope-bar {
+    --scope-bar-margin-override: 0;
+}
+
+.filter-bar > input[type="search"] {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    margin: 3px 0 4px;
+    margin-inline-start: 6px;
+}
+
+:is(.filter-bar, .search-bar) > input[type="search"] {
+    height: 22px;
+    padding-top: 0;
+    color: var(--text-color-active);
+    background-color: transparent;
+    background-clip: padding-box;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    outline: none;
+    appearance: none;
+}
+
+:is(.filter-bar, .search-bar) > input[type="search"]:is(:focus, :not(:placeholder-shown)) {
+    background-color: var(--background-color-content);
+}
+
+:is(.filter-bar, .search-bar) > input[type="search"]::-webkit-search-decoration {
+    align-self: center;
+    width: 13px;
+    height: 13px;
+    margin: 4px 4px 3px 3px;
+    background-image: url(../Images/FilterFieldGlyph.svg);
+    appearance: none;
+}
+
+:is(.filter-bar, .search-bar) > input[type="search"]::-webkit-search-results-button {
+    margin-inline-end: 4px;
+}
+
+/* FIXME: use a different image for ::-webkit-search-decoration when :not(:placeholder-shown) */
+
+:is(.filter-bar, .search-bar) > input[type="search"]::placeholder {
+    color: var(--text-color-secondary);
+}
+
+:is(.filter-bar, .search-bar) > input[type="search"]:is(:not(:focus), :placeholder-shown)::-webkit-search-cancel-button {
+    display: none;
+}
+
+:is(.filter-bar, .search-bar) > .navigation-bar + input[type="search"] {
+    margin-inline-start: 0;
+}
+
+:is(.filter-bar, .search-bar) > input[type="search"]:focus {
+    margin-inline-end: 6px;
+}
+
+:is(.filter-bar, .search-bar) > input[type="search"] + :empty {
+    margin-inline-start: 6px;
+}
+
+:is(.filter-bar, .search-bar) > input[type="search"]:focus ~ * {
+    display: none;
+}
+
+:is(.filter-bar, .search-bar) > input[type="search"] + .navigation-bar > .item.scope-bar:last-child {
+    margin-inline-end: 4px;
+}
+
+:is(.filter-bar, .search-bar).invalid > input[type="search"] {
+    border-color: var(--error-text-color);
+}

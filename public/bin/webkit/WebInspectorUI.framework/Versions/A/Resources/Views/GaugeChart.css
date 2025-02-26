@@ -1,0 +1,65 @@
+/*
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.gauge-chart {
+    position: relative;
+}
+
+body[dir=rtl] .gauge-chart {
+    transform: scaleX(-1);
+}
+
+.gauge-chart > svg > path,
+.gauge-chart > svg > polygon {
+    stroke-width: 1;
+    transition-property: transform, fill, stroke;
+    transition-duration: 0.2s;
+}
+
+.gauge-chart:not(.empty) > svg > path {
+    fill: var(--gauge-chart-path-fill-color, hsla(0, 0%, 0%, 0.02));
+    stroke: var(--gauge-chart-path-stroke-color, hsla(0, 0%, var(--foreground-lightness), 0.1));
+}
+
+.gauge-chart:not(.empty) > svg > .needle {
+    fill: var(--gauge-chart-needle-fill-color, gray);
+    stroke: var(--gauge-chart-needle-stroke-color, gray);
+}
+
+.gauge-chart.empty > svg > path {
+    fill: hsla(0, 0%, 0%, 0.02);
+    stroke: hsla(0, 0%, var(--foreground-lightness), 0.1);
+}
+
+.gauge-chart.empty > svg > .needle {
+    fill: hsl(0, 0%, 88%);
+    stroke: hsla(0, 0%, var(--foreground-lightness), 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+    .gauge-chart.empty > svg > .needle {
+        fill: hsl(0, 0%, 20%);
+    }
+}

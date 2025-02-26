@@ -1,0 +1,717 @@
+; Copyright (C) 2022 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+; notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+; notice, this list of conditions and the following disclaimer in the
+; documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+; Copyright (C) 2022 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+; notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+; notice, this list of conditions and the following disclaimer in the
+; documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+(version 3)
+(deny default)
+(deny nvram*)
+(deny system-privilege)
+(allow system-audit file-read-metadata)
+;; Silence spurious logging due to rdar:
+(deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report))
+(allow mach-bootstrap)
+(allow mach-kernel-endpoint)
+(allow file-test-existence)
+(allow syscall-mach)
+(allow system-memorystatus-control)
+;; Sandbox extensions
+(define (apply-read-and-issue-extension op path-filter)
+    (op file-read* path-filter)
+    (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") path-filter)))
+(define (apply-write-and-issue-extension op path-filter)
+    (op file-write* path-filter)
+    (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read-write") path-filter)))
+(define (read-only-and-issue-extensions path-filter)
+    (apply-read-and-issue-extension allow path-filter))
+(define (read-write-and-issue-extensions path-filter)
+    (apply-read-and-issue-extension allow path-filter)
+    (apply-write-and-issue-extension allow path-filter))
+(define (webcontent-process-launched)
+    (state-flag "local:WebContentProcessLaunched"))
+(define (notify-blocking) (require-entitlement "com.apple.developer.web-browser-engine.restrict.notifyd"))
+(with-filter (mac-policy-name "Sandbox")
+    (allow system-mac-syscall (mac-syscall-number 2 4 6 7)))
+(with-filter (mac-policy-name "Quarantine")
+    (allow system-mac-syscall (mac-syscall-number 84 87)))
+;; Utility functions for home directory relative path filters
+(define (home-regex home-relative-regex)
+    (regex (string-append "^" (regex-quote (param "HOME_DIR")) home-relative-regex)))
+(define (home-subpath home-relative-subpath)
+    (subpath (string-append (param "HOME_DIR") home-relative-subpath)))
+(define (home-literal home-relative-literal)
+    (literal (string-append (param "HOME_DIR") home-relative-literal)))
+; Copyright (C) 2021 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+; notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+; notice, this list of conditions and the following disclaimer in the
+; documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+(define (home-library-preferences-regex home-library-preferences-relative-regex)
+    (regex (string-append "^" (regex-quote (param "HOME_LIBRARY_PREFERENCES_DIR")) home-library-preferences-relative-regex)))
+(define (home-library-preferences-literal home-library-preferences-relative-literal)
+    (literal (string-append (param "HOME_LIBRARY_PREFERENCES_DIR") home-library-preferences-relative-literal)))
+(define (shared-preferences-read . domains)
+    (for-each (lambda (domain)
+        (begin
+            (allow user-preference-read (with telemetry) (preference-domain domain))
+            (allow file-read*
+                (literal (string-append "/Library/Preferences/" domain ".plist"))
+                (home-library-preferences-literal (string-append "/" domain ".plist"))
+                (home-library-preferences-regex (string-append #"/ByHost/" (regex-quote domain) #"\..*\.plist$")))))
+        domains))
+(define (allow-reading-global-preferences)
+    (allow user-preference-read (preference-domain "kCFPreferencesAnyApplication"))
+    (allow file-read*
+        (literal "/Library/Preferences/.GlobalPreferences.plist")
+        (home-subpath "/Library/Preferences/.GlobalPreferences.plist")
+        (home-subpath "/Library/Preferences/.GlobalPreferences_m.plist")
+        (home-regex #"/Library/Preferences/ByHost/\.GlobalPreferences\..*\.plist$")
+    )
+)
+(allow system-privilege (with grant)
+    (require-all
+        (privilege-id PRIV_NET_PRIVILEGED_SOCKET_DELEGATE)
+        (require-entitlement "com.apple.private.network.socket-delegate")))
+(with-filter (mac-policy-name "Sandbox")
+    (allow system-mac-syscall (mac-syscall-number 5)))
+(with-filter (mac-policy-name "vnguard")
+    (allow system-mac-syscall (mac-syscall-number 1)))
+(with-filter (mac-policy-name "Quarantine")
+    (allow system-mac-syscall (mac-syscall-number 80 82 83)))
+(allow system-fcntl
+    (fcntl-command
+        F_ADDFILESIGS_RETURN
+        F_BARRIERFSYNC
+        F_CHECK_LV
+        F_DUPFD_CLOEXEC
+        F_GETCONFINED
+        F_GETFL
+        F_GETFD
+        F_GETPATH
+        F_GETPROTECTIONCLASS
+        F_NOCACHE
+        F_OFD_GETLK
+        F_OFD_SETLK
+        F_OFD_SETLKWTIMEOUT
+        F_PREALLOCATE
+        F_RDADVISE
+        F_SETCONFINED
+        F_SETFL
+        F_SETFD
+        F_SETLKW
+        F_SETPROTECTIONCLASS
+        F_SINGLE_WRITER))
+(allow process-codesigning-entitlements-der-blob-get)
+(allow process-codesigning-identity-get (target self))
+(allow process-codesigning-status-get)
+(allow process-info-codesignature)
+(allow socket-ioctl)
+(allow socket-option-set (with report))
+(allow socket-option-get (with telemetry) (with report))
+(allow socket-option-set
+    (require-all
+        (socket-option-level SOL_SOCKET)
+        (socket-option-name
+            0
+            65536
+            131072
+            SO_DELEGATED
+            SO_DELEGATED_UUID
+            SO_FLOW_DIVERT_TOKEN
+            SO_LINGER
+            SO_MARK_KNOWN_TRACKER
+            SO_MARK_KNOWN_TRACKER_NON_APP_INITIATED
+            SO_NECP_ATTRIBUTES
+            SO_NECP_CLIENTUUID
+            SO_NECP_LISTENUUID
+            SO_NOSIGPIPE
+            SO_RCVBUF
+            SO_RCVLOWAT
+            SO_RESTRICTIONS
+            SO_REUSEADDR
+            SO_REUSEPORT
+            SO_SNDBUF
+            SO_SNDLOWAT
+            SO_TIMESTAMP)))
+(allow socket-option-get
+    (require-all
+        (socket-option-level SOL_SOCKET)
+        (socket-option-name
+            SO_ERROR
+            SO_NREAD
+            SO_NWRITE
+            SO_RCVBUF
+            SO_SNDBUF)))
+(allow socket-option-set
+    (require-all
+        (socket-option-level IPPROTO_TCP)
+        (socket-option-name SO_DEBUG 513)))
+(allow socket-option-set
+    (require-all
+        (socket-option-level IPPROTO_IP)
+        (socket-option-name 3 7 20 25 27 28)))
+(allow socket-option-get
+    (require-all
+        (socket-option-level IPPROTO_IP)
+        (socket-option-name 25)))
+(allow socket-option-set
+    (require-all
+        (socket-option-level IPPROTO_IPV6)
+        (socket-option-name 27 35 36 61 62)))
+(allow socket-option-get
+    (require-all
+        (socket-option-level IPPROTO_IPV6)
+        (socket-option-name 125)))
+(allow socket-option-get
+    (require-all
+        (socket-option-level IPPROTO_TCP)
+        (socket-option-name 262 SO_REUSEPORT)))
+(allow socket-ioctl
+    (ioctl-command CTLIOCGINFO))
+(allow system-necp-client-action)
+(allow necp-client-open)
+(allow iokit-open-service (iokit-registry-entry-class
+    "AppleAPFSContainer"
+    "IOPMrootDomain"))
+(allow file-link
+    (extension-class "com.apple.app-sandbox.read-write")
+    (extension "com.apple.app-sandbox.read-write"))
+(allow file-link (subpath "/private/var/folders"))
+(allow file-clone (with telemetry))
+(allow file-clone
+    (home-subpath "/Library/Caches")
+    (home-subpath "/Library/Containers"))
+(allow file-clone (subpath
+    "/private/var/folders") )
+(allow darwin-notification-post
+    (notification-name
+        "com.apple.WebKit.mediaStreamingActivity"
+        "com.apple.accessibility.AirPodsSpatialAudioLockToDeviceChanged"
+        "com.apple.accessibility.cache.app.ax"
+        "com.apple.accessibility.cache.ax"
+        "com.apple.accessibility.darken.system.colors"
+        "com.apple.accessibility.increase.button.legibility"
+        "com.apple.accessibility.reduce.motion.status"
+        "com.apple.accessibility.text.legibility.status"
+        "com.apple.accessibility.wob.status"))
+(deny mach-register (local-name-prefix ""))
+(allow system-automount
+       (process-attribute is-platform-binary))
+(allow file-map-executable (with telemetry))
+(allow file-map-executable
+    (home-subpath "/Library/Caches")
+    (home-subpath "/Library/Containers")
+    (home-subpath "/Library/WebKit")
+    (subpath "/Library/Frameworks")
+    (subpath "/Library/KerberosPlugins")
+    (subpath "/System/Library/Frameworks")
+    (subpath "/System/Library/KerberosPlugins")
+    (subpath "/System/Library/PrivateFrameworks")
+    (subpath "/usr/lib"))
+(if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
+    (allow file-map-executable
+        (subpath (param "DARWIN_USER_TEMP_DIR"))))
+(allow file-read-metadata
+    (literal "/etc")
+    (literal "/tmp")
+    (literal "/var")
+    (literal "/private/etc/localtime"))
+(allow file-read-metadata (path-ancestors "/System/Volumes/Data/private"))
+(allow file-read* (literal "/"))
+(allow file-read*
+       (subpath "/System"))
+(allow file-read*
+       (subpath "/Library/Preferences/Logging")
+       (subpath "/private/var/db/timezone")
+       (subpath "/usr/lib")
+       (subpath "/usr/share"))
+(allow file-read*
+       (literal "/dev/urandom")
+       (literal "/private/etc/master.passwd")
+       (literal "/private/etc/passwd")
+       (literal "/private/etc/services"))
+(allow file-read* file-write-data file-ioctl
+       (literal "/dev/dtracehelper"))
+(allow file-read*
+       (require-all (subpath "/AppleInternal/Library/Preferences/Logging")
+                    (system-attribute apple-internal)))
+(allow network-outbound
+       (literal "/private/var/run/syslog"))
+(allow ipc-posix-shm-read*
+    (ipc-posix-name "apple.shm.notification_center")
+)
+(allow mach-lookup (global-name "com.apple.coreservices.launchservicesd"))
+(allow mach-lookup
+    (global-name "com.apple.system.opendirectoryd.libinfo")
+    (global-name "com.apple.trustd")
+    (global-name "com.apple.trustd.agent"))
+(define (system-network)
+    (allow file-read*
+         (literal "/Library/Preferences/com.apple.networkd.plist")
+         (literal "/private/var/db/nsurlstoraged/dafsaData.bin"))
+    (deny mach-lookup
+         (global-name "com.apple.SystemConfiguration.PPPController")
+         (global-name "com.apple.SystemConfiguration.SCNetworkReachability")
+         (global-name "com.apple.networkd")
+         (global-name "com.apple.nsurlstorage-cache")
+         (global-name "com.apple.symptomsd"))
+    (allow mach-lookup
+         (global-name "com.apple.dnssd.service")
+         (global-name "com.apple.nehelper")
+         (global-name "com.apple.nesessionmanager")
+         (global-name "com.apple.usymptomsd"))
+    (allow network-outbound
+         (control-name "com.apple.netsrc"))
+    (deny system-socket
+          (socket-domain AF_ROUTE))
+    (allow system-socket
+         (require-all (socket-domain AF_SYSTEM)
+                      (socket-protocol 2)))
+    (allow mach-lookup
+         (global-name "com.apple.AppSSO.service-xpc"))
+    (deny ipc-posix-shm-read-data
+         (ipc-posix-name "/com.apple.AppSSO.version")))
+(deny process-info*)
+(allow process-info-dirtycontrol (target self))
+(allow process-info-pidinfo)
+(allow process-info-setcontrol (target self))
+(deny sysctl*)
+(allow sysctl-read
+    (sysctl-name
+        "hw.cputype"
+        "hw.memsize"
+        "hw.ncpu"
+        "kern.boottime"
+        "kern.maxfilesperproc"
+        "kern.osproductversion"
+        "kern.osrelease"
+        "kern.ostype"
+        "kern.osversion"
+        "kern.tcsm_available"
+        "kern.tcsm_enable"
+        "kern.willshutdown"
+        "vm.malloc_ranges")
+    (sysctl-name-prefix "kern.proc.pid.")
+    (sysctl-name-prefix "net.routetable"))
+(deny sysctl-read (with no-report)
+    (sysctl-name "sysctl.proc_translated"))
+(allow sysctl-write
+    (sysctl-name
+        "kern.tcsm_enable"))
+(deny iokit-get-properties)
+(allow iokit-get-properties
+    (iokit-property
+        "Ejectable"
+        "IOClassNameOverride"
+        "IOMediaIcon"
+        "IOServiceDEXTEntitlements"
+        "No-idle-support"
+        "Product Identification"
+        "Protocol Characteristics"
+        "Removable"
+        "acpi-pmcap-offset"
+        "driver-child-bundle"
+        "iommu-selection"
+    )
+)
+(deny mach-lookup (xpc-service-name-prefix ""))
+(define (HEX-pattern-match-generator pattern-descriptor)
+    (letrec ((pattern-string ""))
+        (for-each (lambda (repeat-count)
+            (if (zero? repeat-count)
+                (set! pattern-string (string-append pattern-string "-"))
+                (let appender ((count repeat-count))
+                    (if (> count 0)
+                        (begin
+                            (set! pattern-string (string-append pattern-string "[0-9A-F]"))
+                            (appender (- count 1)))))))
+            pattern-descriptor)
+        pattern-string))
+(define (uuid-HEX-pattern-match-string)
+    (HEX-pattern-match-generator '(8 0 4 0 4 0 4 0 12)))
+(define *uuid-pattern* "")
+(define (uuid-regex-string)
+    (if (zero? (string-length *uuid-pattern*))
+        (set! *uuid-pattern* (uuid-HEX-pattern-match-string)))
+    *uuid-pattern*)
+(allow-reading-global-preferences)
+(shared-preferences-read
+    "com.apple.CFNetwork"
+    "com.apple.DownloadAssessment"
+    "com.apple.WebFoundation"
+    "com.apple.ist.ds.appleconnect2.uat"
+    "com.apple.networkConnect")
+(allow file-read*
+    (subpath "/Library/Frameworks")
+    (subpath "/Library/Managed Preferences"))
+(allow file-read* file-test-existence
+    (subpath (param "WEBKIT2_FRAMEWORK_DIR")))
+(allow file-read-data
+    (literal "/usr/local/lib/log")
+)
+(read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
+(read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
+(if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
+    (allow file-read* file-write* (subpath (param "DARWIN_USER_CACHE_DIR"))))
+(if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
+    (allow file-read* file-write* (subpath (param "DARWIN_USER_TEMP_DIR"))))
+(allow iokit-open-user-client
+    (iokit-user-client-class "RootDomainUserClient"))
+(deny mach-lookup
+    (global-name "com.apple.PowerManagement.control"))
+(allow mach-lookup
+    (global-name "com.apple.FileCoordination")
+    (global-name "com.apple.SystemConfiguration.configd")
+    (global-name "com.apple.cfnetwork.AuthBrokerAgent")
+    (global-name "com.apple.cfnetwork.cfnetworkagent")
+    (global-name "com.apple.ciphermld")
+    (global-name "com.apple.ist.ds.appleconnect2.service.kdctunnelcontroller")
+    (global-name "com.apple.logd")
+    (global-name "com.apple.logd.events")
+    (global-name "com.apple.lsd.mapdb")
+    (global-name "com.apple.mobileasset.autoasset")
+    (global-name "com.apple.nesessionmanager.flow-divert-token")
+    (global-name "com.apple.nesessionmanager.content-filter")
+    (global-name "com.apple.system.notification_center"))
+(with-filter (system-attribute apple-internal)
+    (allow mach-lookup
+        (global-name "com.apple.aggregated")
+        (global-name "com.apple.analyticsd")
+        (global-name "com.apple.diagnosticd")))
+(allow mach-lookup (global-name "com.apple.webkit.adattributiond.service"))
+(allow mach-lookup (global-name "org.webkit.pcmtestdaemon.service"))
+(allow mach-lookup (global-name "com.apple.webkit.webpushd.service"))
+(allow mach-lookup (global-name "com.apple.webkit.webpushd.relocatable.service"))
+(allow mach-lookup (global-name "org.webkit.webpushtestdaemon.service"))
+(deny mach-lookup (with no-report)
+    (global-name "com.apple.DiskArbitration.diskarbitrationd"))
+(with-filter (uid 0)
+    (allow mach-lookup
+        (global-name "com.apple.DiskArbitration.diskarbitrationd")))
+(deny mach-lookup
+   (global-name "com.apple.ctkd.token-client")
+   (global-name "com.apple.securityd.xpc")
+   (global-name "com.apple.CoreAuthentication.agent")
+   (global-name "com.apple.ocspd"))
+(allow mach-lookup
+    (global-name "com.apple.SecurityServer"))
+(deny file-read* file-write*
+    (regex (string-append "/Library/Keychains/" (uuid-regex-string) "(/|$)"))
+    (home-regex (string-append "/Library/Keychains/" (uuid-regex-string) "(/|$)")))
+(allow file-read* (subpath "/private/var/db/mds/system"))
+(with-filter (uid 0)
+    (allow file-write*
+        (subpath "/private/var/db/mds/system"))
+)
+(shared-preferences-read
+    "com.apple.crypto"
+    "com.apple.security"
+    "com.apple.security.common"
+    "com.apple.security.revocation")
+(allow file-read*
+       (subpath "/private/var/db/mds")
+       (literal "/Library/Preferences/com.apple.security.plist")
+       (home-literal "/Library/Preferences/com.apple.security.plist")
+       (literal "/Library/Preferences/com.apple.ist.ds.appleconnect2.plist")
+       (literal "/Library/Preferences/com.apple.ist.ds.appleconnect2.production.plist")
+       (home-literal "/Library/Preferences/com.apple.ist.ds.appleconnect2.plist")
+       (home-literal "/Library/Preferences/com.apple.ist.ds.appleconnect2.production.plist")
+       (home-regex (string-append "/Library/Preferences/ByHost/com\.apple\.ist\.ds\.appleconnect2\." (uuid-regex-string) "\.plist$"))
+       (home-regex (string-append "/Library/Preferences/ByHost/com\.apple\.ist\.ds\.appleconnect2\.production\." (uuid-regex-string) "\.plist$"))
+)
+(allow ipc-posix-shm-read* ipc-posix-shm-write-create ipc-posix-shm-write-data
+       (ipc-posix-name "com.apple.AppleDatabaseChanged"))
+(system-network)
+(allow network-outbound
+    (literal "/private/var/run/mDNSResponder")
+    (remote tcp))
+(with-filter (uid 0)
+    (allow mach-lookup
+        (global-name "com.apple.system.logger")))
+(allow mach-lookup
+    (global-name "org.h5l.kcm")
+    (global-name "com.apple.GSSCred")
+    (global-name "com.apple.ist.ds.appleconnect.service.kdctunnel"))
+(allow network-outbound
+    (remote udp))
+(shared-preferences-read
+    "com.apple.GSS"
+    "com.apple.Kerberos"
+    "edu.mit.Kerberos")
+(allow file-read*
+    (literal "/private/etc/services")
+    (literal "/private/etc/hosts")
+    (subpath "/Library/KerberosPlugins/GSSAPI")
+    (subpath "/Library/KerberosPlugins/KerberosFrameworkPlugins"))
+(deny file-write-create (vnode-type SYMLINK))
+(deny file-read-xattr file-write-xattr (xattr-prefix "com.apple.security.private."))
+(deny file-read* file-write* (with no-report)
+    (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2")
+    (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2-journal"))
+(macro (with-filter form)
+   (let* ((ps (cdr form))
+          (extra-filter (car ps))
+          (rules (cdr ps)))
+    `(letrec
+        ((collect
+             (lambda (l filters non-filters)
+                 (if (null? l)
+                     (list filters non-filters)
+                     (let*
+                         ((x (car l))
+                          (rest (cdr l)))
+                         (if (sbpl-filter? x)
+                             (collect rest (cons x filters) non-filters)
+                             (collect rest filters (cons x non-filters)))))))
+         (inject-filter
+             (lambda args
+                 (let* ((collected (collect args '() '()))
+                        (filters (car collected))
+                        (non-filters (cadr collected)))
+                 (if (null? filters)
+                     (cons ,extra-filter non-filters)
+                     (cons (require-all (apply require-any filters) ,extra-filter) non-filters)))))
+         (orig-allow allow)
+         (orig-deny deny)
+         (wrapper
+             (lambda (action)
+                 (lambda args (apply action (apply inject-filter args))))))
+        (set! allow (wrapper orig-allow))
+        (set! deny (wrapper orig-deny))
+        ,@rules
+        (set! deny orig-deny)
+        (set! allow orig-allow))))
+(allow network*
+    (local udp)
+    (remote udp)
+    (local tcp)
+    (remote tcp))
+(allow mach-lookup
+    (global-name "com.apple.ProgressReporting"))
+(allow mach-lookup
+    (global-name "com.apple.tccd"))
+(deny mach-lookup (with no-report)
+    (global-name "com.apple.tccd.system")
+    (global-name "com.apple.CoreServices.coreservicesd")
+    (global-name-prefix "com.apple.distributed_notifications"))
+(allow mach-lookup
+    (global-name "com.apple.networkserviceproxy.fetch-token"))
+(allow file-read* file-write*
+    (home-subpath "/Library/HTTPStorages"))
+(allow file-read*
+    (prefix "/private/var/db/com.apple.networkextension."))
+(when (defined? 'syscall-unix)
+    (deny syscall-unix)
+    (when (defined? 'SYS_crossarch_trap)
+        (deny syscall-unix (with no-report) (syscall-number
+            SYS_crossarch_trap)))
+    (allow syscall-unix (syscall-number
+        SYS___channel_get_info
+        SYS___channel_open
+        SYS___channel_sync
+        SYS___disable_threadsignal
+        SYS___mac_syscall
+        SYS___pthread_kill
+        SYS___pthread_sigmask
+        SYS___semwait_signal
+        SYS___semwait_signal_nocancel
+        SYS_abort_with_payload
+        SYS_access
+        SYS_bsdthread_create
+        SYS_bsdthread_ctl
+        SYS_bsdthread_terminate
+        SYS_change_fdguard_np
+        SYS_close
+        SYS_close_nocancel
+        SYS_csops_audittoken
+        SYS_csrctl
+        SYS_dup
+        SYS_exit
+        SYS_fcntl
+        SYS_fcntl_nocancel
+        SYS_ffsctl
+        SYS_fgetattrlist
+        SYS_fgetxattr
+        SYS_fileport_makeport
+        SYS_flistxattr
+        SYS_flock
+        SYS_fsctl
+        SYS_fsetattrlist
+        SYS_fsgetpath
+        SYS_fstat
+        SYS_fstat64
+        SYS_fstat64_extended
+        SYS_fstatat
+        SYS_fstatat64
+        SYS_fstatfs
+        SYS_fstatfs64
+        SYS_fsync
+        SYS_ftruncate
+        SYS_getattrlist
+        SYS_getattrlistbulk
+        SYS_getaudit_addr
+        SYS_getdirentries
+        SYS_getdirentries64
+        SYS_getegid
+        SYS_getentropy
+        SYS_geteuid
+        SYS_getfsstat
+        SYS_getfsstat64
+        SYS_getgid
+        SYS_getgroups
+        SYS_gethostuuid
+        SYS_getpeername
+        SYS_getrlimit
+        SYS_getsockname
+        SYS_getsockopt
+        SYS_gettid
+        SYS_gettimeofday
+        SYS_getuid
+        SYS_getxattr
+        SYS_guarded_close_np
+        SYS_guarded_open_dprotected_np
+        SYS_guarded_open_np
+        SYS_guarded_pwrite_np
+        SYS_iopolicysys
+        SYS_issetugid
+        SYS_kdebug_trace
+        SYS_kdebug_trace64
+        SYS_kdebug_trace_string
+        SYS_kdebug_typefilter
+        SYS_kevent
+        SYS_kevent_id
+        SYS_kevent_qos
+        SYS_kqueue
+        SYS_link
+        SYS_listxattr
+        SYS_lseek
+        SYS_lstat
+        SYS_lstat64
+        SYS_lstat64_extended
+        SYS_madvise
+        SYS_memorystatus_control
+        SYS_mkdir
+        SYS_mkdirat
+        SYS_mmap
+        SYS_mprotect
+        SYS_msync
+        SYS_munmap
+        SYS_necp_client_action
+        SYS_necp_open
+        SYS_open
+        SYS_open_dprotected_np
+        SYS_open_nocancel
+        SYS_openat
+        SYS_os_fault_with_payload
+        SYS_pathconf
+        SYS_pipe
+        SYS_pread
+        SYS_pread_nocancel
+        SYS_proc_info
+        SYS_pselect
+        SYS_psynch_cvbroad
+        SYS_psynch_cvclrprepost
+        SYS_psynch_cvsignal
+        SYS_psynch_cvwait
+        SYS_psynch_mutexdrop
+        SYS_psynch_mutexwait
+        SYS_psynch_rw_rdlock
+        SYS_psynch_rw_unlock
+        SYS_psynch_rw_wrlock
+        SYS_read
+        SYS_read_nocancel
+        SYS_readlink
+        SYS_recvfrom
+        SYS_recvfrom_nocancel
+        SYS_recvmsg
+        SYS_rename
+        SYS_rmdir
+        SYS_select
+        SYS_select_nocancel
+        SYS_sendmsg
+        SYS_sendmsg_nocancel
+        SYS_sendto
+        SYS_sendto_nocancel
+        SYS_setattrlistat
+        SYS_setrlimit
+        SYS_setsockopt
+        SYS_shutdown
+        SYS_sigaction
+        SYS_sigprocmask
+        SYS_sigreturn
+        SYS_socketpair
+        SYS_stat
+        SYS_stat64
+        SYS_stat64_extended
+        SYS_statfs
+        SYS_statfs64
+        SYS_sysctl
+        SYS_thread_selfid
+        SYS_ulock_wait
+        SYS_ulock_wait2
+        SYS_ulock_wake
+        SYS_unlink
+        SYS_workq_kernreturn
+        SYS_write
+        SYS_write_nocancel)))
+(when (defined? 'SYS_map_with_linking_np)
+    (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
+(allow mach-lookup
+    (global-name "com.apple.webprivacyd")
+    (global-name "com.apple.WebPrivacy.Service"))

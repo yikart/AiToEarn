@@ -1,0 +1,191 @@
+/*
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.content-view-container > .content-view.audit-test {
+    overflow-y: auto;
+}
+
+.content-view-container > .content-view.audit-test > header {
+    padding-top: calc(var(--audit-test-vertical-space) / 5 * 8);
+    padding-bottom: calc(var(--audit-test-vertical-space) / 5 * 8);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.content-view-container > .content-view.audit-test > header h1 {
+    font-size: 2em;
+}
+
+.content-view-container > .content-view.audit-test > header p {
+    font-size: 1.25em;
+    opacity: 0.85;
+}
+
+.content-view.audit-test {
+    --audit-test-vertical-space: 10px;
+    --audit-test-horizontal-space: 20px;
+    --audit-test-header-background-color: hsla(0, 0%, 98%, 0.7);
+}
+
+.content-view.audit-test:is(.unsupported, .disabled):not(.manager-editing) {
+    display: none;
+}
+
+.content-view.audit-test h1 {
+    margin: 0;
+}
+
+.content-view.audit-test.manager-editing .editor:not(:empty) {
+    width: 100%;
+}
+
+.content-view.audit-test.manager-editing :is(.content-view.audit-test, header) .editor:not(:empty) {
+    border: 1px solid var(--border-color);
+}
+
+.content-view.audit-test .CodeMirror {
+    width: 100%;
+    height: auto;
+}
+
+.content-view.audit-test > header {
+    display: flex;
+    align-items: center;
+    padding-top: var(--audit-test-vertical-space);
+    padding-bottom: var(--audit-test-vertical-space);
+    padding-inline-start: var(--audit-test-horizontal-space);
+
+    --metadata-width: 60px;
+}
+
+.content-view.audit-test > header > .information {
+    flex-grow: 1;
+}
+
+.content-view.audit-test > header p {
+    margin: 4px 0 0;
+}
+
+.content-view.audit-test > header :is(.name, .description):not([contenteditable]) {
+    padding: 1px;
+    outline: none;
+}
+
+.content-view.audit-test.manager-editing > header :is(.name, .description)[contenteditable] {
+    border: 1px solid var(--border-color);
+    -webkit-user-select: text;
+    outline-offset: var(--focus-ring-outline-offset);
+}
+
+.content-view.audit-test.manager-editing > header .name[contenteditable]:empty {
+    border-color: var(--error-text-color);
+}
+
+.content-view.audit-test.manager-editing > header .name[contenteditable]:empty:before {
+    content: attr(data-name);
+    color: var(--text-color-tertiary);
+}
+
+.content-view.audit-test.manager-editing > header .description[contenteditable]:empty:before {
+    content: "description";
+    color: var(--text-color-tertiary);
+}
+
+.content-view.audit-test:not(.manager-editing) > header .description:empty,
+.content-view.audit-test:not(.manager-editing) > header table.controls {
+    display: none;
+}
+
+.content-view.audit-test > header table.controls,
+.content-view.audit-test > header table.controls > tr > td {
+    width: 100%;
+}
+
+.content-view.audit-test > header table.controls > tr > th {
+    text-align: end;
+    vertical-align: top;
+    line-height: 2em;
+    color: hsl(0, 0%, 34%);
+}
+
+.content-view.audit-test > header table.controls > tr.supports input[type="number"] {
+    text-align: end;
+}
+
+.content-view.audit-test > header table.controls > tr.supports .warning {
+    margin-inline-start: 4px;
+    color: var(--text-color-secondary);
+}
+
+.content-view.audit-test > header table.controls > tr.supports .warning:not(:empty)::before {
+    display: inline-block;
+    width: 1em;
+    margin-inline-end: 2px;
+    vertical-align: -1px;
+    content: url(../Images/Warning.svg);
+}
+
+.content-view.audit-test > header table.controls > tr.setup .editor {
+    margin-top: 2px;
+}
+
+.content-view.audit-test .audit-test.filtered,
+.content-view.audit-test .audit-test .message-text-view {
+    display: none;
+}
+
+.content-view.audit-test > section {
+    position: relative;
+}
+
+.content-view.audit-test > section > .message-text-view {
+    background-color: var(--background-color-content);
+}
+
+.content-view.audit-test > section > .message-text-view > :is(progress, .indeterminate-progress-spinner) {
+    margin-bottom: 8px;
+}
+
+.content-view.audit-test.showing-placeholder {
+    display: flex;
+    flex-direction: column;
+}
+
+.content-view.audit-test.showing-placeholder > section {
+    flex-grow: 1;
+}
+
+.content-view.audit-test.showing-placeholder > section > :not(.message-text-view) {
+    display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    .content-view.audit-test {
+        --audit-test-header-background-color: hsla(0, 0%, 23%, 0.7);
+    }
+
+    .content-view.audit-test > header table.controls > tr > th {
+        color: var(--text-color-secondary);
+    }
+}

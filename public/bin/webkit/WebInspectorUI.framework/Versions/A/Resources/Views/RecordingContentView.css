@@ -1,0 +1,102 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.content-view.recording {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background-color: hsl(0, 0%, 90%);
+}
+
+.content-view.recording > header {
+    margin-bottom: 10px;
+}
+
+.content-view.recording > header > .slider-container {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 4px 0;
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.content-view.recording > header > .slider-container > * {
+    margin: 4px 8px;
+}
+
+.content-view.recording > header > .slider-container > .slider-value {
+    font-family: Menlo, monospace;
+}
+
+.content-view.recording > header > .slider-container > input[type=range] {
+    flex: 1;
+    width: 100%;
+}
+
+.content-view.recording > header > .slider-container > input[type=range]::-webkit-slider-runnable-track {
+    height: 2px;
+    background-color: var(--border-color);
+    border-radius: 1px;
+}
+
+.content-view.recording > header > .slider-container > input[type=range]::-webkit-slider-thumb {
+    margin-top: -6px;
+}
+
+.content-view.recording > .preview-container {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
+}
+
+.content-view.recording :is(img, canvas) {
+    position: absolute;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.content-view.recording canvas.path {
+    z-index: 10;
+}
+
+@media (prefers-color-scheme: dark) {
+    .content-view.recording {
+        background-color: unset;
+    }
+
+    .content-view.recording > header > .slider-container {
+        background-color: unset;
+        border-color: var(--border-color-secondary);
+    }
+
+    .content-view.recording > header > .slider-container > input[type=range] {
+        background: none;
+    }
+}

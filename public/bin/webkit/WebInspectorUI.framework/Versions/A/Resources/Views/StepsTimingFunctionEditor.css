@@ -1,0 +1,90 @@
+/*
+ * Copyright (C) 2023 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.steps-timing-function-editor {
+    width: calc(var(--steps-timing-function-editor-width) + (2 * var(--steps-timing-function-editor-inline-margin)));
+    height: 249px;
+
+    --steps-timing-function-preview-start: 0;
+    --steps-timing-function-preview-end: calc(var(--steps-timing-function-editor-width) - var(--steps-timing-function-editor-inline-margin) - var(--steps-timing-function-editor-timing-size) - var(--steps-timing-function-editor-timing-inline-margin));
+}
+
+.steps-timing-function-editor > .preview {
+    width: calc(100% - 10px);
+    height: 25px;
+    margin: 5px var(--steps-timing-function-editor-inline-margin) 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.steps-timing-function-editor > .preview > div {
+    width: 20px;
+    height: 20px;
+    background-color: var(--glyph-color-active);
+    border-radius: 50%;
+}
+
+.steps-timing-function-editor > .timing {
+    position: absolute;
+    top: 34px;
+    margin-inline-start: var(--steps-timing-function-editor-timing-inline-margin);
+    border-inline: var(--steps-timing-function-editor-timing-size) solid transparent;
+    border-top: var(--steps-timing-function-editor-timing-size) solid var(--text-color);
+}
+
+.steps-timing-function-editor > .preview.animate > div,
+.steps-timing-function-editor > .timing.animate {
+    animation: StepsTimingFunctionPreview 2.5s linear 250ms infinite;
+}
+
+@keyframes StepsTimingFunctionPreview {
+    from { transform: translateX(var(--steps-timing-function-preview-start)); }
+    10% { transform: translateX(var(--steps-timing-function-preview-start)); }
+    90% { transform: translateX(var(--steps-timing-function-preview-end)); }
+    to { transform: translateX(var(--steps-timing-function-preview-end)); }
+}
+
+.steps-timing-function-editor > svg {
+    margin: 8px var(--steps-timing-function-editor-inline-margin);
+}
+
+.steps-timing-function-editor > svg path {
+    fill: none;
+    stroke: var(--text-color);
+    stroke-width: var(--steps-timing-function-editor-stroke-width);
+}
+
+.steps-timing-function-editor > .parameter-editors {
+    display: flex;
+    width: calc(100% - 10px);
+    margin: 0 var(--steps-timing-function-editor-inline-margin);
+    padding: 7px 2px 0;
+    border-top: 1px solid var(--border-color);
+}
+
+.steps-timing-function-editor > .parameter-editors > input {
+    width: 100%;
+    margin-inline-start: 0.5em;
+    text-align: end;
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2017 Devin Rousso <webkit@devinrousso.com>. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+    <rect fill="currentColor" x="0" y="0" width="16" height="16" rx="3" ry="3"/>
+    <rect fill="white" x="3.5" y="4.5" width="9" height="2.5"/>
+    <rect fill="white" x="3.5" y="9" width="9" height="2.5"/>
+</svg>

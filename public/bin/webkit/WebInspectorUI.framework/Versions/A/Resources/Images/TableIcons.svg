@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2020 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs>
+        <style>
+            g:not(:target) {
+                display: none;
+            }
+
+            .light {
+                --border: black;
+                --backfill: hsla(0, 0%, 100%, 0.5);
+            }
+
+            .dark {
+                --border: white;
+                --backfill: hsla(0, 0%, 0%, 0.5);
+            }
+
+            .database.light {
+                --border: hsl(43, 33%, 37%);
+            }
+
+            .database.dark {
+                --border: hsl(43, 33%, 53%);
+            }
+
+            .local {
+                --border: hsl(222, 22%, 51%);
+            }
+
+            .session {
+                --border: hsl(336, 19%, 53%);
+            }
+
+            .application-cache {
+                --border: hsl(136, 19%, 52%);
+            }
+        </style>
+    </defs>
+
+    <symbol id="i" stroke="none" viewBox="0 0 32 32">
+        <path fill="var(--backfill)" d="M 4.324 27.5 C 1.475 27.5 5.329 26.116 5.329 23.402 L 5.329 7.585 C 5.329 4.871 1.475 3.5 4.324 3.5 L 27.676 3.5 C 30.554 3.5 32 4.884 32 7.585 L 32 23.402 C 32 26.116 30.554 27.5 27.676 27.5 L 4.324 27.5 Z"/>
+        <path fill="var(--border)" d="M 5.054 26.5 C 2.383 26.5 1 25.231 1 22.743 L 1 8.244 C 1 5.756 2.383 4.5 5.054 4.5 L 26.946 4.5 C 29.644 4.5 31 5.769 31 8.244 L 31 22.743 C 31 25.231 29.644 26.5 26.946 26.5 L 5.054 26.5 Z M 3.215 8.382 L 3.215 11.348 L 15.067 11.348 L 15.067 6.573 L 5.134 6.573 C 3.899 6.573 3.215 7.176 3.215 8.382 Z M 16.946 11.348 L 28.785 11.348 L 28.785 8.382 C 28.785 7.176 28.101 6.573 26.866 6.573 L 16.946 6.573 L 16.946 11.348 Z M 16.946 17.893 L 28.785 17.893 L 28.785 13.107 L 16.946 13.107 L 16.946 17.893 Z M 15.067 13.107 L 3.215 13.107 L 3.215 17.893 L 15.067 17.893 L 15.067 13.107 Z M 26.866 24.427 C 28.101 24.427 28.785 23.811 28.785 22.605 L 28.785 19.652 L 16.946 19.652 L 16.946 24.427 L 26.866 24.427 Z M 5.134 24.427 L 15.067 24.427 L 15.067 19.652 L 3.215 19.652 L 3.215 22.605 C 3.215 23.811 3.899 24.427 5.134 24.427 Z"/>
+    </symbol>
+
+    <g id="light" class="light"><use href="#i"/></g>
+    <g id="dark" class="dark"><use href="#i"/></g>
+    <g id="database-light" class="database light"><use href="#i"/></g>
+    <g id="database-dark" class="database dark"><use href="#i"/></g>
+    <g id="local-light" class="local light"><use href="#i"/></g>
+    <g id="local-dark" class="local dark"><use href="#i"/></g>
+    <g id="session-light" class="session light"><use href="#i"/></g>
+    <g id="session-dark" class="session dark"><use href="#i"/></g>
+    <g id="application-cache-light" class="application-cache light"><use href="#i"/></g>
+    <g id="application-cache-dark" class="application-cache dark"><use href="#i"/></g>
+</svg>

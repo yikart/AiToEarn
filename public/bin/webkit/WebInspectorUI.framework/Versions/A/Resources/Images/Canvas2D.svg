@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2017 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+    <rect x="1.5" y="1.5" width="13" height="13" rx="1.5" ry="1.5" fill="#fff" stroke="#4d4d4d"/>
+    <path d="M11,9,9,11,6,8,3,11v1.3a.7.7,0,0,0,.7.7h8.6a.7.7,0,0,0,.7-.7V11Z" fill="#666"/>
+    <circle cx="10.5" cy="5.5" r="1.75" fill="#666"/>
+</svg>

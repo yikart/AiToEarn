@@ -1,0 +1,78 @@
+/*
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.resource-details > section {
+    padding-top: 5px;
+}
+
+.resource-details > section > .title {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.resource-details > section > .details {
+    margin-inline-start: 10px;
+    white-space: normal;
+    word-break: break-all;
+    border-inline-start: 2px solid var(--border-color);
+}
+
+.resource-details > section > .details > p {
+    margin: 0;
+    padding: 2px 0;
+    padding-inline-start: 7px;
+}
+
+.resource-details > section.incomplete > .details {
+    color: var(--console-secondary-text-color) !important;
+    border-color: var(--console-secondary-text-color) !important;
+}
+
+.resource-details > section > .details > .pair {
+    --resource-details-value-indent: 15px;
+    margin-inline-start: var(--resource-details-value-indent);
+}
+
+body[dir=rtl] .resource-details > section > .details > .pair {
+    /* Don't include indents in RTL */
+    --resource-details-value-indent: 0px;
+}
+
+.resource-details > section > .details > .pair > .key {
+    font-weight: 500;
+    margin-inline-start: calc(var(--resource-details-value-indent) * -1);
+}
+
+.resource-details > section > .details > .pair > .value {
+    color: var(--text-color);
+}
+
+body[dir] .resource-details > section.error > .details {
+    border-color: var(--network-error-color);
+}
+
+.resource-details > section.error > .details > .pair > .key {
+    color: var(--network-error-color);
+}

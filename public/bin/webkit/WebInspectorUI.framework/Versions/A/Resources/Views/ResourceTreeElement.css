@@ -1,0 +1,53 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.item.resource.failed {
+    color: var(--error-text-color) !important;
+}
+
+.item.resource.failed .subtitle {
+    color: var(--error-text-color) !important;
+    opacity: 0.7;
+}
+
+.item.resource.resource-type-websocket .status > .ready-state {
+    width: 8px;
+    height: 8px;
+    margin-top: 4px;
+    background-color: white;
+    clip-path: circle(50% at 50% 50%);
+}
+
+.item.resource.resource-type-websocket:not(.selected) .status .ready-state.open,
+.tree-outline:not(:focus-within) .item.resource.resource-type-websocket.selected .status .ready-state.open,
+body:is(.window-inactive, .window-docked-inactive) .item.resource.resource-type-websocket.selected .status .ready-state.open {
+    background-color: limegreen;
+}
+
+.item.resource.resource-type-websocket:not(.selected) .status .ready-state.connecting,
+.tree-outline:not(:focus-within) .item.resource.resource-type-websocket.selected .status .ready-state.connecting,
+body:is(.window-inactive, .window-docked-inactive) .item.resource.resource-type-websocket.selected .status .ready-state.connecting {
+    background-color: yellow;
+}

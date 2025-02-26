@@ -1,0 +1,156 @@
+.login {
+  display: flex;
+  height: 100%;
+  .login_wrap {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .login_left {
+    .login_left_top {
+      margin-bottom: 50px;
+    }
+
+    .login_left_texts {
+      padding: 30px;
+      li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 40px;
+      }
+
+      .login_left_texts_svg {
+        margin-right: 15px;
+      }
+
+      .login_left_text {
+        display: flex;
+        flex-direction: column;
+        justify-content: left;
+        strong {
+          margin-bottom: 4px;
+          font-weight: 400;
+          font-size: var(--fs-lg);
+        }
+        p {
+          margin: 0;
+          font-size: var(--fs-xs);
+          color: var(--lightGreyColor);
+        }
+        strong, p {
+          text-align: left;
+        }
+      }
+    }
+  }
+
+  .loginCore {
+  }
+
+  .phoneLogin {
+    width: 300px;
+    :global {
+      .ant-tabs-nav {
+        &::before {
+          content: none;
+        }
+      }
+      .ant-tabs-nav-list {
+        width: 100%;
+        justify-content: center;
+        .ant-tabs-tab {
+          &:nth-of-type(2) {
+            margin-left: 50px;
+          }
+          .ant-tabs-tab-btn {
+            font-size: var(--fs-md);
+          }
+        }
+      }
+      .ant-form-item-explain-error {
+        text-align: left;
+      }
+    }
+  }
+}
+
+.loginForm {
+  input {
+    padding: 10px 15px;
+  }
+  .loginForm-buttonWrapper {
+    margin-top: 50px;
+    button {
+      width: 100%;
+      margin: 20px auto 0 auto;
+      padding: 20px 0;
+    }
+  }
+
+  .loginForm-phone {
+    :global {
+      .ant-form-item-control-input-content {
+        display: flex;
+        align-items: center;
+      }
+    }
+    &-site {
+      border: 1px solid var(--lightGreyColor);
+      color: var(--lightGreyColor);
+      padding: 1px 10px;
+      line-height: 40px;
+      border-radius: 6px;
+      margin-right: 8px;
+      font-size: var(--fs-sm);
+      height: 100%;
+    }
+  }
+
+  .loginForm-getCode {
+    color: var(--colorPrimary5);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+
+    &:hover {
+      color: var(--colorPrimary3);
+    }
+    &:active {
+      color: var(--colorPrimary6);
+    }
+
+    :global {
+      .ant-statistic-content {
+        display: flex;
+        align-items: center;
+      }
+      span {
+        font-size: 14px;
+        font-weight: 400;
+        color: var(--colorPrimary5);
+      }
+    }
+  }
+
+  .loginForm-getCode--disable {
+    cursor: no-drop;
+  }
+}
+
+
+
+
+
+
+
+
+

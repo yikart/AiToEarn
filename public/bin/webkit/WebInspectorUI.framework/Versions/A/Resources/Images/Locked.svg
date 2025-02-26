@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2013, 2015 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 8 10">
+    <polygon fill="hsla(0, 0%, 0%, 0.5)" points="0 5 8 5 8 10 0 10"/>
+    <path stroke="hsla(0, 0%, 0%, 0.5)" fill="none" d="M 1.5 5 L 1.5 3 C 1.5 1.33333333 2.33333333 0.5 4 0.5 C 5.66666667 0.5 6.5 1.33333333 6.5 3 L 6.5 5"/>
+</svg>

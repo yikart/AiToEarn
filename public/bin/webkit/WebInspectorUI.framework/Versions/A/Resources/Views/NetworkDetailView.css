@@ -1,0 +1,90 @@
+/*
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.network-detail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: var(--network-statistics-height);
+    /* left or right set by NetworkTableView on display / resize */
+    z-index: 10;
+    background-color: white;
+}
+
+.network-detail .navigation-bar {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.network-detail .item.close > .glyph {
+    border-radius: 2px;
+    padding: 2px;
+    background: white;
+}
+
+.network-detail .item.close > .glyph:hover {
+    background-color: var(--button-background-color-hover);
+}
+
+.network-detail .item.close > .glyph:active {
+    background-color: var(--button-background-color-pressed);
+}
+
+.network .network-detail .navigation-bar .item.radio.button.text-only {
+    color: inherit;
+    background-color: inherit;
+}
+
+.network .network-detail .navigation-bar .item.radio.button.text-only:before {
+    display: none;
+}
+
+.network .network-detail .navigation-bar .item.radio.button.text-only.selected {
+    color: var(--glyph-color-active);
+}
+
+.network-detail > .content-browser {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.network-table.showing-detail .network-detail {
+    border-inline-start: 1px solid var(--border-color);
+}
+
+@media (prefers-color-scheme: dark) {
+    .network-detail {
+        background-color: var(--background-color);
+    }
+
+    .network-detail .item.close > .glyph {
+        background-color: hsla(0, 0%, 100%, 0.2);
+    }
+}

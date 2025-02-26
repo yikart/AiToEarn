@@ -1,0 +1,95 @@
+/*
+ * Copyright (C) 2011 Google Inc. All Rights Reserved.
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.soft-context-menu-glass-pane {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20000;
+}
+
+.soft-context-menu {
+    position: absolute;
+    border: 1px solid hsla(0, 0%, 77%, 0.9);
+    border-top: 1px solid hsla(0, 0%, 77%, 0.5);
+    border-bottom: 1px solid hsla(0, 0%, 59%, 0.9);
+    padding: 4px 0;
+    border-radius: 6px;
+    background-color: hsl(0, 0%, 94%);
+    box-shadow: 0 5px 10px hsla(0, 0%, 0%, 0.25);
+    color: hsl(0, 0%, 24%);
+    outline: none;
+}
+
+.soft-context-menu > .item {
+    display: flex;
+    align-items: center;
+    line-height: 13px;
+    font-size: 14px;
+    padding: 2px 12px 4px 5px;
+    white-space: nowrap;
+}
+
+.soft-context-menu > .item.disabled {
+    color: hsl(0, 0%, 72%);
+    pointer-events: none;
+}
+
+.soft-context-menu > .item.highlighted {
+    background-color: hsl(215, 95%, 64%);
+    color: hsl(0, 0%, 100%);
+}
+
+.soft-context-menu > .item > .checkmark {
+    width: 16px;
+    pointer-events: none;
+}
+
+.soft-context-menu > .item > .label {
+    flex: 1;
+    padding-right: 8px;
+    pointer-events: none;
+}
+
+.soft-context-menu > .item > .submenu-arrow {
+    width: 39px;
+    line-height: 12px;
+    font-size: 11px;
+    text-align: right;
+    pointer-events: none;
+}
+
+.soft-context-menu > .separator {
+    height: 12px;
+}
+
+.soft-context-menu > .separator > .line {
+    padding-bottom: 5px;
+    border-bottom: 2px solid hsl(0, 0%, 87%);
+    pointer-events: none;
+}

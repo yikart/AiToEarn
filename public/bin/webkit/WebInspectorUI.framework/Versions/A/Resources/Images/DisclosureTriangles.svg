@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 13 13">
+    <style>
+        svg[id] {
+            display: none;
+        }
+
+        svg[id]:target {
+            display: initial;
+        }
+
+        path {
+            fill: inherit;
+        }
+
+        svg[id $= "-normal"] {
+            fill: hsl(0, 0%, 55%);
+        }
+
+        svg[id $= "-active"] {
+            fill: hsl(0, 0%, 50%);
+        }
+
+        svg[id $= "-selected"] {
+            fill: white;
+        }
+    </style>
+
+    <defs>
+        <path id="closed-triangle-path" d="M 3.011719 1.910156 L 3.011719 11.089844 L 10.507812 6.5 Z"/>
+        <path id="open-triangle-path" d="M 1.910156 2.980469 L 11.089844 2.980469 L 6.5 10.507812 Z"/>
+    </defs>
+
+    <svg id="closed-normal"><use xlink:href="#closed-triangle-path"/></svg>
+    <svg id="closed-active"><use xlink:href="#closed-triangle-path"/></svg>
+    <svg id="closed-selected"><use xlink:href="#closed-triangle-path"/></svg>
+
+    <svg id="open-normal"><use xlink:href="#open-triangle-path"/></svg>
+    <svg id="open-active"><use xlink:href="#open-triangle-path"/></svg>
+    <svg id="open-selected"><use xlink:href="#open-triangle-path"/></svg>
+</svg>

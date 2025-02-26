@@ -1,0 +1,347 @@
+/*
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.console-message, .console-user-command {
+    position: relative;
+    padding: 4px 12px 2px 20px;
+    min-height: 21px;
+}
+
+.console-user-command.special-user-log > .console-message-body {
+    padding: 0 3px 1px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    background-color: var(--selected-background-color);
+    color: var(--selected-foreground-color);
+    font: 10px -webkit-system-font, sans-serif;
+    -webkit-user-select: none;
+}
+
+.console-message .repeat-count {
+    display: inline-block;
+    float: left;
+
+    padding: 1px 4px;
+    margin: 0 4px 0 0;
+
+    height: 15px;
+    background-color: hsl(217, 31%, 62%);
+    vertical-align: middle;
+    white-space: nowrap;
+
+    font-size: 11px;
+    text-align: left;
+    line-height: normal;
+    font-weight: bold;
+    color: white;
+    border-radius: 7px;
+}
+
+.console-message-body {
+    white-space: pre-wrap;
+}
+
+.console-message-body > span {
+    -webkit-user-select: text;
+}
+
+.console-message-body > span > :is(.console-message-enclosed, .console-message-preview, .console-message-preview-divider) {
+    -webkit-user-select: none;
+}
+
+.console-message-body > .show-grid {
+    /* Prevents the light blue highlight from being visible in the checkerboard. */
+    --checkerboard-light-square: var(--background-color);
+}
+
+.console-image > .console-message-body > :is(hr, img) {
+    display: block;
+    margin: 4px 0;
+}
+
+.console-image > .console-message-body > hr {
+    height: 1px;
+    background-image: linear-gradient(to right, var(--border-color) 50%, transparent 50%);
+    background-size: 10px 1px;
+    background-repeat: repeat-x;
+    border: none;
+}
+
+.console-image > .console-message-body > img {
+    max-width: 500px;
+    max-height: 500px;
+    box-shadow: 1px 2px 6px hsla(0, 0%, 0%, 0.5);
+}
+
+.console-message.expandable .console-top-level-message::before {
+    display: inline-block;
+
+    vertical-align: baseline;
+    margin-bottom: -2px;
+    margin-inline-end: 2px;
+
+    width: 13px;
+    height: 13px;
+
+    background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
+    background-size: 13px 13px;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    content: "";
+}
+
+.console-message.expandable.expanded .console-top-level-message::before {
+    background-image: url(../Images/DisclosureTriangles.svg#open-normal);
+}
+
+.console-message.expandable.expanded :is(.console-message-preview, .console-message-preview-divider):not(.inline-lossless) {
+    display: none;
+}
+
+.console-message-preview-divider {
+    color: var(--console-secondary-text-color);
+}
+
+.console-message-enclosed {
+    font-family: Menlo, monospace;
+    font-size: 11px;
+    color: var(--console-secondary-text-color);
+}
+
+.console-message .console-message-extra-parameters-container,
+.console-message .console-message-stack-trace-container {
+    margin: 0;
+    padding: 2px 0 0 0;
+    list-style: none;
+    outline: none;
+    display: none;
+}
+
+.console-message .console-message-stack-trace-container {
+    margin-left: 20px;
+}
+
+.console-message.expandable.expanded .console-message-extra-parameters-container,
+.console-message.expandable.expanded .console-message-stack-trace-container {
+    display: block;
+}
+
+.console-message .console-message-extra-parameters-container > li,
+.console-message .console-message-stack-trace-container > li {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -webkit-user-select: text;
+    cursor: default;
+    padding: 2px 0 2px 15px;
+}
+
+.console-message .console-message-extra-parameters-container > li::before {
+    display: inline-block;
+    width: 15px;
+    margin-left: -15px;
+    text-align: center;
+
+    height: 13px;
+    content: "\2022"; /* &middot; */
+
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 11px;
+    color: var(--console-secondary-text-color);
+
+    vertical-align: top;
+}
+
+.console-error-level {
+    background-color: hsl(0, 100%, 96%);
+    border-color: hsl(0, 100%, 92%);
+}
+
+.console-error-level .console-message-body {
+    color: hsl(0, 75%, 45%);
+}
+
+.console-warning-level {
+    background-color: var(--warning-color);
+    border-color: hsl(40, 100%, 90%);
+}
+
+.console-warning-level .console-message-body {
+    color: hsl(30, 90%, 35%);
+}
+
+.console-user-command .console-message {
+    margin-left: -24px;
+    padding-right: 0;
+}
+
+.console-log-level::before {
+    content: url(../Images/Log.svg);
+}
+
+.console-log-level.console-image::before {
+    content: url(../Images/ConsoleImage.svg);
+}
+
+.console-info-level::before {
+    content: url(../Images/Info.svg);
+}
+
+.console-debug-level::before {
+    content: url(../Images/Debug.svg);
+}
+
+.console-error-level::before {
+    content: url(../Images/Error.svg);
+}
+
+.console-warning-level::before {
+    content: url(../Images/Warning.svg);
+}
+
+.console-user-command::before {
+    content: url(../Images/UserInputPromptPrevious.svg);
+}
+
+:is(.console-warning-level, .console-error-level, .console-log-level, .console-info-level, .console-debug-level).console-message {
+ /* Move non-monospace log/warning/error text up a bit. */
+    padding: 3px 12px 3px 20px;
+}
+
+:is(.console-warning-level, .console-error-level, .console-log-level, .console-info-level, .console-debug-level)::before {
+ /* Re-center log/warning/error icons. */
+    padding-top: 1px;
+}
+
+.console-user-command > .console-message-body {
+    color: hsl(209, 100%, 50%);
+    -webkit-user-select: text;
+}
+
+.console-saved-variable {
+    font-style: normal;
+    color: var(--console-secondary-text-color);
+}
+
+.console-user-command,
+.console-user-command-result {
+    font-family: Menlo, monospace;
+    font-size: 11px;
+}
+
+.console-user-command-result.console-log-level::before {
+    content: url(../Images/UserInputResult.svg);
+    margin-left: 1px;
+}
+
+.console-message .console-message-location {
+    float: right;
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.console-message-extra-parameter .stack-trace {
+    display: inline-block;
+}
+
+.console-message-location.call-frame {
+    display: inline-block;
+    max-width: 100%;
+    max-height: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.console-message-location.call-frame > .title {
+    max-width: 20vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: text-top;
+}
+
+.console-message-location.call-frame > .subtitle > .source-link {
+    max-width: 30vw;
+}
+
+.console-message .go-to-link {
+    color: hsla(0, 0%, 0%, 0.6);
+    text-decoration: none;
+}
+
+.console-message .go-to-link:hover,
+.console-message .go-to-link:focus {
+    color: hsl(210, 100%, 40%);
+}
+
+.console-message .console-message-url::before {
+    content: ' ';
+}
+
+.console-message .timestamp {
+    float: right;
+    margin-inline-start: 12px;
+    padding-top: 2px;
+    font-family: Menlo, monospace;
+    font-size: 11px;
+    color: var(--text-color-tertiary);
+}
+
+.console-session:not(.timestamps-visible) .console-message .timestamp {
+    display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    .console-message .syntax-highlighted {
+        background-color: unset;
+    }
+
+    .console-warning-level .console-message-body {
+        color: hsl(53, 80%, 55%);
+    }
+
+    .console-error-level .console-message-body {
+        color: hsl(10, 100%, 70%);
+    }
+
+    .console-user-command > .console-message-body {
+        color: hsl(209, 100%, 70%);
+    }
+
+    .console-message .repeat-count {
+        background-color: hsl(218, 70%, 48%);
+    }
+
+    .console-message .go-to-link {
+        color: var(--text-color-secondary);
+    }
+
+    .console-message .go-to-link:hover,
+    .console-message .go-to-link:focus {
+        color: var(--selected-secondary-text-color-active);
+    }
+}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2022 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+    <path fill="currentColor" fill-rule="evenodd" d="M1.264,13L6,13L6,14.5L5.732,14.5C5.456,14.5 5.232,14.724 5.232,15C5.232,15.276 5.456,15.5 5.732,15.5L10.232,15.5C10.508,15.5 10.732,15.276 10.732,15C10.732,14.724 10.508,14.5 10.232,14.5L10,14.5L10,13L14.736,13C15.433,13 16,12.433 16,11.736L16,2.264C16,1.567 15.433,1 14.736,1L1.264,1C0.567,1 -0,1.567 -0,2.264L-0,11.736C-0,12.433 0.567,13 1.264,13ZM15,2L1,2L1,12L15,12L15,2Z"/>
+    <rect fill="currentColor" fill-opacity="0.25" x="1" y="2" width="14" height="10"/>
+</svg>

@@ -1,0 +1,41 @@
+/*  全局css变量 */
+:root {
+  /* 深灰色 */
+  --darkGreyColor: #555;
+  /* 浅灰色 */
+  --lightGreyColor: #888;
+
+  /* 超大号字 */
+  --fs-xl: 20px;
+  /* 大号字 */
+  --fs-lg: 18px;
+  /* 中号字 */
+  --fs-md: 16px;
+  /* 小号字 */
+  --fs-sm: 14px;
+  /* 超小号字 */
+  --fs-xs: 12px;
+
+  /*  主题颜色 */
+  --colorPrimary1: #faf0ff;
+  --colorPrimary2: #f9f0ff;
+  --colorPrimary3: #e4c5fc;
+  --colorPrimary4: #c595f0;
+  --colorPrimary5: #a66ae4;
+  --colorPrimary6: #814dbd;
+  --colorPrimary7: #603696;
+  --colorPrimary8: #603696;
+  --colorPrimary9: #422370;
+  --colorPrimary10: #29164a;
+
+  /* 渐变背景色 */
+  --gradientBackColor: linear-gradient(to right, #c565ef, #55D9ED);
+  /*--gradientBackColor: linear-gradient(to right, #7881fd, #f2c3cf);*/
+
+  /* 警告色 */
+  --warningColor: #d48806;
+  /* 错误色 */
+  --errerColor: red;
+  /* 成功色 */
+  --successColor: #52c41a;
+}

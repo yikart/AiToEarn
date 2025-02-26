@@ -1,0 +1,93 @@
+/*
+ * Copyright (C) 2023 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.linear-timing-function-editor {
+    width: 200px; /* Keep in sync with `editorWidth`. */
+    min-height: 310px;
+}
+
+.linear-timing-function-editor > .preview {
+    width: calc(100% - 10px);
+    height: 25px;
+    margin: 5px 5px 0; /* Keep in sync with `margin`. */
+    border-bottom: 1px solid var(--border-color);
+}
+
+.linear-timing-function-editor > .preview > div {
+    width: 20px;
+    height: 20px;
+    background-color: var(--glyph-color-active);
+    border-radius: 50%;
+}
+
+.linear-timing-function-editor > .timing {
+    position: absolute;
+    top: 34px;
+    /* Keep in sync with `indent`. */
+    margin-inline-start: 11px;
+    border-inline: 4px solid transparent;
+    border-top: 4px solid var(--text-color);
+}
+
+.linear-timing-function-editor > .preview.animate > div,
+.linear-timing-function-editor > .timing.animate {
+    animation: LinearTimingFunctionPreview 2.5s linear 250ms infinite;
+}
+
+@keyframes LinearTimingFunctionPreview {
+    from { transform: translateX(0); }
+    10% { transform: translateX(0); }
+    90% { transform: translateX(170px); }
+    to { transform: translateX(170px); }
+}
+
+.linear-timing-function-editor > svg {
+    margin: 8px 5px; /* Keep in sync with `editorWidth`. */
+}
+
+.linear-timing-function-editor > svg path {
+    fill: none;
+    stroke: var(--text-color);
+    stroke-width: 2; /* Keep in sync with `strokeWidth`. */
+}
+
+.linear-timing-function-editor > .points {
+    width: calc(100% - 10px);
+    margin: 0 5px;
+    padding: 7px 2px 0;
+    border-top: 1px solid var(--border-color);
+}
+
+.linear-timing-function-editor > .points :is(table, thead, tbody, tfoot, tr, input) {
+    width: 100%;
+}
+
+.linear-timing-function-editor > .points th {
+    text-align: start;
+}
+
+.linear-timing-function-editor > .points input {
+    text-align: end;
+}

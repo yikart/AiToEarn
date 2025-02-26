@@ -1,0 +1,28 @@
+{
+  "main_library": {
+    "current_versions": [
+      {
+        "version": "621.1.10"
+      }
+    ],
+    "flags": [
+      {
+        "attributes": [
+          "not_app_extension_safe"
+        ]
+      }
+    ],
+    "install_names": [
+      {
+        "name": "/System/Library/PrivateFrameworks/WebInspectorUI.framework/Versions/A/WebInspectorUI"
+      }
+    ],
+    "target_info": [
+      {
+        "min_deployment": "15.0",
+        "target": "arm64-macos"
+      }
+    ]
+  },
+  "tapi_tbd_version": 5
+}

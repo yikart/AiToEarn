@@ -1,0 +1,256 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.network-icon .icon {
+    content: url(../Images/IdentifierIcons.svg#NetworkInstrument-light);
+}
+
+.script-icon .icon {
+    content: url(../Images/IdentifierIcons.svg#ScriptsInstrument-light);
+}
+
+.cpu-icon .icon {
+    content: url(../Images/IdentifierIcons.svg#CPUInstrument-light);
+}
+
+.screenshots-icon .icon {
+    content: url(../Images/IdentifierIcons.svg#ScreenshotsInstrument-light);
+}
+
+.memory-icon .icon {
+    content: url(../Images/IdentifierIcons.svg#MemoryInstrument-light);
+}
+
+.heap-allocations-icon .icon {
+    content: url(../Images/IdentifierIcons.svg#HeapAllocationsInstrument-light);
+}
+
+.layout-icon .icon {
+    content: url(../Images/IdentifierIcons.svg#LayoutInstrument-light);
+}
+
+.rendering-frame-icon .icon {
+    content: url(../Images/IdentifierIcons.svg#RenderingFramesInstrument-light);
+}
+
+.media-icon .icon {
+    content: url(../Images/IdentifierIcons.svg#MediaInstrument-light);
+}
+
+.stopwatch-icon .icon {
+    content: url(../Images/Stopwatch.svg#light);
+}
+
+.time-icon .icon {
+    content: url(../Images/Timeline.svg);
+    width: 13px;
+    opacity: 0.6;
+}
+
+.style-record .icon {
+    content: url(../Images/TypeIcons.svg#TimelineRecordStyle-light);
+}
+
+.layout-record .icon {
+    content: url(../Images/TypeIcons.svg#TimelineRecordLayout-light);
+}
+
+.paint-record .icon {
+    content: url(../Images/TypeIcons.svg#TimelineRecordPaint-light);
+}
+
+.composite-record .icon {
+    content: url(../Images/TypeIcons.svg#TimelineRecordComposite-light);
+}
+
+.rendering-frame-record .icon {
+    content: url(../Images/TypeIcons.svg#RenderingFrame-light);
+}
+
+.api-record .icon {
+    content: url(../Images/TypeIcons.svg#TimelineRecordAPI-light);
+}
+
+.evaluated-record .icon {
+    content: url(../Images/TypeIcons.svg#TimelineRecordScriptEvaluated-light);
+}
+
+.event-record .icon {
+    content: url(../Images/TypeIcons.svg#TimelineRecordEvent-light);
+}
+
+.probe-record .icon {
+    content: url(../Images/TypeIcons.svg#TimelineRecordProbeSampled-light);
+}
+
+.runloop-record .icon {
+    width: 0 !important;
+}
+
+.console-profile-record .icon {
+    content: url(../Images/TypeIcons.svg#TimelineRecordConsoleProfile-light);
+}
+
+.garbage-collection-profile-record .icon {
+    content: url(../Images/TypeIcons.svg#TimelineRecordGarbageCollection-light);
+}
+
+.timer-record .icon {
+    content: url(../Images/TypeIcons.svg#TimelineRecordTimer-light);
+}
+
+.animation-frame-record .icon {
+    content: url(../Images/TypeIcons.svg#TimelineRecordAnimationFrame-light);
+}
+
+.css-animation-record .icon {
+    content: url(../Images/TypeIcons.svg#TimelineRecordCSSAnimation-light);
+}
+
+.css-transition-record .icon {
+    content: url(../Images/TypeIcons.svg#TimelineRecordCSSTransition-light);
+}
+
+.media-element-record .icon {
+    content: url(../Images/TypeIcons.svg#TimelineRecordMediaElement-light);
+}
+
+.heap-snapshot-record .icon {
+    content: url(../Images/TypeIcons.svg#HeapSnapshot-light);
+}
+
+@media (prefers-color-scheme: dark) {
+    .time-icon .icon {
+        filter: invert();
+    }
+
+    .network-icon .icon {
+        content: url(../Images/IdentifierIcons.svg#NetworkInstrument-dark);
+    }
+
+    .script-icon .icon {
+        content: url(../Images/IdentifierIcons.svg#ScriptsInstrument-dark);
+    }
+
+    .cpu-icon .icon {
+        content: url(../Images/IdentifierIcons.svg#CPUInstrument-dark);
+    }
+
+    .screenshots-icon .icon {
+        content: url(../Images/IdentifierIcons.svg#ScreenshotsInstrument-dark);
+    }
+
+    .memory-icon .icon {
+        content: url(../Images/IdentifierIcons.svg#MemoryInstrument-dark);
+    }
+
+    .heap-allocations-icon .icon {
+        content: url(../Images/IdentifierIcons.svg#HeapAllocationsInstrument-dark);
+    }
+
+    .layout-icon .icon {
+        content: url(../Images/IdentifierIcons.svg#LayoutInstrument-dark);
+    }
+
+    .rendering-frame-icon .icon {
+        content: url(../Images/IdentifierIcons.svg#RenderingFramesInstrument-dark);
+    }
+
+    .media-icon .icon {
+        content: url(../Images/IdentifierIcons.svg#MediaInstrument-dark);
+    }
+
+    .stopwatch-icon .icon {
+        content: url(../Images/Stopwatch.svg#dark);
+    }
+
+    .style-record .icon {
+        content: url(../Images/TypeIcons.svg#TimelineRecordStyle-dark);
+    }
+
+    .layout-record .icon {
+        content: url(../Images/TypeIcons.svg#TimelineRecordLayout-dark);
+    }
+
+    .paint-record .icon {
+        content: url(../Images/TypeIcons.svg#TimelineRecordPaint-dark);
+    }
+
+    .composite-record .icon {
+        content: url(../Images/TypeIcons.svg#TimelineRecordComposite-dark);
+    }
+
+    .rendering-frame-record .icon {
+        content: url(../Images/TypeIcons.svg#RenderingFrame-dark);
+    }
+
+    .api-record .icon {
+        content: url(../Images/TypeIcons.svg#TimelineRecordAPI-dark);
+    }
+
+    .evaluated-record .icon {
+        content: url(../Images/TypeIcons.svg#TimelineRecordScriptEvaluated-dark);
+    }
+
+    .event-record .icon {
+        content: url(../Images/TypeIcons.svg#TimelineRecordEvent-dark);
+    }
+
+    .probe-record .icon {
+        content: url(../Images/TypeIcons.svg#TimelineRecordProbeSampled-dark);
+    }
+
+    .console-profile-record .icon {
+        content: url(../Images/TypeIcons.svg#TimelineRecordConsoleProfile-dark);
+    }
+
+    .garbage-collection-profile-record .icon {
+        content: url(../Images/TypeIcons.svg#TimelineRecordGarbageCollection-dark);
+    }
+
+    .timer-record .icon {
+        content: url(../Images/TypeIcons.svg#TimelineRecordTimer-dark);
+    }
+
+    .animation-frame-record .icon {
+        content: url(../Images/TypeIcons.svg#TimelineRecordAnimationFrame-dark);
+    }
+
+    .css-animation-record .icon {
+        content: url(../Images/TypeIcons.svg#TimelineRecordCSSAnimation-dark);
+    }
+
+    .css-transition-record .icon {
+        content: url(../Images/TypeIcons.svg#TimelineRecordCSSTransition-dark);
+    }
+
+    .media-element-record .icon {
+        content: url(../Images/TypeIcons.svg#TimelineRecordMediaElement-dark);
+    }
+
+    .heap-snapshot-record .icon {
+        content: url(../Images/TypeIcons.svg#HeapSnapshot-dark);
+    }
+}

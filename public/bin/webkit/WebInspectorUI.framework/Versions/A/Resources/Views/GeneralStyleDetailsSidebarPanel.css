@@ -1,0 +1,203 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.sidebar > .panel.details.css-style > .content {
+    flex-grow: 1;
+    position: relative;
+}
+
+.sidebar > .panel.details.css-style > .content ~ :is(.options-container, .class-list-container, .forced-pseudo-class-container) {
+    /* Make sure options and class containers are above details section headers, but below popovers. */
+    z-index: calc(var(--z-index-header) + 1);
+    width: 100%;
+    border-top: 1px solid var(--border-color);
+}
+
+.sidebar > .panel.details.css-style > .content ~ :is(.options-container, .class-list-container) {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .options-container {
+    height: var(--navigation-bar-height);
+    padding-top: 2px;
+}
+
+.sidebar > .panel.details.css-style > .content:not(.supports-new-rule, .has-filter-bar) ~ :is(.options-container, .class-list-container, .forced-pseudo-class-container) {
+    display: none;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule {
+    width: 15px;
+    min-width: 15px;
+    height: 15px;
+    margin-inline-start: 6px;
+    content: url(../Images/Plus15.svg);
+    opacity: 0.7;
+
+}
+
+.sidebar > .panel.details.css-style > .content ~ .options-container > .filter-bar {
+    width: -webkit-fill-available;
+    background-color: transparent;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle {
+    position: relative;
+    margin: 0 0 1px;
+    margin-inline-end: 5px;
+    padding: 2px 4px 3px;
+    color: var(--text-color);
+    background: none;
+    border: none;
+    border-radius: 3px;
+    white-space: nowrap;
+    appearance: none;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle:focus {
+    outline-offset: var(--focus-ring-outline-offset);
+}
+
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle::before {
+    position: absolute;
+    content: "";
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 3px;
+    opacity: var(--glyph-opacity);
+    z-index: -1;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle:is(.selected, :hover) {
+    color: var(--selected-foreground-color);
+}
+
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle:is(.selected, :hover)::before {
+    background-color: var(--glyph-color-active);
+}
+
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle:not(.selected):hover::before {
+    opacity: 0.5;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle.selected:active::before {
+    filter: brightness(0.8);
+}
+
+.sidebar > .panel.details.css-style > .content:not(.supports-new-rule) ~ .options-container > .new-rule,
+.sidebar > .panel.details.css-style > .content:not(.supports-toggle-class-list) ~ .options-container > .toggle.class-list,
+.sidebar > .panel.details.css-style > .content:not(.supports-toggle-forced-pseudo-class) ~ .options-container > .toggle.forced-pseudo-class,
+.sidebar > .panel.details.css-style > .content:not(.has-filter-bar) ~ .options-container > .filter-bar,
+.sidebar > .panel.details.css-style > .content:not(.supports-new-rule):not(.supports-toggle-class-list):not(.supports-toggle-forced-pseudo-class):not(.has-filter-bar) ~ .options-container {
+    display: none;
+}
+
+.sidebar > .panel.details.css-style > .content ~ :is(.class-list-container, .forced-pseudo-class-container) {
+    padding: 3px 2px;
+    background-color: var(--panel-background-color);
+}
+
+.sidebar > .panel.details.css-style > .content ~ :is(.class-list-container, .forced-pseudo-class-container)[hidden] {
+    display: none;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .class-list-container {
+    flex-wrap: wrap;
+    max-height: 75px;
+    overflow-y: auto;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class {
+    display: flex;
+    width: 100%;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > .class-name-input {
+    flex-grow: 1;
+    height: 18px;
+    margin: 0;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .class-list-container > *:is(.new-class, .class-toggle) {
+    margin: 1px 3px;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .forced-pseudo-class-container {
+    display: block;
+    column-count: 2;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .forced-pseudo-class-container > label {
+    display: block;
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress .filter-matching {
+    display: inline;
+    background-color: hsla(53, 83%, 53%, 0.5);
+    border-bottom: 1px solid hsl(47, 82%, 60%);
+    opacity: 1;
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress .style-declaration-section {
+    margin-bottom: 0;
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress .style-declaration-section.last-in-group.filter-section-non-matching + .style-declaration-section.filter-section-has-label {
+    margin-top: 0;
+    border-top: none;
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress .style-declaration-section:not(.filter-section-has-label) {
+    margin-top: 0;
+    border-top: none;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress .style-declaration-section > .header > .selector > .filter-matching {
+    color: black;
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress .filter-section-non-matching {
+    display: none;
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress .filter-property-non-matching {
+    opacity: 0.5;
+}
+
+@media (prefers-color-scheme: dark) {
+    .sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule {
+        filter: var(--filter-invert);
+    }
+}
+
+.multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > .options-container > .toggle,
+.multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > :is(.class-list-container, .forced-pseudo-class-container) {
+    display: none;
+}

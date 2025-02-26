@@ -1,0 +1,147 @@
+/*
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.object-tree {
+    position: relative;
+    display: inline;
+    color: var(--text-color);
+    font-family: Menlo, monospace;
+    font-size: 11px;
+}
+
+.object-tree > :is(.title, .object-preview)::before {
+    display: inline-block;
+
+    vertical-align: baseline;
+    margin-bottom: -2px;
+    margin-right: 2px;
+
+    width: 13px;
+    height: 13px;
+
+    background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
+    background-size: 13px 13px;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    content: "";
+}
+
+.object-tree:not(.lossless-preview) > :is(.title, .object-preview) {
+    margin-left: 0;
+}
+
+.object-tree.expanded > :is(.title, .object-preview)::before {
+    background-image: url(../Images/DisclosureTriangles.svg#open-normal);
+}
+
+.object-tree.properties-only > :is(.title, .object-preview) {
+    display: none;
+}
+
+.object-tree.expanded .object-preview {
+    font-style: normal;
+}
+
+.object-tree.expanded > .title {
+    line-height: 16px;
+}
+
+.object-tree.lossless-preview > :is(.title, .object-preview)::before {
+    background: none;
+    width: 0px;
+}
+
+.object-tree .tree-outline.object {
+    display: none;
+}
+
+.object-tree.expanded > .tree-outline.object {
+    display: block;
+}
+
+.tree-outline.object {
+    margin: 0;
+    padding-top: 0;
+    padding-bottom: 2px;
+    padding-inline: 6px 0;
+    list-style: none;
+    min-height: 18px;
+    outline: none;
+}
+
+.tree-outline.object > .item {
+    padding-inline-end: 0;
+}
+
+.object-tree .tree-outline.object.compact {
+    margin-top: 1px;
+}
+
+.tree-outline.object .item,
+.object-tree.properties-only .tree-outline.object {
+    padding-left: 0;
+}
+
+.object-tree.properties-only .object-tree-property .property-name {
+    opacity: 1;
+}
+
+.object-tree.properties-only.json-only .object-tree-property.prototype-property,
+.object-tree.properties-only.json-only .object-tree-property.prototype-property + .children {
+    display: none;
+}
+
+.tree-outline.object li {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -webkit-user-select: text;
+    cursor: default;
+}
+
+.tree-outline.object ol {
+    display: none;
+    margin: 0;
+    padding-inline-start: 16px;
+    list-style: none;
+}
+
+.tree-outline.object ol.expanded {
+    display: block;
+}
+
+.tree-outline.object li .empty-message {
+    color: hsl(0, 0%, 60%);
+    margin-left: 15px;
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 12px;
+}
+
+.tree-outline.object li > button[disabled] + .indeterminate-progress-spinner {
+    display: inline-block;
+    margin-inline-start: 2px;
+    vertical-align: -4px;
+}

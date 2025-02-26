@@ -1,0 +1,119 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.navigation-bar .item.button {
+    justify-content: center;
+    color: hsl(0, 0%, 18%);
+}
+
+.navigation-bar .item.button:not(.image-only):focus,
+.navigation-bar .item.button.image-only:focus > .glyph {
+    outline: auto -webkit-focus-ring-color;
+}
+
+.navigation-bar .item.button.image-only:focus {
+    outline: none;
+}
+
+.navigation-bar .item.button.image-only {
+    width: var(--image-button-navigation-item-width);
+}
+
+.navigation-bar .item.button.image-and-text {
+    padding: 0 8px;
+}
+
+.navigation-bar .item.button.image-and-text > span {
+    padding-bottom: 1px;
+    padding-inline-start: 4px;
+}
+
+.tab-bar > .navigation-bar .item.button.image-and-text > span {
+    padding-bottom: 0;
+}
+
+.navigation-bar .item.button.text-only {
+    padding: 1px 4px 3px;
+    margin: 0 2px; /* WI.ButtonNavigationItem.prototype.get textMargin */
+
+    height: initial;
+    line-height: 11px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    text-align: center;
+}
+
+.navigation-bar .item.button.text-only:focus {
+    outline-offset: var(--focus-ring-outline-offset);
+}
+
+.navigation-bar .item.button > .glyph {
+    color: var(--glyph-color);
+    opacity: var(--glyph-opacity);
+}
+
+.navigation-bar .item.button:not(.disabled):active > .glyph {
+    color: var(--glyph-color-pressed);
+}
+
+.navigation-bar .item.button:not(.disabled):is(.activate.activated, .radio.selected) > .glyph {
+    color: var(--glyph-color-active);
+}
+
+.navigation-bar .item.button:not(.disabled):active:is(.activate.activated, .radio.selected) > .glyph {
+    color: var(--glyph-color-active-pressed);
+}
+
+.navigation-bar .item.button.disabled.image-and-text,
+.navigation-bar .item.button.disabled > .glyph {
+    color: var(--glyph-color-disabled);
+}
+
+.navigation-bar .item.button > img {
+    width: 100%;
+    height: 100%;
+}
+
+.navigation-bar .item.button.disabled > img {
+    opacity: 0.3;
+}
+
+body.window-inactive .navigation-bar .item.button > img {
+    opacity: 0.6;
+}
+
+body.window-inactive .navigation-bar .item.button.disabled > img {
+    opacity: 0.18;
+}
+
+@media (prefers-color-scheme: dark) {
+    .navigation-bar .item.button {
+        color: var(--text-color-secondary);
+    }
+
+    .navigation-bar .item.button.disabled > img {
+        filter: invert();
+    }
+}

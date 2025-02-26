@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2018 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+    <path fill="currentColor" d="M 15.5 8 a 0.5 0.5 0 0 1 -0.24 0.43 L 11 10.99 V 9.82 L 14.03 8 11 6.18 V 5.01 l 4.26 2.56 A 0.5 0.5 0 0 1 15.5 8 Z"/>
+    <polygon fill="currentColor" points="10.77 3 6.32 13 5.23 13 9.68 3 10.77 3"/>
+    <path fill="currentColor" d="M 5 6.18 1.97 8 5 9.82 v 1.17 L 0.74 8.43 a 0.505 0.505 0 0 1 0 -0.86 L 5 5.01 Z"/>
+</svg>

@@ -1,0 +1,231 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.find-banner {
+    border-bottom: 1px solid var(--border-color);
+
+    position: absolute;
+    top: -22px;
+    left: 0;
+    right: 0;
+    height: 22px;
+
+    text-align: right;
+
+    white-space: nowrap;
+    overflow: hidden;
+
+    transition-property: top;
+    transition-duration: 200ms;
+    transition-timing-function: ease-in;
+
+    z-index: var(--z-index-header);
+
+    --find-banner-inline-space: 6px;
+}
+
+.find-banner.showing {
+    top: 0;
+    transition-timing-function: ease-out;
+}
+
+.no-find-banner-transition:is(.find-banner, .supports-find-banner) {
+    transition-duration: 0s !important;
+}
+
+.supports-find-banner {
+    transition-property: top;
+    transition-duration: 200ms;
+    transition-timing-function: ease-in;
+}
+
+.supports-find-banner.showing-find-banner {
+    top: 22px !important;
+    transition-timing-function: ease-out;
+}
+
+.find-banner > input[type="search"] {
+    width: 30vw;
+    min-width: 143px;
+    max-width: 210px;
+    height: 19px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    margin-inline: 0 -1px;
+    vertical-align: top;
+    background-color: white;
+    border: 1px solid var(--border-color);
+    outline: none;
+    appearance: none;
+
+    --find-banner-search-box-border-radius-start: 4px;
+    --find-banner-search-box-border-radius-end: 0;
+}
+
+body[dir=ltr] .find-banner > input[type="search"] {
+    border-top-left-radius: var(--find-banner-search-box-border-radius-start);
+    border-bottom-left-radius: var(--find-banner-search-box-border-radius-start);
+    border-top-right-radius: var(--find-banner-search-box-border-radius-end);
+    border-bottom-right-radius: var(--find-banner-search-box-border-radius-end);
+}
+
+body[dir=rtl] .find-banner > input[type="search"] {
+    border-top-left-radius: var(--find-banner-search-box-border-radius-end);
+    border-bottom-left-radius: var(--find-banner-search-box-border-radius-end);
+    border-top-right-radius: var(--find-banner-search-box-border-radius-start);
+    border-bottom-right-radius: var(--find-banner-search-box-border-radius-start);
+}
+
+.find-banner > button {
+    margin: 1px 4px;
+
+    padding-inline: var(--find-banner-inline-space);
+
+    appearance: none;
+
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    color: var(--glyph-color);
+    background-color: var(--button-background-color);
+
+    line-height: 11px;
+
+    height: 19px;
+
+    text-align: center;
+    vertical-align: top;
+
+    outline-offset: -2px;
+}
+
+.find-banner > button > .glyph {
+    display: inline-block;
+
+    width: 7px;
+    height: 11px;
+}
+
+.find-banner > button:disabled > .glyph {
+    opacity: 0.4;
+}
+
+.find-banner > button:active:not(:disabled) {
+    border: 1px solid var(--border-color);
+    background-color: var(--button-background-color-pressed);
+}
+
+.find-banner > button.segmented {
+    margin: 1px 0;
+}
+
+.find-banner > button.segmented.previous-result {
+    border-radius: 0;
+    border-inline-end: solid 1px var(--border-color);
+}
+
+body[dir=ltr] .find-banner > button.segmented.previous-result > .glyph {
+    background-image: url(../Images/BackForwardArrows.svg#left-arrow-normal);
+}
+
+body[dir=rtl] .find-banner > button.segmented.previous-result > .glyph {
+    background-image: url(../Images/BackForwardArrows.svg#right-arrow-normal);
+}
+
+body[dir=ltr] .find-banner > button.segmented.previous-result:active:not(:disabled) > .glyph {
+    background-image: url(../Images/BackForwardArrows.svg#left-arrow-active);
+}
+
+body[dir=rtl] .find-banner > button.segmented.previous-result:active:not(:disabled) > .glyph {
+    background-image: url(../Images/BackForwardArrows.svg#right-arrow-active);
+}
+
+.find-banner > button.segmented.next-result {
+    border-inline-start: none;
+
+    --next-result-border-radius-start: 0;
+}
+
+body[dir=ltr] .find-banner > button.segmented.next-result {
+    border-top-left-radius: var(--next-result-border-radius-start);
+    border-bottom-left-radius: var(--next-result-border-radius-start);
+}
+
+body[dir=rtl] .find-banner > button.segmented.next-result {
+    border-top-right-radius: var(--next-result-border-radius-start);
+    border-bottom-right-radius: var(--next-result-border-radius-start);
+}
+
+.find-banner > button.segmented.next-result > .glyph {
+    margin-inline-start: 1px;
+}
+
+body[dir=ltr] .find-banner > button.segmented.next-result > .glyph {
+    background-image: url(../Images/BackForwardArrows.svg#right-arrow-normal);
+}
+
+body[dir=rtl] .find-banner > button.segmented.next-result > .glyph {
+    background-image: url(../Images/BackForwardArrows.svg#left-arrow-normal);
+}
+
+body[dir=ltr] .find-banner > button.segmented.next-result:active:not(:disabled) > .glyph {
+    background-image: url(../Images/BackForwardArrows.svg#right-arrow-active);
+}
+
+body[dir=rtl] .find-banner > button.segmented.next-result:active:not(:disabled) > .glyph {
+    background-image: url(../Images/BackForwardArrows.svg#left-arrow-active);
+}
+
+.find-banner > button.segmented {
+    min-width: 22px;
+    padding: 3px var(--find-banner-inline-space) 2px;
+}
+
+.find-banner > button.segmented > .glyph {
+    background-size: 7px 11px;
+    background-repeat: no-repeat;
+}
+
+.find-banner > label {
+    line-height: 21px;
+}
+
+.find-banner > label:not(:empty) {
+    margin-inline-end: var(--find-banner-inline-space);
+}
+
+@media (prefers-color-scheme: dark) {
+    .find-banner > button.segmented {
+        background: transparent !important;
+    }
+
+    .find-banner > button.segmented > .glyph {
+        filter: invert();
+    }
+
+    .find-banner > input[type="search"] {
+        background-color: var(--background-color-alternate);
+        border-color: var(--background-color-selected);
+    }
+}

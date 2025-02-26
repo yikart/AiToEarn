@@ -1,0 +1,440 @@
+/*
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+:root {
+    --z-index-highlight: 64;
+    --z-index-header: 128;
+    --z-index-resizer: 256;
+    --z-index-popover: 512;
+    --z-index-tooltip: 1024;
+    --z-index-glass-pane-for-drag: 2048;
+    --z-index-uncaught-exception-sheet: 4096;
+
+    --foreground-lightness: 0%;
+
+    --text-color: black;
+    --text-color-transparent: hsla(0, 0%, 0%, 0.4);
+
+    --text-color-active: black;
+
+    --text-color-secondary: hsl(0, 0%, 50%);
+
+    /* Disabled text/glyphs */
+    --text-color-tertiary: hsl(0, 0%, 70%);
+
+    /* Dividers, separators, background fills */
+    --text-color-quaternary: hsl(0, 0%, 85%);
+
+    --separator-color: hsla(0, 0%, var(--foreground-lightness), 0.15);
+
+    --background-color: white;
+
+    --background-color-content: white;
+    --background-color-intermediate: hsl(0, 0%, 97%);
+
+    --background-color-unfocused: hsla(0, 0%, calc(100% - var(--foreground-lightness)), 0.8);
+    --background-color-alternate: hsla(0, 0%, var(--foreground-lightness), 0.05);
+    --background-color-selected: hsla(0, 0%, var(--foreground-lightness), 0.1);
+    --background-color-pressed: hsla(0, 0%, var(--foreground-lightness), 0.05);
+
+    /* Gray background with lighter foreground. In dark mode this is lighter. */
+    --gray-background-color: hsl(0, 0%, 66%);
+    --gray-foreground-color: white;
+
+    --link-text-color: hsl(0, 0%, 33%);
+
+    --selected-foreground-color: white;
+    --selected-secondary-text-color: hsla(0, 100%, 100%, 0.7);
+    --selected-background-color: hsl(212, 92%, 54%);
+    --selected-background-color-unfocused: hsl(0, 0%, 83%);
+    --selected-background-color-active: hsl(218, 85%, 52%);
+    --selected-background-color-hover: hsla(212, 92%, 54%, 0.5);
+    --selected-background-color-highlight: hsla(0, 0%, 100%, 0.3);
+    --selected-text-background-color: hsl(210, 98%, 93%);
+
+    --breakpoint-color: hsl(211, 100%, 50%);
+    --breakpoint-color-disabled: hsl(211, 82%, 82%);
+
+    --glyph-color: hsl(0, 0%, 30%);
+    --glyph-color-pressed: hsl(0, 0%, 15%);
+    --glyph-color-disabled: hsla(0, 0%, 30%, 0.55);
+    --glyph-color-active: hsl(212, 92%, 54%);
+    --glyph-color-active-pressed: hsl(218, 85%, 52%);
+    --glyph-opacity: 1;
+
+    --border-color: hsl(0, 0%, 70%);
+    --border-color-secondary: hsl(0, 0%, 87%);
+
+    --button-background-color: white;
+    --button-background-color-hover: hsl(0, 0%, 88%);
+    --button-background-color-pressed: hsl(0, 0%, 85%);
+
+    --panel-background-color: hsl(0, 0%, 93%);
+    --panel-background-color-light: hsl(0, 0%, 96%);
+
+    --warning-color: hsl(50, 100%, 94%);
+    --warning-background-color: hsl(43, 97%, 84%);
+    --warning-background-color-secondary: hsl(51, 87%, 93%);
+
+    --error-background-color: hsl(11, 100%, 80%);
+    --error-background-color-secondary: hsl(15, 100%, 90%);
+
+    --yellow-highlight-background-color: var(--warning-color);
+    --yellow-highlight-text-color: var(--text-color);
+
+    --console-secondary-text-color: hsla(0, 0%, 0%, 0.33);
+    --console-prompt-min-height: 30px;
+
+    --message-text-view-font-size: 16px;
+    --message-text-view-large-font-size: 28px;
+
+    --text-color-gray-dark: hsl(0, 0%, 20%);
+    --text-color-gray-medium: hsl(0, 0%, 52%);
+    --error-text-color: hsl(0, 86%, 47%);
+
+    --value-changed-highlight: hsla(83, 100%, 48%, 0.4);
+
+    --syntax-highlight-number-color: hsl(248, 100%, 40%);
+    --syntax-highlight-bigint-color: hsl(192, 100%, 38%);
+    --syntax-highlight-boolean-color: hsl(309, 85%, 35%);
+    --syntax-highlight-string-color: hsl(1, 79%, 42%);
+    --syntax-highlight-link-color: hsl(240, 100%, 52%);
+    --syntax-highlight-regexp-color: hsl(20, 100%, 44%);
+    --syntax-highlight-symbol-color: hsl(172, 45%, 45%);
+    --syntax-highlight-comment-color: hsl(119, 100%, 22%);
+
+    --syntax-highlight-regex-group-color: var(--text-color-gray-medium);
+
+    --timeline-marker-z-index: 4;
+    --timeline-record-z-index: 8;
+    --timeline-current-time-z-index: 16;
+    --timeline-selection-z-index: 32;
+
+    --timeline-odd-background-color: var(--background-color-content);
+    --timeline-even-background-color: hsl(0, 0%, 96%);
+
+    --timeline-scanner-color: hsl(0, 0%, 35%);
+
+    --graph-line-color: hsla(0, 0%, var(--foreground-lightness), 0.07);
+
+    --memory-javascript-fill-color: hsl(269, 65%, 75%);
+    --memory-javascript-stroke-color: hsl(269, 33%, 50%);
+    --memory-images-fill-color: hsl(0, 65%, 75%);
+    --memory-images-stroke-color: hsl(0, 54%, 50%);
+    --memory-layers-fill-color: hsl(76, 49%, 75%);
+    --memory-layers-stroke-color: hsl(79, 45%, 50%);
+    --memory-page-fill-color: hsl(22, 60%, 70%);
+    --memory-page-stroke-color: hsl(22, 40%, 50%);
+    --memory-max-comparison-fill-color: hsl(220, 10%, 75%);
+    --memory-max-comparison-stroke-color: hsl(220, 10%, 55%);
+
+    --cpu-other-thread-fill-color: hsl(81, 80%, 50%);
+    --cpu-other-thread-stroke-color: hsl(81, 80%, 30%);
+    --cpu-main-thread-fill-color: hsl(118, 43%, 55%);
+    --cpu-main-thread-stroke-color: hsl(118, 33%, 42%);
+    --cpu-worker-thread-fill-color: hsl(59, 79%, 62%);
+    --cpu-worker-thread-stroke-color: hsl(59, 79%, 37%);
+    --cpu-overlay-color: var(--cpu-main-thread-stroke-color);
+
+    --cpu-javascript-fill-color: hsl(269, 65%, 75%);
+    --cpu-javascript-stroke-color: hsl(269, 33%, 50%);
+    --cpu-style-fill-color: hsl(22, 60%, 70%);
+    --cpu-style-stroke-color: hsl(22, 40%, 50%);
+    --cpu-layout-fill-color: hsl(0, 65%, 75%);
+    --cpu-layout-stroke-color: hsl(0, 54%, 50%);
+    --cpu-paint-fill-color: hsl(76, 49%, 75%);
+    --cpu-paint-stroke-color: hsl(79, 45%, 50%);
+
+    --cpu-low-color: hsl(110, 52%, 56%);
+    --cpu-medium-color: hsl(46, 91%, 62%);
+    --cpu-high-color: hsl(6, 79%, 57%);
+
+    --network-statistics-height: var(--navigation-bar-height);
+
+    --network-header-color: hsl(204, 52%, 55%);
+    --network-system-color: hsl(79, 32%, 50%);
+    --network-pseudo-header-color: hsl(312, 35%, 51%);
+    --network-error-color: hsl(0, 54%, 50%);
+
+    --network-redirect-color: lightgrey;
+    --network-queue-color: hsl(0, 0%, 54%);
+    --network-dns-color: hsl(265, 82%, 60%);
+    --network-connect-color: hsl(46, 92%, 62%);
+    --network-secure-color: hsl(352, 81%, 59%);
+    --network-request-color: hsl(118, 56%, 65%);
+    --network-response-color: hsl(202, 61%, 59%);
+
+    --even-zebra-stripe-row-background-color: hsl(0, 0%, 96%);
+    --odd-zebra-stripe-row-background-color: white;
+    --transparent-stripe-background-gradient: linear-gradient(to bottom, transparent, transparent 50%, hsla(0, 0%, 0%, 0.03) 50%, hsla(0, 0%, 0%, 0.03)) top left / 100% 40px;
+
+    --focus-ring-outline-offset: -2px;
+
+    /* Invert colors yet preserve the hue */
+    --filter-invert: invert(100%) hue-rotate(180deg);
+
+    --undocked-title-area-height: 0px;
+    --tab-bar-height: var(--navigation-bar-height);
+    --navigation-bar-height: 29px;
+
+    --slider-width: 11px;
+
+    --css-declaration-vertical-padding: 4px;
+    --css-declaration-horizontal-padding: 6px;
+
+    --diff-addition-text-color: hsl(90, 61%, 25%);
+    --diff-addition-background-color: hsl(70, 90%, 86%);
+    --diff-deletion-text-color: hsl(0, 100%, 35%);
+    --diff-deletion-background-color: hsl(5, 100%, 94%);
+    --diff-addition-border-color: hsl(90, 100%, 40%);
+
+    --color-picker-width: 256px;
+
+    --sorted-header-font-weight: 500;
+
+    --reference-page-link-size: 20px;
+
+    --image-button-navigation-item-width: 26px;
+
+    --blackboxed-opacity: 0.5;
+
+    --slider-height: 20px;
+    --slider-thumb-background: white;
+    --slider-thumb-background-active: hsl(0, 0%, 94%);
+    --slider-thumb-box-shadow: 0px 0 2px 0 hsl(0, 0%, 55%);
+    --slider-thumb-height: var(--slider-height);
+    --slider-thumb-width: 8px;
+    --slider-track-background: hsl(0, 0%, 88%);
+    --slider-track-box-shadow: inset 0 0 3px hsl(0, 0%, 70%);
+    --slider-track-tick-background: hsl(0, 0%, 70%);
+    --slider-track-tick-height: 8px;
+    --slider-track-tick-width: 2px;
+
+    @media (prefers-color-scheme: dark) {
+        color: var(--text-color);
+
+        --foreground-lightness: 100%;
+
+        --text-color: hsl(0, 0%, 88%);
+        --text-color-transparent: hsla(0, 0%, 88%, 0.4);
+
+        --text-color-active: white;
+        --text-color-secondary: hsl(0, 0%, 65%);
+
+        /* Disabled text/glyphs */
+        --text-color-tertiary: hsl(0, 0%, 50%);
+
+        /* Dividers, separators, background fills */
+        --text-color-quaternary: hsl(0, 0%, 33%);
+
+        /* Deprecated */
+        --text-color-gray-dark: hsl(0, 0%, 75%);
+        --text-color-gray-medium: var(--text-color-secondary);
+
+        --background-color: hsl(0, 0%, 24%);
+        --background-color-secondary: hsl(0, 0%, 27%);
+        --background-color-tertiary: hsl(0, 0%, 31%);
+
+        --background-color-content: hsl(0, 0%, 21%);
+        --background-color-intermediate: hsl(0, 0%, 23%);
+
+        --gray-background-color: hsl(0, 0%, 50%);
+
+        --link-text-color: var(--text-color-secondary);
+
+        --color-button: hsl(0, 0%, 99%);
+        --color-button-active: var(--text-color-active);
+
+        --selected-foreground-color: var(--text-color-active);
+        --selected-secondary-text-color: hsla(0, 0%, var(--foreground-lightness), 0.7);
+        --selected-secondary-text-color-active: hsla(0, 0%, var(--foreground-lightness), 0.85);
+        --selected-background-color: hsl(219, 80%, 43%);
+        --selected-background-color-unfocused: hsla(0, 0%, var(--foreground-lightness), 0.15);
+        --selected-background-color-active: hsl(218, 85%, 62%);
+        --selected-background-color-hover: hsla(212, 92%, 54%, 0.5);
+        --selected-background-color-highlight: hsla(0, 0%, 100%, 0.3);
+        --selected-text-background-color: hsl(230, 51%, 36%);
+
+        --glyph-color: hsl(0, 0%, 80%);
+        --glyph-color-pressed: hsl(0, 0%, 100%);
+        --glyph-color-disabled: hsla(0, 0%, 80%, 0.4);
+        --glyph-color-active: hsl(212, 100%, 71%);
+        --glyph-color-active-pressed: hsl(212, 92%, 74%);
+        --glyph-color-inactive: hsl(0, 0%, 36%);
+
+        --border-color: hsl(0, 0%, 33%);
+        --border-color-secondary: hsl(0, 0%, 27%);
+
+        --button-background-color: hsl(0, 0%, 43%);
+        --button-background-color-hover: var(--button-background-color);
+        --button-background-color-pressed: hsl(0, 0%, 55%);
+        --button-background-color-inactive: hsl(0, 0%, 28%);
+
+        --panel-background-color: hsl(0, 0%, 24%);
+        --panel-background-color-light: hsl(0, 0%, 29%);
+
+        --error-text-color: hsl(0, 86%, 65%);
+
+        --green-highlight-background-color: hsl(120, 15%, 28%);
+        --green-highlight-text-color: hsl(80, 75%, 80%);
+
+        --yellow-highlight-background-color: hsl(13, 20%, 26%);
+        --yellow-highlight-text-color: hsl(50, 96%, 87%);
+
+        --value-changed-highlight: var(--green-highlight-background-color);
+        --value-visual-highlight: var(--yellow-highlight-background-color);
+
+        --syntax-highlight-number-color: hsl(276, 100%, 85%);
+        --syntax-highlight-bigint-color: hsl(195, 100%, 85%);
+        --syntax-highlight-boolean-color: hsl(299, 71%, 80%);
+        --syntax-highlight-string-color: hsl(28, 84%, 63%);
+        --syntax-highlight-link-color: hsl(223, 100%, 77%);
+        --syntax-highlight-regexp-color: hsl(20, 100%, 64%);
+        --syntax-highlight-symbol-color: hsl(172, 45%, 65%);
+        --syntax-highlight-comment-color: hsl(119, 40%, 72%);
+
+        --console-secondary-text-color: hsla(0, 0%, 100%, 0.45);
+
+        --warning-background-color: hsl(43, 100%, 23%);
+        --warning-background-color-secondary: hsl(21, 18%, 25%);
+        --error-background-color: hsl(11, 70%, 32%);
+        --error-background-color-secondary: hsl(6, 23%, 25%);
+
+        --memory-max-comparison-fill-color: hsl(225, 5%, 45%);
+        --memory-max-comparison-stroke-color: hsl(225, 5%, 65%);
+
+        --network-header-color: hsl(204, 52%, 55%);
+        --network-system-color: hsl(79, 95%, 50%);
+        --network-pseudo-header-color: hsl(312, 55%, 61%);
+        --network-error-color: hsl(0, 54%, 55%);
+
+        --cpu-overlay-color: hsl(35, 88%, 45%);
+        --cpu-low-color: hsl(110, 52%, 56%);
+        --cpu-medium-color: hsl(46, 91%, 62%);
+        --cpu-high-color: hsl(6, 79%, 57%);
+
+        --even-zebra-stripe-row-background-color: var(--background-color-secondary);
+        --odd-zebra-stripe-row-background-color: var(--background-color);
+        --transparent-stripe-background-gradient: linear-gradient(to bottom, transparent, transparent 50%, hsla(0, 0%, 100%, 0.03) 50%, hsla(0, 0%, 100%, 0.03)) top left / 100% 40px;
+
+        --search-highlight-text-color: hsl(60, 100%, 50%);
+        --search-highlight-text-color-active: hsl(0, 0%, 0%);
+        --search-highlight-background-color: hsla(53, 83%, 53%, 0.2);
+        --search-highlight-background-color-active: hsl(60, 100%, 50%);
+        --search-highlight-underline-color: hsla(60, 100%, 50%, 0.5);
+
+        --timeline-even-background-color: hsl(0, 0%, 25%);
+
+        --timeline-scanner-color: hsl(0, 0%, 80%);
+
+        /* TODO: Use the same variable for the default theme */
+        --overlay-background: hsla(0, 0%, 24%, 0.9);
+
+        --console-message-separator: var(--text-color-quaternary);
+
+        --diff-addition-text-color: hsl(70, 64%, 70%);
+        --diff-addition-background-color: hsl(90, 40%, 19%);
+        --diff-deletion-text-color: hsl(0, 84%, 75%);
+        --diff-deletion-background-color: hsl(5, 40%, 28%);
+
+        --slider-thumb-background: hsl(0, 0%, 60%);
+        --slider-thumb-background-active: hsl(0, 0%, 70%);
+        --slider-thumb-box-shadow: 0px 0 2px 0 hsl(0, 0%, 10%);
+        --slider-track-background: hsl(0, 0%, 35%);
+        --slider-track-box-shadow: inset 0 0 3px hsl(0, 0%, 20%);
+        --slider-track-tick-background: hsl(0, 0%, 55%);
+    }
+}
+
+body {
+    &.window-inactive {
+        /* FIXME: Use CSS4 color blend functions once they're available. */
+        --selected-background-color: hsla(212, 92%, 54%, 0.5);
+        --glyph-color: hsla(0, 0%, 30%, 0.65);
+        --glyph-color-disabled: hsla(0, 0%, 30%, 0.35);
+        --glyph-opacity: 0.6;
+        --border-color: hsl(0, 0%, 85%);
+
+        @media (prefers-color-scheme: dark) {
+            --border-color: hsl(0, 0%, 33%);
+            --selected-background-color: hsla(212, 92%, 64%, 0.5);
+
+            --glyph-color: hsl(0, 0%, 52%);
+            --glyph-color-disabled: hsla(0, 0%, 52%, 0.4);
+        }
+    }
+
+    &.mac-platform {
+        --text-color: hsl(0, 0%, 15%);
+        --text-color-transparent: hsla(0, 0%, 15%, 0.4);
+
+        --background-color-intermediate: hsl(0, 0%, 98.5%);
+
+        --panel-background-color: hsl(0, 0%, 96%);
+        --panel-background-color-light: hsl(0, 0%, 98%);
+
+        --separator-color: hsla(0, 0%, var(--foreground-lightness), 0.1);
+
+        --border-color: hsl(0, 0%, 87%);
+        --border-color-secondary: hsl(0, 0%, 91%);
+
+        --sorted-header-font-weight: 700;
+
+        --selected-foreground-color: -apple-system-alternate-selected-text;
+        --selected-background-color: -apple-system-selected-content-background;
+        --selected-text-background-color: -apple-system-selected-text-background;
+
+        --breakpoint-color: -apple-system-control-accent;
+        --breakpoint-color-disabled: -apple-system-selected-text-background;
+
+        --glyph-color-active: -apple-system-control-accent;
+        --glyph-color-active-pressed: -apple-system-control-accent;
+
+        @media (prefers-color-scheme: dark) {
+            --text-color: hsl(0, 0%, 85%);
+            --text-color-transparent: hsla(0, 0%, 85%, 0.4);
+
+            --background-color: hsl(0, 0%, 20%);
+            --background-color-secondary: hsl(0, 0%, 23%);
+            --background-color-tertiary: hsl(0, 0%, 27%);
+
+            --background-color-content: hsl(0, 0%, 17%);
+            --background-color-intermediate: hsl(0, 0%, 19%);
+
+            --glyph-color: hsl(0, 0%, 69%);
+            --glyph-color-pressed: hsl(0, 0%, 100%);
+
+            --panel-background-color: hsl(0, 0%, 20%);
+            --panel-background-color-light: hsl(0, 0%, 25%);
+
+            --border-color: hsl(0, 0%, 30%);
+            --border-color-secondary: hsl(0, 0%, 24%);
+        }
+    }
+
+    &:not(.docked) {
+        --undocked-title-area-height: calc(27px / var(--zoom-factor));
+    }
+}

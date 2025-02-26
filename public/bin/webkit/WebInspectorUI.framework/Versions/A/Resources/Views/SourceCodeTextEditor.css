@@ -1,0 +1,204 @@
+/*
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.source-code.text-editor .CodeMirror-linewidget {
+    color: var(--text-color-active);
+    overflow: initial;
+    z-index: 3; /* overlap line content */
+}
+
+.source-code.text-editor > .CodeMirror .warning {
+    background-color: var(--warning-background-color-secondary);
+}
+
+.source-code.text-editor > .CodeMirror .error {
+    background-color: var(--error-background-color-secondary);
+}
+
+.source-code.text-editor > .CodeMirror .thread-indicator {
+    background-color: hsla(99, 38%, 86%, 0.5);
+}
+
+.source-code.text-editor > .CodeMirror .line-indicator-widget {
+    float: right;
+    padding: 0 5px 1px 5px;
+    border-bottom-left-radius: 5px;
+    cursor: default;
+}
+
+.source-code.text-editor > .CodeMirror .line-indicator-widget.inline {
+    position: relative;
+    top: -13px;
+    height: 13px;
+    padding: 0 5px 0 8px;
+    border-bottom-left-radius: 0;
+    clip-path: polygon(0% 50%, 8px 100%, 100% 100%, 100% 0, 8px 0);
+}
+
+.source-code.text-editor > .CodeMirror .line-indicator-widget > .icon {
+    height: 9px;
+    width: 9px;
+    padding-right: 12px;
+
+    background-size: 9px 9px;
+    background-repeat: no-repeat;
+    background-position-y: 1px;
+}
+
+.source-code.text-editor > .CodeMirror .line-indicator-widget > .text {
+    font-family: -webkit-system-font, sans-serif;
+}
+
+.source-code.text-editor > .CodeMirror .line-indicator-widget.inline > .text {
+    display: inline-block;
+    max-width: 300px;
+    vertical-align: baseline;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget > .icon.icon-warning {
+    background-image: url(../Images/Warning.svg);
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget > .icon.icon-error {
+    background-image: url(../Images/Error.svg);
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget.warning {
+    background-color: var(--warning-background-color-secondary);
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget.inline.warning {
+    background-color: var(--warning-background-color);
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget.error {
+    background-color: var(--error-background-color-secondary);
+}
+
+.source-code.text-editor > .CodeMirror .issue-widget.inline.error {
+    background-color: var(--error-background-color);
+}
+
+.source-code.text-editor > .CodeMirror .thread-widget {
+    background-color: hsl(90, 30%, 82%);
+}
+
+.source-code.text-editor > .CodeMirror .thread-widget.inline {
+    background-color: hsl(90, 30%, 82%);
+}
+
+.popover .debugger-popover-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    font-family: Menlo, monospace;
+    font-size: 11px;
+    white-space: pre;
+    overflow: hidden;
+}
+
+.popover .debugger-popover-content.expandable {
+    min-width: 200px;
+    max-width: 400px;
+    min-height: 150px;
+    max-height: 300px;
+}
+
+.popover .debugger-popover-content > .title {
+    flex-shrink: 0;
+    padding: 2px 6px 4px 6px;
+    font-family: -webkit-system-font, sans-serif;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.popover .debugger-popover-content > .title > .go-to-arrow {
+    position: relative;
+    top: 2px;
+    left: 4px;
+    width: 12px;
+    height: 12px;
+}
+
+.popover .debugger-popover-content > .body {
+    padding-top: 2px;
+    border-top: 1px solid var(--text-color-quaternary);
+    overflow: auto;
+    display: flex;
+}
+
+.popover .debugger-popover-content.function > .body {
+    min-width: 200px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.popover .debugger-popover-content.function > .body .CodeMirror {
+    height: auto;
+    background-color: inherit;
+}
+
+.popover .debugger-popover-content.function > .body .CodeMirror pre {
+    padding-left: 0;
+}
+
+.popover .debugger-popover-content.formatted {
+    justify-content: center;
+    align-items: center;
+}
+
+/* Custom styling for the hover menu attached to color tokens */
+
+.hover-menu.color {
+    padding-right: 15px;
+}
+
+.hover-menu.color > img {
+    width: 16px;
+    height: 16px;
+    content: image-set(url(../Images/ColorIcon.png) 1x, url(../Images/ColorIcon@2x.png) 2x);
+    transform: translateY(0.5px);
+}
+
+@media (min-resolution: 2dppx) {
+    .popover .debugger-popover-content > .body {
+        border-width: 0.5px;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .source-code.text-editor > .CodeMirror .issue-widget {
+        color: hsl(0, 0%, var(--foreground-lightness));
+    }
+
+    .source-code.text-editor > .CodeMirror .thread-widget.inline {
+        background-color: hsl(99, 85%, 34%);
+    }
+}

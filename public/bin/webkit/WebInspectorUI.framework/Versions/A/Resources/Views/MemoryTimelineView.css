@@ -1,0 +1,164 @@
+/*
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.timeline-view.memory {
+    overflow: auto !important;
+}
+
+.timeline-view.memory > .content .subtitle {
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 14px;
+}
+
+.timeline-view.memory > .content > .details {
+    position: relative;
+}
+
+.timeline-view.memory > .content > .details > .timeline-ruler {
+    position: absolute;
+    top: 5px;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    inset-inline-start: 150px;
+}
+
+.timeline-view.memory > .content > .details > .subtitle {
+    padding: 0 10px 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.timeline-view.memory > .content > .overview {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.timeline-view.memory > .content > .overview > .chart {
+    width: 420px;
+    text-align: center;
+}
+
+.timeline-view.memory > .content > .overview > .chart > .subtitle {
+    margin-bottom: 1em;
+}
+
+.timeline-view.memory > .content > .overview > .chart > .container {
+    display: flex;
+    justify-content: center;
+}
+
+.timeline-view.memory > .content > .overview > .divider {
+    margin: 0 5px;
+    border-inline-end: 1px solid var(--border-color);
+}
+
+.timeline-view.memory > .content > .overview .total-usage,
+.timeline-view.memory > .content > .overview .max-percentage,
+.timeline-view.memory > .content > .overview .legend .size {
+    margin: auto;
+    color: var(--text-color-secondary);
+}
+
+.timeline-view.memory .legend {
+    padding-inline-start: 20px;
+    text-align: start;
+}
+
+.timeline-view.memory .legend .row {
+    display: flex;
+}
+
+.timeline-view.memory .legend .row + .row {
+    margin-top: 4px;
+}
+
+.timeline-view.memory .legend .swatch {
+    width: 1em;
+    height: 1em;
+    margin-top: 1px;
+    margin-inline-end: 8px;
+}
+
+.timeline-view.memory .legend .swatch.javascript {
+    border: 1px solid var(--memory-javascript-stroke-color);
+    background: var(--memory-javascript-fill-color);
+}
+
+.timeline-view.memory .legend .swatch.images {
+    border: 1px solid var(--memory-images-stroke-color);
+    background: var(--memory-images-fill-color);
+}
+
+.timeline-view.memory .legend .swatch.layers {
+    border: 1px solid var(--memory-layers-stroke-color);
+    background: var(--memory-layers-fill-color);
+}
+
+.timeline-view.memory .legend .swatch.page {
+    border: 1px solid var(--memory-page-stroke-color);
+    background: var(--memory-page-fill-color);
+}
+
+.timeline-view.memory .legend .swatch.current {
+    border: 1px solid var(--memory-max-comparison-stroke-color);
+    background: var(--memory-max-comparison-fill-color);
+}
+
+.timeline-view.memory .circle-chart > svg > path.javascript,
+.memory-category-view.javascript .area-chart > svg > path {
+    stroke: var(--memory-javascript-stroke-color);
+    fill: var(--memory-javascript-fill-color);
+}
+
+.timeline-view.memory .circle-chart > svg > path.images,
+.memory-category-view.images .area-chart > svg > path {
+    stroke: var(--memory-images-stroke-color);
+    fill: var(--memory-images-fill-color);
+}
+
+.timeline-view.memory .circle-chart > svg > path.layers,
+.memory-category-view.layers .area-chart > svg > path {
+    stroke: var(--memory-layers-stroke-color);
+    fill: var(--memory-layers-fill-color);
+}
+
+.timeline-view.memory .circle-chart > svg > path.page,
+.memory-category-view.page .area-chart > svg > path {
+    stroke: var(--memory-page-stroke-color);
+    fill: var(--memory-page-fill-color);
+}
+
+.timeline-view.memory .circle-chart > svg > path.current {
+    stroke: var(--memory-max-comparison-stroke-color);
+    fill: var(--memory-max-comparison-fill-color);
+}
+
+.timeline-view.memory .circle-chart > svg > path.remainder {
+    stroke: none;
+    fill: none;
+}

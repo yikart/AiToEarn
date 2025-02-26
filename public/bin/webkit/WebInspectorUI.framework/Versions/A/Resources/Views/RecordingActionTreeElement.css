@@ -1,0 +1,223 @@
+/*
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.item.recording-action > .icon {
+    content: url("../Images/TypeIcons.svg#Source-light");
+}
+
+.item.recording-action:not(.initial-state)::before {
+    position: relative;
+    top: 3px;
+    margin-inline: 0 var(--tree-outline-icon-margin-end);
+    content: attr(data-index);
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 9px;
+    color: var(--text-color-gray-medium);
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+
+    --data-indent: calc(var(--tree-outline-icon-margin-start) - var(--tree-outline-icon-margin-end));
+}
+
+body[dir=ltr] .item.recording-action::before {
+    float: left;
+}
+
+body[dir=rtl] .item.recording-action::before {
+    float: right;
+}
+
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.recording-action.selected:not(.invalid, .initial-state, .has-context-replacer, .name-unknown) > .icon {
+    filter: invert();
+    opacity: 1;
+}
+
+.item.recording-action > .titles .parameter.object-handle {
+    color: var(--text-color-gray-medium);
+}
+
+.item.recording-action > .titles .parameter.swizzled {
+    color: var(--text-color-gray-medium);
+}
+
+.item.recording-action > .titles .parameter.constant {
+    font-size: calc(100% - 1px);
+    font-family: Menlo, monospace;
+    font-style: italic;
+}
+
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.recording-action.selected > .titles .parameter.swizzled,
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.recording-action.selected::before {
+    color: var(--selected-secondary-text-color);
+}
+
+.tree-outline[data-indent="1"] .item.recording-action::before,
+.tree-outline[data-indent="2"] .item.recording-action::before {
+    min-width: var(--data-indent);
+}
+
+.tree-outline[data-indent="3"] .item.recording-action::before {
+    min-width: calc(var(--data-indent) * 1.5);
+}
+
+.tree-outline[data-indent="4"] .item.recording-action::before {
+    min-width: calc(var(--data-indent) * 2);
+}
+
+.tree-outline[data-indent="5"] .item.recording-action::before {
+    min-width: calc(var(--data-indent) * 2.5);
+}
+
+.tree-outline[data-indent="6"] .item.recording-action::before {
+    min-width: calc(var(--data-indent) * 3);
+}
+
+.tree-outline[data-indent="7"] .item.recording-action::before {
+    min-width: calc(var(--data-indent) * 3.5);
+}
+
+.tree-outline:not(.hide-disclosure-buttons) .item.recording-action:not(.initial-state, .parent) > .icon {
+    margin-inline-start: 0;
+}
+
+.item.recording-action.visual:not(.selected, .invalid) {
+    background-color: var(--value-changed-highlight);
+}
+
+.item.recording-action:not(.selected) > .titles .parameter.swizzled {
+    color: var(--text-color-gray-medium);
+}
+
+.item.recording-action > .titles .parameters > .inline-swatch {
+    vertical-align: -1px;
+}
+
+.item.recording-action.composite > .icon {
+    content: url(../Images/Composite.svg);
+}
+
+.item.recording-action.fill > .icon {
+    content: url(../Images/Fill.svg);
+}
+
+.item.recording-action.image > .icon {
+    content: url(../Images/Pixels.svg);
+}
+
+.item.recording-action.line-style > .icon {
+    content: url(../Images/LineStyle.svg);
+}
+
+.item.recording-action.shadow > .icon {
+    content: url(../Images/Shadow.svg);
+}
+
+.item.recording-action.stroke > .icon {
+    content: url(../Images/Stroke.svg);
+}
+
+.item.recording-action.style > .icon {
+    content: url(../Images/Palette.svg);
+}
+
+.item.recording-action.text > .icon {
+    content: url(../Images/Text.svg);
+}
+
+.item.recording-action.transform > .icon {
+    content: url(../Images/Transform.svg);
+}
+
+.item.recording-action.arc > .icon {
+    content: url(../Images/PathArc.svg);
+}
+
+.item.recording-action.clip > .icon {
+    content: url(../Images/Clip.svg);
+}
+
+.item.recording-action.curve > .icon {
+    content: url(../Images/PathCurve.svg);
+}
+
+.item.recording-action.ellipse > .icon {
+    content: url(../Images/PathEllipse.svg);
+}
+
+.item.recording-action.line-to > .icon {
+    content: url(../Images/PathLineTo.svg);
+}
+
+.item.recording-action.move-to > .icon {
+    content: url(../Images/PathMoveTo.svg);
+}
+
+.item.recording-action.point-in-path > .icon {
+    content: url(../Images/PointInPath.svg);
+}
+
+.item.recording-action.point-in-stroke > .icon {
+    content: url(../Images/PointInStroke.svg);
+}
+
+.item.recording-action.rect > .icon {
+    content: url(../Images/PathRect.svg);
+}
+
+.item.recording-action.restore > .icon {
+    content: url(../Images/StepOut.svg);
+}
+
+.item.recording-action.save > .icon {
+    content: url(../Images/StepInto.svg);
+}
+
+.item.recording-action.invalid > .icon {
+    top: 2px;
+    width: 16px;
+    height: 12px;
+    content: url(../Images/Error.svg);
+}
+
+.item.recording-action.warning:not(.invalid) > .status > .warning {
+    width: 12px;
+    height: 12px;
+    margin-top: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .tree-outline .item.recording-action.visual:not(.selected, .invalid) {
+        color: var(--green-highlight-text-color);
+    }
+
+    .item.recording-action:not(.invalid, .initial-state, .has-context-replacer, .name-unknown) > .icon {
+        filter: invert();
+        opacity: 0.8;
+    }
+
+    .item.recording-action > .icon {
+        content: url("../Images/TypeIcons.svg#Source-dark");
+    }    
+}

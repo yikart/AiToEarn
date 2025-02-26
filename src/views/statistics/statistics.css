@@ -1,0 +1,117 @@
+#root {
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo-box {
+  position: relative;
+  height: 9em;
+}
+
+.logo {
+  position: absolute;
+  left: calc(50% - 4.5em);
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .logo.electron {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-table .ant-table-thead > tr > th {
+  background-color: #f8f9fa;
+  color: #666;
+  font-weight: 500;
+}
+
+.custom-table .ant-table-tbody > tr:hover > td {
+  background-color: #f5f3ff;
+}
+
+.custom-table .ant-table-tbody > tr > td {
+  padding: 12px 16px;
+}
+
+.custom-table .ant-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* 渐变背景卡片悬停效果 */
+.gradient-card {
+  transition: transform 0.3s ease;
+}
+
+.gradient-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 日期选择器样式 */
+.ant-picker-range {
+  border-radius: 6px;
+}
+
+.ant-picker-range:hover {
+  border-color: #a66ae4;
+}
+
+/* 自定义滚动条样式 */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 6px;
+  width: 0; /* 设置垂直滚动条宽度为0 */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #a66ae4;
+}
+
+/* 隐藏滚动条但保持可滚动 */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f1f1f1;
+  overflow-y: hidden; /* 隐藏垂直滚动条 */
+}

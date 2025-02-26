@@ -1,0 +1,34 @@
+.supportPlat {
+  :global {
+    .supportPlat-tip {
+      margin-bottom: 10px;
+      font-size: var(--fs-xs);
+      display: flex;
+      align-items: center;
+      &--line {
+        width: 100%;
+        height: 1px;
+        background: rgb(243, 243, 243);
+      }
+      &-text {
+        white-space: nowrap;
+        padding: 0 15px;
+        color: rgb(136, 145, 145);
+      }
+    }
+    .supportPlat-con {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 20px;
+      min-width: 340px;
+      img {
+        width: 25px;
+      }
+    }
+    .supportPlat-centerCon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}

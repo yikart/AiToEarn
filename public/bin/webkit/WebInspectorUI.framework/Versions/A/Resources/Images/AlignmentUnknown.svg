@@ -1,0 +1,7 @@
+<!-- Copyright © 2021 Apple Inc. All rights reserved. -->
+<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" id="root">
+    <rect x="2" y="2" width="4" height="6" fill="black"/>
+    <rect x="8" y="2" width="6" height="6" fill="black"/>
+    <rect x="10" y="10" width="4" height="4" fill="black"/>
+    <rect x="2" y="10" width="6" height="4" fill="black"/>
+</svg>

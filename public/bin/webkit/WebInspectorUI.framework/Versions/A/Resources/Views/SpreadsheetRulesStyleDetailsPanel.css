@@ -1,0 +1,65 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.sidebar > .panel.details.css-style .rules {
+    text-align: left;
+}
+
+.sidebar > .panel.details.css-style > .content > .rules .section-header {
+    margin: 0;
+    padding: 4px 6px;
+    font-size: inherit;
+    font-weight: inherit;
+    color: hsl(0, 0%, 30%);
+    border-bottom: 0.5px solid hsla(0, 0%, 0%, 0.2);
+}
+
+.sidebar > .panel.details.css-style > .content > .rules .section-header .node-link {
+    color: inherit;
+}
+
+.sidebar > .panel.details.css-style > .content > .rules .section-header .node-link:hover {
+    color: var(--text-color);
+}
+
+.sidebar > .panel.details.css-style > .content > .rules > .message-text-view {
+    top: var(--navigation-bar-height);
+}
+
+.sidebar > .panel.details.css-style > .content > .rules:not(.filter-non-matching) > .message-text-view {
+    display: none;
+}
+
+.sidebar > .panel.details.css-style > .content > .rules > :nth-last-child(1 of .spreadsheet-css-declaration) {
+    /* Unset border-bottom of last CSS rule. */
+    border-bottom: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    .sidebar > .panel.details.css-style > .content > .rules .section-header {
+        color: var(--text-color-secondary);
+        border-bottom-color: hsla(0, 0%, var(--foreground-lightness), 0.2);
+    }
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2017-2020 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs>
+        <style>
+            g:not(:target) {
+                display: none;
+            }
+
+            #light {
+                --stroke: black;
+                --backfill: white;
+            }
+
+            #dark {
+                --stroke: white;
+                --backfill: black;
+            }
+        </style>
+    </defs>
+
+    <symbol id="i" viewBox="0 0 16 16" stroke="none" stroke-width="1" fill="none">
+        <circle cx="8" cy="8" r="5" fill="var(--backfill)" />
+        <circle cx="8" cy="8" r="5.5" stroke="var(--stroke)" opacity="0.65" />
+        <circle cx="8" cy="8" r="3" stroke="var(--stroke)" opacity="0.9" fill="none"/>
+        <circle cx="8" cy="8" r="0.5" stroke="var(--stroke)" fill="none"/>
+    </symbol>
+
+    <g id="light"><use href="#i"/></g>
+    <g id="dark"><use href="#i"/></g>
+</svg>

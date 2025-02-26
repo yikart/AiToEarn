@@ -1,0 +1,185 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.table {
+    position: relative;
+    outline: none;
+    width: 100%;
+    height: 100%;
+    background: var(--background-color);
+
+    --table-column-border-start: 1px solid transparent;
+    --table-column-border-end: 1px solid var(--border-color);
+}
+
+.table > .header {
+    position: sticky;
+    top: 0;
+    height: var(--navigation-bar-height);
+    line-height: calc(var(--navigation-bar-height) - 1px);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--background-color);
+    overflow: hidden;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.table > .header > .sortable:active {
+    background-color: var(--background-color-pressed);
+}
+
+.table > .header > :is(.sort-ascending, .sort-descending) {
+    font-weight: var(--sorted-header-font-weight);
+    padding-inline-end: 18px;
+}
+
+.table > .header > :is(.sort-ascending, .sort-descending)::after {
+    position: absolute;
+    top: 1px;
+    bottom: 0;
+    inset-inline-end: 6px;
+    width: 9px;
+    height: 8px;
+    margin-bottom: auto;
+    margin-top: auto;
+    content: "";
+    background-size: 9px 8px;
+    background-repeat: no-repeat;
+}
+
+.table > .header > .sort-ascending::after {
+    background-image: url(../Images/SortIndicatorArrows.svg#up-arrow-normal);
+}
+
+.table > .header > .sort-descending::after {
+    background-image: url(../Images/SortIndicatorArrows.svg#down-arrow-normal);
+}
+
+.table > .data-container {
+    position: absolute;
+    top: var(--navigation-bar-height);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.table > .resizers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.table > .data-container.not-scrollable {
+    overflow-y: hidden;
+}
+
+.table > .data-container > .data-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    min-height: 100%;
+
+    background-image: linear-gradient(to bottom, var(--odd-zebra-stripe-row-background-color), var(--odd-zebra-stripe-row-background-color) 50%, var(--even-zebra-stripe-row-background-color) 50%, var(--even-zebra-stripe-row-background-color));
+    background-size: 100% 40px;
+}
+
+.table > .data-container > .data-list.even-first-zebra-stripe {
+    background-image: linear-gradient(to bottom, var(--even-zebra-stripe-row-background-color), var(--even-zebra-stripe-row-background-color) 50%, var(--odd-zebra-stripe-row-background-color) 50%, var(--odd-zebra-stripe-row-background-color));
+}
+
+.table > .data-container > .data-list > li {
+    height: 20px;
+    line-height: 20px;
+    vertical-align: middle;
+    white-space: nowrap;
+    border-bottom: solid 1px transparent;
+}
+
+.table > .data-container > .data-list > li.selected {
+    background-color: var(--selected-background-color-unfocused) !important;
+    color: inherit !important;
+    background-clip: padding-box;
+}
+
+.table:focus > .data-container > .data-list li.selected {
+    background-color: var(--selected-background-color) !important;
+    color: var(--selected-foreground-color) !important;
+}
+
+.table .cell {
+    position: relative;
+    display: inline-block;
+    padding: 0 6px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.table > .header .cell {
+    padding-top: var(--table-header-cell-vertical-padding);
+    padding-bottom: var(--table-header-cell-vertical-padding);
+    line-height: calc(var(--navigation-bar-height) - 1px - 2 * var(--table-header-cell-vertical-padding));
+
+    --table-header-cell-vertical-padding: 4px;
+}
+
+.table > .header .cell:not(:first-child)::before {
+    content: "";
+    position: absolute;
+    top: var(--table-header-cell-vertical-padding);
+    bottom: var(--table-header-cell-vertical-padding);
+    inset-inline-start: 0;
+    width: 1px;
+    background-color: var(--separator-color);
+}
+
+.table > .header .cell:not(:first-child):active::before,
+.table > .header .cell:active + .cell::before {
+    top: 0;
+    bottom: 0;
+}
+
+.table .cell.align-right {
+    text-align: right;
+}
+
+.table .cell.align-left {
+    text-align: left;
+}
+
+.table .cell.align-center {
+    text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+    .table > .header > :is(.sort-ascending, .sort-descending)::after {
+        filter: invert();
+    }
+}

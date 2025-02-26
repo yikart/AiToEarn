@@ -1,0 +1,138 @@
+/*
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.popover .local-resource-override-popover-content {
+    max-width: 420px;
+    padding: 4px 8px;
+}
+
+.popover .local-resource-override-popover-content > label.toggle {
+    font-weight: bold;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.popover .local-resource-override-popover-content > table {
+    width: 100%;
+}
+
+.popover .local-resource-override-popover-content > table > tr > th {
+    font-weight: bold;
+    line-height: 23px;
+    text-align: end;
+    vertical-align: top;
+    white-space: nowrap;
+    color: hsl(0, 0%, 34%);
+}
+
+.popover .local-resource-override-popover-content > table > tr.options > th {
+    line-height: 17px;
+}
+
+.popover .local-resource-override-popover-content > table > tr > td {
+    padding-left: 4px;
+}
+
+.popover .local-resource-override-popover-content > table > tr.options > td > label:not([hidden]) {
+    display: block;
+}
+
+.popover .local-resource-override-popover-content .editor {
+    display: inline-block;
+    width: 100%;
+    padding: 4px 0 2px;
+    appearance: unset;
+    border: 1px solid var(--text-color-quaternary);
+    background: var(--background-color-content);
+}
+
+.popover .local-resource-override-popover-content .editor > .CodeMirror {
+    height: auto;
+}
+
+.popover .local-resource-override-popover-content.request .editor:is(.url, .redirect),
+.popover .local-resource-override-popover-content.response-mapped-directory :is(.editor:is(.url, .mapped-directory-subpath), .mapped-directory-path) {
+    width: 344px;
+}
+
+.popover .local-resource-override-popover-content.block .editor.url,
+.popover .local-resource-override-popover-content.response :is(.editor.url, .mapped-file-path) {
+    width: 330px;
+}
+
+.popover .local-resource-override-popover-content label:is(.is-case-sensitive, .is-regex) {
+    display: inline-block;
+}
+
+.popover .local-resource-override-popover-content label.is-case-sensitive {
+    margin-inline-end: 8px;
+}
+
+.popover .local-resource-override-popover-content .editor.mime {
+    width: 240px;
+}
+
+.popover .local-resource-override-popover-content .editor.status {
+    width: 36px;
+}
+
+.popover .local-resource-override-popover-content .editor.status-text {
+    width: 168px;
+    margin-inline-start: 12px;
+}
+
+.popover .local-resource-override-popover-content :is(.mapped-directory-path, .mapped-file-path) {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.popover .local-resource-override-popover-content :is(.mapped-directory-path, .mapped-file-path) > .value:not(:empty) + .placeholder {
+    display: none;
+}
+
+.popover .local-resource-override-popover-content :is(.mapped-directory-path, .mapped-file-path) > button {
+    margin-inline-end: 4px;
+}
+
+.popover .local-resource-override-popover-content .data-grid {
+    margin-bottom: 6px;
+}
+
+.popover .local-resource-override-popover-content .data-grid tr.header-content-type > :is(.name-column, .value-column) {
+    opacity: 0.5;
+}
+
+.popover .local-resource-override-popover-content .reference-page-link-container {
+    position: absolute;
+    inset-inline-end: 1.5em;
+    bottom: 1.25em;
+}
+
+@media (prefers-color-scheme: dark) {
+    .popover .local-resource-override-popover-content > table > tr > th {
+        color: var(--text-color-secondary);
+    }
+}

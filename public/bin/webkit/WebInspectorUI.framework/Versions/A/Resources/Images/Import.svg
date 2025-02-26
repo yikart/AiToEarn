@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2017 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" viewBox="0 0 15 15">
+    <path fill="none" stroke="currentColor" d="M 7.5 8.5 V 1"/>
+    <path fill="none" stroke="currentColor" d="M 10.5 5.5 l -3, 3 l -3 -3"/>
+    <polyline fill="none" stroke="currentColor" points="12.5 9 12.5 12.5 2.5 12.5 2.5 9"/>
+</svg>

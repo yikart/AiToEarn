@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2018 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+    <circle fill="rgb(202, 202, 202)" stroke="rgb(153, 153, 153)" stroke-width="0.5" stroke-miterlimit="10" cx="8" cy="8" r="6.5"/>
+    <path fill="white" stroke="rgb(153, 153, 153)" stroke-width="0.33" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M 9.25 11.563 a 1.25 1.25 0 1 1 -2.5 0 1.25 1.25 0 0 1 2.5 0 z m -0.973 -8.25 c 1.653 0 2.973 0.832 2.973 2.486 0 1.159 -0.642 1.622 -1.23 1.992 -0.708 0.444 -1 0.632 -1 1.271 v 0.25 H 6.951 l -0.018 -0.131 c -0.136 -1.015 0.137 -1.722 0.946 -2.205 0.559 -0.332 0.933 -0.563 0.933 -1.052 0 -0.47 -0.339 -0.695 -0.69 -0.695 -0.422 0 -0.683 0.338 -0.695 0.783 h -2.17 c -0.12 -1.854 1.35 -2.7 3.02 -2.7 z"/>
+</svg>

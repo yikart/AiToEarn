@@ -1,0 +1,106 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.formatted-object, .formatted-node, .formatted-error, .formatted-map, .formatted-set, .formatted-weakmap, .formatted-weakset {
+    position: relative;
+    display: inline-block;
+    color: black;
+}
+
+:is(.formatted-array, .formatted-map, .formatted-set, .formatted-weakmap, .formatted-weakset) > .size {
+    font-style: normal;
+    color: var(--console-secondary-text-color);
+}
+
+.formatted-number {
+    color: var(--syntax-highlight-number-color);
+}
+
+.formatted-boolean {
+    color: var(--syntax-highlight-boolean-color);
+}
+
+.formatted-string, .formatted-regexp {
+    white-space: pre;
+    unicode-bidi: isolate;
+}
+
+.formatted-string {
+    color: var(--syntax-highlight-string-color);
+}
+
+.formatted-regexp {
+    color: var(--syntax-highlight-regexp-color);
+}
+
+.formatted-symbol {
+    color: var(--syntax-highlight-symbol-color);
+}
+
+.formatted-bigint {
+    color: var(--syntax-highlight-bigint-color);
+}
+
+.formatted-null, .formatted-undefined {
+    color: hsl(0, 0%, 50%);
+}
+
+.formatted-node > .tree-outline.dom {
+    display: block !important;
+    padding: 0;
+
+    --item-pseudo-class-indicator-start: -2px;
+}
+
+.formatted-node > .tree-outline.dom li {
+    -webkit-user-select: none !important;
+}
+
+.formatted-node > .tree-outline.dom li.selected .selection-area {
+    background-color: transparent;
+}
+
+.formatted-node > .tree-outline.dom li.hovered:not(.selected) .selection-area {
+    display: block;
+    left: -1px;
+    right: -2px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .formatted-object,
+    .formatted-node,
+    .formatted-error,
+    .formatted-map,
+    .formatted-set,
+    .formatted-weakmap,
+    .formatted-weakset {
+        color: var(--text-color);
+    }
+
+    .formatted-null,
+    .formatted-undefined {
+        color: var(--text-color-secondary);
+    }
+}

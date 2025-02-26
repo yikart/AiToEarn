@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2022 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 15 15">
+    <g transform="translate(0.5, 0.5)">
+        <circle stroke="currentColor" fill="none" cx="7" cy="7" r="7"/>
+        <path stroke="currentColor" d="M3 5 L 11 5" stroke-linecap="square"/>
+        <path stroke="currentColor" d="M4 7.5 L 10 7.5" stroke-linecap="square"/>
+        <path stroke="currentColor" d="M5 10 L 9 10" stroke-linecap="square"/>
+    </g>
+</svg>

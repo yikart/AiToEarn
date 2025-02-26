@@ -1,0 +1,253 @@
+/*
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.content-view.canvas-overview {
+    justify-content: center;
+    align-items: flex-start;
+    position: relative;
+    padding: 4px 0;
+}
+
+.content-view.canvas-overview > .content-view.canvas {
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: 400px;
+    margin: 4px;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+}
+
+.content-view.canvas-overview > .content-view.canvas,
+.content-view.canvas-overview > .content-view.canvas > .preview > img {
+    background-color: white;
+}
+
+.content-view.canvas-overview > .content-view.canvas.recording-active {
+    border-color: red;
+}
+
+.content-view.canvas-overview > .content-view.canvas > :is(header, footer) {
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 6px;
+    height: var(--navigation-bar-height);
+    cursor: default;
+}
+
+.content-view.canvas-overview > .content-view.canvas > header {
+    font-size: 13px;
+}
+
+.content-view.canvas-overview > .content-view.canvas.recording-active > header {
+    background-color: red;
+}
+
+.content-view.canvas-overview > .content-view.canvas > header > .titles,
+.content-view.canvas-overview > .content-view.canvas > footer > .size {
+    white-space: nowrap;
+}
+
+.content-view.canvas-overview > .content-view.canvas > header > .titles > .title {
+    color: var(--text-color-gray-dark);
+}
+
+.content-view.canvas-overview > .content-view.canvas > header > .titles > :is(.subtitle, .color-space),
+.content-view.canvas-overview > .content-view.canvas > footer .memory-cost {
+    color: var(--text-color-gray-medium);
+}
+
+.content-view.canvas-overview > .content-view.canvas > header .subtitle::before {
+    content: "\00A0\2014\00A0"; /* &nbsp;&mdash;&nbsp; */;
+}
+
+.content-view.canvas-overview > .content-view.canvas > header .color-space::before {
+    content: "\00A0"; /* &nbsp; */;
+}
+
+.content-view.canvas-overview > .content-view.canvas.recording-active > header > .titles > .title {
+    color: white;
+}
+
+.content-view.canvas-overview > .content-view.canvas.recording-active > header > .titles > .subtitle {
+    color: var(--selected-secondary-text-color);
+}
+
+.content-view.canvas-overview > .content-view.canvas.recording-active > header > .navigation-bar > .item {
+    filter: brightness(0) invert();
+}
+
+.content-view.canvas-overview > .content-view.canvas > header > .navigation-bar {
+    align-items: initial;
+    border: none;
+    opacity: 0;
+    transition: opacity 200ms ease-in-out;
+}
+
+.content-view.canvas-overview > .content-view.canvas:is(:hover, .recording-active) > header > .navigation-bar {
+    opacity: 1;
+    transition: opacity 200ms ease-in-out;
+}
+
+.content-view.canvas-overview > .content-view.canvas:not(.recording-active) > header > .navigation-bar > .item.record-start-stop.disabled {
+    filter: grayscale();
+    opacity: 0.5;
+}
+
+.content-view.canvas-overview > .content-view.canvas:not(.recording-active) > header > .navigation-bar > .item.record-start-stop:not(.disabled):hover {
+    filter: brightness(95%);
+}
+
+.content-view.canvas-overview > .content-view.canvas:not(.recording-active) > header > .navigation-bar > .item.record-start-stop:not(.disabled):active {
+    filter: brightness(80%);
+}
+
+.content-view.canvas-overview > .content-view.canvas.recording-active > .progress-view,
+.content-view.canvas-overview > .content-view.canvas > .preview {
+    height: 280px;
+    transition: background-color 200ms ease-in-out;
+}
+
+.content-view.canvas-overview > .content-view.canvas.recording-active > .progress-view:hover,
+.content-view.canvas-overview > .content-view.canvas > .preview:hover {
+    background-color: hsl(0, 0%, 96%);
+}
+
+.content-view.canvas-overview > .content-view.canvas.recording-active > .preview {
+    display: none;
+}
+
+.content-view.canvas-overview > .content-view.canvas > .preview > img {
+    border-radius: 4px;
+    box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.58);
+}
+
+.content-view.canvas-overview > .content-view.canvas > .preview > .message-text-view {
+    position: static;
+    z-index: 0;
+}
+
+.content-view.canvas-overview > .content-view.canvas > footer {
+    border-top: none;
+}
+
+.content-view.canvas-overview > .content-view.canvas > footer > .view-related-items {
+    display: flex;
+    align-items: center;
+}
+
+.content-view.canvas-overview > .content-view.canvas > footer > .view-related-items > :is(.view-shader, .view-recording) {
+    width: 16px;
+    height: 16px;
+}
+
+.content-view.canvas-overview > .content-view.canvas > footer > .view-related-items > img + img {
+    margin-inline-start: 4px;
+}
+
+.content-view.canvas-overview > .content-view.canvas > footer > .view-related-items > .view-shader {
+    content: url(../Images/DocumentIcons.svg#gl-light);
+}
+
+.content-view.canvas-overview > .content-view.canvas > footer > .view-related-items > .view-recording {
+    content: url(../Images/Recording.svg);
+}
+
+.content-view.canvas-overview > .content-view.canvas > footer > .flexible-space {
+    flex: 1;
+}
+
+.content-view.canvas-overview > .content-view.canvas > footer .memory-cost {
+    padding-inline-start: 4px;
+}
+
+.content-view.canvas-overview > .content-view.canvas.saved-recordings {
+    height: 340px;
+}
+
+.content-view.canvas-overview > .content-view.canvas.saved-recordings .tree-outline {
+    overflow-y: auto;
+}
+
+.content-view.canvas-overview > .content-view.canvas.saved-recordings .tree-outline > .item.recording > .icon {
+    content: url(../Images/Recording.svg);
+}
+
+.navigation-bar > .item.canvas-recording-auto-capture > label {
+    display: flex;
+    align-items: center;
+}
+
+.navigation-bar > .item.canvas-recording-auto-capture > label > input {
+    width: 1.5em;
+    min-width: 1.5em;
+    margin: 0 4px;
+    text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+    .content-view.canvas-overview > .content-view.canvas,
+    .content-view.canvas-overview > .content-view.canvas > .preview > img {
+        background-color: var(--background-color-secondary);
+    }
+
+    .content-view.canvas-overview > .content-view.canvas.recording-active > .progress-view:hover,
+    .content-view.canvas-overview > .content-view.canvas > .preview:hover {
+        background-color: var(--background-color-tertiary);
+    }
+
+    .content-view.canvas-overview > .content-view.canvas.recording-active {
+        --recording-color: hsl(0, 100%, 39%);
+        border-color: var(--recording-color);
+    }
+
+    .content-view.canvas-overview > .content-view.canvas.recording-active > header {
+        background-color: var(--recording-color);
+    }
+
+    .content-view.canvas-overview > .content-view.canvas > header > .titles > .title {
+        color: var(--text-color);
+    }
+
+    .content-view.canvas-overview > .content-view.canvas > header > .titles > .subtitle,
+    .content-view.canvas-overview > .content-view.canvas > footer .memory-cost {
+        color: var(--text-color-secondary);
+    }
+
+    .content-view.canvas-overview > .content-view.canvas > footer .view-recording {
+        filter: invert();
+    }
+
+    .content-view.canvas-overview > .content-view.canvas.recording-active > header > .titles > .subtitle {
+        color: unset;
+        opacity: 0.5
+    }
+
+    .content-view.canvas-overview > .content-view.canvas > footer > .view-related-items > .view-shader {
+        content: url(../Images/DocumentIcons.svg#gl-dark);
+    }
+}

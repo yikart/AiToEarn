@@ -1,0 +1,305 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.tree-outline.dom {
+    position: relative;
+    /* Ensure this containing block for the absolutely-positioned descendant .selection-area spans the full width of the scroll container so .selection-area spans from edge-to-edge of the scoll area. */
+    width: fit-content;
+    min-width: 100%;
+    margin: 0;
+    padding: 0;
+
+    outline: none;
+
+    list-style-type: none;
+
+    /* Needed to make the negative z-index on .selection-area works. Otherwise the background-color from .syntax-highlighted hides the selection. */
+    background-color: transparent !important;
+    color: var(--text-color);
+
+    --item-pseudo-class-indicator-start: 2px;
+    --item-minimum-width: 200px;
+
+    --sublist-margin-start: 4px;
+    --sublist-padding-start: 1px;
+    --sublist-border-width-start: 9px;
+
+    --shadow-subtree-background-color: hsla(0, 0%, 0%, 0.05);
+}
+
+.tree-outline.dom.non-selectable {
+    -webkit-user-select: text;
+}
+
+.tree-outline.dom li .selection-area {
+    position: absolute;
+    inset-inline: 0;
+    height: 15px;
+    z-index: -1;
+}
+
+.tree-outline.dom li.selected .selection-area {
+    background-color: var(--selected-background-color-unfocused);
+}
+
+.tree-outline.dom li.elements-drag-over .selection-area {
+    margin-top: -2px;
+    border-top: 2px solid var(--selected-background-color);
+}
+
+body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:not(.non-selectable):focus-within li.selected .selection-area {
+    background-color: var(--selected-background-color);
+}
+
+.tree-outline.dom:not(.non-selectable) li.hovered:not(.selected) .selection-area {
+    background-color: var(--selected-background-color);
+    opacity: 0.3;
+}
+
+.tree-outline.dom li.inspected-node > span::after {
+    content: " = " var(--console-saved-result-prefix) "0";
+    color: var(--console-secondary-text-color);
+    position: absolute;
+    white-space: pre;
+}
+
+body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.inspected-node.selected > span::after {
+    color: var(--selected-secondary-text-color);
+}
+
+.content-view.dom-tree.deemphasize-unrendered .tree-outline.dom li:not(.rendered) > span > *:not(.html-comment) {
+    filter: grayscale();
+}
+
+.content-view.dom-tree.deemphasize-unrendered .tree-outline.dom li:not(.rendered, .selected) > span > *:not(.html-comment),
+.content-view.dom-tree.deemphasize-unrendered .tree-outline.dom:not(:focus-within) li.selected:not(.rendered) > span > *:not(.html-comment),
+body:is(.window-inactive, .window-docked-inactive) .content-view.dom-tree.deemphasize-unrendered .tree-outline.dom li.selected:not(.rendered) > span > *:not(.html-comment) {
+    opacity: 0.7;
+}
+
+.tree-outline.dom ol {
+    list-style-type: none;
+    margin: 0;
+    padding-inline-start: calc(var(--sublist-margin-start) + var(--sublist-padding-start) + var(--sublist-border-width-start));
+}
+
+.tree-outline.dom ol.children {
+    display: none;
+}
+
+.tree-outline.dom ol.children.expanded {
+    display: block;
+}
+
+.tree-outline.dom li:is(.hovered, .selected) + ol.children.expanded {
+    margin-inline-start: var(--sublist-margin-start);
+    padding-inline-start: var(--sublist-padding-start);
+    border: 0 solid hsla(0, 0%, 83%, 0.5);
+}
+
+.tree-outline.dom li:is(.hovered, .selected) + ol.children.expanded {
+    border-left-width: var(--sublist-border-width-start);
+}
+
+.tree-outline.dom li.selected + ol.children.expanded {
+    border-color: hsl(0, 0%, 65%, 0.5);
+}
+
+.tree-outline.dom li {
+    padding: 0;
+    word-wrap: break-word;
+    outline: none;
+    min-width: var(--item-minimum-width);
+
+    --item-padding-start: 17px;
+    --item-padding-end: 6px;
+}
+
+.tree-outline.dom li:not(.editing) {
+    padding-left: var(--item-padding-start);
+    padding-right: var(--item-padding-end);
+}
+
+.tree-outline.dom li.editing {
+    margin-left: var(--item-padding-start);
+    margin-right: var(--item-padding-end);
+}
+
+.tree-outline.dom li > span > .html-text-node {
+    unicode-bidi: isolate;
+}
+
+.tree-outline.dom li .pseudo-class-indicator {
+    display: inline-block;
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    margin-top: 4px;
+    content: "";
+    background-color: var(--glyph-color-active);
+    border-radius: 50%;
+}
+
+.tree-outline.dom li .pseudo-class-indicator {
+    left: var(--item-pseudo-class-indicator-start);
+}
+
+body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.selected .pseudo-class-indicator {
+    background-color: var(--selected-foreground-color);
+}
+
+.tree-outline.dom.single-node li {
+    padding-left: 2px;
+}
+
+body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.selected {
+    color: white;
+}
+
+body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.selected * {
+    color: inherit;
+}
+
+.tree-outline.dom li.parent {
+    margin-left: -15px;
+    line-height: 13px;
+}
+
+.tree-outline.dom li .html-tag.close {
+    margin-left: calc(-1 * var(--sublist-margin-start) - var(--sublist-border-width-start));
+}
+
+.tree-outline.dom li .html-tag ~ .go-to-arrow {
+    height: 13px;
+    vertical-align: -3px;
+}
+
+.tree-outline.dom li:not(.hovered) .html-tag ~ .go-to-arrow {
+    visibility: hidden;
+}
+
+.tree-outline.dom li.parent::before {
+    position: relative;
+    z-index: 20;
+    width: 13px;
+    height: 13px;
+    padding-right: 2px;
+    content: "";
+    background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
+    background-size: 13px 13px;
+    background-repeat: no-repeat;
+}
+
+.tree-outline.dom li.parent::before {
+    float: left;
+}
+
+body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.parent.selected::before {
+    background-image: url(../Images/DisclosureTriangles.svg#closed-selected);
+}
+
+.tree-outline.dom li.parent.expanded::before {
+    background-image: url(../Images/DisclosureTriangles.svg#open-normal);
+}
+
+body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.parent.expanded.selected::before {
+    background-image: url(../Images/DisclosureTriangles.svg#open-selected);
+}
+
+.tree-outline.dom .html-text-node.large {
+    display: inline-block;
+    min-width: 100%;
+    white-space: pre-wrap;
+}
+
+.tree-outline.dom .html-pseudo-element {
+    color: hsl(0, 59%, 41%);
+}
+
+.tree-outline.dom .shadow {
+    color: gray;
+}
+
+/* Cannot apply styling directly to the parent element since it has a disclosure triangle. */
+.tree-outline.dom li.parent.shadow::after {
+    display: block;
+    /* Adds padding to the right edge. */
+    width: calc(100% + 8px);
+    height: 1.2em;
+    margin-top: -13px;
+    margin-left: -2px;
+    content: "";
+    background-color: var(--shadow-subtree-background-color);
+}
+
+.tree-outline.dom li.parent.shadow + ol.children.expanded {
+    background-color: var(--shadow-subtree-background-color);
+}
+
+.showing-find-banner .tree-outline.dom .search-highlight {
+    color: black;
+    background-color: hsla(53, 83%, 53%, 0.2);
+    border-bottom: 1px solid hsl(47, 82%, 60%);
+}
+
+@keyframes node-state-changed {
+    from { background-color: var(--value-changed-highlight); }
+}
+
+.node-state-changed {
+    animation: node-state-changed 1s cubic-bezier(0.25, 0, 0.25, 1);
+}
+
+@keyframes dom-tree-outline-highlight-fadeout {
+    from { background-color: highlight; }
+}
+
+.highlight .selection-area {
+    animation: dom-tree-outline-highlight-fadeout 2s;
+}
+
+.tree-outline.dom li .highlight {
+    background-color: hsla(53, 83%, 53%, 0.2);
+    border-bottom: 1px solid hsl(47, 82%, 60%);
+}
+
+@media (prefers-color-scheme: dark) {
+    .tree-outline.dom {
+        --shadow-subtree-background-color: hsla(0, 0%, 100%, 0.05);
+    }
+
+    .tree-outline.dom .shadow {
+        color: var(--text-color);
+    }
+
+    .showing-find-banner .tree-outline.dom .search-highlight {
+        /* FIXME: This should use a variable. */
+        background-color: hsla(53, 83%, 53%, 0.8);
+    }
+
+    .tree-outline.dom .html-pseudo-element {
+        color: hsl(0, 80%, 65%);
+    }
+}

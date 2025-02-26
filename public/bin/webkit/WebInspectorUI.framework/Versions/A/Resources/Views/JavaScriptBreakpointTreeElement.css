@@ -1,0 +1,93 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.item.breakpoint.javascript .subtitle.formatted-location {
+    font-style: italic;
+}
+
+/* When animating a layer on top of a tree element's icon, move the main
+icon to the icon element's background so animations are layered on top. */
+.item.breakpoint.javascript.line .icon {
+    background-image: url(../Images/TypeIcons.svg#ResultLine-light);
+    content: '';
+}
+
+.item.breakpoint.javascript.line .icon > span {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    border-radius: 50%;
+    transform: scale(0);
+    transition: none;
+    background-color: hsl(216, 30%, 42%);
+}
+
+.data-updated.item.breakpoint.javascript.line .icon > span {
+    border-radius: 0;
+    transform: scale(0.85);
+    transition: all .4s ease-out;
+    background-color: hsla(216, 30%, 42%, 0.1);
+}
+
+.item.breakpoint.javascript.debugger-statement .icon {
+    content: url(../Images/TypeIcons.svg#DebuggerStatement-light);
+}
+
+.item.breakpoint.javascript.exception .icon {
+    content: url(../Images/TypeIcons.svg#Exception-light);
+}
+
+.item.breakpoint.javascript.assertion .icon {
+    content: url(../Images/TypeIcons.svg#Assertion-light);
+}
+
+.item.breakpoint.javascript.microtask .icon {
+    content: url(../Images/TypeIcons.svg#Microtask-light);
+}
+
+@media (prefers-color-scheme: dark) {
+    .item.breakpoint.javascript.line .icon {
+        background-image: url(../Images/TypeIcons.svg#ResultLine-dark);
+    }
+
+    .item.breakpoint.javascript.debugger-statement .icon {
+        content: url(../Images/TypeIcons.svg#DebuggerStatement-dark);
+    }
+
+    .item.breakpoint.javascript.exception .icon {
+        content: url(../Images/TypeIcons.svg#Exception-dark);
+    }
+
+    .item.breakpoint.javascript.assertion .icon {
+        content: url(../Images/TypeIcons.svg#Assertion-dark);
+    }
+
+    .item.breakpoint.javascript.microtask .icon {
+        content: url(../Images/TypeIcons.svg#Microtask-dark);
+    }
+}

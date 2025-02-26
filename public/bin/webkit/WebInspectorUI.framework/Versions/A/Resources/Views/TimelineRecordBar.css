@@ -1,0 +1,188 @@
+/*
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.timeline-record-bar {
+    position: absolute;
+    z-index: var(--timeline-record-z-index);
+    height: 12px;
+}
+
+.timeline-record-bar > :is(img, .segment) {
+    position: absolute;
+    z-index: var(--timeline-record-z-index);
+}
+
+.timeline-record-bar > img {
+    width: 14px;
+    height: 14px;
+    margin-top: -1px;
+    margin-inline-start: -7px;
+}
+
+.timeline-record-bar > .segment {
+    min-width: 4px;
+    height: 100%;
+    background-color: hsl(0, 0%, 88%);
+    border-top: 1px solid var(--record-bar-segment-border-color);
+    border-bottom: 1px solid var(--record-bar-segment-border-color);
+    border-inline: var(--record-bar-segment-border-start) var(--record-bar-segment-border-end);
+
+    --record-bar-segment-border-color: hsl(0, 0%, 78%);
+    --record-bar-segment-border-start: 1px solid var(--record-bar-segment-border-color);
+    --record-bar-segment-border-end: 1px solid var(--record-bar-segment-border-color);
+    --record-bar-segment-border-start-radius: 3px;
+    --record-bar-segment-border-end-radius: 3px;
+}
+
+body[dir=ltr] .timeline-record-bar > .segment:first-of-type {
+    border-top-left-radius: var(--record-bar-segment-border-start-radius);
+    border-bottom-left-radius: var(--record-bar-segment-border-start-radius);
+}
+
+body[dir=ltr] .timeline-record-bar > .segment:last-of-type {
+    border-top-right-radius: var(--record-bar-segment-border-end-radius);
+    border-bottom-right-radius: var(--record-bar-segment-border-end-radius);
+}
+
+body[dir=rtl] .timeline-record-bar > .segment:first-of-type {
+    border-top-left-radius: var(--record-bar-segment-border-end-radius);
+    border-bottom-left-radius: var(--record-bar-segment-border-end-radius);
+}
+
+body[dir=rtl] .timeline-record-bar > .segment:last-of-type {
+    border-top-right-radius: var(--record-bar-segment-border-start-radius);
+    border-bottom-right-radius: var(--record-bar-segment-border-start-radius);
+}
+
+.timeline-record-bar > .segment:not(:last-of-type) {
+    --record-bar-segment-border-end: none;
+}
+
+.timeline-record-bar.selected > .segment {
+    background-color: var(--selected-text-background-color) !important;
+    --record-bar-segment-border-color: var(--glyph-color-active) !important;
+}
+
+.timeline-record-bar:not(.has-inactive-segment) > .segment {
+    left: 0;
+    width: 100%;
+}
+
+.timeline-record-bar > .segment.inactive {
+    z-index: 0;
+}
+
+.timeline-record-bar > .segment.inactive,
+.timeline-record-bar.unfinished > .segment:last-child {
+    --record-bar-segment-border-end: none;
+    --record-bar-segment-border-end-radius: 0;
+}
+
+.timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
+    --record-bar-segment-border-start-radius: 0;
+}
+
+:focus .selected .timeline-record-bar:not(.has-custom-children) > .segment {
+    background-color: white !important;
+    border: none !important;
+}
+
+:focus .selected .timeline-record-bar:not(.has-custom-children) > .segment.inactive {
+    background-color: hsl(215, 63%, 85%) !important;
+}
+
+:focus .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
+    --record-bar-segment-border-start: 1px solid hsla(215, 67%, 53%, 0.7);
+}
+
+.timeline-record-bar.timeline-record-type-network > .segment {
+    background-color: hsl(207, 63%, 67%);
+    --record-bar-segment-border-color: hsl(202, 55%, 51%);
+}
+
+.timeline-record-bar.timeline-record-type-network > .segment.inactive {
+    background-color: hsl(208, 66%, 79%);
+    --record-bar-segment-border-color: hsl(202, 57%, 68%);
+}
+
+.timeline-record-bar.timeline-record-type-layout > .segment {
+    background-color: hsl(0, 65%, 75%);
+    --record-bar-segment-border-color: hsl(0, 54%, 62%);
+}
+
+
+.timeline-record-bar.timeline-record-type-layout.paint > .segment,
+.timeline-record-bar.timeline-record-type-layout.composite > .segment {
+    background-color: hsl(76, 49%, 60%);
+    --record-bar-segment-border-color: hsl(79, 45%, 51%);
+}
+
+.timeline-record-bar.timeline-record-type-script > .segment {
+    background-color: hsl(269, 65%, 74%);
+    --record-bar-segment-border-color: hsl(273, 33%, 58%);
+}
+
+.timeline-record-bar.timeline-record-type-script.garbage-collected > .segment,
+.timeline-record-bar.timeline-record-type-heap-allocations > .segment {
+    background-color: hsl(23, 69%, 73%);
+    --record-bar-segment-border-color: hsl(11, 54%, 62%);
+}
+
+.timeline-record-bar.timeline-record-type-media > .segment {
+    background-color: hsl(143, 24%, 66%);
+    --record-bar-segment-border-color: hsl(153, 24%, 51%);
+}
+
+.timeline-record-bar.has-custom-children.timeline-record-type-media > .segment {
+    height: 8px;
+    margin-top: 2px;
+}
+
+.timeline-record-bar.has-custom-children.timeline-record-type-media > .segment.css-animation-ready {
+    background-color: var(--text-color-quaternary);
+}
+
+.timeline-record-bar.has-custom-children.timeline-record-type-media > .segment:is(.css-animation-delay, .media-element-paused) {
+    background-color: hsl(143, 24%, 84%);
+}
+
+.timeline-record-bar.has-custom-children.timeline-record-type-media.media-element > .segment {
+    --record-bar-segment-border-start-radius: 0;
+    --record-bar-segment-border-end-radius: 0;
+}
+
+.timeline-record-bar.has-custom-children.timeline-record-type-media.media-element > .segment.media-element-full-screen {
+    height: 14px;
+    margin-top: -1px;
+    background-color: lightgrey;
+    border: none;
+}
+
+.timeline-record-bar.has-custom-children.timeline-record-type-media.media-element > .segment.media-element-power-efficient-playback {
+    height: 12px;
+    margin-top: 0;
+    background-color: var(--network-request-color);
+    border: none;
+}

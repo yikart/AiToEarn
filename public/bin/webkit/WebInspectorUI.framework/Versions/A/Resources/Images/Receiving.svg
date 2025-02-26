@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2017 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 50 50">
+    <line stroke="hsl(0, 0%, 75%)" stroke-linecap="round" stroke-width="5" x1="25" y1="44" x2="25" y2="6"/>
+    <line stroke="hsl(0, 0%, 75%)" stroke-linecap="round" stroke-width="5" x1="25" y1="44" x2="10" y2="28"/>
+    <line stroke="hsl(0, 0%, 75%)" stroke-linecap="round" stroke-width="5" x1="25" y1="44" x2="40" y2="28"/>
+</svg>

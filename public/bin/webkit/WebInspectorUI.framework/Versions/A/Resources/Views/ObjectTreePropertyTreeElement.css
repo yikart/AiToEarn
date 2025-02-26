@@ -1,0 +1,226 @@
+/*
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.tree-outline .item.object-tree-property {
+    margin-top: 0;
+    border-top: 0;
+}
+
+.object-tree-property.boolean > .icon {
+    content: url(../Images/TypeIcons.svg#TypeBoolean-light);
+}
+
+.object-tree-property.function > .icon {
+    content: url(../Images/TypeIcons.svg#Function-light);
+}
+
+.object-tree-property.number > .icon {
+    content: url(../Images/TypeIcons.svg#TypeNumber-light);
+}
+
+.object-tree-property.bigint > .icon {
+    content: url(../Images/TypeIcons.svg#TypeBigInt-light);
+}
+
+.object-tree-property.object > .icon {
+    content: url(../Images/TypeIcons.svg#TypeObject-light);
+}
+
+.object-tree-property.object.null > .icon {
+    content: url(../Images/TypeIcons.svg#TypeNull-light);
+}
+
+.object-tree-property.object.node > .icon {
+    content: url(../Images/TypeIcons.svg#DOMElement-light);
+}
+
+.object-tree-property.regex > .icon {
+    content: url(../Images/TypeIcons.svg#TypeRegex-light);
+}
+
+.object-tree-property.string > .icon {
+    content: url(../Images/TypeIcons.svg#TypeString-light);
+}
+
+.object-tree-property.symbol > .icon {
+    content: url(../Images/TypeIcons.svg#TypeSymbol-light);
+}
+
+.object-tree-property.accessor > .icon,
+.object-tree-property.undefined > .icon {
+    content: url(../Images/TypeIcons.svg#TypeUndefined-light);
+}
+
+.object-tree-property.had-error > .icon {
+    content: url(../Images/TypeIcons.svg#TypeUndefined-light) !important;
+}
+
+.object-tree-property .property-name,
+.object-tree-property .function-parameters,
+.object-tree-property .prototype-name {
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 12px;
+}
+
+.object-tree-property .property-name:is(.private, .internal) {
+    color: var(--text-color-secondary);
+}
+
+.item.object-tree-property.prototype-property {
+    display: inline-block;
+
+    border: 1px solid hsla(0, 0%, 0%, 0.06);
+    background-color: hsla(0, 0%, 0%, 0.03);
+    border-radius: 3px;
+
+    padding: 0 10px 1px 0;
+    margin: 3px 0 2px 0;
+}
+
+.object-tree-property.prototype-property:hover, .object-tree-property.prototype-property:focus {
+    border-color: hsla(0, 0%, 0%, 0.1);
+}
+
+.object-tree-property.prototype-property > .icon {
+    display: none;
+}
+
+.item.object-tree-property.prototype-property + ol {
+    padding-inline-start: 0px;
+}
+
+.object-tree-property :is(.getter, .setter) {
+    position: relative;
+    opacity: 0.6;
+    vertical-align: top;
+}
+
+.object-tree-property .spacer {
+    margin-left: 4px;
+}
+
+.object-tree-property .getter {
+    top: 1px;
+
+    content: url(../Images/Show.svg);
+
+    width: 16px;
+    height: 11px;
+}
+
+.object-tree-property .setter {
+    top: -1px;
+
+    content: url(../Images/Pencil.svg);
+
+    width: 13px;
+    height: 13px;
+}
+
+.object-tree-property .getter + .setter {
+    margin-left: 1px;
+}
+
+.object-tree-property :is(.getter, .setter).disabled {
+    opacity: 0.35;
+}
+
+.object-tree-property .getter:not(.disabled):hover {
+    opacity: 1;
+}
+
+.object-tree-property .value.error {
+    color: red;
+}
+
+@media (prefers-color-scheme: dark) {
+    .object-tree-property .getter,
+    .object-tree-property .setter {
+        filter: invert();
+    }
+
+    .item.object-tree-property.prototype-property {
+        border-color: hsla(0, 0%, var(--foreground-lightness), 0.06);
+        background-color: hsla(0, 0%, var(--foreground-lightness), 0.03);
+    }
+
+    .object-tree-property.prototype-property:hover,
+    .object-tree-property.prototype-property:focus {
+        border-color: hsla(0, 0%, var(--foreground-lightness), 0.1);
+    }
+
+    .object-tree-property .value.error {
+        color: hsl(0, 100%, 60%);
+    }
+
+    .object-tree-property.boolean > .icon {
+        content: url(../Images/TypeIcons.svg#TypeBoolean-dark);
+    }
+
+    .object-tree-property.function > .icon {
+        content: url(../Images/TypeIcons.svg#Function-dark);
+    }
+
+    .object-tree-property.number > .icon {
+        content: url(../Images/TypeIcons.svg#TypeNumber-dark);
+    }
+
+    .object-tree-property.bigint > .icon {
+        content: url(../Images/TypeIcons.svg#TypeBigInt-dark);
+    }
+
+    .object-tree-property.object > .icon {
+        content: url(../Images/TypeIcons.svg#TypeObject-dark);
+    }
+
+    .object-tree-property.object.null > .icon {
+        content: url(../Images/TypeIcons.svg#TypeNull-dark);
+    }
+
+    .object-tree-property.object.node > .icon {
+        content: url(../Images/TypeIcons.svg#DOMElement-dark);
+    }
+
+    .object-tree-property.regex > .icon {
+        content: url(../Images/TypeIcons.svg#TypeRegex-dark);
+    }
+
+    .object-tree-property.string > .icon {
+        content: url(../Images/TypeIcons.svg#TypeString-dark);
+    }
+
+    .object-tree-property.symbol > .icon {
+        content: url(../Images/TypeIcons.svg#TypeSymbol-dark);
+    }
+
+    .object-tree-property.accessor > .icon,
+    .object-tree-property.undefined > .icon {
+        content: url(../Images/TypeIcons.svg#TypeUndefined-dark);
+    }
+
+    .object-tree-property.had-error > .icon {
+        content: url(../Images/TypeIcons.svg#TypeUndefined-dark) !important;
+    }
+}

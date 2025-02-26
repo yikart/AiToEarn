@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 10 10">
+    <style>
+        svg[id] {
+            display: none;
+        }
+
+        svg[id]:target {
+            display: initial;
+        }
+
+        path {
+            fill: inherit;
+        }
+
+        #normal {
+            fill: hsla(0, 0%, 0%, 0.5);
+        }
+
+        #active {
+            fill: hsla(0, 0%, 0%, 0.7);
+        }
+
+        #selected {
+            fill: white;
+        }
+
+        #selected-active {
+            fill: hsla(0, 0%, 100%, 0.75);
+        }
+    </style>
+
+    <defs>
+        <path id="go-to-arrow-path" d="M 5 8 L 5 6 L 2 6 L 2 4 L 5 4 L 5 2 L 8 5 Z M 5 0 C 2.238281 0 0 2.238281 0 5 C 0 7.761719 2.238281 10 5 10 C 7.761719 10 10 7.761719 10 5 C 10 2.238281 7.761719 0 5 0"/>
+    </defs>
+
+    <svg id="normal"><use xlink:href="#go-to-arrow-path"/></svg>
+    <svg id="active"><use xlink:href="#go-to-arrow-path"/></svg>
+    <svg id="selected"><use xlink:href="#go-to-arrow-path"/></svg>
+    <svg id="selected-active"><use xlink:href="#go-to-arrow-path"/></svg>
+</svg>

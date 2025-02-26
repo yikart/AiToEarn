@@ -1,0 +1,942 @@
+{
+    "domain": "Automation",
+    "description": "Automation domain exposes commands for automating user interactions with the browser.",
+    "types": [
+        {
+            "id": "Point",
+            "type": "object",
+            "properties": [
+                { "name": "x", "type": "number" },
+                { "name": "y", "type": "number" }
+            ]
+        },
+        {
+            "id": "Size",
+            "type": "object",
+            "properties": [
+                { "name": "width", "type": "number" },
+                { "name": "height", "type": "number" }
+            ]
+        },
+        {
+            "id": "Rect",
+            "type": "object",
+            "properties": [
+                { "name": "origin", "$ref": "Point" },
+                { "name": "size", "$ref": "Size" }
+            ]
+        },
+        {
+            "id": "CoordinateSystem",
+            "type": "string",
+            "description": "The coordinate system in which rects, points, and sizes are to be interpreted. LayoutViewport is a legacy value and should not be used going forward.",
+            "enum": [
+                "Page",
+                "Viewport",
+                "LayoutViewport"
+            ]
+        },
+        {
+            "id": "BrowsingContextHandle",
+            "type": "string",
+            "description": "An opaque identifier for a browsing context."
+        },
+        {
+            "id": "BrowsingContextPresentation",
+            "type": "string",
+            "description": "How a browsing context is presented by the user agent. A browsing context is considered a tab if it shares an OS-level window with another browsing context.",
+            "enum": [
+                "Window",
+                "Tab"
+            ]
+        },
+        {
+            "id": "FrameHandle",
+            "type": "string",
+            "description": "An opaque identifier for a frame in a page."
+        },
+        {
+            "id": "NodeHandle",
+            "type": "string",
+            "description": "An opaque identifier for a node in a page."
+        },
+        {
+            "id": "ErrorMessage",
+            "type": "string",
+            "description": "This enum contains predefined error messages that can be used to signal a well-defined error condition, such as a missing implementation, unknown window handle, and so forth. The backend signals one of these errors by using it as a prefix of the commands's error message (the errorString argument in generated C++ backend dispatchers). This will be reported to the frontend as a protocol error with a JSON-RPC error code of 'ServerError'. It is up to the frontend whether and how to deal with errors.",
+            "enum": [
+                "InternalError",
+                "Timeout",
+                "JavaScriptError",
+                "JavaScriptTimeout",
+                "WindowNotFound",
+                "FrameNotFound",
+                "NodeNotFound",
+                "InvalidNodeIdentifier",
+                "InvalidElementState",
+                "NoJavaScriptDialog",
+                "NotImplemented",
+                "MissingParameter",
+                "InvalidParameter",
+                "InvalidSelector",
+                "ElementNotInteractable",
+                "ElementNotSelectable",
+                "ScreenshotError",
+                "UnexpectedAlertOpen",
+                "TargetOutOfBounds",
+                "UnableToLoadExtension",
+                "UnableToUnloadExtension",
+                "NoSuchExtension"
+            ]
+        },
+        {
+            "id": "PageLoadStrategy",
+            "type": "string",
+            "description": "Enumerates different page load strategies.",
+            "enum": [
+                "None",
+                "Eager",
+                "Normal"
+            ]
+        },
+        {
+            "id": "BrowsingContext",
+            "type": "object",
+            "description": "A handle representing an open window or tab in the automation session.",
+            "properties": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "Opaque handle for a browsing context (window or tab). Used as a key for window-related commands." },
+                { "name": "active", "type": "boolean", "description": "Whether the browsing context has focus at the time the command is handled." },
+                { "name": "url", "type": "string", "description": "The URL loaded by the browsing context at the time the command is handled." },
+                { "name": "windowSize", "$ref": "Size", "description": "The current size of the browsing context's window." },
+                { "name": "windowOrigin", "$ref": "Point", "description": "The current (x, y) position of the browsing context's window relative to the top-left of the screen." }
+            ]
+        },
+        {
+            "id": "MouseInteraction",
+            "type": "string",
+            "description": "Enumerates different ways of interacting with a mouse cursor.",
+            "enum": [
+                "Move",
+                "Down",
+                "Up",
+                "SingleClick",
+                "DoubleClick"
+            ]
+        },
+        {
+            "id": "MouseButton",
+            "type": "string",
+            "description": "Enumerates different mouse buttons that can be used.",
+            "enum": [
+                "None",
+                "Left",
+                "Middle",
+                "Right"
+            ]
+        },
+        {
+            "id": "KeyModifier",
+            "type": "string",
+            "description": "Enumerates different key modifiers that can remain pressed during other mouse/touch interactions.",
+            "enum": [
+                "CapsLock",
+                "Control",
+                "Shift",
+                "Meta",
+                "Alt"
+            ]
+        },
+        {
+            "id": "VirtualKey",
+            "type": "string",
+            "description": "Enumerates different platform-independent virtual keys on a physical keyboard whose input via keyboard may or may not produce characters.",
+            "enum": [
+                "Shift",
+                "ShiftRight",
+                "Control",
+                "ControlRight",
+                "Alternate",
+                "AlternateRight",
+                "Meta",
+                "MetaRight",
+                "Command",
+                "CommandRight",
+                "Cancel",
+                "Help",
+                "Backspace",
+                "Tab",
+                "Clear",
+                "Enter",
+                "Pause",
+                "Escape",
+                "PageUp",
+                "PageUpRight",
+                "PageDown",
+                "PageDownRight",
+                "End",
+                "EndRight",
+                "Home",
+                "HomeRight",
+                "LeftArrow",
+                "LeftArrowRight",
+                "UpArrow",
+                "UpArrowRight",
+                "RightArrow",
+                "RightArrowRight",
+                "DownArrow",
+                "DownArrowRight",
+                "Insert",
+                "InsertRight",
+                "Delete",
+                "DeleteRight",
+                "Space",
+                "Semicolon",
+                "Equals",
+                "Return",
+                "NumberPad0",
+                "NumberPad1",
+                "NumberPad2",
+                "NumberPad3",
+                "NumberPad4",
+                "NumberPad5",
+                "NumberPad6",
+                "NumberPad7",
+                "NumberPad8",
+                "NumberPad9",
+                "NumberPadMultiply",
+                "NumberPadAdd",
+                "NumberPadSeparator",
+                "NumberPadSubtract",
+                "NumberPadDecimal",
+                "NumberPadDivide",
+                "Function1",
+                "Function2",
+                "Function3",
+                "Function4",
+                "Function5",
+                "Function6",
+                "Function7",
+                "Function8",
+                "Function9",
+                "Function10",
+                "Function11",
+                "Function12"
+            ]
+        },
+        {
+            "id": "KeyboardInteractionType",
+            "type": "string",
+            "description": "Enumerates different ways of interacting with a keyboard device. 'InsertByKey' implies that a separate KeyDown and KeyUp event are produced for each combining character sequence, regardless of the actual keystrokes required to produce the character sequence.",
+            "enum": [
+                "KeyPress",
+                "KeyRelease",
+                "InsertByKey"
+            ]
+        },
+        {
+            "id": "KeyboardInteraction",
+            "type": "object",
+            "description": "A single step in a key sequence. A step can contain a key up/down of a virtual key, or a sequence of Unicode code points that are delivered to the page at grapheme cluster boundaries. Either a 'key' or 'text' property must be specified.",
+            "properties": [
+                { "name": "type", "$ref": "KeyboardInteractionType", "description": "The type of interaction to be performed by a step." },
+                { "name": "key", "$ref": "VirtualKey", "optional": true, "description": "A virtual key to be used to perform the specified interaction." },
+                { "name": "text", "type": "string", "optional": true, "description": "A unicode string to be delivered to the page. The sequence of key events is determined by splitting the string at grapheme cluster boundaries." }
+            ]
+        },
+        {
+            "id": "CookieSameSitePolicy",
+            "type": "string",
+            "description": "Enumerates values for cookies same site policy",
+            "enum": [
+                "None",
+                "Lax",
+                "Strict"
+            ]
+        },
+        {
+            "id": "Cookie",
+            "type": "object",
+            "properties": [
+                { "name": "name", "type": "string", "description": "Cookie name." },
+                { "name": "value", "type": "string", "description": "Cookie value." },
+                { "name": "domain", "type": "string", "description": "Cookie domain. If empty, the domain is inherited from the relevant browsing context." },
+                { "name": "path", "type": "string", "description": "Cookie path." },
+                { "name": "expires", "type": "number", "description": "Cookie expiration in seconds since the UNIX epoch." },
+                { "name": "size", "type": "integer", "description": "Cookie size." },
+                { "name": "httpOnly", "type": "boolean", "description": "True if cookie is http-only." },
+                { "name": "secure", "type": "boolean", "description": "True if cookie is secure." },
+                { "name": "session", "type": "boolean", "description": "True in case of session cookie." },
+                { "name": "sameSite", "$ref": "CookieSameSitePolicy", "description": "Cookie same site policy." }
+            ]
+        },
+        {
+            "id": "SessionPermission",
+            "type": "string",
+            "description": "Enumerates different permissions that must be obtained in order to use privileged APIs.",
+            "enum": [
+                "GetUserMedia"
+            ]
+        },
+        {
+            "id": "SessionPermissionData",
+            "type": "object",
+            "properties": [
+                { "name": "permission", "$ref": "SessionPermission" },
+                { "name": "value", "type": "boolean" }
+            ]
+        },
+        {
+            "id": "InputSourceType",
+            "type": "string",
+            "description": "The type of an input source. This determines which state properties are applicable to the input source. The 'Null' input source type has no properties, only a duration. This can extend the effective wait for a tick.",
+            "enum": [
+                "Null",
+                "Mouse",
+                "Keyboard",
+                "Touch",
+                "Wheel",
+                "Pen"
+            ]
+        },
+        {
+            "id": "InputSource",
+            "type": "object",
+            "properties": [
+                { "name": "sourceId", "type": "string", "description": "A unique identifier for this input source." },
+                { "name": "sourceType", "$ref": "InputSourceType", "description": "The type of this input source. This affects what input source state fields are valid for this input source." }
+            ]
+        },
+        {
+            "id": "InteractionStep",
+            "description": "A set of input source states to which all applicable input sources must transition before further steps may be processed. If an input source does not have a corresponding state in a step, its state assumed to be 'released' for that step.",
+            "type": "object",
+            "properties": [
+                { "name": "states", "type": "array", "items": { "$ref": "InputSourceState" }, "optional": true, "description": "A list of new input states for input sources that must transition during this step. Source state transitions that cannot be performed concurrently (i.e., touch gestures) are performed sequentially in the order they are listed." }
+            ]
+        },
+        {
+            "id": "MouseMoveOrigin",
+            "type": "string",
+            "description": "Enumerates different origin types that can be used in mouse move interactions.",
+            "enum": [
+                "Viewport",
+                "Pointer",
+                "Element"
+            ]
+        },
+        {
+            "id": "InputSourceState",
+            "type": "object",
+            "description": "A new state for a specific input source. All state-related fields are optional and must be applicable to the InputSource referenced by 'sourceId'. If no state-related fields are specified, the state is assumed to remain the same as in the previous step (i.e., 'sustained').",
+            "properties": [
+                { "name": "sourceId", "type": "string", "description": "The input source whose state is described by this object." },
+                { "name": "pressedCharKey", "type": "string", "optional": true, "description": "For 'keyboard' input sources, specifies a character key that has 'pressed' state. Unmentioned character keys are assumed to have a 'released' state." },
+                { "name": "pressedVirtualKeys", "type": "array", "items": { "$ref": "VirtualKey" }, "optional": true, "description": "For 'keyboard' input sources, specifies virtual keys that have a 'pressed' state. Unmentioned virtual keys are assumed to have a 'released' state." },
+                { "name": "pressedButton", "$ref": "MouseButton", "optional": true, "description": "For 'mouse' input sources, specifies which mouse button has a 'pressed' state. Unmentioned mouse buttons are assumed to have a 'released' state. For 'touch' input sources, passing MouseButton::Left denotes a touch-down state." },
+                { "name": "mouseInteraction", "$ref": "MouseInteraction", "optional": true, "description": "For 'mouse' input sources, specifies which type of interaction took place. If unmentioned and the interaction cannot be determined through other heuristics, the state is dropped."},
+                { "name": "origin", "$ref": "MouseMoveOrigin", "optional": true, "description": "For 'mouse' or 'wheel' input sources, specifies the origin type of a mouse move transition. Defaults to 'Viewport' if omitted."},
+                { "name": "nodeHandle", "$ref": "NodeHandle", "optional": true, "description": "The handle of the element to use as origin when origin type is 'Element'."},
+                { "name": "location", "$ref": "Point", "optional": true, "description": "For 'mouse', 'wheel' or 'touch' input sources, specifies a location in view coordinates to which the input source should transition. Transitioning to this state may interpolate intemediate input source states to better simulate real user movements and gestures." },
+                { "name": "delta", "$ref": "Size", "optional": true, "description": "For 'wheel' input sources, specifies a scroll delta."},
+                { "name": "duration", "type": "integer", "optional": true, "description": "The minimum number of milliseconds that must elapse while the relevant input source transitions to this state." }
+            ]
+        },
+        {
+            "id": "AuthenticatorProtocol",
+            "type": "string",
+            "description": "This enum contains the different protocol types supported by virtual authenticators.",
+            "enum": [
+                "ctap1_u2f",
+                "ctap2",
+                "ctap2_1"
+            ]
+        },
+        {
+            "id": "AuthenticatorTransport",
+            "type": "string",
+            "description": "Authenticators may implement various transports for communicating with clients. This enumeration defines hints as to how clients might communicate with a particular authenticator in order to obtain an assertion for a specific credential.",
+            "enum": [
+                "usb",
+                "nfc",
+                "ble",
+                "internal"
+            ]
+        },
+        {
+            "id": "VirtualAuthenticatorCredential",
+            "type": "object",
+            "description": "A credential object used for virtual authenticators.",
+            "properties": [
+                { "name": "credentialId", "type": "string", "description": "The Credential ID encoded using Base64url Encoding."},
+                { "name": "isResidentCredential", "type": "boolean", "description": "If set to true, a client-side discoverable credential is created. If set to false, a server-side credential is created instead."},
+                { "name": "rpId", "type": "string", "description": "The Relying Party ID the credential is scoped to."},
+                { "name": "privateKey", "type": "string", "description": "An asymmetric key package containing a single private key per [RFC5958], encoded using Base64url Encoding." },
+                { "name": "userHandle", "type": "string", "optional": true, "description": "The userHandle associated to the credential encoded using Base64url Encoding. This property may not be defined." },
+                { "name": "signCount", "type": "integer", "description": "The initial value for a signature counter associated to the public key credential source." },
+                { "name": "largeBlob", "type": "string", "optional": true, "description": "The large, per-credential blob associated to the public key credential source, encoded using Base64url Encoding. This property may not be defined." }
+            ]
+        },
+        {
+            "id": "VirtualAuthenticatorConfiguration",
+            "type": "object",
+            "description": "Parameters used when creating a virtual authenticator",
+            "properties": [
+                { "name": "protocol", "$ref": "AuthenticatorProtocol", "description": "The protocol of the authenticator" },
+                { "name": "transport", "$ref": "AuthenticatorTransport", "description": "The transport of the protocol" },
+                { "name": "hasResidentKey", "type": "boolean", "optional": true, "description": "If the authenticator has a resident key" },
+                { "name": "hasUserVerification", "type": "boolean", "optional": true, "description": "If the authenticator supports user verification" },
+                { "name": "isUserConsenting", "type": "boolean", "optional": true, "description": "If the virtual authenticator should consent to requests"},
+                { "name": "isUserVerified", "type": "boolean", "optional": true, "description": "If user verification requests should succeeed"},
+                { "name": "extensions", "type": "array", "items": {"type": "string"}, "optional": true, "description": "An array containing extension identifiers" },
+                { "name": "uvm", "type": "array", "items": {"type": "integer"}, "optional": true, "description": "Up to 3 User Verification Method entries"}
+            ]
+        },
+        {
+            "id": "WebExtensionResourceOptions",
+            "type": "string",
+            "description": "The format of the resource used to load the web extension.",
+            "enum": [
+                "Path",
+                "ArchivePath",
+                "Base64"
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "getBrowsingContexts",
+            "description": "Fetches information about all open browsing contexts (windows and tabs) in the automation session.",
+            "returns": [
+                { "name": "contexts", "type": "array", "items": { "$ref": "BrowsingContext" }, "description": "All known browsing contexts available to the session." }
+            ],
+            "async": true
+        },
+        {
+            "name": "getBrowsingContext",
+            "description": "Fetches information about the specified browsing context.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." }
+            ],
+            "returns": [
+                { "name": "context", "$ref": "BrowsingContext", "description": "The browsing context available to the session." }
+            ],
+            "async": true
+        },
+        {
+            "name": "createBrowsingContext",
+            "description": "Opens a new browsing context in the automation session and makes it the active browsing context for user interaction. This command creates a browsing context in a new window rather than adding a tab to an existing window.",
+            "parameters": [
+                { "name": "presentationHint", "$ref": "BrowsingContextPresentation", "optional": true, "description": "A hint for the desired presentation of new browsing context (new tab or new window)."}
+            ],
+            "returns": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "An opaque handle for the newly created browsing context." },
+                { "name": "presentation", "$ref": "BrowsingContextPresentation", "description": "How the browser presented the new browsing context (new tab or new window)." }
+            ],
+            "async": true
+        },
+        {
+            "name": "closeBrowsingContext",
+            "description": "Try to close the specified browsing context. This can trigger an unload prompt and thereafter succeed or fail.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be closed." }
+            ]
+        },
+        {
+            "name": "deleteSession",
+            "description": "Closes the automation session. Deletion of browsing contexts is handled by separate previous closeBrowsingContext commands."
+        },
+        {
+            "name": "switchToBrowsingContext",
+            "description": "Activates the specified browsing context and optional frame, which gives them focus (causing the 'focus' DOM event to fire, and 'blur' DOM event to fire for the previous browsing context and frame).",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be made focused." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame that should be focused. Defaults to the main frame if omitted." }
+            ],
+            "async": true
+        },
+        {
+            "name": "setWindowFrameOfBrowsingContext",
+            "description": "Moves and/or resizes the window of the specified top-level browsing context to the specified position and size. Both position and size may be omitted. This command implicitly exits fullscreen and restores the window (if previously hidden), then optionally sets the window frame.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context to be resized." },
+                { "name": "origin", "$ref": "Point", "optional": true, "description": "The new origin for the browsing context's window. The position is interpreted in screen coordinate space, relative to the upper left corner of the screen." },
+                { "name": "size", "$ref": "Size", "optional": true, "description": "The new size for the browsing context's window. The size is interpreted in screen pixels." }
+            ],
+            "async": true
+        },
+        {
+            "name": "maximizeWindowOfBrowsingContext",
+            "description": "Causes the window of the specified browsing context to be maximized. This command implicitly exits fullscreen mode.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context whose window should be maximized." }
+            ],
+            "async": true
+        },
+        {
+            "name": "hideWindowOfBrowsingContext",
+            "description": "Causes the window of the specified browsing context to be hidden/minimized/iconified. This command implicitly exits fullscreen mode.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context whose window should be hidden." }
+            ],
+            "async": true
+        },
+        {
+            "name": "navigateBrowsingContext",
+            "description": "Navigates a browsing context to a specified URL.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." },
+                { "name": "url", "type": "string", "description": "The URL to load in the browsing context." },
+                { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
+                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
+            ],
+            "async": true
+        },
+        {
+            "name": "goBackInBrowsingContext",
+            "description": "Navigates a browsing context to go back one page in history.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." },
+                { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
+                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
+            ],
+            "async": true
+        },
+        {
+            "name": "goForwardInBrowsingContext",
+            "description": "Navigates a browsing context to got forward one page in history.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." },
+                { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
+                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
+            ],
+            "async": true
+        },
+        {
+            "name": "reloadBrowsingContext",
+            "description": "Reloads the current page in a browsing context.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be reloaded." },
+                { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
+                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
+            ],
+            "async": true
+        },
+        {
+            "name": "waitForNavigationToComplete",
+            "description": "Wait for pending navigation to complete.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context in which wait for pending navigation to complete." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame in which wait for pending navigation to complete. The main frame is used if this parameter empty string or excluded." },
+                { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
+                { "name": "pageLoadTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
+            ],
+            "async": true
+        },
+        {
+            "name": "inspectBrowsingContext",
+            "description": "Inspect the specified browsing context using Web Inspector.",
+            "condition": "defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be inspected." },
+                { "name": "enableAutoCapturing", "type": "boolean", "optional": true, "description": "If this option is present and set to true, the Web Inspector will automatically start a timeline recording of the specified browsing context once it is attached. Note that this disables the debugger for the duration of the recording." }
+            ],
+            "async": true
+        },
+        {
+            "name": "evaluateJavaScriptFunction",
+            "description": "Evaluates a script function in a browsing context and calls it with the supplied arguments.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context the script should be evaluated." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame the script should be evaluated. The main frame is used if this parameter empty string or excluded." },
+                { "name": "function", "type": "string", "description": "The script to evaluate in the browsing context. It must be a function result." },
+                { "name": "arguments", "type": "array", "items": { "type": "string" }, "description": "The arguments to pass to the function when called. They will be parsed as JSON before calling the function." },
+                { "name": "expectsImplicitCallbackArgument", "type": "boolean", "optional": true, "description": "The function expects a callback function as the last argument. It is expected to call this callback with a result." },
+                { "name": "forceUserGesture", "type": "boolean", "optional": true, "description": "Force a user gesture when the script is evaluated. Defaults to false if omitted." },
+                { "name": "callbackTimeout", "type": "number", "optional": true, "description": "The timeout in milliseconds that the implicit callback is expected to be called in, otherwise a <code>JavaScriptTimeout</code> error is returned." }
+            ],
+            "returns": [
+                { "name": "result", "type": "string", "description": "The result returned by the called function. It is JSON encoded after the function returns or calls the callback." }
+            ],
+            "async": true
+        },
+        {
+            "name": "performMouseInteraction",
+            "description": "Simulates interaction with a mouse cursor.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The browsing context to be interacted with." },
+                { "name": "position", "$ref": "Point", "description": "The requested position for the mouse cursor, specified in viewport coordinates." },
+                { "name": "button", "$ref": "MouseButton", "description": "The button to use to perform the interaction. This parameter only has an effect for the <code>Down</code>, <code>Up</code>, <code>Click</code>, and <code>DoubleClick</code> mouse interactions." },
+                { "name": "interaction", "$ref": "MouseInteraction", "description": "The type of interaction to be performed with the mouse cursor." },
+                { "name": "modifiers", "type": "array", "items": { "$ref": "KeyModifier" }, "description": "Key modifiers to be active during the mouse interaction." }
+            ],
+            "returns": [
+                { "name": "position", "$ref": "Point", "description": "The updated position of the mouse cursor, specified in viewport coordinates." }
+            ],
+            "async": true
+        },
+        {
+            "name": "performKeyboardInteractions",
+            "description": "Simulates delivering the results of pressing one or more keyboard keys together or successively.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context which should receive key." },
+                { "name": "interactions", "type": "array", "items": { "$ref": "KeyboardInteraction" }, "description": "An ordered list of key sequences to be delivered using native key events." }
+            ],
+            "async": true
+        },
+        {
+            "name": "performInteractionSequence",
+            "description": "Perform multiple simulated interactions over time using a list of input sources and a list of steps, where each step specifies a state for each input source at the time that step is performed.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The browsing context to be interacted with." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame in which to search for the elements in case of an 'Element' type MouseMoveOrigin. The main frame is used if this parameter empty string or excluded." },
+                { "name": "inputSources", "type": "array", "items": { "$ref": "InputSource" }, "description": "All input sources that are used to perform this interaction sequence." },
+                { "name": "steps", "type": "array", "items": { "$ref": "InteractionStep" }, "description": "A list of steps that are executed in order." }
+            ],
+            "async": true
+        },
+        {
+            "name": "cancelInteractionSequence",
+            "description": "Cancel an active interaction sequence that is currently in progress.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The browsing context to be interacted with." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame passed to performInteractionSequence. The main frame is used if this parameter empty string or excluded." }
+            ],
+            "async": true
+        },
+        {
+            "name": "takeScreenshot",
+            "description": "Take a screenshot of the current page or given element in a browsing context.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context to take a screenshot of." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame that contains the element. The main frame is used if this parameter is empty string or excluded." },
+                { "name": "nodeHandle", "$ref": "NodeHandle", "optional": true, "description": "The handle of the element to take a screenshot of. The browsing context document element is used if this parameter is excluded." },
+                { "name": "scrollIntoViewIfNeeded", "type": "boolean", "optional": true, "description": "If the element should be scrolled into view before taking the screenshot." },
+                { "name": "clipToViewport", "type": "boolean", "optional": true, "description": "Whether a screenshot of the entire page should be clipped to the visual viewport. A value of 'false' preserves behavior for legacy protocol screenshots." }
+            ],
+            "returns": [
+                { "name": "data", "type": "string", "description": "Base64-encoded image data (PNG)." }
+            ],
+            "async": true
+        },
+        {
+            "name": "resolveChildFrameHandle",
+            "description": "Determines the <code>FrameHandle</code> based on the ordinal, name or node handle of a child frame.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context in which to search for the frame." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame in which to search for the frame. The main frame is used if this parameter empty string or excluded." },
+                { "name": "ordinal", "type": "integer", "optional": true, "description": "The ordinal of the child frame to resolve as a <code>FrameHandle</code>. This is analogous to 'window.frames[ordinal]' in JavaScript." },
+                { "name": "name", "type": "string", "optional": true, "description": "The name of the child frame to resolve as a <code>FrameHandle</code>. This is analogous to 'window.frames[name]' in JavaScript." },
+                { "name": "nodeHandle", "$ref": "NodeHandle", "optional": true, "description": "The handle of the child frame owner element to resolve as a <code>FrameHandle</code>." }
+            ],
+            "returns": [
+                { "name": "result", "$ref": "FrameHandle", "description": "The <code>FrameHandle</code> for the requested frame." }
+            ],
+            "async": true
+        },
+        {
+            "name": "resolveParentFrameHandle",
+            "description": "Determines the <code>FrameHandle</code> for the parent frame of the supplied <code>FrameHandle</code>.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context the frame is located." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "description": "The handle for the frame that should resolve its parent frame." }
+            ],
+            "returns": [
+                { "name": "result", "$ref": "FrameHandle", "description": "The <code>FrameHandle</code> for the requested frame." }
+            ],
+            "async": true
+        },
+        {
+            "name": "computeElementLayout",
+            "description": "Computes the layout for an element.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context the frame is located." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "description": "The handle for the frame that contains the element." },
+                { "name": "nodeHandle", "$ref": "NodeHandle", "description": "The handle of the element to use." },
+                { "name": "scrollIntoViewIfNeeded", "optional": true, "type": "boolean", "description": "If the element should be scrolled into view before computing its layout." },
+                { "name": "coordinateSystem", "$ref": "CoordinateSystem", "description": "The coordinate system to use for rect and point results." }
+            ],
+            "returns": [
+                { "name": "rect", "$ref": "Rect", "description": "The layout rect for the requested element. Values are converted to the requested coordinate system." },
+                { "name": "inViewCenterPoint", "optional": true, "$ref": "Point", "description": "The in-view center point for the requested element. Values are converted to the requested coordinate system." },
+                { "name": "isObscured", "type": "boolean", "description": "If the in-view center point of the requested element is obscured by another element." }
+            ],
+            "async": true
+        },
+        {
+            "name": "getComputedRole",
+            "description": "Get the computed WAI-ARIA role of the element.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "description": "The handle for the frame that contains the element. The main frame is used if this parameter is empty string." },
+                { "name": "nodeHandle", "$ref": "NodeHandle", "description": "The handle of the element to get the role of." }
+            ],
+            "returns": [
+                { "name": "role", "type": "string", "description": "The computed WAI-ARIA role of the element." }
+            ],
+            "async": true
+        },
+        {
+            "name": "getComputedLabel",
+            "description": "Get the Accessible Name and Description Computation computed accessible name of the element.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "description": "The handle for the frame that contains the element. The main frame is used if this parameter is empty string." },
+                { "name": "nodeHandle", "$ref": "NodeHandle", "description": "The handle of the element to get the label of." }
+            ],
+            "returns": [
+                { "name": "label", "type": "string", "description": "The computed label for the element." }
+            ],
+            "async": true
+        },
+        {
+            "name": "selectOptionElement",
+            "description": "Selects the given option element. In case of container with multiple options enabled, the element selectedness is toggled.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "description": "The handle for the frame that contains the element." },
+                { "name": "nodeHandle", "$ref": "NodeHandle", "description": "The handle of the element to use." }
+            ],
+            "async": true
+        },
+        {
+            "name": "isShowingJavaScriptDialog",
+            "description": "Checks if a browsing context is showing a JavaScript alert, confirm, or prompt dialog.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." }
+            ],
+            "returns": [
+                { "name": "result", "type": "boolean", "description": "If the browsing context is showing a JavaScript dialog or not." }
+            ]
+        },
+        {
+            "name": "dismissCurrentJavaScriptDialog",
+            "description": "Dismisses a JavaScript alert, confirm, or prompt dialog currently showing in a browsing context. Equivalent to clicking the 'Cancel' button.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." }
+            ]
+        },
+        {
+            "name": "acceptCurrentJavaScriptDialog",
+            "description": "Accepts a JavaScript alert, confirm, or prompt dialog currently showing in a browsing context. Equivalent to clicking the 'OK' button.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." }
+            ]
+        },
+        {
+            "name": "messageOfCurrentJavaScriptDialog",
+            "description": "Returns the text displayed in a JavaScript alert, confirm, or prompt dialog currently showing in a browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." }
+            ],
+            "returns": [
+                { "name": "message", "type": "string", "description": "Text being displayed in the current JavaScript dialog." }
+            ]
+        },
+        {
+            "name": "setUserInputForCurrentJavaScriptPrompt",
+            "description": "Sets the user entered value in a JavaScript prompt dialog currently showing in a browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "userInput", "type": "string", "description": "The text to enter in the prompt." }
+            ]
+        },
+        {
+            "name": "setFilesToSelectForFileUpload",
+            "description": "Sets the files to be selected when a file input type element becomes active in a browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "filenames", "type": "array", "items": { "type": "string" }, "description": "Absolute paths to the files that should be selected." },
+                { "name": "fileContents", "type": "array", "items": { "type" : "string" }, "optional": true, "description": "An array of Base64-encoded binary data for each file to be selected. If this property is provided, it is assumed that 'filenames' are not real file paths on the session host's filesystem, and this binary data will be used instead." }
+            ]
+        },
+        {
+            "name": "setFilesForInputFileUpload",
+            "description": "Sets the choosen files for the given input file upload element.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "description": "The handle for the frame that contains the input element." },
+                { "name": "nodeHandle", "$ref": "NodeHandle", "description": "The handle of the input element." },
+                { "name": "filenames", "type": "array", "items": { "type": "string" }, "description": "Absolute paths to the choosen files." }
+            ],
+            "async": true
+        },
+        {
+            "name": "getAllCookies",
+            "description": "Returns all cookies visible to the specified browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." }
+            ],
+            "returns": [
+                { "name": "cookies", "type": "array", "items": { "$ref": "Cookie" }, "description": "Array of cookie objects." }
+            ],
+            "async": true
+        },
+        {
+            "name": "deleteSingleCookie",
+            "description": "Deletes a cookie with the given name if visible to the specified browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "cookieName", "type": "string", "description": "Name of the cookie to remove." }
+            ],
+            "async": true
+        },
+        {
+            "name": "addSingleCookie",
+            "description": "Add a cookie to cookie storage for the specified browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "cookie", "$ref": "Cookie", "description": "The cookie that should be added to storage." }
+            ],
+            "async": true
+        },
+        {
+            "name": "deleteAllCookies",
+            "description": "Delete all cookies that are visible to the specified browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." }
+            ]
+        },
+        {
+            "name": "getSessionPermissions",
+            "description": "Returns the state of all session permissions, which control whether privileged Web APIs can be used. Permissions are applied to all browsing contexts associated with the automation session.",
+            "returns": [
+                { "name": "permissions", "type": "array", "items": { "$ref": "SessionPermissionData" }, "description": "Array of available session permissions and their values." }
+            ]
+        },
+        {
+            "name": "setSessionPermissions",
+            "description": "Attempts to set the state of session permissions, which control whether privileged Web APIs can be used. Permissions that are not understood are ignored. Permissions are applied to all browsing contexts associated with the automation session.",
+            "parameters": [
+                { "name": "permissions", "type": "array", "items": { "$ref": "SessionPermissionData" }, "description": "Array of session permissions to set, if they are available." }
+            ]
+        },
+        {
+            "name": "addVirtualAuthenticator",
+            "description": "Adds a virtual web authentication authenticator for the specified browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "authenticator", "$ref": "VirtualAuthenticatorConfiguration", "description": "The configuration for the virtual authenticator to be created." }
+            ],
+            "returns": [
+                { "name": "authenticatorId", "type": "string", "description": "The authenticatorId of the created authenticator" }
+            ]
+        },
+        {
+            "name": "removeVirtualAuthenticator",
+            "description": "Removes a virtual web authentication authenticator for the specified browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "authenticatorId", "type": "string", "description": "The virtual authenticator id to remove." }
+            ]
+        },
+        {
+            "name": "addVirtualAuthenticatorCredential",
+            "description": "Add a credential to a specified virutal authenticator for the specified browsing context",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "authenticatorId", "type": "string", "description": "The virtual authenticator id to add the credential to." },
+                { "name": "credential", "$ref": "VirtualAuthenticatorCredential", "description": "The parameters of the credential to add." }
+            ]
+        },
+        {
+            "name": "getVirtualAuthenticatorCredentials",
+            "description": "Get all credentials for a given virtual authenticator for the specified browsing context",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "authenticatorId", "type": "string", "description": "The virtual authenticator id to fetch all credentials for." }
+            ],
+            "returns": [
+                { "name": "credentials", "type": "array", "items": { "$ref": "VirtualAuthenticatorCredential" }, "description": "Array of credentials for given virtual authenticator" }
+            ]
+        },
+        {
+            "name": "removeVirtualAuthenticatorCredential",
+            "description": "Remove a credential from a virtual authenticator for the specified browsing context",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "authenticatorId", "type": "string", "description": "The virtual authenticator id to fetch all credentials for." },
+                { "name": "credentialId", "type": "string", "description": "The credentialId of the credential to remove from the virtual authenticator"}
+            ]
+        },
+        {
+            "name": "removeAllVirtualAuthenticatorCredentials",
+            "description": "Remove all credentials from a given virtual authenticatior for the specified browsing context",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "authenticatorId", "type": "string", "description": "The virtual authenticator id to fetch all credentials for." }
+            ]
+        },
+        {
+            "name": "setVirtualAuthenticatorUserVerified",
+            "description": "set isUserVerified property for a given virtual authenticator for the specified browsing context",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "authenticatorId", "type": "string", "description": "The virtual authenticator id to fetch all credentials for." },
+                { "name": "isUserVerified", "type": "boolean", "description": "The isUserVerified value to set on the given virtual authenticator"}
+            ]
+        },
+        {
+            "name": "generateTestReport",
+            "description": "generate a test report for the specified browsing context",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "message", "type": "string", "description": "The body message for the generated test report." },
+                { "name": "group", "type": "string", "description": "The group value to use when sending a test report."}
+            ]
+        },
+        {
+            "name": "loadWebExtension",
+            "description": "Loads a web extension in the automation session.",
+            "condition": "defined(WK_WEB_EXTENSIONS_IN_WEBDRIVER) && WK_WEB_EXTENSIONS_IN_WEBDRIVER",
+            "platform": "macos",
+            "parameters": [
+                { "name": "type", "$ref": "WebExtensionResourceOptions", "optional": false, "description": "A hint for the resource format used to load the extension." },
+                { "name": "value", "type": "string", "description": "One of the following: the path to the extension, the path to the extension's archive, or the base 64 encoded data of the extension's archive." }
+            ],
+            "returns": [
+                { "name": "extensionId", "type": "string", "description": "The unique identifier of the extension." }
+            ],
+            "async": true
+        },
+        {
+            "name": "unloadWebExtension",
+            "description": "Unloads a web extension in the automation session.",
+            "condition": "defined(WK_WEB_EXTENSIONS_IN_WEBDRIVER) && WK_WEB_EXTENSIONS_IN_WEBDRIVER",
+            "platform": "macos",
+            "parameters": [
+                { "name": "identifier", "type": "string", "description": "The identifier of the extension to unload." }
+            ],
+            "async": true
+        }
+    ],
+    "events": [
+        {
+            "name": "fileChooserDismissed",
+            "description": "Fired when a file chooser for a file input element is dismissed by selecting files or cancelling.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "selectionCancelled", "type": "boolean", "description": "If true, file selection was cancelled due to an error. For example, this could occur if a file's MIME type cannot be handled by WebKit." },
+                { "name": "selectedFiles", "type": "array", "items": { "type": "string" }, "optional": true, "description": "A list of file names that were successfully selected for upload." }
+            ]
+        },
+        {
+            "name": "browsingContextCleared",
+            "description": "Fired when the specified browsing context has navigated or closed. Existing element references from the browsing context are no longer valid.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle" }
+            ]
+        },
+        {
+            "name": "logEntryAdded",
+            "description": "Fired when a new log entry is added.",
+            "parameters": [
+                { "name": "level", "type": "string", "description": "The log entry level." },
+                { "name": "source", "type": "string", "description": "The source script information" },
+                { "name": "text", "type": "string", "description": "The log entry text message." },
+                { "name": "timestamp", "type": "number", "description": "The timestamp of the log entry." },
+                { "name": "type", "type": "string", "description": "The log entry type." },
+                { "name": "method", "type": "string", "optional": true, "description": "The log entry console method."}
+            ]
+        }
+    ]
+}

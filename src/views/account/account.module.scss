@@ -1,0 +1,18 @@
+.account {
+  display: flex;
+  height: 100%;
+  :global {
+    .account-con {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    .account-noSelect {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}

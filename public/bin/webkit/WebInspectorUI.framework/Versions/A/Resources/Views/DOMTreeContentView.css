@@ -1,0 +1,87 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.item.button.text-only.configure-dom-tree-badges {
+    border-color: var(--border-color);
+}
+
+.item.button.text-only.configure-dom-tree-badges:hover {
+    background-color: var(--background-color-alternate);
+}
+
+.content-view.dom-tree {
+    overflow: auto;
+}
+
+.content-view.dom-tree .tree-outline.dom {
+    padding-inline-start: 7px;
+    transition: padding 200ms ease-in-out;
+}
+
+.content-view.dom-tree.show-gutter .tree-outline.dom {
+    padding-inline-start: 20px;
+
+    --item-pseudo-class-indicator-start: 17px;
+}
+
+.content-view.dom-tree .tree-outline.dom li .status-image {
+    position: absolute;
+    inset-inline-start: 0;
+    height: 13px;
+}
+
+body[dir=rtl] .content-view.dom-tree .tree-outline.dom li .status-image {
+    transform: scaleX(-1);
+}
+
+.content-view.dom-tree .tree-outline.dom li .status-image.breakpoint {
+    width: 15px;
+    fill: var(--breakpoint-color);
+}
+
+body:not(.window-inactive, .window-docked-inactive) .content-view.dom-tree .tree-outline.dom:focus-within li:is(.selected, .hovered) .status-image.breakpoint {
+    stroke: var(--selected-foreground-color);
+}
+
+.content-view.dom-tree .tree-outline.dom:not(.breakpoints-disabled) li .status-image.breakpoint.disabled {
+    fill: var(--breakpoint-color-disabled);
+}
+
+.content-view.dom-tree .tree-outline.dom.breakpoints-disabled li .status-image.breakpoint {
+    filter: grayscale();
+}
+
+.content-view.dom-tree .tree-outline.dom li .status-image.breakpoint.subtree {
+    fill: none;
+    stroke: var(--breakpoint-color);
+}
+
+body:not(.window-inactive, .window-docked-inactive) .content-view.dom-tree .tree-outline.dom:focus-within li:is(.selected, .hovered) .status-image.breakpoint.subtree {
+    stroke: var(--selected-foreground-color);
+}
+
+.content-view.dom-tree .tree-outline.dom li.expanded .status-image.breakpoint.subtree {
+    display: none;
+}

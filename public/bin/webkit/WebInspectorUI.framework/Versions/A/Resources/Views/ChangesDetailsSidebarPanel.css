@@ -1,0 +1,108 @@
+/*
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.sidebar > .panel.changes-panel {
+    white-space: pre-wrap;
+    overflow-y: auto;
+}
+
+.sidebar > .panel.changes-panel .css-rule {
+    padding: var(--css-declaration-vertical-padding) 0;
+    font: 11px Menlo, monospace;
+    color: var(--text-color-secondary);
+    background-color: var(--background-color-content);
+    -webkit-user-select: text;
+}
+
+.sidebar > .panel.changes-panel .css-rule + .css-rule {
+    border-top: 0.5px solid var(--text-color-quaternary);
+}
+
+.sidebar > .panel.selected.changes-panel.empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.changes-panel .resource-section {
+    border-bottom: 0.5px solid var(--text-color-quaternary);
+}
+
+.changes-panel .resource-section > .header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-index-header);
+    padding: 4px 8px;
+    background-color: var(--panel-background-color);
+    border-bottom: 0.5px solid var(--text-color-quaternary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.changes-panel .resource-section > .header > a:hover {
+    color: var(--text-color);
+}
+
+.sidebar > .panel.changes-panel .selector-line,
+.sidebar > .panel.changes-panel .close-brace {
+    padding-left: var(--css-declaration-horizontal-padding);
+}
+
+.changes-panel .selector.style-attribute {
+    font: 12px sans-serif;
+}
+
+.changes-panel .selector:not(.style-attribute) {
+    color: var(--text-color);
+}
+
+.changes-panel .css-property-line > .property {
+    display: inline;
+}
+
+.changes-panel .css-property-line.added {
+    color: var(--diff-addition-text-color);
+    background-color: var(--diff-addition-background-color);
+}
+
+.changes-panel .css-property-line.removed {
+    color: var(--diff-deletion-text-color);
+    background-color: var(--diff-deletion-background-color);
+}
+
+.changes-panel .css-property-line.removed::before {
+    content: "-";
+    position: absolute;
+    left: var(--css-declaration-horizontal-padding);
+    pointer-events: none;
+}
+
+.changes-panel .css-property-line.added::before {
+    content: "+";
+    position: absolute;
+    left: var(--css-declaration-horizontal-padding);
+    pointer-events: none;
+}

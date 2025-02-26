@@ -1,0 +1,82 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+body[dir] .resource-headers > section.summary > .details {
+    border-color: var(--network-system-color);
+}
+
+body[dir] .resource-headers > section.error > .details {
+    border-color: var(--network-error-color);
+}
+
+body[dir] .resource-headers > section:is(.redirect, .headers) > .details {
+    border-color: var(--network-header-color);
+}
+
+.resource-headers .url + .url > .key {
+    color: transparent;
+}
+
+.resource-headers .summary .key {
+    color: var(--network-system-color);
+}
+
+.resource-headers .header > .key {
+    color: var(--network-header-color);
+}
+
+.resource-headers .h1-status > .key,
+.resource-headers .h2-pseudo-header > .key {
+    color: var(--network-pseudo-header-color);
+}
+
+.resource-headers .go-to-link {
+    -webkit-user-select: text;
+}
+
+.resource-headers .pair.initiator > .value {
+    display: inline-flex;
+    align-items: center;
+}
+
+.resource-headers .call-stack {
+    position: relative;
+    width: 16px;
+    height: 13px;
+    margin-left: 3px;
+    content: url(../Images/CallStack.svg);
+    opacity: 0.5;
+    -webkit-user-select: none;
+}
+
+.resource-headers .call-stack:hover {
+    opacity: 0.8;
+}
+
+@media (prefers-color-scheme: dark) {
+    .resource-headers .call-stack {
+        filter: invert();
+    }
+}

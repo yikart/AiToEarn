@@ -1,0 +1,89 @@
+.pubRecord {
+  width: 100%;
+  min-width: 0;
+  padding: 20px;
+  box-sizing: border-box;
+  :global {
+    .pubRecord-pubCon {
+      display: flex;
+      align-items: center;
+      //max-width: 350px;
+      & > img {
+        height: 60px;
+        margin-right: 10px;
+      }
+      &-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .pubRecord-record {
+      margin-top: 20px;
+      display: flex;
+      &-item {
+        background: rgb(247, 250, 250);
+        padding: 15px 15px 5px 15px;
+        border-radius: 6px;
+        box-sizing: border-box;
+        position: relative;
+        width: calc(50% - 8px);
+        &:nth-child(even) {
+          margin-left: 16px;
+        }
+        &-btns {
+          display: flex;
+          justify-content: right;
+        }
+        &-status {
+          position: absolute;
+          top: 0;
+          right: 0;
+          font-size: var(--fs-xs);
+          padding: 2px 5px;
+          border-radius: 6px 6px 0 6px;
+        }
+        &--success {
+          background: rgb(218, 245, 233);
+          color: rgb(47, 178, 122);
+        }
+        &--fail {
+          background-color: #ffcccc;
+          color: #ff0000;
+        }
+        &-con {
+          display: flex;
+          &-avatar {
+            position: relative;
+            margin-right: 10px;
+            & > img {
+              width: 15px;
+              position: absolute;
+              border-radius: 50%;
+              bottom: 0;
+              right: 0;
+            }
+          }
+        }
+        &-failMsg {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          width: 100%;
+          font-size: var(--fs-xs);
+          color: #ff0000;
+        }
+        &-userinfo {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          &-time {
+            font-size: var(--fs-xs);
+            margin-top: 3px;
+            color: #b4b4b4;
+          }
+        }
+      }
+    }
+  }
+}

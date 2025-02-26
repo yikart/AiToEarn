@@ -1,0 +1,171 @@
+/*
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.content-view-container > .content-view.audit-test-group > header {
+    background-color: var(--background-color-content);
+}
+
+.content-view.audit-test-group > section > .audit-test-group > header {
+    margin-top: -1px;
+    border-top: 1px solid var(--border-color);
+}
+
+.content-view.audit-test-group > header {
+    padding-inline-end: var(--audit-test-horizontal-space);
+}
+
+.content-view.audit-test-group.no-matches + .audit-test-group > header {
+    border-top: none;
+}
+
+.content-view.audit-test-group > header,
+.content-view.audit-test-group:not(.filtered):last-child > header {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.content-view.audit-test-group.contains-test-case > header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-index-header);
+    background-color: var(--audit-test-header-background-color);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.content-view.audit-test-group > section > .audit-test-group.contains-test-case > header {
+    top: -1px;
+}
+
+.content-view.audit-test-group.contains-test-case + .audit-test-group.contains-test-case,
+.content-view.audit-test-group + .content-view.audit-test-case {
+    border-top: 1px solid var(--border-color);
+}
+
+.content-view.audit-test-group.contains-test-case:not(.contains-test-group) > section,
+.content-view.audit-test-group.contains-test-case.contains-test-group > section > .audit-test-case {
+    padding-right: calc(var(--audit-test-horizontal-space) / 2);
+    padding-left: calc(var(--audit-test-horizontal-space) / 2);
+}
+
+.content-view.audit-test-group > header > .information > p {
+    font-size: 1.25em;
+}
+
+.content-view.audit-test-group > header > nav {
+    display: inline-flex;
+    height: auto;
+    border-bottom: none;
+    overflow: visible;
+}
+
+.content-view.audit-test-group > header > nav > .scope-bar {
+    overflow: visible;
+}
+
+.content-view.audit-test-group > header > nav:empty {
+    display: none;
+}
+
+.content-view.audit-test-group > header > nav > .scope-bar > li {
+    margin: 0 3px;
+}
+
+.content-view.audit-test-group > header > nav > .scope-bar > li:not(:hover, .selected) {
+    --scope-bar-border-color-override: var(--selected-background-color-unfocused);
+}
+
+.content-view.audit-test-group > header > nav > .scope-bar > li:last-child {
+    margin-inline-end: 0;
+}
+
+.content-view.audit-test-group > header > nav > .scope-bar > li > img {
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    margin-inline-end: 4px;
+    vertical-align: -4px;
+}
+
+.content-view.audit-test-group > header > nav > .scope-bar > li.pass > img {
+    content: url(../Images/AuditTestPass.svg);
+}
+
+.content-view.audit-test-group > header > nav > .scope-bar > li.warn > img {
+    content: url(../Images/AuditTestWarn.svg);
+}
+
+.content-view.audit-test-group > header > nav > .scope-bar > li.fail > img {
+    content: url(../Images/AuditTestFail.svg);
+}
+
+.content-view.audit-test-group > header > nav > .scope-bar > li.error > img {
+    content: url(../Images/AuditTestError.svg);
+}
+
+.content-view.audit-test-group > header > nav > .scope-bar > li.unsupported > img {
+    content: url(../Images/AuditTestUnsupported.svg);
+}
+
+.content-view.audit-test-group > header > .percentage-pass {
+    width: var(--metadata-width);
+    margin-inline-start: var(--audit-test-horizontal-space);
+    font-size: 16px;
+    text-align: end;
+    font-weight: bold;
+    /* FIXME: Use CSS4 color blend functions once they're available. */
+    color: hsla(0, 0%, 0%, 0.5);
+}
+
+.content-view.audit-test-group > header > .percentage-pass > span {
+    font-size: 24px;
+    /* FIXME: Use CSS4 color blend functions once they're available. */
+    color: hsla(0, 0%, 0%, 0.65);
+}
+
+.content-view.audit-test-group > section > .audit-test-case:first-child,
+.content-view.audit-test-group > section > .audit-test-case.filtered ~ .audit-test-case:not(.filtered),
+.content-view.audit-test-group > section > .audit-test-group + .audit-test-case,
+.content-view.audit-test-group > section > .audit-test-case + .audit-test-group {
+    margin-top: var(--audit-test-vertical-space);
+}
+
+.content-view.audit-test-group > section > .audit-test-case:not(.filtered) ~ .audit-test-case:not(.filtered) {
+    margin-top: unset;
+}
+
+.content-view.audit-test-group > section > .audit-test-case:last-child {
+    margin-bottom: var(--audit-test-vertical-space);
+}
+
+@media (prefers-color-scheme: dark) {
+    .content-view.audit-test-group > header > .percentage-pass {
+        /* FIXME: Use CSS4 color blend functions once they're available. */
+        color: hsla(0, 0%, 88%, 0.5);
+    }
+
+    .content-view.audit-test-group > header > .percentage-pass > span {
+        /* FIXME: Use CSS4 color blend functions once they're available. */
+        color: hsla(0, 0%, 88%, 0.65);
+    }
+}

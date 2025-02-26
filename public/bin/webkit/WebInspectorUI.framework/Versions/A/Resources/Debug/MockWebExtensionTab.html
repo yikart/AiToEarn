@@ -1,0 +1,24 @@
+<html>
+<head>
+<script>
+window._secretValue = {answer:42};
+
+window.getUniqueValue = function() {
+    if (!window._cachedUniqueValue)
+        window._cachedUniqueValue = Math.floor(Math.random() * 10e9);
+
+    return window._cachedUniqueValue;
+}
+
+function initialize() {
+    document.getElementById("uniqueValueField").innerText = window.getUniqueValue();
+};
+</script>
+<body onload="initialize()">
+<h1>This is a test extension.</h1>
+<p>In a normal extension, this area would show the extension's user interface.</p>
+<p>The unique value for this iframe's execution context is:
+    <span id="uniqueValueField">TBD</span>
+</p>
+</body>
+</html>

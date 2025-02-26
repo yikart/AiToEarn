@@ -1,0 +1,206 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.request-icon .icon {
+    content: url(../Images/TypeIcons.svg#Request-light);
+}
+
+.response-icon .icon {
+    content: url(../Images/TypeIcons.svg#Response-light);
+}
+
+.heap-snapshot-summary-icon .icon {
+    content: url(../Images/TypeIcons.svg#HeapSnapshotSummary-light);
+}
+
+.heap-snapshot-instances-icon .icon {
+    content: url(../Images/TypeIcons.svg#HeapSnapshotInstances-light);
+}
+
+.heap-snapshot-object-graph-icon .icon {
+    content: url(../Images/TypeIcons.svg#HeapSnapshotObjectGraph-light);
+}
+
+.dom-element-icon .icon {
+    content: url(../Images/TypeIcons.svg#DOMElement-light);
+}
+
+.dom-pseudo-element-icon .icon {
+    content: url(../Images/TypeIcons.svg#PseudoElement-light);
+}
+
+.dom-text-node-icon .icon {
+    content: url(../Images/TypeIcons.svg#DOMTextNode-light);
+}
+
+.dom-comment-icon .icon {
+    content: url(../Images/TypeIcons.svg#DOMComment-light);
+}
+
+.dom-document-type-icon .icon {
+    content: url(../Images/TypeIcons.svg#DOMDocumentType-light);
+}
+
+.dom-document-icon .icon {
+    content: url(../Images/TypeIcons.svg#DOMDocument-light);
+}
+
+.dom-character-data-icon .icon {
+    content: url(../Images/TypeIcons.svg#DOMCharacterData-light);
+}
+
+.dom-node-icon .icon {
+    content: url(../Images/TypeIcons.svg#DOMNode-light);
+}
+
+.object-icon .icon {
+    content: url(../Images/TypeIcons.svg#Object-light);
+}
+
+.function-icon .icon {
+    content: url(../Images/TypeIcons.svg#Function-light);
+}
+
+.native-icon .icon {
+    content: url(../Images/TypeIcons.svg#Native-light);
+}
+
+.program-icon .icon {
+    content: url(../Images/TypeIcons.svg#Program-light);
+}
+
+.events-icon .icon {
+    content: url(../Images/TypeIcons.svg#Events-light);
+}
+
+.call-trees-icon .icon {
+    content: url(../Images/TypeIcons.svg#CallTrees-light);
+}
+
+.snapshot-list-icon .icon {
+    content: url(../Images/TypeIcons.svg#HeapSnapshotList-light);
+}
+
+.snapshot-diff-icon .icon {
+    content: url(../Images/TypeIcons.svg#HeapSnapshotDiff-light);
+}
+
+.image-icon .icon {
+    content: url(../Images/Image.svg);
+}
+
+.source-icon .icon {
+    content: url(../Images/TypeIcons.svg#Source-light);
+}
+
+@media (prefers-color-scheme: dark) {
+    .request-icon .icon {
+        content: url(../Images/TypeIcons.svg#Request-dark);
+    }
+
+    .response-icon .icon {
+        content: url(../Images/TypeIcons.svg#Response-dark);
+    }
+
+    .heap-snapshot-summary-icon .icon {
+        content: url(../Images/TypeIcons.svg#HeapSnapshotSummary-dark);
+    }
+
+    .heap-snapshot-instances-icon .icon {
+        content: url(../Images/TypeIcons.svg#HeapSnapshotInstances-dark);
+    }
+
+    .heap-snapshot-object-graph-icon .icon {
+        content: url(../Images/TypeIcons.svg#HeapSnapshotObjectGraph-dark);
+    }
+
+    .dom-element-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMElement-dark);
+    }
+
+    .dom-pseudo-element-icon .icon {
+        content: url(../Images/TypeIcons.svg#PseudoElement-dark);
+    }
+
+    .dom-text-node-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMTextNode-dark);
+    }
+
+    .dom-comment-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMComment-dark);
+    }
+
+    .dom-document-type-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMDocumentType-dark);
+    }
+
+    .dom-document-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMDocument-dark);
+    }
+
+    .dom-character-data-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMCharacterData-dark);
+    }
+
+    .dom-node-icon .icon {
+        content: url(../Images/TypeIcons.svg#DOMNode-dark);
+    }
+
+    .object-icon .icon {
+        content: url(../Images/TypeIcons.svg#Object-dark);
+    }
+
+    .function-icon .icon {
+        content: url(../Images/TypeIcons.svg#Function-dark);
+    }
+
+    .native-icon .icon {
+        content: url(../Images/TypeIcons.svg#Native-dark);
+    }
+
+    .program-icon .icon {
+        content: url(../Images/TypeIcons.svg#Program-dark);
+    }
+
+    .events-icon .icon {
+        content: url(../Images/TypeIcons.svg#Events-dark);
+    }
+
+    .call-trees-icon .icon {
+        content: url(../Images/TypeIcons.svg#CallTrees-dark);
+    }
+
+    .snapshot-list-icon .icon {
+        content: url(../Images/TypeIcons.svg#HeapSnapshotList-dark);
+    }
+
+    .snapshot-diff-icon .icon {
+        content: url(../Images/TypeIcons.svg#HeapSnapshotDiff-dark);
+    }
+
+    .source-icon .icon {
+        content: url(../Images/TypeIcons.svg#Source-dark);
+    }
+}

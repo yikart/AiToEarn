@@ -1,0 +1,592 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    color-scheme: light dark;
+}
+
+summary {
+    outline: none;
+}
+
+summary::-webkit-details-marker {
+    color: hsl(0, 0%, 55%);
+}
+
+body {
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 11px;
+
+    position: absolute;
+    inset: 0;
+
+    padding: 0;
+    margin: 0;
+
+    overflow: hidden;
+
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+
+    cursor: default;
+
+    -webkit-font-smoothing: subpixel-antialiased;
+
+    background-color: var(--background-color-content);
+}
+
+body.docked.right {
+    border-left: 1px solid var(--border-color);
+}
+
+body.docked.left {
+    border-right: 1px solid var(--border-color);
+}
+
+#docked-resizer {
+    display: none;
+
+    z-index: var(--z-index-resizer);
+}
+
+body.docked #docked-resizer {
+    display: block;
+
+    position: absolute;
+    top: 0;
+}
+
+body.docked.bottom #docked-resizer {
+    left: 0;
+    right: 0;
+    height: 3px;
+
+    cursor: row-resize;
+}
+
+body.docked.right #docked-resizer {
+    left: 0;
+    bottom: 0;
+    width: 3px;
+
+    cursor: col-resize;
+}
+
+body.docked.left #docked-resizer {
+    right: 0;
+    bottom: 0;
+    width: 3px;
+
+    cursor: col-resize;
+}
+
+#undocked-title-area {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: var(--undocked-title-area-height);
+    background: var(--undocked-title-area-background);
+}
+
+body.mac-platform #undocked-title-area {
+    --undocked-title-area-background: white;
+}
+
+body:not(.mac-platform) #undocked-title-area {
+    --undocked-title-area-background: linear-gradient(to bottom, hsl(0, 0%, 92%), hsl(0, 0%, 87%));
+    box-shadow: inset hsla(0, 0%, 100%, 0.5) 0 1px 1px;
+}
+
+body.docked #undocked-title-area {
+    display: none;
+}
+
+body.window-inactive #undocked-title-area {
+    --undocked-title-area-background: hsl(0, 0%, 96%);
+}
+
+input[type=range] {
+    appearance: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    margin-top: -7px;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    height: 1px;
+    margin-top: 1px;
+    background-color: var(--selected-background-color);
+}
+
+#main {
+    position: absolute;
+    top: calc(var(--undocked-title-area-height) + var(--tab-bar-height));
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    background-color: var(--background-color-content);
+
+    /* The position and z-index are needed to make negative z-index work in the DOM tree. */
+    z-index: 0;
+}
+
+#navigation-sidebar {
+    width: 300px;
+    height: 100%;
+    grid-area: navigation-sidebar;
+}
+
+body.docked:is(.right, .left) #navigation-sidebar.collapsed > .resizer {
+    pointer-events: none;
+}
+
+#content {
+    display: grid;
+    height: 100%; /* This reduces paint areas when typing in the console. http://webkit.org/b/145324 */
+    flex: 1;
+}
+
+body:not(.narrow) #content {
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "navigation-sidebar tab-browser details-sidebar";
+}
+
+body[dir="rtl"]:not(.narrow) #content {
+    grid-template-areas: "details-sidebar tab-browser navigation-sidebar";
+}
+
+body.narrow #content {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: 1fr auto;
+    grid-template-areas: "navigation-sidebar tab-browser" "details-sidebar details-sidebar";
+}
+
+body[dir="rtl"].narrow #content {
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "tab-browser navigation-sidebar" "details-sidebar details-sidebar";
+}
+
+#tab-browser {
+    flex: 1;
+    min-width: 200px; /* Keep in sync with `WI.getMaximumSidebarWidth(...) -> const minimumContentBrowserWidth` */
+    min-height: 110px; /* Keep in sync with `WI.TabBrowser.MinimumHeight` */
+    grid-area: tab-browser;
+}
+
+#details-sidebar {
+    min-width: 250px; /* Keep in sync with `WI.Sidebar.AbsoluteMinimumWidth` */
+    height: 100%;
+    grid-area: details-sidebar;
+}
+
+#layout-measurement-container {
+    position: absolute;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.message-text-view {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    inset: 0;
+    z-index: var(--z-index-popover);
+    min-height: min-content;
+    white-space: pre-wrap;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-color-gray-medium);
+}
+
+.message-text-view > .message {
+    display: inline-block;
+    padding: 15px;
+    font-size: var(--message-text-view-font-size);
+}
+
+.message-text-view > .message + button {
+    margin-bottom: 15px;
+}
+
+.navigation-item-help {
+    display: block;
+}
+
+.navigation-item-help > .navigation-bar {
+    display: inline-flex;
+    height: 20px;
+    border-bottom: none;
+    vertical-align: sub;
+}
+
+.navigation-item-help > .navigation-bar > .item.button {
+    height: 100%;
+    font-size: 11px;
+    border-radius: 4px;
+    border: solid 1px var(--border-color);
+}
+
+.navigation-item-help > .navigation-bar > .item.button:not(.text-only) {
+    padding: 0 4px !important;
+}
+
+/* Note: this is necessary due to the specificity of `.navigation-bar .item.button.text-only` */
+.navigation-item-help > .navigation-bar > .item.button.text-only {
+    border: solid 1px var(--border-color);
+}
+
+.message-text-view > .navigation-item-help + .navigation-item-help {
+    margin-top: 4px;
+}
+
+.message-text-view.error {
+    color: var(--error-text-color);
+}
+
+.resource-link {
+    display: block;
+}
+
+.resource-link + .resource-link {
+    margin-top: 2px;
+}
+
+.resource-link,
+.go-to-link {
+    color: var(--link-text-color);
+    text-decoration: underline;
+    cursor: pointer;
+    -webkit-user-select: none;
+}
+
+.go-to-link:not(.dont-float) {
+    max-width: 100%;
+    margin-inline-start: 5px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+body[dir=ltr] .go-to-link:not(.dont-float) {
+    float: right;
+}
+
+body[dir=rtl] .go-to-link:not(.dont-float) {
+    float: left;
+}
+
+.go-to-arrow {
+    appearance: none;
+
+    padding: 0;
+    margin: 0;
+    border: none;
+
+    background-color: transparent;
+    background-image: url(../Images/GoToArrow.svg#normal);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 10px 10px;
+
+    width: 16px;
+    height: 16px;
+
+ /* Workaround: for text boxes overlapping float:right. Give go-to arrows a z-index to ensure they are clickable.
+    <rdar://problem/11536832> Cannot access content view from Instruments navigator if name of file is truncated */
+    position: relative;
+    z-index: 1;
+}
+
+.go-to-arrow:active {
+    background-image: url(../Images/GoToArrow.svg#active);
+}
+
+body[dir=rtl] .go-to-arrow {
+    transform: scaleX(-1);
+}
+
+body[dir=rtl] [dir=ltr] .go-to-arrow {
+    transform: revert;
+}
+
+:focus .selected .go-to-arrow,
+.selected:focus .go-to-arrow {
+    background-image: url(../Images/GoToArrow.svg#selected);
+}
+
+:focus .selected .go-to-arrow:active,
+.selected:focus .go-to-arrow:active {
+    background-image: url(../Images/GoToArrow.svg#selected-active);
+}
+
+.css-documentation-button {
+    appearance: none;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: none;
+    background-image: url(../Images/InfoIcon.svg#normal);
+    background-position: center;
+    background-size: 10px 10px;
+    background-repeat: no-repeat;
+    width: 1em;
+    height: 1em;
+    vertical-align: -2px;
+}
+
+.css-documentation-button:active {
+    background-image: url(../Images/InfoIcon.svg#active);
+}
+
+.search-settings {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    appearance: none;
+}
+
+.search-settings > .glyph {
+    width: 16px;
+    height: 16px;
+    color: var(--glyph-color);
+}
+
+.search-settings:active > .glyph {
+    color: var(--glyph-color-pressed);
+}
+
+.search-settings.active > .glyph {
+    color: var(--glyph-color-active);
+}
+
+.search-settings:active.active > .glyph {
+    color: var(--glyph-color-active-pressed);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.expand-list-button {
+    appearance: none;
+    text-decoration: underline;
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    cursor: pointer;
+    color: black;
+}
+
+.node-link {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.node-link-list, .node-link-list li:not([hidden]) {
+    display: block;
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
+}
+
+.node-link-list li {
+    margin: 0 0 0.4em;
+}
+
+.node-link-list li:last-child {
+    margin: 0;
+}
+
+.value-with-clarification .clarification {
+    color: hsl(0, 0%, 40%);
+}
+
+.bouncy-highlight {
+    position: absolute;
+    z-index: var(--z-index-highlight);
+
+    box-shadow: inset hsl(50, 91%, 76%) 0 -1px 0, hsl(52, 56%, 60%) 0 1px 1px, hsla(0, 0%, 0%, 0.33) 0 1px 2px 1px;
+
+    background-color: hsl(54, 93%, 70%);
+    color: black !important;
+
+    padding: 2px 4px;
+    margin-top: -2px;
+    margin-left: -4px;
+
+    -webkit-user-select: none;
+    pointer-events: none;
+
+    animation-name: bouncy-highlight-animation;
+    animation-duration: 750ms;
+    animation-timing-function: ease-in-out;
+
+    opacity: 0;
+}
+
+@keyframes bouncy-highlight-animation {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    12.5% {
+        transform: scale(1.25);
+    }
+
+    25% {
+        transform: scale(1);
+    }
+
+    62.5% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+:is(img, canvas).show-grid {
+    background-color: var(--checkerboard-light-square);
+    background-image: linear-gradient(315deg, transparent 75%, var(--checkerboard-dark-square) 75%),
+                      linear-gradient(45deg, transparent 75%, var(--checkerboard-dark-square) 75%),
+                      linear-gradient(315deg, var(--checkerboard-dark-square) 25%, transparent 25%),
+                      linear-gradient(45deg, var(--checkerboard-dark-square) 25%, transparent 25%);
+    background-size: 20px 20px;
+    background-position: 10px 10px, 10px 0px, 0 0, 0 10px;
+
+    --checkerboard-light-square: transparent;
+    --checkerboard-dark-square: hsl(0, 0%, 95%);
+}
+
+.reference-page-link {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: var(--reference-page-link-size);
+    height: var(--reference-page-link-size);
+    font-size: 14px;
+    line-height: 18px;
+    color: var(--text-color);
+    text-decoration: none;
+    background-color: var(--button-background-color);
+    border: var(--stroke-width) solid var(--border-color);
+    border-radius: 50%;
+    box-shadow: 0 var(--stroke-width) 1px var(--border-color);
+    cursor: default;
+
+    --stroke-width: 0.5px;
+}
+
+.reference-page-link:active {
+    background-color: var(--button-background-color-active);
+}
+
+@media (resolution: 1dppx) {
+    .reference-page-link {
+        padding-inline-start: 1px;
+
+        --stroke-width: 1px;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .reference-page-link {
+        border: var(--stroke-width) solid hsl(0, 0%, 20%);
+        box-shadow: 0 var(--stroke-width) 1px hsl(0, 0%, 20%);
+    }
+
+    .reference-page-link:active {
+        background-color: hsl(0, 0%, 50%);
+    }
+}
+
+@keyframes tab-bar-console-item-pulse {
+    50% { opacity: 0.6; }
+}
+
+.tab-bar > .navigation-bar :is(.console-warnings, .console-errors):not(.disabled).pulsing {
+    animation-name: tab-bar-console-item-pulse;
+    animation-duration: 0.75s;
+}
+
+@media (prefers-color-scheme: dark) {
+    #undocked-title-area {
+        box-shadow: none;
+    }
+
+    body.mac-platform #undocked-title-area {
+        --undocked-title-area-background: var(--background-color-content);
+    }
+
+    body:not(.mac-platform) #undocked-title-area {
+        --undocked-title-area-background: linear-gradient(to bottom, hsl(0, 0%, 26%), hsl(0, 0%, 23%));
+    }
+
+    body.mac-platform.window-inactive #undocked-title-area {
+        --undocked-title-area-background: hsl(0, 0%, 11%);
+    }
+
+    body:not(.mac-platform).window-inactive #undocked-title-area {
+        --undocked-title-area-background: hsl(0, 0%, 19%);
+    }
+
+    .go-to-arrow {
+        filter: invert();
+    }
+
+    :focus .selected .go-to-arrow,
+    .selected:focus .go-to-arrow {
+        filter: unset;
+    }
+
+    .css-documentation-button {
+        filter: invert();
+    }
+
+    .expand-list-button {
+        color: inherit;
+    }
+
+    :is(img, canvas).show-grid {
+        --checkerboard-dark-square: hsl(0, 0%, 5%);
+    }
+}

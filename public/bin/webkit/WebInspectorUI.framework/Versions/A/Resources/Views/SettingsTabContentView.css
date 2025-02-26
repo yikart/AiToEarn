@@ -1,0 +1,160 @@
+/*
+ * Copyright (C) 2016-2020 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.content-view.tab.settings {
+    overflow-y: auto;
+}
+
+.content-view.tab.settings .navigation-bar {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-index-header);
+    background-color: var(--background-color-content);
+}
+
+.content-view.tab.settings .navigation-bar.invisible {
+    visibility: hidden;
+}
+
+.content-view.tab.settings .navigation-bar .item.radio.button.text-only {
+    color: inherit;
+    background-color: inherit;
+}
+
+.content-view.tab.settings .navigation-bar .item.radio.button.text-only:before {
+    display: none;
+}
+
+.content-view.tab.settings .navigation-bar .item.radio.button.text-only.selected {
+    color: var(--glyph-color-active);
+}
+
+.content-view.tab.settings > .settings-view {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100% - var(--navigation-bar-height));
+    padding-bottom: 1em;
+    background-color: var(--background-color-alternate);
+    overflow-y: auto;
+}
+
+.content-view.tab.settings > .settings-view > .separator {
+    height: 1em;
+}
+
+.content-view.tab.settings > .settings-view > :is(.settings-group, .container) {
+    display: flex;
+    margin-top: 1em;
+    font-size: 13px;
+}
+
+.content-view.tab.settings > .settings-view > .container.hidden {
+    display: none;
+}
+
+.content-view.tab.settings > .settings-view > .container.centered {
+    display: block;
+    text-align: center;
+}
+
+.content-view.tab.settings > .settings-view > .container button {
+    margin-inline-end: 4px;
+    font-size: inherit;
+}
+
+.content-view.tab.settings > .settings-view > .settings-group > .title {
+    width: 50%;
+    margin-inline-end: 6px;
+    text-align: end;
+}
+
+.content-view.tab.settings > .settings-view > .settings-group > .editor-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.content-view.tab.settings > .settings-view > .settings-group > .editor-group > .setting-editor {
+    --settings-editor-child-margin-top: 0;
+}
+
+.content-view.tab.settings > .settings-view > .settings-group > .editor-group > .setting-editor:first-child > * {
+    margin-top: var(--settings-editor-child-margin-top);
+}
+
+.content-view.tab.settings > .settings-view > .settings-group > .editor-group > .setting-editor input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    vertical-align: -1px;
+}
+
+.content-view.tab.settings > .settings-view > .settings-group > .editor-group > .setting-editor select {
+    /*
+    To set the font-size of <select> to be exactly 13px, it needs to be set to 16px.
+    Setting the font-size to 13px actually sets it to 11px.
+    */
+    font-size: 16px;
+
+    /* Vertically align <select> with the group title text. */
+    --settings-editor-child-margin-top: -2px;
+}
+
+.content-view.tab.settings > .settings-view > .settings-group > .editor-group > .setting-editor input[type="number"] {
+    max-width: 48px;
+    margin-inline: 2px 5px;
+    padding-top: 0;
+    padding-bottom: 0;
+    text-align: end;
+    vertical-align: 1px;
+
+    /* Vertically align <input> with the group title text. */
+    --settings-editor-child-margin-top: -2px;
+}
+
+.content-view.tab.settings > .settings-view > .settings-group > .editor-group > .setting-editor input[type="text"] {
+    padding-top: 0;
+    padding-bottom: 0;
+    vertical-align: 1px;
+
+    /* Vertically align <input> with the group title text. */
+    --settings-editor-child-margin-top: -2px;
+}
+
+.content-view.tab.settings > .settings-view > .container.reference {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex-grow: 1;
+}
+
+.content-view.tab.settings > .settings-view > .container.reference > a {
+    margin-inline-start: 16px; /* Balance the size of `.go-to-arrow` so that the text is visually centered. */
+    color: var(--text-color-secondary);
+}
+
+.content-view.tab.settings > .settings-view > .container.reference > a > .go-to-arrow {
+    margin: 0;
+    vertical-align: -0.25em;
+}

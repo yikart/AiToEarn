@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2017 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 13 13">
+    <g transform="translate(0.5, 0.5)" stroke="rgb(127, 127, 127)" stroke-width="1" fill="none">
+        <circle cx="6" cy="6" r="6"/>
+        <path d="M3 4 L 9 4" stroke-linecap="square"/>
+        <path d="M4 6 L 8 6" stroke-linecap="square"/>
+        <path d="M5 8 L 7 8" stroke-linecap="square"/>
+    </g>
+</svg>

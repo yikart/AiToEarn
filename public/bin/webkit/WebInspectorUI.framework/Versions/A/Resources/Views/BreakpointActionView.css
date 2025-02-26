@@ -1,0 +1,121 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.breakpoint-action-block-header {
+    margin-bottom: 3px;
+}
+
+body[dir=ltr] .breakpoint-action-button-container {
+    float: right;
+}
+
+body[dir=rtl] .breakpoint-action-button-container {
+    float: left;
+}
+
+:is(.breakpoint-action-append-button, .breakpoint-action-remove-button) {
+    background-origin: border-box;
+    width: 13px;
+    height: 13px;
+    margin-block-start: 5px;
+    margin-inline-start: 5px;
+    background-color: transparent;
+    border: none;
+    opacity: 0.6;
+}
+
+.breakpoint-action-append-button {
+    background-image: url(../Images/Plus13.svg);
+}
+
+.breakpoint-action-remove-button {
+    background-image: url(../Images/Minus.svg);
+}
+
+.breakpoint-action-block-body {
+    margin: 1px 2px 6px 2px;
+    padding: 8px;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid hsl(0, 0%, 74%);
+    background-color: hsla(0, 0%, 87%, 0.95);
+    box-shadow: inset 0 0 2px hsl(0, 0%, 78%);
+}
+
+.breakpoint-action-block-body .description {
+    flex-grow: 1;
+    text-align: right;
+    color: var(--text-color-gray-medium);
+}
+
+.breakpoint-action-block-body > input {
+    width: 100%;
+    text-align: left;
+}
+
+.breakpoint-action-block-body > .flex {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.breakpoint-action-eval-editor {
+    margin: 2px 0;
+    padding: 2px 0 1px 0;
+    appearance: textfield;
+    border: 1px solid hsl(0, 0%, 78%);
+    background: white;
+}
+
+.breakpoint-action-eval-editor > .CodeMirror {
+    width: 336px; /* NOTE: Fixed value, manually tuned to .edit-breakpoint-popover-content.wide width */
+    height: auto;
+}
+
+.breakpoint-action-eval-editor > .CodeMirror-scroll {
+    width: 336px; /* NOTE: Fixed value, manually tuned to .edit-breakpoint-popover-content.wide width */
+    overflow: hidden;
+}
+
+@media (prefers-color-scheme: dark) {
+    .breakpoint-action-block-body {
+        border-color: var(--text-color-quaternary);
+        background-color: unset;
+        box-shadow: unset;
+    }
+
+    .breakpoint-action-block-body > .description {
+        color: var(--text-color-secondary);
+    }
+
+    .breakpoint-action-append-button,
+    .breakpoint-action-remove-button {
+        filter: invert();
+    }
+
+    .breakpoint-action-eval-editor {
+        background: var(--background-color-content);
+    }
+}

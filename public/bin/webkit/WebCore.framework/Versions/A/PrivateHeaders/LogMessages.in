@@ -1,0 +1,109 @@
+# Copyright (C) 2024 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# File format:
+#
+# Identifier, Format string, Parameters, Log type (DEFAULT, INFO, ERROR, FAULT), Category (Default, Process, Loading, etc) 
+
+SUBRESOURCELOADER_DIDFINISHLOADING, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didFinishLoading", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load canceled because new request is invalid", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_CANCELLED_INVALID_NEW_REQUEST, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load canceled because new request is NULL (1)", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_CANCELLED_TERMINAL_STATE, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load canceled because reached terminal state", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_TERMINAL_STATE_CALLING_COMPLETION_HANDLER, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: reached terminal state; calling completion handler", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_CANCELLED_INVALID_REQUEST, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load canceled because request is NULL (2)", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCELOAD_FINISHED, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load finished; calling completion handler", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCELOAD_CANCELLED_REDIRECT_NOT_ALLOWED, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load canceled because not allowed to follow a redirect", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_REACHED_TERMINAL_STATE, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: reached terminal state", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_LOAD_COMPLETED, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load completed", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_LOAD_CANCELLED_TOO_MANY_REDIRECTS, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load canceled because too many redirects", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_LOAD_CANCELLED_CANNOT_REQUEST_AFTER_REDIRECTION, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load canceled because CachedResourceLoader::updateRequestAfterRedirection (really CachedResourceLoader::canRequestAfterRedirection) said no", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_LOAD_CANCELLED_AFTER_USING_BLOCKED_PORT, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load (redirect) canceled because it attempted to use a blocked port", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_LOAD_CANCELLED_AFTER_REDIRECT_DENIED_BY_CORS_POLICY, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load canceled because cross-origin redirection denied by CORS policy", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_LOAD_CANCELLED_AFTER_IMAGE_BEING_DEFERRED, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load canceled because it's an image that should be deferred", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_DONE_NOTIFYING_CLIENTS, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource done notifying clients", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_DIDRECEIVERESPONSE_CANCELING_LOAD_BLOCKED_BY_CONTENT_POLICY, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didReceiveResponse: canceling load because not allowed by content policy", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_DIDRECEIVERESPONSE_CANCELING_LOAD_RECEIVED_UNEXPECTED_RANGE_RESPONSE, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didReceiveResponse: canceling load because receiving a range requested response for a non-range request", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_DIDRECEIVERESPONSE_CANCELING_LOAD_BECAUSE_OF_CROSS_ORIGIN_ACCESS_CONTROL, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didReceiveResponse: canceling load because of cross origin access control", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_DIDRECEIVERESPONSE_CANCELING_LOAD_BECAUSE_OF_MULTIPART_NON_IMAGE, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didReceiveResponse: canceling load because something about a multi-part non-image", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_DIDFINISHLOADING_CANCELED, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didFinishLoading: was canceled", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_DIDFINISHLOADING_REACHED_TERMINAL_STATE, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didFinishLoading: reached terminal state", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_DIDFINISHLOADING_DID_NOT_REACH_TERMINAL_STATE, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didFinishLoading: Did not reach terminal state", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_DIDFAIL, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didFail: (type=%d, code=%d)", (uint64_t, uint64_t, uint64_t, int, int), DEFAULT, ResourceLoading
+SUBRESOURCELOADER_WILLCANCEL, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willCancel: (type=%d, code=%d)", (uint64_t, uint64_t, uint64_t, int, int), DEFAULT, ResourceLoading
+
+PROGRESSTRACKER_PROGRESSSTARTED, "ProgressTracker::progressStarted: frameID %llu, value %f, tracked frames %d, originating frameID %llu, isMainLoad %d", (uint64_t, double, int, uint64_t, int), DEFAULT, Network
+PROGRESSTRACKER_PROGRESSCOMPLETED, "ProgressTracker::progressCompleted: frameID %llu, value %f, tracked frames %d, originating frameID %llu, isMainLoad %d", (uint64_t, double, int, uint64_t, int), DEFAULT, Network
+PROGRESSTRACKER_FINALPROGRESSCOMPLETE, "ProgressTracker::finalProgressComplete: value %f, tracked frames %d, originating frameID %llu, isMainLoad %d, isMainLoadProgressing %d", (double, int, uint64_t, int, int), DEFAULT, Network
+
+FRAMELOADER_SETPROVISIONALDOCUMENTLOADER, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::setProvisionalDocumentLoader: Setting provisional document loader to %lx (was %lx)", (uint64_t, uint64_t, int, uintptr_t, uintptr_t), DEFAULT, ResourceLoading
+FRAMELOADER_SETSTATE_MAIN_FRAME_LOAD_COMPLETED, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::setState: main frame load completed", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FRAMELOADER_SETPOLICYDOCUMENTLOADER, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::setPolicyDocumentLoader: Setting policy document loader to %lx (was %lx)", (uint64_t, uint64_t, int, uintptr_t, uintptr_t), DEFAULT, ResourceLoading
+FRAMELOADER_TRANSITIONTOCOMMITTED, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::transitionToCommitted: Clearing provisional document loader (m_provisionalDocumentLoader=%lx)", (uint64_t, uint64_t, int, uintptr_t), DEFAULT, ResourceLoading
+FRAMELOADER_SETDOCUMENTLOADER, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::setDocumentLoader: Setting document loader to %lx (was %lx)", (uint64_t, uint64_t, int, uintptr_t, uintptr_t), DEFAULT, ResourceLoading
+FRAMELOADER_STOPALLLOADERS_CLEARING_PROVISIONAL_DOCUMENT_LOADER, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::stopAllLoaders: Clearing provisional document loader (m_provisionalDocumentLoader=%lx)", (uint64_t, uint64_t, int, uintptr_t), DEFAULT, ResourceLoading
+FRAMELOADER_LOADWITHDOCUMENTLOADER_FRAME_LOAD_STARTED, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::loadWithDocumentLoader: frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FRAMELOADER_LOADWITHDOCUMENTLOADER_MAIN_FRAME_LOAD_STARTED, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::loadWithDocumentLoader: main frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FRAMELOADER_STOPALLLOADERS, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::stopAllLoaders: m_provisionalDocumentLoader=%lx, m_documentLoader=%lx", (uint64_t, uint64_t, int, uintptr_t, uintptr_t), DEFAULT, ResourceLoading
+FRAMELOADER_CONTINUELOADAFTERNAVIGATIONPOLICY, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::continueLoadAfterNavigationPolicy: Setting provisional document loader (m_provisionalDocumentLoader=%lx)", (uint64_t, uint64_t, int, uintptr_t), DEFAULT, ResourceLoading
+FRAMELOADER_PREPAREFORLOADSTART, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::prepareForLoadStart: Starting frame load", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FRAMELOADER_CHANGELOCATION, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::changeLocation: frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FRAMELOADER_LOADFRAMEREQUEST_FRAME_LOAD_STARTED, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::loadFrameRequest: frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FRAMELOADER_CHECKLOADCOMPLETEFORTHISFRAME, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::checkLoadCompleteForThisFrame: Finished frame load", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FRAMELOADER_LOAD_URL, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::loadURL: frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FRAMELOADER_LOADWITHNAVIGATIONACTION, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::loadWithNavigationAction: frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FRAMELOADER_LOADURLINTOCHILDFRAME, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::loadURLIntoChildFrame: frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FRAMELOADER_CONTINUELOADAFTERNAVIGATIONPOLICY_CANNOT_CONTINUE, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::continueLoadAfterNavigationPolicy: can't continue loading frame due to the following reasons (allowNavigationToInvalidURL = %d, requestURLIsValid = %d, navigationPolicyDecision = %d)", (uint64_t, uint64_t, int, int, int, int), DEFAULT, ResourceLoading
+
+RESOURCELOADER_WILLSENDREQUESTINTERNAL, "[pageID=%llu, frameID=%llu, resourceID=%llu] ResourceLoader::willSendRequestInternal: calling completion handler", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+
+DOCUMENTLOADER_STARTLOADINGMAINRESOURCE_EMTPY_DOCUMENT, "[pageID=%llu, frameID=%llu, isMainFrame=%d] DocumentLoader::startLoadingMainResource: Returning empty document", (uint64_t, uint64_t, int), DEFAULT, Network
+DOCUMENTLOADER_STARTLOADINGMAINRESOURCE_STARTING_LOAD, "[pageID=%llu, frameID=%llu, isMainFrame=%d] DocumentLoader::startLoadingMainResource: Starting load", (uint64_t, uint64_t, int), DEFAULT, Network
+DOCUMENTLOADER_ATTACHTOFRAME, "[pageID=%llu, frameID=%llu, isMainFrame=%d] DocumentLoader::attachToFrame", (uint64_t, uint64_t, int), DEFAULT, Network
+DOCUMENTLOADER_DETACHFROMFRAME, "[pageID=%llu, frameID=%llu, isMainFrame=%d] DocumentLoader::detachFromFrame", (uint64_t, uint64_t, int), DEFAULT, Network
+DOCUMENTLOADER_STOPLOADING, "[pageID=%llu, frameID=%llu, isMainFrame=%d] DocumentLoader::stopLoading", (uint64_t, uint64_t, int), DEFAULT, Network
+
+MEDIASESSIONMANAGERCOCOA_SESSIONCANPRODUCEAUDIOCHANGED, "MediaSessionManagerCocoa::sessionCanProduceAudioChanged", (), DEFAULT, Media
+MEDIASESSIONMANAGERCOCOA_CLIENTCHARACTERISTICSCHANGED, "MediaSessionManagerCocoa::clientCharacteristicsChanged, session ID = %llu", (uint64_t), DEFAULT, Media
+MEDIASESSIONMANAGERCOCOA_UPDATESESSIONSTATE, "MediaSessionManagerCocoa::updateSessionState: AudioCapture(%d), AudioTrack(%d), Video(%d), Audio(%d), VideoAudio(%d), WebAudio(%d)", (int, int, int, int, int, int), DEFAULT, Media
+
+PLATFORMMEDIASESSIONMANAGER_REMOVESESSION, "PlatformMediaSessionManager::removeSession, session ID = %llu", (uint64_t), DEFAULT, Media
+PLATFORMMEDIASESSIONMANAGER_SESSIONWILLENDPLAYBACK, "PlatformMediaSessionManager::sessionWillEndPlayback, session ID = %llu", (uint64_t), DEFAULT, Media
+PLATFORMMEDIASESSIONMANAGER_SESSIONCANPRODUCEAUDIOCHANGED, "PlatformMediaSessionManager::sessionCanProduceAudioChanged", (), DEFAULT, Media
+PLATFORMMEDIASESSIONMANAGER_ADDSESSION, "PlatformMediaSessionManager::addSession, session ID = %llu", (uint64_t), DEFAULT, Media
+PLATFORMMEDIASESSIONMANAGER_MAYBEACTIVATEAUDIOSESSION_ACTIVE_SESSION_NOT_REQUIRED, "PlatformMediaSessionManager::maybeActivateAudioSession:  active audio session not required", (), DEFAULT, Media
+
+HTMLMEDIAELEMENT_CONSTRUCTOR, "HTMLMediaElement::HTMLMediaElement(%llu)", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_DESTRUCTOR, "HTMLMediaElement::~HTMLMediaElement(%llu)", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_SETBUFFERINGPOLICY, "HTMLMediaElement::setBufferingPolicy(%llu): %hhu", (uint64_t, uint8_t), DEFAULT, Media
+HTMLMEDIAELEMENT_INSERTEDINTOANCESTOR, "HTMLMediaElement::insertedIntoAncestor(%llu)", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_REMOVEDFROMANCESTOR, "HTMLMediaElement::removedFromAncestor(%llu)", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_DIDFINISHINSERTINGNODE, "HTMLMediaElement::didFinishInsertingNode(%llu)", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_MEDIAPLAYERRATECHANGED, "HTMLMediaElement::mediaPlayerRateChanged(%llu) rate: %f", (uint64_t, double), DEFAULT, Media
+HTMLMEDIAELEMENT_MEDIAPLAYERTIMECHANGED, "HTMLMediaElement::mediaPlayerTimeChanged(%llu)", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_SETSHOULDDELAYLOADEVENT, "HTMLMediaElement::setShouldDelayLoadEvent(%llu) %hhu", (uint64_t, uint8_t), DEFAULT, Media
+HTMLMEDIAELEMENT_MEDIAPLAYERENGINEUPDATED, "HTMLMediaElement::mediaPlayerEngineUpdated(%llu) %s", (uint64_t, CString), DEFAULT, Media
+HTMLMEDIAELEMENT_CURRENTMEDIATIME_SEEKING, "HTMLMediaElement::currentMediaTime(%llu) seeking, returning %f", (uint64_t, float), DEFAULT, Media
+HTMLMEDIAELEMENT_UPDATEPLAYSTATE, "HTMLMediaElement::updatePlayState(%llu) shouldBePlaying = %d, playerPaused = %d", (uint64_t, int, int), DEFAULT, Media
+HTMLMEDIAELEMENT_VISIBILITYSTATECHANGED, "HTMLMediaElement::visibilityStateChanged(%llu) visible = %d", (uint64_t, int), DEFAULT, Media
+HTMLMEDIAELEMENT_CREATEMEDIAPLAYER, "HTMLMediaElement::createMediaPlayer(%llu)", (uint64_t), DEFAULT, Media
+
+HTMLVIDEOELEMENT_MEDIAPLAYERRENDERINGMODECHANGED, "HTMLVideoElement::mediaPlayerRenderingModeChanged(%llu)", (uint64_t), DEFAULT, Media

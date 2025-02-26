@@ -1,0 +1,80 @@
+/*
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+body .sidebar > .panel.navigation.timeline > .timelines-content li.item.memory,
+body .timeline-overview > .graphs-container > .timeline-overview-graph.memory {
+    height: 108px;
+}
+
+.timeline-overview-graph.memory {
+    position: relative;
+}
+
+.timeline-overview-graph.memory > .legend {
+    position: absolute;
+    top: 0;
+    inset-inline-end: 0;
+    z-index: var(--timeline-record-z-index);
+    padding: 2px;
+    font-size: 8px;
+    color: hsl(0, 0%, 50%);
+    background-color: var(--timeline-odd-background-color);
+    pointer-events: none;
+}
+
+.timeline-overview-graph.memory .memory-pressure-event {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-inline-start: 1px solid black;
+}
+
+.timeline-overview-graph.memory:nth-child(even) > .legend {
+    background-color: var(--timeline-even-background-color);
+}
+
+body[dir=rtl] .timeline-overview-graph.memory > .stacked-area-chart {
+    transform: scaleX(-1);
+}
+
+.timeline-overview-graph.memory > .stacked-area-chart > svg > path.javascript {
+    stroke: var(--memory-javascript-stroke-color);
+    fill: var(--memory-javascript-fill-color);
+}
+
+.timeline-overview-graph.memory > .stacked-area-chart > svg > path.images {
+    stroke: var(--memory-images-stroke-color);
+    fill: var(--memory-images-fill-color);
+}
+
+.timeline-overview-graph.memory > .stacked-area-chart > svg > path.layers {
+    stroke: var(--memory-layers-stroke-color);
+    fill: var(--memory-layers-fill-color);
+}
+
+.timeline-overview-graph.memory > .stacked-area-chart > svg > path.page {
+    stroke: var(--memory-page-stroke-color);
+    fill: var(--memory-page-fill-color);
+}

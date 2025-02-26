@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2017 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+    <rect x="1.5" y="1.5" width="13" height="13" rx="1.5" ry="1.5" fill="#fff" stroke="#4d4d4d"/>
+    <polygon points="12.109 10.361 8.451 12.469 8 12.731 7.549 12.469 3.891 10.361 3.891 5.63 4.207 5.45 7.982 3.269 11.775 5.45 12.1 5.639 12.1 6.315 12.109 10.361" fill="#ccc" stroke="#666"/>
+    <path d="M12.1,5.639,8,8,3.891,5.63M8,8v4.731" fill="none" stroke="#666"/>
+</svg>

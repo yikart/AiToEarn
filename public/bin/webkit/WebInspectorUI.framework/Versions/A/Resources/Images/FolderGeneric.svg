@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2020 Apple Inc. All rights reserved. -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <style>
+            g:not(:target) {
+                display: none;
+            }
+
+            #light {
+                color: black;
+            }
+
+            #dark {
+                color: white;
+            }
+        </style>
+    </defs>
+    <symbol id="i" stroke="none" stroke-width="1" fill="none" viewBox="0 0 32 32">
+        <rect fill-opacity="0.2" fill="currentColor" width="30" height="7" x="1" y="20.5" />
+        <path stroke="currentColor" fill-opacity="0.4" fill="currentColor" d="M 1 9 L 31 9 C 31.276 9 31.5 9.224 31.5 9.5 L 31.5 27.5 C 31.5 27.776 31.276 28 31 28 L 1 28 C 0.724 28 0.5 27.776 0.5 27.5 L 0.5 9.5 C 0.5 9.224 0.724 9 1 9 Z"/>
+        <path fill="currentColor" fill-opacity="0.2" stroke="currentColor" d="M 0.5 9.605 L 0.5 4.588 C 0.5 3.987 0.987 3.5 1.588 3.5 L 8.981 3.5 C 9.28 3.5 9.567 3.623 9.771 3.84 L 11.698 5.16 C 11.903 5.377 12.189 5.5 12.488 5.5 L 30.412 5.5 C 31.013 5.5 31.5 6.483 31.5 7.084 L 31.5 9.605"/>
+    </symbol>
+    <g id="light"><use href="#i"/></g>
+    <g id="dark"><use href="#i"/></g>
+</svg>

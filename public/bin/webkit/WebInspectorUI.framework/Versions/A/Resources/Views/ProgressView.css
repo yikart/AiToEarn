@@ -1,0 +1,70 @@
+/*
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.progress-view {
+    display: flex;
+    flex-shrink: 0;
+    flex-direction: column;
+    justify-content: center;
+    font-size: var(--message-text-view-font-size);
+    text-align: center;
+}
+
+.progress-view > .titles {
+    padding: 15px 0;
+}
+
+.progress-view > .titles > .title {
+    color: var(--text-color-gray-dark);
+}
+
+.progress-view > .titles > .subtitle {
+    color: var(--text-color-gray-medium);
+}
+
+.progress-view > .titles > .subtitle::before {
+    content: "\2002\2012\2002";
+}
+
+.progress-view > .indeterminate-progress-spinner {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    margin: 0 auto;
+}
+
+@media (prefers-color-scheme: dark) {
+    .progress-view > .titles > .title {
+        color: var(--text-color-secondary);
+    }
+
+    .progress-view > .titles > .subtitle {
+        color: var(--text-color-tertiary);
+    }
+
+    .indeterminate-progress-spinner {
+        filter: invert();
+    }
+}

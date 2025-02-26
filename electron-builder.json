@@ -1,0 +1,65 @@
+{
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+  "appId": "cn.yikart.att",
+  "productName": "爱团团AiToEarn",
+  "asar": true,
+  "directories": {
+    "output": "release/${version}"
+  },
+  "files": [
+    "dist-electron",
+    "dist"
+  ],
+"beforePack": "scripts/cleanup-ffmpeg.cjs",
+  "mac": {
+    "identity":null,
+    "artifactName": "${productName}_${version}_${arch}.${ext}",
+    "target": [
+      {
+        "target": "default",
+        "arch": [
+          "x64",
+          "arm64"
+        ]
+      }
+    ]
+  },
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      }
+    ],
+    "artifactName": "${productName}_${version}.${ext}"
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true,
+    "deleteAppDataOnUninstall": false
+  },
+  "publish": {
+    "provider": "generic",
+    "channel": "latest",
+    "url": "https://ylzsfile.yikart.cn/att/"
+  },
+  "extraResources": [
+    {
+      "from": "public/assets",
+      "to": "assets",
+      "filter": [
+        "**/*"
+      ]
+    },
+    {
+      "from": "public/bin",
+      "to": "bin",
+      "filter": [
+        "**/*"
+      ]
+    }
+  ]
+}

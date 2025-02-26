@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2022 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs>
+        <style>
+            g:not(:target) {
+                display: none;
+            }
+
+            #light {
+                --stroke: black;
+            }
+
+            #dark {
+                --stroke: white;
+            }
+        </style>
+    </defs>
+
+    <symbol id="i" viewBox="0 0 16 16" fill="none" stroke="var(--stroke)" stroke-width="1">
+        <circle cx="8" cy="8" r="7.5"/>
+        <path d="M 5.5 1.0 L 5.5 10.5"/>
+        <path d="M 3.0 9.0 L 5.5 11.0 L 8.0 9.0"/>
+        <path d="M 10.5 15.0 L 10.5 5.5"/>
+        <path d="M 13.0 7.0 L 10.5 5.0 L 8.0 7.0"/>
+        <path d="M 13.3 2.7 L 2.7 13.3"/>
+    </symbol>
+
+    <g id="light"><use href="#i"/></g>
+    <g id="dark"><use href="#i"/></g>
+</svg>

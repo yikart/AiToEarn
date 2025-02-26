@@ -1,0 +1,1050 @@
+; Copyright (C) 2022 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+; notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+; notice, this list of conditions and the following disclaimer in the
+; documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+; Copyright (C) 2022 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+; notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+; notice, this list of conditions and the following disclaimer in the
+; documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+(version 3)
+(deny default)
+(deny nvram*)
+(deny system-privilege)
+(allow system-audit file-read-metadata)
+;; Silence spurious logging due to rdar:
+(deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report))
+(allow mach-bootstrap)
+(allow mach-kernel-endpoint)
+(allow file-test-existence)
+(allow syscall-mach)
+(allow system-memorystatus-control)
+;; Sandbox extensions
+(define (apply-read-and-issue-extension op path-filter)
+    (op file-read* path-filter)
+    (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") path-filter)))
+(define (apply-write-and-issue-extension op path-filter)
+    (op file-write* path-filter)
+    (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read-write") path-filter)))
+(define (read-only-and-issue-extensions path-filter)
+    (apply-read-and-issue-extension allow path-filter))
+(define (read-write-and-issue-extensions path-filter)
+    (apply-read-and-issue-extension allow path-filter)
+    (apply-write-and-issue-extension allow path-filter))
+(define (webcontent-process-launched)
+    (state-flag "local:WebContentProcessLaunched"))
+(define (notify-blocking) (require-entitlement "com.apple.developer.web-browser-engine.restrict.notifyd"))
+(with-filter (mac-policy-name "Sandbox")
+    (allow system-mac-syscall (mac-syscall-number 2 4 6 7)))
+(with-filter (mac-policy-name "Quarantine")
+    (allow system-mac-syscall (mac-syscall-number 84 87)))
+;; Utility functions for home directory relative path filters
+(define (home-regex home-relative-regex)
+    (regex (string-append "^" (regex-quote (param "HOME_DIR")) home-relative-regex)))
+(define (home-subpath home-relative-subpath)
+    (subpath (string-append (param "HOME_DIR") home-relative-subpath)))
+(define (home-literal home-relative-literal)
+    (literal (string-append (param "HOME_DIR") home-relative-literal)))
+; Copyright (C) 2021 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+; notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+; notice, this list of conditions and the following disclaimer in the
+; documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+(define (home-library-preferences-regex home-library-preferences-relative-regex)
+    (regex (string-append "^" (regex-quote (param "HOME_LIBRARY_PREFERENCES_DIR")) home-library-preferences-relative-regex)))
+(define (home-library-preferences-literal home-library-preferences-relative-literal)
+    (literal (string-append (param "HOME_LIBRARY_PREFERENCES_DIR") home-library-preferences-relative-literal)))
+(define (shared-preferences-read . domains)
+    (for-each (lambda (domain)
+        (begin
+            (allow user-preference-read (with telemetry) (preference-domain domain))
+            (allow file-read*
+                (literal (string-append "/Library/Preferences/" domain ".plist"))
+                (home-library-preferences-literal (string-append "/" domain ".plist"))
+                (home-library-preferences-regex (string-append #"/ByHost/" (regex-quote domain) #"\..*\.plist$")))))
+        domains))
+(define (allow-reading-global-preferences)
+    (allow user-preference-read (preference-domain "kCFPreferencesAnyApplication"))
+    (allow file-read*
+        (literal "/Library/Preferences/.GlobalPreferences.plist")
+        (home-subpath "/Library/Preferences/.GlobalPreferences.plist")
+        (home-subpath "/Library/Preferences/.GlobalPreferences_m.plist")
+        (home-regex #"/Library/Preferences/ByHost/\.GlobalPreferences\..*\.plist$")
+    )
+)
+
+(with-filter (mac-policy-name "Sandbox")
+    (allow system-mac-syscall (mac-syscall-number 5)))
+(with-filter (mac-policy-name "Quarantine")
+    (allow system-mac-syscall (mac-syscall-number 180)))
+(with-filter (mac-policy-name "AMFI")
+    (allow system-mac-syscall (mac-syscall-number 95)))
+(allow system-fcntl
+    (fcntl-command
+        F_ADDFILESIGS_RETURN
+        F_CHECK_LV
+        F_GETFL
+        F_GETPATH
+        F_GETPROTECTIONCLASS
+        F_GETSIGSINFO
+        F_NOCACHE
+        F_SETFD
+        F_SETFL
+        F_SETLKW
+        F_SETNOSIGPIPE))
+(allow process-codesigning-entitlements-der-blob-get)
+(allow process-codesigning-identity-get (target self))
+(allow process-info-codesignature)
+(allow iokit-open-service (iokit-user-client-class "IOSurfaceRoot"))
+(allow iokit-open-service (iokit-user-client-class "AppleCLCD2"))
+(allow iokit-open-service (iokit-registry-entry-class
+    "AGPM"
+    "AppleGFXHDAEngineOutputDP"
+    "AppleHDAEngineInput"
+    "AppleHDAEngineOutput"
+    "AppleIntelMEClientController"
+    "AppleMobileADBE0"
+    "AppleUpstreamUserClientDriver"
+    "AudioAUUCDriver"
+    "IOAudioSelectorControl"
+    "IOMobileFramebufferShim"))
+(allow file-map-executable (subpath
+    "/System/Library/Components"
+    "/System/Library/CoreServices"
+    "/System/Library/Extensions"
+    "/System/Library/Video/Plug-Ins"))
+(allow fs-quota-get)
+(allow iokit-open-user-client (iokit-user-client-class "AGXDeviceUserClient"))
+(allow iokit-open-service
+    (iokit-registry-entry-class
+        "AppleAVD"
+        "AppleM2ScalerCSCDriver"
+        "IOPMrootDomain"))
+(allow iokit-open-service (iokit-registry-entry-class "AppleVideoToolboxParavirtualizationDriver"))
+(allow iokit-open-user-client (iokit-user-client-class "AppleVideoToolboxParavirtualizationUserClient"))
+(deny darwin-notification-post (with no-report))
+(deny nvram-get (with no-report))
+(deny (with no-report) necp-client-open)
+(allow file-read*
+    (require-all
+        (file-mode #o0004)
+        (subpath "/System")))
+(allow file-read*
+    (require-all (file-mode #o0004)
+    (require-any
+    (subpath "/Library/Preferences/Logging")
+    (subpath "/private/var/db/timezone")
+    (subpath "/usr/lib")
+    (subpath "/usr/share"))))
+(allow file-map-executable
+    (subpath "/System/Library/Frameworks")
+    (subpath "/System/Library/PrivateFrameworks")
+    (subpath "/usr/lib"))
+(allow file-read-metadata
+    (literal "/var")
+    (literal "/etc")
+    (literal "/tmp")
+    (literal "/private/etc/localtime"))
+(allow file-read*
+    (literal "/dev/random")
+    (literal "/private/etc/passwd"))
+(allow file-read* file-write-data file-ioctl
+    (literal "/dev/dtracehelper"))
+(allow ipc-posix-shm-read*
+    (ipc-posix-name "apple.shm.notification_center"))
+(define (system-graphics)
+    (allow user-preference-read
+        (preference-domain "com.apple.opengl")
+        (preference-domain "com.nvidia.OpenGL"))
+    (allow mach-lookup
+        (global-name "com.apple.cvmsServ"))
+    (allow file-read*
+        (prefix "/private/var/db/CVMS/cvmsCodeSignObj"))
+    (allow iokit-open-service
+        (iokit-connection "IOAccelerator"))
+    (allow iokit-open-user-client
+        (iokit-connection "IOAccelerator"))
+    (allow iokit-open-user-client
+        (iokit-user-client-class "IOSurfaceRootUserClient"))
+    (deny iokit-open-user-client
+        (iokit-user-client-class "IOAccelerationUserClient"))
+    (deny iokit-open-user-client
+        (iokit-user-client-class "IOFramebufferSharedUserClient"))
+    (allow iokit-open-user-client
+        (iokit-user-client-class
+            "AppleIntelMEUserClient"
+            "AppleSNBFBUserClient"))
+    (deny iokit-open-user-client (with no-report)
+        (iokit-user-client-class "AGPMClient")
+        (iokit-user-client-class "AppleGraphicsControlClient")
+        (iokit-user-client-class "AppleGraphicsPolicyClient"))
+    (deny iokit-open-user-client
+        (iokit-user-client-class "AppleMGPUPowerControlClient"))
+    (allow file-read*
+        (subpath "/Library/GPUBundles"))
+    (allow iokit-set-properties
+        (require-all (iokit-connection "IODisplay")
+        (require-any (iokit-property "brightness")
+        (iokit-property "linear-brightness")
+        (iokit-property "commit")
+        (iokit-property "rgcs")
+        (iokit-property "ggcs")
+        (iokit-property "bgcs")))))
+(deny process-info*)
+(allow process-info-dirtycontrol (target self))
+(allow process-info-pidinfo)
+(allow process-info-rusage (target self))
+(allow process-info-setcontrol (target self))
+(allow process-codesigning-status*)
+(deny sysctl*)
+(allow sysctl-read
+    (sysctl-name
+        "hw.activecpu"
+        "hw.cachelinesize"
+        "hw.cpufamily"
+        "hw.cpusubfamily"
+        "hw.cputhreadtype"
+        "hw.cputype"
+        "hw.l2cachesize"
+        "hw.logicalcpu"
+        "hw.logicalcpu_max"
+        "hw.memsize"
+        "hw.model"
+        "hw.ncpu"
+        "hw.physicalcpu"
+        "hw.physicalcpu_max"
+        "hw.product"
+        "hw.target"
+        "hw.vectorunit"
+        "kern.bootargs"
+        "kern.boottime"
+        "kern.hostname"
+        "kern.hv_vmm_present"
+        "kern.iossupportversion"
+        "kern.maxfilesperproc"
+        "kern.osproductversion"
+        "kern.osrelease"
+        "kern.ostype"
+        "kern.osversion"
+        "kern.version"
+        "kern.willshutdown"
+        "machdep.ptrauth_enabled"
+        "vm.malloc_ranges")
+    (sysctl-name-prefix "hw.optional.")
+    (sysctl-name-prefix "hw.perflevel")
+)
+(deny sysctl-read (with no-report)
+    (sysctl-name
+        "security.mac.amfi.qa_root_certs_allowed"
+        "sysctl.proc_translated"
+        "vm.page_wire_count"
+        "vm.task_no_footprint_for_debug"))
+(deny iokit-get-properties)
+(allow iokit-get-properties
+    (iokit-property "AAPL,LCD-PowerState-ON")
+    (iokit-property "AGCInfo")
+    (iokit-property "AccelCaps")
+    (iokit-property "AccelNativeDMARowByteAlignment")
+    (iokit-property "AccurateMaxDigitizerPressureValue")
+    (iokit-property "ActivationThresholds")
+    (iokit-property "ActuationSupported")
+    (iokit-property "AnimationThresholds")
+    (iokit-property "AllowDisplaySleep")
+    (iokit-property "AlwaysNeedsVelocityCalculated")
+    (iokit-property "AppleGVAKeyDoesNotExist")
+    (iokit-property "AppleIntelMEVABundleName")
+    (iokit-property "AAPL,DisplayPipe")
+    (iokit-property "AAPL,OpenCLdisabled")
+    (iokit-property-prefix "AAPL,IOGraphics_LER")
+    (iokit-property "AAPL,alias-policy")
+    (iokit-property "AAPL,boot-display")
+    (iokit-property "AAPL,display-alias")
+    (iokit-property "AAPL,mux-switch-state")
+    (iokit-property "AAPL,ndrv-dev")
+    (iokit-property "AAPL,primary-display")
+    (iokit-property "AAPL,slot-name")
+    (iokit-property "ATY,cbits")
+    (iokit-property "ATY,fb_linebytes")
+    (iokit-property "ATY,fb_offset")
+    (iokit-property "ATY,fb_size")
+    (iokit-property "ATY,intrev")
+    (iokit-property "ATY,DeviceName")
+    (iokit-property "ATY,EFIDisplay")
+    (iokit-property "ATY,FamilyName")
+    (iokit-property "AVCSupported")
+    (iokit-property "BacklightHandle")
+    (iokit-property "BlockSize")
+    (iokit-property "CEAModeID")
+    (iokit-property "CEAPixelRepetition")
+    (iokit-property "CFBundleIdentifier")
+    (iokit-property "CFBundleIdentifierKernel")
+    (iokit-property "CapsLockDelay")
+    (iokit-property "CaseSensitive")
+    (iokit-property "ConfigState")
+    (iokit-property "DPLanes")
+    (iokit-property "DPLinkBit")
+    (iokit-property "DPLinkRate")
+    (iokit-property "Description")
+    (iokit-property "Development")
+    (iokit-property "Device Characteristics")
+    (iokit-property "DeviceEqID")
+    (iokit-property "DiskImageURL")
+    (iokit-property "DisplayRouting")
+    (iokit-property "Driver is Ready")
+    (iokit-property "Ejectable")
+    (iokit-property "EnableLPVP")
+    (iokit-property "Encrypted")
+    (iokit-property "Endianness")
+    (iokit-property "ExtendedMaxDigitizerPressureValue")
+    (iokit-property "Family ID")
+    (iokit-property "ForceSupported")
+    (iokit-property "Formats")
+    (iokit-property "FramebufferEnabled")
+    (iokit-property "FramebufferStarted")
+    (iokit-property "GPUConfigurationVariable")
+    (iokit-property "GPUDCCDisplayable")
+    (iokit-property "GPUDebugNullClientMask")
+    (iokit-property "GpuDebugPolicy")
+    (iokit-property "GPURawCounterBundleName")
+    (iokit-property "GPURawCounterPluginClassName")
+    (iokit-property "HEVCSupported")
+    (iokit-property "HIDPointerAccelerationType")
+    (iokit-property "HwCtxCacheUpdate")
+    (iokit-property "IOAccelDisplayPipeCapabilities")
+    (iokit-property "IOAccelIndex")
+    (iokit-property "IOAccelTypes")
+    (iokit-property "IOAccelRevision")
+    (iokit-property-prefix "IOAudioControl")
+    (iokit-property "IOAudioDeviceCanBeDefaults")
+    (iokit-property "IOAudioDeviceTransportType")
+    (iokit-property-prefix "IOAudioEngine")
+    (iokit-property "IOAudioSampleRate")
+    (iokit-property "IOAudioStreamSampleFormatByteOrder")
+    (iokit-property-prefix "IOAV")
+    (iokit-property "IOBacklightHandlerID")
+    (iokit-property "IOBusyInterest")
+    (iokit-property "IOCFPlugInTypes")
+    (iokit-property "IOChildIndex")
+    (iokit-property "IOClass")
+    (iokit-property "IOClassNameOverride")
+    (iokit-property "IOConsoleUsers")
+    (iokit-property "IODVDBundleName")
+    (iokit-property "IODeviceMemory")
+    (iokit-property "IODisplayParameters")
+    (iokit-property-prefix "IOFB")
+    (iokit-property "IOFramebufferOpenGLIndex")
+    (iokit-property "IOGeneralInterest")
+    (iokit-property "IOGLBundleName")
+    (iokit-property-prefix "IOGVA")
+    (iokit-property "IOHibernateState")
+    (iokit-property "IOI2CTransactionTypes")
+    (iokit-property "IOInterruptControllers")
+    (iokit-property "IOInterruptSpecifiers")
+    (iokit-property "IOKitDebug")
+    (iokit-property "IOMatchCategory")
+    (iokit-property "IOMediaIcon")
+    (iokit-property "IONDRVFramebufferGeneration")
+    (iokit-property "IONVRAMProperty")
+    (iokit-property "IOName")
+    (iokit-property "IONameMatch")
+    (iokit-property "IONameMatched")
+    (iokit-property "IOOCDBundleName")
+    (iokit-property "IOPCITunnelled")
+    (iokit-property "IOPCITunnelCompatible")
+    (iokit-property "IOPMStrictTreeOrder")
+    (iokit-property "IOParentMatch")
+    (iokit-property-prefix "IOPCI")
+    (iokit-property "IOPMIsPowerManaged")
+    (iokit-property "IOPersonalityPublisher")
+    (iokit-property "IOPlatformSerialNumber")
+    (iokit-property "IOPlatformUUID")
+    (iokit-property "IOPowerManagement")
+    (iokit-property "IOProbeScore")
+    (iokit-property "IOPropertyMatch")
+    (iokit-property "IOProviderClass")
+    (iokit-property "IOReportLures")
+    (iokit-property "IOReportLegend")
+    (iokit-property "IOReportLegendPublic")
+    (iokit-property "IOScreenRestoreState")
+    (iokit-property "IOSourceVersion")
+    (iokit-property "IOVABundleName")
+    (iokit-property "IOVARendererID")
+    (iokit-property "IOVARendererSubID")
+    (iokit-property "InternalStatistics")
+    (iokit-property "InternalStatisticsAccm")
+    (iokit-property "MetalPluginClassName")
+    (iokit-property "MetalPluginName")
+    (iokit-property "MetalStatisticsName")
+    (iokit-property "MTHIDDevice")
+    (iokit-property "MT Built-In")
+    (iokit-property "MaintainPowerInUILock")
+    (iokit-property "Max Packet Size")
+    (iokit-property "MaximumBootBeepVolume")
+    (iokit-property "MinDigitizerPressureValue")
+    (iokit-property "Multitouch ID")
+    (iokit-property "Multitouch Serial Number")
+    (iokit-property "Multitouch Subdevice ID")
+    (iokit-property "NVArch")
+    (iokit-property "NVCAP")
+    (iokit-property "NVCLASS")
+    (iokit-property "NVDA,Enable-A2R10G10B10Format")
+    (iokit-property "NVDA,Features")
+    (iokit-property "NVDA,NVPresentment-version")
+    (iokit-property "NVDA,accel-loaded")
+    (iokit-property "NVDA,invalid-config")
+    (iokit-property "NVDA,mm-version")
+    (iokit-property "NVDAType")
+    (iokit-property "NVDAinitgl_created")
+    (iokit-property "NVRAMProperty")
+    (iokit-property "NXSystemInfo")
+    (iokit-property "VRAM,memvendorID")
+    (iokit-property "VRAM,totalsize")
+    (iokit-property "NoAutoRoute")
+    (iokit-property "NumBlocks")
+    (iokit-property "NumStreams")
+    (iokit-property "PerformanceStatistics")
+    (iokit-property "PerformanceStatisticsAccum")
+    (iokit-property "PinConfigurations")
+    (iokit-property "Protocol Characteristics")
+    (iokit-property "Removable")
+    (iokit-property "ResetOnLockMs")
+    (iokit-property "ResetOnUnlockMs")
+    (iokit-property "SWIP_properties")
+    (iokit-property "SafeEjectRequested")
+    (iokit-property "SampleRates")
+    (iokit-property "Sensor Columns")
+    (iokit-property "Sensor Rows")
+    (iokit-property "Sensor Region Descriptor")
+    (iokit-property "Sensor Region Param")
+    (iokit-property "Sensor Region Rows")
+    (iokit-property "Sensor Surface Descriptor")
+    (iokit-property "Sensor Surface Height")
+    (iokit-property "Sensor Surface Width")
+    (iokit-property "Serial Number")
+    (iokit-property "StartupDisplay")
+    (iokit-property "SurfaceList")
+    (iokit-property "SupportAudioAUUC")
+    (iokit-property "SupportsSilentClick")
+    (iokit-property "SupportTapToWake")
+    (iokit-property "TimeStampFiltering")
+    (iokit-property "Transport")
+    (iokit-property "USBADC")
+    (iokit-property "UserClientEnabled")
+    (iokit-property "VRAM,totalMB")
+    (iokit-property "WANTS_FRAMES_IGNORED")
+    (iokit-property "ane-type")
+    (iokit-property "acpi-device")
+    (iokit-property "acpi-path")
+    (iokit-property "assigned-addresses")
+    (iokit-property "attached-gpu-control-path")
+    (iokit-property "audio-codec-info")
+    (iokit-property "audio-device-mvalue")
+    (iokit-property "audio-device-nvalue")
+    (iokit-property "audio-selector")
+    (iokit-property "av-signal-type")
+    (iokit-property "backlight-PWM-freq")
+    (iokit-property "bcdVersion")
+    (iokit-property "board-id")
+    (iokit-property "boot-gamma-restored")
+    (iokit-property "built-in")
+    (iokit-property "cail_properties")
+    (iokit-property "canvas-height")
+    (iokit-property "canvas-width")
+    (iokit-property "class-code")
+    (iokit-property "color-accuracy-index")
+    (iokit-property "compatible")
+    (iokit-property "connector-type")
+    (iokit-property "device-id")
+    (iokit-property "device_type")
+    (iokit-property "display-bpc")
+    (iokit-property "display-connect-flags")
+    (iokit-property "display-link-component-bits")
+    (iokit-property "display-pixel-component-bits")
+    (iokit-property "display-type")
+    (iokit-property "dpm")
+    (iokit-property "errordb")
+    (iokit-property "filevault-image")
+    (iokit-property "graphic-options")
+    (iokit-property "hda-gfx")
+    (iokit-property "housing-color")
+    (iokit-property "idProduct")
+    (iokit-property "idVendor")
+    (iokit-property "iofb_version")
+    (iokit-property "image-encrypted")
+    (iokit-property "image-path")
+    (iokit-property "layout-id")
+    (iokit-property "locationID")
+    (iokit-property "model")
+    (iokit-property "mt-device-id")
+    (iokit-property "name")
+    (iokit-property "nv-stats")
+    (iokit-property "parser-options")
+    (iokit-property "parser-type")
+    (iokit-property "pci-aspm-default")
+    (iokit-property "pcidebug")
+    (iokit-property "port-number")
+    (iokit-property "reg")
+    (iokit-property "revision-id")
+    (iokit-property "rm_board_number")
+    (iokit-property "rom-revision")
+    (iokit-property "saved-config")
+    (iokit-property "startup-timing")
+    (iokit-property "subsystem-id")
+    (iokit-property "subsystem-vendor-id")
+    (iokit-property "touch-size-id")
+    (iokit-property "vendor-id")
+    (iokit-property "vbios-revision")
+    (iokit-property "CompactVRAM")
+    (iokit-property "EnableBlitLib")
+    (iokit-property "ForceDisableEDRAM")
+    (iokit-property "IOPCIMatch")
+    (iokit-property "MetalStatisticsScriptName")
+    (iokit-property "MetalCoalesce")
+    (iokit-property "PanicOnGPUHang")
+    (iokit-property "TelemetryDisable")
+    (iokit-property "IOGVAH264EncodeCapabilities")
+    (iokit-property "IOAVDHEVCDecodeCapabilities")
+)
+(if (equal? (param "CPU") "arm64")
+    (allow iokit-get-properties
+        (iokit-property "ADSSupported")
+        (iokit-property "IOAVDHEVCDecodeCapabilities")
+        (iokit-property "IOGLESBundleName")
+        (iokit-property "MetalPluginClassName")
+        (iokit-property "MetalPluginName")
+        (iokit-property "IOSurfaceAcceleratorCapabilitiesDict")
+        (iokit-property "acoustic-id")
+    ))
+(with-filter (iokit-registry-entry-class "IOService")
+    (allow iokit-get-properties
+        (iokit-property "supports-advanced-vp-chatflavor")))
+(if (equal? (param "CPU") "arm64")
+    (with-filter (iokit-registry-entry-class "IOService")
+        (allow iokit-get-properties
+            (iokit-property "IORegistryEntryPropertyKeys"))))
+(if (equal? (param "CPU") "arm64")
+    (with-filter (iokit-registry-entry-class "IOMobileFramebuffer")
+        (allow iokit-get-properties
+            (iokit-property "AppleTV"
+                            "DisplayPipePlaneBaseAlignment"
+                            "DisplayPipeStrideRequirements"
+                            "dfr"
+                            "external"
+                            "hdcp-hoover-protocol"))))
+(if (equal? (param "CPU") "arm64")
+    (with-filter (iokit-registry-entry-class "IOPlatformDevice")
+        (allow iokit-get-properties
+            (iokit-property
+                "iommu-present"
+                "soc-generation"))))
+(if (equal? (param "CPU") "arm64")
+    (with-filter (iokit-registry-entry-class "IOService")
+        (allow iokit-get-properties
+            (iokit-property "apple-coprocessor-version"
+                            "chip-id"
+                            "display-rotation"
+                            "display-scale"))))
+(with-filter (iokit-registry-entry-class "AppleMobileADBE0")
+    (allow iokit-get-properties
+        (iokit-property "GainMapVersion")))
+(with-filter (iokit-registry-entry-class "IOPlatformDevice")
+    (deny iokit-get-properties (with no-report)
+        (iokit-property
+            "artwork-display-gamut"
+            "product-id")))
+(with-filter (iokit-registry-entry-class "AppleMobileADBE0")
+    (deny iokit-get-properties (with no-report)
+        (iokit-property "APTDevice")))
+(with-filter (iokit-registry-entry-class "AppleARMIODevice")
+    (deny iokit-get-properties (with no-report)
+        (iokit-property
+            "AAPL,phandle"
+            "ads-present"
+            "avd-version"
+            "clock-gates"
+            "clock-ids"
+            "coprovider-group"
+            "decode-samples-per-second"
+            "function-avd_reset"
+            "function-mcc_dataset"
+            "h264-playback-level"
+            "interrupt-parent"
+            "interrupts"
+            "iommu-parent"
+            "power-gates"
+            "supports-apt")))
+(deny mach-lookup (xpc-service-name-prefix ""))
+(allow mach-lookup
+    (xpc-service-name "com.apple.audio.SandboxHelper"))
+(allow mach-lookup
+    (xpc-service-name "com.apple.coremedia.videodecoder")
+    (xpc-service-name "com.apple.coremedia.videoencoder"))
+(allow mach-lookup
+    (global-name "com.apple.accessibility.mediaaccessibilityd"))
+(define (allow-read-directory-and-issue-read-extensions path)
+    (if path
+        (begin
+            (allow file-read* (subpath path))
+            (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") (subpath path))))))
+(define (allow-read-write-directory-and-issue-read-write-extensions path)
+    (if path
+        (begin
+            (allow file-read* file-write* (subpath path))
+            (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") (subpath path)))
+            (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read-write") (subpath path))))))
+(define (HEX-pattern-match-generator pattern-descriptor)
+    (letrec ((pattern-string ""))
+        (for-each (lambda (repeat-count)
+            (if (zero? repeat-count)
+                (set! pattern-string (string-append pattern-string "-"))
+                (let appender ((count repeat-count))
+                    (if (> count 0)
+                        (begin
+                            (set! pattern-string (string-append pattern-string "[0-9A-F]"))
+                            (appender (- count 1)))))))
+            pattern-descriptor)
+    pattern-string))
+(define (uuid-HEX-pattern-match-string)
+    (HEX-pattern-match-generator '(8 0 4 0 4 0 4 0 12)))
+(define *uuid-pattern* "")
+(define (uuid-regex-string)
+    (if (zero? (string-length *uuid-pattern*))
+        (set! *uuid-pattern* (uuid-HEX-pattern-match-string)))
+    *uuid-pattern*)
+(allow file-read*
+    (subpath "/Library/Audio/Plug-Ins/HAL")
+    (subpath "/Library/Fonts")
+    (subpath "/Library/Managed Preferences")
+    (home-subpath "/Library/Fonts"))
+(allow file-read-data
+    (literal "/usr/local/lib/log"))
+(shared-preferences-read
+    "com.apple.Accessibility"
+    "com.apple.ATS"
+    "com.apple.CoreGraphics"
+    "com.apple.DownloadAssessment"
+    "com.apple.HIToolbox"
+    "com.apple.LaunchServices"
+    "com.apple.MultitouchSupport"
+    "com.apple.ServicesMenu.Services"
+    "com.apple.ViewBridge"
+    "com.apple.WebFoundation"
+    "com.apple.WebKit"
+    "com.apple.avfoundation"
+    "com.apple.avfoundation.frecents"
+    "com.apple.avfoundation.videoperformancehud"
+    "com.apple.coremedia"
+    "com.apple.crypto"
+    "com.apple.driver.AppleBluetoothMultitouch.mouse"
+    "com.apple.driver.AppleBluetoothMultitouch.trackpad"
+    "com.apple.driver.AppleHIDMouse"
+    "com.apple.lookup.shared"
+    "com.apple.mediaaccessibility"
+    "com.apple.networkConnect"
+    "com.apple.security"
+    "com.apple.speech.voice.prefs"
+    "com.apple.systemsound"
+    "com.apple.universalaccess"
+    "edu.mit.Kerberos"
+    "pbs")
+(allow-reading-global-preferences)
+(allow-read-directory-and-issue-read-extensions (param "WEBKIT2_FRAMEWORK_DIR"))
+(read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
+(read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
+(with-filter (system-attribute apple-internal)
+    (allow mach-register (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
+(if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
+    (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_CACHE_DIR")))
+(if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
+    (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_TEMP_DIR")))
+(allow iokit-open-user-client
+    (iokit-user-client-class "AppleUpstreamUserClient")
+    (iokit-user-client-class "RootDomainUserClient")
+    (iokit-user-client-class "IOAudioControlUserClient")
+    (iokit-user-client-class "IOAudioEngineUserClient")
+    (iokit-user-client-class "AudioAUUC")
+)
+(allow iokit-open-user-client
+    (require-all
+        (extension "com.apple.webkit.extension.iokit")
+        (iokit-user-client-class "H11ANEInDirectPathClient")))
+(allow iokit-open-service
+    (require-all
+        (extension "com.apple.webkit.extension.iokit")
+        (iokit-user-client-class "H11ANEIn")))
+(deny iokit-open-user-client
+    (iokit-user-client-class "AppleMultitouchDeviceUserClient")
+    (iokit-user-client-class "IOHIDParamUserClient"))
+(allow ipc-posix-shm-read* ipc-posix-shm-write-data
+    (ipc-posix-name-prefix "AudioIO"))
+(allow mach-lookup
+    (global-name "com.apple.audio.AudioComponentRegistrar"))
+(deny mach-lookup (with no-report)
+    (xpc-service-name "com.apple.audio.toolbox.reporting.service"))
+(allow mach-lookup
+    (global-name "com.apple.audio.AudioSession"))
+(allow mach-lookup (xpc-service-name "com.apple.audio.AudioConverterService"))
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name "com.apple.powerlog.plxpclogger.xpc")))
+(with-filter (system-attribute apple-internal)
+    (allow mach-lookup
+        (global-name "com.apple.powerlog.plxpclogger.xpc")))
+(with-filter (uid 0)
+    (allow mach-lookup
+        (global-name "com.apple.system.logger")))
+(with-filter (system-attribute apple-internal)
+    (allow mach-lookup
+        (global-name "com.apple.analyticsd")
+        (global-name "com.apple.diagnosticd")))
+(allow mach-lookup
+       (global-name "com.apple.audio.audiohald")
+       (global-name "com.apple.CARenderServer")
+       (global-name "com.apple.fonts")
+       (global-name "com.apple.PowerManagement.control")
+       (global-name "com.apple.trustd.agent")
+       (global-name "com.apple.logd.events"))
+(allow mach-lookup
+       (global-name "com.apple.mediaremoted.xpc")
+       (global-name "com.apple.logd")
+       (global-name "com.apple.lskdd")
+       (global-name "com.apple.tccd"))
+(allow mach-lookup (xpc-service-name "com.apple.MTLCompilerService"))
+(deny mach-lookup (with no-report)
+    (global-name
+        "com.apple.CoreServices.coreservicesd"
+        "com.apple.DiskArbitration.diskarbitrationd"
+        "com.apple.ViewBridgeAuxiliary"
+        "com.apple.audioanalyticsd"
+        "com.apple.windowserver.active"))
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name "com.apple.coreservices.launchservicesd")))
+(deny mach-lookup (with no-report)
+    (global-name-prefix "com.apple.distributed_notifications"))
+(allow mach-lookup
+    (global-name "com.apple.SecurityServer"))
+(allow file-read* (subpath "/private/var/db/mds/system"))
+(with-filter (uid 0)
+    (allow file-write*
+        (subpath "/private/var/db/mds/system"))
+)
+(allow file-read*
+    (subpath "/private/var/db/mds"))
+(allow ipc-posix-shm-read* ipc-posix-shm-write-data ipc-posix-shm-write-create
+    (ipc-posix-name "com.apple.AppleDatabaseChanged"))
+(allow system-fsctl (fsctl-command (_IO "h" 47)))
+(system-graphics)
+(allow network-outbound
+       (literal "/private/var/run/syslog")
+)
+(allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
+(deny file-read* (with no-report)
+    (home-literal "/Library/Preferences/com.apple.networkd.plist")
+    (literal "/Library/Preferences/com.apple.networkd.plist"))
+(allow mach-lookup
+       (global-name "com.apple.system.notification_center"))
+(deny file-write-create (vnode-type SYMLINK))
+(deny file-read-xattr file-write-xattr (xattr-prefix "com.apple.security.private."))
+(deny file-read* file-write* (with no-report)
+       (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2")
+       (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2-journal"))
+(deny file-read* (with no-report)
+       (subpath "/Library/InputManagers")
+       (home-subpath "/Library/InputManagers"))
+(deny user-preference-read (with no-report)
+    (preference-domain "com.apple.speech.recognition.AppleSpeechRecognition.prefs"))
+(deny mach-lookup (with no-report)
+       (global-name "com.apple.coreservices.appleevents")
+       (global-name "com.apple.pasteboard.1")
+       (global-name "com.apple.speech.recognitionserver"))
+(allow mach-lookup
+    (global-name "com.apple.coremedia.routingcontext.xpc"))
+(allow mach-lookup
+    (global-name "com.apple.coremedia.endpointstream.xpc")
+    (global-name "com.apple.coremedia.endpointstreamaudioengine.xpc")
+    (global-name "com.apple.coremedia.endpointplaybacksession.xpc")
+    (global-name "com.apple.coremedia.endpointremotecontrolsession.xpc")
+    (global-name "com.apple.coremedia.routediscoverer.xpc")
+    (global-name "com.apple.coremedia.samplebufferconsumer.xpc")
+    (global-name "com.apple.coremedia.shaphelper.xpc")
+    (global-name "com.apple.coremedia.volumecontroller.xpc")
+    (global-name "com.apple.timesync.expositor")
+    (global-name "com.apple.timesync.manager")
+    (global-name "com.apple.timesync.ptp.manager")
+    (global-name "com.apple.coremedia.endpoint.xpc")
+)
+(if (not (defined? 'sbpl-filter?))
+  (define (sbpl-filter? x)
+      (and (list? x)
+           (eq? (car x) 'filter))))
+(macro (with-filter form)
+   (let* ((ps (cdr form))
+          (extra-filter (car ps))
+          (rules (cdr ps)))
+    `(letrec
+        ((collect
+             (lambda (l filters non-filters)
+                 (if (null? l)
+                     (list filters non-filters)
+                     (let*
+                         ((x (car l))
+                          (rest (cdr l)))
+                         (if (sbpl-filter? x)
+                             (collect rest (cons x filters) non-filters)
+                             (collect rest filters (cons x non-filters)))))))
+         (inject-filter
+             (lambda args
+                 (let* ((collected (collect args '() '()))
+                        (filters (car collected))
+                        (non-filters (cadr collected)))
+                 (if (null? filters)
+                     (cons ,extra-filter non-filters)
+                     (cons (require-all (apply require-any filters) ,extra-filter) non-filters)))))
+         (orig-allow allow)
+         (orig-deny deny)
+         (wrapper
+             (lambda (action)
+                 (lambda args (apply action (apply inject-filter args))))))
+        (set! allow (wrapper orig-allow))
+        (set! deny (wrapper orig-deny))
+        ,@rules
+        (set! deny orig-deny)
+        (set! allow orig-allow))))
+(with-filter (extension "com.apple.webkit.microphone")
+    (allow device-microphone)
+    (with-filter (system-attribute apple-internal)
+        (allow user-preference-read (preference-domain "com.apple.coreaudio"))
+        (allow file-read* file-write*
+            (subpath "/private/tmp/AudioCapture")
+            (subpath "/tmp/AudioCapture"))
+        (allow file-read* (subpath "/usr/local/lib"))
+        (allow file-read-data (subpath "/AppleInternal/Library/Audio"))))
+(deny mach-lookup (with no-report)
+    (global-name "com.apple.cmio.registerassistantservice.system-extensions"))
+(with-filter (extension "com.apple.webkit.camera")
+    (shared-preferences-read "com.apple.cmio")
+    (shared-preferences-read "com.apple.coremedia")
+    (allow file-read* (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
+    (allow mach-lookup
+        (global-name "com.apple.cmio.AppleCameraAssistant")
+        (global-name "com.apple.cmio.registerassistantservice")
+        (global-name "com.apple.cmio.registerassistantservice.system-extensions")
+        (global-name "com.apple.cmio.VDCAssistant")
+        (global-name "com.apple.cmio.AVCAssistant")
+        (global-name "com.apple.cmio.IIDCVideoAssistant")
+        (global-name "com.apple.IIDCAssistant")
+        (require-all
+            (extension "com.apple.webkit.extension.mach")
+            (global-name "com.apple.applecamerad")
+        )
+        (require-all
+            (extension "com.apple.webkit.extension.mach")
+            (global-name "com.apple.appleh13camerad")
+        )
+        (require-all
+            (extension "com.apple.webkit.extension.mach")
+            (global-name "com.apple.aneuserd")
+        )
+        )
+    (deny iokit-open-user-client
+        (iokit-user-client-class "IOUSBDeviceUserClientV2")
+        (iokit-user-client-class "IOUSBInterfaceUserClientV2"))
+    (allow device-camera))
+(deny mach-lookup (with no-report)
+    (global-name "com.apple.tccd.system"))
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name
+            "com.apple.replaykit.sharingsession.notification"
+            "com.apple.replaykit.sharingsession"
+            "com.apple.tccd.system"
+            "com.apple.replayd"
+        )
+    )
+)
+(deny mach-lookup (with no-report)
+    (global-name "com.apple.system.opendirectoryd.libinfo"))
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name "com.apple.system.opendirectoryd.libinfo")))
+(allow mach-lookup
+    (global-name "com.apple.relatived.tempest"))
+(allow iokit-open-user-client
+    (iokit-user-client-class "AppleAVDUserClient"))
+(when (equal? (param "CPU") "arm64")
+    (allow iokit-open-user-client
+        (iokit-user-client-class "IOMobileFramebufferUserClient")
+        (iokit-user-client-class "IOSurfaceAcceleratorClient")))
+(when (defined? 'syscall-unix)
+    (deny syscall-unix)
+    (when (defined? 'SYS_crossarch_trap)
+        (deny syscall-unix (with no-report) (syscall-number
+            SYS_crossarch_trap)))
+    (allow syscall-unix (syscall-number
+        SYS___channel_open
+        SYS___disable_threadsignal
+        SYS___mac_syscall
+        SYS___pthread_canceled
+        SYS___pthread_kill
+        SYS___pthread_sigmask
+        SYS___semwait_signal
+        SYS___semwait_signal_nocancel
+        SYS_abort_with_payload
+        SYS_access
+        SYS_bsdthread_create
+        SYS_bsdthread_ctl
+        SYS_bsdthread_terminate
+        SYS_change_fdguard_np
+        SYS_close_nocancel
+        SYS_csrctl
+        SYS_dup
+        SYS_exit
+        SYS_faccessat
+        SYS_fcntl
+        SYS_fcntl_nocancel
+        SYS_fgetxattr
+        SYS_fileport_makefd
+        SYS_flock
+        SYS_fsgetpath
+        SYS_fstat
+        SYS_fstat64
+        SYS_fstatat64
+        SYS_fstatfs
+        SYS_fstatfs64
+        SYS_ftruncate
+        SYS_getattrlist
+        SYS_getattrlistbulk
+        SYS_getaudit_addr
+        SYS_getdirentries
+        SYS_getdirentries64
+        SYS_getentropy
+        SYS_geteuid
+        SYS_getfsstat
+        SYS_getfsstat64
+        SYS_getgid
+        SYS_getpriority
+        SYS_getrlimit
+        SYS_getrusage
+        SYS_gettimeofday
+        SYS_getuid
+        SYS_getxattr
+        SYS_guarded_open_np
+        SYS_issetugid
+        SYS_kdebug_trace
+        SYS_kdebug_trace64
+        SYS_kdebug_trace_string
+        SYS_kdebug_typefilter
+        SYS_kevent_id
+        SYS_kevent_qos
+        SYS_kqueue_workloop_ctl
+        SYS_listxattr
+        SYS_lseek
+        SYS_lstat
+        SYS_lstat64
+        SYS_mach_eventlink_signal_wait_until
+        SYS_mach_eventlink_wait_until
+        SYS_madvise
+        SYS_memorystatus_control
+        SYS_mincore
+        SYS_mkdir
+        SYS_mkdirat
+        SYS_mlock
+        SYS_mmap
+        SYS_mprotect
+        SYS_msync
+        SYS_munlock
+        SYS_munmap
+        SYS_necp_client_action
+        SYS_necp_open
+        SYS_open_dprotected_np
+        SYS_open_nocancel
+        SYS_pathconf
+        SYS_pread
+        SYS_proc_rlimit_control
+        SYS_psynch_cvbroad
+        SYS_psynch_cvclrprepost
+        SYS_psynch_cvsignal
+        SYS_psynch_cvwait
+        SYS_psynch_mutexdrop
+        SYS_psynch_mutexwait
+        SYS_psynch_rw_rdlock
+        SYS_psynch_rw_unlock
+        SYS_psynch_rw_wrlock
+        SYS_read
+        SYS_read_nocancel
+        SYS_readlink
+        SYS_rename
+        SYS_sendto
+        SYS_setrlimit
+        SYS_setsockopt
+        SYS_sigprocmask
+        SYS_socket
+        SYS_stat
+        SYS_stat64
+        SYS_statfs
+        SYS_statfs64
+        SYS_thread_selfid
+        SYS_ulock_wait
+        SYS_ulock_wait2
+        SYS_ulock_wake
+        SYS_work_interval_ctl
+        SYS_workq_kernreturn)))
+(when (defined? 'SYS_map_with_linking_np)
+    (allow syscall-unix (syscall-number SYS_map_with_linking_np)))

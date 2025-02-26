@@ -1,0 +1,139 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.CodeMirror {
+    z-index: 0;
+}
+
+.CodeMirror,
+.CodeMirror * {
+    box-sizing: content-box;
+}
+
+.CodeMirror .CodeMirror-lines {
+ /* One pixel bottom padding needed to show the bottom border for matching brackets and search matches. */
+    padding: 0 0 1px 0;
+}
+
+.CodeMirror pre {
+    padding: 0 3px 0 7px;
+}
+
+.CodeMirror .CodeMirror-selected {
+    background-color: var(--selected-background-color-unfocused);
+}
+
+.CodeMirror.CodeMirror-focused .CodeMirror-selected {
+    background-color: highlight;
+}
+
+.CodeMirror .CodeMirror-cursor {
+    pointer-events: none;
+}
+
+.CodeMirror .CodeMirror-lines .CodeMirror-matchingbracket {
+    color: inherit;
+    background-color: hsla(226, 77%, 65%, 0.2);
+    border-bottom: 1px dotted hsl(240, 84%, 50%);
+}
+
+.CodeMirror .CodeMirror-lines .CodeMirror-nonmatchingbracket {
+    color: inherit;
+    background-color: hsla(2, 84%, 50%, 0.2);
+    border-bottom: 1px dotted hsl(2, 84%, 50%);
+}
+
+.CodeMirror .CodeMirror-gutters {
+    background-color: hsl(0, 0%, 96%);
+    border-right: 1px solid hsl(0, 0%, 90%);
+}
+
+.CodeMirror .CodeMirror-linenumber {
+    padding: 0 2px;
+    min-width: 22px;
+
+    color: hsl(0, 0%, 57%);
+
+    font: 8px/13px -webkit-system-font, Menlo, Monaco, monospace;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.CodeMirror-linewidget {
+    -webkit-user-select: text;
+}
+
+.CodeMirror .CodeMirror-placeholder {
+    font-family: -webkit-system-font, sans-serif;
+    color: hsl(0, 0%, 65%);
+    text-indent: 0;
+}
+
+.CodeMirror .cm-tab {
+    position: relative;
+}
+
+.CodeMirror .cm-invalidchar {
+    display: none;
+}
+
+.show-whitespace-characters .CodeMirror .cm-tab::before {
+    position: absolute;
+    width: 90%;
+    bottom: 50%;
+    left: 5%;
+    content: "";
+    border-bottom: 1px solid hsl(0, 0%, 70%);
+}
+
+.show-whitespace-characters .CodeMirror .cm-whitespace::before {
+    position: absolute;
+    pointer-events: none;
+    color: hsl(0, 0%, 70%);
+}
+
+.show-invisible-characters .CodeMirror .cm-invalidchar {
+    display: initial;
+}
+
+@media (prefers-color-scheme: dark) {
+    .CodeMirror-cursor {
+        border-left-color: hsl(0, 0%, var(--foreground-lightness));
+    }
+
+    .CodeMirror .CodeMirror-gutters {
+        background-color: var(--background-color);
+        border-right-color: var(--text-color-quaternary);
+    }
+
+    .cm-s-default .cm-link {
+        color: var(--syntax-highlight-link-color);
+    }
+
+    .CodeMirror .CodeMirror-lines .CodeMirror-matchingbracket {
+        background-color: hsla(232, 100%, 72%, 0.4);
+        border-bottom-color: hsl(206, 100%, 65%);
+    }
+}

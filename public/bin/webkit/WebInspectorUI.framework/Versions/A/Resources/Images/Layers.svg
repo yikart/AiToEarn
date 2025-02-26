@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2017 Sony Interactive Entertainment Inc. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+    <rect fill="none" stroke="currentColor" x="5.5" y="5.5" width="9" height="9"/>
+    <path fill="none" stroke="currentColor" d="M 5.5 12.5 L 3.5 12.5 L 3.5 3.5 L 12.5 3.5 L 12.5 5.5"/>
+    <path fill="none" stroke="currentColor" d="M 3.5 10.5 L 1.5 10.5 L 1.5 1.5 L 10.5 1.5 L 10.5 3.5"/>
+</svg>

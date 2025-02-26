@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2022 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15">
+    <defs>
+        <style>
+            g:not(:target) {
+                display: none;
+            }
+
+            #light {
+                color: black;
+            }
+
+            #dark {
+                color: white;
+            }
+        </style>
+    </defs>
+    <symbol id="i">
+        <path fill="none" stroke="currentColor" d="M5.240,3.215 L9.784,3.215 C10.594,3.215 11.325,3.705 11.633,4.455 L13.521,9.047 C13.941,10.069 13.454,11.238 12.432,11.658 C12.191,11.757 11.932,11.808 11.672,11.808 L3.337,11.808 C2.233,11.808 1.337,10.912 1.337,9.808 C1.337,9.545 1.389,9.285 1.490,9.042 L3.393,4.449 C3.702,3.702 4.432,3.215 5.240,3.215 Z"/>
+        <rect fill="none" width="12.219" height="4.137" x="1.395" y="7.671" stroke="currentColor" rx="2"/>
+        <line x1="11.5" x2="11.5" y1="9.5" y2="10" stroke="currentColor" stroke-linecap="round"/>
+        <line x1="10" x2="10" y1="9.5" y2="10" stroke="currentColor" stroke-linecap="round"/>
+        <line x1="8.5" x2="8.5" y1="9.5" y2="10" stroke="currentColor" stroke-linecap="round"/>
+    </symbol>
+    <g id="root"><use href="#i"/></g>
+    <g id="light"><use href="#i"/></g>
+    <g id="dark"><use href="#i"/></g>
+</svg>

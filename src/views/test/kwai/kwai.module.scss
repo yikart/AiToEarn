@@ -1,0 +1,18 @@
+.kwai {
+  height: 100%;
+  display: flex;
+  :global {
+    .kwai-options {
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      padding: 15px;
+      button {
+        margin-bottom: 10px;
+      }
+    }
+    .kwai-webview {
+      width: 100%;
+    }
+  }
+}

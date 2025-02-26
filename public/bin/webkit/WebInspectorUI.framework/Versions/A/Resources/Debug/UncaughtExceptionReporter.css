@@ -1,0 +1,128 @@
+/*
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.sheet-container {
+    position: absolute;
+    inset: 0;
+    z-index: var(--z-index-uncaught-exception-sheet);
+    background-color: hsl(0, 0%, 96%);
+    overflow: auto;
+}
+
+.uncaught-exception-sheet {
+    min-width: 400px;
+    margin-inline: 65px 55px;
+    padding: 50px 0;
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 11pt;
+    color: hsl(0, 0%, 40%);
+}
+
+.uncaught-exception-sheet a {
+    text-decoration: underline;
+    color: hsl(240, 55%, 30%);
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 97%;
+}
+.uncaught-exception-sheet a:hover,
+.uncaught-exception-sheet a:active {
+    color: hsl(240, 55%, 25%);
+}
+
+.uncaught-exception-sheet h1,
+.uncaught-exception-sheet h2 {
+    font-size: 24px;
+    line-height: 28px;
+    margin-bottom: 0px;
+    margin-top: 10px;
+    font-weight: normal;
+}
+
+.uncaught-exception-sheet h2 {
+    margin-top: 40px;
+}
+
+.uncaught-exception-sheet h1 > img {
+    position: relative;
+    height: 35px;
+    margin-top: -5px;
+    margin-inline-start: -50px;
+}
+
+body[dir=ltr] .uncaught-exception-sheet h1 > img {
+    float: left;
+}
+
+body[dir=rtl] .uncaught-exception-sheet h1 > img {
+    float: right;
+}
+
+.uncaught-exception-sheet h2 > img {
+    position: relative;
+    height: 25px;
+    margin-top: 0;
+    margin-inline-start: -45px;
+}
+
+body[dir=ltr] .uncaught-exception-sheet h2 > img {
+    float: left;
+}
+
+body[dir=rtl] .uncaught-exception-sheet h2 > img {
+    float: right;
+}
+
+.uncaught-exception-sheet dl {
+    max-width: 600px;
+}
+
+.uncaught-exception-sheet dt {
+    font-style: italic;
+    font-size: 17px;
+}
+
+.uncaught-exception-sheet dd {
+    margin: 10px 0 20px;
+    margin-inline-start: 10px;
+    font-size: 13px;
+    line-height: 18px;
+}
+
+.uncaught-exception-sheet ul {
+    margin: 0;
+    margin-inline-start: 2px;
+    padding: 0;
+    font-family: Menlo, monospace;
+    font-size: 12px;
+    line-height: 18px;
+}
+
+.uncaught-exception-sheet li {
+    margin-bottom: 20px;
+    word-break: break-word;
+    -webkit-user-select: text;
+    white-space: pre;
+}

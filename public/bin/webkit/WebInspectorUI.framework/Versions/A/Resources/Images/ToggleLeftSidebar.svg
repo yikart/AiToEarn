@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+    <rect stroke="currentColor" fill="none" x="2.5" y="1.5" width="11" height="13"/>
+    <rect fill="currentColor" x="4" y="3" width="2" height="10"/>
+</svg>

@@ -1,0 +1,364 @@
+/*
+ * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.timeline-view.cpu {
+    overflow: auto !important;
+}
+
+.timeline-view.cpu > .content .subtitle {
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 14px;
+}
+
+.timeline-view.cpu > .content .subtitle > .info {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-inline-start: 7px;
+    font-size: 12px;
+    color: var(--gray-foreground-color);
+    background-color: var(--gray-background-color);
+    border-radius: 50%;
+}
+
+.energy-info-popover-content {
+    width: 275px;
+    padding: 0 5px;
+    -webkit-hyphens: auto;
+}
+
+.timeline-view.cpu > .content > .details {
+    position: relative;
+}
+
+.timeline-view.cpu > .content > .details > .timeline-ruler {
+    position: absolute;
+    top: 5px;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    inset-inline: 150px 0;
+}
+
+.timeline-view.cpu > .content > .details > .subtitle,
+.timeline-view.cpu > .content > .details > details > .subtitle {
+    padding: 0 10px 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.timeline-view.cpu > .content > .details > details > .subtitle.threads {
+    position: relative;
+    z-index: calc(var(--timeline-marker-z-index) + 1);
+    padding-top: 10px;
+    background-color: var(--background-color-content);
+}
+
+.timeline-view.cpu > .content > .overview {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+}
+
+.timeline-view.cpu > .content > .overview:not(:last-child) {
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.timeline-view.cpu > .content > .overview > .chart {
+    width: 420px;
+    text-align: center;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .subtitle {
+    margin-bottom: 1em;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container {
+    display: flex;
+    justify-content: center;
+}
+
+.timeline-view.cpu > .content > .overview > .divider {
+    margin: 0 5px;
+    border-inline-end: 1px solid var(--border-color);
+}
+
+.timeline-view.cpu > .content > .overview .samples,
+.timeline-view.cpu > .content > .overview .legend .size {
+    margin: auto;
+    color: var(--text-color-secondary);
+}
+
+.timeline-view.cpu > .content > .overview .legend {
+    padding-inline-start: 20px;
+    text-align: start;
+    -webkit-user-select: text;
+}
+
+.timeline-view.cpu > .content > .overview .legend .row {
+    display: flex;
+}
+
+.timeline-view.cpu > .content > .overview .legend .row + .row {
+    margin-top: 4px;
+}
+
+.timeline-view.cpu > .content > .overview .legend .swatch {
+    width: 1em;
+    height: 1em;
+    margin-top: 1px;
+    margin-inline-end: 8px;
+}
+
+.timeline-view.cpu > .content > .overview .legend > .row > .swatch.sample-type-javascript {
+    border: 1px solid var(--cpu-javascript-stroke-color);
+    background-color: var(--cpu-javascript-fill-color);
+}
+
+.timeline-view.cpu > .content > .overview .legend > .row > .swatch.sample-type-style {
+    border: 1px solid var(--cpu-style-stroke-color);
+    background-color: var(--cpu-style-fill-color);
+}
+
+.timeline-view.cpu > .content > .overview .legend > .row > .swatch.sample-type-layout {
+    border: 1px solid var(--cpu-layout-stroke-color);
+    background-color: var(--cpu-layout-fill-color);
+}
+
+.timeline-view.cpu > .content > .overview .legend > .row > .swatch.sample-type-paint {
+    border: 1px solid var(--cpu-paint-stroke-color);
+    background-color: var(--cpu-paint-fill-color);
+}
+
+.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-idle {
+    stroke: var(--cpu-idle-stroke-color);
+    fill: var(--cpu-idle-fill-color);
+}
+
+.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-javascript {
+    stroke: var(--cpu-javascript-stroke-color);
+    fill: var(--cpu-javascript-fill-color);
+}
+
+.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-style {
+    stroke: var(--cpu-style-stroke-color);
+    fill: var(--cpu-style-fill-color);
+}
+
+.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-layout {
+    stroke: var(--cpu-layout-stroke-color);
+    fill: var(--cpu-layout-fill-color);
+}
+
+.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-paint {
+    stroke: var(--cpu-paint-stroke-color);
+    fill: var(--cpu-paint-fill-color);
+}
+
+.timeline-view.cpu :is(.area-chart, .stacked-area-chart) svg > path {
+    fill: var(--cpu-other-thread-fill-color);
+    stroke: var(--cpu-other-thread-stroke-color);
+}
+
+.timeline-view.cpu .main-thread svg > path,
+.timeline-view.cpu svg > path.main-thread-usage {
+    fill: var(--cpu-main-thread-fill-color);
+    stroke: var(--cpu-main-thread-stroke-color);
+}
+
+.timeline-view.cpu .worker-thread svg > path,
+.timeline-view.cpu svg > path.worker-thread-usage {
+    fill: var(--cpu-worker-thread-fill-color);
+    stroke: var(--cpu-worker-thread-stroke-color);
+}
+
+.timeline-view.cpu :is(.area-chart, .stacked-area-chart) .markers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.timeline-view.cpu :is(.area-chart, .stacked-area-chart) .markers > div {
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    height: 1px;
+    text-align: end;
+    background-color: var(--graph-line-color);
+}
+
+body[dir=rtl] .timeline-view.cpu :is(.area-chart, .stacked-area-chart) .markers > div {
+    transform: scaleX(-1);
+}
+
+.timeline-view.cpu :is(.area-chart, .stacked-area-chart) .markers > div > .label {
+    padding: 2px;
+    font-size: 8px;
+    color: var(--text-color-secondary);
+    background-color: var(--background-color-content);
+}
+
+.timeline-view.cpu :is(.area-chart, .stacked-area-chart) circle {
+    r: 3;
+    fill: var(--cpu-overlay-color);
+}
+
+.timeline-view.cpu .timeline-ruler > .markers > .marker.timestamp {
+    color: var(--cpu-overlay-color);
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.timeline-view.cpu .timeline-ruler > .markers > .marker.timestamp::after {
+    display: none;
+}
+
+.timeline-view.cpu .gauge-chart .low {
+    --gauge-chart-path-fill-color: var(--cpu-low-color);
+    --gauge-chart-path-stroke-color: var(--cpu-low-color);
+}
+
+.timeline-view.cpu .gauge-chart .medium {
+    --gauge-chart-path-fill-color: var(--cpu-medium-color);
+    --gauge-chart-path-stroke-color: var(--cpu-medium-color);
+}
+
+.timeline-view.cpu .gauge-chart .high {
+    --gauge-chart-path-fill-color: var(--cpu-high-color);
+    --gauge-chart-path-stroke-color: var(--cpu-high-color);
+}
+
+.timeline-view.cpu .gauge-chart {
+    --gauge-chart-needle-fill-color: hsla(0, 0%, 36%, 0.85);
+    --gauge-chart-needle-stroke-color: hsla(0, 0%, 36%, 0.85);
+}
+
+.timeline-view.cpu .energy {
+    color: hsla(0, 0%, var(--foreground-lightness), 0.85);
+}
+
+.timeline-view.cpu .energy .energy-impact {
+    min-width: 140px;
+    margin-top: 15px;
+    font-size: 3em;
+    color: var(--text-color-secondary);
+}
+
+.timeline-view.cpu .energy .energy-impact.low {
+    color: var(--cpu-low-color);
+}
+
+.timeline-view.cpu .energy .energy-impact.medium {
+    color: var(--cpu-medium-color);
+}
+
+.timeline-view.cpu .energy .energy-impact.high {
+    color: var(--cpu-high-color);
+}
+
+.timeline-view.cpu .energy .energy-impact-number {
+    font-size: 14px;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats {
+    padding: 0 5px;
+    white-space: nowrap;
+    -webkit-user-select: text;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table {
+    overflow: hidden;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table > tr > th {
+    text-align: end;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table > tr > td.number {
+    min-width: 25px;
+    padding: 0px 2px;
+    text-align: end;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table > tr > td.label {
+    text-align: start;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table .show-more {
+    cursor: pointer;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table .unknown {
+    color: var(--link-text-color);
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table .filter-clear {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    font-size: 12px;
+    color: var(--gray-foreground-color);
+    background-color: var(--gray-background-color);
+    border-radius: 50%;
+    line-height: 12px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table .filter {
+    padding: 0 6px 1px;
+    font-size: 10px;
+    background-color: hsl(0, 0%, 85%);
+    border: 1px solid transparent;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table :is(.filter, .filter-clear):hover {
+    opacity: 0.7;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table .filter.active {
+    color: var(--selected-foreground-color);
+    background-color: var(--selected-background-color);
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table .filter.active + .filter.active {
+    margin-inline-start: 3px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .timeline-view.cpu .gauge-chart:not(.empty) > svg > polygon.needle {
+        fill: hsla(0, 0%, var(--foreground-lightness), 0.85);
+        stroke: hsla(0, 0%, var(--foreground-lightness), 0.85);
+    }
+
+    .timeline-view.cpu > .content > .overview > .chart > .container.stats > table .filter {
+        background-color: hsl(0, 0%, 33%);
+    }
+}

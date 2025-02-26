@@ -1,0 +1,95 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.timeline-record-frame {
+    position: absolute;
+    height: 108px;
+    min-height: 3px;
+    min-width: 4px;
+    width: 4px;
+
+    overflow: hidden;
+}
+
+.timeline-record-frame.tall {
+    mask-image: linear-gradient(hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 1) 10%);
+}
+
+.timeline-record-frame > .frame {
+    position: absolute;
+    z-index: 1;
+    bottom: 1px;
+    min-width: 4px;
+    width: 100%;
+
+    padding-left: 1px;
+
+    box-sizing: border-box;
+}
+
+.timeline-record-frame.selected {
+    background: linear-gradient(to right, var(--selected-text-background-color), var(--selected-text-background-color)) no-repeat 1px -1px;
+}
+
+body.window-inactive .timeline-record-frame.selected {
+    background: linear-gradient(to right, hsl(0, 0%, 96%), hsl(0, 0%, 96%)) no-repeat 1px -1px;
+}
+
+.timeline-record-frame.filtered > .frame {
+    opacity: 0.35;
+}
+
+.timeline-record-frame.selected > .frame {
+    box-shadow: 0 -1px 0 white;
+}
+
+.timeline-record-frame > .frame > .duration {
+    box-sizing: border-box;
+
+    min-height: 3px;
+    background-color: hsl(0, 0%, 90%);
+    border-style: solid solid none solid;
+    border-width: 1px;
+    border-color: hsl(0, 0%, 82%);
+}
+
+.timeline-record-frame > .frame > .duration:last-child {
+    border-bottom-style: solid;
+}
+
+.timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-script {
+    background-color: hsl(269, 65%, 74%);
+    border-color: hsl(273, 33%, 58%);
+}
+
+.timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-layout {
+    background-color: hsl(0, 65%, 75%);
+    border-color: hsl(0, 54%, 62%);
+}
+
+.timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-paint {
+    background-color: hsl(76, 49%, 60%);
+    border-color: hsl(79, 45%, 51%);
+}

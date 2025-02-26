@@ -1,0 +1,119 @@
+/*
+* Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions
+* are met:
+* 1. Redistributions of source code must retain the above copyright
+*    notice, this list of conditions and the following disclaimer.
+* 2. Redistributions in binary form must reproduce the above copyright
+*    notice, this list of conditions and the following disclaimer in the
+*    documentation and/or other materials provided with the distribution.
+*
+* THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+* PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+* THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+.profile > .data-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.profile > .data-grid td .icon {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    margin-right: 3px;
+}
+
+.profile > .data-grid td .percentage {
+    width: 45px;
+    margin-left: 4px;
+    display: inline-block;
+}
+
+.profile > .data-grid td .location {
+    margin-left: 1ex;
+    color: hsl(0, 0%, 60%);
+}
+
+.profile > .data-grid:focus tr.selected td .location {
+    color: hsl(0, 0%, 85%);
+}
+
+.profile > .data-grid td .icon.function-icon {
+    content: url(../Images/TypeIcons.svg#Function-light);
+}
+
+.profile > .data-grid td .icon.native-icon {
+    content: url(../Images/TypeIcons.svg#Native-light);
+}
+
+.profile > .data-grid td .icon.program-icon {
+    content: url(../Images/TypeIcons.svg#Program-light);
+}
+
+.profile > .data-grid tr:is(.selected, :hover) .go-to-arrow {
+    float: none;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    width: 16px;
+    height: 16px;
+    margin-left: 2px;
+}
+
+.profile > .data-grid td.function-column {
+    position: relative;
+}
+
+.profile > .data-grid td .guidance {
+    width: 10px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    background-color: hsla(0, 0%, 50%, 0.4);
+}
+
+.profile > .data-grid td .guidance.hover {
+    background-color: hsla(0, 0%, 50%, 0.2);
+}
+
+.profile > .data-grid td .guidance.base {
+    height: 70%;
+    top: 30%;
+}
+
+.profile > .data-grid tr:not(.expanded) td .guidance.base {
+    display: none;
+}
+
+.profile > .data-grid tr.expanded td .guidance.base {
+    display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+    .profile > .data-grid td .icon.function-icon {
+        content: url(../Images/TypeIcons.svg#Function-dark);
+    }
+
+    .profile > .data-grid td .icon.native-icon {
+        content: url(../Images/TypeIcons.svg#Native-dark);
+    }
+
+    .profile > .data-grid td .icon.program-icon {
+        content: url(../Images/TypeIcons.svg#Program-dark);
+    }
+}

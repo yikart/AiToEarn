@@ -1,0 +1,115 @@
+/*
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.resource-sizes {
+    font-family: -webkit-system-font, sans-serif;
+}
+
+.resource-sizes > .content {
+    width: 550px;
+    margin: 0 auto;
+}
+
+.resource-sizes > .content .label {
+    color: gray;
+}
+
+.resource-sizes > .content > section {
+    position: relative;
+    padding: 10px 0;
+}
+
+.resource-sizes > .content > section .subtitle {
+    margin-bottom: 10px;
+    font-size: 14px;
+    text-align: center;
+    letter-spacing: 0.04em;
+}
+
+.resource-sizes > .content > section.split {
+    display: flex;
+    justify-content: center;
+}
+
+.resource-sizes > .content > section.split > .subsection {
+    width: 160px;
+    margin: 10px 0px;
+}
+
+.resource-sizes > .content > section.split > .subsection.large .icon {
+    width: 32px;
+    height: 32px;
+}
+
+.resource-sizes > .content > section.split > .subsection > table {
+    margin: 0 auto;
+}
+
+.resource-sizes > .content > section.split > .divider {
+    margin: 0 10px;
+    border-right: 1px solid var(--border-color);
+}
+
+.resource-sizes > .content > section.network > .subsection > .container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.resource-sizes > .content > section.network .bytes {
+    margin-top: 2px;
+    text-align: start;
+    font-size: 28px;
+    display: inline-block;
+}
+
+.resource-sizes > .content > section.network table > tr > td.label {
+    text-align: end;
+}
+
+.resource-sizes > .content > section.network img {
+    width: 32px;
+    height: 32px;
+    margin: 3px;
+}
+
+.resource-sizes > .content > section.network .go-to-arrow {
+    bottom: -1px;
+    height: 12px;
+    vertical-align: top;
+}
+
+.resource-sizes > .content > section.network .warning {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-inline-start: 3px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .resource-sizes > .content .label {
+        color: var(--text-color-secondary);
+    }
+}

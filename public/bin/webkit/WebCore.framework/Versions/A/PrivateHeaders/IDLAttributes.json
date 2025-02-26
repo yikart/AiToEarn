@@ -1,0 +1,510 @@
+{
+    "contexts": [
+        "type",
+        "interface",
+        "namespace",
+        "attribute",
+        "operation",
+        "argument",
+        "callback-function",
+        "dictionary",
+        "dictionary-member",
+        "enum",
+        "constant",
+        "union-member",
+        "iterable",
+        "map-like",
+        "set-like",
+        "includes"
+    ],
+    "attributes": {
+        "ActiveDOMObject": {
+            "contextsAllowed": ["interface"]
+        },
+        "AllowShared": {
+            "contextsAllowed": ["type"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#AllowShared"
+            }
+        },
+        "AppleCopyright": {
+            "contextsAllowed": ["interface", "attribute", "operation"]
+        },
+        "AtomString": {
+            "contextsAllowed": ["type"]
+        },
+        "CEReactions": {
+            "contextsAllowed": ["attribute", "operation"],
+            "values": ["Needed", "NotNeeded"],
+            "standard": {
+                "url": "https://html.spec.whatwg.org/multipage/custom-elements.html#cereactions"
+            }
+        },
+        "CachedAttribute": {
+            "contextsAllowed": ["attribute"]
+        },
+        "CallTracer": {
+            "contextsAllowed": ["interface", "attribute", "operation"],
+            "values": ["*"]
+        },
+        "CallbackThisObject": {
+            "contextsAllowed": ["callback-function", "operation"]
+        },
+        "CallWith": {
+            "contextsAllowed": ["attribute", "operation"],
+            "values": ["CurrentDocument", "RelevantDocument", "CurrentScriptExecutionContext", "RelevantScriptExecutionContext", "CurrentGlobalObject", "RelevantGlobalObject", "ActiveWindow", "FirstWindow", "EntryDocument", "World", "PropertyName"],
+            "standard": {
+                "url": "https://html.spec.whatwg.org/multipage/webappapis.html#concept-current-everything"
+            },
+            "supportsConjunction": true
+        },
+        "CheckSecurity": {
+            "contextsAllowed": ["interface"]
+        },
+        "CheckSecurityForNode": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "Clamp": {
+            "contextsAllowed": ["type"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#Clamp"
+            }
+        },
+        "Conditional": {
+            "contextsAllowed": ["interface", "namespace", "dictionary", "dictionary-member", "enum", "attribute", "operation", "constant", "callback-function", "includes"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "ConditionalForWorker": {
+            "contextsAllowed": ["interface", "namespace", "dictionary", "dictionary-member", "enum", "attribute", "operation", "constant", "callback-function", "includes"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "ConditionallyReadWrite": {
+            "contextsAllowed": ["attribute"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "ConstantsScope": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"]
+        },
+        "ConstantsEnum": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"]
+        },
+        "ContextAllowsMediaDevices": {
+            "contextsAllowed": ["attribute"]
+        },
+        "Custom": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "CustomDefineOwnProperty": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomDeleteProperty": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomGetCallData": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomGetOwnPropertyNames": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomGetOwnPropertySlot": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomGetPrototype": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomGetter": {
+            "contextsAllowed": ["attribute"]
+        },
+        "CustomHeapSnapshot": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomIndexedSetter": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomIsReachable": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomPreventExtensions": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomPut": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomSetter": {
+            "contextsAllowed": ["attribute"]
+        },
+        "CustomToJSObject": {
+            "contextsAllowed": ["interface"]
+        },
+        "DOMJIT": {
+            "contextsAllowed": ["interface", "attribute", "operation"],
+            "values": ["", "ReadDOM", "Getter"],
+            "supportsConjunction": true
+        },
+        "Default": {
+            "contextsAllowed": ["operation"]
+        },
+        "DelegateToSharedSyntheticAttribute": {
+            "contextsAllowed": ["attribute"]
+        },
+        "DisabledByQuirk": {
+            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member", "includes"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "DoNotCheckConstants": {
+            "contextsAllowed": ["interface"]
+        },
+        "DoNotCheckSecurity": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "DoNotCheckSecurityOnGetter": {
+            "contextsAllowed": ["attribute"]
+        },
+        "DoNotCheckSecurityOnSetter": {
+            "contextsAllowed": ["attribute"]
+        },
+        "EnabledByQuirk": {
+            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member", "includes"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "EnabledByDeprecatedGlobalSetting": {
+            "contextsAllowed": ["interface", "namespace", "dictionary", "enum", "attribute", "operation", "constant", "iterable", "includes"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "EnabledBySetting": {
+            "contextsAllowed": ["interface", "namespace", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member", "includes"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "EnabledForContext": {
+            "contextsAllowed": ["attribute", "interface"]
+        },
+        "EnabledForWorld": {
+            "contextsAllowed": ["attribute", "operation"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "EnforceRange": {
+            "contextsAllowed": ["type"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#EnforceRange"
+            }
+        },
+        "Exception": {
+            "contextsAllowed": ["interface"]
+        },
+        "ResultField": {
+            "contextsAllowed": ["operation"]
+        },
+        "ExportMacro": {
+            "contextsAllowed": ["interface", "dictionary", "enum", "callback-function"],
+            "values": ["WEBCORE_EXPORT", "WEBCORE_TESTSUPPORT_EXPORT"]
+        },
+        "ExportToWrappedFunction": {
+            "contextsAllowed": ["interface"]
+        },
+        "Exposed": {
+            "contextsAllowed": ["interface", "namespace", "attribute", "operation", "constant"],
+            "values": ["*"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#Exposed"
+            }
+        },
+        "GenerateAddOpaqueRoot": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"]
+        },
+        "GenerateForEachEventHandlerContentAttribute": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"]
+        },
+        "GenerateForEachWindowEventHandlerContentAttribute": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"]
+        },
+        "GenerateIsReachable": {
+            "contextsAllowed": ["interface", "callback-function"],
+            "values": ["", "Impl", "ImplWebGLRenderingContext", "ImplCanvasBase", "ImplDocument", "ImplElementRoot", "ImplOwnerNodeRoot", "ImplScriptExecutionContext", "ReachableFromDOMWindow", "ReachableFromNavigator"]
+        },
+        "Global": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#Global"
+            }
+        },
+        "HTMLConstructor": {
+            "contextsAllowed": ["operation"],
+            "standard": {
+                "url": "https://html.spec.whatwg.org/multipage/dom.html#htmlconstructor"
+            },
+            "unsupported": true
+        },
+        "ImplementedAs": {
+            "contextsAllowed": ["interface", "dictionary", "dictionary-member", "enum", "attribute", "operation", "constant"],
+            "values": ["*"]
+        },
+        "ImplementedBy": {
+            "contextsAllowed": ["interface", "namespace", "dictionary", "dictionary-member", "attribute", "operation", "constant"],
+            "values": ["*"]
+        },
+        "InterfaceName": {
+            "contextsAllowed": ["interface", "namespace"],
+            "values": ["*"]
+        },
+        "IsImmutablePrototypeExoticObject": {
+            "contextsAllowed": ["interface"]
+        },
+        "IsImmutablePrototypeExoticObjectOnPrototype": {
+            "contextsAllowed": ["interface"]
+        },
+        "JSBuiltin": {
+            "contextsAllowed": ["interface", "attribute", "operation"]
+        },
+        "JSCustomFinalize": {
+            "contextsAllowed": ["interface"]
+        },
+        "JSCustomHeader": {
+            "contextsAllowed": ["interface"]
+        },
+        "JSCustomMarkFunction": {
+            "contextsAllowed": ["interface"]
+        },
+        "JSCustomToNativeObject": {
+            "contextsAllowed": ["interface"]
+        },
+        "JSGenerateToJSObject": {
+            "contextsAllowed": ["interface", "dictionary", "callback-function"]
+        },
+        "JSGenerateToNativeObject": {
+            "contextsAllowed": ["interface", "dictionary"]
+        },
+        "JSLegacyParent": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"]
+        },
+        "LegacyFactoryFunction": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#LegacyFactoryFunction"
+            }
+        },
+        "LegacyFactoryFunctionCallWith": {
+            "contextsAllowed": ["interface"],
+            "values": ["CurrentDocument", "CurrentScriptExecutionContext", "RuntimeFlags"],
+            "supportsConjunction": true
+        },
+        "LegacyFactoryFunctionEnabledBySetting": {
+            "contextsAllowed": ["attribute", "interface"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "LegacyLenientSetter": {
+            "contextsAllowed": ["attribute"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#LegacyLenientSetter"
+            }
+        },
+        "LegacyLenientThis": {
+            "contextsAllowed": ["attribute"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#LegacyLenientThis"
+            }
+        },
+        "LegacyNamespace": {
+            "contextsAllowed": ["interface"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#LegacyNamespace"
+            },
+            "unsupported": true
+        },
+        "LegacyNoInterfaceObject": {
+            "contextsAllowed": ["interface"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#LegacyNoInterfaceObject"
+            }
+        },
+        "LegacyNullToEmptyString": {
+            "contextsAllowed": ["type"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#LegacyNullToEmptyString"
+            }
+        },
+        "LegacyOverrideBuiltIns": {
+            "contextsAllowed": ["interface"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#LegacyOverrideBuiltIns"
+            }
+        },
+        "LegacyTreatNonObjectAsNull": {
+            "contextsAllowed": ["callback-function"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#LegacyTreatNonObjectAsNull"
+            },
+            "unsupported": true
+        },
+        "LegacyUnenumerableNamedProperties": {
+            "contextsAllowed": ["interface"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#LegacyUnenumerableNamedProperties"
+            }
+        },
+        "LegacyUnforgeable": {
+            "contextsAllowed": ["attribute", "operation", "interface"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#LegacyUnforgeable"
+            }
+        },
+        "LegacyWindowAlias": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#LegacyWindowAlias"
+            }
+        },
+        "MasqueradesAsUndefined": {
+            "contextsAllowed": ["interface"]
+        },
+        "NewImpurePropertyFiresWatchpoints": {
+            "contextsAllowed": ["interface"]
+        },
+        "NewObject": {
+            "contextsAllowed": ["operation", "attribute"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#NewObject"
+            }
+        },
+        "NotEnumerable": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "OverrideIDLType": {
+            "contextsAllowed": ["type"],
+            "values": ["*"]
+        },
+        "BypassDocumentFullyActiveCheck": {
+            "contextsAllowed": ["type"]
+        },
+        "Plugin": {
+            "contextsAllowed": ["interface"],
+            "notes" : "Should only be used by elements that forward to Netscape plug-ins"
+        },
+        "PrivateIdentifier": {
+            "contextsAllowed": ["interface", "attribute", "operation"]
+        },
+        "PromiseProxy": {
+            "contextsAllowed": ["operation"]
+        },
+        "PublicIdentifier": {
+            "contextsAllowed": ["interface", "attribute", "operation"]
+        },
+        "PutForwards": {
+            "contextsAllowed": ["attribute"],
+            "values": ["*"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#PutForwards"
+            }
+        },
+        "RaisesException": {
+            "contextsAllowed": ["operation"],
+            "notes": "Should only be used on indexed getters that have to throw an exception in some cases"
+        },
+        "Reflect": {
+            "contextsAllowed": ["attribute"],
+            "values": ["*"]
+        },
+        "Replaceable": {
+            "contextsAllowed": ["attribute"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#Replaceable"
+            }
+        },
+        "ReportExtraMemoryCost": {
+            "contextsAllowed": ["interface"]
+        },
+        "ReportExternalMemoryCost": {
+            "contextsAllowed": ["interface"]
+        },
+        "RequiresExistingAtomString": {
+            "contextsAllowed": ["type"]
+        },
+        "ReturnsOwnPromise": {
+            "contextsAllowed": ["operation"]
+        },
+        "ReturnsPromisePair": {
+            "contextsAllowed": ["operation"]
+        },
+        "ReturnValue": {
+            "contextsAllowed": ["argument"]
+        },
+        "SameObject": {
+            "contextsAllowed": ["attribute"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#SameObject"
+            },
+            "unsupported": true
+        },
+        "SecureContext": {
+            "contextsAllowed": ["interface", "namespace", "dictionary", "enum", "attribute", "operation", "constant"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#SecureContext"
+            }
+        },
+        "Serializable": {
+            "contextsAllowed": ["interface"],
+            "standard": {
+                "url": "https://html.spec.whatwg.org/multipage/structured-data.html#serializable"
+            },
+            "unsupported": true
+        },
+        "SetterCallWith": {
+            "contextsAllowed": ["attribute"],
+            "values": ["CurrentScriptExecutionContext", "CurrentGlobalObject", "ActiveWindow", "FirstWindow", "PropertyName"],
+            "supportsConjunction": true
+        },
+        "EnabledConditionallyReadWriteBySetting": {
+            "contextsAllowed": ["attribute"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "SkipCallbackInvokeCheck": {
+            "contextsAllowed": ["operation", "callback-function"]
+        },
+        "SkipVTableValidation": {
+            "contextsAllowed": ["interface"]
+        },
+        "SuppressToJSObject": {
+            "contextsAllowed": ["interface"]
+        },
+        "TaggedWrapper": {
+            "contextsAllowed": ["interface"]
+        },
+        "Transferable": {
+            "contextsAllowed": ["interface"],
+            "standard": {
+                "url": "https://html.spec.whatwg.org/multipage/structured-data.html#transferable"
+            },
+            "unsupported": true
+        },
+        "URL": {
+            "contextsAllowed": ["attribute"]
+        },
+        "Unscopable": {
+            "contextsAllowed": ["attribute", "operation"],
+            "standard": {
+                "url": "https://webidl.spec.whatwg.org/#Unscopable"
+            }
+        },
+        "WindowEventHandler": {
+            "contextsAllowed": ["attribute"]
+        }
+    }
+}

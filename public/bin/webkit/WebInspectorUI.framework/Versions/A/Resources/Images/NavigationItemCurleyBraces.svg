@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2014 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 13 13">
+    <path d="M 5 0.5 L 2.5 1 L 2.5 5 L 1.5 6.5 L 2.5 8 L 2.5 12 L 5 12.5" fill="none" stroke="currentColor" stroke-linecap="square"/>
+    <path d="M 8 0.5 L 10.5 1 L 10.5 5 L 11.5 6.5 L 10.5 8 L 10.5 12 L 8 12.5" fill="none" stroke="currentColor" stroke-linecap="square"/>
+</svg>

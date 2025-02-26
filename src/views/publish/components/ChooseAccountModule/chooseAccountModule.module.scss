@@ -1,0 +1,76 @@
+.platChoose {
+  display: flex;
+
+  :global {
+    .ant-segmented {
+      margin-right: 20px;
+      .ant-segmented-item {
+        margin-bottom: 5px;
+        padding: 3px 60px 3px 0;
+      }
+
+      .ant-segmented-item-label {
+        display: flex;
+        align-items: center;
+        .ant-segmented-item-icon {
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
+
+    .platChoose-con {
+      width: 100%;
+    }
+
+    .platChoose-accounts {
+      margin-top: 10px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+
+      &-item {
+        background: rgb(247, 250, 250);
+        cursor: pointer;
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: 6px 0 6px 6px;
+        align-items: center;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        position: relative;
+        &-nickname {
+          margin-left: 5px;
+        }
+
+        &-choose {
+          position: absolute;
+          top: 0;
+          right: 0;
+          padding: 0 4px;
+          text-align: center;
+          background: rgb(225, 230, 230);
+          border-radius: 0 0 0 12px;
+          color: #fff;
+          font-size: 12px;
+        }
+
+        &--active {
+          background: var(--colorPrimary2);
+
+          .platChoose-accounts-item-choose {
+            background: var(--colorPrimary5);
+          }
+        }
+
+        &--disable {
+          cursor: no-drop;
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,411 @@
+/*
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.tab-bar {
+    display: flex;
+    position: absolute;
+    top: var(--undocked-title-area-height);
+    left: 0;
+    right: 0;
+    height: var(--tab-bar-height);
+    background: var(--tab-bar-background);
+
+    --tab-item-dark-border-color: hsl(0, 0%, 59%);
+    --tab-item-medium-border-color: hsl(0, 0%, 65%);
+    --tab-item-light-border-color: hsl(0, 0%, 85%);
+
+    --tab-item-medium-border-style: 1px solid var(--tab-item-medium-border-color);
+
+    --tab-bar-border-z-index: 10;
+}
+
+body.mac-platform .tab-bar {
+    --tab-bar-background: hsl(0, 0%, 90%);
+
+    --tab-item-light-border-color: hsl(0, 0%, 85%);
+    --tab-item-medium-border-color: hsl(0, 0%, 85%);
+    --tab-item-dark-border-color: hsl(0, 0%, 75%);
+}
+
+body:not(.mac-platform) .tab-bar {
+    background-size: 100% 200%;
+    --tab-bar-background: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 72%));
+}
+
+body.window-inactive .tab-bar {
+    --tab-bar-background: hsl(0, 0%, 92%);
+}
+
+.tab-bar > .border {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: var(--tab-bar-border-z-index);
+    background-color: var(--tab-item-medium-border-color);
+}
+
+.tab-bar > .border.top {
+    top: 0;
+    height: calc(1px / var(--zoom-factor));
+}
+
+.tab-bar > .border.bottom {
+    bottom: 0;
+    height: 1px;
+}
+
+body.window-inactive .tab-bar > .border {
+    background-color: var(--tab-item-light-border-color);
+}
+
+.tab-bar > .navigation-bar {
+    height: var(--tab-bar-height);
+}
+
+.tab-bar > .navigation-bar > .item.group > .item {
+    width: auto;
+    margin: 0 4px;
+    padding: 0;
+}
+
+.tab-bar > .navigation-bar > .item.group > .item:nth-child(1 of :not(.hidden)) {
+    margin-inline-start: 8px;
+}
+
+.tab-bar > .navigation-bar > .item.group > .item:nth-last-child(1 of :not(.hidden)) {
+    margin-inline-end: 8px;
+}
+
+.tab-bar > .navigation-bar .item.divider {
+    margin-top: 1px;
+    background-color: var(--tab-item-medium-border-color);
+}
+
+body.window-inactive .tab-bar > .navigation-bar > .item.divider {
+    background-color: var(--tab-item-light-border-color);
+}
+
+.tab-bar > .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.tab-bar > .tabs > .item {
+    display: flex;
+
+    position: relative;
+
+    z-index: calc(var(--tab-bar-border-z-index) + 1);
+
+    align-items: center;
+
+    padding: 0 8px;
+
+    height: var(--tab-bar-item-height);
+    overflow: hidden;
+
+    line-height: 15px;
+    outline: none;
+
+    border-top: var(--tab-item-medium-border-style);
+    border-bottom: var(--tab-item-medium-border-style);
+    background: var(--tab-item-background);
+
+    /* FIXME: These cause noticeable transitions when focusing the window. Fix that with JavaScript? */
+    /* transition-property: background-position, border-color; */
+    /* transition-duration: 250ms; */
+    /* transition-delay: 50ms; */
+
+    --tab-bar-item-height: 100%;
+}
+
+body.mac-platform .tab-bar > .tabs > .item {
+    --tab-item-background: var(--tab-bar-background);
+}
+
+body:not(.mac-platform) .tab-bar > .tabs > .item {
+    background-size: 100% 200%;
+    --tab-item-background: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 72%));
+}
+
+.tab-bar > .tabs:not(.calculate-width) > .item:not(.pinned) {
+    flex-grow: 1;
+}
+
+.tab-bar > .tabs.calculate-width > .item:not(.pinned) {
+    flex: initial;
+}
+
+.tab-bar > .tabs > .item:nth-child(n + 2 of :not(.hidden)),
+.tab-bar > .tabs:not(.hide-border-start) > .item:nth-child(1 of :not(.hidden)),
+.tab-bar > .tabs.dragging-tab > .item.selected {
+    border-inline-start: var(--tab-item-medium-border-style);
+}
+
+.tab-bar > .tabs:not(.hide-border-end) > .item:nth-last-child(1 of :not(.hidden)) {
+    border-inline-end: var(--tab-item-medium-border-style);
+}
+
+.tab-bar > .tabs > .item.pinned {
+    flex: none;
+    justify-content: center;
+    width: var(--tab-bar-height);
+    padding: 0;
+}
+
+body.mac-platform .tab-bar > .tabs > .item:not(.disabled).selected {
+    --tab-item-background: white;
+}
+
+body.mac-platform:not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected {
+    border-top-color: var(--tab-item-background);
+}
+
+body:not(.mac-platform) .tab-bar > .tabs > .item:not(.disabled).selected {
+    --tab-item-background: linear-gradient(to bottom, hsl(0, 0%, 87%), hsl(0, 0%, 82%));
+    background-size: 100% 100%;
+}
+
+body.mac-platform .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
+    --tab-item-background: hsl(0, 0%, 84%);
+}
+
+body:not(.mac-platform) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
+    --tab-item-background: linear-gradient(to bottom, hsl(0, 0%, 67%), hsl(0, 0%, 64%));
+}
+
+.tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover,
+.tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover + .item {
+    border-inline-start-color: var(--tab-item-dark-border-color);
+}
+
+.tab-bar > .tabs:not(.animating) > .item:last-child:not(.selected, .disabled):hover {
+    border-inline-end-color: var(--tab-item-dark-border-color);
+}
+
+body.window-inactive .tab-bar > .tabs > .item {
+    border-top-color: var(--tab-item-light-border-color);
+    border-bottom-color: var(--tab-item-light-border-color);
+    border-right-color: var(--tab-item-light-border-color) !important;
+    border-left-color: var(--tab-item-light-border-color) !important;
+
+    transition: none;
+}
+
+body.window-inactive .tab-bar > .tabs > .item {
+    --tab-item-background: hsl(0, 0%, 92%);
+}
+
+body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected {
+    --tab-item-background: hsl(0, 0%, 96%);
+}
+
+.tab-bar > .tabs > .item > .flex-space {
+    display: flex;
+    flex: 1;
+}
+
+.tab-bar > .tabs > .item > .icon {
+    width: 16px;
+    height: 16px;
+
+    min-width: 16px;
+    min-height: 16px;
+
+    opacity: 0.55; /* Assumes black glyphs. */
+
+    -webkit-user-drag: none;
+}
+
+.tab-bar > .tabs > .item.pinned > .icon {
+    width: 15px;
+    height: 15px;
+    min-width: 15px;
+    min-height: 15px;
+}
+
+.tab-bar > .tabs > .item:not(.selected):hover > .icon {
+    opacity: 0.6;
+}
+
+.tab-bar > .tabs > .item:not(.disabled).selected > .icon {
+    opacity: 0.7;
+}
+
+.tab-bar > .tabs > .item.disabled > .icon {
+    opacity: 0.35;
+}
+
+body.window-inactive .tab-bar > .tabs > .item > .icon {
+    opacity: 0.3;
+}
+
+body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected > .icon {
+    opacity: 0.4;
+}
+
+.tab-bar > .tabs > .item > .name {
+    color: hsla(0, 0%, var(--foreground-lightness), 0.6);
+
+    display: flex;
+
+    min-width: 0;
+    max-width: 400px;
+    margin-inline-start: 6px;
+}
+
+body.window-inactive .tab-bar > .tabs > .item > .name {
+    color: hsla(0, 0%, var(--foreground-lightness), 0.4);
+}
+
+.tab-bar > .tabs > .item > .name > .content {
+    min-width: 0;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tab-bar > .tabs > .item:not(.selected):hover > .name {
+    color: hsla(0, 0%, var(--foreground-lightness), 0.7);
+}
+
+.tab-bar > .tabs > .item:not(.disabled).selected > .name {
+    color: hsla(0, 0%, var(--foreground-lightness), 0.8);
+}
+
+body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected > .name {
+    color: hsla(0, 0%, var(--foreground-lightness), 0.5);
+}
+
+.tab-bar > .tabs.static-layout {
+    position: relative;
+}
+
+.tab-bar > .tabs.static-layout > :is(.flexible-space, .item) {
+    position: absolute;
+    top: 0;
+}
+
+.tab-bar > .tabs.animating.closing-tab > .item {
+    transition-property: left;
+    transition-duration: 250ms;
+    transition-timing-function: ease-in-out;
+}
+
+.tab-bar > .tabs.animating:is(.expanding-tabs, .inserting-tab) > .item {
+    transition-property: left, width;
+    transition-duration: 250ms;
+    transition-timing-function: ease-in-out;
+}
+
+.tab-bar > .tabs.animating.inserting-tab > .item.being-inserted {
+    z-index: calc(var(--tab-bar-border-z-index) + 2);
+    padding: 0;
+}
+
+.tab-bar > .tabs.dragging-tab > .item:not(.disabled).selected,
+.tab-bar > .tabs.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)),
+.tab-bar > .tabs.animating.closing-tab > .item:not(.disabled).selected {
+    border-right: var(--tab-item-medium-border-style);
+}
+
+body.window-inactive .tab-bar > .tabs.dragging-tab > .item:not(.disabled).selected,
+body.window-inactive .tab-bar > .tabs.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)),
+body.window-inactive .tab-bar > .tabs.animating.closing-tab > .item:not(.disabled).selected {
+    border-right-color: var(--tab-item-light-border-color);
+}
+
+.tab-bar > .tabs.dragging-tab > .item:not(.disabled).selected {
+    z-index: calc(var(--tab-bar-border-z-index) + 2);
+    pointer-events: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    body.mac-platform .tab-bar {
+        /* FIXME: <https://webkit.org/b/189769> Dark Mode: use semantic color names */
+        --tab-item-dark-border-color: var(--tab-item-border-color);
+        --tab-item-medium-border-color: var(--tab-item-border-color);
+        --tab-item-light-border-color: var(--tab-item-border-color);
+        --tab-item-border-color: hsl(0, 0%, 36%);
+        --tab-bar-background: hsl(0, 0%, 8%);
+    }
+
+    body:not(.mac-platform) .tab-bar {
+        background-image: linear-gradient(to bottom, hsl(0, 0%, 12%), hsl(0, 0%, 10%));
+    }
+
+    body:not(.mac-platform) .tab-bar > .tabs > .item {
+        --tab-item-background: linear-gradient(to bottom, hsl(0, 0%, 12%), hsl(0, 0%, 10%));
+    }
+
+    body.mac-platform .tab-bar > .tabs > .item:not(.disabled).selected {
+        --tab-item-background: var(--background-color-content);
+    }
+
+    body:not(.mac-platform) .tab-bar > .tabs > .item:not(.disabled).selected {
+        --tab-item-background: linear-gradient(to bottom, hsl(0, 0%, 23%), hsl(0, 0%, 21%));
+    }
+
+    body.mac-platform .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
+        --tab-item-background: hsl(0, 0%, 7%);
+    }
+
+    body:not(.mac-platform) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
+        --tab-item-background: linear-gradient(to bottom, hsl(0, 0%, 11%), hsl(0, 0%, 9%));
+    }
+
+    .tab-bar > .tabs > .item > .icon {
+        filter: var(--filter-invert);
+    }
+
+    .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover > .icon {
+        opacity: 0.6;
+    }
+
+    body.window-inactive .tab-bar {
+        --tab-bar-background: hsl(0, 0%, 7%);
+        --tab-item-border-color: hsl(0, 0%, 34%);
+    }
+
+    body.mac-platform.window-inactive .tab-bar > .tabs > .item {
+        --tab-item-background: hsl(0, 0%, 7%);
+    }
+
+    body:not(.mac-platform).window-inactive .tab-bar > .tabs > .item {
+        --tab-item-background: hsl(0, 0%, 13%);
+    }
+
+    body.mac-platform.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected {
+        --tab-item-background: hsl(0, 0%, 11%);
+    }
+
+    body:not(.mac-platform).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected {
+        --tab-item-background: hsl(0, 0%, 19%);
+    }
+}

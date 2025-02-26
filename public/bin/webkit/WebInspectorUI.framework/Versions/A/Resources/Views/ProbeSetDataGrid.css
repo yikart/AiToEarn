@@ -1,0 +1,92 @@
+/*
+ * Copyright (C) 2013 University of Washington. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.details-section.probe-set .data-grid tr.past-value td {
+    background-color: hsla(0, 0%, 39%, 0.2);
+    font-style: italic;
+    color: hsl(0, 0%, 46%);
+}
+
+.details-section.probe-set .data-grid > td.unknown-value {
+    background-color: hsla(0, 0%, 90%, 0.8);
+    background-image: repeating-linear-gradient(-45deg, transparent, transparent 7px, hsla(0, 0%, 100%, 0.5) 7px, hsla(0, 0%, 100%, 0.5) 14px);
+}
+
+.details-section.probe-set .data-grid tr.revealed.highlighted {
+    animation-duration: 2s;
+    animation-timing-function: ease;
+    animation-iteration-count: infinite;
+    animation-name: blink-frame-highlight;
+}
+
+@keyframes blink-frame-highlight {
+    0% {
+        background-color: hsla(262, 44%, 60%, 0.8);
+    }
+
+    100% {
+        background-color: hsla(262, 44%, 60%, 0);
+    }
+}
+
+.details-section.probe-set .data-grid tr.separator {
+    border-bottom: 3px solid hsl(0, 0%, 33%);
+}
+
+.details-section.probe-set .data-grid tr.separator {
+    border-bottom: 2px solid hsl(0, 0%, 40%);
+}
+
+.details-section.probe-set .data-grid tr.data-updated {
+    animation-duration: 0.3s;
+    animation-name: blink-probe-frame;
+}
+
+@keyframes blink-probe-frame {
+    0% {
+        background-color: hsl(262, 44%, 60%);
+    }
+
+    100% {
+        background-color: hsla(262, 44%, 60%, 0);
+    }
+}
+
+.details-section.probe-set .data-grid .selected .section * {
+    color: white;
+}
+
+.details-section.probe-set .data-grid .selected td.unknown-value {
+    color: black !important;
+}
+
+.details-section.probe-set .data-grid .section {
+    left: -6px;
+}
+
+.details-section.probe-set .data-grid .object-tree > :is(.title, .object-preview)::before {
+ /* The line-height inside a data-grid is 17px instead of 13px, this will center vertically on the top line. */
+    top: 2px;
+}

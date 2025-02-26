@@ -1,0 +1,265 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.timeline-ruler {
+    position: relative;
+    pointer-events: none;
+
+    --timeline-ruler-marker-translateX: -1px;
+}
+
+.timeline-ruler.allows-time-range-selection:not(.disabled) {
+    pointer-events: all;
+}
+
+.timeline-ruler.resizing-selection,
+.timeline-ruler.resizing-selection > .selection-drag {
+    cursor: col-resize;
+}
+
+.timeline-ruler > * {
+    pointer-events: none;
+}
+
+body[dir=ltr] .timeline-ruler > .header > .divider,
+body[dir=ltr] .timeline-ruler > .markers > :is(.divider, .marker) {
+    transform: translateX(var(--timeline-ruler-marker-translateX));
+}
+
+body[dir=rtl] .timeline-ruler > .header > .divider,
+body[dir=rtl] .timeline-ruler > .markers > :is(.divider, .marker) {
+    transform: translateX(calc(-1 * var(--timeline-ruler-marker-translateX)));
+}
+
+.timeline-ruler > .header {
+    border-bottom: 1px solid var(--border-color);
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--timeline-ruler-height);
+
+    --timeline-ruler-height: 23px;
+}
+
+
+.timeline-ruler > .header > .divider {
+    position: absolute;
+    width: 1px;
+    top: 0;
+    bottom: 0;
+    background-image: linear-gradient(to bottom, hsla(0, 0%, 70%, 0), hsla(0, 0%, 70%, 2) 85%);
+}
+
+body.window-inactive .timeline-ruler > .header > .divider {
+    background-image: linear-gradient(to bottom, hsla(0, 0%, 85%, 0), hsla(0, 0%, 85%, 1) 85%);
+}
+
+.timeline-ruler > .header > .divider > .label {
+    position: absolute;
+    top: 6px;
+    inset-inline-end: var(--timeline-ruler-header-divider-label-offset-end);
+    font-size: 9px;
+    font-weight: normal;
+    color: hsl(0, 0%, 50%);
+    white-space: nowrap;
+
+    --timeline-ruler-header-divider-label-offset-end: 5px;
+}
+
+.timeline-ruler > .markers {
+    position: absolute;
+    top: 22px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.timeline-ruler > .markers > .divider {
+    position: absolute;
+    top: 1px;
+    z-index: var(--timeline-marker-z-index);
+    bottom: 0;
+    width: 1px;
+    background-color: var(--graph-line-color);
+}
+
+.timeline-ruler > .markers > .marker {
+    position: absolute;
+    top: 0;
+    z-index: var(--timeline-marker-z-index);
+    bottom: 0;
+    width: 3px;
+    color: hsla(0, 0%, 50%, 0.5);
+    border: 0 solid currentColor;
+    border-inline-start-width: var(--timeline-ruler-marker-border-width);
+    pointer-events: all;
+
+    --timeline-ruler-marker-border-width: 1px;
+}
+
+.timeline-ruler > .markers > .marker::before {
+    width: var(--timeline-ruler-marker-before-size);
+    inset-inline-start: calc(-1 * ((var(--timeline-ruler-marker-before-size) + var(--timeline-ruler-marker-border-width)) / 2));
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    content: "";
+
+    --timeline-ruler-marker-before-size: 6px;
+}
+
+.timeline-ruler > .markers > .marker::after {
+    position: absolute;
+    top: calc(-1 * (var(--timeline-ruler-marker-after-size) - 1px) / 2);
+    inset-inline-start: var(--timeline-ruler-marker-after-offset);
+    content: "";
+    border-right: calc(var(--timeline-ruler-marker-after-size) / 2) solid transparent;
+    border-left: calc(var(--timeline-ruler-marker-after-size) / 2) solid transparent;
+    border-top: calc(var(--timeline-ruler-marker-after-size) / 2) solid currentColor;
+
+    --timeline-ruler-marker-after-size: 10px;
+    --timeline-ruler-marker-after-offset: calc(-1 * ((var(--timeline-ruler-marker-after-size) + var(--timeline-ruler-marker-border-width)) / 2));
+}
+
+.timeline-ruler > .markers > .marker.current-time {
+    z-index: var(--timeline-current-time-z-index);
+    color: red;
+}
+
+.timeline-ruler > .markers > .marker.current-time::after {
+    top: var(--timeline-ruler-marker-after-offset);
+    width: var(--timeline-ruler-marker-after-size);
+    height: var(--timeline-ruler-marker-after-size);
+    background-color: currentColor;
+    border: none;
+    border-radius: 5px;
+}
+
+.timeline-ruler > .markers > .marker.load-event {
+    color: hsl(0, 100%, 50%);
+}
+
+.timeline-ruler > .markers > .marker.dom-content-event {
+    color: hsl(240, 100%, 50%);
+}
+
+.timeline-ruler > .markers > .marker.timestamp {
+    color: hsl(119, 100%, 21%);
+}
+
+.timeline-ruler > .markers > .marker.scanner {
+    color: var(--timeline-scanner-color);
+}
+
+.timeline-ruler > .selection-drag {
+    position: absolute;
+    top: 0;
+    height: 23px;
+}
+
+.timeline-ruler:not(.disabled, .resizing-selection) > .selection-drag {
+    cursor: grab;
+    pointer-events: all;
+}
+
+.timeline-ruler:not(.disabled, .resizing-selection) > .selection-drag:active {
+    cursor: grabbing;
+}
+
+.timeline-ruler > .selection-handle {
+    position: absolute;
+    top: 0;
+    width: 8px;
+    height: 22px;
+    border-radius: 5px;
+    background-color: hsl(0, 0%, 64%);
+    border: 1px solid white;
+    cursor: col-resize;
+    pointer-events: all;
+    z-index: var(--timeline-selection-z-index);
+
+    --timeline-ruler-selection-handle-translateX: -4px;
+}
+
+.timeline-ruler.disabled > .selection-handle {
+    display: none;
+}
+
+.timeline-ruler.selection-hidden > :is(.selection-drag, .selection-handle, .shaded-area) {
+    display: none;
+}
+
+.timeline-ruler > .selection-handle.clamped {
+    border-color: hsl(0, 0%, 64%);
+    background-color: white;
+}
+
+.timeline-ruler > .selection-handle:hover,
+.timeline-ruler > .selection-handle:active {
+    background-color: hsl(0, 0%, 50%);
+    border-color: white;
+}
+
+.timeline-ruler.both-handles-clamped > .selection-handle {
+    z-index: calc(var(--timeline-selection-z-index) - 1);
+}
+
+.timeline-ruler > .selection-handle.clamped.hidden {
+    display: none;
+}
+
+body[dir=ltr] .timeline-ruler > .selection-handle.left,
+body[dir=rtl] .timeline-ruler > .selection-handle.right {
+    transform: translateX(var(--timeline-ruler-selection-handle-translateX));
+}
+
+body[dir=ltr] .timeline-ruler > .selection-handle.right,
+body[dir=rtl] .timeline-ruler > .selection-handle.left {
+    transform: translateX(calc(-1 * var(--timeline-ruler-selection-handle-translateX)));
+}
+
+.timeline-ruler > .shaded-area {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background-color: hsla(0, 0%, 0%, 0.1);
+    z-index: var(--timeline-selection-z-index);
+}
+
+.timeline-ruler > .shaded-area.left {
+    inset-inline-start: 0;
+}
+
+.timeline-ruler > .shaded-area.right {
+    inset-inline-end: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+    .timeline-ruler > .markers > .marker.dom-content-event {
+        color: hsl(240, 100%, 70%);
+    }
+}

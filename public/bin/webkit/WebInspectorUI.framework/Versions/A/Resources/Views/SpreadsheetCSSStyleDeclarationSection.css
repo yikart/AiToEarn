@@ -1,0 +1,173 @@
+/*
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.spreadsheet-css-declaration {
+    margin: 0;
+    padding: 0 0 var(--css-declaration-vertical-padding);
+    font-family: Menlo, monospace;
+    font-size: 11px;
+    color: var(--text-color-tertiary);
+    background: var(--background-color-content);
+    border-bottom: 0.5px solid var(--text-color-quaternary);
+    -webkit-user-select: text;
+}
+
+.spreadsheet-css-declaration.selecting,
+.spreadsheet-css-declaration.selecting .spreadsheet-style-declaration-editor {
+    -webkit-user-select: none;
+}
+
+.spreadsheet-css-declaration :is(.header, .header-groupings) {
+    padding: 0 var(--css-declaration-horizontal-padding);
+}
+
+.spreadsheet-css-declaration :is(.header, .header-groupings):first-child {
+    padding-top: var(--css-declaration-vertical-padding);
+}
+
+.spreadsheet-css-declaration .header:not(:first-child),
+.spreadsheet-css-declaration .header:not(.editing-selector) .selector,
+.spreadsheet-css-declaration.has-icon .header.editing-selector .selector {
+    margin-top: 1px;
+}
+
+.spreadsheet-css-declaration .header.editing-selector .origin {
+    position: absolute;
+    right: var(--css-declaration-horizontal-padding);
+}
+
+.spreadsheet-css-declaration .header-groupings > .grouping {
+    color: var(--text-color);
+}
+
+.spreadsheet-css-declaration .origin {
+    float: right;
+    max-width: 100%;
+    font: 11px sans-serif;
+    color: hsl(0, 0%, 50%);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.spreadsheet-css-declaration.locked .origin::after {
+    display: inline-block;
+    position: relative;
+    top: 1px;
+    width: 8px;
+    height: 10px;
+    margin-left: 4px;
+    content: url(../Images/Locked.svg);
+}
+
+.spreadsheet-css-declaration .origin .go-to-link {
+    color: hsl(0, 0%, 50%);
+}
+
+.spreadsheet-css-declaration .origin .go-to-link:hover {
+    color: hsl(0, 0%, 33%);
+}
+
+.spreadsheet-css-declaration .styles-source {
+    float: right;
+}
+
+.spreadsheet-css-declaration .selector {
+    position: relative;
+    z-index: 1;
+}
+
+.spreadsheet-css-declaration .selector.style-attribute {
+    font: 12px sans-serif;
+    color: hsl(0, 0%, 30%);
+    -webkit-user-modify: read-only;
+}
+
+.spreadsheet-css-declaration .selector > .icon {
+    width: 16px;
+    height: 16px;
+    margin-top: -1px;
+    margin-inline-start: -2px;
+    vertical-align: -3.5px;
+    -webkit-user-select: none;
+}
+
+.spreadsheet-css-declaration .selector > .icon + * {
+    padding-inline-start: 2px;
+}
+
+.spreadsheet-css-declaration .selector > span {
+    color: var(--text-color-secondary);
+}
+
+.spreadsheet-css-declaration .selector.style-attribute > span {
+    margin-inline-start: 0.5px;
+}
+
+.spreadsheet-css-declaration .selector.editing:focus,
+.spreadsheet-css-declaration .selector > .matched {
+    color: var(--text-color);
+}
+
+.spreadsheet-css-declaration.locked {
+    background-color: var(--background-color-intermediate);
+}
+
+.spreadsheet-css-declaration .locked-icon {
+    width: 8px;
+    height: 10px;
+    content: url(../Images/Locked.svg);
+}
+
+.spreadsheet-css-declaration :is(.selector, .grouping).spreadsheet-rule-header-field {
+    outline: none;
+}
+
+.spreadsheet-css-declaration :is(.selector, .grouping).spreadsheet-rule-header-field.editing {
+    display: inline-block;
+    box-shadow: hsla(0, 0%, 0%, 0.5) 0 1px 3px;
+    outline: none !important;
+}
+
+.spreadsheet-css-declaration .close-brace {
+    display: inline-block;
+    padding-left: var(--css-declaration-horizontal-padding);
+}
+
+@media (prefers-color-scheme: dark) {
+    .spreadsheet-css-declaration .selector.style-attribute {
+        color: var(--text-color-secondary);
+    }
+
+    .spreadsheet-css-declaration.locked .origin::after {
+        filter: var(--filter-invert);
+    }
+
+    .spreadsheet-css-declaration .origin .go-to-link,
+    .spreadsheet-css-declaration .origin .go-to-link:hover {
+        color: var(--text-color-secondary);
+    }
+}
+

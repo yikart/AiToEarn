@@ -1,0 +1,431 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.message-channel-scope-bar.default-item-selected:not(:hover) {
+    --scope-bar-text-color-override: var(--text-color);
+    --scope-bar-background-color-override: transparent;
+    --scope-bar-border-color-override: transparent;
+}
+
+.message-channel-scope-bar.default-item-selected:hover {
+    --scope-bar-background-opacity-override: 0.5;
+}
+
+.log-scope-bar + .message-channel-scope-bar {
+    padding-inline-start: 0;
+}
+
+.console-other-filters-button > .glyph {
+    width: 16px;
+    height: 16px;
+    color: var(--glyph-color);
+    opacity: var(--glyph-opacity);
+}
+
+.console-other-filters-button:active > .glyph {
+    color: var(--glyph-color-pressed);
+}
+
+.console-other-filters-button.active > .glyph {
+    color: var(--glyph-color-active);
+}
+
+.console-other-filters-button.active:active > .glyph {
+    color: var(--glyph-color-active-pressed);
+}
+
+.navigation-bar > .item.find-banner.console {
+    flex-wrap: nowrap;
+    position: relative;
+    top: auto;
+    border: none;
+}
+
+:not(.console-drawer) > .navigation-bar > .item.find-banner.console {
+    margin-inline-start: var(--find-banner-inline-space);
+}
+
+.navigation-bar > .item.find-banner.console > input[type="search"] {
+    padding-top: 0;
+    border: 1px solid var(--border-color);
+    outline: none;
+}
+
+.navigation-bar > .item.find-banner.console > :is(input[type="search"], button) {
+    background-color: inherit;
+    height: 22px;
+}
+
+.navigation-bar > .item.find-banner.console > input[type="search"]::-webkit-textfield-decoration-container {
+    margin-inline-start: 4px;
+}
+
+.navigation-bar > .item.find-banner.console > input[type="search"]:focus,
+.navigation-bar > .item.find-banner.console > input[type="search"]:focus ~ button,
+.navigation-bar > .item.find-banner.console > input[type="search"]:not(:placeholder-shown),
+.navigation-bar > .item.find-banner.console > input[type="search"]:not(:placeholder-shown) ~ button {
+    background-color: var(--background-color);
+}
+
+.navigation-bar > .item.console-snippets > img {
+    width: 16px;
+    height: 16px;
+    content: url(../Images/ClippingIcons.svg#js-light);
+}
+
+.content-view.log {
+    display: flex;
+    flex-direction: column;
+}
+
+.content-view.log > .hidden-messages-banner {
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    height: var(--navigation-bar-height);
+    padding: 0 4px;
+    color: var(--yellow-highlight-text-color);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    background-color: var(--yellow-highlight-background-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.content-view.log > .hidden-messages-banner > button {
+    margin-inline-start: 4px;
+}
+
+.content-view.log > .hidden-messages-banner > .dismiss {
+    position: absolute;
+    inset-inline-end: 5px;
+    width: 16px;
+    height: 16px;
+    padding-bottom: 2px;
+}
+
+.console-messages {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 12px;
+    word-wrap: break-word;
+    outline: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    will-change: z-index; /* Workaround for <rdar://125601926> - Content renders on top of the scroll bar */
+}
+
+.console-messages > :first-child {
+    margin-top: auto;
+}
+
+.console-item {
+    border-top: 1px solid hsl(0, 0%, 94%);
+}
+
+.console-error-level:not(.filtered-out, .filtered-out-by-search),
+.console-error-level:not(.filtered-out, .filtered-out-by-search) + .console-item {
+    border-top-color: hsl(0, 100%, 92%);
+}
+
+.console-warning-level:not(.filtered-out, .filtered-out-by-search),
+.console-warning-level:not(.filtered-out, .filtered-out-by-search) + .console-item {
+    border-top-color: hsl(40, 100%, 90%);
+}
+
+.console-item::before,
+.console-group::before {
+    position: absolute;
+    left: 4px;
+    height: 12px;
+    width: 12px;
+    z-index: 1;
+}
+
+.console-group::before {
+    top: 4px;
+}
+
+.console-group:is(.console-warning-level, .console-error-level, .console-log-level, .console-info-level, .console-debug-level) {
+    padding-inline-start: 16px;
+}
+
+.console-item.selected::after {
+    position: absolute;
+    display: block;
+    content: "";
+    left: 0;
+    top: -1px;
+    bottom: 0;
+    background: hsl(0, 0%, 60%);
+    width: 2px;
+    z-index: 10;
+}
+
+.console-messages:focus .console-item.selected .data-grid tr.selected {
+    background-color: hsl(210, 90%, 90%) !important;
+}
+
+.console-item .data-grid tr.selected {
+    background-color: hsl(210, 0%, 90%) !important;
+}
+
+.console-messages:focus .console-item .data-grid tr.selected td:not(:last-child) {
+    border-right-color: hsl(210, 70%, 75%);
+}
+
+.console-messages:focus .console-item.selected {
+    background-color: hsl(210, 98%, 96%);
+    border-color: hsl(210, 90%, 93%);
+}
+
+.console-messages:focus .console-item.selected + .console-item {
+    border-top-color: hsl(210, 90%, 93%);
+}
+
+.console-messages:focus .console-item.selected::after {
+    background-color: var(--glyph-color-active);
+}
+
+.console-messages:focus .console-item.selected .go-to-link {
+    color: hsl(210, 100%, 33%);
+}
+
+.console-group-title {
+    font-weight: bold;
+}
+
+.console-group-title::before {
+    content: "";
+    background-image: url(../Images/DisclosureTriangles.svg#open-normal);
+    background-size: 13px 13px;
+    top: 4px;
+    inset-inline-start: 4px;
+    width: 13px;
+    height: 13px;
+}
+
+.console-group-title > .console-error-level {
+    display: inline-block;
+    margin-inline-end: 4px;
+    height: 12px;
+    width: 12px;    
+}
+
+.console-group-title > .console-error-level::before {
+    position: relative;
+    top: 2px;
+}
+
+body[dir=rtl] .console-group-title::before {
+    transform: scaleX(-1);
+}
+
+.console-group.collapsed .console-group-title::before {
+    background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
+}
+
+.console-group.collapsed > .console-group-messages {
+    display: none;
+}
+
+.console-group {
+    position: relative;
+}
+
+.console-session-header {
+    text-align: center;
+    padding: 6px 0;
+}
+
+.console-session:first-of-type .console-session-header {
+    color: hsl(0, 0%, 60%);
+}
+
+.console-session:not(:first-of-type) {
+    border-top: 0.5px dashed var(--border-color);
+}
+
+.console-session:not(:first-of-type) .console-session-header {
+    color: hsl(0, 0%, 30%);
+    background-color: hsl(0, 0%, 95%);
+}
+
+.console-messages a {
+    color: hsl(0, 0%, 32%);
+    cursor: pointer;
+}
+
+.console-messages a:hover {
+    color: hsl(0, 0%, 14%);
+}
+
+.console-messages .data-grid {
+    clear: both;
+}
+
+.console-item.filtered-out {
+    display: none;
+}
+
+.search-in-progress .console-item.filtered-out-by-search {
+    display: none;
+}
+
+.search-in-progress .console-item:not(.filtered-out-by-search) .highlighted {
+    color: black;
+    background-color: hsla(53, 83%, 53%, 0.2);
+    border-bottom: 1px solid hsl(47, 82%, 60%);
+}
+
+.search-in-progress .console-item:not(.filtered-out-by-search) .highlighted.selected {
+    background-color: hsla(53, 83%, 53%, 0.75);
+}
+
+.search-in-progress .console-item:not(.filtered-out-by-search).special-user-log .console-message-body .highlighted {
+    color: var(--selected-foreground-color);
+    background-color: var(--selected-background-color-highlight);
+
+    border-bottom: none;
+    text-decoration: underline;
+}
+
+.console-user-command::before,
+.console-messages:focus .console-item.selected .console-user-command::before,
+.console-user-command-result.console-log-level::before,
+.console-messages:focus .console-item.selected .console-user-command-result.console-log-level::before {
+        /* Accessible label alternative for icon indicating console input/output/warning/error, etc. */
+        alt: attr(data-labelprefix);
+}
+
+.console-user-command:not(:hover) > .console-snippet-options {
+    display: none;
+}
+
+.create-snippet-popover > .label {
+    display: inline-block;
+    margin-inline-end: 6px;
+    font-weight: bold;
+    line-height: 23px;
+    white-space: nowrap;
+    color: hsl(0, 0%, 34%);
+}
+
+@media (prefers-color-scheme: dark) {
+    .navigation-bar > .item.console-snippets > img {
+        content: url(../Images/ClippingIcons.svg#js-dark);
+    }
+
+    .console-messages {
+        background-color: var(--background-color-content);
+    }
+
+    .console-item {
+        border-top-color: var(--console-message-separator);
+    }
+
+    .console-item .data-grid tr.selected {
+        background-color: hsl(210, 0%, 35%) !important;
+    }
+
+    .console-messages:focus .console-item.selected .data-grid tr.selected {
+        background-color: hsl(210, 90%, 35%) !important;
+    }
+
+    .console-messages:focus .console-item .data-grid tr.selected td:not(:last-child) {
+        border-right-color: hsl(210, 70%, 25%);
+    }
+
+    .console-messages {
+        --background-color-selected: hsl(233, 30%, 30%);
+        --border-color-selected: hsl(224, 30%, 35%);
+        --border-color-error: hsla(20, 100%, 50%, 0.12);
+        --border-color-warning: hsla(40, 100%, 50%, 0.12);
+    }
+
+    .console-messages:focus .console-item.selected {
+        background-color: var(--background-color-selected);
+        border-color: var(--border-color-selected);
+    }
+
+    .console-messages:focus .console-item.selected + .console-item {
+        border-color: var(--border-color-selected);
+    }
+
+    .console-session:first-of-type .console-session-header {
+        color: var(--text-color-tertiary);
+    }
+
+    .console-session:not(:first-of-type) .console-session-header {
+        color: unset;
+        background-color: unset;
+    }
+
+    .console-messages a {
+        color: var(--selected-secondary-text-color);
+        cursor: pointer;
+    }
+
+    .console-messages a:hover {
+        color: var(--selected-secondary-text-color-active);
+    }
+
+    .console-error-level {
+        background-color: var(--error-background-color-secondary);
+        border-color: var(--border-color-error);
+    }
+
+    .console-error-level:not(.filtered-out, .filtered-out-by-search), .console-error-level:not(.filtered-out, .filtered-out-by-search) + .console-item {
+        border-top-color: var(--border-color-error);
+    }
+
+    .console-warning-level {
+        background-color: var(--warning-background-color-secondary);
+        border-color: var(--border-color-warning);
+    }
+
+    .console-warning-level:not(.filtered-out, .filtered-out-by-search), .console-warning-level:not(.filtered-out, .filtered-out-by-search) + .console-item {
+        border-top-color: var(--border-color-warning);
+    }
+    
+    .console-group-sourcemap-errors {
+        background-color: var(--error-background-color-secondary);
+    }
+
+    .search-in-progress .console-item:not(.filtered-out-by-search) .highlighted {
+        color: var(--search-highlight-text-color);
+        background-color: var(--search-highlight-background-color);
+        border-bottom-color: var(--search-highlight-underline-color);
+    }
+
+    .search-in-progress .console-item:not(.filtered-out-by-search) .highlighted.selected {
+        color: var(--search-highlight-text-color-active);
+        background-color: var(--search-highlight-background-color-active);
+    }
+}

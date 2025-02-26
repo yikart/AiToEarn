@@ -1,0 +1,139 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.inline-swatch {
+    display: inline-block;
+    position: relative;
+    width: 1em;
+    height: 1em;
+    margin-right: var(--inline-swatch-margin-right-override, var(--inline-swatch-margin-right-default));
+    vertical-align: var(--inline-swatch-vertical-align-override, var(--inline-swatch-vertical-align-default));
+    border-radius: 2px;
+    overflow: hidden;
+    cursor: default;
+
+    --inline-swatch-margin-right-default: 3px;
+    --inline-swatch-vertical-align-override: -2px;
+}
+
+.inline-swatch:not(.box-shadow),
+.inline-swatch.box-shadow:is(:hover, :active) {
+    background-color: var(--background-color-content);
+}
+
+.inline-swatch:is(.color, .gradient) {
+    /* Make a checkered background for transparent colors to show against. */
+    background-image: linear-gradient(to bottom, hsl(0, 0%, 80%), hsl(0, 0%, 80%)),
+                      linear-gradient(to bottom, hsl(0, 0%, 80%), hsl(0, 0%, 80%));
+    background-size: 50% 50%;
+    background-position: top left, bottom right;
+    background-repeat: no-repeat;
+}
+
+.inline-swatch:is(.cubic-bezier-timing-function, .linear-timing-function, .spring-timing-function, .steps-timing-function, .linear-timing-function, .variable) {
+    color: var(--glyph-color-active);
+}
+
+.inline-swatch:is(.box-shadow, .cubic-bezier-timing-function, .linear-timing-function, .spring-timing-function, .steps-timing-function, .variable) {
+    margin-right: 2px;
+}
+
+.inline-swatch:not(.read-only):is(.box-shadow, .cubic-bezier-timing-function, .linear-timing-function, .spring-timing-function, .steps-timing-function, .variable, .alignment):hover {
+    filter: brightness(0.9);
+}
+
+.inline-swatch:not(.read-only):is(.box-shadow, .cubic-bezier-timing-function, .linear-timing-function, .spring-timing-function, .steps-timing-function, .variable, .alignment):active {
+    filter: brightness(0.8);
+}
+
+@media (max-resolution: 1dppx) {
+    /* Ensure the color swatch is even by even so that it looks okay checkered. */
+    .inline-swatch {
+        vertical-align: -1px;
+        width: 10px;
+        height: 10px;
+    }
+}
+
+.inline-swatch > span {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border: 1px solid hsla(0, 0%, 25%, 0.4);
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+.inline-swatch:not(.read-only):hover > span {
+    border-color: hsla(0, 0%, 25%, 0.8);
+}
+
+.inline-swatch:not(.read-only):active > span {
+    border-color: hsl(0, 0%, 25%);
+}
+
+.inline-swatch:is(.box-shadow, .cubic-bezier-timing-function, .linear-timing-function, .spring-timing-function, .steps-timing-function, .variable) > span {
+    display: none;
+}
+
+.inline-swatch:is(.image, .alignment) > span {
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.inline-swatch.alignment > span.rotate-left {
+    rotate: -90deg;
+}
+
+.inline-swatch-variable-popover {
+    display: flex;
+    align-items: center;
+    min-height: 24px;
+    padding-top: 0.5px;
+}
+
+.inline-swatch-variable-popover .CodeMirror {
+    height: auto;
+    background-color: transparent;
+}
+
+.inline-swatch-variable-popover .CodeMirror pre {
+    padding: 0 3px;
+}
+
+.inline-swatch-variable-popover .CodeMirror-sizer {
+    /* Override min-height set as inline style by CodeMirror which sizes its container disproportionally tall. */
+    min-height: fit-content !important;
+}
+
+@media (prefers-color-scheme: dark) {
+    .inline-swatch.box-shadow > svg,
+    .inline-swatch.alignment > span {
+        filter: invert();
+    }
+}

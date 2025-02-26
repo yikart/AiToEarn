@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2017 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+    <polygon points="8 11.333 3.25 8.167 2 9 8 13 14 9 12.75 8.167 8 11.333"/>
+    <polygon points="8 2 2 6 8 10 14 6 8 2"/>
+</svg>

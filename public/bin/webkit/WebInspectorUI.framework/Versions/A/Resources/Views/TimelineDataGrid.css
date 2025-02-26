@@ -1,0 +1,75 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.tree-outline.timeline-data-grid .item:hover {
+    border-radius: 3px;
+    color: white;
+    background-color: var(--selected-background-color);
+}
+
+.tree-outline.timeline-data-grid .item:hover .subtitle {
+    color: white;
+}
+
+.data-grid.timeline th {
+    border-top: none;
+}
+
+.data-grid th.graph-column:is(.sort-ascending, .sort-descending) {
+    background-color: var(--background-color-selected);
+}
+
+.data-grid.timeline th.graph-column > .timeline-ruler {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.data-grid.timeline th > .header-cell-content.timeline-ruler > .markers {
+    position: absolute;
+}
+
+.data-grid.timeline th:is(.sort-ascending, .sort-descending) > .header-cell-content.timeline-ruler:first-child::after {
+    top: calc(var(--data-grid-header-height) / 2 - var(--data-grid-sorting-indicator-height) / 2);
+    bottom: unset;
+}
+
+.data-grid.timeline td.graph-column {
+    padding: 2px 0;
+}
+
+.data-grid.timeline td.graph-column {
+    border-inline-start: 1px solid var(--graph-line-color);
+}
+
+.data-grid.timeline td.graph-column > .cell-content {
+    position: relative;
+}
+
+.data-grid.timeline td.graph-column .timeline-record-bar {
+    top: 2px;
+}

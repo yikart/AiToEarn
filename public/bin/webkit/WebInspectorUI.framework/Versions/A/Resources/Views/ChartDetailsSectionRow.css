@@ -1,0 +1,105 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.details-section > .content > .group > .row.chart > .title {
+    color: hsl(0, 0%, 22%);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+
+    font-size: 11px;
+
+    padding: 4px 5px 0px 9px;
+}
+
+.details-section > .content > .group > .row.chart > .chart-content {
+    display: flex;
+    justify-content: center;
+    padding: 8px 5px 0px 12px;
+}
+
+.details-section > .content > .group > .row.chart > .chart-content > svg > path.hidden {
+    display: none;
+}
+.details-section > .content > .group > .row.chart > .chart-content > svg > path.chart-segment {
+    stroke-width: 1;
+    stroke: rgba(255, 255, 255, 0.7);
+}
+
+.details-section > .content > .group > .row.chart > .chart-content > svg > path.empty-chart {
+    fill: rgba(0, 0, 0, 0.02);
+    stroke-width: 1;
+    stroke: rgba(0, 0, 0, 0.1);
+}
+
+.details-section > .content > .group > .row.chart > .chart-content > .legend {
+    display: table;
+    margin-left: 12px;
+}
+
+.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item {
+    display: table-row;
+    height: 16px;
+}
+
+.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label {
+    color: hsl(0, 0%, 20%);
+}
+
+.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > .value {
+    padding-left: 8px;
+}
+
+.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > * {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label > .color-key,
+.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label > input[type=checkbox] {
+    width: 10px;
+    height: 10px;
+    vertical-align: top;
+    margin: 0 8px 0 3px;
+}
+
+.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label > .color-key {
+    display: inline-block;
+    margin-top: 1px;
+    border: solid 1px hsla(0, 0%, 0%, 0.15);
+    border-radius: 2px;
+}
+
+.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label > input[type=checkbox]:not(:checked),
+body.window-docked-inactive .details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label > input[type=checkbox],
+body.window-inactive .details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > label > input[type=checkbox] {
+    filter: none !important;
+}
+
+.details-section > .content > .group > .row.chart > .defs-only {
+    display: none;
+}

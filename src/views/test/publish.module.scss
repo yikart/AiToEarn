@@ -1,0 +1,16 @@
+.publish {
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+  :global {
+    .ant-segmented {
+      padding: 30px 10px;
+
+      .ant-segmented-item {
+        margin-bottom: 5px;
+        padding: 3px 40px 3px 0;
+      }
+    }
+  }
+}

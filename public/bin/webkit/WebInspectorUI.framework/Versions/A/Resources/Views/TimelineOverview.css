@@ -1,0 +1,226 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.timeline-overview {
+    --timeline-sidebar-width: 197px;
+}
+
+.timeline-overview > :is(.navigation-bar.timelines, .tree-outline.timelines) {
+    border-inline-end: 1px solid var(--border-color);
+    inset-inline-start: 0;
+}
+
+.timeline-overview:not(.frames) > :is(.scroll-container, .timeline-ruler, .graphs-container) {
+    inset-inline-start: var(--timeline-sidebar-width);
+}
+
+.timeline-overview > .navigation-bar.timelines {
+    box-sizing: border-box;
+    justify-content: flex-start;
+    position: absolute;
+    top: 0;
+    z-index: var(--z-index-header);
+    width: var(--timeline-sidebar-width);
+    height: 23px;
+    background-color: var(--background-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.navigation-bar.timelines .item.text.enabled-timelines {
+    font-style: italic;
+    color: hsl(0, 0%, 50%);
+}
+
+.navigation-bar.timelines .item.button.toggle-edit-instruments:not(.disabled):is(:focus, .activate.activated, .radio.selected) {
+    color: var(--glyph-color-active);
+}
+
+.navigation-bar.timelines .item.button.toggle-edit-instruments:not(.disabled):active:is(:focus, .activate.activated, .radio.selected) {
+    color: var(--glyph-color-active-pressed);
+}
+
+.navigation-bar.timelines .item.button.toggle-edit-instruments.disabled {
+    color: var(--glyph-color-disabled);
+}
+
+.navigation-bar.timelines .toggle-edit-instruments:not(.disabled):active {
+    color: var(--glyph-color-pressed);
+}
+
+.timeline-overview > .tree-outline.timelines {
+    position: absolute;
+    top: 23px;
+    z-index: var(--z-index-header);
+    width: var(--timeline-sidebar-width);
+    background-color: var(--panel-background-color);
+}
+
+.timeline-overview.edit-instruments > .tree-outline.timelines {
+    bottom: 0;
+}
+
+.timeline-overview.edit-instruments > .tree-outline.timelines .item.selected {
+    color: var(--text-color);
+    background-color: transparent;
+}
+
+.timeline-overview > .tree-outline.timelines .close-button {
+    width: 14px;
+
+    visibility: hidden;
+}
+
+.timeline-overview > .tree-outline.timelines .item.selected .close-button {
+    visibility: visible;
+}
+
+.timeline-overview > .tree-outline.timelines input[type=checkbox].status-button {
+    width: 12px;
+    height: 12px;
+}
+
+.timeline-overview.edit-instruments > .tree-outline.timelines .item:nth-child(even),
+.timeline-overview > .tree-outline.timelines .item:not(.selected):nth-child(even) {
+    background-color: hsla(0, 0%, var(--foreground-lightness), 0.03);
+    background-clip: padding-box;
+}
+
+.timeline-overview.edit-instruments > .tree-outline.timelines .item:not(:first-child),
+.timeline-overview > .tree-outline.timelines .item:not(.selected):not(:first-child) {
+    border-top-color: hsla(0, 0%, var(--foreground-lightness), 0.09);
+}
+
+body:is(.window-inactive, .window-docked-inactive) .timeline-overview:not(.edit-instruments) > .tree-outline.timelines .item.selected + .item {
+    border-top-color: var(--selected-background-color-unfocused);
+}
+
+body:not(.window-inactive, .window-docked-inactive) .timeline-overview:not(.edit-instruments) > .tree-outline.timelines:focus-within .item.selected + .item {
+    border-top-color: var(--selected-background-color);
+}
+
+.timeline-overview > .scroll-container {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    opacity: 0;
+
+ /* Allows the horizontal scroll bar to be interacted with. */
+    z-index: calc(var(--z-index-resizer) + 1);
+}
+
+.timeline-overview.frames > :is(.tree-outline.timelines, .navigation-bar.timelines) {
+    display: none;
+}
+
+.timeline-overview.frames > .scroll-container {
+    left: 0;
+}
+
+.timeline-overview:hover > .scroll-container {
+    opacity: 0.75;
+}
+
+.timeline-overview > .scroll-container:hover {
+    opacity: 1;
+}
+
+.timeline-overview > .timeline-ruler {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.timeline-overview.frames > .timeline-ruler {
+    left: 0;
+}
+
+.timeline-overview > .timeline-ruler > .markers {
+    top: 23px;
+}
+
+.timeline-overview.frames > .timeline-ruler > .markers > .marker:not(.current-time) {
+    display: none;
+}
+
+.timeline-overview.frames > .timeline-ruler > .header > .divider,
+.timeline-overview.frames > .timeline-ruler > .markers > .divider {
+    transform: translateX(0px);
+}
+
+body[dir=ltr] .timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .selection-handle.right,
+body[dir=rtl] .timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .selection-handle.left {
+    transform: translateX(5px);
+}
+
+body[dir=ltr] .timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .shaded-area.right,
+body[dir=rtl] .timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .shaded-area.left {
+    transform: translateX(1px);
+}
+
+.timeline-overview > .graphs-container {
+    position: absolute;
+    top: 23px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.timeline-overview > .graphs-container > .timeline-overview-graph {
+    height: 36px;
+}
+
+.timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:nth-child(even) {
+    background-color: hsl(0, 0%, 96%);
+    background-clip: padding-box;
+}
+
+.timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:not(:first-child) {
+    border-top: 1px solid hsla(0, 0%, var(--foreground-lightness), 0.09);
+}
+
+.timeline-overview:not(.has-scrollbar) > .scroll-container {
+    pointer-events: none;
+}
+
+.timeline-overview > .scroll-container > .scroll-width-sizer {
+    position: absolute;
+    top: 0;
+    inset-inline-start: 0;
+    height: 1px;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    .timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:nth-child(even) {
+        background: var(--background-color-alternate);
+    }
+}

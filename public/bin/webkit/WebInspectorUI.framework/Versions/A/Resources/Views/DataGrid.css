@@ -1,0 +1,396 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.data-grid {
+    position: relative;
+    outline: none;
+
+    --data-grid-header-horizontal-padding: 6px;
+    --data-grid-header-height: 22px;
+    --data-grid-sorting-indicator-height: 8px;
+}
+
+.data-grid .highlight {
+    background-color: hsl(40, 100%, 85%);
+}
+
+.data-grid tr.selected .highlight {
+    background-color: transparent;
+}
+
+.data-grid table {
+    table-layout: fixed;
+    border-spacing: 0;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.data-grid .data-container {
+    position: absolute;
+    top: 23px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.data-grid.inline .data-container {
+    position: static;
+    overflow-y: auto;
+}
+
+.data-grid.inline {
+    border: 1px solid var(--border-color);
+}
+
+.data-grid > .header-wrapper {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.data-grid.no-header > .header-wrapper {
+    display: none;
+}
+
+.data-grid.no-header .data-container {
+    top: 0;
+}
+
+.data-grid th {
+    height: var(--data-grid-header-height);
+    padding: 0;
+    text-align: start;
+    vertical-align: middle;
+    font-weight: normal;
+    white-space: nowrap;
+    background-color: var(--background-color);
+    overflow: hidden;
+}
+
+.data-grid th > .header-cell-content {
+    margin: 3px 0;
+    padding: 0 var(--data-grid-header-horizontal-padding);
+}
+
+.data-grid th:not(:last-child) > .header-cell-content {
+    border-inline-end: 1px solid var(--border-color);
+}
+
+.data-grid th.sortable:active {
+    background-color: var(--background-color-pressed);
+}
+
+.data-grid th:is(.sort-ascending, .sort-descending) {
+    font-weight: var(--sorted-header-font-weight);
+}
+
+.data-grid tr.filler {
+    display: table-row !important;
+    height: auto !important;
+}
+
+.data-grid tr.filler td {
+    height: auto !important;
+    padding: 0 !important;
+}
+
+.data-grid table.data {
+    position: relative;
+    left: 0;
+    right: 0;
+    height: 100%;
+    border-top: 0 none transparent;
+    table-layout: fixed;
+}
+
+.data-grid:not(.variable-height-rows) table.data {
+    background-image: linear-gradient(to bottom, var(--odd-zebra-stripe-row-background-color), var(--odd-zebra-stripe-row-background-color) 50%, var(--even-zebra-stripe-row-background-color) 50%, var(--even-zebra-stripe-row-background-color));
+    background-size: 100% 40px;
+}
+
+.data-grid:not(.variable-height-rows) > .data-container > table.data > tbody > tr > td > .cell-content {
+    height: 16px;
+}
+
+.data-grid:not(.variable-height-rows) table.data.even-first-zebra-stripe {
+    background-image: linear-gradient(to bottom, var(--even-zebra-stripe-row-background-color), var(--even-zebra-stripe-row-background-color) 50%, var(--odd-zebra-stripe-row-background-color) 50%, var(--odd-zebra-stripe-row-background-color));
+}
+
+.data-grid.inline table.data {
+    position: static;
+}
+
+.data-grid table.data tr {
+    display: none;
+}
+
+.data-grid table.data tr.revealed {
+    display: table-row;
+}
+
+.data-grid.variable-height-rows table.data tr:nth-child(odd) {
+    background-color: var(--odd-zebra-stripe-row-background-color);
+}
+
+.data-grid.variable-height-rows table.data tr:nth-child(even) {
+    background-color: var(--even-zebra-stripe-row-background-color);
+}
+
+.data-grid.variable-height-rows.even-first-zebra-stripe table.data tr:nth-child(odd) {
+    background-color: var(--even-zebra-stripe-row-background-color);
+}
+
+.data-grid.variable-height-rows.even-first-zebra-stripe table.data tr:nth-child(even) {
+    background-color: var(--odd-zebra-stripe-row-background-color);
+}
+
+.data-grid.variable-height-rows table.data tr.filler {
+ /* FIXME: This should show an alternating stripe, but it needs to know if the last row is even or odd. */
+    background-color: var(--even-zebra-stripe-row-background-color);
+}
+
+.data-grid td {
+    vertical-align: top;
+    height: 16px;
+    line-height: 16px;
+    padding: 2px 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    font-family: -webkit-system-font, sans-serif;
+    font-variant-numeric: tabular-nums;
+}
+
+.data-grid td.spanning {
+    text-align: center;
+    color: hsl(0, 0%, 30%);
+    background-color: hsl(0, 0%, 95%);
+    pointer-events: none;
+}
+
+.data-grid:focus tr.selected td:not(:last-child) {
+    --border-end-color: hsla(0, 0%, var(--foreground-lightness), 0.05);
+}
+
+.data-grid:focus tr.selected td:not(:last-child) {
+    border-inline-end-color: var(--border-end-color);
+}
+
+.data-grid :is(th, td) > div {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/* FIXME: Remove this once <https://webkit.org/b/169972> is fixed. */
+.data-grid td.editing > div {
+    text-overflow: clip;
+}
+
+.data-grid .centered div {
+    text-align: center;
+}
+
+.data-grid .right div {
+    text-align: end;
+}
+
+.data-grid th.sortable div {
+    position: relative;
+}
+
+.data-grid th:is(.sort-ascending, .sort-descending) > .header-cell-content:first-child {
+    padding-inline-end: calc(12px + var(--data-grid-header-horizontal-padding)); /* Add 12px for the sorting chevron. */
+}
+
+.data-grid th:is(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after {
+    position: absolute;
+    top: 1px;
+    bottom: 0;
+    inset-inline-end: var(--data-grid-header-horizontal-padding);
+    width: 9px;
+    height: var(--data-grid-sorting-indicator-height);
+    margin-bottom: auto;
+    margin-top: auto;
+    content: "";
+    background-size: 9px 8px;
+    background-repeat: no-repeat;
+}
+
+.data-grid th.sort-ascending > .header-cell-content:first-child::after {
+    background-image: url(../Images/SortIndicatorArrows.svg#up-arrow-normal);
+}
+
+.data-grid th.sort-descending > .header-cell-content:first-child::after {
+    background-image: url(../Images/SortIndicatorArrows.svg#down-arrow-normal);
+}
+
+.data-grid button {
+    line-height: 19px;
+}
+
+.data-grid tr.parent td.disclosure::before {
+    width: 13px;
+    height: 100%;
+    content: "";
+    background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
+    background-position-y: center;
+    background-size: 13px 13px;
+    background-repeat: no-repeat;
+}
+
+body[dir=rtl] .data-grid tr.parent td.disclosure::before {
+    transform: scaleX(-1);
+}
+
+body[dir=ltr] .data-grid tr.parent td.disclosure::before {
+    float: left;
+}
+
+body[dir=rtl] .data-grid tr.parent td.disclosure::before {
+    float: right;
+}
+
+.data-grid tr.parent.expanded td.disclosure::before {
+    background-image: url(../Images/DisclosureTriangles.svg#open-normal);
+}
+
+.data-grid:focus tr.parent.selected td.disclosure::before {
+    background-image: url(../Images/DisclosureTriangles.svg#closed-selected);
+}
+
+.data-grid:focus tr.parent.expanded.selected td.disclosure::before {
+    background-image: url(../Images/DisclosureTriangles.svg#open-selected);
+}
+
+.data-grid tr.selected {
+    background-color: var(--selected-background-color-unfocused) !important;
+    color: inherit !important;
+}
+
+.data-grid:focus tr.selected {
+    background-color: var(--selected-background-color) !important;
+    color: var(--selected-foreground-color) !important;
+}
+
+.data-grid tr:not(.parent) td.disclosure {
+    text-indent: 13px;
+}
+
+.data-grid td .subtitle {
+    color: hsla(0, 0%, 0%, 0.7);
+}
+
+.data-grid td .subtitle::before {
+    content: "\00A0\2014\00A0"; /* &nbsp;&mdash;&nbsp; */;
+}
+
+.data-grid:focus tr.selected td .subtitle {
+    color: hsla(0, 0%, 100%, 0.9);
+}
+
+.data-grid td.error {
+    color: var(--error-text-color);
+}
+
+.data-grid tr.selected td.error {
+    color: inherit;
+}
+
+.data-grid td .icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-inline-end: 2px;
+    vertical-align: top;
+}
+
+.data-grid td .go-to-arrow {
+    display: none;
+    margin-inline-start: 2px;
+}
+
+body[dir=ltr] .data-grid td .go-to-arrow {
+    float: right;
+}
+
+body[dir=rtl] .data-grid td .go-to-arrow {
+    float: left;
+}
+
+.data-grid tr:is(.selected, :hover) .go-to-arrow {
+    display: block;
+}
+
+.data-grid .resizer {
+    z-index: var(--z-index-resizer);
+
+    --data-grid-resizer-translateX: -2.5px;
+}
+
+body[dir=ltr] .data-grid .resizer {
+    transform: translateX(var(--data-grid-resizer-translateX));
+}
+
+body[dir=rtl] .data-grid .resizer {
+    transform: translateX(calc(-1 * var(--data-grid-resizer-translateX)));
+}
+
+.data-grid tr.editable .cell-content > input {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    outline: none;
+    text-overflow: ellipsis;
+}
+
+body:not(.window-inactive, .window-docked-inactive) .data-grid:focus tr.editable.selected .cell-content > input {
+    color: var(--selected-foreground-color);
+}
+
+@media (prefers-color-scheme: dark) {
+    .data-grid td .subtitle {
+        color: var(--selected-secondary-text-color);
+    }
+
+    .data-grid:focus tr.selected td .subtitle {
+        color: hsla(0, 0%, var(--foreground-lightness), 0.9);
+    }
+
+    .data-grid tr.editable .cell-content > input {
+        color: inherit;
+    }
+
+    .data-grid td.spanning {
+        color: var(--text-color-secondary);
+        background-color: unset;
+    }
+
+    .data-grid th:is(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after {
+        filter: invert();
+    }
+}

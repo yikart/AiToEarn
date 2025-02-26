@@ -1,0 +1,114 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.go-to-line-dialog {
+    display: flex;
+    flex-direction: column;
+
+    position: absolute;
+    left: 50%;
+    top: 21px;
+    width: calc(100% - 40px);
+    max-width: 452px;
+    height: 46px;
+
+    transform: translate(-50%, 0);
+
+    border-radius: 5px;
+    background-color: hsla(0, 0%, 95%, 0.8);
+    border: 1px hsla(0, 0%, 0%, 0.25) solid;
+    box-shadow: 1px 5px 20px 3px hsla(0, 0%, 0%, 0.33);
+
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.go-to-line-dialog > div {
+    margin: 8px 3px 8px 32px;
+}
+
+.go-to-line-dialog > div::before {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    width: 24px;
+    opacity: 0.5;
+    content: url(../Images/Search.svg);
+}
+
+.go-to-line-dialog > div > input {
+    display: block;
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    font-size: 20px;
+    color: hsl(0, 0%, 4%);
+    padding: 0 30px 1px 7px;
+    outline: none;
+    appearance: none;
+}
+
+.go-to-line-dialog > div > input::placeholder {
+    color: hsl(0, 0%, 0%, 0.25);
+}
+
+.go-to-line-dialog > div > img {
+    position: absolute;
+    top: 15px;
+    right: 10px;
+    padding: 2px;
+    border-radius: 9px;
+    width: 15px;
+    height: 15px;
+    background-color: hsl(0, 0%, 60%);
+    display: none;
+    content: url(../Images/CloseWhite.svg);
+}
+
+.go-to-line-dialog > div > img:active {
+    background-color: hsl(0, 0%, 54%);
+}
+
+.go-to-line-dialog.non-empty > div > img {
+    display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+    .go-to-line-dialog {
+        background-color: var(--overlay-background);
+        border-color: hsla(0, 0%, var(--foreground-lightness), 0.2);
+    }
+
+    .go-to-line-dialog > div > input {
+        color: var(--text-color-active);
+    }
+
+    .go-to-line-dialog > div > input::placeholder {
+        color: var(--text-color-secondary);
+    }
+
+    .go-to-line-dialog > div::before {
+        filter: invert();
+    }
+}

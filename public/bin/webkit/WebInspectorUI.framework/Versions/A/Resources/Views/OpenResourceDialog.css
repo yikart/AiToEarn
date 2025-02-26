@@ -1,0 +1,191 @@
+/*
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.open-resource-dialog {
+    display: flex;
+    flex-direction: column;
+
+    position: absolute;
+    left: 50%;
+    top: 50px;
+    width: calc(100% - 40px);
+    max-width: 452px;
+    max-height: calc(100% - 100px);
+    overflow: hidden;
+
+    transform: translate(-50%, 0);
+
+    border-radius: 5px;
+    background-color: hsla(0, 0%, 95%, 0.8);
+    border: 1px hsla(0, 0%, 0%, 0.25) solid;
+    box-shadow: 1px 5px 20px 3px hsla(0, 0%, 0%, 0.33);
+
+    -webkit-backdrop-filter: blur(10px);
+
+    z-index: var(--z-index-popover);
+}
+
+.open-resource-dialog > .field {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    margin-inline: 32px 3px;
+}
+
+.open-resource-dialog > .field::before {
+    position: absolute;
+    top: 10px;
+    inset-inline-start: 10px;
+    width: 24px;
+    opacity: 0.5;
+    content: url(../Images/Search.svg);
+}
+
+.open-resource-dialog > .field > input {
+    display: block;
+    width: 100%;
+    padding-top: 0;
+    padding-bottom: 1px;
+    padding-inline: 7px 30px;
+    font-size: 20px;
+    color: hsl(0, 0%, 4%);
+    background-color: transparent;
+    border: none;
+    outline: none;
+    appearance: none;
+}
+
+.open-resource-dialog > .field > input::placeholder {
+    color: hsl(0, 0%, 0%, 0.25);
+}
+
+.open-resource-dialog > .field > img {
+    position: absolute;
+    top: 15px;
+    inset-inline-end: 10px;
+    padding: 2px;
+    border-radius: 9px;
+    width: 15px;
+    height: 15px;
+    background-color: hsl(0, 0%, 60%);
+    display: none;
+    content: url(../Images/CloseWhite.svg);
+}
+
+.open-resource-dialog > .field > img:active {
+    background-color: hsl(0, 0%, 54%);
+}
+
+.open-resource-dialog.non-empty > .field > img {
+    display: block;
+}
+
+.open-resource-dialog > .tree-outline {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.open-resource-dialog.has-results > .tree-outline {
+    border-top: solid 1px var(--border-color);
+}
+
+.open-resource-dialog > .tree-outline .item {
+    flex: none;
+    padding-inline-start: 10px;
+    border: none;
+}
+
+.open-resource-dialog > .tree-outline.large .item {
+    height: 44px;
+    line-height: 42px;
+}
+
+.open-resource-dialog > .tree-outline.large .item .icon {
+    width: 32px;
+    height: 32px;
+    margin-top: 6px;
+}
+
+.open-resource-dialog .tree-outline.large .item .titles[data-path] {
+    top: 6px;
+}
+
+.open-resource-dialog .tree-outline.large .item .titles[data-path]::after {
+    display: block;
+    font-size: 10px;
+    content: attr(data-path);
+}
+
+.open-resource-dialog .tree-outline.large .item .titles .title {
+    font-size: 15px;
+}
+
+.open-resource-dialog .tree-outline.large .item .titles .subtitle {
+    font-size: 11px;
+    vertical-align: 1px;
+}
+
+.open-resource-dialog > .tree-outline .item.selected {
+    color: white;
+    background-color: hsl(209, 100%, 49%);
+}
+
+.open-resource-dialog > .tree-outline .item.selected .highlighted {
+    background-color: var(--selected-background-color-highlight);
+
+    border-bottom: none;
+    text-decoration: underline;
+}
+
+.open-resource-dialog > .tree-outline .item.selected .subtitle {
+    color: hsla(0, 0%, 100%, 0.9);
+}
+
+@media (prefers-color-scheme: dark) {
+    .open-resource-dialog {
+        background-color: var(--overlay-background);
+        border-color: hsla(0, 0%, var(--foreground-lightness), 0.2);
+    }
+
+    .open-resource-dialog > .field > input {
+        color: var(--text-color-active);
+    }
+
+    .open-resource-dialog > .field > input::placeholder {
+        color: var(--text-color-secondary);
+    }
+
+    .open-resource-dialog > .tree-outline .item.selected {
+        background-color: var(--selected-background-color);
+        color: white;
+    }
+
+    .open-resource-dialog > .field::before {
+        filter: invert();
+    }
+}

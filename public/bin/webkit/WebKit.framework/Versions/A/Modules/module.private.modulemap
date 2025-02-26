@@ -1,0 +1,2276 @@
+framework module WebKit_Private [system] {
+  umbrella header "WebKitPrivate.h"
+  export *
+
+  module * { export * }
+
+  explicit module DOMDocumentFragmentPrivate {
+    header "DOMDocumentFragmentPrivate.h"
+    export *
+  }
+
+  explicit module DOMDocumentPrivate {
+    header "DOMDocumentPrivate.h"
+    export *
+  }
+
+  explicit module DOMHTMLCanvasElement {
+    header "DOMHTMLCanvasElement.h"
+    export *
+  }
+
+  explicit module DOMHTMLElementPrivate {
+    header "DOMHTMLElementPrivate.h"
+    export *
+  }
+
+  explicit module DOMHTMLInputElementPrivate {
+    header "DOMHTMLInputElementPrivate.h"
+    export *
+  }
+
+  explicit module DOMHTMLMediaElement {
+    header "DOMHTMLMediaElement.h"
+    export *
+  }
+
+  explicit module DOMHTMLVideoElement {
+    header "DOMHTMLVideoElement.h"
+    export *
+  }
+
+  explicit module DOMMediaError {
+    header "DOMMediaError.h"
+    export *
+  }
+
+  explicit module DOMNodePrivate {
+    header "DOMNodePrivate.h"
+    export *
+  }
+
+  explicit module DOMPrivate {
+    header "DOMPrivate.h"
+    export *
+  }
+
+  explicit module DOMTextEvent {
+    header "DOMTextEvent.h"
+    export *
+  }
+
+  explicit module DOMTimeRanges {
+    header "DOMTimeRanges.h"
+    export *
+  }
+
+  explicit module EnvironmentUtilities {
+    header "EnvironmentUtilities.h"
+    export *
+  }
+
+  explicit module FullscreenTouchSecheuristic {
+    header "FullscreenTouchSecheuristic.h"
+    export *
+  }
+
+  explicit module FullscreenTouchSecheuristicParameters {
+    header "FullscreenTouchSecheuristicParameters.h"
+    export *
+  }
+
+  explicit module NSAttributedStringPrivate {
+    header "NSAttributedStringPrivate.h"
+    export *
+  }
+
+  explicit module PreferenceObserver {
+    header "PreferenceObserver.h"
+    export *
+  }
+
+  explicit module SOAuthorizationNSURLExtras {
+    header "SOAuthorizationNSURLExtras.h"
+    export *
+  }
+
+  explicit module WKActionMenuItemTypes {
+    header "WKActionMenuItemTypes.h"
+    export *
+  }
+
+  explicit module WKActionMenuTypes {
+    header "WKActionMenuTypes.h"
+    export *
+  }
+
+  explicit module WKApplicationCacheManager {
+    header "WKApplicationCacheManager.h"
+    export *
+  }
+
+  explicit module WKArray {
+    header "WKArray.h"
+    export *
+  }
+
+  explicit module WKAuthenticationChallenge {
+    header "WKAuthenticationChallenge.h"
+    export *
+  }
+
+  explicit module WKAuthenticationDecisionListener {
+    header "WKAuthenticationDecisionListener.h"
+    export *
+  }
+
+  explicit module WKBackForwardListItemPrivate {
+    header "WKBackForwardListItemPrivate.h"
+    export *
+  }
+
+  explicit module WKBackForwardListItemRef {
+    header "WKBackForwardListItemRef.h"
+    export *
+  }
+
+  explicit module WKBackForwardListPrivate {
+    header "WKBackForwardListPrivate.h"
+    export *
+  }
+
+  explicit module WKBackForwardListRef {
+    header "WKBackForwardListRef.h"
+    export *
+  }
+
+  explicit module WKBrowsingContextController {
+    header "WKBrowsingContextController.h"
+    export *
+  }
+
+  explicit module WKBrowsingContextControllerPrivate {
+    header "WKBrowsingContextControllerPrivate.h"
+    export *
+  }
+
+  explicit module WKBrowsingContextGroup {
+    header "WKBrowsingContextGroup.h"
+    export *
+  }
+
+  explicit module WKBrowsingContextGroupPrivate {
+    header "WKBrowsingContextGroupPrivate.h"
+    export *
+  }
+
+  explicit module WKBrowsingContextHandle {
+    header "WKBrowsingContextHandle.h"
+    export *
+  }
+
+  explicit module WKBrowsingContextHandlePrivate {
+    header "WKBrowsingContextHandlePrivate.h"
+    export *
+  }
+
+  explicit module WKBrowsingContextHistoryDelegate {
+    header "WKBrowsingContextHistoryDelegate.h"
+    export *
+  }
+
+  explicit module WKBrowsingContextLoadDelegate {
+    header "WKBrowsingContextLoadDelegate.h"
+    export *
+  }
+
+  explicit module WKBrowsingContextLoadDelegatePrivate {
+    header "WKBrowsingContextLoadDelegatePrivate.h"
+    export *
+  }
+
+  explicit module WKBrowsingContextPolicyDelegate {
+    header "WKBrowsingContextPolicyDelegate.h"
+    export *
+  }
+
+  explicit module WKBundle {
+    header "WKBundle.h"
+    export *
+  }
+
+  explicit module WKBundleBackForwardList {
+    header "WKBundleBackForwardList.h"
+    export *
+  }
+
+  explicit module WKBundleBackForwardListItem {
+    header "WKBundleBackForwardListItem.h"
+    export *
+  }
+
+  explicit module WKBundleDOMWindowExtension {
+    header "WKBundleDOMWindowExtension.h"
+    export *
+  }
+
+  explicit module WKBundleFileHandleRef {
+    header "WKBundleFileHandleRef.h"
+    export *
+  }
+
+  explicit module WKBundleFrame {
+    header "WKBundleFrame.h"
+    export *
+  }
+
+  explicit module WKBundleFramePrivate {
+    header "WKBundleFramePrivate.h"
+    export *
+  }
+
+  explicit module WKBundleHitTestResult {
+    header "WKBundleHitTestResult.h"
+    export *
+  }
+
+  explicit module WKBundleInitialize {
+    header "WKBundleInitialize.h"
+    export *
+  }
+
+  explicit module WKBundleMac {
+    header "WKBundleMac.h"
+    export *
+  }
+
+  explicit module WKBundleNavigationAction {
+    header "WKBundleNavigationAction.h"
+    export *
+  }
+
+  explicit module WKBundleNavigationActionPrivate {
+    header "WKBundleNavigationActionPrivate.h"
+    export *
+  }
+
+  explicit module WKBundleNodeHandle {
+    header "WKBundleNodeHandle.h"
+    export *
+  }
+
+  explicit module WKBundleNodeHandlePrivate {
+    header "WKBundleNodeHandlePrivate.h"
+    export *
+  }
+
+  explicit module WKBundlePage {
+    header "WKBundlePage.h"
+    export *
+  }
+
+  explicit module WKBundlePageBanner {
+    header "WKBundlePageBanner.h"
+    export *
+  }
+
+  explicit module WKBundlePageBannerMac {
+    header "WKBundlePageBannerMac.h"
+    export *
+  }
+
+  explicit module WKBundlePageContextMenuClient {
+    header "WKBundlePageContextMenuClient.h"
+    export *
+  }
+
+  explicit module WKBundlePageEditorClient {
+    header "WKBundlePageEditorClient.h"
+    export *
+  }
+
+  explicit module WKBundlePageFormClient {
+    header "WKBundlePageFormClient.h"
+    export *
+  }
+
+  explicit module WKBundlePageFullScreenClient {
+    header "WKBundlePageFullScreenClient.h"
+    export *
+  }
+
+  explicit module WKBundlePageLoaderClient {
+    header "WKBundlePageLoaderClient.h"
+    export *
+  }
+
+  explicit module WKBundlePageMac {
+    header "WKBundlePageMac.h"
+    export *
+  }
+
+  explicit module WKBundlePageOverlay {
+    header "WKBundlePageOverlay.h"
+    export *
+  }
+
+  explicit module WKBundlePagePolicyClient {
+    header "WKBundlePagePolicyClient.h"
+    export *
+  }
+
+  explicit module WKBundlePagePrivate {
+    header "WKBundlePagePrivate.h"
+    export *
+  }
+
+  explicit module WKBundlePageResourceLoadClient {
+    header "WKBundlePageResourceLoadClient.h"
+    export *
+  }
+
+  explicit module WKBundlePageUIClient {
+    header "WKBundlePageUIClient.h"
+    export *
+  }
+
+  explicit module WKBundlePrivate {
+    header "WKBundlePrivate.h"
+    export *
+  }
+
+  explicit module WKBundleRangeHandle {
+    header "WKBundleRangeHandle.h"
+    export *
+  }
+
+  explicit module WKBundleRangeHandlePrivate {
+    header "WKBundleRangeHandlePrivate.h"
+    export *
+  }
+
+  explicit module WKBundleScriptWorld {
+    header "WKBundleScriptWorld.h"
+    export *
+  }
+
+  explicit module WKCertificateInfo {
+    header "WKCertificateInfo.h"
+    export *
+  }
+
+  explicit module WKCertificateInfoMac {
+    header "WKCertificateInfoMac.h"
+    export *
+  }
+
+  explicit module WKContentRuleListPrivate {
+    header "WKContentRuleListPrivate.h"
+    export *
+  }
+
+  explicit module WKContentRuleListStorePrivate {
+    header "WKContentRuleListStorePrivate.h"
+    export *
+  }
+
+  explicit module WKContentWorldPrivate {
+    header "WKContentWorldPrivate.h"
+    export *
+  }
+
+  explicit module WKContext {
+    header "WKContext.h"
+    export *
+  }
+
+  explicit module WKContextConfigurationRef {
+    header "WKContextConfigurationRef.h"
+    export *
+  }
+
+  explicit module WKContextDownloadClient {
+    header "WKContextDownloadClient.h"
+    export *
+  }
+
+  explicit module WKContextHistoryClient {
+    header "WKContextHistoryClient.h"
+    export *
+  }
+
+  explicit module WKContextInjectedBundleClient {
+    header "WKContextInjectedBundleClient.h"
+    export *
+  }
+
+  explicit module WKContextMenuElementInfoPrivate {
+    header "WKContextMenuElementInfoPrivate.h"
+    export *
+  }
+
+  explicit module WKContextMenuItem {
+    header "WKContextMenuItem.h"
+    export *
+  }
+
+  explicit module WKContextMenuItemTypes {
+    header "WKContextMenuItemTypes.h"
+    export *
+  }
+
+  explicit module WKContextMenuListener {
+    header "WKContextMenuListener.h"
+    export *
+  }
+
+  explicit module WKContextPrivate {
+    header "WKContextPrivate.h"
+    export *
+  }
+
+  explicit module WKContextPrivateMac {
+    header "WKContextPrivateMac.h"
+    export *
+  }
+
+  explicit module WKCookieManager {
+    header "WKCookieManager.h"
+    export *
+  }
+
+  explicit module WKCrashReporter {
+    header "WKCrashReporter.h"
+    export *
+  }
+
+  explicit module WKCredential {
+    header "WKCredential.h"
+    export *
+  }
+
+  explicit module WKCredentialTypes {
+    header "WKCredentialTypes.h"
+    export *
+  }
+
+  explicit module WKDOMDocument {
+    header "WKDOMDocument.h"
+    export *
+  }
+
+  explicit module WKDOMElement {
+    header "WKDOMElement.h"
+    export *
+  }
+
+  explicit module WKDOMNode {
+    header "WKDOMNode.h"
+    export *
+  }
+
+  explicit module WKDOMNodePrivate {
+    header "WKDOMNodePrivate.h"
+    export *
+  }
+
+  explicit module WKDOMRange {
+    header "WKDOMRange.h"
+    export *
+  }
+
+  explicit module WKDOMRangePrivate {
+    header "WKDOMRangePrivate.h"
+    export *
+  }
+
+  explicit module WKDOMText {
+    header "WKDOMText.h"
+    export *
+  }
+
+  explicit module WKDOMTextIterator {
+    header "WKDOMTextIterator.h"
+    export *
+  }
+
+  explicit module WKData {
+    header "WKData.h"
+    export *
+  }
+
+  explicit module WKDeprecated {
+    header "WKDeprecated.h"
+    export *
+  }
+
+  explicit module WKDiagnosticLoggingResultType {
+    header "WKDiagnosticLoggingResultType.h"
+    export *
+  }
+
+  explicit module WKDictionary {
+    header "WKDictionary.h"
+    export *
+  }
+
+  explicit module WKDownloadClient {
+    header "WKDownloadClient.h"
+    export *
+  }
+
+  explicit module WKDownloadRef {
+    header "WKDownloadRef.h"
+    export *
+  }
+
+  explicit module WKErrorCF {
+    header "WKErrorCF.h"
+    export *
+  }
+
+  explicit module WKErrorPrivate {
+    header "WKErrorPrivate.h"
+    export *
+  }
+
+  explicit module WKErrorRef {
+    header "WKErrorRef.h"
+    export *
+  }
+
+  explicit module WKEvent {
+    header "WKEvent.h"
+    export *
+  }
+
+  explicit module WKFindOptions {
+    header "WKFindOptions.h"
+    export *
+  }
+
+  explicit module WKFormSubmissionListener {
+    header "WKFormSubmissionListener.h"
+    export *
+  }
+
+  explicit module WKFrame {
+    header "WKFrame.h"
+    export *
+  }
+
+  explicit module WKFrameHandleRef {
+    header "WKFrameHandleRef.h"
+    export *
+  }
+
+  explicit module WKFrameInfoPrivate {
+    header "WKFrameInfoPrivate.h"
+    export *
+  }
+
+  explicit module WKFrameInfoRef {
+    header "WKFrameInfoRef.h"
+    export *
+  }
+
+  explicit module WKFrameMac {
+    header "WKFrameMac.h"
+    export *
+  }
+
+  explicit module WKFramePolicyListener {
+    header "WKFramePolicyListener.h"
+    export *
+  }
+
+  explicit module WKGeolocationManager {
+    header "WKGeolocationManager.h"
+    export *
+  }
+
+  explicit module WKGeolocationPermissionRequest {
+    header "WKGeolocationPermissionRequest.h"
+    export *
+  }
+
+  explicit module WKGeolocationPosition {
+    header "WKGeolocationPosition.h"
+    export *
+  }
+
+  explicit module WKGeometry {
+    header "WKGeometry.h"
+    export *
+  }
+
+  explicit module WKHTTPCookieStorePrivate {
+    header "WKHTTPCookieStorePrivate.h"
+    export *
+  }
+
+  explicit module WKHTTPCookieStoreRef {
+    header "WKHTTPCookieStoreRef.h"
+    export *
+  }
+
+  explicit module WKHitTestResult {
+    header "WKHitTestResult.h"
+    export *
+  }
+
+  explicit module WKIconDatabase {
+    header "WKIconDatabase.h"
+    export *
+  }
+
+  explicit module WKIconDatabaseCG {
+    header "WKIconDatabaseCG.h"
+    export *
+  }
+
+  explicit module WKImage {
+    header "WKImage.h"
+    export *
+  }
+
+  explicit module WKImageCG {
+    header "WKImageCG.h"
+    export *
+  }
+
+  explicit module WKImmediateActionTypes {
+    header "WKImmediateActionTypes.h"
+    export *
+  }
+
+  explicit module WKInspector {
+    header "WKInspector.h"
+    export *
+  }
+
+  explicit module WKInspectorPrivateMac {
+    header "WKInspectorPrivateMac.h"
+    export *
+  }
+
+  explicit module WKKeyValueStorageManager {
+    header "WKKeyValueStorageManager.h"
+    export *
+  }
+
+  explicit module WKLayoutMode {
+    header "WKLayoutMode.h"
+    export *
+  }
+
+  explicit module WKMain {
+    header "WKMain.h"
+    export *
+  }
+
+  explicit module WKMediaKeySystemPermissionCallback {
+    header "WKMediaKeySystemPermissionCallback.h"
+    export *
+  }
+
+  explicit module WKMenuItemIdentifiersPrivate {
+    header "WKMenuItemIdentifiersPrivate.h"
+    export *
+  }
+
+  explicit module WKMessageListener {
+    header "WKMessageListener.h"
+    export *
+  }
+
+  explicit module WKMockMediaDevice {
+    header "WKMockMediaDevice.h"
+    export *
+  }
+
+  explicit module WKMutableArray {
+    header "WKMutableArray.h"
+    export *
+  }
+
+  explicit module WKMutableDictionary {
+    header "WKMutableDictionary.h"
+    export *
+  }
+
+  explicit module WKNativeEvent {
+    header "WKNativeEvent.h"
+    export *
+  }
+
+  explicit module WKNavigationActionPrivate {
+    header "WKNavigationActionPrivate.h"
+    export *
+  }
+
+  explicit module WKNavigationActionRef {
+    header "WKNavigationActionRef.h"
+    export *
+  }
+
+  explicit module WKNavigationData {
+    header "WKNavigationData.h"
+    export *
+  }
+
+  explicit module WKNavigationDataRef {
+    header "WKNavigationDataRef.h"
+    export *
+  }
+
+  explicit module WKNavigationDelegatePrivate {
+    header "WKNavigationDelegatePrivate.h"
+    export *
+  }
+
+  explicit module WKNavigationRef {
+    header "WKNavigationRef.h"
+    export *
+  }
+
+  explicit module WKNavigationResponsePrivate {
+    header "WKNavigationResponsePrivate.h"
+    export *
+  }
+
+  explicit module WKNavigationResponseRef {
+    header "WKNavigationResponseRef.h"
+    export *
+  }
+
+  explicit module WKNotification {
+    header "WKNotification.h"
+    export *
+  }
+
+  explicit module WKNotificationManager {
+    header "WKNotificationManager.h"
+    export *
+  }
+
+  explicit module WKNotificationPermissionRequest {
+    header "WKNotificationPermissionRequest.h"
+    export *
+  }
+
+  explicit module WKNotificationPrivateMac {
+    header "WKNotificationPrivateMac.h"
+    export *
+  }
+
+  explicit module WKNotificationProvider {
+    header "WKNotificationProvider.h"
+    export *
+  }
+
+  explicit module WKNumber {
+    header "WKNumber.h"
+    export *
+  }
+
+  explicit module WKObjCTypeWrapperRef {
+    header "WKObjCTypeWrapperRef.h"
+    export *
+  }
+
+  explicit module WKOpenPanelParametersPrivate {
+    header "WKOpenPanelParametersPrivate.h"
+    export *
+  }
+
+  explicit module WKOpenPanelParametersRef {
+    header "WKOpenPanelParametersRef.h"
+    export *
+  }
+
+  explicit module WKOpenPanelResultListener {
+    header "WKOpenPanelResultListener.h"
+    export *
+  }
+
+  explicit module WKPage {
+    header "WKPage.h"
+    export *
+  }
+
+  explicit module WKPageConfigurationRef {
+    header "WKPageConfigurationRef.h"
+    export *
+  }
+
+  explicit module WKPageContextMenuClient {
+    header "WKPageContextMenuClient.h"
+    export *
+  }
+
+  explicit module WKPageDiagnosticLoggingClient {
+    header "WKPageDiagnosticLoggingClient.h"
+    export *
+  }
+
+  explicit module WKPageFindClient {
+    header "WKPageFindClient.h"
+    export *
+  }
+
+  explicit module WKPageFindMatchesClient {
+    header "WKPageFindMatchesClient.h"
+    export *
+  }
+
+  explicit module WKPageFormClient {
+    header "WKPageFormClient.h"
+    export *
+  }
+
+  explicit module WKPageGroup {
+    header "WKPageGroup.h"
+    export *
+  }
+
+  explicit module WKPageInjectedBundleClient {
+    header "WKPageInjectedBundleClient.h"
+    export *
+  }
+
+  explicit module WKPageLoadTypes {
+    header "WKPageLoadTypes.h"
+    export *
+  }
+
+  explicit module WKPageLoaderClient {
+    header "WKPageLoaderClient.h"
+    export *
+  }
+
+  explicit module WKPageNavigationClient {
+    header "WKPageNavigationClient.h"
+    export *
+  }
+
+  explicit module WKPagePolicyClient {
+    header "WKPagePolicyClient.h"
+    export *
+  }
+
+  explicit module WKPagePrivate {
+    header "WKPagePrivate.h"
+    export *
+  }
+
+  explicit module WKPagePrivateMac {
+    header "WKPagePrivateMac.h"
+    export *
+  }
+
+  explicit module WKPageRenderingProgressEvents {
+    header "WKPageRenderingProgressEvents.h"
+    export *
+  }
+
+  explicit module WKPageStateClient {
+    header "WKPageStateClient.h"
+    export *
+  }
+
+  explicit module WKPageUIClient {
+    header "WKPageUIClient.h"
+    export *
+  }
+
+  explicit module WKPageVisibilityTypes {
+    header "WKPageVisibilityTypes.h"
+    export *
+  }
+
+  explicit module WKPluginInformation {
+    header "WKPluginInformation.h"
+    export *
+  }
+
+  explicit module WKPluginLoadPolicy {
+    header "WKPluginLoadPolicy.h"
+    export *
+  }
+
+  explicit module WKPreferencesPrivate {
+    header "WKPreferencesPrivate.h"
+    export *
+  }
+
+  explicit module WKPreferencesRef {
+    header "WKPreferencesRef.h"
+    export *
+  }
+
+  explicit module WKPreferencesRefPrivate {
+    header "WKPreferencesRefPrivate.h"
+    export *
+  }
+
+  explicit module WKProcessGroup {
+    header "WKProcessGroup.h"
+    export *
+  }
+
+  explicit module WKProcessGroupPrivate {
+    header "WKProcessGroupPrivate.h"
+    export *
+  }
+
+  explicit module WKProcessTerminationReason {
+    header "WKProcessTerminationReason.h"
+    export *
+  }
+
+  explicit module WKProtectionSpace {
+    header "WKProtectionSpace.h"
+    export *
+  }
+
+  explicit module WKProtectionSpaceNS {
+    header "WKProtectionSpaceNS.h"
+    export *
+  }
+
+  explicit module WKProtectionSpaceTypes {
+    header "WKProtectionSpaceTypes.h"
+    export *
+  }
+
+  explicit module WKQueryPermissionResultCallback {
+    header "WKQueryPermissionResultCallback.h"
+    export *
+  }
+
+  explicit module WKRenderLayer {
+    header "WKRenderLayer.h"
+    export *
+  }
+
+  explicit module WKRenderObject {
+    header "WKRenderObject.h"
+    export *
+  }
+
+  explicit module WKResourceCacheManager {
+    header "WKResourceCacheManager.h"
+    export *
+  }
+
+  explicit module WKRetainPtr {
+    header "WKRetainPtr.h"
+    export *
+  }
+
+  explicit module WKSecurityOriginPrivate {
+    header "WKSecurityOriginPrivate.h"
+    export *
+  }
+
+  explicit module WKSecurityOriginRef {
+    header "WKSecurityOriginRef.h"
+    export *
+  }
+
+  explicit module WKSerializedScriptValue {
+    header "WKSerializedScriptValue.h"
+    export *
+  }
+
+  explicit module WKSessionStateRef {
+    header "WKSessionStateRef.h"
+    export *
+  }
+
+  explicit module WKSnapshotConfigurationPrivate {
+    header "WKSnapshotConfigurationPrivate.h"
+    export *
+  }
+
+  explicit module WKSpeechRecognitionPermissionCallback {
+    header "WKSpeechRecognitionPermissionCallback.h"
+    export *
+  }
+
+  explicit module WKString {
+    header "WKString.h"
+    export *
+  }
+
+  explicit module WKStringCF {
+    header "WKStringCF.h"
+    export *
+  }
+
+  explicit module WKStringPrivate {
+    header "WKStringPrivate.h"
+    export *
+  }
+
+  explicit module WKTestingSupport {
+    header "WKTestingSupport.h"
+    export *
+  }
+
+  explicit module WKTextChecker {
+    header "WKTextChecker.h"
+    export *
+  }
+
+  explicit module WKType {
+    header "WKType.h"
+    export *
+  }
+
+  explicit module WKURL {
+    header "WKURL.h"
+    export *
+  }
+
+  explicit module WKURLCF {
+    header "WKURLCF.h"
+    export *
+  }
+
+  explicit module WKURLRequest {
+    header "WKURLRequest.h"
+    export *
+  }
+
+  explicit module WKURLRequestNS {
+    header "WKURLRequestNS.h"
+    export *
+  }
+
+  explicit module WKURLResponse {
+    header "WKURLResponse.h"
+    export *
+  }
+
+  explicit module WKURLResponseNS {
+    header "WKURLResponseNS.h"
+    export *
+  }
+
+  explicit module WKURLSchemeTaskPrivate {
+    header "WKURLSchemeTaskPrivate.h"
+    export *
+  }
+
+  explicit module WKUserContentControllerPrivate {
+    header "WKUserContentControllerPrivate.h"
+    export *
+  }
+
+  explicit module WKUserContentControllerRef {
+    header "WKUserContentControllerRef.h"
+    export *
+  }
+
+  explicit module WKUserContentExtensionStoreRef {
+    header "WKUserContentExtensionStoreRef.h"
+    export *
+  }
+
+  explicit module WKUserContentInjectedFrames {
+    header "WKUserContentInjectedFrames.h"
+    export *
+  }
+
+  explicit module WKUserContentURLPattern {
+    header "WKUserContentURLPattern.h"
+    export *
+  }
+
+  explicit module WKUserMediaPermissionCheck {
+    header "WKUserMediaPermissionCheck.h"
+    export *
+  }
+
+  explicit module WKUserMediaPermissionRequest {
+    header "WKUserMediaPermissionRequest.h"
+    export *
+  }
+
+  explicit module WKUserScriptInjectionTime {
+    header "WKUserScriptInjectionTime.h"
+    export *
+  }
+
+  explicit module WKUserScriptPrivate {
+    header "WKUserScriptPrivate.h"
+    export *
+  }
+
+  explicit module WKUserScriptRef {
+    header "WKUserScriptRef.h"
+    export *
+  }
+
+  explicit module WKView {
+    header "WKView.h"
+    export *
+  }
+
+  explicit module WKViewPrivate {
+    header "WKViewPrivate.h"
+    export *
+  }
+
+  explicit module WKWebArchive {
+    header "WKWebArchive.h"
+    export *
+  }
+
+  explicit module WKWebArchiveRef {
+    header "WKWebArchiveRef.h"
+    export *
+  }
+
+  explicit module WKWebArchiveResource {
+    header "WKWebArchiveResource.h"
+    export *
+  }
+
+  explicit module WKWebProcess {
+    header "WKWebProcess.h"
+    export *
+  }
+
+  explicit module WKWebProcessPlugIn {
+    header "WKWebProcessPlugIn.h"
+    export *
+  }
+
+  explicit module WKWebProcessPlugInBrowserContextController {
+    header "WKWebProcessPlugInBrowserContextController.h"
+    export *
+  }
+
+  explicit module WKWebProcessPlugInBrowserContextControllerPrivate {
+    header "WKWebProcessPlugInBrowserContextControllerPrivate.h"
+    export *
+  }
+
+  explicit module WKWebProcessPlugInCSSStyleDeclarationHandle {
+    header "WKWebProcessPlugInCSSStyleDeclarationHandle.h"
+    export *
+  }
+
+  explicit module WKWebProcessPlugInEditingDelegate {
+    header "WKWebProcessPlugInEditingDelegate.h"
+    export *
+  }
+
+  explicit module WKWebProcessPlugInFormDelegatePrivate {
+    header "WKWebProcessPlugInFormDelegatePrivate.h"
+    export *
+  }
+
+  explicit module WKWebProcessPlugInFrame {
+    header "WKWebProcessPlugInFrame.h"
+    export *
+  }
+
+  explicit module WKWebProcessPlugInFramePrivate {
+    header "WKWebProcessPlugInFramePrivate.h"
+    export *
+  }
+
+  explicit module WKWebProcessPlugInHitTestResult {
+    header "WKWebProcessPlugInHitTestResult.h"
+    export *
+  }
+
+  explicit module WKWebProcessPlugInLoadDelegate {
+    header "WKWebProcessPlugInLoadDelegate.h"
+    export *
+  }
+
+  explicit module WKWebProcessPlugInNodeHandle {
+    header "WKWebProcessPlugInNodeHandle.h"
+    export *
+  }
+
+  explicit module WKWebProcessPlugInNodeHandlePrivate {
+    header "WKWebProcessPlugInNodeHandlePrivate.h"
+    export *
+  }
+
+  explicit module WKWebProcessPlugInPageGroup {
+    header "WKWebProcessPlugInPageGroup.h"
+    export *
+  }
+
+  explicit module WKWebProcessPlugInPrivate {
+    header "WKWebProcessPlugInPrivate.h"
+    export *
+  }
+
+  explicit module WKWebProcessPlugInRangeHandle {
+    header "WKWebProcessPlugInRangeHandle.h"
+    export *
+  }
+
+  explicit module WKWebProcessPlugInScriptWorld {
+    header "WKWebProcessPlugInScriptWorld.h"
+    export *
+  }
+
+  explicit module WKWebViewPrivateForTesting {
+    header "WKWebViewPrivateForTesting.h"
+    export *
+  }
+
+  explicit module WKWebViewPrivateForTestingIOS {
+    header "WKWebViewPrivateForTestingIOS.h"
+    export *
+  }
+
+  explicit module WKWebViewPrivateForTestingMac {
+    header "WKWebViewPrivateForTestingMac.h"
+    export *
+  }
+
+  explicit module WKWebpagePreferencesPrivate {
+    header "WKWebpagePreferencesPrivate.h"
+    export *
+  }
+
+  explicit module WKWebsiteDataRecordPrivate {
+    header "WKWebsiteDataRecordPrivate.h"
+    export *
+  }
+
+  explicit module WKWebsiteDataStoreConfigurationRef {
+    header "WKWebsiteDataStoreConfigurationRef.h"
+    export *
+  }
+
+  explicit module WKWebsiteDataStorePrivate {
+    header "WKWebsiteDataStorePrivate.h"
+    export *
+  }
+
+  explicit module WKWebsiteDataStoreRef {
+    header "WKWebsiteDataStoreRef.h"
+    export *
+  }
+
+  explicit module WKWebsiteDataStoreRefPrivateMac {
+    header "WKWebsiteDataStoreRefPrivateMac.h"
+    export *
+  }
+
+  explicit module WKWebsitePolicies {
+    header "WKWebsitePolicies.h"
+    export *
+  }
+
+  explicit module WKWindowFeaturesPrivate {
+    header "WKWindowFeaturesPrivate.h"
+    export *
+  }
+
+  explicit module WKWindowFeaturesRef {
+    header "WKWindowFeaturesRef.h"
+    export *
+  }
+
+  explicit module WebAllowDenyPolicyListener {
+    header "WebAllowDenyPolicyListener.h"
+    export *
+  }
+
+  explicit module WebAutocapitalizeTypes {
+    header "WebAutocapitalizeTypes.h"
+    export *
+  }
+
+  explicit module WebBackForwardListPrivate {
+    header "WebBackForwardListPrivate.h"
+    export *
+  }
+
+  explicit module WebCache {
+    header "WebCache.h"
+    export *
+  }
+
+  explicit module WebCoreStatistics {
+    header "WebCoreStatistics.h"
+    export *
+  }
+
+  explicit module WebCreateFragmentInternal {
+    header "WebCreateFragmentInternal.h"
+    export *
+  }
+
+  explicit module WebDOMOperationsPrivate {
+    header "WebDOMOperationsPrivate.h"
+    export *
+  }
+
+  explicit module WebDataSourcePrivate {
+    header "WebDataSourcePrivate.h"
+    export *
+  }
+
+  explicit module WebDatabaseManagerPrivate {
+    header "WebDatabaseManagerPrivate.h"
+    export *
+  }
+
+  explicit module WebDatabaseQuotaManager {
+    header "WebDatabaseQuotaManager.h"
+    export *
+  }
+
+  explicit module WebDefaultPolicyDelegate {
+    header "WebDefaultPolicyDelegate.h"
+    export *
+  }
+
+  explicit module WebDeviceOrientation {
+    header "WebDeviceOrientation.h"
+    export *
+  }
+
+  explicit module WebDeviceOrientationProvider {
+    header "WebDeviceOrientationProvider.h"
+    export *
+  }
+
+  explicit module WebDeviceOrientationProviderMock {
+    header "WebDeviceOrientationProviderMock.h"
+    export *
+  }
+
+  explicit module WebDocumentPrivate {
+    header "WebDocumentPrivate.h"
+    export *
+  }
+
+  explicit module WebDynamicScrollBarsView {
+    header "WebDynamicScrollBarsView.h"
+    export *
+  }
+
+  explicit module WebEditingDelegatePrivate {
+    header "WebEditingDelegatePrivate.h"
+    export *
+  }
+
+  explicit module WebFeature {
+    header "WebFeature.h"
+    export *
+  }
+
+  explicit module WebFormDelegate {
+    header "WebFormDelegate.h"
+    export *
+  }
+
+  explicit module WebFormDelegatePrivate {
+    header "WebFormDelegatePrivate.h"
+    export *
+  }
+
+  explicit module WebFrameLoadDelegatePrivate {
+    header "WebFrameLoadDelegatePrivate.h"
+    export *
+  }
+
+  explicit module WebFramePrivate {
+    header "WebFramePrivate.h"
+    export *
+  }
+
+  explicit module WebFrameViewPrivate {
+    header "WebFrameViewPrivate.h"
+    export *
+  }
+
+  explicit module WebGeolocationPosition {
+    header "WebGeolocationPosition.h"
+    export *
+  }
+
+  explicit module WebHTMLRepresentation {
+    header "WebHTMLRepresentation.h"
+    export *
+  }
+
+  explicit module WebHTMLRepresentationPrivate {
+    header "WebHTMLRepresentationPrivate.h"
+    export *
+  }
+
+  explicit module WebHTMLView {
+    header "WebHTMLView.h"
+    export *
+  }
+
+  explicit module WebHTMLViewPrivate {
+    header "WebHTMLViewPrivate.h"
+    export *
+  }
+
+  explicit module WebHistoryItemPrivate {
+    header "WebHistoryItemPrivate.h"
+    export *
+  }
+
+  explicit module WebHistoryPrivate {
+    header "WebHistoryPrivate.h"
+    export *
+  }
+
+  explicit module WebIconDatabase {
+    header "WebIconDatabase.h"
+    export *
+  }
+
+  explicit module WebInspector {
+    header "WebInspector.h"
+    export *
+  }
+
+  explicit module WebInspectorPrivate {
+    header "WebInspectorPrivate.h"
+    export *
+  }
+
+  explicit module WebJavaScriptTextInputPanel {
+    header "WebJavaScriptTextInputPanel.h"
+    export *
+  }
+
+  explicit module WebKit2_C {
+    header "WebKit2_C.h"
+    export *
+  }
+
+  explicit module WebKitErrorsPrivate {
+    header "WebKitErrorsPrivate.h"
+    export *
+  }
+
+  explicit module WebKitNSStringExtras {
+    header "WebKitNSStringExtras.h"
+    export *
+  }
+
+  explicit module WebKitStatistics {
+    header "WebKitStatistics.h"
+    export *
+  }
+
+  explicit module WebLocalizableStrings {
+    header "WebLocalizableStrings.h"
+    export *
+  }
+
+  explicit module WebNSEventExtras {
+    header "WebNSEventExtras.h"
+    export *
+  }
+
+  explicit module WebNSFileManagerExtras {
+    header "WebNSFileManagerExtras.h"
+    export *
+  }
+
+  explicit module WebNSPasteboardExtras {
+    header "WebNSPasteboardExtras.h"
+    export *
+  }
+
+  explicit module WebNSURLExtras {
+    header "WebNSURLExtras.h"
+    export *
+  }
+
+  explicit module WebNSUserDefaultsExtras {
+    header "WebNSUserDefaultsExtras.h"
+    export *
+  }
+
+  explicit module WebNSViewExtras {
+    header "WebNSViewExtras.h"
+    export *
+  }
+
+  explicit module WebNSWindowExtras {
+    header "WebNSWindowExtras.h"
+    export *
+  }
+
+  explicit module WebNavigationData {
+    header "WebNavigationData.h"
+    export *
+  }
+
+  explicit module WebNotification {
+    header "WebNotification.h"
+    export *
+  }
+
+  explicit module WebPanelAuthenticationHandler {
+    header "WebPanelAuthenticationHandler.h"
+    export *
+  }
+
+  explicit module WebPluginContainerPrivate {
+    header "WebPluginContainerPrivate.h"
+    export *
+  }
+
+  explicit module WebPluginDatabase {
+    header "WebPluginDatabase.h"
+    export *
+  }
+
+  explicit module WebPluginPackagePrivate {
+    header "WebPluginPackagePrivate.h"
+    export *
+  }
+
+  explicit module WebPluginViewFactoryPrivate {
+    header "WebPluginViewFactoryPrivate.h"
+    export *
+  }
+
+  explicit module WebPolicyDelegatePrivate {
+    header "WebPolicyDelegatePrivate.h"
+    export *
+  }
+
+  explicit module WebPreferenceKeysPrivate {
+    header "WebPreferenceKeysPrivate.h"
+    export *
+  }
+
+  explicit module WebPreferencesPrivate {
+    header "WebPreferencesPrivate.h"
+    export *
+  }
+
+  explicit module WebPushDaemonConstants {
+    header "WebPushDaemonConstants.h"
+    export *
+  }
+
+  explicit module WebQuotaManager {
+    header "WebQuotaManager.h"
+    export *
+  }
+
+  explicit module WebResourceLoadDelegatePrivate {
+    header "WebResourceLoadDelegatePrivate.h"
+    export *
+  }
+
+  explicit module WebResourcePrivate {
+    header "WebResourcePrivate.h"
+    export *
+  }
+
+  explicit module WebScriptDebugDelegate {
+    header "WebScriptDebugDelegate.h"
+    export *
+  }
+
+  explicit module WebScriptWorld {
+    header "WebScriptWorld.h"
+    export *
+  }
+
+  explicit module WebSecurityOriginPrivate {
+    header "WebSecurityOriginPrivate.h"
+    export *
+  }
+
+  explicit module WebStorageManagerPrivate {
+    header "WebStorageManagerPrivate.h"
+    export *
+  }
+
+  explicit module WebStringTruncator {
+    header "WebStringTruncator.h"
+    export *
+  }
+
+  explicit module WebTextIterator {
+    header "WebTextIterator.h"
+    export *
+  }
+
+  explicit module WebUIDelegatePrivate {
+    header "WebUIDelegatePrivate.h"
+    export *
+  }
+
+  explicit module WebURLsWithTitles {
+    header "WebURLsWithTitles.h"
+    export *
+  }
+
+  explicit module WebUserContentURLPattern {
+    header "WebUserContentURLPattern.h"
+    export *
+  }
+
+  explicit module WebViewPrivate {
+    header "WebViewPrivate.h"
+    export *
+  }
+
+  explicit module _WKAppHighlight {
+    header "_WKAppHighlight.h"
+    export *
+  }
+
+  explicit module _WKAppHighlightDelegate {
+    header "_WKAppHighlightDelegate.h"
+    export *
+  }
+
+  explicit module _WKApplicationManifest {
+    header "_WKApplicationManifest.h"
+    export *
+  }
+
+  explicit module _WKArchiveConfiguration {
+    header "_WKArchiveConfiguration.h"
+    export *
+  }
+
+  explicit module _WKArchiveExclusionRule {
+    header "_WKArchiveExclusionRule.h"
+    export *
+  }
+
+  explicit module _WKAuthenticationExtensionsClientInputs {
+    header "_WKAuthenticationExtensionsClientInputs.h"
+    export *
+  }
+
+  explicit module _WKAuthenticationExtensionsClientOutputs {
+    header "_WKAuthenticationExtensionsClientOutputs.h"
+    export *
+  }
+
+  explicit module _WKAuthenticatorAssertionResponse {
+    header "_WKAuthenticatorAssertionResponse.h"
+    export *
+  }
+
+  explicit module _WKAuthenticatorAttachment {
+    header "_WKAuthenticatorAttachment.h"
+    export *
+  }
+
+  explicit module _WKAuthenticatorAttestationResponse {
+    header "_WKAuthenticatorAttestationResponse.h"
+    export *
+  }
+
+  explicit module _WKAuthenticatorResponse {
+    header "_WKAuthenticatorResponse.h"
+    export *
+  }
+
+  explicit module _WKAuthenticatorSelectionCriteria {
+    header "_WKAuthenticatorSelectionCriteria.h"
+    export *
+  }
+
+  explicit module _WKAutomationDelegate {
+    header "_WKAutomationDelegate.h"
+    export *
+  }
+
+  explicit module _WKAutomationSession {
+    header "_WKAutomationSession.h"
+    export *
+  }
+
+  explicit module _WKAutomationSessionConfiguration {
+    header "_WKAutomationSessionConfiguration.h"
+    export *
+  }
+
+  explicit module _WKAutomationSessionDelegate {
+    header "_WKAutomationSessionDelegate.h"
+    export *
+  }
+
+  explicit module _WKContentRuleListAction {
+    header "_WKContentRuleListAction.h"
+    export *
+  }
+
+  explicit module _WKContextMenuElementInfo {
+    header "_WKContextMenuElementInfo.h"
+    export *
+  }
+
+  explicit module _WKCustomHeaderFields {
+    header "_WKCustomHeaderFields.h"
+    export *
+  }
+
+  explicit module _WKDataTask {
+    header "_WKDataTask.h"
+    export *
+  }
+
+  explicit module _WKDataTaskDelegate {
+    header "_WKDataTaskDelegate.h"
+    export *
+  }
+
+  explicit module _WKDiagnosticLoggingDelegate {
+    header "_WKDiagnosticLoggingDelegate.h"
+    export *
+  }
+
+  explicit module _WKDownload {
+    header "_WKDownload.h"
+    export *
+  }
+
+  explicit module _WKDownloadDelegate {
+    header "_WKDownloadDelegate.h"
+    export *
+  }
+
+  explicit module _WKErrorRecoveryAttempting {
+    header "_WKErrorRecoveryAttempting.h"
+    export *
+  }
+
+  explicit module _WKExperimentalFeature {
+    header "_WKExperimentalFeature.h"
+    export *
+  }
+
+  explicit module _WKFindDelegate {
+    header "_WKFindDelegate.h"
+    export *
+  }
+
+  explicit module _WKFrameHandle {
+    header "_WKFrameHandle.h"
+    export *
+  }
+
+  explicit module _WKFrameTreeNode {
+    header "_WKFrameTreeNode.h"
+    export *
+  }
+
+  explicit module _WKFullscreenDelegate {
+    header "_WKFullscreenDelegate.h"
+    export *
+  }
+
+  explicit module _WKGeolocationCoreLocationProvider {
+    header "_WKGeolocationCoreLocationProvider.h"
+    export *
+  }
+
+  explicit module _WKGeolocationPosition {
+    header "_WKGeolocationPosition.h"
+    export *
+  }
+
+  explicit module _WKHitTestResult {
+    header "_WKHitTestResult.h"
+    export *
+  }
+
+  explicit module _WKIconLoadingDelegate {
+    header "_WKIconLoadingDelegate.h"
+    export *
+  }
+
+  explicit module _WKInspector {
+    header "_WKInspector.h"
+    export *
+  }
+
+  explicit module _WKInspectorConfiguration {
+    header "_WKInspectorConfiguration.h"
+    export *
+  }
+
+  explicit module _WKInspectorDebuggableInfo {
+    header "_WKInspectorDebuggableInfo.h"
+    export *
+  }
+
+  explicit module _WKInspectorDelegate {
+    header "_WKInspectorDelegate.h"
+    export *
+  }
+
+  explicit module _WKInspectorExtension {
+    header "_WKInspectorExtension.h"
+    export *
+  }
+
+  explicit module _WKInspectorExtensionDelegate {
+    header "_WKInspectorExtensionDelegate.h"
+    export *
+  }
+
+  explicit module _WKInspectorExtensionHost {
+    header "_WKInspectorExtensionHost.h"
+    export *
+  }
+
+  explicit module _WKInspectorIBActions {
+    header "_WKInspectorIBActions.h"
+    export *
+  }
+
+  explicit module _WKInspectorPrivate {
+    header "_WKInspectorPrivate.h"
+    export *
+  }
+
+  explicit module _WKInspectorPrivateForTesting {
+    header "_WKInspectorPrivateForTesting.h"
+    export *
+  }
+
+  explicit module _WKInspectorWindow {
+    header "_WKInspectorWindow.h"
+    export *
+  }
+
+  explicit module _WKInternalDebugFeature {
+    header "_WKInternalDebugFeature.h"
+    export *
+  }
+
+  explicit module _WKLinkIconParameters {
+    header "_WKLinkIconParameters.h"
+    export *
+  }
+
+  explicit module _WKModalContainerInfo {
+    header "_WKModalContainerInfo.h"
+    export *
+  }
+
+  explicit module _WKNSFileManagerExtras {
+    header "_WKNSFileManagerExtras.h"
+    export *
+  }
+
+  explicit module _WKNSWindowExtras {
+    header "_WKNSWindowExtras.h"
+    export *
+  }
+
+  explicit module _WKNotificationData {
+    header "_WKNotificationData.h"
+    export *
+  }
+
+  explicit module _WKPublicKeyCredentialCreationOptions {
+    header "_WKPublicKeyCredentialCreationOptions.h"
+    export *
+  }
+
+  explicit module _WKPublicKeyCredentialDescriptor {
+    header "_WKPublicKeyCredentialDescriptor.h"
+    export *
+  }
+
+  explicit module _WKPublicKeyCredentialEntity {
+    header "_WKPublicKeyCredentialEntity.h"
+    export *
+  }
+
+  explicit module _WKPublicKeyCredentialParameters {
+    header "_WKPublicKeyCredentialParameters.h"
+    export *
+  }
+
+  explicit module _WKPublicKeyCredentialRelyingPartyEntity {
+    header "_WKPublicKeyCredentialRelyingPartyEntity.h"
+    export *
+  }
+
+  explicit module _WKPublicKeyCredentialRequestOptions {
+    header "_WKPublicKeyCredentialRequestOptions.h"
+    export *
+  }
+
+  explicit module _WKPublicKeyCredentialUserEntity {
+    header "_WKPublicKeyCredentialUserEntity.h"
+    export *
+  }
+
+  explicit module _WKRemoteObjectInterface {
+    header "_WKRemoteObjectInterface.h"
+    export *
+  }
+
+  explicit module _WKRemoteObjectRegistry {
+    header "_WKRemoteObjectRegistry.h"
+    export *
+  }
+
+  explicit module _WKRemoteWebInspectorViewController {
+    header "_WKRemoteWebInspectorViewController.h"
+    export *
+  }
+
+  explicit module _WKRemoteWebInspectorViewControllerPrivate {
+    header "_WKRemoteWebInspectorViewControllerPrivate.h"
+    export *
+  }
+
+  explicit module _WKResidentKeyRequirement {
+    header "_WKResidentKeyRequirement.h"
+    export *
+  }
+
+  explicit module _WKResourceLoadDelegate {
+    header "_WKResourceLoadDelegate.h"
+    export *
+  }
+
+  explicit module _WKResourceLoadInfo {
+    header "_WKResourceLoadInfo.h"
+    export *
+  }
+
+  explicit module _WKResourceLoadStatisticsFirstParty {
+    header "_WKResourceLoadStatisticsFirstParty.h"
+    export *
+  }
+
+  explicit module _WKResourceLoadStatisticsThirdParty {
+    header "_WKResourceLoadStatisticsThirdParty.h"
+    export *
+  }
+
+  explicit module _WKSameDocumentNavigationType {
+    header "_WKSameDocumentNavigationType.h"
+    export *
+  }
+
+  explicit module _WKSessionState {
+    header "_WKSessionState.h"
+    export *
+  }
+
+  explicit module _WKSystemPreferences {
+    header "_WKSystemPreferences.h"
+    export *
+  }
+
+  explicit module _WKTextInputContext {
+    header "_WKTextInputContext.h"
+    export *
+  }
+
+  explicit module _WKTextManipulationConfiguration {
+    header "_WKTextManipulationConfiguration.h"
+    export *
+  }
+
+  explicit module _WKTextManipulationDelegate {
+    header "_WKTextManipulationDelegate.h"
+    export *
+  }
+
+  explicit module _WKTextManipulationExclusionRule {
+    header "_WKTextManipulationExclusionRule.h"
+    export *
+  }
+
+  explicit module _WKTextManipulationItem {
+    header "_WKTextManipulationItem.h"
+    export *
+  }
+
+  explicit module _WKTextManipulationToken {
+    header "_WKTextManipulationToken.h"
+    export *
+  }
+
+  explicit module _WKTouchEventGenerator {
+    header "_WKTouchEventGenerator.h"
+    export *
+  }
+
+  explicit module _WKUserContentExtensionStore {
+    header "_WKUserContentExtensionStore.h"
+    export *
+  }
+
+  explicit module _WKUserContentExtensionStorePrivate {
+    header "_WKUserContentExtensionStorePrivate.h"
+    export *
+  }
+
+  explicit module _WKUserContentFilter {
+    header "_WKUserContentFilter.h"
+    export *
+  }
+
+  explicit module _WKUserContentFilterPrivate {
+    header "_WKUserContentFilterPrivate.h"
+    export *
+  }
+
+  explicit module _WKUserContentWorld {
+    header "_WKUserContentWorld.h"
+    export *
+  }
+
+  explicit module _WKUserInitiatedAction {
+    header "_WKUserInitiatedAction.h"
+    export *
+  }
+
+  explicit module _WKUserStyleSheet {
+    header "_WKUserStyleSheet.h"
+    export *
+  }
+
+  explicit module _WKUserVerificationRequirement {
+    header "_WKUserVerificationRequirement.h"
+    export *
+  }
+
+  explicit module _WKWebAuthenticationAssertionResponse {
+    header "_WKWebAuthenticationAssertionResponse.h"
+    export *
+  }
+
+  explicit module _WKWebAuthenticationPanelForTesting {
+    header "_WKWebAuthenticationPanelForTesting.h"
+    export *
+  }
+
+  explicit module WKWebExtensionActionPrivate {
+    header "WKWebExtensionActionPrivate.h"
+    export *
+  }
+
+  explicit module WKWebExtensionCommandPrivate {
+    header "WKWebExtensionCommandPrivate.h"
+    export *
+  }
+
+  explicit module WKWebExtensionContextPrivate {
+    header "WKWebExtensionContextPrivate.h"
+    export *
+  }
+
+  explicit module WKWebExtensionControllerConfigurationPrivate {
+    header "WKWebExtensionControllerConfigurationPrivate.h"
+    export *
+  }
+
+  explicit module WKWebExtensionControllerDelegatePrivate {
+    header "WKWebExtensionControllerDelegatePrivate.h"
+    export *
+  }
+
+  explicit module WKWebExtensionControllerPrivate {
+    header "WKWebExtensionControllerPrivate.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionDeclarativeNetRequestRule {
+    header "_WKWebExtensionDeclarativeNetRequestRule.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionDeclarativeNetRequestTranslator {
+    header "_WKWebExtensionDeclarativeNetRequestTranslator.h"
+    export *
+  }
+
+  explicit module WKWebExtensionDataRecordPrivate {
+    header "WKWebExtensionDataRecordPrivate.h"
+    export *
+  }
+
+  explicit module WKWebExtensionMatchPatternPrivate {
+    header "WKWebExtensionMatchPatternPrivate.h"
+    export *
+  }
+
+  explicit module WKWebExtensionMessagePortPrivate {
+    header "WKWebExtensionMessagePortPrivate.h"
+    export *
+  }
+
+  explicit module WKWebExtensionPermissionPrivate {
+    header "WKWebExtensionPermissionPrivate.h"
+    export *
+  }
+
+  explicit module WKWebExtensionPrivate {
+    header "WKWebExtensionPrivate.h"
+    export *
+  }
+
+  explicit module _WKWebExtension {
+    header "_WKWebExtension.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionAction {
+    header "_WKWebExtensionAction.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionSidebar {
+    header "_WKWebExtensionSidebar.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionCommand {
+    header "_WKWebExtensionCommand.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionCommandPrivate {
+    header "_WKWebExtensionCommandPrivate.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionContext {
+    header "_WKWebExtensionContext.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionContextPrivate {
+    header "_WKWebExtensionContextPrivate.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionController {
+    header "_WKWebExtensionController.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionControllerConfiguration {
+    header "_WKWebExtensionControllerConfiguration.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionControllerConfigurationPrivate {
+    header "_WKWebExtensionControllerConfigurationPrivate.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionControllerPrivate {
+    header "_WKWebExtensionControllerPrivate.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionDataRecord {
+    header "_WKWebExtensionDataRecord.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionDataType {
+    header "_WKWebExtensionDataType.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionMatchPattern {
+    header "_WKWebExtensionMatchPattern.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionMatchPatternPrivate {
+    header "_WKWebExtensionMatchPatternPrivate.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionMessagePort {
+    header "_WKWebExtensionMessagePort.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionMessagePortPrivate {
+    header "_WKWebExtensionMessagePortPrivate.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionPrivate {
+    header "_WKWebExtensionPrivate.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionTab {
+    header "_WKWebExtensionTab.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionTabCreationOptions {
+    header "_WKWebExtensionTabCreationOptions.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionWindow {
+    header "_WKWebExtensionWindow.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionWindowCreationOptions {
+    header "_WKWebExtensionWindowCreationOptions.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionWebNavigationURLFilter {
+    header "_WKWebExtensionWebNavigationURLFilter.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionWebRequestFilter {
+    header "_WKWebExtensionWebRequestFilter.h"
+    export *
+  }
+
+  explicit module _WKWebViewPrintFormatter {
+    header "_WKWebViewPrintFormatter.h"
+    export *
+  }
+
+  explicit module _WKWebsiteDataSize {
+    header "_WKWebsiteDataSize.h"
+    export *
+  }
+
+  explicit module _WKWebsiteDataStoreConfiguration {
+    header "_WKWebsiteDataStoreConfiguration.h"
+    export *
+  }
+
+  explicit module _WKWebsiteDataStoreDelegate {
+    header "_WKWebsiteDataStoreDelegate.h"
+    export *
+  }
+}

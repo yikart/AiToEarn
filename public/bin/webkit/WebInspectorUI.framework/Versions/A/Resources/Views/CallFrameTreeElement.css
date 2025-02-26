@@ -1,0 +1,106 @@
+/*
+ * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.tree-outline .item.call-frame {
+    position: relative;
+}
+
+.tree-outline .item.call-frame .status {
+    position: absolute;
+    inset-inline-start: var(--call-frame-status-start);
+    float: none;
+    margin-top: 0;
+    margin-inline-start: 1px;
+
+    --call-frame-status-start: 1px;
+}
+
+.tree-outline.single-thread .item.call-frame .status {
+    --call-frame-status-start: 11px;
+}
+
+body[dir=rtl] .tree-outline .item.call-frame .status {
+    transform: scaleX(-1);
+}
+
+.tree-outline .item.call-frame .status > .status-image {
+    width: 17px;
+    height: 17px;
+    fill: hsl(0, 0%, 70%);
+}
+
+.tree-outline .item.call-frame.selected .status > .status-image {
+    fill: hsl(0, 0%, 57%);
+}
+
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.call-frame.selected .status > .status-image {
+    fill: var(--selected-foreground-color);
+}
+
+.call-frame:is(.async-boundary, .truncated-boundary) {
+    cursor: default;
+    color: var(--text-color-gray-medium);
+}
+
+.tree-outline:not(.single-thread) > .children > .item.call-frame.async-boundary {
+    padding-inline-start: 5px;
+}
+
+.tree-outline .item.call-frame.async-boundary .icon {
+    display: inline-block;
+    float: none;
+    margin-inline-start: 0 !important;
+}
+
+.tree-outline .item.call-frame.async-boundary::before,
+.tree-outline .item.call-frame.async-boundary::after {
+    content: "";
+    display: inline-block;
+    height: 0;
+    margin-bottom: 4px;
+    border-bottom: solid 0.5px var(--border-color);
+}
+
+.tree-outline .item.call-frame.async-boundary::after {
+    width: 100%;
+    margin-inline-start: 2px;
+}
+
+.tree-outline .item.call-frame.async-boundary::before {
+    width: 4px;
+    margin-inline: -5px 1px;
+}
+
+.tree-outline .children .item.call-frame.async-boundary::before {
+    width: 30px;
+}
+
+.tree-outline.single-thread .children .item.call-frame.async-boundary::before {
+    width: 20px;
+}
+
+.tree-outline .item.call-frame.blackboxed:not(.selected) {
+    opacity: var(--blackboxed-opacity);
+}

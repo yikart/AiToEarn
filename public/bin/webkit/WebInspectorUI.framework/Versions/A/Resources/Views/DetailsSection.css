@@ -1,0 +1,316 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.details-section {
+    font-size: 10px;
+    background-color: var(--panel-background-color);
+    border-bottom: var(--details-section-border-bottom);
+
+    --details-section-border-bottom: 1px solid var(--border-color);
+    --details-section-header-top: -1px;
+}
+
+.details-section .details-section {
+    background-color: var(--background-color-content);
+    border-color: var(--text-color-quaternary);
+}
+
+.details-section .details-section:last-child {
+    border-bottom: none;
+}
+
+.details-section .details-section:first-child {
+    border-top: 1px solid var(--border-color);
+}
+
+.details-section > .header {
+    position: sticky;
+    top: var(--details-section-header-top);
+    height: var(--details-section-header-height);
+    padding: var(--details-section-header-vertical-padding) 0;
+    padding-inline-end: 5px;
+    font-size: 11px;
+    font-weight: bold;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: hsl(0, 0%, 22%);
+    background-color: var(--panel-background-color);
+    overflow: hidden;
+
+    /* Ensure the headers are displayed above scrollbars. */
+    z-index: var(--z-index-header);
+
+    --details-section-header-height: 23px;
+    --details-section-header-vertical-padding: 4px;
+}
+
+.details-section > .header > .options > .navigation-bar {
+    margin-top: 1px;
+    height: 100%;
+    border: none;
+}
+
+body[dir=ltr] .details-section > .header > .options,
+body[dir=rtl] .details-section > .header::before {
+    float: right;
+}
+
+body[dir=ltr] .details-section > .header::before,
+body[dir=rtl] .details-section > .header > .options {
+    float: left;
+}
+
+.details-section > .header > .options > .navigation-bar > .item {
+    width: 20px;
+    height: 100%;
+}
+
+.details-section .details-section > .header {
+    background-color: var(--background-color-content);
+    font-weight: 500;
+
+    /* Ensure these headers are displayed below the parent header but above scrollbars. */
+    z-index: calc(var(--z-index-header) - 1);
+}
+
+.details-section:has(> .header > .title:not(:empty)) .details-section > .header {
+    top: 21px;
+}
+
+.details-section .details-section:not(.collapsed) > .header {
+    border-bottom: 1px solid var(--border-color-secondary);
+}
+
+.details-section > .header::before {
+    display: block;
+    width: 21px;
+    height: var(--details-section-header-height);
+    margin-top: calc(-1 * var(--details-section-header-vertical-padding));
+    content: "";
+    background-image: url(../Images/DisclosureTriangles.svg#open-normal);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 13px 13px;
+}
+
+.details-section .header:focus {
+    outline: none;
+}
+
+.details-section .header:focus::before {
+    outline: auto -webkit-focus-ring-color;
+    outline-offset: -5px;
+    border-radius: 9px;
+}
+
+body[dir=rtl] .details-section > .header::before {
+    transform: scaleX(-1);
+}
+
+.details-section > .header:not(.mouse-over-options-element):active::before {
+    background-image: url(../Images/DisclosureTriangles.svg#open-active);
+}
+
+.details-section.collapsed > .header::before {
+    background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
+}
+
+.details-section.collapsed > .header:not(.mouse-over-options-element):active::before {
+    background-image: url(../Images/DisclosureTriangles.svg#closed-active);
+}
+
+.details-section > .header > label {
+    font-size: 10px;
+    color: hsla(0, 0%, 0%, 0.6);
+    text-align: end;
+}
+
+.details-section.collapsed  > .header > .options {
+    display: none;
+}
+
+.details-section > .header > label > input[type="checkbox"] {
+    margin: 0;
+    margin-inline-start: 5px;
+    vertical-align: 1px;
+    font-size: 10px;
+}
+
+.details-section > .header .go-to-arrow {
+    width: 10px;
+    height: 15px;
+    margin-inline-start: 3px;
+}
+
+.details-section.collapsed > .content {
+    display: none;
+}
+
+.details-section > .content > .group {
+    display: grid;
+    grid-template-columns: [label] minmax(85px, max-content) [value] 1fr;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.details-section > .content > .group > * {
+    grid-column: 1 / -1;
+}
+
+.details-section > .content > .group:last-child {
+    border-bottom: none;
+}
+
+.details-section > .content > .group:nth-child(even) {
+    background-color: var(--background-color-intermediate);
+}
+
+.details-section > .content > .group:has(> .row.simple:last-child) {
+    padding-block-end: 3px;
+}
+
+.details-section > .content > .group > .row.simple {
+    display: grid;
+    grid-template-columns: subgrid;
+}
+
+.details-section > .content > .group > .row.simple.empty {
+    display: none;
+}
+
+.details-section > .content > .group > .row.empty.syntax-highlighted {
+    font-size: 10px;
+}
+
+.details-section > .content > .group > .row.simple > * {
+    vertical-align: top;
+    padding: 5px 4px 2px;
+}
+
+.details-section > .content > .group > .row.simple > .label {
+    padding-inline-start: 6px;
+    color: hsl(0, 0%, 20%);
+    text-align: end;
+    grid-column: label;
+}
+
+.details-section > .content > .group > .row.simple > .value {
+    padding-inline-start: 6px;
+    word-break: break-all;
+    word-wrap: break-word;
+    cursor: text;
+    -webkit-user-select: text;
+    grid-column: value;
+}
+
+.details-section > .content > .group > .row.simple > .value .go-to-arrow {
+    width: 10px;
+    height: 12px;
+    margin-inline-start: 5px;
+}
+
+.details-section > .content > .group > .row.simple:has(.warning) {
+    background-color: var(--warning-background-color-secondary);
+    position: relative;
+}
+
+.details-section > .content > .group > .row.simple > .warning {
+    position: absolute;
+    right: 0;
+    align-self: center;
+    display: inline-block;
+    width: calc(var(--warning-badge-arrow-depth) + var(--warning-icon-inline-padding) + var(--warning-icon-size) + var(--warning-icon-inline-padding) + 4px);
+    height: 18px;
+    margin-block-start: 0.5px;
+    background-image: url(/Images/Warning.svg);
+    background-color: var(--warning-background-color);
+    background-repeat: no-repeat;
+    background-size: var(--warning-icon-size) var(--warning-icon-size);
+    background-position-y: center;
+    background-position-x: calc(var(--warning-badge-arrow-depth) + var(--warning-icon-inline-padding));
+    clip-path: polygon(0% 50%, var(--warning-badge-arrow-depth) 0%, 100% 0%, 100% 100%, var(--warning-badge-arrow-depth) 100%);
+    --warning-icon-size: 11px;
+    --warning-icon-inline-padding: 2px;
+    --warning-badge-arrow-depth: 6px;
+}
+
+.details-section > .content > .group > .row.simple.data > .value {
+    word-break: break-all;
+}
+
+.details-section > .content > .group > .row:is(.empty, .text) {
+    padding: 0 6px 7px 6px;
+    text-align: center;
+    color: var(--text-color-secondary);
+}
+
+.details-section > .content > .group > .row.text {
+    -webkit-user-select: text;
+}
+
+.details-section > .content > .group > .row.properties:not(.empty) {
+    padding: 4px 6px;
+}
+
+.details-section > .content > .group > .row > .message-text-view {
+    position: static;
+}
+
+.details-section > .content .data-grid {
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+}
+
+.details-section > .content .data-grid tr:not(.editable) td.value-column {
+    height: auto;
+    line-height: initial;
+    white-space: normal;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.details-section > .content .data-grid tr:not(.editable) td.value-column > div {
+    white-space: normal;
+    word-break: break-all;
+}
+
+@media (min-resolution: 2dppx) {
+    .details-section,
+    .details-section .details-section:not(.collapsed) > .header,
+    .details-section > .content > .group {
+        border-width: 0.5px !important;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .details-section > .header {
+        color: var(--text-color);
+    }
+
+    .details-section > .header > label,
+    .details-section > .content > .group > .row.simple > .label {
+        color: var(--text-color-secondary);
+    }
+}

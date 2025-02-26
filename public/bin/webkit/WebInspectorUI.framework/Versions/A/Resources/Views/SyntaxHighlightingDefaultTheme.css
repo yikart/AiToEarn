@@ -1,0 +1,165 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/* These styles match Xcode 4's Default theme. */
+
+.cm-s-default,
+.syntax-highlighted {
+    color: var(--text-color);
+
+    font-family: Menlo, monospace;
+    font-size: 11px;
+}
+
+.cm-s-default .cm-comment,
+.syntax-highlighted :is(.css-comment, .javascript-comment, .html-comment) {
+    color: var(--syntax-highlight-comment-color);
+}
+
+.cm-s-default :is(.cm-tag, .cm-bracket, .cm-atom, .cm-keyword, .cm-m-javascript.cm-builtin),
+.cm-s-default .cm-m-css:is(.cm-atom, .cm-meta, .cm-variable-2, .cm-variable-3, .cm-property),
+.syntax-highlighted :is(.css-keyword, .css-tag, .css-at-rule, .css-important, .javascript-keyword, .html-tag) {
+    color: var(--syntax-highlight-boolean-color);
+}
+
+.cm-s-default :is(.cm-number, .cm-atom.cm-hex-color),
+.syntax-highlighted :is(.css-number, .javascript-number) {
+    color: var(--syntax-highlight-number-color);
+}
+
+.cm-s-default .cm-number.cm-bigint,
+.syntax-highlighted .javascript-bigint {
+    color: var(--syntax-highlight-bigint-color);
+}
+
+.cm-s-default :is(.cm-def, .cm-operator, .cm-variable, .cm-variable-2),
+.cm-s-default .cm-m-css:is(.cm-tag, .cm-string-2, .cm-builtin, .cm-qualifier),
+.syntax-highlighted :is(.css-property, .css-selector, .javascript-ident) {
+    color: inherit;
+}
+
+.cm-s-default .cm-string,
+.syntax-highlighted :is(.css-string, .javascript-string, .html-attribute-value) {
+    color: var(--syntax-highlight-string-color);
+}
+
+.cm-s-default .cm-string-2,
+.syntax-highlighted .javascript-regexp {
+    color: var(--syntax-highlight-regexp-color);
+}
+
+.cm-s-default .cm-m-xml.cm-meta,
+.syntax-highlighted :is(.html-doctype, .html-processing-instruction) {
+    color: hsl(0, 0%, 75%);
+}
+
+.cm-s-default .cm-m-xml.cm-attribute,
+.syntax-highlighted .html-attribute-name {
+    color: hsl(44, 53%, 33%);
+}
+
+.syntax-highlighted a {
+    color: var(--syntax-highlight-link-color);
+}
+
+.cm-s-default .cm-link,
+.syntax-highlighted a {
+    text-decoration: none;
+}
+
+.read-only.cm-s-default .cm-link:hover,
+.mac-platform.meta-key-pressed :not(.read-only).cm-s-default .cm-link:hover,
+:not(.mac-platform).control-key-pressed :not(.read-only).cm-s-default .cm-link:hover,
+.syntax-highlighted a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.supports-find-banner.showing-find-banner.syntax-highlighted .search-result,
+.supports-find-banner.showing-find-banner .syntax-highlighted .search-result {
+    background-color: hsla(53, 83%, 53%, 0.2);
+    border-bottom: 1px solid hsl(47, 82%, 60%);
+}
+
+.cm-s-default .basic-block-has-not-executed {
+    color: hsl(0, 0%, 60%);
+}
+
+.cm-s-default .basic-block-has-not-executed.cm-comment {
+    color: hsl(119, 27%, 65%);
+}
+
+.cm-s-default .basic-block-has-not-executed:is(.cm-tag, .cm-bracket, .cm-atom, .cm-keyword, .cm-m-javascript.cm-builtin),
+.cm-s-default .basic-block-has-not-executed.cm-m-css:is(.cm-atom, .cm-meta, .cm-variable-2, .cm-variable-3, .cm-property) {
+    color: hsl(309, 21%, 70%);
+}
+
+.cm-s-default .basic-block-has-not-executed:is(.cm-number, .cm-atom.cm-hex-color) {
+    color: hsl(248, 52%, 78%);
+}
+
+.cm-s-default .basic-block-has-not-executed.cm-string {
+    color: hsl(1, 33%, 70%);
+}
+
+.cm-s-default .basic-block-has-not-executed.cm-m-xml.cm-meta {
+    color: hsl(0, 0%, 82%);
+}
+
+.cm-s-default .basic-block-has-not-executed.cm-m-xml.cm-attribute {
+    color: rgb(201, 192, 166);
+}
+
+@media (prefers-color-scheme: dark) {
+    .CodeMirror {
+        color: var(--text-color);
+    }
+
+    .cm-s-default,
+    .CodeMirror {
+        background-color: var(--background-color-content);
+    }
+
+    .cm-s-default .cm-attribute {
+        color: hsl(222, 100%, 72%);
+    }
+
+    .cm-s-default .cm-m-xml.cm-attribute,
+    .syntax-highlighted .html-attribute-name {
+        color: hsl(27, 100%, 80%);
+    }
+
+    .cm-s-default .cm-meta {
+        color: hsl(0, 0%, 60%);
+    }
+
+    .cm-s-default .cm-variable-3 {
+        color: hsl(160, 69%, 64%);
+    }
+
+    .cm-s-default .cm-builtin {
+        color: hsl(218, 64%, 76%);
+    }
+}

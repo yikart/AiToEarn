@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2017 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+    <path d="M 5 3 V 5 H 3 v 8 h 8 V 11 h 2 V 3 Z m 7 7 H 6 V 4 h 6 Z"/>
+</svg>

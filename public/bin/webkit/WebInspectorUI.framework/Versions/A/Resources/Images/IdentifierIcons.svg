@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2020 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs>
+        <style>
+            g:not(:target) {
+                display: none;
+            }
+            .dark {
+                --stroke: hsla(0, 0%, 0%, 0.5);
+            }
+
+            .light.blue {
+                --fill: hsl(207, 64%, 67%);
+                --stroke: hsl(202, 55%, 51%);
+                --outline: hsl(202, 55%, 51%);
+            }
+
+            .dark.blue {
+                --fill: hsl(210, 50%, 21%);
+                --outline: hsl(212, 94%, 54%);
+            }
+
+            .light.red {
+                --fill: hsl(360, 64%, 75%);
+                --stroke: hsl(360, 54%, 62%);
+                --outline: hsl(360, 54%, 62%);
+            }
+
+            .dark.red {
+                --fill: hsl(359, 69%, 25%);
+                --outline: hsl(357, 77%, 59%);
+            }
+
+            .light.pink {
+                --fill: hsl(360, 64%, 75%);
+                --stroke: hsl(360, 54%, 62%);
+                --outline: hsl(360, 54%, 62%);
+            }
+
+            .dark.pink {
+                --fill: hsl(359, 69%, 25%);
+                --outline: hsl(357, 77%, 59%);
+            }
+
+            .light.green {
+                --fill: hsl(118, 43%, 55%);
+                --stroke: hsl(118, 33%, 42%);
+                --outline: hsl(118, 33%, 42%);
+            }
+
+            .dark.green {
+                --fill: hsl(118, 26%, 24%);
+                --outline: hsl(117, 56%, 65%);
+            }
+
+            .light.purple {
+                --fill: hsl(269, 65%, 74%);
+                --stroke: hsl(273, 33%, 58%);
+                --outline: hsl(273, 33%, 58%);
+            }
+
+            .dark.purple {
+                --fill: hsl(269, 26%, 23%);
+                --stroke: hsl(272, 25%, 12%);
+                --outline: hsl(273, 40%, 53%);
+            }
+
+            .light.brown {
+                --fill: hsl(22, 59%, 70%);
+                --stroke: hsl(22, 40%, 50%);
+                --outline: hsl(22, 40%, 50%);
+            }
+
+            .dark.brown {
+                --fill: hsl(28, 51%, 21%);
+                --outline: hsl(28, 56%, 65%);
+            }
+
+            .light.lime {
+                --fill: hsl(76, 49%, 60%);
+                --stroke: hsl(79, 43%, 48%);
+                --outline: hsl(79, 43%, 48%);
+            }
+
+            .dark.lime {
+                --fill: hsl(77, 49%, 23%);
+                --outline: hsl(79, 75%, 52%);
+            }
+
+            .light.teal {
+                --fill: hsl(143, 24%, 66%);
+                --stroke: hsl(153, 24%, 51%);
+                --outline: hsl(153, 24%, 51%);
+            }
+
+            .dark.teal {
+                --fill: hsl(143, 48%, 20%);
+                --outline: hsl(153, 50%, 52%);
+            }
+        </style>
+
+        <clipPath id="clip">
+            <circle cx="8" cy="8" r="7"/>
+        </clipPath>
+    </defs>
+
+    <symbol id="circle" viewBox="0 0 16 16">
+        <circle stroke="var(--outline)" fill="var(--fill)" cx="8" cy="8" r="7.5"/>
+    </symbol>
+
+    <symbol id="network" viewBox="0 0 16 16">
+        <path d="M 11 14.333 L 10 14.690 L 10 4.817 L 8.468 6.241 L 7.75 5.571 L 10.5 3.002 L 13.25 5.571 L 12.532 6.241 L 11 4.811 L 11 14.333 Z" stroke="var(--stroke)" stroke-linejoin="round" stroke-width="2" style="clip-path: url(#clip);"/>
+        <path d="M 6 1.327 L 5 1.792 L 5 10.278 L 3.468 8.846 L 2.75 9.520 L 5.5 12.102 L 8.25 9.520 L 7.532 8.846 L 6 10.284 L 6 1.327 Z" stroke="var(--stroke)" stroke-linejoin="round" stroke-width="2" style="clip-path: url(#clip);"/>
+        <path d="M 11 14.333 L 10 14.690 L 10 4.817 L 8.468 6.241 L 7.75 5.571 L 10.5 3.002 L 13.25 5.571 L 12.532 6.241 L 11 4.811 L 11 14.333 Z" fill="white"/>
+        <path d="M 6 1.327 L 5 1.792 L 5 10.278 L 3.468 8.846 L 2.75 9.520 L 5.5 12.102 L 8.25 9.520 L 7.532 8.846 L 6 10.284 L 6 1.327 Z" fill="white"/>
+    </symbol>
+
+    <symbol id="cpu" viewBox="0 0 16 16">
+        <rect stroke="var(--stroke)" stroke-width="2" x="4" y="4" width="2" height="8" rx="0.25"/>
+        <rect stroke="var(--stroke)" stroke-width="2" x="7" y="4" width="2" height="8" rx="0.25"/>
+        <rect stroke="var(--stroke)" stroke-width="2" x="10" y="4" width="2" height="8" rx="0.25"/>
+        <rect fill="white" x="4" y="4" width="2" height="8" rx="0.25"/>
+        <rect fill="white" x="7" y="4" width="2" height="8" rx="0.25"/>
+        <rect fill="white" x="10" y="4" width="2" height="8" rx="0.25"/>
+        <rect stroke="var(--stroke)" stroke-width="2" x="3" y="6" width="10" height="4" rx="0.25"/>
+        <rect fill="white" x="3" y="6" width="10" height="4" rx="0.25"/>
+    </symbol>
+
+    <symbol id="cube" viewBox="0 0 16 16">
+        <path d="M 3.006 11.003 L 3 5 L 8 3 L 13 5.003 L 13 11.003 L 8 13 L 3.006 11.003 Z" stroke="var(--stroke)"/>
+        <path d="M 3.006 5.003 L 8 7 L 8 13 L 3.006 11.003 L 3.006 5.003 Z M 8 7 L 8 13 L 13 11.003 L 13 5.003 L 8 7 Z M 8 3 L 13 5 L 8 7 L 3 5 L 8 3 Z" fill="white" stroke="var(--stroke)" stroke-width="0.5" stroke-linejoin="bevel"/>
+    </symbol>
+
+    <symbol id="paintbrush" viewBox="0 0 16 16">
+        <path d="M 3 10.494 C 3 11.631 3.942 11.991 4.935 12 C 6.424 11.991 6.921 11.320 6.921 10.494 C 6.921 9.667 6.250 8.996 5.422 8.996 C 4.594 8.996 3.942 9.667 3.942 10.494 C 3.942 11.000 3.318 10.724 3 10.494 Z M 8.998 9.088 L 11.757 5.321 C 12.060 4.942 12.099 4.428 11.844 4.173 C 11.588 3.917 11.070 3.952 10.686 4.250 L 6.890 6.980 C 6.490 7.263 5.984 8.194 6.865 9.075 C 7.746 9.956 8.711 9.484 8.998 9.088 Z" stroke="var(--stroke)" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M 3 10.494 C 3 11.631 3.942 11.991 4.935 12 C 6.424 11.991 6.921 11.320 6.921 10.494 C 6.921 9.667 6.250 8.996 5.422 8.996 C 4.594 8.996 3.942 9.667 3.942 10.494 C 3.942 11.000 3.318 10.724 3 10.494 Z M 8.998 9.088 L 11.757 5.321 C 12.060 4.942 12.099 4.428 11.844 4.173 C 11.588 3.917 11.070 3.952 10.686 4.250 L 6.890 6.980 C 6.490 7.263 5.984 8.194 6.865 9.075 C 7.746 9.956 8.711 9.484 8.998 9.088 Z" fill="white"/>
+    </symbol>
+
+    <symbol id="camera" viewBox="0 0 16 16">
+        <path d="M 9.05 7.389 L 12.375 5.5 L 12.375 10.5 L 9.05 8.611 L 9.05 9.5 C 9.05 10.052 8.602 10.5 8.05 10.5 L 4.25 10.5 C 3.698 10.5 3.25 10.052 3.25 9.5 L 3.25 6.5 C 3.25 5.948 3.698 5.5 4.25 5.5 L 8.05 5.5 C 8.602 5.5 9.05 5.948 9.05 6.5 L 9.05 7.389 Z" stroke="var(--stroke)" fill="var(--fill)" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M 9.05 7.389 L 12.375 5.5 L 12.375 10.5 L 9.05 8.611 L 9.05 9.5 C 9.05 10.052 8.602 10.5 8.05 10.5 L 4.25 10.5 C 3.698 10.5 3.25 10.052 3.25 9.5 L 3.25 6.5 C 3.25 5.948 3.698 5.5 4.25 5.5 L 8.05 5.5 C 8.602 5.5 9.05 5.948 9.05 6.5 L 9.05 7.389 Z" fill="white"/>
+    </symbol>
+
+    <symbol id="screenshot" viewBox="0 0 16 16">
+        <path d="M10.5,4.94 L10.1875,4.26205342 C10.1875,4.26205342 9.92668194,3.69 9.5625,3.69 L6.4375,3.69 C6.07272974,3.69 5.8125,4.2620534 5.8125,4.2620534 L5.5,4.94 L4.48858987,4.94 C4.48858987,4.94 3.3125,5.03898711 3.3125,6.19 L3.3125,10.565 C3.3125,11.7160129 4.48858987,11.815 4.48858987,11.815 L11.4375,11.815 C11.4375,11.815 12.6875,11.7160129 12.6875,10.565 L12.6875,6.19 C12.6875,5.03898711 11.4375,4.94 11.4375,4.94 L10.5,4.94 Z" fill="white" stroke="var(--stroke)" stroke-width="0.625"/>
+        <path d="M8,10.565 C9.38071187,10.565 10.5,9.44571188 10.5,8.065 C10.5,6.68428812 9.38071187,5.565 8,5.565 C6.61928812,5.565 5.5,6.68428812 5.5,8.065 C5.5,9.44571188 6.61928812,10.565 8,10.565 Z" fill="white" stroke="var(--stroke)" stroke-width="0.625"/>
+        <path d="M8,9.315 C8.69035594,9.315 9.25,8.75535594 9.25,8.065 C9.25,7.37464406 8.69035594,6.815 8,6.815 C7.30964406,6.815 6.75,7.37464406 6.75,8.065 C6.75,8.75535594 7.30964406,9.315 8,9.315 Z" fill="white" stroke="var(--stroke)" stroke-width="0.625"/>
+    </symbol>
+
+    <symbol id="barchart" viewBox="0 0 16 16">
+        <rect stroke-linejoin="round" fill="white" x="9.5" y="4" width="3" height="8" stroke="var(--stroke)"/>
+        <rect stroke-linejoin="round" fill="white" x="3.5" y="9" width="3" height="3" stroke="var(--stroke)"/>
+        <rect stroke-linejoin="round" fill="white" x="6.5" y="7" width="3" height="5" stroke="var(--stroke)"/>
+    </symbol>
+
+    <symbol id="script" viewBox="0 0 16 16">
+        <path d="M 5.227 6.125 C 5.920 6.125 6.454 6.681 6.454 7.250 C 6.454 7.250 6.935 6.811 7.175 6.591 C 7.925 5.905 9.425 4.534 9.425 4.534 C 9.425 4.534 12.417 7.541 12.527 7.673 C 12.675 7.851 13 8.177 13 8.752 C 13 9.039 12.871 9.318 12.657 9.526 C 12.440 9.736 7.894 13.880 8.110 13.693 C 8.350 13.487 8.500 13.194 8.500 12.875 C 8.500 12.264 8.181 11.971 8.023 11.798 C 8.019 11.794 7.874 11.648 7.646 11.417 L 6.045 12.875 C 6.045 13.496 6.595 14 7.272 14 C 7.596 14 7.891 13.883 8.110 13.693 C 8.350 13.486 8.500 13.194 8.500 12.875 C 8.500 12.264 8.181 11.971 8.023 11.798 C 7.865 11.625 4.776 8.521 4.565 8.297 C 4.354 8.074 4 7.828 4 7.250 C 4 6.939 4.155 6.637 4.405 6.425 C 4.155 6.637 8.686 2.473 8.966 2.262 C 9.180 2.100 9.447 2 9.727 2 C 10.374 2 10.967 2.554 10.967 3.125 L 6.454 7.250 C 6.454 6.681 5.920 6.125 5.227 6.125 C 4.907 6.125 4.621 6.242 4.405 6.425 C 4.621 6.242 4.907 6.125 5.227 6.125 Z" stroke="var(--stroke)" />
+        <path d="M 5.227 6.125 C 5.920 6.125 6.454 6.681 6.454 7.250 C 6.454 7.250 6.935 6.811 7.175 6.591 C 7.925 5.905 9.425 4.534 9.425 4.534 C 9.425 4.534 12.417 7.541 12.527 7.673 C 12.675 7.851 13 8.177 13 8.752 C 13 9.039 12.871 9.318 12.657 9.526 C 12.440 9.736 7.894 13.880 8.110 13.693 C 8.350 13.487 8.500 13.194 8.500 12.875 C 8.500 12.264 8.181 11.971 8.023 11.798 C 8.019 11.794 7.874 11.648 7.646 11.417 L 6.045 12.875 C 6.045 13.496 6.595 14 7.272 14 C 7.596 14 7.891 13.883 8.110 13.693 C 8.350 13.486 8.500 13.194 8.500 12.875 C 8.500 12.264 8.181 11.971 8.023 11.798 C 7.865 11.625 4.776 8.521 4.565 8.297 C 4.354 8.074 4 7.828 4 7.250 C 4 6.939 4.155 6.637 4.405 6.425 C 4.155 6.637 8.686 2.473 8.966 2.262 C 9.180 2.100 9.447 2 9.727 2 C 10.374 2 10.967 2.554 10.967 3.125 L 6.454 7.250 C 6.454 6.681 5.920 6.125 5.227 6.125 C 4.907 6.125 4.621 6.242 4.405 6.425 C 4.621 6.242 4.907 6.125 5.227 6.125 Z" fill="white" stroke="var(--stroke)" stroke-width="0.5"/>
+    </symbol>
+
+    <symbol id="threads" viewBox="0 0 16 16">
+        <line stroke="var(--stroke)" x1="8" y1="3" x2="8" y2="13" stroke-width="3.5" stroke-linecap="round"/>
+        <line stroke="var(--stroke)" x1="5" y1="5" x2="5" y2="11" stroke-width="3.5" stroke-linecap="round"/>
+        <line stroke="var(--stroke)" x1="11" y1="5" x2="11" y2="11" stroke-width="3.5" stroke-linecap="round"/>
+        <line stroke="white" x1="8" y1="3" x2="8" y2="13" stroke-width="1.5" stroke-linecap="round"/>
+        <line stroke="white" x1="5" y1="5" x2="5" y2="11" stroke-width="1.5" stroke-linecap="round"/>
+        <line stroke="white" x1="11" y1="5" x2="11" y2="11" stroke-width="1.5" stroke-linecap="round"/>
+    </symbol>
+
+    <g id="NetworkInstrument-light" class="light blue"><use href="#circle"/><use href="#network"/></g>
+    <g id="NetworkInstrument-dark" class="dark blue"><use href="#circle"/><use href="#network"/></g>
+    <g id="CPUInstrument-light" class="light green"><use href="#circle"/><use href="#cpu"/></g>
+    <g id="CPUInstrument-dark" class="dark green"><use href="#circle"/><use href="#cpu"/></g>
+    <g id="HeapAllocationsInstrument-light" class="light brown"><use href="#circle"/><use href="#cube"/></g>
+    <g id="HeapAllocationsInstrument-dark" class="dark brown"><use href="#circle"/><use href="#cube"/></g>
+    <g id="LayoutInstrument-light" class="light lime"><use href="#circle"/><use href="#paintbrush"/></g>
+    <g id="LayoutInstrument-dark" class="dark lime"><use href="#circle"/><use href="#paintbrush"/></g>
+    <g id="MediaInstrument-light" class="light teal"><use href="#circle"/><use href="#camera"/></g>
+    <g id="MediaInstrument-dark" class="dark teal"><use href="#circle"/><use href="#camera"/></g>
+    <g id="MemoryInstrument-light" class="light brown"><use href="#circle"/><use href="#cpu"/></g>
+    <g id="MemoryInstrument-dark" class="dark brown"><use href="#circle"/><use href="#cpu"/></g>
+    <g id="RenderingFramesInstrument-light" class="light red"><use href="#circle"/><use href="#barchart"/></g>
+    <g id="RenderingFramesInstrument-dark" class="dark red"><use href="#circle"/><use href="#barchart"/></g>
+    <g id="ScreenshotsInstrument-light" class="light pink"><use href="#circle"/><use href="#screenshot"/></g>
+    <g id="ScreenshotsInstrument-dark" class="dark pink"><use href="#circle"/><use href="#screenshot"/></g>
+    <g id="ScriptsInstrument-light" class="light purple"><use href="#circle"/><use href="#script"/></g>
+    <g id="ScriptsInstrument-dark" class="dark purple"><use href="#circle"/><use href="#script"/></g>
+    <g id="Thread-light" class="light blue"><use href="#circle"/><use href="#threads"/></g>
+    <g id="Thread-dark" class="dark blue"><use href="#circle"/><use href="#threads"/></g>
+</svg>

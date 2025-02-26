@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2019 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+    <rect x="0.5" y="2.5" width="13" height="10" fill="none" stroke="currentColor"/>
+    <polyline points="2 14.5 15.5 14.5 15.5 4" fill="none" stroke="currentColor"/>
+    <path fill="none" stroke="currentColor" d="M 4.5 2.5 L 4.5 10.5"/>
+    <path fill="none" stroke="currentColor" d="M 2.0 8.0 L 4.5 10.5 L 7.0 8.0"/>
+    <path fill="none" stroke="currentColor" d="M 9.5 12.5 L 9.5 4.5"/>
+    <path fill="none" stroke="currentColor" d="M 12.0 6.5 L 9.5 4.5 L 7.0 6.5"/>
+</svg>

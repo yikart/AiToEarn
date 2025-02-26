@@ -1,0 +1,240 @@
+(version 1)
+(deny default (with partial-symbolication))
+(deny nvram*)
+(allow system-audit file-read-metadata)
+(deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report))
+; Copyright (C) 2021 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+; notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+; notice, this list of conditions and the following disclaimer in the
+; documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+(define (home-library-preferences-regex home-library-preferences-relative-regex)
+    (regex (string-append "^" (regex-quote (param "HOME_LIBRARY_PREFERENCES_DIR")) home-library-preferences-relative-regex)))
+(define (home-library-preferences-literal home-library-preferences-relative-literal)
+    (literal (string-append (param "HOME_LIBRARY_PREFERENCES_DIR") home-library-preferences-relative-literal)))
+(define (shared-preferences-read . domains)
+    (for-each (lambda (domain)
+        (begin
+            (allow user-preference-read (with telemetry) (preference-domain domain))
+            (allow file-read*
+                (literal (string-append "/Library/Preferences/" domain ".plist"))
+                (home-library-preferences-literal (string-append "/" domain ".plist"))
+                (home-library-preferences-regex (string-append #"/ByHost/" (regex-quote domain) #"\..*\.plist$")))))
+        domains))
+(define (allow-reading-global-preferences)
+    (allow user-preference-read (preference-domain "kCFPreferencesAnyApplication"))
+    (allow file-read*
+        (literal "/Library/Preferences/.GlobalPreferences.plist")
+        (home-subpath "/Library/Preferences/.GlobalPreferences.plist")
+        (home-subpath "/Library/Preferences/.GlobalPreferences_m.plist")
+        (home-regex #"/Library/Preferences/ByHost/\.GlobalPreferences\..*\.plist$")
+    )
+)
+(allow mach-register (local-name-prefix ""))
+(allow file-read*
+    (require-all (file-mode #o0004)
+    (require-any (subpath "/Library/Filesystems/NetFSPlugins")
+    (subpath "/Library/Apple/System")
+    (subpath "/Library/Preferences/Logging")
+    (subpath "/System")
+    (subpath "/private/var/db/timezone")
+    (subpath "/usr/lib")
+    (subpath "/usr/share"))))
+(allow file-read*
+    (require-all (file-mode #o0004)
+    (subpath "/AppleInternal/Library/Preferences/Logging")
+    (system-attribute apple-internal)))
+(allow file-map-executable
+    (subpath "/Library/Apple/System/Library/Frameworks")
+    (subpath "/Library/Apple/System/Library/PrivateFrameworks")
+    (subpath "/System/Library/Frameworks")
+    (subpath "/System/Library/PrivateFrameworks")
+    (subpath "/usr/lib")
+    (subpath "/usr/appleinternal/lib")
+)
+(allow file-read-metadata
+    (literal "/etc")
+    (literal "/tmp")
+    (literal "/var")
+    (literal "/private/etc/localtime"))
+(allow file-read*
+    (literal "/dev/autofs_nowait")
+    (literal "/dev/random")
+    (literal "/dev/urandom")
+    (literal "/private/etc/master.passwd")
+    (literal "/private/etc/passwd"))
+(allow file-read*
+       file-write-data
+    (literal "/dev/null")
+    (literal "/dev/zero"))
+(allow file-read*
+       file-write-data
+       file-ioctl
+    (literal "/dev/dtracehelper"))
+(deny process-info*)
+(allow process-info-dirtycontrol (target self))
+(allow process-info-pidinfo)
+(allow process-info-setcontrol (target self))
+(allow process-codesigning-status*)
+(deny sysctl*)
+(allow sysctl-read
+    (sysctl-name
+        "hw.activecpu"
+        "hw.availcpu"
+        "hw.byteorder"
+        "hw.busfrequency"
+        "hw.busfrequency_max"
+        "hw.cacheconfig"
+        "hw.cachelinesize"
+        "hw.cachesize"
+        "hw.cpufrequency"
+        "hw.cpufrequency_max"
+        "hw.cpusubfamily"
+        "hw.cputhreadtype"
+        "hw.cputype"
+        "hw.l1dcachesize"
+        "hw.l1icachesize"
+        "hw.l2cachesize"
+        "hw.l3cachesize"
+        "hw.logicalcpu"
+        "hw.logicalcpu_max"
+        "hw.machine"
+        "hw.memsize"
+        "hw.model"
+        "hw.ncpu"
+        "hw.nperflevels"
+        "hw.pagesize"
+        "hw.pagesize_compat"
+        "hw.physicalcpu"
+        "hw.physicalcpu_max"
+        "hw.tbfrequency"
+        "hw.tbfrequency_compat"
+        "hw.vectorunit"
+        "kern.bootargs"
+        "kern.boottime"
+        "kern.hostname"
+        "kern.hv_vmm_present"
+        "kern.maxfilesperproc"
+        "kern.memorystatus_level"
+        "kern.osproductversion"
+        "kern.osrelease"
+        "kern.ostype"
+        "kern.osvariant_status"
+        "kern.osversion"
+        "kern.safeboot"
+        "kern.version"
+        "kern.tcsm_enable"
+        "kern.tcsm_available"
+        "kern.willshutdown"
+        "machdep.cpu.brand_string"
+        "security.mac.sandbox.sentinel"
+        "vm.footprint_suspend"
+        "vm.malloc_ranges")
+    (sysctl-name-prefix "net.routetable")
+    (sysctl-name-prefix "hw.optional.")
+    (sysctl-name-prefix "hw.perflevel")
+)
+(deny sysctl-read (with no-report)
+    (sysctl-name "sysctl.proc_translated"))
+(allow sysctl-write
+    (sysctl-name
+        "kern.tcsm_enable"))
+(deny mach-lookup (xpc-service-name-prefix ""))
+(define (home-regex home-relative-regex)
+  (regex (string-append "^" (regex-quote (param "HOME_DIR")) home-relative-regex)))
+(define (home-subpath home-relative-subpath)
+  (subpath (string-append (param "HOME_DIR") home-relative-subpath)))
+(define (home-literal home-relative-literal)
+  (literal (string-append (param "HOME_DIR") home-relative-literal)))
+(define (home-prefix home-relative-prefix)
+  (prefix (string-append (param "HOME_DIR") home-relative-prefix)))
+(define (allow-read-directory-and-issue-read-extensions path)
+    (if path
+        (begin
+            (allow file-read* (subpath path))
+            (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") (subpath path))))))
+(allow file-read*
+    (subpath "/Library/Frameworks")
+    (subpath "/Library/Managed Preferences")
+    (regex #"^/private/etc/(hosts|group|passwd)$")
+    (home-literal "/.CFUserTextEncoding"))
+(allow file-read-data
+    (literal "/usr/local/lib/log"))
+(shared-preferences-read
+    "com.apple.LaunchServices"
+    "com.apple.crypto")
+(allow-reading-global-preferences)
+(allow file-read*
+    (subpath (param "WEBKIT2_FRAMEWORK_DIR")))
+(allow file-read-data
+    (literal "/Library/Preferences/com.apple.security.plist")
+    (home-subpath "/Library/Preferences/com.apple.security.plist"))
+(allow mach-lookup
+    (with telemetry)
+    (global-name "com.apple.SystemConfiguration.configd"))
+(allow mach-lookup
+    (global-name "com.apple.logd")
+    (global-name "com.apple.logd.events")
+    (global-name-prefix "com.apple.distributed_notifications"))
+(deny mach-lookup (with no-log)
+    (global-name "com.apple.CoreServices.coreservicesd")
+    (global-name "com.apple.DiskArbitration.diskarbitrationd")
+    (global-name "com.apple.ViewBridgeAuxiliary")
+    (global-name "com.apple.system.opendirectoryd.membership"))
+(deny file-write-create (vnode-type SYMLINK))
+(deny file-read-xattr file-write-xattr (xattr-prefix "com.apple.security.private."))
+(with-filter (system-attribute apple-internal)
+    (allow mach-lookup
+        (global-name "com.apple.analyticsd")
+        (global-name "com.apple.diagnosticd")))
+(allow user-preference-read user-preference-write
+    (preference-domain "com.apple.webkit.webpushd"))
+(allow mach-lookup
+    (global-name "com.apple.apsd")
+    (global-name "com.apple.windowserver.active"))
+(allow lsopen)
+(allow mach-lookup
+    (global-name "com.apple.coreservices.launchservicesd")
+    (global-name "com.apple.coreservices.quarantine-resolver")
+    (global-name "com.apple.lsd.mapdb"))
+(allow user-preference-read
+    (preference-domain
+         "com.apple.inputmethodkit"
+         "com.apple.inputsources"
+         "com.apple.LaunchServices"
+         "kCFPreferencesAnyApplication"))
+(allow file-write-create
+    (require-all (vnode-type DIRECTORY) (home-literal "/Library/WebKit"))
+    (require-all (vnode-type DIRECTORY) (home-literal "/Library/WebKit/WebPush")))
+(allow file*
+    (home-literal "/Library/WebKit/WebPush/PushDatabase.db")
+    (home-literal "/Library/WebKit/WebPush/PushDatabase.db-shm")
+    (home-literal "/Library/WebKit/WebPush/PushDatabase.db-wal")
+    (home-literal "/Library/WebKit/WebPush/PushDatabase.db-lock")
+    (home-literal "/Library/WebKit/WebPush/PushDatabase.db-journal"))
+(allow file-read-data (require-all (vnode-type DIRECTORY) (home-prefix "/Library/WebKit/WebPush")))
+(allow file-write*
+    (subpath (param "DARWIN_USER_TEMP_DIR"))
+    (subpath (param "DARWIN_USER_CACHE_DIR")))
+(allow file-read* file-write*
+    (with telemetry)
+    (mount-relative-regex #"^/\.TemporaryItems/"))
+(allow mach-lookup
+    (global-name "com.apple.usernotifications.listener"))

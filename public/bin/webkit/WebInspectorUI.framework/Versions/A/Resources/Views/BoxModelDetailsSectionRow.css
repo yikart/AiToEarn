@@ -1,0 +1,192 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.details-section .row.box-model {
+    padding-bottom: 6px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.details-section .row.box-model .box {
+    display: inline-block;
+    position: relative;
+    margin: 3px; /* Keep this in sync with `WI.BoxModelDetailsSectionRow.prototype.get minimumWidth`. */
+    padding: 3px;
+    text-align: center;
+    vertical-align: middle;
+    background-color: white;
+    border: 1px solid grey;
+}
+
+.details-section .row.box-model .box > .label {
+    position: absolute;
+    padding: 0 2px;
+}
+
+.details-section .row.box-model .box.position {
+    border-style: dotted;
+}
+
+.details-section .row.box-model .box.margin {
+    border-style: dashed;
+    border-color: black;
+}
+
+.details-section .row.box-model:not(.hovered) .box.margin,
+.details-section .row.box-model .box.margin.active {
+    background-color: hsla(30, 88%, 69%, 0.66);
+}
+
+.details-section .row.box-model .box.border {
+    border-color: black;
+
+    --has-border-radius-border-radius: 10px;
+}
+
+.details-section .row.box-model:not(.hovered) .box.border,
+.details-section .row.box-model .box.border.active {
+    background-color: hsla(44, 100%, 80%, 0.66);
+}
+
+.details-section .row.box-model .box.border > .label {
+    margin-inline-start: 20px;
+}
+
+.details-section .row.box-model .box.border.has-top-left-radius,
+.details-section .row.box-model .box.border.has-top-left-radius .box {
+    border-top-left-radius: var(--has-border-radius-border-radius);
+}
+
+.details-section .row.box-model .box.border.has-top-right-radius,
+.details-section .row.box-model .box.border.has-top-right-radius .box {
+    border-top-right-radius: var(--has-border-radius-border-radius);
+}
+
+.details-section .row.box-model .box.border.has-bottom-right-radius,
+.details-section .row.box-model .box.border.has-bottom-right-radius .box {
+    border-bottom-right-radius: var(--has-border-radius-border-radius);
+}
+
+.details-section .row.box-model .box.border.has-bottom-left-radius,
+.details-section .row.box-model .box.border.has-bottom-left-radius .box {
+    border-bottom-left-radius: var(--has-border-radius-border-radius);
+}
+
+.details-section .row.box-model .box.padding {
+    border-style: dashed;
+}
+
+.details-section .row.box-model:not(.hovered) .box.padding,
+.details-section .row.box-model .box.padding.active {
+    background-color: hsla(101, 37%, 62%, 0.55);
+}
+
+.details-section .row.box-model .box.content {
+    position: static;
+    min-width: 80px;
+    overflow: visible;
+}
+
+.details-section .row.box-model:not(.hovered) .box.content,
+.details-section .row.box-model .box.content.active {
+    background-color: hsla(208, 60%, 64%, 0.66);
+}
+
+.details-section .row.box-model .editing {
+    position: relative;
+    z-index: 2;
+}
+
+.details-section .row.box-model :is(.top, .right, .bottom, .left) {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.details-section .row.box-model :is(.top, .right, .bottom, .left):not(.editing),
+.details-section .row.box-model :is(.top-left, .top-right, .bottom-right, .bottom-left) {
+    margin: 0 0.25em;
+}
+
+.details-section .row.box-model :is(.top-left, .top-right, .bottom-right, .bottom-left) {
+    position: absolute;
+}
+
+.details-section .row.box-model :is(.top-left, .top-right) {
+    top: 4px;
+}
+
+.details-section .row.box-model :is(.bottom-left, .bottom-right):not(.editing) {
+    bottom: 3px;
+}
+
+.details-section .row.box-model :is(.bottom-left, .bottom-right).editing {
+    bottom: 2px;
+}
+
+.details-section .row.box-model :is(.top-left, .bottom-left):not(.editing) {
+    left: 3px;
+}
+
+.details-section .row.box-model :is(.top-left, .bottom-left).editing {
+    left: 1px;
+}
+
+.details-section .row.box-model :is(.top-right, .bottom-right):not(.editing) {
+    right: 3px;
+}
+
+.details-section .row.box-model :is(.top-right, .bottom-right).editing {
+    right: 1px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .details-section .row.box-model {
+        color: var(--text-color);
+    }
+
+    .details-section .row.box-model .label {
+        color: inherit;
+    }
+
+    .details-section .row.box-model .box {
+        border-color: var(--text-color-quaternary);
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    .details-section .row.box-model:not(.hovered) .box:is(.margin, .border, .padding, .content),
+    .details-section .row.box-model .box.active:is(.margin, .border, .padding, .content) {
+        color: black;
+    }
+
+    .details-section .row.box-model .box.margin {
+        border-color: var(--text-color-quaternary);
+    }
+
+    .details-section .row.box-model .box.border {
+        border-color: var(--text-color-quaternary);
+    }
+}
+

@@ -1,0 +1,111 @@
+.videoPubSetModal {
+  :global {
+    textarea {
+      resize: none;
+      height: 150px !important;
+    }
+
+    .ant-tabs-tab {
+      padding: 0;
+      margin: 0 10px 0 0 !important;
+      background: #fff;
+      transition: 0.3s;
+    }
+    .ant-tabs-ink-bar {
+      height: 3px !important;
+    }
+    .ant-tabs-tab-active {
+      background: var(--colorPrimary2);
+    }
+    .videoPubSetModal_con {
+      display: flex;
+      justify-content: space-between;
+      &-red {
+        color: red;
+        margin-right: 5px;
+      }
+      &-tips {
+        color: rgb(178, 185, 185);
+      }
+      &_top {
+        margin-bottom: 10px;
+        button {
+          width: 100%;
+        }
+      }
+      &-left {
+        width: calc(70% - 50px);
+        height: 55vh;
+        overflow: auto;
+        padding: 0 20px 20px 0;
+
+        h1 {
+          font-weight: 400;
+          font-size: var(--fs-sm);
+          display: flex;
+          align-items: center;
+          margin: 20px 0 8px 0;
+        }
+      }
+      &-right {
+        width: 30%;
+        video {
+          width: 100%;
+          border-radius: 20px;
+        }
+      }
+    }
+    .ant-tabs-nav-wrap {
+      border: 1px solid #e3e3e3;
+      border-right: none;
+      border-left: none;
+    }
+    .videoPubSetModal-tabLabel {
+      height: 70px;
+      width: 100px;
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .ant-alert {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        width: 100%;
+        height: 20px;
+        padding: 0;
+        border-radius: 0 0 10px 10px;
+        display: flex;
+        border-top: none;
+        justify-content: center;
+        .ant-alert-content {
+          flex: none;
+        }
+        .anticon {
+          font-size: var(--fs-xs);
+          margin-right: 4px;
+        }
+        .ant-alert-message {
+          font-size: var(--fs-xs);
+        }
+      }
+      & > span {
+        display: flex;
+        overflow: hidden;
+        & > img {
+          width: 15px;
+        }
+      }
+      .ant-avatar {
+        flex-shrink: 0 !important;
+      }
+      &-name {
+        display: block;
+        margin: 0 3px;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}

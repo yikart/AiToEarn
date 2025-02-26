@@ -1,0 +1,21 @@
+{
+    "text-align-last": {
+        "syntax": "auto | start | end | left | right | center | justify | match-parent"
+    },
+    "shape-outside": {
+        "description": "Defines a shape around which adjacent inline content should wrap."
+    },
+    "-webkit-appearance": {
+        "description": "Changes the appearance of buttons and other controls to resemble native controls.",
+        "syntax": "none | button | checkbox | listbox | menulist | menulist-button | meter | progress-bar | push-button | radio | searchfield | slider-horizontal | slider-vertical | square-button | textarea | textfield | -apple-pay-button"
+    },
+    "overlay": {
+        "description": "The overlay CSS property specifies whether an element appearing in the top layer (for example, a shown popover or modal <dialog> element) is actually rendered in the top layer. This property is only relevant within a list of transition-property values, and only if allow-discrete is set as the transition-behavior."
+    },
+    "text-wrap-mode": {
+        "description": "The text-wrap-mode CSS property controls whether the text inside an element is wrapped. The different values provide alternate ways of wrapping the content of a block element. It can also be set, and reset, using the text-wrap shorthand."
+    },
+    "text-wrap-style": {
+        "description": "The text-wrap-style CSS property controls how text inside an element is wrapped. The different values provide alternate ways of wrapping the content of a block element. It can also be set, and reset, using the text-wrap shorthand."
+    }
+}

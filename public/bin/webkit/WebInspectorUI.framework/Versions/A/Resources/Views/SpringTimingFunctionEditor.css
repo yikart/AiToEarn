@@ -1,0 +1,116 @@
+/*
+ * Copyright (C) 2016 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.spring-timing-function-editor {
+    width: 200px;
+    height: 200px;
+    --spring-timing-function-editor-horizontal-margin: 5px;
+}
+
+.spring-timing-function-editor > .preview {
+    width: calc(100% - 10px);
+    height: 25px;
+    margin: 5px var(--spring-timing-function-editor-horizontal-margin) 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.spring-timing-function-editor > .preview > div {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    background-color: var(--glyph-color-active);
+    border-radius: 50%;
+}
+
+.spring-timing-function-editor > .timing {
+    position: relative;
+    margin: -0.5px calc(2 * var(--spring-timing-function-editor-horizontal-margin)) 10px;
+    padding: 0 1px;
+}
+
+.spring-timing-function-editor > .timing > div {
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid var(--text-color);
+    transition-timing-function: linear;
+}
+
+.spring-timing-function-editor > .timing::before,
+.spring-timing-function-editor > .timing::after {
+    position: absolute;
+    top: 2.5px;
+    font-size: 9px;
+}
+
+.spring-timing-function-editor > .timing::before {
+    content: "0s";
+}
+
+.spring-timing-function-editor > .timing::after {
+    content: attr(data-duration) "s";
+}
+
+.spring-timing-function-editor > .timing::before {
+    inset-inline-start: 0;
+}
+
+.spring-timing-function-editor > .timing::after {
+    inset-inline-end: 0;
+}
+
+.spring-timing-function-editor > :is(.preview, .timing) > div {
+    transition-property: none;
+}
+
+.spring-timing-function-editor > .animate:is(.preview, .timing) > div {
+    transition-property: transform;
+}
+
+.spring-timing-function-editor > .number-input-container > .number-input-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 3px;
+}
+
+.spring-timing-function-editor > .number-input-container > .number-input-row > .number-input-row-title {
+    width: 100%;
+    margin: 5px var(--spring-timing-function-editor-horizontal-margin) 0;
+}
+
+.spring-timing-function-editor > .number-input-container > .number-input-row > input {
+    width: calc(25% - 2 * var(--spring-timing-function-editor-horizontal-margin));
+    margin: 0 var(--spring-timing-function-editor-horizontal-margin);
+    text-align: end;
+}
+
+.spring-timing-function-editor > .number-input-container > .number-input-row > input::-webkit-inner-spin-button {
+    appearance: none;
+}
+
+.spring-timing-function-editor > .number-input-container > .number-input-row > input[type="range"] {
+    width: calc(75% - 2 * var(--spring-timing-function-editor-horizontal-margin));
+    background-color: transparent;
+}

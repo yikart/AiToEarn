@@ -1,0 +1,94 @@
+/*
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.waterfall-popover-content .dom-events-breakdown {
+    -webkit-user-select: text;
+    max-height: 210px;
+    overflow-y: auto;
+}
+
+.dom-events-breakdown {
+    margin: 5px;
+}
+
+.dom-events-breakdown table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dom-events-breakdown tr > :is(th, td) {
+    padding: 4px;
+    text-align: start;
+}
+
+.dom-events-breakdown tbody > tr {
+    /* FIXME: <https://webkit.org/b/94128> */
+    border-top: 1px solid lightgrey;
+}
+
+.dom-events-breakdown .graph {
+    position: relative;
+    width: 100%;
+    border-right: var(--img-size) solid transparent;
+    border-left: var(--img-size) solid transparent;
+
+    --img-size: 14px;
+}
+
+.dom-events-breakdown .graph > :is(img, .area) {
+    position: absolute;
+}
+
+.dom-events-breakdown .graph > img {
+    top: calc(50% - (var(--img-size) / 2));
+    width: var(--img-size);
+    height: var(--img-size);
+}
+
+.dom-events-breakdown .graph > .area {
+    top: 0;
+    height: 100%;
+}
+
+.dom-events-breakdown .graph > .area.fullscreen {
+    background-color: hsla(0, 0%, 75%, 0.25);
+}
+
+.dom-events-breakdown .graph > .area.power-efficient-playback {
+    background-color: hsla(83, 100%, 48%, 0.4);
+}
+
+.dom-events-breakdown .time {
+    text-align: end;
+}
+
+.dom-events-breakdown .inherited > .name,
+.dom-events-breakdown .inherited > .graph > img {
+    opacity: 0.5;
+}
+
+.dom-events-breakdown:not(.has-inherited) .originator {
+    display: none;
+}

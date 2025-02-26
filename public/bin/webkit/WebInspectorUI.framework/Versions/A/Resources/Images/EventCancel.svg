@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2019 Apple Inc. All rights reserved. -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 14 14">
+    <circle fill="rgb(191, 222, 255)" stroke="rgb(0, 122, 255)" cx="7" cy="7" r="6.25"/>
+    <path fill="white" d="M 7 0.5 c 3.584 0 6.5 2.916 6.5 6.5 s -2.916 6.5 -6.5 6.5 S 0.5 10.584 0.5 7 3.416 0.5 7 0.5 M 7 0 a 7 7 0 1 0 0 14 A 7 7 0 0 0 7 0 z"/>
+    <circle fill="none" stroke="rgb(0, 122, 255)" cx="7" cy="7" r="4"/>
+    <line stroke="rgb(0, 122, 255)" x1="4" y1="4" x2="10" y2="10" />
+</svg>

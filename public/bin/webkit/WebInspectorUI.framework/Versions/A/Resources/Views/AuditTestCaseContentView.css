@@ -1,0 +1,171 @@
+/*
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.content-view-container > .content-view.audit-test-case {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.content-view-container > .content-view.audit-test-case > header {
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: var(--z-index-header);
+    background-color: var(--audit-test-header-background-color);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.content-view-container > .content-view.audit-test-case.manager-editing > header h1 > img {
+    width: 0.75em;
+    min-width: 12px;
+    height: 0.75em;
+    min-height: 12px;
+    margin: 0.125em;
+    margin-inline-end: 0.375em;
+}
+
+.content-view-container > .content-view.audit-test-case > section > :not(.message-text-view, .editor):first-child {
+    margin-top: var(--audit-test-vertical-space);
+}
+
+.content-view-container > .content-view.audit-test-case > section {
+    overflow-y: scroll;
+}
+
+.content-view-container > .content-view.audit-test-case > section,
+.content-view-container > .content-view.audit-test-case > section :is(.editor, .CodeMirror) {
+    height: 100%;
+}
+
+.content-view.audit-test-case > header {
+    padding-inline-end: calc(var(--audit-test-horizontal-space) / 2);
+}
+
+.content-view.audit-test-case > header h1 {
+    display: flex;
+    align-items: center;
+}
+
+.content-view.audit-test-case > header h1 > img {
+    width: 1em;
+    height: 1em;
+    min-width: 16px;
+    min-height: 16px;
+    margin-inline-end: 0.25em;
+}
+
+.content-view.audit-test-case.manager-editing.disabled:not(.editable) > header h1 > img {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.content-view.audit-test-case > header > .metadata {
+    display: flex;
+    align-items: center;
+    text-align: end;
+}
+
+.content-view.audit-test-case > header > .metadata > .source {
+    margin-inline-end: 3px;
+}
+
+.content-view.audit-test-case > header > .metadata > .source > time {
+    display: block;
+    font-style: italic;
+    white-space: nowrap;
+}
+
+.content-view.audit-test-case > header > .metadata > .source > a {
+    display: block;
+}
+
+.content-view.audit-test-case > header > .metadata > .duration {
+    min-width: var(--metadata-width);
+    margin-inline-start: var(--audit-test-horizontal-space);
+    font-size: 12px;
+    text-align: end;
+    font-weight: bold;
+}
+
+.content-view.audit-test-case > section > :not(.message-text-view, .editor) {
+    margin-right: var(--audit-test-horizontal-space);
+    margin-left: var(--audit-test-horizontal-space);
+}
+
+.content-view.audit-test-case > section > :not(.message-text-view, .editor):last-child {
+    margin-bottom: var(--audit-test-vertical-space);
+}
+
+.content-view.audit-test-case > section > :not(.message-text-view, .editor) + :not(.message-text-view, .editor) {
+    margin-top: var(--audit-test-vertical-space);
+}
+
+.content-view.audit-test-case > section h1 {
+    margin-bottom: 4px;
+}
+
+.content-view.audit-test-case > section table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.content-view.audit-test-case > section table > tr + tr > td {
+    padding-top: 2px;
+}
+
+.content-view.audit-test-case > section table > tr > td > :not(.tree-outline) {
+    -webkit-user-select: text;
+}
+
+.content-view.audit-test-case > section table > tr > td:first-child {
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+    vertical-align: top;
+    color: var(--console-secondary-text-color);
+}
+
+.content-view.audit-test-case > section > .dom-nodes > table > tr > td:first-child {
+    position: relative;
+    top: -1px;
+}
+
+.content-view.audit-test-case > section table > tr > td + td {
+    width: 100%;
+}
+
+.content-view.audit-test-case > section .mark {
+    background-color: hsla(53, 83%, 53%, 0.2);
+    border-bottom: 1px solid hsl(47, 82%, 60%);
+}
+
+@media (prefers-color-scheme: dark) {
+    .content-view.audit-test-case.manager-editing > header h1 > img {
+        filter: var(--filter-invert);
+    }
+}

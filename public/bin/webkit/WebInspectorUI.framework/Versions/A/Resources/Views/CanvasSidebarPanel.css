@@ -1,0 +1,136 @@
+/*
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.sidebar > .panel.navigation.canvas > .content {
+    display: flex;
+    flex-direction: column;
+    top: var(--navigation-bar-height);
+    overflow-y: hidden;
+}
+
+.sidebar > .panel.navigation.canvas:not(.showing-recording) > .content {
+    bottom: 0;
+}
+
+.sidebar > .panel.navigation.canvas > .navigation-bar > .item.record-start-stop.disabled > .glyph {
+    filter: grayscale();
+    opacity: 0.5;
+}
+
+.sidebar > .panel.navigation.canvas > .content > .tree-outline.canvas {
+    overflow-y: auto;
+}
+
+.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas:is(.canvas-2d, .bitmaprenderer) .icon {
+    content: url(../Images/Canvas2D.svg);
+}
+
+.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas:is(.webgl, .webgl2, .webgpu, .webmetal) .icon {
+    content: url(../Images/Canvas3D.svg);
+}
+
+.sidebar > .panel.navigation.canvas > .content > .navigation-bar {
+    border-top: 1px solid var(--border-color);
+}
+
+.sidebar > .panel.navigation.canvas:not(.showing-recording) > .content > .navigation-bar {
+    border-bottom: none;
+}
+
+.sidebar > .panel.navigation.canvas.has-recordings > .content > .recording-content {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.sidebar > .panel.navigation.canvas.showing-recording > .content > .tree-outline.canvas {
+    flex-shrink: 0;
+    height: fit-content;
+    max-height: 110px;
+}
+
+.sidebar > .panel.navigation.canvas:not(.showing-recording) > :is(.filter-bar, .overflow-shadow),
+.sidebar > .panel.navigation.canvas:not(.has-recordings) > .content > :is(.navigation-bar, .recording-content) {
+    display: none;
+}
+
+.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.shader-program > .icon {
+    content: url(../Images/DocumentIcons.svg#gl-light);
+}
+
+.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.recording > .icon {
+    content: url(../Images/Recording.svg);
+}
+
+.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.folder-icon > .icon {
+    content: url(../Images/TypeIcons.svg#RenderingFrame-light);
+}
+
+.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.folder-icon > .status {
+    line-height: 16px;
+}
+
+.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.processing .subtitle > progress {
+    width: 100%;
+    max-width: 100px;
+    margin: 0 4px;
+    vertical-align: -3px;
+}
+
+body:not(.window-inactive, .window-docked-inactive) .sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline:focus-within .item.processing.selected .subtitle > progress {
+    filter: brightness(10);
+}
+
+.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.processing .subtitle::before {
+    content: "";
+}
+
+.sidebar > .panel.navigation.canvas > .content > .recording-content > .recording-processing-options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 16px 0;
+}
+
+.sidebar > .panel.navigation.canvas > .content > .recording-content > .recording-processing-options > .indeterminate-progress-spinner {
+    margin-bottom: 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .sidebar > .panel.navigation.canvas > .navigation-bar > .item.record-start-stop.disabled > .glyph {
+        filter: grayscale() invert();
+    }
+
+    .sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas .icon {
+        filter: invert();
+    }
+
+    .sidebar > .panel.navigation.canvas > .content > .tree-outline .item.shader-program > .icon {
+        content: url(../Images/DocumentIcons.svg#gl-dark);
+    }
+
+    .sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.folder-icon > .icon {
+        content: url(../Images/TypeIcons.svg#RenderingFrame-dark);
+    }
+}

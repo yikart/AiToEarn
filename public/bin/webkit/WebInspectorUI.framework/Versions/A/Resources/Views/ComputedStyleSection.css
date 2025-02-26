@@ -1,0 +1,181 @@
+/*
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.computed-style-section {
+    padding-bottom: var(--computed-style-section-vertical-padding);
+    color: var(--text-color-tertiary);
+    -webkit-user-select: text;
+
+    --computed-style-section-vertical-padding: 3px;
+}
+
+.computed-style-section .computed-property-item {
+    box-sizing: border-box;
+    max-width: 100%;
+    min-height: calc(var(--disclosure-button-size));
+    padding-left: calc(var(--disclosure-button-size) + 6px);
+    padding-right: var(--css-declaration-horizontal-padding);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.computed-style-section .computed-property-item.expanded {
+    margin-top: -0.5px;
+    padding-bottom: 2px;
+    background-color: var(--background-color-intermediate);
+    border-top: 0.5px solid var(--text-color-quaternary);
+    border-bottom: 0.5px solid var(--text-color-quaternary);
+}
+
+.computed-style-section .computed-property-item.expanded + .computed-property-item.expanded {
+    border-top: none;
+}
+
+.computed-style-section .computed-property-item > .disclosure-button:focus {
+    outline: auto -webkit-focus-ring-color;
+    outline-offset: -3px; /* Make focus outline smaller than usual so it doesn't get clipped here. */
+    border-radius: calc((var(--disclosure-button-size) / 2) - 2px);
+}
+
+.computed-style-section .computed-property-item .disclosure-button {
+    display: inline-block;
+    width: var(--disclosure-button-size);
+    height: var(--disclosure-button-size);
+    margin-inline-start: calc(-1 * var(--disclosure-button-size));
+    border: 0;
+    background-color: transparent;
+    background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 13px 13px;
+    appearance: none;
+}
+
+.computed-style-section .computed-property-item .property-traces {
+    display: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.computed-style-section .computed-property-item.expanded .property-traces {
+    display: table;
+}
+
+.computed-style-section .computed-property-item.expanded .disclosure-button {
+    vertical-align: top;
+    background-image: url(../Images/DisclosureTriangles.svg#open-normal);
+}
+
+.computed-style-section .computed-property-item .property-trace-item {
+    display: table-row;
+    margin-left: 1.2em;
+}
+
+.computed-style-section .computed-property-item .property-trace-item::before {
+    content: "\2022";
+    display: inline-block;
+    margin-left: -0.8em;
+}
+
+.computed-style-section .computed-property-item .property-trace-item .property.overridden .value {
+    text-decoration: line-through;
+    text-decoration-color: hsla(0, 100%, 50%, 0.7);
+}
+
+.computed-style-section .property-trace-item-left,
+.computed-style-section .property-trace-item-right {
+    display: table-cell;
+}
+
+.computed-style-section .property-trace-item-right {
+    text-align: right;
+}
+
+.computed-style-section .computed-property-item .property-trace-item .value {
+    min-width: 4em;
+    padding-right: 0.6em;
+    color: var(--text-color);
+}
+
+.computed-style-section .property .value {
+    color: var(--text-color);
+}
+
+.computed-style-section .computed-property-item .property {
+    display: inline;
+    overflow: hidden;
+    max-width: 100%;
+    text-overflow: ellipsis;
+}
+
+.computed-style-section .computed-property-item .property .name {
+    color: var(--syntax-highlight-boolean-color);
+}
+
+.computed-style-section .computed-property-item .property-trace-item .selector {
+    color: var(--text-color-secondary);
+}
+
+.computed-style-section .computed-property-item .origin {
+    font: 11px sans-serif;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.computed-style-section .computed-property-item .go-to-link {
+    color: var(--text-color-secondary);
+}
+
+.computed-style-section .property-trace-item .property :is(.name, .colon, .semicolon, .css-documentation-button) {
+    display: none;
+}
+
+.computed-style-properties.details-section > .content,
+.computed-style-properties.details-section > .content > .group {
+    display: block;
+}
+
+.sidebar > .panel.details.css-style > .content > .computed .computed-property-item > .property .go-to-arrow {
+    vertical-align: bottom;
+    width: var(--disclosure-button-size);
+    height: var(--disclosure-button-size);
+}
+
+.sidebar > .panel.details.css-style > .content > .computed .computed-property-item:not(:hover) > .property .go-to-arrow {
+    display: none;
+}
+
+.sidebar > .panel.details.css-style > .content > .computed .computed-property-item > .property > .content > .css-documentation-button {
+    vertical-align: bottom;
+    width: var(--disclosure-button-size);
+    height: var(--disclosure-button-size);
+    margin-left: 1px;
+}
+
+.sidebar > .panel.details.css-style > .content > .computed .computed-property-item:not(:hover) > .property > .content > .css-documentation-button {
+    display: none;
+}

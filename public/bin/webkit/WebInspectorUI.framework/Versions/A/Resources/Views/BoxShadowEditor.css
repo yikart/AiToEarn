@@ -1,0 +1,100 @@
+/*
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.box-shadow-editor {
+    max-width: var(--color-picker-width);
+}
+
+.box-shadow-editor > table {
+    width: 100%;
+    padding: 0 4px;
+    border-spacing: 0;
+}
+
+.box-shadow-editor > table > tr > th {
+    font-weight: bold;
+    text-align: end;
+    line-height: 23px;
+    vertical-align: top;
+    white-space: nowrap;
+    color: hsl(0, 0%, 34%);
+}
+
+.box-shadow-editor > table > tr > td {
+    padding-inline-start: 4px;
+}
+
+.box-shadow-editor > table > tr > td > input[type="text"] {
+    width: 100%;
+    padding: 3px 4px 2px;
+    font-family: Menlo, monospace;
+    text-align: end;
+    background-color: var(--background-color-content);
+    border: 1px solid var(--text-color-quaternary);
+    appearance: none;
+}
+
+.box-shadow-editor > table > tr > td > input[type="range"] {
+    width: 120px;
+    height: 19px;
+    background-color: transparent;
+}
+
+.box-shadow-editor > table > tr.offset-x > td > svg {
+    margin-inline-start: 5px;
+}
+
+.box-shadow-editor > table > tr.offset-x > td > svg line.axis {
+    fill: none;
+    stroke: var(--text-color-quaternary);
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.box-shadow-editor > table > tr.offset-x > td > svg line:not(.axis) {
+    fill: none;
+    stroke: var(--glyph-color-active);
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.box-shadow-editor > table > tr.offset-x > td > svg circle {
+    r: 5px; /* keep in sync with `this._offsetSliderKnobRadius` */
+    fill: var(--glyph-color-active);
+}
+
+.box-shadow-editor > table > tr.inset > td {
+    vertical-align: top;
+}
+
+.box-shadow-editor > table > tr.inset > td > input[type="checkbox"] {
+    margin-top: 0.5em;
+}
+
+@media (prefers-color-scheme: dark) {
+    .box-shadow-editor > table > tr > th {
+        color: var(--text-color-secondary);
+    }
+}
