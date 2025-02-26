@@ -98,16 +98,16 @@ class KwaiPub {
         await textarea.click();
         // 设置简介 触发粘贴事件
         await page.evaluate(
-          ({ textarea, params }) => {
+          ({ textarea, desc }) => {
             const pasteEvent = new ClipboardEvent('paste', {
               bubbles: true,
               cancelable: true,
               clipboardData: new DataTransfer(),
             });
-            pasteEvent.clipboardData?.setData('text/plain', params.desc);
+            pasteEvent.clipboardData?.setData('text/plain', desc);
             textarea.dispatchEvent(pasteEvent);
           },
-          { textarea, params },
+          { textarea, desc: params.desc },
         );
 
         // 设置私密性

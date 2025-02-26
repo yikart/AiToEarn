@@ -13,6 +13,7 @@ import {
   IGetTopicsResponse,
   IVideoPublishParams,
   StatisticsData,
+  VideoCallbackType,
   WorkData,
 } from './plat.type';
 import { PublishVideoResult } from './module';
@@ -75,6 +76,8 @@ export abstract class PlatformBase {
   // 在该平台发布视频
   abstract videoPublish(
     params: IVideoPublishParams,
+    // 获取发布进度的回调函数
+    callback: VideoCallbackType,
   ): Promise<PublishVideoResult>;
 
   // 获取这个平台的话题

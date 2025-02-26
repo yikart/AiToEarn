@@ -12,6 +12,7 @@ import {
   IGetTopicsParams,
   IGetTopicsResponse,
   IVideoPublishParams,
+  VideoCallbackType,
 } from '../../plat.type';
 import { PublishVideoResult } from '../../module';
 import { kwaiPub } from '../../../../plat/Kwai';
@@ -63,12 +64,15 @@ export class Kwai extends PlatformBase {
     return this.formatUserInfo(res);
   }
 
-  async videoPublish(params: IVideoPublishParams): Promise<PublishVideoResult> {
+  async videoPublish(
+    params: IVideoPublishParams,
+    callback: VideoCallbackType,
+  ): Promise<PublishVideoResult> {
     const publishVideoResult = new PublishVideoResult();
     const res = await kwaiPub.pubVideo({
       ...params,
       desc: params.desc + params.topics.map((v) => `#${v}`).join(' '),
-      callback(progress: number, msg?: string) {},
+      callback,
     });
     // 发布失败
     if (!res.success) {

@@ -12,6 +12,15 @@ import { PlatformBase } from '../PlatformBase';
 import { PubStatus } from '../../../db/models/pubRecord';
 import { Event } from '../../../global/event';
 import { VisibleTypeEnum } from '../../../../commont/publish/PublishEnum';
+import windowOperate from '../../../util/windowOperate';
+import { SendChannelEnum } from '../../../../commont/UtilsEnum';
+
+// 视频发布进度返回值
+export interface VideoPublishProgressRes {
+  progress: number;
+  msg: string;
+  account: AccountModel;
+}
 
 /**
  * 视频发布单条处理逻辑
@@ -32,16 +41,27 @@ export class PubItemVideo extends PubItemBase {
    * 发布视频
    */
   async publishVideo() {
-    const publishVideoResult = await this.platform.videoPublish({
-      cookies: JSON.parse(this.accountModel.loginCookie),
-      desc: this.videoModel.desc!,
-      videoPath: this.videoModel.videoPath!,
-      title: this.videoModel.title || '',
-      topics: this.videoModel.topics?.map((v) => v.label) || [],
-      coverPath: this.videoModel.coverPath || '',
-      visibleType: this.videoModel.visibleType || VisibleTypeEnum.Private,
-      diffParams: this.videoModel.diffParams,
-    });
+    const publishVideoResult = await this.platform.videoPublish(
+      {
+        cookies: JSON.parse(this.accountModel.loginCookie),
+        desc: this.videoModel.desc!,
+        videoPath: this.videoModel.videoPath!,
+        title: this.videoModel.title || '',
+        topics: this.videoModel.topics?.map((v) => v.label) || [],
+        coverPath: this.videoModel.coverPath || '',
+        visibleType: this.videoModel.visibleType || VisibleTypeEnum.Private,
+        diffParams: this.videoModel.diffParams,
+      },
+      (progress: number, msg?: string) => {
+        const args: VideoPublishProgressRes = {
+          progress,
+          msg: msg || '',
+          account: this.accountModel,
+        };
+        // 视频发布进度，向渲染层发送进度
+        windowOperate.sendRenderMsg(SendChannelEnum.VideoPublishProgress, args);
+      },
+    );
     // 发布失败
     if (publishVideoResult.code === 0) {
       this.videoModel.status = PubStatus.FAIL;

@@ -14,6 +14,7 @@ import {
   IGetTopicsParams,
   IGetTopicsResponse,
   IVideoPublishParams,
+  VideoCallbackType,
 } from '../../plat.type';
 import { PublishVideoResult } from '../../module';
 import { shipinhaoService } from '../../../../plat/shipinhao';
@@ -123,7 +124,10 @@ export class WxSph extends PlatformBase {
     return {};
   }
 
-  async videoPublish(params: IVideoPublishParams): Promise<PublishVideoResult> {
+  async videoPublish(
+    params: IVideoPublishParams,
+    callback: VideoCallbackType,
+  ): Promise<PublishVideoResult> {
     const result = await shipinhaoService.publishVideoWorkApi(
       params.cookies,
       params.videoPath,
@@ -133,8 +137,7 @@ export class WxSph extends PlatformBase {
         topics: params.topics,
         // des: params.desc,
       },
-      (progress: number, msg?: string) => {
-      }
+      callback,
     );
     if (!result.publishId)
       return {

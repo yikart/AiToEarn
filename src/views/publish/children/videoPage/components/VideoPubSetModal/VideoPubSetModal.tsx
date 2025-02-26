@@ -38,6 +38,12 @@ import VideoPubSetModal_KWAI from '@/views/publish/children/videoPage/components
 import VideoPubSetModal_DouYin from '@/views/publish/children/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_DouYin';
 import VideoPubSetModal_XSH from '@/views/publish/children/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_XSH';
 import VideoPubSetModal_WxSph from '@/views/publish/children/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_WxSph';
+import { onVideoPublishProgress } from '@/icp/receiveMsg';
+import PubProgressModule from '@/views/publish/components/PubProgressModule';
+import { VideoPublishProgressRes } from '../../../../../../../electron/main/plat/pub/PubItemVideo';
+import VideoPubSetModalVideo, {
+  IVideoPubSetModalVideoRef,
+} from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalVideo';
 
 export interface IVideoPubSetModalRef {}
 
@@ -70,6 +76,7 @@ const VideoPubSetModal = memo(
         setVideoPubSetModalOpen,
         updateAccounts,
         accountRestart,
+        clear,
       } = useVideoPageStore(
         useShallow((state) => ({
           videoListChoose: state.videoListChoose,
@@ -80,17 +87,47 @@ const VideoPubSetModal = memo(
           setVideoPubSetModalOpen: state.setVideoPubSetModalOpen,
           updateAccounts: state.updateAccounts,
           accountRestart: state.accountRestart,
+          clear: state.clear,
         })),
       );
       const [loading, setLoading] = useState(false);
       const [api, contextHolder] = notification.useNotification();
-      const videoRef = useRef<HTMLVideoElement>(null);
       const pubAccountDetModuleRef = useRef<IPubAccountDetModuleRef>(null);
+      // 主进程传过来的发布进度数据，key为用户id value为发布进度数据
+      const [pubProgressMap, setPubProgressMap] = useState<
+        Map<number, VideoPublishProgressRes>
+      >(new Map());
+      const [pubProgressModuleOpen, setPubProgressModuleOpen] = useState(false);
+      const videoPubSetModalVideoRef = useRef<IVideoPubSetModalVideoRef>(null);
+
+      useEffect(() => {
+        // 发布进度监听
+        onVideoPublishProgress((progressData) => {
+          setPubProgressMap((prev) => {
+            const newMap = new Map(prev);
+            newMap.set(progressData.account.id!, progressData);
+            return newMap;
+          });
+        });
+      }, []);
 
       useEffect(() => {
         if (!currChooseAccountId)
           setCurrChooseAccountId(videoListChoose[0]?.id);
       }, [videoListChoose]);
+
+      const pubProgressData = useMemo(() => {
+        return videoListChoose
+          .filter((v) => v.account && v.video)
+          .map((v) => {
+            const progress = pubProgressMap.get(v.account!.id);
+            return {
+              account: v.account!,
+              progress: progress?.progress || 0,
+              msg: progress?.msg || '',
+            };
+          });
+      }, [pubProgressMap, videoListChoose]);
 
       // 捕获 videoListChoose 的错误
       const errVideoMap = useMemo(() => {
@@ -148,6 +185,9 @@ const VideoPubSetModal = memo(
           coverPath: videoListChoose[0].pubParams.cover?.imgPath,
         });
         if (!recordRes) return err();
+
+        setPubProgressModuleOpen(true);
+        setLoading(false);
         for (const vData of videoListChoose) {
           const account = vData.account!;
           const video = vData.video!;
@@ -168,6 +208,8 @@ const VideoPubSetModal = memo(
         const okRes = await icpPubVideo(recordRes.id);
         setLoading(false);
         close();
+        setPubProgressModuleOpen(false);
+        // clear();
 
         // 成功数据
         const successList = okRes.filter((v) => v.code === 1);
@@ -218,12 +260,17 @@ const VideoPubSetModal = memo(
 
       const close = () => {
         setVideoPubSetModalOpen(false);
-        videoRef.current!.pause();
+        videoPubSetModalVideoRef.current!.pause();
       };
 
       return (
         <>
           {contextHolder}
+          <PubProgressModule
+            pubProgressData={pubProgressData}
+            open={pubProgressModuleOpen}
+            onClose={() => setPubProgressModuleOpen(false)}
+          />
           <PubAccountDetModule
             ref={pubAccountDetModuleRef}
             accounts={videoListChoose
@@ -242,7 +289,7 @@ const VideoPubSetModal = memo(
             }}
           />
           <Modal
-            width={800}
+            width={900}
             title="预览/发布配置"
             open={videoPubSetModalOpen}
             onOk={handleOk}
@@ -378,11 +425,13 @@ const VideoPubSetModal = memo(
                     })()}
                 </div>
                 <div className="videoPubSetModal_con-right">
-                  <video
-                    ref={videoRef}
-                    src={currChooseAccount?.video?.videoUrl}
-                    controls
-                  />
+                  {currChooseAccount && (
+                    <VideoPubSetModalVideo
+                      ref={videoPubSetModalVideoRef}
+                      chooseAccountItem={currChooseAccount}
+                      key={currChooseAccount?.video?.videoUrl}
+                    />
+                  )}
                 </div>
               </div>
             </div>

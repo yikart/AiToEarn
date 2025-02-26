@@ -14,6 +14,7 @@ import {
   IGetTopicsParams,
   IGetTopicsResponse,
   IVideoPublishParams,
+  VideoCallbackType,
 } from '../../plat.type';
 import { PublishVideoResult } from '../../module';
 import { douyinService } from '../../../../plat/douyin';
@@ -132,7 +133,10 @@ export class Douyin extends PlatformBase {
     return {};
   }
 
-  async videoPublish(params: IVideoPublishParams): Promise<PublishVideoResult> {
+  async videoPublish(
+    params: IVideoPublishParams,
+    callback: VideoCallbackType,
+  ): Promise<PublishVideoResult> {
     return new Promise(async (resolve) => {
       const result = await douyinService
         .publishVideoWorkApi(
@@ -145,8 +149,7 @@ export class Douyin extends PlatformBase {
             cover: params.coverPath,
             timingTime: getNowTimeStamp() + '',
           },
-          (progress: number, msg?: string) => {
-          },
+          callback,
         )
         .catch((e) => {
           resolve({

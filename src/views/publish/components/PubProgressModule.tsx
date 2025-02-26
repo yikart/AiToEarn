@@ -1,0 +1,68 @@
+import { ForwardedRef, forwardRef, memo } from 'react';
+import { Avatar, Modal, Progress, Tooltip } from 'antd';
+import { VideoPublishProgressRes } from '../../../../electron/main/plat/pub/PubItemVideo';
+import styles from './pubProgressModule.module.scss';
+import { AccountPlatInfoMap } from '@/views/account/comment';
+
+export interface IPubProgressModuleRef {}
+
+export interface IPubProgressModuleProps {
+  pubProgressData: VideoPublishProgressRes[];
+  open: boolean;
+  onClose: () => void;
+}
+
+// 发布进度展示
+const PubProgressModule = memo(
+  forwardRef(
+    (
+      { pubProgressData, open, onClose }: IPubProgressModuleProps,
+      ref: ForwardedRef<IPubProgressModuleRef>,
+    ) => {
+      return (
+        <Modal
+          width={700}
+          title="内容分发"
+          maskClosable={false}
+          open={open}
+          onCancel={onClose}
+          footer={null}
+        >
+          <div className={styles.pubProgressModule}>
+            {pubProgressData.map((v) => {
+              const { account } = v;
+              const plat = AccountPlatInfoMap.get(account.type);
+              if (!plat) return;
+
+              return (
+                <div className="pubProgressModule-item" key={account.id}>
+                  <div className="pubProgressModule-item-left">
+                    <div className="pubProgressModule-item-left-avatar">
+                      <Avatar src={account.avatar} size="large" />
+                      <img src={plat.icon} />
+                    </div>
+                    <Tooltip title={account.nickname}>
+                      <span className="pubProgressModule-item-left-name">
+                        {account.nickname}
+                      </span>
+                    </Tooltip>
+                  </div>
+
+                  <div className="pubProgressModule-item-right">
+                    <Progress percent={v.progress} />
+                    <p className="pubProgressModule-item-right-msg">
+                      {v.msg || '正在加载...'}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Modal>
+      );
+    },
+  ),
+);
+PubProgressModule.displayName = 'PubProgressModule';
+
+export default PubProgressModule;
