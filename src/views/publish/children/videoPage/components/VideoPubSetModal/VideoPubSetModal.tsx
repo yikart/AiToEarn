@@ -41,6 +41,9 @@ import VideoPubSetModal_WxSph from '@/views/publish/children/videoPage/component
 import { onVideoPublishProgress } from '@/icp/receiveMsg';
 import PubProgressModule from '@/views/publish/components/PubProgressModule';
 import { VideoPublishProgressRes } from '../../../../../../../electron/main/plat/pub/PubItemVideo';
+import VideoPubSetModalVideo, {
+  IVideoPubSetModalVideoRef,
+} from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalVideo';
 
 export interface IVideoPubSetModalRef {}
 
@@ -89,13 +92,13 @@ const VideoPubSetModal = memo(
       );
       const [loading, setLoading] = useState(false);
       const [api, contextHolder] = notification.useNotification();
-      const videoRef = useRef<HTMLVideoElement>(null);
       const pubAccountDetModuleRef = useRef<IPubAccountDetModuleRef>(null);
       // 主进程传过来的发布进度数据，key为用户id value为发布进度数据
       const [pubProgressMap, setPubProgressMap] = useState<
         Map<number, VideoPublishProgressRes>
       >(new Map());
       const [pubProgressModuleOpen, setPubProgressModuleOpen] = useState(false);
+      const videoPubSetModalVideoRef = useRef<IVideoPubSetModalVideoRef>(null);
 
       useEffect(() => {
         // 发布进度监听
@@ -206,7 +209,7 @@ const VideoPubSetModal = memo(
         setLoading(false);
         close();
         setPubProgressModuleOpen(false);
-        clear();
+        // clear();
 
         // 成功数据
         const successList = okRes.filter((v) => v.code === 1);
@@ -257,7 +260,7 @@ const VideoPubSetModal = memo(
 
       const close = () => {
         setVideoPubSetModalOpen(false);
-        videoRef.current!.pause();
+        videoPubSetModalVideoRef.current!.pause();
       };
 
       return (
@@ -422,11 +425,13 @@ const VideoPubSetModal = memo(
                     })()}
                 </div>
                 <div className="videoPubSetModal_con-right">
-                  <video
-                    ref={videoRef}
-                    src={currChooseAccount?.video?.videoUrl}
-                    controls
-                  />
+                  {currChooseAccount && (
+                    <VideoPubSetModalVideo
+                      ref={videoPubSetModalVideoRef}
+                      chooseAccountItem={currChooseAccount}
+                      key={currChooseAccount?.video?.videoUrl}
+                    />
+                  )}
                 </div>
               </div>
             </div>
