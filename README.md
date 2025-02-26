@@ -6,7 +6,7 @@
  * @Description:
 -->
 
-# AttAiToEarn
+# AiToEarn
 
 ![GitHub stars](https://img.shields.io/github/stars/yikart/AttAiToEarn?color=fa6470)
 ![GitHub issues](https://img.shields.io/github/issues/yikart/AttAiToEarn?color=d8b22d)
@@ -17,7 +17,7 @@
 
 ## Overview
 
-One-click publishing tool for multiple social media platforms.
+One-click publishing tool for multiple social media platforms, such as douyin, red book, wechat channels, kuaishou.
 
 ## Supported Platforms
 
