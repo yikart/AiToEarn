@@ -48,6 +48,9 @@ export type WorkData = {
   income?: number;
 };
 
+// 视频发布进度回调函数类型
+export type VideoCallbackType = (progress: number, msg?: string) => void;
+
 // 发布视频入参
 export interface IVideoPublishParams {
   // 调用该平台的cookies
@@ -67,7 +70,6 @@ export interface IVideoPublishParams {
   visibleType: VisibleTypeEnum;
   // 各个平台的差异化参数
   diffParams?: DiffParmasType;
-  callback?: (progress: number, msg: string) => void;
 }
 
 // 获取话题返回值

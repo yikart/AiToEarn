@@ -12,7 +12,7 @@ import { AccountStatus, AccountType } from '../../../commont/AccountEnum';
 @Entity({ name: 'account' })
 export class AccountModel extends TempModel {
   @PrimaryGeneratedColumn({ type: 'int', comment: 'id' })
-  id?: number;
+  id!: number;
 
   @Column({ type: 'varchar', nullable: false, comment: '用户id' })
   userId!: string;

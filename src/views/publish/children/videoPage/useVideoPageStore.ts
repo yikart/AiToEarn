@@ -11,6 +11,7 @@ import { accountLogin } from '@/icp/account';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { message } from 'antd';
 import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
+import lodash from 'lodash';
 
 interface IVideoPageStore {
   // 选择的视频数据
@@ -97,9 +98,7 @@ export const useVideoPageStore = create(
 
         // 初始化发布参数
         pubParamsInit(): IPubParams {
-          return {
-            ...get().commonPubParams,
-          };
+          return lodash.cloneDeep(store.commonPubParams);
         },
 
         /**

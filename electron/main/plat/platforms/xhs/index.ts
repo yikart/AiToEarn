@@ -14,6 +14,7 @@ import {
   IGetTopicsParams,
   IGetTopicsResponse,
   IVideoPublishParams,
+  VideoCallbackType,
 } from '../../plat.type';
 import { PublishVideoResult } from '../../module';
 import { xiaohongshuService } from '../../../../plat/xiaohongshu';
@@ -131,11 +132,13 @@ export class Xhs extends PlatformBase {
     return {};
   }
   /**
-   * TODO: 未实现
    * @param params
    * @returns
    */
-  async videoPublish(params: IVideoPublishParams): Promise<PublishVideoResult> {
+  async videoPublish(
+    params: IVideoPublishParams,
+    callback: VideoCallbackType,
+  ): Promise<PublishVideoResult> {
     return new Promise(async (resolve) => {
       const result = await xiaohongshuService
         .publishVideoWorkApi(
@@ -148,7 +151,7 @@ export class Xhs extends PlatformBase {
             topicsDetail:
               params.diffParams?.[AccountType.Xhs]?.topicsDetail || [],
           },
-          () => {},
+          callback,
         )
         .catch((err) => {
           resolve({
