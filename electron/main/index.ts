@@ -44,7 +44,7 @@ async function createWindow() {
   splashWindow.create();
 
   // 等待一会儿确保启动窗口显示
-  await new Promise(resolve => setTimeout(resolve, 500));
+  await new Promise((resolve) => setTimeout(resolve, 500));
 
   // 创建主窗口但先不显示
   win = new BrowserWindow({
