@@ -173,6 +173,23 @@
       margin-top: 0;
       padding: 0 40px;
     }
+
+    .agreement {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+
+      a {
+        color: #C367EF;
+        text-decoration: none;
+        margin: 0 2px;
+        
+        &:hover {
+          color: #64C9ED;
+        }
+      }
+    }
   }
 }
 
