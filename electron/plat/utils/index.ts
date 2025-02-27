@@ -33,3 +33,7 @@ export async function getFileContent(filePath: string): Promise<Buffer> {
     throw new Error(`读取文件失败: filePath`);
   }
 }
+
+export const CookieToString = (cookies: Electron.Cookie[]) => {
+  return cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ');
+};

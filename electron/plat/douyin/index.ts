@@ -6,7 +6,7 @@ import * as crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 // @ts-ignore
 import crc32 from 'crc32';
-import { getFileContent } from '../utils';
+import { CookieToString, getFileContent } from '../utils';
 import {
   DouyinLocationDataResponse,
   DouyinTopicsSugResponse,
@@ -2003,6 +2003,7 @@ export class DouyinService {
     keywords: string;
     latitude: string;
     longitude: string;
+    cookie: Electron.Cookie[];
   }) {
     return await requestNet<DouyinLocationDataResponse>({
       url: `${this.loginUrl}aweme/v1/life/video_api/search/poi/?${jsonToQueryString(
@@ -2013,17 +2014,23 @@ export class DouyinService {
         },
       )}`,
       method: 'GET',
+      headers: {
+        cookie: CookieToString(params.cookie),
+      },
     });
   }
 
   // 获取热点数据
-  async getHotspotData(params: { query: string }) {
+  async getHotspotData(params: { query: string; cookie: Electron.Cookie[]; }) {
     return await requestNet<DouyinLocationDataResponse>({
       url: `${this.loginUrl}aweme/v1/hotspot/search/?${jsonToQueryString({
         ...params,
         count: 50,
       })}`,
       method: 'GET',
+      headers: {
+        cookie: CookieToString(params.cookie),
+      },
     });
   }
 }

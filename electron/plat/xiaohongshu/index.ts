@@ -3,7 +3,7 @@ import * as crypto from 'crypto';
 import sizeOf from 'image-size';
 import { CommonUtils } from '../../util/common';
 import { FileUtils } from '../../util/file';
-import { getFileContent } from '../utils';
+import { CookieToString, getFileContent } from '../utils';
 import requestNet from '../requestNet';
 import { IXHSLocationResponse, IXHSTopicsResponse } from './xiaohongshu.type';
 
@@ -1266,9 +1266,7 @@ export class XiaohongshuService {
       url: `https://edith.xiaohongshu.com/web_api/sns/v1/search/topic`,
       method: 'POST',
       headers: {
-        Cookie: cookies
-          .map((cookie) => `${cookie.name}=${cookie.value}`)
-          .join('; '),
+        cookie: CookieToString(cookies),
         Referer: this.loginUrl,
         origin: this.loginUrl,
       },
@@ -1291,9 +1289,13 @@ export class XiaohongshuService {
     size?: number;
     source: string;
     type: number;
+    cookies: Electron.Cookie[];
   }) {
     return await requestNet<IXHSLocationResponse>({
       url: 'https://edith.xiaohongshu.com/web_api/sns/v1/local/poi/creator/search',
+      headers: {
+        cookie: CookieToString(params.cookies),
+      },
       body: {
         ...params,
         page: 1,

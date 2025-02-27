@@ -2,7 +2,9 @@ import { screen, BrowserWindow, net, session } from 'electron';
 import { CommonUtils } from '../../util/common';
 import path from 'path';
 import { FileUtils } from '../../util/file';
-import { getFileContent } from '../utils';
+import { CookieToString, getFileContent } from '../utils';
+import requestNet from '../requestNet';
+import { DouyinTopicsSugResponse } from '../douyin/douyin.type';
 
 interface UserInfo {
   authorId: string;
@@ -1302,6 +1304,23 @@ export class ShipinhaoService {
         shareLink: '',
       };
     }
+  }
+
+  // 获取位置数据
+  async getLocation(params: {
+    keyword: string;
+    longitude: number;
+    latitude: number;
+    cookie: Electron.Cookie[];
+  }) {
+    return await requestNet<DouyinTopicsSugResponse>({
+      url: `https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/helper/helper_search_location`,
+      method: 'POST',
+      body: params,
+      headers: {
+        cookie: CookieToString(params.cookie),
+      },
+    });
   }
 }
 
