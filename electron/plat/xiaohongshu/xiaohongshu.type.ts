@@ -16,10 +16,32 @@ interface TopicsData {
   result: TopicsResult;
 }
 
-// 话题接口返回数据
-export interface IXHSTopicsResponse {
+interface CommonResponse<T> {
   code: number;
   success: boolean;
   msg: string;
-  data: TopicsData;
+  data: T;
 }
+
+interface Poi {
+  poi_id: string;
+  poi_type: number;
+  city_name: string;
+  longitude: number;
+  type: string;
+  address: string;
+  name: string;
+  full_address: string;
+  latitude: number;
+}
+
+interface LocationData {
+  poi_list: Poi[];
+  search_context: string;
+}
+
+// 话题列表返回值
+export type IXHSTopicsResponse = CommonResponse<TopicsData>;
+
+// 地点列表返回值
+export type IXHSLocationResponse = CommonResponse<LocationData>;
