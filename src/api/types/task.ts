@@ -24,19 +24,24 @@ export interface MineTaskListParams extends ApiCorrectQuery {
   status?: UserTaskStatus;
 }
 
-export interface IUserInfo {
-  _id: string;
+export interface UserTask {
   id: string;
-  name: string;
-  phone: string;
-  gender: number;
-  avatar: string;
-  desc: string;
-}
-
-export interface IRefreshToken {
-  token: string;
-  userInfo: IUserInfo;
-  // 过期时间。秒
-  exp: number;
+  userId: string;
+  taskId: string;
+  status: UserTaskStatus;
+  submissionUrl?: string; // 提交的视频、文章或截图URL
+  screenshotUrls?: string[]; // 任务完成截图
+  qrCodeScanResult?: string; // 二维码扫描结果
+  submissionTime?: Date; // 提交时间
+  completionTime?: Date; // 完成时间
+  rejectionReason?: string; // 拒绝原因
+  metadata?: Record<string, any>; // 额外信息，如审核反馈等
+  isFirstTimeSubmission: boolean; // 是否首次提交，用于确定是否给予首次奖励
+  earnedCommission?: number; // 实际获得的佣金
+  verificationNote?: string; // 人工核查备注
+  rewardAmount?: number; // 奖励金额
+  rewardTime?: Date; // 奖励发放时间
+  keyword?: string;
+  productLevel?: string;
+  verifiedBy?: string; // 核查人员ID
 }

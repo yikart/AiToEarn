@@ -1,12 +1,12 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-22 12:02:55
- * @LastEditTime: 2025-02-27 14:35:39
+ * @LastEditTime: 2025-02-27 20:26:22
  * @LastEditors: nevin
  * @Description: 任务
  */
 import http from './request';
-import { TaskListParams } from './types/task';
+import { MineTaskListParams, TaskListParams, UserTask } from './types/task';
 import { Task } from 'commont/types/task';
 import { Pagination } from './types';
 
@@ -22,11 +22,11 @@ export const taskApi = {
   },
 
   /**
-   * 获取任务列表
+   * 获取我的任务列表
    */
-  getMineTaskList(params: TaskListParams) {
-    return http.get<Pagination<Task>>('/tasks/list', {
-      isToken: false,
+  getMineTaskList(params: MineTaskListParams) {
+    return http.get<Pagination<UserTask>>('/tasks/mine/list', {
+      isToken: true,
       params,
     });
   },
@@ -44,5 +44,12 @@ export const taskApi = {
    */
   taskApply(id: string) {
     return http.post<Task>(`/tasks/apply/${id}`);
+  },
+
+  /**
+   * 完成任务
+   */
+  taskDone(id: string) {
+    return http.post<Task>(`/tasks/done/${id}`);
   },
 };

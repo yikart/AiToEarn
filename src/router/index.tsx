@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-02-22 18:22:15
+ * @LastEditTime: 2025-02-27 19:46:42
  * @LastEditors: nevin
  * @Description:
  */
@@ -41,6 +41,10 @@ import Test from '@/views/test/index';
 import TestVideo from '@/views/test/video';
 import Task from '@/views/task';
 import HotTopic from '@/views/trending/hotTopic';
+import CarTask from '@/views/task/carTask';
+import PopTask from '@/views/task/popTask';
+import VideoTask from '@/views/task/videoTask';
+import MineTask from '@/views/task/mineTask';
 
 interface IRouterMeta {
   // 路由名称
@@ -149,6 +153,24 @@ export const router: CustomRouteObject[] = [
           name: '任务市场',
           icon: UserOutlined,
         },
+        children: [
+          {
+            path: 'car',
+            element: <CarTask />,
+          },
+          {
+            path: 'pop',
+            element: <PopTask />,
+          },
+          {
+            path: 'video',
+            element: <VideoTask />,
+          },
+          {
+            path: 'mine',
+            element: <MineTask />,
+          },
+        ],
       },
       {
         path: '/ceshi',
