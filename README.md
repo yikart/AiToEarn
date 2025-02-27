@@ -96,4 +96,5 @@ npm run dev
 └── src                                      渲染进程源码、React代码
 ```
 ## 加我微信
+辛苦备注一下 AiToEarn
 <img src="./wechat.jpg" alt="wechat" width="500"/>
