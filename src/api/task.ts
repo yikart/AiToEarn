@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-22 12:02:55
- * @LastEditTime: 2025-02-22 19:14:28
+ * @LastEditTime: 2025-02-27 14:35:39
  * @LastEditors: nevin
  * @Description: 任务
  */
@@ -15,6 +15,16 @@ export const taskApi = {
    * 获取任务列表
    */
   getTaskList(params: TaskListParams) {
+    return http.get<Pagination<Task>>('/tasks/list', {
+      isToken: false,
+      params,
+    });
+  },
+
+  /**
+   * 获取任务列表
+   */
+  getMineTaskList(params: TaskListParams) {
     return http.get<Pagination<Task>>('/tasks/list', {
       isToken: false,
       params,
