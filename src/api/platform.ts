@@ -197,7 +197,7 @@ export const platformApi = {
     });
   },
 
-  // 获取所有话题标签
+  // 获取所有专题标签
   getTopics() {
     return http.get<string[]>(`/topics/topics`, {
       isToken: false,
