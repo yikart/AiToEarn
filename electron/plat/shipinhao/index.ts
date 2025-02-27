@@ -1323,7 +1323,7 @@ export class ShipinhaoService {
     });
   }
 
-  // 获取商品号的活动
+  // 获取视频号的活动
   async getActivityList(params: { cookie: Electron.Cookie[]; query: string }) {
     return await requestNet<WeChatLocationData>({
       url: `https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/post/post_search_event`,

@@ -43,7 +43,13 @@ const requestNet = <T = any>({
       });
 
       response.on('end', () => {
-        const parsedData: T = JSON.parse(data);
+        let parsedData: T;
+        try {
+          parsedData = JSON.parse(data);
+        } catch (e) {
+          parsedData = undefined as any;
+          console.error(e);
+        }
         resolve({
           status: response.statusCode,
           headers: response.headers,

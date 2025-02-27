@@ -120,7 +120,7 @@ export class Kwai extends PlatformBase {
     });
     return {
       status: res.status,
-      data: res.data.data.tags.map((v) => {
+      data: res.data?.data?.tags?.map((v) => {
         return {
           id: v.tag.id,
           name: v.tag.name,

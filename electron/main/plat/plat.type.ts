@@ -114,3 +114,9 @@ export interface ILocationDataItem {
   // 距离
   distance: string;
 }
+
+// 获取地点数据返回值
+export interface IGetLocationResponse {
+  status: number;
+  data?: ILocationDataItem[];
+}

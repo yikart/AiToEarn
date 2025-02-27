@@ -20,10 +20,30 @@ export interface ISaveFileParams {
 }
 
 export function views(win: Electron.BrowserWindow) {
+  // 获取经纬度
+  ipcMain.handle('GET_LOCATION', async () => {
+    return new Promise<{ latitude: number; longitude: number }>(
+      (resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            resolve({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+          },
+          (error) => {
+            reject(error);
+          },
+        );
+      },
+    );
+  });
+
   ipcMain.handle('OPEN_DEV_TOOLS', () => {
     win.webContents.openDevTools({ mode: 'right' });
   });
 
+  // 保存文件
   ipcMain.handle(
     'ICP_VIEWS_SAVE_FILE',
     (event, { saveDir, filename, file }: ISaveFileParams) => {

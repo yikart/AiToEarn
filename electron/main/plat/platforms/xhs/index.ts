@@ -202,11 +202,11 @@ export class Xhs extends PlatformBase {
     const locationRes = await xiaohongshuService.getLocations({
       ...params,
       keyword: params.keywords,
-      cookies: params.cookie,
+      cookies: params.cookie!,
     });
     return {
       status: locationRes.status,
-      data: locationRes.data.data.poi_list.map((v) => {
+      data: locationRes?.data?.data?.poi_list?.map((v) => {
         return {
           name: v.name,
           simpleAddress: v.full_address,

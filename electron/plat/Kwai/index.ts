@@ -6,7 +6,7 @@ import {
   IKwaiUserInfoResponse,
   ILoginResponse,
 } from './kwai.type';
-import { cookieToPlaywright } from '../utils';
+import { cookieToPlaywright, CookieToString } from '../utils';
 import { BrowserWindow } from 'electron';
 import { VisibleTypeEnum } from '../plat.common.type';
 import { getChromiumPath } from '../../util/chromium';
@@ -226,17 +226,13 @@ class KwaiPub {
     });
   }
 
-  cookieFormat(cookies: Electron.Cookie[]) {
-    return cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ');
-  }
-
   // 获取账号信息
   async getAccountInfo(cookies: Electron.Cookie[]) {
     return await requestNet<IKwaiUserInfoResponse>({
       url: 'https://cp.kuaishou.com/rest/v2/creator/pc/authority/account/current?__NS_sig3=9585c2f20a5d5ba1adc8cbca965d865710f45cb0d4d4d6d6d9d8dbc1',
       method: 'POST',
       headers: {
-        cookie: this.cookieFormat(cookies),
+        cookie: CookieToString(cookies),
       },
       body: {
         'kuaishou.web.cp.api_ph': '20d8d6752131fa2ea941cbf5965061fd0a7a',
@@ -256,7 +252,7 @@ class KwaiPub {
       url: `https://cp.kuaishou.com/rest/cp/works/v2/video/pc/tag/search?__NS_sig3=9585c2f20a5d5ba1adc8cbca965d865710f45cb0d4d4d6d6d9d8dbc1`,
       method: 'POST',
       headers: {
-        cookie: this.cookieFormat(cookies),
+        cookie: CookieToString(cookies),
       },
       body: {
         keyword,

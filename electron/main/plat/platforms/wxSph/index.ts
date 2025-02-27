@@ -165,10 +165,11 @@ export class WxSph extends PlatformBase {
     const locationRes = await shipinhaoService.getLocation({
       ...params,
       keyword: params.keywords,
+      cookie: params.cookie!,
     });
     return {
-      status: locationRes.status,
-      data: locationRes.data.data.list.map((v) => {
+      status: locationRes.data.errCode === 300334 ? 401 : locationRes.status,
+      data: locationRes?.data?.data?.list?.map((v) => {
         return {
           name: v.name,
           simpleAddress: v.fullAddress,

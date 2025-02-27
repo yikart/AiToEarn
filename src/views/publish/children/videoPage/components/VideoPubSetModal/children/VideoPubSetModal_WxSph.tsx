@@ -3,10 +3,12 @@ import {
   IVideoPubSetModalChildProps,
   IVideoPubSetModalChildRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/videoPubSetModal.type';
-import { Input, Radio, Select } from 'antd';
+import { Checkbox, Input, Radio, Select } from 'antd';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import { VisibleTypeEnum } from '@@/publish/PublishEnum';
+import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
+import { AccountType } from '@@/AccountEnum';
 
 const { TextArea } = Input;
 
@@ -81,6 +83,47 @@ const VideoPubSetModal_KWAI = memo(
           <p className="videoPubSetModal_con-tips">
             您可添加10个标签，按回车键确认
           </p>
+
+          <LocationSelect currChooseAccount={currChooseAccount} />
+
+          <h1>扩展链接</h1>
+          <Input
+            placeholder="粘贴链接"
+            value={
+              currChooseAccount?.pubParams.diffParams![AccountType.WxSph]!
+                .extLink
+            }
+            onChange={(e) => {
+              const newDiffParams = currChooseAccount.pubParams.diffParams!;
+              newDiffParams[AccountType.WxSph]!.extLink = e.target.value;
+              setOnePubParams(
+                {
+                  diffParams: newDiffParams,
+                },
+                currChooseAccount.id,
+              );
+            }}
+          />
+
+          <h1>声明远程</h1>
+          <Checkbox
+            value={
+              currChooseAccount?.pubParams.diffParams![AccountType.WxSph]!
+                .isOriginal
+            }
+            onChange={(e) => {
+              const newDiffParams = currChooseAccount.pubParams.diffParams!;
+              newDiffParams[AccountType.WxSph]!.isOriginal = e.target.checked;
+              setOnePubParams(
+                {
+                  diffParams: newDiffParams,
+                },
+                currChooseAccount.id,
+              );
+            }}
+          >
+            声明后，作品将展示原创标记，有机会获得广告收入
+          </Checkbox>
 
           <h1>权限设置</h1>
           <Radio.Group

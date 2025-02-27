@@ -1,0 +1,11 @@
+.locationSelect {
+  :global {
+    .location-name {
+      margin-bottom: 2px;
+    }
+    .location-simpleAddress {
+      font-size: var(--fs-xs);
+      color: var(--lightGreyColor);
+    }
+  }
+}

@@ -1295,7 +1295,10 @@ export class XiaohongshuService {
       url: 'https://edith.xiaohongshu.com/web_api/sns/v1/local/poi/creator/search',
       headers: {
         cookie: CookieToString(params.cookies),
+        Referer: this.loginUrl,
+        origin: this.loginUrl,
       },
+      method: 'POST',
       body: {
         ...params,
         page: 1,

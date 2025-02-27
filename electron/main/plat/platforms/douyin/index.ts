@@ -189,16 +189,20 @@ export class Douyin extends PlatformBase {
   }
 
   // 获取热点数据
-  async getHotData(query: string) {
-    const hotDataRes = await douyinService.getHotspotData({ query });
+  async getHotData(query: string, cookie: Electron.Cookie[]) {
+    const hotDataRes = await douyinService.getHotspotData({ query, cookie });
     return hotDataRes.data;
   }
 
   async getLocationData(params: IGetLocationDataParams) {
-    const locationRes = await douyinService.getLocation(params);
+    const locationRes = await douyinService.getLocation({
+      ...params,
+      cookie: params.cookie!,
+    });
+
     return {
-      status: locationRes.status,
-      data: locationRes.data.poi_list.map((v) => {
+      status: locationRes.data.status_code === 8 ? 401 : locationRes.status,
+      data: locationRes?.data?.poi_list?.map((v) => {
         return {
           name: v.poi_name,
           simpleAddress: v.simple_address_str,

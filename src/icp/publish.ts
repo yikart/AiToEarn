@@ -11,7 +11,11 @@ import { PubRecordModel } from '@/views/publish/comment';
 import { VideoPul } from '@/views/publish/children/videoPage/comment';
 import { AccountType } from '../../commont/AccountEnum';
 import { PubType } from '../../commont/publish/PublishEnum';
-import { IGetTopicsResponse } from '../../electron/main/plat/plat.type';
+import {
+  type IGetLocationDataParams,
+  IGetLocationResponse,
+  IGetTopicsResponse,
+} from '../../electron/main/plat/plat.type';
 import { AccountInfo } from '@/views/account/comment';
 
 // 创建发布记录
@@ -163,6 +167,15 @@ export async function icpGetTopic(account: AccountInfo, keyword: string) {
     'ICP_PUBLISH_GET_TOPIC',
     account,
     keyword,
+  );
+  return res;
+}
+
+// 获取各个平台位置数据
+export async function icpGetLocationData(params: IGetLocationDataParams) {
+  const res: IGetLocationResponse = await window.ipcRenderer.invoke(
+    'ICP_PUBLISH_GET_LOCATION',
+    params,
   );
   return res;
 }

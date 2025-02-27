@@ -45,6 +45,15 @@ const store: IVideoPageStore = {
       [AccountType.Xhs]: {
         topicsDetail: [],
       },
+      [AccountType.Douyin]: {
+        hotPoint: undefined,
+        selfDeclare: undefined,
+      },
+      [AccountType.WxSph]: {
+        isOriginal: false,
+        extLink: undefined,
+        activity: undefined,
+      },
     },
   },
   loadingPageLoading: false,

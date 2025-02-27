@@ -3,11 +3,12 @@ import {
   IVideoPubSetModalChildProps,
   IVideoPubSetModalChildRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/videoPubSetModal.type';
-import { Input, Radio } from 'antd';
+import { Checkbox, Input, Radio } from 'antd';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import TopicSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/TopicSelect';
+import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
 
 const { TextArea } = Input;
 
@@ -65,6 +66,8 @@ const VideoPubSetModal_KWAI = memo(
             currChooseAccount={currChooseAccount}
             tips="您可以添加20个话题"
           />
+
+          <LocationSelect currChooseAccount={currChooseAccount} />
 
           <h1>权限设置</h1>
           <Radio.Group
