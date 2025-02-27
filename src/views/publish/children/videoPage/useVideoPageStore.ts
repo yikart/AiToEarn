@@ -344,11 +344,14 @@ export const useVideoPageStore = create(
           });
         },
 
-        // 账户重新登录
+        /**
+         * 账户重新登录。登录成功后会自动更新该条账户数据
+         */
         async accountRestart(pType: AccountType) {
           const res = await accountLogin(pType);
           if (!res) return;
           message.success('登录成功！');
+          // 更新此条账户数据
           methods.updateAccounts({ accounts: [res] });
         },
       };
