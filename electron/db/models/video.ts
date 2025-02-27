@@ -7,15 +7,18 @@
  */
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { WorkData } from './workData';
-import { VisibleTypeEnum } from '../../../commont/publish/PublishEnum';
+import {
+  DouyinDeclareEnum,
+  VisibleTypeEnum,
+} from '../../../commont/publish/PublishEnum';
 import { AccountType } from '@@/AccountEnum';
 
-// 话题
-interface ITopics {
+// 包含一个name和一个value的对象
+export interface ILableValue {
   label: string;
   value: string | number;
 }
-export type TopicsArrType = ITopics[];
+export type TopicsArrType = ILableValue[];
 
 /**
  * 不同平台的差异化参数
@@ -24,13 +27,25 @@ export type TopicsArrType = ITopics[];
 export type DiffParmasType = {
   [AccountType.Xhs]?: {
     // 小红书的话题格式
-    topicsDetail: {
+    topicsDetail?: {
       topicId: string;
       topicName: string;
     }[];
   };
-  [AccountType.Douyin]?: {};
-  [AccountType.WxSph]?: {};
+  [AccountType.Douyin]?: {
+    // 申请关联的热点
+    hotPoint?: ILableValue;
+    // 自主声明
+    selfDeclare?: DouyinDeclareEnum;
+  };
+  [AccountType.WxSph]?: {
+    // 是否未原创
+    isOriginal?: boolean;
+    // 扩展链接
+    extLink?: string;
+    // 活动
+    activity?: ILableValue;
+  };
   [AccountType.KWAI]?: {};
 };
 
@@ -76,9 +91,17 @@ export class VideoModel extends WorkData {
   @Column({ type: 'json', nullable: true, comment: '话题' })
   topics?: TopicsArrType;
 
+  // 位置
+  @Column({ type: 'json', nullable: true, comment: '位置' })
+  location?: ILableValue;
+
   // 差异化参数
   @Column({ type: 'json', nullable: true, comment: '不同平台的差异化参数' })
   diffParams?: DiffParmasType;
+
+  // 定时发布日期
+  @Column({ type: 'datetime', nullable: true, comment: '定时发布日期' })
+  timingTime?: Date;
 
   // 视频可见性
   @Column({

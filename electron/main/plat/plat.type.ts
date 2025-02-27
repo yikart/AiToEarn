@@ -7,8 +7,7 @@
  */
 import { AccountModel } from '../../db/models/account';
 import { VisibleTypeEnum } from '@@/publish/PublishEnum';
-import { AccountType } from '@@/AccountEnum';
-import { DiffParmasType } from '../../db/models/video';
+import { DiffParmasType, ILableValue } from '../../db/models/video';
 
 export type CookiesType = Electron.Cookie[];
 
@@ -65,11 +64,14 @@ export interface IVideoPublishParams {
   videoPath: string;
   // 封面路径
   coverPath: string;
-  other?: string;
   // 可见性
   visibleType: VisibleTypeEnum;
   // 各个平台的差异化参数
   diffParams?: DiffParmasType;
+  // 定时发布日期
+  timingTime?: Date;
+  // 地点
+  location?: ILableValue;
 }
 
 // 获取话题返回值
