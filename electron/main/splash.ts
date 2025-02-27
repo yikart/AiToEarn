@@ -14,7 +14,7 @@ export class SplashWindow {
       alwaysOnTop: true,
       skipTaskbar: true,
       center: true,
-      backgroundColor: '#ffffff', // 添加背景色
+      // backgroundColor: '#ffffff', // 添加背景色
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false
