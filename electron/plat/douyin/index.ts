@@ -7,8 +7,12 @@ import { v4 as uuidv4 } from 'uuid';
 // @ts-ignore
 import crc32 from 'crc32';
 import { getFileContent } from '../utils';
-import { DouyinTopicsSugResponse } from './douyin.type';
+import {
+  DouyinLocationDataResponse,
+  DouyinTopicsSugResponse,
+} from './douyin.type';
 import requestNet from '../requestNet';
+import { jsonToQueryString } from '../../util';
 
 export class DouyinService {
   private defaultUserAgent =
@@ -1990,6 +1994,35 @@ export class DouyinService {
   async getTopics({ keyword }: { keyword: string }) {
     return await requestNet<DouyinTopicsSugResponse>({
       url: `${this.loginUrl}aweme/v1/search/challengesug/?aid=1&keyword=${keyword}`,
+      method: 'GET',
+    });
+  }
+
+  // 获取位置数据
+  async getLocation(params: {
+    keywords: string;
+    latitude: string;
+    longitude: string;
+  }) {
+    return await requestNet<DouyinLocationDataResponse>({
+      url: `${this.loginUrl}aweme/v1/life/video_api/search/poi/?${jsonToQueryString(
+        {
+          ...params,
+          page: 1,
+          from_webapp: 1,
+        },
+      )}`,
+      method: 'GET',
+    });
+  }
+
+  // 获取热点数据
+  async getHotspotData(params: { query: string }) {
+    return await requestNet<DouyinLocationDataResponse>({
+      url: `${this.loginUrl}aweme/v1/hotspot/search/?${jsonToQueryString({
+        ...params,
+        count: 50,
+      })}`,
       method: 'GET',
     });
   }

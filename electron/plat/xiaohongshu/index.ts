@@ -5,7 +5,7 @@ import { CommonUtils } from '../../util/common';
 import { FileUtils } from '../../util/file';
 import { getFileContent } from '../utils';
 import requestNet from '../requestNet';
-import { IXHSTopicsResponse } from './xiaohongshu.type';
+import { IXHSLocationResponse, IXHSTopicsResponse } from './xiaohongshu.type';
 
 export class XiaohongshuService {
   private defaultUserAgent =
@@ -1254,7 +1254,7 @@ export class XiaohongshuService {
     });
   }
 
-  // 获取话题
+  // 获取话题数据
   async getTopics({
     keyword,
     cookies,
@@ -1278,6 +1278,26 @@ export class XiaohongshuService {
           page_size: 30,
           page: 1,
         },
+      },
+    });
+  }
+
+  // 获取位置数据
+  async getLocations(params: {
+    latitude: number;
+    longitude: number;
+    keyword: string;
+    page?: number;
+    size?: number;
+    source: string;
+    type: number;
+  }) {
+    return await requestNet<IXHSLocationResponse>({
+      url: 'https://edith.xiaohongshu.com/web_api/sns/v1/local/poi/creator/search',
+      body: {
+        ...params,
+        page: 1,
+        size: 50,
       },
     });
   }

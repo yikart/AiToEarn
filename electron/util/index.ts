@@ -43,3 +43,10 @@ export const getAssetPath = (...paths: string[]): string => {
 
   return path.join(RESOURCES_PATH, ...paths);
 };
+
+// json转 a=1&b=2 格式
+export function jsonToQueryString(json: Record<string, any>): string {
+  return Object.keys(json)
+    .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(json[key]))
+    .join('&');
+}
