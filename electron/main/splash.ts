@@ -1,3 +1,10 @@
+/*
+ * @Author: nevin
+ * @Date: 2025-02-27 12:12:19
+ * @LastEditTime: 2025-02-27 16:38:08
+ * @LastEditors: nevin
+ * @Description:
+ */
 import { BrowserWindow } from 'electron';
 import path from 'node:path';
 import { VITE_DEV_SERVER_URL, RENDERER_DIST } from './index';
@@ -17,18 +24,18 @@ export class SplashWindow {
       // backgroundColor: '#ffffff', // 添加背景色
       webPreferences: {
         nodeIntegration: true,
-        contextIsolation: false
-      }
+        contextIsolation: false,
+      },
     });
 
     // 根据开发环境和生产环境使用不同的加载方式
-    const splashPath = VITE_DEV_SERVER_URL 
+    const splashPath = VITE_DEV_SERVER_URL
       ? path.join(process.env.VITE_PUBLIC!, 'splash.html')
       : path.join(RENDERER_DIST, 'splash.html');
 
     console.log('Splash path:', splashPath); // 调试路径
 
-    this.window.loadFile(splashPath).catch(err => {
+    this.window.loadFile(splashPath).catch((err) => {
       console.error('Failed to load splash window:', err);
     });
 
@@ -50,4 +57,4 @@ export class SplashWindow {
       this.window = null;
     }
   }
-} 
+}
