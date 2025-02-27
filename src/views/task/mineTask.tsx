@@ -1,49 +1,65 @@
 /*
  * @Author: nevin
- * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-02-27 20:15:54
+ * @Date: 2025-02-27 19:37:08
+ * @LastEditTime: 2025-02-27 20:39:21
  * @LastEditors: nevin
- * @Description: 我的任务
+ * @Description: 我的任务列表
  */
 import { Button } from 'antd';
-import { useState, useEffect, useRef } from 'react';
-import { Task } from 'commont/types/task';
+import { useState, useEffect } from 'react';
 import { taskApi } from '@/api/task';
-import { TaskInfoRef } from './components/info';
-import TaskInfo from './components/info';
+import { UserTask } from '@/api/types/task';
+
 export default function Page() {
-  const [taskList, setTaskList] = useState<Task[]>([]);
+  const [taskList, setTaskList] = useState<UserTask[]>([]);
+  const [taskDetails, setTaskDetails] = useState<Record<string, any>>({});
   const [pageInfo, setPageInfo] = useState({
     pageSize: 10,
     pageNo: 1,
     totalCount: 0,
   });
 
-  const Ref_TaskInfo = useRef<TaskInfoRef>(null);
-
-  async function getTaskList() {
-    const res = await taskApi.getMineTaskList(pageInfo);
-    setTaskList(res.items);
+  async function getTaskInfo(task: UserTask) {
+    const res = await taskApi.getTaskInfo(task.taskId);
+    return res;
   }
 
   useEffect(() => {
-    getTaskList();
+    const fetchTaskDetails = async () => {
+      const tasks = await taskApi.getMineTaskList(pageInfo);
+      setTaskList(tasks.items);
+
+      const detailsPromises = tasks.items.map((task) => getTaskInfo(task));
+      const details = await Promise.all(detailsPromises);
+
+      const detailsMap: Record<string, any> = {};
+      details.forEach((detail, index) => {
+        detailsMap[tasks.items[index].taskId] = detail;
+      });
+
+      setTaskDetails(detailsMap);
+    };
+
+    fetchTaskDetails();
   }, []);
 
   return (
     <div>
-      <TaskInfo ref={Ref_TaskInfo} />
       <div>
         {taskList.map((v) => {
+          const detail = taskDetails[v.taskId];
           return (
             <div key={v.id}>
-              {v.title}
-              <Button
-                type="primary"
-                onClick={() => Ref_TaskInfo.current?.init(v)}
-              >
-                查看
-              </Button>
+              {v.taskId}
+              <Button type="primary">提现</Button>
+              {/* 渲染任务详细信息 */}
+              {detail && (
+                <div>
+                  <p>任务名称: {detail.name}</p>
+                  <p>任务描述: {detail.description}</p>
+                  {/* 其他详细信息 */}
+                </div>
+              )}
             </div>
           );
         })}

@@ -9,8 +9,9 @@ import { Button } from 'antd';
 import { useState, useEffect, useRef } from 'react';
 import { Task } from 'commont/types/task';
 import { taskApi } from '@/api/task';
-import { TaskInfoRef } from './components/info';
-import TaskInfo from './components/info';
+import { TaskInfoRef } from './components/popInfo';
+import TaskInfo from './components/popInfo';
+
 export default function Page() {
   const [taskList, setTaskList] = useState<Task[]>([]);
   const [pageInfo, setPageInfo] = useState({
