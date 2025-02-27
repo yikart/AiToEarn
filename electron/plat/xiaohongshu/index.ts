@@ -1287,8 +1287,8 @@ export class XiaohongshuService {
     keyword: string;
     page?: number;
     size?: number;
-    source: string;
-    type: number;
+    source?: string;
+    type?: number;
     cookies: Electron.Cookie[];
   }) {
     return await requestNet<IXHSLocationResponse>({
@@ -1300,6 +1300,8 @@ export class XiaohongshuService {
         ...params,
         page: 1,
         size: 50,
+        source: 'WEB',
+        type: 3,
       },
     });
   }

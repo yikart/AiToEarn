@@ -11,6 +11,7 @@ import {
   CookiesType,
   DashboardData,
   IAccountInfoParams,
+  IGetLocationDataParams,
   IGetTopicsParams,
   IGetTopicsResponse,
   IVideoPublishParams,
@@ -158,6 +159,33 @@ export class WxSph extends PlatformBase {
       data: [],
       status: 400,
     });
+  }
+
+  async getLocationData(params: IGetLocationDataParams) {
+    const locationRes = await shipinhaoService.getLocation({
+      ...params,
+      keyword: params.keywords,
+    });
+    return {
+      status: locationRes.status,
+      data: locationRes.data.data.list.map((v) => {
+        return {
+          name: v.name,
+          simpleAddress: v.fullAddress,
+          id: v.poiCheckSum,
+          distance: '',
+        };
+      }),
+    };
+  }
+
+  // 获取商品号的活动列表
+  async getActivityList(params: { cookie: Electron.Cookie[]; query: string }) {
+    const activityRes = await shipinhaoService.getActivityList(params);
+    return {
+      status: activityRes.status,
+      data: activityRes.data,
+    };
   }
 }
 

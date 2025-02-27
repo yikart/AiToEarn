@@ -9,8 +9,10 @@ import {
   AccountInfoTypeRV,
   DashboardData,
   IAccountInfoParams,
+  IGetLocationDataParams,
   IGetTopicsParams,
   IGetTopicsResponse,
+  ILocationDataItem,
   IVideoPublishParams,
   StatisticsData,
   VideoCallbackType,
@@ -82,4 +84,10 @@ export abstract class PlatformBase {
 
   // 获取这个平台的话题
   abstract getTopics(params: IGetTopicsParams): Promise<IGetTopicsResponse>;
+
+  // 获取位置数据
+  abstract getLocationData(params: IGetLocationDataParams): Promise<{
+    status: number;
+    data: ILocationDataItem[];
+  }>;
 }

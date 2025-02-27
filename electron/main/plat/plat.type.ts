@@ -93,3 +93,24 @@ export interface IGetTopicsParams {
   keyword: string;
   account: AccountModel;
 }
+
+// 话题参数
+export interface IGetLocationDataParams {
+  keywords: string;
+  latitude: number;
+  longitude: number;
+  cookie?: Electron.Cookie[];
+  account?: AccountModel;
+}
+
+// 地点数据
+export interface ILocationDataItem {
+  // 地点名称
+  name: string;
+  // 简单地址简介
+  simpleAddress: string;
+  // 地址ID
+  id: string;
+  // 距离
+  distance: string;
+}

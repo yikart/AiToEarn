@@ -11,6 +11,7 @@ import {
   CookiesType,
   DashboardData,
   IAccountInfoParams,
+  IGetLocationDataParams,
   IGetTopicsParams,
   IGetTopicsResponse,
   IVideoPublishParams,
@@ -192,6 +193,25 @@ export class Xhs extends PlatformBase {
           id: v.id,
           name: v.name,
           view_count: v.view_num,
+        };
+      }),
+    };
+  }
+
+  async getLocationData(params: IGetLocationDataParams) {
+    const locationRes = await xiaohongshuService.getLocations({
+      ...params,
+      keyword: params.keywords,
+      cookies: params.cookie,
+    });
+    return {
+      status: locationRes.status,
+      data: locationRes.data.data.poi_list.map((v) => {
+        return {
+          name: v.name,
+          simpleAddress: v.full_address,
+          id: v.poi_id,
+          distance: '',
         };
       }),
     };

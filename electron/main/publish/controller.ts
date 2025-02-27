@@ -16,6 +16,7 @@ import { VideoPubService } from './video/service';
 import { VideoModel } from '../../db/models/video';
 import platController from '../plat';
 import { AccountModel } from '../../db/models/account';
+import type { IGetLocationDataParams } from '../plat/plat.type';
 
 @Controller()
 export class PublishController {
@@ -144,5 +145,14 @@ export class PublishController {
     keyword: string,
   ) {
     return await platController.getTopic(account, keyword);
+  }
+
+  // 获取位置数据
+  @Icp('ICP_PUBLISH_GET_LOCATION')
+  async getLocationData(
+    event: Electron.IpcMainInvokeEvent,
+    params: IGetLocationDataParams,
+  ) {
+    return await platController.getLocationData(params);
   }
 }

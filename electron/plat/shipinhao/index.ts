@@ -4,7 +4,7 @@ import path from 'path';
 import { FileUtils } from '../../util/file';
 import { CookieToString, getFileContent } from '../utils';
 import requestNet from '../requestNet';
-import { DouyinTopicsSugResponse } from '../douyin/douyin.type';
+import { WeChatLocationData } from './wxShp.type';
 
 interface UserInfo {
   authorId: string;
@@ -1313,8 +1313,20 @@ export class ShipinhaoService {
     latitude: number;
     cookie: Electron.Cookie[];
   }) {
-    return await requestNet<DouyinTopicsSugResponse>({
+    return await requestNet<WeChatLocationData>({
       url: `https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/helper/helper_search_location`,
+      method: 'POST',
+      body: params,
+      headers: {
+        cookie: CookieToString(params.cookie),
+      },
+    });
+  }
+
+  // 获取商品号的活动
+  async getActivityList(params: { cookie: Electron.Cookie[]; query: string }) {
+    return await requestNet<WeChatLocationData>({
+      url: `https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/post/post_search_event`,
       method: 'POST',
       body: params,
       headers: {

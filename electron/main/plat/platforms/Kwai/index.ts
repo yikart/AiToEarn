@@ -9,6 +9,7 @@ import { PlatformBase } from '../../PlatformBase';
 import {
   AccountInfoTypeRV,
   IAccountInfoParams,
+  IGetLocationDataParams,
   IGetTopicsParams,
   IGetTopicsResponse,
   IVideoPublishParams,
@@ -126,6 +127,13 @@ export class Kwai extends PlatformBase {
           view_count: v.viewCount,
         };
       }),
+    };
+  }
+
+  async getLocationData(params: IGetLocationDataParams) {
+    return {
+      status: 400,
+      data: [],
     };
   }
 }

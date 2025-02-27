@@ -11,6 +11,7 @@ import {
   CookiesType,
   DashboardData,
   IAccountInfoParams,
+  IGetLocationDataParams,
   IGetTopicsParams,
   IGetTopicsResponse,
   IVideoPublishParams,
@@ -182,6 +183,27 @@ export class Douyin extends PlatformBase {
           id: v.cid,
           name: v.cha_name,
           view_count: v.view_count,
+        };
+      }),
+    };
+  }
+
+  // 获取热点数据
+  async getHotData(query: string) {
+    const hotDataRes = await douyinService.getHotspotData({ query });
+    return hotDataRes.data;
+  }
+
+  async getLocationData(params: IGetLocationDataParams) {
+    const locationRes = await douyinService.getLocation(params);
+    return {
+      status: locationRes.status,
+      data: locationRes.data.poi_list.map((v) => {
+        return {
+          name: v.poi_name,
+          simpleAddress: v.simple_address_str,
+          id: v.poi_id,
+          distance: v.distance,
         };
       }),
     };
