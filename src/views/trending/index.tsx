@@ -113,29 +113,33 @@ const Trending: React.FC = () => {
   const [categoryLoading, setCategoryLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentTitle, setCurrentTitle] = useState('');
+  const [topicCategories, setTopicCategories] = useState<string[]>([]);
 
-  // 获取平台数据并自动选择第一个平台
-  useEffect(() => {
-    const fetchPlatforms = async () => {
+  // 获取平台数据和专题分类
+  useEffect(() => { 
+    const fetchData = async () => {
       setLoading(true);
       try {
-        const data = await platformApi.getPlatformList();
-        setPlatforms(data);
-        // 自动选择第一个平台
-        if (data.length > 0) {
-          const firstPlatform = data[0];
+        // 获取平台列表
+        const platformData = await platformApi.getPlatformList();
+        setPlatforms(platformData);
+        if (platformData.length > 0) {
+          const firstPlatform = platformData[0];
           setSelectedPlatform(firstPlatform);
-          // 获取第一个平台的榜单
           fetchPlatformRanking(firstPlatform._id);
         }
+
+        // 获取专题分类
+        const topicData = await platformApi.getTopics();
+        setTopicCategories(topicData);
       } catch (error) {
-        console.error('获取平台列表失败:', error);
+        console.error('获取数据失败:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPlatforms();
+    fetchData();
   }, []);
 
   // 获取平台榜单数据
@@ -278,33 +282,58 @@ const Trending: React.FC = () => {
       <div className="flex h-full bg-gray-50">
         {/* 左侧平台列表 */}
         <div className="flex-shrink-0 w-48 p-4 bg-white border-r border-gray-100">
-          <ul className="space-y-2">
-            {loading ? (
-              <div className="flex items-center justify-center py-4">
-                <span className="text-gray-500">加载中...</span>
-              </div>
-            ) : (
-              platforms.map((platform) => (
-                <li
-                  key={platform._id}
-                  className={`flex items-center space-x-2 p-2 rounded cursor-pointer transition-all duration-200
-                    ${
-                      selectedPlatform?._id === platform._id
-                        ? 'bg-[#f4ebff] text-[#a66ae4]'
-                        : 'hover:bg-gray-50'
-                    }`}
-                  onClick={() => handlePlatformSelect(platform)}
-                >
-                  <img
-                    src={getImageUrl(platform.icon)}
-                    alt={platform.name}
-                    className="w-5 h-5"
-                  />
-                  <span>{platform.name}</span>
-                </li>
-              ))
-            )}
-          </ul>
+          {/* 平台列表 */}
+          <div className="mb-8">
+            <div className="font-medium text-gray-900 mb-4">平台</div>
+            <ul className="space-y-2">
+              {loading ? (
+                <div className="flex items-center justify-center py-4">
+                  <span className="text-gray-500">加载中...</span>
+                </div>
+              ) : (
+                platforms.map((platform) => (
+                  <li
+                    key={platform._id}
+                    className={`flex items-center space-x-2 p-2 rounded cursor-pointer transition-all duration-200
+                      ${
+                        selectedPlatform?._id === platform._id
+                          ? 'bg-[#f4ebff] text-[#a66ae4]'
+                          : 'hover:bg-gray-50'
+                      }`}
+                    onClick={() => handlePlatformSelect(platform)}
+                  >
+                    <img
+                      src={getImageUrl(platform.icon)}
+                      alt={platform.name}
+                      className="w-5 h-5"
+                    />
+                    <span>{platform.name}</span>
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
+
+          {/* 专题分类列表 */}
+          <div>
+            <div className="font-medium text-gray-900 mb-4">热门专题</div>
+            <ul className="space-y-2">
+              {loading ? (
+                <div className="flex items-center justify-center py-4">
+                  <span className="text-gray-500">加载中...</span>
+                </div>
+              ) : (
+                topicCategories.map((category) => (
+                  <li
+                    key={category}
+                    className="flex items-center p-2 rounded cursor-pointer transition-all duration-200 hover:bg-gray-50"
+                  >
+                    <span>{category}</span>
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
         </div>
 
         {/* 右侧内容区 */}
