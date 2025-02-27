@@ -115,7 +115,7 @@ const VideoPubSetModalVideo = memo(
                         height={150}
                         avatar={chooseAccountItem.account.avatar}
                         nickname={chooseAccountItem.account.nickname}
-                        coverUrl={chooseAccountItem.video?.cover.imgUrl}
+                        coverUrl={chooseAccountItem.pubParams.cover?.imgUrl}
                       />
                       <CoverPreview />
                     </div>

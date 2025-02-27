@@ -20,6 +20,10 @@ export interface ISaveFileParams {
 }
 
 export function views(win: Electron.BrowserWindow) {
+  ipcMain.handle('OPEN_DEV_TOOLS', () => {
+    win.webContents.openDevTools({ mode: 'right' });
+  });
+
   ipcMain.handle(
     'ICP_VIEWS_SAVE_FILE',
     (event, { saveDir, filename, file }: ISaveFileParams) => {

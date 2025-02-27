@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import type { SelectProps } from 'antd';
+import { Button, SelectProps } from 'antd';
 import { Select, Spin } from 'antd';
 import lodash from 'lodash';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
@@ -33,10 +33,11 @@ export default function TopicSelect<
   const [options, setOptions] = useState<ValueType[]>([]);
   const fetchRef = useRef(0);
 
-  const { setOnePubParams, updateAccounts } = useVideoPageStore(
+  const { setOnePubParams, updateAccounts, accountRestart } = useVideoPageStore(
     useShallow((state) => ({
       setOnePubParams: state.setOnePubParams,
       updateAccounts: state.updateAccounts,
+      accountRestart: state.accountRestart,
     })),
   );
 
@@ -126,6 +127,20 @@ export default function TopicSelect<
         }}
       />
 
+      {currChooseAccount.account?.status === AccountStatus.DISABLE && (
+        <div className="videoPubSetModal_con-accountDisable">
+          账户已失效，
+          <Button
+            type="link"
+            onClick={() => {
+              accountRestart(currChooseAccount.account!.type);
+            }}
+          >
+            重新登录
+          </Button>
+          后可获取
+        </div>
+      )}
       <p className="videoPubSetModal_con-tips">{tips}</p>
     </>
   );
