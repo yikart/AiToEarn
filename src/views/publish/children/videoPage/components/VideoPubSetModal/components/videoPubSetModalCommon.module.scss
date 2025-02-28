@@ -1,0 +1,34 @@
+.locationSelect {
+  :global {
+    .location-name {
+      margin-bottom: 2px;
+    }
+    .location-simpleAddress {
+      font-size: var(--fs-xs);
+      color: var(--lightGreyColor);
+    }
+  }
+}
+
+.hotspotSelect {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 10px;
+  :global {
+    .hotspotSelect-left {
+      display: flex;
+      align-items: center;
+      img {
+        width: 35px;
+        height: 35px;
+        border-radius: 4px;
+        object-fit: cover;
+        margin-right: 10px;
+      }
+    }
+
+    .hotspotSelect-right {
+    }
+  }
+}

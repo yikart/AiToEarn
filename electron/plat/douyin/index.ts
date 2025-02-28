@@ -8,9 +8,11 @@ import { v4 as uuidv4 } from 'uuid';
 import crc32 from 'crc32';
 import { CookieToString, getFileContent } from '../utils';
 import {
+  DouyinAllHotDataResponse,
+  DouyinHotDataResponse,
   DouyinLocationDataResponse,
-  DouyinTopicsSugResponse,
-} from './douyin.type';
+  DouyinTopicsSugResponse
+} from "./douyin.type";
 import requestNet from '../requestNet';
 import { jsonToQueryString } from '../../util';
 
@@ -2022,7 +2024,7 @@ export class DouyinService {
 
   // 获取热点数据
   async getHotspotData(params: { query: string; cookie: Electron.Cookie[] }) {
-    return await requestNet<DouyinLocationDataResponse>({
+    return await requestNet<DouyinHotDataResponse>({
       url: `${this.loginUrl}aweme/v1/hotspot/search/?${jsonToQueryString({
         ...params,
         count: 50,
@@ -2030,6 +2032,14 @@ export class DouyinService {
       headers: {
         cookie: CookieToString(params.cookie),
       },
+      method: 'GET',
+    });
+  }
+
+  // 获取默认热点数据，默认热点数据是没有搜索热点数据之前展示的默认数据
+  async getAllHotspotData() {
+    return await requestNet<DouyinAllHotDataResponse>({
+      url: `${this.loginUrl}aweme/v1/hotspot/recommend`,
       method: 'GET',
     });
   }

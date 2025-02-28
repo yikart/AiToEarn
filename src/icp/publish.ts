@@ -17,6 +17,8 @@ import {
   IGetTopicsResponse,
 } from '../../electron/main/plat/plat.type';
 import { AccountInfo } from '@/views/account/comment';
+import { AccountModel } from '../../electron/db/models/account';
+import { DouyinAllHotDataResponse, DouyinHotDataResponse } from "../../electron/plat/douyin/douyin.type";
 
 // 创建发布记录
 export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
@@ -176,6 +178,24 @@ export async function icpGetLocationData(params: IGetLocationDataParams) {
   const res: IGetLocationResponse = await window.ipcRenderer.invoke(
     'ICP_PUBLISH_GET_LOCATION',
     params,
+  );
+  return res;
+}
+
+// 获取抖音热点数据
+export async function icpGetDoytinHot(account: AccountModel, query: string) {
+  const res: DouyinHotDataResponse = await window.ipcRenderer.invoke(
+    'ICP_PUBLISH_GET_DOYTIN_HOT',
+    account,
+    query,
+  );
+  return res;
+}
+
+// 获取抖音所有热点数据
+export async function icpGetDoytinHotAll() {
+  const res: DouyinAllHotDataResponse = await window.ipcRenderer.invoke(
+    'ICP_PUBLISH_GET_ALL_DOYTIN_HOT',
   );
   return res;
 }

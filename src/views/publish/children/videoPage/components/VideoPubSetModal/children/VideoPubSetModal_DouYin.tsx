@@ -1,22 +1,121 @@
-import React, { ForwardedRef, forwardRef, memo } from 'react';
+import React, {
+  ForwardedRef,
+  forwardRef,
+  memo,
+  useEffect,
+  useState,
+} from 'react';
 import {
   IVideoPubSetModalChildProps,
   IVideoPubSetModalChildRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/videoPubSetModal.type';
-import { Input, Radio, Select } from 'antd';
+import { Input, Radio, Select, Spin } from 'antd';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import { DouyinDeclareEnum, VisibleTypeEnum } from '@@/publish/PublishEnum';
 import TopicSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/TopicSelect';
 import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
-import { AccountType } from '@@/AccountEnum';
+import { AccountStatus, AccountType } from '@@/AccountEnum';
+import useDebounceFetcher from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/useDebounceFetcher';
+import { icpGetDoytinHot, icpGetDoytinHotAll } from '@/icp/publish';
+import { ipcUpdateAccountStatus } from '@/icp/account';
+import { VideoPubRestartLogin } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
+import { DouyinHotSentence } from '../../../../../../../../electron/plat/douyin/douyin.type';
+import styles from '../components/videoPubSetModalCommon.module.scss';
+import { describeNumber } from '@/utils';
 
 const { TextArea } = Input;
+
+const HotspotSelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
+  const { setOnePubParams, updateAccounts } = useVideoPageStore(
+    useShallow((state) => ({
+      setOnePubParams: state.setOnePubParams,
+      updateAccounts: state.updateAccounts,
+    })),
+  );
+  const [doytinHotAll, setDoytinHotAll] = useState<DouyinHotSentence[]>([]);
+  const [keywords, setKeywords] = useState('');
+
+  const { fetching, options, debounceFetcher } =
+    useDebounceFetcher<DouyinHotSentence>(async (keywords) => {
+      setKeywords(keywords);
+      const res = await icpGetDoytinHot(
+        currChooseAccount.account!,
+        keywords || '',
+      );
+      if (res.status_code !== 0) {
+        currChooseAccount.account!.status = AccountStatus.DISABLE;
+        updateAccounts({ accounts: [currChooseAccount.account!] });
+        await ipcUpdateAccountStatus(
+          currChooseAccount.account!.id,
+          AccountStatus.DISABLE,
+        );
+        return null;
+      }
+      return res.sentences;
+    });
+
+  useEffect(() => {
+    icpGetDoytinHotAll().then((res) => {
+      setDoytinHotAll(res.all_sentences);
+    });
+  }, []);
+
+  return (
+    <>
+      <h1>申请关联热点</h1>
+      <Select
+        showSearch
+        allowClear
+        style={{ width: '100%' }}
+        placeholder="输入热点词搜索"
+        labelInValue
+        filterOption={false}
+        onSearch={debounceFetcher}
+        notFoundContent={fetching ? <Spin size="small" /> : null}
+        options={(!keywords ? doytinHotAll : options).map((v) => {
+          return {
+            ...v,
+            label: v.word,
+            value: v.sentence_id,
+          };
+        })}
+        optionRender={({ data }) => {
+          return (
+            <div className={styles.hotspotSelect}>
+              <div className="hotspotSelect-left">
+                <img src={data.word_cover.url_list[0]} />
+                <span>{data.word}</span>
+              </div>
+              <div className="hotspotSelect-right">
+                {describeNumber(data.hot_value)}在看
+              </div>
+            </div>
+          );
+        }}
+        value={
+          currChooseAccount.pubParams!.diffParams![AccountType.Douyin]!.hotPoint
+        }
+        onChange={(newValue) => {
+          const newDiffParams = currChooseAccount.pubParams.diffParams!;
+          newDiffParams[AccountType.Douyin]!.hotPoint = newValue;
+          setOnePubParams(
+            {
+              diffParams: newDiffParams,
+            },
+            currChooseAccount.id,
+          );
+        }}
+      />
+      <VideoPubRestartLogin currChooseAccount={currChooseAccount} />
+    </>
+  );
+};
 
 const VideoPubSetModal_KWAI = memo(
   forwardRef(
     (
-      { currChooseAccount }: IVideoPubSetModalChildProps,
+      props: IVideoPubSetModalChildProps,
       ref: ForwardedRef<IVideoPubSetModalChildRef>,
     ) => {
       const { setOnePubParams } = useVideoPageStore(
@@ -25,6 +124,7 @@ const VideoPubSetModal_KWAI = memo(
           videoListChoose: state.videoListChoose,
         })),
       );
+      const { currChooseAccount } = props;
 
       return (
         <>
@@ -93,6 +193,8 @@ const VideoPubSetModal_KWAI = memo(
             }}
             value={currChooseAccount?.pubParams.visibleType}
           />
+
+          <HotspotSelect {...props} />
 
           <h1>自主声明</h1>
           <Select

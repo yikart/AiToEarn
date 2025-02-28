@@ -18,6 +18,8 @@ import { PublishService } from '../service';
 import platController from '../../plat';
 import { AccountService } from '../../account/service';
 import { AccountType } from '../../../../commont/AccountEnum';
+import douyin from '../../plat/platforms/douyin';
+import { AccountModel } from '../../../db/models/account';
 
 @Controller()
 export class VideoPubController {
@@ -164,6 +166,22 @@ export class VideoPubController {
   @Et('ET_DEL_PUB_RECORD_ITEM')
   async delVideoPul(pulRecordId: number) {
     await this.videoPubService.deleteVideoPulByPubRecordId(pulRecordId);
+  }
+
+  // 获取抖音热点数据
+  @Icp('ICP_PUBLISH_GET_DOYTIN_HOT')
+  async getDoytinHot(
+    event: Electron.IpcMainInvokeEvent,
+    account: AccountModel,
+    query: string,
+  ) {
+    return await douyin.getHotData(query, JSON.parse(account.loginCookie));
+  }
+
+  // 获取抖音所有热点数据
+  @Icp('ICP_PUBLISH_GET_ALL_DOYTIN_HOT')
+  async getDoytinHotAll(event: Electron.IpcMainInvokeEvent) {
+    return await douyin.getAllHotData();
   }
 
   // 删除发布记录

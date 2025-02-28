@@ -9,6 +9,9 @@ import { dialog, ipcMain } from 'electron';
 import fs from 'fs';
 import { FileUtils } from '../util/file';
 import path from 'path';
+import requestNet from '../plat/requestNet';
+// @ts-ignore
+import coordtransform from 'coordtransform';
 
 export interface ISaveFileParams {
   // 要保存的路由
@@ -22,23 +25,24 @@ export interface ISaveFileParams {
 export function views(win: Electron.BrowserWindow) {
   // 获取经纬度
   ipcMain.handle('GET_LOCATION', async () => {
-    return new Promise<{ latitude: number; longitude: number }>(
-      (resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            resolve({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            });
-          },
-          (error) => {
-            reject(error);
-          },
-        );
+    const res = await requestNet({
+      url: `https://map.baidu.com/?qt=ipLocation&t=${Date.now()}`,
+      headers: {
+        cookie:
+          'BAIDUID=C6DFA184EA0E181B507D36D4E39DE552:FG=1; BAIDUID_BFESS=C6DFA184EA0E181BFB22AB6E4BC30249:FG=1',
       },
-    );
+      method: 'GET',
+    });
+    const { lat, lng } = res.data.rgc.result.location;
+    const gcj02 = coordtransform.bd09togcj02(lng, lat);
+    return {
+      bd09: [lng, lat],
+      wgs84: coordtransform.gcj02towgs84(gcj02[0], gcj02[1]),
+      gcj02,
+    };
   });
 
+  // 打开开发者工具
   ipcMain.handle('OPEN_DEV_TOOLS', () => {
     win.webContents.openDevTools({ mode: 'right' });
   });

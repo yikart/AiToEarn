@@ -147,7 +147,7 @@ interface Cover {
   url_list: string[];
 }
 
-interface Sentence {
+export interface DouyinHotSentence {
   aweme_infos: any;
   challenge_id: string;
   display_style: number;
@@ -170,7 +170,15 @@ interface Sentence {
 export interface DouyinHotDataResponse {
   extra: Extra;
   log_pb: LogPb;
-  sentences: Sentence[];
+  sentences: DouyinHotSentence[];
+  status_code: number;
+}
+
+// 抖音的所有热点数据
+export interface DouyinAllHotDataResponse {
+  extra: Extra;
+  log_pb: LogPb;
+  all_sentences: DouyinHotSentence[];
   status_code: number;
 }
 

@@ -194,6 +194,12 @@ export class Douyin extends PlatformBase {
     return hotDataRes.data;
   }
 
+  // 获取所有热点数据
+  async getAllHotData() {
+    const hotDataRes = await douyinService.getAllHotspotData();
+    return hotDataRes.data;
+  }
+
   async getLocationData(params: IGetLocationDataParams) {
     const locationRes = await douyinService.getLocation({
       ...params,

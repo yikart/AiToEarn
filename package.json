@@ -32,6 +32,7 @@
     "antd-img-crop": "^4.24.0",
     "axios": "^1.7.9",
     "better-sqlite3": "^11.8.1",
+    "coordtransform": "^2.1.2",
     "crc32": "^0.2.2",
     "cropperjs": "^1.6.2",
     "crypto": "^1.0.1",

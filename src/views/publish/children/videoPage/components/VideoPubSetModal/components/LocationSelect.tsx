@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
-import { Button, SelectProps } from 'antd';
-import { Select, Spin } from 'antd';
+import React, { useEffect, useRef } from 'react';
+import { Select, SelectProps, Spin } from 'antd';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import { icpGetLocationData } from '@/icp/publish';
@@ -9,7 +8,10 @@ import { ipcUpdateAccountStatus } from '@/icp/account';
 import { ILocationDataItem } from '../../../../../../../../electron/main/plat/plat.type';
 import useDebounceFetcher from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/useDebounceFetcher';
 import { IVideoChooseItem } from '@/views/publish/children/videoPage/videoPage';
-import styles from './locationSelect.module.scss';
+import styles from './videoPubSetModalCommon.module.scss';
+// @ts-ignore
+import { icpGetLocation } from '@/icp/view';
+import { VideoPubRestartLogin } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
 
 interface DebounceSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
@@ -21,20 +23,20 @@ export default function LocationSelect({
   currChooseAccount,
   ...props
 }: DebounceSelectProps<ILocationDataItem>) {
-  const { setOnePubParams, updateAccounts, accountRestart } = useVideoPageStore(
+  const { setOnePubParams, updateAccounts } = useVideoPageStore(
     useShallow((state) => ({
       setOnePubParams: state.setOnePubParams,
       updateAccounts: state.updateAccounts,
-      accountRestart: state.accountRestart,
     })),
   );
   const { fetching, options, debounceFetcher } =
     useDebounceFetcher<ILocationDataItem>(async (keywords) => {
+      if (location.current.length === 0) await getLocation();
       const locationData = await icpGetLocationData({
         account: currChooseAccount.account!,
         keywords,
-        latitude: 40.043624478084524,
-        longitude: 116.24432699979916,
+        latitude: location.current[1],
+        longitude: location.current[0],
       });
       if (locationData.status !== 200 && locationData.status !== 201) {
         if (locationData.status === 401) {
@@ -49,12 +51,17 @@ export default function LocationSelect({
       }
       return locationData.data!;
     });
+  // 位置 0=经度 1=纬度
+  const location = useRef<number[]>([]);
 
   useEffect(() => {
-    // getLocation().then((res) => {
-    //   console.log(res);
-    // });
+    getLocation();
   }, []);
+
+  const getLocation = async () => {
+    const res = await icpGetLocation();
+    location.current = res.gcj02;
+  };
 
   return (
     <>
@@ -69,7 +76,13 @@ export default function LocationSelect({
         onSearch={debounceFetcher}
         notFoundContent={fetching ? <Spin size="small" /> : null}
         {...props}
-        options={options}
+        options={options.map((v) => {
+          return {
+            value: v.id,
+            label: v.name,
+            ...v,
+          };
+        })}
         optionRender={({ data }) => {
           return (
             <div className={styles.locationSelect}>
@@ -78,26 +91,17 @@ export default function LocationSelect({
             </div>
           );
         }}
-        // value={currChooseAccount.pubParams!.topics} TODO 参数选择接入
+        value={currChooseAccount.pubParams!.location as any}
         onChange={(newValue) => {
-          console.log(newValue);
+          setOnePubParams(
+            {
+              location: newValue || null,
+            },
+            currChooseAccount.id,
+          );
         }}
       />
-
-      {currChooseAccount.account?.status === AccountStatus.DISABLE && (
-        <div className="videoPubSetModal_con-accountDisable">
-          账户已失效，
-          <Button
-            type="link"
-            onClick={() => {
-              accountRestart(currChooseAccount.account!.type);
-            }}
-          >
-            重新登录
-          </Button>
-          后可获取
-        </div>
-      )}
+      <VideoPubRestartLogin currChooseAccount={currChooseAccount} />
     </>
   );
 }
