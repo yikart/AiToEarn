@@ -429,7 +429,6 @@ const VideoPubSetModal = memo(
                     <VideoPubSetModalVideo
                       ref={videoPubSetModalVideoRef}
                       chooseAccountItem={currChooseAccount}
-                      key={currChooseAccount?.video?.videoUrl}
                     />
                   )}
                 </div>

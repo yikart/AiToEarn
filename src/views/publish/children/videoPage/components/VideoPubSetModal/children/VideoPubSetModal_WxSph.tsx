@@ -28,6 +28,23 @@ const VideoPubSetModal_KWAI = memo(
 
       return (
         <>
+          <h1>短标题</h1>
+          <Input
+            value={currChooseAccount.pubParams.title}
+            showCount
+            maxLength={30}
+            placeholder="好的标题可以获得更多浏览"
+            variant="filled"
+            onChange={(e) => {
+              setOnePubParams(
+                {
+                  title: e.target.value,
+                },
+                currChooseAccount.id,
+              );
+            }}
+          />
+
           <h1>描述</h1>
           <TextArea
             value={currChooseAccount?.pubParams.describe}

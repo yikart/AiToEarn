@@ -340,7 +340,7 @@ export const useVideoPageStore = create(
           if (findedData) {
             for (const key in pubParmas) {
               if (
-                pubParmas[key as 'title'] ||
+                pubParmas[key as 'title'] !== undefined ||
                 pubParmas[key as 'title'] === ''
               ) {
                 findedData.pubParams[key as 'title'] =

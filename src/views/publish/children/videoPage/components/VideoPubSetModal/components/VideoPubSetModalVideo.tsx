@@ -9,6 +9,8 @@ import {
 import { IVideoChooseItem } from '@/views/publish/children/videoPage/videoPage';
 import { Avatar, Segmented } from 'antd';
 import { HeartFilled } from '@ant-design/icons';
+import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
+import { useShallow } from 'zustand/react/shallow';
 
 export interface IVideoPubSetModalVideoRef {
   play: () => void;
@@ -63,7 +65,11 @@ const VideoPubSetModalVideo = memo(
     ) => {
       const videoRef = useRef<HTMLVideoElement>(null);
       const [active, setActive] = useState(1);
-
+      const { videoListChoose } = useVideoPageStore(
+        useShallow((state) => ({
+          videoListChoose: state.videoListChoose,
+        })),
+      );
       const imperativeMethods: IVideoPubSetModalVideoRef = {
         play: () => {
           videoRef.current?.play();

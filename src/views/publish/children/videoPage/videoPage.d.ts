@@ -4,6 +4,7 @@ import { IImgFile } from '@/components/Choose/ImgChoose';
 import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import {
   DiffParmasType,
+  ILableValue,
   TopicsArrType,
 } from '../../../../../electron/db/models/video';
 
@@ -20,6 +21,8 @@ export interface IPubParams {
   topics?: TopicsArrType;
   // 每个平台的差异性参数
   diffParams?: DiffParmasType;
+  // 位置
+  location?: ILableValue;
 }
 
 // 选择视频的每项数据
