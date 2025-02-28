@@ -188,18 +188,6 @@ export class Douyin extends PlatformBase {
     };
   }
 
-  // 获取热点数据
-  async getHotData(query: string, cookie: Electron.Cookie[]) {
-    const hotDataRes = await douyinService.getHotspotData({ query, cookie });
-    return hotDataRes.data;
-  }
-
-  // 获取所有热点数据
-  async getAllHotData() {
-    const hotDataRes = await douyinService.getAllHotspotData();
-    return hotDataRes.data;
-  }
-
   async getLocationData(params: IGetLocationDataParams) {
     const locationRes = await douyinService.getLocation({
       ...params,

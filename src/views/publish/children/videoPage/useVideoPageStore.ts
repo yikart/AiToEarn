@@ -48,6 +48,7 @@ const store: IVideoPageStore = {
       [AccountType.Douyin]: {
         hotPoint: undefined,
         selfDeclare: undefined,
+        activitys: [],
       },
       [AccountType.WxSph]: {
         isOriginal: false,

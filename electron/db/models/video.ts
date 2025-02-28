@@ -35,11 +35,13 @@ export type DiffParmasType = {
   [AccountType.Douyin]?: {
     // 申请关联的热点
     hotPoint?: ILableValue;
+    // 申请关联的活动
+    activitys?: ILableValue[];
     // 自主声明
     selfDeclare?: DouyinDeclareEnum;
   };
   [AccountType.WxSph]?: {
-    // 是否未原创
+    // 是否为原创
     isOriginal?: boolean;
     // 扩展链接
     extLink?: string;

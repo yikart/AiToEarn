@@ -17,6 +17,8 @@ import { VideoModel } from '../../db/models/video';
 import platController from '../plat';
 import { AccountModel } from '../../db/models/account';
 import type { IGetLocationDataParams } from '../plat/plat.type';
+import { douyinService } from '../../plat/douyin';
+import { shipinhaoService } from '../../plat/shipinhao';
 
 @Controller()
 export class PublishController {
@@ -137,7 +139,7 @@ export class PublishController {
     return await this.publishService.deletePubRecordById(id);
   }
 
-  // 获取话题
+  // 获取所有平台话题
   @Icp('ICP_PUBLISH_GET_TOPIC')
   async getTopic(
     event: Electron.IpcMainInvokeEvent,
@@ -147,12 +149,72 @@ export class PublishController {
     return await platController.getTopic(account, keyword);
   }
 
-  // 获取位置数据
+  // 获取所有平台位置数据
   @Icp('ICP_PUBLISH_GET_LOCATION')
   async getLocationData(
     event: Electron.IpcMainInvokeEvent,
     params: IGetLocationDataParams,
   ) {
     return await platController.getLocationData(params);
+  }
+
+  // 获取抖音热点数据
+  @Icp('ICP_PUBLISH_GET_DOYTIN_HOT')
+  async getDoytinHot(
+    event: Electron.IpcMainInvokeEvent,
+    account: AccountModel,
+    query: string,
+  ) {
+    const res = await douyinService.getHotspotData({
+      query: query,
+      cookie: JSON.parse(account.loginCookie),
+    });
+    return res.data;
+  }
+
+  // 获取抖音所有热点数据
+  @Icp('ICP_PUBLISH_GET_ALL_DOYTIN_HOT')
+  async getDoytinHotAll(event: Electron.IpcMainInvokeEvent) {
+    const res = await douyinService.getAllHotspotData();
+    return res.data;
+  }
+
+  // 获取抖音的活动列表
+  @Icp('ICP_PUBLISH_GET_DOUYIN_ACTIVITY')
+  async getDouyinActivity(
+    event: Electron.IpcMainInvokeEvent,
+    account: AccountModel,
+  ) {
+    const res = await douyinService.getActivity(
+      JSON.parse(account.loginCookie),
+    );
+    return res.data;
+  }
+
+  // 获取抖音的活动详情
+  @Icp('ICP_PUBLISH_GET_DOUYIN_ACTIVITY_DETAILS')
+  async getDouyinActivityDetails(
+    event: Electron.IpcMainInvokeEvent,
+    account: AccountModel,
+    activity_id: string,
+  ) {
+    const res = await douyinService.getActivityDetails(
+      JSON.parse(account.loginCookie),
+      activity_id,
+    );
+    return res.data;
+  }
+
+  // 获取微信视频号的活动
+  @Icp('ICP_PUBLISH_GET_WXSPH_ACTIVITY')
+  async getSphActivity(
+    event: Electron.IpcMainInvokeEvent,
+    account: AccountModel,
+    query: string,
+  ) {
+    return await shipinhaoService.getActivityList({
+      cookie: JSON.parse(account.loginCookie),
+      query,
+    });
   }
 }

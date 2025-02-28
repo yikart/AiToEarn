@@ -8,6 +8,8 @@ import { v4 as uuidv4 } from 'uuid';
 import crc32 from 'crc32';
 import { CookieToString, getFileContent } from '../utils';
 import {
+  DouyinActivityDetailResponse,
+  DouyinActivityListResponse,
   DouyinAllHotDataResponse,
   DouyinHotDataResponse,
   DouyinLocationDataResponse,
@@ -2040,6 +2042,28 @@ export class DouyinService {
   async getAllHotspotData() {
     return await requestNet<DouyinAllHotDataResponse>({
       url: `${this.loginUrl}aweme/v1/hotspot/recommend`,
+      method: 'GET',
+    });
+  }
+
+  // 查询抖音的活动列表
+  async getActivity(cookie: Electron.Cookie[]) {
+    return await requestNet<DouyinActivityListResponse>({
+      url: `https://creator.douyin.com/web/api/media/activity/get/?page=1&size=9999`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'GET',
+    });
+  }
+
+  // 获取活动详情
+  async getActivityDetails(cookie: Electron.Cookie[], activity_id: string) {
+    return await requestNet<DouyinActivityDetailResponse>({
+      url: `https://creator.douyin.com/web/api/media/activity/get/?page=1&size=9999&activity_id=${activity_id}`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
       method: 'GET',
     });
   }

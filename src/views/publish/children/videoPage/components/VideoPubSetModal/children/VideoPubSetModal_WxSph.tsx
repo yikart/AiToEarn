@@ -3,15 +3,62 @@ import {
   IVideoPubSetModalChildProps,
   IVideoPubSetModalChildRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/videoPubSetModal.type';
-import { Checkbox, Input, Radio, Select, Tooltip } from "antd";
+import { Checkbox, Input, Radio, Select, Spin, Tooltip } from 'antd';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
 import { AccountType } from '@@/AccountEnum';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { DouyinHotSentence } from '../../../../../../../../electron/plat/douyin/douyin.type';
+import useDebounceFetcher from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/useDebounceFetcher';
+import { VideoPubRestartLogin } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
 
 const { TextArea } = Input;
+
+const WXSphActivity = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
+  const { setOnePubParams } = useVideoPageStore(
+    useShallow((state) => ({
+      setOnePubParams: state.setOnePubParams,
+    })),
+  );
+
+  const { fetching, options, debounceFetcher } =
+    useDebounceFetcher<DouyinHotSentence>(async (keywords) => {
+      console.log(keywords);
+    });
+
+  return (
+    <>
+      <h1>申请关联热点</h1>
+      <Select
+        showSearch
+        allowClear
+        style={{ width: '100%' }}
+        placeholder="输入热点词搜索"
+        labelInValue
+        filterOption={false}
+        onSearch={debounceFetcher}
+        notFoundContent={fetching ? <Spin size="small" /> : null}
+        options={[]}
+        value={
+          currChooseAccount.pubParams!.diffParams![AccountType.Douyin]!.hotPoint
+        }
+        onChange={(newValue) => {
+          const newDiffParams = currChooseAccount.pubParams.diffParams!;
+          newDiffParams[AccountType.Douyin]!.hotPoint = newValue;
+          setOnePubParams(
+            {
+              diffParams: newDiffParams,
+            },
+            currChooseAccount.id,
+          );
+        }}
+      />
+      <VideoPubRestartLogin currChooseAccount={currChooseAccount} />
+    </>
+  );
+};
 
 const VideoPubSetModal_KWAI = memo(
   forwardRef(
@@ -108,6 +155,8 @@ const VideoPubSetModal_KWAI = memo(
           </p>
 
           <LocationSelect currChooseAccount={currChooseAccount} />
+
+          <WXSphActivity currChooseAccount={currChooseAccount} />
 
           <h1>扩展链接</h1>
           <Input

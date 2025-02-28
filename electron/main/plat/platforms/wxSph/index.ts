@@ -179,15 +179,6 @@ export class WxSph extends PlatformBase {
       }),
     };
   }
-
-  // 获取商品号的活动列表
-  async getActivityList(params: { cookie: Electron.Cookie[]; query: string }) {
-    const activityRes = await shipinhaoService.getActivityList(params);
-    return {
-      status: activityRes.status,
-      data: activityRes.data,
-    };
-  }
 }
 
 const wxSph = new WxSph();

@@ -147,6 +147,35 @@ interface Cover {
   url_list: string[];
 }
 
+interface Activity {
+  activity_id: string;
+  activity_level: number;
+  activity_name: string;
+  activity_status: number;
+  activity_type: number;
+  challenge: string[];
+  challenge_ids: number[];
+  collect_id: number;
+  collect_status: boolean;
+  cover_image: string;
+  game_id: string;
+  hot_score: number;
+  if_well_chosen: boolean;
+  jump_link: string;
+  jump_type: number;
+  query_tag: number;
+  reward_type: number;
+  show_end_time: string;
+  show_start_time: string;
+}
+
+interface Video {
+  big_thumbs?: any;
+  bit_rate?: any;
+  cover: Cover;
+  duration: number;
+}
+
 export interface DouyinHotSentence {
   aweme_infos: any;
   challenge_id: string;
@@ -164,6 +193,72 @@ export interface DouyinHotSentence {
   word_cover: Cover;
   word_sub_board: any;
   word_type: number;
+}
+
+interface ActivityInfo {
+  activity_id: string;
+  activity_level: number;
+  activity_name: string;
+  activity_status: number;
+  activity_type: number;
+  challenge?: any;
+  challenge_ids: number[];
+  collect_id: number;
+  collect_status: boolean;
+  cover_image: string;
+  game_id: string;
+  hot_score: number;
+  if_well_chosen: boolean;
+  jump_link: string;
+  jump_type: number;
+  post_url: string;
+  query_tag: number;
+  reward_type: number;
+  show_end_time: string;
+  show_start_time: string;
+}
+
+export interface DemoVideo {
+  aweme_id: string;
+  cha_list?: any;
+  chapter_bar_color?: any;
+  chapter_list?: any;
+  comment_list?: any;
+  geofencing?: any;
+  image_infos?: any;
+  images?: any;
+  img_bitrate?: any;
+  interaction_stickers?: any;
+  label_top_text?: any;
+  long_video?: any;
+  promotions?: any;
+  text_extra?: any;
+  video: Video;
+  video_labels?: any;
+  video_text?: any;
+}
+
+// 抖音活动详情接口的返回值
+export interface DouyinActivityDetailResponse {
+  activity_description: string;
+  activity_info: ActivityInfo;
+  demo_videos: DemoVideo[];
+  extra: Extra;
+  my_publish_videos: any;
+  other_publish_videos: any;
+  publish_end_time: string;
+  publish_start_time: string;
+  reward_rules: string;
+  status_code: number;
+  topics: string[];
+  topics_ids: string[];
+}
+
+// 抖音活动列表
+export interface DouyinActivityListResponse {
+  activity_list: Activity[];
+  extra: Extra;
+  status_code: number;
 }
 
 // 抖音的热点数据

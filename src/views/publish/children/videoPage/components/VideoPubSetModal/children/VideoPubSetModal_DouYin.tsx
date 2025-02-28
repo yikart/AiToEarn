@@ -15,10 +15,9 @@ import { useShallow } from 'zustand/react/shallow';
 import { DouyinDeclareEnum, VisibleTypeEnum } from '@@/publish/PublishEnum';
 import TopicSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/TopicSelect';
 import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
-import { AccountStatus, AccountType } from '@@/AccountEnum';
+import { AccountType } from '@@/AccountEnum';
 import useDebounceFetcher from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/useDebounceFetcher';
 import { icpGetDoytinHot, icpGetDoytinHotAll } from '@/icp/publish';
-import { ipcUpdateAccountStatus } from '@/icp/account';
 import { VideoPubRestartLogin } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
 import { DouyinHotSentence } from '../../../../../../../../electron/plat/douyin/douyin.type';
 import styles from '../components/videoPubSetModalCommon.module.scss';
@@ -27,10 +26,9 @@ import { describeNumber } from '@/utils';
 const { TextArea } = Input;
 
 const HotspotSelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
-  const { setOnePubParams, updateAccounts } = useVideoPageStore(
+  const { setOnePubParams } = useVideoPageStore(
     useShallow((state) => ({
       setOnePubParams: state.setOnePubParams,
-      updateAccounts: state.updateAccounts,
     })),
   );
   const [doytinHotAll, setDoytinHotAll] = useState<DouyinHotSentence[]>([]);
@@ -43,15 +41,6 @@ const HotspotSelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
         currChooseAccount.account!,
         keywords || '',
       );
-      if (res.status_code !== 0) {
-        currChooseAccount.account!.status = AccountStatus.DISABLE;
-        updateAccounts({ accounts: [currChooseAccount.account!] });
-        await ipcUpdateAccountStatus(
-          currChooseAccount.account!.id,
-          AccountStatus.DISABLE,
-        );
-        return null;
-      }
       return res.sentences;
     });
 
