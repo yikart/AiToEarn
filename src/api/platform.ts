@@ -204,6 +204,13 @@ export const platformApi = {
     });
   },
 
+  // 获取所有专题类型
+  getMsgType() {
+    return http.get<string[]>(`/topics/msgType`, {
+      isToken: false,
+    });
+  },
+
   // ---- 爆款标题 ----
   // 获取有数据的平台列表
   findPlatformsWithData() {
