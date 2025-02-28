@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, SelectProps } from 'antd';
+import { SelectProps } from 'antd';
 import { Select, Spin } from 'antd';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
@@ -8,6 +8,7 @@ import { icpGetTopic } from '@/icp/publish';
 import { AccountStatus, AccountType } from '@@/AccountEnum';
 import { ipcUpdateAccountStatus } from '@/icp/account';
 import useDebounceFetcher from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/useDebounceFetcher';
+import { VideoPubRestartLogin } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
 
 interface DebounceSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
@@ -46,11 +47,10 @@ export default function TopicSelect<
     },
   );
 
-  const { setOnePubParams, updateAccounts, accountRestart } = useVideoPageStore(
+  const { setOnePubParams, updateAccounts } = useVideoPageStore(
     useShallow((state) => ({
       setOnePubParams: state.setOnePubParams,
       updateAccounts: state.updateAccounts,
-      accountRestart: state.accountRestart,
     })),
   );
 
@@ -98,21 +98,7 @@ export default function TopicSelect<
           );
         }}
       />
-
-      {currChooseAccount.account?.status === AccountStatus.DISABLE && (
-        <div className="videoPubSetModal_con-accountDisable">
-          账户已失效，
-          <Button
-            type="link"
-            onClick={() => {
-              accountRestart(currChooseAccount.account!.type);
-            }}
-          >
-            重新登录
-          </Button>
-          后可获取
-        </div>
-      )}
+      <VideoPubRestartLogin currChooseAccount={currChooseAccount} />
       <p className="videoPubSetModal_con-tips">{tips}</p>
     </>
   );

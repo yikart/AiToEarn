@@ -1,5 +1,4 @@
 import moment from 'moment';
-import { message } from 'antd';
 /**
  * 生成唯一ID
  */
@@ -42,70 +41,22 @@ export function formatSeconds(seconds: number): string {
   return `${pad(hours)}:${pad(minutes)}:${pad(secs)}`;
 }
 
-function handlePositionError(e: GeolocationPositionError) {
-  switch (e.code) {
-    case e.PERMISSION_DENIED:
-      message.warning('位置服务被拒绝');
-      break;
-    case e.POSITION_UNAVAILABLE:
-      message.warning('暂时获取不到位置信息');
-      break;
-    case e.TIMEOUT:
-      message.warning('获取信息超时');
-      break;
-    default:
-      message.warning('未知错误');
-      break;
+/**
+ * 根据输入数值返回中文描述
+ * @param value 输入的数值
+ * @returns 如果数值超过1000返回'n千'，超过10000返回'n万'
+ */
+export function describeNumber(value: number): string {
+  if (value > 10000) {
+    // 数值超过10000，返回'n万'
+    const wan = Math.floor(value / 10000);
+    return `${wan}万`;
+  } else if (value > 1000) {
+    // 数值超过1000，返回'n千'
+    const qian = Math.floor(value / 1000);
+    return `${qian}千`;
+  } else {
+    // 数值不超过1000，直接返回数值的字符串形式
+    return value.toString();
   }
-}
-
-// 获取位置信息
-export async function getLocation(): Promise<GeolocationPosition> {
-  return new Promise((resolve) => {
-    function handlePosition(position: GeolocationPosition) {
-      resolve(position);
-    }
-
-    const options = {
-      //是否使用高精度设备，如GPS。默认是true
-      enableHighAccuracy: true,
-      //超时时间，单位毫秒，默认为0
-      timeout: 5000,
-      //使用设置时间内的缓存数据，单位毫秒
-      //默认为0，即始终请求新数据
-      //如设为Infinity，则始终使用缓存数据
-      maximumAge: 0,
-    };
-    console.log(navigator.permissions);
-    if (navigator.permissions) {
-      navigator.permissions
-        .query({ name: 'geolocation' })
-        .then(function (result) {
-          console.debug('permissions:', result.state);
-          if (result.state === 'granted') {
-            navigator.geolocation.getCurrentPosition(
-              handlePosition,
-              handlePositionError,
-              options,
-            );
-          } else if (result.state === 'prompt') {
-            navigator.geolocation.getCurrentPosition(
-              handlePosition,
-              handlePositionError,
-              options,
-            );
-          } else if (result.state === 'denied') {
-            alert(
-              'Permission denied. Please allow location access in your browser settings.',
-            );
-          }
-        });
-    } else {
-      navigator.geolocation.getCurrentPosition(
-        handlePosition,
-        handlePositionError,
-        options,
-      );
-    }
-  });
 }

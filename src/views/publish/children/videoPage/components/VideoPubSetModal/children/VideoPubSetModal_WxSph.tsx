@@ -128,7 +128,7 @@ const VideoPubSetModal_KWAI = memo(
             }}
           />
 
-          <h1>声明远程</h1>
+          <h1>声明原创</h1>
           <Checkbox
             value={
               currChooseAccount?.pubParams.diffParams![AccountType.WxSph]!

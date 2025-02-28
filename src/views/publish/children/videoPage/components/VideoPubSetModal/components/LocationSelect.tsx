@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Button, Select, SelectProps, Spin } from 'antd';
+import { Select, SelectProps, Spin } from 'antd';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import { icpGetLocationData } from '@/icp/publish';
@@ -8,9 +8,10 @@ import { ipcUpdateAccountStatus } from '@/icp/account';
 import { ILocationDataItem } from '../../../../../../../../electron/main/plat/plat.type';
 import useDebounceFetcher from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/useDebounceFetcher';
 import { IVideoChooseItem } from '@/views/publish/children/videoPage/videoPage';
-import styles from './locationSelect.module.scss';
+import styles from './videoPubSetModalCommon.module.scss';
 // @ts-ignore
 import { icpGetLocation } from '@/icp/view';
+import { VideoPubRestartLogin } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
 
 interface DebounceSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
@@ -22,11 +23,10 @@ export default function LocationSelect({
   currChooseAccount,
   ...props
 }: DebounceSelectProps<ILocationDataItem>) {
-  const { setOnePubParams, updateAccounts, accountRestart } = useVideoPageStore(
+  const { setOnePubParams, updateAccounts } = useVideoPageStore(
     useShallow((state) => ({
       setOnePubParams: state.setOnePubParams,
       updateAccounts: state.updateAccounts,
-      accountRestart: state.accountRestart,
     })),
   );
   const { fetching, options, debounceFetcher } =
@@ -101,21 +101,7 @@ export default function LocationSelect({
           );
         }}
       />
-
-      {currChooseAccount.account?.status === AccountStatus.DISABLE && (
-        <div className="videoPubSetModal_con-accountDisable">
-          账户已失效，
-          <Button
-            type="link"
-            onClick={() => {
-              accountRestart(currChooseAccount.account!.type);
-            }}
-          >
-            重新登录
-          </Button>
-          后可获取
-        </div>
-      )}
+      <VideoPubRestartLogin currChooseAccount={currChooseAccount} />
     </>
   );
 }
