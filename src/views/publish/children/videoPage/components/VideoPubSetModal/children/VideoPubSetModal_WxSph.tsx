@@ -3,12 +3,13 @@ import {
   IVideoPubSetModalChildProps,
   IVideoPubSetModalChildRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/videoPubSetModal.type';
-import { Checkbox, Input, Radio, Select } from 'antd';
+import { Checkbox, Input, Radio, Select, Tooltip } from "antd";
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
 import { AccountType } from '@@/AccountEnum';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const { TextArea } = Input;
 
@@ -28,12 +29,17 @@ const VideoPubSetModal_KWAI = memo(
 
       return (
         <>
-          <h1>短标题</h1>
+          <h1>
+            短标题
+            <Tooltip title="短标题会出现在搜索、话题、活动、地点、订阅号消息、发现页红点等场景">
+              <QuestionCircleOutlined style={{ marginLeft: '2px' }} />
+            </Tooltip>
+          </h1>
           <Input
             value={currChooseAccount.pubParams.title}
             showCount
-            maxLength={30}
-            placeholder="好的标题可以获得更多浏览"
+            maxLength={16}
+            placeholder="概况视频的主要内容。字数建议6-16个字符"
             variant="filled"
             onChange={(e) => {
               setOnePubParams(
