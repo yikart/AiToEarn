@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-22 12:02:55
- * @LastEditTime: 2025-02-28 13:30:09
+ * @LastEditTime: 2025-02-28 21:47:31
  * @LastEditors: nevin
  * @Description: 财务
  */
@@ -41,7 +41,7 @@ export const financeApi = {
    * @returns
    */
   getUserWalletAccountList() {
-    return http.get<UserWalletAccount>(`/userWalletAccount/list`, {
+    return http.get<UserWalletAccount[]>(`/userWalletAccount/list`, {
       isToken: true,
     });
   },
