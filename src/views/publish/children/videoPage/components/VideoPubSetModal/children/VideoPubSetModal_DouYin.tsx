@@ -1,4 +1,10 @@
-import React, { ForwardedRef, forwardRef, memo, useEffect, useRef, useState } from "react";
+import React, {
+  ForwardedRef,
+  forwardRef,
+  memo,
+  useEffect,
+  useState,
+} from 'react';
 import {
   IVideoPubSetModalChildProps,
   IVideoPubSetModalChildRef,
@@ -87,9 +93,18 @@ const HotspotSelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
             </div>
           );
         }}
-        // value={currChooseAccount.pubParams!.location as any}
+        value={
+          currChooseAccount.pubParams!.diffParams![AccountType.Douyin]!.hotPoint
+        }
         onChange={(newValue) => {
-          console.log(newValue);
+          const newDiffParams = currChooseAccount.pubParams.diffParams!;
+          newDiffParams[AccountType.Douyin]!.hotPoint = newValue;
+          setOnePubParams(
+            {
+              diffParams: newDiffParams,
+            },
+            currChooseAccount.id,
+          );
         }}
       />
       <VideoPubRestartLogin currChooseAccount={currChooseAccount} />
