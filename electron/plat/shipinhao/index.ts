@@ -4,7 +4,7 @@ import path from 'path';
 import { FileUtils } from '../../util/file';
 import { CookieToString, getFileContent } from '../utils';
 import requestNet from '../requestNet';
-import { WeChatLocationData } from './wxShp.type';
+import { WeChatLocationData, WeChatVideoApiResponse } from "./wxShp.type";
 
 interface UserInfo {
   authorId: string;
@@ -1325,7 +1325,7 @@ export class ShipinhaoService {
 
   // 获取视频号的活动
   async getActivityList(params: { cookie: Electron.Cookie[]; query: string }) {
-    return await requestNet<WeChatLocationData>({
+    return await requestNet<WeChatVideoApiResponse>({
       url: `https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/post/post_search_event`,
       method: 'POST',
       body: params,

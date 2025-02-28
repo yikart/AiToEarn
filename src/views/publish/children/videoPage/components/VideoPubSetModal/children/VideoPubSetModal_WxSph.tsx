@@ -8,45 +8,64 @@ import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPa
 import { useShallow } from 'zustand/react/shallow';
 import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
-import { AccountType } from '@@/AccountEnum';
+import { AccountStatus, AccountType } from '@@/AccountEnum';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { DouyinHotSentence } from '../../../../../../../../electron/plat/douyin/douyin.type';
 import useDebounceFetcher from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/useDebounceFetcher';
 import { VideoPubRestartLogin } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
+import { getSphActivity } from '@/icp/publish';
+import { ipcUpdateAccountStatus } from '@/icp/account';
+import { WxSphEventList } from '../../../../../../../../electron/plat/shipinhao/wxShp.type';
 
 const { TextArea } = Input;
 
 const WXSphActivity = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
-  const { setOnePubParams } = useVideoPageStore(
+  const { setOnePubParams, updateAccounts } = useVideoPageStore(
     useShallow((state) => ({
       setOnePubParams: state.setOnePubParams,
+      updateAccounts: state.updateAccounts,
     })),
   );
 
   const { fetching, options, debounceFetcher } =
-    useDebounceFetcher<DouyinHotSentence>(async (keywords) => {
-      console.log(keywords);
+    useDebounceFetcher<WxSphEventList>(async (keywords) => {
+      const res = await getSphActivity(currChooseAccount.account!, keywords);
+      if (res.data.errCode === 300334) {
+        currChooseAccount.account!.status = AccountStatus.DISABLE;
+        updateAccounts({ accounts: [currChooseAccount.account!] });
+        await ipcUpdateAccountStatus(
+          currChooseAccount.account!.id,
+          AccountStatus.DISABLE,
+        );
+        return [];
+      }
+      console.log(res);
+      return res.data.data.eventList;
     });
 
   return (
     <>
-      <h1>申请关联热点</h1>
+      <h1>参与活动</h1>
       <Select
         showSearch
         allowClear
         style={{ width: '100%' }}
-        placeholder="输入热点词搜索"
+        placeholder="输入关键词搜索活动"
         labelInValue
         filterOption={false}
         onSearch={debounceFetcher}
         notFoundContent={fetching ? <Spin size="small" /> : null}
-        options={[]}
+        options={options.map((v) => {
+          return {
+            label: v.eventName,
+            value: v.eventTopicId,
+          };
+        })}
         value={
-          currChooseAccount.pubParams!.diffParams![AccountType.Douyin]!.hotPoint
+          currChooseAccount.pubParams!.diffParams![AccountType.WxSph]!.activity
         }
         onChange={(newValue) => {
           const newDiffParams = currChooseAccount.pubParams.diffParams!;
-          newDiffParams[AccountType.Douyin]!.hotPoint = newValue;
+          newDiffParams[AccountType.WxSph]!.activity = newValue;
           setOnePubParams(
             {
               diffParams: newDiffParams,

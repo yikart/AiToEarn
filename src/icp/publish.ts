@@ -25,7 +25,7 @@ import {
   DouyinHotDataResponse,
 } from '../../electron/plat/douyin/douyin.type';
 import { IRequestNetResult } from '../../electron/plat/requestNet';
-import { WeChatLocationData } from '../../electron/plat/shipinhao/wxShp.type';
+import { WeChatLocationData, WeChatVideoApiResponse } from "../../electron/plat/shipinhao/wxShp.type";
 
 // 创建发布记录
 export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
@@ -228,9 +228,9 @@ export async function getDouyinActivityDetails(
   return res;
 }
 
-// 获取微信视频号的活动详情
+// 获取微信视频号的活动列表
 export async function getSphActivity(account: AccountModel, query: string) {
-  const res: IRequestNetResult<WeChatLocationData> =
+  const res: IRequestNetResult<WeChatVideoApiResponse> =
     await window.ipcRenderer.invoke(
       'ICP_PUBLISH_GET_WXSPH_ACTIVITY',
       account,

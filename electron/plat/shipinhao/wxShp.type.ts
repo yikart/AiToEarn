@@ -23,6 +23,24 @@ interface POI {
   poiCheckSum: string;
 }
 
+interface Data {
+  eventList: WxSphEventList[];
+  lastBuff: string;
+  continueFlag: boolean;
+}
+
+export interface WxSphEventList {
+  eventTopicId: string;
+  eventName: string;
+  eventCreatorNickname: string;
+}
+
+export interface WeChatVideoApiResponse {
+  errCode: number;
+  errMsg: string;
+  data: Data;
+}
+
 export interface WeChatLocationData {
   errCode: number;
   errMsg: string;
