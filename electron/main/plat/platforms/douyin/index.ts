@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-08 11:40:45
- * @LastEditTime: 2025-02-27 21:03:16
+ * @LastEditTime: 2025-03-01 20:03:05
  * @LastEditors: nevin
  * @Description: 抖音
  */
@@ -21,7 +21,7 @@ import { PublishVideoResult } from '../../module';
 import { douyinService } from '../../../../plat/douyin';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
-import { VisibleTypeEnum } from '@@/publish/PublishEnum';
+import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
 
 export type PubVideoOptin = {
   token: string;
