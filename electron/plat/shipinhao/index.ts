@@ -4,7 +4,7 @@ import path from 'path';
 import { FileUtils } from '../../util/file';
 import { CookieToString, getFileContent } from '../utils';
 import requestNet from '../requestNet';
-import { WeChatLocationData, WeChatVideoApiResponse } from "./wxShp.type";
+import { WeChatLocationData, WeChatVideoApiResponse } from './wxShp.type';
 
 interface UserInfo {
   authorId: string;
@@ -1228,6 +1228,15 @@ export class ShipinhaoService {
       title?: string;
       topics?: string[];
       des?: string;
+      timingTime?: number;
+      poiInfo?: {
+        latitude: string;
+        longitude: string;
+        poiCity: string;
+        poiName: string;
+        poiAddress: string;
+        poiId: string;
+      };
     },
     callback: (progress: number, msg?: string) => void,
   ): Promise<{

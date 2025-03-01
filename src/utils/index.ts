@@ -1,4 +1,4 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 /**
  * 生成唯一ID
  */
@@ -22,7 +22,7 @@ export function formatTime(
   time: string | number | Date,
   format: string = 'YYYY-MM-DD HH:MM:SS',
 ) {
-  return moment(time).format(format);
+  return dayjs(time).format(format);
 }
 
 /**

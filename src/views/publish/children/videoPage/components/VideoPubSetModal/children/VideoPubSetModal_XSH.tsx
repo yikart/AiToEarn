@@ -9,6 +9,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import TopicSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/TopicSelect';
 import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
+import { ScheduledTimeSelect } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
 
 const { TextArea } = Input;
 
@@ -90,6 +91,10 @@ const VideoPubSetModal_KWAI = memo(
               );
             }}
             value={currChooseAccount?.pubParams.visibleType}
+          />
+          <ScheduledTimeSelect
+            currChooseAccount={currChooseAccount}
+            tips="定时发布仅支持指定1h-14天内"
           />
         </>
       );
