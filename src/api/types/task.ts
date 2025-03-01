@@ -1,7 +1,15 @@
-import { TaskType } from 'commont/types/task';
+/*
+ * @Author: nevin
+ * @Date: 2025-03-01 19:27:35
+ * @LastEditTime: 2025-03-02 00:07:23
+ * @LastEditors: nevin
+ * @Description:
+ */
+import { Task, TaskType } from 'commont/types/task';
 import { ApiCorrectQuery } from '.';
 
 export enum UserTaskStatus {
+  DODING = 'doing', // 进行中
   PENDING = 'pending', // 待审核
   APPROVED = 'approved', // 已通过
   REJECTED = 'rejected', // 已拒绝
@@ -24,24 +32,26 @@ export interface MineTaskListParams extends ApiCorrectQuery {
   status?: UserTaskStatus;
 }
 
-export interface UserTask {
+export interface UserTask<T extends Task | string> {
   id: string;
   userId: string;
-  taskId: string;
+  taskId: T;
   status: UserTaskStatus;
   submissionUrl?: string; // 提交的视频、文章或截图URL
   screenshotUrls?: string[]; // 任务完成截图
   qrCodeScanResult?: string; // 二维码扫描结果
-  submissionTime?: Date; // 提交时间
-  completionTime?: Date; // 完成时间
+  submissionTime?: string; // 提交时间
+  completionTime?: string; // 完成时间
   rejectionReason?: string; // 拒绝原因
   metadata?: Record<string, any>; // 额外信息，如审核反馈等
   isFirstTimeSubmission: boolean; // 是否首次提交，用于确定是否给予首次奖励
   earnedCommission?: number; // 实际获得的佣金
   verificationNote?: string; // 人工核查备注
   rewardAmount?: number; // 奖励金额
-  rewardTime?: Date; // 奖励发放时间
+  rewardTime?: string; // 奖励发放时间
   keyword?: string;
   productLevel?: string;
   verifiedBy?: string; // 核查人员ID
+  createTime: string;
+  updateTime: string;
 }

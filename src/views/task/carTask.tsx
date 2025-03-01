@@ -1,13 +1,13 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-02-27 19:32:32
+ * @LastEditTime: 2025-03-02 00:16:00
  * @LastEditors: nevin
  * @Description: 任务
  */
 import { Button } from 'antd';
 import { useState, useEffect, useRef } from 'react';
-import { Task } from 'commont/types/task';
+import { Task, TaskType } from '@@/types/task';
 import { taskApi } from '@/api/task';
 import { TaskInfoRef } from './components/popInfo';
 import TaskInfo from './components/carInfo';
@@ -22,7 +22,10 @@ export default function Page() {
   const Ref_TaskInfo = useRef<TaskInfoRef>(null);
 
   async function getTaskList() {
-    const res = await taskApi.getTaskList(pageInfo);
+    const res = await taskApi.getTaskList({
+      ...pageInfo,
+      type: TaskType.PRODUCT,
+    });
     setTaskList(res.items);
   }
 
