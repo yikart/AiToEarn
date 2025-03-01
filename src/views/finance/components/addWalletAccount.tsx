@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-27 20:44:31
- * @LastEditTime: 2025-02-28 22:29:24
+ * @LastEditTime: 2025-03-01 20:04:48
  * @LastEditors: nevin
  * @Description: 添加账户 addWalletAccount
  */
@@ -84,6 +84,14 @@ const Com = forwardRef<AddWalletAccountRef>((props: any, ref) => {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
+          <Form.Item
+            label="账号"
+            name="account"
+            rules={[{ required: true, message: '请输入账号!' }]}
+          >
+            <Input />
+          </Form.Item>
+
           <Form.Item
             label="真实姓名"
             name="userName"
