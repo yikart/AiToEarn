@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-02-28 22:09:10
+ * @LastEditTime: 2025-03-01 19:39:12
  * @LastEditors: nevin
  * @Description: 用户的钱包账户 userWalletAccount
  */
@@ -41,11 +41,14 @@ export default function Page() {
 
       <AddWalletAccount ref={Ref_AddWalletAccountRef} />
       <div>
-        ƒ{' '}
         {walletAccountList.map((v) => {
           return (
             <div key={v.id}>
-              {v.phone}
+              <p>手机号{v.phone} </p>
+              <p>账户号{v.account} </p>
+              <p>身份证号{v.cardNum} </p>
+              <p>账号类型{v.type} </p>
+              <p>用户名{v.userName} </p>
               <Button type="primary">查看</Button>
             </div>
           );
