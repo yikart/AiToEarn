@@ -9,7 +9,7 @@ import crc32 from 'crc32';
 import { CookieToString, getFileContent } from '../utils';
 import {
   DouyinActivityDetailResponse,
-  DouyinActivityListResponse,
+  DouyinActivityListResponse, DouyinActivityTagsResponse,
   DouyinAllHotDataResponse,
   DouyinHotDataResponse,
   DouyinLocationDataResponse,
@@ -2059,8 +2059,20 @@ export class DouyinService {
 
   // 获取活动详情
   async getActivityDetails(cookie: Electron.Cookie[], activity_id: string) {
+    console.log(activity_id);
     return await requestNet<DouyinActivityDetailResponse>({
-      url: `https://creator.douyin.com/web/api/media/activity/get/?page=1&size=9999&activity_id=${activity_id}`,
+      url: `https://creator.douyin.com/web/api/media/activity/detail/?activity_id=${activity_id}`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'GET',
+    });
+  }
+
+  // 获取抖音活动标签
+  async getActivityTags(cookie: Electron.Cookie[]) {
+    return await requestNet<DouyinActivityTagsResponse>({
+      url: `https://creator.douyin.com/web/api/media/activity/tags/query`,
       headers: {
         cookie: CookieToString(cookie),
       },

@@ -147,7 +147,7 @@ interface Cover {
   url_list: string[];
 }
 
-interface Activity {
+export interface DouyinActivity {
   activity_id: string;
   activity_level: number;
   activity_name: string;
@@ -254,9 +254,22 @@ export interface DouyinActivityDetailResponse {
   topics_ids: string[];
 }
 
+// 抖音活动标签item
+export interface DouyinQueryTags {
+  id: number;
+  name: string;
+}
+
+// 抖音活动标签返回数据
+export interface DouyinActivityTagsResponse {
+  status_code: number;
+  extra: Extra;
+  query_tags: DouyinQueryTags[];
+}
+
 // 抖音活动列表
 export interface DouyinActivityListResponse {
-  activity_list: Activity[];
+  activity_list: DouyinActivity[];
   extra: Extra;
   status_code: number;
 }

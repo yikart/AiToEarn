@@ -21,11 +21,12 @@ import { AccountModel } from '../../electron/db/models/account';
 import {
   DouyinActivityDetailResponse,
   DouyinActivityListResponse,
+  DouyinActivityTagsResponse,
   DouyinAllHotDataResponse,
   DouyinHotDataResponse,
 } from '../../electron/plat/douyin/douyin.type';
 import { IRequestNetResult } from '../../electron/plat/requestNet';
-import { WeChatLocationData, WeChatVideoApiResponse } from "../../electron/plat/shipinhao/wxShp.type";
+import { WeChatVideoApiResponse } from '../../electron/plat/shipinhao/wxShp.type';
 
 // 创建发布记录
 export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
@@ -209,8 +210,10 @@ export async function icpGetDoytinHotAll() {
 
 // 获取抖音的活动列表
 export async function icpGetDouyinActivity(account: AccountModel) {
-  const res: IRequestNetResult<DouyinActivityListResponse> =
-    await window.ipcRenderer.invoke('ICP_PUBLISH_GET_DOUYIN_ACTIVITY', account);
+  const res: DouyinActivityListResponse = await window.ipcRenderer.invoke(
+    'ICP_PUBLISH_GET_DOUYIN_ACTIVITY',
+    account,
+  );
   return res;
 }
 
@@ -219,11 +222,20 @@ export async function getDouyinActivityDetails(
   account: AccountModel,
   activity_id: string,
 ) {
-  const res: IRequestNetResult<DouyinActivityDetailResponse> =
+  const res: DouyinActivityDetailResponse = await window.ipcRenderer.invoke(
+    'ICP_PUBLISH_GET_DOUYIN_ACTIVITY_DETAILS',
+    account,
+    activity_id,
+  );
+  return res;
+}
+
+// 获取抖音活动标签
+export async function icpGetActivityTags(account: AccountModel) {
+  const res: IRequestNetResult<DouyinActivityTagsResponse> =
     await window.ipcRenderer.invoke(
-      'ICP_PUBLISH_GET_DOUYIN_ACTIVITY_DETAILS',
+      'ICP_PUBLISH_GET_DOUYIN_ACTIVITY_TAGS',
       account,
-      activity_id,
     );
   return res;
 }

@@ -205,6 +205,15 @@ export class PublishController {
     return res.data;
   }
 
+  // 获取抖音活动标签
+  @Icp('ICP_PUBLISH_GET_DOUYIN_ACTIVITY_TAGS')
+  async getActivityTags(
+    event: Electron.IpcMainInvokeEvent,
+    account: AccountModel,
+  ) {
+    return await douyinService.getActivityTags(JSON.parse(account.loginCookie));
+  }
+
   // 获取微信视频号的活动
   @Icp('ICP_PUBLISH_GET_WXSPH_ACTIVITY')
   async getSphActivity(
