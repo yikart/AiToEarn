@@ -72,7 +72,7 @@ export interface IVideoPublishParams {
   timingTime?: Date;
   // 地点
   location?: ILableValue;
-  other: any;
+  other?: any;
 }
 
 // 获取话题返回值

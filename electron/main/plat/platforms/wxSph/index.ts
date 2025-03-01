@@ -136,7 +136,8 @@ export class WxSph extends PlatformBase {
         cover: params.coverPath,
         title: params.desc,
         topics: params.topics,
-        // des: params.desc,
+        des: params.desc,
+        timingTime: params.timingTime?.getTime(),
       },
       callback,
     );

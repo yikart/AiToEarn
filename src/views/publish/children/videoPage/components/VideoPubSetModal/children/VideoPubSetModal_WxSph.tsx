@@ -11,7 +11,10 @@ import LocationSelect from '@/views/publish/children/videoPage/components/VideoP
 import { AccountStatus, AccountType } from '@@/AccountEnum';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import useDebounceFetcher from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/useDebounceFetcher';
-import { VideoPubRestartLogin } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
+import {
+  ScheduledTimeSelect,
+  VideoPubRestartLogin,
+} from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
 import { getSphActivity } from '@/icp/publish';
 import { ipcUpdateAccountStatus } from '@/icp/account';
 import { WxSphEventList } from '../../../../../../../../electron/plat/shipinhao/wxShp.type';
@@ -238,6 +241,8 @@ const VideoPubSetModal_KWAI = memo(
             }}
             value={currChooseAccount?.pubParams.visibleType}
           />
+
+          <ScheduledTimeSelect currChooseAccount={currChooseAccount} />
         </>
       );
     },

@@ -25,7 +25,10 @@ import {
   icpGetDoytinHot,
   icpGetDoytinHotAll,
 } from '@/icp/publish';
-import { VideoPubRestartLogin } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
+import {
+  ScheduledTimeSelect,
+  VideoPubRestartLogin,
+} from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
 import {
   DouyinActivity,
   DouyinActivityDetailResponse,
@@ -206,11 +209,11 @@ const ActivitySelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
         </Spin>
       </Modal>
 
-      <h1>申请关联热点</h1>
+      <h1>活动奖励</h1>
       <Select
         allowClear
         style={{ width: '100%' }}
-        placeholder="输入热点词搜索"
+        placeholder="点击选择活动奖励"
         labelInValue
         mode="multiple"
         filterOption={false}
@@ -371,6 +374,11 @@ const VideoPubSetModal_KWAI = memo(
           />
 
           <HotspotSelect {...props} />
+
+          <ScheduledTimeSelect
+            currChooseAccount={currChooseAccount}
+            tips="支持2小时后及14天内的定时发布"
+          />
 
           <h1>自主声明</h1>
           <Select

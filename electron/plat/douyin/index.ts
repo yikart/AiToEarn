@@ -9,12 +9,13 @@ import crc32 from 'crc32';
 import { CookieToString, getFileContent } from '../utils';
 import {
   DouyinActivityDetailResponse,
-  DouyinActivityListResponse, DouyinActivityTagsResponse,
+  DouyinActivityListResponse,
+  DouyinActivityTagsResponse,
   DouyinAllHotDataResponse,
   DouyinHotDataResponse,
   DouyinLocationDataResponse,
-  DouyinTopicsSugResponse
-} from "./douyin.type";
+  DouyinTopicsSugResponse,
+} from './douyin.type';
 import requestNet from '../requestNet';
 import { jsonToQueryString } from '../../util';
 
@@ -462,7 +463,19 @@ export class DouyinService {
     cookies: string,
     tokens: any,
     filePath: string,
-    platformSetting: any,
+    platformSetting: {
+      title: string;
+      topics: string[];
+      cover: string;
+      timingTime?: number;
+      // 0 公共 1 私密 2 好友
+      visibility_type: 0 | 1 | 2;
+      // 地址
+      poiInfo?: {
+        poiId: string;
+        poiName: string;
+      };
+    },
     callback: (progress: number, msg?: string) => void,
   ): Promise<any> {
     return new Promise(async (resolve, reject) => {
@@ -535,6 +548,7 @@ export class DouyinService {
           `[${new Date().toLocaleString()}] 发布参数:`,
           publishVideoParams,
         );
+        return;
         callback(80, '正在发布...');
         const publishResult = await this.makePublishRequest(this.publishUrl, {
           method: 'POST',
@@ -1727,8 +1741,8 @@ export class DouyinService {
       text: text,
       text_extra: textExtra,
       mentions: mentions,
-      // visibility_type: 0, // 0 公共 1 私密 2 好友
-      visibility_type: 1,
+      // 0 公共 1 私密 2 好友
+      visibility_type: platformSetting['visibility_type'],
       download: 1,
     };
 

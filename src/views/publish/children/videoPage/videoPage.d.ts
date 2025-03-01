@@ -23,6 +23,8 @@ export interface IPubParams {
   diffParams?: DiffParmasType;
   // 位置
   location?: ILableValue;
+  // 定时发布日期
+  timingTime?: Date | null;
 }
 
 // 选择视频的每项数据

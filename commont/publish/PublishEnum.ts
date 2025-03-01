@@ -6,12 +6,12 @@ export enum PubType {
 
 // 可见性
 export enum VisibleTypeEnum {
+  // 所有人可见
+  Public = 0,
   // 仅自己可见
   Private = 1,
   // 好友可见
   Friend = 2,
-  // 所有人可见
-  Public = 3,
 }
 
 // 抖音自主声明

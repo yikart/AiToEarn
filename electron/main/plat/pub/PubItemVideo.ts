@@ -51,6 +51,8 @@ export class PubItemVideo extends PubItemBase {
         coverPath: this.videoModel.coverPath || '',
         visibleType: this.videoModel.visibleType || VisibleTypeEnum.Private,
         diffParams: this.videoModel.diffParams,
+        timingTime: this.videoModel.timingTime,
+        location: this.videoModel.location,
       },
       (progress: number, msg?: string) => {
         const args: VideoPublishProgressRes = {

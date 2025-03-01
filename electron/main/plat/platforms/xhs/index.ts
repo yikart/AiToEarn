@@ -151,6 +151,7 @@ export class Xhs extends PlatformBase {
             title: params.title,
             topicsDetail:
               params.diffParams?.[AccountType.Xhs]?.topicsDetail || [],
+            timingTime: params.timingTime?.getTime(),
           },
           callback,
         )

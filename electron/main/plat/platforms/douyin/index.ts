@@ -20,8 +20,8 @@ import {
 import { PublishVideoResult } from '../../module';
 import { douyinService } from '../../../../plat/douyin';
 import { AccountType } from '../../../../../commont/AccountEnum';
-import { getNowTimeStamp } from '../../../../util/time';
 import { AccountModel } from '../../../../db/models/account';
+import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 
 export type PubVideoOptin = {
   token: string;
@@ -148,7 +148,22 @@ export class Douyin extends PlatformBase {
             title: params.title,
             topics: params.topics,
             cover: params.coverPath,
-            timingTime: getNowTimeStamp() + '',
+            timingTime: params.timingTime?.getTime(),
+            visibility_type:
+              params.visibleType === VisibleTypeEnum.Public
+                ? 0
+                : params.visibleType === VisibleTypeEnum.Private
+                  ? 1
+                  : 2,
+            // 地址
+            ...(params.location
+              ? {
+                  poiInfo: {
+                    poiId: `${params.location.value}`,
+                    poiName: params.location.label,
+                  },
+                }
+              : {}),
           },
           callback,
         )

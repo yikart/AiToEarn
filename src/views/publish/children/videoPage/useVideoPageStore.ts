@@ -41,6 +41,7 @@ const store: IVideoPageStore = {
     cover: undefined,
     visibleType: VisibleTypeEnum.Public,
     topics: [],
+    timingTime: undefined,
     diffParams: {
       [AccountType.Xhs]: {
         topicsDetail: [],
