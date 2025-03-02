@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-22 12:02:55
- * @LastEditTime: 2025-03-02 14:47:44
+ * @LastEditTime: 2025-03-02 21:12:33
  * @LastEditors: nevin
  * @Description: 任务
  */
@@ -9,6 +9,7 @@ import http from './request';
 import { MineTaskListParams, TaskListParams, UserTask } from './types/task';
 import { Task } from 'commont/types/task';
 import { Pagination } from './types';
+import { UserWalletRecord } from './types/finance';
 
 export const taskApi = {
   /**
@@ -66,5 +67,16 @@ export const taskApi = {
     return http.post<UserTask<string>>(`/tasks/submit/${id}`, data, {
       isToken: true,
     });
+  },
+
+  // 提现
+  withdraw(id: string) {
+    return http.post<UserWalletRecord>(
+      `/tasks/withdraw/${id}`,
+      {},
+      {
+        isToken: true,
+      },
+    );
   },
 };

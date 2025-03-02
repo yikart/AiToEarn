@@ -1,11 +1,13 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-22 12:02:55
- * @LastEditTime: 2025-02-28 21:52:01
+ * @LastEditTime: 2025-03-02 22:00:40
  * @LastEditors: nevin
  * @Description: 财务
  */
 import http from './request';
+import { Pagination } from './types';
+import { UserWalletRecord } from './types/finance';
 import {
   CreateUserWalletAccountParams,
   UserWalletAccount,
@@ -53,4 +55,15 @@ export const financeApi = {
     return http.delete<boolean>(`/finance/userWalletAccount/delete/${id}`);
   },
   // --------- userWalletAccount END ---------
+
+  // 提现记录
+  getWithdrawList(params: { page: number; pageSize: number }) {
+    return http.get<Pagination<UserWalletRecord>>(
+      `/finance/userWalletRecord/list`,
+      {
+        isToken: true,
+        params,
+      },
+    );
+  },
 };

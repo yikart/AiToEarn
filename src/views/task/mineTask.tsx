@@ -1,11 +1,11 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-27 19:37:08
- * @LastEditTime: 2025-03-02 13:52:29
+ * @LastEditTime: 2025-03-02 21:23:47
  * @LastEditors: nevin
  * @Description: 我的任务列表
  */
-import { Button } from 'antd';
+import { Button, Card } from 'antd';
 import { useState, useEffect, useRef } from 'react';
 import { taskApi } from '@/api/task';
 import { UserTask, UserTaskStatus } from '@/api/types/task';
@@ -43,29 +43,41 @@ export default function Page() {
 
   const Ref_MineTaskInfo = useRef<MineTaskInfoRef>(null);
 
+  async function withdraw(id: string) {
+    const res = await taskApi.withdraw(id);
+  }
+
   return (
     <div>
       <MineTaskInfo ref={Ref_MineTaskInfo} />
       <div>
         {taskList.map((v) => {
           return (
-            <div key={v.id}>
-              {v.taskId.id}
+            <Card key={v.id} title={v.taskId.title}>
               <div>
-                <p>任务名称: {v.taskId.title}</p>
                 <p>任务描述: {v.taskId.description}</p>
                 <p>状态: {UserTaskStatusNameMap.get(v.status)}</p>
                 <p>接受时间: {v.createTime}</p>
                 <p>提交时间: {v.submissionTime}</p>
                 <p>完成时间: {v.rewardTime}</p>
               </div>
-              <Button
-                type="primary"
-                onClick={() => Ref_MineTaskInfo.current?.init(v)}
-              >
-                去完成
-              </Button>
-            </div>
+              <div>
+                {v.status === UserTaskStatus.DODING && (
+                  <Button
+                    type="primary"
+                    onClick={() => Ref_MineTaskInfo.current?.init(v)}
+                  >
+                    去完成
+                  </Button>
+                )}
+
+                {v.status === UserTaskStatus.APPROVED && (
+                  <Button type="primary" onClick={() => withdraw(v.id)}>
+                    提现
+                  </Button>
+                )}
+              </div>
+            </Card>
           );
         })}
       </div>
