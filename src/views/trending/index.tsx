@@ -483,50 +483,51 @@ const Trending: React.FC = () => {
                       onClick={async () => {
                         setSelectedMsgType(type);
                         setTopicLoading(true);
+                        setContentExpanded(false); // 关闭热门内容
+                        
                         try {
-                          // 1. 获取专题标签
-                          const topics = await platformApi.getTopics();
-                          setTopicList(topics);
-
-                          // 2. 获取专题分类
-                          const categories = await platformApi.getTopicCategories();
-                          setTopicCategories(categories);
+                          // 获取所有热点事件
+                          const hotTopicsData = await platformApi.getAllHotTopics();
+                          console.log(JSON.stringify(hotTopicsData));
                           
-                          if (categories.length > 0) {
-                            const firstCategory = categories[0];
-                            setSelectedTopicCategory(firstCategory);
-
-                            // 3. 获取第一个分类的子分类
-                            const subCategories = await platformApi.getSubCategories(firstCategory);
-                            setTopicSubCategories(subCategories);
-
-                            if (subCategories.length > 0) {
-                              const firstSubCategory = subCategories[0];
-                              setSelectedTopicSubCategory(firstSubCategory);
-
-                              // 4. 获取专题内容
-                              const response = await platformApi.getAllTopics({
-                                category: firstCategory,
-                                subCategory: firstSubCategory,
-                                startTime: selectedDate,
-                                endTime: selectedDate,
-                                topic: type // 使用选中的专题类型
-                              });
-
-                              setTopicContents(response.items || []);
-                              if (response.meta) {
-                                setTopicPagination({
-                                  currentPage: response.meta.currentPage || 1,
-                                  totalPages: response.meta.totalPages || 1,
-                                  totalItems: response.meta.totalItems || 0,
-                                  itemsPerPage: response.meta.itemsPerPage || 20,
-                                  itemCount: response.meta.itemCount || 0
+                          // 处理数据并显示
+                          if (hotTopicsData && hotTopicsData.length > 0) {
+                            // 将平台数据和话题数据整合
+                            const processedData = [];
+                            hotTopicsData.forEach(platformData => {
+                              const platform = platformData.platform;
+                              const topics = platformData.topics || [];
+                              
+                              topics.forEach(topic => {
+                                processedData.push({
+                                  id: topic._id,
+                                  title: topic.title,
+                                  content: topic.title,
+                                  cover: platform.icon || '',
+                                  category: platform.name,
+                                  subCategory: '',
+                                  createTime: topic.createTime || topic.fetchTime,
+                                  url: topic.url,
+                                  hotValue: topic.hotValue,
+                                  rank: topic.rank,
+                                  stats: {
+                                    viewCount: topic.hotValue || 0,
+                                    likeCount: 0,
+                                    commentCount: 0,
+                                    shareCount: 0,
+                                    collectCount: 0
+                                  }
                                 });
-                              }
-                            }
+                              });
+                            });
+                            
+                            setTopicContents(processedData);
+                          } else {
+                            setTopicContents([]);
                           }
                         } catch (error) {
                           console.error('获取专题数据失败:', error);
+                          setTopicContents([]);
                         } finally {
                           setTopicLoading(false);
                         }
@@ -545,145 +546,88 @@ const Trending: React.FC = () => {
         {/* 右侧内容区 */}
         <div className="flex-1 p-6">
           {topicExpanded ? (
-            // 热门专题界面
+            // 右侧内容区 - 热门专题界面
             <div>
-              {/* 专题标签筛选 */}
-              <div className="p-4 mb-4 bg-white rounded-lg shadow-sm">
-                <div className="flex flex-wrap gap-2">
-                  {topicList.map((topic) => (
-                    <button
-                      key={topic}
-                      className={`px-4 py-2 rounded-full text-sm transition-all duration-200 
-                        ${selectedMsgType === topic 
-                          ? 'bg-[#a66ae4] text-white' 
-                          : 'bg-gray-50 text-gray-600 hover:bg-[#f4ebff] hover:text-[#a66ae4]'
-                        }`}
-                      onClick={async () => {
-                        setSelectedMsgType(topic);
-                        setTopicLoading(true);
-                        try {
-                          // 获取专题内容
-                          const response = await platformApi.getAllTopics({
-                            category: selectedTopicCategory,
-                            subCategory: selectedTopicSubCategory,
-                            startTime: selectedDate,
-                            endTime: selectedDate,
-                            topic: topic // 使用点击的专题标签
-                          });
-
-                          setTopicContents(response.items || []);
-                          if (response.meta) {
-                            setTopicPagination({
-                              currentPage: response.meta.currentPage || 1,
-                              totalPages: response.meta.totalPages || 1,
-                              totalItems: response.meta.totalItems || 0,
-                              itemsPerPage: response.meta.itemsPerPage || 20,
-                              itemCount: response.meta.itemCount || 0
-                            });
-                          }
-                        } catch (error) {
-                          console.error('获取专题数据失败:', error);
-                        } finally {
-                          setTopicLoading(false);
-                        }
-                      }}
-                    >
-                      {topic}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* 专题分类和子分类 */}
-              <div className="p-4 mb-4 bg-white rounded-lg shadow-sm">
-                <div className="flex flex-wrap gap-2">
-                  {topicCategories.map((category) => (
-                    <button
-                      key={category}
-                      className={`px-4 py-2 rounded-full text-sm transition-all duration-200 
-                        ${selectedTopicCategory === category 
-                          ? 'bg-[#a66ae4] text-white' 
-                          : 'bg-gray-50 text-gray-600 hover:bg-[#f4ebff] hover:text-[#a66ae4]'
-                        }`}
-                      onClick={() => handleTopicCategoryClick(category)}
-                    >
-                      {category || '全部'}
-                    </button>
-                  ))}
-                </div>
-
-                {topicSubCategories.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {topicSubCategories.map((subCategory) => (
-                      <button
-                        key={subCategory}
-                        className={`px-4 py-2 rounded-full text-sm transition-all duration-200 
-                          ${selectedTopicSubCategory === subCategory 
-                            ? 'bg-[#a66ae4] text-white' 
-                            : 'bg-gray-50 text-gray-600 hover:bg-[#f4ebff] hover:text-[#a66ae4]'
-                          }`}
-                        onClick={() => handleTopicSubCategoryClick(subCategory)}
-                      >
-                        {subCategory || '全部'}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
               {/* 专题内容列表 */}
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {topicLoading ? (
                   <div className="flex items-center justify-center py-8">
                     <span className="text-gray-500">加载中...</span>
                   </div>
                 ) : topicContents.length > 0 ? (
                   <>
-                    {topicContents.map((content) => (
-                      <div
-                        key={content.id}
-                        className="flex bg-white p-4 rounded-lg hover:shadow-md transition-shadow cursor-pointer"
-                      >
-                        {/* 内容展示，样式类似热门内容 */}
-                        <div className="w-48">
-                          <div className="relative w-full overflow-hidden rounded-lg h-28">
-                            <img
-                              src={getImageUrl(content.cover)}
-                              alt={content.title}
-                              className="object-cover w-full h-full"
-                            />
+                    {/* 表头 */}
+                    <div className="flex p-4 text-sm text-gray-500 bg-gray-50">
+                      <div className="w-8">排名</div>
+                      <div className="w-48">专题信息</div>
+                      <div className="flex-1">
+                        <div className="flex items-center">
+                          <div className="w-32">平台</div>
+                          <div className="flex items-center space-x-12">
+                            <div className="w-24 text-center">热度</div>
                           </div>
                         </div>
+                      </div>
+                    </div>
+
+                    {/* 内容列表 */}
+                    {topicContents.map((item, index) => (
+                      <div
+                        key={item.id}
+                        className="flex bg-white p-4 rounded-lg hover:shadow-md transition-shadow cursor-pointer border border-transparent hover:border-[#e6d3f7]"
+                        onClick={() => handleContentClick(item.url, item.title)}
+                      >
+                        {/* 排名 */}
+                        <div className="w-8 text-lg font-bold text-orange-500">
+                          {item.rank || index + 1}
+                        </div>
+
+                        {/* 专题信息区域 */}
+                        <div className="w-48">
+                          <div className="relative w-full overflow-hidden rounded-lg h-28 bg-gray-100 flex items-center justify-center">
+                            {item.cover ? (
+                              <img
+                                src={getImageUrl(item.cover)}
+                                alt={item.title}
+                                className="object-cover w-full h-full"
+                              />
+                            ) : (
+                              <div className="text-gray-400 text-center">暂无图片</div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* 内容信息 */}
                         <div className="flex-1 ml-4">
-                          <h3 className="text-lg font-medium mb-2">{content.title}</h3>
-                          <div className="text-sm text-gray-500">
-                            <span>{content.category}</span>
-                            <span className="mx-2">·</span>
-                            <span>{content.subCategory}</span>
+                          <div className="flex flex-col justify-between h-full">
+                            <div>
+                              <h3 className="text-base font-medium mb-2 hover:text-blue-500">
+                                {item.title}
+                              </h3>
+                              <div className="flex items-center space-x-2">
+                                <span className="text-xs text-gray-400">
+                                  发布于 {dayjs(item.createTime).format('YYYY-MM-DD HH:mm')}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center mt-2">
+                              <div className="w-32 text-gray-500">
+                                <span>{item.category}</span>
+                              </div>
+                              <div className="flex items-center space-x-12">
+                                <div className="w-24 text-center">
+                                  <span className="text-[#a66ae4]">{item.hotValue?.toLocaleString() || '0'}</span>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
                     ))}
-
-                    {/* 分页 */}
-                    {topicPagination && topicPagination.totalPages > 1 && (
-                      <div className="flex justify-center mt-6">
-                        <Pagination
-                          current={topicPagination.currentPage}
-                          total={topicPagination.totalItems}
-                          pageSize={topicPagination.itemsPerPage}
-                          onChange={(page) => {
-                            // 处理分页
-                          }}
-                          showSizeChanger={false}
-                          showQuickJumper
-                          showTotal={(total) => `共 ${total} 条`}
-                        />
-                      </div>
-                    )}
                   </>
                 ) : (
-                  <div className="py-8 text-center text-gray-500">暂无数据</div>
+                  <div className="py-8 text-center text-gray-500">暂无专题数据</div>
                 )}
               </div>
             </div>
