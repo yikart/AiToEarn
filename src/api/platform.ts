@@ -183,7 +183,7 @@ export const platformApi = {
       },
     });
   },
-  // 获取所有热点事件
+  // 获取热门专题列表
   getAllTopics(params: {
     category?: string;
     subCategory?: string;
