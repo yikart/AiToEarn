@@ -7,7 +7,7 @@ import {
   PaginationMeta,
 } from '@/api/platform';
 import { Pagination, Modal, Popover, DatePicker } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, DownOutlined, RightOutlined } from '@ant-design/icons';
 import { getImageUrl } from '@/config';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
@@ -114,6 +114,8 @@ const Trending: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentTitle, setCurrentTitle] = useState('');
   const [topicCategories, setTopicCategories] = useState<string[]>([]);
+  const [contentExpanded, setContentExpanded] = useState(true);
+  const [topicExpanded, setTopicExpanded] = useState(false);
 
   // 获取平台数据和专题分类
   useEffect(() => { 
@@ -130,7 +132,7 @@ const Trending: React.FC = () => {
         }
 
         // 获取专题分类
-        const topicData = await platformApi.getTopics();
+        const topicData = await platformApi.getMsgType();
         setTopicCategories(topicData);
       } catch (error) {
         console.error('获取数据失败:', error);
@@ -282,57 +284,74 @@ const Trending: React.FC = () => {
       <div className="flex h-full bg-gray-50">
         {/* 左侧平台列表 */}
         <div className="flex-shrink-0 w-48 p-4 bg-white border-r border-gray-100">
-          {/* 平台列表 */}
+          {/* 热门内容 */}
           <div className="mb-8">
-            <div className="font-medium text-gray-900 mb-4">平台</div>
-            <ul className="space-y-2">
-              {loading ? (
-                <div className="flex items-center justify-center py-4">
-                  <span className="text-gray-500">加载中...</span>
-                </div>
-              ) : (
-                platforms.map((platform) => (
-                  <li
-                    key={platform._id}
-                    className={`flex items-center space-x-2 p-2 rounded cursor-pointer transition-all duration-200
-                      ${
-                        selectedPlatform?._id === platform._id
-                          ? 'bg-[#f4ebff] text-[#a66ae4]'
-                          : 'hover:bg-gray-50'
-                      }`}
-                    onClick={() => handlePlatformSelect(platform)}
-                  >
-                    <img
-                      src={getImageUrl(platform.icon)}
-                      alt={platform.name}
-                      className="w-5 h-5"
-                    />
-                    <span>{platform.name}</span>
-                  </li>
-                ))
-              )}
-            </ul>
+            <div 
+              className="flex items-center justify-between font-medium text-gray-900 mb-4 cursor-pointer hover:text-[#a66ae4]"
+              onClick={() => setContentExpanded(!contentExpanded)}
+            >
+              <span>热门内容</span>
+              {contentExpanded ? <DownOutlined /> : <RightOutlined />}
+            </div>
+            {contentExpanded && (
+              <ul className="space-y-2">
+                {loading ? (
+                  <div className="flex items-center justify-center py-4">
+                    <span className="text-gray-500">加载中...</span>
+                  </div>
+                ) : (
+                  platforms.map((platform) => (
+                    <li
+                      key={platform._id}
+                      className={`flex items-center space-x-2 p-2 rounded cursor-pointer transition-all duration-200
+                        ${
+                          selectedPlatform?._id === platform._id
+                            ? 'bg-[#f4ebff] text-[#a66ae4]'
+                            : 'hover:bg-gray-50'
+                        }`}
+                      onClick={() => handlePlatformSelect(platform)}
+                    >
+                      <img
+                        src={getImageUrl(platform.icon)}
+                        alt={platform.name}
+                        className="w-5 h-5"
+                      />
+                      <span>{platform.name}</span>
+                    </li>
+                  ))
+                )}
+              </ul>
+            )}
           </div>
 
           {/* 专题分类列表 */}
           <div>
-            <div className="font-medium text-gray-900 mb-4">热门专题</div>
-            <ul className="space-y-2">
-              {loading ? (
-                <div className="flex items-center justify-center py-4">
-                  <span className="text-gray-500">加载中...</span>
-                </div>
-              ) : (
-                topicCategories.map((category) => (
-                  <li
-                    key={category}
-                    className="flex items-center p-2 rounded cursor-pointer transition-all duration-200 hover:bg-gray-50"
-                  >
-                    <span>{category}</span>
-                  </li>
-                ))
-              )}
-            </ul>
+            <div 
+              className="flex items-center justify-between font-medium text-gray-900 mb-4 cursor-pointer hover:text-[#a66ae4]"
+              onClick={() => setTopicExpanded(!topicExpanded)}
+            >
+              <span>热门专题</span>
+              {topicExpanded ? <DownOutlined /> : <RightOutlined />}
+            </div>
+            {topicExpanded && (
+              <ul className="space-y-2">
+                {loading ? (
+                  <div className="flex items-center justify-center py-4">
+                    <span className="text-gray-500">加载中...</span>
+                  </div>
+                ) : (
+                  topicCategories.map((category) => (
+                    <li
+                      key={category}
+                      className="flex items-center p-2 rounded cursor-pointer transition-all duration-200 hover:bg-gray-50"
+                    >
+                      <InfoCircleOutlined className="mr-2 text-[#a66ae4]" />
+                      <span>{category}</span>
+                    </li>
+                  ))
+                )}
+              </ul>
+            )}
           </div>
         </div>
 
