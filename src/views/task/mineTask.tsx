@@ -1,15 +1,16 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-27 19:37:08
- * @LastEditTime: 2025-03-02 00:11:11
+ * @LastEditTime: 2025-03-02 13:52:29
  * @LastEditors: nevin
  * @Description: 我的任务列表
  */
 import { Button } from 'antd';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { taskApi } from '@/api/task';
 import { UserTask, UserTaskStatus } from '@/api/types/task';
 import { Task } from '@@/types/task';
+import MineTaskInfo, { MineTaskInfoRef } from './components/mineInfo';
 
 const UserTaskStatusNameMap = new Map<UserTaskStatus, string>([
   [UserTaskStatus.DODING, '进行中'],
@@ -24,7 +25,6 @@ const UserTaskStatusNameMap = new Map<UserTaskStatus, string>([
 
 export default function Page() {
   const [taskList, setTaskList] = useState<UserTask<Task>[]>([]);
-  const [taskDetails, setTaskDetails] = useState<Record<string, any>>({});
   const [pageInfo, setPageInfo] = useState({
     pageSize: 10,
     pageNo: 1,
@@ -35,16 +35,17 @@ export default function Page() {
     const fetchTaskDetails = async () => {
       const tasks = await taskApi.getMineTaskList(pageInfo);
 
-      console.log(tasks);
-
       setTaskList(tasks.items);
     };
 
     fetchTaskDetails();
   }, []);
 
+  const Ref_MineTaskInfo = useRef<MineTaskInfoRef>(null);
+
   return (
     <div>
+      <MineTaskInfo ref={Ref_MineTaskInfo} />
       <div>
         {taskList.map((v) => {
           return (
@@ -58,7 +59,12 @@ export default function Page() {
                 <p>提交时间: {v.submissionTime}</p>
                 <p>完成时间: {v.rewardTime}</p>
               </div>
-              <Button type="primary">查看</Button>
+              <Button
+                type="primary"
+                onClick={() => Ref_MineTaskInfo.current?.init(v)}
+              >
+                去完成
+              </Button>
             </div>
           );
         })}

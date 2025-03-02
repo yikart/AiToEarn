@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-22 12:02:55
- * @LastEditTime: 2025-03-02 00:12:15
+ * @LastEditTime: 2025-03-02 14:47:44
  * @LastEditors: nevin
  * @Description: 任务
  */
@@ -43,13 +43,28 @@ export const taskApi = {
    * 申请任务
    */
   taskApply(id: string) {
-    return http.post<Task>(`/tasks/apply/${id}`);
+    return http.post<Task>(
+      `/tasks/apply/${id}`,
+      {},
+      {
+        isToken: true,
+      },
+    );
   },
 
   /**
    * 完成任务
    */
-  taskDone(id: string) {
-    return http.post<Task>(`/tasks/done/${id}`);
+  taskDone(
+    id: string,
+    data: {
+      submissionUrl?: string; // 提交的结果，视频、文章或截图URL
+      screenshotUrls?: string[]; // 任务截图
+      qrCodeScanResult?: string; // 二维码扫描结果
+    },
+  ) {
+    return http.post<UserTask<string>>(`/tasks/submit/${id}`, data, {
+      isToken: true,
+    });
   },
 };
