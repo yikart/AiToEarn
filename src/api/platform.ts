@@ -185,8 +185,8 @@ export const platformApi = {
   },
   // 获取所有热点事件
   getAllTopics(params: {
-    category?: string;
-    subCategory?: string;
+    category?: any;
+    subCategory?: any;
     startTime?: string;
     endTime?: string;
     topic?: string;
