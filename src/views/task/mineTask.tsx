@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-27 19:37:08
- * @LastEditTime: 2025-03-02 21:23:47
+ * @LastEditTime: 2025-03-02 22:40:53
  * @LastEditors: nevin
  * @Description: 我的任务列表
  */
@@ -11,6 +11,8 @@ import { taskApi } from '@/api/task';
 import { UserTask, UserTaskStatus } from '@/api/types/task';
 import { Task } from '@@/types/task';
 import MineTaskInfo, { MineTaskInfoRef } from './components/mineInfo';
+import { WithdrawRef } from './components/withdraw';
+import Withdraw from './components/withdraw';
 
 const UserTaskStatusNameMap = new Map<UserTaskStatus, string>([
   [UserTaskStatus.DODING, '进行中'],
@@ -42,14 +44,16 @@ export default function Page() {
   }, []);
 
   const Ref_MineTaskInfo = useRef<MineTaskInfoRef>(null);
+  const Ref_Withdraw = useRef<WithdrawRef>(null);
 
-  async function withdraw(id: string) {
-    const res = await taskApi.withdraw(id);
+  async function withdraw(task: UserTask<Task>) {
+    Ref_Withdraw.current?.init(task);
   }
 
   return (
     <div>
       <MineTaskInfo ref={Ref_MineTaskInfo} />
+      <Withdraw ref={Ref_Withdraw} />
       <div>
         {taskList.map((v) => {
           return (
@@ -72,7 +76,7 @@ export default function Page() {
                 )}
 
                 {v.status === UserTaskStatus.APPROVED && (
-                  <Button type="primary" onClick={() => withdraw(v.id)}>
+                  <Button type="primary" onClick={() => withdraw(v)}>
                     提现
                   </Button>
                 )}

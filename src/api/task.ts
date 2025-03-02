@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-22 12:02:55
- * @LastEditTime: 2025-03-02 21:12:33
+ * @LastEditTime: 2025-03-02 22:21:01
  * @LastEditors: nevin
  * @Description: 任务
  */
@@ -70,10 +70,12 @@ export const taskApi = {
   },
 
   // 提现
-  withdraw(id: string) {
+  withdraw(id: string, walletAccountId: string) {
     return http.post<UserWalletRecord>(
       `/tasks/withdraw/${id}`,
-      {},
+      {
+        accountId: walletAccountId,
+      },
       {
         isToken: true,
       },

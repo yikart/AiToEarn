@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-03-02 22:12:39
+ * @LastEditTime: 2025-03-02 23:01:36
  * @LastEditors: nevin
  * @Description: 用户金额记录 userWalletRecord
  */
@@ -24,6 +24,9 @@ export default function Page() {
       page: 1,
       pageSize: 10,
     });
+
+    console.log('----- ', res);
+
     setWalletAccountList(res.items);
   }
 
