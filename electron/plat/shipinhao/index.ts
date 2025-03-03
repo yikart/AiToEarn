@@ -1245,6 +1245,7 @@ export class ShipinhaoService {
     publishId: string;
     shareLink: string;
   }> {
+    console.log('platformSetting：', platformSetting);
     try {
       callback(5, '加载中...');
       const fileInfo = await FileUtils.getFileInfo(filePath);

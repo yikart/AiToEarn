@@ -1739,8 +1739,8 @@ export class DouyinService {
     const publishParams = {
       item_title: platformSetting['title'] ?? '',
       text: text,
-      text_extra: JSON.stringify(textExtra),
-      mentions: JSON.stringify(mentions),
+      text_extra: textExtra,
+      mentions: mentions,
       // 0 公共 1 私密 2 好友
       visibility_type: platformSetting['visibility_type'],
       download: 1,
