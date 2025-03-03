@@ -448,6 +448,56 @@ const Trending: React.FC = () => {
     }
   };
 
+  // 修改热门专题点击处理函数
+  const handleTopicExpandClick = async () => {
+    const newTopicExpanded = !topicExpanded;
+    setTopicExpanded(newTopicExpanded);
+    setContentExpanded(false);
+    setHotPlatformExpanded(false);
+    setHotEventExpanded(false);
+    
+    // 如果是展开热门专题，并且还没有选择消息类型，则自动选择第一个
+    if (newTopicExpanded && (!selectedMsgType || selectedMsgType === '') && msgTypeList.length > 0) {
+      // 自动选择第一个消息类型
+      const firstMsgType = msgTypeList[0];
+      setSelectedMsgType(firstMsgType);
+      
+      // 调用处理函数获取数据
+      setTopicLoading(true);
+      try {
+        // 获取二级分类
+        await fetchTopicTypes(firstMsgType);
+        
+        // 获取专题数据
+        const hotTopicsData = await platformApi.getAllTopics({
+          msgType: firstMsgType,
+          page: 1,
+          limit: 20
+        });
+        
+        if (hotTopicsData && hotTopicsData.items.length > 0) {
+          setTopicContents(hotTopicsData.items);
+          if (hotTopicsData.meta) {
+            setTopicPagination({
+              currentPage: hotTopicsData.meta.currentPage,
+              totalPages: hotTopicsData.meta.totalPages,
+              totalItems: hotTopicsData.meta.totalItems,
+              itemCount: hotTopicsData.meta.itemCount,
+              itemsPerPage: hotTopicsData.meta.itemsPerPage
+            });
+          }
+        } else {
+          setTopicContents([]);
+        }
+      } catch (error) {
+        console.error('获取专题数据失败:', error);
+        setTopicContents([]);
+      } finally {
+        setTopicLoading(false);
+      }
+    }
+  };
+
   // 更新 handleMsgTypeClick 函数
   const handleMsgTypeClick = async (type: string) => {
     setSelectedMsgType(type);
@@ -599,7 +649,7 @@ const Trending: React.FC = () => {
                 setHotEventExpanded(false);
               }}
             >
-              <span>热门内容</span>
+              <span className="font-bold text-base">热门内容</span>
               {contentExpanded ? <DownOutlined /> : <RightOutlined />}
             </div>
             {contentExpanded && (
@@ -642,7 +692,7 @@ const Trending: React.FC = () => {
               className="flex items-center justify-between font-medium text-gray-900 mb-4 cursor-pointer hover:text-[#a66ae4]"
               onClick={() => setHotEventExpanded(!hotEventExpanded)}
             >
-              <span>热点事件</span>
+              <span className="font-bold text-base">热点事件</span>
               {hotEventExpanded ? <DownOutlined /> : <RightOutlined />}
             </div>
             {hotEventExpanded && (
@@ -659,7 +709,7 @@ const Trending: React.FC = () => {
                     }
                   }}
                 >
-                  <InfoCircleOutlined className="mr-2" />
+                  {/* <InfoCircleOutlined className="mr-2" /> */}
                   <span>八大平台热点</span>
                 </li>
               </ul>
@@ -670,14 +720,9 @@ const Trending: React.FC = () => {
           <div>
             <div
               className="flex items-center justify-between font-medium text-gray-900 mb-4 cursor-pointer hover:text-[#a66ae4]"
-              onClick={() => {
-                setTopicExpanded(!topicExpanded);
-                setContentExpanded(false);
-                setHotPlatformExpanded(false);
-                setHotEventExpanded(false);
-              }}
+              onClick={handleTopicExpandClick}
             >
-              <span>热门专题</span>
+              <span className="font-bold text-base">热门专题</span>
               {topicExpanded ? <DownOutlined /> : <RightOutlined />}
             </div>
             {topicExpanded && (
