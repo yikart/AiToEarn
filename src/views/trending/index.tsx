@@ -996,14 +996,14 @@ const Trending: React.FC = () => {
                     ))}
 
                     {/* 在热门专题部分添加调试信息 */}
-                    {topicPagination ? (
+                    {/* {topicPagination ? (
                       <div className="text-xs text-gray-500 mb-2">
                         调试信息: 当前页 {topicPagination.currentPage}, 总页数 {topicPagination.totalPages}, 
                         总条目 {topicPagination.totalItems}, 每页条目 {topicPagination.itemsPerPage}
                       </div>
                     ) : (
                       <div className="text-xs text-gray-500 mb-2">分页数据为空</div>
-                    )}
+                    )} */}
 
                     {/* 分页组件 */}
                     {topicPagination && topicPagination.totalPages > 1 && (
