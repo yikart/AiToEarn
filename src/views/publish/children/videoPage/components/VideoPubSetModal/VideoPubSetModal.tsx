@@ -192,6 +192,7 @@ const VideoPubSetModal = memo(
           const account = vData.account!;
           const video = vData.video!;
           await icpCreateVideoPubRecord({
+            ...vData.pubParams,
             type: account.type,
             accountId: account.id,
             pubRecordId: recordRes.id,

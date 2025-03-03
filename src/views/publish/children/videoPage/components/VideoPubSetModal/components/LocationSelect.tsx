@@ -49,8 +49,7 @@ export default function LocationSelect({
         }
         return [];
       }
-      console.log(locationData);
-      return locationData.data!;
+      return locationData.data || [];
     });
   // 位置 0=经度 1=纬度
   const location = useRef<number[]>([]);
@@ -77,7 +76,7 @@ export default function LocationSelect({
         onSearch={debounceFetcher}
         notFoundContent={fetching ? <Spin size="small" /> : null}
         {...props}
-        options={options.map((v) => {
+        options={options?.map((v) => {
           return {
             value: v.id,
             label: v.name,
@@ -93,10 +92,10 @@ export default function LocationSelect({
           );
         }}
         value={currChooseAccount.pubParams!.location as any}
-        onChange={(newValue) => {
+        onChange={(_, value) => {
           setOnePubParams(
             {
-              location: newValue || null,
+              location: (value as ILocationDataItem) || null,
             },
             currChooseAccount.id,
           );

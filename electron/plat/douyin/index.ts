@@ -478,6 +478,8 @@ export class DouyinService {
     },
     callback: (progress: number, msg?: string) => void,
   ): Promise<any> {
+    console.log('开始发布视频作品，参数：', platformSetting);
+
     return new Promise(async (resolve, reject) => {
       try {
         // 初始化cookie
@@ -493,6 +495,7 @@ export class DouyinService {
         callback(15);
         console.log('获取到的用户Uid:', userUid);
 
+        // 上传封面图片 获取封面图片poster参数值
         console.log('开始上传封面图片...');
         console.log('封面图片路径:', platformSetting.cover);
         const poster = await this.uploadCoverFile(
@@ -529,7 +532,7 @@ export class DouyinService {
           `[${new Date().toLocaleString()}] 获取到的csrf-token:`,
           csrfToken,
         );
-        callback(70);
+        callback(70, '正在发布...');
 
         // 获取bd-ticket
         console.log(`[${new Date().toLocaleString()}] 开始获取bd-ticket...`);
@@ -548,7 +551,6 @@ export class DouyinService {
           `[${new Date().toLocaleString()}] 发布参数:`,
           publishVideoParams,
         );
-        callback(80, '正在发布...');
         const publishResult = await this.makePublishRequest(this.publishUrl, {
           method: 'POST',
           headers: {
@@ -960,6 +962,10 @@ export class DouyinService {
       });
 
       request.on('response', (response) => {
+        console.log(
+          `收到响应 [${new Date().toLocaleString()}], 状态码:`,
+          response.statusCode,
+        );
         let data = '';
         response.on('data', (chunk) => {
           data += chunk;
@@ -1671,7 +1677,7 @@ export class DouyinService {
   private getPublishPublicParams(platformSetting: any): any {
     console.log('开始处理发布参数...');
     // 处理标题
-    let text = platformSetting['desc'] ?? '';
+    let text = platformSetting['title'] ?? '';
     // 标题扩展属性
     const textExtra = [];
     // @好友参数
@@ -1844,6 +1850,7 @@ export class DouyinService {
         headers: headers,
         ok: response.ok,
       };
+      // console.log('fffff',fft)
       return fft;
     } catch (error) {
       console.error('HEAD请求失败:', error);
@@ -1877,6 +1884,8 @@ export class DouyinService {
         }
 
         const headers = csrfTokenRes.headers;
+        // console.log('CSRF Token响应头:', headers);
+
         if (!headers['x-ware-csrf-token']) {
           console.error('获取CSRF_TOKEN失败，响应头中没有x-ware-csrf-token');
           reject('获取CSRF_TOKEN失败,请稍后重试!');
@@ -1945,6 +1954,10 @@ export class DouyinService {
    * 发布专用请求方法
    */
   private async makePublishRequest(url: string, options: any): Promise<any> {
+    console.log(`[${new Date().toLocaleString()}] 开始发起发布请求...`);
+    console.log(`[${new Date().toLocaleString()}] 请求URL:`, url);
+    console.log(`[${new Date().toLocaleString()}] 请求参数:`, options);
+
     try {
       // 创建 FormData 对象
       const formData = new FormData();
@@ -1959,6 +1972,11 @@ export class DouyinService {
         }
       });
 
+      console.log(
+        `[${new Date().toLocaleString()}] 请求体数据:`,
+        Object.fromEntries(formData.entries()),
+      );
+
       const response = await fetch(url, {
         method: options.method,
         headers: {
@@ -1967,7 +1985,25 @@ export class DouyinService {
         body: formData,
       });
 
+      console.log(
+        `[${new Date().toLocaleString()}] 收到响应，状态码:`,
+        response.status,
+      );
+      console.log(
+        `[${new Date().toLocaleString()}] 响应头:`,
+        Object.fromEntries(response.headers.entries()),
+      );
+
       const responseText = await response.text();
+      console.log(
+        `[${new Date().toLocaleString()}] 原始响应数据长度:`,
+        responseText.length,
+      );
+      console.log(
+        `[${new Date().toLocaleString()}] 原始响应数据:`,
+        responseText,
+      );
+
       // 检查响应数据是否为空
       if (!responseText || responseText.trim() === '') {
         console.error(`[${new Date().toLocaleString()}] 响应数据为空`);

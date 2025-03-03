@@ -56,7 +56,7 @@ const WXSphActivity = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
         filterOption={false}
         onSearch={debounceFetcher}
         notFoundContent={fetching ? <Spin size="small" /> : null}
-        options={options.map((v) => {
+        options={options?.map((v) => {
           return {
             label: v.eventName,
             value: v.eventTopicId,

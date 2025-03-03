@@ -39,7 +39,6 @@ export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
 
 // 创建视频发布记录
 export async function icpCreateVideoPubRecord(pubRecord: Partial<VideoPul>) {
-  console.log('发布参数：', pubRecord);
   const res: VideoPul = await window.ipcRenderer.invoke(
     'ICP_PUBLISH_CREATE_VIDEO_PUL',
     pubRecord,
