@@ -553,6 +553,8 @@ const Trending: React.FC = () => {
               onClick={() => {
                 setContentExpanded(!contentExpanded);
                 setTopicExpanded(false);
+                setHotPlatformExpanded(false);
+                setHotEventExpanded(false);
               }}
             >
               <span>热门内容</span>
@@ -610,7 +612,9 @@ const Trending: React.FC = () => {
                     setHotPlatformExpanded(!hotPlatformExpanded);
                     setContentExpanded(false);
                     setTopicExpanded(false);
-                    fetchHotTopics();
+                    if (!hotPlatformExpanded) {
+                      fetchHotTopics();
+                    }
                   }}
                 >
                   <InfoCircleOutlined className="mr-2" />
@@ -624,7 +628,12 @@ const Trending: React.FC = () => {
           <div>
             <div
               className="flex items-center justify-between font-medium text-gray-900 mb-4 cursor-pointer hover:text-[#a66ae4]"
-              onClick={() => setTopicExpanded(!topicExpanded)}
+              onClick={() => {
+                setTopicExpanded(!topicExpanded);
+                setContentExpanded(false);
+                setHotPlatformExpanded(false);
+                setHotEventExpanded(false);
+              }}
             >
               <span>热门专题</span>
               {topicExpanded ? <DownOutlined /> : <RightOutlined />}
