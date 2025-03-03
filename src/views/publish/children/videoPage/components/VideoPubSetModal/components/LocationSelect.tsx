@@ -39,7 +39,7 @@ export default function LocationSelect({
         longitude: location.current[0],
       });
       if (locationData.status !== 200 && locationData.status !== 201) {
-        if (locationData.status === 401) {
+        if (locationData.status === 401 || locationData.data === undefined) {
           currChooseAccount.account!.status = AccountStatus.DISABLE;
           updateAccounts({ accounts: [currChooseAccount.account!] });
           await ipcUpdateAccountStatus(
