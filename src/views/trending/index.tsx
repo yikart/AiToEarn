@@ -48,6 +48,46 @@ interface RankingItem {
   createTime: string;
 }
 
+// 在文件顶部添加或更新接口定义
+interface TopicContent {
+  _id: string;
+  title: string;
+  description: string | null;
+  msgType: string;
+  category: string;
+  subCategory: string | null;
+  author: string;
+  avatar: string;
+  cover: string;
+  authorId: string;
+  fans: number;
+  topics: string[];
+  rank: number;
+  shareCount: number;
+  likeCount: number;
+  watchingCount: number | null;
+  readCount: number;
+  publishTime: string;
+  url: string;
+  platformId: {
+    _id: string;
+    name: string;
+    icon: string;
+  };
+  // ... 其他属性
+}
+
+interface TopicResponse {
+  items: TopicContent[];
+  meta: {
+    currentPage: number;
+    itemCount: number;
+    itemsPerPage: number;
+    totalItems: number;
+    totalPages: number;
+  };
+}
+
 // 修改主题色常量
 const THEME = {
   primary: '#a66ae4',
@@ -130,11 +170,16 @@ const Trending: React.FC = () => {
     useState<string>('');
   const [selectedTopicSubCategory, setSelectedTopicSubCategory] =
     useState<string>('');
-  const [topicContents, setTopicContents] = useState<any[]>([]);
+  const [topicContents, setTopicContents] = useState<TopicContent[]>([]);
   const [topicLoading, setTopicLoading] = useState(false);
   const [topicPagination, setTopicPagination] = useState<PaginationMeta | null>(
     null,
   );
+
+  // 在右侧内容区 - 热门专题界面部分添加筛选区
+  const [selectedPlatformId, setSelectedPlatformId] = useState<string>('');
+  const [selectedTopicType, setSelectedTopicType] = useState<string>('');
+  const [topicTypes, setTopicTypes] = useState<string[]>([]);
 
   // 获取平台数据和专题分类
   useEffect(() => {
@@ -173,7 +218,7 @@ const Trending: React.FC = () => {
       if (data.length > 0) {
         const firstRanking = data[0];
         setSelectedRanking(firstRanking);
-        // 获取榜单分类
+        // 获取榜单分类   
         fetchRankingCategories(firstRanking._id);
         // 获取榜单内容
         fetchRankingContents(firstRanking._id, 1);
@@ -191,7 +236,7 @@ const Trending: React.FC = () => {
   const fetchRankingCategories = async (rankingId: string) => {
     setCategoryLoading(true);
     try {
-      const data = await platformApi.getRankingCategories(rankingId);
+      const data = await platformApi.getRankingLabel(rankingId);
       // 添加"全部"选项到分类列表开头
       setCategories(['全部', ...data]);
       // 默认选中"全部"
@@ -348,6 +393,88 @@ const Trending: React.FC = () => {
     }
   };
 
+  // 添加获取二级分类的函数
+  const fetchTopicTypes = async (msgType: string) => {
+    try {
+      const types = await platformApi.getTopicLabels(msgType);
+      setTopicTypes(types);
+    } catch (error) {
+      console.error('获取专题分类失败:', error);
+      setTopicTypes([]);
+    }
+  };
+
+  // 更新 handleMsgTypeClick 函数
+  const handleMsgTypeClick = async (type: string) => {
+    setSelectedMsgType(type);
+    setTopicLoading(true);
+    setContentExpanded(false);
+    setSelectedPlatformId(''); // 重置平台选择
+    setSelectedTopicType(''); // 重置分类选择
+
+    try {
+      // 获取二级分类
+      await fetchTopicTypes(type);
+
+      // 获取专题数据
+      const hotTopicsData: TopicResponse = await platformApi.getAllTopics({
+        msgType: type
+      });
+
+      if (hotTopicsData && hotTopicsData.items.length > 0) {
+        setTopicContents(hotTopicsData.items);
+        if (hotTopicsData.meta) {
+          setTopicPagination({
+            currentPage: hotTopicsData.meta.currentPage,
+            totalPages: hotTopicsData.meta.totalPages,
+            totalItems: hotTopicsData.meta.totalItems,
+            itemCount: hotTopicsData.meta.itemCount,
+            itemsPerPage: hotTopicsData.meta.itemsPerPage
+          });
+        }
+      } else {
+        setTopicContents([]);
+      }
+    } catch (error) {
+      console.error('获取专题数据失败:', error);
+      setTopicContents([]);
+    } finally {
+      setTopicLoading(false);
+    }
+  };
+
+  // 添加筛选变化处理函数
+  const handleFilterChange = async () => {
+    setTopicLoading(true);
+    try {
+      const hotTopicsData: TopicResponse = await platformApi.getAllTopics({
+        msgType: selectedMsgType,
+        platformId: selectedPlatformId,
+        type: selectedTopicType,
+      });
+
+      if (hotTopicsData && hotTopicsData.items.length > 0) {
+        setTopicContents(hotTopicsData.items);
+        if (hotTopicsData.meta) {
+          setTopicPagination({
+            currentPage: hotTopicsData.meta.currentPage,
+            totalPages: hotTopicsData.meta.totalPages,
+            totalItems: hotTopicsData.meta.totalItems,
+            itemCount: hotTopicsData.meta.itemCount,
+            itemsPerPage: hotTopicsData.meta.itemsPerPage
+          });
+        }
+      } else {
+        setTopicContents([]);
+      }
+    } catch (error) {
+      console.error('筛选专题数据失败:', error);
+      setTopicContents([]);
+    } finally {
+      setTopicLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="flex h-full bg-gray-50">
@@ -420,63 +547,7 @@ const Trending: React.FC = () => {
                       key={type}
                       className={`flex items-center p-2 rounded cursor-pointer transition-all duration-200 hover:bg-gray-50 
                         ${selectedMsgType === type ? 'bg-[#f4ebff] text-[#a66ae4]' : ''}`}
-                      onClick={async () => {
-                        setSelectedMsgType(type);
-                        setTopicLoading(true);
-                        setContentExpanded(false); // 关闭热门内容
-
-                        try {
-                          // 获取所有热点事件
-                          const hotTopicsData = await platformApi.getAllTopics(
-                            {},
-                          );
-                          console.log('------- sdasds', hotTopicsData);
-
-                          console.log(JSON.stringify(hotTopicsData));
-
-                          // 处理数据并显示
-                          if (hotTopicsData && hotTopicsData.items.length > 0) {
-                            // 将平台数据和话题数据整合
-                            const processedData: any[] = [];
-                            hotTopicsData.items.forEach((platformData) => {
-                              // const platform = platformData.platform;
-                              const topics = platformData.topics || [];
-
-                              // topics.forEach((topic) => {
-                              //   processedData.push({
-                              //     id: topic._id,
-                              //     title: topic.title,
-                              //     content: topic.title,
-                              //     cover: platform.icon || '',
-                              //     category: platform.name,
-                              //     subCategory: '',
-                              //     createTime:
-                              //       topic.createTime || topic.fetchTime,
-                              //     url: topic.url,
-                              //     hotValue: topic.hotValue,
-                              //     rank: topic.rank,
-                              //     stats: {
-                              //       viewCount: topic.hotValue || 0,
-                              //       likeCount: 0,
-                              //       commentCount: 0,
-                              //       shareCount: 0,
-                              //       collectCount: 0,
-                              //     },
-                              //   });
-                              // });
-                            });
-
-                            setTopicContents(processedData);
-                          } else {
-                            setTopicContents([]);
-                          }
-                        } catch (error) {
-                          console.error('获取专题数据失败:', error);
-                          setTopicContents([]);
-                        } finally {
-                          setTopicLoading(false);
-                        }
-                      }}
+                      onClick={() => handleMsgTypeClick(type)}
                     >
                       <InfoCircleOutlined className="mr-2" />
                       <span>{type}</span>
@@ -493,6 +564,86 @@ const Trending: React.FC = () => {
           {topicExpanded ? (
             // 右侧内容区 - 热门专题界面
             <div>
+              {/* 顶部筛选区 */}
+              <div className="p-4 mb-4 bg-white rounded-lg shadow-sm">
+                {/* 平台筛选 */}
+                <div className="flex flex-col space-y-2">
+                  <div className="text-sm text-gray-500 mb-2">平台</div>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      className={`${buttonStyles.base} ${
+                        !selectedPlatformId ? buttonStyles.primary : buttonStyles.secondary
+                      }`}
+                      onClick={() => {
+                        setSelectedPlatformId('');
+                        handleFilterChange();
+                      }}
+                    >
+                      全部
+                    </button>
+                    {platforms.map((platform) => (
+                      <button
+                        key={platform._id}
+                        className={`${buttonStyles.base} ${
+                          selectedPlatformId === platform._id
+                            ? buttonStyles.primary
+                            : buttonStyles.secondary
+                        }`}
+                        onClick={() => {
+                          setSelectedPlatformId(platform._id);
+                          handleFilterChange();
+                        }}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <img
+                            src={getImageUrl(platform.icon)}
+                            alt={platform.name}
+                            className="w-4 h-4"
+                          />
+                          <span>{platform.name}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 二级分类筛选 */}
+                {selectedMsgType && (
+                  <div className="flex flex-col space-y-2 mt-4">
+                    <div className="text-sm text-gray-500 mb-2">分类</div>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        className={`${buttonStyles.base} ${
+                          !selectedTopicType ? buttonStyles.primary : buttonStyles.secondary
+                        }`}
+                        onClick={() => {
+                          setSelectedTopicType('');
+                          handleFilterChange();
+                        }}
+                      >
+                        全部
+                      </button>
+                      {topicTypes.map((type) => (
+                        <button
+                          key={type}
+                          className={`${buttonStyles.base} ${
+                            selectedTopicType === type
+                              ? buttonStyles.primary
+                              : buttonStyles.secondary
+                          }`}
+                          onClick={() => {
+                            setSelectedTopicType(type);
+                            handleFilterChange();
+                          }}
+                        >
+                          {type}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* 专题内容列表 */}
               <div className="space-y-3">
                 {topicLoading ? (
@@ -720,11 +871,10 @@ const Trending: React.FC = () => {
                           <div className="w-32">作品分类</div>
                           <div className="flex items-center flex-1">
                             <div className="flex items-center space-x-12">
-                              <div className="w-24 text-center">观看</div>
                               <div className="w-24 text-center">点赞</div>
                               <div className="w-24 text-center">评论</div>
-                              <div className="w-24 text-center">分享</div>
-                              <div className="w-24 text-center">收藏</div>
+                              {/* <div className="w-24 text-center">分享</div>
+                              <div className="w-24 text-center">收藏</div> */}
                             </div>
                           </div>
                         </div>
@@ -810,11 +960,7 @@ const Trending: React.FC = () => {
                             </div>
                             <div className="flex items-center justify-between flex-1">
                               <div className="flex items-center space-x-12">
-                                <div className="w-24 text-center">
-                                  <span className="text-[#a66ae4]">
-                                    {item.stats.viewCount || '0'}
-                                  </span>
-                                </div>
+                                
                                 <div className="w-24 text-center">
                                   <span className="text-[#a66ae4]">
                                     {item.stats.likeCount || '1w'}
@@ -825,16 +971,16 @@ const Trending: React.FC = () => {
                                     {item.stats.commentCount || '1w'}
                                   </span>
                                 </div>
-                                <div className="w-24 text-center">
+                                {/* <div className="w-24 text-center">
                                   <span className="text-[#a66ae4]">
-                                    {item.stats.shareCount || '1w'}
+                                    {item.stats.shareCount || '1w'} 
                                   </span>
                                 </div>
                                 <div className="w-24 text-center">
                                   <span className="text-[#a66ae4]">
                                     {item.stats.collectCount || '1w'}
                                   </span>
-                                </div>
+                                </div> */}
                               </div>
                               {/* <div className="flex items-center space-x-2">
                                 <button className="text-[#a66ae4] hover:text-[#9559d1] px-3 py-1 rounded-full border border-[#e6d3f7] text-sm">
