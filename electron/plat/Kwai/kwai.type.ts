@@ -1,5 +1,5 @@
 import { IRequestNetResult } from '../requestNet';
-import { VisibleTypeEnum } from '../plat.common.type';
+import { KwaiVisibleTypeEnum } from '../plat.common.type';
 
 interface AbConfig {
   cpPublishNewPage2024: boolean;
@@ -66,7 +66,7 @@ export interface IKwaiPubVideoParams {
   // 封面路径
   coverPath: string;
   // 视频可见性
-  visibleType: VisibleTypeEnum;
+  visibleType: KwaiVisibleTypeEnum;
   // 发布回调，可以用于获取发布进度
   callback: (progress: number, msg?: string) => void;
 }

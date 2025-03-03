@@ -21,6 +21,8 @@ import { IRequestNetResult } from '../../../../plat/requestNet';
 import { IKwaiUserInfoResponse } from '../../../../plat/Kwai/kwai.type';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
+import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
+import { KwaiVisibleTypeEnum } from '../../../../plat/plat.common.type';
 
 export class Kwai extends PlatformBase {
   constructor() {
@@ -74,6 +76,11 @@ export class Kwai extends PlatformBase {
       ...params,
       desc: params.desc + params.topics.map((v) => `#${v}`).join(' '),
       callback,
+      visibleType: VisibleTypeEnum.Public
+        ? KwaiVisibleTypeEnum.Public
+        : VisibleTypeEnum.Friend
+          ? KwaiVisibleTypeEnum.Friend
+          : KwaiVisibleTypeEnum.Private,
     });
     // 发布失败
     if (!res.success) {

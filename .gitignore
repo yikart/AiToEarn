@@ -43,3 +43,5 @@ release
 public/bin/*
 !public/bin/webkit
 !public/bin/*.md
+
+gao-vite.config.ts

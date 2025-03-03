@@ -8,7 +8,7 @@ import {
 } from './kwai.type';
 import { cookieToPlaywright, CookieToString } from '../utils';
 import { BrowserWindow } from 'electron';
-import { VisibleTypeEnum } from '../plat.common.type';
+import { KwaiVisibleTypeEnum } from '../plat.common.type';
 import { getChromiumPath } from '../../util/chromium';
 import os from 'os';
 import path from 'path';
@@ -111,12 +111,12 @@ class KwaiPub {
         );
 
         // 设置私密性
-        if (params.visibleType === VisibleTypeEnum.Private) {
+        if (params.visibleType === KwaiVisibleTypeEnum.Private) {
           const privacyBtn = await page.waitForSelector(
             'span:text-is("仅自己可见")',
           );
           await privacyBtn.click();
-        } else if (params.visibleType === VisibleTypeEnum.Friend) {
+        } else if (params.visibleType === KwaiVisibleTypeEnum.Friend) {
           const friendBtn = await page.waitForSelector(
             'span:text-is("好友可见")',
           );
