@@ -49,6 +49,7 @@ export default function LocationSelect({
         }
         return [];
       }
+      console.log(locationData);
       return locationData.data!;
     });
   // 位置 0=经度 1=纬度

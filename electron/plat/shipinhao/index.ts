@@ -1231,8 +1231,8 @@ export class ShipinhaoService {
       timingTime?: number;
       // 位置信息
       poiInfo?: {
-        latitude: string;
-        longitude: string;
+        latitude: number;
+        longitude: number;
         poiCity: string;
         poiName: string;
         poiAddress: string;

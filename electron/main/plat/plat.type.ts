@@ -7,7 +7,7 @@
  */
 import { AccountModel } from '../../db/models/account';
 import { VisibleTypeEnum } from '../../../commont/publish/PublishEnum';
-import { DiffParmasType, ILableValue } from '../../db/models/video';
+import { DiffParmasType } from '../../db/models/video';
 
 export type CookiesType = Electron.Cookie[];
 
@@ -71,7 +71,7 @@ export interface IVideoPublishParams {
   // 定时发布日期
   timingTime?: Date;
   // 地点
-  location?: ILableValue;
+  location?: ILocationDataItem;
   other?: any;
 }
 

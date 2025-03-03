@@ -12,6 +12,7 @@ import {
   VisibleTypeEnum,
 } from '../../../commont/publish/PublishEnum';
 import { AccountType } from '../../../commont/AccountEnum';
+import type { ILocationDataItem } from '../../main/plat/plat.type';
 
 // 包含一个name和一个value的对象
 export interface ILableValue {
@@ -95,7 +96,7 @@ export class VideoModel extends WorkData {
 
   // 位置
   @Column({ type: 'json', nullable: true, comment: '位置' })
-  location?: ILableValue;
+  location?: ILocationDataItem;
 
   // 差异化参数
   @Column({ type: 'json', nullable: true, comment: '不同平台的差异化参数' })

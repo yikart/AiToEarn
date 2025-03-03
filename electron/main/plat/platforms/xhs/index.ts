@@ -155,6 +155,17 @@ export class Xhs extends PlatformBase {
               params.diffParams?.[AccountType.Xhs]?.topicsDetail || [],
             timingTime: params.timingTime?.getTime(),
             privacy: params.visibleType !== VisibleTypeEnum.Public,
+            // 位置
+            ...(params.location
+              ? {
+                  poiInfo: {
+                    poiType: params.location.poi_type!,
+                    poiId: params.location.id,
+                    poiName: params.location.name,
+                    poiAddress: params.location.simpleAddress,
+                  },
+                }
+              : {}),
           },
           callback,
         )

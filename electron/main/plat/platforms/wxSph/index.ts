@@ -138,6 +138,19 @@ export class WxSph extends PlatformBase {
         topics: params.topics,
         des: params.desc,
         timingTime: params.timingTime?.getTime(),
+        // 位置
+        ...(params.location
+          ? {
+              poiInfo: {
+                latitude: params.location.latitude,
+                longitude: params.location.longitude,
+                poiCity: params.location.city,
+                poiName: params.location.name,
+                poiAddress: params.location.simpleAddress,
+                poiId: params.location.id,
+              },
+            }
+          : {}),
       },
       callback,
     );

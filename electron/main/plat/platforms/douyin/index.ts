@@ -149,6 +149,7 @@ export class Douyin extends PlatformBase {
             topics: params.topics,
             cover: params.coverPath,
             timingTime: params.timingTime?.getTime(),
+            // 可见性
             visibility_type:
               params.visibleType === VisibleTypeEnum.Public
                 ? 0
@@ -159,8 +160,8 @@ export class Douyin extends PlatformBase {
             ...(params.location
               ? {
                   poiInfo: {
-                    poiId: `${params.location.value}`,
-                    poiName: params.location.label,
+                    poiId: `${params.location.id}`,
+                    poiName: params.location.name,
                   },
                 }
               : {}),
