@@ -699,43 +699,48 @@ const Trending: React.FC = () => {
 
                         {/* 热点列表 */}
                         <div className="space-y-4">
-                          {platformData.topics.map((topic, index) => (
-                            <div
-                              key={topic._id}
-                              className="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer"
-                              onClick={() => topic.url && handleContentClick(topic.url, topic.title)}
-                            >
-                              {/* 排名 */}
-                              <div className="w-8 text-base">
-                                <span className={`font-medium ${index < 3 ? 'text-[#ff4d4f]' : 'text-gray-400'}`}>
-                                  {index + 1}
-                                </span>
-                              </div>
-
-                              {/* 标题和热度 */}
-                              <div className="flex flex-1 items-center justify-between">
-                                <div className="flex items-center space-x-2">
-                                  <span className="text-gray-900">{topic.title}</span>
-                                  {topic.isRising && (
-                                    <span className="text-xs text-[#ff4d4f] bg-[#fff1f0] px-1 rounded">
-                                      热
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="flex items-center space-x-4">
-                                  <span className="text-[#ff4d4f]">
-                                    {(topic.hotValue / 10000).toFixed(1)}w
+                          {platformData.topics && Array.isArray(platformData.topics) ? (
+                            platformData.topics.map((topic, index) => (
+                              <div
+                                key={topic._id || index}
+                                className="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer"
+                                onClick={() => topic.url && handleContentClick(topic.url, topic.title)}
+                              >
+                                {/* 排名 */}
+                                <div className="w-8 text-base">
+                                  <span className={`font-medium ${index < 3 ? 'text-[#ff4d4f]' : 'text-gray-400'}`}>
+                                    {index + 1}
                                   </span>
-                                  <div className="w-24 h-4">
-                                    {/* 热度趋势图 - 可以使用简单的SVG线图 */}
-                                    <div className="text-xs text-gray-400">
-                                      {topic.hotValueHistory}
+                                </div>
+
+                                {/* 标题和热度 */}
+                                <div className="flex flex-1 items-center justify-between">
+                                  <div className="flex items-center space-x-2">
+                                    <span className="text-gray-900">{typeof topic.title === 'string' ? topic.title : '无标题'}</span>
+                                    {topic.isRising && (
+                                      <span className="text-xs text-[#ff4d4f] bg-[#fff1f0] px-1 rounded">
+                                        热
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center space-x-4">
+                                    <span className="text-[#ff4d4f]">
+                                      {typeof topic.hotValue === 'number' ? (topic.hotValue / 10000).toFixed(1) + 'w' : '0w'}
+                                    </span>
+                                    <div className="w-24 h-4">
+                                      {/* 热度趋势图 - 可以使用简单的SVG线图 */}
+                                      <div className="text-xs text-gray-400">
+                                        {/* 确保 hotValueHistory 是字符串 */}
+                                        {typeof topic.hotValueHistory === 'string' ? topic.hotValueHistory : ''}
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                          ))}
+                            ))
+                          ) : (
+                            <div className="text-center text-gray-500">暂无热点数据</div>
+                          )}
                         </div>
                       </div>
                     ))}
