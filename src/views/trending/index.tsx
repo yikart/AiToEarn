@@ -7,7 +7,11 @@ import {
   PaginationMeta,
 } from '@/api/platform';
 import { Pagination, Modal, Popover, DatePicker } from 'antd';
-import { InfoCircleOutlined, DownOutlined, RightOutlined } from '@ant-design/icons';
+import {
+  InfoCircleOutlined,
+  DownOutlined,
+  RightOutlined,
+} from '@ant-design/icons';
 import { getImageUrl } from '@/config';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
@@ -122,14 +126,18 @@ const Trending: React.FC = () => {
   const [msgTypeList, setMsgTypeList] = useState<string[]>([]);
   const [topicList, setTopicList] = useState<string[]>([]); // 专题标签列表
   const [topicSubCategories, setTopicSubCategories] = useState<string[]>([]);
-  const [selectedTopicCategory, setSelectedTopicCategory] = useState<string>('');
-  const [selectedTopicSubCategory, setSelectedTopicSubCategory] = useState<string>('');
+  const [selectedTopicCategory, setSelectedTopicCategory] =
+    useState<string>('');
+  const [selectedTopicSubCategory, setSelectedTopicSubCategory] =
+    useState<string>('');
   const [topicContents, setTopicContents] = useState<any[]>([]);
   const [topicLoading, setTopicLoading] = useState(false);
-  const [topicPagination, setTopicPagination] = useState<PaginationMeta | null>(null);
+  const [topicPagination, setTopicPagination] = useState<PaginationMeta | null>(
+    null,
+  );
 
   // 获取平台数据和专题分类
-  useEffect(() => { 
+  useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -301,7 +309,7 @@ const Trending: React.FC = () => {
       // 2. 获取专题分类
       const categories = await platformApi.getTopicCategories();
       setTopicCategories(categories);
-      
+
       if (categories.length > 0) {
         const firstCategory = categories[0];
         setSelectedTopicCategory(firstCategory);
@@ -319,7 +327,7 @@ const Trending: React.FC = () => {
             category: firstCategory,
             subCategory: firstSubCategory,
             startTime: selectedDate,
-            endTime: selectedDate
+            endTime: selectedDate,
           });
 
           setTopicContents(response.items || []);
@@ -328,7 +336,7 @@ const Trending: React.FC = () => {
               currentPage: response.meta.currentPage || 1,
               totalPages: response.meta.totalPages || 1,
               totalItems: response.meta.totalItems || 0,
-              itemsPerPage: response.meta.itemsPerPage || 20
+              itemsPerPage: response.meta.itemsPerPage || 20,
             });
           }
         }
@@ -359,8 +367,10 @@ const Trending: React.FC = () => {
           category,
           subCategory: firstSubCategory,
           startTime: selectedDate,
-          endTime: selectedDate
+          endTime: selectedDate,
         });
+
+        console.log('------ response', response);
 
         setTopicContents(response.items || []);
         if (response.meta) {
@@ -368,7 +378,7 @@ const Trending: React.FC = () => {
             currentPage: response.meta.currentPage || 1,
             totalPages: response.meta.totalPages || 1,
             totalItems: response.meta.totalItems || 0,
-            itemsPerPage: response.meta.itemsPerPage || 20
+            itemsPerPage: response.meta.itemsPerPage || 20,
           });
         }
       }
@@ -389,7 +399,7 @@ const Trending: React.FC = () => {
         category: selectedTopicCategory,
         subCategory,
         startTime: selectedDate,
-        endTime: selectedDate
+        endTime: selectedDate,
       });
 
       setTopicContents(response.items || []);
@@ -398,7 +408,7 @@ const Trending: React.FC = () => {
           currentPage: response.meta.currentPage || 1,
           totalPages: response.meta.totalPages || 1,
           totalItems: response.meta.totalItems || 0,
-          itemsPerPage: response.meta.itemsPerPage || 20
+          itemsPerPage: response.meta.itemsPerPage || 20,
         });
       }
     } catch (error) {
@@ -415,7 +425,7 @@ const Trending: React.FC = () => {
         <div className="flex-shrink-0 w-48 p-4 bg-white border-r border-gray-100">
           {/* 热门内容 */}
           <div className="mb-8">
-            <div 
+            <div
               className="flex items-center justify-between font-medium text-gray-900 mb-4 cursor-pointer hover:text-[#a66ae4]"
               onClick={() => {
                 setContentExpanded(!contentExpanded);
@@ -461,7 +471,7 @@ const Trending: React.FC = () => {
 
           {/* 热门专题 */}
           <div>
-            <div 
+            <div
               className="flex items-center justify-between font-medium text-gray-900 mb-4 cursor-pointer hover:text-[#a66ae4]"
               onClick={() => setTopicExpanded(!topicExpanded)}
             >
@@ -484,21 +494,25 @@ const Trending: React.FC = () => {
                         setSelectedMsgType(type);
                         setTopicLoading(true);
                         setContentExpanded(false); // 关闭热门内容
-                        
+
                         try {
                           // 获取所有热点事件
-                          const hotTopicsData = await platformApi.getAllHotTopics();
+                          const hotTopicsData = await platformApi.getAllTopics(
+                            {},
+                          );
+                          console.log('------- sdasds', hotTopicsData);
+
                           console.log(JSON.stringify(hotTopicsData));
-                          
+
                           // 处理数据并显示
                           if (hotTopicsData && hotTopicsData.length > 0) {
                             // 将平台数据和话题数据整合
                             const processedData = [];
-                            hotTopicsData.forEach(platformData => {
+                            hotTopicsData.forEach((platformData) => {
                               const platform = platformData.platform;
                               const topics = platformData.topics || [];
-                              
-                              topics.forEach(topic => {
+
+                              topics.forEach((topic) => {
                                 processedData.push({
                                   id: topic._id,
                                   title: topic.title,
@@ -506,7 +520,8 @@ const Trending: React.FC = () => {
                                   cover: platform.icon || '',
                                   category: platform.name,
                                   subCategory: '',
-                                  createTime: topic.createTime || topic.fetchTime,
+                                  createTime:
+                                    topic.createTime || topic.fetchTime,
                                   url: topic.url,
                                   hotValue: topic.hotValue,
                                   rank: topic.rank,
@@ -515,12 +530,12 @@ const Trending: React.FC = () => {
                                     likeCount: 0,
                                     commentCount: 0,
                                     shareCount: 0,
-                                    collectCount: 0
-                                  }
+                                    collectCount: 0,
+                                  },
                                 });
                               });
                             });
-                            
+
                             setTopicContents(processedData);
                           } else {
                             setTopicContents([]);
@@ -584,7 +599,7 @@ const Trending: React.FC = () => {
 
                         {/* 专题信息区域 */}
                         <div className="w-48">
-                          <div className="relative w-full overflow-hidden rounded-lg h-28 bg-gray-100 flex items-center justify-center">
+                          <div className="relative flex items-center justify-center w-full overflow-hidden bg-gray-100 rounded-lg h-28">
                             {item.cover ? (
                               <img
                                 src={getImageUrl(item.cover)}
@@ -592,7 +607,9 @@ const Trending: React.FC = () => {
                                 className="object-cover w-full h-full"
                               />
                             ) : (
-                              <div className="text-gray-400 text-center">暂无图片</div>
+                              <div className="text-center text-gray-400">
+                                暂无图片
+                              </div>
                             )}
                           </div>
                         </div>
@@ -601,12 +618,15 @@ const Trending: React.FC = () => {
                         <div className="flex-1 ml-4">
                           <div className="flex flex-col justify-between h-full">
                             <div>
-                              <h3 className="text-base font-medium mb-2 hover:text-blue-500">
+                              <h3 className="mb-2 text-base font-medium hover:text-blue-500">
                                 {item.title}
                               </h3>
                               <div className="flex items-center space-x-2">
                                 <span className="text-xs text-gray-400">
-                                  发布于 {dayjs(item.createTime).format('YYYY-MM-DD HH:mm')}
+                                  发布于{' '}
+                                  {dayjs(item.createTime).format(
+                                    'YYYY-MM-DD HH:mm',
+                                  )}
                                 </span>
                               </div>
                             </div>
@@ -617,7 +637,9 @@ const Trending: React.FC = () => {
                               </div>
                               <div className="flex items-center space-x-12">
                                 <div className="w-24 text-center">
-                                  <span className="text-[#a66ae4]">{item.hotValue?.toLocaleString() || '0'}</span>
+                                  <span className="text-[#a66ae4]">
+                                    {item.hotValue?.toLocaleString() || '0'}
+                                  </span>
                                 </div>
                               </div>
                             </div>
@@ -627,7 +649,9 @@ const Trending: React.FC = () => {
                     ))}
                   </>
                 ) : (
-                  <div className="py-8 text-center text-gray-500">暂无专题数据</div>
+                  <div className="py-8 text-center text-gray-500">
+                    暂无专题数据
+                  </div>
                 )}
               </div>
             </div>
@@ -662,7 +686,8 @@ const Trending: React.FC = () => {
                   <div
                     className={`grid gap-2 transition-[grid-template-rows,max-height] duration-300 ease-in-out relative pr-20`}
                     style={{
-                      gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
+                      gridTemplateColumns:
+                        'repeat(auto-fill, minmax(100px, 1fr))',
                       gridTemplateRows: isExpanded ? '1fr' : '40px',
                       maxHeight: isExpanded ? '1000px' : '40px',
                       overflow: 'hidden',
@@ -688,7 +713,9 @@ const Trending: React.FC = () => {
                         className="absolute right-0 top-0 h-10 px-3 flex items-center text-sm text-gray-500 hover:text-[#a66ae4] transition-colors bg-transparent border-none outline-none shadow-none"
                         onClick={() => setIsExpanded(!isExpanded)}
                       >
-                        <span className="mr-1">{isExpanded ? '收起' : '展开'}</span>
+                        <span className="mr-1">
+                          {isExpanded ? '收起' : '展开'}
+                        </span>
                         <InfoCircleOutlined
                           className={`transform transition-transform duration-300 ${
                             isExpanded ? 'rotate-180' : ''
@@ -910,7 +937,9 @@ const Trending: React.FC = () => {
                     )}
                   </>
                 ) : (
-                  <div className="py-8 text-center text-gray-500">暂无榜单数据</div>
+                  <div className="py-8 text-center text-gray-500">
+                    暂无榜单数据
+                  </div>
                 )}
               </div>
             </>
