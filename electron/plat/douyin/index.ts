@@ -1791,11 +1791,11 @@ export class DouyinService {
     // 处理定时
     if (
       platformSetting.hasOwnProperty('timingTime') &&
-      platformSetting.timingTime > Math.floor(Date.now() / 1000) + 60 * 60 * 2
+      platformSetting.timingTime > Date.now()
     ) {
       console.log('处理定时发布...');
       // @ts-ignore
-      publishParams.timing = platformSetting.timingTime;
+      publishParams.timing = Math.floor(platformSetting.timingTime / 1000);
     }
 
     console.log('最终发布参数:', publishParams);

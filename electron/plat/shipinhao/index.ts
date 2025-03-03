@@ -1145,10 +1145,13 @@ export class ShipinhaoService {
         // 处理定时时间
         if (
           platformSetting.hasOwnProperty('timingTime') &&
-          platformSetting.timingTime > Math.floor(Date.now() / 1000)
+          platformSetting.timingTime > Date.now()
         ) {
-          (requestData as any).effectiveTime = platformSetting.timingTime;
+          (requestData as any).effectiveTime = Math.floor(
+            platformSetting.timingTime / 1000,
+          );
         }
+        console.log('requestData：', requestData);
         // 发起请求
         const createRes = await this.makeRequest(this.postCreateVideoUrl, {
           method: 'POST',

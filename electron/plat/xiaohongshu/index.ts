@@ -1033,15 +1033,15 @@ export class XiaohongshuService {
               noteId: 0,
               bizType:
                 platformSetting.hasOwnProperty('timingTime') &&
-                platformSetting.timingTime > Math.floor(Date.now() / 1000)
+                platformSetting.timingTime > Date.now()
                   ? 13
                   : 0,
               noteOrderBind: {},
               notePostTiming: {
                 postTime:
                   platformSetting.hasOwnProperty('timingTime') &&
-                  platformSetting.timingTime > Math.floor(Date.now() / 1000)
-                    ? (platformSetting.timingTime * 1000).toString()
+                  platformSetting.timingTime > Date.now()
+                    ? platformSetting.timingTime.toString()
                     : '',
               },
               noteCollectionBind: {
@@ -1060,6 +1060,8 @@ export class XiaohongshuService {
           image_info: xhs_image_info,
           video_info: xhs_video_info,
         };
+        console.log('platformSetting：', platformSetting);
+        console.log('requestData：', requestData);
         // 获取加密使用的Url
         const encryptUrl = this.postCreateVideoUrl.replace(
           'https://edith.xiaohongshu.com',

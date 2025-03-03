@@ -33,6 +33,7 @@ export function views(win: Electron.BrowserWindow) {
       },
       method: 'GET',
     });
+    console.log(res);
     const { lat, lng } = res.data.rgc.result.location;
     const gcj02 = coordtransform.bd09togcj02(lng, lat);
     return {
