@@ -1307,6 +1307,7 @@ export class ShipinhaoService {
       };
     } catch (err: any) {
       console.error('发布视频失败:', err);
+      callback(-1);
       return {
         publishTime: Math.floor(Date.now() / 1000),
         publishId: '',

@@ -1215,6 +1215,7 @@ export class XiaohongshuService {
         });
       } catch (err) {
         reject(err);
+        callback(-1);
       }
     });
   }
