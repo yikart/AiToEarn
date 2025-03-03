@@ -1307,6 +1307,7 @@ export class ShipinhaoService {
       };
     } catch (err: any) {
       console.error('发布视频失败:', err);
+      callback(-1);
       return {
         publishTime: Math.floor(Date.now() / 1000),
         publishId: '',
@@ -1317,7 +1318,7 @@ export class ShipinhaoService {
 
   // 获取位置数据
   async getLocation(params: {
-    keyword: string;
+    query: string;
     longitude: number;
     latitude: number;
     cookie: Electron.Cookie[];
@@ -1325,7 +1326,11 @@ export class ShipinhaoService {
     return await requestNet<WeChatLocationData>({
       url: `https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/helper/helper_search_location`,
       method: 'POST',
-      body: params,
+      body: {
+        ...params,
+        reqScene: 7,
+        scene: 7,
+      },
       headers: {
         cookie: CookieToString(params.cookie),
       },

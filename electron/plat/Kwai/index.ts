@@ -182,6 +182,7 @@ class KwaiPub {
           success: false,
           msg: `${error}`,
         });
+        callback(-1);
         await browser!.close();
       }
     });

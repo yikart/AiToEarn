@@ -165,7 +165,7 @@ export class WxSph extends PlatformBase {
   async getLocationData(params: IGetLocationDataParams) {
     const locationRes = await shipinhaoService.getLocation({
       ...params,
-      keyword: params.keywords,
+      query: params.keywords,
       cookie: params.cookie!,
     });
     return {

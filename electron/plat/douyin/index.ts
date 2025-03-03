@@ -548,7 +548,6 @@ export class DouyinService {
           `[${new Date().toLocaleString()}] 发布参数:`,
           publishVideoParams,
         );
-        return;
         callback(80, '正在发布...');
         const publishResult = await this.makePublishRequest(this.publishUrl, {
           method: 'POST',
@@ -597,6 +596,7 @@ export class DouyinService {
         resolve(response);
       } catch (err) {
         console.error('发布视频过程中出现错误:', err);
+        callback(-1);
         reject(err);
       }
     });
