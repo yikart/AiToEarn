@@ -88,6 +88,33 @@ interface TopicResponse {
   };
 }
 
+// 在文件顶部添加热点事件相关的接口
+interface HotTopic {
+  _id: string;
+  title: string;
+  hotValue: number;
+  url: string;
+  rank: number;
+  rankChange: number;
+  isRising: boolean;
+  platformId: {
+    _id: string;
+    name: string;
+    icon: string;
+  };
+  hotValueHistory: string; // 热度趋势数据
+}
+
+interface PlatformHotTopics {
+  platform: {
+    _id: string;
+    name: string;
+    icon: string;
+    type: string;
+  };
+  topics: HotTopic[];
+}
+
 // 修改主题色常量
 const THEME = {
   primary: '#a66ae4',
@@ -183,6 +210,12 @@ const Trending: React.FC = () => {
 
   // 添加图片错误处理的状态
   const [imgErrors, setImgErrors] = useState<{[key: string]: boolean}>({});
+
+  // 在组件内添加状态
+  const [hotEventExpanded, setHotEventExpanded] = useState(false);
+  const [hotPlatformExpanded, setHotPlatformExpanded] = useState(false);
+  const [hotTopics, setHotTopics] = useState<PlatformHotTopics[]>([]);
+  const [hotTopicLoading, setHotTopicLoading] = useState(false);
 
   // 添加处理图片加载错误的函数
   const handleImageError = (imageId: string) => {
@@ -486,11 +519,33 @@ const Trending: React.FC = () => {
     }
   };
 
+  // 修改获取热点事件数据的函数
+  const fetchHotTopics = async () => {
+    setHotTopicLoading(true);
+    try {
+      const response = await platformApi.getAllHotTopics();
+      console.log('getAllHotTopics:',JSON.stringify(response))
+      // 确保 response 和 items 存在
+      if (response && Array.isArray(response)) {
+        setHotTopics(response);
+      } else {
+        setHotTopics([]);
+      }
+    } catch (error) {
+      console.error('获取热点事件失败:', error);
+      setHotTopics([]);
+    } finally {
+      setHotTopicLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="flex h-full bg-gray-50">
         {/* 左侧平台列表 */}
         <div className="flex-shrink-0 w-48 p-4 bg-white border-r border-gray-100">
+
+
           {/* 热门内容 */}
           <div className="mb-8">
             <div
@@ -537,6 +592,34 @@ const Trending: React.FC = () => {
             )}
           </div>
 
+          {/* 热点事件 */}
+          <div className="mb-8">
+            <div
+              className="flex items-center justify-between font-medium text-gray-900 mb-4 cursor-pointer hover:text-[#a66ae4]"
+              onClick={() => setHotEventExpanded(!hotEventExpanded)}
+            >
+              <span>热点事件</span>
+              {hotEventExpanded ? <DownOutlined /> : <RightOutlined />}
+            </div>
+            {hotEventExpanded && (
+              <ul className="space-y-2">
+                <li
+                  className={`flex items-center p-2 rounded cursor-pointer transition-all duration-200 hover:bg-gray-50 
+                    ${hotPlatformExpanded ? 'bg-[#f4ebff] text-[#a66ae4]' : ''}`}
+                  onClick={() => {
+                    setHotPlatformExpanded(!hotPlatformExpanded);
+                    setContentExpanded(false);
+                    setTopicExpanded(false);
+                    fetchHotTopics();
+                  }}
+                >
+                  <InfoCircleOutlined className="mr-2" />
+                  <span>八大平台热点</span>
+                </li>
+              </ul>
+            )}
+          </div>
+
           {/* 热门专题 */}
           <div>
             <div
@@ -572,8 +655,91 @@ const Trending: React.FC = () => {
 
         {/* 右侧内容区 */}
         <div className="flex-1 p-6">
-          {topicExpanded ? (
-            // 右侧内容区 - 热门专题界面
+          {hotPlatformExpanded ? (
+            <div>
+              {/* 热点事件内容列表 */}
+              <div className="space-y-6">
+                {hotTopicLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <span className="text-gray-500">加载中...</span>
+                  </div>
+                ) : hotTopics && hotTopics.length > 0 ? (
+                  <>
+                    {hotTopics.map((platformData: PlatformHotTopics) => (
+                      <div key={platformData.platform._id} className="bg-white rounded-lg p-4">
+                        {/* 平台标题 */}
+                        <div className="flex items-center mb-4">
+                          <div className="flex items-center space-x-2">
+                            {platformData.platform.icon && !imgErrors[`platform-${platformData.platform._id}`] ? (
+                              <img
+                                src={getImageUrl(platformData.platform.icon)}
+                                alt={platformData.platform.name}
+                                className="w-6 h-6"
+                                onError={() => handleImageError(`platform-${platformData.platform._id}`)}
+                              />
+                            ) : (
+                              <div className="w-6 h-6 bg-[#fff1f0] rounded flex items-center justify-center">
+                                <span className="text-[#ff4d4f]">
+                                  {platformData.platform.name?.charAt(0)?.toUpperCase() || '?'}
+                                </span>
+                              </div>
+                            )}
+                            <span className="text-base font-medium">{platformData.platform.name} · 热点</span>
+                          </div>
+                        </div>
+
+                        {/* 热点列表 */}
+                        <div className="space-y-4">
+                          {platformData.topics.map((topic, index) => (
+                            <div
+                              key={topic._id}
+                              className="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer"
+                              onClick={() => topic.url && handleContentClick(topic.url, topic.title)}
+                            >
+                              {/* 排名 */}
+                              <div className="w-8 text-base">
+                                <span className={`font-medium ${index < 3 ? 'text-[#ff4d4f]' : 'text-gray-400'}`}>
+                                  {index + 1}
+                                </span>
+                              </div>
+
+                              {/* 标题和热度 */}
+                              <div className="flex flex-1 items-center justify-between">
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-gray-900">{topic.title}</span>
+                                  {topic.isRising && (
+                                    <span className="text-xs text-[#ff4d4f] bg-[#fff1f0] px-1 rounded">
+                                      热
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="flex items-center space-x-4">
+                                  <span className="text-[#ff4d4f]">
+                                    {(topic.hotValue / 10000).toFixed(1)}w
+                                  </span>
+                                  <div className="w-24 h-4">
+                                    {/* 热度趋势图 - 可以使用简单的SVG线图 */}
+                                    <div className="text-xs text-gray-400">
+                                      {topic.hotValueHistory}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <div className="py-8 text-center text-gray-500">
+                    暂无热点事件数据
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : topicExpanded ? (
+            // 热门专题界面
             <div>
               {/* 顶部筛选区 */}
               <div className="p-4 mb-4 bg-white rounded-lg shadow-sm">
@@ -670,24 +836,9 @@ const Trending: React.FC = () => {
                   </div>
                 ) : topicContents.length > 0 ? (
                   <>
-                    {/* 表头 */}
-                    <div className="flex p-4 text-sm text-gray-500 bg-gray-50">
-                      <div className="w-8">排名</div>
-                      <div className="w-48">专题信息</div>
-                      <div className="flex-1">
-                        <div className="flex items-center">
-                          <div className="w-32">平台</div>
-                          <div className="flex items-center space-x-12">
-                            <div className="w-24 text-center">热度</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* 内容列表 */}
                     {topicContents.map((item, index) => (
                       <div
-                        key={item.id}
+                        key={item._id}
                         className="flex bg-white p-4 rounded-lg hover:shadow-md transition-shadow cursor-pointer border border-transparent hover:border-[#e6d3f7]"
                         onClick={() => handleContentClick(item.url, item.title)}
                       >
@@ -723,10 +874,7 @@ const Trending: React.FC = () => {
                               </h3>
                               <div className="flex items-center space-x-2">
                                 <span className="text-xs text-gray-400">
-                                  发布于{' '}
-                                  {dayjs(item.createTime).format(
-                                    'YYYY-MM-DD HH:mm',
-                                  )}
+                                  发布于 {dayjs(item.publishTime).format('YYYY-MM-DD HH:mm')}
                                 </span>
                               </div>
                             </div>
@@ -756,7 +904,7 @@ const Trending: React.FC = () => {
               </div>
             </div>
           ) : (
-            // 热门内容界面（保持原有代码不变）
+            // 热门内容界面
             <>
               {/* 榜单选择 */}
               {rankingList.length > 0 && (
