@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-03-01 19:27:35
- * @LastEditTime: 2025-03-02 14:49:10
+ * @LastEditTime: 2025-03-03 18:05:09
  * @LastEditors: nevin
  * @Description: 用户任务信息
  */
@@ -72,7 +72,6 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
               <p>任务描述：{mineTaskInfo.taskId.description}</p>
               <p>任务类型：{TaskTypeName.get(mineTaskInfo.taskId.type)}</p>
               <p>任务图片：{mineTaskInfo.taskId.imageUrl}</p>
-              <p>任务要求：{mineTaskInfo.taskId.requirements}</p>
             </div>
           ) : (
             <div>暂无任务信息</div>
