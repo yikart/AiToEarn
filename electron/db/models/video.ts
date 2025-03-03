@@ -11,7 +11,7 @@ import {
   DouyinDeclareEnum,
   VisibleTypeEnum,
 } from '../../../commont/publish/PublishEnum';
-import { AccountType } from '@@/AccountEnum';
+import { AccountType } from '../../../commont/AccountEnum';
 
 // 包含一个name和一个value的对象
 export interface ILableValue {

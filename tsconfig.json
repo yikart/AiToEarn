@@ -33,14 +33,12 @@
   },
   "include": [
     "src",
+    "electron",
     "commont"
   ],
   "references": [
     {
       "path": "./tsconfig.node.json"
-    },
-    {
-      "path": "./tsconfig.electron.json"
     }
   ]
 }
