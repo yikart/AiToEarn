@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-02-24 14:31:25
+ * @LastEditTime: 2025-03-03 13:45:00
  * @LastEditors: nevin
  * @Description: Test test
  */
@@ -36,7 +36,8 @@ export class TestController {
           'https://help-static-aliyun-doc.aliyuncs.com/assets/img/zh-CN/6069415171/p792953.png',
         title: '元宵节快乐',
         topics: ['元宵节'],
-        timingTime: getNowTimeStamp() + '',
+        timingTime: getNowTimeStamp(),
+        visibility_type: 0,
       },
       () => {},
     );
@@ -84,7 +85,8 @@ export class TestController {
         cover: coverPath,
         title: '元宵节快乐',
         topics: ['元宵节'],
-        timingTime: getNowTimeStamp() + '',
+        timingTime: getNowTimeStamp(),
+        visibility_type: 0,
       },
       () => {},
     );
