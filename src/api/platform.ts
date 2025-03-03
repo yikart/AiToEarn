@@ -185,11 +185,11 @@ export const platformApi = {
   },
   // 获取热门专题列表
   getAllTopics(params: {
-    category?: any;
-    subCategory?: any;
-    startTime?: string;
-    endTime?: string;
-    topic?: string;
+    category?: string; // 分类
+    subCategory?: string; // 子分类
+    startTime?: string; // 发布时间开始
+    endTime?: string; // 发布时间结束
+    topic?: string; // 话题标签
   }) {
     return http.get<Pagination<Topic>>(`/topics`, {
       isToken: false,

@@ -497,9 +497,9 @@ const Trending: React.FC = () => {
 
                         try {
                           // 获取所有热点事件
-                          const hotTopicsData = await platformApi.getAllTopics(
-                            {},
-                          );
+                          const hotTopicsData = await platformApi.getAllTopics({
+                            category: '体娱',
+                          });
                           console.log('------- sdasds', hotTopicsData);
 
                           console.log(JSON.stringify(hotTopicsData));
