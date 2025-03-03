@@ -988,7 +988,7 @@ const Trending: React.FC = () => {
                       >
                         {/* 排名 */}
                         <div className="w-8 text-lg font-bold text-orange-500">
-                          {item.rank || index + 1}
+                          {(topicPagination?.currentPage - 1 ) * topicPagination?.itemsPerPage + index + 1}
                         </div>
 
                         {/* 专题信息区域 */}
