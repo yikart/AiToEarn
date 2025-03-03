@@ -167,36 +167,6 @@ export const platformApi = {
 
   // ---- 热门专题 ----
 
-  // 获取所有专题分类
-  getTopicCategories() {
-    return http.get<string[]>(`/topics/categories`, {
-      isToken: false,
-    });
-  },
-
-  // 获取子分类列表
-  getSubCategories(category?: string) {
-    return http.get<string[]>(`/topics/sub-categories`, {
-      isToken: false,
-      params: {
-        category,
-      },
-    });
-  },
-  // 获取热门专题列表
-  getAllTopics(params: {
-    category?: string; // 分类
-    subCategory?: string; // 子分类
-    startTime?: string; // 发布时间开始
-    endTime?: string; // 发布时间结束
-    topic?: string; // 话题标签
-  }) {
-    return http.get<Pagination<Topic>>(`/topics`, {
-      isToken: false,
-      params,
-    });
-  },
-
   // 获取所有专题标签
   getTopics() {
     return http.get<string[]>(`/topics/topics`, {
@@ -208,6 +178,28 @@ export const platformApi = {
   getMsgType() {
     return http.get<string[]>(`/topics/msgType`, {
       isToken: false,
+    });
+  },
+
+  // 获取所有专题分类
+  getTopicTypes(msgType: string) {
+    return http.get<string[]>(`/topics/types/${msgType}`, {
+      isToken: false,
+    });
+  },
+
+  // 获取热门专题列表
+  getAllTopics(params: {
+    msgType?: string; // 项目类型
+    type?: string; // 类型
+    platformId?: string; // 平台ID
+    startTime?: string; // 发布时间开始
+    endTime?: string; // 发布时间结束
+    topic?: string; // 话题标签
+  }) {
+    return http.get<Pagination<Topic>>(`/topics`, {
+      isToken: false,
+      params,
     });
   },
 

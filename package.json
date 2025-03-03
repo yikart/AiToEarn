@@ -28,6 +28,7 @@
     "lint:stylelint": "stylelint --cache --fix \"**/*.{vue,less,postcss,css,scss}\" --cache --cache-location node_modules/.cache/stylelint/"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.6.1",
     "antd": "^5.23.1",
     "antd-img-crop": "^4.24.0",
     "axios": "^1.7.9",
@@ -55,6 +56,7 @@
     "playwright": "^1.49.1",
     "react-router-dom": "6",
     "react-svg": "^16.2.0",
+    "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.20",
     "uninstall": "^0.0.0",
     "uuid": "^11.0.5",

@@ -348,76 +348,6 @@ const Trending: React.FC = () => {
     }
   };
 
-  // 处理专题分类点击
-  const handleTopicCategoryClick = async (category: string) => {
-    setSelectedTopicCategory(category);
-    setTopicLoading(true);
-
-    try {
-      // 获取子分类
-      const subCategories = await platformApi.getSubCategories(category);
-      setTopicSubCategories(subCategories);
-
-      if (subCategories.length > 0) {
-        const firstSubCategory = subCategories[0];
-        setSelectedTopicSubCategory(firstSubCategory);
-
-        // 获取专题内容
-        const response = await platformApi.getAllTopics({
-          category,
-          subCategory: firstSubCategory,
-          startTime: selectedDate,
-          endTime: selectedDate,
-        });
-
-        console.log('------ response', response);
-
-        setTopicContents(response.items || []);
-        if (response.meta) {
-          setTopicPagination({
-            currentPage: response.meta.currentPage || 1,
-            totalPages: response.meta.totalPages || 1,
-            totalItems: response.meta.totalItems || 0,
-            itemsPerPage: response.meta.itemsPerPage || 20,
-          });
-        }
-      }
-    } catch (error) {
-      console.error('获取专题数据失败:', error);
-    } finally {
-      setTopicLoading(false);
-    }
-  };
-
-  // 处理专题子分类点击
-  const handleTopicSubCategoryClick = async (subCategory: string) => {
-    setSelectedTopicSubCategory(subCategory);
-    setTopicLoading(true);
-
-    try {
-      const response = await platformApi.getAllTopics({
-        category: selectedTopicCategory,
-        subCategory,
-        startTime: selectedDate,
-        endTime: selectedDate,
-      });
-
-      setTopicContents(response.items || []);
-      if (response.meta) {
-        setTopicPagination({
-          currentPage: response.meta.currentPage || 1,
-          totalPages: response.meta.totalPages || 1,
-          totalItems: response.meta.totalItems || 0,
-          itemsPerPage: response.meta.itemsPerPage || 20,
-        });
-      }
-    } catch (error) {
-      console.error('获取专题数据失败:', error);
-    } finally {
-      setTopicLoading(false);
-    }
-  };
-
   return (
     <>
       <div className="flex h-full bg-gray-50">
@@ -497,43 +427,43 @@ const Trending: React.FC = () => {
 
                         try {
                           // 获取所有热点事件
-                          const hotTopicsData = await platformApi.getAllTopics({
-                            category: '体娱',
-                          });
+                          const hotTopicsData = await platformApi.getAllTopics(
+                            {},
+                          );
                           console.log('------- sdasds', hotTopicsData);
 
                           console.log(JSON.stringify(hotTopicsData));
 
                           // 处理数据并显示
-                          if (hotTopicsData && hotTopicsData.length > 0) {
+                          if (hotTopicsData && hotTopicsData.items.length > 0) {
                             // 将平台数据和话题数据整合
-                            const processedData = [];
-                            hotTopicsData.forEach((platformData) => {
-                              const platform = platformData.platform;
+                            const processedData: any[] = [];
+                            hotTopicsData.items.forEach((platformData) => {
+                              // const platform = platformData.platform;
                               const topics = platformData.topics || [];
 
-                              topics.forEach((topic) => {
-                                processedData.push({
-                                  id: topic._id,
-                                  title: topic.title,
-                                  content: topic.title,
-                                  cover: platform.icon || '',
-                                  category: platform.name,
-                                  subCategory: '',
-                                  createTime:
-                                    topic.createTime || topic.fetchTime,
-                                  url: topic.url,
-                                  hotValue: topic.hotValue,
-                                  rank: topic.rank,
-                                  stats: {
-                                    viewCount: topic.hotValue || 0,
-                                    likeCount: 0,
-                                    commentCount: 0,
-                                    shareCount: 0,
-                                    collectCount: 0,
-                                  },
-                                });
-                              });
+                              // topics.forEach((topic) => {
+                              //   processedData.push({
+                              //     id: topic._id,
+                              //     title: topic.title,
+                              //     content: topic.title,
+                              //     cover: platform.icon || '',
+                              //     category: platform.name,
+                              //     subCategory: '',
+                              //     createTime:
+                              //       topic.createTime || topic.fetchTime,
+                              //     url: topic.url,
+                              //     hotValue: topic.hotValue,
+                              //     rank: topic.rank,
+                              //     stats: {
+                              //       viewCount: topic.hotValue || 0,
+                              //       likeCount: 0,
+                              //       commentCount: 0,
+                              //       shareCount: 0,
+                              //       collectCount: 0,
+                              //     },
+                              //   });
+                              // });
                             });
 
                             setTopicContents(processedData);
