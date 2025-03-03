@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-22 12:27:40
- * @LastEditTime: 2025-02-22 20:01:29
+ * @LastEditTime: 2025-03-02 00:13:48
  * @LastEditors: nevin
  * @Description:
  */
@@ -11,6 +11,7 @@ export enum TaskType {
   PRODUCT = 'product', // 商品任务
   ARTICLE = 'article', // 文章任务
   PROMOTION = 'promotion', // 拉新任务
+  VIDEO = 'video', // 拉新任务
 }
 
 export const TaskTypeName = new Map([

@@ -1,66 +1,87 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-27 19:37:08
- * @LastEditTime: 2025-02-27 20:39:21
+ * @LastEditTime: 2025-03-02 22:40:53
  * @LastEditors: nevin
  * @Description: 我的任务列表
  */
-import { Button } from 'antd';
-import { useState, useEffect } from 'react';
+import { Button, Card } from 'antd';
+import { useState, useEffect, useRef } from 'react';
 import { taskApi } from '@/api/task';
-import { UserTask } from '@/api/types/task';
+import { UserTask, UserTaskStatus } from '@/api/types/task';
+import { Task } from '@@/types/task';
+import MineTaskInfo, { MineTaskInfoRef } from './components/mineInfo';
+import { WithdrawRef } from './components/withdraw';
+import Withdraw from './components/withdraw';
+
+const UserTaskStatusNameMap = new Map<UserTaskStatus, string>([
+  [UserTaskStatus.DODING, '进行中'],
+  [UserTaskStatus.PENDING, '待审核'],
+  [UserTaskStatus.APPROVED, '已通过'],
+  [UserTaskStatus.REJECTED, '已拒绝'],
+  [UserTaskStatus.COMPLETED, '已完成'],
+  [UserTaskStatus.CANCELLED, '已取消'],
+  [UserTaskStatus.PENDING_REWARD, '待发放奖励'],
+  [UserTaskStatus.REWARDED, '已发放奖励'],
+]);
 
 export default function Page() {
-  const [taskList, setTaskList] = useState<UserTask[]>([]);
-  const [taskDetails, setTaskDetails] = useState<Record<string, any>>({});
+  const [taskList, setTaskList] = useState<UserTask<Task>[]>([]);
   const [pageInfo, setPageInfo] = useState({
     pageSize: 10,
     pageNo: 1,
     totalCount: 0,
   });
 
-  async function getTaskInfo(task: UserTask) {
-    const res = await taskApi.getTaskInfo(task.taskId);
-    return res;
-  }
-
   useEffect(() => {
     const fetchTaskDetails = async () => {
       const tasks = await taskApi.getMineTaskList(pageInfo);
+
       setTaskList(tasks.items);
-
-      const detailsPromises = tasks.items.map((task) => getTaskInfo(task));
-      const details = await Promise.all(detailsPromises);
-
-      const detailsMap: Record<string, any> = {};
-      details.forEach((detail, index) => {
-        detailsMap[tasks.items[index].taskId] = detail;
-      });
-
-      setTaskDetails(detailsMap);
     };
 
     fetchTaskDetails();
   }, []);
 
+  const Ref_MineTaskInfo = useRef<MineTaskInfoRef>(null);
+  const Ref_Withdraw = useRef<WithdrawRef>(null);
+
+  async function withdraw(task: UserTask<Task>) {
+    Ref_Withdraw.current?.init(task);
+  }
+
   return (
     <div>
+      <MineTaskInfo ref={Ref_MineTaskInfo} />
+      <Withdraw ref={Ref_Withdraw} />
       <div>
         {taskList.map((v) => {
-          const detail = taskDetails[v.taskId];
           return (
-            <div key={v.id}>
-              {v.taskId}
-              <Button type="primary">提现</Button>
-              {/* 渲染任务详细信息 */}
-              {detail && (
-                <div>
-                  <p>任务名称: {detail.name}</p>
-                  <p>任务描述: {detail.description}</p>
-                  {/* 其他详细信息 */}
-                </div>
-              )}
-            </div>
+            <Card key={v.id} title={v.taskId.title}>
+              <div>
+                <p>任务描述: {v.taskId.description}</p>
+                <p>状态: {UserTaskStatusNameMap.get(v.status)}</p>
+                <p>接受时间: {v.createTime}</p>
+                <p>提交时间: {v.submissionTime}</p>
+                <p>完成时间: {v.rewardTime}</p>
+              </div>
+              <div>
+                {v.status === UserTaskStatus.DODING && (
+                  <Button
+                    type="primary"
+                    onClick={() => Ref_MineTaskInfo.current?.init(v)}
+                  >
+                    去完成
+                  </Button>
+                )}
+
+                {v.status === UserTaskStatus.APPROVED && (
+                  <Button type="primary" onClick={() => withdraw(v)}>
+                    提现
+                  </Button>
+                )}
+              </div>
+            </Card>
           );
         })}
       </div>

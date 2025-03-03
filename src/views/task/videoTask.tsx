@@ -1,13 +1,13 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-02-27 20:49:50
+ * @LastEditTime: 2025-03-02 00:17:11
  * @LastEditors: nevin
  * @Description: 视频任务
  */
 import { Button } from 'antd';
 import { useState, useEffect, useRef } from 'react';
-import { Task } from 'commont/types/task';
+import { Task, TaskType } from '@@/types/task';
 import { taskApi } from '@/api/task';
 import { TaskInfoRef } from './components/popInfo';
 import TaskInfo from './components/videoInfo';
@@ -22,7 +22,10 @@ export default function Page() {
   const Ref_TaskInfo = useRef<TaskInfoRef>(null);
 
   async function getTaskList() {
-    const res = await taskApi.getTaskList(pageInfo);
+    const res = await taskApi.getTaskList({
+      ...pageInfo,
+      type: TaskType.VIDEO,
+    });
     setTaskList(res.items);
   }
 

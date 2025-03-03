@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-02-28 21:42:02
+ * @LastEditTime: 2025-03-02 22:15:04
  * @LastEditors: nevin
  * @Description:
  */
@@ -47,6 +47,7 @@ import VideoTask from '@/views/task/videoTask';
 import MineTask from '@/views/task/mineTask';
 import UserWalletAccount from '@/views/finance/userWalletAccount';
 import Finance from '@/views/finance/index';
+import UserWalletRecord from '@/views/finance/userWalletRecord';
 
 interface IRouterMeta {
   // 路由名称
@@ -140,7 +141,7 @@ export const router: CustomRouteObject[] = [
         element: <Finance />,
         meta: { name: '钱包', icon: UserOutlined },
         children: [
-          { path: 'userWalletRecord', element: <UserWalletAccount /> },
+          { path: 'userWalletRecord', element: <UserWalletRecord /> },
           { path: 'userWalletAccount', element: <UserWalletAccount /> },
         ],
       },

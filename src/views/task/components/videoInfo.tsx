@@ -1,5 +1,12 @@
+/*
+ * @Author: nevin
+ * @Date: 2025-03-01 19:27:35
+ * @LastEditTime: 2025-03-02 00:25:27
+ * @LastEditors: nevin
+ * @Description: video
+ */
 import { Button, Modal } from 'antd';
-import { Task, TaskTypeName } from '@@/types/task';
+import { Task, TaskStatusName, TaskTypeName } from '@@/types/task';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { taskApi } from '@/api/task';
 
@@ -59,7 +66,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
               <p>任务图片：{taskInfo.imageUrl}</p>
               <p>佣金比例：{taskInfo.commission}</p>
               <p>任务奖励金额：{taskInfo.reward}</p>
-              <p>任务状态：{taskInfo.status}</p>
+              <p>任务状态：{TaskStatusName.get(taskInfo.status)}</p>
               <p>任务要求：{taskInfo.requirements}</p>
             </div>
           ) : (
