@@ -182,8 +182,8 @@ export const platformApi = {
   },
 
   // 获取所有专题分类
-  getTopicTypes(msgType: string) {
-    return http.get<string[]>(`/topics/types/${msgType}`, {
+  getTopicLabels(msgType: string) {
+    return http.get<string[]>(`/topics/labels/${msgType}`, {
       isToken: false,
     });
   },
