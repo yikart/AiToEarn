@@ -667,15 +667,23 @@ const Trending: React.FC = () => {
           {hotPlatformExpanded ? (
             <div>
               {/* 热点事件内容列表 */}
-              <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-items-center">
                 {hotTopicLoading ? (
-                  <div className="flex items-center justify-center py-8">
+                  <div className="col-span-full flex items-center justify-center py-8">
                     <span className="text-gray-500">加载中...</span>
                   </div>
-                ) : hotTopics && hotTopics.length > 0 ? (
+                ) : hotTopics && hotTopics.length > 0 ? ( 
                   <>
                     {hotTopics.map((platformData: PlatformHotTopics) => (
-                      <div key={platformData.platform._id} className="bg-white rounded-lg p-4">
+                      <div 
+                        key={platformData.platform._id} 
+                        className="bg-white rounded-lg p-4 flex flex-col w-full"
+                        style={{ 
+                          minWidth: '300px', 
+                          maxWidth: '550px',
+                          height: '500px'
+                        }}
+                      >
                         {/* 平台标题 */}
                         <div className="flex items-center mb-4">
                           <div className="flex items-center space-x-2">
@@ -697,56 +705,76 @@ const Trending: React.FC = () => {
                           </div>
                         </div>
 
-                        {/* 热点列表 */}
-                        <div className="space-y-4">
-                          {platformData.topics && Array.isArray(platformData.topics) ? (
-                            platformData.topics.map((topic, index) => (
-                              <div
-                                key={topic._id || index}
-                                className="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer"
-                                onClick={() => topic.url && handleContentClick(topic.url, topic.title)}
-                              >
-                                {/* 排名 */}
-                                <div className="w-8 text-base">
-                                  <span className={`font-medium ${index < 3 ? 'text-[#ff4d4f]' : 'text-gray-400'}`}>
-                                    {index + 1}
-                                  </span>
-                                </div>
-
-                                {/* 标题和热度 */}
-                                <div className="flex flex-1 items-center justify-between">
-                                  <div className="flex items-center space-x-2">
-                                    <span className="text-gray-900">{typeof topic.title === 'string' ? topic.title : '无标题'}</span>
-                                    {topic.isRising && (
-                                      <span className="text-xs text-[#ff4d4f] bg-[#fff1f0] px-1 rounded">
-                                        热
-                                      </span>
-                                    )}
-                                  </div>
-                                  <div className="flex items-center space-x-4">
-                                    <span className="text-[#ff4d4f]">
-                                      {typeof topic.hotValue === 'number' ? (topic.hotValue / 10000).toFixed(1) + 'w' : '0w'}
+                        {/* 热点列表 - 固定高度，超出滚动，隐藏滚动条 */}
+                        <div className="flex-1 overflow-y-auto pr-1 scrollbar-hide" style={{ maxHeight: '480px' }}>
+                          <div className="space-y-2">
+                            {platformData.topics && Array.isArray(platformData.topics) ? (
+                              platformData.topics.map((topic, index) => (
+                                <div
+                                  key={topic._id || index}
+                                  className="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer"
+                                  onClick={() => topic.url && handleContentClick(topic.url, topic.title)}
+                                >
+                                  {/* 排名 */}
+                                  <div className="w-6 flex-shrink-0 text-base">
+                                    <span className={`font-medium ${index < 3 ? 'text-[#ff4d4f]' : 'text-gray-400'}`}>
+                                      {index + 1}
                                     </span>
-                                    <div className="w-24 h-4">
-                                      {/* 热度趋势图 - 可以使用简单的SVG线图 */}
-                                      <div className="text-xs text-gray-400">
-                                        {/* 确保 hotValueHistory 是字符串 */}
-                                        {typeof topic.hotValueHistory === 'string' ? topic.hotValueHistory : ''}
+                                  </div>
+
+                                  {/* 标题和热度 */}
+                                  <div className="flex flex-1 items-center justify-between min-w-0">
+                                    <div className="flex-1 min-w-0 mr-2">
+                                      <span className="text-gray-900  truncate block" style={{ textAlign: 'left', fontSize: '14px' }}>
+                                        {typeof topic.title === 'string' ? topic.title : '无标题'}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center space-x-2 flex-shrink-0">
+                                      {topic.isRising && (
+                                        <span className="text-xs text-[#ff4d4f] bg-[#fff1f0] px-1 rounded flex-shrink-0">
+                                          热
+                                        </span>
+                                      )}
+                                      <span className="text-[#ff4d4f] whitespace-nowrap">
+                                        {typeof topic.hotValue === 'number' ? (topic.hotValue / 10000).toFixed(1) + 'w' : '0w'}
+                                      </span>
+                                      <div className="w-16 h-4 relative group flex-shrink-0">
+                                        {/* 热度趋势图 */}
+                                        <div className="w-full h-full relative">
+                                          <svg width="100%" height="100%" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                            <polyline
+                                              points={topic.hotValueHistory
+                                                .map((item, i) => {
+                                                  const x = (i / (topic.hotValueHistory.length - 1)) * 100;
+                                                  // 归一化热度值到0-20的范围
+                                                  const maxHot = Math.max(...topic.hotValueHistory.map(h => h.hotValue));
+                                                  const minHot = Math.min(...topic.hotValueHistory.map(h => h.hotValue));
+                                                  const range = maxHot - minHot;
+                                                  const y = range === 0 ? 10 : 20 - ((item.hotValue - minHot) / range) * 20;
+                                                  return `${x},${y}`;
+                                                })
+                                                .join(' ')}
+                                              fill="none"
+                                              stroke="#ff4d4f"
+                                              strokeWidth="1.5"
+                                            />
+                                          </svg>
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
                                 </div>
-                              </div>
-                            ))
-                          ) : (
-                            <div className="text-center text-gray-500">暂无热点数据</div>
-                          )}
+                              ))
+                            ) : (
+                              <div className="text-center text-gray-500">暂无热点数据</div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
                   </>
                 ) : (
-                  <div className="py-8 text-center text-gray-500">
+                  <div className="col-span-full py-8 text-center text-gray-500">
                     暂无热点事件数据
                   </div>
                 )}
@@ -1258,6 +1286,59 @@ const Trending: React.FC = () => {
           />
         )}
       </Modal>
+
+      {/* 添加必要的CSS和JavaScript */}
+      <style jsx>{`
+        .hover-trigger:hover + circle {
+          r: 3;
+        }
+        
+        .hover-trigger:hover ~ .tooltip {
+          opacity: 1;
+          transform: translateY(-5px);
+        }
+      `}</style>
+
+      <script dangerouslySetInnerHTML={{
+        __html: `
+          document.addEventListener('DOMContentLoaded', function() {
+            const hoverTriggers = document.querySelectorAll('.hover-trigger');
+            const tooltip = document.querySelector('.tooltip');
+            const hotvalueEl = document.querySelector('.tooltip .hotvalue');
+            const timeEl = document.querySelector('.tooltip .time');
+            
+            hoverTriggers.forEach(trigger => {
+              trigger.addEventListener('mouseenter', function(e) {
+                const value = this.getAttribute('data-value');
+                const time = this.getAttribute('data-time');
+                
+                hotvalueEl.textContent = (value / 10000).toFixed(1) + 'w';
+                timeEl.textContent = time;
+                
+                const rect = this.getBoundingClientRect();
+                tooltip.style.left = rect.left + 'px';
+                tooltip.style.top = (rect.top - 40) + 'px';
+                tooltip.style.opacity = '1';
+              });
+              
+              trigger.addEventListener('mouseleave', function() {
+                tooltip.style.opacity = '0';
+              });
+            });
+          });
+        `
+      }} />
+
+      {/* 添加隐藏滚动条的样式 */}
+      <style jsx global>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+        }
+      `}</style>
     </>
   );
 };
