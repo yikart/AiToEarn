@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-03-01 19:27:35
- * @LastEditTime: 2025-03-02 22:43:10
+ * @LastEditTime: 2025-03-03 18:06:49
  * @LastEditors: nevin
  * @Description: 任务提现
  */
@@ -93,7 +93,6 @@ const Com = forwardRef<WithdrawRef>((props: any, ref) => {
               <p>任务描述：{taskInfo.taskId.description}</p>
               <p>任务类型：{TaskTypeName.get(taskInfo.taskId.type)}</p>
               <p>任务图片：{taskInfo.taskId.imageUrl}</p>
-              <p>佣金比例：{taskInfo.taskId.commission}</p>
               <p>任务奖励金额：{taskInfo.taskId.reward}</p>
             </div>
           ) : (
