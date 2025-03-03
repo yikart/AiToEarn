@@ -144,9 +144,11 @@ const ActivitySelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
 
   useEffect(() => {
     init();
-  }, []);
 
-  onAccountLoginFinish(() => init());
+    onAccountLoginFinish(() => {
+      init();
+    });
+  }, []);
 
   return (
     <>
@@ -258,7 +260,7 @@ const ActivitySelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
             </div>
           );
         }}
-        options={options.map((v) => {
+        options={options?.map((v) => {
           return {
             ...v,
             label: v.activity_name,

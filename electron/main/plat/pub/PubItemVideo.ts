@@ -17,6 +17,7 @@ import { SendChannelEnum } from '../../../../commont/UtilsEnum';
 
 // 视频发布进度返回值
 export interface VideoPublishProgressRes {
+  // 为 -1 表示失败
   progress: number;
   msg: string;
   account: AccountModel;

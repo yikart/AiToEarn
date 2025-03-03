@@ -12,6 +12,16 @@ export interface IPubProgressModuleProps {
   onClose: () => void;
 }
 
+function getMsg(progressData: VideoPublishProgressRes) {
+  if (progressData.progress === 100) {
+    return '发布成功';
+  } else if (progressData.progress === -1) {
+    return '发布错误';
+  } else {
+    return progressData.msg || '正在加载...';
+  }
+}
+
 // 发布进度展示
 const PubProgressModule = memo(
   forwardRef(
@@ -49,9 +59,12 @@ const PubProgressModule = memo(
                   </div>
 
                   <div className="pubProgressModule-item-right">
-                    <Progress percent={v.progress} />
+                    <Progress
+                      percent={v.progress}
+                      status={v.progress === -1 ? 'exception' : undefined}
+                    />
                     <p className="pubProgressModule-item-right-msg">
-                      {v.msg || '正在加载...'}
+                      {getMsg(v)}
                     </p>
                   </div>
                 </div>

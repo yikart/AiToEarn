@@ -948,7 +948,7 @@ export class DouyinService {
     method: string = 'PUT',
   ): Promise<any> {
     return new Promise((resolve, reject) => {
-      console.log(`开始请求 [${new Date().toLocaleString()}]`, fileContent);
+      console.log(`开始请求 [${new Date().toLocaleString()}]`);
       console.log('请求URL:', url);
       console.log('请求方法:', method);
       console.log('请求头:', headers);
