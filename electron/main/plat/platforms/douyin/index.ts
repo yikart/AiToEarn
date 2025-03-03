@@ -21,7 +21,7 @@ import { PublishVideoResult } from '../../module';
 import { douyinService } from '../../../../plat/douyin';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
-import { VisibleTypeEnum } from '@@/publish/PublishEnum';
+import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
 
 export type PubVideoOptin = {
   token: string;

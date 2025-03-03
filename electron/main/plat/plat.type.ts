@@ -6,7 +6,7 @@
  * @Description:
  */
 import { AccountModel } from '../../db/models/account';
-import { VisibleTypeEnum } from '@@/publish/PublishEnum';
+import { VisibleTypeEnum } from '../../../commont/publish/PublishEnum';
 import { DiffParmasType, ILableValue } from '../../db/models/video';
 
 export type CookiesType = Electron.Cookie[];
