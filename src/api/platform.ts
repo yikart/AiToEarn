@@ -147,8 +147,8 @@ export const platformApi = {
   },
 
   // 获取榜单分类
-  getRankingCategories(rankingId: string) {
-    return http.get<any[]>(`/ranking/${rankingId}/categories`, {
+  getRankingLabel(rankingId: string) {
+    return http.get<string[]>(`/ranking/label/${rankingId}`, {
       isToken: false,
     });
   },
