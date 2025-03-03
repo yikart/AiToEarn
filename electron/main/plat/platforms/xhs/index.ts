@@ -134,6 +134,7 @@ export class Xhs extends PlatformBase {
   }
   /**
    * @param params
+   * @param callback
    * @returns
    */
   async videoPublish(

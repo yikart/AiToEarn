@@ -18,29 +18,16 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
     "baseUrl": "./",
     "paths": {
       "@/*": [
         "src/*"
-      ],
-      "@@/*": [
-        "commont/*"
-      ],
+      ]
     },
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
   },
   "include": [
-    "src",
-    "commont"
-  ],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    },
-    {
-      "path": "./tsconfig.electron.json"
-    }
+    "electron"
   ]
 }
