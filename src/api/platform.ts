@@ -135,11 +135,15 @@ export const platformApi = {
     category?: string,
     date?: string,
   ) {
+    let ctr = null;
+    if (category && category != '全部') {
+      ctr = category;
+    }
     return http.get<RankingContentsResponse>(`/ranking/${rankingId}/contents`, {
       params: {
         page,
         pageSize,
-        category,
+        category:ctr,
         date,
       },
       isToken: false,
@@ -174,7 +178,7 @@ export const platformApi = {
     });
   },
 
-  // 获取所有专题类型
+  // 获取所有专题类型1
   getMsgType() {
     return http.get<string[]>(`/topics/msgType`, {
       isToken: false,
