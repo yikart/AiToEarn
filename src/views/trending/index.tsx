@@ -181,6 +181,17 @@ const Trending: React.FC = () => {
   const [selectedTopicType, setSelectedTopicType] = useState<string>('');
   const [topicTypes, setTopicTypes] = useState<string[]>([]);
 
+  // 添加图片错误处理的状态
+  const [imgErrors, setImgErrors] = useState<{[key: string]: boolean}>({});
+
+  // 添加处理图片加载错误的函数
+  const handleImageError = (imageId: string) => {
+    setImgErrors(prev => ({
+      ...prev,
+      [imageId]: true
+    }));
+  };
+
   // 获取平台数据和专题分类
   useEffect(() => {
     const fetchData = async () => {
@@ -568,7 +579,6 @@ const Trending: React.FC = () => {
               <div className="p-4 mb-4 bg-white rounded-lg shadow-sm">
                 {/* 平台筛选 */}
                 <div className="flex flex-col space-y-2">
-                  <div className="text-sm text-gray-500 mb-2">平台</div>
                   <div className="flex flex-wrap gap-2">
                     <button
                       className={`${buttonStyles.base} ${
@@ -595,11 +605,20 @@ const Trending: React.FC = () => {
                         }}
                       >
                         <div className="flex items-center space-x-2">
-                          <img
-                            src={getImageUrl(platform.icon)}
-                            alt={platform.name}
-                            className="w-4 h-4"
-                          />
+                          {platform.icon && !imgErrors[`platform-${platform._id}`] ? (
+                            <img
+                              src={getImageUrl(platform.icon)}
+                              alt={platform.name}
+                              className="w-4 h-4"
+                              onError={() => handleImageError(`platform-${platform._id}`)}
+                            />
+                          ) : (
+                            <div className="w-4 h-4 bg-gray-200 rounded flex items-center justify-center">
+                              <span className="text-xs text-gray-500">
+                                {platform.name?.charAt(0)?.toUpperCase() || '?'}
+                              </span>
+                            </div>
+                          )}
                           <span>{platform.name}</span>
                         </div>
                       </button>
@@ -610,7 +629,6 @@ const Trending: React.FC = () => {
                 {/* 二级分类筛选 */}
                 {selectedMsgType && (
                   <div className="flex flex-col space-y-2 mt-4">
-                    <div className="text-sm text-gray-500 mb-2">分类</div>
                     <div className="flex flex-wrap gap-2">
                       <button
                         className={`${buttonStyles.base} ${
@@ -681,11 +699,12 @@ const Trending: React.FC = () => {
                         {/* 专题信息区域 */}
                         <div className="w-48">
                           <div className="relative flex items-center justify-center w-full overflow-hidden bg-gray-100 rounded-lg h-28">
-                            {item.cover ? (
+                            {item.cover && !imgErrors[item._id] ? (
                               <img
                                 src={getImageUrl(item.cover)}
                                 alt={item.title}
                                 className="object-cover w-full h-full"
+                                onError={() => handleImageError(item._id)}
                               />
                             ) : (
                               <div className="text-center text-gray-400">
@@ -895,11 +914,18 @@ const Trending: React.FC = () => {
                         {/* 笔记信息区域 */}
                         <div className="w-48">
                           <div className="relative w-full overflow-hidden rounded-lg h-28">
-                            <img
-                              src={getImageUrl(item.cover)}
-                              alt={item.title}
-                              className="object-cover w-full h-full"
-                            />
+                            {item.cover && !imgErrors[item._id] ? (
+                              <img
+                                src={getImageUrl(item.cover)}
+                                alt={item.title}
+                                className="object-cover w-full h-full"
+                                onError={() => handleImageError(item._id)}
+                              />
+                            ) : (
+                              <div className="text-center text-gray-400">
+                                暂无图片
+                              </div>
+                            )}
                           </div>
                         </div>
 
@@ -931,23 +957,28 @@ const Trending: React.FC = () => {
                                 {item.title}
                               </h3>
                               <div className="flex items-center space-x-2">
-                                <img
-                                  src={getImageUrl(item.author.avatar)}
-                                  alt={item.author.name}
-                                  className="w-5 h-5 rounded-full"
-                                />
+                                {item.author && !imgErrors[`${item._id}-avatar`] ? (
+                                  <img
+                                    src={getImageUrl(item.author.avatar)}
+                                    alt={item.author.name}
+                                    className="w-5 h-5 rounded-full"
+                                    onError={() => handleImageError(`${item._id}-avatar`)}
+                                  />
+                                ) : (
+                                  <div className="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center">
+                                    <span className="text-xs text-gray-500">
+                                      {item.author.name?.charAt(0)?.toUpperCase() || '?'}
+                                    </span>
+                                  </div>
+                                )}
                                 <span className="text-sm text-gray-600">
                                   {item.author.name}
                                 </span>
                                 <span className="text-xs text-gray-400">
-                                  粉丝数 {item.author.fansCount}
+                                  粉丝数 {item.author.fansCount?.toLocaleString()}
                                 </span>
-
                                 <span className="text-xs text-gray-400">
-                                  发布于{' '}
-                                  {dayjs(item.publishTime).format(
-                                    'YYYY-MM-DD HH:mm',
-                                  )}
+                                  发布于 {dayjs(item.publishTime).format('YYYY-MM-DD HH:mm')}
                                 </span>
                               </div>
                             </div>
