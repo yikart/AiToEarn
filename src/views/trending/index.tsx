@@ -539,6 +539,48 @@ const Trending: React.FC = () => {
     }
   };
 
+  // 添加专题分页处理函数
+  const handleTopicPageChange = async (page: number) => {
+    if (page !== topicPagination?.currentPage) {
+      setTopicLoading(true);
+      try {
+        const hotTopicsData: TopicResponse = await platformApi.getAllTopics({
+          msgType: selectedMsgType,
+          platformId: selectedPlatformId,
+          type: selectedTopicType,
+          page: page,
+          limit: topicPagination?.itemsPerPage || 20
+        });
+
+        if (hotTopicsData && hotTopicsData.items.length > 0) {
+          setTopicContents(hotTopicsData.items);
+          if (hotTopicsData.meta) {
+            setTopicPagination({
+              currentPage: hotTopicsData.meta.currentPage,
+              totalPages: hotTopicsData.meta.totalPages,
+              totalItems: hotTopicsData.meta.totalItems,
+              itemCount: hotTopicsData.meta.itemCount,
+              itemsPerPage: hotTopicsData.meta.itemsPerPage
+            });
+          }
+        } else {
+          setTopicContents([]);
+        }
+
+        // 滚动到顶部
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      } catch (error) {
+        console.error('获取专题数据失败:', error);
+        setTopicContents([]);
+      } finally {
+        setTopicLoading(false);
+      }
+    }
+  };
+
   return (
     <>
       <div className="flex h-full bg-gray-50">
@@ -878,6 +920,21 @@ const Trending: React.FC = () => {
                   </div>
                 ) : topicContents.length > 0 ? (
                   <>
+                    {/* 表头 */}
+                    <div className="flex p-4 text-sm text-gray-500 bg-gray-50">
+                      <div className="w-8">排名</div>
+                      <div className="w-48">专题信息</div>
+                      <div className="flex-1">
+                        <div className="flex items-center">
+                          <div className="w-32">平台</div>
+                          <div className="flex items-center space-x-12">
+                            <div className="w-24 text-center">热度</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 内容列表 */}
                     {topicContents.map((item, index) => (
                       <div
                         key={item._id}
@@ -937,6 +994,31 @@ const Trending: React.FC = () => {
                         </div>
                       </div>
                     ))}
+
+                    {/* 在热门专题部分添加调试信息 */}
+                    {topicPagination ? (
+                      <div className="text-xs text-gray-500 mb-2">
+                        调试信息: 当前页 {topicPagination.currentPage}, 总页数 {topicPagination.totalPages}, 
+                        总条目 {topicPagination.totalItems}, 每页条目 {topicPagination.itemsPerPage}
+                      </div>
+                    ) : (
+                      <div className="text-xs text-gray-500 mb-2">分页数据为空</div>
+                    )}
+
+                    {/* 分页组件 */}
+                    {topicPagination && topicPagination.totalPages > 1 && (
+                      <div className="flex justify-center mt-6 mb-8">
+                        <Pagination
+                          current={topicPagination.currentPage}
+                          total={topicPagination.totalItems}
+                          pageSize={topicPagination.itemsPerPage}
+                          showSizeChanger={false}
+                          showQuickJumper
+                          showTotal={(total) => `共 ${total} 条`}
+                          onChange={handleTopicPageChange}
+                        />
+                      </div>
+                    )}
                   </>
                 ) : (
                   <div className="py-8 text-center text-gray-500">
@@ -1241,7 +1323,9 @@ const Trending: React.FC = () => {
               </div>
             </>
           )}
+           <div style={{ width: '100%', height: '20px' }}></div>
         </div>
+       
       </div>
 
       {/* 内容预览模态框 */}
