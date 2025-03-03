@@ -111,8 +111,12 @@ export interface ILocationDataItem {
   simpleAddress: string;
   // 地址ID
   id: string;
-  // 距离
-  distance: string;
+  // 小红书特有
+  poi_type?: number;
+  latitude: number;
+  longitude: number;
+  // 市
+  city: string;
 }
 
 // 获取地点数据返回值

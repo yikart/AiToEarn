@@ -3,10 +3,9 @@ import {
   IVideoPubSetModalChildProps,
   IVideoPubSetModalChildRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/videoPubSetModal.type';
-import { Checkbox, Input, Radio, Select, Spin, Tooltip } from 'antd';
+import { Checkbox, Input, Select, Spin, Tooltip } from 'antd';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
-import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
 import { AccountStatus, AccountType } from '@@/AccountEnum';
 import { QuestionCircleOutlined } from '@ant-design/icons';
@@ -218,29 +217,6 @@ const VideoPubSetModal_KWAI = memo(
           >
             声明后，作品将展示原创标记，有机会获得广告收入
           </Checkbox>
-
-          <h1>权限设置</h1>
-          <Radio.Group
-            options={[
-              {
-                label: '公开（所有人可见）',
-                value: VisibleTypeEnum.Public,
-              },
-              {
-                label: '私密（仅自己可见）',
-                value: VisibleTypeEnum.Private,
-              },
-            ]}
-            onChange={(e) => {
-              setOnePubParams(
-                {
-                  visibleType: e.target.value,
-                },
-                currChooseAccount!.id,
-              );
-            }}
-            value={currChooseAccount?.pubParams.visibleType}
-          />
 
           <ScheduledTimeSelect currChooseAccount={currChooseAccount} />
         </>

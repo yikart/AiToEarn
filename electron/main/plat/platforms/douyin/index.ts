@@ -216,7 +216,9 @@ export class Douyin extends PlatformBase {
           name: v.poi_name,
           simpleAddress: v.simple_address_str,
           id: v.poi_id,
-          distance: v.distance,
+          latitude: v.poi_latitude,
+          longitude: v.poi_longitude,
+          city: v.address_info.city,
         };
       }),
     };

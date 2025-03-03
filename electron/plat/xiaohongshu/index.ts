@@ -820,7 +820,6 @@ export class XiaohongshuService {
     publishType: 'video' | 'image',
     uploadResult: any,
     platformSetting: any,
-    privacy: boolean = false,
   ) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1054,8 +1053,8 @@ export class XiaohongshuService {
             post_loc: post_loc,
             privacy_info: {
               op_type: 1,
-              type: privacy ? 1 : 0,
-              user_ids: privacy ? [] : undefined,
+              type: platformSetting['privacy'] ? 1 : 0,
+              user_ids: platformSetting['privacy'] ? [] : undefined,
             },
           },
           image_info: xhs_image_info,
@@ -1144,7 +1143,16 @@ export class XiaohongshuService {
         topicId: string;
         topicName: string;
       }[];
+      // 位置
+      poiInfo?: {
+        poiType: number;
+        poiId: string;
+        poiName: string;
+        poiAddress: string;
+      };
       cover: string;
+      // true=私有 flase=公开
+      privacy: boolean;
     },
     callback: (progress: number, msg?: string) => void,
   ): Promise<{

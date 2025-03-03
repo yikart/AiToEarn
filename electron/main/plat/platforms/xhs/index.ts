@@ -21,6 +21,7 @@ import { PublishVideoResult } from '../../module';
 import { xiaohongshuService } from '../../../../plat/xiaohongshu';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
+import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
 
 export class Xhs extends PlatformBase {
   constructor() {
@@ -153,6 +154,7 @@ export class Xhs extends PlatformBase {
             topicsDetail:
               params.diffParams?.[AccountType.Xhs]?.topicsDetail || [],
             timingTime: params.timingTime?.getTime(),
+            privacy: params.visibleType !== VisibleTypeEnum.Public,
           },
           callback,
         )
@@ -213,7 +215,10 @@ export class Xhs extends PlatformBase {
           name: v.name,
           simpleAddress: v.full_address,
           id: v.poi_id,
-          distance: '',
+          poi_type: v.poi_type,
+          latitude: v.latitude,
+          longitude: v.longitude,
+          city: v.city_name,
         };
       }),
     };

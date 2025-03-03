@@ -1229,6 +1229,7 @@ export class ShipinhaoService {
       topics?: string[];
       des?: string;
       timingTime?: number;
+      // 位置信息
       poiInfo?: {
         latitude: string;
         longitude: string;

@@ -175,7 +175,9 @@ export class WxSph extends PlatformBase {
           name: v.name,
           simpleAddress: v.fullAddress,
           id: v.poiCheckSum,
-          distance: '',
+          latitude: v.latitude,
+          longitude: v.longitude,
+          city: v.city,
         };
       }),
     };
