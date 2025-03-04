@@ -139,16 +139,42 @@ export class Kwai extends PlatformBase {
   }
 
   async getUsers(params: IGetUsersParams) {
+    const res = await kwaiPub.getUsers({
+      page: params.page,
+      cookies: JSON.parse(params.account.loginCookie),
+    });
+
     return {
-      status: 400,
-      data: [],
+      status: res.status,
+      data: res.data?.data?.list?.map((v) => {
+        return {
+          image: v.headUrl,
+          id: `${v.userId}`,
+          name: v.userName,
+          follower_count: v.fansCount,
+        };
+      }),
     };
   }
 
   async getLocationData(params: IGetLocationDataParams) {
+    const res = await kwaiPub.getLocations({
+      cookies: params.cookie!,
+      cityName: params.cityName,
+      keyword: params.keywords,
+    });
     return {
-      status: 400,
-      data: [],
+      status: res.status,
+      data: res.data?.locations?.map((v) => {
+        return {
+          name: v.title,
+          simpleAddress: v.address,
+          id: `${v.id}`,
+          latitude: v.latitude,
+          longitude: v.longitude,
+          city: v.city,
+        };
+      }),
     };
   }
 }

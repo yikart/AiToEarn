@@ -55,6 +55,34 @@ export type IKwaiGetTopicsResponse = IKwaiUserCommonResponse<{
   }[];
 }>;
 
+// 获取快手关注用户返回的数据
+export type IKwaiGetUsersResponse = IKwaiUserCommonResponse<{
+  list: {
+    userName: string;
+    userId: number;
+    fansCount: number;
+    headUrl: string;
+  }[];
+  name: string;
+  type: number;
+}>;
+
+// 获取快手位置数据
+export type IKwaiGetLocationsResponse = {
+  locations: {
+    id: number;
+    title: string;
+    address: string;
+    city: string;
+    category: number;
+    latitude: number;
+    longitude: number;
+    idString: string;
+  }[];
+  pcursor: string;
+  result: number;
+};
+
 // 快手视频发布入参
 export interface IKwaiPubVideoParams {
   // cookies

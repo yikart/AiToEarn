@@ -131,6 +131,7 @@ export interface IGetLocationDataParams {
   keywords: string;
   latitude: number;
   longitude: number;
+  cityName: string;
   cookie?: Electron.Cookie[];
   account?: AccountModel;
 }
