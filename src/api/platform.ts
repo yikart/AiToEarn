@@ -1,4 +1,4 @@
-import http from './request';
+import hotHttp from './hotRequest';
 import { Pagination } from './types';
 import { HotTopic } from './types/hotTopic';
 import { Topic } from './types/topic';
@@ -117,12 +117,12 @@ export interface RankingContentsResponse {
 export const platformApi = {
   // 获取平台列表
   getPlatformList() {
-    return http.get<Platform[]>('/platform');
+    return hotHttp.get<Platform[]>('/platform');
   },
 
   // 获取平台榜单列表
   getPlatformRanking(platformId: string) {
-    return http.get<PlatformRanking[]>(
+    return hotHttp.get<PlatformRanking[]>(
       `/ranking/platform?platformId=${platformId}`,
     );
   },
@@ -139,27 +139,30 @@ export const platformApi = {
     if (category && category != '全部') {
       ctr = category;
     }
-    return http.get<RankingContentsResponse>(`/ranking/${rankingId}/contents`, {
-      params: {
-        page,
-        pageSize,
-        category:ctr,
-        date,
+    return hotHttp.get<RankingContentsResponse>(
+      `/ranking/${rankingId}/contents`,
+      {
+        params: {
+          page,
+          pageSize,
+          category: ctr,
+          date,
+        },
+        isToken: false,
       },
-      isToken: false,
-    });
+    );
   },
 
   // 获取榜单分类
   getRankingLabel(rankingId: string) {
-    return http.get<string[]>(`/ranking/label/${rankingId}`, {
+    return hotHttp.get<string[]>(`/ranking/label/${rankingId}`, {
       isToken: false,
     });
   },
 
   // 获取所有热点事件
   getAllHotTopics() {
-    return http.get<
+    return hotHttp.get<
       {
         platform: Platform;
         hotTopic: HotTopic;
@@ -173,21 +176,21 @@ export const platformApi = {
 
   // 获取所有专题标签
   getTopics() {
-    return http.get<string[]>(`/topics/topics`, {
+    return hotHttp.get<string[]>(`/topics/topics`, {
       isToken: false,
     });
   },
 
   // 获取所有专题类型1
   getMsgType() {
-    return http.get<string[]>(`/topics/msgType`, {
+    return hotHttp.get<string[]>(`/topics/msgType`, {
       isToken: false,
     });
   },
 
   // 获取所有专题分类
   getTopicLabels(msgType: string) {
-    return http.get<string[]>(`/topics/labels/${msgType}`, {
+    return hotHttp.get<string[]>(`/topics/labels/${msgType}`, {
       isToken: false,
     });
   },
@@ -201,7 +204,7 @@ export const platformApi = {
     endTime?: string; // 发布时间结束
     topic?: string; // 话题标签
   }) {
-    return http.get<Pagination<Topic>>(`/topics`, {
+    return hotHttp.get<Pagination<Topic>>(`/topics`, {
       isToken: false,
       params,
     });
@@ -210,14 +213,14 @@ export const platformApi = {
   // ---- 爆款标题 ----
   // 获取有数据的平台列表
   findPlatformsWithData() {
-    return http.get<Platform[]>(`/viral-titles/platforms`, {
+    return hotHttp.get<Platform[]>(`/viral-titles/platforms`, {
       isToken: false,
     });
   },
 
   // 获取指定平台的分类列表
   findCategoriesByPlatform(platformId: string) {
-    return http.get<string[]>(
+    return hotHttp.get<string[]>(
       `/viral-titles/platforms/${platformId}/categories`,
       {
         isToken: false,
@@ -227,7 +230,7 @@ export const platformApi = {
 
   // 获取平台下所有分类的前五条数据
   findTopByPlatformAndCategories(platformId: string) {
-    return http.get<
+    return hotHttp.get<
       {
         category: string;
         titles: ViralTitle[];
@@ -239,7 +242,7 @@ export const platformApi = {
 
   // 获取平台下指定分类的数据列表（分页）
   findByPlatformAndCategory(platformId: string) {
-    return http.get<Pagination<ViralTitle>>(
+    return hotHttp.get<Pagination<ViralTitle>>(
       `/viral-titles/platforms/${platformId}/top-by-categories`,
       {
         isToken: false,
