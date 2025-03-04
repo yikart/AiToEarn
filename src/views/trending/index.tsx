@@ -282,7 +282,7 @@ const Trending: React.FC = () => {
     try {
       const data = await platformApi.getRankingLabel(rankingId);
       // 添加"全部"选项到分类列表开头
-      setCategories(['全部', ...data]);
+      setCategories([...data]);
       // 默认选中"全部"
       setSelectedCategory('全部');
     } catch (error) {
@@ -828,11 +828,11 @@ const Trending: React.FC = () => {
                                       <div className="w-16 h-4 relative group flex-shrink-0">
                                         {/* 热度趋势图 */}
                                         <div className="w-full h-full relative">
-                                          <svg width="100%" height="100%" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                          <svg width="100%" height="100%" viewBox="0 0 100 20" preserveAspectRatio="none"  v-if="topic.hotValueHistory.length > 0">
                                             <polyline
                                               points={topic.hotValueHistory
                                                 .map((item, i) => {
-                                                  const x = (i / (topic.hotValueHistory.length - 1)) * 100;
+                                                  const x = (i / (topic.hotValueHistory.length - 1)) * 100 || 0;
                                                   // 归一化热度值到0-20的范围
                                                   const maxHot = Math.max(...topic.hotValueHistory.map(h => h.hotValue));
                                                   const minHot = Math.min(...topic.hotValueHistory.map(h => h.hotValue));
