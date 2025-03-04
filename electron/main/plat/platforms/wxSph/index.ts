@@ -137,7 +137,7 @@ export class WxSph extends PlatformBase {
         usersRes.data.errCode === 300334 || usersRes.data.errCode === 300333
           ? 401
           : usersRes.status,
-      data: usersRes.data.data.list.map((v) => {
+      data: usersRes?.data?.data?.list?.map((v) => {
         return {
           image: v.headImgUrl,
           id: v.username,
