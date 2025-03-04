@@ -31,7 +31,7 @@ const WXSphActivity = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
   const { fetching, options, debounceFetcher } =
     useDebounceFetcher<WxSphEventList>(async (keywords) => {
       const res = await getSphActivity(currChooseAccount.account!, keywords);
-      if (res.data.errCode === 300334) {
+      if (res.data.errCode === 300334 || res.data.errCode === 300333) {
         currChooseAccount.account!.status = AccountStatus.DISABLE;
         updateAccounts({ accounts: [currChooseAccount.account!] });
         await ipcUpdateAccountStatus(
@@ -40,8 +40,7 @@ const WXSphActivity = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
         );
         return [];
       }
-      console.log(res);
-      return res.data.data.eventList;
+      return res?.data?.data?.eventList || [];
     });
 
   return (

@@ -182,7 +182,7 @@ export class WxSph extends PlatformBase {
       cookie: params.cookie!,
     });
     return {
-      status: locationRes.data.errCode === 300334 ? 401 : locationRes.status,
+      status: locationRes.data.errCode === 300334 || locationRes.data.errCode === 300333 ? 401 : locationRes.status,
       data: locationRes?.data?.data?.list?.map((v) => {
         return {
           name: v.name,
