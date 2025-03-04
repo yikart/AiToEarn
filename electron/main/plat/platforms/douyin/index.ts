@@ -14,6 +14,7 @@ import {
   IGetLocationDataParams,
   IGetTopicsParams,
   IGetTopicsResponse,
+  IGetUsersParams,
   IVideoPublishParams,
   VideoCallbackType,
 } from '../../plat.type';
@@ -199,6 +200,27 @@ export class Douyin extends PlatformBase {
           id: v.cid,
           name: v.cha_name,
           view_count: v.view_count,
+        };
+      }),
+    };
+  }
+
+  async getUsers(params: IGetUsersParams) {
+    const usersRes = await douyinService.getUsers(
+      JSON.parse(params.account.loginCookie),
+      params.keyword,
+      params.page,
+    );
+    return {
+      status: usersRes.data.status_code === 8 ? 401 : usersRes.status,
+      data: usersRes.data.user_list.map((v) => {
+        return {
+          image: 'https://p26.douyinpic.com/aweme/' + v.avatar_thumb.uri,
+          id: v.uid,
+          name: v.nickname,
+          unique_id: v.unique_id,
+          des: '',
+          follower_count: v.follower_count,
         };
       }),
     };

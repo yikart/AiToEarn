@@ -16,7 +16,10 @@ import { VideoPubService } from './video/service';
 import { VideoModel } from '../../db/models/video';
 import platController from '../plat';
 import { AccountModel } from '../../db/models/account';
-import type { IGetLocationDataParams } from '../plat/plat.type';
+import type {
+  IGetLocationDataParams,
+  IGetUsersParams,
+} from '../plat/plat.type';
 import { douyinService } from '../../plat/douyin';
 import { shipinhaoService } from '../../plat/shipinhao';
 
@@ -156,6 +159,12 @@ export class PublishController {
     params: IGetLocationDataParams,
   ) {
     return await platController.getLocationData(params);
+  }
+
+  // 获取所有平台的用户数据
+  @Icp('ICP_PUBLISH_GET_USERS')
+  async getUsers(event: Electron.IpcMainInvokeEvent, params: IGetUsersParams) {
+    return await platController.getUsers(params);
   }
 
   // 获取抖音热点数据

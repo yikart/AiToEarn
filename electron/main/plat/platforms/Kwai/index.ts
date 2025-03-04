@@ -12,6 +12,7 @@ import {
   IGetLocationDataParams,
   IGetTopicsParams,
   IGetTopicsResponse,
+  IGetUsersParams,
   IVideoPublishParams,
   VideoCallbackType,
 } from '../../plat.type';
@@ -134,6 +135,13 @@ export class Kwai extends PlatformBase {
           view_count: v.viewCount,
         };
       }),
+    };
+  }
+
+  async getUsers(params: IGetUsersParams) {
+    return {
+      status: 400,
+      data: [],
     };
   }
 

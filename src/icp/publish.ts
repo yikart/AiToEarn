@@ -15,6 +15,8 @@ import {
   type IGetLocationDataParams,
   IGetLocationResponse,
   IGetTopicsResponse,
+  type IGetUsersParams,
+  IGetUsersResponse,
 } from '../../electron/main/plat/plat.type';
 import { AccountInfo } from '@/views/account/comment';
 import { AccountModel } from '../../electron/db/models/account';
@@ -247,5 +249,14 @@ export async function getSphActivity(account: AccountModel, query: string) {
       account,
       query,
     );
+  return res;
+}
+
+// 获取所有平台的用户数据
+export async function icpGetUsers(params: IGetUsersParams) {
+  const res: IGetUsersResponse = await window.ipcRenderer.invoke(
+    'ICP_PUBLISH_GET_USERS',
+    params,
+  );
   return res;
 }

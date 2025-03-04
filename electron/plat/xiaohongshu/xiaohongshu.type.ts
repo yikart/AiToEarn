@@ -40,6 +40,39 @@ interface LocationData {
   search_context: string;
 }
 
+interface XiaohongshuUserBaseDTO {
+  desc: string;
+  image_size_large: string;
+  followed: boolean;
+  show_red_official_verify_icon: boolean;
+  red_id: string;
+  user_id: string;
+  user_nickname: string;
+  image: string;
+  red_official_verified: boolean;
+  red_official_verify_type: number;
+}
+
+interface XiaohongshuUserInfoDTO {
+  user_base_dto: XiaohongshuUserBaseDTO;
+  fans_total: number;
+  discovery_total: number;
+}
+
+interface XiaohongshuResult {
+  success: boolean;
+  code: number;
+  message: string;
+}
+
+interface XiaohongshuData {
+  result: XiaohongshuResult;
+  user_info_dtos: XiaohongshuUserInfoDTO[];
+}
+
+// 搜索用户
+export type XiaohongshuApiResponse = CommonResponse<XiaohongshuData>;
+
 // 话题列表返回值
 export type IXHSTopicsResponse = CommonResponse<TopicsData>;
 

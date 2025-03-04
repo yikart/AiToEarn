@@ -14,6 +14,7 @@ import {
   IGetLocationDataParams,
   IGetTopicsParams,
   IGetTopicsResponse,
+  IGetUsersParams,
   IVideoPublishParams,
   VideoCallbackType,
 } from '../../plat.type';
@@ -125,6 +126,27 @@ export class WxSph extends PlatformBase {
     return {};
   }
 
+  async getUsers(params: IGetUsersParams) {
+    const usersRes = await shipinhaoService.getUsers(
+      JSON.parse(params.account.loginCookie),
+      params.keyword,
+      params.page,
+    );
+    return {
+      status:
+        usersRes.data.errCode === 300334 || usersRes.data.errCode === 300333
+          ? 401
+          : usersRes.status,
+      data: usersRes.data.data.list.map((v) => {
+        return {
+          image: v.headImgUrl,
+          id: v.username,
+          name: v.nickName,
+        };
+      }),
+    };
+  }
+
   async videoPublish(
     params: IVideoPublishParams,
     callback: VideoCallbackType,
@@ -151,6 +173,16 @@ export class WxSph extends PlatformBase {
               },
             }
           : {}),
+        // @用户
+        mentionedUserInfo: params.mentionedUserInfo
+          ? params.mentionedUserInfo.map((v) => {
+              return {
+                nickName: v.label,
+              };
+            })
+          : undefined,
+        // 活动
+        event: params.diffParams![AccountType.WxSph]!.activity,
       },
       callback,
     );
@@ -191,7 +223,7 @@ export class WxSph extends PlatformBase {
         return {
           name: v.name,
           simpleAddress: v.fullAddress,
-          id: v.poiCheckSum,
+          id: v.uid,
           latitude: v.latitude,
           longitude: v.longitude,
           city: v.city,

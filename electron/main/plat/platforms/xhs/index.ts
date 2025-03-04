@@ -14,6 +14,7 @@ import {
   IGetLocationDataParams,
   IGetTopicsParams,
   IGetTopicsResponse,
+  IGetUsersParams,
   IVideoPublishParams,
   VideoCallbackType,
 } from '../../plat.type';
@@ -156,16 +157,23 @@ export class Xhs extends PlatformBase {
             timingTime: params.timingTime?.getTime(),
             privacy: params.visibleType !== VisibleTypeEnum.Public,
             // 位置
-            ...(params.location
+            poiInfo: params.location
               ? {
-                  poiInfo: {
-                    poiType: params.location.poi_type!,
-                    poiId: params.location.id,
-                    poiName: params.location.name,
-                    poiAddress: params.location.simpleAddress,
-                  },
+                  poiType: params.location.poi_type!,
+                  poiId: params.location.id,
+                  poiName: params.location.name,
+                  poiAddress: params.location.simpleAddress,
                 }
-              : {}),
+              : undefined,
+            // @用户
+            mentionedUserInfo: params.mentionedUserInfo
+              ? params.mentionedUserInfo.map((v) => {
+                  return {
+                    nickName: v.label,
+                    uid: `${v.value}`,
+                  };
+                })
+              : undefined,
           },
           callback,
         )
@@ -192,6 +200,24 @@ export class Xhs extends PlatformBase {
     });
   }
 
+  async getUsers(params: IGetUsersParams) {
+    const usersRes = await xiaohongshuService.getUsers(
+      JSON.parse(params.account.loginCookie),
+      params.keyword,
+      params.page,
+    );
+    return {
+      status: usersRes.status,
+      data: usersRes?.data?.data?.user_info_dtos?.map((v) => {
+        return {
+          image: v.user_base_dto.image,
+          id: v.user_base_dto.red_id,
+          name: v.user_base_dto.user_nickname,
+        };
+      }),
+    };
+  }
+
   async getTopics({
     keyword,
     account,
@@ -200,7 +226,6 @@ export class Xhs extends PlatformBase {
       keyword,
       cookies: JSON.parse(account.loginCookie),
     });
-    console.log(res);
     return {
       status: res.status,
       data: res?.data?.data?.topic_info_dtos?.map((v) => {

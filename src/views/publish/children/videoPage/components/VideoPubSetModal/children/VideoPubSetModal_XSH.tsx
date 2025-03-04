@@ -10,6 +10,7 @@ import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import TopicSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/TopicSelect';
 import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
 import { ScheduledTimeSelect } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
+import UserSelect from '../components/UserSelect';
 
 const { TextArea } = Input;
 
@@ -67,6 +68,8 @@ const VideoPubSetModal_KWAI = memo(
             currChooseAccount={currChooseAccount}
             tips="您可以添加20个话题"
           />
+
+          <UserSelect currChooseAccount={currChooseAccount} />
 
           <LocationSelect currChooseAccount={currChooseAccount} />
 

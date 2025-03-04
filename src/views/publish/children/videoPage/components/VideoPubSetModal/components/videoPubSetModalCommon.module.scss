@@ -136,3 +136,28 @@
     }
   }
 }
+
+.usersSelect {
+  display: flex;
+  padding: 3px 0;
+  align-items: center;
+  :global {
+    .usersSelect-con {
+      margin-left: 10px;
+      &-name {
+        font-size: var(--fs-md);
+      }
+      &-footer {
+        margin-top: 5px;
+        font-size: var(--fs-xs);
+        display: flex;
+        &-follower {
+          color: var(--lightGreyColor);
+        }
+        &-unique {
+          margin-left: 20px;
+        }
+      }
+    }
+  }
+}

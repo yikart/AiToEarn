@@ -12,7 +12,7 @@ import {
   VisibleTypeEnum,
 } from '../../../commont/publish/PublishEnum';
 import { AccountType } from '../../../commont/AccountEnum';
-import type { ILocationDataItem } from '../../main/plat/plat.type';
+import type { ILocationDataItem, WxSphEvent } from '../../main/plat/plat.type';
 
 // 包含一个name和一个value的对象
 export interface ILableValue {
@@ -47,7 +47,7 @@ export type DiffParmasType = {
     // 扩展链接
     extLink?: string;
     // 活动
-    activity?: ILableValue;
+    activity?: WxSphEvent;
   };
   [AccountType.KWAI]?: {};
 };
@@ -105,6 +105,10 @@ export class VideoModel extends WorkData {
   // 定时发布日期
   @Column({ type: 'datetime', nullable: true, comment: '定时发布日期' })
   timingTime?: Date;
+
+  // @用户
+  @Column({ type: 'json', nullable: true, comment: '@用户数组' })
+  mentionedUserInfo?: ILableValue[];
 
   // 视频可见性
   @Column({

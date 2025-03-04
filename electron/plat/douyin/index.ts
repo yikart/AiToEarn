@@ -15,6 +15,7 @@ import {
   DouyinHotDataResponse,
   DouyinLocationDataResponse,
   DouyinTopicsSugResponse,
+  DouyinUserListResponse,
 } from './douyin.type';
 import requestNet from '../requestNet';
 import { jsonToQueryString } from '../../util';
@@ -1686,7 +1687,7 @@ export class DouyinService {
     // 处理话题
     if (
       platformSetting.hasOwnProperty('topics') &&
-      platformSetting.topics.length > 0
+      platformSetting.topics?.length > 0
     ) {
       console.log('处理话题标签...');
       for (const topic of platformSetting.topics) {
@@ -1713,7 +1714,7 @@ export class DouyinService {
     // 处理@好友
     if (
       platformSetting.hasOwnProperty('mentionedUserInfo') &&
-      platformSetting.mentionedUserInfo.length > 0
+      platformSetting.mentionedUserInfo?.length > 0
     ) {
       console.log('处理@好友...');
       for (const userInfo of platformSetting.mentionedUserInfo) {
@@ -2123,6 +2124,17 @@ export class DouyinService {
   async getActivityTags(cookie: Electron.Cookie[]) {
     return await requestNet<DouyinActivityTagsResponse>({
       url: `https://creator.douyin.com/web/api/media/activity/tags/query`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'GET',
+    });
+  }
+
+  // 获取@的用户
+  async getUsers(cookie: Electron.Cookie[], keyword: string, page: number) {
+    return await requestNet<DouyinUserListResponse>({
+      url: `https://creator.douyin.com/web/api/v2/discover/search/?search_source=publish_web&count=10&keyword=${keyword}&cursor=${(page - 1) * 10}&scene=1`,
       headers: {
         cookie: CookieToString(cookie),
       },

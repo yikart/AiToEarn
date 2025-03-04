@@ -13,11 +13,12 @@ import {
   IGetLocationResponse,
   IGetTopicsParams,
   IGetTopicsResponse,
+  IGetUsersParams, IGetUsersResponse,
   IVideoPublishParams,
   StatisticsData,
   VideoCallbackType,
-  WorkData,
-} from './plat.type';
+  WorkData
+} from "./plat.type";
 import { PublishVideoResult } from './module';
 import { AccountType } from '../../../commont/AccountEnum';
 import { AccountModel } from '../../db/models/account';
@@ -89,4 +90,7 @@ export abstract class PlatformBase {
   abstract getLocationData(
     params: IGetLocationDataParams,
   ): Promise<IGetLocationResponse>;
+
+  // 获取@用户数据
+  abstract getUsers(params: IGetUsersParams): Promise<IGetUsersResponse>;
 }

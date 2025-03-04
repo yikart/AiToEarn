@@ -11,7 +11,7 @@ import kwai from './platforms/Kwai';
 import xhs from './platforms/xhs';
 import douyin from './platforms/douyin';
 import wxSph from './platforms/wxSph';
-import { IAccountInfoParams, IGetLocationDataParams } from './plat.type';
+import { IAccountInfoParams, IGetLocationDataParams, IGetUsersParams } from "./plat.type";
 import { PublishVideoResult } from './module';
 import { VideoModel } from '../../db/models/video';
 import { PubItemVideo } from './pub/PubItemVideo';
@@ -130,6 +130,12 @@ class PlatController {
       ...params,
       cookie: JSON.parse(params.account!.loginCookie),
     });
+  }
+
+  // 获取用户数据
+  public async getUsers(params: IGetUsersParams) {
+    const platform = this.platforms.get(params.account!.type)!;
+    return await platform.getUsers(params);
   }
 }
 

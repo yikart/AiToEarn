@@ -38,6 +38,7 @@ import {
 import styles from '../components/videoPubSetModalCommon.module.scss';
 import { describeNumber } from '@/utils';
 import { onAccountLoginFinish } from '@/icp/receiveMsg';
+import UserSelect from '../components/UserSelect';
 
 const { TextArea } = Input;
 
@@ -345,6 +346,12 @@ const VideoPubSetModal_KWAI = memo(
             }
             currChooseAccount={currChooseAccount}
             tips="最多可添加5个话题（包含活动奖励）"
+          />
+
+          <UserSelect
+            currChooseAccount={currChooseAccount}
+            maxCount={10}
+            tips="您可以@10个视频号"
           />
 
           <ActivitySelect currChooseAccount={currChooseAccount} />

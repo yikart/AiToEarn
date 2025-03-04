@@ -341,10 +341,7 @@ export const useVideoPageStore = create(
           const findedData = newValue.find((v) => v.id === id);
           if (findedData) {
             for (const key in pubParmas) {
-              if (
-                pubParmas[key as 'title'] !== undefined ||
-                pubParmas[key as 'title'] === ''
-              ) {
+              if (pubParmas.hasOwnProperty(key)) {
                 findedData.pubParams[key as 'title'] =
                   pubParmas[key as 'title'];
               }

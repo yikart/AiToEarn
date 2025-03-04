@@ -218,6 +218,64 @@ interface ActivityInfo {
   show_start_time: string;
 }
 
+interface DouyinUser {
+  avatar_larger: Avatar;
+  avatar_medium: Avatar;
+  avatar_thumb: Avatar;
+  aweme_count: number;
+  card_entries: any;
+  custom_verify: string;
+  enterprise_verify_reason: string;
+  favoriting_count: number;
+  follow_status: number;
+  follower_count: number;
+  follower_status: number;
+  followers_detail: any;
+  following_count: number;
+  geofencing: any;
+  has_orders: boolean;
+  is_ad_fake: boolean;
+  is_gov_media_vip: boolean;
+  mix_info: any;
+  nickname: string;
+  original_musician: OriginalMusician;
+  platform_sync_info: any;
+  policy_version: any;
+  rate: number;
+  region: string;
+  sec_uid: string;
+  secret: number;
+  short_id: string;
+  signature: string;
+  status: number;
+  story_open: boolean;
+  total_favorited: string;
+  type_label: any[];
+  uid: string;
+  unique_id: string;
+  user_canceled: boolean;
+  verification_type: number;
+  video_icon: VideoIcon;
+  with_commerce_entry: boolean;
+  with_fusion_shop_entry: boolean;
+  with_shop_entry: boolean;
+}
+
+interface Avatar {
+  uri: string;
+  url_list: string[];
+}
+
+interface OriginalMusician {
+  music_count: number;
+  music_used_count: number;
+}
+
+interface VideoIcon {
+  uri: string;
+  url_list: string[];
+}
+
 export interface DemoVideo {
   aweme_id: string;
   cha_list?: any;
@@ -323,4 +381,15 @@ export interface DouyinLocationDataResponse {
   status_code: number;
   status_msg: string;
   user_interest_city_code_list: any;
+}
+
+// 抖音用户数据
+export interface DouyinUserListResponse {
+  challenge_list: any[];
+  cursor: number;
+  extra: Extra;
+  has_more: boolean;
+  scene: number;
+  status_code: number;
+  user_list: DouyinUser[];
 }

@@ -27,7 +27,7 @@ export default function TopicSelect<
   const { fetching, options, debounceFetcher } = useDebounceFetcher<ValueType>(
     async (keyword: string): Promise<ValueType[]> => {
       const topics = await icpGetTopic(currChooseAccount.account!, keyword);
-      if (topics.status !== 200) {
+      if (topics.status !== 200 && topics.status !== 201) {
         if (topics.status === 401) {
           currChooseAccount.account!.status = AccountStatus.DISABLE;
           updateAccounts({ accounts: [currChooseAccount.account!] });

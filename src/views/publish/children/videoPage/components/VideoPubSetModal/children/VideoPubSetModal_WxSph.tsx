@@ -17,6 +17,7 @@ import {
 import { getSphActivity } from '@/icp/publish';
 import { ipcUpdateAccountStatus } from '@/icp/account';
 import { WxSphEventList } from '../../../../../../../../electron/plat/shipinhao/wxShp.type';
+import UserSelect from '../components/UserSelect';
 
 const { TextArea } = Input;
 
@@ -57,6 +58,7 @@ const WXSphActivity = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
         notFoundContent={fetching ? <Spin size="small" /> : null}
         options={options?.map((v) => {
           return {
+            ...v,
             label: v.eventName,
             value: v.eventTopicId,
           };
@@ -64,9 +66,9 @@ const WXSphActivity = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
         value={
           currChooseAccount.pubParams!.diffParams![AccountType.WxSph]!.activity
         }
-        onChange={(newValue) => {
+        onChange={(_, value) => {
           const newDiffParams = currChooseAccount.pubParams.diffParams!;
-          newDiffParams[AccountType.WxSph]!.activity = newValue;
+          newDiffParams[AccountType.WxSph]!.activity = value as WxSphEventList;
           setOnePubParams(
             {
               diffParams: newDiffParams,
@@ -174,6 +176,12 @@ const VideoPubSetModal_KWAI = memo(
             您可添加10个标签，按回车键确认
           </p>
 
+          <UserSelect
+            currChooseAccount={currChooseAccount}
+            maxCount={100}
+            tips="您可以添加100个好友"
+          />
+
           <LocationSelect currChooseAccount={currChooseAccount} />
 
           <WXSphActivity currChooseAccount={currChooseAccount} />
@@ -199,7 +207,7 @@ const VideoPubSetModal_KWAI = memo(
 
           <h1>声明原创</h1>
           <Checkbox
-            value={
+            checked={
               currChooseAccount?.pubParams.diffParams![AccountType.WxSph]!
                 .isOriginal
             }

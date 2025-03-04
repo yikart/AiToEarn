@@ -5,7 +5,11 @@ import { CommonUtils } from '../../util/common';
 import { FileUtils } from '../../util/file';
 import { CookieToString, getFileContent } from '../utils';
 import requestNet from '../requestNet';
-import { IXHSLocationResponse, IXHSTopicsResponse } from './xiaohongshu.type';
+import {
+  IXHSLocationResponse,
+  IXHSTopicsResponse,
+  XiaohongshuApiResponse,
+} from './xiaohongshu.type';
 
 export class XiaohongshuService {
   private defaultUserAgent =
@@ -601,7 +605,7 @@ export class XiaohongshuService {
         let remoteVideoId = '';
 
         // 开始上传文件
-        if (filePartInfo.blockInfo.length === 1) {
+        if (filePartInfo.blockInfo?.length === 1) {
           // 获取文件内容
           const fileContent = await FileUtils.getFilePartContent(
             filePath,
@@ -965,7 +969,7 @@ export class XiaohongshuService {
         const hashTag = [];
         if (
           platformSetting.hasOwnProperty('topicsDetail') &&
-          platformSetting.topicsDetail.length > 0
+          platformSetting.topicsDetail?.length > 0
         ) {
           for (const topicInfo of platformSetting.topicsDetail) {
             description += ` #${topicInfo.topicName}[话题]# `;
@@ -980,7 +984,7 @@ export class XiaohongshuService {
         const ats = [];
         if (
           platformSetting.hasOwnProperty('mentionedUserInfo') &&
-          platformSetting.mentionedUserInfo.length > 0
+          platformSetting.mentionedUserInfo?.length > 0
         ) {
           for (const userInfo of platformSetting.mentionedUserInfo) {
             if (
@@ -1140,6 +1144,11 @@ export class XiaohongshuService {
       desc?: string;
       // 定时发布
       timingTime?: number;
+      // @用户
+      mentionedUserInfo?: {
+        nickName: string;
+        uid: string;
+      }[];
       // 话题
       topicsDetail?: {
         topicId: string;
@@ -1316,6 +1325,27 @@ export class XiaohongshuService {
         size: 50,
         source: 'WEB',
         type: 3,
+      },
+    });
+  }
+
+  // 获取@用户列表
+  async getUsers(cookie: Electron.Cookie[], keyword: string, page: number) {
+    return await requestNet<XiaohongshuApiResponse>({
+      url: `https://edith.xiaohongshu.com/web_api/sns/v1/search/user_info`,
+      headers: {
+        cookie: CookieToString(cookie),
+        Referer: this.loginUrl,
+        origin: this.loginUrl,
+      },
+      method: 'POST',
+      body: {
+        keyword,
+        search_id: '',
+        page: {
+          page_size: 10,
+          page,
+        },
       },
     });
   }

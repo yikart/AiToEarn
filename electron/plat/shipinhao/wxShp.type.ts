@@ -51,3 +51,20 @@ export interface WeChatLocationData {
     continueFlag: number;
   };
 }
+
+interface WeChatVideoUser {
+  username: string;
+  headImgUrl: string;
+  nickName: string;
+  authImgUrl: string;
+  authCompanyName: string;
+}
+
+export interface WeChatVideoUserData {
+  errCode: number;
+  errMsg: string;
+  data: {
+    list: WeChatVideoUser[];
+    totalCount: number;
+  };
+}
