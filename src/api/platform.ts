@@ -244,11 +244,19 @@ export const platformApi = {
   },
 
   // 获取平台下指定分类的数据列表（分页）
-  findByPlatformAndCategory(platformId: string) {
+  findByPlatformAndCategory(
+    platformId: string,
+    params: {
+      category?: string;
+      startTime?: Date;
+      endTime?: Date;
+    },
+  ) {
     return hotHttp.get<Pagination<ViralTitle>>(
-      `/viral-titles/platforms/${platformId}/top-by-categories`,
+      `/viral-titles/platforms/${platformId}`,
       {
         isToken: false,
+        params,
       },
     );
   },
