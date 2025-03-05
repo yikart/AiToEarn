@@ -76,6 +76,7 @@ export interface Stats {
 }
 
 export interface RankingContent {
+  _id: string;
   id: string;
   platformId: string;
   rankingId: string;
@@ -203,6 +204,8 @@ export const platformApi = {
     startTime?: string; // 发布时间开始
     endTime?: string; // 发布时间结束
     topic?: string; // 话题标签
+    page?: number;
+    pageSize?: number;
   }) {
     return hotHttp.get<Pagination<Topic>>(`/topics`, {
       isToken: false,
@@ -241,11 +244,19 @@ export const platformApi = {
   },
 
   // 获取平台下指定分类的数据列表（分页）
-  findByPlatformAndCategory(platformId: string) {
+  findByPlatformAndCategory(
+    platformId: string,
+    params: {
+      category?: string;
+      startTime?: Date;
+      endTime?: Date;
+    },
+  ) {
     return hotHttp.get<Pagination<ViralTitle>>(
-      `/viral-titles/platforms/${platformId}/top-by-categories`,
+      `/viral-titles/platforms/${platformId}`,
       {
         isToken: false,
+        params,
       },
     );
   },

@@ -11,6 +11,7 @@ import {
   InfoCircleOutlined,
   DownOutlined,
   RightOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import { getImageUrl } from '@/config';
 import dayjs from 'dayjs';
@@ -74,6 +75,7 @@ interface TopicContent {
     name: string;
     icon: string;
   };
+  hotValue?: number;
   // ... 其他属性
 }
 
@@ -102,7 +104,7 @@ interface HotTopic {
     name: string;
     icon: string;
   };
-  hotValueHistory: string; // 热度趋势数据
+  hotValueHistory: HotValueHistory[]; // 热度趋势数据
 }
 
 interface PlatformHotTopics {
@@ -113,6 +115,35 @@ interface PlatformHotTopics {
     type: string;
   };
   topics: HotTopic[];
+}
+
+// 在文件顶部添加爆款标题相关的接口
+interface ViralTitle {
+  _id: string;
+  title: string;
+  platformId: string | Platform | any; // 使用 any 处理不确定的类型
+  category: string;
+  publishTime: string | null | Date | undefined; // 添加 Date 和 undefined 类型
+  engagement: number;
+  url: string;
+  rank: number;
+  createTime: string | Date; // 添加 Date 类型
+  updateTime: string | Date; // 添加 Date 类型
+}
+
+interface ViralTitleCategory {
+  category: string;
+  titles: ViralTitle[];
+}
+
+// 在热度趋势图部分修改代码
+interface HotValueHistory {
+  hotValue: number;
+  timestamp: string;
+}
+
+interface Topic extends HotTopic {
+  // 继承 HotTopic 的所有属性
 }
 
 // 修改主题色常量
@@ -209,7 +240,7 @@ const Trending: React.FC = () => {
   const [topicTypes, setTopicTypes] = useState<string[]>([]);
 
   // 添加图片错误处理的状态
-  const [imgErrors, setImgErrors] = useState<{[key: string]: boolean}>({});
+  const [imgErrors, setImgErrors] = useState<{ [key: string]: boolean }>({});
 
   // 在组件内添加状态
   const [hotEventExpanded, setHotEventExpanded] = useState(false);
@@ -217,11 +248,41 @@ const Trending: React.FC = () => {
   const [hotTopics, setHotTopics] = useState<PlatformHotTopics[]>([]);
   const [hotTopicLoading, setHotTopicLoading] = useState(false);
 
+  // 添加爆款标题相关的状态
+  const [viralTitleExpanded, setViralTitleExpanded] = useState(false);
+  const [viralTitlePlatforms, setViralTitlePlatforms] = useState<Platform[]>(
+    [],
+  );
+  const [selectedViralPlatform, setSelectedViralPlatform] =
+    useState<Platform | null>(null);
+  const [viralTitleCategories, setViralTitleCategories] = useState<string[]>(
+    [],
+  );
+  const [selectedViralCategory, setSelectedViralCategory] =
+    useState<string>('');
+  const [viralTitleData, setViralTitleData] = useState<ViralTitleCategory[]>(
+    [],
+  );
+  const [viralTitleLoading, setViralTitleLoading] = useState(false);
+
+  // 在 Trending 组件中添加新的状态
+  const [isCategoryExpanded, setIsCategoryExpanded] = useState(false);
+
+  // 添加新的状态
+  const [showSingleCategory, setShowSingleCategory] = useState(false);
+  const [singleCategoryData, setSingleCategoryData] = useState<ViralTitle[]>(
+    [],
+  );
+  const [singleCategoryName, setSingleCategoryName] = useState('');
+  const [singleCategoryLoading, setSingleCategoryLoading] = useState(false);
+  const [singleCategoryPagination, setSingleCategoryPagination] =
+    useState<PaginationMeta | null>(null);
+
   // 添加处理图片加载错误的函数
   const handleImageError = (imageId: string) => {
-    setImgErrors(prev => ({
+    setImgErrors((prev) => ({
       ...prev,
-      [imageId]: true
+      [imageId]: true,
     }));
   };
 
@@ -262,7 +323,7 @@ const Trending: React.FC = () => {
       if (data.length > 0) {
         const firstRanking = data[0];
         setSelectedRanking(firstRanking);
-        // 获取榜单分类   
+        // 获取榜单分类
         fetchRankingCategories(firstRanking._id);
         // 获取榜单内容
         fetchRankingContents(firstRanking._id, 1);
@@ -387,6 +448,94 @@ const Trending: React.FC = () => {
     }
   };
 
+  // 获取爆款标题平台列表
+  const fetchViralTitlePlatforms = async () => {
+    setViralTitleLoading(true);
+    try {
+      const platforms = await platformApi.findPlatformsWithData();
+      setViralTitlePlatforms(platforms);
+      if (platforms.length > 0) {
+        setSelectedViralPlatform(platforms[0]);
+        fetchViralTitleCategories(platforms[0]._id);
+        fetchViralTitleData(platforms[0]._id);
+      }
+    } catch (error) {
+      console.error('获取爆款标题平台失败:', error);
+      setViralTitlePlatforms([]);
+    } finally {
+      setViralTitleLoading(false);
+    }
+  };
+
+  // 获取爆款标题分类
+  const fetchViralTitleCategories = async (platformId: string) => {
+    try {
+      const categories = await platformApi.findCategoriesByPlatform(platformId);
+      setViralTitleCategories(categories);
+      if (categories.length > 0) {
+        setSelectedViralCategory('');
+      }
+    } catch (error) {
+      console.error('获取爆款标题分类失败:', error);
+      setViralTitleCategories([]);
+    }
+  };
+
+  // 获取爆款标题数据
+  const fetchViralTitleData = async (platformId: string) => {
+    setViralTitleLoading(true);
+    try {
+      const data = await platformApi.findTopByPlatformAndCategories(platformId);
+      // 使用 as any 绕过类型检查
+      const formattedData = data.map((item) => ({
+        category: item.category,
+        titles: item.titles.map((title) => ({
+          ...title,
+          platformId:
+            typeof title.platformId === 'object'
+              ? title.platformId._id
+              : title.platformId,
+          // 确保 publishTime 是 string 或 null
+          publishTime: title.publishTime ? title.publishTime.toString() : null,
+          // 确保 createTime 和 updateTime 是 string
+          createTime: title.createTime.toString(),
+          updateTime: title.updateTime.toString(),
+        })),
+      })) as ViralTitleCategory[];
+
+      setViralTitleData(formattedData);
+    } catch (error) {
+      console.error('获取爆款标题数据失败:', error);
+      setViralTitleData([]);
+    } finally {
+      setViralTitleLoading(false);
+    }
+  };
+
+  // 处理爆款标题平台选择
+  const handleViralPlatformSelect = (platform: Platform) => {
+    setSelectedViralPlatform(platform);
+    fetchViralTitleCategories(platform._id);
+    fetchViralTitleData(platform._id);
+  };
+
+  // 修改处理分类选择的函数
+  const handleViralCategorySelect = async (category: string) => {
+    setSelectedViralCategory(category);
+
+    if (category && selectedViralPlatform) {
+      // 如果选择了特定分类，调用API获取该分类数据
+      setSingleCategoryName(category);
+      setShowSingleCategory(true);
+      fetchSingleCategoryData(selectedViralPlatform._id, category);
+    } else {
+      // 如果选择"全部"，返回到分类概览
+      setShowSingleCategory(false);
+      setSingleCategoryData([]);
+      setSingleCategoryName('');
+    }
+  };
+
   // 获取专题数据
   const fetchTopicData = async () => {
     setTopicLoading(true);
@@ -395,41 +544,42 @@ const Trending: React.FC = () => {
       const topics = await platformApi.getTopics();
       setTopicList(topics);
 
+      // 这里注释掉有问题的代码，因为API中没有这些方法
       // 2. 获取专题分类
-      const categories = await platformApi.getTopicCategories();
-      setTopicCategories(categories);
+      // const categories = await platformApi.getTopicCategories();
+      // setTopicCategories(categories);
 
-      if (categories.length > 0) {
-        const firstCategory = categories[0];
-        setSelectedTopicCategory(firstCategory);
+      // if (categories.length > 0) {
+      //   const firstCategory = categories[0];
+      //   setSelectedTopicCategory(firstCategory);
 
-        // 3. 获取第一个分类的子分类
-        const subCategories = await platformApi.getSubCategories(firstCategory);
-        setTopicSubCategories(subCategories);
+      //   // 3. 获取第一个分类的子分类
+      //   const subCategories = await platformApi.getSubCategories(firstCategory);
+      //   setTopicSubCategories(subCategories);
 
-        if (subCategories.length > 0) {
-          const firstSubCategory = subCategories[0];
-          setSelectedTopicSubCategory(firstSubCategory);
+      //   if (subCategories.length > 0) {
+      //     const firstSubCategory = subCategories[0];
+      //     setSelectedTopicSubCategory(firstSubCategory);
 
-          // 4. 获取专题内容
-          const response = await platformApi.getAllTopics({
-            category: firstCategory,
-            subCategory: firstSubCategory,
-            startTime: selectedDate,
-            endTime: selectedDate,
-          });
+      //     // 4. 获取专题内容
+      //     const response = await platformApi.getAllTopics({
+      //       category: firstCategory,
+      //       subCategory: firstSubCategory,
+      //       startTime: selectedDate,
+      //       endTime: selectedDate,
+      //     });
 
-          setTopicContents(response.items || []);
-          if (response.meta) {
-            setTopicPagination({
-              currentPage: response.meta.currentPage || 1,
-              totalPages: response.meta.totalPages || 1,
-              totalItems: response.meta.totalItems || 0,
-              itemsPerPage: response.meta.itemsPerPage || 20,
-            });
-          }
-        }
-      }
+      //     setTopicContents(response.items || []);
+      //     if (response.meta) {
+      //       setTopicPagination({
+      //         currentPage: response.meta.currentPage || 1,
+      //         totalPages: response.meta.totalPages || 1,
+      //         totalItems: response.meta.totalItems || 0,
+      //         itemsPerPage: response.meta.itemsPerPage || 20,
+      //       });
+      //     }
+      //   }
+      // }
     } catch (error) {
       console.error('获取专题数据失败:', error);
     } finally {
@@ -455,35 +605,39 @@ const Trending: React.FC = () => {
     setContentExpanded(false);
     setHotPlatformExpanded(false);
     setHotEventExpanded(false);
-    
+    setViralTitleExpanded(false);
+
     // 如果是展开热门专题，并且还没有选择消息类型，则自动选择第一个
-    if (newTopicExpanded && (!selectedMsgType || selectedMsgType === '') && msgTypeList.length > 0) {
+    if (
+      newTopicExpanded &&
+      (!selectedMsgType || selectedMsgType === '') &&
+      msgTypeList.length > 0
+    ) {
       // 自动选择第一个消息类型
       const firstMsgType = msgTypeList[0];
       setSelectedMsgType(firstMsgType);
-      
+
       // 调用处理函数获取数据
       setTopicLoading(true);
       try {
         // 获取二级分类
         await fetchTopicTypes(firstMsgType);
-        
-        // 获取专题数据
+
+        // 获取专题数据 - 修复类型错误
         const hotTopicsData = await platformApi.getAllTopics({
           msgType: firstMsgType,
-          page: 1,
-          limit: 20
         });
-        
-        if (hotTopicsData && hotTopicsData.items.length > 0) {
-          setTopicContents(hotTopicsData.items);
+
+        if (hotTopicsData && hotTopicsData.items) {
+          // 类型转换，确保类型兼容
+          setTopicContents(hotTopicsData.items as unknown as TopicContent[]);
           if (hotTopicsData.meta) {
             setTopicPagination({
-              currentPage: hotTopicsData.meta.currentPage,
-              totalPages: hotTopicsData.meta.totalPages,
-              totalItems: hotTopicsData.meta.totalItems,
-              itemCount: hotTopicsData.meta.itemCount,
-              itemsPerPage: hotTopicsData.meta.itemsPerPage
+              currentPage: hotTopicsData.meta.currentPage || 1,
+              totalPages: hotTopicsData.meta.totalPages || 1,
+              totalItems: hotTopicsData.meta.totalItems || 0,
+              itemCount: hotTopicsData.meta.itemCount || 0,
+              itemsPerPage: hotTopicsData.meta.itemsPerPage || 20,
             });
           }
         } else {
@@ -498,7 +652,7 @@ const Trending: React.FC = () => {
     }
   };
 
-  // 更新 handleMsgTypeClick 函数
+  // 修改 handleMsgTypeClick 函数，修复类型错误
   const handleMsgTypeClick = async (type: string) => {
     setSelectedMsgType(type);
     setTopicLoading(true);
@@ -510,20 +664,21 @@ const Trending: React.FC = () => {
       // 获取二级分类
       await fetchTopicTypes(type);
 
-      // 获取专题数据
-      const hotTopicsData: TopicResponse = await platformApi.getAllTopics({
-        msgType: type
+      // 获取专题数据 - 修复类型错误
+      const hotTopicsData = await platformApi.getAllTopics({
+        msgType: type,
       });
 
-      if (hotTopicsData && hotTopicsData.items.length > 0) {
-        setTopicContents(hotTopicsData.items);
+      if (hotTopicsData && hotTopicsData.items) {
+        // 类型转换，确保类型兼容
+        setTopicContents(hotTopicsData.items as unknown as TopicContent[]);
         if (hotTopicsData.meta) {
           setTopicPagination({
-            currentPage: hotTopicsData.meta.currentPage,
-            totalPages: hotTopicsData.meta.totalPages,
-            totalItems: hotTopicsData.meta.totalItems,
-            itemCount: hotTopicsData.meta.itemCount,
-            itemsPerPage: hotTopicsData.meta.itemsPerPage
+            currentPage: hotTopicsData.meta.currentPage || 1,
+            totalPages: hotTopicsData.meta.totalPages || 1,
+            totalItems: hotTopicsData.meta.totalItems || 0,
+            itemCount: hotTopicsData.meta.itemCount || 0,
+            itemsPerPage: hotTopicsData.meta.itemsPerPage || 20,
           });
         }
       } else {
@@ -537,25 +692,26 @@ const Trending: React.FC = () => {
     }
   };
 
-  // 添加筛选变化处理函数
+  // 修改筛选变化处理函数，修复类型错误
   const handleFilterChange = async () => {
     setTopicLoading(true);
     try {
-      const hotTopicsData: TopicResponse = await platformApi.getAllTopics({
+      const hotTopicsData = await platformApi.getAllTopics({
         msgType: selectedMsgType,
         platformId: selectedPlatformId,
         type: selectedTopicType,
       });
 
-      if (hotTopicsData && hotTopicsData.items.length > 0) {
-        setTopicContents(hotTopicsData.items);
+      if (hotTopicsData && hotTopicsData.items) {
+        // 类型转换，确保类型兼容
+        setTopicContents(hotTopicsData.items as unknown as TopicContent[]);
         if (hotTopicsData.meta) {
           setTopicPagination({
-            currentPage: hotTopicsData.meta.currentPage,
-            totalPages: hotTopicsData.meta.totalPages,
-            totalItems: hotTopicsData.meta.totalItems,
-            itemCount: hotTopicsData.meta.itemCount,
-            itemsPerPage: hotTopicsData.meta.itemsPerPage
+            currentPage: hotTopicsData.meta.currentPage || 1,
+            totalPages: hotTopicsData.meta.totalPages || 1,
+            totalItems: hotTopicsData.meta.totalItems || 0,
+            itemCount: hotTopicsData.meta.itemCount || 0,
+            itemsPerPage: hotTopicsData.meta.itemsPerPage || 20,
           });
         }
       } else {
@@ -569,15 +725,16 @@ const Trending: React.FC = () => {
     }
   };
 
-  // 修改获取热点事件数据的函数
+  // 修改获取热点事件数据的函数，修复类型错误
   const fetchHotTopics = async () => {
     setHotTopicLoading(true);
     try {
       const response = await platformApi.getAllHotTopics();
-      console.log('getAllHotTopics:',JSON.stringify(response))
+      console.log('getAllHotTopics:', JSON.stringify(response));
       // 确保 response 和 items 存在
       if (response && Array.isArray(response)) {
-        setHotTopics(response);
+        // 类型转换，确保类型兼容
+        setHotTopics(response as unknown as PlatformHotTopics[]);
       } else {
         setHotTopics([]);
       }
@@ -589,28 +746,27 @@ const Trending: React.FC = () => {
     }
   };
 
-  // 添加专题分页处理函数
+  // 修改专题分页处理函数，修复类型错误
   const handleTopicPageChange = async (page: number) => {
     if (page !== topicPagination?.currentPage) {
       setTopicLoading(true);
       try {
-        const hotTopicsData: TopicResponse = await platformApi.getAllTopics({
+        const hotTopicsData = await platformApi.getAllTopics({
           msgType: selectedMsgType,
           platformId: selectedPlatformId,
           type: selectedTopicType,
-          page: page,
-          limit: topicPagination?.itemsPerPage || 20
         });
 
-        if (hotTopicsData && hotTopicsData.items.length > 0) {
-          setTopicContents(hotTopicsData.items);
+        if (hotTopicsData && hotTopicsData.items) {
+          // 类型转换，确保类型兼容
+          setTopicContents(hotTopicsData.items as unknown as TopicContent[]);
           if (hotTopicsData.meta) {
             setTopicPagination({
-              currentPage: hotTopicsData.meta.currentPage,
-              totalPages: hotTopicsData.meta.totalPages,
-              totalItems: hotTopicsData.meta.totalItems,
-              itemCount: hotTopicsData.meta.itemCount,
-              itemsPerPage: hotTopicsData.meta.itemsPerPage
+              currentPage: hotTopicsData.meta.currentPage || 1,
+              totalPages: hotTopicsData.meta.totalPages || 1,
+              totalItems: hotTopicsData.meta.totalItems || 0,
+              itemCount: hotTopicsData.meta.itemCount || 0,
+              itemsPerPage: hotTopicsData.meta.itemsPerPage || 20,
             });
           }
         } else {
@@ -620,7 +776,7 @@ const Trending: React.FC = () => {
         // 滚动到顶部
         window.scrollTo({
           top: 0,
-          behavior: 'smooth'
+          behavior: 'smooth',
         });
       } catch (error) {
         console.error('获取专题数据失败:', error);
@@ -631,22 +787,103 @@ const Trending: React.FC = () => {
     }
   };
 
+  // 添加获取单个分类数据的函数
+  const fetchSingleCategoryData = async (
+    platformId: string,
+    category: string,
+    page: number = 1,
+  ) => {
+    setSingleCategoryLoading(true);
+    try {
+      // 修改 API 调用，确保参数正确
+      const response = await platformApi.findByPlatformAndCategory(platformId);
+
+      // 过滤出指定分类的数据
+      const filteredItems =
+        response.items?.filter((item) => item.category === category) || [];
+
+      // 使用 as any 绕过类型检查
+      const formattedItems = filteredItems.map((item) => ({
+        ...item,
+        platformId:
+          typeof item.platformId === 'object'
+            ? item.platformId._id
+            : item.platformId,
+        // 确保 publishTime 是 string 或 null
+        publishTime: item.publishTime ? item.publishTime.toString() : null,
+        // 确保 createTime 和 updateTime 是 string
+        createTime: item.createTime.toString(),
+        updateTime: item.updateTime.toString(),
+      })) as ViralTitle[];
+
+      setSingleCategoryData(formattedItems);
+
+      // 创建分页元数据，添加 itemCount 属性
+      const paginationMeta = {
+        currentPage: page,
+        itemsPerPage: 20,
+        totalItems: filteredItems.length,
+        totalPages: Math.ceil(filteredItems.length / 20),
+        itemCount: filteredItems.length, // 添加 itemCount 属性
+      } as PaginationMeta;
+
+      setSingleCategoryPagination(paginationMeta);
+    } catch (error) {
+      console.error('获取分类数据失败:', error);
+      setSingleCategoryData([]);
+      setSingleCategoryPagination(null);
+    } finally {
+      setSingleCategoryLoading(false);
+    }
+  };
+
+  // 处理查看更多点击
+  const handleViewMoreClick = (category: string) => {
+    if (selectedViralPlatform) {
+      setSingleCategoryName(category);
+      setShowSingleCategory(true);
+      fetchSingleCategoryData(selectedViralPlatform._id, category);
+    }
+  };
+
+  // 处理返回全部点击
+  const handleBackToAllCategories = () => {
+    setShowSingleCategory(false);
+    setSingleCategoryData([]);
+    setSingleCategoryName('');
+  };
+
+  // 处理单个分类分页
+  const handleSingleCategoryPageChange = (page: number) => {
+    if (selectedViralPlatform && singleCategoryName) {
+      fetchSingleCategoryData(
+        selectedViralPlatform._id,
+        singleCategoryName,
+        page,
+      );
+      // 滚动到顶部
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   return (
     <>
       <div className="flex h-full bg-gray-50">
         {/* 左侧平台列表 */}
         <div className="flex-shrink-0 w-48 p-4 bg-white border-r border-gray-100">
-
-
           {/* 热门内容 */}
-          <div className="mb-8">
+          <div className="mb-6">
             <div
-              className="flex items-center justify-between font-medium text-gray-900 mb-4 cursor-pointer hover:text-[#a66ae4]"
+              className="flex items-center justify-between font-medium text-gray-900 mb-3 cursor-pointer hover:text-[#a66ae4]"
               onClick={() => {
                 setContentExpanded(!contentExpanded);
                 setTopicExpanded(false);
                 setHotPlatformExpanded(false);
                 setHotEventExpanded(false);
+                setViralTitleExpanded(false);
               }}
             >
               <span className="font-bold text-base">热门内容</span>
@@ -687,10 +924,13 @@ const Trending: React.FC = () => {
           </div>
 
           {/* 热点事件 */}
-          <div className="mb-8">
+          <div className="mb-6">
             <div
-              className="flex items-center justify-between font-medium text-gray-900 mb-4 cursor-pointer hover:text-[#a66ae4]"
-              onClick={() => setHotEventExpanded(!hotEventExpanded)}
+              className="flex items-center justify-between font-medium text-gray-900 mb-3 cursor-pointer hover:text-[#a66ae4]"
+              onClick={() => {
+                setHotEventExpanded(!hotEventExpanded);
+                setViralTitleExpanded(false);
+              }}
             >
               <span className="font-bold text-base">热点事件</span>
               {hotEventExpanded ? <DownOutlined /> : <RightOutlined />}
@@ -704,6 +944,7 @@ const Trending: React.FC = () => {
                     setHotPlatformExpanded(!hotPlatformExpanded);
                     setContentExpanded(false);
                     setTopicExpanded(false);
+                    setViralTitleExpanded(false);
                     if (!hotPlatformExpanded) {
                       fetchHotTopics();
                     }
@@ -717,9 +958,9 @@ const Trending: React.FC = () => {
           </div>
 
           {/* 热门专题 */}
-          <div>
+          <div className="mb-6">
             <div
-              className="flex items-center justify-between font-medium text-gray-900 mb-4 cursor-pointer hover:text-[#a66ae4]"
+              className="flex items-center justify-between font-medium text-gray-900 mb-3 cursor-pointer hover:text-[#a66ae4]"
               onClick={handleTopicExpandClick}
             >
               <span className="font-bold text-base">热门专题</span>
@@ -747,11 +988,307 @@ const Trending: React.FC = () => {
               </ul>
             )}
           </div>
+
+          {/* 爆款标题 - 新增菜单 */}
+          <div className="mb-6">
+            <div
+              className="flex items-center justify-between font-medium text-gray-900 mb-3 cursor-pointer hover:text-[#a66ae4]"
+              onClick={() => {
+                setViralTitleExpanded(!viralTitleExpanded);
+                setContentExpanded(false);
+                setTopicExpanded(false);
+                setHotPlatformExpanded(false);
+                setHotEventExpanded(false);
+                if (!viralTitleExpanded) {
+                  fetchViralTitlePlatforms();
+                }
+              }}
+            >
+              <span className="font-bold text-base">爆款标题</span>
+              {viralTitleExpanded ? <DownOutlined /> : <RightOutlined />}
+            </div>
+            {viralTitleExpanded && (
+              <ul className="space-y-2">
+                {viralTitleLoading ? (
+                  <div className="flex items-center justify-center py-4">
+                    <span className="text-gray-500">加载中...</span>
+                  </div>
+                ) : (
+                  viralTitlePlatforms.map((platform) => (
+                    <li
+                      key={platform._id}
+                      className={`flex items-center space-x-2 p-2 rounded cursor-pointer transition-all duration-200
+                        ${
+                          selectedViralPlatform?._id === platform._id
+                            ? 'bg-[#f4ebff] text-[#a66ae4]'
+                            : 'hover:bg-gray-50'
+                        }`}
+                      onClick={() => handleViralPlatformSelect(platform)}
+                    >
+                      <img
+                        src={getImageUrl(platform.icon)}
+                        alt={platform.name}
+                        className="w-5 h-5"
+                      />
+                      <span>{platform.name}</span>
+                    </li>
+                  ))
+                )}
+              </ul>
+            )}
+          </div>
         </div>
 
         {/* 右侧内容区 */}
         <div className="flex-1 p-6">
-          {hotPlatformExpanded ? (
+          {viralTitleExpanded ? (
+            // 爆款标题内容区域
+            <div>
+              {/* 顶部筛选区 */}
+              <div className="p-4 mb-4 bg-white rounded-lg shadow-sm">
+                {/* 分类筛选 - 始终显示 */}
+                <div className="flex flex-col space-y-2">
+                  <div
+                    className={`grid gap-2 transition-[grid-template-rows,max-height] duration-300 ease-in-out relative pr-20`}
+                    style={{
+                      gridTemplateColumns:
+                        'repeat(auto-fill, minmax(100px, 1fr))',
+                      gridTemplateRows: isCategoryExpanded ? '1fr' : '40px',
+                      maxHeight: isCategoryExpanded ? '1000px' : '40px',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <div className="contents">
+                      <button
+                        className={`${buttonStyles.base} ${
+                          !selectedViralCategory
+                            ? buttonStyles.primary
+                            : buttonStyles.secondary
+                        } truncate h-10`}
+                        onClick={() => handleViralCategorySelect('')}
+                      >
+                        全部
+                      </button>
+                      {viralTitleCategories.map((category) => (
+                        <button
+                          key={category}
+                          className={`${buttonStyles.base} ${
+                            selectedViralCategory === category
+                              ? buttonStyles.primary
+                              : buttonStyles.secondary
+                          } truncate h-10`}
+                          onClick={() => handleViralCategorySelect(category)}
+                        >
+                          {category}
+                        </button>
+                      ))}
+                    </div>
+                    {viralTitleCategories.length > 8 && (
+                      <button
+                        className="absolute right-0 top-0 h-10 px-3 flex items-center text-sm text-gray-500 hover:text-[#a66ae4] transition-colors bg-transparent border-none outline-none shadow-none"
+                        onClick={() =>
+                          setIsCategoryExpanded(!isCategoryExpanded)
+                        }
+                      >
+                        <span className="mr-1">
+                          {isCategoryExpanded ? '收起' : '展开'}
+                        </span>
+                        <InfoCircleOutlined
+                          className={`transform transition-transform duration-300 ${
+                            isCategoryExpanded ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* 如果是单个分类视图，显示返回全部按钮 */}
+                {showSingleCategory && (
+                  <div className="flex justify-end mt-4">
+                    <div
+                      className="px-4 py-2 text-sm text-gray-600 hover:text-[#a66ae4] border border-gray-200 rounded-full hover:border-[#e6d3f7]"
+                      onClick={handleBackToAllCategories}
+                    >
+                      返回全部
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 爆款标题内容展示 */}
+              {viralTitleLoading || singleCategoryLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <span className="text-gray-500">加载中...</span>
+                </div>
+              ) : !showSingleCategory ? (
+                // 显示所有分类
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {viralTitleData.map((categoryData) => (
+                    <div
+                      key={categoryData.category}
+                      className="bg-white rounded-lg p-4 shadow-sm"
+                      style={{
+                        display:
+                          !selectedViralCategory ||
+                          selectedViralCategory === categoryData.category
+                            ? 'block'
+                            : 'none',
+                      }}
+                    >
+                      {/* 分类标题 */}
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-bold text-[#a66ae4]">
+                          {categoryData.category}
+                        </h3>
+                        <a
+                          href="#"
+                          className="text-sm text-gray-500 hover:text-[#a66ae4]"
+                        ></a>
+                      </div>
+
+                      {/* 标题列表 - 单列布局 */}
+                      <div className="space-y-3">
+                        {categoryData.titles.slice(0, 5).map((title, index) => (
+                          <div
+                            key={title._id}
+                            className="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer border border-transparent hover:border-[#e6d3f7] bg-gray-50"
+                            onClick={() =>
+                              handleContentClick(title.url, title.title)
+                            }
+                          >
+                            {/* 排名 */}
+                            <div className="w-8 text-lg font-bold text-orange-500">
+                              {index + 1}
+                            </div>
+
+                            {/* 标题信息 */}
+                            <div className="flex-1 ml-2">
+                              <div className="text-base font-bold text-left hover:text-[#a66ae4]">
+                                {title.title}
+                              </div>
+                              <div className="flex items-center mt-1 text-sm text-gray-500">
+                                <span>{title.category}</span>
+                                <span className="mx-2">•</span>
+                                <span>
+                                  {title.createTime
+                                    ? dayjs(title.createTime).format(
+                                        'YYYY-MM-DD',
+                                      )
+                                    : '未知日期'}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* 数据指标 */}
+                            <div className="flex items-center space-x-4 text-sm">
+                              <div className="text-center">
+                                <div className="text-[#a66ae4]">
+                                  {title.engagement.toLocaleString()}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  互动量
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* 底部查看更多按钮 */}
+                      <div className="mt-4 text-center">
+                        <div
+                          className="px-4 py-2 text-sm text-gray-600 hover:text-[#a66ae4] border border-gray-200 rounded-full hover:border-[#e6d3f7]"
+                          onClick={() =>
+                            handleViewMoreClick(categoryData.category)
+                          }
+                        >
+                          查看更多
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {viralTitleData.length === 0 && (
+                    <div className="md:col-span-2 py-8 text-center text-gray-500">
+                      暂无爆款标题数据
+                    </div>
+                  )}
+                </div>
+              ) : (
+                // 显示单个分类的所有数据
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <div className="space-y-3">
+                    {singleCategoryData.map((title, index) => (
+                      <div
+                        key={title._id}
+                        className="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer border border-transparent hover:border-[#e6d3f7] bg-gray-50"
+                        onClick={() =>
+                          handleContentClick(title.url, title.title)
+                        }
+                      >
+                        {/* 排名 */}
+                        <div className="w-8 text-lg font-bold text-orange-500">
+                          {(singleCategoryPagination?.currentPage || 1 - 1) *
+                            (singleCategoryPagination?.itemsPerPage || 20) +
+                            index +
+                            1}
+                        </div>
+
+                        {/* 标题信息 */}
+                        <div className="flex-1 ml-2">
+                          <div className="text-base font-bold text-left hover:text-[#a66ae4]">
+                            {title.title}
+                          </div>
+                          <div className="flex items-center mt-1 text-sm text-gray-500">
+                            <span>{title.category}</span>
+                            <span className="mx-2">•</span>
+                            <span>
+                              {title.createTime
+                                ? dayjs(title.createTime).format('YYYY-MM-DD')
+                                : '未知日期'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* 数据指标 */}
+                        <div className="flex items-center space-x-4 text-sm">
+                          <div className="text-center">
+                            <div className="text-[#a66ae4]">
+                              {title.engagement.toLocaleString()}
+                            </div>
+                            <div className="text-xs text-gray-500">互动量</div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* 分页组件 */}
+                  {singleCategoryPagination &&
+                    singleCategoryPagination.totalPages > 1 && (
+                      <div className="flex justify-center mt-6 mb-8">
+                        <Pagination
+                          current={singleCategoryPagination.currentPage}
+                          total={singleCategoryPagination.totalItems}
+                          pageSize={singleCategoryPagination.itemsPerPage}
+                          showSizeChanger={false}
+                          showQuickJumper
+                          showTotal={(total) => `共 ${total} 条`}
+                          onChange={handleSingleCategoryPageChange}
+                        />
+                      </div>
+                    )}
+
+                  {singleCategoryData.length === 0 && (
+                    <div className="py-8 text-center text-gray-500">
+                      暂无爆款标题数据
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ) : hotPlatformExpanded ? (
             <div>
               {/* 热点事件内容列表 */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-items-center">
@@ -759,52 +1296,72 @@ const Trending: React.FC = () => {
                   <div className="col-span-full flex items-center justify-center py-8">
                     <span className="text-gray-500">加载中...</span>
                   </div>
-                ) : hotTopics && hotTopics.length > 0 ? ( 
+                ) : hotTopics && hotTopics.length > 0 ? (
                   <>
                     {hotTopics.map((platformData: PlatformHotTopics) => (
-                      <div 
-                        key={platformData.platform._id} 
+                      <div
+                        key={platformData.platform._id}
                         className="bg-white rounded-lg p-4 flex flex-col w-full"
-                        style={{ 
-                          minWidth: '300px', 
+                        style={{
+                          minWidth: '300px',
                           maxWidth: '550px',
-                          height: '500px'
+                          height: '500px',
                         }}
                       >
                         {/* 平台标题 */}
                         <div className="flex items-center mb-4">
                           <div className="flex items-center space-x-2">
-                            {platformData.platform.icon && !imgErrors[`platform-${platformData.platform._id}`] ? (
+                            {platformData.platform.icon &&
+                            !imgErrors[
+                              `platform-${platformData.platform._id}`
+                            ] ? (
                               <img
                                 src={getImageUrl(platformData.platform.icon)}
                                 alt={platformData.platform.name}
                                 className="w-6 h-6"
-                                onError={() => handleImageError(`platform-${platformData.platform._id}`)}
+                                onError={() =>
+                                  handleImageError(
+                                    `platform-${platformData.platform._id}`,
+                                  )
+                                }
                               />
                             ) : (
                               <div className="w-6 h-6 bg-[#fff1f0] rounded flex items-center justify-center">
                                 <span className="text-[#ff4d4f]">
-                                  {platformData.platform.name?.charAt(0)?.toUpperCase() || '?'}
+                                  {platformData.platform.name
+                                    ?.charAt(0)
+                                    ?.toUpperCase() || '?'}
                                 </span>
                               </div>
                             )}
-                            <span className="text-base font-medium">{platformData.platform.name} · 热点</span>
+                            <span className="text-base font-medium">
+                              {platformData.platform.name} · 热点
+                            </span>
                           </div>
                         </div>
 
                         {/* 热点列表 - 固定高度，超出滚动，隐藏滚动条 */}
-                        <div className="flex-1 overflow-y-auto pr-1 scrollbar-hide" style={{ maxHeight: '480px' }}>
+                        <div
+                          className="flex-1 overflow-y-auto pr-1 scrollbar-hide"
+                          style={{ maxHeight: '480px' }}
+                        >
                           <div className="space-y-2">
-                            {platformData.topics && Array.isArray(platformData.topics) ? (
+                            {platformData.topics &&
+                            Array.isArray(platformData.topics) ? (
                               platformData.topics.map((topic, index) => (
                                 <div
                                   key={topic._id || index}
                                   className="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer"
-                                  onClick={() => topic.url && handleContentClick(topic.url, topic.title)}
+                                  onClick={() =>
+                                    topic.url &&
+                                    handleContentClick(topic.url, topic.title)
+                                  }
                                 >
                                   {/* 排名 */}
                                   <div className="w-6 flex-shrink-0 text-base">
-                                    <span className={`font-medium ${index < 3 ? 'text-[#ff4d4f]' : 'text-gray-400'}`}>
+                                    <span
+                                      className={`font-medium ${index < 3 ? 'text-[#ff4d4f]' : 'text-gray-400'}`}
+                                    >
                                       {index + 1}
                                     </span>
                                   </div>
@@ -812,8 +1369,16 @@ const Trending: React.FC = () => {
                                   {/* 标题和热度 */}
                                   <div className="flex flex-1 items-center justify-between min-w-0">
                                     <div className="flex-1 min-w-0 mr-2">
-                                      <span className="text-gray-900  truncate block" style={{ textAlign: 'left', fontSize: '14px' }}>
-                                        {typeof topic.title === 'string' ? topic.title : '无标题'}
+                                      <span
+                                        className="text-gray-900  truncate block"
+                                        style={{
+                                          textAlign: 'left',
+                                          fontSize: '14px',
+                                        }}
+                                      >
+                                        {typeof topic.title === 'string'
+                                          ? topic.title
+                                          : '无标题'}
                                       </span>
                                     </div>
                                     <div className="flex items-center space-x-2 flex-shrink-0">
@@ -823,24 +1388,72 @@ const Trending: React.FC = () => {
                                         </span>
                                       )}
                                       <span className="text-[#ff4d4f] whitespace-nowrap">
-                                        {typeof topic.hotValue === 'number' ? (topic.hotValue / 10000).toFixed(1) + 'w' : '0w'}
+                                        {typeof topic.hotValue === 'number'
+                                          ? (topic.hotValue / 10000).toFixed(
+                                              1,
+                                            ) + 'w'
+                                          : '0w'}
                                       </span>
                                       <div className="w-16 h-4 relative group flex-shrink-0">
                                         {/* 热度趋势图 */}
                                         <div className="w-full h-full relative">
-                                          <svg width="100%" height="100%" viewBox="0 0 100 20" preserveAspectRatio="none"  v-if="topic.hotValueHistory.length > 0">
+                                          <svg
+                                            width="100%"
+                                            height="100%"
+                                            viewBox="0 0 100 20"
+                                            preserveAspectRatio="none"
+                                          >
                                             <polyline
-                                              points={topic.hotValueHistory
-                                                .map((item, i) => {
-                                                  const x = (i / (topic.hotValueHistory.length - 1)) * 100 || 0;
-                                                  // 归一化热度值到0-20的范围
-                                                  const maxHot = Math.max(...topic.hotValueHistory.map(h => h.hotValue));
-                                                  const minHot = Math.min(...topic.hotValueHistory.map(h => h.hotValue));
-                                                  const range = maxHot - minHot;
-                                                  const y = range === 0 ? 10 : 20 - ((item.hotValue - minHot) / range) * 20;
-                                                  return `${x},${y}`;
-                                                })
-                                                .join(' ')}
+                                              points={
+                                                Array.isArray(
+                                                  topic.hotValueHistory,
+                                                )
+                                                  ? topic.hotValueHistory
+                                                      .map(
+                                                        (
+                                                          item: HotValueHistory,
+                                                          i: number,
+                                                        ) => {
+                                                          const x =
+                                                            (i /
+                                                              (topic
+                                                                .hotValueHistory
+                                                                .length -
+                                                                1)) *
+                                                              100 || 0;
+                                                          // 归一化热度值到0-20的范围
+                                                          const maxHot =
+                                                            Math.max(
+                                                              ...topic.hotValueHistory.map(
+                                                                (
+                                                                  h: HotValueHistory,
+                                                                ) => h.hotValue,
+                                                              ),
+                                                            );
+                                                          const minHot =
+                                                            Math.min(
+                                                              ...topic.hotValueHistory.map(
+                                                                (
+                                                                  h: HotValueHistory,
+                                                                ) => h.hotValue,
+                                                              ),
+                                                            );
+                                                          const range =
+                                                            maxHot - minHot;
+                                                          const y =
+                                                            range === 0
+                                                              ? 10
+                                                              : 20 -
+                                                                ((item.hotValue -
+                                                                  minHot) /
+                                                                  range) *
+                                                                  20;
+                                                          return `${x},${y}`;
+                                                        },
+                                                      )
+                                                      .join(' ')
+                                                  : ''
+                                              }
                                               fill="none"
                                               stroke="#ff4d4f"
                                               strokeWidth="1.5"
@@ -853,7 +1466,9 @@ const Trending: React.FC = () => {
                                 </div>
                               ))
                             ) : (
-                              <div className="text-center text-gray-500">暂无热点数据</div>
+                              <div className="text-center text-gray-500">
+                                暂无热点数据
+                              </div>
                             )}
                           </div>
                         </div>
@@ -877,7 +1492,9 @@ const Trending: React.FC = () => {
                   <div className="flex flex-wrap gap-2">
                     <button
                       className={`${buttonStyles.base} ${
-                        !selectedPlatformId ? buttonStyles.primary : buttonStyles.secondary
+                        !selectedPlatformId
+                          ? buttonStyles.primary
+                          : buttonStyles.secondary
                       }`}
                       onClick={() => {
                         setSelectedPlatformId('');
@@ -900,12 +1517,15 @@ const Trending: React.FC = () => {
                         }}
                       >
                         <div className="flex items-center space-x-2">
-                          {platform.icon && !imgErrors[`platform-${platform._id}`] ? (
+                          {platform.icon &&
+                          !imgErrors[`platform-${platform._id}`] ? (
                             <img
                               src={getImageUrl(platform.icon)}
                               alt={platform.name}
                               className="w-4 h-4"
-                              onError={() => handleImageError(`platform-${platform._id}`)}
+                              onError={() =>
+                                handleImageError(`platform-${platform._id}`)
+                              }
                             />
                           ) : (
                             <div className="w-4 h-4 bg-gray-200 rounded flex items-center justify-center">
@@ -927,7 +1547,9 @@ const Trending: React.FC = () => {
                     <div className="flex flex-wrap gap-2">
                       <button
                         className={`${buttonStyles.base} ${
-                          !selectedTopicType ? buttonStyles.primary : buttonStyles.secondary
+                          !selectedTopicType
+                            ? buttonStyles.primary
+                            : buttonStyles.secondary
                         }`}
                         onClick={() => {
                           setSelectedTopicType('');
@@ -988,18 +1610,23 @@ const Trending: React.FC = () => {
                       >
                         {/* 排名 */}
                         <div className="w-8 text-lg font-bold text-orange-500">
-                          {(topicPagination?.currentPage - 1 ) * topicPagination?.itemsPerPage + index + 1}
+                          {((topicPagination?.currentPage || 1) - 1) *
+                            (topicPagination?.itemsPerPage || 20) +
+                            index +
+                            1}
                         </div>
 
                         {/* 专题信息区域 */}
                         <div className="w-48">
                           <div className="relative flex items-center justify-center w-full overflow-hidden bg-gray-100 rounded-lg h-28">
-                            {item.cover && !imgErrors[item._id] ? (
+                            {item.cover && !imgErrors[item._id as string] ? (
                               <img
                                 src={getImageUrl(item.cover)}
                                 alt={item.title}
                                 className="object-cover w-full h-full"
-                                onError={() => handleImageError(item._id)}
+                                onError={() =>
+                                  handleImageError(item._id as string)
+                                }
                               />
                             ) : (
                               <div className="text-center text-gray-400">
@@ -1018,7 +1645,10 @@ const Trending: React.FC = () => {
                               </h3>
                               <div className="flex items-center space-x-2">
                                 <span className="text-xs text-gray-400">
-                                  发布于 {dayjs(item.publishTime).format('YYYY-MM-DD HH:mm')}
+                                  发布于{' '}
+                                  {dayjs(item.publishTime).format(
+                                    'YYYY-MM-DD HH:mm',
+                                  )}
                                 </span>
                               </div>
                             </div>
@@ -1039,16 +1669,6 @@ const Trending: React.FC = () => {
                         </div>
                       </div>
                     ))}
-
-                    {/* 在热门专题部分添加调试信息 */}
-                    {/* {topicPagination ? (
-                      <div className="text-xs text-gray-500 mb-2">
-                        调试信息: 当前页 {topicPagination.currentPage}, 总页数 {topicPagination.totalPages}, 
-                        总条目 {topicPagination.totalItems}, 每页条目 {topicPagination.itemsPerPage}
-                      </div>
-                    ) : (
-                      <div className="text-xs text-gray-500 mb-2">分页数据为空</div>
-                    )} */}
 
                     {/* 分页组件 */}
                     {topicPagination && topicPagination.totalPages > 1 && (
@@ -1231,12 +1851,12 @@ const Trending: React.FC = () => {
                         {/* 笔记信息区域 */}
                         <div className="w-48">
                           <div className="relative w-full overflow-hidden rounded-lg h-28">
-                            {item.cover && !imgErrors[item._id] ? (
+                            {item.cover && !imgErrors[item.id || ''] ? (
                               <img
                                 src={getImageUrl(item.cover)}
                                 alt={item.title}
                                 className="object-cover w-full h-full"
-                                onError={() => handleImageError(item._id)}
+                                onError={() => handleImageError(item.id || '')}
                               />
                             ) : (
                               <div className="text-center text-gray-400">
@@ -1274,28 +1894,35 @@ const Trending: React.FC = () => {
                                 {item.title}
                               </h3>
                               <div className="flex items-center space-x-2">
-                                {item.author && !imgErrors[`${item._id}-avatar`] ? (
+                                {item.author &&
+                                !imgErrors[`${item.id || ''}-avatar`] ? (
                                   <img
                                     src={getImageUrl(item.author.avatar)}
                                     alt={item.author.name}
                                     className="w-5 h-5 rounded-full"
-                                    onError={() => handleImageError(`${item._id}-avatar`)}
+                                    onError={() =>
+                                      handleImageError(
+                                        `${item.id || ''}-avatar`,
+                                      )
+                                    }
                                   />
                                 ) : (
                                   <div className="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center">
-                                    <span className="text-xs text-gray-500">
-                                      {item.author.name?.charAt(0)?.toUpperCase() || '?'}
-                                    </span>
+                                    <UserOutlined className="text-xs text-gray-500" />
                                   </div>
                                 )}
                                 <span className="text-sm text-gray-600">
                                   {item.author.name}
                                 </span>
                                 <span className="text-xs text-gray-400">
-                                  粉丝数 {item.author.fansCount?.toLocaleString()}
+                                  粉丝数{' '}
+                                  {item.author.fansCount?.toLocaleString()}
                                 </span>
                                 <span className="text-xs text-gray-400">
-                                  发布于 {dayjs(item.publishTime).format('YYYY-MM-DD HH:mm')}
+                                  发布于{' '}
+                                  {dayjs(item.publishTime).format(
+                                    'YYYY-MM-DD HH:mm',
+                                  )}
                                 </span>
                               </div>
                             </div>
@@ -1308,7 +1935,6 @@ const Trending: React.FC = () => {
                             </div>
                             <div className="flex items-center justify-between flex-1">
                               <div className="flex items-center space-x-12">
-                                
                                 <div className="w-24 text-center">
                                   <span className="text-[#a66ae4]">
                                     {item.stats.likeCount || '1w'}
@@ -1368,9 +1994,8 @@ const Trending: React.FC = () => {
               </div>
             </>
           )}
-           <div style={{ width: '100%', height: '20px' }}></div>
+          <div style={{ width: '100%', height: '20px' }}></div>
         </div>
-       
       </div>
 
       {/* 内容预览模态框 */}
@@ -1417,19 +2042,19 @@ const Trending: React.FC = () => {
       </Modal>
 
       {/* 添加必要的CSS和JavaScript */}
-      <style jsx>{`
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .hover-trigger:hover + circle {
           r: 3;
         }
-        
-        .hover-trigger:hover ~ .tooltip {
-          opacity: 1;
-          transform: translateY(-5px);
-        }
-      `}</style>
+      `,
+        }}
+      />
 
-      <script dangerouslySetInnerHTML={{
-        __html: `
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
           document.addEventListener('DOMContentLoaded', function() {
             const hoverTriggers = document.querySelectorAll('.hover-trigger');
             const tooltip = document.querySelector('.tooltip');
@@ -1455,19 +2080,24 @@ const Trending: React.FC = () => {
               });
             });
           });
-        `
-      }} />
+        `,
+        }}
+      />
 
       {/* 添加隐藏滚动条的样式 */}
-      <style jsx global>{`
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
         }
         .scrollbar-hide {
-          -ms-overflow-style: none;  /* IE and Edge */
-          scrollbar-width: none;  /* Firefox */
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
-      `}</style>
+      `,
+        }}
+      />
     </>
   );
 };
