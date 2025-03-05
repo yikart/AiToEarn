@@ -77,7 +77,9 @@ export default function Page() {
               </Row>
               <Row>
                 <Row>
-                  <Col span={12}>-----</Col>
+                  <Col span={12}>
+                    是否已经接受: {v.isAccepted ? '是' : '否'}
+                  </Col>
                   <Col span={12}>
                     <Button
                       type="primary"

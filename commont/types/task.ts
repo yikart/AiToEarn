@@ -47,6 +47,7 @@ export interface TaskProduct extends TaskData {
 export type TaskDataInfo = TaskProduct | TaskPromotion | TaskVideo;
 export interface Task<T extends TaskProduct | TaskPromotion | TaskVideo>
   extends TimeTemp {
+  _id: string;
   id: string;
   title: string;
   description: string;
@@ -62,6 +63,5 @@ export interface Task<T extends TaskProduct | TaskPromotion | TaskVideo>
   reward: number; // 任务奖励金额
   status: TaskStatus; // 'active' | 'completed' | 'cancelled'
   platforms: string[]; // 支持的平台ID列表
-  platformRequirements?: Record<string, any>; // 平台特定要求，如视频时长、标签等
-  metadata: Record<string, any>; // 额外的任务相关信息
+  isAccepted?: boolean; // 是否已经接受任务
 }
