@@ -14,6 +14,7 @@ import {
 } from '@@/types/task';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { taskApi } from '@/api/task';
+const FILE_BASE_URL = import.meta.env.VITE_APP_FILE_HOST;
 
 export interface TaskInfoRef {
   init: (pubRecord: Task<TaskPromotion>) => Promise<void>;
@@ -50,7 +51,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
   return (
     <>
       <Modal
-        title="Basic Modal"
+        title="商品任务"
         open={isModalOpen}
         onCancel={handleCancel}
         footer={[
@@ -68,7 +69,13 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
               <p>任务标题：{taskInfo.title}</p>
               <p>任务描述：{taskInfo.description}</p>
               <p>任务类型：{TaskTypeName.get(taskInfo.type)}</p>
-              <p>任务图片：{taskInfo.imageUrl}</p>
+
+              <img
+                src={`${FILE_BASE_URL}${taskInfo.imageUrl}`}
+                alt=""
+                className="w-full h-full"
+              />
+
               <p>任务奖励金额：{taskInfo.reward}</p>
               <p>任务状态：{TaskStatusName.get(taskInfo.status)}</p>
             </div>

@@ -43,6 +43,8 @@ export interface TaskProduct extends TaskData {
   price: number;
   sales?: number;
 }
+
+export type TaskDataInfo = TaskProduct | TaskPromotion | TaskVideo;
 export interface Task<T extends TaskProduct | TaskPromotion | TaskVideo>
   extends TimeTemp {
   id: string;
@@ -55,7 +57,7 @@ export interface Task<T extends TaskProduct | TaskPromotion | TaskVideo>
   requiresShoppingCart: boolean; // 是否需要挂购物车
   maxRecruits: number; // 最大招募人数
   currentRecruits: number; // 当前招募人数
-  deadline: Date; // 任务截止时间
+  deadline: string; // 任务截止时间
   firstTimeBonus: number; // 首次任务奖励
   reward: number; // 任务奖励金额
   status: TaskStatus; // 'active' | 'completed' | 'cancelled'
