@@ -11,9 +11,12 @@ import {
   CookiesType,
   DashboardData,
   IAccountInfoParams,
+  IGetLocationDataParams,
   IGetTopicsParams,
   IGetTopicsResponse,
+  IGetUsersParams,
   IVideoPublishParams,
+  VideoCallbackType,
 } from '../../plat.type';
 import { PublishVideoResult } from '../../module';
 import { shipinhaoService } from '../../../../plat/shipinhao';
@@ -123,7 +126,31 @@ export class WxSph extends PlatformBase {
     return {};
   }
 
-  async videoPublish(params: IVideoPublishParams): Promise<PublishVideoResult> {
+  async getUsers(params: IGetUsersParams) {
+    const usersRes = await shipinhaoService.getUsers(
+      JSON.parse(params.account.loginCookie),
+      params.keyword,
+      params.page,
+    );
+    return {
+      status:
+        usersRes.data.errCode === 300334 || usersRes.data.errCode === 300333
+          ? 401
+          : usersRes.status,
+      data: usersRes?.data?.data?.list?.map((v) => {
+        return {
+          image: v.headImgUrl,
+          id: v.username,
+          name: v.nickName,
+        };
+      }),
+    };
+  }
+
+  async videoPublish(
+    params: IVideoPublishParams,
+    callback: VideoCallbackType,
+  ): Promise<PublishVideoResult> {
     const result = await shipinhaoService.publishVideoWorkApi(
       params.cookies,
       params.videoPath,
@@ -131,10 +158,33 @@ export class WxSph extends PlatformBase {
         cover: params.coverPath,
         title: params.desc,
         topics: params.topics,
-        // des: params.desc,
+        des: params.desc,
+        timingTime: params.timingTime?.getTime(),
+        // 位置
+        ...(params.location
+          ? {
+              poiInfo: {
+                latitude: params.location.latitude,
+                longitude: params.location.longitude,
+                poiCity: params.location.city,
+                poiName: params.location.name,
+                poiAddress: params.location.simpleAddress,
+                poiId: params.location.id,
+              },
+            }
+          : {}),
+        // @用户
+        mentionedUserInfo: params.mentionedUserInfo
+          ? params.mentionedUserInfo.map((v) => {
+              return {
+                nickName: v.label,
+              };
+            })
+          : undefined,
+        // 活动
+        event: params.diffParams![AccountType.WxSph]!.activity,
       },
-      (progress: number, msg?: string) => {
-      }
+      callback,
     );
     if (!result.publishId)
       return {
@@ -155,6 +205,31 @@ export class WxSph extends PlatformBase {
       data: [],
       status: 400,
     });
+  }
+
+  async getLocationData(params: IGetLocationDataParams) {
+    const locationRes = await shipinhaoService.getLocation({
+      ...params,
+      query: params.keywords,
+      cookie: params.cookie!,
+    });
+    return {
+      status:
+        locationRes.data.errCode === 300334 ||
+        locationRes.data.errCode === 300333
+          ? 401
+          : locationRes.status,
+      data: locationRes?.data?.data?.list?.map((v) => {
+        return {
+          name: v.name,
+          simpleAddress: v.fullAddress,
+          id: v.uid,
+          latitude: v.latitude,
+          longitude: v.longitude,
+          city: v.city,
+        };
+      }),
+    };
   }
 }
 

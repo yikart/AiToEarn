@@ -6,12 +6,13 @@
  * @Description: 账户
  */
 
-import { AccountStatus, AccountType } from '../../../commont/AccountEnum';
+import { AccountType } from '../../../commont/AccountEnum';
 import { PubType } from '../../../commont/publish/PublishEnum';
 import ksSvg from '@/assets/svgs/account/ks.svg';
 import xhsSvg from '@/assets/svgs/account/xhs.svg';
 import douyinSvg from '@/assets/svgs/account/douyin.svg';
 import wxSphSvg from '@/assets/svgs/account/wx-sph.svg';
+import { AccountModel } from '../../../electron/db/models/account';
 
 export interface IAccountPlatInfo {
   // 显示的icon
@@ -67,14 +68,4 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
   ],
 ]);
 
-export interface AccountInfo {
-  id: number;
-  userId: string;
-  type: AccountType;
-  loginCookie: string;
-  uid: string;
-  account: string;
-  avatar: string;
-  nickname: string;
-  status: AccountStatus;
-}
+export type AccountInfo = AccountModel;

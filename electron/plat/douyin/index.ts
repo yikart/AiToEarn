@@ -6,9 +6,19 @@ import * as crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 // @ts-ignore
 import crc32 from 'crc32';
-import { getFileContent } from '../utils';
-import { DouyinTopicsSugResponse } from './douyin.type';
+import { CookieToString, getFileContent } from '../utils';
+import {
+  DouyinActivityDetailResponse,
+  DouyinActivityListResponse,
+  DouyinActivityTagsResponse,
+  DouyinAllHotDataResponse,
+  DouyinHotDataResponse,
+  DouyinLocationDataResponse,
+  DouyinTopicsSugResponse,
+  DouyinUserListResponse,
+} from './douyin.type';
 import requestNet from '../requestNet';
+import { jsonToQueryString } from '../../util';
 
 export class DouyinService {
   private defaultUserAgent =
@@ -454,9 +464,23 @@ export class DouyinService {
     cookies: string,
     tokens: any,
     filePath: string,
-    platformSetting: any,
+    platformSetting: {
+      title: string;
+      topics: string[];
+      cover: string;
+      timingTime?: number;
+      // 0 公共 1 私密 2 好友
+      visibility_type: 0 | 1 | 2;
+      // 地址
+      poiInfo?: {
+        poiId: string;
+        poiName: string;
+      };
+    },
     callback: (progress: number, msg?: string) => void,
   ): Promise<any> {
+    console.log('开始发布视频作品，参数：', platformSetting);
+
     return new Promise(async (resolve, reject) => {
       try {
         // 初始化cookie
@@ -472,6 +496,7 @@ export class DouyinService {
         callback(15);
         console.log('获取到的用户Uid:', userUid);
 
+        // 上传封面图片 获取封面图片poster参数值
         console.log('开始上传封面图片...');
         console.log('封面图片路径:', platformSetting.cover);
         const poster = await this.uploadCoverFile(
@@ -508,7 +533,7 @@ export class DouyinService {
           `[${new Date().toLocaleString()}] 获取到的csrf-token:`,
           csrfToken,
         );
-        callback(70);
+        callback(70, '正在发布...');
 
         // 获取bd-ticket
         console.log(`[${new Date().toLocaleString()}] 开始获取bd-ticket...`);
@@ -527,7 +552,6 @@ export class DouyinService {
           `[${new Date().toLocaleString()}] 发布参数:`,
           publishVideoParams,
         );
-        callback(80, '正在发布...');
         const publishResult = await this.makePublishRequest(this.publishUrl, {
           method: 'POST',
           headers: {
@@ -575,6 +599,7 @@ export class DouyinService {
         resolve(response);
       } catch (err) {
         console.error('发布视频过程中出现错误:', err);
+        callback(-1);
         reject(err);
       }
     });
@@ -926,7 +951,7 @@ export class DouyinService {
     method: string = 'PUT',
   ): Promise<any> {
     return new Promise((resolve, reject) => {
-      console.log(`开始请求 [${new Date().toLocaleString()}]`, fileContent);
+      console.log(`开始请求 [${new Date().toLocaleString()}]`);
       console.log('请求URL:', url);
       console.log('请求方法:', method);
       console.log('请求头:', headers);
@@ -938,6 +963,10 @@ export class DouyinService {
       });
 
       request.on('response', (response) => {
+        console.log(
+          `收到响应 [${new Date().toLocaleString()}], 状态码:`,
+          response.statusCode,
+        );
         let data = '';
         response.on('data', (chunk) => {
           data += chunk;
@@ -1649,7 +1678,7 @@ export class DouyinService {
   private getPublishPublicParams(platformSetting: any): any {
     console.log('开始处理发布参数...');
     // 处理标题
-    let text = platformSetting['desc'] ?? '';
+    let text = platformSetting['title'] ?? '';
     // 标题扩展属性
     const textExtra = [];
     // @好友参数
@@ -1658,7 +1687,7 @@ export class DouyinService {
     // 处理话题
     if (
       platformSetting.hasOwnProperty('topics') &&
-      platformSetting.topics.length > 0
+      platformSetting.topics?.length > 0
     ) {
       console.log('处理话题标签...');
       for (const topic of platformSetting.topics) {
@@ -1685,7 +1714,7 @@ export class DouyinService {
     // 处理@好友
     if (
       platformSetting.hasOwnProperty('mentionedUserInfo') &&
-      platformSetting.mentionedUserInfo.length > 0
+      platformSetting.mentionedUserInfo?.length > 0
     ) {
       console.log('处理@好友...');
       for (const userInfo of platformSetting.mentionedUserInfo) {
@@ -1719,8 +1748,8 @@ export class DouyinService {
       text: text,
       text_extra: textExtra,
       mentions: mentions,
-      // visibility_type: 0, // 0 公共 1 私密 2 好友
-      visibility_type: 1,
+      // 0 公共 1 私密 2 好友
+      visibility_type: platformSetting['visibility_type'],
       download: 1,
     };
 
@@ -1763,11 +1792,11 @@ export class DouyinService {
     // 处理定时
     if (
       platformSetting.hasOwnProperty('timingTime') &&
-      platformSetting.timingTime > Math.floor(Date.now() / 1000) + 60 * 60 * 2
+      platformSetting.timingTime > Date.now()
     ) {
       console.log('处理定时发布...');
       // @ts-ignore
-      publishParams.timing = platformSetting.timingTime;
+      publishParams.timing = Math.floor(platformSetting.timingTime / 1000);
     }
 
     console.log('最终发布参数:', publishParams);
@@ -1822,6 +1851,7 @@ export class DouyinService {
         headers: headers,
         ok: response.ok,
       };
+      // console.log('fffff',fft)
       return fft;
     } catch (error) {
       console.error('HEAD请求失败:', error);
@@ -1855,6 +1885,8 @@ export class DouyinService {
         }
 
         const headers = csrfTokenRes.headers;
+        // console.log('CSRF Token响应头:', headers);
+
         if (!headers['x-ware-csrf-token']) {
           console.error('获取CSRF_TOKEN失败，响应头中没有x-ware-csrf-token');
           reject('获取CSRF_TOKEN失败,请稍后重试!');
@@ -1923,6 +1955,10 @@ export class DouyinService {
    * 发布专用请求方法
    */
   private async makePublishRequest(url: string, options: any): Promise<any> {
+    console.log(`[${new Date().toLocaleString()}] 开始发起发布请求...`);
+    console.log(`[${new Date().toLocaleString()}] 请求URL:`, url);
+    console.log(`[${new Date().toLocaleString()}] 请求参数:`, options);
+
     try {
       // 创建 FormData 对象
       const formData = new FormData();
@@ -1937,6 +1973,11 @@ export class DouyinService {
         }
       });
 
+      console.log(
+        `[${new Date().toLocaleString()}] 请求体数据:`,
+        Object.fromEntries(formData.entries()),
+      );
+
       const response = await fetch(url, {
         method: options.method,
         headers: {
@@ -1945,7 +1986,25 @@ export class DouyinService {
         body: formData,
       });
 
+      console.log(
+        `[${new Date().toLocaleString()}] 收到响应，状态码:`,
+        response.status,
+      );
+      console.log(
+        `[${new Date().toLocaleString()}] 响应头:`,
+        Object.fromEntries(response.headers.entries()),
+      );
+
       const responseText = await response.text();
+      console.log(
+        `[${new Date().toLocaleString()}] 原始响应数据长度:`,
+        responseText.length,
+      );
+      console.log(
+        `[${new Date().toLocaleString()}] 原始响应数据:`,
+        responseText,
+      );
+
       // 检查响应数据是否为空
       if (!responseText || responseText.trim() === '') {
         console.error(`[${new Date().toLocaleString()}] 响应数据为空`);
@@ -1990,6 +2049,95 @@ export class DouyinService {
   async getTopics({ keyword }: { keyword: string }) {
     return await requestNet<DouyinTopicsSugResponse>({
       url: `${this.loginUrl}aweme/v1/search/challengesug/?aid=1&keyword=${keyword}`,
+      method: 'GET',
+    });
+  }
+
+  // 获取位置数据
+  async getLocation(params: {
+    keywords: string;
+    latitude: number;
+    longitude: number;
+    cookie: Electron.Cookie[];
+  }) {
+    return await requestNet<DouyinLocationDataResponse>({
+      url: `${this.loginUrl}aweme/v1/life/video_api/search/poi/?${jsonToQueryString(
+        {
+          ...params,
+          page: 1,
+          from_webapp: 1,
+        },
+      )}`,
+      headers: {
+        cookie: CookieToString(params.cookie),
+      },
+      method: 'GET',
+    });
+  }
+
+  // 获取热点数据
+  async getHotspotData(params: { query: string; cookie: Electron.Cookie[] }) {
+    return await requestNet<DouyinHotDataResponse>({
+      url: `${this.loginUrl}aweme/v1/hotspot/search/?${jsonToQueryString({
+        ...params,
+        count: 50,
+      })}`,
+      headers: {
+        cookie: CookieToString(params.cookie),
+      },
+      method: 'GET',
+    });
+  }
+
+  // 获取默认热点数据，默认热点数据是没有搜索热点数据之前展示的默认数据
+  async getAllHotspotData() {
+    return await requestNet<DouyinAllHotDataResponse>({
+      url: `${this.loginUrl}aweme/v1/hotspot/recommend`,
+      method: 'GET',
+    });
+  }
+
+  // 查询抖音的活动列表
+  async getActivity(cookie: Electron.Cookie[]) {
+    return await requestNet<DouyinActivityListResponse>({
+      url: `https://creator.douyin.com/web/api/media/activity/get/?page=1&size=9999`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'GET',
+    });
+  }
+
+  // 获取活动详情
+  async getActivityDetails(cookie: Electron.Cookie[], activity_id: string) {
+    console.log(activity_id);
+    return await requestNet<DouyinActivityDetailResponse>({
+      url: `https://creator.douyin.com/web/api/media/activity/detail/?activity_id=${activity_id}`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'GET',
+    });
+  }
+
+  // 获取抖音活动标签
+  async getActivityTags(cookie: Electron.Cookie[]) {
+    return await requestNet<DouyinActivityTagsResponse>({
+      url: `https://creator.douyin.com/web/api/media/activity/tags/query`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'GET',
+    });
+  }
+
+  // 获取@的用户
+  async getUsers(cookie: Electron.Cookie[], keyword: string, page: number) {
+    return await requestNet<DouyinUserListResponse>({
+      url: `https://creator.douyin.com/web/api/v2/discover/search/?search_source=publish_web&count=10&keyword=${keyword}&cursor=${(page - 1) * 10}&scene=1`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
       method: 'GET',
     });
   }

@@ -23,6 +23,7 @@ release
 *.njsproj
 *.sln
 *.sw?
+# .env
 
 #lockfile
 # package-lock.json
@@ -42,3 +43,5 @@ release
 public/bin/*
 !public/bin/webkit
 !public/bin/*.md
+
+gao-vite.config.ts

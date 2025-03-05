@@ -3,9 +3,13 @@ import * as crypto from 'crypto';
 import sizeOf from 'image-size';
 import { CommonUtils } from '../../util/common';
 import { FileUtils } from '../../util/file';
-import { getFileContent } from '../utils';
+import { CookieToString, getFileContent } from '../utils';
 import requestNet from '../requestNet';
-import { IXHSTopicsResponse } from './xiaohongshu.type';
+import {
+  IXHSLocationResponse,
+  IXHSTopicsResponse,
+  XiaohongshuApiResponse,
+} from './xiaohongshu.type';
 
 export class XiaohongshuService {
   private defaultUserAgent =
@@ -601,7 +605,7 @@ export class XiaohongshuService {
         let remoteVideoId = '';
 
         // 开始上传文件
-        if (filePartInfo.blockInfo.length === 1) {
+        if (filePartInfo.blockInfo?.length === 1) {
           // 获取文件内容
           const fileContent = await FileUtils.getFilePartContent(
             filePath,
@@ -820,7 +824,6 @@ export class XiaohongshuService {
     publishType: 'video' | 'image',
     uploadResult: any,
     platformSetting: any,
-    privacy: boolean = false,
   ) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -966,7 +969,7 @@ export class XiaohongshuService {
         const hashTag = [];
         if (
           platformSetting.hasOwnProperty('topicsDetail') &&
-          platformSetting.topicsDetail.length > 0
+          platformSetting.topicsDetail?.length > 0
         ) {
           for (const topicInfo of platformSetting.topicsDetail) {
             description += ` #${topicInfo.topicName}[话题]# `;
@@ -981,7 +984,7 @@ export class XiaohongshuService {
         const ats = [];
         if (
           platformSetting.hasOwnProperty('mentionedUserInfo') &&
-          platformSetting.mentionedUserInfo.length > 0
+          platformSetting.mentionedUserInfo?.length > 0
         ) {
           for (const userInfo of platformSetting.mentionedUserInfo) {
             if (
@@ -1034,15 +1037,15 @@ export class XiaohongshuService {
               noteId: 0,
               bizType:
                 platformSetting.hasOwnProperty('timingTime') &&
-                platformSetting.timingTime > Math.floor(Date.now() / 1000)
+                platformSetting.timingTime > Date.now()
                   ? 13
                   : 0,
               noteOrderBind: {},
               notePostTiming: {
                 postTime:
                   platformSetting.hasOwnProperty('timingTime') &&
-                  platformSetting.timingTime > Math.floor(Date.now() / 1000)
-                    ? (platformSetting.timingTime * 1000).toString()
+                  platformSetting.timingTime > Date.now()
+                    ? platformSetting.timingTime.toString()
                     : '',
               },
               noteCollectionBind: {
@@ -1054,13 +1057,15 @@ export class XiaohongshuService {
             post_loc: post_loc,
             privacy_info: {
               op_type: 1,
-              type: privacy ? 1 : 0,
-              user_ids: privacy ? [] : undefined,
+              type: platformSetting['privacy'] ? 1 : 0,
+              user_ids: platformSetting['privacy'] ? [] : undefined,
             },
           },
           image_info: xhs_image_info,
           video_info: xhs_video_info,
         };
+        console.log('platformSetting：', platformSetting);
+        console.log('requestData：', requestData);
         // 获取加密使用的Url
         const encryptUrl = this.postCreateVideoUrl.replace(
           'https://edith.xiaohongshu.com',
@@ -1139,12 +1144,26 @@ export class XiaohongshuService {
       desc?: string;
       // 定时发布
       timingTime?: number;
+      // @用户
+      mentionedUserInfo?: {
+        nickName: string;
+        uid: string;
+      }[];
       // 话题
       topicsDetail?: {
         topicId: string;
         topicName: string;
       }[];
+      // 位置
+      poiInfo?: {
+        poiType: number;
+        poiId: string;
+        poiName: string;
+        poiAddress: string;
+      };
       cover: string;
+      // true=私有 flase=公开
+      privacy: boolean;
     },
     callback: (progress: number, msg?: string) => void,
   ): Promise<{
@@ -1215,6 +1234,7 @@ export class XiaohongshuService {
         });
       } catch (err) {
         reject(err);
+        callback(-1);
       }
     });
   }
@@ -1254,7 +1274,7 @@ export class XiaohongshuService {
     });
   }
 
-  // 获取话题
+  // 获取话题数据
   async getTopics({
     keyword,
     cookies,
@@ -1266,9 +1286,7 @@ export class XiaohongshuService {
       url: `https://edith.xiaohongshu.com/web_api/sns/v1/search/topic`,
       method: 'POST',
       headers: {
-        Cookie: cookies
-          .map((cookie) => `${cookie.name}=${cookie.value}`)
-          .join('; '),
+        cookie: CookieToString(cookies),
         Referer: this.loginUrl,
         origin: this.loginUrl,
       },
@@ -1277,6 +1295,56 @@ export class XiaohongshuService {
         page: {
           page_size: 30,
           page: 1,
+        },
+      },
+    });
+  }
+
+  // 获取位置数据
+  async getLocations(params: {
+    latitude: number;
+    longitude: number;
+    keyword: string;
+    page?: number;
+    size?: number;
+    source?: string;
+    type?: number;
+    cookies: Electron.Cookie[];
+  }) {
+    return await requestNet<IXHSLocationResponse>({
+      url: 'https://edith.xiaohongshu.com/web_api/sns/v1/local/poi/creator/search',
+      headers: {
+        cookie: CookieToString(params.cookies),
+        Referer: this.loginUrl,
+        origin: this.loginUrl,
+      },
+      method: 'POST',
+      body: {
+        ...params,
+        page: 1,
+        size: 50,
+        source: 'WEB',
+        type: 3,
+      },
+    });
+  }
+
+  // 获取@用户列表
+  async getUsers(cookie: Electron.Cookie[], keyword: string, page: number) {
+    return await requestNet<XiaohongshuApiResponse>({
+      url: `https://edith.xiaohongshu.com/web_api/sns/v1/search/user_info`,
+      headers: {
+        cookie: CookieToString(cookie),
+        Referer: this.loginUrl,
+        origin: this.loginUrl,
+      },
+      method: 'POST',
+      body: {
+        keyword,
+        search_id: '',
+        page: {
+          page_size: 10,
+          page,
         },
       },
     });

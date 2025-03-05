@@ -1,4 +1,4 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 /**
  * 生成唯一ID
  */
@@ -22,7 +22,7 @@ export function formatTime(
   time: string | number | Date,
   format: string = 'YYYY-MM-DD HH:MM:SS',
 ) {
-  return moment(time).format(format);
+  return dayjs(time).format(format);
 }
 
 /**
@@ -41,3 +41,22 @@ export function formatSeconds(seconds: number): string {
   return `${pad(hours)}:${pad(minutes)}:${pad(secs)}`;
 }
 
+/**
+ * 根据输入数值返回中文描述
+ * @param value 输入的数值
+ * @returns 如果数值超过1000返回'n千'，超过10000返回'n万'
+ */
+export function describeNumber(value: number): string {
+  if (value > 10000) {
+    // 数值超过10000，返回'n万'
+    const wan = Math.floor(value / 10000);
+    return `${wan}万`;
+  } else if (value > 1000) {
+    // 数值超过1000，返回'n千'
+    const qian = Math.floor(value / 1000);
+    return `${qian}千`;
+  } else {
+    // 数值不超过1000，直接返回数值的字符串形式
+    return value.toString();
+  }
+}

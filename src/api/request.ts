@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-17 20:21:04
- * @LastEditTime: 2025-01-17 20:29:46
+ * @LastEditTime: 2025-02-27 16:57:37
  * @LastEditors: nevin
  * @Description: 请求
  */
@@ -16,8 +16,7 @@ interface ProjectAxiosRequestConfig extends AxiosRequestConfig {
 
 // 创建 axios 实例
 const request = axios.create({
-  // baseURL: 'https://ttgufwxxqyow.sealosbja.site/api', // 从环境变量获取基础URL
-  baseURL: 'https://attapi.yikart.cn/api', // 从环境变量获取基础URL
+  baseURL: import.meta.env.VITE_APP_URL, // 从环境变量获取基础URL
   timeout: 15000, // 请求超时时间
   headers: {
     'Content-Type': 'application/json',

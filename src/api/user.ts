@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-17 20:21:07
- * @LastEditTime: 2025-02-26 09:09:07
+ * @LastEditTime: 2025-03-03 14:13:26
  * @LastEditors: nevin
  * @Description: 用户
  */
@@ -54,6 +54,13 @@ export const userApi = {
       status: -1 | 0 | 1; // 未存在 未登录 已登录
     }>('/user/gzh/qrcode/login', data, {
       isToken: false,
+    });
+  },
+
+  // 用户设置或绑定手机号
+  upUserPhone(data: { phone: string; code: string }) {
+    return http.put<string>('/user/updatePhone', data, {
+      isToken: true,
     });
   },
 };

@@ -1,4 +1,4 @@
-export enum VisibleTypeEnum {
+export enum KwaiVisibleTypeEnum {
   // 仅自己可见
   Private = 1,
   // 好友可见

@@ -1,53 +1,34 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-02-22 19:54:31
+ * @LastEditTime: 2025-02-28 21:36:53
  * @LastEditors: nevin
- * @Description: 任务测试
+ * @Description: 任务页面
  */
-import { Button } from 'antd';
-import { useState, useEffect, useRef } from 'react';
-import { Task } from 'commont/types/task';
-import { taskApi } from '@/api/task';
-import { TaskInfoRef } from './components/info';
-import TaskInfo from './components/info';
+import { VideoCameraOutlined } from '@ant-design/icons';
+import { Segmented } from 'antd';
+import { Outlet, useNavigate } from 'react-router-dom';
+import styles from './task.module.scss';
+
 export default function Page() {
-  const [taskList, setTaskList] = useState<Task[]>([]);
-  const [pageInfo, setPageInfo] = useState({
-    pageSize: 10,
-    pageNo: 1,
-    totalCount: 0,
-  });
-
-  const Ref_TaskInfo = useRef<TaskInfoRef>(null);
-
-  async function getTaskList() {
-    const res = await taskApi.getTaskList(pageInfo);
-    setTaskList(res.items);
-  }
-
-  useEffect(() => {
-    getTaskList();
-  }, []);
+  const navigate = useNavigate();
 
   return (
-    <div>
-      <TaskInfo ref={Ref_TaskInfo} />
-      <div>
-        {taskList.map((v) => {
-          return (
-            <div key={v.id}>
-              {v.title}
-              <Button
-                type="primary"
-                onClick={() => Ref_TaskInfo.current?.init(v)}
-              >
-                查看
-              </Button>
-            </div>
-          );
-        })}
-      </div>
+    <div className={styles.publish}>
+      <Segmented
+        vertical
+        size="large"
+        options={[
+          { label: '挂车任务', value: 'car', icon: <VideoCameraOutlined /> },
+          { label: '推广任务', value: 'pop', icon: <VideoCameraOutlined /> },
+          { label: '视频任务', value: 'video', icon: <VideoCameraOutlined /> },
+          { label: '已参与任务', value: 'mine', icon: <VideoCameraOutlined /> },
+        ]}
+        onChange={(value) => {
+          navigate(value);
+        }}
+      />
+      <Outlet />
     </div>
   );
 }

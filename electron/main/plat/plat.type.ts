@@ -6,9 +6,8 @@
  * @Description:
  */
 import { AccountModel } from '../../db/models/account';
-import { VisibleTypeEnum } from '@@/publish/PublishEnum';
-import { AccountType } from '@@/AccountEnum';
-import { DiffParmasType } from '../../db/models/video';
+import { VisibleTypeEnum } from '../../../commont/publish/PublishEnum';
+import { DiffParmasType, ILableValue } from '../../db/models/video';
 
 export type CookiesType = Electron.Cookie[];
 
@@ -48,6 +47,16 @@ export type WorkData = {
   income?: number;
 };
 
+// 视频发布进度回调函数类型
+export type VideoCallbackType = (progress: number, msg?: string) => void;
+
+// 微信视频号活动
+export interface WxSphEvent {
+  eventCreatorNickname: string;
+  eventTopicId: string;
+  eventName: string;
+}
+
 // 发布视频入参
 export interface IVideoPublishParams {
   // 调用该平台的cookies
@@ -62,12 +71,40 @@ export interface IVideoPublishParams {
   videoPath: string;
   // 封面路径
   coverPath: string;
-  other?: string;
   // 可见性
   visibleType: VisibleTypeEnum;
   // 各个平台的差异化参数
   diffParams?: DiffParmasType;
-  callback?: (progress: number, msg: string) => void;
+  // 定时发布日期
+  timingTime?: Date;
+  // 地点
+  location?: ILocationDataItem;
+  // @用户
+  mentionedUserInfo?: ILableValue[];
+  other?: any;
+}
+
+// 获取用户参数
+export interface IGetUsersParams {
+  keyword: string;
+  account: AccountModel;
+  page: number;
+}
+
+// 获取用户返回值
+export interface IGetUsersResponse {
+  status: number;
+  data?: IUsersItem[];
+}
+
+// 用户数据
+export interface IUsersItem {
+  image: string;
+  id: string;
+  name: string;
+  des?: string;
+  unique_id?: string;
+  follower_count?: number;
 }
 
 // 获取话题返回值
@@ -87,4 +124,36 @@ export interface ITopicsItem {
 export interface IGetTopicsParams {
   keyword: string;
   account: AccountModel;
+}
+
+// 话题参数
+export interface IGetLocationDataParams {
+  keywords: string;
+  latitude: number;
+  longitude: number;
+  cityName: string;
+  cookie?: Electron.Cookie[];
+  account?: AccountModel;
+}
+
+// 地点数据
+export interface ILocationDataItem {
+  // 地点名称
+  name: string;
+  // 简单地址简介
+  simpleAddress: string;
+  // 地址ID
+  id: string;
+  // 小红书特有
+  poi_type?: number;
+  latitude: number;
+  longitude: number;
+  // 市
+  city: string;
+}
+
+// 获取地点数据返回值
+export interface IGetLocationResponse {
+  status: number;
+  data?: ILocationDataItem[];
 }

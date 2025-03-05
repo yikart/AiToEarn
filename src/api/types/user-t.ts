@@ -9,10 +9,11 @@ export interface IUserInfo {
   _id: string;
   id: string;
   name: string;
-  phone: string;
-  gender: number;
-  avatar: string;
-  desc: string;
+  phone?: string;
+  gender?: number;
+  avatar?: string;
+  desc?: string;
+  wxOpenId?: string;
 }
 
 export interface IRefreshToken {

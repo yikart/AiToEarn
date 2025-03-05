@@ -11,8 +11,24 @@ import { PubRecordModel } from '@/views/publish/comment';
 import { VideoPul } from '@/views/publish/children/videoPage/comment';
 import { AccountType } from '../../commont/AccountEnum';
 import { PubType } from '../../commont/publish/PublishEnum';
-import { IGetTopicsResponse } from '../../electron/main/plat/plat.type';
+import {
+  type IGetLocationDataParams,
+  IGetLocationResponse,
+  IGetTopicsResponse,
+  type IGetUsersParams,
+  IGetUsersResponse,
+} from '../../electron/main/plat/plat.type';
 import { AccountInfo } from '@/views/account/comment';
+import { AccountModel } from '../../electron/db/models/account';
+import {
+  DouyinActivityDetailResponse,
+  DouyinActivityListResponse,
+  DouyinActivityTagsResponse,
+  DouyinAllHotDataResponse,
+  DouyinHotDataResponse,
+} from '../../electron/plat/douyin/douyin.type';
+import { IRequestNetResult } from '../../electron/plat/requestNet';
+import { WeChatVideoApiResponse } from '../../electron/plat/shipinhao/wxShp.type';
 
 // 创建发布记录
 export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
@@ -25,7 +41,6 @@ export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
 
 // 创建视频发布记录
 export async function icpCreateVideoPubRecord(pubRecord: Partial<VideoPul>) {
-  console.log('发布参数：', pubRecord);
   const res: VideoPul = await window.ipcRenderer.invoke(
     'ICP_PUBLISH_CREATE_VIDEO_PUL',
     pubRecord,
@@ -163,6 +178,85 @@ export async function icpGetTopic(account: AccountInfo, keyword: string) {
     'ICP_PUBLISH_GET_TOPIC',
     account,
     keyword,
+  );
+  return res;
+}
+
+// 获取各个平台位置数据
+export async function icpGetLocationData(params: IGetLocationDataParams) {
+  const res: IGetLocationResponse = await window.ipcRenderer.invoke(
+    'ICP_PUBLISH_GET_LOCATION',
+    params,
+  );
+  return res;
+}
+
+// 获取抖音热点数据
+export async function icpGetDoytinHot(account: AccountModel, query: string) {
+  const res: DouyinHotDataResponse = await window.ipcRenderer.invoke(
+    'ICP_PUBLISH_GET_DOYTIN_HOT',
+    account,
+    query,
+  );
+  return res;
+}
+
+// 获取抖音所有热点数据
+export async function icpGetDoytinHotAll() {
+  const res: DouyinAllHotDataResponse = await window.ipcRenderer.invoke(
+    'ICP_PUBLISH_GET_ALL_DOYTIN_HOT',
+  );
+  return res;
+}
+
+// 获取抖音的活动列表
+export async function icpGetDouyinActivity(account: AccountModel) {
+  const res: DouyinActivityListResponse = await window.ipcRenderer.invoke(
+    'ICP_PUBLISH_GET_DOUYIN_ACTIVITY',
+    account,
+  );
+  return res;
+}
+
+// 获取抖音的活动详情
+export async function getDouyinActivityDetails(
+  account: AccountModel,
+  activity_id: string,
+) {
+  const res: DouyinActivityDetailResponse = await window.ipcRenderer.invoke(
+    'ICP_PUBLISH_GET_DOUYIN_ACTIVITY_DETAILS',
+    account,
+    activity_id,
+  );
+  return res;
+}
+
+// 获取抖音活动标签
+export async function icpGetActivityTags(account: AccountModel) {
+  const res: IRequestNetResult<DouyinActivityTagsResponse> =
+    await window.ipcRenderer.invoke(
+      'ICP_PUBLISH_GET_DOUYIN_ACTIVITY_TAGS',
+      account,
+    );
+  return res;
+}
+
+// 获取微信视频号的活动列表
+export async function getSphActivity(account: AccountModel, query: string) {
+  const res: IRequestNetResult<WeChatVideoApiResponse> =
+    await window.ipcRenderer.invoke(
+      'ICP_PUBLISH_GET_WXSPH_ACTIVITY',
+      account,
+      query,
+    );
+  return res;
+}
+
+// 获取所有平台的用户数据
+export async function icpGetUsers(params: IGetUsersParams) {
+  const res: IGetUsersResponse = await window.ipcRenderer.invoke(
+    'ICP_PUBLISH_GET_USERS',
+    params,
   );
   return res;
 }

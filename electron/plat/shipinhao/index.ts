@@ -2,7 +2,13 @@ import { screen, BrowserWindow, net, session } from 'electron';
 import { CommonUtils } from '../../util/common';
 import path from 'path';
 import { FileUtils } from '../../util/file';
-import { getFileContent } from '../utils';
+import { CookieToString, getFileContent } from '../utils';
+import requestNet from '../requestNet';
+import {
+  WeChatLocationData,
+  WeChatVideoApiResponse,
+  WeChatVideoUserData,
+} from './wxShp.type';
 
 interface UserInfo {
   authorId: string;
@@ -20,58 +26,6 @@ interface UploadArguments {
   taskid: string;
   scene: any;
   [key: string]: any;
-}
-
-interface RequestData {
-  objectType: number;
-  longitude: number;
-  latitude: number;
-  feedLongitude: number;
-  feedLatitude: number;
-  originalFlag: number;
-  topics: string[];
-  isFullPost: number;
-  handleFlag: number;
-  videoClipTaskId: any;
-  traceInfo: {
-    traceKey: string;
-    uploadCdnStart: number;
-    uploadCdnEnd: number;
-  };
-  objectDesc: {
-    mpTitle: string;
-    description: string;
-    extReading: Record<string, any>;
-    mediaType: number;
-    location: Record<string, any>;
-    topic: Record<string, any>;
-    event: Record<string, any>;
-    mentionedUser: Array<{ nickname: string }>;
-    media: Array<{
-      url: string;
-      fileSize: number;
-      thumbUrl: string;
-      fullThumbUrl: string;
-      mediaType: number;
-      videoPlayLen: number;
-      width: number;
-      height: number;
-      md5sum: string;
-      coverUrl: string;
-      fullCoverUrl: string;
-      urlCdnTaskId: string;
-    }>;
-    member: Record<string, any>;
-  };
-  postFlag: number;
-  mode: number;
-  clientid: string;
-  timestamp: number;
-  rawKeyBuff: null;
-  pluginSessionId: null;
-  scene: number;
-  reqScene: number;
-  effectiveTime?: number;
 }
 
 export class ShipinhaoService {
@@ -1014,17 +968,7 @@ export class ShipinhaoService {
     startUploadTime: number,
     endUploadTime: number,
     clipResult: any,
-    platformSetting: {
-      cover: string;
-      mentionedUserInfo: {
-        nickName?: string;
-      }[];
-      title?: string;
-      topics: string[];
-      mixInfo?: any;
-      poiInfo?: any;
-      timingTime?: any;
-    },
+    platformSetting: any,
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1034,7 +978,7 @@ export class ShipinhaoService {
         const mentionedUser = [];
         if (
           platformSetting.hasOwnProperty('topics') &&
-          platformSetting.topics.length > 0
+          platformSetting.topics?.length > 0
         ) {
           for (const topic of platformSetting.topics) {
             description += ` #${topic}`;
@@ -1043,7 +987,7 @@ export class ShipinhaoService {
         }
         if (
           platformSetting.hasOwnProperty('mentionedUserInfo') &&
-          platformSetting.mentionedUserInfo.length > 0
+          platformSetting.mentionedUserInfo?.length > 0
         ) {
           for (const userInfo of platformSetting.mentionedUserInfo) {
             if (
@@ -1111,7 +1055,7 @@ export class ShipinhaoService {
             mediaType: 4,
             location: poiInfo,
             topic: topicMix,
-            event: {},
+            event: platformSetting['event'] || {},
             mentionedUser: mentionedUser,
             media: [
               {
@@ -1143,10 +1087,13 @@ export class ShipinhaoService {
         // 处理定时时间
         if (
           platformSetting.hasOwnProperty('timingTime') &&
-          platformSetting.timingTime > Math.floor(Date.now() / 1000)
+          platformSetting.timingTime > Date.now()
         ) {
-          (requestData as any).effectiveTime = platformSetting.timingTime;
+          (requestData as any).effectiveTime = Math.floor(
+            platformSetting.timingTime / 1000,
+          );
         }
+        console.log('requestData：', requestData);
         // 发起请求
         const createRes = await this.makeRequest(this.postCreateVideoUrl, {
           method: 'POST',
@@ -1226,6 +1173,26 @@ export class ShipinhaoService {
       title?: string;
       topics?: string[];
       des?: string;
+      timingTime?: number;
+      // 位置信息
+      poiInfo?: {
+        latitude: number;
+        longitude: number;
+        poiCity: string;
+        poiName: string;
+        poiAddress: string;
+        poiId: string;
+      };
+      // @的用户
+      mentionedUserInfo?: {
+        nickName?: string;
+      }[];
+      // 活动
+      event?: {
+        eventCreatorNickname: string;
+        eventTopicId: string;
+        eventName: string;
+      };
     },
     callback: (progress: number, msg?: string) => void,
   ): Promise<{
@@ -1233,6 +1200,7 @@ export class ShipinhaoService {
     publishId: string;
     shareLink: string;
   }> {
+    console.log('platformSetting：', platformSetting);
     try {
       callback(5, '加载中...');
       const fileInfo = await FileUtils.getFileInfo(filePath);
@@ -1282,7 +1250,6 @@ export class ShipinhaoService {
           ...platformSetting,
           cover: platformSetting.cover,
           title: platformSetting.title,
-          mentionedUserInfo: [],
           topics: platformSetting.topics ? platformSetting.topics : [],
         },
       );
@@ -1296,12 +1263,63 @@ export class ShipinhaoService {
       };
     } catch (err: any) {
       console.error('发布视频失败:', err);
+      callback(-1);
       return {
         publishTime: Math.floor(Date.now() / 1000),
         publishId: '',
         shareLink: '',
       };
     }
+  }
+
+  // 获取位置数据
+  async getLocation(params: {
+    query: string;
+    longitude: number;
+    latitude: number;
+    cookie: Electron.Cookie[];
+  }) {
+    return await requestNet<WeChatLocationData>({
+      url: `https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/helper/helper_search_location`,
+      method: 'POST',
+      body: {
+        ...params,
+        reqScene: 7,
+        scene: 7,
+      },
+      headers: {
+        cookie: CookieToString(params.cookie),
+      },
+    });
+  }
+
+  // 获取视频号的活动
+  async getActivityList(params: { cookie: Electron.Cookie[]; query: string }) {
+    return await requestNet<WeChatVideoApiResponse>({
+      url: `https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/post/post_search_event`,
+      method: 'POST',
+      body: params,
+      headers: {
+        cookie: CookieToString(params.cookie),
+      },
+    });
+  }
+
+  // 获取@用户列表
+  async getUsers(cookie: Electron.Cookie[], keyword: string, page: number) {
+    return await requestNet<WeChatVideoUserData>({
+      url: `https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/helper/helper_search_finder_account`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'POST',
+      body: {
+        pageSize: 10,
+        currentPage: page,
+        offset: (page - 1) * 10,
+        query: keyword,
+      },
+    });
   }
 }
 

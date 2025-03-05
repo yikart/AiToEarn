@@ -11,14 +11,18 @@ import {
   CookiesType,
   DashboardData,
   IAccountInfoParams,
+  IGetLocationDataParams,
   IGetTopicsParams,
   IGetTopicsResponse,
+  IGetUsersParams,
   IVideoPublishParams,
+  VideoCallbackType,
 } from '../../plat.type';
 import { PublishVideoResult } from '../../module';
 import { xiaohongshuService } from '../../../../plat/xiaohongshu';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
+import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
 
 export class Xhs extends PlatformBase {
   constructor() {
@@ -131,11 +135,14 @@ export class Xhs extends PlatformBase {
     return {};
   }
   /**
-   * TODO: 未实现
    * @param params
+   * @param callback
    * @returns
    */
-  async videoPublish(params: IVideoPublishParams): Promise<PublishVideoResult> {
+  async videoPublish(
+    params: IVideoPublishParams,
+    callback: VideoCallbackType,
+  ): Promise<PublishVideoResult> {
     return new Promise(async (resolve) => {
       const result = await xiaohongshuService
         .publishVideoWorkApi(
@@ -147,8 +154,28 @@ export class Xhs extends PlatformBase {
             title: params.title,
             topicsDetail:
               params.diffParams?.[AccountType.Xhs]?.topicsDetail || [],
+            timingTime: params.timingTime?.getTime(),
+            privacy: params.visibleType !== VisibleTypeEnum.Public,
+            // 位置
+            poiInfo: params.location
+              ? {
+                  poiType: params.location.poi_type!,
+                  poiId: params.location.id,
+                  poiName: params.location.name,
+                  poiAddress: params.location.simpleAddress,
+                }
+              : undefined,
+            // @用户
+            mentionedUserInfo: params.mentionedUserInfo
+              ? params.mentionedUserInfo.map((v) => {
+                  return {
+                    nickName: v.label,
+                    uid: `${v.value}`,
+                  };
+                })
+              : undefined,
           },
-          () => {},
+          callback,
         )
         .catch((err) => {
           resolve({
@@ -173,6 +200,24 @@ export class Xhs extends PlatformBase {
     });
   }
 
+  async getUsers(params: IGetUsersParams) {
+    const usersRes = await xiaohongshuService.getUsers(
+      JSON.parse(params.account.loginCookie),
+      params.keyword,
+      params.page,
+    );
+    return {
+      status: usersRes.status,
+      data: usersRes?.data?.data?.user_info_dtos?.map((v) => {
+        return {
+          image: v.user_base_dto.image,
+          id: v.user_base_dto.red_id,
+          name: v.user_base_dto.user_nickname,
+        };
+      }),
+    };
+  }
+
   async getTopics({
     keyword,
     account,
@@ -181,7 +226,6 @@ export class Xhs extends PlatformBase {
       keyword,
       cookies: JSON.parse(account.loginCookie),
     });
-    console.log(res);
     return {
       status: res.status,
       data: res?.data?.data?.topic_info_dtos?.map((v) => {
@@ -189,6 +233,28 @@ export class Xhs extends PlatformBase {
           id: v.id,
           name: v.name,
           view_count: v.view_num,
+        };
+      }),
+    };
+  }
+
+  async getLocationData(params: IGetLocationDataParams) {
+    const locationRes = await xiaohongshuService.getLocations({
+      ...params,
+      keyword: params.keywords,
+      cookies: params.cookie!,
+    });
+    return {
+      status: locationRes.status,
+      data: locationRes?.data?.data?.poi_list?.map((v) => {
+        return {
+          name: v.name,
+          simpleAddress: v.full_address,
+          id: v.poi_id,
+          poi_type: v.poi_type,
+          latitude: v.latitude,
+          longitude: v.longitude,
+          city: v.city_name,
         };
       }),
     };

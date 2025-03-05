@@ -17,3 +17,14 @@ export async function icpSaveFile(params: ISaveFileParams) {
   );
   return res;
 }
+
+// 获取经纬度
+export async function icpGetLocation() {
+  const res: {
+    bd09: number[];
+    wgs84: number[];
+    gcj02: number[];
+    city: string;
+  } = await window.ipcRenderer.invoke('GET_LOCATION');
+  return res;
+}

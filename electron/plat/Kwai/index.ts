@@ -1,14 +1,16 @@
 import { Browser, chromium, webkit } from 'playwright';
 import requestNet from '../requestNet';
 import {
+  IKwaiGetLocationsResponse,
   IKwaiGetTopicsResponse,
+  IKwaiGetUsersResponse,
   IKwaiPubVideoParams,
   IKwaiUserInfoResponse,
-  ILoginResponse,
-} from './kwai.type';
-import { cookieToPlaywright } from '../utils';
+  ILoginResponse
+} from "./kwai.type";
+import { cookieToPlaywright, CookieToString } from '../utils';
 import { BrowserWindow } from 'electron';
-import { VisibleTypeEnum } from '../plat.common.type';
+import { KwaiVisibleTypeEnum } from '../plat.common.type';
 import { getChromiumPath } from '../../util/chromium';
 import os from 'os';
 import path from 'path';
@@ -98,25 +100,25 @@ class KwaiPub {
         await textarea.click();
         // 设置简介 触发粘贴事件
         await page.evaluate(
-          ({ textarea, params }) => {
+          ({ textarea, desc }) => {
             const pasteEvent = new ClipboardEvent('paste', {
               bubbles: true,
               cancelable: true,
               clipboardData: new DataTransfer(),
             });
-            pasteEvent.clipboardData?.setData('text/plain', params.desc);
+            pasteEvent.clipboardData?.setData('text/plain', desc);
             textarea.dispatchEvent(pasteEvent);
           },
-          { textarea, params },
+          { textarea, desc: params.desc },
         );
 
         // 设置私密性
-        if (params.visibleType === VisibleTypeEnum.Private) {
+        if (params.visibleType === KwaiVisibleTypeEnum.Private) {
           const privacyBtn = await page.waitForSelector(
             'span:text-is("仅自己可见")',
           );
           await privacyBtn.click();
-        } else if (params.visibleType === VisibleTypeEnum.Friend) {
+        } else if (params.visibleType === KwaiVisibleTypeEnum.Friend) {
           const friendBtn = await page.waitForSelector(
             'span:text-is("好友可见")',
           );
@@ -182,6 +184,7 @@ class KwaiPub {
           success: false,
           msg: `${error}`,
         });
+        callback(-1);
         await browser!.close();
       }
     });
@@ -226,17 +229,13 @@ class KwaiPub {
     });
   }
 
-  cookieFormat(cookies: Electron.Cookie[]) {
-    return cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ');
-  }
-
   // 获取账号信息
   async getAccountInfo(cookies: Electron.Cookie[]) {
     return await requestNet<IKwaiUserInfoResponse>({
       url: 'https://cp.kuaishou.com/rest/v2/creator/pc/authority/account/current?__NS_sig3=9585c2f20a5d5ba1adc8cbca965d865710f45cb0d4d4d6d6d9d8dbc1',
       method: 'POST',
       headers: {
-        cookie: this.cookieFormat(cookies),
+        cookie: CookieToString(cookies),
       },
       body: {
         'kuaishou.web.cp.api_ph': '20d8d6752131fa2ea941cbf5965061fd0a7a',
@@ -256,10 +255,59 @@ class KwaiPub {
       url: `https://cp.kuaishou.com/rest/cp/works/v2/video/pc/tag/search?__NS_sig3=9585c2f20a5d5ba1adc8cbca965d865710f45cb0d4d4d6d6d9d8dbc1`,
       method: 'POST',
       headers: {
-        cookie: this.cookieFormat(cookies),
+        cookie: CookieToString(cookies),
       },
       body: {
         keyword,
+      },
+    });
+  }
+
+  // 获取关注用户
+  async getUsers({
+    page,
+    cookies,
+  }: {
+    page: number;
+    cookies: Electron.Cookie[];
+  }) {
+    return await requestNet<IKwaiGetUsersResponse>({
+      url: `https://cp.kuaishou.com/rest/cp/works/v2/video/pc/at/list`,
+      method: 'POST',
+      headers: {
+        cookie: CookieToString(cookies),
+      },
+      body: {
+        atType: 3,
+        pageCount: page,
+        pageSize: 10,
+        'kuaishou.web.cp.api_ph': 'fe283c2f058ddb7a3098f89511fbd536dd82',
+      },
+    });
+  }
+
+  // 获取快手位置
+  async getLocations({
+    cookies,
+    cityName,
+    keyword,
+  }: {
+    cookies: Electron.Cookie[];
+    cityName: string;
+    keyword: string;
+  }) {
+    return await requestNet<IKwaiGetLocationsResponse>({
+      url: `https://cp.kuaishou.com/rest/zt/location/wi/poi/search?kpn=kuaishou_cp&subBiz=CP%2FCREATOR_PLATFORM&kuaishou.web.cp.api_ph=fe283c2f058ddb7a3098f89511fbd536dd82`,
+      method: 'POST',
+      headers: {
+        cookie: CookieToString(cookies),
+      },
+      body: {
+        cityName,
+        count: 50,
+        keyword,
+        pcursor: '',
+        'kuaishou.web.cp.api_ph': 'fe283c2f058ddb7a3098f89511fbd536dd82',
       },
     });
   }

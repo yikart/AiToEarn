@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-02-22 18:20:33
+ * @LastEditTime: 2025-02-26 21:50:26
  * @LastEditors: nevin
  * @Description: 测试页面
  */
@@ -33,6 +33,11 @@ export default function Page() {
           },
           { label: '视频测试', value: 'video', icon: <VideoCameraOutlined /> },
           { label: '任务测试', value: 'video', icon: <VideoCameraOutlined /> },
+          {
+            label: '热门事件',
+            value: 'hotTopic',
+            icon: <VideoCameraOutlined />,
+          },
         ]}
         onChange={(value) => {
           navigate(value);

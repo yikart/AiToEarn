@@ -1,4 +1,8 @@
-import http from './request';
+import hotHttp from './hotRequest';
+import { Pagination } from './types';
+import { HotTopic } from './types/hotTopic';
+import { Topic } from './types/topic';
+import { ViralTitle } from './types/viralTitles';
 
 export interface Platform {
   id: string;
@@ -72,6 +76,7 @@ export interface Stats {
 }
 
 export interface RankingContent {
+  _id: string;
   id: string;
   platformId: string;
   rankingId: string;
@@ -105,15 +110,20 @@ export interface RankingContentsResponse {
   meta: PaginationMeta;
 }
 
+export interface RankingContentsResponse {
+  items: RankingContent[];
+  meta: PaginationMeta;
+}
+
 export const platformApi = {
   // 获取平台列表
   getPlatformList() {
-    return http.get<Platform[]>('/platform');
+    return hotHttp.get<Platform[]>('/platform');
   },
 
   // 获取平台榜单列表
   getPlatformRanking(platformId: string) {
-    return http.get<PlatformRanking[]>(
+    return hotHttp.get<PlatformRanking[]>(
       `/ranking/platform?platformId=${platformId}`,
     );
   },
@@ -126,21 +136,128 @@ export const platformApi = {
     category?: string,
     date?: string,
   ) {
-    return http.get<RankingContentsResponse>(`/ranking/${rankingId}/contents`, {
-      params: {
-        page,
-        pageSize,
-        category,
-        date,
+    let ctr = null;
+    if (category && category != '全部') {
+      ctr = category;
+    }
+    return hotHttp.get<RankingContentsResponse>(
+      `/ranking/${rankingId}/contents`,
+      {
+        params: {
+          page,
+          pageSize,
+          category: ctr,
+          date,
+        },
+        isToken: false,
       },
+    );
+  },
+
+  // 获取榜单分类
+  getRankingLabel(rankingId: string) {
+    return hotHttp.get<string[]>(`/ranking/label/${rankingId}`, {
       isToken: false,
     });
   },
 
-  // 获取榜单分类
-  getRankingCategories(rankingId: string) {
-    return http.get<any[]>(`/ranking/${rankingId}/categories`, {
+  // 获取所有热点事件
+  getAllHotTopics() {
+    return hotHttp.get<
+      {
+        platform: Platform;
+        hotTopic: HotTopic;
+      }[]
+    >(`/hot-topics/all`, {
       isToken: false,
     });
+  },
+
+  // ---- 热门专题 ----
+
+  // 获取所有专题标签
+  getTopics() {
+    return hotHttp.get<string[]>(`/topics/topics`, {
+      isToken: false,
+    });
+  },
+
+  // 获取所有专题类型1
+  getMsgType() {
+    return hotHttp.get<string[]>(`/topics/msgType`, {
+      isToken: false,
+    });
+  },
+
+  // 获取所有专题分类
+  getTopicLabels(msgType: string) {
+    return hotHttp.get<string[]>(`/topics/labels/${msgType}`, {
+      isToken: false,
+    });
+  },
+
+  // 获取热门专题列表
+  getAllTopics(params: {
+    msgType?: string; // 项目类型
+    type?: string; // 类型
+    platformId?: string; // 平台ID
+    startTime?: string; // 发布时间开始
+    endTime?: string; // 发布时间结束
+    topic?: string; // 话题标签
+    page?: number;
+    pageSize?: number;
+  }) {
+    return hotHttp.get<Pagination<Topic>>(`/topics`, {
+      isToken: false,
+      params,
+    });
+  },
+
+  // ---- 爆款标题 ----
+  // 获取有数据的平台列表
+  findPlatformsWithData() {
+    return hotHttp.get<Platform[]>(`/viral-titles/platforms`, {
+      isToken: false,
+    });
+  },
+
+  // 获取指定平台的分类列表
+  findCategoriesByPlatform(platformId: string) {
+    return hotHttp.get<string[]>(
+      `/viral-titles/platforms/${platformId}/categories`,
+      {
+        isToken: false,
+      },
+    );
+  },
+
+  // 获取平台下所有分类的前五条数据
+  findTopByPlatformAndCategories(platformId: string) {
+    return hotHttp.get<
+      {
+        category: string;
+        titles: ViralTitle[];
+      }[]
+    >(`/viral-titles/platforms/${platformId}/top-by-categories`, {
+      isToken: false,
+    });
+  },
+
+  // 获取平台下指定分类的数据列表（分页）
+  findByPlatformAndCategory(
+    platformId: string,
+    params: {
+      category?: string;
+      startTime?: Date;
+      endTime?: Date;
+    },
+  ) {
+    return hotHttp.get<Pagination<ViralTitle>>(
+      `/viral-titles/platforms/${platformId}`,
+      {
+        isToken: false,
+        params,
+      },
+    );
   },
 };

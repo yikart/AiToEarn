@@ -4,8 +4,10 @@ import { IImgFile } from '@/components/Choose/ImgChoose';
 import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import {
   DiffParmasType,
+  ILableValue,
   TopicsArrType,
 } from '../../../../../electron/db/models/video';
+import { ILocationDataItem } from '../../../../../electron/main/plat/plat.type';
 
 export interface IPubParams {
   // 视频标题
@@ -20,6 +22,12 @@ export interface IPubParams {
   topics?: TopicsArrType;
   // 每个平台的差异性参数
   diffParams?: DiffParmasType;
+  // 位置
+  location?: ILocationDataItem;
+  // 定时发布日期
+  timingTime?: Date | null;
+  // @用户
+  mentionedUserInfo?: ILableValue[];
 }
 
 // 选择视频的每项数据

@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-08 11:40:45
- * @LastEditTime: 2025-02-20 10:24:07
+ * @LastEditTime: 2025-03-01 20:03:05
  * @LastEditors: nevin
  * @Description: 抖音
  */
@@ -11,15 +11,18 @@ import {
   CookiesType,
   DashboardData,
   IAccountInfoParams,
+  IGetLocationDataParams,
   IGetTopicsParams,
   IGetTopicsResponse,
+  IGetUsersParams,
   IVideoPublishParams,
+  VideoCallbackType,
 } from '../../plat.type';
 import { PublishVideoResult } from '../../module';
 import { douyinService } from '../../../../plat/douyin';
 import { AccountType } from '../../../../../commont/AccountEnum';
-import { getNowTimeStamp } from '../../../../util/time';
 import { AccountModel } from '../../../../db/models/account';
+import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
 
 export type PubVideoOptin = {
   token: string;
@@ -132,7 +135,10 @@ export class Douyin extends PlatformBase {
     return {};
   }
 
-  async videoPublish(params: IVideoPublishParams): Promise<PublishVideoResult> {
+  async videoPublish(
+    params: IVideoPublishParams,
+    callback: VideoCallbackType,
+  ): Promise<PublishVideoResult> {
     return new Promise(async (resolve) => {
       const result = await douyinService
         .publishVideoWorkApi(
@@ -143,10 +149,25 @@ export class Douyin extends PlatformBase {
             title: params.title,
             topics: params.topics,
             cover: params.coverPath,
-            timingTime: getNowTimeStamp() + '',
+            timingTime: params.timingTime?.getTime(),
+            // 可见性
+            visibility_type:
+              params.visibleType === VisibleTypeEnum.Public
+                ? 0
+                : params.visibleType === VisibleTypeEnum.Private
+                  ? 1
+                  : 2,
+            // 地址
+            ...(params.location
+              ? {
+                  poiInfo: {
+                    poiId: `${params.location.id}`,
+                    poiName: params.location.name,
+                  },
+                }
+              : {}),
           },
-          (progress: number, msg?: string) => {
-          },
+          callback,
         )
         .catch((e) => {
           resolve({
@@ -179,6 +200,48 @@ export class Douyin extends PlatformBase {
           id: v.cid,
           name: v.cha_name,
           view_count: v.view_count,
+        };
+      }),
+    };
+  }
+
+  async getUsers(params: IGetUsersParams) {
+    const usersRes = await douyinService.getUsers(
+      JSON.parse(params.account.loginCookie),
+      params.keyword,
+      params.page,
+    );
+    return {
+      status: usersRes.data.status_code === 8 ? 401 : usersRes.status,
+      data: usersRes.data.user_list.map((v) => {
+        return {
+          image: 'https://p26.douyinpic.com/aweme/' + v.avatar_thumb.uri,
+          id: v.uid,
+          name: v.nickname,
+          unique_id: v.unique_id,
+          des: '',
+          follower_count: v.follower_count,
+        };
+      }),
+    };
+  }
+
+  async getLocationData(params: IGetLocationDataParams) {
+    const locationRes = await douyinService.getLocation({
+      ...params,
+      cookie: params.cookie!,
+    });
+
+    return {
+      status: locationRes.data.status_code === 8 ? 401 : locationRes.status,
+      data: locationRes?.data?.poi_list?.map((v) => {
+        return {
+          name: v.poi_name,
+          simpleAddress: v.simple_address_str,
+          id: v.poi_id,
+          latitude: v.poi_latitude,
+          longitude: v.poi_longitude,
+          city: v.address_info.city,
         };
       }),
     };

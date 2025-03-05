@@ -14,7 +14,6 @@ import platformSvg from './svgs/icon-platform.svg';
 import accountSvg from './svgs/icon-account.svg';
 import mediaSvg from './svgs/icon-media.svg';
 import logo from '@/assets/logo.png';
-import QrcodeLogin from './components/qrcodeLogin';
 
 const Login = () => {
   const features = [
@@ -46,7 +45,6 @@ const Login = () => {
 
   return (
     <div className={`${styles.login}`}>
-      <QrcodeLogin />
       <div className={`${styles.login_wrap} ${styles.login_left}`}>
         <div className={styles.login_left_top}>
           <img src={logo} alt="logo" width={80} />
@@ -67,7 +65,7 @@ const Login = () => {
           })}
         </ul>
       </div>
-      <div className={styles.login_wrap}>
+      <div className={styles.login_wrap} >
         <LoginCore />
       </div>
     </div>

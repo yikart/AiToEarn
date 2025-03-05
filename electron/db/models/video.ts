@@ -7,15 +7,19 @@
  */
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { WorkData } from './workData';
-import { VisibleTypeEnum } from '../../../commont/publish/PublishEnum';
-import { AccountType } from '@@/AccountEnum';
+import {
+  DouyinDeclareEnum,
+  VisibleTypeEnum,
+} from '../../../commont/publish/PublishEnum';
+import { AccountType } from '../../../commont/AccountEnum';
+import type { ILocationDataItem, WxSphEvent } from '../../main/plat/plat.type';
 
-// 话题
-interface ITopics {
+// 包含一个name和一个value的对象
+export interface ILableValue {
   label: string;
   value: string | number;
 }
-export type TopicsArrType = ITopics[];
+export type TopicsArrType = ILableValue[];
 
 /**
  * 不同平台的差异化参数
@@ -24,13 +28,27 @@ export type TopicsArrType = ITopics[];
 export type DiffParmasType = {
   [AccountType.Xhs]?: {
     // 小红书的话题格式
-    topicsDetail: {
+    topicsDetail?: {
       topicId: string;
       topicName: string;
     }[];
   };
-  [AccountType.Douyin]?: {};
-  [AccountType.WxSph]?: {};
+  [AccountType.Douyin]?: {
+    // 申请关联的热点
+    hotPoint?: ILableValue;
+    // 申请关联的活动
+    activitys?: ILableValue[];
+    // 自主声明
+    selfDeclare?: DouyinDeclareEnum;
+  };
+  [AccountType.WxSph]?: {
+    // 是否为原创
+    isOriginal?: boolean;
+    // 扩展链接
+    extLink?: string;
+    // 活动
+    activity?: WxSphEvent;
+  };
   [AccountType.KWAI]?: {};
 };
 
@@ -76,9 +94,21 @@ export class VideoModel extends WorkData {
   @Column({ type: 'json', nullable: true, comment: '话题' })
   topics?: TopicsArrType;
 
+  // 位置
+  @Column({ type: 'json', nullable: true, comment: '位置' })
+  location?: ILocationDataItem;
+
   // 差异化参数
   @Column({ type: 'json', nullable: true, comment: '不同平台的差异化参数' })
   diffParams?: DiffParmasType;
+
+  // 定时发布日期
+  @Column({ type: 'datetime', nullable: true, comment: '定时发布日期' })
+  timingTime?: Date;
+
+  // @用户
+  @Column({ type: 'json', nullable: true, comment: '@用户数组' })
+  mentionedUserInfo?: ILableValue[];
 
   // 视频可见性
   @Column({

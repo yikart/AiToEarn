@@ -1,5 +1,5 @@
 import { IRequestNetResult } from '../requestNet';
-import { VisibleTypeEnum } from '../plat.common.type';
+import { KwaiVisibleTypeEnum } from '../plat.common.type';
 
 interface AbConfig {
   cpPublishNewPage2024: boolean;
@@ -55,6 +55,34 @@ export type IKwaiGetTopicsResponse = IKwaiUserCommonResponse<{
   }[];
 }>;
 
+// 获取快手关注用户返回的数据
+export type IKwaiGetUsersResponse = IKwaiUserCommonResponse<{
+  list: {
+    userName: string;
+    userId: number;
+    fansCount: number;
+    headUrl: string;
+  }[];
+  name: string;
+  type: number;
+}>;
+
+// 获取快手位置数据
+export type IKwaiGetLocationsResponse = {
+  locations: {
+    id: number;
+    title: string;
+    address: string;
+    city: string;
+    category: number;
+    latitude: number;
+    longitude: number;
+    idString: string;
+  }[];
+  pcursor: string;
+  result: number;
+};
+
 // 快手视频发布入参
 export interface IKwaiPubVideoParams {
   // cookies
@@ -66,7 +94,7 @@ export interface IKwaiPubVideoParams {
   // 封面路径
   coverPath: string;
   // 视频可见性
-  visibleType: VisibleTypeEnum;
+  visibleType: KwaiVisibleTypeEnum;
   // 发布回调，可以用于获取发布进度
   callback: (progress: number, msg?: string) => void;
 }

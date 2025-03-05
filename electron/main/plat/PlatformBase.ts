@@ -9,12 +9,16 @@ import {
   AccountInfoTypeRV,
   DashboardData,
   IAccountInfoParams,
+  IGetLocationDataParams,
+  IGetLocationResponse,
   IGetTopicsParams,
   IGetTopicsResponse,
+  IGetUsersParams, IGetUsersResponse,
   IVideoPublishParams,
   StatisticsData,
-  WorkData,
-} from './plat.type';
+  VideoCallbackType,
+  WorkData
+} from "./plat.type";
 import { PublishVideoResult } from './module';
 import { AccountType } from '../../../commont/AccountEnum';
 import { AccountModel } from '../../db/models/account';
@@ -75,8 +79,18 @@ export abstract class PlatformBase {
   // 在该平台发布视频
   abstract videoPublish(
     params: IVideoPublishParams,
+    // 获取发布进度的回调函数
+    callback: VideoCallbackType,
   ): Promise<PublishVideoResult>;
 
   // 获取这个平台的话题
   abstract getTopics(params: IGetTopicsParams): Promise<IGetTopicsResponse>;
+
+  // 获取位置数据
+  abstract getLocationData(
+    params: IGetLocationDataParams,
+  ): Promise<IGetLocationResponse>;
+
+  // 获取@用户数据
+  abstract getUsers(params: IGetUsersParams): Promise<IGetUsersResponse>;
 }

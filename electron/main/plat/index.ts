@@ -11,7 +11,7 @@ import kwai from './platforms/Kwai';
 import xhs from './platforms/xhs';
 import douyin from './platforms/douyin';
 import wxSph from './platforms/wxSph';
-import { IAccountInfoParams } from './plat.type';
+import { IAccountInfoParams, IGetLocationDataParams, IGetUsersParams } from "./plat.type";
 import { PublishVideoResult } from './module';
 import { VideoModel } from '../../db/models/video';
 import { PubItemVideo } from './pub/PubItemVideo';
@@ -82,7 +82,7 @@ class PlatController {
   }
 
   /**
-   * 获取某个平台的话题
+   * 获取某个平台的话题数据
    * @param account
    * @param keyword
    */
@@ -121,6 +121,21 @@ class PlatController {
   public async getDashboard(account: AccountModel, time?: [string, string]) {
     const platform = this.platforms.get(account.type)!;
     return await platform.getDashboard(account, time || []);
+  }
+
+  // 获取位置数据
+  public async getLocationData(params: IGetLocationDataParams) {
+    const platform = this.platforms.get(params.account!.type)!;
+    return await platform.getLocationData({
+      ...params,
+      cookie: JSON.parse(params.account!.loginCookie),
+    });
+  }
+
+  // 获取用户数据
+  public async getUsers(params: IGetUsersParams) {
+    const platform = this.platforms.get(params.account!.type)!;
+    return await platform.getUsers(params);
   }
 }
 

@@ -11,6 +11,7 @@ import { accountLogin } from '@/icp/account';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { message } from 'antd';
 import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
+import lodash from 'lodash';
 
 interface IVideoPageStore {
   // 选择的视频数据
@@ -40,9 +41,20 @@ const store: IVideoPageStore = {
     cover: undefined,
     visibleType: VisibleTypeEnum.Public,
     topics: [],
+    timingTime: undefined,
     diffParams: {
       [AccountType.Xhs]: {
         topicsDetail: [],
+      },
+      [AccountType.Douyin]: {
+        hotPoint: undefined,
+        selfDeclare: undefined,
+        activitys: [],
+      },
+      [AccountType.WxSph]: {
+        isOriginal: false,
+        extLink: undefined,
+        activity: undefined,
       },
     },
   },
@@ -97,9 +109,7 @@ export const useVideoPageStore = create(
 
         // 初始化发布参数
         pubParamsInit(): IPubParams {
-          return {
-            ...get().commonPubParams,
-          };
+          return lodash.cloneDeep(store.commonPubParams);
         },
 
         /**
@@ -331,10 +341,7 @@ export const useVideoPageStore = create(
           const findedData = newValue.find((v) => v.id === id);
           if (findedData) {
             for (const key in pubParmas) {
-              if (
-                pubParmas[key as 'title'] ||
-                pubParmas[key as 'title'] === ''
-              ) {
+              if (pubParmas.hasOwnProperty(key)) {
                 findedData.pubParams[key as 'title'] =
                   pubParmas[key as 'title'];
               }
@@ -345,11 +352,14 @@ export const useVideoPageStore = create(
           });
         },
 
-        // 账户重新登录
+        /**
+         * 账户重新登录。登录成功后会自动更新该条账户数据
+         */
         async accountRestart(pType: AccountType) {
           const res = await accountLogin(pType);
           if (!res) return;
           message.success('登录成功！');
+          // 更新此条账户数据
           methods.updateAccounts({ accounts: [res] });
         },
       };
