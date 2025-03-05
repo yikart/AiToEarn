@@ -31,12 +31,13 @@ export default function LocationSelect({
   );
   const { fetching, options, debounceFetcher } =
     useDebounceFetcher<ILocationDataItem>(async (keywords) => {
-      if (location.current.length === 0) await getLocation();
+      if (location.current.loca.length === 0) await getLocation();
       const locationData = await icpGetLocationData({
         account: currChooseAccount.account!,
         keywords,
-        latitude: location.current[1],
-        longitude: location.current[0],
+        latitude: location.current.loca[1],
+        longitude: location.current.loca[0],
+        cityName: location.current.city,
       });
       if (locationData.status !== 200 && locationData.status !== 201) {
         if (locationData.status === 401 || locationData.data === undefined) {
@@ -52,7 +53,13 @@ export default function LocationSelect({
       return locationData.data || [];
     });
   // 位置 0=经度 1=纬度
-  const location = useRef<number[]>([]);
+  const location = useRef<{
+    loca: number[];
+    city: string;
+  }>({
+    loca: [],
+    city: '',
+  });
 
   useEffect(() => {
     getLocation();
@@ -60,7 +67,8 @@ export default function LocationSelect({
 
   const getLocation = async () => {
     const res = await icpGetLocation();
-    location.current = res.gcj02;
+    location.current.loca = res.gcj02;
+    location.current.city = res.city;
   };
 
   return (

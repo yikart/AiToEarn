@@ -8,6 +8,8 @@ import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPa
 import { useShallow } from 'zustand/react/shallow';
 import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import TopicSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/TopicSelect';
+import LocationSelect from '../components/LocationSelect';
+import UserSelect from "../components/UserSelect";
 
 const { TextArea } = Input;
 
@@ -49,6 +51,16 @@ const VideoPubSetModal_KWAI = memo(
             currChooseAccount={currChooseAccount}
             tips="您可以添加3个话题"
           />
+
+          <UserSelect
+            currChooseAccount={currChooseAccount}
+            maxCount={3}
+            title="@好友"
+            tips="您可以添加3个好友"
+            isSearch={false}
+          />
+
+          <LocationSelect currChooseAccount={currChooseAccount} />
 
           <h1>查看权限</h1>
           <Radio.Group

@@ -24,6 +24,7 @@ export async function icpGetLocation() {
     bd09: number[];
     wgs84: number[];
     gcj02: number[];
+    city: string;
   } = await window.ipcRenderer.invoke('GET_LOCATION');
   return res;
 }

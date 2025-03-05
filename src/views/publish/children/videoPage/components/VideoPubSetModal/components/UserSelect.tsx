@@ -12,11 +12,15 @@ import { icpGetUsers } from '../../../../../../../icp/publish';
 import { AccountStatus } from '../../../../../../../../commont/AccountEnum';
 import { ipcUpdateAccountStatus } from '../../../../../../../icp/account';
 import { describeNumber } from '../../../../../../../utils';
+import { onAccountLoginFinish } from '../../../../../../../icp/receiveMsg';
 
 interface DebounceSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
   currChooseAccount: IVideoChooseItem;
   tips?: string;
+  title: string;
+  // 是否需要搜索，默认需要
+  isSearch?: boolean;
 }
 
 // 话题选择器
@@ -30,36 +34,50 @@ export default function UserSelect({
       updateAccounts: state.updateAccounts,
     })),
   );
-  const { fetching, options, debounceFetcher } = useDebounceFetcher<IUsersItem>(
-    async (keywords) => {
-      const res = await icpGetUsers({
-        page: 1,
-        keyword: keywords,
-        account: currChooseAccount.account!,
-      });
-      if (res.status !== 200 && res.status !== 201) {
-        if (res.status === 401) {
-          currChooseAccount.account!.status = AccountStatus.DISABLE;
-          updateAccounts({ accounts: [currChooseAccount.account!] });
-          await ipcUpdateAccountStatus(
-            currChooseAccount.account!.id,
-            AccountStatus.DISABLE,
-          );
-        }
-        return [];
-      }
-      console.log(res);
-      return res.data || [];
-    },
-  );
+  const { fetching, options, debounceFetcher, setOptions } =
+    useDebounceFetcher<IUsersItem>(async (keywords) => {
+      return await getList(keywords);
+    });
 
-  useEffect(() => {}, []);
+  const getList = async (keywords?: string) => {
+    const res = await icpGetUsers({
+      page: 1,
+      keyword: keywords || '',
+      account: currChooseAccount.account!,
+    });
+    if (res.status !== 200 && res.status !== 201) {
+      if (res.status === 401) {
+        currChooseAccount.account!.status = AccountStatus.DISABLE;
+        updateAccounts({ accounts: [currChooseAccount.account!] });
+        await ipcUpdateAccountStatus(
+          currChooseAccount.account!.id,
+          AccountStatus.DISABLE,
+        );
+      }
+      return [];
+    }
+    return res.data || [];
+  };
+
+  useEffect(() => {
+    if (props.isSearch === false) {
+      getList().then((res) => {
+        setOptions(res);
+      });
+
+      onAccountLoginFinish(() => {
+        getList().then((res) => {
+          setOptions(res);
+        });
+      });
+    }
+  }, []);
 
   return (
     <>
-      <h1>@好友</h1>
+      <h1>{props.title}</h1>
       <Select
-        showSearch
+        showSearch={props.hasOwnProperty('isSearch') ? props.isSearch : true}
         allowClear
         style={{ width: '100%' }}
         mode="multiple"

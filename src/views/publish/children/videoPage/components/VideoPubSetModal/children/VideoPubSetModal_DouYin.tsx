@@ -351,7 +351,8 @@ const VideoPubSetModal_KWAI = memo(
           <UserSelect
             currChooseAccount={currChooseAccount}
             maxCount={10}
-            tips="您可以@10个视频号"
+            tips="您可以添加100个好友"
+            title="@好友"
           />
 
           <ActivitySelect currChooseAccount={currChooseAccount} />

@@ -1,11 +1,13 @@
 import { Browser, chromium, webkit } from 'playwright';
 import requestNet from '../requestNet';
 import {
+  IKwaiGetLocationsResponse,
   IKwaiGetTopicsResponse,
+  IKwaiGetUsersResponse,
   IKwaiPubVideoParams,
   IKwaiUserInfoResponse,
-  ILoginResponse,
-} from './kwai.type';
+  ILoginResponse
+} from "./kwai.type";
 import { cookieToPlaywright, CookieToString } from '../utils';
 import { BrowserWindow } from 'electron';
 import { KwaiVisibleTypeEnum } from '../plat.common.type';
@@ -257,6 +259,55 @@ class KwaiPub {
       },
       body: {
         keyword,
+      },
+    });
+  }
+
+  // 获取关注用户
+  async getUsers({
+    page,
+    cookies,
+  }: {
+    page: number;
+    cookies: Electron.Cookie[];
+  }) {
+    return await requestNet<IKwaiGetUsersResponse>({
+      url: `https://cp.kuaishou.com/rest/cp/works/v2/video/pc/at/list`,
+      method: 'POST',
+      headers: {
+        cookie: CookieToString(cookies),
+      },
+      body: {
+        atType: 3,
+        pageCount: page,
+        pageSize: 10,
+        'kuaishou.web.cp.api_ph': 'fe283c2f058ddb7a3098f89511fbd536dd82',
+      },
+    });
+  }
+
+  // 获取快手位置
+  async getLocations({
+    cookies,
+    cityName,
+    keyword,
+  }: {
+    cookies: Electron.Cookie[];
+    cityName: string;
+    keyword: string;
+  }) {
+    return await requestNet<IKwaiGetLocationsResponse>({
+      url: `https://cp.kuaishou.com/rest/zt/location/wi/poi/search?kpn=kuaishou_cp&subBiz=CP%2FCREATOR_PLATFORM&kuaishou.web.cp.api_ph=fe283c2f058ddb7a3098f89511fbd536dd82`,
+      method: 'POST',
+      headers: {
+        cookie: CookieToString(cookies),
+      },
+      body: {
+        cityName,
+        count: 50,
+        keyword,
+        pcursor: '',
+        'kuaishou.web.cp.api_ph': 'fe283c2f058ddb7a3098f89511fbd536dd82',
       },
     });
   }

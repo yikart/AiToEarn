@@ -69,7 +69,7 @@ const VideoPubSetModal_KWAI = memo(
             tips="您可以添加20个话题"
           />
 
-          <UserSelect currChooseAccount={currChooseAccount} />
+          <UserSelect currChooseAccount={currChooseAccount} title="@用户" />
 
           <LocationSelect currChooseAccount={currChooseAccount} />
 

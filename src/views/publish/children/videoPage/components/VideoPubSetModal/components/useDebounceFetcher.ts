@@ -33,5 +33,6 @@ export default function useDebounceFetcher<T>(
     options,
     fetching,
     debounceFetcher,
+    setOptions,
   };
 }
