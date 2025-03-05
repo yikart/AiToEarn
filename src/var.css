@@ -16,17 +16,9 @@
   /* 超小号字 */
   --fs-xs: 12px;
 
-  /*  主题颜色 */
-  --colorPrimary1: #faf0ff;
-  --colorPrimary2: #f9f0ff;
-  --colorPrimary3: #e4c5fc;
-  --colorPrimary4: #c595f0;
-  --colorPrimary5: #a66ae4;
-  --colorPrimary6: #814dbd;
-  --colorPrimary7: #603696;
-  --colorPrimary8: #603696;
-  --colorPrimary9: #422370;
-  --colorPrimary10: #29164a;
+  /*
+    主题颜色逻辑在：main.tsx
+   */
 
   /* 渐变背景色 */
   --gradientBackColor: linear-gradient(to right, #c565ef, #55D9ED);
