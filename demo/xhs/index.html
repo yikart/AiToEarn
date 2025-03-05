@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script src="https://fe-static.xhscdn.com/biz-static/goten/xhs-1.0.1.js"></script>
+  <script>
+    xhs.share({
+      shareInfo: {
+        type: 'video', // 必填，笔记类型 'video' | 'normal'
+        title: '', // 笔记标题
+        content: '', // 笔记正文
+        images:  [], //图文类型必填，笔记图片，必须是服务器地址，暂时不支持本地文件
+        video: 'https://v2.kwaicdn.com/ksc2/VmX3B76w8gFXMDBsRimf78ezmXWpFE9J_Icv6tNSDH5ypAcqiNwEMXvyIIcytk45IJk597zST0AAT8z6p8_j_0pivi6BfA4aYkthLPCeoMt6X-ZHAfhrG0_UAmyBd8Ws.mp4?pkey=AAUputNjdOyCup9trHzJeM0BfThdt6s38U-6KX66Wgi5Fd45hYFBN6bGFt9C4T1a375WlxkUF30R8reD7_17OTPilPDCxxlQ63VvorbpPqBRa0q2EJxfuRxopT_B46PogMs&tag=1-1741178711-unknown-0-hazkxkcjwr-fd564f77b8f22cef&clientCacheKey=3x6kpd8ge4ajy5q_7b82d723&di=dfa08008&bp=14944&tt=hd15&ss=vp', // 视频类型必填，必须是服务器地址
+        cover: '' // 视频封面图，必须是服务器地址，暂时不支持本地文件
+      },
+      verifyConfig: {
+        appKey: 'red.gLvsVoksierVz0uF', //必填，应用的唯一标识,
+        nonce: '106krnew4gdr', // 必填，服务端生成签名的随机字符串
+        timestamp: 1741181993022, // 必填，服务端生成签名的时间戳
+        signature: '76908895db88441161ef039dad7b94b3bf44778f574bb196ae6b592ccd01415a', // 必填，服务端生成的签名
+      },
+      fail: (e) => {
+        console.log(e)
+        // 调用失败时执行的回调函数
+      },
+    })
+  </script>
+</body>
+</html>
