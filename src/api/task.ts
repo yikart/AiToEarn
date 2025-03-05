@@ -7,7 +7,7 @@
  */
 import http from './request';
 import { MineTaskListParams, TaskListParams, UserTask } from './types/task';
-import { Task } from 'commont/types/task';
+import { Task, TaskDataInfo } from 'commont/types/task';
 import { Pagination } from './types';
 import { UserWalletRecord } from './types/finance';
 
@@ -15,8 +15,8 @@ export const taskApi = {
   /**
    * 获取任务列表
    */
-  getTaskList(params: TaskListParams) {
-    return http.get<Pagination<Task>>('/tasks/list', {
+  getTaskList<T extends TaskDataInfo>(params: TaskListParams) {
+    return http.get<Pagination<Task<T>>>('/tasks/list', {
       isToken: false,
       params,
     });
@@ -26,10 +26,13 @@ export const taskApi = {
    * 获取我的任务列表
    */
   getMineTaskList(params: MineTaskListParams) {
-    return http.get<Pagination<UserTask<Task>>>('/tasks/mine/list', {
-      isToken: true,
-      params,
-    });
+    return http.get<Pagination<UserTask<Task<TaskDataInfo>>>>(
+      '/tasks/mine/list',
+      {
+        isToken: true,
+        params,
+      },
+    );
   },
 
   /**
@@ -37,14 +40,14 @@ export const taskApi = {
    * @returns
    */
   getTaskInfo(id: string) {
-    return http.get<Task>(`/tasks/info/${id}`);
+    return http.get<Task<TaskDataInfo>>(`/tasks/info/${id}`);
   },
 
   /**
    * 申请任务
    */
-  taskApply(id: string) {
-    return http.post<Task>(
+  taskApply<T extends TaskDataInfo>(id: string) {
+    return http.post<Task<T>>(
       `/tasks/apply/${id}`,
       {},
       {

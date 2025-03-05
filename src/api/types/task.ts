@@ -5,7 +5,7 @@
  * @LastEditors: nevin
  * @Description:
  */
-import { Task, TaskType } from 'commont/types/task';
+import { Task, TaskDataInfo, TaskType } from 'commont/types/task';
 import { ApiCorrectQuery } from '.';
 
 export enum UserTaskStatus {
@@ -32,7 +32,7 @@ export interface MineTaskListParams extends ApiCorrectQuery {
   status?: UserTaskStatus;
 }
 
-export interface UserTask<T extends Task | string> {
+export interface UserTask<T extends Task<TaskDataInfo> | string> {
   id: string;
   userId: string;
   taskId: T;

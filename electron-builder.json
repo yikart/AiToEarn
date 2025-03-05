@@ -13,7 +13,7 @@
 "beforePack": "scripts/cleanup-ffmpeg.cjs",
   "mac": {
     "identity":null,
-    "artifactName": "${productName}_${version}_${arch}.${ext}",
+    "artifactName": "${productName}-${version}-${arch}.${ext}",
     "target": [
       {
         "target": "default",
@@ -33,7 +33,7 @@
         ]
       }
     ],
-    "artifactName": "${productName}_${version}.${ext}"
+    "artifactName": "${productName}-${version}.${ext}"
   },
   "nsis": {
     "oneClick": false,

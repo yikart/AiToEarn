@@ -796,7 +796,10 @@ const Trending: React.FC = () => {
     setSingleCategoryLoading(true);
     try {
       // 修改 API 调用，确保参数正确
-      const response = await platformApi.findByPlatformAndCategory(platformId);
+      const response = await platformApi.findByPlatformAndCategory(
+        platformId,
+        {},
+      );
 
       // 过滤出指定分类的数据
       const filteredItems =
@@ -886,7 +889,7 @@ const Trending: React.FC = () => {
                 setViralTitleExpanded(false);
               }}
             >
-              <span className="font-bold text-base">热门内容</span>
+              <span className="text-base font-bold">热门内容</span>
               {contentExpanded ? <DownOutlined /> : <RightOutlined />}
             </div>
             {contentExpanded && (
@@ -932,7 +935,7 @@ const Trending: React.FC = () => {
                 setViralTitleExpanded(false);
               }}
             >
-              <span className="font-bold text-base">热点事件</span>
+              <span className="text-base font-bold">热点事件</span>
               {hotEventExpanded ? <DownOutlined /> : <RightOutlined />}
             </div>
             {hotEventExpanded && (
@@ -963,7 +966,7 @@ const Trending: React.FC = () => {
               className="flex items-center justify-between font-medium text-gray-900 mb-3 cursor-pointer hover:text-[#a66ae4]"
               onClick={handleTopicExpandClick}
             >
-              <span className="font-bold text-base">热门专题</span>
+              <span className="text-base font-bold">热门专题</span>
               {topicExpanded ? <DownOutlined /> : <RightOutlined />}
             </div>
             {topicExpanded && (
@@ -1004,7 +1007,7 @@ const Trending: React.FC = () => {
                 }
               }}
             >
-              <span className="font-bold text-base">爆款标题</span>
+              <span className="text-base font-bold">爆款标题</span>
               {viralTitleExpanded ? <DownOutlined /> : <RightOutlined />}
             </div>
             {viralTitleExpanded && (
@@ -1123,11 +1126,11 @@ const Trending: React.FC = () => {
                 </div>
               ) : !showSingleCategory ? (
                 // 显示所有分类
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   {viralTitleData.map((categoryData) => (
                     <div
                       key={categoryData.category}
-                      className="bg-white rounded-lg p-4 shadow-sm"
+                      className="p-4 bg-white rounded-lg shadow-sm"
                       style={{
                         display:
                           !selectedViralCategory ||
@@ -1210,14 +1213,14 @@ const Trending: React.FC = () => {
                   ))}
 
                   {viralTitleData.length === 0 && (
-                    <div className="md:col-span-2 py-8 text-center text-gray-500">
+                    <div className="py-8 text-center text-gray-500 md:col-span-2">
                       暂无爆款标题数据
                     </div>
                   )}
                 </div>
               ) : (
                 // 显示单个分类的所有数据
-                <div className="bg-white rounded-lg p-4 shadow-sm">
+                <div className="p-4 bg-white rounded-lg shadow-sm">
                   <div className="space-y-3">
                     {singleCategoryData.map((title, index) => (
                       <div
@@ -1291,9 +1294,9 @@ const Trending: React.FC = () => {
           ) : hotPlatformExpanded ? (
             <div>
               {/* 热点事件内容列表 */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-items-center">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-items-center">
                 {hotTopicLoading ? (
-                  <div className="col-span-full flex items-center justify-center py-8">
+                  <div className="flex items-center justify-center py-8 col-span-full">
                     <span className="text-gray-500">加载中...</span>
                   </div>
                 ) : hotTopics && hotTopics.length > 0 ? (
@@ -1301,7 +1304,7 @@ const Trending: React.FC = () => {
                     {hotTopics.map((platformData: PlatformHotTopics) => (
                       <div
                         key={platformData.platform._id}
-                        className="bg-white rounded-lg p-4 flex flex-col w-full"
+                        className="flex flex-col w-full p-4 bg-white rounded-lg"
                         style={{
                           minWidth: '300px',
                           maxWidth: '550px',
@@ -1342,7 +1345,7 @@ const Trending: React.FC = () => {
 
                         {/* 热点列表 - 固定高度，超出滚动，隐藏滚动条 */}
                         <div
-                          className="flex-1 overflow-y-auto pr-1 scrollbar-hide"
+                          className="flex-1 pr-1 overflow-y-auto scrollbar-hide"
                           style={{ maxHeight: '480px' }}
                         >
                           <div className="space-y-2">
@@ -1351,14 +1354,14 @@ const Trending: React.FC = () => {
                               platformData.topics.map((topic, index) => (
                                 <div
                                   key={topic._id || index}
-                                  className="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer"
+                                  className="flex items-center p-2 rounded cursor-pointer hover:bg-gray-50"
                                   onClick={() =>
                                     topic.url &&
                                     handleContentClick(topic.url, topic.title)
                                   }
                                 >
                                   {/* 排名 */}
-                                  <div className="w-6 flex-shrink-0 text-base">
+                                  <div className="flex-shrink-0 w-6 text-base">
                                     <span
                                       className={`font-medium ${index < 3 ? 'text-[#ff4d4f]' : 'text-gray-400'}`}
                                     >
@@ -1367,10 +1370,10 @@ const Trending: React.FC = () => {
                                   </div>
 
                                   {/* 标题和热度 */}
-                                  <div className="flex flex-1 items-center justify-between min-w-0">
+                                  <div className="flex items-center justify-between flex-1 min-w-0">
                                     <div className="flex-1 min-w-0 mr-2">
                                       <span
-                                        className="text-gray-900  truncate block"
+                                        className="block text-gray-900 truncate"
                                         style={{
                                           textAlign: 'left',
                                           fontSize: '14px',
@@ -1381,7 +1384,7 @@ const Trending: React.FC = () => {
                                           : '无标题'}
                                       </span>
                                     </div>
-                                    <div className="flex items-center space-x-2 flex-shrink-0">
+                                    <div className="flex items-center flex-shrink-0 space-x-2">
                                       {topic.isRising && (
                                         <span className="text-xs text-[#ff4d4f] bg-[#fff1f0] px-1 rounded flex-shrink-0">
                                           热
@@ -1394,9 +1397,9 @@ const Trending: React.FC = () => {
                                             ) + 'w'
                                           : '0w'}
                                       </span>
-                                      <div className="w-16 h-4 relative group flex-shrink-0">
+                                      <div className="relative flex-shrink-0 w-16 h-4 group">
                                         {/* 热度趋势图 */}
-                                        <div className="w-full h-full relative">
+                                        <div className="relative w-full h-full">
                                           <svg
                                             width="100%"
                                             height="100%"
@@ -1476,7 +1479,7 @@ const Trending: React.FC = () => {
                     ))}
                   </>
                 ) : (
-                  <div className="col-span-full py-8 text-center text-gray-500">
+                  <div className="py-8 text-center text-gray-500 col-span-full">
                     暂无热点事件数据
                   </div>
                 )}
@@ -1528,7 +1531,7 @@ const Trending: React.FC = () => {
                               }
                             />
                           ) : (
-                            <div className="w-4 h-4 bg-gray-200 rounded flex items-center justify-center">
+                            <div className="flex items-center justify-center w-4 h-4 bg-gray-200 rounded">
                               <span className="text-xs text-gray-500">
                                 {platform.name?.charAt(0)?.toUpperCase() || '?'}
                               </span>
@@ -1543,7 +1546,7 @@ const Trending: React.FC = () => {
 
                 {/* 二级分类筛选 */}
                 {selectedMsgType && (
-                  <div className="flex flex-col space-y-2 mt-4">
+                  <div className="flex flex-col mt-4 space-y-2">
                     <div className="flex flex-wrap gap-2">
                       <button
                         className={`${buttonStyles.base} ${
@@ -1907,7 +1910,7 @@ const Trending: React.FC = () => {
                                     }
                                   />
                                 ) : (
-                                  <div className="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center">
+                                  <div className="flex items-center justify-center w-5 h-5 bg-gray-200 rounded-full">
                                     <UserOutlined className="text-xs text-gray-500" />
                                   </div>
                                 )}

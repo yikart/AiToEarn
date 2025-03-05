@@ -33,7 +33,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
   async function taskApply() {
     if (!taskInfo) return;
 
-    const res = await taskApi.taskApply(taskInfo?.id);
+    const res = await taskApi.taskApply<TaskVideo>(taskInfo?.id);
     setTaskInfo(res);
     setIsModalOpen(false);
   }

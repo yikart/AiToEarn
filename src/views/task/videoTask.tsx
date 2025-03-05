@@ -24,7 +24,7 @@ export default function Page() {
   const Ref_TaskInfo = useRef<TaskInfoRef>(null);
 
   async function getTaskList() {
-    const res = await taskApi.getTaskList({
+    const res = await taskApi.getTaskList<TaskVideo>({
       ...pageInfo,
       type: TaskType.VIDEO,
     });
