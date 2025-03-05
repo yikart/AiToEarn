@@ -240,7 +240,7 @@ const Trending: React.FC = () => {
   const [topicTypes, setTopicTypes] = useState<string[]>([]);
 
   // 添加图片错误处理的状态
-  const [imgErrors, setImgErrors] = useState<{[key: string]: boolean}>({});
+  const [imgErrors, setImgErrors] = useState<{ [key: string]: boolean }>({});
 
   // 在组件内添加状态
   const [hotEventExpanded, setHotEventExpanded] = useState(false);
@@ -250,11 +250,19 @@ const Trending: React.FC = () => {
 
   // 添加爆款标题相关的状态
   const [viralTitleExpanded, setViralTitleExpanded] = useState(false);
-  const [viralTitlePlatforms, setViralTitlePlatforms] = useState<Platform[]>([]);
-  const [selectedViralPlatform, setSelectedViralPlatform] = useState<Platform | null>(null);
-  const [viralTitleCategories, setViralTitleCategories] = useState<string[]>([]);
-  const [selectedViralCategory, setSelectedViralCategory] = useState<string>('');
-  const [viralTitleData, setViralTitleData] = useState<ViralTitleCategory[]>([]);
+  const [viralTitlePlatforms, setViralTitlePlatforms] = useState<Platform[]>(
+    [],
+  );
+  const [selectedViralPlatform, setSelectedViralPlatform] =
+    useState<Platform | null>(null);
+  const [viralTitleCategories, setViralTitleCategories] = useState<string[]>(
+    [],
+  );
+  const [selectedViralCategory, setSelectedViralCategory] =
+    useState<string>('');
+  const [viralTitleData, setViralTitleData] = useState<ViralTitleCategory[]>(
+    [],
+  );
   const [viralTitleLoading, setViralTitleLoading] = useState(false);
 
   // 在 Trending 组件中添加新的状态
@@ -262,16 +270,19 @@ const Trending: React.FC = () => {
 
   // 添加新的状态
   const [showSingleCategory, setShowSingleCategory] = useState(false);
-  const [singleCategoryData, setSingleCategoryData] = useState<ViralTitle[]>([]);
+  const [singleCategoryData, setSingleCategoryData] = useState<ViralTitle[]>(
+    [],
+  );
   const [singleCategoryName, setSingleCategoryName] = useState('');
   const [singleCategoryLoading, setSingleCategoryLoading] = useState(false);
-  const [singleCategoryPagination, setSingleCategoryPagination] = useState<PaginationMeta | null>(null);
+  const [singleCategoryPagination, setSingleCategoryPagination] =
+    useState<PaginationMeta | null>(null);
 
   // 添加处理图片加载错误的函数
   const handleImageError = (imageId: string) => {
-    setImgErrors(prev => ({
+    setImgErrors((prev) => ({
       ...prev,
-      [imageId]: true
+      [imageId]: true,
     }));
   };
 
@@ -312,7 +323,7 @@ const Trending: React.FC = () => {
       if (data.length > 0) {
         const firstRanking = data[0];
         setSelectedRanking(firstRanking);
-        // 获取榜单分类   
+        // 获取榜单分类
         fetchRankingCategories(firstRanking._id);
         // 获取榜单内容
         fetchRankingContents(firstRanking._id, 1);
@@ -476,19 +487,22 @@ const Trending: React.FC = () => {
     try {
       const data = await platformApi.findTopByPlatformAndCategories(platformId);
       // 使用 as any 绕过类型检查
-      const formattedData = data.map(item => ({
+      const formattedData = data.map((item) => ({
         category: item.category,
-        titles: item.titles.map(title => ({
+        titles: item.titles.map((title) => ({
           ...title,
-          platformId: typeof title.platformId === 'object' ? title.platformId._id : title.platformId,
+          platformId:
+            typeof title.platformId === 'object'
+              ? title.platformId._id
+              : title.platformId,
           // 确保 publishTime 是 string 或 null
           publishTime: title.publishTime ? title.publishTime.toString() : null,
           // 确保 createTime 和 updateTime 是 string
           createTime: title.createTime.toString(),
-          updateTime: title.updateTime.toString()
-        }))
+          updateTime: title.updateTime.toString(),
+        })),
       })) as ViralTitleCategory[];
-      
+
       setViralTitleData(formattedData);
     } catch (error) {
       console.error('获取爆款标题数据失败:', error);
@@ -508,7 +522,7 @@ const Trending: React.FC = () => {
   // 修改处理分类选择的函数
   const handleViralCategorySelect = async (category: string) => {
     setSelectedViralCategory(category);
-    
+
     if (category && selectedViralPlatform) {
       // 如果选择了特定分类，调用API获取该分类数据
       setSingleCategoryName(category);
@@ -592,24 +606,28 @@ const Trending: React.FC = () => {
     setHotPlatformExpanded(false);
     setHotEventExpanded(false);
     setViralTitleExpanded(false);
-    
+
     // 如果是展开热门专题，并且还没有选择消息类型，则自动选择第一个
-    if (newTopicExpanded && (!selectedMsgType || selectedMsgType === '') && msgTypeList.length > 0) {
+    if (
+      newTopicExpanded &&
+      (!selectedMsgType || selectedMsgType === '') &&
+      msgTypeList.length > 0
+    ) {
       // 自动选择第一个消息类型
       const firstMsgType = msgTypeList[0];
       setSelectedMsgType(firstMsgType);
-      
+
       // 调用处理函数获取数据
       setTopicLoading(true);
       try {
         // 获取二级分类
         await fetchTopicTypes(firstMsgType);
-        
+
         // 获取专题数据 - 修复类型错误
         const hotTopicsData = await platformApi.getAllTopics({
-          msgType: firstMsgType
+          msgType: firstMsgType,
         });
-        
+
         if (hotTopicsData && hotTopicsData.items) {
           // 类型转换，确保类型兼容
           setTopicContents(hotTopicsData.items as unknown as TopicContent[]);
@@ -619,7 +637,7 @@ const Trending: React.FC = () => {
               totalPages: hotTopicsData.meta.totalPages || 1,
               totalItems: hotTopicsData.meta.totalItems || 0,
               itemCount: hotTopicsData.meta.itemCount || 0,
-              itemsPerPage: hotTopicsData.meta.itemsPerPage || 20
+              itemsPerPage: hotTopicsData.meta.itemsPerPage || 20,
             });
           }
         } else {
@@ -648,7 +666,7 @@ const Trending: React.FC = () => {
 
       // 获取专题数据 - 修复类型错误
       const hotTopicsData = await platformApi.getAllTopics({
-        msgType: type
+        msgType: type,
       });
 
       if (hotTopicsData && hotTopicsData.items) {
@@ -660,7 +678,7 @@ const Trending: React.FC = () => {
             totalPages: hotTopicsData.meta.totalPages || 1,
             totalItems: hotTopicsData.meta.totalItems || 0,
             itemCount: hotTopicsData.meta.itemCount || 0,
-            itemsPerPage: hotTopicsData.meta.itemsPerPage || 20
+            itemsPerPage: hotTopicsData.meta.itemsPerPage || 20,
           });
         }
       } else {
@@ -693,7 +711,7 @@ const Trending: React.FC = () => {
             totalPages: hotTopicsData.meta.totalPages || 1,
             totalItems: hotTopicsData.meta.totalItems || 0,
             itemCount: hotTopicsData.meta.itemCount || 0,
-            itemsPerPage: hotTopicsData.meta.itemsPerPage || 20
+            itemsPerPage: hotTopicsData.meta.itemsPerPage || 20,
           });
         }
       } else {
@@ -712,7 +730,7 @@ const Trending: React.FC = () => {
     setHotTopicLoading(true);
     try {
       const response = await platformApi.getAllHotTopics();
-      console.log('getAllHotTopics:',JSON.stringify(response))
+      console.log('getAllHotTopics:', JSON.stringify(response));
       // 确保 response 和 items 存在
       if (response && Array.isArray(response)) {
         // 类型转换，确保类型兼容
@@ -736,7 +754,7 @@ const Trending: React.FC = () => {
         const hotTopicsData = await platformApi.getAllTopics({
           msgType: selectedMsgType,
           platformId: selectedPlatformId,
-          type: selectedTopicType
+          type: selectedTopicType,
         });
 
         if (hotTopicsData && hotTopicsData.items) {
@@ -748,7 +766,7 @@ const Trending: React.FC = () => {
               totalPages: hotTopicsData.meta.totalPages || 1,
               totalItems: hotTopicsData.meta.totalItems || 0,
               itemCount: hotTopicsData.meta.itemCount || 0,
-              itemsPerPage: hotTopicsData.meta.itemsPerPage || 20
+              itemsPerPage: hotTopicsData.meta.itemsPerPage || 20,
             });
           }
         } else {
@@ -758,7 +776,7 @@ const Trending: React.FC = () => {
         // 滚动到顶部
         window.scrollTo({
           top: 0,
-          behavior: 'smooth'
+          behavior: 'smooth',
         });
       } catch (error) {
         console.error('获取专题数据失败:', error);
@@ -770,37 +788,45 @@ const Trending: React.FC = () => {
   };
 
   // 添加获取单个分类数据的函数
-  const fetchSingleCategoryData = async (platformId: string, category: string, page: number = 1) => {
+  const fetchSingleCategoryData = async (
+    platformId: string,
+    category: string,
+    page: number = 1,
+  ) => {
     setSingleCategoryLoading(true);
     try {
       // 修改 API 调用，确保参数正确
       const response = await platformApi.findByPlatformAndCategory(platformId);
-      
+
       // 过滤出指定分类的数据
-      const filteredItems = response.items?.filter(item => item.category === category) || [];
-      
+      const filteredItems =
+        response.items?.filter((item) => item.category === category) || [];
+
       // 使用 as any 绕过类型检查
-      const formattedItems = filteredItems.map(item => ({
+      const formattedItems = filteredItems.map((item) => ({
         ...item,
-        platformId: typeof item.platformId === 'object' ? item.platformId._id : item.platformId,
+        platformId:
+          typeof item.platformId === 'object'
+            ? item.platformId._id
+            : item.platformId,
         // 确保 publishTime 是 string 或 null
         publishTime: item.publishTime ? item.publishTime.toString() : null,
         // 确保 createTime 和 updateTime 是 string
         createTime: item.createTime.toString(),
-        updateTime: item.updateTime.toString()
+        updateTime: item.updateTime.toString(),
       })) as ViralTitle[];
-      
+
       setSingleCategoryData(formattedItems);
-      
+
       // 创建分页元数据，添加 itemCount 属性
       const paginationMeta = {
         currentPage: page,
         itemsPerPage: 20,
         totalItems: filteredItems.length,
         totalPages: Math.ceil(filteredItems.length / 20),
-        itemCount: filteredItems.length // 添加 itemCount 属性
+        itemCount: filteredItems.length, // 添加 itemCount 属性
       } as PaginationMeta;
-      
+
       setSingleCategoryPagination(paginationMeta);
     } catch (error) {
       console.error('获取分类数据失败:', error);
@@ -830,7 +856,11 @@ const Trending: React.FC = () => {
   // 处理单个分类分页
   const handleSingleCategoryPageChange = (page: number) => {
     if (selectedViralPlatform && singleCategoryName) {
-      fetchSingleCategoryData(selectedViralPlatform._id, singleCategoryName, page);
+      fetchSingleCategoryData(
+        selectedViralPlatform._id,
+        singleCategoryName,
+        page,
+      );
       // 滚动到顶部
       window.scrollTo({
         top: 0,
@@ -959,8 +989,8 @@ const Trending: React.FC = () => {
             )}
           </div>
 
-           {/* 爆款标题 - 新增菜单 */}
-           <div className="mb-6">
+          {/* 爆款标题 - 新增菜单 */}
+          <div className="mb-6">
             <div
               className="flex items-center justify-between font-medium text-gray-900 mb-3 cursor-pointer hover:text-[#a66ae4]"
               onClick={() => {
@@ -1021,7 +1051,8 @@ const Trending: React.FC = () => {
                   <div
                     className={`grid gap-2 transition-[grid-template-rows,max-height] duration-300 ease-in-out relative pr-20`}
                     style={{
-                      gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
+                      gridTemplateColumns:
+                        'repeat(auto-fill, minmax(100px, 1fr))',
                       gridTemplateRows: isCategoryExpanded ? '1fr' : '40px',
                       maxHeight: isCategoryExpanded ? '1000px' : '40px',
                       overflow: 'hidden',
@@ -1030,7 +1061,9 @@ const Trending: React.FC = () => {
                     <div className="contents">
                       <button
                         className={`${buttonStyles.base} ${
-                          !selectedViralCategory ? buttonStyles.primary : buttonStyles.secondary
+                          !selectedViralCategory
+                            ? buttonStyles.primary
+                            : buttonStyles.secondary
                         } truncate h-10`}
                         onClick={() => handleViralCategorySelect('')}
                       >
@@ -1053,7 +1086,9 @@ const Trending: React.FC = () => {
                     {viralTitleCategories.length > 8 && (
                       <button
                         className="absolute right-0 top-0 h-10 px-3 flex items-center text-sm text-gray-500 hover:text-[#a66ae4] transition-colors bg-transparent border-none outline-none shadow-none"
-                        onClick={() => setIsCategoryExpanded(!isCategoryExpanded)}
+                        onClick={() =>
+                          setIsCategoryExpanded(!isCategoryExpanded)
+                        }
                       >
                         <span className="mr-1">
                           {isCategoryExpanded ? '收起' : '展开'}
@@ -1067,7 +1102,7 @@ const Trending: React.FC = () => {
                     )}
                   </div>
                 </div>
-                
+
                 {/* 如果是单个分类视图，显示返回全部按钮 */}
                 {showSingleCategory && (
                   <div className="flex justify-end mt-4">
@@ -1090,38 +1125,43 @@ const Trending: React.FC = () => {
                 // 显示所有分类
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {viralTitleData.map((categoryData) => (
-                    <div 
-                      key={categoryData.category} 
+                    <div
+                      key={categoryData.category}
                       className="bg-white rounded-lg p-4 shadow-sm"
                       style={{
-                        display: !selectedViralCategory || selectedViralCategory === categoryData.category ? 'block' : 'none'
+                        display:
+                          !selectedViralCategory ||
+                          selectedViralCategory === categoryData.category
+                            ? 'block'
+                            : 'none',
                       }}
                     >
                       {/* 分类标题 */}
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-bold text-[#a66ae4]">{categoryData.category}</h3>
-                        <a 
-                          href="#" 
+                        <h3 className="text-lg font-bold text-[#a66ae4]">
+                          {categoryData.category}
+                        </h3>
+                        <a
+                          href="#"
                           className="text-sm text-gray-500 hover:text-[#a66ae4]"
-                          
-                        >
-                          
-                        </a>
+                        ></a>
                       </div>
-                      
+
                       {/* 标题列表 - 单列布局 */}
                       <div className="space-y-3">
                         {categoryData.titles.slice(0, 5).map((title, index) => (
-                          <div 
-                            key={title._id} 
+                          <div
+                            key={title._id}
                             className="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer border border-transparent hover:border-[#e6d3f7] bg-gray-50"
-                            onClick={() => handleContentClick(title.url, title.title)}
+                            onClick={() =>
+                              handleContentClick(title.url, title.title)
+                            }
                           >
                             {/* 排名 */}
                             <div className="w-8 text-lg font-bold text-orange-500">
                               {index + 1}
                             </div>
-                            
+
                             {/* 标题信息 */}
                             <div className="flex-1 ml-2">
                               <div className="text-base font-bold text-left hover:text-[#a66ae4]">
@@ -1130,35 +1170,45 @@ const Trending: React.FC = () => {
                               <div className="flex items-center mt-1 text-sm text-gray-500">
                                 <span>{title.category}</span>
                                 <span className="mx-2">•</span>
-                                <span>{title.createTime ? dayjs(title.createTime).format('YYYY-MM-DD') : '未知日期'}</span>
+                                <span>
+                                  {title.createTime
+                                    ? dayjs(title.createTime).format(
+                                        'YYYY-MM-DD',
+                                      )
+                                    : '未知日期'}
+                                </span>
                               </div>
                             </div>
-                            
+
                             {/* 数据指标 */}
                             <div className="flex items-center space-x-4 text-sm">
                               <div className="text-center">
                                 <div className="text-[#a66ae4]">
                                   {title.engagement.toLocaleString()}
                                 </div>
-                                <div className="text-xs text-gray-500">互动量</div>
+                                <div className="text-xs text-gray-500">
+                                  互动量
+                                </div>
                               </div>
                             </div>
                           </div>
                         ))}
                       </div>
-                      
+
                       {/* 底部查看更多按钮 */}
                       <div className="mt-4 text-center">
-                        <div 
+                        <div
                           className="px-4 py-2 text-sm text-gray-600 hover:text-[#a66ae4] border border-gray-200 rounded-full hover:border-[#e6d3f7]"
-                          onClick={() => handleViewMoreClick(categoryData.category)}
+                          onClick={() =>
+                            handleViewMoreClick(categoryData.category)
+                          }
                         >
                           查看更多
                         </div>
                       </div>
                     </div>
                   ))}
-                  
+
                   {viralTitleData.length === 0 && (
                     <div className="md:col-span-2 py-8 text-center text-gray-500">
                       暂无爆款标题数据
@@ -1170,16 +1220,21 @@ const Trending: React.FC = () => {
                 <div className="bg-white rounded-lg p-4 shadow-sm">
                   <div className="space-y-3">
                     {singleCategoryData.map((title, index) => (
-                      <div 
-                        key={title._id} 
+                      <div
+                        key={title._id}
                         className="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer border border-transparent hover:border-[#e6d3f7] bg-gray-50"
-                        onClick={() => handleContentClick(title.url, title.title)}
+                        onClick={() =>
+                          handleContentClick(title.url, title.title)
+                        }
                       >
                         {/* 排名 */}
                         <div className="w-8 text-lg font-bold text-orange-500">
-                          {(singleCategoryPagination?.currentPage || 1 - 1) * (singleCategoryPagination?.itemsPerPage || 20) + index + 1}
+                          {(singleCategoryPagination?.currentPage || 1 - 1) *
+                            (singleCategoryPagination?.itemsPerPage || 20) +
+                            index +
+                            1}
                         </div>
-                        
+
                         {/* 标题信息 */}
                         <div className="flex-1 ml-2">
                           <div className="text-base font-bold text-left hover:text-[#a66ae4]">
@@ -1188,10 +1243,14 @@ const Trending: React.FC = () => {
                           <div className="flex items-center mt-1 text-sm text-gray-500">
                             <span>{title.category}</span>
                             <span className="mx-2">•</span>
-                            <span>{title.createTime ? dayjs(title.createTime).format('YYYY-MM-DD') : '未知日期'}</span>
+                            <span>
+                              {title.createTime
+                                ? dayjs(title.createTime).format('YYYY-MM-DD')
+                                : '未知日期'}
+                            </span>
                           </div>
                         </div>
-                        
+
                         {/* 数据指标 */}
                         <div className="flex items-center space-x-4 text-sm">
                           <div className="text-center">
@@ -1204,22 +1263,23 @@ const Trending: React.FC = () => {
                       </div>
                     ))}
                   </div>
-                  
+
                   {/* 分页组件 */}
-                  {singleCategoryPagination && singleCategoryPagination.totalPages > 1 && (
-                    <div className="flex justify-center mt-6 mb-8">
-                      <Pagination
-                        current={singleCategoryPagination.currentPage}
-                        total={singleCategoryPagination.totalItems}
-                        pageSize={singleCategoryPagination.itemsPerPage}
-                        showSizeChanger={false}
-                        showQuickJumper
-                        showTotal={(total) => `共 ${total} 条`}
-                        onChange={handleSingleCategoryPageChange}
-                      />
-                    </div>
-                  )}
-                  
+                  {singleCategoryPagination &&
+                    singleCategoryPagination.totalPages > 1 && (
+                      <div className="flex justify-center mt-6 mb-8">
+                        <Pagination
+                          current={singleCategoryPagination.currentPage}
+                          total={singleCategoryPagination.totalItems}
+                          pageSize={singleCategoryPagination.itemsPerPage}
+                          showSizeChanger={false}
+                          showQuickJumper
+                          showTotal={(total) => `共 ${total} 条`}
+                          onChange={handleSingleCategoryPageChange}
+                        />
+                      </div>
+                    )}
+
                   {singleCategoryData.length === 0 && (
                     <div className="py-8 text-center text-gray-500">
                       暂无爆款标题数据
@@ -1236,52 +1296,72 @@ const Trending: React.FC = () => {
                   <div className="col-span-full flex items-center justify-center py-8">
                     <span className="text-gray-500">加载中...</span>
                   </div>
-                ) : hotTopics && hotTopics.length > 0 ? ( 
+                ) : hotTopics && hotTopics.length > 0 ? (
                   <>
                     {hotTopics.map((platformData: PlatformHotTopics) => (
-                      <div 
-                        key={platformData.platform._id} 
+                      <div
+                        key={platformData.platform._id}
                         className="bg-white rounded-lg p-4 flex flex-col w-full"
-                        style={{ 
-                          minWidth: '300px', 
+                        style={{
+                          minWidth: '300px',
                           maxWidth: '550px',
-                          height: '500px'
+                          height: '500px',
                         }}
                       >
                         {/* 平台标题 */}
                         <div className="flex items-center mb-4">
                           <div className="flex items-center space-x-2">
-                            {platformData.platform.icon && !imgErrors[`platform-${platformData.platform._id}`] ? (
+                            {platformData.platform.icon &&
+                            !imgErrors[
+                              `platform-${platformData.platform._id}`
+                            ] ? (
                               <img
                                 src={getImageUrl(platformData.platform.icon)}
                                 alt={platformData.platform.name}
                                 className="w-6 h-6"
-                                onError={() => handleImageError(`platform-${platformData.platform._id}`)}
+                                onError={() =>
+                                  handleImageError(
+                                    `platform-${platformData.platform._id}`,
+                                  )
+                                }
                               />
                             ) : (
                               <div className="w-6 h-6 bg-[#fff1f0] rounded flex items-center justify-center">
                                 <span className="text-[#ff4d4f]">
-                                  {platformData.platform.name?.charAt(0)?.toUpperCase() || '?'}
+                                  {platformData.platform.name
+                                    ?.charAt(0)
+                                    ?.toUpperCase() || '?'}
                                 </span>
                               </div>
                             )}
-                            <span className="text-base font-medium">{platformData.platform.name} · 热点</span>
+                            <span className="text-base font-medium">
+                              {platformData.platform.name} · 热点
+                            </span>
                           </div>
                         </div>
 
                         {/* 热点列表 - 固定高度，超出滚动，隐藏滚动条 */}
-                        <div className="flex-1 overflow-y-auto pr-1 scrollbar-hide" style={{ maxHeight: '480px' }}>
+                        <div
+                          className="flex-1 overflow-y-auto pr-1 scrollbar-hide"
+                          style={{ maxHeight: '480px' }}
+                        >
                           <div className="space-y-2">
-                            {platformData.topics && Array.isArray(platformData.topics) ? (
+                            {platformData.topics &&
+                            Array.isArray(platformData.topics) ? (
                               platformData.topics.map((topic, index) => (
                                 <div
                                   key={topic._id || index}
                                   className="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer"
-                                  onClick={() => topic.url && handleContentClick(topic.url, topic.title)}
+                                  onClick={() =>
+                                    topic.url &&
+                                    handleContentClick(topic.url, topic.title)
+                                  }
                                 >
                                   {/* 排名 */}
                                   <div className="w-6 flex-shrink-0 text-base">
-                                    <span className={`font-medium ${index < 3 ? 'text-[#ff4d4f]' : 'text-gray-400'}`}>
+                                    <span
+                                      className={`font-medium ${index < 3 ? 'text-[#ff4d4f]' : 'text-gray-400'}`}
+                                    >
                                       {index + 1}
                                     </span>
                                   </div>
@@ -1289,8 +1369,16 @@ const Trending: React.FC = () => {
                                   {/* 标题和热度 */}
                                   <div className="flex flex-1 items-center justify-between min-w-0">
                                     <div className="flex-1 min-w-0 mr-2">
-                                      <span className="text-gray-900  truncate block" style={{ textAlign: 'left', fontSize: '14px' }}>
-                                        {typeof topic.title === 'string' ? topic.title : '无标题'}
+                                      <span
+                                        className="text-gray-900  truncate block"
+                                        style={{
+                                          textAlign: 'left',
+                                          fontSize: '14px',
+                                        }}
+                                      >
+                                        {typeof topic.title === 'string'
+                                          ? topic.title
+                                          : '无标题'}
                                       </span>
                                     </div>
                                     <div className="flex items-center space-x-2 flex-shrink-0">
@@ -1300,26 +1388,72 @@ const Trending: React.FC = () => {
                                         </span>
                                       )}
                                       <span className="text-[#ff4d4f] whitespace-nowrap">
-                                        {typeof topic.hotValue === 'number' ? (topic.hotValue / 10000).toFixed(1) + 'w' : '0w'}
+                                        {typeof topic.hotValue === 'number'
+                                          ? (topic.hotValue / 10000).toFixed(
+                                              1,
+                                            ) + 'w'
+                                          : '0w'}
                                       </span>
                                       <div className="w-16 h-4 relative group flex-shrink-0">
                                         {/* 热度趋势图 */}
                                         <div className="w-full h-full relative">
-                                          <svg width="100%" height="100%" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                          <svg
+                                            width="100%"
+                                            height="100%"
+                                            viewBox="0 0 100 20"
+                                            preserveAspectRatio="none"
+                                          >
                                             <polyline
-                                              points={Array.isArray(topic.hotValueHistory) 
-                                                ? topic.hotValueHistory
-                                                    .map((item: HotValueHistory, i: number) => {
-                                                      const x = (i / (topic.hotValueHistory.length - 1)) * 100 || 0;
-                                                      // 归一化热度值到0-20的范围
-                                                      const maxHot = Math.max(...topic.hotValueHistory.map((h: HotValueHistory) => h.hotValue));
-                                                      const minHot = Math.min(...topic.hotValueHistory.map((h: HotValueHistory) => h.hotValue));
-                                                      const range = maxHot - minHot;
-                                                      const y = range === 0 ? 10 : 20 - ((item.hotValue - minHot) / range) * 20;
-                                                      return `${x},${y}`;
-                                                    })
-                                                    .join(' ')
-                                                : ''}
+                                              points={
+                                                Array.isArray(
+                                                  topic.hotValueHistory,
+                                                )
+                                                  ? topic.hotValueHistory
+                                                      .map(
+                                                        (
+                                                          item: HotValueHistory,
+                                                          i: number,
+                                                        ) => {
+                                                          const x =
+                                                            (i /
+                                                              (topic
+                                                                .hotValueHistory
+                                                                .length -
+                                                                1)) *
+                                                              100 || 0;
+                                                          // 归一化热度值到0-20的范围
+                                                          const maxHot =
+                                                            Math.max(
+                                                              ...topic.hotValueHistory.map(
+                                                                (
+                                                                  h: HotValueHistory,
+                                                                ) => h.hotValue,
+                                                              ),
+                                                            );
+                                                          const minHot =
+                                                            Math.min(
+                                                              ...topic.hotValueHistory.map(
+                                                                (
+                                                                  h: HotValueHistory,
+                                                                ) => h.hotValue,
+                                                              ),
+                                                            );
+                                                          const range =
+                                                            maxHot - minHot;
+                                                          const y =
+                                                            range === 0
+                                                              ? 10
+                                                              : 20 -
+                                                                ((item.hotValue -
+                                                                  minHot) /
+                                                                  range) *
+                                                                  20;
+                                                          return `${x},${y}`;
+                                                        },
+                                                      )
+                                                      .join(' ')
+                                                  : ''
+                                              }
                                               fill="none"
                                               stroke="#ff4d4f"
                                               strokeWidth="1.5"
@@ -1332,7 +1466,9 @@ const Trending: React.FC = () => {
                                 </div>
                               ))
                             ) : (
-                              <div className="text-center text-gray-500">暂无热点数据</div>
+                              <div className="text-center text-gray-500">
+                                暂无热点数据
+                              </div>
                             )}
                           </div>
                         </div>
@@ -1356,7 +1492,9 @@ const Trending: React.FC = () => {
                   <div className="flex flex-wrap gap-2">
                     <button
                       className={`${buttonStyles.base} ${
-                        !selectedPlatformId ? buttonStyles.primary : buttonStyles.secondary
+                        !selectedPlatformId
+                          ? buttonStyles.primary
+                          : buttonStyles.secondary
                       }`}
                       onClick={() => {
                         setSelectedPlatformId('');
@@ -1379,12 +1517,15 @@ const Trending: React.FC = () => {
                         }}
                       >
                         <div className="flex items-center space-x-2">
-                          {platform.icon && !imgErrors[`platform-${platform._id}`] ? (
+                          {platform.icon &&
+                          !imgErrors[`platform-${platform._id}`] ? (
                             <img
                               src={getImageUrl(platform.icon)}
                               alt={platform.name}
                               className="w-4 h-4"
-                              onError={() => handleImageError(`platform-${platform._id}`)}
+                              onError={() =>
+                                handleImageError(`platform-${platform._id}`)
+                              }
                             />
                           ) : (
                             <div className="w-4 h-4 bg-gray-200 rounded flex items-center justify-center">
@@ -1406,7 +1547,9 @@ const Trending: React.FC = () => {
                     <div className="flex flex-wrap gap-2">
                       <button
                         className={`${buttonStyles.base} ${
-                          !selectedTopicType ? buttonStyles.primary : buttonStyles.secondary
+                          !selectedTopicType
+                            ? buttonStyles.primary
+                            : buttonStyles.secondary
                         }`}
                         onClick={() => {
                           setSelectedTopicType('');
@@ -1467,7 +1610,10 @@ const Trending: React.FC = () => {
                       >
                         {/* 排名 */}
                         <div className="w-8 text-lg font-bold text-orange-500">
-                          {((topicPagination?.currentPage || 1) - 1) * (topicPagination?.itemsPerPage || 20) + index + 1}
+                          {((topicPagination?.currentPage || 1) - 1) *
+                            (topicPagination?.itemsPerPage || 20) +
+                            index +
+                            1}
                         </div>
 
                         {/* 专题信息区域 */}
@@ -1478,7 +1624,9 @@ const Trending: React.FC = () => {
                                 src={getImageUrl(item.cover)}
                                 alt={item.title}
                                 className="object-cover w-full h-full"
-                                onError={() => handleImageError(item._id as string)}
+                                onError={() =>
+                                  handleImageError(item._id as string)
+                                }
                               />
                             ) : (
                               <div className="text-center text-gray-400">
@@ -1497,7 +1645,10 @@ const Trending: React.FC = () => {
                               </h3>
                               <div className="flex items-center space-x-2">
                                 <span className="text-xs text-gray-400">
-                                  发布于 {dayjs(item.publishTime).format('YYYY-MM-DD HH:mm')}
+                                  发布于{' '}
+                                  {dayjs(item.publishTime).format(
+                                    'YYYY-MM-DD HH:mm',
+                                  )}
                                 </span>
                               </div>
                             </div>
@@ -1743,12 +1894,17 @@ const Trending: React.FC = () => {
                                 {item.title}
                               </h3>
                               <div className="flex items-center space-x-2">
-                                {item.author && !imgErrors[`${item.id || ''}-avatar`] ? (
+                                {item.author &&
+                                !imgErrors[`${item.id || ''}-avatar`] ? (
                                   <img
                                     src={getImageUrl(item.author.avatar)}
                                     alt={item.author.name}
                                     className="w-5 h-5 rounded-full"
-                                    onError={() => handleImageError(`${item.id || ''}-avatar`)}
+                                    onError={() =>
+                                      handleImageError(
+                                        `${item.id || ''}-avatar`,
+                                      )
+                                    }
                                   />
                                 ) : (
                                   <div className="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center">
@@ -1759,10 +1915,14 @@ const Trending: React.FC = () => {
                                   {item.author.name}
                                 </span>
                                 <span className="text-xs text-gray-400">
-                                  粉丝数 {item.author.fansCount?.toLocaleString()}
+                                  粉丝数{' '}
+                                  {item.author.fansCount?.toLocaleString()}
                                 </span>
                                 <span className="text-xs text-gray-400">
-                                  发布于 {dayjs(item.publishTime).format('YYYY-MM-DD HH:mm')}
+                                  发布于{' '}
+                                  {dayjs(item.publishTime).format(
+                                    'YYYY-MM-DD HH:mm',
+                                  )}
                                 </span>
                               </div>
                             </div>
@@ -1775,7 +1935,6 @@ const Trending: React.FC = () => {
                             </div>
                             <div className="flex items-center justify-between flex-1">
                               <div className="flex items-center space-x-12">
-                                
                                 <div className="w-24 text-center">
                                   <span className="text-[#a66ae4]">
                                     {item.stats.likeCount || '1w'}
@@ -1835,9 +1994,8 @@ const Trending: React.FC = () => {
               </div>
             </>
           )}
-           <div style={{ width: '100%', height: '20px' }}></div>
+          <div style={{ width: '100%', height: '20px' }}></div>
         </div>
-       
       </div>
 
       {/* 内容预览模态框 */}
@@ -1884,14 +2042,19 @@ const Trending: React.FC = () => {
       </Modal>
 
       {/* 添加必要的CSS和JavaScript */}
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .hover-trigger:hover + circle {
           r: 3;
         }
-      `}} />
+      `,
+        }}
+      />
 
-      <script dangerouslySetInnerHTML={{
-        __html: `
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
           document.addEventListener('DOMContentLoaded', function() {
             const hoverTriggers = document.querySelectorAll('.hover-trigger');
             const tooltip = document.querySelector('.tooltip');
@@ -1917,11 +2080,14 @@ const Trending: React.FC = () => {
               });
             });
           });
-        `
-      }} />
+        `,
+        }}
+      />
 
       {/* 添加隐藏滚动条的样式 */}
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
         }
@@ -1929,7 +2095,9 @@ const Trending: React.FC = () => {
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
-      `}} />
+      `,
+        }}
+      />
     </>
   );
 };
