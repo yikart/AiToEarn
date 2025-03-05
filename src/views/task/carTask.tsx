@@ -76,12 +76,17 @@ export default function Page() {
                 </Col>
               </Row>
               <Row>
-                <Button
-                  type="primary"
-                  onClick={() => Ref_TaskInfo.current?.init(v)}
-                >
-                  查看
-                </Button>
+                <Row>
+                  <Col span={12}>-----</Col>
+                  <Col span={12}>
+                    <Button
+                      type="primary"
+                      onClick={() => Ref_TaskInfo.current?.init(v)}
+                    >
+                      查看
+                    </Button>
+                  </Col>
+                </Row>
               </Row>
             </Card>
           );

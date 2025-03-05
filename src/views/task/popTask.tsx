@@ -7,13 +7,13 @@
  */
 import { Button } from 'antd';
 import { useState, useEffect, useRef } from 'react';
-import { Task, TaskType } from '@@/types/task';
+import { Task, TaskPromotion, TaskType } from '@@/types/task';
 import { taskApi } from '@/api/task';
 import { TaskInfoRef } from './components/popInfo';
 import TaskInfo from './components/popInfo';
 
 export default function Page() {
-  const [taskList, setTaskList] = useState<Task[]>([]);
+  const [taskList, setTaskList] = useState<Task<TaskPromotion>[]>([]);
   const [pageInfo, setPageInfo] = useState({
     pageSize: 10,
     pageNo: 1,

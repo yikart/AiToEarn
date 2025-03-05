@@ -6,19 +6,24 @@
  * @Description: pop
  */
 import { Button, Modal } from 'antd';
-import { Task, TaskStatusName, TaskTypeName } from '@@/types/task';
+import {
+  Task,
+  TaskPromotion,
+  TaskStatusName,
+  TaskTypeName,
+} from '@@/types/task';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { taskApi } from '@/api/task';
 
 export interface TaskInfoRef {
-  init: (pubRecord: Task) => Promise<void>;
+  init: (pubRecord: Task<TaskPromotion>) => Promise<void>;
 }
 
 const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [taskInfo, setTaskInfo] = useState<Task | null>();
+  const [taskInfo, setTaskInfo] = useState<Task<TaskPromotion> | null>();
 
-  async function init(inTaskInfo: Task) {
+  async function init(inTaskInfo: Task<TaskPromotion>) {
     setTaskInfo(inTaskInfo);
     setIsModalOpen(true);
   }

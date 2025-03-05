@@ -6,18 +6,28 @@
  * @Description: 用户任务信息
  */
 import { Button, Modal } from 'antd';
-import { Task, TaskTypeName } from '@@/types/task';
+import {
+  Task,
+  TaskProduct,
+  TaskPromotion,
+  TaskTypeName,
+  TaskVideo,
+} from '@@/types/task';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { taskApi } from '@/api/task';
 import { UserTask } from '@/api/types/task';
 
 export interface MineTaskInfoRef {
-  init: (inData: UserTask<Task>) => Promise<void>;
+  init: (
+    inData: UserTask<Task<TaskProduct | TaskPromotion | TaskVideo>>,
+  ) => Promise<void>;
 }
 
 const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [mineTaskInfo, setMineTaskInfo] = useState<UserTask<Task> | null>();
+  const [mineTaskInfo, setMineTaskInfo] = useState<UserTask<
+    Task<TaskProduct | TaskPromotion | TaskVideo>
+  > | null>();
   const [doneInfo, setDoneInfo] = useState<{
     submissionUrl?: string;
     qrCodeScanResult?: string;
@@ -28,7 +38,9 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
     screenshotUrls: ['img1', 'img2'],
   });
 
-  async function init(inData: UserTask<Task>) {
+  async function init(
+    inData: UserTask<Task<TaskProduct | TaskPromotion | TaskVideo>>,
+  ) {
     setMineTaskInfo(inData);
     setIsModalOpen(true);
   }

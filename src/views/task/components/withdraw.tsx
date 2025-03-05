@@ -6,7 +6,13 @@
  * @Description: 任务提现
  */
 import { Button, Modal } from 'antd';
-import { Task, TaskTypeName } from '@@/types/task';
+import {
+  Task,
+  TaskProduct,
+  TaskPromotion,
+  TaskTypeName,
+  TaskVideo,
+} from '@@/types/task';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { taskApi } from '@/api/task';
 import { financeApi } from '@/api/finance';
@@ -14,16 +20,22 @@ import { UserWalletAccount } from '@/api/types/userWalletAccount';
 import { UserTask } from '@/api/types/task';
 
 export interface WithdrawRef {
-  init: (taskInfo: UserTask<Task>) => Promise<void>;
+  init: (
+    taskInfo: UserTask<Task<TaskProduct | TaskPromotion | TaskVideo>>,
+  ) => Promise<void>;
 }
 
 const Com = forwardRef<WithdrawRef>((props: any, ref) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [accountList, setAccountList] = useState<UserWalletAccount[]>([]);
   const [account, setAccount] = useState<UserWalletAccount | null>();
-  const [taskInfo, setTaskInfo] = useState<UserTask<Task> | null>();
+  const [taskInfo, setTaskInfo] = useState<UserTask<
+    Task<TaskProduct | TaskPromotion | TaskVideo>
+  > | null>();
 
-  async function init(inTaskInfo: UserTask<Task>) {
+  async function init(
+    inTaskInfo: UserTask<Task<TaskProduct | TaskPromotion | TaskVideo>>,
+  ) {
     await getAccountList();
     setTaskInfo(inTaskInfo);
     setIsModalOpen(true);

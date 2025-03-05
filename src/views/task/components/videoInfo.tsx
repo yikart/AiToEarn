@@ -6,19 +6,19 @@
  * @Description: video
  */
 import { Button, Modal } from 'antd';
-import { Task, TaskStatusName, TaskTypeName } from '@@/types/task';
+import { Task, TaskStatusName, TaskTypeName, TaskVideo } from '@@/types/task';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { taskApi } from '@/api/task';
 
 export interface TaskInfoRef {
-  init: (pubRecord: Task) => Promise<void>;
+  init: (pubRecord: Task<TaskVideo>) => Promise<void>;
 }
 
 const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [taskInfo, setTaskInfo] = useState<Task | null>();
+  const [taskInfo, setTaskInfo] = useState<Task<TaskVideo> | null>();
 
-  async function init(inTaskInfo: Task) {
+  async function init(inTaskInfo: Task<TaskVideo>) {
     setTaskInfo(inTaskInfo);
     setIsModalOpen(true);
   }
