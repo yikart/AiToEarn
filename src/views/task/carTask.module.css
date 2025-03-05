@@ -1,0 +1,24 @@
+.task-list-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px; /* 卡片之间的间距 */
+}
+
+.task-card {
+  width: calc(33.33% - 16px); /* 默认每行3个，减去间距 */
+  box-sizing: border-box; /* 确保宽度计算包含边框和内边距 */
+}
+
+/* 响应式规则：屏幕宽度小于1200px时，每行显示2个 */
+@media (max-width: 1200px) {
+  .task-card {
+    width: calc(50% - 16px);
+  }
+}
+
+/* 响应式规则：屏幕宽度小于768px时，每行显示1个 */
+@media (max-width: 768px) {
+  .task-card {
+    width: 100%;
+  }
+}

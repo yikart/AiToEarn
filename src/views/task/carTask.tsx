@@ -5,14 +5,16 @@
  * @LastEditors: nevin
  * @Description: 任务
  */
-import { Button } from 'antd';
+import { Button, Card, Col, Row } from 'antd';
 import { useState, useEffect, useRef } from 'react';
-import { Task, TaskType } from '@@/types/task';
+import { Task, TaskProduct, TaskType } from '@@/types/task';
 import { taskApi } from '@/api/task';
 import { TaskInfoRef } from './components/popInfo';
 import TaskInfo from './components/carInfo';
+const FILE_BASE_URL = import.meta.env.VITE_APP_FILE_HOST;
+
 export default function Page() {
-  const [taskList, setTaskList] = useState<Task[]>([]);
+  const [taskList, setTaskList] = useState<Task<TaskProduct>[]>([]);
   const [pageInfo, setPageInfo] = useState({
     pageSize: 10,
     pageNo: 1,
@@ -34,20 +36,54 @@ export default function Page() {
   }, []);
 
   return (
-    <div>
+    <div className="p-4">
       <TaskInfo ref={Ref_TaskInfo} />
-      <div>
+      <div className="flex flex-wrap gap-4">
         {taskList.map((v) => {
           return (
-            <div key={v.id}>
-              {v.title}
-              <Button
-                type="primary"
-                onClick={() => Ref_TaskInfo.current?.init(v)}
-              >
-                查看
-              </Button>
-            </div>
+            <Card
+              key={v.id}
+              className="box-border w-full p-4 sm:w-1/2 md:w-1/3"
+            >
+              <Row>
+                <Col span={12}>
+                  <div>
+                    <img
+                      src={`${FILE_BASE_URL}${v.imageUrl}`}
+                      alt=""
+                      className="w-full h-full"
+                    />
+                  </div>
+                </Col>
+                <Col span={12}>
+                  <h3>{v.title}</h3>
+                  <Row>
+                    <Col span={12}>
+                      {!v.dataInfo ? (
+                        <div>暂无数据</div>
+                      ) : (
+                        <>
+                          <p> {v.dataInfo.title}</p>
+                          <p> {v.dataInfo.price}元</p>
+                          <p>数量: {v.dataInfo.sales}</p>
+                        </>
+                      )}
+                    </Col>
+                    <Col span={12}>
+                      <p>招募人数: {v.maxRecruits}</p>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+              <Row>
+                <Button
+                  type="primary"
+                  onClick={() => Ref_TaskInfo.current?.init(v)}
+                >
+                  查看
+                </Button>
+              </Row>
+            </Card>
           );
         })}
       </div>

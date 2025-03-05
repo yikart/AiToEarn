@@ -31,11 +31,25 @@ export const TaskStatusName = new Map([
   [TaskStatus.CANCELLED, '取消'],
 ]);
 
-export interface Task extends TimeTemp {
+interface TaskData {
+  title: string;
+  desc?: string;
+}
+export interface TaskVideo extends TaskData {
+  videoUrl: string;
+}
+export interface TaskPromotion extends TaskData {}
+export interface TaskProduct extends TaskData {
+  price: number;
+  sales?: number;
+}
+export interface Task<T extends TaskProduct | TaskPromotion | TaskVideo>
+  extends TimeTemp {
   id: string;
   title: string;
   description: string;
   type: TaskType;
+  dataInfo: T;
   imageUrl: string;
   keepTime: number; // 保持时间(秒)
   requiresShoppingCart: boolean; // 是否需要挂购物车
