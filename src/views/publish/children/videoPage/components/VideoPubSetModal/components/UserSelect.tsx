@@ -84,7 +84,11 @@ export default function UserSelect({
         placeholder="输入关键词搜索"
         labelInValue
         filterOption={false}
-        onSearch={debounceFetcher}
+        onSearch={
+          (props.hasOwnProperty('isSearch') ? props.isSearch : true)
+            ? debounceFetcher
+            : undefined
+        }
         notFoundContent={fetching ? <Spin size="small" /> : null}
         fieldNames={{
           label: 'name',
