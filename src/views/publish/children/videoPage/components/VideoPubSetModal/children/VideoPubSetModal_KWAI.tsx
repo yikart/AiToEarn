@@ -57,7 +57,7 @@ const VideoPubSetModal_KWAI = memo(
             maxCount={3}
             title="@好友"
             tips="您可以添加3个好友"
-            isSearch={false}
+            showSearch={false}
           />
 
           <LocationSelect currChooseAccount={currChooseAccount} />

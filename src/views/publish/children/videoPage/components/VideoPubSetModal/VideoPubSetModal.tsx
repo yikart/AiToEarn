@@ -102,7 +102,7 @@ const VideoPubSetModal = memo(
 
       useEffect(() => {
         // 发布进度监听
-        onVideoPublishProgress((progressData) => {
+        return onVideoPublishProgress((progressData) => {
           setPubProgressMap((prev) => {
             const newMap = new Map(prev);
             newMap.set(progressData.account.id!, progressData);

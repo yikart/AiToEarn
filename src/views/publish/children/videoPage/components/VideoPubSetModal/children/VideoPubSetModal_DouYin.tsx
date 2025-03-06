@@ -146,7 +146,7 @@ const ActivitySelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
   useEffect(() => {
     init();
 
-    onAccountLoginFinish(() => {
+    return onAccountLoginFinish(() => {
       init();
     });
   }, []);
