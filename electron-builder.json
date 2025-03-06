@@ -6,21 +6,15 @@
   "directories": {
     "output": "release/${version}"
   },
-  "files": [
-    "dist-electron",
-    "dist"
-  ],
-"beforePack": "scripts/cleanup-ffmpeg.cjs",
+  "files": ["dist-electron", "dist"],
+  "beforePack": "scripts/cleanup-ffmpeg.cjs",
   "mac": {
-    "identity":null,
+    "identity": null,
     "artifactName": "${productName}-${version}-${arch}.${ext}",
     "target": [
       {
         "target": "default",
-        "arch": [
-          "x64",
-          "arm64"
-        ]
+        "arch": ["x64", "arm64"]
       }
     ]
   },
@@ -28,9 +22,7 @@
     "target": [
       {
         "target": "nsis",
-        "arch": [
-          "x64"
-        ]
+        "arch": ["x64"]
       }
     ],
     "artifactName": "${productName}-${version}.${ext}"
@@ -50,16 +42,12 @@
     {
       "from": "public/assets",
       "to": "assets",
-      "filter": [
-        "**/*"
-      ]
+      "filter": ["**/*"]
     },
     {
       "from": "public/bin",
       "to": "bin",
-      "filter": [
-        "**/*"
-      ]
+      "filter": ["**/*"]
     }
   ]
 }
