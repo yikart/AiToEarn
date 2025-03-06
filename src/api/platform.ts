@@ -196,6 +196,13 @@ export const platformApi = {
     });
   },
 
+  // 获取专题的时间类型
+  getTopicTimeTypes(msgType: string) {
+    return hotHttp.get<string[]>(`/topics/timeType/${msgType}`, {
+      isToken: false,
+    });
+  },
+
   // 获取热门专题列表
   getAllTopics(params: {
     msgType?: string; // 项目类型
