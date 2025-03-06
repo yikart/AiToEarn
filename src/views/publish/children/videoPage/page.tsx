@@ -12,7 +12,7 @@ import VideoChooseItem from '@/views/publish/children/videoPage/components/Video
 import CommonPubSetting from '@/views/publish/children/videoPage/components/CommonPubSetting';
 import VideoPubSetModal from '@/views/publish/children/videoPage/components/VideoPubSetModal/VideoPubSetModal';
 
-enum AccountChooseType {
+export enum AccountChooseType {
   // 多选
   MultiSelect = 0,
   // 单选
@@ -56,7 +56,7 @@ export default function Page() {
 
   useEffect(() => {
     return () => {
-      clear();
+      // clear();
     };
   }, []);
 
@@ -78,7 +78,10 @@ export default function Page() {
             addAccount(aList);
           }}
           onPlatChange={(_, account) => {
-            if (accountChooseType.current === AccountChooseType.Radio) {
+            if (
+              accountChooseType.current === AccountChooseType.Radio ||
+              accountChooseType.current === AccountChooseType.Replace
+            ) {
               setChooseAccountOpen(false);
               aloneAdd({
                 account,
@@ -157,10 +160,10 @@ export default function Page() {
                       <VideoChooseItem
                         key={v.id + v.video + v.account}
                         videoChooseItem={v}
-                        onAccountOneChoose={(id) => {
-                          accountChooseType.current = AccountChooseType.Radio;
-                          setChooseAccountOpen(true);
+                        onAccountOneChoose={(id, type) => {
+                          accountChooseType.current = type;
                           accountOneChooseId.current = id;
+                          setChooseAccountOpen(true);
                         }}
                       />
                     );

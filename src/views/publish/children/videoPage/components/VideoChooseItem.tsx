@@ -8,19 +8,21 @@ import {
   EditOutlined,
   PlusOutlined,
   VideoCameraFilled,
+  SwapOutlined,
 } from '@ant-design/icons';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import VideoChoose from '@/components/Choose/VideoChoose';
 import { formatSeconds } from '@/utils';
 import { AccountStatus } from '../../../../../../commont/AccountEnum';
+import { AccountChooseType } from '../page';
 
 export interface IVideoChooseItemRef {}
 
 export interface IVideoChooseItemProps {
   videoChooseItem: IVideoChooseItem;
   // 用户单选触发
-  onAccountOneChoose: (id: string) => void;
+  onAccountOneChoose: (id: string, type: AccountChooseType) => void;
 }
 
 // 选择视频完成后渲染的列表 item
@@ -135,6 +137,17 @@ const VideoChooseItem = memo(
                 <div className="videoChooseItem-account">
                   <div className="videoChooseItem-account-avatar">
                     <Avatar src={videoChooseItem.account.avatar} size="large" />
+                    <div
+                      className="videoChooseItem-account-avatar-replace"
+                      onClick={() => {
+                        onAccountOneChoose(
+                          videoChooseItem.id,
+                          AccountChooseType.Replace,
+                        );
+                      }}
+                    >
+                      <SwapOutlined />
+                    </div>
                   </div>
                   <div className="videoChooseItem-account-con">
                     <div className="videoChooseItem-account-top">
@@ -167,7 +180,10 @@ const VideoChooseItem = memo(
                 <div
                   className="videoChooseItem-noAccount"
                   onClick={() => {
-                    onAccountOneChoose(videoChooseItem.id);
+                    onAccountOneChoose(
+                      videoChooseItem.id,
+                      AccountChooseType.Radio,
+                    );
                   }}
                 >
                   <div className="videoChooseItem-noAccount-icon">

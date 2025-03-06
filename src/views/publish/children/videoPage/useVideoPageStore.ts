@@ -376,7 +376,6 @@ export const useVideoPageStore = create(
             });
           }
 
-          console.log(videoListChoose);
           set({
             videoListChoose,
           });

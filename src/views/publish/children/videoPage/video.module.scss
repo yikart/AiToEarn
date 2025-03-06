@@ -276,9 +276,30 @@
         width: 100%;
         display: flex;
         align-items: center;
+        &:hover {
+          .videoChooseItem-account-avatar-replace {
+            display: flex !important;
+          }
+        }
         &-avatar {
+          position: relative;
           .ant-avatar {
             flex-shrink: 0;
+          }
+          &-replace {
+            display: none;
+            position: absolute;
+            cursor: pointer;
+            color: #fff;
+            background: var(--colorPrimary5);
+            width: 16px;
+            height: 16px;
+            bottom: -2px;
+            right: -2px;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            border-radius: 50%;
           }
         }
         &-con {
