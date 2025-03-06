@@ -807,7 +807,7 @@ const Trending: React.FC = () => {
 
       // 获取响应数据
       const items = response.items || [];
-      
+
       // 转换数据类型
       const formattedItems = items.map((item) => ({
         ...item,
@@ -1235,10 +1235,10 @@ const Trending: React.FC = () => {
                       >
                         {/* 排名 */}
                         <div className="w-8 text-lg font-bold text-orange-500">
-                          { (singleCategoryPagination?.currentPage  - 1) *
+                          {(singleCategoryPagination!.currentPage - 1) *
                             (singleCategoryPagination?.itemsPerPage || 20) +
                             index +
-                            1 || title.rank }
+                            1 || title.rank}
                         </div>
 
                         {/* 标题信息 */}
