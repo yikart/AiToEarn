@@ -1,7 +1,7 @@
 import axios from "axios";
 import crypto from "crypto-js"
 const appKey = "red.gLvsVoksierVz0uF";
-const appSecret = "xxxx";
+const appSecret = "f13a2266d1e2c32a553cb7a42ea63c48";
 let cachedAccessToken = null;
 let accessTokenExpiresAt = 0; // 记录 access_token 过期时间
 
@@ -16,7 +16,7 @@ function generateSignature(appKey, nonce, timeStamp, appSecret) {
     .sort()
     .map((key) => `${key}=${params[key]}`)
     .join("&");
-  const stringToSign = sortedParams + '&appSecret=' + appSecret;
+  const stringToSign = sortedParams + appSecret;
   console.log(stringToSign);
   return crypto.SHA256(stringToSign).toString();
 }
@@ -63,8 +63,8 @@ const getAccessToken = async (nonce, timestamp) => {
 const nonce = Math.random().toString(36).substring(2);
 const timestamp = Date.now();
 const accessToken = await getAccessToken(nonce, timestamp);
-// const signature = generateSignature(appKey, nonce, timestamp, accessToken);
-// console.log("appKey：", appKey);
-// console.log("nonce：", nonce);
-// console.log("timestamp：", timestamp);
-// console.log("signature：", signature);
+const signature = generateSignature(appKey, nonce, timestamp, accessToken);
+console.log("appKey：", appKey);
+console.log("nonce：", nonce);
+console.log("timestamp：", timestamp);
+console.log("signature：", signature);
