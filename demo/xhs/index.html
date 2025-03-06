@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>小红书api demo</title>
+</head>
+<body>
+  <button onclick="start()">开始</button>
+
+  <script src="https://fe-static.xhscdn.com/biz-static/goten/xhs-1.0.1.js"></script>
+  <script>
+    function start() {
+      xhs.share({
+        shareInfo: {
+          type: 'video', // 必填，笔记类型 'video' | 'normal'
+          title: '', // 笔记标题
+          content: '', // 笔记正文
+          images:  [], //图文类型必填，笔记图片，必须是服务器地址，暂时不支持本地文件
+          video: `https://v2.kwaicdn.com/ksc2/SMdhuIRTGiY9m3ArzOK-oHez6UYVeUxXanHgmB1xBBnsbp74iJ_obAfIGVj_d7RHk6egi72Fhhavh4Qt3kjvcX800rPTC5C4syQmMn0JNmCLXkLc0x0eZWPixd9v8ojThsZlGa5-R-cGkJ6Yz_5w3o6LTNvznfEwWK5IuTbsTyo6JyqnSjXHJXTJt60OfHLe.mp4?pkey=AAUeTe5wQYga8lqgFEiu9QADrMJ-cmeeNpa4a56yDq9mUM4dwIxc3BPJngfj0w8jM6NTOFDeMt89qwdGNeinaf0mnVdWuk3OXt32rpKDlVwqQgN2grlkN-TtNH9tSRnd_hE&tag=1-1741227422-unknown-0-6brouypjgg-0d40512211807271&clientCacheKey=3xm49hn8ttwywgm_b.mp4&di=72fe0292&bp=14944&tt=b&ss=vp`,
+          cover: '' // 视频封面图，必须是服务器地址，暂时不支持本地文件
+        },
+        verifyConfig: {
+          appKey: 'red.gLvsVoksierVz0uF', //必填，应用的唯一标识,
+          nonce: 'xln7snms4mh', // 必填，服务端生成签名的随机字符串
+          timestamp: 1741227154604, // 必填，服务端生成签名的时间戳
+          signature: '646b7c0c796fdc8f7b15eb1aaeac0b198ce875716742a3d3b8af0b583c66bf71', // 必填，服务端生成的签名
+        },
+        fail: (e) => {
+          console.log(e)
+          // 调用失败时执行的回调函数
+        },
+      })
+    }
+  </script>
+</body>
+</html>

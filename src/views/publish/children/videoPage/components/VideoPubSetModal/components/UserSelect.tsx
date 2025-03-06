@@ -19,8 +19,6 @@ interface DebounceSelectProps<ValueType = any>
   currChooseAccount: IVideoChooseItem;
   tips?: string;
   title: string;
-  // 是否需要搜索，默认需要
-  isSearch?: boolean;
 }
 
 // 话题选择器
@@ -60,7 +58,7 @@ export default function UserSelect({
   };
 
   useEffect(() => {
-    if (props.isSearch === false) {
+    if (props.showSearch === false) {
       getList().then((res) => {
         setOptions(res);
       });
@@ -77,20 +75,26 @@ export default function UserSelect({
     <>
       <h1>{props.title}</h1>
       <Select
-        showSearch={props.hasOwnProperty('isSearch') ? props.isSearch : true}
+        {...props}
+        showSearch={
+          props.hasOwnProperty('showSearch') ? props.showSearch : true
+        }
         allowClear
         style={{ width: '100%' }}
         mode="multiple"
         placeholder="输入关键词搜索"
         labelInValue
         filterOption={false}
-        onSearch={debounceFetcher}
+        onSearch={
+          (props.hasOwnProperty('showSearch') ? props.showSearch : true)
+            ? debounceFetcher
+            : undefined
+        }
         notFoundContent={fetching ? <Spin size="small" /> : null}
         fieldNames={{
           label: 'name',
           value: 'id',
         }}
-        {...props}
         options={options}
         optionRender={({ data }) => {
           return (

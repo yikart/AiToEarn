@@ -112,7 +112,7 @@ const PlatChoose = memo(
       useEffect(() => {
         getAccountList();
 
-        onAccountLoginFinish(() => {
+        const revmoeListener = onAccountLoginFinish(() => {
           getAccountList();
         });
 
@@ -120,6 +120,7 @@ const PlatChoose = memo(
           setAccountMap(new Map());
           setChoosedAcountMap(new Map());
           init();
+          revmoeListener();
         };
       }, []);
 

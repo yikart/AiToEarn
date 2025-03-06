@@ -121,7 +121,7 @@ const AccountSidebar = memo(
       useEffect(() => {
         getAccountList();
 
-        onAccountLoginFinish(() => {
+        return onAccountLoginFinish(() => {
           getAccountList();
         });
       }, []);

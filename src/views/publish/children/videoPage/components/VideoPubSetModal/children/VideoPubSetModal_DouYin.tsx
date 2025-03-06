@@ -146,7 +146,7 @@ const ActivitySelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
   useEffect(() => {
     init();
 
-    onAccountLoginFinish(() => {
+    return onAccountLoginFinish(() => {
       init();
     });
   }, []);
@@ -214,6 +214,7 @@ const ActivitySelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
 
       <h1>活动奖励</h1>
       <Select
+        showSearch={false}
         allowClear
         style={{ width: '100%' }}
         placeholder="点击选择活动奖励"

@@ -84,7 +84,10 @@ const VideoChooseItem = memo(
                     </div>
                   </div>
                   <div className="videoChooseItem-left-info">
-                    <p className="videoChooseItem-left-title">
+                    <p
+                      className="videoChooseItem-left-title"
+                      title={videoChooseItem.video?.filename}
+                    >
                       {videoChooseItem.video?.filename}
                     </p>
                     <div className="videoChooseItem-left-bottom">
