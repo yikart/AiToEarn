@@ -206,6 +206,7 @@ export const platformApi = {
   // 获取热门专题列表
   getAllTopics(params: {
     msgType?: string; // 项目类型
+    timeType?: string; // 时间分类
     type?: string; // 类型
     platformId?: string; // 平台ID
     startTime?: string; // 发布时间开始
