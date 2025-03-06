@@ -575,43 +575,45 @@ const Trending: React.FC = () => {
   // 修改热门专题点击处理函数
   const handleTopicExpandClick = async () => {
     const newTopicExpanded = !topicExpanded;
-    console.log('11111');
+    console.log('切换热门专题展开状态:', newTopicExpanded);
+    
+    // 更新展开状态
     setTopicExpanded(newTopicExpanded);
-    console.log('22222');
+    
+    // 关闭其他展开的内容
     setContentExpanded(false);
-    console.log('33333');
     setHotPlatformExpanded(false);
-    console.log('44444');
     setHotEventExpanded(false);
-    console.log('55555');
     setViralTitleExpanded(false);
 
-    // 如果是展开热门专题，并且还没有选择消息类型，则自动选择第一个
-    if (
-      newTopicExpanded &&
-      msgTypeList.length > 0
-    ) {
-      console.log('66666');
-      // 自动选择第一个消息类型
-      const firstMsgType = msgTypeList[0];
-      setSelectedMsgType(firstMsgType);
-
-      // 如果有平台数据，默认选择第一个平台
-      if (platforms.length > 0) {
+    // 如果是展开热门专题，并且有消息类型，则加载数据
+    if (newTopicExpanded && msgTypeList.length > 0) {
+      console.log('准备加载热门专题数据');
+      
+      // 如果没有选择消息类型，则自动选择第一个
+      if (!selectedMsgType && msgTypeList.length > 0) {
+        setSelectedMsgType(msgTypeList[0]);
+      }
+      
+      // 使用当前选择的消息类型或第一个消息类型
+      const msgType = selectedMsgType || msgTypeList[0];
+      
+      // 如果没有选择平台，则使用第一个平台
+      if (!selectedPlatformId && platforms.length > 0) {
         setSelectedPlatformId(platforms[0]._id);
       }
-
+      
       // 调用处理函数获取数据
       setTopicLoading(true);
       try {
         // 获取二级分类
-        await fetchTopicTypes(firstMsgType);
-
-        // 获取专题数据 - 使用时间范围参数和默认选择的平台
+        await fetchTopicTypes(msgType);
+        
+        // 获取专题数据 - 使用时间类型参数和当前选择的平台
         const hotTopicsData = await platformApi.getAllTopics({
-          msgType: firstMsgType,
-          platformId: platforms.length > 0 ? platforms[0]._id : undefined,
-          timeType: selectedTimeRange,
+          msgType: msgType,
+          platformId: selectedPlatformId || (platforms.length > 0 ? platforms[0]._id : undefined),
+          timeType: selectedTimeType || selectedTimeRange,
         });
 
         if (hotTopicsData && hotTopicsData.items) {
@@ -643,7 +645,7 @@ const Trending: React.FC = () => {
     setSelectedMsgType(type);
     setTopicLoading(true);
     setContentExpanded(false);
-    setSelectedPlatformId(''); // 重置平台选择
+    // setSelectedPlatformId(''); // 重置平台选择
     setSelectedTopicType(''); // 重置分类选择
 
     try {
@@ -655,6 +657,7 @@ const Trending: React.FC = () => {
       // 获取专题数据 - 使用时间范围参数
       const hotTopicsData = await platformApi.getAllTopics({
         msgType: type,
+        platformId: selectedPlatformId,
         timeType: selectedTimeRange
       });
 
