@@ -156,7 +156,7 @@ const THEME = {
 
 // 修改按钮相关的样式类
 const buttonStyles = {
-  base: 'px-4 py-2 rounded-full text-sm transition-all duration-200 border-none outline-none',
+  base: 'px-4 py-2 rounded-md text-sm transition-all duration-200 border-none outline-none',
   primary: `bg-[#a66ae4] text-white hover:bg-[#9559d1]`,
   secondary: `bg-gray-50 text-gray-600 hover:bg-[#f4ebff] hover:text-[#a66ae4]`,
 };
@@ -190,6 +190,39 @@ const DataInfoContent: React.FC<{ ranking: PlatformRanking }> = ({
     </div>
   </div>
 );
+
+// 修改时间范围转换函数，返回完整的日期时间格式
+const getTimeRangeParams = (timeRange: string) => {
+  const endTime = new Date();
+  let startTime = new Date();
+  
+  switch (timeRange) {
+    case '近3天':
+      startTime.setDate(endTime.getDate() - 3);
+      break;
+    case '近7天':
+      startTime.setDate(endTime.getDate() - 7);
+      break;
+    case '近15天':
+      startTime.setDate(endTime.getDate() - 15);
+      break;
+    case '近30天':
+      startTime.setDate(endTime.getDate() - 30);
+      break;
+    default:
+      startTime.setDate(endTime.getDate() - 7); // 默认7天
+  }
+  
+  // 格式化为 YYYY-MM-DD HH:MM:SS
+  const formatDateTime = (date: Date) => {
+    return date.toISOString().replace('T', ' ').substring(0, 19);
+  };
+  
+  return {
+    startTime: formatDateTime(startTime),
+    endTime: formatDateTime(endTime)
+  };
+};
 
 const Trending: React.FC = () => {
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(
@@ -278,6 +311,10 @@ const Trending: React.FC = () => {
   const [singleCategoryPagination, setSingleCategoryPagination] =
     useState<PaginationMeta | null>(null);
 
+  // 在 Trending 组件中添加时间筛选状态
+  const [selectedTimeRange, setSelectedTimeRange] = useState<string>('近7天'); // 默认选中近7天
+  const timeRangeOptions = ['近3天', '近7天', '近15天', '近30天'];
+
   // 添加处理图片加载错误的函数
   const handleImageError = (imageId: string) => {
     setImgErrors((prev) => ({
@@ -342,8 +379,17 @@ const Trending: React.FC = () => {
     setCategoryLoading(true);
     try {
       const data = await platformApi.getRankingLabel(rankingId);
-      // 添加"全部"选项到分类列表开头
-      setCategories([...data]);
+      
+      // 检查数据中是否已经包含"全部"选项
+      if (data.includes('全部')) {
+        // 如果已经包含"全部"，则将其移到数组第一位
+        const filteredData = data.filter(item => item !== '全部');
+        setCategories(['全部', ...filteredData]);
+      } else {
+        // 如果不包含"全部"，则添加到列表开头
+        setCategories(['全部', ...data]);
+      }
+      
       // 默认选中"全部"
       setSelectedCategory('全部');
     } catch (error) {
@@ -386,14 +432,20 @@ const Trending: React.FC = () => {
     fetchPlatformRanking(platform._id);
   };
 
-  // 处理榜单选择
-  const handleRankingSelect = (ranking: PlatformRanking) => {
+  // 修改榜单选择处理函数
+  const handleRankingSelect = async (ranking: PlatformRanking) => {
+    // 如果点击的是当前已选中的榜单，不做任何操作
+    if (selectedRanking?._id === ranking._id) return;
+    
+    // 设置选中的榜单
     setSelectedRanking(ranking);
+    
+    // 重置分页到第一页
     setCurrentPage(1);
-    // 获取该榜单的分类
-    fetchRankingCategories(ranking._id);
-    // 获取榜单内容时添加分类参数
-    fetchRankingContents(ranking._id, 1, selectedCategory);
+    
+    
+    // 获取榜单内容
+    await fetchRankingContents(ranking._id, 1, selectedCategory !== '全部' ? selectedCategory : undefined);
   };
 
   // 处理页码变化
@@ -536,56 +588,6 @@ const Trending: React.FC = () => {
     }
   };
 
-  // 获取专题数据
-  const fetchTopicData = async () => {
-    setTopicLoading(true);
-    try {
-      // 1. 获取专题标签
-      const topics = await platformApi.getTopics();
-      setTopicList(topics);
-
-      // 这里注释掉有问题的代码，因为API中没有这些方法
-      // 2. 获取专题分类
-      // const categories = await platformApi.getTopicCategories();
-      // setTopicCategories(categories);
-
-      // if (categories.length > 0) {
-      //   const firstCategory = categories[0];
-      //   setSelectedTopicCategory(firstCategory);
-
-      //   // 3. 获取第一个分类的子分类
-      //   const subCategories = await platformApi.getSubCategories(firstCategory);
-      //   setTopicSubCategories(subCategories);
-
-      //   if (subCategories.length > 0) {
-      //     const firstSubCategory = subCategories[0];
-      //     setSelectedTopicSubCategory(firstSubCategory);
-
-      //     // 4. 获取专题内容
-      //     const response = await platformApi.getAllTopics({
-      //       category: firstCategory,
-      //       subCategory: firstSubCategory,
-      //       startTime: selectedDate,
-      //       endTime: selectedDate,
-      //     });
-
-      //     setTopicContents(response.items || []);
-      //     if (response.meta) {
-      //       setTopicPagination({
-      //         currentPage: response.meta.currentPage || 1,
-      //         totalPages: response.meta.totalPages || 1,
-      //         totalItems: response.meta.totalItems || 0,
-      //         itemsPerPage: response.meta.itemsPerPage || 20,
-      //       });
-      //     }
-      //   }
-      // }
-    } catch (error) {
-      console.error('获取专题数据失败:', error);
-    } finally {
-      setTopicLoading(false);
-    }
-  };
 
   // 添加获取二级分类的函数
   const fetchTopicTypes = async (msgType: string) => {
@@ -617,15 +619,26 @@ const Trending: React.FC = () => {
       const firstMsgType = msgTypeList[0];
       setSelectedMsgType(firstMsgType);
 
+      // 如果有平台数据，默认选择第一个平台
+      if (platforms.length > 0) {
+        setSelectedPlatformId(platforms[0]._id);
+      }
+
       // 调用处理函数获取数据
       setTopicLoading(true);
       try {
         // 获取二级分类
         await fetchTopicTypes(firstMsgType);
 
-        // 获取专题数据 - 修复类型错误
+        // 获取时间范围参数
+        const { startTime, endTime } = getTimeRangeParams(selectedTimeRange);
+
+        // 获取专题数据 - 使用时间范围参数和默认选择的平台
         const hotTopicsData = await platformApi.getAllTopics({
           msgType: firstMsgType,
+          platformId: platforms.length > 0 ? platforms[0]._id : undefined,
+          startTime, // 使用开始时间
+          endTime,   // 使用结束时间
         });
 
         if (hotTopicsData && hotTopicsData.items) {
@@ -652,7 +665,7 @@ const Trending: React.FC = () => {
     }
   };
 
-  // 修改 handleMsgTypeClick 函数，修复类型错误
+  // 修改 handleMsgTypeClick 函数
   const handleMsgTypeClick = async (type: string) => {
     setSelectedMsgType(type);
     setTopicLoading(true);
@@ -664,9 +677,14 @@ const Trending: React.FC = () => {
       // 获取二级分类
       await fetchTopicTypes(type);
 
-      // 获取专题数据 - 修复类型错误
+      // 获取时间范围参数
+      const { startTime, endTime } = getTimeRangeParams(selectedTimeRange);
+
+      // 获取专题数据 - 使用时间范围参数
       const hotTopicsData = await platformApi.getAllTopics({
         msgType: type,
+        startTime, // 使用开始时间
+        endTime,   // 使用结束时间
       });
 
       if (hotTopicsData && hotTopicsData.items) {
@@ -692,14 +710,74 @@ const Trending: React.FC = () => {
     }
   };
 
-  // 修改筛选变化处理函数，修复类型错误
-  const handleFilterChange = async () => {
+  // 修改筛选变化处理函数
+  const handleFilterChange = async (platformId?: string) => {
     setTopicLoading(true);
     try {
+      // 获取时间范围参数
+      const { startTime, endTime } = getTimeRangeParams(selectedTimeRange);
+
+      // 使用传入的 platformId 或当前状态
+      const currentPlatformId = platformId || selectedPlatformId;
+      
+      // 准备请求参数，只包含非空值
+      const params: any = {
+        msgType: selectedMsgType,
+        startTime, // 使用开始时间
+        endTime,   // 使用结束时间
+      };
+
+      // 只有当 platformId 有值时才添加
+      if (currentPlatformId) {
+        params.platformId = currentPlatformId;
+      }
+
+      // 只有当 type 有值时才添加
+      if (selectedTopicType && selectedTopicType.trim() !== '') {
+        params.type = selectedTopicType;
+      }
+
+      console.log('查询参数:', params); // 添加日志，方便调试
+
+      const hotTopicsData = await platformApi.getAllTopics(params);
+
+      if (hotTopicsData && hotTopicsData.items) {
+        // 类型转换，确保类型兼容
+        setTopicContents(hotTopicsData.items as unknown as TopicContent[]);
+        if (hotTopicsData.meta) {
+          setTopicPagination({
+            currentPage: hotTopicsData.meta.currentPage || 1,
+            totalPages: hotTopicsData.meta.totalPages || 1,
+            totalItems: hotTopicsData.meta.totalItems || 0,
+            itemCount: hotTopicsData.meta.itemCount || 0,
+            itemsPerPage: hotTopicsData.meta.itemsPerPage || 20,
+          });
+        }
+      } else {
+        setTopicContents([]);
+      }
+    } catch (error) {
+      console.error('筛选专题数据失败:', error);
+      setTopicContents([]);
+    } finally {
+      setTopicLoading(false);
+    }
+  };
+
+  // 修改时间筛选处理函数
+  const handleTimeRangeChange = async (timeRange: string) => {
+    setSelectedTimeRange(timeRange);
+    setTopicLoading(true);
+    try {
+      // 获取时间范围参数
+      const { startTime, endTime } = getTimeRangeParams(timeRange);
+
       const hotTopicsData = await platformApi.getAllTopics({
         msgType: selectedMsgType,
         platformId: selectedPlatformId,
         type: selectedTopicType,
+        startTime, // 使用开始时间
+        endTime,   // 使用结束时间
       });
 
       if (hotTopicsData && hotTopicsData.items) {
@@ -746,16 +824,33 @@ const Trending: React.FC = () => {
     }
   };
 
-  // 修改专题分页处理函数，修复类型错误
+  // 修改专题分页处理函数
   const handleTopicPageChange = async (page: number) => {
     if (page !== topicPagination?.currentPage) {
       setTopicLoading(true);
       try {
-        const hotTopicsData = await platformApi.getAllTopics({
+        // 获取时间范围参数
+        const { startTime, endTime } = getTimeRangeParams(selectedTimeRange);
+
+        // 准备请求参数，只包含非空值
+        const params: any = {
           msgType: selectedMsgType,
-          platformId: selectedPlatformId,
-          type: selectedTopicType,
-        });
+          startTime, // 使用开始时间
+          endTime,   // 使用结束时间
+          page,      // 添加页码
+        };
+
+        // 只有当 platformId 有值时才添加
+        if (selectedPlatformId) {
+          params.platformId = selectedPlatformId;
+        }
+
+        // 只有当 type 有值时才添加
+        if (selectedTopicType && selectedTopicType.trim() !== '') {
+          params.type = selectedTopicType;
+        }
+
+        const hotTopicsData = await platformApi.getAllTopics(params);
 
         if (hotTopicsData && hotTopicsData.items) {
           // 类型转换，确保类型兼容
@@ -1494,21 +1589,8 @@ const Trending: React.FC = () => {
               {/* 顶部筛选区 */}
               <div className="p-4 mb-4 bg-white rounded-lg shadow-sm">
                 {/* 平台筛选 */}
-                <div className="flex flex-col space-y-2">
+                <div className="flex flex-col space-y-4">
                   <div className="flex flex-wrap gap-2">
-                    <button
-                      className={`${buttonStyles.base} ${
-                        !selectedPlatformId
-                          ? buttonStyles.primary
-                          : buttonStyles.secondary
-                      }`}
-                      onClick={() => {
-                        setSelectedPlatformId('');
-                        handleFilterChange();
-                      }}
-                    >
-                      全部
-                    </button>
                     {platforms.map((platform) => (
                       <button
                         key={platform._id}
@@ -1518,8 +1600,11 @@ const Trending: React.FC = () => {
                             : buttonStyles.secondary
                         }`}
                         onClick={() => {
-                          setSelectedPlatformId(platform._id);
-                          handleFilterChange();
+                          const platformId = platform._id;
+                          // 先设置平台 ID
+                          setSelectedPlatformId(platformId);
+                          // 直接调用查询，传入当前点击的平台 ID
+                          handleFilterChange(platformId);
                         }}
                       >
                         <div className="flex items-center space-x-2">
@@ -1545,48 +1630,63 @@ const Trending: React.FC = () => {
                       </button>
                     ))}
                   </div>
-                </div>
-
-                {/* 二级分类筛选 */}
-                {selectedMsgType && (
-                  <div className="flex flex-col mt-4 space-y-2">
+                  
+                  {/* 时间筛选 - 新增 */}
+                  <div className="flex items-center">
+                    <span className="text-sm text-gray-500 mr-3">时间范围:</span>
                     <div className="flex flex-wrap gap-2">
-                      <button
-                        className={`${buttonStyles.base} ${
-                          !selectedTopicType
-                            ? buttonStyles.primary
-                            : buttonStyles.secondary
-                        }`}
-                        onClick={() => {
-                          setSelectedTopicType('');
-                          handleFilterChange();
-                        }}
-                      >
-                        全部
-                      </button>
-                      {topicTypes.map((type) => (
+                      {timeRangeOptions.map((timeRange) => (
                         <button
-                          key={type}
+                          key={timeRange}
                           className={`${buttonStyles.base} ${
-                            selectedTopicType === type
+                            selectedTimeRange === timeRange
                               ? buttonStyles.primary
                               : buttonStyles.secondary
                           }`}
                           onClick={() => {
-                            setSelectedTopicType(type);
-                            handleFilterChange();
+                            // 先设置时间范围
+                            setSelectedTimeRange(timeRange);
+                            // 使用 setTimeout 确保状态更新后再调用查询
+                            setTimeout(() => {
+                              handleTimeRangeChange(timeRange);
+                            }, 0);
                           }}
                         >
-                          {type}
+                          {timeRange}
                         </button>
                       ))}
                     </div>
                   </div>
-                )}
+                  
+                  {/* 分类筛选 - 如果有的话 */}
+                  {topicTypes.length > 1 && (
+                    <div className="flex items-center">
+                      <span className="text-sm text-gray-500 mr-3">分类:</span>
+                      <div className="flex flex-wrap gap-2">
+                        {topicTypes.map((type) => (
+                          <button
+                            key={type}
+                            className={`${buttonStyles.base} ${
+                              selectedTopicType === type
+                                ? buttonStyles.primary
+                                : buttonStyles.secondary
+                            }`}
+                            onClick={() => {
+                              setSelectedTopicType(type === selectedTopicType ? '' : type);
+                              handleFilterChange();
+                            }}
+                          >
+                            {type}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-
+              
               {/* 专题内容列表 */}
-              <div className="space-y-3">
+              <div className="bg-white rounded-lg shadow-sm">
                 {topicLoading ? (
                   <div className="flex items-center justify-center py-8">
                     <span className="text-gray-500">加载中...</span>
@@ -1594,37 +1694,34 @@ const Trending: React.FC = () => {
                 ) : topicContents.length > 0 ? (
                   <>
                     {/* 表头 */}
-                    <div className="flex p-4 text-sm text-gray-500 bg-gray-50">
-                      <div className="w-8">排名</div>
-                      <div className="w-48">专题信息</div>
-                      <div className="flex-1">
-                        <div className="flex items-center">
-                          <div className="w-32">平台</div>
-                          <div className="flex items-center space-x-12">
-                            <div className="w-24 text-center">热度</div>
-                          </div>
-                        </div>
-                      </div>
+                    <div className="grid grid-cols-12 p-4 text-sm text-gray-500 bg-gray-50">
+                      <div className="col-span-1 text-center">排名</div>
+                      <div className="col-span-2 pl-2">封面</div>
+                      <div className="col-span-5 pl-2">标题/作者</div>
+                      <div className="col-span-1 text-center">分类</div>
+                      <div className="col-span-1 text-center">点赞</div>
+                      <div className="col-span-1 text-center">分享</div>
+                      <div className="col-span-1 text-center">阅读</div>
                     </div>
 
                     {/* 内容列表 */}
                     {topicContents.map((item, index) => (
                       <div
                         key={item._id}
-                        className="flex bg-white p-4 rounded-lg hover:shadow-md transition-shadow cursor-pointer border border-transparent hover:border-[#e6d3f7]"
+                        className="grid grid-cols-12 py-5 px-4 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer items-center"
                         onClick={() => handleContentClick(item.url, item.title)}
                       >
                         {/* 排名 */}
-                        <div className="w-8 text-lg font-bold text-orange-500">
+                        <div className="col-span-1 text-lg font-bold text-orange-500 text-center">
                           {((topicPagination?.currentPage || 1) - 1) *
                             (topicPagination?.itemsPerPage || 20) +
                             index +
                             1}
                         </div>
 
-                        {/* 专题信息区域 */}
-                        <div className="w-48">
-                          <div className="relative flex items-center justify-center w-full overflow-hidden bg-gray-100 rounded-lg h-28">
+                        {/* 封面 */}
+                        <div className="col-span-2 pl-2">
+                          <div className="relative w-full overflow-hidden bg-gray-100 rounded-lg aspect-video">
                             {item.cover && !imgErrors[item._id as string] ? (
                               <img
                                 src={getImageUrl(item.cover)}
@@ -1635,42 +1732,94 @@ const Trending: React.FC = () => {
                                 }
                               />
                             ) : (
-                              <div className="text-center text-gray-400">
+                              <div className="flex items-center justify-center h-full text-center text-gray-400">
                                 暂无图片
+                              </div>
+                            )}
+                            {item.type === 'video' && (
+                              <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded">
+                                视频
                               </div>
                             )}
                           </div>
                         </div>
 
-                        {/* 内容信息 */}
-                        <div className="flex-1 ml-4">
-                          <div className="flex flex-col justify-between h-full">
-                            <div>
-                              <h3 className="mb-2 text-base font-medium hover:text-blue-500">
-                                {item.title}
-                              </h3>
-                              <div className="flex items-center space-x-2">
-                                <span className="text-xs text-gray-400">
-                                  发布于{' '}
-                                  {dayjs(item.publishTime).format(
-                                    'YYYY-MM-DD HH:mm',
-                                  )}
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center mt-2">
-                              <div className="w-32 text-gray-500">
-                                <span>{item.category}</span>
-                              </div>
-                              <div className="flex items-center space-x-12">
-                                <div className="w-24 text-center">
-                                  <span className="text-[#a66ae4]">
-                                    {item.hotValue?.toLocaleString() || '0'}
+                        {/* 标题和作者信息 */}
+                        <div className="col-span-5 pl-4 ">
+                          <h3 className="text-base font-medium line-clamp-2 hover:text-[#a66ae4] text-left">
+                            {item.title}
+                          </h3>
+                          <div style={{width:'100%', height:'60px'}}></div>
+                          <div className="flex items-center mt-2">
+                            <div className="flex items-center">
+                              {item.avatar && !imgErrors[`avatar-${item._id}`] ? (
+                                <img
+                                  src={getImageUrl(item.avatar)}
+                                  alt={item.author}
+                                  className="w-5 h-5 rounded-full mr-1"
+                                  onError={() => handleImageError(`avatar-${item._id}`)}
+                                />
+                              ) : (
+                                <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center mr-1">
+                                  <span className="text-xs text-gray-500">
+                                    {item.author?.charAt(0)?.toUpperCase() || '?'}
                                   </span>
                                 </div>
-                              </div>
+                              )}
+                              <span className="text-sm text-gray-600 mr-2">{item.author}</span>
+                              {item.fans > 0 && (
+                                <span className="text-xs text-gray-400 mr-2">
+                                  {item.fans >= 10000 
+                                    ? `${(item.fans / 10000).toFixed(1)}万粉丝` 
+                                    : `${item.fans}粉丝`}
+                                </span>
+                              )}
+                              <span className="text-xs text-gray-400">
+                                发布于 {dayjs(item.publishTime).format('YYYY-MM-DD HH:mm')}
+                              </span>
                             </div>
+                          </div>
+                        </div>
+
+                        {/* 分类信息 */}
+                        <div className="col-span-1 text-center">
+                          <div className="text-sm text-gray-600">{item.category}</div>
+                          {item.subCategory && (
+                            <div className="text-xs text-gray-400 mt-1">{item.subCategory}</div>
+                          )}
+                        </div>
+
+                        {/* 点赞数 */}
+                        <div className="col-span-1 text-center">
+                          <div className="text-[#a66ae4] font-medium">
+                            {item.likeCount >= 10000 
+                              ? `${(item.likeCount / 10000).toFixed(1)}w` 
+                              : item.likeCount}
+                          </div>
+                          <div className="text-xs text-gray-400">点赞</div>
+                        </div>
+
+                        {/* 分享数 */}
+                        <div className="col-span-1 text-center">
+                          <div className="text-[#a66ae4] font-medium">
+                            {item.shareCount >= 10000 
+                              ? `${(item.shareCount / 10000).toFixed(1)}w` 
+                              : item.shareCount}
+                          </div>
+                          <div className="text-xs text-gray-400">分享</div>
+                        </div>
+
+                        {/* 阅读/观看数 */}
+                        <div className="col-span-1 text-center">
+                          <div className="text-[#a66ae4] font-medium">
+                            {item.readCount 
+                              ? (item.readCount >= 10000 
+                                  ? `${(item.readCount / 10000).toFixed(1)}w` 
+                                  : item.readCount)
+                              : '-'}
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            {item.watchingCount !== null ? '观看' : '阅读'}
                           </div>
                         </div>
                       </div>
@@ -1678,7 +1827,7 @@ const Trending: React.FC = () => {
 
                     {/* 分页组件 */}
                     {topicPagination && topicPagination.totalPages > 1 && (
-                      <div className="flex justify-center mt-6 mb-8">
+                      <div className="flex justify-center py-6">
                         <Pagination
                           current={topicPagination.currentPage}
                           total={topicPagination.totalItems}
@@ -1705,24 +1854,26 @@ const Trending: React.FC = () => {
               {rankingList.length > 0 && (
                 <div className="p-4 mb-4 bg-white rounded-lg shadow-sm">
                   <div className="flex space-x-4">
-                    {rankingList.map((ranking) => (
-                      <button
-                        key={ranking._id}
-                        className={`${buttonStyles.base} ${
-                          selectedRanking?._id === ranking._id
-                            ? buttonStyles.primary
-                            : buttonStyles.secondary
-                        }`}
-                        onClick={() => handleRankingSelect(ranking)}
-                      >
-                        {ranking.name}
-                      </button>
-                    ))}
+                    {rankingList
+                      .filter(ranking => !ranking.parentId)
+                      .map((ranking) => (
+                        <button
+                          key={ranking._id}
+                          className={`${buttonStyles.base} ${
+                            selectedRanking?._id === ranking._id
+                              ? buttonStyles.primary
+                              : buttonStyles.secondary
+                          }`}
+                          onClick={() => handleRankingSelect(ranking)}
+                        >
+                          {ranking.name}
+                        </button>
+                      ))}
                   </div>
                 </div>
               )}
 
-              {/* 顶部筛选区 */}
+              {/* 顶部筛选区 - 保持不变 */}
               <div className="p-4 mb-4 bg-white rounded-lg shadow-sm">
                 {/* 分类筛选 */}
                 <div className="flex flex-col space-y-2">
@@ -1730,9 +1881,9 @@ const Trending: React.FC = () => {
                     className={`grid gap-2 transition-[grid-template-rows,max-height] duration-300 ease-in-out relative pr-20`}
                     style={{
                       gridTemplateColumns:
-                        'repeat(auto-fill, minmax(100px, 1fr))',
-                      gridTemplateRows: isExpanded ? '1fr' : '40px',
-                      maxHeight: isExpanded ? '1000px' : '40px',
+                        'repeat(auto-fill, minmax(80px, 1fr))',
+                      gridTemplateRows: isExpanded ? '1fr' : '36px',
+                      maxHeight: isExpanded ? '1000px' : '36px',
                       overflow: 'hidden',
                     }}
                   >
@@ -1740,11 +1891,11 @@ const Trending: React.FC = () => {
                       {categories.map((category) => (
                         <button
                           key={category}
-                          className={`${buttonStyles.base} ${
+                          className={`${
                             selectedCategory === category
-                              ? buttonStyles.primary
-                              : buttonStyles.secondary
-                          } truncate h-10`}
+                              ? 'bg-[#a66ae4] text-white hover:bg-[#9559d1]'
+                              : 'bg-gray-50 text-gray-600 hover:bg-[#f4ebff] hover:text-[#a66ae4]'
+                          } px-2 py-1 rounded-md text-xs transition-all duration-200 border-none outline-none truncate h-8`}
                           onClick={() => handleCategorySelect(category)}
                         >
                           {category}
@@ -1753,7 +1904,7 @@ const Trending: React.FC = () => {
                     </div>
                     {categories.length > 8 && (
                       <button
-                        className="absolute right-0 top-0 h-10 px-3 flex items-center text-sm text-gray-500 hover:text-[#a66ae4] transition-colors bg-transparent border-none outline-none shadow-none"
+                        className="absolute right-0 top-0 h-8 px-2 flex items-center text-xs text-gray-500 hover:text-[#a66ae4] transition-colors bg-transparent border-none outline-none shadow-none"
                         onClick={() => setIsExpanded(!isExpanded)}
                       >
                         <span className="mr-1">
@@ -1769,19 +1920,48 @@ const Trending: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 日期选择和数据说明 */}
-                <div className="flex items-center justify-between mt-4 space-x-4">
-                  <DatePicker
-                    value={dayjs(selectedDate)}
-                    onChange={handleDateChange}
-                    locale={locale}
-                    allowClear={false}
-                    className="w-32"
-                    placeholder="选择日期"
-                    disabledDate={(current) => {
-                      return current && current > dayjs().endOf('day');
-                    }}
-                  />
+                {/* 日期选择和子榜单选择 */}
+                <div className="flex items-center justify-between mt-4">
+                  <div className="flex items-center space-x-4">
+                    <DatePicker
+                      value={dayjs(selectedDate)}
+                      onChange={handleDateChange}
+                      locale={locale}
+                      allowClear={false}
+                      className="w-32"
+                      placeholder="选择日期"
+                      disabledDate={(current) => {
+                        return current && current > dayjs().endOf('day');
+                      }}
+                    />
+                    
+                    {/* 子榜单选择 - 只在选择了父榜单后显示 */}
+                    {selectedRanking && rankingList.filter(ranking => 
+                      // 如果当前选中的是子榜单，则显示与其父榜单相关的所有子榜单
+                      ranking.parentId === (selectedRanking.parentId || selectedRanking._id)
+                    ).length > 0 && (
+                      <div className="flex flex-wrap gap-2 ml-4">
+                        {rankingList
+                          .filter(ranking => 
+                            // 如果当前选中的是子榜单，则显示与其父榜单相关的所有子榜单
+                            ranking.parentId === (selectedRanking.parentId || selectedRanking._id)
+                          )
+                          .map((ranking) => (
+                            <button
+                              key={ranking._id}
+                              className={`px-3 py-1.5 text-xs rounded-md transition-all duration-200 border-none outline-none ${
+                                selectedRanking?._id === ranking._id
+                                  ? 'bg-[#a66ae4] text-white hover:bg-[#9559d1]'
+                                  : 'bg-gray-50 text-gray-600 hover:bg-[#f4ebff] hover:text-[#a66ae4]'
+                              }`}
+                              onClick={() => handleRankingSelect(ranking)}
+                            >
+                              {ranking.name}
+                            </button>
+                          ))}
+                      </div>
+                    )}
+                  </div>
 
                   {selectedRanking && (
                     <Popover
