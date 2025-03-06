@@ -191,38 +191,6 @@ const DataInfoContent: React.FC<{ ranking: PlatformRanking }> = ({
   </div>
 );
 
-// 修改时间范围转换函数，返回完整的日期时间格式
-const getTimeRangeParams = (timeRange: string) => {
-  const endTime = new Date();
-  let startTime = new Date();
-  
-  switch (timeRange) {
-    case '近3天':
-      startTime.setDate(endTime.getDate() - 3);
-      break;
-    case '近7天':
-      startTime.setDate(endTime.getDate() - 7);
-      break;
-    case '近15天':
-      startTime.setDate(endTime.getDate() - 15);
-      break;
-    case '近30天':
-      startTime.setDate(endTime.getDate() - 30);
-      break;
-    default:
-      startTime.setDate(endTime.getDate() - 7); // 默认7天
-  }
-  
-  // 格式化为 YYYY-MM-DD HH:MM:SS
-  const formatDateTime = (date: Date) => {
-    return date.toISOString().replace('T', ' ').substring(0, 19);
-  };
-  
-  return {
-    startTime: formatDateTime(startTime),
-    endTime: formatDateTime(endTime)
-  };
-};
 
 const Trending: React.FC = () => {
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(
@@ -313,7 +281,11 @@ const Trending: React.FC = () => {
 
   // 在 Trending 组件中添加时间筛选状态
   const [selectedTimeRange, setSelectedTimeRange] = useState<string>('近7天'); // 默认选中近7天
-  const timeRangeOptions = ['近3天', '近7天', '近15天', '近30天'];
+  const timeRangeOptions = [];
+
+  // 在 Trending 组件中添加时间类型状态
+  const [timeTypes, setTimeTypes] = useState<string[]>([]);
+  const [selectedTimeType, setSelectedTimeType] = useState<string>('');
 
   // 添加处理图片加载错误的函数
   const handleImageError = (imageId: string) => {
@@ -603,18 +575,23 @@ const Trending: React.FC = () => {
   // 修改热门专题点击处理函数
   const handleTopicExpandClick = async () => {
     const newTopicExpanded = !topicExpanded;
+    console.log('11111');
     setTopicExpanded(newTopicExpanded);
+    console.log('22222');
     setContentExpanded(false);
+    console.log('33333');
     setHotPlatformExpanded(false);
+    console.log('44444');
     setHotEventExpanded(false);
+    console.log('55555');
     setViralTitleExpanded(false);
 
     // 如果是展开热门专题，并且还没有选择消息类型，则自动选择第一个
     if (
       newTopicExpanded &&
-      (!selectedMsgType || selectedMsgType === '') &&
       msgTypeList.length > 0
     ) {
+      console.log('66666');
       // 自动选择第一个消息类型
       const firstMsgType = msgTypeList[0];
       setSelectedMsgType(firstMsgType);
@@ -630,15 +607,11 @@ const Trending: React.FC = () => {
         // 获取二级分类
         await fetchTopicTypes(firstMsgType);
 
-        // 获取时间范围参数
-        const { startTime, endTime } = getTimeRangeParams(selectedTimeRange);
-
         // 获取专题数据 - 使用时间范围参数和默认选择的平台
         const hotTopicsData = await platformApi.getAllTopics({
           msgType: firstMsgType,
           platformId: platforms.length > 0 ? platforms[0]._id : undefined,
-          startTime, // 使用开始时间
-          endTime,   // 使用结束时间
+          timeType: selectedTimeRange,
         });
 
         if (hotTopicsData && hotTopicsData.items) {
@@ -678,13 +651,11 @@ const Trending: React.FC = () => {
       await fetchTopicTypes(type);
 
       // 获取时间范围参数
-      const { startTime, endTime } = getTimeRangeParams(selectedTimeRange);
 
       // 获取专题数据 - 使用时间范围参数
       const hotTopicsData = await platformApi.getAllTopics({
         msgType: type,
-        startTime, // 使用开始时间
-        endTime,   // 使用结束时间
+        timeType: selectedTimeRange
       });
 
       if (hotTopicsData && hotTopicsData.items) {
@@ -714,8 +685,7 @@ const Trending: React.FC = () => {
   const handleFilterChange = async (platformId?: string) => {
     setTopicLoading(true);
     try {
-      // 获取时间范围参数
-      const { startTime, endTime } = getTimeRangeParams(selectedTimeRange);
+      
 
       // 使用传入的 platformId 或当前状态
       const currentPlatformId = platformId || selectedPlatformId;
@@ -723,8 +693,7 @@ const Trending: React.FC = () => {
       // 准备请求参数，只包含非空值
       const params: any = {
         msgType: selectedMsgType,
-        startTime, // 使用开始时间
-        endTime,   // 使用结束时间
+        timeType: selectedTimeRange,
       };
 
       // 只有当 platformId 有值时才添加
@@ -770,14 +739,12 @@ const Trending: React.FC = () => {
     setTopicLoading(true);
     try {
       // 获取时间范围参数
-      const { startTime, endTime } = getTimeRangeParams(timeRange);
 
       const hotTopicsData = await platformApi.getAllTopics({
         msgType: selectedMsgType,
         platformId: selectedPlatformId,
         type: selectedTopicType,
-        startTime, // 使用开始时间
-        endTime,   // 使用结束时间
+        timeType: timeRange
       });
 
       if (hotTopicsData && hotTopicsData.items) {
@@ -829,14 +796,11 @@ const Trending: React.FC = () => {
     if (page !== topicPagination?.currentPage) {
       setTopicLoading(true);
       try {
-        // 获取时间范围参数
-        const { startTime, endTime } = getTimeRangeParams(selectedTimeRange);
 
         // 准备请求参数，只包含非空值
         const params: any = {
           msgType: selectedMsgType,
-          startTime, // 使用开始时间
-          endTime,   // 使用结束时间
+          timeType: selectedTimeRange,
           page,      // 添加页码
         };
 
@@ -969,6 +933,152 @@ const Trending: React.FC = () => {
       });
     }
   };
+
+  // 获取专题分类和时间类型
+  useEffect(() => {
+    const fetchTopicData = async () => {
+      try {
+        // 获取专题分类
+        const topicData = await platformApi.getMsgType();
+        setMsgTypeList(topicData);
+        
+        // 如果有分类，自动选择第一个并获取其时间类型
+        if (topicData.length > 0) {
+          setSelectedMsgType(topicData[0]);
+          fetchTopicTimeTypes(topicData[0]);
+        }
+      } catch (error) {
+        console.error('获取专题分类失败:', error);
+      }
+    };
+
+    fetchTopicData();
+  }, []);
+
+  // 获取专题时间类型
+  const fetchTopicTimeTypes = async (msgType: string) => {
+    try {
+      const timeTypeData = await platformApi.getTopicTimeTypes(msgType);
+      setTimeTypes(timeTypeData);
+      
+      // 如果有时间类型，自动选择第一个
+      if (timeTypeData.length > 0) {
+        setSelectedTimeType(timeTypeData[0]);
+      }
+    } catch (error) {
+      console.error('获取专题时间类型失败:', error);
+      setTimeTypes([]);
+    }
+  };
+
+  // 处理专题分类选择
+  const handleMsgTypeSelect = (msgType: string) => {
+    setSelectedMsgType(msgType);
+    setSelectedTopicCategory('');
+    setSelectedTopicSubCategory('');
+    
+    // 获取该分类的时间类型
+    fetchTopicTimeTypes(msgType);
+    
+    // 重置分页
+    setCurrentPage(1);
+    
+    // 获取专题内容
+    fetchTopicContents(msgType, '', '', 1, selectedTimeType);
+  };
+
+  // 处理时间类型选择
+  const handleTimeTypeSelect = (timeType: string) => {
+    setSelectedTimeType(timeType);
+    
+    // 重置分页
+    setCurrentPage(1);
+    
+    // 获取专题内容
+    fetchTopicContents(
+      selectedMsgType,
+      selectedTopicCategory,
+      selectedTopicSubCategory,
+      1,
+      timeType
+    );
+  };
+
+  // 修改获取专题内容的函数
+  const fetchTopicContents = async (
+    msgType: string,
+    category: string = '',
+    subCategory: string = '',
+    page: number = 1,
+    timeType: string = ''
+  ) => {
+    if (!msgType) return;
+    
+    setTopicLoading(true);
+    try {
+      // 构建查询参数
+      const params: any = {
+        msgType,
+        page,
+        limit: 10,
+      };
+      
+      // 添加分类参数
+      if (category) {
+        params.category = category;
+      }
+      
+      // 添加子分类参数
+      if (subCategory) {
+        params.subCategory = subCategory;
+      }
+      
+      // 添加时间类型参数
+      if (timeType) {
+        params.timeType = timeType;
+      }
+      
+      // 添加平台ID参数
+      if (selectedPlatformId) {
+        params.platformId = selectedPlatformId;
+      }
+      
+      // 添加专题类型参数
+      if (selectedTopicType) {
+        params.type = selectedTopicType;
+      }
+      
+      const { data, meta } = await platformApi.getAllTopics(params);
+      setTopicContents(data);
+      setTopicPagination(meta);
+    } catch (error) {
+      console.error('获取专题内容失败:', error);
+      setTopicContents([]);
+      setTopicPagination(null);
+    } finally {
+      setTopicLoading(false);
+    }
+  };
+
+  // 在热门专题界面部分添加时间类型筛选
+  <div className="flex items-center">
+    <span className="text-sm text-gray-500 mr-2">时间类型:</span>
+    <div className="flex flex-wrap gap-2">
+      {timeTypes.map((timeType) => (
+        <button
+          key={timeType}
+          className={`px-3 py-1.5 text-xs rounded-md transition-all duration-200 border-none outline-none ${
+            selectedTimeType === timeType
+              ? 'bg-[#a66ae4] text-white hover:bg-[#9559d1]'
+              : 'bg-gray-50 text-gray-600 hover:bg-[#f4ebff] hover:text-[#a66ae4]'
+          }`}
+          onClick={() => handleTimeTypeSelect(timeType)}
+        >
+          {timeType}
+        </button>
+      ))}
+    </div>
+  </div>
 
   return (
     <>
@@ -1635,7 +1745,7 @@ const Trending: React.FC = () => {
                   <div className="flex items-center">
                     <span className="text-sm text-gray-500 mr-3">时间范围:</span>
                     <div className="flex flex-wrap gap-2">
-                      {timeRangeOptions.map((timeRange) => (
+                      {timeTypes.map((timeRange) => (
                         <button
                           key={timeRange}
                           className={`${buttonStyles.base} ${
