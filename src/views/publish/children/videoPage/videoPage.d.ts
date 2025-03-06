@@ -25,7 +25,7 @@ export interface IPubParams {
   // 位置
   location?: ILocationDataItem;
   // 定时发布日期
-  timingTime?: Date | null;
+  timingTime?: Date;
   // @用户
   mentionedUserInfo?: ILableValue[];
 }

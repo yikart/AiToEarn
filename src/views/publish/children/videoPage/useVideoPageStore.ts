@@ -6,12 +6,15 @@ import {
 } from '@/views/publish/children/videoPage/videoPage';
 import { generateUUID } from '@/utils';
 import { AccountInfo } from '@/views/account/comment';
-import { IVideoFile } from '@/components/Choose/VideoChoose';
+import { getVideoFile, IVideoFile } from '@/components/Choose/VideoChoose';
 import { accountLogin } from '@/icp/account';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { message } from 'antd';
 import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
 import lodash from 'lodash';
+import { VideoModel } from '../../../../../electron/db/models/video';
+import { getImgFile } from '../../../../components/Choose/ImgChoose';
+import router from '@/router/index';
 
 interface IVideoPageStore {
   // 选择的视频数据
@@ -62,9 +65,7 @@ const store: IVideoPageStore = {
   operateId: '',
 };
 
-/**
- * 视频发布所有组件的共享状态和方法
- */
+// 视频发布所有组件的共享状态和方法
 export const useVideoPageStore = create(
   combine(
     {
@@ -349,6 +350,35 @@ export const useVideoPageStore = create(
           }
           set({
             videoListChoose: newValue,
+          });
+        },
+
+        // 重新发布设置参数
+        async restartPub(pubRecordList: VideoModel[], accounts: AccountInfo[]) {
+          const videoListChoose: IVideoChooseItem[] = [];
+          methods.setOperateId();
+
+          for (let i = 0; i < pubRecordList.length; i++) {
+            const pubRecord = pubRecordList[i];
+            const account = accounts[i];
+            const video = await getVideoFile(pubRecord.videoPath!);
+            const cover = await getImgFile(pubRecord.coverPath!);
+
+            videoListChoose.push({
+              id: generateUUID(),
+              account,
+              video,
+              pubParams: {
+                ...pubRecord,
+                cover: cover,
+                describe: pubRecord.desc,
+              },
+            });
+          }
+
+          console.log(videoListChoose);
+          set({
+            videoListChoose,
           });
         },
 

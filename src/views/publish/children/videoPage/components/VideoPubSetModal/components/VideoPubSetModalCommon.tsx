@@ -65,7 +65,7 @@ export const ScheduledTimeSelect = ({
         onChange={(e) => {
           setOnePubParams(
             {
-              timingTime: e ? e.toDate() : null,
+              timingTime: e ? e.toDate() : undefined,
             },
             currChooseAccount!.id,
           );

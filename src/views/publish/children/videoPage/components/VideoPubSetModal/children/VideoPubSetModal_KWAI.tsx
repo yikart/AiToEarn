@@ -9,7 +9,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import TopicSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/TopicSelect';
 import LocationSelect from '../components/LocationSelect';
-import UserSelect from "../components/UserSelect";
+import UserSelect from '../components/UserSelect';
 
 const { TextArea } = Input;
 

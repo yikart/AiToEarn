@@ -360,30 +360,6 @@ const VideoPubSetModal_KWAI = memo(
 
           <LocationSelect currChooseAccount={currChooseAccount} />
 
-          <h1>谁可以看</h1>
-          <Radio.Group
-            options={[
-              {
-                label: '公开（所有人可见）',
-                value: VisibleTypeEnum.Public,
-              },
-              { label: '好友可见', value: VisibleTypeEnum.Friend },
-              {
-                label: '私密（仅自己可见）',
-                value: VisibleTypeEnum.Private,
-              },
-            ]}
-            onChange={(e) => {
-              setOnePubParams(
-                {
-                  visibleType: e.target.value,
-                },
-                currChooseAccount!.id,
-              );
-            }}
-            value={currChooseAccount?.pubParams.visibleType}
-          />
-
           <HotspotSelect {...props} />
 
           <ScheduledTimeSelect
@@ -438,6 +414,30 @@ const VideoPubSetModal_KWAI = memo(
                 currChooseAccount.id,
               );
             }}
+          />
+
+          <h1>谁可以看</h1>
+          <Radio.Group
+            options={[
+              {
+                label: '公开（所有人可见）',
+                value: VisibleTypeEnum.Public,
+              },
+              { label: '好友可见', value: VisibleTypeEnum.Friend },
+              {
+                label: '私密（仅自己可见）',
+                value: VisibleTypeEnum.Private,
+              },
+            ]}
+            onChange={(e) => {
+              setOnePubParams(
+                {
+                  visibleType: e.target.value,
+                },
+                currChooseAccount!.id,
+              );
+            }}
+            value={currChooseAccount?.pubParams.visibleType}
           />
         </>
       );

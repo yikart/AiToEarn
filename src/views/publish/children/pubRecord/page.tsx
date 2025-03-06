@@ -8,6 +8,9 @@ import { formatTime, getFilePathName } from '@/utils';
 import { VideoPul } from '@/views/publish/children/videoPage/comment';
 import { icpGetAccountList } from '@/icp/account';
 import { AccountInfo, AccountPlatInfoMap } from '@/views/account/comment';
+import { useVideoPageStore } from '../videoPage/useVideoPageStore';
+import { useShallow } from 'zustand/react/shallow';
+import { useNavigate } from 'react-router-dom';
 
 const PubCon = ({ prm }: { prm: PubRecordModel }) => {
   const [imgFile, setImgFile] = useState<IImgFile>();
@@ -38,6 +41,13 @@ export default function Page() {
   const [pubRecordList, setPubRecordList] = useState<VideoPul[]>([]);
   // id=账户id，val=账户item数据
   const accountMap = useRef<Map<number, AccountInfo>>(new Map());
+  const navigate = useNavigate();
+
+  const { restartPub } = useVideoPageStore(
+    useShallow((state) => ({
+      restartPub: state.restartPub,
+    })),
+  );
 
   const columns: TableProps<PubRecordModel>['columns'] = [
     {
@@ -145,13 +155,34 @@ export default function Page() {
                           </Tooltip>
                         ) : (
                           <p className="pubRecord-record-item-userinfo-time">
-                            {formatTime(v.publishTime)}
+                            {formatTime(v.publishTime!)}
                           </p>
                         )}
                       </div>
                     </div>
                     <div className="pubRecord-record-item-btns">
-                      <Button type="link">查看</Button>
+                      {/*<Button type="link">查看</Button>*/}
+                      {v.status === 2 && (
+                        <Button
+                          type="link"
+                          onClick={() => {
+                            setRecordLoaidng(true);
+                            const prl = pubRecordList.filter(
+                              (v) => v.status === 2,
+                            );
+                            restartPub(
+                              prl,
+                              prl.map(
+                                (k) => accountMap.current.get(k.accountId)!,
+                              ),
+                            );
+                            setRecordLoaidng(false);
+                            navigate('/publish/video');
+                          }}
+                        >
+                          重新发布
+                        </Button>
+                      )}
                     </div>
                   </li>
                 );
