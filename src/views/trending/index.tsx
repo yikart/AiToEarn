@@ -787,7 +787,7 @@ const Trending: React.FC = () => {
     }
   };
 
-  // 添加获取单个分类数据的函数
+  // 修改获取单个分类数据的函数
   const fetchSingleCategoryData = async (
     platformId: string,
     category: string,
@@ -795,18 +795,21 @@ const Trending: React.FC = () => {
   ) => {
     setSingleCategoryLoading(true);
     try {
-      // 修改 API 调用，确保参数正确
-      const response = await platformApi.findByPlatformAndCategory(
-        platformId,
-        {},
-      );
+      // 修改 API 调用，使用正确的参数格式
+      const response = await platformApi.findByPlatformAndCategory(platformId, {
+        category: category,
+        page: page,
+        pageSize: 20, // 每页显示数量
+        // 可以添加其他参数，如时间范围
+        // startTime: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000), // 90天前
+        // endTime: new Date(),
+      });
 
-      // 过滤出指定分类的数据
-      const filteredItems =
-        response.items?.filter((item) => item.category === category) || [];
-
-      // 使用 as any 绕过类型检查
-      const formattedItems = filteredItems.map((item) => ({
+      // 获取响应数据
+      const items = response.items || [];
+      
+      // 转换数据类型
+      const formattedItems = items.map((item) => ({
         ...item,
         platformId:
           typeof item.platformId === 'object'
@@ -821,16 +824,16 @@ const Trending: React.FC = () => {
 
       setSingleCategoryData(formattedItems);
 
-      // 创建分页元数据，添加 itemCount 属性
-      const paginationMeta = {
+      // 使用 API 返回的分页元数据
+      const paginationMeta = response.meta || {
         currentPage: page,
         itemsPerPage: 20,
-        totalItems: filteredItems.length,
-        totalPages: Math.ceil(filteredItems.length / 20),
-        itemCount: filteredItems.length, // 添加 itemCount 属性
-      } as PaginationMeta;
+        totalItems: items.length,
+        totalPages: Math.ceil(items.length / 20),
+        itemCount: items.length,
+      };
 
-      setSingleCategoryPagination(paginationMeta);
+      setSingleCategoryPagination(paginationMeta as PaginationMeta);
     } catch (error) {
       console.error('获取分类数据失败:', error);
       setSingleCategoryData([]);
@@ -1232,10 +1235,10 @@ const Trending: React.FC = () => {
                       >
                         {/* 排名 */}
                         <div className="w-8 text-lg font-bold text-orange-500">
-                          {(singleCategoryPagination?.currentPage || 1 - 1) *
+                          { (singleCategoryPagination?.currentPage  - 1) *
                             (singleCategoryPagination?.itemsPerPage || 20) +
                             index +
-                            1}
+                            1 || title.rank }
                         </div>
 
                         {/* 标题信息 */}

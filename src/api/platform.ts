@@ -250,6 +250,8 @@ export const platformApi = {
       category?: string;
       startTime?: Date;
       endTime?: Date;
+      page?: number;
+      pageSize?: number;
     },
   ) {
     return hotHttp.get<Pagination<ViralTitle>>(

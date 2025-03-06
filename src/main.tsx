@@ -31,7 +31,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           locale={zh_CN}
           theme={{
             token: {
-              colorPrimary: colors[4].trim(),
+              colorPrimary: colors[5].trim(),
             },
           }}
         >
