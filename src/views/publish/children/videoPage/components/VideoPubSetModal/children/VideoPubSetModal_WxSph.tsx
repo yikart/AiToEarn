@@ -226,7 +226,7 @@ const VideoPubSetModal_KWAI = memo(
             声明后，作品将展示原创标记，有机会获得广告收入
           </Checkbox>
 
-          <ScheduledTimeSelect currChooseAccount={currChooseAccount} />
+          <ScheduledTimeSelect currChooseAccount={currChooseAccount} maxDate={24} />
         </>
       );
     },

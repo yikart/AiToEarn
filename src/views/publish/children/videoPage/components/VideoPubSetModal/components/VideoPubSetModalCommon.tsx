@@ -41,9 +41,15 @@ export const VideoPubRestartLogin = ({
 export const ScheduledTimeSelect = ({
   currChooseAccount,
   tips,
+  timeOffset = 10,
+  maxDate = 14,
 }: {
   currChooseAccount: IVideoChooseItem;
   tips?: string;
+  // 分钟、当前时间 + 这个分钟之后的时间才可以选择
+  timeOffset?: number;
+  // 天，昨天 ~ maxDate
+  maxDate?: number;
 }) => {
   const { setOnePubParams } = useVideoPageStore(
     useShallow((state) => ({
@@ -51,11 +57,47 @@ export const ScheduledTimeSelect = ({
     })),
   );
 
+  const range = (start: number, end: number) => {
+    const result = [];
+    for (let i = start; i < end; i++) {
+      result.push(i);
+    }
+    return result;
+  };
+
+  const disabledDate = (current: dayjs.Dayjs) => {
+    const yesterday = dayjs().subtract(0, 'day').startOf('day');
+    const futureDate = dayjs().add(maxDate, 'day').endOf('day');
+    return (
+      current &&
+      (current.isBefore(yesterday, 'day') || current.isAfter(futureDate, 'day'))
+    );
+  };
+
+  const disabledTime = (current: dayjs.Dayjs | null) => {
+    const now = dayjs();
+    const minutesOffset = now.add(timeOffset, 'minute');
+    if (current && current.isBefore(minutesOffset)) {
+      const hours = minutesOffset.hour();
+      const minutes = minutesOffset.minute();
+      return {
+        disabledHours: () => range(0, hours),
+        disabledMinutes: () => range(0, minutes),
+      };
+    }
+    return {
+      disabledHours: () => [],
+      disabledMinutes: () => [],
+    };
+  };
+
   return (
     <>
       <h1>定时发布</h1>
       <DatePicker
-        format="YYYY-MM-DD HH:mm:ss"
+        format="YYYY-MM-DD HH:mm"
+        disabledDate={disabledDate}
+        disabledTime={disabledTime}
         showTime={{ defaultValue: dayjs('00:00:00', 'HH:mm:ss') }}
         value={
           currChooseAccount.pubParams.timingTime

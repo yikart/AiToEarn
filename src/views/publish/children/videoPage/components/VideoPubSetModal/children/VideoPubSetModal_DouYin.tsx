@@ -365,6 +365,7 @@ const VideoPubSetModal_KWAI = memo(
           <ScheduledTimeSelect
             currChooseAccount={currChooseAccount}
             tips="支持2小时后及14天内的定时发布"
+            timeOffset={120}
           />
 
           <h1>自主声明</h1>
