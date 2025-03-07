@@ -18,15 +18,8 @@ const Account: React.FC = () => {
   const [activeAccountId, setActiveAccountId] = useState(-1);
   const [accountInfo, setAccountInfo] = useState<AccountInfo>();
 
-  function getLocation() {
-    icpGetLocation().then((res) => {
-      console.log(res);
-    });
-  }
-
   return (
     <div className={styles.account}>
-      <button onClick={getLocation}>start</button>
       <AccountSidebar
         activeAccountId={activeAccountId}
         onAccountChange={useCallback((info) => {
