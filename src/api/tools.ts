@@ -6,9 +6,6 @@
  * @Description: 工具
  */
 import http from './request';
-import { UserTask } from './types/task';
-import { Task, TaskDataInfo } from 'commont/types/task';
-import { UserWalletRecord } from './types/finance';
 
 export const toolsApi = {
   /**
