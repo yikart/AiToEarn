@@ -328,19 +328,31 @@ const Trending: React.FC = () => {
     try {
       const data = await platformApi.getPlatformRanking(platformId);
       setRankingList(data);
+      
       // 自动选择第一个榜单并获取其内容
       if (data.length > 0) {
         const firstRanking = data[0];
         setSelectedRanking(firstRanking);
+        
         // 获取榜单分类
-        fetchRankingCategories(firstRanking._id);
+        await fetchRankingCategories(firstRanking._id);
+        
         // 获取榜单内容
-        fetchRankingContents(firstRanking._id, 1);
+        await fetchRankingContents(firstRanking._id, 1);
+      } else {
+        // 如果没有榜单数据，清空相关状态
+        setSelectedRanking(null);
+        setCategories(['全部']);
+        setSelectedCategory('全部');
+        setRankingContents([]);
       }
     } catch (error) {
       console.error('获取平台榜单失败:', error);
       setRankingList([]);
       setSelectedRanking(null);
+      setCategories(['全部']);
+      setSelectedCategory('全部');
+      setRankingContents([]);
     } finally {
       setRankingLoading(false);
     }
@@ -400,7 +412,21 @@ const Trending: React.FC = () => {
 
   // 处理平台选择
   const handlePlatformSelect = (platform: Platform) => {
+    // 设置选中的平台
     setSelectedPlatform(platform);
+    
+    // 清空原有数据并显示加载动画
+    setRankingList([]);
+    setSelectedRanking(null);
+    setCategories(['全部']);
+    setSelectedCategory('全部');
+    setRankingContents([]);
+    setRankingLoading(true);
+    
+    // 关闭热门专题展开
+    setTopicExpanded(false);
+    
+    // 获取新平台的榜单数据
     fetchPlatformRanking(platform._id);
   };
 
