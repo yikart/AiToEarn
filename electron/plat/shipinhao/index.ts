@@ -130,7 +130,7 @@ export class ShipinhaoService {
             fansCount: res.data.finderUser.fansCount ?? 0,
           });
         } else {
-          reject(res.data.errMsg ?? '未知错误');
+          reject(res.data?.errMsg ?? '未知错误');
         }
       } catch (err) {
         reject(err);
@@ -261,7 +261,7 @@ export class ShipinhaoService {
             });
           }
         } else {
-          reject(res.data.errMsg ?? '未知错误');
+          reject(res.data?.errMsg ?? '未知错误');
         }
       } catch (err) {
         reject(err);

@@ -1,4 +1,3 @@
-import { Browser, chromium, webkit } from 'playwright';
 import requestNet from '../requestNet';
 import {
   IKwaiGetLocationsResponse,
@@ -6,14 +5,12 @@ import {
   IKwaiGetUsersResponse,
   IKwaiPubVideoParams,
   IKwaiUserInfoResponse,
-  ILoginResponse
-} from "./kwai.type";
+  ILoginResponse,
+} from './kwai.type';
 import { cookieToPlaywright, CookieToString } from '../utils';
 import { BrowserWindow } from 'electron';
 import { KwaiVisibleTypeEnum } from '../plat.common.type';
-import { getChromiumPath } from '../../util/chromium';
-import os from 'os';
-import path from 'path';
+import { getBrowser } from '../coomont';
 
 class KwaiPub {
   // 发布视频
@@ -23,26 +20,10 @@ class KwaiPub {
   }> {
     const { callback } = params;
     return new Promise(async (resolve) => {
-      let browser: Browser;
+      const browser = await getBrowser();
       try {
-        const platform = os.platform();
+        if (!browser) throw 'playwright 初始化失败！';
         callback(5, '正在加载...');
-        if (platform === 'darwin') {
-          browser = await webkit.launch({
-            headless: import.meta.env.MODE !== 'development',
-            executablePath: path.join(
-              process.resourcesPath,
-              'bin',
-              'webkit',
-              'pw_run.sh',
-            ),
-          });
-        } else {
-          browser = await chromium.launch({
-            headless: import.meta.env.MODE !== 'development',
-            executablePath: getChromiumPath(),
-          });
-        }
 
         const context = await browser.newContext();
         callback(10);

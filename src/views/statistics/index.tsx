@@ -245,6 +245,7 @@ const Statistics = () => {
   async function getAccountStatistics() {
     setDashboardData([]);
     const res: StatisticsInfo = await icpGetAccountStatistics();
+    console.log(res);
     setStatisticsInfo(res);
     // 获取到账号列表后,遍历获取每个账号的看板数据
     if (res.list && res.list.length > 0) {
@@ -264,7 +265,7 @@ const Statistics = () => {
     const dataAll = [];
 
     // 获取到账号列表后,遍历获取每个账号的看板数据
-    if (res.list && res.list.length > 0) {
+    if (res?.list && res.list.length > 0) {
       // 只获取选中账户的数据
       const selectedAccountsList = res.list.filter((account: any) =>
         selectedAccounts.includes(account.id),
