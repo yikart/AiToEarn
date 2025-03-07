@@ -161,8 +161,7 @@ export default function Page() {
                       </div>
                     </div>
                     <div className="pubRecord-record-item-btns">
-                      {/*<Button type="link">查看</Button>*/}
-                      {v.status === 2 && (
+                      {v.status === 2 ? (
                         <Button
                           type="link"
                           onClick={() => {
@@ -182,6 +181,8 @@ export default function Page() {
                         >
                           重新发布
                         </Button>
+                      ) : (
+                        <Button type="link">查看</Button>
                       )}
                     </div>
                   </li>
