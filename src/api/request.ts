@@ -14,108 +14,118 @@ interface ProjectAxiosRequestConfig extends AxiosRequestConfig {
   isToken: boolean;
 }
 
-// 创建 axios 实例
-const request = axios.create({
-  baseURL: import.meta.env.VITE_APP_URL, // 从环境变量获取基础URL
-  timeout: 15000, // 请求超时时间
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+export const getAxiosRequest = (baseURL: string) => {
+  // 创建 axios 实例
+  const request = axios.create({
+    baseURL, // 从环境变量获取基础URL
+    timeout: 15000, // 请求超时时间
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 
-// 请求拦截器
-request.interceptors.request.use(
-  (config) => {
-    // 获取 token
-    const token = useUserStore.getState().token;
+  // 请求拦截器
+  request.interceptors.request.use(
+    (config) => {
+      // 获取 token
+      const token = useUserStore.getState().token;
 
-    // @ts-ignore 如果没有token或者不在白名单内将接口拦截
-    if (token === '' && config.isToken !== false) {
-      console.log('接口拦截：', config.url);
-      return Promise.reject();
-    }
-
-    // @ts-ignore
-    if (config!.isToken !== false) {
-      useUserStore.getState().refreshTokenDet();
-    }
-
-    config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  },
-);
-
-// 响应拦截器
-request.interceptors.response.use(
-  (response: AxiosResponse) => {
-    const { data } = response;
-
-    // 这里可以根据后端的响应结构进行调整
-    if (data.code !== 0) {
-      message.error(data.message || '请求失败');
-      return Promise.reject(new Error(data.message || '请求失败'));
-    }
-
-    return data.data;
-  },
-  (error) => {
-    if (!error) return;
-    // 处理 HTTP 错误状态
-    if (error.response) {
-      switch (error.response.status) {
-        case 401:
-          message.error('未授权，请重新登录');
-          // 可以在这里处理登出逻辑
-          setTimeout(() => useUserStore.getState().logout(), 500);
-          break;
-        case 403:
-          message.error('拒绝访问');
-          setTimeout(() => useUserStore.getState().logout(), 500);
-          break;
-        case 404:
-          message.error('请求错误，未找到该资源');
-          break;
-        case 500:
-          message.error('服务器错误');
-          break;
-        default:
-          message.error(`连接错误 ${error.response.status}`);
+      // @ts-ignore 如果没有token或者不在白名单内将接口拦截
+      if (token === '' && config.isToken !== false) {
+        console.log('接口拦截：', config.url);
+        return Promise.reject();
       }
-    } else {
-      message.error('网络异常，请检查网络连接');
-    }
-    return Promise.reject(error);
-  },
-);
 
-// 封装通用请求方法
-export const http = {
-  get<T = any>(url: string, config?: ProjectAxiosRequestConfig): Promise<T> {
-    return request.get(url, config);
-  },
+      // @ts-ignore
+      if (config!.isToken !== false) {
+        useUserStore.getState().refreshTokenDet();
+      }
 
-  post<T = any>(
-    url: string,
-    data?: any,
-    config?: ProjectAxiosRequestConfig,
-  ): Promise<T> {
-    return request.post(url, data, config);
-  },
+      config.headers.Authorization = `Bearer ${token}`;
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    },
+  );
 
-  put<T = any>(
-    url: string,
-    data?: any,
-    config?: ProjectAxiosRequestConfig,
-  ): Promise<T> {
-    return request.put(url, data, config);
-  },
+  // 响应拦截器
+  request.interceptors.response.use(
+    (response: AxiosResponse) => {
+      const { data } = response;
 
-  delete<T = any>(url: string, config?: ProjectAxiosRequestConfig): Promise<T> {
-    return request.delete(url, config);
-  },
+      // 这里可以根据后端的响应结构进行调整
+      if (data.code !== 0) {
+        message.error(data.message || '请求失败');
+        return Promise.reject(new Error(data.message || '请求失败'));
+      }
+
+      return data.data;
+    },
+    (error) => {
+      if (!error) return;
+      // 处理 HTTP 错误状态
+      if (error.response) {
+        switch (error.response.status) {
+          case 401:
+            message.error('未授权，请重新登录');
+            // 可以在这里处理登出逻辑
+            setTimeout(() => useUserStore.getState().logout(), 500);
+            break;
+          case 403:
+            message.error('拒绝访问');
+            setTimeout(() => useUserStore.getState().logout(), 500);
+            break;
+          case 404:
+            message.error('请求错误，未找到该资源');
+            break;
+          case 500:
+            message.error('服务器错误');
+            break;
+          default:
+            message.error(`连接错误 ${error.response.status}`);
+        }
+      } else {
+        message.error('网络异常，请检查网络连接');
+      }
+      return Promise.reject(error);
+    },
+  );
+
+  // 封装通用请求方法
+  const http = {
+    get<T = any>(url: string, config?: ProjectAxiosRequestConfig): Promise<T> {
+      return request.get(url, config);
+    },
+
+    post<T = any>(
+      url: string,
+      data?: any,
+      config?: ProjectAxiosRequestConfig,
+    ): Promise<T> {
+      return request.post(url, data, config);
+    },
+
+    put<T = any>(
+      url: string,
+      data?: any,
+      config?: ProjectAxiosRequestConfig,
+    ): Promise<T> {
+      return request.put(url, data, config);
+    },
+
+    delete<T = any>(
+      url: string,
+      config?: ProjectAxiosRequestConfig,
+    ): Promise<T> {
+      return request.delete(url, config);
+    },
+  };
+
+  return http;
 };
+
+export const http = getAxiosRequest(import.meta.env.VITE_APP_URL);
+export const hotHttp = getAxiosRequest(import.meta.env.VITE_APP_HOT_URL);
 
 export default http;

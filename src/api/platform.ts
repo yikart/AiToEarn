@@ -1,8 +1,8 @@
-import hotHttp from './hotRequest';
 import { Pagination } from './types';
 import { HotTopic } from './types/hotTopic';
 import { Topic } from './types/topic';
 import { ViralTitle } from './types/viralTitles';
+import { hotHttp } from './request';
 
 export interface Platform {
   id: string;
