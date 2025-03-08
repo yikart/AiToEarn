@@ -35,6 +35,7 @@ export type DashboardData = {
   like: number;
   collect: number;
   forward: number;
+  time?: string;
 };
 
 // 获取某个作品的数据返回值

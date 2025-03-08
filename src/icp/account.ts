@@ -8,6 +8,7 @@
 
 import { AccountInfo } from '@/views/account/comment';
 import { AccountStatus, AccountType } from '../../commont/AccountEnum';
+import { DashboardData } from '../views/statistics/comment';
 
 export async function ipcUpdateAccountStatus(
   accountId: number,
@@ -98,8 +99,7 @@ export async function icpGetAccountStatistics() {
 
 // 获取账户统计
 export async function icpGetAccountDashboard(id: number, time?: any) {
-  console.log('time@@111:', time);
-  const res = await window.ipcRenderer.invoke(
+  const res: DashboardData[] = await window.ipcRenderer.invoke(
     'ICP_ACCOUNT_DASHBOARD',
     id,
     time,

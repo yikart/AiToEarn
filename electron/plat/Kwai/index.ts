@@ -1,6 +1,7 @@
 import requestNet from '../requestNet';
 import {
   IGetHomeInfoResponse,
+  IGetHomeOverview,
   IKwaiGetLocationsResponse,
   IKwaiGetTopicsResponse,
   IKwaiGetUsersResponse,
@@ -169,6 +170,20 @@ class KwaiPub {
         callback(-1);
         await browser!.close();
       }
+    });
+  }
+
+  async getHomeOverview(cookie: Electron.Cookie[]) {
+    return await requestNet<IGetHomeOverview>({
+      url: 'https://cp.kuaishou.com/rest/cp/creator/analysis/pc/home/author/overview?__NS_sig3=1c0c4b7b90498228d5414243bfb44c3f997dd5395d5d5f5f50515248',
+      method: 'POST',
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      body: {
+        timeType: 3,
+        'kuaishou.web.cp.api_ph': '19af6d5b24cb170a03331ce9254b1204154c',
+      },
     });
   }
 

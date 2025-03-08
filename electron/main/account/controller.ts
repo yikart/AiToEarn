@@ -173,7 +173,6 @@ export class AccountController {
 
     const account = await this.accountService.getAccountById(id);
     if (!account) return null;
-
     return this.accountService.getAccountDashboard(account, time);
   }
 

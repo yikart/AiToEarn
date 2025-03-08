@@ -8,6 +8,7 @@
 import { PlatformBase } from '../../PlatformBase';
 import {
   AccountInfoTypeRV,
+  DashboardData,
   IAccountInfoParams,
   IGetLocationDataParams,
   IGetTopicsParams,
@@ -24,6 +25,7 @@ import { AccountType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
 import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
 import { KwaiVisibleTypeEnum } from '../../../../plat/plat.common.type';
+import dayjs from 'dayjs';
 
 export class Kwai extends PlatformBase {
   constructor() {
@@ -100,7 +102,44 @@ export class Kwai extends PlatformBase {
   }
 
   async getDashboard(account: AccountModel, time: string[] = []) {
-    return [];
+    const res = await kwaiPub.getHomeOverview(JSON.parse(account.loginCookie));
+    const dashboard: DashboardData[] = [];
+    const startTime = new Date(time[0]).getTime();
+    const endTime = new Date(time[1]).getTime();
+
+    res?.data?.data?.basicData?.map((v1, i1) => {
+      v1.trendData.map((v2, i2) => {
+        const currTime = dayjs(v2.date, 'YYYYMMDD').valueOf();
+        if (currTime >= startTime && currTime <= endTime) {
+          if (!dashboard[i2])
+            dashboard[i2] = {
+              comment: 0,
+              fans: 0,
+              forward: 0,
+              like: 0,
+              read: 0,
+              time: '',
+              collect: 0, // TODO: 获取收藏数据
+            };
+          const item = dashboard[i2];
+
+          item.time = v2.date;
+          if (v1.tab === 'LIKE') {
+            item.like = v2.count;
+          } else if (v1.tab === 'PURE_INCREASE_FAN') {
+            item.fans = v2.count;
+          } else if (v1.tab === ' COMMENT') {
+            item.comment = v2.count;
+          } else if (v1.tab === 'SHARE') {
+            item.forward = v2.count;
+          } else if (v1.tab === 'PLAY') {
+            item.read = v2.count;
+          }
+        }
+      });
+    });
+
+    return dashboard.filter(Boolean);
   }
 
   /**

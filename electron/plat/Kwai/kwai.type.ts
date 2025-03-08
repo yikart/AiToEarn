@@ -19,6 +19,30 @@ export interface IKwaiUserCommonResponse<T> {
   message: string;
 }
 
+export interface IGetHomeOverviewItem {
+  name: string;
+  tab: string;
+  sumCount: number;
+  endDayCount: number;
+  interpretDesc: string | null;
+  trendData: {
+    date: string;
+    count: number;
+  }[];
+  diagnoseResultType: string;
+}
+
+export interface IGetHomeOverview {
+  result: number;
+  currentTime: number;
+  'host-name': string;
+  data: {
+    basicData: IGetHomeOverviewItem[];
+    dataUpdateTime: string;
+  };
+  message: string;
+}
+
 export interface IGetHomeInfoResponse {
   data: {
     desc: string;
