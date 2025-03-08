@@ -65,7 +65,7 @@ const Login = () => {
           })}
         </ul>
       </div>
-      <div className={styles.login_wrap} >
+      <div className={styles.login_wrap}>
         <LoginCore />
       </div>
     </div>

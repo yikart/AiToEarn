@@ -105,9 +105,9 @@ const PhoneLogin = memo(
             className={styles['loginForm-buttonWrapper']}
             wrapperCol={{ offset: 0 }}
           >
-            <Button 
-              loading={loginLoading} 
-              className={`${styles.submitBtn} ${formValid ? styles.active : ''}`} 
+            <Button
+              loading={loginLoading}
+              className={`${styles.submitBtn} ${formValid ? styles.active : ''}`}
               htmlType="submit"
             >
               登录

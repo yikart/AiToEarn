@@ -6,8 +6,8 @@ import {
   IKwaiGetUsersResponse,
   IKwaiPubVideoParams,
   IKwaiUserInfoResponse,
-  ILoginResponse
-} from "./kwai.type";
+  ILoginResponse,
+} from './kwai.type';
 import { cookieToPlaywright, CookieToString } from '../utils';
 import { BrowserWindow } from 'electron';
 import { KwaiVisibleTypeEnum } from '../plat.common.type';

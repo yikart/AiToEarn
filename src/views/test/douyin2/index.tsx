@@ -7,7 +7,7 @@
  */
 
 import React, { useState } from 'react';
-import { Button, Layout, message, Card } from 'antd';
+import { Button, Layout } from 'antd';
 
 const { Sider, Content } = Layout;
 

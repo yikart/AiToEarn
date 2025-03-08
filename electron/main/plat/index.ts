@@ -11,7 +11,11 @@ import kwai from './platforms/Kwai';
 import xhs from './platforms/xhs';
 import douyin from './platforms/douyin';
 import wxSph from './platforms/wxSph';
-import { IAccountInfoParams, IGetLocationDataParams, IGetUsersParams } from "./plat.type";
+import {
+  IAccountInfoParams,
+  IGetLocationDataParams,
+  IGetUsersParams,
+} from './plat.type';
 import { PublishVideoResult } from './module';
 import { VideoModel } from '../../db/models/video';
 import { PubItemVideo } from './pub/PubItemVideo';

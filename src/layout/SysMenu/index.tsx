@@ -1,15 +1,14 @@
-import { 
-  DownOutlined, 
-  SettingOutlined,
+import {
+  DownOutlined,
   InfoCircleOutlined,
   CloudSyncOutlined,
   LogoutOutlined,
   UserOutlined,
   PhoneOutlined,
-  IdcardOutlined
+  IdcardOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Button, Dropdown, Space, Avatar } from 'antd';
+import { Button, Dropdown, Avatar } from 'antd';
 import React, { useEffect, useState } from 'react';
 import Update from '@/components/update';
 import { useUserStore } from '@/store/user';
@@ -38,17 +37,23 @@ const App: React.FC = () => {
           <div className="flex items-center space-x-2 mb-2">
             <UserOutlined className="text-[#a66ae4]" />
             <span className="text-gray-600">用户名：</span>
-            <span className="text-gray-900 font-medium">{userStore.userInfo?.name || '-'}</span>
+            <span className="text-gray-900 font-medium">
+              {userStore.userInfo?.name || '-'}
+            </span>
           </div>
           <div className="flex items-center space-x-2 mb-2">
             <IdcardOutlined className="text-[#a66ae4]" />
             <span className="text-gray-600">ID：</span>
-            <span className="text-gray-900 font-medium">{userStore.userInfo?.id || '-'}</span>
+            <span className="text-gray-900 font-medium">
+              {userStore.userInfo?.id || '-'}
+            </span>
           </div>
           <div className="flex items-center space-x-2">
             <PhoneOutlined className="text-[#a66ae4]" />
             <span className="text-gray-600">手机：</span>
-            <span className="text-gray-900 font-medium">{userStore.userInfo?.phone || '-'}</span>
+            <span className="text-gray-900 font-medium">
+              {userStore.userInfo?.phone || '-'}
+            </span>
           </div>
         </div>
       ),
@@ -95,20 +100,22 @@ const App: React.FC = () => {
   ];
 
   return (
-    <Dropdown 
-      menu={{ items }} 
+    <Dropdown
+      menu={{ items }}
       trigger={['hover']}
       placement="bottomRight"
       overlayClassName="min-w-[240px]"
       overlayStyle={{ marginTop: '8px' }}
     >
       <div className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-3 py-1.5 rounded-full transition-all duration-300 group">
-        <Avatar 
+        <Avatar
           size="small"
           icon={<UserOutlined />}
           className="bg-[#a66ae4] group-hover:shadow-sm transition-all duration-300"
         />
-        <span className="text-gray-600 text-sm">{userStore.userInfo?.name || '未登录'}</span>
+        <span className="text-gray-600 text-sm">
+          {userStore.userInfo?.name || '未登录'}
+        </span>
         <DownOutlined className="text-gray-400 text-xs transition-transform duration-300 group-hover:rotate-180" />
       </div>
     </Dropdown>

@@ -136,8 +136,8 @@ const Update = () => {
           )}
         </div>
       </Modal>
-      <Button 
-        disabled={checking} 
+      <Button
+        disabled={checking}
         onClick={checkUpdate}
         type="text"
         className="w-full text-left !p-0 !bg-transparent hover:!bg-transparent !border-none"

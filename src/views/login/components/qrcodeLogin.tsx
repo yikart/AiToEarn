@@ -11,7 +11,6 @@ import { Button } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import styles from '../login.module.scss';
 import { useUserStore } from '@/store/user';
-import { IRefreshToken, PhoneLoginParams } from '@/api/types/user-t';
 import { message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,12 +19,14 @@ export interface PubItemRef {
 }
 
 export default forwardRef<PubItemRef>((props, ref) => {
-  const [ticketInfo, setTicketInfo] = useState<{ ticket: string; key: string }>({
-    ticket: '',
-    key: '',
-  });
+  const [ticketInfo, setTicketInfo] = useState<{ ticket: string; key: string }>(
+    {
+      ticket: '',
+      key: '',
+    },
+  );
   const [showMask, setShowMask] = useState(false);
-  const userStore = useUserStore(); 
+  const userStore = useUserStore();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,7 +43,7 @@ export default forwardRef<PubItemRef>((props, ref) => {
   // 添加轮询登录检查
   useEffect(() => {
     let loginTimer: NodeJS.Timeout;
-    
+
     if (ticketInfo.ticket) {
       loginTimer = setInterval(async () => {
         const res = await userApi.wxGzhQrcodelogin(ticketInfo);
@@ -101,7 +102,7 @@ export default forwardRef<PubItemRef>((props, ref) => {
         <h2>微信扫码登录</h2>
         <p>请使用微信扫描二维码关注爱团团公众号</p>
       </div>
-      
+
       <div className={styles.qrcodeWrapper}>
         {ticketInfo.ticket && (
           <img
@@ -109,13 +110,13 @@ export default forwardRef<PubItemRef>((props, ref) => {
             alt="微信登录二维码"
           />
         )}
-        
+
         {showMask && (
           <div className={styles.qrcodeMask}>
             <p>二维码已过期</p>
-            <Button 
-              type="link" 
-              icon={<ReloadOutlined />} 
+            <Button
+              type="link"
+              icon={<ReloadOutlined />}
               onClick={getQrcode}
               className={styles.refreshBtn}
             >
@@ -127,8 +128,22 @@ export default forwardRef<PubItemRef>((props, ref) => {
 
       <div className={styles.agreement}>
         登录即表示已接受爱团团
-        <a href="#" onClick={(e) => { e.preventDefault(); /* 打开注册协议 */ }}>《注册协议》</a>
-        <a href="#" onClick={(e) => { e.preventDefault(); /* 打开隐私政策 */ }}>《隐私权政策》</a>
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault(); /* 打开注册协议 */
+          }}
+        >
+          《注册协议》
+        </a>
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault(); /* 打开隐私政策 */
+          }}
+        >
+          《隐私权政策》
+        </a>
       </div>
     </div>
   );

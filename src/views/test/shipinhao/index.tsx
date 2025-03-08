@@ -8,7 +8,6 @@
 
 import React, { useCallback, useState } from 'react';
 import { Button, Layout, message, Card, Avatar } from 'antd';
-import WebView from '@/components/WebView';
 import { AccountInfo } from '@/views/account/comment';
 import VideoChoose from '@/components/Choose/VideoChoose';
 import { useXiaohongshuStore } from '@/store/xiaohongshu';
@@ -62,16 +61,20 @@ const Account: React.FC = () => {
   const { setLoginInfo, loginInfo } = useXiaohongshuStore();
   const [publishResult, setPublishResult] = useState<any>(null);
   const [filePath, setFilePath] = useState<string>('922.mp4');
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
-  const [dashboardList, setDashboardList] = useState<Array<{
-    date: string;
-    zhangfen: number;
-    bofang: number;
-    pinglun: number;
-    dianzan: number; 
-    fenxiang: number;
-    zhuye: number;
-  }>>([]);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(
+    null,
+  );
+  const [dashboardList, setDashboardList] = useState<
+    Array<{
+      date: string;
+      zhangfen: number;
+      bofang: number;
+      pinglun: number;
+      dianzan: number;
+      fenxiang: number;
+      zhuye: number;
+    }>
+  >([]);
 
   // 修改选择视频的处理函数
   const handleChooseVideo = useCallback((path: string) => {
@@ -136,10 +139,13 @@ const Account: React.FC = () => {
     }
   };
 
-  // 获取账户数据 
+  // 获取账户数据
   const handleGetDashboardFunc = async () => {
     const cookies = loginInfo?.cookie;
-    const result = await window.ipcRenderer.invoke('ICP_SPH_GetDashboardFunckApi', cookies);
+    const result = await window.ipcRenderer.invoke(
+      'ICP_SPH_GetDashboardFunckApi',
+      cookies,
+    );
     console.log('handleGetDashboardFunc result:', result);
     if (result.success && result.data) {
       setDashboardData(result.data);
@@ -153,7 +159,7 @@ const Account: React.FC = () => {
       'ICP_SPH_GetDashboardFunckApi',
       cookies,
       '2025-02-10',
-      '2025-02-18'
+      '2025-02-18',
     );
     console.log('handleGetDashboardFunc result:', result);
     if (result.success && Array.isArray(result.data)) {
@@ -290,7 +296,9 @@ const Account: React.FC = () => {
 
                 <Button onClick={handleGetDashboardFunc}>获取昨日数据</Button>
 
-                <Button onClick={handleGetDashboardFunc1}>获取指定日期数据</Button>
+                <Button onClick={handleGetDashboardFunc1}>
+                  获取指定日期数据
+                </Button>
 
                 <Button onClick={handlePublishImage}>发布图文</Button>
 
@@ -357,9 +365,12 @@ const Account: React.FC = () => {
                     </div>
                   </div>
                 )}
-                
+
                 {dashboardList.length > 0 && (
-                  <div className="mb-6" style={{ height: '100%' , overflowY: 'auto' }}>
+                  <div
+                    className="mb-6"
+                    style={{ height: '100%', overflowY: 'auto' }}
+                  >
                     <h2 className="text-lg font-medium mb-4">历史数据概览</h2>
                     {renderDashboardList()}
                   </div>

@@ -13,12 +13,13 @@ import {
   IGetLocationResponse,
   IGetTopicsParams,
   IGetTopicsResponse,
-  IGetUsersParams, IGetUsersResponse,
+  IGetUsersParams,
+  IGetUsersResponse,
   IVideoPublishParams,
   StatisticsData,
   VideoCallbackType,
-  WorkData
-} from "./plat.type";
+  WorkData,
+} from './plat.type';
 import { PublishVideoResult } from './module';
 import { AccountType } from '../../../commont/AccountEnum';
 import { AccountModel } from '../../db/models/account';

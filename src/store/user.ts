@@ -18,7 +18,7 @@ const state: IUserStore = {
     id: '678f8da7a6ab46b91d2ddce3',
     name: '123',
   },
-  token: '11111111',
+  token: '123',
   overdueTime: 0,
   // 是否开始刷新token，防止多次调用
   refreshTokenLoading: false,

@@ -12,7 +12,6 @@ import styles from './account.module.scss';
 import AccountSidebar from '@/views/account/components/AccountSidebar';
 import WebView from '@/components/WebView';
 import { AccountInfo, AccountPlatInfoMap } from '@/views/account/comment';
-import { icpGetLocation } from '../../icp/view';
 
 const Account: React.FC = () => {
   const [activeAccountId, setActiveAccountId] = useState(-1);

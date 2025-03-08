@@ -73,19 +73,21 @@ const Account: React.FC = () => {
   const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null);
   const { setLoginInfo, loginInfo } = useXiaohongshuStore();
   const [publishResult, setPublishResult] = useState<any>(null);
-  const [filePath, setFilePath] = useState<string>(
-    '922.mp4',
+  const [filePath, setFilePath] = useState<string>('922.mp4');
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(
+    null,
   );
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
-  const [dashboardList, setDashboardList] = useState<Array<{
-    date: string;
-    zhangfen: number;
-    bofang: number;
-    pinglun: number;
-    dianzan: number;
-    fenxiang: number;
-    zhuye: number;
-  }>>([]);
+  const [dashboardList, setDashboardList] = useState<
+    Array<{
+      date: string;
+      zhangfen: number;
+      bofang: number;
+      pinglun: number;
+      dianzan: number;
+      fenxiang: number;
+      zhuye: number;
+    }>
+  >([]);
 
   // 修改选择视频的处理函数
   const handleChooseVideo = useCallback((e: any) => {
@@ -127,7 +129,168 @@ const Account: React.FC = () => {
     } else {
       // 设置测试数据
       const mockLoginInfo = {
-        cookie: [{"name":"acw_tc","value":"0a0d09d017398662023601636e6b3678b5453e72c449955a71a88dce9aa8b8","domain":"creator.xiaohongshu.com","hostOnly":true,"path":"/","secure":false,"httpOnly":true,"session":false,"expirationDate":1739868001.880623,"sameSite":"unspecified"},{"name":"xsecappid","value":"ugc","domain":".xiaohongshu.com","hostOnly":false,"path":"/","secure":false,"httpOnly":false,"session":false,"expirationDate":1771402203,"sameSite":"unspecified"},{"name":"a1","value":"195181b64e1uk2zdwtecq2bg07ka2lc03dyrv1j6750000218505","domain":".xiaohongshu.com","hostOnly":false,"path":"/","secure":false,"httpOnly":false,"session":false,"expirationDate":1771402203,"sameSite":"unspecified"},{"name":"webId","value":"448e8a71902ed4e5bd9221d673d5f64a","domain":".xiaohongshu.com","hostOnly":false,"path":"/","secure":false,"httpOnly":false,"session":false,"expirationDate":1771402203,"sameSite":"unspecified"},{"name":"websectiga","value":"6169c1e84f393779a5f7de7303038f3b47a78e47be716e7bec57ccce17d45f99","domain":".xiaohongshu.com","hostOnly":false,"path":"/","secure":false,"httpOnly":false,"session":false,"expirationDate":1740125404,"sameSite":"unspecified"},{"name":"sec_poison_id","value":"1b93d373-5581-4c3f-86a5-162894a5f930","domain":".xiaohongshu.com","hostOnly":false,"path":"/","secure":false,"httpOnly":false,"session":false,"expirationDate":1739866809,"sameSite":"unspecified"},{"name":"gid","value":"yj2yYyDWyqqfyj2yYyDK4fyVdy7TJufE9dSAvKWJDk8WTF280J1S8h888JyY2828Kj2yK0Ky","domain":".xiaohongshu.com","hostOnly":false,"path":"/","secure":false,"httpOnly":false,"session":false,"expirationDate":1774426205.902804,"sameSite":"unspecified"},{"name":"customer-sso-sid","value":"68c5174726686778508354287f952ccbdf2fb1dc","domain":".xiaohongshu.com","hostOnly":false,"path":"/","secure":false,"httpOnly":true,"session":false,"expirationDate":1740471057.305251,"sameSite":"unspecified"},{"name":"x-user-id-creator.xiaohongshu.com","value":"65755c46000000003d02be4d","domain":".xiaohongshu.com","hostOnly":false,"path":"/","secure":false,"httpOnly":true,"session":false,"expirationDate":1774426258.305439,"sameSite":"unspecified"},{"name":"customerClientId","value":"534324456763569","domain":".xiaohongshu.com","hostOnly":false,"path":"/","secure":false,"httpOnly":true,"session":false,"expirationDate":1774426258.305536,"sameSite":"unspecified"},{"name":"access-token-creator.xiaohongshu.com","value":"customer.creator.AT-68c517472668677850667525pjzcjw0rje0xar0k","domain":".xiaohongshu.com","hostOnly":false,"path":"/","secure":false,"httpOnly":true,"session":false,"expirationDate":1742458257.305611,"sameSite":"unspecified"},{"name":"galaxy_creator_session_id","value":"aVIvKrLoRitPPJGXFIZH6oRpXH7IUAHpOG3c","domain":".xiaohongshu.com","hostOnly":false,"path":"/","secure":false,"httpOnly":true,"session":false,"expirationDate":1742458258.305697,"sameSite":"unspecified"},{"name":"galaxy.creator.beaker.session.id","value":"1739866258632030794988","domain":".xiaohongshu.com","hostOnly":false,"path":"/","secure":false,"httpOnly":true,"session":false,"expirationDate":1742458258.305777,"sameSite":"unspecified"}],
+        cookie: [
+          {
+            name: 'acw_tc',
+            value:
+              '0a0d09d017398662023601636e6b3678b5453e72c449955a71a88dce9aa8b8',
+            domain: 'creator.xiaohongshu.com',
+            hostOnly: true,
+            path: '/',
+            secure: false,
+            httpOnly: true,
+            session: false,
+            expirationDate: 1739868001.880623,
+            sameSite: 'unspecified',
+          },
+          {
+            name: 'xsecappid',
+            value: 'ugc',
+            domain: '.xiaohongshu.com',
+            hostOnly: false,
+            path: '/',
+            secure: false,
+            httpOnly: false,
+            session: false,
+            expirationDate: 1771402203,
+            sameSite: 'unspecified',
+          },
+          {
+            name: 'a1',
+            value: '195181b64e1uk2zdwtecq2bg07ka2lc03dyrv1j6750000218505',
+            domain: '.xiaohongshu.com',
+            hostOnly: false,
+            path: '/',
+            secure: false,
+            httpOnly: false,
+            session: false,
+            expirationDate: 1771402203,
+            sameSite: 'unspecified',
+          },
+          {
+            name: 'webId',
+            value: '448e8a71902ed4e5bd9221d673d5f64a',
+            domain: '.xiaohongshu.com',
+            hostOnly: false,
+            path: '/',
+            secure: false,
+            httpOnly: false,
+            session: false,
+            expirationDate: 1771402203,
+            sameSite: 'unspecified',
+          },
+          {
+            name: 'websectiga',
+            value:
+              '6169c1e84f393779a5f7de7303038f3b47a78e47be716e7bec57ccce17d45f99',
+            domain: '.xiaohongshu.com',
+            hostOnly: false,
+            path: '/',
+            secure: false,
+            httpOnly: false,
+            session: false,
+            expirationDate: 1740125404,
+            sameSite: 'unspecified',
+          },
+          {
+            name: 'sec_poison_id',
+            value: '1b93d373-5581-4c3f-86a5-162894a5f930',
+            domain: '.xiaohongshu.com',
+            hostOnly: false,
+            path: '/',
+            secure: false,
+            httpOnly: false,
+            session: false,
+            expirationDate: 1739866809,
+            sameSite: 'unspecified',
+          },
+          {
+            name: 'gid',
+            value:
+              'yj2yYyDWyqqfyj2yYyDK4fyVdy7TJufE9dSAvKWJDk8WTF280J1S8h888JyY2828Kj2yK0Ky',
+            domain: '.xiaohongshu.com',
+            hostOnly: false,
+            path: '/',
+            secure: false,
+            httpOnly: false,
+            session: false,
+            expirationDate: 1774426205.902804,
+            sameSite: 'unspecified',
+          },
+          {
+            name: 'customer-sso-sid',
+            value: '68c5174726686778508354287f952ccbdf2fb1dc',
+            domain: '.xiaohongshu.com',
+            hostOnly: false,
+            path: '/',
+            secure: false,
+            httpOnly: true,
+            session: false,
+            expirationDate: 1740471057.305251,
+            sameSite: 'unspecified',
+          },
+          {
+            name: 'x-user-id-creator.xiaohongshu.com',
+            value: '65755c46000000003d02be4d',
+            domain: '.xiaohongshu.com',
+            hostOnly: false,
+            path: '/',
+            secure: false,
+            httpOnly: true,
+            session: false,
+            expirationDate: 1774426258.305439,
+            sameSite: 'unspecified',
+          },
+          {
+            name: 'customerClientId',
+            value: '534324456763569',
+            domain: '.xiaohongshu.com',
+            hostOnly: false,
+            path: '/',
+            secure: false,
+            httpOnly: true,
+            session: false,
+            expirationDate: 1774426258.305536,
+            sameSite: 'unspecified',
+          },
+          {
+            name: 'access-token-creator.xiaohongshu.com',
+            value:
+              'customer.creator.AT-68c517472668677850667525pjzcjw0rje0xar0k',
+            domain: '.xiaohongshu.com',
+            hostOnly: false,
+            path: '/',
+            secure: false,
+            httpOnly: true,
+            session: false,
+            expirationDate: 1742458257.305611,
+            sameSite: 'unspecified',
+          },
+          {
+            name: 'galaxy_creator_session_id',
+            value: 'aVIvKrLoRitPPJGXFIZH6oRpXH7IUAHpOG3c',
+            domain: '.xiaohongshu.com',
+            hostOnly: false,
+            path: '/',
+            secure: false,
+            httpOnly: true,
+            session: false,
+            expirationDate: 1742458258.305697,
+            sameSite: 'unspecified',
+          },
+          {
+            name: 'galaxy.creator.beaker.session.id',
+            value: '1739866258632030794988',
+            domain: '.xiaohongshu.com',
+            hostOnly: false,
+            path: '/',
+            secure: false,
+            httpOnly: true,
+            session: false,
+            expirationDate: 1742458258.305777,
+            sameSite: 'unspecified',
+          },
+        ],
         userInfo: {
           authorId: '1234567890',
           nickname: '测试账号',
@@ -145,7 +308,10 @@ const Account: React.FC = () => {
   const handleGetDashboardFunc = async () => {
     console.log('Stored login info:', loginInfo);
     const cookies = loginInfo?.cookie;
-    const result = await window.ipcRenderer.invoke('ICP_XHS_GetDashboardFunckApi', cookies);
+    const result = await window.ipcRenderer.invoke(
+      'ICP_XHS_GetDashboardFunckApi',
+      cookies,
+    );
     console.log('handleGetDashboardFunc result:', JSON.stringify(result.data));
     if (result.success && Array.isArray(result.data)) {
       setDashboardList(result.data);
@@ -155,7 +321,12 @@ const Account: React.FC = () => {
   const handleGetDashboardFunc1 = async () => {
     console.log('Stored login info:', loginInfo);
     const cookies = loginInfo?.cookie;
-    const result = await window.ipcRenderer.invoke('ICP_XHS_GetDashboardFunckApi', cookies, '2025-02-10', '2025-02-18');
+    const result = await window.ipcRenderer.invoke(
+      'ICP_XHS_GetDashboardFunckApi',
+      cookies,
+      '2025-02-10',
+      '2025-02-18',
+    );
     console.log('handleGetDashboardFunc1 result:', JSON.stringify(result));
     if (result.success && Array.isArray(result.data)) {
       setDashboardList(result.data);
@@ -349,7 +520,9 @@ const Account: React.FC = () => {
 
                 <Button onClick={handleGetDashboardFunc}>获取昨日数据</Button>
 
-                <Button onClick={handleGetDashboardFunc1}>获取指定日期数据</Button>
+                <Button onClick={handleGetDashboardFunc1}>
+                  获取指定日期数据
+                </Button>
 
                 {publishResult && (
                   <Card title="发布结果">
@@ -402,7 +575,10 @@ const Account: React.FC = () => {
             <Content style={contentStyle}>
               <div className="flex flex-col h-full">
                 {dashboardList.length > 0 && (
-                  <div className="mb-6" style={{ height: '100%', overflowY: 'auto' }}>
+                  <div
+                    className="mb-6"
+                    style={{ height: '100%', overflowY: 'auto' }}
+                  >
                     <h2 className="text-lg font-medium mb-4">数据概览</h2>
                     {renderDashboardList()}
                   </div>

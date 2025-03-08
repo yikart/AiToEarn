@@ -22,7 +22,7 @@ function GetCode({ onGetCode }: { onGetCode: (unlock: () => void) => void }) {
         styles['loginForm-getCode'] +
         ` ${isCode ? styles['loginForm-getCode--disable'] : ''}`
       }
-      style={{display: 'flex'}}
+      style={{ display: 'flex' }}
       onClick={() => {
         if (isCode) return;
         lockCode();

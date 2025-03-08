@@ -14,7 +14,6 @@ import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
 import lodash from 'lodash';
 import { VideoModel } from '../../../../../electron/db/models/video';
 import { getImgFile } from '../../../../components/Choose/ImgChoose';
-import router from '@/router/index';
 
 interface IVideoPageStore {
   // 选择的视频数据

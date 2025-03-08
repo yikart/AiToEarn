@@ -7,10 +7,7 @@ import zh_CN from 'antd/es/locale/zh_CN';
 import './index.css';
 import './var.css';
 
-import './demos/ipc';
 import { generate } from '@ant-design/colors';
-// If you want use Node.js, the`nodeIntegration` needs to be enabled in the Main process.
-// import './demos/node'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
