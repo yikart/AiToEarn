@@ -91,13 +91,12 @@ export class Kwai extends PlatformBase {
     return publishVideoResult;
   }
 
-  /**
-   * TODO: 未实现
-   * @returns
-   * @param account
-   */
   async getStatistics(account: AccountModel) {
-    return {};
+    const res = await kwaiPub.getHomeInfo(JSON.parse(account.loginCookie));
+    return {
+      fansCount: res?.data?.data?.fansCnt,
+      workCount: 0,
+    };
   }
 
   async getDashboard(account: AccountModel, time: string[] = []) {

@@ -19,6 +19,18 @@ export interface IKwaiUserCommonResponse<T> {
   message: string;
 }
 
+export interface IGetHomeInfoResponse {
+  data: {
+    desc: string;
+    fansCnt: number;
+    followCnt: number;
+    likeCnt: number;
+    userId: number;
+    userName: string;
+    userKwaiId?: number;
+  };
+}
+
 // 快手用户信息接口返回的数据
 export type IKwaiUserInfoResponse = IKwaiUserCommonResponse<{
   ab: AbConfig;

@@ -106,7 +106,7 @@ export class AccountService {
     };
 
     for (const element of accountList) {
-      const ret = await platController.getStatistics(element).catch(err => {
+      const ret = await platController.getStatistics(element).catch((err) => {
         console.error(err);
       });
       res.fansCount += ret?.fansCount || 0;

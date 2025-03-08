@@ -1,12 +1,13 @@
 import requestNet from '../requestNet';
 import {
+  IGetHomeInfoResponse,
   IKwaiGetLocationsResponse,
   IKwaiGetTopicsResponse,
   IKwaiGetUsersResponse,
   IKwaiPubVideoParams,
   IKwaiUserInfoResponse,
-  ILoginResponse,
-} from './kwai.type';
+  ILoginResponse
+} from "./kwai.type";
 import { cookieToPlaywright, CookieToString } from '../utils';
 import { BrowserWindow } from 'electron';
 import { KwaiVisibleTypeEnum } from '../plat.common.type';
@@ -207,6 +208,20 @@ class KwaiPub {
           }
         }
       });
+    });
+  }
+
+  // 获取账户的粉丝数、关注、获赞
+  async getHomeInfo(cookies: Electron.Cookie[]) {
+    return await requestNet<IGetHomeInfoResponse>({
+      url: 'https://cp.kuaishou.com/rest/cp/creator/pc/home/infoV2?__NS_sig3=16064171beba8e22244b48496eb9c2a99377df33575755555a5b5842',
+      method: 'POST',
+      headers: {
+        cookie: CookieToString(cookies),
+      },
+      body: {
+        'kuaishou.web.cp.api_ph': '19af6d5b24cb170a03331ce9254b1204154c',
+      },
     });
   }
 
