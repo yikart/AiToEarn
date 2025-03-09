@@ -5,94 +5,159 @@
  * @LastEditors: nevin
  * @Description: 任务
  */
-import { Button, Card, Col, Row } from 'antd';
+import { Button, Tag, Tooltip, Spin } from 'antd';
 import { useState, useEffect, useRef } from 'react';
 import { Task, TaskProduct, TaskType } from '@@/types/task';
 import { taskApi } from '@/api/task';
 import { TaskInfoRef } from './components/popInfo';
 import TaskInfo from './components/carInfo';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import styles from './task.module.scss';
+
 const FILE_BASE_URL = import.meta.env.VITE_APP_FILE_HOST;
 
 export default function Page() {
   const [taskList, setTaskList] = useState<Task<TaskProduct>[]>([]);
   const [pageInfo, setPageInfo] = useState({
-    pageSize: 10,
+    pageSize: 9,
     pageNo: 1,
     totalCount: 0,
   });
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   const Ref_TaskInfo = useRef<TaskInfoRef>(null);
 
-  async function getTaskList() {
-    const res = await taskApi.getTaskList<TaskProduct>({
-      ...pageInfo,
-      type: TaskType.PRODUCT,
-    });
-    setTaskList(res.items);
+  async function getTaskList(isLoadMore = false) {
+    setLoading(true);
+    try {
+      const res = await taskApi.getTaskList<TaskProduct>({
+        ...pageInfo,
+        type: TaskType.PRODUCT,
+      });
+      
+      if (isLoadMore) {
+        setTaskList(prev => [...prev, ...res.items]);
+      } else {
+        setTaskList(res.items);
+      }
+      
+      setPageInfo(prev => ({
+        ...prev,
+        totalCount: res.totalCount,
+      }));
+      
+      // 检查是否还有更多数据
+      setHasMore(pageInfo.pageNo * pageInfo.pageSize < res.totalCount);
+    } catch (error) {
+      console.error('获取任务列表失败', error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
     getTaskList();
   }, []);
 
+  // 加载更多数据
+  const loadMore = () => {
+    setPageInfo(prev => ({
+      ...prev,
+      pageNo: prev.pageNo + 1,
+    }));
+    getTaskList(true);
+  };
+
+  // 计算佣金比例
+  const calculateCommissionRate = (price: number, reward: number) => {
+    if (!price || price === 0) return 0;
+    return Math.round((reward / price) * 100);
+  };
+
+  // 计算节省金额
+  const calculateSavings = (price: number, reward: number) => {
+    return reward.toFixed(2);
+  };
+
   return (
-    <div className="p-4">
+    <div className={styles.taskListContainer}>
       <TaskInfo ref={Ref_TaskInfo} />
-      <div className="flex flex-wrap gap-4">
-        {taskList.map((v) => {
-          return (
-            <Card
-              key={v.id}
-              className="box-border w-full p-4 sm:w-1/2 md:w-1/3"
-            >
-              <Row>
-                <Col span={12}>
-                  <div>
+      
+      <div className={styles.productGridContainer}>
+        <div className={styles.productGrid}>
+          {taskList.map((task) => {
+            const price = task.dataInfo?.price || 0;
+            const reward = task.reward || 0;
+            const commissionRate = calculateCommissionRate(price, reward);
+            const savings = calculateSavings(price, reward);
+            
+            return (
+              <div key={task.id} className={styles.productCard}>
+                <h3 className={styles.productTitle}>{task.dataInfo?.title || task.title}</h3>
+                
+                <div className={styles.productContent}>
+                  <div className={styles.imageContainer}>
                     <img
-                      src={`${FILE_BASE_URL}${v.imageUrl}`}
-                      alt=""
-                      className="w-full h-full"
+                      src={`${FILE_BASE_URL}${task.imageUrl}`}
+                      alt={task.title}
+                      className={styles.productImage}
                     />
                   </div>
-                </Col>
-                <Col span={12}>
-                  <h3>{v.title}</h3>
-                  <Row>
-                    <Col span={12}>
-                      {!v.dataInfo ? (
-                        <div>暂无数据</div>
-                      ) : (
-                        <>
-                          <p> {v.dataInfo.title}</p>
-                          <p> {v.dataInfo.price}元</p>
-                          <p>数量: {v.dataInfo.sales}</p>
-                        </>
-                      )}
-                    </Col>
-                    <Col span={12}>
-                      <p>招募人数: {v.maxRecruits}</p>
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
-              <Row>
-                <Row>
-                  <Col span={12}>
-                    是否已经接受: {v.isAccepted ? '是' : '否'}
-                  </Col>
-                  <Col span={12}>
-                    <Button
-                      type="primary"
-                      onClick={() => Ref_TaskInfo.current?.init(v)}
-                    >
-                      查看
-                    </Button>
-                  </Col>
-                </Row>
-              </Row>
-            </Card>
-          );
-        })}
+                  
+                  <div className={styles.productInfo}>
+                    <div className={styles.priceRow}>
+                      <span className={styles.price}>¥{task.dataInfo?.price || '暂无价格'}</span>
+                      <div className={styles.discountTag}>
+                        <Tag color="#ff4d4f">高佣{commissionRate}%</Tag>
+                        <Tag color="#ff4d4f">赚¥{savings}</Tag>
+                      </div>
+                    </div>
+                    
+                    <div className={styles.infoRow}>
+                      <div className={styles.infoItem}>
+                        <span className={styles.infoLabel}>带货等级：</span>
+                        <span className={styles.infoValue}>LV03及以上</span>
+                      </div>
+                      <div className={styles.infoItem}>
+                        <span className={styles.infoLabel}>招募人数：</span>
+                        <span className={styles.infoValue}>{task.maxRecruits}</span>
+                      </div>
+                      <div className={styles.infoItem}>
+                        <span className={styles.infoLabel}>已售：</span>
+                        <span className={styles.infoValue}>{task.dataInfo?.sales || 0}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className={styles.taskFooter}>
+                  <div className={styles.taskTips}>
+                    新号首次报名，奖励1-100元，立即到账 
+                    <Tooltip title="新用户首次完成任务可获得随机奖励">
+                      <InfoCircleOutlined className={styles.infoIcon} />
+                    </Tooltip>
+                  </div>
+                  <Button 
+                    type="primary" 
+                    className={styles.applyButton}
+                    onClick={() => Ref_TaskInfo.current?.init(task)}
+                  >
+                    报名
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        
+        {loading && <div className={styles.loadingContainer}><Spin /></div>}
+        
+        {!loading && hasMore && (
+          <div className={styles.loadMoreContainer}>
+            <Button onClick={loadMore}>查看更多项目...</Button>
+          </div>
+        )}
       </div>
     </div>
   );

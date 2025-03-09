@@ -36,7 +36,7 @@ export default function Page() {
   }, []);
 
   return (
-    <div className="p-4">
+    <div >
       <TaskInfo ref={Ref_TaskInfo} />
       <div className="flex flex-wrap gap-4">
         {taskList.map((v) => {

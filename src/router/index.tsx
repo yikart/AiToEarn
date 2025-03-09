@@ -129,12 +129,6 @@ export const router: CustomRouteObject[] = [
         path: '/task',
         element: <Task />,
         meta: { name: '任务市场', icon: UserOutlined },
-        children: [
-          { path: 'car', element: <CarTask /> },
-          { path: 'pop', element: <PopTask /> },
-          { path: 'video', element: <VideoTask /> },
-          { path: 'mine', element: <MineTask /> },
-        ],
       },
       {
         path: '/finance',

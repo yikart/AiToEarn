@@ -51,7 +51,7 @@ export default function Page() {
   }
 
   return (
-    <div className="p-4">
+    <div>
       <MineTaskInfo ref={Ref_MineTaskInfo} />
       <Withdraw ref={Ref_Withdraw} />
       <div className="flex flex-wrap gap-4">
