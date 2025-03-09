@@ -50,7 +50,6 @@
   bottom: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
   padding: 12px;
 }
 
@@ -60,6 +59,103 @@
   border: none;
   padding: 4px 12px;
   border-radius: 4px;
+}
+
+.richTextTag {
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #333;
+  border-radius: 4px;
+  padding: 8px 12px;
+  max-width: 280px;
+  
+  // 富文本内容样式
+  :global {
+    p {
+      margin: 0 0 8px;
+      line-height: 1.5;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    
+    strong, b {
+      font-weight: 600;
+    }
+    
+    em, i {
+      font-style: italic;
+    }
+    
+    ul, ol {
+      margin: 8px 0;
+      padding-left: 20px;
+    }
+    
+    li {
+      margin-bottom: 4px;
+    }
+    
+    a {
+      color: #1890ff;
+      text-decoration: none;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+    
+    img {
+      max-width: 100%;
+      height: auto;
+      margin: 8px 0;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0;
+      
+      th, td {
+        border: 1px solid #e8e8e8;
+        padding: 8px;
+        text-align: left;
+      }
+      
+      th {
+        background-color: #f5f5f5;
+        font-weight: 500;
+      }
+    }
+    
+    blockquote {
+      margin: 8px 0;
+      padding: 8px 16px;
+      border-left: 4px solid #f0f0f0;
+      background-color: #fafafa;
+      color: #666;
+    }
+    
+    code {
+      background-color: #f5f5f5;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+    
+    pre {
+      background-color: #f5f5f5;
+      padding: 12px;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin: 8px 0;
+      
+      code {
+        background-color: transparent;
+        padding: 0;
+      }
+    }
+  }
 }
 
 .taskInfoContainer {

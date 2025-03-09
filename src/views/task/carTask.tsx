@@ -94,7 +94,7 @@ export default function Page() {
             
             return (
               <div key={task.id} className={styles.productCard}>
-                <h3 className={styles.productTitle}>{task.dataInfo?.title || task.title}</h3>
+               
                 
                 <div className={styles.productContent}>
                   <div className={styles.imageContainer}>
@@ -106,9 +106,18 @@ export default function Page() {
                   </div>
                   
                   <div className={styles.productInfo}>
+                  <h3 className={styles.productTitle}>{task.dataInfo?.title || task.title}</h3>
                     <div className={styles.priceRow}>
+                      <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                       <span className={styles.price}>¥{task.dataInfo?.price || '暂无价格'}</span>
-                      <div className={styles.discountTag}>
+                      <div className={styles.infoItem}>
+                        <span className={styles.infoLabel}>已售：</span>
+                        <span className={styles.infoValue}>{task.dataInfo?.sales || 0}</span>
+                      </div>
+                      </div>
+                      
+
+                      <div className={styles.discountTag} style={{margin: '8px 0'}}>
                         <Tag color="#ff4d4f">高佣{commissionRate}%</Tag>
                         <Tag color="#ff4d4f">赚¥{savings}</Tag>
                       </div>
@@ -123,10 +132,7 @@ export default function Page() {
                         <span className={styles.infoLabel}>招募人数：</span>
                         <span className={styles.infoValue}>{task.maxRecruits}</span>
                       </div>
-                      <div className={styles.infoItem}>
-                        <span className={styles.infoLabel}>已售：</span>
-                        <span className={styles.infoValue}>{task.dataInfo?.sales || 0}</span>
-                      </div>
+                      
                     </div>
                   </div>
                 </div>

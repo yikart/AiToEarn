@@ -78,9 +78,10 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                   className={styles.taskImage}
                 />
                 <div className={styles.taskImageTags}>
-                  <Tag className={styles.imageTag}>精铜材质</Tag>
-                  <Tag className={styles.imageTag}>重力耐合</Tag>
-                  <Tag className={styles.imageTag}>防虫防臭</Tag>
+                  <div 
+                    className={styles.richTextTag}
+                    dangerouslySetInnerHTML={{ __html: taskInfo.description || '' }}
+                  />
                 </div>
               </div>
               
