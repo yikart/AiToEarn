@@ -35,20 +35,20 @@ export default function Page() {
         ...pageInfo,
         type: TaskType.PRODUCT,
       });
-      
+
       if (isLoadMore) {
-        setTaskList(prev => [...prev, ...res.items]);
+        setTaskList((prev) => [...prev, ...res.items]);
       } else {
         setTaskList(res.items);
       }
-      
-      setPageInfo(prev => ({
+
+      setPageInfo((prev) => ({
         ...prev,
-        totalCount: res.totalCount,
+        totalCount: (res as any).totalCount,
       }));
-      
+
       // 检查是否还有更多数据
-      setHasMore(pageInfo.pageNo * pageInfo.pageSize < res.totalCount);
+      setHasMore(pageInfo.pageNo * pageInfo.pageSize < (res as any).totalCount);
     } catch (error) {
       console.error('获取任务列表失败', error);
     } finally {
@@ -62,7 +62,7 @@ export default function Page() {
 
   // 加载更多数据
   const loadMore = () => {
-    setPageInfo(prev => ({
+    setPageInfo((prev) => ({
       ...prev,
       pageNo: prev.pageNo + 1,
     }));
@@ -83,7 +83,7 @@ export default function Page() {
   return (
     <div className={styles.taskListContainer}>
       <TaskInfo ref={Ref_TaskInfo} />
-      
+
       <div className={styles.productGridContainer}>
         <div className={styles.productGrid}>
           {taskList.map((task) => {
@@ -91,11 +91,9 @@ export default function Page() {
             const reward = task.reward || 0;
             const commissionRate = calculateCommissionRate(price, reward);
             const savings = calculateSavings(price, reward);
-            
+
             return (
               <div key={task.id} className={styles.productCard}>
-               
-                
                 <div className={styles.productContent}>
                   <div className={styles.imageContainer}>
                     <img
@@ -104,25 +102,40 @@ export default function Page() {
                       className={styles.productImage}
                     />
                   </div>
-                  
-                  <div className={styles.productInfo}>
-                  <h3 className={styles.productTitle}>{task.dataInfo?.title || task.title}</h3>
-                    <div className={styles.priceRow}>
-                      <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                      <span className={styles.price}>¥{task.dataInfo?.price || '暂无价格'}</span>
-                      <div className={styles.infoItem}>
-                        <span className={styles.infoLabel}>已售：</span>
-                        <span className={styles.infoValue}>{task.dataInfo?.sales || 0}</span>
-                      </div>
-                      </div>
-                      
 
-                      <div className={styles.discountTag} style={{margin: '8px 0'}}>
+                  <div className={styles.productInfo}>
+                    <h3 className={styles.productTitle}>
+                      {task.dataInfo?.title || task.title}
+                    </h3>
+                    <div className={styles.priceRow}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                        }}
+                      >
+                        <span className={styles.price}>
+                          ¥{task.dataInfo?.price || '暂无价格'}
+                        </span>
+                        <div className={styles.infoItem}>
+                          <span className={styles.infoLabel}>已售：</span>
+                          <span className={styles.infoValue}>
+                            {task.dataInfo?.sales || 0}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div
+                        className={styles.discountTag}
+                        style={{ margin: '8px 0' }}
+                      >
                         <Tag color="#ff4d4f">高佣{commissionRate}%</Tag>
                         <Tag color="#ff4d4f">赚¥{savings}</Tag>
                       </div>
                     </div>
-                    
+
                     <div className={styles.infoRow}>
                       <div className={styles.infoItem}>
                         <span className={styles.infoLabel}>带货等级：</span>
@@ -130,22 +143,23 @@ export default function Page() {
                       </div>
                       <div className={styles.infoItem}>
                         <span className={styles.infoLabel}>招募人数：</span>
-                        <span className={styles.infoValue}>{task.maxRecruits}</span>
+                        <span className={styles.infoValue}>
+                          {task.maxRecruits}
+                        </span>
                       </div>
-                      
                     </div>
                   </div>
                 </div>
-                
+
                 <div className={styles.taskFooter}>
                   <div className={styles.taskTips}>
-                    新号首次报名，奖励1-100元，立即到账 
+                    新号首次报名，奖励1-100元，立即到账
                     <Tooltip title="新用户首次完成任务可获得随机奖励">
                       <InfoCircleOutlined className={styles.infoIcon} />
                     </Tooltip>
                   </div>
-                  <Button 
-                    type="primary" 
+                  <Button
+                    type="primary"
                     className={styles.applyButton}
                     onClick={() => Ref_TaskInfo.current?.init(task)}
                   >
@@ -156,9 +170,13 @@ export default function Page() {
             );
           })}
         </div>
-        
-        {loading && <div className={styles.loadingContainer}><Spin /></div>}
-        
+
+        {loading && (
+          <div className={styles.loadingContainer}>
+            <Spin />
+          </div>
+        )}
+
         {!loading && hasMore && (
           <div className={styles.loadMoreContainer}>
             <Button onClick={loadMore}>查看更多项目...</Button>

@@ -44,6 +44,7 @@ export interface PlatformRanking {
   id: string;
   name: string;
   platformId: string;
+  parentId: string;
   platform: Platform;
   type: 'daily' | 'weekly' | 'monthly';
   description: string;

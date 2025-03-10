@@ -53,6 +53,7 @@ interface RankingItem {
 interface TopicContent {
   _id: string;
   title: string;
+  type: string;
   description: string | null;
   msgType: string;
   category: string;
@@ -333,7 +334,7 @@ const Trending: React.FC = () => {
         const firstRanking = data[0];
         setSelectedRanking(firstRanking);
 
-        // 获取榜单分类   
+        // 获取榜单分类
         await fetchRankingCategories(firstRanking._id);
 
         // 获取榜单内容
@@ -629,13 +630,13 @@ const Trending: React.FC = () => {
       if (!selectedPlatformId && platforms.length > 0) {
         setSelectedPlatformId(platforms[0]._id);
       }
-      
+
       // 调用处理函数获取数据
       setTopicLoading(true);
       try {
         // 获取二级分类
         await fetchTopicTypes(msgType);
-        
+
         // 获取专题数据 - 使用时间类型参数和当前选择的平台
         const hotTopicsData = await platformApi.getAllTopics({
           msgType: msgType,
@@ -1077,7 +1078,7 @@ const Trending: React.FC = () => {
         params.type = selectedTopicType;
       }
 
-      const { data, meta } = await platformApi.getAllTopics(params);
+      const { data, meta } = (await platformApi.getAllTopics(params)) as any;
       setTopicContents(data);
       setTopicPagination(meta);
     } catch (error) {
@@ -1091,7 +1092,7 @@ const Trending: React.FC = () => {
 
   // 在热门专题界面部分添加时间类型筛选
   <div className="flex items-center">
-    <span className="text-sm text-gray-500 mr-2">时间类型:</span>
+    <span className="mr-2 text-sm text-gray-500">时间类型:</span>
     <div className="flex flex-wrap gap-2">
       {timeTypes.map((timeType) => (
         <button
@@ -1536,14 +1537,14 @@ const Trending: React.FC = () => {
                   <div className="flex items-center justify-center py-8 col-span-full">
                     <span className="text-gray-500">加载中...</span>
                   </div>
-                ) : hotTopics && hotTopics.length > 0 ? ( 
+                ) : hotTopics && hotTopics.length > 0 ? (
                   <>
                     {hotTopics.map((platformData: PlatformHotTopics) => (
-                      <div 
-                        key={platformData.platform._id} 
+                      <div
+                        key={platformData.platform._id}
                         className="flex flex-col w-full p-4 bg-white rounded-lg"
-                        style={{ 
-                          minWidth: '300px', 
+                        style={{
+                          minWidth: '300px',
                           maxWidth: '550px',
                           height: '500px',
                         }}
@@ -1661,7 +1662,7 @@ const Trending: React.FC = () => {
                                                                 .length -
                                                                 1)) *
                                                               100 || 0;
-                                                  // 归一化热度值到0-20的范围
+                                                          // 归一化热度值到0-20的范围
                                                           const maxHot =
                                                             Math.max(
                                                               ...topic.hotValueHistory.map(
@@ -1688,7 +1689,7 @@ const Trending: React.FC = () => {
                                                                   minHot) /
                                                                   range) *
                                                                   20;
-                                                  return `${x},${y}`;
+                                                          return `${x},${y}`;
                                                         },
                                                       )
                                                       .join(' ')
@@ -1768,23 +1769,23 @@ const Trending: React.FC = () => {
                         </div>
                       </button>
                     ))}
-                </div>
+                  </div>
 
                   {/* 时间筛选 - 新增 */}
                   <div className="flex items-center">
-                    <span className="text-sm text-gray-500 mr-3">
+                    <span className="mr-3 text-sm text-gray-500">
                       时间范围:
                     </span>
                     <div className="flex flex-wrap gap-2">
                       {timeTypes.map((timeRange) => (
-                      <button
+                        <button
                           key={timeRange}
-                        className={`${buttonStyles.base} ${
+                          className={`${buttonStyles.base} ${
                             selectedTimeRange === timeRange
                               ? buttonStyles.primary
                               : buttonStyles.secondary
-                        }`}
-                        onClick={() => {
+                          }`}
+                          onClick={() => {
                             // 先设置时间范围
                             setSelectedTimeRange(timeRange);
                             // 使用 setTimeout 确保状态更新后再调用查询
@@ -1794,7 +1795,7 @@ const Trending: React.FC = () => {
                           }}
                         >
                           {timeRange}
-                      </button>
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -1802,29 +1803,29 @@ const Trending: React.FC = () => {
                   {/* 分类筛选 - 如果有的话 */}
                   {topicTypes.length > 1 && (
                     <div className="flex items-center">
-                      <span className="text-sm text-gray-500 mr-3">分类:</span>
+                      <span className="mr-3 text-sm text-gray-500">分类:</span>
                       <div className="flex flex-wrap gap-2">
-                      {topicTypes.map((type) => (
-                        <button
-                          key={type}
-                          className={`${buttonStyles.base} ${
-                            selectedTopicType === type
-                              ? buttonStyles.primary
-                              : buttonStyles.secondary
-                          }`}
-                          onClick={() => {
+                        {topicTypes.map((type) => (
+                          <button
+                            key={type}
+                            className={`${buttonStyles.base} ${
+                              selectedTopicType === type
+                                ? buttonStyles.primary
+                                : buttonStyles.secondary
+                            }`}
+                            onClick={() => {
                               setSelectedTopicType(
                                 type === selectedTopicType ? '' : type,
                               );
-                            handleFilterChange();
-                          }}
-                        >
-                          {type}
-                        </button>
-                      ))}
+                              handleFilterChange();
+                            }}
+                          >
+                            {type}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
                 </div>
               </div>
 
@@ -1851,11 +1852,11 @@ const Trending: React.FC = () => {
                     {topicContents.map((item, index) => (
                       <div
                         key={item._id}
-                        className="grid grid-cols-12 py-5 px-4 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer items-center"
+                        className="grid items-center grid-cols-12 px-4 py-5 transition-colors border-b border-gray-100 cursor-pointer hover:bg-gray-50"
                         onClick={() => handleContentClick(item.url, item.title)}
                       >
                         {/* 排名 */}
-                        <div className="col-span-1 text-lg font-bold text-orange-500 text-center">
+                        <div className="col-span-1 text-lg font-bold text-center text-orange-500">
                           {((topicPagination?.currentPage || 1) - 1) *
                             (topicPagination?.itemsPerPage || 20) +
                             index +
@@ -1880,7 +1881,7 @@ const Trending: React.FC = () => {
                               </div>
                             )}
                             {item.type === 'video' && (
-                              <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded">
+                              <div className="absolute px-2 py-1 text-xs text-white bg-black rounded bottom-2 right-2 bg-opacity-60">
                                 视频
                               </div>
                             )}
@@ -1890,8 +1891,8 @@ const Trending: React.FC = () => {
                         {/* 标题和作者信息 */}
                         <div className="col-span-5 pl-4 ">
                           <h3 className="text-base font-medium line-clamp-2 hover:text-[#a66ae4] text-left">
-                                {item.title}
-                              </h3>
+                            {item.title}
+                          </h3>
                           <div style={{ width: '100%', height: '60px' }}></div>
                           <div className="flex items-center mt-2">
                             <div className="flex items-center">
@@ -1900,50 +1901,50 @@ const Trending: React.FC = () => {
                                 <img
                                   src={getImageUrl(item.avatar)}
                                   alt={item.author}
-                                  className="w-5 h-5 rounded-full mr-1"
+                                  className="w-5 h-5 mr-1 rounded-full"
                                   onError={() =>
                                     handleImageError(`avatar-${item._id}`)
                                   }
                                 />
                               ) : (
-                                <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center mr-1">
+                                <div className="flex items-center justify-center w-5 h-5 mr-1 bg-gray-200 rounded-full">
                                   <span className="text-xs text-gray-500">
                                     {item.author?.charAt(0)?.toUpperCase() ||
                                       '?'}
                                   </span>
                                 </div>
                               )}
-                              <span className="text-sm text-gray-600 mr-2">
+                              <span className="mr-2 text-sm text-gray-600">
                                 {item.author}
                               </span>
                               {item.fans > 0 && (
-                                <span className="text-xs text-gray-400 mr-2">
+                                <span className="mr-2 text-xs text-gray-400">
                                   {item.fans >= 10000
                                     ? `${(item.fans / 10000).toFixed(1)}万粉丝`
                                     : `${item.fans}粉丝`}
                                 </span>
                               )}
-                                <span className="text-xs text-gray-400">
+                              <span className="text-xs text-gray-400">
                                 发布于{' '}
                                 {dayjs(item.publishTime).format(
                                   'YYYY-MM-DD HH:mm',
                                 )}
-                                </span>
+                              </span>
                             </div>
-                              </div>
-                            </div>
+                          </div>
+                        </div>
 
                         {/* 分类信息 */}
                         <div className="col-span-1 text-center">
                           <div className="text-sm text-gray-600">
                             {item.category}
-                              </div>
+                          </div>
                           {item.subCategory && (
-                            <div className="text-xs text-gray-400 mt-1">
+                            <div className="mt-1 text-xs text-gray-400">
                               {item.subCategory}
-                                </div>
+                            </div>
                           )}
-                              </div>
+                        </div>
 
                         {/* 点赞数 */}
                         <div className="col-span-1 text-center">
@@ -1951,9 +1952,9 @@ const Trending: React.FC = () => {
                             {item.likeCount >= 10000
                               ? `${(item.likeCount / 10000).toFixed(1)}w`
                               : item.likeCount}
-                            </div>
-                          <div className="text-xs text-gray-400">点赞</div>
                           </div>
+                          <div className="text-xs text-gray-400">点赞</div>
+                        </div>
 
                         {/* 分享数 */}
                         <div className="col-span-1 text-center">
@@ -1961,9 +1962,9 @@ const Trending: React.FC = () => {
                             {item.shareCount >= 10000
                               ? `${(item.shareCount / 10000).toFixed(1)}w`
                               : item.shareCount}
-                        </div>
+                          </div>
                           <div className="text-xs text-gray-400">分享</div>
-                      </div>
+                        </div>
 
                         {/* 阅读/观看数 */}
                         <div className="col-span-1 text-center">
@@ -1973,7 +1974,7 @@ const Trending: React.FC = () => {
                                 ? `${(item.readCount / 10000).toFixed(1)}w`
                                 : item.readCount
                               : '-'}
-                      </div>
+                          </div>
                           <div className="text-xs text-gray-400">
                             {item.watchingCount !== null ? '观看' : '阅读'}
                           </div>
@@ -2013,18 +2014,18 @@ const Trending: React.FC = () => {
                     {rankingList
                       .filter((ranking) => !ranking.parentId)
                       .map((ranking) => (
-                      <button
-                        key={ranking._id}
-                        className={`${buttonStyles.base} ${
-                          selectedRanking?._id === ranking._id
-                            ? buttonStyles.primary
-                            : buttonStyles.secondary
-                        }`}
-                        onClick={() => handleRankingSelect(ranking)}
-                      >
-                        {ranking.name}
-                      </button>
-                    ))}
+                        <button
+                          key={ranking._id}
+                          className={`${buttonStyles.base} ${
+                            selectedRanking?._id === ranking._id
+                              ? buttonStyles.primary
+                              : buttonStyles.secondary
+                          }`}
+                          onClick={() => handleRankingSelect(ranking)}
+                        >
+                          {ranking.name}
+                        </button>
+                      ))}
                   </div>
                 </div>
               )}
@@ -2079,17 +2080,17 @@ const Trending: React.FC = () => {
                 {/* 日期选择和子榜单选择 */}
                 <div className="flex items-center justify-between mt-4">
                   <div className="flex items-center space-x-4">
-                  <DatePicker
-                    value={dayjs(selectedDate)}
-                    onChange={handleDateChange}
-                    locale={locale}
-                    allowClear={false}
-                    className="w-32"
-                    placeholder="选择日期"
-                    disabledDate={(current) => {
-                      return current && current > dayjs().endOf('day');
-                    }}
-                  />
+                    <DatePicker
+                      value={dayjs(selectedDate)}
+                      onChange={handleDateChange}
+                      locale={locale}
+                      allowClear={false}
+                      className="w-32"
+                      placeholder="选择日期"
+                      disabledDate={(current) => {
+                        return current && current > dayjs().endOf('day');
+                      }}
+                    />
 
                     {/* 子榜单选择 - 只在选择了父榜单后显示 */}
                     {selectedRanking &&
@@ -2342,7 +2343,7 @@ const Trending: React.FC = () => {
               </div>
             </>
           )}
-           <div style={{ width: '100%', height: '20px' }}></div>
+          <div style={{ width: '100%', height: '20px' }}></div>
         </div>
       </div>
 
@@ -2402,7 +2403,7 @@ const Trending: React.FC = () => {
 
       <script
         dangerouslySetInnerHTML={{
-        __html: `
+          __html: `
           document.addEventListener('DOMContentLoaded', function() {
             const hoverTriggers = document.querySelectorAll('.hover-trigger');
             const tooltip = document.querySelector('.tooltip');
