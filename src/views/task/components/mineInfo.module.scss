@@ -1,0 +1,169 @@
+.taskInfoModal {
+  :global {
+    .ant-modal-content {
+      padding: 0;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+    
+    .ant-modal-body {
+      padding: 0;
+    }
+    
+    .ant-modal-close {
+      color: #999;
+      
+      &:hover {
+        color: #333;
+      }
+    }
+  }
+}
+
+.taskInfoContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.taskInfoHeader {
+  padding: 20px 24px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.taskTitle {
+  font-size: 20px;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.taskId {
+  font-size: 14px;
+  color: #999;
+  font-weight: normal;
+  margin-left: 12px;
+}
+
+.statusTag {
+  font-size: 14px;
+}
+
+.taskInfoContent {
+  padding: 24px;
+  flex: 1;
+}
+
+.taskDetails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.taskDetail {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.detailIcon {
+  margin-right: 8px;
+  color: #999;
+  font-size: 16px;
+}
+
+.detailLabel {
+  color: #666;
+  margin-right: 8px;
+}
+
+.detailValue {
+  color: #333;
+  font-weight: 500;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.infoIcon {
+  margin-left: 8px;
+  color: #faad14;
+  font-size: 16px;
+}
+
+.taskDescription {
+  margin-bottom: 24px;
+}
+
+.descriptionContent {
+  color: #666;
+  line-height: 1.6;
+  
+  p {
+    margin-bottom: 12px;
+  }
+  
+  img {
+    max-width: 100%;
+    border-radius: 4px;
+    margin: 8px 0;
+  }
+}
+
+.submissionSection {
+  margin-bottom: 24px;
+}
+
+.uploadTips {
+  background-color: #f9f9f9;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-top: 16px;
+  
+  p {
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+  }
+  
+  ul {
+    padding-left: 20px;
+    margin: 0;
+    
+    li {
+      color: #666;
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+  }
+}
+
+.taskInfoFooter {
+  padding: 16px 24px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.noDataContainer {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+  font-size: 16px;
+} 
