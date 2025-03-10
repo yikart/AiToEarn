@@ -15,6 +15,8 @@ interface ProjectAxiosRequestConfig extends AxiosRequestConfig {
 }
 
 export const getAxiosRequest = (baseURL: string) => {
+  const MessageKey = 'reqKey';
+
   // 创建 axios 实例
   const request = axios.create({
     baseURL, // 从环境变量获取基础URL
@@ -56,7 +58,10 @@ export const getAxiosRequest = (baseURL: string) => {
 
       // 这里可以根据后端的响应结构进行调整
       if (data.code !== 0) {
-        message.error(data.message || '请求失败');
+        message.error({
+          content: data.message || '请求失败',
+          key: MessageKey,
+        });
         return Promise.reject(new Error(data.message || '请求失败'));
       }
 
@@ -68,25 +73,43 @@ export const getAxiosRequest = (baseURL: string) => {
       if (error.response) {
         switch (error.response.status) {
           case 401:
-            message.error('未授权，请重新登录');
+            message.error({
+              content: '未授权，请重新登录',
+              key: MessageKey,
+            });
             // 可以在这里处理登出逻辑
             setTimeout(() => useUserStore.getState().logout(), 500);
             break;
           case 403:
-            message.error('拒绝访问');
+            message.error({
+              key: MessageKey,
+              content: '拒绝访问',
+            });
             setTimeout(() => useUserStore.getState().logout(), 500);
             break;
           case 404:
-            message.error('请求错误，未找到该资源');
+            message.error({
+              key: MessageKey,
+              content: '请求错误，未找到该资源',
+            });
             break;
           case 500:
-            message.error('服务器错误');
+            message.error({
+              key: MessageKey,
+              content: '服务器错误',
+            });
             break;
           default:
-            message.error(`连接错误 ${error.response.status}`);
+            message.error({
+              key: MessageKey,
+              content: `连接错误 ${error.response.status}`,
+            });
         }
       } else {
-        message.error('网络异常，请检查网络连接');
+        message.error({
+          content: '网络异常，请检查网络连接',
+          key: MessageKey,
+        });
       }
       return Promise.reject(error);
     },
