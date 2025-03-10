@@ -12,12 +12,7 @@ export interface IUserStore {
 }
 
 const state: IUserStore = {
-  userInfo: {
-    phone: '17600917357',
-    _id: '678f8da7a6ab46b91d2ddce3',
-    id: '678f8da7a6ab46b91d2ddce3',
-    name: '123',
-  },
+  userInfo: undefined,
   token: '123',
   overdueTime: 0,
   // 是否开始刷新token，防止多次调用
