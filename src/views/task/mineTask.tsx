@@ -5,7 +5,7 @@
  * @LastEditors: nevin
  * @Description: 我的任务列表
  */
-import { Button, Card, Empty, Spin } from 'antd';
+import { Button, Card, Empty, Spin, Modal } from 'antd';
 import { useState, useEffect, useRef } from 'react';
 import { taskApi } from '@/api/task';
 import { UserTask, UserTaskStatus } from '@/api/types/task';
@@ -43,6 +43,7 @@ export default function Page() {
     totalCount: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [isGuideModalVisible, setIsGuideModalVisible] = useState(false);
 
   useEffect(() => {
     const fetchTaskDetails = async () => {
@@ -71,12 +72,30 @@ export default function Page() {
     Ref_Withdraw.current?.init(task);
   }
 
+  // 打开指南弹窗
+  const openGuideModal = () => {
+    setIsGuideModalVisible(true);
+  };
+
+  // 关闭指南弹窗
+  const closeGuideModal = () => {
+    setIsGuideModalVisible(false);
+  };
+
   // 渲染空状态
   const renderEmptyState = () => {
     return (
       <div className={styles.emptyContainer}>
         <div className={styles.emptyText}>
-          <h3>接单前请务必先浏览《接单须知与常见问题解答》</h3>
+          <h3>
+            接单前请务必先浏览
+            <span 
+              className={styles.guideLink} 
+              onClick={openGuideModal}
+            >
+              《接单须知与常见问题解答》
+            </span>
+          </h3>
           <p>所有关于接单的秘诀都在这里，请不要错过</p>
         </div>
         
@@ -156,7 +175,7 @@ export default function Page() {
         <div className={styles.loadingContainer}>
           <Spin size="large" />
         </div>
-      ) : taskList.length > 10 ? (
+      ) : taskList.length > 3 ? (
         <div className={styles.taskGrid}>
           {taskList.map((task) => (
             <Card
@@ -222,6 +241,128 @@ export default function Page() {
       ) : (
         renderEmptyState()
       )}
+
+      {/* 接单须知与常见问题解答弹窗 */}
+      <Modal
+        title="接单须知与常见问题解答"
+        open={isGuideModalVisible}
+        onCancel={closeGuideModal}
+        footer={[
+          <Button key="close" onClick={closeGuideModal}>
+            关闭
+          </Button>
+        ]}
+        width={800}
+        className={styles.guideModal}
+      >
+        <div className={styles.guideModalContent}>
+          <div className={styles.guideHeader}>
+            <h2>接单步骤&常见问答</h2>
+            <p className={styles.guideDate}>新榜有赚 2024-08-23</p>
+          </div>
+          
+          <div className={styles.guideIntro}>
+            <p>欢迎使用爱团团AiToEarn任务市场，爱团团是新榜开发的一款新媒体多账号运营工具，爱团团任务市场目前支持小红书、抖音、视频号、B站、微博、知乎、公众号、快手、携程等新媒体账号接单变现。</p>
+            <p>任务属于派单制，如果您的号满足当前广告主的要求，则会被派单,每个人得到的任务是不同的。如果您想要接单，可以把自己有的流量资源绑定到爱团团当中耐心等待。请按照下列步骤进行：</p>
+          </div>
+          
+          <div className={styles.guideSection}>
+            <h3>操作步骤</h3>
+            <ol className={styles.guideSteps}>
+              <li>
+                <p>扫描下方二维码，有符合您账号的项目出现时，【新榜有赚】会第一时间通知您。如果您的爱团团电脑端保持在线即可通过手机端完成发布。</p>
+                <div className={styles.guideImageContainer}>
+                  <img src={qr1} alt="扫码接收项目上新通知" className={styles.guideImage} />
+                  <p className={styles.guideImageCaption}>扫码接收项目上新通知</p>
+                </div>
+                <div className={styles.guideImageContainer}>
+                  <img src={qr2} alt="点击该模板消息可手机发文" className={styles.guideImage} />
+                  <p className={styles.guideImageCaption}>点击该模板消息可手机发文</p>
+                </div>
+              </li>
+              <li>
+                <p>点击下方链接下载爱团团接单软件（已下载可忽略）</p>
+                <p className={styles.guideLink}>http://s.sqllb.com/Kky80</p>
+              </li>
+              <li>
+                <p>【多开面板】或【管理中心】添加小红书、抖音、视频号、B站等平台账号，等待3天左右，可以前往【任务市场】查看任务和接单（如下图）</p>
+                <div className={styles.guideImageContainer}>
+                  <img src={bindTaskImg} alt="管理中心-添加账号" className={styles.guideImage} />
+                  <p className={styles.guideImageCaption}>管理中心-添加账号</p>
+                </div>
+                <p>列表会展示添加成功的账号</p>
+                <div className={styles.guideImageContainer}>
+                  <img src={checkTaskImg} alt="绑定账号后等待3天左右会显示项目" className={styles.guideImage} />
+                  <p className={styles.guideImageCaption}>绑定账号后等待3天左右会显示项目</p>
+                </div>
+              </li>
+              <li>
+                <p>耐心等待任务下发，任务下发后，请仔细判断是否符合自己账号调性，确认合适再进行发布，一旦发布不可删除，否则必须补发且影响您后续得到派单。</p>
+              </li>
+              <li>
+                <p>建议日常无单时积极运营账号，保持真诚、分享、有用的人设，有利于后续接到更多高质量的订单。连续接广告无原创内容、不经常更新、批量做矩阵账号都是封号高危原因，对后续发展不利。</p>
+              </li>
+            </ol>
+          </div>
+          
+          <div className={styles.guideSection}>
+            <h3>常见问题</h3>
+            <div className={styles.guideFaq}>
+              <div className={styles.faqItem}>
+                <h4>为什么我没有项目？</h4>
+                <div className={styles.faqAnswer}>
+                  <p>请先完成上方操作步骤的所有流程。如果您已在爱团团绑定小红书等账号，请耐心等待派单。24小时、48小时没有得到派单都是正常的。超过1周没有收到项目邀请可填写下方收集表快速排查为何没有单子</p>
+                  <p className={styles.guideLink}>【收集表】快速排查为何没单子</p>
+                </div>
+              </div>
+              
+              <div className={styles.faqItem}>
+                <h4>手机如何发文？</h4>
+                <div className={styles.faqAnswer}>
+                  <p>请先完成上方操作步骤中流程。公众号收到接单邀请，点击即可手机发文（手机操作一键发文前提是电脑需保证爱团团和发文账号在线，否则还需使用电脑发文）</p>
+                  <div className={styles.guideImageContainer}>
+                    <img src={qr2} alt="点击该模板消息可手机发文" className={styles.guideImage} />
+                    <p className={styles.guideImageCaption}>点击该模板消息可手机发文</p>
+                  </div>
+                  <p>点击下方链接下载爱团团接单软件（已下载可忽略）</p>
+                  <p className={styles.guideLink}>http://s.sqllb.com/Kky80</p>
+                </div>
+              </div>
+              
+              <div className={styles.faqItem}>
+                <h4>有人在我接的单子下面评论该怎么回复？</h4>
+                <div className={styles.faqAnswer}>
+                  <p>请私聊工作人员，直接发送您的订单号和用户回复截图。</p>
+                </div>
+              </div>
+              
+              <div className={styles.faqItem}>
+                <h4>抖音一直发不出去怎么办？</h4>
+                <div className={styles.faqAnswer}>
+                  <p>由于存在难以攻克的技术问题，约 30%的抖音订单无法正常发布，很遗憾您这单在此之列。对此给您带来不好的体验深表歉意，这单您可以放弃。</p>
+                </div>
+              </div>
+              
+              <div className={styles.faqItem}>
+                <h4>我的账号不想接单怎么办？</h4>
+                <div className={styles.faqAnswer}>
+                  <p>如您不想接单或有账号不想收到任务市场消息提醒，可填写下表，后续【任务市场】将不再给您发邀请和派任务。</p>
+                  <p className={styles.guideLink}>【收集表】任务市场不接单申请</p>
+                </div>
+              </div>
+              
+              <div className={styles.faqItem}>
+                <h4>违规提示或账号封禁怎么处理？</h4>
+                <div className={styles.faqAnswer}>
+                  <p>将订单号和违规截图私聊发给工作人员。</p>
+                  <p>如未回复消息请耐心等待（工作时间：工作日9:00-18:00）</p>
+                  <p>前往新榜查看更多新媒体相关信息</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

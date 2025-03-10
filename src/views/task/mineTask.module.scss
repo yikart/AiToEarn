@@ -231,3 +231,132 @@
   background-color: #e8e8e8;
   margin: 0 8px;
 }
+
+.guideLink {
+  color: #1890ff;
+  cursor: pointer;
+  text-decoration: underline;
+  
+  &:hover {
+    color: #40a9ff;
+  }
+}
+
+.guideModal {
+  :global {
+    .ant-modal-body {
+      max-height: 70vh;
+      overflow-y: auto;
+      padding: 24px;
+    }
+    
+    .ant-modal-header {
+      border-bottom: 1px solid #f0f0f0;
+      padding: 16px 24px;
+    }
+    
+    .ant-modal-title {
+      font-size: 18px;
+      font-weight: 500;
+      color: #333;
+    }
+    
+    .ant-modal-footer {
+      border-top: 1px solid #f0f0f0;
+      padding: 12px 24px;
+    }
+  }
+}
+
+.guideModalContent {
+  color: #333;
+  line-height: 1.6;
+}
+
+.guideHeader {
+  margin-bottom: 24px;
+  text-align: center;
+  
+  h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+}
+
+.guideDate {
+  color: #999;
+  font-size: 14px;
+}
+
+.guideIntro {
+  margin-bottom: 24px;
+  
+  p {
+    margin-bottom: 12px;
+  }
+}
+
+.guideSection {
+  margin-bottom: 32px;
+  
+  h3 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+}
+
+.guideSteps {
+  padding-left: 24px;
+  
+  li {
+    margin-bottom: 20px;
+  }
+  
+  p {
+    margin-bottom: 12px;
+  }
+}
+
+.guideImageContainer {
+  margin: 16px 0;
+  text-align: center;
+}
+
+.guideImage {
+  max-width: 100%;
+  max-height: 300px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+.guideImageCaption {
+  margin-top: 8px;
+  color: #666;
+  font-size: 14px;
+}
+
+.guideFaq {
+  .faqItem {
+    margin-bottom: 24px;
+    
+    h4 {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 12px;
+      color: #1890ff;
+    }
+    
+    .faqAnswer {
+      padding-left: 16px;
+      border-left: 3px solid #f0f0f0;
+      
+      p {
+        margin-bottom: 12px;
+      }
+    }
+  }
+}
