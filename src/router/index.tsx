@@ -32,19 +32,13 @@ import Publish from '@/views/publish/page';
 import VideoPage from '@/views/publish/children/videoPage/page';
 import PubRecord from '@/views/publish/children/pubRecord/page';
 import Drafts from '@/views/publish/children/drafts/page';
-import Shipinhao from '@/views/test/shipinhao';
-import Douyin from '@/views/test/douyin/index';
-import Douyin2 from '@/views/test/douyin2';
-import Xiaohongshu from '@/views/test/xiaohongshu';
 import Statistics from '@/views/statistics';
-import Test from '@/views/test/index';
-import TestVideo from '@/views/test/video';
 import Task from '@/views/task';
-import HotTopic from '@/views/trending/hotTopic';
-import CarTask from '@/views/task/carTask';
-import PopTask from '@/views/task/popTask';
-import VideoTask from '@/views/task/videoTask';
-import MineTask from '@/views/task/mineTask';
+// import HotTopic from '@/views/trending/hotTopic';
+// import CarTask from '@/views/task/carTask';
+// import PopTask from '@/views/task/popTask';
+// import VideoTask from '@/views/task/videoTask';
+// import MineTask from '@/views/task/mineTask';
 import UserWalletAccount from '@/views/finance/userWalletAccount';
 import Finance from '@/views/finance/index';
 import UserWalletRecord from '@/views/finance/userWalletRecord';
@@ -137,19 +131,6 @@ export const router: CustomRouteObject[] = [
         children: [
           { path: 'userWalletRecord', element: <UserWalletRecord /> },
           { path: 'userWalletAccount', element: <UserWalletAccount /> },
-        ],
-      },
-      {
-        path: '/ceshi',
-        element: <Test />,
-        meta: { name: '测试', icon: UserOutlined },
-        children: [
-          { path: 'video', element: <TestVideo /> },
-          { path: 'douyin', element: <Douyin /> },
-          { path: 'douyin2', element: <Douyin2 /> },
-          { path: 'shipinhao', element: <Shipinhao /> },
-          { path: 'xiaohongshu', element: <Xiaohongshu /> },
-          { path: 'hotTopic', element: <HotTopic /> },
         ],
       },
     ],
