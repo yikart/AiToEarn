@@ -2,19 +2,25 @@
   display: flex;
 
   :global {
-    .ant-segmented {
-      margin-right: 20px;
-      .ant-segmented-item {
+    .platChoose-platSelect {
+      .ant-checkbox-wrapper {
         margin-bottom: 5px;
-        padding: 3px 60px 3px 0;
       }
 
-      .ant-segmented-item-label {
-        display: flex;
-        align-items: center;
-        .ant-segmented-item-icon {
+      .ant-segmented {
+        margin-right: 20px;
+        .ant-segmented-item {
+          margin-bottom: 5px;
+          padding: 3px 60px 3px 0;
+        }
+
+        .ant-segmented-item-label {
           display: flex;
           align-items: center;
+          .ant-segmented-item-icon {
+            display: flex;
+            align-items: center;
+          }
         }
       }
     }

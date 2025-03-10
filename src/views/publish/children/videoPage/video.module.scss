@@ -408,6 +408,9 @@
         font-size: var(--fs-md);
         margin-bottom: 5px;
         margin-top: 20px;
+        .anticon {
+          margin-left: 3px;
+        }
       }
       &-tip {
         font-size: var(--fs-sm);
