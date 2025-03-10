@@ -5,7 +5,7 @@
  * @LastEditors: nevin
  * @Description: 我的任务列表
  */
-import { Button, Card, Empty, Spin, Modal } from 'antd';
+import { Button, Card, Spin, Modal } from 'antd';
 import { useState, useEffect, useRef } from 'react';
 import { taskApi } from '@/api/task';
 import { UserTask, UserTaskStatus } from '@/api/types/task';
@@ -15,14 +15,12 @@ import { WithdrawRef } from './components/withdraw';
 import Withdraw from './components/withdraw';
 import styles from './mineTask.module.scss';
 
-
 import bindTaskImg from '@/assets/task/binds.png';
 import checkTaskImg from '@/assets/task/waits.png';
 import publishTaskImg from '@/assets/task/fabu.png';
 import rewardTaskImg from '@/assets/task/jiesuan.png';
 import qr1 from '@/assets/task/qr1.png';
 import qr2 from '@/assets/task/qr2.png';
-
 
 const UserTaskStatusNameMap = new Map<UserTaskStatus, string>([
   [UserTaskStatus.DODING, '进行中'],
@@ -51,9 +49,9 @@ export default function Page() {
       try {
         const tasks = await taskApi.getMineTaskList(pageInfo);
         setTaskList(tasks.items);
-        setPageInfo(prev => ({
+        setPageInfo((prev) => ({
           ...prev,
-          totalCount: tasks.totalCount,
+          totalCount: (tasks as any).totalCount,
         }));
       } catch (error) {
         console.error('获取任务列表失败', error);
@@ -89,73 +87,94 @@ export default function Page() {
         <div className={styles.emptyText}>
           <h3>
             接单前请务必先浏览
-            <span 
-              className={styles.guideLink} 
-              onClick={openGuideModal}
-            >
+            <span className={styles.guideLink} onClick={openGuideModal}>
               《接单须知与常见问题解答》
             </span>
           </h3>
           <p>所有关于接单的秘诀都在这里，请不要错过</p>
         </div>
-        
+
         <div className={styles.guideContainer}>
           <div className={styles.guideStep}>
             <h4>接单前完成以下步骤，接单快人一步</h4>
-            
+
             <div className={styles.qrCodeContainer}>
               <div className={styles.qrCodeItem}>
                 <div className={styles.qrCodeWrapper}>
-                  <img src={qr1} alt="扫码加入账号招募群" className={styles.qrCode} />
+                  <img
+                    src={qr1}
+                    alt="扫码加入账号招募群"
+                    className={styles.qrCode}
+                  />
                 </div>
                 <p className={styles.qrCodeText}>扫码加入账号招募群</p>
                 <p className={styles.qrCodeSubtext}>不可在群内天打扰他人</p>
               </div>
-              
+
               <div className={styles.qrCodeItem}>
                 <div className={styles.qrCodeWrapper}>
-                  <img src={qr2} alt="扫码开启更多权益" className={styles.qrCode} />
+                  <img
+                    src={qr2}
+                    alt="扫码开启更多权益"
+                    className={styles.qrCode}
+                  />
                 </div>
                 <p className={styles.qrCodeText}>扫码开启更多权益</p>
                 <p className={styles.qrCodeSubtext}>手机发文付打款通知</p>
               </div>
             </div>
           </div>
-          
+
           <div className={styles.processContainer}>
             <h4 className={styles.processTitle}>接单流程</h4>
-            
+
             <div className={styles.processSteps}>
               <div className={styles.processStep}>
                 <div className={styles.processIcon}>
-                  <img src={bindTaskImg} alt="前往管理中心绑定账号" className={styles.stepIcon} />
+                  <img
+                    src={bindTaskImg}
+                    alt="前往管理中心绑定账号"
+                    className={styles.stepIcon}
+                  />
                 </div>
                 <p className={styles.stepText}>前往管理中心绑定账号</p>
               </div>
-              
+
               <div className={styles.processDivider}></div>
-              
+
               <div className={styles.processStep}>
                 <div className={styles.processIcon}>
-                  <img src={checkTaskImg} alt="等待平台验证通过" className={styles.stepIcon} />
+                  <img
+                    src={checkTaskImg}
+                    alt="等待平台验证通过"
+                    className={styles.stepIcon}
+                  />
                 </div>
                 <p className={styles.stepText}>等待平台验证通过</p>
               </div>
-              
+
               <div className={styles.processDivider}></div>
-              
+
               <div className={styles.processStep}>
                 <div className={styles.processIcon}>
-                  <img src={publishTaskImg} alt="一键发文" className={styles.stepIcon} />
+                  <img
+                    src={publishTaskImg}
+                    alt="一键发文"
+                    className={styles.stepIcon}
+                  />
                 </div>
                 <p className={styles.stepText}>一键发文</p>
               </div>
-              
+
               <div className={styles.processDivider}></div>
-              
+
               <div className={styles.processStep}>
                 <div className={styles.processIcon}>
-                  <img src={rewardTaskImg} alt="成功发文等待结算" className={styles.stepIcon} />
+                  <img
+                    src={rewardTaskImg}
+                    alt="成功发文等待结算"
+                    className={styles.stepIcon}
+                  />
                 </div>
                 <p className={styles.stepText}>成功发文等待结算</p>
               </div>
@@ -170,7 +189,7 @@ export default function Page() {
     <div className={styles.mineTaskContainer}>
       <MineTaskInfo ref={Ref_MineTaskInfo} />
       <Withdraw ref={Ref_Withdraw} />
-      
+
       {loading ? (
         <div className={styles.loadingContainer}>
           <Spin size="large" />
@@ -192,27 +211,35 @@ export default function Page() {
             >
               <div className={styles.cardContent}>
                 <div className={styles.taskInfo}>
-                  <p className={styles.taskDescription}>{task.taskId.description}</p>
+                  <p className={styles.taskDescription}>
+                    {task.taskId.description}
+                  </p>
                   <div className={styles.taskDetails}>
                     <div className={styles.detailItem}>
                       <span className={styles.detailLabel}>接受时间:</span>
-                      <span className={styles.detailValue}>{task.createTime}</span>
+                      <span className={styles.detailValue}>
+                        {task.createTime}
+                      </span>
                     </div>
                     {task.submissionTime && (
                       <div className={styles.detailItem}>
                         <span className={styles.detailLabel}>提交时间:</span>
-                        <span className={styles.detailValue}>{task.submissionTime}</span>
+                        <span className={styles.detailValue}>
+                          {task.submissionTime}
+                        </span>
                       </div>
                     )}
                     {task.rewardTime && (
                       <div className={styles.detailItem}>
                         <span className={styles.detailLabel}>完成时间:</span>
-                        <span className={styles.detailValue}>{task.rewardTime}</span>
+                        <span className={styles.detailValue}>
+                          {task.rewardTime}
+                        </span>
                       </div>
                     )}
                   </div>
                 </div>
-                
+
                 <div className={styles.taskActions}>
                   {task.status === UserTaskStatus.DODING && (
                     <Button
@@ -225,8 +252,8 @@ export default function Page() {
                   )}
 
                   {task.status === UserTaskStatus.APPROVED && (
-                    <Button 
-                      type="primary" 
+                    <Button
+                      type="primary"
                       className={styles.actionButton}
                       onClick={() => withdraw(task)}
                     >
@@ -250,7 +277,7 @@ export default function Page() {
         footer={[
           <Button key="close" onClick={closeGuideModal}>
             关闭
-          </Button>
+          </Button>,
         ]}
         width={800}
         className={styles.guideModal}
@@ -260,24 +287,42 @@ export default function Page() {
             <h2>接单步骤&常见问答</h2>
             <p className={styles.guideDate}>新榜有赚 2024-08-23</p>
           </div>
-          
+
           <div className={styles.guideIntro}>
-            <p>欢迎使用爱团团AiToEarn任务市场，爱团团是新榜开发的一款新媒体多账号运营工具，爱团团任务市场目前支持小红书、抖音、视频号、B站、微博、知乎、公众号、快手、携程等新媒体账号接单变现。</p>
-            <p>任务属于派单制，如果您的号满足当前广告主的要求，则会被派单,每个人得到的任务是不同的。如果您想要接单，可以把自己有的流量资源绑定到爱团团当中耐心等待。请按照下列步骤进行：</p>
+            <p>
+              欢迎使用爱团团AiToEarn任务市场，爱团团是新榜开发的一款新媒体多账号运营工具，爱团团任务市场目前支持小红书、抖音、视频号、B站、微博、知乎、公众号、快手、携程等新媒体账号接单变现。
+            </p>
+            <p>
+              任务属于派单制，如果您的号满足当前广告主的要求，则会被派单,每个人得到的任务是不同的。如果您想要接单，可以把自己有的流量资源绑定到爱团团当中耐心等待。请按照下列步骤进行：
+            </p>
           </div>
-          
+
           <div className={styles.guideSection}>
             <h3>操作步骤</h3>
             <ol className={styles.guideSteps}>
               <li>
-                <p>扫描下方二维码，有符合您账号的项目出现时，【新榜有赚】会第一时间通知您。如果您的爱团团电脑端保持在线即可通过手机端完成发布。</p>
+                <p>
+                  扫描下方二维码，有符合您账号的项目出现时，【新榜有赚】会第一时间通知您。如果您的爱团团电脑端保持在线即可通过手机端完成发布。
+                </p>
                 <div className={styles.guideImageContainer}>
-                  <img src={qr1} alt="扫码接收项目上新通知" className={styles.guideImage} />
-                  <p className={styles.guideImageCaption}>扫码接收项目上新通知</p>
+                  <img
+                    src={qr1}
+                    alt="扫码接收项目上新通知"
+                    className={styles.guideImage}
+                  />
+                  <p className={styles.guideImageCaption}>
+                    扫码接收项目上新通知
+                  </p>
                 </div>
                 <div className={styles.guideImageContainer}>
-                  <img src={qr2} alt="点击该模板消息可手机发文" className={styles.guideImage} />
-                  <p className={styles.guideImageCaption}>点击该模板消息可手机发文</p>
+                  <img
+                    src={qr2}
+                    alt="点击该模板消息可手机发文"
+                    className={styles.guideImage}
+                  />
+                  <p className={styles.guideImageCaption}>
+                    点击该模板消息可手机发文
+                  </p>
                 </div>
               </li>
               <li>
@@ -285,72 +330,107 @@ export default function Page() {
                 <p className={styles.guideLink}>http://s.sqllb.com/Kky80</p>
               </li>
               <li>
-                <p>【多开面板】或【管理中心】添加小红书、抖音、视频号、B站等平台账号，等待3天左右，可以前往【任务市场】查看任务和接单（如下图）</p>
+                <p>
+                  【多开面板】或【管理中心】添加小红书、抖音、视频号、B站等平台账号，等待3天左右，可以前往【任务市场】查看任务和接单（如下图）
+                </p>
                 <div className={styles.guideImageContainer}>
-                  <img src={bindTaskImg} alt="管理中心-添加账号" className={styles.guideImage} />
+                  <img
+                    src={bindTaskImg}
+                    alt="管理中心-添加账号"
+                    className={styles.guideImage}
+                  />
                   <p className={styles.guideImageCaption}>管理中心-添加账号</p>
                 </div>
                 <p>列表会展示添加成功的账号</p>
                 <div className={styles.guideImageContainer}>
-                  <img src={checkTaskImg} alt="绑定账号后等待3天左右会显示项目" className={styles.guideImage} />
-                  <p className={styles.guideImageCaption}>绑定账号后等待3天左右会显示项目</p>
+                  <img
+                    src={checkTaskImg}
+                    alt="绑定账号后等待3天左右会显示项目"
+                    className={styles.guideImage}
+                  />
+                  <p className={styles.guideImageCaption}>
+                    绑定账号后等待3天左右会显示项目
+                  </p>
                 </div>
               </li>
               <li>
-                <p>耐心等待任务下发，任务下发后，请仔细判断是否符合自己账号调性，确认合适再进行发布，一旦发布不可删除，否则必须补发且影响您后续得到派单。</p>
+                <p>
+                  耐心等待任务下发，任务下发后，请仔细判断是否符合自己账号调性，确认合适再进行发布，一旦发布不可删除，否则必须补发且影响您后续得到派单。
+                </p>
               </li>
               <li>
-                <p>建议日常无单时积极运营账号，保持真诚、分享、有用的人设，有利于后续接到更多高质量的订单。连续接广告无原创内容、不经常更新、批量做矩阵账号都是封号高危原因，对后续发展不利。</p>
+                <p>
+                  建议日常无单时积极运营账号，保持真诚、分享、有用的人设，有利于后续接到更多高质量的订单。连续接广告无原创内容、不经常更新、批量做矩阵账号都是封号高危原因，对后续发展不利。
+                </p>
               </li>
             </ol>
           </div>
-          
+
           <div className={styles.guideSection}>
             <h3>常见问题</h3>
             <div className={styles.guideFaq}>
               <div className={styles.faqItem}>
                 <h4>为什么我没有项目？</h4>
                 <div className={styles.faqAnswer}>
-                  <p>请先完成上方操作步骤的所有流程。如果您已在爱团团绑定小红书等账号，请耐心等待派单。24小时、48小时没有得到派单都是正常的。超过1周没有收到项目邀请可填写下方收集表快速排查为何没有单子</p>
-                  <p className={styles.guideLink}>【收集表】快速排查为何没单子</p>
+                  <p>
+                    请先完成上方操作步骤的所有流程。如果您已在爱团团绑定小红书等账号，请耐心等待派单。24小时、48小时没有得到派单都是正常的。超过1周没有收到项目邀请可填写下方收集表快速排查为何没有单子
+                  </p>
+                  <p className={styles.guideLink}>
+                    【收集表】快速排查为何没单子
+                  </p>
                 </div>
               </div>
-              
+
               <div className={styles.faqItem}>
                 <h4>手机如何发文？</h4>
                 <div className={styles.faqAnswer}>
-                  <p>请先完成上方操作步骤中流程。公众号收到接单邀请，点击即可手机发文（手机操作一键发文前提是电脑需保证爱团团和发文账号在线，否则还需使用电脑发文）</p>
+                  <p>
+                    请先完成上方操作步骤中流程。公众号收到接单邀请，点击即可手机发文（手机操作一键发文前提是电脑需保证爱团团和发文账号在线，否则还需使用电脑发文）
+                  </p>
                   <div className={styles.guideImageContainer}>
-                    <img src={qr2} alt="点击该模板消息可手机发文" className={styles.guideImage} />
-                    <p className={styles.guideImageCaption}>点击该模板消息可手机发文</p>
+                    <img
+                      src={qr2}
+                      alt="点击该模板消息可手机发文"
+                      className={styles.guideImage}
+                    />
+                    <p className={styles.guideImageCaption}>
+                      点击该模板消息可手机发文
+                    </p>
                   </div>
                   <p>点击下方链接下载爱团团接单软件（已下载可忽略）</p>
                   <p className={styles.guideLink}>http://s.sqllb.com/Kky80</p>
                 </div>
               </div>
-              
+
               <div className={styles.faqItem}>
                 <h4>有人在我接的单子下面评论该怎么回复？</h4>
                 <div className={styles.faqAnswer}>
                   <p>请私聊工作人员，直接发送您的订单号和用户回复截图。</p>
                 </div>
               </div>
-              
+
               <div className={styles.faqItem}>
                 <h4>抖音一直发不出去怎么办？</h4>
                 <div className={styles.faqAnswer}>
-                  <p>由于存在难以攻克的技术问题，约 30%的抖音订单无法正常发布，很遗憾您这单在此之列。对此给您带来不好的体验深表歉意，这单您可以放弃。</p>
+                  <p>
+                    由于存在难以攻克的技术问题，约
+                    30%的抖音订单无法正常发布，很遗憾您这单在此之列。对此给您带来不好的体验深表歉意，这单您可以放弃。
+                  </p>
                 </div>
               </div>
-              
+
               <div className={styles.faqItem}>
                 <h4>我的账号不想接单怎么办？</h4>
                 <div className={styles.faqAnswer}>
-                  <p>如您不想接单或有账号不想收到任务市场消息提醒，可填写下表，后续【任务市场】将不再给您发邀请和派任务。</p>
-                  <p className={styles.guideLink}>【收集表】任务市场不接单申请</p>
+                  <p>
+                    如您不想接单或有账号不想收到任务市场消息提醒，可填写下表，后续【任务市场】将不再给您发邀请和派任务。
+                  </p>
+                  <p className={styles.guideLink}>
+                    【收集表】任务市场不接单申请
+                  </p>
                 </div>
               </div>
-              
+
               <div className={styles.faqItem}>
                 <h4>违规提示或账号封禁怎么处理？</h4>
                 <div className={styles.faqAnswer}>
