@@ -180,22 +180,195 @@
 }
 
 .emptyContainer {
-  padding: 40px 0;
-  text-align: center;
+  background-color: #f9f9f9;
+  padding: 30px 20px;
+  border-radius: 8px;
+  margin-top: 20px;
 }
 
 .emptyText {
-  margin-top: 16px;
-  color: #666;
+  text-align: center;
+  margin-bottom: 30px;
   
   h3 {
     font-size: 16px;
-    font-weight: normal;
+    font-weight: 500;
+    color: #333;
     margin-bottom: 8px;
+    
+    .emptyHighlight {
+      color: #ff4d4f;
+      font-weight: bold;
+    }
   }
   
   p {
-    color: #999;
+    color: #666;
+    font-size: 14px;
+  }
+  
+  .emptyLink {
+    color: #1890ff;
+    cursor: pointer;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.emptySubtitle {
+  text-align: center;
+  font-size: 15px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.guideContainer {
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.guideStep {
+  margin-bottom: 30px;
+  
+  h4 {
+    text-align: center;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 20px;
+  }
+}
+
+.qrCodeContainer {
+  display: flex;
+  justify-content: space-around;
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+.qrCodeItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 45%;
+}
+
+.qrCodeTitle {
+  text-align: center;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.qrCodeWrapper {
+  width: 140px;
+  height: 140px;
+  border: 1px solid #eee;
+  padding: 5px;
+  background-color: #fff;
+  margin-bottom: 10px;
+}
+
+.qrCode {
+  width: 100%;
+  height: 100%;
+}
+
+.qrCodeCaption {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.qrCodeSubCaption {
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+}
+
+.processContainer {
+  margin-top: 40px;
+}
+
+.processTitle {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 30px;
+  position: relative;
+  
+  &:before, &:after {
+    content: '';
+    display: inline-block;
+    width: 30px;
+    height: 1px;
+    background-color: #ccc;
+    vertical-align: middle;
+    margin: 0 10px;
+  }
+}
+
+.processSteps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.processStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 20%;
+}
+
+.processIcon {
+  width: 50px;
+  height: 50px;
+  background-color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.stepIcon {
+  width: 30px;
+  height: 30px;
+}
+
+.stepText {
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  max-width: 80px;
+}
+
+.processDivider {
+  flex-grow: 1;
+  height: 1px;
+  background-color: #e8e8e8;
+  position: relative;
+  margin: 0 5px;
+  margin-bottom: 30px;
+  
+  &:after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 6px solid #e8e8e8;
   }
 }
 
@@ -326,43 +499,4 @@
       }
     }
   }
-}
-
-.qrCodeContainer {
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  margin: 24px 0;
-}
-
-.qrCodeItem {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.qrCodeWrapper {
-  width: 120px;
-  height: 120px;
-  border: 1px solid #eee;
-  border-radius: 4px;
-  padding: 8px;
-  background-color: #fff;
-  margin-bottom: 12px;
-}
-
-.qrCode {
-  width: 100%;
-  height: 100%;
-}
-
-.qrCodeText {
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 4px;
-}
-
-.qrCodeSubtext {
-  font-size: 12px;
-  color: #999;
 }
