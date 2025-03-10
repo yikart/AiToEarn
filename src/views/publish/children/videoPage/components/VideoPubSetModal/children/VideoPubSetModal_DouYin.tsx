@@ -39,6 +39,7 @@ import styles from '../components/videoPubSetModalCommon.module.scss';
 import { describeNumber } from '@/utils';
 import { onAccountLoginFinish } from '@/icp/receiveMsg';
 import UserSelect from '../components/UserSelect';
+import { AccountPlatInfoMap } from '../../../../../../account/comment';
 
 const { TextArea } = Input;
 
@@ -309,7 +310,10 @@ const VideoPubSetModal_KWAI = memo(
           <Input
             value={currChooseAccount.pubParams.title}
             showCount
-            maxLength={30}
+            maxLength={
+              AccountPlatInfoMap.get(currChooseAccount.account!.type)
+                ?.commonPubParamsConfig.titleMax
+            }
             placeholder="好的标题可以获得更多浏览"
             variant="filled"
             onChange={(e) => {
@@ -362,11 +366,7 @@ const VideoPubSetModal_KWAI = memo(
 
           <HotspotSelect {...props} />
 
-          <ScheduledTimeSelect
-            currChooseAccount={currChooseAccount}
-            tips="支持2小时后及14天内的定时发布"
-            timeOffset={120}
-          />
+          <ScheduledTimeSelect currChooseAccount={currChooseAccount} />
 
           <h1>自主声明</h1>
           <Select

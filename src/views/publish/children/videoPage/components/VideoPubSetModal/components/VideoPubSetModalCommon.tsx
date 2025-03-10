@@ -1,10 +1,11 @@
 import { AccountStatus } from '@@/AccountEnum';
 import { Button, DatePicker } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IVideoChooseItem } from '@/views/publish/children/videoPage/videoPage';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import dayjs from 'dayjs';
+import { AccountPlatInfoMap } from '../../../../../../account/comment';
 
 export const VideoPubRestartLogin = ({
   currChooseAccount,
@@ -40,22 +41,37 @@ export const VideoPubRestartLogin = ({
 // 定时发布
 export const ScheduledTimeSelect = ({
   currChooseAccount,
-  tips,
-  timeOffset = 10,
+  timeOffset = 60,
   maxDate = 14,
+  value,
+  onChange,
 }: {
-  currChooseAccount: IVideoChooseItem;
-  tips?: string;
+  currChooseAccount?: IVideoChooseItem;
   // 分钟、当前时间 + 这个分钟之后的时间才可以选择
   timeOffset?: number;
   // 天，昨天 ~ maxDate
   maxDate?: number;
+  value?: dayjs.Dayjs | null | undefined;
+  onChange?:
+    | ((date: dayjs.Dayjs, dateString: string | string[]) => void)
+    | undefined;
 }) => {
   const { setOnePubParams } = useVideoPageStore(
     useShallow((state) => ({
       setOnePubParams: state.setOnePubParams,
     })),
   );
+
+  useEffect(() => {
+    if (currChooseAccount) {
+      const accountPlatInfo = AccountPlatInfoMap.get(
+        currChooseAccount.account!.type,
+      )!;
+      const timingMax = accountPlatInfo.commonPubParamsConfig.timingMax;
+      timeOffset = timingMax?.timeOffset || timeOffset;
+      maxDate = timingMax?.maxDate || maxDate;
+    }
+  }, []);
 
   const range = (start: number, end: number) => {
     const result = [];
@@ -93,27 +109,47 @@ export const ScheduledTimeSelect = ({
 
   return (
     <>
-      <h1>定时发布</h1>
+      {!onChange && <h1>定时发布</h1>}
       <DatePicker
         format="YYYY-MM-DD HH:mm"
         disabledDate={disabledDate}
         disabledTime={disabledTime}
         showTime={{ defaultValue: dayjs('00:00:00', 'HH:mm:ss') }}
         value={
-          currChooseAccount.pubParams.timingTime
-            ? dayjs(currChooseAccount.pubParams.timingTime)
-            : undefined
+          value
+            ? value
+            : currChooseAccount?.pubParams.timingTime
+              ? dayjs(currChooseAccount?.pubParams.timingTime)
+              : undefined
         }
-        onChange={(e) => {
-          setOnePubParams(
-            {
-              timingTime: e ? e.toDate() : undefined,
-            },
-            currChooseAccount!.id,
-          );
-        }}
+        onChange={
+          onChange
+            ? onChange
+            : (e) => {
+                if (!currChooseAccount) return;
+                setOnePubParams(
+                  {
+                    timingTime: e ? e.toDate() : undefined,
+                  },
+                  currChooseAccount!.id,
+                );
+              }
+        }
       />
-      {tips && <p className="videoPubSetModal_con-tips">{tips}</p>}
+      {!onChange ? (
+        <p className="videoPubSetModal_con-tips">
+          支持{timeOffset}分钟后及{maxDate}天内的定时发布
+        </p>
+      ) : (
+        <p
+          style={{
+            color: 'rgb(178, 185, 185)',
+            fontSize: 'var(--fs-sm)',
+          }}
+        >
+          请选择{timeOffset}分钟后及{maxDate}天内的时间
+        </p>
+      )}
     </>
   );
 };

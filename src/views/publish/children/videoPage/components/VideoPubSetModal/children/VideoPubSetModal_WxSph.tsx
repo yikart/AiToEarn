@@ -18,6 +18,7 @@ import { getSphActivity } from '@/icp/publish';
 import { ipcUpdateAccountStatus } from '@/icp/account';
 import { WxSphEventList } from '../../../../../../../../electron/plat/shipinhao/wxShp.type';
 import UserSelect from '../components/UserSelect';
+import { AccountPlatInfoMap } from '../../../../../../account/comment';
 
 const { TextArea } = Input;
 
@@ -107,7 +108,10 @@ const VideoPubSetModal_KWAI = memo(
           <Input
             value={currChooseAccount.pubParams.title}
             showCount
-            maxLength={16}
+            maxLength={
+              AccountPlatInfoMap.get(currChooseAccount.account!.type)
+                ?.commonPubParamsConfig.titleMax
+            }
             placeholder="概况视频的主要内容。字数建议6-16个字符"
             variant="filled"
             onChange={(e) => {
@@ -226,10 +230,7 @@ const VideoPubSetModal_KWAI = memo(
             声明后，作品将展示原创标记，有机会获得广告收入
           </Checkbox>
 
-          <ScheduledTimeSelect
-            currChooseAccount={currChooseAccount}
-            maxDate={24}
-          />
+          <ScheduledTimeSelect currChooseAccount={currChooseAccount} />
         </>
       );
     },

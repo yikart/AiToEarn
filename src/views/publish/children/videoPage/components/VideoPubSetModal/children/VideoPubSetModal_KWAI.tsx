@@ -87,10 +87,7 @@ const VideoPubSetModal_KWAI = memo(
             value={currChooseAccount?.pubParams.visibleType}
           />
 
-          <ScheduledTimeSelect
-            currChooseAccount={currChooseAccount}
-            maxDate={13}
-          />
+          <ScheduledTimeSelect currChooseAccount={currChooseAccount} />
         </>
       );
     },

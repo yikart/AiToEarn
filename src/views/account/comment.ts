@@ -23,6 +23,22 @@ export interface IAccountPlatInfo {
   url: string;
   // 支持的发布类型
   pubTypes: Set<PubType>;
+  /**
+   * 通用发布参数配置，有两个地方用到
+   * 1. 在设置通用发布参数的时候会根据当前选择的账户中的最小参数为基准设置参数限制
+   * 2. 规定每个平台通用参数的限制
+   */
+  commonPubParamsConfig: {
+    // title限制字数，可以不填，不填表示该平台无标题参数
+    titleMax?: number;
+    // 定时发布，可以不填，不填表示该平台无定时发布参数
+    timingMax?: {
+      // 同 VideoPubSetModalCommon.maxDate
+      maxDate: number;
+      // 同 VideoPubSetModalCommon.timeOffset
+      timeOffset: number;
+    };
+  };
 }
 
 // 支持所有发布
@@ -36,6 +52,12 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
       icon: ksSvg,
       url: 'https://cp.kuaishou.com/profile',
       pubTypes: PubTypeAll,
+      commonPubParamsConfig: {
+        timingMax: {
+          maxDate: 13,
+          timeOffset: 60,
+        },
+      },
     },
   ],
   [
@@ -46,6 +68,13 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
       url: 'https://creator.xiaohongshu.com/login?source=official',
       // url: 'https://www.xiaohongshu.com/explore',
       pubTypes: PubTypeAll,
+      commonPubParamsConfig: {
+        timingMax: {
+          maxDate: 14,
+          timeOffset: 60,
+        },
+        titleMax: 20,
+      },
     },
   ],
   [
@@ -55,6 +84,13 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
       icon: douyinSvg,
       url: 'https://creator.douyin.com/creator-micro/content/upload?enter_from=dou_web',
       pubTypes: PubTypeAll,
+      commonPubParamsConfig: {
+        timingMax: {
+          maxDate: 14,
+          timeOffset: 120,
+        },
+        titleMax: 30,
+      },
     },
   ],
   [
@@ -64,6 +100,13 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
       icon: wxSphSvg,
       url: 'https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/helper/hepler_merlin_mmdata?_rid=67b30b55-6e3ea588',
       pubTypes: PubTypeAll,
+      commonPubParamsConfig: {
+        timingMax: {
+          maxDate: 30,
+          timeOffset: 60,
+        },
+        titleMax: 16,
+      },
     },
   ],
 ]);

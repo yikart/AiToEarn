@@ -11,6 +11,7 @@ import TopicSelect from '@/views/publish/children/videoPage/components/VideoPubS
 import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
 import { ScheduledTimeSelect } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
 import UserSelect from '../components/UserSelect';
+import { AccountPlatInfoMap } from '../../../../../../account/comment';
 
 const { TextArea } = Input;
 
@@ -33,7 +34,10 @@ const VideoPubSetModal_KWAI = memo(
           <Input
             value={currChooseAccount.pubParams.title}
             showCount
-            maxLength={20}
+            maxLength={
+              AccountPlatInfoMap.get(currChooseAccount.account!.type)
+                ?.commonPubParamsConfig.titleMax
+            }
             placeholder="填写标题，可能会有更多赞哦"
             variant="filled"
             onChange={(e) => {
@@ -95,11 +99,7 @@ const VideoPubSetModal_KWAI = memo(
             }}
             value={currChooseAccount?.pubParams.visibleType}
           />
-          <ScheduledTimeSelect
-            currChooseAccount={currChooseAccount}
-            tips="定时发布仅支持指定1h-14天内"
-            timeOffset={60}
-          />
+          <ScheduledTimeSelect currChooseAccount={currChooseAccount} />
         </>
       );
     },

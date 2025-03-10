@@ -149,6 +149,7 @@ const PlatChoose = memo(
       };
 
       useImperativeHandle(ref, () => ({
+        // 恢复到本次操作之前的状态
         recover() {
           if (!choosedAccounts || choosedAccounts.length === 0)
             return setChoosedAcountMap(new Map());

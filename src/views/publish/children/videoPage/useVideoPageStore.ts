@@ -109,7 +109,7 @@ export const useVideoPageStore = create(
 
         // 初始化发布参数
         pubParamsInit(): IPubParams {
-          return lodash.cloneDeep(store.commonPubParams);
+          return lodash.cloneDeep(get().commonPubParams);
         },
 
         /**
@@ -322,12 +322,12 @@ export const useVideoPageStore = create(
           const commonPubParams = { ...get().commonPubParams };
 
           videoListChoose.map((v) => {
-            for (const key in pubParmas) {
-              if (pubParmas[key as 'title']) {
+            Object.keys(pubParmas).map((key) => {
+              if (pubParmas.hasOwnProperty(key)) {
                 v.pubParams[key as 'title'] = pubParmas[key as 'title'];
                 commonPubParams[key as 'title'] = pubParmas[key as 'title'];
               }
-            }
+            });
           });
           set({
             videoListChoose,
