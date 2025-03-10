@@ -110,8 +110,8 @@ const AccountSidebar = memo(
        */
       const getAccountList = async () => {
         try {
-          const result: AccountInfo[] = await icpGetAccountList();
-          setAccountList(result);
+          const result = await icpGetAccountList();
+          setAccountList(result || []);
         } catch (error) {
           console.error('获取账户列表失败', error);
           message.error('获取账户列表失败');

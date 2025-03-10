@@ -101,6 +101,7 @@ const PlatChoose = memo(
 
       const getAccountList = () => {
         icpGetAccountList().then((res) => {
+          if (!res) return;
           setAccountMap((prevMap) => {
             const newMap = new Map(prevMap);
             Array.from(AccountPlatInfoMap).map(([key, value]) => {

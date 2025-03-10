@@ -52,7 +52,7 @@ export default forwardRef<PubItemRef>((props, ref) => {
 
   async function getAccountListByIds(ids: number[]) {
     const res = await icpGetAccountListByIds(ids);
-    setAccountList(res);
+    setAccountList(res || []);
   }
 
   async function delPubRecord() {

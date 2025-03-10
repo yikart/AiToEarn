@@ -13,7 +13,7 @@ export interface IUserStore {
 
 const state: IUserStore = {
   userInfo: undefined,
-  token: '123',
+  token: '',
   overdueTime: 0,
   // 是否开始刷新token，防止多次调用
   refreshTokenLoading: false,

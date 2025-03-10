@@ -67,7 +67,6 @@ export async function icpGetAccountList() {
     return res;
   } catch (error) {
     console.error('获取账户列表失败', error);
-    throw error;
   }
 }
 
@@ -81,7 +80,6 @@ export async function icpGetAccountListByIds(ids: number[]) {
     return res;
   } catch (error) {
     console.error('获取账户列表失败', error);
-    throw error;
   }
 }
 

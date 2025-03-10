@@ -107,6 +107,7 @@ export default function Page() {
 
   useEffect(() => {
     icpGetAccountList().then((res) => {
+      if (!res) return;
       res.map((v) => {
         accountMap.current.set(v.id, v);
       });

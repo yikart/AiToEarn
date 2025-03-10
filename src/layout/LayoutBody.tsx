@@ -7,7 +7,11 @@ export const LayoutBody = () => {
   const userStore = useUserStore();
 
   useEffect(() => {
-    userStore.getUserInfo();
+    if (userStore.token) {
+      userStore.getUserInfo();
+    } else {
+      userStore.logout();
+    }
   }, []);
 
   // 添加键盘事件监听
