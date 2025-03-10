@@ -67,7 +67,8 @@ export default function Page() {
 
         <ChooseAccountModule
           disableAllSelect={
-            accountChooseType.current === AccountChooseType.Radio
+            accountChooseType.current === AccountChooseType.Radio ||
+            accountChooseType.current === AccountChooseType.Replace
           }
           open={chooseAccountOpen}
           onClose={setChooseAccountOpen}

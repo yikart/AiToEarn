@@ -246,9 +246,9 @@ export const useVideoPageStore = create(
         // 清空所有数据
         clear() {
           store.commonPubParams.cover = undefined;
-          set({
-            ...store,
-          });
+          // set({
+          //   ...store,
+          // });
         },
 
         // 删除某个视频

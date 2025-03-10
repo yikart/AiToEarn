@@ -55,7 +55,12 @@ const CommonPubSetting = memo(
           <p className="commonPubSetting-tip">
             支持常用图片格式上传，暂不支持 GIF，上传后图片将按平台要求自动裁剪
           </p>
-          <h2>标题</h2>
+          <h2>
+            标题
+            <Tooltip title="更多详情中单独设置的话题和描述中带的话题都是有效的，发布时将合并去重处理">
+              <ExclamationCircleOutlined />
+            </Tooltip>
+          </h2>
           <Input
             showCount
             maxLength={30}
@@ -81,7 +86,7 @@ const CommonPubSetting = memo(
             }}
           />
           <p className="commonPubSetting-tip">
-            描述中可带话题，以‘#’开头、‘空格’结尾，{' '}
+            描述中可带话题，以‘#’开头、‘空格’结尾，
             <Tooltip title="更多详情中单独设置的话题和描述中带的话题都是有效的，发布时将合并去重处理">
               <span style={{ color: 'rgb(250, 173, 20)' }}>
                 <ExclamationCircleOutlined style={{ marginRight: '3px' }} />

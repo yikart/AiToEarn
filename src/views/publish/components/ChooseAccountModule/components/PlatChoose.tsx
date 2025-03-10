@@ -69,6 +69,24 @@ const PlatChoose = memo(
       // 每次change操作的数据
       const recentData = useRef<AccountInfo>();
 
+      // 所有平台的账户数据
+      const getAllAccountList = useMemo(() => {
+        const allAccountList = [];
+        for (const [_, accountList] of accountMap) {
+          allAccountList.push(...accountList);
+        }
+        return allAccountList;
+      }, [accountMap]);
+
+      // 当前选择的所有平台的账户数据
+      const getChoosedAllAccountList = useMemo(() => {
+        const allAccountList = [];
+        for (const [_, accountList] of choosedAcountMap) {
+          allAccountList.push(...accountList);
+        }
+        return allAccountList;
+      }, [choosedAcountMap]);
+
       // 当前平台的所有用户数据
       const currAccountList = useMemo(
         () => (activePlat && accountMap.get(activePlat)) || [],
@@ -80,14 +98,6 @@ const PlatChoose = memo(
         () => (activePlat && choosedAcountMap.get(activePlat)) || [],
         [activePlat, choosedAcountMap],
       );
-
-      // 半选
-      const indeterminate = useMemo(() => {
-        return (
-          currChoosedAcount.length > 0 &&
-          currChoosedAcount.length < currAccountList.length
-        );
-      }, [activePlat, choosedAcountMap]);
 
       const getAccountList = () => {
         icpGetAccountList().then((res) => {
@@ -157,51 +167,85 @@ const PlatChoose = memo(
 
       return (
         <div className={styles.platChoose}>
-          <ConfigProvider
-            theme={{
-              components: {
-                Segmented: {
-                  trackBg: '#fff',
-                  itemSelectedBg: cssVars['--colorPrimary1'],
-                  itemHoverBg: cssVars['--colorPrimary2'],
-                  itemActiveBg: cssVars['--colorPrimary3'],
-                  itemSelectedColor: cssVars['--colorPrimary9'],
+          <div className="platChoose-platSelect">
+            {!disableAllSelect && (
+              <Checkbox
+                indeterminate={
+                  getChoosedAllAccountList.length > 0 &&
+                  getChoosedAllAccountList.length < getAllAccountList.length
+                }
+                onChange={(e) => {
+                  const { checked } = e.target;
+                  setChoosedAcountMap((v) => {
+                    const newMap = new Map(v);
+                    recentData.current = currAccountList[0];
+
+                    for (const [accountType, accountList] of accountMap) {
+                      if (checked) {
+                        newMap.set(accountType, accountList);
+                      } else {
+                        newMap.set(accountType, []);
+                      }
+                    }
+                    return newMap;
+                  });
+                }}
+                checked={
+                  getAllAccountList.length === getChoosedAllAccountList.length
+                }
+              >
+                选择所有平台账户
+              </Checkbox>
+            )}
+            <ConfigProvider
+              theme={{
+                components: {
+                  Segmented: {
+                    trackBg: '#fff',
+                    itemSelectedBg: cssVars['--colorPrimary1'],
+                    itemHoverBg: cssVars['--colorPrimary2'],
+                    itemActiveBg: cssVars['--colorPrimary3'],
+                    itemSelectedColor: cssVars['--colorPrimary9'],
+                  },
                 },
-              },
-            }}
-          >
-            <Segmented
-              vertical
-              size="large"
-              value={activePlat}
-              options={Array.from(accountMap)
-                .map(([key, value]) => {
-                  if (value.length === 0) return undefined;
-                  const platInfo = AccountPlatInfoMap.get(key)!;
-                  return {
-                    value: key,
-                    label: platInfo.name,
-                    icon: (
-                      <Badge
-                        count={choosedAcountMap.get(key)?.length}
-                        size="small"
-                      >
-                        <img src={platInfo.icon} />
-                      </Badge>
-                    ),
-                  };
-                })
-                .filter((v) => v !== undefined)}
-              onChange={setActivePlat}
-            />
-          </ConfigProvider>
+              }}
+            >
+              <Segmented
+                vertical
+                size="large"
+                value={activePlat}
+                options={Array.from(accountMap)
+                  .map(([key, value]) => {
+                    if (value.length === 0) return undefined;
+                    const platInfo = AccountPlatInfoMap.get(key)!;
+                    return {
+                      value: key,
+                      label: platInfo.name,
+                      icon: (
+                        <Badge
+                          count={choosedAcountMap.get(key)?.length}
+                          size="small"
+                        >
+                          <img src={platInfo.icon} />
+                        </Badge>
+                      ),
+                    };
+                  })
+                  .filter((v) => v !== undefined)}
+                onChange={setActivePlat}
+              />
+            </ConfigProvider>
+          </div>
 
           <div className="platChoose-con">
             {currAccountList && (
               <>
                 {!disableAllSelect ? (
                   <Checkbox
-                    indeterminate={indeterminate}
+                    indeterminate={
+                      currChoosedAcount.length > 0 &&
+                      currChoosedAcount.length < currAccountList.length
+                    }
                     onChange={(e) => {
                       setChoosedAcountMap((v) => {
                         recentData.current = currAccountList[0];
