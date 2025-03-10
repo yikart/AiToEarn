@@ -1,5 +1,5 @@
 .update-modal {
-  --primary-color: rgb(224, 30, 90);
+  --primary-color: linear-gradient(to right, white, #a66ae4);
 
   .update-modal__mask {
     width: 100vw;
