@@ -60,3 +60,26 @@ export function describeNumber(value: number): string {
     return value.toString();
   }
 }
+
+// 去除字符串中的话题
+export function parseTopicString(input: string): {
+  topics: string[];
+  cleanedString: string;
+} {
+  // 使用正则表达式提取字符串中的部分
+  const extractedParts = input.match(/#(\S+)\s/g) || [];
+
+  // 在原始输入中用空字符串替换提取的部分
+  let cleanedString = input;
+  extractedParts.forEach((part) => {
+    cleanedString = cleanedString.replace(part, '').trim();
+  });
+
+  // 创建提取的话题数组
+  const topics = extractedParts.map((part) => {
+    const match = part.match(/#(\S+)\s/);
+    return match ? match[1] : '';
+  });
+
+  return { topics, cleanedString };
+}

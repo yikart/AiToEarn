@@ -1,17 +1,27 @@
-import { ForwardedRef, forwardRef, memo, useEffect, useState } from 'react';
+import {
+  ForwardedRef,
+  forwardRef,
+  memo,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import styles from './AccountSidebar.module.scss';
-import { AccountInfo, AccountPlatInfoMap } from '@/views/account/comment';
+import { AccountInfo, AccountPlatInfoMap } from '../../comment';
 import { Avatar, Button, message, Popover } from 'antd';
 import {
   accountLogin,
   acpAccountLoginCheck,
   icpGetAccountList,
-} from '@/icp/account';
-import AddAccountModal from '@/views/account/components/AddAccountModal';
-import { AccountStatus } from '../../../../commont/AccountEnum';
+} from '../../../../icp/account';
+import AddAccountModal from '../AddAccountModal';
+import { AccountStatus } from '../../../../../commont/AccountEnum';
 import { CheckCircleOutlined, WarningOutlined } from '@ant-design/icons';
-import useCssVariables from '@/hooks/useCssVariables';
-import { onAccountLoginFinish } from '@/icp/receiveMsg';
+import useCssVariables from '../../../../hooks/useCssVariables';
+import { onAccountLoginFinish } from '../../../../icp/receiveMsg';
+import PubAccountDetModule, {
+  IPubAccountDetModuleRef,
+} from '../../../publish/components/PubAccountDetModule';
 
 export interface IAccountSidebarRef {}
 
@@ -104,6 +114,7 @@ const AccountSidebar = memo(
     ) => {
       const [accountList, setAccountList] = useState<AccountInfo[]>([]);
       const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
+      const pubAccountDetModuleRef = useRef<IPubAccountDetModuleRef>(null);
 
       /**
        * 获取账户列表
@@ -128,18 +139,27 @@ const AccountSidebar = memo(
 
       return (
         <>
+          <PubAccountDetModule
+            title="账号检测"
+            tips="所有平台在线"
+            ref={pubAccountDetModuleRef}
+            accounts={accountList}
+            isFooter={false}
+          />
           <AddAccountModal
             open={isAccountModalOpen}
             onClose={() => setIsAccountModalOpen(false)}
             onAddSuccess={getAccountList}
           />
           <div className={styles.accountSidebar}>
-            <Button
-              style={{ margin: '10px 0' }}
-              onClick={() => setIsAccountModalOpen(true)}
-            >
-              添加账号
-            </Button>
+            <div className="accountSidebar-top">
+              <Button
+                style={{ margin: '10px 0' }}
+                onClick={() => setIsAccountModalOpen(true)}
+              >
+                添加账号
+              </Button>
+            </div>
             <ul className="accountList">
               {accountList.map((account) => {
                 const platInfo = AccountPlatInfoMap.get(account.type)!;
@@ -188,6 +208,17 @@ const AccountSidebar = memo(
                 );
               })}
             </ul>
+
+            <div className="accountSidebar-footer">
+              <Button
+                type="link"
+                onClick={() => {
+                  pubAccountDetModuleRef.current?.startDet();
+                }}
+              >
+                一键检测登录状态
+              </Button>
+            </div>
           </div>
         </>
       );

@@ -9,7 +9,7 @@
 import React, { useCallback, useState } from 'react';
 
 import styles from './account.module.scss';
-import AccountSidebar from '@/views/account/components/AccountSidebar';
+import AccountSidebar from './components/AccountSidebar/AccountSidebar';
 import WebView from '@/components/WebView';
 import { AccountInfo, AccountPlatInfoMap } from '@/views/account/comment';
 

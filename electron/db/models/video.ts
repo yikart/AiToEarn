@@ -19,20 +19,13 @@ export interface ILableValue {
   label: string;
   value: string | number;
 }
-export type TopicsArrType = ILableValue[];
 
 /**
  * 不同平台的差异化参数
  * 每个平台有相同点，有不同点，这不同点都在这个参数下集合
  */
 export type DiffParmasType = {
-  [AccountType.Xhs]?: {
-    // 小红书的话题格式
-    topicsDetail?: {
-      topicId: string;
-      topicName: string;
-    }[];
-  };
+  [AccountType.Xhs]?: {};
   [AccountType.Douyin]?: {
     // 申请关联的热点
     hotPoint?: ILableValue;
@@ -92,7 +85,7 @@ export class VideoModel extends WorkData {
 
   // 话题
   @Column({ type: 'json', nullable: true, comment: '话题' })
-  topics?: TopicsArrType;
+  topics?: string[];
 
   // 位置
   @Column({ type: 'json', nullable: true, comment: '位置' })

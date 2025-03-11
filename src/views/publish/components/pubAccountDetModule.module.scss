@@ -50,11 +50,22 @@
         }
       }
       &-disable {
-        color: #ff4d4f;
-        .anticon {
+        color: var(--errerColor);
+        .pubAccountDetModule-accounts-disable-icon {
+          display: inline-block;
+        }
+      }
+      &-ol {
+        color: var(--successColor);
+        .pubAccountDetModule-accounts-ol-icon {
           display: inline-block;
         }
       }
     }
   }
+}
+
+.loginStatusDisable {
+  display: flex;
+  justify-content: space-between;
 }

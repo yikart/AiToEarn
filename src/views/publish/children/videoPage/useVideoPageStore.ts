@@ -45,9 +45,7 @@ const store: IVideoPageStore = {
     topics: [],
     timingTime: undefined,
     diffParams: {
-      [AccountType.Xhs]: {
-        topicsDetail: [],
-      },
+      [AccountType.Xhs]: {},
       [AccountType.Douyin]: {
         hotPoint: undefined,
         selfDeclare: undefined,
