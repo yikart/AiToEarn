@@ -9,7 +9,7 @@
 /**
  * 获取作品列表
  */
-export async function ipcCreatorList() {
-  const res = await window.ipcRenderer.invoke('ICP_CREATOR_LIST');
+export async function ipcCreatorList(accountId: number) {
+  const res = await window.ipcRenderer.invoke('ICP_CREATOR_LIST', accountId);
   return res;
 }

@@ -2145,7 +2145,7 @@ export class DouyinService {
   }
 
   /**
-   * 查询抖音的活动列表
+   * 查询抖音的作品列表
    * @param cookie
    * @param msToken
    * @returns
@@ -2180,6 +2180,27 @@ export class DouyinService {
         cookie: CookieToString(cookie),
       },
       method: 'GET',
+    });
+  }
+
+  // 作品的评论回复
+  async getCreatorCommentReply(
+    cookie: Electron.Cookie[],
+    data: {
+      comment_Id: string; // 空字符串, 直接回复
+      item_id: string; // '@j/do779EQE//uctS8rzvvch6oCaTZCH0JqwsPqxpgahhkia+W5A7RJEoPQpq6PZl7wq9uxSqSWCjcIdbPzF8fQ==';
+      text: string; //'哈哈哈';
+    },
+    msToken: string,
+    a_bogus: string,
+  ) {
+    return await requestNet<DouyinCreatorCommentListResponse>({
+      url: `https://creator.douyin.com/aweme/v1/creator/comment/reply/?msToken=${msToken}&a_bogus=${a_bogus}`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'POST',
+      body: data,
     });
   }
 }

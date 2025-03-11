@@ -12,15 +12,25 @@ import { AccountModel } from '../../db/models/account';
 export class ReplyService {
   // 测试获取抖音作品列表
   async testGetDouyinList(account: AccountModel) {
-    const cookie: any = JSON.parse(account.loginCookie);
-    const res = await douyinService.getCreatorItems(
-      cookie,
-      '11111',
-      cookie.msToken,
-    );
+    const cookie: Electron.Cookie[] = JSON.parse(account.loginCookie);
 
-    console.log(res);
+    let msToken = '';
+    for (let i = 0; i < cookie.length; i++) {
+      if (cookie[i].name === 'msToken') {
+        msToken = cookie[i].value;
+        break;
+      }
+    }
+    console.log('------ msToken ----', msToken);
 
-    return res;
+    // 秒级时间戳
+    const timestamp = Date.now();
+    console.log('------ timestamp ----', timestamp);
+
+    const res = await douyinService.getCreatorItems(cookie, timestamp + '', '');
+
+    console.log('------ res ----', res);
+
+    return 1;
   }
 }
