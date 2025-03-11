@@ -26,7 +26,7 @@ import {
   LoadingOutlined
 } from '@ant-design/icons';
 import ChooseAccountModule from "@/views/publish/components/ChooseAccountModule/ChooseAccountModule";
-import { downloadAndSaveFile } from '@/utils/fileUtils';
+import { icpDownloadFileToTemp } from '@/icp/file';
 
 const FILE_BASE_URL = import.meta.env.VITE_APP_FILE_HOST;
 
@@ -105,23 +105,14 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
       console.log('下载视频:', videoUrl);
       console.log('下载封面:', coverUrl);
       
-      // 使用下载链接触发浏览器下载
-      message.info('请在弹出的窗口中保存视频文件');
-      await downloadAndSaveFile(videoUrl, `视频任务_${taskInfo.id}.mp4`);
+      // 使用IPC接口下载视频文件到本地临时目录
+      const localVideoPath = await icpDownloadFileToTemp(videoUrl, 'video');
       
-      message.info('请在弹出的窗口中保存封面图片');
-      await downloadAndSaveFile(coverUrl, `封面_${taskInfo.id}.jpg`);
+      // 使用IPC接口下载封面图片到本地临时目录
+      const localCoverPath = await icpDownloadFileToTemp(coverUrl, 'image');
       
-      // 提示用户输入保存的文件路径
-      const localVideoPath = prompt('请输入视频文件保存的完整路径:', '');
-      if (!localVideoPath) {
-        throw new Error('未提供视频文件路径');
-      }
-      
-      const localCoverPath = prompt('请输入封面图片保存的完整路径:', '');
-      if (!localCoverPath) {
-        throw new Error('未提供封面图片路径');
-      }
+      console.log('视频已下载到:', localVideoPath);
+      console.log('封面已下载到:', localCoverPath);
       
       message.destroy();
       message.success('文件下载完成，开始发布...');
@@ -138,7 +129,6 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
       // 创建二级记录
       for (const vData of aList) {
         const account = vData.account!;
-        const video = vData.video!;
         
         await icpCreateVideoPubRecord({
           type: account.type,
