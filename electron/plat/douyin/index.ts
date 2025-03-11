@@ -12,6 +12,7 @@ import {
   DouyinActivityListResponse,
   DouyinActivityTagsResponse,
   DouyinAllHotDataResponse,
+  DouyinCreatorCommentListResponse,
   DouyinCreatorListResponse,
   DouyinHotDataResponse,
   DouyinLocationDataResponse,
@@ -2143,10 +2144,19 @@ export class DouyinService {
     });
   }
 
-  // 查询抖音的活动列表
-  async getCreatorItems(cookie: Electron.Cookie[]) {
+  /**
+   * 查询抖音的活动列表
+   * @param cookie
+   * @param msToken
+   * @returns
+   */
+  async getCreatorItems(
+    cookie: Electron.Cookie[],
+    cursor: string,
+    msToken: string,
+  ) {
     return await requestNet<DouyinCreatorListResponse>({
-      url: `https://creator.douyin.com/aweme/v1/creator/item/list/?cursor=1541234344000&msToken=Ebo-uQlPJr-ICq23I7VMTe0nwYlocnqE5RBduJUPnXAu4dBw4bcqAHYV8lMraGXmHY3Z4_wXGetYKGb9ag4N0qODk9BSHgoJ9BDcIkdCwulqmedq5hAXWUgfPjAmOa_9kk6FyQX517kYJJ5S_6ROqKtefK4r6-Cf7WRDWoKjVwCaGg%3D%3D&a_bogus=O60jDtUiOo8ca3KtYKd4H1elFldlNs8yZaTxRbUnH5nmTX0GVHe6Znb0cxKXpyld-YBnhCKHunT%2FPjdbK0siZ%2FHpKmZkSDzS4tAc9gvogqiDGei%2FLNRwCuDNtJtYUbTEOAKjJlf6WURO2dOUEN3wUB5yC%2FPq4QJpMNrbDdRaEoFv60s7FNFxuNSdPXMtU1IG`,
+      url: `https://creator.douyin.com/aweme/v1/creator/item/list/?cursor=${cursor}&msToken=${msToken}`,
       headers: {
         cookie: CookieToString(cookie),
       },
@@ -2155,9 +2165,17 @@ export class DouyinService {
   }
 
   // 查看作品的评论列表
-  async getCreatorCommentList(cookie: Electron.Cookie[]) {
-    return await requestNet<DouyinCreatorListResponse>({
-      url: `https://creator.douyin.com/aweme/v1/creator/comment/list/?cursor=0&count=10&item_id=%40j%2Fdo779EQE%2F%2FuctS8rzvvch6oCaTZCH0JqwsPqxpgahhkia%2BW5A7RJEoPQpq6PZl7wq9uxSqSWCjcIdbPzF8fQ%3D%3D&sort=TIME&msToken=yQqn99oxgrHKzHmripWPpKZLis4fCjPI_D8XoI42Ok_zdaAUG4O-y2lf7AxR_qcJ_AIDPOHMyta2NpMghNfYVRHRiLXqxBHaPyZsYVyMfegq4lmivibvZRhap9vug6MwDfLmwNLomzE_QyhImaiQ1UdbYElA_GSOyIYCtmqLt2h6HIIwXDwZey4%3D&a_bogus=Dy45hFUjOZ5RKpFtuOcaCaclmtoMrPuyaMTdR9Sn9xE3GHUYoNebZxcEcou1smczaupVhH37bVzlYxVc%2FskwZ%2FrpwmkvuTwfGzAC9gsoMqqDatGmErRTCzDNtJtb054EKQoRJIf6UU5OIx5UgN3hUQA9S%2FPo4YJpFHaWDQUaPozv6FG7BNq2uNtdTwFb5Q94jD%3D%3D`,
+  async getCreatorCommentList(
+    cookie: Electron.Cookie[],
+    item_id: string, // 作品ID
+    pageInfo: {
+      cursor: number;
+      count: number;
+    },
+    msToken: string,
+  ) {
+    return await requestNet<DouyinCreatorCommentListResponse>({
+      url: `https://creator.douyin.com/aweme/v1/creator/comment/list/?cursor=${pageInfo.cursor}&count=${pageInfo.count}&item_id=${item_id}&sort=TIME&msToken=${msToken}`,
       headers: {
         cookie: CookieToString(cookie),
       },

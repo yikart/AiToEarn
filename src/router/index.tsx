@@ -42,6 +42,7 @@ import Task from '@/views/task';
 import UserWalletAccount from '@/views/finance/userWalletAccount';
 import Finance from '@/views/finance/index';
 import UserWalletRecord from '@/views/finance/userWalletRecord';
+import Reply from '@/views/reply';
 
 interface IRouterMeta {
   // 路由名称
@@ -113,6 +114,11 @@ export const router: CustomRouteObject[] = [
           { path: 'pubRecord', element: <PubRecord /> },
           { path: 'drafts', element: <Drafts /> },
         ],
+      },
+      {
+        path: '/reply',
+        element: <Reply />,
+        meta: { name: '评论', icon: UserOutlined },
       },
       {
         path: '/statistics',

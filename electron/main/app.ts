@@ -16,6 +16,7 @@ import { TestModule } from './test/module';
 import { ToolsModule } from './tools/module';
 import { AppController } from './controller';
 import { AppService } from './service';
+import { ReplyModule } from './reply/module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AppService } from './service';
     BackupModule,
     DataCenterModule,
     TestModule,
+    ReplyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
