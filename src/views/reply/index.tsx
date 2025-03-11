@@ -8,7 +8,7 @@
 import { ipcCreatorList } from '@/icp/reply';
 import { Button } from 'antd';
 import { useCallback, useState } from 'react';
-import AccountSidebar from '../account/components/AccountSidebar';
+import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 export default function Page() {
   const [activeTab, setActiveTab] = useState('car');
   const [activeAccountId, setActiveAccountId] = useState<number>(-1);
