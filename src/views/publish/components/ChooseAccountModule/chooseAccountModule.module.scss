@@ -2,6 +2,12 @@
   display: flex;
 
   :global {
+    .platChoose-empty {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
     .platChoose-platSelect {
       padding-right: 20px;
       .ant-checkbox-wrapper {

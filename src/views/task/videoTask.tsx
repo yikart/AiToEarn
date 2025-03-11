@@ -23,6 +23,14 @@ import dayjs from 'dayjs';
 
 const FILE_BASE_URL = import.meta.env.VITE_APP_FILE_HOST;
 
+// 平台类型映射
+const PLATFORM_MAP = {
+  KWAI: { name: '快手', color: '#00bbf0' },
+  wxSph: { name: '视频号', color: '#07c160' },
+  xhs: { name: '小红书', color: '#fe2c55' },
+  douyin: { name: '抖音', color: '#000000' }
+};
+
 export default function Page() {
   const [taskList, setTaskList] = useState<Task<TaskVideo>[]>([]);
   const [pageInfo, setPageInfo] = useState({
@@ -94,9 +102,27 @@ export default function Page() {
       });
   };
 
+  // 渲染平台标签
+  const renderPlatformTags = (accountTypes?: string[]) => {
+    if (!accountTypes || accountTypes.length === 0) {
+      return <Tag color="#f50">全平台</Tag>;
+    }
+    
+    return (
+      <div className={styles.platformTags}>
+        {accountTypes.map(type => (
+          <Tag key={type} color={PLATFORM_MAP[type]?.color || '#f50'}>
+            {PLATFORM_MAP[type]?.name || type}
+          </Tag>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className={styles.videoTaskContainer}>
       <TaskInfo ref={Ref_TaskInfo} />
+      
       <div className={styles.taskList}>
         {taskList.map((task) => (
           <Card
@@ -157,6 +183,11 @@ export default function Page() {
                 <div className={styles.taskRequirement}>
                   <span className={styles.requirementLabel}>任务要求:</span>
                   <span className={styles.requirementValue}>{task.requirement || '不许删文'}</span>
+                </div>
+                
+                <div className={styles.platformContainer}>
+                  <span className={styles.platformLabel}>可用平台:</span>
+                  {renderPlatformTags(task.accountTypes)}
                 </div>
               </div>
               
