@@ -188,7 +188,7 @@ const VideoPubSetModal = memo(
         if (!recordRes) return err();
 
         setPubProgressModuleOpen(true);
-        setLoading(false);
+        setLoading(true);
         for (const vData of videoListChoose) {
           const account = vData.account!;
           const video = vData.video!;
