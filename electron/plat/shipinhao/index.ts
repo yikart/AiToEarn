@@ -1321,6 +1321,123 @@ export class ShipinhaoService {
       },
     });
   }
+
+  /**
+   * 获取作品列表
+   * @returns
+   */
+  async getPostList(
+    cookie: Electron.Cookie[],
+    body: {
+      currentPage: 1;
+      forMcn: false;
+      needAllCommentCount: true;
+      onlyUnread: false;
+      pageSize: 10;
+      pluginSessionId: null;
+      rawKeyBuff: null;
+      reqScene: 7; // 固定值
+      scene: 7; // 固定值
+      timestamp: '1741697365389';
+      userpageType: 13;
+      _log_finder_id: 'v2_060000231003b20faec8c5e38b10cbd6cb06ef3cb077ad5b14a8587570bc414e95c4b7e034ea@finder';
+      _log_finder_uin: '';
+    },
+  ) {
+    return await requestNet<WeChatVideoUserData>({
+      url: `https://channels.weixin.qq.com/micro/interaction/cgi-bin/mmfinderassistant-bin/post/post_list?_rid=67d03155-a6da7281`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'POST',
+      body,
+    });
+  }
+
+  /**
+   * 获取评论列表
+   * @param cookie
+   * @param keyword
+   * @param page
+   * @returns
+   */
+  async getCommentList(
+    cookie: Electron.Cookie[],
+    body: {
+      commentSelection: false;
+      exportId: 'export/UzFfAgtgekIEAQAAAAAAOhIpzVxlAQAAAAstQy6ubaLX4KHWvLEZgBPExKFQKCowfoSJzNPgMJrD53jJrD_NBzgU3Ncr3usg';
+      forMcn: false;
+      lastBuff: '';
+      pluginSessionId: null;
+      rawKeyBuff: null;
+      reqScene: 7;
+      scene: 7;
+      timestamp: '1741697703260';
+      _log_finder_id: 'v2_060000231003b20faec8c5e38b10cbd6cb06ef3cb077ad5b14a8587570bc414e95c4b7e034ea@finder';
+      _log_finder_uin: '';
+    },
+  ) {
+    return await requestNet<WeChatVideoUserData>({
+      url: `https://channels.weixin.qq.com/micro/interaction/cgi-bin/mmfinderassistant-bin/comment/comment_list?_rid=67d032a7-6c8f7126`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'POST',
+      body,
+    });
+  }
+
+  /**
+   * 评论作品
+   * @param cookie
+   * @param body
+   * @param rid
+   * @returns
+   */
+  async createComment(
+    cookie: Electron.Cookie[],
+    body: {
+      comment: {
+        // 空对象是直接回复作品
+        commentContent: '可爱吧';
+        commentCreatetime: '1741695959';
+        commentHeadurl: 'https://wx.qlogo.cn/finderhead/Q3auHgzwzM5OEKzc5UdzOUJUbOsaCtSkcCctCb9ddrCKiag4ZibQ73oA/0';
+        commentId: '14610404657143548189';
+        commentLikeCount: 0;
+        commentNickname: '义务之后是金钱';
+        displayFlag: 2;
+        levelTwoComment: [];
+        replyContent: '';
+        replyNickname: '';
+        username: 'v2_060000231003b20faec8c5e38b10cbd6cb06ef3cb077ad5b14a8587570bc414e95c4b7e034ea@finder';
+        visibleFlag: 1;
+      };
+      content: '可爱吧';
+      exportId: 'export/UzFfAgtgekIEAQAAAAAAOhIpzVxlAQAAAAstQy6ubaLX4KHWvLEZgBPExKFQKCowfoSJzNPgMJrD53jJrD_NBzgU3Ncr3usg';
+      pluginSessionId: null;
+      rawKeyBuff: null;
+      replyCommentId: '';
+      reqScene: 7;
+      rootCommentId: '';
+      scene: 7;
+      timestamp: '1741695962126';
+      _log_finder_id: 'v2_060000231003b20faec8c5e38b10cbd6cb06ef3cb077ad5b14a8587570bc414e95c4b7e034ea@finder';
+      _log_finder_uin: '';
+    },
+    rid: string,
+  ) {
+    return await requestNet<WeChatVideoUserData>({
+      url: `https://channels.weixin.qq.com/micro/interaction/cgi-bin/mmfinderassistant-bin/comment/create_comment?_rid=${rid}`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'POST',
+      body: {
+        clientId: this.getUniqueTaskId(),
+        ...body,
+      },
+    });
+  }
 }
 
 // 导出服务实例
