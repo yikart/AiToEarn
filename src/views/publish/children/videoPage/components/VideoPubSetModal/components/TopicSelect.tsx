@@ -5,7 +5,7 @@ import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPa
 import { useShallow } from 'zustand/react/shallow';
 import { IVideoChooseItem } from '@/views/publish/children/videoPage/videoPage';
 import { icpGetTopic } from '@/icp/publish';
-import { AccountStatus, AccountType } from '@@/AccountEnum';
+import { AccountStatus } from '@@/AccountEnum';
 import { ipcUpdateAccountStatus } from '@/icp/account';
 import useDebounceFetcher from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/useDebounceFetcher';
 import { VideoPubRestartLogin } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
@@ -16,14 +16,17 @@ interface DebounceSelectProps<ValueType = any>
   currChooseAccount: IVideoChooseItem;
 }
 
+type ValueType = {
+  label: string;
+  value: string | number;
+};
+
 // 话题选择器
-export default function TopicSelect<
-  ValueType extends {
-    key?: string;
-    label: React.ReactNode;
-    value: string | number;
-  } = any,
->({ currChooseAccount, tips, ...props }: DebounceSelectProps<ValueType>) {
+export default function TopicSelect({
+  currChooseAccount,
+  tips,
+  ...props
+}: DebounceSelectProps<ValueType>) {
   const { fetching, options, debounceFetcher } = useDebounceFetcher<ValueType>(
     async (keyword: string): Promise<ValueType[]> => {
       const topics = await icpGetTopic(currChooseAccount.account!, keyword);
@@ -68,28 +71,16 @@ export default function TopicSelect<
         notFoundContent={fetching ? <Spin size="small" /> : null}
         {...props}
         options={options}
-        value={currChooseAccount.pubParams!.topics as ValueType[]}
+        value={currChooseAccount.pubParams!.topics!.map((v) => {
+          return {
+            value: v,
+            label: v,
+          };
+        })}
         onChange={(newValue) => {
-          // 小红书话题特殊处理
-          if (currChooseAccount.account?.type === AccountType.Xhs) {
-            currChooseAccount.pubParams.diffParams![
-              AccountType.Xhs
-            ]!.topicsDetail =
-              (newValue as any[]).map((v) => {
-                return {
-                  topicId: `${v.value}`,
-                  topicName: v.label,
-                };
-              }) || [];
-          }
           setOnePubParams(
             {
-              topics: (newValue as any[]).map((v) => {
-                return {
-                  label: v.label,
-                  value: v.value,
-                };
-              }),
+              topics: (newValue as ValueType[]).map((v) => v.label),
               diffParams: {
                 ...currChooseAccount.pubParams.diffParams,
               },

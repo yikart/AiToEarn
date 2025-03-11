@@ -29,6 +29,7 @@ import {
 } from '../../electron/plat/douyin/douyin.type';
 import { IRequestNetResult } from '../../electron/plat/requestNet';
 import { WeChatVideoApiResponse } from '../../electron/plat/shipinhao/wxShp.type';
+import { parseTopicString } from '../utils';
 
 // 创建发布记录
 export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
@@ -39,8 +40,16 @@ export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
   return res;
 }
 
-// 创建视频发布记录
+/**
+ * 创建视频发布记录
+ * 这个函数中做了一些处理
+ * 1. 将描述中的标题取出，并且放到话题字段，再去重
+ * @param pubRecord
+ */
 export async function icpCreateVideoPubRecord(pubRecord: Partial<VideoPul>) {
+  const { topics, cleanedString } = parseTopicString(pubRecord.desc || '');
+  pubRecord.topics = [...new Set(pubRecord.topics?.concat(topics))];
+  pubRecord.desc = cleanedString;
   const res: VideoPul = await window.ipcRenderer.invoke(
     'ICP_PUBLISH_CREATE_VIDEO_PUL',
     pubRecord,

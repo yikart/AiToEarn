@@ -4,6 +4,8 @@
   --darkGreyColor: #555;
   /* 浅灰色 */
   --lightGreyColor: #888;
+  /* 超浅灰色 */
+  --superLightGreyColor: #d2d2d2;
 
   /* 超大号字 */
   --fs-xl: 20px;

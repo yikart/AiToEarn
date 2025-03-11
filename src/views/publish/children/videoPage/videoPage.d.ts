@@ -5,7 +5,6 @@ import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import {
   DiffParmasType,
   ILableValue,
-  TopicsArrType,
 } from '../../../../../electron/db/models/video';
 import { ILocationDataItem } from '../../../../../electron/main/plat/plat.type';
 
@@ -19,7 +18,7 @@ export interface IPubParams {
   // 查看权限
   visibleType?: VisibleTypeEnum;
   // 视频话题
-  topics?: TopicsArrType;
+  topics?: string[];
   // 每个平台的差异性参数
   diffParams?: DiffParmasType;
   // 位置

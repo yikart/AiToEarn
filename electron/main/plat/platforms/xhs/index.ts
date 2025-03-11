@@ -153,7 +153,10 @@ export class Xhs extends PlatformBase {
             desc: params.desc,
             title: params.title,
             topicsDetail:
-              params.diffParams?.[AccountType.Xhs]?.topicsDetail || [],
+              params.topics?.map((v) => ({
+                topicId: v,
+                topicName: v,
+              })) || [],
             timingTime: params.timingTime?.getTime(),
             privacy: params.visibleType !== VisibleTypeEnum.Public,
             // 位置

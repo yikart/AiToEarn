@@ -173,6 +173,7 @@ const VideoPubSetModal = memo(
       }, [currChooseAccountId, videoListChoose]);
 
       const pubCore = async () => {
+        setLoading(false);
         const err = () => {
           setLoading(false);
           message.error('网络繁忙，请稍后重试！');
@@ -284,6 +285,11 @@ const VideoPubSetModal = memo(
             onPubClick={() => {
               pubCore();
             }}
+            onRestartLoginFinish={(account) => {
+              updateAccounts({
+                accounts: [account],
+              });
+            }}
             onDetFinish={(accounts) => {
               updateAccounts({
                 accounts,
@@ -292,6 +298,7 @@ const VideoPubSetModal = memo(
           />
           <Modal
             width={900}
+            maskClosable={false}
             title="预览/发布配置"
             open={videoPubSetModalOpen}
             onOk={handleOk}
