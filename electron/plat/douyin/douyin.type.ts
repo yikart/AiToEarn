@@ -393,3 +393,28 @@ export interface DouyinUserListResponse {
   status_code: number;
   user_list: DouyinUser[];
 }
+
+// 抖音作品列表
+export interface DouyinCreatorListResponse {
+  extra: Extra;
+  status_code: number; // 0
+  status_msg: string;
+  has_more: boolean;
+  item_info_list: {
+    anchor_user_id: string;
+    cursor: string;
+    comment_count: number; // 回复数量
+    cover_image_url: string; // 'https://p3-sign.douyinpic.com/c5d200033ae82940b280~tplv-dy-resize-walign-adapt-aq:540:q75.jpeg?lk3s=138a59ce&x-expires=1742889600&x-signature=jcYpgxENZDa38hHUHNFfpcAPUDs%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=cover&biz_tag=aweme_video&l=20250311165957E85797DDC3B0DA04AEBA';
+    create_time: string; // '发布于2018年09月23日 17:51';
+    creator_item_setting: {
+      charge_comment_audit: boolean; // 收费评论审计
+    };
+    duration: number;
+    item_id: string; //  '@j/do779EQE//uctS8r3tvsx9pyuRYyn/J6krPKNgjq9hkia+W5A7RJEoPQpq6PZlQedr6LX3XaKU0Yc8jcykog==';
+    item_id_plain: string; // '6604355150884637966';
+    item_link: string; // 'https://www.iesdouyin.com/share/video/6604355150884637966/?region=CN&mid=6568746752824380174&u_code=16b4ji55k&did=MS4wLjABAAAANwkJuWIRFOzg5uCpDRpMj4OX-QryoDgn-yYlXQnRwQQ&iid=MS4wLjABAAAANwkJuWIRFOzg5uCpDRpMj4OX-QryoDgn-yYlXQnRwQQ&with_sec_did=1&video_share_track_ver=&titleType=&share_sign=qwbHwbUn9.rqVOBIpmIak8F4W9CXvvE18GzpMaAUfyU-&share_version=210100&ts=1741683597&from_aid=1128&from_ssr=1';
+    media_type: number; //  4;
+    title: string; // '';
+  }[];
+  total_count: number;
+}

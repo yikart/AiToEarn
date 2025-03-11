@@ -6,12 +6,12 @@
  * @Description: 任务页面
  */
 import { useState } from 'react';
-import { 
-  ShoppingCartOutlined, 
-  ShareAltOutlined, 
+import {
+  ShoppingCartOutlined,
+  ShareAltOutlined,
   VideoCameraOutlined,
   HistoryOutlined,
-  WalletOutlined
+  WalletOutlined,
 } from '@ant-design/icons';
 import styles from './task.module.scss';
 
@@ -37,7 +37,7 @@ interface Task {
 export default function Task() {
   // 当前选中的任务类型
   const [activeTab, setActiveTab] = useState('car');
-  
+
   // 渲染对应的任务内容
   const renderTaskContent = () => {
     switch (activeTab) {
@@ -59,28 +59,28 @@ export default function Task() {
       {/* 顶部导航栏 */}
       <div className={styles.taskHeader}>
         <div className={styles.taskHeaderLeft}>
-          <div 
+          <div
             className={`${styles.taskButton} ${activeTab === 'car' ? styles.activeTaskButton : ''}`}
             onClick={() => setActiveTab('car')}
           >
             <ShoppingCartOutlined />
             <span>挂车市场任务</span>
           </div>
-          <div 
+          <div
             className={`${styles.taskButton} ${activeTab === 'pop' ? styles.activeTaskButton : ''}`}
             onClick={() => setActiveTab('pop')}
           >
             <ShareAltOutlined />
             <span>推广任务</span>
           </div>
-          <div 
+          <div
             className={`${styles.taskButton} ${activeTab === 'video' ? styles.activeTaskButton : ''}`}
             onClick={() => setActiveTab('video')}
           >
             <VideoCameraOutlined />
             <span>视频任务</span>
           </div>
-          <div 
+          <div
             className={`${styles.taskButton} ${activeTab === 'mine' ? styles.activeTaskButton : ''}`}
             onClick={() => setActiveTab('mine')}
           >
@@ -97,9 +97,7 @@ export default function Task() {
       </div>
 
       {/* 任务内容 */}
-      <div className={styles.taskContent}>
-        {renderTaskContent()}
-      </div>
+      <div className={styles.taskContent}>{renderTaskContent()}</div>
     </div>
   );
 }
