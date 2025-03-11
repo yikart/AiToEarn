@@ -12,6 +12,7 @@ import { PubType } from '../../../../../commont/publish/PublishEnum';
 import PlatChoose, {
   IPlatChooseRef,
 } from '@/views/publish/components/ChooseAccountModule/components/PlatChoose';
+import { AccountType } from '../../../../../commont/AccountEnum';
 
 export interface IChooseAccountModuleRef {}
 
@@ -28,12 +29,15 @@ export interface IChooseAccountModuleProps {
   onPlatChange?: (accounts: AccountInfo[], account: AccountInfo) => void;
   // 按平台 是否禁用全选，true=禁用，false=不禁用，默认为false
   disableAllSelect?: boolean;
+  // 可选择的平台，默认为全部
+  allowPlatSet?: Set<AccountType>;
 }
 
 const ChooseAccountModule = memo(
   forwardRef(
     (
       {
+        allowPlatSet,
         open,
         onClose,
         pubType,
@@ -87,6 +91,7 @@ const ChooseAccountModule = memo(
                 label: '按平台选择',
                 children: (
                   <PlatChoose
+                    allowPlatSet={allowPlatSet}
                     choosedAccounts={choosedAccounts}
                     disableAllSelect={disableAllSelect || false}
                     ref={platChooseRef}

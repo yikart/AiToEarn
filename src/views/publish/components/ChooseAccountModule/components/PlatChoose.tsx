@@ -42,6 +42,8 @@ export interface IPlatChooseProps {
   choosedAccounts?: AccountInfo[];
   // 按平台 是否禁用多选，true=禁用，false=不禁用
   disableAllSelect: boolean;
+  // 可选择的平台，默认为全部
+  allowPlatSet?: Set<AccountType>;
 }
 
 const PlatChoose = memo(
@@ -52,6 +54,7 @@ const PlatChoose = memo(
         onChange,
         choosedAccounts,
         disableAllSelect,
+        allowPlatSet,
       }: IPlatChooseProps,
       ref: ForwardedRef<IPlatChooseRef>,
     ) => {
@@ -233,7 +236,10 @@ const PlatChoose = memo(
                       ),
                     };
                   })
-                  .filter((v) => v !== undefined)}
+                  .filter((v) => v !== undefined)
+                  .filter((v) =>
+                    allowPlatSet ? allowPlatSet.has(v.value) : true,
+                  )}
                 onChange={setActivePlat}
               />
             </ConfigProvider>

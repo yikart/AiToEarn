@@ -3,13 +3,15 @@
 
   :global {
     .platChoose-platSelect {
+      padding-right: 20px;
       .ant-checkbox-wrapper {
         margin-bottom: 5px;
         white-space: nowrap;
       }
 
       .ant-segmented {
-        margin-right: 20px;
+        width: 100%;
+        box-sizing: border-box;
         .ant-segmented-item {
           margin-bottom: 5px;
           padding: 3px 60px 3px 0;

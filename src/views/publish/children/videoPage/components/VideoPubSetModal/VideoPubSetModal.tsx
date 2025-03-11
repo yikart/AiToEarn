@@ -11,7 +11,6 @@ import {
   Alert,
   Avatar,
   Button,
-  Input,
   message,
   Modal,
   notification,
@@ -178,6 +177,7 @@ const VideoPubSetModal = memo(
           setLoading(false);
           message.error('网络繁忙，请稍后重试！');
         };
+        // 创建一级记录
         const recordRes = await icpCreatePubRecord({
           title: '/',
           desc: '/',
@@ -192,6 +192,7 @@ const VideoPubSetModal = memo(
         for (const vData of videoListChoose) {
           const account = vData.account!;
           const video = vData.video!;
+          // 创建二级记录
           await icpCreateVideoPubRecord({
             ...vData.pubParams,
             type: account.type,
@@ -211,7 +212,6 @@ const VideoPubSetModal = memo(
         setLoading(false);
         close();
         setPubProgressModuleOpen(false);
-        // clear();
 
         // 成功数据
         const successList = okRes.filter((v) => v.code === 1);
@@ -224,7 +224,7 @@ const VideoPubSetModal = memo(
                 条，失败 {okRes.length - successList.length} 条
               </>
             ),
-            duration: 20000,
+            duration: 10000,
             btn: (
               <Space>
                 <Button
