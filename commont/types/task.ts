@@ -3,8 +3,9 @@
  * @Date: 2025-02-22 12:27:40
  * @LastEditTime: 2025-03-03 17:59:13
  * @LastEditors: nevin
- * @Description:
+ * @Description: 任务
  */
+import { AccountType } from '../AccountEnum';
 import { TimeTemp } from './apiServer';
 
 export enum TaskType {
@@ -62,6 +63,6 @@ export interface Task<T extends TaskProduct | TaskPromotion | TaskVideo>
   firstTimeBonus: number; // 首次任务奖励
   reward: number; // 任务奖励金额
   status: TaskStatus; // 'active' | 'completed' | 'cancelled'
-  platforms: string[]; // 支持的平台ID列表
+  accountTypes: AccountType[];
   isAccepted?: boolean; // 是否已经接受任务
 }

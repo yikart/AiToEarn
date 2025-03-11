@@ -1,0 +1,212 @@
+.popTaskContainer {
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 8px;
+  min-height: 100%;
+}
+
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.taskCard {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.taskCardContent {
+  display: flex;
+  align-items: stretch;
+}
+
+.taskImageContainer {
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 16px;
+}
+
+.taskImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.taskInfo {
+  flex: 1;
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.taskHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.taskTitle {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+  margin: 0 12px 0 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.taskId {
+  font-size: 12px;
+  color: #999;
+  font-weight: normal;
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.copyIcon {
+  margin-left: 4px;
+  cursor: pointer;
+  color: #1890ff;
+  
+  &:hover {
+    color: #40a9ff;
+  }
+}
+
+.taskTag {
+  font-size: 12px;
+}
+
+.taskDescription {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-align: left;
+  
+  p {
+    margin-bottom: 0;
+  }
+}
+
+.taskDetails {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 12px;
+}
+
+.taskDetail {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #666;
+}
+
+.detailIcon {
+  margin-right: 4px;
+  color: #999;
+}
+
+.detailLabel {
+  margin-right: 4px;
+}
+
+.detailValue {
+  color: #333;
+}
+
+.taskRequirement {
+  font-size: 13px;
+  color: #666;
+  text-align: left;
+}
+
+.requirementLabel {
+  margin-right: 4px;
+}
+
+.requirementValue {
+  color: #333;
+}
+
+.taskAction {
+  width: 160px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  border-left: 1px solid #f0f0f0;
+}
+
+.taskStatus {
+  margin-bottom: 12px;
+}
+
+.taskReward {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.rewardLabel {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 4px;
+}
+
+.rewardValue {
+  font-size: 24px;
+  font-weight: 500;
+  color: #ff4d4f;
+}
+
+.viewButton {
+  width: 100%;
+  background-color: #52c41a;
+  border-color: #52c41a;
+  
+  &:hover {
+    background-color: #73d13d;
+    border-color: #73d13d;
+  }
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+.loadMoreContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  
+  button {
+    padding: 0 32px;
+  }
+} 

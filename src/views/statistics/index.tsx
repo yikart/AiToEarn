@@ -14,10 +14,12 @@ import {
   InfoCircleOutlined,
   DownloadOutlined,
   SearchOutlined,
+  ReloadOutlined,
 } from '@ant-design/icons';
 import { Dayjs } from 'dayjs';
 import * as echarts from 'echarts';
 import dayjs from 'dayjs';
+import { message } from 'antd';
 
 const { Content } = Layout;
 
@@ -371,6 +373,15 @@ const Statistics = () => {
     setSelectedMetric(metric);
   };
 
+  // 刷新账户数据
+  const refreshAccountData = () => {
+    // 清空现有数据
+    setDashboardData([]);
+    // 重新获取所有选中账户的数据
+    getAccountStatistics();
+    message.success('数据已刷新');
+  };
+
   return (
     <div className="min-h-screen page-container bg-gray-50">
       <div className="px-6 py-6">
@@ -540,7 +551,17 @@ const Statistics = () => {
 
         {/* 账户数据 */}
         <div className="mb-8" style={{ paddingBottom: '80px' }}>
-          <h2 className="mb-4 text-lg font-medium">昨日账户数据</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-medium">昨日账户数据</h2>
+            <Button 
+              type="text" 
+              icon={<ReloadOutlined />} 
+              onClick={refreshAccountData}
+              className="flex items-center hover:text-blue-500 transition-colors"
+            >
+              刷新
+            </Button>
+          </div>
           <div className="space-y-4">
             {statisticsInfo?.list?.map((account) => {
               const accountData = dashboardData.find(
