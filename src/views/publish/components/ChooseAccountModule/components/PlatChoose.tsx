@@ -16,8 +16,10 @@ import styles from '@/views/publish/components/ChooseAccountModule/chooseAccount
 import {
   Avatar,
   Badge,
+  Button,
   Checkbox,
   ConfigProvider,
+  Empty,
   Segmented,
   Tooltip,
 } from 'antd';
@@ -172,167 +174,176 @@ const PlatChoose = memo(
 
       return (
         <div className={styles.platChoose}>
-          <div className="platChoose-platSelect">
-            {!disableAllSelect && (
-              <Checkbox
-                indeterminate={
-                  getChoosedAllAccountList.length > 0 &&
-                  getChoosedAllAccountList.length < getAllAccountList.length
-                }
-                onChange={(e) => {
-                  const { checked } = e.target;
-                  setChoosedAcountMap((v) => {
-                    const newMap = new Map(v);
-                    recentData.current = currAccountList[0];
-
-                    for (const [accountType, accountList] of accountMap) {
-                      if (checked) {
-                        newMap.set(accountType, accountList);
-                      } else {
-                        newMap.set(accountType, []);
-                      }
-                    }
-                    return newMap;
-                  });
-                }}
-                checked={
-                  getAllAccountList.length === getChoosedAllAccountList.length
-                }
-              >
-                选择所有平台账户
-              </Checkbox>
-            )}
-            <ConfigProvider
-              theme={{
-                components: {
-                  Segmented: {
-                    trackBg: '#fff',
-                    itemSelectedBg: cssVars['--colorPrimary1'],
-                    itemHoverBg: cssVars['--colorPrimary2'],
-                    itemActiveBg: cssVars['--colorPrimary3'],
-                    itemSelectedColor: cssVars['--colorPrimary9'],
-                  },
-                },
-              }}
-            >
-              <Segmented
-                vertical
-                size="large"
-                value={activePlat}
-                options={Array.from(accountMap)
-                  .map(([key, value]) => {
-                    if (value.length === 0) return undefined;
-                    const platInfo = AccountPlatInfoMap.get(key)!;
-                    return {
-                      value: key,
-                      label: platInfo.name,
-                      icon: (
-                        <Badge
-                          count={choosedAcountMap.get(key)?.length}
-                          size="small"
-                        >
-                          <img src={platInfo.icon} />
-                        </Badge>
-                      ),
-                    };
-                  })
-                  .filter((v) => v !== undefined)
-                  .filter((v) =>
-                    allowPlatSet ? allowPlatSet.has(v.value) : true,
-                  )}
-                onChange={setActivePlat}
-              />
-            </ConfigProvider>
-          </div>
-
-          <div className="platChoose-con">
-            {currAccountList && (
-              <>
-                {!disableAllSelect ? (
+          {getAllAccountList.length === 0 ? (
+            <div className="platChoose-empty">
+              <Empty description="无账户数据，请添加账户" />
+            </div>
+          ) : (
+            <>
+              <div className="platChoose-platSelect">
+                {!disableAllSelect && (
                   <Checkbox
                     indeterminate={
-                      currChoosedAcount.length > 0 &&
-                      currChoosedAcount.length < currAccountList.length
+                      getChoosedAllAccountList.length > 0 &&
+                      getChoosedAllAccountList.length < getAllAccountList.length
                     }
                     onChange={(e) => {
+                      const { checked } = e.target;
                       setChoosedAcountMap((v) => {
+                        const newMap = new Map(v);
                         recentData.current = currAccountList[0];
-                        return new Map(v).set(
-                          activePlat!,
-                          e.target.checked ? currAccountList : [],
-                        );
+
+                        for (const [accountType, accountList] of accountMap) {
+                          if (checked) {
+                            newMap.set(accountType, accountList);
+                          } else {
+                            newMap.set(accountType, []);
+                          }
+                        }
+                        return newMap;
                       });
                     }}
                     checked={
-                      currChoosedAcount.length === currAccountList.length
+                      getAllAccountList.length ===
+                      getChoosedAllAccountList.length
                     }
                   >
-                    全选 已选择 {currChoosedAcount.length} 个
+                    选择所有平台账户
                   </Checkbox>
-                ) : (
-                  <span>已选择 {currChoosedAcount.length} 个</span>
                 )}
-                <div className="platChoose-accounts">
-                  {currAccountList.map((v) => {
-                    // true=禁用
-                    const isDisable = choosedAccounts?.find(
-                      (k) => k.id === v.id,
-                    );
-                    return (
-                      <div
-                        key={v.id}
-                        className={[
-                          'platChoose-accounts-item',
-                          currChoosedAcount.find((k) => k.id === v.id) &&
-                            'platChoose-accounts-item--active',
-                          isDisable && 'platChoose-accounts-item--disable',
-                        ].join(' ')}
-                        onClick={() => {
-                          if (isDisable) return;
-                          recentData.current = v;
-                          setChoosedAcountMap((prevV) => {
-                            const newV = new Map(prevV);
-                            let list = newV.get(activePlat!);
-                            if (!list) {
-                              list = [];
-                              newV.set(activePlat!, list);
-                            }
-                            // 是否存在
-                            if (list.some((k) => k.id === v.id)) {
-                              // 有、去掉
-                              list = list.filter((k) => k.id !== v.id);
-                            } else {
-                              // 无、添加
-                              list.push(v);
-                            }
-                            newV.set(activePlat!, list);
-                            return newV;
+                <ConfigProvider
+                  theme={{
+                    components: {
+                      Segmented: {
+                        trackBg: '#fff',
+                        itemSelectedBg: cssVars['--colorPrimary1'],
+                        itemHoverBg: cssVars['--colorPrimary2'],
+                        itemActiveBg: cssVars['--colorPrimary3'],
+                        itemSelectedColor: cssVars['--colorPrimary9'],
+                      },
+                    },
+                  }}
+                >
+                  <Segmented
+                    vertical
+                    size="large"
+                    value={activePlat}
+                    options={Array.from(accountMap)
+                      .map(([key, value]) => {
+                        if (value.length === 0) return undefined;
+                        const platInfo = AccountPlatInfoMap.get(key)!;
+                        return {
+                          value: key,
+                          label: platInfo.name,
+                          icon: (
+                            <Badge
+                              count={choosedAcountMap.get(key)?.length}
+                              size="small"
+                            >
+                              <img src={platInfo.icon} />
+                            </Badge>
+                          ),
+                        };
+                      })
+                      .filter((v) => v !== undefined)
+                      .filter((v) =>
+                        allowPlatSet ? allowPlatSet.has(v.value) : true,
+                      )}
+                    onChange={setActivePlat}
+                  />
+                </ConfigProvider>
+              </div>
+
+              <div className="platChoose-con">
+                {currAccountList && (
+                  <>
+                    {!disableAllSelect ? (
+                      <Checkbox
+                        indeterminate={
+                          currChoosedAcount.length > 0 &&
+                          currChoosedAcount.length < currAccountList.length
+                        }
+                        onChange={(e) => {
+                          setChoosedAcountMap((v) => {
+                            recentData.current = currAccountList[0];
+                            return new Map(v).set(
+                              activePlat!,
+                              e.target.checked ? currAccountList : [],
+                            );
                           });
                         }}
+                        checked={
+                          currChoosedAcount.length === currAccountList.length
+                        }
                       >
-                        <Tooltip
-                          title={
-                            <>
-                              <p>昵称：{v.nickname}</p>
-                            </>
-                          }
-                        >
-                          <Avatar src={v.avatar} />
-                          <span className="platChoose-accounts-item-nickname">
-                            {v.nickname}
-                          </span>
-                        </Tooltip>
+                        全选 已选择 {currChoosedAcount.length} 个
+                      </Checkbox>
+                    ) : (
+                      <span>已选择 {currChoosedAcount.length} 个</span>
+                    )}
+                    <div className="platChoose-accounts">
+                      {currAccountList.map((v) => {
+                        // true=禁用
+                        const isDisable = choosedAccounts?.find(
+                          (k) => k.id === v.id,
+                        );
+                        return (
+                          <div
+                            key={v.id}
+                            className={[
+                              'platChoose-accounts-item',
+                              currChoosedAcount.find((k) => k.id === v.id) &&
+                                'platChoose-accounts-item--active',
+                              isDisable && 'platChoose-accounts-item--disable',
+                            ].join(' ')}
+                            onClick={() => {
+                              if (isDisable) return;
+                              recentData.current = v;
+                              setChoosedAcountMap((prevV) => {
+                                const newV = new Map(prevV);
+                                let list = newV.get(activePlat!);
+                                if (!list) {
+                                  list = [];
+                                  newV.set(activePlat!, list);
+                                }
+                                // 是否存在
+                                if (list.some((k) => k.id === v.id)) {
+                                  // 有、去掉
+                                  list = list.filter((k) => k.id !== v.id);
+                                } else {
+                                  // 无、添加
+                                  list.push(v);
+                                }
+                                newV.set(activePlat!, list);
+                                return newV;
+                              });
+                            }}
+                          >
+                            <Tooltip
+                              title={
+                                <>
+                                  <p>昵称：{v.nickname}</p>
+                                </>
+                              }
+                            >
+                              <Avatar src={v.avatar} />
+                              <span className="platChoose-accounts-item-nickname">
+                                {v.nickname}
+                              </span>
+                            </Tooltip>
 
-                        <div className="platChoose-accounts-item-choose">
-                          <CheckOutlined />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </>
-            )}
-          </div>
+                            <div className="platChoose-accounts-item-choose">
+                              <CheckOutlined />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
+              </div>
+            </>
+          )}
         </div>
       );
     },
