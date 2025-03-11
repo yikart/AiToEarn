@@ -12,6 +12,8 @@ import {
   DouyinActivityListResponse,
   DouyinActivityTagsResponse,
   DouyinAllHotDataResponse,
+  DouyinCreatorCommentListResponse,
+  DouyinCreatorListResponse,
   DouyinHotDataResponse,
   DouyinLocationDataResponse,
   DouyinTopicsSugResponse,
@@ -2135,6 +2137,45 @@ export class DouyinService {
   async getUsers(cookie: Electron.Cookie[], keyword: string, page: number) {
     return await requestNet<DouyinUserListResponse>({
       url: `https://creator.douyin.com/web/api/v2/discover/search/?search_source=publish_web&count=10&keyword=${keyword}&cursor=${(page - 1) * 10}&scene=1`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'GET',
+    });
+  }
+
+  /**
+   * 查询抖音的活动列表
+   * @param cookie
+   * @param msToken
+   * @returns
+   */
+  async getCreatorItems(
+    cookie: Electron.Cookie[],
+    cursor: string,
+    msToken: string,
+  ) {
+    return await requestNet<DouyinCreatorListResponse>({
+      url: `https://creator.douyin.com/aweme/v1/creator/item/list/?cursor=${cursor}&msToken=${msToken}`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'GET',
+    });
+  }
+
+  // 查看作品的评论列表
+  async getCreatorCommentList(
+    cookie: Electron.Cookie[],
+    item_id: string, // 作品ID
+    pageInfo: {
+      cursor: number;
+      count: number;
+    },
+    msToken: string,
+  ) {
+    return await requestNet<DouyinCreatorCommentListResponse>({
+      url: `https://creator.douyin.com/aweme/v1/creator/comment/list/?cursor=${pageInfo.cursor}&count=${pageInfo.count}&item_id=${item_id}&sort=TIME&msToken=${msToken}`,
       headers: {
         cookie: CookieToString(cookie),
       },

@@ -45,7 +45,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
     if (!taskInfo) return;
 
     try {
-      const res = await taskApi.taskApply<TaskVideo>(taskInfo?.id);
+      const res = await taskApi.taskApply<TaskVideo>(taskInfo?._id);
       setTaskInfo(res);
       message.success('任务接受成功！');
       setIsModalOpen(false);
