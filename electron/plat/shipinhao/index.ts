@@ -1328,29 +1328,34 @@ export class ShipinhaoService {
    */
   async getPostList(
     cookie: Electron.Cookie[],
-    body: {
-      currentPage: 1;
-      forMcn: false;
-      needAllCommentCount: true;
-      onlyUnread: false;
-      pageSize: 10;
-      pluginSessionId: null;
-      rawKeyBuff: null;
-      reqScene: 7; // 固定值
-      scene: 7; // 固定值
-      timestamp: '1741697365389';
-      userpageType: 13;
-      _log_finder_id: 'v2_060000231003b20faec8c5e38b10cbd6cb06ef3cb077ad5b14a8587570bc414e95c4b7e034ea@finder';
-      _log_finder_uin: '';
-    },
+    pageInfo: { pageNo: number; pageSize: number },
   ) {
-    return await requestNet<WeChatVideoUserData>({
+    return await requestNet<{
+      errCode: 0;
+      errMsg: string; // 'request successful';
+      data: { list: any[]; bindInfo: any[]; totalCount: number };
+    }>({
       url: `https://channels.weixin.qq.com/micro/interaction/cgi-bin/mmfinderassistant-bin/post/post_list?_rid=67d03155-a6da7281`,
       headers: {
         cookie: CookieToString(cookie),
       },
       method: 'POST',
-      body,
+      body: {
+        currentPage: pageInfo.pageNo,
+        forMcn: false,
+        needAllCommentCount: true,
+        onlyUnread: false,
+        pageSize: pageInfo.pageSize,
+        pluginSessionId: null,
+        rawKeyBuff: null,
+        reqScene: 7, // 固定值
+        scene: 7, // 固定值
+        timestamp: '1741697365389',
+        userpageType: 13,
+        _log_finder_id:
+          'v2_060000231003b20faec8c5e38b10cbd6cb06ef3cb077ad5b14a8587570bc414e95c4b7e034ea@finder',
+        _log_finder_uin: '',
+      },
     });
   }
 

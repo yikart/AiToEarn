@@ -7,6 +7,7 @@
 import { Injectable } from '../core/decorators';
 import { douyinService } from '../../plat/douyin/index';
 import { AccountModel } from '../../db/models/account';
+import { shipinhaoService } from '../../plat/shipinhao';
 
 @Injectable()
 export class ReplyService {
@@ -32,5 +33,16 @@ export class ReplyService {
     console.log('------ res ----', res);
 
     return 1;
+  }
+
+  async testGetSphCreatorList(account: AccountModel) {
+    const cookie: Electron.Cookie[] = JSON.parse(account.loginCookie);
+
+    const res = await shipinhaoService.getPostList(cookie, {
+      pageNo: 1,
+      pageSize: 10,
+    });
+
+    console.log('------ res ----', res);
   }
 }
