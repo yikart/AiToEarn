@@ -72,6 +72,21 @@ export abstract class PlatformBase {
   ): Promise<DashboardData[]>;
 
   /**
+   * 获取作品列表
+   * @param pageInfo
+   */
+  abstract getWorkList(
+    account: AccountModel,
+    pageInfo: {
+      pageNo: number;
+      pageSize: number;
+    },
+  ): Promise<{
+    list: WorkData[];
+    count: number;
+  }>;
+
+  /**
    * 获取某个作品的数据
    * @param dataId 作品的唯一标识
    */

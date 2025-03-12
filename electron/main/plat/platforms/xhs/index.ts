@@ -127,12 +127,30 @@ export class Xhs extends PlatformBase {
   }
 
   /**
+   * 获取作品列表
+   * @param account
+   * @param pageInfo
+   * @returns
+   */
+  async getWorkList(
+    account: AccountModel,
+    pageInfo: { pageNo: number; pageSize: number },
+  ) {
+    return {
+      list: [],
+      count: 0,
+    };
+  }
+
+  /**
    * TODO: 未实现
    * @returns
    * @param dataId
    */
   async getWorkData(dataId: string) {
-    return {};
+    return {
+      dataId: '',
+    };
   }
   /**
    * @param params

@@ -40,12 +40,17 @@ export type DashboardData = {
 
 // 获取某个作品的数据返回值
 export type WorkData = {
+  dataId: string;
   readCount?: number;
   likeCount?: number;
   collectCount?: number;
   forwardCount?: number;
-  commentCount?: number;
+  commentCount?: number; // 评论数量
   income?: number;
+  title?: string;
+  desc?: string;
+  coverUrl?: string;
+  videoUrl?: string;
 };
 
 // 视频发布进度回调函数类型

@@ -17,6 +17,7 @@ import {
   IGetUsersParams,
   IVideoPublishParams,
   VideoCallbackType,
+  WorkData,
 } from '../../plat.type';
 import { PublishVideoResult } from '../../module';
 import { shipinhaoService } from '../../../../plat/shipinhao';
@@ -118,12 +119,46 @@ export class WxSph extends PlatformBase {
   }
 
   /**
+   * 获取作品列表
+   * @param pageInfo
+   * @returns
+   */
+  async getWorkList(
+    account: AccountModel,
+    pageInfo: { pageNo: number; pageSize: number },
+  ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await shipinhaoService.getPostList(cookie, {
+      pageNo: 1,
+      pageSize: 10,
+    });
+
+    const listData: WorkData[] = res.list.map((item) => {
+      return {
+        dataId: item.objectId,
+        commentCount: item.commentCount,
+        title: item.desc.shortTitle[0] || '',
+        desc: item.desc.description,
+        coverUrl: item.desc.media[0]?.coverUrl || '',
+        videoUrl: item.desc.media[0]?.url || '',
+      };
+    });
+
+    return {
+      list: listData,
+      count: res.totalCount,
+    };
+  }
+
+  /**
    * TODO: 未实现
    * @returns
    * @param dataId
    */
   async getWorkData(dataId: string) {
-    return {};
+    return {
+      dataId: '',
+    };
   }
 
   async getUsers(params: IGetUsersParams) {
