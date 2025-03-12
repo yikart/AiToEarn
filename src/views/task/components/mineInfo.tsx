@@ -5,12 +5,22 @@
  * @LastEditors: nevin
  * @Description: 用户任务信息
  */
-import { Button, Modal, Form, Input, Upload, message, Tag, Divider, Space, Tooltip } from 'antd';
+import {
+  Button,
+  Modal,
+  Form,
+  Input,
+  Upload,
+  message,
+  Tag,
+  Divider,
+  Space,
+  Tooltip,
+} from 'antd';
 import {
   Task,
   TaskProduct,
   TaskPromotion,
-  TaskStatusName,
   TaskTypeName,
   TaskVideo,
 } from '@@/types/task';
@@ -18,15 +28,14 @@ import { forwardRef, useImperativeHandle, useState } from 'react';
 import { taskApi } from '@/api/task';
 import { UserTask, UserTaskStatus } from '@/api/types/task';
 import styles from './mineInfo.module.scss';
-import { 
-  UploadOutlined, 
-  LinkOutlined, 
+import {
+  LinkOutlined,
   QrcodeOutlined,
   ClockCircleOutlined,
   FileTextOutlined,
   DollarOutlined,
   InfoCircleOutlined,
-  PictureOutlined
+  PictureOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
@@ -40,10 +49,7 @@ export interface MineTaskInfoRef {
 }
 
 // 可以提交的任务状态
-const SUBMITTABLE_STATUSES = [
-  UserTaskStatus.DODING,
-  UserTaskStatus.REJECTED
-];
+const SUBMITTABLE_STATUSES = [UserTaskStatus.DODING, UserTaskStatus.REJECTED];
 
 const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -59,18 +65,22 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
   ) {
     setMineTaskInfo(inData);
     setIsModalOpen(true);
-    
+
     // 重置表单
     form.resetFields();
     setFileList([]);
-    
+
     // 如果有已提交的数据，填充表单
-    if (inData.submissionUrl || inData.qrCodeScanResult || inData.screenshotUrls?.length) {
+    if (
+      inData.submissionUrl ||
+      inData.qrCodeScanResult ||
+      inData.screenshotUrls?.length
+    ) {
       form.setFieldsValue({
         submissionUrl: inData.submissionUrl || '',
         qrCodeScanResult: inData.qrCodeScanResult || '',
       });
-      
+
       if (inData.screenshotUrls?.length) {
         const initialFileList = inData.screenshotUrls.map((url, index) => ({
           uid: `-${index}`,
@@ -89,32 +99,32 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
 
   async function taskDone() {
     if (!mineTaskInfo) return;
-    
+
     try {
       await form.validateFields();
       const values = form.getFieldsValue();
-      
+
       setSubmitting(true);
-      
+
       // 处理截图文件
       const screenshotUrls = fileList
-        .filter(file => file.status === 'done')
-        .map(file => file.url || file.response?.url);
-      
+        .filter((file) => file.status === 'done')
+        .map((file) => file.url || file.response?.url);
+
       const doneInfo = {
         submissionUrl: values.submissionUrl,
         qrCodeScanResult: values.qrCodeScanResult,
         screenshotUrls,
       };
-      
+
       const res = await taskApi.taskDone(mineTaskInfo.id, doneInfo);
-      
+
       setMineTaskInfo({
         ...mineTaskInfo,
         status: res.status, // 更新为待审核
         ...doneInfo, // 更新提交的信息
       });
-      
+
       message.success('任务提交成功！');
       setIsModalOpen(false);
     } catch (error) {
@@ -128,36 +138,36 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  
+
   // 格式化日期
   const formatDate = (dateString?: string) => {
     if (!dateString) return '暂无日期';
     return dayjs(dateString).format('YYYY/MM/DD HH:mm');
   };
-  
+
   // 判断任务是否可提交
   const canSubmitTask = () => {
     if (!mineTaskInfo) return false;
     return SUBMITTABLE_STATUSES.includes(mineTaskInfo.status as UserTaskStatus);
   };
-  
+
   // 处理上传图片变化
   const handleUploadChange = ({ fileList }: any) => {
     setFileList(fileList);
   };
-  
+
   // 上传前检查
   const beforeUpload = (file: any) => {
     const isImage = file.type.startsWith('image/');
     if (!isImage) {
       message.error('只能上传图片文件!');
     }
-    
+
     const isLt5M = file.size / 1024 / 1024 < 5;
     if (!isLt5M) {
       message.error('图片大小不能超过5MB!');
     }
-    
+
     return isImage && isLt5M;
   };
 
@@ -176,32 +186,44 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
           <div className={styles.taskInfoHeader}>
             <h2 className={styles.taskTitle}>
               {mineTaskInfo.taskId?.title || '未知任务'}
-              <span className={styles.taskId}>
-                订单号: {mineTaskInfo._id}
-              </span>
+              <span className={styles.taskId}>订单号: {mineTaskInfo._id}</span>
             </h2>
-            <Tag 
-              color={mineTaskInfo.status === UserTaskStatus.DODING ? 'processing' : 
-                    mineTaskInfo.status === UserTaskStatus.PENDING ? 'warning' :
-                    mineTaskInfo.status === UserTaskStatus.APPROVED ? 'success' :
-                    mineTaskInfo.status === UserTaskStatus.REJECTED ? 'error' : 'default'}
+            <Tag
+              color={
+                mineTaskInfo.status === UserTaskStatus.DODING
+                  ? 'processing'
+                  : mineTaskInfo.status === UserTaskStatus.PENDING
+                    ? 'warning'
+                    : mineTaskInfo.status === UserTaskStatus.APPROVED
+                      ? 'success'
+                      : mineTaskInfo.status === UserTaskStatus.REJECTED
+                        ? 'error'
+                        : 'default'
+              }
               className={styles.statusTag}
             >
-              {mineTaskInfo.status === UserTaskStatus.DODING ? '进行中' : 
-               mineTaskInfo.status === UserTaskStatus.PENDING ? '待审核' :
-               mineTaskInfo.status === UserTaskStatus.APPROVED ? '已通过' :
-               mineTaskInfo.status === UserTaskStatus.REJECTED ? '已拒绝' : '未知状态'}
+              {mineTaskInfo.status === UserTaskStatus.DODING
+                ? '进行中'
+                : mineTaskInfo.status === UserTaskStatus.PENDING
+                  ? '待审核'
+                  : mineTaskInfo.status === UserTaskStatus.APPROVED
+                    ? '已通过'
+                    : mineTaskInfo.status === UserTaskStatus.REJECTED
+                      ? '已拒绝'
+                      : '未知状态'}
             </Tag>
           </div>
-          
+
           <div className={styles.taskInfoContent}>
             <div className={styles.taskDetails}>
               <div className={styles.taskDetail}>
                 <ClockCircleOutlined className={styles.detailIcon} />
                 <span className={styles.detailLabel}>接单时间:</span>
-                <span className={styles.detailValue}>{formatDate(mineTaskInfo.createTime)}</span>
+                <span className={styles.detailValue}>
+                  {formatDate(mineTaskInfo.createTime)}
+                </span>
               </div>
-              
+
               <div className={styles.taskDetail}>
                 <FileTextOutlined className={styles.detailIcon} />
                 <span className={styles.detailLabel}>任务类型:</span>
@@ -209,26 +231,30 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
                   {TaskTypeName.get(mineTaskInfo.taskId?.type) || '未知类型'}
                 </span>
               </div>
-              
+
               <div className={styles.taskDetail}>
                 <DollarOutlined className={styles.detailIcon} />
                 <span className={styles.detailLabel}>任务奖励:</span>
-                <span className={styles.detailValue}>¥{mineTaskInfo.taskId?.reward || 5}</span>
+                <span className={styles.detailValue}>
+                  ¥{mineTaskInfo.taskId?.reward || 5}
+                </span>
               </div>
             </div>
-            
+
             <Divider />
-            
+
             <div className={styles.taskDescription}>
               <h3 className={styles.sectionTitle}>任务描述</h3>
-              <div 
+              <div
                 className={styles.descriptionContent}
-                dangerouslySetInnerHTML={{ __html: mineTaskInfo.taskId?.description || '暂无描述' }}
+                dangerouslySetInnerHTML={{
+                  __html: mineTaskInfo.taskId?.description || '暂无描述',
+                }}
               />
             </div>
-            
+
             <Divider />
-            
+
             <div className={styles.submissionSection}>
               <h3 className={styles.sectionTitle}>
                 提交任务
@@ -238,7 +264,7 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
                   </Tooltip>
                 )}
               </h3>
-              
+
               <Form
                 form={form}
                 layout="vertical"
@@ -249,23 +275,23 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
                   label="提交链接"
                   rules={[{ required: true, message: '请输入提交链接' }]}
                 >
-                  <Input 
-                    placeholder="请输入任务完成后的链接" 
-                    prefix={<LinkOutlined />} 
+                  <Input
+                    placeholder="请输入任务完成后的链接"
+                    prefix={<LinkOutlined />}
                   />
                 </Form.Item>
-                
+
                 <Form.Item
                   name="qrCodeScanResult"
                   label="二维码扫描结果"
                   rules={[{ required: false, message: '请输入二维码扫描结果' }]}
                 >
-                  <Input 
-                    placeholder="请输入二维码扫描结果（如有）" 
-                    prefix={<QrcodeOutlined />} 
+                  <Input
+                    placeholder="请输入二维码扫描结果（如有）"
+                    prefix={<QrcodeOutlined />}
                   />
                 </Form.Item>
-                
+
                 <Form.Item
                   name="screenshotUrls"
                   label="任务截图"
@@ -276,7 +302,7 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
                     fileList={fileList}
                     onChange={handleUploadChange}
                     beforeUpload={beforeUpload}
-                    action={VITE_APP_URL+"/oss/upload/permanent"}
+                    action={VITE_APP_URL + '/oss/upload/permanent'}
                     multiple
                     maxCount={5}
                   >
@@ -288,7 +314,7 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
                     )}
                   </Upload>
                 </Form.Item>
-                
+
                 <div className={styles.uploadTips}>
                   <p>提示：</p>
                   <ul>
@@ -300,18 +326,12 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
               </Form>
             </div>
           </div>
-          
+
           <div className={styles.taskInfoFooter}>
             <Space>
-              <Button onClick={handleCancel}>
-                关闭
-              </Button>
+              <Button onClick={handleCancel}>关闭</Button>
               {canSubmitTask() && (
-                <Button 
-                  type="primary" 
-                  onClick={taskDone}
-                  loading={submitting}
-                >
+                <Button type="primary" onClick={taskDone} loading={submitting}>
                   提交任务
                 </Button>
               )}

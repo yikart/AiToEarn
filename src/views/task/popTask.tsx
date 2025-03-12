@@ -12,11 +12,11 @@ import { taskApi } from '@/api/task';
 import { TaskInfoRef } from './components/popInfo';
 import TaskInfo from './components/popInfo';
 import styles from './popTask.module.scss';
-import { 
-  ClockCircleOutlined, 
-  TeamOutlined, 
-  RightOutlined, 
-  CopyOutlined 
+import {
+  ClockCircleOutlined,
+  TeamOutlined,
+  RightOutlined,
+  CopyOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
@@ -41,18 +41,18 @@ export default function Page() {
         ...pageInfo,
         type: TaskType.PROMOTION,
       });
-      
+
       if (isLoadMore) {
-        setTaskList(prev => [...prev, ...res.items]);
+        setTaskList((prev) => [...prev, ...res.items]);
       } else {
         setTaskList(res.items);
       }
-      
-      setPageInfo(prev => ({
+
+      setPageInfo((prev) => ({
         ...prev,
         totalCount: (res as any).totalCount,
       }));
-      
+
       // 检查是否还有更多数据
       setHasMore(pageInfo.pageNo * pageInfo.pageSize < (res as any).totalCount);
     } catch (error) {
@@ -65,25 +65,26 @@ export default function Page() {
   useEffect(() => {
     getTaskList();
   }, []);
-  
+
   // 加载更多数据
   const loadMore = () => {
-    setPageInfo(prev => ({
+    setPageInfo((prev) => ({
       ...prev,
       pageNo: prev.pageNo + 1,
     }));
     getTaskList(true);
   };
-  
+
   // 格式化日期
   const formatDate = (dateString: string) => {
     if (!dateString) return '2025/03/17';
     return dayjs(dateString).format('YYYY/MM/DD');
   };
-  
+
   // 复制任务ID
   const copyTaskId = (id: string) => {
-    navigator.clipboard.writeText(id)
+    navigator.clipboard
+      .writeText(id)
       .then(() => {
         message.success('任务ID已复制到剪贴板');
       })
@@ -95,7 +96,7 @@ export default function Page() {
   return (
     <div className={styles.popTaskContainer}>
       <TaskInfo ref={Ref_TaskInfo} />
-      
+
       <div className={styles.taskList}>
         {taskList.map((task) => (
           <Card key={task.id} className={styles.taskCard}>
@@ -107,7 +108,7 @@ export default function Page() {
                   className={styles.taskImage}
                 />
               </div>
-              
+
               <div className={styles.taskInfo}>
                 <div className={styles.taskHeader}>
                   <h3 className={styles.taskTitle}>
@@ -115,8 +116,8 @@ export default function Page() {
                     <span className={styles.taskId}>
                       ID: {task._id}
                       <Tooltip title="复制任务ID">
-                        <CopyOutlined 
-                          className={styles.copyIcon} 
+                        <CopyOutlined
+                          className={styles.copyIcon}
                           onClick={() => copyTaskId(task._id)}
                         />
                       </Tooltip>
@@ -126,42 +127,52 @@ export default function Page() {
                     {task.dataInfo?.type || 'AI对话APP'}
                   </Tag>
                 </div>
-                
-                <div 
+
+                <div
                   className={styles.taskDescription}
-                  dangerouslySetInnerHTML={{ __html: task.description || '扫二维码下载APP并完成注册任务' }}
+                  dangerouslySetInnerHTML={{
+                    __html: task.description || '扫二维码下载APP并完成注册任务',
+                  }}
                 />
-                
+
                 <div className={styles.taskDetails}>
                   <div className={styles.taskDetail}>
                     <ClockCircleOutlined className={styles.detailIcon} />
                     <span className={styles.detailLabel}>截止时间:</span>
-                    <span className={styles.detailValue}>{formatDate(task.deadline)}</span>
+                    <span className={styles.detailValue}>
+                      {formatDate(task.deadline)}
+                    </span>
                   </div>
-                  
+
                   <div className={styles.taskDetail}>
                     <TeamOutlined className={styles.detailIcon} />
                     <span className={styles.detailLabel}>招募人数:</span>
-                    <span className={styles.detailValue}>{task.maxRecruits || 100}</span>
+                    <span className={styles.detailValue}>
+                      {task.maxRecruits || 100}
+                    </span>
                   </div>
                 </div>
-                
+
                 <div className={styles.taskRequirement}>
                   <span className={styles.requirementLabel}>任务要求:</span>
-                  <span className={styles.requirementValue}>{task.requirement || '扫二维码'}</span>
+                  <span className={styles.requirementValue}>
+                    {task.requirement || '扫二维码'}
+                  </span>
                 </div>
               </div>
-              
+
               <div className={styles.taskAction}>
                 <div className={styles.taskStatus}>
                   <Tag color="#87d068">进行中</Tag>
                 </div>
-                
+
                 <div className={styles.taskReward}>
                   <span className={styles.rewardLabel}>每篇可赚</span>
-                  <span className={styles.rewardValue}>¥{task.reward || 5}</span>
+                  <span className={styles.rewardValue}>
+                    ¥{task.reward || 5}
+                  </span>
                 </div>
-                
+
                 <Button
                   type="primary"
                   className={styles.viewButton}
@@ -173,13 +184,13 @@ export default function Page() {
             </div>
           </Card>
         ))}
-        
+
         {loading && (
           <div className={styles.loadingContainer}>
             <Spin size="large" />
           </div>
         )}
-        
+
         {!loading && hasMore && (
           <div className={styles.loadMoreContainer}>
             <Button onClick={loadMore}>查看更多任务</Button>

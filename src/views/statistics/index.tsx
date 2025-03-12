@@ -553,9 +553,9 @@ const Statistics = () => {
         <div className="mb-8" style={{ paddingBottom: '80px' }}>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-medium">昨日账户数据</h2>
-            <Button 
-              type="text" 
-              icon={<ReloadOutlined />} 
+            <Button
+              type="text"
+              icon={<ReloadOutlined />}
               onClick={refreshAccountData}
               className="flex items-center hover:text-blue-500 transition-colors"
             >

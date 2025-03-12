@@ -15,13 +15,13 @@ import {
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { taskApi } from '@/api/task';
 import styles from './popInfo.module.scss';
-import { 
-  ClockCircleOutlined, 
-  TeamOutlined, 
+import {
+  ClockCircleOutlined,
+  TeamOutlined,
   TagOutlined,
   DollarOutlined,
   QrcodeOutlined,
-  CopyOutlined
+  CopyOutlined,
 } from '@ant-design/icons';
 
 const FILE_BASE_URL = import.meta.env.VITE_APP_FILE_HOST;
@@ -62,10 +62,11 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  
+
   // 复制任务ID
   const copyTaskId = (id: string) => {
-    navigator.clipboard.writeText(id)
+    navigator.clipboard
+      .writeText(id)
       .then(() => {
         message.success('任务ID已复制到剪贴板');
       })
@@ -92,8 +93,8 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                 {taskInfo.title}
                 <span className={styles.taskId}>
                   ID: {taskInfo.id}
-                  <CopyOutlined 
-                    className={styles.copyIcon} 
+                  <CopyOutlined
+                    className={styles.copyIcon}
                     onClick={() => copyTaskId(taskInfo.id)}
                   />
                 </span>
@@ -102,19 +103,19 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                 {taskInfo.dataInfo?.type || 'AI对话APP'}
               </Tag>
             </div>
-            
+
             <div className={styles.taskInfoContent}>
               <Row gutter={24}>
                 <Col span={12}>
                   <div className={styles.taskImageContainer}>
-                    <img 
-                      src={`${FILE_BASE_URL}${taskInfo.imageUrl}`} 
+                    <img
+                      src={`${FILE_BASE_URL}${taskInfo.imageUrl}`}
                       alt={taskInfo.title}
                       className={styles.taskImage}
                     />
                   </div>
                 </Col>
-                
+
                 <Col span={12}>
                   <div className={styles.taskDetails}>
                     <div className={styles.taskDetail}>
@@ -124,7 +125,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                         {TaskTypeName.get(taskInfo.type) || '推广任务'}
                       </span>
                     </div>
-                    
+
                     <div className={styles.taskDetail}>
                       <ClockCircleOutlined className={styles.detailIcon} />
                       <span className={styles.detailLabel}>截止时间:</span>
@@ -132,7 +133,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                         {taskInfo.deadline || '2025/03/17'}
                       </span>
                     </div>
-                    
+
                     <div className={styles.taskDetail}>
                       <TeamOutlined className={styles.detailIcon} />
                       <span className={styles.detailLabel}>招募人数:</span>
@@ -140,7 +141,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                         {taskInfo.maxRecruits || 100}
                       </span>
                     </div>
-                    
+
                     <div className={styles.taskDetail}>
                       <DollarOutlined className={styles.detailIcon} />
                       <span className={styles.detailLabel}>任务奖励:</span>
@@ -148,7 +149,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                         ¥{taskInfo.reward || 5}
                       </span>
                     </div>
-                    
+
                     <div className={styles.taskDetail}>
                       <QrcodeOutlined className={styles.detailIcon} />
                       <span className={styles.detailLabel}>任务要求:</span>
@@ -159,17 +160,19 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                   </div>
                 </Col>
               </Row>
-              
+
               <Divider />
-              
+
               <div className={styles.taskDescription}>
                 <h3 className={styles.sectionTitle}>任务描述</h3>
-                <div 
+                <div
                   className={styles.descriptionContent}
-                  dangerouslySetInnerHTML={{ __html: taskInfo.description || '暂无描述' }}
+                  dangerouslySetInnerHTML={{
+                    __html: taskInfo.description || '暂无描述',
+                  }}
                 />
               </div>
-              
+
               {taskInfo.dataInfo && (
                 <>
                   <Divider />
@@ -178,36 +181,42 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                     <div className={styles.appInfo}>
                       <div className={styles.appInfoItem}>
                         <span className={styles.appInfoLabel}>APP名称:</span>
-                        <span className={styles.appInfoValue}>{taskInfo.dataInfo.title || '未知'}</span>
+                        <span className={styles.appInfoValue}>
+                          {taskInfo.dataInfo.title || '未知'}
+                        </span>
                       </div>
-                      
+
                       <div className={styles.appInfoItem}>
                         <span className={styles.appInfoLabel}>APP描述:</span>
-                        <span className={styles.appInfoValue}>{taskInfo.dataInfo.desc || '暂无描述'}</span>
+                        <span className={styles.appInfoValue}>
+                          {taskInfo.dataInfo.desc || '暂无描述'}
+                        </span>
                       </div>
                     </div>
                   </div>
                 </>
               )}
             </div>
-            
+
             <div className={styles.taskInfoFooter}>
               <div className={styles.taskStatus}>
                 <span className={styles.statusLabel}>任务状态:</span>
-                <Tag color="#87d068">{TaskStatusName.get(taskInfo.status) || '进行中'}</Tag>
+                <Tag color="#87d068">
+                  {TaskStatusName.get(taskInfo.status) || '进行中'}
+                </Tag>
               </div>
-              
+
               <div className={styles.taskActions}>
-                <Button 
-                  key="back" 
+                <Button
+                  key="back"
                   onClick={handleCancel}
                   className={styles.cancelButton}
                 >
                   取消
                 </Button>
-                <Button 
-                  key="submit" 
-                  type="primary" 
+                <Button
+                  key="submit"
+                  type="primary"
                   onClick={taskApply}
                   className={styles.applyButton}
                 >
