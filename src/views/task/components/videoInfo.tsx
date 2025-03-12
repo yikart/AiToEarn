@@ -109,16 +109,10 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
       console.log('下载封面:', coverUrl);
 
       // 使用IPC接口下载视频文件到本地临时目录
-      const localVideoPath = await ipcDownFile(
-        videoUrl,
-        'default_filename1',
-      );
+      const localVideoPath = await ipcDownFile(videoUrl, 'default_filename1');
 
       // 使用IPC接口下载封面图片到本地临时目录
-      const localCoverPath = await ipcDownFile(
-        coverUrl,
-        'default_filename2',
-      );
+      const localCoverPath = await ipcDownFile(coverUrl, 'default_filename2');
 
       console.log('视频已下载到:', localVideoPath);
       console.log('封面已下载到:', localCoverPath);

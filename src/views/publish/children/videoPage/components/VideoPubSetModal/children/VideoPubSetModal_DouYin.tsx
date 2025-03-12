@@ -10,10 +10,10 @@ import {
   IVideoPubSetModalChildProps,
   IVideoPubSetModalChildRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/videoPubSetModal.type';
-import { Button, Input, Modal, Radio, Select, Spin } from 'antd';
+import { Button, Input, Modal, Radio, Select, Spin, Tooltip } from 'antd';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
-import { DouyinDeclareEnum, VisibleTypeEnum } from '@@/publish/PublishEnum';
+import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import TopicSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/TopicSelect';
 import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
 import { AccountType } from '@@/AccountEnum';
@@ -40,6 +40,8 @@ import { describeNumber } from '@/utils';
 import { onAccountLoginFinish } from '@/icp/receiveMsg';
 import UserSelect from '../components/UserSelect';
 import { AccountPlatInfoMap } from '../../../../../../account/comment';
+import { DeclarationDouyin } from '../../../../../../../../electron/plat/douyin/common.douyin';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const { TextArea } = Input;
 
@@ -70,7 +72,12 @@ const HotspotSelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
 
   return (
     <>
-      <h1>申请关联热点</h1>
+      <h1>
+        申请关联热点
+        <Tooltip title="你可以申请和一个热点做关联，如果视频确实和热点非常相关，将会进入抖音热点榜，若不相关则不会生效。">
+          <QuestionCircleOutlined style={{ marginLeft: '2px' }} />
+        </Tooltip>
+      </h1>
       <Select
         showSearch
         allowClear
@@ -91,7 +98,7 @@ const HotspotSelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
           return (
             <div className={styles.hotspotSelect}>
               <div className="hotspotSelect-left">
-                <img src={data.word_cover.url_list[0]} />
+                <img src={data.word_cover?.url_list[0]} />
                 <span>{data.word}</span>
               </div>
               <div className="hotspotSelect-right">
@@ -213,7 +220,12 @@ const ActivitySelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
         </Spin>
       </Modal>
 
-      <h1>活动奖励</h1>
+      <h1>
+        活动奖励
+        <Tooltip title="添加活动将有机会获得流量奖励">
+          <QuestionCircleOutlined style={{ marginLeft: '2px' }} />
+        </Tooltip>
+      </h1>
       <Select
         showSearch={false}
         allowClear
@@ -274,6 +286,11 @@ const ActivitySelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
           currChooseAccount.pubParams!.diffParams![AccountType.Douyin]!
             .activitys
         }
+        onDropdownVisibleChange={() => {
+          if (options.length === 0 && currChooseAccount.account?.status === 0) {
+            init();
+          }
+        }}
         onChange={(newValue) => {
           const newDiffParams = currChooseAccount.pubParams.diffParams!;
           newDiffParams[AccountType.Douyin]!.activitys = newValue;
@@ -285,6 +302,9 @@ const ActivitySelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
           );
         }}
       />
+      <p className="videoPubSetModal_con-tips">
+        活动奖励 + 话题 最多不能超过五个。
+      </p>
       <VideoPubRestartLogin currChooseAccount={currChooseAccount} />
     </>
   );
@@ -352,6 +372,7 @@ const VideoPubSetModal_KWAI = memo(
             currChooseAccount={currChooseAccount}
             tips="最多可添加5个话题（包含活动奖励）"
           />
+          <ActivitySelect currChooseAccount={currChooseAccount} />
 
           <UserSelect
             currChooseAccount={currChooseAccount}
@@ -359,8 +380,6 @@ const VideoPubSetModal_KWAI = memo(
             tips="您可以添加100个好友"
             title="@好友"
           />
-
-          <ActivitySelect currChooseAccount={currChooseAccount} />
 
           <LocationSelect currChooseAccount={currChooseAccount} />
 
@@ -382,27 +401,27 @@ const VideoPubSetModal_KWAI = memo(
             options={[
               {
                 label: '内容自行拍摄',
-                value: DouyinDeclareEnum.Self,
+                value: DeclarationDouyin.SelfShoot,
               },
               {
                 label: '内容取材网络',
-                value: DouyinDeclareEnum.Network,
+                value: DeclarationDouyin.FromNetV3,
               },
               {
                 label: '内容由AI生成',
-                value: DouyinDeclareEnum.AI,
+                value: DeclarationDouyin.AIGC,
               },
               {
                 label: '可能引人不适',
-                value: DouyinDeclareEnum.Uncomfortable,
+                value: DeclarationDouyin.MaybeUnsuitable,
               },
               {
                 label: '虚构演绎，仅供娱乐',
-                value: DouyinDeclareEnum.Fiction,
+                value: DeclarationDouyin.OnlyFunNew,
               },
               {
                 label: '危险行为，请勿模仿',
-                value: DouyinDeclareEnum.Danger,
+                value: DeclarationDouyin.DangerousBehavior,
               },
             ]}
             onChange={(newValue: any) => {

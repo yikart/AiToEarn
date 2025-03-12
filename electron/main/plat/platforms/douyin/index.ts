@@ -165,14 +165,31 @@ export class Douyin extends PlatformBase {
     callback: VideoCallbackType,
   ): Promise<PublishVideoResult> {
     return new Promise(async (resolve) => {
+      const douyinParams = params.diffParams![AccountType.Douyin];
+
       const result = await douyinService
         .publishVideoWorkApi(
           JSON.stringify(params.cookies),
           params.other!,
           params.videoPath,
           {
+            userDeclare: douyinParams?.selfDeclare,
+            activity: douyinParams?.activitys?.map((v) => {
+              return {
+                label: v.label,
+                value: `${v.value}`,
+              };
+            }),
+            hot_sentence: douyinParams?.hotPoint?.label,
+            mentionedUserInfo: params.mentionedUserInfo?.map((v) => {
+              return {
+                nickName: v.label,
+                uid: `${v.value}`,
+              };
+            }),
             title: params.title,
             topics: params.topics,
+            caption: params.desc,
             cover: params.coverPath,
             timingTime: params.timingTime?.getTime(),
             // 可见性

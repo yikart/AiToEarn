@@ -21,6 +21,45 @@ import {
 } from './douyin.type';
 import requestNet from '../requestNet';
 import { jsonToQueryString } from '../../util';
+import { DeclarationDouyin } from './common.douyin';
+
+type PlatformSettingType = {
+  // 自主声明
+  userDeclare?: DeclarationDouyin;
+  // 合集
+  mixInfo?: {
+    mixId: string;
+    mixName: string;
+  };
+  // 关联热点，传热点中文名称即可
+  hot_sentence?: string;
+  // 活动
+  activity?: {
+    value: string;
+    label: string;
+  }[];
+  // @用户
+  mentionedUserInfo?: {
+    nickName: string;
+    uid: string;
+  }[];
+  // 标题
+  title: string;
+  // 描述
+  caption?: string;
+  topics?: string[];
+  cover: string;
+  timingTime?: number;
+  // 0 公共 1 私密 2 好友
+  visibility_type: 0 | 1 | 2;
+  // 地址
+  poiInfo?: {
+    poiId: string;
+    poiName: string;
+  };
+  // 背景音乐
+  musicId?: string;
+};
 
 export class DouyinService {
   private defaultUserAgent =
@@ -39,6 +78,8 @@ export class DouyinService {
   private getCsrfTokenUrl =
     'https://creator.douyin.com/web/api/media/anchor/search';
   private publishUrl = 'https://creator.douyin.com/web/api/media/aweme/create/';
+  private publishUrlV2 =
+    'https://creator.douyin.com/web/api/media/aweme/create_v2/';
   private getUploadImageProofUrl = 'https://imagex.bytedanceapi.com/';
   private windowName = 'douyin';
   private cookieCheckField = 'sessionid';
@@ -466,19 +507,7 @@ export class DouyinService {
     cookies: string,
     tokens: any,
     filePath: string,
-    platformSetting: {
-      title: string;
-      topics: string[];
-      cover: string;
-      timingTime?: number;
-      // 0 公共 1 私密 2 好友
-      visibility_type: 0 | 1 | 2;
-      // 地址
-      poiInfo?: {
-        poiId: string;
-        poiName: string;
-      };
-    },
+    platformSetting: PlatformSettingType,
     callback: (progress: number, msg?: string) => void,
   ): Promise<any> {
     console.log('开始发布视频作品，参数：', platformSetting);
@@ -519,13 +548,14 @@ export class DouyinService {
 
         // 发布视频参数
         console.log('开始获取发布参数...');
-        const publishVideoParams = this.getPublishPublicParams(platformSetting);
+        const publishVideoParams =
+          this.getPublishPublicParamsV2(platformSetting);
         console.log('发布参数:', publishVideoParams);
         callback(55, '参数获取完成');
 
         // 拼接视频封面内容
-        publishVideoParams.video_id = videoId;
-        publishVideoParams.poster = poster;
+        publishVideoParams.item.common.video_id = videoId;
+        publishVideoParams.item.cover.poster = poster;
         console.log('完整的发布参数:', publishVideoParams);
 
         // 获取csrf-token
@@ -548,20 +578,21 @@ export class DouyinService {
         // 发布视频
         console.log(
           `[${new Date().toLocaleString()}] 开始发布视频请求...`,
-          this.publishUrl,
+          this.publishUrlV2,
         );
         console.log(
           `[${new Date().toLocaleString()}] 发布参数:`,
           publishVideoParams,
         );
-        const publishResult = await this.makePublishRequest(this.publishUrl, {
+        const publishResult = await requestNet({
+          url: this.publishUrlV2,
           method: 'POST',
           headers: {
             Cookie: cookieString,
             'X-Secsdk-Csrf-Token': csrfToken,
             ...bdTicketHeaders,
           },
-          data: publishVideoParams,
+          body: publishVideoParams,
         });
         callback(100, '发布完成');
         console.log(
@@ -578,20 +609,20 @@ export class DouyinService {
         }
 
         if (
-          !publishResult.hasOwnProperty('status_code') ||
-          publishResult.status_code !== 0
+          !publishResult.data.hasOwnProperty('status_code') ||
+          publishResult.data.status_code !== 0
         ) {
           console.error(
             `[${new Date().toLocaleString()}] 发布失败，状态码异常:`,
-            publishResult.status_code,
+            publishResult.data.status_code,
           );
-          reject(publishResult.status_msg || '发布失败,账号可能已掉线!');
+          reject(publishResult.data.status_msg || '发布失败,账号可能已掉线!');
           return false;
         }
 
         const response = {
           publishTime: Math.floor(Date.now() / 1000),
-          publishId: publishResult.aweme.aweme_id,
+          publishId: publishResult.data.item_id,
           shareLink: '',
         };
         console.log(
@@ -703,18 +734,6 @@ export class DouyinService {
           `[${new Date().toLocaleString()}] 获取到的发布参数:`,
           publishImgParams,
         );
-
-        // publishImgParams = {
-        //   text: '这是一条Test作品#立夏 #二十四节气 ',
-        //   text_extra: [{"start":10,"type":1,"hashtag_name":"立夏","hashtag_id":0,"user_id":"","caption_start":0,"caption_end":0,"end":13},{"start":14,"type":1,"hashtag_name":"二十四节气","hashtag_id":0,"user_id":"","caption_start":0,"caption_end":0,"end":20}],
-        //   mentions: [],
-        //   visibility_type: 0,
-        //   download: 1,
-        //   images: [{"uri":"tos-cn-i-jm8ajry58r/f6048854aa284085bb9e681e1051df45","width":613,"height":348},{"uri":"tos-cn-i-jm8ajry58r/c2958370a35f483e8031b97d48375e01","width":613,"height":348}]
-        // }
-        // console.log(`[${new Date().toLocaleString()}] 完整的发布参数:`, publishImgParams);
-
-        // return;
 
         // 获取csrf-token
         console.log(`[${new Date().toLocaleString()}] 开始获取csrf-token...`);
@@ -1269,7 +1288,6 @@ export class DouyinService {
           const cookies = await session
             .fromPartition(partition)
             .cookies.get({});
-          console.log('获取到的cookies:', cookies);
 
           const alreadyLogin = cookies.some((item) =>
             item.name.includes(this.cookieCheckField),
@@ -1673,14 +1691,103 @@ export class DouyinService {
     });
   }
 
+  // 发布视频、v2 api参数处理
+  private getPublishPublicParamsV2(platformSetting: PlatformSettingType) {
+    console.log('platformSetting：', platformSetting);
+    const parmasDisposeOK = this.getPublishPublicParams(platformSetting);
+
+    const params = {
+      item: {
+        anchor: parmasDisposeOK.hasOwnProperty('poi_id')
+          ? {
+              anchor_content: JSON.stringify({
+                is_commerce_intention: false,
+              }),
+              poi_id: parmasDisposeOK.poi_id,
+              poi_name: parmasDisposeOK.poi_name,
+            }
+          : {},
+        assistant: {
+          is_post_assistant: 1,
+          is_preview: 0,
+        },
+        chapter: {
+          chapter: JSON.stringify({
+            chapter_abstract: '',
+            chapter_details: [],
+            chapter_type: 0,
+            chapter_tools_info: {
+              chapter_recommend_detail: [],
+              chapter_recommend_abstract: '',
+              chapter_source: 2,
+              chapter_recommend_type: -2,
+              create_date: 1741767807,
+              is_pc: '1',
+              is_pre_generated: '0',
+              is_syn: '1',
+            },
+          }),
+        },
+        common: {
+          // 活动
+          activity: parmasDisposeOK.activity,
+          text: parmasDisposeOK.text,
+          item_title: parmasDisposeOK.item_title,
+          text_extra: JSON.stringify(parmasDisposeOK.text_extra),
+          // 挑战
+          challenges: JSON.stringify([]),
+          creation_id: '',
+          // 是否允许下载
+          download: 1,
+          hashtag_source: 'recommend/recommend/recommend',
+          // 热点中文
+          hot_sentence: platformSetting.hot_sentence,
+          // 标题
+          media_type: 4,
+          mentions: JSON.stringify(parmasDisposeOK.mentions),
+          music_id: '',
+          video_id: '',
+          music_source: 0,
+          // 定时,
+          timing: parmasDisposeOK.timing,
+          // 可见性
+          visibility_type: platformSetting['visibility_type'],
+        },
+        cover: {
+          cover_text: null,
+          cover_text_uri: null,
+          cover_tools_extend_info: '{}',
+          cover_tools_info: JSON.stringify({}),
+          poster: '',
+          poster_delay: 0,
+        },
+        declare: platformSetting.userDeclare
+          ? {
+              user_declare_info: JSON.stringify({
+                // 内容由AI生成
+                choose_value: platformSetting.userDeclare,
+              }),
+            }
+          : {},
+        mix: {},
+        open_platform: {},
+        sync: {
+          should_sync: false,
+          sync_to_toutiao: 0,
+        },
+      },
+    };
+    return params;
+  }
+
   /**
    * 获取视频|图文公共发布参数
    * @param platformSetting 平台设置参数
    */
-  private getPublishPublicParams(platformSetting: any): any {
+  private getPublishPublicParams(platformSetting: PlatformSettingType): any {
     console.log('开始处理发布参数...');
-    // 处理标题
-    let text = platformSetting['title'] ?? '';
+    // 处理描述
+    let text = `${platformSetting['title'] || ''} ${platformSetting['caption'] || ''}`;
     // 标题扩展属性
     const textExtra = [];
     // @好友参数
@@ -1688,11 +1795,14 @@ export class DouyinService {
 
     // 处理话题
     if (
-      platformSetting.hasOwnProperty('topics') &&
-      platformSetting.topics?.length > 0
+      (platformSetting.topics && platformSetting.topics?.length > 0) ||
+      (platformSetting.activity && platformSetting.activity?.length > 0)
     ) {
       console.log('处理话题标签...');
-      for (const topic of platformSetting.topics) {
+      for (const topic of [
+        ...(platformSetting.topics || []),
+        ...(platformSetting.activity?.map((v) => v.label) || []),
+      ]) {
         // 扩展属性追加话题位置
         const extraItem = {
           start: text.length,
@@ -1716,6 +1826,7 @@ export class DouyinService {
     // 处理@好友
     if (
       platformSetting.hasOwnProperty('mentionedUserInfo') &&
+      platformSetting.mentionedUserInfo &&
       platformSetting.mentionedUserInfo?.length > 0
     ) {
       console.log('处理@好友...');
@@ -1732,10 +1843,10 @@ export class DouyinService {
             caption_end: 0,
           };
           // 标题追加@好友
-          text += `@${userInfo.nickName} `;
+          text += ` @${userInfo.nickName}`;
           // 计算话题结束位置
           // @ts-ignore
-          extraItem.end = text.length - 1;
+          extraItem.end = text.length;
           // 追加到扩展属性
           textExtra.push(extraItem);
           // 追加到@好友
@@ -1747,12 +1858,15 @@ export class DouyinService {
     // 整合发布参数
     const publishParams = {
       item_title: platformSetting['title'] ?? '',
-      text: text,
+      text,
       text_extra: textExtra,
       mentions: mentions,
       // 0 公共 1 私密 2 好友
       visibility_type: platformSetting['visibility_type'],
       download: 1,
+      activity: JSON.stringify(
+        platformSetting.activity?.map((v) => v.value) || [],
+      ),
     };
 
     // 处理合集
@@ -1794,6 +1908,7 @@ export class DouyinService {
     // 处理定时
     if (
       platformSetting.hasOwnProperty('timingTime') &&
+      platformSetting.timingTime &&
       platformSetting.timingTime > Date.now()
     ) {
       console.log('处理定时发布...');

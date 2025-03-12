@@ -16,7 +16,6 @@ import styles from '@/views/publish/components/ChooseAccountModule/chooseAccount
 import {
   Avatar,
   Badge,
-  Button,
   Checkbox,
   ConfigProvider,
   Empty,

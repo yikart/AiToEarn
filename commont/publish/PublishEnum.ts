@@ -13,20 +13,3 @@ export enum VisibleTypeEnum {
   // 好友可见
   Friend = 3,
 }
-
-// 抖音自主声明
-export enum DouyinDeclareEnum {
-  // 内容自行拍摄
-  Self = 1,
-  // 内容取材网络
-  Network = 2,
-  // 内容由AI生成
-  AI = 3,
-  // 可能引人不适
-  Uncomfortable = 4,
-  // 虚构演绎，仅供娱乐
-  Fiction = 5,
-  // 危险行为，请勿模仿
-  Danger = 6,
-}
-

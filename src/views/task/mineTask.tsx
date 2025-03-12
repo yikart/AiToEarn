@@ -5,7 +5,17 @@
  * @LastEditors: nevin
  * @Description: 我的任务列表
  */
-import { Button, Card, Spin, Modal, Select, Space, Tag, Empty, message, Tooltip } from 'antd';
+import {
+  Button,
+  Card,
+  Spin,
+  Modal,
+  Select,
+  Space,
+  Tag,
+  Empty,
+  message,
+} from 'antd';
 import { useState, useEffect, useRef } from 'react';
 import { taskApi } from '@/api/task';
 import { UserTask, UserTaskStatus } from '@/api/types/task';
@@ -14,14 +24,14 @@ import MineTaskInfo, { MineTaskInfoRef } from './components/mineInfo';
 import { WithdrawRef } from './components/withdraw';
 import Withdraw from './components/withdraw';
 import styles from './mineTask.module.scss';
-import { 
-  ReloadOutlined, 
-  FilterOutlined, 
-  ClockCircleOutlined, 
+import {
+  ReloadOutlined,
+  FilterOutlined,
+  ClockCircleOutlined,
   DollarOutlined,
   FileTextOutlined,
   RightOutlined,
-  QuestionCircleOutlined
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
@@ -55,81 +65,105 @@ const UserTaskStatusColorMap = new Map<UserTaskStatus, string>([
   [UserTaskStatus.REWARDED, 'success'],
 ]);
 
-  // 渲染空状态
-  const renderEmptyState = () => {
-    return (
-      <div className={styles.emptyContainer}>
-        <div className={styles.emptyText}>
-          <h3>接单前请务必先浏览《接单须知与常见问题解答》</h3>
-          <p>所有关于接单的秘诀都在这里，请不要错过</p>
-        </div>
-        
-        <div className={styles.guideContainer}>
-          <div className={styles.guideStep}>
-            <h4>接单前完成以下步骤，接单快人一步</h4>
-            
-            <div className={styles.qrCodeContainer}>
-              <div className={styles.qrCodeItem}>
-                <div className={styles.qrCodeWrapper}>
-                  <img src={qr1} alt="扫码加入账号招募群" className={styles.qrCode} />
-                </div>
-                <p className={styles.qrCodeText}>扫码加入账号招募群</p>
-                <p className={styles.qrCodeSubtext}>不可在群内天打扰他人</p>
+// 渲染空状态
+const renderEmptyState = () => {
+  return (
+    <div className={styles.emptyContainer}>
+      <div className={styles.emptyText}>
+        <h3>接单前请务必先浏览《接单须知与常见问题解答》</h3>
+        <p>所有关于接单的秘诀都在这里，请不要错过</p>
+      </div>
+
+      <div className={styles.guideContainer}>
+        <div className={styles.guideStep}>
+          <h4>接单前完成以下步骤，接单快人一步</h4>
+
+          <div className={styles.qrCodeContainer}>
+            <div className={styles.qrCodeItem}>
+              <div className={styles.qrCodeWrapper}>
+                <img
+                  src={qr1}
+                  alt="扫码加入账号招募群"
+                  className={styles.qrCode}
+                />
               </div>
-              
-              <div className={styles.qrCodeItem}>
-                <div className={styles.qrCodeWrapper}>
-                  <img src={qr2} alt="扫码开启更多权益" className={styles.qrCode} />
-                </div>
-                <p className={styles.qrCodeText}>扫码开启更多权益</p>
-                <p className={styles.qrCodeSubtext}>手机扫码爱团团公众号</p>
+              <p className={styles.qrCodeText}>扫码加入账号招募群</p>
+              <p className={styles.qrCodeSubtext}>不可在群内天打扰他人</p>
+            </div>
+
+            <div className={styles.qrCodeItem}>
+              <div className={styles.qrCodeWrapper}>
+                <img
+                  src={qr2}
+                  alt="扫码开启更多权益"
+                  className={styles.qrCode}
+                />
               </div>
+              <p className={styles.qrCodeText}>扫码开启更多权益</p>
+              <p className={styles.qrCodeSubtext}>手机扫码爱团团公众号</p>
             </div>
           </div>
-          
-          <div className={styles.processContainer}>
-            <h4 className={styles.processTitle}>接单流程</h4>
-            
-            <div className={styles.processSteps}>
-              <div className={styles.processStep}>
-                <div className={styles.processIcon}>
-                  <img src={bindTaskImg} alt="前往管理中心绑定账号" className={styles.stepIcon} />
-                </div>
-                <p className={styles.stepText}>前往管理中心绑定账号</p>
+        </div>
+
+        <div className={styles.processContainer}>
+          <h4 className={styles.processTitle}>接单流程</h4>
+
+          <div className={styles.processSteps}>
+            <div className={styles.processStep}>
+              <div className={styles.processIcon}>
+                <img
+                  src={bindTaskImg}
+                  alt="前往管理中心绑定账号"
+                  className={styles.stepIcon}
+                />
               </div>
-              
-              <div className={styles.processDivider}></div>
-              
-              <div className={styles.processStep}>
-                <div className={styles.processIcon}>
-                  <img src={checkTaskImg} alt="等待平台验证通过" className={styles.stepIcon} />
-                </div>
-                <p className={styles.stepText}>等待平台验证通过</p>
+              <p className={styles.stepText}>前往管理中心绑定账号</p>
+            </div>
+
+            <div className={styles.processDivider}></div>
+
+            <div className={styles.processStep}>
+              <div className={styles.processIcon}>
+                <img
+                  src={checkTaskImg}
+                  alt="等待平台验证通过"
+                  className={styles.stepIcon}
+                />
               </div>
-              
-              <div className={styles.processDivider}></div>
-              
-              <div className={styles.processStep}>
-                <div className={styles.processIcon}>
-                  <img src={publishTaskImg} alt="一键发文" className={styles.stepIcon} />
-                </div>
-                <p className={styles.stepText}>一键发文</p>
+              <p className={styles.stepText}>等待平台验证通过</p>
+            </div>
+
+            <div className={styles.processDivider}></div>
+
+            <div className={styles.processStep}>
+              <div className={styles.processIcon}>
+                <img
+                  src={publishTaskImg}
+                  alt="一键发文"
+                  className={styles.stepIcon}
+                />
               </div>
-              
-              <div className={styles.processDivider}></div>
-              
-              <div className={styles.processStep}>
-                <div className={styles.processIcon}>
-                  <img src={rewardTaskImg} alt="成功发文等待结算" className={styles.stepIcon} />
-                </div>
-                <p className={styles.stepText}>成功发文等待结算</p>
+              <p className={styles.stepText}>一键发文</p>
+            </div>
+
+            <div className={styles.processDivider}></div>
+
+            <div className={styles.processStep}>
+              <div className={styles.processIcon}>
+                <img
+                  src={rewardTaskImg}
+                  alt="成功发文等待结算"
+                  className={styles.stepIcon}
+                />
               </div>
+              <p className={styles.stepText}>成功发文等待结算</p>
             </div>
           </div>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
 export default function Page() {
   const [taskList, setTaskList] = useState<UserTask<Task<TaskDataInfo>>[]>([]);
@@ -150,27 +184,29 @@ export default function Page() {
         ...pageInfo,
         status: statusFilter,
       };
-      
+
       // 如果没有选择状态筛选，则不传status参数
       if (statusFilter === null) {
         delete params.status;
       }
-      
+
       const tasks = await taskApi.getMineTaskList(params);
-      
+
       if (isLoadMore) {
-        setTaskList(prev => [...prev, ...tasks.items]);
+        setTaskList((prev) => [...prev, ...tasks.items]);
       } else {
         setTaskList(tasks.items);
       }
-      
-      setPageInfo(prev => ({
+
+      setPageInfo((prev) => ({
         ...prev,
         totalCount: (tasks as any).totalCount,
       }));
-      
+
       // 检查是否还有更多数据
-      setHasMore(pageInfo.pageNo * pageInfo.pageSize < (tasks as any).totalCount);
+      setHasMore(
+        pageInfo.pageNo * pageInfo.pageSize < (tasks as any).totalCount,
+      );
     } catch (error) {
       console.error('获取任务列表失败', error);
       message.error('获取任务列表失败，请稍后再试');
@@ -185,7 +221,7 @@ export default function Page() {
 
   // 加载更多数据
   const loadMore = () => {
-    setPageInfo(prev => ({
+    setPageInfo((prev) => ({
       ...prev,
       pageNo: prev.pageNo + 1,
     }));
@@ -219,13 +255,13 @@ export default function Page() {
   const closeGuideModal = () => {
     setIsGuideModalVisible(false);
   };
-  
+
   // 格式化日期
   const formatDate = (dateString?: string) => {
     if (!dateString) return '暂无日期';
     return dayjs(dateString).format('YYYY/MM/DD HH:mm');
   };
-  
+
   // 查看任务详情
   const viewTaskDetail = (task: UserTask<Task<TaskDataInfo>>) => {
     Ref_MineTaskInfo.current?.init(task);
@@ -235,7 +271,7 @@ export default function Page() {
     <div className={styles.mineTaskContainer}>
       <MineTaskInfo ref={Ref_MineTaskInfo} />
       <Withdraw ref={Ref_Withdraw} />
-      
+
       <div className={styles.pageHeader}>
         <h2 className={styles.pageTitle}>我的任务</h2>
         <div className={styles.pageActions}>
@@ -247,21 +283,23 @@ export default function Page() {
               style={{ width: 150 }}
               onChange={(value) => setStatusFilter(value)}
               value={statusFilter}
-              options={Array.from(UserTaskStatusNameMap).map(([value, label]) => ({
-                value,
-                label,
-              }))}
+              options={Array.from(UserTaskStatusNameMap).map(
+                ([value, label]) => ({
+                  value,
+                  label,
+                }),
+              )}
               suffixIcon={<FilterOutlined />}
             />
-            <Button 
+            <Button
               className={styles.refreshButton}
-              icon={<ReloadOutlined />} 
+              icon={<ReloadOutlined />}
               onClick={refreshData}
             >
               刷新
             </Button>
-            <Button 
-              type="primary" 
+            <Button
+              type="primary"
               onClick={openGuideModal}
               icon={<QuestionCircleOutlined />}
             >
@@ -270,7 +308,7 @@ export default function Page() {
           </Space>
         </div>
       </div>
-      
+
       {loading && taskList.length === 0 ? (
         <div className={styles.loadingContainer}>
           <Spin size="large" />
@@ -288,7 +326,7 @@ export default function Page() {
           {taskList.map((task) => {
             // 获取任务详情，处理可能的undefined情况
             const taskDetail = task.taskId || {};
-            
+
             return (
               <Card key={task._id} className={styles.taskCard} bordered={false}>
                 <div className={styles.taskCardContent}>
@@ -300,38 +338,50 @@ export default function Page() {
                           订单号: {task._id}
                         </span>
                       </h3>
-                      <Tag 
-                        color={UserTaskStatusColorMap.get(task.status as UserTaskStatus) || 'default'} 
+                      <Tag
+                        color={
+                          UserTaskStatusColorMap.get(
+                            task.status as UserTaskStatus,
+                          ) || 'default'
+                        }
                         className={styles.statusTag}
                       >
-                        {UserTaskStatusNameMap.get(task.status as UserTaskStatus) || '未知状态'}
+                        {UserTaskStatusNameMap.get(
+                          task.status as UserTaskStatus,
+                        ) || '未知状态'}
                       </Tag>
                     </div>
-                    
+
                     <div className={styles.taskDetails}>
                       <div className={styles.taskDetail}>
                         <ClockCircleOutlined className={styles.detailIcon} />
                         <span className={styles.detailLabel}>接单时间:</span>
-                        <span className={styles.detailValue}>{formatDate(task.createTime)}</span>
+                        <span className={styles.detailValue}>
+                          {formatDate(task.createTime)}
+                        </span>
                       </div>
-                      
+
                       <div className={styles.taskDetail}>
                         <FileTextOutlined className={styles.detailIcon} />
                         <span className={styles.detailLabel}>任务要求:</span>
-                        <span className={styles.detailValue}>{taskDetail.requirement || '不许删文'}</span>
+                        <span className={styles.detailValue}>
+                          {taskDetail.requirement || '不许删文'}
+                        </span>
                       </div>
-                      
+
                       <div className={styles.taskDetail}>
                         <DollarOutlined className={styles.detailIcon} />
                         <span className={styles.detailLabel}>任务奖励:</span>
-                        <span className={styles.detailValue}>¥{taskDetail.reward || 5}</span>
+                        <span className={styles.detailValue}>
+                          ¥{taskDetail.reward || 5}
+                        </span>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className={styles.taskAction}>
-                    {(task.status === UserTaskStatus.APPROVED || 
-                      task.status === UserTaskStatus.COMPLETED || 
+                    {(task.status === UserTaskStatus.APPROVED ||
+                      task.status === UserTaskStatus.COMPLETED ||
                       task.status === UserTaskStatus.REWARDED) && (
                       <Button
                         type="primary"
@@ -342,7 +392,7 @@ export default function Page() {
                         提现
                       </Button>
                     )}
-                    
+
                     <Button
                       className={styles.viewButton}
                       onClick={() => viewTaskDetail(task)}
@@ -354,13 +404,13 @@ export default function Page() {
               </Card>
             );
           })}
-          
+
           {loading && (
             <div className={styles.loadingContainer}>
               <Spin size="large" />
             </div>
           )}
-          
+
           {!loading && hasMore && (
             <div className={styles.loadMoreContainer}>
               <Button onClick={loadMore}>加载更多</Button>
@@ -368,7 +418,7 @@ export default function Page() {
           )}
         </div>
       )}
-      
+
       <Modal
         title="接单指南"
         open={isGuideModalVisible}
@@ -382,24 +432,26 @@ export default function Page() {
             <h2>如何接单赚钱</h2>
             <div className={styles.guideDate}>更新时间: 2025年3月1日</div>
           </div>
-          
+
           <div className={styles.guideIntro}>
             <p>
               欢迎使用任务市场！本指南将帮助您了解如何通过接单赚取额外收入。请仔细阅读以下步骤，确保您能顺利完成任务并获得奖励。
             </p>
           </div>
-          
+
           <div className={styles.guideSection}>
             <h3>操作步骤</h3>
             <ol className={styles.guideSteps}>
               <li>
-                <p>
-                  关注公众号"任务市场"，获取最新任务通知和平台动态。
-                </p>
+                <p>关注公众号"任务市场"，获取最新任务通知和平台动态。</p>
                 <div className={styles.qrCodeContainer}>
                   <div className={styles.qrCodeItem}>
                     <div className={styles.qrCodeWrapper}>
-                      <img src={qr2} alt="任务市场公众号" className={styles.qrCode} />
+                      <img
+                        src={qr2}
+                        alt="任务市场公众号"
+                        className={styles.qrCode}
+                      />
                     </div>
                     <div className={styles.qrCodeText}>任务市场公众号</div>
                     <div className={styles.qrCodeSubtext}>获取最新任务通知</div>

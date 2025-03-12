@@ -50,7 +50,8 @@ const WebView: React.FC<WebViewProps> = ({ url, cookieParams }) => {
       <Spin spinning={loading} tip="加载中...">
         <webview
           ref={webviewRef}
-          src={!loading ? url : 'www.baidu.com'}
+          src={url}
+          key={loading ? 0 : 1}
           webpreferences="sandbox"
           style={{ width: '100%', height: '100%' }}
           partition={partitionId.current}

@@ -165,12 +165,7 @@ const VideoPubSetModal_KWAI = memo(
             onChange={(newValue) => {
               setOnePubParams(
                 {
-                  topics: (newValue as any[]).map((v) => {
-                    return {
-                      label: v.label,
-                      value: v.value,
-                    };
-                  }),
+                  topics: newValue,
                 },
                 currChooseAccount.id,
               );

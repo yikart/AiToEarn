@@ -47,6 +47,7 @@ export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
  * @param pubRecord
  */
 export async function icpCreateVideoPubRecord(pubRecord: Partial<VideoPul>) {
+  console.log(pubRecord);
   const { topics, cleanedString } = parseTopicString(pubRecord.desc || '');
   pubRecord.topics = [...new Set(pubRecord.topics?.concat(topics))];
   pubRecord.desc = cleanedString;

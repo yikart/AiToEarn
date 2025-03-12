@@ -225,7 +225,7 @@ const VideoPubSetModal = memo(
                 条，失败 {okRes.length - successList.length} 条
               </>
             ),
-            duration: 10000,
+            showProgress: true,
             btn: (
               <Space>
                 <Button

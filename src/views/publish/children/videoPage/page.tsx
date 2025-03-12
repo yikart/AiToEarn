@@ -1,17 +1,16 @@
-import styles from "./video.module.scss";
-import VideoChoose from "@/components/Choose/VideoChoose";
-import { useEffect, useRef, useState } from "react";
-import { Button, Popconfirm, Spin, Tooltip } from "antd";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import ChooseAccountModule from "@/views/publish/components/ChooseAccountModule/ChooseAccountModule";
-import NoChoosePage from "@/views/publish/children/videoPage/components/NoChoosePage";
-import { useVideoPageStore } from "@/views/publish/children/videoPage/useVideoPageStore";
-import { useShallow } from "zustand/react/shallow";
-import { PubType } from "@@/publish/PublishEnum";
-import VideoChooseItem from "@/views/publish/children/videoPage/components/VideoChooseItem";
-import CommonPubSetting from "@/views/publish/children/videoPage/components/CommonPubSetting";
-import VideoPubSetModal from "@/views/publish/children/videoPage/components/VideoPubSetModal/VideoPubSetModal";
-import { AccountType } from "../../../../../commont/AccountEnum";
+import styles from './video.module.scss';
+import VideoChoose from '@/components/Choose/VideoChoose';
+import { useEffect, useRef, useState } from 'react';
+import { Button, Popconfirm, Spin, Tooltip } from 'antd';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import ChooseAccountModule from '@/views/publish/components/ChooseAccountModule/ChooseAccountModule';
+import NoChoosePage from '@/views/publish/children/videoPage/components/NoChoosePage';
+import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
+import { useShallow } from 'zustand/react/shallow';
+import { PubType } from '@@/publish/PublishEnum';
+import VideoChooseItem from '@/views/publish/children/videoPage/components/VideoChooseItem';
+import CommonPubSetting from '@/views/publish/children/videoPage/components/CommonPubSetting';
+import VideoPubSetModal from '@/views/publish/children/videoPage/components/VideoPubSetModal/VideoPubSetModal';
 
 export enum AccountChooseType {
   // 多选
