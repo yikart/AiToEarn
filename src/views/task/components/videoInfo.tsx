@@ -27,6 +27,7 @@ import {
 } from '@ant-design/icons';
 import ChooseAccountModule from '@/views/publish/components/ChooseAccountModule/ChooseAccountModule';
 import { ipcDownFile } from '@/icp/tools';
+import { AccountType } from '@@/AccountEnum';
 
 const FILE_BASE_URL = import.meta.env.VITE_APP_FILE_HOST;
 
@@ -193,6 +194,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
             </div>
           ) : null
         }
+        allowPlatSet={new Set([AccountType.Douyin])}
       />
 
       <Modal
