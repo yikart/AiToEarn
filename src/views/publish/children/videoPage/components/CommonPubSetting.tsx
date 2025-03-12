@@ -97,6 +97,9 @@ const CommonPubSetting = memo(
           <p className="commonPubSetting-tip">
             支持常用图片格式上传，暂不支持 GIF，上传后图片将按平台要求自动裁剪
           </p>
+          <p className="commonPubSetting-tip">
+            未上传任何图片的情况下，默认选择视频第一帧。
+          </p>
 
           <h2>
             标题
