@@ -45,4 +45,13 @@ export const toolsApi = {
       isToken: true,
     });
   },
+
+  /**
+   * 上传文件
+   */
+  uploadFile() {
+    return http.post<{
+      name: string;
+    }>('/oss/upload/permanent');
+  },
 };

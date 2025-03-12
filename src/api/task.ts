@@ -46,7 +46,7 @@ export const taskApi = {
   /**
    * 申请任务
    */
-  taskApply<T extends TaskDataInfo>(id: string) {
+  taskApply<T extends TaskDataInfo>(id: string) { 
     return http.post<Task<T>>(
       `/tasks/apply/${id}`,
       {},

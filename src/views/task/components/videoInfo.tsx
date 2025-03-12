@@ -16,17 +16,17 @@ import {
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { taskApi } from '@/api/task';
 import styles from './videoInfo.module.scss';
-import { 
-  ClockCircleOutlined, 
-  TeamOutlined, 
+import {
+  ClockCircleOutlined,
+  TeamOutlined,
   TagOutlined,
   DollarOutlined,
   PlayCircleOutlined,
   CopyOutlined,
-  LoadingOutlined
+  LoadingOutlined,
 } from '@ant-design/icons';
-import ChooseAccountModule from "@/views/publish/components/ChooseAccountModule/ChooseAccountModule";
-import { icpDownloadFileToTemp } from '@/icp/file';
+import ChooseAccountModule from '@/views/publish/components/ChooseAccountModule/ChooseAccountModule';
+import { ipcDownFile } from '@/icp/tools';
 
 const FILE_BASE_URL = import.meta.env.VITE_APP_FILE_HOST;
 
@@ -69,10 +69,11 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  
+
   // 复制任务ID
   const copyTaskId = (id: string) => {
-    navigator.clipboard.writeText(id)
+    navigator.clipboard
+      .writeText(id)
       .then(() => {
         message.success('任务ID已复制到剪贴板');
       })
@@ -83,7 +84,9 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
 
   // 账户选择弹框显示隐藏状态
   const [chooseAccountOpen, setChooseAccountOpen] = useState(false);
-  const [accountListChoose, setAccountListChoose] = useState<AccountModel[]>([]);
+  const [accountListChoose, setAccountListChoose] = useState<AccountModel[]>(
+    [],
+  );
 
   // 下载文件到本地并发布
   const downloadAndPublish = async (aList: any) => {
@@ -97,26 +100,32 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
     try {
       console.log('开始下载文件...');
       message.loading('正在下载视频和封面图片，请稍候...', 0);
-      
+
       // 构建完整的文件URL
       const videoUrl = FILE_BASE_URL + taskInfo.dataInfo.videoUrl;
       const coverUrl = FILE_BASE_URL + taskInfo.imageUrl;
-      
+
       console.log('下载视频:', videoUrl);
       console.log('下载封面:', coverUrl);
-      
+
       // 使用IPC接口下载视频文件到本地临时目录
-      const localVideoPath = await icpDownloadFileToTemp(videoUrl, 'video');
-      
+      const localVideoPath = await ipcDownFile(
+        videoUrl,
+        'default_filename1',
+      );
+
       // 使用IPC接口下载封面图片到本地临时目录
-      const localCoverPath = await icpDownloadFileToTemp(coverUrl, 'image');
-      
+      const localCoverPath = await ipcDownFile(
+        coverUrl,
+        'default_filename2',
+      );
+
       console.log('视频已下载到:', localVideoPath);
       console.log('封面已下载到:', localCoverPath);
-      
+
       message.destroy();
       message.success('文件下载完成，开始发布...');
-      
+
       // 创建一级记录
       const recordRes = await icpCreatePubRecord({
         title: taskInfo.dataInfo.title || '/',
@@ -128,8 +137,10 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
 
       // 创建二级记录
       for (const vData of aList) {
-        const account = vData.account!;
-        
+        // console.log('vData', vData)
+        const account = vData;
+        // console.log('account', account)
+
         await icpCreateVideoPubRecord({
           type: account.type,
           accountId: account.id,
@@ -139,25 +150,24 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
           // topics: vData.pubParams.topics,
           desc: taskInfo.dataInfo.desc,
           videoPath: localVideoPath,
-          coverPath: localCoverPath
+          coverPath: localCoverPath,
         });
       }
 
       // 发布视频
       const okRes = await icpPubVideo(recordRes.id);
-      
+
       // 成功数据
       const successList = okRes.filter((v) => v.code === 1);
-      
+
       console.log('发布成功', successList);
       console.log('发布结果', okRes);
-      
+
       if (successList.length > 0) {
         message.success(`成功发布到${successList.length}个平台`);
       } else {
         message.warning('发布完成，但没有成功发布的平台');
       }
-      
     } catch (error) {
       console.error('下载或发布过程中出错:', error);
       message.error('下载或发布过程中出错，请重试');
@@ -176,7 +186,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
         onPlatConfirm={async (aList) => {
           console.log('选择的账号:', aList);
           setAccountListChoose(aList);
-          
+
           // 下载文件并发布
           await downloadAndPublish(aList);
         }}
@@ -207,8 +217,8 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                 {taskInfo.title}
                 <span className={styles.taskId}>
                   ID: {taskInfo.id}
-                  <CopyOutlined 
-                    className={styles.copyIcon} 
+                  <CopyOutlined
+                    className={styles.copyIcon}
                     onClick={() => copyTaskId(taskInfo.id)}
                   />
                 </span>
@@ -217,7 +227,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                 {taskInfo.dataInfo?.type || '视频任务'}
               </Tag>
             </div>
-            
+
             <div className={styles.taskInfoContent}>
               <Row gutter={24}>
                 <Col span={12}>
@@ -235,7 +245,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                     <div className={styles.videoCaption}>视频封面预览</div>
                   </div>
                 </Col>
-                
+
                 <Col span={12}>
                   <div className={styles.taskDetails}>
                     <div className={styles.taskDetail}>
@@ -245,7 +255,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                         {TaskTypeName.get(taskInfo.type) || '视频任务'}
                       </span>
                     </div>
-                    
+
                     <div className={styles.taskDetail}>
                       <ClockCircleOutlined className={styles.detailIcon} />
                       <span className={styles.detailLabel}>截止时间:</span>
@@ -253,7 +263,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                         {taskInfo.deadline || '2025/03/17'}
                       </span>
                     </div>
-                    
+
                     <div className={styles.taskDetail}>
                       <TeamOutlined className={styles.detailIcon} />
                       <span className={styles.detailLabel}>招募人数:</span>
@@ -261,7 +271,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                         {taskInfo.maxRecruits || 100}
                       </span>
                     </div>
-                    
+
                     <div className={styles.taskDetail}>
                       <DollarOutlined className={styles.detailIcon} />
                       <span className={styles.detailLabel}>任务奖励:</span>
@@ -269,7 +279,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                         ¥{taskInfo.reward || 5}
                       </span>
                     </div>
-                    
+
                     <div className={styles.taskDetail}>
                       <span className={styles.detailLabel}>任务要求:</span>
                       <span className={styles.detailValue}>
@@ -279,17 +289,19 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                   </div>
                 </Col>
               </Row>
-              
+
               <Divider />
-              
+
               <div className={styles.taskDescription}>
                 <h3 className={styles.sectionTitle}>任务描述</h3>
-                <div 
+                <div
                   className={styles.descriptionContent}
-                  dangerouslySetInnerHTML={{ __html: taskInfo.description || '暂无描述' }}
+                  dangerouslySetInnerHTML={{
+                    __html: taskInfo.description || '暂无描述',
+                  }}
                 />
               </div>
-              
+
               {taskInfo.dataInfo && (
                 <>
                   <Divider />
@@ -298,36 +310,42 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                     <div className={styles.videoInfo}>
                       <div className={styles.videoInfoItem}>
                         <span className={styles.videoInfoLabel}>视频标题:</span>
-                        <span className={styles.videoInfoValue}>{taskInfo.dataInfo.title || '未知'}</span>
+                        <span className={styles.videoInfoValue}>
+                          {taskInfo.dataInfo.title || '未知'}
+                        </span>
                       </div>
-                      
+
                       <div className={styles.videoInfoItem}>
                         <span className={styles.videoInfoLabel}>视频描述:</span>
-                        <span className={styles.videoInfoValue}>{taskInfo.dataInfo.desc || '暂无描述'}</span>
+                        <span className={styles.videoInfoValue}>
+                          {taskInfo.dataInfo.desc || '暂无描述'}
+                        </span>
                       </div>
                     </div>
                   </div>
                 </>
               )}
             </div>
-            
+
             <div className={styles.taskInfoFooter}>
               <div className={styles.taskStatus}>
                 <span className={styles.statusLabel}>任务状态:</span>
-                <Tag color="#87d068">{TaskStatusName.get(taskInfo.status) || '进行中'}</Tag>
+                <Tag color="#87d068">
+                  {TaskStatusName.get(taskInfo.status) || '进行中'}
+                </Tag>
               </div>
-              
+
               <div className={styles.taskActions}>
-                <Button 
-                  key="back" 
+                <Button
+                  key="back"
                   onClick={handleCancel}
                   className={styles.cancelButton}
                 >
                   取消
                 </Button>
-                <Button 
-                  key="submit" 
-                  type="primary" 
+                <Button
+                  key="submit"
+                  type="primary"
                   onClick={taskApply}
                   className={styles.applyButton}
                 >

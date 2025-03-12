@@ -19,3 +19,17 @@ export async function ipcGetVideoCover(path: string, time?: string) {
   );
   return res;
 }
+
+/**
+ * 下载文件到本地
+ * @param url
+ * @param name
+ */
+export async function ipcDownFile(url: string, name?: string) {
+  const res: string = await window.ipcRenderer.invoke(
+    'ICP_TOOL_DOWN_FILE',
+    url,
+    name,
+  );
+  return res;
+}

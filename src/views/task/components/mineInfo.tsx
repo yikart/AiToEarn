@@ -31,6 +31,7 @@ import {
 import dayjs from 'dayjs';
 
 const FILE_BASE_URL = import.meta.env.VITE_APP_FILE_HOST;
+const VITE_APP_URL = import.meta.env.VITE_APP_URL;
 
 export interface MineTaskInfoRef {
   init: (
@@ -275,7 +276,7 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
                     fileList={fileList}
                     onChange={handleUploadChange}
                     beforeUpload={beforeUpload}
-                    action="/api/upload"
+                    action={VITE_APP_URL+"/oss/upload/permanent"}
                     multiple
                     maxCount={5}
                   >

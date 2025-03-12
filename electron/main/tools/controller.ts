@@ -5,6 +5,7 @@
  * @LastEditors: nevin
  * @Description:
  */
+import { FileUtils } from '../../util/file';
 import { FFmpegVideoUtil } from '../../util/ffmpeg/video';
 import { Controller, Icp, Inject } from '../core/decorators';
 import { ToolsService } from './service';
@@ -24,5 +25,23 @@ export class ToolsController {
     time?: string, // 添加可选参数 time
   ): Promise<string> {
     return await FFmpegVideoUtil.getVideoCover(path, time);
+  }
+
+  /**
+   * 下载文件
+   */
+  @Icp('ICP_TOOL_DOWN_FILE')
+  async downFile(
+    event: Electron.IpcMainInvokeEvent,
+    url: string,
+    name?: string,
+  ): Promise<string> {
+    try {
+      const res = await FileUtils.downFile(url, name);
+      return res;
+    } catch (error) {
+      console.log('--- ICP_TOOL_DOWN_FILE error ---', error);
+      return '';
+    }
   }
 }

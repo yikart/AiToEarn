@@ -141,6 +141,22 @@ class PlatController {
     const platform = this.platforms.get(params.account!.type)!;
     return await platform.getUsers(params);
   }
+
+  /**
+   * 获取作品列表
+   * @param account
+   * @param pageInfo
+   */
+  public async getWorkList(
+    account: AccountModel,
+    pageInfo: {
+      pageNo: number;
+      pageSize: number;
+    },
+  ) {
+    const platform = this.platforms.get(account.type)!;
+    return await platform.getWorkList(account, pageInfo);
+  }
 }
 
 const platController = new PlatController();
