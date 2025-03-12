@@ -7,6 +7,7 @@
  */
 import {
   AccountInfoTypeRV,
+  CommentData,
   DashboardData,
   IAccountInfoParams,
   IGetLocationDataParams,
@@ -95,7 +96,13 @@ export abstract class PlatformBase {
   /**
    * 获取评论列表
    */
-  abstract getCommentList(account: AccountModel, dataId: string): Promise<any>;
+  abstract getCommentList(
+    account: AccountModel,
+    dataId: string,
+  ): Promise<{
+    list: CommentData[];
+    count: number;
+  }>;
 
   /**
    * 在该平台发布视频

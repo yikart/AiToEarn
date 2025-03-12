@@ -5,6 +5,7 @@ import { FileUtils } from '../../util/file';
 import { CookieToString, getFileContent } from '../utils';
 import requestNet from '../requestNet';
 import {
+  SphGetCommentListResponse,
   SphGetPostListResponse,
   WeChatLocationData,
   WeChatVideoApiResponse,
@@ -1366,7 +1367,7 @@ export class ShipinhaoService {
    * @returns
    */
   async getCommentList(cookie: Electron.Cookie[], exportId: string) {
-    return await requestNet<WeChatVideoUserData>({
+    const res = await requestNet<SphGetCommentListResponse>({
       url: `https://channels.weixin.qq.com/micro/interaction/cgi-bin/mmfinderassistant-bin/comment/comment_list?_rid=67d032a7-6c8f7126`,
       headers: {
         cookie: CookieToString(cookie),
@@ -1387,6 +1388,12 @@ export class ShipinhaoService {
         _log_finder_uin: '',
       },
     });
+
+    const ret = res.data.data;
+
+    console.log('----- ', ret.comment[0].levelTwoComment);
+
+    return res;
   }
 
   /**

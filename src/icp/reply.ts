@@ -5,11 +5,44 @@
  * @LastEditors: nevin
  * @Description:
  */
+export type WorkData = {
+  dataId: string;
+  readCount?: number;
+  likeCount?: number;
+  collectCount?: number;
+  forwardCount?: number;
+  commentCount?: number; // 评论数量
+  income?: number;
+  title?: string;
+  desc?: string;
+  coverUrl?: string;
+  videoUrl?: string;
+};
 
 /**
  * 获取作品列表
  */
-export async function ipcCreatorList(accountId: number) {
-  const res = await window.ipcRenderer.invoke('ICP_CREATOR_LIST', accountId);
+export async function icpCreatorList(
+  accountId: number,
+  pageInfo: {
+    pageNo: number;
+    pageSize: number;
+  },
+) {
+  const res: {
+    list: WorkData[];
+    count: number;
+  } = await window.ipcRenderer.invoke('ICP_CREATOR_LIST', accountId, pageInfo);
+  return res;
+}
+
+/**
+ * 获取作品列表
+ */
+export async function icpGetCommentList(accountId: number, dataId: string) {
+  const res: {
+    list: WorkData[];
+    count: number;
+  } = await window.ipcRenderer.invoke('ICP_COMMENT_LIST', accountId, dataId);
   return res;
 }

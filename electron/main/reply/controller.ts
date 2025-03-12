@@ -5,10 +5,10 @@
  * @LastEditors: nevin
  * @Description: reply Reply
  */
-import { AccountType } from '../../../commont/AccountEnum';
 import { AccountService } from '../account/service';
 import { Controller, Icp, Inject } from '../core/decorators';
 import platController from '../plat';
+import { WorkData } from '../plat/plat.type';
 import { ReplyService } from './service';
 
 @Controller()
@@ -30,11 +30,34 @@ export class ReplyController {
       pageNo: number;
       pageSize: number;
     },
+  ): Promise<{
+    list: WorkData[];
+    count: number;
+  }> {
+    const account = await this.accountService.getAccountById(accountId);
+    if (!account)
+      return {
+        list: [],
+        count: 0,
+      };
+
+    const res = await platController.getWorkList(account, pageInfo);
+    return res;
+  }
+
+  /**
+   * 获取评论列表
+   */
+  @Icp('ICP_COMMENT_LIST')
+  async getCommentList(
+    event: Electron.IpcMainInvokeEvent,
+    accountId: number,
+    dataId: string,
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 
-    const res = await platController.getWorkList(account, pageInfo);
+    const res = await platController.getCommentList(account, dataId);
     return res;
   }
 }

@@ -157,6 +157,16 @@ class PlatController {
     const platform = this.platforms.get(account.type)!;
     return await platform.getWorkList(account, pageInfo);
   }
+
+  /**
+   * 获取评论列表
+   * @param account
+   * @param pageInfo
+   */
+  public async getCommentList(account: AccountModel, dataId: string) {
+    const platform = this.platforms.get(account.type)!;
+    return await platform.getCommentList(account, dataId);
+  }
 }
 
 const platController = new PlatController();

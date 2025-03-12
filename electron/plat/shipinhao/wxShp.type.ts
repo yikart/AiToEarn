@@ -167,3 +167,31 @@ export interface SphGetPostListResponse {
     totalCount: number;
   };
 }
+
+export interface CommentInfo {
+  levelTwoComment: CommentInfo[]; // 二级评论
+  commentId: string; // '14610404657143548189';
+  commentNickname: string; // '义务之后是金钱';
+  commentContent: string; // '可爱吧';
+  commentHeadurl: string; // 'http://wx.qlogo.cn/finderhead/Q3auHgzwzM5OEKzc5UdzOUJUbOsaCtSkcCctCb9ddrCKiag4ZibQ73oA/0';
+  commentCreatetime: string; // '1741695959';
+  commentLikeCount: number; // 0;
+  lastBuff: string; // '';
+  downContinueFlag: number; //  0;
+  visibleFlag: number; // 0;
+  readFlag: true;
+  displayFlag: number; // 514;
+  blacklistFlag: number; // 0;
+  likeFlag: number; // 0;
+}
+
+export interface SphGetCommentListResponse {
+  errCode: number;
+  errMsg: string;
+  data: {
+    comment: CommentInfo[];
+    lastBuff: string; // 'AATVfYAEAAABAAAAAADWiCo0vu4ltcc8lXzRZyAAAADzrBEppsryM1QLZ+dDmBLm9XwcA0exd+eEMM5e+lsrR+oHHo2NIZY18J6IkJAbntQxZiEBkXZ24Y1hrnqW334ItvllglnXoA==',
+    commentCount: number; // 2;
+    downContinueFlag: number; // 0;
+  };
+}

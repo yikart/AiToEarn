@@ -161,9 +161,22 @@ export class WxSph extends PlatformBase {
   async getCommentList(account: AccountModel, dataId: string) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await shipinhaoService.getCommentList(cookie, dataId);
-    console.log('------ res', res);
 
-    return res;
+    const dataList = res.data.data.comment.map((item) => {
+      return {
+        dataId: item.commentId,
+        commentId: item.commentId,
+        content: item.commentContent,
+        nikeName: item.commentNickname,
+        headUrl: item.commentHeadurl,
+        data: item,
+      };
+    });
+
+    return {
+      list: dataList,
+      count: res.data.data.commentCount,
+    };
   }
 
   async getUsers(params: IGetUsersParams) {

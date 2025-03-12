@@ -171,7 +171,10 @@ export class Kwai extends PlatformBase {
 
   async getCommentList(account: AccountModel, dataId: string) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    return [];
+    return {
+      list: [],
+      count: 0,
+    };
   }
 
   async loginCheck(account: AccountModel): Promise<boolean> {
