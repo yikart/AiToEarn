@@ -322,6 +322,96 @@ class KwaiPub {
       },
     });
   }
+
+  // 获取评论列表
+  async getCommentList(
+    cookies: Electron.Cookie[],
+    body: {
+      photoId: '3xsq95w5uxvjx7q';
+      sortType: '';
+      selectedComment: false;
+      'kuaishou.web.cp.api_ph': '69799694cfd7e689847219cf678dec275266';
+    },
+  ) {
+    return await requestNet<{
+      result: 1;
+      currentTime: 1741705055540;
+      'host-name': 'public-bjxy-amd-kcs-node26.idcyz.hb1.kwaidc.com';
+      data: {
+        photoList: [
+          {
+            photoId: '3xsq95w5uxvjx7q';
+            title: '';
+            cover: 'https://p2.a.yximgs.com/upic/2025/02/24/21/BMjAyNTAyMjQyMTQ4NDFfNzk4MzE5MzUxXzE1Nzc4MzY4MTM2MV8wXzM=_B05f8067d6793fd47dcbb196af577f7ae.jpg?tag=1-1741705055-nil-0-dcmp1mb85g-21787ddd08616c9d&clientCacheKey=3xsq95w5uxvjx7q.jpg&di=b7c6874b&bp=10000';
+            playCount: 6;
+            likeCount: 0;
+            commentCount: 2;
+            uploadTime: 1740404944454;
+            duration: 13300;
+            isVideo: true;
+            isSettingSelectedComment: false;
+            photoSelectedTips: null;
+          },
+          {
+            photoId: '3xezykcnif5a6x9';
+            title: '第一个';
+            cover: 'https://p2.a.yximgs.com/upic/2018/01/06/23/BMjAxODAxMDYyMzUxMThfNzk4MzE5MzUxXzQ1MTkzNDUxMDRfMl8z_Ac616ac2c4d4040f79b74ba7a85862176.jpg?tag=1-1741705055-nil-0-o0w3ceakdu-72258dc0921fa396&clientCacheKey=3xezykcnif5a6x9.jpg&di=b7c6874b&bp=10000';
+            playCount: 4;
+            likeCount: 0;
+            commentCount: 0;
+            uploadTime: 1515253882684;
+            duration: 11650;
+            isVideo: true;
+            isSettingSelectedComment: false;
+            photoSelectedTips: null;
+          },
+        ];
+        pcursor: 1515253882683;
+        totalCount: 2;
+      };
+      message: '成功';
+    }>({
+      url: `https://cp.kuaishou.com/rest/cp/creator/comment/commentList?__NS_sig3=a7b7f0c019bb25938afaf9f86e97581522c66e82e6e6e4e4ebeae9f3`,
+      method: 'POST',
+      headers: {
+        cookie: CookieToString(cookies),
+      },
+      body,
+    });
+  }
+
+  /**
+   * 添加评论
+   * @param cookie
+   * @returns
+   */
+  async creatorCommentAdd(
+    cookie: Electron.Cookie[],
+    body: {
+      content: '666';
+      photoId: '3xsq95w5uxvjx7q';
+      replyToCommentId?: 969549966791;
+      replyTo?: 798319351;
+      'kuaishou.web.cp.api_ph': '69799694cfd7e689847219cf678dec275266';
+    },
+  ) {
+    return await requestNet<{
+      result: 1;
+      currentTime: 1741704937529;
+      'host-name': 'public-bjx-c26-kce-node717.idchb1az1.hb1.kwaidc.com';
+      data: {
+        commentId: 969618657810;
+      };
+      message: '成功';
+    }>({
+      url: 'https://cp.kuaishou.com/rest/cp/creator/comment/add?__NS_sig3=a9b9fecedad12b9d75f4f7f64ed9b1c62cc8608ce8e8eaeae5e4e7fd',
+      method: 'POST',
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      body,
+    });
+  }
 }
 
 export const kwaiPub = new KwaiPub();
