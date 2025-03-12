@@ -10,7 +10,6 @@ import { getAssetPath } from '../util/index';
 import windowOperate from '../util/windowOperate';
 import { logger } from '../global/log';
 import { SplashWindow } from './splash';
-import { registerFileHandlers } from './ipc/fileHandler';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -126,9 +125,6 @@ app.whenReady().then(async () => {
     update(bWin);
     views(bWin);
     windowOperate.init(bWin);
-
-    // 注册文件处理IPC
-    registerFileHandlers();
   } catch (error) {
     logger.error('Failed to start application:', error);
     app.quit();

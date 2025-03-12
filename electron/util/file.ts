@@ -3,6 +3,7 @@ import mimeTypes from 'mime-types';
 import ffmpeg from 'fluent-ffmpeg';
 import { ffprobePath } from './ffprobe_static';
 import path from 'path';
+import { net } from 'electron';
 
 // 文件工具类
 // 设置 ffprobe 路径
@@ -245,19 +246,61 @@ export class FileUtils {
           process.env.HOME || '',
           'Library',
           'Application Support',
-          'ktt-app',
+          'att',
         );
       }
       case 'win32': {
-        return path.join(process.env.APPDATA || '', 'ktt-app');
+        return path.join(process.env.APPDATA || '', 'att');
       }
       case 'linux': {
-        return path.join(process.env.HOME || '', 'ktt-app');
+        return path.join(process.env.HOME || '', 'att');
       }
       default: {
         console.log('Unsupported platform!');
         process.exit(1);
       }
     }
+  }
+
+  /**
+   * 下载文件
+   * @param url
+   * @param name
+   * @returns
+   */
+  static async downFile(url: string, name?: string): Promise<string> {
+    const dirPath = this.getAppDataPath();
+    console.log('------- dirPath', dirPath);
+
+    await this.checkDirectories(dirPath);
+
+    return new Promise((resolve, reject) => {
+      const request = net.request(url);
+      let fileStream: NodeJS.WritableStream | null = null;
+      let filePath: string;
+
+      request.on('response', (response) => {
+        if (response.statusCode !== 200) {
+          return reject(new Error(`下载失败: 状态码 ${response.statusCode}`));
+        }
+
+        filePath = path.join(dirPath, name || 'default_filename.mp4');
+        fileStream = fs.createWriteStream(filePath);
+
+        response.on('end', () => {
+          if (fileStream) {
+            fileStream.end();
+            resolve(filePath); // 确保filePath已定义
+          }
+        });
+      });
+
+      request.on('error', (err) => {
+        reject(err);
+      });
+
+      // 必须调用request.end()来发送请求
+      request.end();
+    });
   }
 }
