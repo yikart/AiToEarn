@@ -159,6 +159,7 @@ export default function Page() {
                     </Tooltip>
                   </div>
                   <Button
+                    disabled={task.isAccepted}
                     type="primary"
                     className={styles.applyButton}
                     onClick={() => Ref_TaskInfo.current?.init(task)}

@@ -5,6 +5,8 @@ import { FileUtils } from '../../util/file';
 import { CookieToString, getFileContent } from '../utils';
 import requestNet from '../requestNet';
 import {
+  CommentInfo,
+  SphGetCommentListResponse,
   SphGetPostListResponse,
   WeChatLocationData,
   WeChatVideoApiResponse,
@@ -1362,34 +1364,34 @@ export class ShipinhaoService {
   /**
    * 获取评论列表
    * @param cookie
-   * @param keyword
-   * @param page
+   * @param exportId
    * @returns
    */
-  async getCommentList(
-    cookie: Electron.Cookie[],
-    body: {
-      commentSelection: false;
-      exportId: 'export/UzFfAgtgekIEAQAAAAAAOhIpzVxlAQAAAAstQy6ubaLX4KHWvLEZgBPExKFQKCowfoSJzNPgMJrD53jJrD_NBzgU3Ncr3usg';
-      forMcn: false;
-      lastBuff: '';
-      pluginSessionId: null;
-      rawKeyBuff: null;
-      reqScene: 7;
-      scene: 7;
-      timestamp: '1741697703260';
-      _log_finder_id: 'v2_060000231003b20faec8c5e38b10cbd6cb06ef3cb077ad5b14a8587570bc414e95c4b7e034ea@finder';
-      _log_finder_uin: '';
-    },
-  ) {
-    return await requestNet<WeChatVideoUserData>({
+  async getCommentList(cookie: Electron.Cookie[], exportId: string) {
+    const res = await requestNet<SphGetCommentListResponse>({
       url: `https://channels.weixin.qq.com/micro/interaction/cgi-bin/mmfinderassistant-bin/comment/comment_list?_rid=67d032a7-6c8f7126`,
       headers: {
         cookie: CookieToString(cookie),
       },
       method: 'POST',
-      body,
+      body: {
+        commentSelection: false,
+        exportId,
+        forMcn: false,
+        lastBuff: '',
+        pluginSessionId: null,
+        rawKeyBuff: null,
+        reqScene: 7,
+        scene: 7,
+        timestamp: Date.now() + '',
+        _log_finder_id:
+          'v2_060000231003b20faec8c5e38b10cbd6cb06ef3cb077ad5b14a8587570bc414e95c4b7e034ea@finder',
+        _log_finder_uin: '',
+      },
     });
+
+    const ret = res.data.data;
+    return ret;
   }
 
   /**
@@ -1401,45 +1403,33 @@ export class ShipinhaoService {
    */
   async createComment(
     cookie: Electron.Cookie[],
-    body: {
-      comment: {
-        // 空对象是直接回复作品
-        commentContent: '可爱吧';
-        commentCreatetime: '1741695959';
-        commentHeadurl: 'https://wx.qlogo.cn/finderhead/Q3auHgzwzM5OEKzc5UdzOUJUbOsaCtSkcCctCb9ddrCKiag4ZibQ73oA/0';
-        commentId: '14610404657143548189';
-        commentLikeCount: 0;
-        commentNickname: '义务之后是金钱';
-        displayFlag: 2;
-        levelTwoComment: [];
-        replyContent: '';
-        replyNickname: '';
-        username: 'v2_060000231003b20faec8c5e38b10cbd6cb06ef3cb077ad5b14a8587570bc414e95c4b7e034ea@finder';
-        visibleFlag: 1;
-      };
-      content: '可爱吧';
-      exportId: 'export/UzFfAgtgekIEAQAAAAAAOhIpzVxlAQAAAAstQy6ubaLX4KHWvLEZgBPExKFQKCowfoSJzNPgMJrD53jJrD_NBzgU3Ncr3usg';
-      pluginSessionId: null;
-      rawKeyBuff: null;
-      replyCommentId: '';
-      reqScene: 7;
-      rootCommentId: '';
-      scene: 7;
-      timestamp: '1741695962126';
-      _log_finder_id: 'v2_060000231003b20faec8c5e38b10cbd6cb06ef3cb077ad5b14a8587570bc414e95c4b7e034ea@finder';
-      _log_finder_uin: '';
-    },
-    rid: string,
+    exportId: string,
+    content: string,
+    comment: Partial<CommentInfo> = {},
   ) {
     return await requestNet<WeChatVideoUserData>({
-      url: `https://channels.weixin.qq.com/micro/interaction/cgi-bin/mmfinderassistant-bin/comment/create_comment?_rid=${rid}`,
+      url: `https://channels.weixin.qq.com/micro/interaction/cgi-bin/mmfinderassistant-bin/comment/create_comment?_rid=67d032a7-6c8f7126`,
       headers: {
         cookie: CookieToString(cookie),
       },
       method: 'POST',
       body: {
         clientId: this.getUniqueTaskId(),
-        ...body,
+        body: {
+          comment,
+          content,
+          exportId,
+          pluginSessionId: null,
+          rawKeyBuff: null,
+          replyCommentId: '',
+          reqScene: 7,
+          rootCommentId: '',
+          scene: 7,
+          timestamp: Date.now() + '',
+          _log_finder_id:
+            'v2_060000231003b20faec8c5e38b10cbd6cb06ef3cb077ad5b14a8587570bc414e95c4b7e034ea@finder',
+          _log_finder_uin: '',
+        },
       },
     });
   }

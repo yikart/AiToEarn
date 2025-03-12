@@ -8,6 +8,7 @@
 import { PlatformBase } from '../../PlatformBase';
 import {
   AccountInfoTypeRV,
+  CookiesType,
   DashboardData,
   IAccountInfoParams,
   IGetLocationDataParams,
@@ -166,6 +167,34 @@ export class Kwai extends PlatformBase {
     return {
       dataId: '',
     };
+  }
+
+  async getCommentList(account: AccountModel, dataId: string) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    return {
+      list: [],
+      count: 0,
+    };
+  }
+
+  async createComment(
+    account: AccountModel,
+    dataId: string, // 作品ID
+    content: string,
+  ) {
+    return false;
+  }
+
+  async replyComment(
+    account: AccountModel,
+    commentId: string,
+    content: string,
+    option: {
+      dataId?: string; // 作品ID
+      data: any; // 辅助数据,原数据
+    },
+  ) {
+    return false;
   }
 
   async loginCheck(account: AccountModel): Promise<boolean> {

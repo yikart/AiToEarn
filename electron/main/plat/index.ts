@@ -157,6 +157,48 @@ class PlatController {
     const platform = this.platforms.get(account.type)!;
     return await platform.getWorkList(account, pageInfo);
   }
+
+  /**
+   * 获取评论列表
+   * @param account
+   * @param pageInfo
+   */
+  public async getCommentList(account: AccountModel, dataId: string) {
+    const platform = this.platforms.get(account.type)!;
+    return await platform.getCommentList(account, dataId);
+  }
+
+  /**
+   * 创建评论
+   * @param account
+   * @param pageInfo
+   */
+  public async createComment(
+    account: AccountModel,
+    dataId: string,
+    content: string,
+  ) {
+    const platform = this.platforms.get(account.type)!;
+    return await platform.createComment(account, dataId, content);
+  }
+
+  /**
+   * 回复评论
+   * @param account
+   * @param pageInfo
+   */
+  public async replyComment(
+    account: AccountModel,
+    commentId: string,
+    content: string,
+    option: {
+      dataId?: string; // 作品ID
+      data: any; // 辅助数据,原数据
+    },
+  ) {
+    const platform = this.platforms.get(account.type)!;
+    return await platform.replyComment(account, commentId, content, option);
+  }
 }
 
 const platController = new PlatController();

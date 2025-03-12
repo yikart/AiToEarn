@@ -7,6 +7,7 @@
  */
 import {
   AccountInfoTypeRV,
+  CommentData,
   DashboardData,
   IAccountInfoParams,
   IGetLocationDataParams,
@@ -92,7 +93,42 @@ export abstract class PlatformBase {
    */
   abstract getWorkData(dataId: string): Promise<WorkData>;
 
-  // 在该平台发布视频
+  /**
+   * 获取评论列表
+   */
+  abstract getCommentList(
+    account: AccountModel,
+    dataId: string,
+  ): Promise<{
+    list: CommentData[];
+    count: number;
+  }>;
+
+  /**
+   * 创建评论
+   */
+  abstract createComment(
+    account: AccountModel,
+    dataId: string, // 作品ID
+    content: string,
+  ): Promise<boolean>;
+
+  /**
+   * 回复评论
+   */
+  abstract replyComment(
+    account: AccountModel,
+    commentId: string,
+    content: string,
+    option: {
+      dataId?: string; // 作品ID
+      data: any; // 辅助数据,原数据
+    },
+  ): Promise<boolean>;
+
+  /**
+   * 在该平台发布视频
+   */
   abstract videoPublish(
     params: IVideoPublishParams,
     // 获取发布进度的回调函数

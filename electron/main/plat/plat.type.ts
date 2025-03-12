@@ -53,6 +53,18 @@ export type WorkData = {
   videoUrl?: string;
 };
 
+// 评论
+export type CommentData = {
+  dataId: string;
+  commentId: string;
+  parentCommentId?: string; // 上级评论ID
+  content: string;
+  likeCount?: number; // 点赞次数
+  nikeName?: string;
+  headUrl?: string;
+  data: any; // 原数据
+};
+
 // 视频发布进度回调函数类型
 export type VideoCallbackType = (progress: number, msg?: string) => void;
 

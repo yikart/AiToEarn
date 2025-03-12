@@ -23,6 +23,7 @@ import { PublishVideoResult } from '../../module';
 import { shipinhaoService } from '../../../../plat/shipinhao';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
+import { CommentInfo } from '../../../../plat/shipinhao/wxShp.type';
 
 export class WxSph extends PlatformBase {
   constructor() {
@@ -128,16 +129,13 @@ export class WxSph extends PlatformBase {
     pageInfo: { pageNo: number; pageSize: number },
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const res = await shipinhaoService.getPostList(cookie, {
-      pageNo: 1,
-      pageSize: 10,
-    });
+    const res = await shipinhaoService.getPostList(cookie, pageInfo);
 
     const listData: WorkData[] = res.list.map((item) => {
       return {
         dataId: item.objectId,
         commentCount: item.commentCount,
-        title: item.desc.shortTitle[0] || '',
+        title: item.desc.shortTitle[0]?.shortTitle || '',
         desc: item.desc.description,
         coverUrl: item.desc.media[0]?.coverUrl || '',
         videoUrl: item.desc.media[0]?.url || '',
@@ -159,6 +157,57 @@ export class WxSph extends PlatformBase {
     return {
       dataId: '',
     };
+  }
+
+  async getCommentList(account: AccountModel, dataId: string) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await shipinhaoService.getCommentList(cookie, dataId);
+
+    const dataList = res.comment.map((item) => {
+      return {
+        dataId: item.commentId,
+        commentId: item.commentId,
+        content: item.commentContent,
+        nikeName: item.commentNickname,
+        headUrl: item.commentHeadurl,
+        data: item,
+      };
+    });
+
+    return {
+      list: dataList,
+      count: res.commentCount,
+    };
+  }
+
+  async createComment(
+    account: AccountModel,
+    dataId: string, // 作品ID
+    content: string,
+  ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await shipinhaoService.createComment(cookie, dataId, content);
+
+    return false;
+  }
+
+  async replyComment(
+    account: AccountModel,
+    commentId: string,
+    content: string,
+    option: {
+      dataId: string; // 作品ID
+      data: CommentInfo; // 辅助数据,原数据
+    },
+  ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await shipinhaoService.createComment(
+      cookie,
+      option.dataId,
+      content,
+      option.data,
+    );
+    return false;
   }
 
   async getUsers(params: IGetUsersParams) {
