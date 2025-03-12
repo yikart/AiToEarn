@@ -4,6 +4,7 @@ import ffmpeg from 'fluent-ffmpeg';
 import { ffprobePath } from './ffprobe_static';
 import path from 'path';
 import { net } from 'electron';
+import { v4 as uuidv4 } from 'uuid';
 
 // 文件工具类
 // 设置 ffprobe 路径
@@ -270,22 +271,34 @@ export class FileUtils {
    */
   static async downFile(url: string, name?: string): Promise<string> {
     const dirPath = this.getAppDataPath();
-    console.log('------- dirPath', dirPath);
-
     await this.checkDirectories(dirPath);
 
     return new Promise((resolve, reject) => {
       const request = net.request(url);
       let fileStream: NodeJS.WritableStream | null = null;
       let filePath: string;
+      const fileExt: string = path.extname(url);
 
       request.on('response', (response) => {
         if (response.statusCode !== 200) {
           return reject(new Error(`下载失败: 状态码 ${response.statusCode}`));
         }
 
-        filePath = path.join(dirPath, name || 'default_filename.mp4');
+        filePath = path.join(dirPath, (name || uuidv4()) + fileExt);
         fileStream = fs.createWriteStream(filePath);
+
+        response.on('data', (chunk) => {
+          if (fileStream) fileStream.write(chunk);
+        });
+
+        fileStream.on('finish', () => {
+          resolve(filePath);
+        });
+
+        // 处理文件流错误
+        fileStream.on('error', (err) => {
+          reject(err);
+        });
 
         response.on('end', () => {
           if (fileStream) {

@@ -28,7 +28,7 @@ export class ToolsController {
   }
 
   /**
-   * 视频截取指定时间点的帧
+   * 下载文件
    */
   @Icp('ICP_TOOL_DOWN_FILE')
   async downFile(
@@ -36,8 +36,12 @@ export class ToolsController {
     url: string,
     name?: string,
   ): Promise<string> {
-    const res = await FileUtils.downFile(url, name);
-    console.log('-----', res);
-    return '';
+    try {
+      const res = await FileUtils.downFile(url, name);
+      return res;
+    } catch (error) {
+      console.log('--- ICP_TOOL_DOWN_FILE error ---', error);
+      return '';
+    }
   }
 }

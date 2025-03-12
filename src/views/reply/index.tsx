@@ -22,7 +22,7 @@ export default function Page() {
   async function downFile() {
     const res = await ipcDownFile(
       'https://ai-to-earn.oss-cn-beijing.aliyuncs.com/development/temp/nopath/202503/f1cffb9c-c42a-4fcc-8516-0e2c276ee2f8.mp4',
-      '111',
+      'default_filename',
     );
     console.log('----- res', res);
   }
