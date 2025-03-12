@@ -23,6 +23,7 @@ import { PublishVideoResult } from '../../module';
 import { shipinhaoService } from '../../../../plat/shipinhao';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
+import { CommentInfo } from '../../../../plat/shipinhao/wxShp.type';
 
 export class WxSph extends PlatformBase {
   constructor() {
@@ -162,7 +163,7 @@ export class WxSph extends PlatformBase {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await shipinhaoService.getCommentList(cookie, dataId);
 
-    const dataList = res.data.data.comment.map((item) => {
+    const dataList = res.comment.map((item) => {
       return {
         dataId: item.commentId,
         commentId: item.commentId,
@@ -175,8 +176,38 @@ export class WxSph extends PlatformBase {
 
     return {
       list: dataList,
-      count: res.data.data.commentCount,
+      count: res.commentCount,
     };
+  }
+
+  async createComment(
+    account: AccountModel,
+    dataId: string, // 作品ID
+    content: string,
+  ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await shipinhaoService.createComment(cookie, dataId, content);
+
+    return false;
+  }
+
+  async replyComment(
+    account: AccountModel,
+    commentId: string,
+    content: string,
+    option: {
+      dataId: string; // 作品ID
+      data: CommentInfo; // 辅助数据,原数据
+    },
+  ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await shipinhaoService.createComment(
+      cookie,
+      option.dataId,
+      content,
+      option.data,
+    );
+    return false;
   }
 
   async getUsers(params: IGetUsersParams) {

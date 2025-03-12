@@ -160,6 +160,26 @@ export class Douyin extends PlatformBase {
     };
   }
 
+  async createComment(
+    account: AccountModel,
+    dataId: string, // 作品ID
+    content: string,
+  ) {
+    return false;
+  }
+
+  async replyComment(
+    account: AccountModel,
+    commentId: string,
+    content: string,
+    option: {
+      dataId?: string; // 作品ID
+      data: any; // 辅助数据,原数据
+    },
+  ) {
+    return false;
+  }
+
   async videoPublish(
     params: IVideoPublishParams,
     callback: VideoCallbackType,

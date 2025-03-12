@@ -105,6 +105,28 @@ export abstract class PlatformBase {
   }>;
 
   /**
+   * 创建评论
+   */
+  abstract createComment(
+    account: AccountModel,
+    dataId: string, // 作品ID
+    content: string,
+  ): Promise<boolean>;
+
+  /**
+   * 回复评论
+   */
+  abstract replyComment(
+    account: AccountModel,
+    commentId: string,
+    content: string,
+    option: {
+      dataId?: string; // 作品ID
+      data: any; // 辅助数据,原数据
+    },
+  ): Promise<boolean>;
+
+  /**
    * 在该平台发布视频
    */
   abstract videoPublish(
