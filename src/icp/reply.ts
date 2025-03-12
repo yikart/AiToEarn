@@ -37,12 +37,51 @@ export async function icpCreatorList(
 }
 
 /**
- * 获取作品列表
+ * 获取评论列表
  */
 export async function icpGetCommentList(accountId: number, dataId: string) {
   const res: {
     list: WorkData[];
     count: number;
   } = await window.ipcRenderer.invoke('ICP_COMMENT_LIST', accountId, dataId);
+  return res;
+}
+
+/**
+ * 创建评论
+ */
+export async function icpCreateComment(
+  accountId: number,
+  dataId: string,
+  content: string,
+) {
+  const res: boolean = await window.ipcRenderer.invoke(
+    'ICP_CREATE_COMMENT',
+    accountId,
+    dataId,
+    content,
+  );
+  return res;
+}
+
+/**
+ * 回复评论
+ */
+export async function icpReplyComment(
+  accountId: number,
+  commentId: string,
+  content: string,
+  option: {
+    dataId?: string; // 作品ID
+    data: any; // 辅助数据,原数据
+  },
+) {
+  const res: boolean = await window.ipcRenderer.invoke(
+    'ICP_REPLY_COMMENT',
+    accountId,
+    commentId,
+    content,
+    option,
+  );
   return res;
 }

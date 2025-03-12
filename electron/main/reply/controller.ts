@@ -60,4 +60,47 @@ export class ReplyController {
     const res = await platController.getCommentList(account, dataId);
     return res;
   }
+
+  /**
+   * 创建评论
+   */
+  @Icp('ICP_CREATE_COMMENT')
+  async createComment(
+    event: Electron.IpcMainInvokeEvent,
+    accountId: number,
+    dataId: string,
+    content: string,
+  ): Promise<any> {
+    const account = await this.accountService.getAccountById(accountId);
+    if (!account) return null;
+
+    const res = await platController.createComment(account, dataId, content);
+    return res;
+  }
+
+  /**
+   * 回复评论
+   */
+  @Icp('ICP_REPLY_COMMENT')
+  async replyComment(
+    event: Electron.IpcMainInvokeEvent,
+    accountId: number,
+    commentId: string,
+    content: string,
+    option: {
+      dataId?: string; // 作品ID
+      data: any; // 辅助数据,原数据
+    },
+  ): Promise<any> {
+    const account = await this.accountService.getAccountById(accountId);
+    if (!account) return null;
+
+    const res = await platController.replyComment(
+      account,
+      commentId,
+      content,
+      option,
+    );
+    return res;
+  }
 }
