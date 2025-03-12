@@ -16,7 +16,11 @@ import {
 } from '../../../../icp/account';
 import AddAccountModal from '../AddAccountModal';
 import { AccountStatus } from '../../../../../commont/AccountEnum';
-import { CheckCircleOutlined, WarningOutlined } from '@ant-design/icons';
+import {
+  CheckCircleOutlined,
+  UserOutlined,
+  WarningOutlined,
+} from '@ant-design/icons';
 import useCssVariables from '../../../../hooks/useCssVariables';
 import { onAccountLoginFinish } from '../../../../icp/receiveMsg';
 import PubAccountDetModule, {
@@ -157,6 +161,7 @@ const AccountSidebar = memo(
                 style={{ margin: '10px 0' }}
                 onClick={() => setIsAccountModalOpen(true)}
               >
+                <UserOutlined />
                 添加账号
               </Button>
             </div>

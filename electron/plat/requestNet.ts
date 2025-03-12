@@ -48,7 +48,7 @@ const requestNet = <T = any>({
           parsedData = JSON.parse(data);
         } catch (e) {
           parsedData = undefined as any;
-          console.error(e);
+          console.log(e);
         }
         resolve({
           status: response.statusCode,

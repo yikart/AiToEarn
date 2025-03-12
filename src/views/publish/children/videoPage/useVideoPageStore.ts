@@ -360,16 +360,19 @@ export const useVideoPageStore = create(
             const account = accounts[i];
             const video = await getVideoFile(pubRecord.videoPath!);
             const cover = await getImgFile(pubRecord.coverPath!);
+            const pubParams = {
+              ...pubRecord,
+              cover: cover,
+              describe: pubRecord.desc,
+            };
+            pubParams.id = undefined;
+            pubParams.failMsg = '';
 
             videoListChoose.push({
               id: generateUUID(),
               account,
               video,
-              pubParams: {
-                ...pubRecord,
-                cover: cover,
-                describe: pubRecord.desc,
-              },
+              pubParams,
             });
           }
 

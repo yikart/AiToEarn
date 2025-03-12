@@ -84,6 +84,7 @@ export default function Page() {
               const res = await icpGetPubVideoRecord(prm.id);
               setRecordLoaidng(false);
               setPubRecordList(res);
+              console.log(res);
             }}
           >
             详情

@@ -7,12 +7,10 @@
  */
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { WorkData } from './workData';
-import {
-  DouyinDeclareEnum,
-  VisibleTypeEnum,
-} from '../../../commont/publish/PublishEnum';
+import { VisibleTypeEnum } from '../../../commont/publish/PublishEnum';
 import { AccountType } from '../../../commont/AccountEnum';
 import type { ILocationDataItem, WxSphEvent } from '../../main/plat/plat.type';
+import { DeclarationDouyin } from '../../plat/douyin/common.douyin';
 
 // 包含一个name和一个value的对象
 export interface ILableValue {
@@ -32,7 +30,7 @@ export type DiffParmasType = {
     // 申请关联的活动
     activitys?: ILableValue[];
     // 自主声明
-    selfDeclare?: DouyinDeclareEnum;
+    selfDeclare?: DeclarationDouyin;
   };
   [AccountType.WxSph]?: {
     // 是否为原创
