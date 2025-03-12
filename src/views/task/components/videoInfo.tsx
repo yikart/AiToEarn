@@ -26,6 +26,7 @@ import {
   LoadingOutlined,
 } from '@ant-design/icons';
 import ChooseAccountModule from '@/views/publish/components/ChooseAccountModule/ChooseAccountModule';
+import { ipcDownFile } from '@/icp/tools';
 
 const FILE_BASE_URL = import.meta.env.VITE_APP_FILE_HOST;
 
@@ -108,10 +109,16 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
       console.log('下载封面:', coverUrl);
 
       // 使用IPC接口下载视频文件到本地临时目录
-      const localVideoPath = '';
+      const localVideoPath = await ipcDownFile(
+        videoUrl,
+        'default_filename1',
+      );
 
       // 使用IPC接口下载封面图片到本地临时目录
-      const localCoverPath = '';
+      const localCoverPath = await ipcDownFile(
+        coverUrl,
+        'default_filename2',
+      );
 
       console.log('视频已下载到:', localVideoPath);
       console.log('封面已下载到:', localCoverPath);
@@ -130,7 +137,9 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
 
       // 创建二级记录
       for (const vData of aList) {
-        const account = vData.account!;
+        // console.log('vData', vData)
+        const account = vData;
+        // console.log('account', account)
 
         await icpCreateVideoPubRecord({
           type: account.type,
