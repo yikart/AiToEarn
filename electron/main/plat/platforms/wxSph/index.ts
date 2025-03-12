@@ -128,16 +128,13 @@ export class WxSph extends PlatformBase {
     pageInfo: { pageNo: number; pageSize: number },
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const res = await shipinhaoService.getPostList(cookie, {
-      pageNo: 1,
-      pageSize: 10,
-    });
+    const res = await shipinhaoService.getPostList(cookie, pageInfo);
 
     const listData: WorkData[] = res.list.map((item) => {
       return {
         dataId: item.objectId,
         commentCount: item.commentCount,
-        title: item.desc.shortTitle[0] || '',
+        title: item.desc.shortTitle[0]?.shortTitle || '',
         desc: item.desc.description,
         coverUrl: item.desc.media[0]?.coverUrl || '',
         videoUrl: item.desc.media[0]?.url || '',
@@ -159,6 +156,14 @@ export class WxSph extends PlatformBase {
     return {
       dataId: '',
     };
+  }
+
+  async getCommentList(account: AccountModel, dataId: string) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await shipinhaoService.getCommentList(cookie, dataId);
+    console.log('------ res', res);
+
+    return res;
   }
 
   async getUsers(params: IGetUsersParams) {

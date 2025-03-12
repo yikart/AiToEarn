@@ -8,6 +8,7 @@
 import { AccountType } from '../../../commont/AccountEnum';
 import { AccountService } from '../account/service';
 import { Controller, Icp, Inject } from '../core/decorators';
+import platController from '../plat';
 import { ReplyService } from './service';
 
 @Controller()
@@ -25,18 +26,15 @@ export class ReplyController {
   async getCreatorList(
     event: Electron.IpcMainInvokeEvent,
     accountId: number,
+    pageInfo: {
+      pageNo: number;
+      pageSize: number;
+    },
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 
-    if (account.type === AccountType.Douyin) {
-      const res = await this.replyService.testGetDouyinList(account);
-      return res;
-    }
-
-    if (account.type === AccountType.WxSph) {
-      const res = await this.replyService.testGetSphCreatorList(account);
-      return res;
-    }
+    const res = await platController.getWorkList(account, pageInfo);
+    return res;
   }
 }

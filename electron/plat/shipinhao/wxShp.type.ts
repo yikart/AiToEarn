@@ -110,7 +110,9 @@ export interface SphGetPostListResponse {
           cardShowStyle: number; // 0;
         }[];
         mentionedMusics: any[];
-        shortTitle: any[];
+        shortTitle: {
+          shortTitle: string; // '我家的干饭宝宝';
+        }[];
         description: string; // '#干饭宝宝';
         mediaType: number; // 4;
         location: {

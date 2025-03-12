@@ -152,6 +152,11 @@ export class Douyin extends PlatformBase {
     };
   }
 
+  async getCommentList(account: AccountModel, dataId: string) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    return [];
+  }
+
   async videoPublish(
     params: IVideoPublishParams,
     callback: VideoCallbackType,

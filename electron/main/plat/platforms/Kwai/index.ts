@@ -8,6 +8,7 @@
 import { PlatformBase } from '../../PlatformBase';
 import {
   AccountInfoTypeRV,
+  CookiesType,
   DashboardData,
   IAccountInfoParams,
   IGetLocationDataParams,
@@ -166,6 +167,11 @@ export class Kwai extends PlatformBase {
     return {
       dataId: '',
     };
+  }
+
+  async getCommentList(account: AccountModel, dataId: string) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    return [];
   }
 
   async loginCheck(account: AccountModel): Promise<boolean> {

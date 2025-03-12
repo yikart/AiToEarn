@@ -92,7 +92,14 @@ export abstract class PlatformBase {
    */
   abstract getWorkData(dataId: string): Promise<WorkData>;
 
-  // 在该平台发布视频
+  /**
+   * 获取评论列表
+   */
+  abstract getCommentList(account: AccountModel, dataId: string): Promise<any>;
+
+  /**
+   * 在该平台发布视频
+   */
   abstract videoPublish(
     params: IVideoPublishParams,
     // 获取发布进度的回调函数

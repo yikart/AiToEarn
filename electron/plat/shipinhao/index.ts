@@ -1362,33 +1362,30 @@ export class ShipinhaoService {
   /**
    * 获取评论列表
    * @param cookie
-   * @param keyword
-   * @param page
+   * @param exportId
    * @returns
    */
-  async getCommentList(
-    cookie: Electron.Cookie[],
-    body: {
-      commentSelection: false;
-      exportId: 'export/UzFfAgtgekIEAQAAAAAAOhIpzVxlAQAAAAstQy6ubaLX4KHWvLEZgBPExKFQKCowfoSJzNPgMJrD53jJrD_NBzgU3Ncr3usg';
-      forMcn: false;
-      lastBuff: '';
-      pluginSessionId: null;
-      rawKeyBuff: null;
-      reqScene: 7;
-      scene: 7;
-      timestamp: '1741697703260';
-      _log_finder_id: 'v2_060000231003b20faec8c5e38b10cbd6cb06ef3cb077ad5b14a8587570bc414e95c4b7e034ea@finder';
-      _log_finder_uin: '';
-    },
-  ) {
+  async getCommentList(cookie: Electron.Cookie[], exportId: string) {
     return await requestNet<WeChatVideoUserData>({
       url: `https://channels.weixin.qq.com/micro/interaction/cgi-bin/mmfinderassistant-bin/comment/comment_list?_rid=67d032a7-6c8f7126`,
       headers: {
         cookie: CookieToString(cookie),
       },
       method: 'POST',
-      body,
+      body: {
+        commentSelection: false,
+        exportId,
+        forMcn: false,
+        lastBuff: '',
+        pluginSessionId: null,
+        rawKeyBuff: null,
+        reqScene: 7,
+        scene: 7,
+        timestamp: Date.now() + '',
+        _log_finder_id:
+          'v2_060000231003b20faec8c5e38b10cbd6cb06ef3cb077ad5b14a8587570bc414e95c4b7e034ea@finder',
+        _log_finder_uin: '',
+      },
     });
   }
 

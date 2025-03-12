@@ -152,6 +152,11 @@ export class Xhs extends PlatformBase {
       dataId: '',
     };
   }
+
+  async getCommentList(account: AccountModel, dataId: string) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    return [];
+  }
   /**
    * @param params
    * @param callback
