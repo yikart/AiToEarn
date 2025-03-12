@@ -338,6 +338,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                   取消
                 </Button>
                 <Button
+                  disabled={taskInfo.isAccepted}
                   key="submit"
                   type="primary"
                   onClick={taskApply}
