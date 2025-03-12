@@ -90,7 +90,6 @@ export class VideoPubController {
       pubRecordId,
       PubStatus.RELEASED,
     );
-
     return pubRes;
   }
 

@@ -20,6 +20,8 @@ class BrowserWindowController {
 
   // 销毁 BrowserWindow
   destroyBrowserWindow(webViewId: number) {
+    // @ts-ignore
+    this.browserWindowMap.get(webViewId)?.webview.destroy();
     this.browserWindowMap.delete(webViewId);
   }
 }

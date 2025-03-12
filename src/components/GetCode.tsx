@@ -4,6 +4,7 @@ import { Statistic } from 'antd';
 const { Countdown } = Statistic;
 
 /**
+ * 播放视频
  * 验证码倒计时触发组件
  * @param onGetCode
  */

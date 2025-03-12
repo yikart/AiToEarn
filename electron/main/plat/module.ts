@@ -16,9 +16,8 @@ export class PublishVideoResult {
   code: number;
   // 提示信息
   msg: string;
-
   // 数据ID
-  dataId: string;
+  dataId?: string;
 
   constructor(
     { code, msg, dataId }: IProperty = {
