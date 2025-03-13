@@ -134,7 +134,7 @@ export class ReplyController {
     if (!account) return 1;
     const cookie = JSON.parse(account.loginCookie);
 
-    const res = await douyinService.getCreatorItems(cookie);
+    const res = await douyinService.getCreatorItems(cookie, '');
     return res;
   }
 }

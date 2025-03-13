@@ -60,6 +60,7 @@ export class Kwai extends PlatformBase {
       account: `${data.userId}` || '',
       avatar: data.userAvatar || '',
       nickname: data?.userName || '',
+      fansCount: 0, // TODO: 获取粉丝数
     };
   }
 
