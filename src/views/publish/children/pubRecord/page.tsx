@@ -1,18 +1,28 @@
-import { useEffect, useRef, useState } from "react";
-import { PubRecordModel } from "../../comment";
-import styles from "./pubRecord.module.scss";
-import { icpGetPubRecordList, icpGetPubVideoRecord } from "@/icp/publish";
-import { Avatar, Button, Drawer, Modal, Spin, Table, TableProps, Tooltip } from "antd";
-import { getImgFile, IImgFile } from "@/components/Choose/ImgChoose";
-import { formatTime, getFilePathName } from "@/utils";
-import { VideoPul } from "@/views/publish/children/videoPage/comment";
-import { icpGetAccountList } from "@/icp/account";
-import { AccountInfo, AccountPlatInfoMap } from "@/views/account/comment";
-import { useVideoPageStore } from "../videoPage/useVideoPageStore";
-import { useShallow } from "zustand/react/shallow";
-import { useNavigate } from "react-router-dom";
-import { AccountType } from "../../../../../commont/AccountEnum";
-import WebView from "../../../../components/WebView";
+import { useEffect, useRef, useState } from 'react';
+import { PubRecordModel } from '../../comment';
+import styles from './pubRecord.module.scss';
+import { icpGetPubRecordList, icpGetPubVideoRecord } from '@/icp/publish';
+import {
+  Avatar,
+  Button,
+  Drawer,
+  Modal,
+  Spin,
+  Table,
+  TableProps,
+  Tooltip,
+} from 'antd';
+import { getImgFile, IImgFile } from '@/components/Choose/ImgChoose';
+import { formatTime, getFilePathName } from '@/utils';
+import { VideoPul } from '@/views/publish/children/videoPage/comment';
+import { icpGetAccountList } from '@/icp/account';
+import { AccountInfo, AccountPlatInfoMap } from '@/views/account/comment';
+import { useVideoPageStore } from '../videoPage/useVideoPageStore';
+import { useShallow } from 'zustand/react/shallow';
+import { useNavigate } from 'react-router-dom';
+import { AccountType } from '../../../../../commont/AccountEnum';
+import WebView from '../../../../components/WebView';
+import { getVideoFile } from '../../../../components/Choose/VideoChoose';
 
 const PubCon = ({ prm }: { prm: PubRecordModel }) => {
   const [imgFile, setImgFile] = useState<IImgFile>();
@@ -49,7 +59,9 @@ export default function Page() {
     url: string;
     open: boolean;
     jsCode: string;
+    videoSrc?: string;
   }>({
+    videoSrc: '',
     account: undefined,
     url: '',
     open: false,
@@ -97,7 +109,6 @@ export default function Page() {
               const res = await icpGetPubVideoRecord(prm.id);
               setRecordLoaidng(false);
               setPubRecordList(res);
-              console.log(res);
             }}
           >
             详情
@@ -141,6 +152,7 @@ export default function Page() {
             const newState = { ...prevState };
             newState.open = false;
             newState.url = '';
+            newState.videoSrc = '';
             return newState;
           });
         }}
@@ -148,16 +160,29 @@ export default function Page() {
         width="90%"
       >
         <div style={{ height: '70vh' }}>
-          {examineVideo.account && open ? (
-            <WebView
-              url={examineVideo.url}
-              cookieParams={{
-                cookies: JSON.parse(examineVideo.account.loginCookie),
-              }}
-              key={examineVideo.url + examineVideo.open}
-            />
+          {examineVideo.videoSrc ? (
+            <>
+              <video
+                src={examineVideo.videoSrc}
+                controls
+                autoPlay
+                style={{ margin: '0 auto', display: 'block' }}
+              />
+            </>
           ) : (
-            ''
+            <>
+              {examineVideo.account && open ? (
+                <WebView
+                  url={examineVideo.url}
+                  cookieParams={{
+                    cookies: JSON.parse(examineVideo.account.loginCookie),
+                  }}
+                  key={examineVideo.url + examineVideo.open}
+                />
+              ) : (
+                ''
+              )}
+            </>
           )}
         </div>
       </Modal>
@@ -230,8 +255,9 @@ export default function Page() {
                       ) : (
                         <Button
                           type="link"
-                          onClick={() => {
+                          onClick={async () => {
                             if (!v.dataId) return;
+                            const videoFile = await getVideoFile(v.videoPath!);
                             setExamineVideo((prevState) => {
                               const newState = { ...prevState };
                               newState.open = true;
@@ -242,7 +268,7 @@ export default function Page() {
                               } else if (account?.type === AccountType.Xhs) {
                                 newState.url = `https://www.xiaohongshu.com/explore/${v.dataId}?xsec_token=${v.videoPubOtherData![AccountType.Xhs]!.xsec_token}&xsec_source=${v.videoPubOtherData![AccountType.Xhs]!.xsec_source}`;
                               } else if (account?.type === AccountType.WxSph) {
-                                console.log(newState.url);
+                                newState.videoSrc = videoFile.videoUrl;
                               }
                               return newState;
                             });
