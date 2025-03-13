@@ -51,7 +51,7 @@ interface RankingItem {
 
 // 在文件顶部添加或更新接口定义
 interface TopicContent {
-  _id: string;
+  id: string;
   title: string;
   type: string;
   description: string | null;
@@ -72,7 +72,7 @@ interface TopicContent {
   publishTime: string;
   url: string;
   platformId: {
-    _id: string;
+    id: string;
     name: string;
     icon: string;
   };
@@ -93,7 +93,7 @@ interface TopicResponse {
 
 // 在文件顶部添加热点事件相关的接口
 interface HotTopic {
-  _id: string;
+  id: string;
   title: string;
   hotValue: number;
   url: string;
@@ -101,7 +101,7 @@ interface HotTopic {
   rankChange: number;
   isRising: boolean;
   platformId: {
-    _id: string;
+    id: string;
     name: string;
     icon: string;
   };
@@ -110,7 +110,7 @@ interface HotTopic {
 
 interface PlatformHotTopics {
   platform: {
-    _id: string;
+    id: string;
     name: string;
     icon: string;
     type: string;
@@ -120,7 +120,7 @@ interface PlatformHotTopics {
 
 // 在文件顶部添加爆款标题相关的接口
 interface ViralTitle {
-  _id: string;
+  id: string;
   title: string;
   platformId: string | Platform | any; // 使用 any 处理不确定的类型
   category: string;
@@ -302,16 +302,17 @@ const Trending: React.FC = () => {
       try {
         // 获取平台列表
         const platformData = await platformApi.getPlatformList();
+        console.log('platformData:', platformData);
         setPlatforms(platformData);
         if (platformData.length > 0) {
           const firstPlatform = platformData[0];
           setSelectedPlatform(firstPlatform);
-          fetchPlatformRanking(firstPlatform._id);
+          fetchPlatformRanking(firstPlatform.id);
         }
 
-        // 获取专题分类
-        const topicData = await platformApi.getMsgType();
-        setMsgTypeList(topicData);
+        // // 获取专题分类
+        // const topicData = await platformApi.getMsgType();
+        // setMsgTypeList(topicData);
       } catch (error) {
         console.error('获取数据失败:', error);
       } finally {
@@ -327,18 +328,19 @@ const Trending: React.FC = () => {
     setRankingLoading(true);
     try {
       const data = await platformApi.getPlatformRanking(platformId);
+      console.log('data:', data);
       setRankingList(data);
 
       // 自动选择第一个榜单并获取其内容
       if (data.length > 0) {
         const firstRanking = data[0];
-        setSelectedRanking(firstRanking);
+        setSelectedRanking(firstRanking); 
 
-        // 获取榜单分类
-        await fetchRankingCategories(firstRanking._id);
+        // // 获取榜单分类
+        await fetchRankingCategories(firstRanking.id);
 
-        // 获取榜单内容
-        await fetchRankingContents(firstRanking._id, 1);
+        // // 获取榜单内容
+        await fetchRankingContents(firstRanking.id, 1);
       } else {
         // 如果没有榜单数据，清空相关状态
         setSelectedRanking(null);
@@ -427,13 +429,13 @@ const Trending: React.FC = () => {
     setTopicExpanded(false);
 
     // 获取新平台的榜单数据
-    fetchPlatformRanking(platform._id);
+    fetchPlatformRanking(platform.id);
   };
 
   // 修改榜单选择处理函数
   const handleRankingSelect = async (ranking: PlatformRanking) => {
     // 如果点击的是当前已选中的榜单，不做任何操作
-    if (selectedRanking?._id === ranking._id) return;
+    if (selectedRanking?.id === ranking.id) return;
 
     // 设置选中的榜单
     setSelectedRanking(ranking);
@@ -443,7 +445,7 @@ const Trending: React.FC = () => {
 
     // 获取榜单内容
     await fetchRankingContents(
-      ranking._id,
+      ranking.id,
       1,
       selectedCategory !== '全部' ? selectedCategory : undefined,
     );
@@ -482,7 +484,7 @@ const Trending: React.FC = () => {
     if (selectedRanking) {
       // 当选择"全部"时，不传递 category 参数
       const categoryParam = category === '全部' ? undefined : category;
-      fetchRankingContents(selectedRanking._id, 1, categoryParam);
+      fetchRankingContents(selectedRanking.id, 1, categoryParam);
     }
   };
 
@@ -494,7 +496,7 @@ const Trending: React.FC = () => {
     setSelectedDate(formattedDate);
     if (selectedRanking) {
       fetchRankingContents(
-        selectedRanking._id,
+        selectedRanking.id,
         1,
         selectedCategory === '全部' ? undefined : selectedCategory,
       );
@@ -509,8 +511,8 @@ const Trending: React.FC = () => {
       setViralTitlePlatforms(platforms);
       if (platforms.length > 0) {
         setSelectedViralPlatform(platforms[0]);
-        fetchViralTitleCategories(platforms[0]._id);
-        fetchViralTitleData(platforms[0]._id);
+        fetchViralTitleCategories(platforms[0].id);
+        fetchViralTitleData(platforms[0].id);
       }
     } catch (error) {
       console.error('获取爆款标题平台失败:', error);
@@ -546,7 +548,7 @@ const Trending: React.FC = () => {
           ...title,
           platformId:
             typeof title.platformId === 'object'
-              ? title.platformId._id
+              ? title.platformId.id
               : title.platformId,
           // 确保 publishTime 是 string 或 null
           publishTime: title.publishTime ? title.publishTime.toString() : null,
@@ -568,8 +570,8 @@ const Trending: React.FC = () => {
   // 处理爆款标题平台选择
   const handleViralPlatformSelect = (platform: Platform) => {
     setSelectedViralPlatform(platform);
-    fetchViralTitleCategories(platform._id);
-    fetchViralTitleData(platform._id);
+    fetchViralTitleCategories(platform.id);
+    fetchViralTitleData(platform.id);
   };
 
   // 修改处理分类选择的函数
@@ -580,7 +582,7 @@ const Trending: React.FC = () => {
       // 如果选择了特定分类，调用API获取该分类数据
       setSingleCategoryName(category);
       setShowSingleCategory(true);
-      fetchSingleCategoryData(selectedViralPlatform._id, category);
+      fetchSingleCategoryData(selectedViralPlatform.id, category);
     } else {
       // 如果选择"全部"，返回到分类概览
       setShowSingleCategory(false);
@@ -628,7 +630,7 @@ const Trending: React.FC = () => {
 
       // 如果没有选择平台，则使用第一个平台
       if (!selectedPlatformId && platforms.length > 0) {
-        setSelectedPlatformId(platforms[0]._id);
+        setSelectedPlatformId(platforms[0].id);
       }
 
       // 调用处理函数获取数据
@@ -642,7 +644,7 @@ const Trending: React.FC = () => {
           msgType: msgType,
           platformId:
             selectedPlatformId ||
-            (platforms.length > 0 ? platforms[0]._id : undefined),
+            (platforms.length > 0 ? platforms[0].id : undefined),
           timeType: selectedTimeType || selectedTimeRange,
         });
 
@@ -902,7 +904,7 @@ const Trending: React.FC = () => {
         ...item,
         platformId:
           typeof item.platformId === 'object'
-            ? item.platformId._id
+            ? item.platformId.id
             : item.platformId,
         // 确保 publishTime 是 string 或 null
         publishTime: item.publishTime ? item.publishTime.toString() : null,
@@ -937,7 +939,7 @@ const Trending: React.FC = () => {
     if (selectedViralPlatform) {
       setSingleCategoryName(category);
       setShowSingleCategory(true);
-      fetchSingleCategoryData(selectedViralPlatform._id, category);
+      fetchSingleCategoryData(selectedViralPlatform.id, category);
     }
   };
 
@@ -952,7 +954,7 @@ const Trending: React.FC = () => {
   const handleSingleCategoryPageChange = (page: number) => {
     if (selectedViralPlatform && singleCategoryName) {
       fetchSingleCategoryData(
-        selectedViralPlatform._id,
+        selectedViralPlatform.id,
         singleCategoryName,
         page,
       );
@@ -1139,10 +1141,10 @@ const Trending: React.FC = () => {
                 ) : (
                   platforms.map((platform) => (
                     <li
-                      key={platform._id}
+                      key={platform.id}
                       className={`flex items-center space-x-2 p-2 rounded cursor-pointer transition-all duration-200
                         ${
-                          selectedPlatform?._id === platform._id
+                          selectedPlatform?.id === platform.id
                             ? 'bg-[#f4ebff] text-[#a66ae4]'
                             : 'hover:bg-gray-50'
                         }`}
@@ -1221,7 +1223,7 @@ const Trending: React.FC = () => {
                         ${selectedMsgType === type ? 'bg-[#f4ebff] text-[#a66ae4]' : ''}`}
                       onClick={() => handleMsgTypeClick(type)}
                     >
-                      <InfoCircleOutlined className="mr-2" />
+                      {/* <InfoCircleOutlined className="mr-2" /> */}
                       <span>{type}</span>
                     </li>
                   ))
@@ -1257,10 +1259,10 @@ const Trending: React.FC = () => {
                 ) : (
                   viralTitlePlatforms.map((platform) => (
                     <li
-                      key={platform._id}
+                      key={platform.id}
                       className={`flex items-center space-x-2 p-2 rounded cursor-pointer transition-all duration-200
                         ${
-                          selectedViralPlatform?._id === platform._id
+                          selectedViralPlatform?.id === platform.id
                             ? 'bg-[#f4ebff] text-[#a66ae4]'
                             : 'hover:bg-gray-50'
                         }`}
@@ -1392,7 +1394,7 @@ const Trending: React.FC = () => {
                       <div className="space-y-3">
                         {categoryData.titles.slice(0, 5).map((title, index) => (
                           <div
-                            key={title._id}
+                            key={title.id}
                             className="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer border border-transparent hover:border-[#e6d3f7] bg-gray-50"
                             onClick={() =>
                               handleContentClick(title.url, title.title)
@@ -1462,7 +1464,7 @@ const Trending: React.FC = () => {
                   <div className="space-y-3">
                     {singleCategoryData.map((title, index) => (
                       <div
-                        key={title._id}
+                        key={title.id}
                         className="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer border border-transparent hover:border-[#e6d3f7] bg-gray-50"
                         onClick={() =>
                           handleContentClick(title.url, title.title)
@@ -1541,7 +1543,7 @@ const Trending: React.FC = () => {
                   <>
                     {hotTopics.map((platformData: PlatformHotTopics) => (
                       <div
-                        key={platformData.platform._id}
+                        key={platformData.platform.id}
                         className="flex flex-col w-full p-4 bg-white rounded-lg"
                         style={{
                           minWidth: '300px',
@@ -1554,7 +1556,7 @@ const Trending: React.FC = () => {
                           <div className="flex items-center space-x-2">
                             {platformData.platform.icon &&
                             !imgErrors[
-                              `platform-${platformData.platform._id}`
+                              `platform-${platformData.platform.id}`
                             ] ? (
                               <img
                                 src={getImageUrl(platformData.platform.icon)}
@@ -1562,7 +1564,7 @@ const Trending: React.FC = () => {
                                 className="w-6 h-6"
                                 onError={() =>
                                   handleImageError(
-                                    `platform-${platformData.platform._id}`,
+                                    `platform-${platformData.platform.id}`,
                                   )
                                 }
                               />
@@ -1591,7 +1593,7 @@ const Trending: React.FC = () => {
                             Array.isArray(platformData.topics) ? (
                               platformData.topics.map((topic, index) => (
                                 <div
-                                  key={topic._id || index}
+                                  key={topic.id || index}
                                   className="flex items-center p-2 rounded cursor-pointer hover:bg-gray-50"
                                   onClick={() =>
                                     topic.url &&
@@ -1733,14 +1735,14 @@ const Trending: React.FC = () => {
                   <div className="flex flex-wrap gap-2">
                     {platforms.map((platform) => (
                       <button
-                        key={platform._id}
+                        key={platform.id}
                         className={`${buttonStyles.base} ${
-                          selectedPlatformId === platform._id
+                          selectedPlatformId === platform.id
                             ? buttonStyles.primary
                             : buttonStyles.secondary
                         }`}
                         onClick={() => {
-                          const platformId = platform._id;
+                          const platformId = platform.id;
                           // 先设置平台 ID
                           setSelectedPlatformId(platformId);
                           // 直接调用查询，传入当前点击的平台 ID
@@ -1749,13 +1751,13 @@ const Trending: React.FC = () => {
                       >
                         <div className="flex items-center space-x-2">
                           {platform.icon &&
-                          !imgErrors[`platform-${platform._id}`] ? (
+                          !imgErrors[`platform-${platform.id}`] ? (
                             <img
                               src={getImageUrl(platform.icon)}
                               alt={platform.name}
                               className="w-4 h-4"
                               onError={() =>
-                                handleImageError(`platform-${platform._id}`)
+                                handleImageError(`platform-${platform.id}`)
                               }
                             />
                           ) : (
@@ -1851,7 +1853,7 @@ const Trending: React.FC = () => {
                     {/* 内容列表 */}
                     {topicContents.map((item, index) => (
                       <div
-                        key={item._id}
+                        key={item.id}
                         className="grid items-center grid-cols-12 px-4 py-5 transition-colors border-b border-gray-100 cursor-pointer hover:bg-gray-50"
                         onClick={() => handleContentClick(item.url, item.title)}
                       >
@@ -1866,13 +1868,13 @@ const Trending: React.FC = () => {
                         {/* 封面 */}
                         <div className="col-span-2 pl-2">
                           <div className="relative w-full overflow-hidden bg-gray-100 rounded-lg aspect-video">
-                            {item.cover && !imgErrors[item._id as string] ? (
+                            {item.cover && !imgErrors[item.id as string] ? (
                               <img
                                 src={getImageUrl(item.cover)}
                                 alt={item.title}
                                 className="object-cover w-full h-full"
                                 onError={() =>
-                                  handleImageError(item._id as string)
+                                  handleImageError(item.id as string)
                                 }
                               />
                             ) : (
@@ -1897,13 +1899,13 @@ const Trending: React.FC = () => {
                           <div className="flex items-center mt-2">
                             <div className="flex items-center">
                               {item.avatar &&
-                              !imgErrors[`avatar-${item._id}`] ? (
+                              !imgErrors[`avatar-${item.id}`] ? (
                                 <img
                                   src={getImageUrl(item.avatar)}
                                   alt={item.author}
                                   className="w-5 h-5 mr-1 rounded-full"
                                   onError={() =>
-                                    handleImageError(`avatar-${item._id}`)
+                                    handleImageError(`avatar-${item.id}`)
                                   }
                                 />
                               ) : (
@@ -2015,9 +2017,9 @@ const Trending: React.FC = () => {
                       .filter((ranking) => !ranking.parentId)
                       .map((ranking) => (
                         <button
-                          key={ranking._id}
+                          key={ranking.id}
                           className={`${buttonStyles.base} ${
-                            selectedRanking?._id === ranking._id
+                            selectedRanking?.id === ranking.id
                               ? buttonStyles.primary
                               : buttonStyles.secondary
                           }`}
@@ -2098,7 +2100,7 @@ const Trending: React.FC = () => {
                         (ranking) =>
                           // 如果当前选中的是子榜单，则显示与其父榜单相关的所有子榜单
                           ranking.parentId ===
-                          (selectedRanking.parentId || selectedRanking._id),
+                          (selectedRanking.parentId || selectedRanking.id),
                       ).length > 0 && (
                         <div className="flex flex-wrap gap-2 ml-4">
                           {rankingList
@@ -2107,13 +2109,13 @@ const Trending: React.FC = () => {
                                 // 如果当前选中的是子榜单，则显示与其父榜单相关的所有子榜单
                                 ranking.parentId ===
                                 (selectedRanking.parentId ||
-                                  selectedRanking._id),
+                                  selectedRanking.id),
                             )
                             .map((ranking) => (
                               <button
-                                key={ranking._id}
+                                key={ranking.id}
                                 className={`px-3 py-1.5 text-xs rounded-md transition-all duration-200 border-none outline-none ${
-                                  selectedRanking?._id === ranking._id
+                                  selectedRanking?.id === ranking.id
                                     ? 'bg-[#a66ae4] text-white hover:bg-[#9559d1]'
                                     : 'bg-gray-50 text-gray-600 hover:bg-[#f4ebff] hover:text-[#a66ae4]'
                                 }`}

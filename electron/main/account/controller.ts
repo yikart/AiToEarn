@@ -118,14 +118,19 @@ export class AccountController {
     data: { type: AccountType; uid: string },
   ): Promise<any> {
     const userInfo = getUserInfo();
+    
 
     const { type, uid } = data;
 
-    return this.accountService.getAccountInfo({
+    const accountInfo = await this.accountService.getAccountInfo({
       type,
       userId: userInfo.id,
       uid,
     });
+
+    // console.log('userInfouserInfo@@@:', accountInfo);
+
+    return accountInfo;
   }
 
   // 获取账户列表

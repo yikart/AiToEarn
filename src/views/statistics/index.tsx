@@ -7,7 +7,7 @@
  */
 import { useEffect, useState, useRef } from 'react';
 import './statistics.css';
-import { icpGetAccountDashboard, icpGetAccountStatistics } from '@/icp/account';
+import { icpGetAccountDashboard, icpGetAccountStatistics, icpGetAccountInfo } from '@/icp/account';
 import { DashboardData, StatisticsInfo } from './comment';
 import { Button, Card, Layout, Avatar, DatePicker } from 'antd';
 import {
@@ -20,6 +20,11 @@ import { Dayjs } from 'dayjs';
 import * as echarts from 'echarts';
 import dayjs from 'dayjs';
 import { message } from 'antd';
+
+import douyinIcon from '@/assets/svgs/account/douyin.svg';
+import xhsIcon from '@/assets/svgs/account/xhs.svg';
+import wxSphIcon from '@/assets/svgs/account/wx-sph.svg';
+import ksIcon from '@/assets/svgs/account/ks.svg';
 
 const { Content } = Layout;
 
@@ -100,6 +105,14 @@ const Statistics = () => {
           return date?.format('YYYY-MM-DD');
         }) || [];
 
+      // 平台类型对应的颜色
+      const platformColors: Record<string, string> = {
+        douyin: '#183641',  // 抖音
+        xhs: '#FF2442',     // 小红书
+        wxSph: '#46BC68',   // 微信视频号
+        KWAI: '#F64806'     // 快手
+      };
+
       const option = {
         title: {
           text: '数据趋势',
@@ -153,6 +166,7 @@ const Statistics = () => {
           ),
           barMaxWidth: 30,
           itemStyle: {
+            color: platformColors[account.type] || '#a66ae4', // 根据账户类型设置颜色，默认使用紫色
             borderRadius: [4, 4, 0, 0],
           },
         })),
@@ -247,12 +261,13 @@ const Statistics = () => {
   async function getAccountStatistics() {
     setDashboardData([]);
     const res: StatisticsInfo = await icpGetAccountStatistics();
-    console.log(res);
+    console.log('res@@@:', res);
     setStatisticsInfo(res);
     // 获取到账号列表后,遍历获取每个账号的看板数据
     if (res.list && res.list.length > 0) {
       for (const account of res.list) {
         const dashboardRes = await getAccountDashboard(account.id);
+        // const accountInfo = await icpGetAccountInfo(account.type, account.uid);
         setDashboardData((prev) => [
           ...prev,
           { ...dashboardRes[0], id: account.id },
@@ -287,6 +302,7 @@ const Statistics = () => {
           name: account.nickname,
           data: dashboardRes,
         };
+        console.log('datas$$$:', datas);
         dataAll.push(datas);
       }
 
@@ -382,6 +398,22 @@ const Statistics = () => {
     message.success('数据已刷新');
   };
 
+  // 添加获取平台图标的函数
+  const getPlatformIcon = (type: string) => {
+    switch (type) {
+      case 'douyin':
+        return douyinIcon;
+      case 'xhs':
+        return xhsIcon;
+      case 'wxSph':
+        return wxSphIcon;
+      case 'KWAI':
+        return ksIcon;
+      default:
+        return '';
+    }
+  };
+
   return (
     <div className="min-h-screen page-container bg-gray-50">
       <div className="px-6 py-6">
@@ -441,24 +473,35 @@ const Statistics = () => {
                     }`}
                     onClick={() => toggleAccountSelection(account.id)}
                   >
+                    <div style={{ position: 'relative' }}>
                     <img
                       className="w-12 h-12 rounded-full"
                       src={account.avatar}
                       alt=""
                     />
+                      {getPlatformIcon(account.type) && (
+                        <img
+                          src={getPlatformIcon(account.type)}
+                          alt={account.type}
+                          className="w-4 h-4 ml-2"
+                          style={{ position: 'absolute', bottom: '0', right: '0' }}
+                        />
+                      )}
+                    </div>
+                    
                     <div className="space-y-1">
-                      <div className="text-base font-medium text-gray-900">
+                      <div className="text-base font-medium text-gray-900 text-left">
                         {account.nickname}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      
+                      <div className="text-sm flex text-left">
+                        <span className="text-gray-500">粉丝: {(account as any).fansCount?.toLocaleString() || 0}</span>
+                      </div>
+
+                      <div className="text-gray-500 text-left" style={{ fontSize: '12px' }}>
                         ID: {account.uid}
                       </div>
-                      <div className="text-sm">
-                        <span className="text-[#a66ae4] font-medium">
-                          {(account as any).fansCount?.toLocaleString() || 0}
-                        </span>
-                        <span className="ml-1 text-gray-500">粉丝</span>
-                      </div>
+
                     </div>
                   </div>
                 ))}
