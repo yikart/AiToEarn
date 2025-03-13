@@ -65,18 +65,36 @@ export default function Page() {
     console.log('----- res', res);
   }
 
+  async function testGetKuaiShouWorksList() {
+    const res = await window.ipcRenderer.invoke(
+      'ICP_TEST_KUAISHOU_WORKS_LIST',
+      activeAccountId,
+    );
+    return res;
+  }
+
   return (
     <div>
       <div>
         <AccountSidebar
           activeAccountId={activeAccountId}
           onAccountChange={useCallback((info) => {
+            console.log('---- ', info);
+
             setActiveAccountId(info.id);
-            getCreatorList();
+            // getCreatorList();
           }, [])}
         />
       </div>
       <div>
+        <Button
+          type="primary"
+          onClick={() => {
+            testGetKuaiShouWorksList();
+          }}
+        >
+          测试查看抖音
+        </Button>
         <div>
           {wordList.map((item) => (
             <div key={item.dataId}>

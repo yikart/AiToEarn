@@ -337,7 +337,7 @@ class KwaiPub {
     cookies: Electron.Cookie[],
     pcursor?: number, // 下一页页码
   ) {
-    return await requestNet<GetPhotoListResponse>({
+    const res = await requestNet<GetPhotoListResponse>({
       url: `https://cp.kuaishou.com/rest/cp/creator/comment/photoList?__NS_sig3=79692e1e5040f94d562427268d0d3694fc18b05c38383a3a3534372d`,
       method: 'POST',
       headers: {
@@ -348,6 +348,7 @@ class KwaiPub {
         pcursor,
       },
     });
+    return res;
   }
 
   // 获取评论列表
@@ -373,7 +374,7 @@ class KwaiPub {
     photoId: string,
     commentId: number,
   ) {
-    return await requestNet<GetSubCommentListResponse>({
+    const res = await requestNet<GetSubCommentListResponse>({
       url: `https://cp.kuaishou.com/rest/cp/creator/comment/subCommentList?__NS_sig3=09195e6e1b33893d26545756e88395048c68c02c48484a4a4544475d`,
       method: 'POST',
       headers: {
@@ -385,6 +386,8 @@ class KwaiPub {
         'kuaishou.web.cp.api_ph': '69799694cfd7e689847219cf678dec275266',
       },
     });
+
+    return res;
   }
 
   /**

@@ -10,6 +10,7 @@ import { Controller, Icp, Inject } from '../core/decorators';
 import platController from '../plat';
 import { WorkData } from '../plat/plat.type';
 import { ReplyService } from './service';
+import { kwaiPub } from '../../plat/Kwai';
 
 @Controller()
 export class ReplyController {
@@ -101,6 +102,22 @@ export class ReplyController {
       content,
       option,
     );
+    return res;
+  }
+
+  /**
+   * 作品列表
+   */
+  @Icp('ICP_TEST_KUAISHOU_WORKS_LIST')
+  async testKuaiShouGetWorksList(
+    event: Electron.IpcMainInvokeEvent,
+    accountId: number,
+  ): Promise<any> {
+    const account = await this.accountService.getAccountById(accountId);
+    if (!account) return 1;
+    const cookie = JSON.parse(account.loginCookie);
+
+    const res = await kwaiPub.getPhotoList(cookie);
     return res;
   }
 }
