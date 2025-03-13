@@ -87,6 +87,7 @@ export class Douyin extends PlatformBase {
       account: res.authorId,
       avatar: res.avatar,
       nickname: res.nickname,
+      fansCount: res.fansCount,
     };
   }
 

@@ -57,6 +57,7 @@ export class Xhs extends PlatformBase {
         account: userInfo.authorId,
         avatar: userInfo.avatar,
         nickname: userInfo.nickname,
+        fansCount: userInfo.fansCount,
       };
     } catch (error) {
       console.error('Login process failed:', error);

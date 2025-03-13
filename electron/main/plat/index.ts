@@ -47,7 +47,16 @@ class PlatController {
    */
   public async platlogin(type: AccountType, params?: any) {
     const platform = this.platforms.get(type)!;
-    return await platform.login(params);
+    const res = await platform.login(params);
+    if (!res || !res.loginCookie) return null;
+    // 获取账户信息
+    const info = await platform.getAccountInfo({
+      cookies: JSON.parse(res.loginCookie),
+    });
+    console.log('------ info', info);
+
+    if (!!info) res.fansCount = info.fansCount || 0;
+    return res;
   }
 
   /**

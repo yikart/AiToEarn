@@ -85,6 +85,7 @@ export abstract class PlatformBase {
   ): Promise<{
     list: WorkData[];
     count: number;
+    pcursor?: number;
   }>;
 
   /**
@@ -102,6 +103,7 @@ export abstract class PlatformBase {
   ): Promise<{
     list: CommentData[];
     count: number;
+    pcursor?: number;
   }>;
 
   /**

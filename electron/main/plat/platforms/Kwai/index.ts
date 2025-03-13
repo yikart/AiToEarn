@@ -17,6 +17,7 @@ import {
   IGetUsersParams,
   IVideoPublishParams,
   VideoCallbackType,
+  WorkData,
 } from '../../plat.type';
 import { PublishVideoResult } from '../../module';
 import { kwaiPub } from '../../../../plat/Kwai';
@@ -59,6 +60,7 @@ export class Kwai extends PlatformBase {
       account: `${data.userId}` || '',
       avatar: data.userAvatar || '',
       nickname: data?.userName || '',
+      fansCount: 0, // TODO: 获取粉丝数
     };
   }
 
@@ -152,9 +154,23 @@ export class Kwai extends PlatformBase {
     account: AccountModel,
     pageInfo: { pageNo: number; pageSize: number },
   ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await kwaiPub.getPhotoList(cookie, pageInfo.pageNo);
+    const photoList = res.data.data.photoList;
+    const list: WorkData[] = photoList.map((v) => {
+      return {
+        dataId: v.photoId,
+        readCount: v.playCount,
+        likeCount: v.likeCount,
+        commentCount: v.commentCount,
+        title: v.title,
+      };
+    });
+
     return {
-      list: [],
-      count: 0,
+      list,
+      count: res.data.data.totalCount,
+      pcursor: res.data.data.pcursor,
     };
   }
 

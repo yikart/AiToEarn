@@ -2267,8 +2267,8 @@ export class DouyinService {
    */
   async getCreatorItems(
     cookie: Electron.Cookie[],
-    cursor: string,
     msToken: string,
+    cursor?: string,
   ) {
     return await requestNet<DouyinCreatorListResponse>({
       url: `https://creator.douyin.com/aweme/v1/creator/item/list/?cursor=${cursor}&msToken=${msToken}`,
