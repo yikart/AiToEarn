@@ -235,53 +235,61 @@ export class WxSph extends PlatformBase {
     params: IVideoPublishParams,
     callback: VideoCallbackType,
   ): Promise<PublishVideoResult> {
-    const result = await shipinhaoService.publishVideoWorkApi(
-      params.cookies,
-      params.videoPath,
-      {
-        cover: params.coverPath,
-        title: params.desc,
-        topics: params.topics,
-        des: params.desc,
-        timingTime: params.timingTime?.getTime(),
-        // 位置
-        ...(params.location
-          ? {
-              poiInfo: {
-                latitude: params.location.latitude,
-                longitude: params.location.longitude,
-                poiCity: params.location.city,
-                poiName: params.location.name,
-                poiAddress: params.location.simpleAddress,
-                poiId: params.location.id,
-              },
-            }
-          : {}),
-        // @用户
-        mentionedUserInfo: params.mentionedUserInfo
-          ? params.mentionedUserInfo.map((v) => {
-              return {
-                nickName: v.label,
-              };
-            })
-          : undefined,
-        // 活动
-        event: params.diffParams![AccountType.WxSph]!.activity,
-      },
-      callback,
-    );
-    if (!result.publishId)
-      return {
-        code: 0,
-        msg: '',
-        dataId: '',
-      };
+    return new Promise(async (resolve) => {
+      const result = await shipinhaoService
+        .publishVideoWorkApi(
+          params.cookies,
+          params.videoPath,
+          {
+            cover: params.coverPath,
+            title: params.desc,
+            topics: params.topics,
+            des: params.desc,
+            timingTime: params.timingTime?.getTime(),
+            // 位置
+            ...(params.location
+              ? {
+                  poiInfo: {
+                    latitude: params.location.latitude,
+                    longitude: params.location.longitude,
+                    poiCity: params.location.city,
+                    poiName: params.location.name,
+                    poiAddress: params.location.simpleAddress,
+                    poiId: params.location.id,
+                  },
+                }
+              : {}),
+            // @用户
+            mentionedUserInfo: params.mentionedUserInfo
+              ? params.mentionedUserInfo.map((v) => {
+                  return {
+                    nickName: v.label,
+                  };
+                })
+              : undefined,
+            // 活动
+            event: params.diffParams![AccountType.WxSph]!.activity,
+          },
+          callback,
+        )
+        .catch((e) => {
+          resolve({
+            code: 0,
+            msg: e,
+          });
+        });
+      if (!result || !result.publishId)
+        return resolve({
+          code: 0,
+          msg: '网络繁忙，请稍后重试',
+        });
 
-    return {
-      code: 1,
-      msg: '',
-      dataId: result.publishId,
-    };
+      return resolve({
+        code: 1,
+        msg: '成功！',
+        dataId: result.publishId,
+      });
+    });
   }
 
   async getTopics({}: IGetTopicsParams): Promise<IGetTopicsResponse> {

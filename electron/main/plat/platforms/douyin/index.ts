@@ -63,7 +63,7 @@ export class Douyin extends PlatformBase {
         loginTime: new Date(),
         type: this.type,
         uid: userInfo.authorId,
-        account: userInfo.authorId,
+        account: userInfo.uid,
         avatar: userInfo.avatar,
         nickname: userInfo.nickname,
         token: data.localStorage,
@@ -235,19 +235,17 @@ export class Douyin extends PlatformBase {
           resolve({
             code: 0,
             msg: e,
-            dataId: '',
           });
         });
       if (!result.publishId)
         return resolve({
           code: 0,
-          msg: '',
-          dataId: '',
+          msg: '网络繁忙，请稍后重试',
         });
 
       return resolve({
         code: 1,
-        msg: '',
+        msg: '发布成功',
         dataId: result.publishId,
       });
     });

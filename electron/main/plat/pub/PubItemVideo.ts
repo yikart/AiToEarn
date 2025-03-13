@@ -73,6 +73,7 @@ export class PubItemVideo extends PubItemBase {
     } else {
       // 发布成功
       this.videoModel.status = PubStatus.RELEASED;
+      this.videoModel.dataId = publishVideoResult.dataId;
     }
     await this.uploadRecord();
     return publishVideoResult;

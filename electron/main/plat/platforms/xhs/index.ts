@@ -230,20 +230,18 @@ export class Xhs extends PlatformBase {
           resolve({
             code: 0,
             msg: err,
-            dataId: '',
           });
         });
 
       if (result && !result.publishId)
         return resolve({
           code: 0,
-          msg: '',
-          dataId: '',
+          msg: '网络繁忙，请稍后重试！',
         });
 
       return resolve({
         code: 1,
-        msg: '',
+        msg: '成功！',
         dataId: result!.publishId,
       });
     });

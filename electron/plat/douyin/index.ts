@@ -1,4 +1,4 @@
-import { screen, BrowserWindow, net, session } from 'electron';
+import { BrowserWindow, net, screen, session } from 'electron';
 import { CommonUtils } from '../../util/common';
 import path from 'path';
 import { FileUtils } from '../../util/file';
@@ -344,6 +344,7 @@ export class DouyinService {
 
         if (res.status_code === 0) {
           resolve({
+            uid: res.user.sec_uid,
             authorId:
               res.user.unique_id !== '' ? res.user.unique_id : res.user.uid,
             nickname: res.user.nickname ?? '',
@@ -1696,7 +1697,7 @@ export class DouyinService {
     console.log('platformSetting：', platformSetting);
     const parmasDisposeOK = this.getPublishPublicParams(platformSetting);
 
-    const params = {
+    return {
       item: {
         anchor: parmasDisposeOK.hasOwnProperty('poi_id')
           ? {
@@ -1777,7 +1778,6 @@ export class DouyinService {
         },
       },
     };
-    return params;
   }
 
   /**

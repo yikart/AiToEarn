@@ -2,7 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import { PubRecordModel } from '../../comment';
 import styles from './pubRecord.module.scss';
 import { icpGetPubRecordList, icpGetPubVideoRecord } from '@/icp/publish';
-import { Avatar, Button, Drawer, Spin, Table, TableProps, Tooltip } from 'antd';
+import {
+  Avatar,
+  Button,
+  Drawer,
+  Modal,
+  Spin,
+  Table,
+  TableProps,
+  Tooltip,
+} from 'antd';
 import { getImgFile, IImgFile } from '@/components/Choose/ImgChoose';
 import { formatTime, getFilePathName } from '@/utils';
 import { VideoPul } from '@/views/publish/children/videoPage/comment';
@@ -11,6 +20,8 @@ import { AccountInfo, AccountPlatInfoMap } from '@/views/account/comment';
 import { useVideoPageStore } from '../videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import { useNavigate } from 'react-router-dom';
+import { AccountType } from '../../../../../commont/AccountEnum';
+import WebView from '../../../../components/WebView';
 
 const PubCon = ({ prm }: { prm: PubRecordModel }) => {
   const [imgFile, setImgFile] = useState<IImgFile>();
@@ -42,6 +53,17 @@ export default function Page() {
   // id=账户id，val=账户item数据
   const accountMap = useRef<Map<number, AccountInfo>>(new Map());
   const navigate = useNavigate();
+  const [examineVideo, setExamineVideo] = useState<{
+    account?: AccountInfo;
+    url: string;
+    open: boolean;
+    jsCode: string;
+  }>({
+    account: undefined,
+    url: '',
+    open: false,
+    jsCode: '',
+  });
 
   const { restartPub } = useVideoPageStore(
     useShallow((state) => ({
@@ -118,6 +140,37 @@ export default function Page() {
 
   return (
     <div className={styles.pubRecord}>
+      <Modal
+        zIndex={10000}
+        open={examineVideo.open}
+        forceRender={true}
+        footer={null}
+        onCancel={() => {
+          setExamineVideo((prevState) => {
+            const newState = { ...prevState };
+            newState.open = false;
+            newState.url = '';
+            return newState;
+          });
+        }}
+        title="查看视频"
+        width="90%"
+      >
+        <div style={{ height: '70vh' }}>
+          {examineVideo.account && open ? (
+            <WebView
+              url={examineVideo.url}
+              cookieParams={{
+                cookies: JSON.parse(examineVideo.account.loginCookie),
+              }}
+              key={examineVideo.url + examineVideo.open}
+            />
+          ) : (
+            ''
+          )}
+        </div>
+      </Modal>
+
       <Table<PubRecordModel>
         columns={columns}
         dataSource={pulRecardList}
@@ -184,7 +237,27 @@ export default function Page() {
                           重新发布
                         </Button>
                       ) : (
-                        <Button type="link">查看</Button>
+                        <Button
+                          type="link"
+                          onClick={() => {
+                            if (!v.dataId) return;
+                            console.log(v);
+                            setExamineVideo((prevState) => {
+                              const newState = { ...prevState };
+                              newState.open = true;
+                              newState.account = account;
+
+                              if (account?.type === AccountType.Douyin) {
+                                newState.url = `https://www.douyin.com/user/self?from_tab_name=main&modal_id=${v.dataId}&showTab=post`;
+                              } else {
+                                newState.url = `https://www.xiaohongshu.com/explore/67d18664000000000903814a?xsec_token=YBMab332BXv8-5Do5w8-AfCUsQpEry-xdpKLyG1y_g67k%3D&xsec_source=pc_creatormng`;
+                              }
+                              return newState;
+                            });
+                          }}
+                        >
+                          查看
+                        </Button>
                       )}
                     </div>
                   </li>

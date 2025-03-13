@@ -15,7 +15,7 @@ export class XiaohongshuService {
   private defaultUserAgent =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
   private loginUrl = 'https://creator.xiaohongshu.com/';
-  // private loginUrl = 'https://www.xiaohongshu.com/';
+  private loginUrlHome = 'https://www.xiaohongshu.com/';
   private getUserInfoUrl =
     'https://creator.xiaohongshu.com/api/galaxy/user/info';
   private getDashboardUrl =
@@ -28,9 +28,9 @@ export class XiaohongshuService {
     'https://edith.xiaohongshu.com/web_api/sns/v2/note';
   private fileBlockSize = 5242880;
   private cookieCheckField = 'access-token';
-  // private cookieCheckField = 'web_session';
   private cookieIntervalList: { [key: string]: NodeJS.Timer } = {};
   private prev_web_session = '';
+  private win?: BrowserWindow;
 
   /**
    * 授权|预览
@@ -115,8 +115,9 @@ export class XiaohongshuService {
     }
 
     // 加载登录页
-    await win.loadURL(this.loginUrl);
+    await win.loadURL(this.loginUrlHome);
 
+    this.win = win;
     return {
       winContentsId: win.id,
       partition,
@@ -131,33 +132,51 @@ export class XiaohongshuService {
     partition: string,
   ): Promise<Electron.Cookie[]> {
     return new Promise((resolve, reject) => {
+      console.log('----------------------');
+      this.win!.webContents.openDevTools();
       // Monitor cookie status with interval
       this.cookieIntervalList[winContentsId] = setInterval(async () => {
         try {
-          const cookies = await session.fromPartition(partition).cookies.get({
-            url: this.loginUrl,
-          });
-          // const web_session = cookies.find((v) => v.name === 'web_session');
-          // if (!this.prev_web_session) {
-          //   this.prev_web_session = web_session?.value || '';
-          // }
-          /**
-           * 因为小红书的cookie字段始终存在
-           * 所以判断cookie是否进行更改
-           */
-          // if (this.prev_web_session === (web_session?.value || '')) return;
-
-          const alreadyLogin = cookies.some((cookie) => {
-            return cookie.name.includes(this.cookieCheckField);
-          });
-          if (alreadyLogin) {
-            // Clear interval
-            if (this.cookieIntervalList[winContentsId]) {
-              clearInterval(this.cookieIntervalList[winContentsId] as any);
-              delete this.cookieIntervalList[winContentsId];
+          console.log(
+            this.win!.webContents.getURL().includes(this.loginUrlHome),
+          );
+          console.log(this.win!.webContents.getURL().includes(this.loginUrl));
+          if (this.win!.webContents.getURL().includes(this.loginUrlHome)) {
+            const cookies2 = await session
+              .fromPartition(partition)
+              .cookies.get({
+                url: this.loginUrlHome,
+              });
+            const web_session = cookies2.find((v) => v.name === 'web_session');
+            if (!this.prev_web_session) {
+              this.prev_web_session = web_session?.value || '';
             }
+            if (this.prev_web_session === (web_session?.value || '')) return;
+            await this.win!.loadURL(this.loginUrl + 'login?source=official');
+          } else if (this.win!.webContents.getURL().includes(this.loginUrl)) {
+            const cookies1 = await session
+              .fromPartition(partition)
+              .cookies.get({
+                url: this.loginUrl,
+              });
+            const cookies2 = await session
+              .fromPartition(partition)
+              .cookies.get({
+                url: this.loginUrlHome,
+              });
+            const cookies = cookies1.concat(cookies2);
+            const alreadyLogin = cookies1.some((cookie) => {
+              return cookie.name.includes(this.cookieCheckField);
+            });
+            if (alreadyLogin) {
+              // Clear interval
+              if (this.cookieIntervalList[winContentsId]) {
+                clearInterval(this.cookieIntervalList[winContentsId] as any);
+                delete this.cookieIntervalList[winContentsId];
+              }
 
-            resolve(cookies);
+              resolve(cookies);
+            }
           }
         } catch (error) {
           // Clear interval on error
