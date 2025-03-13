@@ -11,6 +11,7 @@ import platController from '../plat';
 import { WorkData } from '../plat/plat.type';
 import { ReplyService } from './service';
 import { kwaiPub } from '../../plat/Kwai';
+import { douyinService } from '../../plat/douyin';
 
 @Controller()
 export class ReplyController {
@@ -106,7 +107,7 @@ export class ReplyController {
   }
 
   /**
-   * 作品列表
+   * 快手作品列表
    */
   @Icp('ICP_TEST_KUAISHOU_WORKS_LIST')
   async testKuaiShouGetWorksList(
@@ -118,6 +119,22 @@ export class ReplyController {
     const cookie = JSON.parse(account.loginCookie);
 
     const res = await kwaiPub.getPhotoList(cookie);
+    return res;
+  }
+
+  /**
+   * 抖音作品列表
+   */
+  @Icp('ICP_TEST_DOUYIN_WORKS_LIST')
+  async testDouyinGetWorksList(
+    event: Electron.IpcMainInvokeEvent,
+    accountId: number,
+  ): Promise<any> {
+    const account = await this.accountService.getAccountById(accountId);
+    if (!account) return 1;
+    const cookie = JSON.parse(account.loginCookie);
+
+    const res = await douyinService.getCreatorItems(cookie);
     return res;
   }
 }
