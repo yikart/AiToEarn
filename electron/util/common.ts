@@ -99,4 +99,18 @@ export class CommonUtils {
       }
     });
   }
+
+  static buildUrl(baseUrl: string, params: any) {
+    const url = new URL(baseUrl);
+    Object.keys(params).forEach((key) => {
+      if (
+        params[key] !== undefined &&
+        params[key] !== null &&
+        params[key] !== ''
+      ) {
+        url.searchParams.append(key, params[key]);
+      }
+    });
+    return url.toString();
+  }
 }

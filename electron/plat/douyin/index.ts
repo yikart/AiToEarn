@@ -22,6 +22,7 @@ import {
 import requestNet from '../requestNet';
 import { jsonToQueryString } from '../../util';
 import { DeclarationDouyin } from './common.douyin';
+import { url } from 'url';
 
 type PlatformSettingType = {
   // 自主声明
@@ -2265,18 +2266,20 @@ export class DouyinService {
    * @param msToken
    * @returns
    */
-  async getCreatorItems(
-    cookie: Electron.Cookie[],
-    msToken: string,
-    cursor?: string,
-  ) {
-    return await requestNet<DouyinCreatorListResponse>({
-      url: `https://creator.douyin.com/aweme/v1/creator/item/list/?cursor=${cursor}&msToken=${msToken}`,
+  async getCreatorItems(cookie: Electron.Cookie[], cursor?: string) {
+    const url = CommonUtils.buildUrl(
+      'https://creator.douyin.com/aweme/v1/creator/item/list/',
+      { cursor },
+    );
+    const res = await requestNet<DouyinCreatorListResponse>({
+      url,
       headers: {
         cookie: CookieToString(cookie),
       },
       method: 'GET',
     });
+
+    return res;
   }
 
   // 查看作品的评论列表
@@ -2284,18 +2287,27 @@ export class DouyinService {
     cookie: Electron.Cookie[],
     item_id: string, // 作品ID
     pageInfo: {
-      cursor: number;
-      count: number;
+      cursor?: number;
+      count?: number;
     },
-    msToken: string,
   ) {
-    return await requestNet<DouyinCreatorCommentListResponse>({
-      url: `https://creator.douyin.com/aweme/v1/creator/comment/list/?cursor=${pageInfo.cursor}&count=${pageInfo.count}&item_id=${item_id}&sort=TIME&msToken=${msToken}`,
+    const res = await requestNet<DouyinCreatorCommentListResponse>({
+      url: CommonUtils.buildUrl(
+        `https://creator.douyin.com/aweme/v1/creator/comment/list/`,
+        {
+          cursor: pageInfo.cursor,
+          count: pageInfo.count,
+          item_id: item_id,
+          sort: 'TIME',
+        },
+      ),
       headers: {
         cookie: CookieToString(cookie),
       },
       method: 'GET',
     });
+
+    return res;
   }
 
   // 作品的评论回复
@@ -2306,11 +2318,9 @@ export class DouyinService {
       item_id: string; // '@j/do779EQE//uctS8rzvvch6oCaTZCH0JqwsPqxpgahhkia+W5A7RJEoPQpq6PZl7wq9uxSqSWCjcIdbPzF8fQ==';
       text: string; //'哈哈哈';
     },
-    msToken: string,
-    a_bogus: string,
   ) {
     return await requestNet<DouyinCreatorCommentListResponse>({
-      url: `https://creator.douyin.com/aweme/v1/creator/comment/reply/?msToken=${msToken}&a_bogus=${a_bogus}`,
+      url: `https://creator.douyin.com/aweme/v1/creator/comment/reply/`,
       headers: {
         cookie: CookieToString(cookie),
       },
