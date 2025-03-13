@@ -70,6 +70,43 @@ interface XiaohongshuData {
   user_info_dtos: XiaohongshuUserInfoDTO[];
 }
 
+export interface IXHSWorks {
+  collected_count: number;
+  comments_count: number;
+  display_title: string;
+  id: string;
+  images_list: {
+    url: string;
+  }[];
+  level: number;
+  permission_code: number;
+  likes: number;
+  permission_msg: string;
+  schedule_post_time: number;
+  shared_count: number;
+  sticky: boolean;
+  tab_status: number;
+  time: string;
+  type: string;
+  video_info: {
+    duration: number;
+  };
+  view_count: number;
+  xsec_source: string;
+  xsec_token: string;
+}
+
+export type IXHSGetWorksResponse = CommonResponse<{
+  page: number;
+  notes: IXHSWorks[];
+  tags: {
+    checked: boolean;
+    id: string;
+    name: string;
+    notes_count: number;
+  }[];
+}>;
+
 // 搜索用户
 export type XiaohongshuApiResponse = CommonResponse<XiaohongshuData>;
 

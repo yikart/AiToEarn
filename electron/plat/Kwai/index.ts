@@ -390,6 +390,9 @@ class KwaiPub {
   /**
    * 添加评论和回复评论
    * @param cookie
+   * @param photoId
+   * @param content
+   * @param reply
    * @returns
    */
   async commentAdd(

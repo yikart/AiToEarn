@@ -233,7 +233,7 @@ export class Xhs extends PlatformBase {
           });
         });
 
-      if (result && !result.publishId)
+      if (!result || !result.publishId)
         return resolve({
           code: 0,
           msg: '网络繁忙，请稍后重试！',
@@ -243,6 +243,12 @@ export class Xhs extends PlatformBase {
         code: 1,
         msg: '成功！',
         dataId: result!.publishId,
+        videoPubOtherData: {
+          [AccountType.Xhs]: {
+            xsec_token: result!.works!.xsec_token,
+            xsec_source: result!.works!.xsec_source,
+          },
+        },
       });
     });
   }

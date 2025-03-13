@@ -6,8 +6,10 @@ import { FileUtils } from '../../util/file';
 import { CookieToString, getFileContent } from '../utils';
 import requestNet from '../requestNet';
 import {
+  IXHSGetWorksResponse,
   IXHSLocationResponse,
   IXHSTopicsResponse,
+  IXHSWorks,
   XiaohongshuApiResponse,
 } from './xiaohongshu.type';
 
@@ -1189,6 +1191,7 @@ export class XiaohongshuService {
     publishTime: number;
     publishId: string;
     shareLink: string;
+    works?: IXHSWorks;
   }> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1244,14 +1247,24 @@ export class XiaohongshuService {
         ).catch((err) => {
           reject(err);
         });
+        callback(80, '发布完成，正在查询结果...');
+
+        const worksList = await this.getWorks(JSON.parse(cookies));
+        console.log(worksList);
+        const works = worksList.data.data.notes.find(
+          (v) => v.id === result.publishId,
+        );
+        console.log(works);
         callback(100);
         // 返回信息
         resolve({
           publishTime: Math.floor(Date.now() / 1000),
           publishId: result.publishId,
           shareLink: result.shareLink || '',
+          works,
         });
       } catch (err) {
+        console.warn(err);
         reject(err);
         callback(-1);
       }
@@ -1345,6 +1358,28 @@ export class XiaohongshuService {
         source: 'WEB',
         type: 3,
       },
+    });
+  }
+
+  // 获取作品列表
+  async getWorks(cookie: Electron.Cookie[]) {
+    const reverseRes: any = await this.getReverseResult({
+      url: '/web_api/sns/v5/creator/note/user/posted?tab=0&page=0',
+      a1: CookieToString(cookie),
+    });
+
+    return await requestNet<IXHSGetWorksResponse>({
+      url: `https://edith.xiaohongshu.com/web_api/sns/v5/creator/note/user/posted?tab=0&page=0`,
+      headers: {
+        cookie: CookieToString(cookie),
+        Referer: this.loginUrl,
+        origin: this.loginUrl,
+        'X-S': reverseRes['X-s'],
+        'X-T': reverseRes['X-t'],
+        userAgent:
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
+      },
+      method: 'GET',
     });
   }
 

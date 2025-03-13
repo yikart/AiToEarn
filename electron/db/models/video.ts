@@ -11,6 +11,7 @@ import { VisibleTypeEnum } from '../../../commont/publish/PublishEnum';
 import { AccountType } from '../../../commont/AccountEnum';
 import type { ILocationDataItem, WxSphEvent } from '../../main/plat/plat.type';
 import { DeclarationDouyin } from '../../plat/douyin/common.douyin';
+import type { IVideoPubOtherData } from '../../main/plat/module';
 
 // 包含一个name和一个value的对象
 export interface ILableValue {
@@ -100,6 +101,10 @@ export class VideoModel extends WorkData {
   // @用户
   @Column({ type: 'json', nullable: true, comment: '@用户数组' })
   mentionedUserInfo?: ILableValue[];
+
+  // 其它数据，发布完成每个可能需要这个平台独特的数据
+  @Column({ type: 'json', nullable: true, comment: '@用户数组' })
+  videoPubOtherData?: IVideoPubOtherData;
 
   // 视频可见性
   @Column({

@@ -1,27 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
-import { PubRecordModel } from '../../comment';
-import styles from './pubRecord.module.scss';
-import { icpGetPubRecordList, icpGetPubVideoRecord } from '@/icp/publish';
-import {
-  Avatar,
-  Button,
-  Drawer,
-  Modal,
-  Spin,
-  Table,
-  TableProps,
-  Tooltip,
-} from 'antd';
-import { getImgFile, IImgFile } from '@/components/Choose/ImgChoose';
-import { formatTime, getFilePathName } from '@/utils';
-import { VideoPul } from '@/views/publish/children/videoPage/comment';
-import { icpGetAccountList } from '@/icp/account';
-import { AccountInfo, AccountPlatInfoMap } from '@/views/account/comment';
-import { useVideoPageStore } from '../videoPage/useVideoPageStore';
-import { useShallow } from 'zustand/react/shallow';
-import { useNavigate } from 'react-router-dom';
-import { AccountType } from '../../../../../commont/AccountEnum';
-import WebView from '../../../../components/WebView';
+import { useEffect, useRef, useState } from "react";
+import { PubRecordModel } from "../../comment";
+import styles from "./pubRecord.module.scss";
+import { icpGetPubRecordList, icpGetPubVideoRecord } from "@/icp/publish";
+import { Avatar, Button, Drawer, Modal, Spin, Table, TableProps, Tooltip } from "antd";
+import { getImgFile, IImgFile } from "@/components/Choose/ImgChoose";
+import { formatTime, getFilePathName } from "@/utils";
+import { VideoPul } from "@/views/publish/children/videoPage/comment";
+import { icpGetAccountList } from "@/icp/account";
+import { AccountInfo, AccountPlatInfoMap } from "@/views/account/comment";
+import { useVideoPageStore } from "../videoPage/useVideoPageStore";
+import { useShallow } from "zustand/react/shallow";
+import { useNavigate } from "react-router-dom";
+import { AccountType } from "../../../../../commont/AccountEnum";
+import WebView from "../../../../components/WebView";
 
 const PubCon = ({ prm }: { prm: PubRecordModel }) => {
   const [imgFile, setImgFile] = useState<IImgFile>();
@@ -216,7 +207,7 @@ export default function Page() {
                       </div>
                     </div>
                     <div className="pubRecord-record-item-btns">
-                      {v.status === 2 ? (
+                      {v.status !== 1 ? (
                         <Button
                           type="link"
                           onClick={() => {
@@ -241,7 +232,6 @@ export default function Page() {
                           type="link"
                           onClick={() => {
                             if (!v.dataId) return;
-                            console.log(v);
                             setExamineVideo((prevState) => {
                               const newState = { ...prevState };
                               newState.open = true;
@@ -249,8 +239,10 @@ export default function Page() {
 
                               if (account?.type === AccountType.Douyin) {
                                 newState.url = `https://www.douyin.com/user/self?from_tab_name=main&modal_id=${v.dataId}&showTab=post`;
-                              } else {
-                                newState.url = `https://www.xiaohongshu.com/explore/67d18664000000000903814a?xsec_token=YBMab332BXv8-5Do5w8-AfCUsQpEry-xdpKLyG1y_g67k%3D&xsec_source=pc_creatormng`;
+                              } else if (account?.type === AccountType.Xhs) {
+                                newState.url = `https://www.xiaohongshu.com/explore/${v.dataId}?xsec_token=${v.videoPubOtherData![AccountType.Xhs]!.xsec_token}&xsec_source=${v.videoPubOtherData![AccountType.Xhs]!.xsec_source}`;
+                              } else if (account?.type === AccountType.WxSph) {
+                                console.log(newState.url);
                               }
                               return newState;
                             });
