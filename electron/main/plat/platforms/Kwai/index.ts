@@ -39,7 +39,7 @@ export class Kwai extends PlatformBase {
    */
   async login() {
     const req = await kwaiPub.login();
-    const userInfo = this.formatUserInfo(req.userInfo);
+    const userInfo = await this.formatUserInfo(req.userInfo, req.cookies);
     if (!userInfo) return null;
     userInfo.loginCookie = JSON.stringify(req.cookies);
     return userInfo;
@@ -48,9 +48,14 @@ export class Kwai extends PlatformBase {
   /**
    * 格式化用户信息
    * @param req
+   * @param cookies
    */
-  formatUserInfo(req: IRequestNetResult<IKwaiUserInfoResponse>) {
+  async formatUserInfo(
+    req: IRequestNetResult<IKwaiUserInfoResponse>,
+    cookies: Electron.Cookie[],
+  ) {
     const { data } = req.data;
+    const res = await kwaiPub.getHomeInfo(cookies);
     if (!data) return null;
     return {
       userId: '',
@@ -60,7 +65,7 @@ export class Kwai extends PlatformBase {
       account: `${data.userId}` || '',
       avatar: data.userAvatar || '',
       nickname: data?.userName || '',
-      fansCount: 0, // TODO: 获取粉丝数
+      fansCount: res.data.data.fansCnt,
     };
   }
 
@@ -70,7 +75,7 @@ export class Kwai extends PlatformBase {
    */
   async getAccountInfo(params: IAccountInfoParams): Promise<AccountInfoTypeRV> {
     const res = await kwaiPub.getAccountInfo(params.cookies);
-    return this.formatUserInfo(res);
+    return await this.formatUserInfo(res, params.cookies);
   }
 
   async videoPublish(
