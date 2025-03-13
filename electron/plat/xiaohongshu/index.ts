@@ -1368,6 +1368,24 @@ export class XiaohongshuService {
       },
     });
   }
+
+  // 获取评论列表
+  async getCommentList(
+    cookie: Electron.Cookie[],
+    noteId: string,
+    cursor?: number,
+  ) {
+    return await requestNet<XiaohongshuApiResponse>({
+      url: `https://edith.xiaohongshu.com/api/sns/web/v2/comment/page?note_id=${noteId}&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=AB9FJ4Lt0GzHqwzKCWh2glQja0HkO-sc0zNChTPhFvwGo%3D`,
+      headers: {
+        cookie: CookieToString(cookie),
+        Referer: this.loginUrl,
+        origin: this.loginUrl,
+      },
+      method: 'POST',
+      body: {},
+    });
+  }
 }
 
 // 导出服务实例
