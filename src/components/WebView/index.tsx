@@ -10,19 +10,23 @@ import { generateUUID } from '../../utils';
 import styles from './webView.module.scss';
 import { Spin } from 'antd';
 import { ICookieParams } from '../../../electron/main/account/BrowserWindow/browserWindow';
+import { AccountInfo } from '../../views/account/comment';
+import { AccountType } from '../../../commont/AccountEnum';
 
 export interface IWebViewRef {}
 
 export interface IWebViewProps {
   url: string;
   cookieParams?: ICookieParams;
-  jsCode?: string;
+  // 是否开启沙盒化模式
+  partition?: boolean;
+  account?: AccountInfo;
 }
 
 const WebView = memo(
   forwardRef(
     (
-      { url, cookieParams, jsCode }: IWebViewProps,
+      { url, cookieParams, partition, account }: IWebViewProps,
       ref: ForwardedRef<IWebViewRef>,
     ) => {
       const webviewRef = useRef<HTMLWebViewElement>(null);
@@ -34,8 +38,18 @@ const WebView = memo(
 
       useEffect(() => {
         setLoading(true);
+
         webviewRef.current?.addEventListener('dom-ready', async () => {
-          if (jsCode) {
+          // 每个平台localStorage添加
+          if (account) {
+            let jsCode;
+            if (account?.type === AccountType.Douyin) {
+              jsCode = `
+                localStorage.setItem('douyin_web_hide_guide', '1');
+                localStorage.setItem('user_info', '{"uid":"${account.account}","nickname":"${account.nickname}","avatarUrl":"${account.avatar}"}');
+                localStorage.setItem('useShortcut2', '{"Wed Mar 12 2025":false}');
+              `;
+            }
             // @ts-ignore
             webviewRef.current!.executeJavaScript(jsCode);
           }
@@ -70,9 +84,9 @@ const WebView = memo(
               <webview
                 ref={webviewRef}
                 webpreferences="sandbox"
-                src={!jsCode ? (loading ? 'about:blank' : url) : url}
+                src={loading ? 'about:blank' : url}
                 style={{ width: '100%', height: '100%' }}
-                partition={partitionId.current}
+                partition={partition ? partitionId.current : undefined}
                 useragent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 Edg/133.0.0.0"
               ></webview>
             </Spin>

@@ -160,7 +160,6 @@ export default function Page() {
           {examineVideo.account && open ? (
             <WebView
               url={examineVideo.url}
-              jsCode={examineVideo.jsCode}
               cookieParams={{
                 cookies: JSON.parse(examineVideo.account.loginCookie),
               }}
@@ -242,18 +241,16 @@ export default function Page() {
                           type="link"
                           onClick={() => {
                             if (!v.dataId) return;
+                            console.log(v);
                             setExamineVideo((prevState) => {
                               const newState = { ...prevState };
                               newState.open = true;
                               newState.account = account;
+
                               if (account?.type === AccountType.Douyin) {
                                 newState.url = `https://www.douyin.com/user/self?from_tab_name=main&modal_id=${v.dataId}&showTab=post`;
-                                newState.jsCode = `
-                                  localStorage.setItem('douyin_web_hide_guide', '1');
-                                  localStorage.setItem('user_info', '1');
-                                  localStorage.setItem('user_info_passport', '1');
-                                  localStorage.setItem('useShortcut2', '{"Wed Mar 12 2025":false}');
-                                `;
+                              } else {
+                                newState.url = `https://www.xiaohongshu.com/explore/67d18664000000000903814a?xsec_token=YBMab332BXv8-5Do5w8-AfCUsQpEry-xdpKLyG1y_g67k%3D&xsec_source=pc_creatormng`;
                               }
                               return newState;
                             });

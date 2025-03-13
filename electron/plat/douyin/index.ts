@@ -344,6 +344,7 @@ export class DouyinService {
 
         if (res.status_code === 0) {
           resolve({
+            uid: res.user.sec_uid,
             authorId:
               res.user.unique_id !== '' ? res.user.unique_id : res.user.uid,
             nickname: res.user.nickname ?? '',
