@@ -207,7 +207,7 @@ export class ShipinhaoService {
             timestamp: new Date().getTime(),
           },
         });
-        console.log('getDashboardFunc res:', JSON.stringify(res));
+        // console.log('getDashboardFunc res:', JSON.stringify(res));
         if (res.errCode === 0) {
           if (endDate && startDate) {
             // 如果传入了日期范围，返回数组格式

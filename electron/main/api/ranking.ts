@@ -100,7 +100,7 @@ class RankingApi {
   async getRanking(id: string, token: string): Promise<Ranking> {
     const response = await this.request<Ranking>(
       'GET',
-      `/api/ranking/${id}`,
+      `/api/ranking/${id}/detail`,
       null,
       token,
     );

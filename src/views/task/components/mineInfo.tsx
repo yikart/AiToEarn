@@ -330,11 +330,11 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
           <div className={styles.taskInfoFooter}>
             <Space>
               <Button onClick={handleCancel}>关闭</Button>
-              {canSubmitTask() && (
+              {/* {canSubmitTask() && ( */}
                 <Button type="primary" onClick={taskDone} loading={submitting}>
                   提交任务
                 </Button>
-              )}
+              {/* )} */}
             </Space>
           </div>
         </div>
