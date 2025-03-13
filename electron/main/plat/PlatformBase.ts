@@ -79,8 +79,9 @@ export abstract class PlatformBase {
   abstract getWorkList(
     account: AccountModel,
     pageInfo: {
-      pageNo: number;
-      pageSize: number;
+      pageNo?: number;
+      pageSize?: number;
+      pcursor?: string;
     },
   ): Promise<{
     list: WorkData[];
@@ -100,6 +101,11 @@ export abstract class PlatformBase {
   abstract getCommentList(
     account: AccountModel,
     dataId: string,
+    pageInfo?: {
+      pageNo?: number;
+      pageSize?: number;
+      pcursor?: number;
+    },
   ): Promise<{
     list: CommentData[];
     count: number;

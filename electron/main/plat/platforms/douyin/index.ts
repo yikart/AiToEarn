@@ -8,6 +8,7 @@
 import { PlatformBase } from '../../PlatformBase';
 import {
   AccountInfoTypeRV,
+  CommentData,
   CookiesType,
   DashboardData,
   IAccountInfoParams,
@@ -17,6 +18,7 @@ import {
   IGetUsersParams,
   IVideoPublishParams,
   VideoCallbackType,
+  WorkData,
 } from '../../plat.type';
 import { PublishVideoResult } from '../../module';
 import { douyinService } from '../../../../plat/douyin';
@@ -134,11 +136,25 @@ export class Douyin extends PlatformBase {
    */
   async getWorkList(
     account: AccountModel,
-    pageInfo: { pageNo: number; pageSize: number },
+    pageInfo: { pageNo?: number; pageSize?: number; pcursor?: string },
   ) {
+    const res = await douyinService.getCreatorItems(
+      JSON.parse(account.loginCookie),
+      pageInfo.pcursor,
+    );
+    const list: WorkData[] = res.data.item_info_list.map((v) => {
+      return {
+        dataId: v.item_id,
+        cover: v.cover_image_url,
+        title: v.title,
+        createTime: v.create_time,
+        commentCount: v.comment_count,
+      };
+    });
+
     return {
-      list: [],
-      count: 0,
+      list: list,
+      count: res.data.total_count,
     };
   }
 
@@ -153,11 +169,38 @@ export class Douyin extends PlatformBase {
     };
   }
 
-  async getCommentList(account: AccountModel, dataId: string) {
+  async getCommentList(
+    account: AccountModel,
+    dataId: string,
+    pageInfo?: {
+      pageNo?: number;
+      pageSize?: number;
+      pcursor?: number;
+    },
+  ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await douyinService.getCreatorCommentList(cookie, dataId, {
+      count: pageInfo?.pageSize || undefined,
+      cursor: pageInfo?.pcursor || undefined,
+    });
+
+    console.log('===== res ===', res.data.comment_info_list[0]);
+
+    const list: CommentData[] = res.data.comment_info_list.map((v) => {
+      return {
+        dataId: dataId,
+        commentId: v.comment_id,
+        content: v.text,
+        likeCount: Number.parseInt(v.digg_count),
+        nikeName: v.user_info.screen_name,
+        headUrl: v.user_info.avatar_url,
+        data: v,
+      };
+    });
+
     return {
-      list: [],
-      count: 0,
+      list,
+      count: res.data.total_count,
     };
   }
 

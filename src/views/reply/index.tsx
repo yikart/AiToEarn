@@ -21,12 +21,11 @@ export default function Page() {
   const [activeAccountId, setActiveAccountId] = useState<number>(-1);
 
   async function getCreatorList() {
-    const res = await icpCreatorList(activeAccountId, {
+    const res = await icpCreatorList(4, {
       pageNo: 1,
       pageSize: 10,
     });
     setWordList(res.list);
-    console.log('----- res', res);
   }
 
   /**
@@ -65,36 +64,20 @@ export default function Page() {
     console.log('----- res', res);
   }
 
-  async function testGetKuaiShouWorksList() {
-    const res = await window.ipcRenderer.invoke(
-      'ICP_TEST_KUAISHOU_WORKS_LIST',
-      activeAccountId,
-    );
-    return res;
-  }
-
   return (
     <div>
       <div>
         <AccountSidebar
           activeAccountId={activeAccountId}
           onAccountChange={useCallback((info) => {
-            console.log('---- ', info);
+            console.log('----- info', info);
 
             setActiveAccountId(info.id);
-            // getCreatorList();
+            getCreatorList();
           }, [])}
         />
       </div>
       <div>
-        <Button
-          type="primary"
-          onClick={() => {
-            testGetKuaiShouWorksList();
-          }}
-        >
-          测试查看抖音
-        </Button>
         <div>
           {wordList.map((item) => (
             <div key={item.dataId}>

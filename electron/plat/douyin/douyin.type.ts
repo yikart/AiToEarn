@@ -421,25 +421,35 @@ export interface DouyinCreatorListResponse {
 
 // 抖音作品评论列表
 export interface DouyinCreatorCommentListResponse {
-  extra: Extra;
-  status_code: number; // 0
-  status_msg: string;
-  has_more: boolean;
-  item_info_list: {
-    anchor_user_id: string;
-    cursor: string;
-    comment_count: number; // 回复数量
-    cover_image_url: string; // 'https://p3-sign.douyinpic.com/c5d200033ae82940b280~tplv-dy-resize-walign-adapt-aq:540:q75.jpeg?lk3s=138a59ce&x-expires=1742889600&x-signature=jcYpgxENZDa38hHUHNFfpcAPUDs%3D&from=327834062&s=PackSourceEnum_PUBLISH&se=false&sc=cover&biz_tag=aweme_video&l=20250311165957E85797DDC3B0DA04AEBA';
-    create_time: string; // '发布于2018年09月23日 17:51';
-    creator_item_setting: {
-      charge_comment_audit: boolean; // 收费评论审计
+  comment_info_list: {
+    comment_id: string; // '@j/do779EQE//uctS8rzvtsh7oymVZyz/K6UlPqVrj61hkia+W5A7RJEoPQpq6PZl0KYgJ8TOofuQDOgXI12wCA==';
+    create_time: string; // '1741694473';
+    digg_count: string; // '0';
+    followed: boolean; // false;
+    following: boolean; // false;
+    is_author: boolean; // true;
+    level: number; // 1;
+    reply_count: string; // '0';
+    reply_to_user_info: {
+      avatar_url: string; // '';
+      screen_name: string; // '';
+      user_id: string; // '@j/do779EQE//uctS8rvZjLtLqeE8MOypT/Xro3hVZaE=';
     };
-    duration: number;
-    item_id: string; //  '@j/do779EQE//uctS8r3tvsx9pyuRYyn/J6krPKNgjq9hkia+W5A7RJEoPQpq6PZlQedr6LX3XaKU0Yc8jcykog==';
-    item_id_plain: string; // '6604355150884637966';
-    item_link: string; // 'https://www.iesdouyin.com/share/video/6604355150884637966/?region=CN&mid=6568746752824380174&u_code=16b4ji55k&did=MS4wLjABAAAANwkJuWIRFOzg5uCpDRpMj4OX-QryoDgn-yYlXQnRwQQ&iid=MS4wLjABAAAANwkJuWIRFOzg5uCpDRpMj4OX-QryoDgn-yYlXQnRwQQ&with_sec_did=1&video_share_track_ver=&titleType=&share_sign=qwbHwbUn9.rqVOBIpmIak8F4W9CXvvE18GzpMaAUfyU-&share_version=210100&ts=1741683597&from_aid=1128&from_ssr=1';
-    media_type: number; //  4;
-    title: string; // '';
+    status: number; // 1;
+    text: string; // '不知道在哪里学的';
+    user_bury: boolean; // false;
+    user_digg: boolean; // false;
+    user_info: {
+      avatar_url: string; // 'https://p3.douyinpic.com/aweme/100x100/aweme-avatar/mosaic-legacy_9bae0021f45bb7d411b0.jpeg?from=2956013662';
+      screen_name: string; // '沐墨人';
+      user_id: string; // '@j/do779EQE//uctS8rrrvst3qyiRYCHwJpoaCJNev56Vc+YwAlekyGOU0vO5C292';
+    };
   }[];
-  total_count: number;
+  cursor: number; // 3;
+  extra: { now: number }; // 1741874549000 };
+  has_more: boolean; // false;
+  has_vcd_filter: boolean; // false;
+  status_code: number; //  0;
+  status_msg: string; // '';
+  total_count: number; //  3;
 }

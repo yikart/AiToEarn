@@ -15,6 +15,7 @@ import {
   DownloadOutlined,
   SearchOutlined,
   ReloadOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
 import { Dayjs } from 'dayjs';
 import * as echarts from 'echarts';
@@ -109,7 +110,7 @@ const Statistics = () => {
       const platformColors: Record<string, string> = {
         douyin: '#183641',  // 抖音
         xhs: '#FF2442',     // 小红书
-        wxSph: '#46BC68',   // 微信视频号
+        wxSph: '#FA9A32',   // 微信视频号
         KWAI: '#F64806'     // 快手
       };
 
@@ -459,53 +460,61 @@ const Statistics = () => {
           <div className="flex-1">
             <h2 className="mb-4 text-lg font-medium">账户列表</h2>
             <div className="bg-white rounded-lg shadow-sm p-6 h-[120px]">
-              <div
-                className="flex items-center h-full gap-4 overflow-x-auto custom-scrollbar"
-                style={{ padding: '2px 10px' }}
-              >
-                {statisticsInfo?.list?.map((account) => (
-                  <div
-                    key={account.id}
-                    className={`flex-shrink-0 flex items-center px-6 py-4 space-x-3 transition-all rounded-lg bg-gray-50 hover:shadow-sm cursor-pointer ${
-                      selectedAccounts.includes(account.id)
-                        ? 'ring-2 ring-[#a66ae4]'
-                        : ''
-                    }`}
-                    onClick={() => toggleAccountSelection(account.id)}
-                  >
-                    <div style={{ position: 'relative' }}>
-                    <img
-                      className="w-12 h-12 rounded-full"
-                      src={account.avatar}
-                      alt=""
-                    />
-                      {getPlatformIcon(account.type) && (
+              {!statisticsInfo?.list || statisticsInfo.list.length === 0 ? (
+                // 无数据状态 - 使用Ant Design图标
+                <div className="flex flex-col items-center justify-center h-full">
+                  <QuestionCircleOutlined style={{ fontSize: '32px', color: '#CCCCCC' }} />
+                  <div className="text-sm text-gray-500 mt-2">暂无数据</div>
+                </div>
+              ) : (
+                // 有数据状态
+                <div
+                  className="flex items-center h-full gap-4 overflow-x-auto custom-scrollbar"
+                  style={{ padding: '2px 10px' }}
+                >
+                  {statisticsInfo?.list?.map((account) => (
+                    <div
+                      key={account.id}
+                      className={`flex-shrink-0 flex items-center px-6 py-4 space-x-3 transition-all rounded-lg bg-gray-50 hover:shadow-sm cursor-pointer ${
+                        selectedAccounts.includes(account.id)
+                          ? 'ring-2 ring-[#a66ae4]'
+                          : ''
+                      }`}
+                      onClick={() => toggleAccountSelection(account.id)}
+                    >
+                      <div style={{ position: 'relative' }}>
                         <img
-                          src={getPlatformIcon(account.type)}
-                          alt={account.type}
-                          className="w-4 h-4 ml-2"
-                          style={{ position: 'absolute', bottom: '0', right: '0' }}
+                          className="w-12 h-12 rounded-full"
+                          src={account.avatar}
+                          alt=""
                         />
-                      )}
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <div className="text-base font-medium text-gray-900 text-left">
-                        {account.nickname}
+                        {getPlatformIcon(account.type) && (
+                          <img
+                            src={getPlatformIcon(account.type)}
+                            alt={account.type}
+                            className="w-4 h-4 ml-2"
+                            style={{ position: 'absolute', bottom: '0', right: '0' }}
+                          />
+                        )}
                       </div>
                       
-                      <div className="text-sm flex text-left">
-                        <span className="text-gray-500">粉丝: {(account as any).fansCount?.toLocaleString() || 0}</span>
-                      </div>
+                      <div className="space-y-1">
+                        <div className="text-base font-medium text-gray-900 text-left">
+                          {account.nickname}
+                        </div>
+                        
+                        <div className="text-sm flex text-left">
+                          <span className="text-gray-500">粉丝: {(account as any).fansCount?.toLocaleString() || 0}</span>
+                        </div>
 
-                      <div className="text-gray-500 text-left" style={{ fontSize: '12px' }}>
-                        ID: {account.uid}
+                        <div className="text-gray-500 text-left" style={{ fontSize: '12px' }}>
+                          ID: {account.uid}
+                        </div>
                       </div>
-
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -605,73 +614,83 @@ const Statistics = () => {
               刷新
             </Button>
           </div>
-          <div className="space-y-4">
-            {statisticsInfo?.list?.map((account) => {
-              const accountData = dashboardData.find(
-                (item: any) => item.id == account.id,
-              );
-              return (
-                <Card
-                  key={account.id}
-                  className="transition-shadow hover:shadow-md"
-                >
-                  <div className="flex items-center">
-                    {/* 账户信息 */}
-                    <div className="flex items-center flex-shrink-0 w-64 space-x-3">
-                      <Avatar size={48} src={account.avatar} />
-                      <div>
-                        <div className="font-medium">{account.nickname}</div>
+          
+          {!statisticsInfo?.list || statisticsInfo.list.length === 0 ? (
+            // 无数据状态 - 使用Ant Design图标
+            <div className="flex flex-col items-center justify-center p-12 bg-white rounded-lg shadow-sm">
+              <QuestionCircleOutlined style={{ fontSize: '32px', color: '#CCCCCC' }} />
+              <div className="text-sm text-gray-500 mt-2">暂无数据</div>
+            </div>
+          ) : (
+            // 有数据状态
+            <div className="space-y-4">
+              {statisticsInfo?.list?.map((account) => {
+                const accountData = dashboardData.find(
+                  (item: any) => item.id == account.id,
+                );
+                return (
+                  <Card
+                    key={account.id}
+                    className="transition-shadow hover:shadow-md"
+                  >
+                    <div className="flex items-center">
+                      {/* 账户信息 */}
+                      <div className="flex items-center flex-shrink-0 w-64 space-x-3">
+                        <Avatar size={48} src={account.avatar} />
+                        <div>
+                          <div className="font-medium">{account.nickname}</div>
 
-                        <div className="text-sm text-gray-500">
-                          ID: {account.uid}{' '}
+                          <div className="text-sm text-gray-500">
+                            ID: {account.uid}{' '}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 数据展示 */}
+                      <div className="grid flex-1 grid-cols-6 gap-4">
+                        <div className="text-center">
+                          <div className="text-sm text-gray-500">粉丝数</div>
+                          <div className="font-medium text-[#a66ae4]">
+                            {accountData?.fans || 0}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-sm text-gray-500">阅读数</div>
+                          <div className="font-medium text-[#a66ae4]">
+                            {accountData?.read || 0}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-sm text-gray-500">评论数</div>
+                          <div className="font-medium text-[#a66ae4]">
+                            {accountData?.comment || 0}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-sm text-gray-500">点赞数</div>
+                          <div className="font-medium text-[#a66ae4]">
+                            {accountData?.like || 0}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-sm text-gray-500">分享数</div>
+                          <div className="font-medium text-[#a66ae4]">
+                            {accountData?.collect || 0}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-sm text-gray-500">主页访问</div>
+                          <div className="font-medium text-[#a66ae4]">
+                            {accountData?.forward || 0}
+                          </div>
                         </div>
                       </div>
                     </div>
-
-                    {/* 数据展示 */}
-                    <div className="grid flex-1 grid-cols-6 gap-4">
-                      <div className="text-center">
-                        <div className="text-sm text-gray-500">粉丝数</div>
-                        <div className="font-medium text-[#a66ae4]">
-                          {accountData?.fans || 0}
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-sm text-gray-500">阅读数</div>
-                        <div className="font-medium text-[#a66ae4]">
-                          {accountData?.read || 0}
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-sm text-gray-500">评论数</div>
-                        <div className="font-medium text-[#a66ae4]">
-                          {accountData?.comment || 0}
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-sm text-gray-500">点赞数</div>
-                        <div className="font-medium text-[#a66ae4]">
-                          {accountData?.like || 0}
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-sm text-gray-500">分享数</div>
-                        <div className="font-medium text-[#a66ae4]">
-                          {accountData?.collect || 0}
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-sm text-gray-500">主页访问</div>
-                        <div className="font-medium text-[#a66ae4]">
-                          {accountData?.forward || 0}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* <div>
