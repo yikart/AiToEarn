@@ -140,3 +140,105 @@ export interface ILoginResponse {
   cookies: Electron.Cookie[];
   userInfo: IRequestNetResult<IKwaiUserInfoResponse>;
 }
+
+// 获取作品列表
+export interface GetPhotoListResponse {
+  result: number; // 1;
+  currentTime: number; // 1741842574582;
+  'host-name': string; // 'public-bjxy-rs9-kce-node961.idcyz.hb1.kwaidc.com';
+  data: {
+    photoList: {
+      photoId: string; // '3xsq95w5uxvjx7q';
+      title: string; // '';
+      cover: string; // 'https://p2.a.yximgs.com/upic/2025/02/24/21/BMjAyNTAyMjQyMTQ4NDFfNzk4MzE5MzUxXzE1Nzc4MzY4MTM2MV8wXzM=_B05f8067d6793fd47dcbb196af577f7ae.jpg?tag=1-1741842574-nil-0-uacnaa9n5n-f19cc27a1c6378c5&clientCacheKey=3xsq95w5uxvjx7q.jpg&di=b7c6874b&bp=10000';
+      playCount: number; // 6;
+      likeCount: number; // 0;
+      commentCount: number; // 2;
+      uploadTime: number; // 1740404944454;
+      duration: number; // 13300;
+      isVideo: true;
+      isSettingSelectedComment: boolean; // false;
+      photoSelectedTips: any; // null;
+    }[];
+    pcursor: number; // 1515253882683; // 下一页页码
+    totalCount: number; // 2;
+  };
+  message: string; // '成功';
+}
+
+// 获取评论列表
+export interface GetCommentListResponse {
+  result: number; // 1;
+  currentTime: number; // 1741843263417;
+  'host-name': string; // 'public-bjxy-rs9-kce-node961.idcyz.hb1.kwaidc.com';
+  data: {
+    list: [
+      {
+        photoId: number; // 157783681361;
+        authorId: number; // 798319351;
+        headurl: string; // 'https://p66-pro.a.yximgs.com/uhead/AB/2018/01/06/23/BMjAxODAxMDYyMzQ4MjRfNzk4MzE5MzUxXzJfaGQ4OTBfMTcz_s.jpg';
+        authorName: string; // '墨2668';
+        commentId: number; // 969549966791;
+        content: string; // '哈哈哈';
+        replyTo: number; // 0;
+        replyToUserName: any; // null;
+        replyToCommentId: number; // 0;
+        timestamp: number; // 1741695330721;
+        likedCount: number; // 0;
+        liked: boolean; // false;
+        subCommentCount: number; // 1;
+        emotionId: any; // null;
+        emotion: any; // null;
+        ip: number; // 0;
+        referer: any; // null;
+        toped: boolean; // false;
+        settingSelectedComment: boolean; // false;
+        isSettingSelectedComment: boolean; // false;
+      },
+    ];
+  };
+  message: string; // '成功';
+}
+
+// 回复评论返回
+export interface GetSubCommentListResponse {
+  result: number; // 1;
+  currentTime: number; // 1741843273188;
+  'host-name': string; // 'public-bjx-c26-kce-node710.idchb1az1.hb1.kwaidc.com';
+  data: {
+    list: {
+      photoId: number; // 157783681361;
+      authorId: number; // 798319351;
+      headurl: string; // 'https://p66-pro.a.yximgs.com/uhead/AB/2018/01/06/23/BMjAxODAxMDYyMzQ4MjRfNzk4MzE5MzUxXzJfaGQ4OTBfMTcz_s.jpg';
+      authorName: string; // '墨2668';
+      commentId: number; // 969618657810;
+      content: string; // '666';
+      replyTo: number; // 798319351;
+      replyToUserName: string; // '墨2668';
+      replyToCommentId: number; // 0;
+      timestamp: number; // 1741704937506;
+      likedCount: number; // 0;
+      liked: boolean; // false;
+      subCommentCount: number; // 0;
+      emotionId: any; // null;
+      emotion: any; // null;
+      ip: number; // 0;
+      referer: any; // null;
+      toped: boolean; // false;
+      settingSelectedComment: boolean; // false;
+      isSettingSelectedComment: boolean; // false;
+    }[];
+  };
+  message: string; // '成功';
+}
+
+// 创建评论返回参数
+export interface CommentAddResponse {
+  result: number; // 1;
+  currentTime: number; // 1741704937529;
+  'host-name': string; // 'public-bjx-c26-kce-node717.idchb1az1.hb1.kwaidc.com';
+  data: {
+    commentId: number; // 969618657810;
+  };
+  message: string; // '成功';
+}
