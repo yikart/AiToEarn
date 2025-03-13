@@ -553,8 +553,8 @@ const Trending: React.FC = () => {
           // 确保 publishTime 是 string 或 null
           publishTime: title.publishTime ? title.publishTime.toString() : null,
           // 确保 createTime 和 updateTime 是 string
-          createTime: title.createTime.toString(),
-          updateTime: title.updateTime.toString(),
+          // createTime: title.createTime.toString(),
+          updateTime: title.updateTime,
         })),
       })) as ViralTitleCategory[];
 
