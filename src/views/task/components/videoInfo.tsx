@@ -67,6 +67,25 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
     }
   }
 
+
+    /**
+   * 接受任务
+   */
+    async function taskDone() {
+      console.log('接受任务', taskInfo);
+      if (!taskInfo) return;
+      try {
+        const res = await taskApi.taskDone(taskInfo?._id, {
+          submissionUrl: taskInfo.title,
+          screenshotUrls: [taskInfo.imageUrl],
+          qrCodeScanResult: taskInfo.title,
+        });
+        message.success('任务发布成功！');
+      } catch (error) {
+        message.error('接受任务失败，请稍后再试');
+      }
+    }
+
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -158,6 +177,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
 
       if (successList.length > 0) {
         message.success(`成功发布到${successList.length}个平台`);
+        taskDone();
       } else {
         message.warning('发布完成，但没有成功发布的平台');
       }
