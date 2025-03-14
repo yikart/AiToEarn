@@ -10,6 +10,8 @@ import {
   IXHSLocationResponse,
   IXHSTopicsResponse,
   IXHSWorks,
+  XhsCommentListResponse,
+  XhsCommentPostResponse,
   XiaohongshuApiResponse,
 } from './xiaohongshu.type';
 
@@ -1410,15 +1412,64 @@ export class XiaohongshuService {
     noteId: string,
     cursor?: number,
   ) {
-    return await requestNet<XiaohongshuApiResponse>({
-      url: `https://edith.xiaohongshu.com/api/sns/web/v2/comment/page?note_id=${noteId}&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=AB9FJ4Lt0GzHqwzKCWh2glQja0HkO-sc0zNChTPhFvwGo%3D`,
+    const url = `https://edith.xiaohongshu.com/api/sns/web/v2/comment/page?note_id=${noteId}&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=AB9FJ4Lt0GzHqwzKCWh2glQpU_HdfsMIJ5MuRM8aB9Xvo%3D`;
+    const reverseRes: any = await this.getReverseResult({
+      url,
+      a1: CookieToString(cookie),
+    });
+
+    return await requestNet<XhsCommentListResponse>({
+      url,
       headers: {
         cookie: CookieToString(cookie),
         Referer: this.loginUrl,
         origin: this.loginUrl,
+        'X-S': reverseRes['X-s'],
+        'X-T': reverseRes['X-t'],
+        userAgent:
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
+      },
+      method: 'GET',
+    });
+  }
+
+  /**
+   * 评论作品
+   * @param noteId
+   * @param content
+   * @param targetCommentId // 回复的评论ID
+   * @returns
+   */
+  async commentPost(
+    cookie: Electron.Cookie[],
+    noteId: string,
+    content: string,
+    targetCommentId?: string, // "67d4145300000000190210ba"
+  ) {
+    const url = `https://edith.xiaohongshu.com/api/sns/web/v1/comment/post`;
+    const reverseRes: any = await this.getReverseResult({
+      url,
+      a1: CookieToString(cookie),
+    });
+
+    return await requestNet<XhsCommentPostResponse>({
+      url,
+      headers: {
+        cookie: CookieToString(cookie),
+        Referer: this.loginUrl,
+        origin: this.loginUrl,
+        'X-S': reverseRes['X-s'],
+        'X-T': reverseRes['X-t'],
+        userAgent:
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
       },
       method: 'POST',
-      body: {},
+      body: {
+        note_id: noteId,
+        content,
+        target_comment_id: targetCommentId,
+        at_users: [],
+      },
     });
   }
 }
