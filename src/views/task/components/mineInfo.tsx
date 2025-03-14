@@ -109,7 +109,10 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
       // 处理截图文件
       const screenshotUrls = fileList
         .filter((file) => file.status === 'done')
-        .map((file) => file.url || file.response?.url);
+        .map((file) => {
+          console.log('file', file);
+          return file.response?.data.name;
+        });
 
       const doneInfo = {
         submissionUrl: values.submissionUrl,

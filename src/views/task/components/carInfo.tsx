@@ -5,7 +5,7 @@
  * @LastEditors: nevin
  * @Description: 挂车
  */
-import { Button, Modal } from 'antd';
+import { Button, Modal, message } from 'antd';
 import { Task, TaskProduct } from '@@/types/task';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { taskApi } from '@/api/task';
@@ -35,10 +35,27 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
    */
   async function taskApply() {
     if (!taskInfo) return;
-
-    const res = await taskApi.taskApply(taskInfo?._id);
-    setTaskInfo(res as any);
-    setIsModalOpen(false);
+    console.log('taskInfo', taskInfo);
+    try {
+      const res = await taskApi.taskApply(taskInfo?._id);
+      setTaskInfo(res as any);
+      setIsModalOpen(false);
+      
+      // 添加成功提示
+      message.success('任务接受成功');
+      
+      // 跳转到已参与任务选项卡
+      const taskTabElement = document.querySelector('[data-tab="mine"]');
+      if (taskTabElement) {
+        (taskTabElement as HTMLElement).click();
+      } else {
+        // 如果找不到元素，则使用URL参数方式跳转
+        window.location.href = '/task?tab=mine';
+      }
+    } catch (error) {
+      console.error('接受任务失败:', error);
+      message.error('接受任务失败，请重试');
+    }
   }
 
   const handleCancel = () => {
