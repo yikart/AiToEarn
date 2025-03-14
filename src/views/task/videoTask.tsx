@@ -112,8 +112,8 @@ export default function Page() {
     return (
       <div className={styles.platformTags}>
         {accountTypes.map((type) => (
-          <Tag key={type} color={PLATFORM_MAP[type]?.color || '#f50'}>
-            {PLATFORM_MAP[type]?.name || type}
+          <Tag key={type} color={(PLATFORM_MAP as any)[type]?.color || '#f50'}>
+            {(PLATFORM_MAP as any)[type]?.name || type}
           </Tag>
         ))}
       </div>
@@ -158,7 +158,7 @@ export default function Page() {
                     </span>
                   </h3>
                   <Tag color="#f50" className={styles.taskTag}>
-                    {task.dataInfo?.type || '视频任务'}
+                    {(task.dataInfo as any)?.type || '视频任务'}
                   </Tag>
                 </div>
 

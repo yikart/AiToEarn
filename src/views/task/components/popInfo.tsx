@@ -100,7 +100,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                 </span>
               </h2>
               <Tag color="#108ee9" className={styles.taskTag}>
-                {taskInfo.dataInfo?.type || 'AI对话APP'}
+                {(taskInfo.dataInfo as any)?.type || 'AI对话APP'}
               </Tag>
             </div>
 
@@ -154,7 +154,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                       <QrcodeOutlined className={styles.detailIcon} />
                       <span className={styles.detailLabel}>任务要求:</span>
                       <span className={styles.detailValue}>
-                        {taskInfo.requirement || '扫二维码下载APP并完成注册'}
+                        {taskInfo?.requirement || '扫二维码下载APP并完成注册'}
                       </span>
                     </div>
                   </div>
