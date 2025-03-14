@@ -334,7 +334,7 @@ const Trending: React.FC = () => {
       // 自动选择第一个榜单并获取其内容
       if (data.length > 0) {
         const firstRanking = data[0];
-        setSelectedRanking(firstRanking); 
+        setSelectedRanking(firstRanking);
 
         // // 获取榜单分类
         await fetchRankingCategories(firstRanking.id);
@@ -556,7 +556,7 @@ const Trending: React.FC = () => {
           // createTime: title.createTime.toString(),
           updateTime: title.updateTime,
         })),
-      })) as ViralTitleCategory[];
+      })) as any;
 
       setViralTitleData(formattedData);
     } catch (error) {
@@ -909,9 +909,9 @@ const Trending: React.FC = () => {
         // 确保 publishTime 是 string 或 null
         publishTime: item.publishTime ? item.publishTime.toString() : null,
         // 确保 createTime 和 updateTime 是 string
-        createTime: item.createTime.toString(),
-        updateTime: item.updateTime.toString(),
-      })) as ViralTitle[];
+        // createTime: item.createTime.toString(),
+        // updateTime: item.updateTime.toString(),
+      })) as any;
 
       setSingleCategoryData(formattedItems);
 
@@ -1114,7 +1114,7 @@ const Trending: React.FC = () => {
 
   return (
     <>
-      <div className="flex h-full bg-gray-50">
+      <div className="flex h-full bg-gray-50" style={{ overflow: 'auto' }}>
         {/* 左侧平台列表 */}
         <div className="flex-shrink-0 w-48 p-4 bg-white border-r border-gray-100">
           {/* 热门内容 */}
@@ -1283,7 +1283,7 @@ const Trending: React.FC = () => {
         </div>
 
         {/* 右侧内容区 */}
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-6" style={{ overflow: 'auto' }}>
           {viralTitleExpanded ? (
             // 爆款标题内容区域
             <div>

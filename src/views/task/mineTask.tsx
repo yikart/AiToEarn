@@ -187,10 +187,10 @@ export default function Page() {
 
       // 如果没有选择状态筛选，则不传status参数
       if (statusFilter === null) {
-        delete params.status;
+        delete (params as any).status;
       }
 
-      const tasks = await taskApi.getMineTaskList(params);
+      const tasks = await taskApi.getMineTaskList(params as any);
 
       if (isLoadMore) {
         setTaskList((prev) => [...prev, ...tasks.items]);

@@ -33,6 +33,7 @@ export interface MineTaskListParams extends ApiCorrectQuery {
 }
 
 export interface UserTask<T extends Task<TaskDataInfo> | string> {
+  _id: string;
   id: string;
   userId: string;
   taskId: T;

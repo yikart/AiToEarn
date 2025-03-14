@@ -186,7 +186,7 @@ export class Douyin extends PlatformBase {
 
     console.log('===== res ===', res.data.comment_info_list[0]);
 
-    const list: CommentData[] = res.data.comment_info_list.map((v) => {
+    const list: CommentData[] = res.data.comment_info_list.map((v: any) => {
       return {
         dataId: dataId,
         commentId: v.comment_id,
@@ -209,6 +209,15 @@ export class Douyin extends PlatformBase {
     dataId: string, // 作品ID
     content: string,
   ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await douyinService.creatorCommentReply(cookie, {
+      comment_Id: '',
+      item_id: dataId,
+      text: content,
+    });
+
+    console.log('------ res', res);
+
     return false;
   }
 
@@ -221,6 +230,15 @@ export class Douyin extends PlatformBase {
       data: any; // 辅助数据,原数据
     },
   ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await douyinService.creatorCommentReply(cookie, {
+      comment_Id: commentId,
+      item_id: option.data.dataId,
+      text: content,
+    });
+
+    console.log('------ res', res);
+
     return false;
   }
 

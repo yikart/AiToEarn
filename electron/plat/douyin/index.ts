@@ -16,6 +16,7 @@ import {
   DouyinCreatorListResponse,
   DouyinHotDataResponse,
   DouyinLocationDataResponse,
+  DouyinNewCommentResponse,
   DouyinTopicsSugResponse,
   DouyinUserListResponse,
 } from './douyin.type';
@@ -2310,7 +2311,7 @@ export class DouyinService {
   }
 
   // 作品的评论回复
-  async getCreatorCommentReply(
+  async creatorCommentReply(
     cookie: Electron.Cookie[],
     data: {
       comment_Id: string; // 空字符串, 直接回复
@@ -2318,7 +2319,7 @@ export class DouyinService {
       text: string; //'哈哈哈';
     },
   ) {
-    return await requestNet<DouyinCreatorCommentListResponse>({
+    return await requestNet<DouyinNewCommentResponse>({
       url: `https://creator.douyin.com/aweme/v1/creator/comment/reply/`,
       headers: {
         cookie: CookieToString(cookie),

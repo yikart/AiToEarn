@@ -67,6 +67,25 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
     }
   }
 
+
+    /**
+   * 接受任务
+   */
+    async function taskDone() {
+      console.log('接受任务', taskInfo);
+      if (!taskInfo) return;
+      try {
+        const res = await taskApi.taskDone(taskInfo?._id, {
+          submissionUrl: taskInfo.title,
+          screenshotUrls: [taskInfo.imageUrl],
+          qrCodeScanResult: taskInfo.title,
+        });
+        message.success('任务发布成功！');
+      } catch (error) {
+        message.error('接受任务失败，请稍后再试');
+      }
+    }
+
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -85,9 +104,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
 
   // 账户选择弹框显示隐藏状态
   const [chooseAccountOpen, setChooseAccountOpen] = useState(false);
-  const [accountListChoose, setAccountListChoose] = useState<AccountModel[]>(
-    [],
-  );
+  const [accountListChoose, setAccountListChoose] = useState<any[]>([]);
 
   // 下载文件到本地并发布
   const downloadAndPublish = async (aList: any) => {
@@ -160,6 +177,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
 
       if (successList.length > 0) {
         message.success(`成功发布到${successList.length}个平台`);
+        taskDone();
       } else {
         message.warning('发布完成，但没有成功发布的平台');
       }
@@ -186,14 +204,6 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
           await downloadAndPublish(aList);
         }}
         pubType={PubType.VIDEO}
-        footer={
-          downloading ? (
-            <div style={{ textAlign: 'center', padding: '12px 0' }}>
-              <LoadingOutlined style={{ marginRight: 8 }} />
-              正在处理文件，请勿关闭窗口...
-            </div>
-          ) : null
-        }
         allowPlatSet={new Set([AccountType.Douyin])}
       />
 
@@ -220,7 +230,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                 </span>
               </h2>
               <Tag color="#f50" className={styles.taskTag}>
-                {taskInfo.dataInfo?.type || '视频任务'}
+                {(taskInfo.dataInfo as any)?.type || '视频任务'}
               </Tag>
             </div>
 

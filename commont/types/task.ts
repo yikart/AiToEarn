@@ -65,4 +65,5 @@ export interface Task<T extends TaskProduct | TaskPromotion | TaskVideo>
   status: TaskStatus; // 'active' | 'completed' | 'cancelled'
   accountTypes: AccountType[];
   isAccepted?: boolean; // 是否已经接受任务
+  requirement?: string;
 }

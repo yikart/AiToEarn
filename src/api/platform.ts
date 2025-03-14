@@ -119,7 +119,7 @@ export interface RankingContentsResponse {
 export const platformApi = {
   // 获取平台列表
   getPlatformList() {
-    return hotHttp.get<Platform[]>('/platform');
+    return hotHttp.get<Platform[]>('/hotinfo/platform');
   },
 
   // 获取平台榜单列表

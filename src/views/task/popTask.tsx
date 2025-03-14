@@ -124,7 +124,7 @@ export default function Page() {
                     </span>
                   </h3>
                   <Tag color="#108ee9" className={styles.taskTag}>
-                    {task.dataInfo?.type || 'AI对话APP'}
+                    {(task.dataInfo as any)?.type || 'AI对话APP'}
                   </Tag>
                 </div>
 

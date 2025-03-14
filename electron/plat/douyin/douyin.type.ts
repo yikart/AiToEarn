@@ -453,3 +453,29 @@ export interface DouyinCreatorCommentListResponse {
   status_msg: string; // '';
   total_count: number; //  3;
 }
+
+export interface DouyinNewCommentResponse {
+  comment_info: {
+    comment_id: string; // '@j/Jr6bdET0rxssxd57/to896qi+WZSz3LqQlN6Nuja9BugWjRo0mWYw1IBd39et4ggwDVwRptqsgeUQSJiFcAg==';
+    create_time: string; // '1741955069';
+    digg_count: string; // '0';
+    followed: boolean; // false;
+    following: boolean; // false;
+    is_author: boolean; // true;
+    level: number; // 1 | 2; // 第几层
+    reply_count: string; // '0';
+    status: number; // 7;
+    text: string; // '天真蓝';
+    user_digg: boolean; // false;
+    user_info: {
+      avatar_url: string; // 'https://p11.douyinpic.com/aweme/720x720/aweme-avatar/tos-cn-i-0813c001_oUDEAA5qhfAx5dAgIewzNvptBoNAuByobAvNC1.jpeg?from=4010531038';
+      screen_name: string; // '海宝💃';
+      user_id: string; // '@j/Jr6bdET0rxssxd57/to8l7oSuRbyDzJ64tOaxtjpj2c9bt4zgRjBU4l2s/OnM0';
+    };
+  };
+  extra: {
+    now: number; // 1741955069000;
+  };
+  status_code: number; // 0;
+  status_msg: string; // '';
+}
