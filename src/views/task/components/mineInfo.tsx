@@ -186,7 +186,9 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
           <div className={styles.taskInfoHeader}>
             <h2 className={styles.taskTitle}>
               {mineTaskInfo.taskId?.title || '未知任务'}
-              <span className={styles.taskId}>订单号: {mineTaskInfo._id}</span>
+              <span className={styles.taskId}>
+                订单号: {(mineTaskInfo as any)._id}
+              </span>
             </h2>
             <Tag
               color={
@@ -331,9 +333,9 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
             <Space>
               <Button onClick={handleCancel}>关闭</Button>
               {/* {canSubmitTask() && ( */}
-                <Button type="primary" onClick={taskDone} loading={submitting}>
-                  提交任务
-                </Button>
+              <Button type="primary" onClick={taskDone} loading={submitting}>
+                提交任务
+              </Button>
               {/* )} */}
             </Space>
           </div>

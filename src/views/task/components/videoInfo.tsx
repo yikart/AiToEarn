@@ -85,9 +85,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
 
   // 账户选择弹框显示隐藏状态
   const [chooseAccountOpen, setChooseAccountOpen] = useState(false);
-  const [accountListChoose, setAccountListChoose] = useState<AccountModel[]>(
-    [],
-  );
+  const [accountListChoose, setAccountListChoose] = useState<any[]>([]);
 
   // 下载文件到本地并发布
   const downloadAndPublish = async (aList: any) => {
@@ -186,14 +184,6 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
           await downloadAndPublish(aList);
         }}
         pubType={PubType.VIDEO}
-        footer={
-          downloading ? (
-            <div style={{ textAlign: 'center', padding: '12px 0' }}>
-              <LoadingOutlined style={{ marginRight: 8 }} />
-              正在处理文件，请勿关闭窗口...
-            </div>
-          ) : null
-        }
         allowPlatSet={new Set([AccountType.Douyin])}
       />
 
@@ -220,7 +210,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                 </span>
               </h2>
               <Tag color="#f50" className={styles.taskTag}>
-                {taskInfo.dataInfo?.type || '视频任务'}
+                {(taskInfo.dataInfo as any)?.type || '视频任务'}
               </Tag>
             </div>
 

@@ -334,7 +334,7 @@ const Trending: React.FC = () => {
       // 自动选择第一个榜单并获取其内容
       if (data.length > 0) {
         const firstRanking = data[0];
-        setSelectedRanking(firstRanking); 
+        setSelectedRanking(firstRanking);
 
         // // 获取榜单分类
         await fetchRankingCategories(firstRanking.id);
@@ -556,7 +556,7 @@ const Trending: React.FC = () => {
           // createTime: title.createTime.toString(),
           updateTime: title.updateTime,
         })),
-      })) as ViralTitleCategory[];
+      })) as any;
 
       setViralTitleData(formattedData);
     } catch (error) {
@@ -911,7 +911,7 @@ const Trending: React.FC = () => {
         // 确保 createTime 和 updateTime 是 string
         // createTime: item.createTime.toString(),
         // updateTime: item.updateTime.toString(),
-      })) as ViralTitle[];
+      })) as any;
 
       setSingleCategoryData(formattedItems);
 
