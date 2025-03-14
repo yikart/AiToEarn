@@ -909,8 +909,8 @@ const Trending: React.FC = () => {
         // 确保 publishTime 是 string 或 null
         publishTime: item.publishTime ? item.publishTime.toString() : null,
         // 确保 createTime 和 updateTime 是 string
-        createTime: item.createTime.toString(),
-        updateTime: item.updateTime.toString(),
+        // createTime: item.createTime.toString(),
+        // updateTime: item.updateTime.toString(),
       })) as ViralTitle[];
 
       setSingleCategoryData(formattedItems);
