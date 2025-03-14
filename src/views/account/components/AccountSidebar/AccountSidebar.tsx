@@ -159,7 +159,9 @@ const AccountSidebar = memo(
             <div className="accountSidebar-top">
               <Button
                 style={{ margin: '10px 0' }}
-                onClick={() => setIsAccountModalOpen(true)}
+                onClick={() => {
+                  setIsAccountModalOpen(true);
+                }}
               >
                 <UserOutlined />
                 添加账号
