@@ -1114,7 +1114,7 @@ const Trending: React.FC = () => {
 
   return (
     <>
-      <div className="flex h-full bg-gray-50">
+      <div className="flex h-full bg-gray-50" style={{ overflow: 'auto' }}>
         {/* 左侧平台列表 */}
         <div className="flex-shrink-0 w-48 p-4 bg-white border-r border-gray-100">
           {/* 热门内容 */}
@@ -1283,7 +1283,7 @@ const Trending: React.FC = () => {
         </div>
 
         {/* 右侧内容区 */}
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-6" style={{ overflow: 'auto' }}>
           {viralTitleExpanded ? (
             // 爆款标题内容区域
             <div>
