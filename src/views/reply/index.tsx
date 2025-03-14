@@ -15,6 +15,8 @@ import {
 import { Button } from 'antd';
 import { useCallback, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
+import styles from './reply.module.scss';
+
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
   const [commentList, setComment] = useState<WorkData[]>([]);
@@ -65,7 +67,7 @@ export default function Page() {
   }
 
   return (
-    <div>
+    <div className={styles.reply}>
       <div>
         <AccountSidebar
           activeAccountId={activeAccountId}

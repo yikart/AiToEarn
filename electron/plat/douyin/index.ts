@@ -22,7 +22,6 @@ import {
 import requestNet from '../requestNet';
 import { jsonToQueryString } from '../../util';
 import { DeclarationDouyin } from './common.douyin';
-import { url } from 'url';
 
 type PlatformSettingType = {
   // 自主声明

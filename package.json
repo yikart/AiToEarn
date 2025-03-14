@@ -73,6 +73,7 @@
     "@types/lodash": "^4.17.15",
     "@types/mime-types": "^2.1.4",
     "@types/node-schedule": "^2.1.7",
+    "@types/qs": "^6.9.18",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@types/xml2js": "^0.4.14",

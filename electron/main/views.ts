@@ -12,6 +12,7 @@ import path from 'path';
 import requestNet from '../plat/requestNet';
 // @ts-ignore
 import coordtransform from 'coordtransform';
+import kwaiSign from '../plat/Kwai/sign/KwaiSign';
 
 export interface ISaveFileParams {
   // 要保存的路由
