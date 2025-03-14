@@ -6,7 +6,12 @@
  * @Description:
  */
 import styles from './publish.module.scss';
-import { VideoCameraOutlined, FileImageOutlined } from '@ant-design/icons';
+import {
+  VideoCameraOutlined,
+  FileImageOutlined,
+  HddOutlined,
+  ContainerOutlined,
+} from '@ant-design/icons';
 import { message, Segmented } from 'antd';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -53,20 +58,20 @@ export default function Page() {
             icon: <VideoCameraOutlined />,
           },
           // { label: '文章发布', value: '/publish/text', icon: <FileOutlined /> },
-          // {
-          //   label: '图片发布',
-          //   value: '/publish/image',
-          //   icon: <FileImageOutlined />,
-          // },
+          {
+            label: '图片发布',
+            value: '/publish/image',
+            icon: <FileImageOutlined />,
+          },
           {
             label: '发布记录',
             value: '/publish/pubRecord',
-            icon: <FileImageOutlined />,
+            icon: <ContainerOutlined />,
           },
           {
             label: '草稿箱',
             value: '/publish/drafts',
-            icon: <FileImageOutlined />,
+            icon: <HddOutlined />,
           },
         ]}
         onChange={(value) => {

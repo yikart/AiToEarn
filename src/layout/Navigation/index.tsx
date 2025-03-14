@@ -5,36 +5,45 @@
  * @LastEditors: nevin
  * @Description:
  */
-import { Link } from 'react-router-dom';
-import logo from '@/assets/logo.png'; // 请确保这个路径指向您的 logo 图片
+import { Link, useLocation } from 'react-router-dom';
+import logo from '@/assets/logo.png';
 import styles from './navigation.module.scss';
 import { router } from '@/router';
 import SysMenu from '../SysMenu';
+import { useEffect, useState } from 'react';
 
 const Navigation = () => {
+  const location = useLocation();
+  const [pathname, setPathname] = useState('/');
+
+  useEffect(() => {
+    setPathname('/' + (location.pathname.split('/')[1] || ''));
+  }, [location]);
+
   return (
-    <nav className={`flex-none text-white shadow-md ${styles.navigation}`}>
-      <div className="flex items-center h-16" style={{ padding: '0 2.5rem' }}>
-        <div className="flex items-center mr-12 space-x-3">
+    <nav className={styles.navigation}>
+      <div className="navigation_left">
+        <div className="navigation-logo">
           <img src={logo} alt="爱团团AiToEarn" className="w-9 h-9" />
-          <span className="text-xl font-semibold tracking-wide text-white">
-            爱团团AiToEarn
-          </span>
+          <span>爱团团AiToEarn</span>
         </div>
 
-        <ul className="flex items-center h-full space-x-2">
+        <ul className="navigation-list">
           {router[0].children &&
             router[0].children.map((v) => {
               if (!v.meta) return;
               const IconComponent = v.meta!.icon!;
               return (
-                <li className="h-full" key={v.meta!.name}>
-                  <Link
-                    to={v.path || '/'}
-                    className="flex items-center px-6 h-full hover:bg-white/10 transition-colors text-[15px]"
-                  >
-                    <IconComponent className="mr-2 text-lg text-white" />
-                    <span className="text-white">{v.meta!.name}</span>
+                <li
+                  className={[
+                    'navigation-list-item',
+                    pathname === v.path && 'navigation-list-item--active',
+                  ].join(' ')}
+                  key={v.meta!.name}
+                >
+                  <Link to={v.path || '/'}>
+                    <IconComponent />
+                    <span className="navigation-list-text">{v.meta!.name}</span>
                   </Link>
                 </li>
               );

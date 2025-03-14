@@ -15,9 +15,11 @@ import { AntdIconProps } from '@ant-design/icons/lib/components/AntdIcon';
 import {
   CopyOutlined,
   FireOutlined,
-  // HomeOutlined,
-  // InfoCircleOutlined,
-  UserOutlined,
+  UsergroupAddOutlined,
+  ShopOutlined,
+  MessageOutlined,
+  AuditOutlined,
+  MoneyCollectOutlined,
 } from '@ant-design/icons';
 
 // 组件
@@ -30,6 +32,7 @@ import Trending from '@/views/trending';
 import Account from '@/views/account';
 import Publish from '@/views/publish/page';
 import VideoPage from '@/views/publish/children/videoPage/page';
+import ImagePage from '@/views/publish/children/imagePage/page';
 import PubRecord from '@/views/publish/children/pubRecord/page';
 import Drafts from '@/views/publish/children/drafts/page';
 import Statistics from '@/views/statistics';
@@ -82,7 +85,7 @@ export const router: CustomRouteObject[] = [
       {
         path: '/',
         element: <Account />,
-        meta: { name: '账户', icon: UserOutlined },
+        meta: { name: '账户', icon: UsergroupAddOutlined },
       },
       {
         path: '/trending',
@@ -103,10 +106,10 @@ export const router: CustomRouteObject[] = [
         meta: { name: '一键发布', icon: CopyOutlined },
         children: [
           { path: 'video', element: <VideoPage /> },
-          // {
-          //   path: 'image',
-          //   element: <ImagePage />,
-          // },
+          {
+            path: 'image',
+            element: <ImagePage />,
+          },
           // {
           //   path: 'text',
           //   element: <TextPage />,
@@ -118,22 +121,22 @@ export const router: CustomRouteObject[] = [
       {
         path: '/reply',
         element: <Reply />,
-        meta: { name: '评论', icon: UserOutlined },
+        meta: { name: '评论', icon: MessageOutlined },
       },
       {
         path: '/statistics',
         element: <Statistics />,
-        meta: { name: '数据中心', icon: UserOutlined },
+        meta: { name: '数据中心', icon: AuditOutlined },
       },
       {
         path: '/task',
         element: <Task />,
-        meta: { name: '任务市场', icon: UserOutlined },
+        meta: { name: '任务市场', icon: ShopOutlined },
       },
       {
         path: '/finance',
         element: <Finance />,
-        meta: { name: '钱包', icon: UserOutlined },
+        meta: { name: '钱包', icon: MoneyCollectOutlined },
         children: [
           { path: 'userWalletRecord', element: <UserWalletRecord /> },
           { path: 'userWalletAccount', element: <UserWalletAccount /> },
