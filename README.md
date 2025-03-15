@@ -9,7 +9,6 @@
 # AiToEarn 爱团团
 
 ![GitHub stars](https://img.shields.io/github/stars/yikart/AttAiToEarn?color=fa6470)
-![GitHub issues](https://img.shields.io/github/issues/yikart/AttAiToEarn?color=d8b22d)
 ![GitHub license](https://img.shields.io/github/license/yikart/AttAiToEarn)
 [![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node&message=20.18.x%20&logo=node.js&color=3f893e)](https://nodejs.org/about/releases)
 
@@ -97,4 +96,5 @@ npm run dev
 ```
 ## 加我微信
 辛苦备注一下 AiToEarn
+
 <img src="./wechat.jpg" alt="wechat" width="500"/>
