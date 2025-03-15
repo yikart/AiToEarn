@@ -11,17 +11,25 @@ import styles from './navigation.module.scss';
 import { router } from '@/router';
 import SysMenu from '../SysMenu';
 import { useEffect, useState } from 'react';
+import { ipcAppInfo } from '../../icp/app';
 
 const Navigation = () => {
   const location = useLocation();
   const [pathname, setPathname] = useState('/');
+  const [platform, setPlatform] = useState('');
 
   useEffect(() => {
     setPathname('/' + (location.pathname.split('/')[1] || ''));
   }, [location]);
 
+  useEffect(() => {
+    ipcAppInfo().then((res) => {
+      setPlatform(res.platform);
+    });
+  }, []);
+
   return (
-    <nav className={styles.navigation}>
+    <nav className={`${styles.navigation} ${styles['navigation-' + platform]}`}>
       <div className="navigation_left">
         <div className="navigation-logo">
           <img src={logo} alt="爱团团AiToEarn" className="w-9 h-9" />
@@ -50,6 +58,8 @@ const Navigation = () => {
             })}
         </ul>
       </div>
+
+      <div className="navigation_drag" />
 
       <div className="navigation-userinfo">
         <SysMenu />

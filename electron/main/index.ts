@@ -55,7 +55,13 @@ async function createWindow() {
     height: 800,
     minWidth: 1280,
     minHeight: 800,
+    titleBarStyle: 'hidden',
     show: false,
+    titleBarOverlay: {
+      color: 'rgba(0,0,0,0)',
+      height: 64,
+      symbolColor: '#595959',
+    },
     webPreferences: {
       preload,
       webviewTag: true,
