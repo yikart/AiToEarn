@@ -46,6 +46,7 @@ import UserWalletAccount from '@/views/finance/userWalletAccount';
 import Finance from '@/views/finance/index';
 import UserWalletRecord from '@/views/finance/userWalletRecord';
 import Reply from '@/views/reply';
+import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
 
 interface IRouterMeta {
   // 路由名称
@@ -76,7 +77,11 @@ type CustomRouteObject =
  */
 export const router: CustomRouteObject[] = [
   {
-    element: <LayoutBody />,
+    element: (
+      <ErrorBoundary>
+        <LayoutBody />
+      </ErrorBoundary>
+    ),
     children: [
       // 重定向 ---------
       { path: '/publish', element: <Navigate to="/publish/video" /> },
@@ -105,7 +110,10 @@ export const router: CustomRouteObject[] = [
         element: <Publish />,
         meta: { name: '一键发布', icon: CopyOutlined },
         children: [
-          { path: 'video', element: <VideoPage /> },
+          {
+            path: 'video',
+            element: <VideoPage />,
+          },
           {
             path: 'image',
             element: <ImagePage />,
