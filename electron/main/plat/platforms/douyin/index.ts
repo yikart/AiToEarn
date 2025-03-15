@@ -233,7 +233,7 @@ export class Douyin extends PlatformBase {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await douyinService.creatorCommentReply(cookie, {
       comment_Id: commentId,
-      item_id: option.data.dataId,
+      item_id: option.dataId!,
       text: content,
     });
 

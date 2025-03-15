@@ -23,10 +23,18 @@ export default function Page() {
   const [activeAccountId, setActiveAccountId] = useState<number>(-1);
 
   async function getCreatorList() {
-    const res = await icpCreatorList(4, {
+    console.log('------ activeAccountId', activeAccountId);
+    if (activeAccountId === -1) {
+      return;
+    }
+    setWordList([]);
+
+    const res = await icpCreatorList(activeAccountId, {
       pageNo: 1,
       pageSize: 10,
     });
+    console.log('------ res', res);
+
     setWordList(res.list);
   }
 
@@ -68,15 +76,19 @@ export default function Page() {
 
   return (
     <div className={styles.reply}>
+      <p>评论</p>
       <div>
         <AccountSidebar
           activeAccountId={activeAccountId}
-          onAccountChange={useCallback((info) => {
-            console.log('----- info', info);
+          onAccountChange={useCallback(
+            (info) => {
+              console.log('----- info', info);
 
-            setActiveAccountId(info.id);
-            getCreatorList();
-          }, [])}
+              setActiveAccountId(info.id);
+              getCreatorList();
+            },
+            [getCreatorList],
+          )}
         />
       </div>
       <div>

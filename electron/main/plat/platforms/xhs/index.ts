@@ -17,6 +17,7 @@ import {
   IGetUsersParams,
   IVideoPublishParams,
   VideoCallbackType,
+  WorkData,
 } from '../../plat.type';
 import { PublishVideoResult } from '../../module';
 import { xiaohongshuService } from '../../../../plat/xiaohongshu';
@@ -135,13 +136,23 @@ export class Xhs extends PlatformBase {
    */
   async getWorkList(
     account: AccountModel,
-    pageInfo: { pageNo: number; pageSize: number },
+    pageInfo: { pageNo: number; pageSize: number; pcursor?: string },
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const ret = await xiaohongshuService.getWorks(cookie);
+    const res = await xiaohongshuService.getWorks(cookie);
+
+    const list: WorkData[] = res.data.data.notes.map((v) => ({
+      dataId: v.id,
+      readCount: v.view_count,
+      likeCount: v.likes,
+      collectCount: v.collected_count,
+      commentCount: v.comments_count,
+      title: v.display_title,
+      coverUrl: v.images_list[0]?.url || '',
+    }));
 
     return {
-      list: [],
+      list,
       count: 0,
     };
   }
