@@ -165,6 +165,7 @@ export class Kwai extends PlatformBase {
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await kwaiPub.getPhotoList(cookie, Number(pageInfo.pcursor));
+
     const photoList = res.data.data.photoList;
     const list: WorkData[] = photoList.map((v) => {
       return {
@@ -211,8 +212,6 @@ export class Kwai extends PlatformBase {
       dataId,
       // Number(pageInfo.pcursor),
     );
-
-    console.log('------ res ----', res);
 
     const list: CommentData[] = res.data.data.list.map((v) => {
       return {

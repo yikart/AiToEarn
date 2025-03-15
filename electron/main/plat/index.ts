@@ -54,8 +54,6 @@ class PlatController {
     const info = await platform.getAccountInfo({
       cookies: JSON.parse(res.loginCookie),
     });
-    console.log('------ info', info);
-
     if (!!info) res.fansCount = info.fansCount || 0;
     return res;
   }

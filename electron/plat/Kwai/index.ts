@@ -338,14 +338,14 @@ class KwaiPub {
     pcursor?: number, // 下一页页码
   ) {
     const res = await requestNet<GetPhotoListResponse>({
-      url: `https://cp.kuaishou.com/rest/cp/creator/comment/photoList?__NS_sig3=79692e1e5040f94d562427268d0d3694fc18b05c38383a3a3534372d`,
+      url: `https://cp.kuaishou.com/rest/cp/creator/comment/photoList?__NS_sig3=425215256a67c576621f1c1db6360dafc7238b67030301010e0f0c16`,
       method: 'POST',
       headers: {
         cookie: CookieToString(cookies),
       },
       body: {
         'kuaishou.web.cp.api_ph': '69799694cfd7e689847219cf678dec275266',
-        pcursor,
+        ...(pcursor ? { pcursor } : {}),
       },
     });
     return res;
