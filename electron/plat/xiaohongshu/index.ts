@@ -1364,14 +1364,15 @@ export class XiaohongshuService {
   }
 
   // 获取作品列表
-  async getWorks(cookie: Electron.Cookie[]) {
+  async getWorks(cookie: Electron.Cookie[], page: number = 0) {
+    const url = `/web_api/sns/v5/creator/note/user/posted?tab=0&page=${page}`;
     const reverseRes: any = await this.getReverseResult({
-      url: '/web_api/sns/v5/creator/note/user/posted?tab=0&page=0',
+      url,
       a1: CookieToString(cookie),
     });
 
     return await requestNet<IXHSGetWorksResponse>({
-      url: `https://edith.xiaohongshu.com/web_api/sns/v5/creator/note/user/posted?tab=0&page=0`,
+      url: `https://edith.xiaohongshu.com${url}`,
       headers: {
         cookie: CookieToString(cookie),
         Referer: this.loginUrl,
@@ -1412,14 +1413,14 @@ export class XiaohongshuService {
     noteId: string,
     cursor?: number,
   ) {
-    const url = `https://edith.xiaohongshu.com/api/sns/web/v2/comment/page?note_id=${noteId}&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=AB9FJ4Lt0GzHqwzKCWh2glQpU_HdfsMIJ5MuRM8aB9Xvo%3D`;
+    const url = `/api/sns/web/v2/comment/page?note_id=${noteId}&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=AB9FJ4Lt0GzHqwzKCWh2glQpU_HdfsMIJ5MuRM8aB9Xvo%3D`;
     const reverseRes: any = await this.getReverseResult({
       url,
       a1: CookieToString(cookie),
     });
 
-    return await requestNet<XhsCommentListResponse>({
-      url,
+    const res = await requestNet<XhsCommentListResponse>({
+      url: `https://edith.xiaohongshu.com${url}`,
       headers: {
         cookie: CookieToString(cookie),
         Referer: this.loginUrl,
@@ -1431,6 +1432,10 @@ export class XiaohongshuService {
       },
       method: 'GET',
     });
+
+    console.log('---------- 获取评论列表 ---------- res', res);
+
+    return res;
   }
 
   /**
@@ -1446,14 +1451,14 @@ export class XiaohongshuService {
     content: string,
     targetCommentId?: string, // "67d4145300000000190210ba"
   ) {
-    const url = `https://edith.xiaohongshu.com/api/sns/web/v1/comment/post`;
+    const url = `/api/sns/web/v1/comment/post`;
     const reverseRes: any = await this.getReverseResult({
       url,
       a1: CookieToString(cookie),
     });
 
     return await requestNet<XhsCommentPostResponse>({
-      url,
+      url: `https://edith.xiaohongshu.com${url}`,
       headers: {
         cookie: CookieToString(cookie),
         Referer: this.loginUrl,

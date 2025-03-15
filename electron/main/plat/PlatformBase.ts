@@ -108,8 +108,9 @@ export abstract class PlatformBase {
     },
   ): Promise<{
     list: CommentData[];
-    count: number;
-    pcursor?: number; // 下一页的游标
+    count?: number;
+    hasMore?: boolean;
+    pcursor?: string; // 下一页的游标
   }>;
 
   /**
