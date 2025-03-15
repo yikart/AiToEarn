@@ -137,6 +137,9 @@ export class Xhs extends PlatformBase {
     account: AccountModel,
     pageInfo: { pageNo: number; pageSize: number },
   ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const ret = await xiaohongshuService.getWorks(cookie);
+
     return {
       list: [],
       count: 0,
@@ -156,6 +159,9 @@ export class Xhs extends PlatformBase {
 
   async getCommentList(account: AccountModel, dataId: string) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
+
+    const ret = await xiaohongshuService.getCommentList(cookie, dataId);
+
     return {
       list: [],
       count: 0,
@@ -167,6 +173,9 @@ export class Xhs extends PlatformBase {
     dataId: string, // 作品ID
     content: string,
   ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const ret = await xiaohongshuService.commentPost(cookie, dataId, content);
+
     return false;
   }
 
@@ -176,9 +185,17 @@ export class Xhs extends PlatformBase {
     content: string,
     option: {
       dataId?: string; // 作品ID
-      data: any; // 辅助数据,原数据
+      comment: any; // 辅助数据,原数据
     },
   ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const ret = await xiaohongshuService.commentPost(
+      cookie,
+      option.dataId!,
+      content,
+      commentId,
+    );
+
     return false;
   }
   /**

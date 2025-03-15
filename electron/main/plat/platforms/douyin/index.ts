@@ -227,7 +227,7 @@ export class Douyin extends PlatformBase {
     content: string,
     option: {
       dataId?: string; // 作品ID
-      data: any; // 辅助数据,原数据
+      comment: any; // 辅助数据,原数据
     },
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
