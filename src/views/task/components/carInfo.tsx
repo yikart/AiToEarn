@@ -40,10 +40,10 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
       const res = await taskApi.taskApply(taskInfo?._id);
       setTaskInfo(res as any);
       setIsModalOpen(false);
-      
+
       // 添加成功提示
       message.success('任务接受成功');
-      
+
       // 跳转到已参与任务选项卡
       const taskTabElement = document.querySelector('[data-tab="mine"]');
       if (taskTabElement) {

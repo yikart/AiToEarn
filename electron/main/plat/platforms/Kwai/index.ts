@@ -212,7 +212,6 @@ export class Kwai extends PlatformBase {
       dataId,
       pageInfo?.pcursor ? Number.parseInt(pageInfo.pcursor) : undefined,
     );
-    console.log('------- res ----', res);
 
     const list: CommentData[] = res.data.data.list.map((v) => {
       return {

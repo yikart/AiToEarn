@@ -6,23 +6,26 @@
  * @Description: 评论页面 reply
  */
 import {
-  icpCreateComment,
   icpCreatorList,
   icpGetCommentList,
-  icpReplyComment,
   WorkData,
   CommentData,
 } from '@/icp/reply';
 import { Avatar, Button, Card, Col, Row } from 'antd';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import styles from './reply.module.scss';
 import Meta from 'antd/es/card/Meta';
+import ReplyWorks, { ReplyWorksRef } from './components/replyWorks';
+import ReplyComment, { ReplyCommentRef } from './components/replyComment';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
   const [commentList, setCommentList] = useState<CommentData[]>([]);
   const [activeAccountId, setActiveAccountId] = useState<number>(-1);
+
+  const Ref_ReplyWorks = useRef<ReplyWorksRef>(null);
+  const Ref_ReplyComment = useRef<ReplyCommentRef>(null);
 
   async function getCreatorList() {
     if (activeAccountId === -1) {
@@ -47,30 +50,19 @@ export default function Page() {
   }
 
   /**
-   * 创建评论
+   * 打开作品评论
+   * @param data
    */
-  async function createComment(dataId: string) {
-    const res = await icpCreateComment(activeAccountId, dataId, '真不错');
-    console.log('----- res', res);
+  function openReplyWorks(data: WorkData) {
+    Ref_ReplyWorks.current?.init(activeAccountId, data);
   }
 
   /**
-   * 回复评论
+   * 打开评论回复
+   * @param data
    */
-  async function replyComment(
-    commentId: string,
-    option: {
-      dataId?: string; // 作品ID
-      data: any; // 辅助数据,原数据
-    },
-  ) {
-    const res = await icpReplyComment(
-      activeAccountId,
-      commentId,
-      '真不错',
-      option,
-    );
-    console.log('----- res', res);
+  function openReplyComment(data: CommentData) {
+    Ref_ReplyComment.current?.init(activeAccountId, data);
   }
 
   return (
@@ -105,7 +97,7 @@ export default function Page() {
                   <Button
                     type="primary"
                     onClick={() => {
-                      createComment(item.dataId);
+                      openReplyWorks(item);
                     }}
                   >
                     评论作品
@@ -123,7 +115,11 @@ export default function Page() {
               <Card
                 key={item.commentId}
                 style={{ width: 300 }}
-                actions={[<Button type="primary">回复</Button>]}
+                actions={[
+                  <Button type="primary" onClick={() => openReplyComment(item)}>
+                    回复
+                  </Button>,
+                ]}
               >
                 {item.content}
                 <Meta
@@ -135,6 +131,9 @@ export default function Page() {
           </div>
         </Col>
       </Row>
+
+      <ReplyWorks ref={Ref_ReplyWorks} />
+      <ReplyComment ref={Ref_ReplyComment} />
     </div>
   );
 }
