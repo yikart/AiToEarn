@@ -198,7 +198,7 @@ export class WxSph extends PlatformBase {
     content: string,
     option: {
       dataId: string; // 作品ID
-      data: CommentInfo; // 辅助数据,原数据
+      comment: CommentInfo; // 辅助数据,原数据
     },
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
@@ -206,7 +206,7 @@ export class WxSph extends PlatformBase {
       cookie,
       option.dataId,
       content,
-      option.data,
+      option.comment,
     );
     return false;
   }
