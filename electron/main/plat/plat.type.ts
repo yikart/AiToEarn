@@ -16,6 +16,19 @@ export enum PageType {
   cursor = 'cursor',
 }
 
+export interface PageInfo {
+  pageNo?: number;
+  pageSize?: number;
+  pcursor?: string;
+}
+
+export interface ResponsePageInfo {
+  pageType: PageType;
+  count?: number;
+  hasMore?: boolean;
+  pcursor?: string;
+}
+
 // 获取平台账户信息入参
 export interface IAccountInfoParams {
   cookies: CookiesType;

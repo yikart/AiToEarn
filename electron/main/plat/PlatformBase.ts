@@ -17,7 +17,8 @@ import {
   IGetUsersParams,
   IGetUsersResponse,
   IVideoPublishParams,
-  PageType,
+  PageInfo,
+  ResponsePageInfo,
   StatisticsData,
   VideoCallbackType,
   WorkData,
@@ -79,19 +80,10 @@ export abstract class PlatformBase {
    */
   abstract getWorkList(
     account: AccountModel,
-    pageInfo: {
-      pageNo?: number;
-      pageSize?: number;
-      pcursor?: string;
-    },
+    pageInfo: PageInfo,
   ): Promise<{
     list: WorkData[];
-    pageInfo: {
-      pageType: PageType;
-      count?: number;
-      hasMore?: boolean;
-      pcursor?: string; // 下一页的游标
-    };
+    pageInfo: ResponsePageInfo;
   }>;
 
   /**
@@ -106,19 +98,10 @@ export abstract class PlatformBase {
   abstract getCommentList(
     account: AccountModel,
     dataId: string,
-    pageInfo: {
-      pageNo?: number;
-      pageSize?: number;
-      pcursor?: string;
-    },
+    pageInfo: PageInfo,
   ): Promise<{
     list: CommentData[];
-    pageInfo: {
-      pageType: PageType;
-      pageNo?: number;
-      pageSize?: number;
-      pcursor?: string;
-    };
+    pageInfo: ResponsePageInfo;
   }>;
 
   /**

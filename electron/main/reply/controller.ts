@@ -8,10 +8,8 @@
 import { AccountService } from '../account/service';
 import { Controller, Icp, Inject } from '../core/decorators';
 import platController from '../plat';
-import { WorkData } from '../plat/plat.type';
+import type { PageInfo } from '../plat/plat.type';
 import { ReplyService } from './service';
-import { kwaiPub } from '../../plat/Kwai';
-import { douyinService } from '../../plat/douyin';
 
 @Controller()
 export class ReplyController {
@@ -28,14 +26,8 @@ export class ReplyController {
   async getCreatorList(
     event: Electron.IpcMainInvokeEvent,
     accountId: number,
-    pageInfo: {
-      pageNo: number;
-      pageSize: number;
-    },
-  ): Promise<{
-    list: WorkData[];
-    count: number;
-  }> {
+    pageInfo: PageInfo,
+  ) {
     const account = await this.accountService.getAccountById(accountId);
 
     if (!account)
@@ -56,11 +48,12 @@ export class ReplyController {
     event: Electron.IpcMainInvokeEvent,
     accountId: number,
     dataId: string,
+    pageInfo: PageInfo,
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 
-    const res = await platController.getCommentList(account, dataId);
+    const res = await platController.getCommentList(account, dataId, pageInfo);
     return res;
   }
 
@@ -92,7 +85,7 @@ export class ReplyController {
     content: string,
     option: {
       dataId?: string; // 作品ID
-      data: any; // 辅助数据,原数据
+      comment: any; // 辅助数据,原数据
     },
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);

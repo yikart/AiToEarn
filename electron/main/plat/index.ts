@@ -15,6 +15,7 @@ import {
   IAccountInfoParams,
   IGetLocationDataParams,
   IGetUsersParams,
+  PageInfo,
 } from './plat.type';
 import { PublishVideoResult } from './module';
 import { VideoModel } from '../../db/models/video';
@@ -156,13 +157,7 @@ class PlatController {
    * @param account
    * @param pageInfo
    */
-  public async getWorkList(
-    account: AccountModel,
-    pageInfo: {
-      pageNo: number;
-      pageSize: number;
-    },
-  ) {
+  public async getWorkList(account: AccountModel, pageInfo: PageInfo) {
     const platform = this.platforms.get(account.type)!;
     return await platform.getWorkList(account, pageInfo);
   }
@@ -172,9 +167,13 @@ class PlatController {
    * @param account
    * @param pageInfo
    */
-  public async getCommentList(account: AccountModel, dataId: string) {
+  public async getCommentList(
+    account: AccountModel,
+    dataId: string,
+    pageInfo: PageInfo,
+  ) {
     const platform = this.platforms.get(account.type)!;
-    return await platform.getCommentList(account, dataId);
+    return await platform.getCommentList(account, dataId, pageInfo);
   }
 
   /**
@@ -202,7 +201,7 @@ class PlatController {
     content: string,
     option: {
       dataId?: string; // 作品ID
-      data: any; // 辅助数据,原数据
+      comment: any; // 辅助数据,原数据
     },
   ) {
     const platform = this.platforms.get(account.type)!;
