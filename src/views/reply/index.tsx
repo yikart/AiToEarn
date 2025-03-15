@@ -12,10 +12,11 @@ import {
   icpReplyComment,
   WorkData,
 } from '@/icp/reply';
-import { Button } from 'antd';
+import { Button, Card, Col, Row } from 'antd';
 import { useCallback, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import styles from './reply.module.scss';
+import Meta from 'antd/es/card/Meta';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
@@ -43,8 +44,9 @@ export default function Page() {
    */
   async function getCommentList(dataId: string) {
     const res = await icpGetCommentList(activeAccountId, dataId);
-    setWordList(res.list);
     console.log('----- res', res);
+
+    setWordList(res.list);
   }
 
   /**
@@ -76,62 +78,69 @@ export default function Page() {
 
   return (
     <div className={styles.reply}>
-      <p>评论</p>
-      <div>
-        <AccountSidebar
-          activeAccountId={activeAccountId}
-          onAccountChange={useCallback(
-            (info) => {
-              console.log('----- info', info);
-
-              setActiveAccountId(info.id);
-              getCreatorList();
-            },
-            [getCreatorList],
-          )}
-        />
-      </div>
-      <div>
-        <div>
-          {wordList.map((item) => (
-            <div key={item.dataId}>
-              {item.title}
-              <Button
-                type="primary"
-                onClick={() => getCommentList(item.dataId)}
+      <Row>
+        <Col span={4}>
+          <AccountSidebar
+            activeAccountId={activeAccountId}
+            onAccountChange={useCallback(
+              (info) => {
+                setActiveAccountId(info.id);
+                getCreatorList();
+              },
+              [getCreatorList],
+            )}
+          />
+        </Col>
+        <Col span={10}>
+          <div>
+            {wordList.map((item) => (
+              <Card
+                key={item.dataId}
+                style={{ width: 200 }}
+                cover={<img alt="example" src={item.coverUrl} />}
+                actions={[
+                  <Button
+                    type="primary"
+                    onClick={() => getCommentList(item.dataId)}
+                  >
+                    评论列表
+                  </Button>,
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      createComment(item.dataId);
+                    }}
+                  >
+                    评论作品
+                  </Button>,
+                ]}
               >
-                获取评论列表
-              </Button>
-
-              <Button
-                type="primary"
-                onClick={() => {
-                  createComment(item.dataId);
-                }}
-              >
-                评论作品
-              </Button>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div>
-        <div>
-          {commentList.map((item) => (
-            <div key={item.dataId}>
-              <p> {item.title}</p>
-              <p>
-                <Button
-                  type="primary"
-                  // onClick={() => replyComment(item.dataId)}
-                >
-                  回复该评论
-                </Button>
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
+                <Meta
+                  title={item.title}
+                  description="This is the description"
+                />
+              </Card>
+            ))}
+          </div>
+        </Col>
+        <Col span={10}>
+          <div>
+            {commentList.map((item) => (
+              <div key={item.dataId}>
+                <p> {item.title}</p>
+                <p>
+                  <Button
+                    type="primary"
+                    // onClick={() => replyComment(item.dataId)}
+                  >
+                    回复
+                  </Button>
+                </p>
+              </div>
+            ))}
+          </div>
+        </Col>
+      </Row>
     </div>
   );
 }

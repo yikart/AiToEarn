@@ -1419,7 +1419,7 @@ export class XiaohongshuService {
       a1: CookieToString(cookie),
     });
 
-    return await requestNet<XhsCommentListResponse>({
+    const res = await requestNet<XhsCommentListResponse>({
       url: `https://edith.xiaohongshu.com${url}`,
       headers: {
         cookie: CookieToString(cookie),
@@ -1432,6 +1432,10 @@ export class XiaohongshuService {
       },
       method: 'GET',
     });
+
+    console.log('---------- 获取评论列表 ---------- res', res);
+
+    return res;
   }
 
   /**

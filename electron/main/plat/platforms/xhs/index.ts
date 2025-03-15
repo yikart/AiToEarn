@@ -8,6 +8,7 @@
 import { PlatformBase } from '../../PlatformBase';
 import {
   AccountInfoTypeRV,
+  CommentData,
   CookiesType,
   DashboardData,
   IAccountInfoParams,
@@ -171,11 +172,22 @@ export class Xhs extends PlatformBase {
   async getCommentList(account: AccountModel, dataId: string) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
 
-    const ret = await xiaohongshuService.getCommentList(cookie, dataId);
+    const res = await xiaohongshuService.getCommentList(cookie, dataId);
+    const list: CommentData[] = res.data.data.comments.map((v) => ({
+      dataId: v.note_id,
+      commentId: v.id,
+      parentCommentId: undefined,
+      content: v.content,
+      likeCount: Number.parseInt(v.like_count),
+      nikeName: v.user_info.nickname,
+      headUrl: v.user_info.image,
+      data: v,
+    }));
 
     return {
-      list: [],
-      count: 0,
+      list: list,
+      hasMore: res.data.data.has_more,
+      pcursor: res.data.data.cursor,
     };
   }
 
