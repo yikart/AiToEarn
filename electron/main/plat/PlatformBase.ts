@@ -104,12 +104,12 @@ export abstract class PlatformBase {
     pageInfo?: {
       pageNo?: number;
       pageSize?: number;
-      pcursor?: number;
+      pcursor?: number; // 下一页的游标
     },
   ): Promise<{
     list: CommentData[];
     count: number;
-    pcursor?: number;
+    pcursor?: number; // 下一页的游标
   }>;
 
   /**
@@ -130,7 +130,7 @@ export abstract class PlatformBase {
     content: string,
     option: {
       dataId?: string; // 作品ID
-      data: any; // 辅助数据,原数据
+      comment: any; // 辅助数据,原数据
     },
   ): Promise<boolean>;
 
