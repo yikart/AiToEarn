@@ -182,6 +182,7 @@ export class WxSph extends PlatformBase {
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await shipinhaoService.getCommentList(cookie, dataId);
+    console.log('----- res ----', res);
 
     const dataList = res.comment.map((item) => {
       return {

@@ -11,8 +11,9 @@ import {
   icpGetCommentList,
   icpReplyComment,
   WorkData,
+  CommentData,
 } from '@/icp/reply';
-import { Button, Card, Col, Row } from 'antd';
+import { Avatar, Button, Card, Col, Row } from 'antd';
 import { useCallback, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import styles from './reply.module.scss';
@@ -20,11 +21,10 @@ import Meta from 'antd/es/card/Meta';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
-  const [commentList, setComment] = useState<WorkData[]>([]);
+  const [commentList, setCommentList] = useState<CommentData[]>([]);
   const [activeAccountId, setActiveAccountId] = useState<number>(-1);
 
   async function getCreatorList() {
-    console.log('------ activeAccountId', activeAccountId);
     if (activeAccountId === -1) {
       return;
     }
@@ -34,7 +34,6 @@ export default function Page() {
       pageNo: 1,
       pageSize: 10,
     });
-    console.log('------ res', res);
 
     setWordList(res.list);
   }
@@ -43,10 +42,8 @@ export default function Page() {
    * 获取评论列表
    */
   async function getCommentList(dataId: string) {
-    const res = await icpGetCommentList(activeAccountId, dataId);
-    console.log('----- res', res);
-
-    setWordList(res.list);
+    const res = await icpGetCommentList(activeAccountId, dataId, {});
+    setCommentList(res.list);
   }
 
   /**
@@ -115,10 +112,7 @@ export default function Page() {
                   </Button>,
                 ]}
               >
-                <Meta
-                  title={item.title}
-                  description="This is the description"
-                />
+                <Meta title={item.title} />
               </Card>
             ))}
           </div>
@@ -126,17 +120,17 @@ export default function Page() {
         <Col span={10}>
           <div>
             {commentList.map((item) => (
-              <div key={item.dataId}>
-                <p> {item.title}</p>
-                <p>
-                  <Button
-                    type="primary"
-                    // onClick={() => replyComment(item.dataId)}
-                  >
-                    回复
-                  </Button>
-                </p>
-              </div>
+              <Card
+                key={item.commentId}
+                style={{ width: 300 }}
+                actions={[<Button type="primary">回复</Button>]}
+              >
+                {item.content}
+                <Meta
+                  avatar={<Avatar src={item.headUrl} />}
+                  description={item.nikeName}
+                />
+              </Card>
             ))}
           </div>
         </Col>

@@ -352,7 +352,11 @@ class KwaiPub {
   }
 
   // 获取评论列表
-  async getCommentList(cookies: Electron.Cookie[], photoId: string) {
+  async getCommentList(
+    cookies: Electron.Cookie[],
+    photoId: string,
+    pcursor?: number,
+  ) {
     return await requestNet<GetCommentListResponse>({
       url: `https://cp.kuaishou.com/rest/cp/creator/comment/commentList?__NS_sig3=a7b7f0c019bb25938afaf9f86e97581522c66e82e6e6e4e4ebeae9f3`,
       method: 'POST',
@@ -364,6 +368,7 @@ class KwaiPub {
         sortType: '',
         selectedComment: false,
         'kuaishou.web.cp.api_ph': '69799694cfd7e689847219cf678dec275266',
+        ...(pcursor ? { pcursor } : {}),
       },
     });
   }

@@ -19,19 +19,41 @@ export type WorkData = {
   videoUrl?: string;
 };
 
+export type CommentData = {
+  dataId: string;
+  commentId: string;
+  parentCommentId?: string; // 上级评论ID
+  content: string;
+  likeCount?: number; // 点赞次数
+  nikeName?: string;
+  headUrl?: string;
+  data: any; // 原数据
+};
+
+export enum PageType {
+  paging = 'paging',
+  cursor = 'cursor',
+}
+
 /**
  * 获取作品列表
  */
 export async function icpCreatorList(
   accountId: number,
   pageInfo: {
-    pageNo: number;
-    pageSize: number;
+    pageNo?: number;
+    pageSize?: number;
+    pcursor?: string; // 分页游标
   },
 ) {
   const res: {
     list: WorkData[];
-    count: number;
+    pageInfo: {
+      pageType: PageType;
+      count?: number;
+      hasMore?: boolean;
+      pcursor?: string;
+    };
   } = await window.ipcRenderer.invoke('ICP_CREATOR_LIST', accountId, pageInfo);
   return res;
 }
@@ -39,10 +61,23 @@ export async function icpCreatorList(
 /**
  * 获取评论列表
  */
-export async function icpGetCommentList(accountId: number, dataId: string) {
+export async function icpGetCommentList(
+  accountId: number,
+  dataId: string,
+  pageInfo: {
+    pageNo?: number;
+    pageSize?: number;
+    pcursor?: string;
+  },
+) {
   const res: {
-    list: WorkData[];
-    count: number;
+    list: CommentData[];
+    pageInfo: {
+      pageType: PageType;
+      count?: number;
+      hasMore?: boolean;
+      pcursor?: string;
+    };
   } = await window.ipcRenderer.invoke('ICP_COMMENT_LIST', accountId, dataId);
   return res;
 }

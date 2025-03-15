@@ -172,6 +172,7 @@ export interface GetCommentListResponse {
   currentTime: number; // 1741843263417;
   'host-name': string; // 'public-bjxy-rs9-kce-node961.idcyz.hb1.kwaidc.com';
   data: {
+    pcursor?: number; // 971109198576;
     list: [
       {
         photoId: number; // 157783681361;

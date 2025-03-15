@@ -1433,8 +1433,6 @@ export class XiaohongshuService {
       method: 'GET',
     });
 
-    console.log('---------- 获取评论列表 ---------- res', res);
-
     return res;
   }
 

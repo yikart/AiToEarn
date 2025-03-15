@@ -210,8 +210,9 @@ export class Kwai extends PlatformBase {
     const res = await kwaiPub.getCommentList(
       cookie,
       dataId,
-      // Number(pageInfo.pcursor),
+      pageInfo?.pcursor ? Number.parseInt(pageInfo.pcursor) : undefined,
     );
+    console.log('------- res ----', res);
 
     const list: CommentData[] = res.data.data.list.map((v) => {
       return {
@@ -231,8 +232,8 @@ export class Kwai extends PlatformBase {
       pageInfo: {
         pageType: PageType.cursor,
         count: 0,
-        pcursor: '',
-        hasMore: true,
+        pcursor: res.data.data.pcursor + '',
+        hasMore: !!res.data.data.pcursor,
       },
     };
   }
