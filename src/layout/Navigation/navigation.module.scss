@@ -7,17 +7,26 @@
 
   :global {
     .navigation-userinfo {
+      flex-shrink: 0;
+    }
+
+    .navigation_drag {
+      width: 100%;
+      height: 100%;
+      user-select: none;
+      -webkit-app-region: drag;
     }
 
     .navigation_left {
       display: flex;
       align-items: center;
+      flex-shrink: 0;
       .navigation-logo {
         color: #fff;
         font-weight: 900;
         display: flex;
         align-items: center;
-        margin-right: 30px;
+        margin-right: 20px;
         font-size: var(--fs-lg);
         img {
           margin-right: 4px;
@@ -53,3 +62,11 @@
     }
   }
 }
+
+.navigation-win32 {
+  padding-right: 140px;
+}
+
+.navigation-darwin {
+}
+
