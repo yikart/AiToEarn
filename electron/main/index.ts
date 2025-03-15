@@ -51,8 +51,8 @@ async function createWindow() {
   win = new BrowserWindow({
     title: '爱团团AiToEarn',
     icon: path.join(getAssetPath('favicon.ico')),
-    width: 1920,
-    height: 1080,
+    width: 1280,
+    height: 800,
     minWidth: 1280,
     minHeight: 800,
     show: false,
