@@ -19,6 +19,7 @@ import {
   IVideoPublishParams,
   VideoCallbackType,
   WorkData,
+  PageType,
 } from '../../plat.type';
 import { PublishVideoResult } from '../../module';
 import { douyinService } from '../../../../plat/douyin';
@@ -136,25 +137,44 @@ export class Douyin extends PlatformBase {
    */
   async getWorkList(
     account: AccountModel,
-    pageInfo: { pageNo?: number; pageSize?: number; pcursor?: string },
+    pageInfo: {
+      pcursor?: string;
+    },
   ) {
     const res = await douyinService.getCreatorItems(
       JSON.parse(account.loginCookie),
       pageInfo.pcursor,
     );
-    const list: WorkData[] = res.data.item_info_list.map((v) => {
-      return {
-        dataId: v.item_id,
-        cover: v.cover_image_url,
-        title: v.title,
-        createTime: v.create_time,
-        commentCount: v.comment_count,
-      };
-    });
+
+    let pcursor = '';
+    const list: WorkData[] = [];
+    for (const element of res.data.item_info_list) {
+      list.push({
+        dataId: element.item_id,
+        readCount: undefined,
+        likeCount: undefined,
+        collectCount: undefined,
+        forwardCount: undefined,
+        commentCount: element.comment_count,
+        income: undefined,
+        title: element.title,
+        desc: undefined,
+        coverUrl: element.cover_image_url,
+        videoUrl: undefined,
+        createTime: element.create_time,
+      });
+
+      pcursor = element.cursor;
+    }
 
     return {
       list: list,
-      count: res.data.total_count,
+      pageInfo: {
+        pageType: PageType.cursor,
+        count: res.data.total_count,
+        hasMore: res.data.has_more,
+        pcursor: pcursor,
+      },
     };
   }
 
@@ -172,10 +192,9 @@ export class Douyin extends PlatformBase {
   async getCommentList(
     account: AccountModel,
     dataId: string,
-    pageInfo?: {
-      pageNo?: number;
+    pageInfo: {
       pageSize?: number;
-      pcursor?: number;
+      pcursor?: string;
     },
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
@@ -183,8 +202,6 @@ export class Douyin extends PlatformBase {
       count: pageInfo?.pageSize || undefined,
       cursor: pageInfo?.pcursor || undefined,
     });
-
-    console.log('===== res ===', res.data.comment_info_list[0]);
 
     const list: CommentData[] = res.data.comment_info_list.map((v: any) => {
       return {
@@ -200,7 +217,12 @@ export class Douyin extends PlatformBase {
 
     return {
       list,
-      count: res.data.total_count,
+      pageInfo: {
+        pageType: PageType.cursor,
+        count: res.data.total_count,
+        pcursor: res.data.cursor + '',
+        hasMore: res.data.has_more,
+      },
     };
   }
 

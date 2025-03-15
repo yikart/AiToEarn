@@ -11,6 +11,11 @@ import { DiffParmasType, ILableValue } from '../../db/models/video';
 
 export type CookiesType = Electron.Cookie[];
 
+export enum PageType {
+  paging = 'paging',
+  cursor = 'cursor',
+}
+
 // 获取平台账户信息入参
 export interface IAccountInfoParams {
   cookies: CookiesType;
@@ -46,11 +51,12 @@ export type WorkData = {
   collectCount?: number;
   forwardCount?: number;
   commentCount?: number; // 评论数量
-  income?: number;
+  income?: number; // 收入
   title?: string;
   desc?: string;
   coverUrl?: string;
   videoUrl?: string;
+  createTime?: string;
 };
 
 // 评论

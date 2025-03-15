@@ -2287,7 +2287,7 @@ export class DouyinService {
     cookie: Electron.Cookie[],
     item_id: string, // 作品ID
     pageInfo: {
-      cursor?: number;
+      cursor?: string;
       count?: number;
     },
   ) {

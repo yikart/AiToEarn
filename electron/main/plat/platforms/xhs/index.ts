@@ -17,6 +17,7 @@ import {
   IGetTopicsResponse,
   IGetUsersParams,
   IVideoPublishParams,
+  PageType,
   VideoCallbackType,
   WorkData,
 } from '../../plat.type';
@@ -137,7 +138,11 @@ export class Xhs extends PlatformBase {
    */
   async getWorkList(
     account: AccountModel,
-    pageInfo: { pageNo: number; pageSize: number; pcursor?: string },
+    pageInfo: {
+      pageNo?: number;
+      pageSize?: number;
+      pcursor?: string;
+    },
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await xiaohongshuService.getWorks(cookie);
@@ -154,7 +159,10 @@ export class Xhs extends PlatformBase {
 
     return {
       list,
-      count: 0,
+      pageInfo: {
+        pageType: PageType.cursor,
+        count: res.data.data.tags[0].notes_count,
+      },
     };
   }
 
@@ -169,7 +177,15 @@ export class Xhs extends PlatformBase {
     };
   }
 
-  async getCommentList(account: AccountModel, dataId: string) {
+  async getCommentList(
+    account: AccountModel,
+    dataId: string,
+    pageInfo: {
+      pageNo?: number;
+      pageSize?: number;
+      pcursor?: string;
+    },
+  ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
 
     const res = await xiaohongshuService.getCommentList(cookie, dataId);
@@ -186,8 +202,11 @@ export class Xhs extends PlatformBase {
 
     return {
       list: list,
-      hasMore: res.data.data.has_more,
-      pcursor: res.data.data.cursor,
+      pageInfo: {
+        pageType: PageType.cursor,
+        hasMore: res.data.data.has_more,
+        pcursor: res.data.data.cursor,
+      },
     };
   }
 

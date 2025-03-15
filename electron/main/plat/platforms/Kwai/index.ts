@@ -8,6 +8,7 @@
 import { PlatformBase } from '../../PlatformBase';
 import {
   AccountInfoTypeRV,
+  CommentData,
   CookiesType,
   DashboardData,
   IAccountInfoParams,
@@ -16,6 +17,7 @@ import {
   IGetTopicsResponse,
   IGetUsersParams,
   IVideoPublishParams,
+  PageType,
   VideoCallbackType,
   WorkData,
 } from '../../plat.type';
@@ -157,10 +159,12 @@ export class Kwai extends PlatformBase {
    */
   async getWorkList(
     account: AccountModel,
-    pageInfo: { pageNo: number; pageSize: number },
+    pageInfo: {
+      pcursor?: string;
+    },
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const res = await kwaiPub.getPhotoList(cookie, pageInfo.pageNo);
+    const res = await kwaiPub.getPhotoList(cookie, Number(pageInfo.pcursor));
     const photoList = res.data.data.photoList;
     const list: WorkData[] = photoList.map((v) => {
       return {
@@ -174,8 +178,12 @@ export class Kwai extends PlatformBase {
 
     return {
       list,
-      count: res.data.data.totalCount,
-      pcursor: res.data.data.pcursor,
+      pageInfo: {
+        pageType: PageType.cursor,
+        hasMore: !!res.data.data.pcursor,
+        count: res.data.data.totalCount,
+        pcursor: res.data.data.pcursor + '',
+      },
     };
   }
 
@@ -190,11 +198,43 @@ export class Kwai extends PlatformBase {
     };
   }
 
-  async getCommentList(account: AccountModel, dataId: string) {
+  async getCommentList(
+    account: AccountModel,
+    dataId: string,
+    pageInfo: {
+      pcursor?: string;
+    },
+  ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await kwaiPub.getCommentList(
+      cookie,
+      dataId,
+      // Number(pageInfo.pcursor),
+    );
+
+    console.log('------ res ----', res);
+
+    const list: CommentData[] = res.data.data.list.map((v) => {
+      return {
+        dataId: v.photoId + '',
+        commentId: v.commentId + '',
+        parentCommentId: undefined,
+        content: v.content,
+        likeCount: undefined,
+        nikeName: v.headurl,
+        headUrl: v.headurl,
+        data: v,
+      };
+    });
+
     return {
-      list: [],
-      count: 0,
+      list: list,
+      pageInfo: {
+        pageType: PageType.cursor,
+        count: 0,
+        pcursor: '',
+        hasMore: true,
+      },
     };
   }
 
@@ -203,6 +243,10 @@ export class Kwai extends PlatformBase {
     dataId: string, // 作品ID
     content: string,
   ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await kwaiPub.commentAdd(cookie, dataId, content, {});
+    console.log('------ kaishou createComment res ----', res);
+
     return false;
   }
 
@@ -215,6 +259,14 @@ export class Kwai extends PlatformBase {
       comment: any; // 辅助数据,原数据
     },
   ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+
+    const res = await kwaiPub.commentAdd(cookie, option.dataId!, content, {
+      replyToCommentId: Number.parseInt(commentId),
+      replyTo: Number.parseInt(option.dataId!),
+    });
+    console.log('------ kaishou createComment res ----', res);
+
     return false;
   }
 

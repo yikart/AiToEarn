@@ -16,6 +16,7 @@ import {
   IGetTopicsResponse,
   IGetUsersParams,
   IVideoPublishParams,
+  PageType,
   VideoCallbackType,
   WorkData,
 } from '../../plat.type';
@@ -127,10 +128,17 @@ export class WxSph extends PlatformBase {
    */
   async getWorkList(
     account: AccountModel,
-    pageInfo: { pageNo: number; pageSize: number },
+    pageInfo: {
+      pageNo?: number;
+      pageSize?: number;
+      pcursor?: string;
+    },
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const res = await shipinhaoService.getPostList(cookie, pageInfo);
+    const res = await shipinhaoService.getPostList(cookie, {
+      pageNo: pageInfo.pageNo || 1,
+      pageSize: pageInfo.pageSize || 20,
+    });
 
     const listData: WorkData[] = res.list.map((item) => {
       return {
@@ -145,7 +153,10 @@ export class WxSph extends PlatformBase {
 
     return {
       list: listData,
-      count: res.totalCount,
+      pageInfo: {
+        pageType: PageType.paging,
+        count: res.totalCount,
+      },
     };
   }
 
@@ -160,7 +171,15 @@ export class WxSph extends PlatformBase {
     };
   }
 
-  async getCommentList(account: AccountModel, dataId: string) {
+  async getCommentList(
+    account: AccountModel,
+    dataId: string,
+    pageInfo: {
+      pageNo?: number;
+      pageSize?: number;
+      pcursor?: string;
+    },
+  ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await shipinhaoService.getCommentList(cookie, dataId);
 
@@ -177,7 +196,10 @@ export class WxSph extends PlatformBase {
 
     return {
       list: dataList,
-      count: res.commentCount,
+      pageInfo: {
+        pageType: PageType.paging,
+        count: res.commentCount,
+      },
     };
   }
 
