@@ -2298,12 +2298,12 @@ const Trending: React.FC = () => {
                                 </div>
                                 <div className="w-24 text-center">
                                   <span className="text-[#a66ae4]">
-                                    {item.shareCount || '1w'} 
+                                    {(item as any).shareCount || '1w'} 
                                   </span>
                                 </div>
                                 <div className="w-24 text-center">
                                   <span className="text-[#a66ae4]">
-                                    {item.collectCount || '1w'}
+                                    {(item as any).collectCount || '1w'}
                                   </span>
                                 </div>
                               </div>
