@@ -6,6 +6,7 @@
  * @Description: reply Reply
  */
 import { AccountService } from '../account/service';
+import { toolsApi } from '../api/tools';
 import { Controller, Icp, Inject } from '../core/decorators';
 import platController from '../plat';
 import type { CommentData, PageInfo } from '../plat/plat.type';
@@ -84,6 +85,12 @@ export class ReplyController {
     accountId: number,
     dataId: string,
   ): Promise<any> {
+    const res1 = await toolsApi.aiRecoverReview({
+      content: '今天天气真好',
+    });
+
+    console.log('------ res1', res1);
+
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 

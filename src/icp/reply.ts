@@ -120,3 +120,15 @@ export async function icpReplyComment(
   );
   return res;
 }
+
+/**
+ * 一键作品回复评论
+ */
+export async function icpCreateCommentList(accountId: number, dataId: string) {
+  const res: boolean = await window.ipcRenderer.invoke(
+    'ICP_REPLY_COMMENT_LIST_BY_AI',
+    accountId,
+    dataId,
+  );
+  return res;
+}

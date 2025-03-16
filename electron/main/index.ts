@@ -10,6 +10,8 @@ import { getAssetPath } from '../util/index';
 import windowOperate from '../util/windowOperate';
 import { logger } from '../global/log';
 import { SplashWindow } from './splash';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

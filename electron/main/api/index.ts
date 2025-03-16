@@ -14,7 +14,7 @@ export interface IRequestNetParams {
   isFile?: boolean;
 }
 
-const requestNet = <T = any>({
+const netRequest = <T = any>({
   headers,
   body,
   method,
@@ -24,7 +24,7 @@ const requestNet = <T = any>({
   return new Promise((resolve, reject) => {
     const req = net.request({
       method: method || 'GET',
-      url,
+      url: `${process.env.VITE_APP_URL}/${url}`,
     });
 
     // 设置请求头
@@ -78,4 +78,4 @@ const requestNet = <T = any>({
   });
 };
 
-export default requestNet;
+export default netRequest;

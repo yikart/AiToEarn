@@ -10,6 +10,7 @@ import {
   icpGetCommentList,
   WorkData,
   CommentData,
+  icpCreateCommentList,
 } from '@/icp/reply';
 import { Avatar, Button, Card, Col, Row } from 'antd';
 import { useCallback, useRef, useState } from 'react';
@@ -50,6 +51,14 @@ export default function Page() {
   }
 
   /**
+   * 一键AI评论
+   */
+  async function createCommentList(data: WorkData) {
+    const res = await icpCreateCommentList(activeAccountId, data.dataId);
+    console.log('------ res', res);
+  }
+
+  /**
    * 打开作品评论
    * @param data
    */
@@ -85,7 +94,7 @@ export default function Page() {
             {wordList.map((item) => (
               <Card
                 key={item.dataId}
-                style={{ width: 200 }}
+                style={{ width: 300 }}
                 cover={<img alt="example" src={item.coverUrl} />}
                 actions={[
                   <Button
@@ -101,6 +110,14 @@ export default function Page() {
                     }}
                   >
                     评论作品
+                  </Button>,
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      createCommentList(item);
+                    }}
+                  >
+                    一键AI评论
                   </Button>,
                 ]}
               >
