@@ -2,6 +2,7 @@ import { useUserStore } from '@/store/user';
 import { useEffect } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import Navigation from './Navigation';
+import styles from "./layoutBody.module.scss";
 
 export const LayoutBody = () => {
   const userStore = useUserStore();
@@ -33,9 +34,9 @@ export const LayoutBody = () => {
   }
 
   return (
-    <div className="flex flex-col h-full" style={{ height: '100%' }}>
+    <div className={styles.layoutBody}>
       <Navigation />
-      <main style={{ height: '100%', minHeight: 0, width: '100%' }}>
+      <main className="layoutBody-main">
         <Outlet />
       </main>
     </div>

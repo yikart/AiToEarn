@@ -1,0 +1,13 @@
+.layoutBody {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  :global {
+
+    .layoutBody-main {
+      height: 100%;
+      overflow: auto;
+      box-sizing: border-box;
+    }
+  }
+}
