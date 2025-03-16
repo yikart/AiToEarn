@@ -12,7 +12,7 @@ import {
   WeChatVideoApiResponse,
   WeChatVideoUserData,
 } from './wxShp.type';
-
+import { v4 as uuidv4 } from 'uuid';
 interface UserInfo {
   authorId: string;
   nickname: string;
@@ -1407,31 +1407,33 @@ export class ShipinhaoService {
     content: string,
     comment: Partial<CommentInfo> = {},
   ) {
-    return await requestNet<WeChatVideoUserData>({
+    const res = await requestNet<WeChatVideoUserData>({
       url: `https://channels.weixin.qq.com/micro/interaction/cgi-bin/mmfinderassistant-bin/comment/create_comment?_rid=67d032a7-6c8f7126`,
       headers: {
         cookie: CookieToString(cookie),
       },
       method: 'POST',
       body: {
-        clientId: this.getUniqueTaskId(),
-        body: {
-          comment,
-          content,
-          exportId,
-          pluginSessionId: null,
-          rawKeyBuff: null,
-          replyCommentId: '',
-          reqScene: 7,
-          rootCommentId: '',
-          scene: 7,
-          timestamp: Date.now() + '',
-          _log_finder_id:
-            'v2_060000231003b20faec8c5e38b10cbd6cb06ef3cb077ad5b14a8587570bc414e95c4b7e034ea@finder',
-          _log_finder_uin: '',
-        },
+        clientId: uuidv4(),
+        comment, // 默认{}
+        content,
+        exportId,
+        pluginSessionId: null,
+        rawKeyBuff: null,
+        replyCommentId: comment?.commentId || '',
+        reqScene: 7,
+        rootCommentId: comment?.replyCommentId || '',
+        scene: 7,
+        timestamp: Date.now() + '',
+        _log_finder_id:
+          'v2_060000231003b20faec8c5e38b10cbd6cb06ef3cb077ad5b14a8587570bc414e95c4b7e034ea@finder',
+        _log_finder_uin: '',
       },
     });
+
+    console.log('------ res', res);
+
+    return res;
   }
 }
 

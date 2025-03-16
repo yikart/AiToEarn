@@ -183,6 +183,8 @@ export interface CommentInfo {
   displayFlag: number; // 514;
   blacklistFlag: number; // 0;
   likeFlag: number; // 0;
+  replyCommentId?: string; // '14610404657143548189';
+  replyContent?: string; // '可爱吧';
 }
 
 export interface SphGetCommentListResponse {

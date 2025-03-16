@@ -211,8 +211,7 @@ export class WxSph extends PlatformBase {
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await shipinhaoService.createComment(cookie, dataId, content);
-
-    return false;
+    return (res.status === 200 || res.status === 201) && res.data.errCode === 0;
   }
 
   async replyComment(

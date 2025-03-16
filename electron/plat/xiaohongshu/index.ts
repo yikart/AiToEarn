@@ -1457,7 +1457,7 @@ export class XiaohongshuService {
       a1: CookieToString(cookie),
     });
 
-    return await requestNet<XhsCommentPostResponse>({
+    const res = await requestNet<XhsCommentPostResponse>({
       url: `https://edith.xiaohongshu.com${url}`,
       headers: {
         cookie: CookieToString(cookie),
@@ -1476,6 +1476,10 @@ export class XiaohongshuService {
         at_users: [],
       },
     });
+
+    console.log('--- xhs commentPost --- res', res);
+
+    return res;
   }
 }
 
