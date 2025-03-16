@@ -2180,8 +2180,8 @@ const Trending: React.FC = () => {
                             <div className="flex items-center space-x-12">
                               <div className="w-24 text-center">点赞</div>
                               <div className="w-24 text-center">评论</div>
-                              {/* <div className="w-24 text-center">分享</div>
-                              <div className="w-24 text-center">收藏</div> */}
+                              <div className="w-24 text-center">分享</div>
+                              <div className="w-24 text-center">收藏</div>
                             </div>
                           </div>
                         </div>
@@ -2296,16 +2296,16 @@ const Trending: React.FC = () => {
                                     {item.stats.commentCount || '1w'}
                                   </span>
                                 </div>
-                                {/* <div className="w-24 text-center">
+                                <div className="w-24 text-center">
                                   <span className="text-[#a66ae4]">
-                                    {item.stats.shareCount || '1w'} 
+                                    {item.shareCount || '1w'} 
                                   </span>
                                 </div>
                                 <div className="w-24 text-center">
                                   <span className="text-[#a66ae4]">
-                                    {item.stats.collectCount || '1w'}
+                                    {item.collectCount || '1w'}
                                   </span>
-                                </div> */}
+                                </div>
                               </div>
                               {/* <div className="flex items-center space-x-2">
                                 <button className="text-[#a66ae4] hover:text-[#9559d1] px-3 py-1 rounded-full border border-[#e6d3f7] text-sm">
