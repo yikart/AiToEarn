@@ -1,15 +1,20 @@
 import { icpCreateComment, WorkData } from '@/icp/reply';
-import { Button, Modal } from 'antd';
+import { Button, Form, Input, Modal } from 'antd';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
 export interface ReplyWorksRef {
   init: (accountId: number, inWorkData: WorkData) => Promise<void>;
 }
 
+interface FormData {
+  content: string;
+}
+
 const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [accountId, setAccountId] = useState<number>(0);
   const [workData, setWorkData] = useState<WorkData | null>(null);
+  const [formData, setFormData] = useState<Partial<FormData>>();
 
   async function init(accountId: number, inWorkData: WorkData) {
     setAccountId(accountId);
@@ -33,6 +38,14 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
     console.log('----- res', res);
   }
 
+  async function onFinish(values: FormData) {
+    createComment(values.content);
+  }
+
+  async function onFinishFailed(errorInfo: any) {
+    console.log('Failed:', errorInfo);
+  }
+
   return (
     <>
       <Modal
@@ -42,14 +55,29 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
         footer={null}
         width={800}
       >
-        <Button
-          type="primary"
-          onClick={() => {
-            createComment('测试评论');
-          }}
+        <Form
+          name="basic"
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          initialValues={{ remember: true }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          autoComplete="off"
         >
-          测试评论
-        </Button>
+          <Form.Item
+            label="content"
+            name="content"
+            rules={[{ required: true, message: '请输入评论!' }]}
+          >
+            <Input value={formData?.content} />
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button type="primary" htmlType="submit">
+              提交评论
+            </Button>
+          </Form.Item>
+        </Form>
       </Modal>
     </>
   );
