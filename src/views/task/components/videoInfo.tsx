@@ -197,7 +197,6 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
         onClose={() => !downloading && setChooseAccountOpen(false)}
         choosedAccounts={accountListChoose}
         onPlatConfirm={async (aList) => {
-          console.log('选择的账号:', aList);
           setAccountListChoose(aList);
 
           // 下载文件并发布

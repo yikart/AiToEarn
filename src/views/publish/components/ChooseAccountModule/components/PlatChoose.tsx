@@ -118,7 +118,16 @@ const PlatChoose = memo(
               newMap.get(v.type)?.push(v);
             });
             // 默认平台
-            setActivePlat((Array.from(newMap)[0] || [])[0]);
+            if (!activePlat) {
+              for (const [accountType, accountList] of Array.from(newMap)) {
+                if (
+                  accountList.length !== 0 &&
+                  (allowPlatSet ? allowPlatSet.has(accountType) : true)
+                ) {
+                  setActivePlat(accountType);
+                }
+              }
+            }
             return newMap;
           });
         });
