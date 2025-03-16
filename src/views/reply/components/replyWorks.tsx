@@ -1,3 +1,4 @@
+import { toolsApi } from '@/api/tools';
 import { icpCreateComment, WorkData } from '@/icp/reply';
 import { Button, Form, Input, Modal } from 'antd';
 import { forwardRef, useImperativeHandle, useState } from 'react';
@@ -15,6 +16,7 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
   const [accountId, setAccountId] = useState<number>(0);
   const [workData, setWorkData] = useState<WorkData | null>(null);
   const [formData, setFormData] = useState<Partial<FormData>>();
+  const [form] = Form.useForm<FormData>();
 
   async function init(accountId: number, inWorkData: WorkData) {
     setAccountId(accountId);
@@ -46,6 +48,17 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
     console.log('Failed:', errorInfo);
   }
 
+  async function getAiContent() {
+    if (!workData?.coverUrl) return;
+    const res = await toolsApi.apiReviewImgAi({
+      imgUrl: workData?.coverUrl,
+    });
+
+    form.setFieldsValue({
+      content: res,
+    });
+  }
+
   return (
     <>
       <Modal
@@ -73,6 +86,10 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
           </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button type="primary" onClick={getAiContent}>
+              AI建议
+            </Button>
+
             <Button type="primary" htmlType="submit">
               提交评论
             </Button>
