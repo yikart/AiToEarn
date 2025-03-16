@@ -396,7 +396,7 @@ class KwaiPub {
   }
 
   /**
-   * 添加评论和回复评论
+   * 添加评论和回复评论 TODO: 需要逆向获取__NS_sig3
    * @param cookie
    * @param photoId
    * @param content
@@ -416,10 +416,11 @@ class KwaiPub {
     console.log('----------- content', content);
 
     const res = await requestNet<CommentAddResponse>({
-      url: 'https://cp.kuaishou.com/rest/cp/creator/comment/add?__NS_sig3=09195e6e1b33893d26545756e88395048c68c02c48484a4a4544475d',
+      url: 'https://cp.kuaishou.com/rest/cp/creator/comment/add?__NS_sig3=425215256a67c576621f1c1db6360dafc7238b67030301010e0f0c16',
       method: 'POST',
       headers: {
-        cookie: CookieToString(cookie),
+        cookie:
+          'bUserId=1000423613948; userId=798319351; kuaishou.web.cp.api_st=ChZrdWFpc2hvdS53ZWIuY3AuYXBpLnN0ErAB_vTR8iF9DKikTTIbh2Ygqg3nZub0eSwKLV406R0M8U5EW0u-6yziIGS0joT5ZMv9cwW468sjvhgglMZxSj9Dr2zBzVmAnfknWWtWDfJI6YfX3rfYYF5sxNs3sLgTPFAdwKZ0yT-KEWdzTL9EKkvQ8-M-uPE52Ddtui-8O9tljAE3W1R-crkui_-n3y6qAxBqGQ1dS3Rc5z9GueabGwVnP8b4rRaJRN5y4HvBNIs4qVwaEp8Sk2LkGUVizOftibzVab_iqyIgkN6pxFs1FHelwKEnuX2nvY5zHCi2RXIQLNjmCDRQbHUoBTAB; kuaishou.web.cp.api_ph=69799694cfd7e689847219cf678dec275266; kuaishou.web.cp.api_st=ChZrdWFpc2hvdS53ZWIuY3AuYXBpLnN0ErABfuZymYpBkWogGZSKPQhJLnoCMjg1Bk-Avd8fV7NlfsmsssYWf_W-7G1ztmcR6RLXxWomhrbEbWdGWyKVw20nBpOW6kAC6TGx5Cq6BRfI_XO0mQKLHtPaTuQXU-i60d-4XYl5oN3RCn3m0eU-BFvx60LRtmLe3WNyl5FPiK6pKMpzHhNR2vmiswmrUo8sWztoKrwuW2YzBRGXdHu6kddTiyGaeohOTQSlGQcobNluLzwaEr107Lui-h8tgb9_bpuB5sOhZiIg6XuXpTo340vxmG30-tRodOY27YSZM5mh6G7_Z1KFKJ8oBTAB; kuaishou.web.cp.api_ph=83bf801aad61c783ff81481ebea62cd399f5; did=web_f2ab00be8919eee848af510c336665fb',
       },
       body: {
         content,
