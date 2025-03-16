@@ -54,6 +54,8 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
       imgUrl: workData?.coverUrl,
     });
 
+    console.log('----- res', res);
+
     form.setFieldsValue({
       content: res,
     });
@@ -69,6 +71,7 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
         width={800}
       >
         <Form
+          form={form}
           name="basic"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
@@ -82,7 +85,7 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
             name="content"
             rules={[{ required: true, message: '请输入评论!' }]}
           >
-            <Input value={formData?.content} />
+            <Input />
           </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

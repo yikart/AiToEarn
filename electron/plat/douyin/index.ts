@@ -2319,14 +2319,18 @@ export class DouyinService {
       text: string; //'哈哈哈';
     },
   ) {
-    return await requestNet<DouyinNewCommentResponse>({
+    const cookieString = CommonUtils.convertCookieToJson(cookie);
+    const csrfToken = await this.getSecsdkCsrfToken(cookieString);
+    const res = await requestNet<DouyinNewCommentResponse>({
       url: `https://creator.douyin.com/aweme/v1/creator/comment/reply/`,
       headers: {
-        cookie: CookieToString(cookie),
+        cookie: cookieString,
+        'X-Secsdk-Csrf-Token': csrfToken,
       },
       method: 'POST',
       body: data,
     });
+    return res;
   }
 }
 

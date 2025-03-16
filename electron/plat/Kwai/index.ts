@@ -412,7 +412,7 @@ class KwaiPub {
       replyTo?: number; // 798319351;
     },
   ) {
-    return await requestNet<CommentAddResponse>({
+    const res = await requestNet<CommentAddResponse>({
       url: 'https://cp.kuaishou.com/rest/cp/creator/comment/add?__NS_sig3=a9b9fecedad12b9d75f4f7f64ed9b1c62cc8608ce8e8eaeae5e4e7fd',
       method: 'POST',
       headers: {
@@ -425,6 +425,10 @@ class KwaiPub {
         'kuaishou.web.cp.api_ph': '69799694cfd7e689847219cf678dec275266',
       },
     });
+
+    console.log('---- douyin commentAdd ----', res);
+
+    return res;
   }
 }
 
