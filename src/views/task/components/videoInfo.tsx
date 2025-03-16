@@ -127,10 +127,10 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
       console.log('下载封面:', coverUrl);
 
       // 使用IPC接口下载视频文件到本地临时目录
-      const localVideoPath = await ipcDownFile(videoUrl, 'default_filename1');
+      const localVideoPath = await ipcDownFile(videoUrl);
 
       // 使用IPC接口下载封面图片到本地临时目录
-      const localCoverPath = await ipcDownFile(coverUrl, 'default_filename2');
+      const localCoverPath = await ipcDownFile(coverUrl);
 
       console.log('视频已下载到:', localVideoPath);
       console.log('封面已下载到:', localCoverPath);
@@ -197,9 +197,9 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
         onClose={() => !downloading && setChooseAccountOpen(false)}
         choosedAccounts={accountListChoose}
         onPlatConfirm={async (aList) => {
-          console.log('选择的账号:', aList);
+          console.log('账号:', aList);
           setAccountListChoose(aList);
-
+          console.log('选择的账号:', aList);
           // 下载文件并发布
           await downloadAndPublish(aList);
         }}
@@ -350,7 +350,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                   取消
                 </Button>
                 <Button
-                  disabled={taskInfo.isAccepted}
+                  // disabled={taskInfo.isAccepted}
                   key="submit"
                   type="primary"
                   onClick={taskApply}
