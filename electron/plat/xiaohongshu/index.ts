@@ -1425,8 +1425,8 @@ export class XiaohongshuService {
       url: `https://edith.xiaohongshu.com${url}`,
       headers: {
         cookie: CookieToString(cookie),
-        Referer: this.loginUrl,
-        origin: this.loginUrl,
+        Referer: this.loginUrlHome,
+        origin: this.loginUrlHome,
         'X-S': reverseRes['X-s'],
         'X-T': reverseRes['X-t'],
         userAgent:
@@ -1435,11 +1435,13 @@ export class XiaohongshuService {
       method: 'GET',
     });
 
+    console.log('------- xhs getCommentList ---', res);
+
     return res;
   }
 
   /**
-   * 评论作品
+   * 评论作品 TODO: 获取的cookies有问题
    * @param noteId
    * @param content
    * @param targetCommentId // 回复的评论ID
@@ -1461,8 +1463,8 @@ export class XiaohongshuService {
       url: `https://edith.xiaohongshu.com${url}`,
       headers: {
         cookie: CookieToString(cookie),
-        Referer: this.loginUrl,
-        origin: this.loginUrl,
+        Referer: 'https://www.xiaohongshu.com/',
+        Origin: 'https://www.xiaohongshu.com',
         'X-S': reverseRes['X-s'],
         'X-T': reverseRes['X-t'],
         userAgent:
@@ -1472,7 +1474,7 @@ export class XiaohongshuService {
       body: {
         note_id: noteId,
         content,
-        target_comment_id: targetCommentId,
+        target_comment_id: targetCommentId || undefined,
         at_users: [],
       },
     });
