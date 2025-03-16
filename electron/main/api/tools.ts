@@ -1,6 +1,4 @@
 import { net } from 'electron';
-import { ResOp } from './types';
-import { Ranking, CreateRankingDto } from './types/ranking';
 
 class ToolsApi {
   private async request<T>(
@@ -8,7 +6,7 @@ class ToolsApi {
     path: string,
     data?: any,
     token?: string,
-  ): Promise<ResOp<T>> {
+  ): Promise<any> {
     return new Promise((resolve, reject) => {
       const request = net.request({
         method,
@@ -44,8 +42,8 @@ class ToolsApi {
   }
 
   // 获取AI的评论回复
-  async createRanking(data: CreateRankingDto, token: string): Promise<Ranking> {
-    const response = await this.request<Ranking>(
+  async createRanking(data: any, token: string): Promise<any> {
+    const response = await this.request<any>(
       'POST',
       'tools/ai/recover/review',
       data,
