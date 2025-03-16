@@ -24,6 +24,20 @@ export const toolsApi = {
   },
 
   /**
+   * 智能图文
+   */
+  apiReviewImgAi(data: {
+    imgUrl: string;
+    title?: string;
+    desc?: string;
+    max?: number;
+  }) {
+    return http.post<string>('/tools/ai/reviewImg', data, {
+      isToken: true,
+    });
+  },
+
+  /**
    * 智能评论
    */
   apiReviewAi(data: { title: string; desc?: string; max?: number }) {

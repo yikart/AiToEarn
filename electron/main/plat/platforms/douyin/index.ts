@@ -238,9 +238,7 @@ export class Douyin extends PlatformBase {
       text: content,
     });
 
-    console.log('------ res', res);
-
-    return false;
+    return res.status === 200 && res.data.status_code === 0;
   }
 
   async replyComment(

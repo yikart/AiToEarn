@@ -1371,7 +1371,7 @@ export class XiaohongshuService {
       a1: CookieToString(cookie),
     });
 
-    return await requestNet<IXHSGetWorksResponse>({
+    const res = await requestNet<IXHSGetWorksResponse>({
       url: `https://edith.xiaohongshu.com${url}`,
       headers: {
         cookie: CookieToString(cookie),
@@ -1384,6 +1384,8 @@ export class XiaohongshuService {
       },
       method: 'GET',
     });
+
+    return res;
   }
 
   // 获取@用户列表
@@ -1455,7 +1457,7 @@ export class XiaohongshuService {
       a1: CookieToString(cookie),
     });
 
-    return await requestNet<XhsCommentPostResponse>({
+    const res = await requestNet<XhsCommentPostResponse>({
       url: `https://edith.xiaohongshu.com${url}`,
       headers: {
         cookie: CookieToString(cookie),
@@ -1474,6 +1476,10 @@ export class XiaohongshuService {
         at_users: [],
       },
     });
+
+    console.log('--- xhs commentPost --- res', res);
+
+    return res;
   }
 }
 

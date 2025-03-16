@@ -37,6 +37,7 @@ export class ReplyController {
       };
 
     const res = await platController.getWorkList(account, pageInfo);
+
     return res;
   }
 

@@ -412,19 +412,26 @@ class KwaiPub {
       replyTo?: number; // 798319351;
     },
   ) {
-    return await requestNet<CommentAddResponse>({
-      url: 'https://cp.kuaishou.com/rest/cp/creator/comment/add?__NS_sig3=a9b9fecedad12b9d75f4f7f64ed9b1c62cc8608ce8e8eaeae5e4e7fd',
+    console.log('----------- photoId', photoId);
+    console.log('----------- content', content);
+
+    const res = await requestNet<CommentAddResponse>({
+      url: 'https://cp.kuaishou.com/rest/cp/creator/comment/add?__NS_sig3=09195e6e1b33893d26545756e88395048c68c02c48484a4a4544475d',
       method: 'POST',
       headers: {
         cookie: CookieToString(cookie),
       },
       body: {
         content,
-        photoId,
-        ...reply,
         'kuaishou.web.cp.api_ph': '69799694cfd7e689847219cf678dec275266',
+        photoId,
+        // ...reply,
       },
     });
+
+    console.log('---- douyin commentAdd ----', res);
+
+    return res;
   }
 }
 
