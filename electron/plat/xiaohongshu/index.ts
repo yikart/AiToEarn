@@ -1454,7 +1454,7 @@ export class XiaohongshuService {
   ) {
     const url = `/api/sns/web/v1/comment/post`;
     const body = {
-      note_id: '67b3c4cf000000001902dcb1',
+      note_id: noteId,
       content,
       target_comment_id: targetCommentId || undefined,
       at_users: [],
