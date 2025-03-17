@@ -1439,7 +1439,8 @@ export class XiaohongshuService {
   }
 
   /**
-   * 评论作品 TODO: 获取的cookies有问题
+   * 评论作品
+   * @param cookie
    * @param noteId
    * @param content
    * @param targetCommentId // 回复的评论ID
@@ -1449,15 +1450,20 @@ export class XiaohongshuService {
     cookie: Electron.Cookie[],
     noteId: string,
     content: string,
-    targetCommentId?: string, // "67d4145300000000190210ba"
+    targetCommentId?: string,
   ) {
     const url = `/api/sns/web/v1/comment/post`;
+    const body = {
+      note_id: '67b3c4cf000000001902dcb1',
+      content,
+      target_comment_id: targetCommentId || undefined,
+      at_users: [],
+    };
     const reverseRes: any = await this.getReverseResult({
       url,
       a1: CookieToString(cookie),
+      data: body,
     });
-
-    console.log(CookieToString(cookie));
 
     const res = await requestNet<XhsCommentPostResponse>({
       url: `https://edith.xiaohongshu.com${url}`,
@@ -1471,12 +1477,7 @@ export class XiaohongshuService {
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
       },
       method: 'POST',
-      body: {
-        note_id: noteId,
-        content,
-        target_comment_id: targetCommentId || undefined,
-        at_users: [],
-      },
+      body,
     });
 
     console.log('--- xhs commentPost --- res', res);
