@@ -67,7 +67,7 @@ export function parseTopicString(input: string): {
   cleanedString: string;
 } {
   // 使用正则表达式提取字符串中的部分
-  const extractedParts = input.match(/#(\S+)\s/g) || [];
+  const extractedParts = input.match(/#(\S+)/g) || [];
 
   // 在原始输入中用空字符串替换提取的部分
   let cleanedString = input;
@@ -77,7 +77,7 @@ export function parseTopicString(input: string): {
 
   // 创建提取的话题数组
   const topics = extractedParts.map((part) => {
-    const match = part.match(/#(\S+)\s/);
+    const match = part.match(/#(\S+)/);
     return match ? match[1] : '';
   });
 
