@@ -201,7 +201,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
             <div className={styles.taskInfoFooter}>
               <div className={styles.taskStatus}>
                 <span className={styles.statusLabel}>任务状态:</span>
-                <Tag color="#87d068">
+                <Tag color="#a66ae4">
                   {TaskStatusName.get(taskInfo.status) || '进行中'}
                 </Tag>
               </div>

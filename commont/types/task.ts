@@ -27,7 +27,7 @@ export enum TaskStatus {
   CANCELLED = 'cancelled', // 取消
 }
 export const TaskStatusName = new Map([
-  [TaskStatus.ACTIVE, '激活'],
+  [TaskStatus.ACTIVE, '进行中'],
   [TaskStatus.COMPLETED, '完成'],
   [TaskStatus.CANCELLED, '取消'],
 ]);

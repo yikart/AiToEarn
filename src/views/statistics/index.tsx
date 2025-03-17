@@ -21,6 +21,7 @@ import { Dayjs } from 'dayjs';
 import * as echarts from 'echarts';
 import dayjs from 'dayjs';
 import { message } from 'antd';
+import WebView from '@/components/WebView';
 
 import douyinIcon from '@/assets/svgs/account/douyin.svg';
 import xhsIcon from '@/assets/svgs/account/xhs.svg';
@@ -415,8 +416,26 @@ const Statistics = () => {
     }
   };
 
+  const examineVideo = () => {
+    console.log('检查视频');
+    // 实现检查视频的逻辑
+  };
+
   return (
     <div className="min-h-screen page-container bg-gray-50">
+{/* 
+{ open ? (
+                <WebView
+                  url={examineVideo.url}
+                  cookieParams={{
+                    cookies: JSON.parse(examineVideo.account.loginCookie),
+                  }}
+                  key={examineVideo.url + examineVideo.open}
+                />
+              ) : (
+                ''
+              )} */}
+
       <div className="px-6 py-6">
         {/* 顶部标题区域 */}
         <div className="flex items-center justify-between mb-6">

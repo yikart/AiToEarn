@@ -28,6 +28,7 @@ import {
 import ChooseAccountModule from '@/views/publish/components/ChooseAccountModule/ChooseAccountModule';
 import { ipcDownFile } from '@/icp/tools';
 import { AccountType } from '@@/AccountEnum';
+import VideoPlayer from '@/components/VideoPlayer';
 
 const FILE_BASE_URL = import.meta.env.VITE_APP_FILE_HOST;
 
@@ -39,6 +40,24 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [taskInfo, setTaskInfo] = useState<Task<TaskVideo> | null>();
   const [downloading, setDownloading] = useState(false);
+  const [videoPlayback, setVideoPlayback] = useState<{
+    visible: boolean;
+    url: string;
+    title: string;
+  }>({
+    visible: false,
+    url: '',
+    title: '',
+  });
+
+  // 在组件内添加一个新的状态来存储任务记录
+  const [taskRecord, setTaskRecord] = useState<{
+    _id: string;
+    createTime: string;
+    isFirstTimeSubmission: boolean;
+    status: string;
+    taskId: string;
+  } | null>(null);
 
   async function init(inTaskInfo: Task<TaskVideo>) {
     setTaskInfo(inTaskInfo);
@@ -53,38 +72,46 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
    * 接受任务
    */
   async function taskApply() {
-    console.log('接受任务', taskInfo);
     if (!taskInfo) return;
 
     try {
-      const res = await taskApi.taskApply<TaskVideo>(taskInfo?._id);
-      // setTaskInfo(res);
-      message.success('任务接受成功！');
-      setIsModalOpen(false);
-      setChooseAccountOpen(true);
+      const res:any = await taskApi.taskApply<TaskVideo>(taskInfo?._id);
+      // 存储任务记录信息
+      if (res.code === 0 && res.data) {
+        setTaskRecord(res.data);
+        message.success('任务接受成功！');
+        setIsModalOpen(false);
+        setChooseAccountOpen(true);
+      } else {
+        message.error(res.msg || '接受任务失败，请稍后再试?');
+      }
     } catch (error) {
       message.error('接受任务失败，请稍后再试');
     }
   }
 
-
-    /**
-   * 接受任务
+  /**
+   * 完成任务
    */
-    async function taskDone() {
-      console.log('接受任务', taskInfo);
-      if (!taskInfo) return;
-      try {
-        const res = await taskApi.taskDone(taskInfo?._id, {
-          submissionUrl: taskInfo.title,
-          screenshotUrls: [taskInfo.imageUrl],
-          qrCodeScanResult: taskInfo.title,
-        });
-        message.success('任务发布成功！');
-      } catch (error) {
-        message.error('接受任务失败，请稍后再试');
-      }
+  async function taskDone() {
+    console.log('完成任务', taskInfo, taskRecord);
+    if (!taskInfo || !taskRecord) {
+      message.error('任务信息不完整，无法完成任务');
+      return;
     }
+    
+    try {
+      // 使用任务记录的 ID 而不是任务 ID
+      const res = await taskApi.taskDone(taskRecord._id, {
+        submissionUrl: taskInfo.title,
+        screenshotUrls: [taskInfo.imageUrl],
+        qrCodeScanResult: taskInfo.title,
+      });
+      message.success('任务发布成功！');
+    } catch (error) {
+      message.error('完成任务失败，请稍后再试');
+    }
+  }
 
   const handleCancel = () => {
     setIsModalOpen(false);
@@ -190,8 +217,34 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
     }
   };
 
+  // 打开视频播放器
+  const openVideoPlayer = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (taskInfo?.dataInfo?.videoUrl) {
+      setVideoPlayback({
+        visible: true,
+        url: `${FILE_BASE_URL}${taskInfo.dataInfo.videoUrl}`,
+        title: taskInfo.title || '视频播放',
+      });
+    } else {
+      message.info('该任务暂无视频');
+    }
+  };
+  
+  // 关闭视频播放器
+  const closeVideoPlayer = () => {
+    setVideoPlayback((prev) => ({ ...prev, visible: false }));
+  };
+
   return (
     <>
+      <VideoPlayer
+        videoUrl={videoPlayback.url}
+        visible={videoPlayback.visible}
+        onClose={closeVideoPlayer}
+        title={videoPlayback.title}
+      />
+
       <ChooseAccountModule
         open={chooseAccountOpen}
         onClose={() => !downloading && setChooseAccountOpen(false)}
@@ -222,14 +275,14 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
               <h2 className={styles.taskTitle}>
                 {taskInfo.title}
                 <span className={styles.taskId}>
-                  ID: {taskInfo.id}
+                  ID: {taskInfo._id}
                   <CopyOutlined
                     className={styles.copyIcon}
-                    onClick={() => copyTaskId(taskInfo.id)}
+                    onClick={() => copyTaskId(taskInfo._id)}
                   />
                 </span>
               </h2>
-              <Tag color="#f50" className={styles.taskTag}>
+              <Tag color="#a66ae4" className={styles.taskTag}>
                 {(taskInfo.dataInfo as any)?.type || '视频任务'}
               </Tag>
             </div>
@@ -238,7 +291,10 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
               <Row gutter={24}>
                 <Col span={12}>
                   <div className={styles.videoContainer}>
-                    <div className={styles.taskImageContainer}>
+                    <div 
+                      className={styles.taskImageContainer}
+                      onClick={openVideoPlayer}
+                    >
                       <img
                         src={`${FILE_BASE_URL}${taskInfo.imageUrl}`}
                         alt={taskInfo.title}
@@ -336,7 +392,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
             <div className={styles.taskInfoFooter}>
               <div className={styles.taskStatus}>
                 <span className={styles.statusLabel}>任务状态:</span>
-                <Tag color="#87d068">
+                <Tag color="#a66ae4">
                   {TaskStatusName.get(taskInfo.status) || '进行中'}
                 </Tag>
               </div>
