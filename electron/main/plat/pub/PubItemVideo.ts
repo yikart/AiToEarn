@@ -52,7 +52,7 @@ export class PubItemVideo extends PubItemBase {
         topics: this.videoModel.topics || [],
         coverPath: this.videoModel.coverPath || '',
         visibleType: this.videoModel.visibleType || VisibleTypeEnum.Private,
-        diffParams: this.videoModel.diffParams,
+        diffParams: this.videoModel.diffParams || {},
         timingTime: this.videoModel.timingTime,
         location: this.videoModel.location,
       },
