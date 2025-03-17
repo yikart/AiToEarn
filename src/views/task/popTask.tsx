@@ -99,7 +99,7 @@ export default function Page() {
 
       <div className={styles.taskList}>
         {taskList.map((task) => (
-          <Card key={task.id} className={styles.taskCard}>
+          <Card key={task._id} className={styles.taskCard}>
             <div className={styles.taskCardContent}>
               <div className={styles.taskImageContainer}>
                 <img

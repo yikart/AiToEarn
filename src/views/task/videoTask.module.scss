@@ -269,4 +269,32 @@
       height: 22px;
     }
   }
+}
+
+.platformIcons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.platformIconWrapper {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.platformIcon {
+  width: 20px;
+  height: 20px;
+  color: white;
+  fill: white;
 } 
