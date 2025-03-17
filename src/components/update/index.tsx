@@ -141,6 +141,7 @@ const Update = () => {
         onClick={checkUpdate}
         type="text"
         className="w-full text-left !p-0 !bg-transparent hover:!bg-transparent !border-none"
+        style={{ marginLeft: '-10px' }}
       >
         {checking ? '检查中...' : '检查更新'}
       </Button>

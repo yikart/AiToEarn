@@ -92,7 +92,7 @@ const App: React.FC = () => {
             userStore.logout();
           }}
         >
-          退出登录
+          {'   '}退出登录
         </Button>
       ),
       icon: <LogoutOutlined className="text-red-500" />,
