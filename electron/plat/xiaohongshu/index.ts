@@ -136,8 +136,6 @@ export class XiaohongshuService {
     partition: string,
   ): Promise<Electron.Cookie[]> {
     return new Promise((resolve, reject) => {
-      console.log('----------------------');
-      this.win!.webContents.openDevTools();
       // Monitor cookie status with interval
       this.cookieIntervalList[winContentsId] = setInterval(async () => {
         try {
