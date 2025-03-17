@@ -73,6 +73,24 @@ const PlatChoose = memo(
       // 每次change操作的数据
       const recentData = useRef<AccountInfo>();
 
+      useEffect(() => {
+        cutDefaultPlat(accountMap);
+      }, [allowPlatSet]);
+
+      // 切换默认平台
+      const cutDefaultPlat = (accountMap: Map<AccountType, AccountInfo[]>) => {
+        if (!activePlat) {
+          for (const [accountType, accountList] of Array.from(accountMap)) {
+            if (
+              accountList.length !== 0 &&
+              (allowPlatSet ? allowPlatSet.has(accountType) : true)
+            ) {
+              setActivePlat(accountType);
+            }
+          }
+        }
+      };
+
       // 所有平台的账户数据
       const getAllAccountList = useMemo(() => {
         const allAccountList = [];
@@ -118,16 +136,7 @@ const PlatChoose = memo(
               newMap.get(v.type)?.push(v);
             });
             // 默认平台
-            if (!activePlat) {
-              for (const [accountType, accountList] of Array.from(newMap)) {
-                if (
-                  accountList.length !== 0 &&
-                  (allowPlatSet ? allowPlatSet.has(accountType) : true)
-                ) {
-                  setActivePlat(accountType);
-                }
-              }
-            }
+            cutDefaultPlat(newMap);
             return newMap;
           });
         });
