@@ -1,4 +1,4 @@
-import requestNet from '../requestNet';
+import requestNet, { IRequestNetParams } from '../requestNet';
 import {
   CommentAddResponse,
   GetCommentListResponse,
@@ -17,6 +17,11 @@ import { cookieToPlaywright, CookieToString } from '../utils';
 import { BrowserWindow } from 'electron';
 import { KwaiVisibleTypeEnum } from '../plat.common.type';
 import { getBrowser } from '../coomont';
+import kwaiSign from './sign/KwaiSign';
+
+interface IRequestApiParams extends IRequestNetParams {
+  cookie: Electron.Cookie[];
+}
 
 class KwaiPub {
   // 发布视频
@@ -177,16 +182,45 @@ class KwaiPub {
     });
   }
 
+  // 发送请求
+  async requestApi<T>(params: IRequestApiParams) {
+    const { cookie } = params;
+
+    if (params.method === 'POST') {
+      params['body'] = {
+        ...(params['body'] ? params['body'] : {}),
+        'kuaishou.web.cp.api_ph': cookie.find(
+          (v) => v.name === 'kuaishou.web.cp.api_ph',
+        )!.value,
+      };
+    }
+
+    params['headers'] = {
+      ...(params['headers'] ? params['headers'] : {}),
+      cookie: CookieToString(cookie),
+    };
+
+    const signUrl = await kwaiSign.sign({
+      json: params.body || {},
+      type: 'json',
+      url: params.url,
+    });
+
+    console.log('signUrl：', signUrl);
+
+    return await requestNet<T>({
+      ...params,
+      url: `https://cp.kuaishou.com${signUrl}`,
+    });
+  }
+
   async getHomeOverview(cookie: Electron.Cookie[]) {
-    return await requestNet<IGetHomeOverview>({
-      url: 'https://cp.kuaishou.com/rest/cp/creator/analysis/pc/home/author/overview?__NS_sig3=1c0c4b7b90498228d5414243bfb44c3f997dd5395d5d5f5f50515248',
+    return await this.requestApi<IGetHomeOverview>({
+      cookie,
+      url: '/rest/cp/creator/analysis/pc/home/author/overview',
       method: 'POST',
-      headers: {
-        cookie: CookieToString(cookie),
-      },
       body: {
         timeType: 3,
-        'kuaishou.web.cp.api_ph': '19af6d5b24cb170a03331ce9254b1204154c',
       },
     });
   }
@@ -231,30 +265,20 @@ class KwaiPub {
   }
 
   // 获取账户的粉丝数、关注、获赞
-  async getHomeInfo(cookies: Electron.Cookie[]) {
-    return await requestNet<IGetHomeInfoResponse>({
-      url: 'https://cp.kuaishou.com/rest/cp/creator/pc/home/infoV2?__NS_sig3=16064171beba8e22244b48496eb9c2a99377df33575755555a5b5842',
+  async getHomeInfo(cookie: Electron.Cookie[]) {
+    return await this.requestApi<IGetHomeInfoResponse>({
+      cookie: cookie,
+      url: '/rest/cp/creator/pc/home/infoV2',
       method: 'POST',
-      headers: {
-        cookie: CookieToString(cookies),
-      },
-      body: {
-        'kuaishou.web.cp.api_ph': '19af6d5b24cb170a03331ce9254b1204154c',
-      },
     });
   }
 
   // 获取账号信息
-  async getAccountInfo(cookies: Electron.Cookie[]) {
-    return await requestNet<IKwaiUserInfoResponse>({
-      url: 'https://cp.kuaishou.com/rest/v2/creator/pc/authority/account/current?__NS_sig3=9585c2f20a5d5ba1adc8cbca965d865710f45cb0d4d4d6d6d9d8dbc1',
+  async getAccountInfo(cookie: Electron.Cookie[]) {
+    return await this.requestApi<IKwaiUserInfoResponse>({
+      cookie: cookie,
+      url: '/rest/v2/creator/pc/authority/account/current',
       method: 'POST',
-      headers: {
-        cookie: CookieToString(cookies),
-      },
-      body: {
-        'kuaishou.web.cp.api_ph': '20d8d6752131fa2ea941cbf5965061fd0a7a',
-      },
     });
   }
 
@@ -266,12 +290,10 @@ class KwaiPub {
     keyword: string;
     cookies: Electron.Cookie[];
   }) {
-    return await requestNet<IKwaiGetTopicsResponse>({
-      url: `https://cp.kuaishou.com/rest/cp/works/v2/video/pc/tag/search?__NS_sig3=9585c2f20a5d5ba1adc8cbca965d865710f45cb0d4d4d6d6d9d8dbc1`,
+    return await this.requestApi<IKwaiGetTopicsResponse>({
+      cookie: cookies,
+      url: `/rest/cp/works/v2/video/pc/tag/search`,
       method: 'POST',
-      headers: {
-        cookie: CookieToString(cookies),
-      },
       body: {
         keyword,
       },
@@ -286,17 +308,14 @@ class KwaiPub {
     page: number;
     cookies: Electron.Cookie[];
   }) {
-    return await requestNet<IKwaiGetUsersResponse>({
-      url: `https://cp.kuaishou.com/rest/cp/works/v2/video/pc/at/list`,
+    return await this.requestApi<IKwaiGetUsersResponse>({
+      cookie: cookies,
+      url: `/rest/cp/works/v2/video/pc/at/list`,
       method: 'POST',
-      headers: {
-        cookie: CookieToString(cookies),
-      },
       body: {
         atType: 3,
         pageCount: page,
         pageSize: 10,
-        'kuaishou.web.cp.api_ph': 'fe283c2f058ddb7a3098f89511fbd536dd82',
       },
     });
   }
@@ -311,18 +330,15 @@ class KwaiPub {
     cityName: string;
     keyword: string;
   }) {
-    return await requestNet<IKwaiGetLocationsResponse>({
-      url: `https://cp.kuaishou.com/rest/zt/location/wi/poi/search?kpn=kuaishou_cp&subBiz=CP%2FCREATOR_PLATFORM&kuaishou.web.cp.api_ph=fe283c2f058ddb7a3098f89511fbd536dd82`,
+    return await this.requestApi<IKwaiGetLocationsResponse>({
+      cookie: cookies,
+      url: `/rest/zt/location/wi/poi/search?kpn=kuaishou_cp&subBiz=CP%2FCREATOR_PLATFORM&kuaishou.web.cp.api_ph=fe283c2f058ddb7a3098f89511fbd536dd82`,
       method: 'POST',
-      headers: {
-        cookie: CookieToString(cookies),
-      },
       body: {
         cityName,
         count: 50,
         keyword,
         pcursor: '',
-        'kuaishou.web.cp.api_ph': 'fe283c2f058ddb7a3098f89511fbd536dd82',
       },
     });
   }
@@ -337,14 +353,11 @@ class KwaiPub {
     cookies: Electron.Cookie[],
     pcursor?: number, // 下一页页码
   ) {
-    const res = await requestNet<GetPhotoListResponse>({
-      url: `https://cp.kuaishou.com/rest/cp/creator/comment/photoList?__NS_sig3=425215256a67c576621f1c1db6360dafc7238b67030301010e0f0c16`,
+    const res = await this.requestApi<GetPhotoListResponse>({
+      cookie: cookies,
+      url: `/rest/cp/creator/comment/photoList`,
       method: 'POST',
-      headers: {
-        cookie: CookieToString(cookies),
-      },
       body: {
-        'kuaishou.web.cp.api_ph': '69799694cfd7e689847219cf678dec275266',
         ...(pcursor ? { pcursor } : {}),
       },
     });
@@ -357,17 +370,14 @@ class KwaiPub {
     photoId: string,
     pcursor?: number,
   ) {
-    return await requestNet<GetCommentListResponse>({
-      url: `https://cp.kuaishou.com/rest/cp/creator/comment/commentList?__NS_sig3=a7b7f0c019bb25938afaf9f86e97581522c66e82e6e6e4e4ebeae9f3`,
+    return await this.requestApi<GetCommentListResponse>({
+      cookie: cookies,
+      url: `/rest/cp/creator/comment/commentList`,
       method: 'POST',
-      headers: {
-        cookie: CookieToString(cookies),
-      },
       body: {
         photoId,
         sortType: '',
         selectedComment: false,
-        'kuaishou.web.cp.api_ph': '69799694cfd7e689847219cf678dec275266',
         ...(pcursor ? { pcursor } : {}),
       },
     });
@@ -379,16 +389,13 @@ class KwaiPub {
     photoId: string,
     commentId: number,
   ) {
-    const res = await requestNet<GetSubCommentListResponse>({
-      url: `https://cp.kuaishou.com/rest/cp/creator/comment/subCommentList?__NS_sig3=09195e6e1b33893d26545756e88395048c68c02c48484a4a4544475d`,
+    const res = await this.requestApi<GetSubCommentListResponse>({
+      cookie: cookies,
+      url: `/rest/cp/creator/comment/subCommentList`,
       method: 'POST',
-      headers: {
-        cookie: CookieToString(cookies),
-      },
       body: {
         commentId, // 969549966791,
         photoId, //'3xsq95w5uxvjx7q',
-        'kuaishou.web.cp.api_ph': '69799694cfd7e689847219cf678dec275266',
       },
     });
 
@@ -415,16 +422,12 @@ class KwaiPub {
     console.log('----------- photoId', photoId);
     console.log('----------- content', content);
 
-    const res = await requestNet<CommentAddResponse>({
-      url: 'https://cp.kuaishou.com/rest/cp/creator/comment/add?__NS_sig3=425215256a67c576621f1c1db6360dafc7238b67030301010e0f0c16',
+    const res = await this.requestApi<CommentAddResponse>({
+      cookie: cookie,
+      url: '/rest/cp/creator/comment/add',
       method: 'POST',
-      headers: {
-        cookie:
-          'bUserId=1000423613948; userId=798319351; kuaishou.web.cp.api_st=ChZrdWFpc2hvdS53ZWIuY3AuYXBpLnN0ErAB_vTR8iF9DKikTTIbh2Ygqg3nZub0eSwKLV406R0M8U5EW0u-6yziIGS0joT5ZMv9cwW468sjvhgglMZxSj9Dr2zBzVmAnfknWWtWDfJI6YfX3rfYYF5sxNs3sLgTPFAdwKZ0yT-KEWdzTL9EKkvQ8-M-uPE52Ddtui-8O9tljAE3W1R-crkui_-n3y6qAxBqGQ1dS3Rc5z9GueabGwVnP8b4rRaJRN5y4HvBNIs4qVwaEp8Sk2LkGUVizOftibzVab_iqyIgkN6pxFs1FHelwKEnuX2nvY5zHCi2RXIQLNjmCDRQbHUoBTAB; kuaishou.web.cp.api_ph=69799694cfd7e689847219cf678dec275266; kuaishou.web.cp.api_st=ChZrdWFpc2hvdS53ZWIuY3AuYXBpLnN0ErABfuZymYpBkWogGZSKPQhJLnoCMjg1Bk-Avd8fV7NlfsmsssYWf_W-7G1ztmcR6RLXxWomhrbEbWdGWyKVw20nBpOW6kAC6TGx5Cq6BRfI_XO0mQKLHtPaTuQXU-i60d-4XYl5oN3RCn3m0eU-BFvx60LRtmLe3WNyl5FPiK6pKMpzHhNR2vmiswmrUo8sWztoKrwuW2YzBRGXdHu6kddTiyGaeohOTQSlGQcobNluLzwaEr107Lui-h8tgb9_bpuB5sOhZiIg6XuXpTo340vxmG30-tRodOY27YSZM5mh6G7_Z1KFKJ8oBTAB; kuaishou.web.cp.api_ph=83bf801aad61c783ff81481ebea62cd399f5; did=web_f2ab00be8919eee848af510c336665fb',
-      },
       body: {
         content,
-        'kuaishou.web.cp.api_ph': '69799694cfd7e689847219cf678dec275266',
         photoId,
         // ...reply,
       },

@@ -44,7 +44,6 @@ class KwaiSign {
 
       this.exports.realm.global['$encode'](md5, {
         suc(s: string) {
-          console.log('签名成功：', s);
           resolve(`${url}?__NS_sig3=${s}`);
         },
         err(e: string) {

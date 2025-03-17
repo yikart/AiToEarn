@@ -1457,6 +1457,8 @@ export class XiaohongshuService {
       a1: CookieToString(cookie),
     });
 
+    console.log(CookieToString(cookie));
+
     const res = await requestNet<XhsCommentPostResponse>({
       url: `https://edith.xiaohongshu.com${url}`,
       headers: {
