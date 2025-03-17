@@ -1,8 +1,9 @@
 import { ForwardedRef, forwardRef, memo } from 'react';
-import { Avatar, Modal, Progress, Tooltip } from 'antd';
+import { Alert, Avatar, Modal, Progress, Tooltip } from 'antd';
 import { VideoPublishProgressRes } from '../../../../electron/main/plat/pub/PubItemVideo';
 import styles from './pubProgressModule.module.scss';
 import { AccountPlatInfoMap } from '@/views/account/comment';
+import { MinusOutlined } from '@ant-design/icons';
 
 export interface IPubProgressModuleRef {}
 
@@ -37,7 +38,9 @@ const PubProgressModule = memo(
           open={open}
           onCancel={onClose}
           footer={null}
+          closeIcon={<MinusOutlined />}
         >
+          <Alert message="关闭此弹框和页面不会影响发布流程" type="success" />
           <div className={styles.pubProgressModule}>
             {pubProgressData.map((v) => {
               const { account } = v;
