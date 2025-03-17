@@ -1,0 +1,47 @@
+.videoModal {
+  :global {
+    .ant-modal-content {
+      background-color: #000;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .ant-modal-header {
+      background-color: #000;
+      border-bottom: 1px solid #333;
+      
+      .ant-modal-title {
+        color: #fff;
+      }
+    }
+    
+    .ant-modal-close {
+      color: #fff;
+      
+      &:hover {
+        color: #a66ae4;
+      }
+    }
+    
+    .ant-modal-body {
+      padding: 0;
+    }
+  }
+}
+
+.videoContainer {
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%; /* 16:9 宽高比 */
+  position: relative;
+}
+
+.videoPlayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background-color: #000;
+} 

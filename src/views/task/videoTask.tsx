@@ -20,6 +20,7 @@ import {
   CopyOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import VideoPlayer from '@/components/VideoPlayer';
 
 // 导入平台图标
 import KwaiIcon from '@/assets/svgs/account/ks.svg';
@@ -48,6 +49,17 @@ export default function Page() {
   const [hasMore, setHasMore] = useState(true);
 
   const Ref_TaskInfo = useRef<TaskInfoRef>(null);
+
+  // 添加视频播放状态
+  const [videoPlayback, setVideoPlayback] = useState<{
+    visible: boolean;
+    url: string;
+    title: string;
+  }>({
+    visible: false,
+    url: '',
+    title: '',
+  });
 
   async function getTaskList(isLoadMore = false) {
     setLoading(true);
@@ -133,19 +145,49 @@ export default function Page() {
     );
   };
 
+  // 打开视频播放器
+  const openVideoPlayer = (task: Task<TaskVideo>, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (task.dataInfo?.videoUrl) {
+      setVideoPlayback({
+        visible: true,
+        url: `${FILE_BASE_URL}${task.dataInfo.videoUrl}`,
+        title: task.title || '视频播放',
+      });
+    } else {
+      message.info('该任务暂无视频');
+    }
+  };
+  
+  // 关闭视频播放器
+  const closeVideoPlayer = () => {
+    setVideoPlayback((prev) => ({ ...prev, visible: false }));
+  };
+
   return (
     <div className={styles.videoTaskContainer}>
       <TaskInfo ref={Ref_TaskInfo} />
+      
+      {/* 添加视频播放组件 */}
+      <VideoPlayer
+        videoUrl={videoPlayback.url}
+        visible={videoPlayback.visible}
+        onClose={closeVideoPlayer}
+        title={videoPlayback.title}
+      />
 
       <div className={styles.taskList}>
         {taskList.map((task) => (
           <Card
-            key={task.id}
+            key={task._id}
             className={styles.taskCard}
             styles={{ body: { padding: 0 } }}
           >
             <div className={styles.taskCardContent}>
-              <div className={styles.taskImageContainer}>
+              <div 
+                className={styles.taskImageContainer}
+                onClick={(e) => openVideoPlayer(task, e)}
+              >
                 <img
                   src={`${FILE_BASE_URL}${task.imageUrl}`}
                   alt={task.title}
