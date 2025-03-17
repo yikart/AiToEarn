@@ -33,6 +33,7 @@ const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({ children }) => {
     // 您可以自定义回退UI
     return (
       <div className={styles.errorBoundary}>
+        <code>{errorMsg}</code>
         <h1>对不起，系统出现了错误</h1>
         <Button
           type="primary"

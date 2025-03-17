@@ -64,7 +64,6 @@ export default function Page() {
     <div className={styles.video}>
       <Spin spinning={loadingPageLoading}>
         <VideoPubSetModal onClose={setVideoPubSetModalOpen} />
-
         <ChooseAccountModule
           disableAllSelect={
             accountChooseType.current === AccountChooseType.Radio ||

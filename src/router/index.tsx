@@ -28,7 +28,6 @@ import { LayoutBody } from '@/layout/LayoutBody';
 // 页面组件
 import Login from '@/views/login';
 import Trending from '@/views/trending';
-// import About from '@/views/about/About';
 import Account from '@/views/account';
 import Publish from '@/views/publish/page';
 import VideoPage from '@/views/publish/children/videoPage/page';
@@ -97,14 +96,6 @@ export const router: CustomRouteObject[] = [
         element: <Trending />,
         meta: { name: '热门内容', icon: FireOutlined },
       },
-      // {
-      //   path: '/about',
-      //   element: <About />,
-      //   meta: {
-      //     name: '关于',
-      //     icon: InfoCircleOutlined,
-      //   },
-      // },
       {
         path: '/publish',
         element: <Publish />,

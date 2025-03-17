@@ -5,6 +5,10 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  code {
+    font-size: var(--fs-md);
+    margin-bottom: 50px;
+  }
   &:after {
     content: "";
     display: block;
