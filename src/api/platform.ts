@@ -91,6 +91,8 @@ export interface RankingContent {
   author: Author;
   stats: Stats;
   status: number;
+  shareCount: number;
+  collectCount: number;
   publishTime: string;
   sort: number;
   rankingPosition: number;
