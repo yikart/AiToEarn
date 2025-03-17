@@ -99,8 +99,8 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                   />
                 </span>
               </h2>
-              <Tag color="#108ee9" className={styles.taskTag}>
-                {(taskInfo.dataInfo as any)?.type || 'AI对话APP'}
+              <Tag color="#a66ae4" className={styles.taskTag}>
+                {(taskInfo.dataInfo as any)?.type || '推广APP'}
               </Tag>
             </div>
 
@@ -219,6 +219,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                   type="primary"
                   onClick={taskApply}
                   className={styles.applyButton}
+                  style={{ backgroundColor: '#a66ae4' }}
                 >
                   接受任务
                 </Button>

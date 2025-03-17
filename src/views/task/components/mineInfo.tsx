@@ -151,6 +151,8 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
   // 判断任务是否可提交
   const canSubmitTask = () => {
     if (!mineTaskInfo) return false;
+    
+    // 只有在进行中或已拒绝状态才允许提交
     return SUBMITTABLE_STATUSES.includes(mineTaskInfo.status as UserTaskStatus);
   };
 
@@ -335,11 +337,11 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
           <div className={styles.taskInfoFooter}>
             <Space>
               <Button onClick={handleCancel}>关闭</Button>
-              {/* {canSubmitTask() && ( */}
-              <Button type="primary" onClick={taskDone} loading={submitting}>
-                提交任务
-              </Button>
-              {/* )} */}
+              {canSubmitTask() && (
+                <Button type="primary" onClick={taskDone} loading={submitting}>
+                  提交任务
+                </Button>
+              )}
             </Space>
           </div>
         </div>

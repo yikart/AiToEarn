@@ -406,13 +406,14 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                   取消
                 </Button>
                 <Button
-                  // disabled={taskInfo.isAccepted}
                   key="submit"
                   type="primary"
+                  disabled={taskInfo.isAccepted}
                   onClick={taskApply}
                   className={styles.applyButton}
+                  style={{ backgroundColor: '#a66ae4', borderColor: '#a66ae4' }}
                 >
-                  接受任务
+                  {taskInfo.isAccepted ? '已接受任务' : '接受任务'}
                 </Button>
               </div>
             </div>

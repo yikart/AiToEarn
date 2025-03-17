@@ -123,8 +123,8 @@ export default function Page() {
                       </Tooltip>
                     </span>
                   </h3>
-                  <Tag color="#108ee9" className={styles.taskTag}>
-                    {(task.dataInfo as any)?.type || 'AI对话APP'}
+                  <Tag color="#a66ae4" className={styles.taskTag}>
+                    {(task.dataInfo as any)?.type || '推广APP'}
                   </Tag>
                 </div>
 
@@ -177,6 +177,7 @@ export default function Page() {
                   type="primary"
                   className={styles.viewButton}
                   onClick={() => Ref_TaskInfo.current?.init(task)}
+                  style={{ backgroundColor: '#a66ae4' }}
                 >
                   去查看 <RightOutlined />
                 </Button>

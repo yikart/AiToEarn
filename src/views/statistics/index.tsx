@@ -49,6 +49,13 @@ const Statistics = () => {
   // 添加选中的指标类型
   const [selectedMetric, setSelectedMetric] = useState<string>('fans');
 
+  // 添加状态来控制WebView的显示
+  const [examineVideoData, setExamineVideoData] = useState<{url: string, account: any, open: boolean}>({
+    url: '',
+    account: null,
+    open: false
+  });
+
   useEffect(() => {
     getAccountStatistics();
   }, []);
@@ -416,25 +423,72 @@ const Statistics = () => {
     }
   };
 
-  const examineVideo = () => {
-    console.log('检查视频');
-    // 实现检查视频的逻辑
+  // 修改检查视频的函数
+  const examineVideo = (account: any) => {
+    console.log('检查视频', account);
+    // 根据账户类型确定要打开的URL
+    let url = '';
+    switch(account.type) {
+      case 'douyin':
+        url = `https://creator.douyin.com/`;
+        break;
+      case 'xhs':
+        url = `https://www.xiaohongshu.com/`;
+        break;
+      case 'wxSph':
+        url = `https://channels.weixin.qq.com`;
+        break;
+      case 'KWAI':
+        url = `https://id.kuaishou.com/pass/kuaishou/login/passToken?sid=kuaishou.web.cp.api`;
+        break;
+      default:
+        url = '';
+    }
+    
+    setExamineVideoData({
+      url,
+      account,
+      open: true
+    });
+  };
+
+  // 关闭WebView
+  const closeWebView = () => {
+    setExamineVideoData(prev => ({...prev, open: false}));
   };
 
   return (
     <div className="min-h-screen page-container bg-gray-50">
-{/* 
-{ open ? (
-                <WebView
-                  url={examineVideo.url}
-                  cookieParams={{
-                    cookies: JSON.parse(examineVideo.account.loginCookie),
-                  }}
-                  key={examineVideo.url + examineVideo.open}
-                />
-              ) : (
-                ''
-              )} */}
+      {/* WebView组件 */}
+      {examineVideoData.open && examineVideoData.account ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="relative w-4/5 h-4/5 bg-white rounded-lg overflow-hidden">
+            <button 
+              className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center"
+              style={{
+                zIndex: 1000,
+                width: '36px',
+                height: '36px',
+                color: '#a66ae4',
+                border: '1px solid rgba(166, 106, 228, 0.2)'
+              }}
+              onClick={closeWebView}
+            >
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            <WebView
+              url={examineVideoData.url}
+              cookieParams={{
+                cookies: JSON.parse(examineVideoData.account.loginCookie || '{}'),
+              }}
+              key={examineVideoData.url + examineVideoData.open}
+            />
+          </div>
+        </div>
+      ) : null}
 
       <div className="px-6 py-6">
         {/* 顶部标题区域 */}
@@ -670,7 +724,8 @@ const Statistics = () => {
                         <div className="text-center">
                           <div className="text-sm text-gray-500">粉丝数</div>
                           <div className="font-medium text-[#a66ae4]">
-                          {accountData?.fans>0?'+ ':'- ' }{ accountData?.fans || 0}
+                            {(accountData?.fans || 0) > 0 ? '+ ' : '- '}
+                            {Math.abs(accountData?.fans || 0)}
                           </div>
                         </div>
                         <div className="text-center">
@@ -704,7 +759,13 @@ const Statistics = () => {
                           </div>
                         </div>
                         <div className="text-center"> 
-                          <div className="text-sm text-gray-500" style={{marginTop:'10px', color:'#a66ae4', cursor:'pointer'}} >查看详情</div>
+                          <div 
+                            className="text-sm text-gray-500" 
+                            style={{marginTop:'10px', color:'#a66ae4', cursor:'pointer'}}
+                            onClick={() => examineVideo(account)}
+                          >
+                            查看详情
+                          </div>
                         </div>
                       </div>
                     </div>

@@ -42,16 +42,9 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
       setIsModalOpen(false);
 
       // 添加成功提示
-      message.success('任务接受成功');
+      message.success('任务接受成功，请前往我的任务查看');
 
-      // 跳转到已参与任务选项卡
-      const taskTabElement = document.querySelector('[data-tab="mine"]');
-      if (taskTabElement) {
-        (taskTabElement as HTMLElement).click();
-      } else {
-        // 如果找不到元素，则使用URL参数方式跳转
-        window.location.href = '/task?tab=mine';
-      }
+      
     } catch (error) {
       console.error('接受任务失败:', error);
       message.error('接受任务失败，请重试');

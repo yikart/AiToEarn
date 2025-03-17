@@ -215,10 +215,12 @@
 
 .viewButton {
   width: 100%;
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
   
   &:hover {
-    background-color: #9559d1;
-    border-color: #9559d1;
+    background-color: var(--primary-color-hover);
+    border-color: var(--primary-color-hover);
   }
 }
 

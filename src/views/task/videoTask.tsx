@@ -271,6 +271,7 @@ export default function Page() {
                   type="primary"
                   className={styles.viewButton}
                   onClick={() => Ref_TaskInfo.current?.init(task)}
+                  style={{ backgroundColor: '#a66ae4', borderColor: '#a66ae4' }}
                 >
                   去查看 <RightOutlined />
                 </Button>
