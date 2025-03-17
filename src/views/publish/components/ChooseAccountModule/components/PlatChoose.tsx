@@ -60,7 +60,7 @@ const PlatChoose = memo(
       ref: ForwardedRef<IPlatChooseRef>,
     ) => {
       const cssVars = useCssVariables();
-      // 用于渲染的所有账户数据
+      // 所有账户数据
       const [accountMap, setAccountMap] = useState<
         Map<AccountType, AccountInfo[]>
       >(new Map());
@@ -73,32 +73,30 @@ const PlatChoose = memo(
       // 每次change操作的数据
       const recentData = useRef<AccountInfo>();
 
-      useEffect(() => {
-        cutDefaultPlat(accountMap);
-      }, [allowPlatSet]);
-
-      // 切换默认平台
-      const cutDefaultPlat = (accountMap: Map<AccountType, AccountInfo[]>) => {
-        if (!activePlat) {
-          for (const [accountType, accountList] of Array.from(accountMap)) {
-            if (
-              accountList.length !== 0 &&
-              (allowPlatSet ? allowPlatSet.has(accountType) : true)
-            ) {
-              setActivePlat(accountType);
-            }
+      // 经过 allowPlatSet 过滤后的账户数据
+      const accountMapLast = useMemo(() => {
+        const newVal = new Map<AccountType, AccountInfo[]>();
+        for (const [accountType, accountList] of accountMap) {
+          if (!allowPlatSet ? true : allowPlatSet.has(accountType)) {
+            newVal.set(accountType, accountList);
           }
         }
-      };
+        return newVal;
+      }, [accountMap, allowPlatSet]);
+
+      // 默认平台设置
+      useEffect(() => {
+        setActivePlat(Array.from(accountMapLast.keys())[0]);
+      }, [accountMapLast]);
 
       // 所有平台的账户数据
       const getAllAccountList = useMemo(() => {
         const allAccountList = [];
-        for (const [_, accountList] of accountMap) {
+        for (const [_, accountList] of accountMapLast) {
           allAccountList.push(...accountList);
         }
         return allAccountList;
-      }, [accountMap]);
+      }, [accountMapLast]);
 
       // 当前选择的所有平台的账户数据
       const getChoosedAllAccountList = useMemo(() => {
@@ -111,8 +109,8 @@ const PlatChoose = memo(
 
       // 当前平台的所有用户数据
       const currAccountList = useMemo(
-        () => (activePlat && accountMap.get(activePlat)) || [],
-        [activePlat, accountMap],
+        () => (activePlat && accountMapLast.get(activePlat)) || [],
+        [activePlat, accountMapLast],
       );
 
       // 当前平台的选择账户的数据
@@ -135,8 +133,6 @@ const PlatChoose = memo(
             res.map((v) => {
               newMap.get(v.type)?.push(v);
             });
-            // 默认平台
-            cutDefaultPlat(newMap);
             return newMap;
           });
         });
@@ -210,7 +206,10 @@ const PlatChoose = memo(
                         const newMap = new Map(v);
                         recentData.current = currAccountList[0];
 
-                        for (const [accountType, accountList] of accountMap) {
+                        for (const [
+                          accountType,
+                          accountList,
+                        ] of accountMapLast) {
                           if (checked) {
                             newMap.set(accountType, accountList);
                           } else {
@@ -245,7 +244,7 @@ const PlatChoose = memo(
                     vertical
                     size="large"
                     value={activePlat}
-                    options={Array.from(accountMap)
+                    options={Array.from(accountMapLast)
                       .map(([key, value]) => {
                         if (value.length === 0) return undefined;
                         const platInfo = AccountPlatInfoMap.get(key)!;
