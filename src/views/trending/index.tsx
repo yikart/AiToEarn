@@ -1843,11 +1843,12 @@ const Trending: React.FC = () => {
                     <div className="grid grid-cols-12 p-4 text-sm text-gray-500 bg-gray-50">
                       <div className="col-span-1 text-center">排名</div>
                       <div className="col-span-2 pl-2">封面</div>
-                      <div className="col-span-5 pl-2">标题/作者</div>
+                      <div className="col-span-4 pl-2">标题/作者</div>
                       <div className="col-span-1 text-center">分类</div>
                       <div className="col-span-1 text-center">点赞</div>
                       <div className="col-span-1 text-center">分享</div>
-                      <div className="col-span-1 text-center">阅读</div>
+                      <div className="col-span-1 text-center">评论数</div>
+                      <div className="col-span-1 text-center">收藏数</div>
                     </div>
 
                     {/* 内容列表 */}
@@ -1891,7 +1892,7 @@ const Trending: React.FC = () => {
                         </div>
 
                         {/* 标题和作者信息 */}
-                        <div className="col-span-5 pl-4 ">
+                        <div className="col-span-4 pl-4 ">
                           <h3 className="text-base font-medium line-clamp-2 hover:text-[#a66ae4] text-left">
                             {item.title}
                           </h3>
@@ -1968,17 +1969,31 @@ const Trending: React.FC = () => {
                           <div className="text-xs text-gray-400">分享</div>
                         </div>
 
-                        {/* 阅读/观看数 */}
+                        {/* 评论数 */}
                         <div className="col-span-1 text-center">
                           <div className="text-[#a66ae4] font-medium">
-                            {item.readCount
-                              ? item.readCount >= 10000
-                                ? `${(item.readCount / 10000).toFixed(1)}w`
-                                : item.readCount
+                            {item.commentCount
+                              ? item.commentCount >= 10000
+                                ? `${(item.commentCount / 10000).toFixed(1)}w`
+                                : item.commentCount
                               : '-'}
                           </div>
                           <div className="text-xs text-gray-400">
-                            {item.watchingCount !== null ? '观看' : '阅读'}
+                            {'评论数'}
+                          </div>
+                        </div>
+
+                        {/* 收藏数 */}
+                        <div className="col-span-1 text-center">
+                          <div className="text-[#a66ae4] font-medium">
+                            {item.collectCount
+                              ? item.collectCount >= 10000
+                                ? `${(item.collectCount / 10000).toFixed(1)}w`
+                                : item.collectCount
+                              : '-'}
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            {'收藏数'}
                           </div>
                         </div>
                       </div>
