@@ -85,12 +85,6 @@ export class ReplyController {
     accountId: number,
     dataId: string,
   ): Promise<any> {
-    const res1 = await toolsApi.aiRecoverReview({
-      content: '今天天气真好',
-    });
-
-    console.log('------ res1', res1);
-
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 
@@ -118,7 +112,11 @@ export class ReplyController {
 
     // 2. 循环AI回复评论
     for (const element of list) {
-      platController.replyComment(account, element.commentId, '嗨', {
+      const aiRes = await toolsApi.aiRecoverReview({
+        content: element.content,
+      });
+
+      platController.replyComment(account, element.commentId, aiRes, {
         dataId,
         comment: element,
       });
