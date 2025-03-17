@@ -21,14 +21,20 @@ import {
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
+// 导入平台图标
+import KwaiIcon from '@/assets/svgs/account/ks.svg';
+import WxSphIcon from '@/assets/svgs/account/wx-sph.svg';
+import XhsIcon from '@/assets/svgs/account/xhs.svg';
+import DouyinIcon from '@/assets/svgs/account/douyin.svg';
+
 const FILE_BASE_URL = import.meta.env.VITE_APP_FILE_HOST;
 
 // 平台类型映射
 const PLATFORM_MAP = {
-  KWAI: { name: '快手', color: '#00bbf0' },
-  wxSph: { name: '视频号', color: '#07c160' },
-  xhs: { name: '小红书', color: '#fe2c55' },
-  douyin: { name: '抖音', color: '#000000' },
+  KWAI: { name: '快手', color: '#FF5000', icon: KwaiIcon },
+  wxSph: { name: '视频号', color: '#FA9A32', icon: WxSphIcon },
+  xhs: { name: '小红书', color: '#fe2c55', icon: XhsIcon },
+  douyin: { name: '抖音', color: '#000000', icon: DouyinIcon },
 };
 
 export default function Page() {
@@ -103,19 +109,26 @@ export default function Page() {
       });
   };
 
-  // 渲染平台标签
+  // 渲染平台图标
   const renderPlatformTags = (accountTypes?: string[]) => {
     if (!accountTypes || accountTypes.length === 0) {
       return <Tag color="#f50">全平台</Tag>;
     }
 
     return (
-      <div className={styles.platformTags}>
-        {accountTypes.map((type) => (
-          <Tag key={type} color={(PLATFORM_MAP as any)[type]?.color || '#f50'}>
-            {(PLATFORM_MAP as any)[type]?.name || type}
-          </Tag>
-        ))}
+      <div className={styles.platformIcons}>
+        {accountTypes.map((type) => {
+          const platform = (PLATFORM_MAP as any)[type];
+          if (!platform) return null;
+          
+          return (
+            <Tooltip key={type} title={platform.name}>
+              <div className={styles.platformIconWrapper} style={{ backgroundColor: platform.color }}>
+                <img src={platform.icon} className={styles.platformIcon} alt={platform.name} />
+              </div>
+            </Tooltip>
+          );
+        })}
       </div>
     );
   };
@@ -129,7 +142,7 @@ export default function Page() {
           <Card
             key={task.id}
             className={styles.taskCard}
-            bodyStyle={{ padding: 0 }}
+            styles={{ body: { padding: 0 } }}
           >
             <div className={styles.taskCardContent}>
               <div className={styles.taskImageContainer}>
@@ -152,12 +165,12 @@ export default function Page() {
                       <Tooltip title="复制任务ID">
                         <CopyOutlined
                           className={styles.copyIcon}
-                          onClick={(e) => copyTaskId(task.id, e)}
+                          onClick={(e) => copyTaskId(task._id, e)}
                         />
                       </Tooltip>
                     </span>
                   </h3>
-                  <Tag color="#f50" className={styles.taskTag}>
+                  <Tag color="#a66ae4" className={styles.taskTag}>
                     {(task.dataInfo as any)?.type || '视频任务'}
                   </Tag>
                 </div>

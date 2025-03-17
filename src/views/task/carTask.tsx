@@ -93,7 +93,7 @@ export default function Page() {
             const savings = calculateSavings(price, reward);
 
             return (
-              <div key={task.id} className={styles.productCard}>
+              <div key={task._id} className={styles.productCard}>
                 <div className={styles.productContent}>
                   <div className={styles.imageContainer}>
                     <img
