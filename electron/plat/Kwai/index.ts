@@ -429,7 +429,7 @@ class KwaiPub {
       body: {
         content,
         photoId,
-        // ...reply,
+        ...reply,
       },
     });
 
