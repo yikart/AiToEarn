@@ -403,7 +403,7 @@ class KwaiPub {
   }
 
   /**
-   * 添加评论和回复评论 TODO: 需要逆向获取__NS_sig3
+   * 添加评论和回复评论
    * @param cookie
    * @param photoId
    * @param content
