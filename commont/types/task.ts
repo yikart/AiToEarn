@@ -9,16 +9,17 @@ import { AccountType } from '../AccountEnum';
 import { TimeTemp } from './apiServer';
 
 export enum TaskType {
-  PRODUCT = 'product', // 商品任务
+  PRODUCT = 'product', // 挂车市场任务
   ARTICLE = 'article', // 文章任务
-  PROMOTION = 'promotion', // 拉新任务
-  VIDEO = 'video', // 拉新任务
+  PROMOTION = 'promotion', // 推广任务
+  VIDEO = 'video', // 视频任务
 }
 
 export const TaskTypeName = new Map([
-  [TaskType.PRODUCT, '商品'],
-  [TaskType.ARTICLE, '文章'],
-  [TaskType.PROMOTION, '拉新'],
+  [TaskType.PRODUCT, '挂车市场任务'],
+  [TaskType.ARTICLE, '文章任务'],
+  [TaskType.PROMOTION, '推广任务'],
+  [TaskType.VIDEO, '视频任务'],
 ]);
 
 export enum TaskStatus {
@@ -27,7 +28,7 @@ export enum TaskStatus {
   CANCELLED = 'cancelled', // 取消
 }
 export const TaskStatusName = new Map([
-  [TaskStatus.ACTIVE, '激活'],
+  [TaskStatus.ACTIVE, '进行中'],
   [TaskStatus.COMPLETED, '完成'],
   [TaskStatus.CANCELLED, '取消'],
 ]);

@@ -34,6 +34,7 @@ import {
   QuestionCircleOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
+const FILE_BASE_URL = import.meta.env.VITE_APP_FILE_HOST;
 
 import bindTaskImg from '@/assets/task/binds.png';
 import checkTaskImg from '@/assets/task/waits.png';
@@ -47,9 +48,9 @@ const UserTaskStatusNameMap = new Map<UserTaskStatus, string>([
   [UserTaskStatus.PENDING, '待审核'],
   [UserTaskStatus.APPROVED, '已通过'],
   [UserTaskStatus.REJECTED, '已拒绝'],
-  [UserTaskStatus.COMPLETED, '已完成'],
+  // [UserTaskStatus.COMPLETED, '已完成'],
   [UserTaskStatus.CANCELLED, '已取消'],
-  [UserTaskStatus.PENDING_REWARD, '待发放奖励'],
+  // [UserTaskStatus.PENDING_REWARD, '待发放奖励'],
   [UserTaskStatus.REWARDED, '已发放奖励'],
 ]);
 
@@ -64,6 +65,13 @@ const UserTaskStatusColorMap = new Map<UserTaskStatus, string>([
   [UserTaskStatus.PENDING_REWARD, 'warning'],
   [UserTaskStatus.REWARDED, 'success'],
 ]);
+
+// 在文件顶部添加任务类型映射
+const TASK_TYPE_MAP = {
+  video: { name: '视频任务', color: '#a66ae4' },
+  promotion: { name: '推广任务', color: '#1890ff' },
+  product: { name: '挂车市场任务', color: '#52c41a' },
+};
 
 // 渲染空状态
 const renderEmptyState = () => {
@@ -330,6 +338,15 @@ export default function Page() {
             return (
               <Card key={task._id} className={styles.taskCard} bordered={false}>
                 <div className={styles.taskCardContent}>
+                  {/* 添加任务图片显示 */}
+                  <div className={styles.taskImageContainer}>
+                    <img
+                      src={`${FILE_BASE_URL}${task.taskId?.imageUrl || taskDetail.imageUrl || ''}`}
+                      alt={taskDetail.title}
+                      className={styles.taskImage}
+                    />
+                  </div>
+                  
                   <div className={styles.taskInfo}>
                     <div className={styles.taskHeader}>
                       <h3 className={styles.taskTitle}>
@@ -338,18 +355,29 @@ export default function Page() {
                           订单号: {task._id}
                         </span>
                       </h3>
-                      <Tag
-                        color={
-                          UserTaskStatusColorMap.get(
+                      <div className={styles.tagContainer}>
+                        {/* 添加任务类型标签 */}
+                        <Tag
+                          color={(TASK_TYPE_MAP as any)[task.taskId?.type]?.color || '#a66ae4'}
+                          className={styles.typeTag}
+                        >
+                          {(TASK_TYPE_MAP as any)[task.taskId?.type]?.name || '视频任务'}
+                        </Tag>
+                        
+                        {/* 原有的状态标签 */}
+                        <Tag
+                          color={
+                            UserTaskStatusColorMap.get(
+                              task.status as UserTaskStatus,
+                            ) || 'default'
+                          }
+                          className={styles.statusTag}
+                        >
+                          {UserTaskStatusNameMap.get(
                             task.status as UserTaskStatus,
-                          ) || 'default'
-                        }
-                        className={styles.statusTag}
-                      >
-                        {UserTaskStatusNameMap.get(
-                          task.status as UserTaskStatus,
-                        ) || '未知状态'}
-                      </Tag>
+                          ) || '未知状态'}
+                        </Tag>
+                      </div>
                     </div>
 
                     <div className={styles.taskDetails}>
@@ -396,6 +424,7 @@ export default function Page() {
                     <Button
                       className={styles.viewButton}
                       onClick={() => viewTaskDetail(task)}
+                      style={{ backgroundColor: '#a66ae4', borderColor: '#a66ae4', color: 'white' }}
                     >
                       查看详情 <RightOutlined />
                     </Button>
