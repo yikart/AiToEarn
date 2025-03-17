@@ -647,11 +647,11 @@ const Statistics = () => {
                       </div>
 
                       {/* 数据展示 */}
-                      <div className="grid flex-1 grid-cols-6 gap-4">
+                      <div className="grid flex-1 grid-cols-7 gap-4">
                         <div className="text-center">
                           <div className="text-sm text-gray-500">粉丝数</div>
                           <div className="font-medium text-[#a66ae4]">
-                            {accountData?.fans || 0}
+                          {accountData?.fans>0?'+ ':'- ' }{ accountData?.fans || 0}
                           </div>
                         </div>
                         <div className="text-center">
@@ -683,6 +683,9 @@ const Statistics = () => {
                           <div className="font-medium text-[#a66ae4]">
                             {accountData?.forward || 0}
                           </div>
+                        </div>
+                        <div className="text-center"> 
+                          <div className="text-sm text-gray-500" style={{marginTop:'10px', color:'#a66ae4', cursor:'pointer'}} >查看详情</div>
                         </div>
                       </div>
                     </div>
