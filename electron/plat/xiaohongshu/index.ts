@@ -21,7 +21,7 @@ export class XiaohongshuService {
   private loginUrl = 'https://creator.xiaohongshu.com/';
   private loginUrlHome = 'https://www.xiaohongshu.com/';
   private getUserInfoUrl =
-    'https://creator.xiaohongshu.com/api/galaxy/user/info';
+    'https://edith.xiaohongshu.com/api/sns/web/v2/user/me';
   private getDashboardUrl =
     'https://creator.xiaohongshu.com/api/galaxy/v2/creator/datacenter/account/base';
   private getFansInfoUrl =
@@ -235,9 +235,9 @@ export class XiaohongshuService {
     });
 
     return {
-      authorId: userInfo.data.userId || '',
-      nickname: userInfo.data.userName || '',
-      avatar: userInfo.data.userAvatar || '',
+      authorId: userInfo.data.user_id || '',
+      nickname: userInfo.data.nickname || '',
+      avatar: userInfo.data.imageb || '',
       fansCount: fansInfo.data.fans_count || 0,
     };
   }

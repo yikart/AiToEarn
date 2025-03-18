@@ -1118,8 +1118,8 @@ export class ShipinhaoService {
         ) {
           reject('发布失败,失败原因:' + createRes.data.baseResp.errmsg);
         } else {
-          const lastPublishId = await this.getLastPublishId(cookieString);
-          resolve(lastPublishId);
+          const lastWorkInfo = await this.getLastPublishId(cookieString);
+          resolve(lastWorkInfo.lastPublishId);
         }
       } catch (err: any) {
         let errorMessage;
@@ -1138,7 +1138,10 @@ export class ShipinhaoService {
   /**
    * 获取用户视频列表最后一条发布的视频Id
    */
-  private async getLastPublishId(cookieString: string): Promise<string> {
+  private async getLastPublishId(cookieString: string): Promise<{
+    lastPublishId: string;
+    previewVideoLink: string;
+  }> {
     const workListRes = await this.makeRequest(this.getUserWorkListUrl, {
       method: 'POST',
       headers: {
@@ -1155,14 +1158,40 @@ export class ShipinhaoService {
       },
     });
 
-    let lastPublishId = '';
+    let work;
     if (workListRes.errCode === 0) {
       const workList = workListRes.data.list;
       if (workList.length > 0) {
-        lastPublishId = workList[0].desc.media[0].md5sum ?? '';
+        work = workList[0];
       }
     }
-    return lastPublishId;
+
+    // 获取预览的视频链接
+    // const previewVideoRes = await this.makeRequest(
+    //   'https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/post/get_object_short_link',
+    //   {
+    //     method: 'POST',
+    //     headers: {
+    //       Cookie: cookieString,
+    //       'Content-Type': 'application/json',
+    //     },
+    //     data: {},
+    //   },
+    // );
+
+    // let lastPublishId = '';
+    // if (workListRes.errCode === 0) {
+    //   const workList = workListRes.data.list;
+    //   if (workList.length > 0) {
+    //     lastPublishId = workList[0].desc.media[0].md5sum ?? '';
+    //   }
+    // }
+    return {
+      lastPublishId: work?.desc?.media[0]?.md5sum ?? '',
+      previewVideoLink: ''
+      // previewVideoLink: {
+      // }
+    };
   }
 
   /**

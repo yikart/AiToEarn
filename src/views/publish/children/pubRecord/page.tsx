@@ -23,6 +23,7 @@ import { useNavigate } from 'react-router-dom';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import WebView from '../../../../components/WebView';
 import { getVideoFile } from '../../../../components/Choose/VideoChoose';
+import { getVideoPreviewPage } from '../../../../utils/videoPub';
 
 const PubCon = ({ prm }: { prm: PubRecordModel }) => {
   const [imgFile, setImgFile] = useState<IImgFile>();
@@ -263,12 +264,11 @@ export default function Page() {
                               newState.open = true;
                               newState.account = account;
 
-                              if (account?.type === AccountType.Douyin) {
-                                newState.url = `https://www.douyin.com/user/self?from_tab_name=main&modal_id=${v.dataId}&showTab=post`;
-                              } else if (account?.type === AccountType.Xhs) {
-                                newState.url = `https://www.xiaohongshu.com/explore/${v.dataId}?xsec_token=${v.videoPubOtherData![AccountType.Xhs]!.xsec_token}&xsec_source=${v.videoPubOtherData![AccountType.Xhs]!.xsec_source}`;
-                              } else if (account?.type === AccountType.WxSph) {
+                              if (account?.type === AccountType.WxSph) {
                                 newState.videoSrc = videoFile.videoUrl;
+                              } else {
+                                newState.url = getVideoPreviewPage(v);
+                                console.log(newState.url);
                               }
                               return newState;
                             });
