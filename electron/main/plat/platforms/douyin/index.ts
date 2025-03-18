@@ -19,7 +19,6 @@ import {
   IVideoPublishParams,
   VideoCallbackType,
   WorkData,
-  PageType,
 } from '../../plat.type';
 import { PublishVideoResult } from '../../module';
 import { douyinService } from '../../../../plat/douyin';
@@ -135,18 +134,12 @@ export class Douyin extends PlatformBase {
    * @param pageInfo
    * @returns
    */
-  async getWorkList(
-    account: AccountModel,
-    pageInfo: {
-      pcursor?: string;
-    },
-  ) {
+  async getWorkList(account: AccountModel, pcursor?: string) {
     const res = await douyinService.getCreatorItems(
       JSON.parse(account.loginCookie),
-      pageInfo.pcursor,
+      pcursor,
     );
 
-    let pcursor = '';
     const list: WorkData[] = [];
     for (const element of res.data.item_info_list) {
       list.push({
@@ -170,7 +163,6 @@ export class Douyin extends PlatformBase {
     return {
       list: list,
       pageInfo: {
-        pageType: PageType.cursor,
         count: res.data.total_count,
         hasMore: res.data.has_more,
         pcursor: pcursor,
@@ -192,15 +184,12 @@ export class Douyin extends PlatformBase {
   async getCommentList(
     account: AccountModel,
     dataId: string,
-    pageInfo: {
-      pageSize?: number;
-      pcursor?: string;
-    },
+    pcursor?: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await douyinService.getCreatorCommentList(cookie, dataId, {
-      count: pageInfo?.pageSize || undefined,
-      cursor: pageInfo?.pcursor || undefined,
+      count: pcursor ? 20 : undefined,
+      cursor: pcursor || undefined,
     });
 
     const list: CommentData[] = res.data.comment_info_list.map((v: any) => {
@@ -218,7 +207,6 @@ export class Douyin extends PlatformBase {
     return {
       list,
       pageInfo: {
-        pageType: PageType.cursor,
         count: res.data.total_count,
         pcursor: res.data.cursor + '',
         hasMore: res.data.has_more,

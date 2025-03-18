@@ -9,7 +9,7 @@ import { AccountService } from '../account/service';
 import { toolsApi } from '../api/tools';
 import { Controller, Icp, Inject } from '../core/decorators';
 import platController from '../plat';
-import type { CommentData, PageInfo } from '../plat/plat.type';
+import type { CommentData } from '../plat/plat.type';
 import { ReplyService } from './service';
 
 @Controller()
@@ -27,7 +27,7 @@ export class ReplyController {
   async getCreatorList(
     event: Electron.IpcMainInvokeEvent,
     accountId: number,
-    pageInfo: PageInfo,
+    pcursor?: string,
   ) {
     const account = await this.accountService.getAccountById(accountId);
 
@@ -37,7 +37,7 @@ export class ReplyController {
         count: 0,
       };
 
-    const res = await platController.getWorkList(account, pageInfo);
+    const res = await platController.getWorkList(account, pcursor);
 
     return res;
   }
@@ -50,12 +50,12 @@ export class ReplyController {
     event: Electron.IpcMainInvokeEvent,
     accountId: number,
     dataId: string,
-    pageInfo: PageInfo,
+    pcursor?: string,
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 
-    const res = await platController.getCommentList(account, dataId, pageInfo);
+    const res = await platController.getCommentList(account, dataId, pcursor);
     return res;
   }
 
@@ -98,9 +98,7 @@ export class ReplyController {
       const {
         list,
         pageInfo: { pcursor, hasMore },
-      } = await platController.getCommentList(account, dataId, {
-        pcursor: thePcursor,
-      });
+      } = await platController.getCommentList(account, dataId, thePcursor);
 
       list.forEach((item) => {
         list.push(item);

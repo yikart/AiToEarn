@@ -16,7 +16,6 @@ import {
   IGetTopicsResponse,
   IGetUsersParams,
   IVideoPublishParams,
-  PageType,
   VideoCallbackType,
   WorkData,
 } from '../../plat.type';
@@ -126,18 +125,12 @@ export class WxSph extends PlatformBase {
    * @param pageInfo
    * @returns
    */
-  async getWorkList(
-    account: AccountModel,
-    pageInfo: {
-      pageNo?: number;
-      pageSize?: number;
-      pcursor?: string;
-    },
-  ) {
+  async getWorkList(account: AccountModel, pcursor?: string) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const pageNo = pcursor ? Number.parseInt(pcursor) : 1;
     const res = await shipinhaoService.getPostList(cookie, {
-      pageNo: pageInfo.pageNo || 1,
-      pageSize: pageInfo.pageSize || 20,
+      pageNo: pageNo,
+      pageSize: 20,
     });
 
     const listData: WorkData[] = res.list.map((item) => {
@@ -154,8 +147,10 @@ export class WxSph extends PlatformBase {
     return {
       list: listData,
       pageInfo: {
-        pageType: PageType.paging,
         count: res.totalCount,
+        hasMore: res.totalCount > res.list.length * pageNo,
+        pcursor:
+          res.totalCount > res.list.length * pageNo ? pageNo + 1 + '' : '',
       },
     };
   }
@@ -174,16 +169,10 @@ export class WxSph extends PlatformBase {
   async getCommentList(
     account: AccountModel,
     dataId: string,
-    pageInfo: {
-      pageNo?: number;
-      pageSize?: number;
-      pcursor?: string;
-    },
+    pcursor?: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await shipinhaoService.getCommentList(cookie, dataId);
-    console.log('----- res ----', res);
-
     const dataList = res.comment.map((item) => {
       return {
         dataId: item.commentId,
@@ -198,8 +187,12 @@ export class WxSph extends PlatformBase {
     return {
       list: dataList,
       pageInfo: {
-        pageType: PageType.paging,
         count: res.commentCount,
+        hasMore: res.commentCount > res.comment.length * Number(pcursor),
+        pcursor:
+          res.commentCount > res.comment.length * Number(pcursor)
+            ? Number(pcursor) + 1 + ''
+            : '',
       },
     };
   }

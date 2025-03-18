@@ -38,14 +38,7 @@ export enum PageType {
 /**
  * 获取作品列表
  */
-export async function icpCreatorList(
-  accountId: number,
-  pageInfo: {
-    pageNo?: number;
-    pageSize?: number;
-    pcursor?: string; // 分页游标
-  },
-) {
+export async function icpCreatorList(accountId: number, pcursor?: string) {
   const res: {
     list: WorkData[];
     pageInfo: {
@@ -54,7 +47,7 @@ export async function icpCreatorList(
       hasMore?: boolean;
       pcursor?: string;
     };
-  } = await window.ipcRenderer.invoke('ICP_CREATOR_LIST', accountId, pageInfo);
+  } = await window.ipcRenderer.invoke('ICP_CREATOR_LIST', accountId, pcursor);
   return res;
 }
 
@@ -64,21 +57,21 @@ export async function icpCreatorList(
 export async function icpGetCommentList(
   accountId: number,
   dataId: string,
-  pageInfo: {
-    pageNo?: number;
-    pageSize?: number;
-    pcursor?: string;
-  },
+  pcursor?: string,
 ) {
   const res: {
     list: CommentData[];
     pageInfo: {
-      pageType: PageType;
       count?: number;
-      hasMore?: boolean;
+      hasMore: boolean;
       pcursor?: string;
     };
-  } = await window.ipcRenderer.invoke('ICP_COMMENT_LIST', accountId, dataId);
+  } = await window.ipcRenderer.invoke(
+    'ICP_COMMENT_LIST',
+    accountId,
+    dataId,
+    pcursor,
+  );
   return res;
 }
 

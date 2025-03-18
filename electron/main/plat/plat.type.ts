@@ -11,21 +11,9 @@ import { DiffParmasType, ILableValue } from '../../db/models/video';
 
 export type CookiesType = Electron.Cookie[];
 
-export enum PageType {
-  paging = 'paging',
-  cursor = 'cursor',
-}
-
-export interface PageInfo {
-  pageNo?: number;
-  pageSize?: number;
-  pcursor?: string;
-}
-
 export interface ResponsePageInfo {
-  pageType: PageType;
   count?: number;
-  hasMore?: boolean;
+  hasMore: boolean;
   pcursor?: string;
 }
 

@@ -34,10 +34,7 @@ export default function Page() {
     }
     setWordList([]);
 
-    const res = await icpCreatorList(activeAccountId, {
-      pageNo: 1,
-      pageSize: 10,
-    });
+    const res = await icpCreatorList(activeAccountId);
 
     setWordList(res.list);
   }
@@ -46,7 +43,7 @@ export default function Page() {
    * 获取评论列表
    */
   async function getCommentList(dataId: string) {
-    const res = await icpGetCommentList(activeAccountId, dataId, {});
+    const res = await icpGetCommentList(activeAccountId, dataId);
     setCommentList(res.list);
   }
 

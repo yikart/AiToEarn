@@ -17,7 +17,6 @@ import {
   IGetTopicsResponse,
   IGetUsersParams,
   IVideoPublishParams,
-  PageType,
   VideoCallbackType,
   WorkData,
 } from '../../plat.type';
@@ -136,16 +135,13 @@ export class Xhs extends PlatformBase {
    * @param pageInfo
    * @returns
    */
-  async getWorkList(
-    account: AccountModel,
-    pageInfo: {
-      pageNo?: number;
-      pageSize?: number;
-      pcursor?: string;
-    },
-  ) {
+  async getWorkList(account: AccountModel, pcursor?: string) {
+    const pageNo = pcursor ? Number.parseInt(pcursor) : 0;
+
+    // TODO: 小红书的分页每页数量?
+    const pageSize = 20;
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const res = await xiaohongshuService.getWorks(cookie);
+    const res = await xiaohongshuService.getWorks(cookie, pageNo);
 
     const list: WorkData[] = res.data.data.notes.map((v) => ({
       dataId: v.id,
@@ -157,11 +153,14 @@ export class Xhs extends PlatformBase {
       coverUrl: v.images_list[0]?.url || '',
     }));
 
+    const count = res.data.data.tags[0].notes_count;
+    const hasMore = count > pageSize * (pageNo + 1);
     return {
       list,
       pageInfo: {
-        pageType: PageType.cursor,
-        count: res.data.data.tags[0].notes_count,
+        count,
+        hasMore,
+        pcursor: hasMore ? pageNo + 1 + '' : '',
       },
     };
   }
@@ -180,11 +179,7 @@ export class Xhs extends PlatformBase {
   async getCommentList(
     account: AccountModel,
     dataId: string,
-    pageInfo: {
-      pageNo?: number;
-      pageSize?: number;
-      pcursor?: string;
-    },
+    pcursor?: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
 
@@ -203,7 +198,6 @@ export class Xhs extends PlatformBase {
     return {
       list: list,
       pageInfo: {
-        pageType: PageType.cursor,
         hasMore: res.data.data.has_more,
         pcursor: res.data.data.cursor,
       },

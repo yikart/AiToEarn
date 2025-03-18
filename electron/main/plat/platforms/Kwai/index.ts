@@ -17,7 +17,6 @@ import {
   IGetTopicsResponse,
   IGetUsersParams,
   IVideoPublishParams,
-  PageType,
   VideoCallbackType,
   WorkData,
 } from '../../plat.type';
@@ -157,14 +156,9 @@ export class Kwai extends PlatformBase {
    * @param pageInfo
    * @returns
    */
-  async getWorkList(
-    account: AccountModel,
-    pageInfo: {
-      pcursor?: string;
-    },
-  ) {
+  async getWorkList(account: AccountModel, pcursor?: string) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const res = await kwaiPub.getPhotoList(cookie, Number(pageInfo.pcursor));
+    const res = await kwaiPub.getPhotoList(cookie, Number(pcursor));
 
     const photoList = res.data.data.photoList;
     const list: WorkData[] = photoList.map((v) => {
@@ -180,7 +174,6 @@ export class Kwai extends PlatformBase {
     return {
       list,
       pageInfo: {
-        pageType: PageType.cursor,
         hasMore: !!res.data.data.pcursor,
         count: res.data.data.totalCount,
         pcursor: res.data.data.pcursor + '',
@@ -202,15 +195,13 @@ export class Kwai extends PlatformBase {
   async getCommentList(
     account: AccountModel,
     dataId: string,
-    pageInfo: {
-      pcursor?: string;
-    },
+    pcursor?: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await kwaiPub.getCommentList(
       cookie,
       dataId,
-      pageInfo?.pcursor ? Number.parseInt(pageInfo.pcursor) : undefined,
+      pcursor ? Number.parseInt(pcursor) : undefined,
     );
 
     const list: CommentData[] = res.data.data.list.map((v) => {
@@ -229,7 +220,6 @@ export class Kwai extends PlatformBase {
     return {
       list: list,
       pageInfo: {
-        pageType: PageType.cursor,
         count: 0,
         pcursor: res.data.data.pcursor + '',
         hasMore: !!res.data.data.pcursor,

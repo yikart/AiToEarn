@@ -17,7 +17,6 @@ import {
   IGetUsersParams,
   IGetUsersResponse,
   IVideoPublishParams,
-  PageInfo,
   ResponsePageInfo,
   StatisticsData,
   VideoCallbackType,
@@ -76,11 +75,12 @@ export abstract class PlatformBase {
 
   /**
    * 获取作品列表
-   * @param pageInfo
+   * @param account 账户
+   * @param pcursor 分页游标
    */
   abstract getWorkList(
     account: AccountModel,
-    pageInfo: PageInfo,
+    pcursor?: string,
   ): Promise<{
     list: WorkData[];
     pageInfo: ResponsePageInfo;
@@ -94,11 +94,14 @@ export abstract class PlatformBase {
 
   /**
    * 获取评论列表
+   * @param account
+   * @param dataId
+   * @param pcursor
    */
   abstract getCommentList(
     account: AccountModel,
     dataId: string,
-    pageInfo: PageInfo,
+    pcursor?: string,
   ): Promise<{
     list: CommentData[];
     pageInfo: ResponsePageInfo;
