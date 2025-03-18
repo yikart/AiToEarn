@@ -17,6 +17,7 @@
   "type": "module",
   "scripts": {
     "dev": "chcp 65001 && vite",
+    "dev:mac": "vite",
     "build": "tsc && vite build && electron-builder",
     "preview": "vite preview",
     "pretest": "vite build --mode=test",
