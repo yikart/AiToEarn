@@ -23,7 +23,6 @@ import { useNavigate } from 'react-router-dom';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import WebView from '../../../../components/WebView';
 import { getVideoFile } from '../../../../components/Choose/VideoChoose';
-import { getVideoPreviewPage } from '../../../../utils/videoPub';
 
 const PubCon = ({ prm }: { prm: PubRecordModel }) => {
   const [imgFile, setImgFile] = useState<IImgFile>();
@@ -167,7 +166,7 @@ export default function Page() {
                 src={examineVideo.videoSrc}
                 controls
                 autoPlay
-                style={{ margin: '0 auto', display: 'block' }}
+                style={{ margin: '0 auto', display: 'block', height: '100%' }}
               />
             </>
           ) : (
@@ -267,8 +266,7 @@ export default function Page() {
                               if (account?.type === AccountType.WxSph) {
                                 newState.videoSrc = videoFile.videoUrl;
                               } else {
-                                newState.url = getVideoPreviewPage(v);
-                                console.log(newState.url);
+                                newState.url = v.previewVideoLink || '';
                               }
                               return newState;
                             });

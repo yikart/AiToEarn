@@ -329,6 +329,7 @@ export class Douyin extends PlatformBase {
         code: 1,
         msg: '发布成功',
         dataId: result.publishId,
+        previewVideoLink: result.shareLink,
       });
     });
   }

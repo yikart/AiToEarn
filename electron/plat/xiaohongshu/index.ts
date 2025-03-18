@@ -9,7 +9,6 @@ import {
   IXHSGetWorksResponse,
   IXHSLocationResponse,
   IXHSTopicsResponse,
-  IXHSWorks,
   XhsCommentListResponse,
   XhsCommentPostResponse,
   XiaohongshuApiResponse,
@@ -1191,7 +1190,6 @@ export class XiaohongshuService {
     publishTime: number;
     publishId: string;
     shareLink: string;
-    works?: IXHSWorks;
   }> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1260,8 +1258,7 @@ export class XiaohongshuService {
         resolve({
           publishTime: Math.floor(Date.now() / 1000),
           publishId: result.publishId,
-          shareLink: result.shareLink || '',
-          works,
+          shareLink: `https://www.xiaohongshu.com/explore/${result.publishId}?xsec_token=${works!.xsec_token}&xsec_source=${works!.xsec_source}`,
         });
       } catch (err) {
         console.warn(err);

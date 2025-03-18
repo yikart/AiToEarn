@@ -303,12 +303,7 @@ export class Xhs extends PlatformBase {
         code: 1,
         msg: '成功！',
         dataId: result!.publishId,
-        videoPubOtherData: {
-          [AccountType.Xhs]: {
-            xsec_token: result!.works!.xsec_token,
-            xsec_source: result!.works!.xsec_source,
-          },
-        },
+        previewVideoLink: result.shareLink,
       });
     });
   }
