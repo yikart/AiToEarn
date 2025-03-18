@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-24 16:33:22
- * @LastEditTime: 2025-02-20 22:11:44
+ * @LastEditTime: 2025-03-18 20:53:15
  * @LastEditors: nevin
  * @Description:
  */
@@ -17,6 +17,7 @@ import { ToolsModule } from './tools/module';
 import { AppController } from './controller';
 import { AppService } from './service';
 import { ReplyModule } from './reply/module';
+import { AutoRunModule } from './autoRun/module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ReplyModule } from './reply/module';
     DataCenterModule,
     TestModule,
     ReplyModule,
+    AutoRunModule,
   ],
   controllers: [AppController],
   providers: [AppService],
