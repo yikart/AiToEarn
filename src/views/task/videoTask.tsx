@@ -164,9 +164,19 @@ export default function Page() {
     setVideoPlayback((prev) => ({ ...prev, visible: false }));
   };
 
+  // 刷新任务列表的函数
+  const refreshTaskList = () => {
+    setPageInfo({
+      pageSize: 10,
+      pageNo: 1,
+      totalCount: 0,
+    });
+    getTaskList();
+  };
+
   return (
     <div className={styles.videoTaskContainer}>
-      <TaskInfo ref={Ref_TaskInfo} />
+      <TaskInfo ref={Ref_TaskInfo} onTaskApplied={refreshTaskList} />
       
       {/* 添加视频播放组件 */}
       <VideoPlayer
@@ -273,7 +283,7 @@ export default function Page() {
                   onClick={() => Ref_TaskInfo.current?.init(task)}
                   style={{ backgroundColor: '#a66ae4', borderColor: '#a66ae4' }}
                 >
-                  去查看 <RightOutlined />
+                  去查看 <RightOutlined /> 
                 </Button>
               </div>
             </div>

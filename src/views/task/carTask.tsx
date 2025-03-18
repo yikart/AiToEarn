@@ -80,9 +80,19 @@ export default function Page() {
     return reward.toFixed(2);
   };
 
+  // 刷新任务列表的函数
+  const refreshTaskList = () => {
+    setPageInfo({
+      pageSize: 9,
+      pageNo: 1,
+      totalCount: 0,
+    });
+    getTaskList();
+  };
+
   return (
     <div className={styles.taskListContainer}>
-      <TaskInfo ref={Ref_TaskInfo} />
+      <TaskInfo ref={Ref_TaskInfo} onTaskApplied={refreshTaskList} />
 
       <div className={styles.productGridContainer}>
         <div className={styles.productGrid}>
@@ -164,7 +174,7 @@ export default function Page() {
                     className={styles.applyButton}
                     onClick={() => Ref_TaskInfo.current?.init(task)}
                   >
-                    报名
+                    报名 
                   </Button>
                 </div>
               </div>

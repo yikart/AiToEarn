@@ -59,6 +59,9 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
     taskId: string;
   } | null>(null);
 
+  // 从props中获取刷新函数
+  const { onTaskApplied } = props;
+
   async function init(inTaskInfo: Task<TaskVideo>) {
     setTaskInfo(inTaskInfo);
     setIsModalOpen(true);
@@ -82,6 +85,11 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
         message.success('任务接受成功！');
         setIsModalOpen(false);
         setChooseAccountOpen(true);
+        
+        // 调用父组件传递的刷新函数
+        if (onTaskApplied && typeof onTaskApplied === 'function') {
+          onTaskApplied();
+        }
       } else {
         message.error(res.msg || '接受任务失败，请稍后再试?');
       }
@@ -415,7 +423,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                 >
                   {taskInfo.isAccepted ? '已接受任务' : '接受任务'}
                 </Button>
-              </div>
+              </div> 
             </div>
           </div>
         ) : (

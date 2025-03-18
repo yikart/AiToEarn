@@ -194,7 +194,7 @@ export default function Page() {
       };
 
       // 如果没有选择状态筛选，则不传status参数
-      if (statusFilter === null) {
+      if (statusFilter === null) { 
         delete (params as any).status;
       }
 
@@ -275,9 +275,19 @@ export default function Page() {
     Ref_MineTaskInfo.current?.init(task);
   };
 
+  // 刷新任务列表的函数
+  const refreshTaskList = () => {
+    setPageInfo({
+      pageSize: 10,
+      pageNo: 1,
+      totalCount: 0,
+    });
+    fetchTaskDetails();
+  };
+
   return (
     <div className={styles.mineTaskContainer}>
-      <MineTaskInfo ref={Ref_MineTaskInfo} />
+      <MineTaskInfo ref={Ref_MineTaskInfo} onTaskSubmitted={refreshTaskList} />
       <Withdraw ref={Ref_Withdraw} />
 
       <div className={styles.pageHeader}>
