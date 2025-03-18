@@ -21,6 +21,9 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [taskInfo, setTaskInfo] = useState<Task<TaskProduct> | null>();
 
+  // 从props中获取刷新函数
+  const { onTaskApplied } = props;
+
   async function init(inTaskInfo: Task<TaskProduct>) {
     setTaskInfo(inTaskInfo);
     setIsModalOpen(true);
@@ -43,8 +46,11 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
 
       // 添加成功提示
       message.success('任务接受成功，请前往我的任务查看');
-
       
+      // 调用父组件传递的刷新函数
+      if (onTaskApplied && typeof onTaskApplied === 'function') {
+        onTaskApplied();
+      }
     } catch (error) {
       console.error('接受任务失败:', error);
       message.error('接受任务失败，请重试');

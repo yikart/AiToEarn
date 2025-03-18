@@ -59,6 +59,9 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
   const [form] = Form.useForm();
   const [submitting, setSubmitting] = useState(false);
   const [fileList, setFileList] = useState<any[]>([]);
+  
+  // 从props中获取刷新函数
+  const { onTaskSubmitted } = props;
 
   async function init(
     inData: UserTask<Task<TaskProduct | TaskPromotion | TaskVideo>>,
@@ -130,6 +133,11 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
 
       message.success('任务提交成功！');
       setIsModalOpen(false);
+      
+      // 调用父组件传递的刷新函数
+      if (onTaskSubmitted && typeof onTaskSubmitted === 'function') {
+        onTaskSubmitted();
+      }
     } catch (error) {
       console.error('提交任务失败', error);
       message.error('提交任务失败，请检查表单并重试');

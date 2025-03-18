@@ -34,6 +34,9 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [taskInfo, setTaskInfo] = useState<Task<TaskPromotion> | null>();
 
+  // 从props中获取刷新函数
+  const { onTaskApplied } = props;
+
   async function init(inTaskInfo: Task<TaskPromotion>) {
     setTaskInfo(inTaskInfo);
     setIsModalOpen(true);
@@ -54,6 +57,11 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
       setTaskInfo(res);
       message.success('任务接受成功！');
       setIsModalOpen(false);
+      
+      // 调用父组件传递的刷新函数
+      if (onTaskApplied && typeof onTaskApplied === 'function') {
+        onTaskApplied();
+      }
     } catch (error) {
       message.error('接受任务失败，请稍后再试');
     }
@@ -214,15 +222,29 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                 >
                   取消
                 </Button>
-                <Button
-                  key="submit"
-                  type="primary"
-                  onClick={taskApply}
-                  className={styles.applyButton}
-                  style={{ backgroundColor: '#a66ae4' }}
-                >
-                  接受任务
-                </Button>
+                {
+                  taskInfo.isAccepted ? (
+                    <Button
+                      key="submit"
+                      type="primary"
+                      disabled
+                      className={styles.applyButton}
+                      style={{ backgroundColor: '#a66ae4' }}
+                    >
+                      已经接受任务
+                    </Button>
+                  ) : (
+                    <Button
+                      key="submit"
+                      type="primary"
+                      onClick={taskApply}
+                      className={styles.applyButton}
+                      style={{ backgroundColor: '#a66ae4' }}
+                    >
+                      接受任务
+                    </Button>
+                  )
+                }
               </div>
             </div>
           </div>

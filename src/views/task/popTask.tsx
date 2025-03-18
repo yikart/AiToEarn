@@ -50,7 +50,7 @@ export default function Page() {
 
       setPageInfo((prev) => ({
         ...prev,
-        totalCount: (res as any).totalCount,
+        totalCount: (res as any).totalCount, 
       }));
 
       // 检查是否还有更多数据
@@ -93,9 +93,19 @@ export default function Page() {
       });
   };
 
+  // 刷新任务列表的函数
+  const refreshTaskList = () => {
+    setPageInfo({
+      pageSize: 10,
+      pageNo: 1,
+      totalCount: 0,
+    });
+    getTaskList();
+  };
+
   return (
     <div className={styles.popTaskContainer}>
-      <TaskInfo ref={Ref_TaskInfo} />
+      <TaskInfo ref={Ref_TaskInfo} onTaskApplied={refreshTaskList} />
 
       <div className={styles.taskList}>
         {taskList.map((task) => (
