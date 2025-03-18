@@ -26,9 +26,15 @@ export class AutoRunService {
 
   // 创建进程
   async createAutoRun(data: Partial<AutoRunModel>) {
-    return await this.autoRunRepository.save(data);
-  }
+    console.log('------', data);
 
+    try {
+      return await this.autoRunRepository.save(data);
+    } catch (error) {
+      console.log('----- error', error);
+    }
+  }
+ 
   // 查询进程列表
   async findAutoRunList(data: Partial<AutoRunModel>) {
     return await this.autoRunRepository.find({

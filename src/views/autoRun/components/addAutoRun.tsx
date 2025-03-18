@@ -1,3 +1,10 @@
+/*
+ * @Author: nevin
+ * @Date: 2025-03-18 21:02:38
+ * @LastEditTime: 2025-03-19 07:25:32
+ * @LastEditors: nevin
+ * @Description:
+ */
 import { AutoRunType, ipcCreateAutoRun } from '@/icp/autoRun';
 import { Button, Form, Input, Modal, Select } from 'antd';
 import { forwardRef, useImperativeHandle, useState } from 'react';
@@ -53,6 +60,7 @@ const Com = forwardRef<AddAutoRunRef>((props: any, ref) => {
         footer={null}
         width={800}
       >
+        <p>账号ID{accountId}</p>
         <Form
           form={form}
           name="basic"
@@ -63,19 +71,19 @@ const Com = forwardRef<AddAutoRunRef>((props: any, ref) => {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
+          <p>
+            周期类型 天 day-22 例:每天22时 周 week-2 例:每周周二,周日0 月
+            month-22 例:每月22号
+          </p>
           <Form.Item
             label="重复周期类型"
             name="cycleType"
             rules={[{ required: true, message: '重复周期类型!' }]}
           >
-            <p>
-              周期类型 天 day-22 例:每天22时 周 week-2 例:每周周二,周日0 月
-              month-22 例:每月22号
-            </p>
             <Input />
           </Form.Item>
 
-          <Form.Item name="gender" label="类型" rules={[{ required: true }]}>
+          <Form.Item name="type" label="类型" rules={[{ required: true }]}>
             <Select placeholder="选择任务类型" allowClear>
               <Option value={AutoRunType.ReplyComment}>自动回复评论</Option>
             </Select>

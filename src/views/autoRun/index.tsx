@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-03-18 22:25:37
+ * @LastEditTime: 2025-03-19 07:34:14
  * @LastEditors: nevin
  * @Description: 评论页面 reply
  */
@@ -16,6 +16,7 @@ import {
   ipcGetAutoRunList,
   ipcGetAutoRunRecordList,
 } from '@/icp/autoRun';
+import { AutoRunNameMap } from './comment';
 
 export default function Page() {
   const [autoRunList, setAutoRunList] = useState<AutoRun[]>([]);
@@ -27,7 +28,6 @@ export default function Page() {
   const Ref_AddAutoRun = useRef<AddAutoRunRef>(null);
 
   async function getAutoRunList() {
-    if (activeAccountId === -1) return;
     setAutoRunList([]);
     const res = await ipcGetAutoRunList();
     setAutoRunList(res);
@@ -65,6 +65,15 @@ export default function Page() {
       >
         创建自动化
       </Button>
+
+      <Button
+        type="primary"
+        onClick={() => {
+          getAutoRunList();
+        }}
+      >
+        获取列表
+      </Button>
       <Row>
         <Col span={4}>
           <AccountSidebar
@@ -93,7 +102,12 @@ export default function Page() {
                     查看记录
                   </Button>,
                 ]}
-              ></Card>
+              >
+                <Card.Meta
+                  title={AutoRunNameMap.get(item.type) || '无'}
+                  description={item.cycleType}
+                />
+              </Card>
             ))}
           </div>
         </Col>
