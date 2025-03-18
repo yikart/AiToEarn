@@ -11,6 +11,7 @@ interface IProperty {
   code: number;
   msg: string;
   dataId: string;
+  previewVideoLink: string;
 }
 
 export interface IVideoPubOtherData {
@@ -28,18 +29,20 @@ export class PublishVideoResult {
   msg: string;
   // 数据ID
   dataId?: string;
-  // 其它数据，发布完成每个可能需要这个平台独特的数据
-  videoPubOtherData?: IVideoPubOtherData;
+  // 预览视频地址
+  previewVideoLink?: string;
 
   constructor(
-    { code, msg, dataId }: IProperty = {
+    { code, msg, dataId, previewVideoLink }: IProperty = {
       code: 1,
       msg: '发布成功！',
       dataId: '',
+      previewVideoLink: '',
     },
   ) {
     this.code = code;
     this.msg = msg;
     this.dataId = dataId;
+    this.previewVideoLink = previewVideoLink;
   }
 }

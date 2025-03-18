@@ -972,7 +972,10 @@ export class ShipinhaoService {
     endUploadTime: number,
     clipResult: any,
     platformSetting: any,
-  ): Promise<string> {
+  ): Promise<{
+    lastPublishId: string;
+    previewVideoLink: string;
+  }> {
     return new Promise(async (resolve, reject) => {
       try {
         // 处理标题、@好友、话题
@@ -1118,8 +1121,8 @@ export class ShipinhaoService {
         ) {
           reject('发布失败,失败原因:' + createRes.data.baseResp.errmsg);
         } else {
-          const lastPublishId = await this.getLastPublishId(cookieString);
-          resolve(lastPublishId);
+          const lastWorkInfo = await this.getLastPublishId(cookieString);
+          resolve(lastWorkInfo);
         }
       } catch (err: any) {
         let errorMessage;
@@ -1138,7 +1141,10 @@ export class ShipinhaoService {
   /**
    * 获取用户视频列表最后一条发布的视频Id
    */
-  private async getLastPublishId(cookieString: string): Promise<string> {
+  private async getLastPublishId(cookieString: string): Promise<{
+    lastPublishId: string;
+    previewVideoLink: string;
+  }> {
     const workListRes = await this.makeRequest(this.getUserWorkListUrl, {
       method: 'POST',
       headers: {
@@ -1155,14 +1161,34 @@ export class ShipinhaoService {
       },
     });
 
-    let lastPublishId = '';
+    let work;
     if (workListRes.errCode === 0) {
       const workList = workListRes.data.list;
       if (workList.length > 0) {
-        lastPublishId = workList[0].desc.media[0].md5sum ?? '';
+        work = workList[0];
       }
     }
-    return lastPublishId;
+
+    // 获取预览的视频链接
+    const previewVideoRes = await this.makeRequest(
+      'https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/post/get_object_short_link',
+      {
+        method: 'POST',
+        headers: {
+          Cookie: cookieString,
+          'Content-Type': 'application/json',
+        },
+        data: {
+          exportId: work.exportId,
+          nonceId: work.objectNonce,
+        },
+      },
+    );
+
+    return {
+      lastPublishId: work?.desc?.media[0]?.md5sum ?? '',
+      previewVideoLink: previewVideoRes,
+    };
   }
 
   /**
@@ -1243,7 +1269,7 @@ export class ShipinhaoService {
         uploadParams,
       );
       callback(80, '正在发布视频...');
-      const lastPublishId = await this.postCreateVideo(
+      const lastPublishRes = await this.postCreateVideo(
         cookieString,
         traceKey,
         startUploadTime,
@@ -1261,8 +1287,8 @@ export class ShipinhaoService {
       // 返回成功
       return {
         publishTime: Math.floor(Date.now() / 1000),
-        publishId: lastPublishId,
-        shareLink: '',
+        publishId: lastPublishRes.lastPublishId,
+        shareLink: lastPublishRes.previewVideoLink,
       };
     } catch (err: any) {
       console.error('发布视频失败:', err);

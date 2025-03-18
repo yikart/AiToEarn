@@ -102,9 +102,9 @@ export class VideoModel extends WorkData {
   @Column({ type: 'json', nullable: true, comment: '@用户数组' })
   mentionedUserInfo?: ILableValue[];
 
-  // 其它数据，发布完成每个可能需要这个平台独特的数据
-  @Column({ type: 'json', nullable: true, comment: '@用户数组' })
-  videoPubOtherData?: IVideoPubOtherData;
+  // 预览地址
+  @Column({ type: 'varchar', nullable: true, comment: '预览地址' })
+  previewVideoLink?: string;
 
   // 视频可见性
   @Column({

@@ -166,7 +166,7 @@ export default function Page() {
                 src={examineVideo.videoSrc}
                 controls
                 autoPlay
-                style={{ margin: '0 auto', display: 'block' }}
+                style={{ margin: '0 auto', display: 'block', height: '100%' }}
               />
             </>
           ) : (
@@ -263,12 +263,10 @@ export default function Page() {
                               newState.open = true;
                               newState.account = account;
 
-                              if (account?.type === AccountType.Douyin) {
-                                newState.url = `https://www.douyin.com/user/self?from_tab_name=main&modal_id=${v.dataId}&showTab=post`;
-                              } else if (account?.type === AccountType.Xhs) {
-                                newState.url = `https://www.xiaohongshu.com/explore/${v.dataId}?xsec_token=${v.videoPubOtherData![AccountType.Xhs]!.xsec_token}&xsec_source=${v.videoPubOtherData![AccountType.Xhs]!.xsec_source}`;
-                              } else if (account?.type === AccountType.WxSph) {
+                              if (account?.type === AccountType.WxSph) {
                                 newState.videoSrc = videoFile.videoUrl;
+                              } else {
+                                newState.url = v.previewVideoLink || '';
                               }
                               return newState;
                             });
