@@ -1,22 +1,19 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 16:24:16
- * @LastEditTime: 2025-03-18 19:44:55
+ * @LastEditTime: 2025-03-18 22:13:35
  * @LastEditors: nevin
  * @Description: 自动评论 autoComment
  */
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { TempModel } from './temp';
+import { AutoRunType } from './autoRun';
 
 // 状态 进行中 失败 完成
 export enum AutoRunRecordStatus {
   DOING = 1, // 进行中
   FAIL = 2, // 失败
   SUCCESS = 3, // 完成
-}
-
-export enum AutoRunType {
-  ReplyComment = 1, // 回复评论
 }
 
 @Entity({ name: 'autoRunRecord' })

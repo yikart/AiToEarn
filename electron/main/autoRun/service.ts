@@ -25,7 +25,7 @@ export class AutoRunService {
   }
 
   // 创建进程
-  async createAutoRun(data: AutoRunModel) {
+  async createAutoRun(data: Partial<AutoRunModel>) {
     return await this.autoRunRepository.save(data);
   }
 
@@ -44,7 +44,7 @@ export class AutoRunService {
   }
 
   // 创建进程记录
-  async createAutoRunRecord(data: AutoRunRecordModel) {
+  async createAutoRunRecord(data: Partial<AutoRunRecordModel>) {
     return await this.autoRunRecordRepository.save(data);
   }
 

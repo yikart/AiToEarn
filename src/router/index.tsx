@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-03-02 22:15:04
+ * @LastEditTime: 2025-03-18 22:27:20
  * @LastEditors: nevin
  * @Description:
  */
@@ -46,6 +46,7 @@ import Finance from '@/views/finance/index';
 import UserWalletRecord from '@/views/finance/userWalletRecord';
 import Reply from '@/views/reply';
 import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
+import AutoRun from '@/views/autoRun';
 
 interface IRouterMeta {
   // 路由名称
@@ -121,6 +122,11 @@ export const router: CustomRouteObject[] = [
         path: '/reply',
         element: <Reply />,
         meta: { name: '评论', icon: MessageOutlined },
+      },
+      {
+        path: '/autoRun',
+        element: <AutoRun />,
+        meta: { name: '自动化', icon: MessageOutlined },
       },
       {
         path: '/statistics',

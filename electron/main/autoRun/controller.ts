@@ -1,12 +1,14 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-18 20:53:55
+ * @LastEditTime: 2025-03-18 22:17:16
  * @LastEditors: nevin
  * @Description: autoRun AutoRun
  */
 import { Controller, Icp, Inject } from '../core/decorators';
 import { AutoRunService } from './service';
+import { AutoRunType } from '../../db/models/autoRun';
+import { getUserInfo } from '../user/comment';
 
 @Controller()
 export class AutoRunController {
@@ -17,8 +19,20 @@ export class AutoRunController {
    * 创建进程
    */
   @Icp('ICP_AUTO_RUN_CREATE')
-  async createAutoRun(event: Electron.IpcMainInvokeEvent, data: any) {
-    const autoRun = await this.autoRunService.createAutoRun(data);
+  async createAutoRun(
+    event: Electron.IpcMainInvokeEvent,
+    data: {
+      accountId: number;
+      type: AutoRunType;
+      cycleType: string;
+    },
+  ) {
+    const userInfo = getUserInfo();
+
+    const autoRun = await this.autoRunService.createAutoRun({
+      userId: userInfo.id,
+      ...data,
+    });
 
     return autoRun;
   }
@@ -29,7 +43,6 @@ export class AutoRunController {
   @Icp('ICP_AUTO_RUN_LIST')
   async getAutoRunList(event: Electron.IpcMainInvokeEvent) {
     const list = await this.autoRunService.findAutoRunList({});
-
     return list;
   }
 
@@ -51,7 +64,13 @@ export class AutoRunController {
    * 创建进程记录
    */
   @Icp('ICP_AUTO_RUN_RECORD_CREATE')
-  async createAutoRunRecord(event: Electron.IpcMainInvokeEvent, data: any) {
+  async createAutoRunRecord(
+    event: Electron.IpcMainInvokeEvent,
+    data: {
+      accountId: number;
+      type: AutoRunType;
+    },
+  ) {
     const autoRunRecord = await this.autoRunService.createAutoRunRecord(data);
 
     return autoRunRecord;
@@ -63,9 +82,9 @@ export class AutoRunController {
   @Icp('ICP_AUTO_RUN_RECORD_STATUS')
   async updateAutoRunRecordStatus(
     event: Electron.IpcMainInvokeEvent,
-    data: { id: number; status: number },
+    id: number,
+    status: number,
   ) {
-    const { id, status } = data;
     const autoRun = await this.autoRunService.updateAutoRunRecordStatus(
       id,
       status,
