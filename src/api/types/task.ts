@@ -13,9 +13,9 @@ export enum UserTaskStatus {
   PENDING = 'pending', // 待审核
   APPROVED = 'approved', // 已通过
   REJECTED = 'rejected', // 已拒绝
-  COMPLETED = 'completed', // 已完成
+  // COMPLETED = 'completed', // 已完成
   CANCELLED = 'cancelled', // 已取消
-  PENDING_REWARD = 'pending_reward', // 待发放奖励
+  // PENDING_REWARD = 'pending_reward', // 待发放奖励
   REWARDED = 'rewarded', // 已发放奖励
 }
 

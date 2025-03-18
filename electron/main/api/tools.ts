@@ -2,21 +2,28 @@ import netRequest from '.';
 
 class ToolsApi {
   // 获取AI的评论回复
-  async aiRecoverReview(data: {
+  async aiRecoverReview(inData: {
     content: string;
     title?: string;
     desc?: string;
     max?: number;
-  }): Promise<any> {
-    const res = await netRequest<any>({
+  }): Promise<string> {
+    const res = await netRequest<{
+      data: string;
+      code: number;
+      msg: string;
+    }>({
       method: 'POST',
       url: 'tools/ai/recover/review',
-      body: data,
+      body: inData,
     });
-
-    console.log('------ res', res);
-
-    return res;
+    const {
+      status,
+      data: { data, code },
+    } = res;
+    if (status !== 200 && status !== 201) return '';
+    if (!!code) return '';
+    return data;
   }
 }
 

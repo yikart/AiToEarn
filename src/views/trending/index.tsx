@@ -1631,11 +1631,10 @@ const Trending: React.FC = () => {
                                         </span>
                                       )}
                                       <span className="text-[#ff4d4f] whitespace-nowrap">
-                                        {typeof topic.hotValue === 'number'
-                                          ? (topic.hotValue / 10000).toFixed(
+                                        {(topic.hotValue / 10000).toFixed(
                                               1,
                                             ) + 'w'
-                                          : '0w'}
+                                        }
                                       </span>
                                       <div className="relative flex-shrink-0 w-16 h-4 group">
                                         {/* 热度趋势图 */}

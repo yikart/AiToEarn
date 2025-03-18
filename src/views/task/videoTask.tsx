@@ -257,7 +257,7 @@ export default function Page() {
 
               <div className={styles.taskAction}>
                 <div className={styles.taskStatus}>
-                  <Tag color="#87d068">进行中</Tag>
+                  <Tag color="#a66ae4">进行中</Tag>
                 </div>
 
                 <div className={styles.taskReward}>
@@ -271,6 +271,7 @@ export default function Page() {
                   type="primary"
                   className={styles.viewButton}
                   onClick={() => Ref_TaskInfo.current?.init(task)}
+                  style={{ backgroundColor: '#a66ae4', borderColor: '#a66ae4' }}
                 >
                   去查看 <RightOutlined />
                 </Button>
