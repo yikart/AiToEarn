@@ -5,6 +5,12 @@
  * @Description: Reply reply
  */
 import { Injectable } from '../core/decorators';
+import PQueue from 'p-queue';
 
 @Injectable()
-export class ReplyService {}
+export class ReplyService {
+  replyQueue: PQueue;
+  constructor() {
+    this.replyQueue = new PQueue({ concurrency: 2 });
+  }
+}
