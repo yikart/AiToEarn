@@ -15,7 +15,6 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [accountId, setAccountId] = useState<number>(0);
   const [workData, setWorkData] = useState<WorkData | null>(null);
-  const [formData, setFormData] = useState<Partial<FormData>>();
   const [form] = Form.useForm<FormData>();
 
   async function init(accountId: number, inWorkData: WorkData) {
@@ -81,7 +80,7 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
           autoComplete="off"
         >
           <Form.Item
-            label="content"
+            label="评论"
             name="content"
             rules={[{ required: true, message: '请输入评论!' }]}
           >
