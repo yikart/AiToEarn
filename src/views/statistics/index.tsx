@@ -274,7 +274,6 @@ const Statistics = () => {
   async function getAccountStatistics() {
     setDashboardData([]);
     const res: StatisticsInfo = await icpGetAccountStatistics();
-    console.log('res@@@:', res);
     setStatisticsInfo(res);
     // 获取到账号列表后,遍历获取每个账号的看板数据
     if (res.list && res.list.length > 0) {
@@ -330,7 +329,6 @@ const Statistics = () => {
    */
   async function getAccountDashboard(id: number) {
     const res = await icpGetAccountDashboard(id);
-    console.log('res$$$:', res);
     return res;
   }
 
