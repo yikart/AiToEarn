@@ -1,6 +1,6 @@
 import { ForwardedRef, forwardRef, memo } from 'react';
 import VideoChoose from '@/components/Choose/VideoChoose';
-import SupportPlat from '@/views/publish/components/SupportPlat';
+import SupportPlat from '../../../components/SupportPlat/SupportPlat';
 import { PubType } from '../../../../../../commont/publish/PublishEnum';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';

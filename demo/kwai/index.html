@@ -5,9 +5,14 @@
   <title>Title</title>
 </head>
 <body>
+  <button onclick="loginClick()">登录</button>
   <script>
     const appId = "ks715790869885446758";
     const appSecret = "cqSvJvBSPJjd-4pBH_4N0Q";
+
+    function loginClick() {
+      window.href = `https://open.kuaishou.com/oauth2/authorize?app_id=${appId}&scope=user_info,user_video_publish&response_type=code&ua=pc&redirect_uri=your_callback_url&state=your_state`
+    }
   </script>
 </body>
 </html>

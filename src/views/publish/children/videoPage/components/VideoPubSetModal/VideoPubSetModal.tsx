@@ -33,13 +33,13 @@ import { PubType } from '@@/publish/PublishEnum';
 import { useNavigate } from 'react-router-dom';
 import PubAccountDetModule, {
   IPubAccountDetModuleRef,
-} from '@/views/publish/components/PubAccountDetModule';
+} from '../../../../components/PubAccountDetModule/PubAccountDetModule';
 import VideoPubSetModal_KWAI from '@/views/publish/children/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_KWAI';
 import VideoPubSetModal_DouYin from '@/views/publish/children/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_DouYin';
 import VideoPubSetModal_XSH from '@/views/publish/children/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_XSH';
 import VideoPubSetModal_WxSph from '@/views/publish/children/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_WxSph';
 import { onVideoPublishProgress } from '@/icp/receiveMsg';
-import PubProgressModule from '@/views/publish/components/PubProgressModule';
+import PubProgressModule from '../../../../components/PubProgressModule/PubProgressModule';
 import { VideoPublishProgressRes } from '../../../../../../../electron/main/plat/pub/PubItemVideo';
 import VideoPubSetModalVideo, {
   IVideoPubSetModalVideoRef,

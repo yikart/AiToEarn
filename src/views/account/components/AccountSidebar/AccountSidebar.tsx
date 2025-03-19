@@ -25,7 +25,7 @@ import useCssVariables from '../../../../hooks/useCssVariables';
 import { onAccountLoginFinish } from '../../../../icp/receiveMsg';
 import PubAccountDetModule, {
   IPubAccountDetModuleRef,
-} from '../../../publish/components/PubAccountDetModule';
+} from '../../../publish/components/PubAccountDetModule/PubAccountDetModule';
 
 export interface IAccountSidebarRef {}
 

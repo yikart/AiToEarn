@@ -9,10 +9,10 @@ import {
 import styles from './pubAccountDetModule.module.scss';
 import { Alert, Avatar, Button, Checkbox, message, Modal, Tooltip } from 'antd';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { AccountInfo, AccountPlatInfoMap } from '@/views/account/comment';
+import { AccountInfo, AccountPlatInfoMap } from '../../../account/comment';
 import { LoadingOutlined } from '@ant-design/icons';
-import { accountLogin, acpAccountLoginCheck } from '@/icp/account';
-import { AccountStatus } from '../../../../commont/AccountEnum';
+import { accountLogin, acpAccountLoginCheck } from '../../../../icp/account';
+import { AccountStatus } from '../../../../../commont/AccountEnum';
 
 export interface IPubAccountDetModuleRef {
   // 打开弹框并且开始检测

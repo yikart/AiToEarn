@@ -1,8 +1,8 @@
 import { ForwardedRef, forwardRef, memo } from 'react';
 import { Alert, Avatar, Modal, Progress, Tooltip } from 'antd';
-import { VideoPublishProgressRes } from '../../../../electron/main/plat/pub/PubItemVideo';
+import { VideoPublishProgressRes } from '../../../../../electron/main/plat/pub/PubItemVideo';
 import styles from './pubProgressModule.module.scss';
-import { AccountPlatInfoMap } from '@/views/account/comment';
+import { AccountPlatInfoMap } from '../../../account/comment';
 import { MinusOutlined } from '@ant-design/icons';
 
 export interface IPubProgressModuleRef {}

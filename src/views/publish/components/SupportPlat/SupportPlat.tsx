@@ -1,7 +1,7 @@
 import { ForwardedRef, forwardRef, memo } from 'react';
-import { PubType } from '../../../../commont/publish/PublishEnum';
+import { PubType } from '../../../../../commont/publish/PublishEnum';
 import styles from './supportPlat.module.scss';
-import { AccountPlatInfoMap } from '@/views/account/comment';
+import { AccountPlatInfoMap } from '../../../account/comment';
 
 export interface ISupportPlatRef {}
 

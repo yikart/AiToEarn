@@ -10,12 +10,15 @@ import http from './request';
 export const toolsApi = {
   /**
    * 获取智能标题
+   * @param url
+   * @param type 1=标题 2=描述
    */
-  apiVideoAiTitle(url: string) {
+  apiVideoAiTitle(url: string, type: 1 | 2) {
     return http.post<string>(
       '/tools/ai/video/title',
       {
         url,
+        type,
       },
       {
         isToken: true,
@@ -63,9 +66,22 @@ export const toolsApi = {
   /**
    * 上传文件
    */
-  uploadFile() {
+  uploadFile(file: Blob) {
+    const formData = new FormData();
+    formData.append('file', file);
     return http.post<{
       name: string;
-    }>('/oss/upload/permanent');
+    }>('/oss/upload/permanent', formData);
+  },
+
+  /**
+   * 上传文件临时
+   */
+  uploadFileTemp(file: Blob) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return http.post<{
+      name: string;
+    }>('/oss/upload', formData);
   },
 };
