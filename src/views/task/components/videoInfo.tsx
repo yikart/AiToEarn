@@ -23,7 +23,6 @@ import {
   DollarOutlined,
   PlayCircleOutlined,
   CopyOutlined,
-  LoadingOutlined,
 } from '@ant-design/icons';
 import ChooseAccountModule from '@/views/publish/components/ChooseAccountModule/ChooseAccountModule';
 import { ipcDownFile } from '@/icp/tools';
@@ -78,14 +77,14 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
     if (!taskInfo) return;
 
     try {
-      const res:any = await taskApi.taskApply<TaskVideo>(taskInfo?._id);
+      const res: any = await taskApi.taskApply<TaskVideo>(taskInfo?._id);
       // 存储任务记录信息
       if (res.code === 0 && res.data) {
         setTaskRecord(res.data);
         message.success('任务接受成功！');
         setIsModalOpen(false);
         setChooseAccountOpen(true);
-        
+
         // 调用父组件传递的刷新函数
         if (onTaskApplied && typeof onTaskApplied === 'function') {
           onTaskApplied();
@@ -107,7 +106,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
       message.error('任务信息不完整，无法完成任务');
       return;
     }
-    
+
     try {
       // 使用任务记录的 ID 而不是任务 ID
       const res = await taskApi.taskDone(taskRecord._id, {
@@ -238,7 +237,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
       message.info('该任务暂无视频');
     }
   };
-  
+
   // 关闭视频播放器
   const closeVideoPlayer = () => {
     setVideoPlayback((prev) => ({ ...prev, visible: false }));
@@ -299,7 +298,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
               <Row gutter={24}>
                 <Col span={12}>
                   <div className={styles.videoContainer}>
-                    <div 
+                    <div
                       className={styles.taskImageContainer}
                       onClick={openVideoPlayer}
                     >
@@ -423,7 +422,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
                 >
                   {taskInfo.isAccepted ? '已接受任务' : '接受任务'}
                 </Button>
-              </div> 
+              </div>
             </div>
           </div>
         ) : (

@@ -194,7 +194,7 @@ export default function Page() {
       };
 
       // 如果没有选择状态筛选，则不传status参数
-      if (statusFilter === null) { 
+      if (statusFilter === null) {
         delete (params as any).status;
       }
 
@@ -356,7 +356,7 @@ export default function Page() {
                       className={styles.taskImage}
                     />
                   </div>
-                  
+
                   <div className={styles.taskInfo}>
                     <div className={styles.taskHeader}>
                       <h3 className={styles.taskTitle}>
@@ -368,12 +368,16 @@ export default function Page() {
                       <div className={styles.tagContainer}>
                         {/* 添加任务类型标签 */}
                         <Tag
-                          color={(TASK_TYPE_MAP as any)[task.taskId?.type]?.color || '#a66ae4'}
+                          color={
+                            (TASK_TYPE_MAP as any)[task.taskId?.type]?.color ||
+                            '#a66ae4'
+                          }
                           className={styles.typeTag}
                         >
-                          {(TASK_TYPE_MAP as any)[task.taskId?.type]?.name || '视频任务'}
+                          {(TASK_TYPE_MAP as any)[task.taskId?.type]?.name ||
+                            '视频任务'}
                         </Tag>
-                        
+
                         {/* 原有的状态标签 */}
                         <Tag
                           color={
@@ -434,7 +438,11 @@ export default function Page() {
                     <Button
                       className={styles.viewButton}
                       onClick={() => viewTaskDetail(task)}
-                      style={{ backgroundColor: '#a66ae4', borderColor: '#a66ae4', color: 'white' }}
+                      style={{
+                        backgroundColor: '#a66ae4',
+                        borderColor: '#a66ae4',
+                        color: 'white',
+                      }}
                     >
                       查看详情 <RightOutlined />
                     </Button>

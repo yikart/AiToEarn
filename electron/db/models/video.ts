@@ -11,7 +11,6 @@ import { VisibleTypeEnum } from '../../../commont/publish/PublishEnum';
 import { AccountType } from '../../../commont/AccountEnum';
 import type { ILocationDataItem, WxSphEvent } from '../../main/plat/plat.type';
 import { DeclarationDouyin } from '../../plat/douyin/common.douyin';
-import type { IVideoPubOtherData } from '../../main/plat/module';
 
 // 包含一个name和一个value的对象
 export interface ILableValue {

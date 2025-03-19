@@ -15,7 +15,6 @@ import { VideoStatsModel } from './models/videoStats';
 import * as migrations from './migrations';
 import path from 'path';
 import { app } from 'electron';
-import { isDev } from '../util';
 import fs from 'fs/promises';
 import { asyData as accountExamine } from './scripts/account';
 import { logger } from '../global/log';

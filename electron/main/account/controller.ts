@@ -118,7 +118,6 @@ export class AccountController {
     data: { type: AccountType; uid: string },
   ): Promise<any> {
     const userInfo = getUserInfo();
-    
 
     const { type, uid } = data;
 

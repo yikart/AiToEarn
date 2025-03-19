@@ -132,11 +132,18 @@ export default function Page() {
         {accountTypes.map((type) => {
           const platform = (PLATFORM_MAP as any)[type];
           if (!platform) return null;
-          
+
           return (
             <Tooltip key={type} title={platform.name}>
-              <div className={styles.platformIconWrapper} style={{ backgroundColor: platform.color }}>
-                <img src={platform.icon} className={styles.platformIcon} alt={platform.name} />
+              <div
+                className={styles.platformIconWrapper}
+                style={{ backgroundColor: platform.color }}
+              >
+                <img
+                  src={platform.icon}
+                  className={styles.platformIcon}
+                  alt={platform.name}
+                />
               </div>
             </Tooltip>
           );
@@ -158,7 +165,7 @@ export default function Page() {
       message.info('该任务暂无视频');
     }
   };
-  
+
   // 关闭视频播放器
   const closeVideoPlayer = () => {
     setVideoPlayback((prev) => ({ ...prev, visible: false }));
@@ -177,7 +184,7 @@ export default function Page() {
   return (
     <div className={styles.videoTaskContainer}>
       <TaskInfo ref={Ref_TaskInfo} onTaskApplied={refreshTaskList} />
-      
+
       {/* 添加视频播放组件 */}
       <VideoPlayer
         videoUrl={videoPlayback.url}
@@ -194,7 +201,7 @@ export default function Page() {
             styles={{ body: { padding: 0 } }}
           >
             <div className={styles.taskCardContent}>
-              <div 
+              <div
                 className={styles.taskImageContainer}
                 onClick={(e) => openVideoPlayer(task, e)}
               >
@@ -283,7 +290,7 @@ export default function Page() {
                   onClick={() => Ref_TaskInfo.current?.init(task)}
                   style={{ backgroundColor: '#a66ae4', borderColor: '#a66ae4' }}
                 >
-                  去查看 <RightOutlined /> 
+                  去查看 <RightOutlined />
                 </Button>
               </div>
             </div>

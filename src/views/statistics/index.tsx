@@ -7,7 +7,7 @@
  */
 import { useEffect, useState, useRef } from 'react';
 import './statistics.css';
-import { icpGetAccountDashboard, icpGetAccountStatistics, icpGetAccountInfo } from '@/icp/account';
+import { icpGetAccountDashboard, icpGetAccountStatistics } from '@/icp/account';
 import { DashboardData, StatisticsInfo } from './comment';
 import { Button, Card, Layout, Avatar, DatePicker } from 'antd';
 import {
@@ -50,10 +50,14 @@ const Statistics = () => {
   const [selectedMetric, setSelectedMetric] = useState<string>('fans');
 
   // 添加状态来控制WebView的显示
-  const [examineVideoData, setExamineVideoData] = useState<{url: string, account: any, open: boolean}>({
+  const [examineVideoData, setExamineVideoData] = useState<{
+    url: string;
+    account: any;
+    open: boolean;
+  }>({
     url: '',
     account: null,
-    open: false
+    open: false,
   });
 
   useEffect(() => {
@@ -116,10 +120,10 @@ const Statistics = () => {
 
       // 平台类型对应的颜色
       const platformColors: Record<string, string> = {
-        douyin: '#183641',  // 抖音
-        xhs: '#FF2442',     // 小红书
-        wxSph: '#FA9A32',   // 微信视频号
-        KWAI: '#F64806'     // 快手
+        douyin: '#183641', // 抖音
+        xhs: '#FF2442', // 小红书
+        wxSph: '#FA9A32', // 微信视频号
+        KWAI: '#F64806', // 快手
       };
 
       const option = {
@@ -428,7 +432,7 @@ const Statistics = () => {
     console.log('检查视频', account);
     // 根据账户类型确定要打开的URL
     let url = '';
-    switch(account.type) {
+    switch (account.type) {
       case 'douyin':
         url = `https://creator.douyin.com/`;
         break;
@@ -444,17 +448,17 @@ const Statistics = () => {
       default:
         url = '';
     }
-    
+
     setExamineVideoData({
       url,
       account,
-      open: true
+      open: true,
     });
   };
 
   // 关闭WebView
   const closeWebView = () => {
-    setExamineVideoData(prev => ({...prev, open: false}));
+    setExamineVideoData((prev) => ({ ...prev, open: false }));
   };
 
   return (
@@ -463,18 +467,27 @@ const Statistics = () => {
       {examineVideoData.open && examineVideoData.account ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="relative w-4/5 h-4/5 bg-white rounded-lg overflow-hidden">
-            <button 
+            <button
               className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center"
               style={{
                 zIndex: 1000,
                 width: '36px',
                 height: '36px',
                 color: '#a66ae4',
-                border: '1px solid rgba(166, 106, 228, 0.2)'
+                border: '1px solid rgba(166, 106, 228, 0.2)',
               }}
               onClick={closeWebView}
             >
-              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                stroke="currentColor"
+                strokeWidth="2"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
@@ -482,7 +495,9 @@ const Statistics = () => {
             <WebView
               url={examineVideoData.url}
               cookieParams={{
-                cookies: JSON.parse(examineVideoData.account.loginCookie || '{}'),
+                cookies: JSON.parse(
+                  examineVideoData.account.loginCookie || '{}',
+                ),
               }}
               key={examineVideoData.url + examineVideoData.open}
             />
@@ -536,7 +551,9 @@ const Statistics = () => {
               {!statisticsInfo?.list || statisticsInfo.list.length === 0 ? (
                 // 无数据状态 - 使用Ant Design图标
                 <div className="flex flex-col items-center justify-center h-full">
-                  <QuestionCircleOutlined style={{ fontSize: '32px', color: '#CCCCCC' }} />
+                  <QuestionCircleOutlined
+                    style={{ fontSize: '32px', color: '#CCCCCC' }}
+                  />
                   <div className="text-sm text-gray-500 mt-2">暂无数据</div>
                 </div>
               ) : (
@@ -566,21 +583,31 @@ const Statistics = () => {
                             src={getPlatformIcon(account.type)}
                             alt={account.type}
                             className="w-4 h-4 ml-2"
-                            style={{ position: 'absolute', bottom: '0', right: '0' }}
+                            style={{
+                              position: 'absolute',
+                              bottom: '0',
+                              right: '0',
+                            }}
                           />
                         )}
                       </div>
-                      
+
                       <div className="space-y-1">
                         <div className="text-base font-medium text-gray-900 text-left">
                           {account.nickname}
                         </div>
-                        
+
                         <div className="text-sm flex text-left">
-                          <span className="text-gray-500">粉丝: {(account as any).fansCount?.toLocaleString() || 0}</span>
+                          <span className="text-gray-500">
+                            粉丝:{' '}
+                            {(account as any).fansCount?.toLocaleString() || 0}
+                          </span>
                         </div>
 
-                        <div className="text-gray-500 text-left" style={{ fontSize: '12px' }}>
+                        <div
+                          className="text-gray-500 text-left"
+                          style={{ fontSize: '12px' }}
+                        >
                           ID: {account.uid}
                         </div>
                       </div>
@@ -687,11 +714,13 @@ const Statistics = () => {
               刷新
             </Button>
           </div>
-          
+
           {!statisticsInfo?.list || statisticsInfo.list.length === 0 ? (
             // 无数据状态 - 使用Ant Design图标
             <div className="flex flex-col items-center justify-center p-12 bg-white rounded-lg shadow-sm">
-              <QuestionCircleOutlined style={{ fontSize: '32px', color: '#CCCCCC' }} />
+              <QuestionCircleOutlined
+                style={{ fontSize: '32px', color: '#CCCCCC' }}
+              />
               <div className="text-sm text-gray-500 mt-2">暂无数据</div>
             </div>
           ) : (
@@ -758,10 +787,14 @@ const Statistics = () => {
                             {accountData?.forward || 0}
                           </div>
                         </div>
-                        <div className="text-center"> 
-                          <div 
-                            className="text-sm text-gray-500" 
-                            style={{marginTop:'10px', color:'#a66ae4', cursor:'pointer'}}
+                        <div className="text-center">
+                          <div
+                            className="text-sm text-gray-500"
+                            style={{
+                              marginTop: '10px',
+                              color: '#a66ae4',
+                              cursor: 'pointer',
+                            }}
                             onClick={() => examineVideo(account)}
                           >
                             查看详情
