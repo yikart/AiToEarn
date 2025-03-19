@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-07 20:00:47
- * @LastEditTime: 2025-02-13 13:53:55
+ * @LastEditTime: 2025-03-19 14:27:53
  * @LastEditors: nevin
  * @Description:
  */
@@ -10,7 +10,7 @@ import { AccountModel } from '../../../db/models/account';
 import { PubItemBase } from './PubItemBase';
 import { PlatformBase } from '../PlatformBase';
 import { PubStatus } from '../../../db/models/pubRecord';
-import { Event } from '../../../global/event';
+import { EtEvent } from '../../../global/event';
 import { VisibleTypeEnum } from '../../../../commont/publish/PublishEnum';
 import windowOperate from '../../../util/windowOperate';
 import { SendChannelEnum } from '../../../../commont/UtilsEnum';
@@ -84,6 +84,6 @@ export class PubItemVideo extends PubItemBase {
    * 更新视频记录
    */
   async uploadRecord() {
-    Event.emit('ET_PUBLISH_UPDATE_VIDEO_PUL', this.videoModel);
+    EtEvent.emit('ET_PUBLISH_UPDATE_VIDEO_PUL', this.videoModel);
   }
 }
