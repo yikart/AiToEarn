@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-19 14:08:16
+ * @LastEditTime: 2025-03-19 14:27:36
  * @LastEditors: nevin
  * @Description: autoRun AutoRun
  */
@@ -9,6 +9,7 @@ import { Controller, Icp, Inject, Scheduled } from '../core/decorators';
 import { AutoRunService } from './service';
 import { AutoRunType } from '../../db/models/autoRun';
 import { getUserInfo } from '../user/comment';
+import { EtEvent } from '../../global/event';
 
 @Controller()
 export class AutoRunController {
@@ -108,6 +109,7 @@ export class AutoRunController {
   async syncAllAutoRunStart() {
     try {
       console.log('------- 111');
+      EtEvent.emit('ET_RUN_AUTO_RUN', 1111);
     } catch (error) {
       console.error('Failed to sync accounts:', error);
     }

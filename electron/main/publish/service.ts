@@ -9,7 +9,7 @@ import { Injectable } from '../core/decorators';
 import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { CorrectQuery, backPageData } from '../../global/table';
 import { PubRecordModel, PubStatus } from '../../db/models/pubRecord';
-import { Event } from '../../global/event';
+import { EtEvent } from '../../global/event';
 @Injectable()
 export class PublishService {
   private pubRecordRepository: Repository<PubRecordModel>;
@@ -53,7 +53,7 @@ export class PublishService {
   async deletePubRecordById(id: number): Promise<boolean> {
     const { affected } = await this.pubRecordRepository.delete(id);
     const res = affected ? true : false;
-    if (res) Event.emit('ET_DEL_PUB_RECORD_ITEM', id);
+    if (res) EtEvent.emit('ET_DEL_PUB_RECORD_ITEM', id);
     return res;
   }
 }

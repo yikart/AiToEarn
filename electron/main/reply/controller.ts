@@ -1,13 +1,14 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-19 12:18:37
+ * @LastEditTime: 2025-03-19 14:25:31
  * @LastEditors: nevin
  * @Description: reply Reply
  */
+import { AutoRunModel } from '../../db/models/autoRun';
 import { AccountService } from '../account/service';
 import { toolsApi } from '../api/tools';
-import { Controller, Icp, Inject } from '../core/decorators';
+import { Controller, Et, Icp, Inject } from '../core/decorators';
 import platController from '../plat';
 import type { CommentData } from '../plat/plat.type';
 import { ReplyService } from './service';
@@ -147,5 +148,11 @@ export class ReplyController {
       option,
     );
     return res;
+  }
+
+  // 运行自动任务
+  @Et('ET_RUN_AUTO_RUN')
+  async runAutoReplyComment(autoRunData: AutoRunModel): Promise<any> {
+    console.log('------ runAutoReplyComment ------', autoRunData.createTime);
   }
 }
