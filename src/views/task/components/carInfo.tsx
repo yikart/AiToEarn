@@ -46,7 +46,7 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
 
       // 添加成功提示
       message.success('任务接受成功，请前往我的任务查看');
-      
+
       // 调用父组件传递的刷新函数
       if (onTaskApplied && typeof onTaskApplied === 'function') {
         onTaskApplied();

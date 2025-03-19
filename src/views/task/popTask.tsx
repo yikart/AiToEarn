@@ -50,7 +50,7 @@ export default function Page() {
 
       setPageInfo((prev) => ({
         ...prev,
-        totalCount: (res as any).totalCount, 
+        totalCount: (res as any).totalCount,
       }));
 
       // 检查是否还有更多数据

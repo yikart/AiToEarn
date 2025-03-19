@@ -1631,10 +1631,8 @@ const Trending: React.FC = () => {
                                         </span>
                                       )}
                                       <span className="text-[#ff4d4f] whitespace-nowrap">
-                                        {(topic.hotValue / 10000).toFixed(
-                                              1,
-                                            ) + 'w'
-                                        }
+                                        {(topic.hotValue / 10000).toFixed(1) +
+                                          'w'}
                                       </span>
                                       <div className="relative flex-shrink-0 w-16 h-4 group">
                                         {/* 热度趋势图 */}
@@ -2312,7 +2310,7 @@ const Trending: React.FC = () => {
                                 </div>
                                 <div className="w-24 text-center">
                                   <span className="text-[#a66ae4]">
-                                    {(item as any).shareCount || '1w'} 
+                                    {(item as any).shareCount || '1w'}
                                   </span>
                                 </div>
                                 <div className="w-24 text-center">

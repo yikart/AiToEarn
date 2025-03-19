@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Modal } from 'antd';
 import styles from './videoPlayer.module.scss';
 
@@ -9,7 +9,12 @@ interface VideoPlayerProps {
   title?: string;
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, visible, onClose, title }) => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({
+  videoUrl,
+  visible,
+  onClose,
+  title,
+}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -43,4 +48,4 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, visible, onClose, t
   );
 };
 
-export default VideoPlayer; 
+export default VideoPlayer;

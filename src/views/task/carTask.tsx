@@ -174,7 +174,7 @@ export default function Page() {
                     className={styles.applyButton}
                     onClick={() => Ref_TaskInfo.current?.init(task)}
                   >
-                    报名 
+                    报名
                   </Button>
                 </div>
               </div>

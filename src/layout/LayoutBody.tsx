@@ -2,7 +2,7 @@ import { useUserStore } from '@/store/user';
 import { useEffect } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import Navigation from './Navigation';
-import styles from "./layoutBody.module.scss";
+import styles from './layoutBody.module.scss';
 
 export const LayoutBody = () => {
   const userStore = useUserStore();
