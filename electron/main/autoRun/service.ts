@@ -24,15 +24,25 @@ export class AutoRunService {
       AppDataSource.getRepository(AutoRunRecordModel);
   }
 
+  // 限制处于启动状态的任务数量
+  private async chectAutoRunCount(userId: string): Promise<boolean> {
+    const count = await this.autoRunRepository.count({
+      where: {
+        userId,
+        status: AutoRunStatus.DOING,
+      },
+    });
+
+    if (count >= 100) return false;
+
+    return true;
+  }
+
   // 创建进程
   async createAutoRun(data: Partial<AutoRunModel>) {
-    console.log('------', data);
+    if (!(await this.chectAutoRunCount(data.userId!))) return null;
 
-    try {
-      return await this.autoRunRepository.save(data);
-    } catch (error) {
-      console.log('----- error', error);
-    }
+    return await this.autoRunRepository.save(data);
   }
 
   // 根据ID查询进程信息
@@ -48,6 +58,16 @@ export class AutoRunService {
   async findAutoRunList(data: Partial<AutoRunModel>) {
     return await this.autoRunRepository.find({
       where: data,
+    });
+  }
+
+  // 查询需要运行的进程列表
+  async findAutoRunListOfNeedRun(userId: string) {
+    return await this.autoRunRepository.find({
+      where: {
+        userId,
+        status: AutoRunStatus.DOING,
+      },
     });
   }
 
