@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-19 17:54:53
- * @LastEditTime: 2025-02-19 22:45:27
+ * @LastEditTime: 2025-03-19 18:44:00
  * @LastEditors: nevin
  * @Description:
  */
@@ -204,8 +204,31 @@ export class Kwai extends PlatformBase {
       pcursor ? Number.parseInt(pcursor) : undefined,
     );
 
-    const list: CommentData[] = res.data.data.list.map((v) => {
-      return {
+    const list: CommentData[] = [];
+    for (const v of res.data.data.list) {
+      const subList: CommentData[] = [];
+
+      if (!!v.subCommentCount) {
+        const subRes = await kwaiPub.getSubCommentList(
+          cookie,
+          dataId,
+          v.commentId,
+        );
+
+        for (const v1 of subRes.data.data.list) {
+          subList.push({
+            dataId: v1.photoId + '',
+            commentId: v1.commentId + '',
+            content: v1.content,
+            likeCount: undefined,
+            nikeName: v1.headurl,
+            headUrl: v1.headurl,
+            data: v1,
+          });
+        }
+      }
+
+      list.push({
         dataId: v.photoId + '',
         commentId: v.commentId + '',
         parentCommentId: undefined,
@@ -214,8 +237,9 @@ export class Kwai extends PlatformBase {
         nikeName: v.headurl,
         headUrl: v.headurl,
         data: v,
-      };
-    });
+        subCommentList: subList,
+      });
+    }
 
     return {
       list: list,

@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-07 09:48:29
- * @LastEditTime: 2025-02-19 21:05:00
+ * @LastEditTime: 2025-03-19 17:50:53
  * @LastEditors: nevin
  * @Description:
  */
@@ -69,7 +69,8 @@ export type CommentData = {
   likeCount?: number; // 点赞次数
   nikeName?: string;
   headUrl?: string;
-  data: any; // 原数据
+  data?: any; // 原数据
+  subCommentList?: CommentData[]; // 子评论
 };
 
 // 视频发布进度回调函数类型
