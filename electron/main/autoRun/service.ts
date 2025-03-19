@@ -34,7 +34,16 @@ export class AutoRunService {
       console.log('----- error', error);
     }
   }
- 
+
+  // 根据ID查询进程信息
+  async findAutoRunById(id: number) {
+    return await this.autoRunRepository.findOne({
+      where: {
+        id,
+      },
+    });
+  }
+
   // 查询进程列表
   async findAutoRunList(data: Partial<AutoRunModel>) {
     return await this.autoRunRepository.find({
@@ -50,7 +59,13 @@ export class AutoRunService {
   }
 
   // 创建进程记录
-  async createAutoRunRecord(data: Partial<AutoRunRecordModel>) {
+  async createAutoRunRecord(autoRun: AutoRunModel) {
+    const data = {
+      userId: autoRun.userId,
+      type: autoRun.type,
+      cycleType: autoRun.cycleType,
+      status: AutoRunRecordStatus.DOING,
+    };
     return await this.autoRunRecordRepository.save(data);
   }
 

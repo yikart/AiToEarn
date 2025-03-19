@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-23 15:48:14
- * @LastEditTime: 2025-03-18 22:23:06
+ * @LastEditTime: 2025-03-19 07:50:43
  * @LastEditors: nevin
  * @Description: 自动进程
  */
@@ -77,6 +77,18 @@ export async function ipcGetAutoRunList() {
 export async function ipcGetAutoRunRecordList() {
   const res: AutoRunRecord[] = await window.ipcRenderer.invoke(
     'ICP_AUTO_RUN_RECORD_LIST',
+  );
+  return res;
+}
+
+/**
+ * 创建自动进程
+ * @param data
+ */
+export async function ipcCreateAutoRunRecord(autoRunId: number) {
+  const res: string = await window.ipcRenderer.invoke(
+    'ICP_AUTO_RUN_RECORD_CREATE',
+    autoRunId,
   );
   return res;
 }

@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-03-19 07:34:14
+ * @LastEditTime: 2025-03-19 07:51:47
  * @LastEditors: nevin
  * @Description: 评论页面 reply
  */
@@ -13,6 +13,7 @@ import AddAutoRun, { AddAutoRunRef } from './components/addAutoRun';
 import {
   AutoRun,
   AutoRunRecord,
+  ipcCreateAutoRunRecord,
   ipcGetAutoRunList,
   ipcGetAutoRunRecordList,
 } from '@/icp/autoRun';
@@ -43,8 +44,8 @@ export default function Page() {
    * 运行
    */
   async function runAutoRun(data: AutoRun) {
-    // const res = await icpCreateCommentList(activeAccountId, data.dataId);
-    // console.log('------ res', res);
+    const res = await ipcCreateAutoRunRecord(data.id);
+    console.log('------ res', res);
   }
 
   /**

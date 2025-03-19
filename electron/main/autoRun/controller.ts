@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-18 22:17:16
+ * @LastEditTime: 2025-03-19 07:46:54
  * @LastEditors: nevin
  * @Description: autoRun AutoRun
  */
@@ -66,12 +66,12 @@ export class AutoRunController {
   @Icp('ICP_AUTO_RUN_RECORD_CREATE')
   async createAutoRunRecord(
     event: Electron.IpcMainInvokeEvent,
-    data: {
-      accountId: number;
-      type: AutoRunType;
-    },
+    autoRunId: number,
   ) {
-    const autoRunRecord = await this.autoRunService.createAutoRunRecord(data);
+    const autoData = await this.autoRunService.findAutoRunById(autoRunId);
+    if (!autoData) return null;
+    const autoRunRecord =
+      await this.autoRunService.createAutoRunRecord(autoData);
 
     return autoRunRecord;
   }
