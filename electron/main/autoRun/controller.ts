@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-19 15:01:43
+ * @LastEditTime: 2025-03-19 19:34:24
  * @LastEditors: nevin
  * @Description: autoRun AutoRun
  */
@@ -27,6 +27,7 @@ export class AutoRunController {
       accountId: number;
       type: AutoRunType;
       cycleType: string;
+      dataId?: string;
     },
   ) {
     const userInfo = getUserInfo();

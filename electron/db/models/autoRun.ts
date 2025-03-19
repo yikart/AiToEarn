@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 16:24:16
- * @LastEditTime: 2025-03-18 19:44:29
+ * @LastEditTime: 2025-03-19 19:31:29
  * @LastEditors: nevin
  * @Description: 自动任务 autoRun
  */
@@ -29,6 +29,13 @@ export class AutoRunModel extends TempModel {
 
   @Column({ type: 'int', nullable: false, comment: '账号id,对应account表id' })
   accountId!: number;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+    comment: '对应数据的数据ID',
+  })
+  dataId?: string;
 
   @Column({ type: 'int', nullable: false, comment: '执行次数', default: 0 })
   runCount!: number;

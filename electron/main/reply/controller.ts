@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-19 15:01:54
+ * @LastEditTime: 2025-03-19 17:28:02
  * @LastEditors: nevin
  * @Description: reply Reply
  */
@@ -79,6 +79,7 @@ export class ReplyController {
 
   /**
    * 作品一键AI评论
+   * 规则:评论所有的一级评论,已有自己的评论的不评论
    */
   @Icp('ICP_REPLY_COMMENT_LIST_BY_AI')
   async createCommentList(

@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-08 11:40:45
- * @LastEditTime: 2025-02-20 16:22:00
+ * @LastEditTime: 2025-03-19 19:23:41
  * @LastEditors: nevin
  * @Description: 小红书
  */
@@ -184,16 +184,36 @@ export class Xhs extends PlatformBase {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
 
     const res = await xiaohongshuService.getCommentList(cookie, dataId);
-    const list: CommentData[] = res.data.data.comments.map((v) => ({
-      dataId: v.note_id,
-      commentId: v.id,
-      parentCommentId: undefined,
-      content: v.content,
-      likeCount: Number.parseInt(v.like_count),
-      nikeName: v.user_info.nickname,
-      headUrl: v.user_info.image,
-      data: v,
-    }));
+
+    const list: CommentData[] = [];
+
+    for (const v of res.data.data.comments) {
+      const subList: CommentData[] = [];
+
+      for (const sub of v.sub_comments) {
+        subList.push({
+          dataId: v.note_id,
+          commentId: sub.id,
+          parentCommentId: v.id,
+          content: sub.content,
+          likeCount: Number.parseInt(sub.like_count),
+          nikeName: sub.user_info.nickname,
+          headUrl: sub.user_info.image,
+        });
+      }
+
+      list.push({
+        dataId: v.note_id,
+        commentId: v.id,
+        parentCommentId: undefined,
+        content: v.content,
+        likeCount: Number.parseInt(v.like_count),
+        nikeName: v.user_info.nickname,
+        headUrl: v.user_info.image,
+        data: v,
+        subCommentList: subList,
+      });
+    }
 
     return {
       list: list,

@@ -1,13 +1,14 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-08 11:40:45
- * @LastEditTime: 2025-02-19 22:01:59
+ * @LastEditTime: 2025-03-19 18:50:57
  * @LastEditors: nevin
  * @Description: 微信视频号
  */
 import { PlatformBase } from '../../PlatformBase';
 import {
   AccountInfoTypeRV,
+  CommentData,
   CookiesType,
   DashboardData,
   IAccountInfoParams,
@@ -173,16 +174,33 @@ export class WxSph extends PlatformBase {
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await shipinhaoService.getCommentList(cookie, dataId);
-    const dataList = res.comment.map((item) => {
-      return {
+
+    const dataList: CommentData[] = [];
+
+    for (const item of res.comment) {
+      const subDataList: CommentData[] = [];
+      for (const subItem of item.levelTwoComment) {
+        subDataList.push({
+          dataId: subItem.commentId,
+          commentId: subItem.commentId,
+          parentCommentId: item.commentId,
+          content: subItem.commentContent,
+          nikeName: subItem.commentNickname,
+          headUrl: subItem.commentHeadurl,
+          data: subItem,
+        });
+      }
+
+      dataList.push({
         dataId: item.commentId,
         commentId: item.commentId,
         content: item.commentContent,
         nikeName: item.commentNickname,
         headUrl: item.commentHeadurl,
         data: item,
-      };
-    });
+        subCommentList: subDataList,
+      });
+    }
 
     return {
       list: dataList,
