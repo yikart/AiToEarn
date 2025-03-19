@@ -15,8 +15,9 @@ import lodash from 'lodash';
 import { VideoModel } from '../../../../../electron/db/models/video';
 import { getImgFile } from '../../../../components/Choose/ImgChoose';
 import { useAICreateTitleStore } from '../../components/AICreateTitle/useAICreateTitle';
+import { usePubStroe } from '../../../../store/pubStroe';
 
-interface IVideoPageStore {
+export interface IVideoPageStore {
   // 选择的视频数据
   videoListChoose: IVideoChooseItem[];
   // 视频发布设置弹框的 tab选择
@@ -73,19 +74,18 @@ export const useVideoPageStore = create(
     {
       ...getStore(),
     },
-    (set, get, storeApi) => {
+    (_set, get, storeApi) => {
+      const set = (data: Partial<IVideoPageStore>) => {
+        usePubStroe.getState().setVideoPubSaveData(get());
+        _set(data);
+      };
+
       const methods = {
-        // 清除操作ID
-        clearOperateId() {
-          set({
-            operateId: '',
-          });
-        },
         // 设置操作ID
-        setOperateId() {
+        setOperateId(operateId?: string) {
           // if (get().operateId) return;
           set({
-            operateId: generateUUID(),
+            operateId: operateId || generateUUID(),
           });
         },
 
@@ -355,7 +355,7 @@ export const useVideoPageStore = create(
           });
         },
 
-        // 重新发布设置参数
+        // 根据发布记录重新发布设置参数
         async restartPub(pubRecordList: VideoModel[], accounts: AccountInfo[]) {
           const videoListChoose: IVideoChooseItem[] = [];
           methods.setOperateId();
@@ -383,6 +383,48 @@ export const useVideoPageStore = create(
 
           set({
             videoListChoose,
+          });
+        },
+
+        // 根据视频发布的临时存储记录设置发布参数
+        async setTempSaveParams({
+          videoListChoose,
+          commonPubParams,
+          operateId,
+        }: {
+          videoListChoose: IVideoChooseItem[];
+          commonPubParams?: IPubParams;
+          operateId?: string;
+        }) {
+          set({
+            loadingPageLoading: true,
+          });
+          methods.setOperateId(operateId);
+
+          if (commonPubParams?.cover?.imgPath) {
+            commonPubParams.cover = await getImgFile(
+              commonPubParams.cover.imgPath,
+            );
+          }
+          for (const item of videoListChoose) {
+            if (item.video?.videoPath) {
+              item.video = await getVideoFile(item.video.videoPath);
+            }
+            if (item.pubParams.cover) {
+              item.pubParams.cover = await getImgFile(
+                item.pubParams.cover.imgPath,
+              );
+            }
+          }
+
+          set({
+            ...(commonPubParams
+              ? {
+                  commonPubParams,
+                }
+              : {}),
+            videoListChoose,
+            loadingPageLoading: false,
           });
         },
 

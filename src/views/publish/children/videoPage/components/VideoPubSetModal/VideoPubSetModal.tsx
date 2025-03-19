@@ -44,6 +44,7 @@ import { VideoPublishProgressRes } from '../../../../../../../electron/main/plat
 import VideoPubSetModalVideo, {
   IVideoPubSetModalVideoRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalVideo';
+import { usePubStroe } from '../../../../../../store/pubStroe';
 
 export interface IVideoPubSetModalRef {}
 
@@ -213,6 +214,7 @@ const VideoPubSetModal = memo(
         setLoading(false);
         close();
         setPubProgressModuleOpen(false);
+        usePubStroe().clearVideoPubSaveData();
 
         // 成功数据
         const successList = okRes.filter((v) => v.code === 1);
