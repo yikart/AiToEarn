@@ -26,9 +26,11 @@ import {
   icpGetDoytinHotAll,
 } from '@/icp/publish';
 import {
+  DescTextArea,
   ScheduledTimeSelect,
-  VideoPubRestartLogin,
-} from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
+  TitleInput,
+  VideoPubRestartLogin
+} from "@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon";
 import {
   DouyinActivity,
   DouyinActivityDetailResponse,
@@ -39,7 +41,6 @@ import styles from '../components/videoPubSetModalCommon.module.scss';
 import { describeNumber } from '@/utils';
 import { onAccountLoginFinish } from '@/icp/receiveMsg';
 import UserSelect from '../components/UserSelect';
-import { AccountPlatInfoMap } from '../../../../../../account/comment';
 import { DeclarationDouyin } from '../../../../../../../../electron/plat/douyin/common.douyin';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
@@ -326,41 +327,15 @@ const VideoPubSetModal_KWAI = memo(
 
       return (
         <>
-          <h1>标题</h1>
-          <Input
-            value={currChooseAccount.pubParams.title}
-            showCount
-            maxLength={
-              AccountPlatInfoMap.get(currChooseAccount.account!.type)
-                ?.commonPubParamsConfig.titleMax
-            }
+          <TitleInput
             placeholder="好的标题可以获得更多浏览"
-            variant="filled"
-            onChange={(e) => {
-              setOnePubParams(
-                {
-                  title: e.target.value,
-                },
-                currChooseAccount.id,
-              );
-            }}
+            currChooseAccount={currChooseAccount}
           />
 
-          <h1>描述</h1>
-          <TextArea
-            value={currChooseAccount?.pubParams.describe}
+          <DescTextArea
             placeholder="添加作品简介"
-            variant="filled"
-            showCount
+            currChooseAccount={currChooseAccount}
             maxLength={1000}
-            onChange={(e) => {
-              setOnePubParams(
-                {
-                  describe: e.target.value,
-                },
-                currChooseAccount!.id,
-              );
-            }}
           />
 
           <TopicSelect

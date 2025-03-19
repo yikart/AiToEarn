@@ -11,7 +11,7 @@ import { useUserStore } from '@/store/user';
 
 interface ProjectAxiosRequestConfig extends AxiosRequestConfig {
   // 是否需要token，默认为true，为false表示不需要token，需要token的接口如果不存在token会被拦截
-  isToken: boolean;
+  isToken?: boolean;
 }
 
 export const getAxiosRequest = (baseURL: string) => {

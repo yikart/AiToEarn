@@ -11,9 +11,10 @@ import { AccountStatus, AccountType } from '@@/AccountEnum';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import useDebounceFetcher from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/useDebounceFetcher';
 import {
-  ScheduledTimeSelect,
-  VideoPubRestartLogin,
-} from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
+  DescTextArea,
+  ScheduledTimeSelect, TitleInput,
+  VideoPubRestartLogin
+} from "@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon";
 import { getSphActivity } from '@/icp/publish';
 import { ipcUpdateAccountStatus } from '@/icp/account';
 import { WxSphEventList } from '../../../../../../../../electron/plat/shipinhao/wxShp.type';
@@ -99,46 +100,17 @@ const VideoPubSetModal_KWAI = memo(
 
       return (
         <>
-          <h1>
-            短标题
-            <Tooltip title="短标题会出现在搜索、话题、活动、地点、订阅号消息、发现页红点等场景">
-              <QuestionCircleOutlined style={{ marginLeft: '2px' }} />
-            </Tooltip>
-          </h1>
-          <Input
-            value={currChooseAccount.pubParams.title}
-            showCount
-            maxLength={
-              AccountPlatInfoMap.get(currChooseAccount.account!.type)
-                ?.commonPubParamsConfig.titleMax
-            }
+          <TitleInput
+            title="短标题"
+            tips="短标题会出现在搜索、话题、活动、地点、订阅号消息、发现页红点等场景"
             placeholder="概况视频的主要内容。字数建议6-16个字符"
-            variant="filled"
-            onChange={(e) => {
-              setOnePubParams(
-                {
-                  title: e.target.value,
-                },
-                currChooseAccount.id,
-              );
-            }}
+            currChooseAccount={currChooseAccount}
           />
 
-          <h1>描述</h1>
-          <TextArea
-            value={currChooseAccount?.pubParams.describe}
+          <DescTextArea
             placeholder="填写更全面的描述信息，让更多人看到你吧！"
-            variant="filled"
-            showCount
+            currChooseAccount={currChooseAccount}
             maxLength={1000}
-            onChange={(e) => {
-              setOnePubParams(
-                {
-                  describe: e.target.value,
-                },
-                currChooseAccount!.id,
-              );
-            }}
           />
 
           <h1>话题</h1>

@@ -14,6 +14,7 @@ import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
 import lodash from 'lodash';
 import { VideoModel } from '../../../../../electron/db/models/video';
 import { getImgFile } from '../../../../components/Choose/ImgChoose';
+import { useAICreateTitleStore } from '../../components/AICreateTitle/useAICreateTitle';
 
 interface IVideoPageStore {
   // 选择的视频数据
@@ -62,11 +63,15 @@ const store: IVideoPageStore = {
   operateId: '',
 };
 
+const getStore = () => {
+  return lodash.cloneDeep(store);
+};
+
 // 视频发布所有组件的共享状态和方法
 export const useVideoPageStore = create(
   combine(
     {
-      ...store,
+      ...getStore(),
     },
     (set, get, storeApi) => {
       const methods = {
@@ -243,10 +248,10 @@ export const useVideoPageStore = create(
 
         // 清空所有数据
         clear() {
-          store.commonPubParams.cover = undefined;
           set({
-            ...store,
+            ...getStore(),
           });
+          useAICreateTitleStore.getState().clear();
         },
 
         // 删除某个视频

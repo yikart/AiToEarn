@@ -6,19 +6,22 @@
  * @Description: 工具
  */
 import http from './request';
+import { AiCreateType } from './types/tools';
 
 export const toolsApi = {
   /**
    * 获取智能标题
    * @param url
    * @param type 1=标题 2=描述
+   * @param max
    */
-  apiVideoAiTitle(url: string, type: 1 | 2) {
+  apiVideoAiTitle(url: string, type: AiCreateType, max: number) {
     return http.post<string>(
       '/tools/ai/video/title',
       {
         url,
         type,
+        max: max - 10,
       },
       {
         isToken: true,
@@ -82,6 +85,10 @@ export const toolsApi = {
     formData.append('file', file);
     return http.post<{
       name: string;
-    }>('/oss/upload', formData);
+    }>('/oss/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   },
 };

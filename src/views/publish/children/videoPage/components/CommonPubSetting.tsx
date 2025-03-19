@@ -17,6 +17,8 @@ import {
   IAccountPlatInfo,
 } from '../../../../account/comment';
 import { AccountType } from '../../../../../../commont/AccountEnum';
+import AICreateTitle from '../../../components/AICreateTitle/AICreateTitle';
+import { AiCreateType } from '../../../../../api/types/tools';
 
 const { TextArea } = Input;
 
@@ -28,14 +30,19 @@ export interface ICommonPubSettingProps {}
 const CommonPubSetting = memo(
   forwardRef(
     ({}: ICommonPubSettingProps, ref: ForwardedRef<ICommonPubSettingRef>) => {
-      const { setPubParams, videoListChoose, setVideoCoverFirst } =
-        useVideoPageStore(
-          useShallow((state) => ({
-            setPubParams: state.setPubParams,
-            videoListChoose: state.videoListChoose,
-            setVideoCoverFirst: state.setVideoCoverFirst,
-          })),
-        );
+      const {
+        setPubParams,
+        videoListChoose,
+        setVideoCoverFirst,
+        commonPubParams,
+      } = useVideoPageStore(
+        useShallow((state) => ({
+          setPubParams: state.setPubParams,
+          videoListChoose: state.videoListChoose,
+          setVideoCoverFirst: state.setVideoCoverFirst,
+          commonPubParams: state.commonPubParams,
+        })),
+      );
       // 当前选择的通用封面
       const [cover, setCover] = useState<IImgFile>();
 
@@ -125,6 +132,7 @@ const CommonPubSetting = memo(
           </h2>
           <Input
             showCount
+            value={commonPubParams.title}
             maxLength={Math.min(
               getPlatCommonParamsMax.titleMax,
               ...getChoosedAccountPlatList.map(
@@ -139,6 +147,22 @@ const CommonPubSetting = memo(
               });
             }}
           />
+          <AICreateTitle
+            type={AiCreateType.TITLE}
+            tips="在通用发布参数会选择第一个视频作为生成标题的对象"
+            onAiCreateFinish={(text) => {
+              setPubParams({
+                title: text,
+              });
+            }}
+            videoFile={videoListChoose[0]?.video}
+            max={Math.min(
+              getPlatCommonParamsMax.titleMax,
+              ...getChoosedAccountPlatList.map(
+                (v) => v.commonPubParamsConfig.titleMax || 30,
+              ),
+            )}
+          />
 
           <h2>描述</h2>
           <TextArea
@@ -146,12 +170,24 @@ const CommonPubSetting = memo(
             variant="filled"
             showCount
             maxLength={500}
+            value={commonPubParams.describe}
             style={{ height: 200, resize: 'none' }}
             onChange={(e) => {
               setPubParams({
                 describe: e.target.value,
               });
             }}
+          />
+          <AICreateTitle
+            type={AiCreateType.DESC}
+            tips="在通用发布参数会选择第一个视频作为生成描述的对象"
+            onAiCreateFinish={(text) => {
+              setPubParams({
+                describe: text,
+              });
+            }}
+            videoFile={videoListChoose[0]?.video}
+            max={500}
           />
           <p className="commonPubSetting-tip">
             描述中可带话题，以‘#’开头、‘空格’结尾，

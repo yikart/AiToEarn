@@ -10,7 +10,7 @@ import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import TopicSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/TopicSelect';
 import LocationSelect from '../components/LocationSelect';
 import UserSelect from '../components/UserSelect';
-import { ScheduledTimeSelect } from '../components/VideoPubSetModalCommon';
+import { DescTextArea, ScheduledTimeSelect } from "../components/VideoPubSetModalCommon";
 
 const { TextArea } = Input;
 
@@ -30,21 +30,10 @@ const VideoPubSetModal_KWAI = memo(
 
       return (
         <>
-          <h1>描述</h1>
-          <TextArea
-            value={currChooseAccount?.pubParams.describe}
+          <DescTextArea
             placeholder="填写合适的话题和描述，作品能获得更多推荐~"
-            variant="filled"
-            showCount
+            currChooseAccount={currChooseAccount}
             maxLength={500}
-            onChange={(e) => {
-              setOnePubParams(
-                {
-                  describe: e.target.value,
-                },
-                currChooseAccount!.id,
-              );
-            }}
           />
 
           <TopicSelect
