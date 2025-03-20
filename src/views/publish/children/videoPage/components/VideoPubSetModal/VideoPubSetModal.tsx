@@ -15,6 +15,7 @@ import {
   Modal,
   notification,
   Space,
+  Switch,
   Tabs,
   Tooltip,
 } from 'antd';
@@ -89,6 +90,12 @@ const VideoPubSetModal = memo(
           updateAccounts: state.updateAccounts,
           accountRestart: state.accountRestart,
           clear: state.clear,
+        })),
+      );
+      const { moreParamsOpen, setMoreParamsOpen } = usePubStroe(
+        useShallow((state) => ({
+          moreParamsOpen: state.moreParamsOpen,
+          setMoreParamsOpen: state.setMoreParamsOpen,
         })),
       );
       const [loading, setLoading] = useState(false);
@@ -253,6 +260,7 @@ const VideoPubSetModal = memo(
           if (errVideoItem) {
             setCurrChooseAccountId(key);
             message.warning(errVideoItem.message);
+            setMoreParamsOpen(true);
             return;
           }
         }
@@ -299,9 +307,26 @@ const VideoPubSetModal = memo(
             }}
           />
           <Modal
-            width={900}
+            width={moreParamsOpen ? 900 : 500}
             maskClosable={false}
-            title="预览/发布配置"
+            title={
+              <div className={styles.videoPubSetModal_titleWrap}>
+                <div className="videoPubSetModal-title">预览及发布</div>
+                <div className="videoPubSetModal-more">
+                  <div className="videoPubSetModal-more-core">
+                    <label>填写更多参数</label>
+                    <Switch
+                      size="small"
+                      value={moreParamsOpen}
+                      onClick={(e) => setMoreParamsOpen(e)}
+                    />
+                  </div>
+                  <div className="videoPubSetModal-more-tips">
+                    开启后，将显示更多发布参数供您填写
+                  </div>
+                </div>
+              </div>
+            }
             open={videoPubSetModalOpen}
             onOk={handleOk}
             onCancel={close}
@@ -345,7 +370,12 @@ const VideoPubSetModal = memo(
                   .filter((v) => v !== undefined)}
               />
 
-              <div className="videoPubSetModal_con">
+              <div
+                className={[
+                  'videoPubSetModal_con',
+                  !moreParamsOpen && 'videoPubSetModal_con--noMore',
+                ].join(' ')}
+              >
                 <div className="videoPubSetModal_con-left">
                   {(() => {
                     const errItem = errVideoMap.get(

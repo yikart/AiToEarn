@@ -9,10 +9,13 @@ import {
 export interface IPubStore {
   // 视频发布保存的数据
   videoPubSaveData: string;
+  // 是否开启填写更多参数
+  moreParamsOpen: boolean;
 }
 
 const state: IPubStore = {
   videoPubSaveData: '',
+  moreParamsOpen: false,
 };
 
 export const usePubStroe = createPersistStore(
@@ -21,6 +24,12 @@ export const usePubStroe = createPersistStore(
   },
   (set, _get) => {
     return {
+      setMoreParamsOpen(moreParamsOpen: boolean) {
+        set({
+          moreParamsOpen,
+        });
+      },
+
       // 设置视频发布保存的数据
       setVideoPubSaveData(data: Partial<IVideoPageStore>) {
         if (data.videoListChoose && data.videoListChoose.length !== 0) {

@@ -254,6 +254,15 @@
               margin-right: 10px;
               color: var(--lightGreyColor);
             }
+            &--warning {
+              color: var(--errerColor);
+              label {
+                color: var(--errerColor);
+              }
+              & > span {
+                margin-right: 5px;
+              }
+            }
           }
         }
         &-title {

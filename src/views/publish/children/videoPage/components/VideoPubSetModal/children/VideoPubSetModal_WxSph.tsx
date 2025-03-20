@@ -3,23 +3,22 @@ import {
   IVideoPubSetModalChildProps,
   IVideoPubSetModalChildRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/videoPubSetModal.type';
-import { Checkbox, Input, Select, Spin, Tooltip } from 'antd';
+import { Checkbox, Input, Select, Spin } from 'antd';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
 import { AccountStatus, AccountType } from '@@/AccountEnum';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import useDebounceFetcher from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/useDebounceFetcher';
 import {
   DescTextArea,
-  ScheduledTimeSelect, TitleInput,
-  VideoPubRestartLogin
-} from "@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon";
+  ScheduledTimeSelect,
+  TitleInput,
+  VideoPubRestartLogin,
+} from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
 import { getSphActivity } from '@/icp/publish';
 import { ipcUpdateAccountStatus } from '@/icp/account';
 import { WxSphEventList } from '../../../../../../../../electron/plat/shipinhao/wxShp.type';
 import UserSelect from '../components/UserSelect';
-import { AccountPlatInfoMap } from '../../../../../../account/comment';
 
 const { TextArea } = Input;
 

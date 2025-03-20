@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, memo } from 'react';
+import React, { ForwardedRef, forwardRef, memo } from 'react';
 import { IVideoChooseItem } from '@/views/publish/children/videoPage/videoPage';
 import { Alert, Avatar, Button, Tooltip } from 'antd';
 import { AccountPlatInfoMap } from '@/views/account/comment';
@@ -9,6 +9,7 @@ import {
   PlusOutlined,
   VideoCameraFilled,
   SwapOutlined,
+  ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
@@ -99,12 +100,25 @@ const VideoChooseItem = memo(
                           {formatSeconds(videoChooseItem.video.duration)}
                         </span>
                       </div>
-                      <div className="videoChooseItem-left-bottom-item">
+                      <div
+                        className={[
+                          'videoChooseItem-left-bottom-item',
+                          videoChooseItem.video.width < 640 &&
+                            videoChooseItem.video.width < 480 &&
+                            'videoChooseItem-left-bottom-item--warning',
+                        ].join(' ')}
+                      >
                         <label>分辨率</label>
                         <span>
                           {videoChooseItem.video.width}*
                           {videoChooseItem.video.height}
                         </span>
+                        {videoChooseItem.video.width < 640 &&
+                          videoChooseItem.video.width < 480 && (
+                            <Tooltip title="视频清晰度过低，有概率被平台限流或不能发布">
+                              <ExclamationCircleOutlined />
+                            </Tooltip>
+                          )}
                       </div>
                     </div>
                   </div>
