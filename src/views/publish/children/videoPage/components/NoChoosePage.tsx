@@ -5,6 +5,7 @@ import { PubType } from '../../../../../../commont/publish/PublishEnum';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import localUpload from '../images/localUpload.png';
+import importRecord from '../images/importRecord.png';
 import { Button } from 'antd';
 
 export interface INoChoosePageRef {}
@@ -29,23 +30,39 @@ const NoChoosePage = memo(
         <p className="video-pubBefore-tip">
           支持多视频、多平台、多账号同时发布
         </p>
-        <VideoChoose
-          onMultipleChoose={(videoFiles) => {
-            setOperateId();
-            addVideos(videoFiles);
-          }}
-          onStartShoose={() => {
-            setLoadingPageLoading(true);
-          }}
-          onChooseFail={() => {
-            setLoadingPageLoading(false);
-          }}
-        >
-          <img src={localUpload} />
-          <Button type="primary" size="large">
-            本地上传
-          </Button>
-        </VideoChoose>
+
+        <div className="video-pubBefore-con">
+          <VideoChoose
+            onMultipleChoose={(videoFiles) => {
+              setOperateId();
+              addVideos(videoFiles);
+            }}
+            onStartShoose={() => {
+              setLoadingPageLoading(true);
+            }}
+            onChooseFail={() => {
+              setLoadingPageLoading(false);
+            }}
+          >
+            <img src={localUpload} />
+            <Button type="primary" size="large">
+              本地上传
+            </Button>
+          </VideoChoose>
+
+          <div
+            className="videoChoose"
+            onClick={() => {
+              console.log('click');
+            }}
+          >
+            <img src={importRecord} />
+            <Button type="primary" size="large">
+              导入发布记录
+            </Button>
+          </div>
+        </div>
+
         <SupportPlat pubType={PubType.VIDEO} type={1} />
       </div>
     );

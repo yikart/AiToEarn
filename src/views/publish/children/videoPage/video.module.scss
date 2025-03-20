@@ -17,11 +17,15 @@
       justify-content: center;
       width: 100%;
       height: 100%;
+      &-con {
+        display: flex;
+      }
       h1 {
         font-size: 24px;
       }
       .videoChoose {
         display: flex;
+        cursor: pointer;
         flex-direction: column;
         background: rgb(247, 250, 250);
         width: 160px;
@@ -34,8 +38,14 @@
         margin-bottom: 25px;
         border: 1px solid transparent;
         transition: 0.3s;
+        margin-right: 15px;
+        &:last-of-type {
+          margin-right: 0;
+        }
         img {
           width: 50px;
+          height: 45px;
+          object-fit: contain;
         }
         button {
           margin-top: 20px;
@@ -47,6 +57,14 @@
         }
         &:hover {
           border-color: rgb(255, 142, 28);
+        }
+        &:nth-child(2) {
+          &:hover {
+            border-color: var(--colorPrimary6) !important;
+          }
+          button {
+            background: var(--colorPrimary6) !important;
+          }
         }
       }
       &-tip {
