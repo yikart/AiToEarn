@@ -1,13 +1,14 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-19 17:28:02
+ * @LastEditTime: 2025-03-20 22:38:17
  * @LastEditors: nevin
  * @Description: reply Reply
  */
-import { AutoRunModel } from '../../db/models/autoRun';
+import { AutoRunModel, AutoRunType } from '../../db/models/autoRun';
 import { AccountService } from '../account/service';
 import { toolsApi } from '../api/tools';
+import { AutoRunService } from '../autoRun/service';
 import { Controller, Et, Icp, Inject } from '../core/decorators';
 import platController from '../plat';
 import type { CommentData } from '../plat/plat.type';
@@ -20,6 +21,9 @@ export class ReplyController {
 
   @Inject(AccountService)
   private readonly accountService!: AccountService;
+
+  @Inject(AutoRunService)
+  private readonly autoRunService!: AutoRunService;
 
   /**
    * 作品列表
@@ -148,6 +152,30 @@ export class ReplyController {
       content,
       option,
     );
+    return res;
+  }
+
+  /**
+   * 创建自动一键评论任务
+   */
+  @Icp('ICP_AUTO_RUN_CREATE_REPLY')
+  async createReplyCommentAutoRun(
+    event: Electron.IpcMainInvokeEvent,
+    accountId: number,
+    dataId: string,
+    cycleType: string,
+  ): Promise<AutoRunModel | null> {
+    const account = await this.accountService.getAccountById(accountId);
+    if (!account) return null;
+
+    const res = await this.autoRunService.createAutoRun({
+      accountId,
+      cycleType,
+      type: AutoRunType.ReplyComment,
+      userId: account.uid,
+      dataId,
+    });
+
     return res;
   }
 
