@@ -2331,35 +2331,60 @@ const Trending: React.FC = () => {
                             <div className="flex items-center justify-between flex-1">
                               <div className="flex items-center space-x-12">
                                 <div className="w-24 text-center">
-                                  <span className="text-[#a66ae4]">
+                                  {
+                                    item.anaAdd.addInteractiveCount ? (
+<span className="text-[#a66ae4] flex items-center justify-center">
+                                    <span className="text-red-500 mr-1 font-bold">↑</span>
                                     {formatNumber(item.anaAdd.addInteractiveCount)}
                                   </span>
-                                  <p className="text-[#a66ae4]">
-                                    {formatNumber(item.anaAdd.interactiveCount)}
+                                    ):(
+<span className="text-[#a66ae4] flex items-center justify-center">
+                                    -
+                                  </span>
+                                    )
+                                  }
+                                  
+
+
+                                  {
+                                    item.anaAdd.interactiveCount ? (
+                                      <p className="text-[#a66ae4]" style={{fontSize: '12px', border: '1px solid #a66ae4', borderRadius: '15px', padding: '2px', marginTop: '6px'}}>
+                                    <span className="text-red-500 mr-1 font-bold">↑</span>
+                                    总{formatNumber(item.anaAdd.interactiveCount)}
                                   </p>
+                                    ):(
+                                      <p style={{fontSize: '12px', padding: '2px', marginTop: '6px'}}>
+                                        -
+                                      </p>
+                                    )
+                                  }
+                                  
                                 </div>
                                 <div className="w-24 text-center">
-                                  <span className="text-[#a66ae4]">
+                                  <span className="text-[#a66ae4] flex items-center justify-center">
+                                    <span className="text-red-500 mr-1">↑</span>
                                     {formatNumber(item.anaAdd.addCollectCount)}
                                   </span>
-                                  <p className="text-[#a66ae4]">
-                                    {formatNumber(item.anaAdd.collectedCount)}
+                                  <p className="text-[#a66ae4]" style={{fontSize: '12px', border: '1px solid #a66ae4', borderRadius: '15px', padding: '2px', marginTop: '6px'}}>
+                                    总{formatNumber(item.anaAdd.collectedCount)}
                                   </p>
                                 </div>
                                 <div className="w-24 text-center">
-                                  <span className="text-[#a66ae4]">
+                                  <span className="text-[#a66ae4] flex items-center justify-center">
+                                    <span className="text-red-500 mr-1">↑</span>
                                     {formatNumber(item.anaAdd.addShareCount)}
                                   </span>
-                                  <p className="text-[#a66ae4]">
-                                    {formatNumber(item.anaAdd.useShareCount)}
+                                  <p className="text-[#a66ae4]" style={{fontSize: '12px', border: '1px solid #a66ae4', borderRadius: '15px', padding: '2px', marginTop: '6px'}}>
+                                    总{formatNumber(item.anaAdd.useShareCount)}
                                   </p>
                                 </div>
                                 <div className="w-24 text-center">
-                                  <span className="text-[#a66ae4]">
+                                  <span className="text-[#a66ae4] flex items-center justify-center">
+                                    <span className="text-red-500 mr-1">↑</span>
                                     {formatNumber(item.anaAdd.addCommentCount)}
                                   </span>
-                                  <p className="text-[#a66ae4]">
-                                    {formatNumber(item.anaAdd.useCommentCount)}
+                                  <p className="text-[#a66ae4]" style={{fontSize: '12px', border: '1px solid #a66ae4', borderRadius: '15px', padding: '2px', marginTop: '6px'}}>
+                                    总{formatNumber(item.anaAdd.useCommentCount)}
                                   </p>
                                 </div>
                               </div>
@@ -2372,22 +2397,22 @@ const Trending: React.FC = () => {
                             <div className="flex items-center justify-between flex-1">
                               <div className="flex items-center space-x-12">
                                 <div className="w-24 text-center">
-                                  <span className="text-[#a66ae4]">
+                                  <span className="text-[#a66ae4] flex items-center justify-center">
                                     {item.stats.likeCount || '-'}
                                   </span>
                                 </div>
                                 <div className="w-24 text-center">
-                                  <span className="text-[#a66ae4]">
+                                  <span className="text-[#a66ae4] flex items-center justify-center">
                                     {item.stats.commentCount || '-'}
                                   </span>
                                 </div>
                                 <div className="w-24 text-center">
-                                  <span className="text-[#a66ae4]">
+                                  <span className="text-[#a66ae4] flex items-center justify-center">
                                     {(item as any).shareCount || '-'}
                                   </span>
                                 </div>
                                 <div className="w-24 text-center">
-                                  <span className="text-[#a66ae4]">
+                                  <span className="text-[#a66ae4] flex items-center justify-center">
                                     {(item as any).collectCount || '-'}
                                   </span>
                                 </div>
