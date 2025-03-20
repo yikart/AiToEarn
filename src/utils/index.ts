@@ -22,7 +22,6 @@ export function formatTime(
   time: string | number | Date,
   format: string = 'YYYY-MM-DD HH:mm:ss',
 ) {
-  console.log(time);
   return dayjs(time).format(format);
 }
 

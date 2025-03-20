@@ -22,6 +22,10 @@ html, body, #root {
   -webkit-app-region: no-drag;
 }
 
+.ant-image-preview-close {
+  top: 60px;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

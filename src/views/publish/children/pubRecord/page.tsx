@@ -6,6 +6,7 @@ import {
   Avatar,
   Button,
   Drawer,
+  Image,
   Modal,
   Spin,
   Table,
@@ -25,7 +26,15 @@ import { AccountType } from '../../../../../commont/AccountEnum';
 import WebView from '../../../../components/WebView';
 import { getVideoFile } from '../../../../components/Choose/VideoChoose';
 
-const PubCon = ({ prm }: { prm: PubRecordModel }) => {
+export const ImageView = ({
+  prm,
+  width,
+  height,
+}: {
+  prm: PubRecordModel;
+  width: number | string;
+  height: number | string;
+}) => {
   const [imgFile, setImgFile] = useState<IImgFile>();
   useEffect(() => {
     getImgFile(prm.coverPath).then((res) => {
@@ -33,8 +42,8 @@ const PubCon = ({ prm }: { prm: PubRecordModel }) => {
     });
   }, []);
   return (
-    <div className="pubRecord-pubCon">
-      {imgFile && <img src={imgFile.imgUrl} />}
+    <div className={styles['pubRecord-pubCon']}>
+      {imgFile && <Image src={imgFile.imgUrl} height={height} width={width} />}
       <span
         title={getFilePathName(prm.videoPath)}
         className="pubRecord-pubCon-name"
@@ -84,7 +93,7 @@ export default function Page() {
     },
     {
       title: '发布内容',
-      render: (text, prm) => <PubCon prm={prm} />,
+      render: (text, prm) => <ImageView prm={prm} width={50} height={70} />,
       width: 200,
       key: '发布内容',
     },
@@ -215,7 +224,7 @@ export default function Page() {
       <Drawer title="发布记录" onClose={close} open={open} width={600}>
         <Spin spinning={recordLoaidng}>
           <div className={styles.pubRecord} style={{ padding: '0' }}>
-            <PubCon prm={currPubRecordModel!} />
+            <ImageView prm={currPubRecordModel!} width="auto" height={150} />
 
             <ul className="pubRecord-record">
               {pubRecordList.map((v) => {
