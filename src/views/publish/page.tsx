@@ -9,7 +9,6 @@ import styles from './publish.module.scss';
 import {
   VideoCameraOutlined,
   FileImageOutlined,
-  HddOutlined,
   ContainerOutlined,
 } from '@ant-design/icons';
 import { message, Segmented } from 'antd';
@@ -67,11 +66,6 @@ export default function Page() {
             label: '发布记录',
             value: '/publish/pubRecord',
             icon: <ContainerOutlined />,
-          },
-          {
-            label: '草稿箱',
-            value: '/publish/drafts',
-            icon: <HddOutlined />,
           },
         ]}
         onChange={(value) => {

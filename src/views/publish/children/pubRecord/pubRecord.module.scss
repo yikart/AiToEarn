@@ -4,21 +4,6 @@
   padding: 20px;
   box-sizing: border-box;
   :global {
-    .pubRecord-pubCon {
-      display: flex;
-      align-items: center;
-      //max-width: 350px;
-      & > img {
-        height: 60px;
-        margin-right: 10px;
-      }
-      &-name {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-    }
-
     .pubRecord-record {
       margin-top: 20px;
       display: flex;
@@ -90,6 +75,25 @@
           }
         }
       }
+    }
+  }
+}
+
+.pubRecord-pubCon {
+  display: flex;
+  align-items: center;
+  :global {
+    .ant-image {
+      flex-shrink: 0;
+      margin-right: 10px;
+      img {
+        object-fit: cover;
+      }
+    }
+    .pubRecord-pubCon-name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }

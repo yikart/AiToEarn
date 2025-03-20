@@ -33,7 +33,6 @@ import Publish from '@/views/publish/page';
 import VideoPage from '@/views/publish/children/videoPage/page';
 import ImagePage from '@/views/publish/children/imagePage/page';
 import PubRecord from '@/views/publish/children/pubRecord/page';
-import Drafts from '@/views/publish/children/drafts/page';
 import Statistics from '@/views/statistics';
 import Task from '@/views/task';
 // import HotTopic from '@/views/trending/hotTopic';
@@ -115,7 +114,6 @@ export const router: CustomRouteObject[] = [
           //   element: <TextPage />,
           // },
           { path: 'pubRecord', element: <PubRecord /> },
-          { path: 'drafts', element: <Drafts /> },
         ],
       },
       {
