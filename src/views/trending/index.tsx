@@ -402,15 +402,17 @@ const Trending: React.FC = () => {
     rankingId: string,
     page = 1,
     category?: string,
+    formattedDate?: string,
   ) => {
     setRankingLoading(true);
+    let dates = formattedDate ? formattedDate : selectedDate;
     try {
       const response = await platformApi.getRankingContents(
         rankingId,
         page,
         20,
         category,
-        selectedDate,
+        dates,
       );
       setRankingContents(response.items);
       setPagination(response.meta);
@@ -510,6 +512,7 @@ const Trending: React.FC = () => {
         selectedRanking.id,
         1,
         selectedCategory === '全部' ? undefined : selectedCategory,
+        formattedDate,
       );
     }
   };
