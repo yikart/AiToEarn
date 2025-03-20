@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-23 15:48:14
- * @LastEditTime: 2025-03-19 07:50:43
+ * @LastEditTime: 2025-03-20 20:28:02
  * @LastEditors: nevin
  * @Description: 自动进程
  */
@@ -51,6 +51,7 @@ export interface AutoRunRecord {
  */
 export async function ipcCreateAutoRun(data: {
   accountId: number;
+  dataId: number;
   type: AutoRunType;
   cycleType: string;
 }) {

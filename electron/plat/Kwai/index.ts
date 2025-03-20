@@ -419,9 +419,6 @@ class KwaiPub {
       replyTo?: number; // 798319351;
     },
   ) {
-    console.log('----------- photoId', photoId);
-    console.log('----------- content', content);
-
     const res = await this.requestApi<CommentAddResponse>({
       cookie: cookie,
       url: '/rest/cp/creator/comment/add',

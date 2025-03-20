@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-23 15:48:14
- * @LastEditTime: 2025-02-14 22:36:25
+ * @LastEditTime: 2025-03-20 21:28:10
  * @LastEditors: nevin
  * @Description:
  */
@@ -28,6 +28,7 @@ export type CommentData = {
   nikeName?: string;
   headUrl?: string;
   data: any; // 原数据
+  subCommentList: CommentData[]; // 子数据
 };
 
 export enum PageType {
@@ -122,6 +123,24 @@ export async function icpCreateCommentList(accountId: number, dataId: string) {
     'ICP_REPLY_COMMENT_LIST_BY_AI',
     accountId,
     dataId,
+  );
+  return res;
+}
+
+/**
+ * 创建一键回复自动进程
+ * @param data
+ */
+export async function ipcCreateAutoRunOfReply(
+  accountId: number,
+  dataId: string, // 作品ID
+  cycleType: string,
+) {
+  const res: string = await window.ipcRenderer.invoke(
+    'ICP_AUTO_RUN_CREATE_REPLY',
+    accountId,
+    dataId,
+    cycleType,
   );
   return res;
 }
