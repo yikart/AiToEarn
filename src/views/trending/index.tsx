@@ -192,6 +192,17 @@ const DataInfoContent: React.FC<{ ranking: PlatformRanking }> = ({
   </div>
 );
 
+// 格式化数字，超过10000显示为w单位
+const formatNumber = (num: number) => {
+  if (!num && num !== 0) return '0';
+  
+  if (num >= 10000) {
+    return (num / 10000).toFixed(1) + 'w';
+  }
+  
+  return num.toString();
+};
+
 const Trending: React.FC = () => {
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(
     null,
@@ -2188,14 +2199,33 @@ const Trending: React.FC = () => {
                       <div className="">
                         <div className="flex items-center">
                           <div className="w-32">作品分类</div>
-                          <div className="flex items-center flex-1">
+
+                        {
+                          selectedRanking?.name.includes('增量') && (
+                            <div className="flex items-center flex-1">
+                            <div className="flex items-center space-x-12">
+                              <div className="w-24 text-center">互动增量</div>
+                              <div className="w-24 text-center">新增收藏</div>
+                              <div className="w-24 text-center">新增分享</div>
+                              <div className="w-24 text-center">新增评论</div>
+                              </div>
+                            </div>
+                          )
+                        }
+
+                        {
+                          !selectedRanking?.name.includes('增量') && (
+                            <div className="flex items-center flex-1">
                             <div className="flex items-center space-x-12">
                               <div className="w-24 text-center">点赞</div>
                               <div className="w-24 text-center">评论</div>
                               <div className="w-24 text-center">分享</div>
                               <div className="w-24 text-center">收藏</div>
+                              </div>
                             </div>
-                          </div>
+                          )
+                        }
+                          
                         </div>
                       </div>
                     </div>
@@ -2296,38 +2326,78 @@ const Trending: React.FC = () => {
                               <span>{item.category}</span>
                               {/* <span className="ml-2">{item.type}</span> */}
                             </div>
+
+                            { selectedRanking?.name.includes('增量') && (
                             <div className="flex items-center justify-between flex-1">
                               <div className="flex items-center space-x-12">
                                 <div className="w-24 text-center">
                                   <span className="text-[#a66ae4]">
-                                    {item.stats.likeCount || '1w'}
+                                    {formatNumber(item.anaAdd.addInteractiveCount)}
+                                  </span>
+                                  <p className="text-[#a66ae4]">
+                                    {formatNumber(item.anaAdd.interactiveCount)}
+                                  </p>
+                                </div>
+                                <div className="w-24 text-center">
+                                  <span className="text-[#a66ae4]">
+                                    {formatNumber(item.anaAdd.addCollectCount)}
+                                  </span>
+                                  <p className="text-[#a66ae4]">
+                                    {formatNumber(item.anaAdd.collectedCount)}
+                                  </p>
+                                </div>
+                                <div className="w-24 text-center">
+                                  <span className="text-[#a66ae4]">
+                                    {formatNumber(item.anaAdd.addShareCount)}
+                                  </span>
+                                  <p className="text-[#a66ae4]">
+                                    {formatNumber(item.anaAdd.useShareCount)}
+                                  </p>
+                                </div>
+                                <div className="w-24 text-center">
+                                  <span className="text-[#a66ae4]">
+                                    {formatNumber(item.anaAdd.addCommentCount)}
+                                  </span>
+                                  <p className="text-[#a66ae4]">
+                                    {formatNumber(item.anaAdd.useCommentCount)}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        }
+
+
+{ !selectedRanking?.name.includes('增量') && (
+                            <div className="flex items-center justify-between flex-1">
+                              <div className="flex items-center space-x-12">
+                                <div className="w-24 text-center">
+                                  <span className="text-[#a66ae4]">
+                                    {item.stats.likeCount || '-'}
                                   </span>
                                 </div>
                                 <div className="w-24 text-center">
                                   <span className="text-[#a66ae4]">
-                                    {item.stats.commentCount || '1w'}
+                                    {item.stats.commentCount || '-'}
                                   </span>
                                 </div>
                                 <div className="w-24 text-center">
                                   <span className="text-[#a66ae4]">
-                                    {(item as any).shareCount || '1w'}
+                                    {(item as any).shareCount || '-'}
                                   </span>
                                 </div>
                                 <div className="w-24 text-center">
                                   <span className="text-[#a66ae4]">
-                                    {(item as any).collectCount || '1w'}
+                                    {(item as any).collectCount || '-'}
                                   </span>
                                 </div>
                               </div>
-                              {/* <div className="flex items-center space-x-2">
-                                <button className="text-[#a66ae4] hover:text-[#9559d1] px-3 py-1 rounded-full border border-[#e6d3f7] text-sm">
-                                  收藏
-                                </button>
-                                <button className="text-gray-600 hover:text-[#a66ae4] px-3 py-1 rounded-full border border-gray-200 text-sm">
-                                  更多
-                                </button>
-                              </div> */}
                             </div>
+                          )
+                        }
+
+
+
                           </div>
                         </div>
                       </div>
