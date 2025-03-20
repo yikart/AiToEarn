@@ -1,19 +1,8 @@
-import {
-  ForwardedRef,
-  forwardRef,
-  memo,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { ForwardedRef, forwardRef, memo, useRef, useState } from 'react';
 import styles from './AccountSidebar.module.scss';
 import { AccountInfo, AccountPlatInfoMap } from '../../comment';
 import { Avatar, Button, message, Popover } from 'antd';
-import {
-  accountLogin,
-  acpAccountLoginCheck,
-  icpGetAccountList,
-} from '../../../../icp/account';
+import { accountLogin, acpAccountLoginCheck } from '../../../../icp/account';
 import AddAccountModal from '../AddAccountModal';
 import { AccountStatus } from '../../../../../commont/AccountEnum';
 import {
@@ -22,10 +11,11 @@ import {
   WarningOutlined,
 } from '@ant-design/icons';
 import useCssVariables from '../../../../hooks/useCssVariables';
-import { onAccountLoginFinish } from '../../../../icp/receiveMsg';
 import PubAccountDetModule, {
   IPubAccountDetModuleRef,
 } from '../../../publish/components/PubAccountDetModule/PubAccountDetModule';
+import { useShallow } from 'zustand/react/shallow';
+import { useAccountStore } from '../../../../store/account';
 
 export interface IAccountSidebarRef {}
 
@@ -116,30 +106,14 @@ const AccountSidebar = memo(
       { activeAccountId, onAccountChange }: IAccountSidebarProps,
       ref: ForwardedRef<IAccountSidebarRef>,
     ) => {
-      const [accountList, setAccountList] = useState<AccountInfo[]>([]);
       const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
       const pubAccountDetModuleRef = useRef<IPubAccountDetModuleRef>(null);
-
-      /**
-       * 获取账户列表
-       */
-      const getAccountList = async () => {
-        try {
-          const result = await icpGetAccountList();
-          setAccountList(result || []);
-        } catch (error) {
-          console.error('获取账户列表失败', error);
-          message.error('获取账户列表失败');
-        }
-      };
-
-      useEffect(() => {
-        getAccountList();
-
-        return onAccountLoginFinish(() => {
-          getAccountList();
-        });
-      }, []);
+      const { accountList, getAccountList } = useAccountStore(
+        useShallow((state) => ({
+          accountList: state.accountList,
+          getAccountList: state.getAccountList,
+        })),
+      );
 
       return (
         <>

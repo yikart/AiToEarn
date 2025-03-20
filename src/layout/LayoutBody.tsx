@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import Navigation from './Navigation';
 import styles from './layoutBody.module.scss';
+import { useAccountStore } from '../store/account';
 
 export const LayoutBody = () => {
   const userStore = useUserStore();
@@ -24,10 +25,19 @@ export const LayoutBody = () => {
       }
     };
     document.addEventListener('keydown', handleKeyDown);
+
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
+
+  useEffect(() => {
+    if (userStore.token) {
+      useAccountStore.getState().init();
+    } else {
+      useAccountStore.getState().clear();
+    }
+  }, [userStore.token]);
 
   if (!userStore.token) {
     return <Navigate to="/login" replace />;
