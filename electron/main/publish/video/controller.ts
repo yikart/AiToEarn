@@ -85,10 +85,19 @@ export class VideoPubController {
     );
     // 发布
     const pubRes = await platController.videoPublish(videoList, accountList);
+
+    let successCount = 0;
+    pubRes.map((v) => {
+      if (v.code === 1) successCount++;
+    });
     // 更改记录状态
     await this.publishService.updatePubRecordStatus(
       pubRecordId,
-      PubStatus.RELEASED,
+      successCount === 0
+        ? PubStatus.FAIL
+        : successCount === pubRes.length
+          ? PubStatus.RELEASED
+          : PubStatus.PartSuccess,
     );
     return pubRes;
   }

@@ -214,7 +214,7 @@ const VideoPubSetModal = memo(
         setLoading(false);
         close();
         setPubProgressModuleOpen(false);
-        usePubStroe().clearVideoPubSaveData();
+        usePubStroe.getState().clearVideoPubSaveData();
 
         // 成功数据
         const successList = okRes.filter((v) => v.code === 1);

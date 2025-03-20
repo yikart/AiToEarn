@@ -43,7 +43,7 @@ export class WorkData extends TempModel {
   @Column({
     type: 'tinyint',
     nullable: false,
-    comment: '状态 0 未发布/草稿 1 已发布 2=发布失败',
+    comment: '状态 0 未发布/草稿 1 已发布 2=发布失败 3=部分成功',
     enum: PubStatus,
     default: PubStatus.UNPUBLISH,
   })

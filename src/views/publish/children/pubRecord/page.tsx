@@ -10,6 +10,7 @@ import {
   Spin,
   Table,
   TableProps,
+  Tag,
   Tooltip,
 } from 'antd';
 import { getImgFile, IImgFile } from '@/components/Choose/ImgChoose';
@@ -93,6 +94,22 @@ export default function Page() {
       key: 'publishTime',
       render: (text, prm) => formatTime(prm.publishTime),
       width: 200,
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      key: 'status',
+      render: (text, prm) => {
+        switch (prm.status) {
+          case 2:
+            return <Tag color="error">全部发布失败</Tag>;
+          case 1:
+            return <Tag color="success">全部发布成功</Tag>;
+          case 3:
+            return <Tag color="warning">部分发布成功</Tag>;
+        }
+      },
+      width: 100,
     },
     {
       title: '操作',

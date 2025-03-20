@@ -20,8 +20,9 @@ export function getFilePathName(path: string) {
 // 格式化时间
 export function formatTime(
   time: string | number | Date,
-  format: string = 'YYYY-MM-DD HH:MM:SS',
+  format: string = 'YYYY-MM-DD HH:mm:ss',
 ) {
+  console.log(time);
   return dayjs(time).format(format);
 }
 
