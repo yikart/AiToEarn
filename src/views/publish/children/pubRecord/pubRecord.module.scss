@@ -79,6 +79,14 @@
   }
 }
 
+.pubRecord-component {
+  :global {
+    tr {
+      cursor: pointer;
+    }
+  }
+}
+
 .pubRecord-pubCon {
   display: flex;
   align-items: center;

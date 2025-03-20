@@ -357,32 +357,41 @@ export const useVideoPageStore = create(
 
         // 根据发布记录重新发布设置参数
         async restartPub(pubRecordList: VideoModel[], accounts: AccountInfo[]) {
+          set({
+            loadingPageLoading: true,
+          });
+
           const videoListChoose: IVideoChooseItem[] = [];
-          methods.setOperateId();
+          try {
+            methods.setOperateId();
 
-          for (let i = 0; i < pubRecordList.length; i++) {
-            const pubRecord = pubRecordList[i];
-            const account = accounts[i];
-            const video = await getVideoFile(pubRecord.videoPath!);
-            const cover = await getImgFile(pubRecord.coverPath!);
-            const pubParams = {
-              ...pubRecord,
-              cover: cover,
-              describe: pubRecord.desc,
-            };
-            pubParams.id = undefined;
-            pubParams.failMsg = '';
+            for (let i = 0; i < pubRecordList.length; i++) {
+              const pubRecord = pubRecordList[i];
+              const account = accounts[i];
+              const video = await getVideoFile(pubRecord.videoPath!);
+              const cover = await getImgFile(pubRecord.coverPath!);
+              const pubParams = {
+                ...pubRecord,
+                cover: cover,
+                describe: pubRecord.desc,
+              };
+              pubParams.id = undefined;
+              pubParams.failMsg = '';
 
-            videoListChoose.push({
-              id: generateUUID(),
-              account,
-              video,
-              pubParams,
-            });
+              videoListChoose.push({
+                id: generateUUID(),
+                account,
+                video,
+                pubParams,
+              });
+            }
+          } catch (e) {
+            console.warn(e);
           }
 
           set({
             videoListChoose,
+            loadingPageLoading: false,
           });
         },
 
@@ -401,20 +410,24 @@ export const useVideoPageStore = create(
           });
           methods.setOperateId(operateId);
 
-          if (commonPubParams?.cover?.imgPath) {
-            commonPubParams.cover = await getImgFile(
-              commonPubParams.cover.imgPath,
-            );
-          }
-          for (const item of videoListChoose) {
-            if (item.video?.videoPath) {
-              item.video = await getVideoFile(item.video.videoPath);
-            }
-            if (item.pubParams.cover) {
-              item.pubParams.cover = await getImgFile(
-                item.pubParams.cover.imgPath,
+          try {
+            if (commonPubParams?.cover?.imgPath) {
+              commonPubParams.cover = await getImgFile(
+                commonPubParams.cover.imgPath,
               );
             }
+            for (const item of videoListChoose) {
+              if (item.video?.videoPath) {
+                item.video = await getVideoFile(item.video.videoPath);
+              }
+              if (item.pubParams.cover) {
+                item.pubParams.cover = await getImgFile(
+                  item.pubParams.cover.imgPath,
+                );
+              }
+            }
+          } catch (e) {
+            console.warn(e);
           }
 
           set({

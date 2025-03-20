@@ -24,6 +24,12 @@ export const usePubStroe = createPersistStore(
   },
   (set, _get) => {
     return {
+      clear() {
+        set({
+          ...state,
+        });
+      },
+
       setMoreParamsOpen(moreParamsOpen: boolean) {
         set({
           moreParamsOpen,

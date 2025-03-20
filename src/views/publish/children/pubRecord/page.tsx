@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { PubRecordModel } from '../../comment';
 import styles from './pubRecord.module.scss';
 import { icpGetPubRecordList, icpGetPubVideoRecord } from '@/icp/publish';
@@ -25,6 +25,7 @@ import { useNavigate } from 'react-router-dom';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import WebView from '../../../../components/WebView';
 import { getVideoFile } from '../../../../components/Choose/VideoChoose';
+import { useAccountStore } from '../../../../store/account';
 
 export const ImageView = ({
   prm,
@@ -54,15 +55,19 @@ export const ImageView = ({
   );
 };
 
-export default function Page() {
+export default function Page({
+  hegiht = '78vh',
+  onChange,
+}: {
+  hegiht?: string;
+  onChange?: (ids: number[]) => void;
+}) {
   const [pulRecardList, setRecardList] = useState<PubRecordModel[]>([]);
   const [open, setOpen] = useState(false);
   const [currPubRecordModel, setCurrPubRecordModel] =
     useState<PubRecordModel>();
   const [recordLoaidng, setRecordLoaidng] = useState(false);
   const [pubRecordList, setPubRecordList] = useState<VideoPul[]>([]);
-  // id=账户id，val=账户item数据
-  const accountMap = useRef<Map<number, AccountInfo>>(new Map());
   const navigate = useNavigate();
   const [examineVideo, setExamineVideo] = useState<{
     account?: AccountInfo;
@@ -77,72 +82,81 @@ export default function Page() {
     open: false,
     jsCode: '',
   });
-
+  const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
+  const { accountMap } = useAccountStore(
+    useShallow((state) => ({
+      accountMap: state.accountMap,
+    })),
+  );
   const { restartPub } = useVideoPageStore(
     useShallow((state) => ({
       restartPub: state.restartPub,
     })),
   );
 
-  const columns: TableProps<PubRecordModel>['columns'] = [
-    {
-      title: '序号',
-      render: (text, prm, ind) => ind + 1,
-      width: 70,
-      key: '序号',
-    },
-    {
-      title: '发布内容',
-      render: (text, prm) => <ImageView prm={prm} width={50} height={70} />,
-      width: 200,
-      key: '发布内容',
-    },
-    {
-      title: '发布时间',
-      dataIndex: 'publishTime',
-      key: 'publishTime',
-      render: (text, prm) => formatTime(prm.publishTime),
-      width: 200,
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      key: 'status',
-      render: (text, prm) => {
-        switch (prm.status) {
-          case 2:
-            return <Tag color="error">全部发布失败</Tag>;
-          case 1:
-            return <Tag color="success">全部发布成功</Tag>;
-          case 3:
-            return <Tag color="warning">部分发布成功</Tag>;
-        }
+  const columns = useMemo(() => {
+    const columns: TableProps<PubRecordModel>['columns'] = [
+      {
+        title: '序号',
+        render: (text, prm, ind) => ind + 1,
+        width: 70,
+        key: '序号',
       },
-      width: 100,
-    },
-    {
-      title: '操作',
-      width: 100,
-      key: '操作',
-      render: (text, prm) => (
-        <>
-          <Button
-            type="link"
-            onClick={async () => {
-              setOpen(true);
-              setCurrPubRecordModel(prm);
-              setRecordLoaidng(true);
-              const res = await icpGetPubVideoRecord(prm.id);
-              setRecordLoaidng(false);
-              setPubRecordList(res);
-            }}
-          >
-            详情
-          </Button>
-        </>
-      ),
-    },
-  ];
+      {
+        title: '发布内容',
+        render: (text, prm) => <ImageView prm={prm} width={30} height={50} />,
+        width: 200,
+        key: '发布内容',
+      },
+      {
+        title: '发布时间',
+        dataIndex: 'publishTime',
+        key: 'publishTime',
+        render: (text, prm) => formatTime(prm.publishTime),
+        width: 200,
+      },
+      {
+        title: '状态',
+        dataIndex: 'status',
+        key: 'status',
+        render: (text, prm) => {
+          switch (prm.status) {
+            case 2:
+              return <Tag color="error">全部发布失败</Tag>;
+            case 1:
+              return <Tag color="success">全部发布成功</Tag>;
+            case 3:
+              return <Tag color="warning">部分发布成功</Tag>;
+          }
+        },
+        width: 100,
+      },
+      {
+        title: '操作',
+        width: 100,
+        key: '操作',
+        render: (text, prm) => (
+          <>
+            <Button
+              type="link"
+              onClick={async (e) => {
+                e.stopPropagation();
+                setOpen(true);
+                setCurrPubRecordModel(prm);
+                setRecordLoaidng(true);
+                const res = await icpGetPubVideoRecord(prm.id);
+                setRecordLoaidng(false);
+                setPubRecordList(res);
+              }}
+            >
+              详情
+            </Button>
+          </>
+        ),
+      },
+    ];
+    return columns;
+  }, []);
 
   async function GetPubList() {
     const res = await icpGetPubRecordList({
@@ -157,17 +171,29 @@ export default function Page() {
   };
 
   useEffect(() => {
-    icpGetAccountList().then((res) => {
-      if (!res) return;
-      res.map((v) => {
-        accountMap.current.set(v.id, v);
-      });
-      GetPubList();
-    });
-  }, []);
+    if (onChange) onChange(selectedRowKeys);
+  }, [selectedRowKeys]);
+
+  const rowSelection: TableProps<PubRecordModel>['rowSelection'] = {
+    onChange: (
+      selectedRowKeys: React.Key[],
+      selectedRows: PubRecordModel[],
+    ) => {
+      setSelectedRowKeys(selectedRowKeys as number[]);
+    },
+    getCheckboxProps: (record: PubRecordModel) => ({
+      name: record.title,
+    }),
+    selectedRowKeys,
+  };
 
   return (
-    <div className={styles.pubRecord}>
+    <div
+      className={[
+        styles.pubRecord,
+        onChange && styles['pubRecord-component'],
+      ].join(' ')}
+    >
       <Modal
         zIndex={10000}
         open={examineVideo.open}
@@ -216,8 +242,14 @@ export default function Page() {
       <Table<PubRecordModel>
         columns={columns}
         dataSource={pulRecardList}
-        scroll={{ y: '78vh' }}
+        scroll={{ y: hegiht }}
         rowKey="id"
+        rowSelection={onChange ? { type: 'radio', ...rowSelection } : undefined}
+        onRow={(record) => ({
+          onClick: () => {
+            setSelectedRowKeys([record.id]);
+          },
+        })}
       />
 
       {/*发布记录详情*/}
@@ -228,7 +260,7 @@ export default function Page() {
 
             <ul className="pubRecord-record">
               {pubRecordList.map((v) => {
-                const account = accountMap.current.get(v.accountId);
+                const account = accountMap.get(v.accountId);
                 const plat = AccountPlatInfoMap.get(v.type);
                 return (
                   <li className="pubRecord-record-item" key={v.id}>
@@ -268,9 +300,7 @@ export default function Page() {
                             );
                             restartPub(
                               prl,
-                              prl.map(
-                                (k) => accountMap.current.get(k.accountId)!,
-                              ),
+                              prl.map((k) => accountMap.get(k.accountId)!),
                             );
                             setRecordLoaidng(false);
                             navigate('/publish/video');

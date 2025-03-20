@@ -11,7 +11,6 @@ import {
 import useCssVariables from '@/hooks/useCssVariables';
 import { AccountType } from '../../../../../../commont/AccountEnum';
 import { AccountInfo, AccountPlatInfoMap } from '@/views/account/comment';
-import { icpGetAccountList } from '@/icp/account';
 import styles from '@/views/publish/components/ChooseAccountModule/chooseAccountModule.module.scss';
 import {
   Avatar,
@@ -24,7 +23,8 @@ import {
 } from 'antd';
 import { PubType } from '../../../../../../commont/publish/PublishEnum';
 import { CheckOutlined } from '@ant-design/icons';
-import { onAccountLoginFinish } from '@/icp/receiveMsg';
+import { useAccountStore } from '../../../../../store/account';
+import { useShallow } from 'zustand/react/shallow';
 
 export interface IPlatChooseRef {
   /**
@@ -72,6 +72,11 @@ const PlatChoose = memo(
       >(new Map());
       // 每次change操作的数据
       const recentData = useRef<AccountInfo>();
+      const { accountList } = useAccountStore(
+        useShallow((state) => ({
+          accountList: state.accountList,
+        })),
+      );
 
       // 经过 allowPlatSet 过滤后的账户数据
       const accountMapLast = useMemo(() => {
@@ -119,37 +124,27 @@ const PlatChoose = memo(
         [activePlat, choosedAcountMap],
       );
 
-      const getAccountList = () => {
-        icpGetAccountList().then((res) => {
-          if (!res) return;
-          setAccountMap((prevMap) => {
-            const newMap = new Map(prevMap);
-            Array.from(AccountPlatInfoMap).map(([key, value]) => {
-              if (value.pubTypes.has(pubType)) {
-                newMap.set(key, []);
-              }
-            });
-            // 添加渲染账户数据值
-            res.map((v) => {
-              newMap.get(v.type)?.push(v);
-            });
-            return newMap;
+      useEffect(() => {
+        setAccountMap((prevMap) => {
+          const newMap = new Map(prevMap);
+          Array.from(AccountPlatInfoMap).map(([key, value]) => {
+            if (value.pubTypes.has(pubType)) {
+              newMap.set(key, []);
+            }
           });
+          // 添加渲染账户数据值
+          accountList.map((v) => {
+            newMap.get(v.type)?.push(v);
+          });
+          return newMap;
         });
-      };
+      }, [accountList]);
 
       useEffect(() => {
-        getAccountList();
-
-        const revmoeListener = onAccountLoginFinish(() => {
-          getAccountList();
-        });
-
         return () => {
           setAccountMap(new Map());
           setChoosedAcountMap(new Map());
           init();
-          revmoeListener();
         };
       }, []);
 
