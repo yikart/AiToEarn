@@ -1,17 +1,15 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-20 22:38:17
+ * @LastEditTime: 2025-03-20 23:01:23
  * @LastEditors: nevin
  * @Description: reply Reply
  */
 import { AutoRunModel, AutoRunType } from '../../db/models/autoRun';
 import { AccountService } from '../account/service';
-import { toolsApi } from '../api/tools';
 import { AutoRunService } from '../autoRun/service';
 import { Controller, Et, Icp, Inject } from '../core/decorators';
 import platController from '../plat';
-import type { CommentData } from '../plat/plat.type';
 import { ReplyService } from './service';
 
 @Controller()
@@ -83,7 +81,6 @@ export class ReplyController {
 
   /**
    * 作品一键AI评论
-   * 规则:评论所有的一级评论,已有自己的评论的不评论
    */
   @Icp('ICP_REPLY_COMMENT_LIST_BY_AI')
   async createCommentList(
@@ -94,37 +91,7 @@ export class ReplyController {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 
-    // 1. 获取作品的评论列表, 如果返回
-    let theHasMore = true;
-    let thePcursor = undefined;
-
-    const list: CommentData[] = [];
-
-    while (theHasMore) {
-      const {
-        list,
-        pageInfo: { pcursor, hasMore },
-      } = await platController.getCommentList(account, dataId, thePcursor);
-
-      list.forEach((item) => {
-        list.push(item);
-      });
-
-      thePcursor = pcursor;
-      theHasMore = !!hasMore;
-    }
-
-    // 2. 循环AI回复评论
-    for (const element of list) {
-      const aiRes = await toolsApi.aiRecoverReview({
-        content: element.content,
-      });
-
-      platController.replyComment(account, element.commentId, aiRes, {
-        dataId,
-        comment: element,
-      });
-    }
+    const res = await this.replyService.autorReplyComment(account, dataId);
 
     return true;
   }
