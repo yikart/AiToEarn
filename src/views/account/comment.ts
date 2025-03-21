@@ -42,7 +42,7 @@ export interface IAccountPlatInfo {
 }
 
 // 支持所有发布
-const PubTypeAll = new Set([PubType.ARTICLE, PubType.VIDEO]);
+const PubTypeAll = new Set([PubType.ARTICLE, PubType.VIDEO, PubType.ImageText]);
 // 各个平台的信息
 export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
   [
@@ -51,7 +51,7 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
       name: '快手',
       icon: ksSvg,
       url: 'https://cp.kuaishou.com/profile',
-      pubTypes: PubTypeAll,
+      pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
         timingMax: {
           maxDate: 13,
@@ -99,7 +99,7 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
       name: '微信视频号',
       icon: wxSphSvg,
       url: 'https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/helper/hepler_merlin_mmdata?_rid=67b30b55-6e3ea588',
-      pubTypes: PubTypeAll,
+      pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
         timingMax: {
           maxDate: 30,

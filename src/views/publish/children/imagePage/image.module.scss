@@ -1,4 +1,73 @@
 .image {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
   :global {
+    .image-wrapper {
+      width: 80%;
+      margin: 0 auto;
+      height: 100%;
+      min-height: 0;
+      box-sizing: border-box;
+      padding: 15px 0;
+      display: flex;
+    }
+    .image-footer {
+      border-top: 1px solid var(--superLightGreyColor);
+      padding: 15px 0;
+    }
+  }
+}
+
+.imageLeftSetting {
+  width: 65%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  padding: 25px 20px 0 0;
+  margin-right: 20px;
+  border-right: 1px solid var(--superLightGreyColor);
+  :global {
+    .imageLeftSetting-upload {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      border-bottom: 1px solid var(--superLightGreyColor);
+      padding-bottom: 30px;
+      margin-bottom: 25px;
+    }
+    .imageLeftSetting-commonPar {
+      overflow: auto;
+      height: 100%;
+      &-titles, &-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: var(--fs-sm);
+        margin-bottom: 30px;
+        & > label {
+          flex-shrink: 0;
+        }
+      }
+      &-item {
+        textarea {
+          height: 150px;
+          resize: none;
+        }
+      }
+    }
+  }
+}
+
+.imageRightSetting {
+  :global {
+    .imageRightSetting-title {
+      text-align: left;
+      font-size: var(--fs-sm);
+      margin: 25px 0 5px 0;
+    }
   }
 }

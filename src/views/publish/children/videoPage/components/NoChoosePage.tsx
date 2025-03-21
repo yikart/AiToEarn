@@ -6,10 +6,11 @@ import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPa
 import { useShallow } from 'zustand/react/shallow';
 import localUpload from '../images/localUpload.png';
 import importRecord from '../images/importRecord.png';
-import { Alert, Button, message, Modal } from 'antd';
+import { Alert, message, Modal } from 'antd';
 import PubRecord from '../../pubRecord/page';
 import { icpGetPubVideoRecord } from '../../../../../icp/publish';
 import { useAccountStore } from '../../../../../store/account';
+import { ChooseChunk } from '../../../components/CommonComponents/CommonComponents';
 
 export interface INoChoosePageRef {}
 
@@ -82,27 +83,26 @@ const NoChoosePage = memo(
               setLoadingPageLoading(false);
             }}
           >
-            <img src={localUpload} />
-            <Button type="primary" size="large">
-              本地上传
-            </Button>
+            <ChooseChunk
+              text="本地上传"
+              imgUrl={localUpload}
+              color="linear-gradient(to right, rgb(255, 142, 28), rgb(255, 124, 24))"
+              hoverColor="rgb(255, 142, 28)"
+              style={{ marginRight: '15px' }}
+            />
           </VideoChoose>
 
-          <div
-            className="videoChoose"
+          <ChooseChunk
+            text="导入发布记录"
+            imgUrl={importRecord}
+            color="#a66ae4"
             onClick={() => {
               setImportPubRecordOpen(true);
-              console.log('click');
             }}
-          >
-            <img src={importRecord} />
-            <Button type="primary" size="large">
-              导入发布记录
-            </Button>
-          </div>
+          />
         </div>
 
-        <SupportPlat pubType={PubType.VIDEO} type={1} />
+        <SupportPlat pubType={PubType.VIDEO} style={{ marginTop: '15px' }} />
       </div>
     );
   }),

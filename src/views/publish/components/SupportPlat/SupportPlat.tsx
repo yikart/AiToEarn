@@ -7,26 +7,27 @@ export interface ISupportPlatRef {}
 
 export interface ISupportPlatProps {
   pubType: PubType;
-  // 0=视频发布样式、1=文章、图片 样式
-  type: 0 | 1;
+  style?: React.CSSProperties;
 }
 
 const SupportPlat = memo(
   forwardRef(
     (
-      { pubType, type }: ISupportPlatProps,
+      { pubType, style }: ISupportPlatProps,
       ref: ForwardedRef<ISupportPlatRef>,
     ) => {
       return (
-        <div className={styles.supportPlat}>
+        <div
+          className={`${styles.supportPlat} ${pubType !== PubType.VIDEO && styles.supportPlatBg}`}
+          style={style}
+        >
+          <div className="supportPlatBg-title">支持平台</div>
           <div className="supportPlat-tip">
             <p className="supportPlat-tip--line" />
             <p className="supportPlat-tip-text">支持以下平台</p>
             <p className="supportPlat-tip--line" />
           </div>
-          <ul
-            className={`supportPlat-con ${type === 1 ? 'supportPlat-centerCon' : ''}`}
-          >
+          <ul className="supportPlat-con">
             {Array.from(AccountPlatInfoMap).map(([k, v]) => {
               if (!v.pubTypes.has(pubType)) return null;
               return (

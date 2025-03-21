@@ -1,0 +1,27 @@
+.chooseChunk {
+  display: flex;
+  cursor: pointer;
+  flex-direction: column;
+  background: rgb(247, 250, 250);
+  width: 160px;
+  height: 160px;
+  box-sizing: border-box;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  transition: 0.3s;
+  img {
+    width: 50px;
+    height: 45px;
+    object-fit: contain;
+  }
+  button {
+    margin-top: 20px;
+    width: 110px;
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
