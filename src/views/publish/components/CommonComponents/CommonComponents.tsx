@@ -1,7 +1,10 @@
 import { Button } from 'antd';
 import styles from './commonComponents.module.scss';
 import { useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import { PlusOutlined, UserAddOutlined } from '@ant-design/icons';
 
+// 本地上传、素材上传展示的块
 export const ChooseChunk = ({
   onClick,
   imgUrl,
@@ -43,5 +46,18 @@ export const ChooseChunk = ({
         </Button>
       </div>
     </>
+  );
+};
+
+// 选择账户展示的块
+export const ChooseAccountChunk = ({ onClick }: { onClick: () => void }) => {
+  return (
+    <div className={styles.chooseAccountChunk} onClick={onClick}>
+      <UserAddOutlined className="chooseAccountChunk-user" />
+      <Button icon={<PlusOutlined />} type="primary">
+        选择发布账号
+      </Button>
+      <Outlet />
+    </div>
   );
 };

@@ -28,6 +28,13 @@ export default defineConfig(({ command }) => {
         buffer: 'buffer',
       },
     },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: 'modern-compiler',
+        },
+      },
+    },
     plugins: [
       react(),
       electron({

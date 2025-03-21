@@ -69,5 +69,20 @@
       font-size: var(--fs-sm);
       margin: 25px 0 5px 0;
     }
+
+    .ant-steps {
+      margin-top: 30px;
+      .ant-steps-item {
+        height: 70px;
+      }
+      .ant-steps-item-title {
+        color: #222 !important;
+        font-weight: 900;
+      }
+      .ant-steps-item-description {
+        color: var(--lightGreyColor) !important;
+        font-size: var(--fs-xs);
+      }
+    }
   }
 }

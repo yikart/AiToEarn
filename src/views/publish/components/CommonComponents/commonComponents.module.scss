@@ -25,3 +25,25 @@
     }
   }
 }
+
+.chooseAccountChunk {
+  height: 180px;
+  background: var(--colorPrimary1);
+  border: 1px dashed transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  &:hover {
+    border-color: var(--colorPrimary6);
+  }
+  :global {
+    .chooseAccountChunk-user {
+      font-size: 60px;
+      color: var(--colorPrimary4);
+      margin-bottom: 10px;
+    }
+  }
+}
