@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-08 11:40:45
- * @LastEditTime: 2025-03-19 19:23:41
+ * @LastEditTime: 2025-03-21 23:26:00
  * @LastEditors: nevin
  * @Description: 小红书
  */
@@ -199,6 +199,7 @@ export class Xhs extends PlatformBase {
           likeCount: Number.parseInt(sub.like_count),
           nikeName: sub.user_info.nickname,
           headUrl: sub.user_info.image,
+          subCommentList: [],
         });
       }
 

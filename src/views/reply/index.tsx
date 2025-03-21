@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-03-20 21:28:52
+ * @LastEditTime: 2025-03-21 22:53:09
  * @LastEditors: nevin
  * @Description: 评论页面 reply
  */
@@ -155,7 +155,7 @@ export default function Page() {
                 ]}
               >
                 {item.content}
-                {item.subCommentList.map((subItem) => (
+                {/* {item.subCommentList.map((subItem) => (
                   <div key={subItem.commentId}>
                     {subItem.content}
                     <Meta
@@ -163,7 +163,7 @@ export default function Page() {
                       description={subItem.nikeName}
                     />
                   </div>
-                ))}
+                ))} */}
                 <Meta
                   avatar={<Avatar src={item.headUrl} />}
                   description={item.nikeName}

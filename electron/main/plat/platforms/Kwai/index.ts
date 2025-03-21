@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-19 17:54:53
- * @LastEditTime: 2025-03-19 18:44:00
+ * @LastEditTime: 2025-03-21 23:25:40
  * @LastEditors: nevin
  * @Description:
  */
@@ -224,6 +224,7 @@ export class Kwai extends PlatformBase {
             nikeName: v1.headurl,
             headUrl: v1.headurl,
             data: v1,
+            subCommentList: [],
           });
         }
       }
