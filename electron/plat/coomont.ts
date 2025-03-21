@@ -9,6 +9,7 @@ export const getBrowser = async () => {
   try {
     if (platform === 'darwin') {
       browser = await webkit.launch({
+        // headless: true,
         headless: import.meta.env.MODE !== 'development',
         executablePath: path.join(
           process.resourcesPath,

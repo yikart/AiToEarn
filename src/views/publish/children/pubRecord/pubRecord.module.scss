@@ -37,11 +37,15 @@
         }
         &--success {
           background: rgb(218, 245, 233);
-          color: rgb(47, 178, 122);
+          color: var(--successColor);
+        }
+        &--processing {
+          background: #e6f4ff;
+          color: #1677ff;
         }
         &--fail {
           background-color: #ffcccc;
-          color: #ff0000;
+          color: var(--errerColor);
         }
         &-con {
           display: flex;

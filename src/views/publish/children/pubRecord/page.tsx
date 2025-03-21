@@ -42,7 +42,10 @@ export const ImageView = ({
     });
   }, []);
   return (
-    <div className={styles['pubRecord-pubCon']}>
+    <div
+      className={styles['pubRecord-pubCon']}
+      style={{ minHeight: height + 'px' }}
+    >
       {imgFile && <Image src={imgFile.imgUrl} height={height} width={width} />}
       <span
         title={getFilePathName(prm.videoPath)}
@@ -126,6 +129,8 @@ export default function Page({
               return <Tag color="success">全部发布成功</Tag>;
             case 3:
               return <Tag color="warning">部分发布成功</Tag>;
+            case 0:
+              return <Tag color="processing">正在发布</Tag>;
           }
         },
         width: 100,
@@ -268,9 +273,20 @@ export default function Page({
                 return (
                   <li className="pubRecord-record-item" key={v.id}>
                     <div
-                      className={`pubRecord-record-item-status ${v.status === 1 ? 'pubRecord-record-item--success' : 'pubRecord-record-item--fail'}`}
+                      className={[
+                        'pubRecord-record-item-status',
+                        v.status === 1
+                          ? 'pubRecord-record-item--success'
+                          : v.status === 0
+                            ? 'pubRecord-record-item--processing'
+                            : 'pubRecord-record-item--fail',
+                      ].join(' ')}
                     >
-                      {v.status === 1 ? '发布成功' : '发布失败'}
+                      {v.status === 1
+                        ? '发布成功'
+                        : v.status === 0
+                          ? '发布中'
+                          : '发布失败'}
                     </div>
                     <div className="pubRecord-record-item-con">
                       <div className="pubRecord-record-item-con-avatar">

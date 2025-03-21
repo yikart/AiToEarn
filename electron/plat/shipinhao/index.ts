@@ -1230,75 +1230,65 @@ export class ShipinhaoService {
     shareLink: string;
   }> {
     console.log('platformSetting：', platformSetting);
-    try {
-      callback(5, '加载中...');
-      const fileInfo = await FileUtils.getFileInfo(filePath);
-      callback(10);
-      const cookieString = CommonUtils.convertCookieToJson(cookies);
-      callback(15);
-      const traceKey = await this.getPublishTraceKey(cookieString);
-      callback(20);
-      const uploadParams = await this.getPublishUploadParams(cookieString);
-      callback(26);
-      const filePartInfo = await FileUtils.getFilePartInfo(
-        filePath,
-        this.fileBlockSize,
-      );
-      const startUploadTime = Math.floor(Date.now() / 1000);
-      const remoteVideoUrl = await this.uploadVideoFile(
-        filePath,
-        uploadParams,
-        filePartInfo,
-      );
-      callback(30);
-      const endUploadTime = Math.floor(Date.now() / 1000);
+    callback(5, '加载中...');
+    const fileInfo = await FileUtils.getFileInfo(filePath);
+    callback(10);
+    const cookieString = CommonUtils.convertCookieToJson(cookies);
+    callback(15);
+    const traceKey = await this.getPublishTraceKey(cookieString);
+    callback(20);
+    const uploadParams = await this.getPublishUploadParams(cookieString);
+    callback(26);
+    const filePartInfo = await FileUtils.getFilePartInfo(
+      filePath,
+      this.fileBlockSize,
+    );
+    const startUploadTime = Math.floor(Date.now() / 1000);
+    const remoteVideoUrl = await this.uploadVideoFile(
+      filePath,
+      uploadParams,
+      filePartInfo,
+    );
+    callback(30);
+    const endUploadTime = Math.floor(Date.now() / 1000);
 
-      callback(40, '正在上传视频...');
-      const clipResult = await this.postClipUploadVideo(
-        traceKey,
-        startUploadTime,
-        endUploadTime,
-        remoteVideoUrl,
-        fileInfo,
-        filePartInfo,
-        cookieString,
-      );
-      callback(60, '正在上传封面...');
-      platformSetting.cover = await this.uploadCoverFile(
-        platformSetting.cover,
-        uploadParams,
-      );
-      callback(80, '正在发布视频...');
-      const lastPublishRes = await this.postCreateVideo(
-        cookieString,
-        traceKey,
-        startUploadTime,
-        endUploadTime,
-        clipResult,
-        {
-          ...platformSetting,
-          cover: platformSetting.cover,
-          title: platformSetting.title,
-          topics: platformSetting.topics ? platformSetting.topics : [],
-        },
-      );
-      callback(100);
+    callback(40, '正在上传视频...');
+    const clipResult = await this.postClipUploadVideo(
+      traceKey,
+      startUploadTime,
+      endUploadTime,
+      remoteVideoUrl,
+      fileInfo,
+      filePartInfo,
+      cookieString,
+    );
+    callback(60, '正在上传封面...');
+    platformSetting.cover = await this.uploadCoverFile(
+      platformSetting.cover,
+      uploadParams,
+    );
+    callback(80, '正在发布视频...');
+    const lastPublishRes = await this.postCreateVideo(
+      cookieString,
+      traceKey,
+      startUploadTime,
+      endUploadTime,
+      clipResult,
+      {
+        ...platformSetting,
+        cover: platformSetting.cover,
+        title: platformSetting.title,
+        topics: platformSetting.topics ? platformSetting.topics : [],
+      },
+    );
+    callback(100);
 
-      // 返回成功
-      return {
-        publishTime: Math.floor(Date.now() / 1000),
-        publishId: lastPublishRes.lastPublishId,
-        shareLink: lastPublishRes.previewVideoLink,
-      };
-    } catch (err: any) {
-      console.error('发布视频失败:', err);
-      callback(-1);
-      return {
-        publishTime: Math.floor(Date.now() / 1000),
-        publishId: '',
-        shareLink: '',
-      };
-    }
+    // 返回成功
+    return {
+      publishTime: Math.floor(Date.now() / 1000),
+      publishId: lastPublishRes.lastPublishId,
+      shareLink: lastPublishRes.previewVideoLink,
+    };
   }
 
   // 获取位置数据

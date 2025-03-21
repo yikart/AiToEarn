@@ -76,8 +76,14 @@ export const useVideoPageStore = create(
     },
     (_set, get, storeApi) => {
       const set = (data: Partial<IVideoPageStore>) => {
-        usePubStroe.getState().setVideoPubSaveData(get());
         _set(data);
+        if (
+          (data.hasOwnProperty('videoListChoose') &&
+            data.videoListChoose!.length !== 0) ||
+          data.hasOwnProperty('commonPubParams')
+        ) {
+          usePubStroe.getState().setVideoPubSaveData(get());
+        }
       };
 
       const methods = {
