@@ -17,7 +17,6 @@ import {
 import { getImgFile, IImgFile } from '@/components/Choose/ImgChoose';
 import { formatTime, getFilePathName } from '@/utils';
 import { VideoPul } from '@/views/publish/children/videoPage/comment';
-import { icpGetAccountList } from '@/icp/account';
 import { AccountInfo, AccountPlatInfoMap } from '@/views/account/comment';
 import { useVideoPageStore } from '../videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';

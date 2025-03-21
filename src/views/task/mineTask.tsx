@@ -428,7 +428,7 @@ export default function Page() {
                       <Button
                         type="primary"
                         danger
-                        className={styles.withdrawButton} 
+                        className={styles.withdrawButton}
                         style={{
                           backgroundColor: '#a66ae4',
                           borderColor: '#a66ae4',

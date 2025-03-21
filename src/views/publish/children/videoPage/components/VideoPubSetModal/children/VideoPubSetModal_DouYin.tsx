@@ -29,8 +29,8 @@ import {
   DescTextArea,
   ScheduledTimeSelect,
   TitleInput,
-  VideoPubRestartLogin
-} from "@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon";
+  VideoPubRestartLogin,
+} from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
 import {
   DouyinActivity,
   DouyinActivityDetailResponse,

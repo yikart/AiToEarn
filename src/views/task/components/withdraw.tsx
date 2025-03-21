@@ -29,7 +29,7 @@ const Com = forwardRef<WithdrawRef>((props: any, ref) => {
     Task<TaskProduct | TaskPromotion | TaskVideo>
   > | null>();
   const [loading, setLoading] = useState(false);
-  
+
   const { Title, Text, Paragraph } = Typography;
 
   async function init(
@@ -69,11 +69,11 @@ const Com = forwardRef<WithdrawRef>((props: any, ref) => {
   const renderAccountTypeTags = () => {
     const accountTypes = taskInfo?.taskId.accountTypes || [];
     if (accountTypes.length === 0) return null;
-    
+
     return (
       <Space size={[0, 8]} wrap>
         <Text style={{ marginRight: 8 }}>支持账户类型：</Text>
-        {accountTypes.map(type => (
+        {accountTypes.map((type) => (
           <Tag color="blue" key={type}>
             {type.toUpperCase()}
           </Tag>
@@ -93,10 +93,10 @@ const Com = forwardRef<WithdrawRef>((props: any, ref) => {
           <Button key="back" onClick={handleCancel}>
             取消
           </Button>,
-          <Button 
-            key="submit" 
-            type="primary" 
-            onClick={submitWithdraw} 
+          <Button
+            key="submit"
+            type="primary"
+            onClick={submitWithdraw}
             loading={loading}
           >
             提交申请
@@ -105,26 +105,31 @@ const Com = forwardRef<WithdrawRef>((props: any, ref) => {
       >
         <Space direction="vertical" size="large" style={{ width: '100%' }}>
           {/* 提现金额信息卡片 */}
-          <Card 
-            style={{ 
-              backgroundColor: '#f5f5f5', 
-              borderRadius: '8px'
+          <Card
+            style={{
+              backgroundColor: '#f5f5f5',
+              borderRadius: '8px',
             }}
           >
             <Space direction="vertical" size="small">
               <Text>任务标题：{taskInfo?.taskId.title || '暂无'}</Text>
               <Space>
                 <Text>提现金额：</Text>
-                <Text style={{ 
-                  fontSize: '24px', 
-                  fontWeight: 'bold', 
-                  color: '#1890ff' 
-                }}>
+                <Text
+                  style={{
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    color: '#1890ff',
+                  }}
+                >
                   ¥{taskInfo?.taskId.reward || 0}
                 </Text>
               </Space>
               <Text type="secondary">
-                任务类型：{taskInfo?.taskId.type ? TaskTypeName.get(taskInfo.taskId.type) : '暂无'}
+                任务类型：
+                {taskInfo?.taskId.type
+                  ? TaskTypeName.get(taskInfo.taskId.type)
+                  : '暂无'}
               </Text>
               {taskInfo?.verificationNote && (
                 <Paragraph type="secondary" style={{ marginTop: 8 }}>
@@ -144,9 +149,7 @@ const Com = forwardRef<WithdrawRef>((props: any, ref) => {
               <Text type="secondary">
                 2. 审核通过后，奖励将自动发放到您的账户钱包
               </Text>
-              <Text type="secondary">
-                3. 账户钱包余额可提现到支付宝
-              </Text>
+              <Text type="secondary">3. 账户钱包余额可提现到支付宝</Text>
             </Space>
           </Card>
         </Space>
