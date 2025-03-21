@@ -157,6 +157,10 @@ export default function Page({
     return columns;
   }, []);
 
+  useEffect(() => {
+    GetPubList();
+  }, []);
+
   async function GetPubList() {
     const res = await icpGetPubRecordList({
       page_no: 1,
