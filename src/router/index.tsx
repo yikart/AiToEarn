@@ -44,6 +44,7 @@ import UserWalletAccount from '@/views/finance/userWalletAccount';
 import Finance from '@/views/finance/index';
 import UserWalletRecord from '@/views/finance/userWalletRecord';
 import Reply from '@/views/reply';
+import Replyother from '@/views/replyother';
 import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
 import AutoRun from '@/views/autoRun';
 
@@ -120,6 +121,11 @@ export const router: CustomRouteObject[] = [
         path: '/reply',
         element: <Reply />,
         meta: { name: '评论', icon: MessageOutlined },
+      },
+      {
+        path: '/Replyother',
+        element: <Replyother />,
+        meta: { name: '评他人', icon: MessageOutlined },
       },
       {
         path: '/autoRun',
