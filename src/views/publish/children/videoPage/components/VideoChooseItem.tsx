@@ -1,4 +1,4 @@
-import React, { ForwardedRef, forwardRef, memo } from 'react';
+import React, { ForwardedRef, forwardRef, memo, useMemo } from 'react';
 import { IVideoChooseItem } from '@/views/publish/children/videoPage/videoPage';
 import { Alert, Avatar, Button, Tooltip } from 'antd';
 import { AccountPlatInfoMap } from '@/views/account/comment';
@@ -55,6 +55,15 @@ const VideoChooseItem = memo(
         })),
       );
 
+      // 分辨率是否合规
+      const isDpiCompliance = useMemo(() => {
+        if (!videoChooseItem.video) return true;
+        return (
+          videoChooseItem.video.height < 640 ||
+          videoChooseItem.video.width < 480
+        );
+      }, []);
+
       return (
         <div className="videoChooseItem">
           <div className="videoChooseItem-core">
@@ -103,8 +112,7 @@ const VideoChooseItem = memo(
                       <div
                         className={[
                           'videoChooseItem-left-bottom-item',
-                          videoChooseItem.video.width < 640 &&
-                            videoChooseItem.video.width < 480 &&
+                          isDpiCompliance &&
                             'videoChooseItem-left-bottom-item--warning',
                         ].join(' ')}
                       >
@@ -113,12 +121,11 @@ const VideoChooseItem = memo(
                           {videoChooseItem.video.width}*
                           {videoChooseItem.video.height}
                         </span>
-                        {videoChooseItem.video.width < 640 &&
-                          videoChooseItem.video.width < 480 && (
-                            <Tooltip title="视频清晰度过低，有概率被平台限流或不能发布">
-                              <ExclamationCircleOutlined />
-                            </Tooltip>
-                          )}
+                        {isDpiCompliance && (
+                          <Tooltip title="视频清晰度过低，有概率被平台限流或不能发布，推荐您上传 460*640 分辨率以上的视频">
+                            <ExclamationCircleOutlined />
+                          </Tooltip>
+                        )}
                       </div>
                     </div>
                   </div>
