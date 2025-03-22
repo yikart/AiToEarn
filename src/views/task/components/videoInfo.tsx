@@ -255,7 +255,11 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
       <ChooseAccountModule
         open={chooseAccountOpen}
         onClose={() => !downloading && setChooseAccountOpen(false)}
-        choosedAccounts={accountListChoose}
+        platChooseProps={{
+          choosedAccounts: accountListChoose,
+          pubType: PubType.VIDEO,
+          allowPlatSet: new Set([AccountType.Douyin]),
+        }}
         onPlatConfirm={async (aList) => {
           console.log('账号:', aList);
           setAccountListChoose(aList);
@@ -263,8 +267,6 @@ const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
           // 下载文件并发布
           await downloadAndPublish(aList);
         }}
-        pubType={PubType.VIDEO}
-        allowPlatSet={new Set([AccountType.Douyin])}
       />
 
       <Modal

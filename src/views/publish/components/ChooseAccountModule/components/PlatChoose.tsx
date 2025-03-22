@@ -38,13 +38,18 @@ export interface IPlatChooseRef {
 
 export interface IPlatChooseProps {
   pubType: PubType;
-  onChange: (choosedAcounts: AccountInfo[], choosedAcount: AccountInfo) => void;
+  onChange?: (
+    choosedAcounts: AccountInfo[],
+    choosedAcount: AccountInfo,
+  ) => void;
   // 外部传入的已经选中的数据，这个值只有在确认更改才会更新
   choosedAccounts?: AccountInfo[];
   // 按平台 是否禁用多选，true=禁用，false=不禁用
-  disableAllSelect: boolean;
+  disableAllSelect?: boolean;
   // 可选择的平台，默认为全部
   allowPlatSet?: Set<AccountType>;
+  // 是否可以取消已经选择的账户，默认为 false
+  isCancelChooseAccount?: boolean;
 }
 
 const PlatChoose = memo(
@@ -54,7 +59,8 @@ const PlatChoose = memo(
         pubType,
         onChange,
         choosedAccounts,
-        disableAllSelect,
+        disableAllSelect = false,
+        isCancelChooseAccount = false,
         allowPlatSet,
       }: IPlatChooseProps,
       ref: ForwardedRef<IPlatChooseRef>,
@@ -155,7 +161,7 @@ const PlatChoose = memo(
         Array.from(choosedAcountMap).map(([key, value]) => {
           accounts = [...accounts, ...value];
         });
-        onChange(accounts, recentData.current!);
+        if (onChange) onChange(accounts, recentData.current!);
       }, [choosedAcountMap]);
 
       const init = () => {
@@ -295,9 +301,9 @@ const PlatChoose = memo(
                     <div className="platChoose-accounts">
                       {currAccountList.map((v) => {
                         // true=禁用
-                        const isDisable = choosedAccounts?.find(
-                          (k) => k.id === v.id,
-                        );
+                        const isDisable =
+                          choosedAccounts?.find((k) => k.id === v.id) &&
+                          isCancelChooseAccount;
                         return (
                           <div
                             key={v.id}
