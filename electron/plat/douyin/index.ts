@@ -12,6 +12,7 @@ import {
   DouyinActivityListResponse,
   DouyinActivityTagsResponse,
   DouyinAllHotDataResponse,
+  DouyinCommentReplyListResponse,
   DouyinCreatorCommentListResponse,
   DouyinCreatorListResponse,
   DouyinHotDataResponse,
@@ -2263,7 +2264,7 @@ export class DouyinService {
   /**
    * 查询抖音的作品列表
    * @param cookie
-   * @param msToken
+   * @param cursor
    * @returns
    */
   async getCreatorItems(cookie: Electron.Cookie[], cursor?: string) {
@@ -2299,6 +2300,38 @@ export class DouyinService {
           count: pageInfo.count,
           item_id: item_id,
           sort: 'TIME',
+        },
+      ),
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'GET',
+    });
+
+    return res;
+  }
+
+  // 查看评论的回复列表
+  async getCreatorCommentReplyList(
+    cookie: Electron.Cookie[],
+    comment_id: string, // 评论ID
+    item_id: string, // 作品ID
+    pageInfo: {
+      cursor?: string;
+      count?: number;
+    },
+  ) {
+    const res = await requestNet<DouyinCommentReplyListResponse>({
+      url: CommonUtils.buildUrl(
+        `https://creator.douyin.com/web/api/third_party/aweme/api/comment/read/aweme/v1/web/comment/list/reply/`, // msToken=xxx
+        {
+          cursor: pageInfo.cursor,
+          count: pageInfo.count,
+          comment_id: comment_id,
+          item_id: item_id,
+          app_id: 2906,
+          aid: 2906,
+          device_platform: 'webapp',
         },
       ),
       headers: {
