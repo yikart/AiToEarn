@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-08 11:40:45
- * @LastEditTime: 2025-03-01 20:03:05
+ * @LastEditTime: 2025-03-21 22:57:29
  * @LastEditors: nevin
  * @Description: 抖音
  */
@@ -201,6 +201,7 @@ export class Douyin extends PlatformBase {
         nikeName: v.user_info.screen_name,
         headUrl: v.user_info.avatar_url,
         data: v,
+        subCommentList: [],
       };
     });
 

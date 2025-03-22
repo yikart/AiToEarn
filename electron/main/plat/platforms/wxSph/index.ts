@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-08 11:40:45
- * @LastEditTime: 2025-03-19 18:50:57
+ * @LastEditTime: 2025-03-21 23:25:23
  * @LastEditors: nevin
  * @Description: 微信视频号
  */
@@ -188,6 +188,7 @@ export class WxSph extends PlatformBase {
           nikeName: subItem.commentNickname,
           headUrl: subItem.commentHeadurl,
           data: subItem,
+          subCommentList: [],
         });
       }
 

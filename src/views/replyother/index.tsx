@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-03-21 22:53:09
+ * @LastEditTime: 2025-03-20 21:28:52
  * @LastEditors: nevin
  * @Description: 评论页面 reply
  */
@@ -11,7 +11,7 @@ import {
   WorkData,
   CommentData,
   icpCreateCommentList,
-} from '@/icp/reply';
+} from '@/icp/replyother';
 import { Avatar, Button, Card, Col, Row } from 'antd';
 import { useCallback, useRef, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
@@ -155,7 +155,7 @@ export default function Page() {
                 ]}
               >
                 {item.content}
-                {/* {item.subCommentList.map((subItem) => (
+                {item.subCommentList.map((subItem) => (
                   <div key={subItem.commentId}>
                     {subItem.content}
                     <Meta
@@ -163,7 +163,7 @@ export default function Page() {
                       description={subItem.nikeName}
                     />
                   </div>
-                ))} */}
+                ))}
                 <Meta
                   avatar={<Avatar src={item.headUrl} />}
                   description={item.nikeName}
