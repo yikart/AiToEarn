@@ -1,50 +1,28 @@
-import React, {
-  ForwardedRef,
-  forwardRef,
-  memo,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { ForwardedRef, forwardRef, memo } from 'react';
 import {
   IVideoPubSetModalChildProps,
   IVideoPubSetModalChildRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/videoPubSetModal.type';
-import { Button, Input, Modal, Radio, Select, Spin, Tooltip } from 'antd';
+import { Radio, Select } from 'antd';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import TopicSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/TopicSelect';
 import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
 import { AccountType } from '@@/AccountEnum';
-import useDebounceFetcher from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/useDebounceFetcher';
-import {
-  getDouyinActivityDetails,
-  icpGetActivityTags,
-  icpGetDouyinActivity,
-  icpGetDoytinHot,
-  icpGetDoytinHotAll,
-} from '@/icp/publish';
 import {
   DescTextArea,
   ScheduledTimeSelect,
   TitleInput,
   VideoPubRestartLogin,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
-import {
-  DouyinActivity,
-  DouyinActivityDetailResponse,
-  DouyinHotSentence,
-  DouyinQueryTags,
-} from '../../../../../../../../electron/plat/douyin/douyin.type';
-import styles from '../components/videoPubSetModalCommon.module.scss';
-import { describeNumber } from '@/utils';
-import { onAccountLoginFinish } from '@/icp/receiveMsg';
 import UserSelect from '../components/UserSelect';
 import { DeclarationDouyin } from '../../../../../../../../electron/plat/douyin/common.douyin';
-import { QuestionCircleOutlined } from '@ant-design/icons';
-
-const { TextArea } = Input;
+import {
+  CommonActivitySelect,
+  CommonHotspotSelect,
+} from '../../../../../components/CommonComponents/DouyinCommonComponents';
+import { ILableValue } from '../../../../../../../../electron/db/models/video';
 
 const HotspotSelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
   const { setOnePubParams } = useVideoPageStore(
@@ -52,262 +30,55 @@ const HotspotSelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
       setOnePubParams: state.setOnePubParams,
     })),
   );
-  const [doytinHotAll, setDoytinHotAll] = useState<DouyinHotSentence[]>([]);
-  const [keywords, setKeywords] = useState('');
-
-  const { fetching, options, debounceFetcher } =
-    useDebounceFetcher<DouyinHotSentence>(async (keywords) => {
-      setKeywords(keywords);
-      const res = await icpGetDoytinHot(
-        currChooseAccount.account!,
-        keywords || '',
-      );
-      return res.sentences;
-    });
-
-  useEffect(() => {
-    icpGetDoytinHotAll().then((res) => {
-      setDoytinHotAll(res.all_sentences);
-    });
-  }, []);
 
   return (
-    <>
-      <h1>
-        申请关联热点
-        <Tooltip title="你可以申请和一个热点做关联，如果视频确实和热点非常相关，将会进入抖音热点榜，若不相关则不会生效。">
-          <QuestionCircleOutlined style={{ marginLeft: '2px' }} />
-        </Tooltip>
-      </h1>
-      <Select
-        showSearch
-        allowClear
-        style={{ width: '100%' }}
-        placeholder="输入热点词搜索"
-        labelInValue
-        filterOption={false}
-        onSearch={debounceFetcher}
-        notFoundContent={fetching ? <Spin size="small" /> : null}
-        options={(!keywords ? doytinHotAll : options).map((v) => {
-          return {
-            ...v,
-            label: v.word,
-            value: v.sentence_id,
-          };
-        })}
-        optionRender={({ data }) => {
-          return (
-            <div className={styles.hotspotSelect}>
-              <div className="hotspotSelect-left">
-                <img src={data.word_cover?.url_list[0]} />
-                <span>{data.word}</span>
-              </div>
-              <div className="hotspotSelect-right">
-                {describeNumber(data.hot_value)}在看
-              </div>
-            </div>
-          );
-        }}
-        value={
-          currChooseAccount.pubParams!.diffParams![AccountType.Douyin]!.hotPoint
-        }
-        onChange={(newValue) => {
-          const newDiffParams = currChooseAccount.pubParams.diffParams!;
-          newDiffParams[AccountType.Douyin]!.hotPoint = newValue;
-          setOnePubParams(
-            {
-              diffParams: newDiffParams,
-            },
-            currChooseAccount.id,
-          );
-        }}
-      />
-      <VideoPubRestartLogin currChooseAccount={currChooseAccount} />
-    </>
+    <CommonHotspotSelect
+      value={
+        currChooseAccount.pubParams!.diffParams![AccountType.Douyin]!.hotPoint
+      }
+      onChange={(newValue) => {
+        const newDiffParams = currChooseAccount.pubParams.diffParams!;
+        newDiffParams[AccountType.Douyin]!.hotPoint = newValue as ILableValue;
+        setOnePubParams(
+          {
+            diffParams: newDiffParams,
+          },
+          currChooseAccount.id,
+        );
+      }}
+    />
   );
 };
 
 const ActivitySelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState<DouyinActivity[]>([]);
   const { setOnePubParams } = useVideoPageStore(
     useShallow((state) => ({
       setOnePubParams: state.setOnePubParams,
     })),
   );
-  // 活动标签数据
-  const activityTagsMap = useRef<Map<number, DouyinQueryTags>>(new Map());
-  const [activityDetails, setActivityDetails] =
-    useState<DouyinActivityDetailResponse>();
-
-  const init = () => {
-    icpGetDouyinActivity(currChooseAccount.account!).then((res) => {
-      setOptions(res.activity_list);
-    });
-    icpGetActivityTags(currChooseAccount.account!).then((res) => {
-      res.data?.query_tags?.map((v) => {
-        activityTagsMap.current.set(v.id, v);
-      });
-    });
-  };
-
-  useEffect(() => {
-    init();
-
-    return onAccountLoginFinish(() => {
-      init();
-    });
-  }, []);
 
   return (
-    <>
-      <Modal
-        open={open}
-        title="活动详情"
-        footer={null}
-        onCancel={() => setOpen(false)}
-      >
-        <Spin spinning={loading}>
-          <div className={styles.activityDetails}>
-            <div className="activityDetails-top">
-              <div className="activityDetails-top-left">
-                <div className="activityDetails-top-left-img">
-                  <img src={activityDetails?.activity_info.cover_image} />
-                </div>
-                <ul>
-                  <li className="activityDetails-top-left-title">
-                    {activityDetails?.activity_info.activity_name}
-                  </li>
-                  <li className="activityDetails-top-left-hot">
-                    活动热度：{activityDetails?.activity_info.hot_score}
-                  </li>
-                </ul>
-              </div>
-
-              <div className="activityDetails-top-tag">
-                {
-                  activityTagsMap.current.get(
-                    activityDetails?.activity_info.query_tag || 0,
-                  )?.name
-                }
-              </div>
-            </div>
-
-            <div className="activityDetails-bottom">
-              <h2>活动时间</h2>
-              <div className="activityDetails-bottom-text">
-                活动时间：{activityDetails?.publish_start_time}-
-                {activityDetails?.publish_end_time}
-              </div>
-              <h2>活动玩法</h2>
-              <div className="activityDetails-bottom-text">
-                {activityDetails?.activity_description}
-              </div>
-              <h2>关联话题</h2>
-              <ul className="activityDetails-bottom-text">
-                {activityDetails?.topics.map((v) => {
-                  return <li key={v}>#{v}</li>;
-                })}
-              </ul>
-              <h2>流量奖励</h2>
-              <div className="activityDetails-bottom-text">
-                {activityDetails?.reward_rules
-                  ? JSON.parse(activityDetails?.reward_rules).text
-                  : ''}
-              </div>
-            </div>
-          </div>
-        </Spin>
-      </Modal>
-
-      <h1>
-        活动奖励
-        <Tooltip title="添加活动将有机会获得流量奖励">
-          <QuestionCircleOutlined style={{ marginLeft: '2px' }} />
-        </Tooltip>
-      </h1>
-      <Select
-        showSearch={false}
-        allowClear
-        style={{ width: '100%' }}
-        placeholder="点击选择活动奖励"
-        labelInValue
-        mode="multiple"
-        filterOption={false}
-        maxCount={5 - currChooseAccount.pubParams!.topics!.length}
-        optionRender={({ data }) => {
-          return (
-            <div className={styles.activitySelect}>
-              <div className="activitySelect-left">
-                <div className="activitySelect-left-img">
-                  <img src={data.cover_image} />
-                </div>
-                <ul>
-                  <li>{data.label}</li>
-                  <li>热度：{data.hot_score}</li>
-                </ul>
-              </div>
-              <div className="activitySelect-right">
-                <div className="activitySelect-right-top">
-                  {activityTagsMap.current.get(data.query_tag)?.name}
-                </div>
-                <div className="activitySelect-right-bottom">
-                  <span>时间：02.27~03.31</span>
-                  <Button
-                    type="link"
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      setOpen(true);
-                      setLoading(true);
-                      setActivityDetails(undefined);
-                      const res = await getDouyinActivityDetails(
-                        currChooseAccount.account!,
-                        data.activity_id,
-                      );
-                      setLoading(false);
-                      setActivityDetails(res);
-                    }}
-                  >
-                    活动详情
-                  </Button>
-                </div>
-              </div>
-            </div>
-          );
-        }}
-        options={options?.map((v) => {
-          return {
-            ...v,
-            label: v.activity_name,
-            value: v.activity_id,
-          };
-        })}
-        value={
-          currChooseAccount.pubParams!.diffParams![AccountType.Douyin]!
-            .activitys
-        }
-        onDropdownVisibleChange={() => {
-          if (options.length === 0 && currChooseAccount.account?.status === 0) {
-            init();
-          }
-        }}
-        onChange={(newValue) => {
-          const newDiffParams = currChooseAccount.pubParams.diffParams!;
-          newDiffParams[AccountType.Douyin]!.activitys = newValue;
-          setOnePubParams(
-            {
-              diffParams: newDiffParams,
-            },
-            currChooseAccount.id,
-          );
-        }}
-      />
-      <p className="videoPubSetModal_con-tips">
-        活动奖励 + 话题 最多不能超过五个。
-      </p>
+    <CommonActivitySelect
+      account={currChooseAccount.account}
+      maxCount={5 - currChooseAccount.pubParams!.topics!.length}
+      value={
+        currChooseAccount.pubParams!.diffParams![AccountType.Douyin]!.activitys
+      }
+      onChange={(newValue) => {
+        const newDiffParams = currChooseAccount.pubParams.diffParams!;
+        newDiffParams[AccountType.Douyin]!.activitys =
+          newValue as ILableValue[];
+        console.log(newValue);
+        setOnePubParams(
+          {
+            diffParams: newDiffParams,
+          },
+          currChooseAccount.id,
+        );
+      }}
+    >
       <VideoPubRestartLogin currChooseAccount={currChooseAccount} />
-    </>
+    </CommonActivitySelect>
   );
 };
 

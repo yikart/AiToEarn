@@ -28,7 +28,6 @@
   min-height: 0;
   box-sizing: border-box;
   padding: 25px 20px 0 0;
-  margin-right: 20px;
   border-right: 1px solid var(--superLightGreyColor);
   :global {
     .imageLeftSetting-upload {
@@ -63,6 +62,7 @@
 }
 
 .imageRightSetting {
+  margin-left: 20px;
   :global {
     .imageRightSetting-title {
       text-align: left;

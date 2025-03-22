@@ -7,6 +7,7 @@ import { Steps } from 'antd';
 import ChooseAccountModule from '../../../../components/ChooseAccountModule/ChooseAccountModule';
 import { useShallow } from 'zustand/react/shallow';
 import { useImagePageStore } from '../../useImagePageStore';
+import ImageParamsSet from './components/ImageParamsSet';
 
 export interface IImageRightSettingRef {}
 
@@ -16,20 +17,20 @@ const ImageRightSetting = memo(
   forwardRef(
     ({}: IImageRightSettingProps, ref: ForwardedRef<IImageRightSettingRef>) => {
       const [chooseAccountOpen, setChooseAccountOpen] = useState(false);
-      const { imageTextData, addAccount } = useImagePageStore(
+      const { imageAccounts, addAccount } = useImagePageStore(
         useShallow((state) => ({
-          imageTextData: state.imageTextData,
+          imageAccounts: state.imageAccounts,
           addAccount: state.addAccount,
         })),
       );
 
       return (
-        <div className={styles.imageRightSetting}>
+        <>
           <ChooseAccountModule
             open={chooseAccountOpen}
             onClose={setChooseAccountOpen}
             platChooseProps={{
-              choosedAccounts: imageTextData.imageAccounts
+              choosedAccounts: imageAccounts
                 .map((v) => v.account)
                 .filter((v) => v !== undefined),
               pubType: PubType.ImageText,
@@ -38,35 +39,40 @@ const ImageRightSetting = memo(
               addAccount(aList);
             }}
           />
+          {imageAccounts.length === 0 ? (
+            <div className={styles.imageRightSetting}>
+              <SupportPlat
+                pubType={PubType.ImageText}
+                style={{ marginTop: '15px' }}
+              />
 
-          <SupportPlat
-            pubType={PubType.ImageText}
-            style={{ marginTop: '15px' }}
-          />
+              <h2 className="imageRightSetting-title">发布账户</h2>
+              <ChooseAccountChunk
+                onClick={() => {
+                  setChooseAccountOpen(true);
+                }}
+              />
 
-          <h2 className="imageRightSetting-title">发布账户</h2>
-          <ChooseAccountChunk
-            onClick={() => {
-              setChooseAccountOpen(true);
-            }}
-          />
-
-          <Steps
-            direction="vertical"
-            size="small"
-            items={[
-              {
-                title: '选择发布账号',
-                description: '选择将要推文的账号',
-              },
-              {
-                title: '调整发文规则',
-                description:
-                  '完成账号选择后，撰写推文，按需调整各个平台发文规则',
-              },
-            ]}
-          />
-        </div>
+              <Steps
+                direction="vertical"
+                size="small"
+                items={[
+                  {
+                    title: '选择发布账号',
+                    description: '选择将要推文的账号',
+                  },
+                  {
+                    title: '调整发文规则',
+                    description:
+                      '完成账号选择后，撰写推文，按需调整各个平台发文规则',
+                  },
+                ]}
+              />
+            </div>
+          ) : (
+            <ImageParamsSet />
+          )}
+        </>
       );
     },
   ),

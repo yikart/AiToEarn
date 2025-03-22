@@ -3,7 +3,7 @@ import {
   IVideoPubSetModalChildProps,
   IVideoPubSetModalChildRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/videoPubSetModal.type';
-import { Input, Radio } from 'antd';
+import { Radio } from 'antd';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import { VisibleTypeEnum } from '@@/publish/PublishEnum';
@@ -14,8 +14,6 @@ import {
   DescTextArea,
   ScheduledTimeSelect,
 } from '../components/VideoPubSetModalCommon';
-
-const { TextArea } = Input;
 
 const VideoPubSetModal_KWAI = memo(
   forwardRef(

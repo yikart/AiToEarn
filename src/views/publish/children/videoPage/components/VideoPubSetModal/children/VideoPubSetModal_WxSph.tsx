@@ -20,8 +20,6 @@ import { ipcUpdateAccountStatus } from '@/icp/account';
 import { WxSphEventList } from '../../../../../../../../electron/plat/shipinhao/wxShp.type';
 import UserSelect from '../components/UserSelect';
 
-const { TextArea } = Input;
-
 const WXSphActivity = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
   const { setOnePubParams, updateAccounts } = useVideoPageStore(
     useShallow((state) => ({
