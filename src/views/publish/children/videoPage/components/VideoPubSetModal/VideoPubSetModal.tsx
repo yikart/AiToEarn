@@ -46,6 +46,10 @@ import VideoPubSetModalVideo, {
   IVideoPubSetModalVideoRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalVideo';
 import { usePubStroe } from '../../../../../../store/pubStroe';
+import {
+  IVideoPubSetModalChildProps,
+  IVideoPubSetModalChildRef,
+} from './videoPubSetModal.type';
 
 export interface IVideoPubSetModalRef {}
 
@@ -276,6 +280,38 @@ const VideoPubSetModal = memo(
         videoPubSetModalVideoRef.current!.pause();
       };
 
+      const PubSetModalChild = () => {
+        if (!currChooseAccount) return <></>;
+        let Component: React.MemoExoticComponent<
+          React.ForwardRefExoticComponent<
+            IVideoPubSetModalChildProps &
+              React.RefAttributes<IVideoPubSetModalChildRef>
+          >
+        >;
+        switch (currChooseAccount?.account?.type) {
+          // 快手
+          case AccountType.KWAI:
+            Component = VideoPubSetModal_KWAI;
+            break;
+          // 抖音
+          case AccountType.Douyin:
+            Component = VideoPubSetModal_DouYin;
+            break;
+          // 小红书
+          case AccountType.Xhs:
+            Component = VideoPubSetModal_XSH;
+            break;
+          // 微信视频号
+          case AccountType.WxSph:
+            Component = VideoPubSetModal_WxSph;
+            break;
+          default:
+            Component = VideoPubSetModal_KWAI;
+            break;
+        }
+        return <Component currChooseAccount={currChooseAccount} />;
+      };
+
       return (
         <>
           {contextHolder}
@@ -425,45 +461,7 @@ const VideoPubSetModal = memo(
                     }}
                   />
 
-                  {currChooseAccount &&
-                    (() => {
-                      switch (currChooseAccount?.account?.type) {
-                        // 快手
-                        case AccountType.KWAI:
-                          return (
-                            <VideoPubSetModal_KWAI
-                              currChooseAccount={currChooseAccount}
-                            />
-                          );
-                        // 抖音
-                        case AccountType.Douyin:
-                          return (
-                            <VideoPubSetModal_DouYin
-                              currChooseAccount={currChooseAccount}
-                            />
-                          );
-                        // 小红书
-                        case AccountType.Xhs:
-                          return (
-                            <VideoPubSetModal_XSH
-                              currChooseAccount={currChooseAccount}
-                            />
-                          );
-                        // 微信视频号
-                        case AccountType.WxSph:
-                          return (
-                            <VideoPubSetModal_WxSph
-                              currChooseAccount={currChooseAccount}
-                            />
-                          );
-                        default:
-                          return (
-                            <VideoPubSetModal_DouYin
-                              currChooseAccount={currChooseAccount}
-                            />
-                          );
-                      }
-                    })()}
+                  {currChooseAccount && <PubSetModalChild />}
                 </div>
                 <div className="videoPubSetModal_con-right">
                   {currChooseAccount && (

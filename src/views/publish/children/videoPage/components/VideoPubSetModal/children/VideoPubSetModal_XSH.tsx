@@ -16,7 +16,7 @@ import {
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
 import UserSelect from '../components/UserSelect';
 
-const VideoPubSetModal_KWAI = memo(
+const VideoPubSetModal_WxSph = memo(
   forwardRef(
     (
       { currChooseAccount }: IVideoPubSetModalChildProps,
@@ -81,6 +81,6 @@ const VideoPubSetModal_KWAI = memo(
     },
   ),
 );
-VideoPubSetModal_KWAI.displayName = 'VideoPubSetModal_KWAI';
+VideoPubSetModal_WxSph.displayName = 'VideoPubSetModal_WxSph';
 
-export default VideoPubSetModal_KWAI;
+export default VideoPubSetModal_WxSph;

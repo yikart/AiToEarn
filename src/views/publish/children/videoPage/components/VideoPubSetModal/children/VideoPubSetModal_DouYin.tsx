@@ -82,7 +82,7 @@ const ActivitySelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
   );
 };
 
-const VideoPubSetModal_KWAI = memo(
+const VideoPubSetModal_DouYin = memo(
   forwardRef(
     (
       props: IVideoPubSetModalChildProps,
@@ -210,6 +210,6 @@ const VideoPubSetModal_KWAI = memo(
     },
   ),
 );
-VideoPubSetModal_KWAI.displayName = 'VideoPubSetModal_KWAI';
+VideoPubSetModal_DouYin.displayName = 'VideoPubSetModal_DouYin';
 
-export default VideoPubSetModal_KWAI;
+export default VideoPubSetModal_DouYin;

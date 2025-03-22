@@ -6,6 +6,7 @@ import { AccountType } from '../../../../../../../../commont/AccountEnum';
 import { IImageAccountItem } from '../../../imagePage.type';
 import { AccountPlatInfoMap } from '../../../../../../account/comment';
 import { CloseOutlined } from '@ant-design/icons';
+import ParamsSettingItem from './ParamsSettingItem';
 
 export interface IImageParamsSetRef {}
 
@@ -58,7 +59,7 @@ const ImageParamsSet = memo(
                   <div className="imageParamsSet_plats-item-img">
                     <img src={platInfo.icon} />
                     <div
-                      className="imageParamsSet_plats-item-close"
+                      className={`${styles.closeIcon} imageParamsSet_plats-item-close`}
                       onClick={(e) => {
                         e.stopPropagation();
                         console.log('close');
@@ -72,12 +73,11 @@ const ImageParamsSet = memo(
               );
             })}
           </div>
-          <div className="imageParamsSet_paramsSet">
-            <h2>
-              <span>发布账号</span>
-              <i>*</i>
-            </h2>
-          </div>
+          {activePlat && (
+            <ParamsSettingItem
+              imageAccountList={platAccountImagesMap.get(activePlat)!}
+            />
+          )}
         </div>
       );
     },
