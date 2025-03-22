@@ -8,43 +8,34 @@ import {
 } from 'react';
 import { Modal, Tabs } from 'antd';
 import { AccountInfo } from '@/views/account/comment';
-import { PubType } from '../../../../../commont/publish/PublishEnum';
 import PlatChoose, {
+  IPlatChooseProps,
   IPlatChooseRef,
 } from '@/views/publish/components/ChooseAccountModule/components/PlatChoose';
-import { AccountType } from '../../../../../commont/AccountEnum';
 
 export interface IChooseAccountModuleRef {}
 
 export interface IChooseAccountModuleProps {
   open: boolean;
   onClose: (open: boolean) => void;
-  // 发布类型，每个类型的平台都不同
-  pubType: PubType;
-  // 按平台 选择的数据
-  choosedAccounts?: AccountInfo[];
+
+  // 按平台props
+  platChooseProps?: IPlatChooseProps;
   // 按平台选择确认
   onPlatConfirm?: (accounts: AccountInfo[]) => void;
   // 按平台选择change
   onPlatChange?: (accounts: AccountInfo[], account: AccountInfo) => void;
-  // 按平台 是否禁用全选，true=禁用，false=不禁用，默认为false
-  disableAllSelect?: boolean;
-  // 可选择的平台，默认为全部
-  allowPlatSet?: Set<AccountType>;
 }
 
 const ChooseAccountModule = memo(
   forwardRef(
     (
       {
-        allowPlatSet,
         open,
         onClose,
-        pubType,
-        choosedAccounts,
         onPlatConfirm,
         onPlatChange,
-        disableAllSelect,
+        platChooseProps,
       }: IChooseAccountModuleProps,
       ref: ForwardedRef<IChooseAccountModuleRef>,
     ) => {
@@ -59,7 +50,7 @@ const ChooseAccountModule = memo(
       };
 
       const handleCancel = () => {
-        setNewChoosedAccounts(choosedAccounts || []);
+        setNewChoosedAccounts(platChooseProps?.choosedAccounts || []);
         close();
       };
 
@@ -69,7 +60,7 @@ const ChooseAccountModule = memo(
 
       useEffect(() => {
         setTimeout(() => platChooseRef.current?.recover(), 1);
-      }, [choosedAccounts]);
+      }, [platChooseProps?.choosedAccounts]);
 
       useEffect(() => {
         platChooseRef.current?.init();
@@ -90,17 +81,21 @@ const ChooseAccountModule = memo(
                 key: '1',
                 label: '按平台选择',
                 children: (
-                  <PlatChoose
-                    allowPlatSet={allowPlatSet}
-                    choosedAccounts={choosedAccounts}
-                    disableAllSelect={disableAllSelect || false}
-                    ref={platChooseRef}
-                    pubType={pubType}
-                    onChange={(aList, account) => {
-                      setNewChoosedAccounts(aList);
-                      if (onPlatChange) onPlatChange(aList, account);
-                    }}
-                  />
+                  <>
+                    {platChooseProps && (
+                      <PlatChoose
+                        {...platChooseProps}
+                        disableAllSelect={
+                          platChooseProps.disableAllSelect || false
+                        }
+                        ref={platChooseRef}
+                        onChange={(aList, account) => {
+                          setNewChoosedAccounts(aList);
+                          if (onPlatChange) onPlatChange(aList, account);
+                        }}
+                      />
+                    )}
+                  </>
                 ),
               },
             ]}

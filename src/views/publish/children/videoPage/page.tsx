@@ -94,15 +94,18 @@ export default function Page() {
       <Spin spinning={loadingPageLoading}>
         <VideoPubSetModal onClose={setVideoPubSetModalOpen} />
         <ChooseAccountModule
-          disableAllSelect={
-            accountChooseType.current === AccountChooseType.Radio ||
-            accountChooseType.current === AccountChooseType.Replace
-          }
+          platChooseProps={{
+            disableAllSelect:
+              accountChooseType.current === AccountChooseType.Radio ||
+              accountChooseType.current === AccountChooseType.Replace,
+            choosedAccounts: videoListChoose
+              .map((v) => v.account)
+              .filter((v) => v !== undefined),
+            pubType: PubType.VIDEO,
+            isCancelChooseAccount: true,
+          }}
           open={chooseAccountOpen}
           onClose={setChooseAccountOpen}
-          choosedAccounts={videoListChoose
-            .map((v) => v.account)
-            .filter((v) => v !== undefined)}
           onPlatConfirm={(aList) => {
             addAccount(aList);
           }}
@@ -118,7 +121,6 @@ export default function Page() {
               });
             }
           }}
-          pubType={PubType.VIDEO}
         />
 
         {videoListChoose.length !== 0 ? (

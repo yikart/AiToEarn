@@ -16,9 +16,10 @@ const ImageRightSetting = memo(
   forwardRef(
     ({}: IImageRightSettingProps, ref: ForwardedRef<IImageRightSettingRef>) => {
       const [chooseAccountOpen, setChooseAccountOpen] = useState(false);
-      const { imageTextData } = useImagePageStore(
+      const { imageTextData, addAccount } = useImagePageStore(
         useShallow((state) => ({
           imageTextData: state.imageTextData,
+          addAccount: state.addAccount,
         })),
       );
 
@@ -27,13 +28,15 @@ const ImageRightSetting = memo(
           <ChooseAccountModule
             open={chooseAccountOpen}
             onClose={setChooseAccountOpen}
-            choosedAccounts={imageTextData.imageAccounts
-              .map((v) => v.account)
-              .filter((v) => v !== undefined)}
-            onPlatConfirm={(aList) => {
-              console.log(aList);
+            platChooseProps={{
+              choosedAccounts: imageTextData.imageAccounts
+                .map((v) => v.account)
+                .filter((v) => v !== undefined),
+              pubType: PubType.ImageText,
             }}
-            pubType={PubType.ImageText}
+            onPlatConfirm={(aList) => {
+              addAccount(aList);
+            }}
           />
 
           <SupportPlat

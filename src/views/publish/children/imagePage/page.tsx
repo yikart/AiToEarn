@@ -4,9 +4,20 @@ import { useImagePageStore } from './useImagePageStore';
 import ImageLeftSetting from './components/ImageLeftSetting/ImageLeftSetting';
 import ImageRightSetting from './components/ImageRightSetting/ImageRightSetting';
 import { Button, Popconfirm } from 'antd';
+import { useEffect } from 'react';
 
 export default function Page() {
-  const {} = useImagePageStore(useShallow((state) => ({})));
+  const { clear } = useImagePageStore(
+    useShallow((state) => ({
+      clear: state.clear,
+    })),
+  );
+
+  useEffect(() => {
+    return () => {
+      clear();
+    };
+  }, []);
 
   return (
     <div className={styles.image}>

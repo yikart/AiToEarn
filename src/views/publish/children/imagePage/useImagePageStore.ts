@@ -3,6 +3,8 @@ import { combine } from 'zustand/middleware';
 import { IImgFile } from '../../../../components/Choose/ImgChoose';
 import { IImageAccountItem } from './imagePage.type';
 import lodash from 'lodash';
+import { AccountInfo } from '../../../account/comment';
+import { useVideoPageStore } from '../videoPage/useVideoPageStore';
 
 interface IImagePageStore {
   imageTextData: {
@@ -30,6 +32,24 @@ export const useImagePageStore = create(
     },
     (set, get, storeApi) => {
       const methods = {
+        // 添加账户
+        addAccount(accounts: AccountInfo[]) {
+          const imageTextData = {
+            ...get().imageTextData,
+          };
+
+          for (const account of accounts) {
+            imageTextData.imageAccounts.push({
+              account,
+              pubParams: useVideoPageStore.getState().pubParamsInit(),
+            });
+          }
+
+          set({
+            imageTextData,
+          });
+        },
+
         clear() {
           set({
             ...getStore(),
