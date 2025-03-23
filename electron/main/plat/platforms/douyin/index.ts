@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-08 11:40:45
- * @LastEditTime: 2025-03-23 22:45:39
+ * @LastEditTime: 2025-03-23 23:42:31
  * @LastEditors: nevin
  * @Description: 抖音
  */
@@ -209,6 +209,7 @@ export class Douyin extends PlatformBase {
         if (res2.status === 200 && res2.data.status_code === 0) {
           for (const element of res2.data.comment_info_list) {
             subList.push({
+              userId: element.user_info.user_id,
               dataId: dataId,
               commentId: element.comment_id,
               content: element.text,
@@ -223,6 +224,7 @@ export class Douyin extends PlatformBase {
       }
 
       list.push({
+        userId: v.user_info.user_id,
         dataId: dataId,
         commentId: v.comment_id,
         content: v.text,

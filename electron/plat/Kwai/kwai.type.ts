@@ -201,7 +201,7 @@ export interface GetCommentListResponse {
   message: string; // '成功';
 }
 
-// 回复评论返回
+// 获取子回复列表
 export interface GetSubCommentListResponse {
   result: number; // 1;
   currentTime: number; // 1741843273188;

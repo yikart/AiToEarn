@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-08 11:40:45
- * @LastEditTime: 2025-03-21 23:25:23
+ * @LastEditTime: 2025-03-23 23:45:42
  * @LastEditors: nevin
  * @Description: 微信视频号
  */
@@ -181,6 +181,7 @@ export class WxSph extends PlatformBase {
       const subDataList: CommentData[] = [];
       for (const subItem of item.levelTwoComment) {
         subDataList.push({
+          userId: subItem.commentNickname,
           dataId: subItem.commentId,
           commentId: subItem.commentId,
           parentCommentId: item.commentId,
@@ -193,6 +194,7 @@ export class WxSph extends PlatformBase {
       }
 
       dataList.push({
+        userId: item.commentNickname,
         dataId: item.commentId,
         commentId: item.commentId,
         content: item.commentContent,

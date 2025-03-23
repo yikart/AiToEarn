@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-19 17:54:53
- * @LastEditTime: 2025-03-21 23:25:40
+ * @LastEditTime: 2025-03-23 23:43:23
  * @LastEditors: nevin
  * @Description:
  */
@@ -217,6 +217,7 @@ export class Kwai extends PlatformBase {
 
         for (const v1 of subRes.data.data.list) {
           subList.push({
+            userId: v1.authorId + '',
             dataId: v1.photoId + '',
             commentId: v1.commentId + '',
             content: v1.content,
@@ -230,6 +231,7 @@ export class Kwai extends PlatformBase {
       }
 
       list.push({
+        userId: v.authorId + '',
         dataId: v.photoId + '',
         commentId: v.commentId + '',
         parentCommentId: undefined,

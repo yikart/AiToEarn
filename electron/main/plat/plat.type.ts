@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-07 09:48:29
- * @LastEditTime: 2025-03-21 22:57:17
+ * @LastEditTime: 2025-03-23 23:41:38
  * @LastEditors: nevin
  * @Description:
  */
@@ -62,6 +62,7 @@ export type WorkData = {
 
 // 评论
 export type CommentData = {
+  userId: string;
   dataId: string;
   commentId: string;
   parentCommentId?: string; // 上级评论ID

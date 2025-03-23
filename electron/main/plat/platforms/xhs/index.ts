@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-08 11:40:45
- * @LastEditTime: 2025-03-21 23:26:00
+ * @LastEditTime: 2025-03-24 00:03:22
  * @LastEditors: nevin
  * @Description: 小红书
  */
@@ -192,6 +192,7 @@ export class Xhs extends PlatformBase {
 
       for (const sub of v.sub_comments) {
         subList.push({
+          userId: sub.user_info.user_id,
           dataId: v.note_id,
           commentId: sub.id,
           parentCommentId: v.id,
@@ -204,6 +205,7 @@ export class Xhs extends PlatformBase {
       }
 
       list.push({
+        userId: v.user_info.user_id,
         dataId: v.note_id,
         commentId: v.id,
         parentCommentId: undefined,
