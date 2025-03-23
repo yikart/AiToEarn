@@ -2323,12 +2323,6 @@ export class DouyinService {
       count: 10,
     },
   ) {
-    const cookieString = CommonUtils.convertCookieToJson(cookie);
-    const csrfToken = await this.getSecsdkCsrfToken(cookieString);
-
-    console.log('----- comment_id', comment_id);
-    console.log('----- pageInfo', pageInfo);
-
     const res = await requestNet<DouyinCreatorCommentListResponse>({
       url: CommonUtils.buildUrl(
         `https://creator.douyin.com/aweme/v1/creator/comment/reply/list/`, // msToken=xxx
@@ -2339,8 +2333,7 @@ export class DouyinService {
         },
       ),
       headers: {
-        cookie: cookieString,
-        'X-Secsdk-Csrf-Token': csrfToken,
+        cookie: CookieToString(cookie),
       },
       method: 'GET',
     });

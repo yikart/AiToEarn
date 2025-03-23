@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-03-23 21:52:31
+ * @LastEditTime: 2025-03-23 23:02:47
  * @LastEditors: nevin
  * @Description: 评论页面 reply
  */
@@ -32,10 +32,19 @@ export default function Page() {
 
   // 注册监听
   (() => {
-    window.ipcRenderer.on(SendChannelEnum.CommentRelyProgress, (e, args) => {
-      message.info('收到评论通知');
-      console.log('--------- args', args);
-    });
+    window.ipcRenderer.on(
+      SendChannelEnum.CommentRelyProgress,
+      (
+        e,
+        args: {
+          tag: string;
+          status: -1 | 0 | 1;
+          error?: any;
+        },
+      ) => {
+        message.info(`收到评论通知--${args.status}---${args.tag}`);
+      },
+    );
   })();
 
   async function getCreatorList() {

@@ -56,8 +56,6 @@ export class ReplyService {
           status: 0,
         });
 
-        for (const item of list) list.push(item);
-
         if (list.length === 0) {
           scheduleEvent({
             tag: AutorReplyCommentScheduleEvent.End,
