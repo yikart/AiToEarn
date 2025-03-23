@@ -1,12 +1,13 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-23 09:44:54
+ * @LastEditTime: 2025-03-23 09:57:58
  * @LastEditors: nevin
  * @Description: reply Reply
  */
 import { AutoRunModel, AutoRunType } from '../../db/models/autoRun';
 import { AccountService } from '../account/service';
+import { autoRunTypeEtTag } from '../autoRun/comment';
 import { AutoRunService } from '../autoRun/service';
 import { Controller, Et, Icp, Inject } from '../core/decorators';
 import platController from '../plat';
