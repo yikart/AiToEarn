@@ -9,6 +9,7 @@ import PQueue from 'p-queue';
 import { AccountModel } from '../../db/models/account';
 import platController from '../plat';
 import { toolsApi } from '../api/tools';
+import { AutorReplyCommentScheduleEvent } from './comment';
 
 @Injectable()
 export class ReplyService {

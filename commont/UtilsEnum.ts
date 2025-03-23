@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-03-01 19:27:31
- * @LastEditTime: 2025-03-23 18:23:09
+ * @LastEditTime: 2025-03-23 19:39:34
  * @LastEditors: nevin
  * @Description: 工具枚举
  */
@@ -13,4 +13,5 @@ export enum SendChannelEnum {
   VideoPublishProgress = 'VideoPublishProgress',
   // 自动运行进度或状态
   AutoRun = 'AutoRun',
+  CommentRelyProgress = 'CommentRelyProgress',
 }

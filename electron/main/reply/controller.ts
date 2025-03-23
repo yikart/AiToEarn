@@ -1,16 +1,19 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-23 19:17:37
+ * @LastEditTime: 2025-03-23 19:43:47
  * @LastEditors: nevin
  * @Description: reply Reply
  */
+import windowOperate from '../../util/windowOperate';
 import { AutoRunModel, AutoRunType } from '../../db/models/autoRun';
 import { AccountService } from '../account/service';
 import { AutoRunService } from '../autoRun/service';
 import { Controller, Et, Icp, Inject } from '../core/decorators';
 import platController from '../plat';
+import { AutorReplyCommentScheduleEvent } from './comment';
 import { ReplyService } from './service';
+import { SendChannelEnum } from '../../../commont/UtilsEnum';
 
 @Controller()
 export class ReplyController {
@@ -101,6 +104,7 @@ export class ReplyController {
       }) => {
         console.log(e);
         // TODO: 推送消息
+        windowOperate.sendRenderMsg(SendChannelEnum.CommentRelyProgress, 111);
       },
     );
 

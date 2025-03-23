@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-03-23 15:01:19
+ * @LastEditTime: 2025-03-23 19:39:40
  * @LastEditors: nevin
  * @Description: 评论页面 reply
  */
@@ -13,13 +13,14 @@ import {
   icpCreateCommentList,
 } from '@/icp/reply';
 import { Avatar, Button, Card, Col, Row } from 'antd';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import styles from './reply.module.scss';
 import Meta from 'antd/es/card/Meta';
 import ReplyWorks, { ReplyWorksRef } from './components/replyWorks';
 import ReplyComment, { ReplyCommentRef } from './components/replyComment';
 import AddAutoRun, { AddAutoRunRef } from './components/addAutoRun';
+import { SendChannelEnum } from '@@/UtilsEnum';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
@@ -29,14 +30,18 @@ export default function Page() {
   const Ref_AddAutoRun = useRef<AddAutoRunRef>(null);
   const Ref_ReplyComment = useRef<ReplyCommentRef>(null);
 
+  // 注册监听
+  (() => {
+    window.ipcRenderer.on(SendChannelEnum.CommentRelyProgress, (e, args) => {
+      console.log('--------- e', e);
+      console.log('--------- args', args);
+    });
+  })();
+
   async function getCreatorList() {
-    if (activeAccountId === -1) {
-      return;
-    }
+    if (activeAccountId === -1) return;
     setWordList([]);
-
     const res = await icpCreatorList(activeAccountId);
-
     setWordList(res.list);
   }
 
