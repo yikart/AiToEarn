@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-03-23 19:39:40
+ * @LastEditTime: 2025-03-23 21:52:31
  * @LastEditors: nevin
  * @Description: 评论页面 reply
  */
@@ -12,7 +12,7 @@ import {
   CommentData,
   icpCreateCommentList,
 } from '@/icp/reply';
-import { Avatar, Button, Card, Col, Row } from 'antd';
+import { Avatar, Button, Card, Col, message, Row } from 'antd';
 import { useCallback, useRef, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import styles from './reply.module.scss';
@@ -33,7 +33,7 @@ export default function Page() {
   // 注册监听
   (() => {
     window.ipcRenderer.on(SendChannelEnum.CommentRelyProgress, (e, args) => {
-      console.log('--------- e', e);
+      message.info('收到评论通知');
       console.log('--------- args', args);
     });
   })();

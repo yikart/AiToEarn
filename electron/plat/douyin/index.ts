@@ -2315,27 +2315,32 @@ export class DouyinService {
   async getCreatorCommentReplyList(
     cookie: Electron.Cookie[],
     comment_id: string, // 评论ID
-    item_id: string, // 作品ID
     pageInfo: {
       cursor?: string;
       count?: number;
+    } = {
+      cursor: '0',
+      count: 10,
     },
   ) {
-    const res = await requestNet<DouyinCommentReplyListResponse>({
+    const cookieString = CommonUtils.convertCookieToJson(cookie);
+    const csrfToken = await this.getSecsdkCsrfToken(cookieString);
+
+    console.log('----- comment_id', comment_id);
+    console.log('----- pageInfo', pageInfo);
+
+    const res = await requestNet<DouyinCreatorCommentListResponse>({
       url: CommonUtils.buildUrl(
-        `https://creator.douyin.com/web/api/third_party/aweme/api/comment/read/aweme/v1/web/comment/list/reply/`, // msToken=xxx
+        `https://creator.douyin.com/aweme/v1/creator/comment/reply/list/`, // msToken=xxx
         {
+          comment_id: comment_id,
           cursor: pageInfo.cursor,
           count: pageInfo.count,
-          comment_id: comment_id,
-          item_id: item_id,
-          app_id: 2906,
-          aid: 2906,
-          device_platform: 'webapp',
         },
       ),
       headers: {
-        cookie: CookieToString(cookie),
+        cookie: cookieString,
+        'X-Secsdk-Csrf-Token': csrfToken,
       },
       method: 'GET',
     });

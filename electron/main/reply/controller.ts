@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-23 19:43:47
+ * @LastEditTime: 2025-03-23 21:53:31
  * @LastEditors: nevin
  * @Description: reply Reply
  */
@@ -102,9 +102,7 @@ export class ReplyController {
         status: -1 | 0 | 1;
         error?: any;
       }) => {
-        console.log(e);
-        // TODO: 推送消息
-        windowOperate.sendRenderMsg(SendChannelEnum.CommentRelyProgress, 111);
+        windowOperate.sendRenderMsg(SendChannelEnum.CommentRelyProgress, e);
       },
     );
 

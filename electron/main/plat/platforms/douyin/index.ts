@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-08 11:40:45
- * @LastEditTime: 2025-03-22 17:55:12
+ * @LastEditTime: 2025-03-23 22:45:39
  * @LastEditors: nevin
  * @Description: 抖音
  */
@@ -200,20 +200,21 @@ export class Douyin extends PlatformBase {
         const res2 = await douyinService.getCreatorCommentReplyList(
           cookie,
           v.comment_id,
-          dataId,
           {
             cursor: 0 + '',
             count: 20,
           },
         );
+
         if (res2.status === 200 && res2.data.status_code === 0) {
-          for (const element of res2.data.comments) {
+          for (const element of res2.data.comment_info_list) {
             subList.push({
               dataId: dataId,
-              commentId: element.cid,
+              commentId: element.comment_id,
               content: element.text,
-              nikeName: element.user.nickname,
-              headUrl: element.user.avatar_thumb.url_list[0] || '',
+              likeCount: Number.parseInt(element.digg_count),
+              nikeName: element.user_info.screen_name,
+              headUrl: element.user_info.avatar_url,
               data: element,
               subCommentList: [],
             });
