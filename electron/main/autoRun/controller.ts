@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-19 19:34:24
+ * @LastEditTime: 2025-03-23 09:59:57
  * @LastEditors: nevin
  * @Description: autoRun AutoRun
  */
@@ -10,7 +10,7 @@ import { AutoRunService } from './service';
 import { AutoRunType } from '../../db/models/autoRun';
 import { getUserInfo } from '../user/comment';
 import { EtEvent } from '../../global/event';
-import { autoRunTypeEtTag } from './comment';
+import { autoRunTypeEtTag, hasTriggered } from './comment';
 
 @Controller()
 export class AutoRunController {
@@ -119,7 +119,8 @@ export class AutoRunController {
       for (const item of autoRunList) {
         const tag = autoRunTypeEtTag.get(item.type);
         if (!tag) continue;
-        // TODO: 根据创建记录,对比是否已经执行
+        const needRun = hasTriggered(item.cycleType);
+        if (!needRun) continue;
         EtEvent.emit(tag, item);
       }
     } catch (error) {

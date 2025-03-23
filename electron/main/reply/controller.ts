@@ -1,12 +1,13 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-20 23:01:23
+ * @LastEditTime: 2025-03-23 09:57:58
  * @LastEditors: nevin
  * @Description: reply Reply
  */
 import { AutoRunModel, AutoRunType } from '../../db/models/autoRun';
 import { AccountService } from '../account/service';
+import { autoRunTypeEtTag } from '../autoRun/comment';
 import { AutoRunService } from '../autoRun/service';
 import { Controller, Et, Icp, Inject } from '../core/decorators';
 import platController from '../plat';
@@ -93,7 +94,7 @@ export class ReplyController {
 
     const res = await this.replyService.autorReplyComment(account, dataId);
 
-    return true;
+    return res;
   }
 
   /**
@@ -149,6 +150,12 @@ export class ReplyController {
   // 运行自动任务
   @Et('ET_AUTO_RUN_REPLY_COMMENT')
   async runAutoReplyComment(autoRunData: AutoRunModel): Promise<any> {
-    console.log('------ runAutoReplyComment ------', autoRunData.createTime);
+    const { accountId, dataId } = autoRunData;
+    if (!dataId) return null;
+
+    const account = await this.accountService.getAccountById(accountId);
+    if (!account) return null;
+
+    this.replyService.addReplyQueue(account, dataId);
   }
 }
