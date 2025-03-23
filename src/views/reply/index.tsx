@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-03-21 22:53:09
+ * @LastEditTime: 2025-03-23 11:55:30
  * @LastEditors: nevin
  * @Description: 评论页面 reply
  */
@@ -13,7 +13,7 @@ import {
   icpCreateCommentList,
 } from '@/icp/reply';
 import { Avatar, Button, Card, Col, Row } from 'antd';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import styles from './reply.module.scss';
 import Meta from 'antd/es/card/Meta';
@@ -28,6 +28,12 @@ export default function Page() {
   const Ref_ReplyWorks = useRef<ReplyWorksRef>(null);
   const Ref_AddAutoRun = useRef<AddAutoRunRef>(null);
   const Ref_ReplyComment = useRef<ReplyCommentRef>(null);
+
+  useEffect(() => {
+    const e = window.ipcRenderer.on('AutoRunError', (e, args) => {
+      // window.ipcRenderer.off('AutoRunError', e);
+    });
+  }, []);
 
   async function getCreatorList() {
     if (activeAccountId === -1) {

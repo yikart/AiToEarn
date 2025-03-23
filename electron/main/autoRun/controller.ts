@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-23 09:59:57
+ * @LastEditTime: 2025-03-23 11:05:01
  * @LastEditors: nevin
  * @Description: autoRun AutoRun
  */
@@ -11,6 +11,8 @@ import { AutoRunType } from '../../db/models/autoRun';
 import { getUserInfo } from '../user/comment';
 import { EtEvent } from '../../global/event';
 import { autoRunTypeEtTag, hasTriggered } from './comment';
+import windowOperate from '../../util/windowOperate';
+import { SendChannelEnum } from '../../../commont/UtilsEnum';
 
 @Controller()
 export class AutoRunController {
@@ -124,6 +126,7 @@ export class AutoRunController {
         EtEvent.emit(tag, item);
       }
     } catch (error) {
+      windowOperate.sendRenderMsg(SendChannelEnum.AutoRunError, error);
       console.error('Failed to sync accounts:', error);
     }
   }
