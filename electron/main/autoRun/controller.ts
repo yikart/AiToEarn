@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-23 15:18:02
+ * @LastEditTime: 2025-03-23 18:34:36
  * @LastEditors: nevin
  * @Description: autoRun AutoRun
  */
@@ -11,8 +11,6 @@ import { AutoRunType } from '../../db/models/autoRun';
 import { getUserInfo } from '../user/comment';
 import { EtEvent } from '../../global/event';
 import { autoRunTypeEtTag, hasTriggered } from './comment';
-import windowOperate from '../../util/windowOperate';
-import { SendChannelEnum } from '../../../commont/UtilsEnum';
 
 @Controller()
 export class AutoRunController {
@@ -111,10 +109,6 @@ export class AutoRunController {
   // 每5分钟进行一次自动启动
   @Scheduled('*/1 * * * *', 'all_auto_run_start')
   async syncAllAutoRunStart() {
-    console.log('------111', 222);
-
-    windowOperate.sendRenderMsg(SendChannelEnum.AutoRunError, 111);
-
     try {
       const userInfo = getUserInfo();
 
@@ -122,6 +116,7 @@ export class AutoRunController {
         userInfo.id,
       );
 
+      // 遍历自动运行列表,满足运行条件的通知运行
       for (const item of autoRunList) {
         const tag = autoRunTypeEtTag.get(item.type);
         if (!tag) continue;
@@ -130,8 +125,7 @@ export class AutoRunController {
         EtEvent.emit(tag, item);
       }
     } catch (error) {
-      windowOperate.sendRenderMsg(SendChannelEnum.AutoRunError, error);
-      console.error('Failed to sync accounts:', error);
+      console.error('---- syncAllAutoRunStart ---- error', error);
     }
   }
 }

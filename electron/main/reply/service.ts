@@ -35,9 +35,7 @@ export class ReplyService {
         pageInfo: { pcursor, hasMore },
       } = await platController.getCommentList(account, dataId, thePcursor);
 
-      for (const item of list) {
-        list.push(item);
-      }
+      for (const item of list) list.push(item);
 
       thePcursor = pcursor;
       theHasMore = !!hasMore;
@@ -58,6 +56,11 @@ export class ReplyService {
     return true;
   }
 
+  /**
+   * 添加作品回复评论的任务到队列
+   * @param account
+   * @param dataId
+   */
   addReplyQueue(account: AccountModel, dataId: string) {
     this.replyQueue.add(() => {
       this.autorReplyComment(account, dataId);

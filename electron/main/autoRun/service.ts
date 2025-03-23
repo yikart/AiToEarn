@@ -12,6 +12,8 @@ import {
 } from '../../db/models/autoRunRecord';
 import { Repository } from 'typeorm';
 import { AppDataSource } from '../../db';
+import windowOperate from '../../util/windowOperate';
+import { SendChannelEnum } from '../../../commont/UtilsEnum';
 
 @Injectable()
 export class AutoRunService {
@@ -101,5 +103,18 @@ export class AutoRunService {
     return await this.autoRunRecordRepository.update(id, {
       status,
     });
+  }
+
+  // 发送自动任务进度通知
+  async sendAutoRunProgress(id: number, status: -1 | 0 | 1 | 2, error?: any) {
+    const autoRunInfo = await this.findAutoRunById(id);
+    if (!autoRunInfo) return;
+
+    windowOperate.sendRenderMsg(
+      SendChannelEnum.AutoRun,
+      status,
+      autoRunInfo,
+      error,
+    );
   }
 }
