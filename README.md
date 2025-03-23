@@ -97,4 +97,4 @@ npm run dev
 ## 加我微信
 辛苦备注一下 AiToEarn
 
-<img src="/wechat.jpg" alt="wechat" width="500"/>
+<img src="./wechat.jpg" alt="wechat" width="500"/>
