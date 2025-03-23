@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-03-23 11:55:30
+ * @LastEditTime: 2025-03-23 15:01:19
  * @LastEditors: nevin
  * @Description: 评论页面 reply
  */
@@ -28,12 +28,6 @@ export default function Page() {
   const Ref_ReplyWorks = useRef<ReplyWorksRef>(null);
   const Ref_AddAutoRun = useRef<AddAutoRunRef>(null);
   const Ref_ReplyComment = useRef<ReplyCommentRef>(null);
-
-  useEffect(() => {
-    const e = window.ipcRenderer.on('AutoRunError', (e, args) => {
-      // window.ipcRenderer.off('AutoRunError', e);
-    });
-  }, []);
 
   async function getCreatorList() {
     if (activeAccountId === -1) {

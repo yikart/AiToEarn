@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-23 11:05:01
+ * @LastEditTime: 2025-03-23 15:18:02
  * @LastEditors: nevin
  * @Description: autoRun AutoRun
  */
@@ -111,6 +111,10 @@ export class AutoRunController {
   // 每5分钟进行一次自动启动
   @Scheduled('*/1 * * * *', 'all_auto_run_start')
   async syncAllAutoRunStart() {
+    console.log('------111', 222);
+
+    windowOperate.sendRenderMsg(SendChannelEnum.AutoRunError, 111);
+
     try {
       const userInfo = getUserInfo();
 
