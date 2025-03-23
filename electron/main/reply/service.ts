@@ -35,9 +35,9 @@ export class ReplyService {
         pageInfo: { pcursor, hasMore },
       } = await platController.getCommentList(account, dataId, thePcursor);
 
-      list.forEach((item) => {
+      for (const item of list) {
         list.push(item);
-      });
+      }
 
       thePcursor = pcursor;
       theHasMore = !!hasMore;
@@ -58,9 +58,9 @@ export class ReplyService {
     return true;
   }
 
-  addReplyQueue(msg: string) {
+  addReplyQueue(account: AccountModel, dataId: string) {
     this.replyQueue.add(() => {
-      console.log(msg);
+      this.autorReplyComment(account, dataId);
     });
   }
 }

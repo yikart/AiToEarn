@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 16:24:16
- * @LastEditTime: 2025-03-18 22:13:35
+ * @LastEditTime: 2025-03-23 09:27:54
  * @LastEditors: nevin
  * @Description: 自动评论 autoComment
  */
@@ -46,4 +46,7 @@ export class AutoRunRecordModel extends TempModel {
       '周期类型 天 day-22 (例:每天22时) 周 week-2 (例:每周周二,周日0) 月 month-22 (例:每月22号)',
   })
   cycleType!: string;
+
+  @Column({ type: 'varchar', nullable: true, comment: '记录描述' })
+  record?: string;
 }
