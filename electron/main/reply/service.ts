@@ -75,10 +75,22 @@ export class ReplyService {
             content: element.content,
           });
 
-          platController.replyComment(account, element.commentId, aiRes, {
-            dataId,
-            comment: element,
-          });
+          if (account.uid !== element.userId) {
+            let hadReply = false;
+            for (const reply of element.subCommentList) {
+              if (account.uid === reply.userId) {
+                hadReply = true;
+                break;
+              }
+            }
+
+            if (!hadReply) {
+              platController.replyComment(account, element.commentId, aiRes, {
+                dataId,
+                comment: element,
+              });
+            }
+          }
         }
 
         scheduleEvent({
