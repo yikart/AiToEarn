@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-23 15:03:20
+ * @LastEditTime: 2025-03-23 19:17:37
  * @LastEditors: nevin
  * @Description: reply Reply
  */
@@ -91,7 +91,18 @@ export class ReplyController {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 
-    const res = await this.replyService.autorReplyComment(account, dataId);
+    const res = await this.replyService.autorReplyComment(
+      account,
+      dataId,
+      (e: {
+        tag: AutorReplyCommentScheduleEvent;
+        status: -1 | 0 | 1;
+        error?: any;
+      }) => {
+        console.log(e);
+        // TODO: 推送消息
+      },
+    );
 
     return res;
   }

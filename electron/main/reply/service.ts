@@ -6,7 +6,6 @@
  */
 import { Injectable } from '../core/decorators';
 import PQueue from 'p-queue';
-import { CommentData } from '../plat/plat.type';
 import { AccountModel } from '../../db/models/account';
 import platController from '../plat';
 import { toolsApi } from '../api/tools';
@@ -22,38 +21,91 @@ export class ReplyService {
    * 自动一键评论
    * 规则:评论所有的一级评论,已有自己的评论的不评论
    */
-  async autorReplyComment(account: AccountModel, dataId: string) {
+  async autorReplyComment(
+    account: AccountModel,
+    dataId: string,
+    scheduleEvent: (data: {
+      tag: AutorReplyCommentScheduleEvent;
+      status: -1 | 0 | 1;
+      error?: any;
+    }) => void,
+  ) {
     // 1. 获取作品的评论列表, 如果返回
     let theHasMore = true;
     let thePcursor = undefined;
 
-    const list: CommentData[] = [];
-
-    while (theHasMore) {
-      const {
-        list,
-        pageInfo: { pcursor, hasMore },
-      } = await platController.getCommentList(account, dataId, thePcursor);
-
-      for (const item of list) list.push(item);
-
-      thePcursor = pcursor;
-      theHasMore = !!hasMore;
-    }
-
-    // 2. 循环AI回复评论
-    for (const element of list) {
-      const aiRes = await toolsApi.aiRecoverReview({
-        content: element.content,
+    try {
+      scheduleEvent({
+        tag: AutorReplyCommentScheduleEvent.Start,
+        status: 0,
       });
 
-      platController.replyComment(account, element.commentId, aiRes, {
-        dataId,
-        comment: element,
-      });
-    }
+      while (theHasMore) {
+        scheduleEvent({
+          tag: AutorReplyCommentScheduleEvent.GetCommentListStart,
+          status: 1,
+        });
+        const {
+          list,
+          pageInfo: { pcursor, hasMore },
+        } = await platController.getCommentList(account, dataId, thePcursor);
 
-    return true;
+        scheduleEvent({
+          tag: AutorReplyCommentScheduleEvent.GetCommentListEnd,
+          status: 0,
+        });
+
+        for (const item of list) list.push(item);
+
+        if (list.length === 0) {
+          scheduleEvent({
+            tag: AutorReplyCommentScheduleEvent.End,
+            status: 0,
+          });
+          return true;
+        }
+
+        scheduleEvent({
+          tag: AutorReplyCommentScheduleEvent.ReplyCommentStart,
+          status: 0,
+        });
+
+        // 2. 循环AI回复评论
+        for (const element of list) {
+          const aiRes = await toolsApi.aiRecoverReview({
+            content: element.content,
+          });
+
+          platController.replyComment(account, element.commentId, aiRes, {
+            dataId,
+            comment: element,
+          });
+        }
+
+        scheduleEvent({
+          tag: AutorReplyCommentScheduleEvent.ReplyCommentEnd,
+          status: 0,
+        });
+
+        thePcursor = pcursor;
+        theHasMore = !!hasMore;
+
+        if (!theHasMore) {
+          scheduleEvent({
+            tag: AutorReplyCommentScheduleEvent.End,
+            status: 0,
+          });
+          return true;
+        }
+      }
+    } catch (error) {
+      scheduleEvent({
+        tag: AutorReplyCommentScheduleEvent.Error,
+        status: -1,
+        error,
+      });
+      return false;
+    }
   }
 
   /**
@@ -63,7 +115,17 @@ export class ReplyService {
    */
   addReplyQueue(account: AccountModel, dataId: string) {
     this.replyQueue.add(() => {
-      this.autorReplyComment(account, dataId);
+      this.autorReplyComment(
+        account,
+        dataId,
+        (e: {
+          tag: AutorReplyCommentScheduleEvent;
+          status: -1 | 0 | 1;
+          error?: any;
+        }) => {
+          // TODO: 调用自动任务的通知
+        },
+      );
     });
   }
 }
