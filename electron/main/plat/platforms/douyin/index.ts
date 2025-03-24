@@ -246,6 +246,46 @@ export class Douyin extends PlatformBase {
     };
   }
 
+
+  async getCreatorCommentListByOther(
+    account: AccountModel,
+    dataId: string,
+    pcursor?: string,
+  ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res: any = await douyinService.getCreatorCommentListByOther(cookie, dataId, {
+      count: pcursor ? 20 : undefined,
+      cursor: pcursor || undefined,
+    });
+
+    const list: any[] = [];
+    console.log('------ douyinService.getCreatorCommentListByOther', res.data.comments);
+
+    for (const v of res.data.comments) {
+
+      list.push({
+        userId: v.user.uid,
+        dataId: v.aweme_id,
+        commentId: v.cid,
+        content: v.text,
+        likeCount: Number.parseInt(v.digg_count),
+        nikeName: v.user.nickname,
+        headUrl: v.user.avatar_thumb.uri,
+        data: v,
+        subCommentList: []
+      });
+    }
+
+    return {
+      list,
+      pageInfo: {
+        count: res.data.total_count,
+        pcursor: res.data.cursor + '',
+        hasMore: res.data.has_more,
+      },
+    };
+  }
+
   async createComment(
     account: AccountModel,
     dataId: string, // 作品ID

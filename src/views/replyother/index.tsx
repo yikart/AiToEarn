@@ -7,7 +7,7 @@
  */
 import {
   icpCreatorList,
-  icpGetCommentList,
+  icpGetCommentListByOther,
   WorkData,
   CommentData,
   icpCreateCommentList,
@@ -21,7 +21,7 @@ import ReplyWorks, { ReplyWorksRef } from './components/replyWorks';
 import ReplyComment, { ReplyCommentRef } from './components/replyComment';
 import AddAutoRun, { AddAutoRunRef } from './components/addAutoRun';
 
-export default function Page() {
+export default function Page() { 
   const [wordList, setWordList] = useState<WorkData[]>([]);
   const [commentList, setCommentList] = useState<CommentData[]>([]);
   const [activeAccountId, setActiveAccountId] = useState<number>(-1);
@@ -29,14 +29,14 @@ export default function Page() {
   const Ref_AddAutoRun = useRef<AddAutoRunRef>(null);
   const Ref_ReplyComment = useRef<ReplyCommentRef>(null);
 
-  async function getCreatorList() {
+  async function getCreatorList(thisid: any) {
+    setWordList([]);
     if (activeAccountId === -1) {
       return;
     }
-    setWordList([]);
-
-    const res = await icpCreatorList(activeAccountId);
-
+    let thisida = thisid?thisid:activeAccountId;
+    const res = await icpCreatorList(thisida);
+    console.log('------ icpCreatorList', res);
     setWordList(res.list);
   }
 
@@ -44,8 +44,9 @@ export default function Page() {
    * 获取评论列表
    */
   async function getCommentList(dataId: string) {
-    const res = await icpGetCommentList(activeAccountId, dataId);
-    console.log('------ res', res);
+    // 7483006686274374962  7478960244136086784
+    const res = await icpGetCommentListByOther(activeAccountId, '7483006686274374962');
+    console.log('------ icpGetCommentList', res);
 
     setCommentList(res.list);
   }
@@ -91,7 +92,7 @@ export default function Page() {
             onAccountChange={useCallback(
               (info) => {
                 setActiveAccountId(info.id);
-                getCreatorList();
+                getCreatorList(info.id);
               },
               [getCreatorList],
             )}
