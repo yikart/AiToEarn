@@ -2311,6 +2311,73 @@ export class DouyinService {
     return res;
   }
 
+
+    // 查看作品的评论列表
+    async getCreatorCommentListByOther(
+      cookie: Electron.Cookie[],
+      item_id: string, // 作品ID
+      pageInfo: {
+        cursor?: string;
+        count?: number;
+      },
+    ) {
+      const res = await requestNet<DouyinCreatorCommentListResponse>({
+        url: CommonUtils.buildUrl(
+          `https://www.douyin.com/aweme/v1/web/comment/list/`,
+          {
+            cursor: pageInfo.cursor,
+            count: pageInfo.count,
+            aweme_id: item_id,
+            // device_platform: 'webapp',
+            aid: 6383,
+            // channel: 'channel_pc_web',
+            // item_type: 0,
+            // insert_ids: '',
+            // whale_cut_token: '',
+            // cut_version: 1,
+            // rcFT: '',
+            // update_version_code: 170400,
+            // pc_client_type: 1,
+            // pc_libra_divert: 'Windows',
+            // support_h265: 1,
+            // support_dash: 1,
+            // version_code: 170400,
+            // version_name: '17.4.0',
+            // cookie_enabled: true,
+            // screen_width: 2560,
+            // screen_height: 1440,
+            // browser_language: 'zh-CN',
+            // browser_platform: 'Win32',
+            // browser_name: 'Chrome',
+            // browser_version: '134.0.0.0',
+            // browser_online: true,
+            // engine_name: 'Blink',
+            // engine_version: '134.0.0.0',
+            // os_name: 'Windows',
+            // os_version: '10',
+            // cpu_core_num: 6,
+            // device_memory: 8,
+            // platform: 'PC',
+            // downlink: 1.45,
+            // effective_type: '3g',
+            // round_trip_time: 350,
+            // webid: '7462760265944598025',
+            // uifid: '5a0fbbb49c6c57acd77ca86d66dd2e8e2f1fcf7b3fa6b8a56e480f684bd08589f91733f27477dce40e099eb7d637f09445a7ad8892b1bf8acbb37840aafe36d735e7c5beb76859eb4beca27d1809fa0c5e3a6237a3035941e4f018b7a8d0bb5ae2fdd75341387e35816986e9747d52ef9467c7a82e12a9018904cb5a3f31a1a6e300702b83ee316dcf81a88042fe48160ce0e6c7d6ef3f5bd76799c5b6f98f15',
+            // msToken: 'IiU0XpVi5HCA8CoIKsClI4ebuZ3-uzekTlljc8bdH_-mKm5XppBEpMKss_591g-lH9eI-Am1Hzae4NbwkokD0KgQqKBZXqxQKlOPb4n6p6kVe-yyj81KV7uYIc4HT5jZXMS5VKzgiAiYMLHBjHFclkPP2W8cyyOL-hwRKbPD5OzQp_qH07ouFQ==',
+            // a_bogus: 'dX0fgqUEY2mfFdKGuOfg743UWS2/Nsuyz-idReZPHOOLT7lGmRPGpPSZbozcYEW5MWB0h937iVllYxdcKsXkZKrpwmhvS/7RsUI998so0qqpT0hDEqfNCwWT9JaT0cwL8CKbJARVUzmc2dA4D1r0UB-JH/Pn4mipQHaWdnUGT9tfgM49PrFxuOtDiXzx5OI41f==',
+            // verifyFp: 'verify_m8mhezqw_4VakJnSY_T1HQ_4lSe_8ZFw_iK3fj7GWvctC',
+            // fp: 'verify_m8mhezqw_4VakJnSY_T1HQ_4lSe_8ZFw_iK3fj7GWvctC',
+          },
+        ),
+        headers: {
+          cookie: CookieToString(cookie),
+        },
+        method: 'GET',
+      });
+      console.log('------ getCreatorCommentListByOther', res);  
+      return res;
+    }
+
   // 查看评论的回复列表
   async getCreatorCommentReplyList(
     cookie: Electron.Cookie[],

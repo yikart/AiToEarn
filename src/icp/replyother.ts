@@ -52,10 +52,11 @@ export async function icpCreatorList(accountId: number, pcursor?: string) {
   return res;
 }
 
+
 /**
  * 获取评论列表
  */
-export async function icpGetCommentList(
+export async function icpGetCommentListByOther(
   accountId: number,
   dataId: string,
   pcursor?: string,
@@ -68,13 +69,14 @@ export async function icpGetCommentList(
       pcursor?: string;
     };
   } = await window.ipcRenderer.invoke(
-    'ICP_COMMENT_LIST',
+    'ICP_COMMENT_LIST_BY_OTHER',
     accountId,
     dataId,
     pcursor,
   );
   return res;
 }
+
 
 /**
  * 创建评论

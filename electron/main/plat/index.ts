@@ -174,6 +174,21 @@ class PlatController {
   }
 
   /**
+   * 获取评论列表
+   * @param account
+   * @param pageInfo
+   */
+  public async getCreatorCommentListByOther(
+    account: AccountModel,
+    dataId: string,
+    pcursor?: string,
+  ) {
+    const platform = this.platforms.get(account.type)!;
+    return await platform.getCreatorCommentListByOther(account, dataId, pcursor);
+  }
+  
+
+  /**
    * 创建评论
    * @param account
    * @param pageInfo

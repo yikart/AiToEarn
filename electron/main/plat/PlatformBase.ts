@@ -108,6 +108,21 @@ export abstract class PlatformBase {
   }>;
 
   /**
+   * 获取评论列表
+   * @param account
+   * @param dataId
+   * @param pcursor
+   */
+  abstract getCreatorCommentListByOther(
+    account: AccountModel,
+    dataId: string,
+    pcursor?: string,
+  ): Promise<{
+    list: CommentData[];
+    pageInfo: ResponsePageInfo;
+  }>;
+
+  /**
    * 创建评论
    */
   abstract createComment(
