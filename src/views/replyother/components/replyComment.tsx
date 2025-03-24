@@ -1,5 +1,5 @@
 import { toolsApi } from '@/api/tools';
-import { CommentData, icpReplyComment, icpReplyCommentByOther } from '@/icp/replyother';
+import { CommentData, icpReplyCommentByOther } from '@/icp/replyother';
 import { Button, Form, Input, message, Modal } from 'antd';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
@@ -34,7 +34,7 @@ const Com = forwardRef<ReplyCommentRef>((props: any, ref) => {
    * 回复评论
    */
   async function replyComment(content: string) {
-    const res = await icpReplyCommentByOther(
+    const res: any = await icpReplyCommentByOther(
       accountId,
       commentData!.commentId,
       content,
