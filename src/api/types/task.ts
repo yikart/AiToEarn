@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-03-01 19:27:35
- * @LastEditTime: 2025-03-02 00:07:23
+ * @LastEditTime: 2025-03-24 14:10:43
  * @LastEditors: nevin
  * @Description:
  */
@@ -13,7 +13,7 @@ export enum UserTaskStatus {
   PENDING = 'pending', // 待审核
   APPROVED = 'approved', // 已通过
   REJECTED = 'rejected', // 已拒绝
-  // COMPLETED = 'completed', // 已完成
+  COMPLETED = 'completed', // 已完成
   CANCELLED = 'cancelled', // 已取消
   // PENDING_REWARD = 'pending_reward', // 待发放奖励
   REWARDED = 'rewarded', // 已发放奖励

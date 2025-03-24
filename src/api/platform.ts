@@ -98,6 +98,7 @@ export interface RankingContent {
   rankingPosition: number;
   platform: Platform;
   ranking: PlatformRanking;
+  anaAdd: any;
 }
 
 export interface PaginationMeta {

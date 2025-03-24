@@ -77,6 +77,9 @@ interface TopicContent {
     icon: string;
   };
   hotValue?: number;
+
+  commentCount: number;
+  collectCount: number;
   // ... 其他属性
 }
 
@@ -2331,7 +2334,7 @@ const Trending: React.FC = () => {
                                   <div className="w-24 text-center">
                                     {item.anaAdd.addInteractiveCount ? (
                                       <span className="text-[#a66ae4] flex items-center justify-center">
-                                        <span className="text-red-500 mr-1 font-bold">
+                                        <span className="mr-1 font-bold text-red-500">
                                           ↑
                                         </span>
                                         {formatNumber(
@@ -2355,7 +2358,7 @@ const Trending: React.FC = () => {
                                           marginTop: '6px',
                                         }}
                                       >
-                                        <span className="text-red-500 mr-1 font-bold">
+                                        <span className="mr-1 font-bold text-red-500">
                                           ↑
                                         </span>
                                         总
@@ -2377,7 +2380,7 @@ const Trending: React.FC = () => {
                                   </div>
                                   <div className="w-24 text-center">
                                     <span className="text-[#a66ae4] flex items-center justify-center">
-                                      <span className="text-red-500 mr-1">
+                                      <span className="mr-1 text-red-500">
                                         ↑
                                       </span>
                                       {formatNumber(
@@ -2400,7 +2403,7 @@ const Trending: React.FC = () => {
                                   </div>
                                   <div className="w-24 text-center">
                                     <span className="text-[#a66ae4] flex items-center justify-center">
-                                      <span className="text-red-500 mr-1">
+                                      <span className="mr-1 text-red-500">
                                         ↑
                                       </span>
                                       {formatNumber(item.anaAdd.addShareCount)}
@@ -2421,7 +2424,7 @@ const Trending: React.FC = () => {
                                   </div>
                                   <div className="w-24 text-center">
                                     <span className="text-[#a66ae4] flex items-center justify-center">
-                                      <span className="text-red-500 mr-1">
+                                      <span className="mr-1 text-red-500">
                                         ↑
                                       </span>
                                       {formatNumber(
