@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-07 09:48:29
- * @LastEditTime: 2025-02-19 22:03:27
+ * @LastEditTime: 2025-03-24 15:14:58
  * @LastEditors: nevin
  * @Description: 平台主类
  */
@@ -99,6 +99,21 @@ export abstract class PlatformBase {
    * @param pcursor
    */
   abstract getCommentList(
+    account: AccountModel,
+    dataId: string,
+    pcursor?: string,
+  ): Promise<{
+    list: CommentData[];
+    pageInfo: ResponsePageInfo;
+  }>;
+
+  /**
+   * 获取他人作品的评论列表
+   * @param account
+   * @param dataId
+   * @param pcursor
+   */
+  abstract getCreatorCommentListByOther(
     account: AccountModel,
     dataId: string,
     pcursor?: string,

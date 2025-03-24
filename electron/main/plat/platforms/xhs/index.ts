@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-08 11:40:45
- * @LastEditTime: 2025-03-24 00:03:22
+ * @LastEditTime: 2025-03-24 15:17:03
  * @LastEditors: nevin
  * @Description: 小红书
  */
@@ -223,6 +223,21 @@ export class Xhs extends PlatformBase {
       pageInfo: {
         hasMore: res.data.data.has_more,
         pcursor: res.data.data.cursor,
+      },
+    };
+  }
+
+  async getCreatorCommentListByOther(
+    account: AccountModel,
+    dataId: string,
+    pcursor?: string,
+  ) {
+    return {
+      list: [],
+      pageInfo: {
+        count: 0,
+        pcursor: '',
+        hasMore: false,
       },
     };
   }

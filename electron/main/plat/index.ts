@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-06 15:57:02
- * @LastEditTime: 2025-02-19 22:04:13
+ * @LastEditTime: 2025-03-24 15:15:04
  * @LastEditors: nevin
  * @Description:
  */
@@ -184,9 +184,12 @@ class PlatController {
     pcursor?: string,
   ) {
     const platform = this.platforms.get(account.type)!;
-    return await platform.getCreatorCommentListByOther(account, dataId, pcursor);
+    return await platform.getCreatorCommentListByOther(
+      account,
+      dataId,
+      pcursor,
+    );
   }
-  
 
   /**
    * 创建评论

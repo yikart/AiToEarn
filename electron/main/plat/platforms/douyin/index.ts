@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-08 11:40:45
- * @LastEditTime: 2025-03-23 23:42:31
+ * @LastEditTime: 2025-03-24 15:13:56
  * @LastEditors: nevin
  * @Description: 抖音
  */
@@ -246,23 +246,28 @@ export class Douyin extends PlatformBase {
     };
   }
 
-
   async getCreatorCommentListByOther(
     account: AccountModel,
     dataId: string,
     pcursor?: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const res: any = await douyinService.getCreatorCommentListByOther(cookie, dataId, {
-      count: pcursor ? 20 : undefined,
-      cursor: pcursor || undefined,
-    });
+    const res: any = await douyinService.getCreatorCommentListByOther(
+      cookie,
+      dataId,
+      {
+        count: pcursor ? 20 : undefined,
+        cursor: pcursor || undefined,
+      },
+    );
 
     const list: any[] = [];
-    console.log('------ douyinService.getCreatorCommentListByOther', res.data.comments);
+    console.log(
+      '------ douyinService.getCreatorCommentListByOther',
+      res.data.comments,
+    );
 
     for (const v of res.data.comments) {
-
       list.push({
         userId: v.user.uid,
         dataId: v.aweme_id,
@@ -272,7 +277,7 @@ export class Douyin extends PlatformBase {
         nikeName: v.user.nickname,
         headUrl: v.user.avatar_thumb.uri,
         data: v,
-        subCommentList: []
+        subCommentList: [],
       });
     }
 
