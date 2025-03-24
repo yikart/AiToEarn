@@ -2278,7 +2278,7 @@ export class DouyinService {
       },
       method: 'GET',
     });
-
+    console.log('------ getCreatorItems', res.data.item_info_list[0]);
     return res;
   }
 
@@ -2306,7 +2306,7 @@ export class DouyinService {
       },
       method: 'GET',
     });
-
+    
     return res;
   }
 
@@ -2324,23 +2324,20 @@ export class DouyinService {
     // // cursor=20&count=10&
     // // a_bogus=mjsjDq7jDpAcFdFb8KEfC5Fl6g6ArTSyNeidWSaTyPY4T1UTpbPUNPb9GxwoA1vPFRBhhH-73VM%2FbDdbO0UwZo9pwmkvuKiRz02C9zmoMHZ3TTv2XNWsCvSELiPTUCsYY%2FA9i2RRXs0KId5WnH9iAp17u%2FvrmRfdMH-XV2TjE9um0ASjhx%2FIa5JBxhwqjD%3D%3D
 
-    let thisUri = `https://www.douyin.com/aweme/v1/web/comment/list/?${jsonToQueryString(
-      {
-        cursor: pageInfo.cursor || 1,
-        count: pageInfo.count || 10,
-        aweme_id: item_id,
-        a_bogus:
-          'dX0fgqUEY2mfFdKGuOfg743UWS2/Nsuyz-idReZPHOOLT7lGmRPGpPSZbozcYEW5MWB0h937iVllYxdcKsXkZKrpwmhvS/7RsUI998so0qqpT0hDEqfNCwWT9JaT0cwL8CKbJARVUzmc2dA4D1r0UB-JH/Pn4mipQHaWdnUGT9tfgM49PrFxuOtDiXzx5OI41f==',
-      },
-    )}`;
-
-    const res = await requestNet<DouyinHotDataResponse>({
-      url: thisUri,
-      headers: {
-        cookie: CookieToString(cookie),
-      },
-      method: 'GET',
-    });
+      let thisUri = `https://www.douyin.com/aweme/v1/web/comment/list/?${jsonToQueryString({
+          cursor: pageInfo.cursor || 0,
+            count: pageInfo.count || 20,
+            aweme_id: item_id,
+            a_bogus: 'dX0fgqUEY2mfFdKGuOfg743UWS2/Nsuyz-idReZPHOOLT7lGmRPGpPSZbozcYEW5MWB0h937iVllYxdcKsXkZKrpwmhvS/7RsUI998so0qqpT0hDEqfNCwWT9JaT0cwL8CKbJARVUzmc2dA4D1r0UB-JH/Pn4mipQHaWdnUGT9tfgM49PrFxuOtDiXzx5OI41f==',
+        })}`
+      
+      const res =  await requestNet<DouyinHotDataResponse>({
+        url: thisUri,
+        headers: {
+          cookie: CookieToString(cookie),
+        },
+        method: 'GET',
+      });
 
     console.log('------ getCreatorCommentListByOther', res);
     return res;
@@ -2375,6 +2372,34 @@ export class DouyinService {
 
     return res;
   }
+
+  // 
+  // 回复其他人的评论
+  async creatorCommentReplyOther(
+    cookie: Electron.Cookie[],
+    data: any,
+  ) { 
+    let thisUri = `https://www.douyin.com/aweme/v1/web/comment/publish/?${jsonToQueryString({
+        aid: '6383'
+    })}`
+    console.log('------ creatorCommentReplyOther-data', data);
+    console.log('------ creatorCommentReplyOther-thisUri', thisUri);
+    const cookieString = CommonUtils.convertCookieToJson(cookie);
+    const csrfToken = await this.getSecsdkCsrfToken(cookieString);
+
+
+    const res = await this.makePublishRequest(thisUri, {
+      method: 'POST',
+      headers: {
+        Cookie: cookieString,
+        'X-Secsdk-Csrf-Token': csrfToken,
+        'referer': `https://www.douyin.com/video/${data.aweme_id}`
+      },
+      data: data,
+    });
+    return res;
+  }
+
 
   // 作品的评论回复
   async creatorCommentReply(

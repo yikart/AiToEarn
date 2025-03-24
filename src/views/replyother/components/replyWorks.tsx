@@ -1,6 +1,6 @@
 import { toolsApi } from '@/api/tools';
-import { icpCreateComment, WorkData } from '@/icp/reply';
-import { Button, Form, Input, Modal } from 'antd';
+import { icpCreateComment, WorkData } from '@/icp/replyother';
+import { Button, Form, Input, message, Modal } from 'antd';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
 export interface ReplyWorksRef {
@@ -23,7 +23,7 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
     setIsModalOpen(true);
   }
 
-  useImperativeHandle(ref, () => ({
+  useImperativeHandle(ref, () => ({ 
     init: init,
   }));
 
@@ -35,8 +35,15 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
    * 创建评论
    */
   async function createComment(content: string) {
-    const res = await icpCreateComment(accountId, workData!.dataId, content);
+    const res = await icpCreateComment(accountId, '7484585415068880139', content);
     console.log('----- res', res);
+    if (res.status_code == 0) {
+      message.success('评论成功');
+      setIsModalOpen(false);
+    } else {
+      message.error('评论失败');
+    }
+
   }
 
   async function onFinish(values: FormData) {
