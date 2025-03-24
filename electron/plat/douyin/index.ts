@@ -12,7 +12,6 @@ import {
   DouyinActivityListResponse,
   DouyinActivityTagsResponse,
   DouyinAllHotDataResponse,
-  DouyinCommentReplyListResponse,
   DouyinCreatorCommentListResponse,
   DouyinCreatorListResponse,
   DouyinHotDataResponse,
@@ -2179,6 +2178,7 @@ export class DouyinService {
     longitude: number;
     cookie: Electron.Cookie[];
   }) {
+    console.log(CookieToString(params.cookie));
     return await requestNet<DouyinLocationDataResponse>({
       url: `${this.loginUrl}aweme/v1/life/video_api/search/poi/?${jsonToQueryString(
         {
@@ -2229,7 +2229,6 @@ export class DouyinService {
 
   // 获取活动详情
   async getActivityDetails(cookie: Electron.Cookie[], activity_id: string) {
-    console.log(activity_id);
     return await requestNet<DouyinActivityDetailResponse>({
       url: `https://creator.douyin.com/web/api/media/activity/detail/?activity_id=${activity_id}`,
       headers: {

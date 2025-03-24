@@ -1,20 +1,8 @@
 .imageParamsSet {
+  width: 45%;
+  min-width: 0;
   display: flex;
   :global {
-    h2 {
-      font-size: var(--fs-md);
-      font-weight: 400;
-      display: flex;
-      align-items: center;
-      color: var(--darkGreyColor);
-      span {
-        margin-right: 5px;
-      }
-      i {
-        color: red;
-      }
-    }
-
     .imageParamsSet_plats {
       padding: 15px 10px;
       border-right: 1px solid var(--superLightGreyColor);
@@ -27,6 +15,7 @@
         cursor: pointer;
         padding: 20px 15px 15px;
         border-radius: 6px;
+        white-space: nowrap;
         &:hover {
           .imageParamsSet_plats-item-close {
             display: flex !important;
@@ -40,7 +29,6 @@
           }
         }
         &-close {
-
         }
 
         &--active {
@@ -67,23 +55,49 @@
 }
 
 .paramsSettingItem {
+  width: 100%;
   :global {
+    h2 {
+      font-size: var(--fs-md);
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      color: var(--darkGreyColor);
+      margin-bottom: 10px;
+      span {
+        margin-right: 5px;
+      }
+      i {
+        color: red;
+      }
+    }
+
     .paramsSettingItem-users {
       display: flex;
       &-item {
-        width: 60px;
+        width: 70px;
         font-size: var(--fs-sm);
         cursor: pointer;
         margin-right: 10px;
+        &--active {
+          .paramsSettingItem-users-item-img {
+            border-color: var(--colorPrimary6);
+          }
+          .paramsSettingItem-users-item-name {
+            color: var(--colorPrimary6);
+          }
+        }
         &:hover {
           .paramsSettingItem-users-item-close {
             display: flex !important;
           }
         }
         &-img {
-          border: 1px solid red;
+          border: 2px solid transparent;
           display: inline-block;
           position: relative;
+          transition: 0.3s;
+          border-radius: 50%;
         }
         &-close {
         }

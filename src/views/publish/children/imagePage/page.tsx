@@ -29,7 +29,9 @@ export default function Page() {
         <Popconfirm
           title="温馨提示"
           description="是否确认清空内容和账号？"
-          onConfirm={() => {}}
+          onConfirm={() => {
+            clear();
+          }}
           okText="确认"
           cancelText="取消"
         >
