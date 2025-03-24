@@ -2310,41 +2310,41 @@ export class DouyinService {
     return res;
   }
 
+  // 查看作品的评论列表
+  async getCreatorCommentListByOther(
+    cookie: Electron.Cookie[],
+    item_id: string, // 作品ID
+    pageInfo: {
+      cursor?: string;
+      count?: number;
+    },
+  ) {
+    // https://www-hj.douyin.com/aweme/v1/web/comment/list/?
+    // // aweme_id=7483006686274374962&
+    // // cursor=20&count=10&
+    // // a_bogus=mjsjDq7jDpAcFdFb8KEfC5Fl6g6ArTSyNeidWSaTyPY4T1UTpbPUNPb9GxwoA1vPFRBhhH-73VM%2FbDdbO0UwZo9pwmkvuKiRz02C9zmoMHZ3TTv2XNWsCvSELiPTUCsYY%2FA9i2RRXs0KId5WnH9iAp17u%2FvrmRfdMH-XV2TjE9um0ASjhx%2FIa5JBxhwqjD%3D%3D
 
-    // 查看作品的评论列表
-    async getCreatorCommentListByOther(
-      cookie: Electron.Cookie[],
-      item_id: string, // 作品ID
-      pageInfo: {
-        cursor?: string;
-        count?: number;
+    let thisUri = `https://www.douyin.com/aweme/v1/web/comment/list/?${jsonToQueryString(
+      {
+        cursor: pageInfo.cursor || 1,
+        count: pageInfo.count || 10,
+        aweme_id: item_id,
+        a_bogus:
+          'dX0fgqUEY2mfFdKGuOfg743UWS2/Nsuyz-idReZPHOOLT7lGmRPGpPSZbozcYEW5MWB0h937iVllYxdcKsXkZKrpwmhvS/7RsUI998so0qqpT0hDEqfNCwWT9JaT0cwL8CKbJARVUzmc2dA4D1r0UB-JH/Pn4mipQHaWdnUGT9tfgM49PrFxuOtDiXzx5OI41f==',
       },
-    ) {
+    )}`;
 
-      // https://www-hj.douyin.com/aweme/v1/web/comment/list/?
-      // // aweme_id=7483006686274374962&
-      // // cursor=20&count=10&
-      // // a_bogus=mjsjDq7jDpAcFdFb8KEfC5Fl6g6ArTSyNeidWSaTyPY4T1UTpbPUNPb9GxwoA1vPFRBhhH-73VM%2FbDdbO0UwZo9pwmkvuKiRz02C9zmoMHZ3TTv2XNWsCvSELiPTUCsYY%2FA9i2RRXs0KId5WnH9iAp17u%2FvrmRfdMH-XV2TjE9um0ASjhx%2FIa5JBxhwqjD%3D%3D
-      
-      let thisUri = `https://www.douyin.com/aweme/v1/web/comment/list/?${jsonToQueryString({
-          cursor: pageInfo.cursor || 1,
-            count: pageInfo.count || 10,
-            aweme_id: item_id,
-            a_bogus: 'dX0fgqUEY2mfFdKGuOfg743UWS2/Nsuyz-idReZPHOOLT7lGmRPGpPSZbozcYEW5MWB0h937iVllYxdcKsXkZKrpwmhvS/7RsUI998so0qqpT0hDEqfNCwWT9JaT0cwL8CKbJARVUzmc2dA4D1r0UB-JH/Pn4mipQHaWdnUGT9tfgM49PrFxuOtDiXzx5OI41f==',
-        })}`
-      
-      const res =  await requestNet<DouyinHotDataResponse>({
-        url: thisUri,
-        headers: {
-          cookie: CookieToString(cookie),
-        },
-        method: 'GET',
-      });
+    const res = await requestNet<DouyinHotDataResponse>({
+      url: thisUri,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'GET',
+    });
 
-
-      console.log('------ getCreatorCommentListByOther', res);  
-      return res;
-    }
+    console.log('------ getCreatorCommentListByOther', res);
+    return res;
+  }
 
   // 查看评论的回复列表
   async getCreatorCommentReplyList(

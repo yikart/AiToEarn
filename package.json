@@ -1,6 +1,6 @@
 {
   "name": "att",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "main": "dist-electron/main/index.js",
   "description": "艺咖 win打包使用管理员的终端",
   "author": "艺咖",

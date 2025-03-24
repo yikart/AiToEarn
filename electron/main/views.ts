@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-17 21:26:26
- * @LastEditTime: 2025-02-11 21:41:20
+ * @LastEditTime: 2025-03-24 20:55:14
  * @LastEditors: nevin
  * @Description: 浏览器视图
  */
@@ -58,7 +58,7 @@ export function views(win: Electron.BrowserWindow) {
     (event, { saveDir, filename, file }: ISaveFileParams) => {
       return new Promise(async (resolve) => {
         const outputDir = path.join(
-          FileUtils.getAppDataPath(),
+          FileUtils.getAppDataPath()!,
           'resource/images/cropper',
         );
         await FileUtils.checkDirectories(outputDir + saveDir);
