@@ -2377,12 +2377,7 @@ export class DouyinService {
   // 回复其他人的评论
   async creatorCommentReplyOther(
     cookie: Electron.Cookie[],
-    data: {
-      aweme_id: string; // 空字符串, 直接回复
-      reply_id: string; // '@j/do779EQE//uctS8rzvvch6oCaTZCH0JqwsPqxpgahhkia+W5A7RJEoPQpq6PZl7wq9uxSqSWCjcIdbPzF8fQ==';
-      text: string; //'哈哈哈';
-      one_level_comment_rank: number; // 3
-    },
+    data: any,
   ) { 
     let thisUri = `https://www.douyin.com/aweme/v1/web/comment/publish/?${jsonToQueryString({
         aid: '6383'

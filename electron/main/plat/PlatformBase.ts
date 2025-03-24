@@ -147,6 +147,16 @@ export abstract class PlatformBase {
   ): Promise<boolean>;
 
 
+
+  /**
+   * 创建评论
+   */
+  abstract createCommentByOther(
+    account: AccountModel,
+    dataId: string, // 作品ID
+    content: string,
+  ): Promise<any>;
+
   /**
    * 回复评论
    */

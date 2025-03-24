@@ -99,6 +99,24 @@ export class ReplyController {
     return res;
   }
 
+
+    /**
+   * 创建评论
+   */
+  @Icp('ICP_CREATE_COMMENT_BY_OTHER')
+  async createCommentByOther(
+    event: Electron.IpcMainInvokeEvent,
+    accountId: number,
+    dataId: string,
+    content: string,
+    ): Promise<any> {
+      const account = await this.accountService.getAccountById(accountId);
+      if (!account) return null;
+  
+    const res = await platController.createCommentByOther(account, dataId, content);
+    return res;
+  }
+
   /**
    * 作品一键AI评论
    */

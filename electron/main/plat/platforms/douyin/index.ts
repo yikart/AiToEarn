@@ -294,6 +294,38 @@ export class Douyin extends PlatformBase {
   }
 
 
+  
+
+  async createCommentByOther(
+    account: AccountModel,
+    dataId: string, // 作品ID
+    content: string,
+  ) {
+    // const cookie: CookiesType = JSON.parse(account.loginCookie);
+    // const res = await douyinService.creatorCommentReply(cookie, {
+    //   comment_Id: '',
+    //   item_id: dataId,
+    //   text: content,
+    // });
+
+    // return res.status === 200 && res.data.status_code === 0;
+
+
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await douyinService.creatorCommentReplyOther(cookie, {
+      aweme_id: dataId,
+      text: content,
+      one_level_comment_rank: -1
+    });
+
+    console.log('------ res', res);
+
+    return res;
+
+  }
+
+
+
   async createComment(
     account: AccountModel,
     dataId: string, // 作品ID
