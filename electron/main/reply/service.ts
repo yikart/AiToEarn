@@ -4,12 +4,14 @@
  * @LastEditors: nevin
  * @Description: Reply reply
  */
-import { Injectable } from '../core/decorators';
+import { Inject, Injectable } from '../core/decorators';
 import PQueue from 'p-queue';
 import { AccountModel } from '../../db/models/account';
 import platController from '../plat';
 import { toolsApi } from '../api/tools';
 import { AutorReplyCommentScheduleEvent } from './comment';
+import { AutoRunService } from '../autoRun/service';
+import { AutoRunModel } from '../../db/models/autoRun';
 
 @Injectable()
 export class ReplyService {
@@ -17,6 +19,9 @@ export class ReplyService {
   constructor() {
     this.replyQueue = new PQueue({ concurrency: 2 });
   }
+
+  @Inject(AutoRunService)
+  private readonly autoRunService!: AutoRunService;
 
   /**
    * 自动一键评论
@@ -124,7 +129,7 @@ export class ReplyService {
    * @param account
    * @param dataId
    */
-  addReplyQueue(account: AccountModel, dataId: string) {
+  addReplyQueue(account: AccountModel, dataId: string, autoRun: AutoRunModel) {
     this.replyQueue.add(() => {
       this.autorReplyComment(
         account,
@@ -134,7 +139,11 @@ export class ReplyService {
           status: -1 | 0 | 1;
           error?: any;
         }) => {
-          // TODO: 调用自动任务的通知
+          this.autoRunService.sendAutoRunProgress(
+            autoRun.id,
+            e.status,
+            e.error,
+          );
         },
       );
     });

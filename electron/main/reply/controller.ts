@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-23 21:53:31
+ * @LastEditTime: 2025-03-24 09:34:03
  * @LastEditors: nevin
  * @Description: reply Reply
  */
@@ -168,6 +168,9 @@ export class ReplyController {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 
-    this.replyService.addReplyQueue(account, dataId);
+    this.replyService.addReplyQueue(account, dataId, autoRunData);
+
+    // 创建记录
+    this.autoRunService.createAutoRunRecord(autoRunData);
   }
 }
