@@ -253,55 +253,28 @@ export class Douyin extends PlatformBase {
     pcursor?: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const res = await douyinService.getCreatorCommentListByOther(cookie, dataId, {
+    const res: any = await douyinService.getCreatorCommentListByOther(cookie, dataId, {
       count: pcursor ? 20 : undefined,
       cursor: pcursor || undefined,
     });
 
-    const list: CommentData[] = [];
+    const list: any[] = [];
     console.log('------ douyinService.getCreatorCommentListByOther', res.data.comments);
 
-    // for (const v of res.data.comment_info_list) {
-    //   const subList: CommentData[] = [];
-    //   if (v.level === 1 && Number.parseInt(v.reply_count) > 0) {
-    //     const res2 = await douyinService.getCreatorCommentReplyList(
-    //       cookie,
-    //       v.comment_id,
-    //       {
-    //         cursor: 0 + '',
-    //         count: 20,
-    //       },
-    //     );
+    for (const v of res.data.comments) {
 
-    //     if (res2.status === 200 && res2.data.status_code === 0) {
-    //       for (const element of res2.data.comment_info_list) {
-    //         subList.push({
-    //           userId: element.user_info.user_id,
-    //           dataId: dataId,
-    //           commentId: element.comment_id,
-    //           content: element.text,
-    //           likeCount: Number.parseInt(element.digg_count),
-    //           nikeName: element.user_info.screen_name,
-    //           headUrl: element.user_info.avatar_url,
-    //           data: element,
-    //           subCommentList: [],
-    //         });
-    //       }
-    //     }
-    //   }
-
-    //   list.push({
-    //     userId: v.user_info.user_id,
-    //     dataId: dataId,
-    //     commentId: v.comment_id,
-    //     content: v.text,
-    //     likeCount: Number.parseInt(v.digg_count),
-    //     nikeName: v.user_info.screen_name,
-    //     headUrl: v.user_info.avatar_url,
-    //     data: v,
-    //     subCommentList: subList,
-    //   });
-    // }
+      list.push({
+        userId: v.user.uid,
+        dataId: v.aweme_id,
+        commentId: v.cid,
+        content: v.text,
+        likeCount: Number.parseInt(v.digg_count),
+        nikeName: v.user.nickname,
+        headUrl: v.user.avatar_thumb.uri,
+        data: v,
+        subCommentList: []
+      });
+    }
 
     return {
       list,

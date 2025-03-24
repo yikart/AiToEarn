@@ -44,7 +44,8 @@ export default function Page() {
    * 获取评论列表
    */
   async function getCommentList(dataId: string) {
-    const res = await icpGetCommentListByOther(activeAccountId, '7478960244136086784');
+    // 7483006686274374962  7478960244136086784
+    const res = await icpGetCommentListByOther(activeAccountId, '7483006686274374962');
     console.log('------ icpGetCommentList', res);
 
     setCommentList(res.list);
