@@ -45,7 +45,7 @@ export default function Page() {
    */
   async function getCommentList(dataId: string) {
     // 7483006686274374962  7478960244136086784
-    const res = await icpGetCommentListByOther(activeAccountId, '7483006686274374962');
+    const res = await icpGetCommentListByOther(activeAccountId, '7480598266392972596');
     console.log('------ icpGetCommentList', res);
 
     setCommentList(res.list);

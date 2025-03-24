@@ -1,6 +1,6 @@
 import { toolsApi } from '@/api/tools';
-import { CommentData, icpReplyComment } from '@/icp/reply';
-import { Button, Form, Input, Modal } from 'antd';
+import { CommentData, icpReplyComment, icpReplyCommentByOther } from '@/icp/replyother';
+import { Button, Form, Input, message, Modal } from 'antd';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
 export interface ReplyCommentRef {
@@ -34,7 +34,7 @@ const Com = forwardRef<ReplyCommentRef>((props: any, ref) => {
    * 回复评论
    */
   async function replyComment(content: string) {
-    const res = await icpReplyComment(
+    const res = await icpReplyCommentByOther(
       accountId,
       commentData!.commentId,
       content,
@@ -43,7 +43,13 @@ const Com = forwardRef<ReplyCommentRef>((props: any, ref) => {
         comment: commentData!.data,
       },
     );
-    console.log('----- res', res);
+    // console.log('----- res', res.status_code, res.data);
+    if (res.status_code == 0) {
+      message.success('回复成功');
+      setIsModalOpen(false);
+    } else {
+      message.error('回复失败');
+    }
   }
 
   async function onFinish(values: FormData) {

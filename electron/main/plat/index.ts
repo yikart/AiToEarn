@@ -205,6 +205,27 @@ class PlatController {
     return await platform.createComment(account, dataId, content);
   }
 
+
+  
+  /**
+   * 回复评论
+   * @param account
+   * @param pageInfo
+   */
+  public async replyCommentByOther(
+    account: AccountModel,
+    commentId: string,
+    content: string,
+    option: {
+      dataId?: string; // 作品ID
+      comment: any; // 辅助数据,原数据
+    },
+  ) {
+    const platform = this.platforms.get(account.type)!;
+    return await platform.replyCommentByOther(account, commentId, content, option);
+  }
+
+
   /**
    * 回复评论
    * @param account

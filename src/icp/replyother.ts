@@ -95,6 +95,31 @@ export async function icpCreateComment(
   return res;
 }
 
+
+
+/**
+ * 回复评论
+ */
+export async function icpReplyCommentByOther(
+  accountId: number,
+  commentId: string,
+  content: string,
+  option: {
+    dataId?: string; // 作品ID
+    comment: any; // 辅助数据,原数据
+  },
+) {
+  const res: boolean = await window.ipcRenderer.invoke(
+    'ICP_REPLY_COMMENT_BY_OTHER',
+    accountId,
+    commentId,
+    content,
+    option,
+  );
+  return res;
+}
+
+
 /**
  * 回复评论
  */

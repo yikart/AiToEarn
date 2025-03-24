@@ -23,7 +23,7 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
     setIsModalOpen(true);
   }
 
-  useImperativeHandle(ref, () => ({
+  useImperativeHandle(ref, () => ({ 
     init: init,
   }));
 
@@ -35,7 +35,8 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
    * 创建评论
    */
   async function createComment(content: string) {
-    const res = await icpCreateComment(accountId, workData!.dataId, content);
+    console.log('----- createComment', accountId, '7480598266392972596', content);
+    const res = await icpCreateComment(accountId, '7480598266392972596', content);
     console.log('----- res', res);
   }
 
