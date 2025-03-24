@@ -13,7 +13,7 @@ import { message } from 'antd';
 import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
 import lodash from 'lodash';
 import { VideoModel } from '../../../../../electron/db/models/video';
-import { getImgFile } from '../../../../components/Choose/ImgChoose';
+import { getImgFile, IImgFile } from '../../../../components/Choose/ImgChoose';
 import { useAICreateTitleStore } from '../../components/AICreateTitle/useAICreateTitle';
 import { usePubStroe } from '../../../../store/pubStroe';
 
@@ -368,14 +368,51 @@ export const useVideoPageStore = create(
           });
 
           const videoListChoose: IVideoChooseItem[] = [];
+
+          const error = (msg: string) => {
+            set({
+              loadingPageLoading: false,
+            });
+            message.error(msg);
+          };
+
           try {
             methods.setOperateId();
 
+            // key=视频路径 val=视频文件，防止多个相同视频重复取视频文件
+            const videoFileMap = new Map<string, IVideoFile>();
+            const coverFileMap = new Map<string, IImgFile>();
             for (let i = 0; i < pubRecordList.length; i++) {
               const pubRecord = pubRecordList[i];
               const account = accounts[i];
-              const video = await getVideoFile(pubRecord.videoPath!);
-              const cover = await getImgFile(pubRecord.coverPath!);
+              const videoPath = pubRecord.videoPath!;
+              const coverPath = pubRecord.coverPath!;
+
+              // 视频获取
+              let video: void | IVideoFile;
+              if (videoFileMap.has(videoPath)) {
+                video = videoFileMap.get(videoPath);
+              } else {
+                video = await getVideoFile(videoPath).catch((e) => {
+                  console.log(e);
+                });
+              }
+              // 封面获取
+              let cover: void | IImgFile;
+              if (coverFileMap.has(coverPath)) {
+                cover = coverFileMap.get(coverPath);
+              } else {
+                cover = await getImgFile(coverPath).catch((e) => {
+                  console.log(e);
+                });
+              }
+
+              if (!video) return error(`视频获取失败：${videoPath}`);
+              if (!cover) return error(`封面获取失败：${coverPath}`);
+
+              videoFileMap.set(videoPath, video);
+              coverFileMap.set(coverPath, cover);
+
               const pubParams = {
                 ...pubRecord,
                 cover: cover,
@@ -416,6 +453,9 @@ export const useVideoPageStore = create(
           });
           methods.setOperateId(operateId);
 
+          // key=视频路径 val=视频文件，防止多个相同视频重复取视频文件
+          const videoFileMap = new Map<string, IVideoFile>();
+          const coverFileMap = new Map<string, IImgFile>();
           try {
             if (commonPubParams?.cover?.imgPath) {
               commonPubParams.cover = await getImgFile(
@@ -423,13 +463,24 @@ export const useVideoPageStore = create(
               );
             }
             for (const item of videoListChoose) {
-              if (item.video?.videoPath) {
-                item.video = await getVideoFile(item.video.videoPath);
+              const videoPath = item.video?.videoPath;
+              if (videoPath) {
+                if (videoFileMap.has(videoPath)) {
+                  item.video = videoFileMap.get(videoPath);
+                } else {
+                  item.video = await getVideoFile(videoPath);
+                  videoFileMap.set(item.video.videoPath, item.video);
+                }
               }
-              if (item.pubParams.cover) {
-                item.pubParams.cover = await getImgFile(
-                  item.pubParams.cover.imgPath,
-                );
+
+              const imgPath = item.pubParams.cover?.imgPath;
+              if (imgPath) {
+                if (coverFileMap.has(imgPath)) {
+                  item.pubParams.cover = coverFileMap.get(imgPath);
+                } else {
+                  item.pubParams.cover = await getImgFile(imgPath);
+                  coverFileMap.set(imgPath, item.pubParams.cover);
+                }
               }
             }
           } catch (e) {

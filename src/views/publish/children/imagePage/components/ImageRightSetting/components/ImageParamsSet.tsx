@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, memo, useMemo } from 'react';
+import { ForwardedRef, forwardRef, memo, useEffect, useMemo } from 'react';
 import { useImagePageStore } from '../../../useImagePageStore';
 import { useShallow } from 'zustand/react/shallow';
 import styles from './imageParamsSet.module.scss';
@@ -36,21 +36,32 @@ const ImageParamsSet = memo(
       const platAccountImagesMap = useMemo(() => {
         // 平台账户map
         const platAccountMap = new Map<AccountType, IImageAccountItem[]>([]);
+
+        for (const imageAccount of imageAccounts) {
+          if (!platAccountMap.has(imageAccount.account.type)) {
+            platAccountMap.set(imageAccount.account.type, []);
+          }
+          platAccountMap.get(imageAccount.account.type)?.push(imageAccount);
+        }
+        return platAccountMap;
+      }, [imageAccounts]);
+
+      useEffect(() => {
+        // 当前选择的平台不存在了便重新选择
+        if (!activePlat || !platAccountImagesMap.has(activePlat)) {
+          setActivePlat(Array.from(platAccountImagesMap)[0][0]);
+        }
+
         // 默认选中的平台map
         const newPlatActiveAccountMap = new Map<
           AccountType,
           IImageAccountItem
         >();
 
-        for (const imageAccount of imageAccounts) {
-          if (!platAccountMap.has(imageAccount.account.type)) {
-            platAccountMap.set(imageAccount.account.type, []);
-            newPlatActiveAccountMap.set(
-              imageAccount.account.type,
-              imageAccount,
-            );
+        for (const [accountType, imageAccountItems] of platAccountImagesMap) {
+          if (!newPlatActiveAccountMap.has(accountType)) {
+            newPlatActiveAccountMap.set(accountType, imageAccountItems[0]);
           }
-          platAccountMap.get(imageAccount.account.type)?.push(imageAccount);
         }
 
         // 将旧的选中的平台账户设置为新的
@@ -65,7 +76,7 @@ const ImageParamsSet = memo(
 
           // 旧的选中账户新的账户列表是否存在，如果存在则使用上一次选中的状态
           if (
-            platAccountMap
+            platAccountImagesMap
               .get(accountType)!
               .some((v) => v.account.id === activeImageAccountItem.account.id)
           ) {
@@ -77,15 +88,9 @@ const ImageParamsSet = memo(
           }
         }
 
-        // 当前选择的平台不存在了
-        if (!activePlat || !platAccountMap.has(activePlat)) {
-          setActivePlat(Array.from(platAccountMap)[0][0]);
-        }
-
         // 设置store当前选择的平台账户
         setPlatActiveAccountMap(newPlatActiveAccountMap);
-        return platAccountMap;
-      }, [imageAccounts]);
+      }, [platAccountImagesMap]);
 
       return (
         <div className={styles.imageParamsSet}>
@@ -121,7 +126,7 @@ const ImageParamsSet = memo(
               );
             })}
           </div>
-          {activePlat && (
+          {activePlat && platAccountImagesMap.get(activePlat) && (
             <ParamsSettingDetails
               imageAccountList={platAccountImagesMap.get(activePlat)!}
             />

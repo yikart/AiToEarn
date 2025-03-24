@@ -87,7 +87,7 @@ const ParamsSettingDetails = memo(
           </div>
 
           {(() => {
-            switch (imageAccountList[0].account.type) {
+            switch (activePlat) {
               case AccountType.Douyin:
                 return <ImageParamsSet_Douyin />;
               case AccountType.Xhs:
