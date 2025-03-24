@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, memo, useMemo, useState } from 'react';
+import { ForwardedRef, forwardRef, memo, useEffect, useMemo } from 'react';
 import { useImagePageStore } from '../../../useImagePageStore';
 import { useShallow } from 'zustand/react/shallow';
 import styles from './imageParamsSet.module.scss';
@@ -6,7 +6,7 @@ import { AccountType } from '../../../../../../../../commont/AccountEnum';
 import { IImageAccountItem } from '../../../imagePage.type';
 import { AccountPlatInfoMap } from '../../../../../../account/comment';
 import { CloseOutlined } from '@ant-design/icons';
-import ParamsSettingItem from './ParamsSettingItem';
+import ParamsSettingDetails from './ParamsSettingDetails';
 
 export interface IImageParamsSetRef {}
 
@@ -15,29 +15,82 @@ export interface IImageParamsSetProps {}
 const ImageParamsSet = memo(
   forwardRef(
     ({}: IImageParamsSetProps, ref: ForwardedRef<IImageParamsSetRef>) => {
-      const { imageAccounts } = useImagePageStore(
+      const {
+        imageAccounts,
+        activePlat,
+        setActivePlat,
+        setPlatActiveAccountMap,
+        platActiveAccountMap,
+        delAccountByPalt,
+      } = useImagePageStore(
         useShallow((state) => ({
           imageAccounts: state.imageAccounts,
+          setActivePlat: state.setActivePlat,
+          activePlat: state.activePlat,
+          setPlatActiveAccountMap: state.setPlatActiveAccountMap,
+          platActiveAccountMap: state.platActiveAccountMap,
+          delAccountByPalt: state.delAccountByPalt,
         })),
       );
-      // 当前选择的平台
-      const [activePlat, setActivePlat] = useState<AccountType>();
 
       const platAccountImagesMap = useMemo(() => {
+        // 平台账户map
         const platAccountMap = new Map<AccountType, IImageAccountItem[]>([]);
+
         for (const imageAccount of imageAccounts) {
           if (!platAccountMap.has(imageAccount.account.type)) {
             platAccountMap.set(imageAccount.account.type, []);
           }
           platAccountMap.get(imageAccount.account.type)?.push(imageAccount);
         }
-
-        if (!activePlat || !platAccountMap.has(activePlat)) {
-          setActivePlat(Array.from(platAccountMap)[0][0]);
-        }
-
         return platAccountMap;
       }, [imageAccounts]);
+
+      useEffect(() => {
+        // 当前选择的平台不存在了便重新选择
+        if (!activePlat || !platAccountImagesMap.has(activePlat)) {
+          setActivePlat(Array.from(platAccountImagesMap)[0][0]);
+        }
+
+        // 默认选中的平台map
+        const newPlatActiveAccountMap = new Map<
+          AccountType,
+          IImageAccountItem
+        >();
+
+        for (const [accountType, imageAccountItems] of platAccountImagesMap) {
+          if (!newPlatActiveAccountMap.has(accountType)) {
+            newPlatActiveAccountMap.set(accountType, imageAccountItems[0]);
+          }
+        }
+
+        // 将旧的选中的平台账户设置为新的
+        for (const [accountType, imageAccountItem] of newPlatActiveAccountMap) {
+          // 旧的选中账户
+          const activeImageAccountItem = platActiveAccountMap.get(accountType);
+          if (
+            !activeImageAccountItem ||
+            activeImageAccountItem.account.id === imageAccountItem.account.id
+          )
+            continue;
+
+          // 旧的选中账户新的账户列表是否存在，如果存在则使用上一次选中的状态
+          if (
+            platAccountImagesMap
+              .get(accountType)!
+              .some((v) => v.account.id === activeImageAccountItem.account.id)
+          ) {
+            newPlatActiveAccountMap.set(
+              accountType,
+              platActiveAccountMap.get(accountType)!,
+            );
+            break;
+          }
+        }
+
+        // 设置store当前选择的平台账户
+        setPlatActiveAccountMap(newPlatActiveAccountMap);
+      }, [platAccountImagesMap]);
 
       return (
         <div className={styles.imageParamsSet}>
@@ -62,7 +115,7 @@ const ImageParamsSet = memo(
                       className={`${styles.closeIcon} imageParamsSet_plats-item-close`}
                       onClick={(e) => {
                         e.stopPropagation();
-                        console.log('close');
+                        delAccountByPalt(accountType);
                       }}
                     >
                       <CloseOutlined />
@@ -73,8 +126,8 @@ const ImageParamsSet = memo(
               );
             })}
           </div>
-          {activePlat && (
-            <ParamsSettingItem
+          {activePlat && platAccountImagesMap.get(activePlat) && (
+            <ParamsSettingDetails
               imageAccountList={platAccountImagesMap.get(activePlat)!}
             />
           )}

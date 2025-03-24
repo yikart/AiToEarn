@@ -62,6 +62,8 @@
 }
 
 .imageRightSetting {
+  width: 45%;
+  box-sizing: border-box;
   margin-left: 20px;
   :global {
     .imageRightSetting-title {

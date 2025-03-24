@@ -5,15 +5,24 @@ import { IImageAccountItem } from './imagePage.type';
 import lodash from 'lodash';
 import { AccountInfo } from '../../../account/comment';
 import { useVideoPageStore } from '../videoPage/useVideoPageStore';
+import { AccountType } from '../../../../../commont/AccountEnum';
 
 interface IImagePageStore {
+  // 账户数据和对应参数
   imageAccounts: IImageAccountItem[];
+  // 选择的图片数据
   images: IImgFile[];
+  // 每个平台当前选择的账户
+  platActiveAccountMap: Map<AccountType, IImageAccountItem>;
+  // 当前选择的平台
+  activePlat?: AccountType;
 }
 
 const store: IImagePageStore = {
   images: [],
   imageAccounts: [],
+  platActiveAccountMap: new Map<AccountType, IImageAccountItem>(),
+  activePlat: undefined,
 };
 
 const getStore = () => {
@@ -28,6 +37,39 @@ export const useImagePageStore = create(
     },
     (set, get, storeApi) => {
       const methods = {
+        setPlatActiveAccountMap(
+          platActiveAccountMap: Map<AccountType, IImageAccountItem>,
+        ) {
+          set({
+            platActiveAccountMap,
+          });
+        },
+
+        setActivePlat(activePlat: AccountType) {
+          set({
+            activePlat,
+          });
+        },
+
+        // 按照账号id删除
+        delAccountById(accountId: number) {
+          const imageAccounts = get().imageAccounts.filter(
+            (v) => v.account.id !== accountId,
+          );
+          set({
+            imageAccounts,
+          });
+        },
+        // 按平台删除
+        delAccountByPalt(accountType: AccountType) {
+          const imageAccounts = get().imageAccounts.filter(
+            (v) => v.account.type !== accountType,
+          );
+          set({
+            imageAccounts,
+          });
+        },
+
         // 添加账户
         addAccount(accounts: AccountInfo[]) {
           let imageAccounts = [...get().imageAccounts];
