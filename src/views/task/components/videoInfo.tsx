@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-03-01 19:27:35
- * @LastEditTime: 2025-03-03 18:05:59
+ * @LastEditTime: 2025-03-24 14:28:36
  * @LastEditors: nevin
  * @Description: video
  */
@@ -35,7 +35,11 @@ export interface TaskInfoRef {
   init: (pubRecord: Task<TaskVideo>) => Promise<void>;
 }
 
-const Com = forwardRef<TaskInfoRef>((props: any, ref) => {
+interface TaskInfoProps {
+  onTaskApplied?: () => void; // 新增
+}
+
+const Com = forwardRef<TaskInfoRef, TaskInfoProps>((props: any, ref) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [taskInfo, setTaskInfo] = useState<Task<TaskVideo> | null>();
   const [downloading, setDownloading] = useState(false);

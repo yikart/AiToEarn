@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-27 19:37:08
- * @LastEditTime: 2025-03-02 22:40:53
+ * @LastEditTime: 2025-03-24 14:11:03
  * @LastEditors: nevin
  * @Description: 我的任务列表
  */
@@ -60,9 +60,7 @@ const UserTaskStatusColorMap = new Map<UserTaskStatus, string>([
   [UserTaskStatus.PENDING, 'warning'],
   [UserTaskStatus.APPROVED, 'success'],
   [UserTaskStatus.REJECTED, 'error'],
-  [UserTaskStatus.COMPLETED, 'success'],
   [UserTaskStatus.CANCELLED, 'default'],
-  [UserTaskStatus.PENDING_REWARD, 'warning'],
   [UserTaskStatus.REWARDED, 'success'],
 ]);
 
@@ -287,7 +285,8 @@ export default function Page() {
 
   return (
     <div className={styles.mineTaskContainer}>
-      <MineTaskInfo ref={Ref_MineTaskInfo} onTaskSubmitted={refreshTaskList} />
+      {/* <MineTaskInfo ref={Ref_MineTaskInfo} onTaskSubmitted={refreshTaskList} /> */}
+      <MineTaskInfo ref={Ref_MineTaskInfo} />
       <Withdraw ref={Ref_Withdraw} />
 
       <div className={styles.pageHeader}>

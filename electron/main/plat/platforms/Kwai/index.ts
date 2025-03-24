@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-19 17:54:53
- * @LastEditTime: 2025-03-23 23:43:23
+ * @LastEditTime: 2025-03-24 15:16:34
  * @LastEditors: nevin
  * @Description:
  */
@@ -250,6 +250,21 @@ export class Kwai extends PlatformBase {
         count: 0,
         pcursor: res.data.data.pcursor + '',
         hasMore: !!res.data.data.pcursor,
+      },
+    };
+  }
+
+  async getCreatorCommentListByOther(
+    account: AccountModel,
+    dataId: string,
+    pcursor?: string,
+  ) {
+    return {
+      list: [],
+      pageInfo: {
+        count: 0,
+        pcursor: '',
+        hasMore: false,
       },
     };
   }

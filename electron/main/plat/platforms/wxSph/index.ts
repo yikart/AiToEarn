@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-08 11:40:45
- * @LastEditTime: 2025-03-23 23:45:42
+ * @LastEditTime: 2025-03-24 15:16:52
  * @LastEditors: nevin
  * @Description: 微信视频号
  */
@@ -214,6 +214,21 @@ export class WxSph extends PlatformBase {
           res.commentCount > res.comment.length * Number(pcursor)
             ? Number(pcursor) + 1 + ''
             : '',
+      },
+    };
+  }
+
+  async getCreatorCommentListByOther(
+    account: AccountModel,
+    dataId: string,
+    pcursor?: string,
+  ) {
+    return {
+      list: [],
+      pageInfo: {
+        count: 0,
+        pcursor: '',
+        hasMore: false,
       },
     };
   }

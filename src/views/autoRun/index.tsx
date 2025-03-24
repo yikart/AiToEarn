@@ -1,15 +1,14 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-03-19 07:51:47
+ * @LastEditTime: 2025-03-24 14:03:36
  * @LastEditors: nevin
  * @Description: 评论页面 reply
  */
 import { Button, Card, Col, Row } from 'antd';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import styles from './reply.module.scss';
-import AddAutoRun, { AddAutoRunRef } from './components/addAutoRun';
 import {
   AutoRun,
   AutoRunRecord,
@@ -25,8 +24,6 @@ export default function Page() {
     [],
   );
   const [activeAccountId, setActiveAccountId] = useState<number>(-1);
-
-  const Ref_AddAutoRun = useRef<AddAutoRunRef>(null);
 
   async function getAutoRunList() {
     setAutoRunList([]);
@@ -48,25 +45,8 @@ export default function Page() {
     console.log('------ res', res);
   }
 
-  /**
-   * 打开评论回复
-   * @param data
-   */
-  function openAddAutoRun() {
-    Ref_AddAutoRun.current?.init(activeAccountId);
-  }
-
   return (
     <div className={styles.reply}>
-      <Button
-        type="primary"
-        onClick={() => {
-          openAddAutoRun();
-        }}
-      >
-        创建自动化
-      </Button>
-
       <Button
         type="primary"
         onClick={() => {
@@ -122,8 +102,6 @@ export default function Page() {
           </div>
         </Col>
       </Row>
-
-      <AddAutoRun ref={Ref_AddAutoRun} />
     </div>
   );
 }

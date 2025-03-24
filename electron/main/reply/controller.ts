@@ -57,11 +57,28 @@ export class ReplyController {
     accountId: number,
     dataId: string,
     pcursor?: string,
-  ): Promise<any> {
+  ): Promise<any> { 
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 
     const res = await platController.getCommentList(account, dataId, pcursor);
+    return res;
+  }
+
+  /**
+   * 获取评论列表
+   */
+  @Icp('ICP_COMMENT_LIST_BY_OTHER')
+  async getCommentListByOther(
+    event: Electron.IpcMainInvokeEvent,
+    accountId: number,
+    dataId: string,
+    pcursor?: string,
+  ): Promise<any> { 
+    const account = await this.accountService.getAccountById(accountId);
+    if (!account) return null;
+
+    const res = await platController.getCreatorCommentListByOther(account, dataId, pcursor);
     return res;
   }
 
