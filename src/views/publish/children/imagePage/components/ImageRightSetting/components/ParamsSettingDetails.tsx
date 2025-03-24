@@ -15,6 +15,7 @@ export interface IParamsSettingDetailsProps {
   imageAccountList: IImageAccountItem[];
 }
 
+// 图文发布右侧参数设置的具体参数设置，为了防止代码冗余拆分
 const ParamsSettingDetails = memo(
   forwardRef(
     (
@@ -42,10 +43,10 @@ const ParamsSettingDetails = memo(
 
       return (
         <div className={styles.paramsSettingItem}>
-          <h2>
+          <h1 style={{ marginTop: '10px' }}>
             <span>发布账号</span>
             <i>*</i>
-          </h2>
+          </h1>
           <div className="paramsSettingItem-users">
             {imageAccountList.map((v) => {
               return (

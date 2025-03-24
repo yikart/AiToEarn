@@ -56,14 +56,15 @@
 
 .paramsSettingItem {
   width: 100%;
+  text-align: left;
   :global {
-    h2 {
+    h1 {
       font-size: var(--fs-md);
       font-weight: 400;
       display: flex;
       align-items: center;
       color: var(--darkGreyColor);
-      margin-bottom: 10px;
+      margin: 30px 0 10px 0;
       span {
         margin-right: 5px;
       }

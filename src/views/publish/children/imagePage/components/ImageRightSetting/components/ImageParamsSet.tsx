@@ -12,6 +12,7 @@ export interface IImageParamsSetRef {}
 
 export interface IImageParamsSetProps {}
 
+// 图片发布右侧参数设置
 const ImageParamsSet = memo(
   forwardRef(
     ({}: IImageParamsSetProps, ref: ForwardedRef<IImageParamsSetRef>) => {

@@ -6,6 +6,7 @@ import { AccountStatus } from '@@/AccountEnum';
 import { ipcUpdateAccountStatus } from '@/icp/account';
 import useDebounceFetcher from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/useDebounceFetcher';
 import { AccountInfo } from '../../../account/comment';
+import styles from './commonComponents.module.scss';
 
 export interface CommonTopicSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
@@ -67,7 +68,7 @@ export default function CommonTopicSelect({
         options={options}
       />
       {children}
-      <p className="videoPubSetModal_con-tips">{tips}</p>
+      <p className={styles.tips}>{tips}</p>
     </>
   );
 }

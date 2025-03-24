@@ -7,7 +7,7 @@ export interface IRequestNetResult<T> {
 }
 
 export interface IRequestNetParams {
-  headers?: any;
+  headers: Record<string, string | string[]>;
   url: string;
   body?: any;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';

@@ -14,7 +14,7 @@ export interface CommonUserSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
   account?: AccountInfo;
   tips?: string;
-  title: string;
+  title?: string;
   children?: React.ReactNode;
   onAccountChange?: (account: AccountInfo) => void;
 }
@@ -66,7 +66,7 @@ export default function CommonUserSelect({
 
   return (
     <>
-      <h1>{props.title}</h1>
+      <h1>{props.title || '用户选择'}</h1>
       <Select
         {...props}
         showSearch={

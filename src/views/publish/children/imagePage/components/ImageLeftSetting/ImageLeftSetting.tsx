@@ -5,6 +5,8 @@ import localUpload from '../../../videoPage/images/localUpload.png';
 import ImgChoose from '../../../../../../components/Choose/ImgChoose';
 import { Button, Input } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
+import { useShallow } from 'zustand/react/shallow';
+import { useImagePageStore } from '../../useImagePageStore';
 
 const { TextArea } = Input;
 
@@ -15,6 +17,15 @@ export interface IImageLeftSettingProps {}
 const ImageLeftSetting = memo(
   forwardRef(
     ({}: IImageLeftSettingProps, ref: ForwardedRef<IImageLeftSettingRef>) => {
+      const { setAllPubParams, commonPubParams, setCommonPubParams } =
+        useImagePageStore(
+          useShallow((state) => ({
+            setAllPubParams: state.setAllPubParams,
+            commonPubParams: state.commonPubParams,
+            setCommonPubParams: state.setCommonPubParams,
+          })),
+        );
+
       return (
         <div className={styles.imageLeftSetting}>
           <div className="imageLeftSetting-upload">
@@ -37,18 +48,31 @@ const ImageLeftSetting = memo(
             <div className="imageLeftSetting-commonPar-titles">
               <label>通用发布设置</label>
               <div className="imageLeftSetting-commonPar-titles-operate">
-                <Button icon={<ArrowRightOutlined />}>同步至右侧</Button>
+                <Button
+                  icon={<ArrowRightOutlined />}
+                  onClick={() => {
+                    setAllPubParams({
+                      title: commonPubParams.title,
+                      describe: commonPubParams.describe,
+                    });
+                  }}
+                >
+                  同步至右侧
+                </Button>
               </div>
             </div>
 
             <div className="imageLeftSetting-commonPar-item">
               <label>一键设置标题：</label>
               <Input
+                value={commonPubParams.title}
                 placeholder="请输入标题"
                 showCount
                 variant="filled"
                 onChange={(e) => {
-                  console.log(e.target.value);
+                  setCommonPubParams({
+                    title: e.target.value,
+                  });
                 }}
               />
             </div>
@@ -59,12 +83,15 @@ const ImageLeftSetting = memo(
             >
               <label>一键设置简介：</label>
               <TextArea
+                value={commonPubParams.describe}
                 maxLength={1000}
                 placeholder="请输入简介"
                 showCount
                 variant="filled"
                 onChange={(e) => {
-                  console.log(e.target.value);
+                  setCommonPubParams({
+                    describe: e.target.value,
+                  });
                 }}
               />
             </div>

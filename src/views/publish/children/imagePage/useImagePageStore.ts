@@ -6,6 +6,7 @@ import lodash from 'lodash';
 import { AccountInfo } from '../../../account/comment';
 import { useVideoPageStore } from '../videoPage/useVideoPageStore';
 import { AccountType } from '../../../../../commont/AccountEnum';
+import { IPubParams } from '../videoPage/videoPage';
 
 interface IImagePageStore {
   // 账户数据和对应参数
@@ -16,6 +17,7 @@ interface IImagePageStore {
   platActiveAccountMap: Map<AccountType, IImageAccountItem>;
   // 当前选择的平台
   activePlat?: AccountType;
+  commonPubParams: IPubParams;
 }
 
 const store: IImagePageStore = {
@@ -23,6 +25,7 @@ const store: IImagePageStore = {
   imageAccounts: [],
   platActiveAccountMap: new Map<AccountType, IImageAccountItem>(),
   activePlat: undefined,
+  commonPubParams: useVideoPageStore.getState().pubParamsInit(),
 };
 
 const getStore = () => {
@@ -51,6 +54,36 @@ export const useImagePageStore = create(
           });
         },
 
+        // 设置所有参数
+        setAllPubParams(pubParmas: IPubParams) {
+          const imageAccounts = [...get().imageAccounts];
+
+          imageAccounts.map((v) => {
+            // 替换
+            Object.keys(pubParmas).map((key) => {
+              if (pubParmas.hasOwnProperty(key)) {
+                v.pubParams[key as 'topics'] = pubParmas[key as 'topics'];
+              }
+            });
+          });
+          set({
+            imageAccounts,
+          });
+        },
+
+        // 设置通用发布参数
+        setCommonPubParams(pubParmas: IPubParams) {
+          const commonPubParams = { ...get().commonPubParams };
+          for (const key in commonPubParams) {
+            if (pubParmas.hasOwnProperty(key)) {
+              commonPubParams[key as 'topics'] = pubParmas[key as 'topics'];
+            }
+          }
+          set({
+            commonPubParams,
+          });
+        },
+
         // 按照账号id删除
         delAccountById(accountId: number) {
           const imageAccounts = get().imageAccounts.filter(
@@ -60,6 +93,7 @@ export const useImagePageStore = create(
             imageAccounts,
           });
         },
+
         // 按平台删除
         delAccountByPalt(accountType: AccountType) {
           const imageAccounts = get().imageAccounts.filter(
@@ -108,6 +142,38 @@ export const useImagePageStore = create(
           });
         },
 
+        // 设置单条数据的参数
+        setOnePubParams(pubParmas: IPubParams, id: number) {
+          const imageAccounts = [...get().imageAccounts];
+          const findedData = imageAccounts.find((v) => v.account.id === id);
+          if (!findedData) return;
+
+          for (const key in pubParmas) {
+            if (pubParmas.hasOwnProperty(key)) {
+              findedData.pubParams[key as 'title'] = pubParmas[key as 'title'];
+            }
+          }
+
+          set({ imageAccounts });
+        },
+
+        // 更新用户数据
+        updateAccounts(accounts: AccountInfo[]) {
+          const imageAccounts = [...get().imageAccounts];
+          const imageTextMap = new Map<number, IImageAccountItem>();
+
+          imageAccounts.map((v) => {
+            imageTextMap.set(v.account.id || 0, v);
+          });
+
+          accounts.map((v) => {
+            imageTextMap.get(v.id)!.account = v;
+          });
+
+          set({ imageAccounts });
+        },
+
+        // 清除本store所有数据
         clear() {
           set({
             ...getStore(),
