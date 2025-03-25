@@ -14,6 +14,35 @@ import {
   XiaohongshuApiResponse,
 } from './xiaohongshu.type';
 
+export type XSLPlatformSettingType = {
+  // 标题
+  title?: string;
+  // 描述
+  desc?: string;
+  // 定时发布
+  timingTime?: number;
+  // @用户
+  mentionedUserInfo?: {
+    nickName: string;
+    uid: string;
+  }[];
+  // 话题
+  topicsDetail?: {
+    topicId: string;
+    topicName: string;
+  }[];
+  // 位置
+  poiInfo?: {
+    poiType: number;
+    poiId: string;
+    poiName: string;
+    poiAddress: string;
+  };
+  cover: string;
+  // true=私有 flase=公开
+  privacy: boolean;
+};
+
 export class XiaohongshuService {
   private defaultUserAgent =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
@@ -783,8 +812,12 @@ export class XiaohongshuService {
   async publishImageWorkApi(
     cookies: string,
     imagePath: string[],
-    platformSetting: any,
-  ) {
+    platformSetting: XSLPlatformSettingType,
+  ): Promise<{
+    publishTime: number;
+    publishId: string;
+    shareLink: string;
+  }> {
     return new Promise(async (resolve, reject) => {
       // try {
       // 初始化cookie
@@ -1157,34 +1190,7 @@ export class XiaohongshuService {
   async publishVideoWorkApi(
     cookies: string,
     filePath: string,
-    platformSetting: {
-      // 标题
-      title?: string;
-      // 描述
-      desc?: string;
-      // 定时发布
-      timingTime?: number;
-      // @用户
-      mentionedUserInfo?: {
-        nickName: string;
-        uid: string;
-      }[];
-      // 话题
-      topicsDetail?: {
-        topicId: string;
-        topicName: string;
-      }[];
-      // 位置
-      poiInfo?: {
-        poiType: number;
-        poiId: string;
-        poiName: string;
-        poiAddress: string;
-      };
-      cover: string;
-      // true=私有 flase=公开
-      privacy: boolean;
-    },
+    platformSetting: XSLPlatformSettingType,
     callback: (progress: number, msg?: string) => void,
   ): Promise<{
     publishTime: number;

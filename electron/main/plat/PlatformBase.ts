@@ -16,6 +16,7 @@ import {
   IGetTopicsResponse,
   IGetUsersParams,
   IGetUsersResponse,
+  IImgTextPublishParams,
   IVideoPublishParams,
   ResponsePageInfo,
   StatisticsData,
@@ -182,7 +183,7 @@ export abstract class PlatformBase {
   ): Promise<boolean>;
 
   /**
-   * 在该平台发布视频
+   * 视频发布
    */
   abstract videoPublish(
     params: IVideoPublishParams,
@@ -190,7 +191,18 @@ export abstract class PlatformBase {
     callback: VideoCallbackType,
   ): Promise<PublishVideoResult>;
 
-  // 获取这个平台的话题
+  /**
+   * 图文发布，有些平台不支持图文发布
+   */
+  imgTextPublish(
+    params: IImgTextPublishParams,
+    // 获取发布进度的回调函数
+    callback: VideoCallbackType,
+  ): Promise<PublishVideoResult> {
+    throw `平台${this.type}不支持图文发布`;
+  }
+
+  // 话题数据获取
   abstract getTopics(params: IGetTopicsParams): Promise<IGetTopicsResponse>;
 
   // 获取位置数据

@@ -16,12 +16,17 @@ import {
   IGetTopicsParams,
   IGetTopicsResponse,
   IGetUsersParams,
+  IImgTextPublishParams,
+  IPublishParams,
   IVideoPublishParams,
   VideoCallbackType,
   WorkData,
 } from '../../plat.type';
 import { PublishVideoResult } from '../../module';
-import { douyinService } from '../../../../plat/douyin';
+import {
+  DouyinPlatformSettingType,
+  douyinService,
+} from '../../../../plat/douyin';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
 import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
@@ -378,55 +383,58 @@ export class Douyin extends PlatformBase {
     return false;
   }
 
+  pubParamsParse(params: IPublishParams): DouyinPlatformSettingType {
+    const douyinParams = params.diffParams![AccountType.Douyin];
+    return {
+      userDeclare: douyinParams?.selfDeclare,
+      activity: douyinParams?.activitys?.map((v) => {
+        return {
+          label: v.label,
+          value: `${v.value}`,
+        };
+      }),
+      hot_sentence: douyinParams?.hotPoint?.label,
+      mentionedUserInfo: params.mentionedUserInfo?.map((v) => {
+        return {
+          nickName: v.label,
+          uid: `${v.value}`,
+        };
+      }),
+      title: params.title,
+      topics: params.topics,
+      caption: params.desc,
+      cover: params.coverPath,
+      timingTime: params.timingTime?.getTime(),
+      // 可见性
+      visibility_type:
+        params.visibleType === VisibleTypeEnum.Public
+          ? 0
+          : params.visibleType === VisibleTypeEnum.Private
+            ? 1
+            : 2,
+      // 地址
+      ...(params.location
+        ? {
+            poiInfo: {
+              poiId: `${params.location.id}`,
+              poiName: params.location.name,
+            },
+          }
+        : {}),
+    };
+  }
+
   async videoPublish(
     params: IVideoPublishParams,
     callback: VideoCallbackType,
   ): Promise<PublishVideoResult> {
     return new Promise(async (resolve) => {
-      const douyinParams = params.diffParams![AccountType.Douyin];
-
       const result = await douyinService
         .publishVideoWorkApi(
           JSON.stringify(params.cookies),
           params.other!,
           params.videoPath,
-          {
-            userDeclare: douyinParams?.selfDeclare,
-            activity: douyinParams?.activitys?.map((v) => {
-              return {
-                label: v.label,
-                value: `${v.value}`,
-              };
-            }),
-            hot_sentence: douyinParams?.hotPoint?.label,
-            mentionedUserInfo: params.mentionedUserInfo?.map((v) => {
-              return {
-                nickName: v.label,
-                uid: `${v.value}`,
-              };
-            }),
-            title: params.title,
-            topics: params.topics,
-            caption: params.desc,
-            cover: params.coverPath,
-            timingTime: params.timingTime?.getTime(),
-            // 可见性
-            visibility_type:
-              params.visibleType === VisibleTypeEnum.Public
-                ? 0
-                : params.visibleType === VisibleTypeEnum.Private
-                  ? 1
-                  : 2,
-            // 地址
-            ...(params.location
-              ? {
-                  poiInfo: {
-                    poiId: `${params.location.id}`,
-                    poiName: params.location.name,
-                  },
-                }
-              : {}),
-          },
+          this.pubParamsParse(params),
           callback,
         )
         .catch((e) => {
@@ -504,6 +512,40 @@ export class Douyin extends PlatformBase {
         };
       }),
     };
+  }
+
+  async imgTextPublish(
+    params: IImgTextPublishParams,
+    // 获取发布进度的回调函数
+    callback: VideoCallbackType,
+  ): Promise<PublishVideoResult> {
+    return new Promise(async (resolve) => {
+      const result = await douyinService
+        .publishImageWorkApi(
+          JSON.stringify(params.cookies),
+          params.token!,
+          params.imagesPath,
+          this.pubParamsParse(params),
+        )
+        .catch((e) => {
+          resolve({
+            code: 0,
+            msg: e,
+          });
+        });
+      if (!result.publishId)
+        return resolve({
+          code: 0,
+          msg: '网络繁忙，请稍后重试',
+        });
+
+      return resolve({
+        code: 1,
+        msg: '发布成功',
+        dataId: result.publishId,
+        previewVideoLink: result.shareLink,
+      });
+    });
   }
 }
 

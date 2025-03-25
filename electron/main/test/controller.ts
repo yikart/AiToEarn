@@ -8,7 +8,6 @@
 import { Controller, Icp, Inject } from '../core/decorators';
 import { TestService } from './service';
 import { douyinService } from '../../plat/douyin/index';
-import { getNowTimeStamp } from '../../util/time';
 import { xiaohongshuService } from '../../plat/xiaohongshu/index';
 import { shipinhaoService } from '../../plat/shipinhao/index';
 
@@ -19,31 +18,6 @@ const coverPath = 'C:\\Users\\Administrator\\Desktop\\测试用的\\gile.jpg';
 export class TestController {
   @Inject(TestService)
   private readonly testService!: TestService;
-
-  /**
-   * 测试-抖音发布
-   */
-  @Icp('ICP_TEST_DOUYIN_VIDEO_PUB')
-  async testDouyinVideoPub(event: Electron.IpcMainInvokeEvent): Promise<any> {
-    const account = await this.testService.getInfoById(2);
-    if (!account) return;
-    const res = await douyinService.publishVideoWorkApi(
-      account.loginCookie,
-      account.token!,
-      'C:\\Users\\Administrator\\Desktop\\相册.mp4',
-      {
-        cover:
-          'https://help-static-aliyun-doc.aliyuncs.com/assets/img/zh-CN/6069415171/p792953.png',
-        title: '元宵节快乐',
-        topics: ['元宵节'],
-        timingTime: getNowTimeStamp(),
-        visibility_type: 0,
-      },
-      () => {},
-    );
-
-    return 1;
-  }
 
   /**
    * 测试-抖音登录
@@ -63,35 +37,6 @@ export class TestController {
       cookie,
       token: localStorage,
     };
-  }
-
-  /**
-   * 测试2-抖音发布
-   */
-  @Icp('ICP_TEST_DOUYIN_VIDEO_PUB_2')
-  async testDouyinVideoPub2(
-    event: Electron.IpcMainInvokeEvent,
-    cookie: any,
-    token: string,
-  ): Promise<any> {
-    if (!cookie) return;
-    if (!token) return;
-
-    const res = await douyinService.publishVideoWorkApi(
-      cookie,
-      token!,
-      videoPath,
-      {
-        cover: coverPath,
-        title: '元宵节快乐',
-        topics: ['元宵节'],
-        timingTime: getNowTimeStamp(),
-        visibility_type: 0,
-      },
-      () => {},
-    );
-
-    return 1;
   }
 
   /**

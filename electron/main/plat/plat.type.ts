@@ -84,8 +84,8 @@ export interface WxSphEvent {
   eventName: string;
 }
 
-// 发布视频入参
-export interface IVideoPublishParams {
+// 发布通用参数
+export interface IPublishParams {
   // 调用该平台的cookies
   cookies: CookiesType;
   // 标题，有些平台没有标题
@@ -94,10 +94,6 @@ export interface IVideoPublishParams {
   desc: string;
   // 话题
   topics: string[];
-  // 视频的路径
-  videoPath: string;
-  // 封面路径
-  coverPath: string;
   // 可见性
   visibleType: VisibleTypeEnum;
   // 各个平台的差异化参数
@@ -108,7 +104,23 @@ export interface IVideoPublishParams {
   location?: ILocationDataItem;
   // @用户
   mentionedUserInfo?: ILableValue[];
+  // 封面路径
+  coverPath: string;
+}
+
+// 视频发布参数
+export interface IVideoPublishParams extends IPublishParams {
+  // 视频的路径
+  videoPath: string;
   other?: any;
+}
+
+// 图文发布参数
+export interface IImgTextPublishParams extends IPublishParams {
+  // 图片路径
+  imagesPath: string[];
+  // token，只有抖音需要
+  token?: string;
 }
 
 // 获取用户参数

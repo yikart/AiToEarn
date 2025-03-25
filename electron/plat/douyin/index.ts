@@ -24,7 +24,7 @@ import requestNet from '../requestNet';
 import { jsonToQueryString } from '../../util';
 import { DeclarationDouyin } from './common.douyin';
 
-type PlatformSettingType = {
+export type DouyinPlatformSettingType = {
   // 自主声明
   userDeclare?: DeclarationDouyin;
   // 合集
@@ -509,7 +509,7 @@ export class DouyinService {
     cookies: string,
     tokens: any,
     filePath: string,
-    platformSetting: PlatformSettingType,
+    platformSetting: DouyinPlatformSettingType,
     callback: (progress: number, msg?: string) => void,
   ): Promise<any> {
     console.log('开始发布视频作品，参数：', platformSetting);
@@ -651,7 +651,7 @@ export class DouyinService {
     cookies: any,
     tokens: any,
     imagePath: string[],
-    platformSetting: any,
+    platformSetting: DouyinPlatformSettingType,
   ): Promise<any> {
     console.log(`[${new Date().toLocaleString()}] 开始发布图片作品，参数:`, {
       cookies: typeof cookies === 'string' ? cookies.length : cookies.length,
@@ -1694,7 +1694,7 @@ export class DouyinService {
   }
 
   // 发布视频、v2 api参数处理
-  private getPublishPublicParamsV2(platformSetting: PlatformSettingType) {
+  private getPublishPublicParamsV2(platformSetting: DouyinPlatformSettingType) {
     console.log('platformSetting：', platformSetting);
     const parmasDisposeOK = this.getPublishPublicParams(platformSetting);
 
@@ -1785,7 +1785,7 @@ export class DouyinService {
    * 获取视频|图文公共发布参数
    * @param platformSetting 平台设置参数
    */
-  private getPublishPublicParams(platformSetting: PlatformSettingType): any {
+  private getPublishPublicParams(platformSetting: DouyinPlatformSettingType): any {
     console.log('开始处理发布参数...');
     // 处理描述
     let text = `${platformSetting['title'] || ''} ${platformSetting['caption'] || ''}`;
@@ -2376,7 +2376,6 @@ export class DouyinService {
     return res;
   }
 
-  //
   // 回复其他人的评论
   async creatorCommentReplyOther(cookie: Electron.Cookie[], data: any) {
     const thisUri = `https://www.douyin.com/aweme/v1/web/comment/publish/?${jsonToQueryString(

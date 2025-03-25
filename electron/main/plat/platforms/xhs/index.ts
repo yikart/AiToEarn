@@ -16,12 +16,17 @@ import {
   IGetTopicsParams,
   IGetTopicsResponse,
   IGetUsersParams,
+  IImgTextPublishParams,
+  IPublishParams,
   IVideoPublishParams,
   VideoCallbackType,
   WorkData,
 } from '../../plat.type';
 import { PublishVideoResult } from '../../module';
-import { xiaohongshuService } from '../../../../plat/xiaohongshu';
+import {
+  xiaohongshuService,
+  XSLPlatformSettingType,
+} from '../../../../plat/xiaohongshu';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
 import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
@@ -306,36 +311,7 @@ export class Xhs extends PlatformBase {
         .publishVideoWorkApi(
           JSON.stringify(params.cookies),
           params.videoPath,
-          {
-            cover: params.coverPath,
-            desc: params.desc,
-            title: params.title,
-            topicsDetail:
-              params.topics?.map((v) => ({
-                topicId: v,
-                topicName: v,
-              })) || [],
-            timingTime: params.timingTime?.getTime(),
-            privacy: params.visibleType !== VisibleTypeEnum.Public,
-            // 位置
-            poiInfo: params.location
-              ? {
-                  poiType: params.location.poi_type!,
-                  poiId: params.location.id,
-                  poiName: params.location.name,
-                  poiAddress: params.location.simpleAddress,
-                }
-              : undefined,
-            // @用户
-            mentionedUserInfo: params.mentionedUserInfo
-              ? params.mentionedUserInfo.map((v) => {
-                  return {
-                    nickName: v.label,
-                    uid: `${v.value}`,
-                  };
-                })
-              : undefined,
-          },
+          this.pubParamsParse(params),
           callback,
         )
         .catch((err) => {
@@ -418,6 +394,73 @@ export class Xhs extends PlatformBase {
         };
       }),
     };
+  }
+
+  pubParamsParse(params: IPublishParams): XSLPlatformSettingType {
+    return {
+      cover: params.coverPath,
+      desc: params.desc,
+      title: params.title,
+      topicsDetail:
+        params.topics?.map((v) => ({
+          topicId: v,
+          topicName: v,
+        })) || [],
+      timingTime: params.timingTime?.getTime(),
+      privacy: params.visibleType !== VisibleTypeEnum.Public,
+      // 位置
+      poiInfo: params.location
+        ? {
+            poiType: params.location.poi_type!,
+            poiId: params.location.id,
+            poiName: params.location.name,
+            poiAddress: params.location.simpleAddress,
+          }
+        : undefined,
+      // @用户
+      mentionedUserInfo: params.mentionedUserInfo
+        ? params.mentionedUserInfo.map((v) => {
+            return {
+              nickName: v.label,
+              uid: `${v.value}`,
+            };
+          })
+        : undefined,
+    };
+  }
+
+  async imgTextPublish(
+    params: IImgTextPublishParams,
+    // 获取发布进度的回调函数
+    callback: VideoCallbackType,
+  ): Promise<PublishVideoResult> {
+    return new Promise(async (resolve) => {
+      const result = await xiaohongshuService
+        .publishImageWorkApi(
+          JSON.stringify(params.cookies),
+          params.imagesPath,
+          this.pubParamsParse(params),
+        )
+        .catch((err) => {
+          resolve({
+            code: 0,
+            msg: err,
+          });
+        });
+
+      if (!result || !result.publishId)
+        return resolve({
+          code: 0,
+          msg: '网络繁忙，请稍后重试！',
+        });
+
+      return resolve({
+        code: 1,
+        msg: '成功！',
+        dataId: result!.publishId,
+        previewVideoLink: result.shareLink,
+      });
+    });
   }
 }
 
