@@ -1,10 +1,12 @@
-import { ForwardedRef, forwardRef, memo, useState } from 'react';
+import { ForwardedRef, forwardRef, memo, useRef, useState } from 'react';
 import styles from '../../image.module.scss';
 import { PubType } from '../../../../../../../commont/publish/PublishEnum';
 import SupportPlat from '../../../../components/SupportPlat/SupportPlat';
 import { ChooseAccountChunk } from '../../../../components/CommonComponents/CommonComponents';
 import { Steps } from 'antd';
-import ChooseAccountModule from '../../../../components/ChooseAccountModule/ChooseAccountModule';
+import ChooseAccountModule, {
+  IChooseAccountModuleRef,
+} from '../../../../components/ChooseAccountModule/ChooseAccountModule';
 import { useShallow } from 'zustand/react/shallow';
 import { useImagePageStore } from '../../useImagePageStore';
 import ImageParamsSet from './components/ImageParamsSet';
@@ -17,16 +19,19 @@ const ImageRightSetting = memo(
   forwardRef(
     ({}: IImageRightSettingProps, ref: ForwardedRef<IImageRightSettingRef>) => {
       const [chooseAccountOpen, setChooseAccountOpen] = useState(false);
-      const { imageAccounts, addAccount } = useImagePageStore(
+      const { imageAccounts, addAccount, activePlat } = useImagePageStore(
         useShallow((state) => ({
           imageAccounts: state.imageAccounts,
           addAccount: state.addAccount,
+          activePlat: state.activePlat,
         })),
       );
+      const chooseAccountModuleRef = useRef<IChooseAccountModuleRef>(null);
 
       return (
         <>
           <ChooseAccountModule
+            ref={chooseAccountModuleRef}
             open={chooseAccountOpen}
             onClose={setChooseAccountOpen}
             platChooseProps={{
@@ -70,7 +75,14 @@ const ImageRightSetting = memo(
               />
             </div>
           ) : (
-            <ImageParamsSet />
+            <ImageParamsSet
+              openChooseAccount={() => {
+                setChooseAccountOpen(true);
+                chooseAccountModuleRef
+                  .current!.getPlatChooseRef()
+                  ?.setActivePlat(activePlat!);
+              }}
+            />
           )}
         </>
       );

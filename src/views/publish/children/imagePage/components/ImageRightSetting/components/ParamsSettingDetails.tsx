@@ -1,6 +1,6 @@
 import { ForwardedRef, forwardRef, memo, useMemo } from 'react';
 import styles from './imageParamsSet.module.scss';
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { Avatar, Tooltip } from 'antd';
 import { AccountType } from '../../../../../../../../commont/AccountEnum';
 import ImageParamsSet_Douyin from './children/ImageParamsSet_Douyin';
@@ -13,13 +13,14 @@ export interface IParamsSettingDetailsRef {}
 
 export interface IParamsSettingDetailsProps {
   imageAccountList: IImageAccountItem[];
+  openChooseAccount: () => void;
 }
 
 // 图文发布右侧参数设置的具体参数设置，为了防止代码冗余拆分
 const ParamsSettingDetails = memo(
   forwardRef(
     (
-      { imageAccountList }: IParamsSettingDetailsProps,
+      { imageAccountList, openChooseAccount }: IParamsSettingDetailsProps,
       ref: ForwardedRef<IParamsSettingDetailsRef>,
     ) => {
       const {
@@ -48,6 +49,16 @@ const ParamsSettingDetails = memo(
             <i>*</i>
           </h1>
           <div className="paramsSettingItem-users">
+            <div
+              className="paramsSettingItem-users-item"
+              onClick={openChooseAccount}
+            >
+              <div className="paramsSettingItem-users-item-img">
+                <Avatar size="large" icon={<PlusOutlined />} />
+              </div>
+              <p className="paramsSettingItem-users-item-name">发布账号</p>
+            </div>
+
             {imageAccountList.map((v) => {
               return (
                 <div

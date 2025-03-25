@@ -79,7 +79,10 @@
         width: 70px;
         font-size: var(--fs-sm);
         cursor: pointer;
-        margin-right: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 5px;
         &--active {
           .paramsSettingItem-users-item-img {
             border-color: var(--colorPrimary6);
@@ -103,10 +106,12 @@
         &-close {
         }
         &-name {
+          width: 100%;
           margin-top: 4px;
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;
+          text-align: center;
         }
       }
     }

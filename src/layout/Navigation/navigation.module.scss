@@ -29,6 +29,8 @@
         align-items: center;
         margin-right: 20px;
         font-size: var(--fs-lg);
+        user-select: none;
+        -webkit-app-region: drag;
         img {
           margin-right: 4px;
         }

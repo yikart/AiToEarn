@@ -3,6 +3,7 @@ import {
   forwardRef,
   memo,
   useEffect,
+  useImperativeHandle,
   useRef,
   useState,
 } from 'react';
@@ -13,7 +14,9 @@ import PlatChoose, {
   IPlatChooseRef,
 } from '@/views/publish/components/ChooseAccountModule/components/PlatChoose';
 
-export interface IChooseAccountModuleRef {}
+export interface IChooseAccountModuleRef {
+  getPlatChooseRef: () => IPlatChooseRef | null;
+}
 
 export interface IChooseAccountModuleProps {
   open: boolean;
@@ -65,6 +68,13 @@ const ChooseAccountModule = memo(
       useEffect(() => {
         platChooseRef.current?.init();
       }, [open]);
+
+      const ImperativeHandle: IChooseAccountModuleRef = {
+        getPlatChooseRef() {
+          return platChooseRef.current;
+        },
+      };
+      useImperativeHandle(ref, () => ImperativeHandle);
 
       return (
         <Modal

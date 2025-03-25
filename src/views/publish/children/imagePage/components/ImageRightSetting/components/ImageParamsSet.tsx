@@ -10,12 +10,17 @@ import ParamsSettingDetails from './ParamsSettingDetails';
 
 export interface IImageParamsSetRef {}
 
-export interface IImageParamsSetProps {}
+export interface IImageParamsSetProps {
+  openChooseAccount: () => void;
+}
 
 // 图片发布右侧参数设置
 const ImageParamsSet = memo(
   forwardRef(
-    ({}: IImageParamsSetProps, ref: ForwardedRef<IImageParamsSetRef>) => {
+    (
+      { openChooseAccount }: IImageParamsSetProps,
+      ref: ForwardedRef<IImageParamsSetRef>,
+    ) => {
       const {
         imageAccounts,
         activePlat,
@@ -129,6 +134,7 @@ const ImageParamsSet = memo(
           </div>
           {activePlat && platAccountImagesMap.get(activePlat) && (
             <ParamsSettingDetails
+              openChooseAccount={openChooseAccount}
               imageAccountList={platAccountImagesMap.get(activePlat)!}
             />
           )}

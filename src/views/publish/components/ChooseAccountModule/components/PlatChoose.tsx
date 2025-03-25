@@ -34,6 +34,8 @@ export interface IPlatChooseRef {
   recover: () => void;
   // 每次关闭弹框的时候需要初始化一些状态
   init: () => void;
+  // 设置选中平台
+  setActivePlat: (activePlat: AccountType) => void;
 }
 
 export interface IPlatChooseProps {
@@ -183,6 +185,7 @@ const PlatChoose = memo(
             return newV;
           });
         },
+        setActivePlat,
         init,
       }));
 
