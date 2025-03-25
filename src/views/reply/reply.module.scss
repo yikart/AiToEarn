@@ -3,3 +3,14 @@
   :global {
   }
 }
+
+.action-container {
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  width: 100%; /* 确保占满容器宽度 */
+}
+
+.action-container .ant-tooltip {
+  margin-left: auto; /* 将按钮推到右侧 */
+}

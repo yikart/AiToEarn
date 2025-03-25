@@ -45,7 +45,7 @@ const Com = forwardRef<AddAutoRunRef>((props: any, ref) => {
         open={isModalOpen}
         onCancel={handleCancel}
         footer={null}
-        width={800}
+        width={300}
       >
         <p>账号ID{accountId}</p>
         <p>账号ID{accountId}</p>
