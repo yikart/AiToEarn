@@ -5,13 +5,16 @@
   height: 100%;
   :global {
     .image-wrapper {
-      width: 80%;
+      width: 1200px;
       margin: 0 auto;
       height: 100%;
       min-height: 0;
       box-sizing: border-box;
       padding: 15px 0;
       display: flex;
+      @media (max-width: 1450px) {
+        width: 90%;
+      }
     }
     .image-footer {
       border-top: 1px solid var(--superLightGreyColor);
@@ -24,6 +27,7 @@
   width: 65%;
   display: flex;
   flex-direction: column;
+  overflow: auto;
   height: 100%;
   min-height: 0;
   box-sizing: border-box;
@@ -39,7 +43,6 @@
       margin-bottom: 25px;
     }
     .imageLeftSetting-commonPar {
-      overflow: auto;
       height: 100%;
       &-titles, &-item {
         display: flex;

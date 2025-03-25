@@ -7,6 +7,7 @@ import { Button, Input } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
 import { useShallow } from 'zustand/react/shallow';
 import { useImagePageStore } from '../../useImagePageStore';
+import ImgTextImagesView from './ImgTextImagesView';
 
 const { TextArea } = Input;
 
@@ -17,31 +18,48 @@ export interface IImageLeftSettingProps {}
 const ImageLeftSetting = memo(
   forwardRef(
     ({}: IImageLeftSettingProps, ref: ForwardedRef<IImageLeftSettingRef>) => {
-      const { setAllPubParams, commonPubParams, setCommonPubParams } =
-        useImagePageStore(
-          useShallow((state) => ({
-            setAllPubParams: state.setAllPubParams,
-            commonPubParams: state.commonPubParams,
-            setCommonPubParams: state.setCommonPubParams,
-          })),
-        );
+      const {
+        setAllPubParams,
+        commonPubParams,
+        setCommonPubParams,
+        addImages,
+        images,
+      } = useImagePageStore(
+        useShallow((state) => ({
+          setAllPubParams: state.setAllPubParams,
+          commonPubParams: state.commonPubParams,
+          setCommonPubParams: state.setCommonPubParams,
+          addImages: state.addImages,
+          images: state.images,
+        })),
+      );
 
       return (
         <div className={styles.imageLeftSetting}>
           <div className="imageLeftSetting-upload">
-            <ImgChoose
-              onMultipleChoose={(e) => {
-                console.log(e);
-              }}
-            >
-              <ChooseChunk
-                text="本地上传"
-                imgUrl={localUpload}
-                color="linear-gradient(to right, rgb(255, 142, 28), rgb(255, 124, 24))"
-                hoverColor="rgb(255, 142, 28)"
-                style={{ marginRight: '15px', width: '260px', height: '180px' }}
-              />
-            </ImgChoose>
+            {images.length === 0 ? (
+              <ImgChoose
+                onMultipleChoose={(imgFiles) => {
+                  if (imgFiles.length !== 0) {
+                    addImages(imgFiles);
+                  }
+                }}
+              >
+                <ChooseChunk
+                  text="本地上传"
+                  imgUrl={localUpload}
+                  color="linear-gradient(to right, rgb(255, 142, 28), rgb(255, 124, 24))"
+                  hoverColor="rgb(255, 142, 28)"
+                  style={{
+                    marginRight: '15px',
+                    width: '260px',
+                    height: '180px',
+                  }}
+                />
+              </ImgChoose>
+            ) : (
+              <ImgTextImagesView />
+            )}
           </div>
 
           <div className="imageLeftSetting-commonPar">

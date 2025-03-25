@@ -7,6 +7,7 @@ import { AccountInfo } from '../../../account/comment';
 import { useVideoPageStore } from '../videoPage/useVideoPageStore';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { IPubParams } from '../videoPage/videoPage';
+import { message } from 'antd';
 
 interface IImagePageStore {
   // 账户数据和对应参数
@@ -17,10 +18,14 @@ interface IImagePageStore {
   platActiveAccountMap: Map<AccountType, IImageAccountItem>;
   // 当前选择的平台
   activePlat?: AccountType;
+  // 通用参数
   commonPubParams: IPubParams;
+  // 图片上传上限
+  imgUploadLimit: number;
 }
 
 const store: IImagePageStore = {
+  imgUploadLimit: 35,
   images: [],
   imageAccounts: [],
   platActiveAccountMap: new Map<AccountType, IImageAccountItem>(),
@@ -51,6 +56,23 @@ export const useImagePageStore = create(
         setActivePlat(activePlat: AccountType) {
           set({
             activePlat,
+          });
+        },
+
+        // 设置图片
+        setImages(images: IImgFile[]) {
+          set({
+            images,
+          });
+        },
+
+        // 添加图片
+        addImages(images: IImgFile[]) {
+          if (images.length + get().images.length > get().imgUploadLimit) {
+            return message.warning(`最多上传${get().imgUploadLimit}张图片！`);
+          }
+          set({
+            images: [...get().images, ...images],
           });
         },
 

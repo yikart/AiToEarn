@@ -7,9 +7,11 @@ import { Button, Popconfirm } from 'antd';
 import { useEffect } from 'react';
 
 export default function Page() {
-  const { clear } = useImagePageStore(
+  const { clear, images, imageAccounts } = useImagePageStore(
     useShallow((state) => ({
       clear: state.clear,
+      images: state.images,
+      imageAccounts: state.imageAccounts,
     })),
   );
 
@@ -37,7 +39,16 @@ export default function Page() {
         >
           <Button style={{ marginRight: '20px' }}>一键清空</Button>
         </Popconfirm>
-        <Button type="primary">一键发布</Button>
+        <Button
+          type="primary"
+          disabled={imageAccounts.length === 0 || images.length === 0}
+          onClick={() => {
+            console.log('images：', images);
+            console.log('imageAccounts：', imageAccounts);
+          }}
+        >
+          一键发布
+        </Button>
       </div>
     </div>
   );

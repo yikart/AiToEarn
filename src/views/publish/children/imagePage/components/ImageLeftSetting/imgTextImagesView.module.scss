@@ -1,0 +1,83 @@
+.imgTextImagesView {
+  width: 100%;
+  border-radius: 6px;
+  padding: 10px;
+  box-sizing: border-box;
+  font-size: 15px;
+  border: 10px solid rgb(247, 250, 250);
+  :global {
+    .imgTextImagesView_head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      &-left {
+      }
+      &-right {
+        display: flex;
+        align-items: center;
+        &-tips {
+          color: var(--lightGreyColor);
+          margin-right: 8px;
+        }
+        button {
+          margin: 0;
+          padding: 0;
+          gap: 3px;
+          display: flex;
+          align-items: center;
+          font-size: 15px;
+        }
+      }
+    }
+
+
+    .imgTextImagesView_content {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      height: 100%;
+      box-sizing: border-box;
+      &-item {
+        min-width: 100px;
+        height: 102px;
+        border: 1px solid var(--superLightGreyColor);
+        cursor: move;
+        position: relative;
+        &:hover {
+          .imgTextImagesView_content-item-close {
+            display: block !important;
+          }
+        }
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          user-select: none;
+          display: block;
+        }
+        &-close {
+          display: none;
+          cursor: pointer;
+          background: rgba(0, 0, 0, 0.7);
+          width: 16px;
+          height: 16px;
+          line-height: 15px;
+          font-size: 10px;
+          text-align: center;
+          position: absolute;
+          right: 0;
+          top: 0;
+          color: #fff;
+        }
+      }
+    }
+
+    #imgTextImagesView-wrapper {
+      overflow-y: auto;
+      overflow-x: hidden;
+      max-height: 500px;
+      box-sizing: border-box;
+    }
+  }
+}
