@@ -31,10 +31,10 @@ if (os.release().startsWith('6.1')) app.disableHardwareAcceleration();
 if (process.platform === 'win32') app.setAppUserModelId(app.getName());
 
 // 单例锁
-if (!app.requestSingleInstanceLock()) {
-  app.quit();
-  process.exit(0);
-}
+// if (!app.requestSingleInstanceLock()) {
+//   app.quit();
+//   process.exit(0);
+// }
 
 let win: BrowserWindow | null = null;
 let splashWindow: SplashWindow | null = null;

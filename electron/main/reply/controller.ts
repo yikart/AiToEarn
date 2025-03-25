@@ -66,7 +66,7 @@ export class ReplyController {
   }
 
   /**
-   * 获取评论列表
+   * 获取其他人评论列表
    */
   @Icp('ICP_COMMENT_LIST_BY_OTHER')
   async getCommentListByOther(
@@ -99,6 +99,24 @@ export class ReplyController {
     return res;
   }
 
+
+    /**
+   * 创建评论
+   */
+  @Icp('ICP_CREATE_COMMENT_BY_OTHER')
+  async createCommentByOther(
+    event: Electron.IpcMainInvokeEvent,
+    accountId: number,
+    dataId: string,
+    content: string,
+    ): Promise<any> {
+      const account = await this.accountService.getAccountById(accountId);
+      if (!account) return null;
+  
+    const res = await platController.createCommentByOther(account, dataId, content);
+    return res;
+  }
+
   /**
    * 作品一键AI评论
    */
@@ -123,6 +141,32 @@ export class ReplyController {
       },
     );
 
+    return res;
+  }
+
+  /**
+   * 回复评论
+   */
+  @Icp('ICP_REPLY_COMMENT_BY_OTHER')
+  async replyCommentByOther(
+    event: Electron.IpcMainInvokeEvent,
+    accountId: number,
+    commentId: string,
+    content: string,
+    option: {
+      dataId?: string; // 作品ID
+      comment: any; // 辅助数据,原数据
+    },
+  ): Promise<any> {
+    const account = await this.accountService.getAccountById(accountId);
+    if (!account) return null;
+
+    const res = await platController.replyCommentByOther(
+      account,
+      commentId,
+      content,
+      option,
+    );
     return res;
   }
 

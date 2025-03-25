@@ -51,7 +51,7 @@ export const ScheduledTimeSelect = ({
   currChooseAccount,
   ...props
 }: ICommonScheduledTimeSelectProps & {
-  currChooseAccount: IVideoChooseItem;
+  currChooseAccount?: IVideoChooseItem;
 }) => {
   const { value, onChange } = props;
   const { setOnePubParams } = useVideoPageStore(

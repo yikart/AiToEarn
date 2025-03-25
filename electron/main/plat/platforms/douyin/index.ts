@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-08 11:40:45
- * @LastEditTime: 2025-03-24 15:13:56
+ * @LastEditTime: 2025-03-24 23:32:58
  * @LastEditors: nevin
  * @Description: 抖音
  */
@@ -246,6 +246,7 @@ export class Douyin extends PlatformBase {
     };
   }
 
+  // 其他人作品评论列表
   async getCreatorCommentListByOther(
     account: AccountModel,
     dataId: string,
@@ -289,6 +290,56 @@ export class Douyin extends PlatformBase {
         hasMore: res.data.has_more,
       },
     };
+  }
+
+  async createCommentByOther(
+    account: AccountModel,
+    dataId: string, // 作品ID
+    content: string,
+  ) {
+    // const cookie: CookiesType = JSON.parse(account.loginCookie);
+    // const res = await douyinService.creatorCommentReply(cookie, {
+    //   comment_Id: '',
+    //   item_id: dataId,
+    //   text: content,
+    // });
+
+    // return res.status === 200 && res.data.status_code === 0;
+
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await douyinService.creatorCommentReplyOther(cookie, {
+      aweme_id: dataId,
+      text: content,
+      one_level_comment_rank: -1,
+    });
+
+    console.log('------ res', res);
+
+    return res;
+  }
+
+  async replyCommentByOther(
+    account: AccountModel,
+    commentId: string,
+    content: string,
+    option: {
+      dataId?: string; // 作品ID
+      comment: any; // 辅助数据,原数据
+    },
+  ) {
+    console.log('------ replyCommentByOther1', commentId, option.dataId);
+
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await douyinService.creatorCommentReplyOther(cookie, {
+      aweme_id: option.dataId || '',
+      reply_id: commentId,
+      text: content,
+      one_level_comment_rank: 1,
+    });
+
+    console.log('------ res', res);
+
+    return res;
   }
 
   async createComment(

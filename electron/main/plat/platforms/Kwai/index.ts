@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-19 17:54:53
- * @LastEditTime: 2025-03-24 15:16:34
+ * @LastEditTime: 2025-03-24 23:34:45
  * @LastEditors: nevin
  * @Description:
  */
@@ -267,6 +267,26 @@ export class Kwai extends PlatformBase {
         hasMore: false,
       },
     };
+  }
+
+  async createCommentByOther(
+    account: AccountModel,
+    dataId: string, // 作品ID
+    content: string,
+  ) {
+    return null;
+  }
+
+  async replyCommentByOther(
+    account: AccountModel,
+    commentId: string,
+    content: string,
+    option: {
+      dataId?: string; // 作品ID
+      comment: any; // 辅助数据,原数据
+    },
+  ) {
+    return null;
   }
 
   async createComment(

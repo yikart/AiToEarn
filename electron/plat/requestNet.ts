@@ -1,3 +1,10 @@
+/*
+ * @Author: nevin
+ * @Date: 2025-03-24 22:03:35
+ * @LastEditTime: 2025-03-24 22:12:34
+ * @LastEditors: nevin
+ * @Description:
+ */
 import { net } from 'electron';
 
 export interface IRequestNetResult<T> {
@@ -7,7 +14,7 @@ export interface IRequestNetResult<T> {
 }
 
 export interface IRequestNetParams {
-  headers: Record<string, string | string[]>;
+  headers?: Record<string, string | string[]>;
   url: string;
   body?: any;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
