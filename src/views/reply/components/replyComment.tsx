@@ -30,7 +30,7 @@ const Com = forwardRef<ReplyCommentRef>((props: any, ref) => {
     setIsModalOpen(false);
   }
 
-  /**                           
+  /**
    * 回复评论
    */
   async function replyComment(content: string) {

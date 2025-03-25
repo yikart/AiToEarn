@@ -2,11 +2,12 @@ import { forwardRef, memo } from 'react';
 import { ImageRightSettingChildProps } from '../ImageParamsSet.type';
 import {
   ImgTextDescTextArea,
-  ImgTextLocationSelect, ImgTextScheduledTimeSelect,
+  ImgTextLocationSelect,
+  ImgTextScheduledTimeSelect,
   ImgTextTitleInput,
   ImgTextTopicSelect,
-  ImgTextUserSelect
-} from "../ImageRightSettingCommon";
+  ImgTextUserSelect,
+} from '../ImageRightSettingCommon';
 
 const ImageParamsSet_XHS = memo(
   forwardRef(({}: ImageRightSettingChildProps, _) => {

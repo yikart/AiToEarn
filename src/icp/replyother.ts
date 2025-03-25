@@ -52,7 +52,6 @@ export async function icpCreatorList(accountId: number, pcursor?: string) {
   return res;
 }
 
-
 /**
  * 获取评论列表
  */
@@ -77,7 +76,6 @@ export async function icpGetCommentListByOther(
   return res;
 }
 
-
 /**
  * 创建评论
  */
@@ -94,8 +92,6 @@ export async function icpCreateComment(
   );
   return res;
 }
-
-
 
 /**
  * 回复评论
@@ -118,7 +114,6 @@ export async function icpReplyCommentByOther(
   );
   return res;
 }
-
 
 /**
  * 回复评论

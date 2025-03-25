@@ -57,7 +57,7 @@ export class ReplyController {
     accountId: number,
     dataId: string,
     pcursor?: string,
-  ): Promise<any> { 
+  ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 
@@ -74,11 +74,15 @@ export class ReplyController {
     accountId: number,
     dataId: string,
     pcursor?: string,
-  ): Promise<any> { 
+  ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 
-    const res = await platController.getCreatorCommentListByOther(account, dataId, pcursor);
+    const res = await platController.getCreatorCommentListByOther(
+      account,
+      dataId,
+      pcursor,
+    );
     return res;
   }
 
@@ -99,8 +103,7 @@ export class ReplyController {
     return res;
   }
 
-
-    /**
+  /**
    * 创建评论
    */
   @Icp('ICP_CREATE_COMMENT_BY_OTHER')
@@ -109,11 +112,15 @@ export class ReplyController {
     accountId: number,
     dataId: string,
     content: string,
-    ): Promise<any> {
-      const account = await this.accountService.getAccountById(accountId);
-      if (!account) return null;
-  
-    const res = await platController.createCommentByOther(account, dataId, content);
+  ): Promise<any> {
+    const account = await this.accountService.getAccountById(accountId);
+    if (!account) return null;
+
+    const res = await platController.createCommentByOther(
+      account,
+      dataId,
+      content,
+    );
     return res;
   }
 

@@ -205,24 +205,20 @@ class PlatController {
     return await platform.createComment(account, dataId, content);
   }
 
-
-    /**
+  /**
    * 创建评论
    * @param account
    * @param pageInfo
    */
-    public async createCommentByOther(
-      account: AccountModel,
-      dataId: string,
-      content: string,
-    ) {
-      const platform = this.platforms.get(account.type)!;
-      return await platform.createCommentByOther(account, dataId, content);
-    }
+  public async createCommentByOther(
+    account: AccountModel,
+    dataId: string,
+    content: string,
+  ) {
+    const platform = this.platforms.get(account.type)!;
+    return await platform.createCommentByOther(account, dataId, content);
+  }
 
-
-
-  
   /**
    * 回复评论
    * @param account
@@ -238,9 +234,13 @@ class PlatController {
     },
   ) {
     const platform = this.platforms.get(account.type)!;
-    return await platform.replyCommentByOther(account, commentId, content, option);
+    return await platform.replyCommentByOther(
+      account,
+      commentId,
+      content,
+      option,
+    );
   }
-
 
   /**
    * 回复评论

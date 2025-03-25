@@ -7,7 +7,7 @@
  */
 import { Button, message } from 'antd';
 import { FC } from 'react';
-import { generateUUID, getFilePathName } from "@/utils";
+import { generateUUID, getFilePathName } from '@/utils';
 import { icpGetFileStream } from '@/icp/view';
 
 interface ImgChooseProps {

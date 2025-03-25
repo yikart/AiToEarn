@@ -21,7 +21,7 @@ import ReplyWorks, { ReplyWorksRef } from './components/replyWorks';
 import ReplyComment, { ReplyCommentRef } from './components/replyComment';
 import AddAutoRun, { AddAutoRunRef } from './components/addAutoRun';
 
-export default function Page() { 
+export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
   const [commentList, setCommentList] = useState<CommentData[]>([]);
   const [activeAccountId, setActiveAccountId] = useState<number>(-1);
@@ -34,7 +34,7 @@ export default function Page() {
     if (activeAccountId === -1) {
       return;
     }
-    let thisida = thisid?thisid:activeAccountId;
+    const thisida = thisid ? thisid : activeAccountId;
     const res = await icpCreatorList(thisida);
     console.log('------ icpCreatorList', res);
     setWordList(res.list);
@@ -45,7 +45,10 @@ export default function Page() {
    */
   async function getCommentList(dataId: string) {
     // 7483006686274374962  7478960244136086784
-    const res = await icpGetCommentListByOther(activeAccountId, '7480598266392972596');
+    const res = await icpGetCommentListByOther(
+      activeAccountId,
+      '7480598266392972596',
+    );
     console.log('------ icpGetCommentList', res);
 
     setCommentList(res.list);
