@@ -2278,7 +2278,6 @@ export class DouyinService {
       },
       method: 'GET',
     });
-    console.log('------ getCreatorItems', res.data.item_info_list[0]);
     return res;
   }
 
