@@ -11,7 +11,6 @@ import { PubItemBase } from './PubItemBase';
 import { PlatformBase } from '../PlatformBase';
 import { PubStatus } from '../../../db/models/pubRecord';
 import { EtEvent } from '../../../global/event';
-import { VisibleTypeEnum } from '../../../../commont/publish/PublishEnum';
 import windowOperate from '../../../util/windowOperate';
 import { SendChannelEnum } from '../../../../commont/UtilsEnum';
 
@@ -44,17 +43,8 @@ export class PubItemVideo extends PubItemBase {
   async publishVideo() {
     const publishVideoResult = await this.platform.videoPublish(
       {
-        ...this.videoModel,
-        cookies: JSON.parse(this.accountModel.loginCookie),
-        desc: this.videoModel.desc!,
         videoPath: this.videoModel.videoPath!,
-        title: this.videoModel.title || '',
-        topics: this.videoModel.topics || [],
-        coverPath: this.videoModel.coverPath || '',
-        visibleType: this.videoModel.visibleType || VisibleTypeEnum.Private,
-        diffParams: this.videoModel.diffParams || {},
-        timingTime: this.videoModel.timingTime,
-        location: this.videoModel.location,
+        ...this.commonParamsParse(this.videoModel),
       },
       (progress: number, msg?: string) => {
         const args: VideoPublishProgressRes = {

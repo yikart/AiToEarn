@@ -20,6 +20,8 @@ import { PublishVideoResult } from './module';
 import { VideoModel } from '../../db/models/video';
 import { PubItemVideo } from './pub/PubItemVideo';
 import { AccountType } from '../../../commont/AccountEnum';
+import { PubItemImgText } from './pub/PubItemImgText';
+import { ImgTextModel } from '../../db/models/imgText';
 
 class PlatController {
   // 所有平台
@@ -93,6 +95,31 @@ class PlatController {
   }
 
   /**
+   * 发布图文，支持发布到多个平台
+   * @param imgTextModels 图文记录数据
+   * @param accountModels 该用户的账号记录数据
+   */
+  public async imgTextPublish(
+    imgTextModels: ImgTextModel[],
+    accountModels: AccountModel[],
+  ) {
+    // 总发布记录状态更新
+    const tasks: Promise<PublishVideoResult>[] = [];
+    for (const videoModel of imgTextModels) {
+      const platform = this.getPlatform(videoModel.type);
+      if (platform) {
+        const pubItemVideo = new PubItemImgText(
+          accountModels.find((v) => v.id === videoModel.accountId)!,
+          videoModel,
+          platform,
+        );
+        tasks.push(pubItemVideo.publishImgText());
+      }
+    }
+    return await Promise.all(tasks);
+  }
+
+  /**
    * 获取某个平台的话题数据
    * @param account
    * @param keyword
@@ -152,7 +179,7 @@ class PlatController {
   /**
    * 获取作品列表
    * @param account
-   * @param pageInfo
+   * @param pcursor
    */
   public async getWorkList(account: AccountModel, pcursor?: string) {
     const platform = this.platforms.get(account.type)!;
@@ -162,7 +189,8 @@ class PlatController {
   /**
    * 获取评论列表
    * @param account
-   * @param pageInfo
+   * @param dataId
+   * @param pcursor
    */
   public async getCommentList(
     account: AccountModel,
@@ -176,7 +204,8 @@ class PlatController {
   /**
    * 获取评论列表
    * @param account
-   * @param pageInfo
+   * @param dataId
+   * @param pcursor
    */
   public async getCreatorCommentListByOther(
     account: AccountModel,
@@ -194,7 +223,8 @@ class PlatController {
   /**
    * 创建评论
    * @param account
-   * @param pageInfo
+   * @param dataId
+   * @param content
    */
   public async createComment(
     account: AccountModel,
@@ -208,7 +238,8 @@ class PlatController {
   /**
    * 创建评论
    * @param account
-   * @param pageInfo
+   * @param dataId
+   * @param content
    */
   public async createCommentByOther(
     account: AccountModel,
@@ -222,7 +253,9 @@ class PlatController {
   /**
    * 回复评论
    * @param account
-   * @param pageInfo
+   * @param commentId
+   * @param content
+   * @param option
    */
   public async replyCommentByOther(
     account: AccountModel,
@@ -245,7 +278,9 @@ class PlatController {
   /**
    * 回复评论
    * @param account
-   * @param pageInfo
+   * @param commentId
+   * @param content
+   * @param option
    */
   public async replyComment(
     account: AccountModel,
