@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-03-25 14:17:27
+ * @LastEditTime: 2025-03-25 15:32:17
  * @LastEditors: nevin
  * @Description: 评论页面 reply
  */
@@ -91,40 +91,52 @@ export default function Page() {
           />
         </Col>
         <Col span={20}>
-          <div>
+          <div className="grid grid-cols-3 gap-4">
             {wordList.map((item) => (
-              <div key={item.dataId}>
-                <img alt="example" src={item.coverUrl} />
-                <p>{item.title}</p>
-                <Button type="primary" onClick={() => openCommentList(item)}>
-                  评论列表
-                </Button>
-
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    openReplyWorks(item);
-                  }}
-                >
-                  评论作品
-                </Button>
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    createCommentList(item);
-                  }}
-                >
-                  一键AI评论
-                </Button>
-
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    openAddAutoRun(item);
-                  }}
-                >
-                  创建自动任务
-                </Button>
+              <div
+                className="w-[200px] h-[200px] border border-gray-300 p-4 rounded-lg hover:shadow-lg transition-shadow duration-300"
+                key={item.dataId}
+              >
+                <Row>
+                  <Col span={12}>
+                    <div className="w-[100px] h-[200px]">
+                      <img
+                        alt="example"
+                        src={item.coverUrl}
+                        className="object-cover w-full h-full rounded"
+                      />
+                    </div>
+                  </Col>
+                  <Col span={12}>
+                    <div className="w-[100px] h-[200px]">
+                      <p>{item.title || '无标题'}</p>
+                      <Button
+                        type="primary"
+                        onClick={() => openCommentList(item)}
+                      >
+                        评论列表
+                      </Button>
+                      <Button
+                        type="primary"
+                        onClick={() => openReplyWorks(item)}
+                      >
+                        评论作品
+                      </Button>
+                      <Button
+                        type="primary"
+                        onClick={() => createCommentList(item)}
+                      >
+                        一键AI评论
+                      </Button>
+                      <Button
+                        type="primary"
+                        onClick={() => openAddAutoRun(item)}
+                      >
+                        创建自动任务
+                      </Button>
+                    </div>
+                  </Col>
+                </Row>
               </div>
             ))}
           </div>
