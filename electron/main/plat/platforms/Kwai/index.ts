@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-19 17:54:53
- * @LastEditTime: 2025-03-24 23:34:45
+ * @LastEditTime: 2025-03-25 13:18:41
  * @LastEditors: nevin
  * @Description:
  */
@@ -168,6 +168,7 @@ export class Kwai extends PlatformBase {
         likeCount: v.likeCount,
         commentCount: v.commentCount,
         title: v.title,
+        coverUrl: v.cover,
       };
     });
 

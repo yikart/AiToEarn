@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-03-23 23:02:47
+ * @LastEditTime: 2025-03-25 13:14:52
  * @LastEditors: nevin
  * @Description: 评论页面 reply
  */
@@ -47,10 +47,12 @@ export default function Page() {
     );
   })();
 
-  async function getCreatorList() {
-    if (activeAccountId === -1) return;
+  async function getCreatorList(accountId: number) {
+    if (accountId === -1) return;
     setWordList([]);
-    const res = await icpCreatorList(activeAccountId);
+    const res = await icpCreatorList(accountId);
+    console.log('------ res', res);
+
     setWordList(res.list);
   }
 
@@ -59,8 +61,6 @@ export default function Page() {
    */
   async function getCommentList(dataId: string) {
     const res = await icpGetCommentList(activeAccountId, dataId);
-    console.log('------ res', res);
-
     setCommentList(res.list);
   }
 
@@ -102,13 +102,10 @@ export default function Page() {
         <Col span={4}>
           <AccountSidebar
             activeAccountId={activeAccountId}
-            onAccountChange={useCallback(
-              (info) => {
-                setActiveAccountId(info.id);
-                getCreatorList();
-              },
-              [getCreatorList],
-            )}
+            onAccountChange={useCallback((info) => {
+              setActiveAccountId(info.id);
+              getCreatorList(info.id);
+            }, [])}
           />
         </Col>
         <Col span={10}>
