@@ -1,34 +1,26 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-03-25 13:14:52
+ * @LastEditTime: 2025-03-25 14:17:27
  * @LastEditors: nevin
  * @Description: 评论页面 reply
  */
-import {
-  icpCreatorList,
-  icpGetCommentList,
-  WorkData,
-  CommentData,
-  icpCreateCommentList,
-} from '@/icp/reply';
-import { Avatar, Button, Card, Col, message, Row } from 'antd';
+import { icpCreatorList, WorkData, icpCreateCommentList } from '@/icp/reply';
+import { Button, Col, message, Row } from 'antd';
 import { useCallback, useRef, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import styles from './reply.module.scss';
-import Meta from 'antd/es/card/Meta';
 import ReplyWorks, { ReplyWorksRef } from './components/replyWorks';
-import ReplyComment, { ReplyCommentRef } from './components/replyComment';
 import AddAutoRun, { AddAutoRunRef } from './components/addAutoRun';
+import CommentList, { CommentListRef } from './components/commentList';
 import { SendChannelEnum } from '@@/UtilsEnum';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
-  const [commentList, setCommentList] = useState<CommentData[]>([]);
   const [activeAccountId, setActiveAccountId] = useState<number>(-1);
   const Ref_ReplyWorks = useRef<ReplyWorksRef>(null);
   const Ref_AddAutoRun = useRef<AddAutoRunRef>(null);
-  const Ref_ReplyComment = useRef<ReplyCommentRef>(null);
+  const Ref_CommentList = useRef<CommentListRef>(null);
 
   // 注册监听
   (() => {
@@ -51,17 +43,7 @@ export default function Page() {
     if (accountId === -1) return;
     setWordList([]);
     const res = await icpCreatorList(accountId);
-    console.log('------ res', res);
-
     setWordList(res.list);
-  }
-
-  /**
-   * 获取评论列表
-   */
-  async function getCommentList(dataId: string) {
-    const res = await icpGetCommentList(activeAccountId, dataId);
-    setCommentList(res.list);
   }
 
   /**
@@ -81,11 +63,11 @@ export default function Page() {
   }
 
   /**
-   * 打开评论回复
+   * 打开评论列表
    * @param data
    */
-  function openReplyComment(data: CommentData) {
-    Ref_ReplyComment.current?.init(activeAccountId, data);
+  function openCommentList(data: WorkData) {
+    Ref_CommentList.current?.init(activeAccountId, data);
   }
 
   /**
@@ -108,86 +90,50 @@ export default function Page() {
             }, [])}
           />
         </Col>
-        <Col span={10}>
+        <Col span={20}>
           <div>
             {wordList.map((item) => (
-              <Card
-                key={item.dataId}
-                style={{ width: 500 }}
-                cover={<img alt="example" src={item.coverUrl} />}
-                actions={[
-                  <Button
-                    type="primary"
-                    onClick={() => getCommentList(item.dataId)}
-                  >
-                    评论列表
-                  </Button>,
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      openReplyWorks(item);
-                    }}
-                  >
-                    评论作品
-                  </Button>,
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      createCommentList(item);
-                    }}
-                  >
-                    一键AI评论
-                  </Button>,
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      openAddAutoRun(item);
-                    }}
-                  >
-                    创建自动任务
-                  </Button>,
-                ]}
-              >
-                <Meta title={item.title} />
-              </Card>
-            ))}
-          </div>
-        </Col>
-        <Col span={10}>
-          <div>
-            {commentList.map((item) => (
-              <Card
-                key={item.commentId}
-                style={{ width: 300 }}
-                actions={[
-                  <Button type="primary" onClick={() => openReplyComment(item)}>
-                    回复
-                  </Button>,
-                ]}
-              >
-                {item.content}
-                {/* {item.subCommentList.map((subItem) => (
-                  <div key={subItem.commentId}>
-                    {subItem.content}
-                    <Meta
-                      avatar={<Avatar src={subItem.headUrl} />}
-                      description={subItem.nikeName}
-                    />
-                  </div>
-                ))} */}
-                <Meta
-                  avatar={<Avatar src={item.headUrl} />}
-                  description={item.nikeName}
-                />
-              </Card>
+              <div key={item.dataId}>
+                <img alt="example" src={item.coverUrl} />
+                <p>{item.title}</p>
+                <Button type="primary" onClick={() => openCommentList(item)}>
+                  评论列表
+                </Button>
+
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    openReplyWorks(item);
+                  }}
+                >
+                  评论作品
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    createCommentList(item);
+                  }}
+                >
+                  一键AI评论
+                </Button>
+
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    openAddAutoRun(item);
+                  }}
+                >
+                  创建自动任务
+                </Button>
+              </div>
             ))}
           </div>
         </Col>
       </Row>
 
       <ReplyWorks ref={Ref_ReplyWorks} />
-      <ReplyComment ref={Ref_ReplyComment} />
       <AddAutoRun ref={Ref_AddAutoRun} />
+      <CommentList ref={Ref_CommentList} />
     </div>
   );
 }

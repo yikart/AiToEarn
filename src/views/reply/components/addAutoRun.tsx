@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-03-18 21:02:38
- * @LastEditTime: 2025-03-20 22:38:42
+ * @LastEditTime: 2025-03-25 13:41:14
  * @LastEditors: nevin
  * @Description: 添加自动运行
  */
@@ -34,10 +34,6 @@ const Com = forwardRef<AddAutoRunRef>((props: any, ref) => {
   }
 
   async function onFinish() {
-    console.log('-------- accountId', accountId);
-    console.log('-------- dataId', dataId);
-    console.log('-------- cycleType', cycleType);
-
     const res = await ipcCreateAutoRunOfReply(accountId, dataId, cycleType);
     console.log('-------- res', res);
   }
