@@ -2375,6 +2375,198 @@ export class DouyinService {
     return res;
   }
 
+  /**
+   * 发送表单数据请求
+   * @param url 请求URL
+   * @param options 请求选项
+   * @param retryOptions 重试选项
+   */
+  private async postFormData(
+    url: string, 
+    options: any, 
+    retryOptions: { maxRetries?: number, retryDelay?: number } = {}
+  ): Promise<any> {
+    console.log(`[${new Date().toLocaleString()}] 开始发起表单数据请求...`);
+    console.log(`[${new Date().toLocaleString()}] 请求URL:`, url);
+    console.log(`[${new Date().toLocaleString()}] 请求参数:`, options);
+    
+    const maxRetries = retryOptions.maxRetries || 3;
+    const retryDelay = retryOptions.retryDelay || 2000;
+    let retryCount = 0;
+    
+    while (retryCount < maxRetries) {
+      try {
+        // 创建 FormData 对象
+        const formData = new FormData();
+        const postData = options.data;
+
+        // 将数据添加到 FormData
+        Object.keys(postData).forEach((key) => {
+          if (typeof postData[key] === 'object') {
+            formData.append(key, JSON.stringify(postData[key]));
+          } else {
+            formData.append(key, postData[key]);
+          }
+        });
+
+        console.log(
+          `[${new Date().toLocaleString()}] 请求体数据:`,
+          Object.fromEntries(formData.entries()),
+        );
+
+        const response = await fetch(url, {
+          method: options.method || 'POST',
+          headers: {
+            ...options.headers,
+          },
+          body: formData,
+        });
+
+        console.log(
+          `[${new Date().toLocaleString()}] 收到响应，状态码:`,
+          response.status,
+        );
+        console.log(
+          `[${new Date().toLocaleString()}] 响应头:`,
+          Object.fromEntries(response.headers.entries()),
+        );
+
+        // 检查HTTP状态码
+        if (!response.ok) {
+          console.error(`[${new Date().toLocaleString()}] HTTP错误状态码: ${response.status}`);
+          if (retryCount < maxRetries - 1) {
+            retryCount++;
+            console.log(`[${new Date().toLocaleString()}] 状态码错误，${retryDelay/1000}秒后进行第${retryCount}次重试...`);
+            await new Promise(resolve => setTimeout(resolve, retryDelay));
+            continue;
+          }
+          throw new Error(`服务器返回错误状态码: ${response.status}`);
+        }
+
+        const responseText = await response.text();
+        console.log(
+          `[${new Date().toLocaleString()}] 原始响应数据长度:`,
+          responseText.length,
+        );
+        console.log(
+          `[${new Date().toLocaleString()}] 原始响应数据:`,
+          responseText,
+        );
+
+        // 检查响应数据是否为空
+        if (!responseText || responseText.trim() === '') {
+          console.error(`[${new Date().toLocaleString()}] 响应数据为空，尝试次数: ${retryCount + 1}/${maxRetries}`);
+          
+          if (retryCount < maxRetries - 1) {
+            retryCount++;
+            console.log(`[${new Date().toLocaleString()}] 等待${retryDelay/1000}秒后重试...`);
+            await new Promise(resolve => setTimeout(resolve, retryDelay));
+            continue;
+          }
+          
+          throw new Error('服务器多次返回空数据，请检查网络连接或抖音服务器状态');
+        }
+
+        try {
+          const result = JSON.parse(responseText);
+          console.log(
+            `[${new Date().toLocaleString()}] 解析后的响应数据:`,
+            result,
+          );
+
+          if (!result) {
+            console.error(`[${new Date().toLocaleString()}] 解析后的数据为空`);
+            throw new Error('解析后的数据为空');
+          }
+
+          return result;
+        } catch (err) {
+          console.error(
+            `[${new Date().toLocaleString()}] 解析响应数据失败:`,
+            err,
+          );
+          console.error(
+            `[${new Date().toLocaleString()}] 导致错误的原始数据:`,
+            responseText,
+          );
+          throw new Error(
+            `解析响应数据失败: ${err instanceof Error ? err.message : String(err)}`,
+          );
+        }
+      } catch (error) {
+        if (retryCount < maxRetries - 1) {
+          retryCount++;
+          console.log(`[${new Date().toLocaleString()}] 请求失败，${retryDelay/1000}秒后进行第${retryCount}次重试...`);
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
+          continue;
+        }
+        
+        console.error(`[${new Date().toLocaleString()}] 请求发生错误:`, error);
+        throw new Error(
+          `请求失败: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    }
+    
+    // 这里不应该被执行到，但为了类型安全添加
+    throw new Error('请求失败: 超过最大重试次数');
+  }
+
+  // 点赞
+    async creatorDianzanOther(cookie: Electron.Cookie[], data: any) {
+      console.log('------ creatorDianzanOther-data@@@@@');
+      const thisUri = `https://www.douyin.com/aweme/v1/web/commit/item/digg/?${jsonToQueryString(
+        {
+          aid: '6383',
+        },
+      )}`;
+      console.log('------ creatorDianzanOther-data', data);
+      console.log('------ creatorDianzanOther-thisUri', thisUri);
+      const cookieString = CommonUtils.convertCookieToJson(cookie);
+      const csrfToken = await this.getSecsdkCsrfToken(cookieString);
+  
+      // 使用新的 postRequest 方法替代 makePublishRequest
+      const res = await this.postFormData(thisUri, {
+        method: 'POST',
+        headers: {
+          Cookie: cookieString,
+          'X-Secsdk-Csrf-Token': csrfToken,
+          referer: `https://www.douyin.com/video/${data.aweme_id}`,
+          'user-agent': this.defaultUserAgent,
+        },
+        data: data,
+      }, { maxRetries: 0, retryDelay: 2000 });
+      
+      return res;
+    }
+
+  // 收藏
+  async creatorShoucangOther(cookie: Electron.Cookie[], data: any) {
+    console.log('------ creatorShoucangOther-data@@@@@');
+    const thisUri = `https://www.douyin.com/aweme/v1/web/aweme/collect/?${jsonToQueryString(
+      {
+        aid: '6383',
+      },
+    )}`;
+    console.log('------ creatorCommentReplyOther-data', data);
+    console.log('------ creatorCommentReplyOther-thisUri', thisUri);
+    const cookieString = CommonUtils.convertCookieToJson(cookie);
+    const csrfToken = await this.getSecsdkCsrfToken(cookieString);
+
+    // 使用新的 postRequest 方法替代 makePublishRequest
+    const res = await this.postFormData(thisUri, {
+      method: 'POST',
+      headers: {
+        Cookie: cookieString,
+        'X-Secsdk-Csrf-Token': csrfToken,
+        referer: `https://www.douyin.com/video/${data.aweme_id}`,
+      },
+      data: data,
+    }, { maxRetries: 1, retryDelay: 2000 });
+    
+    return res;
+  }
+
   // 回复其他人的评论
   async creatorCommentReplyOther(cookie: Electron.Cookie[], data: any) {
     const thisUri = `https://www.douyin.com/aweme/v1/web/comment/publish/?${jsonToQueryString(
@@ -2420,6 +2612,131 @@ export class DouyinService {
       body: data,
     });
     return res;
+  }
+
+  /**
+   * 发送POST请求
+   * @param url 请求URL
+   * @param options 请求选项
+   * @param retryOptions 重试选项
+   */
+  private async postRequest(
+    url: string, 
+    options: any, 
+    retryOptions: { maxRetries?: number, retryDelay?: number } = {}
+  ): Promise<any> {
+    console.log(`[${new Date().toLocaleString()}] 开始发起POST请求...`);
+    console.log(`[${new Date().toLocaleString()}] 请求URL:`, url);
+    console.log(`[${new Date().toLocaleString()}] 请求参数:`, options);
+    
+    const maxRetries = retryOptions.maxRetries || 3;
+    const retryDelay = retryOptions.retryDelay || 2000;
+    let retryCount = 0;
+    
+    while (retryCount < maxRetries) {
+      try {
+        console.log(
+          `[${new Date().toLocaleString()}] 请求体数据:`,
+          options.data,
+        );
+
+        const response = await fetch(url, {
+          method: options.method || 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...options.headers,
+          },
+          body: JSON.stringify(options.data),
+        });
+
+        console.log(
+          `[${new Date().toLocaleString()}] 收到响应，状态码:`,
+          response.status,
+        );
+        console.log(
+          `[${new Date().toLocaleString()}] 响应头:`,
+          Object.fromEntries(response.headers.entries()),
+        );
+
+        // 检查HTTP状态码
+        if (!response.ok) {
+          console.error(`[${new Date().toLocaleString()}] HTTP错误状态码: ${response.status}`);
+          if (retryCount < maxRetries - 1) {
+            retryCount++;
+            console.log(`[${new Date().toLocaleString()}] 状态码错误，${retryDelay/1000}秒后进行第${retryCount}次重试...`);
+            await new Promise(resolve => setTimeout(resolve, retryDelay));
+            continue;
+          }
+          throw new Error(`服务器返回错误状态码: ${response.status}`);
+        }
+
+        const responseText = await response.text();
+        console.log(
+          `[${new Date().toLocaleString()}] 原始响应数据长度:`,
+          responseText.length,
+        );
+        console.log(
+          `[${new Date().toLocaleString()}] 原始响应数据:`,
+          responseText,
+        );
+
+        // 检查响应数据是否为空
+        if (!responseText || responseText.trim() === '') {
+          console.error(`[${new Date().toLocaleString()}] 响应数据为空，尝试次数: ${retryCount + 1}/${maxRetries}`);
+          
+          if (retryCount < maxRetries - 1) {
+            retryCount++;
+            console.log(`[${new Date().toLocaleString()}] 等待${retryDelay/1000}秒后重试...`);
+            await new Promise(resolve => setTimeout(resolve, retryDelay));
+            continue;
+          }
+          
+          throw new Error('服务器多次返回空数据，请检查网络连接或抖音服务器状态');
+        }
+
+        try {
+          const result = JSON.parse(responseText);
+          console.log(
+            `[${new Date().toLocaleString()}] 解析后的响应数据:`,
+            result,
+          );
+
+          if (!result) {
+            console.error(`[${new Date().toLocaleString()}] 解析后的数据为空`);
+            throw new Error('解析后的数据为空');
+          }
+
+          return result;
+        } catch (err) {
+          console.error(
+            `[${new Date().toLocaleString()}] 解析响应数据失败:`,
+            err,
+          );
+          console.error(
+            `[${new Date().toLocaleString()}] 导致错误的原始数据:`,
+            responseText,
+          );
+          throw new Error(
+            `解析响应数据失败: ${err instanceof Error ? err.message : String(err)}`,
+          );
+        }
+      } catch (error) {
+        if (retryCount < maxRetries - 1) {
+          retryCount++;
+          console.log(`[${new Date().toLocaleString()}] 请求失败，${retryDelay/1000}秒后进行第${retryCount}次重试...`);
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
+          continue;
+        }
+        
+        console.error(`[${new Date().toLocaleString()}] 请求发生错误:`, error);
+        throw new Error(
+          `请求失败: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    }
+    
+    // 这里不应该被执行到，但为了类型安全添加
+    throw new Error('请求失败: 超过最大重试次数');
   }
 }
 

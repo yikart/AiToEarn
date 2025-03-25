@@ -176,6 +176,28 @@ class PlatController {
     return await platform.getUsers(params);
   }
 
+  
+
+  /**
+   * 获取作品列表
+   * @param account
+   * @param pcursor
+   */
+  public async dianzanDyOther(account: AccountModel, pcursor?: string) {
+    const platform = this.platforms.get(account.type)!;
+    return await platform.dianzanDyOther(account, pcursor);
+  }
+
+  /**
+   * 获取作品列表
+   * @param account
+   * @param pcursor
+   */
+  public async shoucangDyOther(account: AccountModel, pcursor?: string) {
+    const platform = this.platforms.get(account.type)!;
+    return await platform.shoucangDyOther(account, pcursor);
+  }
+
   /**
    * 获取作品列表
    * @param account

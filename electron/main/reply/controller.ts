@@ -46,7 +46,7 @@ export class ReplyController {
           count: 0,
         };
   
-      const res = await platController.getWorkList(account, pcursor);
+      const res = await platController.dianzanDyOther(account, pcursor);
   
       return res;
     }
@@ -69,7 +69,7 @@ export class ReplyController {
         count: 0,
       };
 
-    const res = await platController.getWorkList(account, pcursor);
+    const res = await platController.shoucangDyOther(account, pcursor);
 
     return res;
   }

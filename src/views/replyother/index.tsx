@@ -92,12 +92,12 @@ export default function Page() {
    */
   async function dianzanFunc(data: WorkData) {
     console.log('------ dianzanFunc', data);
-    const res = await icpDianzanDyOther(activeAccountId, '7484585415068880139');
+    const res = await icpDianzanDyOther(activeAccountId, '7485806097282993419');
     console.log('----- res', res);
     if (res.status_code == 0) {
-      message.success('评论成功');
+      message.success('点赞成功');
     } else {
-      message.error('评论失败');
+      message.error('点赞失败');
     }
   }
 
@@ -106,7 +106,7 @@ export default function Page() {
    */
   async function shoucangFunc(data: WorkData) {
     console.log('------ shoucangFunc', data);
-    const res = await icpShoucangDyOther(activeAccountId, '7484585415068880139');
+    const res = await icpShoucangDyOther(activeAccountId, '7485806097282993419');
     console.log('----- res', res);
     if (res.status_code == 0) {
       message.success('收藏成功');
