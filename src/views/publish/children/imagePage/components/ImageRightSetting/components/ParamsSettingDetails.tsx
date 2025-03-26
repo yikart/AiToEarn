@@ -1,13 +1,17 @@
 import { ForwardedRef, forwardRef, memo, useMemo } from 'react';
 import styles from './imageParamsSet.module.scss';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
-import { Avatar, Tooltip } from 'antd';
-import { AccountType } from '../../../../../../../../commont/AccountEnum';
+import { Alert, Avatar, Tooltip } from 'antd';
+import {
+  AccountStatus,
+  AccountType,
+} from '../../../../../../../../commont/AccountEnum';
 import ImageParamsSet_Douyin from './children/ImageParamsSet_Douyin';
 import ImageParamsSet_XHS from './children/ImageParamsSet_XHS';
 import { IImageAccountItem } from '../../../imagePage.type';
 import { useImagePageStore } from '../../../useImagePageStore';
 import { useShallow } from 'zustand/react/shallow';
+import { PubParamsErrStatusEnum } from '../../../../../hooks/usePubParamsVerify';
 
 export interface IParamsSettingDetailsRef {}
 
@@ -28,12 +32,16 @@ const ParamsSettingDetails = memo(
         platActiveAccountMap,
         delAccountById,
         setPlatActiveAccountMap,
+        accountRestart,
+        errParamsMap,
       } = useImagePageStore(
         useShallow((state) => ({
           activePlat: state.activePlat,
           platActiveAccountMap: state.platActiveAccountMap,
           setPlatActiveAccountMap: state.setPlatActiveAccountMap,
           delAccountById: state.delAccountById,
+          accountRestart: state.accountRestart,
+          errParamsMap: state.errParamsMap,
         })),
       );
 
@@ -41,6 +49,11 @@ const ParamsSettingDetails = memo(
         if (!activePlat) return undefined;
         return platActiveAccountMap.get(activePlat);
       }, [platActiveAccountMap, activePlat]);
+
+      const currErrParams = useMemo(() => {
+        if (!currAccountItem?.account.id || !errParamsMap) return undefined;
+        return errParamsMap.get(+currAccountItem.account.id);
+      }, [errParamsMap, currAccountItem]);
 
       return (
         <div className={styles.paramsSettingItem}>
@@ -88,15 +101,60 @@ const ParamsSettingDetails = memo(
                     </div>
                     <Avatar src={v.account.avatar} size="large" />
                   </div>
-                  <Tooltip title={v.account.nickname}>
-                    <p className="paramsSettingItem-users-item-name">
-                      {v.account.nickname}
-                    </p>
-                  </Tooltip>
+                  {v.account.status === AccountStatus.DISABLE ? (
+                    <Tooltip
+                      title={
+                        <>
+                          账号已失效，请
+                          <a
+                            onClick={() => {
+                              accountRestart(v.account.type);
+                            }}
+                          >
+                            重新登录
+                          </a>
+                          。
+                        </>
+                      }
+                    >
+                      <Alert message="登录失效" type="error" />
+                    </Tooltip>
+                  ) : (
+                    <Tooltip title={v.account.nickname}>
+                      <p className="paramsSettingItem-users-item-name">
+                        {v.account.nickname}
+                      </p>
+                    </Tooltip>
+                  )}
                 </div>
               );
             })}
           </div>
+
+          {currErrParams && (
+            <Alert
+              type="error"
+              showIcon
+              message={
+                currErrParams.errType === PubParamsErrStatusEnum.LOGIN ? (
+                  <>
+                    登录失效，请
+                    <a
+                      style={{ fontSize: '13px' }}
+                      onClick={() => {
+                        accountRestart(activePlat!);
+                      }}
+                    >
+                      重新登录
+                    </a>
+                  </>
+                ) : (
+                  currErrParams.parErrMsg
+                )
+              }
+              style={{ marginTop: '20px' }}
+            />
+          )}
 
           {(() => {
             switch (activePlat) {

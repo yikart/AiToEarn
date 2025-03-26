@@ -30,6 +30,7 @@ import {
 import { IRequestNetResult } from '../../electron/plat/requestNet';
 import { WeChatVideoApiResponse } from '../../electron/plat/shipinhao/wxShp.type';
 import { parseTopicString } from '../utils';
+import { PublishVideoResult } from '../../electron/main/plat/module';
 
 // 创建发布记录
 export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
@@ -68,12 +69,19 @@ export async function icpGetPubVideoRecord(pubRecordId: number) {
 
 // 发布视频
 export async function icpPubVideo(pubRecordId: number) {
-  const res: {
-    // 0=失败 1=成功
-    code: number;
-    msg: string;
-    dataId: string;
-  }[] = await window.ipcRenderer.invoke('ICP_PUB_VIDEO', pubRecordId);
+  const res: PublishVideoResult[] = await window.ipcRenderer.invoke(
+    'ICP_PUB_VIDEO',
+    pubRecordId,
+  );
+  return res;
+}
+
+// 发布图文
+export async function icpPubImgText(pubRecordId: number) {
+  const res: PublishVideoResult[] = await window.ipcRenderer.invoke(
+    'ICP_PUBLISH_IMG_TEXT',
+    pubRecordId,
+  );
   return res;
 }
 

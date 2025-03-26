@@ -8,6 +8,8 @@ import { useVideoPageStore } from '../videoPage/useVideoPageStore';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { IPubParams } from '../videoPage/videoPage';
 import { message } from 'antd';
+import { accountLogin } from '../../../../icp/account';
+import { ErrPubParamsMapType } from '../../hooks/usePubParamsVerify';
 
 interface IImagePageStore {
   // 账户数据和对应参数
@@ -22,6 +24,11 @@ interface IImagePageStore {
   commonPubParams: IPubParams;
   // 图片上传上限
   imgUploadLimit: number;
+  /**
+   * 这个属性在 imagePage/page.tsx 中进行计算，然后实时的放到这里
+   * 因为别的组件需要这个属性，为了使其只计算一次，特此放到store引用
+   */
+  errParamsMap?: ErrPubParamsMapType;
 }
 
 const store: IImagePageStore = {
@@ -31,6 +38,7 @@ const store: IImagePageStore = {
   platActiveAccountMap: new Map<AccountType, IImageAccountItem>(),
   activePlat: undefined,
   commonPubParams: useVideoPageStore.getState().pubParamsInit(),
+  errParamsMap: undefined,
 };
 
 const getStore = () => {
@@ -52,11 +60,26 @@ export const useImagePageStore = create(
             platActiveAccountMap,
           });
         },
-
+        setErrParamsMap(errParamsMap: ErrPubParamsMapType) {
+          set({
+            errParamsMap,
+          });
+        },
         setActivePlat(activePlat: AccountType) {
           set({
             activePlat,
           });
+        },
+
+        /**
+         * 账户重新登录。登录成功后会自动更新该条账户数据
+         */
+        async accountRestart(pType: AccountType) {
+          const res = await accountLogin(pType);
+          if (!res) return;
+          message.success('登录成功！');
+          // 更新此条账户数据
+          methods.updateAccounts([res]);
         },
 
         // 设置图片

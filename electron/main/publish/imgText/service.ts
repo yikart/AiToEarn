@@ -12,7 +12,15 @@ export class ImgTextPubService {
     this.imgTextRepository = AppDataSource.getRepository(VideoModel);
   }
 
+  // 更新数据
   async updateImgTextPul(imgTextModel: ImgTextModel) {
     return await this.imgTextRepository.update(imgTextModel.id!, imgTextModel);
+  }
+
+  // 根据发布记录ID获取图文记录列表
+  async getImgTextPulListByPubRecordId(pubRecordId: number) {
+    return await this.imgTextRepository.find({
+      where: { pubRecordId },
+    });
   }
 }

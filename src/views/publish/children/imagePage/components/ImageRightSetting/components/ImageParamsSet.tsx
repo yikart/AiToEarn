@@ -5,8 +5,10 @@ import styles from './imageParamsSet.module.scss';
 import { AccountType } from '../../../../../../../../commont/AccountEnum';
 import { IImageAccountItem } from '../../../imagePage.type';
 import { AccountPlatInfoMap } from '../../../../../../account/comment';
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, InfoOutlined } from '@ant-design/icons';
 import ParamsSettingDetails from './ParamsSettingDetails';
+import { ErrPubParamsItem } from '../../../../../hooks/usePubParamsVerify';
+import { Tooltip } from 'antd';
 
 export interface IImageParamsSetRef {}
 
@@ -28,6 +30,7 @@ const ImageParamsSet = memo(
         setPlatActiveAccountMap,
         platActiveAccountMap,
         delAccountByPalt,
+        errParamsMap,
       } = useImagePageStore(
         useShallow((state) => ({
           imageAccounts: state.imageAccounts,
@@ -36,6 +39,7 @@ const ImageParamsSet = memo(
           setPlatActiveAccountMap: state.setPlatActiveAccountMap,
           platActiveAccountMap: state.platActiveAccountMap,
           delAccountByPalt: state.delAccountByPalt,
+          errParamsMap: state.errParamsMap,
         })),
       );
 
@@ -98,6 +102,18 @@ const ImageParamsSet = memo(
         setPlatActiveAccountMap(newPlatActiveAccountMap);
       }, [platAccountImagesMap]);
 
+      // key=平台，val==错误消息
+      const errParamsPlatMap = useMemo(() => {
+        if (!errParamsMap) return undefined;
+        const errParamsMapTemp = new Map<AccountType, ErrPubParamsItem>();
+        for (const [_, errParamsItem] of errParamsMap) {
+          if (!errParamsMapTemp.has(errParamsItem.plat!)) {
+            errParamsMapTemp.set(errParamsItem.plat!, errParamsItem);
+          }
+        }
+        return errParamsMapTemp;
+      }, [errParamsMap]);
+
       return (
         <div className={styles.imageParamsSet}>
           <div className="imageParamsSet_plats">
@@ -126,6 +142,15 @@ const ImageParamsSet = memo(
                     >
                       <CloseOutlined />
                     </div>
+                    {errParamsPlatMap?.get(accountType) && (
+                      <Tooltip
+                        title={errParamsPlatMap?.get(accountType)?.parErrMsg}
+                      >
+                        <div className="imageParamsSet_plats-item-err">
+                          <InfoOutlined />
+                        </div>
+                      </Tooltip>
+                    )}
                   </div>
                   <span>{platInfo.name}</span>
                 </div>

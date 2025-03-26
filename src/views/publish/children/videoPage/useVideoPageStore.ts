@@ -385,11 +385,13 @@ export const useVideoPageStore = create(
           try {
             methods.setOperateId();
 
-            const cover = await getImgFile(pubRecord.commonCoverPath);
-            commonPubParams = {
-              ...pubRecord,
-              cover,
-            };
+            if (pubRecord.commonCoverPath) {
+              const cover = await getImgFile(pubRecord.commonCoverPath);
+              commonPubParams = {
+                ...pubRecord,
+                cover,
+              };
+            }
 
             // key=视频路径 val=视频文件，防止多个相同视频重复取视频文件
             const videoFileMap = new Map<string, IVideoFile>();

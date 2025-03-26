@@ -21,6 +21,18 @@
             display: flex !important;
           }
         }
+        &-err {
+          position: absolute;
+          bottom: 2px;
+          right: -5px;
+          color: #fff;
+          background: red;
+          width: 12px;
+          height: 12px;
+          line-height: 10px;
+          text-align: center;
+          border-radius: 50%;
+        }
         &-img {
           position: relative;
           img {
@@ -85,6 +97,14 @@
         flex-direction: column;
         align-items: center;
         margin-right: 5px;
+        .ant-alert {
+          padding: 2px 4px;
+          font-size: var(--fs-xs);
+          font-weight: 900;
+          margin-top: 4px;
+          border-radius: 6px;
+          color: var(--errerColor);
+        }
         &--active {
           .paramsSettingItem-users-item-img {
             border-color: var(--colorPrimary6);
@@ -109,7 +129,7 @@
         }
         &-name {
           width: 100%;
-          margin-top: 4px;
+          margin-top: 6px;
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;

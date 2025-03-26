@@ -10,6 +10,7 @@ import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { CorrectQuery, backPageData } from '../../global/table';
 import { PubRecordModel, PubStatus } from '../../db/models/pubRecord';
 import { EtEvent } from '../../global/event';
+import { getUserInfo } from '../user/comment';
 @Injectable()
 export class PublishService {
   private pubRecordRepository: Repository<PubRecordModel>;
@@ -41,7 +42,14 @@ export class PublishService {
 
   // 获取发布记录信息
   async getPubRecordInfo(id: number) {
-    return await this.pubRecordRepository.findOne({ where: { id } });
+    const userInfo = getUserInfo();
+    const pubRecordInfo = await this.pubRecordRepository.findOne({
+      where: { id },
+    });
+    if (!pubRecordInfo || pubRecordInfo.userId !== userInfo.id) {
+      console.error('发布记录不存在');
+    }
+    return pubRecordInfo;
   }
 
   // 更新发布记录的状态

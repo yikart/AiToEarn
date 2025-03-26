@@ -123,7 +123,7 @@ const VideoPubSetModal = memo(
       >(new Map());
       const [pubProgressModuleOpen, setPubProgressModuleOpen] = useState(false);
       const videoPubSetModalVideoRef = useRef<IVideoPubSetModalVideoRef>(null);
-      const { errVideoMap } = usePubParamsVerify(
+      const { errParamsMap } = usePubParamsVerify(
         videoListChoose.map((v) => {
           return {
             id: v.id,
@@ -246,7 +246,7 @@ const VideoPubSetModal = memo(
 
       const handleOk = async () => {
         // 数据校验
-        for (const [key, errVideoItem] of errVideoMap) {
+        for (const [key, errVideoItem] of errParamsMap) {
           if (errVideoItem) {
             setCurrChooseAccountId(`${key}`);
             message.warning(errVideoItem.parErrMsg);
@@ -326,7 +326,7 @@ const VideoPubSetModal = memo(
                 items={videoListChoose
                   .map((v) => {
                     const account = v.account!;
-                    const errItem = errVideoMap.get(v.id);
+                    const errItem = errParamsMap.get(v.id);
                     if (!account || !v.video) return undefined;
 
                     return {
@@ -366,7 +366,7 @@ const VideoPubSetModal = memo(
               >
                 <div className="videoPubSetModal_con-left">
                   {(() => {
-                    const errItem = errVideoMap.get(
+                    const errItem = errParamsMap.get(
                       currChooseAccount?.id || '',
                     );
                     if (!errItem) return;
