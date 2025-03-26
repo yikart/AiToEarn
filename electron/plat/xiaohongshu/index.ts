@@ -1416,7 +1416,7 @@ export class XiaohongshuService {
     noteId: string,
     cursor?: number,
   ) {
-    const url = `/api/sns/web/v2/comment/page?note_id=${noteId}&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=AB9FJ4Lt0GzHqwzKCWh2glQpU_HdfsMIJ5MuRM8aB9Xvo%3D`;
+    const url = `/api/sns/web/v2/comment/page?note_id=${noteId}&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=AB_MsaT7Zyowo9N1n4eq0PL4xN9QLxe6JstFjA_Isc9x8%3D`;
     const reverseRes: any = await this.getReverseResult({
       url,
       a1: CookieToString(cookie),
@@ -1440,6 +1440,92 @@ export class XiaohongshuService {
 
     return res;
   }
+
+
+  /**
+   * 点赞作品
+   * @param cookie
+   * @param noteId
+   * @param content
+   * @param targetCommentId // 回复的评论ID
+   * @returns
+   */
+  async likeNote(
+    cookie: Electron.Cookie[],
+    noteId: string,
+  ) {
+    const url = `/api/sns/web/v1/note/like`;
+    const body = {
+      note_oid: noteId,
+    };
+    const reverseRes: any = await this.getReverseResult({
+      url,
+      a1: CookieToString(cookie),
+      data: body,
+    });
+
+    const res = await requestNet<XhsCommentPostResponse>({
+      url: `https://edith.xiaohongshu.com${url}`,
+      headers: {
+        cookie: CookieToString(cookie),
+        Referer: 'https://www.xiaohongshu.com/',
+        Origin: 'https://www.xiaohongshu.com',
+        'X-S': reverseRes['X-s'],
+        'X-T': reverseRes['X-t'],
+        userAgent:
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
+      },
+      method: 'POST',
+      body,
+    });
+
+    console.log('--- xhs likeNote --- res', res);
+
+    return res;
+  }
+
+
+    /**
+   * 点赞作品
+   * @param cookie
+   * @param noteId
+   * @param content
+   * @param targetCommentId // 回复的评论ID
+   * @returns
+   */
+    async shoucangNote(
+      cookie: Electron.Cookie[],
+      noteId: string,
+    ) {
+      const url = `/api/sns/web/v1/note/collect`;
+      const body = {
+        note_id: noteId,
+      };
+      const reverseRes: any = await this.getReverseResult({
+        url,
+        a1: CookieToString(cookie),
+        data: body,
+      });
+  
+      const res = await requestNet<XhsCommentPostResponse>({
+        url: `https://edith.xiaohongshu.com${url}`,
+        headers: {
+          cookie: CookieToString(cookie),
+          Referer: 'https://www.xiaohongshu.com/',
+          Origin: 'https://www.xiaohongshu.com',
+          'X-S': reverseRes['X-s'],
+          'X-T': reverseRes['X-t'],
+          userAgent:
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
+        },
+        method: 'POST',
+        body,
+      });
+  
+      console.log('--- xhs shoucangNote --- res', res);
+  
+      return res;
+    }
 
   /**
    * 评论作品

@@ -48,7 +48,8 @@ export default function Page() {
     // 7483006686274374962  7478960244136086784
     const res = await icpGetCommentListByOther(
       activeAccountId,
-      '7480598266392972596',
+      // '7480598266392972596',
+      '67d624a2000000001d02c637',
     );
     console.log('------ icpGetCommentList', res);
 
@@ -92,9 +93,10 @@ export default function Page() {
    */
   async function dianzanFunc(data: WorkData) {
     console.log('------ dianzanFunc', data);
-    const res = await icpDianzanDyOther(activeAccountId, '7485806097282993419');
+    // const res = await icpDianzanDyOther(activeAccountId, '7485806097282993419'); // 抖音
+    const res = await icpDianzanDyOther(activeAccountId, '67e386fc000000001201fa38');
     console.log('----- res', res);
-    if (res.status_code == 0) {
+    if (res.status_code == 0 || res.data.code == 0) {
       message.success('点赞成功');
     } else {
       message.error('点赞失败');
@@ -106,9 +108,10 @@ export default function Page() {
    */
   async function shoucangFunc(data: WorkData) {
     console.log('------ shoucangFunc', data);
-    const res = await icpShoucangDyOther(activeAccountId, '7485806097282993419');
+    // const res = await icpShoucangDyOther(activeAccountId, '7485806097282993419'); // 抖音
+    const res = await icpShoucangDyOther(activeAccountId, '67e386fc000000001201fa38');
     console.log('----- res', res);
-    if (res.status_code == 0) {
+    if (res.status_code == 0 || res.data.code == 0) {
       message.success('收藏成功');
     } else {
       message.error('收藏失败');

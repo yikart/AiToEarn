@@ -158,7 +158,8 @@ export class Xhs extends PlatformBase {
       coverUrl: v.images_list[0]?.url || '',
     }));
 
-    const count = res.data.data.tags[0].notes_count;
+    console.log('------ getWorkList xhs ---', res.data);
+    const count = res.data.data?.tags[0]?.notes_count || 0;
     const hasMore = count > pageSize * (pageNo + 1);
     return {
       list,
@@ -237,23 +238,94 @@ export class Xhs extends PlatformBase {
     dataId: string,
     pcursor?: string,
   ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    console.log('------ getCreatorCommentListByOther xhs dataId---', dataId);
+    const res = await xiaohongshuService.getCommentList(cookie, dataId);
+
+    const list: CommentData[] = [];
+
+    for (const v of res.data.data.comments) {
+      const subList: CommentData[] = [];
+
+      for (const sub of v.sub_comments) {
+        subList.push({
+          userId: sub.user_info.user_id,
+          dataId: v.note_id,
+          commentId: sub.id,
+          parentCommentId: v.id,
+          content: sub.content,
+          likeCount: Number.parseInt(sub.like_count),
+          nikeName: sub.user_info.nickname,
+          headUrl: sub.user_info.image,
+          subCommentList: [],
+        });
+      }
+
+      list.push({
+        userId: v.user_info.user_id,
+        dataId: v.note_id,
+        commentId: v.id,
+        parentCommentId: undefined,
+        content: v.content,
+        likeCount: Number.parseInt(v.like_count),
+        nikeName: v.user_info.nickname,
+        headUrl: v.user_info.image,
+        data: v,
+        subCommentList: subList,
+      });
+    }
+
     return {
-      list: [],
+      list: list,
       pageInfo: {
-        count: 0,
-        pcursor: '',
-        hasMore: false,
+        hasMore: res.data.data.has_more,
+        pcursor: res.data.data.cursor,
       },
     };
   }
 
+
+  
   async createCommentByOther(
     account: AccountModel,
     dataId: string, // 作品ID
     content: string,
   ) {
-    return null;
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const ret = await xiaohongshuService.commentPost(cookie, dataId, content);
+    console.log('------ createCommentByOther xhs ---', ret);
+    return ret;
   }
+
+
+
+  async dianzanDyOther(
+    account: AccountModel,
+    dataId: string, // 作品ID
+  ) {
+    console.log('------ dianzanDyOther3333', dataId);
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await xiaohongshuService.likeNote(cookie, dataId);
+
+    console.log('------ res', res);
+
+    return res;
+  }
+
+  async shoucangDyOther(
+    account: AccountModel,
+    dataId: string, // 作品ID
+  ) {
+    console.log('------ dianzanDyOther5555', dataId);
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await xiaohongshuService.shoucangNote(cookie, dataId);
+
+    console.log('------ res', res);
+
+    return res;
+  }
+
+  
 
   async replyCommentByOther(
     account: AccountModel,
@@ -264,7 +336,15 @@ export class Xhs extends PlatformBase {
       comment: any; // 辅助数据,原数据
     },
   ) {
-    return null;
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const ret = await xiaohongshuService.commentPost(
+      cookie,
+      option.dataId!,
+      content,
+      commentId,
+    );
+
+    return ret;
   }
 
   async createComment(
