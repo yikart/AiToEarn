@@ -132,23 +132,22 @@ class KwaiPub {
         );
         coverWrapView?.hover();
         // 点击背景的替换按钮
-        const replaceBtn = await page.waitForSelector('span:text("替换")');
+        const replaceBtn = await page.waitForSelector('div:text("封面设置")');
         await replaceBtn.click();
-        // 点击背景的上传按钮
-        const uploadCoverBtn = await page.waitForSelector(
-          '[class^="_tools-uploader-main_"]',
+        const uploadCoverBtnView =
+          await page.waitForSelector('div:text("上传封面")');
+        await uploadCoverBtnView.click();
+
+        const uploadImageBtn = await page.waitForSelector(
+          'button:text("上传图片")',
         );
         const [coverFileChooser] = await Promise.all([
           page.waitForEvent('filechooser'),
-          uploadCoverBtn?.click(),
+          uploadImageBtn?.click(),
         ]);
         await coverFileChooser.setFiles(params.coverPath);
-        // 点击原始比例
-        const originalRatioBtn =
-          await page.waitForSelector('span:text("原始比例")');
-        await originalRatioBtn.click();
-        // 点击完成
-        const finishBtn = await page.waitForSelector('span:text("完成")');
+        // 点击封面完成
+        const finishBtn = await page.waitForSelector('span:text("确认")');
         await finishBtn.click();
 
         // 监听封面应用成功
