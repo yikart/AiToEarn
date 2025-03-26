@@ -12,6 +12,7 @@ import { toolsApi } from '../api/tools';
 import { AutorReplyCommentScheduleEvent } from './comment';
 import { AutoRunService } from '../autoRun/service';
 import { AutoRunModel } from '../../db/models/autoRun';
+import { sysNotice } from '../../global/notice';
 
 @Injectable()
 export class ReplyService {
@@ -143,6 +144,11 @@ export class ReplyService {
             autoRun.id,
             e.status,
             e.error,
+          );
+
+          sysNotice(
+            '评论回复任务执行',
+            `评论回复任务执行--${e.tag}--${e.status}`,
           );
         },
       );

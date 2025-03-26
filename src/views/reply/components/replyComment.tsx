@@ -1,7 +1,9 @@
 import { toolsApi } from '@/api/tools';
 import { CommentData, icpReplyComment } from '@/icp/reply';
-import { Button, Form, Input, Modal } from 'antd';
+import { SendOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Modal, Tooltip } from 'antd';
 import { forwardRef, useImperativeHandle, useState } from 'react';
+import logoAi from '@/assets/logoAi.png';
 
 export interface ReplyCommentRef {
   init: (accountId: number, inInfo: CommentData) => Promise<void>;
@@ -73,35 +75,47 @@ const Com = forwardRef<ReplyCommentRef>((props: any, ref) => {
         open={isModalOpen}
         onCancel={handleCancel}
         footer={null}
-        width={800}
+        width={400}
       >
-        <Form
-          form={form}
-          name="basic"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          initialValues={{ remember: true }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
-        >
-          <Form.Item
-            label="content"
-            name="content"
-            rules={[{ required: true, message: '请输入评论!' }]}
+        <div className="p-5">
+          <Form
+            form={form}
+            name="basic"
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
+            initialValues={{ remember: true }}
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+            autoComplete="off"
           >
-            <Input />
-          </Form.Item>
+            <Form.Item
+              label="内容"
+              name="content"
+              rules={[{ required: true, message: '请输入评论!' }]}
+            >
+              <Input />
+            </Form.Item>
 
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" onClick={getAiContent}>
-              AI建议
-            </Button>
-            <Button type="primary" htmlType="submit">
-              提交
-            </Button>
-          </Form.Item>
-        </Form>
+            <p className="text-right">
+              <Tooltip title="获取AI建议">
+                <img
+                  src={logoAi}
+                  alt="logo"
+                  width={40}
+                  onClick={getAiContent}
+                />
+              </Tooltip>
+
+              <Tooltip title="发送">
+                <Button
+                  shape="circle"
+                  htmlType="submit"
+                  icon={<SendOutlined />}
+                />
+              </Tooltip>
+            </p>
+          </Form>
+        </div>
       </Modal>
     </>
   );
