@@ -46,10 +46,8 @@ import VideoPubSetModalVideo, {
   IVideoPubSetModalVideoRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalVideo';
 import { usePubStroe } from '../../../../../../store/pubStroe';
-import {
-  IVideoPubSetModalChildProps,
-  IVideoPubSetModalChildRef,
-} from './videoPubSetModal.type';
+
+import { IVideoChooseItem } from '../../videoPage';
 
 export interface IVideoPubSetModalRef {}
 
@@ -64,6 +62,24 @@ enum ErrStatusEnum {
   // 参数错误
   PARAMS = 2,
 }
+
+const PubSetModalChild = ({
+  currChooseAccount,
+}: {
+  currChooseAccount: IVideoChooseItem;
+}) => {
+  switch (currChooseAccount?.account?.type) {
+    case AccountType.KWAI:
+      return <VideoPubSetModal_KWAI currChooseAccount={currChooseAccount} />;
+    case AccountType.Douyin:
+      return <VideoPubSetModal_DouYin currChooseAccount={currChooseAccount} />;
+    case AccountType.Xhs:
+      return <VideoPubSetModal_XSH currChooseAccount={currChooseAccount} />;
+    case AccountType.WxSph:
+      return <VideoPubSetModal_WxSph currChooseAccount={currChooseAccount} />;
+  }
+  return <></>;
+};
 
 // 设置发布参数弹框
 const VideoPubSetModal = memo(
@@ -280,38 +296,6 @@ const VideoPubSetModal = memo(
         videoPubSetModalVideoRef.current!.pause();
       };
 
-      const PubSetModalChild = () => {
-        if (!currChooseAccount) return <></>;
-        let Component: React.MemoExoticComponent<
-          React.ForwardRefExoticComponent<
-            IVideoPubSetModalChildProps &
-              React.RefAttributes<IVideoPubSetModalChildRef>
-          >
-        >;
-        switch (currChooseAccount?.account?.type) {
-          // 快手
-          case AccountType.KWAI:
-            Component = VideoPubSetModal_KWAI;
-            break;
-          // 抖音
-          case AccountType.Douyin:
-            Component = VideoPubSetModal_DouYin;
-            break;
-          // 小红书
-          case AccountType.Xhs:
-            Component = VideoPubSetModal_XSH;
-            break;
-          // 微信视频号
-          case AccountType.WxSph:
-            Component = VideoPubSetModal_WxSph;
-            break;
-          default:
-            Component = VideoPubSetModal_KWAI;
-            break;
-        }
-        return <Component currChooseAccount={currChooseAccount} />;
-      };
-
       return (
         <>
           {contextHolder}
@@ -461,7 +445,9 @@ const VideoPubSetModal = memo(
                     }}
                   />
 
-                  {currChooseAccount && <PubSetModalChild />}
+                  {currChooseAccount && (
+                    <PubSetModalChild currChooseAccount={currChooseAccount} />
+                  )}
                 </div>
                 <div className="videoPubSetModal_con-right">
                   {currChooseAccount && (

@@ -22,7 +22,7 @@ import {
   CommonActivitySelect,
   CommonHotspotSelect,
 } from '../../../../../components/CommonComponents/DouyinCommonComponents';
-import { ILableValue } from '../../../../../../../../electron/db/models/video';
+import { ILableValue } from '../../../../../../../../electron/db/models/workData';
 
 const HotspotSelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
   const { setOnePubParams } = useVideoPageStore(
