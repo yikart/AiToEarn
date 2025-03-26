@@ -16,6 +16,7 @@ import { VideoModel } from '../../../../../electron/db/models/video';
 import { getImgFile, IImgFile } from '../../../../components/Choose/ImgChoose';
 import { useAICreateTitleStore } from '../../components/AICreateTitle/useAICreateTitle';
 import { usePubStroe } from '../../../../store/pubStroe';
+import { PubRecordModel } from '../../comment';
 
 export interface IVideoPageStore {
   // 选择的视频数据
@@ -362,12 +363,17 @@ export const useVideoPageStore = create(
         },
 
         // 根据发布记录重新发布设置参数
-        async restartPub(pubRecordList: VideoModel[], accounts: AccountInfo[]) {
+        async restartPub(
+          pubRecordList: VideoModel[],
+          accounts: AccountInfo[],
+          pubRecord: PubRecordModel,
+        ) {
           set({
             loadingPageLoading: true,
           });
 
           const videoListChoose: IVideoChooseItem[] = [];
+          let commonPubParams: IPubParams = { ...get().commonPubParams };
 
           const error = (msg: string) => {
             set({
@@ -378,6 +384,12 @@ export const useVideoPageStore = create(
 
           try {
             methods.setOperateId();
+
+            const cover = await getImgFile(pubRecord.commonCoverPath);
+            commonPubParams = {
+              ...pubRecord,
+              cover,
+            };
 
             // key=视频路径 val=视频文件，防止多个相同视频重复取视频文件
             const videoFileMap = new Map<string, IVideoFile>();
@@ -435,6 +447,7 @@ export const useVideoPageStore = create(
           set({
             videoListChoose,
             loadingPageLoading: false,
+            commonPubParams,
           });
         },
 

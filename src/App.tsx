@@ -15,7 +15,7 @@ import { useAccountStore } from './store/commont';
 
 const App = () => {
   const [api, contextHolder] = notification.useNotification({
-    top: 70,
+    top: 74,
   });
 
   useEffect(() => {

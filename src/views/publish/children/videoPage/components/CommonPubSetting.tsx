@@ -1,16 +1,9 @@
-import React, {
-  ForwardedRef,
-  forwardRef,
-  memo,
-  useMemo,
-  useState,
-} from 'react';
+import React, { ForwardedRef, forwardRef, memo, useMemo } from 'react';
 import VideoCoverSeting from '@/views/publish/children/videoPage/components/VideoCoverSeting';
 import { Input, Tooltip } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
-import { IImgFile } from '@/components/Choose/ImgChoose';
 import { ScheduledTimeSelect } from './VideoPubSetModal/components/VideoPubSetModalCommon';
 import {
   AccountPlatInfoMap,
@@ -43,8 +36,6 @@ const CommonPubSetting = memo(
           commonPubParams: state.commonPubParams,
         })),
       );
-      // 当前选择的通用封面
-      const [cover, setCover] = useState<IImgFile>();
 
       // 获取选择的账户的所有相关平台
       const getChoosedAccountPlatList = useMemo(() => {
@@ -85,17 +76,15 @@ const CommonPubSetting = memo(
           <h2>通用封面</h2>
           <VideoCoverSeting
             videoFile={videoListChoose.find((v) => v.video)?.video}
-            value={cover}
+            value={commonPubParams.cover}
             saveImgId="common"
             onClose={() => {
-              setCover(undefined);
               setPubParams({
                 cover: undefined,
               });
               setVideoCoverFirst(true);
             }}
             onChoosed={(imgFile) => {
-              setCover(imgFile);
               setPubParams({
                 cover: imgFile,
               });

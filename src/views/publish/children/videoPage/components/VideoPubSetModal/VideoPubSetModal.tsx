@@ -182,6 +182,7 @@ const VideoPubSetModal = memo(
           timingTime: commonPubParams.timingTime,
           videoPath: videoListChoose[0].video?.videoPath,
           coverPath: videoListChoose[0].pubParams.cover?.imgPath,
+          commonCoverPath: commonPubParams.cover?.imgPath,
         });
         if (!recordRes) return err();
 
