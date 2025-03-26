@@ -74,6 +74,30 @@ export abstract class PlatformBase {
     time: string[],
   ): Promise<DashboardData[]>;
 
+
+  
+
+  /**
+   * 获取作品列表
+   * @param account 账户
+   * @param pcursor 分页游标
+   */
+  abstract dianzanDyOther(
+    account: AccountModel,
+    pcursor?: string,
+  ): Promise<any>;
+
+
+  /**
+   * 获取作品列表
+   * @param account 账户
+   * @param pcursor 分页游标
+   */
+  abstract shoucangDyOther(
+    account: AccountModel,
+    pcursor?: string,
+  ): Promise<any>;
+
   /**
    * 获取作品列表
    * @param account 账户
