@@ -31,11 +31,6 @@ export type CommentData = {
   subCommentList: CommentData[]; // 子数据
 };
 
-export enum PageType {
-  paging = 'paging',
-  cursor = 'cursor',
-}
-
 /**
  * 获取作品列表
  */
@@ -43,9 +38,8 @@ export async function icpCreatorList(accountId: number, pcursor?: string) {
   const res: {
     list: WorkData[];
     pageInfo: {
-      pageType: PageType;
-      count?: number;
-      hasMore?: boolean;
+      count: number;
+      hasMore: boolean;
       pcursor?: string;
     };
   } = await window.ipcRenderer.invoke('ICP_CREATOR_LIST', accountId, pcursor);
@@ -63,7 +57,7 @@ export async function icpGetCommentList(
   const res: {
     list: CommentData[];
     pageInfo: {
-      count?: number;
+      count: number;
       hasMore: boolean;
       pcursor?: string;
     };
