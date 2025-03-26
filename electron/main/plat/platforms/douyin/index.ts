@@ -297,19 +297,53 @@ export class Douyin extends PlatformBase {
     };
   }
 
+  
+
+  
+  async dianzanDyOther(
+    account: AccountModel,
+    dataId: string, // 作品ID
+  ) {
+    console.log('------ dianzanDyOther3333', dataId);
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await douyinService.creatorDianzanOther(cookie, {
+      aweme_id: dataId,
+      item_type: 0,
+      type: 1,
+    });
+
+    console.log('------ res', res);
+
+    return res;
+  }
+
+
+  
+  async shoucangDyOther(
+    account: AccountModel,
+    dataId: string, // 作品ID
+  ) {
+
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await douyinService.creatorShoucangOther(cookie, {
+      aweme_id: dataId,
+      action: 1,
+      aweme_type: 0
+    });
+
+    console.log('------ res', res);
+
+    return res;
+  }
+
+
+
+
   async createCommentByOther(
     account: AccountModel,
     dataId: string, // 作品ID
     content: string,
   ) {
-    // const cookie: CookiesType = JSON.parse(account.loginCookie);
-    // const res = await douyinService.creatorCommentReply(cookie, {
-    //   comment_Id: '',
-    //   item_id: dataId,
-    //   text: content,
-    // });
-
-    // return res.status === 200 && res.data.status_code === 0;
 
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await douyinService.creatorCommentReplyOther(cookie, {

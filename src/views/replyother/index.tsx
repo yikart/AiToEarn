@@ -12,7 +12,7 @@ import {
   CommentData,
   icpCreateCommentList,
 } from '@/icp/replyother';
-import { Avatar, Button, Card, Col, Row } from 'antd';
+import { Avatar, Button, Card, Col, Row, message } from 'antd';
 import { useCallback, useRef, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import styles from './reply.module.scss';
@@ -20,6 +20,7 @@ import Meta from 'antd/es/card/Meta';
 import ReplyWorks, { ReplyWorksRef } from './components/replyWorks';
 import ReplyComment, { ReplyCommentRef } from './components/replyComment';
 import AddAutoRun, { AddAutoRunRef } from './components/addAutoRun';
+import { icpDianzanDyOther, icpShoucangDyOther } from '@/icp/replyother';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
@@ -86,6 +87,34 @@ export default function Page() {
     Ref_AddAutoRun.current?.init(activeAccountId, data.dataId);
   }
 
+  /**
+   * 点赞
+   */
+  async function dianzanFunc(data: WorkData) {
+    console.log('------ dianzanFunc', data);
+    const res = await icpDianzanDyOther(activeAccountId, '7485806097282993419');
+    console.log('----- res', res);
+    if (res.status_code == 0) {
+      message.success('点赞成功');
+    } else {
+      message.error('点赞失败');
+    }
+  }
+
+  /**
+   * 收藏
+   */
+  async function shoucangFunc(data: WorkData) {
+    console.log('------ shoucangFunc', data);
+    const res = await icpShoucangDyOther(activeAccountId, '7485806097282993419');
+    console.log('----- res', res);
+    if (res.status_code == 0) {
+      message.success('收藏成功');
+    } else {
+      message.error('收藏失败');
+    }
+  }
+
   return (
     <div className={styles.reply}>
       <Row>
@@ -124,21 +153,38 @@ export default function Page() {
                     评论作品
                   </Button>,
                   <Button
-                    type="primary"
-                    onClick={() => {
-                      createCommentList(item);
-                    }}
-                  >
-                    一键AI评论
-                  </Button>,
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      openAddAutoRun(item);
-                    }}
-                  >
-                    创建自动任务
-                  </Button>,
+                  type="primary"
+                  onClick={() => {
+                    dianzanFunc(item);
+                  }}
+                >
+                  点赞
+                </Button>,
+                <Button
+                type="primary"
+                onClick={() => {
+                  shoucangFunc(item);
+                }}
+              >
+                收藏
+              </Button>
+                
+                  // <Button
+                  //   type="primary"
+                  //   onClick={() => {
+                  //     createCommentList(item);
+                  //   }}
+                  // >
+                  //   一键AI评论
+                  // </Button>,
+                  // <Button
+                  //   type="primary"
+                  //   onClick={() => {
+                  //     openAddAutoRun(item);
+                  //   }}
+                  // >
+                  //   创建自动任务
+                  // </Button>,
                 ]}
               >
                 <Meta title={item.title} />

@@ -26,6 +26,54 @@ export class ReplyController {
   @Inject(AutoRunService)
   private readonly autoRunService!: AutoRunService;
 
+
+  
+
+    /**
+   * 作品点赞
+   */
+    @Icp('ICP_DIANZAN_DY_OTHER')
+    async dianzanDyOther(
+      event: Electron.IpcMainInvokeEvent,
+      accountId: number,
+      pcursor?: string,
+    ) {
+      const account = await this.accountService.getAccountById(accountId);
+  
+      if (!account)
+        return {
+          list: [],
+          count: 0,
+        };
+  
+      const res = await platController.dianzanDyOther(account, pcursor);
+  
+      return res;
+    }
+
+
+      /**
+   * 作品收藏
+   */
+  @Icp('ICP_SHOUCANG_DY_OTHER')
+  async shoucangDyOther(
+    event: Electron.IpcMainInvokeEvent,
+    accountId: number,
+    pcursor?: string,
+  ) {
+    const account = await this.accountService.getAccountById(accountId);
+
+    if (!account)
+      return {
+        list: [],
+        count: 0,
+      };
+
+    const res = await platController.shoucangDyOther(account, pcursor);
+
+    return res;
+  }
+
   /**
    * 作品列表
    */

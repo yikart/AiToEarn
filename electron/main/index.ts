@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, nativeTheme } from 'electron';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import os from 'node:os';
@@ -72,6 +72,9 @@ async function createWindow() {
       contextIsolation: true,
     },
   });
+
+  // 强制使用非黑暗模式
+  nativeTheme.themeSource = 'light';
 
   try {
     const tray = new SystemTray(win);
