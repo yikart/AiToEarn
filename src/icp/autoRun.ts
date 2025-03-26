@@ -37,6 +37,7 @@ export enum AutoRunRecordStatus {
 
 export interface AutoRunRecord {
   id: number;
+  autoRunId: number;
   userId: string;
   status: AutoRunRecordStatus;
   type: AutoRunType;
@@ -78,8 +79,11 @@ export async function ipcGetAutoRunList(
     accountId?: number;
     dataId?: string;
   },
-) {
-  const res: AutoRun[] = await window.ipcRenderer.invoke(
+): Promise<{
+  list: AutoRun[];
+  count: number;
+}> {
+  const res = await window.ipcRenderer.invoke(
     'ICP_AUTO_RUN_LIST',
     pageInfo,
     query,
