@@ -19,6 +19,7 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
 
   async function init(accountId: number, inWorkData: WorkData) {
     setAccountId(accountId);
+    console.log('------ init-inWorkData', inWorkData);
     setWorkData(inWorkData);
     setIsModalOpen(true);
   }
@@ -37,11 +38,12 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
   async function createComment(content: string) {
     const res = await icpCreateComment(
       accountId,
-      '7484585415068880139',
+      // workData!.dataId,
+      '67d624a2000000001d02c637',
       content,
     );
     console.log('----- res', res);
-    if (res.status_code == 0) {
+    if (res.status_code == 0 || res.data.code == 0) {
       message.success('评论成功');
       setIsModalOpen(false);
     } else {

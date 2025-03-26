@@ -78,7 +78,7 @@ export abstract class PlatformBase {
   
 
   /**
-   * 获取作品列表
+   * 点赞
    * @param account 账户
    * @param pcursor 分页游标
    */
@@ -89,7 +89,7 @@ export abstract class PlatformBase {
 
 
   /**
-   * 获取作品列表
+   * 收藏
    * @param account 账户
    * @param pcursor 分页游标
    */
