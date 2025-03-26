@@ -13,7 +13,6 @@ import {
   Button,
   message,
   Modal,
-  notification,
   Space,
   Switch,
   Tabs,
@@ -51,7 +50,7 @@ import { IVideoChooseItem } from '../../videoPage';
 import usePubParamsVerify, {
   PubParamsErrStatusEnum,
 } from '../../../../hooks/usePubParamsVerify';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { useAccountStore } from '../../../../../../store/commont';
 
 export interface IVideoPubSetModalRef {}
 
@@ -94,6 +93,7 @@ const VideoPubSetModal = memo(
         setVideoPubSetModalOpen,
         updateAccounts,
         accountRestart,
+        commonPubParams,
         clear,
       } = useVideoPageStore(
         useShallow((state) => ({
@@ -106,6 +106,7 @@ const VideoPubSetModal = memo(
           updateAccounts: state.updateAccounts,
           accountRestart: state.accountRestart,
           clear: state.clear,
+          commonPubParams: state.commonPubParams,
         })),
       );
       const { moreParamsOpen, setMoreParamsOpen } = usePubStroe(
@@ -115,7 +116,6 @@ const VideoPubSetModal = memo(
         })),
       );
       const [loading, setLoading] = useState(false);
-      const [api, contextHolder] = notification.useNotification();
       const pubAccountDetModuleRef = useRef<IPubAccountDetModuleRef>(null);
       // 主进程传过来的发布进度数据，key为用户id value为发布进度数据
       const [pubProgressMap, setPubProgressMap] = useState<
@@ -176,9 +176,10 @@ const VideoPubSetModal = memo(
         };
         // 创建一级记录
         const recordRes = await icpCreatePubRecord({
-          title: '/',
-          desc: '/',
+          title: commonPubParams.title,
+          desc: commonPubParams.describe,
           type: PubType.VIDEO,
+          timingTime: commonPubParams.timingTime,
           videoPath: videoListChoose[0].video?.videoPath,
           coverPath: videoListChoose[0].pubParams.cover?.imgPath,
         });
@@ -214,7 +215,7 @@ const VideoPubSetModal = memo(
         // 成功数据
         const successList = okRes.filter((v) => v.code === 1);
         setTimeout(() => {
-          api.open({
+          useAccountStore.getState().notification!.open({
             message: '发布结果',
             description: (
               <>
@@ -252,9 +253,6 @@ const VideoPubSetModal = memo(
             return;
           }
         }
-        if (videoListChoose.some((v) => !v.pubParams.cover)) {
-          return message.warning('有的数据未上传封面，请检查后重试！');
-        }
         setLoading(true);
         pubAccountDetModuleRef.current!.startDet();
       };
@@ -266,7 +264,6 @@ const VideoPubSetModal = memo(
 
       return (
         <>
-          {contextHolder}
           <PubProgressModule
             pubProgressData={pubProgressData}
             open={pubProgressModuleOpen}

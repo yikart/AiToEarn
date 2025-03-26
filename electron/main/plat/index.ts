@@ -176,8 +176,6 @@ class PlatController {
     return await platform.getUsers(params);
   }
 
-  
-
   /**
    * 获取作品列表
    * @param account

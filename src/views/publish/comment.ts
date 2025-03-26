@@ -6,19 +6,6 @@
  * @Description:
  */
 
-import { PubType } from '../../../commont/publish/PublishEnum';
+import { PubRecordModel as PubRecordModelLast } from '../../../electron/db/models/pubRecord';
 
-export interface PubRecordModel {
-  id: number;
-  userId: string;
-  type: PubType;
-  title: string;
-  topics: string[];
-  desc: string;
-  videoPath: string;
-  coverPath: string;
-  publishTime: Date;
-  status: any;
-  createTime?: Date;
-  updateTime?: Date;
-}
+export type PubRecordModel = PubRecordModelLast;
