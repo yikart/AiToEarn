@@ -6,10 +6,11 @@
  * @Description: 评论列表
  */
 import { CommentData, icpGetCommentList, WorkData } from '@/icp/reply';
-import { Avatar, Button, Card, Col, Modal, Row } from 'antd';
+import { Avatar, Button, Card, Col, Modal, Row, Tooltip } from 'antd';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import Meta from 'antd/es/card/Meta';
 import ReplyComment, { ReplyCommentRef } from './replyComment';
+import { MessageOutlined } from '@ant-design/icons';
 
 export interface CommentListRef {
   init: (accountId: number, workData: WorkData) => Promise<void>;
@@ -21,11 +22,20 @@ const Com = forwardRef<CommentListRef>((props: any, ref) => {
   const [accountId, setAccountId] = useState<number>(0);
   const [workData, setWorkData] = useState<WorkData | null>(null);
   const Ref_ReplyComment = useRef<ReplyCommentRef>(null);
+  const [pageInfo, setPageInfo] = useState<{
+    count: number;
+    hasMore: boolean;
+    pcursor?: string;
+  }>({
+    count: 0,
+    hasMore: false,
+  });
 
   async function init(accountId: number, workData: WorkData) {
     setAccountId(accountId);
     setWorkData(workData);
     setIsModalOpen(true);
+    await getCommentList(workData.dataId);
   }
 
   useImperativeHandle(ref, () => ({
@@ -40,8 +50,11 @@ const Com = forwardRef<CommentListRef>((props: any, ref) => {
    * 获取评论列表
    */
   async function getCommentList(dataId: string) {
-    const res = await icpGetCommentList(accountId, dataId);
-    setCommentList(res.list);
+    const res = await icpGetCommentList(accountId, dataId, pageInfo.pcursor);
+    if (!res) return;
+
+    setPageInfo(res.pageInfo);
+    setCommentList([...commentList, ...res.list]);
   }
 
   /**
@@ -65,9 +78,6 @@ const Com = forwardRef<CommentListRef>((props: any, ref) => {
         style={{ width: 200 }}
         cover={<img alt="example" src={workData.coverUrl} />}
       >
-        <Button type="primary" onClick={() => getCommentList(workData.dataId)}>
-          评论列表
-        </Button>
         <Meta title={workData.title} />
       </Card>
     );
@@ -84,26 +94,40 @@ const Com = forwardRef<CommentListRef>((props: any, ref) => {
       >
         <Row>
           <Col span={6}>{WorkDataDom()}</Col>
-
           <Col span={18}>
             {commentList.map((item) => (
-              <Card key={item.commentId}>
+              <Card key={item.commentId} className="mb-3">
                 <p>
                   <Avatar src={item.headUrl} />
                   {/* <p>{item.nikeName}</p> */}
                   {item.content}
-                  <Button type="primary" onClick={() => openReplyComment(item)}>
-                    回复
-                  </Button>
+                  &nbsp;&nbsp;
+                  <Tooltip title="回复">
+                    <MessageOutlined onClick={() => openReplyComment(item)} />
+                  </Tooltip>
                 </p>
-                {item.subCommentList.map((subItem) => (
-                  <p key={subItem.commentId}>
-                    <Avatar src={subItem.headUrl} />
-                    {subItem.content}
-                  </p>
-                ))}
+                <div className="ml-6">
+                  {item.subCommentList.map((subItem) => (
+                    <p key={subItem.commentId}>
+                      <Avatar src={subItem.headUrl} />
+                      &nbsp;&nbsp;
+                      {subItem.content}
+                    </p>
+                  ))}
+                </div>
               </Card>
             ))}
+
+            {commentList.length > 0 && (
+              <p>
+                <Button
+                  type="link"
+                  onClick={() => getCommentList(workData!.dataId)}
+                >
+                  加载更多
+                </Button>
+              </p>
+            )}
           </Col>
         </Row>
       </Modal>

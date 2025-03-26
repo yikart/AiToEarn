@@ -6,7 +6,7 @@
  * @Description: 评论页面 reply
  */
 import { icpCreatorList, WorkData, icpCreateCommentList } from '@/icp/reply';
-import { Col, message, Row, Tooltip } from 'antd';
+import { Button, Col, message, Row, Tooltip } from 'antd';
 import { useCallback, useRef, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import ReplyWorks, { ReplyWorksRef } from './components/replyWorks';
@@ -24,6 +24,14 @@ import styles from './reply.module.scss';
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
   const [activeAccountId, setActiveAccountId] = useState<number>(-1);
+  const [pageInfo, setPageInfo] = useState<{
+    count: number;
+    hasMore: boolean;
+    pcursor?: string;
+  }>({
+    count: 0,
+    hasMore: false,
+  });
   const Ref_ReplyWorks = useRef<ReplyWorksRef>(null);
   const Ref_AddAutoRun = useRef<AddAutoRunRef>(null);
   const Ref_CommentList = useRef<CommentListRef>(null);
@@ -47,9 +55,9 @@ export default function Page() {
 
   async function getCreatorList(accountId: number) {
     if (accountId === -1) return;
-    setWordList([]);
-    const res = await icpCreatorList(accountId);
-    setWordList(res.list);
+    const res = await icpCreatorList(accountId, pageInfo.pcursor);
+    setPageInfo(res.pageInfo);
+    setWordList([...wordList, ...res.list]);
   }
 
   /**
@@ -153,6 +161,13 @@ export default function Page() {
             </Row>
           </div>
         ))}
+        {wordList.length > 0 && (
+          <p>
+            <Button type="link" onClick={() => getCreatorList(activeAccountId)}>
+              加载更多
+            </Button>
+          </p>
+        )}
       </div>
 
       <ReplyWorks ref={Ref_ReplyWorks} />
