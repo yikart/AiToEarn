@@ -19,6 +19,7 @@ import {
   FieldTimeOutlined,
   MenuUnfoldOutlined,
 } from '@ant-design/icons';
+import styles from './reply.module.scss';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
@@ -84,80 +85,75 @@ export default function Page() {
   }
 
   return (
-    <div>
-      <Row>
-        <Col span={4}>
-          <AccountSidebar
-            activeAccountId={activeAccountId}
-            onAccountChange={useCallback((info) => {
-              setActiveAccountId(info.id);
-              getCreatorList(info.id);
-            }, [])}
-          />
-        </Col>
-        <Col span={20} className="bg-gray-100">
-          <div className="grid grid-cols-5 p-4">
-            {wordList.map((item) => (
-              <div
-                className="bg-white w-[200px] h-[200px] border border-gray-300 p-4 rounded-lg hover:shadow-lg transition-shadow duration-300 m-4"
-                key={item.dataId}
-              >
-                <Row>
-                  <Col span={12}>
-                    <div className="w-[100px] h-[200px]">
-                      <img
-                        alt="example"
-                        src={item.coverUrl}
-                        className="object-cover w-full h-full rounded"
-                      />
-                    </div>
-                  </Col>
-                  <Col span={12}>
-                    <div className="flex flex-col h-full">
-                      <p className="mb-2">{item.title || '无标题'}</p>
-                      <div className="w-full mt-auto">
-                        <Row justify="space-evenly">
-                          <Col span={8}>
-                            <Tooltip title="评论列表">
-                              <MenuUnfoldOutlined
-                                onClick={() => openCommentList(item)}
-                              />
-                            </Tooltip>
-                          </Col>
-                          <Col span={8}>
-                            <Tooltip title="评论作品">
-                              <CommentOutlined
-                                onClick={() => openReplyWorks(item)}
-                              />
-                            </Tooltip>
-                          </Col>
-                        </Row>
+    <div className={styles.account}>
+      <AccountSidebar
+        activeAccountId={activeAccountId}
+        onAccountChange={useCallback((info) => {
+          setActiveAccountId(info.id);
+          getCreatorList(info.id);
+        }, [])}
+      />
 
-                        <Row justify="space-evenly">
-                          <Col span={8}>
-                            <Tooltip title="一键评论">
-                              <AliwangwangOutlined
-                                onClick={() => createCommentList(item)}
-                              />
-                            </Tooltip>
-                          </Col>
-                          <Col span={8}>
-                            <Tooltip title="自动评论">
-                              <FieldTimeOutlined
-                                onClick={() => openAddAutoRun(item)}
-                              />
-                            </Tooltip>
-                          </Col>
-                        </Row>
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-              </div>
-            ))}
+      <div className="grid grid-cols-5 p-4 account-con">
+        {wordList.map((item) => (
+          <div
+            className="bg-white w-[200px] h-[200px] border border-gray-300 p-4 rounded-lg hover:shadow-lg transition-shadow duration-300 m-4"
+            key={item.dataId}
+          >
+            <Row>
+              <Col span={12}>
+                <div className="w-[100px] h-[200px]">
+                  <img
+                    alt="example"
+                    src={item.coverUrl}
+                    className="object-cover w-full h-full rounded"
+                  />
+                </div>
+              </Col>
+              <Col span={12}>
+                <div className="flex flex-col h-full">
+                  <p className="mb-2">{item.title || '无标题'}</p>
+                  <div className="w-full mt-auto">
+                    <Row justify="space-evenly">
+                      <Col span={8}>
+                        <Tooltip title="评论列表">
+                          <MenuUnfoldOutlined
+                            onClick={() => openCommentList(item)}
+                          />
+                        </Tooltip>
+                      </Col>
+                      <Col span={8}>
+                        <Tooltip title="评论作品">
+                          <CommentOutlined
+                            onClick={() => openReplyWorks(item)}
+                          />
+                        </Tooltip>
+                      </Col>
+                    </Row>
+
+                    <Row justify="space-evenly">
+                      <Col span={8}>
+                        <Tooltip title="一键评论">
+                          <AliwangwangOutlined
+                            onClick={() => createCommentList(item)}
+                          />
+                        </Tooltip>
+                      </Col>
+                      <Col span={8}>
+                        <Tooltip title="自动评论">
+                          <FieldTimeOutlined
+                            onClick={() => openAddAutoRun(item)}
+                          />
+                        </Tooltip>
+                      </Col>
+                    </Row>
+                  </div>
+                </div>
+              </Col>
+            </Row>
           </div>
-        </Col>
-      </Row>
+        ))}
+      </div>
 
       <ReplyWorks ref={Ref_ReplyWorks} />
       <AddAutoRun ref={Ref_AddAutoRun} />
