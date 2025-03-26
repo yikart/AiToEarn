@@ -22,7 +22,7 @@ export const commentApi = {
   },
 
   /**
-   * 获取AI分析体检数据的结果
+   * 获取抓取数据的结果
    * @param taskType
    * @param taskId
    */
