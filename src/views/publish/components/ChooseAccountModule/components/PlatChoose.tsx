@@ -25,6 +25,7 @@ import { PubType } from '../../../../../../commont/publish/PublishEnum';
 import { CheckOutlined } from '@ant-design/icons';
 import { useAccountStore } from '../../../../../store/account';
 import { useShallow } from 'zustand/react/shallow';
+import { Link } from 'react-router-dom';
 
 export interface IPlatChooseRef {
   /**
@@ -193,7 +194,13 @@ const PlatChoose = memo(
         <div className={styles.platChoose}>
           {getAllAccountList.length === 0 ? (
             <div className="platChoose-empty">
-              <Empty description="无账户数据，请添加账户" />
+              <Empty
+                description={
+                  <>
+                    无账户数据，请前往 <Link to="/">账户</Link>添加数据
+                  </>
+                }
+              />
             </div>
           ) : (
             <>

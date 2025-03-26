@@ -72,7 +72,6 @@ const ImgTextImagesView = memo(
                       <div
                         className="imgTextImagesView_content-item-close"
                         onClick={() => {
-                          console.log(i);
                           const newImages = [...images];
                           newImages.splice(i, 1);
                           setImages(newImages);

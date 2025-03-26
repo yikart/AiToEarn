@@ -18,6 +18,7 @@ import { PublishService } from '../service';
 import platController from '../../plat';
 import { AccountService } from '../../account/service';
 import { AccountType } from '../../../../commont/AccountEnum';
+import { PublishVideoResult } from '../../plat/module';
 
 @Controller()
 export class VideoPubController {
@@ -57,23 +58,12 @@ export class VideoPubController {
   async pubVideo(
     event: Electron.IpcMainInvokeEvent,
     pubRecordId: number,
-  ): Promise<any> {
-    const res = {
-      code: 0,
-      msg: '发布失败',
-    };
-
-    const userInfo = getUserInfo();
+  ): Promise<PublishVideoResult[]> {
     const pubRecordInfo =
       await this.publishService.getPubRecordInfo(pubRecordId);
 
-    if (!pubRecordInfo || pubRecordInfo.userId !== userInfo.id) {
-      res.msg = '发布记录不存在';
-      return res;
-    }
-    if (pubRecordInfo.status === PubStatus.RELEASED) {
-      res.msg = '发布记录已发布';
-      return res;
+    if (pubRecordInfo?.status === PubStatus.RELEASED) {
+      console.error('发布记录已发布');
     }
 
     // 获取视频发布记录列表
