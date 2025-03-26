@@ -8,9 +8,8 @@
 import { Notification } from 'electron';
 export const sysNotice = (title: string, body: string) =>
   new Promise((resolve, reject) => {
-    if (!Notification.isSupported()) {
-      reject('当前系统不支持通知');
-    }
+    if (!Notification.isSupported()) reject('当前系统不支持通知');
+
     const options = typeof title === 'object' ? title : { title, body };
     const notification = new Notification(options);
     notification.on('click', resolve);
