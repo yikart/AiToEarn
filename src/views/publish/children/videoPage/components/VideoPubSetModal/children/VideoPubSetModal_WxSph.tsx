@@ -19,6 +19,7 @@ import { getSphActivity } from '@/icp/publish';
 import { ipcUpdateAccountStatus } from '@/icp/account';
 import { WxSphEventList } from '../../../../../../../../electron/plat/shipinhao/wxShp.type';
 import UserSelect from '../components/UserSelect';
+import useVideoPubSetModal from './hooks/useVideoPubSetModal';
 
 const WXSphActivity = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
   const { setOnePubParams, updateAccounts } = useVideoPageStore(
@@ -87,12 +88,9 @@ const VideoPubSetModal_WxSph = memo(
       { currChooseAccount }: IVideoPubSetModalChildProps,
       ref: ForwardedRef<IVideoPubSetModalChildRef>,
     ) => {
-      const { setOnePubParams } = useVideoPageStore(
-        useShallow((state) => ({
-          setOnePubParams: state.setOnePubParams,
-          videoListChoose: state.videoListChoose,
-        })),
-      );
+      const { setOnePubParams, platInfo } =
+        useVideoPubSetModal(currChooseAccount);
+      const { topicMax } = platInfo.commonPubParamsConfig;
       const [topicSearch, setTopicSearch] = useState('');
 
       return (
@@ -115,7 +113,7 @@ const VideoPubSetModal_WxSph = memo(
             allowClear
             mode="multiple"
             style={{ width: '100%' }}
-            maxCount={10}
+            maxCount={topicMax}
             placeholder="请输入并选择话题"
             labelInValue
             onSearch={setTopicSearch}
@@ -141,7 +139,7 @@ const VideoPubSetModal_WxSph = memo(
             }}
           />
           <p className="videoPubSetModal_con-tips">
-            您可添加10个标签，按回车键确认
+            您可添加{topicMax}个标签，按回车键确认
           </p>
 
           <UserSelect
