@@ -4,8 +4,11 @@ import { useImagePageStore } from './useImagePageStore';
 import ImageLeftSetting from './components/ImageLeftSetting/ImageLeftSetting';
 import ImageRightSetting from './components/ImageRightSetting/ImageRightSetting';
 import { Button, message, Popconfirm } from 'antd';
-import { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import usePubParamsVerify from '../../hooks/usePubParamsVerify';
+import PubAccountDetModule, {
+  IPubAccountDetModuleRef,
+} from '../../components/PubAccountDetModule/PubAccountDetModule';
 
 export default function Page() {
   const {
@@ -15,6 +18,7 @@ export default function Page() {
     setActivePlat,
     setPlatActiveAccountMap,
     setErrParamsMap,
+    updateAccounts,
   } = useImagePageStore(
     useShallow((state) => ({
       clear: state.clear,
@@ -23,6 +27,7 @@ export default function Page() {
       setPlatActiveAccountMap: state.setPlatActiveAccountMap,
       setActivePlat: state.setActivePlat,
       setErrParamsMap: state.setErrParamsMap,
+      updateAccounts: state.updateAccounts,
     })),
   );
   const { errParamsMap } = usePubParamsVerify(
@@ -34,6 +39,9 @@ export default function Page() {
       };
     }),
   );
+  const pubAccountDetModuleRef = useRef<IPubAccountDetModuleRef>(null);
+  const [loading, setLoading] = useState(false);
+  const [pubProgressModuleOpen, setPubProgressModuleOpen] = useState(false);
 
   useEffect(() => {
     setErrParamsMap(errParamsMap);
@@ -45,8 +53,48 @@ export default function Page() {
     };
   }, []);
 
+  const pubCore = () => {
+    console.log('pubCore');
+  };
+
+  // const pubProgressData = useMemo(() => {
+  //   return videoListChoose
+  //     .filter((v) => v.account && v.video)
+  //     .map((v) => {
+  //       const progress = pubProgressMap.get(v.account!.id);
+  //       return {
+  //         account: v.account!,
+  //         progress: progress?.progress || 0,
+  //         msg: progress?.msg || '',
+  //       };
+  //     });
+  // }, [pubProgressMap, videoListChoose]);
+
   return (
     <div className={styles.image}>
+      {/*<PubProgressModule*/}
+      {/*  pubProgressData={pubProgressData}*/}
+      {/*  open={pubProgressModuleOpen}*/}
+      {/*  onClose={() => setPubProgressModuleOpen(false)}*/}
+      {/*/>*/}
+      <PubAccountDetModule
+        ref={pubAccountDetModuleRef}
+        accounts={imageAccounts
+          .map((v) => v.account)
+          .filter((v) => v !== undefined)}
+        onClose={() => {
+          setLoading(false);
+        }}
+        onPubClick={() => {
+          pubCore();
+        }}
+        onRestartLoginFinish={(account) => {
+          updateAccounts([account]);
+        }}
+        onDetFinish={(accounts) => {
+          updateAccounts(accounts);
+        }}
+      />
       <div className="image-wrapper">
         <ImageLeftSetting />
         <ImageRightSetting />
@@ -83,9 +131,8 @@ export default function Page() {
                 return;
               }
             }
-            console.log(errParamsMap);
-            console.log('images：', images);
-            console.log('imageAccounts：', imageAccounts);
+            pubAccountDetModuleRef.current!.startDet();
+            setLoading(true);
           }}
         >
           一键发布
