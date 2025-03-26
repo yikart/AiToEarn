@@ -18,7 +18,7 @@ export enum PubStatus {
 @Entity({ name: 'pubRecord' })
 export class PubRecordModel extends TempModel {
   @PrimaryGeneratedColumn({ type: 'int', comment: 'id' })
-  id?: number;
+  id!: number;
 
   @Column({ type: 'varchar', nullable: false, comment: '用户id' })
   userId!: string;
@@ -43,9 +43,17 @@ export class PubRecordModel extends TempModel {
   @Column({ type: 'varchar', nullable: false, comment: '视频路径' })
   videoPath!: string;
 
+  // 定时发布日期
+  @Column({ type: 'datetime', nullable: true, comment: '定时发布日期' })
+  timingTime?: Date;
+
   // 封面路径
-  @Column({ type: 'varchar', nullable: false, comment: '封面路径' })
+  @Column({ type: 'varchar', nullable: false, comment: '封面路径，展示给前台用' })
   coverPath!: string;
+
+  // 通用封面路径
+  @Column({ type: 'varchar', nullable: false, comment: '通用封面路径' })
+  commonCoverPath!: string;
 
   // 发布时间
   @Column({ type: 'datetime', nullable: false, comment: '发布时间' })

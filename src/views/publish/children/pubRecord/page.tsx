@@ -62,7 +62,7 @@ export default function Page({
   onChange,
 }: {
   hegiht?: string;
-  onChange?: (ids: number[]) => void;
+  onChange?: (pubRecordModel: PubRecordModel) => void;
 }) {
   const [pulRecardList, setRecardList] = useState<PubRecordModel[]>([]);
   const [open, setOpen] = useState(false);
@@ -179,7 +179,8 @@ export default function Page({
   };
 
   useEffect(() => {
-    if (onChange) onChange(selectedRowKeys);
+    if (onChange)
+      onChange(pulRecardList.find((v) => v.id === selectedRowKeys[0])!);
   }, [selectedRowKeys]);
 
   const rowSelection: TableProps<PubRecordModel>['rowSelection'] = {

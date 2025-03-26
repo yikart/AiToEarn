@@ -6,9 +6,15 @@
  * @Description: 视频发布记录
  */
 import { Entity, Column } from 'typeorm';
-import { ILableValue as ILableValueP, WorkData } from './workData';
+import {
+  ILableValue as ILableValueP,
+  WorkData,
+  DiffParmasType as DiffParmasTypeP,
+} from './workData';
 
 export type ILableValue = ILableValueP;
+
+export type DiffParmasType = DiffParmasTypeP;
 
 @Entity({ name: 'video' })
 export class VideoModel extends WorkData {

@@ -23,6 +23,7 @@ import {
   CommonHotspotSelect,
 } from '../../../../../components/CommonComponents/DouyinCommonComponents';
 import { ILableValue } from '../../../../../../../../electron/db/models/workData';
+import useVideoPubSetModal from './hooks/useVideoPubSetModal';
 
 const HotspotSelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
   const { setOnePubParams } = useVideoPageStore(
@@ -51,16 +52,13 @@ const HotspotSelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
 };
 
 const ActivitySelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
-  const { setOnePubParams } = useVideoPageStore(
-    useShallow((state) => ({
-      setOnePubParams: state.setOnePubParams,
-    })),
-  );
+  const { setOnePubParams, platInfo } = useVideoPubSetModal(currChooseAccount);
+  const { topicMax } = platInfo.commonPubParamsConfig;
 
   return (
     <CommonActivitySelect
       account={currChooseAccount.account}
-      maxCount={5 - currChooseAccount.pubParams!.topics!.length}
+      maxCount={topicMax - currChooseAccount.pubParams!.topics!.length}
       value={
         currChooseAccount.pubParams!.diffParams![AccountType.Douyin]!.activitys
       }
@@ -88,13 +86,10 @@ const VideoPubSetModal_DouYin = memo(
       props: IVideoPubSetModalChildProps,
       ref: ForwardedRef<IVideoPubSetModalChildRef>,
     ) => {
-      const { setOnePubParams } = useVideoPageStore(
-        useShallow((state) => ({
-          setOnePubParams: state.setOnePubParams,
-          videoListChoose: state.videoListChoose,
-        })),
-      );
       const { currChooseAccount } = props;
+      const { setOnePubParams, platInfo } =
+        useVideoPubSetModal(currChooseAccount);
+      const { topicMax } = platInfo.commonPubParamsConfig;
 
       return (
         <>
@@ -111,12 +106,12 @@ const VideoPubSetModal_DouYin = memo(
 
           <TopicSelect
             maxCount={
-              5 -
+              topicMax -
               currChooseAccount.pubParams!.diffParams![AccountType.Douyin]!
                 .activitys!.length
             }
             currChooseAccount={currChooseAccount}
-            tips="最多可添加5个话题（包含活动奖励）"
+            tips={`最多可添加${topicMax}个话题（包含活动奖励）`}
           />
           <ActivitySelect currChooseAccount={currChooseAccount} />
 

@@ -38,6 +38,8 @@ export interface IAccountPlatInfo {
       // 同 VideoPubSetModalCommon.timeOffset
       timeOffset: number;
     };
+    // 话题数量限制
+    topicMax: number;
   };
 }
 
@@ -57,6 +59,7 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
           maxDate: 13,
           timeOffset: 60,
         },
+        topicMax: 3,
       },
     },
   ],
@@ -73,6 +76,7 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
           maxDate: 14,
           timeOffset: 60,
         },
+        topicMax: 20,
         titleMax: 20,
       },
     },
@@ -90,6 +94,7 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
           timeOffset: 120,
         },
         titleMax: 30,
+        topicMax: 5,
       },
     },
   ],
@@ -106,6 +111,7 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
           timeOffset: 60,
         },
         titleMax: 16,
+        topicMax: 10,
       },
     },
   ],

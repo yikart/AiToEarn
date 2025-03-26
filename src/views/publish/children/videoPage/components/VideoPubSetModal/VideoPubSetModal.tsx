@@ -13,7 +13,6 @@ import {
   Button,
   message,
   Modal,
-  notification,
   Space,
   Switch,
   Tabs,
@@ -24,7 +23,7 @@ import { useShallow } from 'zustand/react/shallow';
 import styles from './videoPubSetModal.module.scss';
 import { AccountPlatInfoMap } from '@/views/account/comment';
 import VideoCoverSeting from '@/views/publish/children/videoPage/components/VideoCoverSeting';
-import { AccountStatus, AccountType } from '@@/AccountEnum';
+import { AccountType } from '@@/AccountEnum';
 import {
   icpCreatePubRecord,
   icpCreateVideoPubRecord,
@@ -48,19 +47,15 @@ import VideoPubSetModalVideo, {
 import { usePubStroe } from '../../../../../../store/pubStroe';
 
 import { IVideoChooseItem } from '../../videoPage';
+import usePubParamsVerify, {
+  PubParamsErrStatusEnum,
+} from '../../../../hooks/usePubParamsVerify';
+import { useAccountStore } from '../../../../../../store/commont';
 
 export interface IVideoPubSetModalRef {}
 
 export interface IVideoPubSetModalProps {
   onClose: (open: boolean) => void;
-}
-
-// 错误状态
-enum ErrStatusEnum {
-  // 登录错误
-  LOGIN = 1,
-  // 参数错误
-  PARAMS = 2,
 }
 
 const PubSetModalChild = ({
@@ -98,6 +93,7 @@ const VideoPubSetModal = memo(
         setVideoPubSetModalOpen,
         updateAccounts,
         accountRestart,
+        commonPubParams,
         clear,
       } = useVideoPageStore(
         useShallow((state) => ({
@@ -110,6 +106,7 @@ const VideoPubSetModal = memo(
           updateAccounts: state.updateAccounts,
           accountRestart: state.accountRestart,
           clear: state.clear,
+          commonPubParams: state.commonPubParams,
         })),
       );
       const { moreParamsOpen, setMoreParamsOpen } = usePubStroe(
@@ -119,7 +116,6 @@ const VideoPubSetModal = memo(
         })),
       );
       const [loading, setLoading] = useState(false);
-      const [api, contextHolder] = notification.useNotification();
       const pubAccountDetModuleRef = useRef<IPubAccountDetModuleRef>(null);
       // 主进程传过来的发布进度数据，key为用户id value为发布进度数据
       const [pubProgressMap, setPubProgressMap] = useState<
@@ -127,6 +123,15 @@ const VideoPubSetModal = memo(
       >(new Map());
       const [pubProgressModuleOpen, setPubProgressModuleOpen] = useState(false);
       const videoPubSetModalVideoRef = useRef<IVideoPubSetModalVideoRef>(null);
+      const { errVideoMap } = usePubParamsVerify(
+        videoListChoose.map((v) => {
+          return {
+            id: v.id,
+            account: v.account,
+            pubParams: v.pubParams,
+          };
+        }),
+      );
 
       useEffect(() => {
         // 发布进度监听
@@ -157,43 +162,6 @@ const VideoPubSetModal = memo(
           });
       }, [pubProgressMap, videoListChoose]);
 
-      // 捕获 videoListChoose 的错误
-      const errVideoMap = useMemo(() => {
-        const errVideoMapTemp: Map<
-          string,
-          {
-            message: string;
-            // 同 AlertProps.type
-            type: 'warning' | 'error';
-            errType: ErrStatusEnum;
-            // 参数错误提示消息
-            parErrMsg?: string;
-          }
-        > = new Map();
-        for (const v of videoListChoose) {
-          if (v.account && v.account.status === AccountStatus.DISABLE) {
-            errVideoMapTemp.set(v.id, {
-              message: '登录失效',
-              type: 'warning',
-              errType: ErrStatusEnum.LOGIN,
-            });
-          } else if (
-            v.account?.type === AccountType.KWAI &&
-            v.pubParams.cover &&
-            (v.pubParams.cover.width < 400 || v.pubParams.cover.height < 400)
-          ) {
-            // 快手要求封面必须大于 400x400
-            errVideoMapTemp.set(v.id, {
-              message: '参数错误',
-              type: 'error',
-              errType: ErrStatusEnum.PARAMS,
-              parErrMsg: '封面最小尺寸400*400',
-            });
-          }
-        }
-        return errVideoMapTemp;
-      }, [videoListChoose]);
-
       // 当前选择的账户数据
       const currChooseAccount = useMemo(() => {
         if (!currChooseAccountId) return videoListChoose[0];
@@ -208,11 +176,13 @@ const VideoPubSetModal = memo(
         };
         // 创建一级记录
         const recordRes = await icpCreatePubRecord({
-          title: '/',
-          desc: '/',
+          title: commonPubParams.title,
+          desc: commonPubParams.describe,
           type: PubType.VIDEO,
+          timingTime: commonPubParams.timingTime,
           videoPath: videoListChoose[0].video?.videoPath,
           coverPath: videoListChoose[0].pubParams.cover?.imgPath,
+          commonCoverPath: commonPubParams.cover?.imgPath,
         });
         if (!recordRes) return err();
 
@@ -246,7 +216,7 @@ const VideoPubSetModal = memo(
         // 成功数据
         const successList = okRes.filter((v) => v.code === 1);
         setTimeout(() => {
-          api.open({
+          useAccountStore.getState().notification!.open({
             message: '发布结果',
             description: (
               <>
@@ -278,14 +248,11 @@ const VideoPubSetModal = memo(
         // 数据校验
         for (const [key, errVideoItem] of errVideoMap) {
           if (errVideoItem) {
-            setCurrChooseAccountId(key);
-            message.warning(errVideoItem.message);
+            setCurrChooseAccountId(`${key}`);
+            message.warning(errVideoItem.parErrMsg);
             setMoreParamsOpen(true);
             return;
           }
-        }
-        if (videoListChoose.some((v) => !v.pubParams.cover)) {
-          return message.warning('有的数据未上传封面，请检查后重试！');
         }
         setLoading(true);
         pubAccountDetModuleRef.current!.startDet();
@@ -298,7 +265,6 @@ const VideoPubSetModal = memo(
 
       return (
         <>
-          {contextHolder}
           <PubProgressModule
             pubProgressData={pubProgressData}
             open={pubProgressModuleOpen}
@@ -368,11 +334,13 @@ const VideoPubSetModal = memo(
                       label: (
                         <div className="videoPubSetModal-tabLabel">
                           {errItem && (
-                            <Alert
-                              message={errItem.message}
-                              type={errItem.type}
-                              showIcon
-                            />
+                            <Tooltip title={errItem.parErrMsg}>
+                              <Alert
+                                message={errItem.message}
+                                type={errItem.type}
+                                showIcon
+                              />
+                            </Tooltip>
                           )}
                           <Tooltip title={account.nickname}>
                             <Avatar src={account?.avatar} size="small" />
@@ -404,7 +372,7 @@ const VideoPubSetModal = memo(
                     if (!errItem) return;
                     return (
                       <div className="videoPubSetModal_con_top">
-                        {errItem.errType === ErrStatusEnum.LOGIN && (
+                        {errItem.errType === PubParamsErrStatusEnum.LOGIN && (
                           <Button
                             type="primary"
                             danger
@@ -415,7 +383,7 @@ const VideoPubSetModal = memo(
                             重新登录
                           </Button>
                         )}
-                        {errItem.errType === ErrStatusEnum.PARAMS && (
+                        {errItem.errType === PubParamsErrStatusEnum.PARAMS && (
                           <Alert
                             type="error"
                             showIcon

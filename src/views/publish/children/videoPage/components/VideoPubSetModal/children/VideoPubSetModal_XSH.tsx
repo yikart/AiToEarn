@@ -4,8 +4,6 @@ import {
   IVideoPubSetModalChildRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/videoPubSetModal.type';
 import { Radio } from 'antd';
-import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
-import { useShallow } from 'zustand/react/shallow';
 import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import TopicSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/TopicSelect';
 import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
@@ -15,6 +13,7 @@ import {
   TitleInput,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
 import UserSelect from '../components/UserSelect';
+import useVideoPubSetModal from './hooks/useVideoPubSetModal';
 
 const VideoPubSetModal_WxSph = memo(
   forwardRef(
@@ -22,12 +21,9 @@ const VideoPubSetModal_WxSph = memo(
       { currChooseAccount }: IVideoPubSetModalChildProps,
       ref: ForwardedRef<IVideoPubSetModalChildRef>,
     ) => {
-      const { setOnePubParams } = useVideoPageStore(
-        useShallow((state) => ({
-          setOnePubParams: state.setOnePubParams,
-          videoListChoose: state.videoListChoose,
-        })),
-      );
+      const { setOnePubParams, platInfo } =
+        useVideoPubSetModal(currChooseAccount);
+      const { topicMax } = platInfo.commonPubParamsConfig;
 
       return (
         <>
@@ -44,9 +40,9 @@ const VideoPubSetModal_WxSph = memo(
           />
 
           <TopicSelect
-            maxCount={20}
+            maxCount={topicMax}
             currChooseAccount={currChooseAccount}
-            tips="您可以添加20个话题"
+            tips={`您可以添加${topicMax}个话题`}
           />
 
           <UserSelect currChooseAccount={currChooseAccount} title="@用户" />

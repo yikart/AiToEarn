@@ -11,6 +11,7 @@ import PubRecord from '../../pubRecord/page';
 import { icpGetPubVideoRecord } from '../../../../../icp/publish';
 import { useAccountStore } from '../../../../../store/account';
 import { ChooseChunk } from '../../../components/CommonComponents/CommonComponents';
+import { PubRecordModel } from '../../../comment';
 
 export interface INoChoosePageRef {}
 
@@ -29,7 +30,7 @@ const NoChoosePage = memo(
         })),
       );
     const [importPubRecordOpen, setImportPubRecordOpen] = useState(false);
-    const pubRecordIds = useRef<number[]>([]);
+    const pubRecord = useRef<PubRecordModel>();
     const { accountMap } = useAccountStore(
       useShallow((state) => ({
         accountMap: state.accountMap,
@@ -45,13 +46,14 @@ const NoChoosePage = memo(
           okText="确认导入"
           onCancel={() => setImportPubRecordOpen(false)}
           onOk={async () => {
-            if (pubRecordIds.current.length === 0) {
+            if (!pubRecord.current) {
               return message.warning('未选择任何数据');
             }
-            const res = await icpGetPubVideoRecord(pubRecordIds.current[0]);
+            const res = await icpGetPubVideoRecord(pubRecord.current.id);
             restartPub(
               res,
               res.map((k) => accountMap.get(k.accountId)!),
+              pubRecord.current,
             );
             setImportPubRecordOpen(false);
           }}
@@ -59,8 +61,8 @@ const NoChoosePage = memo(
           <Alert message="选择一条发布记录" />
           <PubRecord
             hegiht="55vh"
-            onChange={async (ids) => {
-              pubRecordIds.current = ids;
+            onChange={async (pubRecordModel) => {
+              pubRecord.current = pubRecordModel;
             }}
           />
         </Modal>
