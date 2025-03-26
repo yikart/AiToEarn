@@ -50,8 +50,6 @@ const Com = forwardRef<AddAutoRunRef>((props: any, ref) => {
         footer={null}
         width={400}
       >
-        <p>账号ID{accountId}</p>
-
         <CronSchedule onSubmit={handleCron} />
       </Modal>
     </>
