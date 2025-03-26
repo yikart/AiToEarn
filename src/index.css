@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  background: #fff;
+}
+
 /* 确保根元素和 body 占满整个视口高度 */
 html, body, #root {
   @apply h-full w-full m-0 p-0;
