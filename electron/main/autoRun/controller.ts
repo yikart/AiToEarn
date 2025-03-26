@@ -7,10 +7,11 @@
  */
 import { Controller, Icp, Inject, Scheduled } from '../core/decorators';
 import { AutoRunService } from './service';
-import { AutoRunType } from '../../db/models/autoRun';
+import { AutoRunStatus, AutoRunType } from '../../db/models/autoRun';
 import { getUserInfo } from '../user/comment';
 import { EtEvent } from '../../global/event';
 import { autoRunTypeEtTag, hasTriggered } from './comment';
+import { AutoRunRecordStatus } from '../../db/models/autoRunRecord';
 
 @Controller()
 export class AutoRunController {
@@ -44,8 +45,21 @@ export class AutoRunController {
    * 进程列表
    */
   @Icp('ICP_AUTO_RUN_LIST')
-  async getAutoRunList(event: Electron.IpcMainInvokeEvent) {
-    const list = await this.autoRunService.findAutoRunList({});
+  async getAutoRunList(
+    event: Electron.IpcMainInvokeEvent,
+    pageInfo: {
+      page: number;
+      pageSize: number;
+    },
+    query: {
+      type?: AutoRunType;
+      status?: AutoRunStatus;
+      cycleType?: string;
+      accountId?: number;
+      dataId?: string;
+    },
+  ) {
+    const list = await this.autoRunService.findAutoRunList(pageInfo, query);
     return list;
   }
 
@@ -100,8 +114,23 @@ export class AutoRunController {
    * 获取进程记录列表
    */
   @Icp('ICP_AUTO_RUN_RECORD_LIST')
-  async getCommentList(event: Electron.IpcMainInvokeEvent): Promise<any> {
-    const list = await this.autoRunService.findAutoRunRecordList({});
+  async getCommentList(
+    event: Electron.IpcMainInvokeEvent,
+    pageInfo: {
+      page: number;
+      pageSize: number;
+    },
+    query: {
+      autoRunId: number;
+      type?: AutoRunType;
+      status?: AutoRunRecordStatus;
+      cycleType?: string;
+    },
+  ): Promise<any> {
+    const list = await this.autoRunService.findAutoRunRecordList(
+      pageInfo,
+      query,
+    );
 
     return list;
   }

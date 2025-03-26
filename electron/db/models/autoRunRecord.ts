@@ -21,6 +21,9 @@ export class AutoRunRecordModel extends TempModel {
   @PrimaryGeneratedColumn({ type: 'int', comment: 'id' })
   id!: number;
 
+  @Column({ type: 'int', nullable: false, comment: ' 自动任务id' })
+  autoRunId!: number;
+
   @Column({ type: 'varchar', nullable: false, comment: '用户id' })
   userId!: string;
 

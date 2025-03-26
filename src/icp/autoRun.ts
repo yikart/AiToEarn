@@ -64,20 +64,49 @@ export async function ipcCreateAutoRun(data: {
 
 /**
  * 获取进程列表
- * @param data
+ * @param query
  */
-export async function ipcGetAutoRunList() {
-  const res: AutoRun[] = await window.ipcRenderer.invoke('ICP_AUTO_RUN_LIST');
+export async function ipcGetAutoRunList(
+  pageInfo: {
+    page: number;
+    pageSize: number;
+  },
+  query: {
+    type?: AutoRunType;
+    status?: AutoRunStatus;
+    cycleType?: string;
+    accountId?: number;
+    dataId?: string;
+  },
+) {
+  const res: AutoRun[] = await window.ipcRenderer.invoke(
+    'ICP_AUTO_RUN_LIST',
+    pageInfo,
+    query,
+  );
   return res;
 }
 
 /**
- * 获取进程列表
+ * 获取进运行记录列表
  * @param data
  */
-export async function ipcGetAutoRunRecordList() {
+export async function ipcGetAutoRunRecordList(
+  pageInfo: {
+    page: number;
+    pageSize: number;
+  },
+  query: {
+    autoRunId: number;
+    type?: AutoRunType;
+    status?: AutoRunRecordStatus;
+    cycleType?: string;
+  },
+) {
   const res: AutoRunRecord[] = await window.ipcRenderer.invoke(
     'ICP_AUTO_RUN_RECORD_LIST',
+    pageInfo,
+    query,
   );
   return res;
 }

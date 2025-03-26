@@ -48,7 +48,11 @@ export class PubRecordModel extends TempModel {
   timingTime?: Date;
 
   // 封面路径
-  @Column({ type: 'varchar', nullable: false, comment: '封面路径，展示给前台用' })
+  @Column({
+    type: 'varchar',
+    nullable: false,
+    comment: '封面路径，展示给前台用',
+  })
   coverPath!: string;
 
   // 通用封面路径

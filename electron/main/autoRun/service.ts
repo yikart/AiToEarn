@@ -5,12 +5,16 @@
  * @Description: autoRun AutoRun
  */
 import { Injectable } from '../core/decorators';
-import { AutoRunModel, AutoRunStatus } from '../../db/models/autoRun';
+import {
+  AutoRunModel,
+  AutoRunStatus,
+  AutoRunType,
+} from '../../db/models/autoRun';
 import {
   AutoRunRecordModel,
   AutoRunRecordStatus,
 } from '../../db/models/autoRunRecord';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { AppDataSource } from '../../db';
 import windowOperate from '../../util/windowOperate';
 import { SendChannelEnum } from '../../../commont/UtilsEnum';
@@ -57,10 +61,45 @@ export class AutoRunService {
   }
 
   // 查询进程列表
-  async findAutoRunList(data: Partial<AutoRunModel>) {
-    return await this.autoRunRepository.find({
-      where: data,
+  async findAutoRunList(
+    pageInfo: {
+      page: number;
+      pageSize: number;
+    },
+    query: {
+      type?: AutoRunType;
+      status?: AutoRunStatus;
+      cycleType?: string;
+      accountId?: number;
+      dataId?: string;
+    },
+  ): Promise<{
+    list: AutoRunModel[];
+    total: number;
+  }> {
+    const { page, pageSize } = pageInfo;
+    const whereClause: FindOptionsWhere<AutoRunModel> = {
+      ...(query.type !== undefined && { type: query.type }),
+      ...(query.status !== undefined && { status: query.status }),
+      ...(query.cycleType !== undefined && { cycleType: query.cycleType }),
+      ...(query.accountId !== undefined && { accountId: query.accountId }),
+      ...(query.dataId !== undefined && { dataId: query.dataId }),
+    };
+
+    const list = await this.autoRunRepository.find({
+      where: whereClause,
+      skip: (page - 1) * pageSize,
+      take: pageSize,
     });
+
+    const total = await this.autoRunRepository.count({
+      where: whereClause,
+    });
+
+    return {
+      list,
+      total,
+    };
   }
 
   // 查询需要运行的进程列表
@@ -92,10 +131,40 @@ export class AutoRunService {
   }
 
   // 查询进程记录列表
-  async findAutoRunRecordList(data: Partial<AutoRunRecordModel>) {
-    return await this.autoRunRecordRepository.find({
-      where: data,
+  async findAutoRunRecordList(
+    pageInfo: {
+      page: number;
+      pageSize: number;
+    },
+    query: {
+      autoRunId: number;
+      type?: AutoRunType;
+      status?: AutoRunRecordStatus;
+      cycleType?: string;
+    },
+  ) {
+    const { page, pageSize } = pageInfo;
+    const whereClause: FindOptionsWhere<AutoRunRecordModel> = {
+      ...(query.autoRunId !== undefined && { autoRunId: query.autoRunId }),
+      ...(query.type !== undefined && { type: query.type }),
+      ...(query.status !== undefined && { status: query.status }),
+      ...(query.cycleType !== undefined && { cycleType: query.cycleType }),
+    };
+
+    const list = await this.autoRunRecordRepository.find({
+      where: whereClause,
+      skip: (page - 1) * pageSize,
+      take: pageSize,
     });
+
+    const total = await this.autoRunRecordRepository.count({
+      where: whereClause,
+    });
+
+    return {
+      list,
+      total,
+    };
   }
 
   // 更新进程记录状态

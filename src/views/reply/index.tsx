@@ -6,7 +6,7 @@
  * @Description: 评论页面 reply
  */
 import { icpCreatorList, WorkData, icpCreateCommentList } from '@/icp/reply';
-import { Button, Col, message, Row, Tooltip } from 'antd';
+import { Button, Col, message, Row, Tabs, Tooltip } from 'antd';
 import { useCallback, useRef, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import ReplyWorks, { ReplyWorksRef } from './components/replyWorks';
@@ -20,6 +20,7 @@ import {
   MenuUnfoldOutlined,
 } from '@ant-design/icons';
 import styles from './reply.module.scss';
+import AutoRun from './autoRun';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
@@ -97,77 +98,90 @@ export default function Page() {
       <AccountSidebar
         activeAccountId={activeAccountId}
         onAccountChange={useCallback((info) => {
+          setWordList([]);
           setActiveAccountId(info.id);
           getCreatorList(info.id);
         }, [])}
       />
 
-      <div className="grid grid-cols-5 p-4 account-con">
-        {wordList.map((item) => (
-          <div
-            className="bg-white w-[200px] h-[200px] border border-gray-300 p-4 rounded-lg hover:shadow-lg transition-shadow duration-300 m-4"
-            key={item.dataId}
-          >
-            <Row>
-              <Col span={12}>
-                <div className="w-[100px] h-[200px]">
-                  <img
-                    alt="example"
-                    src={item.coverUrl}
-                    className="object-cover w-full h-full rounded"
-                  />
-                </div>
-              </Col>
-              <Col span={12}>
-                <div className="flex flex-col h-full">
-                  <p className="mb-2">{item.title || '无标题'}</p>
-                  <div className="w-full mt-auto">
-                    <Row justify="space-evenly">
-                      <Col span={8}>
-                        <Tooltip title="评论列表">
-                          <MenuUnfoldOutlined
-                            onClick={() => openCommentList(item)}
-                          />
-                        </Tooltip>
-                      </Col>
-                      <Col span={8}>
-                        <Tooltip title="评论作品">
-                          <CommentOutlined
-                            onClick={() => openReplyWorks(item)}
-                          />
-                        </Tooltip>
-                      </Col>
-                    </Row>
+      <div className="m-4 ">
+        <Tabs defaultActiveKey="1">
+          <Tabs.TabPane tab="作品列表" key="1">
+            <div className="grid grid-cols-5 p-4 account-con bg-slate-300">
+              {wordList.map((item) => (
+                <div
+                  className="bg-white w-[200px] h-[200px] border border-gray-300 p-4 rounded-lg hover:shadow-lg transition-shadow duration-300 m-4"
+                  key={item.dataId}
+                >
+                  <Row>
+                    <Col span={12}>
+                      <div className="w-[100px] h-[200px]">
+                        <img
+                          alt="example"
+                          src={item.coverUrl}
+                          className="object-cover w-full h-full rounded"
+                        />
+                      </div>
+                    </Col>
+                    <Col span={12}>
+                      <div className="flex flex-col h-full">
+                        <p className="mb-2">{item.title || '无标题'}</p>
+                        <div className="w-full mt-auto">
+                          <Row justify="space-evenly">
+                            <Col span={8}>
+                              <Tooltip title="评论列表">
+                                <MenuUnfoldOutlined
+                                  onClick={() => openCommentList(item)}
+                                />
+                              </Tooltip>
+                            </Col>
+                            <Col span={8}>
+                              <Tooltip title="评论作品">
+                                <CommentOutlined
+                                  onClick={() => openReplyWorks(item)}
+                                />
+                              </Tooltip>
+                            </Col>
+                          </Row>
 
-                    <Row justify="space-evenly">
-                      <Col span={8}>
-                        <Tooltip title="一键评论">
-                          <AliwangwangOutlined
-                            onClick={() => createCommentList(item)}
-                          />
-                        </Tooltip>
-                      </Col>
-                      <Col span={8}>
-                        <Tooltip title="自动评论">
-                          <FieldTimeOutlined
-                            onClick={() => openAddAutoRun(item)}
-                          />
-                        </Tooltip>
-                      </Col>
-                    </Row>
-                  </div>
+                          <Row justify="space-evenly">
+                            <Col span={8}>
+                              <Tooltip title="一键评论">
+                                <AliwangwangOutlined
+                                  onClick={() => createCommentList(item)}
+                                />
+                              </Tooltip>
+                            </Col>
+                            <Col span={8}>
+                              <Tooltip title="自动评论">
+                                <FieldTimeOutlined
+                                  onClick={() => openAddAutoRun(item)}
+                                />
+                              </Tooltip>
+                            </Col>
+                          </Row>
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
                 </div>
-              </Col>
-            </Row>
-          </div>
-        ))}
-        {wordList.length > 0 && (
-          <p>
-            <Button type="link" onClick={() => getCreatorList(activeAccountId)}>
-              加载更多
-            </Button>
-          </p>
-        )}
+              ))}
+              {wordList.length > 0 && (
+                <p>
+                  <Button
+                    type="link"
+                    onClick={() => getCreatorList(activeAccountId)}
+                  >
+                    加载更多
+                  </Button>
+                </p>
+              )}
+            </div>
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="自动任务" key="2">
+            <AutoRun />
+          </Tabs.TabPane>
+        </Tabs>
       </div>
 
       <ReplyWorks ref={Ref_ReplyWorks} />
