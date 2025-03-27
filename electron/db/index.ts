@@ -20,6 +20,7 @@ import { asyData as accountExamine } from './scripts/account';
 import { logger } from '../global/log';
 import { AutoRunModel } from './models/autoRun';
 import { AutoRunRecordModel } from './models/autoRunRecord';
+import { ImgTextModel } from './models/imgText';
 
 const configPath = app.getPath('userData');
 const database = path.join(configPath, 'database.sqlite');
@@ -39,6 +40,7 @@ export const AppDataSource = new DataSource({
     VideoStatsModel,
     AutoRunModel,
     AutoRunRecordModel,
+    ImgTextModel,
   ], // 实体或模型表
   migrations: Object.values(migrations), // 迁移类
   migrationsRun: true, // 确保在连接时自动运行迁移

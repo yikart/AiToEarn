@@ -34,6 +34,7 @@ const HotspotSelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
 
   return (
     <CommonHotspotSelect
+      account={currChooseAccount.account}
       value={
         currChooseAccount.pubParams!.diffParams![AccountType.Douyin]!.hotPoint
       }
@@ -122,9 +123,9 @@ const VideoPubSetModal_DouYin = memo(
             title="@好友"
           />
 
-          <LocationSelect currChooseAccount={currChooseAccount} />
-
           <HotspotSelect {...props} />
+
+          <LocationSelect currChooseAccount={currChooseAccount} />
 
           <ScheduledTimeSelect currChooseAccount={currChooseAccount} />
 

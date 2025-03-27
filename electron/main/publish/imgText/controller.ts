@@ -1,5 +1,4 @@
 import { Controller, Et, Icp, Inject } from '../../core/decorators';
-import { VideoPubService } from '../video/service';
 import { PublishService } from '../service';
 import { AccountService } from '../../account/service';
 import { ImgTextPubService } from './service';
@@ -9,7 +8,7 @@ import platController from '../../plat';
 
 @Controller()
 export class ImgTextPubController {
-  @Inject(VideoPubService)
+  @Inject(ImgTextPubService)
   private readonly imgTextService!: ImgTextPubService;
 
   @Inject(PublishService)

@@ -235,7 +235,6 @@ const VideoPubSetModal = memo(
               </Space>
             ),
             key: Date.now(),
-            onClose: close,
           });
         }, 10);
       };

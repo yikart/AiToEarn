@@ -136,7 +136,6 @@ export default function Page() {
         </Space>
       ),
       key: Date.now(),
-      onClose: close,
     });
   };
 
