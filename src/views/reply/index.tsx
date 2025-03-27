@@ -104,7 +104,7 @@ export default function Page() {
         }, [])}
       />
 
-      <div className="m-4 ">
+      <div className="m-4">
         <Tabs defaultActiveKey="1">
           <Tabs.TabPane tab="作品列表" key="1">
             <div className="grid grid-cols-5 p-4 account-con bg-slate-300">
@@ -179,7 +179,9 @@ export default function Page() {
             </div>
           </Tabs.TabPane>
           <Tabs.TabPane tab="自动任务" key="2">
-            <AutoRun />
+            <div style={{ width: '100%' }}>
+              <AutoRun />
+            </div>
           </Tabs.TabPane>
         </Tabs>
       </div>
