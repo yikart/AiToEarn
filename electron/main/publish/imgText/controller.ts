@@ -50,6 +50,8 @@ export class ImgTextPubController {
       imgTextModels.map((v) => v.accountId),
     );
 
+    console.log(imgTextModels);
+
     // 发布
     const pubRes = await platController.imgTextPublish(
       imgTextModels,

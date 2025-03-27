@@ -1,7 +1,6 @@
 import { Repository } from 'typeorm';
 import { ImgTextModel } from '../../../db/models/imgText';
 import { AppDataSource } from '../../../db';
-import { VideoModel } from '../../../db/models/video';
 import { Injectable } from '../../core/decorators';
 import { getUserInfo } from '../../user/comment';
 
@@ -10,7 +9,7 @@ export class ImgTextPubService {
   private imgTextRepository: Repository<ImgTextModel>;
 
   constructor() {
-    this.imgTextRepository = AppDataSource.getRepository(VideoModel);
+    this.imgTextRepository = AppDataSource.getRepository(ImgTextModel);
   }
 
   // 创建图文记录

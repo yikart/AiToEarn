@@ -36,8 +36,8 @@ const WebView = memo(
       // 隔离ID
       const partitionId = useRef(generateUUID());
 
-      console.log(cookieParams);
       useEffect(() => {
+        console.log(cookieParams);
         setLoading(true);
 
         webviewRef.current?.addEventListener('dom-ready', async () => {

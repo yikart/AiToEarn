@@ -561,31 +561,19 @@ export class DouyinService {
         console.log('完整的发布参数:', publishVideoParams);
 
         // 获取csrf-token
-        console.log(`[${new Date().toLocaleString()}] 开始获取csrf-token...`);
+        console.log(`开始获取csrf-token...`);
         const csrfToken = await this.getSecsdkCsrfToken(cookieString);
-        console.log(
-          `[${new Date().toLocaleString()}] 获取到的csrf-token:`,
-          csrfToken,
-        );
+        console.log(`获取到的csrf-token:`, csrfToken);
         callback(70, '正在发布...');
 
         // 获取bd-ticket
-        console.log(`[${new Date().toLocaleString()}] 开始获取bd-ticket...`);
+        console.log(`开始获取bd-ticket...`);
         const bdTicketHeaders = await this.getBdTicketHeaders(tokens);
-        console.log(
-          `[${new Date().toLocaleString()}] 获取到的bd-ticket headers:`,
-          bdTicketHeaders,
-        );
+        console.log(`获取到的bd-ticket headers:`, bdTicketHeaders);
 
         // 发布视频
-        console.log(
-          `[${new Date().toLocaleString()}] 开始发布视频请求...`,
-          this.publishUrlV2,
-        );
-        console.log(
-          `[${new Date().toLocaleString()}] 发布参数:`,
-          publishVideoParams,
-        );
+        console.log(`开始发布视频请求...`, this.publishUrlV2);
+        console.log(`发布参数:`, publishVideoParams);
         const publishResult = await requestNet({
           url: this.publishUrlV2,
           method: 'POST',
@@ -597,15 +585,10 @@ export class DouyinService {
           body: publishVideoParams,
         });
         callback(100, '发布完成');
-        console.log(
-          `[${new Date().toLocaleString()}] 发布请求结果:`,
-          publishResult,
-        );
+        console.log(`发布请求结果:`, publishResult);
 
         if (publishResult.status === 403 || publishResult.data === null) {
-          console.error(
-            `[${new Date().toLocaleString()}] 发布失败，状态码403或返回数据为空`,
-          );
+          console.error(`发布失败，状态码403或返回数据为空`);
           reject('请重新授权账号后发布,如多次失败,请联系技术处理!');
           return false;
         }
@@ -615,7 +598,7 @@ export class DouyinService {
           publishResult.data.status_code !== 0
         ) {
           console.error(
-            `[${new Date().toLocaleString()}] 发布失败，状态码异常:`,
+            `发布失败，状态码异常:`,
             publishResult.data.status_code,
           );
           reject(publishResult.data.status_msg || '发布失败,账号可能已掉线!');
@@ -627,10 +610,7 @@ export class DouyinService {
           publishId: publishResult.data.item_id,
           shareLink: `https://www.douyin.com/user/self?from_tab_name=main&modal_id=${publishResult.data.item_id}&showTab=post`,
         };
-        console.log(
-          `[${new Date().toLocaleString()}] 发布成功，返回数据:`,
-          response,
-        );
+        console.log(`发布成功，返回数据:`, response);
         resolve(response);
       } catch (err) {
         console.error('发布视频过程中出现错误:', err);
@@ -653,7 +633,7 @@ export class DouyinService {
     imagePath: string[],
     platformSetting: DouyinPlatformSettingType,
   ): Promise<any> {
-    console.log(`[${new Date().toLocaleString()}] 开始发布图片作品，参数:`, {
+    console.log(`开始发布图片作品，参数:`, {
       cookies: typeof cookies === 'string' ? cookies.length : cookies.length,
       tokens,
       imagePath,
@@ -663,46 +643,30 @@ export class DouyinService {
     return new Promise(async (resolve, reject) => {
       try {
         // 初始化cookie
-        console.log(`[${new Date().toLocaleString()}] 开始转换cookie...`);
+        console.log(`开始转换cookie...`);
         const cookieString = CommonUtils.convertCookieToJson(cookies);
-        console.log(
-          `[${new Date().toLocaleString()}] cookie转换结果:`,
-          cookieString,
-        );
+        console.log(`cookie转换结果:`, cookieString);
 
         // 获取用户Uid
-        console.log(`[${new Date().toLocaleString()}] 开始获取用户Uid...`);
+        console.log(`开始获取用户Uid...`);
         const userUid = await this.getUserUid(cookieString);
-        console.log(
-          `[${new Date().toLocaleString()}] 获取到的用户Uid:`,
-          userUid,
-        );
+        console.log(`获取到的用户Uid:`, userUid);
 
         const images = [];
         // 上传图片
-        console.log(
-          `[${new Date().toLocaleString()}] 开始上传图片，共${imagePath.length}张...`,
-        );
+        console.log(`开始上传图片，共${imagePath.length}张...`);
         for (const [index, imgUrl] of imagePath.entries()) {
-          console.log(
-            `[${new Date().toLocaleString()}] 开始上传第${index + 1}张图片:`,
-            imgUrl,
-          );
+          console.log(`开始上传第${index + 1}张图片:`, imgUrl);
           // 上传图片 获取poster
           const poster = await this.uploadCoverFile(
             imgUrl,
             cookieString,
             userUid,
           );
-          console.log(
-            `[${new Date().toLocaleString()}] 第${index + 1}张图片上传完成，poster:`,
-            poster,
-          );
+          console.log(`第${index + 1}张图片上传完成，poster:`, poster);
 
           // 获取图片信息
-          console.log(
-            `[${new Date().toLocaleString()}] 开始获取第${index + 1}张图片信息...`,
-          );
+          console.log(`开始获取第${index + 1}张图片信息...`);
           const posterInfo = await this.makeRequest(
             imgUrl + '?x-oss-process=image/info',
             {
@@ -711,10 +675,7 @@ export class DouyinService {
               timeout: 60000,
             },
           );
-          console.log(
-            `[${new Date().toLocaleString()}] 获取到第${index + 1}张图片信息:`,
-            posterInfo,
-          );
+          console.log(`获取到第${index + 1}张图片信息:`, posterInfo);
 
           images.push({
             uri: poster,
@@ -722,39 +683,27 @@ export class DouyinService {
             height: parseInt(posterInfo.ImageHeight.value),
           });
         }
-        console.log(
-          `[${new Date().toLocaleString()}] 所有图片上传完成，图片信息:`,
-          images,
-        );
+        console.log(`所有图片上传完成，图片信息:`, images);
 
         // 获取公共请求参数
-        console.log(`[${new Date().toLocaleString()}] 开始获取发布参数...`);
+        console.log(`开始获取发布参数...`);
         const publishImgParams = this.getPublishPublicParams(platformSetting);
         // 拼接图文内容
         publishImgParams.images = images;
-        console.log(
-          `[${new Date().toLocaleString()}] 获取到的发布参数:`,
-          publishImgParams,
-        );
+        console.log(`获取到的发布参数:`, publishImgParams);
 
         // 获取csrf-token
-        console.log(`[${new Date().toLocaleString()}] 开始获取csrf-token...`);
+        console.log(`开始获取csrf-token...`);
         const csrfToken = await this.getSecsdkCsrfToken(cookieString);
-        console.log(
-          `[${new Date().toLocaleString()}] 获取到的csrf-token:`,
-          csrfToken,
-        );
+        console.log(`获取到的csrf-token:`, csrfToken);
 
         // 获取bd-ticket
-        console.log(`[${new Date().toLocaleString()}] 开始获取bd-ticket...`);
+        console.log(`开始获取bd-ticket...`);
         const bdTicketHeaders = await this.getBdTicketHeaders(tokens);
-        console.log(
-          `[${new Date().toLocaleString()}] 获取到的bd-ticket headers:`,
-          bdTicketHeaders,
-        );
+        console.log(`获取到的bd-ticket headers:`, bdTicketHeaders);
 
         // 发布图文
-        console.log(`[${new Date().toLocaleString()}] 开始发布图文请求...`);
+        console.log(`开始发布图文请求...`);
         const publishResult = await this.makePublishRequest(this.publishUrl, {
           method: 'POST',
           headers: {
@@ -764,15 +713,10 @@ export class DouyinService {
           },
           data: publishImgParams,
         });
-        console.log(
-          `[${new Date().toLocaleString()}] 发布请求结果:`,
-          publishResult,
-        );
+        console.log(`发布请求结果:`, publishResult);
 
         if (publishResult.status === 403 || publishResult.data === null) {
-          console.error(
-            `[${new Date().toLocaleString()}] 发布失败，状态码403或返回数据为空`,
-          );
+          console.error(`发布失败，状态码403或返回数据为空`);
           reject('请重新授权账号后发布,如多次失败,请联系技术处理!');
           return false;
         }
@@ -781,10 +725,7 @@ export class DouyinService {
           !publishResult.hasOwnProperty('status_code') ||
           publishResult.status_code !== 0
         ) {
-          console.error(
-            `[${new Date().toLocaleString()}] 发布失败，状态码异常:`,
-            publishResult.status_code,
-          );
+          console.error(`发布失败，状态码异常:`, publishResult.status_code);
           reject(publishResult.status_msg || '发布失败,账号可能已掉线!');
           return false;
         }
@@ -794,16 +735,10 @@ export class DouyinService {
           publishId: publishResult.aweme.aweme_id,
           shareLink: '',
         };
-        console.log(
-          `[${new Date().toLocaleString()}] 发布成功，返回数据:`,
-          response,
-        );
+        console.log(`发布成功，返回数据:`, response);
         resolve(response);
       } catch (err) {
-        console.error(
-          `[${new Date().toLocaleString()}] 发布图片作品失败:`,
-          err,
-        );
+        console.error(`发布图片作品失败:`, err);
         reject(err);
       }
     });
@@ -1785,7 +1720,9 @@ export class DouyinService {
    * 获取视频|图文公共发布参数
    * @param platformSetting 平台设置参数
    */
-  private getPublishPublicParams(platformSetting: DouyinPlatformSettingType): any {
+  private getPublishPublicParams(
+    platformSetting: DouyinPlatformSettingType,
+  ): any {
     console.log('开始处理发布参数...');
     // 处理描述
     let text = `${platformSetting['title'] || ''} ${platformSetting['caption'] || ''}`;
@@ -2073,9 +2010,9 @@ export class DouyinService {
    * 发布专用请求方法
    */
   private async makePublishRequest(url: string, options: any): Promise<any> {
-    console.log(`[${new Date().toLocaleString()}] 开始发起发布请求...`);
-    console.log(`[${new Date().toLocaleString()}] 请求URL:`, url);
-    console.log(`[${new Date().toLocaleString()}] 请求参数:`, options);
+    console.log(`开始发起发布请求...`);
+    console.log(`请求URL:`, url);
+    console.log(`请求参数:`, options);
 
     try {
       // 创建 FormData 对象
@@ -2091,10 +2028,7 @@ export class DouyinService {
         }
       });
 
-      console.log(
-        `[${new Date().toLocaleString()}] 请求体数据:`,
-        Object.fromEntries(formData.entries()),
-      );
+      console.log(`请求体数据:`, Object.fromEntries(formData.entries()));
 
       const response = await fetch(url, {
         method: options.method,
@@ -2104,59 +2038,38 @@ export class DouyinService {
         body: formData,
       });
 
-      console.log(
-        `[${new Date().toLocaleString()}] 收到响应，状态码:`,
-        response.status,
-      );
-      console.log(
-        `[${new Date().toLocaleString()}] 响应头:`,
-        Object.fromEntries(response.headers.entries()),
-      );
+      console.log(`收到响应，状态码:`, response.status);
+      console.log(`响应头:`, Object.fromEntries(response.headers.entries()));
 
       const responseText = await response.text();
-      console.log(
-        `[${new Date().toLocaleString()}] 原始响应数据长度:`,
-        responseText.length,
-      );
-      console.log(
-        `[${new Date().toLocaleString()}] 原始响应数据:`,
-        responseText,
-      );
+      console.log(`原始响应数据长度:`, responseText.length);
+      console.log(`原始响应数据:`, responseText);
 
       // 检查响应数据是否为空
       if (!responseText || responseText.trim() === '') {
-        console.error(`[${new Date().toLocaleString()}] 响应数据为空`);
+        console.error(`响应数据为空`);
         throw new Error('服务器返回空数据');
       }
 
       try {
         const result = JSON.parse(responseText);
-        console.log(
-          `[${new Date().toLocaleString()}] 解析后的响应数据:`,
-          result,
-        );
+        console.log(`解析后的响应数据:`, result);
 
         if (!result) {
-          console.error(`[${new Date().toLocaleString()}] 解析后的数据为空`);
+          console.error(`解析后的数据为空`);
           throw new Error('解析后的数据为空');
         }
 
         return result;
       } catch (err) {
-        console.error(
-          `[${new Date().toLocaleString()}] 解析响应数据失败:`,
-          err,
-        );
-        console.error(
-          `[${new Date().toLocaleString()}] 导致错误的原始数据:`,
-          responseText,
-        );
+        console.error(`解析响应数据失败:`, err);
+        console.error(`导致错误的原始数据:`, responseText);
         throw new Error(
           `解析响应数据失败: ${err instanceof Error ? err.message : String(err)}`,
         );
       }
     } catch (error) {
-      console.error(`[${new Date().toLocaleString()}] 请求发生错误:`, error);
+      console.error(`请求发生错误:`, error);
       throw new Error(
         `请求失败: ${error instanceof Error ? error.message : String(error)}`,
       );
@@ -2382,18 +2295,18 @@ export class DouyinService {
    * @param retryOptions 重试选项
    */
   private async postFormData(
-    url: string, 
-    options: any, 
-    retryOptions: { maxRetries?: number, retryDelay?: number } = {}
+    url: string,
+    options: any,
+    retryOptions: { maxRetries?: number; retryDelay?: number } = {},
   ): Promise<any> {
-    console.log(`[${new Date().toLocaleString()}] 开始发起表单数据请求...`);
-    console.log(`[${new Date().toLocaleString()}] 请求URL:`, url);
-    console.log(`[${new Date().toLocaleString()}] 请求参数:`, options);
-    
+    console.log(`开始发起表单数据请求...`);
+    console.log(`请求URL:`, url);
+    console.log(`请求参数:`, options);
+
     const maxRetries = retryOptions.maxRetries || 3;
     const retryDelay = retryOptions.retryDelay || 2000;
     let retryCount = 0;
-    
+
     while (retryCount < maxRetries) {
       try {
         // 创建 FormData 对象
@@ -2409,10 +2322,7 @@ export class DouyinService {
           }
         });
 
-        console.log(
-          `[${new Date().toLocaleString()}] 请求体数据:`,
-          Object.fromEntries(formData.entries()),
-        );
+        console.log(`请求体数据:`, Object.fromEntries(formData.entries()));
 
         const response = await fetch(url, {
           method: options.method || 'POST',
@@ -2422,73 +2332,58 @@ export class DouyinService {
           body: formData,
         });
 
-        console.log(
-          `[${new Date().toLocaleString()}] 收到响应，状态码:`,
-          response.status,
-        );
-        console.log(
-          `[${new Date().toLocaleString()}] 响应头:`,
-          Object.fromEntries(response.headers.entries()),
-        );
+        console.log(`收到响应，状态码:`, response.status);
+        console.log(`响应头:`, Object.fromEntries(response.headers.entries()));
 
         // 检查HTTP状态码
         if (!response.ok) {
-          console.error(`[${new Date().toLocaleString()}] HTTP错误状态码: ${response.status}`);
+          console.error(`HTTP错误状态码: ${response.status}`);
           if (retryCount < maxRetries - 1) {
             retryCount++;
-            console.log(`[${new Date().toLocaleString()}] 状态码错误，${retryDelay/1000}秒后进行第${retryCount}次重试...`);
-            await new Promise(resolve => setTimeout(resolve, retryDelay));
+            console.log(
+              `状态码错误，${retryDelay / 1000}秒后进行第${retryCount}次重试...`,
+            );
+            await new Promise((resolve) => setTimeout(resolve, retryDelay));
             continue;
           }
           throw new Error(`服务器返回错误状态码: ${response.status}`);
         }
 
         const responseText = await response.text();
-        console.log(
-          `[${new Date().toLocaleString()}] 原始响应数据长度:`,
-          responseText.length,
-        );
-        console.log(
-          `[${new Date().toLocaleString()}] 原始响应数据:`,
-          responseText,
-        );
+        console.log(`原始响应数据长度:`, responseText.length);
+        console.log(`原始响应数据:`, responseText);
 
         // 检查响应数据是否为空
         if (!responseText || responseText.trim() === '') {
-          console.error(`[${new Date().toLocaleString()}] 响应数据为空，尝试次数: ${retryCount + 1}/${maxRetries}`);
-          
+          console.error(
+            `响应数据为空，尝试次数: ${retryCount + 1}/${maxRetries}`,
+          );
+
           if (retryCount < maxRetries - 1) {
             retryCount++;
-            console.log(`[${new Date().toLocaleString()}] 等待${retryDelay/1000}秒后重试...`);
-            await new Promise(resolve => setTimeout(resolve, retryDelay));
+            console.log(`等待${retryDelay / 1000}秒后重试...`);
+            await new Promise((resolve) => setTimeout(resolve, retryDelay));
             continue;
           }
-          
-          throw new Error('服务器多次返回空数据，请检查网络连接或抖音服务器状态');
+
+          throw new Error(
+            '服务器多次返回空数据，请检查网络连接或抖音服务器状态',
+          );
         }
 
         try {
           const result = JSON.parse(responseText);
-          console.log(
-            `[${new Date().toLocaleString()}] 解析后的响应数据:`,
-            result,
-          );
+          console.log(`解析后的响应数据:`, result);
 
           if (!result) {
-            console.error(`[${new Date().toLocaleString()}] 解析后的数据为空`);
+            console.error(`解析后的数据为空`);
             throw new Error('解析后的数据为空');
           }
 
           return result;
         } catch (err) {
-          console.error(
-            `[${new Date().toLocaleString()}] 解析响应数据失败:`,
-            err,
-          );
-          console.error(
-            `[${new Date().toLocaleString()}] 导致错误的原始数据:`,
-            responseText,
-          );
+          console.error(`解析响应数据失败:`, err);
+          console.error(`导致错误的原始数据:`, responseText);
           throw new Error(
             `解析响应数据失败: ${err instanceof Error ? err.message : String(err)}`,
           );
@@ -2496,37 +2391,41 @@ export class DouyinService {
       } catch (error) {
         if (retryCount < maxRetries - 1) {
           retryCount++;
-          console.log(`[${new Date().toLocaleString()}] 请求失败，${retryDelay/1000}秒后进行第${retryCount}次重试...`);
-          await new Promise(resolve => setTimeout(resolve, retryDelay));
+          console.log(
+            `请求失败，${retryDelay / 1000}秒后进行第${retryCount}次重试...`,
+          );
+          await new Promise((resolve) => setTimeout(resolve, retryDelay));
           continue;
         }
-        
-        console.error(`[${new Date().toLocaleString()}] 请求发生错误:`, error);
+
+        console.error(`请求发生错误:`, error);
         throw new Error(
           `请求失败: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     }
-    
+
     // 这里不应该被执行到，但为了类型安全添加
     throw new Error('请求失败: 超过最大重试次数');
   }
 
   // 点赞
-    async creatorDianzanOther(cookie: Electron.Cookie[], data: any) {
-      console.log('------ creatorDianzanOther-data@@@@@');
-      const thisUri = `https://www.douyin.com/aweme/v1/web/commit/item/digg/?${jsonToQueryString(
-        {
-          aid: '6383',
-        },
-      )}`;
-      console.log('------ creatorDianzanOther-data', data);
-      console.log('------ creatorDianzanOther-thisUri', thisUri);
-      const cookieString = CommonUtils.convertCookieToJson(cookie);
-      const csrfToken = await this.getSecsdkCsrfToken(cookieString);
-  
-      // 使用新的 postRequest 方法替代 makePublishRequest
-      const res = await this.postFormData(thisUri, {
+  async creatorDianzanOther(cookie: Electron.Cookie[], data: any) {
+    console.log('------ creatorDianzanOther-data@@@@@');
+    const thisUri = `https://www.douyin.com/aweme/v1/web/commit/item/digg/?${jsonToQueryString(
+      {
+        aid: '6383',
+      },
+    )}`;
+    console.log('------ creatorDianzanOther-data', data);
+    console.log('------ creatorDianzanOther-thisUri', thisUri);
+    const cookieString = CommonUtils.convertCookieToJson(cookie);
+    const csrfToken = await this.getSecsdkCsrfToken(cookieString);
+
+    // 使用新的 postRequest 方法替代 makePublishRequest
+    const res = await this.postFormData(
+      thisUri,
+      {
         method: 'POST',
         headers: {
           Cookie: cookieString,
@@ -2535,10 +2434,12 @@ export class DouyinService {
           'user-agent': this.defaultUserAgent,
         },
         data: data,
-      }, { maxRetries: 0, retryDelay: 2000 });
-      
-      return res;
-    }
+      },
+      { maxRetries: 0, retryDelay: 2000 },
+    );
+
+    return res;
+  }
 
   // 收藏
   async creatorShoucangOther(cookie: Electron.Cookie[], data: any) {
@@ -2554,16 +2455,20 @@ export class DouyinService {
     const csrfToken = await this.getSecsdkCsrfToken(cookieString);
 
     // 使用新的 postRequest 方法替代 makePublishRequest
-    const res = await this.postFormData(thisUri, {
-      method: 'POST',
-      headers: {
-        Cookie: cookieString,
-        'X-Secsdk-Csrf-Token': csrfToken,
-        referer: `https://www.douyin.com/video/${data.aweme_id}`,
+    const res = await this.postFormData(
+      thisUri,
+      {
+        method: 'POST',
+        headers: {
+          Cookie: cookieString,
+          'X-Secsdk-Csrf-Token': csrfToken,
+          referer: `https://www.douyin.com/video/${data.aweme_id}`,
+        },
+        data: data,
       },
-      data: data,
-    }, { maxRetries: 1, retryDelay: 2000 });
-    
+      { maxRetries: 1, retryDelay: 2000 },
+    );
+
     return res;
   }
 
@@ -2621,24 +2526,21 @@ export class DouyinService {
    * @param retryOptions 重试选项
    */
   private async postRequest(
-    url: string, 
-    options: any, 
-    retryOptions: { maxRetries?: number, retryDelay?: number } = {}
+    url: string,
+    options: any,
+    retryOptions: { maxRetries?: number; retryDelay?: number } = {},
   ): Promise<any> {
-    console.log(`[${new Date().toLocaleString()}] 开始发起POST请求...`);
-    console.log(`[${new Date().toLocaleString()}] 请求URL:`, url);
-    console.log(`[${new Date().toLocaleString()}] 请求参数:`, options);
-    
+    console.log(`开始发起POST请求...`);
+    console.log(`请求URL:`, url);
+    console.log(`请求参数:`, options);
+
     const maxRetries = retryOptions.maxRetries || 3;
     const retryDelay = retryOptions.retryDelay || 2000;
     let retryCount = 0;
-    
+
     while (retryCount < maxRetries) {
       try {
-        console.log(
-          `[${new Date().toLocaleString()}] 请求体数据:`,
-          options.data,
-        );
+        console.log(`请求体数据:`, options.data);
 
         const response = await fetch(url, {
           method: options.method || 'POST',
@@ -2649,73 +2551,58 @@ export class DouyinService {
           body: JSON.stringify(options.data),
         });
 
-        console.log(
-          `[${new Date().toLocaleString()}] 收到响应，状态码:`,
-          response.status,
-        );
-        console.log(
-          `[${new Date().toLocaleString()}] 响应头:`,
-          Object.fromEntries(response.headers.entries()),
-        );
+        console.log(`收到响应，状态码:`, response.status);
+        console.log(`响应头:`, Object.fromEntries(response.headers.entries()));
 
         // 检查HTTP状态码
         if (!response.ok) {
-          console.error(`[${new Date().toLocaleString()}] HTTP错误状态码: ${response.status}`);
+          console.error(`HTTP错误状态码: ${response.status}`);
           if (retryCount < maxRetries - 1) {
             retryCount++;
-            console.log(`[${new Date().toLocaleString()}] 状态码错误，${retryDelay/1000}秒后进行第${retryCount}次重试...`);
-            await new Promise(resolve => setTimeout(resolve, retryDelay));
+            console.log(
+              `状态码错误，${retryDelay / 1000}秒后进行第${retryCount}次重试...`,
+            );
+            await new Promise((resolve) => setTimeout(resolve, retryDelay));
             continue;
           }
           throw new Error(`服务器返回错误状态码: ${response.status}`);
         }
 
         const responseText = await response.text();
-        console.log(
-          `[${new Date().toLocaleString()}] 原始响应数据长度:`,
-          responseText.length,
-        );
-        console.log(
-          `[${new Date().toLocaleString()}] 原始响应数据:`,
-          responseText,
-        );
+        console.log(`原始响应数据长度:`, responseText.length);
+        console.log(`原始响应数据:`, responseText);
 
         // 检查响应数据是否为空
         if (!responseText || responseText.trim() === '') {
-          console.error(`[${new Date().toLocaleString()}] 响应数据为空，尝试次数: ${retryCount + 1}/${maxRetries}`);
-          
+          console.error(
+            `响应数据为空，尝试次数: ${retryCount + 1}/${maxRetries}`,
+          );
+
           if (retryCount < maxRetries - 1) {
             retryCount++;
-            console.log(`[${new Date().toLocaleString()}] 等待${retryDelay/1000}秒后重试...`);
-            await new Promise(resolve => setTimeout(resolve, retryDelay));
+            console.log(`等待${retryDelay / 1000}秒后重试...`);
+            await new Promise((resolve) => setTimeout(resolve, retryDelay));
             continue;
           }
-          
-          throw new Error('服务器多次返回空数据，请检查网络连接或抖音服务器状态');
+
+          throw new Error(
+            '服务器多次返回空数据，请检查网络连接或抖音服务器状态',
+          );
         }
 
         try {
           const result = JSON.parse(responseText);
-          console.log(
-            `[${new Date().toLocaleString()}] 解析后的响应数据:`,
-            result,
-          );
+          console.log(`解析后的响应数据:`, result);
 
           if (!result) {
-            console.error(`[${new Date().toLocaleString()}] 解析后的数据为空`);
+            console.error(`解析后的数据为空`);
             throw new Error('解析后的数据为空');
           }
 
           return result;
         } catch (err) {
-          console.error(
-            `[${new Date().toLocaleString()}] 解析响应数据失败:`,
-            err,
-          );
-          console.error(
-            `[${new Date().toLocaleString()}] 导致错误的原始数据:`,
-            responseText,
-          );
+          console.error(`解析响应数据失败:`, err);
+          console.error(`导致错误的原始数据:`, responseText);
           throw new Error(
             `解析响应数据失败: ${err instanceof Error ? err.message : String(err)}`,
           );
@@ -2723,18 +2610,20 @@ export class DouyinService {
       } catch (error) {
         if (retryCount < maxRetries - 1) {
           retryCount++;
-          console.log(`[${new Date().toLocaleString()}] 请求失败，${retryDelay/1000}秒后进行第${retryCount}次重试...`);
-          await new Promise(resolve => setTimeout(resolve, retryDelay));
+          console.log(
+            `请求失败，${retryDelay / 1000}秒后进行第${retryCount}次重试...`,
+          );
+          await new Promise((resolve) => setTimeout(resolve, retryDelay));
           continue;
         }
-        
-        console.error(`[${new Date().toLocaleString()}] 请求发生错误:`, error);
+
+        console.error(`请求发生错误:`, error);
         throw new Error(
           `请求失败: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     }
-    
+
     // 这里不应该被执行到，但为了类型安全添加
     throw new Error('请求失败: 超过最大重试次数');
   }

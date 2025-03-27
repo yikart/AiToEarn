@@ -94,7 +94,10 @@ export default function Page() {
   async function dianzanFunc(data: WorkData) {
     console.log('------ dianzanFunc', data);
     // const res = await icpDianzanDyOther(activeAccountId, '7485806097282993419'); // 抖音
-    const res = await icpDianzanDyOther(activeAccountId, '67e386fc000000001201fa38');
+    const res = await icpDianzanDyOther(
+      activeAccountId,
+      '67e386fc000000001201fa38',
+    );
     console.log('----- res', res);
     if (res.status_code == 0 || res.data.code == 0) {
       message.success('点赞成功');
@@ -109,7 +112,10 @@ export default function Page() {
   async function shoucangFunc(data: WorkData) {
     console.log('------ shoucangFunc', data);
     // const res = await icpShoucangDyOther(activeAccountId, '7485806097282993419'); // 抖音
-    const res = await icpShoucangDyOther(activeAccountId, '67e386fc000000001201fa38');
+    const res = await icpShoucangDyOther(
+      activeAccountId,
+      '67e386fc000000001201fa38',
+    );
     console.log('----- res', res);
     if (res.status_code == 0 || res.data.code == 0) {
       message.success('收藏成功');
@@ -156,22 +162,22 @@ export default function Page() {
                     评论作品
                   </Button>,
                   <Button
-                  type="primary"
-                  onClick={() => {
-                    dianzanFunc(item);
-                  }}
-                >
-                  点赞
-                </Button>,
-                <Button
-                type="primary"
-                onClick={() => {
-                  shoucangFunc(item);
-                }}
-              >
-                收藏
-              </Button>
-                
+                    type="primary"
+                    onClick={() => {
+                      dianzanFunc(item);
+                    }}
+                  >
+                    点赞
+                  </Button>,
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      shoucangFunc(item);
+                    }}
+                  >
+                    收藏
+                  </Button>,
+
                   // <Button
                   //   type="primary"
                   //   onClick={() => {

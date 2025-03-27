@@ -31,10 +31,12 @@ export class PubItemImgText extends PubItemBase {
   }
 
   async publishImgText() {
-    const publishVideoResult = await this.platform.imgTextPublish({
+    const params = {
       ...this.commonParamsParse(this.imgTextModel),
       imagesPath: this.imgTextModel.imagesPath!,
-    });
+    };
+    console.log('图文发布原始参数：', params);
+    const publishVideoResult = await this.platform.imgTextPublish(params);
     // 发布失败
     if (publishVideoResult.code === 0) {
       this.imgTextModel.status = PubStatus.FAIL;

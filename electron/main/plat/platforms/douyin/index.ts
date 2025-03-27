@@ -555,7 +555,7 @@ export class Douyin extends PlatformBase {
             msg: e,
           });
         });
-      if (!result.publishId)
+      if (!result?.publishId)
         return resolve({
           code: 0,
           msg: '网络繁忙，请稍后重试',

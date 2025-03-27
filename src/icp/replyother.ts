@@ -36,22 +36,27 @@ export enum PageType {
   cursor = 'cursor',
 }
 
-
-
 /**
  * 点赞作品
  */
 export async function icpDianzanDyOther(accountId: number, dataId: string) {
-  const res: any = await window.ipcRenderer.invoke('ICP_DIANZAN_DY_OTHER', accountId, dataId);
+  const res: any = await window.ipcRenderer.invoke(
+    'ICP_DIANZAN_DY_OTHER',
+    accountId,
+    dataId,
+  );
   return res;
 }
-
 
 /**
  * 收藏作品
  */
 export async function icpShoucangDyOther(accountId: number, dataId: string) {
-  const res: any = await window.ipcRenderer.invoke('ICP_SHOUCANG_DY_OTHER', accountId, dataId);
+  const res: any = await window.ipcRenderer.invoke(
+    'ICP_SHOUCANG_DY_OTHER',
+    accountId,
+    dataId,
+  );
   return res;
 }
 
