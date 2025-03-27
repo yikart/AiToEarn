@@ -46,7 +46,6 @@ import UserWalletRecord from '@/views/finance/userWalletRecord';
 import Reply from '@/views/reply';
 import Replyother from '@/views/replyother';
 import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
-import AutoRun from '@/views/autoRun';
 
 interface IRouterMeta {
   // 路由名称
@@ -126,11 +125,6 @@ export const router: CustomRouteObject[] = [
         path: '/Replyother',
         element: <Replyother />,
         meta: { name: '评他人', icon: MessageOutlined },
-      },
-      {
-        path: '/autoRun',
-        element: <AutoRun />,
-        meta: { name: '自动化', icon: MessageOutlined },
       },
       {
         path: '/statistics',

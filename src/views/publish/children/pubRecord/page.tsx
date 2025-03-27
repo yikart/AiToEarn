@@ -48,10 +48,10 @@ export const ImageView = ({
     >
       {imgFile && <Image src={imgFile.imgUrl} height={height} width={width} />}
       <span
-        title={getFilePathName(prm.videoPath)}
+        title={getFilePathName(prm.videoPath!)}
         className="pubRecord-pubCon-name"
       >
-        {getFilePathName(prm.videoPath)}
+        {getFilePathName(prm.videoPath!)}
       </span>
     </div>
   );

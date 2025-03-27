@@ -366,7 +366,7 @@ export const useVideoPageStore = create(
         async restartPub(
           pubRecordList: VideoModel[],
           accounts: AccountInfo[],
-          pubRecord: PubRecordModel,
+          pubRecord?: PubRecordModel,
         ) {
           set({
             loadingPageLoading: true,
@@ -385,8 +385,8 @@ export const useVideoPageStore = create(
           try {
             methods.setOperateId();
 
-            if (pubRecord.commonCoverPath) {
-              const cover = await getImgFile(pubRecord.commonCoverPath);
+            if (pubRecord!.commonCoverPath) {
+              const cover = await getImgFile(pubRecord!.commonCoverPath);
               commonPubParams = {
                 ...pubRecord,
                 cover,
