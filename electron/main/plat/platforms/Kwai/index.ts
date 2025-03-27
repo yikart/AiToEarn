@@ -386,6 +386,20 @@ export class Kwai extends PlatformBase {
       }),
     };
   }
+
+  /**
+   * 点赞
+   */
+  dianzanDyOther(account: AccountModel, pcursor?: string): Promise<any> {
+    return new Promise((resolve, reject) => {});
+  }
+
+  /**
+   * 收藏
+   */
+  shoucangDyOther(account: AccountModel, pcursor?: string): Promise<any> {
+    return new Promise((resolve, reject) => {});
+  }
 }
 
 const kwai = new Kwai();
