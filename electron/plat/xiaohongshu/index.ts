@@ -43,6 +43,8 @@ export type XSLPlatformSettingType = {
   privacy: boolean;
 };
 
+let esec_token = 'ABrmhLmsdmsu9bCQ80qvGPN2CYSjEqwi5G1l2dirNUjaw%3D';
+
 export class XiaohongshuService {
   private defaultUserAgent =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
@@ -1419,7 +1421,7 @@ export class XiaohongshuService {
     noteId: string,
     cursor?: number,
   ) {
-    const url = `/api/sns/web/v2/comment/page?note_id=${noteId}&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=AB_MsaT7Zyowo9N1n4eq0PL4xN9QLxe6JstFjA_Isc9x8%3D`;
+    const url = `/api/sns/web/v2/comment/page?note_id=${noteId}&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=${esec_token}`;
     const reverseRes: any = await this.getReverseResult({
       url,
       a1: CookieToString(cookie),
@@ -1443,6 +1445,40 @@ export class XiaohongshuService {
 
     return res;
   }
+
+
+    // 获取二级评论列表
+    async getSecondCommentList(
+      cookie: Electron.Cookie[],
+      noteId: string,
+      root_comment_id: string,
+      cursor?: string,
+    ) {
+      const url = `/api/sns/web/v2/comment/sub/page?note_id=${noteId}&root_comment_id=${root_comment_id}&num=10&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=${esec_token}`;
+      const reverseRes: any = await this.getReverseResult({
+        url,
+        a1: CookieToString(cookie),
+      });
+  
+      const res = await requestNet<XhsCommentListResponse>({
+        url: `https://edith.xiaohongshu.com${url}`,
+        headers: {
+          cookie: CookieToString(cookie),
+          Referer: this.loginUrlHome,
+          origin: this.loginUrlHome,
+          'X-S': reverseRes['X-s'],
+          'X-T': reverseRes['X-t'],
+          userAgent:
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
+        },
+        method: 'GET',
+      });
+  
+      console.log('------- xhs getSecondCommentList ---', res);
+  
+      return res;
+    }
+
 
   /**
    * 点赞作品
@@ -1484,7 +1520,7 @@ export class XiaohongshuService {
   }
 
   /**
-   * 点赞作品
+   * 收藏作品
    * @param cookie
    * @param noteId
    * @param content

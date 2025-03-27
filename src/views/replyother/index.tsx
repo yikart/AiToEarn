@@ -8,6 +8,7 @@
 import {
   icpCreatorList,
   icpGetCommentListByOther,
+  icpGetSecondCommentListByOther,
   WorkData,
   CommentData,
   icpCreateCommentList,
@@ -21,10 +22,12 @@ import ReplyWorks, { ReplyWorksRef } from './components/replyWorks';
 import ReplyComment, { ReplyCommentRef } from './components/replyComment';
 import AddAutoRun, { AddAutoRunRef } from './components/addAutoRun';
 import { icpDianzanDyOther, icpShoucangDyOther } from '@/icp/replyother';
+import { commentApi } from '@/api/comment';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
   const [commentList, setCommentList] = useState<CommentData[]>([]);
+  const [secondCommentList, setSecondCommentList] = useState<any[]>([]);
   const [activeAccountId, setActiveAccountId] = useState<number>(-1);
   const Ref_ReplyWorks = useRef<ReplyWorksRef>(null);
   const Ref_AddAutoRun = useRef<AddAutoRunRef>(null);
@@ -36,9 +39,19 @@ export default function Page() {
       return;
     }
     const thisida = thisid ? thisid : activeAccountId;
+    console.log('------ getCreatorList thisida', thisida);
     const res = await icpCreatorList(thisida);
     console.log('------ icpCreatorList', res);
     setWordList(res.list);
+  }
+
+  async function getFwqCreatorList() {
+    setWordList([]);
+    const res = await commentApi.runCommentSearchNotesTask('xhs_comments', '美妆');
+    console.log('------ getFwqCreatorList', res);
+    // setWordList(res.list);
+    const list = await commentApi.getCommentSearchNotes('xhs_comments', '414381229d04c46cb39f97a5a0b7f9eb');
+    console.log('------ getCommentSearchNotes', list);
   }
 
   /**
@@ -49,11 +62,28 @@ export default function Page() {
     const res = await icpGetCommentListByOther(
       activeAccountId,
       // '7480598266392972596',
-      '67d624a2000000001d02c637',
+      '67dfda09000000000903912c',
     );
     console.log('------ icpGetCommentList', res);
 
     setCommentList(res.list);
+  }
+
+
+  /**
+   * 获取二级评论列表
+   */
+  async function getSecondCommentList(item: any) {
+    const res = await icpGetSecondCommentListByOther(
+      activeAccountId,
+      // '7480598266392972596',
+      item.dataId,
+      item.data.id,
+      item.data.sub_comment_cursor
+    );
+    console.log('------ icpGetCommentList', res);
+
+    setSecondCommentList(res.list);
   }
 
   /**
@@ -132,14 +162,21 @@ export default function Page() {
             activeAccountId={activeAccountId}
             onAccountChange={useCallback(
               (info) => {
-                setActiveAccountId(info.id);
-                getCreatorList(info.id);
+                console.log('------ onAccountChange', info);
+                if (info.type == 'xhs') {
+                  setActiveAccountId(info.id);
+                  // getFwqCreatorList();
+                  getCreatorList(info.id);
+                }else{
+                  setActiveAccountId(info.id);
+                  getCreatorList(info.id);
+                }
               },
               [getCreatorList],
             )}
           />
         </Col>
-        <Col span={10}>
+        <Col span={8}>
           <div>
             {wordList.map((item) => (
               <Card
@@ -201,7 +238,7 @@ export default function Page() {
             ))}
           </div>
         </Col>
-        <Col span={10}>
+        <Col span={6}>
           <div>
             {commentList.map((item) => (
               <Card
@@ -211,6 +248,43 @@ export default function Page() {
                   <Button type="primary" onClick={() => openReplyComment(item)}>
                     回复
                   </Button>,
+                  <Button type="primary" onClick={() => getSecondCommentList(item)}>
+                    {item.data.sub_comment_has_more ? '二级评论' : '无'}
+                  </Button>,
+                ]}
+              >
+                {item.content}
+                {item.subCommentList.map((subItem) => (
+                  <div key={subItem.commentId}>
+                    {subItem.content}
+                    <Meta
+                      avatar={<Avatar src={subItem.headUrl} />}
+                      description={subItem.nikeName}
+                    />
+                  </div>
+                ))}
+                <Meta
+                  avatar={<Avatar src={item.headUrl} />}
+                  description={item.nikeName}
+                />
+              </Card>
+            ))}
+          </div>
+        </Col>
+
+        
+
+        <Col span={6}>
+          <div>
+            {secondCommentList.map((item) => (
+              <Card
+                key={item.commentId}
+                style={{ width: 300 }}
+                actions={[
+                  <Button type="primary" onClick={() => openReplyComment(item)}>
+                    回复
+                  </Button>,
+                  
                 ]}
               >
                 {item.content}

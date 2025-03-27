@@ -101,6 +101,25 @@ export async function icpGetCommentListByOther(
 }
 
 /**
+ * 获取二级评论列表
+ */
+export async function icpGetSecondCommentListByOther(
+  accountId: number,
+  dataId: string,
+  root_comment_id: string,
+  pcursor?: string,
+) {
+  const res: any = await window.ipcRenderer.invoke(
+    'ICP_SECOND_COMMENT_LIST_BY_OTHER',
+    accountId,
+    dataId,
+    root_comment_id,
+    pcursor,
+  );
+  return res;
+}
+
+/**
  * 创建评论
  */
 export async function icpCreateComment(

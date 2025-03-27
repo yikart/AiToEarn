@@ -134,14 +134,29 @@ export abstract class PlatformBase {
    * @param dataId
    * @param pcursor
    */
-  abstract getCreatorCommentListByOther(
-    account: AccountModel,
-    dataId: string,
-    pcursor?: string,
-  ): Promise<{
-    list: CommentData[];
-    pageInfo: ResponsePageInfo;
-  }>;
+  // abstract getCreatorCommentListByOther(
+  //   account: AccountModel,
+  //   dataId: string,
+  //   pcursor?: string,
+  // ): Promise<{
+  //   list: CommentData[];
+  //   pageInfo: ResponsePageInfo;   
+  // }>;
+
+  
+    /**
+   * 获取他人作品的二级评论列表
+   * @param account
+   * @param dataId
+   * @param pcursor
+   */
+    abstract getCreatorSecondCommentListByOther(
+      account: AccountModel,
+      dataId: string,
+      root_comment_id: string,
+      pcursor?: string,
+    ): Promise<any>;
+
 
   /**
    * 获取评论列表
