@@ -6,7 +6,7 @@ import * as crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 // @ts-ignore
 import crc32 from 'crc32';
-import { CookieToString, getFileContent } from '../utils';
+import { CookieToString, getFileContent, getImageBaseInfo } from '../utils';
 import {
   DouyinActivityDetailResponse,
   DouyinActivityListResponse,
@@ -667,20 +667,13 @@ export class DouyinService {
 
           // 获取图片信息
           console.log(`开始获取第${index + 1}张图片信息...`);
-          const posterInfo = await this.makeRequest(
-            imgUrl + '?x-oss-process=image/info',
-            {
-              method: 'GET',
-              dataType: 'json',
-              timeout: 60000,
-            },
-          );
-          console.log(`获取到第${index + 1}张图片信息:`, posterInfo);
+          const imageBaseInfo = await getImageBaseInfo(imgUrl);
+          console.log(`获取到第${index + 1}张图片信息:`, imageBaseInfo);
 
           images.push({
             uri: poster,
-            width: parseInt(posterInfo.ImageWidth.value),
-            height: parseInt(posterInfo.ImageHeight.value),
+            width: imageBaseInfo.width,
+            height: imageBaseInfo.height,
           });
         }
         console.log(`所有图片上传完成，图片信息:`, images);
@@ -856,6 +849,7 @@ export class DouyinService {
    */
   private async makeRequest(url: string, options: any): Promise<any> {
     return new Promise((resolve, reject) => {
+      console.log('抖音发布请求：', url);
       const request = net.request({
         method: options.method,
         url: url,
