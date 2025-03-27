@@ -106,8 +106,11 @@ export async function ipcGetAutoRunRecordList(
     status?: AutoRunRecordStatus;
     cycleType?: string;
   },
-) {
-  const res: AutoRunRecord[] = await window.ipcRenderer.invoke(
+): Promise<{
+  list: AutoRunRecord[];
+  count: number;
+}> {
+  const res = await window.ipcRenderer.invoke(
     'ICP_AUTO_RUN_RECORD_LIST',
     pageInfo,
     query,
