@@ -29,6 +29,7 @@ interface IImagePageStore {
    * 因为别的组件需要这个属性，为了使其只计算一次，特此放到store引用
    */
   errParamsMap?: ErrPubParamsMapType;
+  warnParamsMap?: ErrPubParamsMapType;
 }
 
 const store: IImagePageStore = {
@@ -39,6 +40,7 @@ const store: IImagePageStore = {
   activePlat: undefined,
   commonPubParams: useVideoPageStore.getState().pubParamsInit(),
   errParamsMap: undefined,
+  warnParamsMap: undefined,
 };
 
 const getStore = () => {
@@ -60,9 +62,13 @@ export const useImagePageStore = create(
             platActiveAccountMap,
           });
         },
-        setErrParamsMap(errParamsMap: ErrPubParamsMapType) {
+        setErrParamsMap(
+          errParamsMap: ErrPubParamsMapType,
+          warnParamsMap: ErrPubParamsMapType,
+        ) {
           set({
             errParamsMap,
+            warnParamsMap,
           });
         },
         setActivePlat(activePlat: AccountType) {

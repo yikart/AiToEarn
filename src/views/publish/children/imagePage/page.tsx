@@ -5,7 +5,9 @@ import ImageLeftSetting from './components/ImageLeftSetting/ImageLeftSetting';
 import ImageRightSetting from './components/ImageRightSetting/ImageRightSetting';
 import { Button, message, Popconfirm, Space } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import usePubParamsVerify from '../../hooks/usePubParamsVerify';
+import usePubParamsVerify, {
+  PubParamsErrStatusEnum,
+} from '../../hooks/usePubParamsVerify';
 import PubAccountDetModule, {
   IPubAccountDetModuleRef,
 } from '../../components/PubAccountDetModule/PubAccountDetModule';
@@ -43,7 +45,7 @@ export default function Page() {
       commonPubParams: state.commonPubParams,
     })),
   );
-  const { errParamsMap } = usePubParamsVerify(
+  const { errParamsMap, warnParamsMap } = usePubParamsVerify(
     imageAccounts.map((v) => {
       return {
         id: v.account.id,
@@ -51,6 +53,21 @@ export default function Page() {
         pubParams: v.pubParams,
       };
     }),
+    {
+      moreWranVerifyCallback(item, wranParamsMapTemp, platInfo) {
+        const { imgTextConfig } = platInfo.commonPubParamsConfig;
+        if (imgTextConfig) {
+          const { imagesMax } = imgTextConfig;
+          if (images.length > imagesMax) {
+            wranParamsMapTemp.set(item.id, {
+              message: '参数警告',
+              errType: PubParamsErrStatusEnum.PARAMS,
+              parErrMsg: `${platInfo.name}的图片上传数最多不能超过${imagesMax}个，多余的图片会被系统过滤！`,
+            });
+          }
+        }
+      },
+    },
   );
   const pubAccountDetModuleRef = useRef<IPubAccountDetModuleRef>(null);
   const [loading, setLoading] = useState(false);
@@ -62,8 +79,8 @@ export default function Page() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setErrParamsMap(errParamsMap);
-  }, [errParamsMap]);
+    setErrParamsMap(errParamsMap, warnParamsMap);
+  }, [errParamsMap, warnParamsMap]);
 
   useEffect(() => {
     const destroy = onImgTextPublishProgress((progressData) => {

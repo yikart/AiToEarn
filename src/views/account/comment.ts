@@ -40,6 +40,10 @@ export interface IAccountPlatInfo {
     };
     // 话题数量限制
     topicMax: number;
+    // 仅图文发布的限制参数
+    imgTextConfig?: {
+      imagesMax: number;
+    };
   };
 }
 
@@ -78,6 +82,9 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
         },
         topicMax: 20,
         titleMax: 20,
+        imgTextConfig: {
+          imagesMax: 18,
+        },
       },
     },
   ],
@@ -95,6 +102,9 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
         },
         titleMax: 30,
         topicMax: 5,
+        imgTextConfig: {
+          imagesMax: 35,
+        },
       },
     },
   ],

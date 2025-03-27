@@ -11,7 +11,7 @@ import ImageParamsSet_XHS from './children/ImageParamsSet_XHS';
 import { IImageAccountItem } from '../../../imagePage.type';
 import { useImagePageStore } from '../../../useImagePageStore';
 import { useShallow } from 'zustand/react/shallow';
-import { PubParamsErrStatusEnum } from '../../../../../hooks/usePubParamsVerify';
+import { PubParamsVerifyInfo } from '../../../../../hooks/usePubParamsVerify';
 
 export interface IParamsSettingDetailsRef {}
 
@@ -34,6 +34,7 @@ const ParamsSettingDetails = memo(
         setPlatActiveAccountMap,
         accountRestart,
         errParamsMap,
+        warnParamsMap,
       } = useImagePageStore(
         useShallow((state) => ({
           activePlat: state.activePlat,
@@ -42,6 +43,7 @@ const ParamsSettingDetails = memo(
           delAccountById: state.delAccountById,
           accountRestart: state.accountRestart,
           errParamsMap: state.errParamsMap,
+          warnParamsMap: state.warnParamsMap,
         })),
       );
 
@@ -49,11 +51,6 @@ const ParamsSettingDetails = memo(
         if (!activePlat) return undefined;
         return platActiveAccountMap.get(activePlat);
       }, [platActiveAccountMap, activePlat]);
-
-      const currErrParams = useMemo(() => {
-        if (!currAccountItem?.account.id || !errParamsMap) return undefined;
-        return errParamsMap.get(+currAccountItem.account.id);
-      }, [errParamsMap, currAccountItem]);
 
       return (
         <div className={styles.paramsSettingItem}>
@@ -131,30 +128,15 @@ const ParamsSettingDetails = memo(
             })}
           </div>
 
-          {currErrParams && (
-            <Alert
-              type="error"
-              showIcon
-              message={
-                currErrParams.errType === PubParamsErrStatusEnum.LOGIN ? (
-                  <>
-                    登录失效，请
-                    <a
-                      style={{ fontSize: '13px' }}
-                      onClick={() => {
-                        accountRestart(activePlat!);
-                      }}
-                    >
-                      重新登录
-                    </a>
-                  </>
-                ) : (
-                  currErrParams.parErrMsg
-                )
-              }
-              style={{ marginTop: '20px' }}
-            />
-          )}
+          <PubParamsVerifyInfo
+            style={{ marginTop: '20px' }}
+            onAccountRestart={() => {
+              accountRestart(activePlat!);
+            }}
+            warnParamsMap={warnParamsMap}
+            errParamsMap={errParamsMap}
+            id={currAccountItem?.account.id}
+          />
 
           {(() => {
             switch (activePlat) {

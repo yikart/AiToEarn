@@ -48,7 +48,7 @@ import { usePubStroe } from '../../../../../../store/pubStroe';
 
 import { IVideoChooseItem } from '../../videoPage';
 import usePubParamsVerify, {
-  PubParamsErrStatusEnum,
+  PubParamsVerifyInfo,
 } from '../../../../hooks/usePubParamsVerify';
 import { useAccountStore } from '../../../../../../store/commont';
 
@@ -123,7 +123,7 @@ const VideoPubSetModal = memo(
       >(new Map());
       const [pubProgressModuleOpen, setPubProgressModuleOpen] = useState(false);
       const videoPubSetModalVideoRef = useRef<IVideoPubSetModalVideoRef>(null);
-      const { errParamsMap } = usePubParamsVerify(
+      const { errParamsMap, warnParamsMap } = usePubParamsVerify(
         videoListChoose.map((v) => {
           return {
             id: v.id,
@@ -332,7 +332,7 @@ const VideoPubSetModal = memo(
                             <Tooltip title={errItem.parErrMsg}>
                               <Alert
                                 message={errItem.message}
-                                type={errItem.type}
+                                type="error"
                                 showIcon
                               />
                             </Tooltip>
@@ -360,34 +360,15 @@ const VideoPubSetModal = memo(
                 ].join(' ')}
               >
                 <div className="videoPubSetModal_con-left">
-                  {(() => {
-                    const errItem = errParamsMap.get(
-                      currChooseAccount?.id || '',
-                    );
-                    if (!errItem) return;
-                    return (
-                      <div className="videoPubSetModal_con_top">
-                        {errItem.errType === PubParamsErrStatusEnum.LOGIN && (
-                          <Button
-                            type="primary"
-                            danger
-                            onClick={() =>
-                              accountRestart(currChooseAccount!.account!.type)
-                            }
-                          >
-                            重新登录
-                          </Button>
-                        )}
-                        {errItem.errType === PubParamsErrStatusEnum.PARAMS && (
-                          <Alert
-                            type="error"
-                            showIcon
-                            message={errItem.parErrMsg}
-                          />
-                        )}
-                      </div>
-                    );
-                  })()}
+                  <PubParamsVerifyInfo
+                    style={{ marginBottom: '5px' }}
+                    id={currChooseAccount?.id}
+                    warnParamsMap={warnParamsMap}
+                    errParamsMap={errParamsMap}
+                    onAccountRestart={() => {
+                      accountRestart(currChooseAccount!.account!.type);
+                    }}
+                  />
                   <div className="videoPubSetModal_con-tips">
                     <span>*下方参数只应用于当前账号</span>
                   </div>

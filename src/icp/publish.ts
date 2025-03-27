@@ -18,7 +18,7 @@ import {
   type IGetUsersParams,
   IGetUsersResponse,
 } from '../../electron/main/plat/plat.type';
-import { AccountInfo } from '@/views/account/comment';
+import { AccountInfo, AccountPlatInfoMap } from '@/views/account/comment';
 import { AccountModel } from '../../electron/db/models/account';
 import {
   DouyinActivityDetailResponse,
@@ -46,6 +46,11 @@ export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
 export async function icpCreateImgTextPubRecord(
   pubRecord: Partial<ImgTextModel>,
 ) {
+  const platInfo = AccountPlatInfoMap.get(pubRecord.type!)!;
+  pubRecord.imagesPath = [...pubRecord.imagesPath!].splice(
+    0,
+    platInfo.commonPubParamsConfig.imgTextConfig?.imagesMax,
+  );
   const res: ImgTextModel = await window.ipcRenderer.invoke(
     'ICP_PUBLISH_CREATE_IMG_TEXT_PUL',
     pubRecord,
