@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import sharp from 'sharp';
 import * as path from 'path';
 
 // electron cookie 转 playwright cookie
@@ -32,6 +33,20 @@ export async function getFileContent(filePath: string): Promise<Buffer> {
     console.error('Failed to read file:', error);
     throw new Error(`读取文件失败: filePath`);
   }
+}
+
+/**
+ * 获取图片的基本信息
+ * @param filePath
+ */
+export async function getImageBaseInfo(filePath: string) {
+  const absolutePath = path.resolve(filePath);
+  const metadata = await sharp(absolutePath).metadata();
+
+  return {
+    width: metadata.width,
+    height: metadata.height,
+  };
 }
 
 export const CookieToString = (cookies: Electron.Cookie[]) => {
