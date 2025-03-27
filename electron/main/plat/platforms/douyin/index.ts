@@ -297,9 +297,6 @@ export class Douyin extends PlatformBase {
     };
   }
 
-  
-
-  
   async dianzanDyOther(
     account: AccountModel,
     dataId: string, // 作品ID
@@ -317,18 +314,15 @@ export class Douyin extends PlatformBase {
     return res;
   }
 
-
-  
   async shoucangDyOther(
     account: AccountModel,
     dataId: string, // 作品ID
   ) {
-
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await douyinService.creatorShoucangOther(cookie, {
       aweme_id: dataId,
       action: 1,
-      aweme_type: 0
+      aweme_type: 0,
     });
 
     console.log('------ res', res);
@@ -336,15 +330,11 @@ export class Douyin extends PlatformBase {
     return res;
   }
 
-
-
-
   async createCommentByOther(
     account: AccountModel,
     dataId: string, // 作品ID
     content: string,
   ) {
-
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await douyinService.creatorCommentReplyOther(cookie, {
       aweme_id: dataId,
@@ -550,8 +540,6 @@ export class Douyin extends PlatformBase {
 
   async imgTextPublish(
     params: IImgTextPublishParams,
-    // 获取发布进度的回调函数
-    callback: VideoCallbackType,
   ): Promise<PublishVideoResult> {
     return new Promise(async (resolve) => {
       const result = await douyinService

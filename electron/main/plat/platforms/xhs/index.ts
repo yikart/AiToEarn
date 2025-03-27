@@ -284,8 +284,6 @@ export class Xhs extends PlatformBase {
     };
   }
 
-
-  
   async createCommentByOther(
     account: AccountModel,
     dataId: string, // 作品ID
@@ -296,8 +294,6 @@ export class Xhs extends PlatformBase {
     console.log('------ createCommentByOther xhs ---', ret);
     return ret;
   }
-
-
 
   async dianzanDyOther(
     account: AccountModel,
@@ -324,8 +320,6 @@ export class Xhs extends PlatformBase {
 
     return res;
   }
-
-  
 
   async replyCommentByOther(
     account: AccountModel,
@@ -511,8 +505,6 @@ export class Xhs extends PlatformBase {
 
   async imgTextPublish(
     params: IImgTextPublishParams,
-    // 获取发布进度的回调函数
-    callback: VideoCallbackType,
   ): Promise<PublishVideoResult> {
     return new Promise(async (resolve) => {
       const result = await xiaohongshuService

@@ -31,11 +31,23 @@ import { IRequestNetResult } from '../../electron/plat/requestNet';
 import { WeChatVideoApiResponse } from '../../electron/plat/shipinhao/wxShp.type';
 import { parseTopicString } from '../utils';
 import { PublishVideoResult } from '../../electron/main/plat/module';
+import { ImgTextModel } from '../../electron/db/models/imgText';
 
 // 创建发布记录
 export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
   const res: PubRecordModel = await window.ipcRenderer.invoke(
     'ICP_PUBLISH_CREATE_PUB_RECORD',
+    pubRecord,
+  );
+  return res;
+}
+
+// 创建图文发布记录
+export async function icpCreateImgTextPubRecord(
+  pubRecord: Partial<ImgTextModel>,
+) {
+  const res: ImgTextModel = await window.ipcRenderer.invoke(
+    'ICP_PUBLISH_CREATE_IMG_TEXT_PUL',
     pubRecord,
   );
   return res;
