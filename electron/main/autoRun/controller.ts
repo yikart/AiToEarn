@@ -69,9 +69,9 @@ export class AutoRunController {
   @Icp('ICP_AUTO_RUN_STATUS')
   async updateAutoRunStatus(
     event: Electron.IpcMainInvokeEvent,
-    data: { id: number; status: number },
+    id: number,
+    status: AutoRunStatus,
   ) {
-    const { id, status } = data;
     const autoRun = await this.autoRunService.updateAutoRunStatus(id, status);
 
     return autoRun;
