@@ -53,8 +53,22 @@ const Com = forwardRef<OneKeyReplyRef>((props: any, ref) => {
       error?: any;
     },
   ) {
-    const tagStr = AutorReplyCommentScheduleEventTagStrMap.get(args.tag) || '';
-    setInfoText(`${tagStr}`);
+    switch (args.tag) {
+      case AutorReplyCommentScheduleEvent.Start:
+        setInfoText('开始评论');
+        break;
+      case AutorReplyCommentScheduleEvent.End:
+        setInfoText('评论结束');
+        break;
+      case AutorReplyCommentScheduleEvent.Error:
+        setErrorText(args.error);
+        break;
+      default:
+        const tagStr =
+          AutorReplyCommentScheduleEventTagStrMap.get(args.tag) || '';
+        setInfoText(`${tagStr}`);
+        break;
+    }
   }
 
   useImperativeHandle(ref, () => ({
@@ -75,8 +89,12 @@ const Com = forwardRef<OneKeyReplyRef>((props: any, ref) => {
         footer={null}
         width={400}
       >
-        <p>{infoText}</p>
-        <p>{errorText}</p>
+        <div className="p-2 mb-4 border border-green-500 rounded-md shadow-md">
+          <p className="text-green-500">{infoText}</p>
+        </div>
+        <div className="p-2 mb-4 border border-red-500 rounded-md shadow-md">
+          <p className="text-red-500">{errorText}</p>
+        </div>
       </Modal>
     </>
   );
