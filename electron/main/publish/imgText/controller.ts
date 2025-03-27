@@ -18,6 +18,15 @@ export class ImgTextPubController {
   @Inject(AccountService)
   private readonly accountService!: AccountService;
 
+  // 创建图文发布记录
+  @Icp('ICP_PUBLISH_CREATE_IMG_TEXT_PUL')
+  async createVideoPub(
+    event: Electron.IpcMainInvokeEvent,
+    imgText: ImgTextModel,
+  ): Promise<any> {
+    return await this.imgTextService.createImgTextPul(imgText);
+  }
+
   // 更新视频发布数据
   @Et('ET_PUBLISH_UPDATE_IMG_TEXT_PUL')
   async updateImgTextPul(imgTextModel: ImgTextModel): Promise<any> {

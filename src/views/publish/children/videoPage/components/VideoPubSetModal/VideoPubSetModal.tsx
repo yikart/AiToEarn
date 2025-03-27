@@ -40,7 +40,7 @@ import VideoPubSetModal_XSH from '@/views/publish/children/videoPage/components/
 import VideoPubSetModal_WxSph from '@/views/publish/children/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_WxSph';
 import { onVideoPublishProgress } from '@/icp/receiveMsg';
 import PubProgressModule from '../../../../components/PubProgressModule/PubProgressModule';
-import { VideoPublishProgressRes } from '../../../../../../../electron/main/plat/pub/PubItemVideo';
+import { PublishProgressRes } from '../../../../../../../electron/main/plat/pub/PubItemVideo';
 import VideoPubSetModalVideo, {
   IVideoPubSetModalVideoRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalVideo';
@@ -119,7 +119,7 @@ const VideoPubSetModal = memo(
       const pubAccountDetModuleRef = useRef<IPubAccountDetModuleRef>(null);
       // 主进程传过来的发布进度数据，key为用户id value为发布进度数据
       const [pubProgressMap, setPubProgressMap] = useState<
-        Map<number, VideoPublishProgressRes>
+        Map<number, PublishProgressRes>
       >(new Map());
       const [pubProgressModuleOpen, setPubProgressModuleOpen] = useState(false);
       const videoPubSetModalVideoRef = useRef<IVideoPubSetModalVideoRef>(null);
@@ -198,13 +198,9 @@ const VideoPubSetModal = memo(
             accountId: account.id,
             pubRecordId: recordRes.id,
             publishTime: new Date(),
-            title: vData.pubParams.title,
-            topics: vData.pubParams.topics,
             desc: vData.pubParams.describe,
             videoPath: video.videoPath,
             coverPath: vData.pubParams.cover?.imgPath,
-            visibleType: vData.pubParams.visibleType,
-            diffParams: vData.pubParams.diffParams,
           });
         }
         const okRes = await icpPubVideo(recordRes.id);

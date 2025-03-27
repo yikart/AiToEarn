@@ -74,9 +74,6 @@ export abstract class PlatformBase {
     time: string[],
   ): Promise<DashboardData[]>;
 
-
-  
-
   /**
    * 点赞
    * @param account 账户
@@ -86,7 +83,6 @@ export abstract class PlatformBase {
     account: AccountModel,
     pcursor?: string,
   ): Promise<any>;
-
 
   /**
    * 收藏
@@ -218,11 +214,7 @@ export abstract class PlatformBase {
   /**
    * 图文发布，有些平台不支持图文发布
    */
-  imgTextPublish(
-    params: IImgTextPublishParams,
-    // 获取发布进度的回调函数
-    callback: VideoCallbackType,
-  ): Promise<PublishVideoResult> {
+  imgTextPublish(params: IImgTextPublishParams): Promise<PublishVideoResult> {
     throw `平台${this.type}不支持图文发布`;
   }
 

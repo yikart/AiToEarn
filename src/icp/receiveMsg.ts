@@ -1,6 +1,6 @@
 // 接收主进程发来的消息
 import { SendChannelEnum } from '../../commont/UtilsEnum';
-import { VideoPublishProgressRes } from '../../electron/main/plat/pub/PubItemVideo';
+import { PublishProgressRes } from '../../electron/main/plat/pub/PubItemVideo';
 import IpcRendererEvent = Electron.IpcRendererEvent;
 
 // 绑定事件中间层方法
@@ -30,10 +30,22 @@ export const onAccountLoginFinish = (callback: () => void) => {
 
 // 视频发布进度
 export const onVideoPublishProgress = (
-  callback: (progressData: VideoPublishProgressRes) => void,
+  callback: (progressData: PublishProgressRes) => void,
 ) => {
   return bindEventCore(
     SendChannelEnum.VideoPublishProgress,
+    (_, progressData) => {
+      callback(progressData);
+    },
+  );
+};
+
+// 图文发布进度
+export const onImgTextPublishProgress = (
+  callback: (progressData: PublishProgressRes) => void,
+) => {
+  return bindEventCore(
+    SendChannelEnum.ImgTextPublishProgress,
     (_, progressData) => {
       callback(progressData);
     },

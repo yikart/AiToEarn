@@ -3,6 +3,7 @@ import { ImgTextModel } from '../../../db/models/imgText';
 import { AppDataSource } from '../../../db';
 import { VideoModel } from '../../../db/models/video';
 import { Injectable } from '../../core/decorators';
+import { getUserInfo } from '../../user/comment';
 
 @Injectable()
 export class ImgTextPubService {
@@ -10,6 +11,12 @@ export class ImgTextPubService {
 
   constructor() {
     this.imgTextRepository = AppDataSource.getRepository(VideoModel);
+  }
+
+  // 创建图文记录
+  async createImgTextPul(imgText: ImgTextModel) {
+    imgText.userId = getUserInfo().id;
+    return await this.imgTextRepository.save(imgText);
   }
 
   // 更新数据

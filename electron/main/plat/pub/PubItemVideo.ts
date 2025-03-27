@@ -15,7 +15,7 @@ import windowOperate from '../../../util/windowOperate';
 import { SendChannelEnum } from '../../../../commont/UtilsEnum';
 
 // 视频发布进度返回值
-export interface VideoPublishProgressRes {
+export interface PublishProgressRes {
   // 为 -1 表示失败
   progress: number;
   msg: string;
@@ -47,7 +47,7 @@ export class PubItemVideo extends PubItemBase {
         ...this.commonParamsParse(this.videoModel),
       },
       (progress: number, msg?: string) => {
-        const args: VideoPublishProgressRes = {
+        const args: PublishProgressRes = {
           progress,
           msg: msg || '',
           account: this.accountModel,

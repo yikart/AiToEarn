@@ -1,6 +1,6 @@
 import { ForwardedRef, forwardRef, memo } from 'react';
 import { Alert, Avatar, Modal, Progress, Tooltip } from 'antd';
-import { VideoPublishProgressRes } from '../../../../../electron/main/plat/pub/PubItemVideo';
+import { PublishProgressRes } from '../../../../../electron/main/plat/pub/PubItemVideo';
 import styles from './pubProgressModule.module.scss';
 import { AccountPlatInfoMap } from '../../../account/comment';
 import { MinusOutlined } from '@ant-design/icons';
@@ -8,12 +8,12 @@ import { MinusOutlined } from '@ant-design/icons';
 export interface IPubProgressModuleRef {}
 
 export interface IPubProgressModuleProps {
-  pubProgressData: VideoPublishProgressRes[];
+  pubProgressData: PublishProgressRes[];
   open: boolean;
   onClose: () => void;
 }
 
-function getMsg(progressData: VideoPublishProgressRes) {
+function getMsg(progressData: PublishProgressRes) {
   if (progressData.progress === 100) {
     return '发布成功';
   } else if (progressData.progress === -1) {

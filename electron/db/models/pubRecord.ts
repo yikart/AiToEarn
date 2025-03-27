@@ -40,8 +40,8 @@ export class PubRecordModel extends TempModel {
   desc!: string;
 
   // 视频路径
-  @Column({ type: 'varchar', nullable: false, comment: '视频路径' })
-  videoPath!: string;
+  @Column({ type: 'varchar', nullable: true, comment: '视频路径' })
+  videoPath?: string;
 
   // 定时发布日期
   @Column({ type: 'datetime', nullable: true, comment: '定时发布日期' })

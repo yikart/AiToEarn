@@ -11,6 +11,9 @@ import { PlatformBase } from '../PlatformBase';
 import { ImgTextModel } from '../../../db/models/imgText';
 import { PubStatus } from '../../../db/models/pubRecord';
 import { EtEvent } from '../../../global/event';
+import { PublishProgressRes } from './PubItemVideo';
+import windowOperate from '../../../util/windowOperate';
+import { SendChannelEnum } from '../../../../commont/UtilsEnum';
 
 /**
  * 视频发布单条处理逻辑
@@ -28,15 +31,10 @@ export class PubItemImgText extends PubItemBase {
   }
 
   async publishImgText() {
-    const publishVideoResult = await this.platform.imgTextPublish(
-      {
-        ...this.commonParamsParse(this.imgTextModel),
-        imagesPath: this.imgTextModel.imagesPath!,
-      },
-      (progress: number, msg?: string) => {
-        console.log(progress, msg);
-      },
-    );
+    const publishVideoResult = await this.platform.imgTextPublish({
+      ...this.commonParamsParse(this.imgTextModel),
+      imagesPath: this.imgTextModel.imagesPath!,
+    });
     // 发布失败
     if (publishVideoResult.code === 0) {
       this.imgTextModel.status = PubStatus.FAIL;
@@ -47,6 +45,17 @@ export class PubItemImgText extends PubItemBase {
       this.imgTextModel.dataId = publishVideoResult.dataId;
       this.imgTextModel.previewVideoLink = publishVideoResult.previewVideoLink;
     }
+    // 发布进度
+    const progressRes: PublishProgressRes = {
+      progress: publishVideoResult.code === 0 ? -1 : 100,
+      msg: '',
+      account: this.accountModel,
+    };
+    // 图文发布进度，向渲染层发送进度
+    windowOperate.sendRenderMsg(
+      SendChannelEnum.ImgTextPublishProgress,
+      progressRes,
+    );
     await this.uploadRecord();
     return publishVideoResult;
   }
