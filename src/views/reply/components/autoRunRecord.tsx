@@ -21,6 +21,7 @@ const Com = React.forwardRef<AutoRunRecordRef>((props: any, ref) => {
 
   async function init(inAutoRun: AutoRun) {
     setAutoRun(inAutoRun);
+    getAutoRunRecordList(inAutoRun);
     setIsModalOpen(true);
   }
 
@@ -31,8 +32,8 @@ const Com = React.forwardRef<AutoRunRecordRef>((props: any, ref) => {
   /**
    * 获取自动运行的列表
    */
-  async function getAutoRunList() {
-    if (!autoRun) return;
+  async function getAutoRunRecordList(inAutoRun: AutoRun) {
+    if (!inAutoRun) return;
 
     const res = await ipcGetAutoRunRecordList(
       {
@@ -40,7 +41,7 @@ const Com = React.forwardRef<AutoRunRecordRef>((props: any, ref) => {
         pageSize: pagination.pageSize,
       },
       {
-        autoRunId: autoRun.id,
+        autoRunId: inAutoRun.id,
       },
     );
 
@@ -50,10 +51,6 @@ const Com = React.forwardRef<AutoRunRecordRef>((props: any, ref) => {
       total: res.count,
     });
   }
-
-  React.useEffect(() => {
-    getAutoRunList();
-  }, [pagination.page, pagination.pageSize]);
 
   return (
     <Modal
@@ -80,9 +77,7 @@ const Com = React.forwardRef<AutoRunRecordRef>((props: any, ref) => {
           }}
         >
           <Column title="ID" dataIndex="id" key="id" />
-          <Column title="用户DI" dataIndex="userId" key="userId" />
-          <Column title="账户ID" dataIndex="accountId" key="accountId" />
-          <Column title="运行次数" dataIndex="runCount" key="runCount" />
+          <Column title="任务DI" dataIndex="autoRunId" key="autoRunId" />
           <Column title="状态" dataIndex="status" key="status" />
           <Column title="类型" dataIndex="type" key="type" />
           <Column title="触发周期" dataIndex="cycleType" key="cycleType" />
