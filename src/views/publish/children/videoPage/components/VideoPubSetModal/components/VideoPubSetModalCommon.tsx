@@ -1,5 +1,4 @@
-import { AccountStatus } from '@@/AccountEnum';
-import { Button, Input, Tooltip } from 'antd';
+import { Input, Tooltip } from 'antd';
 import React from 'react';
 import { IVideoChooseItem } from '@/views/publish/children/videoPage/videoPage';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
@@ -12,6 +11,7 @@ import AICreateTitle from '../../../../../components/AICreateTitle/AICreateTitle
 import CommonScheduledTimeSelect, {
   ICommonScheduledTimeSelectProps,
 } from '../../../../../components/CommonComponents/CommonScheduledTimeSelect';
+import { AccountRestartLogin } from '../../../../../components/CommonComponents/CommonComponents';
 
 const { TextArea } = Input;
 
@@ -27,22 +27,12 @@ export const VideoPubRestartLogin = ({
   );
 
   return (
-    <>
-      {currChooseAccount.account?.status === AccountStatus.DISABLE && (
-        <div className="videoPubSetModal_con-accountDisable">
-          账户已失效，
-          <Button
-            type="link"
-            onClick={() => {
-              accountRestart(currChooseAccount.account!.type);
-            }}
-          >
-            重新登录
-          </Button>
-          后可获取
-        </div>
-      )}
-    </>
+    <AccountRestartLogin
+      account={currChooseAccount.account}
+      onAccountRestart={() => {
+        accountRestart(currChooseAccount.account!.type);
+      }}
+    />
   );
 };
 

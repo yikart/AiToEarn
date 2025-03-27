@@ -21,11 +21,31 @@ import CommonScheduledTimeSelect, {
   ICommonScheduledTimeSelectProps,
 } from '../../../../../components/CommonComponents/CommonScheduledTimeSelect';
 import dayjs from 'dayjs';
+import { AccountRestartLogin } from '../../../../../components/CommonComponents/CommonComponents';
 
 interface DebounceSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {}
 
 const { TextArea } = Input;
+
+// 重新登录
+const ImgTextPubRestartLogin = () => {
+  const { imageAccountItem } = useImagePlatParams();
+  const { accountRestart } = useImagePageStore(
+    useShallow((state) => ({
+      accountRestart: state.accountRestart,
+    })),
+  );
+
+  return (
+    <AccountRestartLogin
+      account={imageAccountItem.account}
+      onAccountRestart={() => {
+        accountRestart(imageAccountItem.account!.type);
+      }}
+    />
+  );
+};
 
 // 位置选择器
 export const ImgTextLocationSelect = ({
@@ -55,7 +75,9 @@ export const ImgTextLocationSelect = ({
           imageAccountItem.account.id,
         );
       }}
-    />
+    >
+      <ImgTextPubRestartLogin />
+    </CommonLocationSelect>
   );
 };
 
@@ -95,7 +117,9 @@ export const ImgTextTopicSelect = ({ ...props }: CommonTopicSelectProps) => {
           imageAccountItem.account.id,
         );
       }}
-    ></CommonTopicSelect>
+    >
+      <ImgTextPubRestartLogin />
+    </CommonTopicSelect>
   );
 };
 
@@ -142,7 +166,9 @@ export const ImgTextUserSelect = ({
           imageAccountItem.account.id,
         );
       }}
-    />
+    >
+      <ImgTextPubRestartLogin />
+    </CommonUserSelect>
   );
 };
 

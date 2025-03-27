@@ -212,8 +212,8 @@ export const PubParamsVerifyInfo = memo(
             }
             message={
               <>
-                {paramsWarningList.map((v) => {
-                  return <p>{v.parErrMsg}</p>;
+                {paramsWarningList.map((v, i) => {
+                  return <p key={i}>{v.parErrMsg}</p>;
                 })}
               </>
             }

@@ -217,3 +217,14 @@
   text-align: left;
   font-size: var(--fs-sm);
 }
+
+.accountRestartLogin {
+  display: flex;
+  align-items: center;
+  font-size: var(--fs-sm);
+  button {
+    margin: 0;
+    padding: 0;
+    height: auto;
+  }
+}
