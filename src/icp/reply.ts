@@ -112,7 +112,7 @@ export async function icpReplyComment(
 /**
  * 一键作品回复评论
  */
-export async function icpCreateCommentList(accountId: number, dataId: string) {
+export async function icpReplyCommentList(accountId: number, dataId: string) {
   const res: boolean = await window.ipcRenderer.invoke(
     'ICP_REPLY_COMMENT_LIST_BY_AI',
     accountId,

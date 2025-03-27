@@ -11,9 +11,9 @@ import { AccountService } from '../account/service';
 import { AutoRunService } from '../autoRun/service';
 import { Controller, Et, Icp, Inject } from '../core/decorators';
 import platController from '../plat';
-import { AutorReplyCommentScheduleEvent } from './comment';
 import { ReplyService } from './service';
 import { SendChannelEnum } from '../../../commont/UtilsEnum';
+import { AutorReplyCommentScheduleEvent } from '../../../commont/types/reply';
 
 @Controller()
 export class ReplyController {
@@ -186,6 +186,7 @@ export class ReplyController {
       (e: {
         tag: AutorReplyCommentScheduleEvent;
         status: -1 | 0 | 1;
+        data?: any;
         error?: any;
       }) => {
         windowOperate.sendRenderMsg(SendChannelEnum.CommentRelyProgress, e);
@@ -193,6 +194,22 @@ export class ReplyController {
     );
 
     return res;
+  }
+
+  /**
+   * 测试
+   */
+  @Icp('ICP_REPLY_TEST_NOTICE')
+  async testNotice(event: Electron.IpcMainInvokeEvent): Promise<any> {
+    console.log('----1111');
+
+    windowOperate.sendRenderMsg(SendChannelEnum.CommentRelyProgress, {
+      tag: AutorReplyCommentScheduleEvent,
+      status: 1,
+      error: '测试',
+    });
+
+    return 1;
   }
 
   /**

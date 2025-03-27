@@ -5,14 +5,13 @@
  * @LastEditors: nevin
  * @Description: 评论页面 reply
  */
-import { icpCreatorList, WorkData, icpCreateCommentList } from '@/icp/reply';
-import { Button, Col, message, Row, Tabs, Tooltip } from 'antd';
+import { icpCreatorList, WorkData } from '@/icp/reply';
+import { Button, Col, Row, Tabs, Tooltip } from 'antd';
 import { useCallback, useRef, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import ReplyWorks, { ReplyWorksRef } from './components/replyWorks';
 import AddAutoRun, { AddAutoRunRef } from './components/addAutoRun';
 import CommentList, { CommentListRef } from './components/commentList';
-import { SendChannelEnum } from '@@/UtilsEnum';
 import {
   AliwangwangOutlined,
   CommentOutlined,
@@ -22,6 +21,7 @@ import {
 } from '@ant-design/icons';
 import styles from './reply.module.scss';
 import AutoRun from './autoRun';
+import OneKeyReply, { OneKeyReplyRef } from './components/oneKeyReply';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
@@ -37,37 +37,13 @@ export default function Page() {
   const Ref_ReplyWorks = useRef<ReplyWorksRef>(null);
   const Ref_AddAutoRun = useRef<AddAutoRunRef>(null);
   const Ref_CommentList = useRef<CommentListRef>(null);
-
-  // 注册监听
-  (() => {
-    window.ipcRenderer.on(
-      SendChannelEnum.CommentRelyProgress,
-      (
-        e,
-        args: {
-          tag: string;
-          status: -1 | 0 | 1;
-          error?: any;
-        },
-      ) => {
-        message.info(`收到评论通知--${args.status}---${args.tag}`);
-      },
-    );
-  })();
+  const Ref_OneKeyReply = useRef<OneKeyReplyRef>(null);
 
   async function getCreatorList(accountId: number) {
     if (accountId === -1) return;
     const res = await icpCreatorList(accountId, pageInfo.pcursor);
     setPageInfo(res.pageInfo);
     setWordList([...wordList, ...res.list]);
-  }
-
-  /**
-   * 一键AI评论
-   */
-  async function createCommentList(data: WorkData) {
-    const res = await icpCreateCommentList(activeAccountId, data.dataId);
-    console.log('------ res', res);
   }
 
   /**
@@ -108,6 +84,16 @@ export default function Page() {
       <div className="m-4">
         <Tabs defaultActiveKey="1">
           <Tabs.TabPane tab="作品列表" key="1">
+            {/* 测试---- */}
+            <Button
+              onClick={() => {
+                window.ipcRenderer.invoke('ICP_REPLY_TEST_NOTICE');
+              }}
+            >
+              测试
+            </Button>
+            {/* 测试---- */}
+
             {activeAccountId === -1 ? (
               <div className="flex items-center justify-center h-[300px] text-gray-500">
                 <Tooltip title="请先在左侧侧边栏选择账户">
@@ -157,7 +143,12 @@ export default function Page() {
                               <Col span={8}>
                                 <Tooltip title="一键评论">
                                   <AliwangwangOutlined
-                                    onClick={() => createCommentList(item)}
+                                    onClick={() =>
+                                      Ref_OneKeyReply.current?.init(
+                                        activeAccountId,
+                                        item,
+                                      )
+                                    }
                                   />
                                 </Tooltip>
                               </Col>
@@ -199,6 +190,7 @@ export default function Page() {
       <ReplyWorks ref={Ref_ReplyWorks} />
       <AddAutoRun ref={Ref_AddAutoRun} />
       <CommentList ref={Ref_CommentList} />
+      <OneKeyReply ref={Ref_OneKeyReply} />
     </div>
   );
 }

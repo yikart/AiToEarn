@@ -9,10 +9,10 @@ import PQueue from 'p-queue';
 import { AccountModel } from '../../db/models/account';
 import platController from '../plat';
 import { toolsApi } from '../api/tools';
-import { AutorReplyCommentScheduleEvent } from './comment';
 import { AutoRunService } from '../autoRun/service';
 import { AutoRunModel } from '../../db/models/autoRun';
 import { sysNotice } from '../../global/notice';
+import { AutorReplyCommentScheduleEvent } from '../../../commont/types/reply';
 
 @Injectable()
 export class ReplyService {
@@ -33,7 +33,8 @@ export class ReplyService {
     dataId: string,
     scheduleEvent: (data: {
       tag: AutorReplyCommentScheduleEvent;
-      status: -1 | 0 | 1;
+      status: -1 | 0 | 1; // -1 错误 0 进行中 1 完成
+      data?: any; // 数据
       error?: any;
     }) => void,
   ) {
@@ -57,11 +58,6 @@ export class ReplyService {
           pageInfo: { pcursor, hasMore },
         } = await platController.getCommentList(account, dataId, thePcursor);
 
-        scheduleEvent({
-          tag: AutorReplyCommentScheduleEvent.GetCommentListEnd,
-          status: 0,
-        });
-
         if (list.length === 0) {
           scheduleEvent({
             tag: AutorReplyCommentScheduleEvent.End,
@@ -71,16 +67,12 @@ export class ReplyService {
         }
 
         scheduleEvent({
-          tag: AutorReplyCommentScheduleEvent.ReplyCommentStart,
+          tag: AutorReplyCommentScheduleEvent.GetCommentListEnd,
           status: 0,
         });
 
         // 2. 循环AI回复评论
         for (const element of list) {
-          const aiRes = await toolsApi.aiRecoverReview({
-            content: element.content,
-          });
-
           if (account.uid !== element.userId) {
             let hadReply = false;
             for (const reply of element.subCommentList) {
@@ -91,10 +83,49 @@ export class ReplyService {
             }
 
             if (!hadReply) {
-              platController.replyComment(account, element.commentId, aiRes, {
-                dataId,
-                comment: element,
+              const aiRes = await toolsApi.aiRecoverReview({
+                content: element.content,
               });
+
+              scheduleEvent({
+                tag: AutorReplyCommentScheduleEvent.ReplyCommentStart,
+                data: element,
+                status: 0,
+              });
+
+              // AI接口错误
+              if (!aiRes) {
+                scheduleEvent({
+                  tag: AutorReplyCommentScheduleEvent.Error,
+                  status: -1,
+                  error: '未获得AI产出内容',
+                });
+                return false;
+              }
+
+              const replyRes = await platController.replyComment(
+                account,
+                element.commentId,
+                aiRes,
+                {
+                  dataId,
+                  comment: element,
+                },
+              );
+
+              //  错误处理
+              if (!replyRes) {
+                scheduleEvent({
+                  tag: AutorReplyCommentScheduleEvent.ReplyCommentEnd,
+                  status: -1,
+                  error: '回复评论失败',
+                });
+              } else {
+                scheduleEvent({
+                  tag: AutorReplyCommentScheduleEvent.ReplyCommentEnd,
+                  status: 0,
+                });
+              }
             }
           }
         }

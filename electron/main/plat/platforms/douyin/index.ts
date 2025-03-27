@@ -396,15 +396,18 @@ export class Douyin extends PlatformBase {
     },
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const res = await douyinService.creatorCommentReply(cookie, {
-      comment_Id: commentId,
-      item_id: option.dataId!,
-      text: content,
-    });
+    try {
+      const res = await douyinService.creatorCommentReply(cookie, {
+        comment_Id: commentId,
+        item_id: option.dataId!,
+        text: content,
+      });
 
-    console.log('------ res', res);
-
-    return false;
+      return res.status === 200 && res.data.status_code === 0;
+    } catch (error) {
+      console.log('------ replyComment ----', error);
+      return false;
+    }
   }
 
   pubParamsParse(params: IPublishParams): DouyinPlatformSettingType {
