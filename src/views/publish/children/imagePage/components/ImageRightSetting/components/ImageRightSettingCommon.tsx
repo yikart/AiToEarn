@@ -22,6 +22,7 @@ import CommonScheduledTimeSelect, {
 } from '../../../../../components/CommonComponents/CommonScheduledTimeSelect';
 import dayjs from 'dayjs';
 import { AccountRestartLogin } from '../../../../../components/CommonComponents/CommonComponents';
+import { AccountPlatInfoMap } from '../../../../../../account/comment';
 
 interface DebounceSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {}
@@ -29,7 +30,7 @@ interface DebounceSelectProps<ValueType = any>
 const { TextArea } = Input;
 
 // 重新登录
-const ImgTextPubRestartLogin = () => {
+export const ImgTextPubRestartLogin = () => {
   const { imageAccountItem } = useImagePlatParams();
   const { accountRestart } = useImagePageStore(
     useShallow((state) => ({
@@ -90,6 +91,11 @@ export const ImgTextTopicSelect = ({ ...props }: CommonTopicSelectProps) => {
       updateAccounts: state.updateAccounts,
     })),
   );
+  const { topicMax } = AccountPlatInfoMap.get(
+    imageAccountItem.account.type,
+  )!.commonPubParamsConfig;
+  props.maxCount = props.maxCount || topicMax;
+  props.tips = props.tips || `您可以添加${topicMax}个话题`;
 
   return (
     <CommonTopicSelect

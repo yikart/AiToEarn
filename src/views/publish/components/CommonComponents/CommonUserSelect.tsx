@@ -113,7 +113,7 @@ export default function CommonUserSelect({
         }}
       />
       {children}
-      {props.tips && <p className="videoPubSetModal_con-tips">{props.tips}</p>}
+      {props.tips && <p className={styles.tips}>{props.tips}</p>}
     </>
   );
 }

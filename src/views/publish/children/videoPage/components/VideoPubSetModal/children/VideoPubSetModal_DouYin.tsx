@@ -67,7 +67,6 @@ const ActivitySelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
         const newDiffParams = currChooseAccount.pubParams.diffParams!;
         newDiffParams[AccountType.Douyin]!.activitys =
           newValue as ILableValue[];
-        console.log(newValue);
         setOnePubParams(
           {
             diffParams: newDiffParams,
@@ -118,7 +117,7 @@ const VideoPubSetModal_DouYin = memo(
 
           <UserSelect
             currChooseAccount={currChooseAccount}
-            maxCount={10}
+            maxCount={100}
             tips="您可以添加100个好友"
             title="@好友"
           />
