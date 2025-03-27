@@ -92,6 +92,22 @@ export async function ipcGetAutoRunList(
 }
 
 /**
+ * 更新自动进程状态
+ * @param data
+ */
+export async function ipcUpdateAutoRunStatus(
+  id: number,
+  status: AutoRunStatus,
+) {
+  const res: string = await window.ipcRenderer.invoke(
+    'ICP_AUTO_RUN_STATUS',
+    id,
+    status,
+  );
+  return res;
+}
+
+/**
  * 获取进运行记录列表
  * @param data
  */

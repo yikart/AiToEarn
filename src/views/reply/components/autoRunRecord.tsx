@@ -3,8 +3,11 @@ import { Modal, Table } from 'antd';
 import React from 'react';
 
 const { Column } = Table;
+export interface AutoRunRecordRef {
+  init: (inAutoRun: AutoRun) => Promise<void>;
+}
 
-const Page: React.FC = (props: any, ref) => {
+const Com = React.forwardRef<AutoRunRecordRef>((props: any, ref) => {
   const [autoRunRecordList, setAutoRunRecordList] = React.useState<
     AutoRunRecord[]
   >([]);
@@ -94,6 +97,6 @@ const Page: React.FC = (props: any, ref) => {
       </div>
     </Modal>
   );
-};
+});
 
-export default Page;
+export default Com;
