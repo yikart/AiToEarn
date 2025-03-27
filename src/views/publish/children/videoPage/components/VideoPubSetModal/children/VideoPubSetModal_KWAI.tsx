@@ -20,9 +20,7 @@ const VideoPubSetModal_KWAI = memo(
       { currChooseAccount }: IVideoPubSetModalChildProps,
       ref: ForwardedRef<IVideoPubSetModalChildRef>,
     ) => {
-      const { setOnePubParams, platInfo } =
-        useVideoPubSetModal(currChooseAccount);
-      const { topicMax } = platInfo.commonPubParamsConfig;
+      const { setOnePubParams } = useVideoPubSetModal(currChooseAccount);
 
       return (
         <>
@@ -32,11 +30,7 @@ const VideoPubSetModal_KWAI = memo(
             maxLength={500}
           />
 
-          <TopicSelect
-            maxCount={topicMax}
-            currChooseAccount={currChooseAccount}
-            tips={`您可以添加${topicMax}个话题`}
-          />
+          <TopicSelect currChooseAccount={currChooseAccount} />
 
           <UserSelect
             currChooseAccount={currChooseAccount}

@@ -284,6 +284,44 @@ export class Xhs extends PlatformBase {
     };
   }
 
+  async getCreatorSecondCommentListByOther(
+    account: AccountModel,
+    dataId: string,
+    root_comment_id: string,
+    pcursor?: string,
+  ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    console.log('------ getCreatorSecondCommentListByOther xhs dataId---', dataId);
+    const res = await xiaohongshuService.getSecondCommentList(cookie, dataId, root_comment_id, pcursor );
+    console.log('------ getCreatorSecondCommentListByOther xhs res---', res);
+
+    const list: CommentData[] = [];
+
+    for (const v of res.data.data.comments) {
+      
+      list.push({
+        userId: v.user_info.user_id,
+        dataId: v.note_id,
+        commentId: v.id,
+        parentCommentId: undefined,
+        content: v.content,
+        likeCount: Number.parseInt(v.like_count),
+        nikeName: v.user_info.nickname,
+        headUrl: v.user_info.image,
+        data: v,
+        subCommentList: [],
+      });
+    }
+
+    return {
+      list: list,
+      pageInfo: {
+        hasMore: res.data.data.has_more,
+        pcursor: res.data.data.cursor,
+      },
+    };
+  }
+
   async createCommentByOther(
     account: AccountModel,
     dataId: string, // 作品ID

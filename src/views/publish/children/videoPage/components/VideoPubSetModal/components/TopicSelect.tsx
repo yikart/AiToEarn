@@ -7,6 +7,7 @@ import { IVideoChooseItem } from '../../../videoPage';
 import { useVideoPageStore } from '../../../useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import { VideoPubRestartLogin } from './VideoPubSetModalCommon';
+import useVideoPubSetModal from '../children/hooks/useVideoPubSetModal';
 
 interface DebounceSelectProps
   extends CommonTopicSelectProps<CommonTopicSelectValueType> {
@@ -18,12 +19,15 @@ export default function TopicSelect({
   currChooseAccount,
   ...props
 }: DebounceSelectProps) {
-  const { setOnePubParams, updateAccounts } = useVideoPageStore(
+  const { updateAccounts } = useVideoPageStore(
     useShallow((state) => ({
-      setOnePubParams: state.setOnePubParams,
       updateAccounts: state.updateAccounts,
     })),
   );
+  const { setOnePubParams, platInfo } = useVideoPubSetModal(currChooseAccount);
+  const { topicMax } = platInfo.commonPubParamsConfig;
+  props.maxCount = props.maxCount || topicMax;
+  props.tips = props.tips || `您可以添加${topicMax}个话题`;
 
   return (
     <CommonTopicSelect

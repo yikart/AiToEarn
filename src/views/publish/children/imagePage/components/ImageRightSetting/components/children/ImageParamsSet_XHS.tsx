@@ -17,7 +17,7 @@ const ImageParamsSet_XHS = memo(
 
         <ImgTextDescTextArea placeholder="填写更全面的描述信息，让更多人看到你吧！" />
 
-        <ImgTextTopicSelect maxLength={20} tips="您可以添加20个话题" />
+        <ImgTextTopicSelect />
 
         <ImgTextUserSelect />
 

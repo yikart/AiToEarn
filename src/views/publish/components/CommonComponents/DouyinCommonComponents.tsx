@@ -13,19 +13,33 @@ import {
   icpGetDoytinHot,
   icpGetDoytinHotAll,
 } from '../../../../icp/publish';
-import { Button, Modal, Select, SelectProps, Spin, Tooltip } from 'antd';
+import {
+  Button,
+  Checkbox,
+  message,
+  Modal,
+  Select,
+  SelectProps,
+  Spin,
+  Tabs,
+  Tooltip,
+} from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import styles from './commonComponents.module.scss';
 import { describeNumber } from '../../../../utils';
 import { onAccountLoginFinish } from '../../../../icp/receiveMsg';
-import { AccountInfo } from '../../../account/comment';
+import { AccountInfo, AccountPlatInfoMap } from '../../../account/comment';
 import { ILableValue } from '../../../../../electron/db/models/video';
+import { AccountType } from '../../../../../commont/AccountEnum';
 
 interface DouyinCommonComponentsProps
-  extends Omit<
-    SelectProps<ILableValue[] | ILableValue>,
-    'options' | 'children'
-  > {
+  extends Omit<SelectProps<ILableValue[]>, 'options' | 'children'> {
+  account?: AccountInfo;
+  children?: React.ReactNode;
+}
+
+interface DouyinCommonComponentsHotProps
+  extends Omit<SelectProps<ILableValue>, 'options' | 'children'> {
   account?: AccountInfo;
   children?: React.ReactNode;
 }
@@ -35,7 +49,7 @@ export const CommonHotspotSelect = ({
   account,
   children,
   ...props
-}: DouyinCommonComponentsProps) => {
+}: DouyinCommonComponentsHotProps) => {
   if (!account) return '';
 
   const [doytinHotAll, setDoytinHotAll] = useState<DouyinHotSentence[]>([]);
@@ -105,14 +119,17 @@ export const CommonActivitySelect = ({
   ...props
 }: DouyinCommonComponentsProps) => {
   if (!account) return '';
-
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [activityOpen, setActivityOpen] = useState(false);
   const [options, setOptions] = useState<DouyinActivity[]>([]);
-  // 活动标签数据
   const activityTagsMap = useRef<Map<number, DouyinQueryTags>>(new Map());
+  // 活动标签数据
+  const [activityTagList, setActivityTagList] = useState<DouyinQueryTags[]>([]);
   const [activityDetails, setActivityDetails] =
     useState<DouyinActivityDetailResponse>();
+  const [activityTag, setActivityTag] = useState<string>('');
+  const [value, setValue] = useState<ILableValue[]>([]);
 
   const init = () => {
     icpGetDouyinActivity(account).then((res) => {
@@ -122,6 +139,8 @@ export const CommonActivitySelect = ({
       res.data?.query_tags?.map((v) => {
         activityTagsMap.current.set(v.id, v);
       });
+      setActivityTagList(res.data.query_tags);
+      setActivityTag(`${res.data.query_tags[0].id}`);
     });
   };
 
@@ -133,13 +152,36 @@ export const CommonActivitySelect = ({
     });
   }, []);
 
+  const selection = (data: DouyinActivity) => {
+    if (value?.some((v) => v.value === data.activity_id)) {
+      setValue(value?.filter((v) => v.value !== data.activity_id));
+    } else {
+      setValue([
+        ...(value || []),
+        {
+          label: data.activity_name,
+          value: data.activity_id,
+        },
+      ]);
+    }
+  };
+
+  useEffect(() => {
+    setValue(props.value || []);
+  }, [props.value]);
+
+  const closeSelectActivity = () => {
+    setActivityOpen(false);
+    setValue(props.value || []);
+  };
+
   return (
     <>
       <Modal
-        open={open}
+        open={detailsOpen}
         title="活动详情"
         footer={null}
-        onCancel={() => setOpen(false)}
+        onCancel={() => setDetailsOpen(false)}
       >
         <Spin spinning={loading}>
           <div className={styles.activityDetails}>
@@ -194,6 +236,92 @@ export const CommonActivitySelect = ({
         </Spin>
       </Modal>
 
+      <Modal
+        title="选择活动"
+        width={700}
+        open={activityOpen}
+        onCancel={closeSelectActivity}
+        onOk={() => {
+          if (value.length > props.maxCount!) {
+            message.warning(
+              `话题和活动最多可添加 ${AccountPlatInfoMap.get(AccountType.Douyin)?.commonPubParamsConfig.topicMax} 个`,
+            );
+          } else {
+            setActivityOpen(false);
+            if (props.onChange) props.onChange(value);
+          }
+        }}
+      >
+        <Tabs
+          activeKey={activityTag}
+          onChange={setActivityTag}
+          type="card"
+          items={activityTagList.map((v) => {
+            return {
+              key: `${v.id}`,
+              label: v.name,
+            };
+          })}
+        />
+        {options
+          .filter((v) => v.query_tag === +activityTag)
+          .map((data) => {
+            return (
+              <div
+                className={styles.activitySelect}
+                onClick={() => {
+                  selection(data);
+                }}
+                key={data.activity_id}
+              >
+                <div className="activitySelect-left">
+                  <Checkbox
+                    checked={value?.some((v) => v.value === data.activity_id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                    onChange={(e) => {
+                      selection(data);
+                    }}
+                  />
+                  <div className="activitySelect-left-img">
+                    <img src={data.cover_image} />
+                  </div>
+                  <ul>
+                    <li>{data.activity_name}</li>
+                    <li>热度：{data.hot_score}</li>
+                  </ul>
+                </div>
+                <div className="activitySelect-right">
+                  <div className="activitySelect-right-top">
+                    {activityTagsMap.current.get(data.query_tag)?.name}
+                  </div>
+                  <div className="activitySelect-right-bottom">
+                    <span>时间：02.27~03.31</span>
+                    <Button
+                      type="link"
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        setDetailsOpen(true);
+                        setLoading(true);
+                        setActivityDetails(undefined);
+                        const res = await getDouyinActivityDetails(
+                          account,
+                          data.activity_id,
+                        );
+                        setLoading(false);
+                        setActivityDetails(res);
+                      }}
+                    >
+                      活动详情
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+      </Modal>
+
       <h1>
         活动奖励
         <Tooltip title="添加活动将有机会获得流量奖励">
@@ -208,45 +336,19 @@ export const CommonActivitySelect = ({
         labelInValue
         mode="multiple"
         filterOption={false}
-        optionRender={({ data }) => {
-          return (
-            <div className={styles.activitySelect}>
-              <div className="activitySelect-left">
-                <div className="activitySelect-left-img">
-                  <img src={data.cover_image} />
-                </div>
-                <ul>
-                  <li>{data.label}</li>
-                  <li>热度：{data.hot_score}</li>
-                </ul>
-              </div>
-              <div className="activitySelect-right">
-                <div className="activitySelect-right-top">
-                  {activityTagsMap.current.get(data.query_tag)?.name}
-                </div>
-                <div className="activitySelect-right-bottom">
-                  <span>时间：02.27~03.31</span>
-                  <Button
-                    type="link"
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      setOpen(true);
-                      setLoading(true);
-                      setActivityDetails(undefined);
-                      const res = await getDouyinActivityDetails(
-                        account,
-                        data.activity_id,
-                      );
-                      setLoading(false);
-                      setActivityDetails(res);
-                    }}
-                  >
-                    活动详情
-                  </Button>
-                </div>
-              </div>
-            </div>
-          );
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setActivityOpen(true);
+        }}
+        dropdownRender={() => {
+          const customDropdownRef = useRef<HTMLDivElement>(null);
+          if (customDropdownRef.current) {
+            (
+              customDropdownRef.current.parentNode!.parentNode as HTMLDivElement
+            ).style.display = 'none';
+          }
+          return <div ref={customDropdownRef} />;
         }}
         options={options?.map((v) => {
           return {
@@ -256,15 +358,13 @@ export const CommonActivitySelect = ({
           };
         })}
         onDropdownVisibleChange={() => {
-          if (options.length === 0 && account?.status === 0) {
+          if (options?.length === 0 && account?.status === 0) {
             init();
           }
         }}
         {...props}
       />
-      <p className="videoPubSetModal_con-tips">
-        活动奖励 + 话题 最多不能超过五个。
-      </p>
+      <p className={styles.tips}>活动奖励 + 话题 最多不能超过五个。</p>
       {children}
     </>
   );

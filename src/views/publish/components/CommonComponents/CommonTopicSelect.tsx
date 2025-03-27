@@ -10,7 +10,7 @@ import styles from './commonComponents.module.scss';
 
 export interface CommonTopicSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
-  tips: string;
+  tips?: string;
   account?: AccountInfo;
   onAccountChange?: (account: AccountInfo) => void;
   children?: React.ReactNode;

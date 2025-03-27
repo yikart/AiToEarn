@@ -109,21 +109,42 @@
 }
 
 .activitySelect {
+  border-bottom: 1px solid var(--superLightGreyColor);
+  height: 50px;
+  cursor: pointer;
+  padding: 10px 0;
+  &:last-of-type {
+    border-bottom: none;
+  }
   :global {
     display: flex;
     align-items: center;
     justify-content: space-between;
     .activitySelect-left {
       display: flex;
+      align-items: center;
+      height: 100%;
       &-img {
         overflow: hidden;
         border-radius: 6px;
+        margin-left: 10px;
       }
       ul {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: space-between;
+        li {
+          &:nth-child(1) {
+            font-weight: 900;
+          }
+        }
       }
       img {
-        width: 35px;
-        object-fit: contain;
+        display: block;
+        width: 36px;
+        height: 42px;
+        border-radius: 8px;
         margin-right: 8px;
       }
     }
@@ -131,11 +152,12 @@
       display: flex;
       flex-direction: column;
       align-items: end;
+      justify-content: space-between;
+      height: 100%;
       &-top {
         padding: 1px 4px;
         border-radius: 6px;
         font-size: var(--fs-xs);
-        margin-bottom: 6px;
         background: rgb(250, 250, 250);
         border: 1px solid #bbbbbb;
       }

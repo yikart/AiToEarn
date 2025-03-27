@@ -7,6 +7,7 @@ import { useVideoPageStore } from '../../../useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import { VideoPubRestartLogin } from './VideoPubSetModalCommon';
 import React from 'react';
+import useVideoPubSetModal from '../children/hooks/useVideoPubSetModal';
 
 interface DebounceSelectProps extends CommonUserSelectProps<IUsersItem> {
   currChooseAccount: IVideoChooseItem;
@@ -17,12 +18,12 @@ export default function UserSelect({
   currChooseAccount,
   ...props
 }: DebounceSelectProps) {
-  const { setOnePubParams, updateAccounts } = useVideoPageStore(
+  const { updateAccounts } = useVideoPageStore(
     useShallow((state) => ({
-      setOnePubParams: state.setOnePubParams,
       updateAccounts: state.updateAccounts,
     })),
   );
+  const { setOnePubParams } = useVideoPubSetModal(currChooseAccount);
 
   return (
     <CommonUserSelect

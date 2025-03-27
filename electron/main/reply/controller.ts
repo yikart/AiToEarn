@@ -130,6 +130,30 @@ export class ReplyController {
     return res;
   }
 
+
+  /**
+   * 获取二级评论列表
+   */
+  @Icp('ICP_SECOND_COMMENT_LIST_BY_OTHER')
+  async getSecondCommentListByOther(
+    event: Electron.IpcMainInvokeEvent,
+    accountId: number,
+    dataId: string,
+    root_comment_id: string,
+    pcursor?: string,
+  ): Promise<any> {
+    const account = await this.accountService.getAccountById(accountId);
+    if (!account) return null;
+
+    const res = await platController.getCreatorSecondCommentListByOther(
+      account,
+      dataId,
+      root_comment_id,
+      pcursor,
+    );
+    return res;
+  }
+
   /**
    * 创建评论
    */

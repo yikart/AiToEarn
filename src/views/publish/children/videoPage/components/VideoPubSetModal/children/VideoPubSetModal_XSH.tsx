@@ -39,11 +39,7 @@ const VideoPubSetModal_WxSph = memo(
             maxLength={1000}
           />
 
-          <TopicSelect
-            maxCount={topicMax}
-            currChooseAccount={currChooseAccount}
-            tips={`您可以添加${topicMax}个话题`}
-          />
+          <TopicSelect currChooseAccount={currChooseAccount} />
 
           <UserSelect currChooseAccount={currChooseAccount} title="@用户" />
 
