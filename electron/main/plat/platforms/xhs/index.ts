@@ -30,6 +30,7 @@ import {
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
 import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
+import { CookieToString } from '../../../../plat/utils';
 
 export class Xhs extends PlatformBase {
   constructor() {
@@ -137,7 +138,7 @@ export class Xhs extends PlatformBase {
   /**
    * 获取作品列表
    * @param account
-   * @param pageInfo
+   * @param pcursor
    * @returns
    */
   async getWorkList(account: AccountModel, pcursor?: string) {
@@ -146,7 +147,10 @@ export class Xhs extends PlatformBase {
     // TODO: 小红书的分页每页数量?
     const pageSize = 20;
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const res = await xiaohongshuService.getWorks(cookie, pageNo);
+    const res = await xiaohongshuService.getWorks(
+      CookieToString(cookie),
+      pageNo,
+    );
 
     const list: WorkData[] = res.data.data.notes.map((v) => ({
       dataId: v.id,

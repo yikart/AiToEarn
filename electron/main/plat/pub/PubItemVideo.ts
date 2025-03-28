@@ -65,6 +65,11 @@ export class PubItemVideo extends PubItemBase {
       this.videoModel.status = PubStatus.RELEASED;
       this.videoModel.dataId = publishVideoResult.dataId;
       this.videoModel.previewVideoLink = publishVideoResult.previewVideoLink;
+      windowOperate.sendRenderMsg(SendChannelEnum.VideoPublishProgress, {
+        progress: 100,
+        msg: '发布成功！',
+        account: this.accountModel,
+      });
     }
     await this.uploadRecord();
     return publishVideoResult;

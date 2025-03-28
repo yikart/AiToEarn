@@ -720,7 +720,7 @@ export class XiaohongshuService {
             if (this.callback)
               this.callback(
                 50,
-                `上传视频（${filePartInfo.blockInfo}/${filePartInfo.blockInfo.length}）`,
+                `上传视频（${i}/${filePartInfo.blockInfo.length}）`,
               );
 
             const chunkStart =

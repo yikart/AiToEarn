@@ -517,6 +517,7 @@ export class DouyinService {
 
     return new Promise(async (resolve, reject) => {
       try {
+        this.callback = callback;
         // 初始化cookie
         console.log('开始转换cookie...');
         callback(5, '正在加载');
