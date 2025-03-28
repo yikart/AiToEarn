@@ -11,7 +11,12 @@ import AICreateTitle from '../../../../../components/AICreateTitle/AICreateTitle
 import CommonScheduledTimeSelect, {
   ICommonScheduledTimeSelectProps,
 } from '../../../../../components/CommonComponents/CommonScheduledTimeSelect';
-import { AccountRestartLogin } from '../../../../../components/CommonComponents/CommonComponents';
+import {
+  AccountRestartLogin,
+  PubPermission,
+  PubPermissionProps,
+} from '../../../../../components/CommonComponents/CommonComponents';
+import useVideoPubSetModal from '../children/hooks/useVideoPubSetModal';
 
 const { TextArea } = Input;
 
@@ -194,5 +199,30 @@ export const DescTextArea = ({
         max={maxLength}
       />
     </>
+  );
+};
+
+// 可见性
+export const VideoPubPermission = ({
+  currChooseAccount,
+  ...props
+}: PubPermissionProps & {
+  currChooseAccount?: IVideoChooseItem;
+}) => {
+  if (!currChooseAccount) return;
+  const { setOnePubParams } = useVideoPubSetModal(currChooseAccount);
+  return (
+    <PubPermission
+      onChange={(e) => {
+        setOnePubParams(
+          {
+            visibleType: e,
+          },
+          currChooseAccount!.id,
+        );
+      }}
+      value={currChooseAccount?.pubParams.visibleType}
+      {...props}
+    />
   );
 };

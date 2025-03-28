@@ -4,6 +4,9 @@
   padding: 20px;
   box-sizing: border-box;
   :global {
+    .pubRecord-options {
+      margin-bottom: 10px;
+    }
     .pubRecord-record {
       margin-top: 20px;
       display: flex;

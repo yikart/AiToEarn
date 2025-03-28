@@ -541,7 +541,12 @@ export class Xhs extends PlatformBase {
           topicName: v,
         })) || [],
       timingTime: params.timingTime?.getTime(),
-      privacy: params.visibleType !== VisibleTypeEnum.Public,
+      visibility_type:
+        params.visibleType === VisibleTypeEnum.Public
+          ? 0
+          : params.visibleType === VisibleTypeEnum.Private
+            ? 1
+            : 2,
       // 位置
       poiInfo: params.location
         ? {

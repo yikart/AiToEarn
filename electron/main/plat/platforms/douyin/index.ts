@@ -572,6 +572,15 @@ export class Douyin extends PlatformBase {
       });
     });
   }
+
+  getCreatorSecondCommentListByOther(
+    account: AccountModel,
+    dataId: string,
+    root_comment_id: string,
+    pcursor?: string,
+  ): Promise<any> {
+    return Promise.resolve(undefined);
+  }
 }
 
 const douyin = new Douyin();

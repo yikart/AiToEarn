@@ -32,6 +32,7 @@ import { WeChatVideoApiResponse } from '../../electron/plat/shipinhao/wxShp.type
 import { parseTopicString } from '../utils';
 import { PublishVideoResult } from '../../electron/main/plat/module';
 import { ImgTextModel } from '../../electron/db/models/imgText';
+import type { pubRecordListQuery } from '../../electron/global/table';
 
 // 创建发布记录
 export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
@@ -75,6 +76,15 @@ export async function icpCreateVideoPubRecord(pubRecord: Partial<VideoPul>) {
   return res;
 }
 
+// 获取图文发布记录
+export async function icpGetImgTextList(pubRecordId: number) {
+  const res: ImgTextModel[] = await window.ipcRenderer.invoke(
+    'ICP_PUBLISH_GET_IMG_TEXT_LIST',
+    pubRecordId,
+  );
+  return res;
+}
+
 // 获取视频发布记录
 export async function icpGetPubVideoRecord(pubRecordId: number) {
   const res: VideoPul[] = await window.ipcRenderer.invoke(
@@ -103,7 +113,10 @@ export async function icpPubImgText(pubRecordId: number) {
 }
 
 // 获取发布记录列表
-export async function icpGetPubRecordList(page: CorrectQuery, query?: any) {
+export async function icpGetPubRecordList(
+  page: CorrectQuery,
+  query?: pubRecordListQuery,
+) {
   const res: CorrectResponse<PubRecordModel> = await window.ipcRenderer.invoke(
     'ICP_PUBLISH_GET_PUB_RECORD_LIST',
     page,

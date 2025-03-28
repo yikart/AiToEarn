@@ -39,11 +39,11 @@ export type XSLPlatformSettingType = {
     poiAddress: string;
   };
   cover: string;
-  // true=私有 flase=公开
-  privacy: boolean;
+  // 0 公共 1 私密 2 好友
+  visibility_type: 0 | 1 | 2;
 };
 
-let esec_token = 'ABrmhLmsdmsu9bCQ80qvGPN2CYSjEqwi5G1l2dirNUjaw%3D';
+const esec_token = 'ABrmhLmsdmsu9bCQ80qvGPN2CYSjEqwi5G1l2dirNUjaw%3D';
 
 export class XiaohongshuService {
   private defaultUserAgent =
@@ -1115,8 +1115,9 @@ export class XiaohongshuService {
             post_loc: post_loc,
             privacy_info: {
               op_type: 1,
-              type: platformSetting['privacy'] ? 1 : 0,
-              user_ids: platformSetting['privacy'] ? [] : undefined,
+              type: platformSetting['visibility_type'],
+              user_ids:
+                platformSetting['visibility_type'] !== 0 ? [] : undefined,
             },
           },
           image_info: xhs_image_info,
