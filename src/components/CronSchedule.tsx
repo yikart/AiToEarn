@@ -118,13 +118,13 @@ const ParseCronSchedule: React.FC<{ cronExpression: string }> = ({
     let parsed = '';
     switch (type) {
       case 'day':
-        parsed = `天:${value}号`;
+        parsed = `每天${value}时`;
         break;
       case 'week':
-        parsed = `周:${value}`;
+        parsed = `每周周${value}`;
         break;
       case 'month':
-        parsed = `月:${value}号`;
+        parsed = `每月${value}号`;
         break;
       default:
         parsed = '未知类型';
