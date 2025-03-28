@@ -728,7 +728,7 @@ export class DouyinService {
         const response = {
           publishTime: Math.floor(Date.now() / 1000),
           publishId: publishResult.aweme.aweme_id,
-          shareLink: '',
+          shareLink: `https://www.douyin.com/user/self?from_tab_name=main&modal_id=${publishResult.data.item_id}&showTab=post`,
         };
         console.log(`发布成功，返回数据:`, response);
         resolve(response);
@@ -1669,11 +1669,11 @@ export class DouyinService {
         common: {
           // 活动
           activity: parmasDisposeOK.activity,
+          // 挑战
+          challenges: parmasDisposeOK.activity,
           text: parmasDisposeOK.text,
           item_title: parmasDisposeOK.item_title,
           text_extra: JSON.stringify(parmasDisposeOK.text_extra),
-          // 挑战
-          challenges: JSON.stringify([]),
           creation_id: '',
           // 是否允许下载
           download: 1,
@@ -1796,6 +1796,7 @@ export class DouyinService {
 
     // 整合发布参数
     const publishParams = {
+      hot_sentence: platformSetting.hot_sentence,
       item_title: platformSetting['title'] ?? '',
       text,
       text_extra: textExtra,

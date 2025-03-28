@@ -21,7 +21,6 @@ export interface IChooseAccountModuleRef {
 export interface IChooseAccountModuleProps {
   open: boolean;
   onClose: (open: boolean) => void;
-
   // 按平台props
   platChooseProps?: IPlatChooseProps;
   // 按平台选择确认
