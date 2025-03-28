@@ -47,10 +47,16 @@ export default function Page() {
 
   async function getFwqCreatorList() {
     setWordList([]);
-    const res = await commentApi.runCommentSearchNotesTask('xhs_comments', '美妆');
+    const res = await commentApi.runCommentSearchNotesTask(
+      'xhs_comments',
+      '美妆',
+    );
     console.log('------ getFwqCreatorList', res);
     // setWordList(res.list);
-    const list = await commentApi.getCommentSearchNotes('xhs_comments', '414381229d04c46cb39f97a5a0b7f9eb');
+    const list = await commentApi.getCommentSearchNotes(
+      'xhs_comments',
+      '414381229d04c46cb39f97a5a0b7f9eb',
+    );
     console.log('------ getCommentSearchNotes', list);
   }
 
@@ -69,7 +75,6 @@ export default function Page() {
     setCommentList(res.list);
   }
 
-
   /**
    * 获取二级评论列表
    */
@@ -79,7 +84,7 @@ export default function Page() {
       // '7480598266392972596',
       item.dataId,
       item.data.id,
-      item.data.sub_comment_cursor
+      item.data.sub_comment_cursor,
     );
     console.log('------ icpGetCommentList', res);
 
@@ -167,7 +172,7 @@ export default function Page() {
                   setActiveAccountId(info.id);
                   // getFwqCreatorList();
                   getCreatorList(info.id);
-                }else{
+                } else {
                   setActiveAccountId(info.id);
                   getCreatorList(info.id);
                 }
@@ -248,7 +253,10 @@ export default function Page() {
                   <Button type="primary" onClick={() => openReplyComment(item)}>
                     回复
                   </Button>,
-                  <Button type="primary" onClick={() => getSecondCommentList(item)}>
+                  <Button
+                    type="primary"
+                    onClick={() => getSecondCommentList(item)}
+                  >
                     {item.data.sub_comment_has_more ? '二级评论' : '无'}
                   </Button>,
                 ]}
@@ -272,8 +280,6 @@ export default function Page() {
           </div>
         </Col>
 
-        
-
         <Col span={6}>
           <div>
             {secondCommentList.map((item) => (
@@ -284,7 +290,6 @@ export default function Page() {
                   <Button type="primary" onClick={() => openReplyComment(item)}>
                     回复
                   </Button>,
-                  
                 ]}
               >
                 {item.content}

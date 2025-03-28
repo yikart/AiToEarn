@@ -43,7 +43,7 @@ const Com = forwardRef<ReplyCommentRef>((props: any, ref) => {
         comment: commentData!.data,
       },
     );
-    console.log('----- replyComment res', res); 
+    console.log('----- replyComment res', res);
     if (res.status_code == 0 || res.data.code == 0) {
       message.success('回复成功');
       setIsModalOpen(false);

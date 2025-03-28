@@ -240,27 +240,26 @@ class PlatController {
     );
   }
 
-  
-    /**
+  /**
    * 获取二级评论列表
    * @param account
    * @param dataId
    * @param pcursor
    */
-    public async getCreatorSecondCommentListByOther(
-      account: AccountModel,
-      dataId: string,
-      root_comment_id: string,
-      pcursor?: string,
-    ) {
-      const platform = this.platforms.get(account.type)!;
-      return await platform.getCreatorSecondCommentListByOther(
-        account,
-        dataId,
-        root_comment_id,
-        pcursor,
-      );
-    }
+  public async getCreatorSecondCommentListByOther(
+    account: AccountModel,
+    dataId: string,
+    root_comment_id: string,
+    pcursor?: string,
+  ) {
+    const platform = this.platforms.get(account.type)!;
+    return await platform.getCreatorSecondCommentListByOther(
+      account,
+      dataId,
+      root_comment_id,
+      pcursor,
+    );
+  }
 
   /**
    * 创建评论
