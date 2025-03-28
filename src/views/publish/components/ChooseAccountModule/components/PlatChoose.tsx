@@ -41,6 +41,8 @@ export interface IPlatChooseRef {
 
 export interface IPlatChooseProps {
   pubType: PubType;
+  // 默认选择的平台
+  defaultPlat?: AccountType;
   onChange?: (
     choosedAcounts: AccountInfo[],
     choosedAcount: AccountInfo,
@@ -65,6 +67,7 @@ const PlatChoose = memo(
         disableAllSelect = false,
         isCancelChooseAccount = false,
         allowPlatSet,
+        defaultPlat,
       }: IPlatChooseProps,
       ref: ForwardedRef<IPlatChooseRef>,
     ) => {
@@ -100,7 +103,7 @@ const PlatChoose = memo(
 
       // 默认平台设置
       useEffect(() => {
-        setActivePlat(Array.from(accountMapLast.keys())[0]);
+        setActivePlat(defaultPlat || Array.from(accountMapLast.keys())[0]);
       }, [accountMapLast]);
 
       // 所有平台的账户数据

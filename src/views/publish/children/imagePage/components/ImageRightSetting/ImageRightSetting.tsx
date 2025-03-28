@@ -39,6 +39,7 @@ const ImageRightSetting = memo(
                 .map((v) => v.account)
                 .filter((v) => v !== undefined),
               pubType: PubType.ImageText,
+              defaultPlat: activePlat,
             }}
             onPlatConfirm={(aList) => {
               addAccount(aList);

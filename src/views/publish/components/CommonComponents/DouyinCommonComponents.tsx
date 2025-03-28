@@ -133,14 +133,14 @@ export const CommonActivitySelect = ({
 
   const init = () => {
     icpGetDouyinActivity(account).then((res) => {
-      setOptions(res.activity_list);
+      setOptions(res.activity_list || []);
     });
     icpGetActivityTags(account).then((res) => {
       res.data?.query_tags?.map((v) => {
         activityTagsMap.current.set(v.id, v);
       });
-      setActivityTagList(res.data.query_tags);
-      setActivityTag(`${res.data.query_tags[0].id}`);
+      setActivityTagList(res.data.query_tags || []);
+      setActivityTag(`${res.data.query_tags[0]?.id}`);
     });
   };
 
@@ -256,7 +256,7 @@ export const CommonActivitySelect = ({
           activeKey={activityTag}
           onChange={setActivityTag}
           type="card"
-          items={activityTagList.map((v) => {
+          items={activityTagList?.map((v) => {
             return {
               key: `${v.id}`,
               label: v.name,
@@ -264,7 +264,7 @@ export const CommonActivitySelect = ({
           })}
         />
         {options
-          .filter((v) => v.query_tag === +activityTag)
+          ?.filter((v) => v.query_tag === +activityTag)
           .map((data) => {
             return (
               <div
