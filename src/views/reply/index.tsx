@@ -84,16 +84,6 @@ export default function Page() {
       <div className="m-4">
         <Tabs defaultActiveKey="1">
           <Tabs.TabPane tab="作品列表" key="1">
-            {/* 测试---- */}
-            <Button
-              onClick={() => {
-                window.ipcRenderer.invoke('ICP_REPLY_TEST_NOTICE');
-              }}
-            >
-              测试
-            </Button>
-            {/* 测试---- */}
-
             {activeAccountId === -1 ? (
               <div className="flex items-center justify-center h-[300px] text-gray-500">
                 <Tooltip title="请先在左侧侧边栏选择账户">

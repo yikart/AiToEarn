@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Select, Input, Button, message, Form } from 'antd';
 
 interface CronScheduleProps {
@@ -109,4 +109,32 @@ const CronSchedule: React.FC<CronScheduleProps> = ({ onSubmit }) => {
   );
 };
 
-export default CronSchedule;
+// 解析组件
+const ParseCronSchedule: React.FC<{ cronExpression: string }> = ({
+  cronExpression,
+}) => {
+  const [parsedText, setParsedText] = useState('');
+
+  useEffect(() => {
+    const [type, value] = cronExpression.split('-');
+    let parsed = '';
+    switch (type) {
+      case 'day':
+        parsed = `天:${value}号`;
+        break;
+      case 'week':
+        parsed = `周:${value}`;
+        break;
+      case 'month':
+        parsed = `月:${value}号`;
+        break;
+      default:
+        parsed = '未知类型';
+    }
+    setParsedText(parsed);
+  }, [cronExpression]);
+
+  return <p>{parsedText}</p>;
+};
+
+export { CronSchedule, ParseCronSchedule };

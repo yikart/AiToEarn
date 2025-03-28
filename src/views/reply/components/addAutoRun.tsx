@@ -8,7 +8,7 @@
 import { ipcCreateAutoRunOfReply } from '@/icp/reply';
 import { Modal } from 'antd';
 import { forwardRef, useImperativeHandle, useState } from 'react';
-import CronSchedule from '@/components/CronSchedule';
+import { CronSchedule } from '@/components/CronSchedule';
 
 export interface AddAutoRunRef {
   init: (accountId: number, dataId: string) => Promise<void>;
@@ -37,7 +37,7 @@ const Com = forwardRef<AddAutoRunRef>((props: any, ref) => {
   async function handleCron(cron: string) {
     console.log('生成的定时表达式:----', cron);
     setCycleType(cron);
-    const res = await ipcCreateAutoRunOfReply(accountId, dataId, cycleType);
+    const res = await ipcCreateAutoRunOfReply(accountId, dataId, cron);
     console.log('-------- res', res);
   }
 

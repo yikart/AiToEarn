@@ -1,6 +1,7 @@
 import { AutoRun, AutoRunRecord, ipcGetAutoRunRecordList } from '@/icp/autoRun';
 import { Modal, Table } from 'antd';
 import React from 'react';
+import { ParseCronSchedule } from '@/components/CronSchedule';
 
 const { Column } = Table;
 export interface AutoRunRecordRef {
@@ -80,7 +81,13 @@ const Com = React.forwardRef<AutoRunRecordRef>((props: any, ref) => {
           <Column title="任务DI" dataIndex="autoRunId" key="autoRunId" />
           <Column title="状态" dataIndex="status" key="status" />
           <Column title="类型" dataIndex="type" key="type" />
-          <Column title="触发周期" dataIndex="cycleType" key="cycleType" />
+          <Column
+            title="触发周期"
+            key="cycleType"
+            render={(cycleType: string) => (
+              <ParseCronSchedule cronExpression={cycleType} />
+            )}
+          />
           <Column
             title="创建时间"
             key="createTime"
