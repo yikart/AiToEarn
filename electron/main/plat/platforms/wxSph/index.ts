@@ -233,6 +233,15 @@ export class WxSph extends PlatformBase {
     };
   }
 
+  getCreatorSecondCommentListByOther(
+    account: AccountModel,
+    dataId: string,
+    root_comment_id: string,
+    pcursor?: string,
+  ): Promise<any> {
+    return new Promise((resolve, reject) => {});
+  }
+
   async createCommentByOther(
     account: AccountModel,
     dataId: string, // 作品ID

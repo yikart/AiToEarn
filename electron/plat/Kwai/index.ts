@@ -369,7 +369,7 @@ class KwaiPub {
     photoId: string,
     pcursor?: number,
   ) {
-    return await this.requestApi<GetCommentListResponse>({
+    const res = await this.requestApi<GetCommentListResponse>({
       cookie: cookies,
       url: `/rest/cp/creator/comment/commentList`,
       method: 'POST',
@@ -380,6 +380,10 @@ class KwaiPub {
         ...(pcursor ? { pcursor } : {}),
       },
     });
+
+    console.log('----------- getCommentList --- res: ', res);
+
+    return res;
   }
 
   // 获取评论的回复列表
@@ -411,9 +415,9 @@ class KwaiPub {
    */
   async commentAdd(
     cookie: Electron.Cookie[],
-    photoId: string,
     content: string,
     reply: {
+      photoId?: string;
       replyToCommentId?: number; // 969549966791;
       replyTo?: number; // 798319351;
     },
@@ -424,7 +428,6 @@ class KwaiPub {
       method: 'POST',
       body: {
         content,
-        photoId,
         ...reply,
       },
     });

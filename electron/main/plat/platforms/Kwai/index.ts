@@ -270,6 +270,15 @@ export class Kwai extends PlatformBase {
     };
   }
 
+  getCreatorSecondCommentListByOther(
+    account: AccountModel,
+    dataId: string,
+    root_comment_id: string,
+    pcursor?: string,
+  ): Promise<any> {
+    return new Promise((resolve, reject) => {});
+  }
+
   async createCommentByOther(
     account: AccountModel,
     dataId: string, // 作品ID
@@ -296,12 +305,22 @@ export class Kwai extends PlatformBase {
     content: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const res = await kwaiPub.commentAdd(cookie, dataId, content, {});
+    const res = await kwaiPub.commentAdd(cookie, content, {
+      photoId: dataId,
+    });
     console.log('------ kaishou createComment res ----', res);
 
     return false;
   }
 
+  /**
+   * 回复评论
+   * @param account
+   * @param commentId
+   * @param content
+   * @param option
+   * @returns
+   */
   async replyComment(
     account: AccountModel,
     commentId: string,
@@ -313,12 +332,13 @@ export class Kwai extends PlatformBase {
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
 
-    const res = await kwaiPub.commentAdd(cookie, option.dataId!, content, {
+    const res = await kwaiPub.commentAdd(cookie, content, {
+      photoId: option.dataId,
       replyToCommentId: Number.parseInt(commentId),
-      replyTo: Number.parseInt(option.dataId!),
+      replyTo: option.comment.authorId,
     });
-    console.log('------ kaishou createComment res ----', res);
 
+    if (res.status !== 200 || res.data.result !== 1) return false;
     return false;
   }
 
