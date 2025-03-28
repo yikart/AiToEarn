@@ -130,7 +130,6 @@ export class ReplyController {
     return res;
   }
 
-
   /**
    * 获取二级评论列表
    */
@@ -221,22 +220,6 @@ export class ReplyController {
   }
 
   /**
-   * 测试
-   */
-  @Icp('ICP_REPLY_TEST_NOTICE')
-  async testNotice(event: Electron.IpcMainInvokeEvent): Promise<any> {
-    console.log('----1111');
-
-    windowOperate.sendRenderMsg(SendChannelEnum.CommentRelyProgress, {
-      tag: AutorReplyCommentScheduleEvent,
-      status: 1,
-      error: '测试',
-    });
-
-    return 1;
-  }
-
-  /**
    * 回复评论
    */
   @Icp('ICP_REPLY_COMMENT_BY_OTHER')
@@ -322,8 +305,5 @@ export class ReplyController {
     if (!account) return null;
 
     this.replyService.addReplyQueue(account, dataId, autoRunData);
-
-    // 创建记录
-    this.autoRunService.createAutoRunRecord(autoRunData);
   }
 }

@@ -17,6 +17,7 @@ import { Repository } from 'typeorm';
 import { ReplyCommentRecordModel } from '../../db/models/replyCommentRecord';
 import { AppDataSource } from '../../db';
 import { getUserInfo } from '../user/comment';
+import { AutoRunRecordStatus } from '../../db/models/autoRunRecord';
 
 @Injectable()
 export class ReplyService {
@@ -222,7 +223,15 @@ export class ReplyService {
    * @param account
    * @param dataId
    */
-  addReplyQueue(account: AccountModel, dataId: string, autoRun: AutoRunModel) {
+  async addReplyQueue(
+    account: AccountModel,
+    dataId: string,
+    autoRun: AutoRunModel,
+  ) {
+    // 创建任务执行记录
+    const recordData = await this.autoRunService.createAutoRunRecord(autoRun);
+
+    // 添加到队列
     this.replyQueue.add(() => {
       this.autorReplyComment(
         account,
@@ -232,16 +241,25 @@ export class ReplyService {
           status: -1 | 0 | 1;
           error?: any;
         }) => {
-          this.autoRunService.sendAutoRunProgress(
-            autoRun.id,
-            e.status,
-            e.error,
-          );
+          if (e.tag === AutorReplyCommentScheduleEvent.Start) {
+            sysNotice('自动机评论回复任务执行开始', `任务ID:${autoRun.id}`);
+          }
 
-          sysNotice(
-            '评论回复任务执行',
-            `评论回复任务执行--${e.tag}--${e.status}`,
-          );
+          if (e.tag === AutorReplyCommentScheduleEvent.End) {
+            sysNotice('自动机评论回复任务执行结束', `任务ID:${autoRun.id}`);
+            this.autoRunService.updateAutoRunRecordStatus(
+              recordData.id,
+              AutoRunRecordStatus.SUCCESS,
+            );
+          }
+
+          if (e.tag === AutorReplyCommentScheduleEvent.Error) {
+            sysNotice('自动机评论回复任务-错误!!!', `任务ID:${autoRun.id}`);
+            this.autoRunService.updateAutoRunRecordStatus(
+              recordData.id,
+              AutoRunRecordStatus.FAIL,
+            );
+          }
         },
       );
     });
