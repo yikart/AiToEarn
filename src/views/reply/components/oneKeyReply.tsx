@@ -92,9 +92,11 @@ const Com = forwardRef<OneKeyReplyRef>((props: any, ref) => {
         <div className="p-2 mb-4 border border-green-500 rounded-md shadow-md">
           <p className="text-green-500">{infoText}</p>
         </div>
-        <div className="p-2 mb-4 border border-red-500 rounded-md shadow-md">
-          <p className="text-red-500">{errorText}</p>
-        </div>
+        {errorText && (
+          <div className="p-2 mb-4 border border-red-500 rounded-md shadow-md">
+            <p className="text-red-500">{errorText}</p>
+          </div>
+        )}
       </Modal>
     </>
   );
