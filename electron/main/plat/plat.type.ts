@@ -58,6 +58,9 @@ export type WorkData = {
   coverUrl?: string;
   videoUrl?: string;
   createTime?: string;
+  option?: {
+    xsec_token: string;
+  };
 };
 
 // 评论

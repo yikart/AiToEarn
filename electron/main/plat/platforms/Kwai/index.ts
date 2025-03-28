@@ -195,13 +195,13 @@ export class Kwai extends PlatformBase {
 
   async getCommentList(
     account: AccountModel,
-    dataId: string,
+    data: WorkData,
     pcursor?: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await kwaiPub.getCommentList(
       cookie,
-      dataId,
+      data.dataId,
       pcursor ? Number.parseInt(pcursor) : undefined,
     );
 
@@ -212,7 +212,7 @@ export class Kwai extends PlatformBase {
       if (!!v.subCommentCount) {
         const subRes = await kwaiPub.getSubCommentList(
           cookie,
-          dataId,
+          data.dataId,
           v.commentId,
         );
 
@@ -257,7 +257,7 @@ export class Kwai extends PlatformBase {
 
   async getCreatorCommentListByOther(
     account: AccountModel,
-    dataId: string,
+    data: WorkData,
     pcursor?: string,
   ) {
     return {
@@ -272,7 +272,7 @@ export class Kwai extends PlatformBase {
 
   getCreatorSecondCommentListByOther(
     account: AccountModel,
-    dataId: string,
+    data: WorkData,
     root_comment_id: string,
     pcursor?: string,
   ): Promise<any> {

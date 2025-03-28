@@ -169,11 +169,11 @@ export class WxSph extends PlatformBase {
 
   async getCommentList(
     account: AccountModel,
-    dataId: string,
+    data: WorkData,
     pcursor?: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const res = await shipinhaoService.getCommentList(cookie, dataId);
+    const res = await shipinhaoService.getCommentList(cookie, data.dataId);
 
     const dataList: CommentData[] = [];
 
@@ -220,7 +220,7 @@ export class WxSph extends PlatformBase {
 
   async getCreatorCommentListByOther(
     account: AccountModel,
-    dataId: string,
+    data: WorkData,
     pcursor?: string,
   ) {
     return {
@@ -235,7 +235,7 @@ export class WxSph extends PlatformBase {
 
   getCreatorSecondCommentListByOther(
     account: AccountModel,
-    dataId: string,
+    data: WorkData,
     root_comment_id: string,
     pcursor?: string,
   ): Promise<any> {
