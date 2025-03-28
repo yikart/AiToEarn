@@ -291,14 +291,21 @@ export class Xhs extends PlatformBase {
     pcursor?: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    console.log('------ getCreatorSecondCommentListByOther xhs dataId---', dataId);
-    const res = await xiaohongshuService.getSecondCommentList(cookie, dataId, root_comment_id, pcursor );
+    console.log(
+      '------ getCreatorSecondCommentListByOther xhs dataId---',
+      dataId,
+    );
+    const res = await xiaohongshuService.getSecondCommentList(
+      cookie,
+      dataId,
+      root_comment_id,
+      pcursor,
+    );
     console.log('------ getCreatorSecondCommentListByOther xhs res---', res);
 
     const list: CommentData[] = [];
 
     for (const v of res.data.data.comments) {
-      
       list.push({
         userId: v.user_info.user_id,
         dataId: v.note_id,
@@ -519,7 +526,12 @@ export class Xhs extends PlatformBase {
           topicName: v,
         })) || [],
       timingTime: params.timingTime?.getTime(),
-      privacy: params.visibleType !== VisibleTypeEnum.Public,
+      visibility_type:
+        params.visibleType === VisibleTypeEnum.Public
+          ? 0
+          : params.visibleType === VisibleTypeEnum.Private
+            ? 1
+            : 2,
       // 位置
       poiInfo: params.location
         ? {

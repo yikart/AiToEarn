@@ -9,7 +9,11 @@ import { Controller, Icp, Inject } from '../core/decorators';
 import { PublishService } from './service';
 import { getUserInfo } from '../user/comment';
 import { Between, FindOptionsWhere, Not } from 'typeorm';
-import { backPageData, type CorrectQuery } from '../../global/table';
+import {
+  backPageData,
+  type CorrectQuery,
+  type pubRecordListQuery,
+} from '../../global/table';
 import { PubRecordModel, PubStatus } from '../../db/models/pubRecord';
 import { PubType } from '../../../commont/publish/PublishEnum';
 import { VideoPubService } from './video/service';
@@ -47,11 +51,7 @@ export class PublishController {
   async getPubRecordList(
     event: Electron.IpcMainInvokeEvent,
     page: CorrectQuery,
-    query?: {
-      time?: [string, string];
-      status?: PubStatus;
-      type?: PubType;
-    },
+    query?: pubRecordListQuery,
   ): Promise<any> {
     const userInfo = getUserInfo();
     const filters: FindOptionsWhere<PubRecordModel> = !query

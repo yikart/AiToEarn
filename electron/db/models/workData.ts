@@ -141,9 +141,8 @@ export class WorkData extends TempModel {
   // 状态
   @Column({
     type: 'tinyint',
-    nullable: false,
+    nullable: true,
     comment: '状态 0 未发布/草稿 1 已发布 2=发布失败 3=部分成功',
-    enum: PubStatus,
     default: PubStatus.UNPUBLISH,
   })
   status!: PubStatus;

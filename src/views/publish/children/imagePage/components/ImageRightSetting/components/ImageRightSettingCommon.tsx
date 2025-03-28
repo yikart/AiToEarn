@@ -21,7 +21,11 @@ import CommonScheduledTimeSelect, {
   ICommonScheduledTimeSelectProps,
 } from '../../../../../components/CommonComponents/CommonScheduledTimeSelect';
 import dayjs from 'dayjs';
-import { AccountRestartLogin } from '../../../../../components/CommonComponents/CommonComponents';
+import {
+  AccountRestartLogin,
+  PubPermission,
+  PubPermissionProps,
+} from '../../../../../components/CommonComponents/CommonComponents';
 import { AccountPlatInfoMap } from '../../../../../../account/comment';
 
 interface DebounceSelectProps<ValueType = any>
@@ -264,6 +268,35 @@ export const ImgTextDescTextArea = ({
         }}
       />
     </>
+  );
+};
+
+// 权限设置
+export const ImgTextPubPermission = ({ ...props }: PubPermissionProps) => {
+  const { imageAccountItem } = useImagePlatParams();
+  const { setOnePubParams } = useImagePageStore(
+    useShallow((state) => ({
+      setOnePubParams: state.setOnePubParams,
+    })),
+  );
+  return (
+    <PubPermission
+      style={{
+        display: 'flex',
+        gap: 4,
+        flexDirection: 'column',
+      }}
+      onChange={(e) => {
+        setOnePubParams(
+          {
+            visibleType: e,
+          },
+          imageAccountItem.account!.id,
+        );
+      }}
+      value={imageAccountItem?.pubParams.visibleType}
+      {...props}
+    />
   );
 };
 

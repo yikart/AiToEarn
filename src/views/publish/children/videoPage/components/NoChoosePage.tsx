@@ -61,6 +61,7 @@ const NoChoosePage = memo(
           <Alert message="选择一条发布记录" />
           <PubRecord
             hegiht="55vh"
+            defaultPubType={PubType.VIDEO}
             onChange={async (pubRecordModel) => {
               pubRecord.current = pubRecordModel;
             }}

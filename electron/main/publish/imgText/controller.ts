@@ -32,6 +32,17 @@ export class ImgTextPubController {
     await this.imgTextService.updateImgTextPul(imgTextModel);
   }
 
+  // 根据发布记录ID获取图文发布列表
+  @Icp('ICP_PUBLISH_GET_IMG_TEXT_LIST')
+  async getImgTextList(
+    event: Electron.IpcMainInvokeEvent,
+    pubRecordId: number,
+  ) {
+    return await this.imgTextService.getImgTextPulListByPubRecordId(
+      pubRecordId,
+    );
+  }
+
   // 发布图文
   @Icp('ICP_PUBLISH_IMG_TEXT')
   async pubImgText(event: Electron.IpcMainInvokeEvent, pubRecordId: number) {
@@ -49,8 +60,6 @@ export class ImgTextPubController {
     const accountList = await this.accountService.getAccountsByIds(
       imgTextModels.map((v) => v.accountId),
     );
-
-    console.log(imgTextModels);
 
     // 发布
     const pubRes = await platController.imgTextPublish(

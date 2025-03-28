@@ -3,14 +3,13 @@ import {
   IVideoPubSetModalChildProps,
   IVideoPubSetModalChildRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/videoPubSetModal.type';
-import { Radio } from 'antd';
-import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import TopicSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/TopicSelect';
 import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
 import {
   DescTextArea,
   ScheduledTimeSelect,
   TitleInput,
+  VideoPubPermission,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
 import UserSelect from '../components/UserSelect';
 import useVideoPubSetModal from './hooks/useVideoPubSetModal';
@@ -45,27 +44,9 @@ const VideoPubSetModal_WxSph = memo(
 
           <LocationSelect currChooseAccount={currChooseAccount} />
 
-          <h1>权限设置</h1>
-          <Radio.Group
-            options={[
-              {
-                label: '公开（所有人可见）',
-                value: VisibleTypeEnum.Public,
-              },
-              {
-                label: '私密（仅自己可见）',
-                value: VisibleTypeEnum.Private,
-              },
-            ]}
-            onChange={(e) => {
-              setOnePubParams(
-                {
-                  visibleType: e.target.value,
-                },
-                currChooseAccount!.id,
-              );
-            }}
-            value={currChooseAccount?.pubParams.visibleType}
+          <VideoPubPermission
+            currChooseAccount={currChooseAccount}
+            title="谁可以看"
           />
           <ScheduledTimeSelect currChooseAccount={currChooseAccount} />
         </>

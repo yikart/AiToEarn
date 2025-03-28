@@ -3,10 +3,9 @@ import {
   IVideoPubSetModalChildProps,
   IVideoPubSetModalChildRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/videoPubSetModal.type';
-import { Radio, Select } from 'antd';
+import { Select } from 'antd';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
-import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import TopicSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/TopicSelect';
 import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
 import { AccountType } from '@@/AccountEnum';
@@ -14,6 +13,7 @@ import {
   DescTextArea,
   ScheduledTimeSelect,
   TitleInput,
+  VideoPubPermission,
   VideoPubRestartLogin,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
 import UserSelect from '../components/UserSelect';
@@ -177,28 +177,9 @@ const VideoPubSetModal_DouYin = memo(
             }}
           />
 
-          <h1>谁可以看</h1>
-          <Radio.Group
-            options={[
-              {
-                label: '公开（所有人可见）',
-                value: VisibleTypeEnum.Public,
-              },
-              { label: '好友可见', value: VisibleTypeEnum.Friend },
-              {
-                label: '私密（仅自己可见）',
-                value: VisibleTypeEnum.Private,
-              },
-            ]}
-            onChange={(e) => {
-              setOnePubParams(
-                {
-                  visibleType: e.target.value,
-                },
-                currChooseAccount!.id,
-              );
-            }}
-            value={currChooseAccount?.pubParams.visibleType}
+          <VideoPubPermission
+            currChooseAccount={currChooseAccount}
+            title="谁可以看"
           />
         </>
       );

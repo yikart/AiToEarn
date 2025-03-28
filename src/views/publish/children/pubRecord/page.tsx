@@ -1,30 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { PubRecordModel } from '../../comment';
 import styles from './pubRecord.module.scss';
-import { icpGetPubRecordList, icpGetPubVideoRecord } from '@/icp/publish';
-import {
-  Avatar,
-  Button,
-  Drawer,
-  Image,
-  Modal,
-  Spin,
-  Table,
-  TableProps,
-  Tag,
-  Tooltip,
-} from 'antd';
+import { icpGetPubRecordList } from '@/icp/publish';
+import { Button, Image, Modal, Select, Table, TableProps, Tag } from 'antd';
 import { getImgFile, IImgFile } from '@/components/Choose/ImgChoose';
 import { formatTime, getFilePathName } from '@/utils';
-import { VideoPul } from '@/views/publish/children/videoPage/comment';
-import { AccountInfo, AccountPlatInfoMap } from '@/views/account/comment';
-import { useVideoPageStore } from '../videoPage/useVideoPageStore';
-import { useShallow } from 'zustand/react/shallow';
-import { useNavigate } from 'react-router-dom';
-import { AccountType } from '../../../../../commont/AccountEnum';
+import { AccountInfo } from '@/views/account/comment';
 import WebView from '../../../../components/WebView';
-import { getVideoFile } from '../../../../components/Choose/VideoChoose';
-import { useAccountStore } from '../../../../store/account';
+import { PubType } from '../../../../../commont/publish/PublishEnum';
+import PubRecordDetails, {
+  IPubRecordDetailsRef,
+} from './components/PubRecordDetails';
 
 export const ImageView = ({
   prm,
@@ -57,27 +43,25 @@ export const ImageView = ({
   );
 };
 
+export interface IExamineVideo {
+  account?: AccountInfo;
+  url: string;
+  open: boolean;
+  jsCode: string;
+  videoSrc?: string;
+}
+
 export default function Page({
-  hegiht = '78vh',
+  hegiht = '75vh',
   onChange,
+  defaultPubType,
 }: {
   hegiht?: string;
   onChange?: (pubRecordModel: PubRecordModel) => void;
+  defaultPubType?: PubType;
 }) {
   const [pulRecardList, setRecardList] = useState<PubRecordModel[]>([]);
-  const [open, setOpen] = useState(false);
-  const [currPubRecordModel, setCurrPubRecordModel] =
-    useState<PubRecordModel>();
-  const [recordLoaidng, setRecordLoaidng] = useState(false);
-  const [pubRecordList, setPubRecordList] = useState<VideoPul[]>([]);
-  const navigate = useNavigate();
-  const [examineVideo, setExamineVideo] = useState<{
-    account?: AccountInfo;
-    url: string;
-    open: boolean;
-    jsCode: string;
-    videoSrc?: string;
-  }>({
+  const [examineVideo, setExamineVideo] = useState<IExamineVideo>({
     videoSrc: '',
     account: undefined,
     url: '',
@@ -85,16 +69,9 @@ export default function Page({
     jsCode: '',
   });
   const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
-  const { accountMap } = useAccountStore(
-    useShallow((state) => ({
-      accountMap: state.accountMap,
-    })),
-  );
-  const { restartPub } = useVideoPageStore(
-    useShallow((state) => ({
-      restartPub: state.restartPub,
-    })),
-  );
+  const pubRecordDetailsRef = useRef<IPubRecordDetailsRef>(null);
+  // 发布类型的筛选
+  const [pubType, setPubType] = useState<PubType | undefined>(defaultPubType);
 
   const columns = useMemo(() => {
     const columns: TableProps<PubRecordModel>['columns'] = [
@@ -115,6 +92,22 @@ export default function Page({
         dataIndex: 'publishTime',
         key: 'publishTime',
         render: (text, prm) => formatTime(prm.publishTime),
+        width: 200,
+      },
+      {
+        title: '发布类型',
+        dataIndex: 'type',
+        key: 'type',
+        render: (_, prm) => {
+          switch (prm.type) {
+            case PubType.ARTICLE:
+              return <>文章发布</>;
+            case PubType.VIDEO:
+              return <>视频发布</>;
+            case PubType.ImageText:
+              return <>图文发布</>;
+          }
+        },
         width: 200,
       },
       {
@@ -145,12 +138,7 @@ export default function Page({
               type="link"
               onClick={async (e) => {
                 e.stopPropagation();
-                setOpen(true);
-                setCurrPubRecordModel(prm);
-                setRecordLoaidng(true);
-                const res = await icpGetPubVideoRecord(prm.id);
-                setRecordLoaidng(false);
-                setPubRecordList(res);
+                pubRecordDetailsRef.current?.oepnPubRecordDetails(prm);
               }}
             >
               详情
@@ -164,19 +152,20 @@ export default function Page({
 
   useEffect(() => {
     GetPubList();
-  }, []);
+  }, [pubType]);
 
   async function GetPubList() {
-    const res = await icpGetPubRecordList({
-      page_no: 1,
-      page_size: 10,
-    });
+    const res = await icpGetPubRecordList(
+      {
+        page_no: 1,
+        page_size: 10,
+      },
+      {
+        type: pubType,
+      },
+    );
     setRecardList(res.list);
   }
-
-  const close = () => {
-    setOpen(false);
-  };
 
   useEffect(() => {
     if (onChange)
@@ -214,6 +203,7 @@ export default function Page({
             newState.open = false;
             newState.url = '';
             newState.videoSrc = '';
+            newState.account = undefined;
             return newState;
           });
         }}
@@ -232,7 +222,7 @@ export default function Page({
             </>
           ) : (
             <>
-              {examineVideo.account && open ? (
+              {examineVideo.account ? (
                 <WebView
                   url={examineVideo.url}
                   cookieParams={{
@@ -248,6 +238,24 @@ export default function Page({
         </div>
       </Modal>
 
+      {!onChange && (
+        <div className="pubRecord-options">
+          <Select
+            style={{ width: 120 }}
+            placeholder="发布类型"
+            allowClear
+            onChange={(e) => {
+              setPubType(e as PubType);
+            }}
+            options={[
+              { value: PubType.ARTICLE, label: '文章' },
+              { value: PubType.ImageText, label: '图文' },
+              { value: PubType.VIDEO, label: '视频' },
+            ]}
+          />
+        </div>
+      )}
+
       <Table<PubRecordModel>
         columns={columns}
         dataSource={pulRecardList}
@@ -261,104 +269,17 @@ export default function Page({
         })}
       />
 
-      {/*发布记录详情*/}
-      <Drawer title="发布记录" onClose={close} open={open} width={600}>
-        <Spin spinning={recordLoaidng}>
-          <div className={styles.pubRecord} style={{ padding: '0' }}>
-            <ImageView prm={currPubRecordModel!} width="auto" height={150} />
-
-            <ul className="pubRecord-record">
-              {pubRecordList.map((v) => {
-                const account = accountMap.get(v.accountId);
-                const plat = AccountPlatInfoMap.get(v.type);
-                return (
-                  <li className="pubRecord-record-item" key={v.id}>
-                    <div
-                      className={[
-                        'pubRecord-record-item-status',
-                        v.status === 1
-                          ? 'pubRecord-record-item--success'
-                          : v.status === 0
-                            ? 'pubRecord-record-item--processing'
-                            : 'pubRecord-record-item--fail',
-                      ].join(' ')}
-                    >
-                      {v.status === 1
-                        ? '发布成功'
-                        : v.status === 0
-                          ? '发布中'
-                          : '发布失败'}
-                    </div>
-                    <div className="pubRecord-record-item-con">
-                      <div className="pubRecord-record-item-con-avatar">
-                        <Avatar size="large" src={account?.avatar} />
-                        <img src={plat?.icon} />
-                      </div>
-                      <div className="pubRecord-record-item-userinfo">
-                        <b>{account?.nickname}</b>
-                        {v.failMsg ? (
-                          <Tooltip title={v.failMsg}>
-                            <div className="pubRecord-record-item-failMsg">
-                              {v.failMsg}
-                            </div>
-                          </Tooltip>
-                        ) : (
-                          <p className="pubRecord-record-item-userinfo-time">
-                            {formatTime(v.publishTime!)}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                    <div className="pubRecord-record-item-btns">
-                      {v.status !== 1 ? (
-                        <Button
-                          type="link"
-                          onClick={() => {
-                            setRecordLoaidng(true);
-                            const prl = pubRecordList.filter(
-                              (v) => v.status === 2,
-                            );
-                            restartPub(
-                              prl,
-                              prl.map((k) => accountMap.get(k.accountId)!),
-                            );
-                            setRecordLoaidng(false);
-                            navigate('/publish/video');
-                          }}
-                        >
-                          重新发布
-                        </Button>
-                      ) : (
-                        <Button
-                          type="link"
-                          onClick={async () => {
-                            if (!v.dataId) return;
-                            const videoFile = await getVideoFile(v.videoPath!);
-                            setExamineVideo((prevState) => {
-                              const newState = { ...prevState };
-                              newState.open = true;
-                              newState.account = account;
-
-                              if (account?.type === AccountType.WxSph) {
-                                newState.videoSrc = videoFile.videoUrl;
-                              } else {
-                                newState.url = v.previewVideoLink || '';
-                              }
-                              return newState;
-                            });
-                          }}
-                        >
-                          查看
-                        </Button>
-                      )}
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </Spin>
-      </Drawer>
+      <PubRecordDetails
+        ref={pubRecordDetailsRef}
+        onExamineVideoClick={(e) => {
+          setExamineVideo((prevState) => {
+            return {
+              ...prevState,
+              ...e,
+            };
+          });
+        }}
+      />
     </div>
   );
 }

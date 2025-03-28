@@ -1,4 +1,4 @@
-import { Button } from 'antd';
+import { Button, Radio } from 'antd';
 import styles from './commonComponents.module.scss';
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
@@ -6,6 +6,7 @@ import { PlusOutlined, UserAddOutlined } from '@ant-design/icons';
 
 import { AccountInfo } from '../../../account/comment';
 import { AccountStatus } from '../../../../../commont/AccountEnum';
+import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
 
 // 本地上传、素材上传展示的块
 export const ChooseChunk = ({
@@ -62,6 +63,45 @@ export const ChooseAccountChunk = ({ onClick }: { onClick: () => void }) => {
       </Button>
       <Outlet />
     </div>
+  );
+};
+
+export interface PubPermissionProps {
+  onChange?: (visibleType: VisibleTypeEnum) => void;
+  value?: VisibleTypeEnum;
+  title?: string;
+  style?: React.CSSProperties;
+}
+
+// 权限设置
+export const PubPermission = ({
+  onChange,
+  value,
+  style,
+  title = '权限设置',
+}: PubPermissionProps) => {
+  return (
+    <>
+      <h1>{title}</h1>
+      <Radio.Group
+        style={style}
+        options={[
+          {
+            label: '公开（所有人可见）',
+            value: VisibleTypeEnum.Public,
+          },
+          { label: '好友可见', value: VisibleTypeEnum.Friend },
+          {
+            label: '私密（仅自己可见）',
+            value: VisibleTypeEnum.Private,
+          },
+        ]}
+        onChange={(e) => {
+          if (onChange) onChange(e.target.value);
+        }}
+        value={value}
+      />
+    </>
   );
 };
 

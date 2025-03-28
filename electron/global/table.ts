@@ -6,9 +6,18 @@
  * @Description: 表格状数据
  */
 
+import { PubStatus } from '../db/models/pubRecord';
+import { PubType } from '../../commont/publish/PublishEnum';
+
 export interface CorrectQuery {
   page_size: number;
   page_no: number;
+}
+
+export interface pubRecordListQuery {
+  time?: [string, string];
+  status?: PubStatus;
+  type?: PubType;
 }
 
 export interface CorrectResponse<T> {
