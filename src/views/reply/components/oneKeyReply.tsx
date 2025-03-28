@@ -61,7 +61,7 @@ const Com = forwardRef<OneKeyReplyRef>((props: any, ref) => {
         setInfoText('评论结束');
         break;
       case AutorReplyCommentScheduleEvent.Error:
-        setErrorText(args.error);
+        setErrorText(args.error?.message || '未知错误');
         break;
       default:
         const tagStr =

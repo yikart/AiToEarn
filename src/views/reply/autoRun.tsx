@@ -59,6 +59,7 @@ const Page: React.FC = () => {
   return (
     <div style={{ width: '100%' }} className="bg-slate-500">
       <Table
+        rowKey="id"
         dataSource={autoRunList}
         style={{ width: '100%' }}
         className="bg-slate-500"
