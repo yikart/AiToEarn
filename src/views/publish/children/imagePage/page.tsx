@@ -3,7 +3,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { useImagePageStore } from './useImagePageStore';
 import ImageLeftSetting from './components/ImageLeftSetting/ImageLeftSetting';
 import ImageRightSetting from './components/ImageRightSetting/ImageRightSetting';
-import { Button, message, Popconfirm, Space } from 'antd';
+import { Button, message, Modal, Popconfirm, Space } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import usePubParamsVerify, {
   PubParamsErrStatusEnum,
@@ -22,6 +22,10 @@ import {
 import { PubType } from '../../../../../commont/publish/PublishEnum';
 import { useAccountStore } from '../../../../store/commont';
 import { useNavigate } from 'react-router-dom';
+import { usePubStroe } from '../../../../store/pubStroe';
+import { ExclamationCircleFilled } from '@ant-design/icons';
+
+const { confirm } = Modal;
 
 export default function Page() {
   const {
@@ -32,6 +36,7 @@ export default function Page() {
     setPlatActiveAccountMap,
     setErrParamsMap,
     updateAccounts,
+    setTempSaveParams,
     commonPubParams,
   } = useImagePageStore(
     useShallow((state) => ({
@@ -43,6 +48,7 @@ export default function Page() {
       setErrParamsMap: state.setErrParamsMap,
       updateAccounts: state.updateAccounts,
       commonPubParams: state.commonPubParams,
+      setTempSaveParams: state.setTempSaveParams,
     })),
   );
   const { errParamsMap, warnParamsMap } = usePubParamsVerify(
@@ -90,9 +96,29 @@ export default function Page() {
         return newMap;
       });
     });
+    const history = usePubStroe.getState().getImgTextPubSaveData();
+    let confirmRes: { destroy: () => void };
+
+    if (history) {
+      confirmRes = confirm({
+        title: '恢复草稿',
+        icon: <ExclamationCircleFilled />,
+        content: '您之前有未发布的图文记录，是否需要恢复？',
+        okText: '恢复',
+        cancelText: '放弃',
+        onOk() {
+          setTempSaveParams(history);
+        },
+        onCancel() {
+          usePubStroe.getState().clearImgTextPubSave();
+        },
+      });
+    }
+
     return () => {
-      // clear();
+      clear();
       destroy();
+      confirmRes?.destroy();
     };
   }, []);
 
@@ -129,6 +155,7 @@ export default function Page() {
     const okRes = await icpPubImgText(recordRes.id);
     setLoading(false);
     setPubProgressModuleOpen(false);
+    usePubStroe.getState().clearImgTextPubSave();
     const successList = okRes.filter((v) => v.code === 1);
     useAccountStore.getState().notification!.open({
       message: '发布结果',
@@ -202,6 +229,7 @@ export default function Page() {
           description="是否确认清空内容和账号？"
           onConfirm={() => {
             clear();
+            usePubStroe.getState().clearImgTextPubSave();
           }}
           okText="确认"
           cancelText="取消"

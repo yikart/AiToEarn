@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
-import { IImgFile } from '../../../../components/Choose/ImgChoose';
+import { getImgFile, IImgFile } from '../../../../components/Choose/ImgChoose';
 import { IImageAccountItem } from './imagePage.type';
 import lodash from 'lodash';
 import { AccountInfo } from '../../../account/comment';
@@ -10,8 +10,9 @@ import { IPubParams } from '../videoPage/videoPage';
 import { message } from 'antd';
 import { accountLogin } from '../../../../icp/account';
 import { ErrPubParamsMapType } from '../../hooks/usePubParamsVerify';
+import { usePubStroe } from '../../../../store/pubStroe';
 
-interface IImagePageStore {
+export interface IImagePageStore {
   // 账户数据和对应参数
   imageAccounts: IImageAccountItem[];
   // 选择的图片数据
@@ -53,7 +54,18 @@ export const useImagePageStore = create(
     {
       ...getStore(),
     },
-    (set, get, storeApi) => {
+    (_set, get, storeApi) => {
+      const set = (data: Partial<IImagePageStore>) => {
+        _set(data);
+        if (
+          (data.hasOwnProperty('imageAccounts') &&
+            data.imageAccounts!.length !== 0) ||
+          (data.hasOwnProperty('images') && data.images!.length !== 0)
+        ) {
+          usePubStroe.getState().setImgTextPubSaveData(get());
+        }
+      };
+
       const methods = {
         setPlatActiveAccountMap(
           platActiveAccountMap: Map<AccountType, IImageAccountItem>,
@@ -76,6 +88,46 @@ export const useImagePageStore = create(
             activePlat,
           });
         },
+        // 设置图片
+        setImages(images: IImgFile[]) {
+          set({
+            images,
+          });
+        },
+
+        // 恢复临时图文记录
+        async setTempSaveParams({
+          images,
+          commonPubParams,
+          imageAccounts,
+        }: {
+          images?: IImgFile[];
+          commonPubParams?: IPubParams;
+          imageAccounts?: IImageAccountItem[];
+        }) {
+          if (images) {
+            const tasks: Promise<IImgFile>[] = [];
+            for (const image of images) {
+              tasks.push(getImgFile(image.imgPath));
+            }
+            const imgFiles = await Promise.all(tasks);
+            set({
+              images: imgFiles,
+            });
+          }
+
+          if (imageAccounts) {
+            set({
+              imageAccounts,
+            });
+          }
+
+          if (commonPubParams) {
+            set({
+              commonPubParams,
+            });
+          }
+        },
 
         /**
          * 账户重新登录。登录成功后会自动更新该条账户数据
@@ -86,13 +138,6 @@ export const useImagePageStore = create(
           message.success('登录成功！');
           // 更新此条账户数据
           methods.updateAccounts([res]);
-        },
-
-        // 设置图片
-        setImages(images: IImgFile[]) {
-          set({
-            images,
-          });
         },
 
         // 添加图片
