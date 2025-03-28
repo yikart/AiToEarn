@@ -1415,12 +1415,19 @@ export class XiaohongshuService {
     });
   }
 
-  // 获取评论列表
+  /**
+   * 获取评论列表
+   * @param cookie
+   * @param noteId
+   * @param cursor
+   * @returns
+   */
   async getCommentList(
     cookie: Electron.Cookie[],
     noteId: string,
     cursor?: number,
   ) {
+    // TODO: xsec_token 每个作品评论列表的xsec_token都不一样，需要重新获取
     const url = `/api/sns/web/v2/comment/page?note_id=${noteId}&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=${esec_token}`;
     const reverseRes: any = await this.getReverseResult({
       url,
@@ -1446,39 +1453,37 @@ export class XiaohongshuService {
     return res;
   }
 
+  // 获取二级评论列表
+  async getSecondCommentList(
+    cookie: Electron.Cookie[],
+    noteId: string,
+    root_comment_id: string,
+    cursor?: string,
+  ) {
+    const url = `/api/sns/web/v2/comment/sub/page?note_id=${noteId}&root_comment_id=${root_comment_id}&num=10&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=${esec_token}`;
+    const reverseRes: any = await this.getReverseResult({
+      url,
+      a1: CookieToString(cookie),
+    });
 
-    // 获取二级评论列表
-    async getSecondCommentList(
-      cookie: Electron.Cookie[],
-      noteId: string,
-      root_comment_id: string,
-      cursor?: string,
-    ) {
-      const url = `/api/sns/web/v2/comment/sub/page?note_id=${noteId}&root_comment_id=${root_comment_id}&num=10&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=${esec_token}`;
-      const reverseRes: any = await this.getReverseResult({
-        url,
-        a1: CookieToString(cookie),
-      });
-  
-      const res = await requestNet<XhsCommentListResponse>({
-        url: `https://edith.xiaohongshu.com${url}`,
-        headers: {
-          cookie: CookieToString(cookie),
-          Referer: this.loginUrlHome,
-          origin: this.loginUrlHome,
-          'X-S': reverseRes['X-s'],
-          'X-T': reverseRes['X-t'],
-          userAgent:
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
-        },
-        method: 'GET',
-      });
-  
-      console.log('------- xhs getSecondCommentList ---', res);
-  
-      return res;
-    }
+    const res = await requestNet<XhsCommentListResponse>({
+      url: `https://edith.xiaohongshu.com${url}`,
+      headers: {
+        cookie: CookieToString(cookie),
+        Referer: this.loginUrlHome,
+        origin: this.loginUrlHome,
+        'X-S': reverseRes['X-s'],
+        'X-T': reverseRes['X-t'],
+        userAgent:
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
+      },
+      method: 'GET',
+    });
 
+    console.log('------- xhs getSecondCommentList ---', res);
+
+    return res;
+  }
 
   /**
    * 点赞作品

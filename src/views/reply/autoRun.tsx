@@ -45,8 +45,9 @@ const Page: React.FC = () => {
     });
   }
 
-  function changeAutoRunStatus(id: number, status: AutoRunStatus) {
-    ipcUpdateAutoRunStatus(id, status);
+  async function changeAutoRunStatus(id: number, status: AutoRunStatus) {
+    await ipcUpdateAutoRunStatus(id, status);
+    getAutoRunList();
   }
 
   // 打开Ref_AutoRunRecord
@@ -102,7 +103,6 @@ const Page: React.FC = () => {
         }}
       >
         <Column title="ID" dataIndex="id" key="id" />
-        <Column title="用户DI" dataIndex="userId" key="userId" />
         <Column title="账户ID" dataIndex="accountId" key="accountId" />
         <Column title="运行次数" dataIndex="runCount" key="runCount" />
         <Column
@@ -150,7 +150,7 @@ const Page: React.FC = () => {
               </Popconfirm>
 
               <Popconfirm
-                title="确认停止该任务"
+                title="确认删除该任务"
                 onConfirm={(e?: React.MouseEvent<HTMLElement>) => {
                   changeAutoRunStatus(record.id, AutoRunStatus.DELETE);
                 }}

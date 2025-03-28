@@ -189,13 +189,28 @@ export class Xhs extends PlatformBase {
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
 
-    const res = await xiaohongshuService.getCommentList(cookie, dataId);
+    const res = await xiaohongshuService.getCommentList(
+      cookie,
+      dataId,
+      pcursor ? Number.parseInt(pcursor) : undefined,
+    );
+
+    // 错误处理
+    if (res.status !== 200 || res.data.code) {
+      console.log('----- getCommentList xhs error---', res);
+      return {
+        list: [],
+        pageInfo: {
+          count: 0,
+          hasMore: false,
+          pcursor: '',
+        },
+      };
+    }
 
     const list: CommentData[] = [];
-
     for (const v of res.data.data.comments) {
       const subList: CommentData[] = [];
-
       for (const sub of v.sub_comments) {
         subList.push({
           userId: sub.user_info.user_id,
@@ -291,14 +306,21 @@ export class Xhs extends PlatformBase {
     pcursor?: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    console.log('------ getCreatorSecondCommentListByOther xhs dataId---', dataId);
-    const res = await xiaohongshuService.getSecondCommentList(cookie, dataId, root_comment_id, pcursor );
+    console.log(
+      '------ getCreatorSecondCommentListByOther xhs dataId---',
+      dataId,
+    );
+    const res = await xiaohongshuService.getSecondCommentList(
+      cookie,
+      dataId,
+      root_comment_id,
+      pcursor,
+    );
     console.log('------ getCreatorSecondCommentListByOther xhs res---', res);
 
     const list: CommentData[] = [];
 
     for (const v of res.data.data.comments) {
-      
       list.push({
         userId: v.user_info.user_id,
         dataId: v.note_id,
