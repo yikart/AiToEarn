@@ -32,6 +32,7 @@ const Com = forwardRef<CommentListRef>((props: any, ref) => {
   });
 
   async function init(accountId: number, workData: WorkData) {
+    setCommentList([]);
     setAccountId(accountId);
     setWorkData(workData);
     setIsModalOpen(true);

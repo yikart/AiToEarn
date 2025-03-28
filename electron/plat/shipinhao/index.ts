@@ -1418,10 +1418,11 @@ export class ShipinhaoService {
   }
 
   /**
-   * 评论作品
+   * 评论作品和回复评论
    * @param cookie
-   * @param body
-   * @param rid
+   * @param exportId
+   * @param content
+   * @param comment
    * @returns
    */
   async createComment(
@@ -1454,7 +1455,7 @@ export class ShipinhaoService {
       },
     });
 
-    console.log('------ res', res);
+    console.log('------- WxSph createComment ----', res);
 
     return res;
   }

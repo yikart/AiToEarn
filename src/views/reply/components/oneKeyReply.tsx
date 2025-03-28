@@ -49,16 +49,19 @@ const Com = forwardRef<OneKeyReplyRef>((props: any, ref) => {
     args: {
       tag: AutorReplyCommentScheduleEvent;
       status: -1 | 0 | 1;
-      data?: any;
+      data?: {
+        content: string;
+        aiContent: string;
+      };
       error?: any;
     },
   ) {
     switch (args.tag) {
       case AutorReplyCommentScheduleEvent.Start:
-        setInfoText('开始评论');
+        setInfoText(`开始评论:${args.data?.content || ''}`);
         break;
       case AutorReplyCommentScheduleEvent.End:
-        setInfoText('评论结束');
+        setInfoText(`评论结束:${args.data?.aiContent || ''}`);
         break;
       case AutorReplyCommentScheduleEvent.Error:
         setErrorText(args.error?.message || '未知错误');

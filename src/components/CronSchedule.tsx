@@ -67,11 +67,9 @@ const CronSchedule: React.FC<CronScheduleProps> = ({ onSubmit }) => {
           onChange={handleTypeChange}
           style={{ width: '100%' }}
         >
-          <Select.Option value="day">每天（格式：day-HH）</Select.Option>
-          <Select.Option value="week">每周（格式：week-0到6）</Select.Option>
-          <Select.Option value="month">
-            每月（格式：month-01到31）
-          </Select.Option>
+          <Select.Option value="day">每天</Select.Option>
+          <Select.Option value="week">每周</Select.Option>
+          <Select.Option value="month">每月</Select.Option>
         </Select>
       </Form.Item>
 
@@ -120,13 +118,13 @@ const ParseCronSchedule: React.FC<{ cronExpression: string }> = ({
     let parsed = '';
     switch (type) {
       case 'day':
-        parsed = `天:${value}号`;
+        parsed = `每天${value}时`;
         break;
       case 'week':
-        parsed = `周:${value}`;
+        parsed = `每周周${value}`;
         break;
       case 'month':
-        parsed = `月:${value}号`;
+        parsed = `每月${value}号`;
         break;
       default:
         parsed = '未知类型';
