@@ -3,11 +3,13 @@ import {
   AutoRunStatus,
   AutoRunType,
   ipcGetAutoRunList,
+  ipcRunNowAutoRun,
   ipcUpdateAutoRunStatus,
 } from '@/icp/autoRun';
-import { Popconfirm, Space, Table } from 'antd';
+import { Button, Popconfirm, Space, Table } from 'antd';
 import React from 'react';
 import AutoRunRecord, { AutoRunRecordRef } from './components/autoRunRecord';
+import { ParseCronSchedule } from '@/components/CronSchedule';
 
 const { Column } = Table;
 
@@ -56,8 +58,35 @@ const Page: React.FC = () => {
     getAutoRunList();
   }, [pagination.page, pagination.pageSize]);
 
+  // 添加刷新功能的函数
+  function refreshAutoRunList() {
+    getAutoRunList();
+  }
+
+  function runNowAutoRun(data: AutoRun) {
+    ipcRunNowAutoRun(data.id);
+  }
+
+  // 添加状态映射
+  const statusMap: { [key in AutoRunStatus]: string } = {
+    [AutoRunStatus.DOING]: '活跃',
+    [AutoRunStatus.PAUSE]: '暂停',
+    [AutoRunStatus.DELETE]: '删除',
+    // 可以根据需要添加更多状态
+  };
+
+  // 添加类型映射
+  const typeMap: { [key in AutoRunType]: string } = {
+    [AutoRunType.ReplyComment]: '回复评论',
+    // 可以根据需要添加更多类型
+  };
+
   return (
     <div style={{ width: '100%' }} className="bg-slate-500">
+      {/* 添加刷新按钮 */}
+      <Button onClick={refreshAutoRunList} style={{ marginBottom: 16 }}>
+        刷新
+      </Button>
       <Table
         rowKey="id"
         dataSource={autoRunList}
@@ -76,9 +105,26 @@ const Page: React.FC = () => {
         <Column title="用户DI" dataIndex="userId" key="userId" />
         <Column title="账户ID" dataIndex="accountId" key="accountId" />
         <Column title="运行次数" dataIndex="runCount" key="runCount" />
-        <Column title="状态" dataIndex="status" key="status" />
-        <Column title="类型" dataIndex="type" key="type" />
-        <Column title="触发周期" dataIndex="cycleType" key="cycleType" />
+        <Column
+          title="状态"
+          dataIndex="status"
+          key="status"
+          render={(status: AutoRunStatus) => statusMap[status]}
+        />
+        <Column
+          title="类型"
+          dataIndex="type"
+          key="type"
+          render={(type: AutoRunType) => typeMap[type]}
+        />
+        <Column
+          title="触发周期"
+          dataIndex="cycleType"
+          key="cycleType"
+          render={(cycleType: string) => (
+            <ParseCronSchedule cronExpression={cycleType} />
+          )}
+        />
         <Column
           title="创建时间"
           key="createTime"
@@ -113,13 +159,12 @@ const Page: React.FC = () => {
               >
                 <a>删除</a>
               </Popconfirm>
-
+              <a onClick={() => runNowAutoRun(record)}>立即执行</a>
               <a onClick={() => openAutoRunRecord(record)}>打开记录</a>
             </Space>
           )}
         />
       </Table>
-
       <AutoRunRecord ref={Ref_AutoRunRecord} />
     </div>
   );

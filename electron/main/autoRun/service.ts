@@ -14,7 +14,7 @@ import {
   AutoRunRecordModel,
   AutoRunRecordStatus,
 } from '../../db/models/autoRunRecord';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, Not, Repository } from 'typeorm';
 import { AppDataSource } from '../../db';
 import windowOperate from '../../util/windowOperate';
 import { SendChannelEnum } from '../../../commont/UtilsEnum';
@@ -79,6 +79,7 @@ export class AutoRunService {
   }> {
     const { page, pageSize } = pageInfo;
     const whereClause: FindOptionsWhere<AutoRunModel> = {
+      status: Not(AutoRunStatus.DELETE),
       ...(query.type !== undefined && { type: query.type }),
       ...(query.status !== undefined && { status: query.status }),
       ...(query.cycleType !== undefined && { cycleType: query.cycleType }),

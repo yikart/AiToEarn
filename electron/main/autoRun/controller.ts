@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-23 18:34:36
+ * @LastEditTime: 2025-03-28 13:33:08
  * @LastEditors: nevin
  * @Description: autoRun AutoRun
  */
@@ -133,6 +133,19 @@ export class AutoRunController {
     );
 
     return list;
+  }
+
+  // 立即执行进程
+  @Icp('ICP_RUN_NOW_AUTO_RUN')
+  async autoRunStart(event: Electron.IpcMainInvokeEvent, id: number) {
+    const item = await this.autoRunService.findAutoRunById(id);
+    if (!item) return false;
+
+    const tag = autoRunTypeEtTag.get(item.type);
+    if (!tag) return false;
+
+    EtEvent.emit(tag, item);
+    return true;
   }
 
   // 每5分钟进行一次自动启动
