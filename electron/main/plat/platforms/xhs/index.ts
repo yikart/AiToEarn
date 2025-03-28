@@ -144,7 +144,6 @@ export class Xhs extends PlatformBase {
   async getWorkList(account: AccountModel, pcursor?: string) {
     const pageNo = pcursor ? Number.parseInt(pcursor) : 0;
 
-    // TODO: 小红书的分页每页数量?
     const pageSize = 20;
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await xiaohongshuService.getWorks(
@@ -186,16 +185,19 @@ export class Xhs extends PlatformBase {
     };
   }
 
-  async getCommentList(
+  async getCommentList<T>(
     account: AccountModel,
-    dataId: string,
+    data: WorkData,
     pcursor?: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
 
     const res = await xiaohongshuService.getCommentList(
       cookie,
-      dataId,
+      {
+        xsec_token: data.option!.xsec_token,
+        id: data.dataId,
+      },
       pcursor ? Number.parseInt(pcursor) : undefined,
     );
 
@@ -254,12 +256,14 @@ export class Xhs extends PlatformBase {
 
   async getCreatorCommentListByOther(
     account: AccountModel,
-    dataId: string,
+    data: WorkData,
     pcursor?: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    console.log('------ getCreatorCommentListByOther xhs dataId---', dataId);
-    const res = await xiaohongshuService.getCommentList(cookie, dataId);
+    const res = await xiaohongshuService.getCommentList(cookie, {
+      xsec_token: data.option!.xsec_token,
+      id: data.dataId,
+    });
 
     const list: CommentData[] = [];
 
@@ -305,18 +309,15 @@ export class Xhs extends PlatformBase {
 
   async getCreatorSecondCommentListByOther(
     account: AccountModel,
-    dataId: string,
+    data: WorkData,
     root_comment_id: string,
     pcursor?: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    console.log(
-      '------ getCreatorSecondCommentListByOther xhs dataId---',
-      dataId,
-    );
+
     const res = await xiaohongshuService.getSecondCommentList(
       cookie,
-      dataId,
+      data.dataId,
       root_comment_id,
       pcursor,
     );

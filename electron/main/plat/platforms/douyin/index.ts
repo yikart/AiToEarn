@@ -186,13 +186,20 @@ export class Douyin extends PlatformBase {
     };
   }
 
+  /**
+   * 获取评论列表
+   * @param account
+   * @param data
+   * @param pcursor
+   * @returns
+   */
   async getCommentList(
     account: AccountModel,
-    dataId: string,
+    data: WorkData,
     pcursor?: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const res = await douyinService.getCreatorCommentList(cookie, dataId, {
+    const res = await douyinService.getCreatorCommentList(cookie, data.dataId, {
       count: pcursor ? 20 : undefined,
       cursor: pcursor || undefined,
     });
@@ -215,7 +222,7 @@ export class Douyin extends PlatformBase {
           for (const element of res2.data.comment_info_list) {
             subList.push({
               userId: element.user_info.user_id,
-              dataId: dataId,
+              dataId: data.dataId,
               commentId: element.comment_id,
               content: element.text,
               likeCount: Number.parseInt(element.digg_count),
@@ -230,7 +237,7 @@ export class Douyin extends PlatformBase {
 
       list.push({
         userId: v.user_info.user_id,
-        dataId: dataId,
+        dataId: data.dataId,
         commentId: v.comment_id,
         content: v.text,
         likeCount: Number.parseInt(v.digg_count),
@@ -254,13 +261,13 @@ export class Douyin extends PlatformBase {
   // 其他人作品评论列表
   async getCreatorCommentListByOther(
     account: AccountModel,
-    dataId: string,
+    data: WorkData,
     pcursor?: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res: any = await douyinService.getCreatorCommentListByOther(
       cookie,
-      dataId,
+      data.dataId,
       {
         count: pcursor ? 20 : undefined,
         cursor: pcursor || undefined,
@@ -575,7 +582,7 @@ export class Douyin extends PlatformBase {
 
   getCreatorSecondCommentListByOther(
     account: AccountModel,
-    dataId: string,
+    data: WorkData,
     root_comment_id: string,
     pcursor?: string,
   ): Promise<any> {

@@ -121,7 +121,7 @@ export abstract class PlatformBase {
    */
   abstract getCommentList(
     account: AccountModel,
-    dataId: string,
+    workData: WorkData,
     pcursor?: string,
   ): Promise<{
     list: CommentData[];
@@ -151,7 +151,7 @@ export abstract class PlatformBase {
    */
   abstract getCreatorSecondCommentListByOther(
     account: AccountModel,
-    dataId: string,
+    workData: WorkData,
     root_comment_id: string,
     pcursor?: string,
   ): Promise<any>;
@@ -164,7 +164,7 @@ export abstract class PlatformBase {
    */
   abstract getCreatorCommentListByOther(
     account: AccountModel,
-    dataId: string,
+    workData: WorkData,
     pcursor?: string,
   ): Promise<{
     list: CommentData[];

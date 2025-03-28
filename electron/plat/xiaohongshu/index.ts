@@ -1431,11 +1431,13 @@ export class XiaohongshuService {
    */
   async getCommentList(
     cookie: Electron.Cookie[],
-    noteId: string,
+    note: {
+      id: string;
+      xsec_token: string;
+    },
     cursor?: number,
   ) {
-    // TODO: xsec_token 每个作品评论列表的xsec_token都不一样，需要重新获取
-    const url = `/api/sns/web/v2/comment/page?note_id=${noteId}&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=${esec_token}`;
+    const url = `/api/sns/web/v2/comment/page?note_id=${note.id}&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=${note.xsec_token}`;
     const reverseRes: any = await this.getReverseResult({
       url,
       a1: CookieToString(cookie),
