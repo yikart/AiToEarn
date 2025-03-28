@@ -67,11 +67,9 @@ const CronSchedule: React.FC<CronScheduleProps> = ({ onSubmit }) => {
           onChange={handleTypeChange}
           style={{ width: '100%' }}
         >
-          <Select.Option value="day">每天（格式：day-HH）</Select.Option>
-          <Select.Option value="week">每周（格式：week-0到6）</Select.Option>
-          <Select.Option value="month">
-            每月（格式：month-01到31）
-          </Select.Option>
+          <Select.Option value="day">每天</Select.Option>
+          <Select.Option value="week">每周</Select.Option>
+          <Select.Option value="month">每月</Select.Option>
         </Select>
       </Form.Item>
 
