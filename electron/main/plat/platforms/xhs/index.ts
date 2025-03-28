@@ -546,7 +546,7 @@ export class Xhs extends PlatformBase {
           ? 0
           : params.visibleType === VisibleTypeEnum.Private
             ? 1
-            : 2,
+            : 4,
       // 位置
       poiInfo: params.location
         ? {

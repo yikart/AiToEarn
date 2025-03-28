@@ -165,10 +165,6 @@ const PubRecordDetails = memo(
                               type="link"
                               onClick={async () => {
                                 if (!v.dataId) return;
-                                const videoFile = await getVideoFile(
-                                  (v as VideoModel).videoPath!,
-                                );
-
                                 const newState: IExamineVideo = {
                                   jsCode: '',
                                   open: true,
@@ -176,6 +172,9 @@ const PubRecordDetails = memo(
                                   account,
                                 };
                                 if (account?.type === AccountType.WxSph) {
+                                  const videoFile = await getVideoFile(
+                                    (v as VideoModel).videoPath!,
+                                  );
                                   newState['videoSrc'] = videoFile.videoUrl;
                                 } else {
                                   newState['url'] = v.previewVideoLink || '';

@@ -70,6 +70,7 @@ export class ShipinhaoService {
   private cookieCheckField = 'sessionid';
   private cookieIntervalList: { [key: string]: NodeJS.Timeout } = {};
   private windowMap: { [key: number]: BrowserWindow } = {}; // 添加窗口引用存储
+  private callback?: (progress: number, msg?: string) => void;
 
   /**
    * 获取网站登录cookie
@@ -695,6 +696,11 @@ export class ShipinhaoService {
 
       // 分片上传文件
       for (let i = 0; i < filePartInfo.blockInfo.length; i++) {
+        if (this.callback)
+          this.callback(
+            50,
+            `上传视频（${i}/${filePartInfo.blockInfo.length}）`,
+          );
         console.log(
           `开始上传第 ${i + 1}/${filePartInfo.blockInfo.length} 个分片`,
         );
@@ -1229,6 +1235,7 @@ export class ShipinhaoService {
     publishId: string;
     shareLink: string;
   }> {
+    this.callback = callback;
     console.log('platformSetting：', platformSetting);
     callback(5, '加载中...');
     const fileInfo = await FileUtils.getFileInfo(filePath);

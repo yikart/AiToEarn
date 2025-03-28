@@ -39,8 +39,8 @@ export type XSLPlatformSettingType = {
     poiAddress: string;
   };
   cover: string;
-  // 0 公共 1 私密 2 好友
-  visibility_type: 0 | 1 | 2;
+  // 0 公共 1 私密 4 好友
+  visibility_type: 0 | 1 | 4;
 };
 
 const esec_token = 'ABrmhLmsdmsu9bCQ80qvGPN2CYSjEqwi5G1l2dirNUjaw%3D';
@@ -65,6 +65,7 @@ export class XiaohongshuService {
   private cookieIntervalList: { [key: string]: NodeJS.Timer } = {};
   private prev_web_session = '';
   private win?: BrowserWindow;
+  private callback?: (progress: number, msg?: string) => void;
 
   /**
    * 授权|预览
@@ -714,7 +715,14 @@ export class XiaohongshuService {
 
           // 分片上传文件
           const uploadPartInfo = [];
+
           for (const i in filePartInfo.blockInfo) {
+            if (this.callback)
+              this.callback(
+                50,
+                `上传视频（${filePartInfo.blockInfo}/${filePartInfo.blockInfo.length}）`,
+              );
+
             const chunkStart =
               i === '0' ? 0 : filePartInfo.blockInfo[parseInt(i) - 1];
             const chunkEnd = filePartInfo.blockInfo[i] - 1;
@@ -824,7 +832,6 @@ export class XiaohongshuService {
       try {
         // 初始化cookie
         const cookieString = CommonUtils.convertCookieToJson(cookies);
-        console.log('cookieString', cookieString);
         // 上传图片
         const uploadImgRet = [];
         for (const imgUrl of imagePath) {
@@ -1167,9 +1174,16 @@ export class XiaohongshuService {
           reject('创建作品失败,失败原因:' + createRes.msg || '未知');
           return;
         }
+
+        if (this.callback) this.callback(80, '发布完成，正在查询结果...');
+        const worksList = await this.getWorks(cookieString);
+        const works = worksList.data.data.notes.find(
+          (v) => v.id === createRes.data.id,
+        );
+        console.log('works：', works);
         // 返回结果
         resolve({
-          shareLink: createRes.share_link ?? '',
+          shareLink: `https://www.xiaohongshu.com/explore/${createRes.data.id}?xsec_token=${works!.xsec_token}&xsec_source=${works!.xsec_source}`,
           publishId: createRes.data.id,
         });
       } catch (err: any) {
@@ -1205,6 +1219,7 @@ export class XiaohongshuService {
   }> {
     return new Promise(async (resolve, reject) => {
       try {
+        this.callback = callback;
         callback(5, '正在加载...');
         // 获取文件信息
         const fileInfo = await FileUtils.getFileInfo(filePath);
@@ -1227,7 +1242,7 @@ export class XiaohongshuService {
           fileInfo,
         );
 
-        callback(40, '正在上传封面...');
+        callback(60, '正在上传封面...');
         // 上传封面,获取远程Url
         const { coverDimensions, coverUploadFileId } =
           await this.uploadCoverFile(cookieString, platformSetting['cover']);
@@ -1257,20 +1272,11 @@ export class XiaohongshuService {
         ).catch((err) => {
           reject(err);
         });
-        callback(80, '发布完成，正在查询结果...');
-
-        const worksList = await this.getWorks(JSON.parse(cookies));
-        console.log(worksList);
-        const works = worksList.data.data.notes.find(
-          (v) => v.id === result.publishId,
-        );
-        console.log(works);
-        callback(100);
         // 返回信息
         resolve({
           publishTime: Math.floor(Date.now() / 1000),
           publishId: result.publishId,
-          shareLink: `https://www.xiaohongshu.com/explore/${result.publishId}?xsec_token=${works!.xsec_token}&xsec_source=${works!.xsec_source}`,
+          shareLink: result.shareLink,
         });
       } catch (err) {
         console.warn(err);
@@ -1371,17 +1377,17 @@ export class XiaohongshuService {
   }
 
   // 获取作品列表
-  async getWorks(cookie: Electron.Cookie[], page: number = 0) {
+  async getWorks(cookie: string, page: number = 0) {
     const url = `/web_api/sns/v5/creator/note/user/posted?tab=0&page=${page}`;
     const reverseRes: any = await this.getReverseResult({
       url,
-      a1: CookieToString(cookie),
+      a1: cookie,
     });
 
     const res = await requestNet<IXHSGetWorksResponse>({
       url: `https://edith.xiaohongshu.com${url}`,
       headers: {
-        cookie: CookieToString(cookie),
+        cookie: cookie,
         Referer: this.loginUrl,
         origin: this.loginUrl,
         'X-S': reverseRes['X-s'],

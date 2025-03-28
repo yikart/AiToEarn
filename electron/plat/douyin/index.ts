@@ -89,6 +89,7 @@ export class DouyinService {
   private windowMap: { [key: number]: BrowserWindow } = {};
   private fileBlockSize = 3145728;
   private app: any;
+  private callback?: (progress: number, msg?: string) => void;
 
   /**
    * 授权|预览
@@ -545,7 +546,7 @@ export class DouyinService {
         console.log('视频文件路径:', filePath);
         callback(30, '正在上传视频...');
         const videoId = await this.uploadVideo(filePath, cookieString, userUid);
-        callback(50, '视频上传完成');
+        callback(60, '视频上传完成');
         console.log('获取到的视频ID:', videoId);
 
         // 发布视频参数
@@ -553,7 +554,7 @@ export class DouyinService {
         const publishVideoParams =
           this.getPublishPublicParamsV2(platformSetting);
         console.log('发布参数:', publishVideoParams);
-        callback(55, '参数获取完成');
+        callback(65, '参数获取完成');
 
         // 拼接视频封面内容
         publishVideoParams.item.common.video_id = videoId;
@@ -1473,6 +1474,11 @@ export class DouyinService {
 
         // 开始上传
         for (const i in filePartInfo.blockInfo) {
+          if (this.callback)
+            this.callback(
+              50,
+              `上传视频（${i}/${filePartInfo.blockInfo.length}）`,
+            );
           console.log(`开始上传第 ${parseInt(i) + 1} 个分片...`);
           // 设置当前文件分片信息
           const nowUploadParams = JSON.parse(JSON.stringify(uploadParams));
