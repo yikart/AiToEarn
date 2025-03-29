@@ -6,7 +6,7 @@
  * @Description: 评论页面 reply
  */
 import { icpCreatorList, WorkData } from '@/icp/reply';
-import { Button, Col, Row, Tabs, Tooltip } from 'antd';
+import { Button, Col, Popconfirm, Row, Tabs, Tooltip } from 'antd';
 import { useCallback, useRef, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import ReplyWorks, { ReplyWorksRef } from './components/replyWorks';
@@ -132,14 +132,21 @@ export default function Page() {
                             <Row justify="space-evenly">
                               <Col span={8}>
                                 <Tooltip title="一键评论">
-                                  <AliwangwangOutlined
-                                    onClick={() =>
+                                  <Popconfirm
+                                    title="确认进行一键评论"
+                                    onConfirm={(
+                                      e?: React.MouseEvent<HTMLElement>,
+                                    ) => {
                                       Ref_OneKeyReply.current?.init(
                                         activeAccountId,
                                         item,
-                                      )
-                                    }
-                                  />
+                                      );
+                                    }}
+                                    okText="是"
+                                    cancelText="否"
+                                  >
+                                    <AliwangwangOutlined />
+                                  </Popconfirm>
                                 </Tooltip>
                               </Col>
                               <Col span={8}>

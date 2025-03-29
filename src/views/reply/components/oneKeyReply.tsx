@@ -6,7 +6,7 @@
  * @Description: 一键评论
  */
 import { icpReplyCommentList, WorkData } from '@/icp/reply';
-import { Modal } from 'antd';
+import { message, Modal } from 'antd';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { SendChannelEnum } from '@@/UtilsEnum';
 import {
@@ -39,6 +39,18 @@ const Com = forwardRef<OneKeyReplyRef>((props: any, ref) => {
     console.log('------ res', res);
   }
 
+  function closeShow() {
+    // 关闭界面
+    setTimeout(() => {
+      handleCancel();
+    }, 1000);
+
+    setTimeout(() => {
+      setErrorText('');
+      setInfoText('');
+    }, 2000);
+  }
+
   /**
    * 返回值处理
    * @param e
@@ -62,9 +74,12 @@ const Com = forwardRef<OneKeyReplyRef>((props: any, ref) => {
         break;
       case AutorReplyCommentScheduleEvent.End:
         setInfoText(`评论结束:${args.data?.aiContent || ''}`);
+        message.success(`部分平台评论需要审核,评论后的数据可能存在延时`);
+        closeShow();
         break;
       case AutorReplyCommentScheduleEvent.Error:
         setErrorText(args.error?.message || '未知错误');
+        closeShow();
         break;
       default:
         const tagStr =

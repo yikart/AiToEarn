@@ -55,6 +55,7 @@
     "image-size": "^1.2.0",
     "lodash": "^4.17.21",
     "mime-types": "^2.1.35",
+    "node-cache": "^5.1.2",
     "node-schedule": "^2.1.1",
     "os": "^0.1.2",
     "p-queue": "^8.1.0",
