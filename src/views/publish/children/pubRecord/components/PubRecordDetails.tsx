@@ -153,6 +153,7 @@ const PubRecordDetails = memo(
                                 restartPub(
                                   prl,
                                   prl.map((k) => accountMap.get(k.accountId)!),
+                                  currPubRecordModel,
                                 );
                                 setRecordLoaidng(false);
                                 navigate('/publish/video');

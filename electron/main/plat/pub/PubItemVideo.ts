@@ -59,7 +59,7 @@ export class PubItemVideo extends PubItemBase {
     // 发布失败
     if (publishVideoResult.code === 0) {
       this.videoModel.status = PubStatus.FAIL;
-      this.videoModel.failMsg = publishVideoResult.msg;
+      this.videoModel.failMsg = publishVideoResult.msg.toString();
       windowOperate.sendRenderMsg(SendChannelEnum.VideoPublishProgress, {
         progress: -1,
         msg: '发布失败！',

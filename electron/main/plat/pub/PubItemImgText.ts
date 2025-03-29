@@ -40,7 +40,7 @@ export class PubItemImgText extends PubItemBase {
     // 发布失败
     if (publishVideoResult.code === 0) {
       this.imgTextModel.status = PubStatus.FAIL;
-      this.imgTextModel.failMsg = publishVideoResult.msg;
+      this.imgTextModel.failMsg = publishVideoResult.msg.toString();
     } else {
       // 发布成功
       this.imgTextModel.status = PubStatus.RELEASED;

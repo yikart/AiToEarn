@@ -728,7 +728,7 @@ export class DouyinService {
         const response = {
           publishTime: Math.floor(Date.now() / 1000),
           publishId: publishResult.aweme.aweme_id,
-          shareLink: `https://www.douyin.com/user/self?from_tab_name=main&modal_id=${publishResult.data.item_id}&showTab=post`,
+          shareLink: `https://www.douyin.com/user/self?from_tab_name=main&modal_id=${publishResult.aweme.aweme_id}&showTab=post`,
         };
         console.log(`发布成功，返回数据:`, response);
         resolve(response);

@@ -68,7 +68,6 @@ export class PubRecordModel extends TempModel {
     type: 'tinyint',
     nullable: false,
     comment: '状态 0=未发布/草稿 1=已发布',
-    enum: PubStatus,
     default: PubStatus.UNPUBLISH,
   })
   status!: PubStatus;

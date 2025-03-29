@@ -136,6 +136,7 @@ export const CommonActivitySelect = ({
       setOptions(res.activity_list || []);
     });
     icpGetActivityTags(account).then((res) => {
+      if (!res.data.query_tags) return;
       res.data?.query_tags?.map((v) => {
         activityTagsMap.current.set(v.id, v);
       });
