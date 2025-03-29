@@ -136,6 +136,9 @@ export default function Page() {
     }
   };
 
+  // 修改状态结构，使用Map存储二级评论
+  const [secondCommentsMap, setSecondCommentsMap] = useState<Record<string, any[]>>({});
+
   async function getCreatorList(thisid: any) {
     setWordList([]);
     if (activeAccountId === -1) {
@@ -200,16 +203,37 @@ export default function Page() {
    * 获取二级评论列表
    */
   async function getSecondCommentList(item: any) {
-    const res = await icpGetSecondCommentListByOther(
-      activeAccountId,
-      // '7480598266392972596',
-      item,
-      item.data.id,
-      item.data.sub_comment_cursor,
-    );
-    console.log('------ icpGetCommentList', res);
-
-    setSecondCommentList(res.list);
+    try {
+      const res = await icpGetSecondCommentListByOther(
+        activeAccountId,
+        item,
+        item.data.id,
+        item.data.sub_comment_cursor,
+      );
+      console.log('------ getSecondCommentList', res);
+      
+      // 更新二级评论Map
+      setSecondCommentsMap(prev => ({
+        ...prev,
+        [item.data.id]: res.list || []
+      }));
+      
+      // 更新当前评论列表中的二级评论
+      setCurrentComments(prevComments => 
+        prevComments.map(comment => 
+          comment.data.id === item.data.id 
+            ? { 
+                ...comment, 
+                subCommentList: res.list || [],
+                isSubCommentsLoaded: true 
+              } 
+            : comment
+        )
+      );
+    } catch (error) {
+      console.error('获取二级评论失败', error);
+      message.error('获取二级评论失败');
+    }
   }
 
   /**
@@ -240,6 +264,7 @@ export default function Page() {
    * @param data
    */
   function openReplyComment(data: CommentData) {
+    console.log('------ openReplyComment', data);
     Ref_ReplyComment.current?.init(activeAccountId, data);
   }
 
@@ -256,18 +281,62 @@ export default function Page() {
    */
   const showCommentModal = async (post: any) => {
     setCurrentPost(post);
-    // 这里可以调用获取评论的API，暂时使用模拟数据
-    const mockComments = await icpGetCommentListByOther(
-      activeAccountId,
-      {
-        dataId: post.noteId,
-        option: {
-          xsec_token: post.xsec_token||'AB-ktiN49qUSB2KL_4EN5bIQSRgCJR_AB1qIv8wAQvj94=',
-        },
-      },
-    );
-    setCurrentComments(mockComments?.list || []);
     setCommentModalVisible(true);
+    
+    try {
+      // 获取评论列表
+      const res = await icpGetCommentListByOther(
+        activeAccountId,
+        {
+          dataId: post.noteId,
+          option: {
+            xsec_token: post.xsec_token||'AB-ktiN49qUSB2KL_4EN5bIQSRgCJR_AB1qIv8wAQvj94=',
+          },
+        },
+      );
+      
+      // 为每个评论添加加载状态标记
+      const commentsWithLoadingState = (res.list || []).map(comment => ({
+        ...comment,
+        isSubCommentsLoaded: false,
+        isLoadingSubComments: false
+      }));
+      
+      setCurrentComments(commentsWithLoadingState);
+    } catch (error) {
+      console.error('获取评论失败', error);
+      message.error('获取评论失败');
+    }
+  };
+
+  /**
+   * 加载二级评论
+   */
+  const loadSubComments = async (comment: any) => {
+    // 如果已经加载过，直接返回
+    if (comment.isSubCommentsLoaded) return;
+    
+    // 设置加载状态
+    setCurrentComments(prevComments => 
+      prevComments.map(item => 
+        item.data.id === comment.data.id 
+          ? { ...item, isLoadingSubComments: true } 
+          : item
+      )
+    );
+    
+    try {
+      await getSecondCommentList(comment);
+    } finally {
+      // 无论成功失败，都取消加载状态
+      setCurrentComments(prevComments => 
+        prevComments.map(item => 
+          item.data.id === comment.data.id 
+            ? { ...item, isLoadingSubComments: false } 
+            : item
+        )
+      );
+    }
   };
 
   /**
@@ -730,7 +799,8 @@ export default function Page() {
               <Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${currentPost?.author?.name}`} />
               <Text strong style={{ marginLeft: 10 }}>{currentPost?.author?.name}</Text>
             </div>
-            <Text>{currentPost?.title}</Text>
+            <Text style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: 20 }}>{currentPost?.title}</Text>
+            
           </div>
         }
         open={commentModalVisible}
@@ -752,13 +822,14 @@ export default function Page() {
                   >
                     回复
                   </Button>,
-                  comment.data?.sub_comment_has_more && (
+                  comment.data?.sub_comment_count > 0 && !comment.isSubCommentsLoaded && (
                     <Button 
                       type="text" 
                       size="small" 
-                      onClick={() => getSecondCommentList(comment)}
+                      loading={comment.isLoadingSubComments}
+                      onClick={() => loadSubComments(comment)}
                     >
-                      查看更多回复
+                      查看{comment.data.sub_comment_count}条回复
                     </Button>
                   )
                 ]}
@@ -769,7 +840,8 @@ export default function Page() {
                   description={comment.content}
                 />
                 
-                {comment.subCommentList && comment.subCommentList.length > 0 && (
+                {/* 二级评论列表 */}
+                {comment.isSubCommentsLoaded && comment.subCommentList && comment.subCommentList.length > 0 && (
                   <div style={{ marginLeft: 40, marginTop: 10 }}>
                     <List
                       itemLayout="vertical"
@@ -778,12 +850,30 @@ export default function Page() {
                         <List.Item>
                           <List.Item.Meta
                             avatar={<Avatar src={subComment.headUrl} size="small" />}
-                            title={subComment.nikeName}
-                            description={subComment.content}
+                            title={
+                              <Space>
+                                <span>{subComment.nikeName}</span>
+                                <span onClick={() => openReplyComment(subComment)} style={{ color: '#999', fontSize: '10px', cursor: 'pointer' }}>回复</span>
+                              </Space>
+                            }
+                            description={subComment.content + ' @ ' + subComment.data.target_comment?.user_info.nickname}
                           />
                         </List.Item>
                       )}
                     />
+                    
+                    {/* 如果还有更多二级评论 */}
+                    {/* {comment.data.sub_comment_has_more && (
+                      <div style={{ textAlign: 'center', marginTop: 8 }}>
+                        <Button 
+                          type="link" 
+                          size="small"
+                          onClick={() => getSecondCommentList(comment)}
+                        >
+                          加载更多回复
+                        </Button>
+                      </div>
+                    )} */}
                   </div>
                 )}
               </List.Item>
