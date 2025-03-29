@@ -298,20 +298,18 @@ export class ReplyController {
     return res;
   }
 
-  // 运行自动任务
+  // 运行自动评论任务
   @Et('ET_AUTO_RUN_REPLY_COMMENT')
   async runAutoReplyComment(autoRunData: AutoRunModel): Promise<boolean> {
-    const { accountId, data } = autoRunData;
-    if (!data) return false;
+    const { accountId, dataInfo } = autoRunData;
+    if (!dataInfo) return false;
 
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return false;
 
-    const WorkData = JSON.parse(data) as WorkData;
-
     const res = await this.replyService.addReplyQueue(
       account,
-      WorkData,
+      dataInfo as WorkData,
       autoRunData,
     );
 

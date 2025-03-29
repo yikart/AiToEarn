@@ -36,6 +36,7 @@ export class AutoRunModel extends TempModel {
     comment: '对应数据的数据内容 JSON字符串',
   })
   data!: string;
+  dataInfo?: Record<string, any>; // 解析后的数据
 
   @Column({ type: 'int', nullable: false, comment: '执行次数', default: 0 })
   runCount!: number;

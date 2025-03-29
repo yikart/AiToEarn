@@ -67,7 +67,7 @@ export default function Page() {
    * @param data
    */
   function openAddAutoRun(data: WorkData) {
-    Ref_AddAutoRun.current?.init(activeAccountId, data.dataId);
+    Ref_AddAutoRun.current?.init(activeAccountId, data);
   }
 
   return (

@@ -258,8 +258,13 @@ export class ReplyService {
         message: '该账户有正在执行的任务,请勿重复执行',
       };
 
+    console.log('=====进入自动机评论回复任务=====');
+
     // 创建任务执行记录
     const recordData = await this.autoRunService.createAutoRunRecord(autoRun);
+
+    console.log('=====recordData=====', recordData);
+
     // 添加到队列
     this.replyQueue.add(() => {
       this.autorReplyComment(

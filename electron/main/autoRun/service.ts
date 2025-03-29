@@ -60,7 +60,7 @@ export class AutoRunService {
       },
     });
 
-    if (info) info.data = JSON.parse(info.data);
+    if (info) info.dataInfo = JSON.parse(info.data);
 
     return info;
   }
@@ -128,6 +128,7 @@ export class AutoRunService {
   // 创建进程记录
   async createAutoRunRecord(autoRun: AutoRunModel) {
     const data = {
+      autoRunId: autoRun.id,
       userId: autoRun.userId,
       type: autoRun.type,
       cycleType: autoRun.cycleType,
