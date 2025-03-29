@@ -221,7 +221,7 @@ export const CommonActivitySelect = ({
               </div>
               <h2>关联话题</h2>
               <ul className="activityDetails-bottom-text">
-                {activityDetails?.topics.map((v) => {
+                {activityDetails?.topics?.map((v) => {
                   return <li key={v}>#{v}</li>;
                 })}
               </ul>
@@ -294,7 +294,7 @@ export const CommonActivitySelect = ({
                 </div>
                 <div className="activitySelect-right">
                   <div className="activitySelect-right-top">
-                    {activityTagsMap.current.get(data.query_tag)?.name}
+                    {activityTagsMap.current?.get(data.query_tag)?.name}
                   </div>
                   <div className="activitySelect-right-bottom">
                     <span>时间：02.27~03.31</span>
