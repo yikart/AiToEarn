@@ -13,7 +13,7 @@ import {
   CommentData,
   icpCreateCommentList,
 } from '@/icp/replyother';
-import { Avatar, Button, Card, Col, Row, message, Modal, List, Space, Typography, Divider, Spin, Empty } from 'antd';
+import { Avatar, Button, Card, Col, Row, message, Modal, List, Space, Typography, Divider, Spin, Empty, Form, Input, Select, Slider, Switch, InputNumber, Collapse, Radio, Tooltip } from 'antd';
 import { useCallback, useRef, useState, useEffect } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import styles from './reply.module.scss';
@@ -30,7 +30,14 @@ import {
   MoreOutlined,
   CloseOutlined,
   CommentOutlined,
-  UnorderedListOutlined
+  UnorderedListOutlined,
+  SearchOutlined,
+  SettingOutlined,
+  RobotOutlined,
+  UserOutlined,
+  SendOutlined,
+  PlusOutlined,
+  DownOutlined
 } from '@ant-design/icons';
 import webview from 'electron';
 import Masonry from 'react-masonry-css';
@@ -79,6 +86,55 @@ export default function Page() {
   // 添加状态记录
   const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>({});
   const [collectedPosts, setCollectedPosts] = useState<Record<string, boolean>>({});
+
+  // 添加任务表单相关状态
+  const [taskForm] = Form.useForm();
+  const [commentType, setCommentType] = useState<'ai' | 'custom'>('ai');
+  const [replyCommentType, setReplyCommentType] = useState<'ai' | 'custom'>('ai');
+  const [customComments, setCustomComments] = useState<string[]>(['很棒！', '喜欢这个', '支持一下', '不错哦']);
+  const [customReplyComments, setCustomReplyComments] = useState<string[]>(['回复一下', '谢谢分享', '同意你的观点', '学习了']);
+  
+  // 添加任务弹窗状态
+  const [taskModalVisible, setTaskModalVisible] = useState(false);
+  
+  // 提交任务
+  const submitTask = (values: any) => {
+    console.log('任务参数:', values);
+    message.success('任务已下发');
+    setTaskModalVisible(false); // 关闭弹窗
+    // 这里可以调用相应的API来执行任务
+  };
+  
+  // 添加自定义评论
+  const addCustomComment = (value: string, type: 'comment' | 'reply') => {
+    if (!value.trim()) return;
+    
+    if (type === 'comment') {
+      setCustomComments([...customComments, value.trim()]);
+    } else {
+      setCustomReplyComments([...customReplyComments, value.trim()]);
+    }
+    
+    // 清空输入框
+    if (type === 'comment') {
+      taskForm.setFieldValue('newComment', '');
+    } else {
+      taskForm.setFieldValue('newReplyComment', '');
+    }
+  };
+  
+  // 删除自定义评论
+  const removeCustomComment = (index: number, type: 'comment' | 'reply') => {
+    if (type === 'comment') {
+      const newComments = [...customComments];
+      newComments.splice(index, 1);
+      setCustomComments(newComments);
+    } else {
+      const newReplyComments = [...customReplyComments];
+      newReplyComments.splice(index, 1);
+      setCustomReplyComments(newReplyComments);
+    }
+  };
 
   async function getCreatorList(thisid: any) {
     setWordList([]);
@@ -332,9 +388,9 @@ export default function Page() {
   };
 
   return (
-    <div className={styles.reply}>
-      <Row>
-        <Col span={4}>
+    <div className={styles.reply} style={{ alignItems: 'flex-start' }}>
+      <Row style={{ height: '100%' }}>
+        {/* <Col span={3}> */}
           <AccountSidebar
             activeAccountId={activeAccountId}
             onAccountChange={useCallback(
@@ -352,10 +408,26 @@ export default function Page() {
               [getCreatorList],
             )}
           />
-        </Col>
+        {/* </Col> */}
         
-        <Col span={20}>
-          <div className={styles.postList}>
+        {/* <Col span={21} > */}
+          <div className={styles.postList} style={{ flex: 1, padding: '20px' }}>
+          <Row justify="space-between" align="middle" style={{ marginBottom: 20 }}>
+            <Col>
+              <Typography.Title level={4} style={{ margin: 0 }}>任务：</Typography.Title>
+            </Col>
+            <Col>
+              <Button 
+                type="primary" 
+                icon={<DownOutlined />} 
+                onClick={() => setTaskModalVisible(true)}
+                size="large"
+              >
+                下发任务
+              </Button>
+            </Col>
+          </Row>
+
             <Masonry
               breakpointCols={breakpointColumnsObj}
               className={styles.myMasonryGrid}
@@ -421,8 +493,234 @@ export default function Page() {
               ))}
             </Masonry>
           </div>
-        </Col>
+        {/* </Col> */}
       </Row>
+
+      {/* 任务下发弹窗 */}
+      <Modal
+        title={
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <SettingOutlined style={{ marginRight: 8 }} />
+            <span>任务下发设置</span>
+          </div>
+        }
+        open={taskModalVisible}
+        onCancel={() => setTaskModalVisible(false)}
+        footer={null}
+        width={800}
+        destroyOnClose
+      >
+        <Form
+          form={taskForm}
+          layout="vertical"
+          onFinish={submitTask}
+          initialValues={{
+            keyword: '美妆',
+            limit: 20,
+            likeProb: 70,
+            commentProb: 50,
+            commentType: 'ai',
+            commentCount: 3,
+            collectProb: 30,
+            replyCommentType: 'ai',
+            replyCommentCount: 2
+          }}
+        >
+          {/* 第一行：关键词和筛选条数 */}
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item 
+                label="视频关键词" 
+                name="keyword"
+                rules={[{ required: true, message: '请输入关键词' }]}
+              >
+                <Input prefix={<SearchOutlined />} placeholder="输入搜索关键词" />
+              </Form.Item>
+            </Col>
+            
+            <Col span={12}>
+              <Form.Item 
+                label="筛选条数" 
+                name="limit"
+                rules={[{ required: true, message: '请输入筛选条数' }]}
+              >
+                <InputNumber min={1} max={100} style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+          </Row>
+          
+          {/* 第二行：点赞概率 */}
+          <Form.Item label="点赞概率" name="likeProb">
+            <Slider 
+              marks={{
+                0: '0%',
+                25: '25%',
+                50: '50%',
+                75: '75%',
+                100: '100%'
+              }}
+            />
+          </Form.Item>
+          
+          <Divider orientation="left">评论设置</Divider>
+          
+          {/* 第三行：评论概率 */}
+          <Form.Item label="评论概率" name="commentProb">
+            <Slider 
+              marks={{
+                0: '0%',
+                25: '25%',
+                50: '50%',
+                75: '75%',
+                100: '100%'
+              }}
+            />
+          </Form.Item>
+          
+          {/* 第四行：评论类型和条数 */}
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item label="评论类型" name="commentType">
+                <Radio.Group onChange={(e) => setCommentType(e.target.value)}>
+                  <Tooltip title="使用AI生成评论">
+                    <Radio.Button value="ai"><RobotOutlined /> AI评论</Radio.Button>
+                  </Tooltip>
+                  <Tooltip title="使用自定义评论">
+                    <Radio.Button value="custom"><UserOutlined /> 自定义评论</Radio.Button>
+                  </Tooltip>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+            
+            <Col span={12}>
+              <Form.Item label="评论条数" name="commentCount">
+                <InputNumber min={1} max={10} style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+          </Row>
+          
+          {/* 自定义评论列表 */}
+          {commentType === 'custom' && (
+            <div className={styles.customCommentsSection}>
+              <div className={styles.commentsList}>
+                {customComments.map((comment, index) => (
+                  <div key={index} className={styles.commentItem}>
+                    <span>{comment}</span>
+                    <Button 
+                      type="text" 
+                      danger 
+                      size="small" 
+                      onClick={() => removeCustomComment(index, 'comment')}
+                    >
+                      删除
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              
+              <Row gutter={8}>
+                <Col flex="auto">
+                  <Form.Item name="newComment">
+                    <Input placeholder="添加自定义评论" />
+                  </Form.Item>
+                </Col>
+                <Col>
+                  <Button 
+                    type="primary" 
+                    onClick={() => addCustomComment(taskForm.getFieldValue('newComment'), 'comment')}
+                  >
+                    添加
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          )}
+          
+          {/* 第五行：收藏概率 */}
+          <Form.Item label="收藏概率" name="collectProb">
+            <Slider 
+              marks={{
+                0: '0%',
+                25: '25%',
+                50: '50%',
+                75: '75%',
+                100: '100%'
+              }}
+            />
+          </Form.Item>
+          
+          <Divider orientation="left">一级评论回复设置</Divider>
+          
+          {/* 第六行：回复类型和条数 */}
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item label="回复类型" name="replyCommentType">
+                <Radio.Group onChange={(e) => setReplyCommentType(e.target.value)}>
+                  <Tooltip title="使用AI生成回复">
+                    <Radio.Button value="ai"><RobotOutlined /> AI回复</Radio.Button>
+                  </Tooltip>
+                  <Tooltip title="使用自定义回复">
+                    <Radio.Button value="custom"><UserOutlined /> 自定义回复</Radio.Button>
+                  </Tooltip>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+            
+            <Col span={12}>
+              <Form.Item label="回复条数" name="replyCommentCount">
+                <InputNumber min={1} max={10} style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+          </Row>
+          
+          {/* 自定义回复列表 */}
+          {replyCommentType === 'custom' && (
+            <div className={styles.customCommentsSection}>
+              <div className={styles.commentsList}>
+                {customReplyComments.map((comment, index) => (
+                  <div key={index} className={styles.commentItem}>
+                    <span>{comment}</span>
+                    <Button 
+                      type="text" 
+                      danger 
+                      size="small" 
+                      onClick={() => removeCustomComment(index, 'reply')}
+                    >
+                      删除
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              
+              <Row gutter={8}>
+                <Col flex="auto">
+                  <Form.Item name="newReplyComment">
+                    <Input placeholder="添加自定义回复" />
+                  </Form.Item>
+                </Col>
+                <Col>
+                  <Button 
+                    type="primary" 
+                    onClick={() => addCustomComment(taskForm.getFieldValue('newReplyComment'), 'reply')}
+                  >
+                    添加
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          )}
+          
+          {/* 提交按钮 */}
+          <Form.Item style={{ marginTop: 20, textAlign: 'right' }}>
+            <Button onClick={() => setTaskModalVisible(false)} style={{ marginRight: 8 }}>
+              取消
+            </Button>
+            <Button type="primary" htmlType="submit" icon={<SendOutlined />}>
+              下发任务
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
 
       {/* 评论弹窗 */}
       <Modal

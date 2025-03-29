@@ -124,4 +124,45 @@
       }
     }
   }
+
+  // 任务面板样式
+  .taskPanel {
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    
+    :global {
+      .ant-collapse {
+        border-radius: 8px;
+        overflow: hidden;
+      }
+    }
+  }
+  
+  .customCommentsSection {
+    background-color: #f9f9f9;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+  }
+  
+  .commentsList {
+    max-height: 150px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+  }
+  
+  .commentItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    background-color: #fff;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 }
