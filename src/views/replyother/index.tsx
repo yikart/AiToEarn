@@ -68,7 +68,12 @@ export default function Page() {
     const res = await icpGetCommentListByOther(
       activeAccountId,
       // '7480598266392972596',
-      '67dfda09000000000903912c',
+      {
+        dataId: '67dfda09000000000903912c',
+        option: {
+          xsec_token: '111',
+        },
+      },
     );
     console.log('------ icpGetCommentList', res);
 
@@ -82,7 +87,7 @@ export default function Page() {
     const res = await icpGetSecondCommentListByOther(
       activeAccountId,
       // '7480598266392972596',
-      item.dataId,
+      item,
       item.data.id,
       item.data.sub_comment_cursor,
     );
@@ -293,7 +298,7 @@ export default function Page() {
                 ]}
               >
                 {item.content}
-                {item.subCommentList.map((subItem) => (
+                {item.subCommentList.map((subItem: any) => (
                   <div key={subItem.commentId}>
                     {subItem.content}
                     <Meta

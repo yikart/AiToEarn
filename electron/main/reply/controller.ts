@@ -14,6 +14,7 @@ import platController from '../plat';
 import { ReplyService } from './service';
 import { SendChannelEnum } from '../../../commont/UtilsEnum';
 import { AutorReplyCommentScheduleEvent } from '../../../commont/types/reply';
+import type { WorkData } from '../plat/plat.type';
 
 @Controller()
 export class ReplyController {
@@ -99,13 +100,13 @@ export class ReplyController {
   async getCommentList(
     event: Electron.IpcMainInvokeEvent,
     accountId: number,
-    dataId: string,
+    data: WorkData,
     pcursor?: string,
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 
-    const res = await platController.getCommentList(account, dataId, pcursor);
+    const res = await platController.getCommentList(account, data, pcursor);
     return res;
   }
 
@@ -116,7 +117,7 @@ export class ReplyController {
   async getCommentListByOther(
     event: Electron.IpcMainInvokeEvent,
     accountId: number,
-    dataId: string,
+    data: WorkData,
     pcursor?: string,
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);
@@ -124,7 +125,7 @@ export class ReplyController {
 
     const res = await platController.getCreatorCommentListByOther(
       account,
-      dataId,
+      data,
       pcursor,
     );
     return res;
@@ -137,7 +138,7 @@ export class ReplyController {
   async getSecondCommentListByOther(
     event: Electron.IpcMainInvokeEvent,
     accountId: number,
-    dataId: string,
+    data: WorkData,
     root_comment_id: string,
     pcursor?: string,
   ): Promise<any> {
@@ -146,7 +147,7 @@ export class ReplyController {
 
     const res = await platController.getCreatorSecondCommentListByOther(
       account,
-      dataId,
+      data,
       root_comment_id,
       pcursor,
     );

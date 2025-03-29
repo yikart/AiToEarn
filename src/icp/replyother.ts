@@ -17,6 +17,9 @@ export type WorkData = {
   desc?: string;
   coverUrl?: string;
   videoUrl?: string;
+  option?: {
+    xsec_token: string;
+  };
 };
 
 export type CommentData = {
@@ -81,7 +84,7 @@ export async function icpCreatorList(accountId: number, pcursor?: string) {
  */
 export async function icpGetCommentListByOther(
   accountId: number,
-  dataId: string,
+  data: WorkData,
   pcursor?: string,
 ) {
   const res: {
@@ -94,7 +97,7 @@ export async function icpGetCommentListByOther(
   } = await window.ipcRenderer.invoke(
     'ICP_COMMENT_LIST_BY_OTHER',
     accountId,
-    dataId,
+    data,
     pcursor,
   );
   return res;
@@ -105,14 +108,14 @@ export async function icpGetCommentListByOther(
  */
 export async function icpGetSecondCommentListByOther(
   accountId: number,
-  dataId: string,
+  data: WorkData,
   root_comment_id: string,
   pcursor?: string,
 ) {
   const res: any = await window.ipcRenderer.invoke(
     'ICP_SECOND_COMMENT_LIST_BY_OTHER',
     accountId,
-    dataId,
+    data,
     root_comment_id,
     pcursor,
   );

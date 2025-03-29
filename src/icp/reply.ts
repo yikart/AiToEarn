@@ -17,6 +17,9 @@ export type WorkData = {
   desc?: string;
   coverUrl?: string;
   videoUrl?: string;
+  option?: {
+    xsec_token: string;
+  };
 };
 
 export type CommentData = {
@@ -51,7 +54,7 @@ export async function icpCreatorList(accountId: number, pcursor?: string) {
  */
 export async function icpGetCommentList(
   accountId: number,
-  dataId: string,
+  data: WorkData,
   pcursor?: string,
 ) {
   const res: {
@@ -64,7 +67,7 @@ export async function icpGetCommentList(
   } = await window.ipcRenderer.invoke(
     'ICP_COMMENT_LIST',
     accountId,
-    dataId,
+    data,
     pcursor,
   );
   return res;

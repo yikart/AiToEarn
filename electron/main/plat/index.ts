@@ -15,6 +15,7 @@ import {
   IAccountInfoParams,
   IGetLocationDataParams,
   IGetUsersParams,
+  WorkData,
 } from './plat.type';
 import { PublishVideoResult } from './module';
 import { VideoModel } from '../../db/models/video';
@@ -209,35 +210,31 @@ class PlatController {
   /**
    * 获取评论列表
    * @param account
-   * @param dataId
+   * @param data
    * @param pcursor
    */
   public async getCommentList(
     account: AccountModel,
-    dataId: string,
+    data: WorkData,
     pcursor?: string,
   ) {
     const platform = this.platforms.get(account.type)!;
-    return await platform.getCommentList(account, dataId, pcursor);
+    return await platform.getCommentList(account, data, pcursor);
   }
 
   /**
    * 获取评论列表
    * @param account
-   * @param dataId
+   * @param data
    * @param pcursor
    */
   public async getCreatorCommentListByOther(
     account: AccountModel,
-    dataId: string,
+    data: WorkData,
     pcursor?: string,
   ) {
     const platform = this.platforms.get(account.type)!;
-    return await platform.getCreatorCommentListByOther(
-      account,
-      dataId,
-      pcursor,
-    );
+    return await platform.getCreatorCommentListByOther(account, data, pcursor);
   }
 
   /**
@@ -248,14 +245,14 @@ class PlatController {
    */
   public async getCreatorSecondCommentListByOther(
     account: AccountModel,
-    dataId: string,
+    data: WorkData,
     root_comment_id: string,
     pcursor?: string,
   ) {
     const platform = this.platforms.get(account.type)!;
     return await platform.getCreatorSecondCommentListByOther(
       account,
-      dataId,
+      data,
       root_comment_id,
       pcursor,
     );
