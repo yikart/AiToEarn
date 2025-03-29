@@ -28,7 +28,9 @@ import {
   MessageOutlined, 
   StarOutlined,
   MoreOutlined,
-  CloseOutlined
+  CloseOutlined,
+  CommentOutlined,
+  UnorderedListOutlined
 } from '@ant-design/icons';
 import webview from 'electron';
 import Masonry from 'react-masonry-css';
@@ -74,6 +76,10 @@ export default function Page() {
     }
   }, [webviewModalVisible, webviewRef.current]);
 
+  // 添加状态记录
+  const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>({});
+  const [collectedPosts, setCollectedPosts] = useState<Record<string, boolean>>({});
+
   async function getCreatorList(thisid: any) {
     setWordList([]);
     if (activeAccountId === -1) {
@@ -107,8 +113,9 @@ export default function Page() {
     newlist[1].noteId = '678ce103000000001803c791';
     newlist[1].xsec_token = 'AB-ktiN49qUSB2KL_4EN5bIQSRgCJR_AB1qIv8wAQvj94=';
 
-    newlist[2].noteId = '65dee0980000000001029df8';
-    newlist[2].xsec_token = 'AB149PHvsqhiW4eqmaHeHOXjeNJS-jnhaLiasNglBYo1M=';
+    newlist[2].noteId = '67e3f5bb000000001c003a1c';
+    newlist[2].xsec_token = 'CBbspa7hsvsencXRmokLj0bOnzo_IHlX0-qWD3Y3GPpcM=';
+
 
     setPostList(newlist || []);
   }
@@ -161,8 +168,15 @@ export default function Page() {
    * 打开作品评论
    * @param data
    */
-  function openReplyWorks(data: WorkData) {
-    Ref_ReplyWorks.current?.init(activeAccountId, data);
+  function openReplyWorks(data: any) {
+    // 确保数据格式兼容
+    const workData: WorkData = {
+      dataId: data.noteId || data.dataId,
+      title: data.title || '',
+      coverUrl: data.cover || data.coverUrl || '',
+      // 添加其他必要的字段
+    };
+    Ref_ReplyWorks.current?.init(activeAccountId, workData);
   }
 
   /**
@@ -192,7 +206,7 @@ export default function Page() {
       {
         dataId: post.noteId,
         option: {
-          xsec_token: 'AB-ktiN49qUSB2KL_4EN5bIQSRgCJR_AB1qIv8wAQvj94=',
+          xsec_token: post.xsec_token||'AB-ktiN49qUSB2KL_4EN5bIQSRgCJR_AB1qIv8wAQvj94=',
         },
       },
     );
@@ -205,9 +219,35 @@ export default function Page() {
    */
   const likePost = async (post: any) => {
     try {
+      // 如果已经点赞，则不重复操作
+      if (likedPosts[post.noteId]) {
+        message.info('已经点赞过了');
+        return;
+      }
+      
       const res = await icpDianzanDyOther(activeAccountId, post.noteId);
       if (res.status_code == 0 || res.data?.code == 0) {
         message.success('点赞成功');
+        // 更新点赞状态
+        setLikedPosts(prev => ({
+          ...prev,
+          [post.noteId]: true
+        }));
+        
+        // 更新点赞数量
+        setPostList(prevList => 
+          prevList.map(item => 
+            item.noteId === post.noteId 
+              ? { 
+                  ...item, 
+                  stats: { 
+                    ...item.stats, 
+                    likeCount: (item.stats?.likeCount || 0) + 1 
+                  } 
+                } 
+              : item
+          )
+        );
       } else {
         message.error('点赞失败');
       }
@@ -221,9 +261,35 @@ export default function Page() {
    */
   const collectPost = async (post: any) => {
     try {
+      // 如果已经收藏，则不重复操作
+      if (collectedPosts[post.noteId]) {
+        message.info('已经收藏过了');
+        return;
+      }
+      
       const res = await icpShoucangDyOther(activeAccountId, post.noteId);
       if (res.status_code == 0 || res.data?.code == 0) {
         message.success('收藏成功');
+        // 更新收藏状态
+        setCollectedPosts(prev => ({
+          ...prev,
+          [post.noteId]: true
+        }));
+        
+        // 更新收藏数量
+        setPostList(prevList => 
+          prevList.map(item => 
+            item.noteId === post.noteId 
+              ? { 
+                  ...item, 
+                  stats: { 
+                    ...item.stats, 
+                    collectCount: (item.stats?.collectCount || 0) + 1 
+                  } 
+                } 
+              : item
+          )
+        );
       } else {
         message.error('收藏失败');
       }
@@ -313,15 +379,25 @@ export default function Page() {
                     }
                     actions={[
                       <Space onClick={() => likePost(item)}>
-                        <LikeOutlined />
+                        <LikeOutlined style={{ 
+                          color: likedPosts[item.noteId] ? '#ff4d4f' : undefined,
+                          fontSize: likedPosts[item.noteId] ? '18px' : undefined
+                        }} />
                         <span>{item.stats?.likeCount || 0}</span>
                       </Space>,
                       <Space onClick={() => showCommentModal(item)}>
-                        <MessageOutlined />
-                        <span>{item.stats?.commentCount || 0}</span>
+                        <UnorderedListOutlined />
+                        <span>列表</span>
+                      </Space>,
+                      <Space onClick={() => openReplyWorks(item)}>
+                        <CommentOutlined />
+                        <span>评论</span>
                       </Space>,
                       <Space onClick={() => collectPost(item)}>
-                        <StarOutlined />
+                        <StarOutlined style={{ 
+                          color: collectedPosts[item.noteId] ? '#faad14' : undefined,
+                          fontSize: collectedPosts[item.noteId] ? '18px' : undefined
+                        }} />
                         <span>{item.stats?.collectCount || 0}</span>
                       </Space>,
                     ]}

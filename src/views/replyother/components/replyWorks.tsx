@@ -38,8 +38,8 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
   async function createComment(content: string) {
     const res = await icpCreateComment(
       accountId,
-      // workData!.dataId,
-      '67d624a2000000001d02c637',
+      workData!.dataId,
+      // '67d624a2000000001d02c637',
       content,
     );
     console.log('----- res', res);
