@@ -16,9 +16,6 @@ import {
   IGetTopicsParams,
   IGetTopicsResponse,
   IGetUsersParams,
-  IImgTextPublishParams,
-  IPublishParams,
-  IVideoPublishParams,
   VideoCallbackType,
   WorkData,
 } from '../../plat.type';
@@ -31,6 +28,9 @@ import { AccountType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
 import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
 import { CookieToString } from '../../../../plat/utils';
+import { VideoModel } from '../../../../db/models/video';
+import { WorkDataModel } from '../../../../db/models/workData';
+import { ImgTextModel } from '../../../../db/models/imgText';
 
 export class Xhs extends PlatformBase {
   constructor() {
@@ -442,7 +442,7 @@ export class Xhs extends PlatformBase {
    * @returns
    */
   async videoPublish(
-    params: IVideoPublishParams,
+    params: VideoModel,
     callback: VideoCallbackType,
   ): Promise<PublishVideoResult> {
     return new Promise(async (resolve) => {
@@ -535,9 +535,9 @@ export class Xhs extends PlatformBase {
     };
   }
 
-  pubParamsParse(params: IPublishParams): XSLPlatformSettingType {
+  pubParamsParse(params: WorkDataModel): XSLPlatformSettingType {
     return {
-      cover: params.coverPath,
+      cover: params.coverPath || '',
       desc: params.desc,
       title: params.title,
       topicsDetail:
@@ -573,9 +573,7 @@ export class Xhs extends PlatformBase {
     };
   }
 
-  async imgTextPublish(
-    params: IImgTextPublishParams,
-  ): Promise<PublishVideoResult> {
+  async imgTextPublish(params: ImgTextModel): Promise<PublishVideoResult> {
     return new Promise(async (resolve) => {
       const result = await xiaohongshuService
         .publishImageWorkApi(

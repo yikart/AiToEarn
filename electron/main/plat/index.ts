@@ -237,10 +237,17 @@ class PlatController {
     return await platform.getCreatorCommentListByOther(account, data, pcursor);
   }
 
+  // 获取合集
+  public async getMixList(account: AccountModel) {
+    const platform = this.platforms.get(account.type)!;
+    return await platform.getMixList(JSON.parse(account.loginCookie));
+  }
+
   /**
    * 获取二级评论列表
    * @param account
-   * @param dataId
+   * @param data
+   * @param root_comment_id
    * @param pcursor
    */
   public async getCreatorSecondCommentListByOther(

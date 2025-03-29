@@ -19,6 +19,6 @@ export type DiffParmasType = DiffParmasTypeP;
 @Entity({ name: 'video' })
 export class VideoModel extends WorkData {
   // 视频路径
-  @Column({ type: 'varchar', nullable: true, comment: '视频路径' })
-  videoPath?: string;
+  @Column({ type: 'varchar', nullable: false, comment: '视频路径' })
+  videoPath!: string;
 }

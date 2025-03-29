@@ -197,3 +197,18 @@ export interface SphGetCommentListResponse {
     downContinueFlag: number; // 0;
   };
 }
+
+// 微信视频号的合集
+export interface WxSPHGetMixListResponse {
+  errCode: number;
+  data: {
+    collectionList: {
+      id: string;
+      name: string;
+      desc: string;
+      coverImgUrl?: string;
+      feedCount: number;
+    }[];
+    collectionListCount: number;
+  };
+}

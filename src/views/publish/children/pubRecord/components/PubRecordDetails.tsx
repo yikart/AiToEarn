@@ -151,7 +151,7 @@ const PubRecordDetails = memo(
                                   (v) => v.status === 2,
                                 );
                                 restartPub(
-                                  prl,
+                                  prl as VideoModel[],
                                   prl.map((k) => accountMap.get(k.accountId)!),
                                   currPubRecordModel,
                                 );

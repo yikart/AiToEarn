@@ -9,7 +9,11 @@ import { Column, PrimaryGeneratedColumn } from 'typeorm';
 import { TempModel } from './temp';
 import { PubStatus } from './pubRecord';
 import { AccountType } from '../../../commont/AccountEnum';
-import type { ILocationDataItem, WxSphEvent } from '../../main/plat/plat.type';
+import type {
+  CookiesType,
+  ILocationDataItem,
+  WxSphEvent,
+} from '../../main/plat/plat.type';
 import { DeclarationDouyin } from '../../plat/douyin/common.douyin';
 import { VisibleTypeEnum } from '../../../commont/publish/PublishEnum';
 
@@ -43,6 +47,8 @@ export type DiffParmasType = {
   };
   [AccountType.KWAI]?: {};
 };
+
+export type WorkDataModel = WorkData;
 
 export class WorkData extends TempModel {
   // 数据唯一ID
@@ -138,6 +144,10 @@ export class WorkData extends TempModel {
   })
   failMsg?: string;
 
+  // 合集
+  @Column({ type: 'json', nullable: true, comment: '合集' })
+  mixInfo?: ILableValue;
+
   // 状态
   @Column({
     type: 'tinyint',
@@ -170,4 +180,6 @@ export class WorkData extends TempModel {
   // 收益(分)
   @Column({ type: 'bigint', nullable: false, comment: '收益', default: 0 })
   income?: number;
+
+  cookies?: CookiesType;
 }

@@ -14,6 +14,7 @@ import {
   DouyinAllHotDataResponse,
   DouyinCreatorCommentListResponse,
   DouyinCreatorListResponse,
+  DouyinGetMixListResponse,
   DouyinHotDataResponse,
   DouyinLocationDataResponse,
   DouyinNewCommentResponse,
@@ -1707,7 +1708,10 @@ export class DouyinService {
               }),
             }
           : {},
-        mix: {},
+        // 合集
+        mix: {
+          mix_id: parmasDisposeOK['mix_id'],
+        },
         open_platform: {},
         sync: {
           should_sync: false,
@@ -2157,6 +2161,17 @@ export class DouyinService {
   async getActivityTags(cookie: Electron.Cookie[]) {
     return await requestNet<DouyinActivityTagsResponse>({
       url: `https://creator.douyin.com/web/api/media/activity/tags/query`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'GET',
+    });
+  }
+
+  // 获取合集
+  async getMixList(cookie: Electron.Cookie[]) {
+    return await requestNet<DouyinGetMixListResponse>({
+      url: `https://creator.douyin.com/web/api/mix/list/?status=0%2C2&count=200&cursor=0`,
       headers: {
         cookie: CookieToString(cookie),
       },
