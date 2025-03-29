@@ -13,8 +13,8 @@ import {
   CommentData,
   icpCreateCommentList,
 } from '@/icp/replyother';
-import { Avatar, Button, Card, Col, Row, message } from 'antd';
-import { useCallback, useRef, useState } from 'react';
+import { Avatar, Button, Card, Col, Row, message, Modal, List, Space, Typography, Divider, Spin, Empty } from 'antd';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import styles from './reply.module.scss';
 import Meta from 'antd/es/card/Meta';
@@ -23,15 +23,55 @@ import ReplyComment, { ReplyCommentRef } from './components/replyComment';
 import AddAutoRun, { AddAutoRunRef } from './components/addAutoRun';
 import { icpDianzanDyOther, icpShoucangDyOther } from '@/icp/replyother';
 import { commentApi } from '@/api/comment';
+import { 
+  LikeOutlined, 
+  MessageOutlined, 
+  StarOutlined,
+  MoreOutlined,
+  CloseOutlined
+} from '@ant-design/icons';
+import webview from 'electron';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
   const [commentList, setCommentList] = useState<CommentData[]>([]);
   const [secondCommentList, setSecondCommentList] = useState<any[]>([]);
   const [activeAccountId, setActiveAccountId] = useState<number>(-1);
+  const [activeAccountType, setActiveAccountType] = useState<string>('');
   const Ref_ReplyWorks = useRef<ReplyWorksRef>(null);
   const Ref_AddAutoRun = useRef<AddAutoRunRef>(null);
   const Ref_ReplyComment = useRef<ReplyCommentRef>(null);
+  const [postList, setPostList] = useState<any[]>([]);
+  const [commentModalVisible, setCommentModalVisible] = useState(false);
+  const [currentPost, setCurrentPost] = useState<any>(null);
+  const [currentComments, setCurrentComments] = useState<any[]>([]);
+  const { Text, Title } = Typography;
+  const [webviewModalVisible, setWebviewModalVisible] = useState(false);
+  const [currentUrl, setCurrentUrl] = useState('');
+  const [isWebviewLoading, setIsWebviewLoading] = useState(true);
+
+  // 创建 webview 的引用
+  const webviewRef = useRef<any>(null);
+  
+  // 在组件挂载后添加事件监听器
+  useEffect(() => {
+    const webviewElement = webviewRef.current;
+    if (webviewElement && webviewModalVisible) {
+      // 添加事件监听器
+      const handleLoad = () => {
+        setIsWebviewLoading(false);
+      };
+      
+      webviewElement.addEventListener('did-finish-load', handleLoad);
+      
+      // 清理函数
+      return () => {
+        if (webviewElement) {
+          webviewElement.removeEventListener('did-finish-load', handleLoad);
+        }
+      };
+    }
+  }, [webviewModalVisible, webviewRef.current]);
 
   async function getCreatorList(thisid: any) {
     setWordList([]);
@@ -52,12 +92,24 @@ export default function Page() {
       '美妆',
     );
     console.log('------ getFwqCreatorList', res);
-    // setWordList(res.list);
+    
     const list = await commentApi.getCommentSearchNotes(
       'xhs_comments',
       '414381229d04c46cb39f97a5a0b7f9eb',
     );
     console.log('------ getCommentSearchNotes', list);
+    let newlist = list.slice(0, 12);
+
+    newlist[0].noteId = '67de8bc2000000001c00fdce';
+    newlist[0].xsec_token = 'AB-q1Xl6YS66mGgN8y_DMoskX40j7FsSv2DoSQTYE6DYU=';
+
+    newlist[1].noteId = '678ce103000000001803c791';
+    newlist[1].xsec_token = 'AB-ktiN49qUSB2KL_4EN5bIQSRgCJR_AB1qIv8wAQvj94=';
+
+    newlist[2].noteId = '65dee0980000000001029df8';
+    newlist[2].xsec_token = 'AB149PHvsqhiW4eqmaHeHOXjeNJS-jnhaLiasNglBYo1M=';
+
+    setPostList(newlist || []);
   }
 
   /**
@@ -69,9 +121,9 @@ export default function Page() {
       activeAccountId,
       // '7480598266392972596',
       {
-        dataId: '67dfda09000000000903912c',
+        dataId: '678ce103000000001803c791',
         option: {
-          xsec_token: '111',
+          xsec_token: 'AB-ktiN49qUSB2KL_4EN5bIQSRgCJR_AB1qIv8wAQvj94=',
         },
       },
     );
@@ -129,40 +181,79 @@ export default function Page() {
   }
 
   /**
-   * 点赞
+   * 显示评论弹窗
    */
-  async function dianzanFunc(data: WorkData) {
-    console.log('------ dianzanFunc', data);
-    // const res = await icpDianzanDyOther(activeAccountId, '7485806097282993419'); // 抖音
-    const res = await icpDianzanDyOther(
+  const showCommentModal = async (post: any) => {
+    setCurrentPost(post);
+    // 这里可以调用获取评论的API，暂时使用模拟数据
+    const mockComments = await icpGetCommentListByOther(
       activeAccountId,
-      '67e386fc000000001201fa38',
+      {
+        dataId: post.noteId,
+        option: {
+          xsec_token: 'AB-ktiN49qUSB2KL_4EN5bIQSRgCJR_AB1qIv8wAQvj94=',
+        },
+      },
     );
-    console.log('----- res', res);
-    if (res.status_code == 0 || res.data.code == 0) {
-      message.success('点赞成功');
-    } else {
-      message.error('点赞失败');
-    }
-  }
+    setCurrentComments(mockComments?.list || []);
+    setCommentModalVisible(true);
+  };
 
   /**
-   * 收藏
+   * 点赞帖子
    */
-  async function shoucangFunc(data: WorkData) {
-    console.log('------ shoucangFunc', data);
-    // const res = await icpShoucangDyOther(activeAccountId, '7485806097282993419'); // 抖音
-    const res = await icpShoucangDyOther(
-      activeAccountId,
-      '67e386fc000000001201fa38',
-    );
-    console.log('----- res', res);
-    if (res.status_code == 0 || res.data.code == 0) {
-      message.success('收藏成功');
-    } else {
-      message.error('收藏失败');
+  const likePost = async (post: any) => {
+    try {
+      const res = await icpDianzanDyOther(activeAccountId, post.noteId);
+      if (res.status_code == 0 || res.data?.code == 0) {
+        message.success('点赞成功');
+      } else {
+        message.error('点赞失败');
+      }
+    } catch (error) {
+      message.error('点赞操作失败');
     }
-  }
+  };
+
+  /**
+   * 收藏帖子
+   */
+  const collectPost = async (post: any) => {
+    try {
+      const res = await icpShoucangDyOther(activeAccountId, post.noteId);
+      if (res.status_code == 0 || res.data?.code == 0) {
+        message.success('收藏成功');
+      } else {
+        message.error('收藏失败');
+      }
+    } catch (error) {
+      message.error('收藏操作失败');
+    }
+  };
+
+  /**
+   * 点击图片打开链接
+   */
+  const handleImageClick = (post: any) => {
+    if (!post || !post.noteId) return;
+    
+    let url = '';
+    // 判断平台类型
+    if (activeAccountType === 'xhs' || post.url?.includes('xiaohongshu.com')) {
+      // 小红书链接格式
+      url = `https://www.xiaohongshu.com/explore/${post.noteId}?xsec_token=${post.xsec_token || ''}&xsec_source=pc_search&source=web_explore_feed`;
+    } else if (activeAccountType === 'douyin' || post.url?.includes('douyin.com')) {
+      // 抖音链接格式
+      url = post.url || `https://www.douyin.com/video/${post.noteId}`;
+    } else {
+      // 默认使用已有的url或者根据noteId构建通用链接
+      url = post.url || `https://www.xiaohongshu.com/explore/${post.noteId}`;
+    }
+    
+    setCurrentUrl(url);
+    setIsWebviewLoading(true);
+    setWebviewModalVisible(true);
+  };
 
   return (
     <div className={styles.reply}>
@@ -173,10 +264,10 @@ export default function Page() {
             onAccountChange={useCallback(
               (info) => {
                 console.log('------ onAccountChange', info);
+                setActiveAccountType(info.type);
                 if (info.type == 'xhs') {
                   setActiveAccountId(info.id);
-                  // getFwqCreatorList();
-                  getCreatorList(info.id);
+                  getFwqCreatorList();
                 } else {
                   setActiveAccountId(info.id);
                   getCreatorList(info.id);
@@ -186,136 +277,171 @@ export default function Page() {
             )}
           />
         </Col>
-        <Col span={8}>
-          <div>
-            {wordList.map((item) => (
-              <Card
-                key={item.dataId}
-                style={{ width: 500 }}
-                cover={<img alt="example" src={item.coverUrl} />}
-                actions={[
-                  <Button
-                    type="primary"
-                    onClick={() => getCommentList(item.dataId)}
+        
+        <Col span={20}>
+          <div className={styles.postList}>
+            <List
+              grid={{ gutter: 16, column: 3 }}
+              dataSource={postList}
+              renderItem={(item: any) => (
+                <List.Item>
+                  <Card
+                    hoverable
+                    cover={
+                      <div 
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => handleImageClick(item)}
+                      >
+                        <img 
+                          alt={item.title} 
+                          src={item.cover} 
+                          style={{ height: 500, objectFit: 'cover' }}
+                        />
+                      </div>
+                    }
+                    actions={[
+                      <Space onClick={() => likePost(item)}>
+                        <LikeOutlined />
+                        <span>{item.stats?.likeCount || 0}</span>
+                      </Space>,
+                      <Space onClick={() => showCommentModal(item)}>
+                        <MessageOutlined />
+                        <span>{item.stats?.commentCount || 0}</span>
+                      </Space>,
+                      <Space onClick={() => collectPost(item)}>
+                        <StarOutlined />
+                        <span>{item.stats?.collectCount || 0}</span>
+                      </Space>,
+                    ]}
                   >
-                    评论列表
-                  </Button>,
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      openReplyWorks(item);
-                    }}
-                  >
-                    评论作品
-                  </Button>,
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      dianzanFunc(item);
-                    }}
-                  >
-                    点赞
-                  </Button>,
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      shoucangFunc(item);
-                    }}
-                  >
-                    收藏
-                  </Button>,
-
-                  // <Button
-                  //   type="primary"
-                  //   onClick={() => {
-                  //     createCommentList(item);
-                  //   }}
-                  // >
-                  //   一键AI评论
-                  // </Button>,
-                  // <Button
-                  //   type="primary"
-                  //   onClick={() => {
-                  //     openAddAutoRun(item);
-                  //   }}
-                  // >
-                  //   创建自动任务
-                  // </Button>,
-                ]}
-              >
-                <Meta title={item.title} />
-              </Card>
-            ))}
-          </div>
-        </Col>
-        <Col span={6}>
-          <div>
-            {commentList.map((item) => (
-              <Card
-                key={item.commentId}
-                style={{ width: 300 }}
-                actions={[
-                  <Button type="primary" onClick={() => openReplyComment(item)}>
-                    回复
-                  </Button>,
-                  <Button
-                    type="primary"
-                    onClick={() => getSecondCommentList(item)}
-                  >
-                    {item.data.sub_comment_has_more ? '二级评论' : '无'}
-                  </Button>,
-                ]}
-              >
-                {item.content}
-                {item.subCommentList.map((subItem) => (
-                  <div key={subItem.commentId}>
-                    {subItem.content}
-                    <Meta
-                      avatar={<Avatar src={subItem.headUrl} />}
-                      description={subItem.nikeName}
+                    <Card.Meta
+                      avatar={<Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${item.author?.name}`} />}
+                      title={item.author?.name}
+                      description={
+                        <div>
+                          <Text strong ellipsis style={{ display: 'block' }}>
+                            {item.title}
+                          </Text>
+                          <Text type="secondary" ellipsis={{ rows: 2 }}>
+                            {item.content}
+                          </Text>
+                        </div>
+                      }
                     />
-                  </div>
-                ))}
-                <Meta
-                  avatar={<Avatar src={item.headUrl} />}
-                  description={item.nikeName}
-                />
-              </Card>
-            ))}
-          </div>
-        </Col>
-
-        <Col span={6}>
-          <div>
-            {secondCommentList.map((item) => (
-              <Card
-                key={item.commentId}
-                style={{ width: 300 }}
-                actions={[
-                  <Button type="primary" onClick={() => openReplyComment(item)}>
-                    回复
-                  </Button>,
-                ]}
-              >
-                {item.content}
-                {item.subCommentList.map((subItem: any) => (
-                  <div key={subItem.commentId}>
-                    {subItem.content}
-                    <Meta
-                      avatar={<Avatar src={subItem.headUrl} />}
-                      description={subItem.nikeName}
-                    />
-                  </div>
-                ))}
-                <Meta
-                  avatar={<Avatar src={item.headUrl} />}
-                  description={item.nikeName}
-                />
-              </Card>
-            ))}
+                  </Card>
+                </List.Item>
+              )}
+            />
           </div>
         </Col>
       </Row>
+
+      {/* 评论弹窗 */}
+      <Modal
+        title={
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+              <Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${currentPost?.author?.name}`} />
+              <Text strong style={{ marginLeft: 10 }}>{currentPost?.author?.name}</Text>
+            </div>
+            <Text>{currentPost?.title}</Text>
+          </div>
+        }
+        open={commentModalVisible}
+        onCancel={() => setCommentModalVisible(false)}
+        footer={null}
+        width={600}
+      >
+        <div style={{ maxHeight: '60vh', overflow: 'auto' }}>
+          <List
+            itemLayout="vertical"
+            dataSource={currentComments}
+            renderItem={(comment) => (
+              <List.Item
+                actions={[
+                  <Button 
+                    type="text" 
+                    size="small" 
+                    onClick={() => openReplyComment(comment)}
+                  >
+                    回复
+                  </Button>,
+                  comment.data?.sub_comment_has_more && (
+                    <Button 
+                      type="text" 
+                      size="small" 
+                      onClick={() => getSecondCommentList(comment)}
+                    >
+                      查看更多回复
+                    </Button>
+                  )
+                ]}
+              >
+                <List.Item.Meta
+                  avatar={<Avatar src={comment.headUrl} />}
+                  title={comment.nikeName}
+                  description={comment.content}
+                />
+                
+                {comment.subCommentList && comment.subCommentList.length > 0 && (
+                  <div style={{ marginLeft: 40, marginTop: 10 }}>
+                    <List
+                      itemLayout="vertical"
+                      dataSource={comment.subCommentList}
+                      renderItem={(subComment: any) => (
+                        <List.Item>
+                          <List.Item.Meta
+                            avatar={<Avatar src={subComment.headUrl} size="small" />}
+                            title={subComment.nikeName}
+                            description={subComment.content}
+                          />
+                        </List.Item>
+                      )}
+                    />
+                  </div>
+                )}
+              </List.Item>
+            )}
+          />
+        </div>
+      </Modal>
+
+      {/* 自定义网页内容弹出层 */}
+      {webviewModalVisible && (
+        <div className={styles.customWebviewModal}>
+          <div className={styles.modalOverlay} onClick={() => setWebviewModalVisible(false)}></div>
+          <div className={styles.modalContent}>
+            <div className={styles.modalHeader}>
+              <Button 
+                type="text" 
+                icon={<CloseOutlined />} 
+                onClick={() => setWebviewModalVisible(false)}
+                className={styles.closeButton}
+              />
+            </div>
+            <div className={styles.modalBody}>
+              {isWebviewLoading && (
+                <div className={styles.loadingContainer}>
+                  <Spin size="large" tip="加载中..." />
+                </div>
+              )}
+              {currentUrl ? (
+                <webview
+                  ref={webviewRef}
+                  src={currentUrl}
+                  style={{ 
+                    width: '100%', 
+                    height: '100%'
+                  }}
+                  webpreferences="contextIsolation=yes, nodeIntegration=no"
+                />
+              ) : (
+                <Empty description="无法加载内容" />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <ReplyWorks ref={Ref_ReplyWorks} />
       <ReplyComment ref={Ref_ReplyComment} />

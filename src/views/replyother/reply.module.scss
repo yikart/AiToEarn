@@ -1,5 +1,105 @@
 .reply {
   height: 100%;
+  padding: 20px;
   :global {
+  }
+
+  .postList {
+    padding: 0 20px;
+  }
+  
+  .webviewModal {
+    :global {
+      .ant-modal-content {
+        padding: 0;
+        overflow: hidden;
+        height: 80vh;
+        
+        .ant-modal-body {
+          height: 100%;
+          padding: 0;
+        }
+        
+        .ant-modal-close {
+          top: 10px;
+          right: 10px;
+          z-index: 1000;
+        }
+      }
+    }
+  }
+  
+  .webviewContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  .customWebviewModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modalOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .modalContent {
+    position: relative;
+    width: 90%;
+    height: 90%;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    z-index: 1001;
+  }
+  
+  .modalHeader {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px;
+    background-color: #f0f0f0;
+  }
+  
+  .closeButton {
+    color: #333;
+    
+    &:hover {
+      color: #1890ff;
+    }
+  }
+  
+  .modalBody {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .loadingContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 1;
   }
 }
