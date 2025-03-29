@@ -5,24 +5,25 @@
  * @LastEditors: nevin
  * @Description: 添加自动运行
  */
-import { ipcCreateAutoRunOfReply } from '@/icp/reply';
+import { ipcCreateAutoRunOfReply, WorkData } from '@/icp/reply';
 import { Modal } from 'antd';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { CronSchedule } from '@/components/CronSchedule';
 
 export interface AddAutoRunRef {
-  init: (accountId: number, dataId: string) => Promise<void>;
+  init: (accountId: number, data: WorkData) => Promise<void>;
 }
 
 const Com = forwardRef<AddAutoRunRef>((props: any, ref) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [accountId, setAccountId] = useState<number>(0);
-  const [dataId, setDataId] = useState<string>('');
+  const [workData, setWorkData] = useState<WorkData | null>(null);
+
   // '周期类型 天 day-22 (例:每天22时) 周 week-2 (例:每周周二,周日0) 月 month-22 (例:每月22号)',
   const [cycleType, setCycleType] = useState<string>('');
-  async function init(accountId: number, dataId: string) {
+  async function init(accountId: number, data: WorkData) {
     setAccountId(accountId);
-    setDataId(dataId);
+    setWorkData(data);
     setIsModalOpen(true);
   }
 
@@ -36,8 +37,10 @@ const Com = forwardRef<AddAutoRunRef>((props: any, ref) => {
 
   async function handleCron(cron: string) {
     console.log('生成的定时表达式:----', cron);
+    if (!workData) return;
+
     setCycleType(cron);
-    const res = await ipcCreateAutoRunOfReply(accountId, dataId, cron);
+    const res = await ipcCreateAutoRunOfReply(accountId, workData, cron);
     console.log('-------- res', res);
   }
 

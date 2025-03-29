@@ -45,19 +45,24 @@ export class AutoRunService {
   }
 
   // 创建进程
-  async createAutoRun(data: Partial<AutoRunModel>) {
+  async createAutoRun(info: Partial<AutoRunModel>, data: Record<string, any>) {
     if (!(await this.chectAutoRunCount(data.userId!))) return null;
 
-    return await this.autoRunRepository.save(data);
+    info.data = JSON.stringify(data);
+    return await this.autoRunRepository.save(info);
   }
 
   // 根据ID查询进程信息
   async findAutoRunById(id: number) {
-    return await this.autoRunRepository.findOne({
+    const info = await this.autoRunRepository.findOne({
       where: {
         id,
       },
     });
+
+    if (info) info.data = JSON.parse(info.data);
+
+    return info;
   }
 
   // 查询进程列表

@@ -199,14 +199,14 @@ export class ReplyController {
   async createCommentList(
     event: Electron.IpcMainInvokeEvent,
     accountId: number,
-    dataId: string,
+    data: WorkData,
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 
     const res = await this.replyService.autorReplyComment(
       account,
-      dataId,
+      data,
       (e: {
         tag: AutorReplyCommentScheduleEvent;
         status: -1 | 0 | 1;
@@ -279,32 +279,42 @@ export class ReplyController {
   async createReplyCommentAutoRun(
     event: Electron.IpcMainInvokeEvent,
     accountId: number,
-    dataId: string,
+    data: WorkData,
     cycleType: string,
   ): Promise<AutoRunModel | null> {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 
-    const res = await this.autoRunService.createAutoRun({
-      accountId,
-      cycleType,
-      type: AutoRunType.ReplyComment,
-      userId: account.uid,
-      dataId,
-    });
+    const res = await this.autoRunService.createAutoRun(
+      {
+        accountId,
+        cycleType,
+        type: AutoRunType.ReplyComment,
+        userId: account.uid,
+      },
+      data,
+    );
 
     return res;
   }
 
   // 运行自动任务
   @Et('ET_AUTO_RUN_REPLY_COMMENT')
-  async runAutoReplyComment(autoRunData: AutoRunModel): Promise<any> {
-    const { accountId, dataId } = autoRunData;
-    if (!dataId) return null;
+  async runAutoReplyComment(autoRunData: AutoRunModel): Promise<boolean> {
+    const { accountId, data } = autoRunData;
+    if (!data) return false;
 
     const account = await this.accountService.getAccountById(accountId);
-    if (!account) return null;
+    if (!account) return false;
 
-    this.replyService.addReplyQueue(account, dataId, autoRunData);
+    const WorkData = JSON.parse(data) as WorkData;
+
+    const res = await this.replyService.addReplyQueue(
+      account,
+      WorkData,
+      autoRunData,
+    );
+
+    return res.status === 1;
   }
 }

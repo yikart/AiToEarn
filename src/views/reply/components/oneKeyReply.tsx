@@ -35,7 +35,7 @@ const Com = forwardRef<OneKeyReplyRef>((props: any, ref) => {
    */
   async function replyCommentList(inAccountId: number, inWorkData: WorkData) {
     if (!workData?.dataId) return;
-    const res = await icpReplyCommentList(inAccountId, inWorkData?.dataId);
+    const res = await icpReplyCommentList(inAccountId, inWorkData);
     console.log('------ res', res);
   }
 

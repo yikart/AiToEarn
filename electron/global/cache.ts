@@ -1,40 +1,53 @@
 import NodeCache from 'node-cache';
-const GlobleCache = new NodeCache();
 
-/**
- * 缓存数据
- * @param key 缓存key
- * @param value 缓存值
- * @param ttl 缓存时间 秒
- */
-export const setCache = (key: string, value: any, ttl?: number) => {
-  if (ttl) {
-    GlobleCache.set(key, value, ttl);
-  } else {
-    GlobleCache.set(key, value);
+class Cache {
+  private static instance: Cache;
+  private cache: NodeCache;
+
+  private constructor() {
+    this.cache = new NodeCache();
   }
-};
 
-export const getCache = (key: string) => {
-  return GlobleCache.get(key);
-};
+  public static getInstance(): Cache {
+    if (!Cache.instance) Cache.instance = new Cache();
+    return Cache.instance;
+  }
 
-export const delCache = (key: string) => {
-  return GlobleCache.del(key);
-};
+  /**
+   * 缓存数据
+   * @param key 缓存key
+   * @param value 缓存值
+   * @param ttl 缓存时间 秒
+   */
+  public setCache(key: string, value: any, ttl?: number) {
+    if (ttl) {
+      this.cache.set(key, value, ttl);
+    } else {
+      this.cache.set(key, value);
+    }
+  }
 
-export const clearCache = () => {
-  return GlobleCache.flushAll();
-};
+  public getCache(key: string) {
+    return this.cache.get(key);
+  }
 
-// 更改TTL
-export const updateCacheTTL = (key: string, ttl: number) => {
-  GlobleCache.ttl(key, ttl);
-};
+  public delCache(key: string) {
+    return this.cache.del(key);
+  }
 
-// 设置多个缓存
-export const setMultiCache = (
-  list: { key: string; val: any; ttl?: number }[],
-) => {
-  GlobleCache.mset(list);
-};
+  public clearCache() {
+    return this.cache.flushAll();
+  }
+
+  // 更改TTL
+  public updateCacheTTL(key: string, ttl: number) {
+    this.cache.ttl(key, ttl);
+  }
+
+  // 设置多个缓存
+  public setMultiCache(list: { key: string; val: any; ttl?: number }[]) {
+    this.cache.mset(list);
+  }
+}
+
+export const GlobleCache = Cache.getInstance();

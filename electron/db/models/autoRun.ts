@@ -31,11 +31,11 @@ export class AutoRunModel extends TempModel {
   accountId!: number;
 
   @Column({
-    type: 'varchar',
-    nullable: true,
-    comment: '对应数据的数据ID',
+    type: 'text',
+    nullable: false,
+    comment: '对应数据的数据内容 JSON字符串',
   })
-  dataId?: string;
+  data!: string;
 
   @Column({ type: 'int', nullable: false, comment: '执行次数', default: 0 })
   runCount!: number;

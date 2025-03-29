@@ -18,6 +18,17 @@ import { ReplyCommentRecordModel } from '../../db/models/replyCommentRecord';
 import { AppDataSource } from '../../db';
 import { getUserInfo } from '../user/comment';
 import { AutoRunRecordStatus } from '../../db/models/autoRunRecord';
+import { WorkData } from '../plat/plat.type';
+import { GlobleCache } from '../../global/cache';
+
+/**
+ * 获取缓存key
+ * @param account
+ * @returns
+ */
+function getCacheKey(account: AccountModel) {
+  return `OneKeyReplyCommentCacheKey_${account.id}`;
+}
 
 @Injectable()
 export class ReplyService {
@@ -76,7 +87,7 @@ export class ReplyService {
    */
   async autorReplyComment(
     account: AccountModel,
-    dataId: string,
+    data: WorkData,
     scheduleEvent: (data: {
       tag: AutorReplyCommentScheduleEvent;
       status: -1 | 0 | 1; // -1 错误 0 进行中 1 完成
@@ -89,6 +100,9 @@ export class ReplyService {
     let theHasMore = true;
     let thePcursor = undefined;
 
+    // 设置缓存
+    GlobleCache.setCache(getCacheKey(account), data, 60 * 15);
+
     try {
       scheduleEvent({
         tag: AutorReplyCommentScheduleEvent.Start,
@@ -96,6 +110,9 @@ export class ReplyService {
       });
 
       while (theHasMore) {
+        // 重设缓存时间
+        GlobleCache.updateCacheTTL(getCacheKey(account), 60 * 15);
+
         scheduleEvent({
           tag: AutorReplyCommentScheduleEvent.GetCommentListStart,
           status: 0,
@@ -103,7 +120,7 @@ export class ReplyService {
         const {
           list,
           pageInfo: { pcursor, hasMore },
-        } = await platController.getCommentList(account, dataId, thePcursor);
+        } = await platController.getCommentList(account, data, thePcursor);
 
         if (list.length === 0) {
           scheduleEvent({
@@ -164,7 +181,7 @@ export class ReplyService {
               element.commentId,
               aiRes,
               {
-                dataId,
+                dataId: data.dataId,
                 comment: element,
               },
             );
@@ -216,6 +233,9 @@ export class ReplyService {
       });
       return false;
     }
+
+    // 清除缓存
+    GlobleCache.delCache(getCacheKey(account));
   }
 
   /**
@@ -225,17 +245,26 @@ export class ReplyService {
    */
   async addReplyQueue(
     account: AccountModel,
-    dataId: string,
+    data: WorkData,
     autoRun: AutoRunModel,
-  ) {
+  ): Promise<{
+    status: 0 | 1;
+    message?: string;
+  }> {
+    // 查看缓存,有的就不执行
+    if (GlobleCache.getCache(getCacheKey(account)))
+      return {
+        status: 0,
+        message: '该账户有正在执行的任务,请勿重复执行',
+      };
+
     // 创建任务执行记录
     const recordData = await this.autoRunService.createAutoRunRecord(autoRun);
-
     // 添加到队列
     this.replyQueue.add(() => {
       this.autorReplyComment(
         account,
-        dataId,
+        data,
         (e: {
           tag: AutorReplyCommentScheduleEvent;
           status: -1 | 0 | 1;
@@ -263,5 +292,9 @@ export class ReplyService {
         },
       );
     });
+
+    return {
+      status: 1,
+    };
   }
 }

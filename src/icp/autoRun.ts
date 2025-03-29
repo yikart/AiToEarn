@@ -50,14 +50,18 @@ export interface AutoRunRecord {
  * 创建自动进程
  * @param data
  */
-export async function ipcCreateAutoRun(data: {
-  accountId: number;
-  dataId: number;
-  type: AutoRunType;
-  cycleType: string;
-}) {
+export async function ipcCreateAutoRun(
+  info: {
+    accountId: number;
+    type: AutoRunType;
+    cycleType: string;
+  },
+  data: Record<string, any>,
+) {
+  data.data = JSON.stringify(data.data);
   const res: string = await window.ipcRenderer.invoke(
     'ICP_AUTO_RUN_CREATE',
+    info,
     data,
   );
   return res;

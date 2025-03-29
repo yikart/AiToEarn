@@ -115,11 +115,11 @@ export async function icpReplyComment(
 /**
  * 一键作品回复评论
  */
-export async function icpReplyCommentList(accountId: number, dataId: string) {
+export async function icpReplyCommentList(accountId: number, data: WorkData) {
   const res: boolean = await window.ipcRenderer.invoke(
     'ICP_REPLY_COMMENT_LIST_BY_AI',
     accountId,
-    dataId,
+    data,
   );
   return res;
 }
@@ -130,13 +130,13 @@ export async function icpReplyCommentList(accountId: number, dataId: string) {
  */
 export async function ipcCreateAutoRunOfReply(
   accountId: number,
-  dataId: string, // 作品ID
+  data: WorkData, // 作品ID
   cycleType: string,
 ) {
   const res: string = await window.ipcRenderer.invoke(
     'ICP_AUTO_RUN_CREATE_REPLY',
     accountId,
-    dataId,
+    data,
     cycleType,
   );
   return res;

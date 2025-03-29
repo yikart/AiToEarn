@@ -24,19 +24,22 @@ export class AutoRunController {
   @Icp('ICP_AUTO_RUN_CREATE')
   async createAutoRun(
     event: Electron.IpcMainInvokeEvent,
-    data: {
+    info: {
       accountId: number;
       type: AutoRunType;
       cycleType: string;
-      dataId?: string;
     },
+    data: Record<string, any>, // 对象
   ) {
     const userInfo = getUserInfo();
 
-    const autoRun = await this.autoRunService.createAutoRun({
-      userId: userInfo.id,
-      ...data,
-    });
+    const autoRun = await this.autoRunService.createAutoRun(
+      {
+        userId: userInfo.id,
+        ...info,
+      },
+      data,
+    );
 
     return autoRun;
   }
