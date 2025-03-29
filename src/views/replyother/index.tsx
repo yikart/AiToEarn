@@ -289,13 +289,13 @@ export default function Page() {
                     hoverable
                     cover={
                       <div 
-                        style={{ cursor: 'pointer' }}
+                        style={{ cursor: 'pointer'}}
                         onClick={() => handleImageClick(item)}
                       >
                         <img 
                           alt={item.title} 
                           src={item.cover} 
-                          style={{ height: 500, objectFit: 'cover' }}
+                          style={{ width: '96%', margin: '2%', borderRadius: '10px', objectFit: 'cover' }}
                         />
                       </div>
                     }
