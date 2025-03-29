@@ -43,8 +43,8 @@ export class PubItemVideo extends PubItemBase {
   async publishVideo() {
     const publishVideoResult = await this.platform.videoPublish(
       {
-        videoPath: this.videoModel.videoPath!,
-        ...this.commonParamsParse(this.videoModel),
+        ...this.videoModel,
+        cookies: JSON.parse(this.accountModel.loginCookie),
       },
       (progress: number, msg?: string) => {
         const args: PublishProgressRes = {

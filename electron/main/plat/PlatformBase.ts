@@ -8,16 +8,16 @@
 import {
   AccountInfoTypeRV,
   CommentData,
+  CookiesType,
   DashboardData,
   IAccountInfoParams,
   IGetLocationDataParams,
   IGetLocationResponse,
+  IGetMixListResponse,
   IGetTopicsParams,
   IGetTopicsResponse,
   IGetUsersParams,
   IGetUsersResponse,
-  IImgTextPublishParams,
-  IVideoPublishParams,
   ResponsePageInfo,
   StatisticsData,
   VideoCallbackType,
@@ -26,6 +26,8 @@ import {
 import { PublishVideoResult } from './module';
 import { AccountType } from '../../../commont/AccountEnum';
 import { AccountModel } from '../../db/models/account';
+import { VideoModel } from '../../db/models/video';
+import { ImgTextModel } from '../../db/models/imgText';
 
 /**
  * 平台基类，所有平台都该继承这个类
@@ -129,21 +131,6 @@ export abstract class PlatformBase {
   }>;
 
   /**
-   * 获取他人作品的评论列表
-   * @param account
-   * @param dataId
-   * @param pcursor
-   */
-  // abstract getCreatorCommentListByOther(
-  //   account: AccountModel,
-  //   dataId: string,
-  //   pcursor?: string,
-  // ): Promise<{
-  //   list: CommentData[];
-  //   pageInfo: ResponsePageInfo;
-  // }>;
-
-  /**
    * 获取他人作品的二级评论列表
    * @param account
    * @param dataId
@@ -219,7 +206,7 @@ export abstract class PlatformBase {
    * 视频发布
    */
   abstract videoPublish(
-    params: IVideoPublishParams,
+    params: VideoModel,
     // 获取发布进度的回调函数
     callback: VideoCallbackType,
   ): Promise<PublishVideoResult>;
@@ -227,8 +214,13 @@ export abstract class PlatformBase {
   /**
    * 图文发布，有些平台不支持图文发布
    */
-  imgTextPublish(params: IImgTextPublishParams): Promise<PublishVideoResult> {
+  imgTextPublish(params: ImgTextModel): Promise<PublishVideoResult> {
     throw `平台${this.type}不支持图文发布`;
+  }
+
+  // 获取合集
+  getMixList(cookie: CookiesType): Promise<IGetMixListResponse> {
+    throw `平台${this.type}不支持获取合集`;
   }
 
   // 话题数据获取

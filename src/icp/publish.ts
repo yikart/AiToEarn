@@ -14,6 +14,7 @@ import { PubType } from '../../commont/publish/PublishEnum';
 import {
   type IGetLocationDataParams,
   IGetLocationResponse,
+  IGetMixListResponse,
   IGetTopicsResponse,
   type IGetUsersParams,
   IGetUsersResponse,
@@ -225,6 +226,15 @@ export async function icpGetTopic(account: AccountInfo, keyword: string) {
     'ICP_PUBLISH_GET_TOPIC',
     account,
     keyword,
+  );
+  return res;
+}
+
+// 获取合集数据
+export async function icpGetMixList(account: AccountInfo) {
+  const res: IGetMixListResponse = await window.ipcRenderer.invoke(
+    'ICP_PUBLISH_GET_MIX_LIST',
+    account,
   );
   return res;
 }

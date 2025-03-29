@@ -161,6 +161,12 @@ export class PublishController {
     return await platController.getLocationData(params);
   }
 
+  // 获取所有平台合集数据
+  @Icp('ICP_PUBLISH_GET_MIX_LIST')
+  async getMixList(event: Electron.IpcMainInvokeEvent, account: AccountModel) {
+    return await platController.getMixList(account);
+  }
+
   // 获取所有平台的用户数据
   @Icp('ICP_PUBLISH_GET_USERS')
   async getUsers(event: Electron.IpcMainInvokeEvent, params: IGetUsersParams) {

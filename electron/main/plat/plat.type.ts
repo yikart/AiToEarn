@@ -6,8 +6,6 @@
  * @Description:
  */
 import { AccountModel } from '../../db/models/account';
-import { VisibleTypeEnum } from '../../../commont/publish/PublishEnum';
-import { DiffParmasType, ILableValue } from '../../db/models/video';
 
 export type CookiesType = Electron.Cookie[];
 
@@ -87,45 +85,6 @@ export interface WxSphEvent {
   eventName: string;
 }
 
-// 发布通用参数
-export interface IPublishParams {
-  // 调用该平台的cookies
-  cookies: CookiesType;
-  // 标题，有些平台没有标题
-  title: string;
-  // 发布视频的简介
-  desc: string;
-  // 话题
-  topics: string[];
-  // 可见性
-  visibleType: VisibleTypeEnum;
-  // 各个平台的差异化参数
-  diffParams?: DiffParmasType;
-  // 定时发布日期
-  timingTime?: Date;
-  // 地点
-  location?: ILocationDataItem;
-  // @用户
-  mentionedUserInfo?: ILableValue[];
-  // 封面路径
-  coverPath: string;
-}
-
-// 视频发布参数
-export interface IVideoPublishParams extends IPublishParams {
-  // 视频的路径
-  videoPath: string;
-  other?: any;
-}
-
-// 图文发布参数
-export interface IImgTextPublishParams extends IPublishParams {
-  // 图片路径
-  imagesPath: string[];
-  // token，只有抖音需要
-  token?: string;
-}
-
 // 获取用户参数
 export interface IGetUsersParams {
   keyword: string;
@@ -198,4 +157,17 @@ export interface ILocationDataItem {
 export interface IGetLocationResponse {
   status: number;
   data?: ILocationDataItem[];
+}
+
+export interface IMixItem {
+  id: string;
+  name: string;
+  coverImg: string;
+  // 作品数量
+  feedCount: number;
+}
+// 获取合集返回值
+export interface IGetMixListResponse {
+  status: number;
+  data: IMixItem[];
 }

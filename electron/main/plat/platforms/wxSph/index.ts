@@ -16,7 +16,6 @@ import {
   IGetTopicsParams,
   IGetTopicsResponse,
   IGetUsersParams,
-  IVideoPublishParams,
   VideoCallbackType,
   WorkData,
 } from '../../plat.type';
@@ -25,6 +24,8 @@ import { shipinhaoService } from '../../../../plat/shipinhao';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
 import { CommentInfo } from '../../../../plat/shipinhao/wxShp.type';
+import { IRequestNetResult } from '../../../../plat/requestNet';
+import { VideoModel } from '../../../../db/models/video';
 
 export class WxSph extends PlatformBase {
   constructor() {
@@ -291,17 +292,21 @@ export class WxSph extends PlatformBase {
     return false;
   }
 
+  getCode(res: IRequestNetResult<any>) {
+    return res.data.errCode === 300334 || res.data.errCode === 300333
+      ? 401
+      : res.status;
+  }
+
   async getUsers(params: IGetUsersParams) {
     const usersRes = await shipinhaoService.getUsers(
       JSON.parse(params.account.loginCookie),
       params.keyword,
       params.page,
     );
+
     return {
-      status:
-        usersRes.data.errCode === 300334 || usersRes.data.errCode === 300333
-          ? 401
-          : usersRes.status,
+      status: this.getCode(usersRes),
       data: usersRes?.data?.data?.list?.map((v) => {
         return {
           image: v.headImgUrl,
@@ -312,17 +317,32 @@ export class WxSph extends PlatformBase {
     };
   }
 
+  async getMixList(cookie: CookiesType) {
+    const mixRes = await shipinhaoService.getMixList(cookie);
+    return {
+      status: this.getCode(mixRes),
+      data: mixRes?.data?.data?.collectionList?.map((v) => {
+        return {
+          id: v.id,
+          name: v.name,
+          coverImg: v.coverImgUrl || '',
+          feedCount: v.feedCount,
+        };
+      }),
+    };
+  }
+
   async videoPublish(
-    params: IVideoPublishParams,
+    params: VideoModel,
     callback: VideoCallbackType,
   ): Promise<PublishVideoResult> {
     return new Promise(async (resolve) => {
       const result = await shipinhaoService
         .publishVideoWorkApi(
-          params.cookies,
-          params.videoPath,
+          params.cookies!,
+          params.videoPath!,
           {
-            cover: params.coverPath,
+            cover: params.coverPath!,
             title: params.desc,
             topics: params.topics,
             des: params.desc,
@@ -387,11 +407,7 @@ export class WxSph extends PlatformBase {
       cookie: params.cookie!,
     });
     return {
-      status:
-        locationRes.data.errCode === 300334 ||
-        locationRes.data.errCode === 300333
-          ? 401
-          : locationRes.status,
+      status: this.getCode(locationRes),
       data: locationRes?.data?.data?.list?.map((v) => {
         return {
           name: v.name,

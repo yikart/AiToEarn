@@ -10,6 +10,6 @@ import { WorkData } from './workData';
 
 @Entity({ name: 'imgText' })
 export class ImgTextModel extends WorkData {
-  @Column({ type: 'json', nullable: true, comment: '多个图片的路径' })
-  imagesPath?: string[];
+  @Column({ type: 'json', nullable: false, comment: '多个图片的路径' })
+  imagesPath!: string[];
 }

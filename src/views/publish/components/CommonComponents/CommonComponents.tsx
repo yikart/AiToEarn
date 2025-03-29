@@ -1,4 +1,4 @@
-import { Button, Radio } from 'antd';
+import { Button, Radio, Select } from "antd";
 import styles from './commonComponents.module.scss';
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
@@ -131,4 +131,9 @@ export const AccountRestartLogin = ({
       )}
     </>
   );
+};
+
+// 合集
+export const CommonMixSelect = ({ account }: { account: AccountInfo }) => {
+  return <Select></Select>;
 };

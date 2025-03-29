@@ -16,7 +16,6 @@ import {
   IGetTopicsParams,
   IGetTopicsResponse,
   IGetUsersParams,
-  IVideoPublishParams,
   VideoCallbackType,
   WorkData,
 } from '../../plat.type';
@@ -29,6 +28,7 @@ import { AccountModel } from '../../../../db/models/account';
 import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
 import { KwaiVisibleTypeEnum } from '../../../../plat/plat.common.type';
 import dayjs from 'dayjs';
+import { VideoModel } from '../../../../db/models/video';
 
 export class Kwai extends PlatformBase {
   constructor() {
@@ -80,12 +80,14 @@ export class Kwai extends PlatformBase {
   }
 
   async videoPublish(
-    params: IVideoPublishParams,
+    params: VideoModel,
     callback: VideoCallbackType,
   ): Promise<PublishVideoResult> {
     const publishVideoResult = new PublishVideoResult();
     const res = await kwaiPub.pubVideo({
-      ...params,
+      videoPath: params.videoPath || '',
+      coverPath: params.coverPath || '',
+      cookies: params.cookies!,
       desc: params.desc + params.topics.map((v) => `#${v}`).join(' '),
       callback,
       visibleType: VisibleTypeEnum.Public

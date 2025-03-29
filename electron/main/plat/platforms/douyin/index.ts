@@ -16,9 +16,6 @@ import {
   IGetTopicsParams,
   IGetTopicsResponse,
   IGetUsersParams,
-  IImgTextPublishParams,
-  IPublishParams,
-  IVideoPublishParams,
   VideoCallbackType,
   WorkData,
 } from '../../plat.type';
@@ -30,6 +27,10 @@ import {
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
 import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
+import { IRequestNetResult } from '../../../../plat/requestNet';
+import { VideoModel } from '../../../../db/models/video';
+import { ImgTextModel } from '../../../../db/models/imgText';
+import { WorkData as WorkDataModel } from '../../../../db/models/workData';
 
 export type PubVideoOptin = {
   token: string;
@@ -417,7 +418,7 @@ export class Douyin extends PlatformBase {
     }
   }
 
-  pubParamsParse(params: IPublishParams): DouyinPlatformSettingType {
+  pubParamsParse(params: WorkDataModel): DouyinPlatformSettingType {
     const douyinParams = params.diffParams![AccountType.Douyin];
     return {
       userDeclare: douyinParams?.selfDeclare,
@@ -434,10 +435,10 @@ export class Douyin extends PlatformBase {
           uid: `${v.value}`,
         };
       }),
-      title: params.title,
+      title: params.title || '',
       topics: params.topics,
       caption: params.desc,
-      cover: params.coverPath,
+      cover: params.coverPath || '',
       timingTime: params.timingTime?.getTime(),
       // 可见性
       visibility_type:
@@ -459,15 +460,15 @@ export class Douyin extends PlatformBase {
   }
 
   async videoPublish(
-    params: IVideoPublishParams,
+    params: VideoModel,
     callback: VideoCallbackType,
   ): Promise<PublishVideoResult> {
     return new Promise(async (resolve) => {
       const result = await douyinService
         .publishVideoWorkApi(
           JSON.stringify(params.cookies),
-          params.other!,
-          params.videoPath,
+          undefined,
+          params.videoPath!,
           this.pubParamsParse(params),
           callback,
         )
@@ -495,7 +496,7 @@ export class Douyin extends PlatformBase {
   async getTopics({ keyword }: IGetTopicsParams): Promise<IGetTopicsResponse> {
     const topicsRes = await douyinService.getTopics({ keyword });
     return {
-      status: topicsRes.status,
+      status: this.getCode(topicsRes),
       data: topicsRes?.data?.sug_list?.map((v) => {
         return {
           id: v.cid,
@@ -513,7 +514,7 @@ export class Douyin extends PlatformBase {
       params.page,
     );
     return {
-      status: usersRes.data.status_code === 8 ? 401 : usersRes.status,
+      status: this.getCode(usersRes),
       data: usersRes.data.user_list.map((v) => {
         return {
           image: 'https://p26.douyinpic.com/aweme/' + v.avatar_thumb.uri,
@@ -534,7 +535,7 @@ export class Douyin extends PlatformBase {
     });
 
     return {
-      status: locationRes.data.status_code === 8 ? 401 : locationRes.status,
+      status: this.getCode(locationRes),
       data: locationRes?.data?.poi_list?.map((v) => {
         return {
           name: v.poi_name,
@@ -548,14 +549,12 @@ export class Douyin extends PlatformBase {
     };
   }
 
-  async imgTextPublish(
-    params: IImgTextPublishParams,
-  ): Promise<PublishVideoResult> {
+  async imgTextPublish(params: ImgTextModel): Promise<PublishVideoResult> {
     return new Promise(async (resolve) => {
       const result = await douyinService
         .publishImageWorkApi(
           JSON.stringify(params.cookies),
-          params.token!,
+          undefined,
           params.imagesPath,
           this.pubParamsParse(params),
         )
@@ -587,6 +586,25 @@ export class Douyin extends PlatformBase {
     pcursor?: string,
   ): Promise<any> {
     return Promise.resolve(undefined);
+  }
+
+  getCode(res: IRequestNetResult<any>) {
+    return res?.data?.status_code === 8 ? 401 : res?.status;
+  }
+
+  async getMixList(cookie: CookiesType) {
+    const mixRes = await douyinService.getMixList(cookie);
+    return {
+      status: this.getCode(mixRes),
+      data: mixRes?.data.mix_list.map((v) => {
+        return {
+          id: v.mix_id,
+          name: v.mix_name,
+          coverImg: v.cover_url.url_list[0],
+          feedCount: v.statis.updated_to_episode,
+        };
+      }),
+    };
   }
 }
 

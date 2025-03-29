@@ -11,6 +11,7 @@ import {
   WeChatLocationData,
   WeChatVideoApiResponse,
   WeChatVideoUserData,
+  WxSPHGetMixListResponse,
 } from './wxShp.type';
 import { v4 as uuidv4 } from 'uuid';
 interface UserInfo {
@@ -1209,6 +1210,11 @@ export class ShipinhaoService {
       topics?: string[];
       des?: string;
       timingTime?: number;
+      // 合集
+      mixInfo?: {
+        mixId: string;
+        mixName: string;
+      };
       // 位置信息
       poiInfo?: {
         latitude: number;
@@ -1344,6 +1350,21 @@ export class ShipinhaoService {
         currentPage: page,
         offset: (page - 1) * 10,
         query: keyword,
+      },
+    });
+  }
+
+  // 获取合集列表
+  async getMixList(cookie: Electron.Cookie[]) {
+    return await requestNet<WxSPHGetMixListResponse>({
+      url: `https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/collection/get_collection_list`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'POST',
+      body: {
+        pageNum: 1,
+        pageSize: 200,
       },
     });
   }

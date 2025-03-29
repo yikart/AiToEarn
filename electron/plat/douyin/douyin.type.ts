@@ -743,3 +743,29 @@ export interface DouyinNewCommentResponse {
   status_code: number; // 0;
   status_msg: string; // '';
 }
+
+// 合集数据
+export interface DouyinGetMixListResponse {
+  total: number;
+  status_code: number;
+  mix_list: {
+    author: DouyinUser;
+    cover_url: {
+      uri: string;
+      url_list: string[];
+    };
+    statis: {
+      collect_vv: number;
+      current_episode: number;
+      play_vv: number;
+      updated_to_episode: number;
+    };
+    status: {
+      is_collected: number;
+      status: number;
+    };
+    mix_name: string;
+    mix_id: string;
+    ban_episode_count: number;
+  }[];
+}
