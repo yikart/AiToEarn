@@ -31,6 +31,7 @@ import {
   CloseOutlined
 } from '@ant-design/icons';
 import webview from 'electron';
+import Masonry from 'react-masonry-css';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
@@ -98,7 +99,7 @@ export default function Page() {
       '414381229d04c46cb39f97a5a0b7f9eb',
     );
     console.log('------ getCommentSearchNotes', list);
-    let newlist = list.slice(0, 12);
+    let newlist = list.slice(0, 20);
 
     newlist[0].noteId = '67de8bc2000000001c00fdce';
     newlist[0].xsec_token = 'AB-q1Xl6YS66mGgN8y_DMoskX40j7FsSv2DoSQTYE6DYU=';
@@ -255,6 +256,15 @@ export default function Page() {
     setWebviewModalVisible(true);
   };
 
+  // 计算断点值，用于响应式布局
+  const breakpointColumnsObj = {
+    default: 5, // 默认显示5列
+    1600: 4,    // 宽度小于1600px时显示4列
+    1200: 3,    // 宽度小于1200px时显示3列
+    900: 2,     // 宽度小于900px时显示2列
+    600: 1      // 宽度小于600px时显示1列
+  };
+
   return (
     <div className={styles.reply}>
       <Row>
@@ -280,22 +290,24 @@ export default function Page() {
         
         <Col span={20}>
           <div className={styles.postList}>
-            <List
-              grid={{ gutter: 16, column: 3 }}
-              dataSource={postList}
-              renderItem={(item: any) => (
-                <List.Item>
+            <Masonry
+              breakpointCols={breakpointColumnsObj}
+              className={styles.myMasonryGrid}
+              columnClassName={styles.myMasonryGridColumn}
+            >
+              {postList.map((item: any) => (
+                <div key={item.noteId || item._id} className={styles.masonryItem}>
                   <Card
                     hoverable
                     cover={
                       <div 
-                        style={{ cursor: 'pointer'}}
+                        style={{ cursor: 'pointer' }}
                         onClick={() => handleImageClick(item)}
                       >
                         <img 
                           alt={item.title} 
                           src={item.cover} 
-                          style={{ width: '96%', margin: '2%', borderRadius: '10px', objectFit: 'cover' }}
+                          style={{ width: '100%', borderRadius: '10px 10px 0 0', objectFit: 'cover' }}
                         />
                       </div>
                     }
@@ -329,9 +341,9 @@ export default function Page() {
                       }
                     />
                   </Card>
-                </List.Item>
-              )}
-            />
+                </div>
+              ))}
+            </Masonry>
           </div>
         </Col>
       </Row>

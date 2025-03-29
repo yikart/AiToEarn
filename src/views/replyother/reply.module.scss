@@ -102,4 +102,26 @@
     background-color: rgba(255, 255, 255, 0.8);
     z-index: 1;
   }
+  
+  // 瀑布流布局样式
+  .myMasonryGrid {
+    display: flex;
+    width: auto;
+    margin-left: -16px; // 列间距
+  }
+  
+  .myMasonryGridColumn {
+    padding-left: 16px; // 列间距
+    background-clip: padding-box;
+  }
+  
+  .masonryItem {
+    margin-bottom: 16px;
+    
+    :global {
+      .ant-card {
+        width: 300px;
+      }
+    }
+  }
 }
