@@ -78,15 +78,20 @@ export class WorkData extends TempModel {
   lastStatsTime?: Date;
 
   // 话题
-  @Column({ type: 'json', nullable: true, comment: '话题' })
-  topics?: string[];
+  @Column({ type: 'json', nullable: true, comment: '话题', default: '[]' })
+  topics!: string[];
 
   // 位置
   @Column({ type: 'json', nullable: true, comment: '位置' })
   location?: ILocationDataItem;
 
   // 差异化参数
-  @Column({ type: 'json', nullable: true, comment: '不同平台的差异化参数' })
+  @Column({
+    type: 'json',
+    nullable: true,
+    comment: '不同平台的差异化参数',
+    default: '{}',
+  })
   diffParams?: DiffParmasType;
 
   // 可见性
@@ -103,8 +108,8 @@ export class WorkData extends TempModel {
   timingTime?: Date;
 
   // @用户
-  @Column({ type: 'json', nullable: true, comment: '@用户数组' })
-  mentionedUserInfo?: ILableValue[];
+  @Column({ type: 'json', nullable: true, comment: '@用户数组', default: '[]' })
+  mentionedUserInfo!: ILableValue[];
 
   // 预览地址
   @Column({ type: 'varchar', nullable: true, comment: '预览地址' })

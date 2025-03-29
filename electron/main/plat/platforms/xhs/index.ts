@@ -582,8 +582,6 @@ export class Xhs extends PlatformBase {
           this.pubParamsParse(params),
         )
         .catch((err) => {
-          console.log('----------');
-          console.log(err);
           resolve({
             code: 0,
             msg: err,
