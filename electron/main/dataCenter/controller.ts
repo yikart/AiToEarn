@@ -15,7 +15,7 @@ export class DataCenterController {
   @Scheduled('*/30 * * * *', 'sync_accounts')
   async syncAccounts() {
     try {
-      const userInfo = await getUserInfo();
+      const userInfo = getUserInfo();
       const token = getUserToken();
       if (!userInfo || !token) return;
 

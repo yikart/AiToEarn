@@ -163,17 +163,18 @@ export default function Page() {
                     </Row>
                   </div>
                 ))}
-                {wordList.length > 0 && (
-                  <p>
-                    <Button
-                      type="link"
-                      onClick={() => getCreatorList(activeAccountId)}
-                    >
-                      加载更多
-                    </Button>
-                  </p>
-                )}
               </div>
+            )}
+
+            {wordList.length > 0 && (
+              <p className="text-center">
+                <Button
+                  type="link"
+                  onClick={() => getCreatorList(activeAccountId)}
+                >
+                  加载更多
+                </Button>
+              </p>
             )}
           </Tabs.TabPane>
           <Tabs.TabPane tab="自动任务" key="2">

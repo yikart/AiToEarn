@@ -120,7 +120,7 @@ const Com = forwardRef<CommentListRef>((props: any, ref) => {
             ))}
 
             {commentList.length > 0 && (
-              <p>
+              <p className="text-center">
                 <Button type="link" onClick={() => getCommentList(workData!)}>
                   加载更多
                 </Button>
