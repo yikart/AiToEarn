@@ -35,8 +35,8 @@ const Com = forwardRef<CommentListRef>((props: any, ref) => {
     setCommentList([]);
     setAccountId(accountId);
     setWorkData(workData);
+    await getCommentList(accountId, workData);
     setIsModalOpen(true);
-    await getCommentList(workData);
   }
 
   useImperativeHandle(ref, () => ({
@@ -50,8 +50,8 @@ const Com = forwardRef<CommentListRef>((props: any, ref) => {
   /**
    * 获取评论列表
    */
-  async function getCommentList(data: WorkData) {
-    const res = await icpGetCommentList(accountId, data, pageInfo.pcursor);
+  async function getCommentList(inAccountId: number, data: WorkData) {
+    const res = await icpGetCommentList(inAccountId, data, pageInfo.pcursor);
     if (!res) return;
 
     setPageInfo(res.pageInfo);
@@ -121,7 +121,10 @@ const Com = forwardRef<CommentListRef>((props: any, ref) => {
 
             {commentList.length > 0 && (
               <p className="text-center">
-                <Button type="link" onClick={() => getCommentList(workData!)}>
+                <Button
+                  type="link"
+                  onClick={() => getCommentList(accountId, workData!)}
+                >
                   加载更多
                 </Button>
               </p>
