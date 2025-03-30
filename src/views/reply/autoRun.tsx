@@ -10,6 +10,7 @@ import { Button, Popconfirm, Space, Table } from 'antd';
 import React from 'react';
 import AutoRunRecord, { AutoRunRecordRef } from './components/autoRunRecord';
 import { ParseCronSchedule } from '@/components/CronSchedule';
+import { WorkData } from '@/icp/reply';
 
 const { Column } = Table;
 
@@ -82,6 +83,15 @@ const Page: React.FC = () => {
     // 可以根据需要添加更多类型
   };
 
+  function domDataInfo(data: string) {
+    const info: WorkData = JSON.parse(data);
+    return (
+      <div>
+        <img className="w-[50px] h-[100px]" src={info.coverUrl} alt="封面" />
+      </div>
+    );
+  }
+
   return (
     <div style={{ width: '100%' }} className="bg-slate-500">
       {/* 添加刷新按钮 */}
@@ -125,6 +135,14 @@ const Page: React.FC = () => {
             <ParseCronSchedule cronExpression={cycleType} />
           )}
         />
+
+        <Column
+          title="数据"
+          dataIndex="data"
+          key="data"
+          render={(data: any) => domDataInfo(data)}
+        />
+
         <Column
           title="创建时间"
           key="createTime"
