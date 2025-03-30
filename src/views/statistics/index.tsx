@@ -62,6 +62,7 @@ const Statistics = () => {
 
   useEffect(() => {
     getAccountStatistics();
+    getAccountStatistics7();
   }, []);
 
   // 初始化图表
