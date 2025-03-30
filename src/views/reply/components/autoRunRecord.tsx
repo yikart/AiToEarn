@@ -46,10 +46,12 @@ const Com = React.forwardRef<AutoRunRecordRef>((props: any, ref) => {
       },
     );
 
+    console.log('----- res', res);
+
     setAutoRunRecordList(res.list);
     setPagination({
       ...pagination,
-      total: res.count,
+      total: res.total,
     });
   }
 
@@ -65,6 +67,7 @@ const Com = React.forwardRef<AutoRunRecordRef>((props: any, ref) => {
     >
       <div style={{ width: '100%' }} className="bg-slate-500">
         <Table
+          key={autoRun?.id}
           dataSource={autoRunRecordList}
           style={{ width: '100%' }}
           className="bg-slate-500"
@@ -84,6 +87,7 @@ const Com = React.forwardRef<AutoRunRecordRef>((props: any, ref) => {
           <Column
             title="触发周期"
             key="cycleType"
+            dataIndex="cycleType"
             render={(cycleType: string) => (
               <ParseCronSchedule cronExpression={cycleType} />
             )}
@@ -91,6 +95,7 @@ const Com = React.forwardRef<AutoRunRecordRef>((props: any, ref) => {
           <Column
             title="创建时间"
             key="createTime"
+            dataIndex="createTime"
             render={(_: any, record: AutoRun) => (
               <p>{new Date(record.createTime).toLocaleString()}</p>
             )}

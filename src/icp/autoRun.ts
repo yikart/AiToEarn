@@ -128,7 +128,7 @@ export async function ipcGetAutoRunRecordList(
   },
 ): Promise<{
   list: AutoRunRecord[];
-  count: number;
+  total: number;
 }> {
   const res = await window.ipcRenderer.invoke(
     'ICP_AUTO_RUN_RECORD_LIST',
