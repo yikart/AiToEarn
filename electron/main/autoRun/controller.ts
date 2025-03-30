@@ -10,7 +10,7 @@ import { AutoRunService } from './service';
 import { AutoRunStatus, AutoRunType } from '../../db/models/autoRun';
 import { getUserInfo } from '../user/comment';
 import { EtEvent } from '../../global/event';
-import { autoRunTypeEtTag, hasTriggered } from './comment';
+import { autoRunTypeEtTag } from './comment';
 import { AutoRunRecordStatus } from '../../db/models/autoRunRecord';
 
 @Controller()
@@ -161,14 +161,15 @@ export class AutoRunController {
         userInfo.id,
       );
 
-      // 遍历自动运行列表,满足运行条件的通知运行
-      for (const item of autoRunList) {
+      autoRunList.map(async (item) => {
         const tag = autoRunTypeEtTag.get(item.type);
-        if (!tag) continue;
-        const needRun = hasTriggered(item.cycleType);
-        if (!needRun) continue;
+        if (!tag) return;
+
+        const needRun = await this.autoRunService.isNeedAutoRunToRun(item);
+        if (!needRun) return;
+
         EtEvent.emit(tag, item);
-      }
+      });
     } catch (error) {
       console.error('---- syncAllAutoRunStart ---- error', error);
     }

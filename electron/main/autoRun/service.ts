@@ -14,10 +14,11 @@ import {
   AutoRunRecordModel,
   AutoRunRecordStatus,
 } from '../../db/models/autoRunRecord';
-import { FindOptionsWhere, Not, Repository } from 'typeorm';
+import { FindOptionsWhere, MoreThan, Not, Repository } from 'typeorm';
 import { AppDataSource } from '../../db';
 import windowOperate from '../../util/windowOperate';
 import { SendChannelEnum } from '../../../commont/UtilsEnum';
+import { hasTriggered, parseCycleType } from './comment';
 
 @Injectable()
 export class AutoRunService {
@@ -192,5 +193,51 @@ export class AutoRunService {
       autoRunInfo,
       error,
     );
+  }
+
+  // 查找周期内的最近一条记录
+  async findLastAutoRunRecord(
+    autoRun: AutoRunModel,
+    cycleType: 'day' | 'week' | 'month',
+  ) {
+    const where: FindOptionsWhere<AutoRunRecordModel> = {
+      autoRunId: autoRun.id,
+    };
+
+    if (cycleType === 'day') {
+      where.createTime = MoreThan(new Date(new Date().setHours(0, 0, 0, 0)));
+    } else if (cycleType === 'week') {
+      where.createTime = MoreThan(
+        new Date(new Date().setDate(new Date().getDate() - 7)),
+      );
+    } else if (cycleType === 'month') {
+      where.createTime = MoreThan(
+        new Date(new Date().setDate(new Date().getDate() - 30)),
+      );
+    }
+
+    const lastRecord = await this.autoRunRecordRepository.findOne({
+      where,
+      order: {
+        createTime: 'DESC',
+      },
+    });
+
+    return lastRecord;
+  }
+
+  // 判断是否需要触发运行
+  async isNeedAutoRunToRun(autoRun: AutoRunModel): Promise<boolean> {
+    const { cycleType } = autoRun;
+
+    const isHasTriggered = hasTriggered(cycleType);
+    if (!isHasTriggered) return false;
+
+    const { type } = parseCycleType(cycleType);
+    if (!type) return false;
+
+    const record = await this.findLastAutoRunRecord(autoRun, type);
+
+    return !record;
   }
 }

@@ -11,11 +11,20 @@ export const autoRunTypeEtTag = new Map<AutoRunType, string>([
   [AutoRunType.ReplyComment, 'ET_AUTO_RUN_REPLY_COMMENT'],
 ]);
 
+export enum CycleType {
+  day = 'day', // 每天HH点触发
+  week = 'week', // 每周D日触发（周日=0，周一=1，..., 周六=6）
+  month = 'month', // 每月DD日触发
+}
+
 // 工具函数：解析周期类型
-function parseCycleType(cycleType: string): { type: string; param: number } {
+export function parseCycleType(cycleType: string): {
+  type: CycleType | '';
+  param: number;
+} {
   const [_, type, paramStr] = cycleType.match(/(\w+)-(\d+)/) || [];
   return {
-    type: type || '',
+    type: type as CycleType,
     param: parseInt(paramStr || '0'),
   };
 }
