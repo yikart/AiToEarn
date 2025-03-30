@@ -44,6 +44,7 @@ const Com = forwardRef<CommentListRef>((props: any, ref) => {
   }));
 
   function handleCancel() {
+    setCommentList([]);
     setIsModalOpen(false);
   }
 
