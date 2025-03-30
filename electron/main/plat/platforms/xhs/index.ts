@@ -159,9 +159,11 @@ export class Xhs extends PlatformBase {
       commentCount: v.comments_count,
       title: v.display_title,
       coverUrl: v.images_list[0]?.url || '',
+      option: {
+        xsec_token: v.xsec_token,
+      },
     }));
 
-    console.log('------ getWorkList xhs ---', res.data);
     const count = res.data.data?.tags[0]?.notes_count || 0;
     const hasMore = count > pageSize * (pageNo + 1);
     return {

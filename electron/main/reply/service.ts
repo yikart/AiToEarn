@@ -252,18 +252,17 @@ export class ReplyService {
     message?: string;
   }> {
     // 查看缓存,有的就不执行
-    if (GlobleCache.getCache(getCacheKey(account)))
+    if (GlobleCache.getCache(getCacheKey(account))) {
+      sysNotice('请勿重复执行', `该账户有正在执行的任务,任务ID:${autoRun.id}`);
+
       return {
         status: 0,
         message: '该账户有正在执行的任务,请勿重复执行',
       };
-
-    console.log('=====进入自动机评论回复任务=====');
+    }
 
     // 创建任务执行记录
     const recordData = await this.autoRunService.createAutoRunRecord(autoRun);
-
-    console.log('=====recordData=====', recordData);
 
     // 添加到队列
     this.replyQueue.add(() => {
