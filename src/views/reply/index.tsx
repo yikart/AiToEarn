@@ -81,11 +81,11 @@ export default function Page() {
         }, [])}
       />
 
-      <div className="m-4">
-        <Tabs defaultActiveKey="1">
+      <div className="w-full p-4 text-gray-500">
+        <Tabs defaultActiveKey="1" className="w-full">
           <Tabs.TabPane tab="作品列表" key="1">
             {activeAccountId === -1 ? (
-              <div className="flex items-center justify-center h-[300px] text-gray-500">
+              <div className="flex items-center justify-center h-[300px]">
                 <Tooltip title="请先在左侧侧边栏选择账户">
                   <QuestionCircleOutlined className="mr-2 text-3xl" />
                 </Tooltip>

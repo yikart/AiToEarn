@@ -93,7 +93,7 @@ const Page: React.FC = () => {
   }
 
   return (
-    <div style={{ width: '100%' }} className="bg-slate-500">
+    <div style={{ width: '100%' }}>
       {/* 添加刷新按钮 */}
       <Button onClick={refreshAutoRunList} style={{ marginBottom: 16 }}>
         刷新
@@ -102,7 +102,6 @@ const Page: React.FC = () => {
         rowKey="id"
         dataSource={autoRunList}
         style={{ width: '100%' }}
-        className="bg-slate-500"
         pagination={pagination}
         onChange={(newPagination) => {
           setPagination({
