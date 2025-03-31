@@ -17,6 +17,7 @@ import {
   PubPermissionProps,
 } from '../../../../../components/CommonComponents/CommonComponents';
 import useVideoPubSetModal from '../children/hooks/useVideoPubSetModal';
+import { IMixItem } from '../../../../../../../../electron/main/plat/plat.type';
 
 const { TextArea } = Input;
 
@@ -67,12 +68,9 @@ export const ScheduledTimeSelect = ({
           ? onChange
           : (e) => {
               if (!currChooseAccount) return;
-              setOnePubParams(
-                {
-                  timingTime: e ? e.toDate() : undefined,
-                },
-                currChooseAccount!.id,
-              );
+              setOnePubParams({
+                timingTime: e ? e.toDate() : undefined,
+              });
             }
       }
     />
@@ -116,23 +114,17 @@ export const TitleInput = ({
         showCount
         variant="filled"
         onChange={(e) => {
-          setOnePubParams(
-            {
-              title: e.target.value,
-            },
-            currChooseAccount.id,
-          );
+          setOnePubParams({
+            title: e.target.value,
+          });
         }}
       />
       <AICreateTitle
         type={AiCreateType.TITLE}
         onAiCreateFinish={(text) => {
-          setOnePubParams(
-            {
-              title: text,
-            },
-            currChooseAccount.id,
-          );
+          setOnePubParams({
+            title: text,
+          });
         }}
         videoFile={currChooseAccount.video}
         max={max || 20}
@@ -170,23 +162,17 @@ export const DescTextArea = ({
         showCount
         maxLength={maxLength}
         onChange={(e) => {
-          setOnePubParams(
-            {
-              describe: e.target.value,
-            },
-            currChooseAccount!.id,
-          );
+          setOnePubParams({
+            describe: e.target.value,
+          });
         }}
       />
       <AICreateTitle
         type={AiCreateType.DESC}
         onAiCreateFinish={(text) => {
-          setOnePubParams(
-            {
-              describe: text,
-            },
-            currChooseAccount.id,
-          );
+          setOnePubParams({
+            describe: text,
+          });
         }}
         videoFile={currChooseAccount.video}
         max={maxLength}
@@ -201,12 +187,9 @@ export const VideoPubPermission = ({ ...props }: PubPermissionProps) => {
   return (
     <PubPermission
       onChange={(e) => {
-        setOnePubParams(
-          {
-            visibleType: e,
-          },
-          currChooseAccount!.id,
-        );
+        setOnePubParams({
+          visibleType: e,
+        });
       }}
       value={currChooseAccount?.pubParams.visibleType}
       {...props}
@@ -217,10 +200,30 @@ export const VideoPubPermission = ({ ...props }: PubPermissionProps) => {
 // 合集
 export const VideoPubMixSelect = ({}: {}) => {
   const { setOnePubParams, currChooseAccount } = useVideoPubSetModal();
+  const { updateAccounts } = useVideoPageStore(
+    useShallow((state) => ({
+      updateAccounts: state.updateAccounts,
+    })),
+  );
+
   return (
     <CommonMixSelect
       account={currChooseAccount.account}
-      onAccountChange={() => {}}
-    />
+      onAccountChange={(account) => {
+        updateAccounts({
+          accounts: [account],
+        });
+      }}
+      onChange={(_, value) => {
+        setOnePubParams({
+          mixInfo: {
+            label: (value as IMixItem).name,
+            value: (value as IMixItem).id,
+          },
+        });
+      }}
+    >
+      <VideoPubRestartLogin />
+    </CommonMixSelect>
   );
 };

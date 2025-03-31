@@ -132,10 +132,10 @@ export const CommonActivitySelect = ({
   const [value, setValue] = useState<ILableValue[]>([]);
 
   const init = () => {
-    icpGetDouyinActivity(account).then((res) => {
+    icpGetDouyinActivity(account!).then((res) => {
       setOptions(res.activity_list || []);
     });
-    icpGetActivityTags(account).then((res) => {
+    icpGetActivityTags(account!).then((res) => {
       if (!res.data.query_tags) return;
       res.data?.query_tags?.map((v) => {
         activityTagsMap.current.set(v.id, v);
@@ -148,7 +148,8 @@ export const CommonActivitySelect = ({
   useEffect(() => {
     init();
 
-    return onAccountLoginFinish(() => {
+    return onAccountLoginFinish((newAccount) => {
+      account = newAccount;
       init();
     });
   }, []);
@@ -307,7 +308,7 @@ export const CommonActivitySelect = ({
                         setLoading(true);
                         setActivityDetails(undefined);
                         const res = await getDouyinActivityDetails(
-                          account,
+                          account!,
                           data.activity_id,
                         );
                         setLoading(false);

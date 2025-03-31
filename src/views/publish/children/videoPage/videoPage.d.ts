@@ -27,6 +27,8 @@ export interface IPubParams {
   timingTime?: Date;
   // @用户
   mentionedUserInfo?: ILableValue[];
+  // 合集
+  mixInfo?: ILableValue;
 }
 
 // 选择视频的每项数据

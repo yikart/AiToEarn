@@ -1051,7 +1051,7 @@ export class ShipinhaoService {
           latitude: 0,
           feedLongitude: 0,
           feedLatitude: 0,
-          originalFlag: 0,
+          originalFlag: 1,
           topics: topics,
           isFullPost: 1,
           handleFlag: 2,

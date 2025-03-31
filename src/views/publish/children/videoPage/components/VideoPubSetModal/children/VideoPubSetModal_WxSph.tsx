@@ -13,6 +13,7 @@ import {
   DescTextArea,
   ScheduledTimeSelect,
   TitleInput,
+  VideoPubMixSelect,
   VideoPubRestartLogin,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
 import { getSphActivity } from '@/icp/publish';
@@ -71,12 +72,9 @@ const WXSphActivity = ({}: IVideoPubSetModalChildProps) => {
         onChange={(_, value) => {
           const newDiffParams = currChooseAccount.pubParams.diffParams!;
           newDiffParams[AccountType.WxSph]!.activity = value as WxSphEventList;
-          setOnePubParams(
-            {
-              diffParams: newDiffParams,
-            },
-            currChooseAccount.id,
-          );
+          setOnePubParams({
+            diffParams: newDiffParams,
+          });
         }}
       />
       <VideoPubRestartLogin />
@@ -130,12 +128,9 @@ const VideoPubSetModal_WxSph = memo(
             }
             value={currChooseAccount.pubParams!.topics}
             onChange={(newValue) => {
-              setOnePubParams(
-                {
-                  topics: newValue,
-                },
-                currChooseAccount.id,
-              );
+              setOnePubParams({
+                topics: newValue,
+              });
             }}
           />
           <p className="videoPubSetModal_con-tips">
@@ -152,6 +147,8 @@ const VideoPubSetModal_WxSph = memo(
 
           <WXSphActivity />
 
+          <VideoPubMixSelect />
+
           <h1>扩展链接</h1>
           <Input
             placeholder="粘贴链接"
@@ -162,12 +159,9 @@ const VideoPubSetModal_WxSph = memo(
             onChange={(e) => {
               const newDiffParams = currChooseAccount.pubParams.diffParams!;
               newDiffParams[AccountType.WxSph]!.extLink = e.target.value;
-              setOnePubParams(
-                {
-                  diffParams: newDiffParams,
-                },
-                currChooseAccount.id,
-              );
+              setOnePubParams({
+                diffParams: newDiffParams,
+              });
             }}
           />
 
@@ -180,12 +174,9 @@ const VideoPubSetModal_WxSph = memo(
             onChange={(e) => {
               const newDiffParams = currChooseAccount.pubParams.diffParams!;
               newDiffParams[AccountType.WxSph]!.isOriginal = e.target.checked;
-              setOnePubParams(
-                {
-                  diffParams: newDiffParams,
-                },
-                currChooseAccount.id,
-              );
+              setOnePubParams({
+                diffParams: newDiffParams,
+              });
             }}
           >
             声明后，作品将展示原创标记，有机会获得广告收入

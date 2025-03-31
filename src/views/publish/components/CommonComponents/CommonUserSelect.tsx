@@ -36,9 +36,9 @@ export default function CommonUserSelect({
     const res = await icpGetUsers({
       page: 1,
       keyword: keywords || '',
-      account: account,
+      account: account!,
     });
-    const data = await accountFailureDispose(res, account, onAccountChange);
+    const data = await accountFailureDispose(res, account!, onAccountChange);
     setOptions(data);
   };
 
@@ -46,7 +46,8 @@ export default function CommonUserSelect({
     if (props.showSearch === false) {
       getList();
 
-      onAccountLoginFinish(() => {
+      onAccountLoginFinish((newAccount) => {
+        account = newAccount;
         getList();
       });
     }

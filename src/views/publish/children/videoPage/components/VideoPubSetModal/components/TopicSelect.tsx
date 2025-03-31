@@ -38,17 +38,14 @@ export default function TopicSelect({ ...props }: DebounceSelectProps) {
         updateAccounts({ accounts: [account] });
       }}
       onChange={(newValue) => {
-        setOnePubParams(
-          {
-            topics: (newValue as CommonTopicSelectValueType[]).map(
-              (v) => v.label,
-            ),
-            diffParams: {
-              ...currChooseAccount.pubParams.diffParams,
-            },
+        setOnePubParams({
+          topics: (newValue as CommonTopicSelectValueType[]).map(
+            (v) => v.label,
+          ),
+          diffParams: {
+            ...currChooseAccount.pubParams.diffParams,
           },
-          currChooseAccount.id,
-        );
+        });
       }}
     >
       <VideoPubRestartLogin />

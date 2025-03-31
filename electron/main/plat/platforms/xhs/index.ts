@@ -145,7 +145,7 @@ export class Xhs extends PlatformBase {
     const pageNo = pcursor ? Number.parseInt(pcursor) : 0;
 
     const pageSize = 20;
-    
+
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await xiaohongshuService.getWorks(
       CookieToString(cookie),

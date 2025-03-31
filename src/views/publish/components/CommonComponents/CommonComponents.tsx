@@ -141,9 +141,11 @@ export const AccountRestartLogin = ({
 export const CommonMixSelect = ({
   account,
   onAccountChange,
+  children,
   ...props
 }: {
   account?: AccountInfo;
+  children?: React.ReactNode;
   onAccountChange?: (account: AccountInfo) => void;
 } & SelectProps) => {
   if (!account || !onAccountChange) return '';
@@ -151,15 +153,15 @@ export const CommonMixSelect = ({
   const [options, setOptions] = useState<IMixItem[]>([]);
 
   const getList = async () => {
-    const res = await icpGetMixList(account);
-    const data = await accountFailureDispose(res, account, onAccountChange);
+    const res = await icpGetMixList(account!);
+    const data = await accountFailureDispose(res, account!, onAccountChange);
     setOptions(data);
-    console.log('111data', data);
   };
 
   useEffect(() => {
     getList();
-    onAccountLoginFinish(() => {
+    onAccountLoginFinish((newAccount) => {
+      account = newAccount;
       getList();
     });
   }, []);
@@ -191,6 +193,7 @@ export const CommonMixSelect = ({
         }}
         {...props}
       />
+      {children}
     </>
   );
 };

@@ -49,6 +49,7 @@ const store: IVideoPageStore = {
     visibleType: VisibleTypeEnum.Public,
     topics: [],
     timingTime: undefined,
+    mixInfo: undefined,
     diffParams: {
       [AccountType.Xhs]: {},
       [AccountType.Douyin]: {
@@ -319,7 +320,10 @@ export const useVideoPageStore = create(
 
         // 账户数据批量更新
         updateAccounts({ accounts }: { accounts: AccountInfo[] }) {
+          if (!accounts) return;
+
           const newValue = [...get().videoListChoose];
+          if (newValue.length === 0) return;
           // key=账户ID val= videoListChoose item
           const videoListMap = new Map<number, IVideoChooseItem>();
 
@@ -356,9 +360,12 @@ export const useVideoPageStore = create(
         },
 
         // 设置单条数据的发布参数
-        setOnePubParams(pubParmas: IPubParams, id: string) {
+        setOnePubParams(pubParmas: IPubParams, id?: string) {
           const newValue = [...get().videoListChoose];
-          const findedData = newValue.find((v) => v.id === id);
+
+          const findedData = newValue.find(
+            (v) => v.id === (id || get().currChooseAccount!.id),
+          );
           if (findedData) {
             for (const key in pubParmas) {
               if (pubParmas.hasOwnProperty(key)) {
@@ -529,6 +536,7 @@ export const useVideoPageStore = create(
         async accountRestart(pType: AccountType) {
           const res = await accountLogin(pType);
           if (!res) return;
+          console.log(res);
           message.success('登录成功！');
           // 更新此条账户数据
           methods.updateAccounts({ accounts: [res] });

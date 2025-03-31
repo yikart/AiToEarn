@@ -38,19 +38,16 @@ export default function UserSelect({ ...props }: DebounceSelectProps) {
         }) as any
       }
       onChange={(_, value) => {
-        setOnePubParams(
-          {
-            mentionedUserInfo: value
-              ? (value as IUsersItem[]).map((v) => {
-                  return {
-                    value: v.id,
-                    label: v.name,
-                  };
-                })
-              : undefined,
-          },
-          currChooseAccount.id,
-        );
+        setOnePubParams({
+          mentionedUserInfo: value
+            ? (value as IUsersItem[]).map((v) => {
+                return {
+                  value: v.id,
+                  label: v.name,
+                };
+              })
+            : undefined,
+        });
       }}
     >
       <VideoPubRestartLogin />

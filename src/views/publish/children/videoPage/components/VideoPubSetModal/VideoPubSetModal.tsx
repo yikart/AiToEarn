@@ -172,8 +172,8 @@ const VideoPubSetModal = memo(
       }, [currChooseAccountId, videoListChoose]);
 
       useEffect(() => {
-        if (currChooseAccount) setCurrChooseAccount(currChooseAccount);
-      }, [currChooseAccount]);
+        if (currChooseAccount) setCurrChooseAccount({ ...currChooseAccount });
+      }, [currChooseAccount, videoListChoose]);
 
       const pubCore = async () => {
         setLoading(false);
@@ -387,12 +387,9 @@ const VideoPubSetModal = memo(
                     videoFile={currChooseAccount?.video}
                     value={currChooseAccount?.pubParams.cover}
                     onChoosed={(imgFile) => {
-                      setOnePubParams(
-                        {
-                          cover: imgFile,
-                        },
-                        currChooseAccount!.id,
-                      );
+                      setOnePubParams({
+                        cover: imgFile,
+                      });
                     }}
                   />
 

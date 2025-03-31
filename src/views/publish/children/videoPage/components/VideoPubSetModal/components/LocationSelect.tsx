@@ -31,12 +31,9 @@ export default function LocationSelect({
         updateAccounts({ accounts: [account] });
       }}
       onChange={(_, value) => {
-        setOnePubParams(
-          {
-            location: value as ILocationDataItem,
-          },
-          currChooseAccount.id,
-        );
+        setOnePubParams({
+          location: value as ILocationDataItem,
+        });
       }}
     >
       <VideoPubRestartLogin />

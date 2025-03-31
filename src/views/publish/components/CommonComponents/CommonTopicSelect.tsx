@@ -2,8 +2,6 @@ import React from 'react';
 import { SelectProps } from 'antd';
 import { Select, Spin } from 'antd';
 import { icpGetTopic } from '@/icp/publish';
-import { AccountStatus } from '@@/AccountEnum';
-import { ipcUpdateAccountStatus } from '@/icp/account';
 import useDebounceFetcher from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/useDebounceFetcher';
 import { AccountInfo } from '../../../account/comment';
 import styles from './commonComponents.module.scss';

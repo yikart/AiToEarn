@@ -5,7 +5,6 @@
  * @LastEditors: nevin
  * @Description: 添加自动运行
  */
-import { ipcCreateAutoRunOfReply } from '@/icp/reply';
 import { Button, Input, Modal } from 'antd';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 

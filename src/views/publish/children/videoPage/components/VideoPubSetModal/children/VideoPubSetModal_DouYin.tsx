@@ -43,12 +43,9 @@ const HotspotSelect = ({}: IVideoPubSetModalChildProps) => {
       onChange={(newValue) => {
         const newDiffParams = currChooseAccount.pubParams.diffParams!;
         newDiffParams[AccountType.Douyin]!.hotPoint = newValue as ILableValue;
-        setOnePubParams(
-          {
-            diffParams: newDiffParams,
-          },
-          currChooseAccount.id,
-        );
+        setOnePubParams({
+          diffParams: newDiffParams,
+        });
       }}
     />
   );
@@ -70,12 +67,9 @@ const ActivitySelect = ({}: IVideoPubSetModalChildProps) => {
         const newDiffParams = currChooseAccount.pubParams.diffParams!;
         newDiffParams[AccountType.Douyin]!.activitys =
           newValue as ILableValue[];
-        setOnePubParams(
-          {
-            diffParams: newDiffParams,
-          },
-          currChooseAccount.id,
-        );
+        setOnePubParams({
+          diffParams: newDiffParams,
+        });
       }}
     >
       <VideoPubRestartLogin />
@@ -159,12 +153,9 @@ const VideoPubSetModal_DouYin = memo(
             onChange={(newValue: any) => {
               const newDiffParams = currChooseAccount.pubParams.diffParams!;
               newDiffParams[AccountType.Douyin]!.selfDeclare = newValue?.value;
-              setOnePubParams(
-                {
-                  diffParams: newDiffParams,
-                },
-                currChooseAccount.id,
-              );
+              setOnePubParams({
+                diffParams: newDiffParams,
+              });
             }}
           />
 

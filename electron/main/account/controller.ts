@@ -63,7 +63,7 @@ export class AccountController {
       },
       accountInfo,
     );
-    windowOperate.sendRenderMsg(SendChannelEnum.AccountLoginFinish);
+    windowOperate.sendRenderMsg(SendChannelEnum.AccountLoginFinish, account);
     // 保存账户信息
     return account;
   }
@@ -96,7 +96,7 @@ export class AccountController {
       accountInfo!.id!,
       res ? AccountStatus.USABLE : AccountStatus.DISABLE,
     );
-    windowOperate.sendRenderMsg(SendChannelEnum.AccountLoginFinish);
+    windowOperate.sendRenderMsg(SendChannelEnum.AccountLoginFinish, account);
     return account || accountInfo;
   }
 
