@@ -103,9 +103,9 @@ async function createWindow() {
           splashWindow.close();
           splashWindow = null;
         }
-      }, 500);
+      }, 100);
     }
-  }, 2000);
+  }, 500);
 
   // 隐藏菜单栏
   win.setMenu(null);
