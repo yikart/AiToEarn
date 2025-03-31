@@ -13,7 +13,30 @@ import {
   CommentData,
   icpCreateCommentList,
 } from '@/icp/replyother';
-import { Avatar, Button, Card, Col, Row, message, Modal, List, Space, Typography, Divider, Spin, Empty, Form, Input, Select, Slider, Switch, InputNumber, Collapse, Radio, Tooltip } from 'antd';
+import {
+  Avatar,
+  Button,
+  Card,
+  Col,
+  Row,
+  message,
+  Modal,
+  List,
+  Space,
+  Typography,
+  Divider,
+  Spin,
+  Empty,
+  Form,
+  Input,
+  Select,
+  Slider,
+  Switch,
+  InputNumber,
+  Collapse,
+  Radio,
+  Tooltip,
+} from 'antd';
 import { useCallback, useRef, useState, useEffect } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import styles from './reply.module.scss';
@@ -23,9 +46,9 @@ import ReplyComment, { ReplyCommentRef } from './components/replyComment';
 import AddAutoRun, { AddAutoRunRef } from './components/addAutoRun';
 import { icpDianzanDyOther, icpShoucangDyOther } from '@/icp/replyother';
 import { commentApi } from '@/api/comment';
-import { 
-  LikeOutlined, 
-  MessageOutlined, 
+import {
+  LikeOutlined,
+  MessageOutlined,
   StarOutlined,
   MoreOutlined,
   CloseOutlined,
@@ -37,7 +60,7 @@ import {
   UserOutlined,
   SendOutlined,
   PlusOutlined,
-  DownOutlined
+  DownOutlined,
 } from '@ant-design/icons';
 import webview from 'electron';
 import Masonry from 'react-masonry-css';
@@ -62,7 +85,7 @@ export default function Page() {
 
   // 创建 webview 的引用
   const webviewRef = useRef<any>(null);
-  
+
   // 在组件挂载后添加事件监听器
   useEffect(() => {
     const webviewElement = webviewRef.current;
@@ -71,9 +94,9 @@ export default function Page() {
       const handleLoad = () => {
         setIsWebviewLoading(false);
       };
-      
+
       webviewElement.addEventListener('did-finish-load', handleLoad);
-      
+
       // 清理函数
       return () => {
         if (webviewElement) {
@@ -85,18 +108,32 @@ export default function Page() {
 
   // 添加状态记录
   const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>({});
-  const [collectedPosts, setCollectedPosts] = useState<Record<string, boolean>>({});
+  const [collectedPosts, setCollectedPosts] = useState<Record<string, boolean>>(
+    {},
+  );
 
   // 添加任务表单相关状态
   const [taskForm] = Form.useForm();
   const [commentType, setCommentType] = useState<'ai' | 'custom'>('ai');
-  const [replyCommentType, setReplyCommentType] = useState<'ai' | 'custom'>('ai');
-  const [customComments, setCustomComments] = useState<string[]>(['很棒！', '喜欢这个', '支持一下', '不错哦']);
-  const [customReplyComments, setCustomReplyComments] = useState<string[]>(['回复一下', '谢谢分享', '同意你的观点', '学习了']);
-  
+  const [replyCommentType, setReplyCommentType] = useState<'ai' | 'custom'>(
+    'ai',
+  );
+  const [customComments, setCustomComments] = useState<string[]>([
+    '很棒！',
+    '喜欢这个',
+    '支持一下',
+    '不错哦',
+  ]);
+  const [customReplyComments, setCustomReplyComments] = useState<string[]>([
+    '回复一下',
+    '谢谢分享',
+    '同意你的观点',
+    '学习了',
+  ]);
+
   // 添加任务弹窗状态
   const [taskModalVisible, setTaskModalVisible] = useState(false);
-  
+
   // 提交任务
   const submitTask = (values: any) => {
     console.log('任务参数:', values);
@@ -104,17 +141,17 @@ export default function Page() {
     setTaskModalVisible(false); // 关闭弹窗
     // 这里可以调用相应的API来执行任务
   };
-  
+
   // 添加自定义评论
   const addCustomComment = (value: string, type: 'comment' | 'reply') => {
     if (!value.trim()) return;
-    
+
     if (type === 'comment') {
       setCustomComments([...customComments, value.trim()]);
     } else {
       setCustomReplyComments([...customReplyComments, value.trim()]);
     }
-    
+
     // 清空输入框
     if (type === 'comment') {
       taskForm.setFieldValue('newComment', '');
@@ -122,7 +159,7 @@ export default function Page() {
       taskForm.setFieldValue('newReplyComment', '');
     }
   };
-  
+
   // 删除自定义评论
   const removeCustomComment = (index: number, type: 'comment' | 'reply') => {
     if (type === 'comment') {
@@ -137,7 +174,9 @@ export default function Page() {
   };
 
   // 修改状态结构，使用Map存储二级评论
-  const [secondCommentsMap, setSecondCommentsMap] = useState<Record<string, any[]>>({});
+  const [secondCommentsMap, setSecondCommentsMap] = useState<
+    Record<string, any[]>
+  >({});
 
   async function getCreatorList(thisid: any) {
     setWordList([]);
@@ -158,7 +197,7 @@ export default function Page() {
       '美妆',
     );
     console.log('------ getFwqCreatorList', res);
-    
+
     const list = await commentApi.getCommentSearchNotes(
       'xhs_comments',
       '414381229d04c46cb39f97a5a0b7f9eb',
@@ -174,7 +213,6 @@ export default function Page() {
 
     newlist[2].noteId = '67e3f5bb000000001c003a1c';
     newlist[2].xsec_token = 'CBbspa7hsvsencXRmokLj0bOnzo_IHlX0-qWD3Y3GPpcM=';
-
 
     setPostList(newlist || []);
   }
@@ -211,24 +249,24 @@ export default function Page() {
         item.data.sub_comment_cursor,
       );
       console.log('------ getSecondCommentList', res);
-      
+
       // 更新二级评论Map
-      setSecondCommentsMap(prev => ({
+      setSecondCommentsMap((prev) => ({
         ...prev,
-        [item.data.id]: res.list || []
+        [item.data.id]: res.list || [],
       }));
-      
+
       // 更新当前评论列表中的二级评论
-      setCurrentComments(prevComments => 
-        prevComments.map(comment => 
-          comment.data.id === item.data.id 
-            ? { 
-                ...comment, 
+      setCurrentComments((prevComments) =>
+        prevComments.map((comment) =>
+          comment.data.id === item.data.id
+            ? {
+                ...comment,
                 subCommentList: res.list || [],
-                isSubCommentsLoaded: true 
-              } 
-            : comment
-        )
+                isSubCommentsLoaded: true,
+              }
+            : comment,
+        ),
       );
     } catch (error) {
       console.error('获取二级评论失败', error);
@@ -282,26 +320,24 @@ export default function Page() {
   const showCommentModal = async (post: any) => {
     setCurrentPost(post);
     setCommentModalVisible(true);
-    
+
     try {
       // 获取评论列表
-      const res = await icpGetCommentListByOther(
-        activeAccountId,
-        {
-          dataId: post.noteId,
-          option: {
-            xsec_token: post.xsec_token||'AB-ktiN49qUSB2KL_4EN5bIQSRgCJR_AB1qIv8wAQvj94=',
-          },
+      const res = await icpGetCommentListByOther(activeAccountId, {
+        dataId: post.noteId,
+        option: {
+          xsec_token:
+            post.xsec_token || 'AB-ktiN49qUSB2KL_4EN5bIQSRgCJR_AB1qIv8wAQvj94=',
         },
-      );
-      
+      });
+
       // 为每个评论添加加载状态标记
-      const commentsWithLoadingState = (res.list || []).map(comment => ({
+      const commentsWithLoadingState = (res.list || []).map((comment) => ({
         ...comment,
         isSubCommentsLoaded: false,
-        isLoadingSubComments: false
+        isLoadingSubComments: false,
       }));
-      
+
       setCurrentComments(commentsWithLoadingState);
     } catch (error) {
       console.error('获取评论失败', error);
@@ -315,26 +351,26 @@ export default function Page() {
   const loadSubComments = async (comment: any) => {
     // 如果已经加载过，直接返回
     if (comment.isSubCommentsLoaded) return;
-    
+
     // 设置加载状态
-    setCurrentComments(prevComments => 
-      prevComments.map(item => 
-        item.data.id === comment.data.id 
-          ? { ...item, isLoadingSubComments: true } 
-          : item
-      )
+    setCurrentComments((prevComments) =>
+      prevComments.map((item) =>
+        item.data.id === comment.data.id
+          ? { ...item, isLoadingSubComments: true }
+          : item,
+      ),
     );
-    
+
     try {
       await getSecondCommentList(comment);
     } finally {
       // 无论成功失败，都取消加载状态
-      setCurrentComments(prevComments => 
-        prevComments.map(item => 
-          item.data.id === comment.data.id 
-            ? { ...item, isLoadingSubComments: false } 
-            : item
-        )
+      setCurrentComments((prevComments) =>
+        prevComments.map((item) =>
+          item.data.id === comment.data.id
+            ? { ...item, isLoadingSubComments: false }
+            : item,
+        ),
       );
     }
   };
@@ -349,29 +385,29 @@ export default function Page() {
         message.info('已经点赞过了');
         return;
       }
-      
+
       const res = await icpDianzanDyOther(activeAccountId, post.noteId);
       if (res.status_code == 0 || res.data?.code == 0) {
         message.success('点赞成功');
         // 更新点赞状态
-        setLikedPosts(prev => ({
+        setLikedPosts((prev) => ({
           ...prev,
-          [post.noteId]: true
+          [post.noteId]: true,
         }));
-        
+
         // 更新点赞数量
-        setPostList(prevList => 
-          prevList.map(item => 
-            item.noteId === post.noteId 
-              ? { 
-                  ...item, 
-                  stats: { 
-                    ...item.stats, 
-                    likeCount: (item.stats?.likeCount || 0) + 1 
-                  } 
-                } 
-              : item
-          )
+        setPostList((prevList) =>
+          prevList.map((item) =>
+            item.noteId === post.noteId
+              ? {
+                  ...item,
+                  stats: {
+                    ...item.stats,
+                    likeCount: (item.stats?.likeCount || 0) + 1,
+                  },
+                }
+              : item,
+          ),
         );
       } else {
         message.error('点赞失败');
@@ -391,29 +427,29 @@ export default function Page() {
         message.info('已经收藏过了');
         return;
       }
-      
+
       const res = await icpShoucangDyOther(activeAccountId, post.noteId);
       if (res.status_code == 0 || res.data?.code == 0) {
         message.success('收藏成功');
         // 更新收藏状态
-        setCollectedPosts(prev => ({
+        setCollectedPosts((prev) => ({
           ...prev,
-          [post.noteId]: true
+          [post.noteId]: true,
         }));
-        
+
         // 更新收藏数量
-        setPostList(prevList => 
-          prevList.map(item => 
-            item.noteId === post.noteId 
-              ? { 
-                  ...item, 
-                  stats: { 
-                    ...item.stats, 
-                    collectCount: (item.stats?.collectCount || 0) + 1 
-                  } 
-                } 
-              : item
-          )
+        setPostList((prevList) =>
+          prevList.map((item) =>
+            item.noteId === post.noteId
+              ? {
+                  ...item,
+                  stats: {
+                    ...item.stats,
+                    collectCount: (item.stats?.collectCount || 0) + 1,
+                  },
+                }
+              : item,
+          ),
         );
       } else {
         message.error('收藏失败');
@@ -428,20 +464,23 @@ export default function Page() {
    */
   const handleImageClick = (post: any) => {
     if (!post || !post.noteId) return;
-    
+
     let url = '';
     // 判断平台类型
     if (activeAccountType === 'xhs' || post.url?.includes('xiaohongshu.com')) {
       // 小红书链接格式
       url = `https://www.xiaohongshu.com/explore/${post.noteId}?xsec_token=${post.xsec_token || ''}&xsec_source=pc_search&source=web_explore_feed`;
-    } else if (activeAccountType === 'douyin' || post.url?.includes('douyin.com')) {
+    } else if (
+      activeAccountType === 'douyin' ||
+      post.url?.includes('douyin.com')
+    ) {
       // 抖音链接格式
       url = post.url || `https://www.douyin.com/video/${post.noteId}`;
     } else {
       // 默认使用已有的url或者根据noteId构建通用链接
       url = post.url || `https://www.xiaohongshu.com/explore/${post.noteId}`;
     }
-    
+
     setCurrentUrl(url);
     setIsWebviewLoading(true);
     setWebviewModalVisible(true);
@@ -450,45 +489,51 @@ export default function Page() {
   // 计算断点值，用于响应式布局
   const breakpointColumnsObj = {
     default: 5, // 默认显示5列
-    1600: 4,    // 宽度小于1600px时显示4列
-    1200: 3,    // 宽度小于1200px时显示3列
-    900: 2,     // 宽度小于900px时显示2列
-    600: 1      // 宽度小于600px时显示1列
+    1600: 4, // 宽度小于1600px时显示4列
+    1200: 3, // 宽度小于1200px时显示3列
+    900: 2, // 宽度小于900px时显示2列
+    600: 1, // 宽度小于600px时显示1列
   };
 
   return (
     <div className={styles.reply} style={{ alignItems: 'flex-start' }}>
       <Row style={{ height: '100%' }}>
         {/* <Col span={3}> */}
-          <AccountSidebar
-            activeAccountId={activeAccountId}
-            onAccountChange={useCallback(
-              (info) => {
-                console.log('------ onAccountChange', info);
-                setActiveAccountType(info.type);
-                if (info.type == 'xhs') {
-                  setActiveAccountId(info.id);
-                  getFwqCreatorList();
-                } else {
-                  setActiveAccountId(info.id);
-                  getCreatorList(info.id);
-                }
-              },
-              [getCreatorList],
-            )}
-          />
+        <AccountSidebar
+          activeAccountId={activeAccountId}
+          onAccountChange={useCallback(
+            (info) => {
+              console.log('------ onAccountChange', info);
+              setActiveAccountType(info.type);
+              if (info.type == 'xhs') {
+                setActiveAccountId(info.id);
+                getFwqCreatorList();
+              } else {
+                setActiveAccountId(info.id);
+                getCreatorList(info.id);
+              }
+            },
+            [getCreatorList],
+          )}
+        />
         {/* </Col> */}
-        
+
         {/* <Col span={21} > */}
-          <div className={styles.postList} style={{ flex: 1, padding: '20px' }}>
-          <Row justify="space-between" align="middle" style={{ marginBottom: 20 }}>
+        <div className={styles.postList} style={{ flex: 1, padding: '20px' }}>
+          <Row
+            justify="space-between"
+            align="middle"
+            style={{ marginBottom: 20 }}
+          >
             <Col>
-              <Typography.Title level={4} style={{ margin: 0 }}>任务：</Typography.Title>
+              <Typography.Title level={4} style={{ margin: 0 }}>
+                任务：
+              </Typography.Title>
             </Col>
             <Col>
-              <Button 
-                type="primary" 
-                icon={<DownOutlined />} 
+              <Button
+                type="primary"
+                icon={<DownOutlined />}
                 onClick={() => setTaskModalVisible(true)}
                 size="large"
               >
@@ -497,71 +542,91 @@ export default function Page() {
             </Col>
           </Row>
 
-            <Masonry
-              breakpointCols={breakpointColumnsObj}
-              className={styles.myMasonryGrid}
-              columnClassName={styles.myMasonryGridColumn}
-            >
-              {postList.map((item: any) => (
-                <div key={item.noteId || item._id} className={styles.masonryItem}>
-                  <Card
-                    hoverable
-                    cover={
-                      <div 
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => handleImageClick(item)}
-                      >
-                        <img 
-                          alt={item.title} 
-                          src={item.cover} 
-                          style={{ width: '100%', borderRadius: '10px 10px 0 0', objectFit: 'cover' }}
-                        />
+          <Masonry
+            breakpointCols={breakpointColumnsObj}
+            className={styles.myMasonryGrid}
+            columnClassName={styles.myMasonryGridColumn}
+          >
+            {postList.map((item: any) => (
+              <div key={item.noteId || item._id} className={styles.masonryItem}>
+                <Card
+                  hoverable
+                  cover={
+                    <div
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleImageClick(item)}
+                    >
+                      <img
+                        alt={item.title}
+                        src={item.cover}
+                        style={{
+                          width: '100%',
+                          borderRadius: '10px 10px 0 0',
+                          objectFit: 'cover',
+                        }}
+                      />
+                    </div>
+                  }
+                  actions={[
+                    <Space onClick={() => likePost(item)}>
+                      <LikeOutlined
+                        style={{
+                          color: likedPosts[item.noteId]
+                            ? '#ff4d4f'
+                            : undefined,
+                          fontSize: likedPosts[item.noteId]
+                            ? '18px'
+                            : undefined,
+                        }}
+                      />
+                      <span>{item.stats?.likeCount || 0}</span>
+                    </Space>,
+                    <Space onClick={() => showCommentModal(item)}>
+                      <UnorderedListOutlined />
+                      <span>列表</span>
+                    </Space>,
+                    <Space onClick={() => openReplyWorks(item)}>
+                      <CommentOutlined />
+                      <span>评论</span>
+                    </Space>,
+                    <Space onClick={() => collectPost(item)}>
+                      <StarOutlined
+                        style={{
+                          color: collectedPosts[item.noteId]
+                            ? '#faad14'
+                            : undefined,
+                          fontSize: collectedPosts[item.noteId]
+                            ? '18px'
+                            : undefined,
+                        }}
+                      />
+                      <span>{item.stats?.collectCount || 0}</span>
+                    </Space>,
+                  ]}
+                >
+                  <Card.Meta
+                    avatar={
+                      <Avatar
+                        src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${item.author?.name}`}
+                      />
+                    }
+                    title={item.author?.name}
+                    description={
+                      <div>
+                        <Text strong ellipsis style={{ display: 'block' }}>
+                          {item.title}
+                        </Text>
+                        <Text type="secondary" ellipsis={{}}>
+                          {item.content}
+                        </Text>
                       </div>
                     }
-                    actions={[
-                      <Space onClick={() => likePost(item)}>
-                        <LikeOutlined style={{ 
-                          color: likedPosts[item.noteId] ? '#ff4d4f' : undefined,
-                          fontSize: likedPosts[item.noteId] ? '18px' : undefined
-                        }} />
-                        <span>{item.stats?.likeCount || 0}</span>
-                      </Space>,
-                      <Space onClick={() => showCommentModal(item)}>
-                        <UnorderedListOutlined />
-                        <span>列表</span>
-                      </Space>,
-                      <Space onClick={() => openReplyWorks(item)}>
-                        <CommentOutlined />
-                        <span>评论</span>
-                      </Space>,
-                      <Space onClick={() => collectPost(item)}>
-                        <StarOutlined style={{ 
-                          color: collectedPosts[item.noteId] ? '#faad14' : undefined,
-                          fontSize: collectedPosts[item.noteId] ? '18px' : undefined
-                        }} />
-                        <span>{item.stats?.collectCount || 0}</span>
-                      </Space>,
-                    ]}
-                  >
-                    <Card.Meta
-                      avatar={<Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${item.author?.name}`} />}
-                      title={item.author?.name}
-                      description={
-                        <div>
-                          <Text strong ellipsis style={{ display: 'block' }}>
-                            {item.title}
-                          </Text>
-                          <Text type="secondary" ellipsis={{ rows: 2 }}>
-                            {item.content}
-                          </Text>
-                        </div>
-                      }
-                    />
-                  </Card>
-                </div>
-              ))}
-            </Masonry>
-          </div>
+                  />
+                </Card>
+              </div>
+            ))}
+          </Masonry>
+        </div>
         {/* </Col> */}
       </Row>
 
@@ -592,24 +657,27 @@ export default function Page() {
             commentCount: 3,
             collectProb: 30,
             replyCommentType: 'ai',
-            replyCommentCount: 2
+            replyCommentCount: 2,
           }}
         >
           {/* 第一行：关键词和筛选条数 */}
           <Row gutter={24}>
             <Col span={12}>
-              <Form.Item 
-                label="视频关键词" 
+              <Form.Item
+                label="视频关键词"
                 name="keyword"
                 rules={[{ required: true, message: '请输入关键词' }]}
               >
-                <Input prefix={<SearchOutlined />} placeholder="输入搜索关键词" />
+                <Input
+                  prefix={<SearchOutlined />}
+                  placeholder="输入搜索关键词"
+                />
               </Form.Item>
             </Col>
-            
+
             <Col span={12}>
-              <Form.Item 
-                label="筛选条数" 
+              <Form.Item
+                label="筛选条数"
                 name="limit"
                 rules={[{ required: true, message: '请输入筛选条数' }]}
               >
@@ -617,57 +685,61 @@ export default function Page() {
               </Form.Item>
             </Col>
           </Row>
-          
+
           {/* 第二行：点赞概率 */}
           <Form.Item label="点赞概率" name="likeProb">
-            <Slider 
+            <Slider
               marks={{
                 0: '0%',
                 25: '25%',
                 50: '50%',
                 75: '75%',
-                100: '100%'
+                100: '100%',
               }}
             />
           </Form.Item>
-          
+
           <Divider orientation="left">评论设置</Divider>
-          
+
           {/* 第三行：评论概率 */}
           <Form.Item label="评论概率" name="commentProb">
-            <Slider 
+            <Slider
               marks={{
                 0: '0%',
                 25: '25%',
                 50: '50%',
                 75: '75%',
-                100: '100%'
+                100: '100%',
               }}
             />
           </Form.Item>
-          
+
           {/* 第四行：评论类型和条数 */}
           <Row gutter={24}>
             <Col span={12}>
               <Form.Item label="评论类型" name="commentType">
                 <Radio.Group onChange={(e) => setCommentType(e.target.value)}>
                   <Tooltip title="使用AI生成评论">
-                    <Radio.Button value="ai"><RobotOutlined /> AI评论</Radio.Button>
+                    <Radio.Button value="ai">
+                      <RobotOutlined /> AI评论
+                    </Radio.Button>
                   </Tooltip>
                   <Tooltip title="使用自定义评论">
-                    <Radio.Button value="custom"><UserOutlined /> 自定义评论</Radio.Button>
+                    <Radio.Button value="custom">
+                      <UserOutlined /> 自定义评论
+                    </Radio.Button>
                   </Tooltip>
                 </Radio.Group>
               </Form.Item>
             </Col>
-            
+
             <Col span={12}>
               <Form.Item label="评论条数" name="commentCount">
                 <InputNumber min={1} max={10} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
           </Row>
-          
+
           {/* 自定义评论列表 */}
           {commentType === 'custom' && (
             <div className={styles.customCommentsSection}>
@@ -675,10 +747,10 @@ export default function Page() {
                 {customComments.map((comment, index) => (
                   <div key={index} className={styles.commentItem}>
                     <span>{comment}</span>
-                    <Button 
-                      type="text" 
-                      danger 
-                      size="small" 
+                    <Button
+                      type="text"
+                      danger
+                      size="small"
                       onClick={() => removeCustomComment(index, 'comment')}
                     >
                       删除
@@ -686,7 +758,7 @@ export default function Page() {
                   </div>
                 ))}
               </div>
-              
+
               <Row gutter={8}>
                 <Col flex="auto">
                   <Form.Item name="newComment">
@@ -694,9 +766,14 @@ export default function Page() {
                   </Form.Item>
                 </Col>
                 <Col>
-                  <Button 
-                    type="primary" 
-                    onClick={() => addCustomComment(taskForm.getFieldValue('newComment'), 'comment')}
+                  <Button
+                    type="primary"
+                    onClick={() =>
+                      addCustomComment(
+                        taskForm.getFieldValue('newComment'),
+                        'comment',
+                      )
+                    }
                   >
                     添加
                   </Button>
@@ -704,44 +781,50 @@ export default function Page() {
               </Row>
             </div>
           )}
-          
+
           {/* 第五行：收藏概率 */}
           <Form.Item label="收藏概率" name="collectProb">
-            <Slider 
+            <Slider
               marks={{
                 0: '0%',
                 25: '25%',
                 50: '50%',
                 75: '75%',
-                100: '100%'
+                100: '100%',
               }}
             />
           </Form.Item>
-          
+
           <Divider orientation="left">一级评论回复设置</Divider>
-          
+
           {/* 第六行：回复类型和条数 */}
           <Row gutter={24}>
             <Col span={12}>
               <Form.Item label="回复类型" name="replyCommentType">
-                <Radio.Group onChange={(e) => setReplyCommentType(e.target.value)}>
+                <Radio.Group
+                  onChange={(e) => setReplyCommentType(e.target.value)}
+                >
                   <Tooltip title="使用AI生成回复">
-                    <Radio.Button value="ai"><RobotOutlined /> AI回复</Radio.Button>
+                    <Radio.Button value="ai">
+                      <RobotOutlined /> AI回复
+                    </Radio.Button>
                   </Tooltip>
                   <Tooltip title="使用自定义回复">
-                    <Radio.Button value="custom"><UserOutlined /> 自定义回复</Radio.Button>
+                    <Radio.Button value="custom">
+                      <UserOutlined /> 自定义回复
+                    </Radio.Button>
                   </Tooltip>
                 </Radio.Group>
               </Form.Item>
             </Col>
-            
+
             <Col span={12}>
               <Form.Item label="回复条数" name="replyCommentCount">
                 <InputNumber min={1} max={10} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
           </Row>
-          
+
           {/* 自定义回复列表 */}
           {replyCommentType === 'custom' && (
             <div className={styles.customCommentsSection}>
@@ -749,10 +832,10 @@ export default function Page() {
                 {customReplyComments.map((comment, index) => (
                   <div key={index} className={styles.commentItem}>
                     <span>{comment}</span>
-                    <Button 
-                      type="text" 
-                      danger 
-                      size="small" 
+                    <Button
+                      type="text"
+                      danger
+                      size="small"
                       onClick={() => removeCustomComment(index, 'reply')}
                     >
                       删除
@@ -760,7 +843,7 @@ export default function Page() {
                   </div>
                 ))}
               </div>
-              
+
               <Row gutter={8}>
                 <Col flex="auto">
                   <Form.Item name="newReplyComment">
@@ -768,9 +851,14 @@ export default function Page() {
                   </Form.Item>
                 </Col>
                 <Col>
-                  <Button 
-                    type="primary" 
-                    onClick={() => addCustomComment(taskForm.getFieldValue('newReplyComment'), 'reply')}
+                  <Button
+                    type="primary"
+                    onClick={() =>
+                      addCustomComment(
+                        taskForm.getFieldValue('newReplyComment'),
+                        'reply',
+                      )
+                    }
                   >
                     添加
                   </Button>
@@ -778,10 +866,13 @@ export default function Page() {
               </Row>
             </div>
           )}
-          
+
           {/* 提交按钮 */}
           <Form.Item style={{ marginTop: 20, textAlign: 'right' }}>
-            <Button onClick={() => setTaskModalVisible(false)} style={{ marginRight: 8 }}>
+            <Button
+              onClick={() => setTaskModalVisible(false)}
+              style={{ marginRight: 8 }}
+            >
               取消
             </Button>
             <Button type="primary" htmlType="submit" icon={<SendOutlined />}>
@@ -795,12 +886,25 @@ export default function Page() {
       <Modal
         title={
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
-              <Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${currentPost?.author?.name}`} />
-              <Text strong style={{ marginLeft: 10 }}>{currentPost?.author?.name}</Text>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                marginBottom: 10,
+              }}
+            >
+              <Avatar
+                src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${currentPost?.author?.name}`}
+              />
+              <Text strong style={{ marginLeft: 10 }}>
+                {currentPost?.author?.name}
+              </Text>
             </div>
-            <Text style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: 20 }}>{currentPost?.title}</Text>
-            
+            <Text
+              style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: 20 }}
+            >
+              {currentPost?.title}
+            </Text>
           </div>
         }
         open={commentModalVisible}
@@ -815,23 +919,24 @@ export default function Page() {
             renderItem={(comment) => (
               <List.Item
                 actions={[
-                  <Button 
-                    type="text" 
-                    size="small" 
+                  <Button
+                    type="text"
+                    size="small"
                     onClick={() => openReplyComment(comment)}
                   >
                     回复
                   </Button>,
-                  comment.data?.sub_comment_count > 0 && !comment.isSubCommentsLoaded && (
-                    <Button 
-                      type="text" 
-                      size="small" 
-                      loading={comment.isLoadingSubComments}
-                      onClick={() => loadSubComments(comment)}
-                    >
-                      查看{comment.data.sub_comment_count}条回复
-                    </Button>
-                  )
+                  comment.data?.sub_comment_count > 0 &&
+                    !comment.isSubCommentsLoaded && (
+                      <Button
+                        type="text"
+                        size="small"
+                        loading={comment.isLoadingSubComments}
+                        onClick={() => loadSubComments(comment)}
+                      >
+                        查看{comment.data.sub_comment_count}条回复
+                      </Button>
+                    ),
                 ]}
               >
                 <List.Item.Meta
@@ -839,31 +944,49 @@ export default function Page() {
                   title={comment.nikeName}
                   description={comment.content}
                 />
-                
+
                 {/* 二级评论列表 */}
-                {comment.isSubCommentsLoaded && comment.subCommentList && comment.subCommentList.length > 0 && (
-                  <div style={{ marginLeft: 40, marginTop: 10 }}>
-                    <List
-                      itemLayout="vertical"
-                      dataSource={comment.subCommentList}
-                      renderItem={(subComment: any) => (
-                        <List.Item>
-                          <List.Item.Meta
-                            avatar={<Avatar src={subComment.headUrl} size="small" />}
-                            title={
-                              <Space>
-                                <span>{subComment.nikeName}</span>
-                                <span onClick={() => openReplyComment(subComment)} style={{ color: '#999', fontSize: '10px', cursor: 'pointer' }}>回复</span>
-                              </Space>
-                            }
-                            description={subComment.content + ' @ ' + subComment.data.target_comment?.user_info.nickname}
-                          />
-                        </List.Item>
-                      )}
-                    />
-                    
-                    {/* 如果还有更多二级评论 */}
-                    {/* {comment.data.sub_comment_has_more && (
+                {comment.isSubCommentsLoaded &&
+                  comment.subCommentList &&
+                  comment.subCommentList.length > 0 && (
+                    <div style={{ marginLeft: 40, marginTop: 10 }}>
+                      <List
+                        itemLayout="vertical"
+                        dataSource={comment.subCommentList}
+                        renderItem={(subComment: any) => (
+                          <List.Item>
+                            <List.Item.Meta
+                              avatar={
+                                <Avatar src={subComment.headUrl} size="small" />
+                              }
+                              title={
+                                <Space>
+                                  <span>{subComment.nikeName}</span>
+                                  <span
+                                    onClick={() => openReplyComment(subComment)}
+                                    style={{
+                                      color: '#999',
+                                      fontSize: '10px',
+                                      cursor: 'pointer',
+                                    }}
+                                  >
+                                    回复
+                                  </span>
+                                </Space>
+                              }
+                              description={
+                                subComment.content +
+                                ' @ ' +
+                                subComment.data.target_comment?.user_info
+                                  .nickname
+                              }
+                            />
+                          </List.Item>
+                        )}
+                      />
+
+                      {/* 如果还有更多二级评论 */}
+                      {/* {comment.data.sub_comment_has_more && (
                       <div style={{ textAlign: 'center', marginTop: 8 }}>
                         <Button 
                           type="link" 
@@ -874,8 +997,8 @@ export default function Page() {
                         </Button>
                       </div>
                     )} */}
-                  </div>
-                )}
+                    </div>
+                  )}
               </List.Item>
             )}
           />
@@ -885,12 +1008,15 @@ export default function Page() {
       {/* 自定义网页内容弹出层 */}
       {webviewModalVisible && (
         <div className={styles.customWebviewModal}>
-          <div className={styles.modalOverlay} onClick={() => setWebviewModalVisible(false)}></div>
+          <div
+            className={styles.modalOverlay}
+            onClick={() => setWebviewModalVisible(false)}
+          ></div>
           <div className={styles.modalContent}>
             <div className={styles.modalHeader}>
-              <Button 
-                type="text" 
-                icon={<CloseOutlined />} 
+              <Button
+                type="text"
+                icon={<CloseOutlined />}
                 onClick={() => setWebviewModalVisible(false)}
                 className={styles.closeButton}
               />
@@ -905,9 +1031,9 @@ export default function Page() {
                 <webview
                   ref={webviewRef}
                   src={currentUrl}
-                  style={{ 
-                    width: '100%', 
-                    height: '100%'
+                  style={{
+                    width: '100%',
+                    height: '100%',
                   }}
                   webpreferences="contextIsolation=yes, nodeIntegration=no"
                 />

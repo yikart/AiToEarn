@@ -38,8 +38,8 @@ const Com = forwardRef<AddAutoRunRef>((props: any, ref) => {
     console.log('-------- dataId', dataId);
     console.log('-------- cycleType', cycleType);
 
-    const res = await ipcCreateAutoRunOfReply(accountId, dataId, cycleType);
-    console.log('-------- res', res);
+    // const res = await ipcCreateAutoRunOfReply(accountId, dataId, cycleType);
+    // console.log('-------- res', res);
   }
 
   return (
