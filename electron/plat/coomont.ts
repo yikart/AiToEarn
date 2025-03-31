@@ -1,7 +1,13 @@
+/*
+ * @Author: nevin
+ * @Date: 2025-03-21 19:08:17
+ * @LastEditTime: 2025-03-31 11:21:42
+ * @LastEditors: nevin
+ * @Description: 
+ */
 import os from 'os';
 import { Browser, chromium, webkit } from 'playwright';
 import path from 'path';
-import { getChromiumPath } from '../util/chromium';
 
 export const getBrowser = async () => {
   let browser: Browser;
@@ -21,7 +27,7 @@ export const getBrowser = async () => {
     } else {
       browser = await chromium.launch({
         headless: import.meta.env.MODE !== 'development',
-        executablePath: getChromiumPath(),
+        executablePath: '',
       });
     }
     return browser;
