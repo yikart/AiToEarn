@@ -1,8 +1,0 @@
-framework module JavaScriptCore {
-  umbrella header "JavaScriptCore.h"
-
-  export *
-  module * {
-    export *
-  }
-}

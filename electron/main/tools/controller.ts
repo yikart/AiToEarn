@@ -1,12 +1,11 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-02-14 22:20:12
+ * @LastEditTime: 2025-03-31 11:21:22
  * @LastEditors: nevin
  * @Description:
  */
 import { FileUtils } from '../../util/file';
-import { FFmpegVideoUtil } from '../../util/ffmpeg/video';
 import { Controller, Icp, Inject } from '../core/decorators';
 import { ToolsService } from './service';
 
@@ -24,7 +23,7 @@ export class ToolsController {
     path: string,
     time?: string, // 添加可选参数 time
   ): Promise<string> {
-    return await FFmpegVideoUtil.getVideoCover(path, time);
+    return '';
   }
 
   /**

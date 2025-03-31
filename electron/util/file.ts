@@ -1,16 +1,11 @@
 import fs from 'fs';
 import mimeTypes from 'mime-types';
 import ffmpeg from 'fluent-ffmpeg';
-import { ffprobePath } from './ffprobe_static';
 import path from 'path';
 import { net } from 'electron';
 import { v4 as uuidv4 } from 'uuid';
 
 // 文件工具类
-// 设置 ffprobe 路径
-console.log('ffprobe 路径:', ffprobePath);
-ffmpeg.setFfprobePath(ffprobePath);
-
 export interface FileInfo {
   streams: Array<{
     codec_type: string;

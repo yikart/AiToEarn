@@ -20,6 +20,7 @@ import { getUserInfo } from '../user/comment';
 import { AutoRunRecordStatus } from '../../db/models/autoRunRecord';
 import { WorkData } from '../plat/plat.type';
 import { GlobleCache } from '../../global/cache';
+import { sleep } from '../../util/time';
 
 /**
  * 获取缓存key
@@ -137,6 +138,7 @@ export class ReplyService {
 
         // 2. 循环AI回复评论
         for (const element of list) {
+          sleep(5);
           const oldRecord = await this.getReplyCommentRecord(
             userInfo.id,
             account,
