@@ -20,12 +20,4 @@ export class AppController {
   async getAppInfo(event: Electron.IpcMainInvokeEvent) {
     return this.toolsService.getAppInfo();
   }
-
-  /**
-   * 指定chromium路径
-   */
-  @Icp('ICP_SET_CHROMIUM_PATH')
-  async setChromiumPath(event: Electron.IpcMainInvokeEvent) {
-    return this.toolsService.setChromiumPath();
-  }
 }

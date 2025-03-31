@@ -2,20 +2,6 @@ import * as fs from 'fs';
 import sharp from 'sharp';
 import * as path from 'path';
 
-// electron cookie 转 playwright cookie
-export function cookieToPlaywright(cookies: Electron.Cookie[]) {
-  return cookies.map((v) => {
-    return {
-      name: v.name,
-      value: v.value,
-      domain: v.domain,
-      path: v.path,
-      secure: v.secure,
-      httpOnly: v.httpOnly,
-    };
-  });
-}
-
 /**
  * 获取文件内容
  * @param filePath 本地文件路径

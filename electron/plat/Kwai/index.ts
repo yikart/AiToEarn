@@ -13,10 +13,8 @@ import {
   IKwaiUserInfoResponse,
   ILoginResponse,
 } from './kwai.type';
-import { cookieToPlaywright, CookieToString } from '../utils';
+import { CookieToString } from '../utils';
 import { BrowserWindow } from 'electron';
-import { KwaiVisibleTypeEnum } from '../plat.common.type';
-import { getBrowser } from '../coomont';
 import kwaiSign from './sign/KwaiSign';
 
 interface IRequestApiParams extends IRequestNetParams {
@@ -29,155 +27,8 @@ class KwaiPub {
     success: boolean;
     msg: string;
   }> {
-    const { callback } = params;
     return new Promise(async (resolve) => {
-      const browser = await getBrowser();
-      try {
-        if (!browser) throw 'playwright 初始化失败！';
-        callback(5, '正在加载...');
-
-        const context = await browser.newContext();
-        callback(10);
-        // cookie添加到浏览器
-        await context.addCookies(cookieToPlaywright(params.cookies));
-
-        // 创建一个新的页面
-        const page = await context.newPage();
-        // 跳转到登录页面
-        await page.goto(
-          'https://id.kuaishou.com/pass/kuaishou/login/passToken?sid=kuaishou.web.cp.api',
-        );
-        // 跳转到上传视频页面
-        await page.goto(
-          'https://cp.kuaishou.com/article/publish/video?tabType=1',
-        );
-        // 设置新手教程隐藏
-        await page.evaluate(() => {
-          localStorage.setItem('PUBLISH_V2_TOUR', 'true');
-        });
-        callback(15);
-
-        // 全局捕获错误弹出消息
-        page
-          .waitForSelector('.ant-message-error', {
-            timeout: 1000 * 60 * 100,
-          })
-          .then(async (el) => {
-            const text = await page.evaluate(
-              (element) => element!.textContent,
-              el,
-            );
-            resolve({
-              success: false,
-              msg: text || '系统繁忙，请稍后重试',
-            });
-            await browser.close();
-          });
-
-        // 寻找上传视频的按钮
-        const uploadVideoBtn = await page.waitForSelector(
-          'button:text("上传视频")',
-        );
-        callback(20, '正在上传视频...');
-        // 触发上传视频
-        const [videoFileChooser] = await Promise.all([
-          page.waitForEvent('filechooser'),
-          uploadVideoBtn.click(),
-        ]);
-        // 选择视频文件
-        await videoFileChooser.setFiles(params.videoPath);
-
-        // 寻找文本域
-        const textarea = await page.waitForSelector('#work-description-edit');
-        await textarea.click();
-        // 设置简介 触发粘贴事件
-        await page.evaluate(
-          ({ textarea, desc }) => {
-            const pasteEvent = new ClipboardEvent('paste', {
-              bubbles: true,
-              cancelable: true,
-              clipboardData: new DataTransfer(),
-            });
-            pasteEvent.clipboardData?.setData('text/plain', desc);
-            textarea.dispatchEvent(pasteEvent);
-          },
-          { textarea, desc: params.desc },
-        );
-
-        // 设置私密性
-        if (params.visibleType === KwaiVisibleTypeEnum.Private) {
-          const privacyBtn = await page.waitForSelector(
-            'span:text-is("仅自己可见")',
-          );
-          await privacyBtn.click();
-        } else if (params.visibleType === KwaiVisibleTypeEnum.Friend) {
-          const friendBtn = await page.waitForSelector(
-            'span:text-is("好友可见")',
-          );
-          await friendBtn.click();
-        }
-
-        console.log('正在等待视频上传...');
-        // 等待视频上传完成
-        await page.waitForSelector('#preview-tours video', {
-          timeout: 1000 * 60 * 10,
-        });
-        console.log('视频上传完成...');
-        callback(40, '正在设置封面');
-
-        // 设置封面
-        // 触发封面hover
-        const coverWrapView = await page.waitForSelector(
-          '[class^="_default-cover_"]',
-        );
-        coverWrapView?.hover();
-        // 点击背景的替换按钮
-        const replaceBtn = await page.waitForSelector('div:text("封面设置")');
-        await replaceBtn.click();
-        const uploadCoverBtnView =
-          await page.waitForSelector('div:text("上传封面")');
-        await uploadCoverBtnView.click();
-
-        const uploadImageBtn = await page.waitForSelector(
-          'button:text("上传图片")',
-        );
-        const [coverFileChooser] = await Promise.all([
-          page.waitForEvent('filechooser'),
-          uploadImageBtn?.click(),
-        ]);
-        await coverFileChooser.setFiles(params.coverPath);
-        // 点击封面完成
-        const finishBtn = await page.waitForSelector('span:text("确认")');
-        await finishBtn.click();
-
-        // 监听封面应用成功
-        await page.waitForSelector('span:text("封面应用成功")');
-        callback(70, '正在发布');
-
-        // 寻找发布按钮并且触发
-        const buttonPublish = await page.waitForSelector('div:text-is("发布")');
-        await buttonPublish.click();
-
-        // 验证是否发布成功
-        await page.waitForSelector('h2:text-is("视频管理")');
-        console.log('提交成功...');
-        callback(100, '发布完成');
-
-        await browser.close();
-
-        resolve({
-          success: true,
-          msg: '发布成功！',
-        });
-      } catch (error) {
-        console.log('操作执行失败：', error);
-        resolve({
-          success: false,
-          msg: `${error}`,
-        });
-        callback(-1);
-        await browser!.close();
-      }
+      console.log('快手图文发布');
     });
   }
 
