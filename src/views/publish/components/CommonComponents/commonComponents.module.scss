@@ -250,3 +250,21 @@
     height: auto;
   }
 }
+
+.mixSelectItem {
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+  :global {
+    .mixSelectItem-left {
+      display: flex;
+      align-items: center;
+      img {
+        height: 100%;
+        width: 30px;
+        object-fit: contain;
+        margin-right: 8px;
+      }
+    }
+  }
+}

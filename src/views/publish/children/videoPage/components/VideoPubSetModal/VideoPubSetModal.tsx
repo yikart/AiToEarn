@@ -46,7 +46,6 @@ import VideoPubSetModalVideo, {
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalVideo';
 import { usePubStroe } from '../../../../../../store/pubStroe';
 
-import { IVideoChooseItem } from '../../videoPage';
 import usePubParamsVerify, {
   PubParamsVerifyInfo,
 } from '../../../../hooks/usePubParamsVerify';
@@ -58,20 +57,22 @@ export interface IVideoPubSetModalProps {
   onClose: (open: boolean) => void;
 }
 
-const PubSetModalChild = ({
-  currChooseAccount,
-}: {
-  currChooseAccount: IVideoChooseItem;
-}) => {
+const PubSetModalChild = ({}: {}) => {
+  const { currChooseAccount } = useVideoPageStore(
+    useShallow((state) => ({
+      currChooseAccount: state.currChooseAccount,
+    })),
+  );
+
   switch (currChooseAccount?.account?.type) {
     case AccountType.KWAI:
-      return <VideoPubSetModal_KWAI currChooseAccount={currChooseAccount} />;
+      return <VideoPubSetModal_KWAI />;
     case AccountType.Douyin:
-      return <VideoPubSetModal_DouYin currChooseAccount={currChooseAccount} />;
+      return <VideoPubSetModal_DouYin />;
     case AccountType.Xhs:
-      return <VideoPubSetModal_XSH currChooseAccount={currChooseAccount} />;
+      return <VideoPubSetModal_XSH />;
     case AccountType.WxSph:
-      return <VideoPubSetModal_WxSph currChooseAccount={currChooseAccount} />;
+      return <VideoPubSetModal_WxSph />;
   }
   return <></>;
 };
@@ -95,6 +96,7 @@ const VideoPubSetModal = memo(
         accountRestart,
         commonPubParams,
         clear,
+        setCurrChooseAccount,
       } = useVideoPageStore(
         useShallow((state) => ({
           videoListChoose: state.videoListChoose,
@@ -107,6 +109,7 @@ const VideoPubSetModal = memo(
           accountRestart: state.accountRestart,
           clear: state.clear,
           commonPubParams: state.commonPubParams,
+          setCurrChooseAccount: state.setCurrChooseAccount,
         })),
       );
       const { moreParamsOpen, setMoreParamsOpen } = usePubStroe(
@@ -167,6 +170,10 @@ const VideoPubSetModal = memo(
         if (!currChooseAccountId) return videoListChoose[0];
         return videoListChoose.find((v) => v.id === currChooseAccountId);
       }, [currChooseAccountId, videoListChoose]);
+
+      useEffect(() => {
+        if (currChooseAccount) setCurrChooseAccount(currChooseAccount);
+      }, [currChooseAccount]);
 
       const pubCore = async () => {
         setLoading(false);
@@ -389,16 +396,11 @@ const VideoPubSetModal = memo(
                     }}
                   />
 
-                  {currChooseAccount && (
-                    <PubSetModalChild currChooseAccount={currChooseAccount} />
-                  )}
+                  {currChooseAccount && <PubSetModalChild />}
                 </div>
                 <div className="videoPubSetModal_con-right">
                   {currChooseAccount && (
-                    <VideoPubSetModalVideo
-                      ref={videoPubSetModalVideoRef}
-                      chooseAccountItem={currChooseAccount}
-                    />
+                    <VideoPubSetModalVideo ref={videoPubSetModalVideoRef} />
                   )}
                 </div>
               </div>

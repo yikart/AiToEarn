@@ -1,6 +1,5 @@
 import { Input, Tooltip } from 'antd';
 import React from 'react';
-import { IVideoChooseItem } from '@/views/publish/children/videoPage/videoPage';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import dayjs from 'dayjs';
@@ -13,6 +12,7 @@ import CommonScheduledTimeSelect, {
 } from '../../../../../components/CommonComponents/CommonScheduledTimeSelect';
 import {
   AccountRestartLogin,
+  CommonMixSelect,
   PubPermission,
   PubPermissionProps,
 } from '../../../../../components/CommonComponents/CommonComponents';
@@ -20,14 +20,11 @@ import useVideoPubSetModal from '../children/hooks/useVideoPubSetModal';
 
 const { TextArea } = Input;
 
-export const VideoPubRestartLogin = ({
-  currChooseAccount,
-}: {
-  currChooseAccount: IVideoChooseItem;
-}) => {
-  const { accountRestart } = useVideoPageStore(
+export const VideoPubRestartLogin = () => {
+  const { accountRestart, currChooseAccount } = useVideoPageStore(
     useShallow((state) => ({
       accountRestart: state.accountRestart,
+      currChooseAccount: state.currChooseAccount!,
     })),
   );
 
@@ -43,15 +40,13 @@ export const VideoPubRestartLogin = ({
 
 // 定时发布
 export const ScheduledTimeSelect = ({
-  currChooseAccount,
   ...props
-}: ICommonScheduledTimeSelectProps & {
-  currChooseAccount?: IVideoChooseItem;
-}) => {
+}: ICommonScheduledTimeSelectProps) => {
   const { value, onChange } = props;
-  const { setOnePubParams } = useVideoPageStore(
+  const { setOnePubParams, currChooseAccount } = useVideoPageStore(
     useShallow((state) => ({
       setOnePubParams: state.setOnePubParams,
+      currChooseAccount: state.currChooseAccount,
     })),
   );
 
@@ -86,19 +81,18 @@ export const ScheduledTimeSelect = ({
 
 // 标题
 export const TitleInput = ({
-  currChooseAccount,
   placeholder,
   tips,
   title = '标题',
 }: {
-  currChooseAccount?: IVideoChooseItem;
   placeholder: string;
   tips?: string;
   title?: string;
 }) => {
-  const { setOnePubParams } = useVideoPageStore(
+  const { setOnePubParams, currChooseAccount } = useVideoPageStore(
     useShallow((state) => ({
       setOnePubParams: state.setOnePubParams,
+      currChooseAccount: state.currChooseAccount,
     })),
   );
   if (!currChooseAccount) return '';
@@ -149,20 +143,19 @@ export const TitleInput = ({
 
 // 描述
 export const DescTextArea = ({
-  currChooseAccount,
   placeholder,
   title = '描述',
   maxLength,
 }: {
-  currChooseAccount?: IVideoChooseItem;
   placeholder: string;
   tips?: string;
   title?: string;
   maxLength: number;
 }) => {
-  const { setOnePubParams } = useVideoPageStore(
+  const { setOnePubParams, currChooseAccount } = useVideoPageStore(
     useShallow((state) => ({
       setOnePubParams: state.setOnePubParams,
+      currChooseAccount: state.currChooseAccount,
     })),
   );
   if (!currChooseAccount) return '';
@@ -203,14 +196,8 @@ export const DescTextArea = ({
 };
 
 // 可见性
-export const VideoPubPermission = ({
-  currChooseAccount,
-  ...props
-}: PubPermissionProps & {
-  currChooseAccount?: IVideoChooseItem;
-}) => {
-  if (!currChooseAccount) return;
-  const { setOnePubParams } = useVideoPubSetModal(currChooseAccount);
+export const VideoPubPermission = ({ ...props }: PubPermissionProps) => {
+  const { setOnePubParams, currChooseAccount } = useVideoPubSetModal();
   return (
     <PubPermission
       onChange={(e) => {
@@ -223,6 +210,17 @@ export const VideoPubPermission = ({
       }}
       value={currChooseAccount?.pubParams.visibleType}
       {...props}
+    />
+  );
+};
+
+// 合集
+export const VideoPubMixSelect = ({}: {}) => {
+  const { setOnePubParams, currChooseAccount } = useVideoPubSetModal();
+  return (
+    <CommonMixSelect
+      account={currChooseAccount.account}
+      onAccountChange={() => {}}
     />
   );
 };

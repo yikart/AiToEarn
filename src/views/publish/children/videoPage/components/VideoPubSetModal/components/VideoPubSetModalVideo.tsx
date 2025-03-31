@@ -6,7 +6,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import { IVideoChooseItem } from '@/views/publish/children/videoPage/videoPage';
 import { Avatar, Segmented } from 'antd';
 import { HeartFilled } from '@ant-design/icons';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
@@ -17,9 +16,7 @@ export interface IVideoPubSetModalVideoRef {
   pause: () => void;
 }
 
-export interface IVideoPubSetModalVideoProps {
-  chooseAccountItem: IVideoChooseItem;
-}
+export interface IVideoPubSetModalVideoProps {}
 
 const CoverPreview = ({
   avatar,
@@ -60,14 +57,14 @@ const CoverPreview = ({
 const VideoPubSetModalVideo = memo(
   forwardRef(
     (
-      { chooseAccountItem }: IVideoPubSetModalVideoProps,
+      {}: IVideoPubSetModalVideoProps,
       ref: ForwardedRef<IVideoPubSetModalVideoRef>,
     ) => {
       const videoRef = useRef<HTMLVideoElement>(null);
       const [active, setActive] = useState(1);
-      const { videoListChoose } = useVideoPageStore(
+      const { chooseAccountItem } = useVideoPageStore(
         useShallow((state) => ({
-          videoListChoose: state.videoListChoose,
+          chooseAccountItem: state.currChooseAccount!,
         })),
       );
       const imperativeMethods: IVideoPubSetModalVideoRef = {

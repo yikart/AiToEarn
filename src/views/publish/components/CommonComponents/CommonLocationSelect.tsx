@@ -1,13 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { Select, SelectProps, Spin } from 'antd';
 import { icpGetLocationData } from '@/icp/publish';
-import { AccountStatus } from '@@/AccountEnum';
-import { ipcUpdateAccountStatus } from '@/icp/account';
 import { ILocationDataItem } from '@/../electron/main/plat/plat.type';
 import useDebounceFetcher from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/useDebounceFetcher';
 import styles from './commonComponents.module.scss';
 import { icpGetLocation } from '@/icp/view';
 import { AccountInfo } from '../../../account/comment';
+import { accountFailureDispose } from '../../comment';
 
 interface CommonLocationSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
@@ -35,15 +34,11 @@ export default function CommonLocationSelect({
         longitude: location.current.loca[0],
         cityName: location.current.city,
       });
-      if (locationData.status !== 200 && locationData.status !== 201) {
-        if (locationData.status === 401 || locationData.data === undefined) {
-          account!.status = AccountStatus.DISABLE;
-          onAccountChange(account);
-          await ipcUpdateAccountStatus(account!.id, AccountStatus.DISABLE);
-        }
-        return [];
-      }
-      return locationData.data || [];
+      return await accountFailureDispose(
+        locationData,
+        account,
+        onAccountChange,
+      );
     });
   // 位置 0=经度 1=纬度
   const location = useRef<{

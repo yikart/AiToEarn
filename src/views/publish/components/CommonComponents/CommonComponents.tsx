@@ -1,12 +1,16 @@
-import { Button, Radio, Select } from "antd";
+import { Button, Radio, Select, SelectProps } from 'antd';
 import styles from './commonComponents.module.scss';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { PlusOutlined, UserAddOutlined } from '@ant-design/icons';
 
 import { AccountInfo } from '../../../account/comment';
 import { AccountStatus } from '../../../../../commont/AccountEnum';
 import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
+import { icpGetMixList } from '../../../../icp/publish';
+import { accountFailureDispose } from '../../comment';
+import { onAccountLoginFinish } from '../../../../icp/receiveMsg';
+import { IMixItem } from '../../../../../electron/main/plat/plat.type';
 
 // 本地上传、素材上传展示的块
 export const ChooseChunk = ({
@@ -134,6 +138,59 @@ export const AccountRestartLogin = ({
 };
 
 // 合集
-export const CommonMixSelect = ({ account }: { account: AccountInfo }) => {
-  return <Select></Select>;
+export const CommonMixSelect = ({
+  account,
+  onAccountChange,
+  ...props
+}: {
+  account?: AccountInfo;
+  onAccountChange?: (account: AccountInfo) => void;
+} & SelectProps) => {
+  if (!account || !onAccountChange) return '';
+
+  const [options, setOptions] = useState<IMixItem[]>([]);
+
+  const getList = async () => {
+    const res = await icpGetMixList(account);
+    const data = await accountFailureDispose(res, account, onAccountChange);
+    setOptions(data);
+    console.log('111data', data);
+  };
+
+  useEffect(() => {
+    getList();
+    onAccountLoginFinish(() => {
+      getList();
+    });
+  }, []);
+
+  return (
+    <>
+      <h1>合集</h1>
+      <Select
+        options={options}
+        allowClear
+        style={{ width: '100%' }}
+        placeholder="选择合集"
+        fieldNames={{
+          label: 'name',
+          value: 'id',
+        }}
+        optionRender={({ data }) => {
+          return (
+            <div className={styles.mixSelectItem}>
+              <div className="mixSelectItem-left">
+                {data.coverImg && <img src={data.coverImg} />}
+                {data.name}
+              </div>
+              <div className="mixSelectItem-right">
+                共{data.feedCount}个作品
+              </div>
+            </div>
+          );
+        }}
+        {...props}
+      />
+    </>
+  );
 };

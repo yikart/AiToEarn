@@ -1,20 +1,18 @@
 import { useVideoPageStore } from '../../../../useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
-import { IVideoChooseItem } from '../../../../videoPage';
 import { AccountPlatInfoMap } from '../../../../../../../account/comment';
 
-export default function useVideoPubSetModal(
-  currChooseAccount: IVideoChooseItem,
-) {
-  const { setOnePubParams } = useVideoPageStore(
+export default function useVideoPubSetModal() {
+  const { setOnePubParams, currChooseAccount } = useVideoPageStore(
     useShallow((state) => ({
       setOnePubParams: state.setOnePubParams,
-      videoListChoose: state.videoListChoose,
+      currChooseAccount: state.currChooseAccount,
     })),
   );
 
   return {
     setOnePubParams,
-    platInfo: AccountPlatInfoMap.get(currChooseAccount.account!.type)!,
+    platInfo: AccountPlatInfoMap.get(currChooseAccount!.account!.type)!,
+    currChooseAccount: currChooseAccount!,
   };
 }

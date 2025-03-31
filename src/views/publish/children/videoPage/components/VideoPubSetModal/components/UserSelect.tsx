@@ -1,4 +1,3 @@
-import { IVideoChooseItem } from '@/views/publish/children/videoPage/videoPage';
 import CommonUserSelect, {
   CommonUserSelectProps,
 } from '../../../../../components/CommonComponents/CommonUserSelect';
@@ -9,21 +8,16 @@ import { VideoPubRestartLogin } from './VideoPubSetModalCommon';
 import React from 'react';
 import useVideoPubSetModal from '../children/hooks/useVideoPubSetModal';
 
-interface DebounceSelectProps extends CommonUserSelectProps<IUsersItem> {
-  currChooseAccount: IVideoChooseItem;
-}
+interface DebounceSelectProps extends CommonUserSelectProps<IUsersItem> {}
 
 // 视频发布用户选择器
-export default function UserSelect({
-  currChooseAccount,
-  ...props
-}: DebounceSelectProps) {
+export default function UserSelect({ ...props }: DebounceSelectProps) {
   const { updateAccounts } = useVideoPageStore(
     useShallow((state) => ({
       updateAccounts: state.updateAccounts,
     })),
   );
-  const { setOnePubParams } = useVideoPubSetModal(currChooseAccount);
+  const { setOnePubParams, currChooseAccount } = useVideoPubSetModal();
 
   return (
     <CommonUserSelect
@@ -59,7 +53,7 @@ export default function UserSelect({
         );
       }}
     >
-      <VideoPubRestartLogin currChooseAccount={currChooseAccount} />
+      <VideoPubRestartLogin />
     </CommonUserSelect>
   );
 }

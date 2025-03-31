@@ -34,6 +34,8 @@ export interface IVideoPageStore {
    * 每次操作都会分配一个操作ID
    */
   operateId: string;
+  // 当前选择的账户数据
+  currChooseAccount?: IVideoChooseItem;
 }
 
 const store: IVideoPageStore = {
@@ -63,6 +65,7 @@ const store: IVideoPageStore = {
   },
   loadingPageLoading: false,
   operateId: '',
+  currChooseAccount: undefined,
 };
 
 const getStore = () => {
@@ -88,6 +91,13 @@ export const useVideoPageStore = create(
       };
 
       const methods = {
+        // 设置当前的账户数据
+        setCurrChooseAccount(currChooseAccount: IVideoChooseItem) {
+          set({
+            currChooseAccount,
+          });
+        },
+
         // 设置操作ID
         setOperateId(operateId?: string) {
           // if (get().operateId) return;

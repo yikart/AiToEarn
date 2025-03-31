@@ -21,13 +21,15 @@ import { WxSphEventList } from '../../../../../../../../electron/plat/shipinhao/
 import UserSelect from '../components/UserSelect';
 import useVideoPubSetModal from './hooks/useVideoPubSetModal';
 
-const WXSphActivity = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
-  const { setOnePubParams, updateAccounts } = useVideoPageStore(
-    useShallow((state) => ({
-      setOnePubParams: state.setOnePubParams,
-      updateAccounts: state.updateAccounts,
-    })),
-  );
+const WXSphActivity = ({}: IVideoPubSetModalChildProps) => {
+  const { setOnePubParams, updateAccounts, currChooseAccount } =
+    useVideoPageStore(
+      useShallow((state) => ({
+        setOnePubParams: state.setOnePubParams,
+        updateAccounts: state.updateAccounts,
+        currChooseAccount: state.currChooseAccount!,
+      })),
+    );
 
   const { fetching, options, debounceFetcher } =
     useDebounceFetcher<WxSphEventList>(async (keywords) => {
@@ -77,7 +79,7 @@ const WXSphActivity = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
           );
         }}
       />
-      <VideoPubRestartLogin currChooseAccount={currChooseAccount} />
+      <VideoPubRestartLogin />
     </>
   );
 };
@@ -85,11 +87,11 @@ const WXSphActivity = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
 const VideoPubSetModal_WxSph = memo(
   forwardRef(
     (
-      { currChooseAccount }: IVideoPubSetModalChildProps,
+      {}: IVideoPubSetModalChildProps,
       ref: ForwardedRef<IVideoPubSetModalChildRef>,
     ) => {
-      const { setOnePubParams, platInfo } =
-        useVideoPubSetModal(currChooseAccount);
+      const { setOnePubParams, platInfo, currChooseAccount } =
+        useVideoPubSetModal();
       const { topicMax } = platInfo.commonPubParamsConfig;
       const [topicSearch, setTopicSearch] = useState('');
 
@@ -99,12 +101,10 @@ const VideoPubSetModal_WxSph = memo(
             title="短标题"
             tips="短标题会出现在搜索、话题、活动、地点、订阅号消息、发现页红点等场景"
             placeholder="概况视频的主要内容。字数建议6-16个字符"
-            currChooseAccount={currChooseAccount}
           />
 
           <DescTextArea
             placeholder="填写更全面的描述信息，让更多人看到你吧！"
-            currChooseAccount={currChooseAccount}
             maxLength={1000}
           />
 
@@ -143,15 +143,14 @@ const VideoPubSetModal_WxSph = memo(
           </p>
 
           <UserSelect
-            currChooseAccount={currChooseAccount}
             maxCount={10}
             tips="您可以添加10个视频号"
             title="@视频号"
           />
 
-          <LocationSelect currChooseAccount={currChooseAccount} />
+          <LocationSelect />
 
-          <WXSphActivity currChooseAccount={currChooseAccount} />
+          <WXSphActivity />
 
           <h1>扩展链接</h1>
           <Input
@@ -192,7 +191,7 @@ const VideoPubSetModal_WxSph = memo(
             声明后，作品将展示原创标记，有机会获得广告收入
           </Checkbox>
 
-          <ScheduledTimeSelect currChooseAccount={currChooseAccount} />
+          <ScheduledTimeSelect />
         </>
       );
     },

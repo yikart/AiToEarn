@@ -4,11 +4,10 @@ import { IUsersItem } from '@/../electron/main/plat/plat.type';
 import useDebounceFetcher from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/useDebounceFetcher';
 import styles from './commonComponents.module.scss';
 import { icpGetUsers } from '@/icp/publish';
-import { AccountStatus } from '@/../commont/AccountEnum';
-import { ipcUpdateAccountStatus } from '@/icp/account';
 import { describeNumber } from '@/utils';
 import { onAccountLoginFinish } from '@/icp/receiveMsg';
 import { AccountInfo } from '../../../account/comment';
+import { accountFailureDispose } from '../../comment';
 
 export interface CommonUserSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
@@ -39,27 +38,16 @@ export default function CommonUserSelect({
       keyword: keywords || '',
       account: account,
     });
-    if (res.status !== 200 && res.status !== 201) {
-      if (res.status === 401) {
-        account.status = AccountStatus.DISABLE;
-        onAccountChange(account);
-        await ipcUpdateAccountStatus(account.id, AccountStatus.DISABLE);
-      }
-      return [];
-    }
-    return res.data || [];
+    const data = await accountFailureDispose(res, account, onAccountChange);
+    setOptions(data);
   };
 
   useEffect(() => {
     if (props.showSearch === false) {
-      getList().then((res) => {
-        setOptions(res);
-      });
+      getList();
 
       onAccountLoginFinish(() => {
-        getList().then((res) => {
-          setOptions(res);
-        });
+        getList();
       });
     }
   }, []);

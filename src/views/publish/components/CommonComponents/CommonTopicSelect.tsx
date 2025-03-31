@@ -7,6 +7,7 @@ import { ipcUpdateAccountStatus } from '@/icp/account';
 import useDebounceFetcher from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/useDebounceFetcher';
 import { AccountInfo } from '../../../account/comment';
 import styles from './commonComponents.module.scss';
+import { accountFailureDispose } from '../../comment';
 
 export interface CommonTopicSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
@@ -35,15 +36,13 @@ export default function CommonTopicSelect({
     useDebounceFetcher<CommonTopicSelectValueType>(
       async (keyword: string): Promise<CommonTopicSelectValueType[]> => {
         const topics = await icpGetTopic(account!, keyword);
-        if (topics.status !== 200 && topics.status !== 201) {
-          if (topics.status === 401) {
-            account!.status = AccountStatus.DISABLE;
-            onAccountChange(account);
-            await ipcUpdateAccountStatus(account!.id, AccountStatus.DISABLE);
-          }
-          return [];
-        }
-        return topics.data!.map((v) => {
+
+        const res = await accountFailureDispose(
+          topics,
+          account,
+          onAccountChange,
+        );
+        return res!.map((v) => {
           return {
             label: v.name,
             value: v.name,

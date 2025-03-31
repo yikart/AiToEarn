@@ -11,39 +11,34 @@ import {
   ScheduledTimeSelect,
   VideoPubPermission,
 } from '../components/VideoPubSetModalCommon';
-import useVideoPubSetModal from './hooks/useVideoPubSetModal';
 
 const VideoPubSetModal_KWAI = memo(
   forwardRef(
     (
-      { currChooseAccount }: IVideoPubSetModalChildProps,
+      {}: IVideoPubSetModalChildProps,
       ref: ForwardedRef<IVideoPubSetModalChildRef>,
     ) => {
-      const { setOnePubParams } = useVideoPubSetModal(currChooseAccount);
-
       return (
         <>
           <DescTextArea
             placeholder="填写合适的话题和描述，作品能获得更多推荐~"
-            currChooseAccount={currChooseAccount}
             maxLength={500}
           />
 
-          <TopicSelect currChooseAccount={currChooseAccount} />
+          <TopicSelect />
 
           <UserSelect
-            currChooseAccount={currChooseAccount}
             maxCount={3}
             title="@好友"
             tips="您可以添加3个好友"
             showSearch={false}
           />
 
-          <LocationSelect currChooseAccount={currChooseAccount} />
+          <LocationSelect />
 
-          <VideoPubPermission currChooseAccount={currChooseAccount} />
+          <VideoPubPermission />
 
-          <ScheduledTimeSelect currChooseAccount={currChooseAccount} />
+          <ScheduledTimeSelect />
         </>
       );
     },

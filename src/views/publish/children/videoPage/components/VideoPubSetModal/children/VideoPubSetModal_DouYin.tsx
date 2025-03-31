@@ -13,6 +13,7 @@ import {
   DescTextArea,
   ScheduledTimeSelect,
   TitleInput,
+  VideoPubMixSelect,
   VideoPubPermission,
   VideoPubRestartLogin,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
@@ -25,10 +26,11 @@ import {
 import { ILableValue } from '../../../../../../../../electron/db/models/workData';
 import useVideoPubSetModal from './hooks/useVideoPubSetModal';
 
-const HotspotSelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
-  const { setOnePubParams } = useVideoPageStore(
+const HotspotSelect = ({}: IVideoPubSetModalChildProps) => {
+  const { setOnePubParams, currChooseAccount } = useVideoPageStore(
     useShallow((state) => ({
       setOnePubParams: state.setOnePubParams,
+      currChooseAccount: state.currChooseAccount!,
     })),
   );
 
@@ -52,8 +54,9 @@ const HotspotSelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
   );
 };
 
-const ActivitySelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
-  const { setOnePubParams, platInfo } = useVideoPubSetModal(currChooseAccount);
+const ActivitySelect = ({}: IVideoPubSetModalChildProps) => {
+  const { setOnePubParams, platInfo, currChooseAccount } =
+    useVideoPubSetModal();
   const { topicMax } = platInfo.commonPubParamsConfig;
 
   return (
@@ -75,7 +78,7 @@ const ActivitySelect = ({ currChooseAccount }: IVideoPubSetModalChildProps) => {
         );
       }}
     >
-      <VideoPubRestartLogin currChooseAccount={currChooseAccount} />
+      <VideoPubRestartLogin />
     </CommonActivitySelect>
   );
 };
@@ -86,23 +89,15 @@ const VideoPubSetModal_DouYin = memo(
       props: IVideoPubSetModalChildProps,
       ref: ForwardedRef<IVideoPubSetModalChildRef>,
     ) => {
-      const { currChooseAccount } = props;
-      const { setOnePubParams, platInfo } =
-        useVideoPubSetModal(currChooseAccount);
+      const { setOnePubParams, platInfo, currChooseAccount } =
+        useVideoPubSetModal();
       const { topicMax } = platInfo.commonPubParamsConfig;
 
       return (
         <>
-          <TitleInput
-            placeholder="好的标题可以获得更多浏览"
-            currChooseAccount={currChooseAccount}
-          />
+          <TitleInput placeholder="好的标题可以获得更多浏览" />
 
-          <DescTextArea
-            placeholder="添加作品简介"
-            currChooseAccount={currChooseAccount}
-            maxLength={1000}
-          />
+          <DescTextArea placeholder="添加作品简介" maxLength={1000} />
 
           <TopicSelect
             maxCount={
@@ -110,23 +105,19 @@ const VideoPubSetModal_DouYin = memo(
               currChooseAccount.pubParams!.diffParams![AccountType.Douyin]!
                 .activitys!.length
             }
-            currChooseAccount={currChooseAccount}
             tips={`最多可添加${topicMax}个话题（包含活动奖励）`}
           />
-          <ActivitySelect currChooseAccount={currChooseAccount} />
+          <ActivitySelect />
 
-          <UserSelect
-            currChooseAccount={currChooseAccount}
-            maxCount={100}
-            tips="您可以添加100个好友"
-            title="@好友"
-          />
+          <UserSelect maxCount={100} tips="您可以添加100个好友" title="@好友" />
 
           <HotspotSelect {...props} />
 
-          <LocationSelect currChooseAccount={currChooseAccount} />
+          <LocationSelect />
 
-          <ScheduledTimeSelect currChooseAccount={currChooseAccount} />
+          <ScheduledTimeSelect />
+
+          <VideoPubMixSelect />
 
           <h1>自主声明</h1>
           <Select
@@ -177,10 +168,7 @@ const VideoPubSetModal_DouYin = memo(
             }}
           />
 
-          <VideoPubPermission
-            currChooseAccount={currChooseAccount}
-            title="谁可以看"
-          />
+          <VideoPubPermission title="谁可以看" />
         </>
       );
     },
