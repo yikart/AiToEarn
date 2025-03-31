@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-03-18 21:02:38
- * @LastEditTime: 2025-03-25 13:41:14
+ * @LastEditTime: 2025-03-31 11:02:12
  * @LastEditors: nevin
  * @Description: 一键评论
  */
@@ -27,6 +27,7 @@ const Com = forwardRef<OneKeyReplyRef>((props: any, ref) => {
     window.ipcRenderer.on(SendChannelEnum.CommentRelyProgress, onGetNotice);
     setWorkData(data);
     setIsModalOpen(true);
+
     replyCommentList(accountId, data);
   }
 
@@ -34,7 +35,7 @@ const Com = forwardRef<OneKeyReplyRef>((props: any, ref) => {
    * 一键AI评论
    */
   async function replyCommentList(inAccountId: number, inWorkData: WorkData) {
-    if (!workData?.dataId) return;
+    if (!inWorkData?.dataId) return;
     const res = await icpReplyCommentList(inAccountId, inWorkData);
     console.log('------ res', res);
   }
