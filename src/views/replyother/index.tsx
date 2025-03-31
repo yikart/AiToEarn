@@ -25,22 +25,17 @@ import {
   Space,
   Typography,
   Divider,
-  Spin,
   Empty,
   Form,
   Input,
-  Select,
   Slider,
-  Switch,
   InputNumber,
-  Collapse,
   Radio,
   Tooltip,
 } from 'antd';
 import { useCallback, useRef, useState, useEffect } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import styles from './reply.module.scss';
-import Meta from 'antd/es/card/Meta';
 import ReplyWorks, { ReplyWorksRef } from './components/replyWorks';
 import ReplyComment, { ReplyCommentRef } from './components/replyComment';
 import AddAutoRun, { AddAutoRunRef } from './components/addAutoRun';
@@ -48,9 +43,7 @@ import { icpDianzanDyOther, icpShoucangDyOther } from '@/icp/replyother';
 import { commentApi } from '@/api/comment';
 import {
   LikeOutlined,
-  MessageOutlined,
   StarOutlined,
-  MoreOutlined,
   CloseOutlined,
   CommentOutlined,
   UnorderedListOutlined,
@@ -59,11 +52,11 @@ import {
   RobotOutlined,
   UserOutlined,
   SendOutlined,
-  PlusOutlined,
   DownOutlined,
 } from '@ant-design/icons';
-import webview from 'electron';
 import Masonry from 'react-masonry-css';
+import { AccountModel } from '../../../electron/db/models/account';
+import WebView from '../../components/WebView';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
@@ -71,6 +64,7 @@ export default function Page() {
   const [secondCommentList, setSecondCommentList] = useState<any[]>([]);
   const [activeAccountId, setActiveAccountId] = useState<number>(-1);
   const [activeAccountType, setActiveAccountType] = useState<string>('');
+  const [activeAccount, setActiveAccount] = useState<AccountModel>();
   const Ref_ReplyWorks = useRef<ReplyWorksRef>(null);
   const Ref_AddAutoRun = useRef<AddAutoRunRef>(null);
   const Ref_ReplyComment = useRef<ReplyCommentRef>(null);
@@ -203,7 +197,7 @@ export default function Page() {
       '414381229d04c46cb39f97a5a0b7f9eb',
     );
     console.log('------ getCommentSearchNotes', list);
-    let newlist = list.slice(0, 20);
+    const newlist = list.slice(0, 20);
 
     newlist[0].noteId = '67de8bc2000000001c00fdce';
     newlist[0].xsec_token = 'AB-q1Xl6YS66mGgN8y_DMoskX40j7FsSv2DoSQTYE6DYU=';
@@ -499,13 +493,14 @@ export default function Page() {
 
   return (
     <div className={styles.reply} style={{ alignItems: 'flex-start' }}>
-      <div style={{ display: 'flex', flexDirection: 'row',  height: '100%' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
         {/* <Col span={3}> */}
         <AccountSidebar
           activeAccountId={activeAccountId}
           onAccountChange={useCallback(
             (info) => {
               console.log('------ onAccountChange', info);
+              setActiveAccount(info);
               setActiveAccountType(info.type);
               if (info.type == 'xhs') {
                 setActiveAccountId(info.id);
@@ -1024,20 +1019,18 @@ export default function Page() {
               />
             </div>
             <div className={styles.modalBody}>
-              {isWebviewLoading && (
-                <div className={styles.loadingContainer}>
-                  <Spin size="large" tip="加载中..." />
-                </div>
-              )}
+              {/*{isWebviewLoading && (*/}
+              {/*  <div className={styles.loadingContainer}>*/}
+              {/*    <Spin size="large" tip="加载中..." />*/}
+              {/*  </div>*/}
+              {/*)}*/}
               {currentUrl ? (
-                <webview
-                  ref={webviewRef}
-                  src={currentUrl}
-                  style={{
-                    width: '100%',
-                    height: '100%',
+                <WebView
+                  url={currentUrl}
+                  partition={true}
+                  cookieParams={{
+                    cookies: JSON.parse(activeAccount!.loginCookie!),
                   }}
-                  webpreferences="contextIsolation=yes, nodeIntegration=no"
                 />
               ) : (
                 <Empty description="无法加载内容" />
