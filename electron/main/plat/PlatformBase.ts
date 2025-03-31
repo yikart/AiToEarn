@@ -109,6 +109,21 @@ export abstract class PlatformBase {
     pageInfo: ResponsePageInfo;
   }>;
 
+  
+
+    /**
+   * 搜索作品
+   * @param account 账户
+   * @param pcursor 分页游标
+   */
+    abstract getsearchNodeList(
+      account: AccountModel,
+      pcursor?: string,
+    ): Promise<{
+      list: WorkData[];
+      pageInfo: ResponsePageInfo;
+    }>;
+
   /**
    * 获取某个作品的数据
    * @param dataId 作品的唯一标识

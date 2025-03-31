@@ -207,6 +207,17 @@ class PlatController {
     return await platform.getWorkList(account, pcursor);
   }
 
+  
+  /**
+   * 获取作品列表
+   * @param account
+   * @param pcursor
+   */
+  public async getsearchNodeList(account: AccountModel, pcursor?: string) {
+    const platform = this.platforms.get(account.type)!;
+    return await platform.getsearchNodeList(account, pcursor);
+  }
+
   /**
    * 获取评论列表
    * @param account

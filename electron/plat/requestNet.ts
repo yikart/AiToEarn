@@ -15,7 +15,7 @@ export interface IRequestNetResult<T> {
 
 export interface IRequestNetParams {
   headers?: Record<string, string | string[]>;
-  url: string;
+  url?: string;
   body?: any;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   isFile?: boolean;
