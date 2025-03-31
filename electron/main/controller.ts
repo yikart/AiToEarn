@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-02-21 21:16:01
+ * @LastEditTime: 2025-03-31 11:30:32
  * @LastEditors: nevin
  * @Description:
  */
@@ -19,13 +19,5 @@ export class AppController {
   @Icp('ICP_APP_GET_INFO')
   async getAppInfo(event: Electron.IpcMainInvokeEvent) {
     return this.toolsService.getAppInfo();
-  }
-
-  /**
-   * 指定chromium路径
-   */
-  @Icp('ICP_SET_CHROMIUM_PATH')
-  async setChromiumPath(event: Electron.IpcMainInvokeEvent) {
-    return this.toolsService.setChromiumPath();
   }
 }
