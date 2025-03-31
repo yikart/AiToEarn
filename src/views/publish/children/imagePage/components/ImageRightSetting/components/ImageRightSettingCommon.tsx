@@ -1,6 +1,7 @@
 // 话题选择器
 import {
   ILocationDataItem,
+  IMixItem,
   IUsersItem,
 } from '../../../../../../../../electron/main/plat/plat.type';
 import { useShallow } from 'zustand/react/shallow';
@@ -23,10 +24,12 @@ import CommonScheduledTimeSelect, {
 import dayjs from 'dayjs';
 import {
   AccountRestartLogin,
+  CommonMixSelect,
   PubPermission,
   PubPermissionProps,
 } from '../../../../../components/CommonComponents/CommonComponents';
 import { AccountPlatInfoMap } from '../../../../../../account/comment';
+import { VideoPubRestartLogin } from '../../../../videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
 
 interface DebounceSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {}
@@ -330,5 +333,38 @@ export const ImgTextScheduledTimeSelect = ({
         );
       }}
     />
+  );
+};
+
+// 合集
+export const ImgTextMixSelect = () => {
+  const { imageAccountItem } = useImagePlatParams();
+  const { setOnePubParams, updateAccounts } = useImagePageStore(
+    useShallow((state) => ({
+      setOnePubParams: state.setOnePubParams,
+      updateAccounts: state.updateAccounts,
+    })),
+  );
+
+  return (
+    <CommonMixSelect
+      account={imageAccountItem.account}
+      onAccountChange={(account) => {
+        updateAccounts([account]);
+      }}
+      onChange={(_, value) => {
+        setOnePubParams(
+          {
+            mixInfo: {
+              label: (value as IMixItem).name,
+              value: (value as IMixItem).id,
+            },
+          },
+          imageAccountItem.account.id,
+        );
+      }}
+    >
+      <VideoPubRestartLogin />
+    </CommonMixSelect>
   );
 };

@@ -46,7 +46,7 @@ export default function CommonUserSelect({
     if (props.showSearch === false) {
       getList();
 
-      onAccountLoginFinish((newAccount) => {
+      return onAccountLoginFinish((newAccount) => {
         account = newAccount;
         getList();
       });

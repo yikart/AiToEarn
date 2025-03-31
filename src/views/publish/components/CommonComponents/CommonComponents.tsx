@@ -160,7 +160,7 @@ export const CommonMixSelect = ({
 
   useEffect(() => {
     getList();
-    onAccountLoginFinish((newAccount) => {
+    return onAccountLoginFinish((newAccount) => {
       account = newAccount;
       getList();
     });

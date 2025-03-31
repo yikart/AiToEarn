@@ -30,12 +30,14 @@ export const VideoPubRestartLogin = () => {
   );
 
   return (
-    <AccountRestartLogin
-      account={currChooseAccount.account}
-      onAccountRestart={() => {
-        accountRestart(currChooseAccount.account!.type);
-      }}
-    />
+    currChooseAccount && (
+      <AccountRestartLogin
+        account={currChooseAccount.account}
+        onAccountRestart={() => {
+          accountRestart(currChooseAccount.account!.type);
+        }}
+      />
+    )
   );
 };
 

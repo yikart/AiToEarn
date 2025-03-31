@@ -3,6 +3,7 @@ import { ImageRightSettingChildProps } from '../ImageParamsSet.type';
 import {
   ImgTextDescTextArea,
   ImgTextLocationSelect,
+  ImgTextMixSelect,
   ImgTextPubPermission,
   ImgTextPubRestartLogin,
   ImgTextScheduledTimeSelect,
@@ -112,6 +113,8 @@ const ImageParamsSet_Douyin = memo(
         <HotspotSelect />
 
         <ImgTextLocationSelect />
+
+        <ImgTextMixSelect />
 
         <ImgTextPubPermission />
 
