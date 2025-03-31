@@ -488,16 +488,18 @@ export default function Page() {
 
   // 计算断点值，用于响应式布局
   const breakpointColumnsObj = {
-    default: 5, // 默认显示5列
-    1600: 4, // 宽度小于1600px时显示4列
-    1200: 3, // 宽度小于1200px时显示3列
+    default: 6, // 默认显示5列
+    2270: 5, // 宽度小于2270px时显示5列
+    1939: 4, // 宽度小于1900px时显示4列
+    1600: 3, // 宽度小于1600px时显示4列
+    1200: 2, // 宽度小于1200px时显示3列
     900: 2, // 宽度小于900px时显示2列
     600: 1, // 宽度小于600px时显示1列
   };
 
   return (
     <div className={styles.reply} style={{ alignItems: 'flex-start' }}>
-      <Row style={{ height: '100%' }}>
+      <div style={{ display: 'flex', flexDirection: 'row',  height: '100%' }}>
         {/* <Col span={3}> */}
         <AccountSidebar
           activeAccountId={activeAccountId}
@@ -628,7 +630,7 @@ export default function Page() {
           </Masonry>
         </div>
         {/* </Col> */}
-      </Row>
+      </div>
 
       {/* 任务下发弹窗 */}
       <Modal
