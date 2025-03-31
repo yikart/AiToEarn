@@ -2235,7 +2235,6 @@ export class DouyinService {
       },
       method: 'GET',
     });
-
     return res;
   }
 

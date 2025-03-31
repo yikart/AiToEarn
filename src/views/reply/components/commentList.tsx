@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-03-18 21:02:38
- * @LastEditTime: 2025-03-25 14:28:36
+ * @LastEditTime: 2025-03-31 09:43:51
  * @LastEditors: nevin
  * @Description: 评论列表
  */
@@ -33,6 +33,11 @@ const Com = forwardRef<CommentListRef>((props: any, ref) => {
 
   async function init(accountId: number, workData: WorkData) {
     setCommentList([]);
+    setPageInfo({
+      count: 0,
+      hasMore: false,
+    });
+
     setAccountId(accountId);
     setWorkData(workData);
     await getCommentList(accountId, workData);
@@ -45,6 +50,10 @@ const Com = forwardRef<CommentListRef>((props: any, ref) => {
 
   function handleCancel() {
     setCommentList([]);
+    setPageInfo({
+      count: 0,
+      hasMore: false,
+    });
     setIsModalOpen(false);
   }
 
