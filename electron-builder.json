@@ -3,6 +3,7 @@
   "appId": "cn.yikart.att",
   "productName": "爱团团AiToEarn",
   "asar": true,
+  "asarUnpack": ["**/node_modules/sharp/**/*", "**/node_modules/@img/**/*"],
   "directories": {
     "output": "release/${version}"
   },
