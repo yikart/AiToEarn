@@ -1,4 +1,4 @@
-import React, { ForwardedRef, forwardRef, memo } from 'react';
+import React, { ForwardedRef, forwardRef, memo } from "react";
 import {
   IVideoPubSetModalChildProps,
   IVideoPubSetModalChildRef,

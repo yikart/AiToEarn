@@ -211,6 +211,7 @@ export const VideoPubMixSelect = ({}: {}) => {
   return (
     <CommonMixSelect
       account={currChooseAccount.account}
+      value={currChooseAccount.pubParams.mixInfo?.value}
       onAccountChange={(account) => {
         updateAccounts({
           accounts: [account],
@@ -218,10 +219,12 @@ export const VideoPubMixSelect = ({}: {}) => {
       }}
       onChange={(_, value) => {
         setOnePubParams({
-          mixInfo: {
-            label: (value as IMixItem).name,
-            value: (value as IMixItem).id,
-          },
+          mixInfo: !value
+            ? undefined
+            : {
+                label: (value as IMixItem).name,
+                value: (value as IMixItem).id,
+              },
         });
       }}
     >

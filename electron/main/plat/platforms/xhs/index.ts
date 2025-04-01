@@ -16,6 +16,7 @@ import {
   IGetTopicsParams,
   IGetTopicsResponse,
   IGetUsersParams,
+  ResponsePageInfo,
   VideoCallbackType,
   WorkData,
 } from '../../plat.type';
@@ -604,6 +605,16 @@ export class Xhs extends PlatformBase {
         previewVideoLink: result.shareLink,
       });
     });
+  }
+
+  getsearchNodeList(
+    account: AccountModel,
+    pcursor?: string,
+  ): Promise<{
+    list: WorkData[];
+    pageInfo: ResponsePageInfo;
+  }> {
+    throw '无此方法';
   }
 }
 

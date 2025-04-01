@@ -352,13 +352,16 @@ export const ImgTextMixSelect = () => {
       onAccountChange={(account) => {
         updateAccounts([account]);
       }}
+      value={imageAccountItem.pubParams.mixInfo?.value}
       onChange={(_, value) => {
         setOnePubParams(
           {
-            mixInfo: {
-              label: (value as IMixItem).name,
-              value: (value as IMixItem).id,
-            },
+            mixInfo: !value
+              ? undefined
+              : {
+                  label: (value as IMixItem).name,
+                  value: (value as IMixItem).id,
+                },
           },
           imageAccountItem.account.id,
         );

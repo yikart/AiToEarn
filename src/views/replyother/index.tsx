@@ -13,7 +13,6 @@ import {
   CommentData,
   icpCreateCommentList,
   getCommentSearchNotes,
-  
 } from '@/icp/replyother';
 import {
   Avatar,
@@ -186,13 +185,11 @@ export default function Page() {
     setWordList(res.list);
   }
 
-
-
-  async function getSearchListFunc(thisid:any, qe?:any) {
-    setPostList([])
-    const res = await getCommentSearchNotes(thisid,qe)
-    console.log('------ getSearchListFunc', res)
-    setPostList(res)
+  async function getSearchListFunc(thisid: any, qe?: any) {
+    setPostList([]);
+    const res = await getCommentSearchNotes(thisid, qe);
+    console.log('------ getSearchListFunc', res);
+    setPostList(res as any);
   }
 
   async function getFwqCreatorList() {
@@ -245,7 +242,7 @@ export default function Page() {
   /**
    * 获取二级评论列表
    */
-  async function getSecondCommentList(item: any) { 
+  async function getSecondCommentList(item: any) {
     try {
       const res = await icpGetSecondCommentListByOther(
         activeAccountId,
@@ -516,10 +513,10 @@ export default function Page() {
               if (info.type == 'xhs') {
                 setActiveAccountId(info.id);
                 getFwqCreatorList();
-              } else if(info.type == 'KWAI'){
+              } else if (info.type == 'KWAI') {
                 setActiveAccountId(info.id);
                 getSearchListFunc(info.id);
-              }else{
+              } else {
                 setActiveAccountId(info.id);
                 getCreatorList(info.id);
               }

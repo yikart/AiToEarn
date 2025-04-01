@@ -64,17 +64,21 @@ const PubSetModalChild = ({}: {}) => {
     })),
   );
 
-  switch (currChooseAccount?.account?.type) {
-    case AccountType.KWAI:
-      return <VideoPubSetModal_KWAI />;
-    case AccountType.Douyin:
-      return <VideoPubSetModal_DouYin />;
-    case AccountType.Xhs:
-      return <VideoPubSetModal_XSH />;
-    case AccountType.WxSph:
-      return <VideoPubSetModal_WxSph />;
-  }
-  return <></>;
+  const renderedComponent = useMemo(() => {
+    switch (currChooseAccount?.account?.type) {
+      case AccountType.KWAI:
+        return <VideoPubSetModal_KWAI />;
+      case AccountType.Douyin:
+        return <VideoPubSetModal_DouYin />;
+      case AccountType.Xhs:
+        return <VideoPubSetModal_XSH />;
+      case AccountType.WxSph:
+        return <VideoPubSetModal_WxSph />;
+    }
+    return <></>;
+  }, [currChooseAccount?.account?.type]);
+
+  return renderedComponent || <></>;
 };
 
 // 设置发布参数弹框

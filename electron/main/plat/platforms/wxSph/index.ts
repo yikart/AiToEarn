@@ -16,6 +16,7 @@ import {
   IGetTopicsParams,
   IGetTopicsResponse,
   IGetUsersParams,
+  ResponsePageInfo,
   VideoCallbackType,
   WorkData,
 } from '../../plat.type';
@@ -206,14 +207,16 @@ export class WxSph extends PlatformBase {
       });
     }
 
+    const pcursorNum = +(pcursor || 0);
+
     return {
       list: dataList,
       pageInfo: {
         count: res.commentCount,
-        hasMore: res.commentCount > res.comment.length * Number(pcursor),
+        hasMore: res.commentCount > res.comment.length * pcursorNum,
         pcursor:
-          res.commentCount > res.comment.length * Number(pcursor)
-            ? Number(pcursor) + 1 + ''
+          res.commentCount > res.comment.length * pcursorNum
+            ? pcursorNum + 1 + ''
             : '',
       },
     };
@@ -441,6 +444,16 @@ export class WxSph extends PlatformBase {
    */
   shoucangDyOther(account: AccountModel, pcursor?: string): Promise<any> {
     return new Promise((resolve, reject) => {});
+  }
+
+  getsearchNodeList(
+    account: AccountModel,
+    pcursor?: string,
+  ): Promise<{
+    list: WorkData[];
+    pageInfo: ResponsePageInfo;
+  }> {
+    throw '无此方法';
   }
 }
 

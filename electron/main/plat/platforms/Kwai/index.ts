@@ -16,6 +16,7 @@ import {
   IGetTopicsParams,
   IGetTopicsResponse,
   IGetUsersParams,
+  ResponsePageInfo,
   VideoCallbackType,
   WorkData,
 } from '../../plat.type';
@@ -184,39 +185,45 @@ export class Kwai extends PlatformBase {
     };
   }
 
-
-    /**
+  /**
    * 搜索作品列表
    * @param pageInfo
    * @returns
    */
-    async getsearchNodeList(account: AccountModel, pcursor?: string) {
-      const cookie: CookiesType = JSON.parse(account.loginCookie);
-      const res = await kwaiPub.getsearchNodeList(cookie, pcursor);
-      console.log('----------- getsearchNodeList --- res: ', res.data);
-      const photoList = res.data.data?.visionSearchPhoto.feeds || [];
-      console.log('----------- getsearchNodeList --- photoList: ', photoList[0]);
-      // const list: WorkData[] = photoList.map((v) => {
-      //   return {
-      //     dataId: v.photo.id,
-      //     readCount: v.photo.viewCount,
-      //     likeCount: v.photo.likeCount,
-      //     commentCount: v.photo.commentCount,
-      //     title: v.photo.caption,
-      //     coverUrl: v.photo.coverUrl,
-      //   };
-      // });
-  
-      return {
-        list: [],
-        pageInfo:  {}
-        // {
-        //   hasMore: !!res.data.data.result,
-        //   count: res.data.data.totalCount || '',
-        //   pcursor: res.data.data.pcursor + '',
-        // },
-      };
-    }
+  async getsearchNodeList(
+    account: AccountModel,
+    pcursor?: string,
+  ): Promise<{
+    list: WorkData[];
+    pageInfo: ResponsePageInfo;
+  }> {
+    throw '';
+    // const cookie: CookiesType = JSON.parse(account.loginCookie);
+    // const res = await kwaiPub.getsearchNodeList(cookie, pcursor);
+    // console.log('----------- getsearchNodeList --- res: ', res.data);
+    // const photoList = res.data.data?.visionSearchPhoto.feeds || [];
+    // console.log('----------- getsearchNodeList --- photoList: ', photoList[0]);
+    // // const list: WorkData[] = photoList.map((v) => {
+    // //   return {
+    // //     dataId: v.photo.id,
+    // //     readCount: v.photo.viewCount,
+    // //     likeCount: v.photo.likeCount,
+    // //     commentCount: v.photo.commentCount,
+    // //     title: v.photo.caption,
+    // //     coverUrl: v.photo.coverUrl,
+    // //   };
+    // // });
+    //
+    // return {
+    //   list: [],
+    //   pageInfo: {},
+    //   // {
+    //   //   hasMore: !!res.data.data.result,
+    //   //   count: res.data.data.totalCount || '',
+    //   //   pcursor: res.data.data.pcursor + '',
+    //   // },
+    // };
+  }
 
   /**
    * TODO: 未实现

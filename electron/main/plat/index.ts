@@ -207,7 +207,6 @@ class PlatController {
     return await platform.getWorkList(account, pcursor);
   }
 
-  
   /**
    * 获取作品列表
    * @param account
