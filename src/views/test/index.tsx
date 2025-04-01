@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-04-01 16:16:21
+ * @LastEditTime: 2025-04-01 16:33:01
  * @LastEditors: nevin
  * @Description: 测试页面
  */
@@ -12,6 +12,7 @@ import { PlusOutlined } from '@ant-design/icons';
 
 export default function Text() {
   const [videoPath, setVideoPath] = useState('');
+  const [fileInfo, setFileInfo] = useState('');
 
   function addVideos(videoFiles: IVideoFile[]) {
     const theVideoPath = videoFiles[0].videoPath;
@@ -23,11 +24,17 @@ export default function Text() {
       'ICP_GET_FILE_MATE_INFO',
       videoPath,
     );
+
+    setFileInfo(JSON.stringify(res));
     console.log('---- res ----', res);
   }
 
   return (
     <div>
+      <p>{videoPath}</p>
+      <hr />
+      <p>{fileInfo}</p>
+      <hr />
       <VideoChoose
         onMultipleChoose={(videoFiles) => {
           addVideos(videoFiles);
