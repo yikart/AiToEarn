@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-04-01 16:15:14
+ * @LastEditTime: 2025-04-01 16:16:21
  * @LastEditors: nevin
  * @Description: 测试页面
  */
@@ -15,7 +15,6 @@ export default function Text() {
 
   function addVideos(videoFiles: IVideoFile[]) {
     const theVideoPath = videoFiles[0].videoPath;
-    console.log('--------- theVideoPath', theVideoPath);
     setVideoPath(theVideoPath);
   }
 
