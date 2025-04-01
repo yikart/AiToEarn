@@ -1380,12 +1380,12 @@ export class XiaohongshuService {
   async getSearchNodeList(cookie: string, qe: string, page: number = 0) {
     const url = `/api/sns/web/v1/search/notes`;
 
-    function L() {
-        var t, e = 2147483646;
-        var a = BigInt(Date.now())
-            , u = BigInt(Math.ceil(Math.random() * e));
-        return a <<= BigInt(64),
-            (a += u).toString(36)
+    function l() {
+      let t,
+        e = 2147483646;
+      let a = BigInt(Date.now()),
+        u = BigInt(Math.ceil(Math.random() * e));
+      return (a <<= BigInt(64)), (a += u).toString(36);
     }
 
     console.log('------ getSearchNodeList --- asdadsda::', qe, page, l());

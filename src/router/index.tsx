@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-03-18 22:27:20
+ * @LastEditTime: 2025-04-01 15:58:37
  * @LastEditors: nevin
  * @Description:
  */
@@ -46,6 +46,7 @@ import UserWalletRecord from '@/views/finance/userWalletRecord';
 import Reply from '@/views/reply';
 import Replyother from '@/views/replyother';
 import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
+import Test from '@/views/test';
 
 interface IRouterMeta {
   // 路由名称
@@ -144,6 +145,11 @@ export const router: CustomRouteObject[] = [
           { path: 'userWalletRecord', element: <UserWalletRecord /> },
           { path: 'userWalletAccount', element: <UserWalletAccount /> },
         ],
+      },
+      {
+        path: '/test',
+        element: <Test />,
+        meta: { name: '测试', icon: ShopOutlined },
       },
     ],
   },
