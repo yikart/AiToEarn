@@ -1379,9 +1379,10 @@ export class XiaohongshuService {
   // 获取作品列表
   async getSearchNodeList(cookie: string, qe: string, page: number = 0) {
     const url = `/api/sns/web/v1/search/notes`;
+    console.log('------ getSearchNodeList --- asdadsda::', qe, page);
     const body = 
       {"keyword":"猫咪",
-        "page":1,
+        "page": page,
         "page_size":20,
         "search_id":"2em3pesjyckq6kdr2n6mt",
         "sort":"general","note_type":0,"ext_flags":[],"geo":"",
