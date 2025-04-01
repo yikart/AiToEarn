@@ -59,6 +59,11 @@ export type WorkData = {
   option?: {
     xsec_token: string;
   };
+  author?: {
+    name: string;
+    avatar: string;
+  };
+  data?: any;
 };
 
 // 评论

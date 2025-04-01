@@ -109,18 +109,22 @@ export abstract class PlatformBase {
     pageInfo: ResponsePageInfo;
   }>;
 
-  /**
+  
+
+    /**
    * 搜索作品
    * @param account 账户
-   * @param pcursor 分页游标
+   * @param qe 搜索关键词
+   * @param pageInfo 分页信息
    */
-  abstract getsearchNodeList(
-    account: AccountModel,
-    pcursor?: string,
-  ): Promise<{
-    list: WorkData[];
-    pageInfo: ResponsePageInfo;
-  }>;
+    abstract getsearchNodeList(
+      account: AccountModel,
+      qe?: string,
+      pageInfo?:any
+    ): Promise<{
+      list: WorkData[];
+      pageInfo: ResponsePageInfo;
+    }>;
 
   /**
    * 获取某个作品的数据
