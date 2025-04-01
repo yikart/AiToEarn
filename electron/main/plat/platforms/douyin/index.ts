@@ -225,7 +225,7 @@ export class Douyin extends PlatformBase {
           author: {
             name: v.author?.nickname,
             id: v.author?.uid,
-            avatar: v.author?.avatar_thumb.uri,
+            avatar: v.author?.avatar_thumb.url_list[0],
           },
           data: v,
         });
@@ -343,7 +343,7 @@ export class Douyin extends PlatformBase {
         content: v.text,
         likeCount: Number.parseInt(v.digg_count),
         nikeName: v.user.nickname,
-        headUrl: v.user.avatar_thumb.uri,
+        headUrl: v.user.avatar_thumb.url_list[0],
         data: v,
         subCommentList: [],
       });
