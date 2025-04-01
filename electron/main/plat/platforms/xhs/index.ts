@@ -153,10 +153,6 @@ export class Xhs extends PlatformBase {
       qe || '',
       pageNo,
     );
-    console.log(
-      '------ getsearchNodeList xhs res---',
-      res.data.data.items[0].note_card,
-    );
 
     const list: WorkData[] = res.data.data.items.map((v: any) => ({
       dataId: v.id,
