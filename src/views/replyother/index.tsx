@@ -559,13 +559,16 @@ export default function Page() {
               console.log('------ onAccountChange', info);
               setActiveAccount(info);
               setActiveAccountType(info.type);
-              if (info.type == 'xhs') {
-                setPostList([]);
+
+              setPostList([]);
                 setPageInfo({
                   count: 0,
                   hasMore: false,
                   pcursor: 1,
                 });
+                
+              if (info.type == 'xhs') {
+                
                 setActiveAccountId(info.id);
                 setTimeout(() => {
                   getSearchListFunc(info.id);
@@ -573,9 +576,10 @@ export default function Page() {
               } else if (info.type == 'KWAI') {
                 setActiveAccountId(info.id);
                 getSearchListFunc(info.id);
-              } else {
+              } else if (info.type == 'douyin') {
+                console.log('------ douyin kaihis ');
                 setActiveAccountId(info.id);
-                getCreatorList(info.id);
+                getSearchListFunc(info.id, '英雄杀道一');
               }
             },
             [getCreatorList],

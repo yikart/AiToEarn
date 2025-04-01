@@ -1388,7 +1388,7 @@ export class XiaohongshuService {
       return (a <<= BigInt(64)), (a += u).toString(36);
     }
 
-    console.log('------ getSearchNodeList --- asdadsda::', qe, page, l());
+    console.log('------ getSearchNodeList --- asdadsda::', qe, page);
     const body = {
       keyword: '大象',
       page: page,
@@ -1513,7 +1513,7 @@ export class XiaohongshuService {
       method: 'GET',
     });
 
-    console.log('------- xhs getCommentList ---', res);
+    // console.log('------- xhs getCommentList ---', res);
 
     return res;
   }
