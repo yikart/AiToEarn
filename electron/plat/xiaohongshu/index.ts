@@ -1379,12 +1379,21 @@ export class XiaohongshuService {
   // 获取作品列表
   async getSearchNodeList(cookie: string, qe: string, page: number = 0) {
     const url = `/api/sns/web/v1/search/notes`;
-    console.log('------ getSearchNodeList --- asdadsda::', qe, page);
+
+    function L() {
+        var t, e = 2147483646;
+        var a = BigInt(Date.now())
+            , u = BigInt(Math.ceil(Math.random() * e));
+        return a <<= BigInt(64),
+            (a += u).toString(36)
+    }
+
+    console.log('------ getSearchNodeList --- asdadsda::', qe, page, l());
     const body = {
-      keyword: '猫咪',
+      keyword: '大象',
       page: page,
       page_size: 20,
-      search_id: '2em3pesjyckq6kdr2n6mt',
+      search_id: '2em4bkby1dpddm5q64f97',
       sort: 'general',
       note_type: 0,
       ext_flags: [],
