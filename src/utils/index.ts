@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { getFilePathNameCommon } from '../../commont/utils';
 /**
  * 生成唯一ID
  */
@@ -10,12 +11,8 @@ export function generateUUID(): string {
   });
 }
 
-// 获取文件路径中的文件名
-export function getFilePathName(path: string) {
-  if (!path) return '';
-  const path1 = path.split('\\')[path.split('\\').length - 1];
-  return path1.split('/')[path1.split('/').length - 1];
-}
+// 获取文件路径中的文件名和后缀
+export const getFilePathName = getFilePathNameCommon;
 
 // 格式化时间
 export function formatTime(

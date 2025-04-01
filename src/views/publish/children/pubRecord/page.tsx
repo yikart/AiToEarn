@@ -27,17 +27,19 @@ export const ImageView = ({
       setImgFile(res);
     });
   }, []);
+
+  const filename = useMemo(() => {
+    return getFilePathName(prm.videoPath!).filename;
+  }, []);
+
   return (
     <div
       className={styles['pubRecord-pubCon']}
       style={{ minHeight: height + 'px' }}
     >
       {imgFile && <Image src={imgFile.imgUrl} height={height} width={width} />}
-      <span
-        title={getFilePathName(prm.videoPath!)}
-        className="pubRecord-pubCon-name"
-      >
-        {getFilePathName(prm.videoPath!)}
+      <span title={filename} className="pubRecord-pubCon-name">
+        {filename}
       </span>
     </div>
   );

@@ -84,25 +84,39 @@ export class Kwai extends PlatformBase {
     params: VideoModel,
     callback: VideoCallbackType,
   ): Promise<PublishVideoResult> {
-    const publishVideoResult = new PublishVideoResult();
-    const res = await kwaiPub.pubVideo({
-      videoPath: params.videoPath || '',
-      coverPath: params.coverPath || '',
-      cookies: params.cookies!,
-      desc: params.desc + params.topics.map((v) => `#${v}`).join(' '),
-      callback,
-      visibleType: VisibleTypeEnum.Public
-        ? KwaiVisibleTypeEnum.Public
-        : VisibleTypeEnum.Friend
-          ? KwaiVisibleTypeEnum.Friend
-          : KwaiVisibleTypeEnum.Private,
+    return new Promise(async (resolve) => {
+      const result = await kwaiPub
+        .pubVideo({
+          videoPath: params.videoPath || '',
+          coverPath: params.coverPath || '',
+          cookies: params.cookies!,
+          desc: params.desc + params.topics.map((v) => `#${v}`).join(' '),
+          callback,
+          visibleType: VisibleTypeEnum.Public
+            ? KwaiVisibleTypeEnum.Public
+            : VisibleTypeEnum.Friend
+              ? KwaiVisibleTypeEnum.Friend
+              : KwaiVisibleTypeEnum.Private,
+        })
+        .catch((e) => {
+          resolve({
+            code: 0,
+            msg: e,
+          });
+        });
+      if (!result || !result.publishId)
+        return resolve({
+          code: 0,
+          msg: '网络繁忙，请稍后重试',
+        });
+
+      return resolve({
+        code: 1,
+        msg: '发布成功',
+        dataId: result.publishId,
+        previewVideoLink: result.shareLink,
+      });
     });
-    // 发布失败
-    if (!res.success) {
-      publishVideoResult.code = 0;
-      publishVideoResult.msg = res.msg;
-    }
-    return publishVideoResult;
   }
 
   async getStatistics(account: AccountModel) {

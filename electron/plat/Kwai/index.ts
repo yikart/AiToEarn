@@ -12,10 +12,15 @@ import {
   IKwaiPubVideoParams,
   IKwaiUserInfoResponse,
   ILoginResponse,
+  KwaiSubmitResponse,
+  UploadFinishResponse,
+  UploadPpreResponse,
 } from './kwai.type';
 import { CookieToString } from '../utils';
 import { BrowserWindow } from 'electron';
 import kwaiSign from './sign/KwaiSign';
+import { FileUtils } from '../../util/file';
+import { getFilePathNameCommon } from '../../../commont/utils';
 
 interface IRequestApiParams extends IRequestNetParams {
   cookie: Electron.Cookie[];
@@ -23,13 +28,132 @@ interface IRequestApiParams extends IRequestNetParams {
 }
 
 class KwaiPub {
+  fileBlockSize = 4194304;
+
   // 发布视频
   async pubVideo(params: IKwaiPubVideoParams): Promise<{
-    success: boolean;
-    msg: string;
+    publishId: string;
+    shareLink: string;
   }> {
-    return new Promise(async (resolve) => {
-      console.log('快手图文发布');
+    return new Promise(async (resolve, reject) => {
+      try {
+        const callback = params.callback;
+        callback(5, '正在视频分片...');
+        const { filename, suffix } = getFilePathNameCommon(params.videoPath);
+        const filePartInfo = await FileUtils.getFilePartInfo(
+          params.videoPath,
+          this.fileBlockSize,
+        );
+        callback(10, '正在创建视频...');
+        const preRes = await this.requestApi<UploadPpreResponse>({
+          url: '/rest/cp/works/v2/video/pc/upload/pre',
+          cookie: params.cookies,
+          method: 'POST',
+          body: {
+            uploadType: 1,
+          },
+        });
+        console.log('创建视频：', preRes.data);
+
+        for (const i in filePartInfo.blockInfo) {
+          callback(40, `上传视频（${i}/${filePartInfo.blockInfo.length}）`);
+          const chunkStart =
+            i === '0' ? 0 : filePartInfo.blockInfo[parseInt(i) - 1];
+          const chunkEnd = filePartInfo.blockInfo[i] - 1;
+          const chunkContent = await FileUtils.getFilePartContent(
+            params.videoPath,
+            chunkStart,
+            chunkEnd,
+          );
+          const uploadVideoRes = await requestNet({
+            method: 'POST',
+            url: `https://upload.kuaishouzt.com/api/upload/fragment?upload_token=${preRes.data.data.token}&fragment_id=${i}`,
+            isFile: true,
+            body: chunkContent,
+          });
+          console.log(`分片上传：（${i}/${filePartInfo.blockInfo.length}）`);
+          console.log(uploadVideoRes.data);
+        }
+
+        callback(60, `查看分片上传结果...`);
+        const completeRes = await this.requestApi({
+          apiUrl: `https://upload.kuaishouzt.com/api/upload/complete?upload_token=${preRes.data.data.token}&fragment_count=${filePartInfo.blockInfo.length}`,
+          method: 'POST',
+          cookie: params.cookies,
+          body: {
+            uploadType: 1,
+          },
+        });
+        console.log(`分片上传完成：`, completeRes.data);
+
+        callback(70, `分片上传完成，视频上传结束...`);
+        const finishRes = await this.requestApi<UploadFinishResponse>({
+          url: `/rest/cp/works/v2/video/pc/upload/finish`,
+          method: 'POST',
+          cookie: params.cookies,
+          body: {
+            token: preRes.data.data.token,
+            fileName: filename,
+            fileType: `video/${suffix}`,
+            fileLength: filePartInfo.fileSize,
+          },
+        });
+        console.log(`视频上传结束：`, finishRes.data);
+        callback(80, `视频上传结束，正发布视频...`);
+        const submitParams = {
+          ...finishRes.data.data,
+          coverTimeStamp: 0,
+          caption: '',
+          photoStatus: 2,
+          coverType: 1,
+          coverTitle: '',
+          photoType: 0,
+          collectionId: '',
+          publishTime: 0,
+          longitude: '',
+          latitude: '',
+          poiId: 0,
+          notifyResult: 0,
+          domain: '',
+          secondDomain: '',
+          coverCropped: false,
+          pkCoverKey: '',
+          profileCoverKey: '',
+          downloadType: 1,
+          disableNearbyShow: false,
+          allowSameFrame: true,
+          movieId: '',
+          openPrePreview: false,
+          declareInfo: {},
+          activityIds: [],
+          riseQuality: false,
+          chapters: [],
+          projectId: '',
+          recTagIdList: [],
+          videoInfoMeta: '',
+          previewUrlErrorMessage: '',
+          triggerH265: false,
+        };
+        console.log('发布参数:', submitParams);
+        const submitRes = await this.requestApi<KwaiSubmitResponse>({
+          url: `/rest/cp/works/v2/video/pc/submit`,
+          method: 'POST',
+          cookie: params.cookies,
+          body: submitParams,
+        });
+        console.log(`视频发布完成：`, submitRes.data);
+        console.log(submitRes.data.result);
+        if (submitRes.data.result !== 1) {
+          return reject(submitRes.data.message);
+        }
+        console.log('发布成功！');
+        resolve({
+          shareLink: ``,
+          publishId: '1',
+        });
+      } catch (e: any) {
+        reject(`发布失败,失败原因：${e.message}`);
+      }
     });
   }
 
@@ -46,11 +170,6 @@ class KwaiPub {
       };
     }
 
-    console.log(
-      '----------- CookieToString(cookie) --- cookies: ',
-      CookieToString(cookie),
-    );
-
     params['headers'] = {
       ...(params['headers'] ? params['headers'] : {}),
       cookie: CookieToString(cookie),
@@ -61,9 +180,6 @@ class KwaiPub {
       type: 'json',
       url: `${apiUrl}${params.url || ''}`,
     });
-
-    console.log('signUrl：', signUrl);
-    console.log('apiUrl：', apiUrl);
 
     return await requestNet<T>({
       ...params,

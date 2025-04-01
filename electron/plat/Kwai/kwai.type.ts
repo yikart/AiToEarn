@@ -19,6 +19,32 @@ export interface IKwaiUserCommonResponse<T> {
   message: string;
 }
 
+// video/pc/upload/pre
+export type UploadPpreResponse = IKwaiUserCommonResponse<{
+  token: string;
+  fileId: number;
+}>;
+
+// video/pc/upload/finish
+export type UploadFinishResponse = IKwaiUserCommonResponse<{
+  coverKey: string;
+  coverMediaId: string;
+  duration: number;
+  fileId: number;
+  height: number;
+  mediaId: string;
+  photoIdStr: string;
+  videoDuration: string;
+  videoFrameRate: string;
+  width: string;
+}>;
+
+// /v2/video/pc/submit
+export type KwaiSubmitResponse = IKwaiUserCommonResponse<{
+  result: number;
+  message: string;
+}>;
+
 export interface IGetHomeOverviewItem {
   name: string;
   tab: string;

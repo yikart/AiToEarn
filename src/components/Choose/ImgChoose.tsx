@@ -57,10 +57,10 @@ export const formatImg = async ({
   blob?: Blob;
 }): Promise<IImgFile> => {
   return new Promise((resolve) => {
+    const { filename, suffix } = getFilePathName(path);
     if (!blob) {
-      const filename = getFilePathName(path);
       blob = new Blob([file!], {
-        type: `image/${filename.split('.')[filename.split('.').length - 1]}`,
+        type: `image/${suffix}`,
       });
     }
     const imgUrl = URL.createObjectURL(blob);
@@ -73,7 +73,7 @@ export const formatImg = async ({
         height: img.height,
         imgPath: path,
         size: blob!.size,
-        filename: getFilePathName(path),
+        filename,
         file: blob!,
         imgUrl,
       });
