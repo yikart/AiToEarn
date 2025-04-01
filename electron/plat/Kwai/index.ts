@@ -63,7 +63,6 @@ class KwaiPub {
     });
 
     console.log('signUrl：', signUrl);
-
     console.log('apiUrl：', apiUrl);
 
     return await requestNet<T>({
@@ -96,27 +95,53 @@ class KwaiPub {
           partition,
         },
       });
-      await mainWindow.loadURL('https://www.kuaishou.com/');
-
-      // 监听 URL 跳转（导航）事件
-      mainWindow.webContents.on('did-navigate', async () => {
-        const cookies = await mainWindow.webContents.session.cookies.get({
-          url: 'https://id.kuaishou.com/pass/kuaishou/login/passToken?sid=kuaishou.web.cp.api',
-        });
-        // 存在关键cookie
-        if (cookies.some((v) => v.name === 'passToken')) {
-          const userInfoReq = await this.getAccountInfo(cookies);
-          if (userInfoReq.status === 200 && userInfoReq.data.data) {
-            mainWindow.close();
-            resolve({
-              cookies,
-              userInfo: userInfoReq,
-            });
-          } else {
-            reject('获取用户信息失败');
-          }
-        }
+      // 登录页面
+      await mainWindow.loadURL(
+        'https://passport.kuaishou.com/pc/account/login/',
+      );
+      let timeId1: NodeJS.Timeout | undefined = undefined;
+      let timeId2: NodeJS.Timeout | undefined = undefined;
+      mainWindow.on('closed', () => {
+        clearInterval(timeId1);
+        clearInterval(timeId2);
       });
+      timeId1 = setInterval(async () => {
+        const cookies = await mainWindow.webContents.session.cookies.get({});
+        // 存在关键cookie
+        if (cookies.some((v) => v.name === 'kuaishou.server.webday7_ph')) {
+          console.log('前台Cookie：', cookies);
+          clearInterval(timeId1);
+          // 开发者后台
+          await mainWindow.loadURL(
+            'https://cp.kuaishou.com/article/publish/video?origin=www.kuaishou.com',
+          );
+          // 检测创作者中心登录
+          timeId2 = setInterval(async () => {
+            const cookies = await mainWindow.webContents.session.cookies.get(
+              {},
+            );
+            // 存在关键cookie
+            if (cookies.some((v) => v.name === 'ks_onvideo_token')) {
+              const cookiesLast =
+                await mainWindow.webContents.session.cookies.get({});
+              console.log('---------------------');
+              console.log('最终Cookie：', cookiesLast);
+              const userInfoReq = await this.getAccountInfo(cookiesLast);
+              if (userInfoReq.status === 200 && userInfoReq.data.data) {
+                clearInterval(timeId2);
+                mainWindow.close();
+                resolve({
+                  cookies: cookiesLast,
+                  userInfo: userInfoReq,
+                });
+              } else {
+                clearInterval(timeId2);
+                reject('获取用户信息失败');
+              }
+            }
+          }, 1500);
+        }
+      }, 1500);
     });
   }
 
@@ -146,6 +171,8 @@ class KwaiPub {
     keyword: string;
     cookies: Electron.Cookie[];
   }) {
+    console.log("111111111111111");
+    console.log(cookies);
     return await this.requestApi<IKwaiGetTopicsResponse>({
       cookie: cookies,
       url: `/rest/cp/works/v2/video/pc/tag/search`,

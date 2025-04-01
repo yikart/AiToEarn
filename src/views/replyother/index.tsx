@@ -59,6 +59,7 @@ import {
 import Masonry from 'react-masonry-css';
 import { AccountModel } from '../../../electron/db/models/account';
 import WebView from '../../components/WebView';
+// @ts-ignore
 import { useInView } from 'react-intersection-observer';
 
 export default function Page() {
