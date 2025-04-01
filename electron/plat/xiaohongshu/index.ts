@@ -1377,6 +1377,44 @@ export class XiaohongshuService {
   }
 
   // 获取作品列表
+  async getSearchNodeList(cookie: string, qe: string, page: number = 0) {
+    const url = `/api/sns/web/v1/search/notes`;
+    const body = 
+      {"keyword":"猫咪",
+        "page":1,
+        "page_size":20,
+        "search_id":"2em3pesjyckq6kdr2n6mt",
+        "sort":"general","note_type":0,"ext_flags":[],"geo":"",
+        "filters":[{"tags":["general"],"type":"sort_type"},
+        {"tags":["不限"],"type":"filter_note_type"},{"tags":["不限"],"type":"filter_note_time"},
+        {"tags":["不限"],"type":"filter_note_range"},{"tags":["不限"],"type":"filter_pos_distance"}],
+        "image_formats":["jpg","webp","avif"]
+      }
+    
+    const reverseRes: any = await this.getReverseResult({
+      url,
+      a1: cookie,
+      data: body
+    });
+
+    const res = await requestNet<any>({
+      url: `https://edith.xiaohongshu.com${url}`,
+      headers: {
+        cookie: cookie,
+        Referer: this.loginUrl,
+        origin: this.loginUrl,
+        'X-S': reverseRes['X-s'],
+        'X-T': reverseRes['X-t'],
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
+      },
+      method: 'POST',
+      body: body
+    });
+
+    return res;
+  }
+
+  // 获取作品列表
   async getWorks(cookie: string, page: number = 0) {
     const url = `/web_api/sns/v5/creator/note/user/posted?tab=0&page=${page}`;
     const reverseRes: any = await this.getReverseResult({

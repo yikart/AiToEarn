@@ -101,6 +101,7 @@ export class ReplyController {
       event: Electron.IpcMainInvokeEvent,
       accountId: number,
       qe?: string,
+      pageInfo?:any
     ) {
       const account = await this.accountService.getAccountById(accountId);
   
@@ -110,7 +111,7 @@ export class ReplyController {
           count: 0,
         };
   
-      const res = await platController.getsearchNodeList(account, qe);
+      const res = await platController.getsearchNodeList(account, qe,pageInfo);
   
       return res;
     }

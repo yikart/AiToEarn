@@ -83,7 +83,7 @@ export async function icpCreatorList(accountId: number, pcursor?: string) {
 /**
  * 搜索各平台内容
  */
-export async function getCommentSearchNotes(accountId: number, qe?: string) {
+export async function getCommentSearchNotes(accountId: number, qe?: string,pageInfo?:any) {
   const res: {
     list: WorkData[];
     pageInfo: {
@@ -92,7 +92,7 @@ export async function getCommentSearchNotes(accountId: number, qe?: string) {
       hasMore?: boolean;
       pcursor?: string;
     };
-  } = await window.ipcRenderer.invoke('ICP_SEARCH_NODE_LIST', accountId, qe);
+  } = await window.ipcRenderer.invoke('ICP_SEARCH_NODE_LIST', accountId, qe,pageInfo);
   return res;
 }
 

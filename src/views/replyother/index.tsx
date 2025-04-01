@@ -78,6 +78,14 @@ export default function Page() {
   const [webviewModalVisible, setWebviewModalVisible] = useState(false);
   const [currentUrl, setCurrentUrl] = useState('');
   const [isWebviewLoading, setIsWebviewLoading] = useState(true);
+  const [pageInfo, setPageInfo] = useState<{
+    count: number;
+    hasMore: boolean;
+    pcursor?: string;
+  }>({
+    count: 0,
+    hasMore: false,
+  });
 
   // 创建 webview 的引用
   const webviewRef = useRef<any>(null);
@@ -187,12 +195,15 @@ export default function Page() {
   }
 
 
-
-  async function getSearchListFunc(thisid:any, qe?:any) {
+// 搜索列表 - 平台自己搜索
+  async function getSearchListFunc(thisid:any, qe?:any,pageInfo?:any) {
     setPostList([])
-    const res = await getCommentSearchNotes(thisid,qe)
+    const res = await getCommentSearchNotes(thisid,qe,pageInfo)
     console.log('------ getSearchListFunc', res)
-    setPostList(res)
+    if(res.list.length){
+      setPostList(res.list)
+    }
+    
   }
 
   async function getFwqCreatorList() {
@@ -515,7 +526,8 @@ export default function Page() {
               setActiveAccountType(info.type);
               if (info.type == 'xhs') {
                 setActiveAccountId(info.id);
-                getFwqCreatorList();
+                // getFwqCreatorList();
+                getSearchListFunc(info.id);
               } else if(info.type == 'KWAI'){
                 setActiveAccountId(info.id);
                 getSearchListFunc(info.id);
@@ -569,7 +581,7 @@ export default function Page() {
                     >
                       <img
                         alt={item.title}
-                        src={item.cover}
+                        src={item.coverUrl}
                         style={{
                           width: '100%',
                           borderRadius: '10px 10px 0 0',
@@ -590,11 +602,11 @@ export default function Page() {
                             : undefined,
                         }}
                       />
-                      <span>{item.stats?.likeCount || 0}</span>
+                      <span>{item.likeCount || 0}</span>
                     </Space>,
                     <Space onClick={() => showCommentModal(item)}>
                       <UnorderedListOutlined />
-                      <span>列表</span>
+                      <span>{item.commentCount || 0}</span>
                     </Space>,
                     <Space onClick={() => openReplyWorks(item)}>
                       <CommentOutlined />
@@ -611,7 +623,7 @@ export default function Page() {
                             : undefined,
                         }}
                       />
-                      <span>{item.stats?.collectCount || 0}</span>
+                      <span>{item.collectCount || 0}</span>
                     </Space>,
                   ]}
                 >

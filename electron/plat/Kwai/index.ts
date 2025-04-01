@@ -100,7 +100,7 @@ class KwaiPub {
       // 监听 URL 跳转（导航）事件
       mainWindow.webContents.on('did-navigate', async () => {
         const cookies = await mainWindow.webContents.session.cookies.get({
-          // url: 'https://id.kuaishou.com/pass/kuaishou/login/passToken?sid=kuaishou.web.cp.api',
+          url: 'https://id.kuaishou.com/pass/kuaishou/login/passToken?sid=kuaishou.web.cp.api',
         });
         // 存在关键cookie
         if (cookies.some((v) => v.name === 'passToken')) {
