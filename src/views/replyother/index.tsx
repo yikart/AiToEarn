@@ -163,7 +163,7 @@ export default function Page() {
     
     setIsLoadingMore(true);
     try {
-      await getSearchListFunc(activeAccountId, undefined);
+      await getSearchListFunc(activeAccountId, searchKeyword);
     } finally {
       setIsLoadingMore(false);
     }
@@ -212,6 +212,9 @@ export default function Page() {
   const [secondCommentsMap, setSecondCommentsMap] = useState<
     Record<string, any[]>
   >({});
+
+  // 添加搜索关键词状态
+  const [searchKeyword, setSearchKeyword] = useState('爱团团');
 
   async function getCreatorList(thisid: any) {
     setWordList([]);
@@ -561,6 +564,20 @@ export default function Page() {
     600: 1, // 宽度小于600px时显示1列
   };
 
+  // 处理搜索提交
+  const handleSearch = () => {
+    // 重置列表和分页信息
+    setPostList([]);
+    setPageInfo({
+      count: 0,
+      hasMore: true,
+      pcursor: 1,
+    });
+    
+    // 执行搜索
+    getSearchListFunc(activeAccountId, searchKeyword);
+  };
+
   return (
     <div className={styles.reply} style={{ alignItems: 'flex-start' }}>
       <div style={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
@@ -583,7 +600,7 @@ export default function Page() {
                 
                 setActiveAccountId(info.id);
                 setTimeout(() => {
-                  getSearchListFunc(info.id);
+                  getSearchListFunc(info.id, searchKeyword);
                 }, 0);
               
             },
@@ -603,6 +620,16 @@ export default function Page() {
               <Typography.Title level={4} style={{ margin: 0 }}>
                 任务：
               </Typography.Title>
+            </Col>
+            <Col flex="auto" style={{ margin: '0 20px' }}>
+              <Input.Search
+                placeholder="输入关键词搜索"
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                onSearch={handleSearch}
+                style={{ width: '100%' }}
+                enterButton
+              />
             </Col>
             <Col>
               <Button
