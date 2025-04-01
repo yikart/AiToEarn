@@ -95,9 +95,11 @@ async function createWindow() {
     if (splashWindow) {
       win?.show();
       // 在主窗口显示后再打开开发者工具
-      if (VITE_DEV_SERVER_URL) {
-        win?.webContents.openDevTools({ mode: 'bottom' });
-      }
+      win?.webContents.openDevTools({ mode: 'bottom' });
+
+      // if (VITE_DEV_SERVER_URL) {
+      //   win?.webContents.openDevTools({ mode: 'bottom' });
+      // }
       setTimeout(() => {
         if (splashWindow) {
           splashWindow.close();

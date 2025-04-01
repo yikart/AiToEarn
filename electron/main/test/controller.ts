@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-03 13:45:00
+ * @LastEditTime: 2025-04-01 18:17:38
  * @LastEditors: nevin
  * @Description: Test test
  */
@@ -10,9 +10,7 @@ import { TestService } from './service';
 import { douyinService } from '../../plat/douyin/index';
 import { xiaohongshuService } from '../../plat/xiaohongshu/index';
 import { shipinhaoService } from '../../plat/shipinhao/index';
-
-const videoPath = 'C:\\Users\\Administrator\\Desktop\\测试用的\\相册.mp4';
-const coverPath = 'C:\\Users\\Administrator\\Desktop\\测试用的\\gile.jpg';
+import { FileUtils } from '../../util/file';
 
 @Controller()
 export class TestController {
@@ -22,21 +20,14 @@ export class TestController {
   /**
    * 测试-抖音登录
    */
-  @Icp('ICP_TEST_DOUYIN_LOGIN')
-  async testDouyinVideoLogin(event: Electron.IpcMainInvokeEvent): Promise<any> {
-    const { success, data } = await douyinService.loginOrView('login');
-    if (!data) {
-      return {
-        cookie: '',
-        token: '',
-      };
-    }
-
-    const { cookie, localStorage } = data;
-    return {
-      cookie,
-      token: localStorage,
-    };
+  @Icp('ICP_GET_FILE_MATE_INFO')
+  async testDouyinVideoLogin(
+    event: Electron.IpcMainInvokeEvent,
+    path: string,
+  ): Promise<any> {
+    const res = await FileUtils.getFileInfo(path);
+    console.log('---- res ----', res);
+    return res;
   }
 
   /**
