@@ -34,6 +34,7 @@ import {
   InputNumber,
   Radio,
   Tooltip,
+  Spin,
 } from 'antd';
 import { useCallback, useRef, useState, useEffect } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
@@ -59,6 +60,7 @@ import {
 import Masonry from 'react-masonry-css';
 import { AccountModel } from '../../../electron/db/models/account';
 import WebView from '../../components/WebView';
+import { useInView } from 'react-intersection-observer';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
@@ -81,10 +83,11 @@ export default function Page() {
   const [pageInfo, setPageInfo] = useState<{
     count: number;
     hasMore: boolean;
-    pcursor?: string;
+    pcursor?: any;
   }>({
     count: 0,
     hasMore: false,
+    pcursor: 1,
   });
 
   // 创建 webview 的引用
@@ -137,6 +140,34 @@ export default function Page() {
 
   // 添加任务弹窗状态
   const [taskModalVisible, setTaskModalVisible] = useState(false);
+
+  // 添加加载状态
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  
+  // 使用 react-intersection-observer 创建一个观察器
+  const { ref: loadMoreRef, inView } = useInView({
+    threshold: 0.5, // 当元素50%可见时触发
+    triggerOnce: false // 允许多次触发
+  });
+  
+  // 监听 inView 变化，当元素可见时加载更多
+  useEffect(() => {
+    if (inView && pageInfo.hasMore && !isLoadingMore) {
+      loadMorePosts();
+    }
+  }, [inView, pageInfo.hasMore, isLoadingMore]);
+  
+  // 加载更多帖子
+  const loadMorePosts = async () => {
+    if (!pageInfo.hasMore || isLoadingMore) return;
+    
+    setIsLoadingMore(true);
+    try {
+      await getSearchListFunc(activeAccountId, undefined);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
 
   // 提交任务
   const submitTask = (values: any) => {
@@ -196,14 +227,26 @@ export default function Page() {
 
 
 // 搜索列表 - 平台自己搜索
-  async function getSearchListFunc(thisid:any, qe?:any,pageInfo?:any) {
-    setPostList([])
-    const res = await getCommentSearchNotes(thisid,qe,pageInfo)
-    console.log('------ getSearchListFunc', res)
-    if(res.list.length){
-      setPostList(res.list)
+  async function getSearchListFunc(thisid:any, qe?:any,) {
+    // 如果不是加载更多（没有传入 pageInfo），则清空现有列表
+    if (!pageInfo) {
+      setPostList([]);
     }
+    console.log('------ getSearchListFunc pageInfo---@@: 1', pageInfo);
+    const res = await getCommentSearchNotes(thisid, qe, pageInfo);
+    console.log('------ getSearchListFunc', res);
     
+    if (res.list?.length) {
+      // 如果是加载更多，则追加到现有列表
+      setPostList(prev => pageInfo ? [...prev, ...res.list] : res.list);
+      
+      // 更新分页信息
+      setPageInfo({
+        count: res.pageInfo.count || 0,
+        hasMore: res.pageInfo.hasMore || false,
+        pcursor: res.pageInfo.pcursor || ''
+      });
+    }
   }
 
   async function getFwqCreatorList() {
@@ -591,7 +634,7 @@ export default function Page() {
                     </div>
                   }
                   actions={[
-                    <Space onClick={() => likePost(item)}>
+                    <Space key="like" onClick={() => likePost(item)}>
                       <LikeOutlined
                         style={{
                           color: likedPosts[item.noteId]
@@ -604,15 +647,15 @@ export default function Page() {
                       />
                       <span>{item.likeCount || 0}</span>
                     </Space>,
-                    <Space onClick={() => showCommentModal(item)}>
+                    <Space key="comment-list" onClick={() => showCommentModal(item)}>
                       <UnorderedListOutlined />
                       <span>{item.commentCount || 0}</span>
                     </Space>,
-                    <Space onClick={() => openReplyWorks(item)}>
+                    <Space key="reply" onClick={() => openReplyWorks(item)}>
                       <CommentOutlined />
                       <span>评论</span>
                     </Space>,
-                    <Space onClick={() => collectPost(item)}>
+                    <Space key="collect" onClick={() => collectPost(item)}>
                       <StarOutlined
                         style={{
                           color: collectedPosts[item.noteId]
@@ -649,6 +692,25 @@ export default function Page() {
               </div>
             ))}
           </Masonry>
+
+          {/* 替换原来的加载更多按钮为自动加载区域 */}
+          <div 
+            ref={loadMoreRef} 
+            className={styles.loadMoreArea}
+          >
+            {isLoadingMore && (
+              <div className={styles.loadingMore}>
+                <Spin size="small" />
+                <span style={{ marginLeft: 8 }}>加载中...</span>
+              </div>
+            )}
+            
+            {!pageInfo.hasMore && postList.length > 0 && (
+              <div className={styles.noMoreData}>
+                <Divider plain>没有更多内容了</Divider>
+              </div>
+            )}
+          </div>
         </div>
         {/* </Col> */}
       </div>

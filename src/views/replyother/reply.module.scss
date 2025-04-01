@@ -164,4 +164,32 @@
       margin-bottom: 0;
     }
   }
+  
+  // 添加自动加载区域样式
+  .loadMoreArea {
+    width: 100%;
+    padding: 16px 0;
+    min-height: 60px;
+  }
+  
+  .loadingMore {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #999;
+    font-size: 14px;
+  }
+  
+  .noMoreData {
+    color: #999;
+    font-size: 14px;
+    text-align: center;
+    
+    :global {
+      .ant-divider {
+        color: #999;
+        font-size: 14px;
+      }
+    }
+  }
 }

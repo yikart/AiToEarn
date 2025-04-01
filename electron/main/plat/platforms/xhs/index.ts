@@ -143,8 +143,9 @@ export class Xhs extends PlatformBase {
    * @returns
    */
     async getsearchNodeList(account: AccountModel, qe?: string,pageInfo?:any) {
+      console.log('------ getsearchNodeList xhs pageInfo---', pageInfo);
       const pageNo = pageInfo ? Number.parseInt(pageInfo.pcursor) : 0;
-  
+      console.log('------ getsearchNodeList xhs pageNo---', pageNo);
       const pageSize = 20;
   
       const cookie: CookiesType = JSON.parse(account.loginCookie);
