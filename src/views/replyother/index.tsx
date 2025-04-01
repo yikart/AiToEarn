@@ -228,13 +228,7 @@ export default function Page() {
 
 // 搜索列表 - 平台自己搜索
   async function getSearchListFunc(thisid:any, qe?:any,) {
-    // 如果不是加载更多（没有传入 pageInfo），则清空现有列表
-    if (!pageInfo) {
-      setPostList([]);
-    }
-    console.log('------ getSearchListFunc pageInfo---@@: 1', pageInfo);
     const res = await getCommentSearchNotes(thisid, qe, pageInfo);
-    console.log('------ getSearchListFunc', res);
     
     if (res.list?.length) {
       // 如果是加载更多，则追加到现有列表
@@ -264,13 +258,13 @@ export default function Page() {
     console.log('------ getCommentSearchNotes', list);
     const newlist = list.slice(0, 20);
 
-    newlist[0].noteId = '67de8bc2000000001c00fdce';
+    newlist[0].dataId = '67de8bc2000000001c00fdce';
     newlist[0].xsec_token = 'AB-q1Xl6YS66mGgN8y_DMoskX40j7FsSv2DoSQTYE6DYU=';
 
-    newlist[1].noteId = '678ce103000000001803c791';
+    newlist[1].dataId = '678ce103000000001803c791';
     newlist[1].xsec_token = 'AB-ktiN49qUSB2KL_4EN5bIQSRgCJR_AB1qIv8wAQvj94=';
 
-    newlist[2].noteId = '67e3f5bb000000001c003a1c';
+    newlist[2].dataId = '67e3f5bb000000001c003a1c';
     newlist[2].xsec_token = 'CBbspa7hsvsencXRmokLj0bOnzo_IHlX0-qWD3Y3GPpcM=';
 
     setPostList(newlist || []);
@@ -348,7 +342,7 @@ export default function Page() {
   function openReplyWorks(data: any) {
     // 确保数据格式兼容
     const workData: WorkData = {
-      dataId: data.noteId || data.dataId,
+      dataId: data.dataId || data.dataId,
       title: data.title || '',
       coverUrl: data.cover || data.coverUrl || '',
       // 添加其他必要的字段
@@ -383,10 +377,10 @@ export default function Page() {
     try {
       // 获取评论列表
       const res = await icpGetCommentListByOther(activeAccountId, {
-        dataId: post.noteId,
+        dataId: post.dataId,
         option: {
           xsec_token:
-            post.xsec_token || 'AB-ktiN49qUSB2KL_4EN5bIQSRgCJR_AB1qIv8wAQvj94=',
+            post.option.xsec_token || post.xsec_token,
         },
       });
 
@@ -440,24 +434,24 @@ export default function Page() {
   const likePost = async (post: any) => {
     try {
       // 如果已经点赞，则不重复操作
-      if (likedPosts[post.noteId]) {
+      if (likedPosts[post.dataId]) {
         message.info('已经点赞过了');
         return;
       }
 
-      const res = await icpDianzanDyOther(activeAccountId, post.noteId);
+      const res = await icpDianzanDyOther(activeAccountId, post.dataId);
       if (res.status_code == 0 || res.data?.code == 0) {
         message.success('点赞成功');
         // 更新点赞状态
         setLikedPosts((prev) => ({
           ...prev,
-          [post.noteId]: true,
+          [post.dataId]: true,
         }));
 
         // 更新点赞数量
         setPostList((prevList) =>
           prevList.map((item) =>
-            item.noteId === post.noteId
+            item.dataId === post.dataId
               ? {
                   ...item,
                   stats: {
@@ -482,24 +476,24 @@ export default function Page() {
   const collectPost = async (post: any) => {
     try {
       // 如果已经收藏，则不重复操作
-      if (collectedPosts[post.noteId]) {
+      if (collectedPosts[post.dataId]) {
         message.info('已经收藏过了');
         return;
       }
 
-      const res = await icpShoucangDyOther(activeAccountId, post.noteId);
+      const res = await icpShoucangDyOther(activeAccountId, post.dataId);
       if (res.status_code == 0 || res.data?.code == 0) {
         message.success('收藏成功');
         // 更新收藏状态
         setCollectedPosts((prev) => ({
           ...prev,
-          [post.noteId]: true,
+          [post.dataId]: true,
         }));
 
         // 更新收藏数量
         setPostList((prevList) =>
           prevList.map((item) =>
-            item.noteId === post.noteId
+            item.dataId === post.dataId
               ? {
                   ...item,
                   stats: {
@@ -522,22 +516,22 @@ export default function Page() {
    * 点击图片打开链接
    */
   const handleImageClick = (post: any) => {
-    if (!post || !post.noteId) return;
+    if (!post || !post.dataId) return;
 
     let url = '';
     // 判断平台类型
     if (activeAccountType === 'xhs' || post.url?.includes('xiaohongshu.com')) {
       // 小红书链接格式
-      url = `https://www.xiaohongshu.com/explore/${post.noteId}?xsec_token=${post.xsec_token || ''}&xsec_source=pc_search&source=web_explore_feed`;
+      url = `https://www.xiaohongshu.com/explore/${post.dataId}?xsec_token=${post.option.xsec_token || ''}&xsec_source=pc_search&source=web_explore_feed`;
     } else if (
       activeAccountType === 'douyin' ||
       post.url?.includes('douyin.com')
     ) {
       // 抖音链接格式
-      url = post.url || `https://www.douyin.com/video/${post.noteId}`;
+      url = post.url || `https://www.douyin.com/video/${post.dataId}`;
     } else {
       // 默认使用已有的url或者根据noteId构建通用链接
-      url = post.url || `https://www.xiaohongshu.com/explore/${post.noteId}`;
+      url = post.url || `https://www.xiaohongshu.com/explore/${post.dataId}`;
     }
 
     setCurrentUrl(url);
@@ -568,9 +562,16 @@ export default function Page() {
               setActiveAccount(info);
               setActiveAccountType(info.type);
               if (info.type == 'xhs') {
+                setPostList([])
+                setPageInfo({
+                  count: 0,
+                  hasMore: false,
+                  pcursor: 1,
+                })
                 setActiveAccountId(info.id);
-                // getFwqCreatorList();
-                getSearchListFunc(info.id);
+                setTimeout(() => {
+                  getSearchListFunc(info.id);
+                }, 0);
               } else if(info.type == 'KWAI'){
                 setActiveAccountId(info.id);
                 getSearchListFunc(info.id);
@@ -614,7 +615,7 @@ export default function Page() {
             columnClassName={styles.myMasonryGridColumn}
           >
             {postList.map((item: any) => (
-              <div key={item.noteId || item._id} className={styles.masonryItem}>
+              <div key={item.dataId || item.coverUrl} className={styles.masonryItem}>
                 <Card
                   hoverable
                   cover={
@@ -637,10 +638,10 @@ export default function Page() {
                     <Space key="like" onClick={() => likePost(item)}>
                       <LikeOutlined
                         style={{
-                          color: likedPosts[item.noteId]
+                          color: likedPosts[item.dataId]
                             ? '#ff4d4f'
                             : undefined,
-                          fontSize: likedPosts[item.noteId]
+                          fontSize: likedPosts[item.dataId]
                             ? '18px'
                             : undefined,
                         }}
@@ -658,10 +659,10 @@ export default function Page() {
                     <Space key="collect" onClick={() => collectPost(item)}>
                       <StarOutlined
                         style={{
-                          color: collectedPosts[item.noteId]
+                          color: collectedPosts[item.dataId]
                             ? '#faad14'
                             : undefined,
-                          fontSize: collectedPosts[item.noteId]
+                          fontSize: collectedPosts[item.dataId]
                             ? '18px'
                             : undefined,
                         }}
