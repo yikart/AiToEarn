@@ -61,6 +61,7 @@ export type WorkData = {
   };
   author?: {
     name: string;
+    id?: string;
     avatar: string;
   };
   data?: any;

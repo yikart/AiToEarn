@@ -2211,6 +2211,36 @@ export class DouyinService {
     return res;
   }
 
+  // 获取搜索作品列表
+  async getSearchNodeList(
+    cookie: Electron.Cookie[],
+    qe: string, // 搜索关键词
+    pageInfo: {
+      pcursor?: string;
+      count?: number;
+    },
+  ) {
+    let pcursor = (pageInfo.pcursor && Number(pageInfo.pcursor) < 16) ? 0 : pageInfo.pcursor;
+    const thisUri = `https://www.douyin.com/aweme/v1/web/search/item/?${jsonToQueryString(
+      {
+        aid: '1',
+        keyword: qe,
+        offset: pcursor,
+        count: 16,
+      },
+    )}`;
+    console.log('------douyin getsearchNodeList uri: ', thisUri);
+    const res = await requestNet<any>({
+      url: thisUri,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'GET',
+    });
+    console.log('------douyin getsearchNodeList res: ', res);
+    return res;
+  }
+
   // 查看作品的评论列表
   async getCreatorCommentList(
     cookie: Electron.Cookie[],
