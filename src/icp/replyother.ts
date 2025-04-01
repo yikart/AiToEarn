@@ -79,6 +79,23 @@ export async function icpCreatorList(accountId: number, pcursor?: string) {
   return res;
 }
 
+
+/**
+ * 搜索各平台内容
+ */
+export async function getCommentSearchNotes(accountId: number, qe?: string) {
+  const res: {
+    list: WorkData[];
+    pageInfo: {
+      pageType: PageType;
+      count?: number;
+      hasMore?: boolean;
+      pcursor?: string;
+    };
+  } = await window.ipcRenderer.invoke('ICP_SEARCH_NODE_LIST', accountId, qe);
+  return res;
+}
+
 /**
  * 获取评论列表
  */

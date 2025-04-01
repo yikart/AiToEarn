@@ -162,6 +162,10 @@ export interface GetPhotoListResponse {
     }[];
     pcursor: number; // 1515253882683; // 下一页页码
     totalCount: number; // 2;
+    visionSearchPhoto: {
+      feeds: any[];
+    };
+    result?: string;
   };
   message: string; // '成功';
 }

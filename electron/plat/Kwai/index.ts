@@ -19,6 +19,7 @@ import kwaiSign from './sign/KwaiSign';
 
 interface IRequestApiParams extends IRequestNetParams {
   cookie: Electron.Cookie[];
+  apiUrl?: string;
 }
 
 class KwaiPub {
@@ -34,7 +35,7 @@ class KwaiPub {
 
   // 发送请求
   async requestApi<T>(params: IRequestApiParams) {
-    const { cookie } = params;
+    const { cookie, apiUrl = 'https://cp.kuaishou.com' } = params;
 
     if (params.method === 'POST') {
       params['body'] = {
@@ -45,6 +46,8 @@ class KwaiPub {
       };
     }
 
+    console.log('----------- CookieToString(cookie) --- cookies: ', CookieToString(cookie));
+
     params['headers'] = {
       ...(params['headers'] ? params['headers'] : {}),
       cookie: CookieToString(cookie),
@@ -53,14 +56,16 @@ class KwaiPub {
     const signUrl = await kwaiSign.sign({
       json: params.body || {},
       type: 'json',
-      url: params.url,
+      url: `${apiUrl}${params.url || ''}`,
     });
 
     console.log('signUrl：', signUrl);
 
+    console.log('apiUrl：', apiUrl);
+
     return await requestNet<T>({
       ...params,
-      url: `https://cp.kuaishou.com${signUrl}`,
+      url: `${apiUrl == 'https://cp.kuaishou.com' ? signUrl : apiUrl}`,
     });
   }
 
@@ -89,13 +94,13 @@ class KwaiPub {
         },
       });
       await mainWindow.loadURL(
-        'https://passport.kuaishou.com/pc/account/login/?sid=kuaishou.web.cp.api&callback=https%3A%2F%2Fcp.kuaishou.com%2Frest%2Finfra%2Fsts%3FfollowUrl%3Dhttps%253A%252F%252Fcp.kuaishou.com%252Fprofile%26setRootDomain%3Dtrue',
+        'https://www.kuaishou.com/',
       );
 
       // 监听 URL 跳转（导航）事件
       mainWindow.webContents.on('did-navigate', async () => {
         const cookies = await mainWindow.webContents.session.cookies.get({
-          url: 'https://id.kuaishou.com/pass/kuaishou/login/passToken?sid=kuaishou.web.cp.api',
+          // url: 'https://id.kuaishou.com/pass/kuaishou/login/passToken?sid=kuaishou.web.cp.api',
         });
         // 存在关键cookie
         if (cookies.some((v) => v.name === 'passToken')) {
@@ -210,6 +215,35 @@ class KwaiPub {
       body: {
         ...(pcursor ? { pcursor } : {}),
       },
+    });
+    return res;
+  }
+
+
+  // 搜索作品列表
+  async getsearchNodeList(
+    cookies: Electron.Cookie[],
+    pcursor?: any, // sousuo 
+  ) {
+    console.log('----------- getsearchNodeList --- cookies: ', cookies);
+    const res = await this.requestApi<any>({
+      cookie: cookies,
+      apiUrl:'https://www.kuaishou.com/graphql', 
+      method: 'POST',
+      body: {
+        "operationName": "visionSearchPhoto",
+        "variables": {
+        "keyword": '牛le',
+        "pcursor": "",
+        "page": "search"
+        },
+        "query": `fragment photoContent on PhotoEntity {\n  __typename\n  id\n  duration\n  caption\n  originCaption\n  likeCount\n  viewCount\n  commentCount\n  realLikeCount\n  coverUrl\n  photoUrl\n  photoH265Url\n  manifest\n  manifestH265\n  videoResource\n  coverUrls {\n    url\n    __typename\n  }\n  timestamp\n  expTag\n  animatedCoverUrl\n  distance\n  videoRatio\n  liked\n  stereoType\n  profileUserTopPhoto\n  musicBlocked\n  riskTagContent\n  riskTagUrl\n}\n\nfragment recoPhotoFragment on recoPhotoEntity {\n  __typename\n  id\n  duration\n  caption\n  originCaption\n  likeCount\n  viewCount\n  commentCount\n  realLikeCount\n  coverUrl\n  photoUrl\n  photoH265Url\n  manifest\n  manifestH265\n  videoResource\n  coverUrls {\n    url\n    __typename\n  }\n  timestamp\n  expTag\n  animatedCoverUrl\n  distance\n  videoRatio\n  liked\n  stereoType\n  profileUserTopPhoto\n  musicBlocked\n  riskTagContent\n  riskTagUrl\n}\n\nfragment feedContent on Feed {\n  type\n  author {\n    id\n    name\n    headerUrl\n    following\n    headerUrls {\n      url\n      __typename\n    }\n    __typename\n  }\n  photo {\n    ...photoContent\n    ...recoPhotoFragment\n    __typename\n  }\n  canAddComment\n  llsid\n  status\n  currentPcursor\n  tags {\n    type\n    name\n    __typename\n  }\n  __typename\n}\n\nquery visionSearchPhoto($keyword: String, $pcursor: String, $searchSessionId: String, $page: String, $webPageArea: String) {\n  visionSearchPhoto(keyword: $keyword, pcursor: $pcursor, searchSessionId: $searchSessionId, page: $page, webPageArea: $webPageArea) {\n    result\n    llsid\n    webPageArea\n    feeds {\n      ...feedContent\n      __typename\n    }\n    searchSessionId\n    pcursor\n    aladdinBanner {\n      imgUrl\n      link\n      __typename\n    }\n    __typename\n  }\n}\n`
+      },
+      headers:{
+
+        'Referer':'https://www.kuaishou.com/search?keyword=牛le',
+        'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+      }
     });
     return res;
   }
