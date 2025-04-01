@@ -230,7 +230,8 @@ export class Douyin extends PlatformBase {
           data: v,
         });
       }
-  
+      
+      console.log('------douyin getsearchNodeList !!res.data.has_more^^: ', !!res.data.has_more);
       return {
         list,
         pageInfo: {

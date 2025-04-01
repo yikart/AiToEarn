@@ -86,7 +86,7 @@ export default function Page() {
     pcursor?: any;
   }>({
     count: 0,
-    hasMore: false,
+    hasMore: true,
     pcursor: 1,
   });
 
@@ -160,7 +160,7 @@ export default function Page() {
   // 加载更多帖子
   const loadMorePosts = async () => {
     if (!pageInfo.hasMore || isLoadingMore) return;
-
+    
     setIsLoadingMore(true);
     try {
       await getSearchListFunc(activeAccountId, undefined);
@@ -227,11 +227,16 @@ export default function Page() {
 
   // 搜索列表 - 平台自己搜索
   async function getSearchListFunc(thisid: any, qe?: any) {
+    if (!pageInfo.hasMore && pageInfo.pcursor !== 1) {
+      console.log('没有更多数据了，不再发送请求');
+      return;
+    }
+    
     const res = await getCommentSearchNotes(thisid, qe, pageInfo);
-
+    console.log('------ getSearchListFunc -- @@:', res);
     if (res.list?.length) {
       // 如果是加载更多，则追加到现有列表
-      setPostList((prev) => (pageInfo ? [...prev, ...res.list] : res.list));
+      setPostList((prev) => (pageInfo.pcursor !== 1 ? [...prev, ...res.list] : res.list));
 
       // 更新分页信息
       setPageInfo({
@@ -239,6 +244,12 @@ export default function Page() {
         hasMore: res.pageInfo.hasMore || false,
         pcursor: res.pageInfo.pcursor || '',
       });
+    } else {
+      // 如果没有返回数据，设置hasMore为false
+      setPageInfo(prev => ({
+        ...prev,
+        hasMore: false
+      }));
     }
   }
 
@@ -526,7 +537,9 @@ export default function Page() {
       post.url?.includes('douyin.com')
     ) {
       // 抖音链接格式
-      url = post.url || `https://www.douyin.com/video/${post.dataId}`;
+      console.log('------ post.dataId', post.dataId);
+      url = `https://www.douyin.com/video/${post.dataId}`;
+      console.log('------ url 2:', url);
     } else {
       // 默认使用已有的url或者根据noteId构建通用链接
       url = post.url || `https://www.xiaohongshu.com/explore/${post.dataId}`;
@@ -557,30 +570,22 @@ export default function Page() {
           onAccountChange={useCallback(
             (info) => {
               console.log('------ onAccountChange', info);
+              setPageInfo({
+                count: 0,
+                hasMore: false,
+                pcursor: 1,
+              });
               setActiveAccount(info);
               setActiveAccountType(info.type);
 
               setPostList([]);
-                setPageInfo({
-                  count: 0,
-                  hasMore: false,
-                  pcursor: 1,
-                });
                 
-              if (info.type == 'xhs') {
                 
                 setActiveAccountId(info.id);
                 setTimeout(() => {
                   getSearchListFunc(info.id);
                 }, 0);
-              } else if (info.type == 'KWAI') {
-                setActiveAccountId(info.id);
-                getSearchListFunc(info.id);
-              } else if (info.type == 'douyin') {
-                console.log('------ douyin 开始搜索 ');
-                setActiveAccountId(info.id);
-                getSearchListFunc(info.id, '英雄杀');
-              }
+              
             },
             [getCreatorList],
           )}
@@ -682,7 +687,7 @@ export default function Page() {
                   <Card.Meta
                     avatar={
                       <Avatar
-                        src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${item.author?.name}`}
+                        src={`${item.author?.avatar}`}
                       />
                     }
                     title={item.author?.name}
@@ -702,18 +707,21 @@ export default function Page() {
             ))}
           </Masonry>
 
-          {/* 替换原来的加载更多按钮为自动加载区域 */}
-          <div ref={loadMoreRef} className={styles.loadMoreArea}>
+          {/* 加载更多区域 */}
+          <div 
+            ref={loadMoreRef} 
+            className={styles.loadMoreArea}
+          >
             {isLoadingMore && (
               <div className={styles.loadingMore}>
                 <Spin size="small" />
                 <span style={{ marginLeft: 8 }}>加载中...</span>
               </div>
             )}
-
+            
             {!pageInfo.hasMore && postList.length > 0 && (
               <div className={styles.noMoreData}>
-                <Divider plain>没有更多内容了</Divider>
+                <Divider plain>没有更多数据了</Divider>
               </div>
             )}
           </div>
