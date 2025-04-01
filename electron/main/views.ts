@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-17 21:26:26
- * @LastEditTime: 2025-03-24 20:55:14
+ * @LastEditTime: 2025-04-01 17:26:37
  * @LastEditors: nevin
  * @Description: 浏览器视图
  */
@@ -12,6 +12,7 @@ import path from 'path';
 import requestNet from '../plat/requestNet';
 // @ts-ignore
 import coordtransform from 'coordtransform';
+import { logger } from '../global/log';
 
 export interface ISaveFileParams {
   // 要保存的路由
@@ -57,17 +58,23 @@ export function views(win: Electron.BrowserWindow) {
     'ICP_VIEWS_SAVE_FILE',
     (event, { saveDir, filename, file }: ISaveFileParams) => {
       return new Promise(async (resolve) => {
+        logger.info('保存文件----111', { saveDir, filename, file });
         const outputDir = path.join(
           FileUtils.getAppDataPath()!,
           'resource/images/cropper',
         );
+        logger.info('保存文件----222', outputDir);
+
         await FileUtils.checkDirectories(outputDir + saveDir);
         const filePath = outputDir + saveDir + '/' + filename;
+        logger.info('保存文件----filePath', filePath);
 
         fs.writeFile(filePath, file, (err) => {
           if (err) {
+            logger.error('保存错误', err);
             console.error('保存错误', err);
           } else {
+            logger.info('文件保存成功：', filePath);
             console.log('文件保存成功：', filePath);
             resolve(filePath);
           }

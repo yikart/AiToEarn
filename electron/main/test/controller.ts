@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-04-01 16:11:14
+ * @LastEditTime: 2025-04-01 17:40:23
  * @LastEditors: nevin
  * @Description: Test test
  */
@@ -25,7 +25,7 @@ export class TestController {
     event: Electron.IpcMainInvokeEvent,
     path: string,
   ): Promise<any> {
-    const res = await FileUtils.getFileInfo(path);
+    const res = await FileUtils.getFileInfo('/Users/yika/Downloads/1.mp4');
     console.log('---- res ----', res);
     return res;
   }
