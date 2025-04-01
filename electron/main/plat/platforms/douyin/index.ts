@@ -435,6 +435,12 @@ export class Douyin extends PlatformBase {
           uid: `${v.value}`,
         };
       }),
+      mixInfo: params.mixInfo
+        ? {
+            mixId: `${params.mixInfo.value}`,
+            mixName: params.mixInfo.label,
+          }
+        : undefined,
       title: params.title || '',
       topics: params.topics,
       caption: params.desc,

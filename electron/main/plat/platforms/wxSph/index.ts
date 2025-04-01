@@ -337,11 +337,19 @@ export class WxSph extends PlatformBase {
     callback: VideoCallbackType,
   ): Promise<PublishVideoResult> {
     return new Promise(async (resolve) => {
+      const wxSphParams = params.diffParams![AccountType.WxSph]!;
       const result = await shipinhaoService
         .publishVideoWorkApi(
           params.cookies!,
           params.videoPath!,
           {
+            mixInfo: params.mixInfo
+              ? {
+                  mixId: `${params.mixInfo.value}`,
+                  mixName: params.mixInfo.label,
+                }
+              : undefined,
+            postFlag: wxSphParams.isOriginal ? 1 : 0,
             cover: params.coverPath!,
             title: params.desc,
             topics: params.topics,
@@ -369,7 +377,7 @@ export class WxSph extends PlatformBase {
                 })
               : undefined,
             // 活动
-            event: params.diffParams![AccountType.WxSph]!.activity,
+            event: wxSphParams.activity,
           },
           callback,
         )

@@ -1051,7 +1051,7 @@ export class ShipinhaoService {
           latitude: 0,
           feedLongitude: 0,
           feedLatitude: 0,
-          originalFlag: 1,
+          originalFlag: 0,
           topics: topics,
           isFullPost: 1,
           handleFlag: 2,
@@ -1086,9 +1086,10 @@ export class ShipinhaoService {
                 urlCdnTaskId: clipResult['clipKey'],
               },
             ],
+            postFlag: platformSetting.postFlag || 0,
             member: {},
           },
-          postFlag: 0,
+          postFlag: platformSetting.postFlag || 0,
           mode: 1,
           clientid: this.getUniqueTaskId(),
           timestamp: Date.now(),
@@ -1234,6 +1235,8 @@ export class ShipinhaoService {
         eventTopicId: string;
         eventName: string;
       };
+      // 0=非原创 1=原创
+      postFlag: 0 | 1;
     },
     callback: (progress: number, msg?: string) => void,
   ): Promise<{
