@@ -577,7 +577,7 @@ export default function Page() {
                 setActiveAccountId(info.id);
                 getSearchListFunc(info.id);
               } else if (info.type == 'douyin') {
-                console.log('------ douyin kaihis ');
+                console.log('------ douyin 开始搜索 ');
                 setActiveAccountId(info.id);
                 getSearchListFunc(info.id, '英雄杀');
               }
