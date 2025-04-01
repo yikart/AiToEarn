@@ -195,7 +195,7 @@ export class Douyin extends PlatformBase {
    * @param pcursor
    * @returns
    */
-    async getsearchNodeList(
+    async getsearchNodeList( 
       account: AccountModel,
       qe: string,
       pageInfo?: any,

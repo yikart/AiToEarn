@@ -579,7 +579,7 @@ export default function Page() {
               } else if (info.type == 'douyin') {
                 console.log('------ douyin kaihis ');
                 setActiveAccountId(info.id);
-                getSearchListFunc(info.id, '英雄杀道一');
+                getSearchListFunc(info.id, '英雄杀');
               }
             },
             [getCreatorList],
