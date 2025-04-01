@@ -109,7 +109,6 @@ class KwaiPub {
         const cookies = await mainWindow.webContents.session.cookies.get({});
         // 存在关键cookie
         if (cookies.some((v) => v.name === 'kuaishou.server.webday7_ph')) {
-          console.log('前台Cookie：', cookies);
           clearInterval(timeId1);
           // 开发者后台
           await mainWindow.loadURL(
@@ -124,8 +123,6 @@ class KwaiPub {
             if (cookies.some((v) => v.name === 'ks_onvideo_token')) {
               const cookiesLast =
                 await mainWindow.webContents.session.cookies.get({});
-              console.log('---------------------');
-              console.log('最终Cookie：', cookiesLast);
               const userInfoReq = await this.getAccountInfo(cookiesLast);
               if (userInfoReq.status === 200 && userInfoReq.data.data) {
                 clearInterval(timeId2);
@@ -171,8 +168,6 @@ class KwaiPub {
     keyword: string;
     cookies: Electron.Cookie[];
   }) {
-    console.log("111111111111111");
-    console.log(cookies);
     return await this.requestApi<IKwaiGetTopicsResponse>({
       cookie: cookies,
       url: `/rest/cp/works/v2/video/pc/tag/search`,

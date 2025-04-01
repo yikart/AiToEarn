@@ -58,7 +58,7 @@ export function views(win: Electron.BrowserWindow) {
     'ICP_VIEWS_SAVE_FILE',
     (event, { saveDir, filename, file }: ISaveFileParams) => {
       return new Promise(async (resolve) => {
-        logger.info('保存文件----111', { saveDir, filename, file });
+        logger.info('保存文件----111', { saveDir });
         const outputDir = path.join(
           FileUtils.getAppDataPath()!,
           'resource/images/cropper',
