@@ -16,7 +16,6 @@ import {
   IGetTopicsParams,
   IGetTopicsResponse,
   IGetUsersParams,
-  ResponsePageInfo,
   VideoCallbackType,
   WorkData,
 } from '../../plat.type';
@@ -136,55 +135,58 @@ export class Xhs extends PlatformBase {
     return res;
   }
 
-    /**
+  /**
    * 搜索作品列表
    * @param account
    * @param pcursor
    * @returns
    */
-    async getsearchNodeList(account: AccountModel, qe?: string,pageInfo?:any) {
-      console.log('------ getsearchNodeList xhs pageInfo---', pageInfo);
-      const pageNo = pageInfo ? Number.parseInt(pageInfo.pcursor) : 0;
-      console.log('------ getsearchNodeList xhs pageNo---', pageNo);
-      const pageSize = 20;
-  
-      const cookie: CookiesType = JSON.parse(account.loginCookie);
-      const res = await xiaohongshuService.getSearchNodeList(
-        CookieToString(cookie),
-        qe || '',
-        pageNo,
-      );
-      console.log('------ getsearchNodeList xhs res---', res.data.data.items[0].note_card);
+  async getsearchNodeList(account: AccountModel, qe?: string, pageInfo?: any) {
+    console.log('------ getsearchNodeList xhs pageInfo---', pageInfo);
+    const pageNo = pageInfo ? Number.parseInt(pageInfo.pcursor) : 0;
+    console.log('------ getsearchNodeList xhs pageNo---', pageNo);
+    const pageSize = 20;
 
-      const list:WorkData[] = res.data.data.items.map((v:any) => ({
-        dataId: v.id,
-        readCount: v.note_card?.interact_info?.view_count,
-        likeCount: v.note_card?.interact_info?.liked_count,
-        collectCount: v.note_card?.interact_info?.collected_count,
-        commentCount: v.note_card?.interact_info?.comment_count,
-        title: v.note_card?.display_title,
-        coverUrl: v.note_card?.cover.url_default || '',
-        option: {
-          xsec_token: v.xsec_token,
-        },
-        author: {
-          name: v.note_card?.user?.nickname,
-          avatar: v.note_card?.user?.avatar,
-        },
-        data: v,
-      }));
-  
-      const count = res.data.data?.tags?.[0]?.notes_count || 0;
-      const hasMore = res.data.data.has_more;
-      return {
-        list,
-        pageInfo: {
-          count,
-          hasMore,
-          pcursor: hasMore ? pageNo + 1 + '' : '',
-        },
-      };
-    }
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await xiaohongshuService.getSearchNodeList(
+      CookieToString(cookie),
+      qe || '',
+      pageNo,
+    );
+    console.log(
+      '------ getsearchNodeList xhs res---',
+      res.data.data.items[0].note_card,
+    );
+
+    const list: WorkData[] = res.data.data.items.map((v: any) => ({
+      dataId: v.id,
+      readCount: v.note_card?.interact_info?.view_count,
+      likeCount: v.note_card?.interact_info?.liked_count,
+      collectCount: v.note_card?.interact_info?.collected_count,
+      commentCount: v.note_card?.interact_info?.comment_count,
+      title: v.note_card?.display_title,
+      coverUrl: v.note_card?.cover.url_default || '',
+      option: {
+        xsec_token: v.xsec_token,
+      },
+      author: {
+        name: v.note_card?.user?.nickname,
+        avatar: v.note_card?.user?.avatar,
+      },
+      data: v,
+    }));
+
+    const count = res.data.data?.tags?.[0]?.notes_count || 0;
+    const hasMore = res.data.data.has_more;
+    return {
+      list,
+      pageInfo: {
+        count,
+        hasMore,
+        pcursor: hasMore ? pageNo + 1 + '' : '',
+      },
+    };
+  }
 
   /**
    * 获取作品列表
@@ -656,8 +658,6 @@ export class Xhs extends PlatformBase {
       });
     });
   }
-
-
 }
 
 const xhs = new Xhs();

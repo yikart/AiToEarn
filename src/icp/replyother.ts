@@ -79,11 +79,14 @@ export async function icpCreatorList(accountId: number, pcursor?: string) {
   return res;
 }
 
-
 /**
  * 搜索各平台内容
  */
-export async function getCommentSearchNotes(accountId: number, qe?: string,pageInfo?:any) {
+export async function getCommentSearchNotes(
+  accountId: number,
+  qe?: string,
+  pageInfo?: any,
+) {
   const res: {
     list: WorkData[];
     pageInfo: {
@@ -92,7 +95,12 @@ export async function getCommentSearchNotes(accountId: number, qe?: string,pageI
       hasMore?: boolean;
       pcursor?: string;
     };
-  } = await window.ipcRenderer.invoke('ICP_SEARCH_NODE_LIST', accountId, qe,pageInfo);
+  } = await window.ipcRenderer.invoke(
+    'ICP_SEARCH_NODE_LIST',
+    accountId,
+    qe,
+    pageInfo,
+  );
   return res;
 }
 

@@ -13,7 +13,6 @@ import {
   CommentData,
   icpCreateCommentList,
   getCommentSearchNotes,
-  
 } from '@/icp/replyother';
 import {
   Avatar,
@@ -143,24 +142,24 @@ export default function Page() {
 
   // 添加加载状态
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  
+
   // 使用 react-intersection-observer 创建一个观察器
   const { ref: loadMoreRef, inView } = useInView({
     threshold: 0.5, // 当元素50%可见时触发
-    triggerOnce: false // 允许多次触发
+    triggerOnce: false, // 允许多次触发
   });
-  
+
   // 监听 inView 变化，当元素可见时加载更多
   useEffect(() => {
     if (inView && pageInfo.hasMore && !isLoadingMore) {
       loadMorePosts();
     }
   }, [inView, pageInfo.hasMore, isLoadingMore]);
-  
+
   // 加载更多帖子
   const loadMorePosts = async () => {
     if (!pageInfo.hasMore || isLoadingMore) return;
-    
+
     setIsLoadingMore(true);
     try {
       await getSearchListFunc(activeAccountId, undefined);
@@ -225,20 +224,19 @@ export default function Page() {
     setWordList(res.list);
   }
 
-
-// 搜索列表 - 平台自己搜索
-  async function getSearchListFunc(thisid:any, qe?:any,) {
+  // 搜索列表 - 平台自己搜索
+  async function getSearchListFunc(thisid: any, qe?: any) {
     const res = await getCommentSearchNotes(thisid, qe, pageInfo);
-    
+
     if (res.list?.length) {
       // 如果是加载更多，则追加到现有列表
-      setPostList(prev => pageInfo ? [...prev, ...res.list] : res.list);
-      
+      setPostList((prev) => (pageInfo ? [...prev, ...res.list] : res.list));
+
       // 更新分页信息
       setPageInfo({
         count: res.pageInfo.count || 0,
         hasMore: res.pageInfo.hasMore || false,
-        pcursor: res.pageInfo.pcursor || ''
+        pcursor: res.pageInfo.pcursor || '',
       });
     }
   }
@@ -293,7 +291,7 @@ export default function Page() {
   /**
    * 获取二级评论列表
    */
-  async function getSecondCommentList(item: any) { 
+  async function getSecondCommentList(item: any) {
     try {
       const res = await icpGetSecondCommentListByOther(
         activeAccountId,
@@ -379,8 +377,7 @@ export default function Page() {
       const res = await icpGetCommentListByOther(activeAccountId, {
         dataId: post.dataId,
         option: {
-          xsec_token:
-            post.option.xsec_token || post.xsec_token,
+          xsec_token: post.option.xsec_token || post.xsec_token,
         },
       });
 
@@ -562,20 +559,20 @@ export default function Page() {
               setActiveAccount(info);
               setActiveAccountType(info.type);
               if (info.type == 'xhs') {
-                setPostList([])
+                setPostList([]);
                 setPageInfo({
                   count: 0,
                   hasMore: false,
                   pcursor: 1,
-                })
+                });
                 setActiveAccountId(info.id);
                 setTimeout(() => {
                   getSearchListFunc(info.id);
                 }, 0);
-              } else if(info.type == 'KWAI'){
+              } else if (info.type == 'KWAI') {
                 setActiveAccountId(info.id);
                 getSearchListFunc(info.id);
-              }else{
+              } else {
                 setActiveAccountId(info.id);
                 getCreatorList(info.id);
               }
@@ -615,7 +612,10 @@ export default function Page() {
             columnClassName={styles.myMasonryGridColumn}
           >
             {postList.map((item: any) => (
-              <div key={item.dataId || item.coverUrl} className={styles.masonryItem}>
+              <div
+                key={item.dataId || item.coverUrl}
+                className={styles.masonryItem}
+              >
                 <Card
                   hoverable
                   cover={
@@ -648,7 +648,10 @@ export default function Page() {
                       />
                       <span>{item.likeCount || 0}</span>
                     </Space>,
-                    <Space key="comment-list" onClick={() => showCommentModal(item)}>
+                    <Space
+                      key="comment-list"
+                      onClick={() => showCommentModal(item)}
+                    >
                       <UnorderedListOutlined />
                       <span>{item.commentCount || 0}</span>
                     </Space>,
@@ -695,17 +698,14 @@ export default function Page() {
           </Masonry>
 
           {/* 替换原来的加载更多按钮为自动加载区域 */}
-          <div 
-            ref={loadMoreRef} 
-            className={styles.loadMoreArea}
-          >
+          <div ref={loadMoreRef} className={styles.loadMoreArea}>
             {isLoadingMore && (
               <div className={styles.loadingMore}>
                 <Spin size="small" />
                 <span style={{ marginLeft: 8 }}>加载中...</span>
               </div>
             )}
-            
+
             {!pageInfo.hasMore && postList.length > 0 && (
               <div className={styles.noMoreData}>
                 <Divider plain>没有更多内容了</Divider>

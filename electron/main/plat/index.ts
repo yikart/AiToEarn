@@ -212,9 +212,13 @@ class PlatController {
    * @param account
    * @param pcursor
    */
-  public async getsearchNodeList(account: AccountModel, qe?: string,pageInfo?:any) {
+  public async getsearchNodeList(
+    account: AccountModel,
+    qe?: string,
+    pageInfo?: any,
+  ) {
     const platform = this.platforms.get(account.type)!;
-    return await platform.getsearchNodeList(account, qe,pageInfo);
+    return await platform.getsearchNodeList(account, qe, pageInfo);
   }
 
   /**

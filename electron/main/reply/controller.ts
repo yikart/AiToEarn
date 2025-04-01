@@ -93,28 +93,28 @@ export class ReplyController {
     return res;
   }
 
-    /**
+  /**
    * 搜索列表
    */
-    @Icp('ICP_SEARCH_NODE_LIST')
-    async getSearchNodeList(
-      event: Electron.IpcMainInvokeEvent,
-      accountId: number,
-      qe?: string,
-      pageInfo?:any
-    ) {
-      const account = await this.accountService.getAccountById(accountId);
-  
-      if (!account)
-        return {
-          list: [],
-          count: 0,
-        };
-  
-      const res = await platController.getsearchNodeList(account, qe,pageInfo);
-  
-      return res;
-    }
+  @Icp('ICP_SEARCH_NODE_LIST')
+  async getSearchNodeList(
+    event: Electron.IpcMainInvokeEvent,
+    accountId: number,
+    qe?: string,
+    pageInfo?: any,
+  ) {
+    const account = await this.accountService.getAccountById(accountId);
+
+    if (!account)
+      return {
+        list: [],
+        count: 0,
+      };
+
+    const res = await platController.getsearchNodeList(account, qe, pageInfo);
+
+    return res;
+  }
 
   /**
    * 获取评论列表
