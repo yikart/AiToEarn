@@ -8,7 +8,6 @@
     "output": "release/${version}"
   },
   "files": ["dist-electron", "dist"],
-  "beforePack": "scripts/cleanup-ffmpeg.cjs",
   "mac": {
     "identity": null,
     "artifactName": "${productName}-${version}-${arch}.${ext}",
