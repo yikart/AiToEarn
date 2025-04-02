@@ -16,7 +16,6 @@ import { Repository } from 'typeorm';
 import { AppDataSource } from '../../db';
 import { getUserInfo } from '../user/comment';
 import { AutoRunRecordStatus } from '../../db/models/autoRunRecord';
-import { WorkData } from '../plat/plat.type';
 import { GlobleCache } from '../../global/cache';
 import { sleep } from '../../util/time';
 import { InteractionRecordModel } from '../../db/models/interactionRecord';
@@ -185,13 +184,41 @@ export class InteractionService {
 
           // ----- 2-点赞作品 -----
           let isLike: 0 | 1 = 0;
-          const isLikeRes = await platController.dianzanDyOther(
-            account,
-            works.worksId,
-          );
+          try {
+            const isLikeRes = await platController.dianzanDyOther(
+              account,
+              works.worksId,
+            );
+            isLike = isLikeRes ? 1 : 0;
+          } catch (error) {
+            scheduleEvent({
+              tag: AutorWorksInteractionScheduleEvent.Error,
+              status: 0,
+              error,
+              data: {
+                isLike,
+              },
+            });
+          }
 
           // ----- 3-收藏作品 -----
           let isCollect: 0 | 1 = 0;
+          try {
+            const isCollectRes = await platController.shoucangDyOther(
+              account,
+              works.worksId,
+            );
+            isCollect = isCollectRes ? 1 : 0;
+          } catch (error) {
+            scheduleEvent({
+              tag: AutorWorksInteractionScheduleEvent.Error,
+              status: 0,
+              error,
+              data: {
+                isLike,
+              },
+            });
+          }
 
           // 创建评论记录
           this.create(
@@ -233,7 +260,15 @@ export class InteractionService {
    */
   async addReplyQueue(
     account: AccountModel,
-    data: WorkData,
+    worksList: {
+      worksId: string;
+      desc: string; // 用来AI生成
+      title?: string;
+      cover?: string;
+    }[],
+    option: {
+      commentContent: string; // 评论内容
+    },
     autoRun: AutoRunModel,
   ): Promise<{
     status: 0 | 1;
@@ -254,19 +289,20 @@ export class InteractionService {
 
     // 添加到队列
     this.replyQueue.add(() => {
-      this.autorReplyComment(
+      this.autorInteraction(
         account,
-        data,
+        worksList,
+        option,
         (e: {
-          tag: AutorReplyCommentScheduleEvent;
+          tag: AutorWorksInteractionScheduleEvent;
           status: -1 | 0 | 1;
           error?: any;
         }) => {
-          if (e.tag === AutorReplyCommentScheduleEvent.Start) {
+          if (e.tag === AutorWorksInteractionScheduleEvent.Start) {
             sysNotice('自动机评论回复任务执行开始', `任务ID:${autoRun.id}`);
           }
 
-          if (e.tag === AutorReplyCommentScheduleEvent.End) {
+          if (e.tag === AutorWorksInteractionScheduleEvent.End) {
             sysNotice('自动机评论回复任务执行结束', `任务ID:${autoRun.id}`);
             this.autoRunService.updateAutoRunRecordStatus(
               recordData.id,
@@ -274,7 +310,7 @@ export class InteractionService {
             );
           }
 
-          if (e.tag === AutorReplyCommentScheduleEvent.Error) {
+          if (e.tag === AutorWorksInteractionScheduleEvent.Error) {
             sysNotice('自动机评论回复任务-错误!!!', `任务ID:${autoRun.id}`);
             this.autoRunService.updateAutoRunRecordStatus(
               recordData.id,
