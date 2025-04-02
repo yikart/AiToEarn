@@ -17,7 +17,7 @@ import {
   UploadPpreResponse,
 } from './kwai.type';
 import { CookieToString } from '../utils';
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, screen } from 'electron';
 import kwaiSign from './sign/KwaiSign';
 import { FileUtils } from '../../util/file';
 import { getFilePathNameCommon } from '../../../commont/utils';
@@ -30,6 +30,28 @@ interface IRequestApiParams extends IRequestNetParams {
 class KwaiPub {
   fileBlockSize = 4194304;
 
+  // 普通参数转换为快手参数
+  convertKwaiParams(params: IKwaiPubVideoParams) {
+    const kwaiParams: any = {};
+    kwaiParams['caption'] = params.desc;
+
+    // 话题处理
+    if (params.topics) {
+      kwaiParams['caption'] = ` ${params.topics.join(' ')}`;
+    }
+
+    // 位置处理
+    if (params.poiInfo) {
+      kwaiParams['poiId'] = params.poiInfo.poiId;
+      kwaiParams['latitude'] = params.poiInfo.latitude;
+      kwaiParams['longitude'] = params.poiInfo.longitude;
+    }
+
+    return {
+      ...kwaiParams,
+      photoStatus: params.photoStatus,
+    };
+  }
   // 发布视频
   async pubVideo(params: IKwaiPubVideoParams): Promise<{
     publishId: string;
@@ -75,7 +97,7 @@ class KwaiPub {
           console.log(uploadVideoRes.data);
         }
 
-        callback(60, `查看分片上传结果...`);
+        callback(60, `查询分片上传结果...`);
         const completeRes = await this.requestApi({
           apiUrl: `https://upload.kuaishouzt.com/api/upload/complete?upload_token=${preRes.data.data.token}&fragment_count=${filePartInfo.blockInfo.length}`,
           method: 'POST',
@@ -99,12 +121,10 @@ class KwaiPub {
           },
         });
         console.log(`视频上传结束：`, finishRes.data);
-        callback(80, `视频上传结束，正发布视频...`);
+        callback(80, `正发布视频...`);
         const submitParams = {
           ...finishRes.data.data,
           coverTimeStamp: 0,
-          caption: '',
-          photoStatus: 2,
           coverType: 1,
           coverTitle: '',
           photoType: 0,
@@ -133,6 +153,7 @@ class KwaiPub {
           videoInfoMeta: '',
           previewUrlErrorMessage: '',
           triggerH265: false,
+          ...this.convertKwaiParams(params),
         };
         console.log('发布参数:', submitParams);
         const submitRes = await this.requestApi<KwaiSubmitResponse>({
@@ -202,9 +223,10 @@ class KwaiPub {
   login(): Promise<ILoginResponse> {
     return new Promise(async (resolve, reject) => {
       const partition = Date.now().toString();
+      const { width, height } = screen.getPrimaryDisplay().workAreaSize;
       const mainWindow = new BrowserWindow({
-        width: 1300,
-        height: 600,
+        width: Math.ceil(width * 0.8),
+        height: Math.ceil(height * 0.8),
         webPreferences: {
           contextIsolation: false,
           nodeIntegration: false,

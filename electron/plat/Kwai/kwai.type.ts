@@ -1,5 +1,4 @@
 import { IRequestNetResult } from '../requestNet';
-import { KwaiVisibleTypeEnum } from '../plat.common.type';
 
 interface AbConfig {
   cpPublishNewPage2024: boolean;
@@ -149,16 +148,24 @@ export type IKwaiGetLocationsResponse = {
 export interface IKwaiPubVideoParams {
   // cookies
   cookies: Electron.Cookie[];
+  // 话题
+  topics: string[];
   // 发布视频的简介
   desc: string;
   // 视频的路径
   videoPath: string;
   // 封面路径
   coverPath: string;
-  // 视频可见性
-  visibleType: KwaiVisibleTypeEnum;
   // 发布回调，可以用于获取发布进度
   callback: (progress: number, msg?: string) => void;
+  // 位置
+  poiInfo?: {
+    poiId: string;
+    latitude: string;
+    longitude: string;
+  };
+  // 作品权限 1=所有人可见 2=仅自己可见 4=好友可见
+  photoStatus: 1 | 2 | 4;
 }
 
 // 登录返回参数

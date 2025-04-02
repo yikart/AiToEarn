@@ -26,10 +26,9 @@ import { IRequestNetResult } from '../../../../plat/requestNet';
 import { IKwaiUserInfoResponse } from '../../../../plat/Kwai/kwai.type';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
-import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
-import { KwaiVisibleTypeEnum } from '../../../../plat/plat.common.type';
 import dayjs from 'dayjs';
 import { VideoModel } from '../../../../db/models/video';
+import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
 
 export class Kwai extends PlatformBase {
   constructor() {
@@ -87,16 +86,25 @@ export class Kwai extends PlatformBase {
     return new Promise(async (resolve) => {
       const result = await kwaiPub
         .pubVideo({
+          topics: params.topics || [],
           videoPath: params.videoPath || '',
           coverPath: params.coverPath || '',
           cookies: params.cookies!,
           desc: params.desc + params.topics.map((v) => `#${v}`).join(' '),
           callback,
-          visibleType: VisibleTypeEnum.Public
-            ? KwaiVisibleTypeEnum.Public
-            : VisibleTypeEnum.Friend
-              ? KwaiVisibleTypeEnum.Friend
-              : KwaiVisibleTypeEnum.Private,
+          photoStatus:
+            params.visibleType === VisibleTypeEnum.Public
+              ? 1
+              : params.visibleType === VisibleTypeEnum.Private
+                ? 2
+                : 4,
+          poiInfo: params.location
+            ? {
+                poiId: params.location.id,
+                latitude: `${params.location.latitude}`,
+                longitude: `${params.location.longitude}`,
+              }
+            : undefined,
         })
         .catch((e) => {
           resolve({

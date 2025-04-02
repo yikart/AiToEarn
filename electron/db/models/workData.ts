@@ -61,57 +61,11 @@ export class WorkData extends TempModel {
   @Column({ type: 'varchar', nullable: false, comment: '用户id' })
   userId!: string;
 
-  // 标题
-  @Column({ type: 'varchar', nullable: true, comment: '标题' })
-  title?: string;
-
-  // 简介
-  @Column({ type: 'varchar', nullable: true, comment: '简介' })
-  desc?: string;
-
-  // 封面路径
-  @Column({ type: 'varchar', nullable: true, comment: '封面路径' })
-  coverPath?: string;
-
   // 最后统计时间
   @Column({ type: 'datetime', nullable: true, comment: '最后统计时间' })
   lastStatsTime?: Date;
 
-  // 话题
-  @Column({ type: 'json', nullable: true, comment: '话题', default: '[]' })
-  topics!: string[];
-
-  // 位置
-  @Column({ type: 'json', nullable: true, comment: '位置' })
-  location?: ILocationDataItem;
-
-  // 差异化参数
-  @Column({
-    type: 'json',
-    nullable: true,
-    comment: '不同平台的差异化参数',
-    default: '{}',
-  })
-  diffParams?: DiffParmasType;
-
-  // 可见性
-  @Column({
-    type: 'tinyint',
-    nullable: false,
-    comment: '可见性',
-    default: VisibleTypeEnum.Private,
-  })
-  visibleType?: VisibleTypeEnum;
-
-  // 定时发布日期
-  @Column({ type: 'datetime', nullable: true, comment: '定时发布日期' })
-  timingTime?: Date;
-
-  // @用户
-  @Column({ type: 'json', nullable: true, comment: '@用户数组', default: '[]' })
-  mentionedUserInfo!: ILableValue[];
-
-  // 预览地址
+  // 预览地址，这个值是发布完成手动拼接的
   @Column({ type: 'varchar', nullable: true, comment: '预览地址' })
   previewVideoLink?: string;
 
@@ -149,10 +103,6 @@ export class WorkData extends TempModel {
   })
   failMsg?: string;
 
-  // 合集
-  @Column({ type: 'json', nullable: true, comment: '合集' })
-  mixInfo?: ILableValue;
-
   // 状态
   @Column({
     type: 'tinyint',
@@ -185,6 +135,62 @@ export class WorkData extends TempModel {
   // 收益(分)
   @Column({ type: 'bigint', nullable: false, comment: '收益', default: 0 })
   income?: number;
+
+  // 以下为发布需要的参数 --------------------------------------------------------------------
+
+  // 标题
+  @Column({ type: 'varchar', nullable: true, comment: '标题' })
+  title?: string;
+
+  // 简介，简介中不该包含话题，如果有需要每个平台再自己做处理。
+  @Column({ type: 'varchar', nullable: true, comment: '简介' })
+  desc?: string;
+
+  // 封面路径，机器的本地路径
+  @Column({ type: 'varchar', nullable: true, comment: '封面路径' })
+  coverPath?: string;
+
+  // 合集
+  @Column({ type: 'json', nullable: true, comment: '合集' })
+  mixInfo?: ILableValue;
+
+  // 话题 格式：['话题1', '话题2']，不该包含 ‘#’
+  @Column({ type: 'json', nullable: true, comment: '话题', default: '[]' })
+  topics!: string[];
+
+  // 位置
+  @Column({ type: 'json', nullable: true, comment: '位置' })
+  location?: ILocationDataItem;
+
+  /**
+   * 差异化参数
+   * 所有平台有通用参数，如：标题、话题、简介
+   * 也有每个平台自己独有的参数，如：抖音活动奖励、抖音热点、视频号声明原创
+   */
+  @Column({
+    type: 'json',
+    nullable: true,
+    comment: '不同平台的差异化参数',
+    default: '{}',
+  })
+  diffParams?: DiffParmasType;
+
+  // 可见性,作品的查看权限
+  @Column({
+    type: 'tinyint',
+    nullable: false,
+    comment: '可见性',
+    default: VisibleTypeEnum.Private,
+  })
+  visibleType?: VisibleTypeEnum;
+
+  // 定时发布日期
+  @Column({ type: 'datetime', nullable: true, comment: '定时发布日期' })
+  timingTime?: Date;
+
+  // @用户
+  @Column({ type: 'json', nullable: true, comment: '@用户数组', default: '[]' })
+  mentionedUserInfo!: ILableValue[];
 
   cookies?: CookiesType;
 }
