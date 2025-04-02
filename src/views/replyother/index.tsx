@@ -158,10 +158,13 @@ export default function Page() {
 
   // 加载更多帖子
   const loadMorePosts = async () => {
+    // console.log('------ loadMorePosts == 1');
     if (!pageInfo.hasMore || isLoadingMore || !searchKeyword || searchKeyword == '') return;
-
-    if(!postFirstId || postFirstId == '') return;
-    
+    // console.log('------ loadMorePosts == 2');
+    if(activeAccountType !== 'xhs'){
+      if(!postFirstId || postFirstId == '') return;
+    }
+    // console.log('------ loadMorePosts == 3');
     setIsLoadingMore(true);
     try {
       setTimeout(async () => {
@@ -217,7 +220,7 @@ export default function Page() {
   >({});
 
   // 添加搜索关键词状态
-  const [searchKeyword, setSearchKeyword] = useState('爱团团');
+  const [searchKeyword, setSearchKeyword] = useState('英雄杀道一');
 
   async function getCreatorList(thisid: any) {
     setWordList([]);
@@ -242,6 +245,9 @@ export default function Page() {
     console.log('------ getSearchListFunc -- @@:', res);
     if (isfirst && activeAccountType == 'douyin') {
       setPostFirstId(res.orgList?.log_pb?.impr_id);
+    } else if (isfirst &&activeAccountType == 'KWAI') {
+      console.log('------ getSearchListFunc -- @@:', res.orgList?.searchSessionId);
+      setPostFirstId(res.orgList?.searchSessionId);
     }
     if (res.list?.length) {
       // 如果是加载更多，则追加到现有列表
@@ -529,6 +535,9 @@ export default function Page() {
       console.log('------ post.dataId', post.dataId);
       url = `https://www.douyin.com/video/${post.dataId}`;
       console.log('------ url 2:', url);
+    } else if(activeAccountType == 'KWAI'){
+      // 快手链接格式
+      url = `https://www.kuaishou.com/short-video/${post.dataId}`;
     } else {
       // 默认使用已有的url或者根据noteId构建通用链接
       url = post.url || `https://www.xiaohongshu.com/explore/${post.dataId}`;
@@ -589,7 +598,7 @@ export default function Page() {
                 setActiveAccountId(info.id);
                 setTimeout(() => {
                   getSearchListFunc(info.id, searchKeyword, true);
-                }, 0);
+                }, 600);
               
             },
             [getCreatorList],
@@ -678,7 +687,7 @@ export default function Page() {
                       onClick={() => showCommentModal(item)}
                     >
                       <UnorderedListOutlined />
-                      <span>{item.commentCount || 0}</span>
+                      <span>{item.commentCount || ''}</span>
                     </Space>,
                     <Space key="reply" onClick={() => openReplyWorks(item)}>
                       <CommentOutlined />
@@ -695,7 +704,7 @@ export default function Page() {
                             : undefined,
                         }}
                       />
-                      <span>{item.collectCount || 0}</span>
+                      <span>{item.collectCount || ''}</span>
                     </Space>,
                   ]}
                 >
