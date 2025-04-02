@@ -64,8 +64,7 @@ import { useInView } from 'react-intersection-observer';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
-  const [commentList, setCommentList] = useState<CommentData[]>([]);
-  const [secondCommentList, setSecondCommentList] = useState<any[]>([]);
+  const [postFirstId, setPostFirstId] = useState<string>('');
   const [activeAccountId, setActiveAccountId] = useState<number>(-1);
   const [activeAccountType, setActiveAccountType] = useState<string>('');
   const [activeAccount, setActiveAccount] = useState<AccountModel>();
@@ -159,7 +158,9 @@ export default function Page() {
 
   // 加载更多帖子
   const loadMorePosts = async () => {
-    if (!pageInfo.hasMore || isLoadingMore) return;
+    if (!pageInfo.hasMore || isLoadingMore ) return;
+
+    if(!postFirstId || postFirstId == '') return;
     
     setIsLoadingMore(true);
     try {
@@ -229,14 +230,17 @@ export default function Page() {
   }
 
   // 搜索列表 - 平台自己搜索
-  async function getSearchListFunc(thisid: any, qe?: any) {
-    if (!pageInfo.hasMore && pageInfo.pcursor !== 1) {
+  async function getSearchListFunc(thisid: any, qe?: any, isfirst?: boolean) {
+    if (!pageInfo.hasMore && pageInfo.pcursor !== 1 && !isfirst) {
       console.log('没有更多数据了，不再发送请求');
       return;
     }
     
-    const res = await getCommentSearchNotes(thisid, qe, pageInfo);
+    const res = await getCommentSearchNotes(thisid, qe, {...pageInfo, postFirstId: postFirstId});
     console.log('------ getSearchListFunc -- @@:', res);
+    if (isfirst && activeAccountType == 'douyin') {
+      setPostFirstId(res.orgList?.log_pb?.impr_id);
+    }
     if (res.list?.length) {
       // 如果是加载更多，则追加到现有列表
       setPostList((prev) => (pageInfo.pcursor !== 1 ? [...prev, ...res.list] : res.list));
@@ -281,26 +285,6 @@ export default function Page() {
     newlist[2].xsec_token = 'CBbspa7hsvsencXRmokLj0bOnzo_IHlX0-qWD3Y3GPpcM=';
 
     setPostList(newlist || []);
-  }
-
-  /**
-   * 获取评论列表
-   */
-  async function getCommentList(dataId: string) {
-    // 7483006686274374962  7478960244136086784
-    const res = await icpGetCommentListByOther(
-      activeAccountId,
-      // '7480598266392972596',
-      {
-        dataId: '678ce103000000001803c791',
-        option: {
-          xsec_token: 'AB-ktiN49qUSB2KL_4EN5bIQSRgCJR_AB1qIv8wAQvj94=',
-        },
-      },
-    );
-    console.log('------ icpGetCommentList', res);
-
-    setCommentList(res.list);
   }
 
   /**
@@ -575,7 +559,9 @@ export default function Page() {
     });
     
     // 执行搜索
-    getSearchListFunc(activeAccountId, searchKeyword);
+    setTimeout(() => {
+      getSearchListFunc(activeAccountId, searchKeyword, true);
+    }, 500);
   };
 
   return (
@@ -600,7 +586,7 @@ export default function Page() {
                 
                 setActiveAccountId(info.id);
                 setTimeout(() => {
-                  getSearchListFunc(info.id, searchKeyword);
+                  getSearchListFunc(info.id, searchKeyword, true);
                 }, 0);
               
             },
