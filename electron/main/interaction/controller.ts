@@ -10,11 +10,10 @@ import { AutoRunModel, AutoRunType } from '../../db/models/autoRun';
 import { AccountService } from '../account/service';
 import { AutoRunService } from '../autoRun/service';
 import { Controller, Et, Icp, Inject } from '../core/decorators';
-import platController from '../plat';
 import { InteractionService } from './service';
 import { SendChannelEnum } from '../../../commont/UtilsEnum';
-import { AutorReplyCommentScheduleEvent } from '../../../commont/types/reply';
 import type { WorkData } from '../plat/plat.type';
+import { AutorWorksInteractionScheduleEvent } from '../../../commont/types/interaction';
 
 @Controller()
 export class InteractionController {
@@ -28,111 +27,31 @@ export class InteractionController {
   private readonly autoRunService!: AutoRunService;
 
   /**
-   * 搜索列表
-   */
-  @Icp('ICP_INTERACTION_SEARCH_NODE_LIST')
-  async getSearchNodeList(
-    event: Electron.IpcMainInvokeEvent,
-    accountId: number,
-    qe?: string,
-    pageInfo?: any,
-  ) {
-    const account = await this.accountService.getAccountById(accountId);
-
-    if (!account)
-      return {
-        list: [],
-        count: 0,
-      };
-
-    const res = await platController.getsearchNodeList(account, qe, pageInfo);
-
-    return res;
-  }
-
-  /**
-   * 作品点赞
-   */
-  @Icp('ICP_DIANZAN_DY_OTHER')
-  async dianzanDyOther(
-    event: Electron.IpcMainInvokeEvent,
-    accountId: number,
-    dataId: string,
-    option?: any,
-  ) {
-    const account = await this.accountService.getAccountById(accountId);
-
-    if (!account)
-      return {
-        list: [],
-        count: 0,
-      };
-
-    const res = await platController.dianzanDyOther(account, dataId, option);
-
-    return res;
-  }
-
-  /**
-   * 作品收藏
-   */
-  @Icp('ICP_SHOUCANG_DY_OTHER')
-  async shoucangDyOther(
-    event: Electron.IpcMainInvokeEvent,
-    accountId: number,
-    pcursor?: string,
-  ) {
-    const account = await this.accountService.getAccountById(accountId);
-
-    if (!account)
-      return {
-        list: [],
-        count: 0,
-      };
-
-    const res = await platController.shoucangDyOther(account, pcursor);
-
-    return res;
-  }
-
-  /**
-   * 创建评论
-   */
-  @Icp('ICP_CREATE_COMMENT_BY_OTHER')
-  async createCommentByOther(
-    event: Electron.IpcMainInvokeEvent,
-    accountId: number,
-    dataId: string,
-    content: string,
-  ): Promise<any> {
-    const account = await this.accountService.getAccountById(accountId);
-    if (!account) return null;
-
-    const res = await platController.createCommentByOther(
-      account,
-      dataId,
-      content,
-    );
-    return res;
-  }
-
-  /**
    * 一键AI互动
    */
-  @Icp('ICP_REPLY_COMMENT_LIST_BY_AI')
+  @Icp('ICP_INTERACTION_ONE_KEY')
   async createCommentList(
     event: Electron.IpcMainInvokeEvent,
     accountId: number,
-    data: WorkData,
+    worksList: {
+      worksId: string;
+      desc: string; // 用来AI生成
+      title?: string;
+      cover?: string;
+    }[],
+    option: {
+      commentContent: string; // 评论内容
+    },
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 
-    const res = await this.interactionService.autorReplyComment(
+    const res = await this.interactionService.autorInteraction(
       account,
-      data,
+      worksList,
+      option,
       (e: {
-        tag: AutorReplyCommentScheduleEvent;
+        tag: AutorWorksInteractionScheduleEvent;
         status: -1 | 0 | 1;
         data?: any;
         error?: any;
@@ -181,7 +100,15 @@ export class InteractionController {
 
     const res = await this.interactionService.addReplyQueue(
       account,
-      dataInfo as WorkData,
+      dataInfo as {
+        worksId: string;
+        desc: string; // 用来AI生成
+        title?: string;
+        cover?: string;
+      }[],
+      {
+        commentContent: dataInfo.commentContent,
+      },
       autoRunData,
     );
 
