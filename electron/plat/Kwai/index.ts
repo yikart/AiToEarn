@@ -402,7 +402,7 @@ class KwaiPub {
       bodys.variables.searchSessionId = pageInfo.postFirstId;
     }
 
-    console.log('----------- getsearchNodeList --- bodys: ', bodys);
+    // console.log('----------- getsearchNodeList --- bodys: ', bodys);
 
     const res = await this.requestApi<any>({
       cookie: cookies,

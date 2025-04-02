@@ -1380,20 +1380,32 @@ export class XiaohongshuService {
   async getSearchNodeList(cookie: string, qe: string, page: number = 0) {
     const url = `/api/sns/web/v1/search/notes`;
 
-    function L() {
-      let t,
-        e = 2147483646;
-      let a = BigInt(Date.now()),
-        u = BigInt(Math.ceil(Math.random() * e));
-      return (a <<= BigInt(64)), (a += u).toString(36);
+    // 生成搜索ID的函数
+    function base36encode(number: number): string {
+      const digits = '0123456789abcdefghijklmnopqrstuvwxyz';
+      let base36 = "";
+      while (number > 0) {
+        const remainder = number % 36;
+        base36 = digits[remainder] + base36;
+        number = Math.floor(number / 36);
+      }
+      return base36;
     }
+
+    function generateSearchId(): string {
+      const timestamp = BigInt(Date.now() * 1000) << BigInt(64);
+      const randomValue = BigInt(Math.floor(Math.random() * 2147483646));
+      return base36encode(Number(timestamp + randomValue));
+    }
+
+    console.log('------ getSearchNodeList --- generateSearchId::', generateSearchId());
 
     console.log('------ getSearchNodeList --- asdadsda::', qe, page);
     const body = {
       keyword: qe,
       page: page,
       page_size: 20,
-      search_id: '2em4bkby1dpddm5q64f97',
+      search_id: generateSearchId(),
       sort: 'general',
       note_type: 0,
       ext_flags: [],
