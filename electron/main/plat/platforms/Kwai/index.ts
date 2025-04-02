@@ -369,14 +369,21 @@ export class Kwai extends PlatformBase {
     return new Promise((resolve, reject) => {});
   }
 
+
+  // 创建其他视频评论
   async createCommentByOther(
     account: AccountModel,
     dataId: string, // 作品ID
     content: string,
   ) {
-    return null;
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await kwaiPub.videoCommentByOther(cookie, dataId, content);
+    console.log('------ kaishou createComment res ----', res);
+
+    return res.data;
   }
 
+  // 回复其他评论
   async replyCommentByOther(
     account: AccountModel,
     commentId: string,
@@ -386,7 +393,18 @@ export class Kwai extends PlatformBase {
       comment: any; // 辅助数据,原数据
     },
   ) {
-    return null;
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+
+    const res = await kwaiPub.commentAdd(cookie, content, {
+      photoId: option.dataId,
+      replyToCommentId: Number.parseInt(commentId),
+      replyTo: option.comment.authorId,
+    });
+
+    console.log('------ replyCommentByOther res ----', res);
+
+    if (res.status !== 200 || res.data.result !== 1) return false;
+    return false;
   }
 
   async createComment(
@@ -500,8 +518,11 @@ export class Kwai extends PlatformBase {
   /**
    * 点赞
    */
-  dianzanDyOther(account: AccountModel, pcursor?: string): Promise<any> {
-    return new Promise((resolve, reject) => {});
+  async dianzanDyOther(account: AccountModel, dataId: string, option?: any): Promise<any> {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await kwaiPub.dianzanDyOther(cookie, dataId, option);
+    console.log('------ dianzanDyOther -- Kwai --- res: ', res);
+    return res.data;
   }
 
   /**

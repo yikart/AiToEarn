@@ -34,7 +34,8 @@ export class ReplyController {
   async dianzanDyOther(
     event: Electron.IpcMainInvokeEvent,
     accountId: number,
-    pcursor?: string,
+    dataId: string,
+    option?: any,
   ) {
     const account = await this.accountService.getAccountById(accountId);
 
@@ -44,7 +45,7 @@ export class ReplyController {
         count: 0,
       };
 
-    const res = await platController.dianzanDyOther(account, pcursor);
+    const res = await platController.dianzanDyOther(account, dataId, option);
 
     return res;
   }

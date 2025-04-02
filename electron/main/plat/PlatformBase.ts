@@ -83,7 +83,8 @@ export abstract class PlatformBase {
    */
   abstract dianzanDyOther(
     account: AccountModel,
-    pcursor?: string,
+    dataId: string,
+    option?: any,
   ): Promise<any>;
 
   /**

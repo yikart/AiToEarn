@@ -1,10 +1,4 @@
-/*
- * @Author: nevin
- * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-03-20 21:28:52
- * @LastEditors: nevin
- * @Description: 评论页面 reply
- */
+
 import {
   icpCreatorList,
   icpGetCommentListByOther,
@@ -268,33 +262,6 @@ export default function Page() {
     }
   }
 
-  async function getFwqCreatorList() {
-    setWordList([]);
-    const res = await commentApi.runCommentSearchNotesTask(
-      'xhs_comments',
-      '美妆',
-    );
-    console.log('------ getFwqCreatorList', res);
-
-    const list = await commentApi.getCommentSearchNotes(
-      'xhs_comments',
-      '414381229d04c46cb39f97a5a0b7f9eb',
-    );
-    console.log('------ getCommentSearchNotes', list);
-    const newlist = list.slice(0, 20);
-
-    newlist[0].dataId = '67de8bc2000000001c00fdce';
-    newlist[0].xsec_token = 'AB-q1Xl6YS66mGgN8y_DMoskX40j7FsSv2DoSQTYE6DYU=';
-
-    newlist[1].dataId = '678ce103000000001803c791';
-    newlist[1].xsec_token = 'AB-ktiN49qUSB2KL_4EN5bIQSRgCJR_AB1qIv8wAQvj94=';
-
-    newlist[2].dataId = '67e3f5bb000000001c003a1c';
-    newlist[2].xsec_token = 'CBbspa7hsvsencXRmokLj0bOnzo_IHlX0-qWD3Y3GPpcM=';
-
-    setPostList(newlist || []);
-  }
-
   /**
    * 获取二级评论列表
    */
@@ -443,8 +410,9 @@ export default function Page() {
         return;
       }
 
-      const res = await icpDianzanDyOther(activeAccountId, post.dataId);
-      if (res.status_code == 0 || res.data?.code == 0) {
+      const res = await icpDianzanDyOther(activeAccountId, post.dataId, {authid: 1});
+      console.log('------ likePost', res);
+      if (res.status_code == 0 || res.data?.code == 0 || res.data?.visionVideoLike.result == 1) {
         message.success('点赞成功');
         // 更新点赞状态
         setLikedPosts((prev) => ({

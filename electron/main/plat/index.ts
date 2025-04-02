@@ -182,9 +182,9 @@ class PlatController {
    * @param account
    * @param pcursor
    */
-  public async dianzanDyOther(account: AccountModel, pcursor?: string) {
+  public async dianzanDyOther(account: AccountModel, dataId: string, option?: any) {
     const platform = this.platforms.get(account.type)!;
-    return await platform.dianzanDyOther(account, pcursor);
+    return await platform.dianzanDyOther(account, dataId, option);
   }
 
   /**

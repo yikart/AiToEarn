@@ -42,11 +42,12 @@ export enum PageType {
 /**
  * 点赞作品
  */
-export async function icpDianzanDyOther(accountId: number, dataId: string) {
+export async function icpDianzanDyOther(accountId: number, dataId: string, option?: any) {
   const res: any = await window.ipcRenderer.invoke(
     'ICP_DIANZAN_DY_OTHER',
     accountId,
     dataId,
+    option,
   );
   return res;
 }
