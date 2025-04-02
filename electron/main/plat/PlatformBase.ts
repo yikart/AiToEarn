@@ -79,7 +79,8 @@ export abstract class PlatformBase {
   /**
    * 点赞
    * @param account 账户
-   * @param pcursor 分页游标
+   * @param dataId 数据ID
+   * @param option 配置项
    */
   abstract dianzanDyOther(
     account: AccountModel,

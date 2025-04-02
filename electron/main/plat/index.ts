@@ -178,11 +178,16 @@ class PlatController {
   }
 
   /**
-   * 获取作品列表
+   * 点赞
    * @param account
-   * @param pcursor
+   * @param dataId
+   * @param option
    */
-  public async dianzanDyOther(account: AccountModel, dataId: string, option?: any) {
+  public async dianzanDyOther(
+    account: AccountModel,
+    dataId: string,
+    option?: any,
+  ) {
     const platform = this.platforms.get(account.type)!;
     return await platform.dianzanDyOther(account, dataId, option);
   }
@@ -208,9 +213,10 @@ class PlatController {
   }
 
   /**
-   * 获取作品列表
+   * 搜索作品列表
    * @param account
-   * @param pcursor
+   * @param qe
+   * @param pageInfo
    */
   public async getsearchNodeList(
     account: AccountModel,

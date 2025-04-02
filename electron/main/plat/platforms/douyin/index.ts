@@ -16,7 +16,6 @@ import {
   IGetTopicsParams,
   IGetTopicsResponse,
   IGetUsersParams,
-  ResponsePageInfo,
   VideoCallbackType,
   WorkData,
 } from '../../plat.type';
@@ -188,61 +187,57 @@ export class Douyin extends PlatformBase {
     };
   }
 
-    /**
+  /**
    * 获取搜索作品列表
    * @param account
    * @param data
    * @param pcursor
    * @returns
    */
-    async getsearchNodeList( 
-      account: AccountModel,
-      qe: string,
-      pageInfo?: any,
-    ) {
-      const cookie: CookiesType = JSON.parse(account.loginCookie);
-      const res = await douyinService.getSearchNodeList(cookie, qe, {
-        count: pageInfo.count,
-        pcursor: pageInfo.pcursor,
-        postFirstId: pageInfo.postFirstId,
-      });
-  
-      const list: WorkData[] = [];
-      // console.log('------douyin getsearchNodeList res: ', res);
-      // console.log('------douyin getsearchNodeList res.data.cursor: ', res.data.cursor);
-      for (const s of res.data.data) {
-        let v = s.aweme_info;
-        list.push({
-          dataId: v.aweme_id,
-          readCount: v.note_card?.interact_info?.view_count,
-          likeCount: v.note_card?.interact_info?.liked_count,
-          collectCount: v.note_card?.interact_info?.collected_count,
-          commentCount: v.note_card?.interact_info?.comment_count,
-          title: v.desc,
-          coverUrl: v.video.cover.url_list[0] || '',
-          option: {
-            xsec_token: v.xsec_token || '',
-          },
-          author: {
-            name: v.author?.nickname,
-            id: v.author?.uid,
-            avatar: v.author?.avatar_thumb.url_list[0],
-          },
-          data: v,
-        });
-      }
-      
-      // console.log('------douyin getsearchNodeList !!res.data.has_more^^: ', !!res.data.has_more);
-      return {
-        list,
-        orgList: res.data,
-        pageInfo: {
-          count: pageInfo.pcursor,
-          pcursor: res.data.cursor + '',
-          hasMore: !!res.data.has_more,
+  async getsearchNodeList(account: AccountModel, qe: string, pageInfo?: any) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await douyinService.getSearchNodeList(cookie, qe, {
+      count: pageInfo.count,
+      pcursor: pageInfo.pcursor,
+      postFirstId: pageInfo.postFirstId,
+    });
+
+    const list: WorkData[] = [];
+    // console.log('------douyin getsearchNodeList res: ', res);
+    // console.log('------douyin getsearchNodeList res.data.cursor: ', res.data.cursor);
+    for (const s of res.data.data) {
+      const v = s.aweme_info;
+      list.push({
+        dataId: v.aweme_id,
+        readCount: v.note_card?.interact_info?.view_count,
+        likeCount: v.note_card?.interact_info?.liked_count,
+        collectCount: v.note_card?.interact_info?.collected_count,
+        commentCount: v.note_card?.interact_info?.comment_count,
+        title: v.desc,
+        coverUrl: v.video.cover.url_list[0] || '',
+        option: {
+          xsec_token: v.xsec_token || '',
         },
-      };
+        author: {
+          name: v.author?.nickname,
+          id: v.author?.uid,
+          avatar: v.author?.avatar_thumb.url_list[0],
+        },
+        data: v,
+      });
     }
+
+    // console.log('------douyin getsearchNodeList !!res.data.has_more^^: ', !!res.data.has_more);
+    return {
+      list,
+      orgList: res.data,
+      pageInfo: {
+        count: pageInfo.pcursor,
+        pcursor: res.data.cursor + '',
+        hasMore: !!res.data.has_more,
+      },
+    };
+  }
 
   /**
    * 获取评论列表
@@ -669,8 +664,6 @@ export class Douyin extends PlatformBase {
       }),
     };
   }
-
-
 }
 
 const douyin = new Douyin();

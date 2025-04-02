@@ -27,8 +27,8 @@ import { sleep } from '../../util/time';
  * @param account
  * @returns
  */
-function getCacheKey(account: AccountModel) {
-  return `OneKeyReplyCommentCacheKey_${account.id}`;
+function getCacheKey(account?: AccountModel) {
+  return `OneKeyReplyCommentCacheKey_${account?.id || 0}`;
 }
 
 @Injectable()

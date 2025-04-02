@@ -2221,27 +2221,28 @@ export class DouyinService {
       postFirstId?: string;
     },
   ) {
-    let pcursor = (pageInfo.pcursor && Number(pageInfo.pcursor) < 16) ? 0 : pageInfo.pcursor;
-    let count = (Number(pcursor) > 10) ? 10 : 16;
+    const pcursor =
+      pageInfo.pcursor && Number(pageInfo.pcursor) < 16 ? 0 : pageInfo.pcursor;
+    const count = Number(pcursor) > 10 ? 10 : 16;
 
-    let gets:any = {
+    const gets: any = {
       aid: '6383',
       keyword: qe,
       offset: pcursor,
-      count: count
-    }
-    if(pageInfo.postFirstId){
+      count: count,
+    };
+    if (pageInfo.postFirstId) {
       gets.search_id = pageInfo.postFirstId;
     }
     const thisUri = `https://www.douyin.com/aweme/v1/web/search/item/?${jsonToQueryString(
-      gets
+      gets,
     )}`;
 
     console.log('------douyin getsearchNodeList uri: ', thisUri);
     const res = await requestNet<any>({
       url: thisUri,
       headers: {
-        cookie: CookieToString(cookie)
+        cookie: CookieToString(cookie),
       },
       method: 'GET',
     });
