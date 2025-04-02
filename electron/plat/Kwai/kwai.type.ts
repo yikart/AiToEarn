@@ -166,6 +166,10 @@ export interface IKwaiPubVideoParams {
   };
   // 作品权限 1=所有人可见 2=仅自己可见 4=好友可见
   photoStatus: 1 | 2 | 4;
+  // @的好友
+  mentions?: string[];
+  // 定时发布日期，时间戳，毫秒
+  publishTime?: number;
 }
 
 // 登录返回参数

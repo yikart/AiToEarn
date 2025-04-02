@@ -21,6 +21,8 @@ import { BrowserWindow, screen } from 'electron';
 import kwaiSign from './sign/KwaiSign';
 import { FileUtils } from '../../util/file';
 import { getFilePathNameCommon } from '../../../commont/utils';
+import FormData from 'form-data';
+import fs from 'fs';
 
 interface IRequestApiParams extends IRequestNetParams {
   cookie: Electron.Cookie[];
@@ -35,9 +37,14 @@ class KwaiPub {
     const kwaiParams: any = {};
     kwaiParams['caption'] = params.desc;
 
+    // 好友处理
+    if (params.mentions) {
+      kwaiParams['caption'] += ` ${params.mentions.join(' ')} `;
+    }
+
     // 话题处理
     if (params.topics) {
-      kwaiParams['caption'] = ` ${params.topics.join(' ')}`;
+      kwaiParams['caption'] += ` ${params.topics.join(' ')} `;
     }
 
     // 位置处理
@@ -50,6 +57,7 @@ class KwaiPub {
     return {
       ...kwaiParams,
       photoStatus: params.photoStatus,
+      publishTime: params.publishTime || 0,
     };
   }
   // 发布视频
@@ -120,10 +128,29 @@ class KwaiPub {
             fileLength: filePartInfo.fileSize,
           },
         });
+        if (finishRes.data.result !== 1) throw finishRes.data.message;
         console.log(`视频上传结束：`, finishRes.data);
-        callback(80, `正发布视频...`);
+
+        callback(80, `视频上传完成，正在上传封面...`);
+        const formData = new FormData();
+        formData.append('file', fs.createReadStream(params.coverPath));
+        const coverRes = await this.requestApi<{
+          data: {
+            coverKey: string;
+          };
+        }>({
+          formData,
+          url: '/rest/cp/works/v2/video/pc/upload/cover/upload',
+          method: 'POST',
+          cookie: params.cookies,
+        });
+        console.log('上传封面结果：', coverRes.data);
+
+        callback(90, `正在发布...`);
+
         const submitParams = {
           ...finishRes.data.data,
+          coverKey: coverRes.data.data.coverKey,
           coverTimeStamp: 0,
           coverType: 1,
           coverTitle: '',
@@ -182,12 +209,16 @@ class KwaiPub {
   async requestApi<T>(params: IRequestApiParams) {
     const { cookie, apiUrl = 'https://cp.kuaishou.com' } = params;
 
-    if (params.method === 'POST') {
+    const api_ph = cookie.find(
+      (v) => v.name === 'kuaishou.web.cp.api_ph',
+    )!.value;
+
+    if (params.formData) {
+      params.formData.append('kuaishou.web.cp.api_ph', api_ph);
+    } else if (params.method === 'POST') {
       params['body'] = {
         ...(params['body'] ? params['body'] : {}),
-        'kuaishou.web.cp.api_ph': cookie.find(
-          (v) => v.name === 'kuaishou.web.cp.api_ph',
-        )!.value,
+        'kuaishou.web.cp.api_ph': api_ph,
       };
     }
 
@@ -197,8 +228,12 @@ class KwaiPub {
     };
 
     const signUrl = await kwaiSign.sign({
-      json: params.body || {},
-      type: 'json',
+      json: !params.formData
+        ? params.body || {}
+        : {
+            'kuaishou.web.cp.api_ph': api_ph,
+          },
+      type: params.formData ? 'form-data' : 'json',
       url: `${apiUrl}${params.url || ''}`,
     });
 

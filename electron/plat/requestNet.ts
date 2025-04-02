@@ -6,6 +6,7 @@
  * @Description:
  */
 import { net } from 'electron';
+import FormData from 'form-data';
 
 export interface IRequestNetResult<T> {
   status: number;
@@ -19,6 +20,7 @@ export interface IRequestNetParams {
   body?: any;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   isFile?: boolean;
+  formData?: FormData;
 }
 
 const requestNet = <T = any>({
@@ -27,12 +29,20 @@ const requestNet = <T = any>({
   method,
   url,
   isFile,
+  formData,
 }: IRequestNetParams): Promise<IRequestNetResult<T>> => {
   return new Promise((resolve, reject) => {
     const req = net.request({
       method: method || 'GET',
       url,
     });
+
+    if (formData) {
+      headers = {
+        ...(headers ? headers : {}),
+        ...formData.getHeaders(),
+      };
+    }
 
     // 设置请求头
     if (headers) {
@@ -70,18 +80,24 @@ const requestNet = <T = any>({
       reject(error);
     });
 
-    if (isFile) {
-      req.setHeader('Content-Type', 'application/octet-stream');
-      req.write(body);
+    if (formData) {
+      formData.pipe(req as any);
+      const cReq = formData.submit(url!, (err, res) => {
+        cReq.end();
+      });
     } else {
-      // 发送请求体
-      if (body) {
-        req.setHeader('Content-Type', 'application/json');
-        req.write(typeof body === 'string' ? body : JSON.stringify(body));
+      if (isFile) {
+        req.setHeader('Content-Type', 'application/octet-stream');
+        req.write(body);
+      } else {
+        // 发送请求体
+        if (body) {
+          req.setHeader('Content-Type', 'application/json');
+          req.write(typeof body === 'string' ? body : JSON.stringify(body));
+        }
       }
+      req.end();
     }
-
-    req.end();
   });
 };
 

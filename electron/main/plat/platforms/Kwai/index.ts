@@ -86,6 +86,8 @@ export class Kwai extends PlatformBase {
     return new Promise(async (resolve) => {
       const result = await kwaiPub
         .pubVideo({
+          publishTime: params.timingTime?.getTime(),
+          mentions: params.mentionedUserInfo.map((v) => v.label),
           topics: params.topics || [],
           videoPath: params.videoPath || '',
           coverPath: params.coverPath || '',
@@ -220,7 +222,6 @@ export class Kwai extends PlatformBase {
     orgList: any[];
     pageInfo: ResponsePageInfo;
   }> {
-   
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await kwaiPub.getsearchNodeList(cookie, pcursor);
     console.log('----------- getsearchNodeList --- res: ', res.data);
@@ -257,10 +258,10 @@ export class Kwai extends PlatformBase {
         data: s,
       });
     }
-    
+
     return {
-      list: list, 
-      orgList: res.data.data, 
+      list: list,
+      orgList: res.data.data,
       pageInfo: {
         hasMore: false,
         count: 0,
