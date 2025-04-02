@@ -209,7 +209,7 @@ export class Douyin extends PlatformBase {
   
       const list: WorkData[] = [];
       // console.log('------douyin getsearchNodeList res: ', res);
-      console.log('------douyin getsearchNodeList res.data.cursor: ', res.data.cursor);
+      // console.log('------douyin getsearchNodeList res.data.cursor: ', res.data.cursor);
       for (const s of res.data.data) {
         let v = s.aweme_info;
         list.push({
@@ -232,7 +232,7 @@ export class Douyin extends PlatformBase {
         });
       }
       
-      console.log('------douyin getsearchNodeList !!res.data.has_more^^: ', !!res.data.has_more);
+      // console.log('------douyin getsearchNodeList !!res.data.has_more^^: ', !!res.data.has_more);
       return {
         list,
         orgList: res.data,

@@ -214,18 +214,19 @@ export class Kwai extends PlatformBase {
    */
   async getsearchNodeList(
     account: AccountModel,
-    pcursor?: string,
+    qe: string,
+    pageInfo?: any,
   ): Promise<{
     list: WorkData[];
     orgList: any[];
-    pageInfo: ResponsePageInfo;
+    pageInfo: any;
   }> {
    
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const res = await kwaiPub.getsearchNodeList(cookie, pcursor);
-    console.log('----------- getsearchNodeList --- res: ', res.data);
+    const res = await kwaiPub.getsearchNodeList(cookie, qe, pageInfo);
+    // console.log('----------- getsearchNodeList --- res: ', res.data);
     const photoList = res.data.data?.visionSearchPhoto.feeds || [];
-    console.log('----------- getsearchNodeList --- photoList: ', photoList[0]);
+    // console.log('----------- getsearchNodeList --- photoList: ', photoList[0]);
     // const list: WorkData[] = photoList.map((v) => {
     //   return {
     //     dataId: v.photo.id,
@@ -239,7 +240,7 @@ export class Kwai extends PlatformBase {
     const list: WorkData[] = [];
     for (const s of photoList) {
       list.push({
-        dataId: s.llsid,
+        dataId: s.photo.id,
         readCount: s.photo.viewCount,
         likeCount: s.photo.likeCount,
         collectCount: s.photo.collectCount,
@@ -260,17 +261,12 @@ export class Kwai extends PlatformBase {
     
     return {
       list: list, 
-      orgList: res.data.data, 
+      orgList: res.data.data?.visionSearchPhoto, 
       pageInfo: {
-        hasMore: false,
-        count: 0,
-        pcursor: '',
+        hasMore: (photoList.length > 1) ? true : false,
+        count: res.data.data?.visionSearchPhoto.length,
+        pcursor: Number(res.data.data?.visionSearchPhoto?.pcursor) + 1 || 1,
       },
-      // {
-      //   hasMore: !!res.data.data.result,
-      //   count: res.data.data.totalCount || '',
-      //   pcursor: res.data.data.pcursor + '',
-      // },
     };
   }
 

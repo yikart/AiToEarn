@@ -158,10 +158,11 @@ export default function Page() {
 
   // 加载更多帖子
   const loadMorePosts = async () => {
+    console.log('------ loadMorePosts == 1');
     if (!pageInfo.hasMore || isLoadingMore || !searchKeyword || searchKeyword == '') return;
-
+    console.log('------ loadMorePosts == 2');
     if(!postFirstId || postFirstId == '') return;
-    
+    console.log('------ loadMorePosts == 3');
     setIsLoadingMore(true);
     try {
       setTimeout(async () => {
@@ -242,6 +243,9 @@ export default function Page() {
     console.log('------ getSearchListFunc -- @@:', res);
     if (isfirst && activeAccountType == 'douyin') {
       setPostFirstId(res.orgList?.log_pb?.impr_id);
+    } else if (isfirst &&activeAccountType == 'KWAI') {
+      console.log('------ getSearchListFunc -- @@:', res.orgList?.searchSessionId);
+      setPostFirstId(res.orgList?.searchSessionId);
     }
     if (res.list?.length) {
       // 如果是加载更多，则追加到现有列表
@@ -589,7 +593,7 @@ export default function Page() {
                 setActiveAccountId(info.id);
                 setTimeout(() => {
                   getSearchListFunc(info.id, searchKeyword, true);
-                }, 0);
+                }, 600);
               
             },
             [getCreatorList],
