@@ -237,6 +237,8 @@ class KwaiPub {
       await mainWindow.loadURL(
         'https://passport.kuaishou.com/pc/account/login/',
       );
+      // mainWindow.webContents.openDevTools();
+      // return;
       let timeId1: NodeJS.Timeout | undefined = undefined;
       let timeId2: NodeJS.Timeout | undefined = undefined;
       mainWindow.on('closed', () => {
@@ -393,7 +395,7 @@ class KwaiPub {
       body: {
         operationName: 'visionSearchPhoto',
         variables: {
-          keyword: '牛le',
+          keyword: '英雄杀道一',
           pcursor: '',
           page: 'search',
         },

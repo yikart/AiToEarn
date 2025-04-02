@@ -89,6 +89,7 @@ export async function getCommentSearchNotes(
 ) {
   const res: {
     list: WorkData[];
+    orgList?: any;
     pageInfo: {
       pageType: PageType;
       count?: number;

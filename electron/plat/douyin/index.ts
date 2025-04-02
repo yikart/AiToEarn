@@ -2218,17 +2218,23 @@ export class DouyinService {
     pageInfo: {
       pcursor?: string;
       count?: number;
+      postFirstId?: string;
     },
   ) {
     let pcursor = (pageInfo.pcursor && Number(pageInfo.pcursor) < 16) ? 0 : pageInfo.pcursor;
     let count = (Number(pcursor) > 10) ? 10 : 16;
+
+    let gets:any = {
+      aid: '6383',
+      keyword: qe,
+      offset: pcursor,
+      count: count
+    }
+    if(pageInfo.postFirstId){
+      gets.search_id = pageInfo.postFirstId;
+    }
     const thisUri = `https://www.douyin.com/aweme/v1/web/search/item/?${jsonToQueryString(
-      {
-        aid: '6383',
-        keyword: qe,
-        offset: pcursor,
-        count: count
-      }
+      gets
     )}`;
 
     console.log('------douyin getsearchNodeList uri: ', thisUri);

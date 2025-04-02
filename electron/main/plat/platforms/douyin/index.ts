@@ -204,6 +204,7 @@ export class Douyin extends PlatformBase {
       const res = await douyinService.getSearchNodeList(cookie, qe, {
         count: pageInfo.count,
         pcursor: pageInfo.pcursor,
+        postFirstId: pageInfo.postFirstId,
       });
   
       const list: WorkData[] = [];
@@ -234,6 +235,7 @@ export class Douyin extends PlatformBase {
       console.log('------douyin getsearchNodeList !!res.data.has_more^^: ', !!res.data.has_more);
       return {
         list,
+        orgList: res.data,
         pageInfo: {
           count: pageInfo.pcursor,
           pcursor: res.data.cursor + '',

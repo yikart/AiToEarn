@@ -170,6 +170,7 @@ export abstract class PlatformBase {
     pcursor?: string,
   ): Promise<{
     list: CommentData[];
+    orgList?: any;
     pageInfo: ResponsePageInfo;
   }>;
 
