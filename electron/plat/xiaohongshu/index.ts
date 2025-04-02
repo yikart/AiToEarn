@@ -1380,7 +1380,7 @@ export class XiaohongshuService {
   async getSearchNodeList(cookie: string, qe: string, page: number = 0) {
     const url = `/api/sns/web/v1/search/notes`;
 
-    function l() {
+    function L() {
       let t,
         e = 2147483646;
       let a = BigInt(Date.now()),
@@ -1390,7 +1390,7 @@ export class XiaohongshuService {
 
     console.log('------ getSearchNodeList --- asdadsda::', qe, page);
     const body = {
-      keyword: '大象',
+      keyword: qe,
       page: page,
       page_size: 20,
       search_id: '2em4bkby1dpddm5q64f97',
