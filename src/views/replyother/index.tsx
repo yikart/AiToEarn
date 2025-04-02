@@ -158,13 +158,15 @@ export default function Page() {
 
   // 加载更多帖子
   const loadMorePosts = async () => {
-    if (!pageInfo.hasMore || isLoadingMore ) return;
+    if (!pageInfo.hasMore || isLoadingMore || !searchKeyword || searchKeyword == '') return;
 
     if(!postFirstId || postFirstId == '') return;
     
     setIsLoadingMore(true);
     try {
-      await getSearchListFunc(activeAccountId, searchKeyword);
+      setTimeout(async () => {
+        await getSearchListFunc(activeAccountId, searchKeyword);
+      }, 0);
     } finally {
       setIsLoadingMore(false);
     }

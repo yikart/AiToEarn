@@ -373,7 +373,7 @@ class KwaiPub {
       body: {
         operationName: 'visionSearchPhoto',
         variables: {
-          keyword: '牛le',
+          keyword: '英雄杀道一',
           pcursor: '',
           page: 'search',
         },

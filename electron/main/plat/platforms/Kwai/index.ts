@@ -209,34 +209,61 @@ export class Kwai extends PlatformBase {
     pcursor?: string,
   ): Promise<{
     list: WorkData[];
+    orgList: any[];
     pageInfo: ResponsePageInfo;
   }> {
-    throw '';
-    // const cookie: CookiesType = JSON.parse(account.loginCookie);
-    // const res = await kwaiPub.getsearchNodeList(cookie, pcursor);
-    // console.log('----------- getsearchNodeList --- res: ', res.data);
-    // const photoList = res.data.data?.visionSearchPhoto.feeds || [];
-    // console.log('----------- getsearchNodeList --- photoList: ', photoList[0]);
-    // // const list: WorkData[] = photoList.map((v) => {
-    // //   return {
-    // //     dataId: v.photo.id,
-    // //     readCount: v.photo.viewCount,
-    // //     likeCount: v.photo.likeCount,
-    // //     commentCount: v.photo.commentCount,
-    // //     title: v.photo.caption,
-    // //     coverUrl: v.photo.coverUrl,
-    // //   };
-    // // });
-    //
-    // return {
-    //   list: [],
-    //   pageInfo: {},
-    //   // {
-    //   //   hasMore: !!res.data.data.result,
-    //   //   count: res.data.data.totalCount || '',
-    //   //   pcursor: res.data.data.pcursor + '',
-    //   // },
-    // };
+   
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await kwaiPub.getsearchNodeList(cookie, pcursor);
+    console.log('----------- getsearchNodeList --- res: ', res.data);
+    const photoList = res.data.data?.visionSearchPhoto.feeds || [];
+    console.log('----------- getsearchNodeList --- photoList: ', photoList[0]);
+    // const list: WorkData[] = photoList.map((v) => {
+    //   return {
+    //     dataId: v.photo.id,
+    //     readCount: v.photo.viewCount,
+    //     likeCount: v.photo.likeCount,
+    //     commentCount: v.photo.commentCount,
+    //     title: v.photo.caption,
+    //     coverUrl: v.photo.coverUrl,
+    //   };
+    // });
+    const list: WorkData[] = [];
+    for (const s of photoList) {
+      list.push({
+        dataId: s.llsid,
+        readCount: s.photo.viewCount,
+        likeCount: s.photo.likeCount,
+        collectCount: s.photo.collectCount,
+        commentCount: s.photo.commentCount,
+        title: s.photo.caption,
+        coverUrl: s.photo.coverUrl,
+        option: {
+          xsec_token: s.xsec_token || '',
+        },
+        author: {
+          name: s.author?.name,
+          id: s.author?.id,
+          avatar: s.author?.headerUrl,
+        },
+        data: s,
+      });
+    }
+    
+    return {
+      list: list, 
+      orgList: res.data.data, 
+      pageInfo: {
+        hasMore: false,
+        count: 0,
+        pcursor: '',
+      },
+      // {
+      //   hasMore: !!res.data.data.result,
+      //   count: res.data.data.totalCount || '',
+      //   pcursor: res.data.data.pcursor + '',
+      // },
+    };
   }
 
   /**
