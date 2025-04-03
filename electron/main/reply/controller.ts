@@ -249,7 +249,7 @@ export class ReplyController {
   }
 
   /**
-   * 回复评论
+   * 回复二级评论
    */
   @Icp('ICP_REPLY_COMMENT_BY_OTHER')
   async replyCommentByOther(
@@ -260,6 +260,7 @@ export class ReplyController {
     option: {
       dataId?: string; // 作品ID
       comment: any; // 辅助数据,原数据
+      videoAuthId?: string; // 视频作者ID
     },
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);

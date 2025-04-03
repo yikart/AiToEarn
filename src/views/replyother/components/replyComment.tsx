@@ -34,6 +34,16 @@ const Com = forwardRef<ReplyCommentRef>((props: any, ref) => {
    * 回复评论
    */
   async function replyComment(content: string) {
+
+    // console.log('----- replyComment commentData', commentData!.commentId,
+    //   content,
+    //   {
+    //     dataId: commentData!.dataId,
+    //     comment: commentData!.data,
+    //   }
+    // );
+    // return;
+
     const res: any = await icpReplyCommentByOther(
       accountId,
       commentData!.commentId,
@@ -41,10 +51,11 @@ const Com = forwardRef<ReplyCommentRef>((props: any, ref) => {
       {
         dataId: commentData!.dataId,
         comment: commentData!.data,
+        videoAuthId: commentData!.videoAuthId,
       },
     );
     console.log('----- replyComment res', res);
-    if (res.status_code == 0 || res.data.code == 0) {
+    if (res.status_code == 0 || res.data.code == 0 || res.data.data.visionAddComment?.result == 1) {
       message.success('回复成功');
       setIsModalOpen(false);
     } else {

@@ -345,17 +345,48 @@ export class Kwai extends PlatformBase {
     };
   }
 
+  /**
+   * 获取其他视频评论列表
+   * @param account
+   * @param data
+   * @param pcursor
+   * @returns
+   */
   async getCreatorCommentListByOther(
     account: AccountModel,
     data: WorkData,
     pcursor?: string,
   ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await kwaiPub.getVideoCommentList(
+      cookie,
+      data.dataId,
+      pcursor,
+    );
+
+    const list: CommentData[] = [];
+    for (const v of res.data.data.visionCommentList?.rootComments || []) {
+
+      list.push({
+        userId: v.authorId + '',
+        dataId: data.dataId + '',
+        commentId: v.commentId + '',
+        parentCommentId: undefined,
+        content: v.content,
+        likeCount: v.likedCount,
+        nikeName: v.authorName,
+        headUrl: v.headurl,
+        data: v,
+        subCommentList: v.subComments,
+      });
+    }
+
     return {
-      list: [],
+      list: list,
       pageInfo: {
         count: 0,
-        pcursor: '',
-        hasMore: false,
+        pcursor: res.data.data.pcursor + '',
+        hasMore: !!res.data.data.pcursor,
       },
     };
   }
@@ -392,21 +423,26 @@ export class Kwai extends PlatformBase {
     option: {
       dataId?: string; // 作品ID
       comment: any; // 辅助数据,原数据
+      videoAuthId?: string; // 视频作者ID
     },
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
 
-    const res = await kwaiPub.commentAdd(cookie, content, {
+
+    const res = await kwaiPub.replyCommentByOther(cookie, content, {
       photoId: option.dataId,
-      replyToCommentId: Number.parseInt(commentId),
+      replyToCommentId: commentId,
       replyTo: option.comment.authorId,
+      photoAuthorId: option.videoAuthId,
     });
 
-    console.log('------ replyCommentByOther res ----', res);
-
-    if (res.status !== 200 || res.data.result !== 1) return false;
-    return false;
+ 
+    return res;
   }
+
+
+
+
 
   async createComment(
     account: AccountModel,

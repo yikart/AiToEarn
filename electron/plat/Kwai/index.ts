@@ -522,7 +522,6 @@ class KwaiPub {
       },
     });
 
-    console.log('---- douyin commentAdd ----', res);
 
     return res;
   }
@@ -557,7 +556,6 @@ class KwaiPub {
       },
     });
 
-    console.log('---- douyin commentAdd ----', res);
 
     return res;
   }
@@ -576,7 +574,6 @@ class KwaiPub {
     content: string,
     authorId?: string
   ) {
-    console.log('dataIddataId:' , dataId, authorId)
     const res = await this.requestApi<CommentAddResponse>({
       cookie: cookie,
       apiUrl: 'https://www.kuaishou.com/graphql',
@@ -595,14 +592,108 @@ class KwaiPub {
       },
     });
 
-    console.log('---- douyin commentAdd ----', res);
 
     return res;
   }
 
 
+  
+   /**
+   * 获取视频评论列表
+   * @param cookie
+   * @param photoId
+   * @param content
+   * @param reply
+   * @returns
+   */
+   async getVideoCommentList(
+    cookie: Electron.Cookie[],
+    dataId: string,
+    pcursor?: string
+  ) {
+    const res = await this.requestApi<any>({
+      cookie: cookie,
+      apiUrl: 'https://www.kuaishou.com/graphql',
+      method: 'POST',
+      body: {
+        "operationName":"commentListQuery",
+        "variables":{
+          "pcursor": '',
+          "photoId": dataId
+        },
+          "query":
+          "query commentListQuery($photoId: String, $pcursor: String) {\n  visionCommentList(photoId: $photoId, pcursor: $pcursor) {\n    commentCount\n    pcursor\n    rootComments {\n      commentId\n      authorId\n      authorName\n      content\n      headurl\n      timestamp\n      likedCount\n      realLikedCount\n      liked\n      status\n      authorLiked\n      subCommentCount\n      subCommentsPcursor\n      subComments {\n        commentId\n        authorId\n        authorName\n        content\n        headurl\n        timestamp\n        likedCount\n        realLikedCount\n        liked\n        status\n        authorLiked\n        replyToUserName\n        replyTo\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n"
+        },
+      headers: {
+        Referer: `https://www.kuaishou.com/short-video/${dataId}`,
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+      },
+    });
 
 
+    return res;
+  }
+
+  /**
+   * 回复二级评论
+   * @param cookie
+   * @param commentId
+   * @param content
+   * @param option
+   * @returns
+   */
+  
+
+  async replyCommentByOther(
+    cookie: Electron.Cookie[],
+    content: string,
+    option: {
+      replyToCommentId?: any; // 969549966791;
+      replyTo?: any; // 798319351;
+      photoId?: string; // 作品ID
+      photoAuthorId: any; // 视频作者ID
+    },
+  ) {
+
+    console.log('------ replyCommentByOther option ----', {
+      
+        "photoId": option.photoId,
+        "photoAuthorId": option.photoAuthorId,
+        "content": content,
+        "replyToCommentId": option.replyToCommentId,
+        "replyTo": option.replyTo,
+        "expTag":"1_a/2004436422502146722_xpcwebdetailxxnull0"
+      
+    });
+
+    const res = await this.requestApi<any>({
+      cookie: cookie,
+      apiUrl: 'https://www.kuaishou.com/graphql',
+      method: 'POST',
+      body: {
+        "operationName":"visionAddComment",
+        "variables":{
+          "photoId": option.photoId,
+          "photoAuthorId": option.photoAuthorId,
+          "content": content,
+          "replyToCommentId": option.replyToCommentId,
+          "replyTo": option.replyTo,
+          "expTag":"1_a/2004436422502146722_xpcwebdetailxxnull0"
+        },
+          "query":
+          "mutation visionAddComment($photoId: String, $photoAuthorId: String, $content: String, $replyToCommentId: ID, $replyTo: ID, $expTag: String) {\n  visionAddComment(photoId: $photoId, photoAuthorId: $photoAuthorId, content: $content, replyToCommentId: $replyToCommentId, replyTo: $replyTo, expTag: $expTag) {\n    result\n    commentId\n    content\n    timestamp\n    status\n    __typename\n  }\n}\n"
+        },
+      headers: {
+        Referer: `https://www.kuaishou.com/short-video/${option.photoId}`,
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+      },
+    });
+
+
+    return res;
+  }
 
 
 

@@ -334,6 +334,7 @@ export default function Page() {
    * @param data
    */
   function openReplyComment(data: CommentData) {
+    data.videoAuthId = currentPost.author.id;
     console.log('------ openReplyComment', data);
     Ref_ReplyComment.current?.init(activeAccountId, data);
   }
@@ -347,9 +348,10 @@ export default function Page() {
   }
 
   /**
-   * 显示评论弹窗
+   * 显示评论列表弹窗
    */
   const showCommentModal = async (post: any) => {
+    console.log('------ showCommentModal post', post);
     setCurrentPost(post);
     setCommentModalVisible(true);
 
@@ -361,7 +363,7 @@ export default function Page() {
           xsec_token: post.option.xsec_token || post.xsec_token,
         },
       });
-
+      console.log('------ getCommentListByOther res', res);
       // 为每个评论添加加载状态标记
       const commentsWithLoadingState = (res.list || []).map((comment) => ({
         ...comment,
@@ -989,7 +991,7 @@ export default function Page() {
               }}
             >
               <Avatar
-                src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${currentPost?.author?.name}`}
+                src={`${currentPost?.author?.avatar}`}
               />
               <Text strong style={{ marginLeft: 10 }}>
                 {currentPost?.author?.name}

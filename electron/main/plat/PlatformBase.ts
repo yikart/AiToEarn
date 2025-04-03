@@ -205,6 +205,7 @@ export abstract class PlatformBase {
     option: {
       dataId?: string; // 作品ID
       comment: any; // 辅助数据,原数据
+      videoAuthId?: string; // 视频作者ID
     },
   ): Promise<any>;
 

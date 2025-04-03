@@ -25,6 +25,7 @@ export type WorkData = {
 
 export type CommentData = {
   dataId: string;
+  videoAuthId?: string;
   commentId: string;
   parentCommentId?: string; // 上级评论ID
   content: string;
@@ -167,6 +168,7 @@ export async function icpReplyCommentByOther(
   option: {
     dataId?: string; // 作品ID
     comment: any; // 辅助数据,原数据
+    videoAuthId?: string; // 视频作者ID
   },
 ) {
   const res: boolean = await window.ipcRenderer.invoke(
