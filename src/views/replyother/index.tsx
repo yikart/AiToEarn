@@ -25,6 +25,7 @@ import {
   Radio,
   Tooltip,
   Spin,
+  Checkbox,
 } from 'antd';
 import { useCallback, useRef, useState, useEffect } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
@@ -112,20 +113,11 @@ export default function Page() {
   // 添加任务表单相关状态
   const [taskForm] = Form.useForm();
   const [commentType, setCommentType] = useState<'ai' | 'custom'>('ai');
-  const [replyCommentType, setReplyCommentType] = useState<'ai' | 'custom'>(
-    'ai',
-  );
   const [customComments, setCustomComments] = useState<string[]>([
     '很棒！',
     '喜欢这个',
     '支持一下',
     '不错哦',
-  ]);
-  const [customReplyComments, setCustomReplyComments] = useState<string[]>([
-    '回复一下',
-    '谢谢分享',
-    '同意你的观点',
-    '学习了',
   ]);
 
   // 添加任务弹窗状态
@@ -172,43 +164,96 @@ export default function Page() {
     }
   };
 
-  // 提交任务
-  const submitTask = (values: any) => {
+  // 添加选择模式状态
+  const [isSelectMode, setIsSelectMode] = useState(false);
+  const [selectedPosts, setSelectedPosts] = useState<string[]>([]);
+
+  // 处理选择模式切换
+  const handleSelectModeToggle = () => {
+    setIsSelectMode(!isSelectMode);
+    if (!isSelectMode) {
+      setSelectedPosts([]); // 清空已选择的帖子
+    }
+  };
+
+  // 处理帖子选择
+  const handlePostSelect = (postId: string) => {
+    setSelectedPosts(prev => {
+      if (prev.includes(postId)) {
+        return prev.filter(id => id !== postId);
+      } else {
+        return [...prev, postId];
+      }
+    });
+  };
+
+  // 修改提交任务函数
+  const submitTask = async (values: any) => {
     console.log('任务参数:', values);
+    console.log('选中的帖子:', selectedPosts);
     message.success('任务已下发');
-    setTaskModalVisible(false); // 关闭弹窗
-    // 这里可以调用相应的API来执行任务
+    setTaskModalVisible(false);
+    setIsSelectMode(false);
+    
+    // 创建任务队列
+    const taskQueue = selectedPosts.map(postId => {
+      const post = postList.find(item => item.dataId === postId);
+      if (!post) return null;
+      
+      return async () => {
+        try {
+          // 根据概率决定是否执行点赞
+          // if (Math.random() * 100 <= values.likeProb) {
+            await likePost(post);
+          // }
+          
+          // 根据概率决定是否执行收藏
+          if(activeAccountType != 'KWAI'){
+            if (Math.random() * 100 <= values.collectProb) {
+              await collectPost(post);
+            }
+          }
+          
+          // // 根据概率决定是否执行评论
+          // if (Math.random() * 100 <= values.commentProb) {
+          //   if (values.commentType === 'ai') {
+          //     // AI评论逻辑
+          //     await openReplyWorks(post);
+          //   } else {
+          //     // 自定义评论逻辑
+          //     const randomComment = customComments[Math.floor(Math.random() * customComments.length)];
+          //     // TODO: 实现自定义评论发送逻辑
+          //   }
+          // }
+        } catch (error) {
+          console.error('执行任务失败:', error);
+        }
+      };
+    }).filter(Boolean);
+
+    // 按顺序执行任务，每个任务间隔3秒
+    for (const task of taskQueue) {
+      if (task) {
+        await task();
+        await new Promise(resolve => setTimeout(resolve, 3000)); // 等待3秒
+      }
+    }
+
+    setSelectedPosts([]);
   };
 
   // 添加自定义评论
-  const addCustomComment = (value: string, type: 'comment' | 'reply') => {
+  const addCustomComment = (value: string, type: 'comment') => {
     if (!value.trim()) return;
-
-    if (type === 'comment') {
-      setCustomComments([...customComments, value.trim()]);
-    } else {
-      setCustomReplyComments([...customReplyComments, value.trim()]);
-    }
-
-    // 清空输入框
-    if (type === 'comment') {
-      taskForm.setFieldValue('newComment', '');
-    } else {
-      taskForm.setFieldValue('newReplyComment', '');
-    }
+    setCustomComments([...customComments, value.trim()]);
+    taskForm.setFieldValue('newComment', '');
   };
 
   // 删除自定义评论
-  const removeCustomComment = (index: number, type: 'comment' | 'reply') => {
-    if (type === 'comment') {
-      const newComments = [...customComments];
-      newComments.splice(index, 1);
-      setCustomComments(newComments);
-    } else {
-      const newReplyComments = [...customReplyComments];
-      newReplyComments.splice(index, 1);
-      setCustomReplyComments(newReplyComments);
-    }
+  const removeCustomComment = (index: number, type: 'comment') => {
+    const newComments = [...customComments];
+    newComments.splice(index, 1);
+    setCustomComments(newComments);
   };
 
   // 修改状态结构，使用Map存储二级评论
@@ -610,14 +655,37 @@ export default function Page() {
               />
             </Col>
             <Col>
-              <Button
-                type="primary"
-                icon={<DownOutlined />}
-                onClick={() => setTaskModalVisible(true)}
-                size="large"
-              >
-                下发任务
-              </Button>
+              <Space>
+                <Button
+                  type={isSelectMode ? "primary" : "default"}
+                  icon={<DownOutlined />}
+                  onClick={handleSelectModeToggle}
+                  size="large"
+                >
+                  {isSelectMode ? '取消选择' : '选择作品'}
+                </Button>
+                {isSelectMode && (
+                  <Button
+                    type="primary"
+                    icon={<SendOutlined />}
+                    onClick={() => setTaskModalVisible(true)}
+                    size="large"
+                    disabled={selectedPosts.length === 0}
+                  >
+                    下发任务 ({selectedPosts.length})
+                  </Button>
+                )}
+                {!isSelectMode && (
+                  <Button
+                    type="primary"
+                    icon={<DownOutlined />}
+                    onClick={() => setTaskModalVisible(true)}
+                    size="large"
+                  >
+                    下发任务
+                  </Button>
+                )}
+              </Space>
             </Col>
           </Row>
 
@@ -626,18 +694,26 @@ export default function Page() {
             className={styles.myMasonryGrid}
             columnClassName={styles.myMasonryGridColumn}
           >
-            {postList.map((item: any) => (
+            {postList.map((item: any, index: number) => (
               <div
-                key={item.dataId || item.coverUrl}
+                key={`${item.dataId || item.coverUrl}-${index}`}
                 className={styles.masonryItem}
               >
                 <Card
                   hoverable
                   cover={
                     <div
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => handleImageClick(item)}
+                      style={{ cursor: 'pointer', position: 'relative' }}
+                      onClick={() => !isSelectMode && handleImageClick(item)}
                     >
+                      {isSelectMode && (
+                        <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 1 }}>
+                          <Checkbox
+                            checked={selectedPosts.includes(item.dataId)}
+                            onChange={() => handlePostSelect(item.dataId)}
+                          />
+                        </div>
+                      )}
                       <img
                         alt={item.title}
                         src={item.coverUrl}
@@ -746,44 +822,13 @@ export default function Page() {
           layout="vertical"
           onFinish={submitTask}
           initialValues={{
-            keyword: '美妆',
-            limit: 20,
             likeProb: 70,
             commentProb: 50,
             commentType: 'ai',
-            commentCount: 3,
             collectProb: 30,
-            replyCommentType: 'ai',
-            replyCommentCount: 2,
           }}
         >
-          {/* 第一行：关键词和筛选条数 */}
-          <Row gutter={24}>
-            <Col span={12}>
-              <Form.Item
-                label="视频关键词"
-                name="keyword"
-                rules={[{ required: true, message: '请输入关键词' }]}
-              >
-                <Input
-                  prefix={<SearchOutlined />}
-                  placeholder="输入搜索关键词"
-                />
-              </Form.Item>
-            </Col>
-
-            <Col span={12}>
-              <Form.Item
-                label="筛选条数"
-                name="limit"
-                rules={[{ required: true, message: '请输入筛选条数' }]}
-              >
-                <InputNumber min={1} max={100} style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          {/* 第二行：点赞概率 */}
+          {/* 点赞概率 */}
           <Form.Item label="点赞概率" name="likeProb">
             <Slider
               marks={{
@@ -798,7 +843,7 @@ export default function Page() {
 
           <Divider orientation="left">评论设置</Divider>
 
-          {/* 第三行：评论概率 */}
+          {/* 评论概率 */}
           <Form.Item label="评论概率" name="commentProb">
             <Slider
               marks={{
@@ -811,7 +856,7 @@ export default function Page() {
             />
           </Form.Item>
 
-          {/* 第四行：评论类型和条数 */}
+          {/* 评论类型 */}
           <Row gutter={24}>
             <Col span={12}>
               <Form.Item label="评论类型" name="commentType">
@@ -827,12 +872,6 @@ export default function Page() {
                     </Radio.Button>
                   </Tooltip>
                 </Radio.Group>
-              </Form.Item>
-            </Col>
-
-            <Col span={12}>
-              <Form.Item label="评论条数" name="commentCount">
-                <InputNumber min={1} max={10} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
           </Row>
@@ -879,7 +918,7 @@ export default function Page() {
             </div>
           )}
 
-          {/* 第五行：收藏概率 */}
+          {/* 收藏概率 */}
           <Form.Item label="收藏概率" name="collectProb">
             <Slider
               marks={{
@@ -891,78 +930,6 @@ export default function Page() {
               }}
             />
           </Form.Item>
-
-          <Divider orientation="left">一级评论回复设置</Divider>
-
-          {/* 第六行：回复类型和条数 */}
-          <Row gutter={24}>
-            <Col span={12}>
-              <Form.Item label="回复类型" name="replyCommentType">
-                <Radio.Group
-                  onChange={(e) => setReplyCommentType(e.target.value)}
-                >
-                  <Tooltip title="使用AI生成回复">
-                    <Radio.Button value="ai">
-                      <RobotOutlined /> AI回复
-                    </Radio.Button>
-                  </Tooltip>
-                  <Tooltip title="使用自定义回复">
-                    <Radio.Button value="custom">
-                      <UserOutlined /> 自定义回复
-                    </Radio.Button>
-                  </Tooltip>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
-
-            <Col span={12}>
-              <Form.Item label="回复条数" name="replyCommentCount">
-                <InputNumber min={1} max={10} style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          {/* 自定义回复列表 */}
-          {replyCommentType === 'custom' && (
-            <div className={styles.customCommentsSection}>
-              <div className={styles.commentsList}>
-                {customReplyComments.map((comment, index) => (
-                  <div key={index} className={styles.commentItem}>
-                    <span>{comment}</span>
-                    <Button
-                      type="text"
-                      danger
-                      size="small"
-                      onClick={() => removeCustomComment(index, 'reply')}
-                    >
-                      删除
-                    </Button>
-                  </div>
-                ))}
-              </div>
-
-              <Row gutter={8}>
-                <Col flex="auto">
-                  <Form.Item name="newReplyComment">
-                    <Input placeholder="添加自定义回复" />
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Button
-                    type="primary"
-                    onClick={() =>
-                      addCustomComment(
-                        taskForm.getFieldValue('newReplyComment'),
-                        'reply',
-                      )
-                    }
-                  >
-                    添加
-                  </Button>
-                </Col>
-              </Row>
-            </div>
-          )}
 
           {/* 提交按钮 */}
           <Form.Item style={{ marginTop: 20, textAlign: 'right' }}>
