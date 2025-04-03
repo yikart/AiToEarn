@@ -547,7 +547,7 @@ class KwaiPub {
       method: 'POST',
       body: {
         "operationName":"visionVideoLike",
-        "variables":{"photoId": dataId,"photoAuthorId":"3xg4kz5yqa2ce2c","cancel":0,"expTag":"1_i/2008189535617610417_xpcwebdetailxxnull0"},
+        "variables":{"photoId": dataId,"photoAuthorId": option.authid,"cancel":0,"expTag":"1_i/2008189535617610417_xpcwebdetailxxnull0"},
         "query": `mutation visionVideoLike($photoId: String, $photoAuthorId: String, $cancel: Int, $expTag: String) {\n  visionVideoLike(photoId: $photoId, photoAuthorId: $photoAuthorId, cancel: $cancel, expTag: $expTag) {\n    result\n    __typename\n  }\n}\n`
       },
       headers: {
@@ -574,15 +574,17 @@ class KwaiPub {
     cookie: Electron.Cookie[],
     dataId: string,
     content: string,
+    authorId?: string
   ) {
+    console.log('dataIddataId:' , dataId, authorId)
     const res = await this.requestApi<CommentAddResponse>({
       cookie: cookie,
       apiUrl: 'https://www.kuaishou.com/graphql',
       method: 'POST',
       body: {"operationName":"visionAddComment",
         "variables":{
-          "photoId":'3xxdnfeyyjp2qck',
-          "photoAuthorId":"3xya6h9q3j26d2g",
+          "photoId": dataId,
+          "photoAuthorId": authorId,
           "content":content,
           "expTag":"1_a/2004436422502146722_xpcwebdetailxxnull0"},
           "query":"mutation visionAddComment($photoId: String, $photoAuthorId: String, $content: String, $replyToCommentId: ID, $replyTo: ID, $expTag: String) {\n  visionAddComment(photoId: $photoId, photoAuthorId: $photoAuthorId, content: $content, replyToCommentId: $replyToCommentId, replyTo: $replyTo, expTag: $expTag) {\n    result\n    commentId\n    content\n    timestamp\n    status\n    __typename\n  }\n}\n"},

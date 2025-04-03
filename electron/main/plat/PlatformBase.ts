@@ -82,7 +82,7 @@ export abstract class PlatformBase {
    * @param dataId 数据ID
    * @param option 配置项
    */
-  abstract dianzanDyOther(
+  abstract dianzanDyOther( 
     account: AccountModel,
     dataId: string,
     option?: any,
@@ -192,6 +192,7 @@ export abstract class PlatformBase {
     account: AccountModel,
     dataId: string, // 作品ID
     content: string,
+    authorId?: string
   ): Promise<any>;
 
   /**

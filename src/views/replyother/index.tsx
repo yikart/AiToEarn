@@ -318,6 +318,7 @@ export default function Page() {
       title: data.title || '',
       coverUrl: data.cover || data.coverUrl || '',
       // 添加其他必要的字段
+      authorId: data.author.id
     };
     Ref_ReplyWorks.current?.init(activeAccountId, workData);
   }
@@ -410,7 +411,7 @@ export default function Page() {
         return;
       }
 
-      const res = await icpDianzanDyOther(activeAccountId, post.dataId, {authid: 1});
+      const res = await icpDianzanDyOther(activeAccountId, post.dataId, {authid: post.author.id});
       console.log('------ likePost', res);
       if (res.status_code == 0 || res.data?.code == 0 || res.data?.visionVideoLike.result == 1) {
         message.success('点赞成功');

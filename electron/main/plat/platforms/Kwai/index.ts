@@ -375,9 +375,10 @@ export class Kwai extends PlatformBase {
     account: AccountModel,
     dataId: string, // 作品ID
     content: string,
+    authorId?: string
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const res = await kwaiPub.videoCommentByOther(cookie, dataId, content);
+    const res = await kwaiPub.videoCommentByOther(cookie, dataId, content, authorId);
     console.log('------ kaishou createComment res ----', res);
 
     return res.data;

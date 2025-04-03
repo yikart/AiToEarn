@@ -20,7 +20,7 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
   async function init(accountId: number, inWorkData: WorkData) {
     setAccountId(accountId);
     console.log('------ init-inWorkData', inWorkData);
-    setWorkData(inWorkData);
+    setWorkData(inWorkData); 
     setIsModalOpen(true);
   }
 
@@ -41,9 +41,10 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
       workData!.dataId,
       // '67d624a2000000001d02c637',
       content,
+      workData!.authorId
     );
     console.log('----- res', res);
-    if (res.status_code == 0 || res.data.code == 0) {
+    if (res.status_code == 0 || res.data.code == 0 || res.data.visionAddComment?.commentId) {
       message.success('评论成功');
       setIsModalOpen(false);
     } else {

@@ -17,6 +17,7 @@ export type WorkData = {
   desc?: string;
   coverUrl?: string;
   videoUrl?: string;
+  authorId?: string;
   option?: {
     xsec_token: string;
   };
@@ -156,12 +157,14 @@ export async function icpCreateComment(
   accountId: number,
   dataId: string,
   content: string,
+  authorId?: string,
 ) {
   const res: any = await window.ipcRenderer.invoke(
     'ICP_CREATE_COMMENT_BY_OTHER',
     accountId,
     dataId,
     content,
+    authorId,
   );
   return res;
 }

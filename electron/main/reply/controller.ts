@@ -204,6 +204,8 @@ export class ReplyController {
     accountId: number,
     dataId: string,
     content: string,
+    authorId?: string
+    
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
@@ -212,6 +214,7 @@ export class ReplyController {
       account,
       dataId,
       content,
+      authorId
     );
     return res;
   }
