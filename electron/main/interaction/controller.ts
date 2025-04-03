@@ -30,15 +30,10 @@ export class InteractionController {
    * 一键AI互动
    */
   @Icp('ICP_INTERACTION_ONE_KEY')
-  async createCommentList(
+  async interactionOneKey(
     event: Electron.IpcMainInvokeEvent,
     accountId: number,
-    worksList: {
-      worksId: string;
-      desc: string; // 用来AI生成
-      title?: string;
-      cover?: string;
-    }[],
+    worksList: WorkData[],
     option: {
       commentContent: string; // 评论内容
     },
@@ -64,9 +59,9 @@ export class InteractionController {
   }
 
   /**
-   * 创建自动一键评论任务
+   * 创建自动一键互动任务
    */
-  @Icp('ICP_AUTO_RUN_CREATE_REPLY')
+  @Icp('ICP_AUTO_RUN_INTERACTION')
   async createReplyCommentAutoRun(
     event: Electron.IpcMainInvokeEvent,
     accountId: number,
@@ -100,12 +95,7 @@ export class InteractionController {
 
     const res = await this.interactionService.addReplyQueue(
       account,
-      dataInfo as {
-        worksId: string;
-        desc: string; // 用来AI生成
-        title?: string;
-        cover?: string;
-      }[],
+      dataInfo as WorkData[],
       {
         commentContent: dataInfo.commentContent,
       },

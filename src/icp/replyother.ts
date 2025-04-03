@@ -43,7 +43,11 @@ export enum PageType {
 /**
  * 点赞作品
  */
-export async function icpDianzanDyOther(accountId: number, dataId: string, option?: any) {
+export async function icpDianzanDyOther(
+  accountId: number,
+  dataId: string,
+  option?: any,
+) {
   const res: any = await window.ipcRenderer.invoke(
     'ICP_DIANZAN_DY_OTHER',
     accountId,
@@ -62,22 +66,6 @@ export async function icpShoucangDyOther(accountId: number, dataId: string) {
     accountId,
     dataId,
   );
-  return res;
-}
-
-/**
- * 获取作品列表
- */
-export async function icpCreatorList(accountId: number, pcursor?: string) {
-  const res: {
-    list: WorkData[];
-    pageInfo: {
-      pageType: PageType;
-      count?: number;
-      hasMore?: boolean;
-      pcursor?: string;
-    };
-  } = await window.ipcRenderer.invoke('ICP_CREATOR_LIST', accountId, pcursor);
   return res;
 }
 
@@ -192,50 +180,37 @@ export async function icpReplyCommentByOther(
 }
 
 /**
- * 回复评论
+ * 一键AI互动
  */
-export async function icpReplyComment(
+export async function icpCreateInteractionOneKey(
   accountId: number,
-  commentId: string,
-  content: string,
+  worksList: WorkData[],
   option: {
-    dataId?: string; // 作品ID
-    comment: any; // 辅助数据,原数据
+    commentContent: string; // 评论内容
   },
 ) {
   const res: boolean = await window.ipcRenderer.invoke(
-    'ICP_REPLY_COMMENT',
+    'ICP_INTERACTION_ONE_KEY',
     accountId,
-    commentId,
-    content,
+    worksList,
     option,
   );
   return res;
 }
 
 /**
- * 一键作品回复评论
- */
-export async function icpCreateCommentList(accountId: number, dataId: string) {
-  const res: boolean = await window.ipcRenderer.invoke(
-    'ICP_REPLY_COMMENT_LIST_BY_AI',
-    accountId,
-    dataId,
-  );
-  return res;
-}
-
-/**
  * 创建一键回复自动进程
- * @param data
+ * @param accountId
+ * @param dataId
+ * @param cycleType
  */
-export async function ipcCreateAutoRunOfReply(
+export async function ipcCreateAutoRunOfInteraction(
   accountId: number,
   dataId: string, // 作品ID
   cycleType: string,
 ) {
   const res: string = await window.ipcRenderer.invoke(
-    'ICP_AUTO_RUN_CREATE_REPLY',
+    'ICP_AUTO_RUN_INTERACTION',
     accountId,
     dataId,
     cycleType,

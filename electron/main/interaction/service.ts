@@ -20,6 +20,7 @@ import { GlobleCache } from '../../global/cache';
 import { sleep } from '../../util/time';
 import { InteractionRecordModel } from '../../db/models/interactionRecord';
 import { AutorWorksInteractionScheduleEvent } from '../../../commont/types/interaction';
+import { WorkData } from '../plat/plat.type';
 
 /**
  * 获取缓存key
@@ -93,12 +94,7 @@ export class InteractionService {
    */
   async autorInteraction(
     account: AccountModel,
-    worksList: {
-      worksId: string;
-      desc: string; // 用来AI生成
-      title?: string;
-      cover?: string;
-    }[],
+    worksList: WorkData[],
     option: {
       commentContent: string; // 评论内容
     },
@@ -133,13 +129,13 @@ export class InteractionService {
         const oldRecord = await this.getInteractionRecord(
           userInfo.id,
           account,
-          works.worksId,
+          works.dataId,
         );
         if (oldRecord) continue;
 
         if (!option.commentContent) {
           const aiRes = await toolsApi.aiRecoverReview({
-            content: works.desc,
+            content: (works.desc || '') + (works.title || ''),
           });
 
           // AI接口错误
@@ -163,7 +159,7 @@ export class InteractionService {
           // ----- 1-评论作品 -----
           const commentWorksRes = await platController.createCommentByOther(
             account,
-            works.worksId,
+            works.dataId,
             aiRes,
           );
 
@@ -187,7 +183,7 @@ export class InteractionService {
           try {
             const isLikeRes = await platController.dianzanDyOther(
               account,
-              works.worksId,
+              works.dataId,
             );
             isLike = isLikeRes ? 1 : 0;
           } catch (error) {
@@ -206,7 +202,7 @@ export class InteractionService {
           try {
             const isCollectRes = await platController.shoucangDyOther(
               account,
-              works.worksId,
+              works.dataId,
             );
             isCollect = isCollectRes ? 1 : 0;
           } catch (error) {
@@ -225,9 +221,9 @@ export class InteractionService {
             userInfo.id,
             account,
             {
-              worksId: works.worksId,
+              worksId: works.dataId,
               worksTitle: works.title,
-              worksCover: works.cover,
+              worksCover: works.coverUrl,
             },
             option.commentContent,
             isLike,
@@ -260,12 +256,7 @@ export class InteractionService {
    */
   async addReplyQueue(
     account: AccountModel,
-    worksList: {
-      worksId: string;
-      desc: string; // 用来AI生成
-      title?: string;
-      cover?: string;
-    }[],
+    worksList: WorkData[],
     option: {
       commentContent: string; // 评论内容
     },

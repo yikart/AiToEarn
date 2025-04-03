@@ -3,9 +3,9 @@
  * @Date: 2025-03-18 21:02:38
  * @LastEditTime: 2025-03-31 11:02:12
  * @LastEditors: nevin
- * @Description: 一键评论
+ * @Description: 一键互动
  */
-import { icpReplyCommentList, WorkData } from '@/icp/reply';
+import { WorkData } from '@/icp/reply';
 import { message, Modal } from 'antd';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { SendChannelEnum } from '@@/UtilsEnum';
@@ -13,30 +13,36 @@ import {
   AutorReplyCommentScheduleEvent,
   AutorReplyCommentScheduleEventTagStrMap,
 } from '@@/types/reply';
+import { icpCreateInteractionOneKey } from '@/icp/replyother';
 
-export interface OneKeyReplyRef {
-  init: (accountId: number, data: WorkData) => Promise<void>;
+export interface InteractionOneKeyRef {
+  init: (accountId: number, data: WorkData[]) => Promise<void>;
 }
 
-const Com = forwardRef<OneKeyReplyRef>((props: any, ref) => {
+const Com = forwardRef<InteractionOneKeyRef>((props: any, ref) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [infoText, setInfoText] = useState('');
   const [errorText, setErrorText] = useState('');
-  const [workData, setWorkData] = useState<WorkData | null>(null);
-  async function init(accountId: number, data: WorkData) {
+  const [workDataList, setWorkDataList] = useState<WorkData[]>([]);
+  async function init(accountId: number, dataList: WorkData[]) {
     window.ipcRenderer.on(SendChannelEnum.CommentRelyProgress, onGetNotice);
-    setWorkData(data);
+    setWorkDataList(dataList);
     setIsModalOpen(true);
 
-    replyCommentList(accountId, data);
+    createInteractionOneKey(accountId, dataList);
   }
 
   /**
-   * 一键AI评论
+   * 一键互动
    */
-  async function replyCommentList(inAccountId: number, inWorkData: WorkData) {
-    if (!inWorkData?.dataId) return;
-    const res = await icpReplyCommentList(inAccountId, inWorkData);
+  async function createInteractionOneKey(
+    inAccountId: number,
+    inWorkDataList: WorkData[] = [],
+  ) {
+    if (!inWorkDataList.length) return;
+    const res = await icpCreateInteractionOneKey(inAccountId, workDataList, {
+      commentContent: '不错啊!收藏了!',
+    });
     console.log('------ res', res);
   }
 

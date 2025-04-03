@@ -101,9 +101,11 @@ export class ReplyController {
   async getSearchNodeList(
     event: Electron.IpcMainInvokeEvent,
     accountId: number,
-    qe?: string,
+    qe?: string, // 搜索内容
     pageInfo?: any,
   ) {
+    console.log('==== pageInfo -----', pageInfo);
+
     const account = await this.accountService.getAccountById(accountId);
 
     if (!account)
@@ -204,8 +206,7 @@ export class ReplyController {
     accountId: number,
     dataId: string,
     content: string,
-    authorId?: string
-    
+    authorId?: string,
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
@@ -214,7 +215,7 @@ export class ReplyController {
       account,
       dataId,
       content,
-      authorId
+      authorId,
     );
     return res;
   }

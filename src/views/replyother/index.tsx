@@ -1,4 +1,3 @@
-
 import {
   icpCreatorList,
   icpGetCommentListByOther,
@@ -153,10 +152,16 @@ export default function Page() {
   // 加载更多帖子
   const loadMorePosts = async () => {
     // console.log('------ loadMorePosts == 1');
-    if (!pageInfo.hasMore || isLoadingMore || !searchKeyword || searchKeyword == '') return;
+    if (
+      !pageInfo.hasMore ||
+      isLoadingMore ||
+      !searchKeyword ||
+      searchKeyword == ''
+    )
+      return;
     // console.log('------ loadMorePosts == 2');
-    if(activeAccountType !== 'xhs'){
-      if(!postFirstId || postFirstId == '') return;
+    if (activeAccountType !== 'xhs') {
+      if (!postFirstId || postFirstId == '') return;
     }
     // console.log('------ loadMorePosts == 3');
     setIsLoadingMore(true);
@@ -229,23 +234,35 @@ export default function Page() {
   }
 
   // 搜索列表 - 平台自己搜索
-  async function getSearchListFunc(thisid: any, qe?: any, isfirst?: boolean) {
+  async function getSearchListFunc(
+    thisid: number,
+    qe?: any,
+    isfirst?: boolean,
+  ) {
     if (!pageInfo.hasMore && pageInfo.pcursor !== 1 && !isfirst) {
       console.log('没有更多数据了，不再发送请求');
       return;
     }
-    
-    const res = await getCommentSearchNotes(thisid, qe, {...pageInfo, postFirstId: postFirstId});
+
+    const res = await getCommentSearchNotes(thisid, qe, {
+      ...pageInfo,
+      postFirstId: postFirstId,
+    });
     console.log('------ getSearchListFunc -- @@:', res);
     if (isfirst && activeAccountType == 'douyin') {
       setPostFirstId(res.orgList?.log_pb?.impr_id);
-    } else if (isfirst &&activeAccountType == 'KWAI') {
-      console.log('------ getSearchListFunc -- @@:', res.orgList?.searchSessionId);
+    } else if (isfirst && activeAccountType == 'KWAI') {
+      console.log(
+        '------ getSearchListFunc -- @@:',
+        res.orgList?.searchSessionId,
+      );
       setPostFirstId(res.orgList?.searchSessionId);
     }
     if (res.list?.length) {
       // 如果是加载更多，则追加到现有列表
-      setPostList((prev) => (pageInfo.pcursor !== 1 ? [...prev, ...res.list] : res.list));
+      setPostList((prev) =>
+        pageInfo.pcursor !== 1 ? [...prev, ...res.list] : res.list,
+      );
 
       // 更新分页信息
       setPageInfo({
@@ -255,9 +272,9 @@ export default function Page() {
       });
     } else {
       // 如果没有返回数据，设置hasMore为false
-      setPageInfo(prev => ({
+      setPageInfo((prev) => ({
         ...prev,
-        hasMore: false
+        hasMore: false,
       }));
     }
   }
@@ -318,7 +335,7 @@ export default function Page() {
       title: data.title || '',
       coverUrl: data.cover || data.coverUrl || '',
       // 添加其他必要的字段
-      authorId: data.author.id
+      authorId: data.author.id,
     };
     Ref_ReplyWorks.current?.init(activeAccountId, workData);
   }
@@ -411,9 +428,15 @@ export default function Page() {
         return;
       }
 
-      const res = await icpDianzanDyOther(activeAccountId, post.dataId, {authid: post.author.id});
+      const res = await icpDianzanDyOther(activeAccountId, post.dataId, {
+        authid: post.author.id,
+      });
       console.log('------ likePost', res);
-      if (res.status_code == 0 || res.data?.code == 0 || res.data?.visionVideoLike.result == 1) {
+      if (
+        res.status_code == 0 ||
+        res.data?.code == 0 ||
+        res.data?.visionVideoLike.result == 1
+      ) {
         message.success('点赞成功');
         // 更新点赞状态
         setLikedPosts((prev) => ({
@@ -504,7 +527,7 @@ export default function Page() {
       console.log('------ post.dataId', post.dataId);
       url = `https://www.douyin.com/video/${post.dataId}`;
       console.log('------ url 2:', url);
-    } else if(activeAccountType == 'KWAI'){
+    } else if (activeAccountType == 'KWAI') {
       // 快手链接格式
       url = `https://www.kuaishou.com/short-video/${post.dataId}`;
     } else {
@@ -537,7 +560,7 @@ export default function Page() {
       hasMore: true,
       pcursor: 1,
     });
-    
+
     // 执行搜索
     setTimeout(() => {
       getSearchListFunc(activeAccountId, searchKeyword, true);
@@ -562,13 +585,11 @@ export default function Page() {
               setActiveAccountType(info.type);
 
               setPostList([]);
-                
-                
-                setActiveAccountId(info.id);
-                setTimeout(() => {
-                  getSearchListFunc(info.id, searchKeyword, true);
-                }, 600);
-              
+
+              setActiveAccountId(info.id);
+              setTimeout(() => {
+                getSearchListFunc(info.id, searchKeyword, true);
+              }, 600);
             },
             [getCreatorList],
           )}
@@ -678,11 +699,7 @@ export default function Page() {
                   ]}
                 >
                   <Card.Meta
-                    avatar={
-                      <Avatar
-                        src={`${item.author?.avatar}`}
-                      />
-                    }
+                    avatar={<Avatar src={`${item.author?.avatar}`} />}
                     title={item.author?.name}
                     description={
                       <div>
@@ -701,17 +718,14 @@ export default function Page() {
           </Masonry>
 
           {/* 加载更多区域 */}
-          <div 
-            ref={loadMoreRef} 
-            className={styles.loadMoreArea}
-          >
+          <div ref={loadMoreRef} className={styles.loadMoreArea}>
             {isLoadingMore && (
               <div className={styles.loadingMore}>
                 <Spin size="small" />
                 <span style={{ marginLeft: 8 }}>加载中...</span>
               </div>
             )}
-            
+
             {!pageInfo.hasMore && postList.length > 0 && (
               <div className={styles.noMoreData}>
                 <Divider plain>没有更多数据了</Divider>

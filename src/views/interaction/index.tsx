@@ -9,16 +9,15 @@ import { WorkData } from '@/icp/reply';
 import { Button, Col, Popconfirm, Row, Tabs, Tooltip } from 'antd';
 import { useCallback, useRef, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
-import ReplyWorks, { ReplyWorksRef } from './components/replyWorks';
-import CommentList, { CommentListRef } from './components/commentList';
 import {
   AliwangwangOutlined,
-  CommentOutlined,
   FieldTimeOutlined,
-  MenuUnfoldOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
-import OneKeyReply, { OneKeyReplyRef } from './components/oneKeyReply';
+import InteractionOneKey, {
+  InteractionOneKeyRef,
+} from './components/oneKeyInteraction';
+import { getCommentSearchNotes } from '@/icp/replyother';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
@@ -31,31 +30,17 @@ export default function Page() {
     count: 0,
     hasMore: false,
   });
-  const Ref_ReplyWorks = useRef<ReplyWorksRef>(null);
-  const Ref_CommentList = useRef<CommentListRef>(null);
-  const Ref_OneKeyReply = useRef<OneKeyReplyRef>(null);
+  const Ref_InteractionOneKey = useRef<InteractionOneKeyRef>(null);
 
   async function getCreatorList(accountId: number) {
-    // const res = await getCommentSearchNotes(thisid, qe, {
-    //   ...pageInfo,
-    //   postFirstId: postFirstId,
-    // });
-  }
+    const res = await getCommentSearchNotes(accountId, '英雄杀道一', {
+      ...pageInfo,
+      postFirstId: '',
+    });
 
-  /**
-   * 打开作品评论
-   * @param data
-   */
-  function openReplyWorks(data: WorkData) {
-    Ref_ReplyWorks.current?.init(activeAccountId, data);
-  }
+    console.log('---- res  ----', res);
 
-  /**
-   * 打开评论列表
-   * @param data
-   */
-  function openCommentList(data: WorkData) {
-    Ref_CommentList.current?.init(activeAccountId, data);
+    setWordList(res.list);
   }
 
   /**
@@ -65,7 +50,7 @@ export default function Page() {
   function openAddAutoRun(data: WorkData) {}
 
   return (
-    <div className={styles.account}>
+    <div>
       <AccountSidebar
         activeAccountId={activeAccountId}
         onAccountChange={useCallback((info) => {
@@ -78,6 +63,17 @@ export default function Page() {
       <div className="w-full p-4 text-gray-500">
         <Tabs defaultActiveKey="1" className="w-full">
           <Tabs.TabPane tab="作品列表" key="1">
+            <Popconfirm
+              title="确认进行一键互动"
+              onConfirm={(e?: React.MouseEvent<HTMLElement>) => {
+                Ref_InteractionOneKey.current?.init(activeAccountId, wordList);
+              }}
+              okText="是"
+              cancelText="否"
+            >
+              <AliwangwangOutlined />
+            </Popconfirm>
+
             {activeAccountId === -1 ? (
               <div className="flex items-center justify-center h-[300px]">
                 <Tooltip title="请先在左侧侧边栏选择账户">
@@ -107,41 +103,13 @@ export default function Page() {
                           <p className="mb-2">{item.title || '无标题'}</p>
                           <div className="w-full mt-auto">
                             <Row justify="space-evenly">
-                              <Col span={8}>
-                                <Tooltip title="评论列表">
-                                  <MenuUnfoldOutlined
-                                    onClick={() => openCommentList(item)}
-                                  />
-                                </Tooltip>
-                              </Col>
-                              <Col span={8}>
-                                <Tooltip title="评论作品">
-                                  <CommentOutlined
-                                    onClick={() => openReplyWorks(item)}
-                                  />
-                                </Tooltip>
-                              </Col>
+                              <Col span={8}></Col>
+                              <Col span={8}></Col>
                             </Row>
 
                             <Row justify="space-evenly">
                               <Col span={8}>
-                                <Tooltip title="一键评论">
-                                  <Popconfirm
-                                    title="确认进行一键评论"
-                                    onConfirm={(
-                                      e?: React.MouseEvent<HTMLElement>,
-                                    ) => {
-                                      Ref_OneKeyReply.current?.init(
-                                        activeAccountId,
-                                        item,
-                                      );
-                                    }}
-                                    okText="是"
-                                    cancelText="否"
-                                  >
-                                    <AliwangwangOutlined />
-                                  </Popconfirm>
-                                </Tooltip>
+                                <Tooltip title="一键评论"></Tooltip>
                               </Col>
                               <Col span={8}>
                                 <Tooltip title="自动评论">
@@ -177,9 +145,7 @@ export default function Page() {
         </Tabs>
       </div>
 
-      <ReplyWorks ref={Ref_ReplyWorks} />
-      <CommentList ref={Ref_CommentList} />
-      <OneKeyReply ref={Ref_OneKeyReply} />
+      <InteractionOneKey ref={Ref_InteractionOneKey} />
     </div>
   );
 }
