@@ -180,6 +180,25 @@ export async function icpReplyCommentByOther(
 }
 
 /**
+ * 作品互动
+ */
+export async function icpInteractionOneData(
+  accountId: number,
+  works: WorkData,
+  option: {
+    commentContent: string; // 评论内容
+  },
+) {
+  const res: boolean = await window.ipcRenderer.invoke(
+    'ICP_INTERACTION_ONE_DATA',
+    accountId,
+    works,
+    option,
+  );
+  return res;
+}
+
+/**
  * 一键AI互动
  */
 export async function icpCreateInteractionOneKey(

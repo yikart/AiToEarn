@@ -89,6 +89,163 @@ export class InteractionService {
   }
 
   /**
+   * 互动:作品评论,收藏,点赞
+   */
+  async interactionOneData(
+    account: AccountModel,
+    works: WorkData,
+    option: {
+      commentContent: string; // 评论内容
+    },
+    scheduleEvent: (data: {
+      tag: AutorWorksInteractionScheduleEvent;
+      status: -1 | 0 | 1; // -1 错误 0 进行中 1 完成
+      data?: any; // 数据
+      error?: any;
+    }) => void,
+  ) {
+    const userInfo = getUserInfo();
+    if (GlobleCache.getCache(getCacheKey(account))) {
+      sysNotice('请勿重复执行', `该账户有正在执行的任务`);
+      return false;
+    }
+
+    try {
+      scheduleEvent({
+        tag: AutorWorksInteractionScheduleEvent.Start,
+        status: 0,
+      });
+
+      // 重设缓存时间
+      GlobleCache.updateCacheTTL(getCacheKey(account), 60 * 15);
+
+      scheduleEvent({
+        tag: AutorWorksInteractionScheduleEvent.GetCommentListStart,
+        status: 0,
+      });
+
+      // 历史记录
+      const oldRecord = await this.getInteractionRecord(
+        userInfo.id,
+        account,
+        works.dataId,
+      );
+      if (oldRecord) return false;
+
+      if (!option.commentContent) {
+        const aiRes = await toolsApi.aiRecoverReview({
+          content: (works.desc || '') + (works.title || ''),
+        });
+
+        // AI接口错误
+        if (!aiRes) {
+          scheduleEvent({
+            tag: AutorWorksInteractionScheduleEvent.Error,
+            status: -1,
+            error: '未获得AI产出内容',
+          });
+          return false;
+        }
+
+        option.commentContent = aiRes;
+      }
+
+      scheduleEvent({
+        tag: AutorWorksInteractionScheduleEvent.ReplyCommentStart,
+        data: {
+          aiContent: option.commentContent,
+        },
+        status: 0,
+      });
+
+      // ----- 1-评论作品 -----
+      const commentWorksRes = await platController.createCommentByOther(
+        account,
+        works.dataId,
+        option.commentContent,
+      );
+
+      //  错误处理
+      if (!commentWorksRes) {
+        scheduleEvent({
+          tag: AutorWorksInteractionScheduleEvent.ReplyCommentEnd,
+          status: -1,
+          error: '回复评论失败',
+        });
+      }
+
+      scheduleEvent({
+        tag: AutorWorksInteractionScheduleEvent.ReplyCommentEnd,
+        status: 0,
+      });
+
+      // ----- 2-点赞作品 -----
+      let isLike: 0 | 1 = 0;
+      try {
+        const isLikeRes = await platController.dianzanDyOther(
+          account,
+          works.dataId,
+        );
+        isLike = isLikeRes ? 1 : 0;
+      } catch (error) {
+        scheduleEvent({
+          tag: AutorWorksInteractionScheduleEvent.Error,
+          status: 0,
+          error,
+          data: {
+            isLike,
+          },
+        });
+      }
+
+      // ----- 3-收藏作品 -----
+      let isCollect: 0 | 1 = 0;
+      try {
+        const isCollectRes = await platController.shoucangDyOther(
+          account,
+          works.dataId,
+        );
+        isCollect = isCollectRes ? 1 : 0;
+      } catch (error) {
+        scheduleEvent({
+          tag: AutorWorksInteractionScheduleEvent.Error,
+          status: 0,
+          error,
+          data: {
+            isLike,
+          },
+        });
+      }
+
+      // 创建评论记录
+      this.create(
+        userInfo.id,
+        account,
+        {
+          worksId: works.dataId,
+          worksTitle: works.title,
+          worksCover: works.coverUrl,
+        },
+        option.commentContent,
+        isLike,
+        isCollect,
+      );
+
+      scheduleEvent({
+        tag: AutorWorksInteractionScheduleEvent.ReplyCommentEnd,
+        status: 0,
+      });
+    } catch (error) {
+      scheduleEvent({
+        tag: AutorWorksInteractionScheduleEvent.Error,
+        status: -1,
+        error,
+      });
+      return false;
+    }
+  }
+
+  /**
    * 自动一键互动:作品评论,收藏,点赞
    * 规则:评论作品,已经评论不评论
    */
@@ -148,88 +305,90 @@ export class InteractionService {
             return false;
           }
 
-          scheduleEvent({
-            tag: AutorWorksInteractionScheduleEvent.ReplyCommentStart,
-            data: {
-              aiContent: aiRes,
-            },
-            status: 0,
-          });
+          option.commentContent = aiRes;
+        }
 
-          // ----- 1-评论作品 -----
-          const commentWorksRes = await platController.createCommentByOther(
-            account,
-            works.dataId,
-            aiRes,
-          );
+        scheduleEvent({
+          tag: AutorWorksInteractionScheduleEvent.ReplyCommentStart,
+          data: {
+            aiContent: option.commentContent,
+          },
+          status: 0,
+        });
 
-          //  错误处理
-          if (!commentWorksRes) {
-            scheduleEvent({
-              tag: AutorWorksInteractionScheduleEvent.ReplyCommentEnd,
-              status: -1,
-              error: '回复评论失败',
-            });
-            continue;
-          }
+        // ----- 1-评论作品 -----
+        const commentWorksRes = await platController.createCommentByOther(
+          account,
+          works.dataId,
+          option.commentContent,
+        );
 
+        //  错误处理
+        if (!commentWorksRes) {
           scheduleEvent({
             tag: AutorWorksInteractionScheduleEvent.ReplyCommentEnd,
-            status: 0,
+            status: -1,
+            error: '回复评论失败',
           });
-
-          // ----- 2-点赞作品 -----
-          let isLike: 0 | 1 = 0;
-          try {
-            const isLikeRes = await platController.dianzanDyOther(
-              account,
-              works.dataId,
-            );
-            isLike = isLikeRes ? 1 : 0;
-          } catch (error) {
-            scheduleEvent({
-              tag: AutorWorksInteractionScheduleEvent.Error,
-              status: 0,
-              error,
-              data: {
-                isLike,
-              },
-            });
-          }
-
-          // ----- 3-收藏作品 -----
-          let isCollect: 0 | 1 = 0;
-          try {
-            const isCollectRes = await platController.shoucangDyOther(
-              account,
-              works.dataId,
-            );
-            isCollect = isCollectRes ? 1 : 0;
-          } catch (error) {
-            scheduleEvent({
-              tag: AutorWorksInteractionScheduleEvent.Error,
-              status: 0,
-              error,
-              data: {
-                isLike,
-              },
-            });
-          }
-
-          // 创建评论记录
-          this.create(
-            userInfo.id,
-            account,
-            {
-              worksId: works.dataId,
-              worksTitle: works.title,
-              worksCover: works.coverUrl,
-            },
-            option.commentContent,
-            isLike,
-            isCollect,
-          );
+          continue;
         }
+
+        scheduleEvent({
+          tag: AutorWorksInteractionScheduleEvent.ReplyCommentEnd,
+          status: 0,
+        });
+
+        // ----- 2-点赞作品 -----
+        let isLike: 0 | 1 = 0;
+        try {
+          const isLikeRes = await platController.dianzanDyOther(
+            account,
+            works.dataId,
+          );
+          isLike = isLikeRes ? 1 : 0;
+        } catch (error) {
+          scheduleEvent({
+            tag: AutorWorksInteractionScheduleEvent.Error,
+            status: 0,
+            error,
+            data: {
+              isLike,
+            },
+          });
+        }
+
+        // ----- 3-收藏作品 -----
+        let isCollect: 0 | 1 = 0;
+        try {
+          const isCollectRes = await platController.shoucangDyOther(
+            account,
+            works.dataId,
+          );
+          isCollect = isCollectRes ? 1 : 0;
+        } catch (error) {
+          scheduleEvent({
+            tag: AutorWorksInteractionScheduleEvent.Error,
+            status: 0,
+            error,
+            data: {
+              isLike,
+            },
+          });
+        }
+
+        // 创建评论记录
+        this.create(
+          userInfo.id,
+          account,
+          {
+            worksId: works.dataId,
+            worksTitle: works.title,
+            worksCover: works.coverUrl,
+          },
+          option.commentContent,
+          isLike,
+          isCollect,
+        );
       }
 
       scheduleEvent({

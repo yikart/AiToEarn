@@ -29,6 +29,41 @@ export class InteractionController {
   /**
    * 一键AI互动
    */
+  @Icp('ICP_INTERACTION_ONE_DATA')
+  async interactionOneData(
+    event: Electron.IpcMainInvokeEvent,
+    accountId: number,
+    works: WorkData,
+    option: {
+      commentContent: string; // 评论内容
+    },
+  ): Promise<any> {
+    const account = await this.accountService.getAccountById(accountId);
+    if (!account) return null;
+
+    console.log('------ works', works);
+    console.log('------ option', option);
+
+    const res = await this.interactionService.interactionOneData(
+      account,
+      works,
+      option,
+      (e: {
+        tag: AutorWorksInteractionScheduleEvent;
+        status: -1 | 0 | 1;
+        data?: any;
+        error?: any;
+      }) => {
+        windowOperate.sendRenderMsg(SendChannelEnum.CommentRelyProgress, e);
+      },
+    );
+
+    return res;
+  }
+
+  /**
+   * 一键AI互动
+   */
   @Icp('ICP_INTERACTION_ONE_KEY')
   async interactionOneKey(
     event: Electron.IpcMainInvokeEvent,
@@ -40,6 +75,9 @@ export class InteractionController {
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
+
+    console.log('------ worksList', worksList);
+    console.log('------ option', option);
 
     const res = await this.interactionService.autorInteraction(
       account,

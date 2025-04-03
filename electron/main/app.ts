@@ -18,6 +18,7 @@ import { AppController } from './controller';
 import { AppService } from './service';
 import { ReplyModule } from './reply/module';
 import { AutoRunModule } from './autoRun/module';
+import { InteractionModule } from './interaction/module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { AutoRunModule } from './autoRun/module';
     TestModule,
     ReplyModule,
     AutoRunModule,
+    InteractionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

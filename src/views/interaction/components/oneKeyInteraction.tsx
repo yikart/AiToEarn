@@ -40,7 +40,7 @@ const Com = forwardRef<InteractionOneKeyRef>((props: any, ref) => {
     inWorkDataList: WorkData[] = [],
   ) {
     if (!inWorkDataList.length) return;
-    const res = await icpCreateInteractionOneKey(inAccountId, workDataList, {
+    const res = await icpCreateInteractionOneKey(inAccountId, inWorkDataList, {
       commentContent: '不错啊!收藏了!',
     });
     console.log('------ res', res);

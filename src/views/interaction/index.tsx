@@ -3,7 +3,7 @@
  * @Date: 2025-02-10 22:20:15
  * @LastEditTime: 2025-03-25 16:01:56
  * @LastEditors: nevin
- * @Description: 评论页面 reply
+ * @Description: 互动页面 interaction
  */
 import { WorkData } from '@/icp/reply';
 import { Button, Col, Popconfirm, Row, Tabs, Tooltip } from 'antd';
@@ -17,7 +17,7 @@ import {
 import InteractionOneKey, {
   InteractionOneKeyRef,
 } from './components/oneKeyInteraction';
-import { getCommentSearchNotes } from '@/icp/replyother';
+import { getCommentSearchNotes, icpInteractionOneData } from '@/icp/replyother';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
@@ -44,7 +44,17 @@ export default function Page() {
   }
 
   /**
-   * 打开创建自动任务
+   * 单个作品互动
+   */
+  async function interactionOneData(works: WorkData) {
+    const res = await icpInteractionOneData(activeAccountId, works, {
+      commentContent: '不错啊!点赞点赞!',
+    });
+    console.log('----- res ---', res);
+  }
+
+  /**
+   * TODO:打开创建自动任务
    * @param data
    */
   function openAddAutoRun(data: WorkData) {}
@@ -114,7 +124,7 @@ export default function Page() {
                               <Col span={8}>
                                 <Tooltip title="自动评论">
                                   <FieldTimeOutlined
-                                    onClick={() => openAddAutoRun(item)}
+                                    onClick={() => interactionOneData(item)}
                                   />
                                 </Tooltip>
                               </Col>
