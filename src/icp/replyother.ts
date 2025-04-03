@@ -220,7 +220,7 @@ export async function icpCreateInteractionOneKey(
 }
 
 /**
- * 创建一键回复自动进程
+ * 创建一键互动自动进程
  * @param accountId
  * @param dataId
  * @param cycleType

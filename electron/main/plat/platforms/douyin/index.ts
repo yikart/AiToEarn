@@ -360,18 +360,20 @@ export class Douyin extends PlatformBase {
   async dianzanDyOther(
     account: AccountModel,
     dataId: string, // 作品ID
-  ) {
-    console.log('------ dianzanDyOther3333', dataId);
+  ): Promise<boolean> {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const res = await douyinService.creatorDianzanOther(cookie, {
-      aweme_id: dataId,
-      item_type: 0,
-      type: 1,
-    });
+    try {
+      const res = await douyinService.creatorDianzanOther(cookie, {
+        aweme_id: dataId,
+        item_type: 0,
+        type: 1,
+      });
 
-    console.log('------ res', res);
-
-    return res;
+      return res.status_code === 0;
+    } catch (error) {
+      console.log('------ error douyin dianzanDyOther ---- ', error);
+      return false;
+    }
   }
 
   async shoucangDyOther(

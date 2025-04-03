@@ -2465,7 +2465,21 @@ export class DouyinService {
   }
 
   // 点赞
-  async creatorDianzanOther(cookie: Electron.Cookie[], data: any) {
+  async creatorDianzanOther(
+    cookie: Electron.Cookie[],
+    data: any,
+  ): Promise<{
+    extra: {
+      fatal_item_ids: string[];
+      logid: string; // '2025040322304072588F91E9D7AE3AA42B';
+      now: number; // 1743690640000;
+    };
+    log_pb: {
+      impr_id: string; // '2025040322304072588F91E9D7AE3AA42B'
+    };
+    status_code: number; // 0;
+    is_digg: number; // 0;
+  }> {
     console.log('------ creatorDianzanOther-data@@@@@');
     const thisUri = `https://www.douyin.com/aweme/v1/web/commit/item/digg/?${jsonToQueryString(
       {

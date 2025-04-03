@@ -17,7 +17,11 @@ import {
 import InteractionOneKey, {
   InteractionOneKeyRef,
 } from './components/oneKeyInteraction';
-import { getCommentSearchNotes, icpInteractionOneData } from '@/icp/replyother';
+import {
+  getCommentSearchNotes,
+  icpDianzanDyOther,
+  icpInteractionOneData,
+} from '@/icp/replyother';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
@@ -58,6 +62,20 @@ export default function Page() {
    * @param data
    */
   function openAddAutoRun(data: WorkData) {}
+
+  function commentWorks(works: WorkData) {
+    console.log('---- interactionOneData ----', works);
+  }
+
+  async function likeWorks(works: WorkData) {
+    console.log('---- interactionOneData ----', works);
+    const res = await icpDianzanDyOther(activeAccountId, works.dataId);
+    console.log('----- res ---', res);
+  }
+
+  async function collectWorks(works: WorkData) {
+    console.log('---- interactionOneData ----', works);
+  }
 
   return (
     <div>
@@ -113,13 +131,23 @@ export default function Page() {
                           <p className="mb-2">{item.title || '无标题'}</p>
                           <div className="w-full mt-auto">
                             <Row justify="space-evenly">
-                              <Col span={8}></Col>
-                              <Col span={8}></Col>
+                              <Col span={8}>
+                                <Button onClick={() => commentWorks(item)}>
+                                  评论作品
+                                </Button>
+                              </Col>
+                              <Col span={8}>
+                                <Button onClick={() => likeWorks(item)}>
+                                  点赞作品
+                                </Button>
+                              </Col>
                             </Row>
 
                             <Row justify="space-evenly">
                               <Col span={8}>
-                                <Tooltip title="一键评论"></Tooltip>
+                                <Button onClick={() => collectWorks(item)}>
+                                  收藏作品
+                                </Button>
                               </Col>
                               <Col span={8}>
                                 <Tooltip title="自动评论">

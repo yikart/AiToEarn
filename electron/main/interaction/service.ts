@@ -46,8 +46,8 @@ export class InteractionService {
   @Inject(AutoRunService)
   private readonly autoRunService!: AutoRunService;
 
-  // 创建评论记录
-  async create(
+  // 创建互动记录
+  async createInteractionRecord(
     userId: string,
     account: AccountModel,
     works: {
@@ -218,7 +218,7 @@ export class InteractionService {
       }
 
       // 创建评论记录
-      this.create(
+      this.createInteractionRecord(
         userInfo.id,
         account,
         {
@@ -376,8 +376,8 @@ export class InteractionService {
           });
         }
 
-        // 创建评论记录
-        this.create(
+        // 创建互动记录
+        this.createInteractionRecord(
           userInfo.id,
           account,
           {

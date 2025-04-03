@@ -16,7 +16,6 @@ import {
   IGetTopicsParams,
   IGetTopicsResponse,
   IGetUsersParams,
-  ResponsePageInfo,
   VideoCallbackType,
   WorkData,
 } from '../../plat.type';
@@ -223,7 +222,6 @@ export class Kwai extends PlatformBase {
     orgList: any[];
     pageInfo: any;
   }> {
-   
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await kwaiPub.getsearchNodeList(cookie, qe, pageInfo);
     // console.log('----------- getsearchNodeList --- res: ', res.data);
@@ -260,12 +258,12 @@ export class Kwai extends PlatformBase {
         data: s,
       });
     }
-    
+
     return {
-      list: list, 
+      list: list,
       orgList: res.data.data?.visionSearchPhoto,
       pageInfo: {
-        hasMore: (photoList.length > 1) ? true : false,
+        hasMore: photoList.length > 1 ? true : false,
         count: res.data.data?.visionSearchPhoto.length,
         pcursor: Number(res.data.data?.visionSearchPhoto?.pcursor) + 1 || 1,
       },
@@ -358,15 +356,10 @@ export class Kwai extends PlatformBase {
     pcursor?: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const res = await kwaiPub.getVideoCommentList(
-      cookie,
-      data.dataId,
-      pcursor,
-    );
+    const res = await kwaiPub.getVideoCommentList(cookie, data.dataId, pcursor);
 
     const list: CommentData[] = [];
     for (const v of res.data.data.visionCommentList?.rootComments || []) {
-
       list.push({
         userId: v.authorId + '',
         dataId: data.dataId + '',
@@ -400,16 +393,20 @@ export class Kwai extends PlatformBase {
     return new Promise((resolve, reject) => {});
   }
 
-
   // 创建其他视频评论
   async createCommentByOther(
     account: AccountModel,
     dataId: string, // 作品ID
     content: string,
-    authorId?: string
+    authorId?: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    const res = await kwaiPub.videoCommentByOther(cookie, dataId, content, authorId);
+    const res = await kwaiPub.videoCommentByOther(
+      cookie,
+      dataId,
+      content,
+      authorId,
+    );
     console.log('------ kaishou createComment res ----', res);
 
     return res.data;
@@ -428,7 +425,6 @@ export class Kwai extends PlatformBase {
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
 
-
     const res = await kwaiPub.replyCommentByOther(cookie, content, {
       photoId: option.dataId,
       replyToCommentId: commentId,
@@ -436,13 +432,8 @@ export class Kwai extends PlatformBase {
       photoAuthorId: option.videoAuthId,
     });
 
- 
     return res;
   }
-
-
-
-
 
   async createComment(
     account: AccountModel,
@@ -555,7 +546,11 @@ export class Kwai extends PlatformBase {
   /**
    * 点赞
    */
-  async dianzanDyOther(account: AccountModel, dataId: string, option?: any): Promise<any> {
+  async dianzanDyOther(
+    account: AccountModel,
+    dataId: string,
+    option?: any,
+  ): Promise<any> {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await kwaiPub.dianzanDyOther(cookie, dataId, option);
     console.log('------ dianzanDyOther -- Kwai --- res: ', res);

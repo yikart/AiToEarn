@@ -310,10 +310,15 @@ class PlatController {
     account: AccountModel,
     dataId: string,
     content: string,
-    authorId?: string
+    authorId?: string,
   ) {
     const platform = this.platforms.get(account.type)!;
-    return await platform.createCommentByOther(account, dataId, content, authorId); 
+    return await platform.createCommentByOther(
+      account,
+      dataId,
+      content,
+      authorId,
+    );
   }
 
   /**

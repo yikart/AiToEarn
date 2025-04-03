@@ -415,27 +415,27 @@ export class Xhs extends PlatformBase {
   async dianzanDyOther(
     account: AccountModel,
     dataId: string, // 作品ID
-  ) {
+  ): Promise<boolean> {
     console.log('------ dianzanDyOther3333', dataId);
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await xiaohongshuService.likeNote(cookie, dataId);
 
     console.log('------ res', res);
 
-    return res;
+    return !!res;
   }
 
   async shoucangDyOther(
     account: AccountModel,
     dataId: string, // 作品ID
-  ) {
+  ): Promise<boolean> {
     console.log('------ dianzanDyOther5555', dataId);
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await xiaohongshuService.shoucangNote(cookie, dataId);
 
     console.log('------ res', res);
 
-    return res;
+    return !!res;
   }
 
   async replyCommentByOther(

@@ -82,11 +82,11 @@ export abstract class PlatformBase {
    * @param dataId 数据ID
    * @param option 配置项
    */
-  abstract dianzanDyOther( 
+  abstract dianzanDyOther(
     account: AccountModel,
     dataId: string,
     option?: any,
-  ): Promise<any>;
+  ): Promise<boolean>;
 
   /**
    * 收藏
@@ -96,7 +96,7 @@ export abstract class PlatformBase {
   abstract shoucangDyOther(
     account: AccountModel,
     pcursor?: string,
-  ): Promise<any>;
+  ): Promise<boolean>;
 
   /**
    * 获取作品列表
@@ -192,7 +192,7 @@ export abstract class PlatformBase {
     account: AccountModel,
     dataId: string, // 作品ID
     content: string,
-    authorId?: string
+    authorId?: string,
   ): Promise<any>;
 
   /**
