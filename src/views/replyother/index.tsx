@@ -1,10 +1,8 @@
 import {
-  icpCreatorList,
   icpGetCommentListByOther,
   icpGetSecondCommentListByOther,
   WorkData,
   CommentData,
-  icpCreateCommentList,
   getCommentSearchNotes,
 } from '@/icp/replyother';
 import {
@@ -35,7 +33,6 @@ import ReplyWorks, { ReplyWorksRef } from './components/replyWorks';
 import ReplyComment, { ReplyCommentRef } from './components/replyComment';
 import AddAutoRun, { AddAutoRunRef } from './components/addAutoRun';
 import { icpDianzanDyOther, icpShoucangDyOther } from '@/icp/replyother';
-import { commentApi } from '@/api/comment';
 import {
   LikeOutlined,
   StarOutlined,
@@ -54,6 +51,7 @@ import { AccountModel } from '../../../electron/db/models/account';
 import WebView from '../../components/WebView';
 // @ts-ignore
 import { useInView } from 'react-intersection-observer';
+import { icpCreatorList } from '@/icp/reply';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
@@ -227,7 +225,6 @@ export default function Page() {
       return;
     }
     const thisida = thisid ? thisid : activeAccountId;
-    console.log('------ getCreatorList thisida', thisida);
     const res = await icpCreatorList(thisida);
     console.log('------ icpCreatorList', res);
     setWordList(res.list);
@@ -314,14 +311,6 @@ export default function Page() {
       console.error('获取二级评论失败', error);
       message.error('获取二级评论失败');
     }
-  }
-
-  /**
-   * 一键AI评论
-   */
-  async function createCommentList(data: WorkData) {
-    const res = await icpCreateCommentList(activeAccountId, data.dataId);
-    console.log('------ res', res);
   }
 
   /**
