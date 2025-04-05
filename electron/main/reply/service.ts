@@ -286,11 +286,11 @@ export class ReplyService {
           error?: any;
         }) => {
           if (e.tag === AutorReplyCommentScheduleEvent.Start) {
-            sysNotice('自动机评论回复任务执行开始', `任务ID:${autoRun.id}`);
+            sysNotice('自动评论回复任务执行开始', `任务ID:${autoRun.id}`);
           }
 
           if (e.tag === AutorReplyCommentScheduleEvent.End) {
-            sysNotice('自动机评论回复任务执行结束', `任务ID:${autoRun.id}`);
+            sysNotice('自动评论回复任务执行结束', `任务ID:${autoRun.id}`);
             this.autoRunService.updateAutoRunRecordStatus(
               recordData.id,
               AutoRunRecordStatus.SUCCESS,
@@ -298,7 +298,7 @@ export class ReplyService {
           }
 
           if (e.tag === AutorReplyCommentScheduleEvent.Error) {
-            sysNotice('自动机评论回复任务-错误!!!', `任务ID:${autoRun.id}`);
+            sysNotice('自动评论回复任务-错误!!!', `任务ID:${autoRun.id}`);
             this.autoRunService.updateAutoRunRecordStatus(
               recordData.id,
               AutoRunRecordStatus.FAIL,

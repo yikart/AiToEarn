@@ -292,11 +292,11 @@ export class InteractionService {
           error?: any;
         }) => {
           if (e.tag === AutorWorksInteractionScheduleEvent.Start) {
-            sysNotice('自动机评论回复任务执行开始', `任务ID:${autoRun.id}`);
+            sysNotice('自动互动任务执行开始', `任务ID:${autoRun.id}`);
           }
 
           if (e.tag === AutorWorksInteractionScheduleEvent.End) {
-            sysNotice('自动机评论回复任务执行结束', `任务ID:${autoRun.id}`);
+            sysNotice('自动互动任务执行结束', `任务ID:${autoRun.id}`);
             this.autoRunService.updateAutoRunRecordStatus(
               recordData.id,
               AutoRunRecordStatus.SUCCESS,
@@ -304,7 +304,7 @@ export class InteractionService {
           }
 
           if (e.tag === AutorWorksInteractionScheduleEvent.Error) {
-            sysNotice('自动机评论回复任务-错误!!!', `任务ID:${autoRun.id}`);
+            sysNotice('自动互动回复任务-错误!!!', `任务ID:${autoRun.id}`);
             this.autoRunService.updateAutoRunRecordStatus(
               recordData.id,
               AutoRunRecordStatus.FAIL,
