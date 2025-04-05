@@ -44,9 +44,9 @@ export class InteractionController {
     console.log('------ works', works);
     console.log('------ option', option);
 
-    const res = await this.interactionService.interactionOneData(
+    const res = await this.interactionService.autorInteraction(
       account,
-      works,
+      [works],
       option,
       (e: {
         tag: AutorWorksInteractionScheduleEvent;

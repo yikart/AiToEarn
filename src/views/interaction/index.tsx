@@ -9,11 +9,7 @@ import { WorkData } from '@/icp/reply';
 import { Button, Col, Popconfirm, Row, Tabs, Tooltip } from 'antd';
 import { useCallback, useRef, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
-import {
-  AliwangwangOutlined,
-  FieldTimeOutlined,
-  QuestionCircleOutlined,
-} from '@ant-design/icons';
+import { AliwangwangOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import InteractionOneKey, {
   InteractionOneKeyRef,
 } from './components/oneKeyInteraction';
@@ -128,35 +124,26 @@ export default function Page() {
                       </Col>
                       <Col span={12}>
                         <div className="flex flex-col h-full">
-                          <p className="mb-2">{item.title || '无标题'}</p>
-                          <div className="w-full mt-auto">
-                            <Row justify="space-evenly">
-                              <Col span={8}>
-                                <Button onClick={() => commentWorks(item)}>
-                                  评论作品
-                                </Button>
-                              </Col>
-                              <Col span={8}>
-                                <Button onClick={() => likeWorks(item)}>
-                                  点赞作品
-                                </Button>
-                              </Col>
-                            </Row>
-
-                            <Row justify="space-evenly">
-                              <Col span={8}>
-                                <Button onClick={() => collectWorks(item)}>
-                                  收藏作品
-                                </Button>
-                              </Col>
-                              <Col span={8}>
-                                <Tooltip title="自动评论">
-                                  <FieldTimeOutlined
-                                    onClick={() => interactionOneData(item)}
-                                  />
-                                </Tooltip>
-                              </Col>
-                            </Row>
+                          <p className="mb-2">
+                            {item.title && item.title.length > 20
+                              ? item.title.slice(0, 20) + '...'
+                              : item.title || '无标题'}
+                          </p>
+                          <div className="w-full p-2 mt-auto">
+                            <Button onClick={() => commentWorks(item)}>
+                              评论作品
+                            </Button>
+                            <Button onClick={() => likeWorks(item)}>
+                              点赞作品
+                            </Button>
+                            <Button onClick={() => collectWorks(item)}>
+                              收藏作品
+                            </Button>
+                            <Tooltip title="自动评论">
+                              <Button onClick={() => interactionOneData(item)}>
+                                自动评论
+                              </Button>
+                            </Tooltip>
                           </div>
                         </div>
                       </Col>

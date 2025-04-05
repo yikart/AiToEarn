@@ -144,6 +144,9 @@ app.whenReady().then(async () => {
   }
 });
 
+/**
+ * Quit when all windows are closed, except on macOS. There, it's common
+ */
 app.on('window-all-closed', () => {
   win = null;
   if (process.platform !== 'darwin') app.quit();

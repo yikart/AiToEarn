@@ -37,7 +37,7 @@ export class ReplyService {
   private replyCommentRecordRepository: Repository<ReplyCommentRecordModel>;
 
   constructor() {
-    this.replyQueue = new PQueue({ concurrency: 2 });
+    this.replyQueue = new PQueue({ concurrency: 1 });
     this.replyCommentRecordRepository = AppDataSource.getRepository(
       ReplyCommentRecordModel,
     );
@@ -102,7 +102,7 @@ export class ReplyService {
     let thePcursor = undefined;
 
     // 设置缓存
-    GlobleCache.setCache(getCacheKey(account), data, 60 * 15);
+    GlobleCache.setCache(getCacheKey(), data, 60 * 15);
 
     try {
       scheduleEvent({
@@ -112,7 +112,7 @@ export class ReplyService {
 
       while (theHasMore) {
         // 重设缓存时间
-        GlobleCache.updateCacheTTL(getCacheKey(account), 60 * 15);
+        GlobleCache.updateCacheTTL(getCacheKey(), 60 * 15);
 
         scheduleEvent({
           tag: AutorReplyCommentScheduleEvent.GetCommentListStart,
@@ -237,13 +237,14 @@ export class ReplyService {
     }
 
     // 清除缓存
-    GlobleCache.delCache(getCacheKey(account));
+    GlobleCache.delCache(getCacheKey());
   }
 
   /**
    * 添加作品回复评论的任务到队列
    * @param account
-   * @param dataId
+   * @param data
+   * @param autoRun
    */
   async addReplyQueue(
     account: AccountModel,
@@ -254,7 +255,7 @@ export class ReplyService {
     message?: string;
   }> {
     // 查看缓存,有的就不执行
-    if (GlobleCache.getCache(getCacheKey(account))) {
+    if (GlobleCache.getCache(getCacheKey())) {
       sysNotice('请勿重复执行', `该账户有正在执行的任务,任务ID:${autoRun.id}`);
 
       return {
