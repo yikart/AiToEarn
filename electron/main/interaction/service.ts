@@ -269,11 +269,11 @@ export class InteractionService {
   }> {
     // 查看缓存,有的就不执行
     if (GlobleCache.getCache(getCacheKey())) {
-      sysNotice('请勿重复执行', `该账户有正在执行的任务,任务ID:${autoRun.id}`);
+      sysNotice('请勿重复执行', `有正在执行的任务,任务ID:${autoRun.id}`);
 
       return {
         status: 0,
-        message: '该账户有正在执行的任务,请勿重复执行',
+        message: '有正在执行的任务,请勿重复执行',
       };
     }
 

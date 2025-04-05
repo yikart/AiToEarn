@@ -46,8 +46,14 @@ export class ReplyService {
   @Inject(AutoRunService)
   private readonly autoRunService!: AutoRunService;
 
-  // 创建评论记录
-  async create(
+  /**
+   * 创建评论回复记录
+   * @param userId
+   * @param account
+   * @param comment
+   * @returns
+   */
+  async createReplyCommentRecord(
     userId: string,
     account: AccountModel,
     comment: {
@@ -97,12 +103,10 @@ export class ReplyService {
     }) => void,
   ) {
     const userInfo = getUserInfo();
-    // 1. 获取作品的评论列表, 如果返回
     let theHasMore = true;
     let thePcursor = undefined;
 
-    // 设置缓存
-    GlobleCache.setCache(getCacheKey(), data, 60 * 15);
+    GlobleCache.setCache(getCacheKey(account), data, 60 * 15); // 设置缓存
 
     try {
       scheduleEvent({
@@ -111,13 +115,14 @@ export class ReplyService {
       });
 
       while (theHasMore) {
-        // 重设缓存时间
-        GlobleCache.updateCacheTTL(getCacheKey(), 60 * 15);
+        GlobleCache.updateCacheTTL(getCacheKey(account), 60 * 15); // 重设缓存时间
 
         scheduleEvent({
           tag: AutorReplyCommentScheduleEvent.GetCommentListStart,
           status: 0,
         });
+
+        // 1. 获取评论列表
         const {
           list,
           pageInfo: { pcursor, hasMore },
@@ -138,7 +143,7 @@ export class ReplyService {
 
         // 2. 循环AI回复评论
         for (const element of list) {
-          sleep(5);
+          // 判断是否已经回复
           const oldRecord = await this.getReplyCommentRecord(
             userInfo.id,
             account,
@@ -146,6 +151,7 @@ export class ReplyService {
           );
           if (oldRecord) continue;
 
+          // 判断是否已经回复
           let hadReply = false;
           for (const reply of element.subCommentList) {
             if (account.uid === reply.userId) {
@@ -153,62 +159,64 @@ export class ReplyService {
               break;
             }
           }
+          if (!!hadReply) continue;
 
-          if (!hadReply) {
-            const aiRes = await toolsApi.aiRecoverReview({
-              content: element.content,
-            });
-
-            // AI接口错误
-            if (!aiRes) {
-              scheduleEvent({
-                tag: AutorReplyCommentScheduleEvent.Error,
-                status: -1,
-                error: '未获得AI产出内容',
-              });
-              return false;
-            }
-
+          const aiRes = await toolsApi.aiRecoverReview({
+            content: element.content,
+          });
+          // AI接口错误
+          if (!aiRes) {
             scheduleEvent({
-              tag: AutorReplyCommentScheduleEvent.ReplyCommentStart,
-              data: {
-                content: element.content,
-                aiContent: aiRes,
-              },
-              status: 0,
+              tag: AutorReplyCommentScheduleEvent.Error,
+              status: -1,
+              error: '未获得AI产出内容',
             });
-
-            const replyRes = await platController.replyComment(
-              account,
-              element.commentId,
-              aiRes,
-              {
-                dataId: data.dataId,
-                comment: element,
-              },
-            );
-
-            //  错误处理
-            if (!replyRes) {
-              scheduleEvent({
-                tag: AutorReplyCommentScheduleEvent.ReplyCommentEnd,
-                status: -1,
-                error: '回复评论失败',
-              });
-            } else {
-              scheduleEvent({
-                tag: AutorReplyCommentScheduleEvent.ReplyCommentEnd,
-                status: 0,
-              });
-
-              // 创建评论记录
-              this.create(userInfo.id, account, {
-                id: element.commentId,
-                commentContent: element.content,
-                replyContent: aiRes,
-              });
-            }
+            return false;
           }
+
+          scheduleEvent({
+            tag: AutorReplyCommentScheduleEvent.ReplyCommentStart,
+            data: {
+              content: element.content,
+              aiContent: aiRes,
+            },
+            status: 0,
+          });
+
+          // 进行回复
+          const replyRes = await platController.replyComment(
+            account,
+            element.commentId,
+            aiRes,
+            {
+              dataId: data.dataId,
+              comment: element,
+            },
+          );
+          //  错误处理
+          if (!replyRes) {
+            scheduleEvent({
+              tag: AutorReplyCommentScheduleEvent.ReplyCommentEnd,
+              status: -1,
+              error: '回复评论失败',
+            });
+            continue;
+          }
+
+          scheduleEvent({
+            tag: AutorReplyCommentScheduleEvent.ReplyCommentEnd,
+            status: 0,
+          });
+
+          // 创建评论记录
+          this.createReplyCommentRecord(userInfo.id, account, {
+            id: element.commentId,
+            commentContent: element.content,
+            replyContent: aiRes,
+          });
+
+          // 延迟
+          sleep(5);
         }
 
         scheduleEvent({
@@ -237,7 +245,7 @@ export class ReplyService {
     }
 
     // 清除缓存
-    GlobleCache.delCache(getCacheKey());
+    GlobleCache.delCache(getCacheKey(account));
   }
 
   /**
@@ -255,7 +263,7 @@ export class ReplyService {
     message?: string;
   }> {
     // 查看缓存,有的就不执行
-    if (GlobleCache.getCache(getCacheKey())) {
+    if (GlobleCache.getCache(getCacheKey(account))) {
       sysNotice('请勿重复执行', `该账户有正在执行的任务,任务ID:${autoRun.id}`);
 
       return {

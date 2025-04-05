@@ -15,6 +15,7 @@ import { ReplyService } from './service';
 import { SendChannelEnum } from '../../../commont/UtilsEnum';
 import { AutorReplyCommentScheduleEvent } from '../../../commont/types/reply';
 import type { WorkData } from '../plat/plat.type';
+import { GlobleCache } from '../../global/cache';
 
 @Controller()
 export class ReplyController {
@@ -221,7 +222,7 @@ export class ReplyController {
   }
 
   /**
-   * 作品一键AI评论
+   * 作品一键AI评论(该进程只同时进行一个)
    */
   @Icp('ICP_REPLY_COMMENT_LIST_BY_AI')
   async createCommentList(
@@ -231,6 +232,10 @@ export class ReplyController {
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
+
+    if (GlobleCache.getCache('replyCommentListByAi')) return null;
+
+    GlobleCache.setCache(`replyCommentListByAi`, true, 60 * 60);
 
     const res = await this.replyService.autorReplyComment(
       account,
@@ -244,6 +249,8 @@ export class ReplyController {
         windowOperate.sendRenderMsg(SendChannelEnum.CommentRelyProgress, e);
       },
     );
+
+    GlobleCache.delCache(`replyCommentListByAi`);
 
     return res;
   }

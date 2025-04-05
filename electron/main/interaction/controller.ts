@@ -41,9 +41,6 @@ export class InteractionController {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 
-    console.log('------ works', works);
-    console.log('------ option', option);
-
     const res = await this.interactionService.autorInteraction(
       account,
       [works],
@@ -75,9 +72,6 @@ export class InteractionController {
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
-
-    console.log('------ worksList', worksList);
-    console.log('------ option', option);
 
     const res = await this.interactionService.autorInteraction(
       account,
