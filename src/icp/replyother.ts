@@ -238,3 +238,11 @@ export async function ipcCreateAutoRunOfInteraction(
   );
   return res;
 }
+
+// 获取一键互动自动进程信息
+export async function ipcGetAutoRunOfInteractionInfo() {
+  const res: any = await window.ipcRenderer.invoke(
+    'ICP_GET_AUTO_INTERACTION_INFO',
+  );
+  return res;
+}

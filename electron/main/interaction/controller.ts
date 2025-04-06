@@ -14,6 +14,7 @@ import { InteractionService } from './service';
 import { SendChannelEnum } from '../../../commont/UtilsEnum';
 import type { WorkData } from '../plat/plat.type';
 import { AutorWorksInteractionScheduleEvent } from '../../../commont/types/interaction';
+import { AutoInteractionCache } from './cacheData';
 
 @Controller()
 export class InteractionController {
@@ -135,5 +136,15 @@ export class InteractionController {
     );
 
     return res.status === 1;
+  }
+
+  /**
+   * 获取一键互动的任务信息
+   */
+  @Icp('ICP_GET_AUTO_INTERACTION_INFO')
+  async getAutoInteractionInfo(
+    event: Electron.IpcMainInvokeEvent,
+  ): Promise<any | null> {
+    return AutoInteractionCache.getInfo();
   }
 }
