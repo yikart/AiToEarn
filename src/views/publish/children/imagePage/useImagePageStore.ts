@@ -11,6 +11,7 @@ import { message } from 'antd';
 import { accountLogin } from '../../../../icp/account';
 import { ErrPubParamsMapType } from '../../hooks/usePubParamsVerify';
 import { usePubStroe } from '../../../../store/pubStroe';
+import { useAccountStore } from '../../../../store/account';
 
 export interface IImagePageStore {
   // 账户数据和对应参数
@@ -117,6 +118,13 @@ export const useImagePageStore = create(
           }
 
           if (imageAccounts) {
+            const accountList = useAccountStore.getState().accountList;
+            imageAccounts = imageAccounts.map((v) => {
+              v.account = accountList.find(
+                (account) => v.account?.id === account.id,
+              )!;
+              return v;
+            });
             set({
               imageAccounts,
             });

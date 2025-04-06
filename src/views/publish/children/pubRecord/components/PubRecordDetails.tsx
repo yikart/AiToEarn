@@ -146,17 +146,26 @@ const PubRecordDetails = memo(
                             <Button
                               type="link"
                               onClick={() => {
-                                setRecordLoaidng(true);
-                                const prl = pubRecordList.filter(
-                                  (v) => v.status === 2,
-                                );
-                                restartPub(
-                                  prl as VideoModel[],
-                                  prl.map((k) => accountMap.get(k.accountId)!),
-                                  currPubRecordModel,
-                                );
-                                setRecordLoaidng(false);
-                                navigate('/publish/video');
+                                if (
+                                  currPubRecordModel?.type === PubType.VIDEO
+                                ) {
+                                  setRecordLoaidng(true);
+                                  const prl = pubRecordList.filter(
+                                    (v) => v.status === 2,
+                                  );
+                                  restartPub(
+                                    prl as VideoModel[],
+                                    prl.map(
+                                      (k) => accountMap.get(k.accountId)!,
+                                    ),
+                                    currPubRecordModel,
+                                  );
+                                  setRecordLoaidng(false);
+                                  navigate('/publish/video');
+                                } else if (
+                                  currPubRecordModel?.type === PubType.ImageText
+                                ) {
+                                }
                               }}
                             >
                               重新发布

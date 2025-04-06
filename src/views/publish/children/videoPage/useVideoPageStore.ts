@@ -17,6 +17,7 @@ import { getImgFile, IImgFile } from '../../../../components/Choose/ImgChoose';
 import { useAICreateTitleStore } from '../../components/AICreateTitle/useAICreateTitle';
 import { usePubStroe } from '../../../../store/pubStroe';
 import { PubRecordModel } from '../../comment';
+import { useAccountStore } from '../../../../store/account';
 
 export interface IVideoPageStore {
   // 选择的视频数据
@@ -133,10 +134,7 @@ export const useVideoPageStore = create(
           return lodash.cloneDeep(get().commonPubParams);
         },
 
-        /**
-         * 添加视频数据
-         * @param videoFiles
-         */
+        // 添加视频数据
         addVideos(videoFiles: IVideoFile[]) {
           const { videoListChoose } = get();
           const newValue = [...get().videoListChoose];
@@ -199,10 +197,7 @@ export const useVideoPageStore = create(
           });
         },
 
-        /**
-         * 添加账户数据
-         * @param accounts
-         */
+        // 添加账户数据
         addAccount(accounts: AccountInfo[]) {
           const newV = [...get().videoListChoose];
           // 判断是否只有一个视频数据
@@ -413,11 +408,15 @@ export const useVideoPageStore = create(
             // key=视频路径 val=视频文件，防止多个相同视频重复取视频文件
             const videoFileMap = new Map<string, IVideoFile>();
             const coverFileMap = new Map<string, IImgFile>();
+            const accountList = useAccountStore.getState().accountList;
             for (let i = 0; i < pubRecordList.length; i++) {
               const pubRecord = pubRecordList[i];
-              const account = accounts[i];
               const videoPath = pubRecord.videoPath!;
               const coverPath = pubRecord.coverPath!;
+              // 账户数据更新
+              const account = accountList.find(
+                (account) => account.id === accounts[i].id,
+              );
 
               // 视频获取
               let video: void | IVideoFile;
@@ -489,6 +488,15 @@ export const useVideoPageStore = create(
           const videoFileMap = new Map<string, IVideoFile>();
           const coverFileMap = new Map<string, IImgFile>();
           try {
+            const accountList = useAccountStore.getState().accountList;
+            // 账户数据更新
+            videoListChoose = videoListChoose.map((v) => {
+              v.account = accountList.find(
+                (account) => v.account?.id === account.id,
+              );
+              return v;
+            });
+
             if (commonPubParams?.cover?.imgPath) {
               commonPubParams.cover = await getImgFile(
                 commonPubParams.cover.imgPath,
