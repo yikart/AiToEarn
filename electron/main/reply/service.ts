@@ -19,17 +19,9 @@ import { AppDataSource } from '../../db';
 import { getUserInfo } from '../user/comment';
 import { AutoRunRecordStatus } from '../../db/models/autoRunRecord';
 import { WorkData } from '../plat/plat.type';
-import { GlobleCache } from '../../global/cache';
 import { sleep } from '../../util/time';
-
-/**
- * 获取缓存key
- * @param account
- * @returns
- */
-function getCacheKey(account?: AccountModel) {
-  return `OneKeyReplyCommentCacheKey_${account?.id || 0}`;
-}
+import { AutoReplyCache, AutorReplyCacheStatus } from './cacheData';
+import { logger } from '../../global/log';
 
 @Injectable()
 export class ReplyService {
@@ -106,7 +98,11 @@ export class ReplyService {
     let theHasMore = true;
     let thePcursor = undefined;
 
-    GlobleCache.setCache(getCacheKey(account), data, 60 * 15); // 设置缓存
+    // 设置缓存数据
+    const cacheData = new AutoReplyCache({
+      title: data.title || data.desc || '无',
+      dataId: data.dataId,
+    });
 
     try {
       scheduleEvent({
@@ -115,7 +111,7 @@ export class ReplyService {
       });
 
       while (theHasMore) {
-        GlobleCache.updateCacheTTL(getCacheKey(account), 60 * 15); // 重设缓存时间
+        cacheData.extendTTL(); // 延长缓存时间
 
         scheduleEvent({
           tag: AutorReplyCommentScheduleEvent.GetCommentListStart,
@@ -133,7 +129,7 @@ export class ReplyService {
             tag: AutorReplyCommentScheduleEvent.End,
             status: 0,
           });
-          return true;
+          break;
         }
 
         scheduleEvent({
@@ -171,6 +167,10 @@ export class ReplyService {
               status: -1,
               error: '未获得AI产出内容',
             });
+            cacheData.updateStatus(
+              AutorReplyCacheStatus.REEOR,
+              '未获得AI产出内容',
+            );
             return false;
           }
 
@@ -241,11 +241,13 @@ export class ReplyService {
         status: -1,
         error,
       });
+      logger.error(['自动一键评论发生错误', error]);
+      cacheData.updateStatus(AutorReplyCacheStatus.REEOR, '进行中发生错误');
       return false;
     }
 
     // 清除缓存
-    GlobleCache.delCache(getCacheKey(account));
+    cacheData.delete();
   }
 
   /**
@@ -262,16 +264,6 @@ export class ReplyService {
     status: 0 | 1;
     message?: string;
   }> {
-    // 查看缓存,有的就不执行
-    if (GlobleCache.getCache(getCacheKey(account))) {
-      sysNotice('请勿重复执行', `该账户有正在执行的任务,任务ID:${autoRun.id}`);
-
-      return {
-        status: 0,
-        message: '该账户有正在执行的任务,请勿重复执行',
-      };
-    }
-
     // 创建任务执行记录
     const recordData = await this.autoRunService.createAutoRunRecord(autoRun);
 

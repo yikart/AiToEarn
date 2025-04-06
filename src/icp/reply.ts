@@ -141,3 +141,24 @@ export async function ipcCreateAutoRunOfReply(
   );
   return res;
 }
+
+export enum AutorReplyCacheStatus {
+  DOING = 0,
+  DONE = 1,
+  REEOR = 2,
+}
+/**
+ * 获取一键回复的进程信息
+ * @returns
+ */
+export async function ipcGetAutoRunOfReplyInfo() {
+  const res: {
+    status: AutorReplyCacheStatus;
+    message: string;
+    createTime?: number;
+    updateTime?: number;
+    title: string;
+    dataId?: string;
+  } = await window.ipcRenderer.invoke('ICP_GET_AUTO_REPLY_INFO');
+  return res;
+}

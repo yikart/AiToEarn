@@ -16,6 +16,7 @@ import { SendChannelEnum } from '../../../commont/UtilsEnum';
 import { AutorReplyCommentScheduleEvent } from '../../../commont/types/reply';
 import type { WorkData } from '../plat/plat.type';
 import { GlobleCache } from '../../global/cache';
+import { AutoReplyCache } from './cacheData';
 
 @Controller()
 export class ReplyController {
@@ -350,5 +351,15 @@ export class ReplyController {
     );
 
     return res.status === 1;
+  }
+
+  /**
+   * 获取一键回复评论的任务信息
+   */
+  @Icp('ICP_GET_AUTO_REPLY_INFO')
+  async getAutoReplyInfo(
+    event: Electron.IpcMainInvokeEvent,
+  ): Promise<any | null> {
+    return AutoReplyCache.getInfo();
   }
 }
