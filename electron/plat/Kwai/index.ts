@@ -83,7 +83,10 @@ class KwaiPub {
             uploadType: 1,
           },
         });
-        console.log('创建视频：', preRes.data);
+        console.log('创建视频：', preRes);
+        if (!preRes.data.data) {
+          throw new Error(preRes.data.message);
+        }
 
         for (const i in filePartInfo.blockInfo) {
           callback(40, `上传视频（${i}/${filePartInfo.blockInfo.length}）`);
@@ -128,7 +131,8 @@ class KwaiPub {
             fileLength: filePartInfo.fileSize,
           },
         });
-        if (finishRes.data.result !== 1) throw finishRes.data.message;
+        if (finishRes.data.result !== 1)
+          throw new Error(finishRes.data.message);
         console.log(`视频上传结束：`, finishRes.data);
 
         callback(80, `视频上传完成，正在上传封面...`);
@@ -423,17 +427,17 @@ class KwaiPub {
     qe: string,
     pageInfo?: any,
   ) {
-    let bodys:any = {
+    const bodys: any = {
       operationName: 'visionSearchPhoto',
       variables: {
         keyword: qe,
-        pcursor: pageInfo.pcursor < 1 ? '' : pageInfo.pcursor+'',
+        pcursor: pageInfo.pcursor < 1 ? '' : pageInfo.pcursor + '',
         page: 'search',
       },
       query: `fragment photoContent on PhotoEntity {\n  __typename\n  id\n  duration\n  caption\n  originCaption\n  likeCount\n  viewCount\n  commentCount\n  realLikeCount\n  coverUrl\n  photoUrl\n  photoH265Url\n  manifest\n  manifestH265\n  videoResource\n  coverUrls {\n    url\n    __typename\n  }\n  timestamp\n  expTag\n  animatedCoverUrl\n  distance\n  videoRatio\n  liked\n  stereoType\n  profileUserTopPhoto\n  musicBlocked\n  riskTagContent\n  riskTagUrl\n}\n\nfragment recoPhotoFragment on recoPhotoEntity {\n  __typename\n  id\n  duration\n  caption\n  originCaption\n  likeCount\n  viewCount\n  commentCount\n  realLikeCount\n  coverUrl\n  photoUrl\n  photoH265Url\n  manifest\n  manifestH265\n  videoResource\n  coverUrls {\n    url\n    __typename\n  }\n  timestamp\n  expTag\n  animatedCoverUrl\n  distance\n  videoRatio\n  liked\n  stereoType\n  profileUserTopPhoto\n  musicBlocked\n  riskTagContent\n  riskTagUrl\n}\n\nfragment feedContent on Feed {\n  type\n  author {\n    id\n    name\n    headerUrl\n    following\n    headerUrls {\n      url\n      __typename\n    }\n    __typename\n  }\n  photo {\n    ...photoContent\n    ...recoPhotoFragment\n    __typename\n  }\n  canAddComment\n  llsid\n  status\n  currentPcursor\n  tags {\n    type\n    name\n    __typename\n  }\n  __typename\n}\n\nquery visionSearchPhoto($keyword: String, $pcursor: String, $searchSessionId: String, $page: String, $webPageArea: String) {\n  visionSearchPhoto(keyword: $keyword, pcursor: $pcursor, searchSessionId: $searchSessionId, page: $page, webPageArea: $webPageArea) {\n    result\n    llsid\n    webPageArea\n    feeds {\n      ...feedContent\n      __typename\n    }\n    searchSessionId\n    pcursor\n    aladdinBanner {\n      imgUrl\n      link\n      __typename\n    }\n    __typename\n  }\n}\n`,
-    }
+    };
 
-    if(pageInfo.postFirstId){
+    if (pageInfo.postFirstId) {
       bodys.variables.searchSessionId = pageInfo.postFirstId;
     }
 
@@ -522,10 +526,8 @@ class KwaiPub {
       },
     });
 
-
     return res;
   }
-
 
   /**
    * 点赞
@@ -535,19 +537,20 @@ class KwaiPub {
    * @param reply
    * @returns
    */
-  async dianzanDyOther(
-    cookie: Electron.Cookie[],
-    dataId: string,
-    option: any,
-  ) {
+  async dianzanDyOther(cookie: Electron.Cookie[], dataId: string, option: any) {
     const res = await this.requestApi<CommentAddResponse>({
       cookie: cookie,
       apiUrl: 'https://www.kuaishou.com/graphql',
       method: 'POST',
       body: {
-        "operationName":"visionVideoLike",
-        "variables":{"photoId": dataId,"photoAuthorId": option.authid,"cancel":0,"expTag":"1_i/2008189535617610417_xpcwebdetailxxnull0"},
-        "query": `mutation visionVideoLike($photoId: String, $photoAuthorId: String, $cancel: Int, $expTag: String) {\n  visionVideoLike(photoId: $photoId, photoAuthorId: $photoAuthorId, cancel: $cancel, expTag: $expTag) {\n    result\n    __typename\n  }\n}\n`
+        operationName: 'visionVideoLike',
+        variables: {
+          photoId: dataId,
+          photoAuthorId: option.authid,
+          cancel: 0,
+          expTag: '1_i/2008189535617610417_xpcwebdetailxxnull0',
+        },
+        query: `mutation visionVideoLike($photoId: String, $photoAuthorId: String, $cancel: Int, $expTag: String) {\n  visionVideoLike(photoId: $photoId, photoAuthorId: $photoAuthorId, cancel: $cancel, expTag: $expTag) {\n    result\n    __typename\n  }\n}\n`,
       },
       headers: {
         Referer: `https://www.kuaishou.com/short-video/${dataId}`,
@@ -555,7 +558,6 @@ class KwaiPub {
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
       },
     });
-
 
     return res;
   }
@@ -572,19 +574,23 @@ class KwaiPub {
     cookie: Electron.Cookie[],
     dataId: string,
     content: string,
-    authorId?: string
+    authorId?: string,
   ) {
     const res = await this.requestApi<CommentAddResponse>({
       cookie: cookie,
       apiUrl: 'https://www.kuaishou.com/graphql',
       method: 'POST',
-      body: {"operationName":"visionAddComment",
-        "variables":{
-          "photoId": dataId,
-          "photoAuthorId": authorId,
-          "content":content,
-          "expTag":"1_a/2004436422502146722_xpcwebdetailxxnull0"},
-          "query":"mutation visionAddComment($photoId: String, $photoAuthorId: String, $content: String, $replyToCommentId: ID, $replyTo: ID, $expTag: String) {\n  visionAddComment(photoId: $photoId, photoAuthorId: $photoAuthorId, content: $content, replyToCommentId: $replyToCommentId, replyTo: $replyTo, expTag: $expTag) {\n    result\n    commentId\n    content\n    timestamp\n    status\n    __typename\n  }\n}\n"},
+      body: {
+        operationName: 'visionAddComment',
+        variables: {
+          photoId: dataId,
+          photoAuthorId: authorId,
+          content: content,
+          expTag: '1_a/2004436422502146722_xpcwebdetailxxnull0',
+        },
+        query:
+          'mutation visionAddComment($photoId: String, $photoAuthorId: String, $content: String, $replyToCommentId: ID, $replyTo: ID, $expTag: String) {\n  visionAddComment(photoId: $photoId, photoAuthorId: $photoAuthorId, content: $content, replyToCommentId: $replyToCommentId, replyTo: $replyTo, expTag: $expTag) {\n    result\n    commentId\n    content\n    timestamp\n    status\n    __typename\n  }\n}\n',
+      },
       headers: {
         Referer: `https://www.kuaishou.com/short-video/${dataId}`,
         'User-Agent':
@@ -592,13 +598,10 @@ class KwaiPub {
       },
     });
 
-
     return res;
   }
 
-
-  
-   /**
+  /**
    * 获取视频评论列表
    * @param cookie
    * @param photoId
@@ -606,31 +609,30 @@ class KwaiPub {
    * @param reply
    * @returns
    */
-   async getVideoCommentList(
+  async getVideoCommentList(
     cookie: Electron.Cookie[],
     dataId: string,
-    pcursor?: string
+    pcursor?: string,
   ) {
     const res = await this.requestApi<any>({
       cookie: cookie,
       apiUrl: 'https://www.kuaishou.com/graphql',
       method: 'POST',
       body: {
-        "operationName":"commentListQuery",
-        "variables":{
-          "pcursor": '',
-          "photoId": dataId
+        operationName: 'commentListQuery',
+        variables: {
+          pcursor: '',
+          photoId: dataId,
         },
-          "query":
-          "query commentListQuery($photoId: String, $pcursor: String) {\n  visionCommentList(photoId: $photoId, pcursor: $pcursor) {\n    commentCount\n    pcursor\n    rootComments {\n      commentId\n      authorId\n      authorName\n      content\n      headurl\n      timestamp\n      likedCount\n      realLikedCount\n      liked\n      status\n      authorLiked\n      subCommentCount\n      subCommentsPcursor\n      subComments {\n        commentId\n        authorId\n        authorName\n        content\n        headurl\n        timestamp\n        likedCount\n        realLikedCount\n        liked\n        status\n        authorLiked\n        replyToUserName\n        replyTo\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n"
-        },
+        query:
+          'query commentListQuery($photoId: String, $pcursor: String) {\n  visionCommentList(photoId: $photoId, pcursor: $pcursor) {\n    commentCount\n    pcursor\n    rootComments {\n      commentId\n      authorId\n      authorName\n      content\n      headurl\n      timestamp\n      likedCount\n      realLikedCount\n      liked\n      status\n      authorLiked\n      subCommentCount\n      subCommentsPcursor\n      subComments {\n        commentId\n        authorId\n        authorName\n        content\n        headurl\n        timestamp\n        likedCount\n        realLikedCount\n        liked\n        status\n        authorLiked\n        replyToUserName\n        replyTo\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n',
+      },
       headers: {
         Referer: `https://www.kuaishou.com/short-video/${dataId}`,
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
       },
     });
-
 
     return res;
   }
@@ -643,7 +645,6 @@ class KwaiPub {
    * @param option
    * @returns
    */
-  
 
   async replyCommentByOther(
     cookie: Electron.Cookie[],
@@ -655,16 +656,13 @@ class KwaiPub {
       photoAuthorId: any; // 视频作者ID
     },
   ) {
-
     console.log('------ replyCommentByOther option ----', {
-      
-        "photoId": option.photoId,
-        "photoAuthorId": option.photoAuthorId,
-        "content": content,
-        "replyToCommentId": option.replyToCommentId,
-        "replyTo": option.replyTo,
-        "expTag":"1_a/2004436422502146722_xpcwebdetailxxnull0"
-      
+      photoId: option.photoId,
+      photoAuthorId: option.photoAuthorId,
+      content: content,
+      replyToCommentId: option.replyToCommentId,
+      replyTo: option.replyTo,
+      expTag: '1_a/2004436422502146722_xpcwebdetailxxnull0',
     });
 
     const res = await this.requestApi<any>({
@@ -672,18 +670,18 @@ class KwaiPub {
       apiUrl: 'https://www.kuaishou.com/graphql',
       method: 'POST',
       body: {
-        "operationName":"visionAddComment",
-        "variables":{
-          "photoId": option.photoId,
-          "photoAuthorId": option.photoAuthorId,
-          "content": content,
-          "replyToCommentId": option.replyToCommentId,
-          "replyTo": option.replyTo,
-          "expTag":"1_a/2004436422502146722_xpcwebdetailxxnull0"
+        operationName: 'visionAddComment',
+        variables: {
+          photoId: option.photoId,
+          photoAuthorId: option.photoAuthorId,
+          content: content,
+          replyToCommentId: option.replyToCommentId,
+          replyTo: option.replyTo,
+          expTag: '1_a/2004436422502146722_xpcwebdetailxxnull0',
         },
-          "query":
-          "mutation visionAddComment($photoId: String, $photoAuthorId: String, $content: String, $replyToCommentId: ID, $replyTo: ID, $expTag: String) {\n  visionAddComment(photoId: $photoId, photoAuthorId: $photoAuthorId, content: $content, replyToCommentId: $replyToCommentId, replyTo: $replyTo, expTag: $expTag) {\n    result\n    commentId\n    content\n    timestamp\n    status\n    __typename\n  }\n}\n"
-        },
+        query:
+          'mutation visionAddComment($photoId: String, $photoAuthorId: String, $content: String, $replyToCommentId: ID, $replyTo: ID, $expTag: String) {\n  visionAddComment(photoId: $photoId, photoAuthorId: $photoAuthorId, content: $content, replyToCommentId: $replyToCommentId, replyTo: $replyTo, expTag: $expTag) {\n    result\n    commentId\n    content\n    timestamp\n    status\n    __typename\n  }\n}\n',
+      },
       headers: {
         Referer: `https://www.kuaishou.com/short-video/${option.photoId}`,
         'User-Agent':
@@ -691,14 +689,8 @@ class KwaiPub {
       },
     });
 
-
     return res;
   }
-
-
-
-
-
 }
 
 export const kwaiPub = new KwaiPub();

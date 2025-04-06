@@ -10,6 +10,7 @@
       &-item {
         display: flex;
         flex-direction: column;
+        align-items: center;
         font-size: var(--fs-xs);
         color: var(--darkGreyColor);
         cursor: pointer;
