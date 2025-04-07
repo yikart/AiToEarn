@@ -46,6 +46,7 @@ import {
   UserOutlined,
   SendOutlined,
   DownOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
 import Masonry from 'react-masonry-css';
 import { AccountModel } from '../../../electron/db/models/account';
@@ -634,171 +635,182 @@ export default function Page() {
 
         {/* <Col span={21} > */}
         <div className={styles.postList} style={{ flex: 1, padding: '20px' }}>
-          <Row
-            justify="space-between"
-            align="middle"
-            style={{ marginBottom: 20 }}
-          >
-            <Col>
-              <Typography.Title level={4} style={{ margin: 0 }}>
-                任务：
-              </Typography.Title>
-            </Col>
-            <Col flex="auto" style={{ margin: '0 20px' }}>
-              <Input.Search
-                placeholder="输入关键词搜索"
-                value={searchKeyword}
-                onChange={(e) => setSearchKeyword(e.target.value)}
-                onSearch={handleSearch}
-                style={{ width: '100%' }}
-                enterButton
-              />
-            </Col>
-            <Col>
-              <Space>
-                <Button
-                  type={isSelectMode ? "primary" : "default"}
-                  icon={<DownOutlined />}
-                  onClick={handleSelectModeToggle}
-                  size="large"
-                >
-                  {isSelectMode ? '取消选择' : '选择作品'}
-                </Button>
-                {isSelectMode && (
-                  <Button
-                    type="primary"
-                    icon={<SendOutlined />}
-                    onClick={() => setTaskModalVisible(true)}
-                    size="large"
-                    disabled={selectedPosts.length === 0}
-                  >
-                    下发任务 ({selectedPosts.length})
-                  </Button>
-                )}
-                {!isSelectMode && (
-                  <Button
-                    type="primary"
-                    icon={<DownOutlined />}
-                    onClick={() => setTaskModalVisible(true)}
-                    size="large"
-                  >
-                    下发任务
-                  </Button>
-                )}
-              </Space>
-            </Col>
-          </Row>
-
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className={styles.myMasonryGrid}
-            columnClassName={styles.myMasonryGridColumn}
-          >
-            {postList.map((item: any, index: number) => (
-              <div
-                key={`${item.dataId || item.coverUrl}-${index}`}
-                className={styles.masonryItem}
+          {activeAccountId === -1 ? (
+            <div className={styles.account}>
+              <div className="account-noSelect">
+                <QuestionCircleOutlined />
+                <span>请选择账户</span>
+              </div>
+            </div>
+          ) : (
+            <>
+              <Row
+                justify="space-between"
+                align="middle"
+                style={{ marginBottom: 20 }}
               >
-                <Card
-                  hoverable
-                  cover={
-                    <div
-                      style={{ cursor: 'pointer', position: 'relative' }}
-                      onClick={() => !isSelectMode && handleImageClick(item)}
+                <Col>
+                  <Typography.Title level={4} style={{ margin: 0 }}>
+                    任务：
+                  </Typography.Title>
+                </Col>
+                <Col flex="auto" style={{ margin: '0 20px' }}>
+                  <Input.Search
+                    placeholder="输入关键词搜索"
+                    value={searchKeyword}
+                    onChange={(e) => setSearchKeyword(e.target.value)}
+                    onSearch={handleSearch}
+                    style={{ width: '100%' }}
+                    enterButton
+                  />
+                </Col>
+                <Col>
+                  <Space>
+                    <Button
+                      type={isSelectMode ? "primary" : "default"}
+                      icon={<DownOutlined />}
+                      onClick={handleSelectModeToggle}
+                      size="large"
                     >
-                      {isSelectMode && (
-                        <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 1 }}>
-                          <Checkbox
-                            checked={selectedPosts.includes(item.dataId)}
-                            onChange={() => handlePostSelect(item.dataId)}
+                      {isSelectMode ? '取消选择' : '选择作品'}
+                    </Button>
+                    {isSelectMode && (
+                      <Button
+                        type="primary"
+                        icon={<SendOutlined />}
+                        onClick={() => setTaskModalVisible(true)}
+                        size="large"
+                        disabled={selectedPosts.length === 0}
+                      >
+                        下发任务 ({selectedPosts.length})
+                      </Button>
+                    )}
+                    {!isSelectMode && (
+                      <Button
+                        type="primary"
+                        icon={<DownOutlined />}
+                        onClick={() => setTaskModalVisible(true)}
+                        size="large"
+                      >
+                        下发任务
+                      </Button>
+                    )}
+                  </Space>
+                </Col>
+              </Row>
+
+              <Masonry
+                breakpointCols={breakpointColumnsObj}
+                className={styles.myMasonryGrid}
+                columnClassName={styles.myMasonryGridColumn}
+              >
+                {postList.map((item: any, index: number) => (
+                  <div
+                    key={`${item.dataId || item.coverUrl}-${index}`}
+                    className={styles.masonryItem}
+                  >
+                    <Card
+                      hoverable
+                      cover={
+                        <div
+                          style={{ cursor: 'pointer', position: 'relative' }}
+                          onClick={() => !isSelectMode && handleImageClick(item)}
+                        >
+                          {isSelectMode && (
+                            <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 1 }}>
+                              <Checkbox
+                                checked={selectedPosts.includes(item.dataId)}
+                                onChange={() => handlePostSelect(item.dataId)}
+                              />
+                            </div>
+                          )}
+                          <img
+                            alt={item.title}
+                            src={item.coverUrl}
+                            style={{
+                              width: '100%',
+                              borderRadius: '10px 10px 0 0',
+                              objectFit: 'cover',
+                            }}
                           />
                         </div>
-                      )}
-                      <img
-                        alt={item.title}
-                        src={item.coverUrl}
-                        style={{
-                          width: '100%',
-                          borderRadius: '10px 10px 0 0',
-                          objectFit: 'cover',
-                        }}
-                      />
-                    </div>
-                  }
-                  actions={[
-                    <Space key="like" onClick={() => likePost(item)}>
-                      <LikeOutlined
-                        style={{
-                          color: likedPosts[item.dataId]
-                            ? '#ff4d4f'
-                            : undefined,
-                          fontSize: likedPosts[item.dataId]
-                            ? '18px'
-                            : undefined,
-                        }}
-                      />
-                      <span>{item.likeCount || 0}</span>
-                    </Space>,
-                    <Space
-                      key="comment-list"
-                      onClick={() => showCommentModal(item)}
+                      }
+                      actions={[
+                        <Space key="like" onClick={() => likePost(item)}>
+                          <LikeOutlined
+                            style={{
+                              color: likedPosts[item.dataId]
+                                ? '#ff4d4f'
+                                : undefined,
+                              fontSize: likedPosts[item.dataId]
+                                ? '18px'
+                                : undefined,
+                            }}
+                          />
+                          <span>{item.likeCount || 0}</span>
+                        </Space>,
+                        <Space
+                          key="comment-list"
+                          onClick={() => showCommentModal(item)}
+                        >
+                          <UnorderedListOutlined />
+                          <span>{item.commentCount || ''}</span>
+                        </Space>,
+                        <Space key="reply" onClick={() => openReplyWorks(item)}>
+                          <CommentOutlined />
+                          <span>评论</span>
+                        </Space>,
+                        <Space key="collect" onClick={() => collectPost(item)}>
+                          <StarOutlined
+                            style={{
+                              color: collectedPosts[item.dataId]
+                                ? '#faad14'
+                                : undefined,
+                              fontSize: collectedPosts[item.dataId]
+                                ? '18px'
+                                : undefined,
+                            }}
+                          />
+                          <span>{item.collectCount || ''}</span>
+                        </Space>,
+                      ]}
                     >
-                      <UnorderedListOutlined />
-                      <span>{item.commentCount || ''}</span>
-                    </Space>,
-                    <Space key="reply" onClick={() => openReplyWorks(item)}>
-                      <CommentOutlined />
-                      <span>评论</span>
-                    </Space>,
-                    <Space key="collect" onClick={() => collectPost(item)}>
-                      <StarOutlined
-                        style={{
-                          color: collectedPosts[item.dataId]
-                            ? '#faad14'
-                            : undefined,
-                          fontSize: collectedPosts[item.dataId]
-                            ? '18px'
-                            : undefined,
-                        }}
+                      <Card.Meta
+                        avatar={<Avatar src={`${item.author?.avatar}`} />}
+                        title={item.author?.name}
+                        description={
+                          <div>
+                            <Text strong ellipsis style={{ display: 'block' }}>
+                              {item.title}
+                            </Text>
+                            <Text type="secondary" ellipsis={{}}>
+                              {item.content}
+                            </Text>
+                          </div>
+                        }
                       />
-                      <span>{item.collectCount || ''}</span>
-                    </Space>,
-                  ]}
-                >
-                  <Card.Meta
-                    avatar={<Avatar src={`${item.author?.avatar}`} />}
-                    title={item.author?.name}
-                    description={
-                      <div>
-                        <Text strong ellipsis style={{ display: 'block' }}>
-                          {item.title}
-                        </Text>
-                        <Text type="secondary" ellipsis={{}}>
-                          {item.content}
-                        </Text>
-                      </div>
-                    }
-                  />
-                </Card>
-              </div>
-            ))}
-          </Masonry>
+                    </Card>
+                  </div>
+                ))}
+              </Masonry>
 
-          {/* 加载更多区域 */}
-          <div ref={loadMoreRef} className={styles.loadMoreArea}>
-            {isLoadingMore && (
-              <div className={styles.loadingMore}>
-                <Spin size="small" />
-                <span style={{ marginLeft: 8 }}>加载中...</span>
-              </div>
-            )}
+              {/* 加载更多区域 */}
+              <div ref={loadMoreRef} className={styles.loadMoreArea}>
+                {isLoadingMore && (
+                  <div className={styles.loadingMore}>
+                    <Spin size="small" />
+                    <span style={{ marginLeft: 8 }}>加载中...</span>
+                  </div>
+                )}
 
-            {!pageInfo.hasMore && postList.length > 0 && (
-              <div className={styles.noMoreData}>
-                <Divider plain>没有更多数据了</Divider>
+                {!pageInfo.hasMore && postList.length > 0 && (
+                  <div className={styles.noMoreData}>
+                    <Divider plain>没有更多数据了</Divider>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </>
+          )}
         </div>
         {/* </Col> */}
       </div>
