@@ -6,7 +6,7 @@
  * @Description: 评论页面 reply
  */
 import { icpCreatorList, WorkData } from '@/icp/reply';
-import { Button, Col, Popconfirm, Row, Tabs, Tooltip } from 'antd';
+import { Button, Col, Popconfirm, Row, Tabs, Tooltip, Card, Avatar, Typography, Divider, Spin } from 'antd';
 import { useCallback, useRef, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import ReplyWorks, { ReplyWorksRef } from './components/replyWorks';
@@ -22,6 +22,8 @@ import {
 import styles from './reply.module.scss';
 import AutoRun from './autoRun';
 import OneKeyReply, { OneKeyReplyRef } from './components/oneKeyReply';
+import Masonry from 'react-masonry-css';
+import { useInView } from 'react-intersection-observer';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
@@ -38,6 +40,30 @@ export default function Page() {
   const Ref_AddAutoRun = useRef<AddAutoRunRef>(null);
   const Ref_CommentList = useRef<CommentListRef>(null);
   const Ref_OneKeyReply = useRef<OneKeyReplyRef>(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const { Text } = Typography;
+
+  // 使用 react-intersection-observer 创建一个观察器
+  const { ref: loadMoreRef, inView } = useInView({
+    threshold: 0.5,
+    triggerOnce: false,
+  });
+
+  // 监听 inView 变化，当元素可见时加载更多
+  const loadMorePosts = useCallback(async () => {
+    if (!pageInfo.hasMore || isLoadingMore) return;
+    setIsLoadingMore(true);
+    try {
+      await getCreatorList(activeAccountId);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [pageInfo.hasMore, isLoadingMore, activeAccountId]);
+
+  // 监听 inView 变化
+  if (inView && pageInfo.hasMore && !isLoadingMore) {
+    loadMorePosts();
+  }
 
   async function getCreatorList(accountId: number) {
     if (accountId === -1) return;
@@ -70,6 +96,17 @@ export default function Page() {
     Ref_AddAutoRun.current?.init(activeAccountId, data);
   }
 
+  // 计算断点值，用于响应式布局
+  const breakpointColumnsObj = {
+    default: 6,
+    2270: 5,
+    1939: 4,
+    1600: 3,
+    1200: 2,
+    900: 2,
+    600: 1,
+  };
+
   return (
     <div className={styles.account}>
       <AccountSidebar
@@ -92,89 +129,76 @@ export default function Page() {
                 请选择账户
               </div>
             ) : (
-              <div className="grid grid-cols-5 p-4 account-con bg-slate-300">
-                {wordList.map((item) => (
-                  <div
-                    className="bg-white w-[200px] h-[200px] border border-gray-300 p-4 rounded-lg hover:shadow-lg transition-shadow duration-300 m-4"
-                    key={item.dataId}
-                  >
-                    <Row>
-                      <Col span={12}>
-                        <div className="w-[100px] h-[200px]">
+              <div className="p-4">
+                <Masonry
+                  breakpointCols={breakpointColumnsObj}
+                  className={styles.myMasonryGrid}
+                  columnClassName={styles.myMasonryGridColumn}
+                >
+                  {wordList.map((item) => (
+                    <div key={item.dataId} className={styles.masonryItem}>
+                      <Card
+                        hoverable
+                        className={styles.cardContainer}
+                        cover={
                           <img
                             alt="example"
                             src={item.coverUrl}
-                            className="object-cover w-full h-full rounded"
                           />
-                        </div>
-                      </Col>
-                      <Col span={12}>
-                        <div className="flex flex-col h-full">
-                          <p className="mb-2">{item.title || '无标题'}</p>
-                          <div className="w-full mt-auto">
-                            <Row justify="space-evenly">
-                              <Col span={8}>
-                                <Tooltip title="评论列表">
-                                  <MenuUnfoldOutlined
-                                    onClick={() => openCommentList(item)}
-                                  />
-                                </Tooltip>
-                              </Col>
-                              <Col span={8}>
-                                <Tooltip title="评论作品">
-                                  <CommentOutlined
-                                    onClick={() => openReplyWorks(item)}
-                                  />
-                                </Tooltip>
-                              </Col>
-                            </Row>
+                        }
+                        actions={[
+                          <Tooltip key="comment-list" title="评论列表">
+                            <MenuUnfoldOutlined onClick={() => openCommentList(item)} />
+                          </Tooltip>,
+                          <Tooltip key="reply" title="评论作品">
+                            <CommentOutlined onClick={() => openReplyWorks(item)} />
+                          </Tooltip>,
+                          <Tooltip key="onekey" title="一键评论">
+                            <Popconfirm
+                              title="确认进行一键评论"
+                              onConfirm={() => {
+                                Ref_OneKeyReply.current?.init(activeAccountId, item);
+                              }}
+                              okText="是"
+                              cancelText="否"
+                            >
+                              <AliwangwangOutlined />
+                            </Popconfirm>
+                          </Tooltip>,
+                          <Tooltip key="auto" title="自动评论">
+                            <FieldTimeOutlined onClick={() => openAddAutoRun(item)} />
+                          </Tooltip>,
+                        ]}
+                      >
+                        <Card.Meta
+                          title={item.title || '无标题'}
+                          description={
+                            <Text type="secondary">
+                              {item.desc || '暂无描述'}
+                            </Text>
+                          }
+                        />
+                      </Card>
+                    </div>
+                  ))}
+                </Masonry>
 
-                            <Row justify="space-evenly">
-                              <Col span={8}>
-                                <Tooltip title="一键评论">
-                                  <Popconfirm
-                                    title="确认进行一键评论"
-                                    onConfirm={(
-                                      e?: React.MouseEvent<HTMLElement>,
-                                    ) => {
-                                      Ref_OneKeyReply.current?.init(
-                                        activeAccountId,
-                                        item,
-                                      );
-                                    }}
-                                    okText="是"
-                                    cancelText="否"
-                                  >
-                                    <AliwangwangOutlined />
-                                  </Popconfirm>
-                                </Tooltip>
-                              </Col>
-                              <Col span={8}>
-                                <Tooltip title="自动评论">
-                                  <FieldTimeOutlined
-                                    onClick={() => openAddAutoRun(item)}
-                                  />
-                                </Tooltip>
-                              </Col>
-                            </Row>
-                          </div>
-                        </div>
-                      </Col>
-                    </Row>
-                  </div>
-                ))}
+                {/* 加载更多区域 */}
+                <div ref={loadMoreRef} className={styles.loadMoreArea}>
+                  {isLoadingMore && (
+                    <div className={styles.loadingMore}>
+                      <Spin size="small" />
+                      <span style={{ marginLeft: 8 }}>加载中...</span>
+                    </div>
+                  )}
+
+                  {!pageInfo.hasMore && wordList.length > 0 && (
+                    <div className={styles.noMoreData}>
+                      <Divider plain>没有更多数据了</Divider>
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
-
-            {wordList.length > 0 && (
-              <p className="text-center">
-                <Button
-                  type="link"
-                  onClick={() => getCreatorList(activeAccountId)}
-                >
-                  加载更多
-                </Button>
-              </p>
             )}
           </Tabs.TabPane>
           <Tabs.TabPane tab="自动任务" key="2">
