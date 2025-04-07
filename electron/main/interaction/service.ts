@@ -83,7 +83,7 @@ export class InteractionService {
    * 自动一键互动:作品评论,收藏,点赞
    * 规则:评论作品,已经评论不评论
    */
-  async autorInteraction(
+  async autorInteraction( 
     account: AccountModel,
     worksList: WorkData[],
     option: {
@@ -185,7 +185,7 @@ export class InteractionService {
               isLike,
             },
           });
-        }
+        } 
 
         // ----- 3-收藏作品 -----
         let isCollect: 0 | 1 = 0;
