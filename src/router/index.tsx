@@ -44,7 +44,7 @@ import UserWalletAccount from '@/views/finance/userWalletAccount';
 import Finance from '@/views/finance/index';
 import UserWalletRecord from '@/views/finance/userWalletRecord';
 import Reply from '@/views/reply';
-import Replyother from '@/views/replyother';
+import Replyother from '@/views/replyother/replyother';
 import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
 import Test from '@/views/test';
 import Interaction from '@/views/interaction';
