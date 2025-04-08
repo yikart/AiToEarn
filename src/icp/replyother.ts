@@ -250,9 +250,8 @@ export async function ipcGetAutoRunOfInteractionInfo() {
 
 /**
  * 获取一键互动的记录列表
- * @param accountId
- * @param dataId
- * @param cycleType
+ * @param page
+ * @param query
  */
 export async function ipcGetInteractionRecordList(
   page: {

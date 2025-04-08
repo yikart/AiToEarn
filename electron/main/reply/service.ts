@@ -13,7 +13,7 @@ import { AutoRunService } from '../autoRun/service';
 import { AutoRunModel } from '../../db/models/autoRun';
 import { sysNotice } from '../../global/notice';
 import { AutorReplyCommentScheduleEvent } from '../../../commont/types/reply';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { ReplyCommentRecordModel } from '../../db/models/replyCommentRecord';
 import { AppDataSource } from '../../db';
 import { getUserInfo } from '../user/comment';
@@ -22,6 +22,8 @@ import { WorkData } from '../plat/plat.type';
 import { sleep } from '../../util/time';
 import { AutoReplyCache, AutorReplyCacheStatus } from './cacheData';
 import { logger } from '../../global/log';
+import { backPageData, CorrectQuery } from '../../global/table';
+import { AccountType } from '../../../commont/AccountEnum';
 
 @Injectable()
 export class ReplyService {
@@ -78,6 +80,29 @@ export class ReplyService {
         commentId: commentId + '',
       },
     });
+  }
+
+  // 获取评论回复记录列表
+  async getReplyCommentRecordList(
+    userId: string,
+    page: CorrectQuery,
+    query: {
+      accountId?: number;
+      type?: AccountType;
+    },
+  ) {
+    const filter: FindOptionsWhere<ReplyCommentRecordModel> = {
+      userId,
+      ...(query.accountId && { accountId: query.accountId }),
+      ...(query.type && { type: query.type }),
+    };
+
+    const [list, totalCount] =
+      await this.replyCommentRecordRepository.findAndCount({
+        where: filter,
+      });
+
+    return backPageData(list, totalCount, page);
   }
 
   /**

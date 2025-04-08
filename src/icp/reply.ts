@@ -1,3 +1,5 @@
+import { AccountType } from '@@/AccountEnum';
+
 /*
  * @Author: nevin
  * @Date: 2025-01-23 15:48:14
@@ -160,5 +162,28 @@ export async function ipcGetAutoRunOfReplyInfo() {
     title: string;
     dataId?: string;
   } = await window.ipcRenderer.invoke('ICP_GET_AUTO_REPLY_INFO');
+  return res;
+}
+
+/**
+ * 获取一键互动的记录列表
+ * @param page
+ * @param query
+ */
+export async function ipcGetReplyCommentRecordList(
+  page: {
+    page_size: number;
+    page_no: number;
+  },
+  query: {
+    accountId?: number;
+    type?: AccountType;
+  },
+) {
+  const res: string = await window.ipcRenderer.invoke(
+    'ICP_GET_REPLAY_COMMENT_RECORD_LIST',
+    page,
+    query,
+  );
   return res;
 }
