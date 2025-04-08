@@ -554,6 +554,7 @@ export class Kwai extends PlatformBase {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await kwaiPub.dianzanDyOther(cookie, dataId, option);
     console.log('------ dianzanDyOther -- Kwai --- res: ', res);
+    
     return res.data;
   }
 

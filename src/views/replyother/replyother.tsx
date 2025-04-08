@@ -54,6 +54,8 @@ import WebView from '../../components/WebView';
 // @ts-ignore
 import { useInView } from 'react-intersection-observer';
 import { icpCreatorList } from '@/icp/reply';
+import { icpCreateInteractionOneKey } from '@/icp/replyother';
+import { forEach } from 'lodash';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
@@ -195,50 +197,73 @@ export default function Page() {
     message.success('任务已下发');
     setTaskModalVisible(false);
     setIsSelectMode(false);
-    
-    // 创建任务队列
-    const taskQueue = selectedPosts.map(postId => {
-      const post = postList.find(item => item.dataId === postId);
-      if (!post) return null;
-      
-      return async () => {
-        try {
-          // 根据概率决定是否执行点赞
-          // if (Math.random() * 100 <= values.likeProb) {
-            await likePost(post);
-          // }
-          
-          // 根据概率决定是否执行收藏
-          if(activeAccountType != 'KWAI'){
-            if (Math.random() * 100 <= values.collectProb) {
-              await collectPost(post);
-            }
-          }
-          
-          // // 根据概率决定是否执行评论
-          // if (Math.random() * 100 <= values.commentProb) {
-          //   if (values.commentType === 'ai') {
-          //     // AI评论逻辑
-          //     await openReplyWorks(post);
-          //   } else {
-          //     // 自定义评论逻辑
-          //     const randomComment = customComments[Math.floor(Math.random() * customComments.length)];
-          //     // TODO: 实现自定义评论发送逻辑
-          //   }
-          // }
-        } catch (error) {
-          console.error('执行任务失败:', error);
-        }
-      };
-    }).filter(Boolean);
 
-    // 按顺序执行任务，每个任务间隔3秒
-    for (const task of taskQueue) {
-      if (task) {
-        await task();
-        await new Promise(resolve => setTimeout(resolve, 3000)); // 等待3秒
-      }
-    }
+    forEach(postList, (postId) => { 
+      const post = postList.find(item => item.dataId === postId);
+      if (!post) return;
+      likePost(post);
+    });
+
+    if (!selectedPosts.length) return;
+
+    // 从postList中提取选中的帖子数据
+    const selectedPostData = selectedPosts.map(postId => {
+      return postList.find(item => item.dataId === postId);
+    }); // 过滤掉undefined的值
+
+    console.log('------ selectedPostData', selectedPostData);
+
+    // 调用icpCreateInteractionOneKey函数
+
+    const res = await icpCreateInteractionOneKey(activeAccountId, selectedPostData, {
+      
+      commentContent: '不错啊!',
+    }); 
+    console.log('------ res', res);
+    
+    // // 创建任务队列
+    // const taskQueue = selectedPosts.map(postId => {
+    //   const post = postList.find(item => item.dataId === postId);
+    //   if (!post) return null;
+      
+    //   return async () => {
+    //     try {
+    //       // 根据概率决定是否执行点赞
+    //       // if (Math.random() * 100 <= values.likeProb) {
+    //         await likePost(post);
+    //       // }
+          
+    //       // 根据概率决定是否执行收藏
+    //       if(activeAccountType != 'KWAI'){
+    //         if (Math.random() * 100 <= values.collectProb) {
+    //           await collectPost(post);
+    //         }
+    //       }
+          
+    //       // // 根据概率决定是否执行评论
+    //       // if (Math.random() * 100 <= values.commentProb) {
+    //       //   if (values.commentType === 'ai') {
+    //       //     // AI评论逻辑
+    //       //     await openReplyWorks(post);
+    //       //   } else {
+    //       //     // 自定义评论逻辑
+    //       //     const randomComment = customComments[Math.floor(Math.random() * customComments.length)];
+    //       //     // TODO: 实现自定义评论发送逻辑
+    //       //   }
+    //       // }
+    //     } catch (error) {
+    //       console.error('执行任务失败:', error);
+    //     }
+    //   };
+    // }).filter(Boolean);
+
+    // // 按顺序执行任务，每个任务间隔3秒
+    // for (const task of taskQueue) {
+    //   if (task) {
+    //     await task();
+    //     await new Promise(resolve => setTimeout(resolve, 3000)); // 等待3秒
+    //   }
+    // }
 
     setSelectedPosts([]);
   };
@@ -470,6 +495,7 @@ export default function Page() {
       });
       console.log('------ likePost', res);
       if (
+        res === true ||
         res.status_code == 0 ||
         res.data?.code == 0 ||
         res.data?.visionVideoLike.result == 1
