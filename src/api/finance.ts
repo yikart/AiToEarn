@@ -7,7 +7,7 @@
  */
 import http from './request';
 import { Pagination } from './types';
-import { UserWalletRecord } from './types/finance';
+import { UserWalletRecord, UserWalletRecordStatus } from './types/finance';
 import {
   CreateUserWalletAccountParams,
   UserWalletAccount,
@@ -55,6 +55,20 @@ export const financeApi = {
     return http.delete<boolean>(`/finance/userWalletAccount/delete/${id}`);
   },
   // --------- userWalletAccount END ---------
+
+  // 创建用户提现记录-提交提现
+  addUserWalletRecord(data: {
+    walletAccountId: string; // 钱包账户
+    balance: number;
+  }) {
+    return http.post<Pagination<UserWalletRecord>>(
+      `/finance/userWalletRecord`,
+      data,
+      {
+        isToken: true,
+      },
+    );
+  },
 
   // 提现记录
   getWithdrawList(params: { page: number; pageSize: number }) {
