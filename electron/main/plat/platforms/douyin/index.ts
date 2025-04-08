@@ -357,7 +357,7 @@ export class Douyin extends PlatformBase {
     };
   }
 
-  async dianzanDyOther(
+  async dianzanDyOther( 
     account: AccountModel,
     dataId: string, // 作品ID
   ): Promise<boolean> {

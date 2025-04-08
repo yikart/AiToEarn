@@ -104,6 +104,7 @@ export class InteractionService {
     });
 
     try {
+      console.log('------ 开始执行互动任务，作品数量:', worksList.length);
       scheduleEvent({
         tag: AutorWorksInteractionScheduleEvent.Start,
         status: 0,
@@ -111,6 +112,7 @@ export class InteractionService {
 
       // 1. 循环AI回复评论
       for (const works of worksList) {
+        console.log('------ 开始处理作品:', works.dataId);
         sleep(5);
         const oldRecord = await this.getInteractionRecord(
           userInfo.id,
@@ -171,11 +173,16 @@ export class InteractionService {
         // ----- 2-点赞作品 -----
         let isLike: 0 | 1 = 0;
         try {
-          const isLikeRes = await platController.dianzanDyOther(
+          console.log('------ 开始点赞作品:', works.dataId);
+          const isLikeRes = await platController.dianzanDyOther( 
             account,
             works.dataId,
+            {
+              authid: works.author?.id,
+            }
           );
           isLike = isLikeRes ? 1 : 0;
+          console.log('------ 点赞结果:', isLikeRes);
         } catch (error) {
           scheduleEvent({
             tag: AutorWorksInteractionScheduleEvent.Error,
@@ -204,7 +211,7 @@ export class InteractionService {
               isLike,
             },
           });
-        }
+        } 
 
         // 创建互动记录
         this.createInteractionRecord(
@@ -217,15 +224,18 @@ export class InteractionService {
           },
           option.commentContent,
           isLike,
-          isCollect,
+          0, // 收藏状态设为0
         );
+        console.log('------ 作品处理完成:', works.dataId);
       }
 
+      console.log('------ 所有作品处理完成');
       scheduleEvent({
         tag: AutorWorksInteractionScheduleEvent.ReplyCommentEnd,
         status: 0,
       });
     } catch (error) {
+      console.error('------ 任务执行出错:', error);
       scheduleEvent({
         tag: AutorWorksInteractionScheduleEvent.Error,
         status: -1,
