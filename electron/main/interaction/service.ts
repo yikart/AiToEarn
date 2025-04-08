@@ -12,7 +12,7 @@ import { toolsApi } from '../api/tools';
 import { AutoRunService } from '../autoRun/service';
 import { AutoRunModel } from '../../db/models/autoRun';
 import { sysNotice } from '../../global/notice';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { AppDataSource } from '../../db';
 import { getUserInfo } from '../user/comment';
 import { AutoRunRecordStatus } from '../../db/models/autoRunRecord';
@@ -21,6 +21,8 @@ import { InteractionRecordModel } from '../../db/models/interactionRecord';
 import { AutorWorksInteractionScheduleEvent } from '../../../commont/types/interaction';
 import { WorkData } from '../plat/plat.type';
 import { AutoInteractionCache } from './cacheData';
+import { backPageData, CorrectQuery } from '../../global/table';
+import { AccountType } from '../../../commont/AccountEnum';
 
 @Injectable()
 export class InteractionService {
@@ -79,11 +81,34 @@ export class InteractionService {
     });
   }
 
+  // 获取互动记录列表
+  async getInteractionRecordList(
+    userId: string,
+    page: CorrectQuery,
+    query: {
+      accountId?: number;
+      type?: AccountType;
+    },
+  ) {
+    const filter: FindOptionsWhere<InteractionRecordModel> = {
+      userId,
+      ...(query.accountId && { accountId: query.accountId }),
+      ...(query.type && { type: query.type }),
+    };
+
+    const [list, totalCount] =
+      await this.interactionRecordRepository.findAndCount({
+        where: filter,
+      });
+
+    return backPageData(list, totalCount, page);
+  }
+
   /**
    * 自动一键互动:作品评论,收藏,点赞
    * 规则:评论作品,已经评论不评论
    */
-  async autorInteraction( 
+  async autorInteraction(
     account: AccountModel,
     worksList: WorkData[],
     option: {
@@ -174,12 +199,12 @@ export class InteractionService {
         let isLike: 0 | 1 = 0;
         try {
           console.log('------ 开始点赞作品:', works.dataId);
-          const isLikeRes = await platController.dianzanDyOther( 
+          const isLikeRes = await platController.dianzanDyOther(
             account,
             works.dataId,
             {
               authid: works.author?.id,
-            }
+            },
           );
           isLike = isLikeRes ? 1 : 0;
           console.log('------ 点赞结果:', isLikeRes);
@@ -192,7 +217,7 @@ export class InteractionService {
               isLike,
             },
           });
-        } 
+        }
 
         // ----- 3-收藏作品 -----
         let isCollect: 0 | 1 = 0;
@@ -211,7 +236,7 @@ export class InteractionService {
               isLike,
             },
           });
-        } 
+        }
 
         // 创建互动记录
         this.createInteractionRecord(
@@ -224,7 +249,7 @@ export class InteractionService {
           },
           option.commentContent,
           isLike,
-          0, // 收藏状态设为0
+          isCollect, // 收藏状态设为0
         );
         console.log('------ 作品处理完成:', works.dataId);
       }

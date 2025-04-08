@@ -15,6 +15,9 @@ import { SendChannelEnum } from '../../../commont/UtilsEnum';
 import type { WorkData } from '../plat/plat.type';
 import { AutorWorksInteractionScheduleEvent } from '../../../commont/types/interaction';
 import { AutoInteractionCache } from './cacheData';
+import { getUserInfo } from '../user/comment';
+import type { CorrectQuery } from '../../global/table';
+import { AccountType } from '../../../commont/AccountEnum';
 
 @Controller()
 export class InteractionController {
@@ -136,6 +139,27 @@ export class InteractionController {
     );
 
     return res.status === 1;
+  }
+
+  /**
+   * 获取一键互动的记录列表
+   */
+  @Icp('ICP_GET_INTERACTION_RECORD_LIST')
+  async getInteractionRecordList(
+    event: Electron.IpcMainInvokeEvent,
+    page: CorrectQuery,
+    query: {
+      accountId?: number;
+      type?: AccountType;
+    },
+  ): Promise<any> {
+    const userInfo = getUserInfo();
+
+    return this.interactionService.getInteractionRecordList(
+      userInfo.id,
+      page,
+      query,
+    );
   }
 
   /**
