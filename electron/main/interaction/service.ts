@@ -61,7 +61,7 @@ export class InteractionService {
       worksCover: works.worksCover,
       commentContent,
       isLike: isLike,
-      replyContent: isCollect,
+      isCollect: isCollect,
     });
   }
 
