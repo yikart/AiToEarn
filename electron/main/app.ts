@@ -11,7 +11,6 @@ import { initSqlite3Db } from '../db';
 import { PublishModule } from './publish/module';
 import { UserModule } from './user/module';
 import { BackupModule } from './backup/module';
-import { DataCenterModule } from './dataCenter/module';
 import { TestModule } from './test/module';
 import { ToolsModule } from './tools/module';
 import { AppController } from './controller';
@@ -27,7 +26,6 @@ import { InteractionModule } from './interaction/module';
     AccountModule,
     PublishModule,
     BackupModule,
-    DataCenterModule,
     TestModule,
     ReplyModule,
     AutoRunModule,
