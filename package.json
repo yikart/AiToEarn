@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": true,
   "engines": {
-    "node": "20.18.x"
+    "node": "20.x.x"
   },
   "debug": {
     "env": {
@@ -77,6 +77,7 @@
     "uninstall": "^0.0.0",
     "uuid": "^11.0.5",
     "vite": "^6.2.3",
+    "vite-plugin-electron-renderer": "^0.14.6",
     "xml2js": "^0.6.2",
     "zustand": "^5.0.3"
   },
