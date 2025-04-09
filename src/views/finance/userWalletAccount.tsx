@@ -82,14 +82,14 @@ export default function Page() {
         </Space>
       ),
     },
-  ];
+  ];  
 
   const handleView = (record: UserWalletAccount) => {
     // TODO: 实现查看详情功能
     console.log('查看账户详情:', record);
   };
 
-  return (
+  return (  
     <div>
       <div style={{ marginBottom: 16, textAlign: 'right' }}>
         <Button
@@ -108,6 +108,6 @@ export default function Page() {
         pagination={false}
       />
       <AddWalletAccount ref={Ref_AddWalletAccountRef} />
-    </div>
+    </div>  
   );
 }

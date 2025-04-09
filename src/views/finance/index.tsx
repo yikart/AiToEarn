@@ -5,7 +5,7 @@
  * @LastEditors: nevin
  * @Description: 任务页面
  */
-import { VideoCameraOutlined, WalletOutlined } from '@ant-design/icons';
+import { VideoCameraOutlined, WalletOutlined, HistoryOutlined, AccountBookOutlined } from '@ant-design/icons';
 import { Segmented, Card, Typography, Space, Row, Col } from 'antd';
 import { Outlet, useNavigate } from 'react-router-dom';
 import styles from './finance.module.scss';
@@ -59,12 +59,12 @@ export default function Page() {
               {
                 label: '提现记录',
                 value: 'userWalletRecord',
-                icon: <WalletOutlined />,
+                icon: <HistoryOutlined />,
               },
               {
                 label: '钱包账户',
                 value: 'userWalletAccount',
-                icon: <WalletOutlined />,
+                icon: <AccountBookOutlined />,
               },
             ]}
             onChange={(value) => {
