@@ -144,7 +144,7 @@ export default function Page() {
       console.log('------ 开始获取进程中互动信息');
       const res = await ipcGetAutoRunOfInteractionInfo();
       console.log('------ 获取进程中互动信息结果:', res);
-      setRunningInteractions([{ ...res }] || []);
+      setRunningInteractions([{ ...res }]);
     } catch (error) {
       console.error('------ 获取进程中互动信息失败:', error);
       message.error('获取进程中互动信息失败');
@@ -1072,7 +1072,7 @@ export default function Page() {
                         </div>
                         <Table
                           columns={[
-                          {
+                            {
                               title: '标题',
                               dataIndex: 'title',
                               key: 'title',
