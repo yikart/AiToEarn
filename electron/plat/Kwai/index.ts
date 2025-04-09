@@ -274,9 +274,8 @@ class KwaiPub {
       });
       // 登录页面
       await mainWindow.loadURL(
-        'https://passport.kuaishou.com/pc/account/login/',
+        'https://passport.kuaishou.com/pc/account/login/?sid=kuaishou.web.cp.api&callback=https%3A%2F%2Fcp.kuaishou.com%2Frest%2Finfra%2Fsts%3FfollowUrl%3Dhttps%253A%252F%252Fcp.kuaishou.com%252Fprofile%26setRootDomain%3Dtrue',
       );
-      // mainWindow.webContents.openDevTools();
       // return;
       let timeId1: NodeJS.Timeout | undefined = undefined;
       let timeId2: NodeJS.Timeout | undefined = undefined;
