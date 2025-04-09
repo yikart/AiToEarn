@@ -421,7 +421,7 @@ export default function Page() {
                   </div>
 
                   <div className={styles.taskAction}>
-                    {(task.status === UserTaskStatus.APPROVED ||
+                    {/* {(task.status === UserTaskStatus.APPROVED ||
                       task.status === UserTaskStatus.COMPLETED ||
                       task.status === UserTaskStatus.REWARDED) && (
                       <Button
@@ -438,7 +438,7 @@ export default function Page() {
                       >
                         申请提现 <RightOutlined />
                       </Button>
-                    )}
+                    )} */}
 
                     <Button
                       className={styles.viewButton}
