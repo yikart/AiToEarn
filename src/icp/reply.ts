@@ -1,3 +1,5 @@
+import { AccountType } from '@@/AccountEnum';
+
 /*
  * @Author: nevin
  * @Date: 2025-01-23 15:48:14
@@ -138,6 +140,50 @@ export async function ipcCreateAutoRunOfReply(
     accountId,
     data,
     cycleType,
+  );
+  return res;
+}
+
+export enum AutorReplyCacheStatus {
+  DOING = 0,
+  DONE = 1,
+  REEOR = 2,
+}
+/**
+ * 获取一键回复的进程信息
+ * @returns
+ */
+export async function ipcGetAutoRunOfReplyInfo() {
+  const res: {
+    status: AutorReplyCacheStatus;
+    message: string;
+    createTime?: number;
+    updateTime?: number;
+    title: string;
+    dataId?: string;
+  } = await window.ipcRenderer.invoke('ICP_GET_AUTO_REPLY_INFO');
+  return res;
+}
+
+/**
+ * 获取一键互动的记录列表
+ * @param page
+ * @param query
+ */
+export async function ipcGetReplyCommentRecordList(
+  page: {
+    page_size: number;
+    page_no: number;
+  },
+  query: {
+    accountId?: number;
+    type?: AccountType;
+  },
+) {
+  const res: string = await window.ipcRenderer.invoke(
+    'ICP_GET_REPLAY_COMMENT_RECORD_LIST',
+    page,
+    query,
   );
   return res;
 }

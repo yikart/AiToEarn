@@ -1571,6 +1571,7 @@ export class XiaohongshuService {
    * @returns
    */
   async likeNote(cookie: Electron.Cookie[], noteId: string) {
+    console.log('------ likeNote --- noteId', noteId);
     const url = `/api/sns/web/v1/note/like`;
     const body = {
       note_oid: noteId,

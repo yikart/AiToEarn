@@ -33,7 +33,7 @@ export default function Page() {
   const Ref_InteractionOneKey = useRef<InteractionOneKeyRef>(null);
 
   async function getCreatorList(accountId: number) {
-    const res = await getCommentSearchNotes(accountId, '英雄杀道一', {
+    const res = await getCommentSearchNotes(accountId, '爱团团', {
       ...pageInfo,
       postFirstId: '',
     });

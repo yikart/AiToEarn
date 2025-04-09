@@ -3,8 +3,9 @@
  * @Date: 2025-01-23 15:48:14
  * @LastEditTime: 2025-03-20 22:39:03
  * @LastEditors: nevin
- * @Description:
+ * @Description: 评论他人
  */
+import { AccountType } from '@@/AccountEnum';
 export type WorkData = {
   dataId: string;
   readCount?: number;
@@ -235,6 +236,37 @@ export async function ipcCreateAutoRunOfInteraction(
     accountId,
     dataId,
     cycleType,
+  );
+  return res;
+}
+
+// 获取一键互动自动进程信息
+export async function ipcGetAutoRunOfInteractionInfo() {
+  const res: any = await window.ipcRenderer.invoke(
+    'ICP_GET_AUTO_INTERACTION_INFO',
+  );
+  return res;
+}
+
+/**
+ * 获取一键互动的记录列表
+ * @param page
+ * @param query
+ */
+export async function ipcGetInteractionRecordList(
+  page: {
+    page_size: number;
+    page_no: number;
+  },
+  query: {
+    accountId?: number;
+    type?: AccountType;
+  },
+) {
+  const res: string = await window.ipcRenderer.invoke(
+    'ICP_GET_INTERACTION_RECORD_LIST',
+    page,
+    query,
   );
   return res;
 }

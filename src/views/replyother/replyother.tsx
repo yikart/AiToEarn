@@ -4,6 +4,9 @@ import {
   WorkData,
   CommentData,
   getCommentSearchNotes,
+  ipcGetInteractionRecordList,
+  ipcGetAutoRunOfInteractionInfo,
+  icpDianzanDyOther, icpShoucangDyOther
 } from '@/icp/replyother';
 import {
   Avatar,
@@ -26,6 +29,8 @@ import {
   Tooltip,
   Spin,
   Checkbox,
+  Tabs,
+  Table,
 } from 'antd';
 import { useCallback, useRef, useState, useEffect } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
@@ -33,7 +38,6 @@ import styles from './reply.module.scss';
 import ReplyWorks, { ReplyWorksRef } from './components/replyWorks';
 import ReplyComment, { ReplyCommentRef } from './components/replyComment';
 import AddAutoRun, { AddAutoRunRef } from './components/addAutoRun';
-import { icpDianzanDyOther, icpShoucangDyOther } from '@/icp/replyother';
 import {
   LikeOutlined,
   StarOutlined,
@@ -46,6 +50,8 @@ import {
   UserOutlined,
   SendOutlined,
   DownOutlined,
+  QuestionCircleOutlined,
+  SyncOutlined,
 } from '@ant-design/icons';
 import Masonry from 'react-masonry-css';
 import { AccountModel } from '../../../electron/db/models/account';
@@ -53,6 +59,8 @@ import WebView from '../../components/WebView';
 // @ts-ignore
 import { useInView } from 'react-intersection-observer';
 import { icpCreatorList } from '@/icp/reply';
+import { icpCreateInteractionOneKey } from '@/icp/replyother';
+import { forEach } from 'lodash';
 
 export default function Page() {
   const [wordList, setWordList] = useState<WorkData[]>([]);
@@ -109,6 +117,75 @@ export default function Page() {
   const [collectedPosts, setCollectedPosts] = useState<Record<string, boolean>>(
     {},
   );
+
+  // 添加互动记录相关状态
+  const [interactionRecords, setInteractionRecords] = useState<any[]>([]);
+  const [interactionPageInfo, setInteractionPageInfo] = useState({
+    page_size: 10,
+    page_no: 1,
+    total: 0,
+  });
+
+  // 添加进程中互动相关状态
+  const [runningInteractions, setRunningInteractions] = useState<any[]>([]);
+
+  // 获取进程中互动信息
+  const getRunningInteractions = async () => {
+    try {
+      console.log('------ 开始获取进程中互动信息');
+      const res = await ipcGetAutoRunOfInteractionInfo();
+      console.log('------ 获取进程中互动信息结果:', res);
+      setRunningInteractions(res || []);
+    } catch (error) {
+      console.error('------ 获取进程中互动信息失败:', error);
+      message.error('获取进程中互动信息失败');
+    }
+  };
+
+  // 定期获取进程中互动信息
+  useEffect(() => {
+    if (activeAccountId !== -1) {
+      getRunningInteractions();
+      const timer = setInterval(() => {
+        getRunningInteractions();
+      }, 5000); // 每5秒更新一次
+      return () => clearInterval(timer);
+    }
+  }, [activeAccountId]);
+
+  // 获取互动记录
+  const getInteractionRecords = async () => {
+    try {
+      console.log('------ 开始获取互动记录', activeAccountId, 'activeAccountType:', activeAccountType);
+      const res = await ipcGetInteractionRecordList(
+        {
+          page_size: interactionPageInfo.page_size,
+          page_no: interactionPageInfo.page_no,
+        },
+        {
+          accountId: activeAccountId,
+          type: activeAccountType as any,
+        }
+      );
+      console.log('------ 获取互动记录结果:', res);
+      const data:any = res;
+      setInteractionRecords(data.list || []);
+      setInteractionPageInfo(prev => ({
+        ...prev,
+        total: data.total || 0
+      }));
+    } catch (error) {
+      console.error('------ 获取互动记录失败:', error);
+      message.error('获取互动记录失败');
+    }
+  };
+
+  // 监听账户变化，重新获取记录
+  useEffect(() => {
+    if (activeAccountId !== -1) {
+      getInteractionRecords();
+    }
+  }, [activeAccountId, activeAccountType]);
 
   // 添加任务表单相关状态
   const [taskForm] = Form.useForm();
@@ -194,50 +271,73 @@ export default function Page() {
     message.success('任务已下发');
     setTaskModalVisible(false);
     setIsSelectMode(false);
-    
-    // 创建任务队列
-    const taskQueue = selectedPosts.map(postId => {
-      const post = postList.find(item => item.dataId === postId);
-      if (!post) return null;
-      
-      return async () => {
-        try {
-          // 根据概率决定是否执行点赞
-          // if (Math.random() * 100 <= values.likeProb) {
-            await likePost(post);
-          // }
-          
-          // 根据概率决定是否执行收藏
-          if(activeAccountType != 'KWAI'){
-            if (Math.random() * 100 <= values.collectProb) {
-              await collectPost(post);
-            }
-          }
-          
-          // // 根据概率决定是否执行评论
-          // if (Math.random() * 100 <= values.commentProb) {
-          //   if (values.commentType === 'ai') {
-          //     // AI评论逻辑
-          //     await openReplyWorks(post);
-          //   } else {
-          //     // 自定义评论逻辑
-          //     const randomComment = customComments[Math.floor(Math.random() * customComments.length)];
-          //     // TODO: 实现自定义评论发送逻辑
-          //   }
-          // }
-        } catch (error) {
-          console.error('执行任务失败:', error);
-        }
-      };
-    }).filter(Boolean);
 
-    // 按顺序执行任务，每个任务间隔3秒
-    for (const task of taskQueue) {
-      if (task) {
-        await task();
-        await new Promise(resolve => setTimeout(resolve, 3000)); // 等待3秒
-      }
-    }
+    forEach(postList, (postId) => { 
+      const post = postList.find(item => item.dataId === postId);
+      if (!post) return;
+      likePost(post);
+    });
+
+    if (!selectedPosts.length) return;
+
+    // 从postList中提取选中的帖子数据
+    const selectedPostData = selectedPosts.map(postId => {
+      return postList.find(item => item.dataId === postId);
+    }); // 过滤掉undefined的值
+
+    console.log('------ selectedPostData', selectedPostData);
+
+    // 调用icpCreateInteractionOneKey函数
+
+    const res = await icpCreateInteractionOneKey(activeAccountId, selectedPostData, {
+      
+      commentContent: '不错啊!',
+    }); 
+    console.log('------ res', res);
+    
+    // // 创建任务队列
+    // const taskQueue = selectedPosts.map(postId => {
+    //   const post = postList.find(item => item.dataId === postId);
+    //   if (!post) return null;
+      
+    //   return async () => {
+    //     try {
+    //       // 根据概率决定是否执行点赞
+    //       // if (Math.random() * 100 <= values.likeProb) {
+    //         await likePost(post);
+    //       // }
+          
+    //       // 根据概率决定是否执行收藏
+    //       if(activeAccountType != 'KWAI'){
+    //         if (Math.random() * 100 <= values.collectProb) {
+    //           await collectPost(post);
+    //         }
+    //       }
+          
+    //       // // 根据概率决定是否执行评论
+    //       // if (Math.random() * 100 <= values.commentProb) {
+    //       //   if (values.commentType === 'ai') {
+    //       //     // AI评论逻辑
+    //       //     await openReplyWorks(post);
+    //       //   } else {
+    //       //     // 自定义评论逻辑
+    //       //     const randomComment = customComments[Math.floor(Math.random() * customComments.length)];
+    //       //     // TODO: 实现自定义评论发送逻辑
+    //       //   }
+    //       // }
+    //     } catch (error) {
+    //       console.error('执行任务失败:', error);
+    //     }
+    //   };
+    // }).filter(Boolean);
+
+    // // 按顺序执行任务，每个任务间隔3秒
+    // for (const task of taskQueue) {
+    //   if (task) {
+    //     await task();
+    //     await new Promise(resolve => setTimeout(resolve, 3000)); // 等待3秒
+    //   }
+    // }
 
     setSelectedPosts([]);
   };
@@ -262,7 +362,7 @@ export default function Page() {
   >({});
 
   // 添加搜索关键词状态
-  const [searchKeyword, setSearchKeyword] = useState('英雄杀道一');
+  const [searchKeyword, setSearchKeyword] = useState('爱团团');
 
   async function getCreatorList(thisid: any) {
     setWordList([]);
@@ -469,6 +569,7 @@ export default function Page() {
       });
       console.log('------ likePost', res);
       if (
+        res === true ||
         res.status_code == 0 ||
         res.data?.code == 0 ||
         res.data?.visionVideoLike.result == 1
@@ -606,7 +707,6 @@ export default function Page() {
   return (
     <div className={styles.reply} style={{ alignItems: 'flex-start' }}>
       <div style={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
-        {/* <Col span={3}> */}
         <AccountSidebar
           activeAccountId={activeAccountId}
           onAccountChange={useCallback(
@@ -630,177 +730,334 @@ export default function Page() {
             [getCreatorList],
           )}
         />
-        {/* </Col> */}
 
-        {/* <Col span={21} > */}
         <div className={styles.postList} style={{ flex: 1, padding: '20px' }}>
-          <Row
-            justify="space-between"
-            align="middle"
-            style={{ marginBottom: 20 }}
-          >
-            <Col>
-              <Typography.Title level={4} style={{ margin: 0 }}>
-                任务：
-              </Typography.Title>
-            </Col>
-            <Col flex="auto" style={{ margin: '0 20px' }}>
-              <Input.Search
-                placeholder="输入关键词搜索"
-                value={searchKeyword}
-                onChange={(e) => setSearchKeyword(e.target.value)}
-                onSearch={handleSearch}
-                style={{ width: '100%' }}
-                enterButton
-              />
-            </Col>
-            <Col>
-              <Space>
-                <Button
-                  type={isSelectMode ? "primary" : "default"}
-                  icon={<DownOutlined />}
-                  onClick={handleSelectModeToggle}
-                  size="large"
-                >
-                  {isSelectMode ? '取消选择' : '选择作品'}
-                </Button>
-                {isSelectMode && (
-                  <Button
-                    type="primary"
-                    icon={<SendOutlined />}
-                    onClick={() => setTaskModalVisible(true)}
-                    size="large"
-                    disabled={selectedPosts.length === 0}
-                  >
-                    下发任务 ({selectedPosts.length})
-                  </Button>
-                )}
-                {!isSelectMode && (
-                  <Button
-                    type="primary"
-                    icon={<DownOutlined />}
-                    onClick={() => setTaskModalVisible(true)}
-                    size="large"
-                  >
-                    下发任务
-                  </Button>
-                )}
-              </Space>
-            </Col>
-          </Row>
+          {activeAccountId === -1 ? (
+            <div className={styles.account}>
+              <div className="account-noSelect">
+                <QuestionCircleOutlined />
+                <span>请选择账户</span>
+              </div>
+            </div>
+          ) : (
+            <>
+              <Tabs
+                defaultActiveKey="1"
+                items={[
+                  {
+                    key: '1',
+                    label: '作品列表',
+                    children: (
+                      <>
+                        <Row
+                          justify="space-between"
+                          align="middle"
+                          style={{ marginBottom: 20 }}
+                        >
+                          <Col>
+                            <Typography.Title level={4} style={{ margin: 0 }}>
+                              任务：
+                            </Typography.Title>
+                          </Col>
+                          <Col flex="auto" style={{ margin: '0 20px' }}>
+                            <Input.Search
+                              placeholder="输入关键词搜索"
+                              value={searchKeyword}
+                              onChange={(e) => setSearchKeyword(e.target.value)}
+                              onSearch={handleSearch}
+                              style={{ width: '100%' }}
+                              enterButton
+                            />
+                          </Col>
+                          <Col>
+                            <Space>
+                              <Button
+                                type={isSelectMode ? "primary" : "default"}
+                                icon={<DownOutlined />}
+                                onClick={handleSelectModeToggle}
+                                size="large"
+                              >
+                                {isSelectMode ? '取消选择' : '选择作品'}
+                              </Button>
+                              {isSelectMode && (
+                                <Button
+                                  type="primary"
+                                  icon={<SendOutlined />}
+                                  onClick={() => setTaskModalVisible(true)}
+                                  size="large"
+                                  disabled={selectedPosts.length === 0}
+                                >
+                                  下发任务 ({selectedPosts.length})
+                                </Button>
+                              )}
+                              {!isSelectMode && (
+                                <Button
+                                  type="primary"
+                                  icon={<DownOutlined />}
+                                  onClick={() => setTaskModalVisible(true)}
+                                  size="large"
+                                >
+                                  下发任务
+                                </Button>
+                              )}
+                            </Space>
+                          </Col>
+                        </Row>
 
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className={styles.myMasonryGrid}
-            columnClassName={styles.myMasonryGridColumn}
-          >
-            {postList.map((item: any, index: number) => (
-              <div
-                key={`${item.dataId || item.coverUrl}-${index}`}
-                className={styles.masonryItem}
-              >
-                <Card
-                  hoverable
-                  cover={
-                    <div
-                      style={{ cursor: 'pointer', position: 'relative' }}
-                      onClick={() => !isSelectMode && handleImageClick(item)}
-                    >
-                      {isSelectMode && (
-                        <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 1 }}>
-                          <Checkbox
-                            checked={selectedPosts.includes(item.dataId)}
-                            onChange={() => handlePostSelect(item.dataId)}
-                          />
+                        <Masonry
+                          breakpointCols={breakpointColumnsObj}
+                          className={styles.myMasonryGrid}
+                          columnClassName={styles.myMasonryGridColumn}
+                        >
+                          {postList.map((item: any, index: number) => (
+                            <div
+                              key={`${item.dataId || item.coverUrl}-${index}`}
+                              className={styles.masonryItem}
+                            >
+                              <Card
+                                hoverable
+                                cover={
+                                  <div
+                                    style={{ cursor: 'pointer', position: 'relative' }}
+                                    onClick={() => !isSelectMode && handleImageClick(item)}
+                                  >
+                                    {isSelectMode && (
+                                      <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 1 }}>
+                                        <Checkbox
+                                          checked={selectedPosts.includes(item.dataId)}
+                                          onChange={() => handlePostSelect(item.dataId)}
+                                        />
+                                      </div>
+                                    )}
+                                    <img
+                                      alt={item.title}
+                                      src={item.coverUrl}
+                                      style={{
+                                        width: '100%',
+                                        borderRadius: '10px 10px 0 0',
+                                        objectFit: 'cover',
+                                      }}
+                                    />
+                                  </div>
+                                }
+                                actions={[
+                                  <Space key="like" onClick={() => likePost(item)}>
+                                    <LikeOutlined
+                                      style={{
+                                        color: likedPosts[item.dataId]
+                                          ? '#ff4d4f'
+                                          : undefined,
+                                        fontSize: likedPosts[item.dataId]
+                                          ? '18px'
+                                          : undefined,
+                                      }}
+                                    />
+                                    <span>{item.likeCount || 0}</span>
+                                  </Space>,
+                                  <Space
+                                    key="comment-list"
+                                    onClick={() => showCommentModal(item)}
+                                  >
+                                    <UnorderedListOutlined />
+                                    <span>{item.commentCount || ''}</span>
+                                  </Space>,
+                                  <Space key="reply" onClick={() => openReplyWorks(item)}>
+                                    <CommentOutlined />
+                                    <span>评论</span>
+                                  </Space>,
+                                  <Space key="collect" onClick={() => collectPost(item)}>
+                                    <StarOutlined
+                                      style={{
+                                        color: collectedPosts[item.dataId]
+                                          ? '#faad14'
+                                          : undefined,
+                                        fontSize: collectedPosts[item.dataId]
+                                          ? '18px'
+                                          : undefined,
+                                      }}
+                                    />
+                                    <span>{item.collectCount || ''}</span>
+                                  </Space>,
+                                ]}
+                              >
+                                <Card.Meta
+                                  avatar={<Avatar src={`${item.author?.avatar}`} />}
+                                  title={item.author?.name}
+                                  description={
+                                    <div>
+                                      <Text strong ellipsis style={{ display: 'block' }}>
+                                        {item.title}
+                                      </Text>
+                                      <Text type="secondary" ellipsis={{}}>
+                                        {item.content}
+                                      </Text>
+                                    </div>
+                                  }
+                                />
+                              </Card>
+                            </div>
+                          ))}
+                        </Masonry>
+
+                        {/* 加载更多区域 */}
+                        <div ref={loadMoreRef} className={styles.loadMoreArea}>
+                          {isLoadingMore && (
+                            <div className={styles.loadingMore}>
+                              <Spin size="small" />
+                              <span style={{ marginLeft: 8 }}>加载中...</span>
+                            </div>
+                          )}
+
+                          {!pageInfo.hasMore && postList.length > 0 && (
+                            <div className={styles.noMoreData}>
+                              <Divider plain>没有更多数据了</Divider>
+                            </div>
+                          )}
                         </div>
-                      )}
-                      <img
-                        alt={item.title}
-                        src={item.coverUrl}
-                        style={{
-                          width: '100%',
-                          borderRadius: '10px 10px 0 0',
-                          objectFit: 'cover',
-                        }}
-                      />
-                    </div>
-                  }
-                  actions={[
-                    <Space key="like" onClick={() => likePost(item)}>
-                      <LikeOutlined
-                        style={{
-                          color: likedPosts[item.dataId]
-                            ? '#ff4d4f'
-                            : undefined,
-                          fontSize: likedPosts[item.dataId]
-                            ? '18px'
-                            : undefined,
-                        }}
-                      />
-                      <span>{item.likeCount || 0}</span>
-                    </Space>,
-                    <Space
-                      key="comment-list"
-                      onClick={() => showCommentModal(item)}
-                    >
-                      <UnorderedListOutlined />
-                      <span>{item.commentCount || ''}</span>
-                    </Space>,
-                    <Space key="reply" onClick={() => openReplyWorks(item)}>
-                      <CommentOutlined />
-                      <span>评论</span>
-                    </Space>,
-                    <Space key="collect" onClick={() => collectPost(item)}>
-                      <StarOutlined
-                        style={{
-                          color: collectedPosts[item.dataId]
-                            ? '#faad14'
-                            : undefined,
-                          fontSize: collectedPosts[item.dataId]
-                            ? '18px'
-                            : undefined,
-                        }}
-                      />
-                      <span>{item.collectCount || ''}</span>
-                    </Space>,
-                  ]}
-                >
-                  <Card.Meta
-                    avatar={<Avatar src={`${item.author?.avatar}`} />}
-                    title={item.author?.name}
-                    description={
-                      <div>
-                        <Text strong ellipsis style={{ display: 'block' }}>
-                          {item.title}
-                        </Text>
-                        <Text type="secondary" ellipsis={{}}>
-                          {item.content}
-                        </Text>
+                      </>
+                    ),
+                  },
+                  {
+                    key: '2',
+                    label: '互动记录',
+                    children: (
+                      <div style={{ marginTop: 0 }}>
+                        <div style={{ marginBottom: 16, textAlign: 'right' }}>
+                          <Button
+                            type="primary"
+                            icon={<SyncOutlined />}
+                            onClick={getInteractionRecords}
+                          >
+                            刷新
+                          </Button>
+                        </div>
+                        <Table
+                          columns={[
+                            {
+                              title: '作品ID',
+                              dataIndex: 'worksId',
+                              key: 'worksId',
+                            },
+                            {
+                              title: '作品标题',
+                              dataIndex: 'worksTitle',
+                              key: 'worksTitle',
+                            },
+                            {
+                              title: '评论内容',
+                              dataIndex: 'commentContent',
+                              key: 'commentContent',
+                            },
+                            {
+                              title: '点赞状态',
+                              dataIndex: 'isLike',
+                              key: 'isLike',
+                              render: (isLike) => (isLike ? '已点赞' : '未点赞'),
+                            },
+                            {
+                              title: '收藏状态',
+                              dataIndex: 'replyContent',
+                              key: 'replyContent',
+                              render: (isCollect) => (isCollect ? '已收藏' : '未收藏'),
+                            },
+                            {
+                              title: '互动时间',
+                              dataIndex: 'updateTime',
+                              key: 'updateTime',
+                              render: (updateTime: any) => {
+                                const date = new Date(updateTime);
+                                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                                const day = date.getDate().toString().padStart(2, '0');
+                                const hours = date.getHours().toString().padStart(2, '0');
+                                const minutes = date.getMinutes().toString().padStart(2, '0');
+                                return `${month}-${day} ${hours}:${minutes}`;
+                              },
+                            },
+                          ]}
+                          dataSource={interactionRecords}
+                          rowKey="id"
+                          pagination={{
+                            total: interactionPageInfo.total,
+                            pageSize: interactionPageInfo.page_size,
+                            current: interactionPageInfo.page_no,
+                            onChange: (page, pageSize) => {
+                              setInteractionPageInfo(prev => ({
+                                ...prev,
+                                page_no: page,
+                                page_size: pageSize,
+                              }));
+                              getInteractionRecords();
+                            },
+                          }}
+                        />
                       </div>
-                    }
-                  />
-                </Card>
-              </div>
-            ))}
-          </Masonry>
-
-          {/* 加载更多区域 */}
-          <div ref={loadMoreRef} className={styles.loadMoreArea}>
-            {isLoadingMore && (
-              <div className={styles.loadingMore}>
-                <Spin size="small" />
-                <span style={{ marginLeft: 8 }}>加载中...</span>
-              </div>
-            )}
-
-            {!pageInfo.hasMore && postList.length > 0 && (
-              <div className={styles.noMoreData}>
-                <Divider plain>没有更多数据了</Divider>
-              </div>
-            )}
-          </div>
+                    ),
+                  },
+                  {
+                    key: '3',
+                    label: '进程中互动',
+                    children: (
+                      <div style={{ marginTop: 20 }}>
+                        <div style={{ marginBottom: 16, textAlign: 'right' }}>
+                          <Button
+                            type="primary"
+                            icon={<SyncOutlined />}
+                            onClick={getRunningInteractions}
+                          >
+                            刷新
+                          </Button>
+                        </div>
+                        <Table
+                          columns={[
+                            {
+                              title: '作品ID',
+                              dataIndex: 'worksId',
+                              key: 'worksId',
+                            },
+                            {
+                              title: '作品标题',
+                              dataIndex: 'worksTitle',
+                              key: 'worksTitle',
+                            },
+                            {
+                              title: '状态',
+                              dataIndex: 'status',
+                              key: 'status',
+                              render: (status: number) => {
+                                const statusMap: Record<number | string, string> = {
+                                  0: '进行中',
+                                  1: '已完成',
+                                  '-1': '失败',
+                                };
+                                return statusMap[status] || '未知';
+                              },
+                            },
+                            {
+                              title: '开始时间',
+                              dataIndex: 'startTime',
+                              key: 'startTime',
+                              render: (startTime: any) => {
+                                const date = new Date(startTime);
+                                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                                const day = date.getDate().toString().padStart(2, '0');
+                                const hours = date.getHours().toString().padStart(2, '0');
+                                const minutes = date.getMinutes().toString().padStart(2, '0');
+                                return `${month}-${day} ${hours}:${minutes}`;
+                              },
+                            },
+                          ]}
+                          dataSource={runningInteractions}
+                          rowKey="id"
+                          pagination={false}
+                        />
+                      </div>
+                    ),
+                  },
+                ]}
+              />
+            </>
+          )}
         </div>
-        {/* </Col> */}
       </div>
 
       {/* 任务下发弹窗 */}

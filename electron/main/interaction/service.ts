@@ -12,24 +12,17 @@ import { toolsApi } from '../api/tools';
 import { AutoRunService } from '../autoRun/service';
 import { AutoRunModel } from '../../db/models/autoRun';
 import { sysNotice } from '../../global/notice';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { AppDataSource } from '../../db';
 import { getUserInfo } from '../user/comment';
 import { AutoRunRecordStatus } from '../../db/models/autoRunRecord';
-import { GlobleCache } from '../../global/cache';
 import { sleep } from '../../util/time';
 import { InteractionRecordModel } from '../../db/models/interactionRecord';
 import { AutorWorksInteractionScheduleEvent } from '../../../commont/types/interaction';
 import { WorkData } from '../plat/plat.type';
-
-/**
- * 获取缓存key
- * @param account
- * @returns
- */
-function getCacheKey(account?: AccountModel) {
-  return `OneKeyInteractionWorksCacheKey_${account?.id || 0}`;
-}
+import { AutoInteractionCache } from './cacheData';
+import { backPageData, CorrectQuery } from '../../global/table';
+import { AccountType } from '../../../commont/AccountEnum';
 
 @Injectable()
 export class InteractionService {
@@ -68,7 +61,7 @@ export class InteractionService {
       worksCover: works.worksCover,
       commentContent,
       isLike: isLike,
-      replyContent: isCollect,
+      isCollect: isCollect,
     });
   }
 
@@ -86,6 +79,29 @@ export class InteractionService {
         worksId: worksId + '',
       },
     });
+  }
+
+  // 获取互动记录列表
+  async getInteractionRecordList(
+    userId: string,
+    page: CorrectQuery,
+    query: {
+      accountId?: number;
+      type?: AccountType;
+    },
+  ) {
+    const filter: FindOptionsWhere<InteractionRecordModel> = {
+      userId,
+      ...(query.accountId && { accountId: query.accountId }),
+      ...(query.type && { type: query.type }),
+    };
+
+    const [list, totalCount] =
+      await this.interactionRecordRepository.findAndCount({
+        where: filter,
+      });
+
+    return backPageData(list, totalCount, page);
   }
 
   /**
@@ -106,25 +122,22 @@ export class InteractionService {
     }) => void,
   ) {
     const userInfo = getUserInfo();
+
     // 设置缓存
-    GlobleCache.setCache(getCacheKey(), worksList, 60 * 15);
+    const cacheData = new AutoInteractionCache({
+      title: '互动任务',
+    });
 
     try {
+      console.log('------ 开始执行互动任务，作品数量:', worksList.length);
       scheduleEvent({
         tag: AutorWorksInteractionScheduleEvent.Start,
         status: 0,
       });
 
-      // 重设缓存时间
-      GlobleCache.updateCacheTTL(getCacheKey(), 60 * 15);
-
-      scheduleEvent({
-        tag: AutorWorksInteractionScheduleEvent.GetCommentListStart,
-        status: 0,
-      });
-
-      // 2. 循环AI回复评论
+      // 1. 循环AI回复评论
       for (const works of worksList) {
+        console.log('------ 开始处理作品:', works.dataId);
         sleep(5);
         const oldRecord = await this.getInteractionRecord(
           userInfo.id,
@@ -145,6 +158,7 @@ export class InteractionService {
               status: -1,
               error: '未获得AI产出内容',
             });
+            cacheData.delete();
             return false;
           }
 
@@ -184,11 +198,16 @@ export class InteractionService {
         // ----- 2-点赞作品 -----
         let isLike: 0 | 1 = 0;
         try {
+          console.log('------ 开始点赞作品:', works.dataId);
           const isLikeRes = await platController.dianzanDyOther(
             account,
             works.dataId,
+            {
+              authid: works.author?.id,
+            },
           );
           isLike = isLikeRes ? 1 : 0;
+          console.log('------ 点赞结果:', isLikeRes);
         } catch (error) {
           scheduleEvent({
             tag: AutorWorksInteractionScheduleEvent.Error,
@@ -230,15 +249,18 @@ export class InteractionService {
           },
           option.commentContent,
           isLike,
-          isCollect,
+          isCollect, // 收藏状态设为0
         );
+        console.log('------ 作品处理完成:', works.dataId);
       }
 
+      console.log('------ 所有作品处理完成');
       scheduleEvent({
         tag: AutorWorksInteractionScheduleEvent.ReplyCommentEnd,
         status: 0,
       });
     } catch (error) {
+      console.error('------ 任务执行出错:', error);
       scheduleEvent({
         tag: AutorWorksInteractionScheduleEvent.Error,
         status: -1,
@@ -248,7 +270,7 @@ export class InteractionService {
     }
 
     // 清除缓存
-    GlobleCache.delCache(getCacheKey());
+    cacheData.delete();
   }
 
   /**
@@ -268,7 +290,7 @@ export class InteractionService {
     message?: string;
   }> {
     // 查看缓存,有的就不执行
-    if (GlobleCache.getCache(getCacheKey())) {
+    if (AutoInteractionCache.getInfo()) {
       sysNotice('请勿重复执行', `有正在执行的任务,任务ID:${autoRun.id}`);
 
       return {

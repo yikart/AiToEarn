@@ -16,7 +16,10 @@ import { SendChannelEnum } from '../../../commont/UtilsEnum';
 import { AutorReplyCommentScheduleEvent } from '../../../commont/types/reply';
 import type { WorkData } from '../plat/plat.type';
 import { GlobleCache } from '../../global/cache';
-
+import { AutoReplyCache } from './cacheData';
+import type { CorrectQuery } from '../../global/table';
+import { AccountType } from '../../../commont/AccountEnum';
+import { getUserInfo } from '../user/comment';
 @Controller()
 export class ReplyController {
   @Inject(ReplyService)
@@ -105,8 +108,6 @@ export class ReplyController {
     qe?: string, // 搜索内容
     pageInfo?: any,
   ) {
-    console.log('==== pageInfo -----', pageInfo);
-
     const account = await this.accountService.getAccountById(accountId);
 
     if (!account)
@@ -350,5 +351,36 @@ export class ReplyController {
     );
 
     return res.status === 1;
+  }
+
+  /**
+   * 获取一键回复评论的任务信息
+   */
+  @Icp('ICP_GET_AUTO_REPLY_INFO')
+  async getAutoReplyInfo(
+    event: Electron.IpcMainInvokeEvent,
+  ): Promise<any | null> {
+    return AutoReplyCache.getInfo();
+  }
+
+  /**
+   * 获取回复评论的记录列表
+   */
+  @Icp('ICP_GET_REPLAY_COMMENT_RECORD_LIST')
+  async getReplyCommentRecordList(
+    event: Electron.IpcMainInvokeEvent,
+    page: CorrectQuery,
+    query: {
+      accountId?: number;
+      type?: AccountType;
+    },
+  ): Promise<any> {
+    const userInfo = getUserInfo();
+
+    return this.replyService.getReplyCommentRecordList(
+      userInfo.id,
+      page,
+      query,
+    );
   }
 }

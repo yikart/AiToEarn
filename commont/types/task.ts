@@ -13,6 +13,7 @@ export enum TaskType {
   ARTICLE = 'article', // 文章任务
   PROMOTION = 'promotion', // 推广任务
   VIDEO = 'video', // 视频任务
+  INTERACTION = 'interaction', // 互动任务
 }
 
 export const TaskTypeName = new Map([
@@ -20,6 +21,7 @@ export const TaskTypeName = new Map([
   [TaskType.ARTICLE, '文章任务'],
   [TaskType.PROMOTION, '推广任务'],
   [TaskType.VIDEO, '视频任务'],
+  [TaskType.INTERACTION, '互动任务'],
 ]);
 
 export enum TaskStatus {
@@ -46,9 +48,17 @@ export interface TaskProduct extends TaskData {
   sales?: number;
 }
 
-export type TaskDataInfo = TaskProduct | TaskPromotion | TaskVideo;
-export interface Task<T extends TaskProduct | TaskPromotion | TaskVideo>
-  extends TimeTemp {
+export interface TaskInteraction extends TaskData {
+  accountType: AccountType; // 平台类型
+  worksId: string; // 作品ID
+}
+
+export type TaskDataInfo =
+  | TaskProduct
+  | TaskPromotion
+  | TaskVideo
+  | TaskInteraction;
+export interface Task<T extends TaskDataInfo> extends TimeTemp {
   _id: string;
   id: string;
   title: string;
