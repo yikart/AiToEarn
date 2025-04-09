@@ -6,7 +6,8 @@ import {
   getCommentSearchNotes,
   ipcGetInteractionRecordList,
   ipcGetAutoRunOfInteractionInfo,
-  icpDianzanDyOther, icpShoucangDyOther
+  icpDianzanDyOther,
+  icpShoucangDyOther,
 } from '@/icp/replyother';
 import {
   Avatar,
@@ -127,7 +128,15 @@ export default function Page() {
   });
 
   // 添加进程中互动相关状态
-  const [runningInteractions, setRunningInteractions] = useState<any[]>([]);
+  const [runningInteractions, setRunningInteractions] = useState<
+    {
+      createTime: number; // 1744200185113;
+      message: string; // '进行中';
+      status: number; // 0;
+      title: string; // '互动任务';
+      updateTime: number; // 1744200185113;
+    }[]
+  >([]);
 
   // 获取进程中互动信息
   const getRunningInteractions = async () => {
@@ -156,7 +165,12 @@ export default function Page() {
   // 获取互动记录
   const getInteractionRecords = async () => {
     try {
-      console.log('------ 开始获取互动记录', activeAccountId, 'activeAccountType:', activeAccountType);
+      console.log(
+        '------ 开始获取互动记录',
+        activeAccountId,
+        'activeAccountType:',
+        activeAccountType,
+      );
       const res = await ipcGetInteractionRecordList(
         {
           page_size: interactionPageInfo.page_size,
@@ -165,14 +179,14 @@ export default function Page() {
         {
           accountId: activeAccountId,
           type: activeAccountType as any,
-        }
+        },
       );
       console.log('------ 获取互动记录结果:', res);
-      const data:any = res;
+      const data: any = res;
       setInteractionRecords(data.list || []);
-      setInteractionPageInfo(prev => ({
+      setInteractionPageInfo((prev) => ({
         ...prev,
-        total: data.total || 0
+        total: data.total || 0,
       }));
     } catch (error) {
       console.error('------ 获取互动记录失败:', error);
@@ -255,9 +269,9 @@ export default function Page() {
 
   // 处理帖子选择
   const handlePostSelect = (postId: string) => {
-    setSelectedPosts(prev => {
+    setSelectedPosts((prev) => {
       if (prev.includes(postId)) {
-        return prev.filter(id => id !== postId);
+        return prev.filter((id) => id !== postId);
       } else {
         return [...prev, postId];
       }
@@ -272,8 +286,8 @@ export default function Page() {
     setTaskModalVisible(false);
     setIsSelectMode(false);
 
-    forEach(postList, (postId) => { 
-      const post = postList.find(item => item.dataId === postId);
+    forEach(postList, (postId) => {
+      const post = postList.find((item) => item.dataId === postId);
       if (!post) return;
       likePost(post);
     });
@@ -281,40 +295,44 @@ export default function Page() {
     if (!selectedPosts.length) return;
 
     // 从postList中提取选中的帖子数据
-    const selectedPostData = selectedPosts.map(postId => {
-      return postList.find(item => item.dataId === postId);
+    const selectedPostData = selectedPosts.map((postId) => {
+      return postList.find((item) => item.dataId === postId);
     }); // 过滤掉undefined的值
 
     console.log('------ selectedPostData', selectedPostData);
 
     // 调用icpCreateInteractionOneKey函数
 
-    const res = await icpCreateInteractionOneKey(activeAccountId, selectedPostData, {
-      commentContent: '不错啊!',
-      platform: activeAccountType,
-      ...values
-    }); 
+    const res = await icpCreateInteractionOneKey(
+      activeAccountId,
+      selectedPostData,
+      {
+        commentContent: '不错啊!',
+        platform: activeAccountType,
+        ...values,
+      },
+    );
     console.log('------ res', res);
-    
+
     // // 创建任务队列
     // const taskQueue = selectedPosts.map(postId => {
     //   const post = postList.find(item => item.dataId === postId);
     //   if (!post) return null;
-      
+
     //   return async () => {
     //     try {
     //       // 根据概率决定是否执行点赞
     //       // if (Math.random() * 100 <= values.likeProb) {
     //         await likePost(post);
     //       // }
-          
+
     //       // 根据概率决定是否执行收藏
     //       if(activeAccountType != 'KWAI'){
     //         if (Math.random() * 100 <= values.collectProb) {
     //           await collectPost(post);
     //         }
     //       }
-          
+
     //       // // 根据概率决定是否执行评论
     //       // if (Math.random() * 100 <= values.commentProb) {
     //       //   if (values.commentType === 'ai') {
@@ -773,7 +791,7 @@ export default function Page() {
                           <Col>
                             <Space>
                               <Button
-                                type={isSelectMode ? "primary" : "default"}
+                                type={isSelectMode ? 'primary' : 'default'}
                                 icon={<DownOutlined />}
                                 onClick={handleSelectModeToggle}
                                 size="large"
@@ -819,14 +837,30 @@ export default function Page() {
                                 hoverable
                                 cover={
                                   <div
-                                    style={{ cursor: 'pointer', position: 'relative' }}
-                                    onClick={() => !isSelectMode && handleImageClick(item)}
+                                    style={{
+                                      cursor: 'pointer',
+                                      position: 'relative',
+                                    }}
+                                    onClick={() =>
+                                      !isSelectMode && handleImageClick(item)
+                                    }
                                   >
                                     {isSelectMode && (
-                                      <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 1 }}>
+                                      <div
+                                        style={{
+                                          position: 'absolute',
+                                          top: 10,
+                                          left: 10,
+                                          zIndex: 1,
+                                        }}
+                                      >
                                         <Checkbox
-                                          checked={selectedPosts.includes(item.dataId)}
-                                          onChange={() => handlePostSelect(item.dataId)}
+                                          checked={selectedPosts.includes(
+                                            item.dataId,
+                                          )}
+                                          onChange={() =>
+                                            handlePostSelect(item.dataId)
+                                          }
                                         />
                                       </div>
                                     )}
@@ -842,7 +876,10 @@ export default function Page() {
                                   </div>
                                 }
                                 actions={[
-                                  <Space key="like" onClick={() => likePost(item)}>
+                                  <Space
+                                    key="like"
+                                    onClick={() => likePost(item)}
+                                  >
                                     <LikeOutlined
                                       style={{
                                         color: likedPosts[item.dataId]
@@ -862,11 +899,17 @@ export default function Page() {
                                     <UnorderedListOutlined />
                                     <span>{item.commentCount || ''}</span>
                                   </Space>,
-                                  <Space key="reply" onClick={() => openReplyWorks(item)}>
+                                  <Space
+                                    key="reply"
+                                    onClick={() => openReplyWorks(item)}
+                                  >
                                     <CommentOutlined />
                                     <span>评论</span>
                                   </Space>,
-                                  <Space key="collect" onClick={() => collectPost(item)}>
+                                  <Space
+                                    key="collect"
+                                    onClick={() => collectPost(item)}
+                                  >
                                     <StarOutlined
                                       style={{
                                         color: collectedPosts[item.dataId]
@@ -882,11 +925,17 @@ export default function Page() {
                                 ]}
                               >
                                 <Card.Meta
-                                  avatar={<Avatar src={`${item.author?.avatar}`} />}
+                                  avatar={
+                                    <Avatar src={`${item.author?.avatar}`} />
+                                  }
                                   title={item.author?.name}
                                   description={
                                     <div>
-                                      <Text strong ellipsis style={{ display: 'block' }}>
+                                      <Text
+                                        strong
+                                        ellipsis
+                                        style={{ display: 'block' }}
+                                      >
                                         {item.title}
                                       </Text>
                                       <Text type="secondary" ellipsis={{}}>
@@ -953,13 +1002,15 @@ export default function Page() {
                               title: '点赞状态',
                               dataIndex: 'isLike',
                               key: 'isLike',
-                              render: (isLike) => (isLike ? '已点赞' : '未点赞'),
+                              render: (isLike) =>
+                                isLike ? '已点赞' : '未点赞',
                             },
                             {
                               title: '收藏状态',
                               dataIndex: 'replyContent',
                               key: 'replyContent',
-                              render: (isCollect) => (isCollect ? '已收藏' : '未收藏'),
+                              render: (isCollect) =>
+                                isCollect ? '已收藏' : '未收藏',
                             },
                             {
                               title: '互动时间',
@@ -967,10 +1018,21 @@ export default function Page() {
                               key: 'updateTime',
                               render: (updateTime: any) => {
                                 const date = new Date(updateTime);
-                                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                                const day = date.getDate().toString().padStart(2, '0');
-                                const hours = date.getHours().toString().padStart(2, '0');
-                                const minutes = date.getMinutes().toString().padStart(2, '0');
+                                const month = (date.getMonth() + 1)
+                                  .toString()
+                                  .padStart(2, '0');
+                                const day = date
+                                  .getDate()
+                                  .toString()
+                                  .padStart(2, '0');
+                                const hours = date
+                                  .getHours()
+                                  .toString()
+                                  .padStart(2, '0');
+                                const minutes = date
+                                  .getMinutes()
+                                  .toString()
+                                  .padStart(2, '0');
                                 return `${month}-${day} ${hours}:${minutes}`;
                               },
                             },
@@ -982,7 +1044,7 @@ export default function Page() {
                             pageSize: interactionPageInfo.page_size,
                             current: interactionPageInfo.page_no,
                             onChange: (page, pageSize) => {
-                              setInteractionPageInfo(prev => ({
+                              setInteractionPageInfo((prev) => ({
                                 ...prev,
                                 page_no: page,
                                 page_size: pageSize,
@@ -1011,21 +1073,24 @@ export default function Page() {
                         <Table
                           columns={[
                             {
-                              title: '作品ID',
-                              dataIndex: 'worksId',
-                              key: 'worksId',
+                              title: '信息',
+                              dataIndex: 'message',
+                              key: 'message',
                             },
                             {
-                              title: '作品标题',
-                              dataIndex: 'worksTitle',
-                              key: 'worksTitle',
+                              title: '标题',
+                              dataIndex: 'title',
+                              key: 'title',
                             },
                             {
                               title: '状态',
                               dataIndex: 'status',
                               key: 'status',
                               render: (status: number) => {
-                                const statusMap: Record<number | string, string> = {
+                                const statusMap: Record<
+                                  number | string,
+                                  string
+                                > = {
                                   0: '进行中',
                                   1: '已完成',
                                   '-1': '失败',
@@ -1035,14 +1100,25 @@ export default function Page() {
                             },
                             {
                               title: '开始时间',
-                              dataIndex: 'startTime',
-                              key: 'startTime',
+                              dataIndex: 'createTime',
+                              key: 'createTime',
                               render: (startTime: any) => {
                                 const date = new Date(startTime);
-                                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                                const day = date.getDate().toString().padStart(2, '0');
-                                const hours = date.getHours().toString().padStart(2, '0');
-                                const minutes = date.getMinutes().toString().padStart(2, '0');
+                                const month = (date.getMonth() + 1)
+                                  .toString()
+                                  .padStart(2, '0');
+                                const day = date
+                                  .getDate()
+                                  .toString()
+                                  .padStart(2, '0');
+                                const hours = date
+                                  .getHours()
+                                  .toString()
+                                  .padStart(2, '0');
+                                const minutes = date
+                                  .getMinutes()
+                                  .toString()
+                                  .padStart(2, '0');
                                 return `${month}-${day} ${hours}:${minutes}`;
                               },
                             },
@@ -1215,9 +1291,7 @@ export default function Page() {
                 marginBottom: 10,
               }}
             >
-              <Avatar
-                src={`${currentPost?.author?.avatar}`}
-              />
+              <Avatar src={`${currentPost?.author?.avatar}`} />
               <Text strong style={{ marginLeft: 10 }}>
                 {currentPost?.author?.name}
               </Text>
