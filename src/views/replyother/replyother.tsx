@@ -720,7 +720,7 @@ export default function Page() {
     // 执行搜索
     setTimeout(() => {
       getSearchListFunc(activeAccountId, searchKeyword, true);
-    }, 500);
+    }, 1000);
   };
 
   return (
