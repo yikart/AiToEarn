@@ -14,7 +14,9 @@ import { AddWalletAccountRef } from './components/addWalletAccount';
 import { PlusOutlined } from '@ant-design/icons';
 
 export default function Page() {
-  const [walletAccountList, setWalletAccountList] = useState<UserWalletAccount[]>([]);
+  const [walletAccountList, setWalletAccountList] = useState<
+    UserWalletAccount[]
+  >([]);
   const [loading, setLoading] = useState(false);
   const Ref_AddWalletAccountRef = useRef<AddWalletAccountRef>(null);
 
@@ -72,7 +74,7 @@ export default function Page() {
     {
       title: '操作',
       key: 'action',
-      render: (_, record: UserWalletAccount) => (
+      render: (_: any, record: UserWalletAccount) => (
         <Space size="middle">
           <Button type="link" onClick={() => handleView(record)}>
             查看

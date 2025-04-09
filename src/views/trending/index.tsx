@@ -296,12 +296,14 @@ const Trending: React.FC = () => {
   // 在 Trending 组件中添加时间筛选状态
   const [selectedTimeRange, setSelectedTimeRange] = useState<string>('近7天'); // 默认选中近7天
   const timeRangeOptions = [];
-  const [selectedViralTimeRange, setViralSelectedTimeRange] = useState<string>('近7天'); // 爆款标题时间筛选 默认选中近7天
+  const [selectedViralTimeRange, setViralSelectedTimeRange] =
+    useState<string>('近7天'); // 爆款标题时间筛选 默认选中近7天
 
   // 在 Trending 组件中添加时间类型状态
   const [timeTypes, setTimeTypes] = useState<string[]>([]);
   const [selectedTimeType, setSelectedTimeType] = useState<string>('');
-  const [selectedViralTimeType, setViralSelectedTimeType] = useState<string>('近7天');
+  const [selectedViralTimeType, setViralSelectedTimeType] =
+    useState<string>('近7天');
 
   // 添加处理图片加载错误的函数
   const handleImageError = (imageId: string) => {
@@ -542,7 +544,6 @@ const Trending: React.FC = () => {
     }
   };
 
-  
   // 获取爆款标题时间类型
   const fetchViralTitleTimeTypes = async () => {
     try {
@@ -574,12 +575,17 @@ const Trending: React.FC = () => {
     }
   };
 
-
   // 获取爆款标题数据
-  const fetchViralTitleContents = async (platformId: string, timeType: string) => {
+  const fetchViralTitleContents = async (
+    platformId: string,
+    timeType: string,
+  ) => {
     setViralTitleLoading(true);
     try {
-      const data = await platformApi.findTopByPlatformAndCategories(platformId, timeType);
+      const data = await platformApi.findTopByPlatformAndCategories(
+        platformId,
+        timeType,
+      );
       // 使用 as any 绕过类型检查
       const formattedData = data.map((item) => ({
         category: item.category,
@@ -610,7 +616,7 @@ const Trending: React.FC = () => {
   const handleViralPlatformSelect = (platform: Platform, timeType: string) => {
     setSelectedViralPlatform(platform);
     fetchViralTitleCategories(platform.id);
-    fetchViralTitleTimeTypes();  // 获取时间类型
+    fetchViralTitleTimeTypes(); // 获取时间类型
     fetchViralTitleContents(platform.id, timeType);
   };
 
@@ -620,10 +626,20 @@ const Trending: React.FC = () => {
 
     if (category && selectedViralPlatform && selectedViralTimeRange) {
       // 如果选择了特定分类，调用API获取该分类数据
-      console.log("handleViralCategorySelect：", category, selectedViralTimeRange, selectedViralTimeType)
+      console.log(
+        'handleViralCategorySelect：',
+        category,
+        selectedViralTimeRange,
+        selectedViralTimeType,
+      );
       setSingleCategoryName(category);
       setShowSingleCategory(true);
-      fetchSingleCategoryData(selectedViralPlatform.id, category, 1, selectedViralTimeType);
+      fetchSingleCategoryData(
+        selectedViralPlatform.id,
+        category,
+        1,
+        selectedViralTimeType,
+      );
     } else {
       // 如果选择"全部"，返回到分类概览
       setShowSingleCategory(false);
@@ -632,22 +648,25 @@ const Trending: React.FC = () => {
     }
   };
 
-    // 处理爆款标题时间类型选择 全部分类
-    const handleViralTimeTypeSelect = (category: string, timeType: string) => {
-        setViralSelectedTimeType(timeType);
-        console.log("handleViralTimeTypeSelect:", selectedViralCategory, category, timeType, selectedViralTimeType, selectedViralTimeRange);
-        if (category){
-            // 获取单独分类
-            fetchSingleCategoryData(selectedViralPlatform.id, category, 1, timeType);
-        }else{
-        // 获取爆款标题内容  全部分类
-        fetchViralTitleContents(
-            selectedViralPlatform.id,
-            timeType
-            );
-        }
-
-      };
+  // 处理爆款标题时间类型选择 全部分类
+  const handleViralTimeTypeSelect = (category: string, timeType: string) => {
+    setViralSelectedTimeType(timeType);
+    console.log(
+      'handleViralTimeTypeSelect:',
+      selectedViralCategory,
+      category,
+      timeType,
+      selectedViralTimeType,
+      selectedViralTimeRange,
+    );
+    if (category) {
+      // 获取单独分类
+      fetchSingleCategoryData(selectedViralPlatform!.id, category, 1, timeType);
+    } else {
+      // 获取爆款标题内容  全部分类
+      fetchViralTitleContents(selectedViralPlatform!.id, timeType);
+    }
+  };
 
   // 添加获取热门专题二级分类的函数
   const fetchTopicTypes = async (msgType: string) => {
@@ -941,7 +960,7 @@ const Trending: React.FC = () => {
     platformId: string,
     category: string,
     page: number = 1,
-    timeType: string = "近7天"
+    timeType: string = '近7天',
   ) => {
     setSingleCategoryLoading(true);
     try {
@@ -950,7 +969,7 @@ const Trending: React.FC = () => {
         category: category,
         page: page,
         pageSize: 20, // 每页显示数量
-        timeType: timeType,  // 时间类型  近7天 近30天 近90天
+        timeType: timeType, // 时间类型  近7天 近30天 近90天
         // 可以添加其他参数，如时间范围
         // startTime: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000), // 90天前
         // endTime: new Date(),
@@ -1327,7 +1346,12 @@ const Trending: React.FC = () => {
                             ? 'bg-[#f4ebff] text-[#a66ae4]'
                             : 'hover:bg-gray-50'
                         }`}
-                      onClick={() => handleViralPlatformSelect(platform, selectedViralTimeRange)}
+                      onClick={() =>
+                        handleViralPlatformSelect(
+                          platform,
+                          selectedViralTimeRange,
+                        )
+                      }
                     >
                       <img
                         src={getImageUrl(platform.icon)}
@@ -1408,30 +1432,30 @@ const Trending: React.FC = () => {
                 </div>
 
                 {/* 爆款标题时间筛选 */}
-                <div className="p-4 flex items-center">
-                <span className="mr-3 text-sm text-gray-500">
-                    时间范围:
-                </span>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex items-center p-4">
+                  <span className="mr-3 text-sm text-gray-500">时间范围:</span>
+                  <div className="flex flex-wrap gap-2">
                     {timeTypes.map((timeType) => (
-                    <button
+                      <button
                         key={timeType}
                         className={`${buttonStyles.base} ${
-                        selectedViralTimeType === timeType
+                          selectedViralTimeType === timeType
                             ? buttonStyles.primary
                             : buttonStyles.secondary
                         }`}
-                        onClick={() => handleViralTimeTypeSelect(selectedViralCategory, timeType)}
-                    >
+                        onClick={() =>
+                          handleViralTimeTypeSelect(
+                            selectedViralCategory,
+                            timeType,
+                          )
+                        }
+                      >
                         {timeType}
-                    </button>
+                      </button>
                     ))}
+                  </div>
                 </div>
-                </div>
-
               </div>
-
-
 
               {/* 爆款标题内容展示 */}
               {viralTitleLoading || singleCategoryLoading ? (
@@ -1484,7 +1508,6 @@ const Trending: React.FC = () => {
                               <div className="text-base font-bold text-left hover:text-[#a66ae4]">
                                 {title.title}
                               </div>
-
                             </div>
 
                             {/* 数据指标 */}
@@ -1548,7 +1571,6 @@ const Trending: React.FC = () => {
                           <div className="text-base font-bold text-left hover:text-[#a66ae4]">
                             {title.title}
                           </div>
-
                         </div>
 
                         {/* 数据指标 */}
@@ -1587,7 +1609,6 @@ const Trending: React.FC = () => {
                   )}
                 </div>
               )}
-
             </div>
           ) : hotPlatformExpanded ? (
             <div>
