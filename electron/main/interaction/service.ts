@@ -231,7 +231,7 @@ export class InteractionService {
         // ----- 3-收藏作品 -----
         let isCollect: 0 | 1 = 0;
 
-        if (option.platform === 'KWAI') {
+        if (option.platform != 'KWAI') {
           try {
             const isCollectRes = await platController.shoucangDyOther(
               account,
