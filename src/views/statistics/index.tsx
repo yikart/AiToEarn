@@ -62,7 +62,8 @@ const Statistics = () => {
 
   useEffect(() => {
     getAccountStatistics();
-    getAccountStatistics7();
+    console.log('selectedAccounts', selectedAccounts);
+    
   }, []);
 
   // 初始化图表
@@ -287,6 +288,8 @@ const Statistics = () => {
         ]);
       }
     }
+
+    getAccountStatistics7();
   }
 
   async function getAccountStatistics7() {
