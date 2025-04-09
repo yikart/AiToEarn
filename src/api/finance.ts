@@ -7,9 +7,10 @@
  */
 import http from './request';
 import { Pagination } from './types';
-import { UserWalletRecord, UserWalletRecordStatus } from './types/finance';
+import { UserWalletRecord } from './types/finance';
 import {
   CreateUserWalletAccountParams,
+  UserWallet,
   UserWalletAccount,
 } from './types/userWalletAccount';
 
@@ -34,6 +35,16 @@ export const financeApi = {
    */
   createUserWalletAccount(data: CreateUserWalletAccountParams) {
     return http.post<UserWalletAccount>('/finance/userWalletAccount', data, {
+      isToken: true,
+    });
+  },
+
+  /**
+   * 获取用户钱包信息
+   * @returns
+   */
+  getUserWalletInfo() {
+    return http.get<UserWallet>(`/finance/userWallet/info`, {
       isToken: true,
     });
   },
