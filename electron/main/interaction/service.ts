@@ -113,6 +113,10 @@ export class InteractionService {
     worksList: WorkData[],
     option: {
       commentContent: string; // 评论内容
+      platform?: string; // 平台ID
+      likeProb?: any; // 点赞概率
+      collectProb?: any; // 收藏概率
+      commentProb?: any; // 评论概率
     },
     scheduleEvent: (data: {
       tag: AutorWorksInteractionScheduleEvent;
@@ -121,6 +125,11 @@ export class InteractionService {
       error?: any;
     }) => void,
   ) {
+    // console.log('------ autorInteraction', option);
+
+    // return;
+
+
     const userInfo = getUserInfo();
 
     // 设置缓存
@@ -178,6 +187,7 @@ export class InteractionService {
           account,
           works.dataId,
           option.commentContent,
+          works.author?.id
         );
 
         //  错误处理
@@ -221,6 +231,8 @@ export class InteractionService {
 
         // ----- 3-收藏作品 -----
         let isCollect: 0 | 1 = 0;
+
+        if (option.platform === 'KWAI') {
         try {
           const isCollectRes = await platController.shoucangDyOther(
             account,
@@ -237,6 +249,7 @@ export class InteractionService {
             },
           });
         }
+      }
 
         // 创建互动记录
         this.createInteractionRecord(

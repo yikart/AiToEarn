@@ -290,8 +290,9 @@ export default function Page() {
     // 调用icpCreateInteractionOneKey函数
 
     const res = await icpCreateInteractionOneKey(activeAccountId, selectedPostData, {
-      
       commentContent: '不错啊!',
+      platform: activeAccountType,
+      ...values
     }); 
     console.log('------ res', res);
     

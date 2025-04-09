@@ -25,7 +25,8 @@ export default function Page() {
   const getBalance = async () => {
     try {
       const res = await financeApi.getUserWalletInfo();
-      setBalance(res.balance || 0);
+      // console.log('getBalance','res',res);
+      setBalance(res.balance);
     } catch (error) {
       console.error('获取余额失败:', error);
     }
