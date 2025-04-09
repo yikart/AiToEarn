@@ -129,7 +129,6 @@ export class InteractionService {
 
     // return;
 
-
     const userInfo = getUserInfo();
 
     // 设置缓存
@@ -187,7 +186,7 @@ export class InteractionService {
           account,
           works.dataId,
           option.commentContent,
-          works.author?.id
+          works.author?.id,
         );
 
         //  错误处理
@@ -233,23 +232,23 @@ export class InteractionService {
         let isCollect: 0 | 1 = 0;
 
         if (option.platform === 'KWAI') {
-        try {
-          const isCollectRes = await platController.shoucangDyOther(
-            account,
-            works.dataId,
-          );
-          isCollect = isCollectRes ? 1 : 0;
-        } catch (error) {
-          scheduleEvent({
-            tag: AutorWorksInteractionScheduleEvent.Error,
-            status: 0,
-            error,
-            data: {
-              isLike,
-            },
-          });
+          try {
+            const isCollectRes = await platController.shoucangDyOther(
+              account,
+              works.dataId,
+            );
+            isCollect = isCollectRes ? 1 : 0;
+          } catch (error) {
+            scheduleEvent({
+              tag: AutorWorksInteractionScheduleEvent.Error,
+              status: 0,
+              error,
+              data: {
+                isLike,
+              },
+            });
+          }
         }
-      }
 
         // 创建互动记录
         this.createInteractionRecord(
