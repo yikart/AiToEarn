@@ -10,6 +10,12 @@ export enum WalletAccountType {
   WX_PAY = 'WX_PAY',
 }
 
+export interface UserWallet {
+  userId: string;
+  balance: number;
+  income: number;
+}
+
 export interface UserWalletAccount {
   id: string;
   account: string; // 账户号
