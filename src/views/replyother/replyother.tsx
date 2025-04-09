@@ -144,7 +144,12 @@ export default function Page() {
       console.log('------ 开始获取进程中互动信息');
       const res = await ipcGetAutoRunOfInteractionInfo();
       console.log('------ 获取进程中互动信息结果:', res);
-      setRunningInteractions([{ ...res }]);
+      if (res) {
+        setRunningInteractions([{ ...res }]);
+      }else{
+        setRunningInteractions([]);
+      }
+      
     } catch (error) {
       console.error('------ 获取进程中互动信息失败:', error);
       message.error('获取进程中互动信息失败');
@@ -1007,10 +1012,10 @@ export default function Page() {
                             },
                             {
                               title: '收藏状态',
-                              dataIndex: 'replyContent',
-                              key: 'replyContent',
+                              dataIndex: 'isCollect',
+                              key: 'isCollect',
                               render: (isCollect) =>
-                                isCollect ? '已收藏' : '未收藏',
+                                isCollect == 1 ? '已收藏' : '未收藏',
                             },
                             {
                               title: '互动时间',
