@@ -63,7 +63,9 @@ export default function Page() {
       dataIndex: 'type',
       key: 'type',
       render: (type: string) => (
-        <Tag color={type === '支付宝' ? 'blue' : 'green'}>{type}</Tag>
+        <Tag color={type === 'ZFB' ? 'blue' : 'green'}>
+          {type === 'ZFB' ? '支付宝' : '微信'}
+          </Tag>
       ),
     },
     {
@@ -71,17 +73,17 @@ export default function Page() {
       dataIndex: 'userName',
       key: 'userName',
     },
-    {
-      title: '操作',
-      key: 'action',
-      render: (_: any, record: UserWalletAccount) => (
-        <Space size="middle">
-          <Button type="link" onClick={() => handleView(record)}>
-            查看
-          </Button>
-        </Space>
-      ),
-    },
+    // {
+    //   title: '操作',
+    //   key: 'action',
+    //   render: (_: any, record: UserWalletAccount) => (
+    //     <Space size="middle">
+    //       <Button type="link" onClick={() => handleView(record)}>
+    //         查看
+    //       </Button>
+    //     </Space>
+    //   ),
+    // },
   ];  
 
   const handleView = (record: UserWalletAccount) => {
@@ -107,7 +109,13 @@ export default function Page() {
         loading={loading}
         pagination={false}
       />
-      <AddWalletAccount ref={Ref_AddWalletAccountRef} />
+      <AddWalletAccount 
+        ref={Ref_AddWalletAccountRef} 
+        onSuccess={() => {
+          message.success('添加账户成功');
+          getTaskList(); // 添加成功后刷新列表
+        }}
+      />
     </div>  
   );
 }

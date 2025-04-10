@@ -42,7 +42,13 @@ interface TaskData {
 export interface TaskVideo extends TaskData {
   videoUrl: string;
 }
+
+export interface TaskArticle extends TaskData {
+  imageList: string[];
+}
+
 export interface TaskPromotion extends TaskData {}
+
 export interface TaskProduct extends TaskData {
   price: number;
   sales?: number;
@@ -51,12 +57,14 @@ export interface TaskProduct extends TaskData {
 export interface TaskInteraction extends TaskData {
   accountType: AccountType; // 平台类型
   worksId: string; // 作品ID
+  authorId?: string; // 作者ID
 }
 
 export type TaskDataInfo =
   | TaskProduct
   | TaskPromotion
   | TaskVideo
+  | TaskArticle
   | TaskInteraction;
 export interface Task<T extends TaskDataInfo> extends TimeTemp {
   _id: string;

@@ -12,6 +12,8 @@ import {
   VideoCameraOutlined,
   HistoryOutlined,
   WalletOutlined,
+  FileTextOutlined,
+  CommentOutlined,
 } from '@ant-design/icons';
 import styles from './task.module.scss';
 
@@ -20,6 +22,8 @@ import CarTask from './carTask';
 import PopTask from './popTask';
 import VideoTask from './videoTask';
 import MineTask from './mineTask';
+import ArticleTask from './articleTask';
+import InteractionTask from './interactionTask';
 
 // 任务类型定义
 interface Task {
@@ -49,6 +53,10 @@ export default function Task() {
         return <VideoTask />;
       case 'mine':
         return <MineTask />;
+      case 'article':
+        return <ArticleTask />;
+      case 'interaction':
+        return <InteractionTask />;
       default:
         return <CarTask />;
     }
@@ -79,6 +87,20 @@ export default function Task() {
           >
             <VideoCameraOutlined />
             <span>视频任务</span>
+          </div>
+          <div
+            className={`${styles.taskButton} ${activeTab === 'article' ? styles.activeTaskButton : ''}`}
+            onClick={() => setActiveTab('article')}
+          >
+            <FileTextOutlined />
+            <span>文章任务</span>
+          </div>
+          <div
+            className={`${styles.taskButton} ${activeTab === 'interaction' ? styles.activeTaskButton : ''}`}
+            onClick={() => setActiveTab('interaction')}
+          >
+            <CommentOutlined />
+            <span>互动任务</span>
           </div>
           <div
             className={`${styles.taskButton} ${activeTab === 'mine' ? styles.activeTaskButton : ''}`}

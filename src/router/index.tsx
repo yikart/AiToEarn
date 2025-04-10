@@ -34,14 +34,14 @@ import VideoPage from '@/views/publish/children/videoPage/page';
 import ImagePage from '@/views/publish/children/imagePage/page';
 import PubRecord from '@/views/publish/children/pubRecord/page';
 import Statistics from '@/views/statistics/statistics'; 
-import Task from '@/views/task';
+import Task from '@/views/task/task';
 // import HotTopic from '@/views/trending/hotTopic';
 // import CarTask from '@/views/task/carTask';
 // import PopTask from '@/views/task/popTask';
 // import VideoTask from '@/views/task/videoTask';
 // import MineTask from '@/views/task/mineTask';
 import UserWalletAccount from '@/views/finance/userWalletAccount';
-import Finance from '@/views/finance/index';
+import Finance from '@/views/finance/finance';
 import UserWalletRecord from '@/views/finance/userWalletRecord';
 import Reply from '@/views/reply';
 import Replyother from '@/views/replyother/replyother';
@@ -121,12 +121,12 @@ export const router: CustomRouteObject[] = [
       {
         path: '/reply',
         element: <Reply />,
-        meta: { name: '评论', icon: MessageOutlined },
+        meta: { name: '作品互动', icon: MessageOutlined },
       },
       {
         path: '/Replyother',
         element: <Replyother />,
-        meta: { name: '评他人', icon: MessageOutlined },
+        meta: { name: '一键互动', icon: MessageOutlined },
       },
       {
         path: '/statistics',
@@ -147,11 +147,11 @@ export const router: CustomRouteObject[] = [
           { path: 'userWalletAccount', element: <UserWalletAccount /> },
         ],
       },
-      {
-        path: '/interaction',
-        element: <Interaction />,
-        meta: { name: '互动', icon: ShopOutlined },
-      },
+      // {
+      //   path: '/interaction',
+      //   element: <Interaction />,
+      //   meta: { name: '互动', icon: ShopOutlined },
+      // },
       {
         path: '/test',
         element: <Test />,

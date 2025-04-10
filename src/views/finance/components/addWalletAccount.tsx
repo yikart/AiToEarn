@@ -12,13 +12,17 @@ export interface AddWalletAccountRef {
   init: () => Promise<void>;
 }
 
+interface AddWalletAccountProps {
+  onSuccess?: (res: any) => void;
+}
+
 import {
   CreateUserWalletAccountParams,
   WalletAccountType,
 } from '@/api/types/userWalletAccount';
 import { financeApi } from '@/api/finance';
 
-const Com = forwardRef<AddWalletAccountRef>((props: any, ref) => {
+const Com = forwardRef<AddWalletAccountRef, AddWalletAccountProps>((props, ref) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm<CreateUserWalletAccountParams>();
 
