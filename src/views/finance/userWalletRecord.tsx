@@ -5,19 +5,21 @@
  * @LastEditors: nevin
  * @Description: 用户金额记录 userWalletRecord
  */
-import { Button, Table, Space, Tag, message, Modal, Input, Form, Card, Typography } from 'antd';
+import { Button, Table, Space, Tag, message, Modal, Input, Form, Card, Typography, Select } from 'antd';
 import { useState, useEffect, useRef } from 'react';
 import AddWalletAccount from './components/addWalletAccount';
 import { financeApi } from '@/api/finance';
 import { AddWalletAccountRef } from './components/addWalletAccount';
 import { UserWalletRecord } from '@/api/types/finance';
+import { UserWalletAccount } from '@/api/types/userWalletAccount';
 import { PlusOutlined, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 import styles from './userWalletRecord.module.scss';
-
+import moment from 'moment';   
 const { Title } = Typography;
 
 export default function Page() {
   const [walletAccountList, setWalletAccountList] = useState<UserWalletRecord[]>([]);
+  const [walletAccounts, setWalletAccounts] = useState<UserWalletAccount[]>([]);
   const [loading, setLoading] = useState(false);
   const [isWithdrawModalVisible, setIsWithdrawModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -39,10 +41,21 @@ export default function Page() {
     }
   }
 
-  const handleWithdraw = async (values: { amount: number }) => {
+  // 获取提现账户列表
+  async function getWalletAccounts() {
+    try {
+      const res = await financeApi.getUserWalletAccountList();
+      setWalletAccounts(res);
+    } catch (error) {
+      console.error('获取提现账户列表失败:', error);
+      message.error('获取提现账户列表失败');
+    }
+  }
+
+  const handleWithdraw = async (values: { amount: number; walletAccountId: string }) => {
     try {
       await financeApi.addUserWalletRecord({
-        walletAccountId: '1', // 这里需要传入实际的账户ID
+        walletAccountId: values.walletAccountId,
         balance: values.amount
       });
       message.success('提现申请提交成功');
@@ -57,6 +70,7 @@ export default function Page() {
 
   useEffect(() => {
     getDataList();
+    getWalletAccounts();
   }, []);
 
   const columns = [
@@ -66,19 +80,29 @@ export default function Page() {
       key: 'type',
       render: (type: string) => (
         <Tag color={type === 'withdraw' ? 'red' : 'green'}>
-          {type === 'withdraw' ? '提现' : '充值'}
+          {type === 'WITHDRAW' ? '提现' : '充值'}
         </Tag>
+      ),
+    },
+    {
+      title: '账户',
+      dataIndex: 'account',
+      key: 'account',
+      render: (account: any) => (
+        <Space>
+          {account.type === 'ZFB' ? '支付宝' : '微信'} - {account.account}
+        </Space>
       ),
     },
     {
       title: '金额',
       dataIndex: 'balance',
       key: 'balance',
-      render: (amount: number) => (
+      render: (amount: number, record: UserWalletRecord) => (
         <Space>
-          {amount > 0 ? <ArrowUpOutlined style={{ color: '#52c41a' }} /> : <ArrowDownOutlined style={{ color: '#ff4d4f' }} />}
+          {/* {amount > 9999 ? <ArrowUpOutlined style={{ color: '#52c41a' }} /> : <ArrowDownOutlined style={{ color: '#ff4d4f' }} />} */}
           <span style={{ color: amount < 0 ? '#ff4d4f' : '#52c41a' }}>
-            {amount > 0 ? '+' : ''}{amount}
+          {record.type === 'WITHDRAW' ? '-' : '+'} {amount}
           </span>
         </Space>
       ),
@@ -87,16 +111,19 @@ export default function Page() {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: (status: string) => (
-        <Tag color={status === 'pending' ? 'orange' : status === 'success' ? 'green' : 'red'}>
-          {status === 'pending' ? '处理中' : status === 'success' ? '成功' : '失败'}
+      render: (status: any) => (
+        <Tag color={status == 0 ? 'orange' : status == 1 ? 'green' : 'red'}>
+          {status == 0 ? '处理中' : status == 1 ? '成功' : '失败'}
         </Tag>
       ),
     },
     {
       title: '创建时间',
-      dataIndex: 'payTime',
-      key: 'payTime',
+      dataIndex: 'createTime',
+      key: 'createTime',
+      render: (createTime: string) => {
+        return moment(createTime).format('YYYY-MM-DD HH:mm:ss');  
+      },
     },
   ];
 
@@ -135,11 +162,23 @@ export default function Page() {
       >
         <Form form={form} onFinish={handleWithdraw}>
           <Form.Item
+            name="walletAccountId"
+            label="提现账户"
+            rules={[{ required: true, message: '请选择提现账户' }]}
+          >
+            <Select placeholder="请选择提现账户">
+              {walletAccounts.map(account => (
+                <Select.Option key={account.id} value={account.id}>
+                  {account.type === 'ZFB' ? '支付宝' : '微信'} - {account.account}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
             name="amount"
             label="提现金额"
             rules={[
               { required: true, message: '请输入提现金额' },
-              { type: 'number', message: '请输入有效的金额' },
               { min: 0, message: '提现金额必须大于0' }
             ]}
           >

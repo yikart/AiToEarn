@@ -2116,7 +2116,7 @@ const Trending: React.FC = () => {
                           }`}
                           onClick={() => handleRankingSelect(ranking)}
                         >
-                          {ranking.name}
+                          {ranking.name }
                         </button>
                       ))}
                   </div>

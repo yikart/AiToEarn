@@ -20,20 +20,22 @@ export default function Page() {
 
   useEffect(() => {
     getBalance();
+    // 默认导航到提现记录界面
+    navigate('userWalletRecord', { replace: true });
   }, []);
 
   const getBalance = async () => {
     try {
       const res = await financeApi.getUserWalletInfo();
       // console.log('getBalance','res',res);
-      setBalance(res.balance);
+      setBalance(res.balance || 0); 
     } catch (error) {
       console.error('获取余额失败:', error);
     }
   };
 
   return (
-    <div className={styles.finance}>
+    <div className={styles.finance}> 
       <div className={styles.header}>
         <Card className={styles.balanceCard} bordered={false}>
           <Row align="middle" justify="space-between">
