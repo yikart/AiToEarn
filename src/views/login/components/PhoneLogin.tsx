@@ -94,9 +94,11 @@ const PhoneLogin = memo(
                 });
                 if (!res) return;
                 message.success('验证码已发送');
-                form.setFieldsValue({
-                  code: res,
-                });
+                if (typeof res === 'string') {
+                  form.setFieldsValue({
+                    code: res,
+                  });
+                }
               }}
             />
           </div>

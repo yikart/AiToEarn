@@ -563,7 +563,7 @@ class KwaiPub {
 
   /**
    * 视频评论
-   * @param cookie
+   * @param cookieu
    * @param photoId
    * @param content
    * @param reply
