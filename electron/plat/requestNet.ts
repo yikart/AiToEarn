@@ -19,6 +19,9 @@ export interface IRequestNetParams {
   url?: string;
   body?: any;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  // 是否请求文件
+  isReqFile?: boolean;
+  // body是否为文件
   isFile?: boolean;
   formData?: FormData;
 }
@@ -30,6 +33,7 @@ const requestNet = <T = any>({
   url,
   isFile,
   formData,
+  isReqFile,
 }: IRequestNetParams): Promise<IRequestNetResult<T>> => {
   return new Promise((resolve, reject) => {
     const req = net.request({
@@ -54,18 +58,28 @@ const requestNet = <T = any>({
 
     // 处理响应
     req.on('response', (response) => {
+      const chunks: Buffer<ArrayBufferLike>[] = [];
       let data = '';
       response.on('data', (chunk) => {
-        data += chunk;
+        if (isReqFile) {
+          chunks.push(chunk);
+        } else {
+          data += chunk;
+        }
       });
 
       response.on('end', () => {
         let parsedData: T;
-        try {
-          parsedData = JSON.parse(data);
-        } catch (e) {
-          parsedData = undefined as any;
-          console.log(e);
+        if (isReqFile) {
+          const buffer = Buffer.concat(chunks);
+          parsedData = buffer as any;
+        } else {
+          try {
+            parsedData = JSON.parse(data);
+          } catch (e) {
+            parsedData = undefined as any;
+            console.log(e);
+          }
         }
         resolve({
           status: response.statusCode,
