@@ -172,7 +172,9 @@ export default function ArticleTask() {
         platChooseProps={{
           choosedAccounts: accountListChoose,
           pubType: PubType.ARTICLE,
-          allowPlatSet: new Set([AccountType.Douyin]),
+          allowPlatSet: new Set(
+            ["KWAI", "wxSph", "xhs", "douyin"]
+          ) as any,
         }}
         onPlatConfirm={async (aList) => {
           console.log('账号:', aList);
