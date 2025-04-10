@@ -213,7 +213,14 @@ const Trending: React.FC = () => {
   const [selectedRanking, setSelectedRanking] =
     useState<PlatformRanking | null>(null);
   const [rankingList, setRankingList] = useState<PlatformRanking[]>([]);
+  const [rankingDatesList, setRankingDatesList] = useState<[]>([]);  // 榜单日期列表
   const [selectedDate, setSelectedDate] = useState<string>(
+    dayjs().subtract(2, 'day').format('YYYY-MM-DD'),
+  );
+  const [rankingMinDate, setRankingMinDate] = useState<string>(
+    dayjs().subtract(2, 'day').format('YYYY-MM-DD'),
+  );
+  const [rankingMaxDate, setRankingMaxDate] = useState<string>(
     dayjs().subtract(2, 'day').format('YYYY-MM-DD'),
   );
   const [platforms, setPlatforms] = useState<Platform[]>([]);
@@ -357,6 +364,9 @@ const Trending: React.FC = () => {
         // // 获取榜单分类
         await fetchRankingCategories(firstRanking.id);
 
+        // 获取榜单日期
+        await fetchRankingDates(firstRanking.id);
+
         // // 获取榜单内容
         await fetchRankingContents(firstRanking.id, 1);
       } else {
@@ -401,6 +411,20 @@ const Trending: React.FC = () => {
       setCategories(['全部']); // 出错时至少保留"全部"选项
     } finally {
       setCategoryLoading(false);
+    }
+  };
+
+  // 获取榜单日期列表
+  const fetchRankingDates = async (rankingId: string) => {
+    try {
+      const data = await platformApi.getRankingDates(rankingId);
+      setRankingMaxDate(data[0].queryDate);  // 显示的最大日期
+      setRankingMinDate(data[data.length - 1].queryDate);  // 显示的最小日期
+      console.log(rankingMinDate, rankingMaxDate);
+      setSelectedDate(rankingMaxDate);
+      setRankingDatesList(data);
+    } catch (error) {
+      console.error('获取榜单日期列表失败:', error);
     }
   };
 
@@ -2181,8 +2205,11 @@ const Trending: React.FC = () => {
                       className="w-32"
                       placeholder="选择日期"
                       disabledDate={(current) => {
-                        return current && current > dayjs().endOf('day');
+                        return current < dayjs(rankingMinDate) || current > dayjs(rankingMaxDate);
                       }}
+                    //   disabledDate={(current) => {
+                    //     return current && current > dayjs().endOf('day');
+                    //   }}
                     />
 
                     {/* 子榜单选择 - 只在选择了父榜单后显示 */}

@@ -165,6 +165,13 @@ export const platformApi = {
     });
   },
 
+  // 获取榜单日期
+  getRankingDates(rankingId: string) {
+    return hotHttp.get<string[]>(`/ranking/hotinfo/${rankingId}/dates`, {
+      isToken: false,
+    });
+  },
+  
   // 获取所有热点事件
   getAllHotTopics() {
     return hotHttp.get<
