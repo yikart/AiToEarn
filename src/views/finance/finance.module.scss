@@ -14,3 +14,135 @@
     }
   }
 }
+
+.finance {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5;
+  padding: 18px;
+
+  .header {
+    margin-bottom: 24px;
+
+    .balanceCard {
+      background: linear-gradient(135deg, #a66ae4 0%, #36cfcf 100%);
+      color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 12px;
+
+      .balanceLabel {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 16px;
+      }
+
+      .balanceAmount {
+        color: white;
+        margin: 0;
+        font-size: 32px;
+      }
+
+      .walletIcon {
+        font-size: 38px;
+        color: rgba(255, 255, 255, 0.8);
+      }
+    }
+  }
+
+  .content {
+    flex: 1;
+    display: flex;
+    gap: 24px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 24px;
+
+    .sidebar {
+      width: 200px;
+      border-right: 1px solid #f0f0f0;
+      padding-right: 24px;
+
+      :global {
+        .ant-segmented {
+          background: transparent;
+          padding: 0;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          
+          .ant-segmented-item {
+            width: 100%;
+            margin: 8px 0;
+            padding: 14px 20px;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            
+            &:hover {
+              background-color: rgba(24, 144, 255, 0.08);
+              transform: translateX(4px);
+              
+              &::after {
+                content: '';
+                position: absolute;
+                right: 0;
+                top: 0;
+                height: 100%;
+                width: 3px;
+                background: #1890ff;
+                border-radius: 2px;
+              }
+            }
+            
+            .ant-segmented-item-label {
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              font-size: 15px;
+              color: #666;
+              
+              .anticon {
+                font-size: 20px;
+                color: #1890ff;
+                opacity: 0.8;
+              }
+            }
+          }
+          
+          .ant-segmented-item-selected {
+            background-color: #e6f7ff;
+            box-shadow: 0 2px 12px rgba(24, 144, 255, 0.12);
+            
+            &::after {
+              content: '';
+              position: absolute;
+              right: 0;
+              top: 0;
+              height: 100%;
+              width: 3px;
+              background: #1890ff;
+              border-radius: 2px;
+            }
+            
+            .ant-segmented-item-label {
+              color: #1890ff;
+              font-weight: 500;
+              
+              .anticon {
+                opacity: 1;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .outlet {
+      flex: 1;
+      padding: 0 24px;
+    }
+  }
+}

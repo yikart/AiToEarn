@@ -5,7 +5,7 @@ import QrcodeLogin from './qrcodeLogin';
 import { WechatOutlined, MobileOutlined } from '@ant-design/icons';
 
 export const LoginCore = () => {
-  const [loginType, setLoginType] = useState<'phone' | 'qrcode'>('phone');
+  const [loginType, setLoginType] = useState<'phone' | 'qrcode'>('qrcode');
 
   return (
     <div className={styles.loginCore} style={{ position: 'relative' }}>

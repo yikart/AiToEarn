@@ -1,0 +1,50 @@
+.container {
+  .headerCard {
+    margin-bottom: 24px;
+    background: #fafafa;
+    border-radius: 8px;
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .title {
+        margin: 0;
+        color: #262626;
+      }
+
+      .withdrawButton {
+        height: 40px;
+        padding: 0 24px;
+      }
+    }
+  }
+
+  .tableCard {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    .table {
+      :global {
+        .ant-table-thead > tr > th {
+          background: #fafafa;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  .modal {
+    :global {
+      .ant-modal-content {
+        border-radius: 8px;
+      }
+    }
+
+    .input {
+      height: 40px;
+    }
+  }
+} 

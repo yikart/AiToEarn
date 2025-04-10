@@ -33,7 +33,7 @@ import Publish from '@/views/publish/page';
 import VideoPage from '@/views/publish/children/videoPage/page';
 import ImagePage from '@/views/publish/children/imagePage/page';
 import PubRecord from '@/views/publish/children/pubRecord/page';
-import Statistics from '@/views/statistics';
+import Statistics from '@/views/statistics/statistics'; 
 import Task from '@/views/task';
 // import HotTopic from '@/views/trending/hotTopic';
 // import CarTask from '@/views/task/carTask';

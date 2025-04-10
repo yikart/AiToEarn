@@ -244,7 +244,9 @@ export const platformApi = {
   },
 
   // 获取平台下所有分类的前五条数据
-  findTopByPlatformAndCategories(platformId: string) {
+  findTopByPlatformAndCategories(platformId: string, 
+    timeType?: string, // 时间分类
+  ) {
     return hotHttp.get<
       {
         category: string;
@@ -252,16 +254,20 @@ export const platformApi = {
       }[]
     >(`/viral-titles/platforms/${platformId}/top-by-categories`, {
       isToken: false,
+      params:{
+        timeType,
+      },
     });
   },
 
-  // 获取平台下指定分类的数据列表（分页）
+  // 获取爆款标题平台下指定分类的数据列表（分页）
   findByPlatformAndCategory(
     platformId: string,
     params: {
       category?: string;
       startTime?: Date;
       endTime?: Date;
+      timeType?: string;
       page?: number;
       pageSize?: number;
     },
@@ -274,4 +280,15 @@ export const platformApi = {
       },
     );
   },
+
+  // 获取爆款标题的时间类型
+    getViralTitleTimeTypes() {
+        return hotHttp.get<string[]>(`/viral-titles/timeType`, {
+            isToken: false,
+        });
+    },
+
 };
+
+
+  

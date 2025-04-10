@@ -11,4 +11,5 @@ export interface ViralTitle {
   publishTime?: Date;
   createTime: Date;
   updateTime: Date;
+  timeType: string;
 }

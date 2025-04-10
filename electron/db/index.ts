@@ -10,8 +10,6 @@ import { AccountModel } from './models/account';
 import { UserModel } from './models/user';
 import { PubRecordModel } from './models/pubRecord';
 import { VideoModel } from './models/video';
-import { AccountStatsModel } from './models/accountStats';
-import { VideoStatsModel } from './models/videoStats';
 import * as migrations from './migrations';
 import path from 'path';
 import { app } from 'electron';
@@ -38,8 +36,6 @@ export const AppDataSource = new DataSource({
     UserModel,
     PubRecordModel,
     VideoModel,
-    AccountStatsModel,
-    VideoStatsModel,
     AutoRunModel,
     AutoRunRecordModel,
     ImgTextModel,

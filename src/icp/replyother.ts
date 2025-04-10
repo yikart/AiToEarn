@@ -207,9 +207,7 @@ export async function icpInteractionOneData(
 export async function icpCreateInteractionOneKey(
   accountId: number,
   worksList: WorkData[],
-  option: {
-    commentContent: string; // 评论内容
-  },
+  option: any
 ) {
   const res: boolean = await window.ipcRenderer.invoke(
     'ICP_INTERACTION_ONE_KEY',
