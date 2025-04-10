@@ -57,6 +57,7 @@ export interface TaskProduct extends TaskData {
 export interface TaskInteraction extends TaskData {
   accountType: AccountType; // 平台类型
   worksId: string; // 作品ID
+  authorId?: string; // 作者ID
 }
 
 export type TaskDataInfo =
