@@ -319,49 +319,6 @@ export default function Page() {
     );
     console.log('------ res', res);
 
-    // // 创建任务队列
-    // const taskQueue = selectedPosts.map(postId => {
-    //   const post = postList.find(item => item.dataId === postId);
-    //   if (!post) return null;
-
-    //   return async () => {
-    //     try {
-    //       // 根据概率决定是否执行点赞
-    //       // if (Math.random() * 100 <= values.likeProb) {
-    //         await likePost(post);
-    //       // }
-
-    //       // 根据概率决定是否执行收藏
-    //       if(activeAccountType != 'KWAI'){
-    //         if (Math.random() * 100 <= values.collectProb) {
-    //           await collectPost(post);
-    //         }
-    //       }
-
-    //       // // 根据概率决定是否执行评论
-    //       // if (Math.random() * 100 <= values.commentProb) {
-    //       //   if (values.commentType === 'ai') {
-    //       //     // AI评论逻辑
-    //       //     await openReplyWorks(post);
-    //       //   } else {
-    //       //     // 自定义评论逻辑
-    //       //     const randomComment = customComments[Math.floor(Math.random() * customComments.length)];
-    //       //     // TODO: 实现自定义评论发送逻辑
-    //       //   }
-    //       // }
-    //     } catch (error) {
-    //       console.error('执行任务失败:', error);
-    //     }
-    //   };
-    // }).filter(Boolean);
-
-    // // 按顺序执行任务，每个任务间隔3秒
-    // for (const task of taskQueue) {
-    //   if (task) {
-    //     await task();
-    //     await new Promise(resolve => setTimeout(resolve, 3000)); // 等待3秒
-    //   }
-    // }
 
     setSelectedPosts([]);
   };
