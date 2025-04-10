@@ -639,6 +639,10 @@ const Trending: React.FC = () => {
   // 处理爆款标题平台选择
   const handleViralPlatformSelect = (platform: Platform, timeType: string) => {
     setSelectedViralPlatform(platform);
+    // 清空原有数据并显示加载动画
+    setSelectedViralCategory("全部");
+    setShowSingleCategory(false);
+    setViralTitleData([]);
     fetchViralTitleCategories(platform.id);
     fetchViralTitleTimeTypes(); // 获取时间类型
     fetchViralTitleContents(platform.id, timeType);
@@ -1373,7 +1377,7 @@ const Trending: React.FC = () => {
                       onClick={() =>
                         handleViralPlatformSelect(
                           platform,
-                          selectedViralTimeRange,
+                          selectedViralTimeType,
                         )
                       }
                     >
