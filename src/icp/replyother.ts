@@ -19,6 +19,9 @@ export type WorkData = {
   coverUrl?: string;
   videoUrl?: string;
   authorId?: string;
+  author?: {
+    id: string;
+  };
   option?: {
     xsec_token: string;
   };

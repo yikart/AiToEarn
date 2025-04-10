@@ -139,26 +139,53 @@ export default function InteractionTask() {
   };
 
   const handleInteraction = async (account: any) => {
+    console.log('account', account.id);
+    console.log('selectedTask', selectedTask.dataInfo);
+    console.log('selectedTask.description', selectedTask.description);
+    console.log('selectedTask.accountTypes', account.type);
+
+    
+
     try {
       setLoading(true);
       const res:any = await icpCreateInteractionOneKey(
         account.id,
-        selectedTask.dataInfo,
+        [
+          {
+          dataId: selectedTask.dataInfo?.worksId,
+          readCount: 0,
+          likeCount: 0,
+          collectCount: 0,
+          forwardCount: 0,
+          commentCount: 0, // 评论数量
+          income: 0,
+          title: selectedTask.dataInfo?.title || '',
+          desc: selectedTask.dataInfo?.title || '',
+          authorId: selectedTask.dataInfo?.authorId || '',
+          author: {
+            id: selectedTask.dataInfo?.authorId || '',
+          },
+          option: {
+            xsec_token: 'ABQgeOn-14sjhmCALp9dEISLZrOOyDdGZwKtr2umjsWeo=',
+          }
+        } ],
         {
-          commentContent: selectedTask.description,
+          commentContent: "真不错 好看",
           platform: account.type,
         }
       );
 
-      if (res.code === 1) {
-        message.success('互动任务完成成功');
-        // 更新任务状态
-        setTaskList(prev => prev.map(task => 
-          task._id === selectedTask._id ? { ...task, isAccepted: true } : task
-        ));
-      } else {
-        message.error('互动任务完成失败');
-      }
+      console.log('handleInteraction','res', res);
+
+      // if (res.code === 1) {
+      //   message.success('互动任务完成成功');
+      //   // 更新任务状态
+      //   setTaskList(prev => prev.map(task => 
+      //     task._id === selectedTask._id ? { ...task, isAccepted: true } : task
+      //   ));
+      // } else {
+      //   message.error('互动任务完成失败');
+      // }
     } catch (error) {
       console.error('互动任务失败', error);
       message.error('互动任务失败，请重试');
