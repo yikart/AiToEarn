@@ -17,6 +17,15 @@ import { TaskInfoRef } from './components/popInfo';
 import ChooseAccountModule from '@/views/publish/components/ChooseAccountModule/ChooseAccountModule';
 import { PubType } from '@@/publish/PublishEnum';
 import { AccountType } from '@@/AccountEnum';
+import { usePubStroe } from '@/store/pubStroe';
+import { useAccountStore } from '@/store/commont';
+import { useNavigate } from 'react-router-dom';
+import { message } from 'antd';
+import {
+  icpCreateImgTextPubRecord,
+  icpCreatePubRecord,
+  icpPubImgText,
+} from '@/icp/publish';
 
 // 导入平台图标
 import KwaiIcon from '@/assets/svgs/account/ks.svg';
@@ -66,6 +75,8 @@ export default function ArticleTask() {
   const [chooseAccountOpen, setChooseAccountOpen] = useState(false);
   const [accountListChoose, setAccountListChoose] = useState<any[]>([]);
   const [downloading, setDownloading] = useState(false);
+  const [pubProgressModuleOpen, setPubProgressModuleOpen] = useState(false);
+  const navigate = useNavigate();
 
   const Ref_TaskInfo = useRef<TaskInfoRef>(null);
 
@@ -152,6 +163,70 @@ export default function ArticleTask() {
     // }
   };
 
+  const pubCore = async () => {
+    if (!selectedTask) return;
+    
+    setPubProgressModuleOpen(true);
+    setLoading(true);
+    const err = () => {
+      setLoading(false);
+      message.error('网络繁忙，请稍后重试！');
+    };
+
+    // 创建一级记录
+    const recordRes = await icpCreatePubRecord({
+      title: selectedTask.title,
+      desc: selectedTask.description,
+      type: PubType.ImageText,
+      coverPath: FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
+    });
+    if (!recordRes) return err();
+
+    for (const account of accountListChoose) {
+      // 创建二级记录
+      await icpCreateImgTextPubRecord({
+        title: selectedTask.title,
+        desc: selectedTask.description,
+        type: account.type,
+        accountId: account.id,
+        pubRecordId: recordRes.id,
+        publishTime: new Date(),
+        coverPath: FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
+        imagesPath: selectedTask.dataInfo?.imageList || [],
+      });
+    }
+
+    const okRes = await icpPubImgText(recordRes.id);
+    setLoading(false);
+    setPubProgressModuleOpen(false);
+    usePubStroe.getState().clearImgTextPubSave();
+    const successList = okRes.filter((v) => v.code === 1);
+    useAccountStore.getState().notification!.open({
+      message: '发布结果',
+      description: (
+        <>
+          一共发布 {okRes.length} 条数据，成功 {successList.length} 条，失败{' '}
+          {okRes.length - successList.length} 条
+        </>
+      ),
+      showProgress: true,
+      btn: (
+        <Space>
+          <Button
+            type="primary"
+            size="small"
+            onClick={() => {
+              navigate('/publish/pubRecord');
+            }}
+          >
+            查看发布记录
+          </Button>
+        </Space>
+      ),
+      key: Date.now(),
+    });
+  };
+
   // 刷新任务列表的函数
   const refreshTaskList = () => {
     setPageInfo({
@@ -171,7 +246,7 @@ export default function ArticleTask() {
         onClose={() => !downloading && setChooseAccountOpen(false)}
         platChooseProps={{
           choosedAccounts: accountListChoose,
-          pubType: PubType.ARTICLE,
+          pubType: PubType.ImageText,
           allowPlatSet: new Set(
             ["KWAI", "wxSph", "xhs", "douyin"]
           ) as any,
@@ -179,9 +254,8 @@ export default function ArticleTask() {
         onPlatConfirm={async (aList) => {
           console.log('账号:', aList);
           setAccountListChoose(aList);
-          console.log('选择的账号:', aList);
-          // 这里可以添加发布文章的逻辑
           setChooseAccountOpen(false);
+          await pubCore();
         }}
       />
 
