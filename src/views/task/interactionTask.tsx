@@ -5,7 +5,7 @@
  * @LastEditors: nevin
  * @Description: 互动任务组件
  */
-import { Card, List, Typography, Button, Space, Tag, Spin, Modal, Descriptions, message, Progress, Image } from 'antd';
+import { Card, List, Typography, Button, Space, Tag, Spin, Modal, Descriptions, message, Progress, Image, notification } from 'antd';
 import { CommentOutlined, LikeOutlined, ShareAltOutlined, UserOutlined, ClockCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import styles from './task.module.scss';
 import { useState, useEffect, useRef } from 'react';
@@ -25,6 +25,7 @@ import WxSphIcon from '@/assets/svgs/account/wx-sph.svg';
 import XhsIcon from '@/assets/svgs/account/xhs.svg';
 import DouyinIcon from '@/assets/svgs/account/douyin.svg';
 import logo from '@/assets/logo.png';
+import { SendChannelEnum } from '@@/UtilsEnum';
 
 const { Title, Text } = Typography;
 
@@ -153,6 +154,9 @@ export default function InteractionTask() {
    * 接受任务
    */
       async function taskApply() {
+
+        // handleCompleteTask();
+        // return;
         if (!selectedTask) return;
     
         try {
@@ -197,6 +201,22 @@ export default function InteractionTask() {
         message.error('完成任务失败，请稍后再试');
       }
     }
+
+
+    window.ipcRenderer.on(SendChannelEnum.InteractionProgress, (e, args) => {
+      console.log('--------- e', e);
+      console.log('--------- args', args);
+
+      if(args.status === 1) {
+        taskDone();
+
+        notification.open({
+          message: '互动任务完成',
+        });
+      }
+  
+      
+    });
 
 
 
