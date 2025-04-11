@@ -21,6 +21,7 @@ export default function useDebounceFetcher<T>(
           return;
         }
 
+        console.log(newOptions);
         setOptions(newOptions);
         setFetching(false);
       });

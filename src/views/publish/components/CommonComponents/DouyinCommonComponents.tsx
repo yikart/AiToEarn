@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   DouyinActivity,
   DouyinActivityDetailResponse,
@@ -15,15 +15,15 @@ import {
 } from '../../../../icp/publish';
 import {
   Button,
-  Checkbox,
+  Checkbox, Empty,
   message,
   Modal,
   Select,
   SelectProps,
   Spin,
   Tabs,
-  Tooltip,
-} from 'antd';
+  Tooltip
+} from "antd";
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import styles from './commonComponents.module.scss';
 import { describeNumber } from '../../../../utils';
@@ -177,6 +177,11 @@ export const CommonActivitySelect = ({
     setValue(props.value || []);
   };
 
+  // 选择标签筛选后的数据
+  const tagActivityData = useMemo(() => {
+    return options?.filter((v) => v.query_tag === +activityTag);
+  }, [activityTag, options]);
+
   return (
     <>
       <Modal
@@ -265,9 +270,8 @@ export const CommonActivitySelect = ({
             };
           })}
         />
-        {options
-          ?.filter((v) => v.query_tag === +activityTag)
-          .map((data) => {
+        {tagActivityData && tagActivityData.length !== 0 ? (
+          tagActivityData?.map((data) => {
             return (
               <div
                 className={styles.activitySelect}
@@ -321,7 +325,10 @@ export const CommonActivitySelect = ({
                 </div>
               </div>
             );
-          })}
+          })
+        ) : (
+          <Empty />
+        )}
       </Modal>
 
       <h1>

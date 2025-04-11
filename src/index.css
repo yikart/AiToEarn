@@ -7,6 +7,10 @@ body {
   color: #222;
 }
 
+.ant-tabs-dropdown {
+  z-index: 10000000;
+}
+
 /* 确保根元素和 body 占满整个视口高度 */
 html, body, #root {
   @apply h-full w-full m-0 p-0;
