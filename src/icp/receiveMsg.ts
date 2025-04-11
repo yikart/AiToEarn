@@ -22,6 +22,14 @@ const bindEventCore = (
   };
 };
 
+// ----------------------- 应用 ---------------------------
+
+export const onInteractionProgress = (callback: (...args: any[]) => void) => {
+  return bindEventCore(SendChannelEnum.InteractionProgress, (e, ...args) => {
+    callback(...args);
+  });
+};
+
 // 账户登录完成
 export const onAccountLoginFinish = (
   callback: (account: AccountModel) => void,

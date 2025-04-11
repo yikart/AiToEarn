@@ -5,8 +5,26 @@
  * @LastEditors: nevin
  * @Description: 互动任务组件
  */
-import { Card, List, Typography, Button, Space, Tag, Spin, Modal, Descriptions, message, Progress, Image, notification } from 'antd';
-import { CommentOutlined, LikeOutlined, ShareAltOutlined, UserOutlined, ClockCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import {
+  Card,
+  List,
+  Typography,
+  Button,
+  Space,
+  Tag,
+  Spin,
+  Modal,
+  Descriptions,
+  message,
+  Progress,
+  Image,
+  notification,
+} from 'antd';
+import {
+  UserOutlined,
+  ClockCircleOutlined,
+  CheckCircleOutlined,
+} from '@ant-design/icons';
 import styles from './task.module.scss';
 import { useState, useEffect, useRef } from 'react';
 import { taskApi } from '@/api/task';
@@ -16,7 +34,6 @@ import { TaskInfoRef } from './components/popInfo';
 import ChooseAccountModule from '@/views/publish/components/ChooseAccountModule/ChooseAccountModule';
 import { PubType } from '@@/publish/PublishEnum';
 import { icpCreateInteractionOneKey } from '@/icp/replyother';
-import { useAccountStore } from '@/store/commont';
 import { useNavigate } from 'react-router-dom';
 
 // 导入平台图标
@@ -25,7 +42,7 @@ import WxSphIcon from '@/assets/svgs/account/wx-sph.svg';
 import XhsIcon from '@/assets/svgs/account/xhs.svg';
 import DouyinIcon from '@/assets/svgs/account/douyin.svg';
 import logo from '@/assets/logo.png';
-import { SendChannelEnum } from '@@/UtilsEnum';
+import { onInteractionProgress } from '../../icp/receiveMsg';
 
 const { Title, Text } = Typography;
 
@@ -36,23 +53,23 @@ const platformConfig = {
   KWAI: {
     name: '快手',
     icon: KwaiIcon,
-    color: '#FF4D4F'
+    color: '#FF4D4F',
   },
   wxSph: {
     name: '微信视频号',
     icon: WxSphIcon,
-    color: '#07C160'
+    color: '#07C160',
   },
   xhs: {
     name: '小红书',
     icon: XhsIcon,
-    color: '#FF2442'
+    color: '#FF2442',
   },
   douyin: {
     name: '抖音',
     icon: DouyinIcon,
-    color: '#000000'
-  }
+    color: '#000000',
+  },
 };
 
 export default function InteractionTask() {
@@ -102,6 +119,15 @@ export default function InteractionTask() {
 
   useEffect(() => {
     getTaskList();
+    return onInteractionProgress((args) => {
+      if (args.status === 1) {
+        taskDone();
+
+        notification.open({
+          message: '互动任务完成',
+        });
+      }
+    });
   }, []);
 
   const formatDate = (date: string) => {
@@ -109,10 +135,10 @@ export default function InteractionTask() {
   };
 
   const getPlatformTags = (accountTypes: string[]) => {
-    return accountTypes.map(type => {
+    return accountTypes.map((type) => {
       const platform = platformConfig[type as keyof typeof platformConfig];
       if (!platform) return null;
-      
+
       return (
         <div
           key={type}
@@ -140,85 +166,62 @@ export default function InteractionTask() {
     setChooseAccountOpen(true);
   };
 
-      // 在组件内添加一个新的状态来存储任务记录
-      const [taskRecord, setTaskRecord] = useState<{
-        _id: string;
-        createTime: string;
-        isFirstTimeSubmission: boolean;
-        status: string;
-        taskId: string;
-      } | null>(null);
+  // 在组件内添加一个新的状态来存储任务记录
+  const [taskRecord, setTaskRecord] = useState<{
+    _id: string;
+    createTime: string;
+    isFirstTimeSubmission: boolean;
+    status: string;
+    taskId: string;
+  } | null>(null);
 
-
-      /**
+  /**
    * 接受任务
    */
-      async function taskApply() {
+  async function taskApply() {
+    // handleCompleteTask();
+    // return;
+    if (!selectedTask) return;
 
-        // handleCompleteTask();
-        // return;
-        if (!selectedTask) return;
-    
-        try {
-          const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
-          // 存储任务记录信息
-          if (res.code === 0 && res.data) {
-            setTaskRecord(res.data);
-            message.success('任务接受成功！');
-            
-            handleCompleteTask();
-    
-          } else {
-            message.error(res.msg || '接受任务失败，请稍后再试?');
-          }
-        } catch (error) {
-          message.error('接受任务失败，请稍后再试');
-        }
+    try {
+      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
+      // 存储任务记录信息
+      if (res.code === 0 && res.data) {
+        setTaskRecord(res.data);
+        message.success('任务接受成功！');
+
+        handleCompleteTask();
+      } else {
+        message.error(res.msg || '接受任务失败，请稍后再试?');
       }
+    } catch (error) {
+      message.error('接受任务失败，请稍后再试');
+    }
+  }
 
-
-      
-    /**
+  /**
    * 完成任务
    */
-    async function taskDone() {
-      console.log('完成任务', selectedTask);
-      if (!selectedTask || !taskRecord) {
-        message.error('任务信息不完整，无法完成任务');
-        return;
-      }
-  
-      try {
-        // 使用任务记录的 ID 而不是任务 ID
-        const res = await taskApi.taskDone(taskRecord._id, {
-          submissionUrl: selectedTask.title,
-          screenshotUrls: [selectedTask.dataInfo?.imageList?.[0] || ''],
-          qrCodeScanResult: selectedTask.title,
-        });
-        message.success('任务发布成功！');
-        refreshTaskList();
-      } catch (error) {
-        message.error('完成任务失败，请稍后再试');
-      }
+  async function taskDone() {
+    console.log('完成任务', selectedTask);
+    if (!selectedTask || !taskRecord) {
+      message.error('任务信息不完整，无法完成任务');
+      return;
     }
 
-
-    window.ipcRenderer.on(SendChannelEnum.InteractionProgress, (e, args) => {
-      console.log('--------- e', e);
-      console.log('--------- args', args);
-
-      if(args.status === 1) {
-        taskDone();
-
-        notification.open({
-          message: '互动任务完成',
-        });
-      }
-  
-      
-    });
-
-
+    try {
+      // 使用任务记录的 ID 而不是任务 ID
+      const res = await taskApi.taskDone(taskRecord._id, {
+        submissionUrl: selectedTask.title,
+        screenshotUrls: [selectedTask.dataInfo?.imageList?.[0] || ''],
+        qrCodeScanResult: selectedTask.title,
+      });
+      message.success('任务发布成功！');
+      refreshTaskList();
+    } catch (error) {
+      message.error('完成任务失败，请稍后再试');
+    }
+  }
 
   const handleInteraction = async (account: any) => {
     console.log('account', account.id);
@@ -226,47 +229,47 @@ export default function InteractionTask() {
     console.log('selectedTask.description', selectedTask.description);
     console.log('selectedTask.accountTypes', account.type);
 
-    let option:any = 
-      {
-        platform: account.type,
-      }
-    
-    if(selectedTask.dataInfo?.commentContent) {
+    const option: any = {
+      platform: account.type,
+    };
+
+    if (selectedTask.dataInfo?.commentContent) {
       option.commentContent = selectedTask.dataInfo?.commentContent;
     }
 
     try {
       setLoading(true);
-      const res:any = await icpCreateInteractionOneKey(
+      const res: any = await icpCreateInteractionOneKey(
         account.id,
         [
           {
-          dataId: selectedTask.dataInfo?.worksId,
-          readCount: 0,
-          likeCount: 0,
-          collectCount: 0,
-          forwardCount: 0,
-          commentCount: 0, // 评论数量
-          income: 0,
-          title: selectedTask.dataInfo?.title || '',
-          desc: selectedTask.dataInfo?.title || '',
-          authorId: selectedTask.dataInfo?.authorId || '',
-          author: {
-            id: selectedTask.dataInfo?.authorId || '',
+            dataId: selectedTask.dataInfo?.worksId,
+            readCount: 0,
+            likeCount: 0,
+            collectCount: 0,
+            forwardCount: 0,
+            commentCount: 0, // 评论数量
+            income: 0,
+            title: selectedTask.dataInfo?.title || '',
+            desc: selectedTask.dataInfo?.title || '',
+            authorId: selectedTask.dataInfo?.authorId || '',
+            author: {
+              id: selectedTask.dataInfo?.authorId || '',
+            },
+            option: {
+              xsec_token: 'ABQgeOn-14sjhmCALp9dEISLZrOOyDdGZwKtr2umjsWeo=',
+            },
           },
-          option: {
-            xsec_token: 'ABQgeOn-14sjhmCALp9dEISLZrOOyDdGZwKtr2umjsWeo=',
-          }
-        } ],
-        option
+        ],
+        option,
       );
 
-      console.log('handleInteraction','res', res);
+      console.log('handleInteraction', 'res', res);
 
       // if (res.code === 1) {
       //   message.success('互动任务完成成功');
       //   // 更新任务状态
-      //   setTaskList(prev => prev.map(task => 
+      //   setTaskList(prev => prev.map(task =>
       //     task._id === selectedTask._id ? { ...task, isAccepted: true } : task
       //   ));
       // } else {
@@ -311,14 +314,14 @@ export default function InteractionTask() {
 
       <Spin spinning={loading}>
         <List
-          grid={{ 
+          grid={{
             gutter: 8,
             xs: 1,
             sm: 2,
             md: 3,
             lg: 4,
             xl: 5,
-            xxl: 6
+            xxl: 6,
           }}
           dataSource={taskList}
           renderItem={(item) => (
@@ -331,22 +334,28 @@ export default function InteractionTask() {
                       src={logo}
                       alt="logo"
                       preview={false}
-                      style={{ width: '100%', height: '200px', objectFit: 'contain' }}
+                      style={{
+                        width: '100%',
+                        height: '200px',
+                        objectFit: 'contain',
+                      }}
                     />
                   </div>
                 }
                 actions={[
                   <Space key="recruits">
                     <UserOutlined />
-                    <Text>{item.currentRecruits}/{item.maxRecruits}</Text>
+                    <Text>
+                      {item.currentRecruits}/{item.maxRecruits}
+                    </Text>
                   </Space>,
                   <Space key="time">
                     <ClockCircleOutlined />
                     <Text>{item.keepTime}分钟</Text>
                   </Space>,
-                  <Button 
-                    type="primary" 
-                    key="join" 
+                  <Button
+                    type="primary"
+                    key="join"
                     disabled={item.isAccepted}
                     onClick={() => handleJoinTask(item)}
                   >
@@ -369,9 +378,11 @@ export default function InteractionTask() {
                   description={
                     <div className={styles.taskInfo}>
                       <div className={styles.taskProgress}>
-                        <Progress 
-                          percent={Math.round((item.currentRecruits / item.maxRecruits) * 100)} 
-                          size="small" 
+                        <Progress
+                          percent={Math.round(
+                            (item.currentRecruits / item.maxRecruits) * 100,
+                          )}
+                          size="small"
                           showInfo={false}
                         />
                       </div>
@@ -379,7 +390,9 @@ export default function InteractionTask() {
                         {item.description.replace(/<[^>]+>/g, '')}
                       </Text>
                       <div className={styles.taskDeadline}>
-                        <Text type="secondary">截止时间：{formatDate(item.deadline)}</Text>
+                        <Text type="secondary">
+                          截止时间：{formatDate(item.deadline)}
+                        </Text>
                       </div>
                     </div>
                   }
@@ -398,28 +411,40 @@ export default function InteractionTask() {
           <Button key="cancel" onClick={() => setModalVisible(false)}>
             取消
           </Button>,
-          <Button 
-            key="complete" 
-            type="primary" 
+          <Button
+            key="complete"
+            type="primary"
             icon={<CheckCircleOutlined />}
             onClick={taskApply}
           >
             一键完成
-          </Button>
+          </Button>,
         ]}
         width={600}
       >
         {selectedTask && (
           <div className={styles.taskDetail}>
             <Descriptions column={1}>
-              <Descriptions.Item label="任务标题">{selectedTask.title}</Descriptions.Item>
-              <Descriptions.Item label="任务描述">
-                <div dangerouslySetInnerHTML={{ __html: selectedTask.description }} />
+              <Descriptions.Item label="任务标题">
+                {selectedTask.title}
               </Descriptions.Item>
-              <Descriptions.Item label="任务奖励">¥{selectedTask.reward}</Descriptions.Item>
-              <Descriptions.Item label="任务时长">{selectedTask.keepTime}分钟</Descriptions.Item>
-              <Descriptions.Item label="开始时间">{formatDate(selectedTask.createTime)}</Descriptions.Item>
-              <Descriptions.Item label="截止时间">{formatDate(selectedTask.deadline)}</Descriptions.Item>
+              <Descriptions.Item label="任务描述">
+                <div
+                  dangerouslySetInnerHTML={{ __html: selectedTask.description }}
+                />
+              </Descriptions.Item>
+              <Descriptions.Item label="任务奖励">
+                ¥{selectedTask.reward}
+              </Descriptions.Item>
+              <Descriptions.Item label="任务时长">
+                {selectedTask.keepTime}分钟
+              </Descriptions.Item>
+              <Descriptions.Item label="开始时间">
+                {formatDate(selectedTask.createTime)}
+              </Descriptions.Item>
+              <Descriptions.Item label="截止时间">
+                {formatDate(selectedTask.deadline)}
+              </Descriptions.Item>
               <Descriptions.Item label="参与人数">
                 {selectedTask.currentRecruits}/{selectedTask.maxRecruits}
               </Descriptions.Item>
@@ -434,4 +459,4 @@ export default function InteractionTask() {
       </Modal>
     </div>
   );
-} 
+}
