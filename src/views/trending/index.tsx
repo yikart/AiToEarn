@@ -213,7 +213,7 @@ const Trending: React.FC = () => {
   const [selectedRanking, setSelectedRanking] =
     useState<PlatformRanking | null>(null);
   const [rankingList, setRankingList] = useState<PlatformRanking[]>([]);
-  const [rankingDatesList, setRankingDatesList] = useState<[]>([]);  // 榜单日期列表
+  const [rankingDatesList, setRankingDatesList] = useState<[]>([]); // 榜单日期列表
   const [selectedDate, setSelectedDate] = useState<string>(
     dayjs().subtract(2, 'day').format('YYYY-MM-DD'),
   );
@@ -418,11 +418,11 @@ const Trending: React.FC = () => {
   const fetchRankingDates = async (rankingId: string) => {
     try {
       const data = await platformApi.getRankingDates(rankingId);
-      setRankingMaxDate(data[0].queryDate);  // 显示的最大日期
-      setRankingMinDate(data[data.length - 1].queryDate);  // 显示的最小日期
+      setRankingMaxDate((data[0] as any).queryDate); // 显示的最大日期
+      setRankingMinDate((data[data.length - 1] as any).queryDate); // 显示的最小日期
       console.log(rankingMinDate, rankingMaxDate);
       setSelectedDate(rankingMaxDate);
-      setRankingDatesList(data);
+      setRankingDatesList(data as any);
     } catch (error) {
       console.error('获取榜单日期列表失败:', error);
     }
@@ -640,7 +640,7 @@ const Trending: React.FC = () => {
   const handleViralPlatformSelect = (platform: Platform, timeType: string) => {
     setSelectedViralPlatform(platform);
     // 清空原有数据并显示加载动画
-    setSelectedViralCategory("全部");
+    setSelectedViralCategory('全部');
     setShowSingleCategory(false);
     setViralTitleData([]);
     fetchViralTitleCategories(platform.id);
@@ -2144,7 +2144,7 @@ const Trending: React.FC = () => {
                           }`}
                           onClick={() => handleRankingSelect(ranking)}
                         >
-                          {ranking.name }
+                          {ranking.name}
                         </button>
                       ))}
                   </div>
@@ -2209,11 +2209,14 @@ const Trending: React.FC = () => {
                       className="w-32"
                       placeholder="选择日期"
                       disabledDate={(current) => {
-                        return current < dayjs(rankingMinDate) || current > dayjs(rankingMaxDate);
+                        return (
+                          current < dayjs(rankingMinDate) ||
+                          current > dayjs(rankingMaxDate)
+                        );
                       }}
-                    //   disabledDate={(current) => {
-                    //     return current && current > dayjs().endOf('day');
-                    //   }}
+                      //   disabledDate={(current) => {
+                      //     return current && current > dayjs().endOf('day');
+                      //   }}
                     />
 
                     {/* 子榜单选择 - 只在选择了父榜单后显示 */}
