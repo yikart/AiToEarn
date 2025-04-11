@@ -176,23 +176,31 @@ export default function ArticleTask() {
     // 创建一级记录
     const recordRes = await icpCreatePubRecord({
       title: selectedTask.title,
-      desc: selectedTask.description,
+      desc: selectedTask.description.replace(/<[^>]+>/g, ''),
       type: PubType.ImageText,
       coverPath: FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
     });
     if (!recordRes) return err();
 
+    let pubList = [];
+    if (selectedTask.dataInfo?.imageList?.length > 1) {
+      pubList = selectedTask.dataInfo?.imageList.map((v: string) => FILE_BASE_URL + v);
+    }
+
+    console.log('pubList', pubList);
+
     for (const account of accountListChoose) {
+      
       // 创建二级记录
       await icpCreateImgTextPubRecord({
         title: selectedTask.title,
-        desc: selectedTask.description,
+        desc: selectedTask.description.replace(/<[^>]+>/g, ''),
         type: account.type,
         accountId: account.id,
         pubRecordId: recordRes.id,
         publishTime: new Date(),
         coverPath: FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
-        imagesPath: selectedTask.dataInfo?.imageList || [],
+        imagesPath: pubList,
       });
     }
 
@@ -210,19 +218,18 @@ export default function ArticleTask() {
         </>
       ),
       showProgress: true,
-      btn: (
-        <Space>
-          <Button
-            type="primary"
-            size="small"
-            onClick={() => {
-              navigate('/publish/pubRecord');
-            }}
-          >
-            查看发布记录
-          </Button>
-        </Space>
-      ),
+      actions: [
+        <Button
+          key="view"
+          type="primary"
+          size="small"
+          onClick={() => {
+            navigate('/publish/pubRecord');
+          }}
+        >
+          查看发布记录
+        </Button>
+      ],
       key: Date.now(),
     });
   };
