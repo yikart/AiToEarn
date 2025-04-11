@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import sharp from 'sharp';
 import * as path from 'path';
+import requestNet from '../requestNet';
 
 /**
  * 获取文件内容
@@ -8,13 +9,20 @@ import * as path from 'path';
  */
 export async function getFileContent(filePath: string): Promise<Buffer> {
   try {
-    // 确保路径是绝对路径
-    const absolutePath = path.resolve(filePath);
-    console.log('Reading file:', absolutePath);
+    if (filePath.includes('https://') || filePath.includes('http://')) {
+      const res = await requestNet({
+        url: filePath,
+        isReqFile: true,
+      });
+      return res.data;
+    } else {
+      // 确保路径是绝对路径
+      const absolutePath = path.resolve(filePath);
+      console.log('Reading file:', absolutePath);
 
-    // 读取文件内容
-    const fileContent = await fs.promises.readFile(absolutePath);
-    return fileContent;
+      // 读取文件内容
+      return await fs.promises.readFile(absolutePath);
+    }
   } catch (error) {
     console.error('Failed to read file:', error);
     throw new Error(`读取文件失败: filePath`);

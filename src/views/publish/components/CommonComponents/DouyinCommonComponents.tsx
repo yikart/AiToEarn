@@ -85,7 +85,7 @@ export const CommonHotspotSelect = ({
         filterOption={false}
         onSearch={debounceFetcher}
         notFoundContent={fetching ? <Spin size="small" /> : null}
-        options={(!keywords ? doytinHotAll : options).map((v) => {
+        options={(!keywords ? doytinHotAll : options)?.map((v) => {
           return {
             ...v,
             label: v.word,

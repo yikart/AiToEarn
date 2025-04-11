@@ -138,7 +138,7 @@ export class InteractionService {
     });
 
     try {
-      console.log('------ 开始执行互动任务，作品数量:', worksList.length);
+      console.log('------ 开始执行互动任务，作品数量:', worksList.length, worksList[0]);
       scheduleEvent({
         tag: AutorWorksInteractionScheduleEvent.Start,
         status: 0,
@@ -155,6 +155,7 @@ export class InteractionService {
         );
         if (oldRecord) continue;
 
+        console.log('option.commentContent', option.commentContent)
         if (!option.commentContent) {
           const aiRes = await toolsApi.aiRecoverReview({
             content: (works.desc || '') + (works.title || ''),
@@ -183,12 +184,14 @@ export class InteractionService {
         });
 
         // ----- 1-评论作品 -----
+        console.log('------ 开始评论作品:', works.dataId,option.commentContent,works.author?.id)
         const commentWorksRes = await platController.createCommentByOther(
           account,
           works.dataId,
           option.commentContent,
           works.author?.id,
         );
+        console.log('------ 评论作品结果:', commentWorksRes)
 
         //  错误处理
         if (!commentWorksRes) {

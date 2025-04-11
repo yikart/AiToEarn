@@ -30,20 +30,105 @@
 }
 
 .taskList {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 16px;
+  padding: 24px;
+  background: #f0f2f5;
+  min-height: calc(100vh - 64px);
+
+  :global {
+    .ant-list-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: flex-start;
+    }
+
+    .ant-list-item {
+      flex: 0 0 calc(33.333% - 16px);
+      max-width: 350px;
+      margin: 0 !important;
+    }
+
+    .ant-card {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s;
+      max-width: 350px;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    .ant-card-cover {
+      height: 180px;
+      overflow: hidden;
+      background: #fafafa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ant-card-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+    }
+
+    .ant-card-meta {
+      flex: 1;
+    }
+
+    .ant-card-actions {
+      background: #fafafa;
+      padding: 12px 0;
+    }
+  }
 }
 
 .taskCard {
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
+  .taskImage {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fafafa;
+    overflow: hidden;
 
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .taskTitle {
+    margin-bottom: 12px;
+
+    h5 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      line-height: 1.4;
+    }
+  }
+
+  .taskInfo {
+    .taskProgress {
+      margin-bottom: 8px;
+    }
+
+    .ant-typography {
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+  }
+
+  .taskDeadline {
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px solid #f0f0f0;
   }
 }
 
@@ -422,4 +507,50 @@
   justify-content: center;
   margin-top: 32px;
   margin-bottom: 16px;
+}
+
+.platformIconWrapper {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.platformIcon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+// 响应式布局
+@media (max-width: 1200px) {
+  .taskList {
+    :global {
+      .ant-list-item {
+        flex: 0 0 calc(50% - 16px);
+        max-width: 350px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .taskList {
+    padding: 12px;
+
+    :global {
+      .ant-list-item {
+        flex: 0 0 100%;
+        max-width: 350px;
+      }
+    }
+  }
 }
