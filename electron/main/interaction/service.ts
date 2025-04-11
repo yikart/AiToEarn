@@ -194,6 +194,15 @@ export class InteractionService {
           option.commentContent,
           works.author?.id,
         );
+
+        if (option.commentContent.includes(',')) {
+          let randomIndex = Math.floor(Math.random() * option.commentContent.split(',').length);  
+          option.commentContent = option.commentContent.split(',')[randomIndex];
+        }
+
+        console.log('------ option.commentContent', option.commentContent);
+
+        
         const commentWorksRes = await platController.createCommentByOther(
           account,
           works.dataId,

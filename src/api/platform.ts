@@ -171,7 +171,7 @@ export const platformApi = {
       isToken: false,
     });
   },
-  
+
   // 获取所有热点事件
   getAllHotTopics() {
     return hotHttp.get<
@@ -289,13 +289,39 @@ export const platformApi = {
   },
 
   // 获取爆款标题的时间类型
-    getViralTitleTimeTypes() {
-        return hotHttp.get<string[]>(`/viral-titles/timeType`, {
-            isToken: false,
-        });
-    },
+  getViralTitleTimeTypes() {
+    return hotHttp.get<string[]>(`/viral-titles/timeType`, {
+      isToken: false,
+    });
+  },
 
+  // ---- 话题 ----
+  // 获取有数据的平台列表
+  findTalksPlatforms() {
+    return hotHttp.get<Platform[]>(`/talks/platforms`, {
+      isToken: false,
+    });
+  },
+
+  // 获取小红书话题流量榜、流量扶持日期
+  getXhsDates() {
+    return hotHttp.get<string[]>(`/xhs/dates`, {
+      isToken: false,
+    });
+  },
+
+  // 获取小红书话题流量榜、流量扶持分类
+  getXhsCategories() {
+    return hotHttp.get<string[]>(`/xhs/category`, {
+      isToken: false,
+    });
+  },
+
+  // 获取小红书话题流量榜
+  getXhsSubjectsRank(data: { phone: string }) {
+    return hotHttp.post<string>('/xhs/contents', data, {
+      isToken: false,
+    });
+  },
 };
 
-
-  

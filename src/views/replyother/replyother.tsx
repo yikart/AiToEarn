@@ -291,6 +291,8 @@ export default function Page() {
     setTaskModalVisible(false);
     setIsSelectMode(false);
 
+    // return;
+
     forEach(postList, (postId) => {
       const post = postList.find((item) => item.dataId === postId);
       if (!post) return;
@@ -308,14 +310,23 @@ export default function Page() {
 
     // 调用icpCreateInteractionOneKey函数
 
+    let option:any = {
+      platform: activeAccountType,
+      ...values,
+    }
+    if (values.commentType != 'ai') {
+      option.commentContent = customComments.join(',');
+    }
+
+    console.log('------ option', option);
+
+    // return;
+    
+
     const res = await icpCreateInteractionOneKey(
       activeAccountId,
       selectedPostData,
-      {
-        commentContent: '不错啊!',
-        platform: activeAccountType,
-        ...values,
-      },
+      option
     );
     console.log('------ res', res);
 
