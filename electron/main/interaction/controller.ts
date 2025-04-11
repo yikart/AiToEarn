@@ -72,6 +72,11 @@ export class InteractionController {
     worksList: WorkData[],
     option: {
       commentContent: string; // 评论内容
+      taskId?: string; // 任务ID
+      platform?: string; // 平台ID
+      likeProb?: any; // 点赞概率
+      collectProb?: any; // 收藏概率
+      commentProb?: any; // 评论概率
     },
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);
