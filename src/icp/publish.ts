@@ -53,6 +53,7 @@ export async function icpCreateImgTextPubRecord(
     0,
     platInfo.commonPubParamsConfig.imgTextConfig?.imagesMax,
   );
+  console.log(pubRecord);
   const res: ImgTextModel = await window.ipcRenderer.invoke(
     'ICP_PUBLISH_CREATE_IMG_TEXT_PUL',
     pubRecord,

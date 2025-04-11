@@ -34,8 +34,8 @@ export async function getFileContent(filePath: string): Promise<Buffer> {
  * @param filePath
  */
 export async function getImageBaseInfo(filePath: string) {
-  const absolutePath = path.resolve(filePath);
-  const metadata = await sharp(absolutePath).metadata();
+  const buffer = await getFileContent(filePath);
+  const metadata = await sharp(buffer).metadata();
 
   return {
     width: metadata.width,

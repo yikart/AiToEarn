@@ -182,6 +182,8 @@ export default function ArticleTask() {
     });
     if (!recordRes) return err();
 
+    console.log(accountListChoose);
+
     for (const account of accountListChoose) {
       // 创建二级记录
       await icpCreateImgTextPubRecord({
@@ -192,7 +194,7 @@ export default function ArticleTask() {
         pubRecordId: recordRes.id,
         publishTime: new Date(),
         coverPath: FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
-        imagesPath: selectedTask.dataInfo?.imageList || [],
+        imagesPath: selectedTask.dataInfo?.imageList.map(v => `https://ai-to-earn.oss-cn-beijing.aliyuncs.com/${v}`) || [],
       });
     }
 
