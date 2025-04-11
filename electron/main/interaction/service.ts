@@ -282,7 +282,7 @@ export class InteractionService {
       console.log('------ 所有作品处理完成');
       scheduleEvent({
         tag: AutorWorksInteractionScheduleEvent.ReplyCommentEnd,
-        status: 0,
+        status: 1,
       });
     } catch (error) {
       console.error('------ 任务执行出错:', error);
