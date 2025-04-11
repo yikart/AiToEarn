@@ -92,7 +92,7 @@ export class InteractionController {
         data?: any;
         error?: any;
       }) => {
-        windowOperate.sendRenderMsg(SendChannelEnum.CommentRelyProgress, e);
+        windowOperate.sendRenderMsg(SendChannelEnum.InteractionProgress, e);
       },
     );
 

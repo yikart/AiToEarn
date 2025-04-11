@@ -17,4 +17,5 @@ export enum SendChannelEnum {
   // 自动运行进度或状态
   AutoRun = 'AutoRun',
   CommentRelyProgress = 'CommentRelyProgress',
+  InteractionProgress = 'InteractionProgress',
 }

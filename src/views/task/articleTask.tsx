@@ -10,7 +10,7 @@ import { FileTextOutlined, ClockCircleOutlined, UserOutlined, CheckCircleOutline
 import styles from './task.module.scss';
 import { useState, useEffect, useRef } from 'react';
 import { taskApi } from '@/api/task';
-import { TaskArticle, TaskType } from '@@/types/task';
+import { TaskArticle, TaskType, TaskVideo } from '@@/types/task';
 import dayjs from 'dayjs';
 import { TaskInfoRef } from './components/popInfo';
 // import TaskInfo from './components/articleInfo';
@@ -163,6 +163,71 @@ export default function ArticleTask() {
     // }
   };
 
+  useEffect(() => {
+    console.log('accountListChoose', accountListChoose);
+    if (accountListChoose.length > 0) {
+      pubCore();
+    }
+  }, [accountListChoose]);
+
+    // 在组件内添加一个新的状态来存储任务记录
+    const [taskRecord, setTaskRecord] = useState<{
+      _id: string;
+      createTime: string;
+      isFirstTimeSubmission: boolean;
+      status: string;
+      taskId: string;
+    } | null>(null);
+
+
+    /**
+   * 接受任务
+   */
+    async function taskApply() {
+      if (!selectedTask) return;
+  
+      try {
+        const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
+        // 存储任务记录信息
+        if (res.code === 0 && res.data) {
+          setTaskRecord(res.data);
+          message.success('任务接受成功！');
+          
+          handleCompleteTask();
+  
+        } else {
+          message.error(res.msg || '接受任务失败，请稍后再试?');
+        }
+      } catch (error) {
+        message.error('接受任务失败，请稍后再试');
+      }
+    }
+
+
+    /**
+   * 完成任务
+   */
+    async function taskDone() {
+      console.log('完成任务', selectedTask);
+      if (!selectedTask || !taskRecord) {
+        message.error('任务信息不完整，无法完成任务');
+        return;
+      }
+  
+      try {
+        // 使用任务记录的 ID 而不是任务 ID
+        const res = await taskApi.taskDone(taskRecord._id, {
+          submissionUrl: selectedTask.title,
+          screenshotUrls: [selectedTask.dataInfo?.imageList?.[0] || ''],
+          qrCodeScanResult: selectedTask.title,
+        });
+        message.success('任务发布成功！');
+        refreshTaskList();
+      } catch (error) {
+        message.error('完成任务失败，请稍后再试');
+      }
+    }
+
   const pubCore = async () => {
     if (!selectedTask) return;
     
@@ -206,6 +271,12 @@ export default function ArticleTask() {
     }
 
     const okRes = await icpPubImgText(recordRes.id);
+
+    if (okRes.length > 0) {
+      taskDone();
+    }
+
+
     setLoading(false);
     setPubProgressModuleOpen(false);
     usePubStroe.getState().clearImgTextPubSave();
@@ -263,7 +334,9 @@ export default function ArticleTask() {
           console.log('账号:', aList);
           setAccountListChoose(aList);
           setChooseAccountOpen(false);
-          await pubCore();
+          // setTimeout(async () => {
+            // await pubCore();
+          // }, 2000);
         }}
       />
 
@@ -356,7 +429,7 @@ export default function ArticleTask() {
             key="complete" 
             type="primary" 
             icon={<CheckCircleOutlined />}
-            onClick={handleCompleteTask}
+            onClick={taskApply}
           >
             一键完成
           </Button>

@@ -5,12 +5,12 @@
  * @LastEditors: nevin
  * @Description: 互动任务组件
  */
-import { Card, List, Typography, Button, Space, Tag, Spin, Modal, Descriptions, message, Progress } from 'antd';
+import { Card, List, Typography, Button, Space, Tag, Spin, Modal, Descriptions, message, Progress, Image, notification } from 'antd';
 import { CommentOutlined, LikeOutlined, ShareAltOutlined, UserOutlined, ClockCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import styles from './task.module.scss';
 import { useState, useEffect, useRef } from 'react';
 import { taskApi } from '@/api/task';
-import { TaskType } from '@@/types/task';
+import { TaskType, TaskVideo } from '@@/types/task';
 import dayjs from 'dayjs';
 import { TaskInfoRef } from './components/popInfo';
 import ChooseAccountModule from '@/views/publish/components/ChooseAccountModule/ChooseAccountModule';
@@ -24,6 +24,8 @@ import KwaiIcon from '@/assets/svgs/account/ks.svg';
 import WxSphIcon from '@/assets/svgs/account/wx-sph.svg';
 import XhsIcon from '@/assets/svgs/account/xhs.svg';
 import DouyinIcon from '@/assets/svgs/account/douyin.svg';
+import logo from '@/assets/logo.png';
+import { SendChannelEnum } from '@@/UtilsEnum';
 
 const { Title, Text } = Typography;
 
@@ -138,13 +140,100 @@ export default function InteractionTask() {
     setChooseAccountOpen(true);
   };
 
+      // 在组件内添加一个新的状态来存储任务记录
+      const [taskRecord, setTaskRecord] = useState<{
+        _id: string;
+        createTime: string;
+        isFirstTimeSubmission: boolean;
+        status: string;
+        taskId: string;
+      } | null>(null);
+
+
+      /**
+   * 接受任务
+   */
+      async function taskApply() {
+
+        // handleCompleteTask();
+        // return;
+        if (!selectedTask) return;
+    
+        try {
+          const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
+          // 存储任务记录信息
+          if (res.code === 0 && res.data) {
+            setTaskRecord(res.data);
+            message.success('任务接受成功！');
+            
+            handleCompleteTask();
+    
+          } else {
+            message.error(res.msg || '接受任务失败，请稍后再试?');
+          }
+        } catch (error) {
+          message.error('接受任务失败，请稍后再试');
+        }
+      }
+
+
+      
+    /**
+   * 完成任务
+   */
+    async function taskDone() {
+      console.log('完成任务', selectedTask);
+      if (!selectedTask || !taskRecord) {
+        message.error('任务信息不完整，无法完成任务');
+        return;
+      }
+  
+      try {
+        // 使用任务记录的 ID 而不是任务 ID
+        const res = await taskApi.taskDone(taskRecord._id, {
+          submissionUrl: selectedTask.title,
+          screenshotUrls: [selectedTask.dataInfo?.imageList?.[0] || ''],
+          qrCodeScanResult: selectedTask.title,
+        });
+        message.success('任务发布成功！');
+        refreshTaskList();
+      } catch (error) {
+        message.error('完成任务失败，请稍后再试');
+      }
+    }
+
+
+    window.ipcRenderer.on(SendChannelEnum.InteractionProgress, (e, args) => {
+      console.log('--------- e', e);
+      console.log('--------- args', args);
+
+      if(args.status === 1) {
+        taskDone();
+
+        notification.open({
+          message: '互动任务完成',
+        });
+      }
+  
+      
+    });
+
+
+
   const handleInteraction = async (account: any) => {
     console.log('account', account.id);
     console.log('selectedTask', selectedTask.dataInfo);
     console.log('selectedTask.description', selectedTask.description);
     console.log('selectedTask.accountTypes', account.type);
 
+    let option:any = 
+      {
+        platform: account.type,
+      }
     
+    if(selectedTask.dataInfo?.commentContent) {
+      option.commentContent = selectedTask.dataInfo?.commentContent;
+    }
 
     try {
       setLoading(true);
@@ -169,10 +258,7 @@ export default function InteractionTask() {
             xsec_token: 'ABQgeOn-14sjhmCALp9dEISLZrOOyDdGZwKtr2umjsWeo=',
           }
         } ],
-        {
-          commentContent: "真不错 好看",
-          platform: account.type,
-        }
+        option
       );
 
       console.log('handleInteraction','res', res);
@@ -241,7 +327,12 @@ export default function InteractionTask() {
                 className={styles.taskCard}
                 cover={
                   <div className={styles.taskImage}>
-                    <CommentOutlined style={{ fontSize: '48px', color: '#52c41a' }} />
+                    <Image
+                      src={logo}
+                      alt="logo"
+                      preview={false}
+                      style={{ width: '100%', height: '200px', objectFit: 'contain' }}
+                    />
                   </div>
                 }
                 actions={[
@@ -311,7 +402,7 @@ export default function InteractionTask() {
             key="complete" 
             type="primary" 
             icon={<CheckCircleOutlined />}
-            onClick={handleCompleteTask}
+            onClick={taskApply}
           >
             一键完成
           </Button>
