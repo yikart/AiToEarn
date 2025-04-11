@@ -724,7 +724,7 @@ const Trending: React.FC = () => {
     // 如果是展开热门专题，并且有消息类型，则加载数据
     if (newTopicExpanded && msgTypeList.length > 0) {
       console.log('准备加载热门专题数据');
-
+      fetchTopicTimeTypes(msgTypeList[0]);
       // 如果没有选择消息类型，则自动选择第一个
       if (!selectedMsgType && msgTypeList.length > 0) {
         setSelectedMsgType(msgTypeList[0]);
