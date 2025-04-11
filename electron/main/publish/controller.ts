@@ -8,7 +8,7 @@
 import { Controller, Icp, Inject } from '../core/decorators';
 import { PublishService } from './service';
 import { getUserInfo } from '../user/comment';
-import { Between, FindOptionsWhere, Not } from 'typeorm';
+import { Between, FindOptionsWhere } from 'typeorm';
 import {
   backPageData,
   type CorrectQuery,
@@ -59,7 +59,7 @@ export class PublishController {
       : {
           ...(query.type !== undefined && { type: query.type }),
           ...(query.status === undefined
-            ? { status: Not(PubStatus.UNPUBLISH) }
+            ? {}
             : {
                 status: query.status,
               }),

@@ -37,9 +37,13 @@ import type { pubRecordListQuery } from '../../electron/global/table';
 
 // 创建发布记录
 export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
+  console.log('创建发布记录：', pubRecord);
   const res: PubRecordModel = await window.ipcRenderer.invoke(
     'ICP_PUBLISH_CREATE_PUB_RECORD',
-    pubRecord,
+    {
+      ...pubRecord,
+      id: undefined,
+    },
   );
   return res;
 }
@@ -53,10 +57,13 @@ export async function icpCreateImgTextPubRecord(
     0,
     platInfo.commonPubParamsConfig.imgTextConfig?.imagesMax,
   );
-  console.log(pubRecord);
+  console.log('创建图文发布记录：', pubRecord);
   const res: ImgTextModel = await window.ipcRenderer.invoke(
     'ICP_PUBLISH_CREATE_IMG_TEXT_PUL',
-    pubRecord,
+    {
+      pubRecord,
+      id: undefined,
+    },
   );
   return res;
 }
@@ -71,9 +78,13 @@ export async function icpCreateVideoPubRecord(pubRecord: Partial<VideoPul>) {
   const { topics, cleanedString } = parseTopicString(pubRecord.desc || '');
   pubRecord.topics = [...new Set(pubRecord.topics?.concat(topics))];
   pubRecord.desc = cleanedString;
+  console.log('创建视频发布记录：', pubRecord);
   const res: VideoPul = await window.ipcRenderer.invoke(
     'ICP_PUBLISH_CREATE_VIDEO_PUL',
-    pubRecord,
+    {
+      ...pubRecord,
+      id: undefined,
+    },
   );
   return res;
 }

@@ -397,10 +397,15 @@ export const useVideoPageStore = create(
           try {
             methods.setOperateId();
 
+            commonPubParams = {
+              ...pubRecord,
+              describe: pubRecord?.desc,
+            };
+
             if (pubRecord!.commonCoverPath) {
               const cover = await getImgFile(pubRecord!.commonCoverPath);
               commonPubParams = {
-                ...pubRecord,
+                ...commonPubParams,
                 cover,
               };
             }

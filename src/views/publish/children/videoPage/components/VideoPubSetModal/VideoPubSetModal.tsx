@@ -185,6 +185,7 @@ const VideoPubSetModal = memo(
           setLoading(false);
           message.error('网络繁忙，请稍后重试！');
         };
+        usePubStroe.getState().clearVideoPubSaveData();
         // 创建一级记录
         const recordRes = await icpCreatePubRecord({
           title: commonPubParams.title,
@@ -266,7 +267,7 @@ const VideoPubSetModal = memo(
 
       const close = () => {
         setVideoPubSetModalOpen(false);
-        videoPubSetModalVideoRef.current!.pause();
+        videoPubSetModalVideoRef.current?.pause();
       };
 
       return (
@@ -274,7 +275,12 @@ const VideoPubSetModal = memo(
           <PubProgressModule
             pubProgressData={pubProgressData}
             open={pubProgressModuleOpen}
-            onClose={() => setPubProgressModuleOpen(false)}
+            onClose={() => {
+              setPubProgressModuleOpen(false);
+              if (loading) {
+                close();
+              }
+            }}
           />
           <PubAccountDetModule
             ref={pubAccountDetModuleRef}

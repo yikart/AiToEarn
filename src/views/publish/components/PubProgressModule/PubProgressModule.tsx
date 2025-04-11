@@ -40,7 +40,10 @@ const PubProgressModule = memo(
           footer={null}
           closeIcon={<MinusOutlined />}
         >
-          <Alert message="关闭此弹框和页面不会影响发布流程" type="success" />
+          <Alert
+            message="关闭此弹框和页面不会影响发布流程，但请不要关闭爱团团哦~"
+            type="success"
+          />
           <div className={styles.pubProgressModule}>
             {pubProgressData.map((v) => {
               const { account } = v;

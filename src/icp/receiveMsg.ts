@@ -9,7 +9,6 @@ const bindEventCore = (
   channel: SendChannelEnum,
   listener: (event: IpcRendererEvent, ...args: any[]) => void,
 ): (() => void) => {
-  console.log('--------------------------');
   const e = window.ipcRenderer.on(channel, listener);
   // @ts-ignore
   const events: any[] = e._events[channel];

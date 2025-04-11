@@ -142,59 +142,61 @@ const PubRecordDetails = memo(
                           </div>
                         </div>
                         <div className="pubRecord-record-item-btns">
-                          {v.status !== 1 ? (
-                            <Button
-                              type="link"
-                              onClick={() => {
-                                if (
-                                  currPubRecordModel?.type === PubType.VIDEO
-                                ) {
-                                  setRecordLoaidng(true);
-                                  const prl = pubRecordList.filter(
-                                    (v) => v.status === 2,
-                                  );
-                                  restartPub(
-                                    prl as VideoModel[],
-                                    prl.map(
-                                      (k) => accountMap.get(k.accountId)!,
-                                    ),
-                                    currPubRecordModel,
-                                  );
-                                  setRecordLoaidng(false);
-                                  navigate('/publish/video');
-                                } else if (
-                                  currPubRecordModel?.type === PubType.ImageText
-                                ) {
-                                }
-                              }}
-                            >
-                              重新发布
-                            </Button>
-                          ) : (
-                            <Button
-                              type="link"
-                              onClick={async () => {
-                                if (!v.dataId) return;
-                                const newState: IExamineVideo = {
-                                  jsCode: '',
-                                  open: true,
-                                  url: '',
-                                  account,
-                                };
-                                if (account?.type === AccountType.WxSph) {
-                                  const videoFile = await getVideoFile(
-                                    (v as VideoModel).videoPath!,
-                                  );
-                                  newState['videoSrc'] = videoFile.videoUrl;
-                                } else {
-                                  newState['url'] = v.previewVideoLink || '';
-                                }
-                                onExamineVideoClick(newState);
-                              }}
-                            >
-                              查看
-                            </Button>
-                          )}
+                          {v.status !== 0 &&
+                            (v.status !== 1 ? (
+                              <Button
+                                type="link"
+                                onClick={() => {
+                                  if (
+                                    currPubRecordModel?.type === PubType.VIDEO
+                                  ) {
+                                    setRecordLoaidng(true);
+                                    const prl = pubRecordList.filter(
+                                      (v) => v.status === 2,
+                                    );
+                                    restartPub(
+                                      prl as VideoModel[],
+                                      prl.map(
+                                        (k) => accountMap.get(k.accountId)!,
+                                      ),
+                                      currPubRecordModel,
+                                    );
+                                    setRecordLoaidng(false);
+                                    navigate('/publish/video');
+                                  } else if (
+                                    currPubRecordModel?.type ===
+                                    PubType.ImageText
+                                  ) {
+                                  }
+                                }}
+                              >
+                                重新发布
+                              </Button>
+                            ) : (
+                              <Button
+                                type="link"
+                                onClick={async () => {
+                                  if (!v.dataId) return;
+                                  const newState: IExamineVideo = {
+                                    jsCode: '',
+                                    open: true,
+                                    url: '',
+                                    account,
+                                  };
+                                  if (account?.type === AccountType.WxSph) {
+                                    const videoFile = await getVideoFile(
+                                      (v as VideoModel).videoPath!,
+                                    );
+                                    newState['videoSrc'] = videoFile.videoUrl;
+                                  } else {
+                                    newState['url'] = v.previewVideoLink || '';
+                                  }
+                                  onExamineVideoClick(newState);
+                                }}
+                              >
+                                查看
+                              </Button>
+                            ))}
                         </div>
                       </li>
                     );
