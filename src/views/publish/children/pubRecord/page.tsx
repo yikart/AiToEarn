@@ -22,10 +22,16 @@ export const ImageView = ({
   height: number | string;
 }) => {
   const [imgFile, setImgFile] = useState<IImgFile>();
+  const [imgUrl, setImgUrl] = useState('');
+
   useEffect(() => {
-    getImgFile(prm.coverPath).then((res) => {
-      setImgFile(res);
-    });
+    if (prm.coverPath.includes('https://')) {
+      setImgUrl(prm.coverPath);
+    } else {
+      getImgFile(prm.coverPath).then((res) => {
+        setImgFile(res);
+      });
+    }
   }, []);
 
   const filename = useMemo(() => {
@@ -37,10 +43,18 @@ export const ImageView = ({
       className={styles['pubRecord-pubCon']}
       style={{ minHeight: height + 'px' }}
     >
-      {imgFile && <Image src={imgFile.imgUrl} height={height} width={width} />}
-      <span title={filename} className="pubRecord-pubCon-name">
-        {filename}
-      </span>
+      {imgUrl ? (
+        <Image src={imgUrl} height={height} width={width} />
+      ) : (
+        <>
+          {imgFile && (
+            <Image src={imgFile.imgUrl} height={height} width={width} />
+          )}
+          <span title={filename} className="pubRecord-pubCon-name">
+            {filename}
+          </span>
+        </>
+      )}
     </div>
   );
 };

@@ -188,6 +188,7 @@ export default function ArticleTask() {
     }
 
     console.log('pubList', pubList);
+    console.log(accountListChoose);
 
     for (const account of accountListChoose) {
       
