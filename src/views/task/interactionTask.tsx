@@ -81,6 +81,7 @@ export default function InteractionTask() {
     totalCount: 0,
   });
   const [hasMore, setHasMore] = useState(true);
+  const selectedTaskRef = useRef<any>(null);
   const [selectedTask, setSelectedTask] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [chooseAccountOpen, setChooseAccountOpen] = useState(false);
@@ -95,6 +96,7 @@ export default function InteractionTask() {
     try {
       const res = await taskApi.getTaskList<any>({
         ...pageInfo,
+        pageSize: 100,
         type: TaskType.INTERACTION,
       });
 
@@ -119,7 +121,7 @@ export default function InteractionTask() {
 
   useEffect(() => {
     getTaskList();
-    return onInteractionProgress((args) => {
+    const unload = onInteractionProgress((args) => {
       if (args.status === 1) {
         taskDone();
 
@@ -128,6 +130,10 @@ export default function InteractionTask() {
         });
       }
     });
+    return () => {
+      unload();
+      console.log(1111);
+    };
   }, []);
 
   const formatDate = (date: string) => {
@@ -199,11 +205,17 @@ export default function InteractionTask() {
     }
   }
 
+  useEffect(() => {
+    selectedTaskRef.current = selectedTask;
+  }, [selectedTask]);
+
   /**
    * 完成任务
    */
   async function taskDone() {
-    console.log('完成任务', selectedTask);
+    console.log('taskDone执行:', selectedTaskRef.current);
+    if (!selectedTaskRef.current) return;
+    const selectedTask = selectedTaskRef.current;
     if (!selectedTask || !taskRecord) {
       message.error('任务信息不完整，无法完成任务');
       return;
@@ -296,6 +308,13 @@ export default function InteractionTask() {
 
   return (
     <div className={styles.taskList}>
+      <Button
+        onClick={() => {
+          taskDone();
+        }}
+      >
+        start
+      </Button>
       <ChooseAccountModule
         open={chooseAccountOpen}
         onClose={() => !downloading && setChooseAccountOpen(false)}

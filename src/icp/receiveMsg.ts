@@ -9,12 +9,17 @@ const bindEventCore = (
   channel: SendChannelEnum,
   listener: (event: IpcRendererEvent, ...args: any[]) => void,
 ): (() => void) => {
+  console.log('--------------------------');
   const e = window.ipcRenderer.on(channel, listener);
   // @ts-ignore
   const events: any[] = e._events[channel];
   if (!events) return () => {};
-  const f = events[events.length === 0 ? 0 : events.length - 1];
-
+  let f: any;
+  if (events instanceof Array) {
+    f = events[events.length === 0 ? 0 : events.length - 1];
+  } else {
+    f = events;
+  }
   return () => {
     if (f) {
       window.ipcRenderer.off(channel, f);
