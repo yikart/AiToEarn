@@ -163,6 +163,37 @@ export default function ArticleTask() {
     // }
   };
 
+  useEffect(() => {
+    console.log('accountListChoose', accountListChoose);
+    if (accountListChoose.length > 0) {
+      pubCore();
+    }
+  }, [accountListChoose]);
+
+
+    /**
+   * 完成任务
+   */
+    async function taskDone() {
+      console.log('完成任务', selectedTask);
+      if (!selectedTask) {
+        message.error('任务信息不完整，无法完成任务');
+        return;
+      }
+  
+      try {
+        // 使用任务记录的 ID 而不是任务 ID
+        const res = await taskApi.taskDone(selectedTask._id, {
+          submissionUrl: selectedTask.title,
+          screenshotUrls: [selectedTask.dataInfo?.imageList?.[0] || ''],
+          qrCodeScanResult: selectedTask.title,
+        });
+        message.success('任务发布成功！');
+      } catch (error) {
+        message.error('完成任务失败，请稍后再试');
+      }
+    }
+
   const pubCore = async () => {
     if (!selectedTask) return;
     
@@ -206,6 +237,12 @@ export default function ArticleTask() {
     }
 
     const okRes = await icpPubImgText(recordRes.id);
+
+    if (okRes.length > 0) {
+      taskDone();
+    }
+
+
     setLoading(false);
     setPubProgressModuleOpen(false);
     usePubStroe.getState().clearImgTextPubSave();
@@ -263,7 +300,9 @@ export default function ArticleTask() {
           console.log('账号:', aList);
           setAccountListChoose(aList);
           setChooseAccountOpen(false);
-          await pubCore();
+          // setTimeout(async () => {
+            // await pubCore();
+          // }, 2000);
         }}
       />
 
