@@ -217,7 +217,7 @@ export default function InteractionTask() {
     if (!selectedTaskRef.current) return;
     const selectedTask = selectedTaskRef.current;
     if (!selectedTask || !taskRecord) {
-      message.error('任务信息不完整，无法完成任务');
+      // message.error('任务信息不完整，无法完成任务');
       return;
     }
 
@@ -308,13 +308,7 @@ export default function InteractionTask() {
 
   return (
     <div className={styles.taskList}>
-      <Button
-        onClick={() => {
-          taskDone();
-        }}
-      >
-        start
-      </Button>
+
       <ChooseAccountModule
         open={chooseAccountOpen}
         onClose={() => !downloading && setChooseAccountOpen(false)}
