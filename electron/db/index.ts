@@ -14,7 +14,6 @@ import * as migrations from './migrations';
 import path from 'path';
 import { app } from 'electron';
 import fs from 'fs/promises';
-import { asyData as accountExamine } from './scripts/account';
 import { logger } from '../global/log';
 import { AutoRunModel } from './models/autoRun';
 import { AutoRunRecordModel } from './models/autoRunRecord';
@@ -53,9 +52,7 @@ export async function initSqlite3Db() {
   if (!AppDataSource.isInitialized) {
     try {
       await AppDataSource.initialize();
-      await AppDataSource.runMigrations();
-      // 运行账号检查
-      await accountExamine(AppDataSource);
+      // await AppDataSource.runMigrations(); // 上面已经有自动迁移
       return true;
     } catch (error) {
       logger.error('Error during database initialization:', error);
