@@ -786,7 +786,13 @@ export default function Page() {
                                 <Button
                                   type="primary"
                                   icon={<DownOutlined />}
-                                  onClick={() => setTaskModalVisible(true)}
+                                  onClick={() =>{
+                                    if (selectedPosts.length === 0) {
+                                      message.error('请选择作品');
+                                      return;
+                                    }
+                                    setTaskModalVisible(true)
+                                  }}
                                   size="large"
                                 >
                                   下发任务
