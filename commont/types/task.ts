@@ -58,6 +58,7 @@ export interface TaskInteraction extends TaskData {
   accountType: AccountType; // 平台类型
   worksId: string; // 作品ID
   authorId?: string; // 作者ID
+  commentContent?: string; // 评论内容,不填则使用AI
 }
 
 export type TaskDataInfo =
