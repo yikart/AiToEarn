@@ -256,6 +256,14 @@ const Trending: React.FC = () => {
     null,
   );
 
+  // 话题相关状态
+  const [talkExpanded, setTalkExpanded] = useState(false);
+  const [talkELoading, setTalkLoading] = useState(false);
+  const [talkEPagination, setTalkPagination] = useState<PaginationMeta | null>(
+    null,
+  );
+  const [talkPlatforms, setTalkPlatforms] = useState<Platform[]>([]);
+
   // 在右侧内容区 - 热门专题界面部分添加筛选区
   const [selectedPlatformId, setSelectedPlatformId] = useState<string>('');
   const [selectedTopicType, setSelectedTopicType] = useState<string>('');
@@ -1219,6 +1227,97 @@ const Trending: React.FC = () => {
       ))}
     </div>
   </div>;
+
+  // 获取话题平台列表
+  const fetchTalksPlatforms = async () => {
+    setTalkLoading(true);
+    try {
+      const platforms = await platformApi.findTalksPlatforms();
+      const timeTypeData = await platformApi.getViralTitleTimeTypes();
+      setViralTitlePlatforms(platforms);
+      if (platforms.length > 0) {
+        setSelectedViralPlatform(platforms[0]);
+        fetchViralTitleCategories(platforms[0].id);
+        fetchViralTitleContents(platforms[0].id, timeTypeData[0]);
+      }
+    } catch (error) {
+      console.error('获取爆款标题平台失败:', error);
+      setViralTitlePlatforms([]);
+    } finally {
+      setTalkLoading(false);
+    }
+  };
+
+  // 修改话题点击处理函数
+  const handleTalkExpandClick = async () => {
+    const newTalkExpanded = !talkExpanded;
+    console.log('切换话题展开状态:', newTalkExpanded);
+
+    // 更新展开状态
+    setTalkExpanded(newTalkExpanded);
+
+    // 关闭其他展开的内容
+    setContentExpanded(false);
+    setHotPlatformExpanded(false);
+    setHotEventExpanded(false);
+    setViralTitleExpanded(false);
+    setTopicExpanded(false);
+
+    // 如果是展开话题，并且有消息类型，则加载数据
+    if (newTalkExpanded && msgTypeList.length > 0) {
+      console.log('准备加载话题数据');
+
+      // 如果没有选择消息类型，则自动选择第一个
+      if (!selectedMsgType && msgTypeList.length > 0) {
+        setSelectedMsgType(msgTypeList[0]);
+      }
+
+      // 使用当前选择的消息类型或第一个消息类型
+      const msgType = selectedMsgType || msgTypeList[0];
+
+      // 如果没有选择平台，则使用第一个平台
+      if (!selectedPlatformId && platforms.length > 0) {
+        setSelectedPlatformId(platforms[0].id);
+      }
+
+      // 调用处理函数获取数据
+      setTopicLoading(true);
+      try {
+        // 获取二级分类
+        await fetchTopicTypes(msgType);
+
+        // 获取专题数据 - 使用时间类型参数和当前选择的平台
+        const hotTopicsData = await platformApi.getAllTopics({
+          msgType: msgType,
+          platformId:
+            selectedPlatformId ||
+            (platforms.length > 0 ? platforms[0].id : undefined),
+          timeType: selectedTimeType || selectedTimeRange,
+        });
+
+        if (hotTopicsData && hotTopicsData.items) {
+          // 类型转换，确保类型兼容
+          setTopicContents(hotTopicsData.items as unknown as TopicContent[]);
+          if (hotTopicsData.meta) {
+            setTopicPagination({
+              currentPage: hotTopicsData.meta.currentPage || 1,
+              totalPages: hotTopicsData.meta.totalPages || 1,
+              totalItems: hotTopicsData.meta.totalItems || 0,
+              itemCount: hotTopicsData.meta.itemCount || 0,
+              itemsPerPage: hotTopicsData.meta.itemsPerPage || 20,
+            });
+          }
+        } else {
+          setTopicContents([]);
+        }
+      } catch (error) {
+        console.error('获取专题数据失败:', error);
+        setTopicContents([]);
+      } finally {
+        setTopicLoading(false);
+      }
+    }
+  };
 
   return (
     <>
