@@ -1581,7 +1581,7 @@ const Trending: React.FC = () => {
           </div>
 
           {/* 话题 */}
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <div
               className="flex items-center justify-between font-medium text-gray-900 mb-3 cursor-pointer hover:text-[#a66ae4]"
               onClick={() => {
@@ -1632,7 +1632,7 @@ const Trending: React.FC = () => {
                 )}
               </ul>
             )}
-          </div>
+          </div> */}
 
         </div>
 
