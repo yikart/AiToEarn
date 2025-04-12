@@ -223,6 +223,7 @@ const Trending: React.FC = () => {
   const [rankingMaxDate, setRankingMaxDate] = useState<string>(
     dayjs().subtract(2, 'day').format('YYYY-MM-DD'),
   );
+  const [rankingDateLoading, setRankingDateLoading] = useState(false);
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [rankingItems, setRankingItems] = useState<RankingItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -258,11 +259,10 @@ const Trending: React.FC = () => {
 
   // 话题相关状态
   const [talkExpanded, setTalkExpanded] = useState(false);
-  const [talkELoading, setTalkLoading] = useState(false);
-  const [talkEPagination, setTalkPagination] = useState<PaginationMeta | null>(
-    null,
-  );
+  const [talkLoading, setTalkLoading] = useState(false);
+  const [talkPagination, setTalkPagination] = useState<PaginationMeta | null>(null);
   const [talkPlatforms, setTalkPlatforms] = useState<Platform[]>([]);
+  const [selectedTalkPlatform, setSelectedTalkPlatform] = useState<Platform | null>(null);
 
   // 在右侧内容区 - 热门专题界面部分添加筛选区
   const [selectedPlatformId, setSelectedPlatformId] = useState<string>('');
@@ -320,6 +320,14 @@ const Trending: React.FC = () => {
   const [selectedViralTimeType, setViralSelectedTimeType] =
     useState<string>('近7天');
 
+  // 通用的一些固定值
+  const xhsPlatformId = "6789d6a69b3e38d8da09ba47";
+  const dyPlatformId = "6789d6a69b3e38d8da09ba48";
+  const ksPlatformId = "678a3c1b18789840c02c806f";
+  const biliPlatformId = "678a3c6218789840c02c8070";
+  const gzhPlatformId = "679095d7df03a9e7d4b30ec9";
+  const sphPlatformId = "678a3bdb18789840c02c806e"; 
+
   // 添加处理图片加载错误的函数
   const handleImageError = (imageId: string) => {
     setImgErrors((prev) => ({
@@ -358,31 +366,40 @@ const Trending: React.FC = () => {
 
   // 获取平台榜单数据
   const fetchPlatformRanking = async (platformId: string) => {
+    console.log("fetchPlatformRanking:", platformId);
     setRankingLoading(true);
     try {
-      const data = await platformApi.getPlatformRanking(platformId);
-      console.log('data:', data);
-      setRankingList(data);
+      const rankingData = await platformApi.getPlatformRanking(platformId);
+      console.log('rankingData:', rankingData);
+      setRankingList(rankingData);
 
       // 自动选择第一个榜单并获取其内容
-      if (data.length > 0) {
-        const firstRanking = data[0];
+      if (rankingData.length > 0) {
+        const firstRanking = rankingData[0];
+        // 获取榜单日期
+        await fetchRankingDates(firstRanking.id);
+
         setSelectedRanking(firstRanking);
 
         // // 获取榜单分类
         await fetchRankingCategories(firstRanking.id);
 
-        // 获取榜单日期
-        await fetchRankingDates(firstRanking.id);
-
         // // 获取榜单内容
-        await fetchRankingContents(firstRanking.id, 1);
+        // await fetchRankingContents(firstRanking.id, 1);
+
+        // 重置页码到第一页
+        setCurrentPage(1);
       } else {
         // 如果没有榜单数据，清空相关状态
         setSelectedRanking(null);
         setCategories(['全部']);
         setSelectedCategory('全部');
         setRankingContents([]);
+        setCurrentPage(1);
+        // ... 可能还需要清空 datesList, min/max date 等 ...
+        setRankingDatesList([]);
+        setRankingMaxDate(undefined);
+        setRankingMinDate(undefined);
       }
     } catch (error) {
       console.error('获取平台榜单失败:', error);
@@ -391,6 +408,10 @@ const Trending: React.FC = () => {
       setCategories(['全部']);
       setSelectedCategory('全部');
       setRankingContents([]);
+      setCurrentPage(1);
+      setRankingDatesList([]);
+      setRankingMaxDate(undefined);
+      setRankingMinDate(undefined);
     } finally {
       setRankingLoading(false);
     }
@@ -424,17 +445,58 @@ const Trending: React.FC = () => {
 
   // 获取榜单日期列表
   const fetchRankingDates = async (rankingId: string) => {
+    setRankingDateLoading(true);
+    let fetchedMaxDate = ''; // 用于临时存储获取到的日期
     try {
-      const data = await platformApi.getRankingDates(rankingId);
-      setRankingMaxDate((data[0] as any).queryDate); // 显示的最大日期
-      setRankingMinDate((data[data.length - 1] as any).queryDate); // 显示的最小日期
-      console.log(rankingMinDate, rankingMaxDate);
-      setSelectedDate(rankingMaxDate);
-      setRankingDatesList(data as any);
+      const rankingDatesData = await platformApi.getRankingDates(rankingId);
+      console.log("fetchRankingDates:--",  rankingId, rankingDatesData);
+      if (rankingDatesData && rankingDatesData.length > 0) {
+        const maxDate = (rankingDatesData[0] as any).queryDate;
+        const minDate = (rankingDatesData[rankingDatesData.length - 1] as any).queryDate;
+        setRankingMaxDate(maxDate);
+        setRankingMinDate(minDate);
+        fetchedMaxDate = maxDate; // 保存获取到的日期
+        setRankingDatesList(rankingDatesData as any);
+    } else {
+        // 没有日期数据，清空相关状态
+        setRankingMaxDate(undefined);
+        setRankingMinDate(undefined);
+        setRankingDatesList([]);
+        fetchedMaxDate = ''; // 没有日期，设为空
+    }
     } catch (error) {
       console.error('获取榜单日期列表失败:', error);
+      setRankingMaxDate(undefined);
+      setRankingMinDate(undefined);
+      setRankingDatesList([]);
+      fetchedMaxDate = ''; // 出错也设为空
+    } finally {
+      // 这将触发上面定义的 useEffect (如果 selectedDate 确实改变了)
+      setSelectedDate(fetchedMaxDate);
+      console.log("检查日期：", fetchedMaxDate, selectedDate);
+      setRankingDateLoading(false);
     }
   };
+
+  // 这个 useEffect 负责在依赖变化时获取榜单内容
+  useEffect(() => {
+    // 从 selectedRanking 中获取 rankingId
+    const currentRankingId = selectedRanking?.id; // 使用可选链 ?. 安全访问 id
+
+    // 检查依赖项是否有效，防止在初始状态或无效状态下发起请求
+    // 重要：这里的检查条件要根据你的逻辑调整：
+    // - currentRankingId 必须存在
+    // - selectedDate 必须存在且不为空字符串 (或者你用来表示“未选择”的其他值)
+    if (currentRankingId && selectedDate && selectedDate !== '') {
+      // 调用 fetchRankingContents，传入当前有效的依赖值
+      fetchRankingContents(currentRankingId, currentPage, selectedCategory, selectedDate);
+    } else {
+      // 如果依赖项无效（例如，刚加载还没有选择榜单，或者日期被清空），
+      // 你可能想清空内容列表
+      console.log("useEffect for content: 依赖项 (rankingId 或 selectedDate) 无效，清空内容");
+      setRankingContents([]);
+    }  // 依赖项数组: 当数组中的任何一个值发生变化时，useEffect 内部的函数会重新执行
+  }, [selectedRanking, selectedCategory, selectedDate, currentPage]); // 依赖 selectedRanking, selectedDate 和 currentPage  
 
   // 获取榜单内容
   const fetchRankingContents = async (
@@ -1233,16 +1295,16 @@ const Trending: React.FC = () => {
     setTalkLoading(true);
     try {
       const platforms = await platformApi.findTalksPlatforms();
-      const timeTypeData = await platformApi.getViralTitleTimeTypes();
-      setViralTitlePlatforms(platforms);
+      // const timeTypeData = await platformApi.getViralTitleTimeTypes();
+      setTalkPlatforms(platforms);
       if (platforms.length > 0) {
-        setSelectedViralPlatform(platforms[0]);
-        fetchViralTitleCategories(platforms[0].id);
-        fetchViralTitleContents(platforms[0].id, timeTypeData[0]);
+        setSelectedTalkPlatform(platforms[0]);
+        // fetchViralTitleCategories(platforms[0].id);
+        // fetchViralTitleContents(platforms[0].id, timeTypeData[0]);
       }
     } catch (error) {
-      console.error('获取爆款标题平台失败:', error);
-      setViralTitlePlatforms([]);
+      console.error('获取话题平台失败:', error);
+      setTalkPlatforms([]);
     } finally {
       setTalkLoading(false);
     }
@@ -1319,6 +1381,30 @@ const Trending: React.FC = () => {
     }
   };
 
+  
+  // 处理话题平台选择
+  const handleTalkPlatformSelect = (platform: Platform) => {
+    setSelectedTalkPlatform(platform);
+    // 小红书话题页面
+    // if (platform.id === xhsPlatformId) {
+    //   params.category = category;
+    // }
+
+    // 抖音话题页面
+    // if (platform.id === dyPlatformId) {
+    //   params.category = category;
+    // }
+
+    // 清空原有数据并显示加载动画
+    // setSelectedViralCategory('全部');
+    // setShowSingleCategory(false);
+    // setViralTitleData([]);
+    // fetchViralTitleCategories(platform.id);
+    // fetchViralTitleTimeTypes(); // 获取时间类型
+    // fetchViralTitleContents(platform.id, timeType);
+  };
+
+
   return (
     <>
       <div className="flex h-full bg-gray-50" style={{ overflow: 'auto' }}>
@@ -1334,6 +1420,7 @@ const Trending: React.FC = () => {
                 setHotPlatformExpanded(false);
                 setHotEventExpanded(false);
                 setViralTitleExpanded(false);
+                setTalkExpanded(false);
               }}
             >
               <span className="text-base font-bold">热门内容</span>
@@ -1492,6 +1579,61 @@ const Trending: React.FC = () => {
               </ul>
             )}
           </div>
+
+          {/* 话题 */}
+          <div className="mb-6">
+            <div
+              className="flex items-center justify-between font-medium text-gray-900 mb-3 cursor-pointer hover:text-[#a66ae4]"
+              onClick={() => {
+                setTalkExpanded(!talkExpanded);
+                setContentExpanded(false);
+                setTopicExpanded(false);
+                setHotPlatformExpanded(false);
+                setHotEventExpanded(false);
+                if (!talkExpanded) {
+                  fetchTalksPlatforms();
+                }
+              }}
+            >
+              <span className="text-base font-bold">话题/热词</span>
+              {talkExpanded ? <DownOutlined /> : <RightOutlined />}
+            </div>
+            {talkExpanded && (
+              <ul className="space-y-2">
+                {talkLoading ? (
+                  <div className="flex items-center justify-center py-4">
+                    <span className="text-gray-500">加载中...</span>
+                  </div>
+                ) : (
+                  talkPlatforms.map((platform) => (
+                    <li
+                      key={platform.id}
+                      className={`flex items-center space-x-2 p-2 rounded cursor-pointer transition-all duration-200
+                        ${
+                          selectedTalkPlatform?.id === platform.id
+                            ? 'bg-[#f4ebff] text-[#a66ae4]'
+                            : 'hover:bg-gray-50'
+                        }`}
+                      // onClick={() =>
+                      //   handleViralPlatformSelect(
+                      //     platform,
+                      //     selectedViralTimeType,
+                      //   )
+                      // }
+                    >
+                      <img
+                        src={getImageUrl(platform.icon)}
+                        alt={platform.name}
+                        className="w-5 h-5"
+                      />
+                      <span>{platform.name}</span>
+                    </li>
+                  ))
+                )}
+              </ul>
+            )}
+          </div>
+
         </div>
 
         {/* 右侧内容区 */}
