@@ -24,6 +24,7 @@ import { useAccountStore } from '../../../../store/commont';
 import { useNavigate } from 'react-router-dom';
 import { usePubStroe } from '../../../../store/pubStroe';
 import { ExclamationCircleFilled } from '@ant-design/icons';
+import { AccountPlatInfoMap } from '../../../account/comment';
 
 const { confirm } = Modal;
 
@@ -194,6 +195,10 @@ export default function Page() {
     });
   }, [pubProgressMap, imageAccounts]);
 
+  const pubClick = () => {
+    pubAccountDetModuleRef.current!.startDet();
+    setLoading(true);
+  };
   return (
     <div className={styles.image}>
       <PubProgressModule
@@ -257,8 +262,43 @@ export default function Page() {
                 return;
               }
             }
-            pubAccountDetModuleRef.current!.startDet();
-            setLoading(true);
+            if (commonPubParams.title !== '') {
+              const titleNullData = imageAccounts.find(
+                (v) => v.pubParams.title === '',
+              );
+              if (titleNullData) {
+                confirm({
+                  title: '温馨提示',
+                  icon: <ExclamationCircleFilled />,
+                  content: `检测到通用发布设置存在标题，但是${AccountPlatInfoMap.get(titleNullData!.account.type)?.name}详情参数的标题为空，您是否忘记同步通用发布参数？`,
+                  okText: '继续发布',
+                  cancelText: '放弃发布',
+                  onOk() {
+                    pubClick();
+                  },
+                });
+                return;
+              }
+            }
+            if (commonPubParams.describe !== '') {
+              const titleNullData = imageAccounts.find(
+                (v) => v.pubParams.describe === '',
+              );
+              if (titleNullData) {
+                confirm({
+                  title: '温馨提示',
+                  icon: <ExclamationCircleFilled />,
+                  content: `检测到通用发布设置存在描述，但是${AccountPlatInfoMap.get(titleNullData!.account.type)?.name}详情参数的描述为空，您是否忘记同步通用发布参数？`,
+                  okText: '继续发布',
+                  cancelText: '放弃发布',
+                  onOk() {
+                    pubClick();
+                  },
+                });
+                return;
+              }
+            }
+            pubClick();
           }}
         >
           一键发布

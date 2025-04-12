@@ -58,10 +58,14 @@ export const useImagePageStore = create(
     (_set, get, storeApi) => {
       const set = (data: Partial<IImagePageStore>) => {
         _set(data);
+        const oldData = get();
         if (
           (data.hasOwnProperty('imageAccounts') &&
             data.imageAccounts!.length !== 0) ||
-          (data.hasOwnProperty('images') && data.images!.length !== 0)
+          (data.hasOwnProperty('images') && data.images!.length !== 0) ||
+          (data.hasOwnProperty('commonPubParams') &&
+            oldData['imageAccounts'] &&
+            oldData['imageAccounts']?.length !== 0)
         ) {
           usePubStroe.getState().setImgTextPubSaveData(get());
         }
