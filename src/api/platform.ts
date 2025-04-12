@@ -261,7 +261,7 @@ export const platformApi = {
       }[]
     >(`/viral-titles/platforms/${platformId}/top-by-categories`, {
       isToken: false,
-      params:{
+      params: {
         timeType,
       },
     });
@@ -303,6 +303,16 @@ export const platformApi = {
     });
   },
 
+  // 获取话题栏目
+  findTalksColumn(platformId: string) {
+    return hotHttp.get<string[]>(`/talks/column`, {
+      params: {
+        platformId,
+      },
+      isToken: false,
+    });
+  },
+
   // 获取小红书话题流量榜、流量扶持日期
   getXhsDates() {
     return hotHttp.get<string[]>(`/xhs/dates`, {
@@ -323,5 +333,13 @@ export const platformApi = {
       isToken: false,
     });
   },
+
+  // 获取抖音榜单日期
+  getDyDates() {
+    return hotHttp.get<string[]>(`/dy/dates`, {
+      isToken: false,
+    });
+  },
+
 };
 

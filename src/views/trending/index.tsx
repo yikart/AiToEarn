@@ -247,10 +247,8 @@ const Trending: React.FC = () => {
   const [msgTypeList, setMsgTypeList] = useState<string[]>([]);
   const [topicList, setTopicList] = useState<string[]>([]); // 专题标签列表
   const [topicSubCategories, setTopicSubCategories] = useState<string[]>([]);
-  const [selectedTopicCategory, setSelectedTopicCategory] =
-    useState<string>('');
-  const [selectedTopicSubCategory, setSelectedTopicSubCategory] =
-    useState<string>('');
+  const [selectedTopicCategory, setSelectedTopicCategory] = useState<string>('');
+  const [selectedTopicSubCategory, setSelectedTopicSubCategory] = useState<string>('');
   const [topicContents, setTopicContents] = useState<TopicContent[]>([]);
   const [topicLoading, setTopicLoading] = useState(false);
   const [topicPagination, setTopicPagination] = useState<PaginationMeta | null>(
@@ -263,6 +261,9 @@ const Trending: React.FC = () => {
   const [talkPagination, setTalkPagination] = useState<PaginationMeta | null>(null);
   const [talkPlatforms, setTalkPlatforms] = useState<Platform[]>([]);
   const [selectedTalkPlatform, setSelectedTalkPlatform] = useState<Platform | null>(null);
+  const [selectedTalkColumn, setSelectedTalkColumn] = useState<string>('');
+  const [selectedTalkCategory, setSelectedTalkCategory] = useState<string>('');
+  const [selectedTalkXhsTimeRange, setSelectedTalkXhsTimeRange] = useState<string>('24小时'); // 小红书话题时间筛选 默认选中24小时
 
   // 在右侧内容区 - 热门专题界面部分添加筛选区
   const [selectedPlatformId, setSelectedPlatformId] = useState<string>('');
@@ -1299,6 +1300,7 @@ const Trending: React.FC = () => {
       setTalkPlatforms(platforms);
       if (platforms.length > 0) {
         setSelectedTalkPlatform(platforms[0]);
+        fetchTalkColumns(platforms[0].id); // 获取话题栏目
         // fetchViralTitleCategories(platforms[0].id);
         // fetchViralTitleContents(platforms[0].id, timeTypeData[0]);
       }
@@ -1381,19 +1383,50 @@ const Trending: React.FC = () => {
     }
   };
 
-  
+  // 获取话题栏目
+  const fetchTalkColumns = async (platformId: string) => {
+    try {
+      const allTalkColumns = await platformApi.findTalksColumn(platformId);
+      console.log(allTalkColumns);
+      // setViralTitleCategories(categories);
+      // fetchViralTitleTimeTypes();
+      // if (categories.length > 0) {
+      //   setSelectedViralCategory('');
+      // }
+    } catch (error) {
+      console.error('获取话题栏目失败:', error);
+      // setViralTitleCategories([]);
+    }
+  };
+
   // 处理话题平台选择
-  const handleTalkPlatformSelect = (platform: Platform) => {
+  const handleTalkPlatformSelect = async (platform: Platform) => {
     setSelectedTalkPlatform(platform);
     // 小红书话题页面
-    // if (platform.id === xhsPlatformId) {
-    //   params.category = category;
-    // }
+    if (platform.id === xhsPlatformId) {
+      // params.category = category;
+      console.log("小红书话题页面");
+
+      try {
+        const xhsDatesList = await platformApi.getXhsDates();
+        const xhsCategoryList = await platformApi.getXhsCategories();
+        // setViralTitlePlatforms(platforms);
+        if (platforms.length > 0) {
+          // setSelectedViralPlatform(platforms[0]);
+          // fetchViralTitleCategories(platforms[0].id);
+          // fetchViralTitleContents(platforms[0].id, timeTypeData[0]);
+        }
+      } catch (error) {
+        console.error('获取小红书话题平台失败:', error);
+        // setViralTitlePlatforms([]);
+      } 
+    }
 
     // 抖音话题页面
-    // if (platform.id === dyPlatformId) {
-    //   params.category = category;
-    // }
+    if (platform.id === dyPlatformId) {
+      // params.category = category;
+      console.log("抖音话题页面");
+    }
 
     // 清空原有数据并显示加载动画
     // setSelectedViralCategory('全部');
@@ -1404,6 +1437,55 @@ const Trending: React.FC = () => {
     // fetchViralTitleContents(platform.id, timeType);
   };
 
+  // 修改处理话题分类选择的函数
+  const handleTalkCategorySelect = async (category: string) => {
+    setSelectedTalkCategory(category);
+    console.log("handleTalkCategorySelect:--"); 
+
+    // if (category && selectedTalkPlatform && selectedTalkTimeRange) {
+    //   // 如果选择了特定分类，调用API获取该分类数据
+    //   console.log(
+    //     'handleViralCategorySelect：',
+    //     category,
+    //     selectedViralTimeRange,
+    //     selectedViralTimeType,
+    //   );
+    //   setSingleCategoryName(category);
+    //   setShowSingleCategory(true);
+    //   fetchSingleCategoryData(
+    //     selectedViralPlatform.id,
+    //     category,
+    //     1,
+    //     selectedViralTimeType,
+    //   );
+    // } else {
+    //   // 如果选择"全部"，返回到分类概览
+    //   setShowSingleCategory(false);
+    //   setSingleCategoryData([]);
+    //   setSingleCategoryName('');
+    // }
+  };
+
+  // 处理话题时间类型选择 全部分类
+  const handleTalkTimeTypeSelect = (category: string, timeType: string) => {
+    console.log("handleTalkTimeTypeSelect:-- "); 
+    // setSelectedTalkTimeType(timeType);
+    // console.log(
+    //   'handleViralTimeTypeSelect:',
+    //   selectedViralCategory,
+    //   category,
+    //   timeType,
+    //   selectedViralTimeType,
+    //   selectedViralTimeRange,
+    // );
+    // if (category) {
+    //   // 获取单独分类
+    //   fetchSingleCategoryData(selectedViralPlatform!.id, category, 1, timeType);
+    // } else {
+    //   // 获取爆款标题内容  全部分类
+    //   fetchViralTitleContents(selectedViralPlatform!.id, timeType);
+    // }
+  };
 
   return (
     <>
@@ -1614,12 +1696,7 @@ const Trending: React.FC = () => {
                             ? 'bg-[#f4ebff] text-[#a66ae4]'
                             : 'hover:bg-gray-50'
                         }`}
-                      // onClick={() =>
-                      //   handleViralPlatformSelect(
-                      //     platform,
-                      //     selectedViralTimeType,
-                      //   )
-                      // }
+                      onClick={() => handleTalkPlatformSelect(platform)}
                     >
                       <img
                         src={getImageUrl(platform.icon)}
@@ -2364,6 +2441,95 @@ const Trending: React.FC = () => {
                     暂无专题数据
                   </div>
                 )}
+              </div>
+            </div>
+          ) : talkExpanded ? (
+            // 话题内容区域
+            <div>
+              {/* 顶部筛选区 */}
+              <div className="p-4 mb-4 bg-white rounded-lg shadow-sm">
+                {/* 分类筛选 - 始终显示 */}
+                <div className="flex flex-col space-y-2">
+                  <div
+                    className={`grid gap-2 transition-[grid-template-rows,max-height] duration-300 ease-in-out relative pr-20`}
+                    style={{
+                      gridTemplateColumns:
+                        'repeat(auto-fill, minmax(100px, 1fr))',
+                      gridTemplateRows: isCategoryExpanded ? '1fr' : '40px',
+                      maxHeight: isCategoryExpanded ? '1000px' : '40px',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <div className="contents">
+                      <button
+                        className={`${buttonStyles.base} ${
+                          !selectedViralCategory
+                            ? buttonStyles.primary
+                            : buttonStyles.secondary
+                        } truncate h-10`}
+                        onClick={() => handleTalkCategorySelect('')}
+                      >
+                        全部
+                      </button>
+                      {/* {talkCategory.map((category) => (
+                        <button
+                          key={category}
+                          className={`${buttonStyles.base} ${
+                            selectedViralCategory === category
+                              ? buttonStyles.primary
+                              : buttonStyles.secondary
+                          } truncate h-10`}
+                          onClick={() => handleViralCategorySelect(category)}
+                        >
+                          {category}
+                        </button>
+                      ))} */}
+                    </div>
+                    {/* {viralTitleCategories.length > 8 && (
+                      <button
+                        className="absolute right-0 top-0 h-10 px-3 flex items-center text-sm text-gray-500 hover:text-[#a66ae4] transition-colors bg-transparent border-none outline-none shadow-none"
+                        onClick={() =>
+                          setIsCategoryExpanded(!isCategoryExpanded)
+                        }
+                      >
+                        <span className="mr-1">
+                          {isCategoryExpanded ? '收起' : '展开'}
+                        </span>
+                        <InfoCircleOutlined
+                          className={`transform transition-transform duration-300 ${
+                            isCategoryExpanded ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+                    )} */}
+                  
+                  </div>
+                </div>
+
+                {/* 爆款标题时间筛选 */}
+                <div className="flex items-center p-4">
+                  <span className="mr-3 text-sm text-gray-500">时间范围:</span>
+                  <div className="flex flex-wrap gap-2">
+                    {timeTypes.map((timeType) => (
+                      <button
+                        key={timeType}
+                        className={`${buttonStyles.base} ${
+                          selectedViralTimeType === timeType
+                            ? buttonStyles.primary
+                            : buttonStyles.secondary
+                        }`}
+                        onClick={() =>
+                          handleViralTimeTypeSelect(
+                            selectedViralCategory,
+                            timeType,
+                          )
+                        }
+                      >
+                        {timeType}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           ) : (
