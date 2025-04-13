@@ -809,12 +809,22 @@ export default function Page() {
                           columnClassName={styles.myMasonryGridColumn}
                         >
                           {postList.map((item: any, index: number) => (
-                            <div
+                            <List.Item
                               key={`${item.dataId || item.coverUrl}-${index}`}
                               className={styles.masonryItem}
+                              onClick={() => {
+                                if (isSelectMode) {
+                                  handlePostSelect(item.dataId);
+                                }
+                              }}
+                              style={{ 
+                                cursor: isSelectMode ? 'pointer' : 'default',
+                                background: selectedPosts.some((p) => p.dataId === item.dataId) ? 'rgba(24, 144, 255, 0.1)' : 'transparent'
+                              }}
                             >
                               <Card
-                                hoverable
+                                hoverable={isSelectMode}
+                                className={styles.postCard}
                                 cover={
                                   <div
                                     style={{
@@ -925,7 +935,7 @@ export default function Page() {
                                   }
                                 />
                               </Card>
-                            </div>
+                            </List.Item>
                           ))}
                         </Masonry>
 
