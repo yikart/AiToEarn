@@ -141,9 +141,9 @@ export default function Page() {
   // 获取进程中互动信息
   const getRunningInteractions = async () => {
     try {
-      console.log('------ 开始获取进程中互动信息');
+      // console.log('------ 开始获取进程中互动信息');
       const res = await ipcGetAutoRunOfInteractionInfo();
-      console.log('------ 获取进程中互动信息结果:', res);
+      // console.log('------ 获取进程中互动信息结果:', res);
       if (res) {
         setRunningInteractions([{ ...res }]);
       }else{
@@ -151,7 +151,7 @@ export default function Page() {
       }
       
     } catch (error) {
-      console.error('------ 获取进程中互动信息失败:', error);
+      // console.error('------ 获取进程中互动信息失败:', error);
       message.error('获取进程中互动信息失败');
     }
   };
@@ -701,6 +701,7 @@ export default function Page() {
       <div style={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
         <AccountSidebar
           activeAccountId={activeAccountId}
+          excludePlatforms={['wxSph']}
           onAccountChange={useCallback(
             (info) => {
               console.log('------ onAccountChange', info);

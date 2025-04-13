@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, memo, useRef, useState } from 'react';
+import { ForwardedRef, forwardRef, memo, useRef, useState, useMemo } from 'react';
 import styles from './AccountSidebar.module.scss';
 import { AccountInfo, AccountPlatInfoMap } from '../../comment';
 import { Avatar, Button, message, Popover } from 'antd';
@@ -24,6 +24,8 @@ export interface IAccountSidebarProps {
   activeAccountId: number;
   // 切换选择的账户
   onAccountChange: (info: AccountInfo) => void;
+  // 排除的平台类型
+  excludePlatforms?: string[];
 }
 
 const AccountPopoverInfo = ({ accountInfo }: { accountInfo: AccountInfo }) => {
@@ -103,17 +105,22 @@ const AccountPopoverInfo = ({ accountInfo }: { accountInfo: AccountInfo }) => {
 const AccountSidebar = memo(
   forwardRef(
     (
-      { activeAccountId, onAccountChange }: IAccountSidebarProps,
+      { activeAccountId, onAccountChange, excludePlatforms = [] }: IAccountSidebarProps,
       ref: ForwardedRef<IAccountSidebarRef>,
     ) => {
       const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
       const pubAccountDetModuleRef = useRef<IPubAccountDetModuleRef>(null);
-      const { accountList, getAccountList } = useAccountStore(
+      const { accountList: fullAccountList, getAccountList } = useAccountStore(
         useShallow((state) => ({
           accountList: state.accountList,
           getAccountList: state.getAccountList,
         })),
       );
+
+      // 在组件内部过滤账号列表，而不是在 useAccountStore 中过滤
+      const accountList = useMemo(() => {
+        return fullAccountList.filter(account => !excludePlatforms.includes(account.type));
+      }, [fullAccountList, excludePlatforms]);
 
       return (
         <>
