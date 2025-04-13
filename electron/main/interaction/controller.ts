@@ -100,7 +100,7 @@ export class InteractionController {
   }
 
   /**
-   * 创建自动一键互动任务
+   * 创建自动AI评论截流任务
    */
   @Icp('ICP_AUTO_RUN_INTERACTION')
   async createReplyCommentAutoRun(
@@ -147,7 +147,7 @@ export class InteractionController {
   }
 
   /**
-   * 获取一键互动的记录列表
+   * 获取AI评论截流的记录列表
    */
   @Icp('ICP_GET_INTERACTION_RECORD_LIST')
   async getInteractionRecordList(
@@ -168,7 +168,7 @@ export class InteractionController {
   }
 
   /**
-   * 获取一键互动的任务信息
+   * 获取AI评论截流的任务信息
    */
   @Icp('ICP_GET_AUTO_INTERACTION_INFO')
   async getAutoInteractionInfo(

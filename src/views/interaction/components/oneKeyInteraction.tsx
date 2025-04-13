@@ -3,7 +3,7 @@
  * @Date: 2025-03-18 21:02:38
  * @LastEditTime: 2025-03-31 11:02:12
  * @LastEditors: nevin
- * @Description: 一键互动
+ * @Description: AI评论截流
  */
 import { WorkData } from '@/icp/reply';
 import { message, Modal } from 'antd';
@@ -33,7 +33,7 @@ const Com = forwardRef<InteractionOneKeyRef>((props: any, ref) => {
   }
 
   /**
-   * 一键互动
+   * AI评论截流
    */
   async function createInteractionOneKey(
     inAccountId: number,

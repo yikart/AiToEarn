@@ -88,7 +88,7 @@ export default function Page() {
         <Tabs defaultActiveKey="1" className="w-full">
           <Tabs.TabPane tab="作品列表" key="1">
             <Popconfirm
-              title="确认进行一键互动"
+              title="确认进行AI评论截流"
               onConfirm={(e?: React.MouseEvent<HTMLElement>) => {
                 Ref_InteractionOneKey.current?.init(activeAccountId, wordList);
               }}

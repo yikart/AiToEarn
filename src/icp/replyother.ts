@@ -222,7 +222,7 @@ export async function icpCreateInteractionOneKey(
 }
 
 /**
- * 创建一键互动自动进程
+ * 创建AI评论截流自动进程
  * @param accountId
  * @param dataId
  * @param cycleType
@@ -241,7 +241,7 @@ export async function ipcCreateAutoRunOfInteraction(
   return res;
 }
 
-// 获取一键互动自动进程信息
+// 获取AI评论截流自动进程信息
 export async function ipcGetAutoRunOfInteractionInfo() {
   const res: any = await window.ipcRenderer.invoke(
     'ICP_GET_AUTO_INTERACTION_INFO',
@@ -250,7 +250,7 @@ export async function ipcGetAutoRunOfInteractionInfo() {
 }
 
 /**
- * 获取一键互动的记录列表
+ * 获取AI评论截流的记录列表
  * @param page
  * @param query
  */

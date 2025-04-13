@@ -105,7 +105,7 @@ export class InteractionService {
   }
 
   /**
-   * 自动一键互动:作品评论,收藏,点赞
+   * 自动AI评论截流:作品评论,收藏,点赞
    * 规则:评论作品,已经评论不评论
    */
   async autorInteraction(

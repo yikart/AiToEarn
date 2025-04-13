@@ -166,7 +166,7 @@ export async function ipcGetAutoRunOfReplyInfo() {
 }
 
 /**
- * 获取一键互动的记录列表
+ * 获取AI评论截流的记录列表
  * @param page
  * @param query
  */
