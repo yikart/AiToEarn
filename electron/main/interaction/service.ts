@@ -159,7 +159,7 @@ export class InteractionService {
         );
         if (oldRecord) continue;
 
-        console.log('option.commentContent', option.commentContent);
+        console.log('option.commentContent', option);
         if (!option.commentContent) {
           const aiRes = await toolsApi.aiRecoverReview({
             content: (works.desc || '') + (works.title || ''),
@@ -195,65 +195,82 @@ export class InteractionService {
           works.author?.id,
         );
 
-        if (option.commentContent.includes(',')) {
-          let randomIndex = Math.floor(Math.random() * option.commentContent.split(',').length);  
-          option.commentContent = option.commentContent.split(',')[randomIndex];
-        }
-
-        console.log('------ option.commentContent', option.commentContent);
-
+        // 判断是否执行评论
+        const shouldComment = option.commentProb === 0 ? false : (!option.commentProb || Math.random() * 100 < option.commentProb);
+        let commentWorksRes;
         
-        const commentWorksRes = await platController.createCommentByOther(
-          account,
-          works.dataId,
-          option.commentContent,
-          works.author?.id,
-        );
-        console.log('------ 评论作品结果:', commentWorksRes);
+        if (shouldComment) {
+          if (option.commentContent.includes(',')) {
+            let randomIndex = Math.floor(Math.random() * option.commentContent.split(',').length);  
+            option.commentContent = option.commentContent.split(',')[randomIndex];
+          }
 
-        //  错误处理
-        if (!commentWorksRes) {
+          console.log('------ option.commentContent', option.commentContent);
+
+          commentWorksRes = await platController.createCommentByOther(
+            account,
+            works.dataId,
+            option.commentContent,
+            works.author?.id,
+          );
+          console.log('------ 评论作品结果:', commentWorksRes);
+
+          //  错误处理
+          if (!commentWorksRes) {
+            scheduleEvent({
+              tag: AutorWorksInteractionScheduleEvent.ReplyCommentEnd,
+              status: -1,
+              error: '回复评论失败',
+            });
+            continue;
+          }
+
           scheduleEvent({
             tag: AutorWorksInteractionScheduleEvent.ReplyCommentEnd,
-            status: -1,
-            error: '回复评论失败',
+            status: 0,
           });
-          continue;
         }
-
-        scheduleEvent({
-          tag: AutorWorksInteractionScheduleEvent.ReplyCommentEnd,
-          status: 0,
-        });
 
         // ----- 2-点赞作品 -----
         let isLike: 0 | 1 = 0;
-        try {
-          console.log('------ 开始点赞作品:', works.dataId);
-          const isLikeRes = await platController.dianzanDyOther(
-            account,
-            works.dataId,
-            {
-              authid: works.author?.id,
-            },
-          );
-          isLike = isLikeRes ? 1 : 0;
-          console.log('------ 点赞结果:', isLikeRes);
-        } catch (error) {
-          scheduleEvent({
-            tag: AutorWorksInteractionScheduleEvent.Error,
-            status: 0,
-            error,
-            data: {
-              isLike,
-            },
-          });
+        // 判断是否执行点赞
+        const randomLike = Math.random() * 100;
+        console.log('判断是否执行点赞', '概率:', option.likeProb, '随机值:', randomLike);
+        const shouldLike = option.likeProb === 0 ? false : (!option.likeProb || randomLike < option.likeProb);
+        
+        if (shouldLike) {
+          try {
+            console.log('------ 开始点赞作品:', works.dataId);
+            const isLikeRes = await platController.dianzanDyOther(
+              account,
+              works.dataId,
+              {
+                authid: works.author?.id,
+              },
+            );
+            isLike = isLikeRes ? 1 : 0;
+            console.log('------ 点赞结果:', isLikeRes);
+          } catch (error) {
+            scheduleEvent({
+              tag: AutorWorksInteractionScheduleEvent.Error,
+              status: 0,
+              error,
+              data: {
+                isLike,
+              },
+            });
+          }
         }
 
         // ----- 3-收藏作品 -----
         let isCollect: 0 | 1 = 0;
 
-        if (option.platform != 'KWAI') {
+        // 判断是否执行收藏
+        const randomCollect = Math.random() * 100;
+        console.log('判断是否执行收藏', '概率:', option.collectProb, '随机值:', randomCollect);
+        const shouldCollect = (option.collectProb === 0 ? false : (!option.collectProb || randomCollect < option.collectProb)) && option.platform != 'KWAI';
+
+        if (shouldCollect) {
           try {
             const isCollectRes = await platController.shoucangDyOther(
               account,
