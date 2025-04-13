@@ -266,10 +266,12 @@ export default function Page() {
 
   // 处理选择模式切换
   const handleSelectModeToggle = () => {
-    setIsSelectMode(!isSelectMode);
-    if (!isSelectMode) {
+    console.log('isSelectMode',isSelectMode)
+    // if (!isSelectMode) {
       setSelectedPosts([]); // 清空已选择的帖子
-    }
+    // }
+    setIsSelectMode(!isSelectMode);
+    
   };
 
   // 处理帖子选择
@@ -330,6 +332,11 @@ export default function Page() {
     );
     console.log('------ res', res);
 
+    // if (res) {
+      message.success('互动任务已下发，前往记录查看');
+    // } else {
+    //   message.error('任务下发失败，请重试');
+    // }
 
     setSelectedPosts([]);
   };
@@ -1140,6 +1147,7 @@ export default function Page() {
         footer={null}
         width={800}
         destroyOnClose
+        maskClosable={false}
       >
         <Form
           form={taskForm}
