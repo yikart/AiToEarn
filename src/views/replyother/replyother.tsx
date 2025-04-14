@@ -1156,7 +1156,7 @@ export default function Page() {
           onFinish={submitTask}
           initialValues={{
             likeProb: 70,
-            commentProb: 50,
+            commentProb: 90,
             commentType: 'ai',
             collectProb: 30,
           }}
