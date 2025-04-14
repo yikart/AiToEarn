@@ -446,8 +446,14 @@ export default function InteractionTask() {
                   dangerouslySetInnerHTML={{ __html: selectedTask.description }}
                 />
               </Descriptions.Item>
-              <Descriptions.Item label="任务奖励">
+              <Descriptions.Item label="任务奖励"> 
                 ¥{selectedTask.reward}
+              </Descriptions.Item>
+              <Descriptions.Item label="评论内容"> 
+                {selectedTask.dataInfo?.commentContent || 'AI智能评论'}
+              </Descriptions.Item>
+              <Descriptions.Item label="作品ID"> 
+                {selectedTask.dataInfo?.worksId || ''}
               </Descriptions.Item>
               <Descriptions.Item label="任务时长">
                 {selectedTask.keepTime}分钟
