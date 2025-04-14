@@ -81,21 +81,18 @@ export interface IGetHomeInfoResponse {
 }
 
 // 快手用户信息接口返回的数据
-export type IKwaiUserInfoResponse = IKwaiUserCommonResponse<{
-  ab: AbConfig;
-  role: number;
-  isGrOrPr: boolean;
-  roles: number[];
-  userAvatar: string;
-  userName: string;
-  userId: number;
-  article: boolean;
-  logined: boolean;
-  enableNotificationV3: boolean;
-  appType: number;
-  userKwaiId: null;
-  showCreator: boolean;
-}>;
+export type IKwaiUserInfoResponse = {
+  data: {
+    userInfo: {
+      avatar: string;
+      eid: string;
+      id: string;
+      name: string;
+      userId: number;
+      __typename: string;
+    };
+  };
+};
 
 interface TopicsTag {
   id: number;

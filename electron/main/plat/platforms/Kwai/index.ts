@@ -61,10 +61,10 @@ export class Kwai extends PlatformBase {
       userId: '',
       loginCookie: '',
       type: this.type,
-      uid: `${data.userId}` || '',
-      account: `${data.userId}` || '',
-      avatar: data.userAvatar || '',
-      nickname: data?.userName || '',
+      uid: `${data.userInfo.userId}` || '',
+      account: `${data.userInfo.userId}` || '',
+      avatar: data.userInfo.avatar || '',
+      nickname: data.userInfo.name || '',
       fansCount: res.data.data.fansCnt,
     };
   }
@@ -479,8 +479,13 @@ export class Kwai extends PlatformBase {
   }
 
   async loginCheck(account: AccountModel): Promise<boolean> {
-    const res = await kwaiPub.getAccountInfo(JSON.parse(account.loginCookie));
-    return !(res.status !== 200 || !res.data.data.userName);
+    try {
+      const res = await kwaiPub.getAccountInfo(JSON.parse(account.loginCookie));
+      return !(res?.status !== 200 || !res?.data?.data?.userInfo?.userId);
+    } catch (e) {
+      console.warn('快手登录状态检测错误：', e);
+      return false;
+    }
   }
 
   async getTopics({
@@ -554,7 +559,7 @@ export class Kwai extends PlatformBase {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await kwaiPub.dianzanDyOther(cookie, dataId, option);
     console.log('------ dianzanDyOther -- Kwai --- res: ', res);
-    
+
     return res.data;
   }
 

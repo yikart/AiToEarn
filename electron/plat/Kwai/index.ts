@@ -276,7 +276,7 @@ class KwaiPub {
       await mainWindow.loadURL(
         'https://passport.kuaishou.com/pc/account/login',
       );
-      mainWindow.webContents.openDevTools();
+      // mainWindow.webContents.openDevTools();
       let timeId1: NodeJS.Timeout | undefined = undefined;
       let timeId2: NodeJS.Timeout | undefined = undefined;
       mainWindow.on('closed', () => {
@@ -333,8 +333,14 @@ class KwaiPub {
   async getAccountInfo(cookie: Electron.Cookie[]) {
     return await this.requestApi<IKwaiUserInfoResponse>({
       cookie: cookie,
-      url: '/rest/v2/creator/pc/authority/account/current',
       method: 'POST',
+      apiUrl: 'https://www.kuaishou.com/graphql',
+      body: {
+        operationName: 'userInfoQuery',
+        variables: {},
+        query:
+          'query userInfoQuery {\n  userInfo {\n    id\n    name\n    avatar\n    eid\n    userId\n    __typename\n  }\n}\n',
+      },
     });
   }
 
