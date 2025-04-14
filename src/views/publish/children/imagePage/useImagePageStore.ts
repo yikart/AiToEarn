@@ -182,13 +182,21 @@ export const useImagePageStore = create(
         // 设置通用发布参数
         setCommonPubParams(pubParmas: IPubParams) {
           const commonPubParams = { ...get().commonPubParams };
+          const imageAccounts = [...get().imageAccounts];
+
           for (const key in commonPubParams) {
             if (pubParmas.hasOwnProperty(key)) {
-              commonPubParams[key as 'topics'] = pubParmas[key as 'topics'];
+              const keyType = key as 'title';
+              const val = pubParmas[keyType];
+              commonPubParams[keyType] = pubParmas[keyType];
+              imageAccounts.map((v) => {
+                v.pubParams[keyType] = val;
+              });
             }
           }
           set({
             commonPubParams,
+            imageAccounts,
           });
         },
 
@@ -241,7 +249,7 @@ export const useImagePageStore = create(
           for (const account of notAddAccount) {
             imageAccounts.push({
               account,
-              pubParams: useVideoPageStore.getState().pubParamsInit(),
+              pubParams: lodash.cloneDeep(get().commonPubParams),
             });
           }
 

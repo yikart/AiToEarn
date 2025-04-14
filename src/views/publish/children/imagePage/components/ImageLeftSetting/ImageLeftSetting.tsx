@@ -3,8 +3,7 @@ import styles from '../../image.module.scss';
 import { ChooseChunk } from '../../../../components/CommonComponents/CommonComponents';
 import localUpload from '../../../videoPage/images/localUpload.png';
 import ImgChoose from '../../../../../../components/Choose/ImgChoose';
-import { Button, Input } from 'antd';
-import { ArrowRightOutlined } from '@ant-design/icons';
+import { Input } from 'antd';
 import { useShallow } from 'zustand/react/shallow';
 import { useImagePageStore } from '../../useImagePageStore';
 import ImgTextImagesView from './ImgTextImagesView';
@@ -18,21 +17,16 @@ export interface IImageLeftSettingProps {}
 const ImageLeftSetting = memo(
   forwardRef(
     ({}: IImageLeftSettingProps, ref: ForwardedRef<IImageLeftSettingRef>) => {
-      const {
-        setAllPubParams,
-        commonPubParams,
-        setCommonPubParams,
-        addImages,
-        images,
-      } = useImagePageStore(
-        useShallow((state) => ({
-          setAllPubParams: state.setAllPubParams,
-          commonPubParams: state.commonPubParams,
-          setCommonPubParams: state.setCommonPubParams,
-          addImages: state.addImages,
-          images: state.images,
-        })),
-      );
+      const { commonPubParams, setCommonPubParams, addImages, images } =
+        useImagePageStore(
+          useShallow((state) => ({
+            setAllPubParams: state.setAllPubParams,
+            commonPubParams: state.commonPubParams,
+            setCommonPubParams: state.setCommonPubParams,
+            addImages: state.addImages,
+            images: state.images,
+          })),
+        );
 
       return (
         <div className={styles.imageLeftSetting}>
@@ -65,19 +59,6 @@ const ImageLeftSetting = memo(
           <div className="imageLeftSetting-commonPar">
             <div className="imageLeftSetting-commonPar-titles">
               <label>通用发布设置</label>
-              <div className="imageLeftSetting-commonPar-titles-operate">
-                <Button
-                  icon={<ArrowRightOutlined />}
-                  onClick={() => {
-                    setAllPubParams({
-                      title: commonPubParams.title,
-                      describe: commonPubParams.describe,
-                    });
-                  }}
-                >
-                  同步至右侧
-                </Button>
-              </div>
             </div>
 
             <div className="imageLeftSetting-commonPar-item">

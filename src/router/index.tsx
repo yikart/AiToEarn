@@ -33,7 +33,7 @@ import Publish from '@/views/publish/page';
 import VideoPage from '@/views/publish/children/videoPage/page';
 import ImagePage from '@/views/publish/children/imagePage/page';
 import PubRecord from '@/views/publish/children/pubRecord/page';
-import Statistics from '@/views/statistics/statistics'; 
+import Statistics from '@/views/statistics/statistics';
 import Task from '@/views/task/task';
 // import HotTopic from '@/views/trending/hotTopic';
 // import CarTask from '@/views/task/carTask';
@@ -47,7 +47,6 @@ import Reply from '@/views/reply';
 import Replyother from '@/views/replyother/replyother';
 import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
 import Test from '@/views/test';
-import Interaction from '@/views/interaction';
 
 interface IRouterMeta {
   // 路由名称
@@ -152,11 +151,11 @@ export const router: CustomRouteObject[] = [
       //   element: <Interaction />,
       //   meta: { name: '互动', icon: ShopOutlined },
       // },
-      {
-        path: '/test',
-        element: <Test />,
-        meta: { name: '测试', icon: ShopOutlined },
-      },
+      // {
+      //   path: '/test',
+      //   element: <Test />,
+      //   meta: { name: '测试', icon: ShopOutlined },
+      // },
     ],
   },
   { path: '/login', element: <Login /> },
