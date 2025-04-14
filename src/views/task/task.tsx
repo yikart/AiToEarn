@@ -25,6 +25,9 @@ import MineTask from './mineTask';
 import ArticleTask from './articleTask';
 import InteractionTask from './interactionTask';
 
+import { useNavigate } from 'react-router-dom';
+
+
 // 任务类型定义
 interface Task {
   id: string;
@@ -39,6 +42,7 @@ interface Task {
 }
 
 export default function Task() {
+  const navigate = useNavigate();
   // 当前选中的任务类型
   const [activeTab, setActiveTab] = useState('car');
 
@@ -111,10 +115,10 @@ export default function Task() {
           </div>
         </div>
         <div className={styles.taskHeaderRight}>
-          <div className={styles.withdrawText}>
+          <div className={styles.withdrawText} onClick={() => navigate('/finance')}>
             <WalletOutlined />
-            <span>提现</span>
-          </div>
+            <span>钱包</span>
+          </div> 
         </div>
       </div>
 
