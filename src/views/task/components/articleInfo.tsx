@@ -198,7 +198,7 @@ const Com = forwardRef<TaskInfoRef, TaskInfoProps>((props: any, ref) => {
                       <TeamOutlined className={styles.detailIcon} />
                       <span className={styles.detailLabel}>招募人数:</span>
                       <span className={styles.detailValue}>
-                        {taskInfo.maxRecruits || 100}
+                        {taskInfo.maxRecruits || 0}
                       </span>
                     </div>
 
@@ -206,7 +206,7 @@ const Com = forwardRef<TaskInfoRef, TaskInfoProps>((props: any, ref) => {
                       <DollarOutlined className={styles.detailIcon} />
                       <span className={styles.detailLabel}>任务奖励:</span>
                       <span className={styles.detailValue}>
-                        ¥{taskInfo.reward || 5}
+                        ¥{taskInfo.reward || 0}
                       </span>
                     </div>
 
