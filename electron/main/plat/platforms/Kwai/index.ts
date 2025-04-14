@@ -224,7 +224,7 @@ export class Kwai extends PlatformBase {
   }> {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await kwaiPub.getsearchNodeList(cookie, qe, pageInfo);
-    // console.log('----------- getsearchNodeList --- res: ', res.data);
+    console.log('----------- getsearchNodeList --- res: ', res.data);
     const photoList = res.data.data?.visionSearchPhoto.feeds || [];
     // console.log('----------- getsearchNodeList --- photoList: ', photoList[0]);
     // const list: WorkData[] = photoList.map((v) => {
