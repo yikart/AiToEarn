@@ -146,10 +146,9 @@ export default function Page() {
       // console.log('------ 获取进程中互动信息结果:', res);
       if (res) {
         setRunningInteractions([{ ...res }]);
-      }else{
+      } else {
         setRunningInteractions([]);
       }
-      
     } catch (error) {
       // console.error('------ 获取进程中互动信息失败:', error);
       message.error('获取进程中互动信息失败');
@@ -266,12 +265,11 @@ export default function Page() {
 
   // 处理选择模式切换
   const handleSelectModeToggle = () => {
-    console.log('isSelectMode',isSelectMode)
+    console.log('isSelectMode', isSelectMode);
     // if (!isSelectMode) {
-      setSelectedPosts([]); // 清空已选择的帖子
+    setSelectedPosts([]); // 清空已选择的帖子
     // }
     setIsSelectMode(!isSelectMode);
-    
   };
 
   // 处理帖子选择
@@ -312,10 +310,10 @@ export default function Page() {
 
     // 调用icpCreateInteractionOneKey函数
 
-    let option:any = {
+    let option: any = {
       platform: activeAccountType,
       ...values,
-    }
+    };
     if (values.commentType != 'ai') {
       option.commentContent = customComments.join(',');
     }
@@ -323,17 +321,16 @@ export default function Page() {
     console.log('------ option', option);
 
     // return;
-    
 
     const res = await icpCreateInteractionOneKey(
       activeAccountId,
       selectedPostData,
-      option
+      option,
     );
     console.log('------ res', res);
 
     // if (res) {
-      message.success('互动任务已下发，前往记录查看');
+    message.success('互动任务已下发，前往记录查看');
     // } else {
     //   message.error('任务下发失败，请重试');
     // }
@@ -794,12 +791,12 @@ export default function Page() {
                                 <Button
                                   type="primary"
                                   icon={<DownOutlined />}
-                                  onClick={() =>{
+                                  onClick={() => {
                                     if (selectedPosts.length === 0) {
                                       message.error('请选择作品');
                                       return;
                                     }
-                                    setTaskModalVisible(true)
+                                    setTaskModalVisible(true);
                                   }}
                                   size="large"
                                 >
@@ -824,9 +821,13 @@ export default function Page() {
                                   handlePostSelect(item.dataId);
                                 }
                               }}
-                              style={{ 
+                              style={{
                                 cursor: isSelectMode ? 'pointer' : 'default',
-                                background: selectedPosts.some((p) => p.dataId === item.dataId) ? 'rgba(24, 144, 255, 0.1)' : 'transparent'
+                                background: selectedPosts.some(
+                                  (p) => (p as any).dataId === item.dataId,
+                                )
+                                  ? 'rgba(24, 144, 255, 0.1)'
+                                  : 'transparent',
                               }}
                             >
                               <Card

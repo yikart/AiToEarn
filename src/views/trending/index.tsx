@@ -247,8 +247,10 @@ const Trending: React.FC = () => {
   const [msgTypeList, setMsgTypeList] = useState<string[]>([]);
   const [topicList, setTopicList] = useState<string[]>([]); // 专题标签列表
   const [topicSubCategories, setTopicSubCategories] = useState<string[]>([]);
-  const [selectedTopicCategory, setSelectedTopicCategory] = useState<string>('');
-  const [selectedTopicSubCategory, setSelectedTopicSubCategory] = useState<string>('');
+  const [selectedTopicCategory, setSelectedTopicCategory] =
+    useState<string>('');
+  const [selectedTopicSubCategory, setSelectedTopicSubCategory] =
+    useState<string>('');
   const [topicContents, setTopicContents] = useState<TopicContent[]>([]);
   const [topicLoading, setTopicLoading] = useState(false);
   const [topicPagination, setTopicPagination] = useState<PaginationMeta | null>(
@@ -258,12 +260,16 @@ const Trending: React.FC = () => {
   // 话题相关状态
   const [talkExpanded, setTalkExpanded] = useState(false);
   const [talkLoading, setTalkLoading] = useState(false);
-  const [talkPagination, setTalkPagination] = useState<PaginationMeta | null>(null);
+  const [talkPagination, setTalkPagination] = useState<PaginationMeta | null>(
+    null,
+  );
   const [talkPlatforms, setTalkPlatforms] = useState<Platform[]>([]);
-  const [selectedTalkPlatform, setSelectedTalkPlatform] = useState<Platform | null>(null);
+  const [selectedTalkPlatform, setSelectedTalkPlatform] =
+    useState<Platform | null>(null);
   const [selectedTalkColumn, setSelectedTalkColumn] = useState<string>('');
   const [selectedTalkCategory, setSelectedTalkCategory] = useState<string>('');
-  const [selectedTalkXhsTimeRange, setSelectedTalkXhsTimeRange] = useState<string>('24小时'); // 小红书话题时间筛选 默认选中24小时
+  const [selectedTalkXhsTimeRange, setSelectedTalkXhsTimeRange] =
+    useState<string>('24小时'); // 小红书话题时间筛选 默认选中24小时
 
   // 在右侧内容区 - 热门专题界面部分添加筛选区
   const [selectedPlatformId, setSelectedPlatformId] = useState<string>('');
@@ -322,12 +328,12 @@ const Trending: React.FC = () => {
     useState<string>('近7天');
 
   // 通用的一些固定值
-  const xhsPlatformId = "6789d6a69b3e38d8da09ba47";
-  const dyPlatformId = "6789d6a69b3e38d8da09ba48";
-  const ksPlatformId = "678a3c1b18789840c02c806f";
-  const biliPlatformId = "678a3c6218789840c02c8070";
-  const gzhPlatformId = "679095d7df03a9e7d4b30ec9";
-  const sphPlatformId = "678a3bdb18789840c02c806e"; 
+  const xhsPlatformId = '6789d6a69b3e38d8da09ba47';
+  const dyPlatformId = '6789d6a69b3e38d8da09ba48';
+  const ksPlatformId = '678a3c1b18789840c02c806f';
+  const biliPlatformId = '678a3c6218789840c02c8070';
+  const gzhPlatformId = '679095d7df03a9e7d4b30ec9';
+  const sphPlatformId = '678a3bdb18789840c02c806e';
 
   // 添加处理图片加载错误的函数
   const handleImageError = (imageId: string) => {
@@ -367,7 +373,7 @@ const Trending: React.FC = () => {
 
   // 获取平台榜单数据
   const fetchPlatformRanking = async (platformId: string) => {
-    console.log("fetchPlatformRanking:", platformId);
+    console.log('fetchPlatformRanking:', platformId);
     setRankingLoading(true);
     try {
       const rankingData = await platformApi.getPlatformRanking(platformId);
@@ -399,8 +405,8 @@ const Trending: React.FC = () => {
         setCurrentPage(1);
         // ... 可能还需要清空 datesList, min/max date 等 ...
         setRankingDatesList([]);
-        setRankingMaxDate(undefined);
-        setRankingMinDate(undefined);
+        setRankingMaxDate('');
+        setRankingMinDate('');
       }
     } catch (error) {
       console.error('获取平台榜单失败:', error);
@@ -411,8 +417,8 @@ const Trending: React.FC = () => {
       setRankingContents([]);
       setCurrentPage(1);
       setRankingDatesList([]);
-      setRankingMaxDate(undefined);
-      setRankingMinDate(undefined);
+      setRankingMaxDate('');
+      setRankingMinDate('');
     } finally {
       setRankingLoading(false);
     }
@@ -450,31 +456,32 @@ const Trending: React.FC = () => {
     let fetchedMaxDate = ''; // 用于临时存储获取到的日期
     try {
       const rankingDatesData = await platformApi.getRankingDates(rankingId);
-      console.log("fetchRankingDates:--",  rankingId, rankingDatesData);
+      console.log('fetchRankingDates:--', rankingId, rankingDatesData);
       if (rankingDatesData && rankingDatesData.length > 0) {
         const maxDate = (rankingDatesData[0] as any).queryDate;
-        const minDate = (rankingDatesData[rankingDatesData.length - 1] as any).queryDate;
+        const minDate = (rankingDatesData[rankingDatesData.length - 1] as any)
+          .queryDate;
         setRankingMaxDate(maxDate);
         setRankingMinDate(minDate);
         fetchedMaxDate = maxDate; // 保存获取到的日期
         setRankingDatesList(rankingDatesData as any);
-    } else {
+      } else {
         // 没有日期数据，清空相关状态
-        setRankingMaxDate(undefined);
-        setRankingMinDate(undefined);
+        setRankingMaxDate('');
+        setRankingMinDate('');
         setRankingDatesList([]);
         fetchedMaxDate = ''; // 没有日期，设为空
-    }
+      }
     } catch (error) {
       console.error('获取榜单日期列表失败:', error);
-      setRankingMaxDate(undefined);
-      setRankingMinDate(undefined);
+      setRankingMaxDate('');
+      setRankingMinDate('');
       setRankingDatesList([]);
       fetchedMaxDate = ''; // 出错也设为空
     } finally {
       // 这将触发上面定义的 useEffect (如果 selectedDate 确实改变了)
       setSelectedDate(fetchedMaxDate);
-      console.log("检查日期：", fetchedMaxDate, selectedDate);
+      console.log('检查日期：', fetchedMaxDate, selectedDate);
       setRankingDateLoading(false);
     }
   };
@@ -490,14 +497,21 @@ const Trending: React.FC = () => {
     // - selectedDate 必须存在且不为空字符串 (或者你用来表示“未选择”的其他值)
     if (currentRankingId && selectedDate && selectedDate !== '') {
       // 调用 fetchRankingContents，传入当前有效的依赖值
-      fetchRankingContents(currentRankingId, currentPage, selectedCategory, selectedDate);
+      fetchRankingContents(
+        currentRankingId,
+        currentPage,
+        selectedCategory,
+        selectedDate,
+      );
     } else {
       // 如果依赖项无效（例如，刚加载还没有选择榜单，或者日期被清空），
       // 你可能想清空内容列表
-      console.log("useEffect for content: 依赖项 (rankingId 或 selectedDate) 无效，清空内容");
+      console.log(
+        'useEffect for content: 依赖项 (rankingId 或 selectedDate) 无效，清空内容',
+      );
       setRankingContents([]);
-    }  // 依赖项数组: 当数组中的任何一个值发生变化时，useEffect 内部的函数会重新执行
-  }, [selectedRanking, selectedCategory, selectedDate, currentPage]); // 依赖 selectedRanking, selectedDate 和 currentPage  
+    } // 依赖项数组: 当数组中的任何一个值发生变化时，useEffect 内部的函数会重新执行
+  }, [selectedRanking, selectedCategory, selectedDate, currentPage]); // 依赖 selectedRanking, selectedDate 和 currentPage
 
   // 获取榜单内容
   const fetchRankingContents = async (
@@ -1405,7 +1419,7 @@ const Trending: React.FC = () => {
     // 小红书话题页面
     if (platform.id === xhsPlatformId) {
       // params.category = category;
-      console.log("小红书话题页面");
+      console.log('小红书话题页面');
 
       try {
         const xhsDatesList = await platformApi.getXhsDates();
@@ -1419,13 +1433,13 @@ const Trending: React.FC = () => {
       } catch (error) {
         console.error('获取小红书话题平台失败:', error);
         // setViralTitlePlatforms([]);
-      } 
+      }
     }
 
     // 抖音话题页面
     if (platform.id === dyPlatformId) {
       // params.category = category;
-      console.log("抖音话题页面");
+      console.log('抖音话题页面');
     }
 
     // 清空原有数据并显示加载动画
@@ -1440,7 +1454,7 @@ const Trending: React.FC = () => {
   // 修改处理话题分类选择的函数
   const handleTalkCategorySelect = async (category: string) => {
     setSelectedTalkCategory(category);
-    console.log("handleTalkCategorySelect:--"); 
+    console.log('handleTalkCategorySelect:--');
 
     // if (category && selectedTalkPlatform && selectedTalkTimeRange) {
     //   // 如果选择了特定分类，调用API获取该分类数据
@@ -1468,7 +1482,7 @@ const Trending: React.FC = () => {
 
   // 处理话题时间类型选择 全部分类
   const handleTalkTimeTypeSelect = (category: string, timeType: string) => {
-    console.log("handleTalkTimeTypeSelect:-- "); 
+    console.log('handleTalkTimeTypeSelect:-- ');
     // setSelectedTalkTimeType(timeType);
     // console.log(
     //   'handleViralTimeTypeSelect:',
@@ -1710,7 +1724,6 @@ const Trending: React.FC = () => {
               </ul>
             )}
           </div> */}
-
         </div>
 
         {/* 右侧内容区 */}
@@ -2502,7 +2515,6 @@ const Trending: React.FC = () => {
                         />
                       </button>
                     )} */}
-                  
                   </div>
                 </div>
 
