@@ -1196,7 +1196,7 @@ export default function Page() {
                 <Radio.Group onChange={(e) => setCommentType(e.target.value)}>
                   <Tooltip title="使用AI生成评论">
                     <Radio.Button value="ai">
-                      <RobotOutlined /> AI评论
+                      <RobotOutlined /> Deepseek评论
                     </Radio.Button>
                   </Tooltip>
                   <Tooltip title="使用自定义评论">
