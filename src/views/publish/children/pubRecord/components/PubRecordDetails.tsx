@@ -2,7 +2,6 @@ import {
   ForwardedRef,
   forwardRef,
   memo,
-  useEffect,
   useImperativeHandle,
   useState,
 } from 'react';
@@ -148,7 +147,7 @@ const PubRecordDetails = memo(
                             (v.status !== 1 ? (
                               <Button
                                 type="link"
-                                onClick={() => {
+                                onClick={async () => {
                                   if (
                                     currPubRecordModel?.type === PubType.VIDEO
                                   ) {
@@ -156,7 +155,7 @@ const PubRecordDetails = memo(
                                     const prl = pubRecordList.filter(
                                       (v) => v.status === 2,
                                     );
-                                    restartPub(
+                                    await restartPub(
                                       prl as VideoModel[],
                                       prl.map(
                                         (k) => accountMap.get(k.accountId)!,

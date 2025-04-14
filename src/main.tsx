@@ -10,7 +10,7 @@ import './var.css';
 import { generate } from '@ant-design/colors';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
+  <>
     {(() => {
       const colors = generate('#a66ae4');
       const root = document.documentElement;
@@ -36,7 +36,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         </ConfigProvider>
       );
     })()}
-  </React.StrictMode>,
+  </>,
 );
 
 postMessage({ payload: 'removeLoading' }, '*');

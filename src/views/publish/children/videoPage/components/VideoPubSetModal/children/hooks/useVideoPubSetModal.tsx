@@ -1,6 +1,7 @@
 import { useVideoPageStore } from '../../../../useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import { AccountPlatInfoMap } from '../../../../../../../account/comment';
+import { AccountType } from '../../../../../../../../../commont/AccountEnum';
 
 export default function useVideoPubSetModal() {
   const { setOnePubParams, currChooseAccount } = useVideoPageStore(
@@ -12,7 +13,9 @@ export default function useVideoPubSetModal() {
 
   return {
     setOnePubParams,
-    platInfo: AccountPlatInfoMap.get(currChooseAccount!.account!.type)!,
+    platInfo: currChooseAccount?.account
+      ? AccountPlatInfoMap.get(currChooseAccount!.account!.type)!
+      : AccountPlatInfoMap.get(AccountType.Douyin)!,
     currChooseAccount: currChooseAccount!,
   };
 }

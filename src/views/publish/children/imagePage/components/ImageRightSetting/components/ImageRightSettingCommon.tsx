@@ -6,7 +6,7 @@ import {
 } from '../../../../../../../../electron/main/plat/plat.type';
 import { useShallow } from 'zustand/react/shallow';
 import CommonLocationSelect from '../../../../../components/CommonComponents/CommonLocationSelect';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input, SelectProps, Tooltip } from 'antd';
 import { useImagePageStore } from '../../../useImagePageStore';
 import { useImagePlatParams } from './children/hooks/useImagePlatParams';
@@ -203,6 +203,19 @@ export const ImgTextTitleInput = ({
       setOnePubParams: state.setOnePubParams,
     })),
   );
+  const [value, setValue] = useState(imageAccountItem.pubParams.title);
+
+  useEffect(() => {
+    setOnePubParams(
+      {
+        title: value,
+      },
+      imageAccountItem.account.id,
+    );
+  }, [value]);
+  useEffect(() => {
+    setValue(imageAccountItem.pubParams.title);
+  }, [imageAccountItem.pubParams.title]);
 
   return (
     <>
@@ -215,18 +228,14 @@ export const ImgTextTitleInput = ({
         )}
       </h1>
       <Input
-        value={imageAccountItem.pubParams.title}
+        spellCheck={false}
+        value={value}
         maxLength={maxLength}
         placeholder={placeholder}
         showCount
         variant="filled"
         onChange={(e) => {
-          setOnePubParams(
-            {
-              title: e.target.value,
-            },
-            imageAccountItem.account.id,
-          );
+          setValue(e.target.value);
         }}
       />
     </>
@@ -250,24 +259,33 @@ export const ImgTextDescTextArea = ({
       setOnePubParams: state.setOnePubParams,
     })),
   );
+  const [value, setValue] = useState(imageAccountItem?.pubParams.describe);
+
+  useEffect(() => {
+    setOnePubParams(
+      {
+        describe: value,
+      },
+      imageAccountItem.account!.id,
+    );
+  }, [value]);
+  useEffect(() => {
+    setValue(imageAccountItem?.pubParams.describe || '');
+  }, [imageAccountItem?.pubParams.describe]);
 
   return (
     <>
       <h1>{title}</h1>
       <TextArea
-        value={imageAccountItem?.pubParams.describe}
+        spellCheck={false}
+        value={value}
         placeholder={placeholder}
         variant="filled"
         showCount
         maxLength={maxLength}
         autoSize={{ minRows: 6, maxRows: 6 }}
         onChange={(e) => {
-          setOnePubParams(
-            {
-              describe: e.target.value,
-            },
-            imageAccountItem.account!.id,
-          );
+          setValue(e.target.value);
         }}
       />
     </>

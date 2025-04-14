@@ -1,5 +1,5 @@
 import { Input, Tooltip } from 'antd';
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import dayjs from 'dayjs';
@@ -95,9 +95,23 @@ export const TitleInput = ({
       currChooseAccount: state.currChooseAccount,
     })),
   );
+  const [value, setValue] = useState(currChooseAccount?.pubParams.title || '');
   if (!currChooseAccount) return '';
   const max = AccountPlatInfoMap.get(currChooseAccount.account!.type)
     ?.commonPubParamsConfig.titleMax;
+
+  const titleValue = useMemo(() => {
+    return currChooseAccount.pubParams.title || '';
+  }, [currChooseAccount.pubParams.title]);
+
+  useEffect(() => {
+    setValue(titleValue);
+  }, [titleValue]);
+  useEffect(() => {
+    setOnePubParams({
+      title: value,
+    });
+  }, [value]);
 
   return (
     <>
@@ -110,15 +124,15 @@ export const TitleInput = ({
         )}
       </h1>
       <Input
-        value={currChooseAccount.pubParams.title}
+        spellCheck={false}
+        defaultValue={titleValue}
+        value={value}
         maxLength={max}
         placeholder={placeholder}
         showCount
         variant="filled"
         onChange={(e) => {
-          setOnePubParams({
-            title: e.target.value,
-          });
+          setValue(e.target.value);
         }}
       />
       <AICreateTitle
@@ -152,21 +166,36 @@ export const DescTextArea = ({
       currChooseAccount: state.currChooseAccount,
     })),
   );
+  const [value, setValue] = useState(
+    currChooseAccount?.pubParams.describe || '',
+  );
   if (!currChooseAccount) return '';
+
+  const describe = useMemo(() => {
+    return currChooseAccount.pubParams.describe || '';
+  }, [currChooseAccount]);
+  useEffect(() => {
+    setValue(describe);
+  }, [describe]);
+  useEffect(() => {
+    setOnePubParams({
+      describe: value,
+    });
+  }, [value]);
 
   return (
     <>
       <h1>{title}</h1>
       <TextArea
-        value={currChooseAccount?.pubParams.describe}
+        spellCheck={false}
+        defaultValue={currChooseAccount.pubParams.describe}
+        value={value}
         placeholder={placeholder}
         variant="filled"
         showCount
         maxLength={maxLength}
         onChange={(e) => {
-          setOnePubParams({
-            describe: e.target.value,
-          });
+          setValue(e.target.value);
         }}
       />
       <AICreateTitle

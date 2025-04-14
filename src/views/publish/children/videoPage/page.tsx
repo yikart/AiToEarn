@@ -64,23 +64,25 @@ export default function Page() {
   const accountOneChooseId = useRef<string>();
 
   useEffect(() => {
-    const history = usePubStroe.getState().getVideoPubSaveData();
     let confirmRes: { destroy: () => void };
+    if (videoListChoose.length === 0) {
+      const history = usePubStroe.getState().getVideoPubSaveData();
 
-    if (history?.videoListChoose && history?.videoListChoose.length !== 0) {
-      confirmRes = confirm({
-        title: '恢复草稿',
-        icon: <ExclamationCircleFilled />,
-        content: '您之前有未发布的视频，是否需要恢复？',
-        okText: '恢复',
-        cancelText: '放弃',
-        onOk() {
-          setTempSaveParams(history);
-        },
-        onCancel() {
-          usePubStroe.getState().clearVideoPubSaveData();
-        },
-      });
+      if (history?.videoListChoose && history?.videoListChoose.length !== 0) {
+        confirmRes = confirm({
+          title: '恢复草稿',
+          icon: <ExclamationCircleFilled />,
+          content: '您之前有未发布的视频，是否需要恢复？',
+          okText: '恢复',
+          cancelText: '放弃',
+          onOk() {
+            setTempSaveParams(history);
+          },
+          onCancel() {
+            usePubStroe.getState().clearVideoPubSaveData();
+          },
+        });
+      }
     }
 
     return () => {
