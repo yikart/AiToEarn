@@ -61,7 +61,7 @@ export async function icpCreateImgTextPubRecord(
   const res: ImgTextModel = await window.ipcRenderer.invoke(
     'ICP_PUBLISH_CREATE_IMG_TEXT_PUL',
     {
-      pubRecord,
+      ...pubRecord,
       id: undefined,
     },
   );
