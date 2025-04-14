@@ -24,6 +24,23 @@ export interface ISaveFileParams {
 }
 
 export function views(win: Electron.BrowserWindow) {
+  // 窗口最小化
+  ipcMain.handle('window-minimize', function () {
+    win.minimize();
+  });
+  // 窗口最大化
+  ipcMain.handle('window-maximize', function () {
+    if (win.isMaximized()) {
+      win.restore();
+    } else {
+      win.maximize();
+    }
+  });
+  // 关闭窗口
+  ipcMain.handle('window-close', function () {
+    win.close();
+  });
+
   // 获取经纬度
   ipcMain.handle('GET_LOCATION', async () => {
     let res: any;

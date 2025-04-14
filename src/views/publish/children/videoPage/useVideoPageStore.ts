@@ -327,7 +327,8 @@ export const useVideoPageStore = create(
           });
 
           accounts.map((v) => {
-            videoListMap.get(v.id)!.account = v;
+            const videoItem = videoListMap.get(v.id);
+            if (videoItem) videoItem.account = v;
           });
 
           set({

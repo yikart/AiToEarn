@@ -67,7 +67,13 @@
 }
 
 .navigation-win32 {
-  padding-right: 140px;
+  //padding-right: 140px;
+  padding-right: 0;
+  :global {
+    .navigation-userinfo {
+      margin-right: 20px;
+    }
+  }
 }
 
 .navigation-darwin {

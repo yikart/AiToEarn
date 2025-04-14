@@ -11,6 +11,7 @@ import windowOperate from '../util/windowOperate';
 import { logger } from '../global/log';
 import { SplashWindow } from './splash';
 import dotenv from 'dotenv';
+const platform = process.platform;
 dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -51,7 +52,7 @@ async function createWindow() {
 
   // 创建主窗口但先不显示
   win = new BrowserWindow({
-    title: '爱团团AiToEarn',
+    title: '爱优赚AiToEarn',
     icon: path.join(getAssetPath('favicon.ico')),
     width: 2350,
     height: 1280,
@@ -59,11 +60,14 @@ async function createWindow() {
     minHeight: 800,
     titleBarStyle: 'hidden',
     show: false,
-    titleBarOverlay: {
-      color: 'rgba(0,0,0,0)',
-      height: 64,
-      symbolColor: '#595959',
-    },
+    titleBarOverlay:
+      platform === 'win32'
+        ? undefined
+        : {
+            color: 'rgba(0,0,0,0)',
+            height: 64,
+            symbolColor: '#595959',
+          },
     webPreferences: {
       preload,
       webviewTag: true,

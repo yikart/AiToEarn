@@ -2,6 +2,7 @@ import {
   ForwardedRef,
   forwardRef,
   memo,
+  useEffect,
   useImperativeHandle,
   useState,
 } from 'react';
@@ -88,6 +89,7 @@ const PubRecordDetails = memo(
                 account: undefined,
               });
             }}
+            closeIcon={false}
             open={open}
             width={600}
           >

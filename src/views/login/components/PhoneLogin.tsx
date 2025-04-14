@@ -52,7 +52,7 @@ const PhoneLogin = memo(
     return (
       <div className={styles.phoneLogin}>
         <div className={styles.loginHeader}>
-          <h2>欢迎来到爱团团</h2>
+          <h2>欢迎来到爱优赚</h2>
           <p>请使用手机号登录</p>
         </div>
         <Form

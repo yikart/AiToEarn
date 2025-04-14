@@ -106,7 +106,7 @@ const renderEmptyState = () => {
                 />
               </div>
               <p className={styles.qrCodeText}>扫码开启更多权益</p>
-              <p className={styles.qrCodeSubtext}>手机扫码爱团团公众号</p>
+              <p className={styles.qrCodeSubtext}>手机扫码爱优赚公众号</p>
             </div>
           </div>
         </div>
@@ -511,7 +511,7 @@ export default function Page() {
                 </div>
               </li>
               <li>
-                <p>点击下方链接下载爱团团接单软件（已下载可忽略）</p>
+                <p>点击下方链接下载爱优赚接单软件（已下载可忽略）</p>
                 <p className={styles.guideLink}>http://s.sqllb.com/Kky80</p>
               </li>
               <li>
@@ -558,7 +558,7 @@ export default function Page() {
                 <h4>为什么我没有项目？</h4>
                 <div className={styles.faqAnswer}>
                   <p>
-                    请先完成上方操作步骤的所有流程。如果您已在爱团团绑定小红书等账号，请耐心等待派单。24小时、48小时没有得到派单都是正常的。超过1周没有收到项目邀请可填写下方收集表快速排查为何没有单子
+                    请先完成上方操作步骤的所有流程。如果您已在爱优赚绑定小红书等账号，请耐心等待派单。24小时、48小时没有得到派单都是正常的。超过1周没有收到项目邀请可填写下方收集表快速排查为何没有单子
                   </p>
                   <p className={styles.guideLink}>
                     【收集表】快速排查为何没单子
@@ -570,7 +570,7 @@ export default function Page() {
                 <h4>手机如何发文？</h4>
                 <div className={styles.faqAnswer}>
                   <p>
-                    请先完成上方操作步骤中流程。公众号收到接单邀请，点击即可手机发文（手机操作一键发文前提是电脑需保证爱团团和发文账号在线，否则还需使用电脑发文）
+                    请先完成上方操作步骤中流程。公众号收到接单邀请，点击即可手机发文（手机操作一键发文前提是电脑需保证爱优赚和发文账号在线，否则还需使用电脑发文）
                   </p>
                   <div className={styles.guideImageContainer}>
                     <img
@@ -582,7 +582,7 @@ export default function Page() {
                       点击该模板消息可手机发文
                     </p>
                   </div>
-                  <p>点击下方链接下载爱团团接单软件（已下载可忽略）</p>
+                  <p>点击下方链接下载爱优赚接单软件（已下载可忽略）</p>
                   <p className={styles.guideLink}>http://s.sqllb.com/Kky80</p>
                 </div>
               </div>

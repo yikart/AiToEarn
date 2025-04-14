@@ -358,7 +358,7 @@ export default function Page() {
   >({});
 
   // 添加搜索关键词状态
-  const [searchKeyword, setSearchKeyword] = useState('爱团团');
+  const [searchKeyword, setSearchKeyword] = useState('爱优赚');
 
   async function getCreatorList(thisid: any) {
     setWordList([]);
