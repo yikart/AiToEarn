@@ -120,7 +120,7 @@ export const router: CustomRouteObject[] = [
       {
         path: '/reply',
         element: <Reply />,
-        meta: { name: '作品互动', icon: MessageOutlined },
+        meta: { name: '评论管理', icon: MessageOutlined },
       },
       {
         path: '/Replyother',
