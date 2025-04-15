@@ -44,7 +44,7 @@ interface Task {
 export default function Task() {
   const navigate = useNavigate();
   // 当前选中的任务类型
-  const [activeTab, setActiveTab] = useState('car');
+  const [activeTab, setActiveTab] = useState('article');
 
   // 渲染对应的任务内容
   const renderTaskContent = () => {
@@ -71,7 +71,7 @@ export default function Task() {
       {/* 顶部导航栏 */}
       <div className={styles.taskHeader}>
         <div className={styles.taskHeaderLeft}>
-          <div
+          {/* <div
             className={`${styles.taskButton} ${activeTab === 'car' ? styles.activeTaskButton : ''}`}
             onClick={() => setActiveTab('car')}
           >
@@ -91,7 +91,7 @@ export default function Task() {
           >
             <VideoCameraOutlined />
             <span>视频任务</span>
-          </div>
+          </div> */}
           <div
             className={`${styles.taskButton} ${activeTab === 'article' ? styles.activeTaskButton : ''}`}
             onClick={() => setActiveTab('article')}
