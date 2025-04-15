@@ -76,7 +76,7 @@ const renderEmptyState = () => {
   return (
     <div className={styles.emptyContainer}>
       <div className={styles.emptyText}>
-        <h3>接单前请务必先浏览《接单须知与常见问题解答》</h3>
+        <h3>接单前请务必先浏览《接单指南与常见问题解答》</h3>
         <p>所有关于接单的秘诀都在这里，请不要错过</p>
       </div>
 
@@ -482,12 +482,18 @@ export default function Page() {
         <div className={styles.guideContainer}>
           <div className={styles.guideHeader}>
             <h2>如何接单赚钱</h2>
-            <div className={styles.guideDate}>更新时间: 2025年3月1日</div>
+            <div className={styles.guideDate}>更新时间: 2025年4月16日</div>
           </div>
 
           <div className={styles.guideIntro}>
+          <p>
+            尊敬的AiToEarn流量主用户：
+            </p>
             <p>
-              欢迎使用任务市场！本指南将帮助您了解如何通过接单赚取额外收入。请仔细阅读以下步骤，确保您能顺利完成任务并获得奖励。
+              您好，为了更好地保障广告主和流量主的权益，建立一个健康、公平的广告交易系统，请仔细阅读并确认以下“《AiToEarn任务市场接单合作须知》”后再操作接单：
+            </p>
+            <p>
+              AiToEarn任务市场服务：指AiToEarn为流量主和广告主提供的撮合交易以及技术支持服务。AiToEarn在此过程中提供平台的运营与维护，监督管理平台内经营主体及交易行为，提升广告主与流量主交易体验。
             </p>
           </div>
 
@@ -512,11 +518,11 @@ export default function Page() {
               </li>
               <li>
                 <p>点击下方链接下载爱优赚接单软件（已下载可忽略）</p>
-                <p className={styles.guideLink}>http://s.sqllb.com/Kky80</p>
+                <p className={styles.guideLink}>https://att.yikart.cn/aiToEarn</p>
               </li>
               <li>
                 <p>
-                  【多开面板】或【管理中心】添加小红书、抖音、视频号、B站等平台账号，等待3天左右，可以前往【任务市场】查看任务和接单（如下图）
+                  【账号】添加小红书、抖音、视频号、B站等平台账号，等待3天左右，可以前往【任务市场】查看任务和接单（如下图）
                 </p>
                 <div className={styles.guideImageContainer}>
                   <img
@@ -555,64 +561,34 @@ export default function Page() {
             <h3>常见问题</h3>
             <div className={styles.guideFaq}>
               <div className={styles.faqItem}>
-                <h4>为什么我没有项目？</h4>
+                <h4>一.关于流量主账号</h4>
                 <div className={styles.faqAnswer}>
                   <p>
-                    请先完成上方操作步骤的所有流程。如果您已在爱优赚绑定小红书等账号，请耐心等待派单。24小时、48小时没有得到派单都是正常的。超过1周没有收到项目邀请可填写下方收集表快速排查为何没有单子
+                  1.1流量主须自行负责在AiToEarn平台的用户账号和密码，且须对在用户账号密码下发生的所有活动（包括但不限于发布需求信息、网上点击同意各类协议、规则、参与需求投标等）承担责任。流量主有权根据需要更改登录和账户提现密码。如因流量主的过错导致的任何损失由流量主自行承担，该过错包括但不限于：不按照交易提示操作，未及时进行交易操作，遗忘或泄漏密码等。
                   </p>
-                  <p className={styles.guideLink}>
-                    【收集表】快速排查为何没单子
+                  <p >
+                  1.2流量主应当注册账户时提供真实准确的注册信息，包括但不限于真实姓名、身份证号、联系电话、地址、邮政编码等，保证AiToEarn工作人员可以通过上述联系方式与流量主进行联系。与此同时，流量主也应当在相关资料实际变更时及时更新有关注册资料。
                   </p>
                 </div>
               </div>
 
               <div className={styles.faqItem}>
-                <h4>手机如何发文？</h4>
+                <h4>二.推广内容审核说明</h4>
                 <div className={styles.faqAnswer}>
                   <p>
-                    请先完成上方操作步骤中流程。公众号收到接单邀请，点击即可手机发文（手机操作一键发文前提是电脑需保证爱优赚和发文账号在线，否则还需使用电脑发文）
+                  2.1针对推广内容，AiToEarn任务市场平台有权对广告主投放内容进行初步审核，并对其中明显涉嫌违反法律法规的内容进行强制性处理，但平台的审核仅为形式审核，重在参照广告法条款进行审核，但因每个社交媒体平台自身规则差异造成的内容违规或下架，AiToEarn不承担相关责任。
                   </p>
-                  <div className={styles.guideImageContainer}>
-                    <img
-                      src={qr2}
-                      alt="点击该模板消息可手机发文"
-                      className={styles.guideImage}
-                    />
-                    <p className={styles.guideImageCaption}>
-                      点击该模板消息可手机发文
-                    </p>
-                  </div>
-                  <p>点击下方链接下载爱优赚接单软件（已下载可忽略）</p>
-                  <p className={styles.guideLink}>http://s.sqllb.com/Kky80</p>
+                  <p>2.2流量主在接受推广任务前，请自行判断可能带来的不确定性风险，我方不承担任何因推广素材造成的包括但不限于系统删文、禁言及封号、隐藏限流等责任。</p>
                 </div>
               </div>
 
               <div className={styles.faqItem}>
-                <h4>有人在我接的单子下面评论该怎么回复？</h4>
+                <h4>三.发布与结算</h4>
                 <div className={styles.faqAnswer}>
-                  <p>请私聊工作人员，直接发送您的订单号和用户回复截图。</p>
-                </div>
-              </div>
-
-              <div className={styles.faqItem}>
-                <h4>抖音一直发不出去怎么办？</h4>
-                <div className={styles.faqAnswer}>
-                  <p>
-                    由于存在难以攻克的技术问题，约
-                    30%的抖音订单无法正常发布，很遗憾您这单在此之列。对此给您带来不好的体验深表歉意，这单您可以放弃。
-                  </p>
-                </div>
-              </div>
-
-              <div className={styles.faqItem}>
-                <h4>我的账号不想接单怎么办？</h4>
-                <div className={styles.faqAnswer}>
-                  <p>
-                    如您不想接单或有账号不想收到任务市场消息提醒，可填写下表，后续【任务市场】将不再给您发邀请和派任务。
-                  </p>
-                  <p className={styles.guideLink}>
-                    【收集表】任务市场不接单申请
-                  </p>
+                  <p>3.1流量主如约完成推送后，推广信息因相关政策或其它非流量主主动因素导致被删除（包括但不限于：用户举报、平台通知配合删除等），如账号数据正常、账号质量过关且在结算期内，AiToEarn任务市场平台应当按照统计金额向乙方支付费用。</p>
+                  <p>3.2流量主发布订单内容后，因自身原因人为删除、隐藏、账号封禁等情况导致广告主推广内容不能正常展示推广的，须按照对应订单要求补发或协商处理，否则会受到相应接单限制或处罚。</p>
+                  <p>3.3流量主不得擅自更改接单推广信息，包括但不限于标题、图片、视频、音频、文字等（与AiToEarn任务市场工作人员沟通确认后的更改除外），如擅自更改将不予结算并影响接单权限。</p>
+                  <p>3.4AiToEarn任务市场订单实行发布后结算方式，结算金额实时到达流量主AiToEarn账户，流量主自行提现操作，平台不收取提现服务费。</p>
                 </div>
               </div>
 
@@ -621,7 +597,7 @@ export default function Page() {
                 <div className={styles.faqAnswer}>
                   <p>将订单号和违规截图私聊发给工作人员。</p>
                   <p>如未回复消息请耐心等待（工作时间：工作日9:00-18:00）</p>
-                  <p>前往新榜查看更多新媒体相关信息</p>
+                  <p>前往爱优赚查看更多新媒体相关信息</p>
                 </div>
               </div>
             </div>
