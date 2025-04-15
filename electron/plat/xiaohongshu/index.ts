@@ -302,7 +302,7 @@ export class XiaohongshuService {
       a1: cookie_a1,
     });
 
-    console.log('reverseRes', reverseRes);
+    // console.log('reverseRes', reverseRes);
 
     const userInfo = await this.makeRequest(this.getDashboardUrl, {
       method: 'GET',
@@ -324,7 +324,7 @@ export class XiaohongshuService {
         // 处理30天的数据
         const dataList = [];
         const startTimestamp = new Date(startDate).getTime();
-        const endTimestamp = new Date(endDate).getTime();
+        const endTimestamp = new Date(endDate).getTime()+1;
 
         // 获取所有列表数据
         const rise_fans_list = userInfo.data.thirty.rise_fans_list || [];
@@ -348,6 +348,7 @@ export class XiaohongshuService {
           list.forEach((item: any) => {
             const timestamp = item.date;
             // 检查日期是否在范围内
+            // console.log('xhs', timestamp, endTimestamp)
             if (timestamp >= startTimestamp && timestamp <= endTimestamp) {
               if (!dateMap[timestamp]) {
                 dateMap[timestamp] = {
@@ -1144,7 +1145,6 @@ export class XiaohongshuService {
           data: requestData,
           a1: cookie_a1,
         });
-        console.log('reverseRes', reverseRes);
         // 发起请求
         const createRes = await this.makeRequest(this.postCreateVideoUrl, {
           method: 'POST',

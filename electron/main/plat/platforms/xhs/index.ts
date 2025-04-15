@@ -120,6 +120,7 @@ export class Xhs extends PlatformBase {
       if (!ret.success) throw new Error('获取三方平台数据失败');
       for (const item of ret.data) {
         res.push({
+          time: item.date,
           fans: item.zhangfen,
           read: item.bofang,
           comment: item.pinglun,
