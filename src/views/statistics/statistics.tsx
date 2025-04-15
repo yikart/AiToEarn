@@ -68,6 +68,13 @@ const Statistics = () => {
     
   }, []);
 
+  useEffect(() => {
+   // 获取账户信息后立即调用 getAccountStatistics7
+   console.log('###',123)
+   getAccountStatistics7();
+    
+  }, [selectedAccounts]);
+
   // 初始化图表
   useEffect(() => {
     if (chartRef.current) {
@@ -82,8 +89,7 @@ const Statistics = () => {
   useEffect(() => {
     if (statisticsInfo?.list) {
       setSelectedAccounts(statisticsInfo.list.map((account) => account.id));
-      // 获取账户信息后立即调用 getAccountStatistics7
-      getAccountStatistics7();
+      
     }
   }, [statisticsInfo]);
 
@@ -302,6 +308,8 @@ const Statistics = () => {
     const res: any = statisticsInfo;
     const dataAll = [];
 
+   
+
     try {
       // 获取到账号列表后,遍历获取每个账号的看板数据
       if (res?.list && res.list.length > 0) {
@@ -326,6 +334,8 @@ const Statistics = () => {
           };
           dataAll.push(datas);
         }
+
+        console.log('所有数据', dataAll)
 
         // 所有数据获取完成后再一次性更新
         setDashboardData7(dataAll);
