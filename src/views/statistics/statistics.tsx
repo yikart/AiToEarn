@@ -23,10 +23,10 @@ import dayjs from 'dayjs';
 import { message } from 'antd';
 import WebView from '@/components/WebView';
 
-import douyinIcon from '@/assets/svgs/account/douyin.svg';
-import xhsIcon from '@/assets/svgs/account/xhs.svg';
-import wxSphIcon from '@/assets/svgs/account/wx-sph.svg';
-import ksIcon from '@/assets/svgs/account/ks.svg';
+import douyinIcon from '../../assets/svgs/noDispose/account/douyin.svg';
+import xhsIcon from '../../assets/svgs/noDispose/account/xhs.svg';
+import wxSphIcon from '../../assets/svgs/noDispose/account/wx-sph.svg';
+import ksIcon from '../../assets/svgs/noDispose/account/ks.svg';
 
 const { Content } = Layout;
 

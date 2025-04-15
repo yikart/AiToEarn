@@ -1,0 +1,14 @@
+.aiTool {
+  height: 100%;
+  display: flex;
+  :global {
+    .ant-menu {
+      height: 100%;
+      box-sizing: border-box;
+      padding-top: 20px;
+      svg {
+        font-size: 20px;
+      }
+    }
+  }
+}

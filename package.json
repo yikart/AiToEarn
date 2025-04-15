@@ -70,7 +70,6 @@
     "react-masonry-css": "^1.0.16",
     "react-router-dom": "6",
     "react-sortablejs": "^6.1.4",
-    "react-svg": "^16.2.0",
     "reflect-metadata": "^0.2.2",
     "sharp": "^0.33.5",
     "sortablejs": "^1.15.6",
@@ -118,6 +117,7 @@
     "vite": "^5.4.11",
     "vite-plugin-electron": "^0.29.0",
     "vite-plugin-electron-renderer": "^0.14.6",
+    "vite-plugin-svgr": "^4.3.0",
     "vitest": "^2.1.5"
   }
 }

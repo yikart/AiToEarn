@@ -8,10 +8,10 @@
 
 import { AccountType } from '../../../commont/AccountEnum';
 import { PubType } from '../../../commont/publish/PublishEnum';
-import ksSvg from '@/assets/svgs/account/ks.svg';
-import xhsSvg from '@/assets/svgs/account/xhs.svg';
-import douyinSvg from '@/assets/svgs/account/douyin.svg';
-import wxSphSvg from '@/assets/svgs/account/wx-sph.svg';
+import ksSvg from '../../assets/svgs/noDispose/account/ks.svg';
+import xhsSvg from '../../assets/svgs/noDispose/account/xhs.svg';
+import douyinSvg from '../../assets/svgs/noDispose/account/douyin.svg';
+import wxSphSvg from '../../assets/svgs/noDispose/account/wx-sph.svg';
 import { AccountModel } from '../../../electron/db/models/account';
 
 export interface IAccountPlatInfo {

@@ -43,6 +43,8 @@ import Reply from '@/views/reply';
 import Replyother from '@/views/replyother/replyother';
 import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
 import AiTool from '@/views/aiTool/index';
+import AiRanking from '@/views/aiTool/aiRanking/index';
+import DigitalHuman from '@/views/aiTool/digitalHuman/index';
 
 interface IRouterMeta {
   // 路由名称
@@ -81,6 +83,7 @@ export const router: CustomRouteObject[] = [
     children: [
       // 重定向 ---------
       { path: '/publish', element: <Navigate to="/publish/video" /> },
+      { path: '/aiTool', element: <Navigate to="/aiTool/aiRanking" /> },
 
       // 路由 ----------
       {
@@ -117,6 +120,16 @@ export const router: CustomRouteObject[] = [
         path: '/aiTool',
         element: <AiTool />,
         meta: { name: 'Ai工具', icon: OpenAIOutlined },
+        children: [
+          {
+            path: '/aiTool/aiRanking',
+            element: <AiRanking />,
+          },
+          {
+            path: '/aiTool/digitalHuman',
+            element: <DigitalHuman />,
+          },
+        ],
       },
       {
         path: '/reply',
