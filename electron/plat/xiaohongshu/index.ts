@@ -317,7 +317,7 @@ export class XiaohongshuService {
       },
     });
 
-    console.log('userInfouserInfo', JSON.stringify(userInfo));
+    // console.log('userInfouserInfo', JSON.stringify(userInfo));
 
     if (userInfo.code == 0) {
       if (startDate && endDate) {

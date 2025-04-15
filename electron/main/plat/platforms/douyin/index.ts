@@ -118,7 +118,7 @@ export class Douyin extends PlatformBase {
         time[1],
       );
       if (!ret.success) throw new Error('获取三方平台数据失败');
-      console.log('@@@ret.data', ret.data)
+      // console.log('@@@ret.data', ret.data)
       for (const item of ret.data) {
         res.push({
           time: item.date,
