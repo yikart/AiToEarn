@@ -6,7 +6,7 @@
  * @Description: 账户
  */
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import styles from './account.module.scss';
 import AccountSidebar from './components/AccountSidebar/AccountSidebar';
@@ -16,6 +16,10 @@ import { AccountInfo, AccountPlatInfoMap } from '@/views/account/comment';
 const Account: React.FC = () => {
   const [activeAccountId, setActiveAccountId] = useState(-1);
   const [accountInfo, setAccountInfo] = useState<AccountInfo>();
+
+  useEffect(() => {
+    window.ipcRenderer.invoke('start-kwai-listen');
+  }, []);
 
   return (
     <div className={styles.account}>

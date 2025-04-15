@@ -19,4 +19,6 @@ export enum SendChannelEnum {
   CommentRelyProgress = 'CommentRelyProgress',
   // 评论互动进度
   InteractionProgress = 'InteractionProgress',
+  // 视频发布完成后待审核变成审核的事件
+  VideoAuditFinish = 'VideoAuditFinish',
 }

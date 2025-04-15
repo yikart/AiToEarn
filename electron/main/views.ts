@@ -13,6 +13,7 @@ import requestNet from '../plat/requestNet';
 // @ts-ignore
 import coordtransform from 'coordtransform';
 import { logger } from '../global/log';
+import KwaiPubListener from './plat/platforms/Kwai/KwaiPubListener';
 
 export interface ISaveFileParams {
   // 要保存的路由
@@ -24,6 +25,11 @@ export interface ISaveFileParams {
 }
 
 export function views(win: Electron.BrowserWindow) {
+  // 开始监听快手审核发布
+  ipcMain.handle('start-kwai-listen', function () {
+    KwaiPubListener.start();
+  });
+
   // 窗口最小化
   ipcMain.handle('window-minimize', function () {
     win.minimize();

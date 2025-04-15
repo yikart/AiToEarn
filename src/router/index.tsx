@@ -20,6 +20,7 @@ import {
   MessageOutlined,
   AuditOutlined,
   MoneyCollectOutlined,
+  OpenAIOutlined,
 } from '@ant-design/icons';
 
 // 组件
@@ -35,18 +36,13 @@ import ImagePage from '@/views/publish/children/imagePage/page';
 import PubRecord from '@/views/publish/children/pubRecord/page';
 import Statistics from '@/views/statistics/statistics';
 import Task from '@/views/task/task';
-// import HotTopic from '@/views/trending/hotTopic';
-// import CarTask from '@/views/task/carTask';
-// import PopTask from '@/views/task/popTask';
-// import VideoTask from '@/views/task/videoTask';
-// import MineTask from '@/views/task/mineTask';
 import UserWalletAccount from '@/views/finance/userWalletAccount';
 import Finance from '@/views/finance/finance';
 import UserWalletRecord from '@/views/finance/userWalletRecord';
 import Reply from '@/views/reply';
 import Replyother from '@/views/replyother/replyother';
 import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
-import Test from '@/views/test';
+import AiTool from '@/views/aiTool/index';
 
 interface IRouterMeta {
   // 路由名称
@@ -116,6 +112,11 @@ export const router: CustomRouteObject[] = [
           // },
           { path: 'pubRecord', element: <PubRecord /> },
         ],
+      },
+      {
+        path: '/aiTool',
+        element: <AiTool />,
+        meta: { name: 'Ai工具', icon: OpenAIOutlined },
       },
       {
         path: '/reply',

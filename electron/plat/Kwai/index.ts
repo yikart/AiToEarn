@@ -4,6 +4,7 @@ import {
   GetCommentListResponse,
   GetPhotoListResponse,
   GetSubCommentListResponse,
+  GetWorksListResponse,
   IGetHomeInfoResponse,
   IGetHomeOverview,
   IKwaiGetLocationsResponse,
@@ -13,6 +14,7 @@ import {
   IKwaiUserInfoResponse,
   ILoginResponse,
   KwaiSubmitResponse,
+  RefreshWorksResponse,
   UploadFinishResponse,
   UploadPpreResponse,
 } from './kwai.type';
@@ -198,13 +200,23 @@ class KwaiPub {
         if (submitRes.data.result !== 1) {
           return reject(submitRes.data.message);
         }
+        callback(95, `正在查询发布结果...`);
+        const worksList = await this.getWorks(params.cookies, {
+          queryType: '2',
+        });
+        console.log(worksList);
+        const work = worksList.data.data.list.find(
+          (v) => v.unPublishCoverKey === coverRes.data.data.coverKey,
+        );
+        if (!work) throw '作品查询失败！';
         console.log('发布成功！');
         resolve({
           shareLink: ``,
-          publishId: '1',
+          publishId: `${work?.publishId}`,
         });
       } catch (e: any) {
         reject(`发布失败,失败原因：${e.message}`);
+        console.error(e);
       }
     });
   }
@@ -405,6 +417,43 @@ class KwaiPub {
     });
   }
 
+  // 刷新作品
+  async refreshWorks(cookies: Electron.Cookie[], ids: number[]) {
+    return await this.requestApi<RefreshWorksResponse>({
+      cookie: cookies,
+      url: `/rest/cp/works/v2/video/pc/publish/refresh`,
+      method: 'POST',
+      body: {
+        ids,
+      },
+    });
+  }
+
+  // 获取作品-开发者后台
+  async getWorks(
+    cookies: Electron.Cookie[],
+    params: {
+      // 0=全部作品，1=已发布，2=待发布，3=未通过
+      queryType: '0' | '1' | '2' | '3';
+      limit?: number;
+    },
+  ) {
+    return await this.requestApi<GetWorksListResponse>({
+      cookie: cookies,
+      url: `/rest/cp/works/v2/video/pc/photo/list`,
+      method: 'POST',
+      body: {
+        cursor: Date.now(),
+        queryType: params.queryType,
+        limit: params.limit || 100,
+        timeRangeType: 5,
+        keyword: '',
+        startTime: Date.now() - 1000 * 60 * 60 * 24 * 30,
+        endTime: Date.now(),
+      },
+    });
+  }
+
   /**
    * 获取作品列表
    * @param cookies
@@ -507,7 +556,6 @@ class KwaiPub {
   /**
    * 添加评论和回复评论
    * @param cookie
-   * @param photoId
    * @param content
    * @param reply
    * @returns
@@ -537,9 +585,8 @@ class KwaiPub {
   /**
    * 点赞
    * @param cookie
-   * @param photoId
-   * @param content
-   * @param reply
+   * @param dataId
+   * @param option
    * @returns
    */
   async dianzanDyOther(cookie: Electron.Cookie[], dataId: string, option: any) {
@@ -569,10 +616,10 @@ class KwaiPub {
 
   /**
    * 视频评论
-   * @param cookieu
-   * @param photoId
+   * @param cookie
+   * @param dataId
    * @param content
-   * @param reply
+   * @param authorId
    * @returns
    */
   async videoCommentByOther(
@@ -609,9 +656,8 @@ class KwaiPub {
   /**
    * 获取视频评论列表
    * @param cookie
-   * @param photoId
-   * @param content
-   * @param reply
+   * @param dataId
+   * @param pcursor
    * @returns
    */
   async getVideoCommentList(
@@ -645,12 +691,10 @@ class KwaiPub {
   /**
    * 回复二级评论
    * @param cookie
-   * @param commentId
    * @param content
    * @param option
    * @returns
    */
-
   async replyCommentByOther(
     cookie: Electron.Cookie[],
     content: string,

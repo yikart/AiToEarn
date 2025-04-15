@@ -18,6 +18,7 @@ import { PublishService } from '../service';
 import platController from '../../plat';
 import { AccountService } from '../../account/service';
 import { AccountType } from '../../../../commont/AccountEnum';
+import lodash from 'lodash';
 
 @Controller()
 export class VideoPubController {
@@ -151,6 +152,31 @@ export class VideoPubController {
   ): Promise<any> {
     const userInfo = getUserInfo();
     return await this.videoPubService.getVideoPulTypeCount(userInfo.id, type);
+  }
+
+  // 获取状态为审核中的视频列表
+  @Et('ET_PUBLISH_VIDEO_AUDIT_LIST')
+  async getAuditVideoList(callback: (_: VideoModel[]) => void): Promise<any> {
+    console.log(callback);
+    const userInfo = getUserInfo();
+    if (!userInfo?.id) return [];
+    const res = await this.videoPubService.getVideoPulList(
+      userInfo.id,
+      {
+        page_size: 20,
+        page_no: 1,
+      },
+      {
+        status: PubStatus.Audit,
+      },
+    );
+    callback(res.list);
+  }
+
+  // 根据dataid更新数据
+  @Et('ET_PUBLISH_UPDATE_VIDEO_PUL_BY_DATAID')
+  async updateVideoPubByDataid(videoModel: Partial<VideoModel>): Promise<any> {
+    return await this.videoPubService.updateVideoPulByDataId(videoModel);
   }
 
   // 更新视频发布数据

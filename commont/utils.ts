@@ -12,3 +12,8 @@ export function getFilePathNameCommon(path: string) {
     suffix: filename.split('.')[filename.split('.').length - 1],
   };
 }
+
+// 等待n毫秒
+export function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

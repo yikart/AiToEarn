@@ -104,24 +104,37 @@ const PubRecordDetails = memo(
                   {pubRecordList?.map((v) => {
                     const account = accountMap.get(v.accountId);
                     const plat = AccountPlatInfoMap.get(v.type);
+                    let statusText = '';
+                    let className = '';
+                    let tooltipText = '';
+                    if (v.status === 1) {
+                      statusText = '发布成功';
+                      className = 'pubRecord-record-item--success';
+                    } else if (v.status === 0) {
+                      statusText = '发布中';
+                      className = 'pubRecord-record-item--processing';
+                    } else if (v.status === 2) {
+                      statusText = '发布失败';
+                      className = 'pubRecord-record-item--fail';
+                    } else if (v.status === 4) {
+                      statusText = '审核中';
+                      tooltipText =
+                        '快手需要几十秒时间审核，等待几十秒后刷新数据即可';
+                      className = 'pubRecord-record-item--processing';
+                    }
+
                     return (
                       <li className="pubRecord-record-item" key={v.id}>
-                        <div
-                          className={[
-                            'pubRecord-record-item-status',
-                            v.status === 1
-                              ? 'pubRecord-record-item--success'
-                              : v.status === 0
-                                ? 'pubRecord-record-item--processing'
-                                : 'pubRecord-record-item--fail',
-                          ].join(' ')}
-                        >
-                          {v.status === 1
-                            ? '发布成功'
-                            : v.status === 0
-                              ? '发布中'
-                              : '发布失败'}
-                        </div>
+                        <Tooltip title={tooltipText || undefined}>
+                          <div
+                            className={[
+                              'pubRecord-record-item-status',
+                              className,
+                            ].join(' ')}
+                          >
+                            {statusText}
+                          </div>
+                        </Tooltip>
                         <div className="pubRecord-record-item-con">
                           <div className="pubRecord-record-item-con-avatar">
                             <Avatar size="large" src={account?.avatar} />
@@ -143,61 +156,61 @@ const PubRecordDetails = memo(
                           </div>
                         </div>
                         <div className="pubRecord-record-item-btns">
-                          {v.status !== 0 &&
-                            (v.status !== 1 ? (
-                              <Button
-                                type="link"
-                                onClick={async () => {
-                                  if (
-                                    currPubRecordModel?.type === PubType.VIDEO
-                                  ) {
-                                    setRecordLoaidng(true);
-                                    const prl = pubRecordList.filter(
-                                      (v) => v.status === 2,
-                                    );
-                                    await restartPub(
-                                      prl as VideoModel[],
-                                      prl.map(
-                                        (k) => accountMap.get(k.accountId)!,
-                                      ),
-                                      currPubRecordModel,
-                                    );
-                                    setRecordLoaidng(false);
-                                    navigate('/publish/video');
-                                  } else if (
-                                    currPubRecordModel?.type ===
-                                    PubType.ImageText
-                                  ) {
-                                  }
-                                }}
-                              >
-                                重新发布
-                              </Button>
-                            ) : (
-                              <Button
-                                type="link"
-                                onClick={async () => {
-                                  if (!v.dataId) return;
-                                  const newState: IExamineVideo = {
-                                    jsCode: '',
-                                    open: true,
-                                    url: '',
-                                    account,
-                                  };
-                                  if (account?.type === AccountType.WxSph) {
-                                    const videoFile = await getVideoFile(
-                                      (v as VideoModel).videoPath!,
-                                    );
-                                    newState['videoSrc'] = videoFile.videoUrl;
-                                  } else {
-                                    newState['url'] = v.previewVideoLink || '';
-                                  }
-                                  onExamineVideoClick(newState);
-                                }}
-                              >
-                                查看
-                              </Button>
-                            ))}
+                          {v.status === 2 && (
+                            <Button
+                              type="link"
+                              onClick={async () => {
+                                if (
+                                  currPubRecordModel?.type === PubType.VIDEO
+                                ) {
+                                  setRecordLoaidng(true);
+                                  const prl = pubRecordList.filter(
+                                    (v) => v.status === 2,
+                                  );
+                                  await restartPub(
+                                    prl as VideoModel[],
+                                    prl.map(
+                                      (k) => accountMap.get(k.accountId)!,
+                                    ),
+                                    currPubRecordModel,
+                                  );
+                                  setRecordLoaidng(false);
+                                  navigate('/publish/video');
+                                } else if (
+                                  currPubRecordModel?.type === PubType.ImageText
+                                ) {
+                                }
+                              }}
+                            >
+                              重新发布
+                            </Button>
+                          )}
+
+                          {v.status === 1 && (
+                            <Button
+                              type="link"
+                              onClick={async () => {
+                                if (!v.dataId) return;
+                                const newState: IExamineVideo = {
+                                  jsCode: '',
+                                  open: true,
+                                  url: '',
+                                  account,
+                                };
+                                if (account?.type === AccountType.WxSph) {
+                                  const videoFile = await getVideoFile(
+                                    (v as VideoModel).videoPath!,
+                                  );
+                                  newState['videoSrc'] = videoFile.videoUrl;
+                                } else {
+                                  newState['url'] = v.previewVideoLink || '';
+                                }
+                                onExamineVideoClick(newState);
+                              }}
+                            >
+                              查看
+                            </Button>
+                          )}
                         </div>
                       </li>
                     );

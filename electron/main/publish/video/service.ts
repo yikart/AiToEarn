@@ -31,6 +31,14 @@ export class VideoPubService {
     return await this.videoRepository.update(videoModel.id!, videoModel);
   }
 
+  // 根据dataid更新数据
+  async updateVideoPulByDataId(videoModel: Partial<VideoModel>) {
+    return await this.videoRepository.update(
+      { dataId: videoModel.dataId },
+      videoModel,
+    );
+  }
+
   // 获取视频发布信息
   async getVideoPulInfo(id: number) {
     return await this.videoRepository.findOne({ where: { id } });

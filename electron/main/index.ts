@@ -11,6 +11,7 @@ import windowOperate from '../util/windowOperate';
 import { logger } from '../global/log';
 import { SplashWindow } from './splash';
 import dotenv from 'dotenv';
+import KwaiPubListener from "./plat/platforms/Kwai/KwaiPubListener";
 const platform = process.platform;
 dotenv.config();
 
@@ -95,6 +96,7 @@ async function createWindow() {
   }
 
   // 延长启动窗口显示时间
+  KwaiPubListener.start();
   setTimeout(() => {
     if (splashWindow) {
       win?.show();

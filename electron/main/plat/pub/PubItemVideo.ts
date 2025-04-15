@@ -67,7 +67,11 @@ export class PubItemVideo extends PubItemBase {
       });
     } else {
       // 发布成功
-      this.videoModel.status = PubStatus.RELEASED;
+      if (typeof publishVideoResult.pubStatus === 'number') {
+        this.videoModel.status = publishVideoResult.pubStatus;
+      } else {
+        this.videoModel.status = PubStatus.RELEASED;
+      }
       this.videoModel.dataId = publishVideoResult.dataId;
       this.videoModel.previewVideoLink = publishVideoResult.previewVideoLink;
       windowOperate.sendRenderMsg(SendChannelEnum.VideoPublishProgress, {

@@ -141,11 +141,24 @@ export class AccountController {
 
   // 获取账户列表(ids)
   @Icp('ICP_ACCOUNT_GET_LIST_BY_IDS')
-  async getAccountListByIds(
+  async getAccountListByIdsTcp(
     event: Electron.IpcMainInvokeEvent,
     ids: number[],
   ): Promise<any> {
+    return this.getAccountListByIds(ids);
+  }
+  // 获取账户列表(ids)
+  @Et('ET_ACCOUNT_GET_LIST_BY_IDS')
+  async getAccountListByIdsEt(
+    ids: number[],
+    callback: (p: AccountModel[]) => void,
+  ): Promise<any> {
+    const accounts = await this.getAccountListByIds(ids);
+    callback(accounts);
+  }
+  async getAccountListByIds(ids: number[]) {
     const userInfo = getUserInfo();
+    if (!userInfo?.id) return [];
     return this.accountService.getAccountListByIds(userInfo.id, ids);
   }
 

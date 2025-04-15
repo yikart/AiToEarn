@@ -28,6 +28,8 @@ import { AccountModel } from '../../../../db/models/account';
 import dayjs from 'dayjs';
 import { VideoModel } from '../../../../db/models/video';
 import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
+import { PubStatus } from '../../../../db/models/pubRecord';
+import KwaiPubListener from './KwaiPubListener';
 
 export class Kwai extends PlatformBase {
   constructor() {
@@ -119,11 +121,13 @@ export class Kwai extends PlatformBase {
           msg: '网络繁忙，请稍后重试',
         });
 
+      KwaiPubListener.start(JSON.stringify(params.cookies), +result.publishId);
       return resolve({
         code: 1,
         msg: '发布成功',
         dataId: result.publishId,
         previewVideoLink: result.shareLink,
+        pubStatus: PubStatus.Audit,
       });
     });
   }

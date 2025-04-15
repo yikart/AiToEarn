@@ -14,6 +14,7 @@ export enum PubStatus {
   RELEASED = 1, // 已发布
   FAIL = 2, // 发布失败
   PartSuccess = 3, // 部分成功
+  Audit = 4, // 审核中
 }
 @Entity({ name: 'pubRecord' })
 export class PubRecordModel extends TempModel {

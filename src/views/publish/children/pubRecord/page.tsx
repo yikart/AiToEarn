@@ -11,6 +11,7 @@ import { PubType } from '../../../../../commont/publish/PublishEnum';
 import PubRecordDetails, {
   IPubRecordDetailsRef,
 } from './components/PubRecordDetails';
+import { onVideoAuditFinish } from '../../../../icp/receiveMsg';
 
 export const ImageView = ({
   prm,
@@ -168,6 +169,10 @@ export default function Page({
 
   useEffect(() => {
     GetPubList();
+
+    return onVideoAuditFinish((params) => {
+      console.log('视频审核完成', params);
+    });
   }, [pubType]);
 
   async function GetPubList() {

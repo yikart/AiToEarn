@@ -46,6 +46,16 @@ export const onAccountLoginFinish = (
   );
 };
 
+// 视频审核完成
+export const onVideoAuditFinish = (
+  callback: (_: { previewVideoLink: string; dataId: string }) => void,
+) => {
+  return bindEventCore(SendChannelEnum.VideoAuditFinish, (_, ...args) => {
+    // @ts-ignore
+    callback(...args);
+  });
+};
+
 // 视频发布进度
 export const onVideoPublishProgress = (
   callback: (progressData: PublishProgressRes) => void,

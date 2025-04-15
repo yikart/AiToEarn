@@ -175,6 +175,53 @@ export interface ILoginResponse {
   userInfo: IRequestNetResult<IKwaiUserInfoResponse>;
 }
 
+// 刷新作品
+export type RefreshWorksResponse = IKwaiUserCommonResponse<{
+  list: {
+    id: number;
+    likeCount: number;
+    operations: number[];
+    playCount: number;
+    publishStatus: number;
+    // 如果已经发布这个值会存在
+    workId?: string;
+  }[];
+}>;
+
+// 获取作品，开发者后台
+export type GetWorksListResponse = IKwaiUserCommonResponse<{
+  list: {
+    publishId: number;
+    workId: string;
+    title: string;
+    publishCoverUrl: string;
+    unPublishCoverKey: string | null;
+    userId: number;
+    userIdStr: string;
+    userName: string;
+    userHead: string;
+    playCount: number;
+    likeCount: number;
+    commentCount: number;
+    uploadTime: number;
+    durationSecond: number;
+    judgementTitle: string;
+    judgementStatus: number;
+    publishStatus: number;
+    operations: string[];
+    publishType: number;
+    photoStatus: number;
+    photoTop: boolean;
+    collectionTitle: string;
+    collectionId: number;
+    awdId: number;
+    hotspotActivity: null;
+    hotspot: null;
+    showAtlasIcon: boolean;
+    showDuration: boolean;
+  }[];
+}>;
+
 // 获取作品列表
 export interface GetPhotoListResponse {
   result: number; // 1;

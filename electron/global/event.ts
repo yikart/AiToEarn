@@ -6,4 +6,5 @@
  * @Description: 全局事件
  */
 import { EventEmitter } from 'events';
+
 export const EtEvent = new EventEmitter();

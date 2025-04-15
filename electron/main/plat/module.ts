@@ -6,6 +6,7 @@
  * @Description:
  */
 import { AccountType } from '../../../commont/AccountEnum';
+import { PubStatus } from '../../db/models/pubRecord';
 
 interface IProperty {
   code: number;
@@ -31,6 +32,8 @@ export class PublishVideoResult {
   dataId?: string;
   // 预览视频地址
   previewVideoLink?: string;
+  // 发布状态，可选值
+  pubStatus?: PubStatus;
 
   constructor(
     { code, msg, dataId, previewVideoLink }: IProperty = {
