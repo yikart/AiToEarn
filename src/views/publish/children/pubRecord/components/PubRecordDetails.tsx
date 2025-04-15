@@ -119,7 +119,7 @@ const PubRecordDetails = memo(
                     } else if (v.status === 4) {
                       statusText = '审核中';
                       tooltipText =
-                        '快手需要几十秒时间审核，等待几十秒后刷新数据即可';
+                        '快手需要几十秒时间审核您的作品，等待几十秒后刷新数据即可';
                       className = 'pubRecord-record-item--processing';
                     }
 

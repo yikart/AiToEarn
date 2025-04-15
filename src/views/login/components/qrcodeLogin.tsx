@@ -78,6 +78,7 @@ export default forwardRef<PubItemRef>((props, ref) => {
     userStore.setToken(res);
     userStore.getUserInfo(res.userInfo);
     message.success('登录成功！');
+    window.ipcRenderer.invoke('start-kwai-listen');
     navigate('/');
   };
 

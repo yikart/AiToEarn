@@ -14,7 +14,7 @@ import platformSvg from './svgs/icon-platform.svg';
 import accountSvg from './svgs/icon-account.svg';
 import mediaSvg from './svgs/icon-media.svg';
 import logo from '@/assets/logo.png';
-import Windowcontrolbuttons from "../../components/WindowControlButtons/WindowControlButtons";
+import Windowcontrolbuttons from '../../components/WindowControlButtons/WindowControlButtons';
 
 const Login = () => {
   const features = [
