@@ -38,7 +38,9 @@ export default function CommonUserSelect({
       keyword: keywords || '',
       account: account!,
     });
-    return await accountFailureDispose(res, account!, onAccountChange);
+    const data = await accountFailureDispose(res, account!, onAccountChange);
+    setOptions(data);
+    return data;
   };
 
   useEffect(() => {
