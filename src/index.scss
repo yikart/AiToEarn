@@ -5,6 +5,9 @@
 body {
   background: #fff;
   color: #222;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+  'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+  'Noto Color Emoji';
 }
 
 .ant-tabs-dropdown {
@@ -93,7 +96,7 @@ code {
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
+    background-color: var(--whiteColor1);
   }
   a:hover {
     color: #747bff;
@@ -118,6 +121,10 @@ ul {
 }
 
 /* 全局自定义滚动条样式 */
+.ant-table-body {
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+}
 *::-webkit-scrollbar {
   width: 10px;
   height: 10px;

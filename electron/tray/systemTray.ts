@@ -46,7 +46,7 @@ export class SystemTray {
       },
     ]);
 
-    this.tray.setToolTip('爱优赚AiToEarn');
+    this.tray.setToolTip('哎哟赚AiToEarn');
     this.tray.setContextMenu(contextMenu);
   }
 

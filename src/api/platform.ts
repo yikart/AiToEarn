@@ -3,6 +3,10 @@ import { HotTopic } from './types/hotTopic';
 import { Topic } from './types/topic';
 import { ViralTitle } from './types/viralTitles';
 import { hotHttp } from './request';
+import {
+  GetAiToolsRankingApiParams,
+  GetAiToolsRankingApiRes,
+} from './types/platform.type';
 
 export interface Platform {
   id: string;
@@ -69,6 +73,7 @@ export interface Author {
 }
 
 export interface Stats {
+  watchCount: number;
   viewCount: number;
   likeCount: number;
   commentCount: number;
@@ -251,7 +256,8 @@ export const platformApi = {
   },
 
   // 获取平台下所有分类的前五条数据
-  findTopByPlatformAndCategories(platformId: string, 
+  findTopByPlatformAndCategories(
+    platformId: string,
     timeType?: string, // 时间分类
   ) {
     return hotHttp.get<
@@ -341,5 +347,12 @@ export const platformApi = {
     });
   },
 
+  // 获取AI工具榜数据
+  getAiToolsRankingApi(data: GetAiToolsRankingApiParams) {
+    return hotHttp.post<GetAiToolsRankingApiRes>(`/products/ranking/ai`, {
+      ...data,
+      pageSize: 100,
+      area: +data.area,
+    });
+  },
 };
-

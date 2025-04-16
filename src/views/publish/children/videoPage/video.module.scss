@@ -25,7 +25,7 @@
       }
       &-tip {
         font-size: var(--fs-sm);
-        color: var(--darkGreyColor);
+        color: var(--grayColor10);
         margin: 20px 0;
       }
     }
@@ -83,7 +83,7 @@
       }
       &-footer {
         text-align: center;
-        border-top: 1px solid var(--superLightGreyColor);
+        border-top: 1px solid var(--grayColor3);
         padding: 15px;
       }
     }
@@ -227,7 +227,7 @@
             margin-right: 30px;
             label {
               margin-right: 10px;
-              color: var(--lightGreyColor);
+              color: var(--grayColor7);
             }
             &--warning {
               color: var(--errerColor);
@@ -399,7 +399,7 @@
       }
       &-tip {
         font-size: var(--fs-sm);
-        color: var(--lightGreyColor);
+        color: var(--grayColor7);
         margin-top: 5px;
       }
     }

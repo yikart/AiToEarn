@@ -27,6 +27,7 @@ import {
 } from '@ant-design/icons';
 import styles from './task.module.scss';
 import { useState, useEffect, useRef } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { taskApi } from '@/api/task';
 import { TaskType, TaskVideo } from '@@/types/task';
 import dayjs from 'dayjs';
@@ -77,7 +78,7 @@ export default function InteractionTask() {
   const [taskList, setTaskList] = useState<any[]>([]);
   const [pageInfo, setPageInfo] = useState({
     pageNo: 1,
-    pageSize: 10,
+    pageSize: 12,
     totalCount: 0,
   });
   const [hasMore, setHasMore] = useState(true);
@@ -90,14 +91,63 @@ export default function InteractionTask() {
   const navigate = useNavigate();
 
   const Ref_TaskInfo = useRef<TaskInfoRef>(null);
+  
+  // 使用 react-intersection-observer 监听底部元素
+  const { ref: loadMoreRef, inView } = useInView({
+    threshold: 0.2,
+    triggerOnce: false,
+  });
+
+  // 当底部元素进入视图时加载更多数据
+  useEffect(() => {
+    if (inView && hasMore && !loading) {
+      loadMore();
+    }
+  }, [inView, hasMore, loading]);
+
+  // 加载更多数据
+  const loadMore = async () => {
+    if (loading || !hasMore) return;
+    
+    setLoading(true);
+    try {
+      const nextPage = pageInfo.pageNo + 1;
+      setPageInfo(prev => ({ ...prev, pageNo: nextPage }));
+      await getTaskList(true);
+    } catch (error) {
+      console.error('加载更多失败:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 初始加载数据
+  useEffect(() => {
+    getTaskList();
+  }, []);
+
+  // 任务进度监听
+  useEffect(() => {
+    const unload = onInteractionProgress((args) => {
+      if (args.status === 1) {
+        taskDone();
+        notification.open({
+          message: '互动任务完成',
+        });
+      }
+    });
+    return () => {
+      unload();
+    };
+  }, []);
 
   async function getTaskList(isLoadMore = false) {
     setLoading(true);
     try {
       const res = await taskApi.getTaskList<any>({
         ...pageInfo,
-        pageSize: 100,
-        type: TaskType.INTERACTION,
+        // pageSize: 100,
+        // type: TaskType.INTERACTION,
       });
 
       if (isLoadMore) {
@@ -118,23 +168,6 @@ export default function InteractionTask() {
       setLoading(false);
     }
   }
-
-  useEffect(() => {
-    getTaskList();
-    const unload = onInteractionProgress((args) => {
-      if (args.status === 1) {
-        taskDone();
-
-        notification.open({
-          message: '互动任务完成',
-        });
-      }
-    });
-    return () => {
-      unload();
-      console.log(1111);
-    };
-  }, []);
 
   const formatDate = (date: string) => {
     return dayjs(date).format('YYYY-MM-DD HH:mm');
@@ -341,10 +374,11 @@ export default function InteractionTask() {
             <List.Item>
               <Card
                 className={styles.taskCard}
+                variant="outlined"
                 cover={
                   <div className={styles.taskImage}>
                     <Image
-                      src={logo}
+                      src={item.imageUrl?  FILE_BASE_URL+item.imageUrl : logo}
                       alt="logo"
                       preview={false}
                       style={{
@@ -415,6 +449,21 @@ export default function InteractionTask() {
           )}
         />
       </Spin>
+
+      {/* 底部加载更多触发器 */}
+      <div ref={loadMoreRef} className={styles.loadMoreTrigger}>
+        {hasMore && (
+          <div className={styles.loadMoreContainer}>
+            <Button 
+              type="link" 
+              loading={loading}
+              onClick={loadMore}
+            >
+              {loading ? '加载中...' : '加载更多'}
+            </Button>
+          </div>
+        )}
+      </div>
 
       <Modal
         title="任务详情"

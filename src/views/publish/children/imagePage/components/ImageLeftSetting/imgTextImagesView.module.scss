@@ -17,7 +17,7 @@
         display: flex;
         align-items: center;
         &-tips {
-          color: var(--lightGreyColor);
+          color: var(--grayColor7);
           margin-right: 8px;
         }
         button {
@@ -41,7 +41,7 @@
       &-item {
         min-width: 100px;
         height: 102px;
-        border: 1px solid var(--superLightGreyColor);
+        border: 1px solid var(--grayColor3);
         cursor: move;
         position: relative;
         &:hover {

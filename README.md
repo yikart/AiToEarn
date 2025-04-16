@@ -6,7 +6,7 @@
  * @Description:
 -->
 
-# AiToEarn 爱优赚
+# AiToEarn 哎哟赚
 
 ![GitHub stars](https://img.shields.io/github/stars/yikart/AttAiToEarn?color=fa6470)
 ![GitHub license](https://img.shields.io/github/license/yikart/AttAiToEarn)

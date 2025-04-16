@@ -1,5 +1,5 @@
 .accountSidebar {
-  border-right: 1px solid var(--superLightGreyColor);
+  border-right: 1px solid var(--grayColor3);
   width: 200px;
   flex-shrink: 0;
   display: flex;
@@ -20,7 +20,7 @@
 
     .accountSidebar-footer {
       padding: 5px 0;
-      border-top: 1px solid var(--superLightGreyColor);
+      border-top: 1px solid var(--grayColor3);
       text-align: center;
     }
 
@@ -105,7 +105,7 @@
       padding: 5px 0 10px 0;
       border-bottom: 1px solid #dedede;
       margin-bottom: 15px;
-      color: var(--lightGreyColor);
+      color: var(--grayColor7);
       &-right {
         margin-left: 10px;
       }
@@ -118,7 +118,7 @@
         display: flex;
         align-items: center;
         &:nth-of-type(1) {
-          color: var(--lightGreyColor);
+          color: var(--grayColor7);
         }
         img {
           width: 15px;
