@@ -111,7 +111,7 @@ interface Task {
 export default function Task() {
   const navigate = useNavigate();
   // 当前选中的任务类型
-  const [activeTab, setActiveTab] = useState('article');
+  const [activeTab, setActiveTab] = useState('interaction');
   
   // 互动任务相关状态
   const [loading, setLoading] = useState(false);
@@ -140,13 +140,7 @@ export default function Task() {
 
   // 当底部元素进入视图时加载更多数据
   useEffect(() => {
-    console.log('inView状态变化:', inView);
-    console.log('hasMore状态:', hasMore);
-    console.log('loading状态:', loading);
-    console.log('activeTab状态:', activeTab);
-    
     if (inView && hasMore && !loading && activeTab === 'interaction') {
-      console.log('触发加载更多');
       loadMore();
     }
   }, [inView, hasMore, loading, activeTab]);
@@ -306,6 +300,9 @@ export default function Task() {
    * 接受任务
    */
   async function taskApply() {
+    // 00.00 测试
+    // handleCompleteTask();
+    // return;
     if (!selectedTask) return;
 
     try {
@@ -364,6 +361,10 @@ export default function Task() {
       setLoading(false);
       message.error('网络繁忙，请稍后重试！');
     };
+
+    // 00.00 测试
+    // console.log('pubCore', selectedTask);
+    // return;
 
     // 创建一级记录
     const recordRes = await icpCreatePubRecord({
@@ -566,7 +567,7 @@ export default function Task() {
                   cover={
                     <div className={styles.taskImage}>
                       <Image
-                        src={item.imageUrl?  FILE_BASE_URL+item.imageUrl : logo}
+                        src={item.imageUrl?  FILE_BASE_URL+item.imageUrl : (item.dataInfo.imageList.length ? FILE_BASE_URL+item.dataInfo.imageList[item.dataInfo.imageList.length-1] : logo)}
                         alt="logo"
                         preview={false}
                         style={{
@@ -650,15 +651,21 @@ export default function Task() {
 
         {/* 底部加载更多触发器 */}
         <div ref={loadMoreRef} className={styles.loadMoreTrigger} style={{ height: '50px', marginTop: '20px' }}>
-          <div className={styles.loadMoreContainer}>
-            <Button 
-              type="link" 
+          {hasMore ? (
+            <div className={styles.loadMoreContainer}>
+              <Button 
+                type="link" 
               loading={loading}
               onClick={loadMore}
             >
-              {loading ? '加载中1...' : '加载更多1'}
+              {loading ? '加载中...' : '加载更多'}
             </Button>
-          </div>
+            </div>
+          ) : (
+            <div className={styles.loadMoreContainer}>
+              <Text style={{ color: '#999' }}>没有更多任务了</Text>
+            </div>
+          )}
         </div>
 
         <Modal
