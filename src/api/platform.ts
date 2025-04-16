@@ -69,6 +69,7 @@ export interface Author {
 }
 
 export interface Stats {
+  watchCount: number;
   viewCount: number;
   likeCount: number;
   commentCount: number;

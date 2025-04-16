@@ -2732,7 +2732,18 @@ const Trending: React.FC = () => {
                             </div>
                           )}
 
-                          {!selectedRanking?.name.includes('增量') && (
+                          {(selectedRanking?.name.includes('阅读榜') || selectedRanking?.name.includes('低粉爆文榜')) && (
+                            <div className="flex items-center flex-1">
+                              <div className="flex items-center space-x-12">
+                                <div className="w-24 text-center">在看数</div>
+                                <div className="w-24 text-center">阅读数</div>
+                                <div className="w-24 text-center">点赞数</div>
+                                <div className="w-24 text-center">转发数</div>
+                              </div>
+                            </div>
+                          )}
+
+                          {!selectedRanking?.name.includes('增量') && !selectedRanking?.name.includes('阅读榜') && !selectedRanking?.name.includes('低粉爆文榜') && (
                             <div className="flex items-center flex-1">
                               <div className="flex items-center space-x-12">
                                 <div className="w-24 text-center">点赞</div>
@@ -2824,9 +2835,14 @@ const Trending: React.FC = () => {
                                   {item.author.name}
                                 </span>
                                 <span className="text-xs text-gray-400">
-                                  粉丝数{' '}
-                                  {item.author.fansCount?.toLocaleString()}
+                                  {item.author.fansCount !== null && item.author.fansCount.toLocaleString() !== '' && (
+                                    <>
+                                      粉丝数{' '}
+                                      {item.author.fansCount.toLocaleString()}
+                                    </>
+                                  )}
                                 </span>
+
                                 <span className="text-xs text-gray-400">
                                   发布于{' '}
                                   {dayjs(item.publishTime).format(
@@ -2966,7 +2982,34 @@ const Trending: React.FC = () => {
                               </div>
                             )}
 
-                            {!selectedRanking?.name.includes('增量') && (
+                            {(selectedRanking?.name.includes('阅读榜') || selectedRanking?.name.includes('低粉爆文榜')) && (
+                              <div className="flex items-center justify-between flex-1">
+                                <div className="flex items-center space-x-12">
+                                  <div className="w-24 text-center">
+                                    <span className="text-[#a66ae4] flex items-center justify-center">
+                                      {item.stats.watchCount || '-'}
+                                    </span>
+                                  </div>
+                                  <div className="w-24 text-center">
+                                    <span className="text-[#a66ae4] flex items-center justify-center">
+                                      {item.stats.viewCount || '-'}
+                                    </span>
+                                  </div>
+                                  <div className="w-24 text-center">
+                                    <span className="text-[#a66ae4] flex items-center justify-center">
+                                    {item.stats.likeCount || '-'}
+                                    </span>
+                                  </div>
+                                  <div className="w-24 text-center">
+                                    <span className="text-[#a66ae4] flex items-center justify-center">
+                                      {(item as any).shareCount || '-'}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {!selectedRanking?.name.includes('增量') && !selectedRanking?.name.includes('阅读榜') && !selectedRanking?.name.includes('低粉爆文榜')  && (
                               <div className="flex items-center justify-between flex-1">
                                 <div className="flex items-center space-x-12">
                                   <div className="w-24 text-center">
