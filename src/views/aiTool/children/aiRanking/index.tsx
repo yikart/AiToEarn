@@ -146,7 +146,7 @@ export default function Page() {
             <div className="aiRanking-productName">
               <Avatar src={prm.cover} size="large" />
               <div className="aiRanking-productName-con">
-                <label>{prm.title}</label>
+                <label style={{ marginBottom: '4px', display: 'inline-block' }}>{prm.title}</label>
                 <div
                   className="aiRanking-productName-con-des"
                   title={prm.description}
