@@ -17,6 +17,9 @@ import {
   UserOutlined,
   ClockCircleOutlined,
   CheckCircleOutlined,
+  PictureOutlined,
+  LeftOutlined,
+  RightOutlined,
 } from '@ant-design/icons';
 import {
   Card,
@@ -32,6 +35,10 @@ import {
   Progress,
   Image,
   notification,
+  Row,
+  Col,
+  Divider,
+  Carousel,
 } from 'antd';
 import { useInView } from 'react-intersection-observer';
 import styles from './task.module.scss';
@@ -307,8 +314,9 @@ export default function Task() {
 
     try {
       const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
-      // 存储任务记录信息
-      if (res.code === 0 && res.data) {
+      // 存储任务记录信息 00.00
+      console.log('jieshou :',res)
+      if (res.code == 0 && res.data) {
         setTaskRecord(res.data);
         message.success('任务接受成功！');
 
@@ -352,7 +360,7 @@ export default function Task() {
   }
 
   // 文章任务的发布核心逻辑
-  const pubCore = async () => {
+  const pubCore = async (account: any) => {
     if (!selectedTask) return;
     
     setPubProgressModuleOpen(true);
@@ -382,8 +390,10 @@ export default function Task() {
 
     console.log('pubList', pubList);
     console.log(accountListChoose);
+    let allAccount = accountListChoose?.length ?accountListChoose: account;
+    console.log(allAccount);
 
-    for (const account of accountListChoose) {
+    for (const account of allAccount) {
       
       // 创建二级记录
       await icpCreateImgTextPubRecord({
@@ -503,7 +513,7 @@ export default function Task() {
     // 根据任务类型选择不同的处理逻辑
     if (selectedTask?.type === TaskType.ARTICLE) {
       // 文章任务使用 pubCore 逻辑
-      await pubCore();
+      await pubCore(aList[0]);
     } else {
       // 其他任务使用原有的互动任务逻辑
       await handleInteraction(aList[0]);
@@ -541,7 +551,7 @@ export default function Task() {
           onClose={() => !downloading && setChooseAccountOpen(false)}
           platChooseProps={{
             choosedAccounts: accountListChoose,
-            pubType: PubType.VIDEO,
+            pubType: PubType.ImageText,
             allowPlatSet: new Set(selectedTask?.accountTypes || []) as any,
           }}
           onPlatConfirm={handleAccountConfirm}
@@ -567,7 +577,7 @@ export default function Task() {
                   cover={
                     <div className={styles.taskImage}>
                       <Image
-                        src={item.imageUrl?  FILE_BASE_URL+item.imageUrl : (item.dataInfo.imageList.length ? FILE_BASE_URL+item.dataInfo.imageList[item.dataInfo.imageList.length-1] : logo)}
+                        src={item.imageUrl?  FILE_BASE_URL+item.imageUrl : (item.dataInfo?.imageList?.length ? FILE_BASE_URL+item.dataInfo.imageList[0] : logo)}
                         alt="logo"
                         preview={false}
                         style={{
@@ -602,7 +612,7 @@ export default function Task() {
                     <Button
                       type="primary"
                       key="join"
-                      disabled={item.isAccepted}
+                      disabled={item.isAccepted} // 00.00
                       onClick={() => handleJoinTask(item)}
                     >
                       {item.isAccepted ? '已参与' : '参与任务'}
@@ -685,46 +695,90 @@ export default function Task() {
               一键完成
             </Button>,
           ]}
-          width={600}
+          width={700}
         >
           {selectedTask && (
             <div className={styles.taskDetail}>
-              <Descriptions column={1}>
-                <Descriptions.Item label="任务标题">
-                  {selectedTask.title}
-                </Descriptions.Item>
-                <Descriptions.Item label="任务描述">
-                  <div
-                    dangerouslySetInnerHTML={{ __html: selectedTask.description }}
-                  />
-                </Descriptions.Item>
-                <Descriptions.Item label="任务奖励"> 
-                  ¥{selectedTask.reward}
-                </Descriptions.Item>
-                <Descriptions.Item label="评论内容"> 
-                  {selectedTask.dataInfo?.commentContent || 'AI智能评论'}
-                </Descriptions.Item>
-                <Descriptions.Item label="作品ID"> 
-                  {selectedTask.dataInfo?.worksId || ''}
-                </Descriptions.Item>
-                <Descriptions.Item label="任务时长">
-                  {selectedTask.keepTime}分钟
-                </Descriptions.Item>
-                <Descriptions.Item label="开始时间">
-                  {formatDate(selectedTask.createTime)}
-                </Descriptions.Item>
-                <Descriptions.Item label="截止时间">
-                  {formatDate(selectedTask.deadline)}
-                </Descriptions.Item>
-                <Descriptions.Item label="参与人数">
-                  {selectedTask.currentRecruits}/{selectedTask.maxRecruits}
-                </Descriptions.Item>
-                <Descriptions.Item label="支持平台">
-                  <Space size={4}>
-                    {getPlatformTags(selectedTask.accountTypes)}
-                  </Space>
-                </Descriptions.Item>
-              </Descriptions>
+              <Row gutter={[16, 6]}>
+                <Col span={24}>
+                  <div className={styles.taskDetailHeader}>
+                    <Title level={4}>{selectedTask.title}</Title>
+                    <Space>
+                      <Tag color="green">¥{selectedTask.reward}</Tag>
+                      <Tag color="blue">{TaskTypeName.get(selectedTask.type as TaskType) || '未知任务'}</Tag>
+                    </Space>
+                  </div>
+                </Col>
+                
+                {/* 图片轮播展示 */}
+                {selectedTask.dataInfo?.imageList && selectedTask.dataInfo.imageList.length > 0 && (
+                  <Col span={24}>
+                    <div className={styles.bannerContainer}>
+                      <Carousel
+                        autoplay
+                        dots={true}
+                        arrows={true}
+                        className={styles.taskBanner}
+                        dotPosition="bottom"
+                      >
+                        {selectedTask.dataInfo.imageList.map((image: string, index: number) => (
+                          <div key={index} className={styles.bannerItem}>
+                            <Image
+                              src={FILE_BASE_URL + image}
+                              alt={`任务图片 ${index + 1}`}
+                              preview={false}
+                              className={styles.bannerImage}
+                            />
+                          </div>
+                        ))}
+                      </Carousel>
+                    </div>
+                  </Col>
+                )}
+                
+                <Col span={24}>
+                  {/* <Divider orientation="left">任务信息</Divider> */}
+                  <Descriptions column={1} bordered>
+                    <Descriptions.Item label="任务描述">
+                      <div
+                        dangerouslySetInnerHTML={{ __html: selectedTask.description }}
+                        className={styles.taskDescription}
+                      />
+                    </Descriptions.Item>
+                    <Descriptions.Item label="评论内容"> 
+                      {selectedTask.dataInfo?.commentContent || 'AI智能评论'}
+                    </Descriptions.Item>
+
+                    {selectedTask.dataInfo?.worksId && (  
+                      <Descriptions.Item label="作品ID"> 
+                        {selectedTask.dataInfo?.worksId || ''}
+                      </Descriptions.Item>
+                    )}
+                    
+                    <Descriptions.Item label="任务时长">
+                      {selectedTask.keepTime}分钟
+                    </Descriptions.Item>
+                    <Descriptions.Item label="开始时间">
+                      {formatDate(selectedTask.createTime)}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="截止时间">
+                      {formatDate(selectedTask.deadline)}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="参与人数">
+                      <Progress
+                        percent={Math.round((selectedTask.currentRecruits / selectedTask.maxRecruits) * 100)}
+                        size="small"
+                        format={() => `${selectedTask.currentRecruits}/${selectedTask.maxRecruits}`}
+                      />
+                    </Descriptions.Item>
+                    <Descriptions.Item label="支持平台">
+                      <Space size={4}>
+                        {getPlatformTags(selectedTask.accountTypes)}
+                      </Space>
+                    </Descriptions.Item>
+                  </Descriptions>
+                </Col>
+              </Row>
             </div>
           )}
         </Modal>

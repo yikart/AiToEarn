@@ -581,3 +581,83 @@ gap: 0px 28px;
   align-items: center;
   margin-top: 16px;
 }
+
+.taskDetail {
+  padding: 16px;
+  
+  .taskDetailHeader {
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .taskDescription {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 8px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+  }
+  
+  .bannerContainer {
+    margin: 16px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    
+    .taskBanner {
+      :global {
+        .ant-carousel .slick-dots {
+          bottom: 16px;
+          
+          li button {
+            background: rgba(255, 255, 255, 0.7);
+            
+            &:hover {
+              background: #fff;
+            }
+          }
+          
+          li.slick-active button {
+            background: #fff;
+          }
+        }
+        
+        .ant-carousel .slick-prev,
+        .ant-carousel .slick-next {
+          z-index: 10;
+          width: 40px;
+          height: 40px;
+          background: rgba(0, 0, 0, 0.3);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          
+          &:hover {
+            background: rgba(0, 0, 0, 0.5);
+          }
+          
+          &:before {
+            display: none;
+          }
+        }
+      }
+    }
+    
+    .bannerItem {
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f0f0f0;
+    }
+    
+    .bannerImage {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+}
