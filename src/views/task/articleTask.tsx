@@ -28,10 +28,10 @@ import {
 } from '@/icp/publish';
 
 // 导入平台图标
-import KwaiIcon from '../../assets/svgs/noDispose/account/ks.svg';
-import WxSphIcon from '../../assets/svgs/noDispose/account/wx-sph.svg';
-import XhsIcon from '../../assets/svgs/noDispose/account/xhs.svg';
-import DouyinIcon from '../../assets/svgs/noDispose/account/douyin.svg';
+import KwaiIcon from '../../assets/svgs/account/ks.svg';
+import WxSphIcon from '../../assets/svgs/account/wx-sph.svg';
+import XhsIcon from '../../assets/svgs/account/xhs.svg';
+import DouyinIcon from '../../assets/svgs/account/douyin.svg';
 
 const { Title, Text } = Typography;
 
