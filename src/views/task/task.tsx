@@ -42,6 +42,8 @@ import PopTask from './popTask';
 import VideoTask from './videoTask';
 import MineTask from './mineTask';
 import ArticleTask from './articleTask';
+// import TaskInfo from './components/TaskInfo';
+import TaskInfo from './components/popInfo';
 // 移除 InteractionTask 导入
 // import InteractionTask from './interactionTask';
 
@@ -54,6 +56,9 @@ import ChooseAccountModule from '@/views/publish/components/ChooseAccountModule/
 import { PubType } from '@@/publish/PublishEnum';
 import { icpCreateInteractionOneKey } from '@/icp/replyother';
 import { onInteractionProgress } from '../../icp/receiveMsg';
+import { icpCreatePubRecord, icpCreateImgTextPubRecord, icpPubImgText } from '@/icp/publish';
+import { usePubStroe } from '@/store/pubStroe';
+import { useAccountStore } from '@/store/commont';
 
 // 导入平台图标
 import KwaiIcon from '../../assets/svgs/account/ks.svg';
@@ -124,6 +129,7 @@ export default function Task() {
   const [accountListChoose, setAccountListChoose] = useState<any[]>([]);
   const [downloading, setDownloading] = useState(false);
   const Ref_TaskInfo = useRef<TaskInfoRef>(null);
+  const [pubProgressModuleOpen, setPubProgressModuleOpen] = useState(false);
   
   // 使用 react-intersection-observer 监听底部元素
   const { ref: loadMoreRef, inView } = useInView({
@@ -262,13 +268,29 @@ export default function Task() {
 
   const handleJoinTask = (task: any) => {
     setSelectedTask(task);
-    setModalVisible(true);
+    
+    // 根据任务类型选择不同的处理逻辑
+    if (task.type === TaskType.ARTICLE || task.type === TaskType.INTERACTION) {
+      // 文章任务和互动任务使用模态框
+      setModalVisible(true);
+    } else {
+      // 其他任务使用 TaskInfo 组件
+      Ref_TaskInfo.current?.init(task);
+    }
   };
 
   const handleCompleteTask = async () => {
     if (!selectedTask) return;
     setModalVisible(false);
-    setChooseAccountOpen(true);
+    
+    // 根据任务类型选择不同的处理逻辑
+    if (selectedTask.type === TaskType.ARTICLE) {
+      // 文章任务使用 pubCore 逻辑
+      setChooseAccountOpen(true);
+    } else {
+      // 其他任务使用原有的互动任务逻辑
+      setChooseAccountOpen(true);
+    }
   };
 
   // 在组件内添加一个新的状态来存储任务记录
@@ -332,6 +354,84 @@ export default function Task() {
     }
   }
 
+  // 文章任务的发布核心逻辑
+  const pubCore = async () => {
+    if (!selectedTask) return;
+    
+    setPubProgressModuleOpen(true);
+    setLoading(true);
+    const err = () => {
+      setLoading(false);
+      message.error('网络繁忙，请稍后重试！');
+    };
+
+    // 创建一级记录
+    const recordRes = await icpCreatePubRecord({
+      title: selectedTask.title,
+      desc: selectedTask.description.replace(/<[^>]+>/g, ''),
+      type: PubType.ImageText,
+      coverPath: FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
+    });
+    if (!recordRes) return err();
+
+    let pubList = [];
+    if (selectedTask.dataInfo?.imageList?.length > 1) {
+      pubList = selectedTask.dataInfo?.imageList.map((v: string) => FILE_BASE_URL + v);
+    }
+
+    console.log('pubList', pubList);
+    console.log(accountListChoose);
+
+    for (const account of accountListChoose) {
+      
+      // 创建二级记录
+      await icpCreateImgTextPubRecord({
+        title: selectedTask.title,
+        desc: selectedTask.description.replace(/<[^>]+>/g, ''),
+        type: account.type,
+        accountId: account.id,
+        pubRecordId: recordRes.id,
+        publishTime: new Date(),
+        coverPath: FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
+        imagesPath: pubList,
+      });
+    }
+
+    const okRes = await icpPubImgText(recordRes.id);
+
+    if (okRes.length > 0) {
+      taskDone();
+    }
+
+    setLoading(false);
+    setPubProgressModuleOpen(false);
+    usePubStroe.getState().clearImgTextPubSave();
+    const successList = okRes.filter((v) => v.code === 1);
+    useAccountStore.getState().notification!.open({
+      message: '发布结果',
+      description: (
+        <>
+          一共发布 {okRes.length} 条数据，成功 {successList.length} 条，失败{' '}
+          {okRes.length - successList.length} 条
+        </>
+      ),
+      showProgress: true,
+      actions: [
+        <Button
+          key="view"
+          type="primary"
+          size="small"
+          onClick={() => {
+            navigate('/publish/pubRecord');
+          }}
+        >
+          查看发布记录
+        </Button>
+      ],
+      key: Date.now(),
+    });
+  };
+
   const handleInteraction = async (account: any) => {
     console.log('account', account.id);
     console.log('selectedTask', selectedTask.dataInfo);
@@ -393,6 +493,22 @@ export default function Task() {
     }
   };
 
+  // 处理账号选择确认
+  const handleAccountConfirm = async (aList: any[]) => {
+    console.log('账号:', aList);
+    setAccountListChoose(aList);
+    setChooseAccountOpen(false);
+    
+    // 根据任务类型选择不同的处理逻辑
+    if (selectedTask?.type === TaskType.ARTICLE) {
+      // 文章任务使用 pubCore 逻辑
+      await pubCore();
+    } else {
+      // 其他任务使用原有的互动任务逻辑
+      await handleInteraction(aList[0]);
+    }
+  };
+
   // 刷新任务列表的函数
   const refreshTaskList = () => {
     setPageInfo({
@@ -427,12 +543,7 @@ export default function Task() {
             pubType: PubType.VIDEO,
             allowPlatSet: new Set(selectedTask?.accountTypes || []) as any,
           }}
-          onPlatConfirm={async (aList) => {
-            console.log('账号:', aList);
-            setAccountListChoose(aList);
-            setChooseAccountOpen(false);
-            await handleInteraction(aList[0]);
-          }}
+          onPlatConfirm={handleAccountConfirm}
         />
 
         <Spin spinning={loading}>
@@ -610,6 +721,9 @@ export default function Task() {
             </div>
           )}
         </Modal>
+        
+        {/* 添加 TaskInfo 组件 */}
+        <TaskInfo ref={Ref_TaskInfo} onTaskApplied={refreshTaskList} />
       </div>
     );
   };
