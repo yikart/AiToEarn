@@ -7,8 +7,13 @@ import {
   AiToolsRankingItemType,
   GetAiToolsRankingApiParams,
 } from '../../../../api/types/platform.type';
-import { Avatar, Popover, Table, TableProps, Tooltip } from 'antd';
-import { QuestionCircleOutlined, SearchOutlined } from '@ant-design/icons';
+import { Avatar, Popover, Table, TableProps, Tag, Tooltip } from "antd";
+import {
+  CaretDownOutlined,
+  CaretUpOutlined,
+  QuestionCircleOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import initWeepPie from './echarts-weekPie';
 
 const optionsTags = [
@@ -94,11 +99,14 @@ export default function Page() {
     if (params.dateType === '' || params.startDate === '') return;
     if (loading) return;
     setLoading(true);
-    platformApi.getAiToolsRankingApi(params).then((res) => {
-      setLoading(false);
-      setData(res.items);
-      document.querySelector('.ant-table-body')!.scrollTo(0, 0);
-    });
+    platformApi
+      .getAiToolsRankingApi(params)
+      .then((res) => {
+        setLoading(false);
+        setData(res.items);
+        document.querySelector('.ant-table-body')!.scrollTo(0, 0);
+      })
+      .catch(() => setLoading(false));
   }, [params]);
 
   const columns = useMemo(() => {
@@ -106,10 +114,27 @@ export default function Page() {
       {
         title: () => <p style={{ textAlign: 'center' }}>#</p>,
         render: (text, prm, ind) => {
-          if (ind <= 2) {
-            return <div className="aiRanking-topthree">{ind + 1}</div>;
-          }
-          return <div className="aiRanking-rank">{ind + 1}</div>;
+          return (
+            <div className="aiRanking-rank">
+              {ind <= 2 ? (
+                <div className="aiRanking-topthree">{ind + 1}</div>
+              ) : (
+                <span>{ind + 1}</span>
+              )}
+              {prm.rankChange > 0 && (
+                <Tag className="aiRanking-rank-up" color="error">
+                  <CaretUpOutlined />
+                  {prm.rankChange}
+                </Tag>
+              )}
+              {prm.rankChange < 0 && (
+                <Tag className="aiRanking-rank-down" color="success">
+                  <CaretDownOutlined />
+                  {Math.abs(prm.rankChange)}
+                </Tag>
+              )}
+            </div>
+          );
         },
         width: 40,
         key: '序号',
