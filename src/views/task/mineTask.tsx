@@ -350,7 +350,7 @@ export default function Page() {
                   {/* 添加任务图片显示 */}
                   <div className={styles.taskImageContainer}>
                     <img
-                      src={`${FILE_BASE_URL}${task.taskId?.imageUrl || taskDetail.imageUrl || ''}`}
+                      src={`${FILE_BASE_URL}${task.screenshotUrls[0] || taskDetail.imageUrl || ''}`}
                       alt={taskDetail.title}
                       className={styles.taskImage}
                     />
