@@ -101,7 +101,7 @@ export default forwardRef<PubItemRef>((props, ref) => {
     <div className={styles.qrcodeLogin}>
       <div className={styles.qrcodeHeader}>
         <h2>微信扫码登录</h2>
-        <p>请使用微信扫描二维码关注爱优赚公众号</p>
+        <p>请使用微信扫描二维码关注哎哟赚公众号</p>
       </div>
 
       <div className={styles.qrcodeWrapper}>
@@ -128,7 +128,7 @@ export default forwardRef<PubItemRef>((props, ref) => {
       </div>
 
       <div className={styles.agreement}>
-        登录即表示已接受爱优赚
+        登录即表示已接受哎哟赚
         <a
           href="#"
           onClick={(e) => {

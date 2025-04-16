@@ -17,7 +17,7 @@
       }
     }
     .image-footer {
-      border-top: 1px solid var(--superLightGreyColor);
+      border-top: 1px solid var(--grayColor3);
       padding: 15px 0;
       text-align: center;
     }
@@ -33,13 +33,13 @@
   min-height: 0;
   box-sizing: border-box;
   padding: 25px 20px 0 0;
-  border-right: 1px solid var(--superLightGreyColor);
+  border-right: 1px solid var(--grayColor3);
   :global {
     .imageLeftSetting-upload {
       width: 100%;
       display: flex;
       justify-content: center;
-      border-bottom: 1px solid var(--superLightGreyColor);
+      border-bottom: 1px solid var(--grayColor3);
       padding-bottom: 30px;
       margin-bottom: 25px;
     }
@@ -86,7 +86,7 @@
         font-weight: 900;
       }
       .ant-steps-item-description {
-        color: var(--lightGreyColor) !important;
+        color: var(--grayColor7) !important;
         font-size: var(--fs-xs);
       }
     }

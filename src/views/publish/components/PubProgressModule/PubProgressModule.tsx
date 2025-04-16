@@ -41,7 +41,7 @@ const PubProgressModule = memo(
           closeIcon={<MinusOutlined />}
         >
           <Alert
-            message="关闭此弹框和页面不会影响发布流程，但请不要关闭爱优赚哦~"
+            message="关闭此弹框和页面不会影响发布流程，但请不要关闭哎哟赚哦~"
             type="success"
           />
           <div className={styles.pubProgressModule}>

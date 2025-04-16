@@ -63,7 +63,7 @@
         font-size: var(--fs-xs);
         display: flex;
         &-follower {
-          color: var(--lightGreyColor);
+          color: var(--grayColor7);
         }
         &-unique {
           margin-left: 20px;
@@ -80,7 +80,7 @@
     }
     .location-simpleAddress {
       font-size: var(--fs-xs);
-      color: var(--lightGreyColor);
+      color: var(--grayColor7);
     }
   }
 }
@@ -109,7 +109,7 @@
 }
 
 .activitySelect {
-  border-bottom: 1px solid var(--superLightGreyColor);
+  border-bottom: 1px solid var(--grayColor3);
   height: 50px;
   cursor: pointer;
   padding: 10px 0;
@@ -204,7 +204,7 @@
         }
         &-hot {
           font-size: var(--fs-xs);
-          color: var(--lightGreyColor);
+          color: var(--grayColor7);
         }
       }
 
@@ -222,7 +222,7 @@
         font-size: var(--fs-sm);
       }
       &-text {
-        color: var(--lightGreyColor);
+        color: var(--grayColor7);
         margin-bottom: 10px;
       }
       ul {

@@ -107,7 +107,7 @@ const renderEmptyState = () => {
                 />
               </div>
               <p className={styles.qrCodeText}>扫码开启更多权益</p>
-              <p className={styles.qrCodeSubtext}>手机扫码爱优赚公众号</p>
+              <p className={styles.qrCodeSubtext}>手机扫码哎哟赚公众号</p>
             </div>
           </div>
         </div>
@@ -518,7 +518,7 @@ export default function Page() {
                 </div>
               </li>
               <li>
-                <p>点击下方链接下载爱优赚接单软件（已下载可忽略）</p>
+                <p>点击下方链接下载哎哟赚接单软件（已下载可忽略）</p>
                 <p className={styles.guideLink}>https://att.yikart.cn/aiToEarn</p>
               </li>
               <li>
@@ -598,7 +598,7 @@ export default function Page() {
                 <div className={styles.faqAnswer}>
                   <p>将订单号和违规截图私聊发给工作人员。</p>
                   <p>如未回复消息请耐心等待（工作时间：工作日9:00-18:00）</p>
-                  <p>前往爱优赚查看更多新媒体相关信息</p>
+                  <p>前往哎哟赚查看更多新媒体相关信息</p>
                 </div>
               </div>
             </div>

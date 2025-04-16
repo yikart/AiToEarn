@@ -4,7 +4,7 @@ import App from './App';
 import { ConfigProvider } from 'antd';
 import zh_CN from 'antd/es/locale/zh_CN';
 
-import './index.css';
+import './index.scss';
 import './var.css';
 
 import { generate } from '@ant-design/colors';
