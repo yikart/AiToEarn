@@ -70,6 +70,7 @@ export type TaskDataInfo =
 export interface Task<T extends TaskDataInfo> extends TimeTemp {
   _id: string;
   id: string;
+  screenshotUrls: any;
   title: string;
   description: string;
   type: TaskType;
