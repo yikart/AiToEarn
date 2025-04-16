@@ -1,6 +1,6 @@
 import styles from './aiRanking.module.scss';
 import RankingTags from '../../components/RankingTags';
-import Cycleselects from '../../components/CycleSelects';
+import Cycleselects, { CycleTypeEnum } from '../../components/CycleSelects';
 
 const options = [
   {
@@ -24,12 +24,23 @@ export default function Page() {
       <div className="aiRanking-head">
         <div className="aiRanking-head-item">
           <div className="aiRanking-head-title">类型</div>
-          <RankingTags options={options} defaultValue={options[0].value} />
+          <RankingTags
+            options={options}
+            defaultValue={options[0].value}
+            onChange={(val) => {
+              console.log(val);
+            }}
+          />
         </div>
         <div className="aiRanking-head-item">
           <div className="aiRanking-head-title">周期</div>
           <div className="aiRanking-head-cycleselects">
-            <Cycleselects />
+            <Cycleselects
+              defaultType={CycleTypeEnum.Week}
+              onChange={(v) => {
+                console.log(v);
+              }}
+            />
           </div>
         </div>
       </div>

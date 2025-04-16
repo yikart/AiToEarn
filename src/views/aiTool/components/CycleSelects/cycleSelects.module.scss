@@ -1,3 +1,24 @@
 .cycleSelects {
-
+  display: flex;
+  :global {
+    .cycleSelects-item {
+      display: flex;
+      align-items: center;
+      height: 32px;
+      margin-right: 30px;
+      &-label {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        padding: 0 10px;
+        border-radius: 8px 0 0 8px;
+        background: var(--colorPrimary3);
+        color: var(--colorPrimary8);
+      }
+      .ant-select-selector {
+        border-bottom-left-radius: 0;
+        border-top-left-radius: 0;
+      }
+    }
+  }
 }

@@ -10,12 +10,13 @@ export interface IRankingtagsProps {
   }[];
   defaultValue: string;
   disable?: boolean;
+  onChange: (value: string) => void;
 }
 
 const Rankingtags = memo(
   forwardRef(
     (
-      { options, defaultValue, disable }: IRankingtagsProps,
+      { options, defaultValue, disable, onChange }: IRankingtagsProps,
       ref: ForwardedRef<IRankingtagsRef>,
     ) => {
       const [activeValue, setActiveValue] = useState(defaultValue);
@@ -32,6 +33,7 @@ const Rankingtags = memo(
                 key={v.value}
                 onClick={() => {
                   if (disable) return;
+                  onChange(v.value);
                   setActiveValue(v.value);
                 }}
               >
