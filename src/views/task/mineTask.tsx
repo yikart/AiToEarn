@@ -42,6 +42,7 @@ import publishTaskImg from '@/assets/task/fabu.png';
 import rewardTaskImg from '@/assets/task/jiesuan.png';
 import qr1 from '@/assets/task/qr1.png';
 import qr2 from '@/assets/task/qr0.jpg';
+import logo from '@/assets/logo.png';
 
 const UserTaskStatusNameMap = new Map<UserTaskStatus, string>([
   [UserTaskStatus.DODING, '进行中'],
@@ -172,7 +173,7 @@ const renderEmptyState = () => {
 };
 
 export default function Page() {
-  const [taskList, setTaskList] = useState<UserTask<Task<TaskDataInfo>>[]>([]);
+  const [taskList, setTaskList] = useState<any>([]);
   const [pageInfo, setPageInfo] = useState({
     pageSize: 10,
     pageNo: 1,
@@ -340,7 +341,7 @@ export default function Page() {
         </div>
       ) : (
         <div className={styles.taskList}>
-          {taskList.map((task) => {
+          {taskList.map((task:any) => {
             // 获取任务详情，处理可能的undefined情况
             const taskDetail = task.taskId || {};
 
@@ -350,7 +351,7 @@ export default function Page() {
                   {/* 添加任务图片显示 */}
                   <div className={styles.taskImageContainer}>
                     <img
-                      src={`${FILE_BASE_URL}${task.taskId?.imageUrl || taskDetail.imageUrl || ''}`}
+                      src={` ${ task.screenshotUrls.length ? FILE_BASE_URL+ task.screenshotUrls[0]: logo }`}
                       alt={taskDetail.title}
                       className={styles.taskImage}
                     />
