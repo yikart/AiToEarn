@@ -32,6 +32,7 @@ import {
   Checkbox,
   Tabs,
   Table,
+  Progress,
 } from 'antd';
 import { useCallback, useRef, useState, useEffect } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
@@ -62,8 +63,12 @@ import { useInView } from 'react-intersection-observer';
 import { icpCreatorList } from '@/icp/reply';
 import { icpCreateInteractionOneKey } from '@/icp/replyother';
 import { forEach } from 'lodash';
+import { useUserStore } from '@/store/user';
+import { taskApi } from '@/api/task';
 
 export default function Page() {
+  const userStore = useUserStore();
+  
   const [wordList, setWordList] = useState<WorkData[]>([]);
   const [postFirstId, setPostFirstId] = useState<string>('');
   const [activeAccountId, setActiveAccountId] = useState<number>(-1);
@@ -252,7 +257,7 @@ export default function Page() {
     setIsLoadingMore(true);
     try {
       setTimeout(async () => {
-        await getSearchListFunc(activeAccountId, searchKeyword);
+        await getSearchListFunc(activeAccountId, searchKeyword, true);
       }, 0);
     } finally {
       setIsLoadingMore(false);
@@ -291,25 +296,19 @@ export default function Page() {
     setTaskModalVisible(false);
     setIsSelectMode(false);
 
-    // return;
-
-    forEach(postList, (postId) => {
-      const post = postList.find((item) => item.dataId === postId);
-      if (!post) return;
-      likePost(post);
-    });
-
     if (!selectedPosts.length) return;
 
-    // 从postList中提取选中的帖子数据
+    // 根据当前激活的标签页获取对应的数据列表
+    const currentDataList = activeTabKey === '4' ? searchTaskResults : postList;
+
+    // 从当前数据列表中提取选中的帖子数据
     const selectedPostData = selectedPosts.map((postId) => {
-      return postList.find((item) => item.dataId === postId);
-    }); // 过滤掉undefined的值
+      return currentDataList.find((item) => item.dataId === postId);
+    }).filter(Boolean); // 过滤掉undefined的值
 
     console.log('------ selectedPostData', selectedPostData);
 
     // 调用icpCreateInteractionOneKey函数
-
     let option: any = {
       platform: activeAccountType,
       ...values,
@@ -320,8 +319,6 @@ export default function Page() {
 
     console.log('------ option', option);
 
-    // return;
-
     const res = await icpCreateInteractionOneKey(
       activeAccountId,
       selectedPostData,
@@ -329,11 +326,7 @@ export default function Page() {
     );
     console.log('------ res', res);
 
-    // if (res) {
     message.success('互动任务已下发，前往记录查看');
-    // } else {
-    //   message.error('任务下发失败，请重试');
-    // }
 
     setSelectedPosts([]);
   };
@@ -359,6 +352,118 @@ export default function Page() {
 
   // 添加搜索关键词状态
   const [searchKeyword, setSearchKeyword] = useState('爱优赚');
+
+  // 添加小红书搜索任务相关状态
+  const [searchTaskId, setSearchTaskId] = useState<string>('');
+  const [searchTaskStatus, setSearchTaskStatus] = useState<'pending' | 'running' | 'completed' | 'failed'>('pending');
+  const [searchTaskProgress, setSearchTaskProgress] = useState<number>(0);
+  const [searchTaskResults, setSearchTaskResults] = useState<any[]>([]);
+  const [searchTaskList, setSearchTaskList] = useState<any[]>([]);
+  const [selectedTaskId, setSelectedTaskId] = useState<string>('');
+  const [activeTabKey, setActiveTabKey] = useState<string>('1');
+
+  // 获取搜索任务列表
+  const getSearchTaskList = async () => {
+    try {
+      const res = await taskApi.searchNotesList({
+        taskType: 'xhs_comments',
+        userId: userStore.userInfo?.id
+      });
+      console.log('333',3333, res)
+      if (res) {
+        console.log('444',444)
+        setSearchTaskList(res);
+      }
+    } catch (error) {
+      message.error('获取搜索任务列表失败');
+    }
+  };
+
+  // 处理页签切换
+  const handleTabChange = (key: string) => {
+    setActiveTabKey(key);
+    if (key === '4' && activeAccountType === 'xhs') {
+      getSearchTaskList();
+    }
+  };
+
+  // 查看任务结果
+  const viewTaskResult = async (taskId: string) => {
+    setSelectedTaskId(taskId);
+    setSearchTaskStatus('running');
+    setSearchTaskProgress(0);
+    
+    try {
+      const result = await taskApi.searchNotesResult({
+        taskType: 'xhs_comments',
+        taskId: taskId
+      });
+
+      if (result) {
+        // 转换数据格式
+        const formattedResults = result.map((item: any) => ({
+          author: {
+            name: item.author.name,
+            avatar: item.author.avatar || '',
+            id: item.author.id
+          },
+          collectCount: item.stats?.collectCount?.toString() || '0',
+          commentCount: item.stats?.commentCount?.toString() || '0',
+          coverUrl: item.cover,
+          data: {
+            id: item.noteId,
+            model_type: 'note',
+            note_card: {},
+            xsec_token: item.set_xsec_token ? item.url?.split('xsec_token=')[1]?.split('&')[0] : ''
+          },
+          dataId: item.noteId,
+          likeCount: item.stats?.likeCount?.toString() || '0',
+          option: {
+            xsec_token: item.set_xsec_token ? item.url?.split('xsec_token=')[1]?.split('&')[0] : ''
+          },
+          title: item.title,
+          content: item.content,
+          url: item.url
+        }));
+
+        setSearchTaskResults(formattedResults);
+      }
+    } catch (error) {
+      message.error('获取任务结果失败');
+    }
+  };
+
+  // 提交搜索任务
+  const submitSearchTask = async () => {
+    if (!searchKeyword) {
+      message.error('请输入搜索关键词');
+      return;
+    }
+
+    try {
+      const res = await taskApi.searchNotesTask({
+        keywords: searchKeyword,
+        taskType: 'xhs_comments',
+        userId: userStore.userInfo?.id,
+        maxCounts: 10
+      });
+
+      if (res && res.taskId) {
+        message.success('搜索任务已提交');
+        // 刷新任务列表
+        getSearchTaskList();
+      }
+    } catch (error) {
+      message.error('提交搜索任务失败');
+    }
+  };
+
+  // 组件加载时获取任务列表
+  useEffect(() => {
+    if (activeAccountType === 'xhs') {
+      getSearchTaskList();
+    }
+  }, [activeAccountType]);
 
   async function getCreatorList(thisid: any) {
     setWordList([]);
@@ -700,6 +805,7 @@ export default function Page() {
     }, 1000);
   };
 
+
   return (
     <div className={styles.reply} style={{ alignItems: 'flex-start' }}>
       <div style={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
@@ -740,10 +846,12 @@ export default function Page() {
             <>
               <Tabs
                 defaultActiveKey="1"
+                activeKey={activeTabKey}
+                onChange={handleTabChange}
                 items={[
                   {
                     key: '1',
-                    label: '作品列表',
+                    label: '作品搜索',
                     children: (
                       <>
                         <Row
@@ -965,6 +1073,262 @@ export default function Page() {
                       </>
                     ),
                   },
+                  ...(activeAccountType === 'xhs' ? [{
+                    key: '4',
+                    label: '评论搜索',
+                    children: (
+                      <div style={{ padding: '20px' }}>
+                        <Card>
+                          <Form layout="vertical">
+                            <Form.Item label="搜索评论">
+                              <Input.Search
+                                placeholder="输入评论"
+                                value={searchKeyword}
+                                onChange={(e) => setSearchKeyword(e.target.value)}
+                                onSearch={submitSearchTask}
+                                enterButton="搜索任务"
+                              />
+                            </Form.Item>
+                          </Form>
+
+                          <Table
+                            dataSource={searchTaskList}
+                            rowKey="_id"
+                            columns={[
+                              {
+                                title: '任务ID',
+                                dataIndex: 'taskId',
+                                key: 'taskId',
+                                width: 220,
+                              },
+                              {
+                                title: '关键词',
+                                dataIndex: 'keywords',
+                                key: 'keywords',
+                              },
+                              {
+                                title: '状态',
+                                dataIndex: 'status',
+                                key: 'status',
+                                render: (status: number) => {
+                                  const statusMap: Record<number, string> = {
+                                    0: '等待运行',
+                                    1: '运行完成',
+                                    2: '正在运行'
+                                  };
+                                  return statusMap[status] || '未知';
+                                }
+                              },
+                              {
+                                title: '创建时间',
+                                dataIndex: 'createTime',
+                                key: 'createTime',
+                              },
+                              {
+                                title: '数据范围',
+                                dataIndex: 'dateType',
+                                key: 'dateType',
+                                render: (dateType: string) => {
+                                  const dateTypeMap: Record<string, string> = {
+                                    '7d': '最近7天',
+                                    '30d': '最近30天',
+                                    '90d': '最近90天'
+                                  };
+                                  return dateTypeMap[dateType] || dateType;
+                                }
+                              },
+                              {
+                                title: '最大数量',
+                                dataIndex: 'maxCounts',
+                                key: 'maxCounts',
+                              },
+                              {
+                                title: '操作',
+                                key: 'action',
+                                render: (_, record) => (
+                                  <Button 
+                                    type="link" 
+                                    onClick={() => viewTaskResult(record.taskId)}
+                                    disabled={record.status != 1} // 正在运行时禁用
+                                  >
+                                    查看结果
+                                  </Button>
+                                ),
+                              },
+                            ]}
+                          />
+
+                          {searchTaskResults.length > 0 && (
+                            <div style={{ marginTop: '20px' }}>
+                              <div style={{ marginBottom: '16px', textAlign: 'right' }}>
+                                <Space>
+                                  <Button
+                                    type={isSelectMode ? 'primary' : 'default'}
+                                    icon={<DownOutlined />}
+                                    onClick={handleSelectModeToggle}
+                                    size="large"
+                                  >
+                                    {isSelectMode ? '取消选择' : '选择作品'}
+                                  </Button>
+                                  {isSelectMode && (
+                                    <Button
+                                      type="primary"
+                                      icon={<SendOutlined />}
+                                      onClick={() => setTaskModalVisible(true)}
+                                      size="large"
+                                      disabled={selectedPosts.length === 0}
+                                    >
+                                      下发任务 ({selectedPosts.length})
+                                    </Button>
+                                  )}
+                                </Space>
+                              </div>
+
+                              <Masonry
+                                breakpointCols={breakpointColumnsObj}
+                                className={styles.myMasonryGrid}
+                                columnClassName={styles.myMasonryGridColumn}
+                              >
+                                {searchTaskResults.map((item: any, index: number) => (
+                                  <List.Item
+                                    key={`${item.dataId}-${index}`}
+                                    className={styles.masonryItem}
+                                    onClick={() => {
+                                      if (isSelectMode) {
+                                        handlePostSelect(item.dataId);
+                                      }
+                                    }}
+                                    style={{
+                                      cursor: isSelectMode ? 'pointer' : 'default',
+                                      background: selectedPosts.some(
+                                        (p) => (p as any).dataId === item.dataId,
+                                      )
+                                        ? 'rgba(24, 144, 255, 0.1)'
+                                        : 'transparent',
+                                    }}
+                                  >
+                                    <Card
+                                      hoverable={isSelectMode}
+                                      className={styles.postCard}
+                                      cover={
+                                        <div
+                                          style={{
+                                            cursor: 'pointer',
+                                            position: 'relative',
+                                          }}
+                                          onClick={() =>
+                                            !isSelectMode && handleImageClick(item)
+                                          }
+                                        >
+                                          {isSelectMode && (
+                                            <div
+                                              style={{
+                                                position: 'absolute',
+                                                top: 10,
+                                                left: 10,
+                                                zIndex: 1,
+                                              }}
+                                            >
+                                              <Checkbox
+                                                checked={selectedPosts.includes(
+                                                  item.dataId,
+                                                )}
+                                                onChange={() =>
+                                                  handlePostSelect(item.dataId)
+                                                }
+                                              />
+                                            </div>
+                                          )}
+                                          <img
+                                            alt={item.title}
+                                            src={item.coverUrl}
+                                            style={{
+                                              width: '100%',
+                                              borderRadius: '10px 10px 0 0',
+                                              objectFit: 'cover',
+                                            }}
+                                          />
+                                        </div>
+                                      }
+                                      actions={[
+                                        <Space
+                                          key="like"
+                                          onClick={() => likePost(item)}
+                                        >
+                                          <LikeOutlined
+                                            style={{
+                                              color: likedPosts[item.dataId]
+                                                ? '#ff4d4f'
+                                                : undefined,
+                                              fontSize: likedPosts[item.dataId]
+                                                ? '18px'
+                                                : undefined,
+                                            }}
+                                          />
+                                          <span>{item.likeCount || 0}</span>
+                                        </Space>,
+                                        <Space
+                                          key="comment-list"
+                                          onClick={() => showCommentModal(item)}
+                                        >
+                                          <UnorderedListOutlined />
+                                          <span>{item.commentCount || ''}</span>
+                                        </Space>,
+                                        <Space
+                                          key="reply"
+                                          onClick={() => openReplyWorks(item)}
+                                        >
+                                          <CommentOutlined />
+                                          <span>评论</span>
+                                        </Space>,
+                                        <Space
+                                          key="collect"
+                                          onClick={() => collectPost(item)}
+                                        >
+                                          <StarOutlined
+                                            style={{
+                                              color: collectedPosts[item.dataId]
+                                                ? '#faad14'
+                                                : undefined,
+                                              fontSize: collectedPosts[item.dataId]
+                                                ? '18px'
+                                                : undefined,
+                                            }}
+                                          />
+                                          <span>{item.collectCount || ''}</span>
+                                        </Space>,
+                                      ]}
+                                    >
+                                      <Card.Meta
+                                        avatar={
+                                          <Avatar src={`${item.author?.avatar}`} />
+                                        }
+                                        title={item.author?.name}
+                                        description={
+                                          <div>
+                                            <Text
+                                              strong
+                                              ellipsis
+                                              style={{ display: 'block' }}
+                                            >
+                                              {item.title}
+                                            </Text>
+                                            <Text type="secondary" ellipsis={{}}>
+                                              {item.content}
+                                            </Text>
+                                          </div>
+                                        }
+                                      />
+                                    </Card>
+                                  </List.Item>
+                                ))}
+                              </Masonry>
+                            </div>
+                          )}
+                        </Card>
+                      </div>
+                    ),
+                  }] : []),
                   {
                     key: '2',
                     label: '互动记录',

@@ -5,13 +5,37 @@
  * @LastEditors: nevin
  * @Description: 任务
  */
-import http from './request';
+import http, { hotHttp } from './request';
 import { MineTaskListParams, TaskListParams, UserTask } from './types/task';
 import { Task, TaskDataInfo } from 'commont/types/task';
 import { Pagination } from './types';
 import { UserWalletRecord } from './types/finance';
 
 export const taskApi = {
+
+  /**
+   * 获取评论搜索
+   */
+  searchNotesTask(params:any) {
+    return hotHttp.get('/comment/search/notes/task', { 
+      isToken: false,
+      params
+    });
+  },
+
+  searchNotesResult(params:any) {
+    return hotHttp.get<any>('/comment/search/notes', {
+      isToken: false,
+      params,
+    });
+  },
+  searchNotesList(params:any) {
+    return hotHttp.get<any>('/comment/search/notes/list', {
+      isToken: false,
+      params,
+    });
+  },
+
   /**
    * 获取任务列表
    */

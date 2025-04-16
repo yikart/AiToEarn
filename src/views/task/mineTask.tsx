@@ -200,7 +200,7 @@ export default function Page() {
       const tasks = await taskApi.getMineTaskList(params as any);
 
       if (isLoadMore) {
-        setTaskList((prev) => [...prev, ...tasks.items]);
+        setTaskList((prev:any) => [...prev, ...tasks.items]);
       } else {
         setTaskList(tasks.items);
       }
