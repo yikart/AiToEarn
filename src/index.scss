@@ -121,6 +121,10 @@ ul {
 }
 
 /* 全局自定义滚动条样式 */
+.ant-table-body {
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+}
 *::-webkit-scrollbar {
   width: 10px;
   height: 10px;

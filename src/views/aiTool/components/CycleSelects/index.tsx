@@ -7,8 +7,8 @@ import isoWeek from 'dayjs/plugin/isoWeek';
 dayjs.extend(isoWeek);
 
 export enum CycleTypeEnum {
-  Week = 1,
-  Month = 2,
+  Week = 'week',
+  Month = 'month',
 }
 
 type CycleItemType = {
@@ -21,6 +21,7 @@ export interface ICycleselectsRef {}
 export interface ICycleselectsProps {
   onChange: (params: { type: CycleTypeEnum; value: string }) => void;
   defaultType: CycleTypeEnum;
+  disable?: boolean;
 }
 
 const CycleseCore = ({
@@ -60,11 +61,14 @@ const CycleseCore = ({
  */
 function getMonths(skipMonths: number, numberOfMonths: number) {
   const currentMonth = dayjs().startOf('month'); // 当前月的开始时间
-  const months: string[] = [];
+  const months: CycleItemType[] = [];
 
   for (let i = 0; i < numberOfMonths; i++) {
     const month = currentMonth.subtract(skipMonths + i + 1, 'month');
-    months.push(month.format('YYYY年MM月'));
+    months.push({
+      label: month.format('YYYY年MM月'),
+      value: month.format('YYYY-MM-DD'),
+    });
   }
 
   return months;
@@ -77,10 +81,7 @@ function getMonths(skipMonths: number, numberOfMonths: number) {
  */
 function getWeekRanges(skipWeeks: number, numberOfWeeks: number) {
   const currentWeekStart = dayjs().startOf('isoWeek'); // 当前周的开始时间（周一）
-  const ranges: {
-    start: string;
-    end: string;
-  }[] = [];
+  const ranges: CycleItemType[] = [];
 
   for (let i = 0; i < numberOfWeeks; i++) {
     const startOfWeek = currentWeekStart
@@ -88,8 +89,8 @@ function getWeekRanges(skipWeeks: number, numberOfWeeks: number) {
       .startOf('isoWeek');
     const endOfWeek = startOfWeek.endOf('isoWeek');
     ranges.push({
-      start: startOfWeek.format('MM月DD日'),
-      end: endOfWeek.format('MM月DD日'),
+      label: `${startOfWeek.format('MM月DD日')} - ${endOfWeek.format('MM月DD日')}`,
+      value: startOfWeek.format('YYYY-MM-DD'),
     });
   }
 
@@ -103,11 +104,14 @@ function getWeekRanges(skipWeeks: number, numberOfWeeks: number) {
  */
 function getDays(skipDays: number, numberOfDays: number) {
   const currentDay = dayjs().startOf('day'); // 当前天的起始时间
-  const days: string[] = [];
+  const days: CycleItemType[] = [];
 
   for (let i = 0; i < numberOfDays; i++) {
     const day = currentDay.subtract(skipDays + i + 1, 'day');
-    days.push(day.format('YYYY年MM月DD日'));
+    days.push({
+      value: day.format('YYYY年MM月DD日'),
+      label: day.format('YYYY-MM-DD'),
+    });
   }
 
   return days;
@@ -116,7 +120,7 @@ function getDays(skipDays: number, numberOfDays: number) {
 const Cycleselects = memo(
   forwardRef(
     (
-      { onChange, defaultType }: ICycleselectsProps,
+      { onChange, defaultType, disable }: ICycleselectsProps,
       ref: ForwardedRef<ICycleselectsRef>,
     ) => {
       // 1周榜 2=月榜
@@ -126,21 +130,10 @@ const Cycleselects = memo(
       const [monthsOptions, setMonthsOptions] = useState<CycleItemType[]>([]);
 
       useEffect(() => {
-        const weekOptions = getWeekRanges(1, 3).map((v) => {
-          const value = `${v.start}-${v.start}`;
-          return {
-            label: value,
-            value,
-          };
-        });
+        const weekOptions = getWeekRanges(1, 3);
         setWeekOptions(weekOptions);
 
-        const monthsOptions = getMonths(0, 3).map((v) => {
-          return {
-            label: v,
-            value: v,
-          };
-        });
+        const monthsOptions = getMonths(0, 3);
         setMonthsOptions(monthsOptions);
 
         if (defaultType === CycleTypeEnum.Week) {
@@ -173,6 +166,7 @@ const Cycleselects = memo(
             value={value}
             isActive={active === CycleTypeEnum.Week}
             onActiveClick={() => {
+              if (disable) return;
               setActive(CycleTypeEnum.Week);
             }}
             onChange={setValue}
@@ -184,6 +178,7 @@ const Cycleselects = memo(
             value={value}
             isActive={active === CycleTypeEnum.Month}
             onActiveClick={() => {
+              if (disable) return;
               setActive(CycleTypeEnum.Month);
             }}
             onChange={setValue}

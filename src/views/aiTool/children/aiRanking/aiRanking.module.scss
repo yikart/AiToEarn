@@ -1,14 +1,79 @@
 .aiRanking {
   padding: 15px;
   width: 100%;
+  min-width: 0;
   height: 100%;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
   font-size: 14px;
   :global {
+    .aiRanking-rank, .aiRanking-topthree {
+      width: 30px;
+      height: 30px;
+      text-align: center;
+      line-height: 30px;
+      font-size: var(--fs-md);
+    }
+    .ant-table-tbody {
+      .ant-table-row {
+        &:nth-child(odd) {
+          background: #f2f5f6;
+        }
+        td {
+          .anticon {
+            margin-left: 5px;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+    .aiRanking-topthree {
+      color: #fff;
+      background: url("../../images/bg-rank-index.png") no-repeat center / cover;
+    }
+    .ant-table-thead {
+      th {
+        color: #9a9a9a !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        font-weight: 400 !important;
+        .anticon {
+          margin-left: 5px;
+        }
+      }
+    }
     .aiRanking-title {
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       font-weight: 900;
       font-size: 24px;
+    }
+    .aiRanking-productName {
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      label {
+        font-size: var(--fs-md);
+        margin-bottom: 6px;
+      }
+      .ant-avatar {
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      &-con {
+        overflow: hidden;
+        margin-left: 10px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        &-des {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          width: 100%;
+          color: var(--grayColor8);
+          font-size: var(--fs-xs);
+        }
+      }
     }
     .aiRanking-head {
       width: 100%;
@@ -29,6 +94,12 @@
           color: var(--grayColor7);
         }
       }
+    }
+
+    .aiRanking-content {
+      height: 100%;
+      min-width: 0;
+      display: flex;
     }
   }
 }
