@@ -5,6 +5,7 @@
     .ant-menu {
       height: 100%;
       box-sizing: border-box;
+      flex-shrink: 0;
       padding-top: 20px;
       svg {
         font-size: 20px;

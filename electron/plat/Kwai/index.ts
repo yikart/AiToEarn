@@ -284,10 +284,23 @@ class KwaiPub {
           partition,
         },
       });
+      mainWindow.webContents.on(
+        'console-message',
+        (event, level, message, line, sourceId) => {
+          console.error(message);
+          // 如果需要禁用所有 JavaScript 错误
+          if (message.includes('Error')) {
+            event.preventDefault();
+            return; // 忽略错误
+          }
+        },
+      );
       // 登录页面
       await mainWindow.loadURL(
         'https://passport.kuaishou.com/pc/account/login',
       );
+      const session = mainWindow.webContents.session;
+      await session.clearCache();
       // mainWindow.webContents.openDevTools();
       let timeId1: NodeJS.Timeout | undefined = undefined;
       let timeId2: NodeJS.Timeout | undefined = undefined;
@@ -326,9 +339,9 @@ class KwaiPub {
                 reject('获取用户信息失败');
               }
             }
-          }, 1500);
+          }, 500);
         }
-      }, 1500);
+      }, 500);
     });
   }
 

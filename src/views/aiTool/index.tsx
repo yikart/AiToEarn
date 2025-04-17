@@ -34,7 +34,7 @@ export default function Page() {
     <div className={styles.aiTool}>
       <Menu
         selectedKeys={[currChooseRoute || '']}
-        style={{ width: 180 }}
+        style={{ width: 160 }}
         inlineIndent={15}
         mode="inline"
         items={items}
