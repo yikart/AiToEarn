@@ -1,4 +1,7 @@
 {
+  "build": {
+    "afterSign": "scripts/notarize.cjs"
+  },
   "name": "att",
   "version": "0.6.0-alpha.3",
   "main": "dist-electron/main/index.js",
@@ -100,6 +103,7 @@
     "autoprefixer": "^10.4.20",
     "electron": "^33.2.0",
     "electron-builder": "^26.0.12",
+    "electron-notarize": "^1.2.2",
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
