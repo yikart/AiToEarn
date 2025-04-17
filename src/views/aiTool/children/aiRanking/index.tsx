@@ -7,7 +7,7 @@ import {
   AiToolsRankingItemType,
   GetAiToolsRankingApiParams,
 } from '../../../../api/types/platform.type';
-import { Avatar, Popover, Table, TableProps, Tag, Tooltip } from "antd";
+import { Avatar, Popover, Table, TableProps, Tag, Tooltip } from 'antd';
 import {
   CaretDownOutlined,
   CaretUpOutlined,
@@ -89,11 +89,6 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<AiToolsRankingItemType[]>([]);
   const aiRankingContentRef = useRef<HTMLDivElement>(null);
-  const [tableHeight, setTableHeight] = useState(200);
-
-  useEffect(() => {
-    setTableHeight(aiRankingContentRef.current!.offsetHeight - 55);
-  }, []);
 
   useEffect(() => {
     if (params.dateType === '' || params.startDate === '') return;
@@ -136,7 +131,7 @@ export default function Page() {
             </div>
           );
         },
-        width: 40,
+        width: '40px',
         key: '序号',
       },
       {
@@ -146,7 +141,9 @@ export default function Page() {
             <div className="aiRanking-productName">
               <Avatar src={prm.cover} size="large" />
               <div className="aiRanking-productName-con">
-                <label style={{ marginBottom: '4px', display: 'inline-block' }}>{prm.title}</label>
+                <label style={{ marginBottom: '4px', display: 'inline-block' }}>
+                  {prm.title}
+                </label>
                 <div
                   className="aiRanking-productName-con-des"
                   title={prm.description}
@@ -165,7 +162,9 @@ export default function Page() {
         render: (text, prm) => {
           return (
             <div className="aiRanking-productName">
-              <div className="aiRanking-productName-con">{prm.intro}</div>
+              <div className="aiRanking-productName-con" title={prm.intro}>
+                {prm.intro}
+              </div>
             </div>
           );
         },
@@ -197,10 +196,10 @@ export default function Page() {
         title: () => {
           return (
             <>
-              周提及量
               <Tooltip title="统计AI工具排行榜的周提及作品数">
                 <QuestionCircleOutlined />
               </Tooltip>
+              周提及量
             </>
           );
         },
@@ -239,17 +238,17 @@ export default function Page() {
             </>
           );
         },
-        width: 80,
+        width: 90,
         key: 'referCount',
       },
       {
         title: () => {
           return (
             <>
-              声望值
               <Tooltip title="统计AI工具排行榜的提及作品、传播范围等多维度数据分析做出的综合评分">
                 <QuestionCircleOutlined />
               </Tooltip>
+              声望值
             </>
           );
         },
@@ -264,10 +263,10 @@ export default function Page() {
         title: () => {
           return (
             <>
-              综合评分
               <Tooltip title="统计AI工具排行榜的用户使用情况等多维度数据分析做出的综合评分">
                 <QuestionCircleOutlined />
               </Tooltip>
+              综合评分
             </>
           );
         },
@@ -279,7 +278,7 @@ export default function Page() {
             </span>
           );
         },
-        width: 80,
+        width: 90,
         key: 'exponentCount',
       },
     ];
@@ -333,7 +332,8 @@ export default function Page() {
           loading={loading}
           pagination={false}
           scroll={{
-            y: tableHeight,
+            // 高度通过css flex设置为自适应
+            y: 0,
           }}
         />
       </div>

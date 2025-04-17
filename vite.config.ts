@@ -12,6 +12,7 @@ import react from '@vitejs/plugin-react';
 import electron from 'vite-plugin-electron/simple';
 import pkg from './package.json';
 import svgr from "vite-plugin-svgr";
+import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
@@ -86,7 +87,10 @@ export default defineConfig(({ command }) => {
         // See 👉 https://github.com/electron-vite/vite-plugin-electron-renderer
         renderer: {},
       }),
-      svgr({ svgrOptions: { icon: true } })
+      svgr({ svgrOptions: { icon: true } }),
+      createSvgIconsPlugin({
+        iconDirs: [path.resolve(process.cwd(), "src/assets/svgs")],
+      })
     ],
     server:
       process.env.VSCODE_DEBUG &&

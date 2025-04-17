@@ -126,7 +126,7 @@ export default function Page() {
                 <Tooltip title="请先在左侧侧边栏选择账户">
                   <QuestionCircleOutlined className="mr-2 text-3xl" />
                 </Tooltip>
-                请选择账户
+                点击左侧账户
               </div>
             ) : (
               <div className="p-4">

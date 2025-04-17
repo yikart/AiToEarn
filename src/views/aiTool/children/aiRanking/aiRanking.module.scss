@@ -19,6 +19,9 @@
       text-align: center;
       line-height: 30px;
       font-size: var(--fs-md);
+      .ant-tag {
+        margin-top: 6px;
+      }
       &-up, &-down {
         width: 100%;
         display: flex;
@@ -27,6 +30,7 @@
         padding: 0;
         height: 20px;
         margin: 0;
+        min-width: 40px;
         .anticon {
           margin: 0 2px 0 0 !important;
         }
@@ -57,12 +61,13 @@
     }
     .ant-table-thead {
       th {
+        white-space: nowrap;
         color: #9a9a9a !important;
         padding-top: 10px !important;
         padding-bottom: 10px !important;
         font-weight: 400 !important;
         .anticon {
-          margin-left: 5px;
+          margin-right: 3px;
         }
       }
     }
@@ -122,6 +127,14 @@
       height: 100%;
       min-width: 0;
       display: flex;
+      min-height: 0;
+      & > .ant-table-wrapper, .ant-spin-nested-loading, .ant-table, .ant-table-container, .ant-table-body, .ant-spin-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        height: 100%;
+        max-height: none !important;
+      }
     }
   }
 }

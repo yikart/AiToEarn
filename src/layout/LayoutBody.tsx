@@ -4,13 +4,25 @@ import { Navigate, Outlet } from 'react-router-dom';
 import Navigation from './Navigation';
 import styles from './layoutBody.module.scss';
 import { useAccountStore } from '../store/account';
+import { sleep } from '../../commont/utils';
 
 export const LayoutBody = () => {
   const userStore = useUserStore();
 
+  // 查询用户信息
+  const queryUserInfo = async () => {
+    let count = 0;
+    while (true) {
+      const res = await userStore.getUserInfo().catch(() => false);
+      if (res || count >= 10) break;
+      await sleep(1000);
+      count++;
+    }
+  };
+
   useEffect(() => {
     if (userStore.token) {
-      userStore.getUserInfo();
+      queryUserInfo();
     } else {
       userStore.logout();
     }
