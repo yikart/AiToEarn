@@ -2,7 +2,7 @@
   "build": {
     "afterSign": "scripts/notarize.cjs"
   },
-  "name": "att",
+  "name": "aiToEarn",
   "version": "0.6.0-alpha.3",
   "main": "dist-electron/main/index.js",
   "description": "艺咖 win打包使用管理员的终端",

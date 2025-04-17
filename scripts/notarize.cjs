@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-04-17 19:22:11
- * @LastEditTime: 2025-04-17 21:08:57
+ * @LastEditTime: 2025-04-18 01:27:38
  * @LastEditors: nevin
  * @Description:
  */
@@ -17,6 +17,6 @@ exports.default = async function notarizing(context) {
   console.log('notarizing-------', appPath);
 
   return await notarize({
-  
+
   });
 };
