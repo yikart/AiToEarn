@@ -7,8 +7,9 @@
  */
 import { FileUtils } from '../../util/file';
 import { FFmpegVideoUtil } from '../../util/ffmpeg/video';
-import { Controller, Icp, Inject } from '../core/decorators';
+import { Controller, Icp, Inject, Scheduled } from '../core/decorators';
 import { ToolsService } from './service';
+import { clearOldLogs } from '../../global/log';
 
 @Controller()
 export class ToolsController {
@@ -43,5 +44,12 @@ export class ToolsController {
       console.log('--- ICP_TOOL_DOWN_FILE error ---', error);
       return '';
     }
+  }
+
+  // 定时清理日志, 每小时进行
+  @Scheduled('0 0 * * * *', 'clearLog')
+  async clearLog() {
+    console.log('clear Log ing ...');
+    clearOldLogs();
   }
 }

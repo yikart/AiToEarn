@@ -50,3 +50,23 @@ export function getLogFilePaths(days: number): string[] {
 
   return logFilePaths;
 }
+
+/**
+ * 清理一周前的日志
+ */
+export function clearOldLogs() {
+  const logDirectory = path.join(app.getPath('appData'), 'logs');
+  const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const logFiles = fs.readdirSync(logDirectory);
+  const logFilePaths = logFiles
+    .filter((file) => file.endsWith('.log'))
+    .map((file) => path.join(logDirectory, file))
+    .filter((filePath) => {
+      const fileStat = fs.statSync(filePath);
+      return fileStat.mtime.getTime() < oneWeekAgo;
+    });
+
+  logFilePaths.forEach((filePath) => {
+    fs.unlinkSync(filePath);
+  });
+}
