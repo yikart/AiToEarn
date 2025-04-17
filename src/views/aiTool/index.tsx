@@ -1,7 +1,7 @@
 import { Menu, MenuProps } from 'antd';
 import styles from './aiTool.module.scss';
 import Ranking from '@/assets/svgs/aiTool/ranking.svg?react';
-import digitalHuman from '@/assets/svgs/aiTool/digitalHuman.svg?react';
+// import digitalHuman from '@/assets/svgs/aiTool/digitalHuman.svg?react';
 import Icon from '@ant-design/icons';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';

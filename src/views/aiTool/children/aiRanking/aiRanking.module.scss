@@ -30,6 +30,7 @@
         padding: 0;
         height: 20px;
         margin: 0;
+        min-width: 40px;
         .anticon {
           margin: 0 2px 0 0 !important;
         }
@@ -126,6 +127,14 @@
       height: 100%;
       min-width: 0;
       display: flex;
+      min-height: 0;
+      & > .ant-table-wrapper, .ant-spin-nested-loading, .ant-table, .ant-table-container, .ant-table-body, .ant-spin-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        height: 100%;
+        max-height: none !important;
+      }
     }
   }
 }
