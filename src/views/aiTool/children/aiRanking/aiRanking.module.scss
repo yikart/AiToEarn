@@ -60,12 +60,13 @@
     }
     .ant-table-thead {
       th {
+        white-space: nowrap;
         color: #9a9a9a !important;
         padding-top: 10px !important;
         padding-bottom: 10px !important;
         font-weight: 400 !important;
         .anticon {
-          margin-left: 5px;
+          margin-right: 3px;
         }
       }
     }

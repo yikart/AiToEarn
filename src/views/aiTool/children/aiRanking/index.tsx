@@ -201,10 +201,10 @@ export default function Page() {
         title: () => {
           return (
             <>
-              周提及量
               <Tooltip title="统计AI工具排行榜的周提及作品数">
                 <QuestionCircleOutlined />
               </Tooltip>
+              周提及量
             </>
           );
         },
@@ -243,17 +243,17 @@ export default function Page() {
             </>
           );
         },
-        width: 80,
+        width: 90,
         key: 'referCount',
       },
       {
         title: () => {
           return (
             <>
-              声望值
               <Tooltip title="统计AI工具排行榜的提及作品、传播范围等多维度数据分析做出的综合评分">
                 <QuestionCircleOutlined />
               </Tooltip>
+              声望值
             </>
           );
         },
@@ -268,10 +268,10 @@ export default function Page() {
         title: () => {
           return (
             <>
-              综合评分
               <Tooltip title="统计AI工具排行榜的用户使用情况等多维度数据分析做出的综合评分">
                 <QuestionCircleOutlined />
               </Tooltip>
+              综合评分
             </>
           );
         },
@@ -283,7 +283,7 @@ export default function Page() {
             </span>
           );
         },
-        width: 80,
+        width: 90,
         key: 'exponentCount',
       },
     ];
