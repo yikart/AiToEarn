@@ -89,11 +89,6 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<AiToolsRankingItemType[]>([]);
   const aiRankingContentRef = useRef<HTMLDivElement>(null);
-  const [tableHeight, setTableHeight] = useState(200);
-
-  useEffect(() => {
-    setTableHeight(aiRankingContentRef.current!.offsetHeight - 55);
-  }, []);
 
   useEffect(() => {
     if (params.dateType === '' || params.startDate === '') return;
@@ -136,7 +131,7 @@ export default function Page() {
             </div>
           );
         },
-        width: 40,
+        width: '40px',
         key: '序号',
       },
       {
@@ -337,7 +332,8 @@ export default function Page() {
           loading={loading}
           pagination={false}
           scroll={{
-            y: tableHeight,
+            // 高度通过css flex设置为自适应
+            y: 0,
           }}
         />
       </div>
