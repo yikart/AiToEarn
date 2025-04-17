@@ -14,11 +14,11 @@ const items: MenuItem[] = [
     label: 'AI工具排行榜',
     icon: <Icon component={Ranking} />,
   },
-  {
-    key: '/aiTool/digitalHuman',
-    label: '数字人制作',
-    icon: <Icon component={digitalHuman} />,
-  },
+  // {
+  //   key: '/aiTool/digitalHuman',
+  //   label: '数字人制作',
+  //   icon: <Icon component={digitalHuman} />,
+  // },
 ];
 
 export default function Page() {
