@@ -117,6 +117,7 @@
     "vite": "^5.4.11",
     "vite-plugin-electron": "^0.29.0",
     "vite-plugin-electron-renderer": "^0.14.6",
+    "vite-plugin-svg-icons": "^2.0.1",
     "vite-plugin-svgr": "^4.3.0",
     "vitest": "^2.1.5"
   }

@@ -1,7 +1,8 @@
 import { Menu, MenuProps } from 'antd';
 import styles from './aiTool.module.scss';
 import Ranking from '@/assets/svgs/aiTool/ranking.svg?react';
-// import digitalHuman from '@/assets/svgs/aiTool/digitalHuman.svg?react';
+import AiDraw from '@/assets/svgs/aiTool/aiDraw.svg?react';
+// import DigitalHuman from '@/assets/svgs/aiTool/digitalHuman.svg?react';
 import Icon from '@ant-design/icons';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -14,10 +15,15 @@ const items: MenuItem[] = [
     label: 'AI工具排行榜',
     icon: <Icon component={Ranking} />,
   },
+  {
+    key: '/aiTool/chatAiDraw',
+    label: 'Chat Ai绘图',
+    icon: <Icon component={AiDraw} />,
+  },
   // {
   //   key: '/aiTool/digitalHuman',
   //   label: '数字人制作',
-  //   icon: <Icon component={digitalHuman} />,
+  //   icon: <Icon component={DigitalHuman} />,
   // },
 ];
 
