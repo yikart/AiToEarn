@@ -54,6 +54,7 @@ import {
   DownOutlined,
   QuestionCircleOutlined,
   SyncOutlined,
+  CheckSquareOutlined,
 } from '@ant-design/icons';
 import Masonry from 'react-masonry-css';
 import { AccountModel } from '../../../electron/db/models/account';
@@ -1160,8 +1161,31 @@ export default function Page() {
 
                           {searchTaskResults.length > 0 && (
                             <div style={{ marginTop: '20px' }}>
-                              <div style={{ marginBottom: '16px', textAlign: 'right' }}>
+                              <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+
+                              <Space>
+                                  {isSelectMode && (
+                                    <Button
+                                      type="primary"
+                                      icon={<CheckSquareOutlined />}
+                                      onClick={() => {
+                                        // 如果当前选中的作品数量等于所有作品数量，则取消全选
+                                        if (selectedPosts.length === searchTaskResults.length) {
+                                          setSelectedPosts([]);
+                                        } else {
+                                          // 否则全选所有作品
+                                          setSelectedPosts([...searchTaskResults.map(item => item.dataId)]);
+                                        }
+                                      }}
+                                      size="large"
+                                    >
+                                      {selectedPosts.length === searchTaskResults.length ? '取消全选' : '全选'}
+                                    </Button>
+                                  )}                                
+                                </Space>
+
                                 <Space>
+
                                   <Button
                                     type={isSelectMode ? 'primary' : 'default'}
                                     icon={<DownOutlined />}
@@ -1181,6 +1205,7 @@ export default function Page() {
                                       下发任务 ({selectedPosts.length})
                                     </Button>
                                   )}
+                                 
                                 </Space>
                               </div>
 

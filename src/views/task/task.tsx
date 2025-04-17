@@ -841,7 +841,7 @@ export default function Task() {
           <div className={styles.withdrawText} onClick={() => navigate('/finance')}>
             <WalletOutlined />
             <span>钱包</span>
-          </div> 
+          </div>
         </div>
       </div>
 
