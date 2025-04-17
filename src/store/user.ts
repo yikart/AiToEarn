@@ -49,8 +49,10 @@ export const useUserStore = createPersistStore(
           return;
         }
         const res = await userApi.getUserInfo();
+        console.log('user：', res);
         if (!res) return;
         set({ userInfo: res });
+        return res;
       },
 
       // 设置Token

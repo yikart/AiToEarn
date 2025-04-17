@@ -19,6 +19,9 @@
       text-align: center;
       line-height: 30px;
       font-size: var(--fs-md);
+      .ant-tag {
+        margin-top: 6px;
+      }
       &-up, &-down {
         width: 100%;
         display: flex;

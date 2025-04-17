@@ -7,7 +7,7 @@ import {
   AiToolsRankingItemType,
   GetAiToolsRankingApiParams,
 } from '../../../../api/types/platform.type';
-import { Avatar, Popover, Table, TableProps, Tag, Tooltip } from "antd";
+import { Avatar, Popover, Table, TableProps, Tag, Tooltip } from 'antd';
 import {
   CaretDownOutlined,
   CaretUpOutlined,
@@ -146,7 +146,9 @@ export default function Page() {
             <div className="aiRanking-productName">
               <Avatar src={prm.cover} size="large" />
               <div className="aiRanking-productName-con">
-                <label style={{ marginBottom: '4px', display: 'inline-block' }}>{prm.title}</label>
+                <label style={{ marginBottom: '4px', display: 'inline-block' }}>
+                  {prm.title}
+                </label>
                 <div
                   className="aiRanking-productName-con-des"
                   title={prm.description}
@@ -165,7 +167,9 @@ export default function Page() {
         render: (text, prm) => {
           return (
             <div className="aiRanking-productName">
-              <div className="aiRanking-productName-con">{prm.intro}</div>
+              <div className="aiRanking-productName-con" title={prm.intro}>
+                {prm.intro}
+              </div>
             </div>
           );
         },
