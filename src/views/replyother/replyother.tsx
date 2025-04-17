@@ -369,9 +369,9 @@ export default function Page() {
         taskType: 'xhs_comments',
         userId: userStore.userInfo?.id
       });
-      console.log('333',3333, res)
+      // console.log('333',3333, res)
       if (res) {
-        console.log('444',444)
+        // console.log('444',444)
         setSearchTaskList(res);
       }
     } catch (error) {
@@ -839,7 +839,7 @@ export default function Page() {
             <div className={styles.account}>
               <div className="account-noSelect">
                 <QuestionCircleOutlined />
-                <span>请选择账户</span>
+                <span>点击左侧账户</span>
               </div>
             </div>
           ) : (
