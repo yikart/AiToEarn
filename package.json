@@ -81,6 +81,7 @@
     "uuid": "^11.0.5",
     "vite": "^6.2.3",
     "vite-plugin-electron-renderer": "^0.14.6",
+    "vite-plugin-svg-icons": "^2.0.1",
     "xml2js": "^0.6.2",
     "zustand": "^5.0.3"
   },

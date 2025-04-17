@@ -806,6 +806,23 @@ export default function Page() {
     }, 1000);
   };
 
+  // 删除搜索任务
+  const deleteSearchTask = async (taskId: string) => {
+    try {
+      const res = await taskApi.deleteSearchNotesTask({
+        userId: userStore.userInfo?.id || '',
+        taskType: 'xhs_comments',
+        taskId: taskId
+      });
+      if (res) {
+        message.success('删除成功');
+        // 刷新任务列表
+        getSearchTaskList();
+      }
+    } catch (error) {
+      message.error('删除失败');
+    }
+  };
 
   return (
     <div className={styles.reply} style={{ alignItems: 'flex-start' }}>
@@ -1147,13 +1164,22 @@ export default function Page() {
                                 title: '操作',
                                 key: 'action',
                                 render: (_, record) => (
-                                  <Button 
-                                    type="link" 
-                                    onClick={() => viewTaskResult(record.taskId)}
-                                    disabled={record.status != 1} // 正在运行时禁用
-                                  >
-                                    查看结果
-                                  </Button>
+                                  <Space>
+                                    <Button 
+                                      type="link" 
+                                      onClick={() => viewTaskResult(record.taskId)}
+                                      disabled={record.status != 1}
+                                    >
+                                      查看结果
+                                    </Button>
+                                    <Button
+                                      type="link"
+                                      danger
+                                      onClick={() => deleteSearchTask(record.taskId)}
+                                    >
+                                      删除
+                                    </Button>
+                                  </Space>
                                 ),
                               },
                             ]}
@@ -1162,18 +1188,15 @@ export default function Page() {
                           {searchTaskResults.length > 0 && (
                             <div style={{ marginTop: '20px' }}>
                               <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-
-                              <Space>
+                                <Space>
                                   {isSelectMode && (
                                     <Button
                                       type="primary"
                                       icon={<CheckSquareOutlined />}
                                       onClick={() => {
-                                        // 如果当前选中的作品数量等于所有作品数量，则取消全选
                                         if (selectedPosts.length === searchTaskResults.length) {
                                           setSelectedPosts([]);
                                         } else {
-                                          // 否则全选所有作品
                                           setSelectedPosts([...searchTaskResults.map(item => item.dataId)]);
                                         }
                                       }}
@@ -1185,7 +1208,6 @@ export default function Page() {
                                 </Space>
 
                                 <Space>
-
                                   <Button
                                     type={isSelectMode ? 'primary' : 'default'}
                                     icon={<DownOutlined />}
@@ -1205,19 +1227,15 @@ export default function Page() {
                                       下发任务 ({selectedPosts.length})
                                     </Button>
                                   )}
-                                 
                                 </Space>
                               </div>
 
-                              <Masonry
-                                breakpointCols={breakpointColumnsObj}
-                                className={styles.myMasonryGrid}
-                                columnClassName={styles.myMasonryGridColumn}
-                              >
-                                {searchTaskResults.map((item: any, index: number) => (
+                              <List
+                                itemLayout="horizontal"
+                                dataSource={searchTaskResults}
+                                renderItem={(item: any) => (
                                   <List.Item
-                                    key={`${item.dataId}-${index}`}
-                                    className={styles.masonryItem}
+                                    key={item.dataId}
                                     onClick={() => {
                                       if (isSelectMode) {
                                         handlePostSelect(item.dataId);
@@ -1225,129 +1243,86 @@ export default function Page() {
                                     }}
                                     style={{
                                       cursor: isSelectMode ? 'pointer' : 'default',
-                                      background: selectedPosts.some(
-                                        (p) => (p as any).dataId === item.dataId,
-                                      )
+                                      background: selectedPosts.includes(item.dataId)
                                         ? 'rgba(24, 144, 255, 0.1)'
                                         : 'transparent',
+                                      padding: '16px',
+                                      borderRadius: '8px',
+                                      marginBottom: '8px',
+                                      border: '1px solid #f0f0f0'
                                     }}
-                                  >
-                                    <Card
-                                      hoverable={isSelectMode}
-                                      className={styles.postCard}
-                                      cover={
-                                        <div
+                                    actions={[
+                                      <Space key="like" onClick={() => likePost(item)}>
+                                        <LikeOutlined
                                           style={{
-                                            cursor: 'pointer',
-                                            position: 'relative',
+                                            color: likedPosts[item.dataId] ? '#ff4d4f' : undefined,
+                                            fontSize: likedPosts[item.dataId] ? '18px' : undefined,
                                           }}
-                                          onClick={() =>
-                                            !isSelectMode && handleImageClick(item)
-                                          }
-                                        >
+                                        />
+                                        <span>{item.likeCount || 0}</span>
+                                      </Space>,
+                                      <Space key="comment-list" onClick={() => showCommentModal(item)}>
+                                        <UnorderedListOutlined />
+                                        <span>{item.commentCount || ''}</span>
+                                      </Space>,
+                                      <Space key="reply" onClick={() => openReplyWorks(item)}>
+                                        <CommentOutlined />
+                                        <span>评论</span>
+                                      </Space>,
+                                      <Space key="collect" onClick={() => collectPost(item)}>
+                                        <StarOutlined
+                                          style={{
+                                            color: collectedPosts[item.dataId] ? '#faad14' : undefined,
+                                            fontSize: collectedPosts[item.dataId] ? '18px' : undefined,
+                                          }}
+                                        />
+                                        <span>{item.collectCount || ''}</span>
+                                      </Space>,
+                                    ]}
+                                  >
+                                    <List.Item.Meta
+                                      avatar={
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
                                           {isSelectMode && (
-                                            <div
-                                              style={{
-                                                position: 'absolute',
-                                                top: 10,
-                                                left: 10,
-                                                zIndex: 1,
-                                              }}
-                                            >
-                                              <Checkbox
-                                                checked={selectedPosts.includes(
-                                                  item.dataId,
-                                                )}
-                                                onChange={() =>
-                                                  handlePostSelect(item.dataId)
-                                                }
-                                              />
-                                            </div>
+                                            <Checkbox
+                                              checked={selectedPosts.includes(item.dataId)}
+                                              onClick={(e) => e.stopPropagation()}
+                                              onChange={() => handlePostSelect(item.dataId)}
+                                              style={{ marginRight: '12px' }}
+                                            />
                                           )}
-                                          <img
-                                            alt={item.title}
-                                            src={item.coverUrl}
-                                            style={{
-                                              width: '100%',
-                                              borderRadius: '10px 10px 0 0',
-                                              objectFit: 'cover',
-                                            }}
-                                          />
+                                          <div style={{ position: 'relative', cursor: 'pointer' }} onClick={() => !isSelectMode && handleImageClick(item)}>
+                                            <img
+                                              src={item.coverUrl}
+                                              alt={item.title}
+                                              style={{
+                                                width: '120px',
+                                                height: '120px',
+                                                objectFit: 'cover',
+                                                borderRadius: '8px'
+                                              }}
+                                            />
+                                          </div>
+                                          <Avatar src={item.author?.avatar} style={{ marginLeft: '12px' }} />
                                         </div>
                                       }
-                                      actions={[
-                                        <Space
-                                          key="like"
-                                          onClick={() => likePost(item)}
-                                        >
-                                          <LikeOutlined
-                                            style={{
-                                              color: likedPosts[item.dataId]
-                                                ? '#ff4d4f'
-                                                : undefined,
-                                              fontSize: likedPosts[item.dataId]
-                                                ? '18px'
-                                                : undefined,
-                                            }}
-                                          />
-                                          <span>{item.likeCount || 0}</span>
-                                        </Space>,
-                                        <Space
-                                          key="comment-list"
-                                          onClick={() => showCommentModal(item)}
-                                        >
-                                          <UnorderedListOutlined />
-                                          <span>{item.commentCount || ''}</span>
-                                        </Space>,
-                                        <Space
-                                          key="reply"
-                                          onClick={() => openReplyWorks(item)}
-                                        >
-                                          <CommentOutlined />
-                                          <span>评论</span>
-                                        </Space>,
-                                        <Space
-                                          key="collect"
-                                          onClick={() => collectPost(item)}
-                                        >
-                                          <StarOutlined
-                                            style={{
-                                              color: collectedPosts[item.dataId]
-                                                ? '#faad14'
-                                                : undefined,
-                                              fontSize: collectedPosts[item.dataId]
-                                                ? '18px'
-                                                : undefined,
-                                            }}
-                                          />
-                                          <span>{item.collectCount || ''}</span>
-                                        </Space>,
-                                      ]}
-                                    >
-                                      <Card.Meta
-                                        avatar={
-                                          <Avatar src={`${item.author?.avatar}`} />
-                                        }
-                                        title={item.author?.name}
-                                        description={
-                                          <div>
-                                            <Text
-                                              strong
-                                              ellipsis
-                                              style={{ display: 'block' }}
-                                            >
-                                              {item.title}
-                                            </Text>
-                                            <Text type="secondary" ellipsis={{}}>
-                                              {item.content}
-                                            </Text>
-                                          </div>
-                                        }
-                                      />
-                                    </Card>
+                                      title={
+                                        <div style={{ marginLeft: '12px' }}>
+                                          <div>{item.author?.name}</div>
+                                          <div style={{ fontWeight: 'bold', marginTop: '8px' }}>{item.title}</div>
+                                        </div>
+                                      }
+                                      description={
+                                        <div style={{ marginLeft: '12px' }}>
+                                          <Text type="secondary" ellipsis={{ rows: 2 }}>
+                                            {item.content}
+                                          </Text>
+                                        </div>
+                                      }
+                                    />
                                   </List.Item>
-                                ))}
-                              </Masonry>
+                                )}
+                              />
                             </div>
                           )}
                         </Card>
