@@ -220,7 +220,7 @@ export default forwardRef<PubItemRef>((props, ref) => {
               }}
             >
               <Input placeholder="请输入验证码" style={{ flex: 1 }} />
-              {/* <div style={{ marginLeft: '8px', width: '120px' }}> */}
+              <div style={{ marginLeft: '8px', width: '138px', backgroundColor: '#a66ae4', padding: '5px 0', borderRadius: '5px' }}>
               <GetCode
                 onGetCode={async (unlock: () => void) => {
                   const validateRes = await phoneForm
@@ -239,7 +239,7 @@ export default forwardRef<PubItemRef>((props, ref) => {
                   }
                 }}
               />
-              {/* </div> */}
+              </div>
             </div>
           </Form.Item>
 
