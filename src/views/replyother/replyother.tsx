@@ -409,11 +409,14 @@ export default function Page() {
           author: {
             name: item.author.name,
             avatar: item.author.avatar || '',
-            id: item.author.id
+            id: item.author.id,
+           
           },
+          profileUrl: item.profileUrl || '',
           collectCount: item.stats?.collectCount?.toString() || '0',
           commentCount: item.stats?.commentCount?.toString() || '0',
           coverUrl: item.cover,
+          category: item.category,
           data: {
             id: item.noteId,
             model_type: 'note',
@@ -435,6 +438,13 @@ export default function Page() {
       }
     } catch (error) {
       message.error('获取任务结果失败');
+    }
+  };
+
+  // 打开作者主页
+  const openAuthorProfile = (url?: string) => {
+    if (url) {
+      window.open(url, '_blank');
     }
   };
 
@@ -783,6 +793,21 @@ export default function Page() {
     setWebviewModalVisible(true);
   };
 
+
+    /**
+   * 点击图片打开链接
+   */
+  const handleUriClick = (link: any) => {
+    console.log('------ handleUriClick', link);
+    if (!link) return;
+
+    let url = link;
+
+    setCurrentUrl(url);
+    setIsWebviewLoading(true);
+    setWebviewModalVisible(true);
+  };
+
   // 计算断点值，用于响应式布局
   const breakpointColumnsObj = {
     default: 6, // 默认显示5列
@@ -829,7 +854,7 @@ export default function Page() {
   };
 
   return (
-    <div className={styles.reply} style={{ alignItems: 'flex-start' }}>
+    <div className={styles.reply} style={{ alignItems: 'flex-start', overflowX: 'hidden' }}>
       <div style={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
         <AccountSidebar
           activeAccountId={activeAccountId}
@@ -992,15 +1017,40 @@ export default function Page() {
                                         />
                                       </div>
                                     )}
-                                    <img
-                                      alt={item.title}
-                                      src={item.coverUrl}
-                                      style={{
-                                        width: '100%',
-                                        borderRadius: '10px 10px 0 0',
-                                        objectFit: 'cover',
-                                      }}
-                                    />
+                                    <div style={{ 
+                                      width: '200px', 
+                                      height: '200px', 
+                                      position: 'relative',
+                                      overflow: 'hidden'
+                                    }}>
+                                      <img
+                                        src={item.coverUrl}
+                                        alt={item.title}
+                                        style={{
+                                          width: '100%',
+                                          height: '100%',
+                                          objectFit: 'cover'
+                                        }}
+                                        onError={(e) => {
+                                          const target = e.target as HTMLImageElement;
+                                          target.style.display = 'none';
+                                          const titleDiv = document.createElement('div');
+                                          titleDiv.style.cssText = `
+                                            width: 100%;
+                                            height: 100%;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            background: #f5f5f5;
+                                            padding: 10px;
+                                            text-align: center;
+                                            word-break: break-word;
+                                          `;
+                                          titleDiv.textContent = item.title;
+                                          target.parentNode?.appendChild(titleDiv);
+                                        }}
+                                      />
+                                    </div>
                                   </div>
                                 }
                                 actions={[
@@ -1110,8 +1160,14 @@ export default function Page() {
                                 onSearch={submitSearchTask}
                                 enterButton="搜索任务"
                               />
-                              <div style={{ marginTop: '8px', color: '#999', fontSize: '12px', paddingLeft: '2px' }}>
-                                 <QuestionCircleOutlined /> 小红书搜索评论需要5-10分钟，请稍后查看
+                              <div style={{ marginTop: '8px', color: '#999', fontSize: '12px', paddingLeft: '2px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <QuestionCircleOutlined /> 小红书搜索评论需要5-10分钟，请稍后查看
+                                <Button
+                                  type="link"
+                                  icon={<SyncOutlined />}
+                                  onClick={getSearchTaskList}
+                                  style={{ padding: 0, height: 'auto' }}
+                                />
                               </div>
                             </Form.Item>
                           </Form>
@@ -1195,8 +1251,8 @@ export default function Page() {
                             size="small"
                           />
 
-                          {searchTaskResults.length > 0 && (
-                            <div style={{ marginTop: '20px' }}>
+                          {searchTaskResults.length > 0 ? (
+                            <div style={{ marginTop: '20px', overflowX: 'hidden' }}>
                               <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Space>
                                   {isSelectMode && (
@@ -1259,7 +1315,8 @@ export default function Page() {
                                       padding: '16px',
                                       borderRadius: '8px',
                                       marginBottom: '8px',
-                                      border: '1px solid #f0f0f0'
+                                      border: '1px solid #f0f0f0',
+                                      overflow: 'hidden'
                                     }}
                                     actions={[
                                       <Space key="like" onClick={() => likePost(item)}>
@@ -1302,24 +1359,70 @@ export default function Page() {
                                             />
                                           )}
                                           <div style={{ position: 'relative', cursor: 'pointer' }} onClick={() => !isSelectMode && handleImageClick(item)}>
-                                            <img
-                                              src={item.coverUrl}
-                                              alt={item.title}
-                                              style={{
+                                            {item.coverUrl ? (
+                                              <div style={{ 
+                                                width: '120px', 
+                                                height: '120px', 
+                                                position: 'relative',
+                                                overflow: 'hidden'
+                                              }}>
+                                                <img
+                                                  src={item.coverUrl}
+                                                  alt={item.title}
+                                                  style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    objectFit: 'cover'
+                                                  }}
+                                                  onError={(e) => {
+                                                    const target = e.target as HTMLImageElement;
+                                                    target.style.display = 'none';
+                                                    const titleDiv = document.createElement('div');
+                                                    titleDiv.style.cssText = `
+                                                      width: 100%;
+                                                      height: 100%;
+                                                      display: flex;
+                                                      align-items: center;
+                                                      justify-content: center;
+                                                      background: #f5f5f5;
+                                                      padding: 10px;
+                                                      text-align: center;
+                                                      word-break: break-word;
+                                                    `;
+                                                    titleDiv.textContent = item.title;
+                                                    target.parentNode?.appendChild(titleDiv);
+                                                  }}
+                                                />
+                                              </div>
+                                            ) : (
+                                              <div style={{
                                                 width: '120px',
                                                 height: '120px',
-                                                objectFit: 'cover',
-                                                borderRadius: '8px'
-                                              }}
-                                            />
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                background: '#f0f0f0',
+                                                borderRadius: '8px',
+                                                padding: '10px',
+                                                textAlign: 'center',
+                                                fontSize: '12px',
+                                                overflow: 'hidden',
+                                                wordBreak: 'break-word'
+                                              }}>
+                                                {item.content}
+                                              </div>
+                                            )}
                                           </div>
-                                          {/* <Avatar src={item.author?.avatar} style={{ marginLeft: '12px' }} /> */}
                                         </div>
                                       }
                                       title={
                                         <div style={{ marginLeft: '12px' }}>
-                                          <div>{item.author?.name}</div>
-                                          <div style={{ fontWeight: 'bold', marginTop: '8px' }}>{item.title}</div>
+                                          <div 
+                                            onClick={() => handleUriClick(item.profileUrl)}
+                                          >
+                                            {item.author?.name}
+                                          </div>
+                                          <div style={{ fontWeight: 'bold', marginTop: '8px' }} onClick={() => !isSelectMode && handleImageClick(item)}>{item.title}</div>
                                         </div>
                                       }
                                       description={
@@ -1328,8 +1431,8 @@ export default function Page() {
                                             {item.content}
                                           </Text>
                                           {item.aboutsComments && (
-                                            <div style={{ marginTop: '8px' }}>
-                                              <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>相关评论：</div>
+                                            <div style={{ marginTop: '8px',display: 'flex',flexDirection: 'row',alignItems: 'center' }}>
+                                              <div style={{ fontWeight: 'bold', marginBottom: '4px', width: '72px' }}>相关评论：</div>
                                               <div style={{ 
                                                 padding: '8px', 
                                                 background: '#f5f5f5', 
@@ -1353,6 +1456,19 @@ export default function Page() {
                                     />
                                   </List.Item>
                                 )}
+                              />
+                            </div>
+                          ) : (
+                            <div style={{ 
+                              marginTop: '20px', 
+                              textAlign: 'center', 
+                              padding: '40px',
+                              background: '#f5f5f5',
+                              borderRadius: '8px'
+                            }}>
+                              <Empty
+                                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                description="此评论未搜索出结果"
                               />
                             </div>
                           )}
