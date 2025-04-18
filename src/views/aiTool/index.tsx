@@ -17,7 +17,7 @@ const items: MenuItem[] = [
     icon: <Icon component={Ranking} />,
   },
   {
-    key: `/aiTool/aiToolWebview?webviewUrl=${encodeURIComponent('https://www.yikart.cn/chat/#/new-chat?mask=100005')}`,
+    key: `/aiTool/aiToolWebview?webviewUrl=${encodeURIComponent('https://www.yikart.cn/chat?isHideNav=true&mask=100005#new-chat?mask=100005')}`,
     label: 'Chat Ai绘图',
     icon: <Icon component={AiDraw} />,
   },
