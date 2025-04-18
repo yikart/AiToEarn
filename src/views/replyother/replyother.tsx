@@ -385,6 +385,8 @@ export default function Page() {
     setActiveTabKey(key);
     if (key === '4' && activeAccountType === 'xhs') {
       getSearchTaskList();
+      // 切换到评论搜索选项卡时，默认使用AI模式
+      setSearchKeyword('AI');
     }
   };
 
@@ -1062,7 +1064,7 @@ export default function Page() {
                                       >
                                         {item.title}
                                       </Text>
-                                      <Text type="secondary" ellipsis={{}}>
+                                      <Text type="secondary" ellipsis>
                                         {item.content}
                                       </Text>
                                     </div>
