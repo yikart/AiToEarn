@@ -31,8 +31,7 @@ import ksIcon from '../../assets/svgs/account/ks.svg';
 const { Content } = Layout;
 
 const Statistics = () => {
-  const [statisticsInfo, setStatisticsInfo] =
-    useState<Partial<StatisticsInfo>>();
+  const [statisticsInfo, setStatisticsInfo] = useState<Partial<StatisticsInfo>>();
 
   const [dashboardData, setDashboardData] = useState<DashboardData[]>([]);
   const [dashboardData7, setDashboardData7] = useState<any[]>([]);
@@ -295,6 +294,7 @@ const Statistics = () => {
       for (const account of res.list) {
         if(account.status === 1) continue;
         const dashboardRes = await getAccountDashboard(account.id);
+        console.log('dashboardRes:', dashboardRes)
         // const accountInfo = await icpGetAccountInfo(account.type, account.uid);
         setDashboardData((prev) => [
           ...prev,
