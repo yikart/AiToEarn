@@ -1,4 +1,7 @@
 {
+  "build": {
+    "afterSign": "scripts/notarize.cjs"
+  },
   "name": "aiToEarn",
   "version": "0.6.0-alpha.4",
   "main": "dist-electron/main/index.js",
