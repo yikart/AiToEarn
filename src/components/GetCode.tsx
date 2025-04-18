@@ -40,7 +40,7 @@ function GetCode({ onGetCode }: { onGetCode: (unlock: () => void) => void }) {
             style={{fontSize: '12px'}}
             format="ss"
             value={Date.now() + currTime.current}
-            precision={1}
+            precision={1} 
             onFinish={() => {
               setIsCode(false);
             }}
