@@ -10,6 +10,7 @@ import { AccountInfo } from '@/views/account/comment';
 import { AccountStatus, AccountType } from '../../commont/AccountEnum';
 import { DashboardData } from '../views/statistics/comment';
 
+// 更新账户状态
 export async function ipcUpdateAccountStatus(
   accountId: number,
   status: AccountStatus,

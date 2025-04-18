@@ -41,7 +41,7 @@ const WebView = memo(
         console.log(cookieParams);
         setLoading(true);
 
-        webviewRef.current?.addEventListener('dom-ready', async () => {
+        webviewRef.current?.addEventListener('dom-ready', async (e) => {
           // 每个平台localStorage添加
           if (account) {
             let jsCode;

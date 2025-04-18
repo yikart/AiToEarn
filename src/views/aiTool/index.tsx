@@ -17,7 +17,7 @@ const items: MenuItem[] = [
     icon: <Icon component={Ranking} />,
   },
   {
-    key: '/aiTool/aiToolWebview?webviewUrl=https://www.yikart.cn/chat?isHideNav=true',
+    key: `/aiTool/aiToolWebview?webviewUrl=${encodeURIComponent('https://www.yikart.cn/chat/#/new-chat?mask=100005')}`,
     label: 'Chat Ai绘图',
     icon: <Icon component={AiDraw} />,
   },
@@ -39,7 +39,8 @@ export default function Page() {
   const [currChooseRoute, setCurrChooseRoute] = useState<string>();
 
   useEffect(() => {
-    setCurrChooseRoute(location.pathname + location.search);
+    console.log(location);
+    setCurrChooseRoute(location.pathname + location.search + location.hash);
   }, [location]);
 
   return (
