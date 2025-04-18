@@ -64,7 +64,7 @@ export default forwardRef<PubItemRef>((props, ref) => {
         setOpenId(openId);
 
         // 登录完成
-        if (!token && !phone && res.userInfo) {
+        if (status === 1 && !!token && !!phone && res.userInfo) {
           completeLogin(res);
           clearInterval(loginTimer);
           return;
@@ -122,7 +122,7 @@ export default forwardRef<PubItemRef>((props, ref) => {
         message.success('手机号绑定成功');
         setShowPhoneModal(false);
         // 完成登录流程
-        completeLogin(values);
+        completeLogin({ ...res, phone: values.phone, openId, status: 1 });
       }
     } catch (error) {
       message.error('手机号绑定失败');
