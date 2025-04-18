@@ -110,5 +110,5 @@ export const taskApi = {
   },
   // 删除搜索笔记任务
   deleteSearchNotesTask: (data: { userId: string; taskType: string; taskId: string }) =>
-    http.post('/comment/search/notes/delete', data),
+    hotHttp.post('/comment/search/notes/delete', data),
 };
