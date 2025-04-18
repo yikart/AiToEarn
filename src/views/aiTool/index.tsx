@@ -18,7 +18,7 @@ const items: MenuItem[] = [
   },
   {
     key: `/aiTool/aiToolWebview?webviewUrl=${encodeURIComponent('https://www.yikart.cn/chat?isHideNav=true&mask=100005#new-chat?mask=100005')}`,
-    label: 'Chat Ai绘图',
+    label: '吉卜力版GPT-4o',
     icon: <Icon component={AiDraw} />,
   },
   {
