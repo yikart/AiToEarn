@@ -19,7 +19,7 @@ export interface IWebViewProps {
   url: string;
   cookieParams?: ICookieParams;
   // 是否开启沙盒化模式
-  partition?: boolean;
+  partition?: boolean | string;
   account?: AccountInfo;
   allowpopups?: boolean;
 }
@@ -92,7 +92,13 @@ const WebView = memo(
                 webpreferences="sandbox"
                 src={loading ? 'about:blank' : url}
                 style={{ width: '100%', height: '100%' }}
-                partition={partition ? partitionId.current : undefined}
+                partition={
+                  typeof partition === 'boolean'
+                    ? partition
+                      ? partitionId.current
+                      : undefined
+                    : partition
+                }
                 useragent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 Edg/133.0.0.0"
               ></webview>
             </Spin>

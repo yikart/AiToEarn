@@ -10,11 +10,17 @@ export default function Page() {
 
   useEffect(() => {
     setWebviewUrl(searchParams[0].get('webviewUrl') || '');
+    console.log(searchParams[0].get('webviewUrl'));
   }, [location]);
 
   return (
     <div className={styles['aiTool-webview']}>
-      <WebView url={webviewUrl} key={webviewUrl} allowpopups />
+      <WebView
+        url={webviewUrl}
+        key={webviewUrl}
+        allowpopups
+        partition={'aiTools'}
+      />
     </div>
   );
 }
