@@ -91,7 +91,7 @@ export default function InteractionTask() {
   const navigate = useNavigate();
 
   const Ref_TaskInfo = useRef<TaskInfoRef>(null);
-  
+
   // 使用 react-intersection-observer 监听底部元素
   const { ref: loadMoreRef, inView } = useInView({
     threshold: 0.2,
@@ -108,11 +108,11 @@ export default function InteractionTask() {
   // 加载更多数据
   const loadMore = async () => {
     if (loading || !hasMore) return;
-    
+
     setLoading(true);
     try {
       const nextPage = pageInfo.pageNo + 1;
-      setPageInfo(prev => ({ ...prev, pageNo: nextPage }));
+      setPageInfo((prev) => ({ ...prev, pageNo: nextPage }));
       await getTaskList(true);
     } catch (error) {
       console.error('加载更多失败:', error);
@@ -174,6 +174,8 @@ export default function InteractionTask() {
   };
 
   const getPlatformTags = (accountTypes: string[]) => {
+    if (!accountTypes || accountTypes.length === 0) return null;
+
     return accountTypes.map((type) => {
       const platform = platformConfig[type as keyof typeof platformConfig];
       if (!platform) return null;
@@ -341,7 +343,6 @@ export default function InteractionTask() {
 
   return (
     <div className={styles.taskList}>
-
       <ChooseAccountModule
         open={chooseAccountOpen}
         onClose={() => !downloading && setChooseAccountOpen(false)}
@@ -378,7 +379,7 @@ export default function InteractionTask() {
                 cover={
                   <div className={styles.taskImage}>
                     <Image
-                      src={item.imageUrl?  FILE_BASE_URL+item.imageUrl : logo}
+                      src={item.imageUrl ? FILE_BASE_URL + item.imageUrl : logo}
                       alt="logo"
                       preview={false}
                       style={{
@@ -454,11 +455,7 @@ export default function InteractionTask() {
       <div ref={loadMoreRef} className={styles.loadMoreTrigger}>
         {hasMore && (
           <div className={styles.loadMoreContainer}>
-            <Button 
-              type="link" 
-              loading={loading}
-              onClick={loadMore}
-            >
+            <Button type="link" loading={loading} onClick={loadMore}>
               {loading ? '加载中...' : '加载更多'}
             </Button>
           </div>
@@ -495,13 +492,13 @@ export default function InteractionTask() {
                   dangerouslySetInnerHTML={{ __html: selectedTask.description }}
                 />
               </Descriptions.Item>
-              <Descriptions.Item label="任务奖励"> 
+              <Descriptions.Item label="任务奖励">
                 ¥{selectedTask.reward}
               </Descriptions.Item>
-              <Descriptions.Item label="评论内容"> 
+              <Descriptions.Item label="评论内容">
                 {selectedTask.dataInfo?.commentContent || 'AI智能评论'}
               </Descriptions.Item>
-              <Descriptions.Item label="作品ID"> 
+              <Descriptions.Item label="作品ID">
                 {selectedTask.dataInfo?.worksId || ''}
               </Descriptions.Item>
               <Descriptions.Item label="任务时长">
