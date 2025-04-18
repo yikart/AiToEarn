@@ -278,56 +278,58 @@
     }
   }
 
-  .loginForm-getCode {
-    color: #C367EF;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 16px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    background: linear-gradient(135deg, #C367EF 0%, #64C9ED 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    transition: opacity 0.3s;
-    z-index: 1;
 
-    &:hover {
-      opacity: 0.8;
-    }
-
-    &:active {
-      opacity: 0.6;
-    }
-
-    &--disable {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    :global {
-      .ant-statistic {
-        position: static;
-      }
-      
-      .ant-statistic-content {
-        display: flex;
-        align-items: center;
-        background: linear-gradient(135deg, #C367EF 0%, #64C9ED 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        white-space: nowrap;
-        
-        &-value {
-          font-size: 14px !important;
-          font-weight: 500;
-        }
-      }
-    }
-  }
 
   .loginForm-buttonWrapper {
     margin-top: 40px;
+  }
+}
+
+.loginForm-getCode {
+  color: #C367EF;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  background: linear-gradient(135deg, #C367EF 0%, #64C9ED 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: opacity 0.3s;
+  z-index: 1;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:active {
+    opacity: 0.6;
+  }
+
+  &--disable {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  :global {
+    .ant-statistic {
+      position: static;
+    }
+    
+    .ant-statistic-content {
+      display: flex;
+      align-items: center;
+      background: linear-gradient(135deg, #C367EF 0%, #64C9ED 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      white-space: nowrap;
+      
+      &-value {
+        font-size: 14px !important;
+        font-weight: 500;
+      }
+    }
   }
 }

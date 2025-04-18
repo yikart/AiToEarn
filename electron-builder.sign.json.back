@@ -13,7 +13,7 @@
   "hardenedRuntime": true,
   "entitlements": "scripts/entitlements.mac.plist",
   "entitlementsInherit": "scripts/entitlements.mac.plist",
-    "identity": null,
+    "identity": "Yika(Beijing)Technology Co., Ltd.",
     "artifactName": "${productName}-${version}-${arch}.${ext}",
     "target": [
       {
