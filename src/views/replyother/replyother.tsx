@@ -353,6 +353,7 @@ export default function Page() {
 
   // 添加搜索关键词状态
   const [searchKeyword, setSearchKeyword] = useState('哎哟赚');
+  const [searchKeywordSelected, setSearchKeywordSelected] = useState('');
 
   // 添加小红书搜索任务相关状态
   const [searchTaskId, setSearchTaskId] = useState<string>('');
@@ -391,11 +392,11 @@ export default function Page() {
   };
 
   // 查看任务结果
-  const viewTaskResult = async (taskId: string) => {
+  const viewTaskResult = async (taskId: string, keywords: string) => {
     setSelectedTaskId(taskId);
     setSearchTaskStatus('running');
     setSearchTaskProgress(0);
-    
+    setSearchKeywordSelected(keywords);
     try {
       const result = await taskApi.searchNotesResult({
         taskType: 'xhs_comments',
@@ -426,7 +427,8 @@ export default function Page() {
           },
           title: item.title,
           content: item.content,
-          url: item.url
+          url: item.url,
+          aboutsComments: item.aboutsComments || ''
         }));
 
         setSearchTaskResults(formattedResults);
@@ -1100,7 +1102,7 @@ export default function Page() {
                       <div style={{ padding: '20px' }}>
                         <Card>
                           <Form layout="vertical">
-                            <Form.Item label="搜索评论">
+                            <Form.Item >
                               <Input.Search
                                 placeholder="输入评论"
                                 value={searchKeyword}
@@ -1108,6 +1110,9 @@ export default function Page() {
                                 onSearch={submitSearchTask}
                                 enterButton="搜索任务"
                               />
+                              <div style={{ marginTop: '8px', color: '#999', fontSize: '12px', paddingLeft: '2px' }}>
+                                 <QuestionCircleOutlined /> 小红书搜索评论需要5-10分钟，请稍后查看
+                              </div>
                             </Form.Item>
                           </Form>
 
@@ -1169,7 +1174,7 @@ export default function Page() {
                                   <Space>
                                     <Button 
                                       type="link" 
-                                      onClick={() => viewTaskResult(record.taskId)}
+                                      onClick={() => viewTaskResult(record.taskId, record.keywords)}
                                       disabled={record.status != 1}
                                     >
                                       查看结果
@@ -1185,6 +1190,9 @@ export default function Page() {
                                 ),
                               },
                             ]}
+                            pagination={false}
+                            scroll={{ y: 300 }}
+                            size="small"
                           />
 
                           {searchTaskResults.length > 0 && (
@@ -1305,7 +1313,7 @@ export default function Page() {
                                               }}
                                             />
                                           </div>
-                                          <Avatar src={item.author?.avatar} style={{ marginLeft: '12px' }} />
+                                          {/* <Avatar src={item.author?.avatar} style={{ marginLeft: '12px' }} /> */}
                                         </div>
                                       }
                                       title={
@@ -1316,9 +1324,30 @@ export default function Page() {
                                       }
                                       description={
                                         <div style={{ marginLeft: '12px' }}>
-                                          <Text type="secondary" ellipsis={{ rows: 2 }}>
+                                          <Text type="secondary" ellipsis>
                                             {item.content}
                                           </Text>
+                                          {item.aboutsComments && (
+                                            <div style={{ marginTop: '8px' }}>
+                                              <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>相关评论：</div>
+                                              <div style={{ 
+                                                padding: '8px', 
+                                                background: '#f5f5f5', 
+                                                borderRadius: '4px',
+                                                marginBottom: '4px'
+                                              }}>
+                                                {/* 高亮显示与搜索关键词匹配的部分 */}
+                                                {(() => {
+                                                  if (!searchKeywordSelected) return item.aboutsComments;
+                                                  const regex = new RegExp(`(${searchKeywordSelected})`, 'gi');
+                                                  const parts = item.aboutsComments.split(regex);
+                                                  return parts.map((part: string, i: number) => 
+                                                    regex.test(part) ? <span key={i} style={{ color: 'red', fontWeight: 'bold' }}>{part}</span> : part
+                                                  );
+                                                })()}
+                                              </div>
+                                            </div>
+                                          )}
                                         </div>
                                       }
                                     />
