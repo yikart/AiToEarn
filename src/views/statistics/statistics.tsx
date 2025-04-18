@@ -31,7 +31,8 @@ import ksIcon from '../../assets/svgs/account/ks.svg';
 const { Content } = Layout;
 
 const Statistics = () => {
-  const [statisticsInfo, setStatisticsInfo] = useState<Partial<StatisticsInfo>>();
+  const [statisticsInfo, setStatisticsInfo] =
+    useState<Partial<StatisticsInfo>>();
 
   const [dashboardData, setDashboardData] = useState<DashboardData[]>([]);
   const [dashboardData7, setDashboardData7] = useState<any[]>([]);
@@ -64,14 +65,12 @@ const Statistics = () => {
   useEffect(() => {
     getAccountStatistics();
     console.log('selectedAccounts', selectedAccounts);
-    
   }, []);
 
   useEffect(() => {
-   // 获取账户信息后立即调用 getAccountStatistics7
-   console.log('###',123)
-   getAccountStatistics7();
-    
+    // 获取账户信息后立即调用 getAccountStatistics7
+    console.log('###', 123);
+    getAccountStatistics7();
   }, [selectedAccounts]);
 
   // 初始化图表
@@ -88,7 +87,6 @@ const Statistics = () => {
   useEffect(() => {
     if (statisticsInfo?.list) {
       setSelectedAccounts(statisticsInfo.list.map((account) => account.id));
-      
     }
   }, [statisticsInfo]);
 
@@ -286,15 +284,15 @@ const Statistics = () => {
     setLoading(true);
     setDashboardData([]);
     const res: StatisticsInfo = await icpGetAccountStatistics();
-    console.log('zhanghu res:', res)
+    console.log('zhanghu res:', res);
     const list = res.list.filter((account: any) => account.status === 0);
-    setStatisticsInfo({...res, list});
+    setStatisticsInfo({ ...res, list });
     // 获取到账号列表后,遍历获取每个账号的看板数据
     if (res.list && res.list.length > 0) {
       for (const account of res.list) {
-        if(account.status === 1) continue;
+        if (account.status === 1) continue;
         const dashboardRes = await getAccountDashboard(account.id);
-        console.log('dashboardRes:', dashboardRes)
+        console.log('dashboardRes:', dashboardRes);
         // const accountInfo = await icpGetAccountInfo(account.type, account.uid);
         setDashboardData((prev) => [
           ...prev,
@@ -306,12 +304,9 @@ const Statistics = () => {
   }
 
   async function getAccountStatistics7() {
-    
     setDashboardData7([]);
     const res: any = statisticsInfo;
     const dataAll = [];
-
-   
 
     try {
       // 获取到账号列表后,遍历获取每个账号的看板数据
@@ -338,7 +333,7 @@ const Statistics = () => {
           dataAll.push(datas);
         }
 
-        console.log('所有数据', dataAll)
+        console.log('所有数据', dataAll);
 
         // 所有数据获取完成后再一次性更新
         setDashboardData7(dataAll);
@@ -489,18 +484,18 @@ const Statistics = () => {
 
   return (
     <div className="min-h-screen page-container bg-gray-50">
-      <Spin 
-        spinning={loading} 
-        tip="数据加载中..." 
+      <Spin
+        spinning={loading}
+        tip="数据加载中..."
         size="large"
         className="min-h-screen"
       >
         {/* WebView组件 */}
         {examineVideoData.open && examineVideoData.account ? (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="relative w-4/5 h-4/5 bg-white rounded-lg overflow-hidden">
+            <div className="relative w-4/5 overflow-hidden bg-white rounded-lg h-4/5">
               <button
-                className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center"
+                className="absolute flex items-center justify-center p-2 transition-all duration-300 bg-white rounded-full shadow-md top-4 right-4 hover:shadow-lg"
                 style={{
                   zIndex: 1000,
                   width: '36px',
@@ -564,7 +559,9 @@ const Statistics = () => {
                         {statisticsInfo?.accountTotal?.toLocaleString() || 0}
                       </div>
                       <div className="absolute bottom-0 right-0 text-xs text-[#ccc]">
-                        失效: {statisticsInfo?.accountTotal - statisticsInfo?.list?.length || 0}
+                        失效:{' '}
+                        {statisticsInfo!.accountTotal! -
+                          (statisticsInfo?.list?.length || 0)}
                       </div>
                     </div>
                   </div>
@@ -591,7 +588,7 @@ const Statistics = () => {
                     <QuestionCircleOutlined
                       style={{ fontSize: '32px', color: '#CCCCCC' }}
                     />
-                    <div className="text-sm text-gray-500 mt-2">暂无数据</div>
+                    <div className="mt-2 text-sm text-gray-500">暂无数据</div>
                   </div>
                 ) : (
                   // 有数据状态
@@ -630,19 +627,20 @@ const Statistics = () => {
                         </div>
 
                         <div className="space-y-1">
-                          <div className="text-base font-medium text-gray-900 text-left">
+                          <div className="text-base font-medium text-left text-gray-900">
                             {account.nickname}
                           </div>
 
-                          <div className="text-sm flex text-left">
+                          <div className="flex text-sm text-left">
                             <span className="text-gray-500">
                               粉丝:{' '}
-                              {(account as any).fansCount?.toLocaleString() || 0}
+                              {(account as any).fansCount?.toLocaleString() ||
+                                0}
                             </span>
                           </div>
 
                           <div
-                            className="text-gray-500 text-left"
+                            className="text-left text-gray-500"
                             style={{ fontSize: '12px' }}
                           >
                             ID: {account.uid}
@@ -740,13 +738,13 @@ const Statistics = () => {
 
           {/* 账户数据 */}
           <div className="mb-8" style={{ paddingBottom: '80px' }}>
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-medium">昨日账户数据</h2>
               <Button
                 type="text"
                 icon={<ReloadOutlined />}
                 onClick={refreshAccountData}
-                className="flex items-center hover:text-blue-500 transition-colors"
+                className="flex items-center transition-colors hover:text-blue-500"
               >
                 刷新
               </Button>
@@ -758,7 +756,7 @@ const Statistics = () => {
                 <QuestionCircleOutlined
                   style={{ fontSize: '32px', color: '#CCCCCC' }}
                 />
-                <div className="text-sm text-gray-500 mt-2">暂无数据</div>
+                <div className="mt-2 text-sm text-gray-500">暂无数据</div>
               </div>
             ) : (
               // 有数据状态
@@ -777,7 +775,9 @@ const Statistics = () => {
                         <div className="flex items-center flex-shrink-0 w-64 space-x-3">
                           <Avatar size={48} src={account.avatar} />
                           <div>
-                            <div className="font-medium">{account.nickname}</div>
+                            <div className="font-medium">
+                              {account.nickname}
+                            </div>
 
                             <div className="text-sm text-gray-500">
                               ID: {account.uid}{' '}
@@ -819,7 +819,9 @@ const Statistics = () => {
                             </div>
                           </div>
                           <div className="text-center">
-                            <div className="text-sm text-gray-500">主页访问</div>
+                            <div className="text-sm text-gray-500">
+                              主页访问
+                            </div>
                             <div className="font-medium text-[#a66ae4]">
                               {accountData?.forward || 0}
                             </div>
