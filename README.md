@@ -96,6 +96,14 @@ npm run dev
 ├── public                                   同 Vite 模板的 public
 └── src                                      渲染进程源码、React代码
 ```
+## 其他说明
+- 关于MAC包,因为苹果对应用要求严格,本项目目前仍在尝试阶段,请自行打包,或设置忽略安全策略
+- ```shell
+   xattr -r -d com.apple.quarantine /Applications/哎呦赚AiToEarn.app
+  ```
+## 官网下载
+[https://www.aitoearn.cn/](https://www.aitoearn.cn/)
+
 ## 加我微信
 辛苦备注一下 AiToEarn
 

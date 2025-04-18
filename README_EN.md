@@ -84,3 +84,5 @@ npm run dev
 ├── public                                  Same as Vite template's public
 └── src                                     Renderer process source (React)
 ```
+## Other explanations
+Regarding the MAC package, as Apple has strict requirements for applications, this project is still in the trial stage. Please package it yourself or set the ignore security policy
