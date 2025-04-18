@@ -6,13 +6,13 @@
  * @Description: 微信二维码登录
  */
 import { forwardRef, useImperativeHandle, useState, useEffect } from 'react';
-import { userApi } from '@/api/user';
-import { Button } from 'antd';
+import { GzhLoginTyp, userApi } from '@/api/user';
+import { Button, Modal, Form, Input, message } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import styles from '../login.module.scss';
 import { useUserStore } from '@/store/user';
-import { message } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import GetCode from '@/components/GetCode';
 
 export interface PubItemRef {
   init: (pubRecord: any) => Promise<void>;
@@ -26,6 +26,10 @@ export default forwardRef<PubItemRef>((props, ref) => {
     },
   );
   const [showMask, setShowMask] = useState(false);
+  const [showPhoneModal, setShowPhoneModal] = useState(false);
+  const [phoneForm] = Form.useForm();
+  const [openId, setOpenId] = useState('');
+  const [isFirstLogin, setIsFirstLogin] = useState(false);
   const userStore = useUserStore();
   const navigate = useNavigate();
 
@@ -47,10 +51,26 @@ export default forwardRef<PubItemRef>((props, ref) => {
     if (ticketInfo.ticket) {
       loginTimer = setInterval(async () => {
         const res = await userApi.wxGzhQrcodelogin(ticketInfo);
-        if (res.token !== '' && res.userInfo) {
-          LoginSuccess(res);
+        console.log('GzhQrcode ======== ', res);
+
+        const { openId, token, phone, status } = res;
+
+        if (status === -1) {
+          message.error('登录失败，请重新扫码登录');
+          setShowMask(true);
           clearInterval(loginTimer);
+          return;
         }
+        setOpenId(openId);
+
+        // 登录完成
+        if (status === 1 && !!token && !!phone && res.userInfo) {
+          completeLogin(res);
+          clearInterval(loginTimer);
+          return;
+        }
+
+        loginByPhone(res);
       }, 2000); // 每2秒检查一次
     }
 
@@ -72,8 +92,13 @@ export default forwardRef<PubItemRef>((props, ref) => {
     }
   }
 
-  const LoginSuccess = (res: any) => {
-    if (!res) return;
+  const loginByPhone = (res: GzhLoginTyp) => {
+    if (!res || !res.openId) return;
+    setIsFirstLogin(true);
+    setShowPhoneModal(true);
+  };
+
+  const completeLogin = (res: GzhLoginTyp) => {
     window.ipcRenderer.invoke('ICP_USER_ADD', res.userInfo);
     userStore.setToken(res);
     userStore.getUserInfo(res.userInfo);
@@ -82,16 +107,27 @@ export default forwardRef<PubItemRef>((props, ref) => {
     navigate('/');
   };
 
-  /**
-   * 登录
-   */
-  async function wxGzhQrcodelogin() {
-    const res = await userApi.wxGzhQrcodelogin(ticketInfo);
-    console.log('---- res', res);
-    if (res.token !== '' && res.userInfo) {
-      LoginSuccess(res);
+  // 提交手机号绑定
+  const handlePhoneSubmit = async () => {
+    try {
+      const values = await phoneForm.validateFields();
+      // 调手机号登录
+      const res = await userApi.phoneGzhLogin({
+        phone: values.phone,
+        code: values.code,
+        openId: openId,
+      });
+
+      if (res) {
+        message.success('手机号绑定成功');
+        setShowPhoneModal(false);
+        // 完成登录流程
+        completeLogin({ ...res, phone: values.phone, openId, status: 1 });
+      }
+    } catch (error) {
+      message.error('手机号绑定失败');
     }
-  }
+  };
 
   useImperativeHandle(ref, () => ({
     init: async (info: any) => {},
@@ -146,6 +182,79 @@ export default forwardRef<PubItemRef>((props, ref) => {
           《隐私权政策》
         </a>
       </div>
+
+      {/* 手机号绑定弹窗 */}
+      <Modal
+        title="绑定手机号"
+        open={showPhoneModal}
+        onCancel={() => setShowPhoneModal(false)}
+        footer={null}
+        closable={false}
+        maskClosable={false}
+      >
+        <Form form={phoneForm} layout="vertical" onFinish={handlePhoneSubmit}>
+          <Form.Item
+            name="phone"
+            label="手机号"
+            rules={[
+              { required: true, message: '请输入手机号' },
+              { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号' },
+            ]}
+          >
+            <Input placeholder="请输入手机号" />
+          </Form.Item>
+
+          <Form.Item
+            name="code"
+            label="验证码"
+            rules={[
+              { required: true, message: '请输入验证码' },
+              { len: 6, message: '验证码长度为6位' },
+            ]}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                position: 'relative',
+              }}
+            >
+              <Input placeholder="请输入验证码" style={{ flex: 1 }} />
+              {/* <div style={{ marginLeft: '8px', width: '120px' }}> */}
+              <GetCode
+                onGetCode={async (unlock: () => void) => {
+                  const validateRes = await phoneForm
+                    .validateFields(['phone'])
+                    .catch(() => unlock());
+                  if (!validateRes) return;
+                  const res = await userApi.getUserCode({
+                    phone: phoneForm.getFieldValue('phone'),
+                  });
+                  if (!res) return;
+                  message.success('验证码已发送');
+                  if (typeof res === 'string') {
+                    phoneForm.setFieldsValue({
+                      code: res,
+                    });
+                  }
+                }}
+              />
+              {/* </div> */}
+            </div>
+          </Form.Item>
+
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              style={{ marginTop: '10px' }}
+            >
+              确认绑定
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 });

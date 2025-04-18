@@ -353,6 +353,7 @@ export default function Page() {
 
   // 添加搜索关键词状态
   const [searchKeyword, setSearchKeyword] = useState('哎哟赚');
+  const [searchKeywordSelected, setSearchKeywordSelected] = useState('');
 
   // 添加小红书搜索任务相关状态
   const [searchTaskId, setSearchTaskId] = useState<string>('');
@@ -385,15 +386,17 @@ export default function Page() {
     setActiveTabKey(key);
     if (key === '4' && activeAccountType === 'xhs') {
       getSearchTaskList();
+      // 切换到评论搜索选项卡时，默认使用AI模式
+      setSearchKeyword('AI');
     }
   };
 
   // 查看任务结果
-  const viewTaskResult = async (taskId: string) => {
+  const viewTaskResult = async (taskId: string, keywords: string) => {
     setSelectedTaskId(taskId);
     setSearchTaskStatus('running');
     setSearchTaskProgress(0);
-    
+    setSearchKeywordSelected(keywords);
     try {
       const result = await taskApi.searchNotesResult({
         taskType: 'xhs_comments',
@@ -406,11 +409,14 @@ export default function Page() {
           author: {
             name: item.author.name,
             avatar: item.author.avatar || '',
-            id: item.author.id
+            id: item.author.id,
+           
           },
+          profileUrl: item.profileUrl || '',
           collectCount: item.stats?.collectCount?.toString() || '0',
           commentCount: item.stats?.commentCount?.toString() || '0',
           coverUrl: item.cover,
+          category: item.category,
           data: {
             id: item.noteId,
             model_type: 'note',
@@ -424,13 +430,21 @@ export default function Page() {
           },
           title: item.title,
           content: item.content,
-          url: item.url
+          url: item.url,
+          aboutsComments: item.aboutsComments || ''
         }));
 
         setSearchTaskResults(formattedResults);
       }
     } catch (error) {
       message.error('获取任务结果失败');
+    }
+  };
+
+  // 打开作者主页
+  const openAuthorProfile = (url?: string) => {
+    if (url) {
+      window.open(url, '_blank');
     }
   };
 
@@ -779,6 +793,21 @@ export default function Page() {
     setWebviewModalVisible(true);
   };
 
+
+    /**
+   * 点击图片打开链接
+   */
+  const handleUriClick = (link: any) => {
+    console.log('------ handleUriClick', link);
+    if (!link) return;
+
+    let url = link;
+
+    setCurrentUrl(url);
+    setIsWebviewLoading(true);
+    setWebviewModalVisible(true);
+  };
+
   // 计算断点值，用于响应式布局
   const breakpointColumnsObj = {
     default: 6, // 默认显示5列
@@ -806,9 +835,26 @@ export default function Page() {
     }, 1000);
   };
 
+  // 删除搜索任务
+  const deleteSearchTask = async (taskId: string) => {
+    try {
+      const res = await taskApi.deleteSearchNotesTask({
+        userId: userStore.userInfo?.id || '',
+        taskType: 'xhs_comments',
+        taskId: taskId
+      });
+      if (res) {
+        message.success('删除成功');
+        // 刷新任务列表
+        getSearchTaskList();
+      }
+    } catch (error) {
+      message.error('删除失败');
+    }
+  };
 
   return (
-    <div className={styles.reply} style={{ alignItems: 'flex-start' }}>
+    <div className={styles.reply} style={{ alignItems: 'flex-start', overflowX: 'hidden' }}>
       <div style={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
         <AccountSidebar
           activeAccountId={activeAccountId}
@@ -971,15 +1017,40 @@ export default function Page() {
                                         />
                                       </div>
                                     )}
-                                    <img
-                                      alt={item.title}
-                                      src={item.coverUrl}
-                                      style={{
-                                        width: '100%',
-                                        borderRadius: '10px 10px 0 0',
-                                        objectFit: 'cover',
-                                      }}
-                                    />
+                                    <div style={{ 
+                                      width: '200px', 
+                                      height: '200px', 
+                                      position: 'relative',
+                                      overflow: 'hidden'
+                                    }}>
+                                      <img
+                                        src={item.coverUrl}
+                                        alt={item.title}
+                                        style={{
+                                          width: '100%',
+                                          height: '100%',
+                                          objectFit: 'cover'
+                                        }}
+                                        onError={(e) => {
+                                          const target = e.target as HTMLImageElement;
+                                          target.style.display = 'none';
+                                          const titleDiv = document.createElement('div');
+                                          titleDiv.style.cssText = `
+                                            width: 100%;
+                                            height: 100%;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            background: #f5f5f5;
+                                            padding: 10px;
+                                            text-align: center;
+                                            word-break: break-word;
+                                          `;
+                                          titleDiv.textContent = item.title;
+                                          target.parentNode?.appendChild(titleDiv);
+                                        }}
+                                      />
+                                    </div>
                                   </div>
                                 }
                                 actions={[
@@ -1045,7 +1116,7 @@ export default function Page() {
                                       >
                                         {item.title}
                                       </Text>
-                                      <Text type="secondary" ellipsis={{}}>
+                                      <Text type="secondary" ellipsis>
                                         {item.content}
                                       </Text>
                                     </div>
@@ -1081,7 +1152,7 @@ export default function Page() {
                       <div style={{ padding: '20px' }}>
                         <Card>
                           <Form layout="vertical">
-                            <Form.Item label="搜索评论">
+                            <Form.Item >
                               <Input.Search
                                 placeholder="输入评论"
                                 value={searchKeyword}
@@ -1089,6 +1160,15 @@ export default function Page() {
                                 onSearch={submitSearchTask}
                                 enterButton="搜索任务"
                               />
+                              <div style={{ marginTop: '8px', color: '#999', fontSize: '12px', paddingLeft: '2px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <QuestionCircleOutlined /> 小红书搜索评论需要5-10分钟，请稍后查看
+                                <Button
+                                  type="link"
+                                  icon={<SyncOutlined />}
+                                  onClick={getSearchTaskList}
+                                  style={{ padding: 0, height: 'auto' }}
+                                />
+                              </div>
                             </Form.Item>
                           </Form>
 
@@ -1147,33 +1227,42 @@ export default function Page() {
                                 title: '操作',
                                 key: 'action',
                                 render: (_, record) => (
-                                  <Button 
-                                    type="link" 
-                                    onClick={() => viewTaskResult(record.taskId)}
-                                    disabled={record.status != 1} // 正在运行时禁用
-                                  >
-                                    查看结果
-                                  </Button>
+                                  <Space>
+                                    <Button 
+                                      type="link" 
+                                      onClick={() => viewTaskResult(record.taskId, record.keywords)}
+                                      disabled={record.status != 1}
+                                    >
+                                      查看结果
+                                    </Button>
+                                    <Button
+                                      type="link"
+                                      danger
+                                      onClick={() => deleteSearchTask(record.taskId)}
+                                    >
+                                      删除
+                                    </Button>
+                                  </Space>
                                 ),
                               },
                             ]}
+                            pagination={false}
+                            scroll={{ y: 300 }}
+                            size="small"
                           />
 
-                          {searchTaskResults.length > 0 && (
-                            <div style={{ marginTop: '20px' }}>
+                          {searchTaskResults.length > 0 ? (
+                            <div style={{ marginTop: '20px', overflowX: 'hidden' }}>
                               <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-
-                              <Space>
+                                <Space>
                                   {isSelectMode && (
                                     <Button
                                       type="primary"
                                       icon={<CheckSquareOutlined />}
                                       onClick={() => {
-                                        // 如果当前选中的作品数量等于所有作品数量，则取消全选
                                         if (selectedPosts.length === searchTaskResults.length) {
                                           setSelectedPosts([]);
                                         } else {
-                                          // 否则全选所有作品
                                           setSelectedPosts([...searchTaskResults.map(item => item.dataId)]);
                                         }
                                       }}
@@ -1185,7 +1274,6 @@ export default function Page() {
                                 </Space>
 
                                 <Space>
-
                                   <Button
                                     type={isSelectMode ? 'primary' : 'default'}
                                     icon={<DownOutlined />}
@@ -1205,19 +1293,15 @@ export default function Page() {
                                       下发任务 ({selectedPosts.length})
                                     </Button>
                                   )}
-                                 
                                 </Space>
                               </div>
 
-                              <Masonry
-                                breakpointCols={breakpointColumnsObj}
-                                className={styles.myMasonryGrid}
-                                columnClassName={styles.myMasonryGridColumn}
-                              >
-                                {searchTaskResults.map((item: any, index: number) => (
+                              <List
+                                itemLayout="horizontal"
+                                dataSource={searchTaskResults}
+                                renderItem={(item: any) => (
                                   <List.Item
-                                    key={`${item.dataId}-${index}`}
-                                    className={styles.masonryItem}
+                                    key={item.dataId}
                                     onClick={() => {
                                       if (isSelectMode) {
                                         handlePostSelect(item.dataId);
@@ -1225,129 +1309,167 @@ export default function Page() {
                                     }}
                                     style={{
                                       cursor: isSelectMode ? 'pointer' : 'default',
-                                      background: selectedPosts.some(
-                                        (p) => (p as any).dataId === item.dataId,
-                                      )
+                                      background: selectedPosts.includes(item.dataId)
                                         ? 'rgba(24, 144, 255, 0.1)'
                                         : 'transparent',
+                                      padding: '16px',
+                                      borderRadius: '8px',
+                                      marginBottom: '8px',
+                                      border: '1px solid #f0f0f0',
+                                      overflow: 'hidden'
                                     }}
-                                  >
-                                    <Card
-                                      hoverable={isSelectMode}
-                                      className={styles.postCard}
-                                      cover={
-                                        <div
+                                    actions={[
+                                      <Space key="like" onClick={() => likePost(item)}>
+                                        <LikeOutlined
                                           style={{
-                                            cursor: 'pointer',
-                                            position: 'relative',
+                                            color: likedPosts[item.dataId] ? '#ff4d4f' : undefined,
+                                            fontSize: likedPosts[item.dataId] ? '18px' : undefined,
                                           }}
-                                          onClick={() =>
-                                            !isSelectMode && handleImageClick(item)
-                                          }
-                                        >
+                                        />
+                                        <span>{item.likeCount || 0}</span>
+                                      </Space>,
+                                      <Space key="comment-list" onClick={() => showCommentModal(item)}>
+                                        <UnorderedListOutlined />
+                                        <span>{item.commentCount || ''}</span>
+                                      </Space>,
+                                      <Space key="reply" onClick={() => openReplyWorks(item)}>
+                                        <CommentOutlined />
+                                        <span>评论</span>
+                                      </Space>,
+                                      <Space key="collect" onClick={() => collectPost(item)}>
+                                        <StarOutlined
+                                          style={{
+                                            color: collectedPosts[item.dataId] ? '#faad14' : undefined,
+                                            fontSize: collectedPosts[item.dataId] ? '18px' : undefined,
+                                          }}
+                                        />
+                                        <span>{item.collectCount || ''}</span>
+                                      </Space>,
+                                    ]}
+                                  >
+                                    <List.Item.Meta
+                                      avatar={
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
                                           {isSelectMode && (
-                                            <div
-                                              style={{
-                                                position: 'absolute',
-                                                top: 10,
-                                                left: 10,
-                                                zIndex: 1,
-                                              }}
-                                            >
-                                              <Checkbox
-                                                checked={selectedPosts.includes(
-                                                  item.dataId,
-                                                )}
-                                                onChange={() =>
-                                                  handlePostSelect(item.dataId)
-                                                }
-                                              />
-                                            </div>
+                                            <Checkbox
+                                              checked={selectedPosts.includes(item.dataId)}
+                                              onClick={(e) => e.stopPropagation()}
+                                              onChange={() => handlePostSelect(item.dataId)}
+                                              style={{ marginRight: '12px' }}
+                                            />
                                           )}
-                                          <img
-                                            alt={item.title}
-                                            src={item.coverUrl}
-                                            style={{
-                                              width: '100%',
-                                              borderRadius: '10px 10px 0 0',
-                                              objectFit: 'cover',
-                                            }}
-                                          />
+                                          <div style={{ position: 'relative', cursor: 'pointer' }} onClick={() => !isSelectMode && handleImageClick(item)}>
+                                            {item.coverUrl ? (
+                                              <div style={{ 
+                                                width: '120px', 
+                                                height: '120px', 
+                                                position: 'relative',
+                                                overflow: 'hidden'
+                                              }}>
+                                                <img
+                                                  src={item.coverUrl}
+                                                  alt={item.title}
+                                                  style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    objectFit: 'cover'
+                                                  }}
+                                                  onError={(e) => {
+                                                    const target = e.target as HTMLImageElement;
+                                                    target.style.display = 'none';
+                                                    const titleDiv = document.createElement('div');
+                                                    titleDiv.style.cssText = `
+                                                      width: 100%;
+                                                      height: 100%;
+                                                      display: flex;
+                                                      align-items: center;
+                                                      justify-content: center;
+                                                      background: #f5f5f5;
+                                                      padding: 10px;
+                                                      text-align: center;
+                                                      word-break: break-word;
+                                                    `;
+                                                    titleDiv.textContent = item.title;
+                                                    target.parentNode?.appendChild(titleDiv);
+                                                  }}
+                                                />
+                                              </div>
+                                            ) : (
+                                              <div style={{
+                                                width: '120px',
+                                                height: '120px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                background: '#f0f0f0',
+                                                borderRadius: '8px',
+                                                padding: '10px',
+                                                textAlign: 'center',
+                                                fontSize: '12px',
+                                                overflow: 'hidden',
+                                                wordBreak: 'break-word'
+                                              }}>
+                                                {item.content}
+                                              </div>
+                                            )}
+                                          </div>
                                         </div>
                                       }
-                                      actions={[
-                                        <Space
-                                          key="like"
-                                          onClick={() => likePost(item)}
-                                        >
-                                          <LikeOutlined
-                                            style={{
-                                              color: likedPosts[item.dataId]
-                                                ? '#ff4d4f'
-                                                : undefined,
-                                              fontSize: likedPosts[item.dataId]
-                                                ? '18px'
-                                                : undefined,
-                                            }}
-                                          />
-                                          <span>{item.likeCount || 0}</span>
-                                        </Space>,
-                                        <Space
-                                          key="comment-list"
-                                          onClick={() => showCommentModal(item)}
-                                        >
-                                          <UnorderedListOutlined />
-                                          <span>{item.commentCount || ''}</span>
-                                        </Space>,
-                                        <Space
-                                          key="reply"
-                                          onClick={() => openReplyWorks(item)}
-                                        >
-                                          <CommentOutlined />
-                                          <span>评论</span>
-                                        </Space>,
-                                        <Space
-                                          key="collect"
-                                          onClick={() => collectPost(item)}
-                                        >
-                                          <StarOutlined
-                                            style={{
-                                              color: collectedPosts[item.dataId]
-                                                ? '#faad14'
-                                                : undefined,
-                                              fontSize: collectedPosts[item.dataId]
-                                                ? '18px'
-                                                : undefined,
-                                            }}
-                                          />
-                                          <span>{item.collectCount || ''}</span>
-                                        </Space>,
-                                      ]}
-                                    >
-                                      <Card.Meta
-                                        avatar={
-                                          <Avatar src={`${item.author?.avatar}`} />
-                                        }
-                                        title={item.author?.name}
-                                        description={
-                                          <div>
-                                            <Text
-                                              strong
-                                              ellipsis
-                                              style={{ display: 'block' }}
-                                            >
-                                              {item.title}
-                                            </Text>
-                                            <Text type="secondary" ellipsis={{}}>
-                                              {item.content}
-                                            </Text>
+                                      title={
+                                        <div style={{ marginLeft: '12px' }}>
+                                          <div 
+                                            onClick={() => handleUriClick(item.profileUrl)}
+                                          >
+                                            {item.author?.name}
                                           </div>
-                                        }
-                                      />
-                                    </Card>
+                                          <div style={{ fontWeight: 'bold', marginTop: '8px' }} onClick={() => !isSelectMode && handleImageClick(item)}>{item.title}</div>
+                                        </div>
+                                      }
+                                      description={
+                                        <div style={{ marginLeft: '12px' }}>
+                                          <Text type="secondary" ellipsis>
+                                            {item.content}
+                                          </Text>
+                                          {item.aboutsComments && (
+                                            <div style={{ marginTop: '8px',display: 'flex',flexDirection: 'row',alignItems: 'center' }}>
+                                              <div style={{ fontWeight: 'bold', marginBottom: '4px', width: '72px' }}>相关评论：</div>
+                                              <div style={{ 
+                                                padding: '8px', 
+                                                background: '#f5f5f5', 
+                                                borderRadius: '4px',
+                                                marginBottom: '4px'
+                                              }}>
+                                                {/* 高亮显示与搜索关键词匹配的部分 */}
+                                                {(() => {
+                                                  if (!searchKeywordSelected) return item.aboutsComments;
+                                                  const regex = new RegExp(`(${searchKeywordSelected})`, 'gi');
+                                                  const parts = item.aboutsComments.split(regex);
+                                                  return parts.map((part: string, i: number) => 
+                                                    regex.test(part) ? <span key={i} style={{ color: 'red', fontWeight: 'bold' }}>{part}</span> : part
+                                                  );
+                                                })()}
+                                              </div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      }
+                                    />
                                   </List.Item>
-                                ))}
-                              </Masonry>
+                                )}
+                              />
+                            </div>
+                          ) : (
+                            <div style={{ 
+                              marginTop: '20px', 
+                              textAlign: 'center', 
+                              padding: '40px',
+                              background: '#f5f5f5',
+                              borderRadius: '8px'
+                            }}>
+                              <Empty
+                                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                description="此评论未搜索出结果"
+                              />
                             </div>
                           )}
                         </Card>
