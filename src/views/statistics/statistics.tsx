@@ -287,10 +287,13 @@ const Statistics = () => {
     setLoading(true);
     setDashboardData([]);
     const res: StatisticsInfo = await icpGetAccountStatistics();
-    setStatisticsInfo(res);
+    console.log('zhanghu res:', res)
+    const list = res.list.filter((account: any) => account.status === 0);
+    setStatisticsInfo({...res, list});
     // 获取到账号列表后,遍历获取每个账号的看板数据
     if (res.list && res.list.length > 0) {
       for (const account of res.list) {
+        if(account.status === 1) continue;
         const dashboardRes = await getAccountDashboard(account.id);
         // const accountInfo = await icpGetAccountInfo(account.type, account.uid);
         setDashboardData((prev) => [
@@ -556,8 +559,13 @@ const Statistics = () => {
                       <div className="text-sm text-gray-600">账户总数</div>
                       <span className="text-lg text-gray-400">👥</span>
                     </div>
-                    <div className="text-2xl font-semibold text-[#a66ae4]">
-                      {statisticsInfo?.accountTotal?.toLocaleString() || 0}
+                    <div className="relative">
+                      <div className="text-2xl font-semibold text-[#a66ae4]">
+                        {statisticsInfo?.accountTotal?.toLocaleString() || 0}
+                      </div>
+                      <div className="absolute bottom-0 right-0 text-xs text-[#ccc]">
+                        失效: {statisticsInfo?.accountTotal - statisticsInfo?.list?.length || 0}
+                      </div>
                     </div>
                   </div>
                   <div className="p-4 rounded-lg bg-gray-50">
