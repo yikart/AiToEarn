@@ -21,12 +21,13 @@ export interface IWebViewProps {
   // 是否开启沙盒化模式
   partition?: boolean;
   account?: AccountInfo;
+  allowpopups?: boolean;
 }
 
 const WebView = memo(
   forwardRef(
     (
-      { url, cookieParams, partition, account }: IWebViewProps,
+      { url, cookieParams, partition, account, allowpopups }: IWebViewProps,
       ref: ForwardedRef<IWebViewRef>,
     ) => {
       const webviewRef = useRef<HTMLWebViewElement>(null);
@@ -83,7 +84,11 @@ const WebView = memo(
           <div className={styles.webview}>
             <Spin spinning={loading} tip="加载中...">
               <webview
+                // @ts-ignore
+                disablewebsecurity={'true'}
                 ref={webviewRef}
+                // @ts-ignore
+                allowpopups={allowpopups ? 'true' : undefined}
                 webpreferences="sandbox"
                 src={loading ? 'about:blank' : url}
                 style={{ width: '100%', height: '100%' }}

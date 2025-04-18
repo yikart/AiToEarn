@@ -44,8 +44,7 @@ import Replyother from '@/views/replyother/replyother';
 import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
 import AiTool from '@/views/aiTool/index';
 import AiRanking from '../views/aiTool/children/aiRanking/index';
-import DigitalHuman from '../views/aiTool/children/digitalHuman/index';
-import ChatAiDraw from '../views/aiTool/children/chatAiDraw';
+import AiToolWebview from '../views/aiTool/children/aiToolWebview';
 
 interface IRouterMeta {
   // 路由名称
@@ -127,12 +126,8 @@ export const router: CustomRouteObject[] = [
             element: <AiRanking />,
           },
           {
-            path: '/aiTool/digitalHuman',
-            element: <DigitalHuman />,
-          },
-          {
-            path: '/aiTool/chatAiDraw',
-            element: <ChatAiDraw />,
+            path: '/aiTool/aiToolWebview',
+            element: <AiToolWebview />,
           },
         ],
       },

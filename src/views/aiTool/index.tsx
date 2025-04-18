@@ -2,7 +2,8 @@ import { Menu, MenuProps } from 'antd';
 import styles from './aiTool.module.scss';
 import Ranking from '@/assets/svgs/aiTool/ranking.svg?react';
 import AiDraw from '@/assets/svgs/aiTool/aiDraw.svg?react';
-// import DigitalHuman from '@/assets/svgs/aiTool/digitalHuman.svg?react';
+import DigitalHuman from '@/assets/svgs/aiTool/digitalHuman.svg?react';
+import VideoParse from '@/assets/svgs/aiTool/videoParse.svg?react';
 import Icon from '@ant-design/icons';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -16,15 +17,20 @@ const items: MenuItem[] = [
     icon: <Icon component={Ranking} />,
   },
   {
-    key: '/aiTool/chatAiDraw',
+    key: '/aiTool/aiToolWebview?webviewUrl=https://www.yikart.cn/chat?isHideNav=true',
     label: 'Chat Ai绘图',
     icon: <Icon component={AiDraw} />,
   },
-  // {
-  //   key: '/aiTool/digitalHuman',
-  //   label: '数字人制作',
-  //   icon: <Icon component={DigitalHuman} />,
-  // },
+  {
+    key: '/aiTool/aiToolWebview?webviewUrl=http://39.100.101.239:6006',
+    label: 'MuseTalk',
+    icon: <Icon component={DigitalHuman} />,
+  },
+  {
+    key: '/aiTool/aiToolWebview?webviewUrl=http://39.100.101.239:5043',
+    label: '在线短视频解析',
+    icon: <Icon component={VideoParse} />,
+  },
 ];
 
 export default function Page() {
@@ -33,14 +39,14 @@ export default function Page() {
   const [currChooseRoute, setCurrChooseRoute] = useState<string>();
 
   useEffect(() => {
-    setCurrChooseRoute(location.pathname);
+    setCurrChooseRoute(location.pathname + location.search);
   }, [location]);
 
   return (
     <div className={styles.aiTool}>
       <Menu
         selectedKeys={[currChooseRoute || '']}
-        style={{ width: 160 }}
+        style={{ width: 180 }}
         inlineIndent={15}
         mode="inline"
         items={items}
