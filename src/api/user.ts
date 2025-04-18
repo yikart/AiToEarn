@@ -63,4 +63,9 @@ export const userApi = {
       isToken: true,
     });
   },
+
+  // 绑定手机号
+  bindPhone(data: { phone: string; code: string; userId: string }) {
+    return http.post('/api/user/bind-phone', data);
+  },
 };
