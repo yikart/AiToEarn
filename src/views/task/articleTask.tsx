@@ -5,8 +5,26 @@
  * @LastEditors: nevin
  * @Description: 文章任务组件
  */
-import { Card, List, Typography, Button, Space, Tag, Spin, Image, Progress, Tooltip, Modal, Descriptions } from 'antd';
-import { FileTextOutlined, ClockCircleOutlined, UserOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import {
+  Card,
+  List,
+  Typography,
+  Button,
+  Space,
+  Tag,
+  Spin,
+  Image,
+  Progress,
+  Tooltip,
+  Modal,
+  Descriptions,
+} from 'antd';
+import {
+  FileTextOutlined,
+  ClockCircleOutlined,
+  UserOutlined,
+  CheckCircleOutlined,
+} from '@ant-design/icons';
 import styles from './task.module.scss';
 import { useState, useEffect, useRef } from 'react';
 import { taskApi } from '@/api/task';
@@ -42,23 +60,23 @@ const platformConfig = {
   KWAI: {
     name: '快手',
     icon: KwaiIcon,
-    color: '#FF4D4F'
+    color: '#FF4D4F',
   },
   wxSph: {
     name: '微信视频号',
     icon: WxSphIcon,
-    color: '#07C160'
+    color: '#07C160',
   },
   xhs: {
     name: '小红书',
     icon: XhsIcon,
-    color: '#FF2442'
+    color: '#FF2442',
   },
   douyin: {
     name: '抖音',
     icon: DouyinIcon,
-    color: '#000000'
-  }
+    color: '#000000',
+  },
 };
 
 export default function ArticleTask() {
@@ -116,10 +134,12 @@ export default function ArticleTask() {
   };
 
   const getPlatformTags = (accountTypes: string[]) => {
-    return accountTypes.map(type => {
+    if (!accountTypes || accountTypes.length === 0) return null;
+
+    return accountTypes.map((type) => {
       const platform = platformConfig[type as keyof typeof platformConfig];
       if (!platform) return null;
-      
+
       return (
         <Tooltip key={type} title={platform.name}>
           <div
@@ -146,7 +166,7 @@ export default function ArticleTask() {
     if (!selectedTask) return;
     setModalVisible(false);
     setChooseAccountOpen(true);
-    
+
     // try {
     //   // 调用完成任务API
     //   await taskApi.taskDone(selectedTask._id, {
@@ -154,7 +174,7 @@ export default function ArticleTask() {
     //     // 例如：截图、链接等
     //   });
     //   // 更新任务状态
-    //   setTaskList(prev => prev.map(task => 
+    //   setTaskList(prev => prev.map(task =>
     //     task._id === selectedTask._id ? { ...task, isAccepted: true } : task
     //   ));
     //   setModalVisible(false);
@@ -170,67 +190,64 @@ export default function ArticleTask() {
     }
   }, [accountListChoose]);
 
-    // 在组件内添加一个新的状态来存储任务记录
-    const [taskRecord, setTaskRecord] = useState<{
-      _id: string;
-      createTime: string;
-      isFirstTimeSubmission: boolean;
-      status: string;
-      taskId: string;
-    } | null>(null);
+  // 在组件内添加一个新的状态来存储任务记录
+  const [taskRecord, setTaskRecord] = useState<{
+    _id: string;
+    createTime: string;
+    isFirstTimeSubmission: boolean;
+    status: string;
+    taskId: string;
+  } | null>(null);
 
-
-    /**
+  /**
    * 接受任务
    */
-    async function taskApply() {
-      if (!selectedTask) return;
-  
-      try {
-        const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
-        // 存储任务记录信息
-        if (res.code === 0 && res.data) {
-          setTaskRecord(res.data);
-          message.success('任务接受成功！');
-          
-          handleCompleteTask();
-  
-        } else {
-          message.error(res.msg || '接受任务失败，请稍后再试?');
-        }
-      } catch (error) {
-        message.error('接受任务失败，请稍后再试');
+  async function taskApply() {
+    if (!selectedTask) return;
+
+    try {
+      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
+      // 存储任务记录信息
+      if (res.code === 0 && res.data) {
+        setTaskRecord(res.data);
+        message.success('任务接受成功！');
+
+        handleCompleteTask();
+      } else {
+        message.error(res.msg || '接受任务失败，请稍后再试?');
       }
+    } catch (error) {
+      message.error('接受任务失败，请稍后再试');
     }
+  }
 
-
-    /**
+  /**
    * 完成任务
    */
-    async function taskDone() {
-      console.log('完成任务', selectedTask);
-      if (!selectedTask || !taskRecord) {
-        message.error('任务信息不完整，无法完成任务');
-        return;
-      }
-  
-      try {
-        // 使用任务记录的 ID 而不是任务 ID
-        const res = await taskApi.taskDone(taskRecord._id, {
-          submissionUrl: selectedTask.title,
-          screenshotUrls: [selectedTask.dataInfo?.imageList?.[0] || ''],
-          qrCodeScanResult: selectedTask.title,
-        });
-        message.success('任务发布成功！');
-        refreshTaskList();
-      } catch (error) {
-        message.error('完成任务失败，请稍后再试');
-      }
+  async function taskDone() {
+    console.log('完成任务', selectedTask);
+    if (!selectedTask || !taskRecord) {
+      message.error('任务信息不完整，无法完成任务');
+      return;
     }
+
+    try {
+      // 使用任务记录的 ID 而不是任务 ID
+      const res = await taskApi.taskDone(taskRecord._id, {
+        submissionUrl: selectedTask.title,
+        screenshotUrls: [selectedTask.dataInfo?.imageList?.[0] || ''],
+        qrCodeScanResult: selectedTask.title,
+      });
+      message.success('任务发布成功！');
+      refreshTaskList();
+    } catch (error) {
+      message.error('完成任务失败，请稍后再试');
+    }
+  }
 
   const pubCore = async () => {
     if (!selectedTask) return;
-    
+
     setPubProgressModuleOpen(true);
     setLoading(true);
     const err = () => {
@@ -249,14 +266,15 @@ export default function ArticleTask() {
 
     let pubList = [];
     if (selectedTask.dataInfo?.imageList?.length > 1) {
-      pubList = selectedTask.dataInfo?.imageList.map((v: string) => FILE_BASE_URL + v);
+      pubList = selectedTask.dataInfo?.imageList.map(
+        (v: string) => FILE_BASE_URL + v,
+      );
     }
 
     console.log('pubList', pubList);
     console.log(accountListChoose);
 
     for (const account of accountListChoose) {
-      
       // 创建二级记录
       await icpCreateImgTextPubRecord({
         title: selectedTask.title,
@@ -265,7 +283,8 @@ export default function ArticleTask() {
         accountId: account.id,
         pubRecordId: recordRes.id,
         publishTime: new Date(),
-        coverPath: FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
+        coverPath:
+          FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
         imagesPath: pubList,
       });
     }
@@ -275,7 +294,6 @@ export default function ArticleTask() {
     if (okRes.length > 0) {
       taskDone();
     }
-
 
     setLoading(false);
     setPubProgressModuleOpen(false);
@@ -300,7 +318,7 @@ export default function ArticleTask() {
           }}
         >
           查看发布记录
-        </Button>
+        </Button>,
       ],
       key: Date.now(),
     });
@@ -326,16 +344,14 @@ export default function ArticleTask() {
         platChooseProps={{
           choosedAccounts: accountListChoose,
           pubType: PubType.ImageText,
-          allowPlatSet: new Set(
-            ["KWAI", "wxSph", "xhs", "douyin"]
-          ) as any,
+          allowPlatSet: new Set(['KWAI', 'wxSph', 'xhs', 'douyin']) as any,
         }}
         onPlatConfirm={async (aList) => {
           console.log('账号:', aList);
           setAccountListChoose(aList);
           setChooseAccountOpen(false);
           // setTimeout(async () => {
-            // await pubCore();
+          // await pubCore();
           // }, 2000);
         }}
       />
@@ -355,25 +371,33 @@ export default function ArticleTask() {
                         src={`${FILE_BASE_URL}/${item.dataInfo.imageList[0]}`}
                         alt={item.title}
                         preview={false}
-                        style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                        style={{
+                          width: '100%',
+                          height: '200px',
+                          objectFit: 'cover',
+                        }}
                       />
                     ) : (
-                      <FileTextOutlined style={{ fontSize: '48px', color: '#1890ff' }} />
+                      <FileTextOutlined
+                        style={{ fontSize: '48px', color: '#1890ff' }}
+                      />
                     )}
                   </div>
                 }
                 actions={[
                   <Space key="recruits">
                     <UserOutlined />
-                    <Text>{item.currentRecruits}/{item.maxRecruits}</Text>
+                    <Text>
+                      {item.currentRecruits}/{item.maxRecruits}
+                    </Text>
                   </Space>,
                   <Space key="time">
                     <ClockCircleOutlined />
                     <Text>{item.keepTime}分钟</Text>
                   </Space>,
-                  <Button 
-                    type="primary" 
-                    key="join" 
+                  <Button
+                    type="primary"
+                    key="join"
                     disabled={item.isAccepted}
                     onClick={() => handleJoinTask(item)}
                   >
@@ -396,9 +420,11 @@ export default function ArticleTask() {
                   description={
                     <div className={styles.taskInfo}>
                       <div className={styles.taskProgress}>
-                        <Progress 
-                          percent={Math.round((item.currentRecruits / item.maxRecruits) * 100)} 
-                          size="small" 
+                        <Progress
+                          percent={Math.round(
+                            (item.currentRecruits / item.maxRecruits) * 100,
+                          )}
+                          size="small"
                           showInfo={false}
                         />
                       </div>
@@ -406,7 +432,9 @@ export default function ArticleTask() {
                         {item.description.replace(/<[^>]+>/g, '')}
                       </Text>
                       <div className={styles.taskDeadline}>
-                        <Text type="secondary">截止时间：{formatDate(item.deadline)}</Text>
+                        <Text type="secondary">
+                          截止时间：{formatDate(item.deadline)}
+                        </Text>
                       </div>
                     </div>
                   }
@@ -425,28 +453,40 @@ export default function ArticleTask() {
           <Button key="cancel" onClick={() => setModalVisible(false)}>
             取消
           </Button>,
-          <Button 
-            key="complete" 
-            type="primary" 
+          <Button
+            key="complete"
+            type="primary"
             icon={<CheckCircleOutlined />}
             onClick={taskApply}
           >
             一键完成
-          </Button>
+          </Button>,
         ]}
         width={600}
       >
         {selectedTask && (
           <div className={styles.taskDetail}>
             <Descriptions column={1}>
-              <Descriptions.Item label="任务标题">{selectedTask.title}</Descriptions.Item>
-              <Descriptions.Item label="任务描述">
-                <div dangerouslySetInnerHTML={{ __html: selectedTask.description }} />
+              <Descriptions.Item label="任务标题">
+                {selectedTask.title}
               </Descriptions.Item>
-              <Descriptions.Item label="任务奖励">¥{selectedTask.reward}</Descriptions.Item>
-              <Descriptions.Item label="任务时长">{selectedTask.keepTime}分钟</Descriptions.Item>
-              <Descriptions.Item label="开始时间">{formatDate(selectedTask.createTime)}</Descriptions.Item>
-              <Descriptions.Item label="截止时间">{formatDate(selectedTask.deadline)}</Descriptions.Item>
+              <Descriptions.Item label="任务描述">
+                <div
+                  dangerouslySetInnerHTML={{ __html: selectedTask.description }}
+                />
+              </Descriptions.Item>
+              <Descriptions.Item label="任务奖励">
+                ¥{selectedTask.reward}
+              </Descriptions.Item>
+              <Descriptions.Item label="任务时长">
+                {selectedTask.keepTime}分钟
+              </Descriptions.Item>
+              <Descriptions.Item label="开始时间">
+                {formatDate(selectedTask.createTime)}
+              </Descriptions.Item>
+              <Descriptions.Item label="截止时间">
+                {formatDate(selectedTask.deadline)}
+              </Descriptions.Item>
               <Descriptions.Item label="参与人数">
                 {selectedTask.currentRecruits}/{selectedTask.maxRecruits}
               </Descriptions.Item>
@@ -461,4 +501,4 @@ export default function ArticleTask() {
       </Modal>
     </div>
   );
-} 
+}

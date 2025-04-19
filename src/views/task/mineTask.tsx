@@ -40,7 +40,6 @@ import bindTaskImg from '@/assets/task/binds.png';
 import checkTaskImg from '@/assets/task/waits.png';
 import publishTaskImg from '@/assets/task/fabu.png';
 import rewardTaskImg from '@/assets/task/jiesuan.png';
-import qr1 from '@/assets/task/qr1.png';
 import qr2 from '@/assets/task/qr0.jpg';
 import logo from '@/assets/logo.png';
 
@@ -86,17 +85,7 @@ const renderEmptyState = () => {
           <h4>接单前完成以下步骤，接单快人一步</h4>
 
           <div className={styles.qrCodeContainer}>
-            <div className={styles.qrCodeItem}>
-              <div className={styles.qrCodeWrapper}>
-                <img
-                  src={qr1}
-                  alt="扫码加入账号招募群"
-                  className={styles.qrCode}
-                />
-              </div>
-              <p className={styles.qrCodeText}>扫码加入账号招募群</p>
-              <p className={styles.qrCodeSubtext}>不可在群内天打扰他人</p>
-            </div>
+            
 
             <div className={styles.qrCodeItem}>
               <div className={styles.qrCodeWrapper}>
@@ -331,7 +320,7 @@ export default function Page() {
         <div className={styles.loadingContainer}>
           <Spin size="large" />
         </div>
-      ) : taskList.length === 0 ? (
+      ) : taskList.length == 0 ? (
         <div className={styles.emptyContainer}>
           <Empty description={false} />
           <div className={styles.emptyText}>

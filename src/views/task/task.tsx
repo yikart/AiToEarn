@@ -63,7 +63,11 @@ import ChooseAccountModule from '@/views/publish/components/ChooseAccountModule/
 import { PubType } from '@@/publish/PublishEnum';
 import { icpCreateInteractionOneKey } from '@/icp/replyother';
 import { onInteractionProgress } from '../../icp/receiveMsg';
-import { icpCreatePubRecord, icpCreateImgTextPubRecord, icpPubImgText } from '@/icp/publish';
+import {
+  icpCreatePubRecord,
+  icpCreateImgTextPubRecord,
+  icpPubImgText,
+} from '@/icp/publish';
 import { usePubStroe } from '@/store/pubStroe';
 import { useAccountStore } from '@/store/commont';
 
@@ -119,7 +123,7 @@ export default function Task() {
   const navigate = useNavigate();
   // 当前选中的任务类型
   const [activeTab, setActiveTab] = useState('interaction');
-  
+
   // 互动任务相关状态
   const [loading, setLoading] = useState(false);
   const [taskList, setTaskList] = useState<any[]>([]);
@@ -137,7 +141,7 @@ export default function Task() {
   const [downloading, setDownloading] = useState(false);
   const Ref_TaskInfo = useRef<TaskInfoRef>(null);
   const [pubProgressModuleOpen, setPubProgressModuleOpen] = useState(false);
-  
+
   // 使用 react-intersection-observer 监听底部元素
   const { ref: loadMoreRef, inView } = useInView({
     threshold: 0.1,
@@ -159,12 +163,12 @@ export default function Task() {
       console.log('loadMore被阻止: loading=', loading, 'hasMore=', hasMore);
       return;
     }
-    
+
     setLoading(true);
     try {
       const nextPage = pageInfo.pageNo + 1;
       console.log('加载下一页:', nextPage);
-      setPageInfo(prev => ({ ...prev, pageNo: nextPage }));
+      setPageInfo((prev) => ({ ...prev, pageNo: nextPage }));
       await getTaskList(true);
     } catch (error) {
       console.error('加载更多失败:', error);
@@ -199,14 +203,14 @@ export default function Task() {
       const currentPage = (res as any).meta.currentPage;
       const pageSize = pageInfo.pageSize;
       const hasMoreItems = currentPage * pageSize < totalCount;
-      
+
       console.log('计算hasMore:', {
         totalCount,
         currentPage,
         pageSize,
-        hasMoreItems
+        hasMoreItems,
       });
-      
+
       setHasMore(hasMoreItems);
     } catch (error) {
       console.error('获取任务列表失败', error);
@@ -247,6 +251,8 @@ export default function Task() {
   };
 
   const getPlatformTags = (accountTypes: string[]) => {
+    if (!accountTypes || accountTypes.length === 0) return null;
+
     return accountTypes.map((type) => {
       const platform = platformConfig[type as keyof typeof platformConfig];
       if (!platform) return null;
@@ -269,7 +275,7 @@ export default function Task() {
 
   const handleJoinTask = (task: any) => {
     setSelectedTask(task);
-    
+
     // 根据任务类型选择不同的处理逻辑
     if (task.type === TaskType.ARTICLE || task.type === TaskType.INTERACTION) {
       // 文章任务和互动任务使用模态框
@@ -283,7 +289,7 @@ export default function Task() {
   const handleCompleteTask = async () => {
     if (!selectedTask) return;
     setModalVisible(false);
-    
+
     // 根据任务类型选择不同的处理逻辑
     if (selectedTask.type === TaskType.ARTICLE) {
       // 文章任务使用 pubCore 逻辑
@@ -315,7 +321,7 @@ export default function Task() {
     try {
       const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
       // 存储任务记录信息 00.00
-      console.log('jieshou :',res)
+      console.log('jieshou :', res);
       if (res.code == 0 && res.data) {
         setTaskRecord(res.data);
         message.success('任务接受成功！');
@@ -362,7 +368,7 @@ export default function Task() {
   // 文章任务的发布核心逻辑
   const pubCore = async (account: any) => {
     if (!selectedTask) return;
-    
+
     setPubProgressModuleOpen(true);
     setLoading(true);
     const err = () => {
@@ -385,16 +391,17 @@ export default function Task() {
 
     let pubList = [];
     if (selectedTask.dataInfo?.imageList?.length > 1) {
-      pubList = selectedTask.dataInfo?.imageList.map((v: string) => FILE_BASE_URL + v);
+      pubList = selectedTask.dataInfo?.imageList.map(
+        (v: string) => FILE_BASE_URL + v,
+      );
     }
 
     console.log('pubList', pubList);
     console.log(accountListChoose);
-    let allAccount = accountListChoose?.length ?accountListChoose: account;
+    let allAccount = accountListChoose?.length ? accountListChoose : account;
     console.log(allAccount);
 
     for (const account of allAccount) {
-      
       // 创建二级记录
       await icpCreateImgTextPubRecord({
         title: selectedTask.title,
@@ -403,7 +410,8 @@ export default function Task() {
         accountId: account.id,
         pubRecordId: recordRes.id,
         publishTime: new Date(),
-        coverPath: FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
+        coverPath:
+          FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
         imagesPath: pubList,
       });
     }
@@ -437,7 +445,7 @@ export default function Task() {
           }}
         >
           查看发布记录
-        </Button>
+        </Button>,
       ],
       key: Date.now(),
     });
@@ -509,7 +517,7 @@ export default function Task() {
     console.log('账号:', aList);
     setAccountListChoose(aList);
     setChooseAccountOpen(false);
-    
+
     // 根据任务类型选择不同的处理逻辑
     if (selectedTask?.type === TaskType.ARTICLE) {
       // 文章任务使用 pubCore 逻辑
@@ -577,7 +585,13 @@ export default function Task() {
                   cover={
                     <div className={styles.taskImage}>
                       <Image
-                        src={item.imageUrl?  FILE_BASE_URL+item.imageUrl : (item.dataInfo?.imageList?.length ? FILE_BASE_URL+item.dataInfo.imageList[0] : logo)}
+                        src={
+                          item.imageUrl
+                            ? FILE_BASE_URL + item.imageUrl
+                            : item.dataInfo?.imageList?.length
+                              ? FILE_BASE_URL + item.dataInfo.imageList[0]
+                              : logo
+                        }
                         alt="logo"
                         preview={false}
                         style={{
@@ -586,14 +600,17 @@ export default function Task() {
                           objectFit: 'contain',
                         }}
                       />
-                      <div style={{ 
-                        position: 'absolute', 
-                        top: '10px', 
-                        right: '10px', 
-                        zIndex: 1 
-                      }}>
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: '10px',
+                          right: '10px',
+                          zIndex: 1,
+                        }}
+                      >
                         <Tag color="blue">
-                          {TaskTypeName.get(item.type as TaskType) || '未知任务'}
+                          {TaskTypeName.get(item.type as TaskType) ||
+                            '未知任务'}
                         </Tag>
                       </div>
                     </div>
@@ -660,16 +677,16 @@ export default function Task() {
         </Spin>
 
         {/* 底部加载更多触发器 */}
-        <div ref={loadMoreRef} className={styles.loadMoreTrigger} style={{ height: '50px', marginTop: '20px' }}>
+        <div
+          ref={loadMoreRef}
+          className={styles.loadMoreTrigger}
+          style={{ height: '50px', marginTop: '20px' }}
+        >
           {hasMore ? (
             <div className={styles.loadMoreContainer}>
-              <Button 
-                type="link" 
-              loading={loading}
-              onClick={loadMore}
-            >
-              {loading ? '加载中...' : '加载更多'}
-            </Button>
+              <Button type="link" loading={loading} onClick={loadMore}>
+                {loading ? '加载中...' : '加载更多'}
+              </Button>
             </div>
           ) : (
             <div className={styles.loadMoreContainer}>
@@ -705,56 +722,64 @@ export default function Task() {
                     <Title level={4}>{selectedTask.title}</Title>
                     <Space>
                       <Tag color="green">¥{selectedTask.reward}</Tag>
-                      <Tag color="blue">{TaskTypeName.get(selectedTask.type as TaskType) || '未知任务'}</Tag>
+                      <Tag color="blue">
+                        {TaskTypeName.get(selectedTask.type as TaskType) ||
+                          '未知任务'}
+                      </Tag>
                     </Space>
                   </div>
                 </Col>
-                
+
                 {/* 图片轮播展示 */}
-                {selectedTask.dataInfo?.imageList && selectedTask.dataInfo.imageList.length > 0 && (
-                  <Col span={24}>
-                    <div className={styles.bannerContainer}>
-                      <Carousel
-                        autoplay
-                        dots={true}
-                        arrows={true}
-                        className={styles.taskBanner}
-                        dotPosition="bottom"
-                      >
-                        {selectedTask.dataInfo.imageList.map((image: string, index: number) => (
-                          <div key={index} className={styles.bannerItem}>
-                            <Image
-                              src={FILE_BASE_URL + image}
-                              alt={`任务图片 ${index + 1}`}
-                              preview={false}
-                              className={styles.bannerImage}
-                            />
-                          </div>
-                        ))}
-                      </Carousel>
-                    </div>
-                  </Col>
-                )}
-                
+                {selectedTask.dataInfo?.imageList &&
+                  selectedTask.dataInfo.imageList.length > 0 && (
+                    <Col span={24}>
+                      <div className={styles.bannerContainer}>
+                        <Carousel
+                          autoplay
+                          dots={true}
+                          arrows={true}
+                          className={styles.taskBanner}
+                          dotPosition="bottom"
+                        >
+                          {selectedTask.dataInfo.imageList.map(
+                            (image: string, index: number) => (
+                              <div key={index} className={styles.bannerItem}>
+                                <Image
+                                  src={FILE_BASE_URL + image}
+                                  alt={`任务图片 ${index + 1}`}
+                                  preview={false}
+                                  className={styles.bannerImage}
+                                />
+                              </div>
+                            ),
+                          )}
+                        </Carousel>
+                      </div>
+                    </Col>
+                  )}
+
                 <Col span={24}>
                   {/* <Divider orientation="left">任务信息</Divider> */}
                   <Descriptions column={1} bordered>
                     <Descriptions.Item label="任务描述">
                       <div
-                        dangerouslySetInnerHTML={{ __html: selectedTask.description }}
+                        dangerouslySetInnerHTML={{
+                          __html: selectedTask.description,
+                        }}
                         className={styles.taskDescription}
                       />
                     </Descriptions.Item>
-                    <Descriptions.Item label="评论内容"> 
+                    <Descriptions.Item label="评论内容">
                       {selectedTask.dataInfo?.commentContent || 'AI智能评论'}
                     </Descriptions.Item>
 
-                    {selectedTask.dataInfo?.worksId && (  
-                      <Descriptions.Item label="作品ID"> 
+                    {selectedTask.dataInfo?.worksId && (
+                      <Descriptions.Item label="作品ID">
                         {selectedTask.dataInfo?.worksId || ''}
                       </Descriptions.Item>
                     )}
-                    
+
                     <Descriptions.Item label="任务时长">
                       {selectedTask.keepTime}分钟
                     </Descriptions.Item>
@@ -766,9 +791,15 @@ export default function Task() {
                     </Descriptions.Item>
                     <Descriptions.Item label="参与人数">
                       <Progress
-                        percent={Math.round((selectedTask.currentRecruits / selectedTask.maxRecruits) * 100)}
+                        percent={Math.round(
+                          (selectedTask.currentRecruits /
+                            selectedTask.maxRecruits) *
+                            100,
+                        )}
                         size="small"
-                        format={() => `${selectedTask.currentRecruits}/${selectedTask.maxRecruits}`}
+                        format={() =>
+                          `${selectedTask.currentRecruits}/${selectedTask.maxRecruits}`
+                        }
                       />
                     </Descriptions.Item>
                     <Descriptions.Item label="支持平台">
@@ -782,7 +813,7 @@ export default function Task() {
             </div>
           )}
         </Modal>
-        
+
         {/* 添加 TaskInfo 组件 */}
         <TaskInfo ref={Ref_TaskInfo} onTaskApplied={refreshTaskList} />
       </div>
@@ -838,7 +869,10 @@ export default function Task() {
           </div>
         </div>
         <div className={styles.taskHeaderRight}>
-          <div className={styles.withdrawText} onClick={() => navigate('/finance')}>
+          <div
+            className={styles.withdrawText}
+            onClick={() => navigate('/finance')}
+          >
             <WalletOutlined />
             <span>钱包</span>
           </div>

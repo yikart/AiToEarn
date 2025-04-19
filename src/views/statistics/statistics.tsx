@@ -560,8 +560,10 @@ const Statistics = () => {
                       </div>
                       <div className="absolute bottom-0 right-0 text-xs text-[#ccc]">
                         失效:{' '}
-                        {statisticsInfo!.accountTotal! -
-                          (statisticsInfo?.list?.length || 0)}
+                        {!!statisticsInfo
+                          ? (statisticsInfo.accountTotal ?? 0) -
+                            (statisticsInfo.list?.length ?? 0)
+                          : 0}
                       </div>
                     </div>
                   </div>
