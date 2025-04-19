@@ -11,11 +11,17 @@ export enum TracingType {
   EVENT = 'event', // 事件
 }
 
+export enum TracingTag {
+  AccountAdd = 'AccountAdd', // 账号添加
+  VideoPul = 'VideoPul', // 视频发布
+  OpenProjectUse = 'OpenProjectUse', // 开源项目调用
+}
+
 export interface Tracing {
   id: string;
   userId: string;
   type: TracingType;
-  tag: string;
+  tag: TracingTag;
   accountId?: number; // 平台账号ID
   desc?: string;
   dataId?: string; // 关联数据id
