@@ -63,7 +63,7 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
           maxDate: 13,
           timeOffset: 60,
         },
-        topicMax: 3,
+        topicMax: 4,
       },
     },
   ],
