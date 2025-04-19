@@ -40,7 +40,6 @@ import bindTaskImg from '@/assets/task/binds.png';
 import checkTaskImg from '@/assets/task/waits.png';
 import publishTaskImg from '@/assets/task/fabu.png';
 import rewardTaskImg from '@/assets/task/jiesuan.png';
-import qr1 from '@/assets/task/qr1.png';
 import qr2 from '@/assets/task/qr0.jpg';
 import logo from '@/assets/logo.png';
 
