@@ -14,15 +14,22 @@
 
 [English](README_EN.md) | 简体中文
 
-## 一句话介绍
+## [最好用的开源内容矩阵工具！](https://www.aitoearn.cn/aiToEarn)
 
-抖音，小红书，视频号，快手等多个自媒体平台的一键发布工具
+- 一站式管理小红书，抖音，快手，视频号等，包括内容发布，评论，互动
+- 用AI制作你的内容
+- AI评论管理与截流
 
-### 20250411更新:这周没有新版本了，非常抱歉，我们会尽快推进！
+## 里程碑
+- 2025.2.26 发布0.1.1版本
+- 2025.3.15 发布0.2.0版本
+- 2025.4.18 发布0.6.0版本
 
-## 具体做了什么
+## [常见问题](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
 
-- 视频一键发布
+## 具体功能介绍
+
+- 视频、图文一键发布
 ![抖音](https://lf1-cdn-tos.bytegoofy.com/goofy/ies/douyin_web/public/favicon.ico '抖音') 抖音
 ![小红书](https://www.xiaohongshu.com/favicon.ico '小红书') 小红书
 ![视频号](https://res.wx.qq.com/t/wx_fed/finder/helper/finder-helper-web/res/favicon-v2.ico '视频号') 视频号
@@ -33,12 +40,17 @@
   - 小红书，抖音，视频号，快手每日，每周分赛道热门内容排行榜
 
 ## 正在实现中
-- 发布参数扩展，增加声明，位置，链接等参数，支持短视频带货等
-- 热门内容扩展，增加AI工具排行榜
-- AI自动评论
-- AI搜索评论
+- MAC客户端实现
+- 手机APP实现
+- 更多实用AI创作工具集成
+- IP代理+指纹浏览器集成
+- 公众号，bilibili发布实现
 
 ## 快速开始
+[查看最新版本](https://github.com/yikart/AiToEarn/releases/tag/v0.6.0)
+
+[直接下载最新版本(windows)](https://github.com/yikart/AiToEarn/releases/download/v0.6.0/AiToEarn-0.6.0.exe)
+
 
 ```sh
 # 克隆项目
@@ -100,3 +112,8 @@ npm run dev
 辛苦备注一下 AiToEarn
 
 <img src="./wechat.jpg" alt="wechat" width="500"/>
+
+## 友情链接
+https://github.com/TMElyralab/MuseTalk
+https://github.com/5ime/video_spider
+
