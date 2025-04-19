@@ -34,10 +34,25 @@
 ![小红书](https://www.xiaohongshu.com/favicon.ico '小红书') 小红书
 ![视频号](https://res.wx.qq.com/t/wx_fed/finder/helper/finder-helper-web/res/favicon-v2.ico '视频号') 视频号
 ![快手](https://s1-111422.kwimgs.com/kos/nlav111422/ks-web/favicon.ico '快手') 快手 
+<img src="./presentation/post.png" alt="post" width="500"/>
 
+- 账号数据汇总分析
+<img src="./presentation/data_center.png" alt="post" width="500"/>
+  
 - 全网热门内容观察
   - 小红书低粉爆文排行榜
-  - 小红书，抖音，视频号，快手每日，每周分赛道热门内容排行榜
+  - 小红书，抖音，视频号，快手，bilibili，公众号分赛道热门内容排行榜
+
+- AI评论自动回复
+- AI评论截流
+- AI评论搜索
+<img src="./presentation/comment_search.png" alt="post" width="500"/>
+
+- AI工具排行榜
+<img src="./presentation/tool_rank.png" alt="post" width="500"/>
+- 实用AI工具
+<img src="./presentation/4o.jpeg" alt="post" width="500"/>
+ 
 
 ## 正在实现中
 - MAC客户端实现
@@ -115,5 +130,6 @@ npm run dev
 
 ## 友情链接
 https://github.com/TMElyralab/MuseTalk
+
 https://github.com/5ime/video_spider
 
