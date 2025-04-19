@@ -5,10 +5,22 @@
  * @LastEditors: nevin
  * @Description:
  */
+import { AccountType } from '../../../commont/AccountEnum';
+import { PubStatus } from '../../db/models/pubRecord';
+
 interface IProperty {
   code: number;
   msg: string;
   dataId: string;
+  previewVideoLink: string;
+}
+
+export interface IVideoPubOtherData {
+  [AccountType.Xhs]?: {
+    // 预览需要
+    xsec_token: string;
+    xsec_source: string;
+  };
 }
 
 export class PublishVideoResult {
@@ -16,19 +28,24 @@ export class PublishVideoResult {
   code: number;
   // 提示信息
   msg: string;
-
   // 数据ID
-  dataId: string;
+  dataId?: string;
+  // 预览视频地址
+  previewVideoLink?: string;
+  // 发布状态，可选值
+  pubStatus?: PubStatus;
 
   constructor(
-    { code, msg, dataId }: IProperty = {
+    { code, msg, dataId, previewVideoLink }: IProperty = {
       code: 1,
       msg: '发布成功！',
       dataId: '',
+      previewVideoLink: '',
     },
   ) {
     this.code = code;
     this.msg = msg;
     this.dataId = dataId;
+    this.previewVideoLink = previewVideoLink;
   }
 }

@@ -1,6 +1,7 @@
 .video {
   width: 100%;
   height: 100%;
+  min-width: 0;
   display: flex;
   :global {
     .ant-spin-nested-loading {
@@ -16,41 +17,15 @@
       justify-content: center;
       width: 100%;
       height: 100%;
+      &-con {
+        display: flex;
+      }
       h1 {
         font-size: 24px;
       }
-      .videoChoose {
-        display: flex;
-        flex-direction: column;
-        background: rgb(247, 250, 250);
-        width: 160px;
-        height: 160px;
-        box-sizing: border-box;
-        padding: 20px;
-        justify-content: center;
-        align-items: center;
-        border-radius: 10px;
-        margin-bottom: 25px;
-        border: 1px solid transparent;
-        transition: 0.3s;
-        img {
-          width: 50px;
-        }
-        button {
-          margin-top: 20px;
-          background-image: linear-gradient(to right, rgb(255, 142, 28), rgb(255, 124, 24)) !important;
-          width: 100%;
-          &:hover {
-            opacity: 0.8;
-          }
-        }
-        &:hover {
-          border-color: rgb(255, 142, 28);
-        }
-      }
       &-tip {
         font-size: var(--fs-sm);
-        color: var(--darkGreyColor);
+        color: var(--grayColor10);
         margin: 20px 0;
       }
     }
@@ -104,9 +79,11 @@
         margin-left: 20px;
         padding-left: 10px;
         border-left: 1px solid rgb(232, 232, 232);
+        overflow: auto;
       }
       &-footer {
-        border-top: 1px solid #ccc;
+        text-align: center;
+        border-top: 1px solid var(--grayColor3);
         padding: 15px;
       }
     }
@@ -118,6 +95,7 @@
       display: flex;
       &-noAccount {
         width: 100%;
+        min-width: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -196,6 +174,7 @@
         border-radius: 8px;
         height: 100%;
         width: 100%;
+        min-width: 0;
         &:hover {
           border-color: var(--colorPrimary5);
           .videoChooseItem-video-close {
@@ -207,6 +186,7 @@
       &-left {
         display: flex;
         width: 100%;
+        min-width: 0;
         &-chooseVideo {
           width: 100%;
           cursor: pointer;
@@ -237,6 +217,7 @@
           flex-direction: column;
           margin-left: 15px;
           justify-content: center;
+          overflow: hidden;
         }
         &-bottom {
           display: flex;
@@ -246,22 +227,64 @@
             margin-right: 30px;
             label {
               margin-right: 10px;
-              color: var(--lightGreyColor);
+              color: var(--grayColor7);
+            }
+            &--warning {
+              color: var(--errerColor);
+              label {
+                color: var(--errerColor);
+              }
+              & > span {
+                margin-right: 5px;
+              }
             }
           }
         }
         &-title {
           font-size: var(--fs-sm);
           font-weight: 900;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
         }
+      }
+      &-right {
+        width: 200px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        border-left: 1px solid #e5e5e5;
+        padding-left: 20px;
+        box-sizing: border-box;
       }
       &-account {
         width: 100%;
         display: flex;
         align-items: center;
+        &:hover {
+          .videoChooseItem-account-avatar-replace {
+            display: flex !important;
+          }
+        }
         &-avatar {
+          position: relative;
           .ant-avatar {
             flex-shrink: 0;
+          }
+          &-replace {
+            display: none;
+            position: absolute;
+            cursor: pointer;
+            color: #fff;
+            background: var(--colorPrimary5);
+            width: 16px;
+            height: 16px;
+            bottom: -2px;
+            right: -2px;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            border-radius: 50%;
           }
         }
         &-con {
@@ -301,18 +324,11 @@
           }
         }
       }
-      &-right {
-        width: 200px;
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        border-left: 1px solid #e5e5e5;
-        padding-left: 20px;
-      }
       &-video {
         width: 50px;
         height: 100%;
         position: relative;
+        flex-shrink: 0;
         &-close {
           border-radius: 50%;
           position: absolute;
@@ -377,10 +393,13 @@
         font-size: var(--fs-md);
         margin-bottom: 5px;
         margin-top: 20px;
+        .anticon {
+          margin-left: 3px;
+        }
       }
       &-tip {
         font-size: var(--fs-sm);
-        color: var(--lightGreyColor);
+        color: var(--grayColor7);
         margin-top: 5px;
       }
     }

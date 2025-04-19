@@ -6,19 +6,32 @@
  * @Description:
  */
 
-import { PubType } from '../../../commont/publish/PublishEnum';
+import { PubRecordModel as PubRecordModelLast } from '../../../electron/db/models/pubRecord';
+import { AccountStatus } from '../../../commont/AccountEnum';
+import { ipcUpdateAccountStatus } from '../../icp/account';
+import { AccountInfo } from '../account/comment';
 
-export interface PubRecordModel {
-  id: number;
-  userId: string;
-  type: PubType;
-  title: string;
-  topics: string[];
-  desc: string;
-  videoPath: string;
-  coverPath: string;
-  publishTime: Date;
-  status: any;
-  createTime?: Date;
-  updateTime?: Date;
+export type PubRecordModel = PubRecordModelLast;
+
+// 接口失效处理
+export async function accountFailureDispose<T>(
+  {
+    status,
+    data,
+  }: {
+    status: number;
+    data?: T;
+  },
+  account: AccountInfo,
+  callback: (account: AccountInfo) => void,
+) {
+  if (status !== 200 && status !== 201) {
+    if (status === 401) {
+      account.status = AccountStatus.DISABLE;
+      callback(account);
+      await ipcUpdateAccountStatus(account.id, AccountStatus.DISABLE);
+    }
+    return [];
+  }
+  return data || [];
 }

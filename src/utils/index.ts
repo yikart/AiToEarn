@@ -1,4 +1,5 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
+import { getFilePathNameCommon } from '../../commont/utils';
 /**
  * 生成唯一ID
  */
@@ -10,19 +11,15 @@ export function generateUUID(): string {
   });
 }
 
-// 获取文件路径中的文件名
-export function getFilePathName(path: string) {
-  if (!path) return '';
-  const path1 = path.split('\\')[path.split('\\').length - 1];
-  return path1.split('/')[path1.split('/').length - 1];
-}
+// 获取文件路径中的文件名和后缀
+export const getFilePathName = getFilePathNameCommon;
 
 // 格式化时间
 export function formatTime(
   time: string | number | Date,
-  format: string = 'YYYY-MM-DD HH:MM:SS',
+  format: string = 'YYYY-MM-DD HH:mm:ss',
 ) {
-  return moment(time).format(format);
+  return dayjs(time).format(format);
 }
 
 /**
@@ -41,3 +38,45 @@ export function formatSeconds(seconds: number): string {
   return `${pad(hours)}:${pad(minutes)}:${pad(secs)}`;
 }
 
+/**
+ * 根据输入数值返回中文描述
+ * @param value 输入的数值
+ * @returns 如果数值超过1000返回'n千'，超过10000返回'n万'
+ */
+export function describeNumber(value: number): string {
+  if (value > 10000) {
+    // 数值超过10000，返回'n万'
+    const wan = Math.floor(value / 10000);
+    return `${wan}万`;
+  } else if (value > 1000) {
+    // 数值超过1000，返回'n千'
+    const qian = Math.floor(value / 1000);
+    return `${qian}千`;
+  } else {
+    // 数值不超过1000，直接返回数值的字符串形式
+    return value.toString();
+  }
+}
+
+// 去除字符串中的话题
+export function parseTopicString(input: string): {
+  topics: string[];
+  cleanedString: string;
+} {
+  // 使用正则表达式提取字符串中的部分
+  const extractedParts = input.match(/#(\S+)/g) || [];
+
+  // 在原始输入中用空字符串替换提取的部分
+  let cleanedString = input;
+  extractedParts.forEach((part) => {
+    cleanedString = cleanedString.replace(part, '').trim();
+  });
+
+  // 创建提取的话题数组
+  const topics = extractedParts.map((part) => {
+    const match = part.match(/#(\S+)/);
+    return match ? match[1] : '';
+  });
+
+  return { topics, cleanedString };
+}

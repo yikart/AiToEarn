@@ -2,19 +2,34 @@
   display: flex;
 
   :global {
-    .ant-segmented {
-      margin-right: 20px;
-      .ant-segmented-item {
+    .platChoose-empty {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .platChoose-platSelect {
+      padding-right: 20px;
+      .ant-checkbox-wrapper {
         margin-bottom: 5px;
-        padding: 3px 60px 3px 0;
+        white-space: nowrap;
       }
 
-      .ant-segmented-item-label {
-        display: flex;
-        align-items: center;
-        .ant-segmented-item-icon {
+      .ant-segmented {
+        width: 100%;
+        box-sizing: border-box;
+        .ant-segmented-item {
+          margin-bottom: 5px;
+          padding: 3px 60px 3px 0;
+        }
+
+        .ant-segmented-item-label {
           display: flex;
           align-items: center;
+          .ant-segmented-item-icon {
+            display: flex;
+            align-items: center;
+          }
         }
       }
     }

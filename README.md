@@ -6,10 +6,9 @@
  * @Description:
 -->
 
-# AiToEarn 爱团团
+# AiToEarn 哎哟赚
 
 ![GitHub stars](https://img.shields.io/github/stars/yikart/AttAiToEarn?color=fa6470)
-![GitHub issues](https://img.shields.io/github/issues/yikart/AttAiToEarn?color=d8b22d)
 ![GitHub license](https://img.shields.io/github/license/yikart/AttAiToEarn)
 [![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node&message=20.18.x%20&logo=node.js&color=3f893e)](https://nodejs.org/about/releases)
 
@@ -18,6 +17,8 @@
 ## 一句话介绍
 
 抖音，小红书，视频号，快手等多个自媒体平台的一键发布工具
+
+### 20250411更新:这周没有新版本了，非常抱歉，我们会尽快推进！
 
 ## 具体做了什么
 
@@ -95,5 +96,15 @@ npm run dev
 ├── public                                   同 Vite 模板的 public
 └── src                                      渲染进程源码、React代码
 ```
+## 其他说明
+- 关于MAC包,因为苹果对应用要求严格,本项目目前仍在尝试阶段,请自行打包,或设置忽略安全策略
+- ```shell
+   xattr -r -d com.apple.quarantine /Applications/哎呦赚AiToEarn.app
+  ```
+## 官网下载
+[https://www.aitoearn.cn/](https://www.aitoearn.cn/)
+
 ## 加我微信
+辛苦备注一下 AiToEarn
+
 <img src="./wechat.jpg" alt="wechat" width="500"/>

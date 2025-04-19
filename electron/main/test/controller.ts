@@ -1,19 +1,16 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-02-24 14:31:25
+ * @LastEditTime: 2025-04-01 18:17:38
  * @LastEditors: nevin
  * @Description: Test test
  */
 import { Controller, Icp, Inject } from '../core/decorators';
 import { TestService } from './service';
 import { douyinService } from '../../plat/douyin/index';
-import { getNowTimeStamp } from '../../util/time';
 import { xiaohongshuService } from '../../plat/xiaohongshu/index';
 import { shipinhaoService } from '../../plat/shipinhao/index';
-
-const videoPath = 'C:\\Users\\Administrator\\Desktop\\测试用的\\相册.mp4';
-const coverPath = 'C:\\Users\\Administrator\\Desktop\\测试用的\\gile.jpg';
+import { FileUtils } from '../../util/file';
 
 @Controller()
 export class TestController {
@@ -21,75 +18,16 @@ export class TestController {
   private readonly testService!: TestService;
 
   /**
-   * 测试-抖音发布
-   */
-  @Icp('ICP_TEST_DOUYIN_VIDEO_PUB')
-  async testDouyinVideoPub(event: Electron.IpcMainInvokeEvent): Promise<any> {
-    const account = await this.testService.getInfoById(2);
-    if (!account) return;
-    const res = await douyinService.publishVideoWorkApi(
-      account.loginCookie,
-      account.token!,
-      'C:\\Users\\Administrator\\Desktop\\相册.mp4',
-      {
-        cover:
-          'https://help-static-aliyun-doc.aliyuncs.com/assets/img/zh-CN/6069415171/p792953.png',
-        title: '元宵节快乐',
-        topics: ['元宵节'],
-        timingTime: getNowTimeStamp() + '',
-      },
-      () => {},
-    );
-
-    return 1;
-  }
-
-  /**
    * 测试-抖音登录
    */
-  @Icp('ICP_TEST_DOUYIN_LOGIN')
-  async testDouyinVideoLogin(event: Electron.IpcMainInvokeEvent): Promise<any> {
-    const { success, data } = await douyinService.loginOrView('login');
-    if (!data) {
-      return {
-        cookie: '',
-        token: '',
-      };
-    }
-
-    const { cookie, localStorage } = data;
-    return {
-      cookie,
-      token: localStorage,
-    };
-  }
-
-  /**
-   * 测试2-抖音发布
-   */
-  @Icp('ICP_TEST_DOUYIN_VIDEO_PUB_2')
-  async testDouyinVideoPub2(
+  @Icp('ICP_GET_FILE_MATE_INFO')
+  async testDouyinVideoLogin(
     event: Electron.IpcMainInvokeEvent,
-    cookie: any,
-    token: string,
+    path: string,
   ): Promise<any> {
-    if (!cookie) return;
-    if (!token) return;
-
-    const res = await douyinService.publishVideoWorkApi(
-      cookie,
-      token!,
-      videoPath,
-      {
-        cover: coverPath,
-        title: '元宵节快乐',
-        topics: ['元宵节'],
-        timingTime: getNowTimeStamp() + '',
-      },
-      () => {},
-    );
-
-    return 1;
+    const res = await FileUtils.getFileInfo(path);
+    console.log('---- res ----', res);
+    return res;
   }
 
   /**

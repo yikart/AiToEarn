@@ -2,8 +2,18 @@ import { screen, BrowserWindow, net, session } from 'electron';
 import { CommonUtils } from '../../util/common';
 import path from 'path';
 import { FileUtils } from '../../util/file';
-import { getFileContent } from '../utils';
-
+import { CookieToString, getFileContent } from '../utils';
+import requestNet from '../requestNet';
+import {
+  CommentInfo,
+  SphGetCommentListResponse,
+  SphGetPostListResponse,
+  WeChatLocationData,
+  WeChatVideoApiResponse,
+  WeChatVideoUserData,
+  WxSPHGetMixListResponse,
+} from './wxShp.type';
+import { v4 as uuidv4 } from 'uuid';
 interface UserInfo {
   authorId: string;
   nickname: string;
@@ -20,58 +30,6 @@ interface UploadArguments {
   taskid: string;
   scene: any;
   [key: string]: any;
-}
-
-interface RequestData {
-  objectType: number;
-  longitude: number;
-  latitude: number;
-  feedLongitude: number;
-  feedLatitude: number;
-  originalFlag: number;
-  topics: string[];
-  isFullPost: number;
-  handleFlag: number;
-  videoClipTaskId: any;
-  traceInfo: {
-    traceKey: string;
-    uploadCdnStart: number;
-    uploadCdnEnd: number;
-  };
-  objectDesc: {
-    mpTitle: string;
-    description: string;
-    extReading: Record<string, any>;
-    mediaType: number;
-    location: Record<string, any>;
-    topic: Record<string, any>;
-    event: Record<string, any>;
-    mentionedUser: Array<{ nickname: string }>;
-    media: Array<{
-      url: string;
-      fileSize: number;
-      thumbUrl: string;
-      fullThumbUrl: string;
-      mediaType: number;
-      videoPlayLen: number;
-      width: number;
-      height: number;
-      md5sum: string;
-      coverUrl: string;
-      fullCoverUrl: string;
-      urlCdnTaskId: string;
-    }>;
-    member: Record<string, any>;
-  };
-  postFlag: number;
-  mode: number;
-  clientid: string;
-  timestamp: number;
-  rawKeyBuff: null;
-  pluginSessionId: null;
-  scene: number;
-  reqScene: number;
-  effectiveTime?: number;
 }
 
 export class ShipinhaoService {
@@ -113,6 +71,7 @@ export class ShipinhaoService {
   private cookieCheckField = 'sessionid';
   private cookieIntervalList: { [key: string]: NodeJS.Timeout } = {};
   private windowMap: { [key: number]: BrowserWindow } = {}; // 添加窗口引用存储
+  private callback?: (progress: number, msg?: string) => void;
 
   /**
    * 获取网站登录cookie
@@ -176,7 +135,7 @@ export class ShipinhaoService {
             fansCount: res.data.finderUser.fansCount ?? 0,
           });
         } else {
-          reject(res.data.errMsg ?? '未知错误');
+          reject(res.data?.errMsg ?? '未知错误');
         }
       } catch (err) {
         reject(err);
@@ -250,7 +209,7 @@ export class ShipinhaoService {
             timestamp: new Date().getTime(),
           },
         });
-        console.log('getDashboardFunc res:', JSON.stringify(res));
+        
         if (res.errCode === 0) {
           if (endDate && startDate) {
             // 如果传入了日期范围，返回数组格式
@@ -307,7 +266,7 @@ export class ShipinhaoService {
             });
           }
         } else {
-          reject(res.data.errMsg ?? '未知错误');
+          reject(res.data?.errMsg ?? '未知错误');
         }
       } catch (err) {
         reject(err);
@@ -738,6 +697,11 @@ export class ShipinhaoService {
 
       // 分片上传文件
       for (let i = 0; i < filePartInfo.blockInfo.length; i++) {
+        if (this.callback)
+          this.callback(
+            50,
+            `上传视频（${i}/${filePartInfo.blockInfo.length}）`,
+          );
         console.log(
           `开始上传第 ${i + 1}/${filePartInfo.blockInfo.length} 个分片`,
         );
@@ -1014,18 +978,11 @@ export class ShipinhaoService {
     startUploadTime: number,
     endUploadTime: number,
     clipResult: any,
-    platformSetting: {
-      cover: string;
-      mentionedUserInfo: {
-        nickName?: string;
-      }[];
-      title?: string;
-      topics: string[];
-      mixInfo?: any;
-      poiInfo?: any;
-      timingTime?: any;
-    },
-  ): Promise<string> {
+    platformSetting: any,
+  ): Promise<{
+    lastPublishId: string;
+    previewVideoLink: string;
+  }> {
     return new Promise(async (resolve, reject) => {
       try {
         // 处理标题、@好友、话题
@@ -1034,7 +991,7 @@ export class ShipinhaoService {
         const mentionedUser = [];
         if (
           platformSetting.hasOwnProperty('topics') &&
-          platformSetting.topics.length > 0
+          platformSetting.topics?.length > 0
         ) {
           for (const topic of platformSetting.topics) {
             description += ` #${topic}`;
@@ -1043,7 +1000,7 @@ export class ShipinhaoService {
         }
         if (
           platformSetting.hasOwnProperty('mentionedUserInfo') &&
-          platformSetting.mentionedUserInfo.length > 0
+          platformSetting.mentionedUserInfo?.length > 0
         ) {
           for (const userInfo of platformSetting.mentionedUserInfo) {
             if (
@@ -1111,7 +1068,7 @@ export class ShipinhaoService {
             mediaType: 4,
             location: poiInfo,
             topic: topicMix,
-            event: {},
+            event: platformSetting['event'] || {},
             mentionedUser: mentionedUser,
             media: [
               {
@@ -1129,9 +1086,10 @@ export class ShipinhaoService {
                 urlCdnTaskId: clipResult['clipKey'],
               },
             ],
+            postFlag: platformSetting.postFlag || 0,
             member: {},
           },
-          postFlag: 0,
+          postFlag: platformSetting.postFlag || 0,
           mode: 1,
           clientid: this.getUniqueTaskId(),
           timestamp: Date.now(),
@@ -1143,10 +1101,13 @@ export class ShipinhaoService {
         // 处理定时时间
         if (
           platformSetting.hasOwnProperty('timingTime') &&
-          platformSetting.timingTime > Math.floor(Date.now() / 1000)
+          platformSetting.timingTime > Date.now()
         ) {
-          (requestData as any).effectiveTime = platformSetting.timingTime;
+          (requestData as any).effectiveTime = Math.floor(
+            platformSetting.timingTime / 1000,
+          );
         }
+        console.log('requestData：', requestData);
         // 发起请求
         const createRes = await this.makeRequest(this.postCreateVideoUrl, {
           method: 'POST',
@@ -1168,8 +1129,8 @@ export class ShipinhaoService {
         ) {
           reject('发布失败,失败原因:' + createRes.data.baseResp.errmsg);
         } else {
-          const lastPublishId = await this.getLastPublishId(cookieString);
-          resolve(lastPublishId);
+          const lastWorkInfo = await this.getLastPublishId(cookieString);
+          resolve(lastWorkInfo);
         }
       } catch (err: any) {
         let errorMessage;
@@ -1188,7 +1149,10 @@ export class ShipinhaoService {
   /**
    * 获取用户视频列表最后一条发布的视频Id
    */
-  private async getLastPublishId(cookieString: string): Promise<string> {
+  private async getLastPublishId(cookieString: string): Promise<{
+    lastPublishId: string;
+    previewVideoLink: string;
+  }> {
     const workListRes = await this.makeRequest(this.getUserWorkListUrl, {
       method: 'POST',
       headers: {
@@ -1205,14 +1169,34 @@ export class ShipinhaoService {
       },
     });
 
-    let lastPublishId = '';
+    let work;
     if (workListRes.errCode === 0) {
       const workList = workListRes.data.list;
       if (workList.length > 0) {
-        lastPublishId = workList[0].desc.media[0].md5sum ?? '';
+        work = workList[0];
       }
     }
-    return lastPublishId;
+
+    // 获取预览的视频链接
+    const previewVideoRes = await this.makeRequest(
+      'https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/post/get_object_short_link',
+      {
+        method: 'POST',
+        headers: {
+          Cookie: cookieString,
+          'Content-Type': 'application/json',
+        },
+        data: {
+          exportId: work.exportId,
+          nonceId: work.objectNonce,
+        },
+      },
+    );
+
+    return {
+      lastPublishId: work?.desc?.media[0]?.md5sum ?? '',
+      previewVideoLink: previewVideoRes,
+    };
   }
 
   /**
@@ -1226,6 +1210,33 @@ export class ShipinhaoService {
       title?: string;
       topics?: string[];
       des?: string;
+      timingTime?: number;
+      // 合集
+      mixInfo?: {
+        mixId: string;
+        mixName: string;
+      };
+      // 位置信息
+      poiInfo?: {
+        latitude: number;
+        longitude: number;
+        poiCity: string;
+        poiName: string;
+        poiAddress: string;
+        poiId: string;
+      };
+      // @的用户
+      mentionedUserInfo?: {
+        nickName?: string;
+      }[];
+      // 活动
+      event?: {
+        eventCreatorNickname: string;
+        eventTopicId: string;
+        eventName: string;
+      };
+      // 0=非原创 1=原创
+      postFlag: 0 | 1;
     },
     callback: (progress: number, msg?: string) => void,
   ): Promise<{
@@ -1233,75 +1244,244 @@ export class ShipinhaoService {
     publishId: string;
     shareLink: string;
   }> {
-    try {
-      callback(5, '加载中...');
-      const fileInfo = await FileUtils.getFileInfo(filePath);
-      callback(10);
-      const cookieString = CommonUtils.convertCookieToJson(cookies);
-      callback(15);
-      const traceKey = await this.getPublishTraceKey(cookieString);
-      callback(20);
-      const uploadParams = await this.getPublishUploadParams(cookieString);
-      callback(26);
-      const filePartInfo = await FileUtils.getFilePartInfo(
-        filePath,
-        this.fileBlockSize,
-      );
-      const startUploadTime = Math.floor(Date.now() / 1000);
-      const remoteVideoUrl = await this.uploadVideoFile(
-        filePath,
-        uploadParams,
-        filePartInfo,
-      );
-      callback(30);
-      const endUploadTime = Math.floor(Date.now() / 1000);
+    this.callback = callback;
+    console.log('platformSetting：', platformSetting);
+    callback(5, '加载中...');
+    const fileInfo = await FileUtils.getFileInfo(filePath);
+    callback(10);
+    const cookieString = CommonUtils.convertCookieToJson(cookies);
+    callback(15);
+    const traceKey = await this.getPublishTraceKey(cookieString);
+    callback(20);
+    const uploadParams = await this.getPublishUploadParams(cookieString);
+    callback(26);
+    const filePartInfo = await FileUtils.getFilePartInfo(
+      filePath,
+      this.fileBlockSize,
+    );
+    const startUploadTime = Math.floor(Date.now() / 1000);
+    const remoteVideoUrl = await this.uploadVideoFile(
+      filePath,
+      uploadParams,
+      filePartInfo,
+    );
+    callback(30);
+    const endUploadTime = Math.floor(Date.now() / 1000);
 
-      callback(40, '正在上传视频...');
-      const clipResult = await this.postClipUploadVideo(
-        traceKey,
-        startUploadTime,
-        endUploadTime,
-        remoteVideoUrl,
-        fileInfo,
-        filePartInfo,
-        cookieString,
-      );
-      callback(60, '正在上传封面...');
-      platformSetting.cover = await this.uploadCoverFile(
-        platformSetting.cover,
-        uploadParams,
-      );
-      callback(80, '正在发布视频...');
-      const lastPublishId = await this.postCreateVideo(
-        cookieString,
-        traceKey,
-        startUploadTime,
-        endUploadTime,
-        clipResult,
-        {
-          ...platformSetting,
-          cover: platformSetting.cover,
-          title: platformSetting.title,
-          mentionedUserInfo: [],
-          topics: platformSetting.topics ? platformSetting.topics : [],
-        },
-      );
-      callback(100);
+    callback(40, '正在上传视频...');
+    const clipResult = await this.postClipUploadVideo(
+      traceKey,
+      startUploadTime,
+      endUploadTime,
+      remoteVideoUrl,
+      fileInfo,
+      filePartInfo,
+      cookieString,
+    );
+    callback(60, '正在上传封面...');
+    platformSetting.cover = await this.uploadCoverFile(
+      platformSetting.cover,
+      uploadParams,
+    );
+    callback(80, '正在发布视频...');
+    const lastPublishRes = await this.postCreateVideo(
+      cookieString,
+      traceKey,
+      startUploadTime,
+      endUploadTime,
+      clipResult,
+      {
+        ...platformSetting,
+        cover: platformSetting.cover,
+        title: platformSetting.title,
+        topics: platformSetting.topics ? platformSetting.topics : [],
+      },
+    );
+    callback(100);
 
-      // 返回成功
-      return {
-        publishTime: Math.floor(Date.now() / 1000),
-        publishId: lastPublishId,
-        shareLink: '',
-      };
-    } catch (err: any) {
-      console.error('发布视频失败:', err);
-      return {
-        publishTime: Math.floor(Date.now() / 1000),
-        publishId: '',
-        shareLink: '',
-      };
-    }
+    // 返回成功
+    return {
+      publishTime: Math.floor(Date.now() / 1000),
+      publishId: lastPublishRes.lastPublishId,
+      shareLink: lastPublishRes.previewVideoLink,
+    };
+  }
+
+  // 获取位置数据
+  async getLocation(params: {
+    query: string;
+    longitude: number;
+    latitude: number;
+    cookie: Electron.Cookie[];
+  }) {
+    return await requestNet<WeChatLocationData>({
+      url: `https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/helper/helper_search_location`,
+      method: 'POST',
+      body: {
+        ...params,
+        reqScene: 7,
+        scene: 7,
+      },
+      headers: {
+        cookie: CookieToString(params.cookie),
+      },
+    });
+  }
+
+  // 获取视频号的活动
+  async getActivityList(params: { cookie: Electron.Cookie[]; query: string }) {
+    return await requestNet<WeChatVideoApiResponse>({
+      url: `https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/post/post_search_event`,
+      method: 'POST',
+      body: params,
+      headers: {
+        cookie: CookieToString(params.cookie),
+      },
+    });
+  }
+
+  // 获取@用户列表
+  async getUsers(cookie: Electron.Cookie[], keyword: string, page: number) {
+    return await requestNet<WeChatVideoUserData>({
+      url: `https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/helper/helper_search_finder_account`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'POST',
+      body: {
+        pageSize: 10,
+        currentPage: page,
+        offset: (page - 1) * 10,
+        query: keyword,
+      },
+    });
+  }
+
+  // 获取合集列表
+  async getMixList(cookie: Electron.Cookie[]) {
+    return await requestNet<WxSPHGetMixListResponse>({
+      url: `https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/collection/get_collection_list`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'POST',
+      body: {
+        pageNum: 1,
+        pageSize: 200,
+      },
+    });
+  }
+
+  /**
+   * 获取作品列表
+   * @returns
+   */
+  async getPostList(
+    cookie: Electron.Cookie[],
+    pageInfo: { pageNo: number; pageSize: number },
+  ) {
+    const res = await requestNet<SphGetPostListResponse>({
+      url: `https://channels.weixin.qq.com/micro/interaction/cgi-bin/mmfinderassistant-bin/post/post_list?_rid=67d03155-a6da7281`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'POST',
+      body: {
+        currentPage: pageInfo.pageNo,
+        forMcn: false,
+        needAllCommentCount: true,
+        onlyUnread: false,
+        pageSize: pageInfo.pageSize,
+        pluginSessionId: null,
+        rawKeyBuff: null,
+        reqScene: 7, // 固定值
+        scene: 7, // 固定值
+        timestamp: Date.now() + '', // '1741697365389',
+        userpageType: 13,
+        _log_finder_id:
+          'v2_060000231003b20faec8c5e38b10cbd6cb06ef3cb077ad5b14a8587570bc414e95c4b7e034ea@finder',
+        _log_finder_uin: '',
+      },
+    });
+
+    const ret = res.data.data;
+    return ret;
+  }
+
+  /**
+   * 获取评论列表
+   * @param cookie
+   * @param exportId
+   * @returns
+   */
+  async getCommentList(cookie: Electron.Cookie[], exportId: string) {
+    const res = await requestNet<SphGetCommentListResponse>({
+      url: `https://channels.weixin.qq.com/micro/interaction/cgi-bin/mmfinderassistant-bin/comment/comment_list?_rid=67d032a7-6c8f7126`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'POST',
+      body: {
+        commentSelection: false,
+        exportId,
+        forMcn: false,
+        lastBuff: '',
+        pluginSessionId: null,
+        rawKeyBuff: null,
+        reqScene: 7,
+        scene: 7,
+        timestamp: Date.now() + '',
+        _log_finder_id:
+          'v2_060000231003b20faec8c5e38b10cbd6cb06ef3cb077ad5b14a8587570bc414e95c4b7e034ea@finder',
+        _log_finder_uin: '',
+      },
+    });
+
+    const ret = res.data.data;
+    return ret;
+  }
+
+  /**
+   * 评论作品和回复评论
+   * @param cookie
+   * @param exportId
+   * @param content
+   * @param comment
+   * @returns
+   */
+  async createComment(
+    cookie: Electron.Cookie[],
+    exportId: string,
+    content: string,
+    comment: Partial<CommentInfo> = {},
+  ) {
+    const res = await requestNet<WeChatVideoUserData>({
+      url: `https://channels.weixin.qq.com/micro/interaction/cgi-bin/mmfinderassistant-bin/comment/create_comment?_rid=67d032a7-6c8f7126`,
+      headers: {
+        cookie: CookieToString(cookie),
+      },
+      method: 'POST',
+      body: {
+        clientId: uuidv4(),
+        comment, // 默认{}
+        content,
+        exportId,
+        pluginSessionId: null,
+        rawKeyBuff: null,
+        replyCommentId: comment?.commentId || '',
+        reqScene: 7,
+        rootCommentId: comment?.replyCommentId || '',
+        scene: 7,
+        timestamp: Date.now() + '',
+        _log_finder_id:
+          'v2_060000231003b20faec8c5e38b10cbd6cb06ef3cb077ad5b14a8587570bc414e95c4b7e034ea@finder',
+        _log_finder_uin: '',
+      },
+    });
+
+    console.log('------- WxSph createComment ----', res);
+
+    return res;
   }
 }
 

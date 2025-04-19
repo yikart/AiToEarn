@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-24 17:55:22
- * @LastEditTime: 2025-02-13 21:15:38
+ * @LastEditTime: 2025-03-19 14:31:34
  * @LastEditors: nevin
  * @Description:
  */
@@ -9,7 +9,7 @@ import 'reflect-metadata';
 import { ipcMain } from 'electron';
 import { container } from './container';
 import { INJECT_METADATA_KEY } from './metadata';
-import { Event } from '../../global/event';
+import { EtEvent } from '../../global/event';
 import { scheduleJob, scheduleJobMap } from '../../global/schedule';
 
 // Module 装饰器
@@ -88,7 +88,7 @@ export function Et(eventName: string) {
   ) {
     const originalMethod = descriptor.value;
 
-    Event.on(eventName, async (...args) => {
+    EtEvent.on(eventName, async (...args) => {
       const controller = container.getController(target.constructor.name);
       if (!controller) {
         throw new Error(`Controller ${target.constructor.name} not found`);

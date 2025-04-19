@@ -7,7 +7,7 @@
  */
 import { Button, message } from 'antd';
 import { FC } from 'react';
-import { getFilePathName } from '@/utils';
+import { generateUUID, getFilePathName } from '@/utils';
 import { icpGetFileStream } from '@/icp/view';
 
 interface ImgChooseProps {
@@ -21,6 +21,7 @@ interface ImgChooseProps {
 }
 
 export interface IImgFile {
+  id: string;
   size: number;
   file: Blob;
   // 前端临时路径，注意不要存到数据库
@@ -56,10 +57,10 @@ export const formatImg = async ({
   blob?: Blob;
 }): Promise<IImgFile> => {
   return new Promise((resolve) => {
+    const { filename, suffix } = getFilePathName(path);
     if (!blob) {
-      const filename = getFilePathName(path);
       blob = new Blob([file!], {
-        type: `image/${filename.split('.')[filename.split('.').length - 1]}`,
+        type: `image/${suffix}`,
       });
     }
     const imgUrl = URL.createObjectURL(blob);
@@ -67,11 +68,12 @@ export const formatImg = async ({
     const img = new Image();
     img.onload = () => {
       resolve({
+        id: generateUUID(),
         width: img.width,
         height: img.height,
         imgPath: path,
         size: blob!.size,
-        filename: getFilePathName(path),
+        filename,
         file: blob!,
         imgUrl,
       });

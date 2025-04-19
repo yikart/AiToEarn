@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, nativeTheme } from 'electron';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import os from 'node:os';
@@ -9,6 +9,11 @@ import App from './app';
 import { getAssetPath } from '../util/index';
 import windowOperate from '../util/windowOperate';
 import { logger } from '../global/log';
+import { SplashWindow } from './splash';
+import dotenv from 'dotenv';
+import KwaiPubListener from "./plat/platforms/Kwai/KwaiPubListener";
+const platform = process.platform;
+dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -27,31 +32,54 @@ if (os.release().startsWith('6.1')) app.disableHardwareAcceleration();
 // Set application name for Windows 10+ notifications
 if (process.platform === 'win32') app.setAppUserModelId(app.getName());
 
-if (!app.requestSingleInstanceLock()) {
-  app.quit();
-  process.exit(0);
-}
+// 单例锁
+// if (!app.requestSingleInstanceLock()) {
+//   app.quit();
+//   process.exit(0);
+// }
 
 let win: BrowserWindow | null = null;
+let splashWindow: SplashWindow | null = null;
 const preload = path.join(__dirname, '../preload/index.mjs');
 const indexHtml = path.join(RENDERER_DIST, 'index.html');
 
 async function createWindow() {
+  // 创建启动窗口
+  splashWindow = new SplashWindow();
+  splashWindow.create();
+
+  // 等待一会儿确保启动窗口显示
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
+  // 创建主窗口但先不显示
   win = new BrowserWindow({
-    title: '爱团团AiToEarn',
+    title: '哎哟赚AiToEarn',
     icon: path.join(getAssetPath('favicon.ico')),
-    width: 1920,
-    height: 1080,
+    width: 2350,
+    height: 1280,
     minWidth: 1280,
     minHeight: 800,
-    // show: false, // 最小化显示
+    titleBarStyle: 'hidden',
+    show: false,
+    titleBarOverlay:
+      platform === 'win32'
+        ? undefined
+        : {
+            color: 'rgba(0,0,0,0)',
+            height: 64,
+            symbolColor: '#595959',
+          },
     webPreferences: {
       preload,
       webviewTag: true,
+      webSecurity: true,
       nodeIntegration: false,
       contextIsolation: true,
     },
   });
+
+  // 强制使用非黑暗模式
+  nativeTheme.themeSource = 'light';
 
   try {
     const tray = new SystemTray(win);
@@ -60,20 +88,34 @@ async function createWindow() {
     logger.error('系统托盘启动失败', error);
   }
 
+  // 等待主窗口加载完成
   if (VITE_DEV_SERVER_URL) {
-
-    win.webContents.openDevTools({ mode: 'right' });
-    // #298
-    win.loadURL(VITE_DEV_SERVER_URL);
-    // Open devTool if the app is not packaged
-    
-
-    ipcMain.handle('OPEN_DEV_TOOLS', (_, mode) => {
-      win!.webContents.openDevTools({ mode: mode || 'right' });
-    });
+    await win.loadURL(VITE_DEV_SERVER_URL);
   } else {
-    win.loadFile(indexHtml);
+    await win.loadFile(indexHtml);
   }
+
+  // 延长启动窗口显示时间
+  KwaiPubListener.start();
+  setTimeout(() => {
+    if (splashWindow) {
+      win?.show();
+      // 在主窗口显示后再打开开发者工具
+      if (process.env.NODE_ENV === 'development') {
+        win?.webContents.openDevTools({ mode: 'bottom' });
+      }
+
+      // if (VITE_DEV_SERVER_URL) {
+      //   win?.webContents.openDevTools({ mode: 'bottom' });
+      // }
+      setTimeout(() => {
+        if (splashWindow) {
+          splashWindow.close();
+          splashWindow = null;
+        }
+      }, 100);
+    }
+  }, 500);
 
   // 隐藏菜单栏
   win.setMenu(null);
@@ -110,6 +152,9 @@ app.whenReady().then(async () => {
   }
 });
 
+/**
+ * Quit when all windows are closed, except on macOS. There, it's common
+ */
 app.on('window-all-closed', () => {
   win = null;
   if (process.platform !== 'darwin') app.quit();

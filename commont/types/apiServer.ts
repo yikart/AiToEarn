@@ -6,6 +6,6 @@
  * @Description:
  */
 export interface TimeTemp {
-  createTime: Date;
-  updateTime: Date;
+  createTime: string;
+  updateTime: string;
 }

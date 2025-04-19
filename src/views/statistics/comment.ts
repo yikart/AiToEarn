@@ -7,6 +7,7 @@
  */
 
 import { AccountInfo } from '../account/comment';
+import { DashboardData as DashboardDataLast } from '../../../electron/main/plat/plat.type';
 
 export interface StatisticsInfo {
   accountTotal: number;
@@ -20,11 +21,4 @@ export interface StatisticsInfo {
 }
 
 // 获取平台账户统计信息返回值
-export type DashboardData = {
-  fans: number;
-  read: number;
-  comment: number;
-  like: number;
-  collect: number;
-  forward: number;
-};
+export type DashboardData = DashboardDataLast;

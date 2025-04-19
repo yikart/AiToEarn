@@ -1,8 +1,12 @@
 import styles from './video.module.scss';
 import VideoChoose from '@/components/Choose/VideoChoose';
 import { useEffect, useRef, useState } from 'react';
-import { Button, Popconfirm, Spin, Tooltip } from 'antd';
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Button, Modal, Popconfirm, Spin, Tooltip } from 'antd';
+import {
+  DeleteOutlined,
+  ExclamationCircleFilled,
+  PlusOutlined,
+} from '@ant-design/icons';
 import ChooseAccountModule from '@/views/publish/components/ChooseAccountModule/ChooseAccountModule';
 import NoChoosePage from '@/views/publish/children/videoPage/components/NoChoosePage';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
@@ -11,8 +15,9 @@ import { PubType } from '@@/publish/PublishEnum';
 import VideoChooseItem from '@/views/publish/children/videoPage/components/VideoChooseItem';
 import CommonPubSetting from '@/views/publish/children/videoPage/components/CommonPubSetting';
 import VideoPubSetModal from '@/views/publish/children/videoPage/components/VideoPubSetModal/VideoPubSetModal';
+import { usePubStroe } from '../../../../store/pubStroe';
 
-enum AccountChooseType {
+export enum AccountChooseType {
   // 多选
   MultiSelect = 0,
   // 单选
@@ -20,6 +25,8 @@ enum AccountChooseType {
   // 替换
   Replace = 2,
 }
+
+const { confirm } = Modal;
 
 export default function Page() {
   const {
@@ -33,6 +40,7 @@ export default function Page() {
     loadingPageLoading,
     setLoadingPageLoading,
     setCurrChooseAccountId,
+    setTempSaveParams,
   } = useVideoPageStore(
     useShallow((state) => ({
       videoListChoose: state.videoListChoose,
@@ -45,6 +53,7 @@ export default function Page() {
       loadingPageLoading: state.loadingPageLoading,
       setLoadingPageLoading: state.setLoadingPageLoading,
       setCurrChooseAccountId: state.setCurrChooseAccountId,
+      setTempSaveParams: state.setTempSaveParams,
     })),
   );
   // 账户选择弹框显示隐藏状态
@@ -55,8 +64,30 @@ export default function Page() {
   const accountOneChooseId = useRef<string>();
 
   useEffect(() => {
+    let confirmRes: { destroy: () => void };
+    if (videoListChoose.length === 0) {
+      const history = usePubStroe.getState().getVideoPubSaveData();
+
+      if (history?.videoListChoose && history?.videoListChoose.length !== 0) {
+        confirmRes = confirm({
+          title: '恢复草稿',
+          icon: <ExclamationCircleFilled />,
+          content: '您之前有未发布的视频，是否需要恢复？',
+          okText: '恢复',
+          cancelText: '放弃',
+          onOk() {
+            setTempSaveParams(history);
+          },
+          onCancel() {
+            usePubStroe.getState().clearVideoPubSaveData();
+          },
+        });
+      }
+    }
+
     return () => {
       clear();
+      confirmRes?.destroy();
     };
   }, []);
 
@@ -64,21 +95,27 @@ export default function Page() {
     <div className={styles.video}>
       <Spin spinning={loadingPageLoading}>
         <VideoPubSetModal onClose={setVideoPubSetModalOpen} />
-
         <ChooseAccountModule
-          disableAllSelect={
-            accountChooseType.current === AccountChooseType.Radio
-          }
+          platChooseProps={{
+            disableAllSelect:
+              accountChooseType.current === AccountChooseType.Radio ||
+              accountChooseType.current === AccountChooseType.Replace,
+            choosedAccounts: videoListChoose
+              .map((v) => v.account)
+              .filter((v) => v !== undefined),
+            pubType: PubType.VIDEO,
+            isCancelChooseAccount: true,
+          }}
           open={chooseAccountOpen}
           onClose={setChooseAccountOpen}
-          choosedAccounts={videoListChoose
-            .map((v) => v.account)
-            .filter((v) => v !== undefined)}
           onPlatConfirm={(aList) => {
             addAccount(aList);
           }}
           onPlatChange={(_, account) => {
-            if (accountChooseType.current === AccountChooseType.Radio) {
+            if (
+              accountChooseType.current === AccountChooseType.Radio ||
+              accountChooseType.current === AccountChooseType.Replace
+            ) {
               setChooseAccountOpen(false);
               aloneAdd({
                 account,
@@ -86,7 +123,6 @@ export default function Page() {
               });
             }
           }}
-          pubType={PubType.VIDEO}
         />
 
         {videoListChoose.length !== 0 ? (
@@ -157,10 +193,10 @@ export default function Page() {
                       <VideoChooseItem
                         key={v.id + v.video + v.account}
                         videoChooseItem={v}
-                        onAccountOneChoose={(id) => {
-                          accountChooseType.current = AccountChooseType.Radio;
-                          setChooseAccountOpen(true);
+                        onAccountOneChoose={(id, type) => {
+                          accountChooseType.current = type;
                           accountOneChooseId.current = id;
+                          setChooseAccountOpen(true);
                         }}
                       />
                     );
@@ -175,7 +211,10 @@ export default function Page() {
               <Popconfirm
                 title="温馨提示"
                 description="是否确认清空内容和账号？"
-                onConfirm={() => clear()}
+                onConfirm={() => {
+                  clear();
+                  usePubStroe.getState().clearVideoPubSaveData();
+                }}
                 okText="确认"
                 cancelText="取消"
               >

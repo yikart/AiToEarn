@@ -10,9 +10,11 @@ import { PublishController } from './controller';
 import { PublishService } from './service';
 import { VideoPubController } from './video/controller';
 import { VideoPubService } from './video/service';
+import { ImgTextPubController } from './imgText/controller';
+import { ImgTextPubService } from './imgText/service';
 
 @Module({
-  controllers: [PublishController, VideoPubController],
-  providers: [PublishService, VideoPubService],
+  controllers: [PublishController, VideoPubController, ImgTextPubController],
+  providers: [PublishService, VideoPubService, ImgTextPubService],
 })
 export class PublishModule {}

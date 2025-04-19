@@ -6,11 +6,14 @@
  * @Description:
  */
 import styles from './publish.module.scss';
-import { VideoCameraOutlined, FileImageOutlined } from '@ant-design/icons';
-import { message, Segmented } from 'antd';
+import {
+  VideoCameraOutlined,
+  FileImageOutlined,
+  ContainerOutlined,
+} from '@ant-design/icons';
+import { Segmented } from 'antd';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { ipcAppInfo } from '@/icp/app';
 
 export default function Page() {
   const navigate = useNavigate();
@@ -19,26 +22,7 @@ export default function Page() {
 
   useEffect(() => {
     setCurrChooseRoute(location.pathname);
-    getAppInfo();
   }, [location]);
-
-  async function getAppInfo() {
-    const appInfo = await ipcAppInfo();
-
-    if (appInfo.chromiumPath) return;
-
-    message.loading('检测到您没有配置chrome浏览器,请指定', 2).then(async () => {
-      const res: string = await window.ipcRenderer.invoke(
-        'ICP_SET_CHROMIUM_PATH',
-      );
-
-      if (res) {
-        message.success('设置成功');
-      } else {
-        message.error('设置失败');
-      }
-    });
-  }
 
   return (
     <div className={styles.publish}>
@@ -53,20 +37,15 @@ export default function Page() {
             icon: <VideoCameraOutlined />,
           },
           // { label: '文章发布', value: '/publish/text', icon: <FileOutlined /> },
-          // {
-          //   label: '图片发布',
-          //   value: '/publish/image',
-          //   icon: <FileImageOutlined />,
-          // },
           {
-            label: '发布记录',
-            value: '/publish/pubRecord',
+            label: '图片发布',
+            value: '/publish/image',
             icon: <FileImageOutlined />,
           },
           {
-            label: '草稿箱',
-            value: '/publish/drafts',
-            icon: <FileImageOutlined />,
+            label: '发布记录',
+            value: '/publish/pubRecord',
+            icon: <ContainerOutlined />,
           },
         ]}
         onChange={(value) => {

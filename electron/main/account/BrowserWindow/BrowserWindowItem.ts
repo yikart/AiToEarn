@@ -18,6 +18,13 @@ export default class BrowserWindowItem {
     if (!this.webview)
       return console.error(`无法找到id为 ‘${this.webViewId}’ 的webview`);
 
+    // this.webview.openDevTools();
+    // this.webview.setWindowOpenHandler((data) => {
+    //   console.log(data.url);
+    //   return {
+    //     action: 'deny',
+    //   };
+    // });
     if (data.cookieParams) {
       await this.setCookies(data.cookieParams);
     }

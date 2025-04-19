@@ -24,6 +24,7 @@ export class UserController {
   ): Promise<UserModel> {
     const currUser = {
       ...user,
+      phone: user.phone || user.wxOpenId,
       loginTime: new Date(),
     };
     await this.userService.addUser(currUser);

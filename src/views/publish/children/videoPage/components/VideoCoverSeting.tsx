@@ -91,7 +91,7 @@ const VideoCoverSeting = memo(
           setImgFile(value);
           return;
         }
-        getVideoCover(1);
+        getVideoCover(0);
       }, [videoCoverSetingModal]);
 
       useEffect(() => {
@@ -101,6 +101,7 @@ const VideoCoverSeting = memo(
 
       /* 获取封面 */
       const getVideoCover = async (n: number) => {
+        if (!videoFile!.videoPath) return;
         setSliderVal(n);
         setVideoCoverLoading(true);
         const pathVideo = await ipcGetVideoCover(
@@ -220,7 +221,7 @@ const VideoCoverSeting = memo(
                   value={sliderVal}
                   style={{ margin: '50px 0' }}
                   step={1}
-                  min={1}
+                  min={0}
                   max={videoFile?.duration}
                   onChange={setSliderVal}
                   onChangeComplete={getVideoCover}

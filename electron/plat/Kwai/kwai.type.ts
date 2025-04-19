@@ -1,5 +1,4 @@
 import { IRequestNetResult } from '../requestNet';
-import { VisibleTypeEnum } from '../plat.common.type';
 
 interface AbConfig {
   cpPublishNewPage2024: boolean;
@@ -19,22 +18,81 @@ export interface IKwaiUserCommonResponse<T> {
   message: string;
 }
 
-// 快手用户信息接口返回的数据
-export type IKwaiUserInfoResponse = IKwaiUserCommonResponse<{
-  ab: AbConfig;
-  role: number;
-  isGrOrPr: boolean;
-  roles: number[];
-  userAvatar: string;
-  userName: string;
-  userId: number;
-  article: boolean;
-  logined: boolean;
-  enableNotificationV3: boolean;
-  appType: number;
-  userKwaiId: null;
-  showCreator: boolean;
+// video/pc/upload/pre
+export type UploadPpreResponse = IKwaiUserCommonResponse<{
+  token: string;
+  fileId: number;
 }>;
+
+// video/pc/upload/finish
+export type UploadFinishResponse = IKwaiUserCommonResponse<{
+  coverKey: string;
+  coverMediaId: string;
+  duration: number;
+  fileId: number;
+  height: number;
+  mediaId: string;
+  photoIdStr: string;
+  videoDuration: string;
+  videoFrameRate: string;
+  width: string;
+}>;
+
+// /v2/video/pc/submit
+export type KwaiSubmitResponse = IKwaiUserCommonResponse<{
+  result: number;
+  message: string;
+}>;
+
+export interface IGetHomeOverviewItem {
+  name: string;
+  tab: string;
+  sumCount: number;
+  endDayCount: number;
+  interpretDesc: string | null;
+  trendData: {
+    date: string;
+    count: number;
+  }[];
+  diagnoseResultType: string;
+}
+
+export interface IGetHomeOverview {
+  result: number;
+  currentTime: number;
+  'host-name': string;
+  data: {
+    basicData: IGetHomeOverviewItem[];
+    dataUpdateTime: string;
+  };
+  message: string;
+}
+
+export interface IGetHomeInfoResponse {
+  data: {
+    desc: string;
+    fansCnt: number;
+    followCnt: number;
+    likeCnt: number;
+    userId: number;
+    userName: string;
+    userKwaiId?: number;
+  };
+}
+
+// 快手用户信息接口返回的数据
+export type IKwaiUserInfoResponse = {
+  data: {
+    userInfo: {
+      avatar: string;
+      eid: string;
+      id: string;
+      name: string;
+      userId: number;
+      __typename: string;
+    };
+  };
+};
 
 interface TopicsTag {
   id: number;
@@ -55,24 +113,218 @@ export type IKwaiGetTopicsResponse = IKwaiUserCommonResponse<{
   }[];
 }>;
 
+// 获取快手关注用户返回的数据
+export type IKwaiGetUsersResponse = IKwaiUserCommonResponse<{
+  list: {
+    userName: string;
+    userId: number;
+    fansCount: number;
+    headUrl: string;
+  }[];
+  name: string;
+  type: number;
+}>;
+
+// 获取快手位置数据
+export type IKwaiGetLocationsResponse = {
+  locations: {
+    id: number;
+    title: string;
+    address: string;
+    city: string;
+    category: number;
+    latitude: number;
+    longitude: number;
+    idString: string;
+  }[];
+  pcursor: string;
+  result: number;
+};
+
 // 快手视频发布入参
 export interface IKwaiPubVideoParams {
   // cookies
   cookies: Electron.Cookie[];
+  // 话题
+  topics: string[];
   // 发布视频的简介
   desc: string;
   // 视频的路径
   videoPath: string;
   // 封面路径
   coverPath: string;
-  // 视频可见性
-  visibleType: VisibleTypeEnum;
   // 发布回调，可以用于获取发布进度
   callback: (progress: number, msg?: string) => void;
+  // 位置
+  poiInfo?: {
+    poiId: string;
+    latitude: string;
+    longitude: string;
+  };
+  // 作品权限 1=所有人可见 2=仅自己可见 4=好友可见
+  photoStatus: 1 | 2 | 4;
+  // @的好友
+  mentions?: string[];
+  // 定时发布日期，时间戳，毫秒
+  publishTime?: number;
 }
 
 // 登录返回参数
 export interface ILoginResponse {
   cookies: Electron.Cookie[];
   userInfo: IRequestNetResult<IKwaiUserInfoResponse>;
+}
+
+// 刷新作品
+export type RefreshWorksResponse = IKwaiUserCommonResponse<{
+  list: {
+    id: number;
+    likeCount: number;
+    operations: number[];
+    playCount: number;
+    publishStatus: number;
+    // 如果已经发布这个值会存在
+    workId?: string;
+  }[];
+}>;
+
+// 获取作品，开发者后台
+export type GetWorksListResponse = IKwaiUserCommonResponse<{
+  list: {
+    publishId: number;
+    workId: string;
+    title: string;
+    publishCoverUrl: string;
+    unPublishCoverKey: string | null;
+    userId: number;
+    userIdStr: string;
+    userName: string;
+    userHead: string;
+    playCount: number;
+    likeCount: number;
+    commentCount: number;
+    uploadTime: number;
+    durationSecond: number;
+    judgementTitle: string;
+    judgementStatus: number;
+    publishStatus: number;
+    operations: string[];
+    publishType: number;
+    photoStatus: number;
+    photoTop: boolean;
+    collectionTitle: string;
+    collectionId: number;
+    awdId: number;
+    hotspotActivity: null;
+    hotspot: null;
+    showAtlasIcon: boolean;
+    showDuration: boolean;
+  }[];
+}>;
+
+// 获取作品列表
+export interface GetPhotoListResponse {
+  result: number; // 1;
+  currentTime: number; // 1741842574582;
+  'host-name': string; // 'public-bjxy-rs9-kce-node961.idcyz.hb1.kwaidc.com';
+  data: {
+    photoList: {
+      photoId: string; // '3xsq95w5uxvjx7q';
+      title: string; // '';
+      cover: string; // 'https://p2.a.yximgs.com/upic/2025/02/24/21/BMjAyNTAyMjQyMTQ4NDFfNzk4MzE5MzUxXzE1Nzc4MzY4MTM2MV8wXzM=_B05f8067d6793fd47dcbb196af577f7ae.jpg?tag=1-1741842574-nil-0-uacnaa9n5n-f19cc27a1c6378c5&clientCacheKey=3xsq95w5uxvjx7q.jpg&di=b7c6874b&bp=10000';
+      playCount: number; // 6;
+      likeCount: number; // 0;
+      commentCount: number; // 2;
+      uploadTime: number; // 1740404944454;
+      duration: number; // 13300;
+      isVideo: true;
+      isSettingSelectedComment: boolean; // false;
+      photoSelectedTips: any; // null;
+    }[];
+    pcursor: number; // 1515253882683; // 下一页页码
+    totalCount: number; // 2;
+    visionSearchPhoto: {
+      feeds: any[];
+    };
+    result?: string;
+  };
+  message: string; // '成功';
+}
+
+// 获取评论列表
+export interface GetCommentListResponse {
+  result: number; // 1;
+  currentTime: number; // 1741843263417;
+  'host-name': string; // 'public-bjxy-rs9-kce-node961.idcyz.hb1.kwaidc.com';
+  data: {
+    pcursor?: number; // 971109198576;
+    list: [
+      {
+        photoId: number; // 157783681361;
+        authorId: number; // 798319351;
+        headurl: string; // 'https://p66-pro.a.yximgs.com/uhead/AB/2018/01/06/23/BMjAxODAxMDYyMzQ4MjRfNzk4MzE5MzUxXzJfaGQ4OTBfMTcz_s.jpg';
+        authorName: string; // '墨2668';
+        commentId: number; // 969549966791;
+        content: string; // '哈哈哈';
+        replyTo: number; // 0;
+        replyToUserName: any; // null;
+        replyToCommentId: number; // 0;
+        timestamp: number; // 1741695330721;
+        likedCount: number; // 0;
+        liked: boolean; // false;
+        subCommentCount: number; // 1;
+        emotionId: any; // null;
+        emotion: any; // null;
+        ip: number; // 0;
+        referer: any; // null;
+        toped: boolean; // false;
+        settingSelectedComment: boolean; // false;
+        isSettingSelectedComment: boolean; // false;
+      },
+    ];
+  };
+  message: string; // '成功';
+}
+
+// 获取子回复列表
+export interface GetSubCommentListResponse {
+  result: number; // 1;
+  currentTime: number; // 1741843273188;
+  'host-name': string; // 'public-bjx-c26-kce-node710.idchb1az1.hb1.kwaidc.com';
+  data: {
+    list: {
+      photoId: number; // 157783681361;
+      authorId: number; // 798319351;
+      headurl: string; // 'https://p66-pro.a.yximgs.com/uhead/AB/2018/01/06/23/BMjAxODAxMDYyMzQ4MjRfNzk4MzE5MzUxXzJfaGQ4OTBfMTcz_s.jpg';
+      authorName: string; // '墨2668';
+      commentId: number; // 969618657810;
+      content: string; // '666';
+      replyTo: number; // 798319351;
+      replyToUserName: string; // '墨2668';
+      replyToCommentId: number; // 0;
+      timestamp: number; // 1741704937506;
+      likedCount: number; // 0;
+      liked: boolean; // false;
+      subCommentCount: number; // 0;
+      emotionId: any; // null;
+      emotion: any; // null;
+      ip: number; // 0;
+      referer: any; // null;
+      toped: boolean; // false;
+      settingSelectedComment: boolean; // false;
+      isSettingSelectedComment: boolean; // false;
+    }[];
+  };
+  message: string; // '成功';
+}
+
+// 创建评论返回参数
+export interface CommentAddResponse {
+  result: number; // 1;
+  currentTime: number; // 1741704937529;
+  'host-name': string; // 'public-bjx-c26-kce-node717.idchb1az1.hb1.kwaidc.com';
+  data: {
+    commentId: number; // 969618657810;
+  };
+  message: string; // '成功';
 }

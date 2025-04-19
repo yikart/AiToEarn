@@ -1,44 +1,62 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-10 22:20:15
- * @LastEditTime: 2025-02-22 18:20:33
+ * @LastEditTime: 2025-04-01 17:00:45
  * @LastEditors: nevin
  * @Description: 测试页面
  */
-import styles from './publish.module.scss';
-import { VideoCameraOutlined } from '@ant-design/icons';
-import { Segmented } from 'antd';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import VideoChoose, { IVideoFile } from '@/components/Choose/VideoChoose';
+import { Button } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 
-export default function Page() {
-  const navigate = useNavigate();
+export default function Text() {
+  const [videoPath, setVideoPath] = useState('');
+  const [fileInfo, setFileInfo] = useState('');
+
+  function addVideos(videoFiles: IVideoFile[]) {
+    console.log('---- videoFiles ----', videoFiles);
+
+    const theVideoPath = videoFiles[0].videoPath;
+    console.log('---- theVideoPath ----', theVideoPath);
+    setVideoPath(theVideoPath);
+  }
+
+  async function getFileMateInfo() {
+    const res = await window.ipcRenderer.invoke(
+      'ICP_GET_FILE_MATE_INFO',
+      videoPath,
+    );
+
+    setFileInfo(JSON.stringify(res));
+    console.log('---- res ----', res);
+  }
 
   return (
-    <div className={styles.publish}>
-      <Segmented
-        vertical
-        size="large"
-        options={[
-          { label: '抖音2', value: 'douyin2', icon: <VideoCameraOutlined /> },
-          { label: '抖音', value: 'douyin', icon: <VideoCameraOutlined /> },
-          {
-            label: '小红书',
-            value: 'xiaohongshu',
-            icon: <VideoCameraOutlined />,
-          },
-          {
-            label: '视频号',
-            value: 'shipinhao',
-            icon: <VideoCameraOutlined />,
-          },
-          { label: '视频测试', value: 'video', icon: <VideoCameraOutlined /> },
-          { label: '任务测试', value: 'video', icon: <VideoCameraOutlined /> },
-        ]}
-        onChange={(value) => {
-          navigate(value);
+    <div>
+      <p>{videoPath}</p>
+      <hr />
+      <p>{fileInfo}</p>
+      <hr />
+      <VideoChoose
+        onMultipleChoose={(videoFiles) => {
+          addVideos(videoFiles);
         }}
-      />
-      <Outlet />
+        onStartShoose={() => {}}
+        onChooseFail={() => {}}
+      >
+        <Button type="dashed" icon={<PlusOutlined />}>
+          批量添加
+        </Button>
+      </VideoChoose>
+
+      <Button
+        onClick={() => {
+          getFileMateInfo();
+        }}
+      >
+        获取文件信息
+      </Button>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-14 18:23:16
- * @LastEditTime: 2025-02-19 02:45:58
+ * @LastEditTime: 2025-03-24 20:55:11
  * @LastEditors: nevin
  * @Description:
  */
@@ -27,7 +27,7 @@ export class FFmpegVideoUtil {
         const ffmpeg = new FFmpeg(videoFilePath);
         console.log('------ outputDir', FileUtils.getAppDataPath());
 
-        const outputDir = path.join(FileUtils.getAppDataPath(), 'screenshots');
+        const outputDir = path.join(FileUtils.getAppDataPath()!, 'screenshots');
 
         const option: ScreenshotsConfig = {
           count: 1,

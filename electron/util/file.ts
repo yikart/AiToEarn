@@ -1,13 +1,9 @@
 import fs from 'fs';
 import mimeTypes from 'mime-types';
 import ffmpeg from 'fluent-ffmpeg';
-import { ffprobePath } from './ffprobe_static';
 import path from 'path';
-
-// 文件工具类
-// 设置 ffprobe 路径
-console.log('ffprobe 路径:', ffprobePath);
-ffmpeg.setFfprobePath(ffprobePath);
+import { net } from 'electron';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface FileInfo {
   streams: Array<{
@@ -245,19 +241,73 @@ export class FileUtils {
           process.env.HOME || '',
           'Library',
           'Application Support',
-          'ktt-app',
+          'att',
         );
       }
       case 'win32': {
-        return path.join(process.env.APPDATA || '', 'ktt-app');
+        return path.join(process.env.APPDATA || '', 'att');
       }
       case 'linux': {
-        return path.join(process.env.HOME || '', 'ktt-app');
+        return path.join(process.env.HOME || '', 'att');
       }
       default: {
         console.log('Unsupported platform!');
         process.exit(1);
       }
     }
+  }
+
+  /**
+   * 下载文件
+   * @param url
+   * @param name
+   * @returns
+   */
+  static async downFile(url: string, name?: string): Promise<string> {
+    const dirPath = this.getAppDataPath();
+    await this.checkDirectories(dirPath);
+
+    return new Promise((resolve, reject) => {
+      const request = net.request(url);
+      let fileStream: NodeJS.WritableStream | null = null;
+      let filePath: string;
+      const fileExt: string = path.extname(url);
+
+      request.on('response', (response) => {
+        if (response.statusCode !== 200) {
+          return reject(new Error(`下载失败: 状态码 ${response.statusCode}`));
+        }
+
+        filePath = path.join(dirPath, (name || uuidv4()) + fileExt);
+        fileStream = fs.createWriteStream(filePath);
+
+        response.on('data', (chunk) => {
+          if (fileStream) fileStream.write(chunk);
+        });
+
+        fileStream.on('finish', () => {
+          resolve(filePath);
+        });
+
+        // 处理文件流错误
+        fileStream.on('error', (err) => {
+          reject(err);
+        });
+
+        response.on('end', () => {
+          if (fileStream) {
+            fileStream.end();
+            resolve(filePath); // 确保filePath已定义
+          }
+        });
+      });
+
+      request.on('error', (err) => {
+        reject(err);
+      });
+
+      // 必须调用request.end()来发送请求
+      request.end();
+    });
   }
 }

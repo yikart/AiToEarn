@@ -115,9 +115,9 @@ export const formatVideo = async (
   path: string,
   file: Uint8Array,
 ): Promise<IVideoFile> => {
-  const blob = new Blob([file], { type: 'video/mp4' });
+  const { filename, suffix } = getFilePathName(path);
+  const blob = new Blob([file], { type: `video/${suffix}` });
   const videoUrl = URL.createObjectURL(blob);
-  const filename = getFilePathName(path);
 
   const videoInfo = await getVideoInfo(videoUrl, filename);
   return {

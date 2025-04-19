@@ -2,12 +2,30 @@ import { useUserStore } from '@/store/user';
 import { useEffect } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import Navigation from './Navigation';
+import styles from './layoutBody.module.scss';
+import { useAccountStore } from '../store/account';
+import { sleep } from '../../commont/utils';
 
 export const LayoutBody = () => {
   const userStore = useUserStore();
 
+  // 查询用户信息
+  const queryUserInfo = async () => {
+    let count = 0;
+    while (true) {
+      const res = await userStore.getUserInfo().catch(() => false);
+      if (res || count >= 10) break;
+      await sleep(1000);
+      count++;
+    }
+  };
+
   useEffect(() => {
-    userStore.getUserInfo();
+    if (userStore.token) {
+      queryUserInfo();
+    } else {
+      userStore.logout();
+    }
   }, []);
 
   // 添加键盘事件监听
@@ -19,19 +37,28 @@ export const LayoutBody = () => {
       }
     };
     document.addEventListener('keydown', handleKeyDown);
+
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
+
+  useEffect(() => {
+    if (userStore.token) {
+      useAccountStore.getState().init();
+    } else {
+      useAccountStore.getState().clear();
+    }
+  }, [userStore.token]);
 
   if (!userStore.token) {
     return <Navigate to="/login" replace />;
   }
 
   return (
-    <div className="flex flex-col h-full" style={{ height: '100%' }}>
+    <div className={styles.layoutBody}>
       <Navigation />
-      <main style={{ height: '100%', minHeight: 0, width: '100%' }}>
+      <main className="layoutBody-main">
         <Outlet />
       </main>
     </div>

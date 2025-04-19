@@ -18,6 +18,7 @@ import { PublishService } from '../service';
 import platController from '../../plat';
 import { AccountService } from '../../account/service';
 import { AccountType } from '../../../../commont/AccountEnum';
+import lodash from 'lodash';
 
 @Controller()
 export class VideoPubController {
@@ -54,44 +55,42 @@ export class VideoPubController {
 
   // 发布视频
   @Icp('ICP_PUB_VIDEO')
-  async pubVideo(
-    event: Electron.IpcMainInvokeEvent,
-    pubRecordId: number,
-  ): Promise<any> {
-    const res = {
-      code: 0,
-      msg: '发布失败',
-    };
+  async pubVideo(event: Electron.IpcMainInvokeEvent, pubRecordId: number) {
+    try {
+      const pubRecordInfo =
+        await this.publishService.getPubRecordInfo(pubRecordId);
 
-    const userInfo = getUserInfo();
-    const pubRecordInfo =
-      await this.publishService.getPubRecordInfo(pubRecordId);
+      if (pubRecordInfo?.status === PubStatus.RELEASED) {
+        console.error('发布记录已发布');
+      }
 
-    if (!pubRecordInfo || pubRecordInfo.userId !== userInfo.id) {
-      res.msg = '发布记录不存在';
-      return res;
+      // 获取视频发布记录列表
+      const videoList =
+        await this.videoPubService.getVideoPulListByPubRecordId(pubRecordId);
+      // 获取用到的账户信息
+      const accountList = await this.accountService.getAccountsByIds(
+        videoList.map((v) => v.accountId),
+      );
+      // 发布
+      const pubRes = await platController.videoPublish(videoList, accountList);
+
+      let successCount = 0;
+      pubRes.map((v) => {
+        if (v.code === 1) successCount++;
+      });
+      // 更改记录状态
+      await this.publishService.updatePubRecordStatus(
+        pubRecordId,
+        successCount === 0
+          ? PubStatus.FAIL
+          : successCount === pubRes.length
+            ? PubStatus.RELEASED
+            : PubStatus.PartSuccess,
+      );
+      return pubRes;
+    } catch (e) {
+      console.error(e);
     }
-    if (pubRecordInfo.status === PubStatus.RELEASED) {
-      res.msg = '发布记录已发布';
-      return res;
-    }
-
-    // 获取视频发布记录列表
-    const videoList =
-      await this.videoPubService.getVideoPulListByPubRecordId(pubRecordId);
-    // 获取用到的账户信息
-    const accountList = await this.accountService.getAccountsByIds(
-      videoList.map((v) => v.accountId),
-    );
-    // 发布
-    const pubRes = await platController.videoPublish(videoList, accountList);
-    // 更改记录状态
-    await this.publishService.updatePubRecordStatus(
-      pubRecordId,
-      PubStatus.RELEASED,
-    );
-
-    return pubRes;
   }
 
   /**
@@ -153,6 +152,31 @@ export class VideoPubController {
   ): Promise<any> {
     const userInfo = getUserInfo();
     return await this.videoPubService.getVideoPulTypeCount(userInfo.id, type);
+  }
+
+  // 获取状态为审核中的视频列表
+  @Et('ET_PUBLISH_VIDEO_AUDIT_LIST')
+  async getAuditVideoList(callback: (_: VideoModel[]) => void): Promise<any> {
+    console.log(callback);
+    const userInfo = getUserInfo();
+    if (!userInfo?.id) return [];
+    const res = await this.videoPubService.getVideoPulList(
+      userInfo.id,
+      {
+        page_size: 20,
+        page_no: 1,
+      },
+      {
+        status: PubStatus.Audit,
+      },
+    );
+    callback(res.list);
+  }
+
+  // 根据dataid更新数据
+  @Et('ET_PUBLISH_UPDATE_VIDEO_PUL_BY_DATAID')
+  async updateVideoPubByDataid(videoModel: Partial<VideoModel>): Promise<any> {
+    return await this.videoPubService.updateVideoPulByDataId(videoModel);
   }
 
   // 更新视频发布数据

@@ -13,6 +13,7 @@ export async function ipcAppInfo() {
   const res: {
     version: string;
     chromiumPath: string;
+    platform: string;
   } = await window.ipcRenderer.invoke('ICP_APP_GET_INFO');
   return res;
 }

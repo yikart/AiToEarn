@@ -1,132 +1,54 @@
-import React, { useMemo, useRef, useState } from 'react';
-import type { SelectProps } from 'antd';
-import { Select, Spin } from 'antd';
-import lodash from 'lodash';
-import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
+import React from 'react';
+import CommonTopicSelect, {
+  CommonTopicSelectProps,
+  CommonTopicSelectValueType,
+} from '../../../../../components/CommonComponents/CommonTopicSelect';
+import { useVideoPageStore } from '../../../useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
-import { IVideoChooseItem } from '@/views/publish/children/videoPage/videoPage';
-import { icpGetTopic } from '@/icp/publish';
-import { AccountStatus, AccountType } from '@@/AccountEnum';
-import { ipcUpdateAccountStatus } from '@/icp/account';
+import { VideoPubRestartLogin } from './VideoPubSetModalCommon';
+import useVideoPubSetModal from '../children/hooks/useVideoPubSetModal';
 
-export interface DebounceSelectProps<ValueType = any>
-  extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
-  debounceTimeout?: number;
-  tips: string;
-  currChooseAccount: IVideoChooseItem;
-}
+interface DebounceSelectProps
+  extends CommonTopicSelectProps<CommonTopicSelectValueType> {}
 
 // 话题选择器
-export default function TopicSelect<
-  ValueType extends {
-    key?: string;
-    label: React.ReactNode;
-    value: string | number;
-  } = any,
->({
-  debounceTimeout = 300,
-  currChooseAccount,
-  tips,
-  ...props
-}: DebounceSelectProps<ValueType>) {
-  const [fetching, setFetching] = useState(false);
-  const [options, setOptions] = useState<ValueType[]>([]);
-  const fetchRef = useRef(0);
-
-  const { setOnePubParams, updateAccounts } = useVideoPageStore(
+export default function TopicSelect({ ...props }: DebounceSelectProps) {
+  const { updateAccounts } = useVideoPageStore(
     useShallow((state) => ({
-      setOnePubParams: state.setOnePubParams,
       updateAccounts: state.updateAccounts,
     })),
   );
-
-  const fetchOptions = async (keyword: string): Promise<ValueType[]> => {
-    const topics = await icpGetTopic(currChooseAccount.account!, keyword);
-    if (topics.status !== 200) {
-      if (topics.status === 401) {
-        currChooseAccount.account!.status = AccountStatus.DISABLE;
-        updateAccounts({ accounts: [currChooseAccount.account!] });
-        await ipcUpdateAccountStatus(
-          currChooseAccount.account!.id,
-          AccountStatus.DISABLE,
-        );
-      }
-      return [];
-    }
-    return topics.data!.map((v) => {
-      return {
-        label: v.name,
-        value: v.name,
-      };
-    }) as ValueType[];
-  };
-
-  const debounceFetcher = useMemo(() => {
-    const loadOptions = (value: string) => {
-      fetchRef.current += 1;
-      const fetchId = fetchRef.current;
-      setOptions([]);
-      setFetching(true);
-
-      fetchOptions(value).then((newOptions) => {
-        if (fetchId !== fetchRef.current) {
-          return;
-        }
-
-        setOptions(newOptions);
-        setFetching(false);
-      });
-    };
-
-    return lodash.debounce(loadOptions, debounceTimeout);
-  }, [fetchOptions, debounceTimeout]);
+  const { setOnePubParams, platInfo, currChooseAccount } =
+    useVideoPubSetModal();
+  const { topicMax } = platInfo.commonPubParamsConfig;
+  props.maxCount = props.maxCount || topicMax;
+  props.tips = props.tips || `您可以添加${topicMax}个话题`;
 
   return (
-    <>
-      <h1>话题</h1>
-      <Select
-        allowClear
-        mode="multiple"
-        style={{ width: '100%' }}
-        placeholder="输入关键字搜索"
-        labelInValue
-        filterOption={false}
-        onSearch={debounceFetcher}
-        notFoundContent={fetching ? <Spin size="small" /> : null}
-        {...props}
-        options={options}
-        value={currChooseAccount.pubParams!.topics as ValueType[]}
-        onChange={(newValue) => {
-          // 小红书话题特殊处理
-          if (currChooseAccount.account?.type === AccountType.Xhs) {
-            currChooseAccount.pubParams.diffParams![
-              AccountType.Xhs
-            ]!.topicsDetail =
-              (newValue as any[]).map((v) => {
-                return {
-                  topicId: `${v.value}`,
-                  topicName: v.label,
-                };
-              }) || [];
-          }
-          setOnePubParams(
-            {
-              topics: (newValue as any[]).map((v) => {
-                return {
-                  label: v.label,
-                  value: v.value,
-                };
-              }),
-              diffParams: {
-                ...currChooseAccount.pubParams.diffParams,
-              },
-            },
-            currChooseAccount.id,
-          );
-        }}
-      />
-
-      <p className="videoPubSetModal_con-tips">{tips}</p>
-    </>
+    <CommonTopicSelect
+      {...props}
+      account={currChooseAccount.account}
+      value={currChooseAccount.pubParams!.topics!.map((v) => {
+        return {
+          value: v,
+          label: v,
+        };
+      })}
+      onAccountChange={(account) => {
+        updateAccounts({ accounts: [account] });
+      }}
+      onChange={(newValue) => {
+        setOnePubParams({
+          topics: (newValue as CommonTopicSelectValueType[]).map(
+            (v) => v.label,
+          ),
+          diffParams: {
+            ...currChooseAccount.pubParams.diffParams,
+          },
+        });
+      }}
+    >
+      <VideoPubRestartLogin />
+    </CommonTopicSelect>
   );
 }

@@ -3,17 +3,55 @@ import * as crypto from 'crypto';
 import sizeOf from 'image-size';
 import { CommonUtils } from '../../util/common';
 import { FileUtils } from '../../util/file';
-import { getFileContent } from '../utils';
+import { CookieToString, getFileContent } from '../utils';
 import requestNet from '../requestNet';
-import { IXHSTopicsResponse } from './xiaohongshu.type';
+import {
+  IXHSGetWorksResponse,
+  IXHSLocationResponse,
+  IXHSTopicsResponse,
+  XhsCommentListResponse,
+  XhsCommentPostResponse,
+  XiaohongshuApiResponse,
+} from './xiaohongshu.type';
+
+export type XSLPlatformSettingType = {
+  // 标题
+  title?: string;
+  // 描述
+  desc?: string;
+  // 定时发布
+  timingTime?: number;
+  // @用户
+  mentionedUserInfo?: {
+    nickName: string;
+    uid: string;
+  }[];
+  // 话题
+  topicsDetail?: {
+    topicId: string;
+    topicName: string;
+  }[];
+  // 位置
+  poiInfo?: {
+    poiType: number;
+    poiId: string;
+    poiName: string;
+    poiAddress: string;
+  };
+  cover: string;
+  // 0 公共 1 私密 4 好友
+  visibility_type: 0 | 1 | 4;
+};
+
+const esec_token = 'ABrmhLmsdmsu9bCQ80qvGPN2CYSjEqwi5G1l2dirNUjaw%3D';
 
 export class XiaohongshuService {
   private defaultUserAgent =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
   private loginUrl = 'https://creator.xiaohongshu.com/';
-  // private loginUrl = 'https://www.xiaohongshu.com/';
+  private loginUrlHome = 'https://www.xiaohongshu.com/';
   private getUserInfoUrl =
-    'https://creator.xiaohongshu.com/api/galaxy/user/info';
+    'https://edith.xiaohongshu.com/api/sns/web/v2/user/me';
   private getDashboardUrl =
     'https://creator.xiaohongshu.com/api/galaxy/v2/creator/datacenter/account/base';
   private getFansInfoUrl =
@@ -24,9 +62,10 @@ export class XiaohongshuService {
     'https://edith.xiaohongshu.com/web_api/sns/v2/note';
   private fileBlockSize = 5242880;
   private cookieCheckField = 'access-token';
-  // private cookieCheckField = 'web_session';
   private cookieIntervalList: { [key: string]: NodeJS.Timer } = {};
   private prev_web_session = '';
+  private win?: BrowserWindow;
+  private callback?: (progress: number, msg?: string) => void;
 
   /**
    * 授权|预览
@@ -111,8 +150,9 @@ export class XiaohongshuService {
     }
 
     // 加载登录页
-    await win.loadURL(this.loginUrl);
+    await win.loadURL(this.loginUrlHome);
 
+    this.win = win;
     return {
       winContentsId: win.id,
       partition,
@@ -130,30 +170,46 @@ export class XiaohongshuService {
       // Monitor cookie status with interval
       this.cookieIntervalList[winContentsId] = setInterval(async () => {
         try {
-          const cookies = await session.fromPartition(partition).cookies.get({
-            url: this.loginUrl,
-          });
-          // const web_session = cookies.find((v) => v.name === 'web_session');
-          // if (!this.prev_web_session) {
-          //   this.prev_web_session = web_session?.value || '';
-          // }
-          /**
-           * 因为小红书的cookie字段始终存在
-           * 所以判断cookie是否进行更改
-           */
-          // if (this.prev_web_session === (web_session?.value || '')) return;
-
-          const alreadyLogin = cookies.some((cookie) => {
-            return cookie.name.includes(this.cookieCheckField);
-          });
-          if (alreadyLogin) {
-            // Clear interval
-            if (this.cookieIntervalList[winContentsId]) {
-              clearInterval(this.cookieIntervalList[winContentsId] as any);
-              delete this.cookieIntervalList[winContentsId];
+          console.log(
+            this.win!.webContents.getURL().includes(this.loginUrlHome),
+          );
+          console.log(this.win!.webContents.getURL().includes(this.loginUrl));
+          if (this.win!.webContents.getURL().includes(this.loginUrlHome)) {
+            const cookies2 = await session
+              .fromPartition(partition)
+              .cookies.get({
+                url: this.loginUrlHome,
+              });
+            const web_session = cookies2.find((v) => v.name === 'web_session');
+            if (!this.prev_web_session) {
+              this.prev_web_session = web_session?.value || '';
             }
+            if (this.prev_web_session === (web_session?.value || '')) return;
+            await this.win!.loadURL(this.loginUrl + 'login?source=official');
+          } else if (this.win!.webContents.getURL().includes(this.loginUrl)) {
+            const cookies1 = await session
+              .fromPartition(partition)
+              .cookies.get({
+                url: this.loginUrl,
+              });
+            const cookies2 = await session
+              .fromPartition(partition)
+              .cookies.get({
+                url: this.loginUrlHome,
+              });
+            const cookies = cookies1.concat(cookies2);
+            const alreadyLogin = cookies1.some((cookie) => {
+              return cookie.name.includes(this.cookieCheckField);
+            });
+            if (alreadyLogin) {
+              // Clear interval
+              if (this.cookieIntervalList[winContentsId]) {
+                clearInterval(this.cookieIntervalList[winContentsId] as any);
+                delete this.cookieIntervalList[winContentsId];
+              }
 
-            resolve(cookies);
+              resolve(cookies);
+            }
           }
         } catch (error) {
           // Clear interval on error
@@ -210,9 +266,9 @@ export class XiaohongshuService {
     });
 
     return {
-      authorId: userInfo.data.userId || '',
-      nickname: userInfo.data.userName || '',
-      avatar: userInfo.data.userAvatar || '',
+      authorId: userInfo.data.user_id || '',
+      nickname: userInfo.data.nickname || '',
+      avatar: userInfo.data.imageb || '',
       fansCount: fansInfo.data.fans_count || 0,
     };
   }
@@ -246,7 +302,7 @@ export class XiaohongshuService {
       a1: cookie_a1,
     });
 
-    console.log('reverseRes', reverseRes);
+    // console.log('reverseRes', reverseRes);
 
     const userInfo = await this.makeRequest(this.getDashboardUrl, {
       method: 'GET',
@@ -261,14 +317,14 @@ export class XiaohongshuService {
       },
     });
 
-    console.log('userInfouserInfo', JSON.stringify(userInfo));
+    // console.log('userInfouserInfo', JSON.stringify(userInfo));
 
     if (userInfo.code == 0) {
       if (startDate && endDate) {
         // 处理30天的数据
         const dataList = [];
         const startTimestamp = new Date(startDate).getTime();
-        const endTimestamp = new Date(endDate).getTime();
+        const endTimestamp = new Date(endDate).getTime()+1;
 
         // 获取所有列表数据
         const rise_fans_list = userInfo.data.thirty.rise_fans_list || [];
@@ -292,6 +348,7 @@ export class XiaohongshuService {
           list.forEach((item: any) => {
             const timestamp = item.date;
             // 检查日期是否在范围内
+            // console.log('xhs', timestamp, endTimestamp)
             if (timestamp >= startTimestamp && timestamp <= endTimestamp) {
               if (!dateMap[timestamp]) {
                 dateMap[timestamp] = {
@@ -601,7 +658,7 @@ export class XiaohongshuService {
         let remoteVideoId = '';
 
         // 开始上传文件
-        if (filePartInfo.blockInfo.length === 1) {
+        if (filePartInfo.blockInfo?.length === 1) {
           // 获取文件内容
           const fileContent = await FileUtils.getFilePartContent(
             filePath,
@@ -659,7 +716,14 @@ export class XiaohongshuService {
 
           // 分片上传文件
           const uploadPartInfo = [];
+
           for (const i in filePartInfo.blockInfo) {
+            if (this.callback)
+              this.callback(
+                50,
+                `上传视频（${i}/${filePartInfo.blockInfo.length}）`,
+              );
+
             const chunkStart =
               i === '0' ? 0 : filePartInfo.blockInfo[parseInt(i) - 1];
             const chunkEnd = filePartInfo.blockInfo[i] - 1;
@@ -759,49 +823,55 @@ export class XiaohongshuService {
   async publishImageWorkApi(
     cookies: string,
     imagePath: string[],
-    platformSetting: any,
-  ) {
+    platformSetting: XSLPlatformSettingType,
+  ): Promise<{
+    publishTime: number;
+    publishId: string;
+    shareLink: string;
+  }> {
     return new Promise(async (resolve, reject) => {
-      // try {
-      // 初始化cookie
-      const cookieString = CommonUtils.convertCookieToJson(cookies);
-      console.log('cookieString', cookieString);
-      // 上传图片
-      const uploadImgRet = [];
-      for (const imgUrl of imagePath) {
-        // 上传图片, 获取远程Url
-        const imgRet = await this.uploadCoverFile(cookieString, imgUrl);
-        // 添加到成功列表
-        uploadImgRet.push(imgRet);
-      }
-      // 获取cookie_a1
-      const cookieObject = JSON.parse(cookies);
-      let cookie_a1 = null;
-      for (const cookieItem of cookieObject) {
-        if (cookieItem.name === 'a1') {
-          cookie_a1 = cookieItem.value;
-          break;
+      try {
+        // 初始化cookie
+        const cookieString = CommonUtils.convertCookieToJson(cookies);
+        // 上传图片
+        const uploadImgRet = [];
+        for (const imgUrl of imagePath) {
+          // 上传图片, 获取远程Url
+          const imgRet = await this.uploadCoverFile(cookieString, imgUrl);
+          // 添加到成功列表
+          uploadImgRet.push(imgRet);
         }
+        // 获取cookie_a1
+        const cookieObject = JSON.parse(cookies);
+        let cookie_a1 = null;
+        for (const cookieItem of cookieObject) {
+          if (cookieItem.name === 'a1') {
+            cookie_a1 = cookieItem.value;
+            break;
+          }
+        }
+        // 创建作品
+        const uploadResult = {
+          imageList: uploadImgRet,
+        };
+        const { shareLink, publishId } = (await this.postCreateVideo(
+          cookieString,
+          cookie_a1,
+          'image',
+          uploadResult,
+          platformSetting,
+        )) as any;
+        console.log('shareLink', shareLink);
+        console.log('publishId', publishId);
+        // 返回信息
+        resolve({
+          publishTime: Math.floor(Date.now() / 1000),
+          publishId: publishId,
+          shareLink: shareLink,
+        });
+      } catch (e) {
+        reject(e);
       }
-      // 创建作品
-      const uploadResult = {
-        imageList: uploadImgRet,
-      };
-      const { shareLink, publishId } = (await this.postCreateVideo(
-        cookieString,
-        cookie_a1,
-        'image',
-        uploadResult,
-        platformSetting,
-      )) as any;
-      console.log('shareLink', shareLink);
-      console.log('publishId', publishId);
-      // 返回信息
-      resolve({
-        publishTime: Math.floor(Date.now() / 1000),
-        publishId: publishId,
-        shareLink: shareLink,
-      });
     });
   }
 
@@ -820,7 +890,6 @@ export class XiaohongshuService {
     publishType: 'video' | 'image',
     uploadResult: any,
     platformSetting: any,
-    privacy: boolean = false,
   ) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -966,7 +1035,7 @@ export class XiaohongshuService {
         const hashTag = [];
         if (
           platformSetting.hasOwnProperty('topicsDetail') &&
-          platformSetting.topicsDetail.length > 0
+          platformSetting.topicsDetail?.length > 0
         ) {
           for (const topicInfo of platformSetting.topicsDetail) {
             description += ` #${topicInfo.topicName}[话题]# `;
@@ -981,7 +1050,7 @@ export class XiaohongshuService {
         const ats = [];
         if (
           platformSetting.hasOwnProperty('mentionedUserInfo') &&
-          platformSetting.mentionedUserInfo.length > 0
+          platformSetting.mentionedUserInfo?.length > 0
         ) {
           for (const userInfo of platformSetting.mentionedUserInfo) {
             if (
@@ -1034,15 +1103,15 @@ export class XiaohongshuService {
               noteId: 0,
               bizType:
                 platformSetting.hasOwnProperty('timingTime') &&
-                platformSetting.timingTime > Math.floor(Date.now() / 1000)
+                platformSetting.timingTime > Date.now()
                   ? 13
                   : 0,
               noteOrderBind: {},
               notePostTiming: {
                 postTime:
                   platformSetting.hasOwnProperty('timingTime') &&
-                  platformSetting.timingTime > Math.floor(Date.now() / 1000)
-                    ? (platformSetting.timingTime * 1000).toString()
+                  platformSetting.timingTime > Date.now()
+                    ? platformSetting.timingTime.toString()
                     : '',
               },
               noteCollectionBind: {
@@ -1054,13 +1123,16 @@ export class XiaohongshuService {
             post_loc: post_loc,
             privacy_info: {
               op_type: 1,
-              type: privacy ? 1 : 0,
-              user_ids: privacy ? [] : undefined,
+              type: platformSetting['visibility_type'],
+              user_ids:
+                platformSetting['visibility_type'] !== 0 ? [] : undefined,
             },
           },
           image_info: xhs_image_info,
           video_info: xhs_video_info,
         };
+        console.log('platformSetting：', platformSetting);
+        console.log('requestData：', requestData);
         // 获取加密使用的Url
         const encryptUrl = this.postCreateVideoUrl.replace(
           'https://edith.xiaohongshu.com',
@@ -1073,7 +1145,6 @@ export class XiaohongshuService {
           data: requestData,
           a1: cookie_a1,
         });
-        console.log('reverseRes', reverseRes);
         // 发起请求
         const createRes = await this.makeRequest(this.postCreateVideoUrl, {
           method: 'POST',
@@ -1103,9 +1174,16 @@ export class XiaohongshuService {
           reject('创建作品失败,失败原因:' + createRes.msg || '未知');
           return;
         }
+
+        if (this.callback) this.callback(80, '发布完成，正在查询结果...');
+        const worksList = await this.getWorks(cookieString);
+        const works = worksList.data.data.notes.find(
+          (v) => v.id === createRes.data.id,
+        );
+        console.log('works：', works);
         // 返回结果
         resolve({
-          shareLink: createRes.share_link ?? '',
+          shareLink: `https://www.xiaohongshu.com/explore/${createRes.data.id}?xsec_token=${works!.xsec_token}&xsec_source=${works!.xsec_source}`,
           publishId: createRes.data.id,
         });
       } catch (err: any) {
@@ -1132,20 +1210,7 @@ export class XiaohongshuService {
   async publishVideoWorkApi(
     cookies: string,
     filePath: string,
-    platformSetting: {
-      // 标题
-      title?: string;
-      // 描述
-      desc?: string;
-      // 定时发布
-      timingTime?: number;
-      // 话题
-      topicsDetail?: {
-        topicId: string;
-        topicName: string;
-      }[];
-      cover: string;
-    },
+    platformSetting: XSLPlatformSettingType,
     callback: (progress: number, msg?: string) => void,
   ): Promise<{
     publishTime: number;
@@ -1154,6 +1219,7 @@ export class XiaohongshuService {
   }> {
     return new Promise(async (resolve, reject) => {
       try {
+        this.callback = callback;
         callback(5, '正在加载...');
         // 获取文件信息
         const fileInfo = await FileUtils.getFileInfo(filePath);
@@ -1176,7 +1242,7 @@ export class XiaohongshuService {
           fileInfo,
         );
 
-        callback(40, '正在上传封面...');
+        callback(60, '正在上传封面...');
         // 上传封面,获取远程Url
         const { coverDimensions, coverUploadFileId } =
           await this.uploadCoverFile(cookieString, platformSetting['cover']);
@@ -1206,15 +1272,16 @@ export class XiaohongshuService {
         ).catch((err) => {
           reject(err);
         });
-        callback(100);
         // 返回信息
         resolve({
           publishTime: Math.floor(Date.now() / 1000),
           publishId: result.publishId,
-          shareLink: result.shareLink || '',
+          shareLink: result.shareLink,
         });
       } catch (err) {
+        console.warn(err);
         reject(err);
+        callback(-1);
       }
     });
   }
@@ -1254,7 +1321,7 @@ export class XiaohongshuService {
     });
   }
 
-  // 获取话题
+  // 获取话题数据
   async getTopics({
     keyword,
     cookies,
@@ -1266,9 +1333,7 @@ export class XiaohongshuService {
       url: `https://edith.xiaohongshu.com/web_api/sns/v1/search/topic`,
       method: 'POST',
       headers: {
-        Cookie: cookies
-          .map((cookie) => `${cookie.name}=${cookie.value}`)
-          .join('; '),
+        cookie: CookieToString(cookies),
         Referer: this.loginUrl,
         origin: this.loginUrl,
       },
@@ -1280,6 +1345,347 @@ export class XiaohongshuService {
         },
       },
     });
+  }
+
+  // 获取位置数据
+  async getLocations(params: {
+    latitude: number;
+    longitude: number;
+    keyword: string;
+    page?: number;
+    size?: number;
+    source?: string;
+    type?: number;
+    cookies: Electron.Cookie[];
+  }) {
+    return await requestNet<IXHSLocationResponse>({
+      url: 'https://edith.xiaohongshu.com/web_api/sns/v1/local/poi/creator/search',
+      headers: {
+        cookie: CookieToString(params.cookies),
+        Referer: this.loginUrl,
+        origin: this.loginUrl,
+      },
+      method: 'POST',
+      body: {
+        ...params,
+        page: 1,
+        size: 50,
+        source: 'WEB',
+        type: 3,
+      },
+    });
+  }
+
+  // 获取作品列表
+  async getSearchNodeList(cookie: string, qe: string, page: number = 0) {
+    const url = `/api/sns/web/v1/search/notes`;
+
+    // 生成搜索ID的函数
+    function base36encode(number: number): string {
+      const digits = '0123456789abcdefghijklmnopqrstuvwxyz';
+      let base36 = "";
+      while (number > 0) {
+        const remainder = number % 36;
+        base36 = digits[remainder] + base36;
+        number = Math.floor(number / 36);
+      }
+      return base36;
+    }
+
+    function generateSearchId(): string {
+      const timestamp = BigInt(Date.now() * 1000) << BigInt(64);
+      const randomValue = BigInt(Math.floor(Math.random() * 2147483646));
+      return base36encode(Number(timestamp + randomValue));
+    }
+
+    console.log('------ getSearchNodeList --- generateSearchId::', generateSearchId());
+
+    console.log('------ getSearchNodeList --- asdadsda::', qe, page);
+    const body = {
+      keyword: qe,
+      page: page,
+      page_size: 20,
+      search_id: generateSearchId(),
+      sort: 'general',
+      note_type: 0,
+      ext_flags: [],
+      geo: '',
+      filters: [
+        { tags: ['general'], type: 'sort_type' },
+        { tags: ['不限'], type: 'filter_note_type' },
+        { tags: ['不限'], type: 'filter_note_time' },
+        { tags: ['不限'], type: 'filter_note_range' },
+        { tags: ['不限'], type: 'filter_pos_distance' },
+      ],
+      image_formats: ['jpg', 'webp', 'avif'],
+    };
+
+    const reverseRes: any = await this.getReverseResult({
+      url,
+      a1: cookie,
+      data: body,
+    });
+
+    const res = await requestNet<any>({
+      url: `https://edith.xiaohongshu.com${url}`,
+      headers: {
+        cookie: cookie,
+        Referer: this.loginUrl,
+        origin: this.loginUrl,
+        'X-S': reverseRes['X-s'],
+        'X-T': reverseRes['X-t'],
+        userAgent:
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
+      },
+      method: 'POST',
+      body: body,
+    });
+
+    return res;
+  }
+
+  // 获取作品列表
+  async getWorks(cookie: string, page: number = 0) {
+    const url = `/web_api/sns/v5/creator/note/user/posted?tab=0&page=${page}`;
+    const reverseRes: any = await this.getReverseResult({
+      url,
+      a1: cookie,
+    });
+
+    const res = await requestNet<IXHSGetWorksResponse>({
+      url: `https://edith.xiaohongshu.com${url}`,
+      headers: {
+        cookie: cookie,
+        Referer: this.loginUrl,
+        origin: this.loginUrl,
+        'X-S': reverseRes['X-s'],
+        'X-T': reverseRes['X-t'],
+        userAgent:
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
+      },
+      method: 'GET',
+    });
+
+    return res;
+  }
+
+  // 获取@用户列表
+  async getUsers(cookie: Electron.Cookie[], keyword: string, page: number) {
+    return await requestNet<XiaohongshuApiResponse>({
+      url: `https://edith.xiaohongshu.com/web_api/sns/v1/search/user_info`,
+      headers: {
+        cookie: CookieToString(cookie),
+        Referer: this.loginUrl,
+        origin: this.loginUrl,
+      },
+      method: 'POST',
+      body: {
+        keyword,
+        search_id: '',
+        page: {
+          page_size: 10,
+          page,
+        },
+      },
+    });
+  }
+
+  /**
+   * 获取评论列表
+   * @param cookie
+   * @param noteId
+   * @param cursor
+   * @returns
+   */
+  async getCommentList(
+    cookie: Electron.Cookie[],
+    note: {
+      id: string;
+      xsec_token: string;
+    },
+    cursor?: number,
+  ) {
+    const url = `/api/sns/web/v2/comment/page?note_id=${note.id}&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=${note.xsec_token}`;
+    const reverseRes: any = await this.getReverseResult({
+      url,
+      a1: CookieToString(cookie),
+    });
+
+    const res = await requestNet<XhsCommentListResponse>({
+      url: `https://edith.xiaohongshu.com${url}`,
+      headers: {
+        cookie: CookieToString(cookie),
+        Referer: this.loginUrlHome,
+        origin: this.loginUrlHome,
+        'X-S': reverseRes['X-s'],
+        'X-T': reverseRes['X-t'],
+        userAgent:
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
+      },
+      method: 'GET',
+    });
+
+    // console.log('------- xhs getCommentList ---', res);
+
+    return res;
+  }
+
+  // 获取二级评论列表
+  async getSecondCommentList(
+    cookie: Electron.Cookie[],
+    noteId: string,
+    root_comment_id: string,
+    cursor?: string,
+  ) {
+    const url = `/api/sns/web/v2/comment/sub/page?note_id=${noteId}&root_comment_id=${root_comment_id}&num=10&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=${esec_token}`;
+    const reverseRes: any = await this.getReverseResult({
+      url,
+      a1: CookieToString(cookie),
+    });
+
+    const res = await requestNet<XhsCommentListResponse>({
+      url: `https://edith.xiaohongshu.com${url}`,
+      headers: {
+        cookie: CookieToString(cookie),
+        Referer: this.loginUrlHome,
+        origin: this.loginUrlHome,
+        'X-S': reverseRes['X-s'],
+        'X-T': reverseRes['X-t'],
+        userAgent:
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
+      },
+      method: 'GET',
+    });
+
+    console.log('------- xhs getSecondCommentList ---', res);
+
+    return res;
+  }
+
+  /**
+   * 点赞作品
+   * @param cookie
+   * @param noteId
+   * @param content
+   * @param targetCommentId // 回复的评论ID
+   * @returns
+   */
+  async likeNote(cookie: Electron.Cookie[], noteId: string) {
+    console.log('------ likeNote --- noteId', noteId);
+    const url = `/api/sns/web/v1/note/like`;
+    const body = {
+      note_oid: noteId,
+    };
+    const reverseRes: any = await this.getReverseResult({
+      url,
+      a1: CookieToString(cookie),
+      data: body,
+    });
+
+    const res = await requestNet<XhsCommentPostResponse>({
+      url: `https://edith.xiaohongshu.com${url}`,
+      headers: {
+        cookie: CookieToString(cookie),
+        Referer: 'https://www.xiaohongshu.com/',
+        Origin: 'https://www.xiaohongshu.com',
+        'X-S': reverseRes['X-s'],
+        'X-T': reverseRes['X-t'],
+        userAgent:
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
+      },
+      method: 'POST',
+      body,
+    });
+
+    console.log('--- xhs likeNote --- res', res);
+
+    return res;
+  }
+
+  /**
+   * 收藏作品
+   * @param cookie
+   * @param noteId
+   * @param content
+   * @param targetCommentId // 回复的评论ID
+   * @returns
+   */
+  async shoucangNote(cookie: Electron.Cookie[], noteId: string) {
+    const url = `/api/sns/web/v1/note/collect`;
+    const body = {
+      note_id: noteId,
+    };
+    const reverseRes: any = await this.getReverseResult({
+      url,
+      a1: CookieToString(cookie),
+      data: body,
+    });
+
+    const res = await requestNet<XhsCommentPostResponse>({
+      url: `https://edith.xiaohongshu.com${url}`,
+      headers: {
+        cookie: CookieToString(cookie),
+        Referer: 'https://www.xiaohongshu.com/',
+        Origin: 'https://www.xiaohongshu.com',
+        'X-S': reverseRes['X-s'],
+        'X-T': reverseRes['X-t'],
+        userAgent:
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
+      },
+      method: 'POST',
+      body,
+    });
+
+    console.log('--- xhs shoucangNote --- res', res);
+
+    return res;
+  }
+
+  /**
+   * 评论作品
+   * @param cookie
+   * @param noteId
+   * @param content
+   * @param targetCommentId // 回复的评论ID
+   * @returns
+   */
+  async commentPost(
+    cookie: Electron.Cookie[],
+    noteId: string,
+    content: string,
+    targetCommentId?: string,
+  ) {
+    const url = `/api/sns/web/v1/comment/post`;
+    const body = {
+      note_id: noteId,
+      content,
+      target_comment_id: targetCommentId || undefined,
+      at_users: [],
+    };
+    const reverseRes: any = await this.getReverseResult({
+      url,
+      a1: CookieToString(cookie),
+      data: body,
+    });
+
+    const res = await requestNet<XhsCommentPostResponse>({
+      url: `https://edith.xiaohongshu.com${url}`,
+      headers: {
+        cookie: CookieToString(cookie),
+        Referer: 'https://www.xiaohongshu.com/',
+        Origin: 'https://www.xiaohongshu.com',
+        'X-S': reverseRes['X-s'],
+        'X-T': reverseRes['X-t'],
+        userAgent:
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
+      },
+      method: 'POST',
+      body,
+    });
+
+    console.log('--- xhs commentPost --- res', res);
+
+    return res;
   }
 }
 

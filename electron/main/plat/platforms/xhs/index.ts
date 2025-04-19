@@ -1,24 +1,36 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-08 11:40:45
- * @LastEditTime: 2025-02-20 16:22:00
+ * @LastEditTime: 2025-03-24 23:35:16
  * @LastEditors: nevin
  * @Description: 小红书
  */
 import { PlatformBase } from '../../PlatformBase';
 import {
   AccountInfoTypeRV,
+  CommentData,
   CookiesType,
   DashboardData,
   IAccountInfoParams,
+  IGetLocationDataParams,
   IGetTopicsParams,
   IGetTopicsResponse,
-  IVideoPublishParams,
+  IGetUsersParams,
+  VideoCallbackType,
+  WorkData,
 } from '../../plat.type';
 import { PublishVideoResult } from '../../module';
-import { xiaohongshuService } from '../../../../plat/xiaohongshu';
+import {
+  xiaohongshuService,
+  XSLPlatformSettingType,
+} from '../../../../plat/xiaohongshu';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
+import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
+import { CookieToString } from '../../../../plat/utils';
+import { VideoModel } from '../../../../db/models/video';
+import { WorkDataModel } from '../../../../db/models/workData';
+import { ImgTextModel } from '../../../../db/models/imgText';
 
 export class Xhs extends PlatformBase {
   constructor() {
@@ -53,6 +65,7 @@ export class Xhs extends PlatformBase {
         account: userInfo.authorId,
         avatar: userInfo.avatar,
         nickname: userInfo.nickname,
+        fansCount: userInfo.fansCount,
       };
     } catch (error) {
       console.error('Login process failed:', error);
@@ -107,6 +120,7 @@ export class Xhs extends PlatformBase {
       if (!ret.success) throw new Error('获取三方平台数据失败');
       for (const item of ret.data) {
         res.push({
+          time: item.date,
           fans: item.zhangfen,
           read: item.bofang,
           comment: item.pinglun,
@@ -123,54 +137,413 @@ export class Xhs extends PlatformBase {
   }
 
   /**
+   * 搜索作品列表
+   * @param account
+   * @param pcursor
+   * @returns
+   */
+  async getsearchNodeList(account: AccountModel, qe?: string, pageInfo?: any) {
+    // console.log('------ getsearchNodeList xhs pageInfo---', pageInfo);
+    const pageNo = pageInfo ? Number.parseInt(pageInfo.pcursor) : 0;
+    // console.log('------ getsearchNodeList xhs pageNo---', pageNo);
+    const pageSize = 20;
+
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await xiaohongshuService.getSearchNodeList(
+      CookieToString(cookie),
+      qe || '',
+      pageNo,
+    );
+
+    const list: WorkData[] = res.data.data.items.map((v: any) => ({
+      dataId: v.id,
+      readCount: v.note_card?.interact_info?.view_count,
+      likeCount: v.note_card?.interact_info?.liked_count,
+      collectCount: v.note_card?.interact_info?.collected_count,
+      commentCount: v.note_card?.interact_info?.comment_count,
+      title: v.note_card?.display_title,
+      coverUrl: v.note_card?.cover.url_default || '',
+      option: {
+        xsec_token: v.xsec_token,
+      },
+      author: {
+        name: v.note_card?.user?.nickname,
+        avatar: v.note_card?.user?.avatar,
+      },
+      data: v,
+    }));
+
+    const count = res.data.data?.tags?.[0]?.notes_count || 0;
+    const hasMore = res.data.data.has_more;
+    return {
+      list,
+      pageInfo: {
+        count,
+        hasMore,
+        pcursor: hasMore ? pageNo + 1 + '' : '',
+      },
+    };
+  }
+
+  /**
+   * 获取作品列表
+   * @param account
+   * @param pcursor
+   * @returns
+   */
+  async getWorkList(account: AccountModel, pcursor?: string) {
+    const pageNo = pcursor ? Number.parseInt(pcursor) : 0;
+
+    const pageSize = 20;
+
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await xiaohongshuService.getWorks(
+      CookieToString(cookie),
+      pageNo,
+    );
+
+    const list: WorkData[] = res.data.data.notes.map((v) => ({
+      dataId: v.id,
+      readCount: v.view_count,
+      likeCount: v.likes,
+      collectCount: v.collected_count,
+      commentCount: v.comments_count,
+      title: v.display_title,
+      coverUrl: v.images_list[0]?.url || '',
+      option: {
+        xsec_token: v.xsec_token,
+      },
+    }));
+
+    const count = res.data.data?.tags[0]?.notes_count || 0;
+    const hasMore = count > pageSize * (pageNo + 1);
+    return {
+      list,
+      pageInfo: {
+        count,
+        hasMore,
+        pcursor: hasMore ? pageNo + 1 + '' : '',
+      },
+    };
+  }
+
+  /**
    * TODO: 未实现
    * @returns
    * @param dataId
    */
   async getWorkData(dataId: string) {
-    return {};
+    return {
+      dataId: '',
+    };
+  }
+
+  async getCommentList<T>(
+    account: AccountModel,
+    data: WorkData,
+    pcursor?: string,
+  ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+
+    const res = await xiaohongshuService.getCommentList(
+      cookie,
+      {
+        xsec_token: data.option!.xsec_token,
+        id: data.dataId,
+      },
+      pcursor ? Number.parseInt(pcursor) : undefined,
+    );
+
+    // 错误处理
+    if (res.status !== 200 || res.data.code) {
+      console.log('----- getCommentList xhs error---', res);
+      return {
+        list: [],
+        pageInfo: {
+          count: 0,
+          hasMore: false,
+          pcursor: '',
+        },
+      };
+    }
+
+    const list: CommentData[] = [];
+    for (const v of res.data.data.comments) {
+      const subList: CommentData[] = [];
+      for (const sub of v.sub_comments) {
+        subList.push({
+          userId: sub.user_info.user_id,
+          dataId: v.note_id,
+          commentId: sub.id,
+          parentCommentId: v.id,
+          content: sub.content,
+          likeCount: Number.parseInt(sub.like_count),
+          nikeName: sub.user_info.nickname,
+          headUrl: sub.user_info.image,
+          subCommentList: [],
+        });
+      }
+
+      list.push({
+        userId: v.user_info.user_id,
+        dataId: v.note_id,
+        commentId: v.id,
+        parentCommentId: undefined,
+        content: v.content,
+        likeCount: Number.parseInt(v.like_count),
+        nikeName: v.user_info.nickname,
+        headUrl: v.user_info.image,
+        data: v,
+        subCommentList: subList,
+      });
+    }
+
+    return {
+      list: list,
+      pageInfo: {
+        hasMore: res.data.data.has_more,
+        pcursor: res.data.data.cursor,
+      },
+    };
+  }
+
+  async getCreatorCommentListByOther(
+    account: AccountModel,
+    data: WorkData,
+    pcursor?: string,
+  ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await xiaohongshuService.getCommentList(cookie, {
+      xsec_token: data.option!.xsec_token,
+      id: data.dataId,
+    });
+
+    const list: CommentData[] = [];
+
+    for (const v of res.data.data.comments) {
+      const subList: CommentData[] = [];
+
+      for (const sub of v.sub_comments) {
+        subList.push({
+          userId: sub.user_info.user_id,
+          dataId: v.note_id,
+          commentId: sub.id,
+          parentCommentId: v.id,
+          content: sub.content,
+          likeCount: Number.parseInt(sub.like_count),
+          nikeName: sub.user_info.nickname,
+          headUrl: sub.user_info.image,
+          subCommentList: [],
+        });
+      }
+
+      list.push({
+        userId: v.user_info.user_id,
+        dataId: v.note_id,
+        commentId: v.id,
+        parentCommentId: undefined,
+        content: v.content,
+        likeCount: Number.parseInt(v.like_count),
+        nikeName: v.user_info.nickname,
+        headUrl: v.user_info.image,
+        data: v,
+        subCommentList: subList,
+      });
+    }
+
+    return {
+      list: list,
+      pageInfo: {
+        hasMore: res.data.data.has_more,
+        pcursor: res.data.data.cursor,
+      },
+    };
+  }
+
+  async getCreatorSecondCommentListByOther(
+    account: AccountModel,
+    data: WorkData,
+    root_comment_id: string,
+    pcursor?: string,
+  ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+
+    const res = await xiaohongshuService.getSecondCommentList(
+      cookie,
+      data.dataId,
+      root_comment_id,
+      pcursor,
+    );
+    console.log('------ getCreatorSecondCommentListByOther xhs res---', res);
+
+    const list: CommentData[] = [];
+
+    for (const v of res.data.data.comments) {
+      list.push({
+        userId: v.user_info.user_id,
+        dataId: v.note_id,
+        commentId: v.id,
+        parentCommentId: undefined,
+        content: v.content,
+        likeCount: Number.parseInt(v.like_count),
+        nikeName: v.user_info.nickname,
+        headUrl: v.user_info.image,
+        data: v,
+        subCommentList: [],
+      });
+    }
+
+    return {
+      list: list,
+      pageInfo: {
+        hasMore: res.data.data.has_more,
+        pcursor: res.data.data.cursor,
+      },
+    };
+  }
+
+  async createCommentByOther(
+    account: AccountModel,
+    dataId: string, // 作品ID
+    content: string,
+  ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const ret = await xiaohongshuService.commentPost(cookie, dataId, content);
+    console.log('------ createCommentByOther xhs ---', ret);
+    return ret;
+  }
+
+  async dianzanDyOther(
+    account: AccountModel,
+    dataId: string, // 作品ID
+  ): Promise<boolean> {
+    console.log('------ dianzanDyOther3333', dataId);
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await xiaohongshuService.likeNote(cookie, dataId);
+
+    console.log('------ res', res);
+
+    return !!res;
+  }
+
+  async shoucangDyOther(
+    account: AccountModel,
+    dataId: string, // 作品ID
+  ): Promise<boolean> {
+    console.log('------ dianzanDyOther5555', dataId);
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const res = await xiaohongshuService.shoucangNote(cookie, dataId);
+
+    console.log('------ res', res);
+
+    return !!res;
+  }
+
+  async replyCommentByOther(
+    account: AccountModel,
+    commentId: string,
+    content: string,
+    option: {
+      dataId?: string; // 作品ID
+      comment: any; // 辅助数据,原数据
+    },
+  ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const ret = await xiaohongshuService.commentPost(
+      cookie,
+      option.dataId!,
+      content,
+      commentId,
+    );
+
+    return ret;
+  }
+
+  async createComment(
+    account: AccountModel,
+    dataId: string, // 作品ID
+    content: string,
+  ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const ret = await xiaohongshuService.commentPost(cookie, dataId, content);
+
+    return false;
+  }
+
+  async replyComment(
+    account: AccountModel,
+    commentId: string,
+    content: string,
+    option: {
+      dataId?: string; // 作品ID
+      comment: any; // 辅助数据,原数据
+    },
+  ) {
+    const cookie: CookiesType = JSON.parse(account.loginCookie);
+    const ret = await xiaohongshuService.commentPost(
+      cookie,
+      option.dataId!,
+      content,
+      commentId,
+    );
+
+    return false;
   }
   /**
-   * TODO: 未实现
    * @param params
+   * @param callback
    * @returns
    */
-  async videoPublish(params: IVideoPublishParams): Promise<PublishVideoResult> {
+  async videoPublish(
+    params: VideoModel,
+    callback: VideoCallbackType,
+  ): Promise<PublishVideoResult> {
     return new Promise(async (resolve) => {
       const result = await xiaohongshuService
         .publishVideoWorkApi(
           JSON.stringify(params.cookies),
           params.videoPath,
-          {
-            cover: params.coverPath,
-            desc: params.desc,
-            title: params.title,
-            topicsDetail:
-              params.diffParams?.[AccountType.Xhs]?.topicsDetail || [],
-          },
-          () => {},
+          this.pubParamsParse(params),
+          callback,
         )
         .catch((err) => {
           resolve({
             code: 0,
             msg: err,
-            dataId: '',
           });
         });
 
-      if (result && !result.publishId)
+      if (!result || !result.publishId)
         return resolve({
           code: 0,
-          msg: '',
-          dataId: '',
+          msg: '网络繁忙，请稍后重试！',
         });
 
       return resolve({
         code: 1,
-        msg: '',
+        msg: '成功！',
         dataId: result!.publishId,
+        previewVideoLink: result.shareLink,
       });
     });
+  }
+
+  async getUsers(params: IGetUsersParams) {
+    const usersRes = await xiaohongshuService.getUsers(
+      JSON.parse(params.account.loginCookie),
+      params.keyword,
+      params.page,
+    );
+    return {
+      status: usersRes.status,
+      data: usersRes?.data?.data?.user_info_dtos?.map((v) => {
+        return {
+          image: v.user_base_dto.image,
+          id: v.user_base_dto.red_id,
+          name: v.user_base_dto.user_nickname,
+        };
+      }),
+    };
   }
 
   async getTopics({
@@ -181,7 +554,6 @@ export class Xhs extends PlatformBase {
       keyword,
       cookies: JSON.parse(account.loginCookie),
     });
-    console.log(res);
     return {
       status: res.status,
       data: res?.data?.data?.topic_info_dtos?.map((v) => {
@@ -192,6 +564,96 @@ export class Xhs extends PlatformBase {
         };
       }),
     };
+  }
+
+  async getLocationData(params: IGetLocationDataParams) {
+    const locationRes = await xiaohongshuService.getLocations({
+      ...params,
+      keyword: params.keywords,
+      cookies: params.cookie!,
+    });
+    return {
+      status: locationRes.status,
+      data: locationRes?.data?.data?.poi_list?.map((v) => {
+        return {
+          name: v.name,
+          simpleAddress: v.full_address,
+          id: v.poi_id,
+          poi_type: v.poi_type,
+          latitude: v.latitude,
+          longitude: v.longitude,
+          city: v.city_name,
+        };
+      }),
+    };
+  }
+
+  pubParamsParse(params: WorkDataModel): XSLPlatformSettingType {
+    return {
+      cover: params.coverPath || '',
+      desc: params.desc,
+      title: params.title,
+      topicsDetail:
+        params.topics?.map((v) => ({
+          topicId: v,
+          topicName: v,
+        })) || [],
+      timingTime: params.timingTime?.getTime(),
+      visibility_type:
+        params.visibleType === VisibleTypeEnum.Public
+          ? 0
+          : params.visibleType === VisibleTypeEnum.Private
+            ? 1
+            : 4,
+      // 位置
+      poiInfo: params.location
+        ? {
+            poiType: params.location.poi_type!,
+            poiId: params.location.id,
+            poiName: params.location.name,
+            poiAddress: params.location.simpleAddress,
+          }
+        : undefined,
+      // @用户
+      mentionedUserInfo: params.mentionedUserInfo
+        ? params.mentionedUserInfo.map((v) => {
+            return {
+              nickName: v.label,
+              uid: `${v.value}`,
+            };
+          })
+        : undefined,
+    };
+  }
+
+  async imgTextPublish(params: ImgTextModel): Promise<PublishVideoResult> {
+    return new Promise(async (resolve) => {
+      const result = await xiaohongshuService
+        .publishImageWorkApi(
+          JSON.stringify(params.cookies),
+          params.imagesPath,
+          this.pubParamsParse(params),
+        )
+        .catch((err) => {
+          resolve({
+            code: 0,
+            msg: err,
+          });
+        });
+
+      if (!result || !result.publishId)
+        return resolve({
+          code: 0,
+          msg: '网络繁忙，请稍后重试！',
+        });
+
+      return resolve({
+        code: 1,
+        msg: '成功！',
+        dataId: result!.publishId,
+        previewVideoLink: result.shareLink,
+      });
+    });
   }
 }
 

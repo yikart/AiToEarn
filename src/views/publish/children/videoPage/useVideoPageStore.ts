@@ -6,13 +6,20 @@ import {
 } from '@/views/publish/children/videoPage/videoPage';
 import { generateUUID } from '@/utils';
 import { AccountInfo } from '@/views/account/comment';
-import { IVideoFile } from '@/components/Choose/VideoChoose';
+import { getVideoFile, IVideoFile } from '@/components/Choose/VideoChoose';
 import { accountLogin } from '@/icp/account';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { message } from 'antd';
 import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
+import lodash from 'lodash';
+import { VideoModel } from '../../../../../electron/db/models/video';
+import { getImgFile, IImgFile } from '../../../../components/Choose/ImgChoose';
+import { useAICreateTitleStore } from '../../components/AICreateTitle/useAICreateTitle';
+import { usePubStroe } from '../../../../store/pubStroe';
+import { PubRecordModel } from '../../comment';
+import { useAccountStore } from '../../../../store/account';
 
-interface IVideoPageStore {
+export interface IVideoPageStore {
   // 选择的视频数据
   videoListChoose: IVideoChooseItem[];
   // 视频发布设置弹框的 tab选择
@@ -28,6 +35,8 @@ interface IVideoPageStore {
    * 每次操作都会分配一个操作ID
    */
   operateId: string;
+  // 当前选择的账户数据
+  currChooseAccount?: IVideoChooseItem;
 }
 
 const store: IVideoPageStore = {
@@ -40,37 +49,62 @@ const store: IVideoPageStore = {
     cover: undefined,
     visibleType: VisibleTypeEnum.Public,
     topics: [],
+    timingTime: undefined,
+    mixInfo: undefined,
     diffParams: {
-      [AccountType.Xhs]: {
-        topicsDetail: [],
+      [AccountType.Xhs]: {},
+      [AccountType.Douyin]: {
+        hotPoint: undefined,
+        selfDeclare: undefined,
+        activitys: [],
+      },
+      [AccountType.WxSph]: {
+        isOriginal: false,
+        extLink: undefined,
+        activity: undefined,
       },
     },
   },
   loadingPageLoading: false,
   operateId: '',
+  currChooseAccount: undefined,
 };
 
-/**
- * 视频发布所有组件的共享状态和方法
- */
+const getStore = () => {
+  return lodash.cloneDeep(store);
+};
+
+// 视频发布所有组件的共享状态和方法
 export const useVideoPageStore = create(
   combine(
     {
-      ...store,
+      ...getStore(),
     },
-    (set, get, storeApi) => {
+    (_set, get, storeApi) => {
+      const set = (data: Partial<IVideoPageStore>) => {
+        _set(data);
+        if (
+          (data.hasOwnProperty('videoListChoose') &&
+            data.videoListChoose!.length !== 0) ||
+          data.hasOwnProperty('commonPubParams')
+        ) {
+          usePubStroe.getState().setVideoPubSaveData(get());
+        }
+      };
+
       const methods = {
-        // 清除操作ID
-        clearOperateId() {
+        // 设置当前的账户数据
+        setCurrChooseAccount(currChooseAccount: IVideoChooseItem) {
           set({
-            operateId: '',
+            currChooseAccount,
           });
         },
+
         // 设置操作ID
-        setOperateId() {
+        setOperateId(operateId?: string) {
           // if (get().operateId) return;
           set({
-            operateId: generateUUID(),
+            operateId: operateId || generateUUID(),
           });
         },
 
@@ -97,15 +131,10 @@ export const useVideoPageStore = create(
 
         // 初始化发布参数
         pubParamsInit(): IPubParams {
-          return {
-            ...get().commonPubParams,
-          };
+          return lodash.cloneDeep(get().commonPubParams);
         },
 
-        /**
-         * 添加视频数据
-         * @param videoFiles
-         */
+        // 添加视频数据
         addVideos(videoFiles: IVideoFile[]) {
           const { videoListChoose } = get();
           const newValue = [...get().videoListChoose];
@@ -168,10 +197,7 @@ export const useVideoPageStore = create(
           });
         },
 
-        /**
-         * 添加账户数据
-         * @param accounts
-         */
+        // 添加账户数据
         addAccount(accounts: AccountInfo[]) {
           const newV = [...get().videoListChoose];
           // 判断是否只有一个视频数据
@@ -235,10 +261,10 @@ export const useVideoPageStore = create(
 
         // 清空所有数据
         clear() {
-          store.commonPubParams.cover = undefined;
           set({
-            ...store,
+            ...getStore(),
           });
+          useAICreateTitleStore.getState().clear();
         },
 
         // 删除某个视频
@@ -289,7 +315,10 @@ export const useVideoPageStore = create(
 
         // 账户数据批量更新
         updateAccounts({ accounts }: { accounts: AccountInfo[] }) {
+          if (!accounts) return;
+
           const newValue = [...get().videoListChoose];
+          if (newValue.length === 0) return;
           // key=账户ID val= videoListChoose item
           const videoListMap = new Map<number, IVideoChooseItem>();
 
@@ -298,7 +327,8 @@ export const useVideoPageStore = create(
           });
 
           accounts.map((v) => {
-            videoListMap.get(v.id)!.account = v;
+            const videoItem = videoListMap.get(v.id);
+            if (videoItem) videoItem.account = v;
           });
 
           set({
@@ -312,12 +342,12 @@ export const useVideoPageStore = create(
           const commonPubParams = { ...get().commonPubParams };
 
           videoListChoose.map((v) => {
-            for (const key in pubParmas) {
-              if (pubParmas[key as 'title']) {
+            Object.keys(pubParmas).map((key) => {
+              if (pubParmas.hasOwnProperty(key)) {
                 v.pubParams[key as 'title'] = pubParmas[key as 'title'];
                 commonPubParams[key as 'title'] = pubParmas[key as 'title'];
               }
-            }
+            });
           });
           set({
             videoListChoose,
@@ -326,15 +356,15 @@ export const useVideoPageStore = create(
         },
 
         // 设置单条数据的发布参数
-        setOnePubParams(pubParmas: IPubParams, id: string) {
+        setOnePubParams(pubParmas: IPubParams, id?: string) {
           const newValue = [...get().videoListChoose];
-          const findedData = newValue.find((v) => v.id === id);
+
+          const findedData = newValue.find(
+            (v) => v.id === (id || get().currChooseAccount!.id),
+          );
           if (findedData) {
             for (const key in pubParmas) {
-              if (
-                pubParmas[key as 'title'] ||
-                pubParmas[key as 'title'] === ''
-              ) {
+              if (pubParmas.hasOwnProperty(key)) {
                 findedData.pubParams[key as 'title'] =
                   pubParmas[key as 'title'];
               }
@@ -345,11 +375,184 @@ export const useVideoPageStore = create(
           });
         },
 
-        // 账户重新登录
+        // 根据发布记录重新发布设置参数
+        async restartPub(
+          pubRecordList: VideoModel[],
+          accounts: AccountInfo[],
+          pubRecord?: PubRecordModel,
+        ) {
+          set({
+            loadingPageLoading: true,
+          });
+
+          const videoListChoose: IVideoChooseItem[] = [];
+          let commonPubParams: IPubParams = { ...get().commonPubParams };
+
+          const error = (msg: string) => {
+            set({
+              loadingPageLoading: false,
+            });
+            message.error(msg);
+          };
+
+          try {
+            methods.setOperateId();
+
+            commonPubParams = {
+              ...pubRecord,
+              describe: pubRecord?.desc,
+            };
+
+            if (pubRecord!.commonCoverPath) {
+              const cover = await getImgFile(pubRecord!.commonCoverPath);
+              commonPubParams = {
+                ...commonPubParams,
+                cover,
+              };
+            }
+
+            // key=视频路径 val=视频文件，防止多个相同视频重复取视频文件
+            const videoFileMap = new Map<string, IVideoFile>();
+            const coverFileMap = new Map<string, IImgFile>();
+            const accountList = useAccountStore.getState().accountList;
+            for (let i = 0; i < pubRecordList.length; i++) {
+              const pubRecord = pubRecordList[i];
+              const videoPath = pubRecord.videoPath!;
+              const coverPath = pubRecord.coverPath!;
+              // 账户数据更新
+              const account = accountList.find(
+                (account) => account.id === accounts[i].id,
+              );
+
+              // 视频获取
+              let video: void | IVideoFile;
+              if (videoFileMap.has(videoPath)) {
+                video = videoFileMap.get(videoPath);
+              } else {
+                video = await getVideoFile(videoPath).catch((e) => {
+                  console.log(e);
+                });
+              }
+              // 封面获取
+              let cover: void | IImgFile;
+              if (coverFileMap.has(coverPath)) {
+                cover = coverFileMap.get(coverPath);
+              } else {
+                cover = await getImgFile(coverPath).catch((e) => {
+                  console.log(e);
+                });
+              }
+
+              if (!video) return error(`视频获取失败：${videoPath}`);
+              if (!cover) return error(`封面获取失败：${coverPath}`);
+
+              videoFileMap.set(videoPath, video);
+              coverFileMap.set(coverPath, cover);
+
+              const pubParams = {
+                ...pubRecord,
+                cover: cover,
+                describe: pubRecord.desc,
+              };
+              pubParams.id = undefined;
+              pubParams.failMsg = '';
+
+              videoListChoose.push({
+                id: generateUUID(),
+                account,
+                video,
+                pubParams,
+              });
+            }
+          } catch (e) {
+            console.warn(e);
+          }
+
+          set({
+            videoListChoose,
+            loadingPageLoading: false,
+            commonPubParams,
+          });
+        },
+
+        // 根据视频发布的临时存储记录设置发布参数
+        async setTempSaveParams({
+          videoListChoose,
+          commonPubParams,
+          operateId,
+        }: {
+          videoListChoose: IVideoChooseItem[];
+          commonPubParams?: IPubParams;
+          operateId?: string;
+        }) {
+          set({
+            loadingPageLoading: true,
+          });
+          methods.setOperateId(operateId);
+
+          // key=视频路径 val=视频文件，防止多个相同视频重复取视频文件
+          const videoFileMap = new Map<string, IVideoFile>();
+          const coverFileMap = new Map<string, IImgFile>();
+          try {
+            const accountList = useAccountStore.getState().accountList;
+            // 账户数据更新
+            videoListChoose = videoListChoose.map((v) => {
+              v.account = accountList.find(
+                (account) => v.account?.id === account.id,
+              );
+              return v;
+            });
+
+            if (commonPubParams?.cover?.imgPath) {
+              commonPubParams.cover = await getImgFile(
+                commonPubParams.cover.imgPath,
+              );
+            }
+            for (const item of videoListChoose) {
+              const videoPath = item.video?.videoPath;
+              if (videoPath) {
+                if (videoFileMap.has(videoPath)) {
+                  item.video = videoFileMap.get(videoPath);
+                } else {
+                  item.video = await getVideoFile(videoPath);
+                  videoFileMap.set(item.video.videoPath, item.video);
+                }
+              }
+
+              const imgPath = item.pubParams.cover?.imgPath;
+              if (imgPath) {
+                if (coverFileMap.has(imgPath)) {
+                  item.pubParams.cover = coverFileMap.get(imgPath);
+                } else {
+                  item.pubParams.cover = await getImgFile(imgPath);
+                  coverFileMap.set(imgPath, item.pubParams.cover);
+                }
+              }
+            }
+          } catch (e) {
+            console.warn(e);
+          }
+
+          set({
+            ...(commonPubParams
+              ? {
+                  commonPubParams,
+                }
+              : {}),
+            videoListChoose,
+            loadingPageLoading: false,
+          });
+        },
+
+        /**
+         * 账户重新登录。登录成功后会自动更新该条账户数据
+         */
         async accountRestart(pType: AccountType) {
           const res = await accountLogin(pType);
           if (!res) return;
+          console.log(res);
           message.success('登录成功！');
+          // 更新此条账户数据
           methods.updateAccounts({ accounts: [res] });
         },
       };

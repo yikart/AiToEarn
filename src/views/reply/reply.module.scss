@@ -1,0 +1,126 @@
+.reply {
+  height: 100%;
+  :global {
+  }
+}
+
+.action-container {
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  width: 100%; /* 确保占满容器宽度 */
+}
+
+.action-container .ant-tooltip {
+  margin-left: auto; /* 将按钮推到右侧 */
+}
+
+.account {
+  display: flex;
+  height: 100%;
+  :global {
+    .account-con {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    .account-noSelect {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}
+
+// 瀑布流布局样式
+.myMasonryGrid {
+  display: flex;
+  margin-left: -20px;
+  width: auto;
+}
+
+.myMasonryGridColumn {
+  padding-left: 20px;
+  background-clip: padding-box;
+}
+
+.masonryItem {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+// 卡片样式
+.cardContainer {
+  width: 100%;
+  height: 100%;
+  
+  :global {
+    .ant-card {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ant-card-cover {
+      position: relative;
+      padding-top: 100%; // 1:1 宽高比
+      overflow: hidden;
+    }
+
+    .ant-card-cover img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .ant-card-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ant-card-meta {
+      flex: 1;
+    }
+
+    .ant-card-meta-title {
+      margin-bottom: 8px;
+      white-space: normal;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .ant-card-meta-description {
+      white-space: normal;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+  }
+}
+
+.loadMoreArea {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.loadingMore {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.noMoreData {
+  padding: 20px 0;
+}

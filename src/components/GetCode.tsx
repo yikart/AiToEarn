@@ -4,6 +4,7 @@ import { Statistic } from 'antd';
 const { Countdown } = Statistic;
 
 /**
+ * 播放视频
  * 验证码倒计时触发组件
  * @param onGetCode
  */
@@ -22,6 +23,7 @@ function GetCode({ onGetCode }: { onGetCode: (unlock: () => void) => void }) {
         styles['loginForm-getCode'] +
         ` ${isCode ? styles['loginForm-getCode--disable'] : ''}`
       }
+      style={{ display: 'flex',justifyContent: 'center', alignItems: 'center' }}
       onClick={() => {
         if (isCode) return;
         lockCode();
@@ -35,9 +37,10 @@ function GetCode({ onGetCode }: { onGetCode: (unlock: () => void) => void }) {
         <>
           （
           <Countdown
+            style={{fontSize: '12px'}}
             format="ss"
             value={Date.now() + currTime.current}
-            precision={1}
+            precision={1} 
             onFinish={() => {
               setIsCode(false);
             }}

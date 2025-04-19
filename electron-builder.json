@@ -1,26 +1,24 @@
 {
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
-  "appId": "cn.yikart.att",
-  "productName": "爱团团AiToEarn",
+  "appId": "cn.yikart.aiToEarn",
+  "productName": "哎哟赚AiToEarn",
   "asar": true,
+  "asarUnpack": ["**/node_modules/sharp/**/*", "**/node_modules/@img/**/*"],
   "directories": {
     "output": "release/${version}"
   },
-  "files": [
-    "dist-electron",
-    "dist"
-  ],
-"beforePack": "scripts/cleanup-ffmpeg.cjs",
+  "files": ["dist-electron", "dist"],
   "mac": {
-    "identity":null,
-    "artifactName": "${productName}_${version}_${arch}.${ext}",
+    "gatekeeperAssess": false,
+  "hardenedRuntime": true,
+  "entitlements": "scripts/entitlements.mac.plist",
+  "entitlementsInherit": "scripts/entitlements.mac.plist",
+    "identity": null,
+    "artifactName": "${productName}-${version}-${arch}.${ext}",
     "target": [
       {
         "target": "default",
-        "arch": [
-          "x64",
-          "arm64"
-        ]
+        "arch": ["x64", "arm64"]
       }
     ]
   },
@@ -28,12 +26,10 @@
     "target": [
       {
         "target": "nsis",
-        "arch": [
-          "x64"
-        ]
+        "arch": ["x64"]
       }
     ],
-    "artifactName": "${productName}_${version}.${ext}"
+    "artifactName": "${productName}-${version}.${ext}"
   },
   "nsis": {
     "oneClick": false,
@@ -50,16 +46,12 @@
     {
       "from": "public/assets",
       "to": "assets",
-      "filter": [
-        "**/*"
-      ]
+      "filter": ["**/*"]
     },
     {
       "from": "public/bin",
       "to": "bin",
-      "filter": [
-        "**/*"
-      ]
+      "filter": ["**/*"]
     }
   ]
 }

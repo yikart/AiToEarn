@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, memo } from 'react';
+import React, { ForwardedRef, forwardRef, memo, useMemo } from 'react';
 import { IVideoChooseItem } from '@/views/publish/children/videoPage/videoPage';
 import { Alert, Avatar, Button, Tooltip } from 'antd';
 import { AccountPlatInfoMap } from '@/views/account/comment';
@@ -8,19 +8,22 @@ import {
   EditOutlined,
   PlusOutlined,
   VideoCameraFilled,
+  SwapOutlined,
+  ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import VideoChoose from '@/components/Choose/VideoChoose';
 import { formatSeconds } from '@/utils';
 import { AccountStatus } from '../../../../../../commont/AccountEnum';
+import { AccountChooseType } from '../page';
 
 export interface IVideoChooseItemRef {}
 
 export interface IVideoChooseItemProps {
   videoChooseItem: IVideoChooseItem;
   // 用户单选触发
-  onAccountOneChoose: (id: string) => void;
+  onAccountOneChoose: (id: string, type: AccountChooseType) => void;
 }
 
 // 选择视频完成后渲染的列表 item
@@ -51,6 +54,15 @@ const VideoChooseItem = memo(
           accountRestart: state.accountRestart,
         })),
       );
+
+      // 分辨率是否合规
+      const isDpiCompliance = useMemo(() => {
+        if (!videoChooseItem.video) return true;
+        return (
+          videoChooseItem.video.height < 640 ||
+          videoChooseItem.video.width < 480
+        );
+      }, []);
 
       return (
         <div className="videoChooseItem">
@@ -84,7 +96,10 @@ const VideoChooseItem = memo(
                     </div>
                   </div>
                   <div className="videoChooseItem-left-info">
-                    <p className="videoChooseItem-left-title">
+                    <p
+                      className="videoChooseItem-left-title"
+                      title={videoChooseItem.video?.filename}
+                    >
                       {videoChooseItem.video?.filename}
                     </p>
                     <div className="videoChooseItem-left-bottom">
@@ -94,12 +109,23 @@ const VideoChooseItem = memo(
                           {formatSeconds(videoChooseItem.video.duration)}
                         </span>
                       </div>
-                      <div className="videoChooseItem-left-bottom-item">
+                      <div
+                        className={[
+                          'videoChooseItem-left-bottom-item',
+                          isDpiCompliance &&
+                            'videoChooseItem-left-bottom-item--warning',
+                        ].join(' ')}
+                      >
                         <label>分辨率</label>
                         <span>
                           {videoChooseItem.video.width}*
                           {videoChooseItem.video.height}
                         </span>
+                        {isDpiCompliance && (
+                          <Tooltip title="视频清晰度过低，有概率被平台限流或不能发布，推荐您上传 460*640 分辨率以上的视频">
+                            <ExclamationCircleOutlined />
+                          </Tooltip>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -132,6 +158,17 @@ const VideoChooseItem = memo(
                 <div className="videoChooseItem-account">
                   <div className="videoChooseItem-account-avatar">
                     <Avatar src={videoChooseItem.account.avatar} size="large" />
+                    <div
+                      className="videoChooseItem-account-avatar-replace"
+                      onClick={() => {
+                        onAccountOneChoose(
+                          videoChooseItem.id,
+                          AccountChooseType.Replace,
+                        );
+                      }}
+                    >
+                      <SwapOutlined />
+                    </div>
                   </div>
                   <div className="videoChooseItem-account-con">
                     <div className="videoChooseItem-account-top">
@@ -164,7 +201,10 @@ const VideoChooseItem = memo(
                 <div
                   className="videoChooseItem-noAccount"
                   onClick={() => {
-                    onAccountOneChoose(videoChooseItem.id);
+                    onAccountOneChoose(
+                      videoChooseItem.id,
+                      AccountChooseType.Radio,
+                    );
                   }}
                 >
                   <div className="videoChooseItem-noAccount-icon">

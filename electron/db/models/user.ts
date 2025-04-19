@@ -19,6 +19,9 @@ export class UserModel extends TempModel {
   @Column({ type: 'varchar', nullable: false, comment: '用户手机号' })
   phone!: string;
 
+  @Column({ type: 'varchar', nullable: true, comment: '用户微信openid' })
+  wxOpenId!: string;
+
   @Column({ type: 'datetime', nullable: false, comment: '登录时间' })
   loginTime!: Date;
 }

@@ -6,30 +6,6 @@
  * @Description:
  */
 
-import { AccountType } from '../../../../../commont/AccountEnum';
-import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
-import {
-  DiffParmasType,
-  TopicsArrType,
-} from '../../../../../electron/db/models/video';
+import { VideoModel } from '../../../../../electron/db/models/video';
 
-export interface VideoPul {
-  id: number;
-  userId: string;
-  type: AccountType;
-  accountId: number;
-  pubRecordId: number;
-  title: string;
-  desc: string;
-  publishTime: Date;
-  failMsg: string;
-  videoPath: string;
-  coverPath: string;
-  otherInfo: Record<string, any>;
-  createTime?: Date;
-  updateTime?: Date;
-  status: number;
-  visibleType: VisibleTypeEnum;
-  topics: TopicsArrType;
-  diffParams?: DiffParmasType;
-}
+export type VideoPul = VideoModel;

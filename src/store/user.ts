@@ -3,6 +3,8 @@ import { IRefreshToken, IUserInfo } from '@/api/types/user-t';
 import { userApi } from '@/api/user';
 import { StoreKey } from '@/utils/StroeEnum';
 import router from '@/router/index';
+import { usePubStroe } from './pubStroe';
+import { useAccountStore } from './account';
 
 export interface IUserStore {
   userInfo?: IUserInfo;
@@ -28,6 +30,8 @@ export const useUserStore = createPersistStore(
       // 清除登录状态
       clearLoginStatus() {
         set({ ...state });
+        usePubStroe.getState().clear();
+        useAccountStore.getState().clear();
       },
 
       // 退出登录
@@ -45,8 +49,10 @@ export const useUserStore = createPersistStore(
           return;
         }
         const res = await userApi.getUserInfo();
+        console.log('user：', res);
         if (!res) return;
         set({ userInfo: res });
+        return res;
       },
 
       // 设置Token

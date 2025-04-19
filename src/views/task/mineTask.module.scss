@@ -1,0 +1,531 @@
+.mineTaskContainer {
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 8px;
+  min-height: 100%;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.pageTitle {
+  font-size: 20px;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+}
+
+.pageActions {
+  display: flex;
+  align-items: center;
+}
+
+.statusFilter {
+  :global {
+    .ant-select-selector {
+      border-radius: 4px;
+    }
+  }
+}
+
+.refreshButton {
+  border-radius: 4px;
+  
+  &:hover {
+    color: #1890ff;
+    border-color: #1890ff;
+  }
+}
+
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.taskCard {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.taskCardContent {
+  display: flex;
+  align-items: flex-start;
+}
+
+.taskImageContainer {
+  width: 128px;
+  height: 128px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-right: 16px;
+  margin-top: 6px;
+  flex-shrink: 0;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.taskImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.taskInfo {
+  flex: 1;
+  min-width: 0;
+  padding: 2px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.taskHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.taskTitle {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.taskId {
+  font-size: 12px;
+  color: #999;
+  font-weight: normal;
+  margin-left: 12px;
+}
+
+.statusTag {
+  font-size: 12px;
+}
+
+.taskDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.taskDetail {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #666;
+}
+
+.detailIcon {
+  margin-right: 8px;
+  color: #999;
+  font-size: 16px;
+}
+
+.detailLabel {
+  margin-right: 8px;
+  min-width: 70px;
+}
+
+.detailValue {
+  color: #333;
+}
+
+.tagContainer {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.typeTag {
+  font-size: 12px;
+}
+
+.taskAction {
+  margin-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.withdrawButton {
+  width: 100%;
+  background-color: #a66ae4;
+  border-color: #a66ae4;
+  
+  &:hover {
+    background-color: #a66ae4;
+    border-color: #a66ae4;
+  }
+}
+
+.viewButton {
+  min-width: 100px;
+  color: white;
+  
+  &:hover {
+    background-color: #9559d1;
+    border-color: #9559d1;
+    color: white;
+  }
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+.loadMoreContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  
+  button {
+    padding: 0 32px;
+  }
+}
+
+.emptyContainer {
+  background-color: #f9f9f9;
+  padding: 30px 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.emptyText {
+  text-align: center;
+  margin-bottom: 30px;
+  
+  h3 {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+    
+    .emptyHighlight {
+      color: #ff4d4f;
+      font-weight: bold;
+    }
+  }
+  
+  p {
+    color: #666;
+    font-size: 14px;
+  }
+  
+  .emptyLink {
+    color: #1890ff;
+    cursor: pointer;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.emptySubtitle {
+  text-align: center;
+  font-size: 15px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.guideContainer {
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.guideStep {
+  margin-bottom: 30px;
+  
+  h4 {
+    text-align: center;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 20px;
+  }
+}
+
+.qrCodeContainer {
+  display: flex;
+  justify-content: space-around;
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+.qrCodeItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 45%;
+}
+
+.qrCodeTitle {
+  text-align: center;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.qrCodeWrapper {
+  width: 140px;
+  height: 140px;
+  border: 1px solid #eee;
+  padding: 5px;
+  background-color: #fff;
+  margin-bottom: 10px;
+}
+
+.qrCode {
+  width: 100%;
+  height: 100%;
+}
+
+.qrCodeCaption {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.qrCodeSubCaption {
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+}
+
+.processContainer {
+  margin-top: 40px;
+}
+
+.processTitle {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 30px;
+  position: relative;
+  
+  &:before, &:after {
+    content: '';
+    display: inline-block;
+    width: 30px;
+    height: 1px;
+    background-color: #ccc;
+    vertical-align: middle;
+    margin: 0 10px;
+  }
+}
+
+.processSteps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.processStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 20%;
+}
+
+.processIcon {
+  width: 50px;
+  height: 50px;
+  background-color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.stepIcon {
+  width: 30px;
+  height: 30px;
+}
+
+.stepText {
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  max-width: 80px;
+}
+
+.processDivider {
+  flex-grow: 1;
+  height: 1px;
+  background-color: #e8e8e8;
+  position: relative;
+  margin: 0 5px;
+  margin-bottom: 30px;
+  
+  &:after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 6px solid #e8e8e8;
+  }
+}
+
+.guideLink {
+  color: #1890ff;
+  cursor: pointer;
+  text-decoration: underline;
+  
+  &:hover {
+    color: #40a9ff;
+  }
+}
+
+.guideModal {
+  :global {
+    .ant-modal-body {
+      max-height: 70vh;
+      overflow-y: auto;
+      padding: 24px;
+    }
+    
+    .ant-modal-header {
+      border-bottom: 1px solid #f0f0f0;
+      padding: 16px 24px;
+    }
+    
+    .ant-modal-title {
+      font-size: 18px;
+      font-weight: 500;
+      color: #333;
+    }
+    
+    .ant-modal-footer {
+      border-top: 1px solid #f0f0f0;
+      padding: 12px 24px;
+    }
+  }
+}
+
+.guideModalContent {
+  color: #333;
+  line-height: 1.6;
+}
+
+.guideHeader {
+  margin-bottom: 24px;
+  text-align: center;
+  
+  h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+}
+
+.guideDate {
+  color: #999;
+  font-size: 14px;
+}
+
+.guideIntro {
+  margin-bottom: 24px;
+  
+  p {
+    margin-bottom: 12px;
+  }
+}
+
+.guideSection {
+  margin-bottom: 32px;
+  
+  h3 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+}
+
+.guideSteps {
+  padding-left: 24px;
+  
+  li {
+    margin-bottom: 20px;
+  }
+  
+  p {
+    margin-bottom: 12px;
+  }
+}
+
+.guideImageContainer {
+  margin: 16px 0;
+  text-align: center;
+}
+
+.guideImage {
+  max-width: 100%;
+  max-height: 300px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+.guideImageCaption {
+  margin-top: 8px;
+  color: #666;
+  font-size: 14px;
+}
+
+.guideFaq {
+  .faqItem {
+    margin-bottom: 24px;
+    
+    h4 {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 12px;
+      color: #1890ff;
+    }
+    
+    .faqAnswer {
+      padding-left: 16px;
+      border-left: 3px solid #f0f0f0;
+      
+      p {
+        margin-bottom: 12px;
+      }
+    }
+  }
+}

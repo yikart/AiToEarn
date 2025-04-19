@@ -1,9 +1,9 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-17 19:25:29
- * @LastEditTime: 2025-02-22 20:26:05
+ * @LastEditTime: 2025-02-27 16:41:49
  * @LastEditors: nevin
- * @Description: 
+ * @Description:
  */
 import { rmSync } from 'node:fs';
 import path from 'node:path';
@@ -11,6 +11,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import electron from 'vite-plugin-electron/simple';
 import pkg from './package.json';
+import svgr from "vite-plugin-svgr";
+import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
@@ -26,6 +28,13 @@ export default defineConfig(({ command }) => {
         '@': path.join(__dirname, 'src'),
         '@@': path.join(__dirname, 'commont'),
         buffer: 'buffer',
+      },
+    },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: 'modern-compiler',
+        },
       },
     },
     plugins: [
@@ -78,6 +87,10 @@ export default defineConfig(({ command }) => {
         // See 👉 https://github.com/electron-vite/vite-plugin-electron-renderer
         renderer: {},
       }),
+      svgr({ svgrOptions: { icon: true } }),
+      createSvgIconsPlugin({
+        iconDirs: [path.resolve(process.cwd(), "src/assets/svgs")],
+      })
     ],
     server:
       process.env.VSCODE_DEBUG &&

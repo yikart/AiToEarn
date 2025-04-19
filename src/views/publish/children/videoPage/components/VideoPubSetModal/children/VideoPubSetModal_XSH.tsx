@@ -3,96 +3,44 @@ import {
   IVideoPubSetModalChildProps,
   IVideoPubSetModalChildRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/videoPubSetModal.type';
-import { Input, Radio } from 'antd';
-import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
-import { useShallow } from 'zustand/react/shallow';
-import { VisibleTypeEnum } from '@@/publish/PublishEnum';
 import TopicSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/TopicSelect';
+import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
+import {
+  DescTextArea,
+  ScheduledTimeSelect,
+  TitleInput,
+  VideoPubPermission,
+} from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
+import UserSelect from '../components/UserSelect';
 
-const { TextArea } = Input;
-
-const VideoPubSetModal_KWAI = memo(
+const VideoPubSetModal_WxSph = memo(
   forwardRef(
     (
-      { currChooseAccount }: IVideoPubSetModalChildProps,
+      {}: IVideoPubSetModalChildProps,
       ref: ForwardedRef<IVideoPubSetModalChildRef>,
     ) => {
-      const { setOnePubParams } = useVideoPageStore(
-        useShallow((state) => ({
-          setOnePubParams: state.setOnePubParams,
-          videoListChoose: state.videoListChoose,
-        })),
-      );
-
       return (
         <>
-          <h1>标题</h1>
-          <Input
-            value={currChooseAccount.pubParams.title}
-            showCount
-            maxLength={20}
-            placeholder="填写标题，可能会有更多赞哦"
-            variant="filled"
-            onChange={(e) => {
-              setOnePubParams(
-                {
-                  title: e.target.value,
-                },
-                currChooseAccount.id,
-              );
-            }}
-          />
+          <TitleInput title="标题" placeholder="填写标题，可能会有更多赞哦" />
 
-          <h1>描述</h1>
-          <TextArea
-            value={currChooseAccount?.pubParams.describe}
+          <DescTextArea
             placeholder="填写更全面的描述信息，让更多人看到你吧！"
-            variant="filled"
-            showCount
             maxLength={1000}
-            onChange={(e) => {
-              setOnePubParams(
-                {
-                  describe: e.target.value,
-                },
-                currChooseAccount!.id,
-              );
-            }}
           />
 
-          <TopicSelect
-            maxCount={20}
-            currChooseAccount={currChooseAccount}
-            tips="您可以添加20个话题"
-          />
+          <TopicSelect />
 
-          <h1>权限设置</h1>
-          <Radio.Group
-            options={[
-              {
-                label: '公开（所有人可见）',
-                value: VisibleTypeEnum.Public,
-              },
-              {
-                label: '私密（仅自己可见）',
-                value: VisibleTypeEnum.Private,
-              },
-            ]}
-            onChange={(e) => {
-              setOnePubParams(
-                {
-                  visibleType: e.target.value,
-                },
-                currChooseAccount!.id,
-              );
-            }}
-            value={currChooseAccount?.pubParams.visibleType}
-          />
+          <UserSelect title="@用户" />
+
+          <LocationSelect />
+
+          <VideoPubPermission title="谁可以看" />
+          <ScheduledTimeSelect />
         </>
       );
     },
   ),
 );
-VideoPubSetModal_KWAI.displayName = 'VideoPubSetModal_KWAI';
+VideoPubSetModal_WxSph.displayName = 'VideoPubSetModal_WxSph';
 
-export default VideoPubSetModal_KWAI;
+export default VideoPubSetModal_WxSph;

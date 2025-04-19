@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 16:22:03
- * @LastEditTime: 2025-02-22 19:25:00
+ * @LastEditTime: 2025-03-18 22:53:17
  * @LastEditors: nevin
  * @Description: 数据库
  */
@@ -10,15 +10,16 @@ import { AccountModel } from './models/account';
 import { UserModel } from './models/user';
 import { PubRecordModel } from './models/pubRecord';
 import { VideoModel } from './models/video';
-import { AccountStatsModel } from './models/accountStats';
-import { VideoStatsModel } from './models/videoStats';
 import * as migrations from './migrations';
 import path from 'path';
 import { app } from 'electron';
-import { isDev } from '../util';
 import fs from 'fs/promises';
-import { asyData as accountExamine } from './scripts/account';
 import { logger } from '../global/log';
+import { AutoRunModel } from './models/autoRun';
+import { AutoRunRecordModel } from './models/autoRunRecord';
+import { ImgTextModel } from './models/imgText';
+import { ReplyCommentRecordModel } from './models/replyCommentRecord';
+import { InteractionRecordModel } from './models/interactionRecord';
 
 const configPath = app.getPath('userData');
 const database = path.join(configPath, 'database.sqlite');
@@ -28,14 +29,17 @@ export const AppDataSource = new DataSource({
   type: 'better-sqlite3', // 设定链接的数据库类型
   database, // 数据库存放地址
   synchronize: true, // 确保每次运行应用程序时实体都将与数据库同步
-  logging: isDev, // 日志，默认在控制台中打印，数组列举错误类型枚举
+  logging: false, // 日志，默认在控制台中打印，数组列举错误类型枚举
   entities: [
     AccountModel,
     UserModel,
     PubRecordModel,
     VideoModel,
-    AccountStatsModel,
-    VideoStatsModel,
+    AutoRunModel,
+    AutoRunRecordModel,
+    ImgTextModel,
+    ReplyCommentRecordModel,
+    InteractionRecordModel,
   ], // 实体或模型表
   migrations: Object.values(migrations), // 迁移类
   migrationsRun: true, // 确保在连接时自动运行迁移
@@ -48,9 +52,7 @@ export async function initSqlite3Db() {
   if (!AppDataSource.isInitialized) {
     try {
       await AppDataSource.initialize();
-      await AppDataSource.runMigrations();
-      // 运行账号检查
-      await accountExamine(AppDataSource);
+      // await AppDataSource.runMigrations(); // 上面已经有自动迁移
       return true;
     } catch (error) {
       logger.error('Error during database initialization:', error);

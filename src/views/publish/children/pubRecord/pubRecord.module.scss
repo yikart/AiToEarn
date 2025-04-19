@@ -4,21 +4,9 @@
   padding: 20px;
   box-sizing: border-box;
   :global {
-    .pubRecord-pubCon {
-      display: flex;
-      align-items: center;
-      //max-width: 350px;
-      & > img {
-        height: 60px;
-        margin-right: 10px;
-      }
-      &-name {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
+    .pubRecord-options {
+      margin-bottom: 10px;
     }
-
     .pubRecord-record {
       margin-top: 20px;
       display: flex;
@@ -37,6 +25,11 @@
         &-btns {
           display: flex;
           justify-content: right;
+          min-height: 30px;
+          button {
+            margin: 0;
+            padding: 0;
+          }
         }
         &-status {
           position: absolute;
@@ -48,11 +41,15 @@
         }
         &--success {
           background: rgb(218, 245, 233);
-          color: rgb(47, 178, 122);
+          color: var(--successColor);
+        }
+        &--processing {
+          background: #e6f4ff;
+          color: #1677ff;
         }
         &--fail {
           background-color: #ffcccc;
-          color: #ff0000;
+          color: var(--errerColor);
         }
         &-con {
           display: flex;
@@ -86,6 +83,33 @@
           }
         }
       }
+    }
+  }
+}
+
+.pubRecord-component {
+  :global {
+    tr {
+      cursor: pointer;
+    }
+  }
+}
+
+.pubRecord-pubCon {
+  display: flex;
+  align-items: center;
+  :global {
+    .ant-image {
+      flex-shrink: 0;
+      margin-right: 10px;
+      img {
+        object-fit: cover;
+      }
+    }
+    .pubRecord-pubCon-name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }
