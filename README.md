@@ -33,7 +33,8 @@
 ![抖音](https://lf1-cdn-tos.bytegoofy.com/goofy/ies/douyin_web/public/favicon.ico '抖音') 抖音
 ![小红书](https://www.xiaohongshu.com/favicon.ico '小红书') 小红书
 ![视频号](https://res.wx.qq.com/t/wx_fed/finder/helper/finder-helper-web/res/favicon-v2.ico '视频号') 视频号
-![快手](https://s1-111422.kwimgs.com/kos/nlav111422/ks-web/favicon.ico '快手') 快手 
+![快手](https://s1-111422.kwimgs.com/kos/nlav111422/ks-web/favicon.ico '快手') 快手
+  - 支持Qwen大模型一键填写参数
 <img src="./presentation/post.png" alt="post" width="500"/>
 
 - 账号数据汇总分析
@@ -44,13 +45,19 @@
   - 小红书，抖音，视频号，快手，bilibili，公众号分赛道热门内容排行榜
 
 - AI评论自动回复
+  - 支持deepseek大模型
 - AI评论截流
 - AI评论搜索
 <img src="./presentation/comment_search.png" alt="post" width="500"/>
 
 - AI工具排行榜
 <img src="./presentation/tool_rank.png" alt="post" width="500"/>
+
 - 实用AI工具
+  - 支持可以画图的GPT-4o
+  - 支持使用Musetalk制作数字人视频
+  - 支持短视频平台视频下载
+  
 <img src="./presentation/4o.jpeg" alt="post" width="500"/>
  
 
