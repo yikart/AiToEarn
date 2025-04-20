@@ -20,6 +20,8 @@
 - 用AI制作你的内容
 - AI评论管理与截流
 
+## 目前服务极不稳定，我们正在修复，非常抱歉。
+
 ## 里程碑
 - 2025.2.26 发布0.1.1版本
 - 2025.3.15 发布0.2.0版本
@@ -135,8 +137,6 @@ npm run dev
 - ```shell
    xattr -r -d com.apple.quarantine /Applications/哎呦赚AiToEarn.app
   ```
-## 官网下载
-[https://www.aitoearn.cn/](https://www.aitoearn.cn/)
 
 ## 加我微信
 辛苦备注一下 AiToEarn
