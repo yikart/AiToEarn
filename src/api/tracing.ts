@@ -35,13 +35,77 @@ export const TracingApi = {
    * @param data
    */
   apiCreateTracing(data: {
-    id: string;
     type: TracingType;
     tag: string;
     accountId?: number; // 平台账号ID
     desc?: string;
     dataId?: string; // 关联数据id
   }) {
+    return http.post<string>(`/tracing`, data);
+  },
+
+  /**
+   * 创建跟踪-账号添加
+   * @param data
+   */
+  apiCreateTracingAccountAdd(account: { id: number; desc?: string }) {
+    const data: {
+      type: TracingType;
+      tag: string;
+      accountId?: number; // 平台账号ID
+      desc?: string;
+      dataId?: string; // 关联数据id
+    } = {
+      type: TracingType.EVENT,
+      tag: TracingTag.AccountAdd,
+      accountId: account.id,
+      desc: account.desc,
+      dataId: account.id + '',
+    };
+    return http.post<string>(`/tracing`, data);
+  },
+
+  /**
+   * 创建跟踪-视频发布
+   * @param inData
+   */
+  apiCreateTracingVideoPul(inData: {
+    accountId: number;
+    dataId: string; // 视频发布数据ID
+    desc?: string;
+  }) {
+    const data: {
+      type: TracingType;
+      tag: string;
+      accountId?: number; // 平台账号ID
+      desc?: string;
+      dataId?: string; // 关联数据id
+    } = {
+      type: TracingType.EVENT,
+      tag: TracingTag.VideoPul,
+      accountId: inData.accountId,
+      desc: inData.desc,
+      dataId: inData.dataId + '',
+    };
+    return http.post<string>(`/tracing`, data);
+  },
+
+  /**
+   * 创建跟踪-开源项目调用
+   * @param inData
+   */
+  apiCreateTracingOpenProjectUse(inData: { desc?: string }) {
+    const data: {
+      type: TracingType;
+      tag: string;
+      accountId?: number; // 平台账号ID
+      desc?: string;
+      dataId?: string; // 关联数据id
+    } = {
+      type: TracingType.EVENT,
+      tag: TracingTag.OpenProjectUse,
+      desc: inData.desc,
+    };
     return http.post<string>(`/tracing`, data);
   },
 };
