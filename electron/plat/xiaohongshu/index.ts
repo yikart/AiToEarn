@@ -134,21 +134,9 @@ export class XiaohongshuService {
 
     // 设置用户代理
     win.webContents.setUserAgent(this.defaultUserAgent);
+    this.prev_web_session = '';
 
     // 如果有cookies，设置cookies
-    if (cookies) {
-      const parsedCookies =
-        typeof cookies === 'string' ? JSON.parse(cookies) : cookies;
-      for (const cookie of parsedCookies) {
-        await session.fromPartition(partition).cookies.set({
-          url: this.loginUrl,
-          name: cookie.name,
-          value: cookie.value,
-          domain: cookie.domain,
-          path: cookie.path,
-        });
-      }
-    }
 
     // 加载登录页
     await win.loadURL(this.loginUrlHome);
