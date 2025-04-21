@@ -148,10 +148,14 @@ export default function Page() {
                         }
                         actions={[
                           <Tooltip key="comment-list" title="评论列表">
-                            <MenuUnfoldOutlined onClick={() => openCommentList(item)} />
+                            <span className=" cursor-pointer" onClick={() => openCommentList(item)}>
+                              评论列表
+                            </span>
                           </Tooltip>,
                           <Tooltip key="reply" title="评论作品">
-                            <CommentOutlined onClick={() => openReplyWorks(item)} />
+                            <span className=" cursor-pointer" onClick={() => openReplyWorks(item)}>
+                              评论作品
+                            </span>
                           </Tooltip>,
                           <Tooltip key="onekey" title="一键评论">
                             <Popconfirm
@@ -162,11 +166,15 @@ export default function Page() {
                               okText="是"
                               cancelText="否"
                             >
-                              <AliwangwangOutlined />
+                              <span className=" cursor-pointer">
+                                一键评论
+                              </span>
                             </Popconfirm>
                           </Tooltip>,
                           <Tooltip key="auto" title="自动评论">
-                            <FieldTimeOutlined onClick={() => openAddAutoRun(item)} />
+                            <span className="cursor-pointer" onClick={() => openAddAutoRun(item)}>
+                              自动评论
+                            </span>
                           </Tooltip>,
                         ]}
                       >

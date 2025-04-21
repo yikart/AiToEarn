@@ -24,6 +24,7 @@ import {
 import requestNet from '../requestNet';
 import { jsonToQueryString } from '../../util';
 import { DeclarationDouyin } from './common.douyin';
+import { RetryWhile } from '../../../commont/utils';
 
 export type DouyinPlatformSettingType = {
   // 自主声明
@@ -1482,54 +1483,62 @@ export class DouyinService {
               `上传视频（${i}/${filePartInfo.blockInfo.length}）`,
             );
           console.log(`开始上传第 ${parseInt(i) + 1} 个分片...`);
-          // 设置当前文件分片信息
-          const nowUploadParams = JSON.parse(JSON.stringify(uploadParams));
-          nowUploadParams['part_number'] = parseInt(i) + 1;
-          nowUploadParams['part_offset'] = parseInt(i) * this.fileBlockSize;
+          let errorMsg = '';
+          const isSuccess = await RetryWhile(async () => {
+            // 设置当前文件分片信息
+            const nowUploadParams = JSON.parse(JSON.stringify(uploadParams));
+            nowUploadParams['part_number'] = parseInt(i) + 1;
+            nowUploadParams['part_offset'] = parseInt(i) * this.fileBlockSize;
 
-          // 获取分片内容
-          const chunkStart =
-            i === '0' ? 0 : filePartInfo.blockInfo[parseInt(i) - 1];
-          const chunkEnd = filePartInfo.blockInfo[i] - 1;
-          const chunkContent = await FileUtils.getFilePartContent(
-            filePath,
-            chunkStart,
-            chunkEnd,
-          );
+            // 获取分片内容
+            const chunkStart =
+              i === '0' ? 0 : filePartInfo.blockInfo[parseInt(i) - 1];
+            const chunkEnd = filePartInfo.blockInfo[i] - 1;
+            const chunkContent = await FileUtils.getFilePartContent(
+              filePath,
+              chunkStart,
+              chunkEnd,
+            );
 
-          // 获取文件crc32
-          const fileCrc32 = crc32(chunkContent).toString(16);
+            // 获取文件crc32
+            const fileCrc32 = crc32(chunkContent).toString(16);
 
-          // 执行分片上传
-          const uploadPartRes = await this.uploadFile(
-            uploadUrl + '?' + this.httpBuildQuery(nowUploadParams),
-            chunkContent,
-            {
-              Authorization: uploadNodes.StoreInfos[0].Auth,
-              'Content-Crc32': fileCrc32,
-              'Content-Type': 'application/octet-stream',
-              'X-Logical-Part-Mode':
-                uploadNodes.UploadHeader['X-Logical-Part-Mode'],
-              'X-Storage-U': userUid,
-            },
-            'POST',
-          );
-          console.log(`第 ${parseInt(i) + 1} 个分片上传结果:`, uploadPartRes);
+            // 执行分片上传
+            const uploadPartRes = await this.uploadFile(
+              uploadUrl + '?' + this.httpBuildQuery(nowUploadParams),
+              chunkContent,
+              {
+                Authorization: uploadNodes.StoreInfos[0].Auth,
+                'Content-Crc32': fileCrc32,
+                'Content-Type': 'application/octet-stream',
+                'X-Logical-Part-Mode':
+                  uploadNodes.UploadHeader['X-Logical-Part-Mode'],
+                'X-Storage-U': userUid,
+              },
+              'POST',
+            );
+            console.log(`第 ${parseInt(i) + 1} 个分片上传结果:`, uploadPartRes);
 
-          if (uploadPartRes === null) {
-            reject('上传文件失败');
-            return false;
+            if (uploadPartRes === null) {
+              errorMsg = '上传文件失败';
+              return false;
+            }
+
+            if (uploadPartRes.code !== 2000) {
+              errorMsg = uploadPartRes.message;
+              return false;
+            }
+            // 上传分片成功
+            uploadBlockRes.push(
+              `${uploadPartRes.data.part_number}:${uploadPartRes.data.crc32}`,
+            );
+            return true;
+          }, 3);
+
+          if (!isSuccess) {
+            reject(errorMsg);
+            break;
           }
-
-          if (uploadPartRes.code !== 2000) {
-            reject(uploadPartRes.message);
-            return false;
-          }
-
-          // 上传分片成功
-          uploadBlockRes.push(
-            `${uploadPartRes.data.part_number}:${uploadPartRes.data.crc32}`,
-          );
         }
 
         // 分片上传完成,合并分片

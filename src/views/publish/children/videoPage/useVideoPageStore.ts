@@ -398,10 +398,12 @@ export const useVideoPageStore = create(
           try {
             methods.setOperateId();
 
-            commonPubParams = {
-              ...pubRecord,
-              describe: pubRecord?.desc,
-            };
+            for (const key in commonPubParams) {
+              if (pubRecord?.[key as 'title']) {
+                commonPubParams[key as 'title'] = pubRecord![key as 'title'];
+              }
+            }
+            commonPubParams['describe'] = pubRecord?.desc;
 
             if (pubRecord!.commonCoverPath) {
               const cover = await getImgFile(pubRecord!.commonCoverPath);
@@ -450,12 +452,10 @@ export const useVideoPageStore = create(
               coverFileMap.set(coverPath, cover);
 
               const pubParams = {
-                ...pubRecord,
+                ...commonPubParams,
                 cover: cover,
                 describe: pubRecord.desc,
               };
-              pubParams.id = undefined;
-              pubParams.failMsg = '';
 
               videoListChoose.push({
                 id: generateUUID(),
