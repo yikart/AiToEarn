@@ -770,9 +770,12 @@ export default function Task() {
                         className={styles.taskDescription}
                       />
                     </Descriptions.Item>
-                    <Descriptions.Item label="评论内容">
-                      {selectedTask.dataInfo?.commentContent || 'AI智能评论'}
-                    </Descriptions.Item>
+
+                    {selectedTask.type !== TaskType.ARTICLE && (
+                      <Descriptions.Item label="评论内容">
+                        {selectedTask.dataInfo?.commentContent || 'AI智能评论'}
+                      </Descriptions.Item>
+                    )}
 
                     {selectedTask.dataInfo?.worksId && (
                       <Descriptions.Item label="作品ID">
