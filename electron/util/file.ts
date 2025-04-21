@@ -310,4 +310,17 @@ export class FileUtils {
       request.end();
     });
   }
+
+  // 获取路径的文件到前端
+  static async getFileBuffer(filePath: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      fs.readFile(filePath, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  }
 }
