@@ -7,17 +7,17 @@
  */
 import { useState } from 'react';
 import { Button } from 'antd';
-import { ipcGetLogFlies } from '@/icp/tools';
+import { ipcGetLogFlies, ipcUpFlie } from '@/icp/tools';
 import log from 'electron-log/renderer';
 export default function Test() {
   const [filePathList, setFilePathList] = useState<string[]>([]);
+  const [filePath, setFilePath] = useState<string>('');
 
   function addLog() {
     log.info('------3333333-----');
   }
   async function getLogFilePathList() {
     const res = await ipcGetLogFlies();
-    console.log('--------upLog-- res', res);
     setFilePathList(res);
   }
 
@@ -39,11 +39,24 @@ export default function Test() {
         前端产生日志
       </Button>
 
+      <Button
+        onClick={() => {
+          ipcUpFlie(filePath);
+        }}
+      >
+        上传日志文件
+      </Button>
+
       <div>
         {filePathList.map((item) => (
-          <div key={item}>{item}</div>
+          <div onClick={() => setFilePath(item)} key={item}>
+            {item}
+          </div>
         ))}
       </div>
+
+      <br />
+      <div>当前:{filePath}</div>
     </div>
   );
 }

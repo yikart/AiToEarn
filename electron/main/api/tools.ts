@@ -9,7 +9,7 @@ export enum FeedbackType {
   msgFeedback = 'msgFeedback', // 消息反馈
 }
 
-class ToolsApi {
+export class ToolsApi {
   // 获取AI的评论回复
   async aiRecoverReview(inData: {
     content: string;
