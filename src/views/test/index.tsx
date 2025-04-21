@@ -6,57 +6,44 @@
  * @Description: 测试页面
  */
 import { useState } from 'react';
-import VideoChoose, { IVideoFile } from '@/components/Choose/VideoChoose';
 import { Button } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { ipcGetLogFlies } from '@/icp/tools';
+import log from 'electron-log/renderer';
+export default function Test() {
+  const [filePathList, setFilePathList] = useState<string[]>([]);
 
-export default function Text() {
-  const [videoPath, setVideoPath] = useState('');
-  const [fileInfo, setFileInfo] = useState('');
-
-  function addVideos(videoFiles: IVideoFile[]) {
-    console.log('---- videoFiles ----', videoFiles);
-
-    const theVideoPath = videoFiles[0].videoPath;
-    console.log('---- theVideoPath ----', theVideoPath);
-    setVideoPath(theVideoPath);
+  function addLog() {
+    log.info('------3333333-----');
   }
-
-  async function getFileMateInfo() {
-    const res = await window.ipcRenderer.invoke(
-      'ICP_GET_FILE_MATE_INFO',
-      videoPath,
-    );
-
-    setFileInfo(JSON.stringify(res));
-    console.log('---- res ----', res);
+  async function getLogFilePathList() {
+    const res = await ipcGetLogFlies();
+    console.log('--------upLog-- res', res);
+    setFilePathList(res);
   }
 
   return (
     <div>
-      <p>{videoPath}</p>
-      <hr />
-      <p>{fileInfo}</p>
-      <hr />
-      <VideoChoose
-        onMultipleChoose={(videoFiles) => {
-          addVideos(videoFiles);
+      <Button
+        onClick={() => {
+          getLogFilePathList();
         }}
-        onStartShoose={() => {}}
-        onChooseFail={() => {}}
       >
-        <Button type="dashed" icon={<PlusOutlined />}>
-          批量添加
-        </Button>
-      </VideoChoose>
+        获取日志文件列表
+      </Button>
 
       <Button
         onClick={() => {
-          getFileMateInfo();
+          addLog();
         }}
       >
-        获取文件信息
+        前端产生日志
       </Button>
+
+      <div>
+        {filePathList.map((item) => (
+          <div key={item}>{item}</div>
+        ))}
+      </div>
     </div>
   );
 }

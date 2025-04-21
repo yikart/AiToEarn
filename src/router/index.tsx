@@ -45,6 +45,7 @@ import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
 import AiTool from '@/views/aiTool/index';
 import AiRanking from '../views/aiTool/children/aiRanking/index';
 import AiToolWebview from '../views/aiTool/children/aiToolWebview';
+import Test from '@/views/test/index';
 
 interface IRouterMeta {
   // 路由名称
@@ -109,10 +110,6 @@ export const router: CustomRouteObject[] = [
             path: 'image',
             element: <ImagePage />,
           },
-          // {
-          //   path: 'text',
-          //   element: <TextPage />,
-          // },
           { path: 'pubRecord', element: <PubRecord /> },
         ],
       },
@@ -165,11 +162,11 @@ export const router: CustomRouteObject[] = [
       //   element: <Interaction />,
       //   meta: { name: '互动', icon: ShopOutlined },
       // },
-      // {
-      //   path: '/test',
-      //   element: <Test />,
-      //   meta: { name: '测试', icon: ShopOutlined },
-      // },
+      {
+        path: '/test',
+        element: <Test />,
+        meta: { name: '测试', icon: ShopOutlined },
+      },
     ],
   },
   { path: '/login', element: <Login /> },
