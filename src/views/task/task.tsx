@@ -398,7 +398,7 @@ export default function Task() {
 
     console.log('pubList', pubList);
     console.log(accountListChoose);
-    let allAccount = accountListChoose?.length ? accountListChoose : account;
+    let allAccount = accountListChoose?.length ? accountListChoose : [account];
     console.log(allAccount);
 
     for (const account of allAccount) {
