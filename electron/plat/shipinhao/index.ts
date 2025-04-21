@@ -14,6 +14,7 @@ import {
   WxSPHGetMixListResponse,
 } from './wxShp.type';
 import { v4 as uuidv4 } from 'uuid';
+import { RetryWhile } from '../../../commont/utils';
 interface UserInfo {
   authorId: string;
   nickname: string;
@@ -209,7 +210,7 @@ export class ShipinhaoService {
             timestamp: new Date().getTime(),
           },
         });
-        
+
         if (res.errCode === 0) {
           if (endDate && startDate) {
             // 如果传入了日期范围，返回数组格式
@@ -693,47 +694,55 @@ export class ShipinhaoService {
       }
 
       const uploadId = uploadIdRes.UploadID;
-      const uploadPartInfo = [];
+      const uploadPartInfo: any[] = [];
 
       // 分片上传文件
       for (let i = 0; i < filePartInfo.blockInfo.length; i++) {
-        if (this.callback)
-          this.callback(
-            50,
-            `上传视频（${i}/${filePartInfo.blockInfo.length}）`,
+        let errorMsg = '';
+        const isSuccess = await RetryWhile(async () => {
+          if (this.callback)
+            this.callback(
+              50,
+              `上传视频（${i}/${filePartInfo.blockInfo.length}）`,
+            );
+          console.log(
+            `开始上传第 ${i + 1}/${filePartInfo.blockInfo.length} 个分片`,
           );
-        console.log(
-          `开始上传第 ${i + 1}/${filePartInfo.blockInfo.length} 个分片`,
-        );
-        const chunkStart = i === 0 ? 0 : filePartInfo.blockInfo[i - 1];
-        const chunkEnd = filePartInfo.blockInfo[i] - 1;
-        const chunkContent = await FileUtils.getFilePartContent(
-          filePath,
-          chunkStart,
-          chunkEnd,
-        );
-
-        // 开始上传
-        const uploadUrl = `${this.uploadpartdfsUrl}?UploadID=${uploadId}&PartNumber=${i + 1}&QuickUpload=2`;
-        const uploadPartRes = await this.uploadFile(uploadUrl, chunkContent, {
-          Authorization: uploadParams.authKey,
-          'X-Arguments': uploadArgumentsString,
-          'Content-Type': 'application/octet-stream',
-        });
-
-        if (!uploadPartRes?.ETag) {
-          throw new Error(
-            '上传视频失败,失败原因3:' + uploadPartRes.data?.['X-Errno'] ||
-              '未知错误',
+          const chunkStart = i === 0 ? 0 : filePartInfo.blockInfo[i - 1];
+          const chunkEnd = filePartInfo.blockInfo[i] - 1;
+          const chunkContent = await FileUtils.getFilePartContent(
+            filePath,
+            chunkStart,
+            chunkEnd,
           );
+
+          // 开始上传
+          const uploadUrl = `${this.uploadpartdfsUrl}?UploadID=${uploadId}&PartNumber=${i + 1}&QuickUpload=2`;
+          const uploadPartRes = await this.uploadFile(uploadUrl, chunkContent, {
+            Authorization: uploadParams.authKey,
+            'X-Arguments': uploadArgumentsString,
+            'Content-Type': 'application/octet-stream',
+          });
+
+          if (!uploadPartRes?.ETag) {
+            errorMsg =
+              '上传视频失败,失败原因3:' + uploadPartRes.data?.['X-Errno'] ||
+              '未知错误';
+            console.error(errorMsg);
+          }
+
+          // 上传成功
+          uploadPartInfo.push({
+            PartNumber: i + 1,
+            ETag: uploadPartRes.ETag,
+          });
+          console.log(`第 ${i + 1} 个分片上传成功`);
+
+          return true;
+        }, 3);
+        if (!isSuccess) {
+          throw new Error(errorMsg);
         }
-
-        // 上传成功
-        uploadPartInfo.push({
-          PartNumber: i + 1,
-          ETag: uploadPartRes.ETag,
-        });
-        console.log(`第 ${i + 1} 个分片上传成功`);
       }
 
       const completeBody = {

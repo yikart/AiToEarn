@@ -34,6 +34,7 @@ import { parseTopicString } from '../utils';
 import { PublishVideoResult } from '../../electron/main/plat/module';
 import { ImgTextModel } from '../../electron/db/models/imgText';
 import type { pubRecordListQuery } from '../../electron/global/table';
+import { PubStatus } from '../../electron/db/models/pubRecord';
 
 // 创建发布记录
 export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
@@ -43,6 +44,7 @@ export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
     {
       ...pubRecord,
       id: undefined,
+      status: PubStatus.UNPUBLISH,
     },
   );
   return res;

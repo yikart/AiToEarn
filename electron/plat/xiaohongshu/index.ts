@@ -13,6 +13,7 @@ import {
   XhsCommentPostResponse,
   XiaohongshuApiResponse,
 } from './xiaohongshu.type';
+import { RetryWhile } from '../../../commont/utils';
 
 export type XSLPlatformSettingType = {
   // 标题
@@ -170,10 +171,6 @@ export class XiaohongshuService {
       // Monitor cookie status with interval
       this.cookieIntervalList[winContentsId] = setInterval(async () => {
         try {
-          console.log(
-            this.win!.webContents.getURL().includes(this.loginUrlHome),
-          );
-          console.log(this.win!.webContents.getURL().includes(this.loginUrl));
           if (this.win!.webContents.getURL().includes(this.loginUrlHome)) {
             const cookies2 = await session
               .fromPartition(partition)
@@ -220,7 +217,7 @@ export class XiaohongshuService {
           console.error('Failed to get cookies:', error);
           reject(new Error('Failed to get website cookies'));
         }
-      }, 3000); // Check every 3 seconds
+      }, 1500); // Check every 3 seconds
     });
   }
 
@@ -324,7 +321,7 @@ export class XiaohongshuService {
         // 处理30天的数据
         const dataList = [];
         const startTimestamp = new Date(startDate).getTime();
-        const endTimestamp = new Date(endDate).getTime()+1;
+        const endTimestamp = new Date(endDate).getTime() + 1;
 
         // 获取所有列表数据
         const rise_fans_list = userInfo.data.thirty.rise_fans_list || [];
@@ -715,7 +712,7 @@ export class XiaohongshuService {
           }
 
           // 分片上传文件
-          const uploadPartInfo = [];
+          const uploadPartInfo: any[] = [];
 
           for (const i in filePartInfo.blockInfo) {
             if (this.callback)
@@ -723,40 +720,46 @@ export class XiaohongshuService {
                 50,
                 `上传视频（${i}/${filePartInfo.blockInfo.length}）`,
               );
+            const isSuccess = await RetryWhile(async () => {
+              const chunkStart =
+                i === '0' ? 0 : filePartInfo.blockInfo[parseInt(i) - 1];
+              const chunkEnd = filePartInfo.blockInfo[i] - 1;
+              const chunkContent = await FileUtils.getFilePartContent(
+                filePath,
+                chunkStart,
+                chunkEnd,
+              );
 
-            const chunkStart =
-              i === '0' ? 0 : filePartInfo.blockInfo[parseInt(i) - 1];
-            const chunkEnd = filePartInfo.blockInfo[i] - 1;
-            const chunkContent = await FileUtils.getFilePartContent(
-              filePath,
-              chunkStart,
-              chunkEnd,
-            );
+              // 开始上传
+              const uploadPartRes = await this.uploadFile(
+                uploadBaseUrl +
+                  `?uploadId=${uploadId}&partNumber=${parseInt(i) + 1}`,
+                chunkContent,
+                {
+                  Referer: this.loginUrl,
+                  'X-Cos-Security-Token': uploadToken,
+                },
+              );
 
-            // 开始上传
-            const uploadPartRes = await this.uploadFile(
-              uploadBaseUrl +
-                `?uploadId=${uploadId}&partNumber=${parseInt(i) + 1}`,
-              chunkContent,
-              {
-                Referer: this.loginUrl,
-                'X-Cos-Security-Token': uploadToken,
-              },
-            );
+              const headers = uploadPartRes.headers;
+              if (!headers.hasOwnProperty('etag') || headers['etag'] === '') {
+                return false;
+              }
 
-            const headers = uploadPartRes.headers;
-            if (!headers.hasOwnProperty('etag') || headers['etag'] === '') {
+              // 分片上传成功
+              uploadPartInfo.push({
+                Part: {
+                  PartNumber: parseInt(i) + 1,
+                  ETag: headers['etag'],
+                },
+              });
+              return true;
+            }, 3);
+
+            if (!isSuccess) {
               reject('上传视频失败,失败原因:上传分片失败');
-              return;
+              break;
             }
-
-            // 分片上传成功
-            uploadPartInfo.push({
-              Part: {
-                PartNumber: parseInt(i) + 1,
-                ETag: headers['etag'],
-              },
-            });
           }
 
           // 合并分片
@@ -1383,7 +1386,7 @@ export class XiaohongshuService {
     // 生成搜索ID的函数
     function base36encode(number: number): string {
       const digits = '0123456789abcdefghijklmnopqrstuvwxyz';
-      let base36 = "";
+      let base36 = '';
       while (number > 0) {
         const remainder = number % 36;
         base36 = digits[remainder] + base36;
@@ -1398,7 +1401,10 @@ export class XiaohongshuService {
       return base36encode(Number(timestamp + randomValue));
     }
 
-    console.log('------ getSearchNodeList --- generateSearchId::', generateSearchId());
+    console.log(
+      '------ getSearchNodeList --- generateSearchId::',
+      generateSearchId(),
+    );
 
     console.log('------ getSearchNodeList --- asdadsda::', qe, page);
     const body = {

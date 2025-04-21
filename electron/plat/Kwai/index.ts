@@ -14,6 +14,7 @@ import {
   IKwaiUserInfoResponse,
   ILoginResponse,
   KwaiSubmitResponse,
+  KwaiWorkItem,
   RefreshWorksResponse,
   UploadFinishResponse,
   UploadPpreResponse,
@@ -22,7 +23,7 @@ import { CookieToString } from '../utils';
 import { BrowserWindow, screen } from 'electron';
 import kwaiSign from './sign/KwaiSign';
 import { FileUtils } from '../../util/file';
-import { getFilePathNameCommon } from '../../../commont/utils';
+import { getFilePathNameCommon, RetryWhile } from '../../../commont/utils';
 import FormData from 'form-data';
 import fs from 'fs';
 
@@ -92,22 +93,30 @@ class KwaiPub {
 
         for (const i in filePartInfo.blockInfo) {
           callback(40, `上传视频（${i}/${filePartInfo.blockInfo.length}）`);
-          const chunkStart =
-            i === '0' ? 0 : filePartInfo.blockInfo[parseInt(i) - 1];
-          const chunkEnd = filePartInfo.blockInfo[i] - 1;
-          const chunkContent = await FileUtils.getFilePartContent(
-            params.videoPath,
-            chunkStart,
-            chunkEnd,
-          );
-          const uploadVideoRes = await requestNet({
-            method: 'POST',
-            url: `https://upload.kuaishouzt.com/api/upload/fragment?upload_token=${preRes.data.data.token}&fragment_id=${i}`,
-            isFile: true,
-            body: chunkContent,
-          });
-          console.log(`分片上传：（${i}/${filePartInfo.blockInfo.length}）`);
-          console.log(uploadVideoRes.data);
+
+          const isSuccess = await RetryWhile(async () => {
+            const chunkStart =
+              i === '0' ? 0 : filePartInfo.blockInfo[parseInt(i) - 1];
+            const chunkEnd = filePartInfo.blockInfo[i] - 1;
+            const chunkContent = await FileUtils.getFilePartContent(
+              params.videoPath,
+              chunkStart,
+              chunkEnd,
+            );
+            const uploadVideoRes = await requestNet({
+              method: 'POST',
+              url: `https://upload.kuaishouzt.com/api/upload/fragment?upload_token=${preRes.data.data.token}&fragment_id=${i}`,
+              isFile: true,
+              body: chunkContent,
+            });
+            if (uploadVideoRes.data.result === 1) {
+              return true;
+            }
+            console.log(`分片上传：（${i}/${filePartInfo.blockInfo.length}）`);
+          }, 3);
+          if (!isSuccess) {
+            throw new Error('分片上传失败，请稍后重试！');
+          }
         }
 
         callback(60, `查询分片上传结果...`);
@@ -201,14 +210,19 @@ class KwaiPub {
           return reject(submitRes.data.message);
         }
         callback(95, `正在查询发布结果...`);
-        const worksList = await this.getWorks(params.cookies, {
-          queryType: '2',
-        });
-        console.log(worksList);
-        const work = worksList.data.data.list.find(
-          (v) => v.unPublishCoverKey === coverRes.data.data.coverKey,
-        );
-        if (!work) throw '作品查询失败！';
+        let work: KwaiWorkItem | undefined;
+        await RetryWhile(async () => {
+          const worksList = await this.getWorks(params.cookies, {
+            queryType: '2',
+            limit: 20,
+          });
+          console.log('worksList：', worksList);
+          work = worksList.data.data.list.find(
+            (v) => v.unPublishCoverKey === coverRes.data.data.coverKey,
+          );
+          console.log('work：', work);
+          if (work) return true;
+        }, 5);
         console.log('发布成功！');
         resolve({
           shareLink: ``,
