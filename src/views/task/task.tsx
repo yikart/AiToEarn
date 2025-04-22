@@ -7,12 +7,19 @@
  */
 import { useState, useEffect, useRef } from 'react';
 import {
+  ShoppingCartOutlined,
+  ShareAltOutlined,
+  VideoCameraOutlined,
   HistoryOutlined,
   WalletOutlined,
+  FileTextOutlined,
   CommentOutlined,
   UserOutlined,
   ClockCircleOutlined,
   CheckCircleOutlined,
+  PictureOutlined,
+  LeftOutlined,
+  RightOutlined,
 } from '@ant-design/icons';
 import {
   Card,
@@ -30,13 +37,18 @@ import {
   notification,
   Row,
   Col,
+  Divider,
   Carousel,
 } from 'antd';
 import { useInView } from 'react-intersection-observer';
 import styles from './task.module.scss';
 
 // 导入现有的任务组件
+import CarTask from './carTask';
+import PopTask from './popTask';
+import VideoTask from './videoTask';
 import MineTask from './mineTask';
+import ArticleTask from './articleTask';
 // import TaskInfo from './components/TaskInfo';
 import TaskInfo from './components/popInfo';
 // 移除 InteractionTask 导入
@@ -65,8 +77,6 @@ import WxSphIcon from '../../assets/svgs/account/wx-sph.svg';
 import XhsIcon from '../../assets/svgs/account/xhs.svg';
 import DouyinIcon from '../../assets/svgs/account/douyin.svg';
 import logo from '@/assets/logo.png';
-import { useImagePageStore } from '../publish/children/imagePage/useImagePageStore';
-import { useShallow } from 'zustand/react/shallow';
 
 const { Title, Text } = Typography;
 
@@ -263,20 +273,7 @@ export default function Task() {
     });
   };
 
-  const { setCommonPubParams } = useImagePageStore(
-    useShallow((state) => ({
-      setCommonPubParams: state.setCommonPubParams,
-    })),
-  );
-  // TODO 完善跳转逻辑
   const handleJoinTask = (task: any) => {
-    setCommonPubParams({
-      title: '标题',
-      describe: '描述',
-      topics: ['111', '222'],
-    });
-    navigate('/publish/image');
-    return;
     setSelectedTask(task);
 
     // 根据任务类型选择不同的处理逻辑
@@ -401,7 +398,7 @@ export default function Task() {
 
     console.log('pubList', pubList);
     console.log(accountListChoose);
-    const allAccount = accountListChoose?.length ? accountListChoose : account;
+    let allAccount = accountListChoose?.length ? accountListChoose : [account];
     console.log(allAccount);
 
     for (const account of allAccount) {
@@ -773,9 +770,12 @@ export default function Task() {
                         className={styles.taskDescription}
                       />
                     </Descriptions.Item>
-                    <Descriptions.Item label="评论内容">
-                      {selectedTask.dataInfo?.commentContent || 'AI智能评论'}
-                    </Descriptions.Item>
+
+                    {selectedTask.type !== TaskType.ARTICLE && (
+                      <Descriptions.Item label="评论内容">
+                        {selectedTask.dataInfo?.commentContent || 'AI智能评论'}
+                      </Descriptions.Item>
+                    )}
 
                     {selectedTask.dataInfo?.worksId && (
                       <Descriptions.Item label="作品ID">
