@@ -9,10 +9,23 @@ export class TracingController {
 
   // 创建跟踪记录-账号添加
   @Et('ET_TRACING_ACCOUNT_ADD')
-  async updateVideoPul(videoModel: {
-    id: number;
+  async tracingAccountAdd(data: { id: number; desc?: string }): Promise<any> {
+    tracingApi.createTracing(data);
+  }
+
+  // 创建跟踪记录-视频发布
+  @Et('ET_TRACING_VIDEO_PUL')
+  async tracingVideoPul(data: {
+    accountId: number;
+    dataId: string; // 视频发布数据ID
     desc?: string;
   }): Promise<any> {
-    tracingApi.createTracing(videoModel);
+    tracingApi.createTracingVideoPul(data);
+  }
+
+  // 创建跟踪记录-开源项目调用
+  @Et('ET_TRACING_OPENPROJECT_USE')
+  async tracingOpenProjectUse(data: { desc?: string }): Promise<any> {
+    tracingApi.createTracingOpenProjectUse(data);
   }
 }

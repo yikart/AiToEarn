@@ -18,6 +18,7 @@ import { AppService } from './service';
 import { ReplyModule } from './reply/module';
 import { AutoRunModule } from './autoRun/module';
 import { InteractionModule } from './interaction/module';
+import { TracingModule } from './tracing/module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { InteractionModule } from './interaction/module';
     ReplyModule,
     AutoRunModule,
     InteractionModule,
+    TracingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
