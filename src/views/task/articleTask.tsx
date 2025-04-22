@@ -258,7 +258,7 @@ export default function ArticleTask() {
     // 创建一级记录
     const recordRes = await icpCreatePubRecord({
       title: selectedTask.title,
-      desc: selectedTask.description.replace(/<[^>]+>/g, ''),
+      desc: selectedTask.description,
       type: PubType.ImageText,
       coverPath: FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
     });
@@ -278,7 +278,7 @@ export default function ArticleTask() {
       // 创建二级记录
       await icpCreateImgTextPubRecord({
         title: selectedTask.title,
-        desc: selectedTask.description.replace(/<[^>]+>/g, ''),
+        desc: selectedTask.description,
         type: account.type,
         accountId: account.id,
         pubRecordId: recordRes.id,
@@ -429,7 +429,7 @@ export default function ArticleTask() {
                         />
                       </div>
                       <Text type="secondary">
-                        {item.description.replace(/<[^>]+>/g, '')}
+                        {item.description}
                       </Text>
                       <div className={styles.taskDeadline}>
                         <Text type="secondary">
