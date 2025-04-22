@@ -329,12 +329,16 @@ export default function Task() {
         message.success('任务接受成功！');
 
         // handleCompleteTask();
-            setCommonPubParams({
-              title: selectedTask.dataInfo?.title || '',
-              describe: selectedTask.dataInfo?.desc || '',
-              // topics: selectedTask.dataInfo?.topics || '',
-            });
-            navigate('/publish/image');
+
+        if(selectedTask.type == TaskType.ARTICLE){
+          setCommonPubParams({
+            title: selectedTask.dataInfo?.title || '',
+            describe: selectedTask.dataInfo?.desc || '',
+            // topics: selectedTask.dataInfo?.topics || '',
+          });
+          navigate('/publish/image');
+        }
+            
             // return;
       } else {
         message.error(res.msg || '接受任务失败，请稍后再试?');
