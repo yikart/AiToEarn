@@ -14,11 +14,18 @@ export enum FeedbackType {
   msgFeedback = 'msgFeedback', // 消息反馈
 }
 
+export interface CreatefeedbackParmas {
+  content: string;
+  imgUrlList: string[];
+  // fileList: string[];
+  fileUrlList: string[];
+}
+
 export const operateApi = {
   /**
    * 创建反馈
    */
-  createfeedback(data: { content: string; fileUrlList?: string[] }) {
+  createfeedback(data: CreatefeedbackParmas) {
     return http.post<any>(`/feedback`, {
       type: FeedbackType.feedback,
       ...data,

@@ -63,7 +63,9 @@ const Navigation = () => {
       <div className="navigation_drag" />
 
       <div className="navigation-userinfo">
+        <div className="navigation-line" style={{ marginRight: '10px' }}></div>
         <SysMenu />
+        <div className="navigation-line" style={{ marginLeft: '10px' }}></div>
       </div>
 
       <Windowcontrolbuttons />

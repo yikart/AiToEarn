@@ -1,5 +1,4 @@
-import {
-  DownOutlined,
+import Icon, {
   InfoCircleOutlined,
   CloudSyncOutlined,
   LogoutOutlined,
@@ -7,12 +6,16 @@ import {
   PhoneOutlined,
   IdcardOutlined,
 } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
-import { Button, Dropdown, Avatar } from 'antd';
+import { Image, MenuProps } from 'antd';
+import { Button, Dropdown } from 'antd';
 import React, { useEffect, useState } from 'react';
 import Update from '@/components/update';
 import { useUserStore } from '@/store/user';
 import { ipcAppInfo } from '@/icp/app';
+import styles from './sysMenu.module.scss';
+import defaultAvatar from '@/assets/user/defaultAvatar.jpg';
+import Updatelog from '../UpdateLog';
+import Feedback from '@/assets/svgs/user/feedback.svg?react';
 
 const App: React.FC = () => {
   const [appInfo, setAppInfo] = useState<{ version: string }>({
@@ -82,6 +85,14 @@ const App: React.FC = () => {
       type: 'divider',
     },
     {
+      key: '3',
+      label: <Updatelog />,
+      icon: <Icon component={Feedback} className="text-[#a66ae4]" />,
+    },
+    {
+      type: 'divider',
+    },
+    {
       key: '2',
       label: (
         <Button
@@ -102,21 +113,12 @@ const App: React.FC = () => {
   return (
     <Dropdown
       menu={{ items }}
-      trigger={['hover']}
-      placement="bottomRight"
+      placement="bottomCenter"
       overlayClassName="min-w-[240px]"
       overlayStyle={{ marginTop: '8px' }}
     >
-      <div className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-3 py-1.5 rounded-full transition-all duration-300 group">
-        <Avatar
-          size="small"
-          icon={<UserOutlined />}
-          className="bg-[#a66ae4] group-hover:shadow-sm transition-all duration-300"
-        />
-        <span className="text-gray-600 text-sm">
-          {userStore.userInfo?.name || '未登录'}
-        </span>
-        <DownOutlined className="text-gray-400 text-xs transition-transform duration-300 group-hover:rotate-180" />
+      <div className={styles.sysMenu}>
+        <Image className="sysMenu-avatar" src={defaultAvatar} preview={false} />
       </div>
     </Dropdown>
   );

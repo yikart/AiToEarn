@@ -1,0 +1,11 @@
+.sysMenu {
+  width: 30px;
+  height: 30px;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 5px;
+  :global {
+    .sysMenu-avatar {
+    }
+  }
+}
