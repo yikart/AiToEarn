@@ -145,7 +145,7 @@ gap: 0px 28px;
   }
 
   .taskDeadline {
-    margin-top: auto;
+    margin-top: 8px;
     padding-top: 8px;
     border-top: 1px solid #f0f0f0;
   }
@@ -588,7 +588,7 @@ gap: 0px 28px;
   .taskDetailHeader {
     margin-bottom: 16px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 12px;
   }
   
