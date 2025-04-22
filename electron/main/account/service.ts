@@ -10,6 +10,7 @@ import { Injectable } from '../core/decorators';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { AccountType } from '../../../commont/AccountEnum';
 import platController from '../plat/index';
+import { EtEvent } from '../../global/event';
 
 @Injectable()
 export class AccountService {
@@ -36,7 +37,16 @@ export class AccountService {
     const accountData = await this.accountRepository.findOne({ where: filter });
     account.loginTime = new Date();
     // 添加数据
-    if (!accountData) return await this.accountRepository.save(account);
+    if (!accountData) {
+      const newAccount = await this.accountRepository.save(account);
+      // 上报账号添加事件
+      EtEvent.emit('ET_TRACING_ACCOUNT_ADD', {
+        id: newAccount.id,
+        desc: '添加账户' + query.type,
+      });
+
+      return newAccount;
+    }
 
     // 更新数据
     await this.accountRepository.update(filter, account);

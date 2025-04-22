@@ -23,6 +23,7 @@ import { PubItemVideo } from './pub/PubItemVideo';
 import { AccountType } from '../../../commont/AccountEnum';
 import { PubItemImgText } from './pub/PubItemImgText';
 import { ImgTextModel } from '../../db/models/imgText';
+import { EtEvent } from '../../global/event';
 
 class PlatController {
   // 所有平台
@@ -89,6 +90,13 @@ class PlatController {
           videoModel,
           platform,
         );
+
+        EtEvent.emit('ET_TRACING_VIDEO_PUL', {
+          accountId: videoModel.accountId,
+          dataId: videoModel.dataId,
+          desc: '发布成功！',
+        });
+
         tasks.push(pubItemVideo.publishVideo());
       }
     }

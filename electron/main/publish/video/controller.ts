@@ -18,7 +18,7 @@ import { PublishService } from '../service';
 import platController from '../../plat';
 import { AccountService } from '../../account/service';
 import { AccountType } from '../../../../commont/AccountEnum';
-import lodash from 'lodash';
+import { EtEvent } from '../../../global/event';
 
 @Controller()
 export class VideoPubController {
@@ -76,17 +76,21 @@ export class VideoPubController {
 
       let successCount = 0;
       pubRes.map((v) => {
-        if (v.code === 1) successCount++;
+        if (v.code === 1) {
+          successCount++;
+        }
       });
+
       // 更改记录状态
-      await this.publishService.updatePubRecordStatus(
-        pubRecordId,
+      const theStatus =
         successCount === 0
           ? PubStatus.FAIL
           : successCount === pubRes.length
             ? PubStatus.RELEASED
-            : PubStatus.PartSuccess,
-      );
+            : PubStatus.PartSuccess;
+
+      await this.publishService.updatePubRecordStatus(pubRecordId, theStatus);
+
       return pubRes;
     } catch (e) {
       console.error(e);
