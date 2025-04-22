@@ -435,7 +435,7 @@ export default function InteractionTask() {
                         />
                       </div>
                       <Text type="secondary">
-                        {item.description.replace(/<[^>]+>/g, '')}
+                        {item.description}
                       </Text>
                       <div className={styles.taskDeadline}>
                         <Text type="secondary">

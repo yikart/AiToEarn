@@ -37,7 +37,7 @@ export interface IVideoFile {
   width: number;
   // 视频高度
   height: number;
-  // 视频下取整的时长
+  // 视频下取整的时长,单位秒
   duration: number;
   // 视频首帧图片
   cover: IImgFile;

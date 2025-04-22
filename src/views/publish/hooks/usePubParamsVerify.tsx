@@ -28,10 +28,11 @@ export interface ErrPubParamsItem {
 
 export type ErrPubParamsMapType = Map<string | number, ErrPubParamsItem>;
 
-interface IPubParamsVerifyItem {
+interface IPubParamsVerifyItem<T = undefined> {
   id: string | number;
   account?: AccountInfo;
   pubParams: IPubParams;
+  other: T;
 }
 
 /**
@@ -39,18 +40,18 @@ interface IPubParamsVerifyItem {
  * @param data
  * @param moreVerify
  */
-export default function (
-  data: IPubParamsVerifyItem[],
+export default function <T>(
+  data: IPubParamsVerifyItem<T>[],
   moreVerify?: {
     // 错误参数扩展
     moreErrorVerifyCallback?: (
-      item: IPubParamsVerifyItem,
+      item: IPubParamsVerifyItem<T>,
       errParamsMapTemp: ErrPubParamsMapType,
       platInfo: IAccountPlatInfo,
     ) => void;
     // 警告参数扩展
     moreWranVerifyCallback?: (
-      item: IPubParamsVerifyItem,
+      item: IPubParamsVerifyItem<T>,
       wranParamsMapTemp: ErrPubParamsMapType,
       platInfo: IAccountPlatInfo,
     ) => void;

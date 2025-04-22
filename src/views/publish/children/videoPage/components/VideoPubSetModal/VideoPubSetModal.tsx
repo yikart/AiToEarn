@@ -47,9 +47,11 @@ import VideoPubSetModalVideo, {
 import { usePubStroe } from '../../../../../../store/pubStroe';
 
 import usePubParamsVerify, {
+  PubParamsErrStatusEnum,
   PubParamsVerifyInfo,
 } from '../../../../hooks/usePubParamsVerify';
 import { useAccountStore } from '../../../../../../store/commont';
+import { IVideoFile } from '../../../../../../components/Choose/VideoChoose';
 
 export interface IVideoPubSetModalRef {}
 
@@ -130,14 +132,29 @@ const VideoPubSetModal = memo(
       >(new Map());
       const [pubProgressModuleOpen, setPubProgressModuleOpen] = useState(false);
       const videoPubSetModalVideoRef = useRef<IVideoPubSetModalVideoRef>(null);
-      const { errParamsMap, warnParamsMap } = usePubParamsVerify(
+      const { errParamsMap, warnParamsMap } = usePubParamsVerify<IVideoFile>(
         videoListChoose.map((v) => {
           return {
             id: v.id,
             account: v.account,
             pubParams: v.pubParams,
+            other: v.video!,
           };
         }),
+        {
+          moreErrorVerifyCallback(item, errParamsMapTemp) {
+            if (
+              item?.account?.type === AccountType.Douyin &&
+              item.other?.duration > 3600
+            ) {
+              errParamsMapTemp.set(item.id, {
+                message: '视频错误',
+                errType: PubParamsErrStatusEnum.PARAMS,
+                parErrMsg: `抖音平台规定视频时长最大不能超过60分钟！`,
+              });
+            }
+          },
+        },
       );
 
       useEffect(() => {

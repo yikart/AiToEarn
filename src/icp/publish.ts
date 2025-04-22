@@ -55,6 +55,9 @@ export async function icpCreateImgTextPubRecord(
   pubRecord: Partial<ImgTextModel>,
 ) {
   const platInfo = AccountPlatInfoMap.get(pubRecord.type!)!;
+  const { topics, cleanedString } = parseTopicString(pubRecord.desc || '');
+  pubRecord.topics = [...new Set(pubRecord.topics?.concat(topics))];
+  pubRecord.desc = cleanedString;
   pubRecord.imagesPath = [...pubRecord.imagesPath!].splice(
     0,
     platInfo.commonPubParamsConfig.imgTextConfig?.imagesMax,

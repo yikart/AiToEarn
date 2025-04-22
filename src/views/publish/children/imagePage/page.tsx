@@ -24,7 +24,6 @@ import { useAccountStore } from '../../../../store/commont';
 import { useNavigate } from 'react-router-dom';
 import { usePubStroe } from '../../../../store/pubStroe';
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import { AccountPlatInfoMap } from '../../../account/comment';
 
 const { confirm } = Modal;
 
