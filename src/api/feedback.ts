@@ -19,15 +19,9 @@ export const operateApi = {
    * 创建反馈
    */
   createfeedback(data: { content: string; fileUrlList?: string[] }) {
-    return http.post<any>(
-      `/feedback`,
-      {
-        type: FeedbackType.feedback,
-        ...data,
-      },
-      {
-        isToken: true,
-      },
-    );
+    return http.post<any>(`/feedback`, {
+      type: FeedbackType.feedback,
+      ...data,
+    });
   },
 };

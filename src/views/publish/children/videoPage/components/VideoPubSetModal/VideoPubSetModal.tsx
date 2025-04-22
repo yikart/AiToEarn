@@ -150,7 +150,7 @@ const VideoPubSetModal = memo(
               errParamsMapTemp.set(item.id, {
                 message: '视频错误',
                 errType: PubParamsErrStatusEnum.PARAMS,
-                parErrMsg: `抖音平台规定视频时长最大不能超过60分钟！`,
+                parErrMsg: `抖音平台规定视频时长最多不能超过60分钟！`,
               });
             }
           },
