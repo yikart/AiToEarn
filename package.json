@@ -1,4 +1,7 @@
 {
+  "build": {
+    "appId": "cn.aitoearn.pc"
+  },
   "name": "aiToEarn",
   "version": "0.7.0-alpha.1",
   "main": "dist-electron/main/index.js",

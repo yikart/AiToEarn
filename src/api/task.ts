@@ -107,10 +107,18 @@ export const taskApi = {
       },
     );
   },
+
   // 删除搜索笔记任务
   deleteSearchNotesTask: (data: {
     userId: string;
     taskType: string;
     taskId: string;
   }) => hotHttp.post('/comment/search/notes/delete', data),
+
+  // 统计合计进行中的任务的金额总数
+  getTotalAmountOfDoingTasks() {
+    return http.get<number>(`/tasks/reward/amount`, {
+      isToken: true,
+    });
+  },
 };

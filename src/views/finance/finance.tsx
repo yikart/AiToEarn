@@ -3,27 +3,32 @@
  * @Date: 2025-02-10 22:20:15
  * @LastEditTime: 2025-02-28 21:42:15
  * @LastEditors: nevin
- * @Description: 任务页面
+ * @Description: 钱包页面
  */
 import {
+  VideoCameraOutlined,
   WalletOutlined,
   HistoryOutlined,
   AccountBookOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
-import { Segmented, Card, Typography, Space, Row, Col } from 'antd';
+import { Segmented, Card, Typography, Space, Row, Col, Tooltip } from 'antd';
 import { Outlet, useNavigate } from 'react-router-dom';
 import styles from './finance.module.scss';
 import { useState, useEffect } from 'react';
 import { financeApi } from '@/api/finance';
+import { taskApi } from '@/api/task';
 
 const { Title, Text } = Typography;
 
 export default function Page() {
   const navigate = useNavigate();
   const [balance, setBalance] = useState<number>(0);
+  const [pendingBalance, setPendingBalance] = useState<number>(0);
 
   useEffect(() => {
     getBalance();
+    getTotalAmountOfDoingTasks();
     // 默认导航到提现记录界面
     navigate('userWalletRecord', { replace: true });
   }, []);
@@ -38,6 +43,15 @@ export default function Page() {
     }
   };
 
+  const getTotalAmountOfDoingTasks = async () => {
+    try {
+      const res = await taskApi.getTotalAmountOfDoingTasks();
+      setPendingBalance(res || 0);
+    } catch (error) {
+      console.error('获取待提取余额失败:', error);
+    }
+  };
+
   return (
     <div className={styles.finance}>
       <div className={styles.header}>
@@ -48,9 +62,22 @@ export default function Page() {
                 <Text type="secondary" className={styles.balanceLabel}>
                   账户余额
                 </Text>
-                <Title level={2} className={styles.balanceAmount}>
-                  ¥{balance.toFixed(2)}
-                </Title>
+                <div className="flex items-center">
+                  <Title level={2} className={styles.balanceAmount}>
+                    ¥{balance.toFixed(2)}
+                  </Title>
+                  <div className="flex items-center ml-4">
+                    <Text type="secondary" className="text-sm" style={{ color: '#ccc' }}>
+                      预计收益: ¥{pendingBalance.toFixed(2) } 
+                    </Text>
+                    <Tooltip 
+                      title="任务完成周期之前，完成任务获得的预计收益，任务周期结束自动进入余额"
+                      placement="top"
+                    >
+                      <QuestionCircleOutlined className="ml-1 text-gray-400 cursor-help" />
+                    </Tooltip>
+                  </div>
+                </div>
               </Space>
             </Col>
             <Col>

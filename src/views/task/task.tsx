@@ -270,13 +270,15 @@ export default function Task() {
   );
   // TODO 完善跳转逻辑
   const handleJoinTask = (task: any) => {
-    setCommonPubParams({
-      title: '标题',
-      describe: '描述',
-      topics: ['111', '222'],
-    });
-    navigate('/publish/image');
-    return;
+
+    // setCommonPubParams({
+    //   title: "标题1",
+    //   describe: "描述1",
+    //   topics: ["话题1","话题2"],
+    // });
+    // navigate('/publish/image');
+    // return;
+    // console.log('task@:', task);
     setSelectedTask(task);
 
     // 根据任务类型选择不同的处理逻辑
@@ -317,19 +319,56 @@ export default function Task() {
    */
   async function taskApply() {
     // 00.00 测试
-    // handleCompleteTask();
-    // return;
+    if (!selectedTask) return;
+
+    try {
+      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
+
+      // const res: any = {
+      //   code: 0,
+      //   data: {
+      //   }
+      // }
+
+      // 存储任务记录信息 00.00
+      // console.log('jieshou :', res);
+      if (res.code == 0 && res.data) {
+        setTaskRecord(res.data);
+        message.success('任务接受成功！');
+
+        // handleCompleteTask();
+
+        // console.log('selectedTask.dataInfo', selectedTask.dataInfo);
+
+        if(selectedTask.type == TaskType.ARTICLE){
+          setCommonPubParams({
+            title: selectedTask.dataInfo?.title || '',
+            describe: selectedTask.dataInfo?.desc || '',
+            topics: selectedTask.dataInfo?.topicList || [],
+          });
+          navigate('/publish/image');
+        }
+            
+            // return;
+      } else {
+        message.error(res.msg || '接受任务失败，请稍后再试?');
+      }
+    } catch (error) {
+      message.error('接受任务失败，请稍后再试');
+    }
+  }
+
+  async function taskApplyoney(){
     if (!selectedTask) return;
 
     try {
       const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
       // 存储任务记录信息 00.00
-      console.log('jieshou :', res);
+      // console.log('jieshou :', res);
       if (res.code == 0 && res.data) {
         setTaskRecord(res.data);
         message.success('任务接受成功！');
 
-        handleCompleteTask();
       } else {
         message.error(res.msg || '接受任务失败，请稍后再试?');
       }
@@ -589,7 +628,7 @@ export default function Task() {
                   variant="outlined"
                   cover={
                     <div className={styles.taskImage}>
-                      <Image
+                      <Image 
                         src={
                           item.imageUrl
                             ? FILE_BASE_URL + item.imageUrl
@@ -624,7 +663,8 @@ export default function Task() {
                     <Space key="recruits">
                       <UserOutlined />
                       <Text>
-                        {item.currentRecruits}/{item.maxRecruits}
+                        {item.currentRecruits}
+                        {/* /{item.maxRecruits} */}
                       </Text>
                     </Space>,
                     <Space key="time">
@@ -638,7 +678,7 @@ export default function Task() {
                       onClick={() => handleJoinTask(item)}
                     >
                       {item.isAccepted ? '已参与' : '参与任务'}
-                    </Button>,
+                    </Button>, 
                   ]}
                 >
                   <Card.Meta
@@ -664,7 +704,15 @@ export default function Task() {
                             showInfo={false}
                           />
                         </div>
-                        <Text type="secondary">{item.description}</Text>
+                        <div
+                        dangerouslySetInnerHTML={{
+                          __html: item.description,
+                        }}
+                        className={styles.taskDescription}
+                      />
+                        {/* <Text type="secondary">
+                          {item.description}
+                        </Text> */}
                         <div className={styles.taskDeadline}>
                           <Text type="secondary">
                             截止时间：{formatDate(item.deadline)}
@@ -703,8 +751,8 @@ export default function Task() {
           open={modalVisible}
           onCancel={() => setModalVisible(false)}
           footer={[
-            <Button key="cancel" onClick={() => setModalVisible(false)}>
-              取消
+            <Button key="cancel" onClick={() => taskApplyoney }>
+              领取
             </Button>,
             <Button
               key="complete"
@@ -712,7 +760,7 @@ export default function Task() {
               icon={<CheckCircleOutlined />}
               onClick={taskApply}
             >
-              一键完成
+              领取&发布
             </Button>,
           ]}
           width={700}
@@ -724,11 +772,11 @@ export default function Task() {
                   <div className={styles.taskDetailHeader}>
                     <Title level={4}>{selectedTask.title}</Title>
                     <Space>
-                      <Tag color="green">¥{selectedTask.reward}</Tag>
-                      <Tag color="blue">
+                    <Tag color="blue">
                         {TaskTypeName.get(selectedTask.type as TaskType) ||
                           '未知任务'}
                       </Tag>
+                      <Tag color="green">赚 ¥{selectedTask.reward}</Tag>
                     </Space>
                   </div>
                 </Col>
@@ -765,10 +813,23 @@ export default function Task() {
                 <Col span={24}>
                   {/* <Divider orientation="left">任务信息</Divider> */}
                   <Descriptions column={1} bordered>
-                    <Descriptions.Item label="任务描述">
+                    <Descriptions.Item label="发布标题">
                       <div
                         dangerouslySetInnerHTML={{
-                          __html: selectedTask.description,
+                          __html: selectedTask.dataInfo?.title,
+                        }}
+                        className={styles.taskDescription}
+                      />
+                    </Descriptions.Item>
+                    <Descriptions.Item label="发布描述">
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: selectedTask.dataInfo?.desc + 
+                            (selectedTask.dataInfo?.topicList?.length > 0 
+                              ? '<span style="color: #999; font-size: 12px; margin-left: 8px;">#' + 
+                                selectedTask.dataInfo.topicList.join(' #') + 
+                                '</span>'
+                              : '')
                         }}
                         className={styles.taskDescription}
                       />
@@ -786,16 +847,16 @@ export default function Task() {
                       </Descriptions.Item>
                     )}
 
-                    <Descriptions.Item label="任务时长">
+                    {/* <Descriptions.Item label="任务时长">
                       {selectedTask.keepTime}分钟
+                    </Descriptions.Item> */}
+                    <Descriptions.Item label="起止时间">
+                      {formatDate(selectedTask.createTime)} - {formatDate(selectedTask.deadline)}
                     </Descriptions.Item>
-                    <Descriptions.Item label="开始时间">
-                      {formatDate(selectedTask.createTime)}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="截止时间">
+                    {/* <Descriptions.Item label="截止时间">
                       {formatDate(selectedTask.deadline)}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="参与人数">
+                    </Descriptions.Item> */}
+                    {/* <Descriptions.Item label="参与人数">
                       <Progress
                         percent={Math.round(
                           (selectedTask.currentRecruits /
@@ -807,7 +868,7 @@ export default function Task() {
                           `${selectedTask.currentRecruits}/${selectedTask.maxRecruits}`
                         }
                       />
-                    </Descriptions.Item>
+                    </Descriptions.Item> */}
                     <Descriptions.Item label="支持平台">
                       <Space size={4}>
                         {getPlatformTags(selectedTask.accountTypes)}
