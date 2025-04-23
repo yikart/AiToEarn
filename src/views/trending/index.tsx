@@ -2732,7 +2732,8 @@ const Trending: React.FC = () => {
                             </div>
                           )}
 
-                          {(selectedRanking?.name.includes('阅读榜') || selectedRanking?.name.includes('低粉爆文榜')) && (
+                          {(selectedRanking?.name.includes('阅读榜') ||
+                            selectedRanking?.name.includes('低粉爆文榜')) && (
                             <div className="flex items-center flex-1">
                               <div className="flex items-center space-x-12">
                                 <div className="w-24 text-center">在看数</div>
@@ -2743,16 +2744,18 @@ const Trending: React.FC = () => {
                             </div>
                           )}
 
-                          {!selectedRanking?.name.includes('增量') && !selectedRanking?.name.includes('阅读榜') && !selectedRanking?.name.includes('低粉爆文榜') && (
-                            <div className="flex items-center flex-1">
-                              <div className="flex items-center space-x-12">
-                                <div className="w-24 text-center">点赞</div>
-                                <div className="w-24 text-center">评论</div>
-                                <div className="w-24 text-center">分享</div>
-                                <div className="w-24 text-center">收藏</div>
+                          {!selectedRanking?.name.includes('增量') &&
+                            !selectedRanking?.name.includes('阅读榜') &&
+                            !selectedRanking?.name.includes('低粉爆文榜') && (
+                              <div className="flex items-center flex-1">
+                                <div className="flex items-center space-x-12">
+                                  <div className="w-24 text-center">点赞</div>
+                                  <div className="w-24 text-center">评论</div>
+                                  <div className="w-24 text-center">分享</div>
+                                  <div className="w-24 text-center">收藏</div>
+                                </div>
                               </div>
-                            </div>
-                          )}
+                            )}
                         </div>
                       </div>
                     </div>
@@ -2835,12 +2838,14 @@ const Trending: React.FC = () => {
                                   {item.author.name}
                                 </span>
                                 <span className="text-xs text-gray-400">
-                                  {item.author.fansCount !== null && item.author.fansCount.toLocaleString() !== '' && (
-                                    <>
-                                      粉丝数{' '}
-                                      {item.author.fansCount.toLocaleString()}
-                                    </>
-                                  )}
+                                  {item.author.fansCount !== null &&
+                                    item.author.fansCount.toLocaleString() !==
+                                      '' && (
+                                      <>
+                                        粉丝数{' '}
+                                        {item.author.fansCount.toLocaleString()}
+                                      </>
+                                    )}
                                 </span>
 
                                 <span className="text-xs text-gray-400">
@@ -2982,7 +2987,8 @@ const Trending: React.FC = () => {
                               </div>
                             )}
 
-                            {(selectedRanking?.name.includes('阅读榜') || selectedRanking?.name.includes('低粉爆文榜')) && (
+                            {(selectedRanking?.name.includes('阅读榜') ||
+                              selectedRanking?.name.includes('低粉爆文榜')) && (
                               <div className="flex items-center justify-between flex-1">
                                 <div className="flex items-center space-x-12">
                                   <div className="w-24 text-center">
@@ -2997,7 +3003,7 @@ const Trending: React.FC = () => {
                                   </div>
                                   <div className="w-24 text-center">
                                     <span className="text-[#a66ae4] flex items-center justify-center">
-                                    {item.stats.likeCount || '-'}
+                                      {item.stats.likeCount || '-'}
                                     </span>
                                   </div>
                                   <div className="w-24 text-center">
@@ -3009,32 +3015,34 @@ const Trending: React.FC = () => {
                               </div>
                             )}
 
-                            {!selectedRanking?.name.includes('增量') && !selectedRanking?.name.includes('阅读榜') && !selectedRanking?.name.includes('低粉爆文榜')  && (
-                              <div className="flex items-center justify-between flex-1">
-                                <div className="flex items-center space-x-12">
-                                  <div className="w-24 text-center">
-                                    <span className="text-[#a66ae4] flex items-center justify-center">
-                                      {item.stats.likeCount || '-'}
-                                    </span>
-                                  </div>
-                                  <div className="w-24 text-center">
-                                    <span className="text-[#a66ae4] flex items-center justify-center">
-                                      {item.stats.commentCount || '-'}
-                                    </span>
-                                  </div>
-                                  <div className="w-24 text-center">
-                                    <span className="text-[#a66ae4] flex items-center justify-center">
-                                      {(item as any).shareCount || '-'}
-                                    </span>
-                                  </div>
-                                  <div className="w-24 text-center">
-                                    <span className="text-[#a66ae4] flex items-center justify-center">
-                                      {(item as any).collectCount || '-'}
-                                    </span>
+                            {!selectedRanking?.name.includes('增量') &&
+                              !selectedRanking?.name.includes('阅读榜') &&
+                              !selectedRanking?.name.includes('低粉爆文榜') && (
+                                <div className="flex items-center justify-between flex-1">
+                                  <div className="flex items-center space-x-12">
+                                    <div className="w-24 text-center">
+                                      <span className="text-[#a66ae4] flex items-center justify-center">
+                                        {item.stats.likeCount || '-'}
+                                      </span>
+                                    </div>
+                                    <div className="w-24 text-center">
+                                      <span className="text-[#a66ae4] flex items-center justify-center">
+                                        {item.stats.commentCount || '-'}
+                                      </span>
+                                    </div>
+                                    <div className="w-24 text-center">
+                                      <span className="text-[#a66ae4] flex items-center justify-center">
+                                        {(item as any).shareCount || '-'}
+                                      </span>
+                                    </div>
+                                    <div className="w-24 text-center">
+                                      <span className="text-[#a66ae4] flex items-center justify-center">
+                                        {(item as any).collectCount || '-'}
+                                      </span>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            )}
+                              )}
                           </div>
                         </div>
                       </div>

@@ -5,7 +5,7 @@
  * @LastEditors: nevin
  * @Description: 用户的钱包账户 userWalletAccount
  */
-import { Button, Table, Space, Tag, message } from 'antd';
+import { Button, Table, Tag, message } from 'antd';
 import { useState, useEffect, useRef } from 'react';
 import AddWalletAccount from './components/addWalletAccount';
 import { UserWalletAccount } from '@/api/types/userWalletAccount';
@@ -65,7 +65,7 @@ export default function Page() {
       render: (type: string) => (
         <Tag color={type === 'ZFB' ? 'blue' : 'green'}>
           {type === 'ZFB' ? '支付宝' : '微信'}
-          </Tag>
+        </Tag>
       ),
     },
     {
@@ -84,14 +84,14 @@ export default function Page() {
     //     </Space>
     //   ),
     // },
-  ];  
+  ];
 
   const handleView = (record: UserWalletAccount) => {
     // TODO: 实现查看详情功能
     console.log('查看账户详情:', record);
   };
 
-  return (  
+  return (
     <div>
       <div style={{ marginBottom: 16, textAlign: 'right' }}>
         <Button
@@ -109,13 +109,13 @@ export default function Page() {
         loading={loading}
         pagination={false}
       />
-      <AddWalletAccount 
-        ref={Ref_AddWalletAccountRef} 
+      <AddWalletAccount
+        ref={Ref_AddWalletAccountRef}
         onSuccess={() => {
           message.success('添加账户成功');
           getTaskList(); // 添加成功后刷新列表
         }}
       />
-    </div>  
+    </div>
   );
 }

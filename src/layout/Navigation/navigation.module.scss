@@ -15,6 +15,22 @@
         width: 1px;
         height: 15px;
         background: #fff;
+        margin: 0 15px;
+      }
+    }
+
+    .navigation-icon {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      cursor: pointer;
+      .anticon {
+        font-size: var(--fs-xl);
+      }
+      &-text {
+        font-size: var(--fs-xs);
       }
     }
 

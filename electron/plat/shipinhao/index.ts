@@ -309,7 +309,6 @@ export class ShipinhaoService {
             // 清理引用
             delete this.windowMap[winContentsId];
           } else {
-            console.log('Window not found or already destroyed');
           }
         }
 
@@ -402,7 +401,6 @@ export class ShipinhaoService {
 
           // 显示页面并设置置顶
           win.once('ready-to-show', () => {
-            console.log('Window ready to show');
             win.focus();
             win.center();
             win.setAlwaysOnTop(true);
@@ -411,7 +409,6 @@ export class ShipinhaoService {
 
           // 监听窗口销毁
           win.webContents.on('destroyed', () => {
-            console.log('Window destroyed:', winContentsId);
             if (this.cookieIntervalList.hasOwnProperty(winContentsId)) {
               clearInterval(this.cookieIntervalList[winContentsId]);
               delete this.cookieIntervalList[winContentsId];
@@ -1116,7 +1113,6 @@ export class ShipinhaoService {
             platformSetting.timingTime / 1000,
           );
         }
-        console.log('requestData：', requestData);
         // 发起请求
         const createRes = await this.makeRequest(this.postCreateVideoUrl, {
           method: 'POST',
@@ -1254,7 +1250,10 @@ export class ShipinhaoService {
     shareLink: string;
   }> {
     this.callback = callback;
-    console.log('platformSetting：', platformSetting);
+    console.log('微信视频号最初发布参数：', {
+      platformSetting,
+      filePath,
+    });
     callback(5, '加载中...');
     const fileInfo = await FileUtils.getFileInfo(filePath);
     callback(10);
@@ -1293,18 +1292,21 @@ export class ShipinhaoService {
       uploadParams,
     );
     callback(80, '正在发布视频...');
+
+    const lastParams = {
+      ...platformSetting,
+      cover: platformSetting.cover,
+      title: platformSetting.title,
+      topics: platformSetting.topics ? platformSetting.topics : [],
+    };
+    console.log('视频号最终发布参数：', lastParams);
     const lastPublishRes = await this.postCreateVideo(
       cookieString,
       traceKey,
       startUploadTime,
       endUploadTime,
       clipResult,
-      {
-        ...platformSetting,
-        cover: platformSetting.cover,
-        title: platformSetting.title,
-        topics: platformSetting.topics ? platformSetting.topics : [],
-      },
+      lastParams,
     );
     callback(100);
 
@@ -1487,8 +1489,6 @@ export class ShipinhaoService {
         _log_finder_uin: '',
       },
     });
-
-    console.log('------- WxSph createComment ----', res);
 
     return res;
   }

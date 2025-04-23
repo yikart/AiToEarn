@@ -1,4 +1,11 @@
-import { ForwardedRef, forwardRef, memo, useRef, useState, useMemo } from 'react';
+import {
+  ForwardedRef,
+  forwardRef,
+  memo,
+  useRef,
+  useState,
+  useMemo,
+} from 'react';
 import styles from './AccountSidebar.module.scss';
 import { AccountInfo, AccountPlatInfoMap } from '../../comment';
 import { Avatar, Button, message, Popover } from 'antd';
@@ -105,7 +112,11 @@ const AccountPopoverInfo = ({ accountInfo }: { accountInfo: AccountInfo }) => {
 const AccountSidebar = memo(
   forwardRef(
     (
-      { activeAccountId, onAccountChange, excludePlatforms = [] }: IAccountSidebarProps,
+      {
+        activeAccountId,
+        onAccountChange,
+        excludePlatforms = [],
+      }: IAccountSidebarProps,
       ref: ForwardedRef<IAccountSidebarRef>,
     ) => {
       const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
@@ -119,7 +130,9 @@ const AccountSidebar = memo(
 
       // 在组件内部过滤账号列表，而不是在 useAccountStore 中过滤
       const accountList = useMemo(() => {
-        return fullAccountList.filter(account => !excludePlatforms.includes(account.type));
+        return fullAccountList.filter(
+          (account) => !excludePlatforms.includes(account.type),
+        );
       }, [fullAccountList, excludePlatforms]);
 
       return (

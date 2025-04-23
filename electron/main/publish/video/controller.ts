@@ -13,12 +13,11 @@ import { getUserInfo } from '../../user/comment';
 import { VideoModel } from '../../../db/models/video';
 import { Between, FindOptionsWhere } from 'typeorm';
 import type { CorrectQuery } from '../../../global/table';
-import { PubStatus } from '../../../db/models/pubRecord';
 import { PublishService } from '../service';
 import platController from '../../plat';
 import { AccountService } from '../../account/service';
 import { AccountType } from '../../../../commont/AccountEnum';
-import { EtEvent } from '../../../global/event';
+import { PubStatus } from '../../../../commont/publish/PublishEnum';
 
 @Controller()
 export class VideoPubController {

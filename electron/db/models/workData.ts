@@ -7,7 +7,6 @@
  */
 import { Column, PrimaryGeneratedColumn } from 'typeorm';
 import { TempModel } from './temp';
-import { PubStatus } from './pubRecord';
 import { AccountType } from '../../../commont/AccountEnum';
 import type {
   CookiesType,
@@ -15,7 +14,10 @@ import type {
   WxSphEvent,
 } from '../../main/plat/plat.type';
 import { DeclarationDouyin } from '../../plat/douyin/common.douyin';
-import { VisibleTypeEnum } from '../../../commont/publish/PublishEnum';
+import {
+  PubStatus,
+  VisibleTypeEnum,
+} from '../../../commont/publish/PublishEnum';
 
 // 包含一个name和一个value的对象
 export interface ILableValue {

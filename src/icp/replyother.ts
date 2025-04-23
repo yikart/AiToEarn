@@ -210,7 +210,7 @@ export async function icpInteractionOneData(
 export async function icpCreateInteractionOneKey(
   accountId: number,
   worksList: WorkData[],
-  option: any
+  option: any,
 ) {
   const res: boolean = await window.ipcRenderer.invoke(
     'ICP_INTERACTION_ONE_KEY',

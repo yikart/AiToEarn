@@ -79,7 +79,6 @@ export class XiaohongshuService {
     data?: { cookie: any; userInfo: any };
     error?: string;
   }> {
-    console.log('Start login process:', { authModel, cookies });
     try {
       const winRes = await this.createAuthorizationWindow(
         authModel === 'view' ? cookies : null,
@@ -268,7 +267,6 @@ export class XiaohongshuService {
   ) {
     // 初始化cookie
     const cookieString = CommonUtils.convertCookieToJson(cookies);
-    console.log('cookieString', cookieString);
 
     // 获取cookie_a1
     const cookieObject = cookies;
@@ -280,14 +278,10 @@ export class XiaohongshuService {
       }
     }
 
-    console.log('cookie_a1', cookie_a1);
-
     const reverseRes: any = await this.getReverseResult({
       url: '/api/galaxy/v2/creator/datacenter/account/base',
       a1: cookie_a1,
     });
-
-    // console.log('reverseRes', reverseRes);
 
     const userInfo = await this.makeRequest(this.getDashboardUrl, {
       method: 'GET',
@@ -301,8 +295,6 @@ export class XiaohongshuService {
         'X-T': reverseRes['X-t'],
       },
     });
-
-    // console.log('userInfouserInfo', JSON.stringify(userInfo));
 
     if (userInfo.code == 0) {
       if (startDate && endDate) {
@@ -333,7 +325,6 @@ export class XiaohongshuService {
           list.forEach((item: any) => {
             const timestamp = item.date;
             // 检查日期是否在范围内
-            // console.log('xhs', timestamp, endTimestamp)
             if (timestamp >= startTimestamp && timestamp <= endTimestamp) {
               if (!dateMap[timestamp]) {
                 dateMap[timestamp] = {
@@ -407,7 +398,6 @@ export class XiaohongshuService {
       }
 
       request.on('response', (response) => {
-        console.log('Response status code:', response.statusCode);
         let data = '';
         response.on('data', (chunk) => {
           data += chunk;
@@ -529,7 +519,6 @@ export class XiaohongshuService {
 
         // 获取文件内容
         const fileContent = await getFileContent(filePath);
-        console.log('fileContent length:', fileContent.length);
 
         // 获取宽高信息
         const coverDimensions = sizeOf(fileContent);
@@ -589,7 +578,6 @@ export class XiaohongshuService {
       }
 
       request.on('response', (response) => {
-        console.log('Response status code:', response.statusCode);
         let data = '';
         response.on('data', (chunk) => {
           data += chunk;
@@ -820,6 +808,10 @@ export class XiaohongshuService {
     publishId: string;
     shareLink: string;
   }> {
+    console.log('小红书图文发布最初发布参数：', {
+      imagePath,
+      platformSetting,
+    });
     return new Promise(async (resolve, reject) => {
       try {
         // 初始化cookie
@@ -845,6 +837,10 @@ export class XiaohongshuService {
         const uploadResult = {
           imageList: uploadImgRet,
         };
+        console.log('小红书图文发布最终发布参数：', {
+          uploadResult,
+          platformSetting,
+        });
         const { shareLink, publishId } = (await this.postCreateVideo(
           cookieString,
           cookie_a1,
@@ -852,8 +848,6 @@ export class XiaohongshuService {
           uploadResult,
           platformSetting,
         )) as any;
-        console.log('shareLink', shareLink);
-        console.log('publishId', publishId);
         // 返回信息
         resolve({
           publishTime: Math.floor(Date.now() / 1000),
@@ -1122,15 +1116,12 @@ export class XiaohongshuService {
           image_info: xhs_image_info,
           video_info: xhs_video_info,
         };
-        console.log('platformSetting：', platformSetting);
-        console.log('requestData：', requestData);
         // 获取加密使用的Url
         const encryptUrl = this.postCreateVideoUrl.replace(
           'https://edith.xiaohongshu.com',
           '',
         );
         // 逆向获取XsXt
-        console.log('encryptUrl', encryptUrl, requestData, cookie_a1);
         const reverseRes: any = await this.getReverseResult({
           url: encryptUrl,
           data: requestData,
@@ -1151,7 +1142,6 @@ export class XiaohongshuService {
           timeout: 15000,
         });
 
-        console.log('createRes@@', createRes);
         // 处理结果
         if (createRes.hasOwnProperty('code') && createRes.code === -1) {
           reject('创建作品失败,失败原因:验签未通过');
@@ -1171,7 +1161,6 @@ export class XiaohongshuService {
         const works = worksList.data.data.notes.find(
           (v) => v.id === createRes.data.id,
         );
-        console.log('works：', works);
         // 返回结果
         resolve({
           shareLink: `https://www.xiaohongshu.com/explore/${createRes.data.id}?xsec_token=${works!.xsec_token}&xsec_source=${works!.xsec_source}`,
@@ -1208,6 +1197,10 @@ export class XiaohongshuService {
     publishId: string;
     shareLink: string;
   }> {
+    console.log('小红书视频发布初始发布参数：', {
+      filePath,
+      platformSetting,
+    });
     return new Promise(async (resolve, reject) => {
       try {
         this.callback = callback;
@@ -1254,6 +1247,11 @@ export class XiaohongshuService {
           fileInfo: fileInfo,
         };
         callback(70, '正在发布...');
+
+        console.log('小红书视频发布最终发布参数：', {
+          platformSetting,
+          uploadResult,
+        });
         const result: any = await this.postCreateVideo(
           cookieString,
           cookie_a1,
@@ -1389,12 +1387,6 @@ export class XiaohongshuService {
       return base36encode(Number(timestamp + randomValue));
     }
 
-    console.log(
-      '------ getSearchNodeList --- generateSearchId::',
-      generateSearchId(),
-    );
-
-    console.log('------ getSearchNodeList --- asdadsda::', qe, page);
     const body = {
       keyword: qe,
       page: page,
@@ -1519,8 +1511,6 @@ export class XiaohongshuService {
       method: 'GET',
     });
 
-    // console.log('------- xhs getCommentList ---', res);
-
     return res;
   }
 
@@ -1551,8 +1541,6 @@ export class XiaohongshuService {
       method: 'GET',
     });
 
-    console.log('------- xhs getSecondCommentList ---', res);
-
     return res;
   }
 
@@ -1565,7 +1553,6 @@ export class XiaohongshuService {
    * @returns
    */
   async likeNote(cookie: Electron.Cookie[], noteId: string) {
-    console.log('------ likeNote --- noteId', noteId);
     const url = `/api/sns/web/v1/note/like`;
     const body = {
       note_oid: noteId,
@@ -1590,8 +1577,6 @@ export class XiaohongshuService {
       method: 'POST',
       body,
     });
-
-    console.log('--- xhs likeNote --- res', res);
 
     return res;
   }
@@ -1629,8 +1614,6 @@ export class XiaohongshuService {
       method: 'POST',
       body,
     });
-
-    console.log('--- xhs shoucangNote --- res', res);
 
     return res;
   }
@@ -1676,9 +1659,6 @@ export class XiaohongshuService {
       method: 'POST',
       body,
     });
-
-    console.log('--- xhs commentPost --- res', res);
-
     return res;
   }
 }

@@ -10,7 +10,7 @@ import { CorrectQuery, CorrectResponse } from '@/global/table';
 import { PubRecordModel } from '@/views/publish/comment';
 import { VideoPul } from '@/views/publish/children/videoPage/comment';
 import { AccountType } from '../../commont/AccountEnum';
-import { PubType } from '../../commont/publish/PublishEnum';
+import { PubStatus, PubType } from '../../commont/publish/PublishEnum';
 import {
   type IGetLocationDataParams,
   IGetLocationResponse,
@@ -34,7 +34,6 @@ import { parseTopicString } from '../utils';
 import { PublishVideoResult } from '../../electron/main/plat/module';
 import { ImgTextModel } from '../../electron/db/models/imgText';
 import type { pubRecordListQuery } from '../../electron/global/table';
-import { PubStatus } from '../../electron/db/models/pubRecord';
 
 // 创建发布记录
 export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
