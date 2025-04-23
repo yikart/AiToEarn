@@ -212,13 +212,14 @@ const VideoPubSetModal = memo(
 
         // 发布记录通知消息初始化
         const initialNotice: NoticeItem = {
-          title: [
-            ...new Set(
-              videoListChoose.map(
-                (v) => AccountPlatInfoMap.get(v.account!.type)!.name,
+          title:
+            [
+              ...new Set(
+                videoListChoose.map(
+                  (v) => AccountPlatInfoMap.get(v.account!.type)!.name,
+                ),
               ),
-            ),
-          ].join('、'),
+            ].join('、') + '发布任务',
           time: recordRes.createTime!,
           id: recordRes.id,
           pub: {
@@ -250,7 +251,7 @@ const VideoPubSetModal = memo(
           });
         }
         const noticeList = noticeMap.get(NoticeType.PubNotice) || [];
-        noticeList.push(initialNotice);
+        noticeList.unshift(initialNotice);
         addNotice(NoticeType.PubNotice, noticeList);
 
         // 发布
