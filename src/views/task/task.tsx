@@ -271,6 +271,14 @@ export default function Task() {
   // TODO 完善跳转逻辑
   const handleJoinTask = (task: any) => {
 
+    // setCommonPubParams({
+    //   title: "标题1",
+    //   describe: "描述1",
+    //   topics: ["话题1","话题2"],
+    // });
+    // navigate('/publish/image');
+    // return;
+    // console.log('task@:', task);
     setSelectedTask(task);
 
     // 根据任务类型选择不同的处理逻辑
@@ -319,22 +327,24 @@ export default function Task() {
       // const res: any = {
       //   code: 0,
       //   data: {
-
       //   }
       // }
+
       // 存储任务记录信息 00.00
-      console.log('jieshou :', res);
+      // console.log('jieshou :', res);
       if (res.code == 0 && res.data) {
         setTaskRecord(res.data);
         message.success('任务接受成功！');
 
         // handleCompleteTask();
 
+        // console.log('selectedTask.dataInfo', selectedTask.dataInfo);
+
         if(selectedTask.type == TaskType.ARTICLE){
           setCommonPubParams({
             title: selectedTask.dataInfo?.title || '',
             describe: selectedTask.dataInfo?.desc || '',
-            // topics: selectedTask.dataInfo?.topics || '',
+            topics: selectedTask.dataInfo?.topicList || [],
           });
           navigate('/publish/image');
         }
@@ -664,7 +674,7 @@ export default function Task() {
                     <Button
                       type="primary"
                       key="join"
-                      disabled={item.isAccepted} // 00.00
+                      // disabled={item.isAccepted} // 00.00
                       onClick={() => handleJoinTask(item)}
                     >
                       {item.isAccepted ? '已参与' : '参与任务'}
