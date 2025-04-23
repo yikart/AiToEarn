@@ -674,11 +674,11 @@ export default function Task() {
                     <Button
                       type="primary"
                       key="join"
-                      // disabled={item.isAccepted} // 00.00
+                      disabled={item.isAccepted} // 00.00
                       onClick={() => handleJoinTask(item)}
                     >
                       {item.isAccepted ? '已参与' : '参与任务'}
-                    </Button>,
+                    </Button>, 
                   ]}
                 >
                   <Card.Meta
