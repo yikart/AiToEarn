@@ -7,7 +7,7 @@ import {
 } from 'react';
 import styles from './uploadImages.module.scss';
 import React, { useState } from 'react';
-import { Image, Upload } from 'antd';
+import { Image, message, Upload } from 'antd';
 import type { GetProp, UploadFile, UploadProps } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useUserStore } from '../../store/user';
@@ -36,7 +36,11 @@ export interface IUploadimagesProps extends UploadProps {
 const Uploadimages = memo(
   forwardRef(
     (
-      { onUploadChange, ...props }: IUploadimagesProps,
+      {
+        accept = '.png,.jpg,.jpeg',
+        onUploadChange,
+        ...props
+      }: IUploadimagesProps,
       ref: ForwardedRef<IUploadimagesRef>,
     ) => {
       const [previewOpen, setPreviewOpen] = useState(false);
@@ -90,8 +94,17 @@ const Uploadimages = memo(
         <div className={styles.uploadImages}>
           <Upload
             {...props}
+            beforeUpload={(e) => {
+              const isAllow = accept
+                ?.split(',')
+                .some((suffix) => e.type.includes(suffix.replace('.', '')));
+              if (!isAllow) {
+                message.warning(`不允许上传 ${e.type} 的文件！`);
+                return Upload.LIST_IGNORE;
+              }
+            }}
+            accept={accept}
             action={`${VITE_APP_URL}/oss/upload/permanent`}
-            accept=".png,.jpg,.jpeg"
             listType="picture-card"
             headers={{
               Authorization: `Bearer ${token}`,
@@ -101,7 +114,9 @@ const Uploadimages = memo(
             onChange={handleChange}
             multiple={true}
           >
-            {fileList.length >= 8 ? null : uploadButton}
+            {props.maxCount && fileList.length >= props.maxCount
+              ? null
+              : uploadButton}
           </Upload>
           {previewImage && (
             <Image

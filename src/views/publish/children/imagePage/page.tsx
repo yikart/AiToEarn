@@ -57,7 +57,7 @@ export default function Page() {
         id: v.account.id,
         account: v.account,
         pubParams: v.pubParams,
-      };
+      } as any;
     }),
     {
       moreWranVerifyCallback(item, wranParamsMapTemp, platInfo) {

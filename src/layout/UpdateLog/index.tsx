@@ -79,6 +79,7 @@ const Updatelog = memo(
             </Form.Item>
             <Form.Item<CreatefeedbackParmas> label="上传图片：">
               <Uploadimages
+                maxCount={4}
                 ref={uploadimagesRef}
                 onUploadChange={(fileList) => {
                   setImgList(fileList.map((v) => v.url) as string[]);
