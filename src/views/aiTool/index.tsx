@@ -5,6 +5,8 @@ import AiDraw from '@/assets/svgs/aiTool/aiDraw.svg?react';
 import FaceFusion from '@/assets/svgs/aiTool/faceFusion.svg?react';
 import DigitalHuman from '@/assets/svgs/aiTool/digitalHuman.svg?react';
 import VideoParse from '@/assets/svgs/aiTool/videoParse.svg?react';
+import CosyVoice from '@/assets/svgs/aiTool/cosyVoice.svg?react';
+import NarratoAI from '@/assets/svgs/aiTool/narratoAI.svg?react';
 import Icon from '@ant-design/icons';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -37,6 +39,16 @@ const items: MenuItem[] = [
     label: 'Face fusion AI换脸工具',
     icon: <Icon component={FaceFusion} />,
   },
+  {
+    key: '/aiTool/aiToolWebview?webviewUrl=http://39.100.101.239:5046',
+    label: 'Cosy voice语音合成',
+    icon: <Icon component={CosyVoice} />,
+  },
+  {
+    key: '/aiTool/aiToolWebview?webviewUrl=http://39.100.101.239:6007',
+    label: 'NarratoAI自动化剪辑工具',
+    icon: <Icon component={NarratoAI} />,
+  },
 ];
 
 export default function Page() {
@@ -45,7 +57,6 @@ export default function Page() {
   const [currChooseRoute, setCurrChooseRoute] = useState<string>();
 
   useEffect(() => {
-    console.log(location);
     setCurrChooseRoute(location.pathname + location.search + location.hash);
   }, [location]);
 
