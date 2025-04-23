@@ -11,27 +11,47 @@ import {
   HistoryOutlined,
   AccountBookOutlined,
   QuestionCircleOutlined,
+  MoneyCollectOutlined,
 } from '@ant-design/icons';
-import { Segmented, Card, Typography, Space, Row, Col, Tooltip } from 'antd';
+import { Segmented, Card, Typography, Space, Row, Col, Tooltip, List, Tag } from 'antd';
 import { Outlet, useNavigate } from 'react-router-dom';
 import styles from './finance.module.scss';
 import { useState, useEffect } from 'react';
 import { financeApi } from '@/api/finance';
 import { taskApi } from '@/api/task';
+import { UserTask, UserTaskStatus } from '@/api/types/task';
+import { Pagination } from '@/api/types';
+import { Task, TaskDataInfo } from 'commont/types/task';
+import { PaginationMeta } from '@/api/platform';
 
 const { Title, Text } = Typography;
+
+interface TaskResponse {
+  list: UserTask<Task<TaskDataInfo>>[];
+  total: number;
+  pageSize: number;
+  pageNo: number;
+}
 
 export default function Page() {
   const navigate = useNavigate();
   const [balance, setBalance] = useState<number>(0);
   const [pendingBalance, setPendingBalance] = useState<number>(0);
+  const [expectedIncomeList, setExpectedIncomeList] = useState<UserTask<Task<TaskDataInfo>>[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  });
 
   useEffect(() => {
     getBalance();
     getTotalAmountOfDoingTasks();
+    getExpectedIncomeList();
     // 默认导航到提现记录界面
     navigate('userWalletRecord', { replace: true });
-  }, []);
+  }, [pagination.current]);
 
   const getBalance = async () => {
     try {
@@ -52,6 +72,28 @@ export default function Page() {
     }
   };
 
+  const getExpectedIncomeList = async () => {
+    try {
+      setLoading(true);
+      const params = {
+        pageSize: pagination.pageSize,
+        pageNo: pagination.current,
+        status: UserTaskStatus.APPROVED
+      };
+      const res = await taskApi.getMineTaskList(params);
+      console.log('getExpectedIncomeList','res',res);
+      setExpectedIncomeList(res.items || []);
+      setPagination(prev => ({
+        ...prev,
+        ...res.meta
+      }));
+    } catch (error) {
+      console.error('获取预计收入列表失败:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className={styles.finance}>
       <div className={styles.header}>
@@ -66,7 +108,10 @@ export default function Page() {
                   <Title level={2} className={styles.balanceAmount}>
                     ¥{balance.toFixed(2)}
                   </Title>
-                  <div className="flex items-center ml-4">
+                  <div className="flex items-center ml-4" 
+                  onClick={() => {
+                    // navigate('expectedIncome');
+                  }}>
                     <Text type="secondary" className="text-sm" style={{ color: '#ccc' }}>
                       预计收益: ¥{pendingBalance.toFixed(2) } 
                     </Text>
@@ -102,6 +147,11 @@ export default function Page() {
                 value: 'userWalletAccount',
                 icon: <AccountBookOutlined />,
               },
+              {
+                label: '预计收入',
+                value: 'expectedIncome',
+                icon: <MoneyCollectOutlined />,
+              },
             ]}
             onChange={(value) => {
               navigate(value);
@@ -113,6 +163,7 @@ export default function Page() {
           <Outlet />
         </div>
       </div>
+
     </div>
   );
 }
