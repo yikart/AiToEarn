@@ -2,25 +2,28 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
     <dict>
-        <key>com.apple.security.app-sandbox</key>
+        <!-- 网络访问 -->
+        <key>com.apple.security.network.client</key>
         <true />
-        <key>com.apple.security.application-groups</key>
-        <array>
-            <string>26A3V27SYB.cn.yikart.aiToEarn</string>
-        </array>
-        <key>com.apple.application-identifier</key>
-        <string>26A3V27SYB.cn.yikart.aiToEarn</string>
-        <key>com.apple.security.cs.allow-jit</key>
+
+        <!-- 作为服务器接收连接 -->
+        <key>com.apple.security.network.server</key>
         <true />
-        <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
-        <true />
-        <key>com.apple.security.cs.disable-library-validation</key>
-        <true />
-        <key>com.apple.security.files.user-selected.read-only</key>
-        <true />
+
+        <!-- 文件访问 -->
         <key>com.apple.security.files.user-selected.read-write</key>
         <true />
+
+        <!-- 读取下载文件夹 -->
         <key>com.apple.security.files.downloads.read-write</key>
+        <true />
+
+        <!-- 读写用户选择的文件 -->
+        <key>com.apple.security.files.user-selected.read-write</key>
+        <true />
+
+        <!-- 读写图片文件夹 -->
+        <key>com.apple.security.files.pictures.read-write</key>
         <true />
     </dict>
 </plist>
