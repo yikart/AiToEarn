@@ -27,8 +27,10 @@ import { AccountType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
 import dayjs from 'dayjs';
 import { VideoModel } from '../../../../db/models/video';
-import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
-import { PubStatus } from '../../../../db/models/pubRecord';
+import {
+  PubStatus,
+  VisibleTypeEnum,
+} from '../../../../../commont/publish/PublishEnum';
 import KwaiPubListener from './KwaiPubListener';
 
 export class Kwai extends PlatformBase {
@@ -143,13 +145,13 @@ export class Kwai extends PlatformBase {
   async getDashboard(account: AccountModel, time: string[] = []) {
     const res = await kwaiPub.getHomeOverview(JSON.parse(account.loginCookie));
     const dashboard: DashboardData[] = [];
-    const startTime = new Date(time[0]).getTime()-86400001;
-    const endTime = new Date(time[1]).getTime()+1;
+    const startTime = new Date(time[0]).getTime() - 86400001;
+    const endTime = new Date(time[1]).getTime() + 1;
 
     res?.data?.data?.basicData?.map((v1, i1) => {
       v1.trendData.map((v2, i2) => {
         const currTime = dayjs(v2.date, 'YYYYMMDD').valueOf();
-        console.log('currTime', currTime)
+        console.log('currTime', currTime);
         if (currTime >= startTime && currTime <= endTime) {
           if (!dashboard[i2])
             dashboard[i2] = {

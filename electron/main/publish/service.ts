@@ -8,9 +8,10 @@ import { AppDataSource } from '../../db';
 import { Injectable } from '../core/decorators';
 import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { CorrectQuery, backPageData } from '../../global/table';
-import { PubRecordModel, PubStatus } from '../../db/models/pubRecord';
+import { PubRecordModel } from '../../db/models/pubRecord';
 import { EtEvent } from '../../global/event';
 import { getUserInfo } from '../user/comment';
+import { PubStatus } from '../../../commont/publish/PublishEnum';
 @Injectable()
 export class PublishService {
   private pubRecordRepository: Repository<PubRecordModel>;

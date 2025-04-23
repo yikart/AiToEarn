@@ -15,15 +15,16 @@ import {
 } from '../../../../icp/publish';
 import {
   Button,
-  Checkbox, Empty,
+  Checkbox,
+  Empty,
   message,
   Modal,
   Select,
   SelectProps,
   Spin,
   Tabs,
-  Tooltip
-} from "antd";
+  Tooltip,
+} from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import styles from './commonComponents.module.scss';
 import { describeNumber } from '../../../../utils';

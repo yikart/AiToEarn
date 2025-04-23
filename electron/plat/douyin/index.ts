@@ -139,9 +139,6 @@ export class DouyinService {
               win.destroy();
               // 清理引用
               delete this.windowMap[winContentsId];
-              console.log('Window closed successfully');
-            } else {
-              console.log('Window not found or already destroyed');
             }
 
             // const winBrowserWindow = BrowserWindow.fromId(winContentsId);
@@ -375,20 +372,13 @@ export class DouyinService {
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log('开始上传封面文件:', filePath);
-
         // 获取上传令牌所需Ak和Tk
         const uploadAuth = await this.getUploadAuth(cookieString);
-        console.log('获取到的上传令牌:', uploadAuth);
 
         // 获取图片数据
         const imageRes = await getFileContent(filePath);
-        console.log('获取到的图片数据大小:', imageRes.length);
-
         // 获取图片Crc32标识
         const imageCrc32 = crc32(imageRes).toString(16);
-        console.log('图片Crc32标识:', imageCrc32);
-
         // 获取图片上传凭证签名所需参数
         const getUploadImageProofRequestParams = {
           Action: 'ApplyImageUpload',
@@ -409,8 +399,6 @@ export class DouyinService {
           'GET',
           getUploadImageProofRequestParams,
         );
-        console.log('requestHeadersInfo:', requestHeadersInfo);
-
         // 获取图片上传凭证
         const uploadImgRes = await this.makeRequest(
           this.getUploadImageProofUrl +
@@ -422,8 +410,6 @@ export class DouyinService {
             timeout: 15000,
           },
         );
-
-        console.log('uploadImgRes:', uploadImgRes);
 
         if (uploadImgRes['ResponseMetadata'].hasOwnProperty('Error')) {
           reject(uploadImgRes['ResponseMetadata']['Error']['Message']);
@@ -515,69 +501,53 @@ export class DouyinService {
     platformSetting: DouyinPlatformSettingType,
     callback: (progress: number, msg?: string) => void,
   ): Promise<any> {
-    console.log('开始发布视频作品，参数：', platformSetting);
+    console.log('抖音开始发布视频作品，参数：', {
+      platformSetting,
+      filePath,
+    });
 
     return new Promise(async (resolve, reject) => {
       try {
         this.callback = callback;
         // 初始化cookie
-        console.log('开始转换cookie...');
         callback(5, '正在加载');
         const cookieString = CommonUtils.convertCookieToJson(cookies);
         callback(10);
-        console.log('cookie转换结果:', cookieString);
-
         // 获取用户Uid
-        console.log('开始获取用户Uid...');
         const userUid = await this.getUserUid(cookieString);
         callback(15);
-        console.log('获取到的用户Uid:', userUid);
 
         // 上传封面图片 获取封面图片poster参数值
-        console.log('开始上传封面图片...');
-        console.log('封面图片路径:', platformSetting.cover);
         const poster = await this.uploadCoverFile(
           platformSetting.cover,
           cookieString,
           userUid,
         );
         callback(20);
-        console.log('获取到的封面图片poster:', poster);
 
         // 上传视频 获取视频video_id参数值
-        console.log('开始上传视频...');
-        console.log('视频文件路径:', filePath);
         callback(30, '正在上传视频...');
         const videoId = await this.uploadVideo(filePath, cookieString, userUid);
         callback(60, '视频上传完成');
-        console.log('获取到的视频ID:', videoId);
 
         // 发布视频参数
-        console.log('开始获取发布参数...');
         const publishVideoParams =
           this.getPublishPublicParamsV2(platformSetting);
-        console.log('发布参数:', publishVideoParams);
         callback(65, '参数获取完成');
 
         // 拼接视频封面内容
         publishVideoParams.item.common.video_id = videoId;
         publishVideoParams.item.cover.poster = poster;
-        console.log('完整的发布参数:', publishVideoParams);
 
         // 获取csrf-token
-        console.log(`开始获取csrf-token...`);
         const csrfToken = await this.getSecsdkCsrfToken(cookieString);
-        console.log(`获取到的csrf-token:`, csrfToken);
         callback(70, '正在发布...');
 
         // 获取bd-ticket
-        console.log(`开始获取bd-ticket...`);
         const bdTicketHeaders = await this.getBdTicketHeaders(tokens);
-        console.log(`获取到的bd-ticket headers:`, bdTicketHeaders);
 
+        console.log('抖音视频发布最终参数：', publishVideoParams);
         // 发布视频
-        console.log(`开始发布视频请求...`, this.publishUrlV2);
-        console.log(`发布参数:`, publishVideoParams);
         const publishResult = await requestNet({
           url: this.publishUrlV2,
           method: 'POST',
@@ -589,7 +559,6 @@ export class DouyinService {
           body: publishVideoParams,
         });
         callback(100, '发布完成');
-        console.log(`发布请求结果:`, publishResult);
 
         if (publishResult.status === 403 || publishResult.data === null) {
           console.error(`发布失败，状态码403或返回数据为空`);
@@ -614,7 +583,7 @@ export class DouyinService {
           publishId: publishResult.data.item_id,
           shareLink: `https://www.douyin.com/user/self?from_tab_name=main&modal_id=${publishResult.data.item_id}&showTab=post`,
         };
-        console.log(`发布成功，返回数据:`, response);
+        console.log(`抖音视频发布成功，返回数据:`, response);
         resolve(response);
       } catch (err) {
         console.error('发布视频过程中出现错误:', err);
@@ -637,8 +606,7 @@ export class DouyinService {
     imagePath: string[],
     platformSetting: DouyinPlatformSettingType,
   ): Promise<any> {
-    console.log(`开始发布图片作品，参数:`, {
-      cookies: typeof cookies === 'string' ? cookies.length : cookies.length,
+    console.log(`抖音开始发布图片作品，参数:`, {
       tokens,
       imagePath,
       platformSetting,
@@ -647,32 +615,23 @@ export class DouyinService {
     return new Promise(async (resolve, reject) => {
       try {
         // 初始化cookie
-        console.log(`开始转换cookie...`);
         const cookieString = CommonUtils.convertCookieToJson(cookies);
-        console.log(`cookie转换结果:`, cookieString);
 
         // 获取用户Uid
-        console.log(`开始获取用户Uid...`);
         const userUid = await this.getUserUid(cookieString);
-        console.log(`获取到的用户Uid:`, userUid);
 
         const images = [];
         // 上传图片
-        console.log(`开始上传图片，共${imagePath.length}张...`);
         for (const [index, imgUrl] of imagePath.entries()) {
-          console.log(`开始上传第${index + 1}张图片:`, imgUrl);
           // 上传图片 获取poster
           const poster = await this.uploadCoverFile(
             imgUrl,
             cookieString,
             userUid,
           );
-          console.log(`第${index + 1}张图片上传完成，poster:`, poster);
 
           // 获取图片信息
-          console.log(`开始获取第${index + 1}张图片信息...`);
           const imageBaseInfo = await getImageBaseInfo(imgUrl);
-          console.log(`获取到第${index + 1}张图片信息:`, imageBaseInfo);
 
           images.push({
             uri: poster,
@@ -680,27 +639,20 @@ export class DouyinService {
             height: imageBaseInfo.height,
           });
         }
-        console.log(`所有图片上传完成，图片信息:`, images);
 
         // 获取公共请求参数
-        console.log(`开始获取发布参数...`);
         const publishImgParams = this.getPublishPublicParams(platformSetting);
         // 拼接图文内容
         publishImgParams.images = images;
-        console.log(`获取到的发布参数:`, publishImgParams);
 
         // 获取csrf-token
-        console.log(`开始获取csrf-token...`);
         const csrfToken = await this.getSecsdkCsrfToken(cookieString);
-        console.log(`获取到的csrf-token:`, csrfToken);
 
         // 获取bd-ticket
-        console.log(`开始获取bd-ticket...`);
         const bdTicketHeaders = await this.getBdTicketHeaders(tokens);
-        console.log(`获取到的bd-ticket headers:`, bdTicketHeaders);
 
+        console.log('抖音图文发布最终参数：', publishImgParams);
         // 发布图文
-        console.log(`开始发布图文请求...`);
         const publishResult = await this.makePublishRequest(this.publishUrl, {
           method: 'POST',
           headers: {
@@ -710,7 +662,6 @@ export class DouyinService {
           },
           data: publishImgParams,
         });
-        console.log(`发布请求结果:`, publishResult);
 
         if (publishResult.status === 403 || publishResult.data === null) {
           console.error(`发布失败，状态码403或返回数据为空`);
@@ -808,7 +759,6 @@ export class DouyinService {
 
         // 监听窗口销毁
         win.webContents.on('destroyed', () => {
-          console.log('Window destroyed:', winContentsId);
           if (this.cookieIntervalList.hasOwnProperty(winContentsId)) {
             clearInterval(this.cookieIntervalList[winContentsId]);
             delete this.cookieIntervalList[winContentsId];
@@ -853,7 +803,6 @@ export class DouyinService {
    */
   private async makeRequest(url: string, options: any): Promise<any> {
     return new Promise((resolve, reject) => {
-      console.log('抖音发布请求：', url);
       const request = net.request({
         method: options.method,
         url: url,
@@ -907,11 +856,6 @@ export class DouyinService {
     method: string = 'PUT',
   ): Promise<any> {
     return new Promise((resolve, reject) => {
-      console.log(`开始请求 [${new Date().toLocaleString()}]`);
-      console.log('请求URL:', url);
-      console.log('请求方法:', method);
-      console.log('请求头:', headers);
-
       const request = net.request({
         method: method,
         url: url,
@@ -919,17 +863,12 @@ export class DouyinService {
       });
 
       request.on('response', (response) => {
-        console.log(
-          `收到响应 [${new Date().toLocaleString()}], 状态码:`,
-          response.statusCode,
-        );
         let data = '';
         response.on('data', (chunk) => {
           data += chunk;
         });
 
         response.on('end', () => {
-          console.log('响应数据:', data);
           try {
             const result = data ? JSON.parse(data) : {};
             resolve(result);
@@ -949,7 +888,6 @@ export class DouyinService {
       try {
         request.write(fileContent);
         request.end();
-        console.log(`请求发送完成 [${new Date().toLocaleString()}]`);
       } catch (err) {
         console.error('写入请求体时出错:', err);
         reject(err);
@@ -963,7 +901,6 @@ export class DouyinService {
   private async getUploadAuth(cookieString: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log('开始获取上传凭证...');
         const authRes = await this.makeRequest(this.getUploadAuthUrl, {
           method: 'GET',
           headers: {
@@ -971,7 +908,6 @@ export class DouyinService {
           },
           timeout: 15000,
         });
-        console.log('获取上传凭证结果:', authRes);
 
         if (
           !authRes.hasOwnProperty('status_code') ||
@@ -1231,8 +1167,6 @@ export class DouyinService {
             item.name.includes(this.cookieSecscdUidCheckField),
           );
 
-          console.log('登录状态检查:', { alreadyLogin, hasSecUid });
-
           // 如果获取到登录状态cookie
           if (alreadyLogin && hasSecUid) {
             // 关闭定时器
@@ -1359,7 +1293,6 @@ export class DouyinService {
   private async getUserUid(cookieString: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log('开始获取用户Uid, 发起请求...');
         const userInfoRes = await this.makeRequest(this.getUserInfoUrl, {
           method: 'GET',
           headers: {
@@ -1368,7 +1301,6 @@ export class DouyinService {
           dataType: 'json',
           timeout: 15000,
         });
-        console.log('获取用户信息响应:', userInfoRes);
 
         if (
           !userInfoRes.hasOwnProperty('status_code') ||
@@ -1379,7 +1311,6 @@ export class DouyinService {
           return false;
         }
 
-        console.log('成功获取用户Uid:', userInfoRes.user.uid);
         resolve(userInfoRes.user.uid);
       } catch (err) {
         console.error('获取用户Uid过程出错:', err);
@@ -1401,17 +1332,14 @@ export class DouyinService {
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log('开始上传视频...');
         // 获取文件大小及分片信息
         const filePartInfo = await FileUtils.getFilePartInfo(
           filePath,
           this.fileBlockSize,
         );
-        console.log('文件分片信息:', filePartInfo);
 
         // 获取上传令牌所需Ak和Tk
         const uploadAuth = await this.getUploadAuth(cookieString);
-        console.log('获取到的上传令牌:', uploadAuth);
 
         // 获取视频上传凭证签名所需参数
         const getUploadVideoProofRequestParams = {
@@ -1449,7 +1377,6 @@ export class DouyinService {
             timeout: 15000,
           },
         );
-        console.log('获取视频上传凭证结果:', uploadRes);
 
         if (uploadRes['ResponseMetadata'].hasOwnProperty('Error')) {
           reject(uploadRes['ResponseMetadata']['Error']['Message']);
@@ -1482,7 +1409,6 @@ export class DouyinService {
               50,
               `上传视频（${i}/${filePartInfo.blockInfo.length}）`,
             );
-          console.log(`开始上传第 ${parseInt(i) + 1} 个分片...`);
           let errorMsg = '';
           const isSuccess = await RetryWhile(async () => {
             // 设置当前文件分片信息
@@ -1517,7 +1443,6 @@ export class DouyinService {
               },
               'POST',
             );
-            console.log(`第 ${parseInt(i) + 1} 个分片上传结果:`, uploadPartRes);
 
             if (uploadPartRes === null) {
               errorMsg = '上传文件失败';
@@ -1641,7 +1566,6 @@ export class DouyinService {
 
   // 发布视频、v2 api参数处理
   private getPublishPublicParamsV2(platformSetting: DouyinPlatformSettingType) {
-    console.log('platformSetting：', platformSetting);
     const parmasDisposeOK = this.getPublishPublicParams(platformSetting);
 
     return {
@@ -1737,7 +1661,6 @@ export class DouyinService {
   private getPublishPublicParams(
     platformSetting: DouyinPlatformSettingType,
   ): any {
-    console.log('开始处理发布参数...');
     // 处理描述
     let text = `${platformSetting['title'] || ''} ${platformSetting['caption'] || ''}`;
     // 标题扩展属性
@@ -1750,7 +1673,6 @@ export class DouyinService {
       (platformSetting.topics && platformSetting.topics?.length > 0) ||
       (platformSetting.activity && platformSetting.activity?.length > 0)
     ) {
-      console.log('处理话题标签...');
       for (const topic of [
         ...(platformSetting.topics || []),
         ...(platformSetting.activity?.map((v) => v.label) || []),
@@ -1781,7 +1703,6 @@ export class DouyinService {
       platformSetting.mentionedUserInfo &&
       platformSetting.mentionedUserInfo?.length > 0
     ) {
-      console.log('处理@好友...');
       for (const userInfo of platformSetting.mentionedUserInfo) {
         if (userInfo.hasOwnProperty('nickName') && userInfo.nickName !== '') {
           // 扩展属性追加@好友位置
@@ -1829,7 +1750,6 @@ export class DouyinService {
       platformSetting.mixInfo.hasOwnProperty('mixId') &&
       platformSetting.mixInfo.hasOwnProperty('mixName')
     ) {
-      console.log('处理合集信息...');
       // @ts-ignore
       publishParams.mix_id = platformSetting.mixInfo.mixId;
     }
@@ -1841,7 +1761,6 @@ export class DouyinService {
       platformSetting.poiInfo.hasOwnProperty('poiId') &&
       platformSetting.poiInfo.poiId !== ''
     ) {
-      console.log('处理POI信息...');
       // @ts-ignore
       publishParams.poi_id = platformSetting.poiInfo.poiId;
       // @ts-ignore
@@ -1853,7 +1772,6 @@ export class DouyinService {
       platformSetting.hasOwnProperty('musicId') &&
       platformSetting.musicId !== ''
     ) {
-      console.log('处理背景音乐...');
       // @ts-ignore
       publishParams.music_id = platformSetting.musicId;
     }
@@ -1864,12 +1782,10 @@ export class DouyinService {
       platformSetting.timingTime &&
       platformSetting.timingTime > Date.now()
     ) {
-      console.log('处理定时发布...');
       // @ts-ignore
       publishParams.timing = Math.floor(platformSetting.timingTime / 1000);
     }
 
-    console.log('最终发布参数:', publishParams);
     return publishParams;
   }
 
@@ -1921,7 +1837,6 @@ export class DouyinService {
         headers: headers,
         ok: response.ok,
       };
-      // console.log('fffff',fft)
       return fft;
     } catch (error) {
       console.error('HEAD请求失败:', error);
@@ -1938,13 +1853,10 @@ export class DouyinService {
   private async getSecsdkCsrfToken(cookieString: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log('开始获取CSRF Token...');
         const csrfTokenRes = await this.makeHeadRequest(
           this.getCsrfTokenUrl,
           cookieString,
         );
-
-        console.log('CSRF Token响应状态:', csrfTokenRes.status);
         if (csrfTokenRes.status !== 200) {
           console.error(
             '获取CSRF_TOKEN失败，状态码不是200:',
@@ -1955,7 +1867,6 @@ export class DouyinService {
         }
 
         const headers = csrfTokenRes.headers;
-        // console.log('CSRF Token响应头:', headers);
 
         if (!headers['x-ware-csrf-token']) {
           console.error('获取CSRF_TOKEN失败，响应头中没有x-ware-csrf-token');
@@ -1964,7 +1875,6 @@ export class DouyinService {
         }
 
         const csrfToken = headers['x-ware-csrf-token'].split(',');
-        console.log('成功获取CSRF Token:', csrfToken[1]);
         resolve(csrfToken[1]);
       } catch (err) {
         console.error('获取CSRF Token过程出错:', err);
@@ -2025,10 +1935,6 @@ export class DouyinService {
    * 发布专用请求方法
    */
   private async makePublishRequest(url: string, options: any): Promise<any> {
-    console.log(`开始发起发布请求...`);
-    console.log(`请求URL:`, url);
-    console.log(`请求参数:`, options);
-
     try {
       // 创建 FormData 对象
       const formData = new FormData();
@@ -2043,8 +1949,6 @@ export class DouyinService {
         }
       });
 
-      console.log(`请求体数据:`, Object.fromEntries(formData.entries()));
-
       const response = await fetch(url, {
         method: options.method,
         headers: {
@@ -2053,12 +1957,7 @@ export class DouyinService {
         body: formData,
       });
 
-      console.log(`收到响应，状态码:`, response.status);
-      console.log(`响应头:`, Object.fromEntries(response.headers.entries()));
-
       const responseText = await response.text();
-      console.log(`原始响应数据长度:`, responseText.length);
-      console.log(`原始响应数据:`, responseText);
 
       // 检查响应数据是否为空
       if (!responseText || responseText.trim() === '') {
@@ -2068,7 +1967,6 @@ export class DouyinService {
 
       try {
         const result = JSON.parse(responseText);
-        console.log(`解析后的响应数据:`, result);
 
         if (!result) {
           console.error(`解析后的数据为空`);
@@ -2106,7 +2004,6 @@ export class DouyinService {
     longitude: number;
     cookie: Electron.Cookie[];
   }) {
-    console.log(CookieToString(params.cookie));
     return await requestNet<DouyinLocationDataResponse>({
       url: `${this.loginUrl}aweme/v1/life/video_api/search/poi/?${jsonToQueryString(
         {
@@ -2247,7 +2144,6 @@ export class DouyinService {
       gets,
     )}`;
 
-    console.log('------douyin getsearchNodeList uri: ', thisUri);
     const res = await requestNet<any>({
       url: thisUri,
       headers: {
@@ -2255,7 +2151,6 @@ export class DouyinService {
       },
       method: 'GET',
     });
-    // console.log('------douyin getsearchNodeList res: ', res.data);
     return res;
   }
 
@@ -2318,7 +2213,6 @@ export class DouyinService {
       method: 'GET',
     });
 
-    console.log('------ getCreatorCommentListByOther', res);
     return res;
   }
 
@@ -2363,10 +2257,6 @@ export class DouyinService {
     options: any,
     retryOptions: { maxRetries?: number; retryDelay?: number } = {},
   ): Promise<any> {
-    console.log(`开始发起表单数据请求...`);
-    console.log(`请求URL:`, url);
-    console.log(`请求参数:`, options);
-
     const maxRetries = retryOptions.maxRetries || 3;
     const retryDelay = retryOptions.retryDelay || 2000;
     let retryCount = 0;
@@ -2386,8 +2276,6 @@ export class DouyinService {
           }
         });
 
-        console.log(`请求体数据:`, Object.fromEntries(formData.entries()));
-
         const response = await fetch(url, {
           method: options.method || 'POST',
           headers: {
@@ -2396,17 +2284,11 @@ export class DouyinService {
           body: formData,
         });
 
-        console.log(`收到响应，状态码:`, response.status);
-        console.log(`响应头:`, Object.fromEntries(response.headers.entries()));
-
         // 检查HTTP状态码
         if (!response.ok) {
           console.error(`HTTP错误状态码: ${response.status}`);
           if (retryCount < maxRetries - 1) {
             retryCount++;
-            console.log(
-              `状态码错误，${retryDelay / 1000}秒后进行第${retryCount}次重试...`,
-            );
             await new Promise((resolve) => setTimeout(resolve, retryDelay));
             continue;
           }
@@ -2414,8 +2296,6 @@ export class DouyinService {
         }
 
         const responseText = await response.text();
-        console.log(`原始响应数据长度:`, responseText.length);
-        console.log(`原始响应数据:`, responseText);
 
         // 检查响应数据是否为空
         if (!responseText || responseText.trim() === '') {
@@ -2437,7 +2317,6 @@ export class DouyinService {
 
         try {
           const result = JSON.parse(responseText);
-          console.log(`解析后的响应数据:`, result);
 
           if (!result) {
             console.error(`解析后的数据为空`);
@@ -2489,14 +2368,11 @@ export class DouyinService {
     status_code: number; // 0;
     is_digg: number; // 0;
   }> {
-    console.log('------ creatorDianzanOther-data@@@@@');
     const thisUri = `https://www.douyin.com/aweme/v1/web/commit/item/digg/?${jsonToQueryString(
       {
         aid: '6383',
       },
     )}`;
-    console.log('------ creatorDianzanOther-data', data);
-    console.log('------ creatorDianzanOther-thisUri', thisUri);
     const cookieString = CommonUtils.convertCookieToJson(cookie);
     const csrfToken = await this.getSecsdkCsrfToken(cookieString);
 
@@ -2521,14 +2397,11 @@ export class DouyinService {
 
   // 收藏
   async creatorShoucangOther(cookie: Electron.Cookie[], data: any) {
-    console.log('------ creatorShoucangOther-data@@@@@');
     const thisUri = `https://www.douyin.com/aweme/v1/web/aweme/collect/?${jsonToQueryString(
       {
         aid: '6383',
       },
     )}`;
-    console.log('------ creatorCommentReplyOther-data', data);
-    console.log('------ creatorCommentReplyOther-thisUri', thisUri);
     const cookieString = CommonUtils.convertCookieToJson(cookie);
     const csrfToken = await this.getSecsdkCsrfToken(cookieString);
 
@@ -2557,8 +2430,6 @@ export class DouyinService {
         aid: '6383',
       },
     )}`;
-    console.log('------ creatorCommentReplyOther-data', data);
-    console.log('------ creatorCommentReplyOther-thisUri', thisUri);
     const cookieString = CommonUtils.convertCookieToJson(cookie);
     const csrfToken = await this.getSecsdkCsrfToken(cookieString);
 
@@ -2608,18 +2479,12 @@ export class DouyinService {
     options: any,
     retryOptions: { maxRetries?: number; retryDelay?: number } = {},
   ): Promise<any> {
-    console.log(`开始发起POST请求...`);
-    console.log(`请求URL:`, url);
-    console.log(`请求参数:`, options);
-
     const maxRetries = retryOptions.maxRetries || 3;
     const retryDelay = retryOptions.retryDelay || 2000;
     let retryCount = 0;
 
     while (retryCount < maxRetries) {
       try {
-        console.log(`请求体数据:`, options.data);
-
         const response = await fetch(url, {
           method: options.method || 'POST',
           headers: {
@@ -2629,17 +2494,11 @@ export class DouyinService {
           body: JSON.stringify(options.data),
         });
 
-        console.log(`收到响应，状态码:`, response.status);
-        console.log(`响应头:`, Object.fromEntries(response.headers.entries()));
-
         // 检查HTTP状态码
         if (!response.ok) {
           console.error(`HTTP错误状态码: ${response.status}`);
           if (retryCount < maxRetries - 1) {
             retryCount++;
-            console.log(
-              `状态码错误，${retryDelay / 1000}秒后进行第${retryCount}次重试...`,
-            );
             await new Promise((resolve) => setTimeout(resolve, retryDelay));
             continue;
           }
@@ -2647,8 +2506,6 @@ export class DouyinService {
         }
 
         const responseText = await response.text();
-        console.log(`原始响应数据长度:`, responseText.length);
-        console.log(`原始响应数据:`, responseText);
 
         // 检查响应数据是否为空
         if (!responseText || responseText.trim() === '') {
@@ -2670,7 +2527,6 @@ export class DouyinService {
 
         try {
           const result = JSON.parse(responseText);
-          console.log(`解析后的响应数据:`, result);
 
           if (!result) {
             console.error(`解析后的数据为空`);

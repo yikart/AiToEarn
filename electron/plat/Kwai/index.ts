@@ -68,6 +68,10 @@ class KwaiPub {
     publishId: string;
     shareLink: string;
   }> {
+    console.log('快手原始参数：', {
+      ...params,
+      cookies: null,
+    });
     return new Promise(async (resolve, reject) => {
       try {
         const callback = params.callback;
@@ -112,7 +116,6 @@ class KwaiPub {
             if (uploadVideoRes.data.result === 1) {
               return true;
             }
-            console.log(`分片上传：（${i}/${filePartInfo.blockInfo.length}）`);
           }, 3);
           if (!isSuccess) {
             throw new Error('分片上传失败，请稍后重试！');
@@ -197,7 +200,7 @@ class KwaiPub {
           triggerH265: false,
           ...this.convertKwaiParams(params),
         };
-        console.log('发布参数:', submitParams);
+        console.log('快手最终发布参数:', submitParams);
         const submitRes = await this.requestApi<KwaiSubmitResponse>({
           url: `/rest/cp/works/v2/video/pc/submit`,
           method: 'POST',
@@ -216,11 +219,10 @@ class KwaiPub {
             queryType: '2',
             limit: 20,
           });
-          console.log('worksList：', worksList);
           work = worksList.data.data.list.find(
             (v) => v.unPublishCoverKey === coverRes.data.data.coverKey,
           );
-          console.log('work：', work);
+          console.log('快手查询到的作品：', work);
           if (work) return true;
         }, 5);
         console.log('发布成功！');
@@ -525,8 +527,6 @@ class KwaiPub {
       bodys.variables.searchSessionId = pageInfo.postFirstId;
     }
 
-    // console.log('----------- getsearchNodeList --- bodys: ', bodys);
-
     const res = await this.requestApi<any>({
       cookie: cookies,
       apiUrl: 'https://www.kuaishou.com/graphql',
@@ -558,8 +558,6 @@ class KwaiPub {
         ...(pcursor ? { pcursor } : {}),
       },
     });
-
-    console.log('----------- getCommentList --- res: ', res);
 
     return res;
   }
@@ -735,15 +733,6 @@ class KwaiPub {
       photoAuthorId: any; // 视频作者ID
     },
   ) {
-    console.log('------ replyCommentByOther option ----', {
-      photoId: option.photoId,
-      photoAuthorId: option.photoAuthorId,
-      content: content,
-      replyToCommentId: option.replyToCommentId,
-      replyTo: option.replyTo,
-      expTag: '1_a/2004436422502146722_xpcwebdetailxxnull0',
-    });
-
     const res = await this.requestApi<any>({
       cookie: cookie,
       apiUrl: 'https://www.kuaishou.com/graphql',

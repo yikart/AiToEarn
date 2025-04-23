@@ -6,7 +6,8 @@
  * @Description:
  */
 import { AccountType } from '../../../commont/AccountEnum';
-import { PubStatus } from '../../db/models/pubRecord';
+
+import { PubStatus } from '../../../commont/publish/PublishEnum';
 
 interface IProperty {
   code: number;

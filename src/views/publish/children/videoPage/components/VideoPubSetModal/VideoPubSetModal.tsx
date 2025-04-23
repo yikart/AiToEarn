@@ -29,7 +29,7 @@ import {
   icpCreateVideoPubRecord,
   icpPubVideo,
 } from '@/icp/publish';
-import { PubType } from '@@/publish/PublishEnum';
+import { PubStatus, PubType } from '@@/publish/PublishEnum';
 import { useNavigate } from 'react-router-dom';
 import PubAccountDetModule, {
   IPubAccountDetModuleRef,
@@ -38,9 +38,7 @@ import VideoPubSetModal_KWAI from '@/views/publish/children/videoPage/components
 import VideoPubSetModal_DouYin from '@/views/publish/children/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_DouYin';
 import VideoPubSetModal_XSH from '@/views/publish/children/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_XSH';
 import VideoPubSetModal_WxSph from '@/views/publish/children/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_WxSph';
-import { onVideoPublishProgress } from '@/icp/receiveMsg';
 import PubProgressModule from '../../../../components/PubProgressModule/PubProgressModule';
-import { PublishProgressRes } from '../../../../../../../electron/main/plat/pub/PubItemVideo';
 import VideoPubSetModalVideo, {
   IVideoPubSetModalVideoRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalVideo';
@@ -52,6 +50,11 @@ import usePubParamsVerify, {
 } from '../../../../hooks/usePubParamsVerify';
 import { useAccountStore } from '../../../../../../store/commont';
 import { IVideoFile } from '../../../../../../components/Choose/VideoChoose';
+import {
+  NoticeItem,
+  NoticeType,
+  useBellMessageStroe,
+} from '../../../../../../store/bellMessageStroe';
 
 export interface IVideoPubSetModalRef {}
 
@@ -91,6 +94,12 @@ const VideoPubSetModal = memo(
       ref: ForwardedRef<IVideoPubSetModalRef>,
     ) => {
       const navigate = useNavigate();
+      const { addNotice, noticeMap } = useBellMessageStroe(
+        useShallow((state) => ({
+          noticeMap: state.noticeMap,
+          addNotice: state.addNotice,
+        })),
+      );
       const {
         videoListChoose,
         setOnePubParams,
@@ -126,10 +135,6 @@ const VideoPubSetModal = memo(
       );
       const [loading, setLoading] = useState(false);
       const pubAccountDetModuleRef = useRef<IPubAccountDetModuleRef>(null);
-      // 主进程传过来的发布进度数据，key为用户id value为发布进度数据
-      const [pubProgressMap, setPubProgressMap] = useState<
-        Map<number, PublishProgressRes>
-      >(new Map());
       const [pubProgressModuleOpen, setPubProgressModuleOpen] = useState(false);
       const videoPubSetModalVideoRef = useRef<IVideoPubSetModalVideoRef>(null);
       const { errParamsMap, warnParamsMap } = usePubParamsVerify<IVideoFile>(
@@ -156,35 +161,21 @@ const VideoPubSetModal = memo(
           },
         },
       );
-
-      useEffect(() => {
-        // 发布进度监听
-        return onVideoPublishProgress((progressData) => {
-          setPubProgressMap((prev) => {
-            const newMap = new Map(prev);
-            newMap.set(progressData.account.id!, progressData);
-            return newMap;
-          });
-        });
-      }, []);
+      const recordId = useRef(-1);
 
       useEffect(() => {
         if (!currChooseAccountId)
           setCurrChooseAccountId(videoListChoose[0]?.id);
       }, [videoListChoose]);
 
+      // 发布进度获取
       const pubProgressData = useMemo(() => {
-        return videoListChoose
-          .filter((v) => v.account && v.video)
-          .map((v) => {
-            const progress = pubProgressMap.get(v.account!.id);
-            return {
-              account: v.account!,
-              progress: progress?.progress || 0,
-              msg: progress?.msg || '',
-            };
-          });
-      }, [pubProgressMap, videoListChoose]);
+        return (
+          (noticeMap.get(NoticeType.PubNotice) || []).find(
+            (v) => v.id === recordId.current,
+          )?.pub?.progressList || []
+        );
+      }, [noticeMap]);
 
       // 当前选择的账户数据
       const currChooseAccount = useMemo(() => {
@@ -213,10 +204,30 @@ const VideoPubSetModal = memo(
           coverPath: videoListChoose[0].pubParams.cover?.imgPath,
           commonCoverPath: commonPubParams.cover?.imgPath,
         });
+        recordId.current = recordRes.id;
         if (!recordRes) return err();
 
         setPubProgressModuleOpen(true);
         setLoading(true);
+
+        // 发布记录通知消息初始化
+        const initialNotice: NoticeItem = {
+          title:
+            [
+              ...new Set(
+                videoListChoose.map(
+                  (v) => AccountPlatInfoMap.get(v.account!.type)!.name,
+                ),
+              ),
+            ].join('、') + '发布任务',
+          time: recordRes.createTime!,
+          id: recordRes.id,
+          pub: {
+            status: PubStatus.UNPUBLISH,
+            progressList: [],
+          },
+        };
+
         for (const vData of videoListChoose) {
           const account = vData.account!;
           const video = vData.video!;
@@ -231,7 +242,19 @@ const VideoPubSetModal = memo(
             videoPath: video.videoPath,
             coverPath: vData.pubParams.cover?.imgPath,
           });
+
+          initialNotice.pub!.progressList.push({
+            account: vData.account!,
+            progress: 0,
+            msg: '加载中...',
+            id: vData.account!.id!,
+          });
         }
+        const noticeList = noticeMap.get(NoticeType.PubNotice) || [];
+        noticeList.unshift(initialNotice);
+        addNotice(NoticeType.PubNotice, noticeList);
+
+        // 发布
         const okRes = await icpPubVideo(recordRes.id);
         setLoading(false);
         close();
@@ -240,6 +263,13 @@ const VideoPubSetModal = memo(
 
         // 成功数据
         const successList = okRes.filter((v) => v.code === 1);
+
+        initialNotice.pub!.status =
+          successList.length === okRes.length
+            ? PubStatus.RELEASED
+            : PubStatus.PartSuccess;
+        addNotice(NoticeType.PubNotice, noticeList);
+
         setTimeout(() => {
           useAccountStore.getState().notification!.open({
             message: '发布结果',

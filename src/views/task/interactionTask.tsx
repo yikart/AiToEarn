@@ -29,7 +29,7 @@ import styles from './task.module.scss';
 import { useState, useEffect, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { taskApi } from '@/api/task';
-import { TaskType, TaskVideo } from '@@/types/task';
+import { TaskVideo } from '@@/types/task';
 import dayjs from 'dayjs';
 import { TaskInfoRef } from './components/popInfo';
 import ChooseAccountModule from '@/views/publish/components/ChooseAccountModule/ChooseAccountModule';
@@ -434,9 +434,7 @@ export default function InteractionTask() {
                           showInfo={false}
                         />
                       </div>
-                      <Text type="secondary">
-                        {item.description}
-                      </Text>
+                      <Text type="secondary">{item.description}</Text>
                       <div className={styles.taskDeadline}>
                         <Text type="secondary">
                           截止时间：{formatDate(item.deadline)}

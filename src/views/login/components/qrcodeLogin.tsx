@@ -214,7 +214,7 @@ export default forwardRef<PubItemRef>((props, ref) => {
           >
             <div
               style={{
-                display: 'flex', 
+                display: 'flex',
                 alignItems: 'center',
                 position: 'relative',
               }}
