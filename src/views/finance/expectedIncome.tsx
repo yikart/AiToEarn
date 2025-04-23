@@ -58,7 +58,7 @@ export default function ExpectedIncome() {
           <List.Item
             actions={[
               <Text key="amount" type="secondary">
-                金额: ¥{(typeof item.taskId === 'string' ? 0 : item.taskId.reward)?.toFixed(2)}
+                金额: ¥{(typeof item.taskId === 'string' ? 0 : item.taskId?.reward)?.toFixed(2)}
               </Text>,
             ]}
           >
@@ -68,7 +68,7 @@ export default function ExpectedIncome() {
                   <Text>
                     {typeof item.taskId === 'string' 
                       ? '未知任务' 
-                      : item.taskId.title || '未知任务'}
+                      : item.taskId?.title || '未知任务'}
                   </Text>
                   <Tag color="processing" className="ml-2">
                     已批准
@@ -78,7 +78,7 @@ export default function ExpectedIncome() {
               description={
                 <div>
                   <Text type="secondary">
-                    任务ID: {typeof item.taskId === 'string' ? item.taskId : item.taskId.id}
+                    任务ID: {typeof item.taskId === 'string' ? item.taskId : item.taskId?.id}
                   </Text>
                   <br />
                   <Text type="secondary">
