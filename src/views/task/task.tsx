@@ -664,9 +664,7 @@ export default function Task() {
                             showInfo={false}
                           />
                         </div>
-                        <Text type="secondary">
-                          {item.description}
-                        </Text>
+                        <Text type="secondary">{item.description}</Text>
                         <div className={styles.taskDeadline}>
                           <Text type="secondary">
                             截止时间：{formatDate(item.deadline)}

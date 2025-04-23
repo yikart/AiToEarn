@@ -196,13 +196,19 @@ export class InteractionService {
         );
 
         // 判断是否执行评论
-        const shouldComment = option.commentProb === 0 ? false : (!option.commentProb || Math.random() * 100 < option.commentProb);
+        const shouldComment =
+          option.commentProb === 0
+            ? false
+            : !option.commentProb || Math.random() * 100 < option.commentProb;
         let commentWorksRes;
-        
+
         if (shouldComment) {
           if (option.commentContent.includes(',')) {
-            let randomIndex = Math.floor(Math.random() * option.commentContent.split(',').length);  
-            option.commentContent = option.commentContent.split(',')[randomIndex];
+            const randomIndex = Math.floor(
+              Math.random() * option.commentContent.split(',').length,
+            );
+            option.commentContent =
+              option.commentContent.split(',')[randomIndex];
           }
 
           console.log('------ option.commentContent', option.commentContent);
@@ -235,9 +241,18 @@ export class InteractionService {
         let isLike: 0 | 1 = 0;
         // 判断是否执行点赞
         const randomLike = Math.random() * 100;
-        console.log('判断是否执行点赞', '概率:', option.likeProb, '随机值:', randomLike);
-        const shouldLike = option.likeProb === 0 ? false : (!option.likeProb || randomLike < option.likeProb);
-        
+        console.log(
+          '判断是否执行点赞',
+          '概率:',
+          option.likeProb,
+          '随机值:',
+          randomLike,
+        );
+        const shouldLike =
+          option.likeProb === 0
+            ? false
+            : !option.likeProb || randomLike < option.likeProb;
+
         if (shouldLike) {
           try {
             console.log('------ 开始点赞作品:', works.dataId);
@@ -267,8 +282,18 @@ export class InteractionService {
 
         // 判断是否执行收藏
         const randomCollect = Math.random() * 100;
-        console.log('判断是否执行收藏', '概率:', option.collectProb, '随机值:', randomCollect);
-        const shouldCollect = (option.collectProb === 0 ? false : (!option.collectProb || randomCollect < option.collectProb)) && option.platform != 'KWAI';
+        console.log(
+          '判断是否执行收藏',
+          '概率:',
+          option.collectProb,
+          '随机值:',
+          randomCollect,
+        );
+        const shouldCollect =
+          (option.collectProb === 0
+            ? false
+            : !option.collectProb || randomCollect < option.collectProb) &&
+          option.platform != 'KWAI';
 
         if (shouldCollect) {
           try {

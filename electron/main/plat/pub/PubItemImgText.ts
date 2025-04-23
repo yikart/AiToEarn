@@ -9,11 +9,11 @@ import { AccountModel } from '../../../db/models/account';
 import { PubItemBase } from './PubItemBase';
 import { PlatformBase } from '../PlatformBase';
 import { ImgTextModel } from '../../../db/models/imgText';
-import { PubStatus } from '../../../db/models/pubRecord';
 import { EtEvent } from '../../../global/event';
 import { PublishProgressRes } from './PubItemVideo';
 import windowOperate from '../../../util/windowOperate';
 import { SendChannelEnum } from '../../../../commont/UtilsEnum';
+import { PubStatus } from '../../../../commont/publish/PublishEnum';
 
 /**
  * 视频发布单条处理逻辑

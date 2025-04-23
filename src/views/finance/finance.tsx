@@ -5,7 +5,11 @@
  * @LastEditors: nevin
  * @Description: 任务页面
  */
-import { VideoCameraOutlined, WalletOutlined, HistoryOutlined, AccountBookOutlined } from '@ant-design/icons';
+import {
+  WalletOutlined,
+  HistoryOutlined,
+  AccountBookOutlined,
+} from '@ant-design/icons';
 import { Segmented, Card, Typography, Space, Row, Col } from 'antd';
 import { Outlet, useNavigate } from 'react-router-dom';
 import styles from './finance.module.scss';
@@ -28,20 +32,22 @@ export default function Page() {
     try {
       const res = await financeApi.getUserWalletInfo();
       // console.log('getBalance','res',res);
-      setBalance(res.balance || 0); 
+      setBalance(res.balance || 0);
     } catch (error) {
       console.error('获取余额失败:', error);
     }
   };
 
   return (
-    <div className={styles.finance}> 
+    <div className={styles.finance}>
       <div className={styles.header}>
         <Card className={styles.balanceCard} bordered={false}>
           <Row align="middle" justify="space-between">
             <Col>
               <Space direction="vertical" size="small">
-                <Text type="secondary" className={styles.balanceLabel}>账户余额</Text>
+                <Text type="secondary" className={styles.balanceLabel}>
+                  账户余额
+                </Text>
                 <Title level={2} className={styles.balanceAmount}>
                   ¥{balance.toFixed(2)}
                 </Title>

@@ -24,6 +24,7 @@ import {
   icpGetImgTextList,
   icpGetPubVideoRecord,
 } from '../../../../../icp/publish';
+import { PubStatusCnMap } from '../../../../../../electron/db/models/pubRecord';
 
 export interface IPubRecordDetailsRef {
   // 打开详情
@@ -104,20 +105,16 @@ const PubRecordDetails = memo(
                   {pubRecordList?.map((v) => {
                     const account = accountMap.get(v.accountId);
                     const plat = AccountPlatInfoMap.get(v.type);
-                    let statusText = '';
+                    const statusText = PubStatusCnMap[v.status];
                     let className = '';
                     let tooltipText = '';
                     if (v.status === 1) {
-                      statusText = '发布成功';
                       className = 'pubRecord-record-item--success';
                     } else if (v.status === 0) {
-                      statusText = '发布中';
                       className = 'pubRecord-record-item--processing';
                     } else if (v.status === 2) {
-                      statusText = '发布失败';
                       className = 'pubRecord-record-item--fail';
                     } else if (v.status === 4) {
-                      statusText = '审核中';
                       tooltipText =
                         '快手需要几十秒时间审核您的作品，等待几十秒后刷新数据即可';
                       className = 'pubRecord-record-item--processing';

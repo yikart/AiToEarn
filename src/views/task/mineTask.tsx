@@ -85,8 +85,6 @@ const renderEmptyState = () => {
           <h4>接单前完成以下步骤，接单快人一步</h4>
 
           <div className={styles.qrCodeContainer}>
-            
-
             <div className={styles.qrCodeItem}>
               <div className={styles.qrCodeWrapper}>
                 <img
@@ -189,7 +187,7 @@ export default function Page() {
       const tasks = await taskApi.getMineTaskList(params as any);
 
       if (isLoadMore) {
-        setTaskList((prev:any) => [...prev, ...tasks.items]);
+        setTaskList((prev: any) => [...prev, ...tasks.items]);
       } else {
         setTaskList(tasks.items);
       }
@@ -330,7 +328,7 @@ export default function Page() {
         </div>
       ) : (
         <div className={styles.taskList}>
-          {taskList.map((task:any) => {
+          {taskList.map((task: any) => {
             // 获取任务详情，处理可能的undefined情况
             const taskDetail = task.taskId || {};
 
@@ -340,7 +338,7 @@ export default function Page() {
                   {/* 添加任务图片显示 */}
                   <div className={styles.taskImageContainer}>
                     <img
-                      src={` ${ task.screenshotUrls.length ? FILE_BASE_URL+ task.screenshotUrls[0]: logo }`}
+                      src={` ${task.screenshotUrls.length ? FILE_BASE_URL + task.screenshotUrls[0] : logo}`}
                       alt={taskDetail.title}
                       className={styles.taskImage}
                     />
@@ -476,9 +474,7 @@ export default function Page() {
           </div>
 
           <div className={styles.guideIntro}>
-          <p>
-            尊敬的AiToEarn流量主用户：
-            </p>
+            <p>尊敬的AiToEarn流量主用户：</p>
             <p>
               您好，为了更好地保障广告主和流量主的权益，建立一个健康、公平的广告交易系统，请仔细阅读并确认以下“《AiToEarn任务市场接单合作须知》”后再操作接单：
             </p>
@@ -508,7 +504,9 @@ export default function Page() {
               </li>
               <li>
                 <p>点击下方链接下载哎哟赚接单软件（已下载可忽略）</p>
-                <p className={styles.guideLink}>https://att.yikart.cn/aiToEarn</p>
+                <p className={styles.guideLink}>
+                  https://att.yikart.cn/aiToEarn
+                </p>
               </li>
               <li>
                 <p>
@@ -554,10 +552,10 @@ export default function Page() {
                 <h4>一.关于流量主账号</h4>
                 <div className={styles.faqAnswer}>
                   <p>
-                  1.1流量主须自行负责在AiToEarn平台的用户账号和密码，且须对在用户账号密码下发生的所有活动（包括但不限于发布需求信息、网上点击同意各类协议、规则、参与需求投标等）承担责任。流量主有权根据需要更改登录和账户提现密码。如因流量主的过错导致的任何损失由流量主自行承担，该过错包括但不限于：不按照交易提示操作，未及时进行交易操作，遗忘或泄漏密码等。
+                    1.1流量主须自行负责在AiToEarn平台的用户账号和密码，且须对在用户账号密码下发生的所有活动（包括但不限于发布需求信息、网上点击同意各类协议、规则、参与需求投标等）承担责任。流量主有权根据需要更改登录和账户提现密码。如因流量主的过错导致的任何损失由流量主自行承担，该过错包括但不限于：不按照交易提示操作，未及时进行交易操作，遗忘或泄漏密码等。
                   </p>
-                  <p >
-                  1.2流量主应当注册账户时提供真实准确的注册信息，包括但不限于真实姓名、身份证号、联系电话、地址、邮政编码等，保证AiToEarn工作人员可以通过上述联系方式与流量主进行联系。与此同时，流量主也应当在相关资料实际变更时及时更新有关注册资料。
+                  <p>
+                    1.2流量主应当注册账户时提供真实准确的注册信息，包括但不限于真实姓名、身份证号、联系电话、地址、邮政编码等，保证AiToEarn工作人员可以通过上述联系方式与流量主进行联系。与此同时，流量主也应当在相关资料实际变更时及时更新有关注册资料。
                   </p>
                 </div>
               </div>
@@ -566,19 +564,29 @@ export default function Page() {
                 <h4>二.推广内容审核说明</h4>
                 <div className={styles.faqAnswer}>
                   <p>
-                  2.1针对推广内容，AiToEarn任务市场平台有权对广告主投放内容进行初步审核，并对其中明显涉嫌违反法律法规的内容进行强制性处理，但平台的审核仅为形式审核，重在参照广告法条款进行审核，但因每个社交媒体平台自身规则差异造成的内容违规或下架，AiToEarn不承担相关责任。
+                    2.1针对推广内容，AiToEarn任务市场平台有权对广告主投放内容进行初步审核，并对其中明显涉嫌违反法律法规的内容进行强制性处理，但平台的审核仅为形式审核，重在参照广告法条款进行审核，但因每个社交媒体平台自身规则差异造成的内容违规或下架，AiToEarn不承担相关责任。
                   </p>
-                  <p>2.2流量主在接受推广任务前，请自行判断可能带来的不确定性风险，我方不承担任何因推广素材造成的包括但不限于系统删文、禁言及封号、隐藏限流等责任。</p>
+                  <p>
+                    2.2流量主在接受推广任务前，请自行判断可能带来的不确定性风险，我方不承担任何因推广素材造成的包括但不限于系统删文、禁言及封号、隐藏限流等责任。
+                  </p>
                 </div>
               </div>
 
               <div className={styles.faqItem}>
                 <h4>三.发布与结算</h4>
                 <div className={styles.faqAnswer}>
-                  <p>3.1流量主如约完成推送后，推广信息因相关政策或其它非流量主主动因素导致被删除（包括但不限于：用户举报、平台通知配合删除等），如账号数据正常、账号质量过关且在结算期内，AiToEarn任务市场平台应当按照统计金额向乙方支付费用。</p>
-                  <p>3.2流量主发布订单内容后，因自身原因人为删除、隐藏、账号封禁等情况导致广告主推广内容不能正常展示推广的，须按照对应订单要求补发或协商处理，否则会受到相应接单限制或处罚。</p>
-                  <p>3.3流量主不得擅自更改接单推广信息，包括但不限于标题、图片、视频、音频、文字等（与AiToEarn任务市场工作人员沟通确认后的更改除外），如擅自更改将不予结算并影响接单权限。</p>
-                  <p>3.4AiToEarn任务市场订单实行发布后结算方式，结算金额实时到达流量主AiToEarn账户，流量主自行提现操作，平台不收取提现服务费。</p>
+                  <p>
+                    3.1流量主如约完成推送后，推广信息因相关政策或其它非流量主主动因素导致被删除（包括但不限于：用户举报、平台通知配合删除等），如账号数据正常、账号质量过关且在结算期内，AiToEarn任务市场平台应当按照统计金额向乙方支付费用。
+                  </p>
+                  <p>
+                    3.2流量主发布订单内容后，因自身原因人为删除、隐藏、账号封禁等情况导致广告主推广内容不能正常展示推广的，须按照对应订单要求补发或协商处理，否则会受到相应接单限制或处罚。
+                  </p>
+                  <p>
+                    3.3流量主不得擅自更改接单推广信息，包括但不限于标题、图片、视频、音频、文字等（与AiToEarn任务市场工作人员沟通确认后的更改除外），如擅自更改将不予结算并影响接单权限。
+                  </p>
+                  <p>
+                    3.4AiToEarn任务市场订单实行发布后结算方式，结算金额实时到达流量主AiToEarn账户，流量主自行提现操作，平台不收取提现服务费。
+                  </p>
                 </div>
               </div>
 

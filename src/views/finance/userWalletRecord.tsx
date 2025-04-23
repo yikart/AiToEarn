@@ -5,20 +5,34 @@
  * @LastEditors: nevin
  * @Description: 用户金额记录 userWalletRecord
  */
-import { Button, Table, Space, Tag, message, Modal, Input, Form, Card, Typography, Select } from 'antd';
+import {
+  Button,
+  Table,
+  Space,
+  Tag,
+  message,
+  Modal,
+  Input,
+  Form,
+  Card,
+  Typography,
+  Select,
+} from 'antd';
 import { useState, useEffect, useRef } from 'react';
 import AddWalletAccount from './components/addWalletAccount';
 import { financeApi } from '@/api/finance';
 import { AddWalletAccountRef } from './components/addWalletAccount';
 import { UserWalletRecord } from '@/api/types/finance';
 import { UserWalletAccount } from '@/api/types/userWalletAccount';
-import { PlusOutlined, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import styles from './userWalletRecord.module.scss';
-import moment from 'moment';   
+import moment from 'moment';
 const { Title } = Typography;
 
 export default function Page() {
-  const [walletAccountList, setWalletAccountList] = useState<UserWalletRecord[]>([]);
+  const [walletAccountList, setWalletAccountList] = useState<
+    UserWalletRecord[]
+  >([]);
   const [walletAccounts, setWalletAccounts] = useState<UserWalletAccount[]>([]);
   const [loading, setLoading] = useState(false);
   const [isWithdrawModalVisible, setIsWithdrawModalVisible] = useState(false);
@@ -52,11 +66,14 @@ export default function Page() {
     }
   }
 
-  const handleWithdraw = async (values: { amount: number; walletAccountId: string }) => {
+  const handleWithdraw = async (values: {
+    amount: number;
+    walletAccountId: string;
+  }) => {
     try {
       await financeApi.addUserWalletRecord({
         walletAccountId: values.walletAccountId,
-        balance: values.amount
+        balance: values.amount,
       });
       message.success('提现申请提交成功');
       setIsWithdrawModalVisible(false);
@@ -102,7 +119,7 @@ export default function Page() {
         <Space>
           {/* {amount > 9999 ? <ArrowUpOutlined style={{ color: '#52c41a' }} /> : <ArrowDownOutlined style={{ color: '#ff4d4f' }} />} */}
           <span style={{ color: amount < 0 ? '#ff4d4f' : '#52c41a' }}>
-          {record.type === 'WITHDRAW' ? '-' : '+'} {amount}
+            {record.type === 'WITHDRAW' ? '-' : '+'} {amount}
           </span>
         </Space>
       ),
@@ -122,7 +139,7 @@ export default function Page() {
       dataIndex: 'createTime',
       key: 'createTime',
       render: (createTime: string) => {
-        return moment(createTime).format('YYYY-MM-DD HH:mm:ss');  
+        return moment(createTime).format('YYYY-MM-DD HH:mm:ss');
       },
     },
   ];
@@ -132,7 +149,9 @@ export default function Page() {
       <AddWalletAccount ref={Ref_AddWalletAccountRef} />
       <Card className={styles.headerCard} bordered={false}>
         <div className={styles.header}>
-          <Title level={4} className={styles.title}>交易记录</Title>
+          <Title level={4} className={styles.title}>
+            交易记录
+          </Title>
           <Button
             type="primary"
             icon={<PlusOutlined />}
@@ -167,9 +186,10 @@ export default function Page() {
             rules={[{ required: true, message: '请选择提现账户' }]}
           >
             <Select placeholder="请选择提现账户">
-              {walletAccounts.map(account => (
+              {walletAccounts.map((account) => (
                 <Select.Option key={account.id} value={account.id}>
-                  {account.type === 'ZFB' ? '支付宝' : '微信'} - {account.account}
+                  {account.type === 'ZFB' ? '支付宝' : '微信'} -{' '}
+                  {account.account}
                 </Select.Option>
               ))}
             </Select>
@@ -179,10 +199,14 @@ export default function Page() {
             label="提现金额"
             rules={[
               { required: true, message: '请输入提现金额' },
-              { min: 0, message: '提现金额必须大于0' }
+              { min: 0, message: '提现金额必须大于0' },
             ]}
           >
-            <Input type="number" placeholder="请输入提现金额" className={styles.input} />
+            <Input
+              type="number"
+              placeholder="请输入提现金额"
+              className={styles.input}
+            />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" block>

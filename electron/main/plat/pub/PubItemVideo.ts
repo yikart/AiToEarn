@@ -9,10 +9,10 @@ import { VideoModel } from '../../../db/models/video';
 import { AccountModel } from '../../../db/models/account';
 import { PubItemBase } from './PubItemBase';
 import { PlatformBase } from '../PlatformBase';
-import { PubStatus } from '../../../db/models/pubRecord';
 import { EtEvent } from '../../../global/event';
 import windowOperate from '../../../util/windowOperate';
 import { SendChannelEnum } from '../../../../commont/UtilsEnum';
+import { PubStatus } from '../../../../commont/publish/PublishEnum';
 
 // 视频发布进度返回值
 export interface PublishProgressRes {
@@ -20,6 +20,7 @@ export interface PublishProgressRes {
   progress: number;
   msg: string;
   account: AccountModel;
+  id: number;
 }
 
 /**
@@ -51,6 +52,7 @@ export class PubItemVideo extends PubItemBase {
           progress,
           msg: msg || '',
           account: this.accountModel,
+          id: this.videoModel.pubRecordId!,
         };
         // 视频发布进度，向渲染层发送进度
         windowOperate.sendRenderMsg(SendChannelEnum.VideoPublishProgress, args);
@@ -64,6 +66,7 @@ export class PubItemVideo extends PubItemBase {
         progress: -1,
         msg: '发布失败！',
         account: this.accountModel,
+        id: this.videoModel.pubRecordId,
       });
     } else {
       // 发布成功
@@ -75,6 +78,7 @@ export class PubItemVideo extends PubItemBase {
       this.videoModel.dataId = publishVideoResult.dataId;
       this.videoModel.previewVideoLink = publishVideoResult.previewVideoLink;
       windowOperate.sendRenderMsg(SendChannelEnum.VideoPublishProgress, {
+        id: this.videoModel.pubRecordId,
         progress: 100,
         msg: '发布成功！',
         account: this.accountModel,

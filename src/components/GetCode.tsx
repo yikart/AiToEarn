@@ -23,7 +23,11 @@ function GetCode({ onGetCode }: { onGetCode: (unlock: () => void) => void }) {
         styles['loginForm-getCode'] +
         ` ${isCode ? styles['loginForm-getCode--disable'] : ''}`
       }
-      style={{ display: 'flex',justifyContent: 'center', alignItems: 'center' }}
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
       onClick={() => {
         if (isCode) return;
         lockCode();
@@ -37,10 +41,10 @@ function GetCode({ onGetCode }: { onGetCode: (unlock: () => void) => void }) {
         <>
           （
           <Countdown
-            style={{fontSize: '12px'}}
+            style={{ fontSize: '12px' }}
             format="ss"
             value={Date.now() + currTime.current}
-            precision={1} 
+            precision={1}
             onFinish={() => {
               setIsCode(false);
             }}

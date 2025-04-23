@@ -3,8 +3,8 @@ import { PublishService } from '../service';
 import { AccountService } from '../../account/service';
 import { ImgTextPubService } from './service';
 import { ImgTextModel } from '../../../db/models/imgText';
-import { PubStatus } from '../../../db/models/pubRecord';
 import platController from '../../plat';
+import { PubStatus } from '../../../../commont/publish/PublishEnum';
 
 @Controller()
 export class ImgTextPubController {

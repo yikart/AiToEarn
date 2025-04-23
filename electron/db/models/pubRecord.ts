@@ -5,17 +5,18 @@
  * @LastEditors: nevin
  * @Description: 发布记录
  */
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { TempModel } from './temp';
-import { PubType } from '../../../commont/publish/PublishEnum';
+import { PubStatus, PubType } from '../../../commont/publish/PublishEnum';
 
-export enum PubStatus {
-  UNPUBLISH = 0, // 未发布/草稿
-  RELEASED = 1, // 已发布
-  FAIL = 2, // 发布失败
-  PartSuccess = 3, // 部分成功
-  Audit = 4, // 审核中
-}
+export const PubStatusCnMap = {
+  [PubStatus.UNPUBLISH]: '未发布',
+  [PubStatus.RELEASED]: '已发布',
+  [PubStatus.FAIL]: '发布失败',
+  [PubStatus.PartSuccess]: '部分成功',
+  [PubStatus.Audit]: '审核中',
+};
+
 @Entity({ name: 'pubRecord' })
 export class PubRecordModel extends TempModel {
   @PrimaryGeneratedColumn({ type: 'int', comment: 'id' })

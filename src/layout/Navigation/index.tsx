@@ -13,6 +13,8 @@ import SysMenu from '../SysMenu';
 import { useEffect, useState } from 'react';
 import { ipcAppInfo } from '../../icp/app';
 import Windowcontrolbuttons from '../../components/WindowControlButtons/WindowControlButtons';
+import Bellmessage from '../BellMessage';
+import { BellOutlined } from '@ant-design/icons';
 
 const Navigation = () => {
   const location = useLocation();
@@ -63,9 +65,15 @@ const Navigation = () => {
       <div className="navigation_drag" />
 
       <div className="navigation-userinfo">
-        <div className="navigation-line" style={{ marginRight: '10px' }}></div>
+        <Bellmessage>
+          <div className="navigation-icon">
+            <BellOutlined />
+            <span className="navigation-icon-text">消息</span>
+          </div>
+        </Bellmessage>
+        <div className="navigation-line"></div>
         <SysMenu />
-        <div className="navigation-line" style={{ marginLeft: '10px' }}></div>
+        <div className="navigation-line"></div>
       </div>
 
       <Windowcontrolbuttons />
