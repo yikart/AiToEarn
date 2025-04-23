@@ -46,9 +46,8 @@ export interface UserTask<T extends Task<TaskDataInfo> | string> {
   rejectionReason?: string; // 拒绝原因
   metadata?: Record<string, any>; // 额外信息，如审核反馈等
   isFirstTimeSubmission: boolean; // 是否首次提交，用于确定是否给予首次奖励
-  earnedCommission?: number; // 实际获得的佣金
   verificationNote?: string; // 人工核查备注
-  rewardAmount?: number; // 奖励金额
+  reward: number; // 佣金金额
   rewardTime?: string; // 奖励发放时间
   keyword?: string;
   productLevel?: string;
