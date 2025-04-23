@@ -10,9 +10,9 @@
   "files": ["dist-electron", "dist"],
   "mac": {
     "gatekeeperAssess": false,
-  "hardenedRuntime": true,
-  "entitlements": "scripts/entitlements.mac.plist",
-  "entitlementsInherit": "scripts/entitlements.mac.plist",
+    "hardenedRuntime": true,
+    "entitlements": "scripts/entitlements.mac.plist",
+    "entitlementsInherit": "scripts/entitlements.mac.plist",
     "identity": "Yika(Beijing)Technology Co., Ltd.",
     "artifactName": "${productName}-${version}-${arch}.${ext}",
     "target": [
