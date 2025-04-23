@@ -69,6 +69,7 @@ const TASK_TYPE_MAP = {
   video: { name: '视频任务', color: '#a66ae4' },
   promotion: { name: '推广任务', color: '#1890ff' },
   product: { name: '挂车市场任务', color: '#52c41a' },
+  article: { name: '文章任务', color: '#0958d9' },
 };
 
 // 渲染空状态
