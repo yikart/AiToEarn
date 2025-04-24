@@ -660,22 +660,23 @@ export default function Task() {
                     </div>
                   }
                   actions={[
-                    <Space key="recruits">
-                      <UserOutlined />
-                      <Text>
-                        {item.currentRecruits}
-                        {/* /{item.maxRecruits} */}
-                      </Text>
-                    </Space>,
-                    <Space key="time">
-                      <ClockCircleOutlined />
-                      <Text>{item.keepTime}分钟</Text>
-                    </Space>,
+                    // <Space key="recruits">
+                    //   <UserOutlined />
+                    //   <Text>
+                    //     {item.currentRecruits}
+                    //     {/* /{item.maxRecruits} */}
+                    //   </Text>
+                    // </Space>,
+                    // <Space key="time">
+                    //   <ClockCircleOutlined />
+                    //   <Text>{item.keepTime}分钟</Text>
+                    // </Space>,
                     <Button
                       type="primary"
                       key="join"
-                      disabled={item.isAccepted} // 00.00
+                      disabled={item.isAccepted}
                       onClick={() => handleJoinTask(item)}
+                      style={{ minWidth: '120px' }}
                     >
                       {item.isAccepted ? '已参与' : '参与任务'}
                     </Button>, 
@@ -686,7 +687,9 @@ export default function Task() {
                       <div className={styles.taskTitle}>
                         <Title level={5}>{item.title}</Title>
                         <Space>
-                          <Tag color="green">¥{item.reward}</Tag>
+                          <Tag color="green" style={{ fontSize: '16px', padding: '1px 18px' }}>
+                            ¥{item.reward}
+                          </Tag>
                           <Space size={4}>
                             {getPlatformTags(item.accountTypes)}
                           </Space>
@@ -696,13 +699,13 @@ export default function Task() {
                     description={
                       <div className={styles.taskInfo}>
                         <div className={styles.taskProgress}>
-                          <Progress
+                          {/* <Progress
                             percent={Math.round(
                               (item.currentRecruits / item.maxRecruits) * 100,
                             )}
                             size="small"
                             showInfo={false}
-                          />
+                          /> */}
                         </div>
                         <div
                         dangerouslySetInnerHTML={{
@@ -713,11 +716,11 @@ export default function Task() {
                         {/* <Text type="secondary">
                           {item.description}
                         </Text> */}
-                        <div className={styles.taskDeadline}>
+                        {/* <div className={styles.taskDeadline}>
                           <Text type="secondary">
                             截止时间：{formatDate(item.deadline)}
                           </Text>
-                        </div>
+                        </div> */}
                       </div>
                     }
                   />
@@ -850,9 +853,11 @@ export default function Task() {
                     {/* <Descriptions.Item label="任务时长">
                       {selectedTask.keepTime}分钟
                     </Descriptions.Item> */}
-                    <Descriptions.Item label="起止时间">
+                    
+                    {/* <Descriptions.Item label="起止时间">
                       {formatDate(selectedTask.createTime)} - {formatDate(selectedTask.deadline)}
-                    </Descriptions.Item>
+                    </Descriptions.Item> */}
+
                     {/* <Descriptions.Item label="截止时间">
                       {formatDate(selectedTask.deadline)}
                     </Descriptions.Item> */}
