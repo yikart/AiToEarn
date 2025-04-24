@@ -1,0 +1,220 @@
+import { ForwardedRef, forwardRef, memo, useMemo, useState } from 'react';
+import { Avatar, Drawer, Modal, Table, TableProps, Tooltip } from 'antd';
+import styles from './AccountSidebar.module.scss';
+import { useAccountStore } from '../../../../store/account';
+import { useShallow } from 'zustand/react/shallow';
+import { AccountModel } from '../../../../../electron/db/models/account';
+import { AccountPlatInfoMap } from '../../comment';
+import { AccountStatus } from '../../../../../commont/AccountEnum';
+import {
+  CheckCircleOutlined,
+  DeleteOutlined,
+  WarningOutlined,
+} from '@ant-design/icons';
+import { AvatarPlat } from '../../../publish/components/PubProgressModule/PubProgressModule';
+
+export interface IUserManageModalRef {}
+
+export interface IUserManageModalProps {
+  open: boolean;
+  onCancel: () => void;
+}
+
+const UserManageModal = memo(
+  forwardRef(
+    (
+      { open, onCancel }: IUserManageModalProps,
+      ref: ForwardedRef<IUserManageModalRef>,
+    ) => {
+      const { accountList, getAccountList } = useAccountStore(
+        useShallow((state) => ({
+          accountList: state.accountList,
+          getAccountList: state.getAccountList,
+        })),
+      );
+      const [deleteHitOpen, setDeleteHitOpen] = useState(false);
+      const [selectedRows, setSelectedRows] = useState<AccountModel[]>([]);
+
+      const columns = useMemo(() => {
+        const columns: TableProps<AccountModel>['columns'] = [
+          {
+            title: '账号',
+            render: (text, am) => {
+              return (
+                <div
+                  className={`userManage-content-user ${am.status === AccountStatus.DISABLE ? 'userManage-content-user--disable' : ''}`}
+                >
+                  <Avatar src={am.avatar} />
+                  <span
+                    className="userManage-content-user-name"
+                    title={am.nickname}
+                  >
+                    {am.nickname}
+                  </span>
+                </div>
+              );
+            },
+            width: 200,
+            key: 'nickname',
+          },
+          {
+            title: '账号状态',
+            render: (text, am) => {
+              return (
+                <>
+                  {am.status === AccountStatus.USABLE ? (
+                    <>
+                      <CheckCircleOutlined
+                        style={{
+                          color: 'var(--successColor)',
+                          marginRight: '3px',
+                        }}
+                      />
+                      在线
+                    </>
+                  ) : (
+                    <>
+                      <WarningOutlined
+                        style={{
+                          color: 'var(--warningColor)',
+                          marginRight: '3px',
+                        }}
+                      />
+                      离线
+                    </>
+                  )}
+                </>
+              );
+            },
+            width: 200,
+            key: 'nickname',
+          },
+          {
+            title: '平台',
+            render: (text, am) => {
+              const platInfo = AccountPlatInfoMap.get(am.type)!;
+              return (
+                <div className="userManage-content-plat">
+                  <Tooltip title={platInfo.name}>
+                    <img src={platInfo.icon} />
+                  </Tooltip>
+                </div>
+              );
+            },
+            width: 200,
+            key: 'nickname',
+          },
+        ];
+        return columns;
+      }, []);
+
+      const rowSelection: TableProps<AccountModel>['rowSelection'] = {
+        onChange: (
+          selectedRowKeys: React.Key[],
+          selectedRows: AccountModel[],
+        ) => {
+          setSelectedRows(selectedRows);
+        },
+        getCheckboxProps: (record: AccountModel) => ({
+          name: record.nickname,
+        }),
+        selectedRowKeys: selectedRows.map((v) => v.id),
+      };
+
+      return (
+        <>
+          <Modal
+            centered
+            open={deleteHitOpen}
+            title="删除提示"
+            width={500}
+            onCancel={() => setDeleteHitOpen(false)}
+            rootClassName={styles.userManageDeleteHitModal}
+            onOk={() => {
+              setDeleteHitOpen(false);
+              console.log("delete");
+            }}
+          >
+            <p>
+              是否删除以下
+              <span style={{ color: 'var(--errerColor)' }}>
+                {selectedRows.length}
+              </span>
+              个账号？
+            </p>
+            <div className={styles['userManageDeleteHitModal-users']}>
+              {selectedRows.map((v) => {
+                return (
+                  <li key={v.id}>
+                    <AvatarPlat account={v} size="large" />
+                    <span>{v.nickname}</span>
+                  </li>
+                );
+              })}
+            </div>
+          </Modal>
+
+          <Modal
+            open={open}
+            title="账号管理器"
+            footer={null}
+            width={900}
+            onCancel={onCancel}
+            rootClassName={styles.userManageModal}
+          >
+            <div className={styles.userManage}>
+              <div className="userManage-sidebar"></div>
+              <div className="userManage-content">
+                <Table<AccountModel>
+                  columns={columns}
+                  dataSource={accountList}
+                  scroll={{ y: 500 }}
+                  rowKey="id"
+                  rowSelection={{ type: 'checkbox', ...rowSelection }}
+                />
+
+                <Drawer
+                  title={
+                    <>
+                      已选择
+                      <span style={{ color: 'var(--successColor)' }}>
+                        {selectedRows.length}
+                      </span>
+                      个账号
+                    </>
+                  }
+                  placement="bottom"
+                  mask={false}
+                  height={150}
+                  closable={true}
+                  onClose={() => {
+                    setSelectedRows([]);
+                  }}
+                  open={selectedRows.length !== 0}
+                  getContainer={false}
+                >
+                  <div className="userManage-content-multiple">
+                    <div
+                      className="userManage-content-multiple-item"
+                      onClick={() => {
+                        setDeleteHitOpen(true);
+                      }}
+                    >
+                      <div className="userManage-content-multiple-item-icon">
+                        <DeleteOutlined />
+                      </div>
+                      <span>删除账号</span>
+                    </div>
+                  </div>
+                </Drawer>
+              </div>
+            </div>
+          </Modal>
+        </>
+      );
+    },
+  ),
+);
+UserManageModal.displayName = 'UserManageModal';
+
+export default UserManageModal;

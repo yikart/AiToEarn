@@ -8,12 +8,13 @@ import {
 } from 'react';
 import styles from './AccountSidebar.module.scss';
 import { AccountInfo, AccountPlatInfoMap } from '../../comment';
-import { Avatar, Button, message, Popover } from 'antd';
+import { Avatar, Button, message, Popover, Tooltip } from 'antd';
 import { accountLogin, acpAccountLoginCheck } from '../../../../icp/account';
 import AddAccountModal from '../AddAccountModal';
 import { AccountStatus } from '../../../../../commont/AccountEnum';
 import {
   CheckCircleOutlined,
+  PlusOutlined,
   UserOutlined,
   WarningOutlined,
 } from '@ant-design/icons';
@@ -23,6 +24,7 @@ import PubAccountDetModule, {
 } from '../../../publish/components/PubAccountDetModule/PubAccountDetModule';
 import { useShallow } from 'zustand/react/shallow';
 import { useAccountStore } from '../../../../store/account';
+import UserManageModal from './UserManageModal';
 
 export interface IAccountSidebarRef {}
 
@@ -127,6 +129,7 @@ const AccountSidebar = memo(
           getAccountList: state.getAccountList,
         })),
       );
+      const [userManageModalOpen, setUserManageModalOpen] = useState(false);
 
       // 在组件内部过滤账号列表，而不是在 useAccountStore 中过滤
       const accountList = useMemo(() => {
@@ -137,6 +140,10 @@ const AccountSidebar = memo(
 
       return (
         <>
+          <UserManageModal
+            open={userManageModalOpen}
+            onCancel={() => setUserManageModalOpen(false)}
+          />
           <PubAccountDetModule
             title="账号检测"
             tips="所有平台在线"
@@ -151,15 +158,26 @@ const AccountSidebar = memo(
           />
           <div className={styles.accountSidebar}>
             <div className="accountSidebar-top">
-              <Button
-                style={{ margin: '10px 0' }}
-                onClick={() => {
-                  setIsAccountModalOpen(true);
-                }}
-              >
-                <UserOutlined />
-                添加账号
-              </Button>
+              <div className="accountSidebar-top-box">
+                <Button
+                  onClick={() => {
+                    setUserManageModalOpen(true);
+                  }}
+                >
+                  <UserOutlined />
+                  账号管理器
+                </Button>
+                <Tooltip title="添加账号">
+                  <Button
+                    type="primary"
+                    className="accountSidebar-top-addUser"
+                    icon={<PlusOutlined />}
+                    onClick={() => {
+                      setIsAccountModalOpen(true);
+                    }}
+                  ></Button>
+                </Tooltip>
+              </div>
             </div>
             <ul className="accountList">
               {accountList.map((account) => {

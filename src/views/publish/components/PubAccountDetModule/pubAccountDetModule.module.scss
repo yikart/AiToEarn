@@ -22,16 +22,6 @@
         align-items: center;
         overflow: hidden;
       }
-      &-avatar {
-        position: relative;
-        &-plat {
-          position: absolute;
-          bottom: 0;
-          right: 0;
-          border-radius: 50%;
-          width: 10px;
-        }
-      }
       &-name {
         white-space: nowrap;
         margin-top: 5px;

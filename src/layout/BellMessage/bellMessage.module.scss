@@ -48,6 +48,10 @@
         transition: 0.3s;
         &-title {
           font-weight: 900;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          width: 100%;
         }
         &-des {
           margin: 5px 0;
