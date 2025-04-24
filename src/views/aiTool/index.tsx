@@ -49,6 +49,11 @@ const items: MenuItem[] = [
     label: 'NarratoAI自动化剪辑工具',
     icon: <Icon component={NarratoAI} />,
   },
+  {
+    key: '/aiTool/aiToolWebview?webviewUrl=http://39.100.101.239:6008',
+    label: 'MoneyPrinterTurbo',
+    icon: <Icon component={NarratoAI} />,
+  },
 ];
 
 export default function Page() {

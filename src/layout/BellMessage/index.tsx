@@ -107,7 +107,10 @@ const Bellmessage = memo(
                               }}
                               key={v.id}
                             >
-                              <div className="bellMessage-content-item-title">
+                              <div
+                                className="bellMessage-content-item-title"
+                                title={v.title}
+                              >
                                 {v.title}
                               </div>
                               <div className="bellMessage-content-item-des">

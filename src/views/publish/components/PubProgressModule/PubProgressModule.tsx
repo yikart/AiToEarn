@@ -4,6 +4,8 @@ import { PublishProgressRes } from '../../../../../electron/main/plat/pub/PubIte
 import styles from './pubProgressModule.module.scss';
 import { AccountPlatInfoMap } from '../../../account/comment';
 import { MinusOutlined } from '@ant-design/icons';
+import { AccountModel } from '../../../../../electron/db/models/account';
+import type { AvatarSize } from 'antd/es/avatar/AvatarContext';
 
 export interface IPubProgressModuleRef {}
 
@@ -22,6 +24,29 @@ function getMsg(progressData: PublishProgressRes) {
     return progressData.msg || '正在加载...';
   }
 }
+
+export const AvatarPlat = ({
+  account,
+  size = 'default',
+}: {
+  account: AccountModel;
+  size?: AvatarSize;
+}) => {
+  const plat = AccountPlatInfoMap.get(account.type)!;
+  return (
+    <>
+      <div className={styles.avatarPlat}>
+        <Avatar src={account.avatar} size={size} />
+        <img
+          src={plat.icon}
+          style={{
+            width: size === 'large' ? 15 : size === 'default' ? 12.5 : 10,
+          }}
+        />
+      </div>
+    </>
+  );
+};
 
 // 发布进度展示
 const PubProgressModule = memo(
@@ -58,10 +83,7 @@ const PubProgressModule = memo(
               return (
                 <div className="pubProgressModule-item" key={account.id}>
                   <div className="pubProgressModule-item-left">
-                    <div className="pubProgressModule-item-left-avatar">
-                      <Avatar src={account.avatar} size="large" />
-                      <img src={plat.icon} />
-                    </div>
+                    <AvatarPlat account={account} size="large" />
                     <Tooltip title={account.nickname}>
                       <span className="pubProgressModule-item-left-name">
                         {account.nickname}

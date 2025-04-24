@@ -10,20 +10,10 @@
         display: flex;
         align-items: center;
         white-space: nowrap;
-        &-avatar {
-          position: relative;
-          margin-right: 10px;
-          & > img {
-            width: 15px;
-            position: absolute;
-            bottom: 0;
-            right: -2.5px;
-            border-radius: 50%;
-          }
-        }
         &-name {
           text-overflow: ellipsis;
           overflow: hidden;
+          margin-left: 6px;
           padding-right: 20px;
         }
       }
@@ -37,5 +27,18 @@
         }
       }
     }
+  }
+}
+
+.avatarPlat {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  & > img {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    transform: translate(-80%, 20%);
+    border-radius: 50%;
   }
 }

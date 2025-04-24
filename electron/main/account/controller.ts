@@ -194,14 +194,13 @@ export class AccountController {
   }
 
   // 删除
-  @Icp('ICP_ACCOUNT_DELETE')
+  @Icp('ICP_ACCOUNTS_DELETE')
   async deleteAccount(
     event: Electron.IpcMainInvokeEvent,
-    id: number,
+    ids: number[],
   ): Promise<any> {
     const userInfo = getUserInfo();
-
-    return this.accountService.deleteAccount(id, userInfo.id);
+    return this.accountService.deleteAccounts(ids, userInfo.id);
   }
 
   @Et('ET_UP_ALL_ACCOUNT_STATISTICS') // 更新所有的账户的统计信息

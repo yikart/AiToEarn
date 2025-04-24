@@ -7,12 +7,13 @@ import {
   useState,
 } from 'react';
 import styles from './pubAccountDetModule.module.scss';
-import { Alert, Avatar, Button, Checkbox, message, Modal, Tooltip } from 'antd';
+import { Alert, Button, Checkbox, message, Modal, Tooltip } from 'antd';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { AccountInfo, AccountPlatInfoMap } from '../../../account/comment';
+import { AccountInfo } from '../../../account/comment';
 import { LoadingOutlined } from '@ant-design/icons';
 import { accountLogin, acpAccountLoginCheck } from '../../../../icp/account';
 import { AccountStatus } from '../../../../../commont/AccountEnum';
+import { AvatarPlat } from '../PubProgressModule/PubProgressModule';
 
 export interface IPubAccountDetModuleRef {
   // 打开弹框并且开始检测
@@ -185,13 +186,7 @@ const PubAccountDetModule = memo(
                         }
                       }}
                     >
-                      <div className="pubAccountDetModule-accounts-avatar">
-                        <Avatar src={v.avatar} />
-                        <img
-                          className="pubAccountDetModule-accounts-avatar-plat"
-                          src={AccountPlatInfoMap.get(v.type)?.icon}
-                        />
-                      </div>
+                      <AvatarPlat account={v} size="default" />
                       <Tooltip title={v.nickname}>
                         <div
                           className={[
