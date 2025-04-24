@@ -202,7 +202,7 @@ export default function Page() {
     <div className={styles.image}>
       <PubProgressModule
         open={pubProgressModuleOpen}
-        pubProgressData={pubProgressData}
+        pubProgressData={pubProgressData as any}
         onClose={() => setPubProgressModuleOpen(false)}
       />
       <PubAccountDetModule

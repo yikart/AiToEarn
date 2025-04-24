@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-07 20:00:47
- * @LastEditTime: 2025-03-19 14:27:53
+ * @LastEditTime: 2025-04-24 14:30:42
  * @LastEditors: nevin
  * @Description:
  */
@@ -49,6 +49,7 @@ export class PubItemImgText extends PubItemBase {
     }
     // 发布进度
     const progressRes: PublishProgressRes = {
+      id: 1,
       progress: publishVideoResult.code === 0 ? -1 : 100,
       msg: '',
       account: this.accountModel,
