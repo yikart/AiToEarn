@@ -1,9 +1,6 @@
 {
-  "build": {
-    "appId": "cn.aitoearn.pc"
-  },
   "name": "aiToEarn",
-  "version": "0.7.0-alpha.1",
+  "version": "0.7.0-alpha.2",
   "main": "dist-electron/main/index.js",
   "description": "艺咖 win打包使用管理员的终端",
   "author": "艺咖",
@@ -42,6 +39,7 @@
     "antd-img-crop": "^4.24.0",
     "axios": "^1.7.9",
     "better-sqlite3": "^11.8.1",
+    "build": "^0.1.4",
     "coordtransform": "^2.1.2",
     "crc32": "^0.2.2",
     "cropperjs": "^1.6.2",
