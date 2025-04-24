@@ -15,6 +15,7 @@ import { AccountStatus, AccountType } from '../../../commont/AccountEnum';
 import { AccountModel } from '../../db/models/account';
 import windowOperate from '../../util/windowOperate';
 import { SendChannelEnum } from '../../../commont/UtilsEnum';
+import { AccountGroupModel } from '../../db/models/accountGroup';
 
 @Controller()
 export class AccountController {
@@ -193,7 +194,7 @@ export class AccountController {
     return this.accountService.getAccountDashboard(account, time);
   }
 
-  // 删除
+  // 删除账户
   @Icp('ICP_ACCOUNTS_DELETE')
   async deleteAccount(
     event: Electron.IpcMainInvokeEvent,
@@ -201,6 +202,36 @@ export class AccountController {
   ): Promise<any> {
     const userInfo = getUserInfo();
     return this.accountService.deleteAccounts(ids, userInfo.id);
+  }
+
+  // 添加用户组数据
+  @Icp('ICP_ACCOUNTS_GROUP_ADD')
+  async addAccountGroup(
+    event: Electron.IpcMainInvokeEvent,
+    data: Partial<AccountGroupModel>,
+  ): Promise<any> {
+    return this.accountService.addAccountGroup(data);
+  }
+  // 获取用户组数据
+  @Icp('ICP_ACCOUNTS_GROUP_GET')
+  async getAccountGroup(event: Electron.IpcMainInvokeEvent): Promise<any> {
+    return this.accountService.getAccountGroup();
+  }
+  // 删除用户组数据
+  @Icp('ICP_ACCOUNTS_GROUP_DELETE')
+  async deleteAccountGroup(
+    event: Electron.IpcMainInvokeEvent,
+    id: number,
+  ): Promise<any> {
+    return this.accountService.deleteAccountGroup(id);
+  }
+  // 编辑用户组数据
+  @Icp('ICP_ACCOUNTS_GROUP_EDIT')
+  async editAccountGroup(
+    event: Electron.IpcMainInvokeEvent,
+    data: Partial<AccountGroupModel>,
+  ): Promise<any> {
+    return this.accountService.editAccountGroup(data);
   }
 
   @Et('ET_UP_ALL_ACCOUNT_STATISTICS') // 更新所有的账户的统计信息

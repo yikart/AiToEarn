@@ -130,6 +130,11 @@ const UserManageModal = memo(
         selectedRowKeys: selectedRows.map((v) => v.id),
       };
 
+      const close = () => {
+        onCancel();
+        setSelectedRows([]);
+      };
+
       return (
         <>
           <Modal
@@ -171,7 +176,7 @@ const UserManageModal = memo(
             title="账号管理器"
             footer={null}
             width={900}
-            onCancel={onCancel}
+            onCancel={close}
             rootClassName={styles.userManageModal}
           >
             <div className={styles.userManage}>

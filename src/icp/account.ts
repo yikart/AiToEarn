@@ -6,9 +6,10 @@
  * @Description:
  */
 
-import { AccountInfo } from "@/views/account/comment";
-import { AccountStatus, AccountType } from "../../commont/AccountEnum";
-import { DashboardData } from "../views/statistics/comment";
+import { AccountInfo } from '@/views/account/comment';
+import { AccountStatus, AccountType } from '../../commont/AccountEnum';
+import { DashboardData } from '../views/statistics/comment';
+import { AccountGroupModel } from '../../electron/db/models/accountGroup';
 
 // 更新账户状态
 export async function ipcUpdateAccountStatus(
@@ -109,4 +110,21 @@ export async function icpGetAccountDashboard(id: number, time?: any) {
 // 删除多个账户
 export async function icpDeleteAccounts(ids: number[]) {
   return await window.ipcRenderer.invoke('ICP_ACCOUNTS_DELETE', ids);
+}
+
+// 添加用户组数据
+export async function icpAddAccountGroup(data: Partial<AccountGroupModel>) {
+  return await window.ipcRenderer.invoke('ICP_ACCOUNTS_GROUP_ADD', data);
+}
+// 获取用户组数据
+export async function icpGetAccountGroup(): Promise<AccountGroupModel[]> {
+  return await window.ipcRenderer.invoke('ICP_ACCOUNTS_GROUP_GET');
+}
+// 删除用户组数据
+export async function icpDeleteAccountGroup(id: number) {
+  return await window.ipcRenderer.invoke('ICP_ACCOUNTS_GROUP_DELETE', id);
+}
+// 编辑用户组数据
+export async function editDeleteAccountGroup(data: AccountGroupModel) {
+  return await window.ipcRenderer.invoke('ICP_ACCOUNTS_GROUP_EDIT', data);
 }
