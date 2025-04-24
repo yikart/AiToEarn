@@ -186,6 +186,11 @@
   :global {
     @include table-flex-container-with-selectors;
 
+    .ant-table-cell {
+      padding: 10px !important;
+      //height: 20px !important;
+    }
+
     .userManage-sidebar {
     }
     .userManage-content {
@@ -207,6 +212,9 @@
         border-radius: 20px 20px 0 0;
         overflow: hidden;
         .ant-drawer-content {
+        }
+        .ant-drawer-body {
+          overflow: hidden;
         }
       }
 

@@ -11,13 +11,38 @@ import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { AccountType } from '../../../commont/AccountEnum';
 import platController from '../plat/index';
 import { EtEvent } from '../../global/event';
+import { AccountGroupModel } from '../../db/models/accountGroup';
 
 @Injectable()
 export class AccountService {
   private accountRepository: Repository<AccountModel>;
+  private accountGroupRepository: Repository<AccountGroupModel>;
 
   constructor() {
     this.accountRepository = AppDataSource.getRepository(AccountModel);
+    this.accountGroupRepository =
+      AppDataSource.getRepository(AccountGroupModel);
+  }
+
+  // 增加用户组数据
+  async addAccountGroup(data: Partial<AccountGroupModel>) {
+    return await this.accountGroupRepository.save({
+      ...data,
+    });
+  }
+  // 获取用户组数据
+  async getAccountGroup() {
+    return await this.accountGroupRepository.find();
+  }
+  // 删除用户组数据
+  async deleteAccountGroup(id: number) {
+    return await this.accountRepository.delete({
+      id: id,
+    });
+  }
+  // 修改用户组数据
+  async editAccountGroup(data: Partial<AccountGroupModel>) {
+    return await this.accountRepository.update({ id: data.id }, data);
   }
 
   // 没有就添加有就更新cookie
