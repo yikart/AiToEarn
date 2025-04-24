@@ -1,3 +1,5 @@
+@import "@/styles/mixin";
+
 .accountSidebar {
   border-right: 1px solid var(--grayColor3);
   width: 200px;
@@ -180,7 +182,10 @@
 .userManage {
   display: flex;
   min-width: 0;
+  height: 500px;
   :global {
+    @include table-flex-container-with-selectors;
+
     .userManage-sidebar {
     }
     .userManage-content {

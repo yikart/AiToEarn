@@ -6,9 +6,9 @@
  * @Description:
  */
 
-import { AccountInfo } from '@/views/account/comment';
-import { AccountStatus, AccountType } from '../../commont/AccountEnum';
-import { DashboardData } from '../views/statistics/comment';
+import { AccountInfo } from "@/views/account/comment";
+import { AccountStatus, AccountType } from "../../commont/AccountEnum";
+import { DashboardData } from "../views/statistics/comment";
 
 // 更新账户状态
 export async function ipcUpdateAccountStatus(
@@ -104,4 +104,9 @@ export async function icpGetAccountDashboard(id: number, time?: any) {
     time,
   );
   return res;
+}
+
+// 删除多个账户
+export async function icpDeleteAccounts(ids: number[]) {
+  return await window.ipcRenderer.invoke('ICP_ACCOUNTS_DELETE', ids);
 }

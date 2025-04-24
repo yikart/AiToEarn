@@ -156,10 +156,10 @@ export class AccountService {
     return accounts.reduce((acc, cur) => acc + (cur.fansCount || 0), 0);
   }
 
-  // 删除
-  async deleteAccount(id: number, userId: string) {
+  // 删除多个账户
+  async deleteAccounts(ids: number[], userId: string) {
     return await this.accountRepository.delete({
-      id,
+      id: In(ids),
       userId: userId,
     });
   }

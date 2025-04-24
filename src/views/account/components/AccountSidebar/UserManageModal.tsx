@@ -1,5 +1,13 @@
 import { ForwardedRef, forwardRef, memo, useMemo, useState } from 'react';
-import { Avatar, Drawer, Modal, Table, TableProps, Tooltip } from 'antd';
+import {
+  Avatar,
+  Drawer,
+  message,
+  Modal,
+  Table,
+  TableProps,
+  Tooltip,
+} from 'antd';
 import styles from './AccountSidebar.module.scss';
 import { useAccountStore } from '../../../../store/account';
 import { useShallow } from 'zustand/react/shallow';
@@ -12,6 +20,7 @@ import {
   WarningOutlined,
 } from '@ant-design/icons';
 import { AvatarPlat } from '../../../publish/components/PubProgressModule/PubProgressModule';
+import { icpDeleteAccounts } from '../../../../icp/account';
 
 export interface IUserManageModalRef {}
 
@@ -130,9 +139,12 @@ const UserManageModal = memo(
             width={500}
             onCancel={() => setDeleteHitOpen(false)}
             rootClassName={styles.userManageDeleteHitModal}
-            onOk={() => {
+            onOk={async () => {
+              await icpDeleteAccounts(selectedRows.map((v) => v.id));
+              await getAccountList();
               setDeleteHitOpen(false);
-              console.log("delete");
+              setSelectedRows([]);
+              message.success('删除成功');
             }}
           >
             <p>
@@ -168,7 +180,6 @@ const UserManageModal = memo(
                 <Table<AccountModel>
                   columns={columns}
                   dataSource={accountList}
-                  scroll={{ y: 500 }}
                   rowKey="id"
                   rowSelection={{ type: 'checkbox', ...rowSelection }}
                 />
