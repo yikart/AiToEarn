@@ -45,6 +45,7 @@ import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
 import AiTool from '@/views/aiTool/index';
 import AiRanking from '../views/aiTool/children/aiRanking/index';
 import AiToolWebview from '../views/aiTool/children/aiToolWebview';
+import ExpectedIncome from '@/views/finance/expectedIncome';
 
 interface IRouterMeta {
   // 路由名称
@@ -154,6 +155,7 @@ export const router: CustomRouteObject[] = [
         children: [
           { path: 'userWalletRecord', element: <UserWalletRecord /> },
           { path: 'userWalletAccount', element: <UserWalletAccount /> },
+          { path: 'expectedIncome', element: <ExpectedIncome /> },
         ],
       },
       // {
