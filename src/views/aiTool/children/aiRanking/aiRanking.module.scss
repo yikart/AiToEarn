@@ -1,4 +1,4 @@
-@import "@/styles/mixin.scss";
+@use "@/styles/mixin";
 
 .aiRanking {
   padding: 15px;
@@ -130,7 +130,7 @@
       min-width: 0;
       display: flex;
       min-height: 0;
-      @include table-flex-container-with-selectors;
+      @include mixin.table-flex-container-with-selectors;
     }
   }
 }

@@ -1,4 +1,4 @@
-@import "@/styles/mixin";
+@use "@/styles/mixin";
 
 .accountSidebar {
   border-right: 1px solid var(--grayColor3);
@@ -184,7 +184,7 @@
   min-width: 0;
   height: 500px;
   :global {
-    @include table-flex-container-with-selectors;
+    @include mixin.table-flex-container-with-selectors;
 
     .ant-table-cell {
       padding: 10px !important;
