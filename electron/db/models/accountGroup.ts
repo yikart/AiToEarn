@@ -30,5 +30,5 @@ export class AccountGroupModel extends TempModel {
     comment: '组排序',
     default: 0,
   })
-  rank!: string;
+  rank!: number;
 }

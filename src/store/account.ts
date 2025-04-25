@@ -2,11 +2,14 @@ import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
 import lodash from 'lodash';
 import { AccountInfo } from '../views/account/comment';
-import { icpGetAccountGroup, icpGetAccountList } from '../icp/account';
+import {
+  AccountGroup,
+  icpGetAccountGroup,
+  icpGetAccountList,
+} from '../icp/account';
 import { onAccountLoginFinish } from '../icp/receiveMsg';
-import { AccountGroupModel } from '../../electron/db/models/accountGroup';
 
-export interface AccountGroupItem extends AccountGroupModel {
+export interface AccountGroupItem extends AccountGroup {
   children: AccountInfo[];
 }
 
