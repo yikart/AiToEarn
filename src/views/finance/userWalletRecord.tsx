@@ -70,6 +70,17 @@ export default function Page() {
     amount: number;
     walletAccountId: string;
   }) => {
+    // if (values.amount > walletAccountList.balance) {
+    //   message.error('提现金额必须大于0');
+    //   return;
+    // }
+
+    const res = await financeApi.getUserWalletInfo();
+    if (res.balance < values.amount) {
+      message.error('提现金额必须小于等于当前余额');
+      return;
+    }
+
     try {
       await financeApi.addUserWalletRecord({
         walletAccountId: values.walletAccountId,
