@@ -2548,7 +2548,7 @@ const Trending: React.FC = () => {
             // 热门内容界面
             <>
               {/* 榜单选择 */}
-              {rankingList.length > 0 && (
+              {rankingList.length > 1 && (
                 <div className="p-4 mb-4 bg-white rounded-lg shadow-sm">
                   <div className="flex space-x-4">
                     {rankingList
