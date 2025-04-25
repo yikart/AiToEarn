@@ -1,6 +1,6 @@
 {
   "name": "aiToEarn",
-  "version": "0.7.0-alpha.2",
+  "version": "0.7.0-alpha.3",
   "main": "dist-electron/main/index.js",
   "description": "艺咖 win打包使用管理员的终端",
   "author": "艺咖",
@@ -15,6 +15,7 @@
     }
   },
   "type": "module",
+  "postinstall": "electron-builder install-app-deps",
   "scripts": {
     "dev": "chcp 65001 && vite",
     "dev:mac": "vite",
