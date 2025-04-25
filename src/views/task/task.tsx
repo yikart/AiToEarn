@@ -827,7 +827,7 @@ export default function Task() {
                     <Descriptions.Item label="发布描述">
                       <div
                         dangerouslySetInnerHTML={{
-                          __html: selectedTask.dataInfo?.desc + 
+                          __html: selectedTask.dataInfo?.desc || '' + 
                             (selectedTask.dataInfo?.topicList?.length > 0 
                               ? '<span style="color: #999; font-size: 12px; margin-left: 8px;">#' + 
                                 selectedTask.dataInfo.topicList.join(' #') + 
