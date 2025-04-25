@@ -35,6 +35,14 @@ import { PublishVideoResult } from '../../electron/main/plat/module';
 import { ImgTextModel } from '../../electron/db/models/imgText';
 import type { pubRecordListQuery } from '../../electron/global/table';
 
+export const PubStatusCnMap = {
+  [PubStatus.UNPUBLISH]: '未发布',
+  [PubStatus.RELEASED]: '已发布',
+  [PubStatus.FAIL]: '发布失败',
+  [PubStatus.PartSuccess]: '部分成功',
+  [PubStatus.Audit]: '审核中',
+};
+
 // 创建发布记录
 export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
   console.log('创建发布记录：', pubRecord);

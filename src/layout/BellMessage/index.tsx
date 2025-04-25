@@ -48,9 +48,7 @@ const Bellmessage = memo(
         })),
       );
       const [progressOpen, setProgressOpen] = useState(false);
-      const [pubProgressData, setPubProgressData] = useState<
-        PublishProgressRes[]
-      >([]);
+      const [pubProgressData, setPubProgressData] = useState<any[]>([]);
       const [open, setOpen] = useState(false);
 
       const noticeList = useMemo(() => {

@@ -23,8 +23,8 @@ import { PubType } from '../../../../../../commont/publish/PublishEnum';
 import {
   icpGetImgTextList,
   icpGetPubVideoRecord,
+  PubStatusCnMap,
 } from '../../../../../icp/publish';
-import { PubStatusCnMap } from '../../../../../../electron/db/models/pubRecord';
 
 export interface IPubRecordDetailsRef {
   // 打开详情
