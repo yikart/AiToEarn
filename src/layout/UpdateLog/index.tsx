@@ -33,7 +33,9 @@ const Updatelog = memo(
           onOk={async () => {
             await form.validateFields();
             setLoading(true);
-            const filelogs = await ipcGetLogFlies();
+            let filelogs = await ipcGetLogFlies();
+            // 只需要最近三天的日志日志
+            filelogs = filelogs.slice(-3);
             let fileList: string[] = [];
             for (const filelog of filelogs) {
               const buffer = await icpGetFileStream(filelog);
