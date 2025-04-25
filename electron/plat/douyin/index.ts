@@ -23,8 +23,8 @@ import {
 } from './douyin.type';
 import requestNet from '../requestNet';
 import { jsonToQueryString } from '../../util';
-import { DeclarationDouyin } from './common.douyin';
 import { RetryWhile } from '../../../commont/utils';
+import { DeclarationDouyin } from '../../../commont/plat/douyin/common.douyin';
 
 export type DouyinPlatformSettingType = {
   // 自主声明
