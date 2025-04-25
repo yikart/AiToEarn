@@ -52,6 +52,7 @@ import {
   QuestionCircleOutlined,
   SyncOutlined,
   CheckSquareOutlined,
+  CopyOutlined,
 } from '@ant-design/icons';
 import Masonry from 'react-masonry-css';
 import { AccountModel } from '../../../electron/db/models/account';
@@ -209,7 +210,7 @@ export default function Page() {
 
   // 添加任务表单相关状态
   const [taskForm] = Form.useForm();
-  const [commentType, setCommentType] = useState<'ai' | 'custom'>('ai');
+  const [commentType, setCommentType] = useState<'ai' | 'custom' | 'copy' >('ai');
   const [customComments, setCustomComments] = useState<string[]>([
     '很棒！',
     '喜欢这个',
@@ -310,7 +311,9 @@ export default function Page() {
     // 调用icpCreateInteractionOneKey函数
     const option: any = {
       platform: activeAccountType,
+      commentType: values.commentType,
       ...values,
+      accountId: activeAccountId
     };
     if (values.commentType != 'ai') {
       option.commentContent = customComments.join(',');
@@ -1921,6 +1924,11 @@ export default function Page() {
                   <Tooltip title="使用AI生成评论">
                     <Radio.Button value="ai">
                       <RobotOutlined /> Deepseek评论
+                    </Radio.Button>
+                  </Tooltip>
+                  <Tooltip title="复制神评评论">
+                    <Radio.Button value="copy">
+                      <CopyOutlined /> 神评评论
                     </Radio.Button>
                   </Tooltip>
                   <Tooltip title="使用自定义评论">

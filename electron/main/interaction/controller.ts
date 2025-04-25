@@ -77,6 +77,7 @@ export class InteractionController {
       likeProb?: any; // 点赞概率
       collectProb?: any; // 收藏概率
       commentProb?: any; // 评论概率
+      commentType: any; // 评论类型
     },
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);

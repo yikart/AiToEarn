@@ -23,6 +23,7 @@ import { WorkData } from '../plat/plat.type';
 import { AutoInteractionCache } from './cacheData';
 import { backPageData, CorrectQuery } from '../../global/table';
 import { AccountType } from '../../../commont/AccountEnum';
+// import { ReplyController } from '../reply/controller';
 
 @Injectable()
 export class InteractionService {
@@ -118,6 +119,7 @@ export class InteractionService {
       likeProb?: any; // 点赞概率
       collectProb?: any; // 收藏概率
       commentProb?: any; // 评论概率
+      commentType: any; // 评论类型
     },
     scheduleEvent: (data: {
       tag: AutorWorksInteractionScheduleEvent;
@@ -150,7 +152,7 @@ export class InteractionService {
 
       // 1. 循环AI回复评论
       for (const works of worksList) {
-        console.log('------ 开始处理作品:', works.dataId);
+        console.log('------ 开始处理作品:', works);
         sleep(5);
         const oldRecord = await this.getInteractionRecord(
           userInfo.id,
@@ -159,8 +161,8 @@ export class InteractionService {
         );
         if (oldRecord) continue;
 
-        console.log('option.commentContent', option);
-        if (!option.commentContent) {
+        // console.log('option.commentContent', option);
+        if (option.commentType && option.commentType == 'ai') {
           const aiRes = await toolsApi.aiRecoverReview({
             content: (works.desc || '') + (works.title || ''),
           });
@@ -178,6 +180,31 @@ export class InteractionService {
 
           option.commentContent = aiRes;
         }
+
+
+        if (option.commentType && option.commentType == 'copy') {
+          const commentList = await platController.getCommentList(
+            account,
+            {
+              dataId: works.dataId,
+              option: {
+                xsec_token: works.data?.xsec_token || '',
+              },
+            },
+            '0',
+          );
+
+          // console.log('------ commentList', commentList);
+
+          const randomIndex = Math.floor(
+            Math.random() * commentList.list.length,
+          );
+          option.commentContent = commentList.list[randomIndex].content;
+
+          // option.commentContent = aiRes;
+        }
+        console.log('------ option.commentContent', option.commentContent);
+        // return;
 
         scheduleEvent({
           tag: AutorWorksInteractionScheduleEvent.ReplyCommentStart,
