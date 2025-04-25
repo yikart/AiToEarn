@@ -90,7 +90,7 @@ const Com = forwardRef<AddWalletAccountRef, AddWalletAccountProps>(
             autoComplete="off"
           >
             <Form.Item
-              label="账号"
+              label="备注名"
               name="account"
               rules={[{ required: true, message: '请输入账号!' }]}
             >
@@ -130,9 +130,9 @@ const Com = forwardRef<AddWalletAccountRef, AddWalletAccountProps>(
                 <Select.Option value={WalletAccountType.ZFB}>
                   支付宝
                 </Select.Option>
-                <Select.Option value={WalletAccountType.WX_PAY}>
+                {/* <Select.Option value={WalletAccountType.WX_PAY}>
                   微信支付
-                </Select.Option>
+                </Select.Option> */}
               </Select>
             </Form.Item>
           </Form>
