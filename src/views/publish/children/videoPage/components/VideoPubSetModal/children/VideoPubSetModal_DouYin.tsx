@@ -18,13 +18,13 @@ import {
   VideoPubRestartLogin,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon';
 import UserSelect from '../components/UserSelect';
-import { DeclarationDouyin } from '../../../../../../../../electron/plat/douyin/common.douyin';
 import {
   CommonActivitySelect,
   CommonHotspotSelect,
 } from '../../../../../components/CommonComponents/DouyinCommonComponents';
 import { ILableValue } from '../../../../../../../../electron/db/models/workData';
 import useVideoPubSetModal from './hooks/useVideoPubSetModal';
+import { DeclarationDouyin } from '../../../../../../../../commont/plat/douyin/common.douyin';
 
 const HotspotSelect = ({}: IVideoPubSetModalChildProps) => {
   const { setOnePubParams, currChooseAccount } = useVideoPageStore(
