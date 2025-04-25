@@ -116,7 +116,7 @@ export default function Page() {
                       预计收益: ¥{pendingBalance.toFixed(2) } 
                     </Text>
                     <Tooltip 
-                      title="任务完成周期之前，完成任务获得的预计收益，任务周期结束自动进入余额"
+                      title="任务完成周期之前，完成任务获得的预计收益，任务周期结束自动进入余额,打款3-7个工作日到账"
                       placement="top"
                     >
                       <QuestionCircleOutlined className="ml-1 text-gray-400 cursor-help" />
