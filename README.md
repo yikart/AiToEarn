@@ -131,7 +131,7 @@ npm run dev
 └── src                                      渲染进程源码、React代码
 ```
 ## 其他说明
-- 关于MAC包,因为苹果对应用要求严格,本项目目前仍在尝试阶段,请自行打包,或设置忽略安全策略
+- 关于MAC打包,目前有bug,我们还在努力解决
 - ```shell
    xattr -r -d com.apple.quarantine /Applications/哎呦赚AiToEarn.app
   ```
