@@ -14,7 +14,7 @@
 
 [English](README_EN.md) | 简体中文
 
-## [最好用的开源内容矩阵工具！](https://www.aitoearn.cn/aiToEarn)
+## [最好用的开源内容营销AI Agent！](https://www.aitoearn.cn/aiToEarn)
 
 - 一站式管理小红书，抖音，快手，视频号等，包括内容发布，评论，互动
 - 用AI制作你的内容
