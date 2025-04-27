@@ -410,7 +410,7 @@ export class InteractionService {
       this.autorInteraction(
         account,
         worksList,
-        option,
+        option as any,
         (e: {
           tag: AutorWorksInteractionScheduleEvent;
           status: -1 | 0 | 1;

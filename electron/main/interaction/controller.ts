@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-24 09:34:03
+ * @LastEditTime: 2025-04-27 09:51:25
  * @LastEditors: nevin
  * @Description: interaction Interaction 互动
  */
@@ -48,7 +48,7 @@ export class InteractionController {
     const res = await this.interactionService.autorInteraction(
       account,
       [works],
-      option,
+      option as any,
       (e: {
         tag: AutorWorksInteractionScheduleEvent;
         status: -1 | 0 | 1;
