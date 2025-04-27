@@ -859,6 +859,34 @@ export default function Page() {
     }
   };
 
+  // 随机选择函数
+  const handleRandomSelect = () => {
+    // 根据当前激活的标签页获取对应的数据列表
+    const currentDataList = activeTabKey === '4' ? searchTaskResults : postList;
+    
+    // 清空当前选择
+    setSelectedPosts([]);
+    
+    // 如果没有数据，直接返回
+    if (!currentDataList || currentDataList.length === 0) {
+      message.info('当前没有可选择的作品');
+      return;
+    }
+    
+    // 计算要选择的数量（约一半）
+    const selectCount = Math.ceil(currentDataList.length / 2);
+    
+    // 随机选择作品
+    const shuffled = [...currentDataList].sort(() => 0.5 - Math.random());
+    const selected = shuffled.slice(0, selectCount);
+    
+    // 更新选中状态
+    const selectedIds = selected.map(item => item.dataId);
+    setSelectedPosts(selectedIds);
+    
+    message.success(`已随机选择 ${selectedIds.length} 个作品`);
+  };
+
   return (
     <div
       className={styles.reply}
@@ -940,32 +968,27 @@ export default function Page() {
                               >
                                 {isSelectMode ? '取消选择' : '选择作品'}
                               </Button>
+                              
                               {isSelectMode && (
-                                <Button
-                                  type="primary"
-                                  icon={<SendOutlined />}
-                                  onClick={() => setTaskModalVisible(true)}
-                                  size="large"
-                                  disabled={selectedPosts.length === 0}
-                                >
-                                  下发任务 ({selectedPosts.length})
-                                </Button>
-                              )}
-                              {!isSelectMode && (
-                                <Button
-                                  type="primary"
-                                  icon={<DownOutlined />}
-                                  onClick={() => {
-                                    if (selectedPosts.length === 0) {
-                                      message.error('请选择作品');
-                                      return;
-                                    }
-                                    setTaskModalVisible(true);
-                                  }}
-                                  size="large"
-                                >
-                                  下发任务
-                                </Button>
+                                <>
+                                  <Button
+                                    type="default"
+                                    icon={<CheckSquareOutlined />}
+                                    onClick={handleRandomSelect}
+                                    size="large"
+                                  >
+                                    随机选择
+                                  </Button>
+                                  <Button
+                                    type="primary"
+                                    icon={<SendOutlined />}
+                                    onClick={() => setTaskModalVisible(true)}
+                                    size="large"
+                                    disabled={selectedPosts.length === 0}
+                                  >
+                                    下发任务 ({selectedPosts.length})
+                                  </Button>
+                                </>
                               )}
                             </Space>
                           </Col>
