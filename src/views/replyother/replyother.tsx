@@ -737,6 +737,7 @@ export default function Page() {
       }
 
       const res = await icpShoucangDyOther(activeAccountId, post.dataId);
+      console.log('------ collectPost res', res);
       if (res.status_code == 0 || res.data?.code == 0) {
         message.success('收藏成功');
         // 更新收藏状态
