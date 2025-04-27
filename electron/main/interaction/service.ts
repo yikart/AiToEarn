@@ -366,7 +366,7 @@ export class InteractionService {
             worksTitle: works.title,
             worksCover: works.coverUrl,
           },
-          option.commentContent,
+          thisCommentContent,
           isLike,
           isCollect, // 收藏状态设为0
         );
