@@ -12,8 +12,9 @@ import {
   AccountBookOutlined,
   QuestionCircleOutlined,
   MoneyCollectOutlined,
+  SyncOutlined,
 } from '@ant-design/icons';
-import { Segmented, Card, Typography, Space, Row, Col, Tooltip, List, Tag } from 'antd';
+import { Segmented, Card, Typography, Space, Row, Col, Tooltip, List, Tag, Button, message } from 'antd';
 import { Outlet, useNavigate } from 'react-router-dom';
 import styles from './finance.module.scss';
 import { useState, useEffect } from 'react';
@@ -39,6 +40,7 @@ export default function Page() {
   const [pendingBalance, setPendingBalance] = useState<number>(0);
   const [expectedIncomeList, setExpectedIncomeList] = useState<UserTask<Task<TaskDataInfo>>[]>([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
@@ -55,12 +57,22 @@ export default function Page() {
 
   const getBalance = async () => {
     try {
+      setRefreshing(true);
       const res = await financeApi.getUserWalletInfo();
       // console.log('getBalance','res',res);
       setBalance(res.balance || 0);
     } catch (error) {
       console.error('获取余额失败:', error);
+      message.error('获取余额失败');
+    } finally {
+      setRefreshing(false);
     }
+  };
+
+  const handleRefreshBalance = async () => {
+    message.loading({ content: '刷新中...', key: 'refreshBalance' });
+    await getBalance();
+    message.success({ content: '余额已更新', key: 'refreshBalance', duration: 2 });
   };
 
   const getTotalAmountOfDoingTasks = async () => {
@@ -101,9 +113,18 @@ export default function Page() {
           <Row align="middle" justify="space-between">
             <Col>
               <Space direction="vertical" size="small">
-                <Text type="secondary" className={styles.balanceLabel}>
-                  账户余额
-                </Text>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <Text type="secondary" className={styles.balanceLabel}>
+                    账户余额
+                  </Text>
+                  <Button 
+                    type="text" 
+                    size="small" 
+                    icon={<SyncOutlined spin={refreshing} />} 
+                    onClick={handleRefreshBalance}
+                    style={{ marginLeft: 4, padding: '0 4px', color: '#ccc' }}
+                  />
+                </div>
                 <div className="flex items-center">
                   <Title level={2} className={styles.balanceAmount}>
                     ¥{balance.toFixed(2)}
@@ -112,11 +133,11 @@ export default function Page() {
                   onClick={() => {
                     // navigate('expectedIncome');
                   }}>
-                    <Text type="secondary" className="text-sm" style={{ color: '#ccc' }}>
+                    {/* <Text type="secondary" className="text-sm" style={{ color: '#ccc' }}>
                       预计收益: ¥{pendingBalance.toFixed(2) } 
-                    </Text>
+                    </Text> */}
                     <Tooltip 
-                      title="任务完成周期之前，完成任务获得的预计收益，任务周期结束自动进入余额,打款3-7个工作日到账"
+                      title="提现打款预计3-7个工作日到账"
                       placement="top"
                     >
                       <QuestionCircleOutlined className="ml-1 text-gray-400 cursor-help" />
@@ -147,11 +168,11 @@ export default function Page() {
                 value: 'userWalletAccount',
                 icon: <AccountBookOutlined />,
               },
-              {
-                label: '预计收入',
-                value: 'expectedIncome',
-                icon: <MoneyCollectOutlined />,
-              },
+              // {
+              //   label: '预计收入',
+              //   value: 'expectedIncome',
+              //   icon: <MoneyCollectOutlined />,
+              // },
             ]}
             onChange={(value) => {
               navigate(value);
