@@ -818,27 +818,38 @@ export default function Task() {
                 <Col span={24}>
                   {/* <Divider orientation="left">任务信息</Divider> */}
                   <Descriptions column={1} bordered>
-                    <Descriptions.Item label="发布标题">
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: selectedTask.dataInfo?.title,
-                        }}
-                        className={styles.taskDescription}
-                      />
-                    </Descriptions.Item>
-                    <Descriptions.Item label="发布描述">
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: selectedTask.dataInfo?.desc || '' + 
-                            (selectedTask.dataInfo?.topicList?.length > 0 
-                              ? '<span style="color: #999; font-size: 12px; margin-left: 8px;">#' + 
-                                selectedTask.dataInfo.topicList.join(' #') + 
-                                '</span>'
-                              : '')
-                        }}
-                        className={styles.taskDescription}
-                      />
-                    </Descriptions.Item>
+                    {
+                      ( selectedTask.dataInfo?.title != '') && (
+                        <Descriptions.Item label="发布标题">
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: selectedTask.dataInfo?.title,
+                            }}
+                            className={styles.taskDescription}
+                          />
+                        </Descriptions.Item>
+                      )
+                    }
+
+                    {
+                      selectedTask.dataInfo?.desc || selectedTask.dataInfo?.topicList?.length > 0 && (
+                        <Descriptions.Item label="发布描述">
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: selectedTask.dataInfo?.desc || '' + 
+                              (selectedTask.dataInfo?.topicList?.length > 0 
+                                ? '<span style="color: #999; font-size: 12px; margin-left: 8px;">#' + 
+                                  selectedTask.dataInfo.topicList.join(' #') + 
+                                  '</span>'
+                                : '')
+                          }}
+                          className={styles.taskDescription}
+                        />
+                      </Descriptions.Item>
+                      )
+                    }
+                   
+                    
 
                     {selectedTask.type !== TaskType.ARTICLE && (
                       <Descriptions.Item label="评论内容">
