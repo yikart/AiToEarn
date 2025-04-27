@@ -100,6 +100,9 @@ export class InteractionService {
     const [list, totalCount] =
       await this.interactionRecordRepository.findAndCount({
         where: filter,
+        order: {
+          createTime: 'DESC',
+        },
       });
 
     return backPageData(list, totalCount, page);
