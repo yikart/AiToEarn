@@ -1955,9 +1955,9 @@ export default function Page() {
                       <RobotOutlined /> Deepseek评论
                     </Radio.Button>
                   </Tooltip>
-                  <Tooltip title="复制神评评论">
+                  <Tooltip title="复制当前内容下热门评论">
                     <Radio.Button value="copy">
-                      <CopyOutlined /> 神评评论
+                      <CopyOutlined /> 评论复刻
                     </Radio.Button>
                   </Tooltip>
                   
