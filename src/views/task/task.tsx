@@ -359,6 +359,7 @@ export default function Task() {
   }
 
   async function taskApplyoney(){
+    console.log('------ taskApplyoney', selectedTask);
     if (!selectedTask) return;
 
     try {
@@ -367,6 +368,7 @@ export default function Task() {
       // console.log('jieshou :', res);
       if (res.code == 0 && res.data) {
         setTaskRecord(res.data);
+        setModalVisible(false)
         message.success('任务接受成功！');
 
       } else {
@@ -754,7 +756,7 @@ export default function Task() {
           open={modalVisible}
           onCancel={() => setModalVisible(false)}
           footer={[
-            <Button key="cancel" onClick={() => taskApplyoney }>
+            <Button key="cancel" onClick={ taskApplyoney }>
               领取
             </Button>,
             <Button
