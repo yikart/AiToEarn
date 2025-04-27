@@ -153,7 +153,7 @@ export class InteractionService {
       // 1. 循环AI回复评论
       for (const works of worksList) {
         console.log('------ 开始处理作品:', works);
-        sleep(5);
+        await sleep(10);
         const oldRecord = await this.getInteractionRecord(
           userInfo.id,
           account,
@@ -180,7 +180,6 @@ export class InteractionService {
 
           option.commentContent = aiRes;
         }
-
 
         if (option.commentType && option.commentType == 'copy') {
           const commentList = await platController.getCommentList(
