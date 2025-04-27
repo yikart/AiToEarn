@@ -151,9 +151,11 @@ export class InteractionService {
       });
 
       // 1. 循环AI回复评论
+      let i = 0;
       for (const works of worksList) {
         console.log('------ 开始处理作品:', works);
-        await sleep(10);
+        if (i > 0) await sleep(10 * 1000);
+        i++;
         const oldRecord = await this.getInteractionRecord(
           userInfo.id,
           account,

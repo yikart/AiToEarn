@@ -241,7 +241,7 @@ export class ReplyService {
           });
 
           // 延迟
-          await sleep(10);
+          await sleep(10 * 1000);
         }
 
         scheduleEvent({
