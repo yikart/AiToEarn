@@ -129,7 +129,7 @@ export class InteractionService {
     }) => void,
   ) {
     // console.log('------ autorInteraction', option);
-
+    let commentContentList = option.commentContent.split(',');
     // return;
 
     const userInfo = getUserInfo();
@@ -153,7 +153,7 @@ export class InteractionService {
       // 1. 循环AI回复评论
       let i = 0;
       for (const works of worksList) {
-        console.log('------ 开始处理作品:', works);
+        // console.log('------ 开始处理作品:', works);
         if (i > 0) await sleep(10 * 1000);
         i++;
         const oldRecord = await this.getInteractionRecord(
@@ -164,6 +164,7 @@ export class InteractionService {
         if (oldRecord) continue;
 
         // console.log('option.commentContent', option);
+        let thisCommentContent = '';
         if (option.commentType && option.commentType == 'ai') {
           const aiRes = await toolsApi.aiRecoverReview({
             content: (works.desc || '') + (works.title || ''),
@@ -180,7 +181,7 @@ export class InteractionService {
             return false;
           }
 
-          option.commentContent = aiRes;
+          thisCommentContent = aiRes;
         }
 
         if (option.commentType && option.commentType == 'copy') {
@@ -200,17 +201,28 @@ export class InteractionService {
           const randomIndex = Math.floor(
             Math.random() * commentList.list.length,
           );
-          option.commentContent = commentList.list[randomIndex].content;
+          thisCommentContent = commentList.list[randomIndex].content;
 
           // option.commentContent = aiRes;
         }
-        console.log('------ option.commentContent', option.commentContent);
+
+        console.log('------ option.commentType', option.commentType);
+        if (option.commentType && option.commentType == 'custom') {
+          // let commentContentList = option.commentContent.split(',');
+          console.log('------ commentContentList', commentContentList);
+          let randomIndex = Math.floor(
+            Math.random() * commentContentList.length,
+          );
+          console.log('------ randomIndex', randomIndex);
+          thisCommentContent = commentContentList[randomIndex];
+        }
+        console.log('------ option.commentContent', thisCommentContent);
         // return;
 
         scheduleEvent({
           tag: AutorWorksInteractionScheduleEvent.ReplyCommentStart,
           data: {
-            aiContent: option.commentContent,
+            aiContent: thisCommentContent,
           },
           status: 0,
         });
@@ -219,7 +231,7 @@ export class InteractionService {
         console.log(
           '------ 开始评论作品:',
           works.dataId,
-          option.commentContent,
+          thisCommentContent,
           works.author?.id,
         );
 
@@ -231,20 +243,20 @@ export class InteractionService {
         let commentWorksRes;
 
         if (shouldComment) {
-          if (option.commentContent.includes(',')) {
-            const randomIndex = Math.floor(
-              Math.random() * option.commentContent.split(',').length,
-            );
-            option.commentContent =
-              option.commentContent.split(',')[randomIndex];
-          }
+          // if (option.commentContent.includes(',')) {
+          //   const randomIndex = Math.floor(
+          //     Math.random() * option.commentContent.split(',').length,
+          //   );
+          //   option.commentContent =
+          //     option.commentContent.split(',')[randomIndex];
+          // }
 
-          console.log('------ option.commentContent', option.commentContent);
+          console.log('------ option.commentContent', thisCommentContent);
 
           commentWorksRes = await platController.createCommentByOther(
             account,
             works.dataId,
-            option.commentContent,
+            thisCommentContent,
             works.author?.id,
           );
           console.log('------ 评论作品结果:', commentWorksRes);
