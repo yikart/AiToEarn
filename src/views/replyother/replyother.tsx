@@ -321,6 +321,8 @@ export default function Page() {
 
     console.log('------ option', option);
 
+    // return;
+
     const res = await icpCreateInteractionOneKey(
       activeAccountId,
       selectedPostData,
