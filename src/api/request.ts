@@ -59,10 +59,10 @@ export const getAxiosRequest = (baseURL: string) => {
       // 这里可以根据后端的响应结构进行调整
       if (data.code !== 0) {
         message.error({
-          content: data.message || '请求失败',
+          content: data.message || data.msg || '请求失败',
           key: MessageKey,
         });
-        return Promise.reject(new Error(data.message || '请求失败'));
+        return Promise.reject(new Error(data.message|| data.msg || '请求失败'));
       }
 
       return data.data;
