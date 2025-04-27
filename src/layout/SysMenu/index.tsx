@@ -5,6 +5,7 @@ import Icon, {
   UserOutlined,
   PhoneOutlined,
   IdcardOutlined,
+  WalletOutlined,
 } from '@ant-design/icons';
 import { Image, MenuProps } from 'antd';
 import { Button, Dropdown } from 'antd';
@@ -16,12 +17,14 @@ import styles from './sysMenu.module.scss';
 import defaultAvatar from '@/assets/user/defaultAvatar.jpg';
 import Updatelog from '../UpdateLog';
 import Feedback from '@/assets/svgs/user/feedback.svg?react';
+import { useNavigate } from 'react-router-dom';
 
 const App: React.FC = () => {
   const [appInfo, setAppInfo] = useState<{ version: string }>({
     version: '',
   });
   const userStore = useUserStore();
+  const navigate = useNavigate();
 
   async function getAppInfo() {
     const res = await ipcAppInfo();
@@ -60,6 +63,24 @@ const App: React.FC = () => {
           </div>
         </div>
       ),
+    },
+    {
+      type: 'divider',
+    },
+    {
+      key: 'wallet',
+      label: (
+        <Button
+          type="text"
+          className="w-full text-left pl-0"
+          onClick={() => {
+            navigate('/finance/userWalletAccount');
+          }}
+        >
+          {'   '}我的钱包
+        </Button>
+      ),
+      icon: <WalletOutlined className="text-[#a66ae4]" />,
     },
     {
       type: 'divider',
