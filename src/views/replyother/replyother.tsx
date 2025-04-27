@@ -210,7 +210,7 @@ export default function Page() {
 
   // 添加任务表单相关状态
   const [taskForm] = Form.useForm();
-  const [commentType, setCommentType] = useState<'ai' | 'custom' | 'copy' >('ai');
+  const [commentType, setCommentType] = useState<'ai' | 'custom' | 'copy' >('custom');
   const [customComments, setCustomComments] = useState<string[]>([
     '很棒！',
     '喜欢这个',
@@ -1908,7 +1908,7 @@ export default function Page() {
           initialValues={{
             likeProb: 70,
             commentProb: 90,
-            commentType: 'ai',
+            commentType: 'custom',
             collectProb: 30,
           }}
         >
@@ -1945,6 +1945,11 @@ export default function Page() {
             <Col span={12}>
               <Form.Item label="评论类型" name="commentType">
                 <Radio.Group onChange={(e) => setCommentType(e.target.value)}>
+                <Tooltip title="使用自定义评论">
+                    <Radio.Button value="custom">
+                      <UserOutlined /> 自定义评论
+                    </Radio.Button>
+                  </Tooltip>
                   <Tooltip title="使用AI生成评论">
                     <Radio.Button value="ai">
                       <RobotOutlined /> Deepseek评论
@@ -1955,11 +1960,7 @@ export default function Page() {
                       <CopyOutlined /> 神评评论
                     </Radio.Button>
                   </Tooltip>
-                  <Tooltip title="使用自定义评论">
-                    <Radio.Button value="custom">
-                      <UserOutlined /> 自定义评论
-                    </Radio.Button>
-                  </Tooltip>
+                  
                 </Radio.Group>
               </Form.Item>
             </Col>
