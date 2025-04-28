@@ -393,6 +393,9 @@ export default function Page() {
       getSearchTaskList();
       // 切换到评论搜索选项卡时，默认使用AI模式
       setSearchKeyword('AI');
+    } else if (key === '2') {
+      // 切换到互动记录标签页时调用 getInteractionRecords
+      getInteractionRecords();
     }
   };
 

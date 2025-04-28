@@ -21,6 +21,7 @@ import { ImgTextModel } from './models/imgText';
 import { ReplyCommentRecordModel } from './models/replyCommentRecord';
 import { InteractionRecordModel } from './models/interactionRecord';
 import { AccountGroupModel } from './models/accountGroup';
+import { defaultAccountGroupId } from '../../commont/AccountEnum';
 
 const configPath = app.getPath('userData');
 const database = path.join(configPath, 'database.sqlite');
@@ -52,11 +53,11 @@ async function sqliteDefaultDataInit() {
   // 添加用户组 【默认列表】
   const accountGroupRepository = AppDataSource.getRepository(AccountGroupModel);
   const accountGroup = await accountGroupRepository.findOne({
-    where: { id: 1 },
+    where: { id: defaultAccountGroupId },
   });
   if (!accountGroup) {
     await accountGroupRepository.save({
-      id: 1,
+      id: defaultAccountGroupId,
       name: '默认列表',
     });
   }

@@ -9,15 +9,9 @@
 import { AccountInfo } from '@/views/account/comment';
 import { AccountStatus, AccountType } from '../../commont/AccountEnum';
 import { DashboardData } from '../views/statistics/comment';
+import { AccountGroupModel } from '../../electron/db/models/accountGroup';
 
-export interface AccountGroup {
-  id: number;
-  name: string;
-  proxyIp?: string;
-  rank: number;
-  createTime: string;
-  updateTime: string;
-}
+export type AccountGroup = AccountGroupModel;
 
 // 更新账户状态
 export async function ipcUpdateAccountStatus(

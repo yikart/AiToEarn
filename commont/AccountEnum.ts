@@ -13,3 +13,5 @@ export enum AccountStatus {
   // 失效
   DISABLE = 1,
 }
+
+export const defaultAccountGroupId = 1;
