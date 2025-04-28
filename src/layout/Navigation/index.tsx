@@ -10,7 +10,7 @@ import logo from '@/assets/logo.png';
 import styles from './navigation.module.scss';
 import { router } from '@/router';
 import SysMenu from '../SysMenu';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { ipcAppInfo } from '../../icp/app';
 import Windowcontrolbuttons from '../../components/WindowControlButtons/WindowControlButtons';
 import Bellmessage from '../BellMessage';
@@ -23,6 +23,8 @@ const Navigation = () => {
   const location = useLocation();
   const [pathname, setPathname] = useState('/');
   const [platform, setPlatform] = useState('');
+
+  const signInCardRef = useRef<any>(null);
 
   useEffect(() => {
     setPathname('/' + (location.pathname.split('/')[1] || ''));
@@ -69,9 +71,14 @@ const Navigation = () => {
 
       <div className="navigation-userinfo">
       <Popover
-        content={<SignInCard />}
+        content={<SignInCard ref={signInCardRef} />}
         trigger="hover"
         placement="bottom"
+        onOpenChange={(open) => {
+          if (open) {
+            signInCardRef.current?.fetchSignInList();
+          }
+        }}
       >
         <div className="navigation-icon">
           <img src={calendarSvg} alt="打卡" style={{ width: 20, height: 20, verticalAlign: 'middle' }} />

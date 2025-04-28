@@ -1,15 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import { signInApi, SignInType } from '@/api/signIn';
 import { Button, Progress, message } from 'antd';
 import { CheckCircleFilled, ClockCircleOutlined } from '@ant-design/icons';
 import styles from './SignInCard.module.scss';
 import treeSvg from '@/assets/svgs/tree.svg';
+import { useNavigate } from 'react-router-dom';
 
-export default function SignInCard() {
+const SignInCard = forwardRef((props, ref) => {
   const [loading, setLoading] = useState(false);
   const [signInList, setSignInList] = useState<any[]>([]);
   const [thisWeekSigned, setThisWeekSigned] = useState(false);
   const [continueWeeks, setContinueWeeks] = useState(0);
+
+  const navigate = useNavigate();
 
   // 获取打卡列表
   const fetchSignInList = async () => {
@@ -57,12 +60,21 @@ export default function SignInCard() {
     setLoading(false);
   };
 
-  useEffect(() => {
-    fetchSignInList();
-  }, []);
+  useImperativeHandle(ref, () => ({
+    fetchSignInList,
+  }));
+
+  // useEffect(() => {
+  //   fetchSignInList();
+  // }, []);
 
   // 打卡
   const handleSignIn = async () => {
+     
+     navigate('/publish');
+
+    return
+
     setLoading(true);
     try {
       await signInApi.createSignInRecord();
@@ -115,7 +127,7 @@ export default function SignInCard() {
       <Button
         type="primary"
         block
-        disabled={thisWeekSigned}
+        // disabled={thisWeekSigned}
         loading={loading}
         onClick={handleSignIn}
         style={{ marginTop: 16 }}
@@ -124,4 +136,6 @@ export default function SignInCard() {
       </Button>
     </div>
   );
-} 
+});
+
+export default SignInCard; 

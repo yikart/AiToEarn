@@ -24,6 +24,7 @@ import { useAccountStore } from '../../../../store/commont';
 import { useNavigate } from 'react-router-dom';
 import { usePubStroe } from '../../../../store/pubStroe';
 import { ExclamationCircleFilled } from '@ant-design/icons';
+import { signInApi, SignInType } from '@/api/signIn';
 
 const { confirm } = Modal;
 
@@ -125,6 +126,8 @@ export default function Page() {
   const pubCore = async () => {
     setPubProgressModuleOpen(true);
     setLoading(true);
+    await signInApi.createSignInRecord();
+
     const err = () => {
       setLoading(false);
       message.error('网络繁忙，请稍后重试！');

@@ -55,6 +55,7 @@ import {
   NoticeType,
   useBellMessageStroe,
 } from '../../../../../../store/bellMessageStroe';
+import { signInApi, SignInType } from '@/api/signIn';
 
 export interface IVideoPubSetModalRef {}
 
@@ -189,6 +190,8 @@ const VideoPubSetModal = memo(
 
       const pubCore = async () => {
         setLoading(false);
+
+        await signInApi.createSignInRecord();
         const err = () => {
           setLoading(false);
           message.error('网络繁忙，请稍后重试！');
