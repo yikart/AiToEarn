@@ -24,7 +24,7 @@ export interface Tracing {
 
 export class TracingApi {
   // 创建跟踪-账号添加
-  async createTracing(account: {
+  async createTracingAccountAdd(account: {
     id: number;
     desc?: string;
   }): Promise<Tracing | null> {
