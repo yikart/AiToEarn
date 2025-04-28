@@ -328,12 +328,20 @@ const Trending: React.FC = () => {
     useState<string>('近7天');
 
   // 通用的一些固定值
-  const xhsPlatformId = '6789d6a69b3e38d8da09ba47';
-  const dyPlatformId = '6789d6a69b3e38d8da09ba48';
-  const ksPlatformId = '678a3c1b18789840c02c806f';
-  const biliPlatformId = '678a3c6218789840c02c8070';
-  const gzhPlatformId = '679095d7df03a9e7d4b30ec9';
-  const sphPlatformId = '678a3bdb18789840c02c806e';
+  const platformIdParams = {
+    xhsPlatformId: '6789d6a69b3e38d8da09ba47',
+    dyPlatformId: '6789d6a69b3e38d8da09ba48',
+    ksPlatformId: '678a3c1b18789840c02c806f',
+    biliPlatformId: '678a3c6218789840c02c8070',
+    gzhPlatformId: '679095d7df03a9e7d4b30ec9',
+    sphPlatformId: '678a3bdb18789840c02c806e',
+  };
+  // const xhsPlatformId = '6789d6a69b3e38d8da09ba47';
+  // const dyPlatformId = '6789d6a69b3e38d8da09ba48';
+  // const ksPlatformId = '678a3c1b18789840c02c806f';
+  // const biliPlatformId = '678a3c6218789840c02c8070';
+  // const gzhPlatformId = '679095d7df03a9e7d4b30ec9';
+  // const sphPlatformId = '678a3bdb18789840c02c806e';
 
   // 添加处理图片加载错误的函数
   const handleImageError = (imageId: string) => {
@@ -1417,7 +1425,7 @@ const Trending: React.FC = () => {
   const handleTalkPlatformSelect = async (platform: Platform) => {
     setSelectedTalkPlatform(platform);
     // 小红书话题页面
-    if (platform.id === xhsPlatformId) {
+    if (platform.id === platformIdParams.xhsPlatformId) {
       // params.category = category;
       console.log('小红书话题页面');
 
@@ -1437,7 +1445,7 @@ const Trending: React.FC = () => {
     }
 
     // 抖音话题页面
-    if (platform.id === dyPlatformId) {
+    if (platform.id === platformIdParams.dyPlatformId) {
       // params.category = category;
       console.log('抖音话题页面');
     }
@@ -2720,8 +2728,20 @@ const Trending: React.FC = () => {
                       <div className="">
                         <div className="flex items-center">
                           <div className="w-32">作品分类</div>
+                          {/* 快手增量榜单字段单独设置 */}
+                          {selectedRanking?.name.includes('增量') && (selectedPlatform?.id === platformIdParams.ksPlatformId) && (
+                            <div className="flex items-center flex-1">
+                              <div className="flex items-center space-x-12">
+                                <div className="w-24 text-center">互动增量</div>
+                                <div className="w-24 text-center">新增播放</div>
+                                <div className="w-24 text-center">新增分享</div>
+                                <div className="w-24 text-center">新增评论</div>
+                              </div>
+                            </div>
+                          )}
 
-                          {selectedRanking?.name.includes('增量') && (
+
+                          {selectedRanking?.name.includes('增量') && !(selectedPlatform?.id === platformIdParams.ksPlatformId) &&(
                             <div className="flex items-center flex-1">
                               <div className="flex items-center space-x-12">
                                 <div className="w-24 text-center">互动增量</div>
@@ -2864,7 +2884,132 @@ const Trending: React.FC = () => {
                               {/* <span className="ml-2">{item.type}</span> */}
                             </div>
 
-                            {selectedRanking?.name.includes('增量') && (
+                            {/* 快手增量榜单字段单独设置 */}
+                            {selectedRanking?.name.includes('增量') && (selectedPlatform?.id === platformIdParams.ksPlatformId) && (
+                              <div className="flex items-center justify-between flex-1">
+                                <div className="flex items-center space-x-12">
+                                  <div className="w-24 text-center">
+                                    {item.anaAdd.addInteractiveCount ? (
+                                      <span className="text-[#a66ae4] flex items-center justify-center">
+                                        <span className="mr-1 font-bold text-red-500">
+                                          ↑
+                                        </span>
+                                        {formatNumber(
+                                          item.anaAdd.addInteractiveCount,
+                                        )}
+                                      </span>
+                                    ) : (
+                                      <span className="text-[#a66ae4] flex items-center justify-center">
+                                        -
+                                      </span>
+                                    )}
+
+                                    {item.anaAdd.interactiveCount ? (
+                                      <p
+                                        className="text-[#a66ae4]"
+                                        style={{
+                                          fontSize: '12px',
+                                          border: '1px solid #a66ae4',
+                                          borderRadius: '15px',
+                                          padding: '2px',
+                                          marginTop: '6px',
+                                        }}
+                                      >
+                                        <span className="mr-1 font-bold text-red-500">
+                                          ↑
+                                        </span>
+                                        总
+                                        {formatNumber(
+                                          item.anaAdd.interactiveCount,
+                                        )}
+                                      </p>
+                                    ) : (
+                                      <p
+                                        style={{
+                                          fontSize: '12px',
+                                          padding: '2px',
+                                          marginTop: '6px',
+                                        }}
+                                      >
+                                        -
+                                      </p>
+                                    )}
+                                  </div>
+                                  <div className="w-24 text-center">
+                                    <span className="text-[#a66ae4] flex items-center justify-center">
+                                      <span className="mr-1 text-red-500">
+                                        ↑
+                                      </span>
+                                      {formatNumber(
+                                        item.anaAdd.addLikeCount,
+                                      )}
+                                    </span>
+                                    <p
+                                      className="text-[#a66ae4]"
+                                      style={{
+                                        fontSize: '12px',
+                                        border: '1px solid #a66ae4',
+                                        borderRadius: '15px',
+                                        padding: '2px',
+                                        marginTop: '6px',
+                                      }}
+                                    >
+                                      总
+                                      {formatNumber(item.anaAdd.useLikeCount)}
+                                    </p>
+                                  </div>
+                                  <div className="w-24 text-center">
+                                    <span className="text-[#a66ae4] flex items-center justify-center">
+                                      <span className="mr-1 text-red-500">
+                                        ↑
+                                      </span>
+                                      {formatNumber(item.anaAdd.addShareCount)}
+                                    </span>
+                                    <p
+                                      className="text-[#a66ae4]"
+                                      style={{
+                                        fontSize: '12px',
+                                        border: '1px solid #a66ae4',
+                                        borderRadius: '15px',
+                                        padding: '2px',
+                                        marginTop: '6px',
+                                      }}
+                                    >
+                                      总
+                                      {formatNumber(item.anaAdd.useShareCount)}
+                                    </p>
+                                  </div>
+                                  <div className="w-24 text-center">
+                                    <span className="text-[#a66ae4] flex items-center justify-center">
+                                      <span className="mr-1 text-red-500">
+                                        ↑
+                                      </span>
+                                      {formatNumber(
+                                        item.anaAdd.addCommentCount,
+                                      )}
+                                    </span>
+                                    <p
+                                      className="text-[#a66ae4]"
+                                      style={{
+                                        fontSize: '12px',
+                                        border: '1px solid #a66ae4',
+                                        borderRadius: '15px',
+                                        padding: '2px',
+                                        marginTop: '6px',
+                                      }}
+                                    >
+                                      总
+                                      {formatNumber(
+                                        item.anaAdd.useCommentCount,
+                                      )}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+
+                            {selectedRanking?.name.includes('增量') && !(selectedPlatform?.id === platformIdParams.ksPlatformId) && (
                               <div className="flex items-center justify-between flex-1">
                                 <div className="flex items-center space-x-12">
                                   <div className="w-24 text-center">
@@ -2934,7 +3079,7 @@ const Trending: React.FC = () => {
                                       }}
                                     >
                                       总
-                                      {formatNumber(item.anaAdd.collectedCount)}
+                                      {formatNumber(item.anaAdd.useCollectCount)}
                                     </p>
                                   </div>
                                   <div className="w-24 text-center">

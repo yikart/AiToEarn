@@ -48,15 +48,21 @@ export default function Page() {
       dataIndex: 'phone',
       key: 'phone',
     },
+
     {
-      title: '账户号',
-      dataIndex: 'account',
-      key: 'account',
+      title: '真实姓名',
+      dataIndex: 'userName',
+      key: 'userName',
     },
     {
       title: '身份证号',
       dataIndex: 'cardNum',
       key: 'cardNum',
+    },
+    {
+      title: '备注名',
+      dataIndex: 'account',
+      key: 'account',
     },
     {
       title: '账号类型',
@@ -68,11 +74,7 @@ export default function Page() {
         </Tag>
       ),
     },
-    {
-      title: '用户名',
-      dataIndex: 'userName',
-      key: 'userName',
-    },
+    
     // {
     //   title: '操作',
     //   key: 'action',

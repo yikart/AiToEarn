@@ -151,12 +151,12 @@ export const router: CustomRouteObject[] = [
       {
         path: '/finance',
         element: <Finance />,
-        meta: { name: '钱包', icon: MoneyCollectOutlined },
+        // meta: { name: '钱包', icon: MoneyCollectOutlined },
         children: [
           { path: 'userWalletRecord', element: <UserWalletRecord /> },
           { path: 'userWalletAccount', element: <UserWalletAccount /> },
           { path: 'expectedIncome', element: <ExpectedIncome /> },
-        ],
+        ]
       },
       // {
       //   path: '/interaction',

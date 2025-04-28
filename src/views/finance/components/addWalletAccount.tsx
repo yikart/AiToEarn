@@ -92,7 +92,7 @@ const Com = forwardRef<AddWalletAccountRef, AddWalletAccountProps>(
             <Form.Item
               label="备注名"
               name="account"
-              rules={[{ required: true, message: '请输入账号!' }]}
+              rules={[{ required: false, message: '请输入备注名!' }]}
             >
               <Input />
             </Form.Item>
@@ -124,6 +124,7 @@ const Com = forwardRef<AddWalletAccountRef, AddWalletAccountProps>(
             <Form.Item
               label="类型"
               name="type"
+              initialValue={WalletAccountType.ZFB}
               rules={[{ required: true, message: '请选择类型!' }]}
             >
               <Select>
