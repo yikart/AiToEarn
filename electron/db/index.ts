@@ -59,6 +59,7 @@ async function sqliteDefaultDataInit() {
     await accountGroupRepository.save({
       id: defaultAccountGroupId,
       name: '默认列表',
+      rank: 0,
     });
   }
 }

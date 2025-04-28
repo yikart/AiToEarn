@@ -127,6 +127,14 @@ export async function icpDeleteAccountGroup(id: number) {
   return await window.ipcRenderer.invoke('ICP_ACCOUNTS_GROUP_DELETE', id);
 }
 // 编辑用户组数据
-export async function editDeleteAccountGroup(data: any) {
+export async function icpEditDeleteAccountGroup(data: Partial<AccountGroup>) {
   return await window.ipcRenderer.invoke('ICP_ACCOUNTS_GROUP_EDIT', data);
+}
+// 修改账户的账户组
+export async function icpAccountEditGroup(id: number, groupId: number) {
+  return await window.ipcRenderer.invoke(
+    'ICP_ACCOUNTS_EDIT_GROUP',
+    id,
+    groupId,
+  );
 }

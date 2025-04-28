@@ -16,7 +16,6 @@ import { AccountModel } from '../../db/models/account';
 import windowOperate from '../../util/windowOperate';
 import { SendChannelEnum } from '../../../commont/UtilsEnum';
 import { AccountGroupModel } from '../../db/models/accountGroup';
-import { Menu } from 'electron';
 
 @Controller()
 export class AccountController {
@@ -203,6 +202,18 @@ export class AccountController {
   ): Promise<any> {
     const userInfo = getUserInfo();
     return this.accountService.deleteAccounts(ids, userInfo.id);
+  }
+
+  // 修改账户的账户组
+  @Icp('ICP_ACCOUNTS_EDIT_GROUP')
+  async accountEditGroup(
+    event: Electron.IpcMainInvokeEvent,
+    id: number,
+    groupId: number,
+  ): Promise<any> {
+    return this.accountService.updateAccountInfo(id, {
+      groupId,
+    });
   }
 
   // 添加用户组数据

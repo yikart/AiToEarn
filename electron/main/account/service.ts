@@ -8,7 +8,10 @@ import { AppDataSource } from '../../db';
 import { AccountModel } from '../../db/models/account';
 import { Injectable } from '../core/decorators';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
-import { AccountType } from '../../../commont/AccountEnum';
+import {
+  AccountType,
+  defaultAccountGroupId,
+} from '../../../commont/AccountEnum';
 import platController from '../plat/index';
 import { EtEvent } from '../../global/event';
 import { AccountGroupModel } from '../../db/models/accountGroup';
@@ -36,13 +39,26 @@ export class AccountService {
   }
   // 删除用户组数据
   async deleteAccountGroup(id: number) {
-    return await this.accountRepository.delete({
+    // 将删除的用户组下的账户账户的组id设置为默认组id
+    const accounts = await this.accountRepository.find({
+      where: { groupId: id },
+    });
+    await this.accountRepository.update(
+      { id: In(accounts.map((v) => v.id)) },
+      {
+        groupId: defaultAccountGroupId,
+      },
+    );
+
+    // 删除
+    return await this.accountGroupRepository.delete({
       id: id,
     });
   }
   // 修改用户组数据
   async editAccountGroup(data: Partial<AccountGroupModel>) {
-    return await this.accountRepository.update({ id: data.id }, data);
+    console.log(data);
+    return await this.accountGroupRepository.update({ id: data.id }, data);
   }
 
   // 没有就添加有就更新cookie
@@ -193,6 +209,11 @@ export class AccountService {
   async updateAccountStatus(id: number, status: number) {
     await this.accountRepository.update(id, { status });
     return await this.accountRepository.findOne({ where: { id } });
+  }
+
+  // 更新用户信息
+  async updateAccountInfo(id: number, data: Partial<AccountModel>) {
+    await this.accountRepository.update(id, data);
   }
 
   // 更新账户的统计信息

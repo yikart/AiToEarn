@@ -11,6 +11,7 @@ import {
   Drawer,
   message,
   Modal,
+  Select,
   Table,
   TableProps,
   Tooltip,
@@ -27,7 +28,11 @@ import {
   WarningOutlined,
 } from '@ant-design/icons';
 import { AvatarPlat } from '../../../publish/components/PubProgressModule/PubProgressModule';
-import { icpDeleteAccounts } from '../../../../icp/account';
+import {
+  icpAccountEditGroup,
+  icpDeleteAccounts,
+  icpEditDeleteAccountGroup,
+} from '../../../../icp/account';
 import UserManageSidebar from './UserManageSidebar';
 
 export interface IUserManageModalRef {}
@@ -36,6 +41,33 @@ export interface IUserManageModalProps {
   open: boolean;
   onCancel: () => void;
 }
+
+const UserGroupSelect = ({
+  account,
+  onChange,
+}: {
+  account: AccountModel;
+  onChange: (groupId: number) => void;
+}) => {
+  const { accountGroupList } = useAccountStore(
+    useShallow((state) => ({
+      accountGroupList: state.accountGroupList,
+    })),
+  );
+
+  return (
+    <Select
+      value={account.groupId}
+      style={{ width: '160px' }}
+      fieldNames={{
+        value: 'id',
+        label: 'name',
+      }}
+      options={accountGroupList}
+      onChange={onChange}
+    />
+  );
+};
 
 const UserManageModal = memo(
   forwardRef(
@@ -58,6 +90,8 @@ const UserManageModal = memo(
       const allUser = useRef(-1);
       // -1=全部账号，不然为对应分组 ID
       const [activeGroup, setActiveGroup] = useState(allUser.current);
+      // 是否改变了顺序
+      const isUpdateRank = useRef(false);
 
       const columns = useMemo(() => {
         const columns: TableProps<AccountModel>['columns'] = [
@@ -79,6 +113,21 @@ const UserManageModal = memo(
               );
             },
             width: 200,
+            key: 'nickname',
+          },
+          {
+            title: '平台',
+            render: (text, am) => {
+              const platInfo = AccountPlatInfoMap.get(am.type)!;
+              return (
+                <div className="userManage-content-plat">
+                  <Tooltip title={platInfo.name}>
+                    <img src={platInfo.icon} />
+                  </Tooltip>
+                </div>
+              );
+            },
+            width: 80,
             key: 'nickname',
           },
           {
@@ -110,23 +159,25 @@ const UserManageModal = memo(
                 </>
               );
             },
-            width: 200,
+            width: 100,
             key: 'nickname',
           },
           {
-            title: '平台',
+            title: '所属列表',
             render: (text, am) => {
-              const platInfo = AccountPlatInfoMap.get(am.type)!;
               return (
-                <div className="userManage-content-plat">
-                  <Tooltip title={platInfo.name}>
-                    <img src={platInfo.icon} />
-                  </Tooltip>
-                </div>
+                <UserGroupSelect
+                  account={am}
+                  onChange={async (groupId) => {
+                    await updateAccountGroupRank();
+                    await icpAccountEditGroup(am.id, groupId);
+                    await getAccountList();
+                  }}
+                />
               );
             },
             width: 200,
-            key: 'nickname',
+            key: 'groupId',
           },
         ];
         return columns;
@@ -148,6 +199,23 @@ const UserManageModal = memo(
       const close = () => {
         onCancel();
         setSelectedRows([]);
+        updateAccountGroupRank();
+      };
+
+      // 更新账户组顺序
+      const updateAccountGroupRank = async () => {
+        if (isUpdateRank.current) {
+          const accountGroupList = useAccountStore.getState().accountGroupList;
+          for (let i = 0; i < accountGroupList.length; i++) {
+            const v = accountGroupList[i];
+            // 这里不需要更新数据，因为在排序完成后已经更新了全局的sotre，引用sotre的所有位置都会发生更改
+            await icpEditDeleteAccountGroup({
+              id: v.id,
+              rank: i,
+            });
+          }
+          isUpdateRank.current = false;
+        }
       };
 
       const accountListLast = useMemo(() => {
@@ -155,7 +223,7 @@ const UserManageModal = memo(
           return accountList;
         }
         return accountGroupList.find((v) => v.id === activeGroup)?.children;
-      }, [accountMap, activeGroup]);
+      }, [accountMap, activeGroup, accountGroupList]);
 
       return (
         <>
@@ -197,7 +265,7 @@ const UserManageModal = memo(
             open={open}
             title="账号管理器"
             footer={null}
-            width={900}
+            width={1000}
             onCancel={close}
             rootClassName={styles.userManageModal}
           >
@@ -206,6 +274,9 @@ const UserManageModal = memo(
                 allUser={allUser.current}
                 activeGroup={activeGroup}
                 onChange={setActiveGroup}
+                onSortEnd={() => {
+                  isUpdateRank.current = true;
+                }}
               />
 
               <div className="userManage-content">
