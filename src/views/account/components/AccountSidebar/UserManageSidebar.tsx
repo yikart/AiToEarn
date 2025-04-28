@@ -130,7 +130,7 @@ const UserManageSidebar = memo(
                   className="userManage-sidebar-list-sortable"
                   list={accountGroupList}
                   animation={250}
-                  onEnd={() => {
+                  onEnd={async () => {
                     onSortEnd();
                   }}
                   setList={setAccountGroupList}

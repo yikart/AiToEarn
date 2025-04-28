@@ -42,11 +42,16 @@ export interface IUserManageModalProps {
   onCancel: () => void;
 }
 
-const UserGroupSelect = ({ account }: { account: AccountModel }) => {
-  const { accountGroupList, getAccountList } = useAccountStore(
+const UserGroupSelect = ({
+  account,
+  onChange,
+}: {
+  account: AccountModel;
+  onChange: (groupId: number) => void;
+}) => {
+  const { accountGroupList } = useAccountStore(
     useShallow((state) => ({
       accountGroupList: state.accountGroupList,
-      getAccountList: state.getAccountList,
     })),
   );
 
@@ -59,10 +64,7 @@ const UserGroupSelect = ({ account }: { account: AccountModel }) => {
         label: 'name',
       }}
       options={accountGroupList}
-      onChange={async (groupId) => {
-        await icpAccountEditGroup(account.id, groupId);
-        await getAccountList();
-      }}
+      onChange={onChange}
     />
   );
 };
@@ -163,7 +165,16 @@ const UserManageModal = memo(
           {
             title: '所属列表',
             render: (text, am) => {
-              return <UserGroupSelect account={am} />;
+              return (
+                <UserGroupSelect
+                  account={am}
+                  onChange={async (groupId) => {
+                    await updateAccountGroupRank();
+                    await icpAccountEditGroup(am.id, groupId);
+                    await getAccountList();
+                  }}
+                />
+              );
             },
             width: 200,
             key: 'groupId',
@@ -185,12 +196,16 @@ const UserManageModal = memo(
         selectedRowKeys: selectedRows.map((v) => v.id),
       };
 
-      const close = async () => {
+      const close = () => {
         onCancel();
         setSelectedRows([]);
+        updateAccountGroupRank();
+      };
 
+      // 更新账户组顺序
+      const updateAccountGroupRank = async () => {
         if (isUpdateRank.current) {
-          isUpdateRank.current = false;
+          const accountGroupList = useAccountStore.getState().accountGroupList;
           for (let i = 0; i < accountGroupList.length; i++) {
             const v = accountGroupList[i];
             // 这里不需要更新数据，因为在排序完成后已经更新了全局的sotre，引用sotre的所有位置都会发生更改
@@ -199,6 +214,7 @@ const UserManageModal = memo(
               rank: i,
             });
           }
+          isUpdateRank.current = false;
         }
       };
 
@@ -207,7 +223,7 @@ const UserManageModal = memo(
           return accountList;
         }
         return accountGroupList.find((v) => v.id === activeGroup)?.children;
-      }, [accountMap, activeGroup]);
+      }, [accountMap, activeGroup, accountGroupList]);
 
       return (
         <>
