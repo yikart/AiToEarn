@@ -11,8 +11,9 @@ import windowOperate from '../util/windowOperate';
 import { logger } from '../global/log';
 import { SplashWindow } from './splash';
 import dotenv from 'dotenv';
-
 import KwaiPubListener from './plat/platforms/Kwai/KwaiPubListener';
+import { registerContextMenuListener } from '@electron-uikit/contextmenu';
+
 const platform = process.platform;
 dotenv.config();
 
@@ -139,6 +140,8 @@ async function createWindow() {
 
 app.whenReady().then(async () => {
   try {
+    registerContextMenuListener();
+
     // 创建应用实例,挂载功能
     new App();
 

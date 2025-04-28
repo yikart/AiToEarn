@@ -48,9 +48,14 @@ export const useAccountStore = create(
           if (get().unBindFn) get().unBindFn!();
         },
 
+        setAccountGroupList(accountGroupList: AccountGroupItem[]) {
+          set({ accountGroupList });
+        },
+
         async getAccountList() {
           const accountMap = new Map<number, AccountInfo>([]);
           const result = await icpGetAccountList();
+          console.log(result);
           if (!result) return;
 
           for (const item of result) {
@@ -81,6 +86,10 @@ export const useAccountStore = create(
           });
           get().accountList.map((v) => {
             accountGroupMap.get(v.groupId!)!.children.push(v);
+          });
+
+          accountGroupList.sort((a, b) => {
+            return a.rank - b.rank;
           });
           set({
             accountGroupList,

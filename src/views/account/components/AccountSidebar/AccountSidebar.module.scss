@@ -3,6 +3,8 @@
 .accountSidebar {
   border-right: 1px solid var(--grayColor3);
   width: 200px;
+  height: 100%;
+  min-height: 0;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -12,6 +14,12 @@
   }
 
   :global {
+    .accountSidebar-userCount {
+      display: inline-block;
+      margin-left: 10px;
+      color: var(--grayColor6);
+    }
+
     .accountSidebar-top {
       flex-shrink: 0;
       padding: 0 10px;
@@ -100,6 +108,20 @@
           filter: grayscale(100%);
           opacity: 0.5;
         }
+      }
+    }
+
+    .ant-collapse {
+      overflow: auto;
+      height: 100%;
+      border: none;
+      background: transparent;
+      .ant-collapse-content-box {
+        padding: 0;
+      }
+      .ant-collapse-header {
+        background: transparent;
+        padding: 10px;
       }
     }
   }
@@ -204,6 +226,9 @@
       box-sizing: border-box;
       padding-top: 10px;
       &-top {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
       }
       &-bottom {
         padding: 0 12px;
@@ -218,7 +243,6 @@
         padding-right: 10px;
         padding-left: 10px;
         background: transparent;
-        transition: 0.3s;
         &:hover {
           background: var(--colorPrimary3);
           cursor: pointer;
@@ -228,20 +252,39 @@
         padding-top: 5px;
         padding-bottom: 5px;
       }
+      &-sortHandle {
+        cursor: move;
+        margin-right: 10px;
+      }
+      &-left {
+        display: flex;
+      }
       &-name {
       }
       &-count {
         color: var(--grayColor8);
       }
       &-list {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        height: 100%;
+
         &-title {
           margin: 10px 0 10px 10px;
           font-size: var(--fs-xs);
           color: var(--grayColor8);
         }
+
         &-item {
           padding-top: 10px;
           padding-bottom: 10px;
+        }
+
+        &-sortable {
+          height: 100%;
+          overflow: auto;
+          padding-bottom: 15px;
         }
       }
       &--active {

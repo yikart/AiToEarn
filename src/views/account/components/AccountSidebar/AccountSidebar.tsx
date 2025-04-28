@@ -8,10 +8,13 @@ import {
 } from 'react';
 import styles from './AccountSidebar.module.scss';
 import { AccountInfo, AccountPlatInfoMap } from '../../comment';
-import { Avatar, Button, message, Popover, Tooltip } from 'antd';
+import { Avatar, Button, Collapse, message, Popover, Tooltip } from 'antd';
 import { accountLogin, acpAccountLoginCheck } from '../../../../icp/account';
 import AddAccountModal from '../AddAccountModal';
-import { AccountStatus } from '../../../../../commont/AccountEnum';
+import {
+  AccountStatus,
+  defaultAccountGroupId,
+} from '../../../../../commont/AccountEnum';
 import {
   CheckCircleOutlined,
   PlusOutlined,
@@ -123,10 +126,15 @@ const AccountSidebar = memo(
     ) => {
       const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
       const pubAccountDetModuleRef = useRef<IPubAccountDetModuleRef>(null);
-      const { accountList: fullAccountList, getAccountList } = useAccountStore(
+      const {
+        accountList: fullAccountList,
+        getAccountList,
+        accountGroupList,
+      } = useAccountStore(
         useShallow((state) => ({
           accountList: state.accountList,
           getAccountList: state.getAccountList,
+          accountGroupList: state.accountGroupList,
         })),
       );
       const [userManageModalOpen, setUserManageModalOpen] = useState(false);
@@ -179,54 +187,80 @@ const AccountSidebar = memo(
                 </Tooltip>
               </div>
             </div>
-            <ul className="accountList">
-              {accountList.map((account) => {
-                const platInfo = AccountPlatInfoMap.get(account.type)!;
-                return (
-                  <li
-                    className={[
-                      'accountList-item',
-                      `${activeAccountId === account.id ? 'accountList-item--active' : ''}`,
-                      account.status === AccountStatus.DISABLE &&
-                        'accountList-item--disable',
-                    ].join(' ')}
-                    key={account.id}
-                    onClick={async () => {
-                      if (account.status === AccountStatus.DISABLE) {
-                        const res = await accountLogin(account.type);
-                        if (!res) return;
-                        message.success('账号登录成功！');
-                        return;
-                      }
-                      onAccountChange(account);
-                    }}
-                  >
-                    <Avatar src={account.avatar} size="large" />
-                    <div className="accountList-item-right">
-                      <div
-                        className="accountList-item-right-name"
-                        title={account.nickname}
-                      >
-                        {account.nickname}
-                      </div>
-                      <div className="accountList-item-right-footer">
-                        <p className="accountList-item-right-plat">
-                          <img src={platInfo.icon} />
-                          <span>{platInfo.name}</span>
-                        </p>
-                        <Popover
-                          content={<AccountPopoverInfo accountInfo={account} />}
-                          // trigger="click"
-                          placement="right"
-                        >
-                          ...
-                        </Popover>
-                      </div>
-                    </div>
-                  </li>
-                );
+
+            <Collapse
+              defaultActiveKey={[defaultAccountGroupId]}
+              items={accountGroupList.map((v) => {
+                return {
+                  key: v.id,
+                  label: (
+                    <>
+                      {v.name}
+                      <span className="accountSidebar-userCount">
+                        {v.children.length}/
+                        {
+                          v.children.map(
+                            (v) => v.status === AccountStatus.USABLE,
+                          ).length
+                        }
+                      </span>
+                    </>
+                  ),
+                  children: (
+                    <ul key={v.id} className="accountList">
+                      {v.children.map((account) => {
+                        const platInfo = AccountPlatInfoMap.get(account.type)!;
+                        return (
+                          <li
+                            className={[
+                              'accountList-item',
+                              `${activeAccountId === account.id ? 'accountList-item--active' : ''}`,
+                              account.status === AccountStatus.DISABLE &&
+                                'accountList-item--disable',
+                            ].join(' ')}
+                            key={account.id}
+                            onClick={async () => {
+                              if (account.status === AccountStatus.DISABLE) {
+                                const res = await accountLogin(account.type);
+                                if (!res) return;
+                                message.success('账号登录成功！');
+                                return;
+                              }
+                              onAccountChange(account);
+                            }}
+                          >
+                            <Avatar src={account.avatar} size="large" />
+                            <div className="accountList-item-right">
+                              <div
+                                className="accountList-item-right-name"
+                                title={account.nickname}
+                              >
+                                {account.nickname}
+                              </div>
+                              <div className="accountList-item-right-footer">
+                                <p className="accountList-item-right-plat">
+                                  <img src={platInfo.icon} />
+                                  <span>{platInfo.name}</span>
+                                </p>
+                                <Popover
+                                  content={
+                                    <AccountPopoverInfo accountInfo={account} />
+                                  }
+                                  // trigger="click"
+                                  placement="right"
+                                >
+                                  ...
+                                </Popover>
+                              </div>
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  ),
+                };
               })}
-            </ul>
+            />
 
             <div className="accountSidebar-footer">
               <Button
