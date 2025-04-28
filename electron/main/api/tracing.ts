@@ -24,7 +24,7 @@ export interface Tracing {
 
 export class TracingApi {
   // 创建跟踪-账号添加
-  async createTracing(account: {
+  async createTracingAccountAdd(account: {
     id: number;
     desc?: string;
   }): Promise<Tracing | null> {
@@ -50,11 +50,13 @@ export class TracingApi {
       method: 'POST',
       url: 'tracing',
       body: inData,
+      isToken: true,
     });
     const {
       status,
       data: { data, code },
     } = res;
+
     if (status !== 200 && status !== 201) return null;
     if (!!code) return null;
     return data;

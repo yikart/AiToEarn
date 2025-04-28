@@ -19,7 +19,6 @@ import {
   ShopOutlined,
   MessageOutlined,
   AuditOutlined,
-  MoneyCollectOutlined,
   OpenAIOutlined,
 } from '@ant-design/icons';
 
@@ -46,6 +45,7 @@ import AiTool from '@/views/aiTool/index';
 import AiRanking from '../views/aiTool/children/aiRanking/index';
 import AiToolWebview from '../views/aiTool/children/aiToolWebview';
 import ExpectedIncome from '@/views/finance/expectedIncome';
+// import Test from '@/views/test';
 
 interface IRouterMeta {
   // 路由名称
@@ -156,7 +156,7 @@ export const router: CustomRouteObject[] = [
           { path: 'userWalletRecord', element: <UserWalletRecord /> },
           { path: 'userWalletAccount', element: <UserWalletAccount /> },
           { path: 'expectedIncome', element: <ExpectedIncome /> },
-        ]
+        ],
       },
       // {
       //   path: '/interaction',

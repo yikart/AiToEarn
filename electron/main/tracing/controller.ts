@@ -10,7 +10,7 @@ export class TracingController {
   // 创建跟踪记录-账号添加
   @Et('ET_TRACING_ACCOUNT_ADD')
   async tracingAccountAdd(data: { id: number; desc?: string }): Promise<any> {
-    tracingApi.createTracing(data);
+    tracingApi.createTracingAccountAdd(data);
   }
 
   // 创建跟踪记录-视频发布
