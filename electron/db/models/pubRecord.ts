@@ -9,14 +9,6 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { TempModel } from './temp';
 import { PubStatus, PubType } from '../../../commont/publish/PublishEnum';
 
-export const PubStatusCnMap = {
-  [PubStatus.UNPUBLISH]: '未发布',
-  [PubStatus.RELEASED]: '已发布',
-  [PubStatus.FAIL]: '发布失败',
-  [PubStatus.PartSuccess]: '部分成功',
-  [PubStatus.Audit]: '审核中',
-};
-
 @Entity({ name: 'pubRecord' })
 export class PubRecordModel extends TempModel {
   @PrimaryGeneratedColumn({ type: 'int', comment: 'id' })

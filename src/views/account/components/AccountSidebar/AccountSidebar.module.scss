@@ -170,6 +170,9 @@
 }
 .userManageModal {
   :global {
+    .ant-modal-header {
+      margin-bottom: 0;
+    }
     .ant-modal-content {
       padding: 0 !important;
       .ant-modal-title {
@@ -191,7 +194,56 @@
     }
 
     .userManage-sidebar {
+      width: 180px;
+      height: 100%;
+      border-right: 1px solid var(--grayColor3);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-sizing: border-box;
+      padding-top: 10px;
+      &-top {
+      }
+      &-bottom {
+      }
+      &-allUser, .userManage-sidebar-list-item {
+        display: flex;
+        justify-content: space-between;
+        padding-right: 10px;
+        padding-left: 10px;
+        background: transparent;
+        transition: 0.3s;
+        &:hover {
+          background: var(--colorPrimary3);
+          cursor: pointer;
+        }
+      }
+      &-allUser {
+        padding-top: 5px;
+        padding-bottom: 5px;
+      }
+      &-name {
+      }
+      &-count {
+        color: var(--grayColor8);
+      }
+      &-list {
+        &-title {
+          margin: 10px 0 10px 10px;
+          font-size: var(--fs-xs);
+          color: var(--grayColor8);
+        }
+        &-item {
+          padding-top: 10px;
+          padding-bottom: 10px;
+        }
+      }
+      &--active {
+        background: var(--colorPrimary3) !important;
+      }
     }
+
     .userManage-content {
       width: 100%;
       overflow: hidden;

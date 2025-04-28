@@ -1,4 +1,11 @@
-import { ForwardedRef, forwardRef, memo, useMemo, useState } from 'react';
+import {
+  ForwardedRef,
+  forwardRef,
+  memo,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   Avatar,
   Drawer,
@@ -35,14 +42,21 @@ const UserManageModal = memo(
       { open, onCancel }: IUserManageModalProps,
       ref: ForwardedRef<IUserManageModalRef>,
     ) => {
-      const { accountList, getAccountList } = useAccountStore(
-        useShallow((state) => ({
-          accountList: state.accountList,
-          getAccountList: state.getAccountList,
-        })),
-      );
+      const { accountList, getAccountList, accountGroupList, accountMap } =
+        useAccountStore(
+          useShallow((state) => ({
+            accountList: state.accountList,
+            getAccountList: state.getAccountList,
+            accountGroupList: state.accountGroupList,
+            accountMap: state.accountMap,
+          })),
+        );
       const [deleteHitOpen, setDeleteHitOpen] = useState(false);
       const [selectedRows, setSelectedRows] = useState<AccountModel[]>([]);
+      // 全部账号
+      const allUser = useRef(-1);
+      // -1=全部账号，不然为对应分组 ID
+      const [activeGroup, setActiveGroup] = useState(allUser.current);
 
       const columns = useMemo(() => {
         const columns: TableProps<AccountModel>['columns'] = [
@@ -135,6 +149,13 @@ const UserManageModal = memo(
         setSelectedRows([]);
       };
 
+      const accountListLast = useMemo(() => {
+        if (activeGroup === allUser.current) {
+          return accountList;
+        }
+        return accountMap.get(activeGroup);
+      }, [accountMap, activeGroup]);
+
       return (
         <>
           <Modal
@@ -180,7 +201,47 @@ const UserManageModal = memo(
             rootClassName={styles.userManageModal}
           >
             <div className={styles.userManage}>
-              <div className="userManage-sidebar"></div>
+              <div className="userManage-sidebar">
+                <div className="userManage-sidebar-top">
+                  <div
+                    className={[
+                      'userManage-sidebar-allUser',
+                      activeGroup === allUser.current &&
+                        'userManage-sidebar--active',
+                    ].join(' ')}
+                    onClick={() => {
+                      setActiveGroup(allUser.current);
+                    }}
+                  >
+                    <span className="userManage-sidebar-name">全部账号</span>
+                    <span className="userManage-sidebar-count">4</span>
+                  </div>
+                  <div className="userManage-sidebar-list">
+                    <p className="userManage-sidebar-list-title">列表</p>
+                    {accountGroupList.map((v) => {
+                      return (
+                        <div
+                          className={[
+                            'userManage-sidebar-list-item',
+                            activeGroup === v.id &&
+                              'userManage-sidebar--active',
+                          ].join(' ')}
+                          key={v.id}
+                          onClick={() => {
+                            setActiveGroup(v.id);
+                          }}
+                        >
+                          <span className="userManage-sidebar-name">
+                            {v.name}
+                          </span>
+                          <span className="userManage-sidebar-count">4</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div className="userManage-sidebar-bottom">bottom</div>
+              </div>
               <div className="userManage-content">
                 <Table<AccountModel>
                   columns={columns}
