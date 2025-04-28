@@ -132,7 +132,7 @@ export class InteractionService {
     }) => void,
   ) {
     // console.log('------ autorInteraction', option);
-    let commentContentList = option.commentContent.split(',');
+    const commentContentList = option.commentContent.split(',');
     // return;
 
     const userInfo = getUserInfo();
@@ -213,7 +213,7 @@ export class InteractionService {
         if (option.commentType && option.commentType == 'custom') {
           // let commentContentList = option.commentContent.split(',');
           console.log('------ commentContentList', commentContentList);
-          let randomIndex = Math.floor(
+          const randomIndex = Math.floor(
             Math.random() * commentContentList.length,
           );
           console.log('------ randomIndex', randomIndex);
