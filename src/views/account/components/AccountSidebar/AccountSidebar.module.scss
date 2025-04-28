@@ -194,7 +194,7 @@
     }
 
     .userManage-sidebar {
-      width: 180px;
+      width: 200px;
       height: 100%;
       border-right: 1px solid var(--grayColor3);
       flex-shrink: 0;
@@ -206,6 +206,11 @@
       &-top {
       }
       &-bottom {
+        padding: 0 12px;
+        margin-bottom: 15px;
+        button {
+          width: 100%;
+        }
       }
       &-allUser, .userManage-sidebar-list-item {
         display: flex;
@@ -308,5 +313,15 @@
         }
       }
     }
+  }
+}
+
+.createGroup {
+  display: flex;
+  align-items: center;
+  margin: 30px 0 50px 0;
+  label {
+    white-space: nowrap;
+    margin-right: 10px;
   }
 }

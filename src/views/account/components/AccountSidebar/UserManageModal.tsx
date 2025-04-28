@@ -28,6 +28,7 @@ import {
 } from '@ant-design/icons';
 import { AvatarPlat } from '../../../publish/components/PubProgressModule/PubProgressModule';
 import { icpDeleteAccounts } from '../../../../icp/account';
+import UserManageSidebar from './UserManageSidebar';
 
 export interface IUserManageModalRef {}
 
@@ -153,7 +154,7 @@ const UserManageModal = memo(
         if (activeGroup === allUser.current) {
           return accountList;
         }
-        return accountMap.get(activeGroup);
+        return accountGroupList.find((v) => v.id === activeGroup)?.children;
       }, [accountMap, activeGroup]);
 
       return (
@@ -201,51 +202,16 @@ const UserManageModal = memo(
             rootClassName={styles.userManageModal}
           >
             <div className={styles.userManage}>
-              <div className="userManage-sidebar">
-                <div className="userManage-sidebar-top">
-                  <div
-                    className={[
-                      'userManage-sidebar-allUser',
-                      activeGroup === allUser.current &&
-                        'userManage-sidebar--active',
-                    ].join(' ')}
-                    onClick={() => {
-                      setActiveGroup(allUser.current);
-                    }}
-                  >
-                    <span className="userManage-sidebar-name">全部账号</span>
-                    <span className="userManage-sidebar-count">4</span>
-                  </div>
-                  <div className="userManage-sidebar-list">
-                    <p className="userManage-sidebar-list-title">列表</p>
-                    {accountGroupList.map((v) => {
-                      return (
-                        <div
-                          className={[
-                            'userManage-sidebar-list-item',
-                            activeGroup === v.id &&
-                              'userManage-sidebar--active',
-                          ].join(' ')}
-                          key={v.id}
-                          onClick={() => {
-                            setActiveGroup(v.id);
-                          }}
-                        >
-                          <span className="userManage-sidebar-name">
-                            {v.name}
-                          </span>
-                          <span className="userManage-sidebar-count">4</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-                <div className="userManage-sidebar-bottom">bottom</div>
-              </div>
+              <UserManageSidebar
+                allUser={allUser.current}
+                activeGroup={activeGroup}
+                onChange={setActiveGroup}
+              />
+
               <div className="userManage-content">
                 <Table<AccountModel>
                   columns={columns}
-                  dataSource={accountList}
+                  dataSource={accountListLast}
                   rowKey="id"
                   rowSelection={{ type: 'checkbox', ...rowSelection }}
                 />

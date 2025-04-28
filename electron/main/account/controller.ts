@@ -16,6 +16,7 @@ import { AccountModel } from '../../db/models/account';
 import windowOperate from '../../util/windowOperate';
 import { SendChannelEnum } from '../../../commont/UtilsEnum';
 import { AccountGroupModel } from '../../db/models/accountGroup';
+import { Menu } from 'electron';
 
 @Controller()
 export class AccountController {

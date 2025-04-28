@@ -33,6 +33,7 @@
   "dependencies": {
     "@ant-design/colors": "^7.2.0",
     "@ant-design/icons": "^5.6.1",
+    "@electron-uikit/contextmenu": "^1.0.0",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@ffprobe-installer/ffprobe": "^2.1.2",
     "@types/form-data": "^2.5.2",
