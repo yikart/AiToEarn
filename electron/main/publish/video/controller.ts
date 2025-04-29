@@ -76,7 +76,7 @@ export class VideoPubController {
       for (let i = 0; i < accountList.length; i++) {
         const account = accountList[i];
         const group = groupModels.find((v) => v.id === account.groupId);
-        if (group && group.proxyIp) {
+        if (group && group.proxyIp && group.proxyOpen) {
           videoList[i].proxyIp = group.proxyIp;
         }
       }

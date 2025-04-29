@@ -143,9 +143,12 @@ const PubAccountDetModule = memo(
 
             if (isCheckProxy) {
               if (!proxyGroupSet.has(account.groupId!)) {
-                tasksProxyCheck.push(
-                  retProxyCheckCore(accountGroupMap.get(account.groupId!)!),
-                );
+                const group = accountGroupMap.get(account.groupId!)!;
+                if (group.proxyOpen) {
+                  tasksProxyCheck.push(
+                    retProxyCheckCore(accountGroupMap.get(account.groupId!)!),
+                  );
+                }
                 proxyGroupSet.add(account.groupId!);
               }
             }

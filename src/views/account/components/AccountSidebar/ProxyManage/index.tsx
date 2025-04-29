@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react';
 import styles from './proxyManage.module.scss';
-import { Button, Input, message, Modal, Table, TableProps } from 'antd';
+import { Button, Input, message, Modal, Switch, Table, TableProps } from 'antd';
 import { AccountGroupItem, useAccountStore } from '@/store/account';
 import { useShallow } from 'zustand/react/shallow';
 import { SearchOutlined } from '@ant-design/icons';
@@ -51,6 +51,28 @@ const ProxyManage = memo(
             title: '代理地址',
             key: 'proxy',
             dataIndex: 'proxyIp',
+          },
+          {
+            title: '代理启用',
+            width: 90,
+            key: 'proxyOpen',
+            dataIndex: 'proxyOpen',
+            render: (_, gri) => {
+              return (
+                <>
+                  <Switch
+                    value={gri.proxyOpen}
+                    onChange={async (v) => {
+                      await icpEditDeleteAccountGroup({
+                        id: gri.id,
+                        proxyOpen: v,
+                      });
+                      await getAccountGroup();
+                    }}
+                  />
+                </>
+              );
+            },
           },
           {
             title: '账号数量',

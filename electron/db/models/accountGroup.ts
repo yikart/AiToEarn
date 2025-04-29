@@ -31,4 +31,12 @@ export class AccountGroupModel extends TempModel {
     default: 1,
   })
   rank!: number;
+
+  @Column({
+    type: 'boolean',
+    nullable: false,
+    comment: '是否启用代理',
+    default: true,
+  })
+  proxyOpen!: boolean;
 }
