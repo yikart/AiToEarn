@@ -134,7 +134,11 @@ export class ReplyController {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 
+    console.log('------ 评论列表 start ------');
+
     const res = await platController.getCommentList(account, data, pcursor);
+    console.log('------ 评论列表 end ------', res);
+
     return res;
   }
 

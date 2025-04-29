@@ -14,6 +14,7 @@ import {
   XiaohongshuApiResponse,
 } from './xiaohongshu.type';
 import { RetryWhile } from '../../../commont/utils';
+import { logger } from '../../global/log';
 
 export type XSLPlatformSettingType = {
   // 标题
@@ -1491,6 +1492,8 @@ export class XiaohongshuService {
     },
     cursor?: number,
   ) {
+    logger.log('小红书 ------ getCommentList ---- start');
+
     const url = `/api/sns/web/v2/comment/page?note_id=${note.id}&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=${note.xsec_token}`;
     const reverseRes: any = await this.getReverseResult({
       url,
@@ -1510,6 +1513,8 @@ export class XiaohongshuService {
       },
       method: 'GET',
     });
+
+    logger.log('小红书 ------ getCommentList ---- end', res);
 
     return res;
   }
