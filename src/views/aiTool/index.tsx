@@ -26,7 +26,7 @@ const items: MenuItem[] = [
   },
   {
     key: '/aiTool/aiToolWebview?webviewUrl=http://39.100.101.239:6006',
-    label: 'MuseTalk',
+    label: '数字人制作 MuseTalk',
     icon: <Icon component={DigitalHuman} />,
   },
   {
@@ -36,25 +36,29 @@ const items: MenuItem[] = [
   },
   {
     key: '/aiTool/aiToolWebview?webviewUrl=http://39.100.101.239:5042',
-    label: 'Face fusion AI换脸工具',
+    label: 'AI换脸 FaceFusion',
     icon: <Icon component={FaceFusion} />,
   },
   {
     key: '/aiTool/aiToolWebview?webviewUrl=http://39.100.101.239:5046',
-    label: 'Cosy voice语音合成',
+    label: '声音克隆CosyVoice',
     icon: <Icon component={CosyVoice} />,
   },
   {
     key: '/aiTool/aiToolWebview?webviewUrl=http://39.100.101.239:6007',
-    label: 'NarratoAI自动化剪辑工具',
+    label: 'AI解说NarratoAI',
     icon: <Icon component={NarratoAI} />,
   },
   {
     key: '/aiTool/aiToolWebview?webviewUrl=http://39.100.101.239:6008',
-    label: 'MoneyPrinterTurbo',
+    label: '一键成片MoneyPrinterTurbo',
     icon: <Icon component={NarratoAI} />,
   },
-];
+].map((v) => {
+  // @ts-ignore
+  v.label = <span title={v.label}>{v.label}</span>;
+  return v;
+});
 
 export default function Page() {
   const navigate = useNavigate();
