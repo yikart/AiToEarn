@@ -1,5 +1,8 @@
 {
   "name": "aiToEarn",
+  "build": {
+    "appId": "cn.aitoearn.pc"
+  },
   "version": "0.7.0-alpha.4",
   "main": "dist-electron/main/index.js",
   "description": "艺咖 win打包使用管理员的终端",
