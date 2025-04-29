@@ -128,7 +128,6 @@ export class Douyin extends PlatformBase {
           like: item.dianzan,
           forward: item.fenxiang,
           collect: 0,
-          
         });
       }
     } catch (error) {
@@ -360,7 +359,7 @@ export class Douyin extends PlatformBase {
     };
   }
 
-  async dianzanDyOther( 
+  async dianzanDyOther(
     account: AccountModel,
     dataId: string, // 作品ID
   ): Promise<boolean> {
@@ -478,6 +477,7 @@ export class Douyin extends PlatformBase {
   pubParamsParse(params: WorkDataModel): DouyinPlatformSettingType {
     const douyinParams = params.diffParams![AccountType.Douyin];
     return {
+      proxyIp: params.proxyIp || '',
       userDeclare: douyinParams?.selfDeclare,
       activity: douyinParams?.activitys?.map((v) => {
         return {

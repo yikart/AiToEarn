@@ -1,4 +1,4 @@
-import { screen, BrowserWindow, net, session } from 'electron';
+import { screen, BrowserWindow, session } from 'electron';
 import { CommonUtils } from '../../util/common';
 import path from 'path';
 import { FileUtils } from '../../util/file';
@@ -14,6 +14,7 @@ import {
   WxSPHGetMixListResponse,
 } from './wxShp.type';
 import { v4 as uuidv4 } from 'uuid';
+import { RetryWhile } from '../../../commont/utils';
 interface UserInfo {
   authorId: string;
   nickname: string;
@@ -118,15 +119,19 @@ export class ShipinhaoService {
     return new Promise(async (resolve, reject) => {
       const cookieString = CommonUtils.convertCookieToJson(cookies);
       try {
-        const res = await this.makeRequest(this.getUserInfoUrl, {
-          method: 'POST',
-          headers: {
-            Origin: 'https://channels.weixin.qq.com',
-            Referer: 'https://channels.weixin.qq.com/platform',
-            Cookie: cookieString,
+        const res = await this.makeRequest(
+          this.getUserInfoUrl,
+          {
+            method: 'POST',
+            headers: {
+              Origin: 'https://channels.weixin.qq.com',
+              Referer: 'https://channels.weixin.qq.com/platform',
+              Cookie: cookieString,
+            },
+            timeout: 15000,
           },
-          timeout: 15000,
-        });
+          '',
+        );
         if (res.errCode === 0) {
           resolve({
             authorId: res.data.finderUser.uniqId ?? '',
@@ -193,23 +198,27 @@ export class ShipinhaoService {
           ).toString();
 
       try {
-        const res = await this.makeRequest(this.getDashboardUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Origin: 'https://channels.weixin.qq.com',
-            Referer: 'https://channels.weixin.qq.com/platform',
-            Cookie: cookieString,
+        const res = await this.makeRequest(
+          this.getDashboardUrl,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Origin: 'https://channels.weixin.qq.com',
+              Referer: 'https://channels.weixin.qq.com/platform',
+              Cookie: cookieString,
+            },
+            timeout: 15000,
+            data: {
+              endTs,
+              interval: 3,
+              startTs,
+              timestamp: new Date().getTime(),
+            },
           },
-          timeout: 15000,
-          data: {
-            endTs,
-            interval: 3,
-            startTs,
-            timestamp: new Date().getTime(),
-          },
-        });
-        
+          '',
+        );
+
         if (res.errCode === 0) {
           if (endDate && startDate) {
             // 如果传入了日期范围，返回数组格式
@@ -308,7 +317,6 @@ export class ShipinhaoService {
             // 清理引用
             delete this.windowMap[winContentsId];
           } else {
-            console.log('Window not found or already destroyed');
           }
         }
 
@@ -401,7 +409,6 @@ export class ShipinhaoService {
 
           // 显示页面并设置置顶
           win.once('ready-to-show', () => {
-            console.log('Window ready to show');
             win.focus();
             win.center();
             win.setAlwaysOnTop(true);
@@ -410,7 +417,6 @@ export class ShipinhaoService {
 
           // 监听窗口销毁
           win.webContents.on('destroyed', () => {
-            console.log('Window destroyed:', winContentsId);
             if (this.cookieIntervalList.hasOwnProperty(winContentsId)) {
               clearInterval(this.cookieIntervalList[winContentsId]);
               delete this.cookieIntervalList[winContentsId];
@@ -464,15 +470,19 @@ export class ShipinhaoService {
   async checkLoginStatus(cookies: string): Promise<boolean> {
     const cookieString = CommonUtils.convertCookieToJson(cookies);
     try {
-      const res = await this.makeRequest(this.getUserInfoUrl, {
-        method: 'POST',
-        headers: {
-          Origin: 'https://channels.weixin.qq.com',
-          Referer: 'https://channels.weixin.qq.com/platform',
-          Cookie: cookieString,
+      const res = await this.makeRequest(
+        this.getUserInfoUrl,
+        {
+          method: 'POST',
+          headers: {
+            Origin: 'https://channels.weixin.qq.com',
+            Referer: 'https://channels.weixin.qq.com/platform',
+            Cookie: cookieString,
+          },
+          timeout: 15000,
         },
-        timeout: 15000,
-      });
+        '',
+      );
       return res.errCode === 0;
     } catch (err) {
       console.log('-------- checkLoginStatus error ---', err);
@@ -483,44 +493,24 @@ export class ShipinhaoService {
   /**
    * 通用请求方法
    */
-  private async makeRequest(url: string, options: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const request = net.request({
-        method: options.method,
-        url: url,
-        headers: options.headers,
-      });
-
-      // 发送请求体
-      if (options.data) {
-        request.write(
-          typeof options.data === 'string'
-            ? options.data
-            : JSON.stringify(options.data),
-        );
+  private async makeRequest(
+    url: string,
+    options: any,
+    proxy: string,
+  ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const res = await requestNet({
+          url: url,
+          method: options.method,
+          headers: options.headers,
+          body: options.data,
+          proxy,
+        });
+        resolve(res.data);
+      } catch (e) {
+        reject(e);
       }
-
-      request.on('response', (response) => {
-        let data = '';
-        response.on('data', (chunk) => {
-          data += chunk;
-        });
-        response.on('end', () => {
-          const result = JSON.parse(data);
-          if (result) {
-            resolve(result);
-          } else {
-            console.error('Request failed:', result);
-            reject(new Error(result.msg || 'Request failed'));
-          }
-        });
-      });
-
-      request.on('error', (error) => {
-        console.error('Request error:', error);
-        reject(error);
-      });
-      request.end();
     });
   }
 
@@ -530,49 +520,29 @@ export class ShipinhaoService {
    * @param fileContent 文件内容
    * @param headers 请求头
    * @param method HTTP 方法
+   * @param proxy
    */
   private async uploadFile(
     url: string,
     fileContent: Buffer,
     headers: any,
     method: string = 'PUT',
+    proxy: string,
   ): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const request = net.request({
-        method: method,
-        url: url,
-        headers: headers,
-      });
-
-      request.on('response', (response) => {
-        let data = '';
-        response.on('data', (chunk) => {
-          data += chunk;
-        });
-
-        response.on('end', () => {
-          try {
-            const result = data ? JSON.parse(data) : {};
-            resolve(result);
-          } catch (err) {
-            console.error('解析响应数据失败:', err);
-            resolve(response);
-          }
-        });
-      });
-
-      request.on('error', (error) => {
-        console.error('请求出错:', error);
-        reject(error);
-      });
-
-      // 写入请求体
+    return new Promise(async (resolve, reject) => {
       try {
-        request.write(fileContent);
-        request.end();
-      } catch (err) {
-        console.error('写入请求体时出错:', err);
-        reject(err);
+        const res = await requestNet({
+          url: url,
+          method: method as 'POST',
+          isFile: true,
+          headers: headers,
+          body: fileContent,
+          proxy,
+        });
+        resolve(res.data);
+      } catch (e) {
+        console.error('上传文件失败:', e);
+        reject(e);
       }
     });
   }
@@ -594,8 +564,12 @@ export class ShipinhaoService {
   /**
    * 获取发布TraceKey
    * @param cookieString
+   * @param proxy
    */
-  private async getPublishTraceKey(cookieString: string): Promise<string> {
+  private async getPublishTraceKey(
+    cookieString: string,
+    proxy: string,
+  ): Promise<string> {
     const requestParams = {
       objectId: '',
       pluginSessionId: null,
@@ -604,13 +578,17 @@ export class ShipinhaoService {
       scene: 7,
     };
 
-    const res = await this.makeRequest(this.getPublishTraceKeyUrl, {
-      method: 'POST',
-      headers: {
-        Cookie: cookieString,
+    const res = await this.makeRequest(
+      this.getPublishTraceKeyUrl,
+      {
+        method: 'POST',
+        headers: {
+          Cookie: cookieString,
+        },
+        body: requestParams,
       },
-      body: requestParams,
-    });
+      proxy,
+    );
 
     if (res.errCode === 0) {
       return res.data.traceKey;
@@ -622,20 +600,28 @@ export class ShipinhaoService {
   /**
    * 获取发布上传参数
    * @param cookieString
+   * @param proxy
    */
-  private async getPublishUploadParams(cookieString: string): Promise<any> {
+  private async getPublishUploadParams(
+    cookieString: string,
+    proxy: string,
+  ): Promise<any> {
     const requestParams = {
       reqScene: 7,
       scene: 7,
     };
 
-    const res = await this.makeRequest(this.getPublishUploadParamsUrl, {
-      method: 'POST',
-      headers: {
-        Cookie: cookieString,
+    const res = await this.makeRequest(
+      this.getPublishUploadParamsUrl,
+      {
+        method: 'POST',
+        headers: {
+          Cookie: cookieString,
+        },
+        body: requestParams,
       },
-      body: requestParams,
-    });
+      proxy,
+    );
 
     if (res.errCode === 0) {
       return res.data;
@@ -649,11 +635,13 @@ export class ShipinhaoService {
    * @param filePath
    * @param uploadParams
    * @param filePartInfo
+   * @param proxy
    */
   private async uploadVideoFile(
     filePath: string,
     uploadParams: any,
     filePartInfo: any,
+    proxy: string,
   ): Promise<string> {
     try {
       // 拼接请求参数
@@ -686,6 +674,8 @@ export class ShipinhaoService {
           'Content-Type': 'application/json',
           'X-Arguments': uploadArgumentsString,
         },
+        undefined,
+        proxy,
       );
 
       if (!uploadIdRes.UploadID) {
@@ -693,47 +683,61 @@ export class ShipinhaoService {
       }
 
       const uploadId = uploadIdRes.UploadID;
-      const uploadPartInfo = [];
+      const uploadPartInfo: any[] = [];
 
       // 分片上传文件
       for (let i = 0; i < filePartInfo.blockInfo.length; i++) {
-        if (this.callback)
-          this.callback(
-            50,
-            `上传视频（${i}/${filePartInfo.blockInfo.length}）`,
+        let errorMsg = '';
+        const isSuccess = await RetryWhile(async () => {
+          if (this.callback)
+            this.callback(
+              50,
+              `上传视频（${i}/${filePartInfo.blockInfo.length}）`,
+            );
+          console.log(
+            `开始上传第 ${i + 1}/${filePartInfo.blockInfo.length} 个分片`,
           );
-        console.log(
-          `开始上传第 ${i + 1}/${filePartInfo.blockInfo.length} 个分片`,
-        );
-        const chunkStart = i === 0 ? 0 : filePartInfo.blockInfo[i - 1];
-        const chunkEnd = filePartInfo.blockInfo[i] - 1;
-        const chunkContent = await FileUtils.getFilePartContent(
-          filePath,
-          chunkStart,
-          chunkEnd,
-        );
-
-        // 开始上传
-        const uploadUrl = `${this.uploadpartdfsUrl}?UploadID=${uploadId}&PartNumber=${i + 1}&QuickUpload=2`;
-        const uploadPartRes = await this.uploadFile(uploadUrl, chunkContent, {
-          Authorization: uploadParams.authKey,
-          'X-Arguments': uploadArgumentsString,
-          'Content-Type': 'application/octet-stream',
-        });
-
-        if (!uploadPartRes?.ETag) {
-          throw new Error(
-            '上传视频失败,失败原因3:' + uploadPartRes.data?.['X-Errno'] ||
-              '未知错误',
+          const chunkStart = i === 0 ? 0 : filePartInfo.blockInfo[i - 1];
+          const chunkEnd = filePartInfo.blockInfo[i] - 1;
+          const chunkContent = await FileUtils.getFilePartContent(
+            filePath,
+            chunkStart,
+            chunkEnd,
           );
+
+          // 开始上传
+          const uploadUrl = `${this.uploadpartdfsUrl}?UploadID=${uploadId}&PartNumber=${i + 1}&QuickUpload=2`;
+          const uploadPartRes = await this.uploadFile(
+            uploadUrl,
+            chunkContent,
+            {
+              Authorization: uploadParams.authKey,
+              'X-Arguments': uploadArgumentsString,
+              'Content-Type': 'application/octet-stream',
+            },
+            undefined,
+            proxy,
+          );
+
+          if (!uploadPartRes?.ETag) {
+            errorMsg =
+              '上传视频失败,失败原因3:' + uploadPartRes.data?.['X-Errno'] ||
+              '未知错误';
+            console.error(errorMsg);
+          }
+
+          // 上传成功
+          uploadPartInfo.push({
+            PartNumber: i + 1,
+            ETag: uploadPartRes.ETag,
+          });
+          console.log(`第 ${i + 1} 个分片上传成功`);
+
+          return true;
+        }, 3);
+        if (!isSuccess) {
+          throw new Error(errorMsg);
         }
-
-        // 上传成功
-        uploadPartInfo.push({
-          PartNumber: i + 1,
-          ETag: uploadPartRes.ETag,
-        });
-        console.log(`第 ${i + 1} 个分片上传成功`);
       }
 
       const completeBody = {
@@ -749,6 +753,8 @@ export class ShipinhaoService {
           'Content-Type': 'application/json',
           'X-Arguments': uploadArgumentsString,
         },
+        undefined,
+        proxy,
       );
 
       if (!uploadCompleteRes.DownloadURL) {
@@ -773,6 +779,7 @@ export class ShipinhaoService {
   private async uploadCoverFile(
     filePath: string,
     uploadParams: any,
+    proxy: string,
   ): Promise<string> {
     try {
       const fileRes = await getFileContent(filePath);
@@ -810,6 +817,8 @@ export class ShipinhaoService {
           'Content-Type': 'application/json',
           'X-Arguments': uploadArgumentsString,
         },
+        undefined,
+        proxy,
       );
 
       if (!uploadIdRes.UploadID) {
@@ -828,6 +837,8 @@ export class ShipinhaoService {
           'X-Arguments': uploadArgumentsString,
           'Content-Type': 'application/octet-stream',
         },
+        undefined,
+        proxy,
       );
 
       if (!uploadPartRes.ETag) {
@@ -859,6 +870,8 @@ export class ShipinhaoService {
           'Content-Type': 'application/json',
           'X-Arguments': uploadArgumentsString,
         },
+        undefined,
+        proxy,
       );
 
       if (!uploadCompleteRes.DownloadURL) {
@@ -883,6 +896,7 @@ export class ShipinhaoService {
     fileInfo: any,
     filePartInfo: any,
     cookieString: string,
+    proxy: string,
   ): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -904,44 +918,48 @@ export class ShipinhaoService {
           reject('提交剪辑失败,失败原因:视频时长不能小于3秒!');
           return;
         }
-        const postClipVideoRes = await this.makeRequest(this.postClipVideoUrl, {
-          method: 'POST',
-          headers: {
-            Cookie: cookieString,
-            'Content-Type': 'application/json',
-          },
-          data: {
-            clipOriginVideoInfo: {
+        const postClipVideoRes = await this.makeRequest(
+          this.postClipVideoUrl,
+          {
+            method: 'POST',
+            headers: {
+              Cookie: cookieString,
+              'Content-Type': 'application/json',
+            },
+            data: {
+              clipOriginVideoInfo: {
+                width: videoInfos.width,
+                height: videoInfos.height,
+                fileSize: fileInfo.format.size ?? 0,
+                duration: videoInfos.duration,
+              },
+              cropDuration: 0,
               width: videoInfos.width,
               height: videoInfos.height,
-              fileSize: fileInfo.format.size ?? 0,
-              duration: videoInfos.duration,
+              pluginSessionId: null,
+              rawKeyBuff: null,
+              reqScene: 7,
+              scene: 7,
+              targetWidth: videoInfos.height,
+              targetHeight: videoInfos.width,
+              timeStart: 0,
+              timestamp: Date.now(),
+              traceInfo: {
+                traceKey: traceKey,
+                uploadCdnStart: startUploadTime,
+                uploadCdnEnd: endUploadTime,
+              },
+              type: 4,
+              url: remoteFileUrl,
+              useAstraThumbCover: 0,
+              x: 0,
+              y: 0,
             },
-            cropDuration: 0,
-            width: videoInfos.width,
-            height: videoInfos.height,
-            pluginSessionId: null,
-            rawKeyBuff: null,
-            reqScene: 7,
-            scene: 7,
-            targetWidth: videoInfos.height,
-            targetHeight: videoInfos.width,
-            timeStart: 0,
-            timestamp: Date.now(),
-            traceInfo: {
-              traceKey: traceKey,
-              uploadCdnStart: startUploadTime,
-              uploadCdnEnd: endUploadTime,
-            },
-            type: 4,
-            url: remoteFileUrl,
-            useAstraThumbCover: 0,
-            x: 0,
-            y: 0,
+            dataType: 'json',
+            timeout: 15000,
           },
-          dataType: 'json',
-          timeout: 15000,
-        });
+          proxy,
+        );
         if (postClipVideoRes.errCode !== 0) {
           reject('提交剪辑失败,失败原因:' + postClipVideoRes.errMsg);
           return;
@@ -979,6 +997,7 @@ export class ShipinhaoService {
     endUploadTime: number,
     clipResult: any,
     platformSetting: any,
+    proxy: string,
   ): Promise<{
     lastPublishId: string;
     previewVideoLink: string;
@@ -1107,18 +1126,21 @@ export class ShipinhaoService {
             platformSetting.timingTime / 1000,
           );
         }
-        console.log('requestData：', requestData);
         // 发起请求
-        const createRes = await this.makeRequest(this.postCreateVideoUrl, {
-          method: 'POST',
-          headers: {
-            Cookie: cookieString,
-            'Content-Type': 'application/json',
+        const createRes = await this.makeRequest(
+          this.postCreateVideoUrl,
+          {
+            method: 'POST',
+            headers: {
+              Cookie: cookieString,
+              'Content-Type': 'application/json',
+            },
+            data: JSON.stringify(requestData),
+            dataType: 'json',
+            timeout: 15000,
           },
-          data: JSON.stringify(requestData),
-          dataType: 'json',
-          timeout: 15000,
-        });
+          proxy,
+        );
         if (createRes.errCode !== 0) {
           reject('发布失败,失败原因:' + createRes.errMsg);
           return;
@@ -1153,21 +1175,25 @@ export class ShipinhaoService {
     lastPublishId: string;
     previewVideoLink: string;
   }> {
-    const workListRes = await this.makeRequest(this.getUserWorkListUrl, {
-      method: 'POST',
-      headers: {
-        Cookie: cookieString,
-        'Content-Type': 'application/json',
+    const workListRes = await this.makeRequest(
+      this.getUserWorkListUrl,
+      {
+        method: 'POST',
+        headers: {
+          Cookie: cookieString,
+          'Content-Type': 'application/json',
+        },
+        data: {
+          pageSize: 20,
+          currentPage: 1,
+          rawKeyBuff: null,
+          pluginSessionId: null,
+          scene: 7,
+          reqScene: 7,
+        },
       },
-      data: {
-        pageSize: 20,
-        currentPage: 1,
-        rawKeyBuff: null,
-        pluginSessionId: null,
-        scene: 7,
-        reqScene: 7,
-      },
-    });
+      '',
+    );
 
     let work;
     if (workListRes.errCode === 0) {
@@ -1191,6 +1217,7 @@ export class ShipinhaoService {
           nonceId: work.objectNonce,
         },
       },
+      '',
     );
 
     return {
@@ -1237,6 +1264,7 @@ export class ShipinhaoService {
       };
       // 0=非原创 1=原创
       postFlag: 0 | 1;
+      proxy: string;
     },
     callback: (progress: number, msg?: string) => void,
   ): Promise<{
@@ -1245,15 +1273,24 @@ export class ShipinhaoService {
     shareLink: string;
   }> {
     this.callback = callback;
-    console.log('platformSetting：', platformSetting);
+    console.log('微信视频号最初发布参数：', {
+      platformSetting,
+      filePath,
+    });
     callback(5, '加载中...');
     const fileInfo = await FileUtils.getFileInfo(filePath);
     callback(10);
     const cookieString = CommonUtils.convertCookieToJson(cookies);
     callback(15);
-    const traceKey = await this.getPublishTraceKey(cookieString);
+    const traceKey = await this.getPublishTraceKey(
+      cookieString,
+      platformSetting.proxy,
+    );
     callback(20);
-    const uploadParams = await this.getPublishUploadParams(cookieString);
+    const uploadParams = await this.getPublishUploadParams(
+      cookieString,
+      platformSetting.proxy,
+    );
     callback(26);
     const filePartInfo = await FileUtils.getFilePartInfo(
       filePath,
@@ -1264,6 +1301,7 @@ export class ShipinhaoService {
       filePath,
       uploadParams,
       filePartInfo,
+      platformSetting.proxy,
     );
     callback(30);
     const endUploadTime = Math.floor(Date.now() / 1000);
@@ -1277,25 +1315,31 @@ export class ShipinhaoService {
       fileInfo,
       filePartInfo,
       cookieString,
+      platformSetting.proxy,
     );
     callback(60, '正在上传封面...');
     platformSetting.cover = await this.uploadCoverFile(
       platformSetting.cover,
       uploadParams,
+      platformSetting.proxy,
     );
     callback(80, '正在发布视频...');
+
+    const lastParams = {
+      ...platformSetting,
+      cover: platformSetting.cover,
+      title: platformSetting.title,
+      topics: platformSetting.topics ? platformSetting.topics : [],
+    };
+    console.log('视频号最终发布参数：', lastParams);
     const lastPublishRes = await this.postCreateVideo(
       cookieString,
       traceKey,
       startUploadTime,
       endUploadTime,
       clipResult,
-      {
-        ...platformSetting,
-        cover: platformSetting.cover,
-        title: platformSetting.title,
-        topics: platformSetting.topics ? platformSetting.topics : [],
-      },
+      lastParams,
+      platformSetting.proxy,
     );
     callback(100);
 
@@ -1478,8 +1522,6 @@ export class ShipinhaoService {
         _log_finder_uin: '',
       },
     });
-
-    console.log('------- WxSph createComment ----', res);
 
     return res;
   }

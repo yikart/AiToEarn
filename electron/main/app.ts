@@ -18,6 +18,8 @@ import { AppService } from './service';
 import { ReplyModule } from './reply/module';
 import { AutoRunModule } from './autoRun/module';
 import { InteractionModule } from './interaction/module';
+import { TracingModule } from './tracing/module';
+import { sleep } from '../../commont/utils';
 
 @Module({
   imports: [
@@ -30,13 +32,32 @@ import { InteractionModule } from './interaction/module';
     ReplyModule,
     AutoRunModule,
     InteractionModule,
+    TracingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class App {
   constructor() {
-    initSqlite3Db();
+    this._init();
+  }
+
+  async _init() {
+    // 初始化数据库
+    await initSqlite3Db();
+    this.timeingCheckAccount();
+  }
+
+  // 轮询检测账户有效性
+  async timeingCheckAccount() {
+    return new Promise(async () => {
+      while (true) {
+        // TODO : 轮询检测账户有效性
+
+        // 等待24小时执行，如果用户没有关闭应用
+        await sleep(3600000 * 24);
+      }
+    });
   }
 }
 

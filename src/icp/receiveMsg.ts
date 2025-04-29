@@ -58,12 +58,12 @@ export const onVideoAuditFinish = (
 
 // 视频发布进度
 export const onVideoPublishProgress = (
-  callback: (progressData: PublishProgressRes) => void,
+  callback: (progressData: PublishProgressRes, id: number) => void,
 ) => {
   return bindEventCore(
     SendChannelEnum.VideoPublishProgress,
-    (_, progressData) => {
-      callback(progressData);
+    (_, progressData, id) => {
+      callback(progressData, id);
     },
   );
 };

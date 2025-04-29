@@ -74,7 +74,11 @@ export const toolsApi = {
     formData.append('file', file);
     return http.post<{
       name: string;
-    }>('/oss/upload/permanent', formData);
+    }>('/oss/upload/permanent', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   },
 
   /**

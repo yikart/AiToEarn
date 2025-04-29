@@ -101,4 +101,13 @@ export class AccountModel extends TempModel {
     default: AccountStatus.USABLE,
   })
   status?: AccountStatus;
+
+  // 关联组
+  @Column({
+    type: 'int',
+    nullable: false,
+    comment: '关联组，与 AccountGroupModel表 id关联',
+    default: 1,
+  })
+  groupId!: number;
 }

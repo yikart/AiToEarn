@@ -14,6 +14,7 @@ import {
   IKwaiUserInfoResponse,
   ILoginResponse,
   KwaiSubmitResponse,
+  KwaiWorkItem,
   RefreshWorksResponse,
   UploadFinishResponse,
   UploadPpreResponse,
@@ -22,7 +23,7 @@ import { CookieToString } from '../utils';
 import { BrowserWindow, screen } from 'electron';
 import kwaiSign from './sign/KwaiSign';
 import { FileUtils } from '../../util/file';
-import { getFilePathNameCommon } from '../../../commont/utils';
+import { getFilePathNameCommon, RetryWhile } from '../../../commont/utils';
 import FormData from 'form-data';
 import fs from 'fs';
 
@@ -67,6 +68,10 @@ class KwaiPub {
     publishId: string;
     shareLink: string;
   }> {
+    console.log('快手原始参数：', {
+      ...params,
+      cookies: null,
+    });
     return new Promise(async (resolve, reject) => {
       try {
         const callback = params.callback;
@@ -84,6 +89,7 @@ class KwaiPub {
           body: {
             uploadType: 1,
           },
+          proxy: params.proxy,
         });
         console.log('创建视频：', preRes);
         if (!preRes.data.data) {
@@ -92,22 +98,29 @@ class KwaiPub {
 
         for (const i in filePartInfo.blockInfo) {
           callback(40, `上传视频（${i}/${filePartInfo.blockInfo.length}）`);
-          const chunkStart =
-            i === '0' ? 0 : filePartInfo.blockInfo[parseInt(i) - 1];
-          const chunkEnd = filePartInfo.blockInfo[i] - 1;
-          const chunkContent = await FileUtils.getFilePartContent(
-            params.videoPath,
-            chunkStart,
-            chunkEnd,
-          );
-          const uploadVideoRes = await requestNet({
-            method: 'POST',
-            url: `https://upload.kuaishouzt.com/api/upload/fragment?upload_token=${preRes.data.data.token}&fragment_id=${i}`,
-            isFile: true,
-            body: chunkContent,
-          });
-          console.log(`分片上传：（${i}/${filePartInfo.blockInfo.length}）`);
-          console.log(uploadVideoRes.data);
+
+          const isSuccess = await RetryWhile(async () => {
+            const chunkStart =
+              i === '0' ? 0 : filePartInfo.blockInfo[parseInt(i) - 1];
+            const chunkEnd = filePartInfo.blockInfo[i] - 1;
+            const chunkContent = await FileUtils.getFilePartContent(
+              params.videoPath,
+              chunkStart,
+              chunkEnd,
+            );
+            const uploadVideoRes = await requestNet({
+              method: 'POST',
+              url: `https://upload.kuaishouzt.com/api/upload/fragment?upload_token=${preRes.data.data.token}&fragment_id=${i}`,
+              isFile: true,
+              body: chunkContent,
+            });
+            if (uploadVideoRes.data.result === 1) {
+              return true;
+            }
+          }, 3);
+          if (!isSuccess) {
+            throw new Error('分片上传失败，请稍后重试！');
+          }
         }
 
         callback(60, `查询分片上传结果...`);
@@ -118,6 +131,7 @@ class KwaiPub {
           body: {
             uploadType: 1,
           },
+          proxy: params.proxy,
         });
         console.log(`分片上传完成：`, completeRes.data);
 
@@ -132,6 +146,7 @@ class KwaiPub {
             fileType: `video/${suffix}`,
             fileLength: filePartInfo.fileSize,
           },
+          proxy: params.proxy,
         });
         if (finishRes.data.result !== 1)
           throw new Error(finishRes.data.message);
@@ -149,6 +164,7 @@ class KwaiPub {
           url: '/rest/cp/works/v2/video/pc/upload/cover/upload',
           method: 'POST',
           cookie: params.cookies,
+          proxy: params.proxy,
         });
         console.log('上传封面结果：', coverRes.data);
 
@@ -188,12 +204,13 @@ class KwaiPub {
           triggerH265: false,
           ...this.convertKwaiParams(params),
         };
-        console.log('发布参数:', submitParams);
+        console.log('快手最终发布参数:', submitParams);
         const submitRes = await this.requestApi<KwaiSubmitResponse>({
           url: `/rest/cp/works/v2/video/pc/submit`,
           method: 'POST',
           cookie: params.cookies,
           body: submitParams,
+          proxy: params.proxy,
         });
         console.log(`视频发布完成：`, submitRes.data);
         console.log(submitRes.data.result);
@@ -201,14 +218,18 @@ class KwaiPub {
           return reject(submitRes.data.message);
         }
         callback(95, `正在查询发布结果...`);
-        const worksList = await this.getWorks(params.cookies, {
-          queryType: '2',
-        });
-        console.log(worksList);
-        const work = worksList.data.data.list.find(
-          (v) => v.unPublishCoverKey === coverRes.data.data.coverKey,
-        );
-        if (!work) throw '作品查询失败！';
+        let work: KwaiWorkItem | undefined;
+        await RetryWhile(async () => {
+          const worksList = await this.getWorks(params.cookies, {
+            queryType: '2',
+            limit: 20,
+          });
+          work = worksList.data.data.list.find(
+            (v) => v.unPublishCoverKey === coverRes.data.data.coverKey,
+          );
+          console.log('快手查询到的作品：', work);
+          if (work) return true;
+        }, 5);
         console.log('发布成功！');
         resolve({
           shareLink: ``,
@@ -511,8 +532,6 @@ class KwaiPub {
       bodys.variables.searchSessionId = pageInfo.postFirstId;
     }
 
-    // console.log('----------- getsearchNodeList --- bodys: ', bodys);
-
     const res = await this.requestApi<any>({
       cookie: cookies,
       apiUrl: 'https://www.kuaishou.com/graphql',
@@ -544,8 +563,6 @@ class KwaiPub {
         ...(pcursor ? { pcursor } : {}),
       },
     });
-
-    console.log('----------- getCommentList --- res: ', res);
 
     return res;
   }
@@ -721,15 +738,6 @@ class KwaiPub {
       photoAuthorId: any; // 视频作者ID
     },
   ) {
-    console.log('------ replyCommentByOther option ----', {
-      photoId: option.photoId,
-      photoAuthorId: option.photoAuthorId,
-      content: content,
-      replyToCommentId: option.replyToCommentId,
-      replyTo: option.replyTo,
-      expTag: '1_a/2004436422502146722_xpcwebdetailxxnull0',
-    });
-
     const res = await this.requestApi<any>({
       cookie: cookie,
       apiUrl: 'https://www.kuaishou.com/graphql',

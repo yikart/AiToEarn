@@ -5,6 +5,7 @@ import Navigation from './Navigation';
 import styles from './layoutBody.module.scss';
 import { useAccountStore } from '../store/account';
 import { sleep } from '../../commont/utils';
+import { useBellMessageStroe } from '../store/bellMessageStroe';
 
 export const LayoutBody = () => {
   const userStore = useUserStore();
@@ -21,6 +22,7 @@ export const LayoutBody = () => {
   };
 
   useEffect(() => {
+    useBellMessageStroe.getState().videoPublishProgressInit();
     if (userStore.token) {
       queryUserInfo();
     } else {

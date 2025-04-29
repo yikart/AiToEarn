@@ -13,6 +13,8 @@ import {
   XhsCommentPostResponse,
   XiaohongshuApiResponse,
 } from './xiaohongshu.type';
+import { RetryWhile } from '../../../commont/utils';
+import { logger } from '../../global/log';
 
 export type XSLPlatformSettingType = {
   // 标题
@@ -41,6 +43,7 @@ export type XSLPlatformSettingType = {
   cover: string;
   // 0 公共 1 私密 4 好友
   visibility_type: 0 | 1 | 4;
+  proxy: string;
 };
 
 const esec_token = 'ABrmhLmsdmsu9bCQ80qvGPN2CYSjEqwi5G1l2dirNUjaw%3D';
@@ -78,7 +81,6 @@ export class XiaohongshuService {
     data?: { cookie: any; userInfo: any };
     error?: string;
   }> {
-    console.log('Start login process:', { authModel, cookies });
     try {
       const winRes = await this.createAuthorizationWindow(
         authModel === 'view' ? cookies : null,
@@ -133,21 +135,9 @@ export class XiaohongshuService {
 
     // 设置用户代理
     win.webContents.setUserAgent(this.defaultUserAgent);
+    this.prev_web_session = '';
 
     // 如果有cookies，设置cookies
-    if (cookies) {
-      const parsedCookies =
-        typeof cookies === 'string' ? JSON.parse(cookies) : cookies;
-      for (const cookie of parsedCookies) {
-        await session.fromPartition(partition).cookies.set({
-          url: this.loginUrl,
-          name: cookie.name,
-          value: cookie.value,
-          domain: cookie.domain,
-          path: cookie.path,
-        });
-      }
-    }
 
     // 加载登录页
     await win.loadURL(this.loginUrlHome);
@@ -170,10 +160,6 @@ export class XiaohongshuService {
       // Monitor cookie status with interval
       this.cookieIntervalList[winContentsId] = setInterval(async () => {
         try {
-          console.log(
-            this.win!.webContents.getURL().includes(this.loginUrlHome),
-          );
-          console.log(this.win!.webContents.getURL().includes(this.loginUrl));
           if (this.win!.webContents.getURL().includes(this.loginUrlHome)) {
             const cookies2 = await session
               .fromPartition(partition)
@@ -220,7 +206,7 @@ export class XiaohongshuService {
           console.error('Failed to get cookies:', error);
           reject(new Error('Failed to get website cookies'));
         }
-      }, 3000); // Check every 3 seconds
+      }, 1500); // Check every 3 seconds
     });
   }
 
@@ -249,21 +235,29 @@ export class XiaohongshuService {
       .map((cookie) => `${cookie.name}=${cookie.value}`)
       .join('; ');
 
-    const userInfo = await this.makeRequest(this.getUserInfoUrl, {
-      method: 'GET',
-      headers: {
-        Cookie: cookieString,
-        Referer: this.loginUrl,
+    const userInfo = await this.makeRequest(
+      this.getUserInfoUrl,
+      {
+        method: 'GET',
+        headers: {
+          Cookie: cookieString,
+          Referer: this.loginUrl,
+        },
       },
-    });
+      '',
+    );
 
-    const fansInfo = await this.makeRequest(this.getFansInfoUrl, {
-      method: 'GET',
-      headers: {
-        Cookie: cookieString,
-        Referer: this.loginUrl,
+    const fansInfo = await this.makeRequest(
+      this.getFansInfoUrl,
+      {
+        method: 'GET',
+        headers: {
+          Cookie: cookieString,
+          Referer: this.loginUrl,
+        },
       },
-    });
+      '',
+    );
 
     return {
       authorId: userInfo.data.user_id || '',
@@ -283,7 +277,6 @@ export class XiaohongshuService {
   ) {
     // 初始化cookie
     const cookieString = CommonUtils.convertCookieToJson(cookies);
-    console.log('cookieString', cookieString);
 
     // 获取cookie_a1
     const cookieObject = cookies;
@@ -295,36 +288,34 @@ export class XiaohongshuService {
       }
     }
 
-    console.log('cookie_a1', cookie_a1);
-
     const reverseRes: any = await this.getReverseResult({
       url: '/api/galaxy/v2/creator/datacenter/account/base',
       a1: cookie_a1,
     });
 
-    // console.log('reverseRes', reverseRes);
-
-    const userInfo = await this.makeRequest(this.getDashboardUrl, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-        Cookie: cookieString,
-        Referer: 'https://creator.xiaohongshu.com/statistics/account',
-        userAgent:
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
-        'X-S': reverseRes['X-s'],
-        'X-T': reverseRes['X-t'],
+    const userInfo = await this.makeRequest(
+      this.getDashboardUrl,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+          Cookie: cookieString,
+          Referer: 'https://creator.xiaohongshu.com/statistics/account',
+          userAgent:
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
+          'X-S': reverseRes['X-s'],
+          'X-T': reverseRes['X-t'],
+        },
       },
-    });
-
-    // console.log('userInfouserInfo', JSON.stringify(userInfo));
+      '',
+    );
 
     if (userInfo.code == 0) {
       if (startDate && endDate) {
         // 处理30天的数据
         const dataList = [];
         const startTimestamp = new Date(startDate).getTime();
-        const endTimestamp = new Date(endDate).getTime()+1;
+        const endTimestamp = new Date(endDate).getTime() + 1;
 
         // 获取所有列表数据
         const rise_fans_list = userInfo.data.thirty.rise_fans_list || [];
@@ -348,7 +339,6 @@ export class XiaohongshuService {
           list.forEach((item: any) => {
             const timestamp = item.date;
             // 检查日期是否在范围内
-            // console.log('xhs', timestamp, endTimestamp)
             if (timestamp >= startTimestamp && timestamp <= endTimestamp) {
               if (!dateMap[timestamp]) {
                 dateMap[timestamp] = {
@@ -403,46 +393,24 @@ export class XiaohongshuService {
   /**
    * 通用请求方法
    */
-  private async makeRequest(url: string, options: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const request = net.request({
-        method: options.method,
-        url: url,
-        headers: options.headers,
-      });
-
-      // 发送请求体
-      if (options.data) {
-        // request.setHeader('Content-Type', 'application/json');
-        request.write(
-          typeof options.data === 'string'
-            ? options.data
-            : JSON.stringify(options.data),
-        );
+  private async makeRequest(
+    url: string,
+    options: any,
+    proxy: string,
+  ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const res = await requestNet({
+          url: url,
+          method: options.method,
+          headers: options.headers,
+          body: options.data,
+          proxy,
+        });
+        resolve(res.data);
+      } catch (e) {
+        reject(e);
       }
-
-      request.on('response', (response) => {
-        console.log('Response status code:', response.statusCode);
-        let data = '';
-        response.on('data', (chunk) => {
-          data += chunk;
-        });
-        response.on('end', () => {
-          const result = JSON.parse(data);
-          if (result) {
-            resolve(result);
-          } else {
-            console.error('Request failed:', result);
-            reject(new Error(result.msg || 'Request failed'));
-          }
-        });
-      });
-
-      request.on('error', (error) => {
-        console.error('Request error:', error);
-        reject(error);
-      });
-      request.end();
     });
   }
 
@@ -451,7 +419,7 @@ export class XiaohongshuService {
    * @param cookieString
    * @param scene
    */
-  async getUploadPermit(cookieString: string, scene: string) {
+  async getUploadPermit(cookieString: string, scene: string, proxy: string) {
     return new Promise(async (resolve, reject) => {
       try {
         const permitRes = await this.makeRequest(
@@ -464,6 +432,7 @@ export class XiaohongshuService {
               Referer: this.loginUrl,
             },
           },
+          proxy,
         );
 
         if (permitRes.code !== 0) {
@@ -491,29 +460,29 @@ export class XiaohongshuService {
    * @param url 上传地址
    * @param fileContent 文件内容
    * @param headers 请求头
+   * @param proxy
    */
   private async uploadFile(
     url: string,
     fileContent: Buffer,
     headers: any,
+    proxy: string,
   ): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const request = net.request({
-        method: 'PUT',
-        url: url,
-        headers: headers,
-      });
-
-      request.on('response', (response) => {
-        resolve(response);
-      });
-
-      request.on('error', (error) => {
-        reject(error);
-      });
-
-      request.write(fileContent);
-      request.end();
+    return new Promise(async (resolve, reject) => {
+      try {
+        const res = await requestNet({
+          url: url,
+          method: 'PUT',
+          headers: headers,
+          isFile: true,
+          body: fileContent,
+          proxy,
+        });
+        resolve(res);
+      } catch (e) {
+        console.error('上传文件失败:', e);
+        reject(e);
+      }
     });
   }
 
@@ -525,6 +494,7 @@ export class XiaohongshuService {
   async uploadCoverFile(
     cookieString: string,
     filePath: string,
+    proxy: string,
   ): Promise<{
     coverUploadFileId: string;
     coverDimensions: any;
@@ -536,6 +506,7 @@ export class XiaohongshuService {
         const uploadPermit: any = await this.getUploadPermit(
           cookieString,
           'image',
+          proxy,
         );
         const coverUploadFileId = uploadPermit[0].fileIds[0];
         const uploadAddr = uploadPermit[0].uploadAddr;
@@ -544,16 +515,20 @@ export class XiaohongshuService {
 
         // 获取文件内容
         const fileContent = await getFileContent(filePath);
-        console.log('fileContent length:', fileContent.length);
 
         // 获取宽高信息
         const coverDimensions = sizeOf(fileContent);
 
         // 直接上传
-        let uploadRes = await this.uploadFile(uploadBaseUrl, fileContent, {
-          Referer: this.loginUrl,
-          'X-Cos-Security-Token': uploadToken,
-        });
+        let uploadRes = await this.uploadFile(
+          uploadBaseUrl,
+          fileContent,
+          {
+            Referer: this.loginUrl,
+            'X-Cos-Security-Token': uploadToken,
+          },
+          proxy,
+        );
 
         uploadRes = uploadRes.headers;
 
@@ -604,7 +579,6 @@ export class XiaohongshuService {
       }
 
       request.on('response', (response) => {
-        console.log('Response status code:', response.statusCode);
         let data = '';
         response.on('data', (chunk) => {
           data += chunk;
@@ -638,6 +612,7 @@ export class XiaohongshuService {
     filePath: string,
     filePartInfo: any,
     fileInfo: any,
+    proxy: string,
   ): Promise<{
     uploadFileId: string;
     remotePreviewUrl: string;
@@ -649,6 +624,7 @@ export class XiaohongshuService {
         const uploadPermit: any = await this.getUploadPermit(
           cookieString,
           'video',
+          proxy,
         );
         const uploadFileId = uploadPermit[0].fileIds[0];
         const uploadAddr = uploadPermit[0].uploadAddr;
@@ -666,11 +642,16 @@ export class XiaohongshuService {
             filePartInfo.fileSize - 1,
           );
           // 直接上传
-          let uploadRes = await this.uploadFile(uploadBaseUrl, fileContent, {
-            'Content-Type': fileInfo.mimeType,
-            Referer: this.loginUrl,
-            'X-Cos-Security-Token': uploadToken,
-          });
+          let uploadRes = await this.uploadFile(
+            uploadBaseUrl,
+            fileContent,
+            {
+              'Content-Type': fileInfo.mimeType,
+              Referer: this.loginUrl,
+              'X-Cos-Security-Token': uploadToken,
+            },
+            proxy,
+          );
 
           uploadRes = uploadRes.headers;
           if (
@@ -715,7 +696,7 @@ export class XiaohongshuService {
           }
 
           // 分片上传文件
-          const uploadPartInfo = [];
+          const uploadPartInfo: any[] = [];
 
           for (const i in filePartInfo.blockInfo) {
             if (this.callback)
@@ -723,40 +704,47 @@ export class XiaohongshuService {
                 50,
                 `上传视频（${i}/${filePartInfo.blockInfo.length}）`,
               );
+            const isSuccess = await RetryWhile(async () => {
+              const chunkStart =
+                i === '0' ? 0 : filePartInfo.blockInfo[parseInt(i) - 1];
+              const chunkEnd = filePartInfo.blockInfo[i] - 1;
+              const chunkContent = await FileUtils.getFilePartContent(
+                filePath,
+                chunkStart,
+                chunkEnd,
+              );
 
-            const chunkStart =
-              i === '0' ? 0 : filePartInfo.blockInfo[parseInt(i) - 1];
-            const chunkEnd = filePartInfo.blockInfo[i] - 1;
-            const chunkContent = await FileUtils.getFilePartContent(
-              filePath,
-              chunkStart,
-              chunkEnd,
-            );
+              // 开始上传
+              const uploadPartRes = await this.uploadFile(
+                uploadBaseUrl +
+                  `?uploadId=${uploadId}&partNumber=${parseInt(i) + 1}`,
+                chunkContent,
+                {
+                  Referer: this.loginUrl,
+                  'X-Cos-Security-Token': uploadToken,
+                },
+                proxy,
+              );
 
-            // 开始上传
-            const uploadPartRes = await this.uploadFile(
-              uploadBaseUrl +
-                `?uploadId=${uploadId}&partNumber=${parseInt(i) + 1}`,
-              chunkContent,
-              {
-                Referer: this.loginUrl,
-                'X-Cos-Security-Token': uploadToken,
-              },
-            );
+              const headers = uploadPartRes.headers;
+              if (!headers.hasOwnProperty('etag') || headers['etag'] === '') {
+                return false;
+              }
 
-            const headers = uploadPartRes.headers;
-            if (!headers.hasOwnProperty('etag') || headers['etag'] === '') {
+              // 分片上传成功
+              uploadPartInfo.push({
+                Part: {
+                  PartNumber: parseInt(i) + 1,
+                  ETag: headers['etag'],
+                },
+              });
+              return true;
+            }, 3);
+
+            if (!isSuccess) {
               reject('上传视频失败,失败原因:上传分片失败');
-              return;
+              break;
             }
-
-            // 分片上传成功
-            uploadPartInfo.push({
-              Part: {
-                PartNumber: parseInt(i) + 1,
-                ETag: headers['etag'],
-              },
-            });
           }
 
           // 合并分片
@@ -829,6 +817,10 @@ export class XiaohongshuService {
     publishId: string;
     shareLink: string;
   }> {
+    console.log('小红书图文发布最初发布参数：', {
+      imagePath,
+      platformSetting,
+    });
     return new Promise(async (resolve, reject) => {
       try {
         // 初始化cookie
@@ -837,7 +829,11 @@ export class XiaohongshuService {
         const uploadImgRet = [];
         for (const imgUrl of imagePath) {
           // 上传图片, 获取远程Url
-          const imgRet = await this.uploadCoverFile(cookieString, imgUrl);
+          const imgRet = await this.uploadCoverFile(
+            cookieString,
+            imgUrl,
+            platformSetting.proxy,
+          );
           // 添加到成功列表
           uploadImgRet.push(imgRet);
         }
@@ -854,15 +850,18 @@ export class XiaohongshuService {
         const uploadResult = {
           imageList: uploadImgRet,
         };
+        console.log('小红书图文发布最终发布参数：', {
+          uploadResult,
+          platformSetting,
+        });
         const { shareLink, publishId } = (await this.postCreateVideo(
           cookieString,
           cookie_a1,
           'image',
           uploadResult,
           platformSetting,
+          platformSetting.proxy,
         )) as any;
-        console.log('shareLink', shareLink);
-        console.log('publishId', publishId);
         // 返回信息
         resolve({
           publishTime: Math.floor(Date.now() / 1000),
@@ -882,6 +881,7 @@ export class XiaohongshuService {
    * @param publishType
    * @param uploadResult {uploadFileId, uploadCoverId, coverDimensions, fileInfo}
    * @param platformSetting
+   * @param proxy
    * @returns {Promise<unknown>}
    */
   async postCreateVideo(
@@ -890,6 +890,7 @@ export class XiaohongshuService {
     publishType: 'video' | 'image',
     uploadResult: any,
     platformSetting: any,
+    proxy: string,
   ) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1131,36 +1132,36 @@ export class XiaohongshuService {
           image_info: xhs_image_info,
           video_info: xhs_video_info,
         };
-        console.log('platformSetting：', platformSetting);
-        console.log('requestData：', requestData);
         // 获取加密使用的Url
         const encryptUrl = this.postCreateVideoUrl.replace(
           'https://edith.xiaohongshu.com',
           '',
         );
         // 逆向获取XsXt
-        console.log('encryptUrl', encryptUrl, requestData, cookie_a1);
         const reverseRes: any = await this.getReverseResult({
           url: encryptUrl,
           data: requestData,
           a1: cookie_a1,
         });
         // 发起请求
-        const createRes = await this.makeRequest(this.postCreateVideoUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json;charset=UTF-8',
-            Cookie: cookieString,
-            Referer: this.loginUrl,
-            Origin: this.loginUrl,
-            'X-S': reverseRes['X-s'],
-            'X-T': reverseRes['X-t'],
+        const createRes = await this.makeRequest(
+          this.postCreateVideoUrl,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json;charset=UTF-8',
+              Cookie: cookieString,
+              Referer: this.loginUrl,
+              Origin: this.loginUrl,
+              'X-S': reverseRes['X-s'],
+              'X-T': reverseRes['X-t'],
+            },
+            data: JSON.stringify(requestData),
+            timeout: 15000,
           },
-          data: JSON.stringify(requestData),
-          timeout: 15000,
-        });
+          platformSetting.proxy,
+        );
 
-        console.log('createRes@@', createRes);
         // 处理结果
         if (createRes.hasOwnProperty('code') && createRes.code === -1) {
           reject('创建作品失败,失败原因:验签未通过');
@@ -1180,7 +1181,6 @@ export class XiaohongshuService {
         const works = worksList.data.data.notes.find(
           (v) => v.id === createRes.data.id,
         );
-        console.log('works：', works);
         // 返回结果
         resolve({
           shareLink: `https://www.xiaohongshu.com/explore/${createRes.data.id}?xsec_token=${works!.xsec_token}&xsec_source=${works!.xsec_source}`,
@@ -1217,6 +1217,10 @@ export class XiaohongshuService {
     publishId: string;
     shareLink: string;
   }> {
+    console.log('小红书视频发布初始发布参数：', {
+      filePath,
+      platformSetting,
+    });
     return new Promise(async (resolve, reject) => {
       try {
         this.callback = callback;
@@ -1240,12 +1244,17 @@ export class XiaohongshuService {
           filePath,
           filePartInfo,
           fileInfo,
+          platformSetting.proxy,
         );
 
         callback(60, '正在上传封面...');
         // 上传封面,获取远程Url
         const { coverDimensions, coverUploadFileId } =
-          await this.uploadCoverFile(cookieString, platformSetting['cover']);
+          await this.uploadCoverFile(
+            cookieString,
+            platformSetting['cover'],
+            platformSetting.proxy,
+          );
         const cookieObject = JSON.parse(cookies);
         let cookie_a1 = null;
         for (const cookieItem of cookieObject) {
@@ -1263,15 +1272,22 @@ export class XiaohongshuService {
           fileInfo: fileInfo,
         };
         callback(70, '正在发布...');
+
+        console.log('小红书视频发布最终发布参数：', {
+          platformSetting,
+          uploadResult,
+        });
         const result: any = await this.postCreateVideo(
           cookieString,
           cookie_a1,
           'video',
           uploadResult,
           platformSetting,
+          platformSetting.proxy,
         ).catch((err) => {
           reject(err);
         });
+        console.log(result);
         // 返回信息
         resolve({
           publishTime: Math.floor(Date.now() / 1000),
@@ -1309,14 +1325,18 @@ export class XiaohongshuService {
    */
   getReverseResult(args: any) {
     return new Promise(async (resolve, reject) => {
-      const permitRes = await this.makeRequest('http://116.62.154.231:7879', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
+      const permitRes = await this.makeRequest(
+        'http://116.62.154.231:7879',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+          },
+          data: args,
+          timeout: 15000,
         },
-        data: args,
-        timeout: 15000,
-      });
+        '',
+      );
       resolve(permitRes);
     });
   }
@@ -1383,7 +1403,7 @@ export class XiaohongshuService {
     // 生成搜索ID的函数
     function base36encode(number: number): string {
       const digits = '0123456789abcdefghijklmnopqrstuvwxyz';
-      let base36 = "";
+      let base36 = '';
       while (number > 0) {
         const remainder = number % 36;
         base36 = digits[remainder] + base36;
@@ -1398,9 +1418,6 @@ export class XiaohongshuService {
       return base36encode(Number(timestamp + randomValue));
     }
 
-    console.log('------ getSearchNodeList --- generateSearchId::', generateSearchId());
-
-    console.log('------ getSearchNodeList --- asdadsda::', qe, page);
     const body = {
       keyword: qe,
       page: page,
@@ -1505,6 +1522,8 @@ export class XiaohongshuService {
     },
     cursor?: number,
   ) {
+    logger.log('小红书 ------ getCommentList ---- start');
+
     const url = `/api/sns/web/v2/comment/page?note_id=${note.id}&cursor=${cursor || ''}&top_comment_id=&image_formats=jpg,webp,avif&xsec_token=${note.xsec_token}`;
     const reverseRes: any = await this.getReverseResult({
       url,
@@ -1525,7 +1544,7 @@ export class XiaohongshuService {
       method: 'GET',
     });
 
-    // console.log('------- xhs getCommentList ---', res);
+    logger.log('小红书 ------ getCommentList ---- end', res);
 
     return res;
   }
@@ -1557,8 +1576,6 @@ export class XiaohongshuService {
       method: 'GET',
     });
 
-    console.log('------- xhs getSecondCommentList ---', res);
-
     return res;
   }
 
@@ -1571,7 +1588,6 @@ export class XiaohongshuService {
    * @returns
    */
   async likeNote(cookie: Electron.Cookie[], noteId: string) {
-    console.log('------ likeNote --- noteId', noteId);
     const url = `/api/sns/web/v1/note/like`;
     const body = {
       note_oid: noteId,
@@ -1596,8 +1612,6 @@ export class XiaohongshuService {
       method: 'POST',
       body,
     });
-
-    console.log('--- xhs likeNote --- res', res);
 
     return res;
   }
@@ -1635,8 +1649,6 @@ export class XiaohongshuService {
       method: 'POST',
       body,
     });
-
-    console.log('--- xhs shoucangNote --- res', res);
 
     return res;
   }
@@ -1682,9 +1694,6 @@ export class XiaohongshuService {
       method: 'POST',
       body,
     });
-
-    console.log('--- xhs commentPost --- res', res);
-
     return res;
   }
 }

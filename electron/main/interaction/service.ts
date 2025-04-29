@@ -23,6 +23,7 @@ import { WorkData } from '../plat/plat.type';
 import { AutoInteractionCache } from './cacheData';
 import { backPageData, CorrectQuery } from '../../global/table';
 import { AccountType } from '../../../commont/AccountEnum';
+// import { ReplyController } from '../reply/controller';
 
 @Injectable()
 export class InteractionService {
@@ -99,6 +100,9 @@ export class InteractionService {
     const [list, totalCount] =
       await this.interactionRecordRepository.findAndCount({
         where: filter,
+        order: {
+          createTime: 'DESC',
+        },
       });
 
     return backPageData(list, totalCount, page);
@@ -118,6 +122,7 @@ export class InteractionService {
       likeProb?: any; // 点赞概率
       collectProb?: any; // 收藏概率
       commentProb?: any; // 评论概率
+      commentType: any; // 评论类型
     },
     scheduleEvent: (data: {
       tag: AutorWorksInteractionScheduleEvent;
@@ -127,7 +132,7 @@ export class InteractionService {
     }) => void,
   ) {
     // console.log('------ autorInteraction', option);
-
+    const commentContentList = option.commentContent.split(',');
     // return;
 
     const userInfo = getUserInfo();
@@ -149,9 +154,11 @@ export class InteractionService {
       });
 
       // 1. 循环AI回复评论
+      let i = 0;
       for (const works of worksList) {
-        console.log('------ 开始处理作品:', works.dataId);
-        sleep(5);
+        // console.log('------ 开始处理作品:', works);
+        if (i > 0) await sleep(10 * 1000);
+        i++;
         const oldRecord = await this.getInteractionRecord(
           userInfo.id,
           account,
@@ -159,8 +166,9 @@ export class InteractionService {
         );
         if (oldRecord) continue;
 
-        console.log('option.commentContent', option);
-        if (!option.commentContent) {
+        // console.log('option.commentContent', option);
+        let thisCommentContent = '';
+        if (option.commentType && option.commentType == 'ai') {
           const aiRes = await toolsApi.aiRecoverReview({
             content: (works.desc || '') + (works.title || ''),
           });
@@ -176,13 +184,48 @@ export class InteractionService {
             return false;
           }
 
-          option.commentContent = aiRes;
+          thisCommentContent = aiRes;
         }
+
+        if (option.commentType && option.commentType == 'copy') {
+          const commentList = await platController.getCommentList(
+            account,
+            {
+              dataId: works.dataId,
+              option: {
+                xsec_token: works.data?.xsec_token || '',
+              },
+            },
+            '0',
+          );
+
+          // console.log('------ commentList', commentList);
+
+          const randomIndex = Math.floor(
+            Math.random() * commentList.list.length,
+          );
+          thisCommentContent = commentList.list[randomIndex].content;
+
+          // option.commentContent = aiRes;
+        }
+
+        console.log('------ option.commentType', option.commentType);
+        if (option.commentType && option.commentType == 'custom') {
+          // let commentContentList = option.commentContent.split(',');
+          console.log('------ commentContentList', commentContentList);
+          const randomIndex = Math.floor(
+            Math.random() * commentContentList.length,
+          );
+          console.log('------ randomIndex', randomIndex);
+          thisCommentContent = commentContentList[randomIndex];
+        }
+        console.log('------ option.commentContent', thisCommentContent);
+        // return;
 
         scheduleEvent({
           tag: AutorWorksInteractionScheduleEvent.ReplyCommentStart,
           data: {
-            aiContent: option.commentContent,
+            aiContent: thisCommentContent,
           },
           status: 0,
         });
@@ -191,26 +234,32 @@ export class InteractionService {
         console.log(
           '------ 开始评论作品:',
           works.dataId,
-          option.commentContent,
+          thisCommentContent,
           works.author?.id,
         );
 
         // 判断是否执行评论
-        const shouldComment = option.commentProb === 0 ? false : (!option.commentProb || Math.random() * 100 < option.commentProb);
+        const shouldComment =
+          option.commentProb === 0
+            ? false
+            : !option.commentProb || Math.random() * 100 < option.commentProb;
         let commentWorksRes;
-        
-        if (shouldComment) {
-          if (option.commentContent.includes(',')) {
-            let randomIndex = Math.floor(Math.random() * option.commentContent.split(',').length);  
-            option.commentContent = option.commentContent.split(',')[randomIndex];
-          }
 
-          console.log('------ option.commentContent', option.commentContent);
+        if (shouldComment) {
+          // if (option.commentContent.includes(',')) {
+          //   const randomIndex = Math.floor(
+          //     Math.random() * option.commentContent.split(',').length,
+          //   );
+          //   option.commentContent =
+          //     option.commentContent.split(',')[randomIndex];
+          // }
+
+          console.log('------ option.commentContent', thisCommentContent);
 
           commentWorksRes = await platController.createCommentByOther(
             account,
             works.dataId,
-            option.commentContent,
+            thisCommentContent,
             works.author?.id,
           );
           console.log('------ 评论作品结果:', commentWorksRes);
@@ -235,9 +284,18 @@ export class InteractionService {
         let isLike: 0 | 1 = 0;
         // 判断是否执行点赞
         const randomLike = Math.random() * 100;
-        console.log('判断是否执行点赞', '概率:', option.likeProb, '随机值:', randomLike);
-        const shouldLike = option.likeProb === 0 ? false : (!option.likeProb || randomLike < option.likeProb);
-        
+        console.log(
+          '判断是否执行点赞',
+          '概率:',
+          option.likeProb,
+          '随机值:',
+          randomLike,
+        );
+        const shouldLike =
+          option.likeProb === 0
+            ? false
+            : !option.likeProb || randomLike < option.likeProb;
+
         if (shouldLike) {
           try {
             console.log('------ 开始点赞作品:', works.dataId);
@@ -267,8 +325,18 @@ export class InteractionService {
 
         // 判断是否执行收藏
         const randomCollect = Math.random() * 100;
-        console.log('判断是否执行收藏', '概率:', option.collectProb, '随机值:', randomCollect);
-        const shouldCollect = (option.collectProb === 0 ? false : (!option.collectProb || randomCollect < option.collectProb)) && option.platform != 'KWAI';
+        console.log(
+          '判断是否执行收藏',
+          '概率:',
+          option.collectProb,
+          '随机值:',
+          randomCollect,
+        );
+        const shouldCollect =
+          (option.collectProb === 0
+            ? false
+            : !option.collectProb || randomCollect < option.collectProb) &&
+          option.platform != 'KWAI';
 
         if (shouldCollect) {
           try {
@@ -298,7 +366,7 @@ export class InteractionService {
             worksTitle: works.title,
             worksCover: works.coverUrl,
           },
-          option.commentContent,
+          thisCommentContent,
           isLike,
           isCollect, // 收藏状态设为0
         );
@@ -358,7 +426,7 @@ export class InteractionService {
       this.autorInteraction(
         account,
         worksList,
-        option,
+        option as any,
         (e: {
           tag: AutorWorksInteractionScheduleEvent;
           status: -1 | 0 | 1;

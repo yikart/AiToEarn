@@ -1,0 +1,84 @@
+.bellMessage {
+  display: flex;
+  width: 600px;
+  height: 500px;
+  :global {
+    .bellMessage-menu {
+      width: 200px;
+      border-right: 1px solid var(--grayColor2);
+      height: 100%;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      .ant-menu {
+        height: 100%;
+        border-right: none;
+      }
+      &-title {
+        font-weight: 900;
+        font-size: var(--fs-sm);
+        color: var(--grayColor10);
+        padding: 0 0 0 18px;
+        margin: 18px 0 10px 0;
+        position: relative;
+        &:after {
+          content: "";
+          display: flex;
+          position: absolute;
+          top: 50%;
+          left: 0;
+          transform: translateY(-50%);
+          width: 2px;
+          height: 70%;
+          background: var(--colorPrimary5);
+        }
+      }
+    }
+
+    .bellMessage-content {
+      box-sizing: border-box;
+      height: 100%;
+      width: 100%;
+      overflow-y: auto;
+      &-item {
+        cursor: pointer;
+        padding: 15px;
+        border-bottom: 1px solid var(--grayColor2);
+        background: transparent;
+        transition: 0.3s;
+        &-title {
+          font-weight: 900;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          width: 100%;
+        }
+        &-des {
+          margin: 5px 0;
+        }
+        &-time {
+          color: var(--grayColor6);
+          font-size: var(--fs-xs);
+        }
+        &:hover {
+          background: var(--grayColor0);
+        }
+      }
+      &-empty {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+}
+
+.bellMessagePopover {
+  :global {
+    .ant-popover-inner {
+      padding: 0;
+    }
+  }
+}

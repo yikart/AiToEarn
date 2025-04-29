@@ -7,15 +7,17 @@
  */
 import { Column, PrimaryGeneratedColumn } from 'typeorm';
 import { TempModel } from './temp';
-import { PubStatus } from './pubRecord';
 import { AccountType } from '../../../commont/AccountEnum';
 import type {
   CookiesType,
   ILocationDataItem,
   WxSphEvent,
 } from '../../main/plat/plat.type';
-import { DeclarationDouyin } from '../../plat/douyin/common.douyin';
-import { VisibleTypeEnum } from '../../../commont/publish/PublishEnum';
+import {
+  PubStatus,
+  VisibleTypeEnum,
+} from '../../../commont/publish/PublishEnum';
+import { DeclarationDouyin } from '../../../commont/plat/douyin/common.douyin';
 
 // 包含一个name和一个value的对象
 export interface ILableValue {
@@ -193,4 +195,5 @@ export class WorkData extends TempModel {
   mentionedUserInfo!: ILableValue[];
 
   cookies?: CookiesType;
+  proxyIp?: string;
 }

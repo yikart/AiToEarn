@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-24 09:34:03
+ * @LastEditTime: 2025-04-27 09:51:25
  * @LastEditors: nevin
  * @Description: interaction Interaction 互动
  */
@@ -48,7 +48,7 @@ export class InteractionController {
     const res = await this.interactionService.autorInteraction(
       account,
       [works],
-      option,
+      option as any,
       (e: {
         tag: AutorWorksInteractionScheduleEvent;
         status: -1 | 0 | 1;
@@ -77,6 +77,7 @@ export class InteractionController {
       likeProb?: any; // 点赞概率
       collectProb?: any; // 收藏概率
       commentProb?: any; // 评论概率
+      commentType: any; // 评论类型
     },
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);

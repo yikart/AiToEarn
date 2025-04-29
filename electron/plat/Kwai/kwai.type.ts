@@ -167,6 +167,8 @@ export interface IKwaiPubVideoParams {
   mentions?: string[];
   // 定时发布日期，时间戳，毫秒
   publishTime?: number;
+  // 代理地址
+  proxy: string;
 }
 
 // 登录返回参数
@@ -188,38 +190,40 @@ export type RefreshWorksResponse = IKwaiUserCommonResponse<{
   }[];
 }>;
 
+export type KwaiWorkItem = {
+  publishId: number;
+  workId: string;
+  title: string;
+  publishCoverUrl: string;
+  unPublishCoverKey: string | null;
+  userId: number;
+  userIdStr: string;
+  userName: string;
+  userHead: string;
+  playCount: number;
+  likeCount: number;
+  commentCount: number;
+  uploadTime: number;
+  durationSecond: number;
+  judgementTitle: string;
+  judgementStatus: number;
+  publishStatus: number;
+  operations: string[];
+  publishType: number;
+  photoStatus: number;
+  photoTop: boolean;
+  collectionTitle: string;
+  collectionId: number;
+  awdId: number;
+  hotspotActivity: null;
+  hotspot: null;
+  showAtlasIcon: boolean;
+  showDuration: boolean;
+};
+
 // 获取作品，开发者后台
 export type GetWorksListResponse = IKwaiUserCommonResponse<{
-  list: {
-    publishId: number;
-    workId: string;
-    title: string;
-    publishCoverUrl: string;
-    unPublishCoverKey: string | null;
-    userId: number;
-    userIdStr: string;
-    userName: string;
-    userHead: string;
-    playCount: number;
-    likeCount: number;
-    commentCount: number;
-    uploadTime: number;
-    durationSecond: number;
-    judgementTitle: string;
-    judgementStatus: number;
-    publishStatus: number;
-    operations: string[];
-    publishType: number;
-    photoStatus: number;
-    photoTop: boolean;
-    collectionTitle: string;
-    collectionId: number;
-    awdId: number;
-    hotspotActivity: null;
-    hotspot: null;
-    showAtlasIcon: boolean;
-    showDuration: boolean;
-  }[];
+  list: KwaiWorkItem[];
 }>;
 
 // 获取作品列表

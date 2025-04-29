@@ -11,7 +11,9 @@ import windowOperate from '../util/windowOperate';
 import { logger } from '../global/log';
 import { SplashWindow } from './splash';
 import dotenv from 'dotenv';
-import KwaiPubListener from "./plat/platforms/Kwai/KwaiPubListener";
+import KwaiPubListener from './plat/platforms/Kwai/KwaiPubListener';
+import { registerContextMenuListener } from '@electron-uikit/contextmenu';
+
 const platform = process.platform;
 dotenv.config();
 
@@ -101,9 +103,11 @@ async function createWindow() {
     if (splashWindow) {
       win?.show();
       // 在主窗口显示后再打开开发者工具
-      if (process.env.NODE_ENV === 'development') {
-        win?.webContents.openDevTools({ mode: 'bottom' });
-      }
+      win?.webContents.openDevTools({ mode: 'right' });
+
+      // if (process.env.NODE_ENV === 'development') {
+      //   win?.webContents.openDevTools({ mode: 'right' });
+      // }
 
       // if (VITE_DEV_SERVER_URL) {
       //   win?.webContents.openDevTools({ mode: 'bottom' });
@@ -136,6 +140,8 @@ async function createWindow() {
 
 app.whenReady().then(async () => {
   try {
+    registerContextMenuListener();
+
     // 创建应用实例,挂载功能
     new App();
 

@@ -6,18 +6,22 @@
  * @Description: 日志组件
  */
 import * as path from 'path';
-import { app } from 'electron';
+import { app, ipcMain } from 'electron';
 import fs from 'fs';
 
 import log from 'electron-log/main';
 
 // 创建logs目录并配置日志路径
-const logDirectory = path.join(app.getPath('appData'), 'logs');
-if (!fs.existsSync(logDirectory))
-  fs.mkdirSync(logDirectory, { recursive: true });
+const logDirectory = path.join(app.getPath('userData'), 'logs');
 
 log.transports.file.level = 'info';
-log.transports.file.fileName = path.join(logDirectory, 'app-%DATE%.log');
+log.transports.file.maxSize = 10 * 1024 * 1024; // 10MB
+log.transports.file.resolvePathFn = () => {
+  return path.join(
+    logDirectory,
+    `${new Date().toISOString().slice(0, 10)}.log`,
+  );
+}; // 按天生成日志
 
 log.initialize();
 
@@ -37,7 +41,6 @@ export const logPath = logDirectory;
  * @returns
  */
 export function getLogFilePaths(days: number): string[] {
-  const logDirectory = path.join(app.getPath('appData'), 'logs');
   const logFiles = fs.readdirSync(logDirectory);
   const logFilePaths = logFiles
     .filter((file) => file.endsWith('.log'))
@@ -55,7 +58,6 @@ export function getLogFilePaths(days: number): string[] {
  * 清理一周前的日志
  */
 export function clearOldLogs() {
-  const logDirectory = path.join(app.getPath('appData'), 'logs');
   const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
   const logFiles = fs.readdirSync(logDirectory);
   const logFilePaths = logFiles
@@ -70,3 +72,11 @@ export function clearOldLogs() {
     fs.unlinkSync(filePath);
   });
 }
+
+/**
+ * 获取日志文件列表
+ */
+ipcMain.handle('GLOBAL_LOG_GET_FLIES', async (event, days) => {
+  const res = getLogFilePaths(days || 7);
+  return res;
+});

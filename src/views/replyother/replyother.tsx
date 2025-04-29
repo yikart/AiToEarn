@@ -25,14 +25,12 @@ import {
   Form,
   Input,
   Slider,
-  InputNumber,
   Radio,
   Tooltip,
   Spin,
   Checkbox,
   Tabs,
   Table,
-  Progress,
 } from 'antd';
 import { useCallback, useRef, useState, useEffect } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
@@ -46,7 +44,6 @@ import {
   CloseOutlined,
   CommentOutlined,
   UnorderedListOutlined,
-  SearchOutlined,
   SettingOutlined,
   RobotOutlined,
   UserOutlined,
@@ -55,6 +52,7 @@ import {
   QuestionCircleOutlined,
   SyncOutlined,
   CheckSquareOutlined,
+  CopyOutlined,
 } from '@ant-design/icons';
 import Masonry from 'react-masonry-css';
 import { AccountModel } from '../../../electron/db/models/account';
@@ -63,13 +61,12 @@ import WebView from '../../components/WebView';
 import { useInView } from 'react-intersection-observer';
 import { icpCreatorList } from '@/icp/reply';
 import { icpCreateInteractionOneKey } from '@/icp/replyother';
-import { forEach } from 'lodash';
 import { useUserStore } from '@/store/user';
 import { taskApi } from '@/api/task';
 
 export default function Page() {
   const userStore = useUserStore();
-  
+
   const [wordList, setWordList] = useState<WorkData[]>([]);
   const [postFirstId, setPostFirstId] = useState<string>('');
   const [activeAccountId, setActiveAccountId] = useState<number>(-1);
@@ -213,7 +210,7 @@ export default function Page() {
 
   // 添加任务表单相关状态
   const [taskForm] = Form.useForm();
-  const [commentType, setCommentType] = useState<'ai' | 'custom'>('ai');
+  const [commentType, setCommentType] = useState<'ai' | 'custom' | 'copy' >('custom');
   const [customComments, setCustomComments] = useState<string[]>([
     '很棒！',
     '喜欢这个',
@@ -303,22 +300,28 @@ export default function Page() {
     const currentDataList = activeTabKey === '4' ? searchTaskResults : postList;
 
     // 从当前数据列表中提取选中的帖子数据
-    const selectedPostData = selectedPosts.map((postId) => {
-      return currentDataList.find((item) => item.dataId === postId);
-    }).filter(Boolean); // 过滤掉undefined的值
+    const selectedPostData = selectedPosts
+      .map((postId) => {
+        return currentDataList.find((item) => item.dataId === postId);
+      })
+      .filter(Boolean); // 过滤掉undefined的值
 
     console.log('------ selectedPostData', selectedPostData);
 
     // 调用icpCreateInteractionOneKey函数
-    let option: any = {
+    const option: any = {
       platform: activeAccountType,
+      commentType: values.commentType,
       ...values,
+      accountId: activeAccountId
     };
     if (values.commentType != 'ai') {
       option.commentContent = customComments.join(',');
     }
 
     console.log('------ option', option);
+
+    // return;
 
     const res = await icpCreateInteractionOneKey(
       activeAccountId,
@@ -357,7 +360,9 @@ export default function Page() {
 
   // 添加小红书搜索任务相关状态
   const [searchTaskId, setSearchTaskId] = useState<string>('');
-  const [searchTaskStatus, setSearchTaskStatus] = useState<'pending' | 'running' | 'completed' | 'failed'>('pending');
+  const [searchTaskStatus, setSearchTaskStatus] = useState<
+    'pending' | 'running' | 'completed' | 'failed'
+  >('pending');
   const [searchTaskProgress, setSearchTaskProgress] = useState<number>(0);
   const [searchTaskResults, setSearchTaskResults] = useState<any[]>([]);
   const [searchTaskList, setSearchTaskList] = useState<any[]>([]);
@@ -369,7 +374,7 @@ export default function Page() {
     try {
       const res = await taskApi.searchNotesList({
         taskType: 'xhs_comments',
-        userId: userStore.userInfo?.id
+        userId: userStore.userInfo?.id,
       });
       // console.log('333',3333, res)
       if (res) {
@@ -388,6 +393,9 @@ export default function Page() {
       getSearchTaskList();
       // 切换到评论搜索选项卡时，默认使用AI模式
       setSearchKeyword('AI');
+    } else if (key === '2') {
+      // 切换到互动记录标签页时调用 getInteractionRecords
+      getInteractionRecords();
     }
   };
 
@@ -400,7 +408,7 @@ export default function Page() {
     try {
       const result = await taskApi.searchNotesResult({
         taskType: 'xhs_comments',
-        taskId: taskId
+        taskId: taskId,
       });
 
       if (result) {
@@ -410,7 +418,6 @@ export default function Page() {
             name: item.author.name,
             avatar: item.author.avatar || '',
             id: item.author.id,
-           
           },
           profileUrl: item.profileUrl || '',
           collectCount: item.stats?.collectCount?.toString() || '0',
@@ -421,17 +428,21 @@ export default function Page() {
             id: item.noteId,
             model_type: 'note',
             note_card: {},
-            xsec_token: item.set_xsec_token ? item.url?.split('xsec_token=')[1]?.split('&')[0] : ''
+            xsec_token: item.set_xsec_token
+              ? item.url?.split('xsec_token=')[1]?.split('&')[0]
+              : '',
           },
           dataId: item.noteId,
           likeCount: item.stats?.likeCount?.toString() || '0',
           option: {
-            xsec_token: item.set_xsec_token ? item.url?.split('xsec_token=')[1]?.split('&')[0] : ''
+            xsec_token: item.set_xsec_token
+              ? item.url?.split('xsec_token=')[1]?.split('&')[0]
+              : '',
           },
           title: item.title,
           content: item.content,
           url: item.url,
-          aboutsComments: item.aboutsComments || ''
+          aboutsComments: item.aboutsComments || '',
         }));
 
         setSearchTaskResults(formattedResults);
@@ -460,7 +471,7 @@ export default function Page() {
         keywords: searchKeyword,
         taskType: 'xhs_comments',
         userId: userStore.userInfo?.id,
-        maxCounts: 10
+        maxCounts: 10,
       });
 
       if (res && res.taskId) {
@@ -731,6 +742,7 @@ export default function Page() {
       }
 
       const res = await icpShoucangDyOther(activeAccountId, post.dataId);
+      console.log('------ collectPost res', res);
       if (res.status_code == 0 || res.data?.code == 0) {
         message.success('收藏成功');
         // 更新收藏状态
@@ -793,15 +805,14 @@ export default function Page() {
     setWebviewModalVisible(true);
   };
 
-
-    /**
+  /**
    * 点击图片打开链接
    */
   const handleUriClick = (link: any) => {
     console.log('------ handleUriClick', link);
     if (!link) return;
 
-    let url = link;
+    const url = link;
 
     setCurrentUrl(url);
     setIsWebviewLoading(true);
@@ -841,7 +852,7 @@ export default function Page() {
       const res = await taskApi.deleteSearchNotesTask({
         userId: userStore.userInfo?.id || '',
         taskType: 'xhs_comments',
-        taskId: taskId
+        taskId: taskId,
       });
       if (res) {
         message.success('删除成功');
@@ -853,8 +864,39 @@ export default function Page() {
     }
   };
 
+  // 随机选择函数
+  const handleRandomSelect = () => {
+    // 根据当前激活的标签页获取对应的数据列表
+    const currentDataList = activeTabKey === '4' ? searchTaskResults : postList;
+    
+    // 清空当前选择
+    setSelectedPosts([]);
+    
+    // 如果没有数据，直接返回
+    if (!currentDataList || currentDataList.length === 0) {
+      message.info('当前没有可选择的作品');
+      return;
+    }
+    
+    // 计算要选择的数量（约一半）
+    const selectCount = Math.ceil(currentDataList.length / 2);
+    
+    // 随机选择作品
+    const shuffled = [...currentDataList].sort(() => 0.5 - Math.random());
+    const selected = shuffled.slice(0, selectCount);
+    
+    // 更新选中状态
+    const selectedIds = selected.map(item => item.dataId);
+    setSelectedPosts(selectedIds);
+    
+    message.success(`已随机选择 ${selectedIds.length} 个作品`);
+  };
+
   return (
-    <div className={styles.reply} style={{ alignItems: 'flex-start', overflowX: 'hidden' }}>
+    <div
+      className={styles.reply}
+      style={{ alignItems: 'flex-start', overflowX: 'hidden' }}
+    >
       <div style={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
         <AccountSidebar
           activeAccountId={activeAccountId}
@@ -931,32 +973,27 @@ export default function Page() {
                               >
                                 {isSelectMode ? '取消选择' : '选择作品'}
                               </Button>
+                              
                               {isSelectMode && (
-                                <Button
-                                  type="primary"
-                                  icon={<SendOutlined />}
-                                  onClick={() => setTaskModalVisible(true)}
-                                  size="large"
-                                  disabled={selectedPosts.length === 0}
-                                >
-                                  下发任务 ({selectedPosts.length})
-                                </Button>
-                              )}
-                              {!isSelectMode && (
-                                <Button
-                                  type="primary"
-                                  icon={<DownOutlined />}
-                                  onClick={() => {
-                                    if (selectedPosts.length === 0) {
-                                      message.error('请选择作品');
-                                      return;
-                                    }
-                                    setTaskModalVisible(true);
-                                  }}
-                                  size="large"
-                                >
-                                  下发任务
-                                </Button>
+                                <>
+                                  <Button
+                                    type="default"
+                                    icon={<CheckSquareOutlined />}
+                                    onClick={handleRandomSelect}
+                                    size="large"
+                                  >
+                                    随机选择
+                                  </Button>
+                                  <Button
+                                    type="primary"
+                                    icon={<SendOutlined />}
+                                    onClick={() => setTaskModalVisible(true)}
+                                    size="large"
+                                    disabled={selectedPosts.length === 0}
+                                  >
+                                    下发任务 ({selectedPosts.length})
+                                  </Button>
+                                </>
                               )}
                             </Space>
                           </Col>
@@ -1017,24 +1054,28 @@ export default function Page() {
                                         />
                                       </div>
                                     )}
-                                    <div style={{ 
-                                      width: '200px', 
-                                      height: '200px', 
-                                      position: 'relative',
-                                      overflow: 'hidden'
-                                    }}>
+                                    <div
+                                      style={{
+                                        width: '200px',
+                                        height: '200px',
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                      }}
+                                    >
                                       <img
                                         src={item.coverUrl}
                                         alt={item.title}
                                         style={{
                                           width: '100%',
                                           height: '100%',
-                                          objectFit: 'cover'
+                                          objectFit: 'cover',
                                         }}
                                         onError={(e) => {
-                                          const target = e.target as HTMLImageElement;
+                                          const target =
+                                            e.target as HTMLImageElement;
                                           target.style.display = 'none';
-                                          const titleDiv = document.createElement('div');
+                                          const titleDiv =
+                                            document.createElement('div');
                                           titleDiv.style.cssText = `
                                             width: 100%;
                                             height: 100%;
@@ -1047,7 +1088,9 @@ export default function Page() {
                                             word-break: break-word;
                                           `;
                                           titleDiv.textContent = item.title;
-                                          target.parentNode?.appendChild(titleDiv);
+                                          target.parentNode?.appendChild(
+                                            titleDiv,
+                                          );
                                         }}
                                       />
                                     </div>
@@ -1145,240 +1188,369 @@ export default function Page() {
                       </>
                     ),
                   },
-                  ...(activeAccountType === 'xhs' ? [{
-                    key: '4',
-                    label: '评论搜索',
-                    children: (
-                      <div style={{ padding: '20px' }}>
-                        <Card>
-                          <Form layout="vertical">
-                            <Form.Item >
-                              <Input.Search
-                                placeholder="输入评论"
-                                value={searchKeyword}
-                                onChange={(e) => setSearchKeyword(e.target.value)}
-                                onSearch={submitSearchTask}
-                                enterButton="搜索任务"
-                              />
-                              <div style={{ marginTop: '8px', color: '#999', fontSize: '12px', paddingLeft: '2px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <QuestionCircleOutlined /> 小红书搜索评论需要5-10分钟，请稍后查看
-                                <Button
-                                  type="link"
-                                  icon={<SyncOutlined />}
-                                  onClick={getSearchTaskList}
-                                  style={{ padding: 0, height: 'auto' }}
-                                />
-                              </div>
-                            </Form.Item>
-                          </Form>
-
-                          <Table
-                            dataSource={searchTaskList}
-                            rowKey="_id"
-                            columns={[
-                              {
-                                title: '任务ID',
-                                dataIndex: 'taskId',
-                                key: 'taskId',
-                                width: 220,
-                              },
-                              {
-                                title: '关键词',
-                                dataIndex: 'keywords',
-                                key: 'keywords',
-                              },
-                              {
-                                title: '状态',
-                                dataIndex: 'status',
-                                key: 'status',
-                                render: (status: number) => {
-                                  const statusMap: Record<number, string> = {
-                                    0: '等待运行',
-                                    1: '运行完成',
-                                    2: '正在运行'
-                                  };
-                                  return statusMap[status] || '未知';
-                                }
-                              },
-                              {
-                                title: '创建时间',
-                                dataIndex: 'createTime',
-                                key: 'createTime',
-                              },
-                              {
-                                title: '数据范围',
-                                dataIndex: 'dateType',
-                                key: 'dateType',
-                                render: (dateType: string) => {
-                                  const dateTypeMap: Record<string, string> = {
-                                    '7d': '最近7天',
-                                    '30d': '最近30天',
-                                    '90d': '最近90天'
-                                  };
-                                  return dateTypeMap[dateType] || dateType;
-                                }
-                              },
-                              {
-                                title: '最大数量',
-                                dataIndex: 'maxCounts',
-                                key: 'maxCounts',
-                              },
-                              {
-                                title: '操作',
-                                key: 'action',
-                                render: (_, record) => (
-                                  <Space>
-                                    <Button 
-                                      type="link" 
-                                      onClick={() => viewTaskResult(record.taskId, record.keywords)}
-                                      disabled={record.status != 1}
-                                    >
-                                      查看结果
-                                    </Button>
-                                    <Button
-                                      type="link"
-                                      danger
-                                      onClick={() => deleteSearchTask(record.taskId)}
-                                    >
-                                      删除
-                                    </Button>
-                                  </Space>
-                                ),
-                              },
-                            ]}
-                            pagination={false}
-                            scroll={{ y: 300 }}
-                            size="small"
-                          />
-
-                          {searchTaskResults.length > 0 ? (
-                            <div style={{ marginTop: '20px', overflowX: 'hidden' }}>
-                              <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <Space>
-                                  {isSelectMode && (
-                                    <Button
-                                      type="primary"
-                                      icon={<CheckSquareOutlined />}
-                                      onClick={() => {
-                                        if (selectedPosts.length === searchTaskResults.length) {
-                                          setSelectedPosts([]);
-                                        } else {
-                                          setSelectedPosts([...searchTaskResults.map(item => item.dataId)]);
-                                        }
-                                      }}
-                                      size="large"
-                                    >
-                                      {selectedPosts.length === searchTaskResults.length ? '取消全选' : '全选'}
-                                    </Button>
-                                  )}                                
-                                </Space>
-
-                                <Space>
-                                  <Button
-                                    type={isSelectMode ? 'primary' : 'default'}
-                                    icon={<DownOutlined />}
-                                    onClick={handleSelectModeToggle}
-                                    size="large"
-                                  >
-                                    {isSelectMode ? '取消选择' : '选择作品'}
-                                  </Button>
-                                  {isSelectMode && (
-                                    <Button
-                                      type="primary"
-                                      icon={<SendOutlined />}
-                                      onClick={() => setTaskModalVisible(true)}
-                                      size="large"
-                                      disabled={selectedPosts.length === 0}
-                                    >
-                                      下发任务 ({selectedPosts.length})
-                                    </Button>
-                                  )}
-                                </Space>
-                              </div>
-
-                              <List
-                                itemLayout="horizontal"
-                                dataSource={searchTaskResults}
-                                renderItem={(item: any) => (
-                                  <List.Item
-                                    key={item.dataId}
-                                    onClick={() => {
-                                      if (isSelectMode) {
-                                        handlePostSelect(item.dataId);
+                  ...(activeAccountType === 'xhs'
+                    ? [
+                        {
+                          key: '4',
+                          label: '评论搜索',
+                          children: (
+                            <div style={{ padding: '20px' }}>
+                              <Card>
+                                <Form layout="vertical">
+                                  <Form.Item>
+                                    <Input.Search
+                                      placeholder="输入评论"
+                                      value={searchKeyword}
+                                      onChange={(e) =>
+                                        setSearchKeyword(e.target.value)
                                       }
-                                    }}
+                                      onSearch={submitSearchTask}
+                                      enterButton="搜索任务"
+                                    />
+                                    <div
+                                      style={{
+                                        marginTop: '8px',
+                                        color: '#999',
+                                        fontSize: '12px',
+                                        paddingLeft: '2px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                      }}
+                                    >
+                                      <QuestionCircleOutlined />{' '}
+                                      小红书搜索评论需要5-10分钟，请稍后查看
+                                      <Button
+                                        type="link"
+                                        icon={<SyncOutlined />}
+                                        onClick={getSearchTaskList}
+                                        style={{ padding: 0, height: 'auto' }}
+                                      />
+                                    </div>
+                                  </Form.Item>
+                                </Form>
+
+                                <Table
+                                  dataSource={searchTaskList}
+                                  rowKey="_id"
+                                  columns={[
+                                    {
+                                      title: '任务ID',
+                                      dataIndex: 'taskId',
+                                      key: 'taskId',
+                                      width: 220,
+                                    },
+                                    {
+                                      title: '关键词',
+                                      dataIndex: 'keywords',
+                                      key: 'keywords',
+                                    },
+                                    {
+                                      title: '状态',
+                                      dataIndex: 'status',
+                                      key: 'status',
+                                      render: (status: number) => {
+                                        const statusMap: Record<
+                                          number,
+                                          string
+                                        > = {
+                                          0: '等待运行',
+                                          1: '运行完成',
+                                          2: '正在运行',
+                                        };
+                                        return statusMap[status] || '未知';
+                                      },
+                                    },
+                                    {
+                                      title: '创建时间',
+                                      dataIndex: 'createTime',
+                                      key: 'createTime',
+                                    },
+                                    {
+                                      title: '数据范围',
+                                      dataIndex: 'dateType',
+                                      key: 'dateType',
+                                      render: (dateType: string) => {
+                                        const dateTypeMap: Record<
+                                          string,
+                                          string
+                                        > = {
+                                          '7d': '最近7天',
+                                          '30d': '最近30天',
+                                          '90d': '最近90天',
+                                        };
+                                        return (
+                                          dateTypeMap[dateType] || dateType
+                                        );
+                                      },
+                                    },
+                                    {
+                                      title: '最大数量',
+                                      dataIndex: 'maxCounts',
+                                      key: 'maxCounts',
+                                    },
+                                    {
+                                      title: '操作',
+                                      key: 'action',
+                                      render: (_, record) => (
+                                        <Space>
+                                          <Button
+                                            type="link"
+                                            onClick={() =>
+                                              viewTaskResult(
+                                                record.taskId,
+                                                record.keywords,
+                                              )
+                                            }
+                                            disabled={record.status != 1}
+                                          >
+                                            查看结果
+                                          </Button>
+                                          <Button
+                                            type="link"
+                                            danger
+                                            onClick={() =>
+                                              deleteSearchTask(record.taskId)
+                                            }
+                                          >
+                                            删除
+                                          </Button>
+                                        </Space>
+                                      ),
+                                    },
+                                  ]}
+                                  pagination={false}
+                                  scroll={{ y: 300 }}
+                                  size="small"
+                                />
+
+                                {searchTaskResults.length > 0 ? (
+                                  <div
                                     style={{
-                                      cursor: isSelectMode ? 'pointer' : 'default',
-                                      background: selectedPosts.includes(item.dataId)
-                                        ? 'rgba(24, 144, 255, 0.1)'
-                                        : 'transparent',
-                                      padding: '16px',
-                                      borderRadius: '8px',
-                                      marginBottom: '8px',
-                                      border: '1px solid #f0f0f0',
-                                      overflow: 'hidden'
+                                      marginTop: '20px',
+                                      overflowX: 'hidden',
                                     }}
-                                    actions={[
-                                      <Space key="like" onClick={() => likePost(item)}>
-                                        <LikeOutlined
-                                          style={{
-                                            color: likedPosts[item.dataId] ? '#ff4d4f' : undefined,
-                                            fontSize: likedPosts[item.dataId] ? '18px' : undefined,
-                                          }}
-                                        />
-                                        <span>{item.likeCount || 0}</span>
-                                      </Space>,
-                                      <Space key="comment-list" onClick={() => showCommentModal(item)}>
-                                        <UnorderedListOutlined />
-                                        <span>{item.commentCount || ''}</span>
-                                      </Space>,
-                                      <Space key="reply" onClick={() => openReplyWorks(item)}>
-                                        <CommentOutlined />
-                                        <span>评论</span>
-                                      </Space>,
-                                      <Space key="collect" onClick={() => collectPost(item)}>
-                                        <StarOutlined
-                                          style={{
-                                            color: collectedPosts[item.dataId] ? '#faad14' : undefined,
-                                            fontSize: collectedPosts[item.dataId] ? '18px' : undefined,
-                                          }}
-                                        />
-                                        <span>{item.collectCount || ''}</span>
-                                      </Space>,
-                                    ]}
                                   >
-                                    <List.Item.Meta
-                                      avatar={
-                                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                                          {isSelectMode && (
-                                            <Checkbox
-                                              checked={selectedPosts.includes(item.dataId)}
-                                              onClick={(e) => e.stopPropagation()}
-                                              onChange={() => handlePostSelect(item.dataId)}
-                                              style={{ marginRight: '12px' }}
-                                            />
-                                          )}
-                                          <div style={{ position: 'relative', cursor: 'pointer' }} onClick={() => !isSelectMode && handleImageClick(item)}>
-                                            {item.coverUrl ? (
-                                              <div style={{ 
-                                                width: '120px', 
-                                                height: '120px', 
-                                                position: 'relative',
-                                                overflow: 'hidden'
-                                              }}>
-                                                <img
-                                                  src={item.coverUrl}
-                                                  alt={item.title}
+                                    <div
+                                      style={{
+                                        marginBottom: '16px',
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                      }}
+                                    >
+                                      <Space>
+                                        {isSelectMode && (
+                                          <Button
+                                            type="primary"
+                                            icon={<CheckSquareOutlined />}
+                                            onClick={() => {
+                                              if (
+                                                selectedPosts.length ===
+                                                searchTaskResults.length
+                                              ) {
+                                                setSelectedPosts([]);
+                                              } else {
+                                                setSelectedPosts([
+                                                  ...searchTaskResults.map(
+                                                    (item) => item.dataId,
+                                                  ),
+                                                ]);
+                                              }
+                                            }}
+                                            size="large"
+                                          >
+                                            {selectedPosts.length ===
+                                            searchTaskResults.length
+                                              ? '取消全选'
+                                              : '全选'}
+                                          </Button>
+                                        )}
+                                      </Space>
+
+                                      <Space>
+                                        <Button
+                                          type={
+                                            isSelectMode ? 'primary' : 'default'
+                                          }
+                                          icon={<DownOutlined />}
+                                          onClick={handleSelectModeToggle}
+                                          size="large"
+                                        >
+                                          {isSelectMode
+                                            ? '取消选择'
+                                            : '选择作品'}
+                                        </Button>
+                                        {isSelectMode && (
+                                          <Button
+                                            type="primary"
+                                            icon={<SendOutlined />}
+                                            onClick={() =>
+                                              setTaskModalVisible(true)
+                                            }
+                                            size="large"
+                                            disabled={
+                                              selectedPosts.length === 0
+                                            }
+                                          >
+                                            下发任务 ({selectedPosts.length})
+                                          </Button>
+                                        )}
+                                      </Space>
+                                    </div>
+
+                                    <List
+                                      itemLayout="horizontal"
+                                      dataSource={searchTaskResults}
+                                      renderItem={(item: any) => (
+                                        <List.Item
+                                          key={item.dataId}
+                                          onClick={() => {
+                                            if (isSelectMode) {
+                                              handlePostSelect(item.dataId);
+                                            }
+                                          }}
+                                          style={{
+                                            cursor: isSelectMode
+                                              ? 'pointer'
+                                              : 'default',
+                                            background: selectedPosts.includes(
+                                              item.dataId,
+                                            )
+                                              ? 'rgba(24, 144, 255, 0.1)'
+                                              : 'transparent',
+                                            padding: '16px',
+                                            borderRadius: '8px',
+                                            marginBottom: '8px',
+                                            border: '1px solid #f0f0f0',
+                                            overflow: 'hidden',
+                                          }}
+                                          actions={[
+                                            <Space
+                                              key="like"
+                                              onClick={() => likePost(item)}
+                                            >
+                                              <LikeOutlined
+                                                style={{
+                                                  color: likedPosts[item.dataId]
+                                                    ? '#ff4d4f'
+                                                    : undefined,
+                                                  fontSize: likedPosts[
+                                                    item.dataId
+                                                  ]
+                                                    ? '18px'
+                                                    : undefined,
+                                                }}
+                                              />
+                                              <span>{item.likeCount || 0}</span>
+                                            </Space>,
+                                            <Space
+                                              key="comment-list"
+                                              onClick={() =>
+                                                showCommentModal(item)
+                                              }
+                                            >
+                                              <UnorderedListOutlined />
+                                              <span>
+                                                {item.commentCount || ''}
+                                              </span>
+                                            </Space>,
+                                            <Space
+                                              key="reply"
+                                              onClick={() =>
+                                                openReplyWorks(item)
+                                              }
+                                            >
+                                              <CommentOutlined />
+                                              <span>评论</span>
+                                            </Space>,
+                                            <Space
+                                              key="collect"
+                                              onClick={() => collectPost(item)}
+                                            >
+                                              <StarOutlined
+                                                style={{
+                                                  color: collectedPosts[
+                                                    item.dataId
+                                                  ]
+                                                    ? '#faad14'
+                                                    : undefined,
+                                                  fontSize: collectedPosts[
+                                                    item.dataId
+                                                  ]
+                                                    ? '18px'
+                                                    : undefined,
+                                                }}
+                                              />
+                                              <span>
+                                                {item.collectCount || ''}
+                                              </span>
+                                            </Space>,
+                                          ]}
+                                        >
+                                          <List.Item.Meta
+                                            avatar={
+                                              <div
+                                                style={{
+                                                  display: 'flex',
+                                                  alignItems: 'center',
+                                                }}
+                                              >
+                                                {isSelectMode && (
+                                                  <Checkbox
+                                                    checked={selectedPosts.includes(
+                                                      item.dataId,
+                                                    )}
+                                                    onClick={(e) =>
+                                                      e.stopPropagation()
+                                                    }
+                                                    onChange={() =>
+                                                      handlePostSelect(
+                                                        item.dataId,
+                                                      )
+                                                    }
+                                                    style={{
+                                                      marginRight: '12px',
+                                                    }}
+                                                  />
+                                                )}
+                                                <div
                                                   style={{
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    objectFit: 'cover'
+                                                    position: 'relative',
+                                                    cursor: 'pointer',
                                                   }}
-                                                  onError={(e) => {
-                                                    const target = e.target as HTMLImageElement;
-                                                    target.style.display = 'none';
-                                                    const titleDiv = document.createElement('div');
-                                                    titleDiv.style.cssText = `
+                                                  onClick={() =>
+                                                    !isSelectMode &&
+                                                    handleImageClick(item)
+                                                  }
+                                                >
+                                                  {item.coverUrl ? (
+                                                    <div
+                                                      style={{
+                                                        width: '120px',
+                                                        height: '120px',
+                                                        position: 'relative',
+                                                        overflow: 'hidden',
+                                                      }}
+                                                    >
+                                                      <img
+                                                        src={item.coverUrl}
+                                                        alt={item.title}
+                                                        style={{
+                                                          width: '100%',
+                                                          height: '100%',
+                                                          objectFit: 'cover',
+                                                        }}
+                                                        onError={(e) => {
+                                                          const target =
+                                                            e.target as HTMLImageElement;
+                                                          target.style.display =
+                                                            'none';
+                                                          const titleDiv =
+                                                            document.createElement(
+                                                              'div',
+                                                            );
+                                                          titleDiv.style.cssText = `
                                                       width: 100%;
                                                       height: 100%;
                                                       display: flex;
@@ -1389,93 +1561,166 @@ export default function Page() {
                                                       text-align: center;
                                                       word-break: break-word;
                                                     `;
-                                                    titleDiv.textContent = item.title;
-                                                    target.parentNode?.appendChild(titleDiv);
+                                                          titleDiv.textContent =
+                                                            item.title;
+                                                          target.parentNode?.appendChild(
+                                                            titleDiv,
+                                                          );
+                                                        }}
+                                                      />
+                                                    </div>
+                                                  ) : (
+                                                    <div
+                                                      style={{
+                                                        width: '120px',
+                                                        height: '120px',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent:
+                                                          'center',
+                                                        background: '#f0f0f0',
+                                                        borderRadius: '8px',
+                                                        padding: '10px',
+                                                        textAlign: 'center',
+                                                        fontSize: '12px',
+                                                        overflow: 'hidden',
+                                                        wordBreak: 'break-word',
+                                                      }}
+                                                    >
+                                                      {item.content}
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              </div>
+                                            }
+                                            title={
+                                              <div
+                                                style={{ marginLeft: '12px' }}
+                                              >
+                                                <div
+                                                  onClick={() =>
+                                                    handleUriClick(
+                                                      item.profileUrl,
+                                                    )
+                                                  }
+                                                >
+                                                  {item.author?.name}
+                                                </div>
+                                                <div
+                                                  style={{
+                                                    fontWeight: 'bold',
+                                                    marginTop: '8px',
                                                   }}
-                                                />
+                                                  onClick={() =>
+                                                    !isSelectMode &&
+                                                    handleImageClick(item)
+                                                  }
+                                                >
+                                                  {item.title}
+                                                </div>
                                               </div>
-                                            ) : (
-                                              <div style={{
-                                                width: '120px',
-                                                height: '120px',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                background: '#f0f0f0',
-                                                borderRadius: '8px',
-                                                padding: '10px',
-                                                textAlign: 'center',
-                                                fontSize: '12px',
-                                                overflow: 'hidden',
-                                                wordBreak: 'break-word'
-                                              }}>
-                                                {item.content}
+                                            }
+                                            description={
+                                              <div
+                                                style={{ marginLeft: '12px' }}
+                                              >
+                                                <Text type="secondary" ellipsis>
+                                                  {item.content}
+                                                </Text>
+                                                {item.aboutsComments && (
+                                                  <div
+                                                    style={{
+                                                      marginTop: '8px',
+                                                      display: 'flex',
+                                                      flexDirection: 'row',
+                                                      alignItems: 'center',
+                                                    }}
+                                                  >
+                                                    <div
+                                                      style={{
+                                                        fontWeight: 'bold',
+                                                        marginBottom: '4px',
+                                                        width: '72px',
+                                                      }}
+                                                    >
+                                                      相关评论：
+                                                    </div>
+                                                    <div
+                                                      style={{
+                                                        padding: '8px',
+                                                        background: '#f5f5f5',
+                                                        borderRadius: '4px',
+                                                        marginBottom: '4px',
+                                                      }}
+                                                    >
+                                                      {/* 高亮显示与搜索关键词匹配的部分 */}
+                                                      {(() => {
+                                                        if (
+                                                          !searchKeywordSelected
+                                                        )
+                                                          return item.aboutsComments;
+                                                        const regex =
+                                                          new RegExp(
+                                                            `(${searchKeywordSelected})`,
+                                                            'gi',
+                                                          );
+                                                        const parts =
+                                                          item.aboutsComments.split(
+                                                            regex,
+                                                          );
+                                                        return parts.map(
+                                                          (
+                                                            part: string,
+                                                            i: number,
+                                                          ) =>
+                                                            regex.test(part) ? (
+                                                              <span
+                                                                key={i}
+                                                                style={{
+                                                                  color: 'red',
+                                                                  fontWeight:
+                                                                    'bold',
+                                                                }}
+                                                              >
+                                                                {part}
+                                                              </span>
+                                                            ) : (
+                                                              part
+                                                            ),
+                                                        );
+                                                      })()}
+                                                    </div>
+                                                  </div>
+                                                )}
                                               </div>
-                                            )}
-                                          </div>
-                                        </div>
-                                      }
-                                      title={
-                                        <div style={{ marginLeft: '12px' }}>
-                                          <div 
-                                            onClick={() => handleUriClick(item.profileUrl)}
-                                          >
-                                            {item.author?.name}
-                                          </div>
-                                          <div style={{ fontWeight: 'bold', marginTop: '8px' }} onClick={() => !isSelectMode && handleImageClick(item)}>{item.title}</div>
-                                        </div>
-                                      }
-                                      description={
-                                        <div style={{ marginLeft: '12px' }}>
-                                          <Text type="secondary" ellipsis>
-                                            {item.content}
-                                          </Text>
-                                          {item.aboutsComments && (
-                                            <div style={{ marginTop: '8px',display: 'flex',flexDirection: 'row',alignItems: 'center' }}>
-                                              <div style={{ fontWeight: 'bold', marginBottom: '4px', width: '72px' }}>相关评论：</div>
-                                              <div style={{ 
-                                                padding: '8px', 
-                                                background: '#f5f5f5', 
-                                                borderRadius: '4px',
-                                                marginBottom: '4px'
-                                              }}>
-                                                {/* 高亮显示与搜索关键词匹配的部分 */}
-                                                {(() => {
-                                                  if (!searchKeywordSelected) return item.aboutsComments;
-                                                  const regex = new RegExp(`(${searchKeywordSelected})`, 'gi');
-                                                  const parts = item.aboutsComments.split(regex);
-                                                  return parts.map((part: string, i: number) => 
-                                                    regex.test(part) ? <span key={i} style={{ color: 'red', fontWeight: 'bold' }}>{part}</span> : part
-                                                  );
-                                                })()}
-                                              </div>
-                                            </div>
-                                          )}
-                                        </div>
-                                      }
+                                            }
+                                          />
+                                        </List.Item>
+                                      )}
                                     />
-                                  </List.Item>
+                                  </div>
+                                ) : (
+                                  <div
+                                    style={{
+                                      marginTop: '20px',
+                                      textAlign: 'center',
+                                      padding: '40px',
+                                      background: '#f5f5f5',
+                                      borderRadius: '8px',
+                                    }}
+                                  >
+                                    <Empty
+                                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                      description="此评论未搜索出结果"
+                                    />
+                                  </div>
                                 )}
-                              />
+                              </Card>
                             </div>
-                          ) : (
-                            <div style={{ 
-                              marginTop: '20px', 
-                              textAlign: 'center', 
-                              padding: '40px',
-                              background: '#f5f5f5',
-                              borderRadius: '8px'
-                            }}>
-                              <Empty
-                                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                                description="此评论未搜索出结果"
-                              />
-                            </div>
-                          )}
-                        </Card>
-                      </div>
-                    ),
-                  }] : []),
+                          ),
+                        },
+                      ]
+                    : []),
                   {
                     key: '2',
                     label: '互动记录',
@@ -1668,7 +1913,7 @@ export default function Page() {
           initialValues={{
             likeProb: 70,
             commentProb: 90,
-            commentType: 'ai',
+            commentType: 'custom',
             collectProb: 30,
           }}
         >
@@ -1705,16 +1950,22 @@ export default function Page() {
             <Col span={12}>
               <Form.Item label="评论类型" name="commentType">
                 <Radio.Group onChange={(e) => setCommentType(e.target.value)}>
+                <Tooltip title="使用自定义评论">
+                    <Radio.Button value="custom">
+                      <UserOutlined /> 自定义评论
+                    </Radio.Button>
+                  </Tooltip>
                   <Tooltip title="使用AI生成评论">
                     <Radio.Button value="ai">
                       <RobotOutlined /> Deepseek评论
                     </Radio.Button>
                   </Tooltip>
-                  <Tooltip title="使用自定义评论">
-                    <Radio.Button value="custom">
-                      <UserOutlined /> 自定义评论
+                  <Tooltip title="复制当前内容下热门评论">
+                    <Radio.Button value="copy">
+                      <CopyOutlined /> 评论复刻
                     </Radio.Button>
                   </Tooltip>
+                  
                 </Radio.Group>
               </Form.Item>
             </Col>

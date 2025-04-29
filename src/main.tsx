@@ -20,6 +20,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
          * 主题色：
          * --colorPrimary1  ~~  --colorPrimary10
          * 由浅到深
+         * 注意：“--colorPrimary6” 为中间主题色，不是 “5”
          */
         root.style.setProperty(`--colorPrimary${i + 1}`, colors[i]);
       }

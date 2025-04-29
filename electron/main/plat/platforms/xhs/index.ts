@@ -409,7 +409,7 @@ export class Xhs extends PlatformBase {
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const ret = await xiaohongshuService.commentPost(cookie, dataId, content);
-    console.log('------ createCommentByOther xhs ---', ret);
+    // console.log('------ createCommentByOther xhs ---', ret);
     return ret;
   }
 
@@ -421,7 +421,7 @@ export class Xhs extends PlatformBase {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await xiaohongshuService.likeNote(cookie, dataId);
 
-    console.log('------ res', res);
+    // console.log('------ res', res);
 
     return !!res;
   }
@@ -429,14 +429,14 @@ export class Xhs extends PlatformBase {
   async shoucangDyOther(
     account: AccountModel,
     dataId: string, // 作品ID
-  ): Promise<boolean> {
-    console.log('------ dianzanDyOther5555', dataId);
+  ): Promise<any> {
+    console.log('------ shoucangDyOther5555', dataId);
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await xiaohongshuService.shoucangNote(cookie, dataId);
 
-    console.log('------ res', res);
+    // console.log('------ res', res);
 
-    return !!res;
+    return res;
   }
 
   async replyCommentByOther(
@@ -590,6 +590,7 @@ export class Xhs extends PlatformBase {
 
   pubParamsParse(params: WorkDataModel): XSLPlatformSettingType {
     return {
+      proxy: params.proxyIp || '',
       cover: params.coverPath || '',
       desc: params.desc,
       title: params.title,

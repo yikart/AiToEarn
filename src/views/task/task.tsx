@@ -7,19 +7,12 @@
  */
 import { useState, useEffect, useRef } from 'react';
 import {
-  ShoppingCartOutlined,
-  ShareAltOutlined,
-  VideoCameraOutlined,
   HistoryOutlined,
   WalletOutlined,
-  FileTextOutlined,
   CommentOutlined,
   UserOutlined,
   ClockCircleOutlined,
   CheckCircleOutlined,
-  PictureOutlined,
-  LeftOutlined,
-  RightOutlined,
 } from '@ant-design/icons';
 import {
   Card,
@@ -37,18 +30,13 @@ import {
   notification,
   Row,
   Col,
-  Divider,
   Carousel,
 } from 'antd';
 import { useInView } from 'react-intersection-observer';
 import styles from './task.module.scss';
 
 // 导入现有的任务组件
-import CarTask from './carTask';
-import PopTask from './popTask';
-import VideoTask from './videoTask';
 import MineTask from './mineTask';
-import ArticleTask from './articleTask';
 // import TaskInfo from './components/TaskInfo';
 import TaskInfo from './components/popInfo';
 // 移除 InteractionTask 导入
@@ -77,6 +65,8 @@ import WxSphIcon from '../../assets/svgs/account/wx-sph.svg';
 import XhsIcon from '../../assets/svgs/account/xhs.svg';
 import DouyinIcon from '../../assets/svgs/account/douyin.svg';
 import logo from '@/assets/logo.png';
+import { useImagePageStore } from '../publish/children/imagePage/useImagePageStore';
+import { useShallow } from 'zustand/react/shallow';
 
 const { Title, Text } = Typography;
 
@@ -273,7 +263,22 @@ export default function Task() {
     });
   };
 
+  const { setCommonPubParams } = useImagePageStore(
+    useShallow((state) => ({
+      setCommonPubParams: state.setCommonPubParams,
+    })),
+  );
+  // TODO 完善跳转逻辑
   const handleJoinTask = (task: any) => {
+
+    // setCommonPubParams({
+    //   title: "标题1",
+    //   describe: "描述1",
+    //   topics: ["话题1","话题2"],
+    // });
+    // navigate('/publish/image');
+    // return;
+    // console.log('task@:', task);
     setSelectedTask(task);
 
     // 根据任务类型选择不同的处理逻辑
@@ -314,19 +319,58 @@ export default function Task() {
    */
   async function taskApply() {
     // 00.00 测试
-    // handleCompleteTask();
-    // return;
+    if (!selectedTask) return;
+
+    try {
+      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
+
+      // const res: any = {
+      //   code: 0,
+      //   data: {
+      //   }
+      // }
+
+      // 存储任务记录信息 00.00
+      // console.log('jieshou :', res);
+      if (res.code == 0 && res.data) {
+        setTaskRecord(res.data);
+        message.success('任务接受成功！');
+
+        // handleCompleteTask();
+
+        // console.log('selectedTask.dataInfo', selectedTask.dataInfo);
+
+        if(selectedTask.type == TaskType.ARTICLE){
+          setCommonPubParams({
+            title: selectedTask.dataInfo?.title || '',
+            describe: selectedTask.dataInfo?.desc || '',
+            topics: selectedTask.dataInfo?.topicList || [],
+          });
+          navigate('/publish/image');
+        }
+            
+            // return;
+      } else {
+        message.error(res.msg || '接受任务失败，请稍后再试?');
+      }
+    } catch (error) {
+      message.error('接受任务失败，请稍后再试');
+    }
+  }
+
+  async function taskApplyoney(){
+    console.log('------ taskApplyoney', selectedTask);
     if (!selectedTask) return;
 
     try {
       const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
       // 存储任务记录信息 00.00
-      console.log('jieshou :', res);
+      // console.log('jieshou :', res);
       if (res.code == 0 && res.data) {
         setTaskRecord(res.data);
+        setModalVisible(false)
         message.success('任务接受成功！');
 
-        handleCompleteTask();
       } else {
         message.error(res.msg || '接受任务失败，请稍后再试?');
       }
@@ -383,7 +427,7 @@ export default function Task() {
     // 创建一级记录
     const recordRes = await icpCreatePubRecord({
       title: selectedTask.title,
-      desc: selectedTask.description.replace(/<[^>]+>/g, ''),
+      desc: selectedTask.description,
       type: PubType.ImageText,
       coverPath: FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
     });
@@ -398,14 +442,16 @@ export default function Task() {
 
     console.log('pubList', pubList);
     console.log(accountListChoose);
-    let allAccount = accountListChoose?.length ? accountListChoose : account;
+    const allAccount = accountListChoose?.length
+      ? accountListChoose
+      : [account];
     console.log(allAccount);
 
     for (const account of allAccount) {
       // 创建二级记录
       await icpCreateImgTextPubRecord({
         title: selectedTask.title,
-        desc: selectedTask.description.replace(/<[^>]+>/g, ''),
+        desc: selectedTask.description,
         type: account.type,
         accountId: account.id,
         pubRecordId: recordRes.id,
@@ -584,7 +630,7 @@ export default function Task() {
                   variant="outlined"
                   cover={
                     <div className={styles.taskImage}>
-                      <Image
+                      <Image 
                         src={
                           item.imageUrl
                             ? FILE_BASE_URL + item.imageUrl
@@ -616,24 +662,26 @@ export default function Task() {
                     </div>
                   }
                   actions={[
-                    <Space key="recruits">
-                      <UserOutlined />
-                      <Text>
-                        {item.currentRecruits}/{item.maxRecruits}
-                      </Text>
-                    </Space>,
-                    <Space key="time">
-                      <ClockCircleOutlined />
-                      <Text>{item.keepTime}分钟</Text>
-                    </Space>,
+                    // <Space key="recruits">
+                    //   <UserOutlined />
+                    //   <Text>
+                    //     {item.currentRecruits}
+                    //     {/* /{item.maxRecruits} */}
+                    //   </Text>
+                    // </Space>,
+                    // <Space key="time">
+                    //   <ClockCircleOutlined />
+                    //   <Text>{item.keepTime}分钟</Text>
+                    // </Space>,
                     <Button
                       type="primary"
                       key="join"
-                      disabled={item.isAccepted} // 00.00
+                      disabled={item.isAccepted}
                       onClick={() => handleJoinTask(item)}
+                      style={{ minWidth: '120px' }}
                     >
                       {item.isAccepted ? '已参与' : '参与任务'}
-                    </Button>,
+                    </Button>, 
                   ]}
                 >
                   <Card.Meta
@@ -641,7 +689,9 @@ export default function Task() {
                       <div className={styles.taskTitle}>
                         <Title level={5}>{item.title}</Title>
                         <Space>
-                          <Tag color="green">¥{item.reward}</Tag>
+                          <Tag color="green" style={{ fontSize: '16px', padding: '1px 18px' }}>
+                            ¥{item.reward}
+                          </Tag>
                           <Space size={4}>
                             {getPlatformTags(item.accountTypes)}
                           </Space>
@@ -651,22 +701,28 @@ export default function Task() {
                     description={
                       <div className={styles.taskInfo}>
                         <div className={styles.taskProgress}>
-                          <Progress
+                          {/* <Progress
                             percent={Math.round(
                               (item.currentRecruits / item.maxRecruits) * 100,
                             )}
                             size="small"
                             showInfo={false}
-                          />
+                          /> */}
                         </div>
-                        <Text type="secondary">
-                          {item.description.replace(/<[^>]+>/g, '')}
-                        </Text>
-                        <div className={styles.taskDeadline}>
+                        <div
+                        dangerouslySetInnerHTML={{
+                          __html: item.description,
+                        }}
+                        className={styles.taskDescription}
+                      />
+                        {/* <Text type="secondary">
+                          {item.description}
+                        </Text> */}
+                        {/* <div className={styles.taskDeadline}>
                           <Text type="secondary">
                             截止时间：{formatDate(item.deadline)}
                           </Text>
-                        </div>
+                        </div> */}
                       </div>
                     }
                   />
@@ -700,8 +756,8 @@ export default function Task() {
           open={modalVisible}
           onCancel={() => setModalVisible(false)}
           footer={[
-            <Button key="cancel" onClick={() => setModalVisible(false)}>
-              取消
+            <Button key="cancel" onClick={ taskApplyoney }>
+              领取
             </Button>,
             <Button
               key="complete"
@@ -709,7 +765,7 @@ export default function Task() {
               icon={<CheckCircleOutlined />}
               onClick={taskApply}
             >
-              一键完成
+              领取&发布
             </Button>,
           ]}
           width={700}
@@ -721,11 +777,11 @@ export default function Task() {
                   <div className={styles.taskDetailHeader}>
                     <Title level={4}>{selectedTask.title}</Title>
                     <Space>
-                      <Tag color="green">¥{selectedTask.reward}</Tag>
-                      <Tag color="blue">
+                    <Tag color="blue">
                         {TaskTypeName.get(selectedTask.type as TaskType) ||
                           '未知任务'}
                       </Tag>
+                      <Tag color="green">赚 ¥{selectedTask.reward}</Tag>
                     </Space>
                   </div>
                 </Col>
@@ -762,17 +818,44 @@ export default function Task() {
                 <Col span={24}>
                   {/* <Divider orientation="left">任务信息</Divider> */}
                   <Descriptions column={1} bordered>
-                    <Descriptions.Item label="任务描述">
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: selectedTask.description,
-                        }}
-                        className={styles.taskDescription}
-                      />
-                    </Descriptions.Item>
-                    <Descriptions.Item label="评论内容">
-                      {selectedTask.dataInfo?.commentContent || 'AI智能评论'}
-                    </Descriptions.Item>
+                    {
+                      ( selectedTask.dataInfo?.title != '') && (
+                        <Descriptions.Item label="发布标题">
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: selectedTask.dataInfo?.title,
+                            }}
+                            className={styles.taskDescription}
+                          />
+                        </Descriptions.Item>
+                      )
+                    }
+
+                    {
+                      selectedTask.dataInfo?.desc || selectedTask.dataInfo?.topicList?.length > 0 && (
+                        <Descriptions.Item label="发布描述">
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: selectedTask.dataInfo?.desc || '' + 
+                              (selectedTask.dataInfo?.topicList?.length > 0 
+                                ? '<span style="color: #999; font-size: 12px; margin-left: 8px;">#' + 
+                                  selectedTask.dataInfo.topicList.join(' #') + 
+                                  '</span>'
+                                : '')
+                          }}
+                          className={styles.taskDescription}
+                        />
+                      </Descriptions.Item>
+                      )
+                    }
+                   
+                    
+
+                    {selectedTask.type !== TaskType.ARTICLE && (
+                      <Descriptions.Item label="评论内容">
+                        {selectedTask.dataInfo?.commentContent || 'AI智能评论'}
+                      </Descriptions.Item>
+                    )}
 
                     {selectedTask.dataInfo?.worksId && (
                       <Descriptions.Item label="作品ID">
@@ -780,16 +863,18 @@ export default function Task() {
                       </Descriptions.Item>
                     )}
 
-                    <Descriptions.Item label="任务时长">
+                    {/* <Descriptions.Item label="任务时长">
                       {selectedTask.keepTime}分钟
-                    </Descriptions.Item>
-                    <Descriptions.Item label="开始时间">
-                      {formatDate(selectedTask.createTime)}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="截止时间">
+                    </Descriptions.Item> */}
+                    
+                    {/* <Descriptions.Item label="起止时间">
+                      {formatDate(selectedTask.createTime)} - {formatDate(selectedTask.deadline)}
+                    </Descriptions.Item> */}
+
+                    {/* <Descriptions.Item label="截止时间">
                       {formatDate(selectedTask.deadline)}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="参与人数">
+                    </Descriptions.Item> */}
+                    {/* <Descriptions.Item label="参与人数">
                       <Progress
                         percent={Math.round(
                           (selectedTask.currentRecruits /
@@ -801,7 +886,7 @@ export default function Task() {
                           `${selectedTask.currentRecruits}/${selectedTask.maxRecruits}`
                         }
                       />
-                    </Descriptions.Item>
+                    </Descriptions.Item> */}
                     <Descriptions.Item label="支持平台">
                       <Space size={4}>
                         {getPlatformTags(selectedTask.accountTypes)}

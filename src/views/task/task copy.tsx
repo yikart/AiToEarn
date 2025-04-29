@@ -27,7 +27,6 @@ import InteractionTask from './interactionTask';
 
 import { useNavigate } from 'react-router-dom';
 
-
 // 任务类型定义
 interface Task {
   id: string;
@@ -115,10 +114,13 @@ export default function Task() {
           </div>
         </div>
         <div className={styles.taskHeaderRight}>
-          <div className={styles.withdrawText} onClick={() => navigate('/finance')}>
+          <div
+            className={styles.withdrawText}
+            onClick={() => navigate('/finance')}
+          >
             <WalletOutlined />
             <span>钱包</span>
-          </div> 
+          </div>
         </div>
       </div>
 

@@ -24,7 +24,7 @@ import { useAccountStore } from '../../../../store/commont';
 import { useNavigate } from 'react-router-dom';
 import { usePubStroe } from '../../../../store/pubStroe';
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import { AccountPlatInfoMap } from '../../../account/comment';
+import { signInApi, SignInType } from '@/api/signIn';
 
 const { confirm } = Modal;
 
@@ -58,7 +58,7 @@ export default function Page() {
         id: v.account.id,
         account: v.account,
         pubParams: v.pubParams,
-      };
+      } as any;
     }),
     {
       moreWranVerifyCallback(item, wranParamsMapTemp, platInfo) {
@@ -126,6 +126,8 @@ export default function Page() {
   const pubCore = async () => {
     setPubProgressModuleOpen(true);
     setLoading(true);
+    await signInApi.createSignInRecord();
+
     const err = () => {
       setLoading(false);
       message.error('网络繁忙，请稍后重试！');
@@ -203,10 +205,11 @@ export default function Page() {
     <div className={styles.image}>
       <PubProgressModule
         open={pubProgressModuleOpen}
-        pubProgressData={pubProgressData}
+        pubProgressData={pubProgressData as any}
         onClose={() => setPubProgressModuleOpen(false)}
       />
       <PubAccountDetModule
+        isCheckProxy={true}
         ref={pubAccountDetModuleRef}
         accounts={imageAccounts
           .map((v) => v.account)

@@ -7,7 +7,7 @@ import { getImgFile, IImgFile } from '@/components/Choose/ImgChoose';
 import { formatTime, getFilePathName } from '@/utils';
 import { AccountInfo } from '@/views/account/comment';
 import WebView from '../../../../components/WebView';
-import { PubType } from '../../../../../commont/publish/PublishEnum';
+import { PubStatus, PubType } from '../../../../../commont/publish/PublishEnum';
 import PubRecordDetails, {
   IPubRecordDetailsRef,
 } from './components/PubRecordDetails';
@@ -67,6 +67,19 @@ export interface IExamineVideo {
   jsCode: string;
   videoSrc?: string;
 }
+
+export const PubRecordStatusTag = ({ status }: { status: PubStatus }) => {
+  switch (status) {
+    case 2:
+      return <Tag color="error">全部发布失败</Tag>;
+    case 1:
+      return <Tag color="success">全部发布成功</Tag>;
+    case 3:
+      return <Tag color="warning">部分发布成功</Tag>;
+    case 0:
+      return <Tag color="processing">正在发布</Tag>;
+  }
+};
 
 export default function Page({
   hegiht = '75vh',
@@ -131,18 +144,7 @@ export default function Page({
         title: '状态',
         dataIndex: 'status',
         key: 'status',
-        render: (text, prm) => {
-          switch (prm.status) {
-            case 2:
-              return <Tag color="error">全部发布失败</Tag>;
-            case 1:
-              return <Tag color="success">全部发布成功</Tag>;
-            case 3:
-              return <Tag color="warning">部分发布成功</Tag>;
-            case 0:
-              return <Tag color="processing">正在发布</Tag>;
-          }
-        },
+        render: (text, prm) => <PubRecordStatusTag status={prm.status} />,
         width: 100,
       },
       {

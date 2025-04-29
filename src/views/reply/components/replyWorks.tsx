@@ -1,6 +1,6 @@
 import { toolsApi } from '@/api/tools';
 import { icpCreateComment, WorkData } from '@/icp/reply';
-import { Button, Form, Input, Modal, Tooltip } from 'antd';
+import { Button, Form, Input, Modal, Tooltip, Space, message } from 'antd';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import logoAi from '@/assets/logoAi.png';
 import { SendOutlined } from '@ant-design/icons';
@@ -38,8 +38,16 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
    * 创建评论
    */
   async function createComment(content: string) {
-    const res = await icpCreateComment(accountId, workData!.dataId, content);
-    console.log('----- res', res);
+    // try {
+      const res = await icpCreateComment(accountId, workData!.dataId, content);
+      // if (res) {
+        message.success('评论成功');
+        setIsModalOpen(false);
+        form.resetFields();
+      // }
+    // } catch (error) {
+    //   message.error('评论失败，请重试');
+    // }
   }
 
   async function onFinish(values: FormData) {
@@ -70,44 +78,46 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
         open={isModalOpen}
         onCancel={handleCancel}
         footer={null}
-        width={400}
+        width={500}
+        className="reply-works-modal"
       >
-        <div className="p-5">
+        <div className="p-6">
           <Form
             form={form}
             name="basic"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
+            layout="vertical"
             initialValues={{ remember: true }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
             <Form.Item
-              label="评论"
+              label="评论内容"
               name="content"
               rules={[{ required: true, message: '请输入评论!' }]}
             >
-              <Input />
+              <Input.TextArea rows={4} />
             </Form.Item>
-            <p className="text-right">
+            <div className="flex justify-end items-center gap-4">
               <Tooltip title="获取AI建议">
                 <img
                   src={logoAi}
                   alt="logo"
-                  width={40}
+                  width={32}
                   onClick={getAiContent}
+                  className="cursor-pointer hover:opacity-80 transition-opacity"
                 />
               </Tooltip>
-
               <Tooltip title="发送">
                 <Button
+                  type="primary"
                   shape="circle"
                   htmlType="submit"
                   icon={<SendOutlined />}
+                  className="flex items-center justify-center"
                 />
               </Tooltip>
-            </p>
+            </div>
           </Form>
         </div>
       </Modal>

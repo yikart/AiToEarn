@@ -10,6 +10,7 @@ import { FFmpegVideoUtil } from '../../util/ffmpeg/video';
 import { Controller, Icp, Inject, Scheduled } from '../core/decorators';
 import { ToolsService } from './service';
 import { clearOldLogs } from '../../global/log';
+import { toolsApi } from '../api/tools';
 
 @Controller()
 export class ToolsController {
@@ -42,6 +43,26 @@ export class ToolsController {
       return res;
     } catch (error) {
       console.log('--- ICP_TOOL_DOWN_FILE error ---', error);
+      return '';
+    }
+  }
+
+  /**
+   * 下载文件
+   */
+  @Icp('ICP_TOOL_UP_FILE')
+  async upFile(
+    event: Electron.IpcMainInvokeEvent,
+    path: string,
+    secondPath?: string,
+  ): Promise<string> {
+    try {
+      const res = await toolsApi.upFile(path, secondPath);
+      console.log('----- ICP_TOOL_UP_FILE ---', res);
+
+      return res;
+    } catch (error) {
+      console.log('--- ICP_TOOL_UP_FILE error ---', error);
       return '';
     }
   }

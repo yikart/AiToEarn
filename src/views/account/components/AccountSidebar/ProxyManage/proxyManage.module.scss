@@ -1,0 +1,27 @@
+.proxyManage {
+
+}
+.accountCount {
+  :global {
+    .accountCount-count {
+      display: inline-block;
+      margin-right: 5px;
+    }
+    .anticon  {
+      color: var(--grayColor8);
+      cursor: pointer;
+    }
+  }
+}
+
+.proxyInput {
+  input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: none;
+  }
+}

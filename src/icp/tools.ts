@@ -33,3 +33,24 @@ export async function ipcDownFile(url: string, name?: string) {
   );
   return res;
 }
+
+/**
+ * 日志路径获取
+ * @param log
+ */
+export async function ipcGetLogFlies() {
+  const res: string[] = await window.ipcRenderer.invoke('GLOBAL_LOG_GET_FLIES');
+  return res;
+}
+
+/**
+ * 本地文件上传
+ * @param path
+ */
+export async function ipcUpFlie(path: string) {
+  const res: string[] = await window.ipcRenderer.invoke(
+    'ICP_TOOL_UP_FILE',
+    path,
+  );
+  return res;
+}

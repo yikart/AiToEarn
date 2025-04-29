@@ -6,7 +6,7 @@
  * @Description: 评论列表
  */
 import { CommentData, icpGetCommentList, WorkData } from '@/icp/reply';
-import { Avatar, Button, Card, Col, Modal, Row, Tooltip } from 'antd';
+import { Avatar, Button, Card, Col, Modal, Row, Tooltip, Space, Typography } from 'antd';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import Meta from 'antd/es/card/Meta';
 import ReplyComment, { ReplyCommentRef } from './replyComment';
@@ -102,43 +102,74 @@ const Com = forwardRef<CommentListRef>((props: any, ref) => {
         onCancel={handleCancel}
         footer={null}
         width={1200}
+        className="comment-list-modal"
       >
-        <Row>
-          <Col span={6}>{WorkDataDom()}</Col>
+        <Row gutter={[24, 0]}>
+          <Col span={6}>
+            <div className="sticky top-4">
+              {WorkDataDom()}
+            </div>
+          </Col>
           <Col span={18}>
-            {commentList.map((item) => (
-              <Card key={item.commentId} className="mb-3">
-                <p>
-                  <Avatar src={item.headUrl} />
-                  {/* <p>{item.nikeName}</p> */}
-                  {item.content}
-                  &nbsp;&nbsp;
-                  <Tooltip title="回复">
-                    <MessageOutlined onClick={() => openReplyComment(item)} />
-                  </Tooltip>
-                </p>
-                <div className="ml-6">
-                  {item.subCommentList.map((subItem) => (
-                    <p key={subItem.commentId}>
-                      <Avatar src={subItem.headUrl} />
-                      &nbsp;&nbsp;
-                      {subItem.content}
-                    </p>
-                  ))}
-                </div>
-              </Card>
-            ))}
-
-            {commentList.length > 0 && (
-              <p className="text-center">
-                <Button
-                  type="link"
-                  onClick={() => getCommentList(accountId, workData!)}
+            <div className="space-y-4">
+              {commentList.map((item) => (
+                <Card 
+                  key={item.commentId} 
+                  className="comment-card"
+                  bodyStyle={{ padding: '16px' }}
                 >
-                  加载更多
-                </Button>
-              </p>
-            )}
+                  <div className="flex items-start gap-3">
+                    <Avatar src={item.headUrl} size="large" />
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <Typography.Text strong>{item.nikeName}</Typography.Text>
+                        <Tooltip title="回复">
+                          <Button 
+                            type="text" 
+                            icon={<MessageOutlined />} 
+                            onClick={() => openReplyComment(item)}
+                            className="text-gray-500 hover:text-blue-500"
+                          />
+                        </Tooltip>
+                      </div>
+                      <Typography.Paragraph className="mb-0">
+                        {item.content}
+                      </Typography.Paragraph>
+                      
+                      {item.subCommentList.length > 0 && (
+                        <div className="mt-4 space-y-3 pl-4 border-l-2 border-gray-100">
+                          {item.subCommentList.map((subItem) => (
+                            <div key={subItem.commentId} className="flex items-start gap-3">
+                              <Avatar src={subItem.headUrl} size="small" />
+                              <div>
+                                <Typography.Text strong className="mr-2">
+                                  {subItem.nikeName}
+                                </Typography.Text>
+                                <Typography.Text>
+                                  {subItem.content}
+                                </Typography.Text>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              ))}
+
+              {commentList.length > 0 && (
+                <div className="text-center mt-4">
+                  <Button
+                    type="link"
+                    onClick={() => getCommentList(accountId, workData!)}
+                    className="text-blue-500 hover:text-blue-600"
+                  >
+                    加载更多
+                  </Button>
+                </div>
+              )}
+            </div>
           </Col>
         </Row>
       </Modal>

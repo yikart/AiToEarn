@@ -1,5 +1,5 @@
 import { Button, Modal, Tag, Divider, Row, Col, message } from 'antd';
-import { Task, TaskStatusName, TaskTypeName, TaskArticle } from '@@/types/task';
+import { Task, TaskTypeName, TaskArticle } from '@@/types/task';
 import { PubType } from '@@/publish/PublishEnum';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { taskApi } from '@/api/task';
@@ -9,7 +9,6 @@ import {
   TeamOutlined,
   TagOutlined,
   DollarOutlined,
-  FileTextOutlined,
   CopyOutlined,
 } from '@ant-design/icons';
 import ChooseAccountModule from '@/views/publish/components/ChooseAccountModule/ChooseAccountModule';
@@ -239,14 +238,18 @@ const Com = forwardRef<TaskInfoRef, TaskInfoProps>((props: any, ref) => {
                     <h3 className={styles.sectionTitle}>文章详情</h3>
                     <div className={styles.articleInfo}>
                       <div className={styles.articleInfoItem}>
-                        <span className={styles.articleInfoLabel}>文章标题:</span>
+                        <span className={styles.articleInfoLabel}>
+                          文章标题:
+                        </span>
                         <span className={styles.articleInfoValue}>
                           {taskInfo.dataInfo.title || '未知'}
                         </span>
                       </div>
 
                       <div className={styles.articleInfoItem}>
-                        <span className={styles.articleInfoLabel}>文章描述:</span>
+                        <span className={styles.articleInfoLabel}>
+                          文章描述:
+                        </span>
                         <span className={styles.articleInfoValue}>
                           {taskInfo.dataInfo.desc || '暂无描述'}
                         </span>
@@ -285,4 +288,4 @@ const Com = forwardRef<TaskInfoRef, TaskInfoProps>((props: any, ref) => {
 
 Com.displayName = 'ArticleInfo';
 
-export default Com; 
+export default Com;
