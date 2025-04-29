@@ -1,6 +1,6 @@
 import { toolsApi } from '@/api/tools';
 import { icpCreateComment, WorkData } from '@/icp/reply';
-import { Button, Form, Input, Modal, Tooltip, Space } from 'antd';
+import { Button, Form, Input, Modal, Tooltip, Space, message } from 'antd';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import logoAi from '@/assets/logoAi.png';
 import { SendOutlined } from '@ant-design/icons';
@@ -38,8 +38,16 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
    * 创建评论
    */
   async function createComment(content: string) {
-    const res = await icpCreateComment(accountId, workData!.dataId, content);
-    console.log('----- res', res);
+    // try {
+      const res = await icpCreateComment(accountId, workData!.dataId, content);
+      // if (res) {
+        message.success('评论成功');
+        setIsModalOpen(false);
+        form.resetFields();
+      // }
+    // } catch (error) {
+    //   message.error('评论失败，请重试');
+    // }
   }
 
   async function onFinish(values: FormData) {
