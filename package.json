@@ -3,7 +3,7 @@
   "build": {
     "appId": "cn.aitoearn.pc"
   },
-  "version": "0.7.0-alpha.4",
+  "version": "0.7.0-alpha.5",
   "main": "dist-electron/main/index.js",
   "description": "艺咖 win打包使用管理员的终端",
   "author": "艺咖",
