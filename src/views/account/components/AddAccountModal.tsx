@@ -40,11 +40,10 @@ const AddAccountModal = memo(
             <div className="addAccountModal_plats">
               {Array.from(AccountPlatInfoMap).map(([key, value]) => {
                 return (
-                  <Tooltip title={value.tips?.account}>
+                  <Tooltip title={value.tips?.account} key={key}>
                     <Button
                       type="text"
                       className="addAccountModal_plats-item"
-                      key={key}
                       onClick={async () => {
                         const res = await accountLogin(key);
                         if (!res) return;

@@ -11,9 +11,15 @@ import { Alert, Button, Checkbox, message, Modal, Tooltip } from 'antd';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { AccountInfo } from '../../../account/comment';
 import { LoadingOutlined } from '@ant-design/icons';
-import { accountLogin, acpAccountLoginCheck } from '../../../../icp/account';
+import {
+  accountLogin,
+  acpAccountLoginCheck,
+  icpProxyCheck,
+} from '../../../../icp/account';
 import { AccountStatus } from '../../../../../commont/AccountEnum';
 import { AvatarPlat } from '../PubProgressModule/PubProgressModule';
+import { AccountGroupItem, useAccountStore } from '@/store/account';
+import { useShallow } from 'zustand/react/shallow';
 
 export interface IPubAccountDetModuleRef {
   // 打开弹框并且开始检测
@@ -38,6 +44,8 @@ export interface IPubAccountDetModuleProps {
   tips?: string;
   // 是否需要footer操作栏
   isFooter?: boolean;
+  // 是否需要校验代理地址
+  isCheckProxy?: boolean;
 }
 
 // 发布用户检测
@@ -53,6 +61,7 @@ const PubAccountDetModule = memo(
         title = '发布检测',
         tips = '以下账号将发布至平台',
         isFooter = true,
+        isCheckProxy = false,
       }: IPubAccountDetModuleProps,
       ref: ForwardedRef<IPubAccountDetModuleRef>,
     ) => {
@@ -64,6 +73,15 @@ const PubAccountDetModule = memo(
       );
       const [progress, setProgress] = useState(0);
       const [isFilterAccountOl, setIsFilterAccountOl] = useState(false);
+      // 代理失效的账户组Map
+      const [proxyInvalidAccountMap, setProxyInvalidAccountMap] = useState<
+        Map<number, AccountGroupItem>
+      >(new Map());
+      const { accountGroupMap } = useAccountStore(
+        useShallow((state) => ({
+          accountGroupMap: state.accountGroupMap,
+        })),
+      );
 
       useEffect(() => {
         if (open) {
@@ -84,34 +102,77 @@ const PubAccountDetModule = memo(
         if (onClose) onClose();
       };
 
+      // 检测账户状态
       const retLoginStatusCore = async (account: AccountInfo) => {
         const res = await acpAccountLoginCheck(account.type, account.uid);
         setProgress((prevProgress) => prevProgress + 1);
         return res;
       };
 
+      // 检测代理地址有效性
+      const retProxyCheckCore = async (group: AccountGroupItem) => {
+        let status = true;
+        if (group.proxyIp) {
+          status = await icpProxyCheck(group.proxyIp);
+        }
+        return {
+          status,
+          group,
+        };
+      };
+
       const imperative: IPubAccountDetModuleRef = {
         async startDet() {
+          setProxyInvalidAccountMap(new Map());
           setDisabledIdSet(new Set([]));
           setOpen(true);
           setDetLoading(true);
 
-          const tasks: Promise<AccountInfo>[] = [];
+          // 账户状态
+          const tasksAccountStatus: Promise<AccountInfo>[] = [];
+          // 代理地址有效性检测
+          const tasksProxyCheck: Promise<{
+            status: boolean;
+            group: AccountGroupItem;
+          }>[] = [];
+          // 代理地址需要检测的账户组
+          const proxyGroupSet = new Set<number>([]);
           for (let i = 0; i < accounts.length; i++) {
             const account = accounts[i];
-            tasks.push(retLoginStatusCore(account));
+            tasksAccountStatus.push(retLoginStatusCore(account));
+
+            if (isCheckProxy) {
+              if (!proxyGroupSet.has(account.groupId!)) {
+                tasksProxyCheck.push(
+                  retProxyCheckCore(accountGroupMap.get(account.groupId!)!),
+                );
+                proxyGroupSet.add(account.groupId!);
+              }
+            }
           }
-          const res = await Promise.all(tasks);
+
+          const resGroupProxyStatus = await Promise.all(tasksProxyCheck);
+          const resAccountStatus = await Promise.all(tasksAccountStatus);
           setTimeout(() => {
-            if (onDetFinish) onDetFinish(res);
+            if (onDetFinish) onDetFinish(resAccountStatus);
             setDetLoading(false);
 
             const disabledIdSet = new Set<number>([]);
-            res.map((v) =>
+            resAccountStatus.map((v) =>
               v.status === AccountStatus.DISABLE ? disabledIdSet.add(v.id) : '',
             );
             setDisabledIdSet(disabledIdSet);
             setProgress(0);
+
+            resGroupProxyStatus.map((v) => {
+              if (!v.status) {
+                setProxyInvalidAccountMap((prevState) => {
+                  const newState = new Map<number, AccountGroupItem>(prevState);
+                  newState.set(v.group.id, v.group);
+                  return newState;
+                });
+              }
+            });
           }, 100);
         },
       };
@@ -129,27 +190,53 @@ const PubAccountDetModule = memo(
           <div className={styles.pubAccountDetModule}>
             <div className="pubAccountDetModule-tips">
               {!detLoading ? (
-                disabledIdSet.size === 0 ? (
-                  `${tips}`
-                ) : (
-                  <Alert
-                    message={
-                      <div className={styles.loginStatusDisable}>
-                        <span>账号登录状态失效，点击账户重新登录</span>
-                        <Checkbox
-                          checked={isFilterAccountOl}
-                          onChange={(e) =>
-                            setIsFilterAccountOl(e.target.checked)
-                          }
-                        >
-                          过滤在线账户
-                        </Checkbox>
-                      </div>
-                    }
-                    type="error"
-                    showIcon
-                  />
-                )
+                <>
+                  {disabledIdSet.size === 0 ? (
+                    proxyInvalidAccountMap.size === 0 && `${tips}`
+                  ) : (
+                    <Alert
+                      message={
+                        <div className={styles.loginStatusDisable}>
+                          <span>账号登录状态失效，点击账户重新登录</span>
+                          <Checkbox
+                            checked={isFilterAccountOl}
+                            onChange={(e) =>
+                              setIsFilterAccountOl(e.target.checked)
+                            }
+                          >
+                            过滤在线账户
+                          </Checkbox>
+                        </div>
+                      }
+                      type="error"
+                      showIcon
+                    />
+                  )}
+
+                  {proxyInvalidAccountMap.size !== 0 && (
+                    <Alert
+                      message={
+                        <div>
+                          <span>以下代理不可用，请调整后重试：</span>
+                          <ul>
+                            {Array.from(proxyInvalidAccountMap).map(
+                              ([_, v]) => {
+                                return (
+                                  <li key={v.id}>
+                                    用户组：{v.name}，代理地址：{v.proxyIp}{' '}
+                                    不可用
+                                  </li>
+                                );
+                              },
+                            )}
+                          </ul>
+                        </div>
+                      }
+                      type="error"
+                      showIcon
+                    />
+                  )}
+                </>
               ) : (
                 <>
                   正在检测账号状态 {progress} / {accounts.length}
@@ -191,11 +278,13 @@ const PubAccountDetModule = memo(
                         <div
                           className={[
                             'pubAccountDetModule-accounts-name',
-                            disabledIdSet.has(v.id) &&
-                              'pubAccountDetModule-accounts-disable',
-                            !disabledIdSet.has(v.id) &&
-                              !detLoading &&
-                              'pubAccountDetModule-accounts-ol',
+
+                            disabledIdSet.has(v.id) ||
+                            proxyInvalidAccountMap.get(v.groupId)
+                              ? 'pubAccountDetModule-accounts-disable'
+                              : !disabledIdSet.has(v.id) &&
+                                !detLoading &&
+                                'pubAccountDetModule-accounts-ol',
                           ].join(' ')}
                         >
                           <div className="pubAccountDetModule-accounts-name-wrapper">
@@ -219,7 +308,9 @@ const PubAccountDetModule = memo(
               <Button
                 type="primary"
                 loading={detLoading}
-                disabled={disabledIdSet.size !== 0}
+                disabled={
+                  disabledIdSet.size !== 0 || proxyInvalidAccountMap.size !== 0
+                }
                 onClick={() => {
                   setOpen(false);
                   if (onPubClick) onPubClick();

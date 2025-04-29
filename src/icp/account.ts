@@ -138,3 +138,8 @@ export async function icpAccountEditGroup(id: number, groupId: number) {
     groupId,
   );
 }
+
+// 代理地址有效性检测
+export async function icpProxyCheck(proxy: string) {
+  return await window.ipcRenderer.invoke('ICP_ACCOUNTS_PROXY_CHECK', proxy);
+}

@@ -109,5 +109,5 @@ export class AccountModel extends TempModel {
     comment: '关联组，与 AccountGroupModel表 id关联',
     default: 1,
   })
-  groupId?: number;
+  groupId!: number;
 }

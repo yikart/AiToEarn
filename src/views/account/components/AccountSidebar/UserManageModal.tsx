@@ -2,6 +2,7 @@ import {
   ForwardedRef,
   forwardRef,
   memo,
+  useImperativeHandle,
   useMemo,
   useRef,
   useState,
@@ -17,7 +18,7 @@ import {
   Tooltip,
 } from 'antd';
 import styles from './AccountSidebar.module.scss';
-import { useAccountStore } from '../../../../store/account';
+import { useAccountStore } from '@/store/account';
 import { useShallow } from 'zustand/react/shallow';
 import { AccountModel } from '../../../../../electron/db/models/account';
 import { AccountPlatInfoMap } from '../../comment';
@@ -27,15 +28,17 @@ import {
   DeleteOutlined,
   WarningOutlined,
 } from '@ant-design/icons';
-import { AvatarPlat } from '../../../publish/components/PubProgressModule/PubProgressModule';
+import { AvatarPlat } from '@/views/publish/components/PubProgressModule/PubProgressModule';
 import {
   icpAccountEditGroup,
   icpDeleteAccounts,
   icpEditDeleteAccountGroup,
-} from '../../../../icp/account';
+} from '@/icp/account';
 import UserManageSidebar from './UserManageSidebar';
 
-export interface IUserManageModalRef {}
+export interface IUserManageModalRef {
+  setActiveGroup: (groupId: number) => void;
+}
 
 export interface IUserManageModalProps {
   open: boolean;
@@ -225,6 +228,11 @@ const UserManageModal = memo(
         return accountGroupList.find((v) => v.id === activeGroup)?.children;
       }, [accountMap, activeGroup, accountGroupList]);
 
+      const imperativeHandle: IUserManageModalRef = {
+        setActiveGroup,
+      };
+      useImperativeHandle(ref, () => imperativeHandle);
+
       return (
         <>
           <Modal
@@ -264,6 +272,7 @@ const UserManageModal = memo(
           <Modal
             open={open}
             title="账号管理器"
+            zIndex={10001}
             footer={null}
             width={1000}
             onCancel={close}
@@ -280,6 +289,9 @@ const UserManageModal = memo(
               />
 
               <div className="userManage-content">
+                {/*<div className="userManage-content-head">*/}
+                {/*  <div></div>*/}
+                {/*</div>*/}
                 <Table<AccountModel>
                   columns={columns}
                   dataSource={accountListLast}

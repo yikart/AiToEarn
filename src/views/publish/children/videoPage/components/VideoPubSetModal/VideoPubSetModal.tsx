@@ -334,6 +334,7 @@ const VideoPubSetModal = memo(
           />
           <PubAccountDetModule
             ref={pubAccountDetModuleRef}
+            isCheckProxy={true}
             accounts={videoListChoose
               .map((v) => v.account)
               .filter((v) => v !== undefined)}

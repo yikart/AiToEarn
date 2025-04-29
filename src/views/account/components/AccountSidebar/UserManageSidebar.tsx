@@ -5,14 +5,14 @@ import {
   PlusOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import { useAccountStore } from '../../../../store/account';
+import { useAccountStore } from '@/store/account';
 import { useShallow } from 'zustand/react/shallow';
 import styles from './AccountSidebar.module.scss';
 import {
   icpEditDeleteAccountGroup,
   icpAddAccountGroup,
   icpDeleteAccountGroup,
-} from '../../../../icp/account';
+} from '@/icp/account';
 import { defaultAccountGroupId } from '../../../../../commont/AccountEnum';
 import { Menu, MenuItem } from '@electron-uikit/contextmenu/renderer';
 import { ReactSortable } from 'react-sortablejs';

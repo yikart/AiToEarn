@@ -209,6 +209,7 @@ export default function Page() {
         onClose={() => setPubProgressModuleOpen(false)}
       />
       <PubAccountDetModule
+        isCheckProxy={true}
         ref={pubAccountDetModuleRef}
         accounts={imageAccounts
           .map((v) => v.account)

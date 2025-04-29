@@ -16,6 +16,7 @@ import { AccountModel } from '../../db/models/account';
 import windowOperate from '../../util/windowOperate';
 import { SendChannelEnum } from '../../../commont/UtilsEnum';
 import { AccountGroupModel } from '../../db/models/accountGroup';
+import { proxyCheck } from '../../plat/coomont';
 
 @Controller()
 export class AccountController {
@@ -244,6 +245,15 @@ export class AccountController {
     data: Partial<AccountGroupModel>,
   ): Promise<any> {
     return this.accountService.editAccountGroup(data);
+  }
+
+  // 代理地址有效性检测
+  @Icp('ICP_ACCOUNTS_PROXY_CHECK')
+  async proxyCheck(
+    event: Electron.IpcMainInvokeEvent,
+    proxy: string,
+  ): Promise<any> {
+    return await proxyCheck(proxy);
   }
 
   @Et('ET_UP_ALL_ACCOUNT_STATISTICS') // 更新所有的账户的统计信息

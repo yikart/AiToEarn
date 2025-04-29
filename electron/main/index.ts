@@ -103,10 +103,10 @@ async function createWindow() {
     if (splashWindow) {
       win?.show();
       // 在主窗口显示后再打开开发者工具
-      win?.webContents.openDevTools({ mode: 'bottom' });
+      win?.webContents.openDevTools({ mode: 'right' });
 
       // if (process.env.NODE_ENV === 'development') {
-      //   win?.webContents.openDevTools({ mode: 'bottom' });
+      //   win?.webContents.openDevTools({ mode: 'right' });
       // }
 
       // if (VITE_DEV_SERVER_URL) {

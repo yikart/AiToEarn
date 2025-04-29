@@ -18,6 +18,7 @@ export interface IAccountStore {
   accountMap: Map<number, AccountInfo>;
   unBindFn?: () => void;
   accountGroupList: AccountGroupItem[];
+  accountGroupMap: Map<number, AccountGroupItem>;
 }
 
 const store: IAccountStore = {
@@ -25,6 +26,7 @@ const store: IAccountStore = {
   accountList: [],
   // 分组的账户数据
   accountGroupList: [],
+  accountGroupMap: new Map([]),
   accountMap: new Map([]),
   unBindFn: undefined,
 };
@@ -55,7 +57,6 @@ export const useAccountStore = create(
         async getAccountList() {
           const accountMap = new Map<number, AccountInfo>([]);
           const result = await icpGetAccountList();
-          console.log(result);
           if (!result) return;
 
           for (const item of result) {
@@ -85,14 +86,16 @@ export const useAccountStore = create(
             accountGroupMap.set(v.id, accountGroupItem);
           });
           get().accountList.map((v) => {
-            accountGroupMap.get(v.groupId!)!.children.push(v);
+            accountGroupMap.get(v.groupId!)!.children?.push(v);
           });
 
           accountGroupList.sort((a, b) => {
             return a.rank - b.rank;
           });
+
           set({
             accountGroupList,
+            accountGroupMap,
           });
         },
 

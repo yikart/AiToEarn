@@ -298,6 +298,15 @@
       position: relative;
       padding: 10px;
 
+      &-head {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        &-proxy {
+
+        }
+      }
+
       .ant-drawer-header {
         height: 40px;
         .ant-drawer-close {

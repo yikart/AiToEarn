@@ -9,13 +9,13 @@ import {
 import styles from './AccountSidebar.module.scss';
 import { AccountInfo, AccountPlatInfoMap } from '../../comment';
 import { Avatar, Button, Collapse, message, Popover, Tooltip } from 'antd';
-import { accountLogin, acpAccountLoginCheck } from '../../../../icp/account';
+import { accountLogin, acpAccountLoginCheck } from '@/icp/account';
 import AddAccountModal from '../AddAccountModal';
 import {
   AccountStatus,
   defaultAccountGroupId,
 } from '../../../../../commont/AccountEnum';
-import {
+import Icon, {
   CheckCircleOutlined,
   PlusOutlined,
   UserOutlined,
@@ -26,8 +26,10 @@ import PubAccountDetModule, {
   IPubAccountDetModuleRef,
 } from '../../../publish/components/PubAccountDetModule/PubAccountDetModule';
 import { useShallow } from 'zustand/react/shallow';
-import { useAccountStore } from '../../../../store/account';
-import UserManageModal from './UserManageModal';
+import { useAccountStore } from '@/store/account';
+import UserManageModal, { IUserManageModalRef } from './UserManageModal';
+import ProxyManage from '@/views/account/components/AccountSidebar/ProxyManage';
+import ProxyIcon from '@/assets/svgs/proxy.svg?react';
 
 export interface IAccountSidebarRef {}
 
@@ -138,6 +140,8 @@ const AccountSidebar = memo(
         })),
       );
       const [userManageModalOpen, setUserManageModalOpen] = useState(false);
+      const [proxyManageOpen, setProxyManageOpen] = useState(false);
+      const userManageModalRef = useRef<IUserManageModalRef>(null);
 
       // 在组件内部过滤账号列表，而不是在 useAccountStore 中过滤
       const accountList = useMemo(() => {
@@ -148,7 +152,16 @@ const AccountSidebar = memo(
 
       return (
         <>
+          <ProxyManage
+            open={proxyManageOpen}
+            onCancel={() => setProxyManageOpen(false)}
+            onExamineAccountClick={(groupId) => {
+              userManageModalRef.current?.setActiveGroup(groupId);
+              setUserManageModalOpen(true);
+            }}
+          />
           <UserManageModal
+            ref={userManageModalRef}
             open={userManageModalOpen}
             onCancel={() => setUserManageModalOpen(false)}
           />
@@ -186,6 +199,16 @@ const AccountSidebar = memo(
                   ></Button>
                 </Tooltip>
               </div>
+              <div className="accountSidebar-top-box">
+                <Button
+                  icon={<Icon component={ProxyIcon} />}
+                  onClick={() => {
+                    setProxyManageOpen(true);
+                  }}
+                >
+                  代理管理器
+                </Button>
+              </div>
             </div>
 
             <Collapse
@@ -197,9 +220,9 @@ const AccountSidebar = memo(
                     <>
                       {v.name}
                       <span className="accountSidebar-userCount">
-                        {v.children.length}/
+                        {v.children?.length}/
                         {
-                          v.children.map(
+                          v.children?.map(
                             (v) => v.status === AccountStatus.USABLE,
                           ).length
                         }
@@ -208,7 +231,7 @@ const AccountSidebar = memo(
                   ),
                   children: (
                     <ul key={v.id} className="accountList">
-                      {v.children.map((account) => {
+                      {v.children?.map((account) => {
                         const platInfo = AccountPlatInfoMap.get(account.type)!;
                         return (
                           <li
