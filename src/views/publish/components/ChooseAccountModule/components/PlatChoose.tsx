@@ -286,7 +286,7 @@ const PlatChoose = memo(
 
               <div className="platChoose-con">
                 {currAccountList && (
-                  <>
+                  <div className="platChoose-con-wrapper">
                     {!disableAllSelect ? (
                       <Checkbox
                         indeterminate={
@@ -369,7 +369,13 @@ const PlatChoose = memo(
                         );
                       })}
                     </div>
-                  </>
+                  </div>
+                )}
+
+                {AccountPlatInfoMap.get(activePlat!)?.tips && (
+                  <div className="platChoose-tips">
+                    {AccountPlatInfoMap.get(activePlat!)?.tips?.publish}
+                  </div>
                 )}
               </div>
             </>

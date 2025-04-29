@@ -36,6 +36,17 @@
 
     .platChoose-con {
       width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      &-wrapper {
+        width: 100%;
+      }
+    }
+
+    .platChoose-tips {
+      color: var(--errerColor);
+      font-size: var(--fs-xs);
     }
 
     .platChoose-accounts {

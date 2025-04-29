@@ -45,6 +45,13 @@ export interface IAccountPlatInfo {
       imagesMax: number;
     };
   };
+  // 平台提示
+  tips?: {
+    // 添加账号时候的提示
+    account: string;
+    // 在发布时添加账号时候的提示
+    publish: string;
+  };
 }
 
 // 支持所有发布
@@ -105,6 +112,11 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
         imgTextConfig: {
           imagesMax: 35,
         },
+      },
+      tips: {
+        account: '首次登录的抖音号可能会频繁掉线，通常将在重登2-3次后趋于稳定',
+        publish:
+          '首次登录的抖音账号请先在账户单独完成一次内容发布后再做一键发布',
       },
     },
   ],
