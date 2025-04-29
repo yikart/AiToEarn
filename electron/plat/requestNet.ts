@@ -49,47 +49,47 @@ const requestNet = <T = any>({
 }: IRequestNetParams): Promise<IRequestNetResult<T>> => {
   return new Promise(async (resolve, reject) => {
     try {
-      // let customSession: Session;
+      let customSession: Session;
 
       // 如果传入了代理配置，动态设置代理
-      // if (proxy) {
-      //   const proxyFormat = convertToProxyFormat(proxy);
-      //   console.log('代理地址：', proxyFormat);
-      //   customSession = session.fromPartition(
-      //     `persist:proxy-session-${Date.now()}`,
-      //   );
-      //   await customSession.setProxy({ proxyRules: proxyFormat });
-      //
-      //   headers = {
-      //     ...(headers ? headers : {}),
-      //     ...(proxy
-      //       ? {
-      //           'x-forwarded-for': proxy,
-      //         }
-      //       : {}),
-      //   };
-      // }
-      //
-      // if (formData) {
-      //   headers = {
-      //     ...(headers ? headers : {}),
-      //     ...formData.getHeaders(),
-      //   };
-      // }
+      if (proxy) {
+        const proxyFormat = convertToProxyFormat(proxy);
+        console.log('代理地址：', proxyFormat);
+        customSession = session.fromPartition(
+          `persist:proxy-session-${Date.now()}`,
+        );
+        await customSession.setProxy({ proxyRules: proxyFormat });
+
+        headers = {
+          ...(headers ? headers : {}),
+          ...(proxy
+            ? {
+                'x-forwarded-for': proxy,
+              }
+            : {}),
+        };
+      }
+
+      if (formData) {
+        headers = {
+          ...(headers ? headers : {}),
+          ...formData.getHeaders(),
+        };
+      }
 
       const req = net.request({
         method: method || 'GET',
         url,
         // 如果有代理，使用自定义 session
-        // session: proxy ? customSession! : undefined,
+        session: proxy ? customSession! : undefined,
         headers,
       });
 
       // 设置请求头
       if (headers) {
-        // Object.entries(headers).forEach(([key, value]) => {
-        //   req.setHeader(key, value as string);
-        // });
+        Object.entries(headers).forEach(([key, value]) => {
+          req.setHeader(key, value as string);
+        });
       }
 
       // 处理响应
@@ -129,28 +129,24 @@ const requestNet = <T = any>({
         reject(error);
       });
 
-      if (body) {
-        req.write(typeof body === 'string' ? body : JSON.stringify(body));
-        // if (formData) {
-        //   formData.pipe(req as any);
-        //   const cReq = formData.submit(url!, (err, res) => {
-        //     cReq.end();
-        //   });
-        // } else {
-        //   if (isFile) {
-        //     req.setHeader('Content-Type', 'application/octet-stream');
-        //     req.write(body);
-        //   } else {
-        //     // 发送请求体
-        //     if (body) {
-        //       req.setHeader('Content-Type', 'application/json');
-        //       req.write(typeof body === 'string' ? body : JSON.stringify(body));
-        //     }
-        //   }
-        // }
+      if (formData) {
+        formData.pipe(req as any);
+        const cReq = formData.submit(url!, (err, res) => {
+          cReq.end();
+        });
+      } else {
+        if (isFile) {
+          req.setHeader('Content-Type', 'application/octet-stream');
+          req.write(body);
+        } else {
+          // 发送请求体
+          if (body) {
+            req.setHeader('Content-Type', 'application/json');
+            req.write(typeof body === 'string' ? body : JSON.stringify(body));
+          }
+        }
+        req.end();
       }
-
-      req.end();
     } catch (error) {
       reject(error);
     }

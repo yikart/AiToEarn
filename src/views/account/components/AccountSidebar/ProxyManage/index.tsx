@@ -163,7 +163,13 @@ const ProxyManage = memo(
               </Button>
             </div>
           </Modal>
-          <Modal open={open} title="代理管理器" onCancel={onCancel} width={700}>
+          <Modal
+            open={open}
+            title="代理管理器"
+            onCancel={onCancel}
+            width={700}
+            footer={null}
+          >
             <div className={styles.proxyManage}>
               <Table<AccountGroupItem>
                 columns={columns}

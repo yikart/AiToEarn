@@ -477,6 +477,7 @@ export class Douyin extends PlatformBase {
   pubParamsParse(params: WorkDataModel): DouyinPlatformSettingType {
     const douyinParams = params.diffParams![AccountType.Douyin];
     return {
+      proxyIp: params.proxyIp || '',
       userDeclare: douyinParams?.selfDeclare,
       activity: douyinParams?.activitys?.map((v) => {
         return {

@@ -10,7 +10,10 @@ import { getVideoFile, IVideoFile } from '@/components/Choose/VideoChoose';
 import { accountLogin } from '@/icp/account';
 import { AccountType } from '../../../../../commont/AccountEnum';
 import { message } from 'antd';
-import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
+import {
+  PubStatus,
+  VisibleTypeEnum,
+} from '../../../../../commont/publish/PublishEnum';
 import lodash from 'lodash';
 import { VideoModel } from '../../../../../electron/db/models/video';
 import { getImgFile, IImgFile } from '../../../../components/Choose/ImgChoose';
@@ -451,10 +454,19 @@ export const useVideoPageStore = create(
               videoFileMap.set(videoPath, video);
               coverFileMap.set(coverPath, cover);
 
+              pubRecord.status = PubStatus.UNPUBLISH;
+              pubRecord.id = undefined;
+              pubRecord.failMsg = undefined;
+              pubRecord.dataId = undefined;
+              pubRecord.previewVideoLink = undefined;
+              pubRecord.previewVideoLink = undefined;
+
               const pubParams = {
+                ...pubRecord,
                 ...commonPubParams,
                 cover: cover,
                 describe: pubRecord.desc,
+                id: undefined,
               };
 
               videoListChoose.push({

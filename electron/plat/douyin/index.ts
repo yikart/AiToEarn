@@ -1,4 +1,4 @@
-import { BrowserWindow, net, screen, session } from 'electron';
+import { BrowserWindow, screen, session } from 'electron';
 import { CommonUtils } from '../../util/common';
 import path from 'path';
 import { FileUtils } from '../../util/file';
@@ -62,6 +62,8 @@ export type DouyinPlatformSettingType = {
   };
   // 背景音乐
   musicId?: string;
+  // 代理IP
+  proxyIp: string;
 };
 
 export class DouyinService {
@@ -156,13 +158,17 @@ export class DouyinService {
     return new Promise(async (resolve, reject) => {
       const cookieString = CommonUtils.convertCookieToJson(cookies);
       try {
-        const res = await this.makeRequest(this.getUserInfoUrl, {
-          method: 'GET',
-          headers: {
-            Cookie: cookieString,
+        const res = await this.makeRequest(
+          this.getUserInfoUrl,
+          {
+            method: 'GET',
+            headers: {
+              Cookie: cookieString,
+            },
+            timeout: 15000,
           },
-          timeout: 15000,
-        });
+          '',
+        );
 
         if (res.status_code !== 0) {
           reject(res.status_msg ?? '未知错误');
@@ -199,16 +205,20 @@ export class DouyinService {
     return new Promise(async (resolve, reject) => {
       const cookieString = CommonUtils.convertCookieToJson(cookies);
       try {
-        const res = await this.makeRequest(this.getDashboardUrl, {
-          method: 'POST',
-          headers: {
-            Cookie: cookieString,
+        const res = await this.makeRequest(
+          this.getDashboardUrl,
+          {
+            method: 'POST',
+            headers: {
+              Cookie: cookieString,
+            },
+            data: JSON.stringify({
+              recent_days: startDate && endDate ? 30 : 1,
+            }),
+            timeout: 15000,
           },
-          data: JSON.stringify({
-            recent_days: startDate && endDate ? 30 : 1,
-          }),
-          timeout: 15000,
-        });
+          '',
+        );
 
         if (res.status_code !== 0) {
           reject(res.status_msg ?? '未知错误');
@@ -335,13 +345,17 @@ export class DouyinService {
     return new Promise(async (resolve, reject) => {
       const cookieString = CommonUtils.convertCookieToJson(cookies);
       try {
-        const res = await this.makeRequest(this.getUserInfoUrl, {
-          method: 'GET',
-          headers: {
-            Cookie: cookieString,
+        const res = await this.makeRequest(
+          this.getUserInfoUrl,
+          {
+            method: 'GET',
+            headers: {
+              Cookie: cookieString,
+            },
+            timeout: 15000,
           },
-          timeout: 15000,
-        });
+          '',
+        );
 
         if (res.status_code === 0) {
           resolve({
@@ -369,6 +383,7 @@ export class DouyinService {
     filePath: string,
     cookieString: string,
     userUid: string,
+    proxy: string,
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -409,6 +424,7 @@ export class DouyinService {
             headers: requestHeadersInfo,
             timeout: 15000,
           },
+          proxy,
         );
 
         if (uploadImgRes['ResponseMetadata'].hasOwnProperty('Error')) {
@@ -431,6 +447,7 @@ export class DouyinService {
             'X-Storage-U': userUid,
           },
           'POST',
+          proxy,
         );
 
         if (imageUploadRes.code !== 2000) {
@@ -475,6 +492,7 @@ export class DouyinService {
             data: JSON.stringify(commitImgContent),
             timeout: 60000,
           },
+          proxy,
         );
 
         if (commitImg['ResponseMetadata'].hasOwnProperty('Error')) {
@@ -522,12 +540,18 @@ export class DouyinService {
           platformSetting.cover,
           cookieString,
           userUid,
+          platformSetting.proxyIp,
         );
         callback(20);
 
         // 上传视频 获取视频video_id参数值
         callback(30, '正在上传视频...');
-        const videoId = await this.uploadVideo(filePath, cookieString, userUid);
+        const videoId = await this.uploadVideo(
+          filePath,
+          cookieString,
+          userUid,
+          platformSetting.proxyIp,
+        );
         callback(60, '视频上传完成');
 
         // 发布视频参数
@@ -557,6 +581,7 @@ export class DouyinService {
             ...bdTicketHeaders,
           },
           body: publishVideoParams,
+          proxy: platformSetting.proxyIp,
         });
         callback(100, '发布完成');
 
@@ -628,6 +653,7 @@ export class DouyinService {
             imgUrl,
             cookieString,
             userUid,
+            platformSetting.proxyIp,
           );
 
           // 获取图片信息
@@ -653,15 +679,19 @@ export class DouyinService {
 
         console.log('抖音图文发布最终参数：', publishImgParams);
         // 发布图文
-        const publishResult = await this.makePublishRequest(this.publishUrl, {
-          method: 'POST',
-          headers: {
-            Cookie: cookieString,
-            'X-Secsdk-Csrf-Token': csrfToken,
-            ...bdTicketHeaders,
+        const publishResult = await this.makePublishRequest(
+          this.publishUrl,
+          {
+            method: 'POST',
+            headers: {
+              Cookie: cookieString,
+              'X-Secsdk-Csrf-Token': csrfToken,
+              ...bdTicketHeaders,
+            },
+            data: publishImgParams,
           },
-          data: publishImgParams,
-        });
+          platformSetting.proxyIp,
+        );
 
         if (publishResult.status === 403 || publishResult.data === null) {
           console.error(`发布失败，状态码403或返回数据为空`);
@@ -801,44 +831,20 @@ export class DouyinService {
   /**
    * 通用请求方法
    */
-  private async makeRequest(url: string, options: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const request = net.request({
+  private async makeRequest(
+    url: string,
+    options: any,
+    proxy: string,
+  ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      const res = await requestNet({
         method: options.method,
         url: url,
         headers: options.headers,
+        body: options.data,
+        proxy,
       });
-
-      // 发送请求体
-      if (options.data) {
-        request.write(
-          typeof options.data === 'string'
-            ? options.data
-            : JSON.stringify(options.data),
-        );
-      }
-
-      request.on('response', (response) => {
-        let data = '';
-        response.on('data', (chunk) => {
-          data += chunk;
-        });
-        response.on('end', () => {
-          const result = JSON.parse(data);
-          if (result) {
-            resolve(result);
-          } else {
-            console.error('Request failed:', result);
-            reject(new Error(result.msg || 'Request failed'));
-          }
-        });
-      });
-
-      request.on('error', (error) => {
-        console.error('Request error:', error);
-        reject(error);
-      });
-      request.end();
+      resolve(res.data);
     });
   }
 
@@ -848,50 +854,26 @@ export class DouyinService {
    * @param fileContent 文件内容
    * @param headers 请求头
    * @param method HTTP 方法
+   * @param proxy
    */
   private async uploadFile(
     url: string,
     fileContent: Buffer,
     headers: any,
     method: string = 'PUT',
+    proxy: string,
   ): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const request = net.request({
-        method: method,
+    return new Promise(async (resolve, reject) => {
+      const res = await requestNet({
+        method: method as 'POST',
         url: url,
         headers: headers,
+        body: fileContent,
+        isFile: true,
+        proxy,
       });
-
-      request.on('response', (response) => {
-        let data = '';
-        response.on('data', (chunk) => {
-          data += chunk;
-        });
-
-        response.on('end', () => {
-          try {
-            const result = data ? JSON.parse(data) : {};
-            resolve(result);
-          } catch (err) {
-            console.error('解析响应数据失败:', err);
-            resolve(response);
-          }
-        });
-      });
-
-      request.on('error', (error) => {
-        console.error('请求出错:', error);
-        reject(error);
-      });
-
-      // 写入请求体
-      try {
-        request.write(fileContent);
-        request.end();
-      } catch (err) {
-        console.error('写入请求体时出错:', err);
-        reject(err);
-      }
+      console.log(res);
+      resolve(res.data);
     });
   }
 
@@ -901,13 +883,17 @@ export class DouyinService {
   private async getUploadAuth(cookieString: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const authRes = await this.makeRequest(this.getUploadAuthUrl, {
-          method: 'GET',
-          headers: {
-            Cookie: cookieString,
+        const authRes = await this.makeRequest(
+          this.getUploadAuthUrl,
+          {
+            method: 'GET',
+            headers: {
+              Cookie: cookieString,
+            },
+            timeout: 15000,
           },
-          timeout: 15000,
-        });
+          '',
+        );
 
         if (
           !authRes.hasOwnProperty('status_code') ||
@@ -1293,14 +1279,18 @@ export class DouyinService {
   private async getUserUid(cookieString: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
-        const userInfoRes = await this.makeRequest(this.getUserInfoUrl, {
-          method: 'GET',
-          headers: {
-            Cookie: cookieString,
+        const userInfoRes = await this.makeRequest(
+          this.getUserInfoUrl,
+          {
+            method: 'GET',
+            headers: {
+              Cookie: cookieString,
+            },
+            dataType: 'json',
+            timeout: 15000,
           },
-          dataType: 'json',
-          timeout: 15000,
-        });
+          '',
+        );
 
         if (
           !userInfoRes.hasOwnProperty('status_code') ||
@@ -1324,11 +1314,13 @@ export class DouyinService {
    * @param filePath 视频文件路径
    * @param cookieString cookie字符串
    * @param userUid 用户ID
+   * @param proxy
    */
   private async uploadVideo(
     filePath: string,
     cookieString: string,
     userUid: string,
+    proxy: string,
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1376,6 +1368,7 @@ export class DouyinService {
             dataType: 'json',
             timeout: 15000,
           },
+          proxy,
         );
 
         if (uploadRes['ResponseMetadata'].hasOwnProperty('Error')) {
@@ -1442,6 +1435,7 @@ export class DouyinService {
                 'X-Storage-U': userUid,
               },
               'POST',
+              proxy,
             );
 
             if (uploadPartRes === null) {
@@ -1485,6 +1479,7 @@ export class DouyinService {
             'X-Storage-U': userUid,
           },
           'POST',
+          proxy,
         );
         console.log('分片合并结果:', uploadFinishRes);
 
@@ -1537,6 +1532,7 @@ export class DouyinService {
             dataType: 'json',
             timeout: 60000,
           },
+          proxy,
         );
         console.log('提交上传结果:', commitRes);
 
@@ -1921,6 +1917,7 @@ export class DouyinService {
             dataType: 'json',
             timeout: 15000,
           },
+          '',
         );
 
         resolve(bdRes);
@@ -1934,7 +1931,11 @@ export class DouyinService {
   /**
    * 发布专用请求方法
    */
-  private async makePublishRequest(url: string, options: any): Promise<any> {
+  private async makePublishRequest(
+    url: string,
+    options: any,
+    proxy: string,
+  ): Promise<any> {
     try {
       // 创建 FormData 对象
       const formData = new FormData();
@@ -1949,15 +1950,16 @@ export class DouyinService {
         }
       });
 
-      const response = await fetch(url, {
+      const response = await requestNet({
         method: options.method,
         headers: {
           ...options.headers,
         },
         body: formData,
+        proxy,
       });
 
-      const responseText = await response.text();
+      const responseText = await response.data;
 
       // 检查响应数据是否为空
       if (!responseText || responseText.trim() === '') {
@@ -1966,7 +1968,7 @@ export class DouyinService {
       }
 
       try {
-        const result = JSON.parse(responseText);
+        const result = responseText;
 
         if (!result) {
           console.error(`解析后的数据为空`);
@@ -2433,15 +2435,19 @@ export class DouyinService {
     const cookieString = CommonUtils.convertCookieToJson(cookie);
     const csrfToken = await this.getSecsdkCsrfToken(cookieString);
 
-    const res = await this.makePublishRequest(thisUri, {
-      method: 'POST',
-      headers: {
-        Cookie: cookieString,
-        'X-Secsdk-Csrf-Token': csrfToken,
-        referer: `https://www.douyin.com/video/${data.aweme_id}`,
+    const res = await this.makePublishRequest(
+      thisUri,
+      {
+        method: 'POST',
+        headers: {
+          Cookie: cookieString,
+          'X-Secsdk-Csrf-Token': csrfToken,
+          referer: `https://www.douyin.com/video/${data.aweme_id}`,
+        },
+        data: data,
       },
-      data: data,
-    });
+      '',
+    );
     return res;
   }
 
