@@ -89,6 +89,7 @@ class KwaiPub {
           body: {
             uploadType: 1,
           },
+          proxy: params.proxy,
         });
         console.log('创建视频：', preRes);
         if (!preRes.data.data) {
@@ -130,6 +131,7 @@ class KwaiPub {
           body: {
             uploadType: 1,
           },
+          proxy: params.proxy,
         });
         console.log(`分片上传完成：`, completeRes.data);
 
@@ -144,6 +146,7 @@ class KwaiPub {
             fileType: `video/${suffix}`,
             fileLength: filePartInfo.fileSize,
           },
+          proxy: params.proxy,
         });
         if (finishRes.data.result !== 1)
           throw new Error(finishRes.data.message);
@@ -161,6 +164,7 @@ class KwaiPub {
           url: '/rest/cp/works/v2/video/pc/upload/cover/upload',
           method: 'POST',
           cookie: params.cookies,
+          proxy: params.proxy,
         });
         console.log('上传封面结果：', coverRes.data);
 
@@ -206,6 +210,7 @@ class KwaiPub {
           method: 'POST',
           cookie: params.cookies,
           body: submitParams,
+          proxy: params.proxy,
         });
         console.log(`视频发布完成：`, submitRes.data);
         console.log(submitRes.data.result);

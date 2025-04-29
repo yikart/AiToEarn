@@ -346,6 +346,7 @@ export class WxSph extends PlatformBase {
           params.cookies!,
           params.videoPath!,
           {
+            proxy: params.proxyIp || '',
             mixInfo: params.mixInfo
               ? {
                   mixId: `${params.mixInfo.value}`,

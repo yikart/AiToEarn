@@ -89,6 +89,7 @@ export class Kwai extends PlatformBase {
     return new Promise(async (resolve) => {
       const result = await kwaiPub
         .pubVideo({
+          proxy: params.proxyIp || '',
           publishTime: params.timingTime?.getTime(),
           mentions: params.mentionedUserInfo.map((v) => v.label),
           topics: params.topics || [],

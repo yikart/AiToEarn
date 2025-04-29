@@ -195,4 +195,5 @@ export class WorkData extends TempModel {
   mentionedUserInfo!: ILableValue[];
 
   cookies?: CookiesType;
+  proxyIp?: string;
 }

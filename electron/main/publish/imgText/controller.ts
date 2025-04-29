@@ -61,6 +61,16 @@ export class ImgTextPubController {
       imgTextModels.map((v) => v.accountId),
     );
 
+    // 获取代理IP
+    const groupModels = await this.accountService.getAccountGroup();
+    for (let i = 0; i < accountList.length; i++) {
+      const account = accountList[i];
+      const group = groupModels.find((v) => v.id === account.groupId);
+      if (group && group.proxyIp) {
+        imgTextModels[i].proxyIp = group.proxyIp;
+      }
+    }
+
     // 发布
     const pubRes = await platController.imgTextPublish(
       imgTextModels,

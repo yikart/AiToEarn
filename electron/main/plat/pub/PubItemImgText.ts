@@ -67,6 +67,7 @@ export class PubItemImgText extends PubItemBase {
    * 更新图文记录
    */
   async uploadRecord() {
+    this.imgTextModel.proxyIp = undefined;
     EtEvent.emit('ET_PUBLISH_UPDATE_IMG_TEXT_PUL', this.imgTextModel);
   }
 }

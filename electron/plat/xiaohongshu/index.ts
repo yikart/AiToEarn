@@ -43,6 +43,7 @@ export type XSLPlatformSettingType = {
   cover: string;
   // 0 公共 1 私密 4 好友
   visibility_type: 0 | 1 | 4;
+  proxy: string;
 };
 
 const esec_token = 'ABrmhLmsdmsu9bCQ80qvGPN2CYSjEqwi5G1l2dirNUjaw%3D';
@@ -234,21 +235,29 @@ export class XiaohongshuService {
       .map((cookie) => `${cookie.name}=${cookie.value}`)
       .join('; ');
 
-    const userInfo = await this.makeRequest(this.getUserInfoUrl, {
-      method: 'GET',
-      headers: {
-        Cookie: cookieString,
-        Referer: this.loginUrl,
+    const userInfo = await this.makeRequest(
+      this.getUserInfoUrl,
+      {
+        method: 'GET',
+        headers: {
+          Cookie: cookieString,
+          Referer: this.loginUrl,
+        },
       },
-    });
+      '',
+    );
 
-    const fansInfo = await this.makeRequest(this.getFansInfoUrl, {
-      method: 'GET',
-      headers: {
-        Cookie: cookieString,
-        Referer: this.loginUrl,
+    const fansInfo = await this.makeRequest(
+      this.getFansInfoUrl,
+      {
+        method: 'GET',
+        headers: {
+          Cookie: cookieString,
+          Referer: this.loginUrl,
+        },
       },
-    });
+      '',
+    );
 
     return {
       authorId: userInfo.data.user_id || '',
@@ -284,18 +293,22 @@ export class XiaohongshuService {
       a1: cookie_a1,
     });
 
-    const userInfo = await this.makeRequest(this.getDashboardUrl, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-        Cookie: cookieString,
-        Referer: 'https://creator.xiaohongshu.com/statistics/account',
-        userAgent:
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
-        'X-S': reverseRes['X-s'],
-        'X-T': reverseRes['X-t'],
+    const userInfo = await this.makeRequest(
+      this.getDashboardUrl,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+          Cookie: cookieString,
+          Referer: 'https://creator.xiaohongshu.com/statistics/account',
+          userAgent:
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36 Edg/100.0.1185.36',
+          'X-S': reverseRes['X-s'],
+          'X-T': reverseRes['X-t'],
+        },
       },
-    });
+      '',
+    );
 
     if (userInfo.code == 0) {
       if (startDate && endDate) {
@@ -380,45 +393,24 @@ export class XiaohongshuService {
   /**
    * 通用请求方法
    */
-  private async makeRequest(url: string, options: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const request = net.request({
-        method: options.method,
-        url: url,
-        headers: options.headers,
-      });
-
-      // 发送请求体
-      if (options.data) {
-        // request.setHeader('Content-Type', 'application/json');
-        request.write(
-          typeof options.data === 'string'
-            ? options.data
-            : JSON.stringify(options.data),
-        );
+  private async makeRequest(
+    url: string,
+    options: any,
+    proxy: string,
+  ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const res = await requestNet({
+          url: url,
+          method: options.method,
+          headers: options.headers,
+          body: options.data,
+          proxy,
+        });
+        resolve(res.data);
+      } catch (e) {
+        reject(e);
       }
-
-      request.on('response', (response) => {
-        let data = '';
-        response.on('data', (chunk) => {
-          data += chunk;
-        });
-        response.on('end', () => {
-          const result = JSON.parse(data);
-          if (result) {
-            resolve(result);
-          } else {
-            console.error('Request failed:', result);
-            reject(new Error(result.msg || 'Request failed'));
-          }
-        });
-      });
-
-      request.on('error', (error) => {
-        console.error('Request error:', error);
-        reject(error);
-      });
-      request.end();
     });
   }
 
@@ -427,7 +419,7 @@ export class XiaohongshuService {
    * @param cookieString
    * @param scene
    */
-  async getUploadPermit(cookieString: string, scene: string) {
+  async getUploadPermit(cookieString: string, scene: string, proxy: string) {
     return new Promise(async (resolve, reject) => {
       try {
         const permitRes = await this.makeRequest(
@@ -440,6 +432,7 @@ export class XiaohongshuService {
               Referer: this.loginUrl,
             },
           },
+          proxy,
         );
 
         if (permitRes.code !== 0) {
@@ -467,29 +460,29 @@ export class XiaohongshuService {
    * @param url 上传地址
    * @param fileContent 文件内容
    * @param headers 请求头
+   * @param proxy
    */
   private async uploadFile(
     url: string,
     fileContent: Buffer,
     headers: any,
+    proxy: string,
   ): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const request = net.request({
-        method: 'PUT',
-        url: url,
-        headers: headers,
-      });
-
-      request.on('response', (response) => {
-        resolve(response);
-      });
-
-      request.on('error', (error) => {
-        reject(error);
-      });
-
-      request.write(fileContent);
-      request.end();
+    return new Promise(async (resolve, reject) => {
+      try {
+        const res = await requestNet({
+          url: url,
+          method: 'PUT',
+          headers: headers,
+          isFile: true,
+          body: fileContent,
+          proxy,
+        });
+        resolve(res);
+      } catch (e) {
+        console.error('上传文件失败:', e);
+        reject(e);
+      }
     });
   }
 
@@ -501,6 +494,7 @@ export class XiaohongshuService {
   async uploadCoverFile(
     cookieString: string,
     filePath: string,
+    proxy: string,
   ): Promise<{
     coverUploadFileId: string;
     coverDimensions: any;
@@ -512,6 +506,7 @@ export class XiaohongshuService {
         const uploadPermit: any = await this.getUploadPermit(
           cookieString,
           'image',
+          proxy,
         );
         const coverUploadFileId = uploadPermit[0].fileIds[0];
         const uploadAddr = uploadPermit[0].uploadAddr;
@@ -525,10 +520,15 @@ export class XiaohongshuService {
         const coverDimensions = sizeOf(fileContent);
 
         // 直接上传
-        let uploadRes = await this.uploadFile(uploadBaseUrl, fileContent, {
-          Referer: this.loginUrl,
-          'X-Cos-Security-Token': uploadToken,
-        });
+        let uploadRes = await this.uploadFile(
+          uploadBaseUrl,
+          fileContent,
+          {
+            Referer: this.loginUrl,
+            'X-Cos-Security-Token': uploadToken,
+          },
+          proxy,
+        );
 
         uploadRes = uploadRes.headers;
 
@@ -612,6 +612,7 @@ export class XiaohongshuService {
     filePath: string,
     filePartInfo: any,
     fileInfo: any,
+    proxy: string,
   ): Promise<{
     uploadFileId: string;
     remotePreviewUrl: string;
@@ -623,6 +624,7 @@ export class XiaohongshuService {
         const uploadPermit: any = await this.getUploadPermit(
           cookieString,
           'video',
+          proxy,
         );
         const uploadFileId = uploadPermit[0].fileIds[0];
         const uploadAddr = uploadPermit[0].uploadAddr;
@@ -640,11 +642,16 @@ export class XiaohongshuService {
             filePartInfo.fileSize - 1,
           );
           // 直接上传
-          let uploadRes = await this.uploadFile(uploadBaseUrl, fileContent, {
-            'Content-Type': fileInfo.mimeType,
-            Referer: this.loginUrl,
-            'X-Cos-Security-Token': uploadToken,
-          });
+          let uploadRes = await this.uploadFile(
+            uploadBaseUrl,
+            fileContent,
+            {
+              'Content-Type': fileInfo.mimeType,
+              Referer: this.loginUrl,
+              'X-Cos-Security-Token': uploadToken,
+            },
+            proxy,
+          );
 
           uploadRes = uploadRes.headers;
           if (
@@ -716,6 +723,7 @@ export class XiaohongshuService {
                   Referer: this.loginUrl,
                   'X-Cos-Security-Token': uploadToken,
                 },
+                proxy,
               );
 
               const headers = uploadPartRes.headers;
@@ -821,7 +829,11 @@ export class XiaohongshuService {
         const uploadImgRet = [];
         for (const imgUrl of imagePath) {
           // 上传图片, 获取远程Url
-          const imgRet = await this.uploadCoverFile(cookieString, imgUrl);
+          const imgRet = await this.uploadCoverFile(
+            cookieString,
+            imgUrl,
+            platformSetting.proxy,
+          );
           // 添加到成功列表
           uploadImgRet.push(imgRet);
         }
@@ -848,6 +860,7 @@ export class XiaohongshuService {
           'image',
           uploadResult,
           platformSetting,
+          platformSetting.proxy,
         )) as any;
         // 返回信息
         resolve({
@@ -868,6 +881,7 @@ export class XiaohongshuService {
    * @param publishType
    * @param uploadResult {uploadFileId, uploadCoverId, coverDimensions, fileInfo}
    * @param platformSetting
+   * @param proxy
    * @returns {Promise<unknown>}
    */
   async postCreateVideo(
@@ -876,6 +890,7 @@ export class XiaohongshuService {
     publishType: 'video' | 'image',
     uploadResult: any,
     platformSetting: any,
+    proxy: string,
   ) {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1129,19 +1144,23 @@ export class XiaohongshuService {
           a1: cookie_a1,
         });
         // 发起请求
-        const createRes = await this.makeRequest(this.postCreateVideoUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json;charset=UTF-8',
-            Cookie: cookieString,
-            Referer: this.loginUrl,
-            Origin: this.loginUrl,
-            'X-S': reverseRes['X-s'],
-            'X-T': reverseRes['X-t'],
+        const createRes = await this.makeRequest(
+          this.postCreateVideoUrl,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json;charset=UTF-8',
+              Cookie: cookieString,
+              Referer: this.loginUrl,
+              Origin: this.loginUrl,
+              'X-S': reverseRes['X-s'],
+              'X-T': reverseRes['X-t'],
+            },
+            data: JSON.stringify(requestData),
+            timeout: 15000,
           },
-          data: JSON.stringify(requestData),
-          timeout: 15000,
-        });
+          platformSetting.proxy,
+        );
 
         // 处理结果
         if (createRes.hasOwnProperty('code') && createRes.code === -1) {
@@ -1225,12 +1244,17 @@ export class XiaohongshuService {
           filePath,
           filePartInfo,
           fileInfo,
+          platformSetting.proxy,
         );
 
         callback(60, '正在上传封面...');
         // 上传封面,获取远程Url
         const { coverDimensions, coverUploadFileId } =
-          await this.uploadCoverFile(cookieString, platformSetting['cover']);
+          await this.uploadCoverFile(
+            cookieString,
+            platformSetting['cover'],
+            platformSetting.proxy,
+          );
         const cookieObject = JSON.parse(cookies);
         let cookie_a1 = null;
         for (const cookieItem of cookieObject) {
@@ -1259,9 +1283,11 @@ export class XiaohongshuService {
           'video',
           uploadResult,
           platformSetting,
+          platformSetting.proxy,
         ).catch((err) => {
           reject(err);
         });
+        console.log(result);
         // 返回信息
         resolve({
           publishTime: Math.floor(Date.now() / 1000),
@@ -1299,14 +1325,18 @@ export class XiaohongshuService {
    */
   getReverseResult(args: any) {
     return new Promise(async (resolve, reject) => {
-      const permitRes = await this.makeRequest('http://116.62.154.231:7879', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
+      const permitRes = await this.makeRequest(
+        'http://116.62.154.231:7879',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+          },
+          data: args,
+          timeout: 15000,
         },
-        data: args,
-        timeout: 15000,
-      });
+        '',
+      );
       resolve(permitRes);
     });
   }

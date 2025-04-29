@@ -167,6 +167,8 @@ export interface IKwaiPubVideoParams {
   mentions?: string[];
   // 定时发布日期，时间戳，毫秒
   publishTime?: number;
+  // 代理地址
+  proxy: string;
 }
 
 // 登录返回参数

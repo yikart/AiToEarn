@@ -92,6 +92,7 @@ export class PubItemVideo extends PubItemBase {
    * 更新视频记录
    */
   async uploadRecord() {
+    this.videoModel.proxyIp = undefined;
     EtEvent.emit('ET_PUBLISH_UPDATE_VIDEO_PUL', this.videoModel);
   }
 }

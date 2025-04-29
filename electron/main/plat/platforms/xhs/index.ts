@@ -590,6 +590,7 @@ export class Xhs extends PlatformBase {
 
   pubParamsParse(params: WorkDataModel): XSLPlatformSettingType {
     return {
+      proxy: params.proxyIp || '',
       cover: params.coverPath || '',
       desc: params.desc,
       title: params.title,

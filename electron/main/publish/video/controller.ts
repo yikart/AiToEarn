@@ -70,6 +70,17 @@ export class VideoPubController {
       const accountList = await this.accountService.getAccountsByIds(
         videoList.map((v) => v.accountId),
       );
+
+      // 获取代理IP
+      const groupModels = await this.accountService.getAccountGroup();
+      for (let i = 0; i < accountList.length; i++) {
+        const account = accountList[i];
+        const group = groupModels.find((v) => v.id === account.groupId);
+        if (group && group.proxyIp) {
+          videoList[i].proxyIp = group.proxyIp;
+        }
+      }
+
       // 发布
       const pubRes = await platController.videoPublish(videoList, accountList);
 
