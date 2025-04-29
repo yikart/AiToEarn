@@ -47,11 +47,6 @@
       "from": "public/assets",
       "to": "assets",
       "filter": ["**/*"]
-    },
-    {
-      "from": "public/bin",
-      "to": "bin",
-      "filter": ["**/*"]
     }
   ]
 }
