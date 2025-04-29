@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-04-17 19:22:11
- * @LastEditTime: 2025-04-29 15:06:56
+ * @LastEditTime: 2025-04-29 16:02:02
  * @LastEditors: nevin
  * @Description:
  */
@@ -18,11 +18,7 @@ exports.default = async function notarizing(context) {
   let appPath = `${outDir}/${productFilename}-${version}-arm64.dmg`;
   console.log('notarizing-------', appPath);
 
-  return await notarize({
-    appBundleId: 'cn.aitoearn.pc',
-    appPath,
-    appleId: 'yika_app@163.com',
-    appleIdPassword: 'ivqj-wemu-qnbi-whgr',
-    teamId: '26A3V27SYB',
-  });
+  // return await notarize({
+    
+  // });
 };
