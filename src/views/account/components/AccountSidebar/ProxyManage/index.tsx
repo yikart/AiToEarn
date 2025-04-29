@@ -60,16 +60,18 @@ const ProxyManage = memo(
             render: (_, gri) => {
               return (
                 <>
-                  <Switch
-                    value={gri.proxyOpen}
-                    onChange={async (v) => {
-                      await icpEditDeleteAccountGroup({
-                        id: gri.id,
-                        proxyOpen: v,
-                      });
-                      await getAccountGroup();
-                    }}
-                  />
+                  {gri.proxyIp && (
+                    <Switch
+                      value={gri.proxyOpen}
+                      onChange={async (v) => {
+                        await icpEditDeleteAccountGroup({
+                          id: gri.id,
+                          proxyOpen: v,
+                        });
+                        await getAccountGroup();
+                      }}
+                    />
+                  )}
                 </>
               );
             },
