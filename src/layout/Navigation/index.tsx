@@ -17,7 +17,7 @@ import Bellmessage from '../BellMessage';
 import { BellOutlined } from '@ant-design/icons';
 import { Popover } from 'antd';
 import SignInCard from '@/components/SignInCard';
-import calendarSvg from '@/assets/svgs/calendar.svg';
+import treeSvg from '@/assets/svgs/tree.svg';
 
 const Navigation = () => {
   const location = useLocation();
@@ -70,22 +70,22 @@ const Navigation = () => {
       <div className="navigation_drag" />
 
       <div className="navigation-userinfo">
-      <Popover
-        content={<SignInCard ref={signInCardRef} />}
-        trigger="hover"
-        placement="bottom"
-        onOpenChange={(open) => {
-          if (open) {
-            signInCardRef.current?.fetchSignInList();
-          }
-        }}
-      >
-        <div className="navigation-icon">
-          <img src={calendarSvg} alt="打卡" style={{ width: 20, height: 20, verticalAlign: 'middle' }} />
-          <span className="navigation-icon-text">打卡</span>
-        </div>
-      </Popover>
-      <div className="navigation-line"></div>
+        <Popover
+          content={<SignInCard ref={signInCardRef} />}
+          trigger="hover"
+          placement="bottom"
+          onOpenChange={(open) => {
+            if (open) {
+              signInCardRef.current?.fetchSignInList();
+            }
+          }}
+        >
+          <div className="navigation-icon">
+            <img src={treeSvg} alt="小树苗" style={{ width: 20, height: 20, verticalAlign: 'middle' }} />
+            <span className="navigation-icon-text">小树苗</span>
+          </div>
+        </Popover>
+        <div className="navigation-line"></div>
 
         <Bellmessage>
           <div className="navigation-icon">

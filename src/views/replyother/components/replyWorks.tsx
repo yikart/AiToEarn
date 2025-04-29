@@ -1,7 +1,9 @@
 import { toolsApi } from '@/api/tools';
 import { icpCreateComment, WorkData } from '@/icp/replyother';
-import { Button, Form, Input, message, Modal } from 'antd';
+import { Button, Form, Input, message, Modal, Tooltip, Space } from 'antd';
 import { forwardRef, useImperativeHandle, useState } from 'react';
+import logoAi from '@/assets/logoAi.png';
+import { SendOutlined } from '@ant-design/icons';
 
 export interface ReplyWorksRef {
   init: (accountId: number, inWorkData: WorkData) => Promise<void>;
@@ -51,6 +53,7 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
     ) {
       message.success('评论成功');
       setIsModalOpen(false);
+      form.resetFields();
     } else {
       message.error('评论失败');
     }
@@ -80,40 +83,54 @@ const Com = forwardRef<ReplyWorksRef>((props: any, ref) => {
   return (
     <>
       <Modal
-        title={null}
+        title="作品评论"
         open={isModalOpen}
         onCancel={handleCancel}
         footer={null}
-        width={800}
+        width={500}
+        className="reply-works-modal"
       >
-        <Form
-          form={form}
-          name="basic"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          initialValues={{ remember: true }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
-        >
-          <Form.Item
-            label="评论"
-            name="content"
-            rules={[{ required: true, message: '请输入评论!' }]}
+        <div className="p-6">
+          <Form
+            form={form}
+            name="basic"
+            layout="vertical"
+            initialValues={{ remember: true }}
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+            autoComplete="off"
           >
-            <Input />
-          </Form.Item>
+            <Form.Item
+              label="评论内容"
+              name="content"
+              rules={[{ required: true, message: '请输入评论!' }]}
+            >
+              <Input.TextArea rows={4} />
+            </Form.Item>
 
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" onClick={getAiContent}>
-              AI建议
-            </Button>
+            <div className="flex justify-end items-center gap-4">
+              <Tooltip title="获取AI建议">
+                <img
+                  src={logoAi}
+                  alt="logo"
+                  width={32}
+                  onClick={getAiContent}
+                  className="cursor-pointer hover:opacity-80 transition-opacity"
+                />
+              </Tooltip>
 
-            <Button type="primary" htmlType="submit">
-              提交评论
-            </Button>
-          </Form.Item>
-        </Form>
+              <Tooltip title="发送">
+                <Button
+                  type="primary"
+                  shape="circle"
+                  htmlType="submit"
+                  icon={<SendOutlined />}
+                  className="flex items-center justify-center"
+                />
+              </Tooltip>
+            </div>
+          </Form>
+        </div>
       </Modal>
     </>
   );
