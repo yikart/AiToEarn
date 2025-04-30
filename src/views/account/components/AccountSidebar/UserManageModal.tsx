@@ -272,7 +272,7 @@ const UserManageModal = memo(
           <Modal
             open={open}
             title="账号管理器"
-            zIndex={10001}
+            zIndex={1001}
             footer={null}
             width={1000}
             onCancel={close}

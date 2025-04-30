@@ -57,7 +57,6 @@ export class AccountService {
   }
   // 修改用户组数据
   async editAccountGroup(data: Partial<AccountGroupModel>) {
-    console.log(data);
     return await this.accountGroupRepository.update({ id: data.id }, data);
   }
 

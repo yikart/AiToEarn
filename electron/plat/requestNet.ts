@@ -21,22 +21,6 @@ export interface IRequestNetParams {
   proxy?: string;
 }
 
-export const convertToProxyFormat = (url: string): string => {
-  const urlPattern = /^(https?):\/\/([^:\/]+(:\d+)?)(\/.*)?$/; // 匹配协议、域名/IP 和端口号
-  const ipPattern = /^\d{1,3}(\.\d{1,3}){3}(:\d+)?$/; // 匹配 IP 地址格式以及可选端口号
-
-  if (ipPattern.test(url)) {
-    // 如果是 IP 地址（可能带端口号），默认使用 HTTP 协议
-    return `http=${url}`;
-  } else if (urlPattern.test(url)) {
-    // 如果是 URL，提取协议、域名/IP 和端口号
-    const [, protocol, domainWithPort] = url.match(urlPattern)!;
-    return `${protocol}=${domainWithPort}`;
-  } else {
-    return url;
-  }
-};
-
 const requestNet = <T = any>({
   headers,
   body,
@@ -53,12 +37,13 @@ const requestNet = <T = any>({
 
       // 如果传入了代理配置，动态设置代理
       if (proxy) {
-        const proxyFormat = convertToProxyFormat(proxy);
-        console.log('代理地址：', proxyFormat);
         customSession = session.fromPartition(
           `persist:proxy-session-${Date.now()}`,
         );
-        await customSession.setProxy({ proxyRules: proxyFormat });
+        console.log(`http=${proxy};https=${proxy}`);
+        await customSession.setProxy({
+          proxyRules: `http=${proxy};https=${proxy}`,
+        });
 
         headers = {
           ...(headers ? headers : {}),
