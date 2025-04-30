@@ -1111,7 +1111,7 @@ export default function Page() {
                                           : undefined,
                                       }}
                                     />
-                                    <span>{item.likeCount || 0}</span>
+                                    <span>{item.likeCount || ''}</span>
                                   </Space>,
                                   <Space
                                     key="comment-list"
@@ -1442,7 +1442,7 @@ export default function Page() {
                                                     : undefined,
                                                 }}
                                               />
-                                              <span>{item.likeCount || 0}</span>
+                                              <span>{item.likeCount || ''}</span>
                                             </Space>,
                                             <Space
                                               key="comment-list"
