@@ -1753,6 +1753,11 @@ export default function Page() {
                               key: 'commentContent',
                             },
                             {
+                              title: '评论反馈',
+                              dataIndex: 'commentRemark',
+                              key: 'commentRemark',
+                            },
+                            {
                               title: '点赞状态',
                               dataIndex: 'isLike',
                               key: 'isLike',

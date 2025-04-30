@@ -34,6 +34,9 @@ export class InteractionRecordModel extends TempModel {
   @Column({ type: 'varchar', nullable: true, comment: '作品标题' })
   worksTitle?: string;
 
+  @Column({ type: 'varchar', nullable: true, comment: '评论备注' })
+  commentRemark?: string;
+
   @Column({ type: 'varchar', nullable: true, comment: '封面' })
   worksCover?: string;
 
