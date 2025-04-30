@@ -1956,7 +1956,7 @@ export class DouyinService {
           ...options.headers,
         },
         body: formData,
-        // proxy,
+        proxy,
       });
 
       const responseText = await response.data;
