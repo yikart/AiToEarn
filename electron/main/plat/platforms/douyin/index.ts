@@ -198,6 +198,7 @@ export class Douyin extends PlatformBase {
    */
   async getsearchNodeList(account: AccountModel, qe: string, pageInfo?: any) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
+    console.log('getsearchNodeList', pageInfo.count, pageInfo.pcursor, pageInfo.postFirstId)
     const res = await douyinService.getSearchNodeList(cookie, qe, {
       count: pageInfo.count,
       pcursor: pageInfo.pcursor,
@@ -205,7 +206,7 @@ export class Douyin extends PlatformBase {
     });
 
     const list: WorkData[] = [];
-    // console.log('------douyin getsearchNodeList res: ', res);
+    console.log('------douyin getsearchNodeList res: ', res.data.data);
     // console.log('------douyin getsearchNodeList res.data.cursor: ', res.data.cursor);
     for (const s of res.data.data) {
       const v = s.aweme_info;
@@ -400,13 +401,21 @@ export class Douyin extends PlatformBase {
     content: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
+    console.log('dataIddataId????:',dataId,content)
     const res = await douyinService.creatorCommentReplyOther(cookie, {
       aweme_id: dataId,
       text: content,
       one_level_comment_rank: -1,
+
+      // aweme_id: '7498682394024430907',
+      // comment_send_celltime: 46567,
+      // comment_video_celltime: 8969,
+      // one_level_comment_rank: -1,
+      // paste_edit_method: 'non_paste',
+      // text: '调',
     });
 
-    console.log('------ res', res);
+    console.log('-- 评论 ---- res', res);
 
     return res;
   }

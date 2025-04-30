@@ -49,6 +49,7 @@ export class InteractionService {
       worksTitle?: string;
       worksCover?: string;
     },
+    commentRemark: string,
     commentContent: string,
     isLike: 0 | 1,
     isCollect: 0 | 1,
@@ -60,6 +61,7 @@ export class InteractionService {
       worksId: works.worksId,
       worksTitle: works.worksTitle,
       worksCover: works.worksCover,
+      commentRemark,
       commentContent,
       isLike: isLike,
       isCollect: isCollect,
@@ -157,6 +159,7 @@ export class InteractionService {
       let i = 0;
       for (const works of worksList) {
         // console.log('------ 开始处理作品:', works);
+        // 等待
         if (i > 0) await sleep(10 * 1000);
         i++;
         const oldRecord = await this.getInteractionRecord(
@@ -357,6 +360,17 @@ export class InteractionService {
           }
         }
 
+        let commentRemark = '';
+        if (commentWorksRes.data) {
+          if (commentWorksRes.data.msg) {
+            commentRemark = commentWorksRes.data.msg;
+          } else {
+            commentRemark = commentWorksRes.data.toast;
+          }
+        } else {
+          commentRemark = '评论完成';
+        }
+
         // 创建互动记录
         this.createInteractionRecord(
           userInfo.id,
@@ -366,6 +380,7 @@ export class InteractionService {
             worksTitle: works.title,
             worksCover: works.coverUrl,
           },
+          commentRemark,
           thisCommentContent,
           isLike,
           isCollect, // 收藏状态设为0

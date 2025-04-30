@@ -1111,7 +1111,7 @@ export default function Page() {
                                           : undefined,
                                       }}
                                     />
-                                    <span>{item.likeCount || 0}</span>
+                                    <span>{item.likeCount || ''}</span>
                                   </Space>,
                                   <Space
                                     key="comment-list"
@@ -1442,7 +1442,7 @@ export default function Page() {
                                                     : undefined,
                                                 }}
                                               />
-                                              <span>{item.likeCount || 0}</span>
+                                              <span>{item.likeCount || ''}</span>
                                             </Space>,
                                             <Space
                                               key="comment-list"
@@ -1751,6 +1751,11 @@ export default function Page() {
                               title: '评论内容',
                               dataIndex: 'commentContent',
                               key: 'commentContent',
+                            },
+                            {
+                              title: '评论反馈',
+                              dataIndex: 'commentRemark',
+                              key: 'commentRemark',
                             },
                             {
                               title: '点赞状态',

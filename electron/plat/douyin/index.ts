@@ -25,6 +25,7 @@ import requestNet from '../requestNet';
 import { jsonToQueryString } from '../../util';
 import { RetryWhile } from '../../../commont/utils';
 import { DeclarationDouyin } from '../../../commont/plat/douyin/common.douyin';
+import CustomFormData from 'form-data';
 
 export type DouyinPlatformSettingType = {
   // 自主声明
@@ -1932,57 +1933,42 @@ export class DouyinService {
    * 发布专用请求方法
    */
   private async makePublishRequest(
-    url: string,
+    url: string, 
     options: any,
     proxy: string,
   ): Promise<any> {
     try {
       // 创建 FormData 对象
-      const formData = new FormData();
+      const formData = new CustomFormData();
       const postData = options.data;
 
       // 将数据添加到 FormData
       Object.keys(postData).forEach((key) => {
-        if (typeof postData[key] === 'object') {
-          formData.append(key, JSON.stringify(postData[key]));
-        } else {
-          formData.append(key, postData[key]);
+        if (postData[key] !== null && postData[key] !== undefined) {
+          if (typeof postData[key] === 'object') {
+            formData.append(key, JSON.stringify(postData[key]));
+          } else {
+            formData.append(key, postData[key]);
+          }
         }
       });
 
       const response = await requestNet({
+        url,
         method: options.method,
         headers: {
           ...options.headers,
         },
-        body: formData,
+        formData: formData,
         proxy,
       });
 
-      const responseText = await response.data;
-
       // 检查响应数据是否为空
-      if (!responseText || responseText.trim() === '') {
+      if (!response.data) {
         console.error(`响应数据为空`);
         throw new Error('服务器返回空数据');
       }
-
-      try {
-        const result = responseText;
-
-        if (!result) {
-          console.error(`解析后的数据为空`);
-          throw new Error('解析后的数据为空');
-        }
-
-        return result;
-      } catch (err) {
-        console.error(`解析响应数据失败:`, err);
-        console.error(`导致错误的原始数据:`, responseText);
-        throw new Error(
-          `解析响应数据失败: ${err instanceof Error ? err.message : String(err)}`,
-        );
-      }
+      return response.data;
     } catch (error) {
       console.error(`请求发生错误:`, error);
       throw new Error(
@@ -2145,11 +2131,13 @@ export class DouyinService {
     const thisUri = `https://www.douyin.com/aweme/v1/web/search/item/?${jsonToQueryString(
       gets,
     )}`;
-
+    console.log('thisUrithisUrithisUri',thisUri)
+    // 方法
     const res = await requestNet<any>({
       url: thisUri,
       headers: {
         cookie: CookieToString(cookie),
+        // referer: 'https://www.douyin.com/'
       },
       method: 'GET',
     });
@@ -2206,8 +2194,8 @@ export class DouyinService {
           'dX0fgqUEY2mfFdKGuOfg743UWS2/Nsuyz-idReZPHOOLT7lGmRPGpPSZbozcYEW5MWB0h937iVllYxdcKsXkZKrpwmhvS/7RsUI998so0qqpT0hDEqfNCwWT9JaT0cwL8CKbJARVUzmc2dA4D1r0UB-JH/Pn4mipQHaWdnUGT9tfgM49PrFxuOtDiXzx5OI41f==',
       },
     )}`;
-
-    const res = await requestNet<DouyinHotDataResponse>({
+    // ？？？
+    const res = await requestNet<DouyinHotDataResponse>({ 
       url: thisUri,
       headers: {
         cookie: CookieToString(cookie),
@@ -2427,15 +2415,18 @@ export class DouyinService {
 
   // 回复其他人的评论
   async creatorCommentReplyOther(cookie: Electron.Cookie[], data: any) {
+    console.log('wentipaicha1')
     const thisUri = `https://www.douyin.com/aweme/v1/web/comment/publish/?${jsonToQueryString(
       {
         aid: '6383',
       },
     )}`;
+    console.log('wentipaicha2')
     const cookieString = CommonUtils.convertCookieToJson(cookie);
+    console.log('wentipaicha3')
     const csrfToken = await this.getSecsdkCsrfToken(cookieString);
-
-    const res = await this.makePublishRequest(
+    console.log('wentipaicha4')
+    const res = await this.postFormData(
       thisUri,
       {
         method: 'POST',
@@ -2445,9 +2436,9 @@ export class DouyinService {
           referer: `https://www.douyin.com/video/${data.aweme_id}`,
         },
         data: data,
-      },
-      '',
+      }
     );
+    console.log('douyin index ------ res', res);
     return res;
   }
 
