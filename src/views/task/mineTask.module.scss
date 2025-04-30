@@ -194,17 +194,17 @@
 .loadingContainer {
   display: flex;
   justify-content: center;
-  padding: 32px 0;
+  margin-top: 32px;
+  margin-bottom: 16px;
 }
 
 .loadMoreContainer {
-  display: flex;
-  justify-content: center;
-  margin-top: 16px;
-  margin-bottom: 16px;
+  text-align: center;
+  padding: 16px 0;
   
   button {
-    padding: 0 32px;
+    color: #a66ae4;
+    font-size: 14px;
   }
 }
 
@@ -528,4 +528,12 @@
       }
     }
   }
+}
+
+.loadMoreTrigger {
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 16px;
 }

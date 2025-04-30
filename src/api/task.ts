@@ -38,7 +38,7 @@ export const taskApi = {
   /**
    * 获取任务列表
    */
-  getTaskList<T extends TaskDataInfo>(params: TaskListParams) {
+  getTaskList<T extends TaskDataInfo>(params: any) {
     return http.get<Pagination<Task<T>>>('/tasks/list', {
       isToken: false,
       params,

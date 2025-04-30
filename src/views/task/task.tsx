@@ -118,7 +118,7 @@ export default function Task() {
   const [loading, setLoading] = useState(false);
   const [taskList, setTaskList] = useState<any[]>([]);
   const [pageInfo, setPageInfo] = useState({
-    pageNo: 1,
+    page: 1,
     pageSize: 20,
     totalCount: 0,
   });
@@ -156,9 +156,9 @@ export default function Task() {
 
     setLoading(true);
     try {
-      const nextPage = pageInfo.pageNo + 1;
+      const nextPage = pageInfo.page + 1;
       console.log('加载下一页:', nextPage);
-      setPageInfo((prev) => ({ ...prev, pageNo: nextPage }));
+      setPageInfo((prev) => ({ ...prev, page: nextPage }));
       await getTaskList(true);
     } catch (error) {
       console.error('加载更多失败:', error);
@@ -171,11 +171,9 @@ export default function Task() {
   async function getTaskList(isLoadMore = false) {
     setLoading(true);
     try {
-      const res = await taskApi.getTaskList<any>({
-        ...pageInfo,
-        // pageSize: 100,
-        // type: TaskType.INTERACTION,
-      });
+      const res = await taskApi.getTaskList<any>(
+        pageInfo
+      );
 
       if (isLoadMore) {
         setTaskList((prev) => [...prev, ...res.items]);
@@ -211,14 +209,14 @@ export default function Task() {
 
   // 初始加载数据
   useEffect(() => {
-    if (activeTab === 'interaction') {
-      setPageInfo({
-        pageNo: 1,
-        pageSize: 12,
-        totalCount: 0,
-      });
-      getTaskList();
-    }
+    // if (activeTab === 'interaction') {
+    //   setPageInfo({
+    //     page: 1,
+    //     pageSize: 2,
+    //     totalCount: 0,
+    //   });
+    //   getTaskList();
+    // }
   }, [activeTab]);
 
   // 任务进度监听
@@ -270,6 +268,11 @@ export default function Task() {
   );
   // TODO 完善跳转逻辑
   const handleJoinTask = (task: any) => {
+
+    if (task.isAccepted) {
+      setActiveTab('mine')
+      return
+    }
 
     // setCommonPubParams({
     //   title: "标题1",
@@ -577,8 +580,8 @@ export default function Task() {
   // 刷新任务列表的函数
   const refreshTaskList = () => {
     setPageInfo({
-      pageSize: 12,
-      pageNo: 1,
+      pageSize: 20,
+      page: 1,
       totalCount: 0,
     });
     getTaskList();
@@ -676,11 +679,11 @@ export default function Task() {
                     <Button
                       type="primary"
                       key="join"
-                      disabled={item.isAccepted}
+                      // disabled={item.isAccepted}
                       onClick={() => handleJoinTask(item)}
                       style={{ minWidth: '120px' }}
                     >
-                      {item.isAccepted ? '已参与' : '参与任务'}
+                      {item.isAccepted ? '去完成任务' : '参与任务'}
                     </Button>, 
                   ]}
                 >

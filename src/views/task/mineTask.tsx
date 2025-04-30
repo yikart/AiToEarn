@@ -17,6 +17,7 @@ import {
   message,
 } from 'antd';
 import { useState, useEffect, useRef } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { taskApi } from '@/api/task';
 import { UserTask, UserTaskStatus } from '@/api/types/task';
 import { Task, TaskDataInfo } from '@@/types/task';
@@ -165,14 +166,28 @@ const renderEmptyState = () => {
 export default function Page() {
   const [taskList, setTaskList] = useState<any>([]);
   const [pageInfo, setPageInfo] = useState({
-    pageSize: 10,
-    pageNo: 1,
+    pageSize: 20,
+    page: 1,
     totalCount: 0,
   });
   const [loading, setLoading] = useState(true);
   const [isGuideModalVisible, setIsGuideModalVisible] = useState(false);
   const [statusFilter, setStatusFilter] = useState<UserTaskStatus | null>(null);
   const [hasMore, setHasMore] = useState(true);
+
+  // 使用 react-intersection-observer 创建一个观察器
+  const { ref: loadMoreRef, inView } = useInView({
+    threshold: 0.1,
+    triggerOnce: false,
+    rootMargin: '100px 0px',
+  });
+
+  // 当底部元素进入视图时加载更多数据
+  useEffect(() => {
+    if (inView && hasMore && !loading) {
+      loadMore();
+    }
+  }, [inView, hasMore, loading]);
 
   const fetchTaskDetails = async (isLoadMore = false) => {
     setLoading(true);
@@ -197,12 +212,12 @@ export default function Page() {
 
       setPageInfo((prev) => ({
         ...prev,
-        totalCount: (tasks as any).totalCount,
+        totalCount: (tasks as any).meta.totalItems,
       }));
 
       // 检查是否还有更多数据
       setHasMore(
-        pageInfo.pageNo * pageInfo.pageSize < (tasks as any).totalCount,
+        pageInfo.page * pageInfo.pageSize < (tasks as any).meta.totalItems,
       );
     } catch (error) {
       console.error('获取任务列表失败', error);
@@ -213,23 +228,25 @@ export default function Page() {
   };
 
   useEffect(() => {
-    fetchTaskDetails();
+    loadMore()
   }, [statusFilter]);
 
   // 加载更多数据
-  const loadMore = () => {
+  const loadMore = async () => {
+    // const nextPage = pageInfo.page + 1;
     setPageInfo((prev) => ({
       ...prev,
-      pageNo: prev.pageNo + 1,
+      page: prev.page + 1,
     }));
-    fetchTaskDetails(true);
+    console.log('pageInfo', pageInfo)
+    await fetchTaskDetails(true);
   };
 
   // 刷新数据
   const refreshData = () => {
     setPageInfo({
       pageSize: 10,
-      pageNo: 1,
+      page: 1,
       totalCount: 0,
     });
     fetchTaskDetails();
@@ -268,7 +285,7 @@ export default function Page() {
   const refreshTaskList = () => {
     setPageInfo({
       pageSize: 10,
-      pageNo: 1,
+      page: 1,
       totalCount: 0,
     });
     fetchTaskDetails();
@@ -454,11 +471,21 @@ export default function Page() {
             </div>
           )}
 
-          {!loading && hasMore && (
-            <div className={styles.loadMoreContainer}>
-              <Button onClick={loadMore}>加载更多</Button>
-            </div>
-          )}
+          {/* 添加加载更多触发器 */}
+          <div ref={loadMoreRef} className={styles.loadMoreTrigger}>
+            {!loading && hasMore && (
+              <div className={styles.loadMoreContainer}>
+                <Button type="link" loading={loading}>
+                  {loading ? '加载中...' : '加载更多'}
+                </Button>
+              </div>
+            )}
+            {!loading && !hasMore && taskList.length > 0 && (
+              <div className={styles.loadMoreContainer}>
+                <span style={{ color: '#999' }}>没有更多任务了</span>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -481,7 +508,7 @@ export default function Page() {
             尊敬的AiToEarn流量主用户：
             </p>
             <p>
-              您好，为了更好地保障广告主和流量主的权益，建立一个健康、公平的广告交易系统，请仔细阅读并确认以下“《AiToEarn任务市场接单合作须知》”后再操作接单：
+              您好，为了更好地保障广告主和流量主的权益，建立一个健康、公平的广告交易系统，请仔细阅读并确认以下"《AiToEarn任务市场接单合作须知》"后再操作接单：
             </p>
             <p>
               AiToEarn任务市场服务：指AiToEarn为流量主和广告主提供的撮合交易以及技术支持服务。AiToEarn在此过程中提供平台的运营与维护，监督管理平台内经营主体及交易行为，提升广告主与流量主交易体验。
