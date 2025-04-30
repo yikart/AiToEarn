@@ -24,8 +24,8 @@ import { BrowserWindow, screen } from 'electron';
 import kwaiSign from './sign/KwaiSign';
 import { FileUtils } from '../../util/file';
 import { getFilePathNameCommon, RetryWhile } from '../../../commont/utils';
-import FormData from 'form-data';
 import fs from 'fs';
+import FormData from 'form-data';
 
 interface IRequestApiParams extends IRequestNetParams {
   cookie: Electron.Cookie[];

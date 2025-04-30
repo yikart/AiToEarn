@@ -25,6 +25,7 @@ import requestNet from '../requestNet';
 import { jsonToQueryString } from '../../util';
 import { RetryWhile } from '../../../commont/utils';
 import { DeclarationDouyin } from '../../../commont/plat/douyin/common.douyin';
+import CustomFormData from 'form-data';
 
 export type DouyinPlatformSettingType = {
   // 自主声明
@@ -1938,51 +1939,36 @@ export class DouyinService {
   ): Promise<any> {
     try {
       // 创建 FormData 对象
-      const formData = new FormData();
+      const formData = new CustomFormData();
       const postData = options.data;
 
       // 将数据添加到 FormData
       Object.keys(postData).forEach((key) => {
-        if (typeof postData[key] === 'object') {
-          formData.append(key, JSON.stringify(postData[key]));
-        } else {
-          formData.append(key, postData[key]);
+        if (postData[key] !== null && postData[key] !== undefined) {
+          if (typeof postData[key] === 'object') {
+            formData.append(key, JSON.stringify(postData[key]));
+          } else {
+            formData.append(key, postData[key]);
+          }
         }
       });
 
       const response = await requestNet({
+        url,
         method: options.method,
         headers: {
           ...options.headers,
         },
-        body: formData,
+        formData: formData,
         proxy,
       });
 
-      const responseText = await response.data;
-
       // 检查响应数据是否为空
-      if (!responseText || responseText.trim() === '') {
+      if (!response.data) {
         console.error(`响应数据为空`);
         throw new Error('服务器返回空数据');
       }
-
-      try {
-        const result = responseText;
-
-        if (!result) {
-          console.error(`解析后的数据为空`);
-          throw new Error('解析后的数据为空');
-        }
-
-        return result;
-      } catch (err) {
-        console.error(`解析响应数据失败:`, err);
-        console.error(`导致错误的原始数据:`, responseText);
-        throw new Error(
-          `解析响应数据失败: ${err instanceof Error ? err.message : String(err)}`,
-        );
-      }
+      return response.data;
     } catch (error) {
       console.error(`请求发生错误:`, error);
       throw new Error(

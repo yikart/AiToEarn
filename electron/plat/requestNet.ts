@@ -133,6 +133,7 @@ const requestNet = <T = any>({
         req.end();
       }
     } catch (error) {
+      console.error('请求失败：', error);
       reject(error);
     }
   });

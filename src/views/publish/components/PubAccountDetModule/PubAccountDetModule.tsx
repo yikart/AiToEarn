@@ -183,7 +183,7 @@ const PubAccountDetModule = memo(
 
       return (
         <Modal
-          width={500}
+          width={530}
           title={title}
           maskClosable={false}
           open={open}
@@ -198,6 +198,7 @@ const PubAccountDetModule = memo(
                     proxyInvalidAccountMap.size === 0 && `${tips}`
                   ) : (
                     <Alert
+                      style={{ marginBottom: '10px' }}
                       message={
                         <div className={styles.loginStatusDisable}>
                           <span>账号登录状态失效，点击账户重新登录</span>
@@ -257,7 +258,15 @@ const PubAccountDetModule = memo(
                 .map((v) => {
                   return (
                     <div
-                      className="pubAccountDetModule-accounts-account"
+                      className={[
+                        'pubAccountDetModule-accounts-account',
+                        disabledIdSet.has(v.id) ||
+                        proxyInvalidAccountMap.get(v.groupId)
+                          ? 'pubAccountDetModule-accounts-disable'
+                          : !disabledIdSet.has(v.id) &&
+                            !detLoading &&
+                            'pubAccountDetModule-accounts-ol',
+                      ].join(' ')}
                       style={{
                         cursor: disabledIdSet.has(v.id) ? 'pointer' : 'auto',
                       }}
@@ -279,16 +288,9 @@ const PubAccountDetModule = memo(
                       <AvatarPlat account={v} size="default" />
                       <Tooltip title={v.nickname}>
                         <div
-                          className={[
-                            'pubAccountDetModule-accounts-name',
-
-                            disabledIdSet.has(v.id) ||
-                            proxyInvalidAccountMap.get(v.groupId)
-                              ? 'pubAccountDetModule-accounts-disable'
-                              : !disabledIdSet.has(v.id) &&
-                                !detLoading &&
-                                'pubAccountDetModule-accounts-ol',
-                          ].join(' ')}
+                          className={['pubAccountDetModule-accounts-name'].join(
+                            ' ',
+                          )}
                         >
                           <div className="pubAccountDetModule-accounts-name-wrapper">
                             <CloseCircleOutlined className="pubAccountDetModule-accounts-disable-icon" />
@@ -297,6 +299,14 @@ const PubAccountDetModule = memo(
                           </div>
                         </div>
                       </Tooltip>
+                      <span className="pubAccountDetModule-accounts-proxy">
+                        {(() => {
+                          if (!isCheckProxy) return '';
+                          const group = accountGroupMap.get(v.groupId!)!;
+                          if (!group.proxyOpen || !group.proxyIp) return '';
+                          return '代理' + ` ${group.proxyIp}`;
+                        })()}
+                      </span>
                     </div>
                   );
                 })}
