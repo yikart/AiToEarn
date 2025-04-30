@@ -159,7 +159,8 @@ export class InteractionService {
       let i = 0;
       for (const works of worksList) {
         // console.log('------ 开始处理作品:', works);
-        // if (i > 0) await sleep(10 * 1000);
+        // 等待
+        if (i > 0) await sleep(10 * 1000);
         i++;
         const oldRecord = await this.getInteractionRecord(
           userInfo.id,
