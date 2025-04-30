@@ -1932,7 +1932,7 @@ export class DouyinService {
    * 发布专用请求方法
    */
   private async makePublishRequest(
-    url: string,
+    url: string, 
     options: any,
     proxy: string,
   ): Promise<any> {
@@ -1956,7 +1956,7 @@ export class DouyinService {
           ...options.headers,
         },
         body: formData,
-        proxy,
+        // proxy,
       });
 
       const responseText = await response.data;
@@ -2427,15 +2427,18 @@ export class DouyinService {
 
   // 回复其他人的评论
   async creatorCommentReplyOther(cookie: Electron.Cookie[], data: any) {
+    console.log('wentipaicha1')
     const thisUri = `https://www.douyin.com/aweme/v1/web/comment/publish/?${jsonToQueryString(
       {
         aid: '6383',
       },
     )}`;
+    console.log('wentipaicha2')
     const cookieString = CommonUtils.convertCookieToJson(cookie);
+    console.log('wentipaicha3')
     const csrfToken = await this.getSecsdkCsrfToken(cookieString);
-
-    const res = await this.makePublishRequest(
+    console.log('wentipaicha4')
+    const res = await this.postFormData(
       thisUri,
       {
         method: 'POST',
@@ -2445,9 +2448,9 @@ export class DouyinService {
           referer: `https://www.douyin.com/video/${data.aweme_id}`,
         },
         data: data,
-      },
-      '',
+      }
     );
+    console.log('douyin index ------ res', res);
     return res;
   }
 

@@ -400,13 +400,21 @@ export class Douyin extends PlatformBase {
     content: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
+    console.log('dataIddataId????:',dataId,content)
     const res = await douyinService.creatorCommentReplyOther(cookie, {
       aweme_id: dataId,
       text: content,
       one_level_comment_rank: -1,
+
+      // aweme_id: '7498682394024430907',
+      // comment_send_celltime: 46567,
+      // comment_video_celltime: 8969,
+      // one_level_comment_rank: -1,
+      // paste_edit_method: 'non_paste',
+      // text: '调',
     });
 
-    console.log('------ res', res);
+    console.log('-- 评论 ---- res', res);
 
     return res;
   }
