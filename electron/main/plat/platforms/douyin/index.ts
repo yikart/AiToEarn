@@ -205,7 +205,7 @@ export class Douyin extends PlatformBase {
     });
 
     const list: WorkData[] = [];
-    // console.log('------douyin getsearchNodeList res: ', res);
+    console.log('------douyin getsearchNodeList res: ', res.data.data);
     // console.log('------douyin getsearchNodeList res.data.cursor: ', res.data.cursor);
     for (const s of res.data.data) {
       const v = s.aweme_info;
