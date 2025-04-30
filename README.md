@@ -16,14 +16,13 @@
 
 ## [最好用的开源内容营销AI Agent！](https://www.aitoearn.cn/aiToEarn)
 
-- 一站式管理小红书，抖音，快手，视频号等，包括内容发布，评论，互动
-- 用AI制作你的内容
-- AI评论管理与截流
+AI内容制作，分发，出售。
 
 ## 里程碑
 - 2025.2.26 发布0.1.1版本
 - 2025.3.15 发布0.2.0版本
 - 2025.4.18 发布0.6.0版本
+- **[2025.4.30 发布0.7.1版本【最新版本】](https://github.com/yikart/AiToEarn/releases)**
 
 ## [常见问题](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
 
@@ -37,12 +36,6 @@
   - 支持Qwen大模型一键填写参数
 <img src="./presentation/post.png" alt="post" width="500"/>
 
-- 账号数据汇总分析
-<img src="./presentation/data_center.png" alt="post" width="500"/>
-  
-- 全网热门内容观察
-  - 小红书低粉爆文排行榜
-  - 小红书，抖音，视频号，快手，bilibili，公众号分赛道热门内容排行榜
 
 - AI评论自动回复
   - 支持deepseek大模型
@@ -50,15 +43,28 @@
 - AI评论搜索
 <img src="./presentation/comment_search.png" alt="post" width="500"/>
 
-- AI工具排行榜
-<img src="./presentation/tool_rank.png" alt="post" width="500"/>
+
 
 - 实用AI工具
   - 支持可以画图的GPT-4o
   - 支持使用Musetalk制作数字人视频
   - 支持短视频平台视频下载
+  - AI换脸
+  - 声音克隆
+  - 视频解说
+  - 一键成片
   
 <img src="./presentation/4o.jpeg" alt="post" width="500"/>
+
+- 账号数据汇总分析
+<img src="./presentation/data_center.png" alt="post" width="500"/>
+
+- 全网热门内容观察
+  - 小红书低粉爆文排行榜
+  - 小红书，抖音，视频号，快手，bilibili，公众号分赛道热门内容排行榜
+ 
+- AI工具排行榜
+<img src="./presentation/tool_rank.png" alt="post" width="500"/>
  
 
 ## 正在实现中
@@ -69,9 +75,7 @@
 - 公众号，bilibili发布实现
 
 ## 快速开始
-[查看最新版本](https://github.com/yikart/AiToEarn/releases/tag/v0.6.0)
-
-[直接下载最新版本(windows)](https://github.com/yikart/AiToEarn/releases/download/v0.6.0/AiToEarn-0.6.0.exe)
+[直接下载最新版本(windows)](https://github.com/yikart/AiToEarn/releases/download/v0.7.1/AiToEarn-0.7.1.exe)
 
 
 ```sh
@@ -145,4 +149,12 @@ npm run dev
 https://github.com/TMElyralab/MuseTalk
 
 https://github.com/5ime/video_spider
+
+https://github.com/FunAudioLLM/CosyVoice?tab=readme-ov-file
+
+https://github.com/facefusion/facefusion
+
+https://github.com/linyqh/NarratoAI
+
+https://github.com/harry0703/MoneyPrinterTurbo
 
