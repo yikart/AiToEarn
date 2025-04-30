@@ -198,6 +198,7 @@ export class Douyin extends PlatformBase {
    */
   async getsearchNodeList(account: AccountModel, qe: string, pageInfo?: any) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
+    console.log('getsearchNodeList', pageInfo.count, pageInfo.pcursor, pageInfo.postFirstId)
     const res = await douyinService.getSearchNodeList(cookie, qe, {
       count: pageInfo.count,
       pcursor: pageInfo.pcursor,

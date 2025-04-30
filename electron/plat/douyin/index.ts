@@ -2131,11 +2131,13 @@ export class DouyinService {
     const thisUri = `https://www.douyin.com/aweme/v1/web/search/item/?${jsonToQueryString(
       gets,
     )}`;
-
+    console.log('thisUrithisUrithisUri',thisUri)
+    // 方法
     const res = await requestNet<any>({
       url: thisUri,
       headers: {
         cookie: CookieToString(cookie),
+        // referer: 'https://www.douyin.com/'
       },
       method: 'GET',
     });
@@ -2192,8 +2194,8 @@ export class DouyinService {
           'dX0fgqUEY2mfFdKGuOfg743UWS2/Nsuyz-idReZPHOOLT7lGmRPGpPSZbozcYEW5MWB0h937iVllYxdcKsXkZKrpwmhvS/7RsUI998so0qqpT0hDEqfNCwWT9JaT0cwL8CKbJARVUzmc2dA4D1r0UB-JH/Pn4mipQHaWdnUGT9tfgM49PrFxuOtDiXzx5OI41f==',
       },
     )}`;
-
-    const res = await requestNet<DouyinHotDataResponse>({
+    // ？？？
+    const res = await requestNet<DouyinHotDataResponse>({ 
       url: thisUri,
       headers: {
         cookie: CookieToString(cookie),
