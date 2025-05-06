@@ -2117,9 +2117,10 @@ export class DouyinService {
   ) {
     const pcursor =
       pageInfo.pcursor && Number(pageInfo.pcursor) < 16 ? 0 : pageInfo.pcursor;
-    const count = Number(pcursor) > 10 ? 10 : 16;
+    const count = Number(pcursor) > 10 ? 10 : 20;
 
     const gets: any = {
+      device_platform: 'webapp',
       aid: '6383',
       keyword: qe,
       offset: pcursor,
@@ -2131,13 +2132,14 @@ export class DouyinService {
     const thisUri = `https://www.douyin.com/aweme/v1/web/search/item/?${jsonToQueryString(
       gets,
     )}`;
-    console.log('thisUrithisUrithisUri',thisUri)
+    console.log('thisUrithisUrithisUri',thisUri) 
     // 方法
     const res = await requestNet<any>({
       url: thisUri,
       headers: {
         cookie: CookieToString(cookie),
-        // referer: 'https://www.douyin.com/'
+        'User-Agent': this.defaultUserAgent,
+        referer: encodeURI('https://www.douyin.com/root/search/'+ qe +'?type=video')
       },
       method: 'GET',
     });
