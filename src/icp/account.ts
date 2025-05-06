@@ -7,8 +7,8 @@
  */
 
 import { AccountInfo } from '@/views/account/comment';
-import { AccountStatus, AccountType } from '../../commont/AccountEnum';
-import { DashboardData } from '../views/statistics/comment';
+import { AccountStatus, AccountType } from '@@/AccountEnum';
+import { DashboardData } from '@/views/statistics/comment';
 import { AccountGroupModel } from '../../electron/db/models/accountGroup';
 
 export type AccountGroup = AccountGroupModel;
