@@ -691,7 +691,7 @@ export default function Page() {
   const likePost = async (post: any) => {
     try {
       // 如果已经点赞，则不重复操作
-      if (likedPosts[post.dataId] ||  post?.data?.note_card?.interact_info?.liked ) {
+      if (likedPosts[post.dataId] ||  post?.data?.note_card?.interact_info?.liked || post?.data?.statistics?.digg_count) {
         message.info('已经点赞过了');
         return;
       }
@@ -741,7 +741,7 @@ export default function Page() {
   const collectPost = async (post: any) => {
     try {
       // 如果已经收藏，则不重复操作
-      if (collectedPosts[post.dataId] || post?.data?.note_card?.interact_info?.collected) {
+      if (collectedPosts[post.dataId] || post?.data?.note_card?.interact_info?.collected || post?.data?.statistics?.collect_count) {
         message.info('已经收藏过了');
         return;
       }
@@ -1108,10 +1108,10 @@ export default function Page() {
                                   >
                                     <LikeOutlined
                                       style={{
-                                        color: (likedPosts[item.dataId] || item?.data.note_card?.interact_info?.liked)
+                                        color: (likedPosts[item.dataId] || item?.data.note_card?.interact_info?.liked || item?.data.statistics?.digg_count)
                                           ? '#ff4d4f'
                                           : undefined,
-                                        fontSize: (likedPosts[item.dataId] || item?.data.note_card?.interact_info?.liked)
+                                        fontSize: (likedPosts[item.dataId] || item?.data.note_card?.interact_info?.liked || item?.data.statistics?.digg_count)
                                           ? '18px'
                                           : undefined,
                                       }}
@@ -1138,10 +1138,10 @@ export default function Page() {
                                   >
                                     <StarOutlined
                                       style={{
-                                        color: (collectedPosts[item.dataId] || item?.data.note_card?.interact_info?.collected)
+                                        color: (collectedPosts[item.dataId] || item?.data.note_card?.interact_info?.collected || item?.data.statistics?.collect_count)
                                           ? '#faad14'
                                           : undefined,
-                                        fontSize: (collectedPosts[item.dataId] || item?.data.note_card?.interact_info?.collected)
+                                        fontSize: (collectedPosts[item.dataId] || item?.data.note_card?.interact_info?.collected || item?.data.statistics?.collect_count)
                                           ? '18px'
                                           : undefined,
                                       }}
