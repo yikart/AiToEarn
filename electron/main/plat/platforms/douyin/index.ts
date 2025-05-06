@@ -212,10 +212,10 @@ export class Douyin extends PlatformBase {
       const v = s.aweme_info;
       list.push({
         dataId: v.aweme_id,
-        readCount: v.statistics?.digg_count,
-        likeCount: v.statistics?.digg_count,
-        collectCount: v.statistics?.collect_count,
-        commentCount: v.statistics?.comment_count,
+        readCount: v.note_card?.interact_info?.view_count,
+        likeCount: v.note_card?.interact_info?.liked_count,
+        collectCount: v.note_card?.interact_info?.collected_count,
+        commentCount: v.note_card?.interact_info?.comment_count,
         title: v.desc,
         coverUrl: v.video.cover.url_list[0] || '',
         option: {
