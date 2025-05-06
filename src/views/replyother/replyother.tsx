@@ -686,7 +686,7 @@ export default function Page() {
   const likePost = async (post: any) => {
     try {
       // 如果已经点赞，则不重复操作
-      if (likedPosts[post.dataId]) {
+      if (likedPosts[post.dataId] ||  post?.data?.note_card?.interact_info?.liked ) {
         message.info('已经点赞过了');
         return;
       }
@@ -736,7 +736,7 @@ export default function Page() {
   const collectPost = async (post: any) => {
     try {
       // 如果已经收藏，则不重复操作
-      if (collectedPosts[post.dataId]) {
+      if (collectedPosts[post.dataId] || post?.data?.note_card?.interact_info?.collected) {
         message.info('已经收藏过了');
         return;
       }
@@ -1103,10 +1103,10 @@ export default function Page() {
                                   >
                                     <LikeOutlined
                                       style={{
-                                        color: likedPosts[item.dataId]
+                                        color: (likedPosts[item.dataId] || item?.data.note_card?.interact_info?.liked)
                                           ? '#ff4d4f'
                                           : undefined,
-                                        fontSize: likedPosts[item.dataId]
+                                        fontSize: (likedPosts[item.dataId] || item?.data.note_card?.interact_info?.liked)
                                           ? '18px'
                                           : undefined,
                                       }}
@@ -1133,10 +1133,10 @@ export default function Page() {
                                   >
                                     <StarOutlined
                                       style={{
-                                        color: collectedPosts[item.dataId]
+                                        color: (collectedPosts[item.dataId] || item?.data.note_card?.interact_info?.collected)
                                           ? '#faad14'
                                           : undefined,
-                                        fontSize: collectedPosts[item.dataId]
+                                        fontSize: (collectedPosts[item.dataId] || item?.data.note_card?.interact_info?.collected)
                                           ? '18px'
                                           : undefined,
                                       }}
