@@ -255,7 +255,7 @@ export default function Page() {
     setIsLoadingMore(true);
     try {
       setTimeout(async () => {
-        await getSearchListFunc(activeAccountId, searchKeyword, true);
+        await getSearchListFunc(activeAccountId, searchKeyword, false);
       }, 0);
     } finally {
       setIsLoadingMore(false);
@@ -512,14 +512,18 @@ export default function Page() {
       console.log('没有更多数据了，不再发送请求');
       return;
     }
-
+    console.log('activeAccountType', activeAccountType)
+    if (isfirst) {
+      setPostFirstId('');
+      pageInfo.pcursor = 1; 
+    }
     const res = await getCommentSearchNotes(thisid, qe, {
       ...pageInfo,
       postFirstId: postFirstId,
     });
     console.log('------ getSearchListFunc -- @@:', res);
     if (isfirst && activeAccountType == 'douyin') {
-      setPostFirstId(res.orgList?.log_pb?.impr_id);
+      setPostFirstId(res.orgList?.log_pb?.impr_id || '');
     } else if (isfirst && activeAccountType == 'KWAI') {
       console.log(
         '------ getSearchListFunc -- @@:',
@@ -539,6 +543,7 @@ export default function Page() {
         hasMore: res.pageInfo.hasMore || false,
         pcursor: res.pageInfo.pcursor || '',
       });
+
     } else {
       // 如果没有返回数据，设置hasMore为false
       setPageInfo((prev) => ({
