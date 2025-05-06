@@ -255,7 +255,7 @@ export default function Page() {
     setIsLoadingMore(true);
     try {
       setTimeout(async () => {
-        await getSearchListFunc(activeAccountId, searchKeyword, true);
+        await getSearchListFunc(activeAccountId, searchKeyword, false);
       }, 0);
     } finally {
       setIsLoadingMore(false);
@@ -512,14 +512,18 @@ export default function Page() {
       console.log('没有更多数据了，不再发送请求');
       return;
     }
-
+    console.log('activeAccountType', activeAccountType)
+    if (isfirst) {
+      setPostFirstId('');
+      pageInfo.pcursor = 1; 
+    }
     const res = await getCommentSearchNotes(thisid, qe, {
       ...pageInfo,
       postFirstId: postFirstId,
     });
     console.log('------ getSearchListFunc -- @@:', res);
     if (isfirst && activeAccountType == 'douyin') {
-      setPostFirstId(res.orgList?.log_pb?.impr_id);
+      setPostFirstId(res.orgList?.log_pb?.impr_id || '');
     } else if (isfirst && activeAccountType == 'KWAI') {
       console.log(
         '------ getSearchListFunc -- @@:',
@@ -539,6 +543,7 @@ export default function Page() {
         hasMore: res.pageInfo.hasMore || false,
         pcursor: res.pageInfo.pcursor || '',
       });
+
     } else {
       // 如果没有返回数据，设置hasMore为false
       setPageInfo((prev) => ({
@@ -686,7 +691,7 @@ export default function Page() {
   const likePost = async (post: any) => {
     try {
       // 如果已经点赞，则不重复操作
-      if (likedPosts[post.dataId]) {
+      if (likedPosts[post.dataId] ||  post?.data?.note_card?.interact_info?.liked || post?.data?.statistics?.digg_count) {
         message.info('已经点赞过了');
         return;
       }
@@ -736,7 +741,7 @@ export default function Page() {
   const collectPost = async (post: any) => {
     try {
       // 如果已经收藏，则不重复操作
-      if (collectedPosts[post.dataId]) {
+      if (collectedPosts[post.dataId] || post?.data?.note_card?.interact_info?.collected || post?.data?.statistics?.collect_count) {
         message.info('已经收藏过了');
         return;
       }
@@ -1103,10 +1108,10 @@ export default function Page() {
                                   >
                                     <LikeOutlined
                                       style={{
-                                        color: likedPosts[item.dataId]
+                                        color: (likedPosts[item.dataId] || item?.data.note_card?.interact_info?.liked || item?.data.statistics?.digg_count)
                                           ? '#ff4d4f'
                                           : undefined,
-                                        fontSize: likedPosts[item.dataId]
+                                        fontSize: (likedPosts[item.dataId] || item?.data.note_card?.interact_info?.liked || item?.data.statistics?.digg_count)
                                           ? '18px'
                                           : undefined,
                                       }}
@@ -1133,10 +1138,10 @@ export default function Page() {
                                   >
                                     <StarOutlined
                                       style={{
-                                        color: collectedPosts[item.dataId]
+                                        color: (collectedPosts[item.dataId] || item?.data.note_card?.interact_info?.collected || item?.data.statistics?.collect_count)
                                           ? '#faad14'
                                           : undefined,
-                                        fontSize: collectedPosts[item.dataId]
+                                        fontSize: (collectedPosts[item.dataId] || item?.data.note_card?.interact_info?.collected || item?.data.statistics?.collect_count)
                                           ? '18px'
                                           : undefined,
                                       }}

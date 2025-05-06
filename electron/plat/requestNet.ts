@@ -1,5 +1,6 @@
 import { net, session, Session } from 'electron';
 import FormData from 'form-data';
+import { ipv4Regular } from '../../commont/regular';
 
 export interface IRequestNetResult<T> {
   status: number;
@@ -37,6 +38,7 @@ const requestNet = <T = any>({
 
       // 如果传入了代理配置，动态设置代理
       if (proxy) {
+        if (!ipv4Regular.test(proxy)) throw new Error('代理地址不合法');
         customSession = session.fromPartition(
           `persist:proxy-session-${Date.now()}`,
         );

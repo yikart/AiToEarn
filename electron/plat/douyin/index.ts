@@ -1933,7 +1933,7 @@ export class DouyinService {
    * 发布专用请求方法
    */
   private async makePublishRequest(
-    url: string, 
+    url: string,
     options: any,
     proxy: string,
   ): Promise<any> {
@@ -2117,9 +2117,10 @@ export class DouyinService {
   ) {
     const pcursor =
       pageInfo.pcursor && Number(pageInfo.pcursor) < 16 ? 0 : pageInfo.pcursor;
-    const count = Number(pcursor) > 10 ? 10 : 16;
+    const count = Number(pcursor) > 10 ? 10 : 20;
 
     const gets: any = {
+      device_platform: 'webapp',
       aid: '6383',
       keyword: qe,
       offset: pcursor,
@@ -2131,13 +2132,14 @@ export class DouyinService {
     const thisUri = `https://www.douyin.com/aweme/v1/web/search/item/?${jsonToQueryString(
       gets,
     )}`;
-    console.log('thisUrithisUrithisUri',thisUri)
+    console.log('thisUrithisUrithisUri',thisUri) 
     // 方法
     const res = await requestNet<any>({
       url: thisUri,
       headers: {
         cookie: CookieToString(cookie),
-        // referer: 'https://www.douyin.com/'
+        'User-Agent': this.defaultUserAgent,
+        referer: encodeURI('https://www.douyin.com/root/search/'+ qe +'?type=video')
       },
       method: 'GET',
     });
@@ -2415,29 +2417,26 @@ export class DouyinService {
 
   // 回复其他人的评论
   async creatorCommentReplyOther(cookie: Electron.Cookie[], data: any) {
-    console.log('wentipaicha1')
+    console.log('wentipaicha1');
     const thisUri = `https://www.douyin.com/aweme/v1/web/comment/publish/?${jsonToQueryString(
       {
         aid: '6383',
       },
     )}`;
-    console.log('wentipaicha2')
+    console.log('wentipaicha2');
     const cookieString = CommonUtils.convertCookieToJson(cookie);
-    console.log('wentipaicha3')
+    console.log('wentipaicha3');
     const csrfToken = await this.getSecsdkCsrfToken(cookieString);
-    console.log('wentipaicha4')
-    const res = await this.postFormData(
-      thisUri,
-      {
-        method: 'POST',
-        headers: {
-          Cookie: cookieString,
-          'X-Secsdk-Csrf-Token': csrfToken,
-          referer: `https://www.douyin.com/video/${data.aweme_id}`,
-        },
-        data: data,
-      }
-    );
+    console.log('wentipaicha4');
+    const res = await this.postFormData(thisUri, {
+      method: 'POST',
+      headers: {
+        Cookie: cookieString,
+        'X-Secsdk-Csrf-Token': csrfToken,
+        referer: `https://www.douyin.com/video/${data.aweme_id}`,
+      },
+      data: data,
+    });
     console.log('douyin index ------ res', res);
     return res;
   }

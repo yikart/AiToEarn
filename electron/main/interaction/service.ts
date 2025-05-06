@@ -118,7 +118,7 @@ export class InteractionService {
     account: AccountModel,
     worksList: WorkData[],
     option: {
-      commentContent: string; // 评论内容
+      commentContent?: string; // 评论内容
       taskId?: string; // 任务ID
       platform?: string; // 平台ID
       likeProb?: any; // 点赞概率
@@ -133,8 +133,9 @@ export class InteractionService {
       error?: any;
     }) => void,
   ) {
-    // console.log('------ autorInteraction', option);
-    const commentContentList = option.commentContent.split(',');
+    const commentContentList = option.commentContent
+      ? option.commentContent.split(',')
+      : [];
     // return;
 
     const userInfo = getUserInfo();
