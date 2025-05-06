@@ -22,7 +22,8 @@ AI内容制作，分发，出售。
 - 2025.2.26 发布0.1.1版本
 - 2025.3.15 发布0.2.0版本
 - 2025.4.18 发布0.6.0版本
-- **[2025.4.30 发布0.7.1版本【最新版本】](https://github.com/yikart/AiToEarn/releases)**
+- 2025.4.30 发布0.7.1版本
+- **[最新版本 0.7.2](https://github.com/yikart/AiToEarn/releases/tag/v0.7.2)**
 
 ## [常见问题](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
 
