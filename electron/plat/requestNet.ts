@@ -113,6 +113,7 @@ const requestNet = <T = any>({
 
       // 错误处理
       req.on('error', (error) => {
+        console.log('error:', error);
         reject(error);
       });
 
@@ -135,7 +136,7 @@ const requestNet = <T = any>({
         req.end();
       }
     } catch (error) {
-      console.error('请求失败：', error);
+      console.log('请求失败：', error);
       reject(error);
     }
   });
