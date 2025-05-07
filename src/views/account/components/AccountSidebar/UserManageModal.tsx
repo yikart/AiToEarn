@@ -240,6 +240,7 @@ const UserManageModal = memo(
             open={deleteHitOpen}
             title="删除提示"
             width={500}
+            zIndex={1002}
             onCancel={() => setDeleteHitOpen(false)}
             rootClassName={styles.userManageDeleteHitModal}
             onOk={async () => {

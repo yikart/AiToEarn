@@ -13,6 +13,7 @@ import { SplashWindow } from './splash';
 import dotenv from 'dotenv';
 import KwaiPubListener from './plat/platforms/Kwai/KwaiPubListener';
 import { registerContextMenuListener } from '@electron-uikit/contextmenu';
+import { dialog } from 'electron';
 
 const platform = process.platform;
 dotenv.config();
@@ -24,6 +25,10 @@ process.env.APP_ROOT = path.join(__dirname, '../..');
 export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron');
 export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist');
 export const VITE_DEV_SERVER_URL = process.env.VITE_DEV_SERVER_URL;
+
+dialog.showErrorBox = (title, content) => {
+  console.error(`Error: ${title}\n${content}`);
+};
 
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
   ? path.join(process.env.APP_ROOT, 'public')

@@ -20,6 +20,7 @@ import { AccountStatus } from '../../../../../commont/AccountEnum';
 import { AvatarPlat } from '../PubProgressModule/PubProgressModule';
 import { AccountGroupItem, useAccountStore } from '@/store/account';
 import { useShallow } from 'zustand/react/shallow';
+import { AccountModel } from '../../../../../electron/db/models/account';
 
 export interface IPubAccountDetModuleRef {
   // 打开弹框并且开始检测
@@ -119,6 +120,13 @@ const PubAccountDetModule = memo(
           status,
           group,
         };
+      };
+
+      const getIp = (account: AccountModel) => {
+        if (!isCheckProxy) return '';
+        const group = accountGroupMap.get(account.groupId!)!;
+        if (!group.proxyOpen || !group.proxyIp) return '';
+        return '代理' + ` ${group.proxyIp}`;
       };
 
       const imperative: IPubAccountDetModuleRef = {
@@ -299,14 +307,11 @@ const PubAccountDetModule = memo(
                           </div>
                         </div>
                       </Tooltip>
-                      <span className="pubAccountDetModule-accounts-proxy">
-                        {(() => {
-                          if (!isCheckProxy) return '';
-                          const group = accountGroupMap.get(v.groupId!)!;
-                          if (!group.proxyOpen || !group.proxyIp) return '';
-                          return '代理' + ` ${group.proxyIp}`;
-                        })()}
-                      </span>
+                      <div className="pubAccountDetModule-accounts-proxy">
+                        <Tooltip title={getIp(v)}>
+                          <span>{getIp(v)}</span>
+                        </Tooltip>
+                      </div>
                     </div>
                   );
                 })}
