@@ -10,7 +10,7 @@ import styles from './proxyManage.module.scss';
 import { Button, Input, message, Modal, Switch, Table, TableProps } from 'antd';
 import { AccountGroupItem, useAccountStore } from '@/store/account';
 import { useShallow } from 'zustand/react/shallow';
-import { SearchOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, SearchOutlined } from '@ant-design/icons';
 import accountStyles from '../AccountSidebar.module.scss';
 import { icpEditDeleteAccountGroup, icpProxyCheck } from '@/icp/account';
 
@@ -39,6 +39,8 @@ const ProxyManage = memo(
       const [proxyLoading, setProxyLoading] = useState(false);
       const [submitLoading, setSubmitLoading] = useState(false);
       const proxyGroupData = useRef<AccountGroupItem>(undefined);
+      const [proxyCourseOpen, setProxyCourseOpen] = useState(false);
+      const videoRef = useRef<HTMLVideoElement>(null);
 
       const columns = useMemo(() => {
         const columns: TableProps<AccountGroupItem>['columns'] = [
@@ -129,6 +131,24 @@ const ProxyManage = memo(
       return (
         <>
           <Modal
+            title="代理使用教程"
+            open={proxyCourseOpen}
+            footer={null}
+            width={1000}
+            onCancel={() => {
+              setProxyCourseOpen(false);
+              videoRef.current!.pause();
+            }}
+          >
+            <video
+              ref={videoRef}
+              src="https://ylzsfile.yikart.cn/att/ipv.mkv"
+              style={{ width: '100%' }}
+              controls={true}
+            ></video>
+          </Modal>
+
+          <Modal
             title="设置代理"
             open={proxyOpen}
             onCancel={() => setProxyOpen(false)}
@@ -189,7 +209,17 @@ const ProxyManage = memo(
           </Modal>
           <Modal
             open={open}
-            title="代理管理器"
+            title={
+              <>
+                代理管理器
+                <QuestionCircleOutlined
+                  style={{ marginLeft: '6px', cursor: 'pointer' }}
+                  onClick={() => {
+                    setProxyCourseOpen(true);
+                  }}
+                />
+              </>
+            }
             onCancel={onCancel}
             width={700}
             footer={null}

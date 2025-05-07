@@ -11,10 +11,7 @@ import { AccountInfo, AccountPlatInfoMap } from '../../comment';
 import { Avatar, Button, Collapse, message, Popover, Tooltip } from 'antd';
 import { accountLogin, acpAccountLoginCheck } from '@/icp/account';
 import AddAccountModal from '../AddAccountModal';
-import {
-  AccountStatus,
-  defaultAccountGroupId,
-} from '../../../../../commont/AccountEnum';
+import { AccountStatus, defaultAccountGroupId } from '@@/AccountEnum';
 import Icon, {
   CheckCircleOutlined,
   PlusOutlined,
