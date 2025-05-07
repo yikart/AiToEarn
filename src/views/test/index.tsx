@@ -5,21 +5,21 @@
  * @LastEditors: nevin
  * @Description: 测试页面
  */
+import { toolsApi } from '@/api/tools';
 import { Button } from 'antd';
 export default function Test() {
-  async function getLogFilePathList() {
-    const res = await window.ipcRenderer.invoke('ICP_GET_FILE_MATE_INFO');
-    console.log('-----', res);
+  async function testBtn() {
+    toolsApi.textModeration('嫖娼去');
   }
 
   return (
     <div>
       <Button
         onClick={() => {
-          getLogFilePathList();
+          testBtn();
         }}
       >
-        测试事件
+        测试
       </Button>
     </div>
   );
