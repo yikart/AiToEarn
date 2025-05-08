@@ -6,7 +6,11 @@ import {
 import { IPubParams } from '../children/videoPage/videoPage';
 import { memo, useMemo } from 'react';
 import { parseTopicString } from '../../../utils';
-import { AccountStatus, AccountType } from '../../../../commont/AccountEnum';
+import {
+  AccountStatus,
+  AccountType,
+  XhsAccountAbnormal,
+} from '../../../../commont/AccountEnum';
 import { Alert, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
@@ -19,10 +23,13 @@ export enum PubParamsErrStatusEnum {
 }
 
 export interface ErrPubParamsItem {
+  // 这个错误提示会在账户tab显示
   message: string;
+  // 错误类型，用户区分是否需要显示重新登录的错误提示
   errType: PubParamsErrStatusEnum;
   // 参数错误提示消息
   parErrMsg?: string;
+  // 发生错误的平台
   plat?: AccountType;
 }
 
@@ -108,10 +115,23 @@ export default function <T>(
           errType: PubParamsErrStatusEnum.PARAMS,
           parErrMsg: `话题 + 活动奖励不能超过${topicMax}个`,
         });
+      } else if (
+        v.account?.type === AccountType.Xhs &&
+        v.account.abnormalStatus &&
+        v.account.abnormalStatus[AccountType.Xhs] ===
+          XhsAccountAbnormal.Abnormal
+      ) {
+        // 小红书账号异常情况处理
+        errParamsMapTemp.set(v.id, {
+          message: '账号错误',
+          errType: PubParamsErrStatusEnum.PARAMS,
+          parErrMsg: `小红书账号异常，无法发布作品，请检查后重试！`,
+        });
       } else {
         if (moreVerify?.moreErrorVerifyCallback)
           moreVerify?.moreErrorVerifyCallback(v, errParamsMapTemp, platInfo);
       }
+
       // 通用参数
       if (errParamsMapTemp.has(v.id)) {
         errParamsMapTemp.set(v.id, {

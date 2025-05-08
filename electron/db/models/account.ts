@@ -7,7 +7,7 @@
  */
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { TempModel } from './temp';
-import { AccountStatus, AccountType } from '../../../commont/AccountEnum';
+import {AccountStatus, AccountType, XhsAccountAbnormal} from '../../../commont/AccountEnum';
 
 @Entity({ name: 'account' })
 export class AccountModel extends TempModel {
@@ -92,6 +92,12 @@ export class AccountModel extends TempModel {
   // 收益
   @Column({ type: 'bigint', nullable: false, comment: '收益', default: 0 })
   income?: number;
+
+  // 账号异常状态，异常状态无法发视频
+  @Column({ type: 'json', nullable: true })
+  abnormalStatus?: {
+    [AccountType.Xhs]: XhsAccountAbnormal;
+  };
 
   // 登录状态，判断是否失效
   @Column({

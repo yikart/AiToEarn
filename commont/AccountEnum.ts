@@ -14,4 +14,12 @@ export enum AccountStatus {
   DISABLE = 1,
 }
 
+// 小红书账号异常状态
+export enum XhsAccountAbnormal {
+  // 账号正常
+  Normal = 1,
+  // 账号异常（无法发布视频）
+  Abnormal = 2,
+}
+
 export const defaultAccountGroupId = 1;

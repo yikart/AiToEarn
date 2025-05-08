@@ -50,7 +50,12 @@ export abstract class PlatformBase {
    * 登录状态检测
    * @param account
    */
-  abstract loginCheck(account: AccountModel): Promise<boolean>;
+  abstract loginCheck(account: AccountModel): Promise<{
+    // true=在线，false=离线
+    online: boolean;
+    // 要额外更新的账户数据
+    account?: Partial<AccountModel>;
+  }>;
 
   /**
    * 获取该平台的用户信息

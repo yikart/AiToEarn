@@ -485,14 +485,18 @@ export class Kwai extends PlatformBase {
     return false;
   }
 
-  async loginCheck(account: AccountModel): Promise<boolean> {
+  async loginCheck(account: AccountModel) {
+    let online = false;
     try {
       const res = await kwaiPub.getAccountInfo(JSON.parse(account.loginCookie));
-      return !(res?.status !== 200 || !res?.data?.data?.userInfo?.userId);
+      online = !(res?.status !== 200 || !res?.data?.data?.userInfo?.userId);
     } catch (e) {
       console.warn('快手登录状态检测错误：', e);
-      return false;
+      online = false;
     }
+    return {
+      online,
+    };
   }
 
   async getTopics({

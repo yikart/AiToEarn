@@ -90,14 +90,13 @@ export class AccountController {
     // 取出cookie
     if (!accountInfo.loginCookie) return accountInfo;
 
-    const res = await platController
-      .platLoginCheck(pType, accountInfo)
-      .catch(() => false);
-    console.log(res);
-    const account = await this.accountService.updateAccountStatus(
-      accountInfo!.id!,
-      res ? AccountStatus.USABLE : AccountStatus.DISABLE,
-    );
+    const res = await platController.platLoginCheck(pType, accountInfo);
+
+    await this.accountService.updateAccountInfo(accountInfo.id, {
+      status: res.online ? AccountStatus.USABLE : AccountStatus.DISABLE,
+      ...(res.online && typeof res.account === 'object' ? res.account : {}),
+    });
+    const account = await this.accountService.getAccountById(accountInfo!.id!);
     windowOperate.sendRenderMsg(SendChannelEnum.AccountLoginFinish, account);
     return account || accountInfo;
   }

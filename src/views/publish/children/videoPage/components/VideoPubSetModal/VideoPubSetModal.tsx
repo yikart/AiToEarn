@@ -55,7 +55,7 @@ import {
   NoticeType,
   useBellMessageStroe,
 } from '../../../../../../store/bellMessageStroe';
-import { signInApi, SignInType } from '@/api/signIn';
+import { signInApi } from '@/api/signIn';
 
 export interface IVideoPubSetModalRef {}
 

@@ -212,7 +212,7 @@ export class AccountService {
 
   // 更新用户信息
   async updateAccountInfo(id: number, data: Partial<AccountModel>) {
-    await this.accountRepository.update(id, data);
+    return await this.accountRepository.update(id, data);
   }
 
   // 更新账户的统计信息

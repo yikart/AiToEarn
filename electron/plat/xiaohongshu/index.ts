@@ -264,6 +264,7 @@ export class XiaohongshuService {
       nickname: userInfo.data.nickname || '',
       avatar: userInfo.data.imageb || '',
       fansCount: fansInfo.data.fans_count || 0,
+      diagnosis_status: fansInfo.data.diagnosis_status,
     };
   }
 

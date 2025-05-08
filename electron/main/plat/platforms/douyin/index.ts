@@ -82,8 +82,11 @@ export class Douyin extends PlatformBase {
     }
   }
 
-  async loginCheck(account: AccountModel): Promise<boolean> {
-    return await douyinService.checkLoginStatus(account.loginCookie);
+  async loginCheck(account: AccountModel) {
+    const online = await douyinService.checkLoginStatus(account.loginCookie);
+    return {
+      online,
+    };
   }
 
   async getAccountInfo(params: IAccountInfoParams): Promise<AccountInfoTypeRV> {

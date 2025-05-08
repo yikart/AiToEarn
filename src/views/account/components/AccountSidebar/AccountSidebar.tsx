@@ -2,23 +2,27 @@ import {
   ForwardedRef,
   forwardRef,
   memo,
+  useMemo,
   useRef,
   useState,
-  useMemo,
 } from 'react';
 import styles from './AccountSidebar.module.scss';
 import { AccountInfo, AccountPlatInfoMap } from '../../comment';
 import { Avatar, Button, Collapse, message, Popover, Tooltip } from 'antd';
 import { accountLogin, acpAccountLoginCheck } from '@/icp/account';
 import AddAccountModal from '../AddAccountModal';
-import { AccountStatus, defaultAccountGroupId } from '@@/AccountEnum';
+import {
+  AccountStatus,
+  AccountType,
+  defaultAccountGroupId,
+  XhsAccountAbnormal,
+} from '@@/AccountEnum';
 import Icon, {
   CheckCircleOutlined,
   PlusOutlined,
   UserOutlined,
   WarningOutlined,
 } from '@ant-design/icons';
-import useCssVariables from '../../../../hooks/useCssVariables';
 import PubAccountDetModule, {
   IPubAccountDetModuleRef,
 } from '../../../publish/components/PubAccountDetModule/PubAccountDetModule';
@@ -27,6 +31,7 @@ import { useAccountStore } from '@/store/account';
 import UserManageModal, { IUserManageModalRef } from './UserManageModal';
 import ProxyManage from '@/views/account/components/AccountSidebar/ProxyManage';
 import ProxyIcon from '@/assets/svgs/proxy.svg?react';
+import { AccountModel } from '../../../../../electron/db/models/account';
 
 export interface IAccountSidebarRef {}
 
@@ -39,9 +44,39 @@ export interface IAccountSidebarProps {
   excludePlatforms?: string[];
 }
 
+const AccountStatusView = ({ account }: { account: AccountModel }) => {
+  if (
+    account.type === AccountType.Xhs &&
+    account.abnormalStatus &&
+    account.abnormalStatus[AccountType.Xhs] === XhsAccountAbnormal.Abnormal
+  ) {
+    return (
+      <Tooltip title="账号状态异常，无法发布作品，请检查后重试！">
+        <WarningOutlined style={{ color: 'var(--warningColor)' }} />
+        异常
+      </Tooltip>
+    );
+  }
+
+  if (account.status === AccountStatus.USABLE) {
+    return (
+      <>
+        <CheckCircleOutlined style={{ color: 'var(--successColor)' }} />
+        在线
+      </>
+    );
+  }
+
+  return (
+    <>
+      <WarningOutlined style={{ color: 'var(--warningColor)' }} />
+      离线
+    </>
+  );
+};
+
 const AccountPopoverInfo = ({ accountInfo }: { accountInfo: AccountInfo }) => {
   const platInfo = AccountPlatInfoMap.get(accountInfo.type)!;
-  const cssVars = useCssVariables();
   const [detLoading, setDetLoading] = useState(false);
 
   return (
@@ -69,19 +104,7 @@ const AccountPopoverInfo = ({ accountInfo }: { accountInfo: AccountInfo }) => {
       <div className="accountPopoverInfo-item">
         <p>登录状态：</p>
         <p>
-          {accountInfo.status === AccountStatus.USABLE ? (
-            <>
-              <CheckCircleOutlined
-                style={{ color: cssVars['--successColor'] }}
-              />
-              在线
-            </>
-          ) : (
-            <>
-              <WarningOutlined style={{ color: cssVars['--warningColor'] }} />
-              离线
-            </>
-          )}
+          <AccountStatusView account={accountInfo} />
           <Button
             type="link"
             style={{ padding: '0 0 0 5px' }}
@@ -235,7 +258,11 @@ const AccountSidebar = memo(
                             className={[
                               'accountList-item',
                               `${activeAccountId === account.id ? 'accountList-item--active' : ''}`,
-                              account.status === AccountStatus.DISABLE &&
+                              // 失效状态
+                              (account.status === AccountStatus.DISABLE ||
+                                (account.abnormalStatus &&
+                                  account.abnormalStatus[AccountType.Xhs] ===
+                                    XhsAccountAbnormal.Abnormal)) &&
                                 'accountList-item--disable',
                             ].join(' ')}
                             key={account.id}

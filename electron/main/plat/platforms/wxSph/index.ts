@@ -68,8 +68,11 @@ export class WxSph extends PlatformBase {
     }
   }
 
-  async loginCheck(account: AccountModel): Promise<boolean> {
-    return await shipinhaoService.checkLoginStatus(account.loginCookie);
+  async loginCheck(account: AccountModel) {
+    const online = await shipinhaoService.checkLoginStatus(account.loginCookie);
+    return {
+      online,
+    };
   }
 
   async getAccountInfo(params: IAccountInfoParams): Promise<AccountInfoTypeRV> {

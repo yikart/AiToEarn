@@ -73,16 +73,27 @@ export class Xhs extends PlatformBase {
     }
   }
 
-  async loginCheck(account: AccountModel): Promise<boolean> {
+  async loginCheck(account: AccountModel) {
     try {
       const userInfo = await xiaohongshuService.getUserInfo(
         JSON.parse(account.loginCookie),
       );
-      return !!userInfo.authorId;
+      return {
+        online: !!userInfo.authorId,
+        account: {
+          avatar: userInfo.avatar,
+          nickname: userInfo.nickname,
+          fansCount: userInfo.fansCount,
+          abnormalStatus: {
+            [AccountType.Xhs]: userInfo.diagnosis_status,
+          },
+        },
+      };
     } catch (error) {
-      console.log('-----xhs loginCheck-- error', error);
-
-      return false;
+      console.error(error);
+      return {
+        online: false,
+      };
     }
   }
 
