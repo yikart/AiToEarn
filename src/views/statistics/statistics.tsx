@@ -60,7 +60,7 @@ const Statistics = () => {
     open: false,
   });
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
 
   useEffect(() => {

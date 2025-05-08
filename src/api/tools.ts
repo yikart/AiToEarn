@@ -95,4 +95,19 @@ export const toolsApi = {
       },
     });
   },
+
+  /**
+   * 文本内容安全
+   */
+  textModeration(content: string) {
+    return http.post<string>(
+      '/tools/common/text/moderation',
+      {
+        content,
+      },
+      {
+        isToken: true,
+      },
+    );
+  },
 };

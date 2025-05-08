@@ -159,11 +159,6 @@ export const router: CustomRouteObject[] = [
         ],
       },
       // {
-      //   path: '/interaction',
-      //   element: <Interaction />,
-      //   meta: { name: '互动', icon: ShopOutlined },
-      // },
-      // {
       //   path: '/test',
       //   element: <Test />,
       //   meta: { name: '测试', icon: ShopOutlined },
