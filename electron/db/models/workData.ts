@@ -194,6 +194,9 @@ export class WorkData extends TempModel {
   @Column({ type: 'json', nullable: true, comment: '@用户数组', default: '[]' })
   mentionedUserInfo!: ILableValue[];
 
+  // 以下参数通过外部赋值，不存储在数据库中
   cookies?: CookiesType;
+  // 这个参数从 account 中赋值，这是从创作者中心的localStorage中获取的参数
+  token?: string;
   proxyIp?: string;
 }

@@ -64,6 +64,7 @@
         &-text {
           display: block;
           margin-top: 3px;
+          white-space: nowrap;
         }
         &-item {
           .anticon  {

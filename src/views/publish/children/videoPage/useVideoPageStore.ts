@@ -462,8 +462,8 @@ export const useVideoPageStore = create(
               pubRecord.previewVideoLink = undefined;
 
               const pubParams = {
-                ...pubRecord,
                 ...commonPubParams,
+                ...pubRecord,
                 cover: cover,
                 describe: pubRecord.desc,
                 id: undefined,

@@ -31,9 +31,10 @@ export class PubItemImgText extends PubItemBase {
   }
 
   async publishImgText() {
-    const params = {
+    const params: ImgTextModel = {
       ...this.imgTextModel,
       cookies: JSON.parse(this.accountModel.loginCookie),
+      token: this.accountModel.token,
     };
     console.log('图文发布原始参数：', params);
     const publishVideoResult = await this.platform.imgTextPublish(params);

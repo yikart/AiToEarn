@@ -142,6 +142,7 @@ export class DouyinService {
               win.destroy();
               // 清理引用
               delete this.windowMap[winContentsId];
+              win.webContents.openDevTools();
             }
 
             // const winBrowserWindow = BrowserWindow.fromId(winContentsId);
@@ -521,6 +522,7 @@ export class DouyinService {
     callback: (progress: number, msg?: string) => void,
   ): Promise<any> {
     console.log('抖音开始发布视频作品，参数：', {
+      tokens,
       platformSetting,
       filePath,
     });
@@ -573,18 +575,26 @@ export class DouyinService {
 
         console.log('抖音视频发布最终参数：', publishVideoParams);
         // 发布视频
+        const headers = {
+          Cookie: cookieString,
+          'X-Secsdk-Csrf-Token': csrfToken,
+          'bd-ticket-guard-client-data':
+            bdTicketHeaders['bd-ticket-guard-client-data'],
+          'bd-ticket-guard-ree-public-key':
+            bdTicketHeaders['bd-ticket-guard-ree-public-key'],
+          'bd-ticket-guard-web-sign-type': '1',
+          'bd-ticket-guard-web-version': '2',
+        };
         const publishResult = await requestNet({
           url: this.publishUrlV2,
           method: 'POST',
-          headers: {
-            Cookie: cookieString,
-            'X-Secsdk-Csrf-Token': csrfToken,
-            ...bdTicketHeaders,
-          },
+          headers,
           body: publishVideoParams,
           proxy: platformSetting.proxyIp,
         });
         callback(100, '发布完成');
+
+        console.log('headers：', headers);
 
         if (publishResult.status === 403 || publishResult.data === null) {
           console.error(`发布失败，状态码403或返回数据为空`);
@@ -1891,8 +1901,10 @@ export class DouyinService {
         return true;
       }
 
+      console.log('----------------------');
       try {
         tokens = JSON.parse(tokens);
+        console.log(tokens);
         if (
           !tokens.hasOwnProperty('privateKey') ||
           !tokens.hasOwnProperty('webProtect')
@@ -1902,6 +1914,8 @@ export class DouyinService {
         }
 
         const { privateKey, webProtect } = tokens;
+
+        console.log(webProtect);
         // 获取bd请求参数
         const bdRes = await this.makeRequest(
           'http://116.62.154.231:7879/index/index/douyin',
@@ -1920,6 +1934,7 @@ export class DouyinService {
           },
           '',
         );
+        console.log('bdRes：', bdRes);
 
         resolve(bdRes);
       } catch (err) {
@@ -2132,14 +2147,16 @@ export class DouyinService {
     const thisUri = `https://www.douyin.com/aweme/v1/web/search/item/?${jsonToQueryString(
       gets,
     )}`;
-    console.log('thisUrithisUrithisUri',thisUri) 
+    console.log('thisUrithisUrithisUri', thisUri);
     // 方法
     const res = await requestNet<any>({
       url: thisUri,
       headers: {
         cookie: CookieToString(cookie),
         'User-Agent': this.defaultUserAgent,
-        referer: encodeURI('https://www.douyin.com/root/search/'+ qe +'?type=video')
+        referer: encodeURI(
+          'https://www.douyin.com/root/search/' + qe + '?type=video',
+        ),
       },
       method: 'GET',
     });
@@ -2197,7 +2214,7 @@ export class DouyinService {
       },
     )}`;
     // ？？？
-    const res = await requestNet<DouyinHotDataResponse>({ 
+    const res = await requestNet<DouyinHotDataResponse>({
       url: thisUri,
       headers: {
         cookie: CookieToString(cookie),

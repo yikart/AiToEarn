@@ -46,6 +46,7 @@ export class PubItemVideo extends PubItemBase {
       {
         ...this.videoModel,
         cookies: JSON.parse(this.accountModel.loginCookie),
+        token: this.accountModel.token,
       },
       (progress: number, msg?: string) => {
         const args: PublishProgressRes = {

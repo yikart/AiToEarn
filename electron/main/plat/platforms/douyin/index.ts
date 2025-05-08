@@ -198,7 +198,12 @@ export class Douyin extends PlatformBase {
    */
   async getsearchNodeList(account: AccountModel, qe: string, pageInfo?: any) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    console.log('getsearchNodeList', pageInfo.count, pageInfo.pcursor, pageInfo.postFirstId)
+    console.log(
+      'getsearchNodeList',
+      pageInfo.count,
+      pageInfo.pcursor,
+      pageInfo.postFirstId,
+    );
     const res = await douyinService.getSearchNodeList(cookie, qe, {
       count: pageInfo.count,
       pcursor: pageInfo.pcursor,
@@ -213,9 +218,9 @@ export class Douyin extends PlatformBase {
       list.push({
         dataId: v.aweme_id,
         readCount: v.statistics?.digg_count,
-         likeCount: v.statistics?.digg_count,
+        likeCount: v.statistics?.digg_count,
         collectCount: v.statistics?.collect_count,
-         commentCount: v.statistics?.comment_count,
+        commentCount: v.statistics?.comment_count,
         title: v.desc,
         coverUrl: v.video.cover.url_list[0] || '',
         option: {
@@ -401,7 +406,7 @@ export class Douyin extends PlatformBase {
     content: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
-    console.log('dataIddataId????:',dataId,content)
+    console.log('dataIddataId????:', dataId, content);
     const res = await douyinService.creatorCommentReplyOther(cookie, {
       aweme_id: dataId,
       text: content,
@@ -539,7 +544,7 @@ export class Douyin extends PlatformBase {
       const result = await douyinService
         .publishVideoWorkApi(
           JSON.stringify(params.cookies),
-          undefined,
+          params?.token,
           params.videoPath!,
           this.pubParamsParse(params),
           callback,
@@ -626,7 +631,7 @@ export class Douyin extends PlatformBase {
       const result = await douyinService
         .publishImageWorkApi(
           JSON.stringify(params.cookies),
-          undefined,
+          params?.token,
           params.imagesPath,
           this.pubParamsParse(params),
         )
