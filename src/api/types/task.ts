@@ -7,6 +7,7 @@
  */
 import { Task, TaskDataInfo, TaskType } from 'commont/types/task';
 import { ApiCorrectQuery } from '.';
+import { AccountType } from '@@/AccountEnum';
 
 export enum UserTaskStatus {
   DODING = 'doing', // 进行中
@@ -54,4 +55,10 @@ export interface UserTask<T extends Task<TaskDataInfo> | string> {
   verifiedBy?: string; // 核查人员ID
   createTime: string;
   updateTime: string;
+}
+
+export interface ApplyTask {
+  account: string;
+  uid: string;
+  accountType: AccountType;
 }

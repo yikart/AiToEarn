@@ -79,4 +79,9 @@ export const userApi = {
   bindPhone(data: { phone: string; code: string; userId: string }) {
     return http.post('/api/user/bind-phone', data);
   },
+
+  // 获取我的邀请码
+  getMinePopularizeCode() {
+    return http.get<string>('user/pop/code');
+  },
 };

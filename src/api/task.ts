@@ -6,7 +6,7 @@
  * @Description: 任务
  */
 import http, { hotHttp } from './request';
-import { MineTaskListParams, TaskListParams, UserTask } from './types/task';
+import { ApplyTask, MineTaskListParams, UserTask } from './types/task';
 import { Task, TaskDataInfo } from 'commont/types/task';
 import { Pagination } from './types';
 import { UserWalletRecord } from './types/finance';
@@ -69,14 +69,10 @@ export const taskApi = {
   /**
    * 申请任务
    */
-  taskApply<T extends TaskDataInfo>(id: string) {
-    return http.post<Task<T>>(
-      `/tasks/apply/${id}`,
-      {},
-      {
-        isToken: true,
-      },
-    );
+  taskApply<T extends TaskDataInfo>(id: string, data: ApplyTask) {
+    return http.post<Task<T>>(`/tasks/apply/${id}`, data, {
+      isToken: true,
+    });
   },
 
   /**
