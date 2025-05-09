@@ -558,8 +558,7 @@ export class DouyinService {
         callback(60, '视频上传完成');
 
         // 发布视频参数
-        const publishVideoParams =
-          this.getPublishPublicParamsV2(platformSetting);
+        const publishVideoParams = this.getPublishPublicParams(platformSetting);
         callback(65, '参数获取完成');
 
         // 拼接视频封面内容
@@ -591,23 +590,23 @@ export class DouyinService {
           // 'bd-ticket-guard-web-sign-type': '1',
           // 'bd-ticket-guard-web-version': '2',
         };
-        let publishResult = await requestNet({
-          url: this.publishUrlV2,
-          method: 'POST',
-          headers,
-          body: publishVideoParams,
-          proxy: platformSetting.proxyIp,
-        });
-        // let publishResult = await this.makePublishRequest(
-        //   this.publishUrl,
-        //   {
-        //     url: this.publishUrl,
-        //     method: 'POST',
-        //     headers,
-        //     data: publishVideoParams,
-        //   },
-        //   platformSetting.proxyIp,
-        // );
+        // let publishResult = await requestNet({
+        //   url: this.publishUrlV2,
+        //   method: 'POST',
+        //   headers,
+        //   body: publishVideoParams,
+        //   proxy: platformSetting.proxyIp,
+        // });
+        let publishResult = await this.makePublishRequest(
+          this.publishUrl,
+          {
+            url: this.publishUrl,
+            method: 'POST',
+            headers,
+            data: publishVideoParams,
+          },
+          platformSetting.proxyIp,
+        );
         callback(100, '发布完成');
 
         console.log('publishResult：', publishResult);
@@ -1764,6 +1763,11 @@ export class DouyinService {
     // 整合发布参数
     const publishParams = {
       hot_sentence: platformSetting.hot_sentence,
+      user_declare_info: platformSetting.userDeclare
+        ? {
+            choose_value: platformSetting.userDeclare,
+          }
+        : {},
       item_title: platformSetting['title'] ?? '',
       text,
       text_extra: textExtra,

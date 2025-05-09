@@ -113,11 +113,11 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
           imagesMax: 35,
         },
       },
-      tips: {
-        account: '首次登录的抖音号可能会频繁掉线，通常将在重登2-3次后趋于稳定',
-        publish:
-          '首次登录的抖音账号请先在账户单独完成一次内容发布后再做一键发布',
-      },
+      // tips: {
+      //   account: '首次登录的抖音号可能会频繁掉线，通常将在重登2-3次后趋于稳定',
+      //   publish:
+      //     '首次登录的抖音账号请先在账户单独完成一次内容发布后再做一键发布',
+      // },
     },
   ],
   [
