@@ -563,8 +563,17 @@ export class DouyinService {
         callback(65, '参数获取完成');
 
         // 拼接视频封面内容
-        publishVideoParams.item.common.video_id = videoId;
-        publishVideoParams.item.cover.poster = poster;
+        if (publishVideoParams.item) {
+          // v2处理
+          publishVideoParams.item.common.video_id = videoId;
+          publishVideoParams.item.cover.poster = poster;
+        } else {
+          // v1 处理
+          // @ts-ignore
+          publishVideoParams.video_id = videoId;
+          // @ts-ignore
+          publishVideoParams.poster = poster;
+        }
 
         // 获取csrf-token
         const csrfToken = await this.getSecsdkCsrfToken(cookieString);
@@ -578,28 +587,43 @@ export class DouyinService {
         const headers = {
           Cookie: cookieString,
           'X-Secsdk-Csrf-Token': csrfToken,
-          'bd-ticket-guard-client-data':
-            bdTicketHeaders['bd-ticket-guard-client-data'],
-          'bd-ticket-guard-ree-public-key':
-            bdTicketHeaders['bd-ticket-guard-ree-public-key'],
-          'bd-ticket-guard-web-sign-type': '1',
-          'bd-ticket-guard-web-version': '2',
+          ...bdTicketHeaders,
+          // 'bd-ticket-guard-web-sign-type': '1',
+          // 'bd-ticket-guard-web-version': '2',
         };
-        const publishResult = await requestNet({
+        let publishResult = await requestNet({
           url: this.publishUrlV2,
           method: 'POST',
           headers,
           body: publishVideoParams,
           proxy: platformSetting.proxyIp,
         });
+        // let publishResult = await this.makePublishRequest(
+        //   this.publishUrl,
+        //   {
+        //     url: this.publishUrl,
+        //     method: 'POST',
+        //     headers,
+        //     data: publishVideoParams,
+        //   },
+        //   platformSetting.proxyIp,
+        // );
         callback(100, '发布完成');
 
-        console.log('headers：', headers);
+        console.log('publishResult：', publishResult);
 
         if (publishResult.status === 403 || publishResult.data === null) {
           console.error(`发布失败，状态码403或返回数据为空`);
           reject('请重新授权账号后发布,如多次失败,请联系技术处理!');
           return false;
+        }
+
+        if (!publishResult.data) {
+          publishResult = {
+            // @ts-ignore
+            data: publishResult,
+            ...publishResult,
+          };
         }
 
         if (
@@ -614,10 +638,12 @@ export class DouyinService {
           return false;
         }
 
+        const item_id =
+          publishResult.data.item_id || publishResult.data.aweme.aweme_id;
         const response = {
           publishTime: Math.floor(Date.now() / 1000),
-          publishId: publishResult.data.item_id,
-          shareLink: `https://www.douyin.com/user/self?from_tab_name=main&modal_id=${publishResult.data.item_id}&showTab=post`,
+          publishId: item_id,
+          shareLink: `https://www.douyin.com/user/self?from_tab_name=main&modal_id=${item_id}&showTab=post`,
         };
         console.log(`抖音视频发布成功，返回数据:`, response);
         resolve(response);

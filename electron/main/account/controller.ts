@@ -90,7 +90,12 @@ export class AccountController {
     // 取出cookie
     if (!accountInfo.loginCookie) return accountInfo;
 
-    const res = await platController.platLoginCheck(pType, accountInfo);
+    const res = await platController
+      .platLoginCheck(pType, accountInfo)
+      .catch(() => ({
+        online: false,
+        account: undefined,
+      }));
 
     await this.accountService.updateAccountInfo(accountInfo.id, {
       status: res.online ? AccountStatus.USABLE : AccountStatus.DISABLE,
