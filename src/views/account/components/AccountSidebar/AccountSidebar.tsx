@@ -259,11 +259,13 @@ const AccountSidebar = memo(
                               'accountList-item',
                               `${activeAccountId === account.id ? 'accountList-item--active' : ''}`,
                               // 失效状态
-                              (account.status === AccountStatus.DISABLE ||
-                                (account.abnormalStatus &&
-                                  account.abnormalStatus[AccountType.Xhs] ===
-                                    XhsAccountAbnormal.Abnormal)) &&
+                              account.status === AccountStatus.DISABLE &&
                                 'accountList-item--disable',
+                              // 异常状态
+                              account.abnormalStatus &&
+                                account.abnormalStatus[AccountType.Xhs] ===
+                                  XhsAccountAbnormal.Abnormal &&
+                                'accountList-item--abnormal',
                             ].join(' ')}
                             key={account.id}
                             onClick={async () => {
@@ -282,7 +284,17 @@ const AccountSidebar = memo(
                                 className="accountList-item-right-name"
                                 title={account.nickname}
                               >
-                                {account.nickname}
+                                <Tooltip
+                                  title={
+                                    account.abnormalStatus &&
+                                    account.abnormalStatus[AccountType.Xhs] ===
+                                      XhsAccountAbnormal.Abnormal
+                                      ? '账号状态异常，无法发布作品，请检查后重试'
+                                      : undefined
+                                  }
+                                >
+                                  {account.nickname}
+                                </Tooltip>
                               </div>
                               <div className="accountList-item-right-footer">
                                 <p className="accountList-item-right-plat">

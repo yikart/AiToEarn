@@ -81,7 +81,11 @@ const Navigation = () => {
           }}
         >
           <div className="navigation-icon">
-            <img src={treeSvg} alt="小树苗" style={{ width: 20, height: 20, verticalAlign: 'middle' }} />
+            <img
+              src={treeSvg}
+              alt="小树苗"
+              style={{ width: 20, height: 20, verticalAlign: 'middle' }}
+            />
             <span className="navigation-icon-text">小树苗</span>
           </div>
         </Popover>
@@ -93,7 +97,7 @@ const Navigation = () => {
             <span className="navigation-icon-text">消息</span>
           </div>
         </Bellmessage>
-        
+
         <div className="navigation-line"></div>
         <SysMenu />
         <div className="navigation-line"></div>

@@ -104,9 +104,13 @@
           background: var(--colorPrimary1);
         }
 
+        &--abnormal {
+          color: red !important;
+        }
+
         &--disable {
-          filter: grayscale(100%);
-          opacity: 0.5;
+          filter: grayscale(100%) !important;
+          opacity: 0.5 !important;
         }
       }
     }

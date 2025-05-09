@@ -6,7 +6,6 @@ import { NoticeType, useBellMessageStroe } from '../../store/bellMessageStroe';
 import { PubRecordStatusTag } from '../../views/publish/children/pubRecord/page';
 import { formatTime } from '../../utils';
 import PubProgressModule from '../../views/publish/components/PubProgressModule/PubProgressModule';
-import { PublishProgressRes } from '../../../electron/main/plat/pub/PubItemVideo';
 
 export interface IBellmessageRef {}
 
