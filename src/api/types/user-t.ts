@@ -2,7 +2,6 @@ export interface PhoneLoginParams {
   phone: string;
   code: string;
   openId?: string; // 微信公众号的openId
-  invitePhone?: string;
   inviteCode?: string;
 }
 
