@@ -301,7 +301,7 @@ export default function Page() {
             }
             for (const { sensitive, accountItem } of res) {
               if (sensitive) {
-                message.warning('检测到此条作品异常！');
+                message.warning('检测到此条作品存在敏感信息！');
                 setActivePlat(accountItem.account.type);
                 const platActiveAccountMap = new Map(
                   useImagePageStore.getState().platActiveAccountMap,
