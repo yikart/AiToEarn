@@ -9,12 +9,14 @@ import { AccountModel } from '../../db/models/account';
 import { Injectable } from '../core/decorators';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import {
+  AccountStatus,
   AccountType,
   defaultAccountGroupId,
 } from '../../../commont/AccountEnum';
 import platController from '../plat/index';
 import { EtEvent } from '../../global/event';
 import { AccountGroupModel } from '../../db/models/accountGroup';
+import { getUserInfo } from '../user/comment';
 
 @Injectable()
 export class AccountService {
@@ -58,6 +60,35 @@ export class AccountService {
   // 修改用户组数据
   async editAccountGroup(data: Partial<AccountGroupModel>) {
     return await this.accountGroupRepository.update({ id: data.id }, data);
+  }
+
+  // 单个账号登录状态检测core
+  async checkAccountLoginCore(pType: AccountType, uid: string) {
+    const userInfo = getUserInfo();
+
+    const accountInfo = await this.getAccountInfo({
+      type: pType,
+      userId: userInfo.id,
+      uid: uid,
+    });
+    if (!accountInfo) return accountInfo;
+    // 取出cookie
+    if (!accountInfo.loginCookie) return accountInfo;
+
+    const res = await platController
+      .platLoginCheck(pType, accountInfo)
+      .catch(() => ({
+        online: false,
+        account: undefined,
+      }));
+
+    await this.updateAccountInfo(accountInfo.id, {
+      status: res.online ? AccountStatus.USABLE : AccountStatus.DISABLE,
+      ...(res.online && typeof res.account === 'object' ? res.account : {}),
+    });
+    const account = await this.getAccountById(accountInfo!.id!);
+
+    return account || accountInfo;
   }
 
   // 没有就添加有就更新cookie

@@ -78,9 +78,10 @@ const PubAccountDetModule = memo(
       const [proxyInvalidAccountMap, setProxyInvalidAccountMap] = useState<
         Map<number, AccountGroupItem>
       >(new Map());
-      const { accountGroupMap } = useAccountStore(
+      const { accountGroupMap, getAccountList } = useAccountStore(
         useShallow((state) => ({
           accountGroupMap: state.accountGroupMap,
+          getAccountList: state.getAccountList,
         })),
       );
 
@@ -105,7 +106,11 @@ const PubAccountDetModule = memo(
 
       // 检测账户状态
       const retLoginStatusCore = async (account: AccountInfo) => {
-        const res = await acpAccountLoginCheck(account.type, account.uid);
+        const res = await acpAccountLoginCheck(
+          account.type,
+          account.uid,
+          false,
+        );
         setProgress((prevProgress) => prevProgress + 1);
         return res;
       };
@@ -150,6 +155,7 @@ const PubAccountDetModule = memo(
             tasksAccountStatus.push(retLoginStatusCore(account));
 
             if (isCheckProxy) {
+              // 代理有效性检测
               if (!proxyGroupSet.has(account.groupId!)) {
                 const group = accountGroupMap.get(account.groupId!)!;
                 if (group.proxyOpen) {
@@ -162,8 +168,12 @@ const PubAccountDetModule = memo(
             }
           }
 
+          // 等待代理和账号有效性检测...
           const resGroupProxyStatus = await Promise.all(tasksProxyCheck);
           const resAccountStatus = await Promise.all(tasksAccountStatus);
+
+          await getAccountList();
+
           setTimeout(() => {
             if (onDetFinish) onDetFinish(resAccountStatus);
             setDetLoading(false);
@@ -184,7 +194,7 @@ const PubAccountDetModule = memo(
                 });
               }
             });
-          }, 100);
+          }, 50);
         },
       };
       useImperativeHandle(ref, () => imperative);

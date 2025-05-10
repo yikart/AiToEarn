@@ -71,39 +71,45 @@ export class AccountController {
   }
 
   /**
-   * 账户登录检测
+   * 账户登录检测-单个
    */
   @Icp('ICP_ACCOUNT_LOGIN_CHECK')
   async checkAccountLogin(
     event: Electron.IpcMainInvokeEvent,
     pType: AccountType,
     uid: string,
+    isSendEvent: boolean = true,
   ): Promise<AccountModel | null> {
-    const userInfo = getUserInfo();
+    const account = await this.accountService.checkAccountLoginCore(pType, uid);
+    if (isSendEvent) {
+      windowOperate.sendRenderMsg(SendChannelEnum.AccountLoginFinish, account);
+    }
+    return account;
+  }
 
-    const accountInfo = await this.accountService.getAccountInfo({
-      type: pType,
-      userId: userInfo.id,
-      uid: uid,
-    });
-    if (!accountInfo) return accountInfo;
-    // 取出cookie
-    if (!accountInfo.loginCookie) return accountInfo;
+  /**
+   * 账户登录检测-多个
+   */
+  @Icp('ICP_ACCOUNT_LOGIN_CHECK_MULTI')
+  async checkAccountLoginMulti(
+    event: Electron.IpcMainInvokeEvent,
+    checkAccounts: {
+      pType: AccountType;
+      uid: string;
+    }[],
+  ): Promise<(AccountModel | null)[]> {
+    const tasks: Promise<AccountModel | null>[] = [];
 
-    const res = await platController
-      .platLoginCheck(pType, accountInfo)
-      .catch(() => ({
-        online: false,
-        account: undefined,
-      }));
-
-    await this.accountService.updateAccountInfo(accountInfo.id, {
-      status: res.online ? AccountStatus.USABLE : AccountStatus.DISABLE,
-      ...(res.online && typeof res.account === 'object' ? res.account : {}),
-    });
-    const account = await this.accountService.getAccountById(accountInfo!.id!);
-    windowOperate.sendRenderMsg(SendChannelEnum.AccountLoginFinish, account);
-    return account || accountInfo;
+    for (const { pType, uid } of checkAccounts) {
+      tasks.push(this.accountService.checkAccountLoginCore(pType, uid));
+    }
+    const accounts = await Promise.all(tasks);
+    windowOperate.sendRenderMsg(
+      SendChannelEnum.AccountLoginFinish,
+      accounts[0],
+      accounts,
+    );
+    return accounts;
   }
 
   // 更新用户状态

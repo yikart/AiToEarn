@@ -593,9 +593,10 @@ export class Douyin extends PlatformBase {
       params.keyword,
       params.page,
     );
+
     return {
       status: this.getCode(usersRes),
-      data: usersRes.data.user_list.map((v) => {
+      data: usersRes?.data?.user_list?.map((v) => {
         return {
           image: 'https://p26.douyinpic.com/aweme/' + v.avatar_thumb.uri,
           id: v.uid,
@@ -669,14 +670,16 @@ export class Douyin extends PlatformBase {
   }
 
   getCode(res: IRequestNetResult<any>) {
-    return res?.data?.status_code === 8 ? 401 : res?.status;
+    return res?.data?.status_code === 8 || res?.data?.status_code === 7
+      ? 401
+      : res?.status;
   }
 
   async getMixList(cookie: CookiesType) {
     const mixRes = await douyinService.getMixList(cookie);
     return {
       status: this.getCode(mixRes),
-      data: mixRes?.data.mix_list.map((v) => {
+      data: mixRes?.data.mix_list?.map((v) => {
         return {
           id: v.mix_id,
           name: v.mix_name,

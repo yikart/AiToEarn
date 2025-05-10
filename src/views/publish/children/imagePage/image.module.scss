@@ -20,6 +20,12 @@
       border-top: 1px solid var(--grayColor3);
       padding: 15px 0;
       text-align: center;
+      button {
+        margin-right: 20px;
+        &:last-of-type {
+          margin-right: 0;
+        }
+      }
     }
   }
 }
