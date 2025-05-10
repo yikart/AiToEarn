@@ -29,12 +29,31 @@ export async function ipcUpdateAccountStatus(
  * 账户登录状态检测
  * @param pType
  * @param uid
+ * @param isSendEvent 是否发送账户更新的事件
  */
-export async function acpAccountLoginCheck(pType: AccountType, uid: string) {
+export async function acpAccountLoginCheck(
+  pType: AccountType,
+  uid: string,
+  isSendEvent: boolean = true,
+) {
   const res: AccountInfo = await window.ipcRenderer.invoke(
     'ICP_ACCOUNT_LOGIN_CHECK',
     pType,
     uid,
+    isSendEvent,
+  );
+  return res;
+}
+// 账户登录状态检测，多个账号
+export async function acpAccountLoginCheckMulti(
+  checkAccounts: {
+    pType: AccountType;
+    uid: string;
+  }[],
+) {
+  const res: AccountInfo[] = await window.ipcRenderer.invoke(
+    'ICP_ACCOUNT_LOGIN_CHECK_MULTI',
+    checkAccounts,
   );
   return res;
 }

@@ -41,7 +41,7 @@ export interface IAccountSidebarProps {
   // 切换选择的账户
   onAccountChange: (info: AccountInfo) => void;
   // 排除的平台类型
-  excludePlatforms?: string[];
+  excludePlatforms?: AccountType[];
 }
 
 const AccountStatusView = ({ account }: { account: AccountModel }) => {
@@ -252,6 +252,7 @@ const AccountSidebar = memo(
                   children: (
                     <ul key={v.id} className="accountList">
                       {v.children?.map((account) => {
+                        if (excludePlatforms.includes(account.type)) return '';
                         const platInfo = AccountPlatInfoMap.get(account.type)!;
                         return (
                           <li

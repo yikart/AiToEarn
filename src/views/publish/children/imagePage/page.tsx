@@ -24,7 +24,9 @@ import { useAccountStore } from '../../../../store/commont';
 import { useNavigate } from 'react-router-dom';
 import { usePubStroe } from '../../../../store/pubStroe';
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import { signInApi, SignInType } from '@/api/signIn';
+import { signInApi } from '@/api/signIn';
+import { toolsApi } from '@/api/tools';
+import { IImageAccountItem } from '@/views/publish/children/imagePage/imagePage.type';
 
 const { confirm } = Modal;
 
@@ -84,6 +86,8 @@ export default function Page() {
     Map<number, PublishProgressRes>
   >(new Map());
   const navigate = useNavigate();
+  // 敏感词检测
+  const [sensitiveDetLoading, setSensitiveDetLoading] = useState(false);
 
   useEffect(() => {
     setErrParamsMap(errParamsMap, warnParamsMap);
@@ -123,6 +127,7 @@ export default function Page() {
     };
   }, []);
 
+  // 发布
   const pubCore = async () => {
     setPubProgressModuleOpen(true);
     setLoading(true);
@@ -186,6 +191,7 @@ export default function Page() {
     });
   };
 
+  // 进度
   const pubProgressData = useMemo(() => {
     return imageAccounts.map((v) => {
       const progress = pubProgressMap.get(v.account!.id);
@@ -197,10 +203,24 @@ export default function Page() {
     });
   }, [pubProgressMap, imageAccounts]);
 
+  // 一键发布点击
   const pubClick = () => {
     pubAccountDetModuleRef.current!.startDet();
     setLoading(true);
   };
+
+  const sensitiveDetCore = async (
+    content: string,
+    accountItem: IImageAccountItem,
+  ) => {
+    const res = await toolsApi.textModeration(content);
+
+    return {
+      sensitive: res !== 'Normal',
+      accountItem,
+    };
+  };
+
   return (
     <div className={styles.image}>
       <PubProgressModule
@@ -242,8 +262,59 @@ export default function Page() {
           okText="确认"
           cancelText="取消"
         >
-          <Button style={{ marginRight: '20px' }}>一键清空</Button>
+          <Button>一键清空</Button>
         </Popconfirm>
+        <Button
+          loading={sensitiveDetLoading}
+          color="danger"
+          variant="solid"
+          disabled={imageAccounts.length === 0 || images.length === 0}
+          onClick={async () => {
+            setSensitiveDetLoading(true);
+            const tasks: Promise<{
+              // 作品
+              accountItem: IImageAccountItem;
+              // 是否敏感 true=敏感 false=正常
+              sensitive: boolean;
+            }>[] = [];
+            // 如果检测内容重复不会进行检测
+            const contentSet = new Set<string>();
+
+            imageAccounts.map((v) => {
+              const content = `
+                ${v.pubParams.title}
+                ${v.pubParams.describe}
+              `;
+              if (content.trim() !== '' && !contentSet.has(content)) {
+                contentSet.add(content);
+                tasks.push(sensitiveDetCore(content, v));
+              }
+            });
+            const res = await Promise.all(tasks);
+            setSensitiveDetLoading(false);
+
+            if (res.length === 0) return message.success('检测正常');
+
+            if (res.every((v) => !v.sensitive)) {
+              message.success('检测正常');
+              return;
+            }
+            for (const { sensitive, accountItem } of res) {
+              if (sensitive) {
+                message.warning('检测到此条作品存在敏感信息！');
+                setActivePlat(accountItem.account.type);
+                const platActiveAccountMap = new Map(
+                  useImagePageStore.getState().platActiveAccountMap,
+                );
+                platActiveAccountMap.set(accountItem.account.type, accountItem);
+                setPlatActiveAccountMap(platActiveAccountMap);
+                break;
+              }
+            }
+          }}
+        >
+          内容安全检测
+        </Button>
         <Button
           loading={loading}
           type="primary"

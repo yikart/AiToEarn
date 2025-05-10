@@ -3,6 +3,7 @@ import { SendChannelEnum } from '../../commont/UtilsEnum';
 import { PublishProgressRes } from '../../electron/main/plat/pub/PubItemVideo';
 import IpcRendererEvent = Electron.IpcRendererEvent;
 import { AccountModel } from '../../electron/db/models/account';
+import { AccountType } from '@@/AccountEnum';
 
 // 绑定事件中间层方法
 const bindEventCore = (
@@ -34,14 +35,17 @@ export const onInteractionProgress = (callback: (...args: any[]) => void) => {
   });
 };
 
-// 账户登录完成
+/**
+ * 账户登录完成的事件，可能为多个账户更新后的结果
+ * @param callback account=如果为多个账户更新的结果那么这个值是第一个，主要是为了兼容之前的单个账户的检测，accounts=如果是单个检测这个值为空，多个值检测这个值为更新后的账号结果
+ */
 export const onAccountLoginFinish = (
-  callback: (account: AccountModel) => void,
+  callback: (account: AccountModel, accounts?: AccountType[]) => void,
 ) => {
   return bindEventCore(
     SendChannelEnum.AccountLoginFinish,
-    (e, account: AccountModel) => {
-      callback(account);
+    (e, account: AccountModel, accounts?: AccountType[]) => {
+      callback(account, accounts);
     },
   );
 };

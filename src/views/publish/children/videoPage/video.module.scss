@@ -85,6 +85,12 @@
         text-align: center;
         border-top: 1px solid var(--grayColor3);
         padding: 15px;
+        button {
+          margin-right: 20px;
+          &:last-of-type {
+            margin-right: 0;
+          }
+        }
       }
     }
 

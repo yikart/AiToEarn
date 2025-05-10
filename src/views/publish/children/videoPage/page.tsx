@@ -1,7 +1,7 @@
 import styles from './video.module.scss';
 import VideoChoose from '@/components/Choose/VideoChoose';
-import { useEffect, useRef, useState } from 'react';
-import { Button, Modal, Popconfirm, Spin, Tooltip } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { Button, message, Modal, Popconfirm, Spin, Tooltip } from 'antd';
 import {
   DeleteOutlined,
   ExclamationCircleFilled,
@@ -16,6 +16,9 @@ import VideoChooseItem from '@/views/publish/children/videoPage/components/Video
 import CommonPubSetting from '@/views/publish/children/videoPage/components/CommonPubSetting';
 import VideoPubSetModal from '@/views/publish/children/videoPage/components/VideoPubSetModal/VideoPubSetModal';
 import { usePubStroe } from '../../../../store/pubStroe';
+import { IVideoChooseItem } from '@/views/publish/children/videoPage/videoPage';
+import {IImageAccountItem} from "@/views/publish/children/imagePage/imagePage.type";
+import {toolsApi} from "@/api/tools";
 
 export enum AccountChooseType {
   // 多选
@@ -62,6 +65,7 @@ export default function Page() {
   const accountChooseType = useRef(AccountChooseType.MultiSelect);
   // 用户单选ID
   const accountOneChooseId = useRef<string>();
+  const [sensitiveDetLoading, setSensitiveDetLoading] = useState(false);
 
   useEffect(() => {
     let confirmRes: { destroy: () => void };
@@ -90,6 +94,18 @@ export default function Page() {
       confirmRes?.destroy();
     };
   }, []);
+
+  const sensitiveDetCore = async (
+    content: string,
+    videoItem: IVideoChooseItem,
+  ) => {
+    const res = await toolsApi.textModeration(content);
+
+    return {
+      sensitive: res !== 'Normal',
+      videoItem,
+    };
+  };
 
   return (
     <div className={styles.video}>
@@ -218,8 +234,57 @@ export default function Page() {
                 okText="确认"
                 cancelText="取消"
               >
-                <Button style={{ marginRight: '15px' }}>一键清空</Button>
+                <Button>一键清空</Button>
               </Popconfirm>
+
+              <Button
+                loading={sensitiveDetLoading}
+                color="danger"
+                variant="solid"
+                disabled={!videoListChoose.every((v) => v.account && v.video)}
+                onClick={async () => {
+                  setSensitiveDetLoading(true);
+                  const tasks: Promise<{
+                    // 作品
+                    videoItem: IVideoChooseItem;
+                    // 是否敏感 true=敏感 false=正常
+                    sensitive: boolean;
+                  }>[] = [];
+                  // 如果检测内容重复不会进行检测
+                  const contentSet = new Set<string>();
+
+                  videoListChoose.map((v) => {
+                    const content = `
+                      ${v.pubParams.title}
+                      ${v.pubParams.describe}
+                    `;
+                    if (content.trim() !== '' && !contentSet.has(content)) {
+                      contentSet.add(content);
+                      tasks.push(sensitiveDetCore(content, v));
+                    }
+                  });
+                  const res = await Promise.all(tasks);
+                  setSensitiveDetLoading(false);
+
+                  if (res.length === 0) return message.success('检测正常');
+
+                  if (res.every((v) => !v.sensitive)) {
+                    message.success('检测正常');
+                    return;
+                  }
+                  for (const { sensitive, videoItem } of res) {
+                    if (sensitive) {
+                      message.warning('检测到此条作品存在敏感信息！');
+                      setVideoPubSetModalOpen(true);
+                      setCurrChooseAccountId(videoItem.id);
+                      break;
+                    }
+                  }
+                }}
+              >
+                内容安全检测
+              </Button>
+
               <Button
                 type="primary"
                 disabled={!videoListChoose.every((v) => v.account && v.video)}

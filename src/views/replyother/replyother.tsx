@@ -63,6 +63,7 @@ import { icpCreatorList } from '@/icp/reply';
 import { icpCreateInteractionOneKey } from '@/icp/replyother';
 import { useUserStore } from '@/store/user';
 import { taskApi } from '@/api/task';
+import {AccountType} from "@@/AccountEnum";
 
 export default function Page() {
   const userStore = useUserStore();
@@ -905,7 +906,7 @@ export default function Page() {
       <div style={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
         <AccountSidebar
           activeAccountId={activeAccountId}
-          excludePlatforms={['wxSph']}
+          excludePlatforms={[AccountType.WxSph]}
           onAccountChange={useCallback(
             (info) => {
               console.log('------ onAccountChange', info);

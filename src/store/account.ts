@@ -4,13 +4,12 @@ import lodash from 'lodash';
 import { AccountInfo } from '@/views/account/comment';
 import {
   AccountGroup,
-  acpAccountLoginCheck,
+  acpAccountLoginCheckMulti,
   icpGetAccountGroup,
   icpGetAccountList,
 } from '@/icp/account';
 import { onAccountLoginFinish } from '@/icp/receiveMsg';
 import { sleep } from '@@/utils';
-import { AccountModel } from '../../electron/db/models/account';
 
 export interface AccountGroupItem extends AccountGroup {
   children: AccountInfo[];
@@ -114,22 +113,18 @@ export const useAccountStore = create(
           await methods.getAccountList();
           methods.timeingCheckAccount();
         },
-
-        // 轮询检测账户有效性 core
-        async checkAccountCore(account: AccountModel) {
-          await acpAccountLoginCheck(account.type, account.uid);
-        },
         // 轮询检测账户有效性
         async timeingCheckAccount() {
           return new Promise(async () => {
             while (true) {
               const { accountList } = get();
-              const tasks: Promise<void>[] = [];
-              for (let i = 0; i < accountList.length; i++) {
-                const account = accountList[i];
-                tasks.push(methods.checkAccountCore(account));
-              }
-              await Promise.all(tasks);
+
+              await acpAccountLoginCheckMulti(
+                accountList.map((v) => ({
+                  pType: v.type,
+                  uid: v.uid,
+                })),
+              );
 
               // 等待24小时执行，如果用户没有关闭应用
               await sleep(3600000 * 24);
