@@ -5,11 +5,14 @@
  * @LastEditors: nevin
  * @Description: 测试页面
  */
-import { toolsApi } from '@/api/tools';
 import { Button } from 'antd';
+import { userApi } from '@/api/user';
+
 export default function Test() {
   async function testBtn() {
-    toolsApi.textModeration('嫖娼去');
+    userApi.getMinePopularizeCode().then((res) => {
+      console.log('----------', res);
+    });
   }
 
   return (

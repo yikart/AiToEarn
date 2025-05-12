@@ -171,9 +171,7 @@ export default function Task() {
   async function getTaskList(isLoadMore = false) {
     setLoading(true);
     try {
-      const res = await taskApi.getTaskList<any>(
-        pageInfo
-      );
+      const res = await taskApi.getTaskList<any>(pageInfo);
 
       if (isLoadMore) {
         setTaskList((prev) => [...prev, ...res.items]);
@@ -268,10 +266,9 @@ export default function Task() {
   );
   // TODO 完善跳转逻辑
   const handleJoinTask = (task: any) => {
-
     if (task.isAccepted) {
-      setActiveTab('mine')
-      return
+      setActiveTab('mine');
+      return;
     }
 
     // setCommonPubParams({
@@ -343,7 +340,7 @@ export default function Task() {
 
         // console.log('selectedTask.dataInfo', selectedTask.dataInfo);
 
-        if(selectedTask.type == TaskType.ARTICLE){
+        if (selectedTask.type == TaskType.ARTICLE) {
           setCommonPubParams({
             title: selectedTask.dataInfo?.title || '',
             describe: selectedTask.dataInfo?.desc || '',
@@ -351,8 +348,8 @@ export default function Task() {
           });
           navigate('/publish/image');
         }
-            
-            // return;
+
+        // return;
       } else {
         message.error(res.msg || '接受任务失败，请稍后再试?');
       }
@@ -361,7 +358,7 @@ export default function Task() {
     }
   }
 
-  async function taskApplyoney(){
+  async function taskApplyoney() {
     console.log('------ taskApplyoney', selectedTask);
     if (!selectedTask) return;
 
@@ -371,9 +368,8 @@ export default function Task() {
       // console.log('jieshou :', res);
       if (res.code == 0 && res.data) {
         setTaskRecord(res.data);
-        setModalVisible(false)
+        setModalVisible(false);
         message.success('任务接受成功！');
-
       } else {
         message.error(res.msg || '接受任务失败，请稍后再试?');
       }
@@ -633,7 +629,7 @@ export default function Task() {
                   variant="outlined"
                   cover={
                     <div className={styles.taskImage}>
-                      <Image 
+                      <Image
                         src={
                           item.imageUrl
                             ? FILE_BASE_URL + item.imageUrl
@@ -684,7 +680,7 @@ export default function Task() {
                       style={{ minWidth: '120px' }}
                     >
                       {item.isAccepted ? '去完成任务' : '参与任务'}
-                    </Button>, 
+                    </Button>,
                   ]}
                 >
                   <Card.Meta
@@ -692,7 +688,10 @@ export default function Task() {
                       <div className={styles.taskTitle}>
                         <Title level={5}>{item.title}</Title>
                         <Space>
-                          <Tag color="green" style={{ fontSize: '16px', padding: '1px 18px' }}>
+                          <Tag
+                            color="green"
+                            style={{ fontSize: '16px', padding: '1px 18px' }}
+                          >
                             ¥{item.reward}
                           </Tag>
                           <Space size={4}>
@@ -713,11 +712,11 @@ export default function Task() {
                           /> */}
                         </div>
                         <div
-                        dangerouslySetInnerHTML={{
-                          __html: item.description,
-                        }}
-                        className={styles.taskDescription}
-                      />
+                          dangerouslySetInnerHTML={{
+                            __html: item.description,
+                          }}
+                          className={styles.taskDescription}
+                        />
                         {/* <Text type="secondary">
                           {item.description}
                         </Text> */}
@@ -759,7 +758,7 @@ export default function Task() {
           open={modalVisible}
           onCancel={() => setModalVisible(false)}
           footer={[
-            <Button key="cancel" onClick={ taskApplyoney }>
+            <Button key="cancel" onClick={taskApplyoney}>
               领取
             </Button>,
             <Button
@@ -780,7 +779,7 @@ export default function Task() {
                   <div className={styles.taskDetailHeader}>
                     <Title level={4}>{selectedTask.title}</Title>
                     <Space>
-                    <Tag color="blue">
+                      <Tag color="blue">
                         {TaskTypeName.get(selectedTask.type as TaskType) ||
                           '未知任务'}
                       </Tag>
@@ -821,38 +820,37 @@ export default function Task() {
                 <Col span={24}>
                   {/* <Divider orientation="left">任务信息</Divider> */}
                   <Descriptions column={1} bordered>
-                    {
-                      ( selectedTask.dataInfo?.title != '') && (
-                        <Descriptions.Item label="发布标题">
-                          <div
-                            dangerouslySetInnerHTML={{
-                              __html: selectedTask.dataInfo?.title,
-                            }}
-                            className={styles.taskDescription}
-                          />
-                        </Descriptions.Item>
-                      )
-                    }
-
-                    {
-                      selectedTask.dataInfo?.desc || selectedTask.dataInfo?.topicList?.length > 0 && (
-                        <Descriptions.Item label="发布描述">
+                    {selectedTask.dataInfo?.title != '' && (
+                      <Descriptions.Item label="发布标题">
                         <div
                           dangerouslySetInnerHTML={{
-                            __html: selectedTask.dataInfo?.desc || '' + 
-                              (selectedTask.dataInfo?.topicList?.length > 0 
-                                ? '<span style="color: #999; font-size: 12px; margin-left: 8px;">#' + 
-                                  selectedTask.dataInfo.topicList.join(' #') + 
-                                  '</span>'
-                                : '')
+                            __html: selectedTask.dataInfo?.title,
                           }}
                           className={styles.taskDescription}
                         />
                       </Descriptions.Item>
-                      )
-                    }
-                   
-                    
+                    )}
+
+                    {selectedTask.dataInfo?.desc ||
+                      (selectedTask.dataInfo?.topicList?.length > 0 && (
+                        <Descriptions.Item label="发布描述">
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html:
+                                selectedTask.dataInfo?.desc ||
+                                '' +
+                                  (selectedTask.dataInfo?.topicList?.length > 0
+                                    ? '<span style="color: #999; font-size: 12px; margin-left: 8px;">#' +
+                                      selectedTask.dataInfo.topicList.join(
+                                        ' #',
+                                      ) +
+                                      '</span>'
+                                    : ''),
+                            }}
+                            className={styles.taskDescription}
+                          />
+                        </Descriptions.Item>
+                      ))}
 
                     {selectedTask.type !== TaskType.ARTICLE && (
                       <Descriptions.Item label="评论内容">
@@ -869,7 +867,7 @@ export default function Task() {
                     {/* <Descriptions.Item label="任务时长">
                       {selectedTask.keepTime}分钟
                     </Descriptions.Item> */}
-                    
+
                     {/* <Descriptions.Item label="起止时间">
                       {formatDate(selectedTask.createTime)} - {formatDate(selectedTask.deadline)}
                     </Descriptions.Item> */}

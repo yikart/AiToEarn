@@ -67,6 +67,15 @@ export const toolsApi = {
   },
 
   /**
+   * 生成AI的html图文
+   */
+  aiArticleHtml(data: { content: string }) {
+    return http.post<string>('/tools/ai/article/html', data, {
+      isToken: true,
+    });
+  },
+
+  /**
    * 上传文件
    */
   uploadFile(file: Blob) {
