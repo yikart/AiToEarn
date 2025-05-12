@@ -1278,6 +1278,7 @@ export class XiaohongshuService {
           platformSetting,
           uploadResult,
         });
+        console.log('topicsDetail:', platformSetting.topicsDetail);
         const result: any = await this.postCreateVideo(
           cookieString,
           cookie_a1,

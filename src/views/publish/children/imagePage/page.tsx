@@ -13,16 +13,16 @@ import PubAccountDetModule, {
 } from '../../components/PubAccountDetModule/PubAccountDetModule';
 import { PublishProgressRes } from '../../../../../electron/main/plat/pub/PubItemVideo';
 import PubProgressModule from '../../components/PubProgressModule/PubProgressModule';
-import { onImgTextPublishProgress } from '../../../../icp/receiveMsg';
+import { onImgTextPublishProgress } from '@/icp/receiveMsg';
 import {
   icpCreateImgTextPubRecord,
   icpCreatePubRecord,
   icpPubImgText,
-} from '../../../../icp/publish';
-import { PubType } from '../../../../../commont/publish/PublishEnum';
-import { useAccountStore } from '../../../../store/commont';
+} from '@/icp/publish';
+import { PubType } from '@@/publish/PublishEnum';
+import { useAccountStore } from '@/store/commont';
 import { useNavigate } from 'react-router-dom';
-import { usePubStroe } from '../../../../store/pubStroe';
+import { usePubStroe } from '@/store/pubStroe';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { signInApi } from '@/api/signIn';
 import { toolsApi } from '@/api/tools';
