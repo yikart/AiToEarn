@@ -132,6 +132,8 @@ export default function Task() {
   const [downloading, setDownloading] = useState(false);
   const Ref_TaskInfo = useRef<TaskInfoRef>(null);
   const [pubProgressModuleOpen, setPubProgressModuleOpen] = useState(false);
+  const [htmlContent, setHtmlContent] = useState<string>('');
+  const [htmlModalVisible, setHtmlModalVisible] = useState(false);
 
   // 使用 react-intersection-observer 监听底部元素
   const { ref: loadMoreRef, inView } = useInView({
@@ -718,7 +720,9 @@ export default function Task() {
                       type="primary"
                       key="join"
                       // disabled={item.isAccepted}
-                      onClick={() => handleJoinTask(item)}
+                      // onClick={() => handleJoinTask(item)}
+
+                      onClick={() => testSseFunc(item)}
                       style={{ minWidth: '120px' }}
                     >
                       {/* {item.isAccepted ? '去完成任务' : '参与任务'} */}
@@ -949,6 +953,79 @@ export default function Task() {
     );
   };
 
+  // 添加 SSE 处理方法
+  const testSseFunc = async (item: any) => {
+    try {
+      setHtmlContent(''); // 清空之前的内容
+      setHtmlModalVisible(true); // 显示模态框
+      const response = await fetch(import.meta.env.VITE_APP_URL + '/tools/ai/article/html/sse', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: '生成一个卡通人物介绍页'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('无法获取响应流');
+      }
+
+      let htmlString = '';
+      let isCollectingHtml = false;
+      let buffer = '';
+
+      // 处理响应流
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          console.log('流读取完成');
+          setHtmlContent(htmlString); // 设置最终的 HTML 内容
+          break;
+        }
+
+        // 将 Uint8Array 转换为文本
+        const text = new TextDecoder().decode(value);
+        buffer += text;
+
+        // 处理缓冲区中的完整行
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || ''; // 保留最后一个不完整的行
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+
+          // 检查是否是 data 行
+          if (line.startsWith('data:')) {
+            const data = line.slice(5).trim();
+            
+            // 检查是否包含 ``` 标记
+            if (data.includes('```')) {
+              isCollectingHtml = !isCollectingHtml;
+              continue;
+            }
+
+            // 如果正在收集 HTML，则添加到结果中
+            if (isCollectingHtml) {
+              htmlString += data;
+            }
+          }
+        }
+      }
+
+    } catch (error) {
+      console.error('请求失败:', error);
+      message.error('连接失败，请稍后重试');
+      setHtmlModalVisible(false); // 发生错误时关闭模态框
+    }
+  };
+
   return (
     <div className={styles.taskPageContainer}>
       {/* 顶部导航栏 */}
@@ -1009,7 +1086,38 @@ export default function Task() {
       </div>
 
       {/* 任务内容 */}
-      <div className={styles.taskContent}>{renderTaskContent()}</div>
+      <div className={styles.taskContent}>
+        {renderTaskContent()}
+      </div>
+
+      {/* HTML 预览模态框 */}
+      <Modal
+        title="HTML 预览"
+        open={htmlModalVisible}
+        onCancel={() => setHtmlModalVisible(false)}
+        width="80%"
+        footer={[
+          <Button key="close" onClick={() => setHtmlModalVisible(false)}>
+            关闭
+          </Button>
+        ]}
+        bodyStyle={{ 
+          height: '70vh', 
+          overflow: 'auto',
+          padding: '20px'
+        }}
+      >
+        {htmlContent ? (
+          <div 
+            className={styles.htmlPreview}
+            dangerouslySetInnerHTML={{ __html: htmlContent }}
+          />
+        ) : (
+          <div style={{ textAlign: 'center', padding: '20px' }}>
+            <Spin tip="正在生成内容..." />
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }
