@@ -123,6 +123,7 @@ export default function Task() {
     totalCount: 0,
   });
   const [hasMore, setHasMore] = useState(true);
+  const [isOne, setIsOne] = useState(false);
   const selectedTaskRef = useRef<any>(null);
   const [selectedTask, setSelectedTask] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -266,10 +267,11 @@ export default function Task() {
   );
   // TODO 完善跳转逻辑
   const handleJoinTask = (task: any) => {
-    if (task.isAccepted) {
-      setActiveTab('mine');
-      return;
-    }
+
+    // if (task.isAccepted) {
+    //   setActiveTab('mine')
+    //   return
+    // }
 
     // setCommonPubParams({
     //   title: "标题1",
@@ -314,15 +316,24 @@ export default function Task() {
     taskId: string;
   } | null>(null);
 
+  
+
   /**
    * 接受任务
    */
-  async function taskApply() {
+  async function taskApply(params: any) {
+    
+   
+    // return;
     // 00.00 测试
     if (!selectedTask) return;
 
     try {
-      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
+      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id, {
+        account: params.account,
+        accountType: params.accountType,
+        uid: params.uid,
+      });
 
       // const res: any = {
       //   code: 0,
@@ -357,13 +368,26 @@ export default function Task() {
       message.error('接受任务失败，请稍后再试');
     }
   }
+  
+  async function isoneFunc(params: any){
+    if (params) {
+      await setIsOne(true);
+    }else{
+      await setIsOne(false);
+    }
+    setChooseAccountOpen(true);
+  }
 
-  async function taskApplyoney() {
+  async function taskApplyoney(params: any){
     console.log('------ taskApplyoney', selectedTask);
     if (!selectedTask) return;
 
     try {
-      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
+      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id, {
+        account: params.account,
+        accountType: params.accountType,
+        uid: params.uid,
+      });
       // 存储任务记录信息 00.00
       // console.log('jieshou :', res);
       if (res.code == 0 && res.data) {
@@ -566,7 +590,25 @@ export default function Task() {
     // 根据任务类型选择不同的处理逻辑
     if (selectedTask?.type === TaskType.ARTICLE) {
       // 文章任务使用 pubCore 逻辑
-      await pubCore(aList[0]);
+      console.log('文章任务使用 pubCore 逻辑');
+      if (isOne) {
+        for (const account of aList) {
+          taskApplyoney({
+            account: account.account,
+            accountType: account.type,
+            uid: account.uid,
+          });
+        }
+      }else{
+        for (const account of aList) {
+          taskApply({
+            account: account.account,
+            accountType: account.type,
+            uid: account.uid,
+          });
+        }
+      }
+      // await pubCore(aList[0]);
     } else {
       // 其他任务使用原有的互动任务逻辑
       await handleInteraction(aList[0]);
@@ -679,8 +721,9 @@ export default function Task() {
                       onClick={() => handleJoinTask(item)}
                       style={{ minWidth: '120px' }}
                     >
-                      {item.isAccepted ? '去完成任务' : '参与任务'}
-                    </Button>,
+                      {/* {item.isAccepted ? '去完成任务' : '参与任务'} */}
+                      参与任务
+                    </Button>, 
                   ]}
                 >
                   <Card.Meta
@@ -758,14 +801,14 @@ export default function Task() {
           open={modalVisible}
           onCancel={() => setModalVisible(false)}
           footer={[
-            <Button key="cancel" onClick={taskApplyoney}>
+            <Button key="cancel" onClick={() => isoneFunc(true)}>
               领取
             </Button>,
             <Button
               key="complete"
               type="primary"
               icon={<CheckCircleOutlined />}
-              onClick={taskApply}
+              onClick={()=> {  isoneFunc(false); }}
             >
               领取&发布
             </Button>,

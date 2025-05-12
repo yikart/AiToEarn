@@ -343,7 +343,7 @@ export default function InteractionTask() {
 
   return (
     <div className={styles.taskList}>
-      <ChooseAccountModule
+      <ChooseAccountModule 
         open={chooseAccountOpen}
         onClose={() => !downloading && setChooseAccountOpen(false)}
         platChooseProps={{
