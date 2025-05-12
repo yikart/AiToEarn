@@ -6,13 +6,17 @@
  * @Description: 测试页面
  */
 import { Button } from 'antd';
-import { userApi } from '@/api/user';
+import { toolsApi } from '@/api/tools';
 
 export default function Test() {
   async function testBtn() {
-    userApi.getMinePopularizeCode().then((res) => {
-      console.log('----------', res);
-    });
+    toolsApi
+      .aiArticleHtml(
+        '主图使用该图片https://ai-to-earn.oss-cn-beijing.aliyuncs.com/development/temp/nopath/202504/d8a3278e-fd0c-42cf-8339-02bf85b6c4e4.png生成一个卡通任务介绍页',
+      )
+      .then((res) => {
+        console.log('----------', res);
+      });
   }
 
   return (

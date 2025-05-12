@@ -67,13 +67,22 @@ export const toolsApi = {
   },
 
   /**
-   * 生成AI的html图文
+   * 生成AI的html图文 弃用: 时间太长得走sse
    */
-  aiArticleHtml(data: { content: string }) {
-    return http.post<string>('/tools/ai/article/html', data, {
-      isToken: true,
-    });
+  aiArticleHtml(content: string) {
+    return http.post<string>(
+      '/tools/ai/article/html',
+      {
+        content,
+      },
+      {
+        isToken: true,
+      },
+    );
   },
+
+  // TODO: sse生成AI的html图文
+  // /tools/ai/article/html/sse
 
   /**
    * 上传文件
