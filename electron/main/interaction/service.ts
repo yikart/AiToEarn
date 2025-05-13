@@ -305,7 +305,7 @@ export class InteractionService {
 
         if (shouldLike) {
           try {
-            console.log('------ 开始点赞作品:', works.dataId);
+            console.log('------ 开始点赞作品:', works.dataId, works.author?.id);
             const isLikeRes = await platController.dianzanDyOther(
               account,
               works.dataId,
@@ -509,9 +509,9 @@ export class InteractionService {
         {
             commentContent: option.commentContent || null, 
             platform: option.accountType, // 平台
-            likeProb: 100, // 点赞概率
-            collectProb: 100, // 收藏概率
-            commentProb: 100, // 评论概率
+            likeProb: 999, // 点赞概率
+            collectProb: 999, // 收藏概率
+            commentProb: 999, // 评论概率
             commentType: 'ai', // 评论类型
         },
         (e: {

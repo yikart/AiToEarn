@@ -184,28 +184,36 @@ export class InteractionController {
     // 自动互动, 每10秒进行
     @Scheduled('0 * * * * *', 'autoHudong')
     async zidongHudong() {
+      return;
       console.log('自动互动 ing ...');
       const res = await taskApi.getActivityTask();
-      // console.log('---- zidongHudong ----', res);
+      console.log('---- zidongHudong ----', res);
       const userList = await this.interactionService.getUserList();
       // console.log('---- userList ----', userList);
-      const accountList = await this.interactionService.getAccountList(userList[1].id);
+      if (!userList.length) {
+        return;
+      }
+      const accountList = await this.interactionService.getAccountList(userList[userList.length - 1].id);
       // console.log('---- accountList ----', accountList);
       if (res.items.length > 0) {
         for (const item of res.items) {
           item.accountTypes.forEach((accountType: any) => {
             let myAccountTypeList = [];
             for (const account of accountList) {
-              if (account.type === accountType) {
+              if (account.type === accountType && account.status === 0) {
                 myAccountTypeList.push(account);
               }
             }
             console.log('---- myAccountTypeList ----', myAccountTypeList);
   
             for (const account of myAccountTypeList) {
-              console.log('---- account ----', account);
+              // console.log('---- account ----', account);
               const autorInteractionList = this.interactionService.getAutorInteractionList(account, [{
-                workId: item.workId,
+                author: {id: item.authorId || ''} ,
+                  data : {id: item.dataInfo.worksId, xsec_token: 'CB9V06UUjwYTrJGcYNNohN8lG4IpBGncEsTF4G7mOPVtI='},
+                  dataId : item.dataInfo.worksId,
+                  option : {xsec_token: 'CB9V06UUjwYTrJGcYNNohN8lG4IpBGncEsTF4G7mOPVtI=='},
+                  title : item.title,
               }], {
                 accountType: accountType,
               });
