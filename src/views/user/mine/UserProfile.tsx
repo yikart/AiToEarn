@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Card, Descriptions, Spin, Typography, Space, Avatar } from 'antd';
+import { Card, Descriptions, Spin, Typography, Space, Avatar, Switch, Slider, Button, Alert } from 'antd';
 import { userApi } from '@/api/user';
 import styles from './userProfile.module.scss';
 import { UserOutlined, PhoneOutlined, IdcardOutlined, QrcodeOutlined, ClockCircleOutlined, SafetyOutlined, WechatOutlined } from '@ant-design/icons';
+import { message } from 'antd';
 
 const { Title } = Typography;
 
@@ -16,12 +17,19 @@ interface UserInfo {
   updateTime: string;
   wxOpenid: string;
   _id: string;
+  earnInfo?: {
+    status: number;
+    cycleInterval: number;
+  };
 }
 
 const UserProfile = () => {
   const [loading, setLoading] = useState(false);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [popularizeCode, setPopularizeCode] = useState<string>('');
+  const [earnStatus, setEarnStatus] = useState<boolean>(false);
+  const [cycleInterval, setCycleInterval] = useState<number>(30);
+  const [earnLoading, setEarnLoading] = useState<boolean>(false);
 
   const fetchUserInfo = async () => {
     try {
@@ -35,6 +43,13 @@ const UserProfile = () => {
       } else {
         setPopularizeCode(res.popularizeCode);
       }
+      if (res.earnInfo) {
+        setEarnStatus(res.earnInfo.status === 1);
+        setCycleInterval(res.earnInfo.cycleInterval || 30);
+      } else {
+        setEarnStatus(false);
+        setCycleInterval(30);
+      }
     } catch (error) {
       console.error('获取用户信息失败:', error);
     } finally {
@@ -45,6 +60,30 @@ const UserProfile = () => {
   useEffect(() => {
     fetchUserInfo();
   }, []);
+
+  const handleSaveEarn = async () => {
+    setEarnLoading(true);
+    try {
+      await userApi.updateUserInfo({
+        earnInfo: {
+          status: earnStatus ? 1 : 0,
+          cycleInterval,
+        },
+      });
+      message.success('设置已保存');
+      fetchUserInfo();
+    } catch (e) {
+      message.error('保存失败');
+    } finally {
+      setEarnLoading(false);
+    }
+  };
+
+  const getIntervalLabel = (val: number) => {
+    if (val < 60) return `${val} 分钟`;
+    if (val % 60 === 0) return `${val / 60} 小时`;
+    return `${Math.floor(val / 60)} 小时${val % 60} 分钟`;
+  };
 
   return (
     <div className={styles.profileContainer}>
@@ -59,6 +98,7 @@ const UserProfile = () => {
         </div>
 
         <div className={styles.profileContent}>
+          
           <Card className={styles.profileCard}>
             <Space direction="vertical" size="large" className={styles.infoSection}>
               <div className={styles.infoGroup}>
@@ -138,6 +178,41 @@ const UserProfile = () => {
               </div>
             </Space>
           </Card>
+
+          <Card className={styles.profileCard} style={{ marginTop: 24 }}>
+            <Title level={5} style={{ marginBottom: 16 }}>赚钱模式设置</Title>
+            <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center', gap: 16 }}>
+              <span>赚钱模式</span>
+              <Switch checked={earnStatus} onChange={setEarnStatus} />
+            </div>
+            <div style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 16 }}>
+              <span>检查频率</span>
+              <Slider
+                min={5}
+                max={1440}
+                step={1}
+                value={cycleInterval}
+                onChange={setCycleInterval}
+                style={{ flex: 1, marginRight: 16 }}
+                disabled={!earnStatus}
+              />
+              <span style={{ minWidth: 70, textAlign: 'right' }}>{getIntervalLabel(cycleInterval)}</span>
+            </div>
+            <div style={{ color: '#999', fontSize: 12, marginBottom: 12 }}>
+              可设置 5分钟~24小时 区间
+            </div>
+            <Alert
+              type="info"
+              showIcon
+              style={{ background: '#fafaff', border: 'none', marginBottom: 16 }}
+              message={
+                <span>
+                  开启赚钱模式后，系统将自动接取并完成互动需求，确保您能获得最大收益。
+                </span>
+              }
+            />
+          </Card>
+
         </div>
       </Spin>
     </div>

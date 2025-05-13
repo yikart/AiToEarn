@@ -189,11 +189,11 @@ export default function Page() {
     }
   }, [inView, hasMore, loading]);
 
-  const fetchTaskDetails = async (isLoadMore = false) => {
+  const fetchTaskDetails = async (isLoadMore = false, pageInfoParam: any) => {
     setLoading(true);
     try {
       const params = {
-        ...pageInfo,
+        ...(pageInfoParam || pageInfo),
         status: statusFilter,
       };
 
@@ -239,17 +239,18 @@ export default function Page() {
       page: prev.page + 1,
     }));
     console.log('pageInfo', pageInfo)
-    await fetchTaskDetails(true);
+    await fetchTaskDetails(true, false);
   };
 
   // 刷新数据
-  const refreshData = () => {
-    setPageInfo({
-      pageSize: 10,
+  const refreshData = async () => {
+    let pageInfo = {
+      pageSize: 10,   
       page: 1,
       totalCount: 0,
-    });
-    fetchTaskDetails();
+    }
+    setPageInfo(pageInfo);
+    await fetchTaskDetails(false, pageInfo);
     message.success('数据已刷新');
   };
 
@@ -281,15 +282,6 @@ export default function Page() {
     Ref_MineTaskInfo.current?.init(task);
   };
 
-  // 刷新任务列表的函数
-  const refreshTaskList = () => {
-    setPageInfo({
-      pageSize: 10,
-      page: 1,
-      totalCount: 0,
-    });
-    fetchTaskDetails();
-  };
 
   return (
     <div className={styles.mineTaskContainer}>
