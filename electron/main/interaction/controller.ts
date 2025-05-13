@@ -184,17 +184,17 @@ export class InteractionController {
     // 自动互动, 每10秒进行
     @Scheduled('0 * * * * *', 'autoHudong')
     async zidongHudong() {
-      return;
+      // return;
       console.log('自动互动 ing ...');
       const res = await taskApi.getActivityTask();
       console.log('---- zidongHudong ----', res);
       const userList = await this.interactionService.getUserList();
-      // console.log('---- userList ----', userList);
+      console.log('---- userList ----', userList);
       if (!userList.length) {
         return;
       }
       const accountList = await this.interactionService.getAccountList(userList[userList.length - 1].id);
-      // console.log('---- accountList ----', accountList);
+      console.log('---- accountList ----', accountList[0]);
       if (res.items.length > 0) {
         for (const item of res.items) {
           item.accountTypes.forEach((accountType: any) => {
@@ -202,6 +202,13 @@ export class InteractionController {
             for (const account of accountList) {
               if (account.type === accountType && account.status === 0) {
                 myAccountTypeList.push(account);
+                // 申请任务
+                const applyTaskRes = taskApi.applyTask(item.id, {
+                  account: account.account,
+                  uid: account.uid,
+                  accountType: account.type,
+                });
+                console.log('---- applyTaskRes ----', applyTaskRes);
               }
             }
             console.log('---- myAccountTypeList ----', myAccountTypeList);
@@ -218,6 +225,13 @@ export class InteractionController {
                 accountType: accountType,
               });
               console.log('---- autorInteractionList ----', autorInteractionList);
+              let submitTasStr = '作品'+ item.dataInfo.worksId + '账户'+ account.nickname + '账户ID'+ account.uid;
+              const submitTaskRes = taskApi.submitTask(item.id, {
+                submissionUrl: submitTasStr,
+                screenshotUrls: [],
+                qrCodeScanResult: submitTasStr,
+              });
+              console.log('---- submitTaskRes ----', submitTaskRes);
             }
           });
         }

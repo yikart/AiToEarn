@@ -10,23 +10,6 @@ export enum FeedbackType {
 }
 
 export class ToolsApi {
-  // 获取活动任务
-  async getActivityTask() {
-    const res = await netRequest({
-      method: 'GET',
-      url: 'tasks/list?page=1&pageSize=20&totalCount=0&type=interaction',
-      body: {},
-      isToken: true,
-    });
-    const {
-      status,
-      data: { data, code },
-    } = res;
-    // console.log('---- getActivityTask ----', data);
-    if (status !== 200 && status !== 201) return '';
-    if (!!code) return '';
-    return data;
-  }
 
   // 获取AI的评论回复
   async aiRecoverReview(inData: {

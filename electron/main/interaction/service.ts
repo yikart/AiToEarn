@@ -397,6 +397,8 @@ export class InteractionService {
         tag: AutorWorksInteractionScheduleEvent.ReplyCommentEnd,
         status: 1,
       });
+
+      return true;
     } catch (error) {
       console.error('------ 任务执行出错:', error);
       scheduleEvent({
