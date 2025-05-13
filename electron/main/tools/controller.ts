@@ -74,36 +74,5 @@ export class ToolsController {
     clearOldLogs();
   }
 
-  // 自动互动, 每10秒进行
-  @Scheduled('0 * * * * *', 'autoHudong')
-  async zidongHudong() {
-    console.log('自动互动 ing ...');
-    const res = await toolsApi.getActivityTask();
-    // console.log('---- zidongHudong ----', res);
-    const userList = await this.toolsService.getUserList();
-    // console.log('---- userList ----', userList);
-    const accountList = await this.toolsService.getAccountList(userList[1].id);
-    // console.log('---- accountList ----', accountList);
-    if (res.items.length > 0) {
-      for (const item of res.items) {
-        item.accountTypes.forEach((accountType: any) => {
-          let myAccountTypeList = [];
-          for (const account of accountList) {
-            if (account.type === accountType) {
-              myAccountTypeList.push(account);
-            }
-          }
-          console.log('---- myAccountTypeList ----', myAccountTypeList);
 
-          for (const account of myAccountTypeList) {
-            console.log('---- account ----', account);
-            const autorInteractionList = this.toolsService.getAutorInteractionList(account, item.worksList, {
-              accountType: accountType,
-            });
-            console.log('---- autorInteractionList ----', autorInteractionList);
-          }
-        });
-      }
-    }
-  }
 }

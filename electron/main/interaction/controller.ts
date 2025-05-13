@@ -9,7 +9,7 @@ import windowOperate from '../../util/windowOperate';
 import { AutoRunModel, AutoRunType } from '../../db/models/autoRun';
 import { AccountService } from '../account/service';
 import { AutoRunService } from '../autoRun/service';
-import { Controller, Et, Icp, Inject } from '../core/decorators';
+import { Controller, Et, Icp, Inject, Scheduled } from '../core/decorators';
 import { InteractionService } from './service';
 import { SendChannelEnum } from '../../../commont/UtilsEnum';
 import type { WorkData } from '../plat/plat.type';
@@ -18,6 +18,7 @@ import { AutoInteractionCache } from './cacheData';
 import { getUserInfo } from '../user/comment';
 import type { CorrectQuery } from '../../global/table';
 import { AccountType } from '../../../commont/AccountEnum';
+import { taskApi } from '../api/taskApi';
 
 @Controller()
 export class InteractionController {
@@ -177,4 +178,41 @@ export class InteractionController {
   ): Promise<any | null> {
     return AutoInteractionCache.getInfo();
   }
+
+
+
+    // 自动互动, 每10秒进行
+    @Scheduled('0 * * * * *', 'autoHudong')
+    async zidongHudong() {
+      console.log('自动互动 ing ...');
+      const res = await taskApi.getActivityTask();
+      // console.log('---- zidongHudong ----', res);
+      const userList = await this.interactionService.getUserList();
+      // console.log('---- userList ----', userList);
+      const accountList = await this.interactionService.getAccountList(userList[1].id);
+      // console.log('---- accountList ----', accountList);
+      if (res.items.length > 0) {
+        for (const item of res.items) {
+          item.accountTypes.forEach((accountType: any) => {
+            let myAccountTypeList = [];
+            for (const account of accountList) {
+              if (account.type === accountType) {
+                myAccountTypeList.push(account);
+              }
+            }
+            console.log('---- myAccountTypeList ----', myAccountTypeList);
+  
+            for (const account of myAccountTypeList) {
+              console.log('---- account ----', account);
+              const autorInteractionList = this.interactionService.getAutorInteractionList(account, [{
+                workId: item.workId,
+              }], {
+                accountType: accountType,
+              });
+              console.log('---- autorInteractionList ----', autorInteractionList);
+            }
+          });
+        }
+      }
+    }
 }

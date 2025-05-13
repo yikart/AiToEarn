@@ -23,7 +23,10 @@ import { WorkData } from '../plat/plat.type';
 import { AutoInteractionCache } from './cacheData';
 import { backPageData, CorrectQuery } from '../../global/table';
 import { AccountType } from '../../../commont/AccountEnum';
+import { AccountService } from '../account/service';
+import { UserService } from '../user/service';
 // import { ReplyController } from '../reply/controller';
+
 
 @Injectable()
 export class InteractionService {
@@ -474,5 +477,50 @@ export class InteractionService {
     return {
       status: 1,
     };
+  }
+
+
+
+
+
+
+
+  // 自动互动
+  @Inject(UserService)
+  private readonly userService!: UserService;
+  @Inject(AccountService)
+  private readonly accountService!: AccountService;
+
+  // 获取用户列表
+  async getUserList() {
+    return await this.userService.getUsers();
+  }
+
+  // 获取账户列表
+  async getAccountList(userId: string) {
+    return await this.accountService.getAccounts(userId);
+  }
+
+  // 获取自动互动列表
+  async getAutorInteractionList(account: any, worksList: any, option: any) {
+    return await this.autorInteraction(
+        account,
+        worksList,  
+        {
+            commentContent: option.commentContent || null, 
+            platform: option.accountType, // 平台
+            likeProb: 100, // 点赞概率
+            collectProb: 100, // 收藏概率
+            commentProb: 100, // 评论概率
+            commentType: 'ai', // 评论类型
+        },
+        (e: {
+          tag: AutorWorksInteractionScheduleEvent;
+          status: -1 | 0 | 1;
+          error?: any;
+        }) => {
+          console.log('------ e', e);
+        },
+    );
   }
 }
