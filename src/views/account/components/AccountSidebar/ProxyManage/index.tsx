@@ -13,6 +13,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { QuestionCircleOutlined, SearchOutlined } from '@ant-design/icons';
 import accountStyles from '../AccountSidebar.module.scss';
 import { icpEditDeleteAccountGroup, icpProxyCheck } from '@/icp/account';
+import {parseProxyString} from "@@/utils";
 
 export interface IProxyManageRef {}
 
@@ -193,6 +194,7 @@ const ProxyManage = memo(
                 disabled={proxyName.length === 0}
                 loading={proxyLoading}
                 onClick={async () => {
+                  console.log(parseProxyString(proxyName));
                   setProxyLoading(true);
                   const res = await icpProxyCheck(proxyName);
                   setProxyLoading(false);

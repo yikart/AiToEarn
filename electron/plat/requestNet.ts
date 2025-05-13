@@ -1,6 +1,7 @@
 import { net, session, Session } from 'electron';
 import FormData from 'form-data';
 import { ipv4Regular } from '../../commont/regular';
+import { parseProxyString } from '../../commont/utils';
 
 export interface IRequestNetResult<T> {
   status: number;
@@ -38,13 +39,18 @@ const requestNet = <T = any>({
 
       // 如果传入了代理配置，动态设置代理
       if (proxy) {
-        if (!ipv4Regular.test(proxy)) throw new Error('代理地址不合法');
+        // 解析代理信息
+        const proxyInfo = parseProxyString(proxy);
+        if (proxyInfo === false || !ipv4Regular.test(proxyInfo.ipAndPort))
+          throw new Error('代理地址不合法');
         customSession = session.fromPartition(
           `persist:proxy-session-${Date.now()}`,
         );
-        console.log(`http=${proxy};https=${proxy}`);
+        const proxyUrl = `${proxyInfo.protocol}://${proxyInfo.ipAndPort}`;
+        const proxyRules = `http=${proxyUrl};https=${proxyUrl}`;
+        console.log(proxyRules);
         await customSession.setProxy({
-          proxyRules: `http=${proxy};https=${proxy}`,
+          proxyRules,
         });
 
         headers = {
