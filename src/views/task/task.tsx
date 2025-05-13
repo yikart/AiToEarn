@@ -964,7 +964,7 @@ export default function Task() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          content: '生成一个卡通人物介绍页'
+          content: '生成一个卡通人物介绍页 带有图片 小红书图文流光卡片样式'
         }),
       });
 
