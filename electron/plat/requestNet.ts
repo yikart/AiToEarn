@@ -2,6 +2,7 @@ import { net, session, Session } from 'electron';
 import FormData from 'form-data';
 import { ipv4Regular } from '../../commont/regular';
 import { parseProxyString } from '../../commont/utils';
+import { ProxyInfo } from '@@/utils.type';
 
 export interface IRequestNetResult<T> {
   status: number;
@@ -33,14 +34,14 @@ const requestNet = <T = any>({
   isReqFile,
   proxy,
 }: IRequestNetParams): Promise<IRequestNetResult<T>> => {
+  let customSession: Session;
+  let proxyInfo: ProxyInfo | false;
   return new Promise(async (resolve, reject) => {
     try {
-      let customSession: Session;
-
       // 如果传入了代理配置，动态设置代理
       if (proxy) {
         // 解析代理信息
-        const proxyInfo = parseProxyString(proxy);
+        proxyInfo = parseProxyString(proxy);
         if (proxyInfo === false || !ipv4Regular.test(proxyInfo.ipAndPort))
           throw new Error('代理地址不合法');
         customSession = session.fromPartition(
@@ -57,7 +58,7 @@ const requestNet = <T = any>({
           ...(headers ? headers : {}),
           ...(proxy
             ? {
-                'x-forwarded-for': proxy,
+                'x-forwarded-for': proxyInfo.ipAndPort,
               }
             : {}),
         };
@@ -116,6 +117,15 @@ const requestNet = <T = any>({
           });
         });
       });
+
+      if (proxyInfo && typeof proxyInfo === 'object') {
+        req.on('login', (authInfo, callback) => {
+          callback(
+            (proxyInfo as ProxyInfo).username,
+            (proxyInfo as ProxyInfo).password,
+          );
+        });
+      }
 
       // 错误处理
       req.on('error', (error) => {
