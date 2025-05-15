@@ -6,7 +6,12 @@
  * @Description: 任务
  */
 import http, { hotHttp } from './request';
-import { ApplyTask, MineTaskListParams, TaskMaterial, UserTask } from './types/task';
+import {
+  ApplyTask,
+  MineTaskListParams,
+  TaskMaterial,
+  UserTask,
+} from './types/task';
 import { Task, TaskDataInfo } from 'commont/types/task';
 import { Pagination } from './types';
 import { UserWalletRecord } from './types/finance';
