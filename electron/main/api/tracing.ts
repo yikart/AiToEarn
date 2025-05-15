@@ -90,7 +90,9 @@ export class TracingApi {
       method: 'POST',
       url: 'tracing',
       body: body,
+      isToken: true,
     });
+
     const {
       status,
       data: { data, code },

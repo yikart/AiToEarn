@@ -46,8 +46,6 @@ export interface TaskVideo extends TaskData {
 export interface TaskArticle extends TaskData {
   imageList: string[];
   topicList: string[];
-  useAi: boolean;
-  aiPrompt: string;
 }
 
 export interface TaskPromotion extends TaskData {}
