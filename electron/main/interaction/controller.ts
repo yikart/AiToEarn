@@ -9,7 +9,7 @@ import windowOperate from '../../util/windowOperate';
 import { AutoRunModel, AutoRunType } from '../../db/models/autoRun';
 import { AccountService } from '../account/service';
 import { AutoRunService } from '../autoRun/service';
-import { Controller, Et, Icp, Inject } from '../core/decorators';
+import { Controller, Et, Icp, Inject, Scheduled } from '../core/decorators';
 import { InteractionService } from './service';
 import { SendChannelEnum } from '../../../commont/UtilsEnum';
 import type { WorkData } from '../plat/plat.type';
@@ -18,6 +18,8 @@ import { AutoInteractionCache } from './cacheData';
 import { getUserInfo } from '../user/comment';
 import type { CorrectQuery } from '../../global/table';
 import { AccountType } from '../../../commont/AccountEnum';
+import { taskApi } from '../api/taskApi';
+import platController from '../plat';
 
 @Controller()
 export class InteractionController {
@@ -177,4 +179,69 @@ export class InteractionController {
   ): Promise<any | null> {
     return AutoInteractionCache.getInfo();
   }
+
+
+
+    // 自动互动, 每10秒进行
+    @Scheduled('0 * * * * *', 'autoHudong')
+    async zidongHudong() {
+      // return;
+      console.log('自动互动 ing ...');
+      const res = await taskApi.getActivityTask();
+      console.log('---- zidongHudong ----', res);
+      const userList = await this.interactionService.getUserList();
+      console.log('---- userList ----', userList);
+      if (!userList.length) {
+        return;
+      }
+      const accountList = await this.interactionService.getAccountList(userList[userList.length - 1].id);
+      // console.log('---- accountList ----', accountList[0]);
+      if (res.items.length > 0) {
+        for (const item of res.items) {
+          item.accountTypes.forEach((accountType: any) => {
+            let myAccountTypeList = [];
+            for (const account of accountList) {
+              if (account.type === accountType && account.status === 0) {
+                myAccountTypeList.push(account);
+                // 申请任务
+                const applyTaskRes = taskApi.applyTask(item.id || item._id, {
+                  account: account.account,
+                  uid: account.uid,
+                  accountType: account.type,
+                });
+                console.log('---- applyTaskRes ----', applyTaskRes);
+              }
+            }
+            // console.log('---- myAccountTypeList ----', myAccountTypeList);
+  
+            for (const account of myAccountTypeList) {
+              // console.log('---- account ----', account);
+              console.log('---- item.dataInfo?.commentContent ----', item.dataInfo?.commentContent);
+              const autorInteractionList = this.interactionService.getAutorInteractionList(account, [{
+                author: {id: item.dataInfo?.authorId || ''} ,
+                  data : {id: item.dataInfo.worksId, xsec_token: item.dataInfo?.xsec_token || ''},
+                  dataId : item.dataInfo.worksId,
+                  option : {xsec_token: item.dataInfo?.xsec_token || ''},
+                  title : item.title,
+              }], {
+                accountType: accountType,
+                commentContent: item.dataInfo?.commentContent,
+              });
+
+
+
+              // // 提交完成任务
+              // console.log('---- autorInteractionList ----', autorInteractionList);
+              // let submitTasStr = '作品'+ item.dataInfo.worksId + '账户'+ account.nickname + '账户ID'+ account.uid;
+              // const submitTaskRes = taskApi.submitTask(item.id, {
+              //   submissionUrl: submitTasStr,
+              //   screenshotUrls: [],
+              //   qrCodeScanResult: submitTasStr,
+              // });
+              // console.log('---- submitTaskRes ----', submitTaskRes);
+            }
+          });
+        }
+      }
+    }
 }

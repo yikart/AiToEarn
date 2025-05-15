@@ -13,6 +13,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { QuestionCircleOutlined, SearchOutlined } from '@ant-design/icons';
 import accountStyles from '../AccountSidebar.module.scss';
 import { icpEditDeleteAccountGroup, icpProxyCheck } from '@/icp/account';
+import { parseProxyString } from '@@/utils';
 
 export interface IProxyManageRef {}
 
@@ -182,6 +183,7 @@ const ProxyManage = memo(
           >
             <div
               className={`${accountStyles.createGroup} ${styles.proxyInput}`}
+              style={{ marginBottom: '20px' }}
             >
               <label>代理地址</label>
               <Input
@@ -193,6 +195,7 @@ const ProxyManage = memo(
                 disabled={proxyName.length === 0}
                 loading={proxyLoading}
                 onClick={async () => {
+                  console.log(parseProxyString(proxyName));
                   setProxyLoading(true);
                   const res = await icpProxyCheck(proxyName);
                   setProxyLoading(false);
@@ -205,6 +208,13 @@ const ProxyManage = memo(
               >
                 验证连接
               </Button>
+            </div>
+            <div className={styles.proxyHint}>
+              <p>1. 代理类型仅支持HTTP、HTTPS、Socks5；</p>
+              <p>支持以下填写格式</p>
+              <p>192.168.0.1:8000{`{备注}`}</p>
+              <p>192.168.0.1:8000:代理账号:代理密码{`{备注}`}</p>
+              <p>socks5://192.168.0.1:8000:代理账号:代理密码{`{备注}`}</p>
             </div>
           </Modal>
           <Modal

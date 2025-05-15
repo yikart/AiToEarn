@@ -30,6 +30,7 @@ export default forwardRef<PubItemRef>((props, ref) => {
   const [phoneForm] = Form.useForm();
   const [openId, setOpenId] = useState('');
   const [isFirstLogin, setIsFirstLogin] = useState(false);
+  const [inviteCode, setInviteCode] = useState('');
   const userStore = useUserStore();
   const navigate = useNavigate();
 
@@ -116,6 +117,7 @@ export default forwardRef<PubItemRef>((props, ref) => {
         phone: values.phone,
         code: values.code,
         openId: openId,
+        inviteCode: values.inviteCode
       });
 
       if (res) {
@@ -198,29 +200,21 @@ export default forwardRef<PubItemRef>((props, ref) => {
             label="手机号"
             rules={[
               { required: true, message: '请输入手机号' },
-              { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号' },
+              { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号' }
             ]}
           >
             <Input placeholder="请输入手机号" />
           </Form.Item>
-
           <Form.Item
             name="code"
             label="验证码"
             rules={[
               { required: true, message: '请输入验证码' },
-              { len: 6, message: '验证码长度为6位' },
+              { len: 6, message: '验证码长度为6位' }
             ]}
           >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                position: 'relative',
-              }}
-            >
+            <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
               <Input placeholder="请输入验证码" style={{ flex: 1 }} />
-              {/* <div style={{ marginLeft: '8px', width: '138px', backgroundColor: '#a66ae4', padding: '5px 0', borderRadius: '5px' }}> */}
               <GetCode
                 onGetCode={async (unlock: () => void) => {
                   const validateRes = await phoneForm
@@ -239,18 +233,21 @@ export default forwardRef<PubItemRef>((props, ref) => {
                   }
                 }}
               />
-              {/* </div> */}
             </div>
           </Form.Item>
-
+          <Form.Item
+            name="inviteCode"
+            label="邀请码"
+            rules={[{ required: false, message: '请输入邀请码' }]}
+          >
+            <Input 
+              placeholder="请输入邀请码" 
+              onChange={(e) => setInviteCode(e.target.value)}
+            />
+          </Form.Item>
           <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              block
-              style={{ marginTop: '10px' }}
-            >
-              确认绑定
+            <Button type="primary" htmlType="submit" block>
+              绑定手机号
             </Button>
           </Form.Item>
         </Form>

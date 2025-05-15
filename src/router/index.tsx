@@ -46,6 +46,8 @@ import AiRanking from '../views/aiTool/children/aiRanking/index';
 import AiToolWebview from '../views/aiTool/children/aiToolWebview';
 import ExpectedIncome from '@/views/finance/expectedIncome';
 import Test from '@/views/test';
+import UserProfile from '@/views/user/mine/UserProfile';
+// import Test from '@/views/test';
 
 interface IRouterMeta {
   // 路由名称
@@ -163,6 +165,17 @@ export const router: CustomRouteObject[] = [
         element: <Test />,
         meta: { name: '测试', icon: ShopOutlined },
       },
+      {
+        path: '/user',
+        children: [
+          { path: 'mine', element: <UserProfile /> },
+        ],
+      },
+      // {
+      //   path: '/test',
+      //   element: <Test />,
+      //   meta: { name: '测试', icon: ShopOutlined },
+      // },
     ],
   },
   { path: '/login', element: <Login /> },

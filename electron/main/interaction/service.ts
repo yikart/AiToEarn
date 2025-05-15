@@ -23,7 +23,10 @@ import { WorkData } from '../plat/plat.type';
 import { AutoInteractionCache } from './cacheData';
 import { backPageData, CorrectQuery } from '../../global/table';
 import { AccountType } from '../../../commont/AccountEnum';
+import { AccountService } from '../account/service';
+import { UserService } from '../user/service';
 // import { ReplyController } from '../reply/controller';
+
 
 @Injectable()
 export class InteractionService {
@@ -136,6 +139,7 @@ export class InteractionService {
     const commentContentList = option.commentContent
       ? option.commentContent.split(',')
       : [];
+    console.log('------ commentContentList ----', commentContentList);
     // return;
 
     const userInfo = getUserInfo();
@@ -247,7 +251,7 @@ export class InteractionService {
           option.commentProb === 0
             ? false
             : !option.commentProb || Math.random() * 100 < option.commentProb;
-        let commentWorksRes;
+        let commentWorksRes: any = {};
 
         if (shouldComment) {
           // if (option.commentContent.includes(',')) {
@@ -300,9 +304,11 @@ export class InteractionService {
             ? false
             : !option.likeProb || randomLike < option.likeProb;
 
+        console.log('------ shouldLike', shouldLike);
+
         if (shouldLike) {
           try {
-            console.log('------ 开始点赞作品:', works.dataId);
+            console.log('------ 开始点赞作品:', works.dataId, works.author?.id);
             const isLikeRes = await platController.dianzanDyOther(
               account,
               works.dataId,
@@ -363,7 +369,7 @@ export class InteractionService {
 
         let commentRemark = '';
         if (commentWorksRes.data) {
-          if (commentWorksRes.data.msg) {
+          if (commentWorksRes.data?.msg) {
             commentRemark = commentWorksRes.data.msg;
           } else {
             commentRemark = commentWorksRes.data.toast;
@@ -394,6 +400,8 @@ export class InteractionService {
         tag: AutorWorksInteractionScheduleEvent.ReplyCommentEnd,
         status: 1,
       });
+
+      return true;
     } catch (error) {
       console.error('------ 任务执行出错:', error);
       scheduleEvent({
@@ -474,5 +482,51 @@ export class InteractionService {
     return {
       status: 1,
     };
+  }
+
+
+
+
+
+
+
+  // 自动互动
+  @Inject(UserService)
+  private readonly userService!: UserService;
+  @Inject(AccountService)
+  private readonly accountService!: AccountService;
+
+  // 获取用户列表
+  async getUserList() {
+    return await this.userService.getUsers();
+  }
+
+  // 获取账户列表
+  async getAccountList(userId: string) {
+    return await this.accountService.getAccounts(userId);
+  }
+
+  // 获取自动互动列表
+  async getAutorInteractionList(account: any, worksList: any, option: any) {
+    console.log('------ server option.commentContent ----', option.commentContent);
+    return await this.autorInteraction( 
+        account,
+        worksList,  
+        {
+            commentContent: option.commentContent || null, 
+            platform: option.accountType, // 平台
+            likeProb: 999, // 点赞概率
+            collectProb: 999, // 收藏概率
+            commentProb: 999, // 评论概率
+            commentType: option.commentContent?'custom' : 'ai', // 评论类型
+        },
+        (e: {
+          tag: AutorWorksInteractionScheduleEvent;
+          status: -1 | 0 | 1;
+          error?: any;
+        }) => {
+          console.log('------ e', e);
+        },
+    );
   }
 }

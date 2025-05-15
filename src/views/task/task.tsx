@@ -123,6 +123,7 @@ export default function Task() {
     totalCount: 0,
   });
   const [hasMore, setHasMore] = useState(true);
+  const [isOne, setIsOne] = useState(false);
   const selectedTaskRef = useRef<any>(null);
   const [selectedTask, setSelectedTask] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -131,6 +132,8 @@ export default function Task() {
   const [downloading, setDownloading] = useState(false);
   const Ref_TaskInfo = useRef<TaskInfoRef>(null);
   const [pubProgressModuleOpen, setPubProgressModuleOpen] = useState(false);
+  const [htmlContent, setHtmlContent] = useState<string>('');
+  const [htmlModalVisible, setHtmlModalVisible] = useState(false);
 
   // 使用 react-intersection-observer 监听底部元素
   const { ref: loadMoreRef, inView } = useInView({
@@ -266,10 +269,11 @@ export default function Task() {
   );
   // TODO 完善跳转逻辑
   const handleJoinTask = (task: any) => {
-    if (task.isAccepted) {
-      setActiveTab('mine');
-      return;
-    }
+
+    // if (task.isAccepted) {
+    //   setActiveTab('mine')
+    //   return
+    // }
 
     // setCommonPubParams({
     //   title: "标题1",
@@ -314,15 +318,24 @@ export default function Task() {
     taskId: string;
   } | null>(null);
 
+  
+
   /**
    * 接受任务
    */
-  async function taskApply() {
+  async function taskApply(params: any) {
+    
+   
+    // return;
     // 00.00 测试
     if (!selectedTask) return;
 
     try {
-      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
+      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id, {
+        account: params.account,
+        accountType: params.accountType,
+        uid: params.uid,
+      });
 
       // const res: any = {
       //   code: 0,
@@ -357,13 +370,26 @@ export default function Task() {
       message.error('接受任务失败，请稍后再试');
     }
   }
+  
+  async function isoneFunc(params: any){
+    if (params) {
+      await setIsOne(true);
+    }else{
+      await setIsOne(false);
+    }
+    setChooseAccountOpen(true);
+  }
 
-  async function taskApplyoney() {
+  async function taskApplyoney(params: any){
     console.log('------ taskApplyoney', selectedTask);
     if (!selectedTask) return;
 
     try {
-      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
+      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id, {
+        account: params.account,
+        accountType: params.accountType,
+        uid: params.uid,
+      });
       // 存储任务记录信息 00.00
       // console.log('jieshou :', res);
       if (res.code == 0 && res.data) {
@@ -566,7 +592,25 @@ export default function Task() {
     // 根据任务类型选择不同的处理逻辑
     if (selectedTask?.type === TaskType.ARTICLE) {
       // 文章任务使用 pubCore 逻辑
-      await pubCore(aList[0]);
+      console.log('文章任务使用 pubCore 逻辑');
+      if (isOne) {
+        for (const account of aList) {
+          taskApplyoney({
+            account: account.account,
+            accountType: account.type,
+            uid: account.uid,
+          });
+        }
+      }else{
+        for (const account of aList) {
+          taskApply({
+            account: account.account,
+            accountType: account.type,
+            uid: account.uid,
+          });
+        }
+      }
+      // await pubCore(aList[0]);
     } else {
       // 其他任务使用原有的互动任务逻辑
       await handleInteraction(aList[0]);
@@ -676,11 +720,14 @@ export default function Task() {
                       type="primary"
                       key="join"
                       // disabled={item.isAccepted}
-                      onClick={() => handleJoinTask(item)}
+                      // onClick={() => handleJoinTask(item)}
+
+                      onClick={() => testSseFunc(item)}
                       style={{ minWidth: '120px' }}
                     >
-                      {item.isAccepted ? '去完成任务' : '参与任务'}
-                    </Button>,
+                      {/* {item.isAccepted ? '去完成任务' : '参与任务'} */}
+                      参与任务
+                    </Button>, 
                   ]}
                 >
                   <Card.Meta
@@ -758,14 +805,14 @@ export default function Task() {
           open={modalVisible}
           onCancel={() => setModalVisible(false)}
           footer={[
-            <Button key="cancel" onClick={taskApplyoney}>
+            <Button key="cancel" onClick={() => isoneFunc(true)}>
               领取
             </Button>,
             <Button
               key="complete"
               type="primary"
               icon={<CheckCircleOutlined />}
-              onClick={taskApply}
+              onClick={()=> {  isoneFunc(false); }}
             >
               领取&发布
             </Button>,
@@ -906,6 +953,79 @@ export default function Task() {
     );
   };
 
+  // 添加 SSE 处理方法
+  const testSseFunc = async (item: any) => {
+    try {
+      setHtmlContent(''); // 清空之前的内容
+      setHtmlModalVisible(true); // 显示模态框
+      const response = await fetch(import.meta.env.VITE_APP_URL + '/tools/ai/article/html/sse', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: '生成一个卡通人物介绍页 带有图片 小红书图文流光卡片样式'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('无法获取响应流');
+      }
+
+      let htmlString = '';
+      let isCollectingHtml = false;
+      let buffer = '';
+
+      // 处理响应流
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          console.log('流读取完成');
+          setHtmlContent(htmlString); // 设置最终的 HTML 内容
+          break;
+        }
+
+        // 将 Uint8Array 转换为文本
+        const text = new TextDecoder().decode(value);
+        buffer += text;
+
+        // 处理缓冲区中的完整行
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || ''; // 保留最后一个不完整的行
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+
+          // 检查是否是 data 行
+          if (line.startsWith('data:')) {
+            const data = line.slice(5).trim();
+            
+            // 检查是否包含 ``` 标记
+            if (data.includes('```')) {
+              isCollectingHtml = !isCollectingHtml;
+              continue;
+            }
+
+            // 如果正在收集 HTML，则添加到结果中
+            if (isCollectingHtml) {
+              htmlString += data;
+            }
+          }
+        }
+      }
+
+    } catch (error) {
+      console.error('请求失败:', error);
+      message.error('连接失败，请稍后重试');
+      setHtmlModalVisible(false); // 发生错误时关闭模态框
+    }
+  };
+
   return (
     <div className={styles.taskPageContainer}>
       {/* 顶部导航栏 */}
@@ -966,7 +1086,38 @@ export default function Task() {
       </div>
 
       {/* 任务内容 */}
-      <div className={styles.taskContent}>{renderTaskContent()}</div>
+      <div className={styles.taskContent}>
+        {renderTaskContent()}
+      </div>
+
+      {/* HTML 预览模态框 */}
+      <Modal
+        title="HTML 预览"
+        open={htmlModalVisible}
+        onCancel={() => setHtmlModalVisible(false)}
+        width="80%"
+        footer={[
+          <Button key="close" onClick={() => setHtmlModalVisible(false)}>
+            关闭
+          </Button>
+        ]}
+        bodyStyle={{ 
+          height: '70vh', 
+          overflow: 'auto',
+          padding: '20px'
+        }}
+      >
+        {htmlContent ? (
+          <div 
+            className={styles.htmlPreview}
+            dangerouslySetInnerHTML={{ __html: htmlContent }}
+          />
+        ) : (
+          <div style={{ textAlign: 'center', padding: '20px' }}>
+            <Spin tip="正在生成内容..." />
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

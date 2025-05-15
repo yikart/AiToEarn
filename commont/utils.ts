@@ -1,4 +1,7 @@
 // 根据文件路径获取文件名和后缀
+import { ProxyInfo } from '@@/utils.type';
+
+// 提取路径中的文件名
 export function getFilePathNameCommon(path: string) {
   if (!path)
     return {
@@ -44,4 +47,29 @@ export async function RetryWhile(
     console.log(`开始第 ${count} 次重试`);
   }
   return flag;
+}
+
+/**
+ * 代理解析
+ * @param proxyString
+ */
+export function parseProxyString(proxyString: string): ProxyInfo | false {
+  const regex =
+    /^(?:(\w+):\/\/)?([\d.]+:\d+)(?::([^:]+):([^{}\s]+))?(?:\[(.*?)\])?(?:{(.*?)})?$/;
+
+  const match = proxyString.match(regex);
+  if (!match) {
+    return false; // 无法解析则返回 false
+  }
+
+  const [, protocol, ipAndPort, username, password, refreshUrl, remark] = match;
+
+  return {
+    protocol: protocol || 'http', // 如果未提供协议，默认为 http
+    ipAndPort,
+    username,
+    password,
+    refreshUrl,
+    remark,
+  };
 }

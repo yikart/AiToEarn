@@ -122,6 +122,7 @@ class Bilibili {
    * 视频稿件提交
    * @param accessToken
    * @param uploadToken
+   * @param data
    * @returns
    */
   async archiveAddByUtoken(

@@ -427,14 +427,14 @@ export class Xhs extends PlatformBase {
   async dianzanDyOther(
     account: AccountModel,
     dataId: string, // 作品ID
-  ): Promise<boolean> {
+  ): Promise<any> {
     console.log('------ dianzanDyOther3333', dataId);
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await xiaohongshuService.likeNote(cookie, dataId);
 
-    // console.log('------ res', res);
+    console.log('------ res 小红书点赞...: ', res);
 
-    return !!res;
+    return res;
   }
 
   async shoucangDyOther(

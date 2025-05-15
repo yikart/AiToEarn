@@ -10,6 +10,7 @@ export enum FeedbackType {
 }
 
 export class ToolsApi {
+
   // 获取AI的评论回复
   async aiRecoverReview(inData: {
     content: string;

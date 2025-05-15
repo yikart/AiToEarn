@@ -91,7 +91,7 @@ export abstract class PlatformBase {
     account: AccountModel,
     dataId: string,
     option?: any,
-  ): Promise<boolean>;
+  ): Promise<any>;
 
   /**
    * 收藏
@@ -101,7 +101,7 @@ export abstract class PlatformBase {
   abstract shoucangDyOther(
     account: AccountModel,
     pcursor?: string,
-  ): Promise<boolean>;
+  ): Promise<any>;
 
   /**
    * 获取作品列表

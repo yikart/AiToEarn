@@ -4,10 +4,11 @@ import requestNet from './requestNet';
 export async function proxyCheck(proxy: string) {
   try {
     const res = await requestNet({
-      url: 'https://www.baidu.com',
+      url: 'https://httpbin.org/ip',
       method: 'GET',
       proxy,
     });
+    console.log(res);
     if (res.status === 200 || res.status === 201 || res.data.length > 100000) {
       return true;
     }

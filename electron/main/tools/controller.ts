@@ -73,4 +73,6 @@ export class ToolsController {
     console.log('clear Log ing ...');
     clearOldLogs();
   }
+
+
 }

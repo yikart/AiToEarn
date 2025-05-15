@@ -4,7 +4,9 @@
  * @LastEditors: nevin
  * @Description: 工具箱
  */
-import { Injectable } from '../core/decorators';
+import { Inject, Injectable } from '../core/decorators';
+
 
 @Injectable()
-export class ToolsService {}
+export class ToolsService {
+}

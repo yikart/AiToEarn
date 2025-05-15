@@ -36,37 +36,37 @@ const App: React.FC = () => {
   }, []);
 
   const items: MenuProps['items'] = [
-    {
-      key: 'userInfo',
-      label: (
-        <div className="px-2 py-2">
-          <div className="flex items-center space-x-2 mb-2">
-            <UserOutlined className="text-[#a66ae4]" />
-            <span className="text-gray-600">用户名：</span>
-            <span className="text-gray-900 font-medium">
-              {userStore.userInfo?.name || '-'}
-            </span>
-          </div>
-          <div className="flex items-center space-x-2 mb-2">
-            <IdcardOutlined className="text-[#a66ae4]" />
-            <span className="text-gray-600">ID：</span>
-            <span className="text-gray-900 font-medium">
-              {userStore.userInfo?.id || '-'}
-            </span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <PhoneOutlined className="text-[#a66ae4]" />
-            <span className="text-gray-600">手机：</span>
-            <span className="text-gray-900 font-medium">
-              {userStore.userInfo?.phone || '-'}
-            </span>
-          </div>
-        </div>
-      ),
-    },
-    {
-      type: 'divider',
-    },
+    // {
+    //   key: 'userInfo',
+    //   label: (
+    //     <div className="px-2 py-2">
+    //       <div className="flex items-center space-x-2 mb-2">
+    //         <UserOutlined className="text-[#a66ae4]" />
+    //         <span className="text-gray-600">用户名：</span>
+    //         <span className="text-gray-900 font-medium">
+    //           {userStore.userInfo?.name || '-'}
+    //         </span>
+    //       </div>
+    //       <div className="flex items-center space-x-2 mb-2">
+    //         <IdcardOutlined className="text-[#a66ae4]" />
+    //         <span className="text-gray-600">ID：</span>
+    //         <span className="text-gray-900 font-medium">
+    //           {userStore.userInfo?.id || '-'}
+    //         </span>
+    //       </div>
+    //       <div className="flex items-center space-x-2">
+    //         <PhoneOutlined className="text-[#a66ae4]" />
+    //         <span className="text-gray-600">手机：</span>
+    //         <span className="text-gray-900 font-medium">
+    //           {userStore.userInfo?.phone || '-'}
+    //         </span>
+    //       </div>
+    //     </div>
+    //   ),
+    // },
+    // {
+    //   type: 'divider',
+    // },
     {
       key: 'wallet',
       label: (
@@ -138,7 +138,11 @@ const App: React.FC = () => {
       overlayClassName="min-w-[240px]"
       overlayStyle={{ marginTop: '8px' }}
     >
-      <div className={styles.sysMenu}>
+      <div 
+        className={styles.sysMenu}
+        onClick={() => navigate('/user/mine')}
+        style={{ cursor: 'pointer' }}
+      >
         <Image className="sysMenu-avatar" src={defaultAvatar} preview={false} />
       </div>
     </Dropdown>

@@ -946,7 +946,7 @@ export default function Page() {
                 items={[
                   {
                     key: '1',
-                    label: '作品搜索',
+                    label: '按内容搜笔记',
                     children: (
                       <>
                         <Row
@@ -1198,7 +1198,7 @@ export default function Page() {
                     ? [
                         {
                           key: '4',
-                          label: '评论搜索',
+                          label: '按评论搜笔记',
                           children: (
                             <div style={{ padding: '20px' }}>
                               <Card>
