@@ -28,12 +28,14 @@ export class TaskApi {
     uid: string;
     accountType: string;
   }) {
+    console.log('------ applyTask ----', id, data);
     const res = await netRequest({
       method: 'POST',
       url: `tasks/apply/${id}`,
       body: data,
       isToken: true,
     });
+    console.log('------ applyTask res ----', res);
     return res;
   }
 
