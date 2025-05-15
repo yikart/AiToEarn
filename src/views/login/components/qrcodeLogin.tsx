@@ -238,7 +238,7 @@ export default forwardRef<PubItemRef>((props, ref) => {
           <Form.Item
             name="inviteCode"
             label="邀请码"
-            rules={[{ required: true, message: '请输入邀请码' }]}
+            rules={[{ required: false, message: '请输入邀请码' }]}
           >
             <Input 
               placeholder="请输入邀请码" 
