@@ -31,7 +31,7 @@ export const userApi = {
   },
 
   // 更新用户信息
-  updateUserInfo(data: Partial<IUserInfo>) {
+  updateUserInfo(data: any) {
     return http.put<IUserInfo>('/user/info/update', data);
   },
 
