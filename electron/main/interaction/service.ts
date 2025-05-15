@@ -139,6 +139,7 @@ export class InteractionService {
     const commentContentList = option.commentContent
       ? option.commentContent.split(',')
       : [];
+    console.log('------ commentContentList ----', commentContentList);
     // return;
 
     const userInfo = getUserInfo();
@@ -250,7 +251,7 @@ export class InteractionService {
           option.commentProb === 0
             ? false
             : !option.commentProb || Math.random() * 100 < option.commentProb;
-        let commentWorksRes;
+        let commentWorksRes: any = {};
 
         if (shouldComment) {
           // if (option.commentContent.includes(',')) {
@@ -302,6 +303,8 @@ export class InteractionService {
           option.likeProb === 0
             ? false
             : !option.likeProb || randomLike < option.likeProb;
+
+        console.log('------ shouldLike', shouldLike);
 
         if (shouldLike) {
           try {
@@ -366,7 +369,7 @@ export class InteractionService {
 
         let commentRemark = '';
         if (commentWorksRes.data) {
-          if (commentWorksRes.data.msg) {
+          if (commentWorksRes.data?.msg) {
             commentRemark = commentWorksRes.data.msg;
           } else {
             commentRemark = commentWorksRes.data.toast;
@@ -505,7 +508,8 @@ export class InteractionService {
 
   // 获取自动互动列表
   async getAutorInteractionList(account: any, worksList: any, option: any) {
-    return await this.autorInteraction(
+    console.log('------ server option.commentContent ----', option.commentContent);
+    return await this.autorInteraction( 
         account,
         worksList,  
         {
@@ -514,7 +518,7 @@ export class InteractionService {
             likeProb: 999, // 点赞概率
             collectProb: 999, // 收藏概率
             commentProb: 999, // 评论概率
-            commentType: 'ai', // 评论类型
+            commentType: option.commentContent?'custom' : 'ai', // 评论类型
         },
         (e: {
           tag: AutorWorksInteractionScheduleEvent;
