@@ -62,3 +62,22 @@ export interface ApplyTask {
   uid: string;
   accountType: AccountType;
 }
+
+export interface TaskArticleImg {
+  content: string;
+  imageUrl: string;
+}
+
+export interface TaskMaterial {
+  id: string;
+  taskId: string;
+  type: TaskType;
+  title?: string; // 标题
+  coverUrl?: string; // 封面图
+  temp?: string; // 模板字符
+  desc?: string;
+  imageList: TaskArticleImg[];
+  usedCount: number;
+  createTime: string;
+  updateTime: string;
+}
