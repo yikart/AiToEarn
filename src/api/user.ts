@@ -35,6 +35,11 @@ export const userApi = {
     return http.put<IUserInfo>('/user/info/update', data);
   },
 
+  // 更新用户自动赚钱配置
+  setUserEarnInfo(data: any) {
+    return http.put<IUserInfo>('/user/info/update', data);
+  },
+
   // token刷新
   refreshToken() {
     return http.post<IRefreshToken>('/user/token/refresh');
