@@ -17,8 +17,8 @@ import CommonPubSetting from '@/views/publish/children/videoPage/components/Comm
 import VideoPubSetModal from '@/views/publish/children/videoPage/components/VideoPubSetModal/VideoPubSetModal';
 import { usePubStroe } from '../../../../store/pubStroe';
 import { IVideoChooseItem } from '@/views/publish/children/videoPage/videoPage';
-import {IImageAccountItem} from "@/views/publish/children/imagePage/imagePage.type";
-import {toolsApi} from "@/api/tools";
+import { toolsApi } from '@/api/tools';
+import { sensitivityLoading } from '@/utils';
 
 export enum AccountChooseType {
   // 多选
@@ -244,30 +244,37 @@ export default function Page() {
                 disabled={!videoListChoose.every((v) => v.account && v.video)}
                 onClick={async () => {
                   setSensitiveDetLoading(true);
-                  const tasks: Promise<{
-                    // 作品
-                    videoItem: IVideoChooseItem;
-                    // 是否敏感 true=敏感 false=正常
-                    sensitive: boolean;
-                  }>[] = [];
-                  // 如果检测内容重复不会进行检测
-                  const contentSet = new Set<string>();
-
-                  videoListChoose.map((v) => {
-                    const content = `
+                  const core = async () => {
+                    const tasks: Promise<{
+                      // 作品
+                      videoItem: IVideoChooseItem;
+                      // 是否敏感 true=敏感 false=正常
+                      sensitive: boolean;
+                    }>[] = [];
+                    // 如果检测内容重复不会进行检测
+                    const contentSet = new Set<string>();
+                    videoListChoose.map((v) => {
+                      const content = `
                       ${v.pubParams.title}
                       ${v.pubParams.describe}
                     `;
-                    if (content.trim() !== '' && !contentSet.has(content)) {
-                      contentSet.add(content);
-                      tasks.push(sensitiveDetCore(content, v));
-                    }
-                  });
-                  const res = await Promise.all(tasks);
+                      if (content.trim() !== '' && !contentSet.has(content)) {
+                        contentSet.add(content);
+                        tasks.push(sensitiveDetCore(content, v));
+                      }
+                    });
+                    return await Promise.all(tasks);
+                  };
+
+                  const taskRes = await Promise.all([
+                    core(),
+                    sensitivityLoading(),
+                  ]);
+                  const res = taskRes[0];
+
                   setSensitiveDetLoading(false);
 
                   if (res.length === 0) return message.success('检测正常');
-
                   if (res.every((v) => !v.sensitive)) {
                     message.success('检测正常');
                     return;
