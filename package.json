@@ -1,6 +1,6 @@
 {
   "name": "aiToEarn",
-  "version": "0.7.2",
+  "version": "0.7.3-alpha",
   "main": "dist-electron/main/index.js",
   "description": "艺咖 win打包使用管理员的终端",
   "author": "艺咖",
