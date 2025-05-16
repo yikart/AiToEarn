@@ -1200,16 +1200,14 @@ export default function Page() {
                           key: '4',
                           label: '按评论搜笔记',
                           children: (
-                            <div style={{ padding: '20px' }}>
-                              <Card>
+                            <div style={{ padding: '20px',  overflowX: 'hidden' }}>
+                              <Card style={{ width: '100%' }}>
                                 <Form layout="vertical">
                                   <Form.Item>
                                     <Input.Search
                                       placeholder="输入评论"
                                       value={searchKeyword}
-                                      onChange={(e) =>
-                                        setSearchKeyword(e.target.value)
-                                      }
+                                      onChange={(e) => setSearchKeyword(e.target.value)}
                                       onSearch={submitSearchTask}
                                       enterButton="搜索任务"
                                     />
@@ -1245,21 +1243,21 @@ export default function Page() {
                                       dataIndex: 'taskId',
                                       key: 'taskId',
                                       width: 220,
+                                      ellipsis: true,
                                     },
                                     {
                                       title: '关键词',
                                       dataIndex: 'keywords',
                                       key: 'keywords',
+                                      ellipsis: true,
                                     },
                                     {
                                       title: '状态',
                                       dataIndex: 'status',
                                       key: 'status',
+                                      width: 100,
                                       render: (status: number) => {
-                                        const statusMap: Record<
-                                          number,
-                                          string
-                                        > = {
+                                        const statusMap: Record<number, string> = {
                                           0: '等待运行',
                                           1: '运行完成',
                                           2: '正在运行',
@@ -1271,43 +1269,38 @@ export default function Page() {
                                       title: '创建时间',
                                       dataIndex: 'createTime',
                                       key: 'createTime',
+                                      width: 150,
                                     },
                                     {
                                       title: '数据范围',
                                       dataIndex: 'dateType',
                                       key: 'dateType',
+                                      width: 100,
                                       render: (dateType: string) => {
-                                        const dateTypeMap: Record<
-                                          string,
-                                          string
-                                        > = {
+                                        const dateTypeMap: Record<string, string> = {
                                           '7d': '最近7天',
                                           '30d': '最近30天',
                                           '90d': '最近90天',
                                         };
-                                        return (
-                                          dateTypeMap[dateType] || dateType
-                                        );
+                                        return dateTypeMap[dateType] || dateType;
                                       },
                                     },
                                     {
                                       title: '最大数量',
                                       dataIndex: 'maxCounts',
                                       key: 'maxCounts',
+                                      width: 100,
                                     },
                                     {
                                       title: '操作',
                                       key: 'action',
+                                      width: 150,
+                                      fixed: 'right',
                                       render: (_, record) => (
                                         <Space>
                                           <Button
                                             type="link"
-                                            onClick={() =>
-                                              viewTaskResult(
-                                                record.taskId,
-                                                record.keywords,
-                                              )
-                                            }
+                                            onClick={() => viewTaskResult(record.taskId, record.keywords)}
                                             disabled={record.status != 1}
                                           >
                                             查看结果
@@ -1315,9 +1308,7 @@ export default function Page() {
                                           <Button
                                             type="link"
                                             danger
-                                            onClick={() =>
-                                              deleteSearchTask(record.taskId)
-                                            }
+                                            onClick={() => deleteSearchTask(record.taskId)}
                                           >
                                             删除
                                           </Button>
@@ -1326,7 +1317,6 @@ export default function Page() {
                                     },
                                   ]}
                                   pagination={false}
-                                  scroll={{ y: 300 }}
                                   size="small"
                                 />
 
