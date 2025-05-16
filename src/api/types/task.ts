@@ -61,6 +61,7 @@ export interface ApplyTask {
   account: string;
   uid: string;
   accountType: AccountType;
+  taskMaterialId?: string; // 任务素材ID
 }
 
 export interface TaskArticleImg {
