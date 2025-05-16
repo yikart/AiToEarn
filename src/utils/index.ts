@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
-import { getFilePathNameCommon } from '../../commont/utils';
+import { getFilePathNameCommon, sleep } from '../../commont/utils';
+import { message } from 'antd';
 /**
  * 生成唯一ID
  */
@@ -79,4 +80,26 @@ export function parseTopicString(input: string): {
   });
 
   return { topics, cleanedString };
+}
+
+// 敏感词检测-多余检测动画
+export async function sensitivityLoading() {
+  const key = generateUUID();
+  const msgs = [
+    '敏感词检测中',
+    '色情检测中',
+    'abuse检测中',
+    '广告法检测中',
+    'Error检测中',
+  ];
+
+  for (const msg of msgs) {
+    message.open({
+      key,
+      type: 'loading',
+      content: `${msg} ...`,
+    });
+    await sleep(200);
+  }
+  message.destroy(key);
 }

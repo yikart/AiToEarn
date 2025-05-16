@@ -27,6 +27,7 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 import { signInApi } from '@/api/signIn';
 import { toolsApi } from '@/api/tools';
 import { IImageAccountItem } from '@/views/publish/children/imagePage/imagePage.type';
+import { sensitivityLoading } from '@/utils';
 
 const { confirm } = Modal;
 
@@ -271,26 +272,32 @@ export default function Page() {
           disabled={imageAccounts.length === 0 || images.length === 0}
           onClick={async () => {
             setSensitiveDetLoading(true);
-            const tasks: Promise<{
-              // 作品
-              accountItem: IImageAccountItem;
-              // 是否敏感 true=敏感 false=正常
-              sensitive: boolean;
-            }>[] = [];
-            // 如果检测内容重复不会进行检测
-            const contentSet = new Set<string>();
+            const core = async () => {
+              const tasks: Promise<{
+                // 作品
+                accountItem: IImageAccountItem;
+                // 是否敏感 true=敏感 false=正常
+                sensitive: boolean;
+              }>[] = [];
+              // 如果检测内容重复不会进行检测
+              const contentSet = new Set<string>();
 
-            imageAccounts.map((v) => {
-              const content = `
+              imageAccounts.map((v) => {
+                const content = `
                 ${v.pubParams.title}
                 ${v.pubParams.describe}
               `;
-              if (content.trim() !== '' && !contentSet.has(content)) {
-                contentSet.add(content);
-                tasks.push(sensitiveDetCore(content, v));
-              }
-            });
-            const res = await Promise.all(tasks);
+                if (content.trim() !== '' && !contentSet.has(content)) {
+                  contentSet.add(content);
+                  tasks.push(sensitiveDetCore(content, v));
+                }
+              });
+              return await Promise.all(tasks);
+            };
+
+            const taskRes = await Promise.all([core(), sensitivityLoading()]);
+            const res = taskRes[0];
+
             setSensitiveDetLoading(false);
 
             if (res.length === 0) return message.success('检测正常');
