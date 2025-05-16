@@ -201,24 +201,7 @@ export default function ArticleTask() {
   /**
    * 接受任务
    */
-  async function taskApply() {
-    if (!selectedTask) return;
-
-    try {
-      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
-      // 存储任务记录信息
-      if (res.code === 0 && res.data) {
-        setTaskRecord(res.data);
-        message.success('任务接受成功！');
-
-        handleCompleteTask();
-      } else {
-        message.error(res.msg || '接受任务失败，请稍后再试?');
-      }
-    } catch (error) {
-      message.error('接受任务失败，请稍后再试');
-    }
-  }
+  async function taskApply() {}
 
   /**
    * 完成任务

@@ -79,26 +79,6 @@ const Com = forwardRef<TaskInfoRef, TaskInfoProps>((props: any, ref) => {
    */
   async function taskApply() {
     if (!taskInfo) return;
-
-    try {
-      const res: any = await taskApi.taskApply<TaskVideo>(taskInfo?._id);
-      // 存储任务记录信息
-      if (res.code === 0 && res.data) {
-        setTaskRecord(res.data);
-        message.success('任务接受成功！');
-        setIsModalOpen(false);
-        setChooseAccountOpen(true);
-
-        // 调用父组件传递的刷新函数
-        if (onTaskApplied && typeof onTaskApplied === 'function') {
-          onTaskApplied();
-        }
-      } else {
-        message.error(res.msg || '接受任务失败，请稍后再试?');
-      }
-    } catch (error) {
-      message.error('接受任务失败，请稍后再试');
-    }
   }
 
   /**

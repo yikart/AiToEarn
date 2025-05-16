@@ -219,26 +219,7 @@ export default function InteractionTask() {
   /**
    * 接受任务
    */
-  async function taskApply() {
-    // handleCompleteTask();
-    // return;
-    if (!selectedTask) return;
-
-    try {
-      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
-      // 存储任务记录信息
-      if (res.code === 0 && res.data) {
-        setTaskRecord(res.data);
-        message.success('任务接受成功！');
-
-        handleCompleteTask();
-      } else {
-        message.error(res.msg || '接受任务失败，请稍后再试?');
-      }
-    } catch (error) {
-      message.error('接受任务失败，请稍后再试');
-    }
-  }
+  async function taskApply() {}
 
   useEffect(() => {
     selectedTaskRef.current = selectedTask;
@@ -343,7 +324,7 @@ export default function InteractionTask() {
 
   return (
     <div className={styles.taskList}>
-      <ChooseAccountModule 
+      <ChooseAccountModule
         open={chooseAccountOpen}
         onClose={() => !downloading && setChooseAccountOpen(false)}
         platChooseProps={{

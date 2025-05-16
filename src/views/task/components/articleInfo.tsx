@@ -50,27 +50,7 @@ const Com = forwardRef<TaskInfoRef, TaskInfoProps>((props: any, ref) => {
   /**
    * 接受任务
    */
-  async function taskApply() {
-    if (!taskInfo) return;
-
-    try {
-      const res: any = await taskApi.taskApply<TaskArticle>(taskInfo?._id);
-      if (res.code === 0 && res.data) {
-        setTaskRecord(res.data);
-        message.success('任务接受成功！');
-        setIsModalOpen(false);
-        setChooseAccountOpen(true);
-
-        if (onTaskApplied && typeof onTaskApplied === 'function') {
-          onTaskApplied();
-        }
-      } else {
-        message.error(res.msg || '接受任务失败，请稍后再试?');
-      }
-    } catch (error) {
-      message.error('接受任务失败，请稍后再试');
-    }
-  }
+  async function taskApply() {}
 
   /**
    * 完成任务

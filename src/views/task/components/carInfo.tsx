@@ -40,26 +40,7 @@ const Com = forwardRef<TaskInfoRef, TaskInfoProps>((props: any, ref) => {
   /**
    * 接受任务
    */
-  async function taskApply() {
-    if (!taskInfo) return;
-    console.log('taskInfo', taskInfo);
-    try {
-      const res = await taskApi.taskApply(taskInfo?._id);
-      setTaskInfo(res as any);
-      setIsModalOpen(false);
-
-      // 添加成功提示
-      message.success('任务接受成功，请前往我的任务查看');
-
-      // 调用父组件传递的刷新函数
-      if (onTaskApplied && typeof onTaskApplied === 'function') {
-        onTaskApplied();
-      }
-    } catch (error) {
-      console.error('接受任务失败:', error);
-      message.error('接受任务失败，请重试');
-    }
-  }
+  async function taskApply() {}
 
   const handleCancel = () => {
     setIsModalOpen(false);
