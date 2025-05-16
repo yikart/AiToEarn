@@ -262,9 +262,10 @@ export default function Task() {
     });
   };
 
-  const { setCommonPubParams } = useImagePageStore(
+  const { setCommonPubParams, setImages } = useImagePageStore(
     useShallow((state) => ({
       setCommonPubParams: state.setCommonPubParams,
+      setImages: state.setImages,
     })),
   );
   // TODO 完善跳转逻辑
@@ -324,24 +325,25 @@ export default function Task() {
    * 接受任务
    */
   async function taskApply(params: any) {
-    
-   
+    // console.log('taskApply执行:', selectedTask);
+    const sucai: any = await taskApi.getFristTaskMaterial(selectedTask?._id);
+    // console.log('sucai:', sucai);
     // return;
     // 00.00 测试
     if (!selectedTask) return;
 
     try {
-      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id, {
-        account: params.account,
-        accountType: params.accountType,
-        uid: params.uid,
-      });
+      // const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id, {
+      //   account: params.account,
+      //   accountType: params.accountType,
+      //   uid: params.uid,
+      // });
 
-      // const res: any = {
-      //   code: 0,
-      //   data: {
-      //   }
-      // }
+      const res: any = {
+        code: 0,
+        data: {
+        }
+      }
 
       // 存储任务记录信息 00.00
       // console.log('jieshou :', res);
@@ -352,13 +354,31 @@ export default function Task() {
         // handleCompleteTask();
 
         // console.log('selectedTask.dataInfo', selectedTask.dataInfo);
+        let imageList = [];
+        for (let index = 0; index < sucai.imageList.length; index++) {
+          let element = sucai.imageList[index];
+          imageList.push(
+            {
+              id: '' + index,
+              // 前端临时路径，注意不要存到数据库
+              imgUrl: import.meta.env.VITE_APP_FILE_HOST+element.imageUrl,
+              filename: import.meta.env.VITE_APP_FILE_HOST+element.imageUrl,
+              // 图片在硬盘上的路径
+              imgPath: import.meta.env.VITE_APP_FILE_HOST+element.imageUrl,
+            }
+            )
+        }
+        console.log('imageList', imageList);
 
         if (selectedTask.type == TaskType.ARTICLE) {
           setCommonPubParams({
-            title: selectedTask.dataInfo?.title || '',
-            describe: selectedTask.dataInfo?.desc || '',
+            title: sucai.title || selectedTask.dataInfo?.title,
+            describe: sucai.desc || selectedTask.dataInfo?.desc,
             topics: selectedTask.dataInfo?.topicList || [],
+            // images: imageList as any[],
           });
+
+          setImages(imageList as any[]);    
           navigate('/publish/image');
         }
 
@@ -720,9 +740,9 @@ export default function Task() {
                       type="primary"
                       key="join"
                       // disabled={item.isAccepted}
-                      // onClick={() => handleJoinTask(item)}
+                      onClick={() => handleJoinTask(item)}
 
-                      onClick={() => testSseFunc(item)}
+                      // onClick={() => testSseFunc(item)}
                       style={{ minWidth: '120px' }}
                     >
                       {/* {item.isAccepted ? '去完成任务' : '参与任务'} */}
