@@ -180,68 +180,72 @@ export class InteractionController {
     return AutoInteractionCache.getInfo();
   }
 
-
-
-    // 自动互动, 每10秒进行
-    @Scheduled('0 * * * * *', 'autoHudong')
-    async zidongHudong() {
-      // return;
-      console.log('自动互动 ing ...');
-      const res = await taskApi.getActivityTask();
-      console.log('---- zidongHudong ----', res);
-      const userList = await this.interactionService.getUserList();
-      console.log('---- userList ----', userList);
-      if (!userList.length) {
-        return;
-      }
-      const accountList = await this.interactionService.getAccountList(userList[userList.length - 1].id);
-      // console.log('---- accountList ----', accountList[0]);
-      if (res.items.length > 0) {
-        for (const item of res.items) {
-          item.accountTypes.forEach((accountType: any) => {
-            let myAccountTypeList = [];
-            for (const account of accountList) {
-              if (account.type === accountType && account.status === 0) {
-                myAccountTypeList.push(account);
-                // 申请任务
-                const applyTaskRes = taskApi.applyTask(item.id || item._id, {
+  // 自动互动, 每10秒进行
+  @Scheduled('0 * * * * *', 'autoHudong')
+  async zidongHudong() {
+    // return;
+    console.log('自动互动 ing ...');
+    const res = await taskApi.getActivityTask();
+    console.log('---- zidongHudong ----', res);
+    const userList = await this.interactionService.getUserList();
+    console.log('---- userList ----', userList);
+    if (!userList.length) {
+      return;
+    }
+    const accountList = await this.interactionService.getAccountList(userList[userList.length - 1].id);
+    // console.log('---- accountList ----', accountList[0]);
+    if (res.items.length > 0) {
+      for (const item of res.items) {
+        for (const accountType of item.accountTypes) {   
+          let myAccountTypeList = [];
+          for (const account of accountList) {
+            if (account.type === accountType && account.status === 0) {
+              myAccountTypeList.push(account);
+              // 申请任务
+              try {
+                const applyTaskRes = await taskApi.applyTask(item.id || item._id, {
                   account: account.account,
                   uid: account.uid,
                   accountType: account.type,
                 });
                 console.log('---- applyTaskRes ----', applyTaskRes);
+                if (applyTaskRes.data.data?.data) {
+                  item.taskId = applyTaskRes.data.data?.data.id;
+                }
+              } catch (error) {
+                console.error('申请任务失败:', error);
               }
             }
-            // console.log('---- myAccountTypeList ----', myAccountTypeList);
+          }
+          // console.log('---- myAccountTypeList ----', myAccountTypeList);
   
-            for (const account of myAccountTypeList) {
-              // console.log('---- account ----', account);
-              console.log('---- item.dataInfo?.commentContent ----', item.dataInfo?.commentContent);
-              const autorInteractionList = this.interactionService.getAutorInteractionList(account, [{
-                author: {id: item.dataInfo?.authorId || ''} ,
-                  data : {id: item.dataInfo.worksId, xsec_token: item.dataInfo?.xsec_token || ''},
-                  dataId : item.dataInfo.worksId,
-                  option : {xsec_token: item.dataInfo?.xsec_token || ''},
-                  title : item.title,
-              }], {
-                accountType: accountType,
-                commentContent: item.dataInfo?.commentContent,
-              });
+          for (const account of myAccountTypeList) {
+            // console.log('---- account ----', account);
+            console.log('---- item.dataInfo?.commentContent ----', item.dataInfo?.commentContent);
+            const autorInteractionList = this.interactionService.getAutorInteractionList(account, [{
+              author: {id: item.dataInfo?.authorId || ''} ,
+                data : {id: item.dataInfo.worksId, xsec_token: item.dataInfo?.xsec_token || ''},
+                dataId : item.dataInfo.worksId,
+                option : {xsec_token: item.dataInfo?.xsec_token || ''},
+                title : item.title,
+            }], {
+              accountType: accountType,
+              commentContent: item.dataInfo?.commentContent,
+            });
 
-
-
-              // // 提交完成任务
-              // console.log('---- autorInteractionList ----', autorInteractionList);
-              // let submitTasStr = '作品'+ item.dataInfo.worksId + '账户'+ account.nickname + '账户ID'+ account.uid;
-              // const submitTaskRes = taskApi.submitTask(item.id, {
-              //   submissionUrl: submitTasStr,
-              //   screenshotUrls: [],
-              //   qrCodeScanResult: submitTasStr,
-              // });
-              // console.log('---- submitTaskRes ----', submitTaskRes);
-            }
-          });
+            // 提交完成任务
+            console.log('---- autorInteractionList ----', autorInteractionList);
+            let submitTasStr = '作品'+ item.dataInfo.worksId + '账户'+ account.nickname + '账户ID'+ account.uid;
+            console.log('item.taskId', item.taskId)
+            const submitTaskRes = await taskApi.submitTask(item.taskId, {
+              submissionUrl: submitTasStr,
+              screenshotUrls: [],
+              qrCodeScanResult: submitTasStr,
+            });
+            console.log('---- submitTaskRes ----', submitTaskRes);
+          }
         }
       }
     }
+  }
 }
