@@ -237,11 +237,13 @@ export class InteractionController {
             console.log('---- autorInteractionList ----', autorInteractionList);
             let submitTasStr = '作品'+ item.dataInfo.worksId + '账户'+ account.nickname + '账户ID'+ account.uid;
             console.log('item.taskId', item.taskId)
-            const submitTaskRes = await taskApi.submitTask(item.taskId, {
-              submissionUrl: submitTasStr,
-              screenshotUrls: [],
-              qrCodeScanResult: submitTasStr,
-            });
+            if (item.taskId) {
+              const submitTaskRes = await taskApi.submitTask(item.taskId, {
+                submissionUrl: submitTasStr,
+                screenshotUrls: [],
+                qrCodeScanResult: submitTasStr,
+              });
+            }
             console.log('---- submitTaskRes ----', submitTaskRes);
           }
         }
