@@ -436,19 +436,19 @@ export default function Task() {
   /**
    * 完成任务
    */
-  async function taskDone() {
+  async function taskDone(url?: string) {
     console.log('taskDone执行:', selectedTaskRef.current);
     if (!selectedTaskRef.current) return;
     const selectedTask = selectedTaskRef.current;
     if (!selectedTask || !taskRecord) {
-      // message.error('任务信息不完整，无法完成任务');
+      console.error('任务信息不完整，无法完成任务', selectedTask, '11:',taskRecord);
       return;
     }
 
     try {
       // 使用任务记录的 ID 而不是任务 ID
       const res = await taskApi.taskDone(taskRecord._id, {
-        submissionUrl: selectedTask.title,
+        submissionUrl: url || selectedTask.title,
         screenshotUrls: [selectedTask.dataInfo?.imageList?.[0] || ''],
         qrCodeScanResult: selectedTask.title,
       });
@@ -464,6 +464,23 @@ export default function Task() {
     const sucai: any = await taskApi.getFristTaskMaterial(selectedTask?._id);
     console.log('sucai:', sucai);
     if (!selectedTask) return;
+
+    const taskApplyRes: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id, {
+      account: account.account,
+      accountType: account.type,
+      uid: account.uid,
+      taskMaterialId: sucai.id,
+    });
+    // 存储任务记录信息 00.00
+    console.log('taskApplyRes', taskApplyRes);
+    if (taskApplyRes.code == 0 && taskApplyRes.data) {
+      console.log('taskApplyRes.data', taskApplyRes.data);
+      setTaskRecord(taskApplyRes.data);
+      
+      message.success('任务接受成功！');
+    } else {
+      message.error(taskApplyRes.msg || '接受任务失败，请稍后再试?');
+    }
     // return;
 
     setPubProgressModuleOpen(true);
@@ -524,12 +541,17 @@ export default function Task() {
 
     const okRes = await icpPubImgText(recordRes.id);
 
+    console.log('okRes', okRes);
+
     if (okRes.length > 0) {
-      taskDone();
+      for (let itemT of okRes) {
+        taskDone(itemT.previewVideoLink);
+      }
     }
 
     setLoading(false);
     setPubProgressModuleOpen(false);
+    setModalVisible(false);
     usePubStroe.getState().clearImgTextPubSave();
     const successList = okRes.filter((v) => v.code === 1);
     useAccountStore.getState().notification!.open({
@@ -643,7 +665,9 @@ export default function Task() {
           //   accountType: account.type,
           //   uid: account.uid,
           // });
+
           await pubCore(account);
+
         }
       }
       // 00.00 测试
@@ -915,26 +939,26 @@ export default function Task() {
                       </Descriptions.Item>
                     )}
 
-                    {selectedTask.dataInfo?.desc ||
-                      (selectedTask.dataInfo?.topicList?.length > 0 && (
+                    {
+                      selectedTask.dataInfo?.desc && (
                         <Descriptions.Item label="发布描述">
                           <div
                             dangerouslySetInnerHTML={{
                               __html:
-                                selectedTask.dataInfo?.desc ||
-                                '' +
-                                  (selectedTask.dataInfo?.topicList?.length > 0
-                                    ? '<span style="color: #999; font-size: 12px; margin-left: 8px;">#' +
-                                      selectedTask.dataInfo.topicList.join(
-                                        ' #',
-                                      ) +
-                                      '</span>'
-                                    : ''),
-                            }}
-                            className={styles.taskDescription}
-                          />
-                        </Descriptions.Item>
-                      ))}
+                            selectedTask.dataInfo?.desc ||
+                            '' +
+                              (selectedTask.dataInfo?.topicList?.length > 0
+                                ? '<span style="color: #999; font-size: 12px; margin-left: 8px;">#' +
+                                  selectedTask.dataInfo.topicList.join(
+                                    ' #',
+                                  ) +
+                                  '</span>'
+                                : ''),
+                        }}
+                        className={styles.taskDescription}
+                      />
+                    </Descriptions.Item>
+                    )}
 
                     {selectedTask.type !== TaskType.ARTICLE && (
                       <Descriptions.Item label="评论内容">

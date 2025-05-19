@@ -186,14 +186,9 @@ export class InteractionController {
     // return;
     console.log('自动互动 ing ...');
     const res = await taskApi.getActivityTask();
-    console.log('---- zidongHudong ----', res);
-    const userList = await this.interactionService.getUserList();
-    console.log('---- userList ----', userList);
-    if (!userList.length) {
-      return;
-    }
-    const accountList = await this.interactionService.getAccountList(userList[userList.length - 1].id);
-    // console.log('---- accountList ----', accountList[0]);
+    console.log('---- getActivityTask ----', res);
+    const accountList = await this.accountService.getAccounts();
+    // console.log('---- accountList ----', accountList);
     if (res.items.length > 0) {
       for (const item of res.items) {
         for (const accountType of item.accountTypes) {   
@@ -244,7 +239,7 @@ export class InteractionController {
                 qrCodeScanResult: submitTasStr,
               });
             }
-            console.log('---- submitTaskRes ----', submitTaskRes);
+            // console.log('---- submitTaskRes ----', submitTaskRes);
           }
         }
       }
