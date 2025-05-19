@@ -436,18 +436,19 @@ export default function Task() {
   /**
    * 完成任务
    */
-  async function taskDone(url?: string) {
+  async function taskDone(url?: string, taskRecordId?: string) {
     console.log('taskDone执行:', selectedTaskRef.current);
     if (!selectedTaskRef.current) return;
     const selectedTask = selectedTaskRef.current;
-    if (!selectedTask || !taskRecord) {
+    if (!selectedTask ) {
       console.error('任务信息不完整，无法完成任务', selectedTask, '11:',taskRecord);
       return;
     }
 
     try {
       // 使用任务记录的 ID 而不是任务 ID
-      const res = await taskApi.taskDone(taskRecord._id, {
+      console.log('taskRecordId', taskRecordId);
+      const res = await taskApi.taskDone(taskRecordId ||taskRecord._id, {
         submissionUrl: url || selectedTask.title,
         screenshotUrls: [selectedTask.dataInfo?.imageList?.[0] || ''],
         qrCodeScanResult: selectedTask.title,
@@ -480,6 +481,7 @@ export default function Task() {
       message.success('任务接受成功！');
     } else {
       message.error(taskApplyRes.msg || '接受任务失败，请稍后再试?');
+      return false;
     }
     // return;
 
@@ -545,7 +547,7 @@ export default function Task() {
 
     if (okRes.length > 0) {
       for (let itemT of okRes) {
-        taskDone(itemT.previewVideoLink);
+        taskDone(itemT.previewVideoLink, taskApplyRes.data.id);
       }
     }
 
