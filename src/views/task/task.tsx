@@ -302,7 +302,7 @@ export default function Task() {
 
     // 根据任务类型选择不同的处理逻辑
     if (selectedTask.type === TaskType.ARTICLE) {
-      // 文章任务使用 pubCore 逻辑
+      // 文章任务使用 逻辑
       setChooseAccountOpen(true);
     } else {
       // 其他任务使用原有的互动任务逻辑
@@ -333,6 +333,7 @@ export default function Task() {
     if (!selectedTask) return;
 
     try {
+      // 00.00 测试
       // const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id, {
       //   account: params.account,
       //   accountType: params.accountType,
@@ -354,6 +355,9 @@ export default function Task() {
         // handleCompleteTask();
 
         // console.log('selectedTask.dataInfo', selectedTask.dataInfo);
+
+        // pubCore(params);
+        
         let imageList = [];
         for (let index = 0; index < sucai.imageList.length; index++) {
           let element = sucai.imageList[index];
@@ -456,7 +460,10 @@ export default function Task() {
 
   // 文章任务的发布核心逻辑
   const pubCore = async (account: any) => {
+    const sucai: any = await taskApi.getFristTaskMaterial(selectedTask?._id);
+    console.log('sucai:', sucai);
     if (!selectedTask) return;
+    // return;
 
     setPubProgressModuleOpen(true);
     setLoading(true);
@@ -466,43 +473,50 @@ export default function Task() {
     };
 
     // 00.00 测试
-    // console.log('pubCore', selectedTask);
+    // console.log('1', selectedTask);
     // return;
+
+    // topics: selectedTask.dataInfo?.topicList || [],
 
     // 创建一级记录
     const recordRes = await icpCreatePubRecord({
-      title: selectedTask.title,
-      desc: selectedTask.description,
+      title: sucai.title || selectedTask.dataInfo?.title,
+      desc: sucai.desc || selectedTask.dataInfo?.desc,
       type: PubType.ImageText,
-      coverPath: FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
+      coverPath: FILE_BASE_URL + (sucai.coverUrl || ''),
     });
     if (!recordRes) return err();
 
     let pubList = [];
-    if (selectedTask.dataInfo?.imageList?.length > 1) {
-      pubList = selectedTask.dataInfo?.imageList.map(
-        (v: string) => FILE_BASE_URL + v,
+    console.log('sucai.imageList', sucai.imageList);
+    if (sucai.imageList.length) {
+      pubList = sucai.imageList.map(
+        (v: any) => {
+          console.log('v', v);
+          return FILE_BASE_URL + v.imageUrl
+        },
       );
+
     }
 
     console.log('pubList', pubList);
-    console.log(accountListChoose);
+    console.log('accountListChoose', accountListChoose);
+
     const allAccount = accountListChoose?.length
       ? accountListChoose
       : [account];
-    console.log(allAccount);
+    console.log('allAccount', allAccount);
 
     for (const account of allAccount) {
       // 创建二级记录
       await icpCreateImgTextPubRecord({
-        title: selectedTask.title,
-        desc: selectedTask.description,
+        title: sucai.title || selectedTask.dataInfo?.title,
+        desc: sucai.desc || selectedTask.dataInfo?.desc,
         type: account.type,
         accountId: account.id,
         pubRecordId: recordRes.id,
         publishTime: new Date(),
-        coverPath:
-          FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
+        coverPath: FILE_BASE_URL + (sucai.coverUrl || ''),
         imagesPath: pubList,
       });
     }
@@ -611,8 +625,8 @@ export default function Task() {
 
     // 根据任务类型选择不同的处理逻辑
     if (selectedTask?.type === TaskType.ARTICLE) {
-      // 文章任务使用 pubCore 逻辑
-      console.log('文章任务使用 pubCore 逻辑');
+      // 文章任务使用逻辑
+      console.log('文章任务使用逻辑');
       if (isOne) {
         for (const account of aList) {
           taskApplyoney({
@@ -623,14 +637,16 @@ export default function Task() {
         }
       }else{
         for (const account of aList) {
-          taskApply({
-            account: account.account,
-            accountType: account.type,
-            uid: account.uid,
-          });
+          // taskApply({
+          //   account: account.account,
+          //   accountType: account.type,
+          //   uid: account.uid,
+          // });
+          await pubCore(account);
         }
       }
-      // await pubCore(aList[0]);
+      // 00.00 测试
+
     } else {
       // 其他任务使用原有的互动任务逻辑
       await handleInteraction(aList[0]);
