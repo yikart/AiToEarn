@@ -36,7 +36,10 @@ export const userApi = {
   },
 
   // 更新用户自动赚钱配置
-  setUserEarnInfo(data: any) {
+  setUserEarnInfo(data: {
+    readonly status: 0 | 1,
+    readonly cycleInterval: number;
+  }) {
     return http.put<IUserInfo>('/user/info/update', data);
   },
 
