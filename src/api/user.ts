@@ -40,7 +40,7 @@ export const userApi = {
     readonly status: 0 | 1,
     readonly cycleInterval: number;
   }) {
-    return http.put<IUserInfo>('/user/info/update', data);
+    return http.put<IUserInfo>('/user/config/earn', data);
   },
 
   // token刷新
