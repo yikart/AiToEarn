@@ -327,24 +327,25 @@ export default function Task() {
   async function taskApply(params: any) {
     // console.log('taskApply执行:', selectedTask);
     const sucai: any = await taskApi.getFristTaskMaterial(selectedTask?._id);
-    // console.log('sucai:', sucai);
+    console.log('sucai:', sucai);
     // return;
     // 00.00 测试
     if (!selectedTask) return;
 
     try {
       // 00.00 测试
-      // const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id, {
-      //   account: params.account,
-      //   accountType: params.accountType,
-      //   uid: params.uid,
-      // });
+      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id, {
+        account: params.account,
+        accountType: params.accountType,
+        uid: params.uid,
+        taskMaterialId: sucai.id,
+      });
 
-      const res: any = {
-        code: 0,
-        data: {
-        }
-      }
+      // const res: any = {
+      //   code: 0,
+      //   data: {
+      //   }
+      // }
 
       // 存储任务记录信息 00.00
       // console.log('jieshou :', res);
@@ -495,8 +496,7 @@ export default function Task() {
           console.log('v', v);
           return FILE_BASE_URL + v.imageUrl
         },
-      );
-
+      )
     }
 
     console.log('pubList', pubList);
@@ -513,6 +513,7 @@ export default function Task() {
         title: sucai.title || selectedTask.dataInfo?.title,
         desc: sucai.desc || selectedTask.dataInfo?.desc,
         type: account.type,
+        topics: selectedTask.dataInfo?.topicList || [],
         accountId: account.id,
         pubRecordId: recordRes.id,
         publishTime: new Date(),
