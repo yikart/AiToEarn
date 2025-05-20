@@ -270,7 +270,6 @@ export default function Task() {
   );
   // TODO 完善跳转逻辑
   const handleJoinTask = (task: any) => {
-
     // if (task.isAccepted) {
     //   setActiveTab('mine')
     //   return
@@ -319,8 +318,6 @@ export default function Task() {
     taskId: string;
   } | null>(null);
 
-  
-
   /**
    * 接受任务
    */
@@ -358,20 +355,18 @@ export default function Task() {
         // console.log('selectedTask.dataInfo', selectedTask.dataInfo);
 
         // pubCore(params);
-        
+
         let imageList = [];
         for (let index = 0; index < sucai.imageList.length; index++) {
           let element = sucai.imageList[index];
-          imageList.push(
-            {
-              id: '' + index,
-              // 前端临时路径，注意不要存到数据库
-              imgUrl: import.meta.env.VITE_APP_FILE_HOST+element.imageUrl,
-              filename: import.meta.env.VITE_APP_FILE_HOST+element.imageUrl,
-              // 图片在硬盘上的路径
-              imgPath: import.meta.env.VITE_APP_FILE_HOST+element.imageUrl,
-            }
-            )
+          imageList.push({
+            id: '' + index,
+            // 前端临时路径，注意不要存到数据库
+            imgUrl: import.meta.env.VITE_APP_FILE_HOST + element.imageUrl,
+            filename: import.meta.env.VITE_APP_FILE_HOST + element.imageUrl,
+            // 图片在硬盘上的路径
+            imgPath: import.meta.env.VITE_APP_FILE_HOST + element.imageUrl,
+          });
         }
         console.log('imageList', imageList);
 
@@ -383,7 +378,7 @@ export default function Task() {
             // images: imageList as any[],
           });
 
-          setImages(imageList as any[]);    
+          setImages(imageList as any[]);
           navigate('/publish/image');
         }
 
@@ -395,17 +390,17 @@ export default function Task() {
       message.error('接受任务失败，请稍后再试');
     }
   }
-  
-  async function isoneFunc(params: any){
+
+  async function isoneFunc(params: any) {
     if (params) {
       await setIsOne(true);
-    }else{
+    } else {
       await setIsOne(false);
     }
     setChooseAccountOpen(true);
   }
 
-  async function taskApplyoney(params: any){
+  async function taskApplyoney(params: any) {
     console.log('------ taskApplyoney', selectedTask);
     if (!selectedTask) return;
 
@@ -440,15 +435,20 @@ export default function Task() {
     console.log('taskDone执行:', selectedTaskRef.current);
     if (!selectedTaskRef.current) return;
     const selectedTask = selectedTaskRef.current;
-    if (!selectedTask ) {
-      console.error('任务信息不完整，无法完成任务', selectedTask, '11:',taskRecord);
+    if (!selectedTask) {
+      console.error(
+        '任务信息不完整，无法完成任务',
+        selectedTask,
+        '11:',
+        taskRecord,
+      );
       return;
     }
 
     try {
       // 使用任务记录的 ID 而不是任务 ID
       console.log('taskRecordId', taskRecordId);
-      const res = await taskApi.taskDone(taskRecordId ||taskRecord._id, {
+      const res = await taskApi.taskDone(taskRecordId || taskRecord!._id, {
         submissionUrl: url || selectedTask.title,
         screenshotUrls: [selectedTask.dataInfo?.imageList?.[0] || ''],
         qrCodeScanResult: selectedTask.title,
@@ -466,18 +466,21 @@ export default function Task() {
     console.log('sucai:', sucai);
     if (!selectedTask) return;
 
-    const taskApplyRes: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id, {
-      account: account.account,
-      accountType: account.type,
-      uid: account.uid,
-      taskMaterialId: sucai.id,
-    });
+    const taskApplyRes: any = await taskApi.taskApply<TaskVideo>(
+      selectedTask?._id,
+      {
+        account: account.account,
+        accountType: account.type,
+        uid: account.uid,
+        taskMaterialId: sucai.id,
+      },
+    );
     // 存储任务记录信息 00.00
     console.log('taskApplyRes', taskApplyRes);
     if (taskApplyRes.code == 0 && taskApplyRes.data) {
       console.log('taskApplyRes.data', taskApplyRes.data);
       setTaskRecord(taskApplyRes.data);
-      
+
       message.success('任务接受成功！');
     } else {
       message.error(taskApplyRes.msg || '接受任务失败，请稍后再试?');
@@ -510,12 +513,10 @@ export default function Task() {
     let pubList = [];
     console.log('sucai.imageList', sucai.imageList);
     if (sucai.imageList.length) {
-      pubList = sucai.imageList.map(
-        (v: any) => {
-          console.log('v', v);
-          return FILE_BASE_URL + v.imageUrl
-        },
-      )
+      pubList = sucai.imageList.map((v: any) => {
+        console.log('v', v);
+        return FILE_BASE_URL + v.imageUrl;
+      });
     }
 
     console.log('pubList', pubList);
@@ -660,7 +661,7 @@ export default function Task() {
             uid: account.uid,
           });
         }
-      }else{
+      } else {
         for (const account of aList) {
           // taskApply({
           //   account: account.account,
@@ -669,11 +670,9 @@ export default function Task() {
           // });
 
           await pubCore(account);
-
         }
       }
       // 00.00 测试
-
     } else {
       // 其他任务使用原有的互动任务逻辑
       await handleInteraction(aList[0]);
@@ -784,13 +783,12 @@ export default function Task() {
                       key="join"
                       // disabled={item.isAccepted}
                       onClick={() => handleJoinTask(item)}
-
                       // onClick={() => testSseFunc(item)}
                       style={{ minWidth: '120px' }}
                     >
                       {/* {item.isAccepted ? '去完成任务' : '参与任务'} */}
                       参与任务
-                    </Button>, 
+                    </Button>,
                   ]}
                 >
                   <Card.Meta
@@ -875,7 +873,9 @@ export default function Task() {
               key="complete"
               type="primary"
               icon={<CheckCircleOutlined />}
-              onClick={()=> {  isoneFunc(false); }}
+              onClick={() => {
+                isoneFunc(false);
+              }}
             >
               领取&发布
             </Button>,
@@ -941,25 +941,22 @@ export default function Task() {
                       </Descriptions.Item>
                     )}
 
-                    {
-                      selectedTask.dataInfo?.desc && (
-                        <Descriptions.Item label="发布描述">
-                          <div
-                            dangerouslySetInnerHTML={{
-                              __html:
-                            selectedTask.dataInfo?.desc ||
-                            '' +
-                              (selectedTask.dataInfo?.topicList?.length > 0
-                                ? '<span style="color: #999; font-size: 12px; margin-left: 8px;">#' +
-                                  selectedTask.dataInfo.topicList.join(
-                                    ' #',
-                                  ) +
-                                  '</span>'
-                                : ''),
-                        }}
-                        className={styles.taskDescription}
-                      />
-                    </Descriptions.Item>
+                    {selectedTask.dataInfo?.desc && (
+                      <Descriptions.Item label="发布描述">
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              selectedTask.dataInfo?.desc ||
+                              '' +
+                                (selectedTask.dataInfo?.topicList?.length > 0
+                                  ? '<span style="color: #999; font-size: 12px; margin-left: 8px;">#' +
+                                    selectedTask.dataInfo.topicList.join(' #') +
+                                    '</span>'
+                                  : ''),
+                          }}
+                          className={styles.taskDescription}
+                        />
+                      </Descriptions.Item>
                     )}
 
                     {selectedTask.type !== TaskType.ARTICLE && (
@@ -1021,15 +1018,18 @@ export default function Task() {
     try {
       setHtmlContent(''); // 清空之前的内容
       setHtmlModalVisible(true); // 显示模态框
-      const response = await fetch(import.meta.env.VITE_APP_URL + '/tools/ai/article/html/sse', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        import.meta.env.VITE_APP_URL + '/tools/ai/article/html/sse',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            content: '生成一个卡通人物介绍页 带有图片 小红书图文流光卡片样式',
+          }),
         },
-        body: JSON.stringify({
-          content: '生成一个卡通人物介绍页 带有图片 小红书图文流光卡片样式'
-        }),
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -1067,7 +1067,7 @@ export default function Task() {
           // 检查是否是 data 行
           if (line.startsWith('data:')) {
             const data = line.slice(5).trim();
-            
+
             // 检查是否包含 ``` 标记
             if (data.includes('```')) {
               isCollectingHtml = !isCollectingHtml;
@@ -1081,7 +1081,6 @@ export default function Task() {
           }
         }
       }
-
     } catch (error) {
       console.error('请求失败:', error);
       message.error('连接失败，请稍后重试');
@@ -1149,9 +1148,7 @@ export default function Task() {
       </div>
 
       {/* 任务内容 */}
-      <div className={styles.taskContent}>
-        {renderTaskContent()}
-      </div>
+      <div className={styles.taskContent}>{renderTaskContent()}</div>
 
       {/* HTML 预览模态框 */}
       <Modal
@@ -1162,16 +1159,16 @@ export default function Task() {
         footer={[
           <Button key="close" onClick={() => setHtmlModalVisible(false)}>
             关闭
-          </Button>
+          </Button>,
         ]}
-        bodyStyle={{ 
-          height: '70vh', 
+        bodyStyle={{
+          height: '70vh',
           overflow: 'auto',
-          padding: '20px'
+          padding: '20px',
         }}
       >
         {htmlContent ? (
-          <div 
+          <div
             className={styles.htmlPreview}
             dangerouslySetInnerHTML={{ __html: htmlContent }}
           />
