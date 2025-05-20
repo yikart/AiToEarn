@@ -454,7 +454,7 @@ export default function Task() {
         qrCodeScanResult: selectedTask.title,
       });
       message.success('任务发布成功！');
-      refreshTaskList();
+      getTaskList();
     } catch (error) {
       message.error('完成任务失败，请稍后再试');
     }
@@ -486,7 +486,6 @@ export default function Task() {
       message.error(taskApplyRes.msg || '接受任务失败，请稍后再试?');
       return false;
     }
-    // return;
 
     setPubProgressModuleOpen(true);
     setLoading(true);
@@ -548,7 +547,9 @@ export default function Task() {
 
     if (okRes.length > 0) {
       for (let itemT of okRes) {
-        taskDone(itemT.previewVideoLink, taskApplyRes.data.id);
+        let thisling = itemT.previewVideoLink || itemT.dataId;
+        console.log('itemT.previewVideoLink', itemT.previewVideoLink)
+        taskDone(thisling, taskApplyRes.data.id);
       }
     }
 

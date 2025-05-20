@@ -160,11 +160,11 @@ export const router: CustomRouteObject[] = [
           { path: 'expectedIncome', element: <ExpectedIncome /> },
         ],
       },
-      {
-        path: '/test',
-        element: <Test />,
-        meta: { name: '测试', icon: ShopOutlined },
-      },
+      // {
+      //   path: '/test',
+      //   element: <Test />,
+      //   meta: { name: '测试', icon: ShopOutlined },
+      // },
       {
         path: '/user',
         children: [
