@@ -39,6 +39,7 @@ const WebView = memo(
 
       useEffect(() => {
         console.log(cookieParams);
+        console.log(JSON.stringify(cookieParams));
         setLoading(true);
 
         webviewRef.current?.addEventListener('dom-ready', async (e) => {
