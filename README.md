@@ -6,7 +6,7 @@
  * @Description:
 -->
 
-# AiToEarn 哎哟赚
+# AiToEarn
 
 ![GitHub stars](https://img.shields.io/github/stars/yikart/AttAiToEarn?color=fa6470)
 ![GitHub license](https://img.shields.io/github/license/yikart/AttAiToEarn)
@@ -14,16 +14,16 @@
 
 [English](README_EN.md) | 简体中文
 
-## [最好用的开源内容矩阵工具！](https://www.aitoearn.cn/aiToEarn)
+## [最好用的开源内容营销AI Agent！](https://www.aitoearn.cn/aiToEarn)
 
-- 一站式管理小红书，抖音，快手，视频号等，包括内容发布，评论，互动
-- 用AI制作你的内容
-- AI评论管理与截流
+AI内容制作，分发，出售。
 
 ## 里程碑
 - 2025.2.26 发布0.1.1版本
 - 2025.3.15 发布0.2.0版本
 - 2025.4.18 发布0.6.0版本
+- 2025.4.30 发布0.7.1版本
+- **[最新版本 0.7.2](https://github.com/yikart/AiToEarn/releases/tag/v0.7.2)**
 
 ## [常见问题](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
 
@@ -37,12 +37,6 @@
   - 支持Qwen大模型一键填写参数
 <img src="./presentation/post.png" alt="post" width="500"/>
 
-- 账号数据汇总分析
-<img src="./presentation/data_center.png" alt="post" width="500"/>
-  
-- 全网热门内容观察
-  - 小红书低粉爆文排行榜
-  - 小红书，抖音，视频号，快手，bilibili，公众号分赛道热门内容排行榜
 
 - AI评论自动回复
   - 支持deepseek大模型
@@ -50,28 +44,38 @@
 - AI评论搜索
 <img src="./presentation/comment_search.png" alt="post" width="500"/>
 
-- AI工具排行榜
-<img src="./presentation/tool_rank.png" alt="post" width="500"/>
+
 
 - 实用AI工具
   - 支持可以画图的GPT-4o
   - 支持使用Musetalk制作数字人视频
   - 支持短视频平台视频下载
+  - AI换脸
+  - 声音克隆
+  - 视频解说
+  - 一键成片
   
 <img src="./presentation/4o.jpeg" alt="post" width="500"/>
+
+- 账号数据汇总分析
+<img src="./presentation/data_center.png" alt="post" width="500"/>
+
+- 全网热门内容观察
+  - 小红书低粉爆文排行榜
+  - 小红书，抖音，视频号，快手，bilibili，公众号分赛道热门内容排行榜
+ 
+- AI工具排行榜
+<img src="./presentation/tool_rank.png" alt="post" width="500"/>
  
 
 ## 正在实现中
 - MAC客户端实现
-- 手机APP实现
-- 更多实用AI创作工具集成
-- IP代理+指纹浏览器集成
+- Web端，APP端实现
+- 内容安全审查
 - 公众号，bilibili发布实现
 
 ## 快速开始
-[查看最新版本](https://github.com/yikart/AiToEarn/releases/tag/v0.6.0)
-
-[直接下载最新版本(windows)](https://github.com/yikart/AiToEarn/releases/download/v0.6.0/AiToEarn-0.6.0.exe)
+[直接下载最新版本0.7.2(windows)](https://github.com/yikart/AiToEarn/releases/download/v0.7.2/AiToEarn-0.7.2.exe)
 
 
 ```sh
@@ -131,12 +135,10 @@ npm run dev
 └── src                                      渲染进程源码、React代码
 ```
 ## 其他说明
-- 关于MAC包,因为苹果对应用要求严格,本项目目前仍在尝试阶段,请自行打包,或设置忽略安全策略
+- 关于MAC打包,目前有bug,我们还在努力解决
 - ```shell
    xattr -r -d com.apple.quarantine /Applications/哎呦赚AiToEarn.app
   ```
-## 官网下载
-[https://www.aitoearn.cn/](https://www.aitoearn.cn/)
 
 ## 加我微信
 辛苦备注一下 AiToEarn
@@ -147,4 +149,12 @@ npm run dev
 https://github.com/TMElyralab/MuseTalk
 
 https://github.com/5ime/video_spider
+
+https://github.com/FunAudioLLM/CosyVoice?tab=readme-ov-file
+
+https://github.com/facefusion/facefusion
+
+https://github.com/linyqh/NarratoAI
+
+https://github.com/harry0703/MoneyPrinterTurbo
 
