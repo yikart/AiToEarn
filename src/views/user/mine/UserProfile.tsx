@@ -185,7 +185,7 @@ const UserProfile = () => {
                   </div>
                 )}
 
-                <div className={styles.infoItem}>
+                {/* <div className={styles.infoItem}>
                   <ClockCircleOutlined className={styles.infoIcon} />
                   <div className={styles.infoContent}>
                     <span className={styles.infoLabel}>创建时间</span>
@@ -193,9 +193,9 @@ const UserProfile = () => {
                       {userInfo?.createTime ? new Date(userInfo.createTime).toLocaleString() : '-'}
                     </span>
                   </div>
-                </div>
+                </div> */}
 
-                <div className={styles.infoItem}>
+                {/* <div className={styles.infoItem}>
                   <ClockCircleOutlined className={styles.infoIcon} />
                   <div className={styles.infoContent}>
                     <span className={styles.infoLabel}>更新时间</span>
@@ -203,17 +203,17 @@ const UserProfile = () => {
                       {userInfo?.updateTime ? new Date(userInfo.updateTime).toLocaleString() : '-'}
                     </span>
                   </div>
-                </div>
+                </div> */}
 
-                <div className={styles.infoItem}>
+                {/* <div className={styles.infoItem}>
                   <WechatOutlined className={styles.infoIcon} />
                   <div className={styles.infoContent}>
                     <span className={styles.infoLabel}>微信OpenID</span>
                     <span className={styles.infoValue}>{userInfo?.wxOpenid || '-'}</span>
                   </div>
-                </div>
+                </div> */}
 
-                <div className={styles.infoItem}>
+                {/* <div className={styles.infoItem}>
                   <SafetyOutlined className={styles.infoIcon} />
                   <div className={styles.infoContent}>
                     <span className={styles.infoLabel}>账号状态</span>
@@ -221,7 +221,7 @@ const UserProfile = () => {
                       {userInfo?.status === 1 ? '正常' : '异常'}
                     </span>
                   </div>
-                </div>
+                </div> */}
               </div>
             </Space>
           </Card>
