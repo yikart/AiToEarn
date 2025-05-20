@@ -302,7 +302,7 @@ export default function Task() {
 
     // 根据任务类型选择不同的处理逻辑
     if (selectedTask.type === TaskType.ARTICLE) {
-      // 文章任务使用 pubCore 逻辑
+      // 文章任务使用 逻辑
       setChooseAccountOpen(true);
     } else {
       // 其他任务使用原有的互动任务逻辑
@@ -327,23 +327,25 @@ export default function Task() {
   async function taskApply(params: any) {
     // console.log('taskApply执行:', selectedTask);
     const sucai: any = await taskApi.getFristTaskMaterial(selectedTask?._id);
-    // console.log('sucai:', sucai);
+    console.log('sucai:', sucai);
     // return;
     // 00.00 测试
     if (!selectedTask) return;
 
     try {
-      // const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id, {
-      //   account: params.account,
-      //   accountType: params.accountType,
-      //   uid: params.uid,
-      // });
+      // 00.00 测试
+      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id, {
+        account: params.account,
+        accountType: params.accountType,
+        uid: params.uid,
+        taskMaterialId: sucai.id,
+      });
 
-      const res: any = {
-        code: 0,
-        data: {
-        }
-      }
+      // const res: any = {
+      //   code: 0,
+      //   data: {
+      //   }
+      // }
 
       // 存储任务记录信息 00.00
       // console.log('jieshou :', res);
@@ -354,6 +356,9 @@ export default function Task() {
         // handleCompleteTask();
 
         // console.log('selectedTask.dataInfo', selectedTask.dataInfo);
+
+        // pubCore(params);
+        
         let imageList = [];
         for (let index = 0; index < sucai.imageList.length; index++) {
           let element = sucai.imageList[index];
@@ -431,19 +436,20 @@ export default function Task() {
   /**
    * 完成任务
    */
-  async function taskDone() {
+  async function taskDone(url?: string, taskRecordId?: string) {
     console.log('taskDone执行:', selectedTaskRef.current);
     if (!selectedTaskRef.current) return;
     const selectedTask = selectedTaskRef.current;
-    if (!selectedTask || !taskRecord) {
-      // message.error('任务信息不完整，无法完成任务');
+    if (!selectedTask ) {
+      console.error('任务信息不完整，无法完成任务', selectedTask, '11:',taskRecord);
       return;
     }
 
     try {
       // 使用任务记录的 ID 而不是任务 ID
-      const res = await taskApi.taskDone(taskRecord._id, {
-        submissionUrl: selectedTask.title,
+      console.log('taskRecordId', taskRecordId);
+      const res = await taskApi.taskDone(taskRecordId ||taskRecord._id, {
+        submissionUrl: url || selectedTask.title,
         screenshotUrls: [selectedTask.dataInfo?.imageList?.[0] || ''],
         qrCodeScanResult: selectedTask.title,
       });
@@ -456,7 +462,28 @@ export default function Task() {
 
   // 文章任务的发布核心逻辑
   const pubCore = async (account: any) => {
+    const sucai: any = await taskApi.getFristTaskMaterial(selectedTask?._id);
+    console.log('sucai:', sucai);
     if (!selectedTask) return;
+
+    const taskApplyRes: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id, {
+      account: account.account,
+      accountType: account.type,
+      uid: account.uid,
+      taskMaterialId: sucai.id,
+    });
+    // 存储任务记录信息 00.00
+    console.log('taskApplyRes', taskApplyRes);
+    if (taskApplyRes.code == 0 && taskApplyRes.data) {
+      console.log('taskApplyRes.data', taskApplyRes.data);
+      setTaskRecord(taskApplyRes.data);
+      
+      message.success('任务接受成功！');
+    } else {
+      message.error(taskApplyRes.msg || '接受任务失败，请稍后再试?');
+      return false;
+    }
+    // return;
 
     setPubProgressModuleOpen(true);
     setLoading(true);
@@ -466,55 +493,67 @@ export default function Task() {
     };
 
     // 00.00 测试
-    // console.log('pubCore', selectedTask);
+    // console.log('1', selectedTask);
     // return;
+
+    // topics: selectedTask.dataInfo?.topicList || [],
 
     // 创建一级记录
     const recordRes = await icpCreatePubRecord({
-      title: selectedTask.title,
-      desc: selectedTask.description,
+      title: sucai.title || selectedTask.dataInfo?.title,
+      desc: sucai.desc || selectedTask.dataInfo?.desc,
       type: PubType.ImageText,
-      coverPath: FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
+      coverPath: FILE_BASE_URL + (sucai.coverUrl || ''),
     });
     if (!recordRes) return err();
 
     let pubList = [];
-    if (selectedTask.dataInfo?.imageList?.length > 1) {
-      pubList = selectedTask.dataInfo?.imageList.map(
-        (v: string) => FILE_BASE_URL + v,
-      );
+    console.log('sucai.imageList', sucai.imageList);
+    if (sucai.imageList.length) {
+      pubList = sucai.imageList.map(
+        (v: any) => {
+          console.log('v', v);
+          return FILE_BASE_URL + v.imageUrl
+        },
+      )
     }
 
     console.log('pubList', pubList);
-    console.log(accountListChoose);
+    console.log('accountListChoose', accountListChoose);
+
     const allAccount = accountListChoose?.length
       ? accountListChoose
       : [account];
-    console.log(allAccount);
+    console.log('allAccount', allAccount);
 
     for (const account of allAccount) {
       // 创建二级记录
       await icpCreateImgTextPubRecord({
-        title: selectedTask.title,
-        desc: selectedTask.description,
+        title: sucai.title || selectedTask.dataInfo?.title,
+        desc: sucai.desc || selectedTask.dataInfo?.desc,
         type: account.type,
+        topics: selectedTask.dataInfo?.topicList || [],
         accountId: account.id,
         pubRecordId: recordRes.id,
         publishTime: new Date(),
-        coverPath:
-          FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
+        coverPath: FILE_BASE_URL + (sucai.coverUrl || ''),
         imagesPath: pubList,
       });
     }
 
     const okRes = await icpPubImgText(recordRes.id);
 
+    console.log('okRes', okRes);
+
     if (okRes.length > 0) {
-      taskDone();
+      for (let itemT of okRes) {
+        taskDone(itemT.previewVideoLink, taskApplyRes.data.id);
+      }
     }
 
     setLoading(false);
     setPubProgressModuleOpen(false);
+    setModalVisible(false);
     usePubStroe.getState().clearImgTextPubSave();
     const successList = okRes.filter((v) => v.code === 1);
     useAccountStore.getState().notification!.open({
@@ -611,8 +650,8 @@ export default function Task() {
 
     // 根据任务类型选择不同的处理逻辑
     if (selectedTask?.type === TaskType.ARTICLE) {
-      // 文章任务使用 pubCore 逻辑
-      console.log('文章任务使用 pubCore 逻辑');
+      // 文章任务使用逻辑
+      console.log('文章任务使用逻辑');
       if (isOne) {
         for (const account of aList) {
           taskApplyoney({
@@ -623,14 +662,18 @@ export default function Task() {
         }
       }else{
         for (const account of aList) {
-          taskApply({
-            account: account.account,
-            accountType: account.type,
-            uid: account.uid,
-          });
+          // taskApply({
+          //   account: account.account,
+          //   accountType: account.type,
+          //   uid: account.uid,
+          // });
+
+          await pubCore(account);
+
         }
       }
-      // await pubCore(aList[0]);
+      // 00.00 测试
+
     } else {
       // 其他任务使用原有的互动任务逻辑
       await handleInteraction(aList[0]);
@@ -898,26 +941,26 @@ export default function Task() {
                       </Descriptions.Item>
                     )}
 
-                    {selectedTask.dataInfo?.desc ||
-                      (selectedTask.dataInfo?.topicList?.length > 0 && (
+                    {
+                      selectedTask.dataInfo?.desc && (
                         <Descriptions.Item label="发布描述">
                           <div
                             dangerouslySetInnerHTML={{
                               __html:
-                                selectedTask.dataInfo?.desc ||
-                                '' +
-                                  (selectedTask.dataInfo?.topicList?.length > 0
-                                    ? '<span style="color: #999; font-size: 12px; margin-left: 8px;">#' +
-                                      selectedTask.dataInfo.topicList.join(
-                                        ' #',
-                                      ) +
-                                      '</span>'
-                                    : ''),
-                            }}
-                            className={styles.taskDescription}
-                          />
-                        </Descriptions.Item>
-                      ))}
+                            selectedTask.dataInfo?.desc ||
+                            '' +
+                              (selectedTask.dataInfo?.topicList?.length > 0
+                                ? '<span style="color: #999; font-size: 12px; margin-left: 8px;">#' +
+                                  selectedTask.dataInfo.topicList.join(
+                                    ' #',
+                                  ) +
+                                  '</span>'
+                                : ''),
+                        }}
+                        className={styles.taskDescription}
+                      />
+                    </Descriptions.Item>
+                    )}
 
                     {selectedTask.type !== TaskType.ARTICLE && (
                       <Descriptions.Item label="评论内容">

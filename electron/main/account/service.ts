@@ -143,7 +143,11 @@ export class AccountService {
   }
 
   // 获取所有账户
-  async getAccounts(userId: string) {
+  async getAccounts(userId?: string) {
+    if (!userId) {
+      const userInfo = getUserInfo();
+      userId = userInfo.id;
+    }
     return await this.accountRepository.find({ where: { userId } });
   }
 

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Card, Descriptions, Spin, Typography, Space, Avatar, Switch, Slider, Button, Alert } from 'antd';
+import { Card, Descriptions, Spin, Typography, Space, Avatar, Switch, Slider, Button, Alert, InputNumber, Form, Tooltip } from 'antd';
 import { userApi } from '@/api/user';
 import styles from './userProfile.module.scss';
-import { UserOutlined, PhoneOutlined, IdcardOutlined, QrcodeOutlined, ClockCircleOutlined, SafetyOutlined, WechatOutlined } from '@ant-design/icons';
+import { UserOutlined, PhoneOutlined, IdcardOutlined, QrcodeOutlined, ClockCircleOutlined, SafetyOutlined, WechatOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { message } from 'antd';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 interface UserInfo {
   createTime: string;
@@ -30,6 +30,7 @@ const UserProfile = () => {
   const [earnStatus, setEarnStatus] = useState<boolean>(false);
   const [cycleInterval, setCycleInterval] = useState<number>(30);
   const [earnLoading, setEarnLoading] = useState<boolean>(false);
+  const [form] = Form.useForm();
 
   const fetchUserInfo = async () => {
     try {
@@ -46,6 +47,9 @@ const UserProfile = () => {
       if (res.earnInfo) {
         setEarnStatus(res.earnInfo.status === 1);
         setCycleInterval(res.earnInfo.cycleInterval || 30);
+        form.setFieldsValue({
+          cycleInterval: res.earnInfo.cycleInterval || 30
+        });
       } else {
         setEarnStatus(false);
         setCycleInterval(30);
@@ -76,6 +80,49 @@ const UserProfile = () => {
       message.error('保存失败');
     } finally {
       setEarnLoading(false);
+    }
+  };
+
+  const handleEarnStatusChange = async (checked: boolean) => {
+    setLoading(true);
+    try {
+      await userApi.setUserEarnInfo({
+        status: checked ? 1 : 0,
+        cycleInterval: cycleInterval
+      });
+      setEarnStatus(checked);
+      message.success(`赚钱模式已${checked ? '开启' : '关闭'}`);
+    } catch (error) {
+      console.error('更新赚钱模式状态失败:', error);
+      message.error('操作失败，请稍后重试');
+      // 恢复原状态
+      setEarnStatus(!checked);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCycleIntervalChange = async (value: number) => {
+    setCycleInterval(value);
+  };
+
+  const handleAfterChangeInterval = async (value: number) => {
+    if (!value || value < 5) return;
+    
+    setLoading(true);
+    try {
+      await userApi.setUserEarnInfo({
+        status: earnStatus ? 1 : 0,
+        cycleInterval: value
+      });
+      message.success('检查频率已更新');
+    } catch (error) {
+      console.error('更新检查频率失败:', error);
+      message.error('操作失败，请稍后重试');
+      // 恢复原值
+      setCycleInterval(cycleInterval);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -181,22 +228,33 @@ const UserProfile = () => {
 
           <Card className={styles.profileCard} style={{ marginTop: 24 }}>
             <Title level={5} style={{ marginBottom: 16 }}>赚钱模式设置</Title>
-            <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center', gap: 16 }}>
-              <span>赚钱模式</span>
-              <Switch checked={earnStatus} onChange={setEarnStatus} />
-            </div>
-            <div style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 16 }}>
-              <span>检查频率</span>
-              <Slider
-                min={5}
-                max={1440}
-                step={1}
-                value={cycleInterval}
-                onChange={setCycleInterval}
-                style={{ flex: 1, marginRight: 16 }}
-                disabled={!earnStatus}
-              />
-              <span style={{ minWidth: 70, textAlign: 'right' }}>{getIntervalLabel(cycleInterval)}</span>
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center', gap: 16 }}>
+                <span>赚钱模式</span>
+                <Switch 
+                  checked={earnStatus} 
+                  onChange={handleEarnStatusChange} 
+                  loading={loading}
+                />
+                <Tooltip title="开启后系统将自动为您寻找并完成任务">
+                  <QuestionCircleOutlined style={{ color: '#999' }} />
+                </Tooltip>
+              </div>
+              
+              <div style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 16 }}>
+                <span>检查频率</span>
+                <Slider
+                  min={5} 
+                  max={120}
+                  step={1}
+                  value={cycleInterval}
+                  onChange={handleCycleIntervalChange}
+                  onAfterChange={handleAfterChangeInterval}
+                  style={{ flex: 1, marginRight: 16 }}
+                  disabled={!earnStatus || loading}
+                />
+                <span style={{ minWidth: 70, textAlign: 'right' }}>{getIntervalLabel(cycleInterval)}</span>
+              </div>
             </div>
             <div style={{ color: '#999', fontSize: 12, marginBottom: 12 }}>
               可设置 5分钟~24小时 区间

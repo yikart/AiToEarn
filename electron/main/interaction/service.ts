@@ -484,27 +484,11 @@ export class InteractionService {
     };
   }
 
-
-
-
-
-
-
   // 自动互动
   @Inject(UserService)
   private readonly userService!: UserService;
   @Inject(AccountService)
   private readonly accountService!: AccountService;
-
-  // 获取用户列表
-  async getUserList() {
-    return await this.userService.getUsers();
-  }
-
-  // 获取账户列表
-  async getAccountList(userId: string) {
-    return await this.accountService.getAccounts(userId);
-  }
 
   // 获取自动互动列表
   async getAutorInteractionList(account: any, worksList: any, option: any) {
