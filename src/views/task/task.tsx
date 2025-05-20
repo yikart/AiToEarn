@@ -866,9 +866,9 @@ export default function Task() {
           open={modalVisible}
           onCancel={() => setModalVisible(false)}
           footer={[
-            <Button key="cancel" onClick={() => isoneFunc(true)}>
-              领取
-            </Button>,
+            // <Button key="cancel" onClick={() => isoneFunc(true)}>
+            //   领取
+            // </Button>,
             <Button
               key="complete"
               type="primary"
@@ -877,7 +877,7 @@ export default function Task() {
                 isoneFunc(false);
               }}
             >
-              领取&发布
+              认可内容，自愿完成
             </Button>,
           ]}
           width={700}
