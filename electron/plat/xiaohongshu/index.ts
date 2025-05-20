@@ -1184,7 +1184,7 @@ export class XiaohongshuService {
         );
         // 返回结果
         resolve({
-          shareLink: ``,
+          shareLink: `https://www.xiaohongshu.com/explore/${createRes.data.id}?xsec_token=${works!.xsec_token}&xsec_source=${works!.xsec_source}`,
           publishId: createRes.data.id,
         });
       } catch (err: any) {
