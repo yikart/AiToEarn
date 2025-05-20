@@ -182,7 +182,7 @@ export class WorkData extends TempModel {
     type: 'tinyint',
     nullable: false,
     comment: '可见性',
-    default: VisibleTypeEnum.Private,
+    default: VisibleTypeEnum.Public,
   })
   visibleType?: VisibleTypeEnum;
 
