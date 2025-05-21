@@ -3,22 +3,24 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 6060",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "react": "^18",
-    "react-dom": "^18",
-    "next": "14.2.29",
-    "sass": "^1.59.2",
-    "zustand": "^5.0.4",
+    "@ant-design/nextjs-registry": "^1.0.2",
+    "@kwooshung/react-no-ssr": "^1.1.4",
+    "@react-oauth/google": "^0.12.2",
     "antd": "^5.25.2",
     "dayjs": "^1.11.13",
     "idb-keyval": "^6.2.2",
-    "@ant-design/nextjs-registry": "^1.0.2",
-    "@kwooshung/react-no-ssr": "^1.1.4"
+    "next": "14.2.29",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-icons": "^5.5.0",
+    "sass": "^1.59.2",
+    "zustand": "^5.0.4"
   },
   "devDependencies": {
     "typescript": "^5",

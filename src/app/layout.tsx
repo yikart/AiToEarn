@@ -1,15 +1,8 @@
-import type { Metadata } from "next";
 import "./globals.css";
-import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { Suspense } from "react";
-import { App, ConfigProvider } from "antd";
-import zh_CN from "antd/es/locale/zh_CN";
-import { APP_TITLE } from "@/constant";
+import { metadata } from "./metadata";
+import { Providers } from "./providers";
 
-export const metadata: Metadata = {
-  title: APP_TITLE,
-  description: "哎呦赚官方网站",
-};
+export { metadata };
 
 export default function RootLayout({
   children,
@@ -17,22 +10,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="zh">
       <body>
-        <ConfigProvider
-          locale={zh_CN}
-          theme={{
-            token: {
-              colorPrimary: "#d49c61",
-            },
-          }}
-        >
-          <App component={false}>
-            <Suspense>
-              <AntdRegistry>{children}</AntdRegistry>
-            </Suspense>
-          </App>
-        </ConfigProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
