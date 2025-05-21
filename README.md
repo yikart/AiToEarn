@@ -75,7 +75,7 @@ AI内容制作，分发，出售。
 - 公众号，bilibili发布实现
 
 ## 快速开始
-[直接下载最新版本0.7.2(windows)](https://github.com/yikart/AiToEarn/releases/download/v0.7.2/AiToEarn-0.7.2.exe)
+[直接下载最新版本0.8.0(windows)](https://github.com/yikart/AiToEarn/releases/download/v0.8.0/AiToEarn-0.8.0.exe)
 
 
 ```sh
