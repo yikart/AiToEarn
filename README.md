@@ -22,8 +22,7 @@ AI内容制作，分发，出售。
 - 2025.2.26 发布0.1.1版本
 - 2025.3.15 发布0.2.0版本
 - 2025.4.18 发布0.6.0版本
-- 2025.4.30 发布0.7.1版本
-- **[最新版本 0.7.2](https://github.com/yikart/AiToEarn/releases/tag/v0.7.2)**
+- **[5月20日最新版本 0.8.0](https://github.com/yikart/AiToEarn/releases/tag/v0.8.0)**
 
 ## [常见问题](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
 
@@ -71,7 +70,8 @@ AI内容制作，分发，出售。
 ## 正在实现中
 - MAC客户端实现
 - Web端，APP端实现
-- 内容安全审查
+- 内容安全审查（30%）
+- 私信功能对接
 - 公众号，bilibili发布实现
 
 ## 快速开始
