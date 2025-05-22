@@ -11,6 +11,14 @@ export interface LoginResponse {
   type: 'regist' | 'login';  // 登录类型：regist-需要注册，login-直接登录
   token?: string;
   registUrl?: string;
+  code?: string;  // 注册码
+}
+
+export interface RegistCheckParams {
+  code: string;
+  mail: string;
+  password: string;
+  inviteCode: string;
 }
 
 export const getMoneyStampApi = () => {
@@ -32,6 +40,6 @@ export const getRegistUrlApi = (mail: string) => {
 };
 
 // 检查注册状态
-export const checkRegistStatusApi = (mail: string) => {
-  return sxRequest.get<LoginResponse>(`user/login/mail/regist/back?mail=${mail}`);
+export const checkRegistStatusApi = (data: RegistCheckParams) => {
+  return sxRequest.get<LoginResponse>(`user/login/mail/regist/back`, data);
 };

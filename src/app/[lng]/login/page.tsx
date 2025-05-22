@@ -4,17 +4,19 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { GoogleLogin } from "@react-oauth/google";
-import { message } from "antd";
+import { message, Modal, Form, Input, Button } from "antd";
 import { useRouter } from "next/navigation";
 import styles from "./login.module.css";
-import { loginWithMailApi, getRegistUrlApi, checkRegistStatusApi, LoginResponse } from "@/api/apiReq";
+import { loginWithMailApi, checkRegistStatusApi, LoginResponse } from "@/api/apiReq";
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isChecking, setIsChecking] = useState(false);
-  const [registUrl, setRegistUrl] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [registCode, setRegistCode] = useState("");
+  const [form] = Form.useForm();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,15 +26,10 @@ export default function LoginPage() {
       
       if (response.code === 0) {
         if (response.data.type === 'regist') {
-          // 用户未注册，获取注册链接
-          const registResponse = await getRegistUrlApi(email);
-          if (!registResponse) return;
-          
-          if (registResponse.code === 0 && registResponse.data.registUrl) {
-            setRegistUrl(registResponse.data.registUrl);
-            setIsChecking(true);
-            message.info('请完成注册后继续');
-          }
+          // 用户未注册，显示弹窗提示
+          setRegistCode(response.data.code || '');
+          setIsModalOpen(true);
+          setIsChecking(true);
         } else if (response.data.type === 'login' && response.data.token) {
           // 登录成功
           localStorage.setItem('token', response.data.token);
@@ -47,19 +44,51 @@ export default function LoginPage() {
     }
   };
 
+  const handleRegistSubmit = async (values: { password: string; inviteCode?: string }) => {
+    try {
+      const response = await checkRegistStatusApi({
+        code: registCode,
+        mail: email,
+        password: values.password,
+        inviteCode: values.inviteCode || ''
+      });
+      
+      if (!response) return;
+      
+      if (response.code === 0 && response.data.type === 'login' && response.data.token) {
+        setIsChecking(false);
+        setIsModalOpen(false);
+        localStorage.setItem('token', response.data.token);
+        message.success('注册成功，已自动登录');
+        router.push('/');
+      } else {
+        message.error(response.msg || '注册失败');
+      }
+    } catch (error) {
+      message.error('注册失败，请稍后重试');
+    }
+  };
+
   // 检查注册状态
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
-    if (isChecking && registUrl) {
+    if (isChecking && !isModalOpen) {
       timer = setInterval(async () => {
         try {
-          const response = await checkRegistStatusApi(email);
+          const response = await checkRegistStatusApi({
+            code: registCode,
+            mail: email,
+            password: form.getFieldValue('password') || '',
+            inviteCode: form.getFieldValue('inviteCode') || ''
+          });
+          
           if (!response) return;
           
           if (response.code === 0 && response.data.type === 'login' && response.data.token) {
             clearInterval(timer);
             setIsChecking(false);
+            setIsModalOpen(false);
             localStorage.setItem('token', response.data.token);
             message.success('注册成功，已自动登录');
             router.push('/');
@@ -75,7 +104,7 @@ export default function LoginPage() {
         clearInterval(timer);
       }
     };
-  }, [isChecking, registUrl, email, router]);
+  }, [isChecking, isModalOpen, email, router, registCode, form]);
 
   const handleGoogleSuccess = (credentialResponse: any) => {
     console.log("Google 登录成功:", credentialResponse);
@@ -116,14 +145,6 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {registUrl && (
-          <div className={styles.registLink}>
-            <a href={registUrl} target="_blank" rel="noopener noreferrer">
-              点击这里完成注册
-            </a>
-          </div>
-        )}
-
         <div className={styles.divider}>
           <span>或 </span>
         </div>
@@ -151,6 +172,49 @@ export default function LoginPage() {
           </Link>
         </div>
       </div>
+
+      <Modal
+        title="完成注册"
+        open={isModalOpen}
+        onCancel={() => {
+          setIsModalOpen(false);
+          setIsChecking(false);
+        }}
+        maskClosable={false}
+        keyboard={false}
+        closable={true}
+        footer={null}
+      >
+        <Form
+          form={form}
+          onFinish={handleRegistSubmit}
+          layout="vertical"
+        >
+          <Form.Item
+            label="设置密码"
+            name="password"
+            rules={[
+              { required: true, message: '请输入密码' },
+              { min: 6, message: '密码长度不能小于6位' }
+            ]}
+          >
+            <Input.Password placeholder="请输入密码" />
+          </Form.Item>
+          
+          <Form.Item
+            label="邀请码（选填）"
+            name="inviteCode"
+          >
+            <Input placeholder="请输入邀请码" />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block>
+              完成注册
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 } 
