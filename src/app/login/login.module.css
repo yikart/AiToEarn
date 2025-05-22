@@ -130,6 +130,21 @@
   text-decoration: underline;
 }
 
+.registLink {
+  margin: 16px 0;
+  text-align: center;
+}
+
+.registLink a {
+  color: #1890ff;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.registLink a:hover {
+  text-decoration: underline;
+}
+
 /* 移动端适配 */
 @media (max-width: 480px) {
   .loginBox {

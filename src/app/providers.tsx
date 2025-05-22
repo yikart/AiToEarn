@@ -8,7 +8,7 @@ import { Suspense } from "react";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
+    <GoogleOAuthProvider clientId="471394506793-t2g4mg90vr8qgpq5stbua0b22pofqrne.apps.googleusercontent.com">
       <ConfigProvider
         locale={zh_CN}
         theme={{
