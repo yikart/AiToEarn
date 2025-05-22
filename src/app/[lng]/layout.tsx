@@ -1,5 +1,5 @@
-import "./globals.css";
-import { metadata } from "./metadata";
+import "../globals.css";
+import { metadata } from "../metadata";
 import { Providers } from "./providers";
 
 export { metadata };
