@@ -23,6 +23,16 @@ export interface RegistCheckParams {
   inviteCode: string;
 }
 
+// 获取用户信息
+export const getUserInfoApi = () => {
+  return sxRequest.get<UserInfo>("user/mine");
+};
+
+// 更新用户信息
+export const updateUserInfoApi = (data: { name: string }) => {
+  return sxRequest.put<UserInfo>("user/info/update", data);
+};
+
 export const getMoneyStampApi = () => {
   return sxRequest.get<any>("cfg/money/stamp");
 };
@@ -43,5 +53,5 @@ export const getRegistUrlApi = (mail: string) => {
 
 // 检查注册状态
 export const checkRegistStatusApi = (data: RegistCheckParams) => {
-  return sxRequest.post<LoginResponse>(`user/login/mail/regist/back`, data);
+  return sxRequest.get<LoginResponse>(`user/login/mail/regist/back`, data);
 };

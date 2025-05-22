@@ -12,8 +12,8 @@
   max-width: 420px;
   padding: 32px;
   background: var(--card-background);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .title {
@@ -38,7 +38,7 @@
   width: 100%;
   padding: 12px 16px;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 16px;
   transition: all 0.3s;
   background: var(--card-background);
@@ -47,7 +47,7 @@
 .input:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+  box-shadow: 0 0 0 2px rgba(216, 181, 245, 0.1);
 }
 
 .input::placeholder {
@@ -55,8 +55,24 @@
 }
 
 .submitButton {
-  width: 100%;
-  margin-top: 8px;
+  height: 44px !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
+  background: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  transition: all 0.3s !important;
+}
+
+.submitButton:hover {
+  background: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(216, 181, 245, 0.2);
+}
+
+.submitButton:active {
+  transform: scale(0.98);
 }
 
 .divider {

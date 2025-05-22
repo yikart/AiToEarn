@@ -1,7 +1,7 @@
 import FetchService from "@/utils/FetchService/FetchService";
 import { RequestParams } from "@/utils/FetchService/types";
 import { API_BASE_URL } from "@/constant";
-// import { useUserStore } from "@/store/user";
+import { useUserStore } from "@/store/user";
 
 type ResponseType<T> = {
   code: string | number;
@@ -13,11 +13,11 @@ type ResponseType<T> = {
 export const fetchService = new FetchService({
   baseURL: API_BASE_URL,
   requestInterceptor(requestParams) {
-    // const token = useUserStore.getState().token;
-
+    const token = useUserStore.getState().token;
+    
     requestParams.headers = {
       ...(requestParams["headers"] || {}),
-      // Authorization: token,
+      Authorization: token ? `Bearer ${token}` : '',
     };
 
     return requestParams;
@@ -33,7 +33,7 @@ export async function request<T>(params: RequestParams) {
     const data: ResponseType<T> = await res.json();
 
     if (data.code === "Unauthorized") {
-      // useUserStore.getState().clearLoginStatus();
+      useUserStore.getState().clearLoginStatus();
       return null;
     }
 

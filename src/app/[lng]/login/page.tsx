@@ -151,9 +151,9 @@ export default function LoginPage() {
               required
             />
           </div>
-          <button type="submit"  >
+          <Button type="primary" htmlType="submit" block className={styles.submitButton}>
             登录
-          </button>
+          </Button>
         </form>
 
         <div className={styles.divider}>
@@ -178,9 +178,7 @@ export default function LoginPage() {
           <Link href="/forgot-password" className={styles.link}>
             忘记密码？
           </Link>
-          <Link href="/register" className={styles.link}>
-            注册账号
-          </Link>
+
         </div>
       </div>
 

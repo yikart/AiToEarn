@@ -5,7 +5,8 @@ export interface UserInfo {
   id: string;
   name: string;
   password: string;
-  phone: string;
+  phone?: string;
+  mail: string;
   salt: string;
   status: number;
   updateTime: string;
