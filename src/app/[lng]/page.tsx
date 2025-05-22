@@ -1,13 +1,20 @@
-import { languages, fallbackLng } from "../i18n/settings";
-import { useTranslation } from "../i18n";
-import { PageParams } from "../../../@types/next";
+"use client";
 
-export default async function Page({ params }: { params: PageParams }) {
-  let { lng } = await params;
-  console.log(lng);
-  if (languages.indexOf(lng) < 0) lng = fallbackLng;
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { t } = await useTranslation(lng, "footer");
+import styles from "./page.module.scss";
+import { Button } from "antd";
+import React from "react";
+import { useRouter } from "next/navigation";
 
-  return <>{t("helpLocize")}</>;
+export default function Home() {
+  const router = useRouter();
+
+  const handleLogin = () => {
+    router.push("/login");
+  };
+
+  return (
+    <div className={styles.page}>
+      <Button onClick={handleLogin}>登录页面</Button>
+    </div>
+  );
 }

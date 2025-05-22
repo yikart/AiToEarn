@@ -1,5 +1,5 @@
 import { getMetadata } from "@/utils/general";
-import { DemoPageCore } from "@/app/demo/demoPageCore";
+import { DemoPageCore } from "@/app/[lng]/demo/demoPageCore";
 
 export const metadata = getMetadata({
   title: "Demo",
