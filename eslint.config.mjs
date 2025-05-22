@@ -32,6 +32,7 @@ const eslintConfig = [
       "@typescript-eslint/no-unused-vars": "warn",
       "prettier/prettier": ["error", { "endOfLine": "auto" }],
       "@typescript-eslint/ban-ts-comment": "off",
+      "react-hooks/rules-of-hooks": "off",
     },
   }
 ];

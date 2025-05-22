@@ -1,18 +1,28 @@
+import { useTranslation } from "@/app/i18n";
+import { PageParams } from "@/app/globals";
+import * as React from "react";
 import { getMetadata } from "@/utils/general";
 import { DemoPageCore } from "@/app/[lng]/demo/demoPageCore";
 
-export const metadata = getMetadata({
-  title: "Demo",
-  keywords: "Demo",
-  description: `Demo`,
-});
+export async function generateMetadata({ params }: PageParams) {
+  const { lng } = await params;
+  const { t } = await useTranslation(lng, "demo");
+  return await getMetadata(
+    {
+      title: t("title"),
+    },
+    lng,
+  );
+}
 
-export default function Page() {
+export default async function Page({ params }: PageParams) {
+  const { lng } = await params;
+  const { t } = await useTranslation(lng, "demo");
+
   return (
     <>
-      <div>11111</div>
-      <DemoPageCore />
+      <div>{t("demoText")}</div>
+      <DemoPageCore lng={lng} />
     </>
   );
 }
-  

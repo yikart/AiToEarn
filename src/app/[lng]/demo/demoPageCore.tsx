@@ -1,6 +1,9 @@
 "use client";
 
-export const DemoPageCore = () => {
-  console.log("111");
-  return <div>demoCore</div>;
+import { useTranslation } from "@/app/i18n/client";
+
+export const DemoPageCore = ({ lng }: { lng: string }) => {
+  const { t } = useTranslation(lng, "demo");
+
+  return <div>{t("demoText")}</div>;
 };
