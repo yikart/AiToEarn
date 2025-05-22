@@ -12,9 +12,15 @@ export default function Home() {
     router.push("/login");
   };
 
+  const handleProfile = () => {
+    router.push("/profile");
+  };
+
+
   return (
     <div className={styles.page}>
       <Button onClick={handleLogin}>登录页面</Button>
+      <Button onClick={handleProfile}>个人中心</Button>
     </div>
   );
 }

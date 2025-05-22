@@ -1,4 +1,5 @@
 import sxRequest from "@/utils/request";
+import { UserInfo } from "@/store/user";
 
 export interface ResponseType<T> {
   code: string | number;
@@ -12,6 +13,7 @@ export interface LoginResponse {
   token?: string;
   registUrl?: string;
   code?: string;  // 注册码
+  userInfo?: UserInfo;  // 用户信息
 }
 
 export interface RegistCheckParams {
@@ -41,5 +43,5 @@ export const getRegistUrlApi = (mail: string) => {
 
 // 检查注册状态
 export const checkRegistStatusApi = (data: RegistCheckParams) => {
-  return sxRequest.get<LoginResponse>(`user/login/mail/regist/back`, data);
+  return sxRequest.post<LoginResponse>(`user/login/mail/regist/back`, data);
 };

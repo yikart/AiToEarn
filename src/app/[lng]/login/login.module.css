@@ -3,164 +3,124 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background-color: var(--background-color);
   padding: 20px;
 }
 
 .loginBox {
-  background: rgba(255, 255, 255, 0.95);
-  padding: 2.5rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 420px;
-  backdrop-filter: blur(10px);
+  padding: 32px;
+  background: var(--card-background);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .title {
+  font-size: 28px;
+  color: var(--text-color);
   text-align: center;
-  color: #1a1a1a;
-  margin-bottom: 2rem;
-  font-size: 2rem;
+  margin-bottom: 32px;
   font-weight: 600;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 20px;
 }
 
 .inputGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  position: relative;
 }
 
 .input {
-  padding: 1rem;
-  border: 2px solid #e1e1e1;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 16px;
+  transition: all 0.3s;
+  background: var(--card-background);
 }
 
 .input:focus {
   outline: none;
-  border-color: #4285f4;
-  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+.input::placeholder {
+  color: #999;
 }
 
 .submitButton {
-  background-color: #4285f4;
-  color: white;
-  padding: 1rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 0.5rem;
-}
-
-.submitButton:hover {
-  background-color: #3367d6;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(66, 133, 244, 0.2);
+  width: 100%;
+  margin-top: 8px;
 }
 
 .divider {
   display: flex;
   align-items: center;
-  text-align: center;
-  margin: 1.5rem 0;
-  color: #666;
+  margin: 24px 0;
+  color: #999;
 }
 
 .divider::before,
 .divider::after {
   content: '';
   flex: 1;
-  border-bottom: 1px solid #e1e1e1;
+  height: 1px;
+  background: var(--border-color);
 }
 
 .divider span {
-  padding: 0 1rem;
-  font-size: 0.9rem;
+  padding: 0 12px;
 }
 
 .googleButtonWrapper {
-  display: flex;
-  justify-content: center;
-  margin: 1rem 0;
   width: 100%;
-}
-
-/* 确保 Google 按钮容器有正确的尺寸 */
-.googleButtonWrapper > div {
-  width: 100% !important;
-  display: flex !important;
-  justify-content: center !important;
-}
-
-/* 确保 Google 按钮本身有正确的尺寸 */
-.googleButtonWrapper iframe {
-  width: 100% !important;
-  height: 40px !important;
+  margin-bottom: 24px;
 }
 
 .links {
   display: flex;
   justify-content: space-between;
-  margin-top: 1.5rem;
-  font-size: 0.9rem;
+  margin-top: 16px;
 }
 
 .link {
-  color: #4285f4;
+  color: var(--primary-color);
   text-decoration: none;
+  font-size: 14px;
   transition: color 0.3s;
-  font-weight: 500;
 }
 
 .link:hover {
-  color: #3367d6;
-  text-decoration: underline;
-}
-
-.registLink {
-  margin: 16px 0;
-  text-align: center;
-}
-
-.registLink a {
-  color: #1890ff;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-.registLink a:hover {
-  text-decoration: underline;
+  color: var(--primary-hover);
 }
 
 /* 移动端适配 */
 @media (max-width: 480px) {
   .loginBox {
-    padding: 1.5rem;
-    margin: 1rem;
+    padding: 24px 16px;
+    box-shadow: none;
+    background: transparent;
   }
 
   .title {
-    font-size: 1.75rem;
+    font-size: 24px;
+    margin-bottom: 24px;
   }
 
   .input {
-    padding: 0.9rem;
+    padding: 10px 14px;
+    font-size: 15px;
   }
 
-  .submitButton {
-    padding: 0.9rem;
+  .links {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
   }
 } 

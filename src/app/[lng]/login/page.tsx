@@ -8,9 +8,11 @@ import { message, Modal, Form, Input, Button } from "antd";
 import { useRouter } from "next/navigation";
 import styles from "./login.module.css";
 import { loginWithMailApi, checkRegistStatusApi, LoginResponse } from "@/api/apiReq";
+import { useUserStore } from "@/store/user";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { setToken, setUserInfo } = useUserStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isChecking, setIsChecking] = useState(false);
@@ -30,9 +32,12 @@ export default function LoginPage() {
           setRegistCode(response.data.code || '');
           setIsModalOpen(true);
           setIsChecking(true);
-        } else if (response.data.type === 'login' && response.data.token) {
+        } else if (response.data.token) {
           // 登录成功
-          localStorage.setItem('token', response.data.token);
+          setToken(response.data.token);
+          if (response.data.userInfo) {
+            setUserInfo(response.data.userInfo);
+          }
           message.success('登录成功');
           router.push('/');
         }
@@ -55,10 +60,13 @@ export default function LoginPage() {
       
       if (!response) return;
       
-      if (response.code === 0 && response.data.type === 'login' && response.data.token) {
+      if (response.code === 0 && response.data.token) {
         setIsChecking(false);
         setIsModalOpen(false);
-        localStorage.setItem('token', response.data.token);
+        setToken(response.data.token);
+        if (response.data.userInfo) {
+          setUserInfo(response.data.userInfo);
+        }
         message.success('注册成功，已自动登录');
         router.push('/');
       } else {
@@ -79,17 +87,20 @@ export default function LoginPage() {
           const response = await checkRegistStatusApi({
             code: registCode,
             mail: email,
-            password: form.getFieldValue('password') || '',
+            password: form.getFieldValue('password'),
             inviteCode: form.getFieldValue('inviteCode') || ''
           });
           
           if (!response) return;
           
-          if (response.code === 0 && response.data.type === 'login' && response.data.token) {
+          if (response.code === 0 && response.data.token) {
             clearInterval(timer);
             setIsChecking(false);
             setIsModalOpen(false);
-            localStorage.setItem('token', response.data.token);
+            setToken(response.data.token);
+            if (response.data.userInfo) {
+              setUserInfo(response.data.userInfo);
+            }
             message.success('注册成功，已自动登录');
             router.push('/');
           }
@@ -104,7 +115,7 @@ export default function LoginPage() {
         clearInterval(timer);
       }
     };
-  }, [isChecking, isModalOpen, email, router, registCode, form]);
+  }, [isChecking, isModalOpen, email, router, registCode, form, setToken, setUserInfo]);
 
   const handleGoogleSuccess = (credentialResponse: any) => {
     console.log("Google 登录成功:", credentialResponse);
@@ -140,7 +151,7 @@ export default function LoginPage() {
               required
             />
           </div>
-          <button type="submit" className={styles.submitButton}>
+          <button type="submit"  >
             登录
           </button>
         </form>
