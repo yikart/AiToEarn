@@ -1,6 +1,7 @@
 import "./globals.css";
 import { metadata } from "./metadata";
 import { Providers } from "./providers";
+import "@/var.css";
 
 export { metadata };
 
