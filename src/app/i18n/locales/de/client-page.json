@@ -1,0 +1,9 @@
+{
+  "back-to-home": "Zurück zur Hauptseite",
+  "counter_one": "eines ausgewählt",
+  "counter_other": "{{count}} ausgewählt",
+  "counter_zero": "keines ausgewählt",
+  "h1": "Eine client Seite, um das client-seitige i18n zu demonstrieren",
+  "title": "Client Seite",
+  "to-second-client-page": "zur zweiten client Seite"
+}

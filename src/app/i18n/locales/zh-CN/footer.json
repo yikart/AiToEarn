@@ -1,0 +1,5 @@
+{
+  "description": "Questo è un componente non di pagina che richiede il proprio spazio dei nomi",
+  "helpLocize": "Con l'utilizzare <1>locize</1> sostieni direttamente il futuro di <3>i18next</3>.",
+  "languageSwitcher": "Passa da <1>{{lng}}</1> a: "
+}
