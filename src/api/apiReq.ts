@@ -55,3 +55,55 @@ export const getRegistUrlApi = (mail: string) => {
 export const checkRegistStatusApi = (data: RegistCheckParams) => {
   return sxRequest.get<LoginResponse>(`user/login/mail/regist/back`, data);
 };
+
+// 发送重置密码邮件
+export const sendResetPasswordMailApi = (data: { mail: string }) => {
+  return sxRequest.post<LoginResponse>("user/login/repassword/mail", data);
+};
+
+// 重置密码
+export const resetPasswordApi = (data: { code: string; mail: string; password: string }) => {
+  return sxRequest.post<LoginResponse>("user/login/repassword/mail/back", data);
+};
+
+// 三方账户类型定义
+export interface SocialAccount {
+  id: number;
+  type: string;
+  loginCookie: string;
+  loginTime: string;
+  uid: string;
+  account: string;
+  avatar: string;
+  nickname: string;
+  fansCount: number;
+  readCount: number;
+  likeCount: number;
+  collectCount: number;
+  forwardCount: number;
+  commentCount: number;
+  lastStatsTime: string;
+  workCount: number;
+  income: number;
+  status: number;
+}
+
+// 创建或更新账户
+export const createOrUpdateAccountApi = (data: Omit<SocialAccount, 'id'>) => {
+  return sxRequest.post<SocialAccount>("account/login", data);
+};
+
+// 更新账户状态
+export const updateAccountStatusApi = (data: { id: number; status: number }) => {
+  return sxRequest.post<SocialAccount>("account/status", data);
+};
+
+// 获取账户列表
+export const getAccountListApi = () => {
+  return sxRequest.post<SocialAccount[]>("account/list/ids");
+};
+
+// 获取账户详情
+export const getAccountDetailApi = (id: number) => {
+  return sxRequest.get<SocialAccount>(`account/${id}`);
+};
