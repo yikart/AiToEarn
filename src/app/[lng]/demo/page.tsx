@@ -22,7 +22,7 @@ export default async function Page({ params }: PageParams) {
   return (
     <>
       <div>{t("demoText")}</div>
-      <DemoPageCore lng={lng} />
+      <DemoPageCore />
     </>
   );
 }

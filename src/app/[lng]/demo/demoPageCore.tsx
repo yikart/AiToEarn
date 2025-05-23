@@ -1,9 +1,9 @@
 "use client";
 
-import { useTranslation } from "@/app/i18n/client";
+import { useTransClient } from "@/app/i18n/client";
 
-export const DemoPageCore = ({ lng }: { lng: string }) => {
-  const { t } = useTranslation(lng, "demo");
+export const DemoPageCore = () => {
+  const { t } = useTransClient("demo");
 
   return <div>{t("demoText")}</div>;
 };
