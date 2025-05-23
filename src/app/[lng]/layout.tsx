@@ -5,6 +5,8 @@ import { Providers } from "../layout/Providers";
 import { dir } from "i18next";
 import { languages, fallbackLng } from "@/app/i18n/settings";
 import { useTranslation } from "@/app/i18n";
+import LyaoutHeader from "@/app/layout/LyaoutHeader";
+import LyaoutFooter from "@/app/layout/LyaoutFooter";
 
 export async function generateMetadata({
   params,
@@ -32,7 +34,11 @@ export default async function RootLayout({
   return (
     <html lang={lng} dir={dir(lng)}>
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <LyaoutHeader />
+          {children}
+          <LyaoutFooter lng={lng} />
+        </Providers>
       </body>
     </html>
   );
