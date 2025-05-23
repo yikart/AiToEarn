@@ -5,6 +5,8 @@ import { ConfigProvider, App } from "antd";
 import zh_CN from "antd/es/locale/zh_CN";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { Suspense } from "react";
+import LyaoutHeader from "@/app/layout/LyaoutHeader";
+import LyaoutFooter from "@/app/layout/LyaoutFooter";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -19,10 +21,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
       >
         <App component={false}>
           <Suspense>
-            <AntdRegistry>{children}</AntdRegistry>
+            <AntdRegistry>
+              <LyaoutHeader />
+              {children}
+              <LyaoutFooter />
+            </AntdRegistry>
           </Suspense>
         </App>
       </ConfigProvider>
     </GoogleOAuthProvider>
   );
-} 
+}

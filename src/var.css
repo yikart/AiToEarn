@@ -1,7 +1,7 @@
 /*  全局css变量 */
 :root {
   /* 中性面板色组---------------------------------------------------- */
-  --whiteColor1: #fff;
+  --whiteColor: #fff;
   --grayColor0: rgb(247,250,250);
   --grayColor1: #F3F3F3;
   --grayColor2: #EEEEEE;
@@ -28,6 +28,14 @@
   --fs-sm: 14px;
   /* 超小号字 */
   --fs-xs: 12px;
+
+  @media (min-width: 1600px) {
+    --fs-xl: 22px;
+    --fs-lg: 20px;
+    --fs-md: 18px;
+    --fs-sm: 16px;
+    --fs-xs: 14px;
+  }
 
   /* 主题色由浅到深 */
   --theColor1: #fbf0ff;

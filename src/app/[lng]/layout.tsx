@@ -1,6 +1,6 @@
 import "@/var.css";
 import "../globals.css";
-import { Providers } from "./providers";
+import { Providers } from "../layout/Providers";
 
 import { dir } from "i18next";
 import { languages, fallbackLng } from "@/app/i18n/settings";

@@ -15,12 +15,12 @@ export interface UserInfo {
 
 export interface IUserStore {
   token?: string;
-  userInfo?: UserInfo;
+  userInfo?: Partial<UserInfo>;
 }
 
 const state: IUserStore = {
   token: undefined,
-  userInfo: undefined,
+  userInfo: {},
 };
 
 export const useUserStore = createPersistStore(

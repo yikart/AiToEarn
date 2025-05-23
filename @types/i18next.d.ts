@@ -6,4 +6,10 @@ declare module "i18next" {
     // defaultNS: 'translation'
     resources: Resources;
   }
+
+  namespace JSX {
+    interface IntrinsicElements {
+      "chatlio-widget": any;
+    }
+  }
 }

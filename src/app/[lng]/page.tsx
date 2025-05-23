@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "./page.module.scss";
+import styles from "@/app/styles/page.module.scss";
 import { Button } from "antd";
 import React from "react";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,6 @@ export default function Home() {
     router.push("/profile");
   };
 
-
   const handleAccounts = () => {
     router.push("/accounts");
   };
@@ -26,7 +25,6 @@ export default function Home() {
       <Button onClick={handleLogin}>登录页面</Button>
       <Button onClick={handleProfile}>个人中心</Button>
       <Button onClick={handleAccounts}>账户中心</Button>
-
     </div>
   );
 }

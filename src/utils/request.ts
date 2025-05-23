@@ -2,6 +2,7 @@ import FetchService from "@/utils/FetchService/FetchService";
 import { RequestParams } from "@/utils/FetchService/types";
 import { API_BASE_URL } from "@/constant";
 import { useUserStore } from "@/store/user";
+import { message } from "antd";
 
 type ResponseType<T> = {
   code: string | number;
@@ -14,10 +15,10 @@ export const fetchService = new FetchService({
   baseURL: API_BASE_URL,
   requestInterceptor(requestParams) {
     const token = useUserStore.getState().token;
-    
+
     requestParams.headers = {
       ...(requestParams["headers"] || {}),
-      Authorization: token ? `Bearer ${token}` : '',
+      Authorization: token ? `Bearer ${token}` : "",
     };
 
     return requestParams;
@@ -38,9 +39,12 @@ export async function request<T>(params: RequestParams) {
     }
 
     if (data.code !== 0) {
-      // if (typeof window !== "undefined")
-      //   message.warning(data.msg || "网络繁忙，请稍后重试！");
-      // return null;
+      if (typeof window !== "undefined")
+        message.warning({
+          content: data.msg || "网络繁忙，请稍后重试！",
+          key: "apiErrorMessage",
+        });
+      return null;
     }
 
     return data;
