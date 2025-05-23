@@ -51,9 +51,9 @@ export const getRegistUrlApi = (mail: string) => {
   return sxRequest.get<LoginResponse>(`user/login/mail/regist/url?mail=${mail}`);
 };
 
-// 检查注册状态
+// 检查注册状态 post!!
 export const checkRegistStatusApi = (data: RegistCheckParams) => {
-  return sxRequest.get<LoginResponse>(`user/login/mail/regist/back`, data);
+  return sxRequest.post<LoginResponse>(`user/login/mail/regist/back`, data);
 };
 
 // 发送重置密码邮件

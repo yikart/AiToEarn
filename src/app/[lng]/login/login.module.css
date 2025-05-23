@@ -46,12 +46,12 @@
 
 .input:focus {
   outline: none;
-  border-color: var(--primary-color);
+  border-color: var(--theColor5);
   box-shadow: 0 0 0 2px rgba(216, 181, 245, 0.1);
 }
 
 .input::placeholder {
-  color: #999;
+  color: var(--grayColor6);
 }
 
 .submitButton {
@@ -59,14 +59,14 @@
   font-size: 16px !important;
   font-weight: 500 !important;
   border-radius: 8px !important;
-  background: var(--primary-color) !important;
-  border-color: var(--primary-color) !important;
+  background: var(--theColor5) !important;
+  border-color: var(--theColor5) !important;
   transition: all 0.3s !important;
 }
 
 .submitButton:hover {
-  background: var(--primary-hover) !important;
-  border-color: var(--primary-hover) !important;
+  background: var(--theColor6) !important;
+  border-color: var(--theColor6) !important;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(216, 181, 245, 0.2);
 }
@@ -79,7 +79,7 @@
   display: flex;
   align-items: center;
   margin: 24px 0;
-  color: #999;
+  color: var(--grayColor6);
 }
 
 .divider::before,
@@ -106,14 +106,86 @@
 }
 
 .link {
-  color: var(--primary-color);
+  color: var(--theColor5);
   text-decoration: none;
-  font-size: 14px;
   transition: color 0.3s;
 }
 
 .link:hover {
-  color: var(--primary-hover);
+  color: var(--theColor6);
+  text-decoration: underline;
+}
+
+/* Modal 样式 */
+.modalWrapper :global(.ant-modal-content) {
+  border-radius: 16px !important;
+  overflow: hidden;
+}
+
+.modalWrapper :global(.ant-modal-header) {
+  border-bottom: 1px solid var(--border-color);
+  padding: 20px 24px;
+}
+
+.modalWrapper :global(.ant-modal-title) {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  color: var(--text-color) !important;
+}
+
+.modalWrapper :global(.ant-modal-body) {
+  padding: 24px !important;
+}
+
+.modalWrapper :global(.ant-form-item-label > label) {
+  color: var(--text-color) !important;
+  font-size: 14px !important;
+}
+
+.modalWrapper :global(.ant-input-affix-wrapper) {
+  border-radius: 8px !important;
+  border-color: var(--border-color) !important;
+  padding: 8px 12px !important;
+  transition: all 0.3s !important;
+}
+
+.modalWrapper :global(.ant-input-affix-wrapper:hover) {
+  border-color: var(--theColor5) !important;
+}
+
+.modalWrapper :global(.ant-input-affix-wrapper-focused) {
+  border-color: var(--theColor5) !important;
+  box-shadow: 0 0 0 2px rgba(216, 181, 245, 0.1) !important;
+}
+
+.modalWrapper :global(.ant-input) {
+  font-size: 16px !important;
+  color: var(--text-color) !important;
+}
+
+.modalWrapper :global(.ant-input::placeholder) {
+  color: var(--grayColor6) !important;
+}
+
+.modalWrapper :global(.ant-btn-primary) {
+  height: 44px !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
+  background: var(--theColor5) !important;
+  border-color: var(--theColor5) !important;
+  transition: all 0.3s !important;
+}
+
+.modalWrapper :global(.ant-btn-primary:hover) {
+  background: var(--theColor6) !important;
+  border-color: var(--theColor6) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(216, 181, 245, 0.2);
+}
+
+.modalWrapper :global(.ant-btn-primary:active) {
+  transform: scale(0.98);
 }
 
 /* 移动端适配 */

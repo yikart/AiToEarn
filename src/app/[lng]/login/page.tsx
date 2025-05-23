@@ -19,6 +19,8 @@ export default function LoginPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [registCode, setRegistCode] = useState("");
   const [form] = Form.useForm();
+  const [isActivating, setIsActivating] = useState(false);
+  const [activationTimer, setActivationTimer] = useState<NodeJS.Timeout | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,50 +53,27 @@ export default function LoginPage() {
 
   const handleRegistSubmit = async (values: { password: string; inviteCode?: string }) => {
     try {
-      const response = await checkRegistStatusApi({
-        code: registCode,
-        mail: email,
-        password: values.password,
-        inviteCode: values.inviteCode || ''
-      });
+      setIsActivating(true);
+      message.info('激活链接已发送至邮箱，请查收并点击激活');
       
-      if (!response) return;
-      
-      if (response.code === 0 && response.data.token) {
-        setIsChecking(false);
-        setIsModalOpen(false);
-        setToken(response.data.token);
-        if (response.data.userInfo) {
-          setUserInfo(response.data.userInfo);
-        }
-        message.success('注册成功，已自动登录');
-        router.push('/');
-      } else {
-        message.error(response.msg || '注册失败');
-      }
-    } catch (error) {
-      message.error('注册失败，请稍后重试');
-    }
-  };
-
-  // 检查注册状态
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    
-    if (isChecking && !isModalOpen) {
-      timer = setInterval(async () => {
+      // 开始循环检查注册状态
+      const timer = setInterval(async () => {
         try {
           const response = await checkRegistStatusApi({
             code: registCode,
             mail: email,
-            password: form.getFieldValue('password'),
-            inviteCode: form.getFieldValue('inviteCode') || ''
+            password: values.password,
+            inviteCode: values.inviteCode || ''
           });
           
           if (!response) return;
           
           if (response.code === 0 && response.data.token) {
-            clearInterval(timer);
+            // 注册成功，清除定时器
+            if (activationTimer) {
+              clearInterval(activationTimer);
+            }
+            setIsActivating(false);
             setIsChecking(false);
             setIsModalOpen(false);
             setToken(response.data.token);
@@ -107,15 +86,23 @@ export default function LoginPage() {
         } catch (error) {
           console.error('检查注册状态失败:', error);
         }
-      }, 3000);
+      }, 2000); // 每2秒检查一次
+      
+      setActivationTimer(timer);
+    } catch (error) {
+      message.error('注册失败，请稍后重试');
+      setIsActivating(false);
     }
+  };
 
+  // 组件卸载时清除定时器
+  useEffect(() => {
     return () => {
-      if (timer) {
-        clearInterval(timer);
+      if (activationTimer) {
+        clearInterval(activationTimer);
       }
     };
-  }, [isChecking, isModalOpen, email, router, registCode, form, setToken, setUserInfo]);
+  }, [activationTimer]);
 
   const handleGoogleSuccess = (credentialResponse: any) => {
     console.log("Google 登录成功:", credentialResponse);
@@ -188,11 +175,16 @@ export default function LoginPage() {
         onCancel={() => {
           setIsModalOpen(false);
           setIsChecking(false);
+          setIsActivating(false);
+          if (activationTimer) {
+            clearInterval(activationTimer);
+          }
         }}
         maskClosable={false}
         keyboard={false}
         closable={true}
         footer={null}
+        className={styles.modalWrapper}
       >
         <Form
           form={form}
@@ -218,8 +210,13 @@ export default function LoginPage() {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
-              完成注册
+            <Button 
+              type="primary" 
+              htmlType="submit" 
+              block 
+              loading={isActivating}
+            >
+              {isActivating ? '等待激活中...' : '完成注册'}
             </Button>
           </Form.Item>
         </Form>
