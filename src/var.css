@@ -38,15 +38,15 @@
   }
 
   /* 主题色由浅到深 */
-  --theColor1: #fbf0ff;
-  --theColor2: #fbf0ff;
-  --theColor3: #f9f0ff;
-  --theColor4: #f4e6ff;
-  --theColor5: #d8b5f5;
-  --theColor6: #b08fcf;
-  --theColor7: #896ca8;
-  --theColor8: #654d82;
-  --theColor9: #45355c;
+  --theColor1: #faf0ff;
+  --theColor2: #f9f0ff;
+  --theColor3: #e4c5fc;
+  --theColor4: #c595f0;
+  --theColor5: #a66ae4;
+  --theColor6: #814dbd;
+  --theColor7: #603696;
+  --theColor8: #422370;
+  --theColor9: #29164a;
   --primary-color: var(--theColor5);
   /* 原先为：#D7B4F5 */
   --primary-hover: var(--theColor6);

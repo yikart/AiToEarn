@@ -34,7 +34,7 @@ export default async function RootLayout({
   return (
     <html lang={lng} dir={dir(lng)}>
       <body>
-        <Providers>
+        <Providers lng={lng}>
           <LyaoutHeader />
           {children}
           <LyaoutFooter lng={lng} />
