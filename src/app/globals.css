@@ -1,14 +1,3 @@
-:root {
-  --primary-color: #D8B5F5;
-  --primary-hover: #D7B4F5;
-  --text-color: #1f2937;
-  --border-color: #e5e7eb;
-  --background-color: #f9fafb;
-  --card-background: #fff;
-  --error-color: #ef4444;
-  --success-color: #10b981;
-}
-
 /* 全局样式重置 */
 * {
   margin: 0;

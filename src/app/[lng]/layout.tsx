@@ -1,3 +1,4 @@
+import "@/var.css";
 import "../globals.css";
 import { Providers } from "./providers";
 
