@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 
 /**
@@ -18,9 +20,13 @@ const useCssVariables = (
     "--theColor8",
     "--theColor9",
   ],
-  element: HTMLElement = document.documentElement,
+  element?: HTMLElement,
 ): Record<string, string> => {
   const [variables, setVariables] = useState<Record<string, string>>({});
+
+  if (typeof window === "undefined") return variables;
+
+  element = element || document.documentElement;
 
   useEffect(() => {
     const handleVariableChange = () => {
