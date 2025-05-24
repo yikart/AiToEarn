@@ -11,6 +11,7 @@ export interface UserInfo {
   status: number;
   updateTime: string;
   _id: string;
+  avatar?: string;
 }
 
 export interface IUserStore {
@@ -28,7 +29,7 @@ export const useUserStore = createPersistStore(
     ...state,
   },
   (set, _get) => {
-    return {
+    const methods = {
       setToken: (token: string) => {
         set({ token });
       },
@@ -38,7 +39,14 @@ export const useUserStore = createPersistStore(
       clearLoginStatus: () => {
         set({ token: undefined, userInfo: undefined });
       },
+
+      // 登出
+      logout() {
+        methods.clearLoginStatus();
+      },
     };
+
+    return methods;
   },
   {
     name: "User",
