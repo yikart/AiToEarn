@@ -100,7 +100,7 @@ export const updateAccountStatusApi = (data: { id: number; status: number }) => 
 
 // 获取账户列表
 export const getAccountListApi = () => {
-  return sxRequest.post<SocialAccount[]>("account/list/ids");
+  return sxRequest.get<SocialAccount[]>("account/list/all");
 };
 
 // 获取账户详情
