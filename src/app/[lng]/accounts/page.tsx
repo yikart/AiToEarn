@@ -1,14 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, Table, Button, message, Modal, Form, Input, Select, InputNumber, Space, Tag } from "antd";
+import { Card, Table, Button, message, Modal, Form, Input, Select, InputNumber, Space, Tag, Descriptions } from "antd";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user";
 import { 
   SocialAccount, 
   createOrUpdateAccountApi, 
   updateAccountStatusApi, 
-  getAccountListApi 
+  getAccountListApi,
+  updateAccountStatisticsApi,
+  UpdateAccountStatisticsParams,
+  deleteAccountApi
 } from "@/api/apiReq";
 import styles from "./accounts.module.css";
 
@@ -16,9 +19,9 @@ const { Option } = Select;
 
 const PLATFORM_TYPES = [
   { value: 'douyin', label: '抖音', color: '#000000' },
-  { value: 'xiaohongshu', label: '小红书', color: '#FF2442' },
+  { value: 'xhs', label: '小红书', color: '#FF2442' },
   { value: 'bilibili', label: 'Bilibili', color: '#FB7299' },
-  { value: 'kuaishou', label: '快手', color: '#FFC300' },
+  { value: 'KWAI', label: '快手', color: '#FFC300' },
   { value: 'facebook', label: 'Facebook', color: '#1877F2' },
   { value: 'twitter', label: 'Twitter', color: '#1DA1F2' },
 ];
@@ -29,6 +32,8 @@ export default function AccountsPage() {
   const [loading, setLoading] = useState(true);
   const [accounts, setAccounts] = useState<SocialAccount[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [currentAccount, setCurrentAccount] = useState<SocialAccount | null>(null);
   const [form] = Form.useForm();
 
   // 获取账户列表
@@ -103,6 +108,57 @@ export default function AccountsPage() {
     }
   };
 
+  // 处理统计数据更新
+  const handleStatisticsUpdate = async (record: SocialAccount) => {
+    try {
+      const params: UpdateAccountStatisticsParams = {
+        id: record.id,
+        fansCount: record.fansCount+1,
+        readCount: record.readCount+1,
+        workCount:  record.workCount+1,
+        likeCount: record.likeCount+1,
+        collectCount: record.collectCount+1,
+        commentCount: record.commentCount+1,
+        income: record.income+1
+      };
+
+      const response: any = await updateAccountStatisticsApi(params);
+      if (!response) {
+        message.error('更新统计数据失败');
+        return;
+      }
+
+      if (response.code === 0) {
+        message.success('更新统计数据成功');
+        fetchAccounts();
+      } else {
+        message.error(response.msg || '更新统计数据失败');
+      }
+    } catch (error) {
+      message.error('更新统计数据失败');
+    }
+  };
+
+  // 处理账户删除
+  const handleDelete = async (id: number) => {
+    try {
+      const response: any = await deleteAccountApi(id);
+      if (!response) {
+        message.error('删除账户失败');
+        return;
+      }
+
+      if (response.code === 0) {
+        message.success('删除账户成功');
+        fetchAccounts();
+      } else {
+        message.error(response.msg || '删除账户失败');
+      }
+    } catch (error) {
+      message.error('删除账户失败');
+    }
+  };
+
   const columns = [
     {
       title: '平台',
@@ -126,6 +182,11 @@ export default function AccountsPage() {
       key: 'nickname',
     },
     {
+      title: '用户id',
+      dataIndex: 'uid',
+      key: 'uid',
+    },
+    {
       title: '粉丝数',
       dataIndex: 'fansCount',
       key: 'fansCount',
@@ -146,8 +207,8 @@ export default function AccountsPage() {
       dataIndex: 'status',
       key: 'status',
       render: (status: number) => (
-        <Tag color={status === 1 ? 'success' : 'error'}>
-          {status === 1 ? '正常' : '禁用'}
+        <Tag color={status === 1 ? 'error' : 'success'}>
+          {status === 1 ? '失效' : '在线'}
         </Tag>
       ),
     },
@@ -158,9 +219,39 @@ export default function AccountsPage() {
         <Space>
           <Button 
             type="link" 
+            onClick={() => {
+              setCurrentAccount(record);
+              setIsDetailModalOpen(true);
+            }}
+          >
+            详情
+          </Button>
+          <Button 
+            type="link" 
             onClick={() => handleStatusChange(record.id, record.status === 1 ? 0 : 1)}
           >
-            {record.status === 1 ? '禁用' : '启用'}
+            {record.status === 1 ? '登录' : '下线'}
+          </Button>
+          <Button 
+            type="link" 
+            onClick={() => handleStatisticsUpdate(record)}
+          >
+            更新统计
+          </Button>
+          <Button 
+            type="link" 
+            danger
+            onClick={() => {
+              Modal.confirm({
+                title: '确认删除',
+                content: `确定要删除账号 ${record.account} 吗？`,
+                okText: '确认',
+                cancelText: '取消',
+                onOk: () => handleDelete(record.id)
+              });
+            }}
+          >
+            删除
           </Button>
         </Space>
       ),
@@ -260,6 +351,55 @@ export default function AccountsPage() {
             </Button>
           </Form.Item>
         </Form>
+      </Modal>
+
+      <Modal
+        title="账户详情"
+        open={isDetailModalOpen}
+        onCancel={() => {
+          setIsDetailModalOpen(false);
+          setCurrentAccount(null);
+        }}
+        footer={null}
+        width={600}
+      >
+        {currentAccount && (
+          <Descriptions bordered column={1}>
+            <Descriptions.Item label="平台">
+              {PLATFORM_TYPES.find(p => p.value === currentAccount.type)?.label}
+            </Descriptions.Item>
+            <Descriptions.Item label="账号">{currentAccount.account}</Descriptions.Item>
+            <Descriptions.Item label="昵称">{currentAccount.nickname}</Descriptions.Item>
+            <Descriptions.Item label="用户ID">{currentAccount.uid}</Descriptions.Item>
+            <Descriptions.Item label="头像URL">
+              <a href={currentAccount.avatar} target="_blank" rel="noopener noreferrer">
+                {currentAccount.avatar}
+              </a>
+            </Descriptions.Item>
+            <Descriptions.Item label="登录Cookie">
+              <div style={{ wordBreak: 'break-all' }}>{currentAccount.loginCookie}</div>
+            </Descriptions.Item>
+            <Descriptions.Item label="粉丝数">{currentAccount.fansCount}</Descriptions.Item>
+            <Descriptions.Item label="作品数">{currentAccount.workCount}</Descriptions.Item>
+            <Descriptions.Item label="点赞数">{currentAccount.likeCount}</Descriptions.Item>
+            <Descriptions.Item label="评论数">{currentAccount.commentCount}</Descriptions.Item>
+            <Descriptions.Item label="转发数">{currentAccount.forwardCount}</Descriptions.Item>
+            <Descriptions.Item label="收藏数">{currentAccount.collectCount}</Descriptions.Item>
+            <Descriptions.Item label="阅读数">{currentAccount.readCount}</Descriptions.Item>
+            <Descriptions.Item label="收入">¥{currentAccount.income.toFixed(2)}</Descriptions.Item>
+            <Descriptions.Item label="状态">
+              <Tag color={currentAccount.status === 1 ? 'error' : 'success'}>
+                {currentAccount.status === 1 ? '失效' : '在线'}
+              </Tag>
+            </Descriptions.Item>
+            <Descriptions.Item label="创建时间">
+              {new Date(currentAccount.createTime).toLocaleString()}
+            </Descriptions.Item>
+            <Descriptions.Item label="更新时间">
+              {new Date(currentAccount.updateTime).toLocaleString()}
+            </Descriptions.Item>
+          </Descriptions>
+        )}
       </Modal>
     </div>
   );

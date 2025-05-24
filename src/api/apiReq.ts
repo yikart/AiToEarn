@@ -86,6 +86,8 @@ export interface SocialAccount {
   workCount: number;
   income: number;
   status: number;
+  createTime: string;
+  updateTime: string;
 }
 
 // 创建或更新账户
@@ -106,4 +108,25 @@ export const getAccountListApi = () => {
 // 获取账户详情
 export const getAccountDetailApi = (id: number) => {
   return sxRequest.get<SocialAccount>(`account/${id}`);
+};
+
+// 更新账户统计数据
+export interface UpdateAccountStatisticsParams {
+  id: number;
+  fansCount: number;
+  readCount: number;
+  likeCount: number;
+  collectCount: number;
+  commentCount: number;
+  income: number;
+  workCount: number;
+}
+
+export const updateAccountStatisticsApi = (data: UpdateAccountStatisticsParams) => {
+  return sxRequest.post<SocialAccount>("account/statistics/update", data);
+};
+
+// 删除账户
+export const deleteAccountApi = (id: number) => {
+  return sxRequest.post<SocialAccount>(`account/delete/${id}`);
 };
