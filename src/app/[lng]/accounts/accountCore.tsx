@@ -8,15 +8,15 @@ import { NoSSR } from "@kwooshung/react-no-ssr";
 import AccountSidebar from "@/app/[lng]/accounts/components/AccountSidebar/AccountSidebar";
 
 export default function AccountPageCore() {
-  const { init } = useAccountStore(
+  const { accountInit } = useAccountStore(
     useShallow((state) => ({
-      init: state.init,
+      accountInit: state.accountInit,
     })),
   );
   const [activeAccountId, setActiveAccountId] = useState(-1);
 
   useEffect(() => {
-    init();
+    accountInit();
   }, []);
 
   return (

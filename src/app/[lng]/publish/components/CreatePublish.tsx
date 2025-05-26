@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { Modal, Form, Input, Button, message, DatePicker, Select } from 'antd';
-import { createPublishApi } from '@/api/publish';
-import type { PublishParams } from '@/api/publish';
-import { useAccountStore } from '@/store/account';
-import { PubType, PublishType, PubStatus } from '@/types/publish';
-import dayjs from 'dayjs';
+import { useState, useEffect } from "react";
+import { Modal, Form, Input, Button, message, DatePicker, Select } from "antd";
+import { createPublishApi } from "@/api/publish";
+import type { PublishParams } from "@/api/publish";
+import { useAccountStore } from "@/store/account";
+import { PubType, PublishType, PubStatus } from "@/types/publish";
+import dayjs from "dayjs";
 
 const { Option } = Select;
 
@@ -16,16 +16,20 @@ interface CreatePublishProps {
   onClose: () => void;
 }
 
-export default function CreatePublish({ visible, type, onClose }: CreatePublishProps) {
+export default function CreatePublish({
+  visible,
+  type,
+  onClose,
+}: CreatePublishProps) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const { accounts, fetchAccounts } = useAccountStore();
+  const { accountList, accountInit } = useAccountStore();
 
   useEffect(() => {
     if (visible) {
-      fetchAccounts();
+      accountInit();
     }
-  }, [visible, fetchAccounts]);
+  }, [visible, accountInit]);
 
   const handleSubmit = async (values: any) => {
     try {
@@ -36,23 +40,27 @@ export default function CreatePublish({ visible, type, onClose }: CreatePublishP
         desc: values.desc,
         accountId: values.accountId,
         videoPath: values.videoPath,
-        timingTime: values.timingTime ? dayjs(values.timingTime).toISOString() : undefined,
+        timingTime: values.timingTime
+          ? dayjs(values.timingTime).toISOString()
+          : undefined,
         coverPath: values.coverPath,
         commonCoverPath: values.commonCoverPath,
-        publishTime: values.publishTime ? dayjs(values.publishTime).toISOString() : undefined,
+        publishTime: values.publishTime
+          ? dayjs(values.publishTime).toISOString()
+          : undefined,
         status: values.status || PubStatus.UNPUBLISH,
       };
 
       const response = await createPublishApi(params);
       if (response?.code === 0) {
-        message.success('创建成功');
+        message.success("创建成功");
         onClose();
         form.resetFields();
       } else {
-        message.error(response?.msg || '创建失败');
+        message.error(response?.msg || "创建失败");
       }
     } catch (error) {
-      message.error('创建失败');
+      message.error("创建失败");
     } finally {
       setLoading(false);
     }
@@ -61,13 +69,13 @@ export default function CreatePublish({ visible, type, onClose }: CreatePublishP
   const getTitle = () => {
     switch (type) {
       case PubType.VIDEO:
-        return '视频';
+        return "视频";
       case PubType.ARTICLE:
-        return '文章';
+        return "文章";
       case PubType.IMAGE_TEXT:
-        return '图文';
+        return "图文";
       default:
-        return '';
+        return "";
     }
   };
 
@@ -79,18 +87,14 @@ export default function CreatePublish({ visible, type, onClose }: CreatePublishP
       footer={null}
       width={600}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handleSubmit}
-      >
+      <Form form={form} layout="vertical" onFinish={handleSubmit}>
         <Form.Item
           name="accountId"
           label="选择账户"
-          rules={[{ required: true, message: '请选择账户' }]}
+          rules={[{ required: true, message: "请选择账户" }]}
         >
           <Select placeholder="请选择账户">
-            {accounts.map(account => (
+            {accountList.map((account) => (
               <Option key={account.id} value={account.id}>
                 {account.nickname} ({account.type})
               </Option>
@@ -101,7 +105,7 @@ export default function CreatePublish({ visible, type, onClose }: CreatePublishP
         <Form.Item
           name="title"
           label="标题"
-          rules={[{ required: true, message: '请输入标题' }]}
+          rules={[{ required: true, message: "请输入标题" }]}
         >
           <Input placeholder="请输入标题" />
         </Form.Item>
@@ -109,7 +113,7 @@ export default function CreatePublish({ visible, type, onClose }: CreatePublishP
         <Form.Item
           name="desc"
           label="描述"
-          rules={[{ required: true, message: '请输入描述' }]}
+          rules={[{ required: true, message: "请输入描述" }]}
         >
           <Input.TextArea rows={4} placeholder="请输入描述" />
         </Form.Item>
@@ -119,7 +123,7 @@ export default function CreatePublish({ visible, type, onClose }: CreatePublishP
             <Form.Item
               name="videoPath"
               label="视频路径"
-              rules={[{ required: true, message: '请输入视频路径' }]}
+              rules={[{ required: true, message: "请输入视频路径" }]}
             >
               <Input placeholder="请输入视频路径" />
             </Form.Item>
@@ -127,15 +131,12 @@ export default function CreatePublish({ visible, type, onClose }: CreatePublishP
             <Form.Item
               name="coverPath"
               label="封面路径"
-              rules={[{ required: true, message: '请输入封面路径' }]}
+              rules={[{ required: true, message: "请输入封面路径" }]}
             >
               <Input placeholder="请输入封面路径" />
             </Form.Item>
 
-            <Form.Item
-              name="commonCoverPath"
-              label="通用封面路径"
-            >
+            <Form.Item name="commonCoverPath" label="通用封面路径">
               <Input placeholder="请输入通用封面路径" />
             </Form.Item>
           </>
@@ -145,7 +146,7 @@ export default function CreatePublish({ visible, type, onClose }: CreatePublishP
           <Form.Item
             name="imagePath"
             label="图片路径"
-            rules={[{ required: true, message: '请输入图片路径' }]}
+            rules={[{ required: true, message: "请输入图片路径" }]}
           >
             <Input placeholder="请输入图片路径" />
           </Form.Item>
@@ -164,25 +165,19 @@ export default function CreatePublish({ visible, type, onClose }: CreatePublishP
           </Select>
         </Form.Item>
 
-        <Form.Item
-          name="timingTime"
-          label="定时发布时间"
-        >
-          <DatePicker 
-            showTime 
+        <Form.Item name="timingTime" label="定时发布时间">
+          <DatePicker
+            showTime
             placeholder="请选择定时发布时间"
-            style={{ width: '100%' }}
+            style={{ width: "100%" }}
           />
         </Form.Item>
 
-        <Form.Item
-          name="publishTime"
-          label="发布时间"
-        >
-          <DatePicker 
-            showTime 
+        <Form.Item name="publishTime" label="发布时间">
+          <DatePicker
+            showTime
             placeholder="请选择发布时间"
-            style={{ width: '100%' }}
+            style={{ width: "100%" }}
           />
         </Form.Item>
 
@@ -194,4 +189,4 @@ export default function CreatePublish({ visible, type, onClose }: CreatePublishP
       </Form>
     </Modal>
   );
-} 
+}

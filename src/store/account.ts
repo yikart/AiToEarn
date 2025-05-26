@@ -102,7 +102,7 @@ export const useAccountStore = create(
           });
         },
 
-        async init() {
+        async accountInit() {
           if (get().accountList.length > 0) return;
           await methods.getAccountList();
         },

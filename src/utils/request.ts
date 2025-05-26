@@ -12,7 +12,7 @@ type ResponseType<T> = {
 };
 
 export const fetchService = new FetchService({
-  baseURL: API_BASE_URL,
+  baseURL: `${API_BASE_URL}/`,
   requestInterceptor(requestParams) {
     const token = useUserStore.getState().token;
 
