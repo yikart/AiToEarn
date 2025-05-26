@@ -6,7 +6,7 @@ import {
 import { IPubParams } from '../children/videoPage/videoPage';
 import { memo, useMemo } from 'react';
 import { parseTopicString } from '@/utils';
-import { AccountStatus, AccountType, XhsAccountAbnormal } from '@@/AccountEnum';
+import { AccountStatus, PlatType, XhsAccountAbnormal } from '@@/AccountEnum';
 import { Alert, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
@@ -25,7 +25,7 @@ export interface ErrPubParamsItem {
   // 参数错误提示消息
   parErrMsg?: string;
   // 发生错误的平台
-  plat?: AccountType;
+  plat?: PlatType;
 }
 
 export type ErrPubParamsMapType = Map<string | number, ErrPubParamsItem>;
@@ -84,7 +84,7 @@ export default function <T>(
         }
         // 快手要求封面必须大于 400x400
         if (
-          v.account?.type === AccountType.KWAI &&
+          v.account?.type === PlatType.KWAI &&
           v.pubParams.cover &&
           (v.pubParams.cover.width < 400 || v.pubParams.cover.height < 400)
         ) {
@@ -107,9 +107,9 @@ export default function <T>(
          * 抖音规定活动奖励 ＋ 话题不能超过5个
          */
         if (
-          v.account?.type === AccountType.Douyin &&
+          v.account?.type === PlatType.Douyin &&
           topicsAll.length +
-            v.pubParams.diffParams![AccountType.Douyin]!.activitys!.length >
+            v.pubParams.diffParams![PlatType.Douyin]!.activitys!.length >
             topicMax
         ) {
           return errParamsMapTemp.set(v.id, {
@@ -120,9 +120,9 @@ export default function <T>(
         }
         // 小红书账号异常情况处理
         if (
-          v.account?.type === AccountType.Xhs &&
+          v.account?.type === PlatType.Xhs &&
           v.account.abnormalStatus &&
-          v.account.abnormalStatus[AccountType.Xhs] ===
+          v.account.abnormalStatus[PlatType.Xhs] ===
             XhsAccountAbnormal.Abnormal
         ) {
           return errParamsMapTemp.set(v.id, {
@@ -186,7 +186,7 @@ export const PubParamsVerifyInfo = memo(
     id?: string | number;
     errParamsMap?: ErrPubParamsMapType;
     warnParamsMap?: ErrPubParamsMapType;
-    onAccountRestart: (plat?: AccountType) => void;
+    onAccountRestart: (plat?: PlatType) => void;
     style?: React.CSSProperties;
   }) => {
     const errPubParams = useMemo(() => {

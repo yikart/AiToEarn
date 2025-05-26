@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { AccountPlatInfoMap } from '../../../account/comment';
 import { DatePicker } from 'antd';
 import styles from './commonComponents.module.scss';
-import { AccountType } from '../../../../../commont/AccountEnum';
+import { PlatType } from '../../../../../commont/AccountEnum';
 
 export interface ICommonScheduledTimeSelectRef {}
 
@@ -16,7 +16,7 @@ export interface ICommonScheduledTimeSelectProps {
   onChange?:
     | ((date: dayjs.Dayjs, dateString: string | string[]) => void)
     | undefined;
-  platType?: AccountType;
+  platType?: PlatType;
   isTitle?: boolean;
 }
 
@@ -36,7 +36,7 @@ const CommonScheduledTimeSelect = memo(
     ) => {
       const getMaxTimes = useMemo(() => {
         const accountPlatInfo = AccountPlatInfoMap.get(
-          platType || AccountType.Douyin,
+          platType || PlatType.Douyin,
         )!;
         const timingMax = accountPlatInfo.commonPubParamsConfig.timingMax;
 

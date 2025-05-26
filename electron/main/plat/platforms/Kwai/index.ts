@@ -23,7 +23,7 @@ import { PublishVideoResult } from '../../module';
 import { kwaiPub } from '../../../../plat/Kwai';
 import { IRequestNetResult } from '../../../../plat/requestNet';
 import { IKwaiUserInfoResponse } from '../../../../plat/Kwai/kwai.type';
-import { AccountType } from '../../../../../commont/AccountEnum';
+import { PlatType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
 import dayjs from 'dayjs';
 import { VideoModel } from '../../../../db/models/video';
@@ -35,7 +35,7 @@ import KwaiPubListener from './KwaiPubListener';
 
 export class Kwai extends PlatformBase {
   constructor() {
-    super(AccountType.KWAI);
+    super(PlatType.KWAI);
   }
 
   /**

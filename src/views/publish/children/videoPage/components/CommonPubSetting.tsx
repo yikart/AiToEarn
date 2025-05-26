@@ -9,7 +9,7 @@ import {
   AccountPlatInfoMap,
   IAccountPlatInfo,
 } from '../../../../account/comment';
-import { AccountType } from '../../../../../../commont/AccountEnum';
+import { PlatType } from '../../../../../../commont/AccountEnum';
 import AICreateTitle from '../../../components/AICreateTitle/AICreateTitle';
 import { AiCreateType } from '../../../../../api/types/tools';
 
@@ -39,7 +39,7 @@ const CommonPubSetting = memo(
 
       // 获取选择的账户的所有相关平台
       const getChoosedAccountPlatList = useMemo(() => {
-        const platMap = new Map<AccountType, IAccountPlatInfo>();
+        const platMap = new Map<PlatType, IAccountPlatInfo>();
         videoListChoose.map((v) => {
           if (v.account) {
             platMap.set(

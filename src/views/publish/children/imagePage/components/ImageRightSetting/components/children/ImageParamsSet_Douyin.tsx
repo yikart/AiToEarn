@@ -16,7 +16,7 @@ import {
   CommonActivitySelect,
   CommonHotspotSelect,
 } from '../../../../../../components/CommonComponents/DouyinCommonComponents';
-import { AccountType } from '../../../../../../../../../commont/AccountEnum';
+import { PlatType } from '../../../../../../../../../commont/AccountEnum';
 import { ILableValue } from '../../../../../../../../../electron/db/models/workData';
 import { useImagePlatParams } from './hooks/useImagePlatParams';
 import { useImagePageStore } from '../../../../useImagePageStore';
@@ -34,11 +34,11 @@ const HotspotSelect = () => {
     <CommonHotspotSelect
       account={imageAccountItem.account}
       value={
-        imageAccountItem.pubParams!.diffParams![AccountType.Douyin]!.hotPoint
+        imageAccountItem.pubParams!.diffParams![PlatType.Douyin]!.hotPoint
       }
       onChange={(newValue) => {
         const newDiffParams = imageAccountItem.pubParams.diffParams!;
-        newDiffParams[AccountType.Douyin]!.hotPoint = newValue as ILableValue;
+        newDiffParams[PlatType.Douyin]!.hotPoint = newValue as ILableValue;
         setOnePubParams(
           {
             diffParams: newDiffParams,
@@ -66,11 +66,11 @@ const ActivitySelect = () => {
       account={imageAccountItem.account}
       maxCount={topicMax - imageAccountItem.pubParams!.topics!.length}
       value={
-        imageAccountItem.pubParams!.diffParams![AccountType.Douyin]!.activitys
+        imageAccountItem.pubParams!.diffParams![PlatType.Douyin]!.activitys
       }
       onChange={(newValue) => {
         const newDiffParams = imageAccountItem.pubParams.diffParams!;
-        newDiffParams[AccountType.Douyin]!.activitys =
+        newDiffParams[PlatType.Douyin]!.activitys =
           newValue as ILableValue[];
         setOnePubParams(
           {
@@ -100,7 +100,7 @@ const ImageParamsSet_Douyin = memo(
         <ImgTextTopicSelect
           maxCount={
             topicMax -
-            imageAccountItem.pubParams!.diffParams![AccountType.Douyin]!
+            imageAccountItem.pubParams!.diffParams![PlatType.Douyin]!
               .activitys!.length
           }
           tips="最多可添加5个话题（包含活动奖励）"

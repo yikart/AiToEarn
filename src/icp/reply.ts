@@ -1,4 +1,4 @@
-import { AccountType } from '@@/AccountEnum';
+import { PlatType } from '@@/AccountEnum';
 
 /*
  * @Author: nevin
@@ -177,7 +177,7 @@ export async function ipcGetReplyCommentRecordList(
   },
   query: {
     accountId?: number;
-    type?: AccountType;
+    type?: PlatType;
   },
 ) {
   const res: string = await window.ipcRenderer.invoke(

@@ -7,7 +7,7 @@
  */
 
 import { AccountInfo } from '@/views/account/comment';
-import { AccountStatus, AccountType } from '@@/AccountEnum';
+import { AccountStatus, PlatType } from '@@/AccountEnum';
 import { DashboardData } from '@/views/statistics/comment';
 import { AccountGroupModel } from '../../electron/db/models/accountGroup';
 
@@ -32,7 +32,7 @@ export async function ipcUpdateAccountStatus(
  * @param isSendEvent 是否发送账户更新的事件
  */
 export async function acpAccountLoginCheck(
-  pType: AccountType,
+  pType: PlatType,
   uid: string,
   isSendEvent: boolean = true,
 ) {
@@ -47,7 +47,7 @@ export async function acpAccountLoginCheck(
 // 账户登录状态检测，多个账号
 export async function acpAccountLoginCheckMulti(
   checkAccounts: {
-    pType: AccountType;
+    pType: PlatType;
     uid: string;
   }[],
 ) {
@@ -63,7 +63,7 @@ export async function acpAccountLoginCheckMulti(
  * @param pType
  * @returns
  */
-export async function accountLogin(pType: AccountType) {
+export async function accountLogin(pType: PlatType) {
   const res: AccountInfo = await window.ipcRenderer.invoke(
     'ICP_ACCOUNT_LOGIN',
     pType,
@@ -72,7 +72,7 @@ export async function accountLogin(pType: AccountType) {
 }
 
 // 获取账户信息
-export async function icpGetAccountInfo(type: AccountType, uid: string) {
+export async function icpGetAccountInfo(type: PlatType, uid: string) {
   const res: AccountInfo = await window.ipcRenderer.invoke(
     'ICP_ACCOUNT_GET_INFO',
     type,

@@ -16,7 +16,7 @@ import type { CorrectQuery } from '../../../global/table';
 import { PublishService } from '../service';
 import platController from '../../plat';
 import { AccountService } from '../../account/service';
-import { AccountType } from '../../../../commont/AccountEnum';
+import { PlatType } from '../../../../commont/AccountEnum';
 import { PubStatus } from '../../../../commont/publish/PublishEnum';
 
 @Controller()
@@ -116,7 +116,7 @@ export class VideoPubController {
     page: CorrectQuery,
     query: {
       pubRecardId?: number;
-      type?: AccountType;
+      type?: PlatType;
       time?: [string, string];
       title?: string;
     },
@@ -162,7 +162,7 @@ export class VideoPubController {
   @Icp('ICP_PUBLISH_GET_VIDEO_PUL_TYPE_COUNT')
   async getVideoPulTypeCount(
     event: Electron.IpcMainInvokeEvent,
-    type?: AccountType,
+    type?: PlatType,
   ): Promise<any> {
     const userInfo = getUserInfo();
     return await this.videoPubService.getVideoPulTypeCount(userInfo.id, type);

@@ -17,7 +17,7 @@ import { AutorWorksInteractionScheduleEvent } from '../../../commont/types/inter
 import { AutoInteractionCache } from './cacheData';
 import { getUserInfo } from '../user/comment';
 import type { CorrectQuery } from '../../global/table';
-import { AccountType } from '../../../commont/AccountEnum';
+import { PlatType } from '../../../commont/AccountEnum';
 import { taskApi } from '../api/taskApi';
 import platController from '../plat';
 
@@ -158,7 +158,7 @@ export class InteractionController {
     page: CorrectQuery,
     query: {
       accountId?: number;
-      type?: AccountType;
+      type?: PlatType;
     },
   ): Promise<any> {
     const userInfo = getUserInfo();

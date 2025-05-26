@@ -5,7 +5,7 @@
  * @LastEditors: nevin
  * @Description:
  */
-import { AccountType } from '../../../commont/AccountEnum';
+import { PlatType } from '../../../commont/AccountEnum';
 
 import { PubStatus } from '../../../commont/publish/PublishEnum';
 
@@ -17,7 +17,7 @@ interface IProperty {
 }
 
 export interface IVideoPubOtherData {
-  [AccountType.Xhs]?: {
+  [PlatType.Xhs]?: {
     // 预览需要
     xsec_token: string;
     xsec_source: string;

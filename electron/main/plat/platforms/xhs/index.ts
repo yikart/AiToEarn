@@ -24,7 +24,7 @@ import {
   xiaohongshuService,
   XSLPlatformSettingType,
 } from '../../../../plat/xiaohongshu';
-import { AccountType } from '../../../../../commont/AccountEnum';
+import { PlatType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
 import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
 import { CookieToString } from '../../../../plat/utils';
@@ -34,7 +34,7 @@ import { ImgTextModel } from '../../../../db/models/imgText';
 
 export class Xhs extends PlatformBase {
   constructor() {
-    super(AccountType.Xhs);
+    super(PlatType.Xhs);
   }
 
   /**
@@ -85,7 +85,7 @@ export class Xhs extends PlatformBase {
           nickname: userInfo.nickname,
           fansCount: userInfo.fansCount,
           abnormalStatus: {
-            [AccountType.Xhs]: userInfo.diagnosis_status,
+            [PlatType.Xhs]: userInfo.diagnosis_status,
           },
         },
       };

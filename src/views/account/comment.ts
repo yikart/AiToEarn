@@ -6,7 +6,7 @@
  * @Description: 账户
  */
 
-import { AccountType } from '../../../commont/AccountEnum';
+import { PlatType } from '../../../commont/AccountEnum';
 import { PubType } from '../../../commont/publish/PublishEnum';
 import ksSvg from '../../assets/svgs/account/ks.svg';
 import xhsSvg from '../../assets/svgs/account/xhs.svg';
@@ -57,9 +57,9 @@ export interface IAccountPlatInfo {
 // 支持所有发布
 const PubTypeAll = new Set([PubType.ARTICLE, PubType.VIDEO, PubType.ImageText]);
 // 各个平台的信息
-export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
+export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
   [
-    AccountType.KWAI,
+    PlatType.KWAI,
     {
       name: '快手',
       icon: ksSvg,
@@ -75,7 +75,7 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
     },
   ],
   [
-    AccountType.Xhs,
+    PlatType.Xhs,
     {
       name: '小红书',
       icon: xhsSvg,
@@ -96,7 +96,7 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
     },
   ],
   [
-    AccountType.Douyin,
+    PlatType.Douyin,
     {
       name: '抖音',
       icon: douyinSvg,
@@ -121,7 +121,7 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
     },
   ],
   [
-    AccountType.WxSph,
+    PlatType.WxSph,
     {
       name: '微信视频号',
       icon: wxSphSvg,

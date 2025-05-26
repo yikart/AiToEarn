@@ -11,7 +11,7 @@ import { getUserInfo } from '../user/comment';
 import platController from '../plat';
 import type { ICreateBrowserWindowParams } from './BrowserWindow/browserWindow';
 import { browserWindowController } from './BrowserWindow';
-import { AccountStatus, AccountType } from '../../../commont/AccountEnum';
+import { AccountStatus, PlatType } from '../../../commont/AccountEnum';
 import { AccountModel } from '../../db/models/account';
 import windowOperate from '../../util/windowOperate';
 import { SendChannelEnum } from '../../../commont/UtilsEnum';
@@ -47,7 +47,7 @@ export class AccountController {
   @Icp('ICP_ACCOUNT_LOGIN')
   async accountLogin(
     event: Electron.IpcMainInvokeEvent,
-    pType: AccountType,
+    pType: PlatType,
   ): Promise<any> {
     const userInfo = getUserInfo();
 
@@ -76,7 +76,7 @@ export class AccountController {
   @Icp('ICP_ACCOUNT_LOGIN_CHECK')
   async checkAccountLogin(
     event: Electron.IpcMainInvokeEvent,
-    pType: AccountType,
+    pType: PlatType,
     uid: string,
     isSendEvent: boolean = true,
   ): Promise<AccountModel | null> {
@@ -94,7 +94,7 @@ export class AccountController {
   async checkAccountLoginMulti(
     event: Electron.IpcMainInvokeEvent,
     checkAccounts: {
-      pType: AccountType;
+      pType: PlatType;
       uid: string;
     }[],
   ): Promise<(AccountModel | null)[]> {
@@ -127,7 +127,7 @@ export class AccountController {
   @Icp('ICP_ACCOUNT_GET_INFO')
   async getAccountInfo(
     event: Electron.IpcMainInvokeEvent,
-    data: { type: AccountType; uid: string },
+    data: { type: PlatType; uid: string },
   ): Promise<any> {
     const userInfo = getUserInfo();
 
@@ -185,7 +185,7 @@ export class AccountController {
   @Icp('ICP_ACCOUNT_STATISTICS')
   async getAccountStatistics(
     event: Electron.IpcMainInvokeEvent,
-    type?: AccountType,
+    type?: PlatType,
   ): Promise<any> {
     const userInfo = getUserInfo();
     return this.accountService.getAccountStatistics(userInfo.id, type);

@@ -9,7 +9,7 @@
 import { CorrectQuery, CorrectResponse } from '@/global/table';
 import { PubRecordModel } from '@/views/publish/comment';
 import { VideoPul } from '@/views/publish/children/videoPage/comment';
-import { AccountType } from '../../commont/AccountEnum';
+import { PlatType } from '../../commont/AccountEnum';
 import { PubStatus, PubType } from '../../commont/publish/PublishEnum';
 import {
   type IGetLocationDataParams,
@@ -191,7 +191,7 @@ export async function icpGetPubRecordItemList(page: CorrectQuery, id: number) {
  */
 export async function icpGetVideoPulList(
   page: CorrectQuery,
-  query: { type?: AccountType; time?: [string, string]; title?: string },
+  query: { type?: PlatType; time?: [string, string]; title?: string },
 ) {
   const res: CorrectResponse<VideoPul> = await window.ipcRenderer.invoke(
     'ICP_PUBLISH_GET_VIDEO_PUL_LIST',
@@ -211,7 +211,7 @@ export async function icpGetVideoPulInfo(id: number) {
 }
 
 // 获取不同类型的视频发布的总数
-export async function icpGetVideoPulTypeCount(type?: AccountType) {
+export async function icpGetVideoPulTypeCount(type?: PlatType) {
   const res: number = await window.ipcRenderer.invoke(
     'ICP_PUBLISH_GET_VIDEO_PUL_TYPE_COUNT',
     type,

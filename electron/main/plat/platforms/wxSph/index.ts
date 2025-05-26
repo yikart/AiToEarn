@@ -22,7 +22,7 @@ import {
 } from '../../plat.type';
 import { PublishVideoResult } from '../../module';
 import { shipinhaoService } from '../../../../plat/shipinhao';
-import { AccountType } from '../../../../../commont/AccountEnum';
+import { PlatType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
 import { CommentInfo } from '../../../../plat/shipinhao/wxShp.type';
 import { IRequestNetResult } from '../../../../plat/requestNet';
@@ -30,7 +30,7 @@ import { VideoModel } from '../../../../db/models/video';
 
 export class WxSph extends PlatformBase {
   constructor() {
-    super(AccountType.WxSph);
+    super(PlatType.WxSph);
   }
 
   /**
@@ -343,7 +343,7 @@ export class WxSph extends PlatformBase {
     callback: VideoCallbackType,
   ): Promise<PublishVideoResult> {
     return new Promise(async (resolve) => {
-      const wxSphParams = params.diffParams![AccountType.WxSph]!;
+      const wxSphParams = params.diffParams![PlatType.WxSph]!;
       const result = await shipinhaoService
         .publishVideoWorkApi(
           params.cookies!,

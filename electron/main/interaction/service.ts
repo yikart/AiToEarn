@@ -22,7 +22,7 @@ import { AutorWorksInteractionScheduleEvent } from '../../../commont/types/inter
 import { WorkData } from '../plat/plat.type';
 import { AutoInteractionCache } from './cacheData';
 import { backPageData, CorrectQuery } from '../../global/table';
-import { AccountType } from '../../../commont/AccountEnum';
+import { PlatType } from '../../../commont/AccountEnum';
 import { AccountService } from '../account/service';
 import { UserService } from '../user/service';
 // import { ReplyController } from '../reply/controller';
@@ -93,7 +93,7 @@ export class InteractionService {
     page: CorrectQuery,
     query: {
       accountId?: number;
-      type?: AccountType;
+      type?: PlatType;
     },
   ) {
     const filter: FindOptionsWhere<InteractionRecordModel> = {
