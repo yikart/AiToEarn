@@ -78,8 +78,15 @@ const LyaoutHeader = memo(
 
     useEffect(() => {
       setTimeout(() => {
-        document.body.style.paddingTop =
-          layoutHeader.current!.offsetHeight + "px";
+        let layoutHeaderHegiht = "0px";
+        layoutHeaderHegiht = layoutHeader.current!.offsetHeight + "px";
+
+        document.body.style.paddingTop = layoutHeaderHegiht;
+
+        document.documentElement.style.setProperty(
+          `--layoutHeaderHegiht`,
+          layoutHeaderHegiht,
+        );
       }, 2);
     }, []);
 

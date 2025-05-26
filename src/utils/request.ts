@@ -33,8 +33,13 @@ export async function request<T>(params: RequestParams) {
     const res = await fetchService.request(params);
     const data: ResponseType<T> = await res.json();
 
-    if (data.code === "Unauthorized") {
-      useUserStore.getState().clearLoginStatus();
+    // @ts-ignore
+    if (data.code === "1" && data.data.statusCode === 401) {
+      useUserStore.getState().logout();
+      message.error({
+        key: "NoPermission",
+        content: "登录状态过期，请重新登录",
+      });
       return null;
     }
 

@@ -27,6 +27,26 @@
   }
 }
 
+@mixin height_100vh() {
+  height: calc(100vh - var(--layoutHeaderHegiht));
+}
+
+// antd table 布局 100%
+@mixin table-flex-container-with-selectors() {
+  .ant-table-wrapper,
+  .ant-spin-nested-loading,
+  .ant-table,
+  .ant-table-container,
+  .ant-table-body,
+  .ant-spin-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+    max-height: none !important;
+  }
+}
+
 // 溢出隐藏 @param $line 行数
 @mixin omitText($line) {
   display: -webkit-box;

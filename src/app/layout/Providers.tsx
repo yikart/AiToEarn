@@ -9,6 +9,8 @@ import zh_CN from "antd/es/locale/zh_CN";
 import en_US from "antd/es/locale/en_US";
 import { fallbackLng } from "@/app/i18n/settings";
 import useCssVariables from "@/app/hooks/useCssVariables";
+import { useAccountStore } from "@/store/account";
+import { useUserStore } from "@/store/user";
 
 // antd 语言获取
 const getAntdLang = (lang: string): Locale => {
@@ -29,6 +31,10 @@ export function Providers({
   lng: string;
 }) {
   const cssVariables = useCssVariables();
+
+  if (useUserStore.getState().token) {
+    useAccountStore.getState().init();
+  }
 
   return (
     <GoogleOAuthProvider clientId="471394506793-t2g4mg90vr8qgpq5stbua0b22pofqrne.apps.googleusercontent.com">

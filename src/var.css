@@ -18,6 +18,9 @@
   --grayColor13: #242424;
   --grayColor14: #181818;
 
+  /* 头部高度 */
+  --layoutHeaderHegiht: 1px;
+
   /* 超大号字 */
   --fs-xl: 20px;
   /* 大号字 */
@@ -50,6 +53,15 @@
   --primary-color: var(--theColor5);
   /* 原先为：#D7B4F5 */
   --primary-hover: var(--theColor6);
+  --colorPrimary1: var(--theColor1);
+  --colorPrimary2: var(--theColor2);
+  --colorPrimary3: var(--theColor3);
+  --colorPrimary4: var(--theColor4);
+  --colorPrimary5: var(--theColor5);
+  --colorPrimary6: var(--theColor6);
+  --colorPrimary7: var(--theColor7);
+  --colorPrimary8: var(--theColor8);
+  --colorPrimary9: var(--theColor9);
 
   /* 其它颜色 */
   --text-color: #1f2937;
