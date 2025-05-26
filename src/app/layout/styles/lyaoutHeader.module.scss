@@ -35,7 +35,11 @@
     }
 
     .layoutHeader_wrapper-logo {
-      margin-right: 12%;
+      margin-right: 50px;
+      & > a {
+        display: flex;
+        align-items: center;
+      }
       @media (max-width: 860px) {
         //width: 100%;
         //margin-right: 0;

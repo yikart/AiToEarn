@@ -29,13 +29,13 @@
   /* 超小号字 */
   --fs-xs: 12px;
 
-  @media (min-width: 1600px) {
-    --fs-xl: 22px;
-    --fs-lg: 20px;
-    --fs-md: 18px;
-    --fs-sm: 16px;
-    --fs-xs: 14px;
-  }
+  /*@media (min-width: 1600px) {*/
+  /*  --fs-xl: 22px;*/
+  /*  --fs-lg: 20px;*/
+  /*  --fs-md: 18px;*/
+  /*  --fs-sm: 16px;*/
+  /*  --fs-xs: 14px;*/
+  /*}*/
 
   /* 主题色由浅到深 */
   --theColor1: #faf0ff;

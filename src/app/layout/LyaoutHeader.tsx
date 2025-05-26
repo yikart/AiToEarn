@@ -19,6 +19,7 @@ export interface ILyaoutHeaderProps {}
 
 function UserInfo() {
   const userInfo = useUserStore((state) => state.userInfo)!;
+  const router = useRouter();
 
   const items: MenuProps["items"] = [
     {
@@ -26,7 +27,20 @@ function UserInfo() {
       label: (
         <div
           onClick={() => {
+            router.push("/profile");
+          }}
+        >
+          个人中心
+        </div>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <div
+          onClick={() => {
             useUserStore.getState().logout();
+            router.push("/");
           }}
         >
           退出登录
@@ -70,8 +84,8 @@ const LyaoutHeader = memo(
     }, []);
 
     return (
-      <div ref={layoutHeader} className={styles["layoutHeader"]}>
-        <div className={styles["layoutHeader_wrapper"]}>
+      <div ref={layoutHeader} className={styles.layoutHeader}>
+        <div className={styles.layoutHeader_wrapper}>
           <div className={styles["layoutHeader_wrapper-left"]}>
             <h1 className={styles["layoutHeader_wrapper-logo"]}>
               <Link href="/">
