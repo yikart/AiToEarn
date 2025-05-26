@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, Table, Button, message, Modal, Form, Input, Select, InputNumber, Space, Tag, Descriptions } from "antd";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user";
+import { useAccountStore } from "@/store/account";
 import { 
   SocialAccount, 
   createOrUpdateAccountApi, 
@@ -29,33 +30,11 @@ const PLATFORM_TYPES = [
 export default function AccountsPage() {
   const router = useRouter();
   const { token } = useUserStore();
-  const [loading, setLoading] = useState(true);
-  const [accounts, setAccounts] = useState<SocialAccount[]>([]);
+  const { accounts, loading, fetchAccounts } = useAccountStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [currentAccount, setCurrentAccount] = useState<SocialAccount | null>(null);
   const [form] = Form.useForm();
-
-  // 获取账户列表
-  const fetchAccounts = async () => {
-    try {
-      const response: any = await getAccountListApi();
-      if (!response) {
-        message.error('获取账户列表失败');
-        return;
-      }
-      
-      if (response.code === 0 && response.data) {
-        setAccounts(response.data);
-      } else {
-        message.error(response.msg || '获取账户列表失败');
-      }
-    } catch (error) {
-      message.error('获取账户列表失败');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     if (!token) {
@@ -64,7 +43,7 @@ export default function AccountsPage() {
       return;
     }
     fetchAccounts();
-  }, [token, router]);
+  }, [token, router, fetchAccounts]);
 
   // 处理账户状态更新
   const handleStatusChange = async (id: number, status: number) => {

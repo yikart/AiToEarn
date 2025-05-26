@@ -24,6 +24,10 @@ export const routerData: IRouterDataItem[] = [
     name: "账户",
     path: "/accounts",
   },
+  {
+    name: "发布",
+    path: "/publish",
+  },
 ];
 
 const recursion = (
