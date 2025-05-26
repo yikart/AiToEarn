@@ -130,3 +130,14 @@ export const updateAccountStatisticsApi = (data: UpdateAccountStatisticsParams) 
 export const deleteAccountApi = (id: number) => {
   return sxRequest.post<SocialAccount>(`account/delete/${id}`);
 };
+
+// Google 登录参数
+export interface GoogleLoginParams {
+  clientId: string;
+  credential: string;
+}
+
+// Google 登录
+export const googleLoginApi = (data: GoogleLoginParams) => {
+  return sxRequest.post<LoginResponse>("account/login/google", data);
+};
