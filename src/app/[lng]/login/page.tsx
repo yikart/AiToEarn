@@ -7,7 +7,13 @@ import { GoogleLogin } from "@react-oauth/google";
 import { message, Modal, Form, Input, Button } from "antd";
 import { useRouter } from "next/navigation";
 import styles from "./login.module.css";
-import { loginWithMailApi, checkRegistStatusApi, LoginResponse } from "@/api/apiReq";
+import { 
+  loginWithMailApi, 
+  getRegistUrlApi, 
+  checkRegistStatusApi, 
+  googleLoginApi,
+  GoogleLoginParams
+} from "@/api/apiReq";
 import { useUserStore } from "@/store/user";
 
 export default function LoginPage() {
@@ -21,6 +27,8 @@ export default function LoginPage() {
   const [form] = Form.useForm();
   const [isActivating, setIsActivating] = useState(false);
   const [activationTimer, setActivationTimer] = useState<NodeJS.Timeout | null>(null);
+  const [registUrl, setRegistUrl] = useState("");
+  const [showRegistModal, setShowRegistModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,9 +112,36 @@ export default function LoginPage() {
     };
   }, [activationTimer]);
 
-  const handleGoogleSuccess = (credentialResponse: any) => {
-    console.log("Google 登录成功:", credentialResponse);
-    // TODO: 将 credential 发送到后端验证
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    console.log('credentialResponse', credentialResponse)
+
+    try {
+      const params: GoogleLoginParams = {
+        clientId: credentialResponse.clientId,
+        credential: credentialResponse.credential
+      };
+
+      const response: any = await googleLoginApi(params);
+      console.log('login response', response)
+      return
+      if (!response) {
+        message.error('Google 登录失败');
+        return;
+      }
+
+      if (response.code === 0) {
+        if (response.data.type === 'login') {
+          // 直接登录成功
+          setToken(response.data.token);
+          message.success('登录成功');
+          router.push('/');
+        }
+      } else {
+        message.error(response.msg || 'Google 登录失败');
+      }
+    } catch (error) {
+      message.error('Google 登录失败');
+    }
   };
 
   const handleGoogleError = () => {

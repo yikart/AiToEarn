@@ -64,3 +64,14 @@ export const resetPasswordApi = (data: {
 }) => {
   return sxRequest.post<LoginResponse>("user/login/repassword/mail/back", data);
 };
+
+// Google 登录参数
+export interface GoogleLoginParams {
+  clientId: string;
+  credential: string;
+}
+
+// Google 登录
+export const googleLoginApi = (data: GoogleLoginParams) => {
+  return sxRequest.post<LoginResponse>("/account/login/google", data);
+};
