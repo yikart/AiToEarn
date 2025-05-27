@@ -73,5 +73,5 @@ export interface GoogleLoginParams {
 
 // Google 登录
 export const googleLoginApi = (data: GoogleLoginParams) => {
-  return sxRequest.post<LoginResponse>("/account/login/google", data);
+  return sxRequest.get<LoginResponse>("/plat/google/auth/code", data);
 };

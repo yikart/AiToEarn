@@ -116,9 +116,10 @@ export default function LoginPage() {
     console.log('credentialResponse', credentialResponse)
 
     try {
-      const params: GoogleLoginParams = {
-        clientId: credentialResponse.clientId,
-        credential: credentialResponse.credential
+      const params: any = {
+        platform: 'google',
+        // clientId: credentialResponse.clientId,
+        // credential: credentialResponse.credential
       };
 
       const response: any = await googleLoginApi(params);
