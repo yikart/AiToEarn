@@ -118,13 +118,12 @@ export default function LoginPage() {
     try {
       const params: any = {
         platform: 'google',
-        // clientId: credentialResponse.clientId,
-        // credential: credentialResponse.credential
+        clientId: credentialResponse.clientId,
+        credential: credentialResponse.credential
       };
 
       const response: any = await googleLoginApi(params);
       console.log('login response', response)
-      return
       if (!response) {
         message.error('Google 登录失败');
         return;
@@ -134,6 +133,9 @@ export default function LoginPage() {
         if (response.data.type === 'login') {
           // 直接登录成功
           setToken(response.data.token);
+          if (response.data.userInfo) {
+            setUserInfo(response.data.userInfo);
+          }
           message.success('登录成功');
           router.push('/');
         }
