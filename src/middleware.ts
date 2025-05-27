@@ -12,6 +12,10 @@ export const config = {
 };
 
 export function middleware(req: NextRequest) {
+  if (req.nextUrl.pathname.includes(process.env.NEXT_PUBLIC_API_URL_PROXY!)) {
+    return NextResponse.next();
+  }
+
   if (
     req.nextUrl.pathname.indexOf("icon") > -1 ||
     req.nextUrl.pathname.indexOf("chrome") > -1

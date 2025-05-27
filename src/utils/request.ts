@@ -1,6 +1,5 @@
 import FetchService from "@/utils/FetchService/FetchService";
 import { RequestParams } from "@/utils/FetchService/types";
-import { API_BASE_URL } from "@/constant";
 import { useUserStore } from "@/store/user";
 import { message } from "antd";
 
@@ -12,7 +11,7 @@ type ResponseType<T> = {
 };
 
 export const fetchService = new FetchService({
-  baseURL: `${API_BASE_URL}/`,
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL_PROXY}`,
   requestInterceptor(requestParams) {
     const token = useUserStore.getState().token;
 
