@@ -33,7 +33,7 @@ export function Providers({
   const cssVariables = useCssVariables();
 
   if (useUserStore.getState().token) {
-    useAccountStore.getState().init();
+    useAccountStore.getState().accountInit();
   }
 
   return (
