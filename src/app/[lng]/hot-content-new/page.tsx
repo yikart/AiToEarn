@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Layout, Modal } from 'antd';
+import { Layout, Modal, Pagination } from 'antd';
 import dayjs from 'dayjs';
 import { PlatformRanking, RankingContent, Platform } from '@/api/hot';
 import { platformApi } from '@/api/hot';
@@ -117,6 +117,12 @@ interface ApiResponse {
 
 const { Content } = Layout;
 
+const buttonStyles = {
+  base: 'px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200',
+  primary: 'bg-[#a66ae4] text-white hover:bg-[#8f5bc4]',
+  secondary: 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+};
+
 const HotContentNew: React.FC = () => {
   // 状态管理
   const [platforms, setPlatforms] = useState<Platform[]>([]);
@@ -167,7 +173,7 @@ const HotContentNew: React.FC = () => {
   const [selectedViralPlatform, setSelectedViralPlatform] = useState<Platform | null>(null);
   const [viralTitleCategories, setViralTitleCategories] = useState<string[]>([]);
   const [selectedViralCategory, setSelectedViralCategory] = useState<string>('');
-  const [viralTitleData, setViralTitleData] = useState<ApiViralTitle[]>([]);
+  const [viralTitleData, setViralTitleData] = useState<Record<string, ApiViralTitle[]>>({});
   const [viralTitleLoading, setViralTitleLoading] = useState(false);
   const [viralTitlePagination, setViralTitlePagination] = useState<PaginationMeta>({
     currentPage: 1,
@@ -304,11 +310,14 @@ const HotContentNew: React.FC = () => {
   };
 
   // 获取专题类型
-  const fetchTopicTypes = async () => {
+  const fetchTopicTypes = async (msgType: string) => {
+    console.log('fetchTopicTypes called with msgType:', msgType); // 添加日志
     try {
-      const response = await platformApi.getTopics();
-      if (response?.data && Array.isArray(response.data)) {
+      const response = await platformApi.getTopicLabels(msgType);
+      console.log('getTopicLabels response for', msgType, ':', response); // 添加日志
+      if (response?.data) {
         setTopicTypes(response.data);
+        console.log('获取到的分类数据:', response.data);
         if (response.data.length > 0) {
           setSelectedTopicType(response.data[0]);
         }
@@ -334,64 +343,104 @@ const HotContentNew: React.FC = () => {
   };
 
   // 获取专题内容
-  const fetchTopicContents = async (page: number = 1) => {
-    if (!selectedTopicType) return;
-    
+  const fetchTopicContents = async (
+    msgType: string,
+    page: number = 1,
+    timeType: string = '',
+    platformId?: string,
+    topicType?: string,
+  ) => {
+    if (!msgType) return;
+
     setTopicLoading(true);
     try {
-      const response = await platformApi.getAllTopics({
+      // 构建查询参数
+      const params: any = {
+        msgType,
         page,
-        pageSize: 10,
-        type: selectedTopicType
-      });
+        limit: 20,
+      };
+
+      // 添加平台ID参数
+      if (platformId) {
+        params.platformId = platformId;
+      }
+
+      // 添加专题类型参数
+      if (topicType) {
+        params.type = topicType;
+      }
       
+      // 添加时间类型参数
+      if (timeType) {
+        params.timeType = timeType;
+      }
+
+      const response = await platformApi.getAllTopics(params);
       if (response?.data) {
-        const { items, meta } = response.data;
-        if (Array.isArray(items)) {
-          const formattedItems = items.map(item => ({
-            id: item._id || '',
-            title: item.title,
-            type: selectedTopicType,
-            description: item.description || null,
-            msgType: selectedMsgType,
-            category: item.category,
-            subCategory: item.subCategory || null,
-            author: item.author || '',
-            avatar: '',
-            cover: item.coverUrl || '',
-            authorId: '',
-            fans: 0,
-            topics: item.topics || [],
-            rank: item.rank,
-            shareCount: item.shareCount,
-            likeCount: item.likeCount,
-            watchingCount: item.watchingCount,
-            readCount: item.readCount,
-            publishTime: item.publishTime?.toISOString() || '',
-            url: item.url,
-            platformId: {
-              id: '',
-              name: '',
-              icon: ''
-            },
-            hotValue: 0,
-            commentCount: 0,
-            collectCount: 0
-          }));
-          setTopicContents(formattedItems);
-        }
+        const formattedItems = response.data.items.map((item: any) => ({
+          id: item._id || '',
+          title: item.title || '',
+          type: item.type || '',
+          description: item.description || null,
+          msgType: item.msgType || '',
+          category: item.category || '',
+          subCategory: item.subCategory || null,
+          author: item.author || '',
+          avatar: item.avatar || '',
+          cover: item.coverUrl || '',
+          authorId: item.authorId || '',
+          fans: item.fans || 0,
+          topics: item.topics || [],
+          rank: item.rank || 0,
+          shareCount: item.shareCount || 0,
+          likeCount: item.likeCount || 0,
+          watchingCount: item.watchingCount || null,
+          readCount: item.readCount || 0,
+          publishTime: item.publishTime || '',
+          url: item.url || '',
+          platformId: {
+            id: item.platformId?.id || '',
+            name: item.platformId?.name || '',
+            icon: item.platformId?.icon || '',
+          },
+          hotValue: item.hotValue || 0,
+          commentCount: item.commentCount || 0,
+          collectCount: item.collectCount || 0,
+        }));
+        setTopicContents(formattedItems);
+        
+        // 转换分页数据
+        const meta = response.data.meta;
         if (meta) {
           setTopicPagination({
             currentPage: meta.currentPage || 1,
-            itemsPerPage: meta.itemsPerPage || 10,
+            itemsPerPage: meta.itemsPerPage || 20,
             totalItems: meta.totalItems || 0,
             totalPages: meta.totalPages || 1,
-            itemCount: meta.itemCount || 0
+            itemCount: meta.itemCount || 0,
           });
         }
+      } else {
+        setTopicContents([]);
+        setTopicPagination({
+          currentPage: 1,
+          itemsPerPage: 20,
+          totalItems: 0,
+          totalPages: 1,
+          itemCount: 0,
+        });
       }
     } catch (error) {
       console.error('获取专题内容失败:', error);
+      setTopicContents([]);
+      setTopicPagination({
+        currentPage: 1,
+        itemsPerPage: 20,
+        totalItems: 0,
+        totalPages: 1,
+        itemCount: 0,
+      });
     } finally {
       setTopicLoading(false);
     }
@@ -413,6 +462,8 @@ const HotContentNew: React.FC = () => {
         setSelectedViralPlatform(platforms[0]);
         fetchViralTitleCategories(platforms[0].id);
         if (timeTypeData.length > 0) {
+          setTimeTypes(timeTypeData);
+          setSelectedTimeType(timeTypeData[0]);
           fetchViralTitleContents(platforms[0].id, timeTypeData[0]);
         }
       }
@@ -442,23 +493,39 @@ const HotContentNew: React.FC = () => {
     setViralTitleLoading(true);
     try {
       const response = await platformApi.findTopByPlatformAndCategories(platformId, timeType);
+      console.log('原始爆款标题数据:', response?.data); // 添加日志
       if (response?.data) {
-        const titles = response.data.flatMap(item => item.titles.map(title => ({
-          id: title._id || '',
-          title: title.title,
-          category: item.category,
-          platform: platformId,
-          timeType: timeType,
-          engagement: title.engagement || 0,
-          url: title.url || ''
-        })));
-        setViralTitleData(titles);
+        // response.data 已经是按分类分组的数据
+        // 转换为方便处理的格式
+        const categorizedTitles = response.data.reduce<Record<string, ApiViralTitle[]>>((acc, item) => {
+          if (item.category) {
+            acc[item.category] = item.titles.map(title => ({
+              id: title._id || '',
+              title: title.title,
+              category: item.category,
+              platform: platformId,
+              timeType: timeType,
+              engagement: title.engagement || 0,
+              url: title.url || ''
+            }));
+          }
+          return acc;
+        }, {});
+
+        setViralTitleData(categorizedTitles);
+
+        // 提取所有分类用于筛选按钮
+        const categories = Object.keys(categorizedTitles);
+        setViralTitleCategories(categories);
+
       } else {
-        setViralTitleData([]);
+        setViralTitleData({});
+        setViralTitleCategories([]);
       }
     } catch (error) {
       console.error('获取爆款标题内容失败:', error);
-      setViralTitleData([]);
+      setViralTitleData({});
+      setViralTitleCategories([]);
     } finally {
       setViralTitleLoading(false);
     }
@@ -562,6 +629,9 @@ const HotContentNew: React.FC = () => {
   // 处理热门专题点击
   const handleTopicExpandClick = async () => {
     const newTopicExpanded = !expandedStates.topic;
+    console.log('切换热门专题展开状态:', newTopicExpanded);
+
+    // 更新展开状态
     setExpandedStates(prev => ({
       ...prev,
       topic: newTopicExpanded,
@@ -572,12 +642,72 @@ const HotContentNew: React.FC = () => {
     }));
     setContentExpanded(false);
 
+    // 如果是展开热门专题，并且有消息类型，则加载数据
     if (newTopicExpanded && msgTypeList.length > 0) {
+      console.log('准备加载热门专题数据');
+      
+      // 如果没有选择消息类型，则自动选择第一个
       if (!selectedMsgType && msgTypeList.length > 0) {
         setSelectedMsgType(msgTypeList[0]);
       }
+
+      // 使用当前选择的消息类型或第一个消息类型
       const msgType = selectedMsgType || msgTypeList[0];
+
+      // 获取时间类型
       await fetchTopicTimeTypes(msgType);
+
+      // 获取分类数据
+      try {
+        const response = await platformApi.getTopicLabels(msgType);
+        if (response?.data) {
+          setTopicTypes(response.data);
+          console.log('获取到的分类数据:', response.data);
+        } else {
+          setTopicTypes([]);
+        }
+      } catch (error) {
+        console.error('获取专题分类失败:', error);
+        setTopicTypes([]);
+      }
+
+      // 如果没有选择平台，则使用第一个平台
+      if (!selectedPlatform?.id && platforms.length > 0) {
+        setSelectedPlatform(platforms[0]);
+      }
+
+      // 调用处理函数获取数据
+      setTopicLoading(true);
+      try {
+        // 获取专题数据 - 使用时间类型参数和当前选择的平台
+        const response = await platformApi.getAllTopics({
+          msgType: msgType,
+          platformId: selectedPlatform?.id || (platforms.length > 0 ? platforms[0].id : undefined),
+          timeType: selectedTimeType || selectedTimeType,
+        });
+
+        if (response?.data) {
+          const { items, meta } = response.data;
+          // 类型转换，确保类型兼容
+          setTopicContents(items as unknown as TopicContent[]);
+          if (meta) {
+            setTopicPagination({
+              currentPage: meta.currentPage || 1,
+              totalPages: meta.totalPages || 1,
+              totalItems: meta.totalItems || 0,
+              itemCount: meta.itemCount || 0,
+              itemsPerPage: meta.itemsPerPage || 20,
+            });
+          }
+        } else {
+          setTopicContents([]);
+        }
+      } catch (error) {
+        console.error('获取专题数据失败:', error);
+        setTopicContents([]);
+      } finally {
+        setTopicLoading(false);
+      }
     }
   };
 
@@ -631,6 +761,8 @@ const HotContentNew: React.FC = () => {
     fetchViralTitleCategories(platform.id);
     platformApi.getViralTitleTimeTypes().then(response => {
       if (response?.data && response.data.length > 0) {
+        setTimeTypes(response.data);
+        setSelectedTimeType(response.data[0]);
         fetchViralTitleContents(platform.id, response.data[0]);
       }
     });
@@ -646,6 +778,423 @@ const HotContentNew: React.FC = () => {
       hotPlatform: false,
     });
   };
+
+  // 处理筛选变化
+  const handleFilterChange = async (platformId?: string) => {
+    if (!selectedMsgType) return;
+    
+    console.log('handleFilterChange called'); // 添加日志
+    setTopicLoading(true);
+    try {
+      const currentPlatformId = platformId || selectedPlatform?.id;
+      const params: any = {
+        msgType: selectedMsgType,
+        timeType: selectedTimeType,
+        page: 1,
+        limit: 20,
+      };
+
+      if (currentPlatformId) {
+        params.platformId = currentPlatformId;
+      }
+
+      if (selectedTopicType) {
+        params.type = selectedTopicType;
+      }
+
+      console.log('Fetching topics with params:', params); // 添加日志
+      const response = await platformApi.getAllTopics(params);
+      console.log('getAllTopics response:', response); // 添加日志
+
+      if (response?.data) {
+        const formattedItems = response.data.items.map((item: any) => ({
+          id: item._id || '',
+          title: item.title || '',
+          type: item.type || '',
+          description: item.description || null,
+          msgType: item.msgType || '',
+          category: item.category || '',
+          subCategory: item.subCategory || null,
+          author: item.author || '',
+          avatar: item.avatar || '',
+          cover: item.coverUrl || '',
+          authorId: item.authorId || '',
+          fans: item.fans || 0,
+          topics: item.topics || [],
+          rank: item.rank || 0,
+          shareCount: item.shareCount || 0,
+          likeCount: item.likeCount || 0,
+          watchingCount: item.watchingCount || null,
+          readCount: item.readCount || 0,
+          publishTime: item.publishTime || '',
+          url: item.url || '',
+          platformId: {
+            id: item.platformId?.id || '',
+            name: item.platformId?.name || '',
+            icon: item.platformId?.icon || '',
+          },
+          hotValue: item.hotValue || 0,
+          commentCount: item.commentCount || 0,
+          collectCount: item.collectCount || 0,
+        }));
+        setTopicContents(formattedItems);
+        
+        // 转换分页数据
+        const meta = response.data.meta;
+        if (meta) {
+          setTopicPagination({
+            currentPage: meta.currentPage || 1,
+            itemsPerPage: meta.itemsPerPage || 20,
+            totalItems: meta.totalItems || 0,
+            totalPages: meta.totalPages || 1,
+            itemCount: meta.itemCount || 0,
+          });
+        }
+      } else {
+        setTopicContents([]);
+        setTopicPagination({
+          currentPage: 1,
+          itemsPerPage: 20,
+          totalItems: 0,
+          totalPages: 1,
+          itemCount: 0,
+        });
+      }
+    } catch (error) {
+      console.error('筛选专题数据失败:', error);
+      setTopicContents([]);
+      setTopicPagination({
+        currentPage: 1,
+        itemsPerPage: 20,
+        totalItems: 0,
+        totalPages: 1,
+        itemCount: 0,
+      });
+    } finally {
+      setTopicLoading(false);
+    }
+  };
+
+  // 处理时间范围变化
+  const handleTimeRangeChange = async (timeRange: string) => {
+    if (!selectedMsgType) return;
+    
+    console.log('handleTimeRangeChange called with timeRange:', timeRange); // 添加日志
+    setSelectedTimeType(timeRange);
+    setTopicLoading(true);
+    try {
+      const params: any = {
+        msgType: selectedMsgType,
+        timeType: timeRange,
+        page: 1,
+        limit: 20,
+      };
+
+      if (selectedPlatform?.id) {
+        params.platformId = selectedPlatform.id;
+      }
+
+      if (selectedTopicType) {
+        params.type = selectedTopicType;
+      }
+
+      console.log('Fetching topics with params:', params); // 添加日志
+      const response = await platformApi.getAllTopics(params);
+      console.log('getAllTopics response:', response); // 添加日志
+
+      if (response?.data) {
+        const formattedItems = response.data.items.map((item: any) => ({
+          id: item._id || '',
+          title: item.title || '',
+          type: item.type || '',
+          description: item.description || null,
+          msgType: item.msgType || '',
+          category: item.category || '',
+          subCategory: item.subCategory || null,
+          author: item.author || '',
+          avatar: item.avatar || '',
+          cover: item.coverUrl || '',
+          authorId: item.authorId || '',
+          fans: item.fans || 0,
+          topics: item.topics || [],
+          rank: item.rank || 0,
+          shareCount: item.shareCount || 0,
+          likeCount: item.likeCount || 0,
+          watchingCount: item.watchingCount || null,
+          readCount: item.readCount || 0,
+          publishTime: item.publishTime || '',
+          url: item.url || '',
+          platformId: {
+            id: item.platformId?.id || '',
+            name: item.platformId?.name || '',
+            icon: item.platformId?.icon || '',
+          },
+          hotValue: item.hotValue || 0,
+          commentCount: item.commentCount || 0,
+          collectCount: item.collectCount || 0,
+        }));
+        setTopicContents(formattedItems);
+        
+        // 转换分页数据
+        const meta = response.data.meta;
+        if (meta) {
+          setTopicPagination({
+            currentPage: meta.currentPage || 1,
+            itemsPerPage: meta.itemsPerPage || 20,
+            totalItems: meta.totalItems || 0,
+            totalPages: meta.totalPages || 1,
+            itemCount: meta.itemCount || 0,
+          });
+        }
+      } else {
+        setTopicContents([]);
+        setTopicPagination({
+          currentPage: 1,
+          itemsPerPage: 20,
+          totalItems: 0,
+          totalPages: 1,
+          itemCount: 0,
+        });
+      }
+    } catch (error) {
+      console.error('筛选专题数据失败:', error);
+      setTopicContents([]);
+      setTopicPagination({
+        currentPage: 1,
+        itemsPerPage: 20,
+        totalItems: 0,
+        totalPages: 1,
+        itemCount: 0,
+      });
+    } finally {
+      setTopicLoading(false);
+    }
+  };
+
+  // 处理专题分页变化
+  const handleTopicPageChange = async (page: number) => {
+    if (!selectedMsgType || page === topicPagination?.currentPage) return;
+    
+    setTopicLoading(true);
+    try {
+      const params: any = {
+        msgType: selectedMsgType,
+        timeType: selectedTimeType,
+        page,
+        limit: 20,
+      };
+
+      if (selectedPlatform?.id) {
+        params.platformId = selectedPlatform.id;
+      }
+
+      if (selectedTopicType) {
+        params.type = selectedTopicType;
+      }
+
+      const response = await platformApi.getAllTopics(params);
+      if (response?.data) {
+        const formattedItems = response.data.items.map((item: any) => ({
+          id: item._id || '',
+          title: item.title || '',
+          type: item.type || '',
+          description: item.description || null,
+          msgType: item.msgType || '',
+          category: item.category || '',
+          subCategory: item.subCategory || null,
+          author: item.author || '',
+          avatar: item.avatar || '',
+          cover: item.coverUrl || '',
+          authorId: item.authorId || '',
+          fans: item.fans || 0,
+          topics: item.topics || [],
+          rank: item.rank || 0,
+          shareCount: item.shareCount || 0,
+          likeCount: item.likeCount || 0,
+          watchingCount: item.watchingCount || null,
+          readCount: item.readCount || 0,
+          publishTime: item.publishTime || '',
+          url: item.url || '',
+          platformId: {
+            id: item.platformId?.id || '',
+            name: item.platformId?.name || '',
+            icon: item.platformId?.icon || '',
+          },
+          hotValue: item.hotValue || 0,
+          commentCount: item.commentCount || 0,
+          collectCount: item.collectCount || 0,
+        }));
+        setTopicContents(formattedItems);
+        
+        // 转换分页数据
+        const meta = response.data.meta;
+        if (meta) {
+          setTopicPagination({
+            currentPage: meta.currentPage || 1,
+            itemsPerPage: meta.itemsPerPage || 20,
+            totalItems: meta.totalItems || 0,
+            totalPages: meta.totalPages || 1,
+            itemCount: meta.itemCount || 0,
+          });
+        }
+        
+        // 滚动到顶部
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth',
+        });
+      }
+    } catch (error) {
+      console.error('获取专题数据失败:', error);
+      setTopicContents([]);
+      setTopicPagination({
+        currentPage: 1,
+        itemsPerPage: 20,
+        totalItems: 0,
+        totalPages: 1,
+        itemCount: 0,
+      });
+    } finally {
+      setTopicLoading(false);
+    }
+  };
+
+  // 处理爆款标题分类选择
+  const handleViralTitleCategorySelect = async (category: string) => {
+    if (!selectedViralPlatform) return;
+
+    setViralTitleLoading(true);
+    try {
+      // 调用获取某个平台某个分类全部标题的API
+      const response = await platformApi.findByPlatformAndCategory(
+        selectedViralPlatform.id,
+        { category: category }
+      );
+
+      if (response?.data && Array.isArray(response.data.items)) {
+        // 更新状态，显示该分类的全部数据
+        setViralTitleData(prevData => ({
+          ...prevData,
+          [category]: response.data.items.map((title: any) => ({
+            id: title._id || '',
+            title: title.title,
+            category: title.category,
+            platform: selectedViralPlatform.id,
+            timeType: selectedTimeType,
+            engagement: title.engagement || 0,
+            url: title.url || ''
+          }))
+        }));
+      } else {
+        // 如果没有数据，清空该分类的数据
+        setViralTitleData(prevData => ({
+          ...prevData,
+          [category]: []
+        }));
+      }
+      // 设置当前选中的分类
+      setSelectedViralCategory(category);
+    } catch (error) {
+      console.error(`获取分类 ${category} 爆款标题详情失败:`, error);
+      // 出错时也清空该分类的数据
+      setViralTitleData(prevData => ({
+        ...prevData,
+        [category]: []
+      }));
+      setSelectedViralCategory(category);
+    } finally {
+      setViralTitleLoading(false);
+    }
+  };
+
+  // 处理查看更多点击
+  const handleViewMoreClick = async (category: string) => {
+    if (!selectedViralPlatform) return;
+
+    setViralTitleLoading(true);
+    try {
+      // 调用获取某个平台某个分类全部标题的API
+      const response = await platformApi.findByPlatformAndCategory(
+        selectedViralPlatform.id,
+        { category: category }
+      );
+
+      if (response?.data && Array.isArray(response.data.items)) {
+        // 更新状态，显示该分类的全部数据
+        // 将获取到的该分类的全部数据覆盖viralTitleData中该分类的数据
+        setViralTitleData(prevData => ({
+          ...prevData,
+          [category]: response.data.items.map((title: any) => ({
+            id: title._id || '',
+            title: title.title,
+            category: title.category,
+            platform: selectedViralPlatform.id,
+            timeType: selectedTimeType,
+            engagement: title.engagement || 0,
+            url: title.url || ''
+          }))
+        }));
+        // 设置当前选中的分类，触发详情视图的渲染
+        setSelectedViralCategory(category);
+      } else {
+        // 如果没有数据，清空该分类的数据并切换到该分类视图
+        setViralTitleData(prevData => ({
+          ...prevData,
+          [category]: []
+        }));
+        setSelectedViralCategory(category);
+      }
+    } catch (error) {
+      console.error(`获取分类 ${category} 爆款标题详情失败:`, error);
+      // 出错时也尝试切换到该分类视图，但数据可能为空或旧数据
+      setViralTitleData(prevData => ({
+          ...prevData,
+          [category]: []
+        }));
+      setSelectedViralCategory(category);
+    } finally {
+      setViralTitleLoading(false);
+    }
+  };
+
+  // 添加消息类型点击处理函数
+  const handleMsgTypeClick = async (type: string) => {
+    setSelectedMsgType(type);
+    setTopicLoading(true);
+    setContentExpanded(false);
+    setSelectedTopicType('');
+
+    try {
+      // 获取该分类的时间类型
+      await fetchTopicTimeTypes(type);
+
+      // 获取专题数据 - 传递当前的筛选条件
+      await fetchTopicContents(
+        type, // msgType
+        1, // page
+        selectedTimeType, // timeType
+        selectedPlatform?.id, // platformId
+        '' // topicType，因为切换msgType时清空了专题类型
+      );
+
+    } catch (error) {
+      console.error('获取专题数据失败:', error);
+      setTopicContents([]);
+    } finally {
+      setTopicLoading(false);
+    }
+  };
+
+  // 分页组件类型定义
+  interface PaginationProps {
+    current: number;
+    total: number;
+    pageSize: number;
+    showSizeChanger?: boolean;
+    showQuickJumper?: boolean;
+    showTotal?: (total: number) => string;
+    onChange?: (page: number) => void;
+  }
 
   return (
     <div className="hot-content-layout" style={{ display: 'flex', flexDirection: 'row' }}>
@@ -672,11 +1221,9 @@ const HotContentNew: React.FC = () => {
         onTalkExpand={() => handleMenuExpandToggle('talk')}
         onHotPlatformExpand={() => handleMenuExpandToggle('hotPlatform')}
         onViralPlatformSelect={handleViralPlatformSelect}
-        onMsgTypeClick={(type) => {
-          setSelectedMsgType(type);
-          fetchTopicTimeTypes(type);
-        }}
+        onMsgTypeClick={handleMsgTypeClick}
         onHotContentClick={handleResetExpandedStates}
+        onViralTitleCategorySelect={handleViralTitleCategorySelect}
         getImageUrl={getImageUrl}
       />
       <div className="main-content">
@@ -702,6 +1249,396 @@ const HotContentNew: React.FC = () => {
             getImageUrl={getImageUrl}
             formatNumber={formatNumber}
           />
+        ) : expandedStates.viralTitle ? (
+          <div className="viral-title-container">
+            {/* 顶部筛选区 */}
+            <div className="viral-title-filter">
+              
+
+              {/* 分类筛选 */}
+              <div className="filter-section">
+                <span className="filter-label">分类:</span>
+                <div className="filter-buttons">
+                  <button
+                    className={`filter-button ${selectedViralCategory === '' ? 'active' : ''}`}
+                    onClick={() => {
+                      if (selectedViralPlatform) {
+                        // 点击"全部"时重新获取所有分类的数据
+                        fetchViralTitleContents(selectedViralPlatform.id, selectedTimeType);
+                        setSelectedViralCategory('');
+                      }
+                    }}
+                  >
+                    全部
+                  </button>
+                  {viralTitleCategories.map((category) => (
+                    <button
+                      key={category}
+                      className={`filter-button ${selectedViralCategory === category ? 'active' : ''}`}
+                      onClick={() => handleViralTitleCategorySelect(category)}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 时间筛选 */}
+              <div className="filter-section">
+                <span className="filter-label">时间范围:</span>
+                <div className="filter-buttons">
+                  {timeTypes.map((timeRange) => (
+                    <button
+                      key={timeRange}
+                      className={`filter-button ${selectedTimeType === timeRange ? 'active' : ''}`}
+                      onClick={() => handleTimeRangeChange(timeRange)}
+                    >
+                      {timeRange}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* 爆款标题内容 */}
+            <div className="viral-title-content">
+              {viralTitleLoading ? (
+                <div className="loading-state">
+                  <span>加载中...</span>
+                </div>
+              ) : Object.keys(viralTitleData).length > 0 ? (
+                // 根据选中的分类显示不同视图
+                selectedViralCategory === '' ? (
+                  // 显示所有分类
+                  Object.keys(viralTitleData).map(category => (
+                    <div key={category} className="category-section">
+                      <h3 className="category-title">{category} </h3>
+                      <div className="viral-title-list">
+                        {viralTitleData[category].slice(0,5).map((title, index) => (
+                          <div
+                            key={title.id || index}
+                            className="viral-title-list-item"
+                            onClick={() => title.url && handleContentClick(title.url, title.title)}
+                          >
+                            <span className={`list-item-rank ${index < 3 ? 'top' : ''}`}>
+                              {index + 1}
+                            </span>
+                            <div className="list-item-details">
+                              <div className="list-item-title">{title.title}</div>
+                              <span className="list-item-engagement">
+                                互动量: {formatNumber(title.engagement)}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      {/* 查看更多按钮 */}
+                      <div className="view-more-button">
+                        <button
+                          className="view-more-btn"
+                          onClick={() => handleViewMoreClick(category)}
+                        >
+                          查看更多
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  // 显示单个分类的全部数据
+                  <div className="category-section">
+                     <h3 className="category-title">{selectedViralCategory}</h3>
+                      <div className="viral-title-list">
+                        {viralTitleData[selectedViralCategory]?.map((title, index) => (
+                          <div
+                            key={title.id || index}
+                            className="viral-title-list-item"
+                            onClick={() => title.url && handleContentClick(title.url, title.title)}
+                          >
+                            <span className={`list-item-rank ${index < 3 ? 'top' : ''}`}>
+                              {index + 1}
+                            </span>
+                            <div className="list-item-details">
+                               <span className="list-item-category">{title.category}</span>
+                               <div className="list-item-title">{title.title}</div>
+                               <span className="list-item-engagement">
+                                 互动量: {formatNumber(title.engagement)}
+                               </span>
+                             </div>
+                          </div>
+                        ))}
+                      </div>
+                  </div>
+                )
+              ) : (
+                <div className="empty-state">
+                  <div className="empty-state-icon">📝</div>
+                  <div>暂无爆款标题数据</div>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : expandedStates.topic ? (
+          <div className="topic-container">
+            {/* 顶部筛选区 */}
+            <div className="topic-filter-container">
+              {/* 平台筛选 */}
+              <div className="topic-filter-options">
+                <div className="topic-filter-group">
+                  {platforms.map((platform) => (
+                    <button
+                      key={platform.id}
+                      className={`topic-filter-button ${
+                        selectedPlatform?.id === platform.id ? 'active' : ''
+                      }`}
+                      onClick={() => {
+                        const platformId = platform.id;
+                        setSelectedPlatform(platform);
+                        handleFilterChange(platformId);
+                      }}
+                    >
+                      <div className="flex items-center space-x-2">
+                        {platform.icon && !imgErrors[`platform-${platform.id}`] ? (
+                          <img
+                            src={getImageUrl(platform.icon)}
+                            alt={platform.name}
+                            className="w-4 h-4"
+                            onError={() => handleImageError(`platform-${platform.id}`)}
+                          />
+                        ) : (
+                          <div className="flex items-center justify-center w-4 h-4 bg-gray-200 rounded">
+                            <span className="text-xs text-gray-500">
+                              {platform.name?.charAt(0)?.toUpperCase() || '?'}
+                            </span>
+                          </div>
+                        )}
+                        <span>{platform.name}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                {/* 时间筛选 */}
+                <div className="topic-filter-section">
+                  <span className="topic-filter-label">时间范围:</span>
+                  <div className="topic-filter-buttons">
+                    {timeTypes.map((timeRange) => (
+                      <button
+                        key={timeRange}
+                        className={`topic-filter-button ${selectedTimeType === timeRange ? 'active' : ''}`}
+                        onClick={() => handleTimeRangeChange(timeRange)}
+                      >
+                        {timeRange}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 分类筛选 */}
+                {selectedMsgType === 'aigc' && topicTypes.length > 1 && (
+                  <div className="topic-filter-section">
+                    <span className="topic-filter-label">分类:</span>
+                    <div className="topic-filter-buttons">
+                      {topicTypes.map((type) => (
+                        <button
+                          key={type}
+                          className={`topic-filter-button ${selectedTopicType === type ? 'active' : ''}`}
+                          onClick={() => {
+                            setSelectedTopicType(type === selectedTopicType ? '' : type);
+                            handleFilterChange();
+                          }}
+                        >
+                          {type}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 专题内容列表 */}
+            <div className="topic-list-container">
+              {topicLoading ? (
+                <div className="topic-loading-state">
+                  <span className="topic-loading-text">加载中...</span>
+                </div>
+              ) : topicContents.length > 0 ? (
+                <>
+                  {/* 表头 */}
+                  <div className="topic-list-header">
+                    <div className="topic-header-col topic-header-col.rank-col">排名</div>
+                    <div className="topic-header-col topic-header-col.cover-col">封面</div>
+                    <div className="topic-header-col topic-header-col.info-col">标题/作者</div>
+                    <div className="topic-header-col topic-header-col.category-col">分类</div>
+                    <div className="topic-header-col topic-header-col.stats-col">点赞</div>
+                    <div className="topic-header-col topic-header-col.stats-col">分享</div>
+                    <div className="topic-header-col topic-header-col.stats-col">评论数</div>
+                    <div className="topic-header-col topic-header-col.stats-col">收藏数</div>
+                  </div>
+
+                  {/* 内容列表 */}
+                  {topicContents.map((item, index) => (
+                    <div
+                      key={item.id}
+                      className="topic-list-item"
+                      onClick={() => handleContentClick(item.url, item.title)}
+                    >
+                      {/* 排名 */}
+                      <div className="topic-item-col topic-item-col.rank-col">
+                        {((topicPagination?.currentPage || 1) - 1) *
+                          (topicPagination?.itemsPerPage || 20) +
+                          index +
+                          1}
+                      </div>
+
+                      {/* 封面 */}
+                      <div className="topic-item-col topic-item-col.cover-col">
+                        <div className="topic-item-cover-wrapper">
+                          {item.cover && !imgErrors[item.id as string] ? (
+                            <img
+                              src={getImageUrl(item.cover)}
+                              alt={item.title}
+                              className="topic-item-cover-image"
+                              onError={() =>
+                                handleImageError(item.id as string)
+                              }
+                            />
+                          ) : (
+                            <div className="topic-item-cover-placeholder">
+                              暂无图片
+                            </div>
+                          )}
+                          {item.type === 'video' && (
+                            <div className="topic-item-cover-video-tag">
+                              视频
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* 标题和作者信息 */}
+                      <div className="topic-item-col topic-item-col.info-col">
+                        <h3 className="topic-item-title">
+                          {item.title}
+                        </h3>
+                        <div className="topic-item-author-info">
+                          <div className="topic-author-details">
+                            {item.avatar &&
+                            !imgErrors[`avatar-${item.id}`] ? (
+                              <img
+                                src={getImageUrl(item.avatar)}
+                                alt={item.author}
+                                className="topic-author-avatar"
+                                onError={() =>
+                                  handleImageError(`avatar-${item.id}`)
+                                }
+                              />
+                            ) : (
+                              <div className="topic-author-avatar-placeholder">
+                                <span className="text-xs text-gray-500">
+                                  {item.author?.charAt(0)?.toUpperCase() ||
+                                    '?'}
+                                </span>
+                              </div>
+                            )}
+                            <span className="topic-author-name">
+                              {item.author}
+                            </span>
+                            {item.fans > 0 && (
+                              <span className="topic-author-fans">
+                                {item.fans >= 10000
+                                  ? `${(item.fans / 10000).toFixed(1)}万粉丝`
+                                  : `${item.fans}粉丝`}
+                              </span>
+                            )}
+                            <span className="topic-publish-time">
+                              发布于{' '}
+                              {dayjs(item.publishTime).format(
+                                'YYYY-MM-DD HH:mm',
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 分类信息 */}
+                      <div className="topic-item-col topic-item-col.category-col">
+                        <div className="topic-item-category">{item.category}</div>
+                        {item.subCategory && (
+                          <div className="topic-item-subcategory">
+                            {item.subCategory}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* 点赞数 */}
+                      <div className="topic-item-col topic-item-col.stats-col">
+                        <div className="topic-stat-value">
+                          {item.likeCount >= 10000
+                            ? `${(item.likeCount / 10000).toFixed(1)}w`
+                            : item.likeCount}
+                        </div>
+                        <div className="topic-stat-label">点赞</div>
+                      </div>
+
+                      {/* 分享数 */}
+                      <div className="topic-item-col topic-item-col.stats-col">
+                        <div className="topic-stat-value">
+                          {item.shareCount >= 10000
+                            ? `${(item.shareCount / 10000).toFixed(1)}w`
+                            : item.shareCount}
+                        </div>
+                        <div className="topic-stat-label">分享</div>
+                      </div>
+
+                      {/* 评论数 */}
+                      <div className="topic-item-col topic-item-col.stats-col">
+                        <div className="topic-stat-value">
+                          {item.commentCount
+                            ? item.commentCount >= 10000
+                              ? `${(item.commentCount / 10000).toFixed(1)}w`
+                              : item.commentCount
+                            : '-'}
+                        </div>
+                        <div className="topic-stat-label">{'评论数'}</div>
+                      </div>
+
+                      {/* 收藏数 */}
+                      <div className="topic-item-col topic-item-col.stats-col">
+                        <div className="topic-stat-value">
+                          {item.collectCount
+                            ? item.collectCount >= 10000
+                              ? `${(item.collectCount / 10000).toFixed(1)}w`
+                              : item.collectCount
+                            : '-'}
+                        </div>
+                        <div className="topic-stat-label">{'收藏数'}</div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* 分页组件 */}
+                  {topicPagination && topicPagination.totalPages > 1 && (
+                    <div className="topic-pagination-container">
+                      <Pagination
+                        current={topicPagination.currentPage}
+                        total={topicPagination.totalItems}
+                        pageSize={topicPagination.itemsPerPage}
+                        showSizeChanger={false}
+                        showQuickJumper
+                        showTotal={(total) => `共 ${total} 条`}
+                        onChange={handleTopicPageChange}
+                      />
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="topic-empty-state">
+                  暂无专题数据
+                </div>
+              )}
+            </div>
+          </div>
         ) : (
           <div className="hot-events-container">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
