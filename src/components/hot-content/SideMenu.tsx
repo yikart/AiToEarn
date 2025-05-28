@@ -29,6 +29,7 @@ interface SideMenuProps {
   onMsgTypeClick: (type: string) => void;
   getImageUrl: (path: string) => string;
   onHotContentClick: () => void;
+  onViralTitleCategorySelect: (category: string) => void;
 }
 
 const SideMenu: React.FC<SideMenuProps> = ({
@@ -57,6 +58,7 @@ const SideMenu: React.FC<SideMenuProps> = ({
   onMsgTypeClick,
   getImageUrl,
   onHotContentClick,
+  onViralTitleCategorySelect,
 }) => {
   return (
     <div className="side-menu">
