@@ -28,6 +28,7 @@ interface SideMenuProps {
   onViralPlatformSelect: (platform: Platform, timeType: string) => void;
   onMsgTypeClick: (type: string) => void;
   getImageUrl: (path: string) => string;
+  onHotContentClick: () => void;
 }
 
 const SideMenu: React.FC<SideMenuProps> = ({
@@ -55,12 +56,13 @@ const SideMenu: React.FC<SideMenuProps> = ({
   onViralPlatformSelect,
   onMsgTypeClick,
   getImageUrl,
+  onHotContentClick,
 }) => {
   return (
     <div className="side-menu">
       {/* 热门内容 */}
       <div className="menu-section">
-        <div className="menu-header" onClick={onContentExpand}>
+        <div className="menu-header" onClick={() => { onContentExpand(); onHotContentClick(); }}>
           <span className="menu-title">热门内容</span>
           {contentExpanded ? <DownOutlined /> : <RightOutlined />}
         </div>

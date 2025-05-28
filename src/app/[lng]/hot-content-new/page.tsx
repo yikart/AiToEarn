@@ -522,10 +522,20 @@ const HotContentNew: React.FC = () => {
 
   // 处理左侧菜单展开/收起
   const handleMenuExpandToggle = (section: keyof typeof expandedStates) => {
-    setExpandedStates(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
+    setExpandedStates(prev => {
+      const newState = { ...prev };
+      // 如果点击的是当前已经展开的项，则收起
+      if (newState[section]) {
+        newState[section] = false;
+      } else {
+        // 展开点击的项，同时收起其他所有项
+        Object.keys(newState).forEach(key => {
+          (newState as any)[key] = key === section;
+        });
+      }
+      return newState;
+    });
+    // setContentExpanded(false); // 移除这行，让expandedStates控制主内容显示
   };
 
   // 处理右侧内容区域展开/收起
@@ -626,6 +636,17 @@ const HotContentNew: React.FC = () => {
     });
   };
 
+  // 重置所有展开状态
+  const handleResetExpandedStates = () => {
+    setExpandedStates({
+      topic: false,
+      hotEvent: false,
+      viralTitle: false,
+      talk: false,
+      hotPlatform: false,
+    });
+  };
+
   return (
     <div className="hot-content-layout" style={{ display: 'flex', flexDirection: 'row' }}>
       <SideMenu
@@ -655,10 +676,11 @@ const HotContentNew: React.FC = () => {
           setSelectedMsgType(type);
           fetchTopicTimeTypes(type);
         }}
+        onHotContentClick={handleResetExpandedStates}
         getImageUrl={getImageUrl}
       />
       <div className="main-content">
-        {!expandedStates.hotEvent ? (
+        {!expandedStates.topic && !expandedStates.hotEvent && !expandedStates.viralTitle && !expandedStates.talk && !expandedStates.hotPlatform ? (
           <HotContent
             rankingList={rankingList}
             selectedRanking={selectedRanking}
