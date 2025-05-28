@@ -13,17 +13,27 @@ type ResponseType<T> = {
 
 class RequestClient {
   fetchService: FetchService<Response>
+  isLogin: boolean;
 
-  constructor(baseURL: string) {
+  /**
+   * @param baseURL
+   * @param isLogin 是否需要token,以及是否需要检测返回值的过期状态
+   */
+  constructor(baseURL: string, isLogin: boolean = false) {
+    this.isLogin = isLogin;
+
     this.fetchService = new FetchService({
       baseURL,
       requestInterceptor(requestParams) {
-        const token = useUserStore.getState().token;
 
-        requestParams.headers = {
-          ...(requestParams["headers"] || {}),
-          Authorization: token ? `Bearer ${token}` : "",
-        };
+        if (isLogin) {
+          const token = useUserStore.getState().token;
+
+          requestParams.headers = {
+            ...(requestParams["headers"] || {}),
+            Authorization: token ? `Bearer ${token}` : "",
+          };
+        }
 
         return requestParams;
       },
@@ -39,7 +49,7 @@ class RequestClient {
       const data: ResponseType<T> = await res.json();
 
       // @ts-ignore
-      if (data.code === "1" && data.data.statusCode === 401) {
+      if (this.isLogin && data.code === "1" && data.data.statusCode === 401) {
         useUserStore.getState().logout();
         message.error({
           key: "NoPermission",
@@ -66,7 +76,7 @@ class RequestClient {
 }
 
 // 基础API
-const requestBase = new RequestClient(`${process.env.NEXT_PUBLIC_API_URL_PROXY}`);
+const requestBase = new RequestClient(`${process.env.NEXT_PUBLIC_API_URL_PROXY}`, true);
 // 热点
 export const requestHot = new RequestClient(APP_HOT_URL);
 
