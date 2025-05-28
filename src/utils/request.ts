@@ -2,7 +2,6 @@ import FetchService from "@/utils/FetchService/FetchService";
 import { RequestParams } from "@/utils/FetchService/types";
 import { useUserStore } from "@/store/user";
 import { message } from "antd";
-import {APP_HOT_URL} from "@/constant";
 
 type ResponseType<T> = {
   code: string | number;
@@ -11,77 +10,52 @@ type ResponseType<T> = {
   url: string;
 };
 
-class RequestClient {
-  fetchService: FetchService<Response>
-  isLogin: boolean;
+const fetchService = new FetchService({
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL_PROXY}`,
+  requestInterceptor(requestParams) {
+    const token = useUserStore.getState().token;
 
-  /**
-   * @param baseURL
-   * @param isLogin 是否需要token,以及是否需要检测返回值的过期状态
-   */
-  constructor(baseURL: string, isLogin: boolean = false) {
-    this.isLogin = isLogin;
+    requestParams.headers = {
+      ...(requestParams["headers"] || {}),
+      Authorization: token ? `Bearer ${token}` : "",
+    };
 
-    this.fetchService = new FetchService({
-      baseURL,
-      requestInterceptor(requestParams) {
-
-        if (isLogin) {
-          const token = useUserStore.getState().token;
-
-          requestParams.headers = {
-            ...(requestParams["headers"] || {}),
-            Authorization: token ? `Bearer ${token}` : "",
-          };
-        }
-
-        return requestParams;
-      },
-      responseInterceptor(response) {
-        return response;
-      },
-    });
-  }
-
-  async request<T>(params: RequestParams) {
-    try {
-      const res = await this.fetchService.request(params);
-      const data: ResponseType<T> = await res.json();
-
-      // @ts-ignore
-      if (this.isLogin && data.code === "1" && data.data.statusCode === 401) {
-        useUserStore.getState().logout();
-        message.error({
-          key: "NoPermission",
-          content: "登录状态过期，请重新登录",
-        });
-        return null;
-      }
-
-      if (data.code !== 0) {
-        if (typeof window !== "undefined")
-          message.warning({
-            content: data.msg || "网络繁忙，请稍后重试！",
-            key: "apiErrorMessage",
-          });
-        return null;
-      }
-
-      return data;
-    } catch (e) {
-      console.warn(e);
-      return null;
-    }
-  }
-}
-
-// 基础API
-const requestBase = new RequestClient(`${process.env.NEXT_PUBLIC_API_URL_PROXY}`, true);
-// 热点
-export const requestHot = new RequestClient(APP_HOT_URL);
+    return requestParams;
+  },
+  responseInterceptor(response) {
+    return response;
+  },
+});
 
 export async function request<T>(params: RequestParams) {
-  return requestBase.request(params);
+  try {
+    const res = await fetchService.request(params);
+    const data: ResponseType<T> = await res.json();
+
+    // @ts-ignore
+    if (data.code === "1" && data.data.statusCode === 401) {
+      useUserStore.getState().logout();
+      message.error({
+        key: "NoPermission",
+        content: "登录状态过期，请重新登录",
+      });
+      return null;
+    }
+
+    if (data.code !== 0) {
+      if (typeof window !== "undefined")
+        message.warning({
+          content: data.msg || "网络繁忙，请稍后重试！",
+          key: "apiErrorMessage",
+        });
+      return null;
+    }
+
+    return data;
+  } catch (e) {
+    console.warn(e);
+    return null;
+  }
 }
 
 export default {

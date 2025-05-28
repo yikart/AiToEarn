@@ -3,7 +3,11 @@ const nextConfig = {
   sassOptions: {
     includePaths: ['./app', '*.scss'],
     prependData: `@import "@/app/styles/mixin.scss";`,
-  }
+  },
+  reactStrictMode: false,
+  experimental: {
+    forceSwcTransforms: true,
+  },
 };
 
 const CorsHeaders = [
@@ -38,6 +42,18 @@ nextConfig.rewrites = async () => {
       source: `${process.env.NEXT_PUBLIC_API_URL_PROXY}:path*`,
       destination: `${process.env.NEXT_PUBLIC_API_URL}:path*`,
     },
+    {
+      source: `/xhsXS/:path*`,
+      destination: `http://116.62.154.231:7879/:path*`,
+    },
+    {
+      source: `/xiaohongshu/:path*`,
+      destination: `https://edith.xiaohongshu.com/api/:path*`,
+    },
+    {
+      source: `/platapiProxy/:path*`,
+      destination: `https://platapi.yikart.cn/api/:path*`
+    }
   ];
 
   return {

@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import acceptLanguage from "accept-language";
 import { fallbackLng, languages, cookieName } from "@/app/i18n/settings";
+import { ProxyUrls } from "@/constant";
 
 acceptLanguage.languages(languages);
 
@@ -12,7 +13,7 @@ export const config = {
 };
 
 export function middleware(req: NextRequest) {
-  if (req.nextUrl.pathname.includes(process.env.NEXT_PUBLIC_API_URL_PROXY!)) {
+  if (ProxyUrls.find((v) => req.nextUrl.pathname.includes(v!))) {
     return NextResponse.next();
   }
 

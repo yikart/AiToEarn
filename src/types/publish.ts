@@ -1,7 +1,7 @@
 export enum PubType {
-  VIDEO = 'video', // 视频
-  ARTICLE = 'article', // 文章
-  IMAGE_TEXT = 'image-text', // 图文
+  VIDEO = "video", // 视频
+  ARTICLE = "article", // 文章
+  IMAGE_TEXT = "image-text", // 图文
 }
 
 export enum PubStatus {
@@ -12,4 +12,4 @@ export enum PubStatus {
 }
 
 export type PublishType = `${PubType}`;
-export type PublishStatus = `${PubStatus}`; 
+export type PublishStatus = `${PubStatus}`;

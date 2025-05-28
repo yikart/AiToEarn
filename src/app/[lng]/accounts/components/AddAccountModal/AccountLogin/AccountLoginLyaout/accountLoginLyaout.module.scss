@@ -1,0 +1,66 @@
+.accountLoginLyaout {
+  display: flex;
+  :global {
+    .accountLoginLyaout-right, .accountLoginLyaout-left {
+      height: 400px;
+      display: flex;
+      flex-direction: column;
+      width: 50%;
+    }
+    .accountLoginLyaout-left {
+      align-items: center;
+      justify-content: center;
+      &-qRCode {
+        width: 156px;
+        height: 156px;
+        padding: 10px;
+        background: var(--grayColor0);
+        position: relative;
+        img {
+          border-radius: 7px;
+          width: 100%;
+          height: 100%;
+        }
+        &-expire {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          background: rgba(255, 255, 255, 0.9);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          span {
+            font-weight: 900;
+            color: var(--error-color);
+          }
+          a {
+            margin-top: 5px;
+          }
+        }
+      }
+      &-tips {
+        margin-top: 20px;
+        color: var(--grayColor8);
+        font-size: var(--fs-md);
+      }
+    }
+    .accountLoginLyaout-right {
+      padding: 40px 50px 0;
+      border-left: 1px solid var(--grayColor2);
+      h2 {
+        font-size: var(--fs-lg);
+        text-align: center;
+        margin-bottom: 40px;
+      }
+      input {
+        height: 40px;
+      }
+      .ant-form {
+        width: 100%;
+      }
+    }
+  }
+}
