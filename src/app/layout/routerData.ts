@@ -28,6 +28,10 @@ export const routerData: IRouterDataItem[] = [
     name: "发布",
     path: "/publish",
   },
+  {
+    name: "热门内容",
+    path: "/hot-content",
+  },
 ];
 
 const recursion = (

@@ -40,7 +40,7 @@ class FetchService<T = Response> {
       }
 
       // body 参数处理
-      const fetchURL = this.baseURL + requestParams.url;
+      const fetchURL = requestParams.url.startsWith('http') ? requestParams.url : this.baseURL + requestParams.url;
       if (!requestParams.body && requestParams.data) {
         requestParams.data = this._filterDictUndefined(requestParams.data);
 

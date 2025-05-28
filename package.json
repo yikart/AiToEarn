@@ -14,6 +14,8 @@
     "i18next-resources-for-ts": "i18next-resources-for-ts interface -i ./src/app/i18n/locales/zh-CN -o ./@types/resources.d.ts"
   },
   "dependencies": {
+    "@ant-design/colors": "^7.2.1",
+    "@ant-design/icons": "^6.0.0",
     "@ant-design/nextjs-registry": "^1.0.2",
     "@kwooshung/react-no-ssr": "^1.1.4",
     "@react-oauth/google": "^0.12.2",
@@ -34,7 +36,8 @@
     "react-icons": "^5.5.0",
     "react-sortablejs": "^6.1.4",
     "sass": "^1.59.2",
-    "zustand": "^5.0.4"
+    "sortablejs": "^1.15.6",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
