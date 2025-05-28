@@ -1,5 +1,4 @@
 .hot-content-layout {
-  min-height: 100vh;
   background: #f0f2f5;
 }
 
@@ -53,7 +52,6 @@
 .hot-events-container {
   width: 100%;
   flex-grow: 1;
-  min-height: calc(100vh - 48px);
   padding: 24px;
   background: #f0f2f5;
   border-radius: 8px;
@@ -63,7 +61,6 @@
 
 .hot-events-container .grid {
   width: 100%;
-  flex-grow: 1;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 16px;
@@ -73,7 +70,7 @@
   display: flex;
   flex-direction: column;
   height: auto;
-  min-height: 400px;
+  height: 451px;
   background: white;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
@@ -163,7 +160,6 @@
   flex: 1;
   padding: 8px 16px;
   overflow-y: auto;
-  min-height: 0;
 }
 
 .hot-topic-rank {
