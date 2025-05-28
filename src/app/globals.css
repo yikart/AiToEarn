@@ -37,3 +37,14 @@ a {
   text-decoration: none;
 }
 
+
+/* 主题颜色 */
+:root {
+  --primary-color: #a66ae4;
+  --primary-hover: #9559d1;
+  --primary-light: #f4ebff;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --border-color: #e5e7eb;
+  --bg-gray: #f9fafb;
+}

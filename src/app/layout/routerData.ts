@@ -32,6 +32,11 @@ export const routerData: IRouterDataItem[] = [
     name: "热门内容",
     path: "/hot-content",
   },
+  {
+    name: "热门内容新",
+    path: "/hot-content-new",
+  },
+  
 ];
 
 const recursion = (

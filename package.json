@@ -37,6 +37,7 @@
     "react-sortablejs": "^6.1.4",
     "sass": "^1.59.2",
     "sortablejs": "^1.15.6",
+    "tailwindcss": "^4.1.7",
     "zustand": "^5.0.5"
   },
   "devDependencies": {

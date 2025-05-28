@@ -20,8 +20,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import locale from 'antd/es/date-picker/locale/zh_CN';
 import { ViralTitle as ApiViralTitle } from '@/api/types/viralTitles';
-import { Topic as ApiTopic } from '@/api/types/topic';
-import { Pagination as ApiPagination } from '@/api/types';
+
 
 // 声明全局 electron 对象
 declare global {
@@ -100,16 +99,6 @@ interface TopicContent {
   // ... 其他属性
 }
 
-interface TopicResponse {
-  items: TopicContent[];
-  meta: {
-    currentPage: number;
-    itemCount: number;
-    itemsPerPage: number;
-    totalItems: number;
-    totalPages: number;
-  };
-}
 
 // 在文件顶部添加热点事件相关的接口
 interface HotTopic {
@@ -147,10 +136,6 @@ interface ViralTitle {
   timeType: string;
 }
 
-interface ViralTitleCategory {
-  category: string;
-  titles: ViralTitle[];
-}
 
 // 在热度趋势图部分修改代码
 interface HotValueHistory {
@@ -158,9 +143,6 @@ interface HotValueHistory {
   timestamp: string;
 }
 
-interface Topic extends HotTopic {
-  // 继承 HotTopic 的所有属性
-}
 
 // 修改主题色常量
 const THEME = {

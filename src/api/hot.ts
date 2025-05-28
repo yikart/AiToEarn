@@ -146,20 +146,23 @@ export const platformApi = {
     category?: string,
     date?: string,
   ) {
-    let ctr = null;
-    if (category && category != '全部') {
-      ctr = category;
+    const params: Record<string, any> = {
+      page,
+      pageSize,
+    };
+
+    if (category && category !== '全部') {
+      params.category = category;
     }
+
+    if (date) {
+      params.date = date;
+    }
+
     return request<RankingContentsResponse>({
       url: `${APP_HOT_URL}/ranking/${rankingId}/contents`,
       method: 'GET',
-      params: {
-        page,
-        pageSize,
-        category: ctr,
-        date,
-      },
-      
+      params,
     });
   },
 

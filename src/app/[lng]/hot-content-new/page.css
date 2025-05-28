@@ -1,0 +1,49 @@
+.hot-content-layout {
+  min-height: 100vh;
+  background: #f0f2f5;
+}
+
+.main-content {
+  margin: 24px;
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* 预览弹窗样式 */
+.preview-modal .ant-modal-content {
+  padding: 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.preview-modal .ant-modal-header {
+  margin: 0;
+  padding: 16px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.preview-modal .ant-modal-body {
+  padding: 0;
+}
+
+/* 响应式布局 */
+@media screen and (max-width: 768px) {
+  .main-content {
+    margin: 12px;
+    padding: 12px;
+  }
+
+  .preview-modal {
+    width: 100% !important;
+    max-width: 100%;
+    margin: 0;
+    top: 0;
+    padding: 0;
+  }
+
+  .preview-modal .ant-modal-content {
+    border-radius: 0;
+  }
+} 
