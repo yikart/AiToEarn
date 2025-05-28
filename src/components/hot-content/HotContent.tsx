@@ -25,7 +25,24 @@ interface HotContentProps {
   onContentClick: (url: string, title: string) => void;
   onExpandToggle: () => void;
   getImageUrl: (path: string) => string;
-  formatNumber: (num: number) => string;
+  formatNumber: (num: number | null) => string;
+  anaAdd?: {
+    addCollectedCunt: number;
+    addCommentCount: number;
+    addLikeCount: number;
+    addShareCount: number;
+    addViewCount: number | null;
+    addInteractiveCount: number | null;
+    addCollectCount: number | null;
+    collectedCount: number;
+    interactiveCount: number;
+    pred_readnum: number;
+    useCollectCount: number;
+    useCommentCount: number;
+    useLikeCount: number;
+    useShareCount: number;
+    useViewCount: number | null;
+  };
 }
 
 const DataInfoContent: React.FC<{ ranking: PlatformRanking }> = ({ ranking }) => (
@@ -78,6 +95,7 @@ const HotContent: React.FC<HotContentProps> = ({
 }) => {
   return (
     <div className="hot-content">
+
       {/* 榜单选择 */}
       {rankingList.length > 1 && (
         <div className="ranking-selector">
@@ -210,10 +228,47 @@ const HotContent: React.FC<HotContentProps> = ({
               <div className="header-right">
                 <div className="category-column">作品分类</div>
                 <div className="stats-columns">
-                  <div className="stat-column">点赞</div>
-                  <div className="stat-column">评论</div>
-                  <div className="stat-column">分享</div>
-                  <div className="stat-column">收藏</div>
+                  {/* 快手增量榜单 */}
+                  {selectedRanking?.name.includes('增量') && selectedRanking?.platform?.id === 'ks' && (
+                    <>
+                      <div className="stat-column">互动增量</div>
+                      <div className="stat-column">新增播放</div>
+                      <div className="stat-column">新增分享</div>
+                      <div className="stat-column">新增评论</div>
+                    </>
+                  )}
+                  
+                  {/* 其他平台增量榜单 */}
+                  {selectedRanking?.name.includes('增量') && selectedRanking?.platform?.id !== 'ks' && (
+                    <>
+                      <div className="stat-column">互动增量</div>
+                      <div className="stat-column">新增收藏</div>
+                      <div className="stat-column">新增分享</div>
+                      <div className="stat-column">新增评论</div>
+                    </>
+                  )}
+
+                  {/* 阅读榜和低粉爆文榜 */}
+                  {(selectedRanking?.name.includes('阅读榜') || selectedRanking?.name.includes('低粉爆文榜')) && (
+                    <>
+                      <div className="stat-column">在看数</div>
+                      <div className="stat-column">阅读数</div>
+                      <div className="stat-column">点赞数</div>
+                      <div className="stat-column">转发数</div>
+                    </>
+                  )}
+
+                  {/* 默认榜单 */}
+                  {!selectedRanking?.name.includes('增量') &&
+                   !selectedRanking?.name.includes('阅读榜') &&
+                   !selectedRanking?.name.includes('低粉爆文榜') && (
+                    <>
+                      <div className="stat-column">点赞</div>
+                      <div className="stat-column">评论</div>
+                      <div className="stat-column">分享</div>
+                      <div className="stat-column">收藏</div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -268,24 +323,145 @@ const HotContent: React.FC<HotContentProps> = ({
                 <div className="content-stats">
                   <div className="category">{item.category}</div>
                   <div className="stats">
-                    <div className="stat">
-                      <span className="value">{item.stats.likeCount || '-'}</span>
-                    </div>
-                    <div className="stat">
-                      <span className="value">
-                        {item.stats.commentCount || '-'}
-                      </span>
-                    </div>
-                    <div className="stat">
-                      <span className="value">
-                        {(item as any).shareCount || '-'}
-                      </span>
-                    </div>
-                    <div className="stat">
-                      <span className="value">
-                        {(item as any).collectCount || '-'}
-                      </span>
-                    </div>
+                    {/* 快手增量榜单 */}
+                    {selectedRanking?.name.includes('增量') && selectedRanking?.platform?.id === 'ks' && (
+                      <>
+                        <div className="stat">
+                          <div className="stat-total">
+                            {item.anaAdd?.addInteractiveCount ? (
+                              <>
+                                <span className="arrow">↑</span>
+                                {formatNumber(item.anaAdd.addInteractiveCount)}
+                              </>
+                            ) : '-'}
+                          </div>
+                          <div className="stat-add">
+                            {item.anaAdd?.interactiveCount ? (
+                              <>
+                                <span className="arrow">↑</span>
+                                总{formatNumber(item.anaAdd.interactiveCount)}
+                              </>
+                            ) : '-'}
+                          </div>
+                        </div>
+                        <div className="stat">
+                          <div className="stat-total">
+                            <span className="arrow">↑</span>
+                            {item.anaAdd?.addViewCount ? formatNumber(item.anaAdd.addViewCount) : '-'}
+                          </div>
+                          <div className="stat-add">
+                            总{item.anaAdd?.useViewCount ? formatNumber(item.anaAdd.useViewCount) : '-'}
+                          </div>
+                        </div>
+                        <div className="stat">
+                          <div className="stat-total">
+                            <span className="arrow">↑</span>
+                            {item.anaAdd?.addShareCount ? formatNumber(item.anaAdd.addShareCount) : '-'}
+                          </div>
+                          <div className="stat-add">
+                            总{item.anaAdd?.useShareCount ? formatNumber(item.anaAdd.useShareCount) : '-'}
+                          </div>
+                        </div>
+                        <div className="stat">
+                          <div className="stat-total">
+                            <span className="arrow">↑</span>
+                            {item.anaAdd?.addCommentCount ? formatNumber(item.anaAdd.addCommentCount) : '-'}
+                          </div>
+                          <div className="stat-add">
+                            总{item.anaAdd?.useCommentCount ? formatNumber(item.anaAdd.useCommentCount) : '-'}
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* 其他平台增量榜单 */}
+                    {selectedRanking?.name.includes('增量') && selectedRanking?.platform?.id !== 'ks' && (
+                      <>
+                        <div className="stat">
+                          <div className="stat-total">
+                            {item.anaAdd?.addInteractiveCount ? (
+                              <>
+                                <span className="arrow">↑</span>
+                                {formatNumber(item.anaAdd.addInteractiveCount)}
+                              </>
+                            ) : '-'}
+                          </div>
+                          <div className="stat-add">
+                            {item.anaAdd?.interactiveCount ? (
+                              <>
+                                <span className="arrow">↑</span>
+                                总{formatNumber(item.anaAdd.interactiveCount)}
+                              </>
+                            ) : '-'}
+                          </div>
+                        </div>
+                        <div className="stat">
+                          <div className="stat-total">
+                            <span className="arrow">↑</span>
+                            {item.anaAdd?.addCollectedCunt ? formatNumber(item.anaAdd.addCollectedCunt) : '-'}
+                          </div>
+                          <div className="stat-add">
+                            总{item.anaAdd?.collectedCount ? formatNumber(item.anaAdd.collectedCount) : '-'}
+                          </div>
+                        </div>
+                        <div className="stat">
+                          <div className="stat-total">
+                            <span className="arrow">↑</span>
+                            {item.anaAdd?.addShareCount ? formatNumber(item.anaAdd.addShareCount) : '-'}
+                          </div>
+                          <div className="stat-add">
+                            总{item.anaAdd?.useShareCount ? formatNumber(item.anaAdd.useShareCount) : '-'}
+                          </div>
+                        </div>
+                        <div className="stat">
+                          <div className="stat-total">
+                            <span className="arrow">↑</span>
+                            {item.anaAdd?.addCommentCount ? formatNumber(item.anaAdd.addCommentCount) : '-'}
+                          </div>
+                          <div className="stat-add">
+                            总{item.anaAdd?.useCommentCount ? formatNumber(item.anaAdd.useCommentCount) : '-'}
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* 阅读榜和低粉爆文榜 */}
+                    {(selectedRanking?.name.includes('阅读榜') || selectedRanking?.name.includes('低粉爆文榜')) && (
+                      <>
+                        <div className="stat">
+                          <div className="stat-total">{item.stats.watchCount || '-'}</div>
+                        </div>
+                        <div className="stat">
+                          <div className="stat-total">{item.stats.viewCount || '-'}</div>
+                        </div>
+                        <div className="stat">
+                          <div className="stat-total">{item.stats.likeCount || '-'}</div>
+                        </div>
+                        <div className="stat">
+                          <div className="stat-total">{(item as any).shareCount || '-'}</div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* 默认榜单 */}
+                    {!selectedRanking?.name.includes('增量') &&
+                     !selectedRanking?.name.includes('阅读榜') &&
+                     !selectedRanking?.name.includes('低粉爆文榜') && (
+                      <>
+                        <div className="stat">
+                          <div className="stat-total">{item.stats.likeCount || '-'}</div>
+                        </div>
+                        <div className="stat">
+                          <div className="stat-total">{item.stats.commentCount || '-'}</div>
+                        </div>
+                        <div className="stat">
+                          <div className="stat-total">{(item as any).shareCount || '-'}</div>
+                        </div>
+                        <div className="stat">
+                          <div className="stat-total">{(item as any).collectCount || '-'}</div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>

@@ -2873,7 +2873,7 @@ const Trending: React.FC = () => {
 
                           <div className="flex items-center text-sm">
                             <div className="w-32 text-gray-500">
-                              <span>{item.category}</span>
+                              <span>{item.category} {selectedPlatform}</span> 
                               {/* <span className="ml-2">{item.type}</span> */}
                             </div>
 

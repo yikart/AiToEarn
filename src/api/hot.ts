@@ -83,28 +83,35 @@ export interface Stats {
 }
 
 export interface RankingContent {
-  _id: string;
   id: string;
-  platformId: string;
-  rankingId: string;
-  originalId: string;
   title: string;
-  type: 'article' | 'video';
-  category: string;
-  url: string;
   cover: string;
-  description: string;
-  author: Author;
-  stats: Stats;
-  status: number;
-  shareCount: number;
-  collectCount: number;
-  publishTime: string;
-  sort: number;
+  url: string;
   rankingPosition: number;
-  platform: Platform;
-  ranking: PlatformRanking;
-  anaAdd: any;
+  category: string;
+  publishTime: string;
+  author: {
+    name: string;
+    avatar: string;
+    fansCount: number;
+  };
+  stats: Stats;
+  anaAdd: {
+    addCollectedCunt: number;
+    addCommentCount: number;
+    addInteractiveCount: number;
+    addLikeCount: number;
+    addShareCount: number;
+    addViewCount: number | null;
+    collectedCount: number;
+    interactiveCount: number;
+    pred_readnum: number;
+    useCollectCount: number;
+    useCommentCount: number;
+    useLikeCount: number;
+    useShareCount: number;
+    useViewCount: number | null;
+  };
 }
 
 export interface PaginationMeta {
@@ -184,7 +191,7 @@ export const platformApi = {
     });
   },
 
-  // 获取所有热点事件
+  // 获取八大平台热点事件
   getAllHotTopics() {
     return request<{
       platform: Platform;
