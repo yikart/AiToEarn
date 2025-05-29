@@ -2,6 +2,20 @@ import React from 'react';
 import { DownOutlined, RightOutlined } from '@ant-design/icons';
 import { Platform } from '@/api/hot';
 import './SideMenu.css';
+import { useTransClient } from '@/app/i18n/client';
+
+const config = {
+  imageCDN: 'https://yika-bj.oss-cn-beijing.aliyuncs.com/',
+  apiBaseURL: 'https://ttgufwxxqyow.sealosbja.site/api',
+};
+
+// 处理图片地址
+const getImageUrl = (path: string) => {
+  if (!path) return '';
+  if (path.startsWith('http')) return path;
+  return `${config.imageCDN}${path}`;
+};
+
 
 interface SideMenuProps {
   platforms: Platform[];
@@ -27,7 +41,7 @@ interface SideMenuProps {
   onHotPlatformExpand: () => void;
   onViralPlatformSelect: (platform: Platform, timeType: string) => void;
   onMsgTypeClick: (type: string) => void;
-  getImageUrl: (path: string) => string;
+  // getImageUrl: (path: string) => string;
   onHotContentClick: () => void;
   onViralTitleCategorySelect: (category: string) => void;
 }
@@ -56,22 +70,24 @@ const SideMenu: React.FC<SideMenuProps> = ({
   onHotPlatformExpand,
   onViralPlatformSelect,
   onMsgTypeClick,
-  getImageUrl,
+  // getImageUrl,
   onHotContentClick,
   onViralTitleCategorySelect,
 }) => {
+  const { t } = useTransClient('hot-content');
+
   return (
     <div className="side-menu">
       {/* 热门内容 */}
       <div className="menu-section">
         <div className="menu-header" onClick={() => { onContentExpand(); onHotContentClick(); }}>
-          <span className="menu-title">热门内容</span>
+          <span className="menu-title">{t('hotContent')}</span>
           {contentExpanded ? <DownOutlined /> : <RightOutlined />}
         </div>
         {contentExpanded && (
           <ul className="menu-list">
             {loading ? (
-              <div className="loading">加载中...</div>
+              <div className="loading">{t('loading')}</div>
             ) : (
               platforms.map((platform) => (
                 <li
@@ -97,7 +113,7 @@ const SideMenu: React.FC<SideMenuProps> = ({
       {/* 热点事件 */}
       <div className="menu-section">
         <div className="menu-header" onClick={onHotEventExpand}>
-          <span className="menu-title">热点事件</span>
+          <span className="menu-title">{t('hotEvents')}</span>
           {hotEventExpanded ? <DownOutlined /> : <RightOutlined />}
         </div>
         {hotEventExpanded && (
@@ -106,7 +122,7 @@ const SideMenu: React.FC<SideMenuProps> = ({
               className={`menu-item ${hotPlatformExpanded ? 'active' : ''}`}
               onClick={onHotPlatformExpand}
             >
-              <span>八大平台热点</span>
+              <span>{t('hotTopics')}</span>
             </li>
           </ul>
         )}
@@ -115,13 +131,13 @@ const SideMenu: React.FC<SideMenuProps> = ({
       {/* 热门专题 */}
       <div className="menu-section">
         <div className="menu-header" onClick={onTopicExpand}>
-          <span className="menu-title">热门专题</span>
+          <span className="menu-title">{t('topics')}</span>
           {topicExpanded ? <DownOutlined /> : <RightOutlined />}
         </div>
         {topicExpanded && (
           <ul className="menu-list">
             {loading ? (
-              <div className="loading">加载中...</div>
+              <div className="loading">{t('loading')}</div>
             ) : (
               msgTypeList.map((type) => (
                 <li
@@ -140,13 +156,13 @@ const SideMenu: React.FC<SideMenuProps> = ({
       {/* 爆款标题 */}
       <div className="menu-section">
         <div className="menu-header" onClick={onViralTitleExpand}>
-          <span className="menu-title">爆款标题</span>
+          <span className="menu-title">{t('viralTitles')}</span>
           {viralTitleExpanded ? <DownOutlined /> : <RightOutlined />}
         </div>
         {viralTitleExpanded && (
           <ul className="menu-list">
             {viralTitleLoading ? (
-              <div className="loading">加载中...</div>
+              <div className="loading">{t('loading')}</div>
             ) : (
               viralTitlePlatforms.map((platform) => (
                 <li

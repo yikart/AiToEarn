@@ -9,6 +9,7 @@ import SideMenu from '@/components/hot-content/SideMenu';
 import HotContent from '@/components/hot-content/HotContent';
 import './page.css';
 import { HotTopic } from '@/api/types/hotTopic';
+import { useTransClient } from '@/app/i18n/client';
 
 // 添加必要的类型定义
 interface ResponseType<T> {
@@ -16,6 +17,7 @@ interface ResponseType<T> {
   code: number;
   message: string;
 }
+
 
 interface TopicContent {
   id: string;
@@ -124,6 +126,7 @@ const buttonStyles = {
 };
 
 const HotContentNew: React.FC = () => {
+  const { t } = useTransClient('hot-content');
   // 状态管理
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(null);
@@ -622,8 +625,11 @@ const HotContentNew: React.FC = () => {
 
   // 格式化数字
   const formatNumber = (num: number | null) => {
-    if (num === null) return '0';
-    return num >= 10000 ? `${(num / 10000).toFixed(1)}w` : num.toString();
+    if (num === null || num === undefined) return '-';
+    if (num >= 10000) {
+      return `${(num / 10000).toFixed(1)}w`;
+    }
+    return num.toLocaleString();
   };
 
   // 处理热门专题点击
@@ -1253,23 +1259,20 @@ const HotContentNew: React.FC = () => {
           <div className="viral-title-container">
             {/* 顶部筛选区 */}
             <div className="viral-title-filter">
-              
-
               {/* 分类筛选 */}
               <div className="filter-section">
-                <span className="filter-label">分类:</span>
+                <span className="filter-label">{t('category')}:</span>
                 <div className="filter-buttons">
                   <button
                     className={`filter-button ${selectedViralCategory === '' ? 'active' : ''}`}
                     onClick={() => {
                       if (selectedViralPlatform) {
-                        // 点击"全部"时重新获取所有分类的数据
                         fetchViralTitleContents(selectedViralPlatform.id, selectedTimeType);
                         setSelectedViralCategory('');
                       }
                     }}
                   >
-                    全部
+                    {t('all')}
                   </button>
                   {viralTitleCategories.map((category) => (
                     <button
@@ -1285,7 +1288,7 @@ const HotContentNew: React.FC = () => {
 
               {/* 时间筛选 */}
               <div className="filter-section">
-                <span className="filter-label">时间范围:</span>
+                <span className="filter-label">{t('timeRange')}:</span>
                 <div className="filter-buttons">
                   {timeTypes.map((timeRange) => (
                     <button
@@ -1304,15 +1307,13 @@ const HotContentNew: React.FC = () => {
             <div className="viral-title-content">
               {viralTitleLoading ? (
                 <div className="loading-state">
-                  <span>加载中...</span>
+                  <span>{t('loading')}</span>
                 </div>
               ) : Object.keys(viralTitleData).length > 0 ? (
-                // 根据选中的分类显示不同视图
                 selectedViralCategory === '' ? (
-                  // 显示所有分类
                   Object.keys(viralTitleData).map(category => (
                     <div key={category} className="category-section">
-                      <h3 className="category-title">{category} </h3>
+                      <h3 className="category-title">{category}</h3>
                       <div className="viral-title-list">
                         {viralTitleData[category].slice(0,5).map((title, index) => (
                           <div
@@ -1326,53 +1327,51 @@ const HotContentNew: React.FC = () => {
                             <div className="list-item-details">
                               <div className="list-item-title">{title.title}</div>
                               <span className="list-item-engagement">
-                                互动量: {formatNumber(title.engagement)}
+                                {t('engagement')}: {formatNumber(title.engagement)}
                               </span>
                             </div>
                           </div>
                         ))}
                       </div>
-                      {/* 查看更多按钮 */}
                       <div className="view-more-button">
                         <button
                           className="view-more-btn"
                           onClick={() => handleViewMoreClick(category)}
                         >
-                          查看更多
+                          {t('viewMore')}
                         </button>
                       </div>
                     </div>
                   ))
                 ) : (
-                  // 显示单个分类的全部数据
                   <div className="category-section">
-                     <h3 className="category-title">{selectedViralCategory}</h3>
-                      <div className="viral-title-list">
-                        {viralTitleData[selectedViralCategory]?.map((title, index) => (
-                          <div
-                            key={title.id || index}
-                            className="viral-title-list-item"
-                            onClick={() => title.url && handleContentClick(title.url, title.title)}
-                          >
-                            <span className={`list-item-rank ${index < 3 ? 'top' : ''}`}>
-                              {index + 1}
+                    <h3 className="category-title">{selectedViralCategory}</h3>
+                    <div className="viral-title-list">
+                      {viralTitleData[selectedViralCategory]?.map((title, index) => (
+                        <div
+                          key={title.id || index}
+                          className="viral-title-list-item"
+                          onClick={() => title.url && handleContentClick(title.url, title.title)}
+                        >
+                          <span className={`list-item-rank ${index < 3 ? 'top' : ''}`}>
+                            {index + 1}
+                          </span>
+                          <div className="list-item-details">
+                            <span className="list-item-category">{title.category}</span>
+                            <div className="list-item-title">{title.title}</div>
+                            <span className="list-item-engagement">
+                              {t('engagement')}: {formatNumber(title.engagement)}
                             </span>
-                            <div className="list-item-details">
-                               <span className="list-item-category">{title.category}</span>
-                               <div className="list-item-title">{title.title}</div>
-                               <span className="list-item-engagement">
-                                 互动量: {formatNumber(title.engagement)}
-                               </span>
-                             </div>
                           </div>
-                        ))}
-                      </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )
               ) : (
                 <div className="empty-state">
                   <div className="empty-state-icon">📝</div>
-                  <div>暂无爆款标题数据</div>
+                  <div>{t('noViralTitles')}</div>
                 </div>
               )}
             </div>
@@ -1419,7 +1418,7 @@ const HotContentNew: React.FC = () => {
 
                 {/* 时间筛选 */}
                 <div className="topic-filter-section">
-                  <span className="topic-filter-label">时间范围:</span>
+                  <span className="topic-filter-label">{t('timeRange')}:</span>
                   <div className="topic-filter-buttons">
                     {timeTypes.map((timeRange) => (
                       <button
@@ -1436,7 +1435,7 @@ const HotContentNew: React.FC = () => {
                 {/* 分类筛选 */}
                 {selectedMsgType === 'aigc' && topicTypes.length > 1 && (
                   <div className="topic-filter-section">
-                    <span className="topic-filter-label">分类:</span>
+                    <span className="topic-filter-label">{t('category')}:</span>
                     <div className="topic-filter-buttons">
                       {topicTypes.map((type) => (
                         <button
@@ -1460,20 +1459,20 @@ const HotContentNew: React.FC = () => {
             <div className="topic-list-container">
               {topicLoading ? (
                 <div className="topic-loading-state">
-                  <span className="topic-loading-text">加载中...</span>
+                  <span className="topic-loading-text">{t('loading')}</span>
                 </div>
               ) : topicContents.length > 0 ? (
                 <>
                   {/* 表头 */}
                   <div className="topic-list-header">
-                    <div className="topic-header-col topic-header-col.rank-col">排名</div>
-                    <div className="topic-header-col topic-header-col.cover-col">封面</div>
-                    <div className="topic-header-col topic-header-col.info-col">标题/作者</div>
-                    <div className="topic-header-col topic-header-col.category-col">分类</div>
-                    <div className="topic-header-col topic-header-col.stats-col">点赞</div>
-                    <div className="topic-header-col topic-header-col.stats-col">分享</div>
-                    <div className="topic-header-col topic-header-col.stats-col">评论数</div>
-                    <div className="topic-header-col topic-header-col.stats-col">收藏数</div>
+                    <div className="topic-header-col topic-header-col.rank-col">{t('rank')}</div>
+                    <div className="topic-header-col topic-header-col.cover-col">{t('cover')}</div>
+                    <div className="topic-header-col topic-header-col.info-col">{t('title')}/{t('author')}</div>
+                    <div className="topic-header-col topic-header-col.category-col">{t('category')}</div>
+                    <div className="topic-header-col topic-header-col.stats-col">{t('likes')}</div>
+                    <div className="topic-header-col topic-header-col.stats-col">{t('shares')}</div>
+                    <div className="topic-header-col topic-header-col.stats-col">{t('comments')}</div>
+                    <div className="topic-header-col topic-header-col.stats-col">{t('collections')}</div>
                   </div>
 
                   {/* 内容列表 */}
@@ -1505,12 +1504,12 @@ const HotContentNew: React.FC = () => {
                             />
                           ) : (
                             <div className="topic-item-cover-placeholder">
-                              暂无图片
+                              {t('noImage')}
                             </div>
                           )}
                           {item.type === 'video' && (
                             <div className="topic-item-cover-video-tag">
-                              视频
+                              {t('video')}
                             </div>
                           )}
                         </div>
@@ -1547,12 +1546,12 @@ const HotContentNew: React.FC = () => {
                             {item.fans > 0 && (
                               <span className="topic-author-fans">
                                 {item.fans >= 10000
-                                  ? `${(item.fans / 10000).toFixed(1)}万粉丝`
-                                  : `${item.fans}粉丝`}
+                                  ? `${(item.fans / 10000).toFixed(1)}万${t('fans')}`
+                                  : `${item.fans}${t('fans')}`}
                               </span>
                             )}
                             <span className="topic-publish-time">
-                              发布于{' '}
+                              {t('publishTime')}{' '}
                               {dayjs(item.publishTime).format(
                                 'YYYY-MM-DD HH:mm',
                               )}
@@ -1578,7 +1577,7 @@ const HotContentNew: React.FC = () => {
                             ? `${(item.likeCount / 10000).toFixed(1)}w`
                             : item.likeCount}
                         </div>
-                        <div className="topic-stat-label">点赞</div>
+                        <div className="topic-stat-label">{t('likes')}</div>
                       </div>
 
                       {/* 分享数 */}
@@ -1588,7 +1587,7 @@ const HotContentNew: React.FC = () => {
                             ? `${(item.shareCount / 10000).toFixed(1)}w`
                             : item.shareCount}
                         </div>
-                        <div className="topic-stat-label">分享</div>
+                        <div className="topic-stat-label">{t('shares')}</div>
                       </div>
 
                       {/* 评论数 */}
@@ -1600,7 +1599,7 @@ const HotContentNew: React.FC = () => {
                               : item.commentCount
                             : '-'}
                         </div>
-                        <div className="topic-stat-label">{'评论数'}</div>
+                        <div className="topic-stat-label">{t('comments')}</div>
                       </div>
 
                       {/* 收藏数 */}
@@ -1612,7 +1611,7 @@ const HotContentNew: React.FC = () => {
                               : item.collectCount
                             : '-'}
                         </div>
-                        <div className="topic-stat-label">{'收藏数'}</div>
+                        <div className="topic-stat-label">{t('collections')}</div>
                       </div>
                     </div>
                   ))}
@@ -1626,7 +1625,7 @@ const HotContentNew: React.FC = () => {
                         pageSize={topicPagination.itemsPerPage}
                         showSizeChanger={false}
                         showQuickJumper
-                        showTotal={(total) => `共 ${total} 条`}
+                        showTotal={(total) => `${t('total')} ${total} ${t('items')}`}
                         onChange={handleTopicPageChange}
                       />
                     </div>
@@ -1634,7 +1633,7 @@ const HotContentNew: React.FC = () => {
                 </>
               ) : (
                 <div className="topic-empty-state">
-                  暂无专题数据
+                  {t('noTopicData')}
                 </div>
               )}
             </div>
@@ -1644,7 +1643,7 @@ const HotContentNew: React.FC = () => {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {hotTopicLoading ? (
                 <div className="loading-container col-span-full">
-                  <span className="loading-text">加载中...</span>
+                  <span className="loading-text">{t('loading')}</span>
                 </div>
               ) : hotTopics && hotTopics.length > 0 ? (
                 hotTopics.map((platformData) => (
@@ -1670,7 +1669,7 @@ const HotContentNew: React.FC = () => {
                           </div>
                         )}
                         <span className="platform-name">
-                          {platformData.platform.name} · 热点
+                          {platformData.platform.name} · {t('hotTopics')}
                         </span>
                       </div>
                     </div>
@@ -1700,7 +1699,7 @@ const HotContentNew: React.FC = () => {
                                 <div className="hot-topic-metrics">
                                   {topic.isRising && (
                                     <span className="text-xs text-[#ff4d4f] bg-[#fff1f0] px-1 rounded">
-                                      热
+                                      {t('rising')}
                                     </span>
                                   )}
                                   <span className="hot-topic-value">
@@ -1727,7 +1726,7 @@ const HotContentNew: React.FC = () => {
                         ) : (
                           <div className="empty-state">
                             <div className="empty-state-icon">📊</div>
-                            <div className="empty-state-text">暂无热点数据</div>
+                            <div className="empty-state-text">{t('noHotTopics')}</div>
                           </div>
                         )}
                       </div>
@@ -1737,7 +1736,7 @@ const HotContentNew: React.FC = () => {
               ) : (
                 <div className="empty-state col-span-full">
                   <div className="empty-state-icon">📊</div>
-                  <div className="empty-state-text">暂无热点事件数据</div>
+                  <div className="empty-state-text">{t('noHotTopics')}</div>
                 </div>
               )}
             </div>
@@ -1757,7 +1756,7 @@ const HotContentNew: React.FC = () => {
         <iframe
           src={previewUrl}
           style={{ width: '100%', height: '600px', border: 'none' }}
-          title="内容预览"
+          title={t('hotContent')}
         />
       </Modal>
     </div>
