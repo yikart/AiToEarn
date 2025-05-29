@@ -37,11 +37,6 @@ export const routerData: IRouterDataItem[] = [
     translationKey: "hotContent",
     path: "/hot-content",
   },
-  {
-    name: "热门内容新",
-    translationKey: "hotContentNew",
-    path: "/hot-content-new",
-  },
 ];
 
 const recursion = (
