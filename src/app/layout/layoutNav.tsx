@@ -7,11 +7,12 @@ import {
   routerData,
 } from "@/app/layout/routerData";
 import Link from "next/link";
-import { MenuFoldOutlined, RightOutlined, UpOutlined } from "@ant-design/icons";
+import { MenuFoldOutlined, RightOutlined, UpOutlined, GlobalOutlined } from "@ant-design/icons";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-import { Drawer, Menu } from "antd";
+import { Drawer, Menu, Button } from "antd";
 import { useRouter, useSelectedLayoutSegments } from "next/navigation";
+import { useLanguage } from "@/app/context/LanguageContext";
 
 /**
  *
@@ -160,6 +161,7 @@ function ChildNav({
 
 function NavPC() {
   const [activeNav, setActiveNav] = useState("");
+  const { language, setLanguage } = useLanguage();
   const timer = useRef<NodeJS.Timeout>();
   const route = useSelectedLayoutSegments();
   let currRouter = "/";
@@ -170,37 +172,51 @@ function NavPC() {
     currRouter = "/" + route.slice(0, 2).join("/");
   }
 
+  const toggleLanguage = () => {
+    setLanguage(language === "zh-CN" ? "en" : "zh-CN");
+  };
+
   return (
-    <ul className={styles.layoutNavPC}>
-      {routerData.map((v1) => {
-        return (
-          <li
-            key={v1.name}
-            className={
-              activeNav === v1.name || v1.path === currRouter
-                ? styles["layoutNavPC-item-active"]
-                : ""
-            }
-            onMouseEnter={() => {
-              setActiveNav(v1.children ? v1.name : "");
-              clearTimeout(timer.current);
-            }}
-            onMouseLeave={() => {
-              timer.current = setTimeout(() => {
-                setActiveNav("");
-              }, 100);
-            }}
-          >
-            {getNameTag(v1, 0)}
-            <ChildNav
+    <div className={styles.navContainer}>
+      <ul className={styles.layoutNavPC}>
+        {routerData.map((v1) => {
+          return (
+            <li
               key={v1.name}
-              child={v1}
-              visible={activeNav === v1.name}
-            />
-          </li>
-        );
-      })}
-    </ul>
+              className={
+                activeNav === v1.name || v1.path === currRouter
+                  ? styles["layoutNavPC-item-active"]
+                  : ""
+              }
+              onMouseEnter={() => {
+                setActiveNav(v1.children ? v1.name : "");
+                clearTimeout(timer.current);
+              }}
+              onMouseLeave={() => {
+                timer.current = setTimeout(() => {
+                  setActiveNav("");
+                }, 100);
+              }}
+            >
+              {getNameTag(v1, 0)}
+              <ChildNav
+                key={v1.name}
+                child={v1}
+                visible={activeNav === v1.name}
+              />
+            </li>
+          );
+        })}
+      </ul>
+      <Button 
+        type="text" 
+        icon={<GlobalOutlined />} 
+        onClick={toggleLanguage}
+        className={styles.languageButton}
+      >
+        {language === "zh-CN" ? "EN" : "中文"}
+      </Button>
+    </div>
   );
 }
 

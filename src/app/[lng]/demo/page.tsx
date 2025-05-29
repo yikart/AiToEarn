@@ -21,7 +21,7 @@ export default async function Page({ params }: PageParams) {
 
   return (
     <>
-      <div>{t("demoText")}</div>
+      <div>{t("demoText")} 1</div>
       <DemoPageCore />
     </>
   );

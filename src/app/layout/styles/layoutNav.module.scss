@@ -159,3 +159,18 @@
   }
 }
 
+.navContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.languageButton {
+  margin-right: 20px;
+  color: #333;
+  &:hover {
+    color: #1890ff;
+  }
+}
+
