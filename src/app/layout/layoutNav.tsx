@@ -12,6 +12,7 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { Drawer, Menu } from "antd";
 import { useRouter, useSelectedLayoutSegments } from "next/navigation";
+import { useTransClient } from "@/app/i18n/client";
 
 /**
  *
@@ -19,16 +20,17 @@ import { useRouter, useSelectedLayoutSegments } from "next/navigation";
  * @param iconLoca 0=上，1=右
  */
 function getNameTag(child: IRouterDataItem, iconLoca: number = 1) {
+  const { t } = useTransClient("route");
   const path = child.path || "/";
   return (
     <>
       {!child.children ? (
         <Link href={path || "/"} target={path[0] === "/" ? "_self" : "_blank"}>
-          {child.name}
+          {t(child.translationKey)}
         </Link>
       ) : (
         <span>
-          {child.name}
+          {t(child.translationKey)}
           {child.children &&
             (iconLoca === 0 ? <UpOutlined /> : <RightOutlined />)}
         </span>
@@ -207,6 +209,12 @@ function NavPC() {
 function NavPE() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const { t } = useTransClient("route");
+
+  const translatedMenuItems = peRouterData?.map(item => ({
+    ...item,
+    label: t(item.key as string)
+  }));
 
   return (
     <div className={styles.layoutNavPE}>
@@ -214,7 +222,7 @@ function NavPE() {
         <MenuFoldOutlined />
       </div>
       <Drawer
-        title="导航"
+        title={t("navigation")}
         placement="right"
         onClose={() => setOpen(false)}
         width="85%"
@@ -229,7 +237,7 @@ function NavPE() {
           }}
           style={{ width: "100%" }}
           mode="inline"
-          items={peRouterData!}
+          items={translatedMenuItems}
         />
       </Drawer>
     </div>

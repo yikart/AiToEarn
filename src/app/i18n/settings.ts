@@ -1,11 +1,13 @@
-export const fallbackLng = "en";
+import { FallbackLng } from "i18next";
+
+export const fallbackLng: FallbackLng = "en";
 export const languages = [fallbackLng, "zh-CN"];
-export const defaultNS = "translation";
+export const defaultNS = "common";
 export const cookieName = "i18next";
 
 export function getOptions(
   lng = fallbackLng,
-  ns: string | string[] = defaultNS,
+  ns: string | string[] = [defaultNS, "route"],
 ) {
   return {
     // debug: true,

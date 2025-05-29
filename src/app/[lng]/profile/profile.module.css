@@ -1,5 +1,4 @@
 .container {
-  min-height: 100vh;
   padding: 24px;
   background-color: var(--background-color);
   display: flex;

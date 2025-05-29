@@ -13,7 +13,6 @@ import defaultAvatar from "./images/defaultAvatar.jpg";
 import { CaretDownOutlined, GlobalOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useTransClient } from "@/app/i18n/client";
-import { useGetClientLng } from "@/hooks/useSystem";
 
 export interface ILyaoutHeaderRef {}
 
@@ -22,6 +21,7 @@ export interface ILyaoutHeaderProps {}
 function UserInfo() {
   const userInfo = useUserStore((state) => state.userInfo)!;
   const router = useRouter();
+  const { t } = useTransClient("common");
 
   const items: MenuProps["items"] = [
     {
@@ -32,7 +32,7 @@ function UserInfo() {
             router.push("/profile");
           }}
         >
-          个人中心
+          {t('profile')}
         </div>
       ),
     },
@@ -45,7 +45,7 @@ function UserInfo() {
             router.push("/");
           }}
         >
-          退出登录
+          {t('logout')}
         </div>
       ),
     },
@@ -63,7 +63,7 @@ function UserInfo() {
             height={35}
           />
           <div className={styles["layoutHeader-userinfo-name"]}>
-            {userInfo.name || "未知用户"}
+            {userInfo.name || t('unknownUser')}
           </div>
           <CaretDownOutlined />
         </div>
@@ -77,12 +77,12 @@ const LyaoutHeader = memo(
     const userStore = useUserStore();
     const layoutHeader = useRef<HTMLDivElement>(null);
     const router = useRouter();
-    const { t } = useTransClient();
-    const lng = useGetClientLng();
+    const { t } = useTransClient("common");
 
     const toggleLanguage = () => {
-      const newLng = lng === "zh-CN" ? "en" : "zh-CN";
-      location.href = `/${newLng}` + location.pathname.replace(`/${lng}`, "");
+      const newLng = userStore.lang === "zh-CN" ? "en" : "zh-CN";
+      userStore.setLang(newLng);
+      location.href = `/${newLng}` + location.pathname.replace(`/${userStore.lang}`, "");
     };
 
     useEffect(() => {
@@ -121,7 +121,7 @@ const LyaoutHeader = memo(
               onClick={toggleLanguage}
               className={styles.languageButton}
             >
-              {lng === "zh-CN" ? "EN" : "中文"}
+              {userStore.lang === "zh-CN" ? "EN" : "中文"}
             </Button>
             <NoSSR>
               {userStore.token ? (
@@ -132,7 +132,7 @@ const LyaoutHeader = memo(
                     router.push("/login");
                   }}
                 >
-                  登录
+                  {t('login')}
                 </Button>
               )}
             </NoSSR>

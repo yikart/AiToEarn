@@ -68,3 +68,5 @@ export function useTransClient<
   }
   return useTranslation(ns, options);
 }
+
+export default i18next;

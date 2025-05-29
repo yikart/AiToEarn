@@ -20,6 +20,15 @@ const fetchService = new FetchService({
       Authorization: token ? `Bearer ${token}` : "",
     };
 
+    // 添加语言头
+    if (typeof window !== "undefined") {
+      const lng = useUserStore.getState().lang;
+      requestParams.headers = {
+        ...requestParams.headers,
+        'Accept-Language': lng
+      };
+    }
+
     return requestParams;
   },
   responseInterceptor(response) {
@@ -31,6 +40,7 @@ export async function request<T>(params: RequestParams) {
   try {
     const res = await fetchService.request(params);
     const data: ResponseType<T> = await res.json();
+
 
     // 语言拦截
     if (typeof window !== "undefined") {
