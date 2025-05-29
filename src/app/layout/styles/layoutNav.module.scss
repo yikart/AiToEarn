@@ -156,6 +156,8 @@
   @media (max-width: 860px) {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    width: 100%;
   }
 }
 
@@ -167,8 +169,12 @@
 }
 
 .languageButton {
-  margin-right: 20px;
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
   color: #333;
+  z-index: 10;
   &:hover {
     color: #1890ff;
   }

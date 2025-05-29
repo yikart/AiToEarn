@@ -10,8 +10,9 @@ import { NoSSR } from "@kwooshung/react-no-ssr";
 import { Button, Dropdown, MenuProps } from "antd";
 import logo from "@/assets/images/logo.png";
 import defaultAvatar from "./images/defaultAvatar.jpg";
-import { CaretDownOutlined } from "@ant-design/icons";
+import { CaretDownOutlined, GlobalOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/app/context/LanguageContext";
 
 export interface ILyaoutHeaderRef {}
 
@@ -75,6 +76,11 @@ const LyaoutHeader = memo(
     const userStore = useUserStore();
     const layoutHeader = useRef<HTMLDivElement>(null);
     const router = useRouter();
+    const { language, setLanguage } = useLanguage();
+
+    const toggleLanguage = () => {
+      setLanguage(language === "zh-CN" ? "en" : "zh-CN");
+    };
 
     useEffect(() => {
       setTimeout(() => {
@@ -106,6 +112,14 @@ const LyaoutHeader = memo(
             className={styles["layoutHeader_wrapper-right"]}
             suppressHydrationWarning={true}
           >
+            <Button 
+              type="text" 
+              icon={<GlobalOutlined />} 
+              onClick={toggleLanguage}
+              className={styles.languageButton}
+            >
+              {language === "zh-CN" ? "EN" : "中文"}
+            </Button>
             <NoSSR>
               {userStore.token ? (
                 <UserInfo />
