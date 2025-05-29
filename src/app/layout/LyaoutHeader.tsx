@@ -12,7 +12,8 @@ import logo from "@/assets/images/logo.png";
 import defaultAvatar from "./images/defaultAvatar.jpg";
 import { CaretDownOutlined, GlobalOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
-import { useLanguage } from "@/app/context/LanguageContext";
+import { useTransClient } from "@/app/i18n/client";
+import { useGetClientLng } from "@/hooks/useSystem";
 
 export interface ILyaoutHeaderRef {}
 
@@ -76,10 +77,12 @@ const LyaoutHeader = memo(
     const userStore = useUserStore();
     const layoutHeader = useRef<HTMLDivElement>(null);
     const router = useRouter();
-    const { language, setLanguage } = useLanguage();
+    const { t } = useTransClient();
+    const lng = useGetClientLng();
 
     const toggleLanguage = () => {
-      setLanguage(language === "zh-CN" ? "en" : "zh-CN");
+      const newLng = lng === "zh-CN" ? "en" : "zh-CN";
+      location.href = `/${newLng}` + location.pathname.replace(`/${lng}`, "");
     };
 
     useEffect(() => {
@@ -112,13 +115,13 @@ const LyaoutHeader = memo(
             className={styles["layoutHeader_wrapper-right"]}
             suppressHydrationWarning={true}
           >
-            <Button 
-              type="text" 
-              icon={<GlobalOutlined />} 
+            <Button
+              type="text"
+              icon={<GlobalOutlined />}
               onClick={toggleLanguage}
               className={styles.languageButton}
             >
-              {language === "zh-CN" ? "EN" : "中文"}
+              {lng === "zh-CN" ? "EN" : "中文"}
             </Button>
             <NoSSR>
               {userStore.token ? (
