@@ -4,7 +4,8 @@ import { MenuItemType } from "antd/es/menu/interface";
 export interface IRouterDataItem {
   // 导航标题
   name: string;
-
+  // 翻译键
+  translationKey: string;
   // 跳转链接
   path?: string;
   // icon
@@ -18,25 +19,29 @@ export interface IRouterDataItem {
 export const routerData: IRouterDataItem[] = [
   {
     name: "首页",
+    translationKey: "home",
     path: "/",
   },
   {
     name: "账户",
+    translationKey: "accounts",
     path: "/accounts",
   },
   {
     name: "发布",
+    translationKey: "publish",
     path: "/publish",
   },
   {
     name: "热门内容",
+    translationKey: "hotContent",
     path: "/hot-content",
   },
   {
     name: "热门内容新",
+    translationKey: "hotContentNew",
     path: "/hot-content-new",
   },
-  
 ];
 
 const recursion = (

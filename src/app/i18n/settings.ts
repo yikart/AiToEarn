@@ -7,7 +7,7 @@ export const cookieName = "i18next";
 
 export function getOptions(
   lng = fallbackLng,
-  ns: string | string[] = defaultNS,
+  ns: string | string[] = [defaultNS, "route"],
 ) {
   return {
     // debug: true,
