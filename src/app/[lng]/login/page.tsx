@@ -15,10 +15,12 @@ import {
   GoogleLoginParams
 } from "@/api/apiReq";
 import { useUserStore } from "@/store/user";
+import { useTransClient } from "@/app/i18n/client";
 
 export default function LoginPage() {
   const router = useRouter();
   const { setToken, setUserInfo } = useUserStore();
+  const { t } = useTransClient("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isChecking, setIsChecking] = useState(false);
@@ -48,21 +50,21 @@ export default function LoginPage() {
           if (response.data.userInfo) {
             setUserInfo(response.data.userInfo);
           }
-          message.success('登录成功');
+          message.success(t('loginSuccess'));
           router.push('/');
         }
       } else {
-        message.error(response.msg || '登录失败');
+        message.error(response.msg || t('loginFailed'));
       }
     } catch (error) {
-      message.error('登录失败，请稍后重试');
+      message.error(t('loginError'));
     }
   };
 
   const handleRegistSubmit = async (values: { password: string; inviteCode?: string }) => {
     try {
       setIsActivating(true);
-      message.info('激活链接已发送至邮箱，请查收并点击激活');
+      message.info(t('activationEmailSent'));
       
       // 开始循环检查注册状态
       const timer = setInterval(async () => {
@@ -88,17 +90,17 @@ export default function LoginPage() {
             if (response.data.userInfo) {
               setUserInfo(response.data.userInfo);
             }
-            message.success('注册成功，已自动登录');
+            message.success(t('registerSuccess'));
             router.push('/');
           }
         } catch (error) {
-          console.error('检查注册状态失败:', error);
+          console.error(t('checkStatusError'), error);
         }
       }, 2000); // 每2秒检查一次
       
       setActivationTimer(timer);
     } catch (error) {
-      message.error('注册失败，请稍后重试');
+      message.error(t('registerError'));
       setIsActivating(false);
     }
   };
@@ -125,7 +127,7 @@ export default function LoginPage() {
       const response: any = await googleLoginApi(params);
       console.log('login response', response)
       if (!response) {
-        message.error('Google 登录失败');
+        message.error(t('googleLoginFailed'));
         return;
       }
 
@@ -136,30 +138,30 @@ export default function LoginPage() {
           if (response.data.userInfo) {
             setUserInfo(response.data.userInfo);
           }
-          message.success('登录成功');
+          message.success(t('loginSuccess'));
           router.push('/');
         }
       } else {
-        message.error(response.msg || 'Google 登录失败');
+        message.error(response.msg || t('googleLoginFailed'));
       }
     } catch (error) {
-      message.error('Google 登录失败');
+      message.error(t('googleLoginFailed'));
     }
   };
 
   const handleGoogleError = () => {
-    console.log("Google 登录失败");
+    console.log(t('googleLoginFailed'));
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.loginBox}>
-        <h1 className={styles.title}>欢迎回来</h1>
+        <h1 className={styles.title}>{t('welcomeBack')}</h1>
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.inputGroup}>
             <input
               type="email"
-              placeholder="邮箱"
+              placeholder={t('emailPlaceholder')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={styles.input}
@@ -169,7 +171,7 @@ export default function LoginPage() {
           <div className={styles.inputGroup}>
             <input
               type="password"
-              placeholder="密码"
+              placeholder={t('passwordPlaceholder')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={styles.input}
@@ -177,12 +179,12 @@ export default function LoginPage() {
             />
           </div>
           <Button type="primary" htmlType="submit" block className={styles.submitButton}>
-            登录
+            {t('login')}
           </Button>
         </form>
 
         <div className={styles.divider}>
-          <span>或 </span>
+          <span>{t('or')}</span>
         </div>
 
         <div className={styles.googleButtonWrapper}>
@@ -201,14 +203,13 @@ export default function LoginPage() {
 
         <div className={styles.links}>
           <Link href="/forgot-password" className={styles.link}>
-            忘记密码？
+            {t('forgotPassword')}
           </Link>
-
         </div>
       </div>
 
       <Modal
-        title="完成注册"
+        title={t('completeRegistration')}
         open={isModalOpen}
         onCancel={() => {
           setIsModalOpen(false);
@@ -230,21 +231,21 @@ export default function LoginPage() {
           layout="vertical"
         >
           <Form.Item
-            label="设置密码"
+            label={t('setPassword')}
             name="password"
             rules={[
-              { required: true, message: '请输入密码' },
-              { min: 6, message: '密码长度不能小于6位' }
+              { required: true, message: t('passwordRequired') },
+              { min: 6, message: t('passwordMinLength') }
             ]}
           >
-            <Input.Password placeholder="请输入密码" />
+            <Input.Password placeholder={t('enterPassword')} />
           </Form.Item>
           
           <Form.Item
-            label="邀请码（选填）"
+            label={t('inviteCode')}
             name="inviteCode"
           >
-            <Input placeholder="请输入邀请码" />
+            <Input placeholder={t('enterInviteCode')} />
           </Form.Item>
 
           <Form.Item>
@@ -254,7 +255,7 @@ export default function LoginPage() {
               block 
               loading={isActivating}
             >
-              {isActivating ? '等待激活中...' : '完成注册'}
+              {isActivating ? t('waitingForActivation') : t('completeRegistration')}
             </Button>
           </Form.Item>
         </Form>
