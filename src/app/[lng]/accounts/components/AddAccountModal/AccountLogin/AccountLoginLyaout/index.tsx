@@ -14,6 +14,8 @@ export interface IAccountLoginInfo {
 export interface IAccountLoginLyaoutRef {}
 
 export interface IAccountLoginLyaoutProps {
+  // 整体loading
+  loading?: boolean;
   // 获取二维码loading
   qRCodeLoading: boolean;
   // 二维码是否过期
@@ -47,13 +49,14 @@ const AccountLoginLyaout = memo(
         isQRCodeExpire = false,
         qRCodeLoading,
         onFlushQRCode,
+        loading = false,
       }: IAccountLoginLyaoutProps,
       ref: ForwardedRef<IAccountLoginLyaoutRef>,
     ) => {
       const [form] = Form.useForm();
 
       return (
-        <div className={styles.accountLoginLyaout}>
+        <Spin wrapperClassName={styles.accountLoginLyaout} spinning={loading}>
           <div className="accountLoginLyaout-left">
             <Spin
               spinning={qRCodeLoading}
@@ -128,7 +131,7 @@ const AccountLoginLyaout = memo(
               </Form>
             </div>
           )}
-        </div>
+        </Spin>
       );
     },
   ),

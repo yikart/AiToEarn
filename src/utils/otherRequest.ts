@@ -1,5 +1,5 @@
 import FetchService from "@/utils/FetchService/FetchService";
-import { RequestParams } from "@/utils/FetchService/types";
+import {RequestParams} from "@/utils/FetchService/types";
 
 class OtherRequest {
   fetchService;
@@ -24,6 +24,5 @@ class OtherRequest {
 
 const requestPlatapi = new OtherRequest("https://platapi.yikart.cn/api/");
 export async function requestPlatApi<T = any>(params: RequestParams) {
-  const res = await requestPlatapi.request(params);
-  return res.data.response_body as T;
+  return await requestPlatapi.request(params);
 }

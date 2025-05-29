@@ -17,11 +17,14 @@ export interface UserInfo {
 export interface IUserStore {
   token?: string;
   userInfo?: Partial<UserInfo>;
+  isAddAccountPorxy: boolean;
 }
 
 const state: IUserStore = {
   token: undefined,
   userInfo: {},
+  // 添加账户是否默认开启代理
+  isAddAccountPorxy: false,
 };
 
 export const useUserStore = createPersistStore(
@@ -30,12 +33,17 @@ export const useUserStore = createPersistStore(
   },
   (set, _get) => {
     const methods = {
+      setIsAddAccountPorxy(isAddAccountPorxy: boolean) {
+        set({ isAddAccountPorxy });
+      },
       setToken: (token: string) => {
         set({ token });
       },
       setUserInfo: (userInfo: UserInfo) => {
         set({ userInfo });
       },
+
+      // 清除登录状态
       clearLoginStatus: () => {
         set({ token: undefined, userInfo: undefined });
       },

@@ -1,5 +1,5 @@
 import { ForwardedRef, forwardRef, memo, useState } from "react";
-import styles from "../AddAccountModal.module.scss";
+import styles from "./AddAccountModal.module.scss";
 import { Button, Modal, Tooltip } from "antd";
 import { AccountPlatInfoArr, PlatType } from "@/app/config/platConfig";
 import { SocialAccount } from "@/api/types/account.type";

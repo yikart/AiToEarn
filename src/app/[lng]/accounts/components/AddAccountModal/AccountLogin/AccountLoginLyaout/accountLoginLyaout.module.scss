@@ -1,6 +1,8 @@
 .accountLoginLyaout {
-  display: flex;
   :global {
+    .ant-spin-container {
+      display: flex;
+    }
     .accountLoginLyaout-right, .accountLoginLyaout-left {
       height: 400px;
       display: flex;
@@ -48,7 +50,7 @@
       }
     }
     .accountLoginLyaout-right {
-      padding: 40px 50px 0;
+      padding: 40px 40px 0;
       border-left: 1px solid var(--grayColor2);
       h2 {
         font-size: var(--fs-lg);
