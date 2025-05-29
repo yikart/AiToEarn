@@ -61,6 +61,12 @@
         }
       }
     }
+
+    .layoutHeader_wrapper-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
   }
 }
 
@@ -102,4 +108,11 @@
 
 .ant-popover-title {
   font-size: 16px !important;
+}
+
+.languageButton {
+  color: #333;
+  &:hover {
+    color: #1890ff;
+  }
 }
