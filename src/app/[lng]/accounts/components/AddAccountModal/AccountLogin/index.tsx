@@ -123,6 +123,7 @@ const AccountLogin = memo(
                   <Button
                     type="primary"
                     style={{ width: "200px", padding: "16px 0" }}
+                    loading={verifyProxyLoading}
                     onClick={async () => {
                       setVerifyProxyLoading(true);
                       const verifyRes = await verifyProxy(proxy);
@@ -142,8 +143,10 @@ const AccountLogin = memo(
               <>
                 <Plat
                   proxy={isAddAccountPorxy ? proxy : ""}
-                  onLoginSuccess={() => {
-                    console.log("登录");
+                  onLoginSuccess={(accountInfo) => {
+                    if (accountInfo) {
+                      console.log("登录", accountInfo);
+                    }
                   }}
                 />
               </>

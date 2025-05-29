@@ -1,6 +1,8 @@
+import { SocialAccount } from "@/api/types/account.type";
+
 export interface IAccountLoginPlatProps {
   // 登录成功
-  onLoginSuccess: (cookie: string) => void;
+  onLoginSuccess: (accountInfo: null | Partial<SocialAccount>) => void;
   // 代理地址
   proxy?: string;
 }

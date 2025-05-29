@@ -1,5 +1,5 @@
 import FetchService from "@/utils/FetchService/FetchService";
-import {RequestParams} from "@/utils/FetchService/types";
+import { RequestParams } from "@/utils/FetchService/types";
 
 class OtherRequest {
   fetchService;

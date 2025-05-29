@@ -14,21 +14,24 @@ import { requestPlatApi } from "@/utils/otherRequest";
 import AccountLoginLyaout from "@/app/[lng]/accounts/components/AddAccountModal/AccountLogin/AccountLoginLyaout";
 import { message } from "antd";
 import { sleep } from "@/utils/general";
+import { parseCookieString } from "@/app/[lng]/accounts/components/AddAccountModal/AccountLogin/accountLogin.utils";
+import { PlatXhs } from "@/app/plat/platChildren/xhs/PlatXhs";
 
 export interface IXhsLoginRef {}
 
 const XhsLogin = memo(
   forwardRef(
-    ({ proxy }: IAccountLoginPlatProps, ref: ForwardedRef<IXhsLoginRef>) => {
+    (
+      { proxy, onLoginSuccess }: IAccountLoginPlatProps,
+      ref: ForwardedRef<IXhsLoginRef>,
+    ) => {
       const [qsImg, setQsImg] = useState("");
       const [qRCodeLoading, setQRCodeLoading] = useState(false);
       const [isQRCodeExpire, setIsQRCodeExpire] = useState(false);
       const [loginLoading, setLoginLoading] = useState(false);
       const sendCodeResRef = useRef<any>(null);
       // 停止轮询的方法
-      const stopPolling = useRef<() => void>(() => {
-        console.log("2222222222")
-      });
+      const stopPolling = useRef<() => void>(() => {});
       const [getUserInfoLoding, setGetUserInfoLoding] = useState(false);
 
       useEffect(() => {
@@ -41,6 +44,7 @@ const XhsLogin = memo(
 
       // 获取登录二维码
       const getLoginQRCode = async () => {
+        setIsQRCodeExpire(false);
         stopPolling.current();
 
         setQRCodeLoading(true);
@@ -64,11 +68,9 @@ const XhsLogin = memo(
 
         let isStopPolling = false;
         stopPolling.current = () => {
-          console.log("----------")
           isStopPolling = true;
         };
         while (true) {
-          console.log(isStopPolling);
           if (isStopPolling) break;
           const res = await requestPlatApi({
             url: "xhs/check_login",
@@ -95,8 +97,15 @@ const XhsLogin = memo(
         }
       };
 
-      const loginSuccess = (cookie: string) => {
-        console.log(cookie);
+      const loginSuccess = async (cookie: string) => {
+        setGetUserInfoLoding(true);
+        const platXhs = new PlatXhs({
+          cookieList: parseCookieString(cookie),
+          proxy: proxy,
+        });
+        const accountInfo = await platXhs.getAccountInfo();
+        setGetUserInfoLoding(false);
+        onLoginSuccess(accountInfo);
       };
 
       return (
@@ -153,13 +162,15 @@ const XhsLogin = memo(
                   setLoginLoading(false);
                   return message.error(loginCodeRes.msg);
                 }
-                console.log(loginCodeRes);
+                setLoginLoading(false);
+                loginSuccess(loginCodeRes.data.response_body.cookie);
               },
               loading: loginLoading,
             }}
             qRCodeTips="可用小红书或微信扫码"
             isQRCodeExpire={isQRCodeExpire}
             onFlushQRCode={getLoginQRCode}
+            loading={getUserInfoLoding}
           />
         </div>
       );
