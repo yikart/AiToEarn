@@ -26,7 +26,9 @@ const XhsLogin = memo(
       const [loginLoading, setLoginLoading] = useState(false);
       const sendCodeResRef = useRef<any>(null);
       // 停止轮询的方法
-      const stopPolling = useRef<() => void>(() => {});
+      const stopPolling = useRef<() => void>(() => {
+        console.log("2222222222")
+      });
       const [getUserInfoLoding, setGetUserInfoLoding] = useState(false);
 
       useEffect(() => {
@@ -62,9 +64,11 @@ const XhsLogin = memo(
 
         let isStopPolling = false;
         stopPolling.current = () => {
+          console.log("----------")
           isStopPolling = true;
         };
         while (true) {
+          console.log(isStopPolling);
           if (isStopPolling) break;
           const res = await requestPlatApi({
             url: "xhs/check_login",
@@ -87,7 +91,7 @@ const XhsLogin = memo(
             loginSuccess(res.data.response_body.cookie);
             break;
           }
-          await sleep(1500);
+          await sleep(2000);
         }
       };
 

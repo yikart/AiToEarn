@@ -3,7 +3,7 @@
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ConfigProvider, App } from "antd";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { Suspense } from "react";
+import {Suspense, useEffect} from "react";
 import type { Locale } from "antd/es/locale";
 import zh_CN from "antd/es/locale/zh_CN";
 import en_US from "antd/es/locale/en_US";
@@ -35,6 +35,10 @@ export function Providers({
   if (useUserStore.getState().token) {
     useAccountStore.getState().accountInit();
   }
+
+  useEffect(() => {
+    useUserStore.getState().setLang(lng);
+  }, [lng]);
 
   return (
     <GoogleOAuthProvider clientId="471394506793-t2g4mg90vr8qgpq5stbua0b22pofqrne.apps.googleusercontent.com">

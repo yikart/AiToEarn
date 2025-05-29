@@ -18,6 +18,7 @@ export interface IUserStore {
   token?: string;
   userInfo?: Partial<UserInfo>;
   isAddAccountPorxy: boolean;
+  lang: string;
 }
 
 const state: IUserStore = {
@@ -25,6 +26,7 @@ const state: IUserStore = {
   userInfo: {},
   // 添加账户是否默认开启代理
   isAddAccountPorxy: false,
+  lang: "",
 };
 
 export const useUserStore = createPersistStore(
@@ -33,6 +35,12 @@ export const useUserStore = createPersistStore(
   },
   (set, _get) => {
     const methods = {
+      // 设置语言
+      setLang(lang: string) {
+        set({
+          lang,
+        });
+      },
       setIsAddAccountPorxy(isAddAccountPorxy: boolean) {
         set({ isAddAccountPorxy });
       },

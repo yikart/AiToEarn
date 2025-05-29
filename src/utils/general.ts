@@ -1,5 +1,7 @@
 import { Metadata } from "next";
 import { useTranslation } from "@/app/i18n";
+import { useParams } from "next/navigation";
+import { fallbackLng } from "@/app/i18n/settings";
 
 export async function getPageTitle(name: string, lng: string) {
   const { t } = await useTranslation(lng);
