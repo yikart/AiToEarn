@@ -2,6 +2,7 @@ import FetchService from "@/utils/FetchService/FetchService";
 import { RequestParams } from "@/utils/FetchService/types";
 import { useUserStore } from "@/store/user";
 import { message } from "antd";
+import { useGetClientLng } from "@/hooks/useSystem";
 
 type ResponseType<T> = {
   code: string | number;
@@ -31,6 +32,13 @@ export async function request<T>(params: RequestParams) {
   try {
     const res = await fetchService.request(params);
     const data: ResponseType<T> = await res.json();
+
+    // 语言拦截
+    if (typeof window !== "undefined") {
+      const lng = useGetClientLng();
+      console.log(lng);
+      // ...
+    }
 
     // @ts-ignore
     if (data.code === "1" && data.data.statusCode === 401) {

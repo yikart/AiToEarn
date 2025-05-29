@@ -7,12 +7,18 @@ import {
   routerData,
 } from "@/app/layout/routerData";
 import Link from "next/link";
-import { MenuFoldOutlined, RightOutlined, UpOutlined, GlobalOutlined } from "@ant-design/icons";
+import {
+  MenuFoldOutlined,
+  RightOutlined,
+  UpOutlined,
+  GlobalOutlined,
+} from "@ant-design/icons";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { Drawer, Menu, Button } from "antd";
 import { useRouter, useSelectedLayoutSegments } from "next/navigation";
-import { useLanguage } from "@/app/context/LanguageContext";
+import { useTransClient } from "@/app/i18n/client";
+import { useGetClientLng } from "@/hooks/useSystem";
 
 /**
  *
@@ -161,7 +167,8 @@ function ChildNav({
 
 function NavPC() {
   const [activeNav, setActiveNav] = useState("");
-  const { language, setLanguage } = useLanguage();
+  const { t } = useTransClient();
+  const lng = useGetClientLng();
   const timer = useRef<NodeJS.Timeout>();
   const route = useSelectedLayoutSegments();
   let currRouter = "/";
@@ -173,7 +180,8 @@ function NavPC() {
   }
 
   const toggleLanguage = () => {
-    setLanguage(language === "zh-CN" ? "en" : "zh-CN");
+    const newLng = lng === "zh-CN" ? "en" : "zh-CN";
+    location.href = `/${newLng}` + location.pathname.replace(`/${lng}`, "");
   };
 
   return (
@@ -208,13 +216,13 @@ function NavPC() {
           );
         })}
       </ul>
-      <Button 
-        type="text" 
-        icon={<GlobalOutlined />} 
+      <Button
+        type="text"
+        icon={<GlobalOutlined />}
         onClick={toggleLanguage}
         className={styles.languageButton}
       >
-        {language === "zh-CN" ? "EN" : "中文"}
+        {lng === "zh-CN" ? "EN" : "中文"}
       </Button>
     </div>
   );

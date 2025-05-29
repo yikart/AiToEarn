@@ -11,9 +11,9 @@ import {
 import resourcesToBackend from "i18next-resources-to-backend";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { cookieName, getOptions, languages } from "./settings";
-import { useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { getCookie, setCookie } from "cookies-next";
+import { useGetClientLng } from "@/hooks/useSystem";
 
 const runsOnServerSide = typeof window === "undefined";
 
@@ -45,26 +45,26 @@ export function useTransClient<
   options?: UseTranslationOptions<KPrefix>,
 ): UseTranslationResponse<FallbackNs<Ns>, KPrefix> {
   const i18nextCookie = getCookie(cookieName);
-  const lng = useParams()?.lng;
+  const lng = useGetClientLng();
   if (typeof lng !== "string")
     throw new Error("useT is only available inside /app/[lng]");
 
-  const [activeLng, setActiveLng] = useState(i18next.resolvedLanguage);
-
-  useEffect(() => {
-    if (!lng || i18next.resolvedLanguage === lng) return;
-    i18next.changeLanguage(lng).then(() => {
-      setActiveLng(lng);
-    });
-  }, [lng]);
-
-  useEffect(() => {
-    if (i18nextCookie === lng) return;
-    setCookie(cookieName, lng, { path: "/" });
-  }, [lng, i18nextCookie]);
-
-  return useTranslation(ns, {
-    ...options,
-    lng: activeLng,
-  });
+  if (runsOnServerSide && i18next.resolvedLanguage !== lng) {
+    i18next.changeLanguage(lng);
+  } else {
+    const [activeLng, setActiveLng] = useState(i18next.resolvedLanguage);
+    useEffect(() => {
+      if (activeLng === i18next.resolvedLanguage) return;
+      setActiveLng(i18next.resolvedLanguage);
+    }, [activeLng, i18next.resolvedLanguage]);
+    useEffect(() => {
+      if (!lng || i18next.resolvedLanguage === lng) return;
+      i18next.changeLanguage(lng);
+    }, [lng, i18next]);
+    useEffect(() => {
+      if (i18nextCookie === lng) return;
+      setCookie(cookieName, lng, { path: "/" });
+    }, [lng, i18nextCookie]);
+  }
+  return useTranslation(ns, options);
 }
