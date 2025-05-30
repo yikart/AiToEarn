@@ -6,5 +6,6 @@
   "authorize": "授权",
   "pleaseEnterEmail": "请输入邮箱地址",
   "invalidEmail": "请输入有效的邮箱地址",
-  "authFailed": "授权失败，请稍后重试"
+  "authFailed": "授权失败，请稍后重试",
+  "checkAuth": "检查授权"
 } 
