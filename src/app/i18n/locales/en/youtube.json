@@ -1,0 +1,10 @@
+{
+  "youtubeAuth": "YouTube Authorization",
+  "authDescription": "Please enter your email address to get YouTube authorization",
+  "email": "Email",
+  "enterEmail": "Enter your email address",
+  "authorize": "Authorize",
+  "pleaseEnterEmail": "Please enter your email address",
+  "invalidEmail": "Please enter a valid email address",
+  "authFailed": "Authorization failed, please try again later"
+} 

@@ -82,7 +82,7 @@ const LyaoutHeader = memo(
     const toggleLanguage = () => {
       const newLng = userStore.lang === "zh-CN" ? "en" : "zh-CN";
       userStore.setLang(newLng);
-      location.href = `/${newLng}` + location.pathname.replace(`/${userStore.lang}`, "");
+      router.push(`/${newLng}${location.pathname.replace(`/${userStore.lang}`, "")}`);
     };
 
     useEffect(() => {
