@@ -41,6 +41,6 @@ export interface UpdateAccountStatisticsParams {
 // 账户组 item 数据
 export interface AccountGroupItem {
   id: number;
-  name: number;
+  name: string;
   rank: number;
 }

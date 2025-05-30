@@ -77,4 +77,8 @@
   --error-color: #ef4444;
   /* 成功色 */
   --success-color: #10b981;
+  /* 错误颜色 */
+  --errorColor: var(--error-color);
+  /* 成功色 */
+  --successColor: var(--success-color);
 }

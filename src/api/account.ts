@@ -39,13 +39,20 @@ export const deleteAccountApi = (id: number) => {
   return sxRequest.post<SocialAccount>(`account/delete/${id}`);
 };
 
+// 删除多个账户
+export const deleteAccountsApi = (ids: number[]) => {
+  return sxRequest.post<SocialAccount>("account/deletes", {
+    ids,
+  });
+};
+
 // 创建账户组
 export const createAccountGroupApi = (data: Partial<AccountGroupItem>) => {
   return sxRequest.post("accountGroup/create", data);
 };
 
 // 更新账户组
-export const updateAccountGroupApi = (data: AccountGroupItem) => {
+export const updateAccountGroupApi = (data: Partial<AccountGroupItem>) => {
   return sxRequest.post("accountGroup/update", data);
 };
 

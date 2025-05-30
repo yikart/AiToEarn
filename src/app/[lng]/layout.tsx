@@ -18,8 +18,7 @@ export async function generateMetadata({
   const { t } = await useTranslation(lng);
   return {
     title: t("title"),
-    // @ts-ignore
-    content: t("content"),
+    description: t("content"),
   };
 }
 

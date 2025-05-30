@@ -3,7 +3,6 @@ import styles from "./AddAccountModal.module.scss";
 import { Button, Modal, Tooltip } from "antd";
 import { AccountPlatInfoArr, PlatType } from "@/app/config/platConfig";
 import { SocialAccount } from "@/api/types/account.type";
-import AccountLogin from "@/app/[lng]/accounts/components/AddAccountModal/AccountLogin";
 
 export interface IAddAccountModalRef {}
 
@@ -32,17 +31,6 @@ const AddAccountModal = memo(
 
       return (
         <>
-          {addPlat && (
-            <AccountLogin
-              open={accountLoginOpen}
-              plat={addPlat!}
-              onLoginSuccess={(cookie) => {
-                console.log("登录完成：", cookie);
-              }}
-              onCancel={() => setAccountLoginOpen(false)}
-            />
-          )}
-
           <Modal
             title="账号添加"
             open={open}

@@ -9,6 +9,7 @@ import {
 } from "react";
 import {
   Avatar,
+  Button,
   Drawer,
   message,
   Modal,
@@ -30,6 +31,7 @@ import { SocialAccount } from "@/api/types/account.type";
 import { AccountPlatInfoMap } from "@/app/config/platConfig";
 import { AccountStatus } from "@/app/config/accountConfig";
 import AvatarPlat from "@/components/AvatarPlat";
+import { deleteAccountsApi } from "@/api/account";
 
 export interface IUserManageModalRef {
   setActiveGroup: (groupId: number) => void;
@@ -90,6 +92,7 @@ const UserManageModal = memo(
       const [activeGroup, setActiveGroup] = useState(allUser.current);
       // 是否改变了顺序
       const isUpdateRank = useRef(false);
+      const [deleteLoading, setDeleteLoading] = useState(false);
 
       const columns = useMemo(() => {
         const columns: TableProps<SocialAccount>["columns"] = [
@@ -233,21 +236,34 @@ const UserManageModal = memo(
       return (
         <>
           <Modal
-            centered
             open={deleteHitOpen}
             title="删除提示"
             width={500}
             zIndex={1002}
-            onCancel={() => setDeleteHitOpen(false)}
             rootClassName={styles.userManageDeleteHitModal}
-            onOk={async () => {
-              // TODO 删除
-              // await icpDeleteAccounts(selectedRows.map((v) => v.id));
-              // await getAccountList();
-              // setDeleteHitOpen(false);
-              // setSelectedRows([]);
-              // message.success("删除成功");
-            }}
+            footer={
+              <>
+                <Button onClick={() => setDeleteHitOpen(false)}>取消</Button>
+                <Button
+                  type="primary"
+                  loading={deleteLoading}
+                  onClick={async () => {
+                    setDeleteLoading(true);
+                    const res = await deleteAccountsApi(
+                      selectedRows.map((v) => v.id),
+                    );
+                    if (!res) return setDeleteLoading(false);
+                    await getAccountList();
+                    setDeleteHitOpen(false);
+                    setSelectedRows([]);
+                    message.success("删除成功");
+                    setDeleteLoading(false);
+                  }}
+                >
+                  确认
+                </Button>
+              </>
+            }
           >
             <p>
               是否删除以下

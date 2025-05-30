@@ -1,14 +1,11 @@
 import { ForwardedRef, forwardRef, memo, useRef, useState } from "react";
-import { Button, Input, message, Modal } from "antd";
-import {
-  ExclamationCircleFilled,
-  PlusOutlined,
-  UnorderedListOutlined,
-} from "@ant-design/icons";
+import { Button, Input, Modal } from "antd";
+import { PlusOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { useAccountStore } from "@/store/account";
 import { useShallow } from "zustand/react/shallow";
 import styles from "./AccountSidebar.module.scss";
 import { ReactSortable } from "react-sortablejs";
+import { createAccountGroupApi, updateAccountGroupApi } from "@/api/account";
 
 export interface IUserManageSidebarRef {}
 
@@ -68,17 +65,16 @@ const UserManageSidebar = memo(
                   disabled={groupName.length === 0}
                   onClick={async () => {
                     setCreateGroupLoading(true);
-                    // TODO 用户组新增和编辑
-                    // if (createGroupId === -1) {
-                    //   await icpAddAccountGroup({
-                    //     name: groupName,
-                    //   });
-                    // } else {
-                    //   await icpEditDeleteAccountGroup({
-                    //     name: groupName,
-                    //     id: createGroupId,
-                    //   });
-                    // }
+                    if (createGroupId === -1) {
+                      await createAccountGroupApi({
+                        name: groupName,
+                      });
+                    } else {
+                      await updateAccountGroupApi({
+                        name: groupName,
+                        id: createGroupId,
+                      });
+                    }
 
                     await getAccountGroup();
                     setCreateGroupLoading(false);
