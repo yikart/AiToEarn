@@ -1,6 +1,4 @@
-import { FallbackLng } from "i18next";
-
-export const fallbackLng: FallbackLng = "en";
+export const fallbackLng = "en";
 export const languages = [fallbackLng, "zh-CN"];
 export const defaultNS = "common";
 export const cookieName = "i18next";

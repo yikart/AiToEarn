@@ -32,6 +32,8 @@ export async function useTranslation<
     >
   > = undefined,
 >(lng: string, ns?: Ns, options: { keyPrefix?: KPrefix } = {}) {
+  // @ts-ignore
+  ns = ns || "translation";
   const i18nextInstance = await initI18next(
     lng,
     Array.isArray(ns) ? (ns as string[]) : (ns as string),

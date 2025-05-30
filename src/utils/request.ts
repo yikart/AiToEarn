@@ -41,14 +41,6 @@ export async function request<T>(params: RequestParams) {
     const res = await fetchService.request(params);
     const data: ResponseType<T> = await res.json();
 
-
-    // 语言拦截
-    if (typeof window !== "undefined") {
-      const lng = useUserStore.getState().lang;
-      console.log(lng);
-      // ...
-    }
-
     // @ts-ignore
     if (data.code === "1" && data.data.statusCode === 401) {
       useUserStore.getState().logout();
