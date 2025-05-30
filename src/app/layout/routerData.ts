@@ -37,6 +37,11 @@ export const routerData: IRouterDataItem[] = [
     translationKey: "hotContent",
     path: "/hot-content",
   },
+  {
+    name: "Youtobe",
+    translationKey: "youtube",
+    path: "/youtube",
+  },
 ];
 
 const recursion = (
