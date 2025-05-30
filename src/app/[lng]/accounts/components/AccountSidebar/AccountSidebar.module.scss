@@ -246,7 +246,7 @@
         padding-left: 10px;
         background: transparent;
         &:hover {
-          background: var(--colorPrimary3);
+          background: var(--colorPrimary2);
           cursor: pointer;
         }
       }
@@ -290,7 +290,7 @@
         }
       }
       &--active {
-        background: var(--colorPrimary3) !important;
+        background: var(--colorPrimary2) !important;
       }
     }
 

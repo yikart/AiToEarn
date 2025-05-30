@@ -38,9 +38,16 @@ export interface UpdateAccountStatisticsParams {
   workCount: number;
 }
 
+// 默认用户组类型
+export enum AccountGroupDefaultType {
+  Default = 0,
+  NonDefault = 1,
+}
+
 // 账户组 item 数据
 export interface AccountGroupItem {
   id: number;
   name: string;
   rank: number;
+  isDefault: AccountGroupDefaultType;
 }

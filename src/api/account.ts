@@ -6,8 +6,13 @@ import {
   UpdateAccountStatisticsParams,
 } from "@/api/types/account.type";
 
-export const createOrUpdateAccountApi = (data: Omit<SocialAccount, "id">) => {
+export const createOrUpdateAccountApi = (data: Partial<SocialAccount>) => {
   return sxRequest.post<SocialAccount>("account/login", data);
+};
+
+// 更新账户
+export const updateAccountApi = (data: Partial<SocialAccount>) => {
+  return sxRequest.post<SocialAccount>("account/update", data);
 };
 
 // 更新账户状态
@@ -58,7 +63,7 @@ export const updateAccountGroupApi = (data: Partial<AccountGroupItem>) => {
 
 // 删除账户组
 export const deleteAccountGroupApi = (ids: number[]) => {
-  return sxRequest.post("accountGroup/update", {
+  return sxRequest.post("accountGroup/deletes", {
     ids,
   });
 };

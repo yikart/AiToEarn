@@ -1,11 +1,25 @@
 import { ForwardedRef, forwardRef, memo, useRef, useState } from "react";
-import { Button, Input, Modal } from "antd";
-import { PlusOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import { Button, Input, message, Modal } from "antd";
+import {
+  ExclamationCircleFilled,
+  PlusOutlined,
+  UnorderedListOutlined,
+} from "@ant-design/icons";
 import { useAccountStore } from "@/store/account";
 import { useShallow } from "zustand/react/shallow";
 import styles from "./AccountSidebar.module.scss";
 import { ReactSortable } from "react-sortablejs";
-import { createAccountGroupApi, updateAccountGroupApi } from "@/api/account";
+import { ControlledMenu, MenuItem } from "@szhsin/react-menu";
+import "@szhsin/react-menu/dist/index.css";
+import {
+  createAccountGroupApi,
+  deleteAccountGroupApi,
+  updateAccountGroupApi,
+} from "@/api/account";
+import {
+  AccountGroupDefaultType,
+  AccountGroupItem,
+} from "@/api/types/account.type";
 
 export interface IUserManageSidebarRef {}
 
@@ -17,6 +31,8 @@ export interface IUserManageSidebarProps {
 }
 
 const { confirm } = Modal;
+
+const MENU_ID = "userManageSidebar";
 
 const UserManageSidebar = memo(
   forwardRef(
@@ -45,6 +61,11 @@ const UserManageSidebar = memo(
       // -1=新建 不然为重命名，值为要重命名的id
       const [createGroupId, setCreateGroupId] = useState(0);
       const srcollEl = useRef<HTMLElement>(undefined);
+      const [isOpen, setOpen] = useState(false);
+      const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
+      // 右键操作的数据
+      const [rightClickOperateData, setRightClickOperateData] =
+        useState<AccountGroupItem>();
 
       const createGroupCancel = () => {
         setOpenCreateGroup(false);
@@ -53,6 +74,63 @@ const UserManageSidebar = memo(
 
       return (
         <>
+          <ControlledMenu
+            anchorPoint={anchorPoint}
+            state={isOpen ? "open" : "closed"}
+            direction="right"
+            onClose={() => setOpen(false)}
+          >
+            <MenuItem
+              onClick={() => {
+                setCreateGroupId(rightClickOperateData!.id);
+                setOpenCreateGroup(true);
+                setGroupName(rightClickOperateData!.name);
+              }}
+            >
+              重命名
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                confirm({
+                  title: "提示",
+                  icon: <ExclamationCircleFilled />,
+                  content: (
+                    <>
+                      请确认是否删除列表：
+                      <span
+                        style={{
+                          color: "var(--colorPrimary6)",
+                        }}
+                      >
+                        {rightClickOperateData!.name}
+                      </span>
+                      ，删除后该列表下的账号将被移动到
+                      <span
+                        style={{
+                          color: "var(--colorPrimary6)",
+                        }}
+                      >
+                        默认列表
+                      </span>
+                      中
+                    </>
+                  ),
+                  async onOk() {
+                    const res = await deleteAccountGroupApi([
+                      rightClickOperateData!.id,
+                    ]);
+                    if (res?.data) {
+                      message.success("删除成功！");
+                      await getAccountList();
+                    }
+                  },
+                });
+              }}
+            >
+              删除
+            </MenuItem>
+          </ControlledMenu>
+
           <Modal
             title={createGroupId === -1 ? "新建列表" : "重命名列表"}
             open={openCreateGroup}
@@ -142,7 +220,13 @@ const UserManageSidebar = memo(
                           onChange(v.id);
                         }}
                         onContextMenu={(e) => {
-                          // TODO 用户组操作
+                          e.preventDefault();
+                          if (v.isDefault === AccountGroupDefaultType.Default) {
+                            return message.error("不能操作默认列表");
+                          }
+                          setAnchorPoint({ x: e.clientX, y: e.clientY });
+                          setOpen(true);
+                          setRightClickOperateData(v);
                         }}
                       >
                         <div className="userManage-sidebar-left">

@@ -19,6 +19,7 @@
     "@ant-design/nextjs-registry": "^1.0.2",
     "@kwooshung/react-no-ssr": "^1.1.4",
     "@react-oauth/google": "^0.12.2",
+    "@szhsin/react-menu": "^4.4.1",
     "accept-language": "3.0.20",
     "antd": "^5.25.2",
     "cookies-next": "^4.3.0",

@@ -14,6 +14,7 @@ import {
   message,
   Modal,
   Select,
+  Spin,
   Table,
   TableProps,
   Tooltip,
@@ -31,7 +32,7 @@ import { SocialAccount } from "@/api/types/account.type";
 import { AccountPlatInfoMap } from "@/app/config/platConfig";
 import { AccountStatus } from "@/app/config/accountConfig";
 import AvatarPlat from "@/components/AvatarPlat";
-import { deleteAccountsApi } from "@/api/account";
+import { deleteAccountsApi, updateAccountApi } from "@/api/account";
 
 export interface IUserManageModalRef {
   setActiveGroup: (groupId: number) => void;
@@ -93,6 +94,7 @@ const UserManageModal = memo(
       // 是否改变了顺序
       const isUpdateRank = useRef(false);
       const [deleteLoading, setDeleteLoading] = useState(false);
+      const [cutLoading, setCutLoading] = useState(false);
 
       const columns = useMemo(() => {
         const columns: TableProps<SocialAccount>["columns"] = [
@@ -170,10 +172,14 @@ const UserManageModal = memo(
                 <UserGroupSelect
                   account={am}
                   onChange={async (groupId) => {
+                    setCutLoading(true);
                     await updateAccountGroupRank();
-                    // TODO 编辑
-                    // await icpAccountEditGroup(am.id, groupId);
+                    await updateAccountApi({
+                      id: am.id,
+                      groupId,
+                    });
                     await getAccountList();
+                    setCutLoading(false);
                   }}
                 />
               );
@@ -293,64 +299,66 @@ const UserManageModal = memo(
             onCancel={close}
             rootClassName={styles.userManageModal}
           >
-            <div className={styles.userManage}>
-              <UserManageSidebar
-                allUser={allUser.current}
-                activeGroup={activeGroup}
-                onChange={setActiveGroup}
-                onSortEnd={() => {
-                  isUpdateRank.current = true;
-                }}
-              />
-
-              <div className="userManage-content">
-                {/*<div className="userManage-content-head">*/}
-                {/*  <div></div>*/}
-                {/*</div>*/}
-                <Table<SocialAccount>
-                  columns={columns}
-                  dataSource={accountListLast}
-                  rowKey="id"
-                  scroll={{ y: "100%" }}
-                  rowSelection={{ type: "checkbox", ...rowSelection }}
+            <Spin spinning={cutLoading}>
+              <div className={styles.userManage}>
+                <UserManageSidebar
+                  allUser={allUser.current}
+                  activeGroup={activeGroup}
+                  onChange={setActiveGroup}
+                  onSortEnd={() => {
+                    isUpdateRank.current = true;
+                  }}
                 />
 
-                <Drawer
-                  title={
-                    <>
-                      已选择
-                      <span style={{ color: "var(--successColor)" }}>
-                        {selectedRows.length}
-                      </span>
-                      个账号
-                    </>
-                  }
-                  placement="bottom"
-                  mask={false}
-                  height={150}
-                  closable={true}
-                  onClose={() => {
-                    setSelectedRows([]);
-                  }}
-                  open={selectedRows.length !== 0}
-                  getContainer={false}
-                >
-                  <div className="userManage-content-multiple">
-                    <div
-                      className="userManage-content-multiple-item"
-                      onClick={() => {
-                        setDeleteHitOpen(true);
-                      }}
-                    >
-                      <div className="userManage-content-multiple-item-icon">
-                        <DeleteOutlined />
+                <div className="userManage-content">
+                  {/*<div className="userManage-content-head">*/}
+                  {/*  <div></div>*/}
+                  {/*</div>*/}
+                  <Table<SocialAccount>
+                    columns={columns}
+                    dataSource={accountListLast}
+                    rowKey="id"
+                    scroll={{ y: "100%" }}
+                    rowSelection={{ type: "checkbox", ...rowSelection }}
+                  />
+
+                  <Drawer
+                    title={
+                      <>
+                        已选择
+                        <span style={{ color: "var(--successColor)" }}>
+                          {selectedRows.length}
+                        </span>
+                        个账号
+                      </>
+                    }
+                    placement="bottom"
+                    mask={false}
+                    height={150}
+                    closable={true}
+                    onClose={() => {
+                      setSelectedRows([]);
+                    }}
+                    open={selectedRows.length !== 0}
+                    getContainer={false}
+                  >
+                    <div className="userManage-content-multiple">
+                      <div
+                        className="userManage-content-multiple-item"
+                        onClick={() => {
+                          setDeleteHitOpen(true);
+                        }}
+                      >
+                        <div className="userManage-content-multiple-item-icon">
+                          <DeleteOutlined />
+                        </div>
+                        <span>删除账号</span>
                       </div>
-                      <span>删除账号</span>
                     </div>
-                  </div>
-                </Drawer>
+                  </Drawer>
+                </div>
               </div>
-            </div>
+            </Spin>
           </Modal>
         </>
       );
