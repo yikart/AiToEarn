@@ -63,6 +63,11 @@
   --colorPrimary8: var(--theColor8);
   --colorPrimary9: var(--theColor9);
 
+  --primary-light: #f4ebff;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --bg-gray: #f9fafb;
+
   /* 其它颜色 */
   --text-color: #1f2937;
   --border-color: #e5e7eb;

@@ -1,4 +1,4 @@
-import "@/var.css";
+import "@/app/var.css";
 import "../globals.css";
 import { Providers } from "../layout/Providers";
 

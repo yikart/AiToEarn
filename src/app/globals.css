@@ -22,7 +22,6 @@ body {
   max-width: 100vw;
   overflow-x: hidden;
   font-size: var(--fs-sm);
-  min-height: 50vh;
 }
 
 body {
@@ -30,21 +29,10 @@ body {
   background: var(--background-color);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 50vh;
 }
 
 a {
   color: inherit;
   text-decoration: none;
-}
-
-
-/* 主题颜色 */
-:root {
-  --primary-color: #a66ae4;
-  --primary-hover: #9559d1;
-  --primary-light: #f4ebff;
-  --text-primary: #333333;
-  --text-secondary: #666666;
-  --border-color: #e5e7eb;
-  --bg-gray: #f9fafb;
 }
