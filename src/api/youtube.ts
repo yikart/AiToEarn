@@ -1,10 +1,29 @@
-import  sxRequest  from '@/utils/request';
+import { request } from '@/utils/request';
 
 // 获取 YouTube 授权 URL
-export const getYouTubeAuthUrlApi = (mail: string) => {
-  return sxRequest.get(`plat/youtube/auth/url?mail=${mail}`);
+export const getYouTubeAuthUrlApi = (email: string) => {
+  return request({
+    url: '/plat/youtube/auth/url',
+    method: 'GET',
+    params: { email },
+  });
 };
 
-export const checkYouTubeAuthApi = (mail: string) => {
-  return sxRequest.get(`plat/youtube/auth/check?mail=${mail}`);
+export const checkYouTubeAuthApi = (email: string) => {
+  return request({
+    url: '/plat/youtube/auth/check',
+    method: 'GET',
+    params: { email },
+  });
+};
+
+export const uploadYouTubeVideoApi = (data: FormData) => {
+  return request({
+    url: '/plat/youtube/videos/upload',
+    method: 'POST',
+    data,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
 }; 

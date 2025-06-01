@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import { useTransClient } from '@/app/i18n/client';
-import { Button, Input, message, Card } from 'antd';
-import { MailOutlined, YoutubeOutlined, CheckOutlined } from '@ant-design/icons';
-import { getYouTubeAuthUrlApi, checkYouTubeAuthApi } from '@/api/youtube';
+import { Button, Input, message, Card, Upload } from 'antd';
+import { MailOutlined, YoutubeOutlined, CheckOutlined, UploadOutlined } from '@ant-design/icons';
+import { getYouTubeAuthUrlApi, checkYouTubeAuthApi, uploadYouTubeVideoApi } from '@/api/youtube';
 import styles from './youtube.module.css';
 
 const YouTubeAuth: React.FC = () => {
@@ -12,6 +12,7 @@ const YouTubeAuth: React.FC = () => {
   const [email, setEmail] = useState('zhang7676533317@gmail.com');
   const [loading, setLoading] = useState(false);
   const [checkLoading, setCheckLoading] = useState(false);
+  const [uploadLoading, setUploadLoading] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   const handleCheck = async () => {
@@ -60,6 +61,36 @@ const YouTubeAuth: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleUpload = async (file: File) => {
+    if (!email) {
+      message.error(t('pleaseEnterEmail'));
+      return;
+    }
+
+    if (!isAuthorized) {
+      message.error(t('notAuthorized'));
+      return;
+    }
+
+    setUploadLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('video', file);
+      formData.append('email', email);
+      
+      const response = await uploadYouTubeVideoApi(formData);
+      if (response?.data) {
+        message.success(t('uploadSuccess'));
+      }
+    } catch (error) {
+      console.error('上传视频失败:', error);
+      message.error(t('uploadFailed'));
+    } finally {
+      setUploadLoading(false);
+    }
+    return false;
   };
 
   return (
@@ -119,6 +150,31 @@ const YouTubeAuth: React.FC = () => {
             >
               {t('authorize')}
             </Button>
+          </div>
+
+          <div className={styles.uploadSection}>
+            <Upload
+              accept="video/*"
+              showUploadList={false}
+              beforeUpload={handleUpload}
+              disabled={!isAuthorized || uploadLoading}
+            >
+              <Button
+                type="primary"
+                size="large"
+                loading={uploadLoading}
+                className={styles.uploadButton}
+                icon={<UploadOutlined />}
+                disabled={!isAuthorized}
+              >
+                {t('uploadVideo')}
+              </Button>
+            </Upload>
+            {!isAuthorized && (
+              <p className={styles.uploadTip}>
+                {t('needAuthFirst')}
+              </p>
+            )}
           </div>
         </div>
       </Card>
