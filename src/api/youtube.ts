@@ -1,19 +1,19 @@
 import { request } from '@/utils/request';
 
 // 获取 YouTube 授权 URL
-export const getYouTubeAuthUrlApi = (email: string) => {
+export const getYouTubeAuthUrlApi = (mail: string) => {
   return request({
     url: '/plat/youtube/auth/url',
     method: 'GET',
-    params: { email },
+    params: { mail },
   });
 };
 
-export const checkYouTubeAuthApi = (email: string) => {
+export const checkYouTubeAuthApi = ( data:any ) => {
   return request({
     url: '/plat/youtube/auth/check',
     method: 'GET',
-    params: { email },
+    params: data,
   });
 };
 

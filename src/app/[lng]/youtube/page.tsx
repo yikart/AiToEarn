@@ -1,24 +1,15 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { useTransClient } from "@/app/i18n/client";
-import { Button, Input, message, Card, Upload } from "antd";
-import {
-  MailOutlined,
-  YoutubeOutlined,
-  CheckOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
-import {
-  getYouTubeAuthUrlApi,
-  checkYouTubeAuthApi,
-  uploadYouTubeVideoApi,
-} from "@/api/youtube";
-import styles from "./youtube.module.css";
+import React, { useState } from 'react';
+import { useTransClient } from '@/app/i18n/client';
+import { Button, Input, message, Card, Upload } from 'antd';
+import { MailOutlined, YoutubeOutlined, CheckOutlined, UploadOutlined } from '@ant-design/icons';
+import { getYouTubeAuthUrlApi, checkYouTubeAuthApi, uploadYouTubeVideoApi } from '@/api/youtube';
+import styles from './youtube.module.css';
 
 const YouTubeAuth: React.FC = () => {
-  const { t } = useTransClient("youtube");
-  const [email, setEmail] = useState("zhang7676533317@gmail.com");
+  const { t } = useTransClient('youtube');
+  const [email, setEmail] = useState('zhang7676533317@gmail.com');
   const [loading, setLoading] = useState(false);
   const [checkLoading, setCheckLoading] = useState(false);
   const [uploadLoading, setUploadLoading] = useState(false);
@@ -26,22 +17,23 @@ const YouTubeAuth: React.FC = () => {
 
   const handleCheck = async () => {
     if (!email) {
-      message.error(t("pleaseEnterEmail"));
+      message.error(t('pleaseEnterEmail'));
       return;
     }
 
     setCheckLoading(true);
     try {
-      const response = await checkYouTubeAuthApi(email);
-      setIsAuthorized(response?.data?.authorized || false);
-      if (response?.data?.authorized) {
-        message.success(t("alreadyAuthorized"));
+      const response = await checkYouTubeAuthApi({ accountId: "117748783778429701407"});
+      
+      if (response?.data) {
+        message.success(t('alreadyAuthorized'));
+        setIsAuthorized(true);
       } else {
-        message.info(t("notAuthorized"));
+        message.info(t('notAuthorized'));
       }
     } catch (error) {
-      console.error("检查授权状态失败:", error);
-      message.error(t("checkFailed"));
+      console.error('检查授权状态失败:', error);
+      message.error(t('checkFailed'));
     } finally {
       setCheckLoading(false);
     }
@@ -49,12 +41,12 @@ const YouTubeAuth: React.FC = () => {
 
   const handleAuth = async () => {
     if (!email) {
-      message.error(t("pleaseEnterEmail"));
+      message.error(t('pleaseEnterEmail'));
       return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      message.error(t("invalidEmail"));
+      message.error(t('invalidEmail'));
       return;
     }
 
@@ -62,40 +54,36 @@ const YouTubeAuth: React.FC = () => {
     try {
       const response = await getYouTubeAuthUrlApi(email);
       if (response?.data) {
-        window.open(response.data, "_blank", "noopener,noreferrer");
+        window.open(response.data?.url, '_blank', 'noopener,noreferrer');
       }
     } catch (error) {
-      console.error("获取授权 URL 失败:", error);
-      message.error(t("authFailed"));
+      console.error('获取授权 URL 失败:', error);
+      message.error(t('authFailed'));
     } finally {
       setLoading(false);
     }
   };
 
   const handleUpload = async (file: File) => {
-    if (!email) {
-      message.error(t("pleaseEnterEmail"));
-      return;
-    }
 
     if (!isAuthorized) {
-      message.error(t("notAuthorized"));
+      message.error(t('notAuthorized'));
       return;
     }
 
     setUploadLoading(true);
     try {
       const formData = new FormData();
-      formData.append("video", file);
-      formData.append("email", email);
-
+      formData.append('video', file);
+      formData.append('accountId', "117748783778429701407");
+      
       const response = await uploadYouTubeVideoApi(formData);
       if (response?.data) {
-        message.success(t("uploadSuccess"));
+        message.success(t('uploadSuccess'));
       }
     } catch (error) {
-      console.error("上传视频失败:", error);
-      message.error(t("uploadFailed"));
+      console.error('上传视频失败:', error);
+      message.error(t('uploadFailed'));
     } finally {
       setUploadLoading(false);
     }
@@ -104,17 +92,24 @@ const YouTubeAuth: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <Card className={styles.card} bodyStyle={{ padding: "2.5rem" }}>
+      <Card 
+        className={styles.card}
+        bodyStyle={{ padding: '2.5rem' }}
+      >
         <div className={styles.header}>
           <YoutubeOutlined className={styles.icon} />
-          <h2 className={styles.title}>{t("youtubeAuth")}</h2>
-          <p className={styles.description}>{t("authDescription")}</p>
+          <h2 className={styles.title}>
+            {t('youtubeAuth')}
+          </h2>
+          <p className={styles.description}>
+            {t('authDescription')}
+          </p>
         </div>
 
         <div className={styles.form}>
           <div className={styles.formItem}>
             <label htmlFor="email" className={styles.label}>
-              {t("email")}
+              {t('email')}
             </label>
             <Input
               id="email"
@@ -123,7 +118,7 @@ const YouTubeAuth: React.FC = () => {
               required
               size="large"
               className={styles.input}
-              placeholder={t("enterEmail")}
+              placeholder={t('enterEmail')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               prefix={<MailOutlined className={styles.inputIcon} />}
@@ -139,7 +134,7 @@ const YouTubeAuth: React.FC = () => {
               className={styles.checkButton}
               icon={<CheckOutlined />}
             >
-              {t("checkAuth")}
+              {t('checkAuth')}
             </Button>
 
             <Button
@@ -150,7 +145,7 @@ const YouTubeAuth: React.FC = () => {
               className={styles.button}
               icon={<YoutubeOutlined />}
             >
-              {t("authorize")}
+              {t('authorize')}
             </Button>
           </div>
 
@@ -169,11 +164,13 @@ const YouTubeAuth: React.FC = () => {
                 icon={<UploadOutlined />}
                 disabled={!isAuthorized}
               >
-                {t("uploadVideo")}
+                {t('uploadVideo')}
               </Button>
             </Upload>
             {!isAuthorized && (
-              <p className={styles.uploadTip}>{t("needAuthFirst")}</p>
+              <p className={styles.uploadTip}>
+                {t('needAuthFirst')}
+              </p>
             )}
           </div>
         </div>
@@ -182,4 +179,4 @@ const YouTubeAuth: React.FC = () => {
   );
 };
 
-export default YouTubeAuth;
+export default YouTubeAuth; 
