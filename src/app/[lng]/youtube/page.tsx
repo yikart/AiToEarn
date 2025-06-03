@@ -53,7 +53,7 @@ const YouTubeAuth: React.FC = () => {
     try {
       const response = await getYouTubeAuthUrlApi(email);
       if (response?.data) {
-        window.open(response.data, '_blank', 'noopener,noreferrer');
+        window.open(response.data?.url, '_blank', 'noopener,noreferrer');
       }
     } catch (error) {
       console.error('获取授权 URL 失败:', error);
