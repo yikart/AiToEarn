@@ -10,6 +10,7 @@ export enum PlatType {
   Xhs = "xhs", // 小红书
   WxSph = "wxSph", // 微信视频号
   KWAI = "KWAI", // 快手
+  YouTube = "youtube", // YouTube
 }
 
 export interface IAccountPlatInfo {
