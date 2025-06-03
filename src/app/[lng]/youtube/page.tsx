@@ -74,7 +74,7 @@ const YouTubeAuth: React.FC = () => {
     setUploadLoading(true);
     try {
       const formData = new FormData();
-      formData.append('video', file);
+      formData.append('file', file);
       formData.append('accountId', "117748783778429701407");
       
       const response = await uploadYouTubeVideoApi(formData);

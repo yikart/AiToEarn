@@ -21,9 +21,9 @@ export const uploadYouTubeVideoApi = (data: FormData) => {
   return request({
     url: '/plat/youtube/videos/upload',
     method: 'POST',
-    data,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
+    body: data,
+    // headers: {
+    //   'Content-Type': 'multipart/form-data',
+    // },
   });
 }; 
