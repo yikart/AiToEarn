@@ -1,0 +1,100 @@
+.image {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  :global {
+    .image-wrapper {
+      width: 1200px;
+      margin: 0 auto;
+      height: 100%;
+      min-height: 0;
+      box-sizing: border-box;
+      padding: 15px 0;
+      display: flex;
+      @media (max-width: 1450px) {
+        width: 90%;
+      }
+    }
+    .image-footer {
+      border-top: 1px solid var(--grayColor3);
+      padding: 15px 0;
+      text-align: center;
+      button {
+        margin-right: 20px;
+        &:last-of-type {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+}
+
+.imageLeftSetting {
+  width: 65%;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  padding: 25px 20px 0 0;
+  border-right: 1px solid var(--grayColor3);
+  :global {
+    .imageLeftSetting-upload {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      border-bottom: 1px solid var(--grayColor3);
+      padding-bottom: 30px;
+      margin-bottom: 25px;
+    }
+    .imageLeftSetting-commonPar {
+      height: 100%;
+      &-titles, &-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: var(--fs-sm);
+        margin-bottom: 30px;
+        & > label {
+          flex-shrink: 0;
+        }
+      }
+      &-item {
+        textarea {
+          height: 150px;
+          resize: none;
+        }
+      }
+    }
+  }
+}
+
+.imageRightSetting {
+  width: 45%;
+  box-sizing: border-box;
+  margin-left: 20px;
+  :global {
+    .imageRightSetting-title {
+      text-align: left;
+      font-size: var(--fs-sm);
+      margin: 25px 0 5px 0;
+    }
+
+    .ant-steps {
+      margin-top: 30px;
+      .ant-steps-item {
+        height: 70px;
+      }
+      .ant-steps-item-title {
+        color: #222 !important;
+        font-weight: 900;
+      }
+      .ant-steps-item-description {
+        color: var(--grayColor7) !important;
+        font-size: var(--fs-xs);
+      }
+    }
+  }
+}

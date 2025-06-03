@@ -1,8 +1,8 @@
-import { request } from '@/utils/request';
-import { PubType, PublishType, PubStatus } from '@/types/publish';
+import { request } from "@/utils/request";
+import { PubType } from "@/app/config/publishConfig";
 
 export interface PublishParams {
-  type: PublishType;
+  type: PubType;
   title: string;
   desc: string;
   accountId: number;
@@ -28,7 +28,7 @@ export interface PublishListResponse {
 export const getPublishListApi = (pageNo: number, pageSize: number) => {
   return request<PublishListResponse>({
     url: `/publish/list/${pageNo}/${pageSize}`,
-    method: 'GET'
+    method: "GET",
   });
 };
 
@@ -36,16 +36,16 @@ export const getPublishListApi = (pageNo: number, pageSize: number) => {
 export const getDraftsListApi = (pageNo: number, pageSize: number) => {
   return request<PublishListResponse>({
     url: `/publish/drafts/list/${pageNo}/${pageSize}`,
-    method: 'GET'
+    method: "GET",
   });
 };
 
 // 创建发布
 export const createPublishApi = (data: PublishParams) => {
   return request({
-    url: '/publish',
-    method: 'POST',
-    data
+    url: "/publish",
+    method: "POST",
+    data,
   });
 };
 
@@ -53,8 +53,8 @@ export const createPublishApi = (data: PublishParams) => {
 export const updatePublishStatusApi = (id: number, status: number) => {
   return request({
     url: `/publish/status/${id}`,
-    method: 'POST',
-    data: { status }
+    method: "POST",
+    data: { status },
   });
 };
 
@@ -62,6 +62,6 @@ export const updatePublishStatusApi = (id: number, status: number) => {
 export const deletePublishApi = (id: number) => {
   return request({
     url: `/publish/${id}`,
-    method: 'DELETE'
+    method: "DELETE",
   });
-}; 
+};

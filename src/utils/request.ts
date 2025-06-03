@@ -25,7 +25,7 @@ const fetchService = new FetchService({
       const lng = useUserStore.getState().lang;
       requestParams.headers = {
         ...requestParams.headers,
-        'Accept-Language': lng
+        "Accept-Language": lng,
       };
     }
 

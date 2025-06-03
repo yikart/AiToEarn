@@ -26,10 +26,12 @@ function getNameTag(child: IRouterDataItem, iconLoca: number = 1) {
     <>
       {!child.children ? (
         <Link href={path || "/"} target={path[0] === "/" ? "_self" : "_blank"}>
+          {/*@ts-ignore*/}
           {t(child.translationKey)}
         </Link>
       ) : (
         <span>
+          {/*@ts-ignore*/}
           {t(child.translationKey)}
           {child.children &&
             (iconLoca === 0 ? <UpOutlined /> : <RightOutlined />)}
@@ -211,9 +213,10 @@ function NavPE() {
   const router = useRouter();
   const { t } = useTransClient("route");
 
-  const translatedMenuItems = peRouterData?.map(item => ({
+  const translatedMenuItems = peRouterData?.map((item) => ({
     ...item,
-    label: t(item.key as string)
+    // @ts-ignore
+    label: t(item.key as string),
   }));
 
   return (
@@ -237,6 +240,7 @@ function NavPE() {
           }}
           style={{ width: "100%" }}
           mode="inline"
+          // @ts-ignore
           items={translatedMenuItems}
         />
       </Drawer>

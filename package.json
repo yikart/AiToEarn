@@ -23,6 +23,7 @@
     "accept-language": "3.0.20",
     "antd": "^5.25.2",
     "cookies-next": "^4.3.0",
+    "cropperjs": "^1.6.2",
     "dayjs": "^1.11.13",
     "i18next": "24.2.3",
     "i18next-browser-languagedetector": "8.0.4",
