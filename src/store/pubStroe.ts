@@ -1,13 +1,13 @@
 import { createPersistStore } from '@/utils/createPersistStore';
 import { StoreKey } from '@/utils/StroeEnum';
-import { IVideoPageStore } from '../views/publish/children/videoPage/useVideoPageStore';
+import { IVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import {
   IPubParams,
   IVideoChooseItem,
-} from '../views/publish/children/videoPage/videoPage';
-import { IImagePageStore } from '../views/publish/children/imagePage/useImagePageStore';
-import { IImgFile } from '../components/Choose/ImgChoose';
-import { IImageAccountItem } from '../views/publish/children/imagePage/imagePage.type';
+} from '@/views/publish/children/videoPage/videoPage';
+import { IImagePageStore } from '@/views/publish/children/imagePage/useImagePageStore';
+import { IImgFile } from '@/components/Choose/ImgChoose';
+import { IImageAccountItem } from '@/views/publish/children/imagePage/imagePage.type';
 
 export interface IPubStore {
   // 视频发布保存的数据

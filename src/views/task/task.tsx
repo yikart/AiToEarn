@@ -57,7 +57,7 @@ import {
   icpPubImgText,
 } from '@/icp/publish';
 import { usePubStroe } from '@/store/pubStroe';
-import { useAccountStore } from '@/store/commont';
+import { useCommontStore } from '@/store/commont';
 
 // 导入平台图标
 import KwaiIcon from '../../assets/svgs/account/ks.svg';
@@ -558,7 +558,7 @@ export default function Task() {
     setModalVisible(false);
     usePubStroe.getState().clearImgTextPubSave();
     const successList = okRes.filter((v) => v.code === 1);
-    useAccountStore.getState().notification!.open({
+    useCommontStore.getState().notification!.open({
       message: '发布结果',
       description: (
         <>

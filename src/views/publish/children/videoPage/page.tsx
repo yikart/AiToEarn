@@ -15,7 +15,7 @@ import { PubType } from '@@/publish/PublishEnum';
 import VideoChooseItem from '@/views/publish/children/videoPage/components/VideoChooseItem';
 import CommonPubSetting from '@/views/publish/children/videoPage/components/CommonPubSetting';
 import VideoPubSetModal from '@/views/publish/children/videoPage/components/VideoPubSetModal/VideoPubSetModal';
-import { usePubStroe } from '../../../../store/pubStroe';
+import { usePubStroe } from '@/store/pubStroe';
 import { IVideoChooseItem } from '@/views/publish/children/videoPage/videoPage';
 import { toolsApi } from '@/api/tools';
 import { sensitivityLoading } from '@/utils';

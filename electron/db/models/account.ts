@@ -7,7 +7,11 @@
  */
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { TempModel } from './temp';
-import {AccountStatus, PlatType, XhsAccountAbnormal} from '../../../commont/AccountEnum';
+import {
+  AccountStatus,
+  PlatType,
+  XhsAccountAbnormal,
+} from '../../../commont/AccountEnum';
 
 @Entity({ name: 'account' })
 export class AccountModel extends TempModel {

@@ -20,7 +20,7 @@ import {
   icpPubImgText,
 } from '@/icp/publish';
 import { PubType } from '@@/publish/PublishEnum';
-import { useAccountStore } from '@/store/commont';
+import { useCommontStore } from '@/store/commont';
 import { useNavigate } from 'react-router-dom';
 import { usePubStroe } from '@/store/pubStroe';
 import { ExclamationCircleFilled } from '@ant-design/icons';
@@ -166,7 +166,7 @@ export default function Page() {
     setPubProgressModuleOpen(false);
     usePubStroe.getState().clearImgTextPubSave();
     const successList = okRes.filter((v) => v.code === 1);
-    useAccountStore.getState().notification!.open({
+    useCommontStore.getState().notification!.open({
       message: '发布结果',
       description: (
         <>

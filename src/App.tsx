@@ -11,7 +11,7 @@ import router from '@/router/index';
 import { ConfigProvider, notification } from 'antd';
 import Inform from './components/Inform';
 import { useEffect } from 'react';
-import { useAccountStore } from './store/commont';
+import { useCommontStore } from './store/commont';
 
 const App = () => {
   const [api, contextHolder] = notification.useNotification({
@@ -19,7 +19,7 @@ const App = () => {
   });
 
   useEffect(() => {
-    useAccountStore.getState().setNotification(api);
+    useCommontStore.getState().setNotification(api);
   }, []);
 
   return (

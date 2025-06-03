@@ -48,7 +48,7 @@ import usePubParamsVerify, {
   PubParamsErrStatusEnum,
   PubParamsVerifyInfo,
 } from '../../../../hooks/usePubParamsVerify';
-import { useAccountStore } from '../../../../../../store/commont';
+import { useCommontStore } from '../../../../../../store/commont';
 import { IVideoFile } from '../../../../../../components/Choose/VideoChoose';
 import {
   NoticeItem,
@@ -274,7 +274,7 @@ const VideoPubSetModal = memo(
         addNotice(NoticeType.PubNotice, noticeList);
 
         setTimeout(() => {
-          useAccountStore.getState().notification!.open({
+          useCommontStore.getState().notification!.open({
             message: '发布结果',
             description: (
               <>
