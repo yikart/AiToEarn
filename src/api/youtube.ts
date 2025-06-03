@@ -9,11 +9,11 @@ export const getYouTubeAuthUrlApi = (mail: string) => {
   });
 };
 
-export const checkYouTubeAuthApi = ( mail: string) => {
+export const checkYouTubeAuthApi = ( data:any ) => {
   return request({
     url: '/plat/youtube/auth/check',
     method: 'GET',
-    params: { mail },
+    params: data,
   });
 };
 

@@ -23,10 +23,11 @@ const YouTubeAuth: React.FC = () => {
 
     setCheckLoading(true);
     try {
-      const response = await checkYouTubeAuthApi(email);
-      setIsAuthorized(response?.data?.authorized || false);
-      if (response?.data?.authorized) {
+      const response = await checkYouTubeAuthApi({ accountId: "117748783778429701407"});
+      
+      if (response?.data) {
         message.success(t('alreadyAuthorized'));
+        setIsAuthorized(true);
       } else {
         message.info(t('notAuthorized'));
       }
@@ -64,10 +65,6 @@ const YouTubeAuth: React.FC = () => {
   };
 
   const handleUpload = async (file: File) => {
-    if (!email) {
-      message.error(t('pleaseEnterEmail'));
-      return;
-    }
 
     if (!isAuthorized) {
       message.error(t('notAuthorized'));
@@ -78,7 +75,7 @@ const YouTubeAuth: React.FC = () => {
     try {
       const formData = new FormData();
       formData.append('video', file);
-      formData.append('email', email);
+      formData.append('accountId', "117748783778429701407");
       
       const response = await uploadYouTubeVideoApi(formData);
       if (response?.data) {

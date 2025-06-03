@@ -42,16 +42,26 @@ class FetchService<T = Response> {
       // body 参数处理
       const fetchURL = requestParams.url.startsWith('http') ? requestParams.url : this.baseURL + requestParams.url;
       if (!requestParams.body && requestParams.data) {
-        requestParams.data = this._filterDictUndefined(requestParams.data);
-
-        requestParams = {
-          ...requestParams,
-          body: JSON.stringify(requestParams.data),
-          headers: {
-            ...(requestParams["headers"] || {}),
-            "content-type": "application/json",
-          },
-        };
+        // 检查是否为FormData
+        if (requestParams.data instanceof FormData) {
+          // 如果是FormData，直接设置为body，不需要转JSON
+          requestParams = {
+            ...requestParams,
+            body: requestParams.data,
+            // 不手动设置Content-Type，让浏览器自动处理
+          };
+        } else {
+          // 非FormData对象走原来的逻辑
+          requestParams.data = this._filterDictUndefined(requestParams.data);
+          requestParams = {
+            ...requestParams,
+            body: JSON.stringify(requestParams.data),
+            headers: {
+              ...(requestParams["headers"] || {}),
+              "content-type": "application/json",
+            },
+          };
+        }
       }
 
       // params 参数处理
