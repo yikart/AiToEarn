@@ -5,7 +5,7 @@
  * @LastEditors: nevin
  * @Description: 选择图片
  */
-import { Button, message } from "antd";
+import { Button } from "antd";
 import { FC } from "react";
 import { generateUUID, getFilePathName } from "@/utils";
 // import { icpGetFileStream } from "@/icp/view";

@@ -5,10 +5,13 @@
  * @LastEditors: nevin
  * @Description: 选择视频
  */
-import { Button } from "antd";
-import { FC } from "react";
-import { getFilePathName } from "@/utils";
-import { IImgFile } from "@/app/[lng]/publish/components/Choose/ImgChoose";
+import { Button, message, Upload } from "antd";
+import { FC, useRef } from "react";
+import {
+  formatImg,
+  IImgFile,
+} from "@/app/[lng]/publish/components/Choose/ImgChoose";
+import { RcFile } from "antd/es/upload";
 // import { saveCropperImage } from "@/views/publish/children/videoPage/components/VideoCoverSeting";
 
 interface VideoChooseProps {
@@ -31,7 +34,7 @@ export interface IVideoFile {
   videoUrl: string;
   filename: string;
   // 视频在硬盘上的路径
-  videoPath: string;
+  // videoPath: string;
   // 视频宽度
   width: number;
   // 视频高度
@@ -54,72 +57,81 @@ function getVideoInfo(
   cover: IImgFile;
 }> {
   return new Promise((resolve) => {
-    // TODO 截帧
-    // // 创建一个临时的 video 元素
-    // const video = document.createElement("video");
-    //
-    // // 设置 video 元素的 src 属性
-    // video.src = videoUrl;
-    //
-    // // 当视频元数据加载完毕时执行回调
-    // video.addEventListener("loadedmetadata", () => {
-    //   video.currentTime = 0;
-    // });
-    //
-    // video.addEventListener("seeked", function () {
-    //   // 获取视频的宽度和高度
-    //   const width = video.videoWidth;
-    //   const height = video.videoHeight;
-    //   // 获取视频的时长
-    //   const duration = video.duration;
-    //
-    //   // 获取视频首帧
-    //   const canvas = document.createElement("canvas");
-    //   canvas.width = width;
-    //   canvas.height = height;
-    //   const context = canvas.getContext("2d")!;
-    //   context.fillStyle = "white";
-    //   context.fillRect(0, 0, width, height);
-    //   context.drawImage(video, 0, 0);
-    //   canvas.toBlob(async (blob) => {
-    //     const imgPath = await saveCropperImage(
-    //       `${fileName}.${blob!.type.split("/")[1]}`,
-    //       blob!,
-    //     );
-    //     const cover = await formatImg({
-    //       blob: blob!,
-    //       path: imgPath,
-    //     });
-    //     resolve({
-    //       width,
-    //       height,
-    //       duration: Math.floor(duration),
-    //       cover,
-    //     });
-    //     video.remove();
-    //   });
-    // });
-    // // 加载视频
-    // video.load();
+    // 创建一个临时的 video 元素
+    const video = document.createElement("video");
+
+    // 设置 video 元素的 src 属性
+    video.src = videoUrl;
+
+    // 当视频元数据加载完毕时执行回调
+    video.addEventListener("loadedmetadata", () => {
+      video.currentTime = 0;
+    });
+
+    video.addEventListener("seeked", function () {
+      // 获取视频的宽度和高度
+      const width = video.videoWidth;
+      const height = video.videoHeight;
+      // 获取视频的时长
+      const duration = video.duration;
+
+      // 获取视频首帧
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const context = canvas.getContext("2d")!;
+      context.fillStyle = "white";
+      context.fillRect(0, 0, width, height);
+      context.drawImage(video, 0, 0);
+      canvas.toBlob(async (blob) => {
+        const cover = await formatImg({
+          blob: blob!,
+          path: fileName,
+        });
+        resolve({
+          width,
+          height,
+          duration: Math.floor(duration),
+          cover,
+        });
+        video.remove();
+      });
+    });
+    // 加载视频
+    video.load();
   });
 }
 
 // 根据视频的Uint8Array和路径获取文件
-export const formatVideo = async (
-  path: string,
-  file: Uint8Array,
-): Promise<IVideoFile> => {
-  const { filename, suffix } = getFilePathName(path);
-  const blob = new Blob([file], { type: `video/${suffix}` });
-  const videoUrl = URL.createObjectURL(blob);
+// export const formatVideo = async (
+//   path: string,
+//   file: Uint8Array,
+// ): Promise<IVideoFile> => {
+//   const { filename, suffix } = getFilePathName(path);
+//   const blob = new Blob([file], { type: `video/${suffix}` });
+//   const videoUrl = URL.createObjectURL(blob);
+//
+//   const videoInfo = await getVideoInfo(videoUrl, filename);
+//   return {
+//     videoPath: path,
+//     size: file.length,
+//     filename,
+//     file: blob,
+//     videoUrl,
+//     ...videoInfo,
+//   };
+// };
 
-  const videoInfo = await getVideoInfo(videoUrl, filename);
+const formatVideo = async (file: RcFile): Promise<IVideoFile> => {
+  const videoUrl = URL.createObjectURL(file);
+
+  const videoInfo = await getVideoInfo(URL.createObjectURL(file), file.name);
+
   return {
-    videoPath: path,
-    size: file.length,
-    filename,
-    file: blob,
+    filename: file.name,
     videoUrl,
+    size: file.size!,
+    file: file,
     ...videoInfo,
   };
 };
@@ -131,45 +143,48 @@ const VideoChoose: FC<VideoChooseProps> = ({
   onStartShoose,
   onChooseFail,
 }) => {
+  const chooseCount = useRef<number>(0);
+  const fileListRef = useRef<RcFile[]>([]);
+
   /**
    * 发送上传的事件
    */
   const handleUploadVideo = async () => {
-    // TODO 上传视频
-    // try {
-    //   // if (onStartShoose) onStartShoose();
-    //   const result: {
-    //     path: string;
-    //     video: Uint8Array;
-    //   }[] = await window.ipcRenderer.invoke(
-    //     "ICP_VIEWS_CHOSE_VIDEO",
-    //     !!onMultipleChoose,
-    //   );
-    //   if (!result) {
-    //     // if (onChooseFail) onChooseFail();
-    //     return;
-    //   }
-    //   if (onStartShoose) onStartShoose();
-    //
-    //   const tasks: Promise<IVideoFile>[] = [];
-    //   for (const v of result) {
-    //     tasks.push(formatVideo(v.path, v.video));
-    //   }
-    //   const videoFiles = await Promise.all(tasks);
-    //
-    //   if (onMultipleChoose) {
-    //     onMultipleChoose(videoFiles);
-    //   } else if (onChoose) {
-    //     onChoose(videoFiles[0]);
-    //   }
-    // } catch (error) {
-    //   message.error("选择视频失败");
-    //   console.error(error);
-    // }
+    try {
+      const tasks: Promise<IVideoFile>[] = [];
+      for (const file of fileListRef.current) {
+        tasks.push(formatVideo(file));
+      }
+      const videoFiles = await Promise.all(tasks);
+
+      if (onMultipleChoose) {
+        onMultipleChoose(videoFiles);
+      } else if (onChoose) {
+        onChoose(videoFiles[0]);
+      }
+    } catch (e) {
+      message.error("选择视频失败");
+      console.error(e);
+    }
   };
 
   return (
-    <>
+    <Upload
+      accept=".mp4"
+      multiple={!!onMultipleChoose}
+      beforeUpload={async (file, uploadFileList) => {
+        chooseCount.current++;
+        fileListRef.current = [...fileListRef.current, file];
+
+        if (chooseCount.current === uploadFileList.length) {
+          handleUploadVideo();
+          fileListRef.current = [];
+          chooseCount.current = 0;
+        }
+
+        return Upload.LIST_IGNORE;
+      }}
+    >
       {children ? (
         <div
           className="videoChoose"
@@ -183,7 +198,7 @@ const VideoChoose: FC<VideoChooseProps> = ({
           选择视频
         </Button>
       )}
-    </>
+    </Upload>
   );
 };
 
