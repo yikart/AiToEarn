@@ -36,3 +36,28 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+/* 全局自定义滚动条样式 */
+.ant-table-body {
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 6px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #cccccc;
+  border-radius: 6px;
+  border: 2px solid #f0f0f0;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #a2a2a2;
+}
