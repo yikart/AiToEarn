@@ -120,6 +120,26 @@
   gap: 1rem;
 }
 
+.alert {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.createChannelButton {
+  margin-top: 1rem;
+  background-color: #ff0000;
+  border: none;
+}
+
+.createChannelButton:hover {
+  background-color: #cc0000;
+}
+
+.sectionSelect {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
 .uploadButton {
   width: 100%;
   height: 3rem;

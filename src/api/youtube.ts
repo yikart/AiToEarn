@@ -23,12 +23,19 @@ export const uploadYouTubeVideoApi = (data: FormData) => {
     method: 'POST',
     body: data,
   });
-}; 
+};
 
-
-export const getYouTubeListApi = ( data:any ) => {
+export const getYouTubeListApi = (data: any) => {
   return request({
     url: '/plat/youtube/videos/list',
+    method: 'GET',
+    params: data,
+  });
+};
+
+export const getYouTubeChannelSectionsApi = (data: any) => {
+  return request({
+    url: '/plat/youtube/channels/list',
     method: 'GET',
     params: data,
   });

@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTransClient } from '@/app/i18n/client';
-import { Button, Input, message, Card, Upload } from 'antd';
-import { MailOutlined, YoutubeOutlined, CheckOutlined, UploadOutlined } from '@ant-design/icons';
-import { getYouTubeAuthUrlApi, checkYouTubeAuthApi, uploadYouTubeVideoApi } from '@/api/youtube';
+import { Button, Input, message, Card, Upload, Select, Alert } from 'antd';
+import { MailOutlined, YoutubeOutlined, CheckOutlined, UploadOutlined, WarningOutlined } from '@ant-design/icons';
+import { getYouTubeAuthUrlApi, checkYouTubeAuthApi, uploadYouTubeVideoApi, getYouTubeChannelSectionsApi } from '@/api/youtube';
 import styles from './youtube.module.css';
 
 const YouTubeAuth: React.FC = () => {
@@ -14,6 +14,36 @@ const YouTubeAuth: React.FC = () => {
   const [checkLoading, setCheckLoading] = useState(false);
   const [uploadLoading, setUploadLoading] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [sections, setSections] = useState([]);
+  const [selectedSection, setSelectedSection] = useState('');
+  const [hasChannel, setHasChannel] = useState(false);
+
+  // 获取频道分区
+  const fetchChannelSections = async () => {
+    try {
+      const response:any = await getYouTubeChannelSectionsApi({ 
+        accountId: "117748783778429701407",
+        mine: true
+      });
+      if (response?.data?.items?.length > 0) {
+        setHasChannel(true);
+        setSections(response.data.items);
+      } else {
+        setHasChannel(false);
+        setSections([]);
+      }
+    } catch (error) {
+      console.error('获取频道分区失败:', error);
+      setHasChannel(false);
+    }
+  };
+
+  // 当授权状态改变时获取分区
+  useEffect(() => {
+    if (isAuthorized) {
+      fetchChannelSections();
+    }
+  }, [isAuthorized]);
 
   const handleCheck = async () => {
     if (!email) {
@@ -65,7 +95,6 @@ const YouTubeAuth: React.FC = () => {
   };
 
   const handleUpload = async (file: File) => {
-
     if (!isAuthorized) {
       message.error(t('notAuthorized'));
       return;
@@ -78,9 +107,10 @@ const YouTubeAuth: React.FC = () => {
       formData.append('accountId', "117748783778429701407");
       formData.append('title', "你说这怎么样");
       formData.append('description', "糟糕啊，是心动的感觉！"); 
-      formData.append('privacyStatus', "private"); 
-      
-      
+      formData.append('privacyStatus', "private");
+      if (selectedSection) {
+        formData.append('sectionId', selectedSection);
+      }
       
       const response = await uploadYouTubeVideoApi(formData);
       if (response?.data) {
@@ -155,11 +185,46 @@ const YouTubeAuth: React.FC = () => {
           </div>
 
           <div className={styles.uploadSection}>
+            {isAuthorized && !hasChannel && (
+              <Alert
+                message="您还没有 YouTube 频道"
+                description={
+                  <div>
+                    <p>请先创建 YouTube 频道后再上传视频</p>
+                    <Button 
+                      type="primary" 
+                      onClick={() => window.open('https://www.youtube.com/create_channel', '_blank')}
+                      className={styles.createChannelButton}
+                    >
+                      创建频道
+                    </Button>
+                  </div>
+                }
+                type="warning"
+                showIcon
+                icon={<WarningOutlined />}
+                className={styles.alert}
+              />
+            )}
+
+            {isAuthorized && hasChannel && sections.length > 0 && (
+              <Select
+                className={styles.sectionSelect}
+                placeholder="选择频道分区"
+                value={selectedSection}
+                onChange={setSelectedSection}
+                options={sections.map((section: any) => ({
+                  label: section.title,
+                  value: section.id
+                }))}
+              />
+            )}
+
             <Upload
               accept="video/*"
               showUploadList={false}
               beforeUpload={handleUpload}
-              disabled={!isAuthorized || uploadLoading}
+              disabled={!isAuthorized || !hasChannel || uploadLoading}
             >
               <Button
                 type="primary"
@@ -167,7 +232,7 @@ const YouTubeAuth: React.FC = () => {
                 loading={uploadLoading}
                 className={styles.uploadButton}
                 icon={<UploadOutlined />}
-                disabled={!isAuthorized}
+                disabled={!isAuthorized || !hasChannel}
               >
                 {t('uploadVideo')}
               </Button>
