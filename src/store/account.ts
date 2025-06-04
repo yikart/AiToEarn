@@ -1,7 +1,11 @@
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 import lodash from "lodash";
-import { AccountGroupItem, SocialAccount } from "@/api/types/account.type";
+import {
+  AccountGroupDefaultType,
+  AccountGroupItem,
+  SocialAccount,
+} from "@/api/types/account.type";
 import { getAccountGroupApi, getAccountListApi } from "@/api/account";
 
 export interface AccountGroup extends AccountGroupItem {
@@ -74,12 +78,17 @@ export const useAccountStore = create(
         async getAccountGroup() {
           const res = await getAccountGroupApi();
           const groupList = res?.data;
-          if (!groupList) return;
 
+          if (!groupList) return;
           if (groupList.length === 0) return;
           const accountGroupList: AccountGroup[] = [];
           // key=组ID，val=账户ID
           const accountGroupMap = new Map<number, AccountGroup>();
+
+          const defaultGroup = groupList.find(
+            (v) => v.isDefault === AccountGroupDefaultType.Default,
+          )!;
+
           groupList.map((v) => {
             const accountGroupItem = {
               ...v,
@@ -89,7 +98,10 @@ export const useAccountStore = create(
             accountGroupMap.set(v.id, accountGroupItem);
           });
           get().accountList.map((v) => {
-            accountGroupMap.get(v.groupId!)!.children?.push(v);
+            (
+              accountGroupMap.get(v.groupId!) ||
+              accountGroupMap.get(defaultGroup.id)!
+            ).children?.push(v);
           });
 
           accountGroupList.sort((a, b) => {

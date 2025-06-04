@@ -31,8 +31,6 @@ class FetchService<T = Response> {
   }
 
   public async request(requestParams: RequestParams): Promise<T> {
-    console.log(requestParams);
-    
     return new Promise(async (resolve, reject) => {
       // 请求拦截
       if (this.requestInterceptor) {
