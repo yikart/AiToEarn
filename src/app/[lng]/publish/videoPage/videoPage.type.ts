@@ -1,8 +1,8 @@
-import { SocialAccount } from "@/api/types/account.type";
-import { PlatType } from "@/app/config/platConfig";
-import { VisibleTypeEnum } from "@/app/config/publishConfig";
-import { IVideoFile } from "@/app/[lng]/publish/components/Choose/VideoChoose";
-import { IImgFile } from "@/app/[lng]/publish/components/Choose/ImgChoose";
+import {SocialAccount} from "@/api/types/account.type";
+import {PlatType} from "@/app/config/platConfig";
+import {VisibleTypeEnum} from "@/app/config/publishConfig";
+import {IVideoFile} from "@/app/[lng]/publish/components/Choose/VideoChoose";
+import {IImgFile} from "@/app/[lng]/publish/components/Choose/ImgChoose";
 
 // 微信视频号活动
 export interface WxSphEvent {
@@ -110,3 +110,12 @@ export interface IVideoChooseItem {
 }
 
 export type AccountInfo = SocialAccount;
+
+export enum AccountChooseType {
+  // 多选
+  MultiSelect = 0,
+  // 单选
+  Radio = 1,
+  // 替换
+  Replace = 2,
+}

@@ -12,8 +12,7 @@ import {
 import { useVideoPageStore } from "@/app/[lng]/publish/videoPage/useVideoPageStore";
 import { useShallow } from "zustand/react/shallow";
 import { formatSeconds } from "@/utils";
-import { AccountChooseType } from "../page";
-import { IVideoChooseItem } from "@/app/[lng]/publish/videoPage/videoPage.type";
+import {AccountChooseType, IVideoChooseItem} from "@/app/[lng]/publish/videoPage/videoPage.type";
 import { AccountStatus } from "@/app/config/accountConfig";
 import VideoChoose from "@/app/[lng]/publish/components/Choose/VideoChoose";
 import { AccountPlatInfoMap } from "@/app/config/platConfig";

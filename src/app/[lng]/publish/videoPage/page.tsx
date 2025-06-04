@@ -14,17 +14,11 @@ import { PubType } from "@/app/config/publishConfig";
 import VideoChooseItem from "@/app/[lng]/publish/videoPage/components/VideoChooseItem";
 import CommonPubSetting from "@/app/[lng]/publish/videoPage/components/CommonPubSetting";
 import VideoPubSetModal from "@/app/[lng]/publish/videoPage/components/VideoPubSetModal/VideoPubSetModal";
-import { IVideoChooseItem } from "@/app/[lng]/publish/videoPage/videoPage.type";
+import {
+  AccountChooseType,
+  IVideoChooseItem,
+} from "@/app/[lng]/publish/videoPage/videoPage.type";
 import { useEffect, useRef, useState } from "react";
-
-export enum AccountChooseType {
-  // 多选
-  MultiSelect = 0,
-  // 单选
-  Radio = 1,
-  // 替换
-  Replace = 2,
-}
 
 export default function Page() {
   const {
