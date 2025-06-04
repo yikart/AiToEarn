@@ -3,6 +3,7 @@ import ksSvg from "@/assets/svgs/plat/ks.svg";
 import xhsSvg from "@/assets/svgs/plat/xhs.svg";
 import douyinSvg from "@/assets/svgs/plat/douyin.svg";
 import wxSphSvg from "@/assets/svgs/plat/wx-sph.svg";
+import youtubeSvg from "@/assets/svgs/plat/youtube.svg";
 
 // 平台类型
 export enum PlatType {
@@ -124,6 +125,23 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       name: "微信视频号",
       icon: wxSphSvg.src,
       url: "https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/helper/hepler_merlin_mmdata?_rid=67b30b55-6e3ea588",
+      pubTypes: new Set([PubType.VIDEO]),
+      commonPubParamsConfig: {
+        timingMax: {
+          maxDate: 30,
+          timeOffset: 60,
+        },
+        titleMax: 16,
+        topicMax: 10,
+      },
+    },
+  ],
+  [
+    PlatType.YouTube,
+    {
+      name: "YouTube",
+      icon: youtubeSvg.src,
+      url: "https://www.youtube.com/",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
         timingMax: {
