@@ -76,6 +76,11 @@ const YouTubeAuth: React.FC = () => {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('accountId', "117748783778429701407");
+      formData.append('title', "你说这怎么样");
+      formData.append('description', "糟糕啊，是心动的感觉！"); 
+      formData.append('privacyStatus', "private"); 
+      
+      
       
       const response = await uploadYouTubeVideoApi(formData);
       if (response?.data) {

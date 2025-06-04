@@ -22,8 +22,14 @@ export const uploadYouTubeVideoApi = (data: FormData) => {
     url: '/plat/youtube/videos/upload',
     method: 'POST',
     body: data,
-    // headers: {
-    //   'Content-Type': 'multipart/form-data',
-    // },
   });
 }; 
+
+
+export const getYouTubeListApi = ( data:any ) => {
+  return request({
+    url: '/plat/youtube/videos/list',
+    method: 'GET',
+    params: data,
+  });
+};
