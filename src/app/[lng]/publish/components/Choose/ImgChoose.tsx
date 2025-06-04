@@ -41,47 +41,6 @@ export interface IImgFile {
 //   return await formatImg({ path, file });
 // };
 
-/**
- * 根据图片的Uint8Array和路径获取文件
- * @param path
- * @param file
- * @param blob
- */
-export const formatImg = async ({
-  path,
-  file,
-  blob,
-}: {
-  path: string;
-  file?: Uint8Array;
-  blob?: Blob;
-}): Promise<IImgFile> => {
-  return new Promise((resolve) => {
-    const { filename, suffix } = getFilePathName(path);
-    if (!blob) {
-      blob = new Blob([file!], {
-        type: `image/${suffix}`,
-      });
-    }
-    const imgUrl = URL.createObjectURL(blob);
-
-    const img = new Image();
-    img.onload = () => {
-      resolve({
-        id: generateUUID(),
-        width: img.width,
-        height: img.height,
-        imgPath: path,
-        size: blob!.size,
-        filename,
-        file: blob!,
-        imgUrl,
-      });
-    };
-    img.src = imgUrl;
-  });
-};
-
 const ImgChoose: FC<ImgChooseProps> = ({
   onChoose,
   onMultipleChoose,

@@ -6,10 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import ImgChoose, {
-  formatImg,
-  IImgFile,
-} from "../../components/Choose/ImgChoose";
+import ImgChoose, { IImgFile } from "../../components/Choose/ImgChoose";
 import styles from "./videoCoverSeting.module.scss";
 import { Alert, Button, message, Modal, Slider, Spin } from "antd";
 import { IVideoFile } from "../../components/Choose/VideoChoose";
@@ -18,6 +15,7 @@ import "cropperjs/dist/cropper.css";
 import { useVideoPageStore } from "@/app/[lng]/publish/videoPage/useVideoPageStore";
 import { useShallow } from "zustand/react/shallow";
 import { CloseCircleOutlined } from "@ant-design/icons";
+import { formatImg } from "@/app/[lng]/publish/components/Choose/ImgChoose.utils";
 
 export interface IVideoCoverSetingRef {}
 
@@ -35,10 +33,7 @@ export interface IVideoCoverSetingProps {
 }
 
 // 保存裁剪的图片
-export const saveCropperImage = (
-  filename: string,
-  file: Blob,
-): Promise<string> => {
+const saveCropperImage = (filename: string, file: Blob): Promise<string> => {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = async function (event) {

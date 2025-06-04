@@ -69,7 +69,7 @@ const VideoChooseItem = memo(
           <div className="videoChooseItem-core">
             <div
               className="videoChooseItem-left"
-              key={videoChooseItem.video?.videoPath}
+              key={videoChooseItem.video?.videoUrl}
             >
               {videoChooseItem.video ? (
                 <>

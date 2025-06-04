@@ -7,11 +7,9 @@
  */
 import { Button, message, Upload } from "antd";
 import { FC, useRef } from "react";
-import {
-  formatImg,
-  IImgFile,
-} from "@/app/[lng]/publish/components/Choose/ImgChoose";
+import { IImgFile } from "@/app/[lng]/publish/components/Choose/ImgChoose";
 import { RcFile } from "antd/es/upload";
+import { formatImg } from "@/app/[lng]/publish/components/Choose/ImgChoose.utils";
 // import { saveCropperImage } from "@/views/publish/children/videoPage/components/VideoCoverSeting";
 
 interface VideoChooseProps {

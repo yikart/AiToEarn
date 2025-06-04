@@ -27,6 +27,7 @@
         font-size: var(--fs-sm);
         color: var(--grayColor10);
         margin: 20px 0;
+        //color: red;
       }
     }
 
@@ -77,9 +78,10 @@
       &-right {
         width: 30%;
         margin-left: 20px;
-        padding-left: 10px;
+        padding: 20px 0 10px 10px;
         border-left: 1px solid rgb(232, 232, 232);
         overflow: auto;
+        color: blue;
       }
       &-footer {
         text-align: center;
