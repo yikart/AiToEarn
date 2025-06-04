@@ -5,7 +5,7 @@ import { InfoCircleOutlined } from "@ant-design/icons";
 import {
   AccountInfo,
   IPubParams,
-} from "@/app/[lng]/publish/videoPage/videoPage";
+} from "@/app/[lng]/publish/videoPage/videoPage.type";
 import {
   AccountPlatInfoMap,
   IAccountPlatInfo,

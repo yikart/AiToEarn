@@ -4,7 +4,7 @@ import { useVideoPageStore } from "../../../useVideoPageStore";
 import { useShallow } from "zustand/react/shallow";
 import { VideoPubRestartLogin } from "./VideoPubSetModalCommon";
 import useVideoPubSetModal from "../children/hooks/useVideoPubSetModal";
-import { ILocationDataItem } from "@/app/[lng]/publish/videoPage/videoPage";
+import { ILocationDataItem } from "@/app/[lng]/publish/videoPage/videoPage.type";
 import CommonLocationSelect from "@/app/[lng]/publish/components/CommonComponents/CommonLocationSelect";
 
 interface DebounceSelectProps<ValueType = any>

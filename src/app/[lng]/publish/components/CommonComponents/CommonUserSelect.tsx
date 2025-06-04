@@ -4,7 +4,7 @@ import styles from "./commonComponents.module.scss";
 import { describeNumber } from "@/utils";
 import { IUsersItem } from "@/app/plat/plat.type";
 import useDebounceFetcher from "@/app/[lng]/publish/videoPage/components/VideoPubSetModal/components/useDebounceFetcher";
-import { AccountInfo } from "@/app/[lng]/publish/videoPage/videoPage";
+import { AccountInfo } from "@/app/[lng]/publish/videoPage/videoPage.type";
 
 export interface CommonUserSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, "options" | "children"> {

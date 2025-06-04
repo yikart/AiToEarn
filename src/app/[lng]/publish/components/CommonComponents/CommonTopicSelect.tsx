@@ -3,7 +3,7 @@ import { SelectProps } from "antd";
 import { Select, Spin } from "antd";
 import styles from "./commonComponents.module.scss";
 import useDebounceFetcher from "@/app/[lng]/publish/videoPage/components/VideoPubSetModal/components/useDebounceFetcher";
-import { AccountInfo } from "@/app/[lng]/publish/videoPage/videoPage";
+import { AccountInfo } from "@/app/[lng]/publish/videoPage/videoPage.type";
 
 export interface CommonTopicSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, "options" | "children"> {

@@ -1,7 +1,7 @@
 .publish {
   width: 100%;
-  height: 100%;
   display: flex;
+  @include height_100vh;
 
   :global {
     .ant-segmented {

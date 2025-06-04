@@ -24,7 +24,7 @@ import useCssVariables from "@/app/hooks/useCssVariables";
 import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import { PubType } from "@/app/config/publishConfig";
 import { useAccountStore } from "@/store/account";
-import { AccountInfo } from "@/app/[lng]/publish/videoPage/videoPage";
+import { AccountInfo } from "@/app/[lng]/publish/videoPage/videoPage.type";
 import Link from "next/link";
 
 export interface IPlatChooseRef {

@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { Modal, Tabs } from "antd";
-import { AccountInfo } from "@/app/[lng]/publish/videoPage/videoPage";
+import { AccountInfo } from "@/app/[lng]/publish/videoPage/videoPage.type";
 import PlatChoose, {
   IPlatChooseProps,
   IPlatChooseRef,

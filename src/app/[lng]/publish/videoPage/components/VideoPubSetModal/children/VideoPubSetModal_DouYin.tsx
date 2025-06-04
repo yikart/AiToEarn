@@ -26,7 +26,7 @@ import {
 import {
   DeclarationDouyin,
   ILableValue,
-} from "@/app/[lng]/publish/videoPage/videoPage";
+} from "@/app/[lng]/publish/videoPage/videoPage.type";
 
 const HotspotSelect = ({}: IVideoPubSetModalChildProps) => {
   const { setOnePubParams, currChooseAccount } = useVideoPageStore(

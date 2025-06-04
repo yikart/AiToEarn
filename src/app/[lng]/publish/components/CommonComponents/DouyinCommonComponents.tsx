@@ -24,7 +24,7 @@ import { describeNumber } from "@/utils";
 import {
   AccountInfo,
   ILableValue,
-} from "@/app/[lng]/publish/videoPage/videoPage";
+} from "@/app/[lng]/publish/videoPage/videoPage.type";
 import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 
 interface DouyinCommonComponentsProps

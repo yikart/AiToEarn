@@ -13,7 +13,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { AvatarPlat } from "../PubProgressModule/PubProgressModule";
 import { useAccountStore } from "@/store/account";
 import { useShallow } from "zustand/react/shallow";
-import { AccountInfo } from "@/app/[lng]/publish/videoPage/videoPage";
+import { AccountInfo } from "@/app/[lng]/publish/videoPage/videoPage.type";
 import { AccountGroupItem } from "@/api/types/account.type";
 
 export interface IPubAccountDetModuleRef {

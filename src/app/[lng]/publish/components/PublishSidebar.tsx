@@ -31,7 +31,7 @@ const PublishSidebar = memo(
           options={[
             {
               label: "视频发布",
-              value: "imagePage",
+              value: "videoPage",
               icon: <VideoCameraOutlined />,
             },
             // { label: '文章发布', value: '/publish/text', icon: <FileOutlined /> },

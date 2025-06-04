@@ -3,7 +3,7 @@ import styles from "./commonComponents.module.scss";
 import React, { ReactNode, useEffect, useState } from "react";
 import { PlusOutlined, UserAddOutlined } from "@ant-design/icons";
 import { AccountStatus } from "@/app/config/accountConfig";
-import { AccountInfo } from "@/app/[lng]/publish/videoPage/videoPage";
+import { AccountInfo } from "@/app/[lng]/publish/videoPage/videoPage.type";
 import { VisibleTypeEnum } from "@/app/config/publishConfig";
 import { IMixItem } from "@/app/plat/plat.type";
 

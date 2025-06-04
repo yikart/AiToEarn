@@ -6,7 +6,7 @@ import { useImagePlatParams } from "./children/hooks/useImagePlatParams";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { VideoPubRestartLogin } from "../../../../videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon";
-import { ILocationDataItem } from "@/app/[lng]/publish/videoPage/videoPage";
+import { ILocationDataItem } from "@/app/[lng]/publish/videoPage/videoPage.type";
 import { IMixItem, IUsersItem } from "@/app/plat/plat.type";
 import CommonLocationSelect from "@/app/[lng]/publish/components/CommonComponents/CommonLocationSelect";
 import CommonTopicSelect, {

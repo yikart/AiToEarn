@@ -1,8 +1,8 @@
 import { SocialAccount } from "@/api/types/account.type";
 import { PlatType } from "@/app/config/platConfig";
-import { IImgFile } from "@/app/[lng]/publish/imagePage/imagePage.type";
 import { VisibleTypeEnum } from "@/app/config/publishConfig";
 import { IVideoFile } from "@/app/[lng]/publish/components/Choose/VideoChoose";
+import { IImgFile } from "@/app/[lng]/publish/components/Choose/ImgChoose";
 
 // 微信视频号活动
 export interface WxSphEvent {

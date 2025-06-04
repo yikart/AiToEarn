@@ -5,7 +5,7 @@ import useDebounceFetcher from "@/app/[lng]/publish/videoPage/components/VideoPu
 import {
   AccountInfo,
   ILocationDataItem,
-} from "@/app/[lng]/publish/videoPage/videoPage";
+} from "@/app/[lng]/publish/videoPage/videoPage.type";
 
 interface CommonLocationSelectProps<ValueType = any>
   extends Omit<SelectProps<ValueType | ValueType[]>, "options" | "children"> {

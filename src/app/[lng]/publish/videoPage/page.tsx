@@ -14,7 +14,7 @@ import { PubType } from "@/app/config/publishConfig";
 import VideoChooseItem from "@/app/[lng]/publish/videoPage/components/VideoChooseItem";
 import CommonPubSetting from "@/app/[lng]/publish/videoPage/components/CommonPubSetting";
 import VideoPubSetModal from "@/app/[lng]/publish/videoPage/components/VideoPubSetModal/VideoPubSetModal";
-import { IVideoChooseItem } from "@/app/[lng]/publish/videoPage/videoPage";
+import { IVideoChooseItem } from "@/app/[lng]/publish/videoPage/videoPage.type";
 import { useEffect, useRef, useState } from "react";
 
 export enum AccountChooseType {

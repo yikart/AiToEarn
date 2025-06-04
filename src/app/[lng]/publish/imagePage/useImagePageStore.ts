@@ -4,7 +4,7 @@ import { IImgFile } from "../components/Choose/ImgChoose";
 import { IImageAccountItem } from "./imagePage.type";
 import lodash from "lodash";
 import { useVideoPageStore } from "../videoPage/useVideoPageStore";
-import { AccountInfo, IPubParams } from "../videoPage/videoPage";
+import { AccountInfo, IPubParams } from "../videoPage/videoPage.type";
 import { message } from "antd";
 import { PlatType } from "@/app/config/platConfig";
 import { ErrPubParamsMapType } from "@/app/[lng]/publish/hooks/usePubParamsVerify";

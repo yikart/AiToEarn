@@ -6,7 +6,7 @@ import { useAICreateTitleStore } from "../components/AICreateTitle/useAICreateTi
 import {
   IPubParams,
   IVideoChooseItem,
-} from "@/app/[lng]/publish/videoPage/videoPage";
+} from "@/app/[lng]/publish/videoPage/videoPage.type";
 import { SocialAccount } from "@/api/types/account.type";
 import { PlatType } from "@/app/config/platConfig";
 import { VisibleTypeEnum } from "@/app/config/publishConfig";

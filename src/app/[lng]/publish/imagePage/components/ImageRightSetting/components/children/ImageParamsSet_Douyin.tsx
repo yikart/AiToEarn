@@ -19,7 +19,7 @@ import {
   CommonHotspotSelect,
 } from "@/app/[lng]/publish/components/CommonComponents/DouyinCommonComponents";
 import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
-import { ILableValue } from "@/app/[lng]/publish/videoPage/videoPage";
+import { ILableValue } from "@/app/[lng]/publish/videoPage/videoPage.type";
 
 const HotspotSelect = () => {
   const { imageAccountItem } = useImagePlatParams();
