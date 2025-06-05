@@ -103,7 +103,15 @@ const PlatChoose = memo(
 
       // 默认平台设置
       useEffect(() => {
-        setActivePlat(defaultPlat || Array.from(accountMapLast.keys())[0]);
+        const defaultPlatData = Array.from(accountMapLast).find(
+          ([plat, data]) => data.length !== 0,
+        );
+        setActivePlat(
+          defaultPlat ||
+            (defaultPlatData
+              ? defaultPlatData[0]
+              : Array.from(accountMapLast.keys())[0]),
+        );
       }, [accountMapLast]);
 
       // 所有平台的账户数据

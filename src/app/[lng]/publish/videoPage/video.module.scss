@@ -148,6 +148,8 @@
         justify-content: center;
         flex-direction: column;
         button {
+          width: 100% !important;
+          justify-content: left !important;
           &:nth-of-type(1) {
             margin-bottom: 5px;
           }
@@ -196,6 +198,9 @@
         &-chooseVideo {
           width: 100%;
           cursor: pointer;
+          display: flex;
+          justify-content: center;
+          align-items: center;
           .videoChoose {
             width: 100%;
             height: 100%;
