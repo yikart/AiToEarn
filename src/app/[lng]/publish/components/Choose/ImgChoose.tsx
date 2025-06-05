@@ -7,8 +7,6 @@
  */
 import { Button } from "antd";
 import { FC } from "react";
-import { generateUUID, getFilePathName } from "@/utils";
-// import { icpGetFileStream } from "@/icp/view";
 
 interface ImgChooseProps {
   // 单选就使用单选方法，多选就使用单选方法

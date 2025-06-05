@@ -15,7 +15,8 @@ import "cropperjs/dist/cropper.css";
 import { useVideoPageStore } from "@/app/[lng]/publish/videoPage/useVideoPageStore";
 import { useShallow } from "zustand/react/shallow";
 import { CloseCircleOutlined } from "@ant-design/icons";
-import { formatImg } from "@/app/[lng]/publish/components/Choose/ImgChoose.utils";
+import { formatImg } from "@/app/[lng]/publish/components/Choose/ImgChoose.util";
+import { VideoGrabFrame } from "@/app/[lng]/publish/components/Choose/videoChoose.util";
 
 export interface IVideoCoverSetingRef {}
 
@@ -31,26 +32,6 @@ export interface IVideoCoverSetingProps {
   // 关闭按钮点击事件，如果有这个事件就会显示关闭按钮
   onClose?: () => void;
 }
-
-// 保存裁剪的图片
-const saveCropperImage = (filename: string, file: Blob): Promise<string> => {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = async function (event) {
-      const arrayBuffer = event.target!.result as ArrayBuffer;
-      const uint8Array = new Uint8Array(arrayBuffer);
-
-      // TODO 报错裁剪的图片
-      // const imgPath = await icpSaveFile({
-      //   file: uint8Array,
-      //   saveDir: "/images/cropper",
-      //   filename: filename,
-      // });
-      // resolve(imgPath);
-    };
-    reader.readAsArrayBuffer(file);
-  });
-};
 
 // 视频封面设置
 const VideoCoverSeting = memo(
@@ -93,17 +74,10 @@ const VideoCoverSeting = memo(
 
       /* 获取封面 */
       const getVideoCover = async (n: number) => {
-        // TODO 读取文件
-        // if (!videoFile!.videoPath) return;
-        // setSliderVal(n);
-        // setVideoCoverLoading(true);
-        // const pathVideo = await ipcGetVideoCover(
-        //   videoFile!.videoPath!,
-        //   formatSeconds(n),
-        // );
-        // const imgFile = await getImgFile(pathVideo);
-        // setVideoCoverLoading(false);
-        // setImgFile(imgFile);
+        setVideoCoverLoading(true);
+        const videoInfo = await VideoGrabFrame(videoFile!.videoUrl, n);
+        setImgFile(videoInfo.cover);
+        setVideoCoverLoading(false);
       };
 
       const close = () => {
@@ -171,13 +145,9 @@ const VideoCoverSeting = memo(
             onOk={async () => {
               const canvas = cropper.current!.getCroppedCanvas();
               canvas.toBlob(async function (blob) {
-                const imgPath = await saveCropperImage(
-                  `${operateId}_${saveImgId}.${imgFile?.file.type.split("/")[1]}`,
-                  blob!,
-                );
                 const cover = await formatImg({
                   blob: blob!,
-                  path: imgPath,
+                  path: `${operateId}_${saveImgId}.${imgFile?.file.type.split("/")[1]}`,
                 });
                 onChoosed(cover);
                 close();

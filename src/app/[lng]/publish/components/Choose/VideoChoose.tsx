@@ -9,8 +9,7 @@ import { Button, message, Upload } from "antd";
 import { FC, useRef } from "react";
 import { IImgFile } from "@/app/[lng]/publish/components/Choose/ImgChoose";
 import { RcFile } from "antd/es/upload";
-import { formatImg } from "@/app/[lng]/publish/components/Choose/ImgChoose.utils";
-// import { saveCropperImage } from "@/views/publish/children/videoPage/components/VideoCoverSeting";
+import { VideoGrabFrame } from "@/app/[lng]/publish/components/Choose/videoChoose.util";
 
 interface VideoChooseProps {
   // 单选就使用单选方法，多选就使用单选方法
@@ -43,10 +42,7 @@ export interface IVideoFile {
   cover: IImgFile;
 }
 
-function getVideoInfo(
-  videoUrl: string,
-  fileName: string,
-): Promise<{
+async function getVideoInfo(videoUrl: string): Promise<{
   width: number;
   height: number;
   // 下取整的时长
@@ -54,50 +50,7 @@ function getVideoInfo(
   // 视频首帧
   cover: IImgFile;
 }> {
-  return new Promise((resolve) => {
-    // 创建一个临时的 video 元素
-    const video = document.createElement("video");
-
-    // 设置 video 元素的 src 属性
-    video.src = videoUrl;
-
-    // 当视频元数据加载完毕时执行回调
-    video.addEventListener("loadedmetadata", () => {
-      video.currentTime = 0;
-    });
-
-    video.addEventListener("seeked", function () {
-      // 获取视频的宽度和高度
-      const width = video.videoWidth;
-      const height = video.videoHeight;
-      // 获取视频的时长
-      const duration = video.duration;
-
-      // 获取视频首帧
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      const context = canvas.getContext("2d")!;
-      context.fillStyle = "white";
-      context.fillRect(0, 0, width, height);
-      context.drawImage(video, 0, 0);
-      canvas.toBlob(async (blob) => {
-        const cover = await formatImg({
-          blob: blob!,
-          path: fileName,
-        });
-        resolve({
-          width,
-          height,
-          duration: Math.floor(duration),
-          cover,
-        });
-        video.remove();
-      });
-    });
-    // 加载视频
-    video.load();
-  });
+  return await VideoGrabFrame(videoUrl, 0);
 }
 
 // 根据视频的Uint8Array和路径获取文件
@@ -122,8 +75,7 @@ function getVideoInfo(
 
 const formatVideo = async (file: RcFile): Promise<IVideoFile> => {
   const videoUrl = URL.createObjectURL(file);
-
-  const videoInfo = await getVideoInfo(URL.createObjectURL(file), file.name);
+  const videoInfo = await VideoGrabFrame(videoUrl, 0);
 
   return {
     filename: file.name,
