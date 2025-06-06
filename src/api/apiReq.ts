@@ -36,24 +36,22 @@ export const fluxSchnellApi = (data: any) => {
 
 // 邮箱登录接口
 export const loginWithMailApi = (data: { mail: string; password: string }) => {
-  return sxRequest.post<LoginResponse>("user/login/mail", data);
+  return sxRequest.post<LoginResponse>("login/mail", data);
 };
 
 // 获取注册链接
 export const getRegistUrlApi = (mail: string) => {
-  return sxRequest.get<LoginResponse>(
-    `user/login/mail/regist/url?mail=${mail}`,
-  );
+  return sxRequest.get<LoginResponse>(`login/mail/regist/url?mail=${mail}`);
 };
 
 // 检查注册状态 post!!
 export const checkRegistStatusApi = (data: RegistCheckParams) => {
-  return sxRequest.post<LoginResponse>(`user/login/mail/regist/back`, data);
+  return sxRequest.post<LoginResponse>(`login/mail/regist/back`, data);
 };
 
 // 发送重置密码邮件
 export const sendResetPasswordMailApi = (data: { mail: string }) => {
-  return sxRequest.post<LoginResponse>("user/login/repassword/mail", data);
+  return sxRequest.post<LoginResponse>("login/repassword/mail", data);
 };
 
 // 重置密码
@@ -62,7 +60,7 @@ export const resetPasswordApi = (data: {
   mail: string;
   password: string;
 }) => {
-  return sxRequest.post<LoginResponse>("user/login/repassword/mail/back", data);
+  return sxRequest.post<LoginResponse>("login/repassword/mail/back", data);
 };
 
 // Google 登录参数
