@@ -6,5 +6,5 @@ export const ProxyUrls = [
   process.env.NEXT_PUBLIC_API_URL_PROXY,
   "/xhsXS",
   "/xiaohongshu/",
-  "/platapiProxy/"
+  "/platapiProxy/",
 ];

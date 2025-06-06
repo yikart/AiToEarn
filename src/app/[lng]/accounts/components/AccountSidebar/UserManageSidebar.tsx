@@ -16,10 +16,7 @@ import {
   deleteAccountGroupApi,
   updateAccountGroupApi,
 } from "@/api/account";
-import {
-  AccountGroupDefaultType,
-  AccountGroupItem,
-} from "@/api/types/account.type";
+import { AccountGroupItem } from "@/api/types/account.type";
 
 export interface IUserManageSidebarRef {}
 
@@ -221,7 +218,7 @@ const UserManageSidebar = memo(
                         }}
                         onContextMenu={(e) => {
                           e.preventDefault();
-                          if (v.isDefault === AccountGroupDefaultType.Default) {
+                          if (v.isDefault) {
                             return message.error("不能操作默认列表");
                           }
                           setAnchorPoint({ x: e.clientX, y: e.clientY });

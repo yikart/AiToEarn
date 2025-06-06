@@ -6,7 +6,7 @@ import { message } from "antd";
 type ResponseType<T> = {
   code: string | number;
   data: T;
-  msg: string;
+  message: string;
   url: string;
 };
 
@@ -41,8 +41,7 @@ export async function request<T>(params: RequestParams) {
     const res = await fetchService.request(params);
     const data: ResponseType<T> = await res.json();
 
-    // @ts-ignore
-    if (data.code === "1" && data.data.statusCode === 401) {
+    if (res.status === 401) {
       useUserStore.getState().logout();
       message.error({
         key: "NoPermission",
@@ -54,7 +53,7 @@ export async function request<T>(params: RequestParams) {
     if (data.code !== 0) {
       if (typeof window !== "undefined")
         message.warning({
-          content: data.msg || "网络繁忙，请稍后重试！",
+          content: data.message || "网络繁忙，请稍后重试！",
           key: "apiErrorMessage",
         });
       return null;

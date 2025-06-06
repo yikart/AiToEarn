@@ -54,7 +54,7 @@ export default function LoginPage() {
           router.push('/');
         }
       } else {
-        message.error(response.msg || t('loginFailed'));
+        message.error(response.message || t('loginFailed'));
       }
     } catch (error) {
       message.error(t('loginError'));
@@ -142,7 +142,7 @@ export default function LoginPage() {
           router.push('/');
         }
       } else {
-        message.error(response.msg || t('googleLoginFailed'));
+        message.error(response.message || t('googleLoginFailed'));
       }
     } catch (error) {
       message.error(t('googleLoginFailed'));

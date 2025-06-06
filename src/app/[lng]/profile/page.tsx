@@ -26,7 +26,7 @@ export default function ProfilePage() {
       if (response.code === 0 && response.data) {
         setUserInfo(response.data);
       } else {
-        message.error(response.msg || '获取用户信息失败');
+        message.error(response.message || '获取用户信息失败');
       }
     } catch (error) {
       message.error('获取用户信息失败');
@@ -63,7 +63,7 @@ export default function ProfilePage() {
         message.success('更新成功');
         setIsModalOpen(false);
       } else {
-        message.error(response.msg || '更新失败');
+        message.error(response.message || '更新失败');
       }
     } catch (error) {
       message.error('更新失败');

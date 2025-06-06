@@ -21,10 +21,7 @@ import { useAccountStore } from "@/store/account";
 import UserManageModal, { IUserManageModalRef } from "./UserManageModal";
 import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import { AccountStatus } from "@/app/config/accountConfig";
-import {
-  AccountGroupDefaultType,
-  SocialAccount,
-} from "@/api/types/account.type";
+import { SocialAccount } from "@/api/types/account.type";
 
 export interface IAccountSidebarRef {}
 
@@ -155,9 +152,7 @@ const AccountSidebar = memo(
       }, [fullAccountList, excludePlatforms]);
 
       const defaultActiveKey = useMemo(() => {
-        return accountGroupList.find(
-          (v) => v.isDefault === AccountGroupDefaultType.Default,
-        )?.id;
+        return accountGroupList.find((v) => v.isDefault)?.id;
       }, [accountGroupList]);
 
       return (

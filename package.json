@@ -5,6 +5,7 @@
   "scripts": {
     "postbuild": "next-sitemap",
     "dev": "next dev -p 6060",
+    "dev:https": "next dev -p 6060 --experimental-https",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

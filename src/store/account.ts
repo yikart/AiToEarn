@@ -1,11 +1,7 @@
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 import lodash from "lodash";
-import {
-  AccountGroupDefaultType,
-  AccountGroupItem,
-  SocialAccount,
-} from "@/api/types/account.type";
+import { AccountGroupItem, SocialAccount } from "@/api/types/account.type";
 import { getAccountGroupApi, getAccountListApi } from "@/api/account";
 
 export interface AccountGroup extends AccountGroupItem {
@@ -85,9 +81,7 @@ export const useAccountStore = create(
           // key=组ID，val=账户ID
           const accountGroupMap = new Map<number, AccountGroup>();
 
-          const defaultGroup = groupList.find(
-            (v) => v.isDefault === AccountGroupDefaultType.Default,
-          )!;
+          const defaultGroup = groupList.find((v) => v.isDefault)!;
 
           groupList.map((v) => {
             const accountGroupItem = {

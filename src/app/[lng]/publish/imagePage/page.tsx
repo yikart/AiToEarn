@@ -166,7 +166,7 @@ export default function Page() {
       return {
         account: v.account!,
         progress: progress?.progress || 0,
-        msg: progress?.msg || "",
+        msg: progress?.message || "",
       };
     });
   }, [pubProgressMap, imageAccounts]);

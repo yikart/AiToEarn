@@ -1,8 +1,5 @@
 import { PubType } from "@/app/config/publishConfig";
 import ksSvg from "@/assets/svgs/plat/ks.svg";
-import xhsSvg from "@/assets/svgs/plat/xhs.svg";
-import douyinSvg from "@/assets/svgs/plat/douyin.svg";
-import wxSphSvg from "@/assets/svgs/plat/wx-sph.svg";
 import youtubeSvg from "@/assets/svgs/plat/youtube.svg";
 
 // 平台类型
@@ -54,7 +51,6 @@ export interface IAccountPlatInfo {
   };
 }
 
-const PubTypeAll = new Set([PubType.ARTICLE, PubType.VIDEO, PubType.ImageText]);
 // 各个平台的信息
 export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
   [
@@ -73,69 +69,69 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       },
     },
   ],
-  [
-    PlatType.Xhs,
-    {
-      name: "小红书",
-      icon: xhsSvg.src,
-      url: "https://creator.xiaohongshu.com/login?source=official",
-      // url: 'https://www.xiaohongshu.com/explore',
-      pubTypes: PubTypeAll,
-      commonPubParamsConfig: {
-        timingMax: {
-          maxDate: 14,
-          timeOffset: 60,
-        },
-        topicMax: 20,
-        titleMax: 20,
-        imgTextConfig: {
-          imagesMax: 18,
-        },
-      },
-    },
-  ],
-  [
-    PlatType.Douyin,
-    {
-      name: "抖音",
-      icon: douyinSvg.src,
-      url: "https://creator.douyin.com/creator-micro/content/upload?enter_from=dou_web",
-      pubTypes: PubTypeAll,
-      commonPubParamsConfig: {
-        timingMax: {
-          maxDate: 14,
-          timeOffset: 120,
-        },
-        titleMax: 30,
-        topicMax: 5,
-        imgTextConfig: {
-          imagesMax: 35,
-        },
-      },
-      // tips: {
-      //   account: '首次登录的抖音号可能会频繁掉线，通常将在重登2-3次后趋于稳定',
-      //   publish:
-      //     '首次登录的抖音账号请先在账户单独完成一次内容发布后再做一键发布',
-      // },
-    },
-  ],
-  [
-    PlatType.WxSph,
-    {
-      name: "微信视频号",
-      icon: wxSphSvg.src,
-      url: "https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/helper/hepler_merlin_mmdata?_rid=67b30b55-6e3ea588",
-      pubTypes: new Set([PubType.VIDEO]),
-      commonPubParamsConfig: {
-        timingMax: {
-          maxDate: 30,
-          timeOffset: 60,
-        },
-        titleMax: 16,
-        topicMax: 10,
-      },
-    },
-  ],
+  // [
+  //   PlatType.Xhs,
+  //   {
+  //     name: "小红书",
+  //     icon: xhsSvg.src,
+  //     url: "https://creator.xiaohongshu.com/login?source=official",
+  //     // url: 'https://www.xiaohongshu.com/explore',
+  //     pubTypes: PubTypeAll,
+  //     commonPubParamsConfig: {
+  //       timingMax: {
+  //         maxDate: 14,
+  //         timeOffset: 60,
+  //       },
+  //       topicMax: 20,
+  //       titleMax: 20,
+  //       imgTextConfig: {
+  //         imagesMax: 18,
+  //       },
+  //     },
+  //   },
+  // ],
+  // [
+  //   PlatType.Douyin,
+  //   {
+  //     name: "抖音",
+  //     icon: douyinSvg.src,
+  //     url: "https://creator.douyin.com/creator-micro/content/upload?enter_from=dou_web",
+  //     pubTypes: PubTypeAll,
+  //     commonPubParamsConfig: {
+  //       timingMax: {
+  //         maxDate: 14,
+  //         timeOffset: 120,
+  //       },
+  //       titleMax: 30,
+  //       topicMax: 5,
+  //       imgTextConfig: {
+  //         imagesMax: 35,
+  //       },
+  //     },
+  //     // tips: {
+  //     //   account: '首次登录的抖音号可能会频繁掉线，通常将在重登2-3次后趋于稳定',
+  //     //   publish:
+  //     //     '首次登录的抖音账号请先在账户单独完成一次内容发布后再做一键发布',
+  //     // },
+  //   },
+  // ],
+  // [
+  //   PlatType.WxSph,
+  //   {
+  //     name: "微信视频号",
+  //     icon: wxSphSvg.src,
+  //     url: "https://channels.weixin.qq.com/cgi-bin/mmfinderassistant-bin/helper/hepler_merlin_mmdata?_rid=67b30b55-6e3ea588",
+  //     pubTypes: new Set([PubType.VIDEO]),
+  //     commonPubParamsConfig: {
+  //       timingMax: {
+  //         maxDate: 30,
+  //         timeOffset: 60,
+  //       },
+  //       titleMax: 16,
+  //       topicMax: 10,
+  //     },
+  //   },
+  // ],
   [
     PlatType.YouTube,
     {

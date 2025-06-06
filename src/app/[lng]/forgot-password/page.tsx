@@ -29,7 +29,7 @@ export default function ForgotPasswordPage() {
         setResetCode(response.data);
         setIsModalOpen(true);
       } else {
-        message.error(response.msg || '发送失败');
+        message.error(response.message || '发送失败');
       }
     } catch (error) {
       message.error('发送失败');
@@ -62,7 +62,7 @@ export default function ForgotPasswordPage() {
         message.success('密码重置成功');
         router.push('/login');
       } else {
-        message.error(response.msg || '重置失败');
+        message.error(response.message || '重置失败');
       }
     } catch (error) {
       message.error('重置失败');
