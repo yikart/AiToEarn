@@ -1,8 +1,9 @@
-import { ForwardedRef, forwardRef, memo, useState } from "react";
+import { ForwardedRef, forwardRef, memo } from "react";
 import styles from "./AddAccountModal.module.scss";
 import { Button, Modal, Tooltip } from "antd";
 import { AccountPlatInfoArr, PlatType } from "@/app/config/platConfig";
 import { SocialAccount } from "@/api/types/account.type";
+import { kwaiSkip } from "@/app/[lng]/accounts/plat/kwaiLogin";
 
 export interface IAddAccountModalRef {}
 
@@ -18,9 +19,6 @@ const AddAccountModal = memo(
       { open, onClose, onAddSuccess }: IAddAccountModalProps,
       ref: ForwardedRef<IAddAccountModalRef>,
     ) => {
-      const [accountLoginOpen, setAccountLoginOpen] = useState(false);
-      const [addPlat, setAddPlat] = useState<PlatType>();
-
       const handleOk = () => {
         onClose();
       };
@@ -49,8 +47,10 @@ const AddAccountModal = memo(
                         type="text"
                         className="addAccountModal_plats-item"
                         onClick={async () => {
-                          setAddPlat(key);
-                          setAccountLoginOpen(true);
+                          switch (key) {
+                            case PlatType.KWAI:
+                              kwaiSkip(key);
+                          }
                         }}
                       >
                         <div className="addAccountModal_plats-item-con">

@@ -43,17 +43,13 @@ nextConfig.rewrites = async () => {
       destination: `${process.env.NEXT_PUBLIC_API_URL}:path*`,
     },
     {
-      source: `/xhsXS/:path*`,
-      destination: `http://116.62.154.231:7879/:path*`,
+      source: `${process.env.NEXT_PUBLIC_API_PROXY}:path*`,
+      destination: `https://open.kuaishou.com/:path*`,
     },
     {
-      source: `/xiaohongshu/:path*`,
-      destination: `https://edith.xiaohongshu.com/api/:path*`,
+      source: `${process.env.NEXT_PUBLIC_API_UPLOAD_PROXY}:path*`,
+      destination: `https://upload.kuaishouzt.com/:path*`,
     },
-    {
-      source: `/platapiProxy/:path*`,
-      destination: `https://platapi.yikart.cn/api/:path*`
-    }
   ];
 
   return {

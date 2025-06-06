@@ -42,7 +42,7 @@ export async function request<T>(params: RequestParams) {
     const data: ResponseType<T> = await res.json();
 
     if (res.status === 401) {
-      useUserStore.getState().logout();
+      // useUserStore.getState().logout();
       message.error({
         key: "NoPermission",
         content: "登录状态过期，请重新登录",

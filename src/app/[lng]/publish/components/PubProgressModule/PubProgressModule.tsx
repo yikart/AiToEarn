@@ -21,7 +21,7 @@ function getMsg(progressData: PublishProgressRes) {
   } else if (progressData.progress === -1) {
     return "发布错误";
   } else {
-    return progressData.message || "正在加载...";
+    return progressData.msg || "正在加载...";
   }
 }
 

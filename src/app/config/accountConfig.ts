@@ -1,9 +1,9 @@
 // 账号状态
 export enum AccountStatus {
   // 未失效
-  USABLE = 0,
+  USABLE = 1,
   // 失效
-  DISABLE = 1,
+  DISABLE = 0,
 }
 
 // 小红书账号异常状态

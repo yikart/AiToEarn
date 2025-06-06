@@ -1,0 +1,27 @@
+.accountAdd {
+  @include height_100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  :global {
+    .accountAdd-success, .accountAdd-fail {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--success-color);
+      .anticon {
+        font-size: 60px;
+        margin-bottom: 10px;
+      }
+      &-text {
+        font-size: var(--fs-lg);
+      }
+    }
+    .accountAdd-fail {
+      color: var(--error-color);
+    }
+  }
+}

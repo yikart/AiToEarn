@@ -55,7 +55,7 @@ class OtherRequest {
   }
 }
 
-const requestPlatapi = new OtherRequest("https://platapi.yikart.cn/api/");
+const requestPlatapi = new OtherRequest("");
 export async function requestPlatApi<T = any>(params: RequestParams) {
   return await requestPlatapi.request(params);
 }

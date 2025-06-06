@@ -4,7 +4,9 @@ import { PlatType } from "@/app/config/platConfig";
 export interface SocialAccount {
   id: number;
   type: PlatType;
-  loginCookie: string;
+  loginCookie?: string;
+  access_token?: string;
+  refresh_token?: string;
   loginTime: string;
   uid: string;
   account: string;

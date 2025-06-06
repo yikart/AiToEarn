@@ -1,12 +1,9 @@
 // plat构造器参数
-import { Cookie } from "undici-types";
 import { SocialAccount } from "@/api/types/account.type";
 
 export interface IPlatConstrParams {
-  // cookie
-  cookieList: Cookie[];
-  // 代理
-  proxy?: string;
+  access_token: string;
+  refresh_token: string;
 }
 
 export interface IMixItem {
