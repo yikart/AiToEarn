@@ -4,6 +4,7 @@ import { Button, Modal, Tooltip } from "antd";
 import { AccountPlatInfoArr, PlatType } from "@/app/config/platConfig";
 import { SocialAccount } from "@/api/types/account.type";
 import { kwaiSkip } from "@/app/[lng]/accounts/plat/kwaiLogin";
+import { bilibiliSkip } from "../../plat/BilibiliLogin";
 
 export interface IAddAccountModalRef {}
 
@@ -50,6 +51,9 @@ const AddAccountModal = memo(
                           switch (key) {
                             case PlatType.KWAI:
                               kwaiSkip(key);
+
+                            case PlatType.BILIBILI:
+                              bilibiliSkip(key);
                           }
                         }}
                       >

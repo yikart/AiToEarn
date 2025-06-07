@@ -9,6 +9,7 @@ export enum PlatType {
   WxSph = "wxSph", // 微信视频号
   KWAI = "KWAI", // 快手
   YouTube = "youtube", // YouTube
+  BILIBILI = 'bilibili', // B站
 }
 
 export interface IAccountPlatInfo {
@@ -57,6 +58,22 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.KWAI,
     {
       name: "快手",
+      icon: ksSvg.src,
+      url: "https://cp.kuaishou.com/profile",
+      pubTypes: new Set([PubType.VIDEO]),
+      commonPubParamsConfig: {
+        timingMax: {
+          maxDate: 13,
+          timeOffset: 60,
+        },
+        topicMax: 4,
+      },
+    },
+  ],
+  [
+    PlatType.BILIBILI,
+    {
+      name: "B站",
       icon: ksSvg.src,
       url: "https://cp.kuaishou.com/profile",
       pubTypes: new Set([PubType.VIDEO]),
