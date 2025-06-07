@@ -18,9 +18,6 @@ import PubAccountDetModule, {
   IPubAccountDetModuleRef,
 } from "@/app/[lng]/publish/components/PubAccountDetModule/PubAccountDetModule";
 import VideoPubSetModal_KWAI from "@/app/[lng]/publish/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_KWAI";
-import VideoPubSetModal_DouYin from "@/app/[lng]/publish/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_DouYin";
-import VideoPubSetModal_XSH from "@/app/[lng]/publish/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_XSH";
-import VideoPubSetModal_WxSph from "@/app/[lng]/publish/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_WxSph";
 import PubProgressModule from "@/app/[lng]/publish/components/PubProgressModule/PubProgressModule";
 import VideoPubSetModalVideo, {
   IVideoPubSetModalVideoRef,
@@ -50,12 +47,6 @@ const PubSetModalChild = ({}: {}) => {
     switch (currChooseAccount?.account?.type) {
       case PlatType.KWAI:
         return <VideoPubSetModal_KWAI />;
-      case PlatType.Douyin:
-        return <VideoPubSetModal_DouYin />;
-      case PlatType.Xhs:
-        return <VideoPubSetModal_XSH />;
-      case PlatType.WxSph:
-        return <VideoPubSetModal_WxSph />;
     }
     return <></>;
   }, [currChooseAccount?.account?.type]);

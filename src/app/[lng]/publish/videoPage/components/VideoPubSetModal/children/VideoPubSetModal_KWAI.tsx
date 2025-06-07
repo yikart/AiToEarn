@@ -1,11 +1,5 @@
 import React, { ForwardedRef, forwardRef, memo } from "react";
-import LocationSelect from "../components/LocationSelect";
-import UserSelect from "../components/UserSelect";
-import {
-  DescTextArea,
-  ScheduledTimeSelect,
-  VideoPubPermission,
-} from "../components/VideoPubSetModalCommon";
+import { DescTextArea } from "../components/VideoPubSetModalCommon";
 import TopicSelect from "@/app/[lng]/publish/videoPage/components/VideoPubSetModal/components/TopicSelect";
 import {
   IVideoPubSetModalChildProps,
@@ -27,18 +21,18 @@ const VideoPubSetModal_KWAI = memo(
 
           <TopicSelect />
 
-          <UserSelect
-            maxCount={3}
-            title="@好友"
-            tips="您可以添加3个好友"
-            showSearch={false}
-          />
+          {/*<UserSelect*/}
+          {/*  maxCount={3}*/}
+          {/*  title="@好友"*/}
+          {/*  tips="您可以添加3个好友"*/}
+          {/*  showSearch={false}*/}
+          {/*/>*/}
 
-          <LocationSelect />
+          {/*<LocationSelect />*/}
 
-          <VideoPubPermission />
+          {/*<VideoPubPermission />*/}
 
-          <ScheduledTimeSelect />
+          {/*<ScheduledTimeSelect />*/}
         </>
       );
     },

@@ -3,7 +3,6 @@ import { PlatType } from "@/app/config/platConfig";
 import { requestPlatApi } from "@/utils/otherRequest";
 import { KwaiPlat } from "@/app/plat/platChildren/kwai/KwaiPlat";
 import { createOrUpdateAccountApi } from "@/api/account";
-import {AccountStatus} from "@/app/config/accountConfig";
 
 export const kwaiAppId = "ks715790869885446758";
 export const kwaiAppSecret = "cqSvJvBSPJjd-4pBH_4N0Q";

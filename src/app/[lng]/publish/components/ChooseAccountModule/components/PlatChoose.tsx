@@ -208,7 +208,8 @@ const PlatChoose = memo(
               <Empty
                 description={
                   <>
-                    无账户数据，请前往 <Link href="/">账户</Link>添加数据
+                    无账户数据，请前往 <Link href="/accounts">账户</Link>
+                    添加数据
                   </>
                 }
               />

@@ -34,10 +34,8 @@ const CommonScheduledTimeSelect = memo(
       ref: ForwardedRef<ICommonScheduledTimeSelectRef>,
     ) => {
       const getMaxTimes = useMemo(() => {
-        const accountPlatInfo = AccountPlatInfoMap.get(
-          platType || PlatType.Douyin,
-        )!;
-        const timingMax = accountPlatInfo.commonPubParamsConfig.timingMax;
+        const accountPlatInfo = AccountPlatInfoMap.get(platType!);
+        const timingMax = accountPlatInfo?.commonPubParamsConfig.timingMax;
 
         return {
           timeOffset: timeOffset || timingMax!.timeOffset,

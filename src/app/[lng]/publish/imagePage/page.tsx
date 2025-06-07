@@ -5,15 +5,8 @@ import { useShallow } from "zustand/react/shallow";
 import { useImagePageStore } from "./useImagePageStore";
 import ImageLeftSetting from "./components/ImageLeftSetting/ImageLeftSetting";
 import ImageRightSetting from "./components/ImageRightSetting/ImageRightSetting";
-import { Button, message, Popconfirm, Space } from "antd";
+import { Button, message, Popconfirm } from "antd";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-// import {
-//   icpCreateImgTextPubRecord,
-//   icpCreatePubRecord,
-//   icpPubImgText,
-// } from "@/icp/publish";
-// import { useNavigate } from "react-router-dom";
-// import { usePubStroe } from "@/store/pubStroe";
 import { signInApi } from "@/api/signIn";
 import { toolsApi } from "@/api/tools";
 import { sensitivityLoading } from "@/utils";
@@ -25,8 +18,6 @@ import PubAccountDetModule, {
 } from "@/app/[lng]/publish/components/PubAccountDetModule/PubAccountDetModule";
 import { PublishProgressRes } from "@/app/plat/plat.type";
 import PubProgressModule from "@/app/[lng]/publish/components/PubProgressModule/PubProgressModule";
-// import { PubType } from "@/app/config/publishConfig";
-// import { useCommontStore } from "@/store/commont";
 import { IImageAccountItem } from "@/app/[lng]/publish/imagePage/imagePage.type";
 
 export default function Page() {
@@ -166,7 +157,7 @@ export default function Page() {
       return {
         account: v.account!,
         progress: progress?.progress || 0,
-        msg: progress?.message || "",
+        msg: progress?.msg || "",
       };
     });
   }, [pubProgressMap, imageAccounts]);
