@@ -26,9 +26,9 @@ export class KwaiPlat extends PlatBase {
   request(params: RequestParams) {
     params.url = `${KwaiApiProxyUrl}${params.url}`;
     params.params = {
-      ...(params.params ?? {}),
       access_token: this.access_token,
       app_id: kwaiAppId,
+      ...(params.params ?? {}),
     };
     return requestPlatApi(params);
   }

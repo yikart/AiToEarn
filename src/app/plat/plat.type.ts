@@ -1,5 +1,7 @@
 // plat构造器参数
 import { SocialAccount } from "@/api/types/account.type";
+import {IPubParams} from "@/app/[lng]/publish/videoPage/videoPage.type";
+import {IVideoFile} from "@/app/[lng]/publish/components/Choose/VideoChoose";
 
 export interface IPlatConstrParams {
   access_token: string;
@@ -31,4 +33,17 @@ export interface PublishProgressRes {
   msg: string;
   account: SocialAccount;
   id: number;
+}
+
+// 视频发布返回值
+export interface PublishRes {
+  // 作品ID
+  worksId: string;
+  // 作品链接
+  worksUrl: string;
+}
+
+// 视频发布
+export interface IVideoPublishItem extends IPubParams {
+  video: IVideoFile;
 }

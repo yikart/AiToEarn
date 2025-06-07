@@ -19,7 +19,7 @@ const VideoPubSetModal_KWAI = memo(
             maxLength={500}
           />
 
-          <TopicSelect />
+          {/*<TopicSelect />*/}
 
           {/*<UserSelect*/}
           {/*  maxCount={3}*/}
