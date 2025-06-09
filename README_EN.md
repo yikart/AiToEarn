@@ -38,6 +38,10 @@ cd AttAiToEarn
 # Install dependencies
 npm i
 
+# To compile sqlite, better-sqlite3 depends on node-gyp and requires a local python environment. Please refer to the installation materials of node-gyp by yourself
+
+npm run rebuild
+
 # Start development
 npm run dev
 ```
@@ -84,5 +88,7 @@ npm run dev
 ├── public                                  Same as Vite template's public
 └── src                                     Renderer process source (React)
 ```
+
 ## Other explanations
+
 Regarding the MAC package, as Apple has strict requirements for applications, this project is still in the trial stage. Please package it yourself or set the ignore security policy

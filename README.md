@@ -88,7 +88,7 @@ cd AttAiToEarn
 # 安装依赖
 npm i
 
-# 编译sqlite
+# 编译sqlite, better-sqlite3对node-gyp有依赖，需要本地有python环境,请自行查阅node-gyp安装资料
 npm run rebuild
 
 # develop
