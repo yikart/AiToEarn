@@ -88,6 +88,9 @@ cd AttAiToEarn
 # 安装依赖
 npm i
 
+# 编译sqlite
+npm run rebuild
+
 # develop
 npm run dev
 ```
