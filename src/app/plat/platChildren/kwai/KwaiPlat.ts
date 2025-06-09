@@ -5,9 +5,11 @@ import { requestPlatApi } from "@/utils/otherRequest";
 import { KwaiApiProxyUrl } from "@/constant";
 import { kwaiAppId } from "@/app/[lng]/accounts/plat/kwaiLogin";
 import { PlatType } from "@/app/config/platConfig";
+import {IPublishResult, IVideoPublishItem, PubProgressType} from "@/app/plat/plat.type";
+import { KwaiPubCore } from "@/app/plat/platChildren/kwai/KwaiPubCore";
 
 export class KwaiPlat extends PlatBase {
-  async getAccountInfo(): Promise<Partial<SocialAccount> | null> {
+  public async getAccountInfo(): Promise<Partial<SocialAccount> | null> {
     const { user_info } = await this.request({
       url: "openapi/user_info",
       method: "GET",
@@ -31,5 +33,18 @@ export class KwaiPlat extends PlatBase {
       ...(params.params ?? {}),
     };
     return requestPlatApi(params);
+  }
+
+  public async publishVideo(
+    videoPubParams: IVideoPublishItem,
+    onProgress: PubProgressType,
+  ): Promise<IPublishResult> {
+    const kwaiPubCore = new KwaiPubCore(this, videoPubParams, onProgress);
+    const pubRes = await kwaiPubCore.publishVideo();
+    return {
+      worksId: pubRes.worksId,
+      worksUrl: pubRes.worksUrl,
+      success: true,
+    };
   }
 }

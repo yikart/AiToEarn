@@ -10,9 +10,14 @@ import { NoSSR } from "@kwooshung/react-no-ssr";
 import { Button, Dropdown, MenuProps } from "antd";
 import logo from "@/assets/images/logo.png";
 import defaultAvatar from "./images/defaultAvatar.jpg";
-import { CaretDownOutlined, GlobalOutlined } from "@ant-design/icons";
+import {
+  BellOutlined,
+  CaretDownOutlined,
+  GlobalOutlined,
+} from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useTransClient } from "@/app/i18n/client";
+import Bellmessage from "@/app/layout/BellMessage";
 
 export interface ILyaoutHeaderRef {}
 
@@ -32,7 +37,7 @@ function UserInfo() {
             router.push("/profile");
           }}
         >
-          {t('profile')}
+          {t("profile")}
         </div>
       ),
     },
@@ -45,7 +50,7 @@ function UserInfo() {
             router.push("/");
           }}
         >
-          {t('logout')}
+          {t("logout")}
         </div>
       ),
     },
@@ -63,7 +68,7 @@ function UserInfo() {
             height={35}
           />
           <div className={styles["layoutHeader-userinfo-name"]}>
-            {userInfo.name || t('unknownUser')}
+            {userInfo.name || t("unknownUser")}
           </div>
           <CaretDownOutlined />
         </div>
@@ -82,7 +87,9 @@ const LyaoutHeader = memo(
     const toggleLanguage = () => {
       const newLng = userStore.lang === "zh-CN" ? "en" : "zh-CN";
       userStore.setLang(newLng);
-      router.push(`/${newLng}${location.pathname.replace(`/${userStore.lang}`, "")}`);
+      router.push(
+        `/${newLng}${location.pathname.replace(`/${userStore.lang}`, "")}`,
+      );
     };
 
     useEffect(() => {
@@ -115,6 +122,12 @@ const LyaoutHeader = memo(
             className={styles["layoutHeader_wrapper-right"]}
             suppressHydrationWarning={true}
           >
+            <Bellmessage>
+              <div style={{ cursor: "pointer" }}>
+                <BellOutlined />
+                <span style={{ marginLeft: "5px" }}>消息</span>
+              </div>
+            </Bellmessage>
             <Button
               type="text"
               icon={<GlobalOutlined />}
@@ -132,7 +145,7 @@ const LyaoutHeader = memo(
                     router.push("/login");
                   }}
                 >
-                  {t('login')}
+                  {t("login")}
                 </Button>
               )}
             </NoSSR>

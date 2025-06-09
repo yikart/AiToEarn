@@ -1,7 +1,7 @@
 // plat构造器参数
 import { SocialAccount } from "@/api/types/account.type";
-import {IPubParams} from "@/app/[lng]/publish/videoPage/videoPage.type";
-import {IVideoFile} from "@/app/[lng]/publish/components/Choose/VideoChoose";
+import { IPubParams } from "@/app/[lng]/publish/videoPage/videoPage.type";
+import { IVideoFile } from "@/app/[lng]/publish/components/Choose/VideoChoose";
 
 export interface IPlatConstrParams {
   access_token: string;
@@ -46,4 +46,17 @@ export interface PublishRes {
 // 视频发布
 export interface IVideoPublishItem extends IPubParams {
   video: IVideoFile;
+}
+
+// 发布进度
+export type PubProgressType = (progress: number, msg: string) => void;
+
+// 发布结果
+export interface IPublishResult {
+  // 是否成功
+  success: boolean;
+  // 失败消息
+  failMsg?: string;
+  worksId: string;
+  worksUrl: string;
 }
