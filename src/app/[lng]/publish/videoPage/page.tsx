@@ -56,7 +56,7 @@ export default function Page() {
 
   useEffect(() => {
     return () => {
-      // clear();
+      clear();
     };
   }, []);
 

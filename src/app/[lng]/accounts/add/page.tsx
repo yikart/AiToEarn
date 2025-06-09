@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { PlatType } from "@/app/config/platConfig";
 import { kwaiLogin } from "@/app/[lng]/accounts/plat/kwaiLogin";
 import { Spin } from "antd";
-import {CheckCircleOutlined, CloseCircleOutlined} from "@ant-design/icons";
+import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 
 enum LoginStatusEnum {
   // 加载中

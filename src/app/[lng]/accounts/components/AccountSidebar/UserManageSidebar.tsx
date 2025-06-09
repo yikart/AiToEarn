@@ -21,9 +21,9 @@ import { AccountGroupItem } from "@/api/types/account.type";
 export interface IUserManageSidebarRef {}
 
 export interface IUserManageSidebarProps {
-  activeGroup: number;
-  allUser: number;
-  onChange: (id: number) => void;
+  activeGroup: string;
+  allUser: string;
+  onChange: (id: string) => void;
   onSortEnd: () => void;
 }
 
@@ -56,7 +56,7 @@ const UserManageSidebar = memo(
       const [groupName, setGroupName] = useState("");
       const [createGroupLoading, setCreateGroupLoading] = useState(false);
       // -1=新建 不然为重命名，值为要重命名的id
-      const [createGroupId, setCreateGroupId] = useState(0);
+      const [createGroupId, setCreateGroupId] = useState("-1");
       const srcollEl = useRef<HTMLElement>(undefined);
       const [isOpen, setOpen] = useState(false);
       const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
@@ -129,7 +129,7 @@ const UserManageSidebar = memo(
           </ControlledMenu>
 
           <Modal
-            title={createGroupId === -1 ? "新建列表" : "重命名列表"}
+            title={createGroupId === "-1" ? "新建列表" : "重命名列表"}
             open={openCreateGroup}
             onCancel={createGroupCancel}
             footer={
@@ -140,7 +140,7 @@ const UserManageSidebar = memo(
                   disabled={groupName.length === 0}
                   onClick={async () => {
                     setCreateGroupLoading(true);
-                    if (createGroupId === -1) {
+                    if (createGroupId === "-1") {
                       await createAccountGroupApi({
                         name: groupName,
                       });
@@ -248,7 +248,7 @@ const UserManageSidebar = memo(
                 type="primary"
                 icon={<PlusOutlined />}
                 onClick={() => {
-                  setCreateGroupId(-1);
+                  setCreateGroupId("-1");
                   setOpenCreateGroup(true);
                 }}
               >

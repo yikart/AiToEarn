@@ -13,7 +13,7 @@ export default function AccountPageCore() {
       accountInit: state.accountInit,
     })),
   );
-  const [activeAccountId, setActiveAccountId] = useState(-1);
+  const [activeAccountId, setActiveAccountId] = useState("");
 
   useEffect(() => {
     accountInit();
@@ -24,8 +24,9 @@ export default function AccountPageCore() {
       <div className={styles.accounts}>
         <AccountSidebar
           activeAccountId={activeAccountId}
-          onAccountChange={() => {
-            console.log("change");
+          onAccountChange={(account) => {
+            console.log("change", account);
+            setActiveAccountId(account.id);
           }}
         />
       </div>

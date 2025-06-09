@@ -27,7 +27,7 @@ export interface IAccountSidebarRef {}
 
 export interface IAccountSidebarProps {
   // 选择的账户id
-  activeAccountId: number;
+  activeAccountId: string;
   // 切换选择的账户
   onAccountChange: (info: SocialAccount) => void;
   // 排除的平台类型

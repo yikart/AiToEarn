@@ -35,7 +35,7 @@ import AvatarPlat from "@/components/AvatarPlat";
 import { deleteAccountsApi, updateAccountApi } from "@/api/account";
 
 export interface IUserManageModalRef {
-  setActiveGroup: (groupId: number) => void;
+  setActiveGroup: (groupId: string) => void;
 }
 
 export interface IUserManageModalProps {
@@ -48,7 +48,7 @@ const UserGroupSelect = ({
   onChange,
 }: {
   account: SocialAccount;
-  onChange: (groupId: number) => void;
+  onChange: (groupId: string) => void;
 }) => {
   const { accountGroupList } = useAccountStore(
     useShallow((state) => ({
@@ -58,6 +58,7 @@ const UserGroupSelect = ({
 
   return (
     <Select
+      // @ts-ignore
       value={account.groupId}
       style={{ width: "160px" }}
       fieldNames={{
@@ -88,7 +89,7 @@ const UserManageModal = memo(
       const [deleteHitOpen, setDeleteHitOpen] = useState(false);
       const [selectedRows, setSelectedRows] = useState<SocialAccount[]>([]);
       // 全部账号
-      const allUser = useRef(-1);
+      const allUser = useRef("-1");
       // -1=全部账号，不然为对应分组 ID
       const [activeGroup, setActiveGroup] = useState(allUser.current);
       // 是否改变了顺序

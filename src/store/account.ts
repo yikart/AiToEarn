@@ -10,9 +10,9 @@ export interface AccountGroup extends AccountGroupItem {
 
 export interface IAccountStore {
   accountList: SocialAccount[];
-  accountMap: Map<number, SocialAccount>;
+  accountMap: Map<string, SocialAccount>;
   accountGroupList: AccountGroup[];
-  accountGroupMap: Map<number, AccountGroup>;
+  accountGroupMap: Map<string, AccountGroup>;
   accountLoading: boolean;
 }
 
@@ -52,7 +52,7 @@ export const useAccountStore = create(
           if (get().accountLoading) return;
           set({ accountLoading: true });
 
-          const accountMap = new Map<number, SocialAccount>([]);
+          const accountMap = new Map<string, SocialAccount>([]);
           const result = await getAccountListApi();
 
           if (result?.code !== 0) return;
@@ -79,7 +79,7 @@ export const useAccountStore = create(
           if (groupList.length === 0) return;
           const accountGroupList: AccountGroup[] = [];
           // key=组ID，val=账户ID
-          const accountGroupMap = new Map<number, AccountGroup>();
+          const accountGroupMap = new Map<string, AccountGroup>();
 
           const defaultGroup = groupList.find((v) => v.isDefault)!;
 

@@ -2,7 +2,7 @@ import { PlatType } from "@/app/config/platConfig";
 
 // 三方账户类型定义
 export interface SocialAccount {
-  id: number;
+  id: string;
   type: PlatType;
   loginCookie?: string;
   access_token?: string;
@@ -25,7 +25,7 @@ export interface SocialAccount {
   createTime: string;
   updateTime: string;
   rank: number;
-  groupId: number;
+  groupId: string;
 }
 
 // 更新账户统计数据
@@ -42,7 +42,7 @@ export interface UpdateAccountStatisticsParams {
 
 // 账户组 item 数据
 export interface AccountGroupItem {
-  id: number;
+  id: string;
   name: string;
   rank: number;
   isDefault: boolean;

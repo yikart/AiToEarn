@@ -17,7 +17,7 @@ export const updateAccountApi = (data: Partial<SocialAccount>) => {
 
 // 更新账户状态
 export const updateAccountStatusApi = (data: {
-  id: number;
+  id: string;
   status: number;
 }) => {
   return sxRequest.post<SocialAccount>("account/status", data);
@@ -29,7 +29,7 @@ export const getAccountListApi = () => {
 };
 
 // 获取账户详情
-export const getAccountDetailApi = (id: number) => {
+export const getAccountDetailApi = (id: string) => {
   return sxRequest.get<SocialAccount>(`account/${id}`);
 };
 
@@ -40,12 +40,12 @@ export const updateAccountStatisticsApi = (
 };
 
 // 删除账户
-export const deleteAccountApi = (id: number) => {
+export const deleteAccountApi = (id: string) => {
   return sxRequest.post<SocialAccount>(`account/delete/${id}`);
 };
 
 // 删除多个账户
-export const deleteAccountsApi = (ids: number[]) => {
+export const deleteAccountsApi = (ids: string[]) => {
   return sxRequest.post<SocialAccount>("account/deletes", {
     ids,
   });
@@ -62,7 +62,7 @@ export const updateAccountGroupApi = (data: Partial<AccountGroupItem>) => {
 };
 
 // 删除账户组
-export const deleteAccountGroupApi = (ids: number[]) => {
+export const deleteAccountGroupApi = (ids: string[]) => {
   return sxRequest.post("accountGroup/deletes", {
     ids,
   });
