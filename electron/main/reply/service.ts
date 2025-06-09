@@ -23,7 +23,7 @@ import { sleep } from '../../util/time';
 import { AutoReplyCache, AutorReplyCacheStatus } from './cacheData';
 import { logger } from '../../global/log';
 import { backPageData, CorrectQuery } from '../../global/table';
-import { AccountType } from '../../../commont/AccountEnum';
+import { PlatType } from '../../../commont/AccountEnum';
 
 @Injectable()
 export class ReplyService {
@@ -88,7 +88,7 @@ export class ReplyService {
     page: CorrectQuery,
     query: {
       accountId?: number;
-      type?: AccountType;
+      type?: PlatType;
     },
   ) {
     const filter: FindOptionsWhere<ReplyCommentRecordModel> = {

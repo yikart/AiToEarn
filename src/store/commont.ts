@@ -12,7 +12,7 @@ const store: ICommontStore = {
 };
 
 // 项目中的通用的、全局的状态和方法
-export const useAccountStore = create(
+export const useCommontStore = create(
   combine(
     {
       ...store,

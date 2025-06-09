@@ -297,6 +297,7 @@ const UserManageModal = memo(
                   columns={columns}
                   dataSource={accountListLast}
                   rowKey="id"
+                  scroll={{ y: '100%' }}
                   rowSelection={{ type: 'checkbox', ...rowSelection }}
                 />
 

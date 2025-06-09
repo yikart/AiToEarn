@@ -10,7 +10,7 @@ import { Injectable } from '../core/decorators';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import {
   AccountStatus,
-  AccountType,
+  PlatType,
   defaultAccountGroupId,
 } from '../../../commont/AccountEnum';
 import platController from '../plat/index';
@@ -63,7 +63,7 @@ export class AccountService {
   }
 
   // 单个账号登录状态检测core
-  async checkAccountLoginCore(pType: AccountType, uid: string) {
+  async checkAccountLoginCore(pType: PlatType, uid: string) {
     const userInfo = getUserInfo();
 
     const accountInfo = await this.getAccountInfo({
@@ -95,7 +95,7 @@ export class AccountService {
   async addOrUpdateAccount(
     query: {
       userId: string;
-      type: AccountType;
+      type: PlatType;
       uid: string;
     },
     account: Partial<AccountModel>,
@@ -135,7 +135,7 @@ export class AccountService {
 
   // 获取账户信息
   async getAccountInfo(query: {
-    type: AccountType;
+    type: PlatType;
     userId: string;
     uid: string;
   }) {
@@ -169,7 +169,7 @@ export class AccountService {
    */
   async getAccountStatistics(
     userId: string,
-    type?: AccountType,
+    type?: PlatType,
   ): Promise<{
     accountTotal: number;
     list: AccountModel[];

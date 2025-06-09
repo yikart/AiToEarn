@@ -35,7 +35,7 @@ import { TaskInfoRef } from './components/popInfo';
 import ChooseAccountModule from '@/views/publish/components/ChooseAccountModule/ChooseAccountModule';
 import { PubType } from '@@/publish/PublishEnum';
 import { usePubStroe } from '@/store/pubStroe';
-import { useAccountStore } from '@/store/commont';
+import { useCommontStore } from '@/store/commont';
 import { useNavigate } from 'react-router-dom';
 import { message } from 'antd';
 import {
@@ -281,7 +281,7 @@ export default function ArticleTask() {
     setPubProgressModuleOpen(false);
     usePubStroe.getState().clearImgTextPubSave();
     const successList = okRes.filter((v) => v.code === 1);
-    useAccountStore.getState().notification!.open({
+    useCommontStore.getState().notification!.open({
       message: '发布结果',
       description: (
         <>

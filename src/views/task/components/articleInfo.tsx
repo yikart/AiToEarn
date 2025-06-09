@@ -12,7 +12,7 @@ import {
   CopyOutlined,
 } from '@ant-design/icons';
 import ChooseAccountModule from '@/views/publish/components/ChooseAccountModule/ChooseAccountModule';
-import { AccountType } from '@@/AccountEnum';
+import { PlatType } from '@@/AccountEnum';
 
 const FILE_BASE_URL = import.meta.env.VITE_APP_FILE_HOST;
 
@@ -102,7 +102,7 @@ const Com = forwardRef<TaskInfoRef, TaskInfoProps>((props: any, ref) => {
         platChooseProps={{
           choosedAccounts: accountListChoose,
           pubType: PubType.ARTICLE,
-          allowPlatSet: new Set([AccountType.Douyin]),
+          allowPlatSet: new Set([PlatType.Douyin]),
         }}
         onPlatConfirm={async (aList) => {
           console.log('账号:', aList);

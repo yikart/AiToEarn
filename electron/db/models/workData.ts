@@ -7,7 +7,7 @@
  */
 import { Column, PrimaryGeneratedColumn } from 'typeorm';
 import { TempModel } from './temp';
-import { AccountType } from '../../../commont/AccountEnum';
+import { PlatType } from '../../../commont/AccountEnum';
 import type {
   CookiesType,
   ILocationDataItem,
@@ -30,8 +30,8 @@ export interface ILableValue {
  * 每个平台有相同点，有不同点，这不同点都在这个参数下集合
  */
 export type DiffParmasType = {
-  [AccountType.Xhs]?: {};
-  [AccountType.Douyin]?: {
+  [PlatType.Xhs]?: {};
+  [PlatType.Douyin]?: {
     // 申请关联的热点
     hotPoint?: ILableValue;
     // 申请关联的活动
@@ -39,7 +39,7 @@ export type DiffParmasType = {
     // 自主声明
     selfDeclare?: DeclarationDouyin;
   };
-  [AccountType.WxSph]?: {
+  [PlatType.WxSph]?: {
     // 是否为原创
     isOriginal?: boolean;
     // 扩展链接
@@ -47,7 +47,7 @@ export type DiffParmasType = {
     // 活动
     activity?: WxSphEvent;
   };
-  [AccountType.KWAI]?: {};
+  [PlatType.KWAI]?: {};
 };
 
 export type WorkDataModel = WorkData;
@@ -83,11 +83,11 @@ export class WorkData extends TempModel {
 
   @Column({
     type: 'varchar',
-    enum: AccountType,
+    enum: PlatType,
     nullable: false,
     comment: '平台类型',
   })
-  type!: AccountType;
+  type!: PlatType;
 
   // 发布时间
   @Column({ type: 'datetime', nullable: true, comment: '发布时间' })

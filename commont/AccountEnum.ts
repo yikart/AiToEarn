@@ -1,5 +1,5 @@
 // 平台类型
-export enum AccountType {
+export enum PlatType {
   Douyin = 'douyin', // 抖音
   Xhs = 'xhs', // 小红书
   WxSph = 'wxSph', // 微信视频号

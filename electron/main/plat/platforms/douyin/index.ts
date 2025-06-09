@@ -24,7 +24,7 @@ import {
   DouyinPlatformSettingType,
   douyinService,
 } from '../../../../plat/douyin';
-import { AccountType } from '../../../../../commont/AccountEnum';
+import { PlatType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
 import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
 import { IRequestNetResult } from '../../../../plat/requestNet';
@@ -44,7 +44,7 @@ export type PubVideoOptin = {
 
 export class Douyin extends PlatformBase {
   constructor() {
-    super(AccountType.Douyin);
+    super(PlatType.Douyin);
   }
 
   /**
@@ -492,7 +492,7 @@ export class Douyin extends PlatformBase {
   }
 
   pubParamsParse(params: WorkDataModel): DouyinPlatformSettingType {
-    const douyinParams = params.diffParams![AccountType.Douyin];
+    const douyinParams = params.diffParams![PlatType.Douyin];
     return {
       proxyIp: params.proxyIp || '',
       userDeclare: douyinParams?.selfDeclare,

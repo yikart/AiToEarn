@@ -8,7 +8,7 @@ import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPa
 import { useShallow } from 'zustand/react/shallow';
 import TopicSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/TopicSelect';
 import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
-import { AccountType } from '@@/AccountEnum';
+import { PlatType } from '@@/AccountEnum';
 import {
   DescTextArea,
   ScheduledTimeSelect,
@@ -38,11 +38,11 @@ const HotspotSelect = ({}: IVideoPubSetModalChildProps) => {
     <CommonHotspotSelect
       account={currChooseAccount.account}
       value={
-        currChooseAccount.pubParams!.diffParams![AccountType.Douyin]!.hotPoint
+        currChooseAccount.pubParams!.diffParams![PlatType.Douyin]!.hotPoint
       }
       onChange={(newValue) => {
         const newDiffParams = currChooseAccount.pubParams.diffParams!;
-        newDiffParams[AccountType.Douyin]!.hotPoint = newValue as ILableValue;
+        newDiffParams[PlatType.Douyin]!.hotPoint = newValue as ILableValue;
         setOnePubParams({
           diffParams: newDiffParams,
         });
@@ -61,11 +61,11 @@ const ActivitySelect = ({}: IVideoPubSetModalChildProps) => {
       account={currChooseAccount.account}
       maxCount={topicMax - currChooseAccount.pubParams!.topics!.length}
       value={
-        currChooseAccount.pubParams!.diffParams![AccountType.Douyin]!.activitys
+        currChooseAccount.pubParams!.diffParams![PlatType.Douyin]!.activitys
       }
       onChange={(newValue) => {
         const newDiffParams = currChooseAccount.pubParams.diffParams!;
-        newDiffParams[AccountType.Douyin]!.activitys =
+        newDiffParams[PlatType.Douyin]!.activitys =
           newValue as ILableValue[];
         setOnePubParams({
           diffParams: newDiffParams,
@@ -96,7 +96,7 @@ const VideoPubSetModal_DouYin = memo(
           <TopicSelect
             maxCount={
               topicMax -
-              currChooseAccount.pubParams!.diffParams![AccountType.Douyin]!
+              currChooseAccount.pubParams!.diffParams![PlatType.Douyin]!
                 .activitys!.length
             }
             tips={`最多可添加${topicMax}个话题（包含活动奖励）`}
@@ -117,7 +117,7 @@ const VideoPubSetModal_DouYin = memo(
           <Select
             allowClear
             value={
-              currChooseAccount?.pubParams.diffParams![AccountType.Douyin]!
+              currChooseAccount?.pubParams.diffParams![PlatType.Douyin]!
                 .selfDeclare
             }
             style={{ width: '100%' }}
@@ -152,7 +152,7 @@ const VideoPubSetModal_DouYin = memo(
             ]}
             onChange={(newValue: any) => {
               const newDiffParams = currChooseAccount.pubParams.diffParams!;
-              newDiffParams[AccountType.Douyin]!.selfDeclare = newValue?.value;
+              newDiffParams[PlatType.Douyin]!.selfDeclare = newValue?.value;
               setOnePubParams({
                 diffParams: newDiffParams,
               });

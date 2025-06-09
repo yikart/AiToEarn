@@ -23,7 +23,7 @@ import { useShallow } from 'zustand/react/shallow';
 import styles from './videoPubSetModal.module.scss';
 import { AccountPlatInfoMap } from '@/views/account/comment';
 import VideoCoverSeting from '@/views/publish/children/videoPage/components/VideoCoverSeting';
-import { AccountType } from '@@/AccountEnum';
+import { PlatType } from '@@/AccountEnum';
 import {
   icpCreatePubRecord,
   icpCreateVideoPubRecord,
@@ -48,7 +48,7 @@ import usePubParamsVerify, {
   PubParamsErrStatusEnum,
   PubParamsVerifyInfo,
 } from '../../../../hooks/usePubParamsVerify';
-import { useAccountStore } from '../../../../../../store/commont';
+import { useCommontStore } from '../../../../../../store/commont';
 import { IVideoFile } from '../../../../../../components/Choose/VideoChoose';
 import {
   NoticeItem,
@@ -72,13 +72,13 @@ const PubSetModalChild = ({}: {}) => {
 
   const renderedComponent = useMemo(() => {
     switch (currChooseAccount?.account?.type) {
-      case AccountType.KWAI:
+      case PlatType.KWAI:
         return <VideoPubSetModal_KWAI />;
-      case AccountType.Douyin:
+      case PlatType.Douyin:
         return <VideoPubSetModal_DouYin />;
-      case AccountType.Xhs:
+      case PlatType.Xhs:
         return <VideoPubSetModal_XSH />;
-      case AccountType.WxSph:
+      case PlatType.WxSph:
         return <VideoPubSetModal_WxSph />;
     }
     return <></>;
@@ -150,7 +150,7 @@ const VideoPubSetModal = memo(
         {
           moreErrorVerifyCallback(item, errParamsMapTemp) {
             if (
-              item?.account?.type === AccountType.Douyin &&
+              item?.account?.type === PlatType.Douyin &&
               item.other?.duration > 3600
             ) {
               errParamsMapTemp.set(item.id, {
@@ -274,7 +274,7 @@ const VideoPubSetModal = memo(
         addNotice(NoticeType.PubNotice, noticeList);
 
         setTimeout(() => {
-          useAccountStore.getState().notification!.open({
+          useCommontStore.getState().notification!.open({
             message: '发布结果',
             description: (
               <>

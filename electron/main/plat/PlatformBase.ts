@@ -24,7 +24,7 @@ import {
   WorkData,
 } from './plat.type';
 import { PublishVideoResult } from './module';
-import { AccountType } from '../../../commont/AccountEnum';
+import { PlatType } from '../../../commont/AccountEnum';
 import { AccountModel } from '../../db/models/account';
 import { VideoModel } from '../../db/models/video';
 import { ImgTextModel } from '../../db/models/imgText';
@@ -34,9 +34,9 @@ import { ImgTextModel } from '../../db/models/imgText';
  */
 export abstract class PlatformBase {
   // 平台类型
-  protected readonly type: AccountType;
+  protected readonly type: PlatType;
 
-  constructor(type: AccountType) {
+  constructor(type: PlatType) {
     this.type = type;
   }
 

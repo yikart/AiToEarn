@@ -10,7 +10,7 @@ import styles from '../pubRecord.module.scss';
 import { AccountPlatInfoMap } from '../../../../account/comment';
 import { formatTime } from '../../../../../utils';
 import { getVideoFile } from '../../../../../components/Choose/VideoChoose';
-import { AccountType } from '../../../../../../commont/AccountEnum';
+import { PlatType } from '../../../../../../commont/AccountEnum';
 import { IExamineVideo, ImageView } from '../page';
 import { PubRecordModel } from '../../../comment';
 import { useAccountStore } from '../../../../../store/account';
@@ -194,7 +194,7 @@ const PubRecordDetails = memo(
                                   url: '',
                                   account,
                                 };
-                                if (account?.type === AccountType.WxSph) {
+                                if (account?.type === PlatType.WxSph) {
                                   const videoFile = await getVideoFile(
                                     (v as VideoModel).videoPath!,
                                   );

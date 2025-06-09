@@ -18,7 +18,7 @@ import type { WorkData } from '../plat/plat.type';
 import { GlobleCache } from '../../global/cache';
 import { AutoReplyCache } from './cacheData';
 import type { CorrectQuery } from '../../global/table';
-import { AccountType } from '../../../commont/AccountEnum';
+import { PlatType } from '../../../commont/AccountEnum';
 import { getUserInfo } from '../user/comment';
 @Controller()
 export class ReplyController {
@@ -376,7 +376,7 @@ export class ReplyController {
     page: CorrectQuery,
     query: {
       accountId?: number;
-      type?: AccountType;
+      type?: PlatType;
     },
   ): Promise<any> {
     const userInfo = getUserInfo();

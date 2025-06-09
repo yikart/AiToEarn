@@ -13,7 +13,7 @@ import { accountLogin, acpAccountLoginCheck } from '@/icp/account';
 import AddAccountModal from '../AddAccountModal';
 import {
   AccountStatus,
-  AccountType,
+  PlatType,
   defaultAccountGroupId,
   XhsAccountAbnormal,
 } from '@@/AccountEnum';
@@ -41,14 +41,14 @@ export interface IAccountSidebarProps {
   // 切换选择的账户
   onAccountChange: (info: AccountInfo) => void;
   // 排除的平台类型
-  excludePlatforms?: AccountType[];
+  excludePlatforms?: PlatType[];
 }
 
 const AccountStatusView = ({ account }: { account: AccountModel }) => {
   if (
-    account.type === AccountType.Xhs &&
+    account.type === PlatType.Xhs &&
     account.abnormalStatus &&
-    account.abnormalStatus[AccountType.Xhs] === XhsAccountAbnormal.Abnormal
+    account.abnormalStatus[PlatType.Xhs] === XhsAccountAbnormal.Abnormal
   ) {
     return (
       <Tooltip title="账号状态异常，无法发布作品，请检查后重试！">
@@ -264,7 +264,7 @@ const AccountSidebar = memo(
                                 'accountList-item--disable',
                               // 异常状态
                               account.abnormalStatus &&
-                                account.abnormalStatus[AccountType.Xhs] ===
+                                account.abnormalStatus[PlatType.Xhs] ===
                                   XhsAccountAbnormal.Abnormal &&
                                 'accountList-item--abnormal',
                             ].join(' ')}
@@ -288,7 +288,7 @@ const AccountSidebar = memo(
                                 <Tooltip
                                   title={
                                     account.abnormalStatus &&
-                                    account.abnormalStatus[AccountType.Xhs] ===
+                                    account.abnormalStatus[PlatType.Xhs] ===
                                       XhsAccountAbnormal.Abnormal
                                       ? '账号状态异常，无法发布作品，请检查后重试'
                                       : undefined

@@ -5,7 +5,7 @@ import { IImageAccountItem } from './imagePage.type';
 import lodash from 'lodash';
 import { AccountInfo } from '../../../account/comment';
 import { useVideoPageStore } from '../videoPage/useVideoPageStore';
-import { AccountType } from '../../../../../commont/AccountEnum';
+import { PlatType } from '../../../../../commont/AccountEnum';
 import { IPubParams } from '../videoPage/videoPage';
 import { message } from 'antd';
 import { accountLogin } from '../../../../icp/account';
@@ -19,9 +19,9 @@ export interface IImagePageStore {
   // 选择的图片数据
   images: IImgFile[];
   // 每个平台当前选择的账户
-  platActiveAccountMap: Map<AccountType, IImageAccountItem>;
+  platActiveAccountMap: Map<PlatType, IImageAccountItem>;
   // 当前选择的平台
-  activePlat?: AccountType;
+  activePlat?: PlatType;
   // 通用参数
   commonPubParams: IPubParams;
   // 图片上传上限
@@ -38,7 +38,7 @@ const store: IImagePageStore = {
   imgUploadLimit: 35,
   images: [],
   imageAccounts: [],
-  platActiveAccountMap: new Map<AccountType, IImageAccountItem>(),
+  platActiveAccountMap: new Map<PlatType, IImageAccountItem>(),
   activePlat: undefined,
   commonPubParams: useVideoPageStore.getState().pubParamsInit(),
   errParamsMap: undefined,
@@ -73,7 +73,7 @@ export const useImagePageStore = create(
 
       const methods = {
         setPlatActiveAccountMap(
-          platActiveAccountMap: Map<AccountType, IImageAccountItem>,
+          platActiveAccountMap: Map<PlatType, IImageAccountItem>,
         ) {
           set({
             platActiveAccountMap,
@@ -88,7 +88,7 @@ export const useImagePageStore = create(
             warnParamsMap,
           });
         },
-        setActivePlat(activePlat: AccountType) {
+        setActivePlat(activePlat: PlatType) {
           set({
             activePlat,
           });
@@ -144,7 +144,7 @@ export const useImagePageStore = create(
         /**
          * 账户重新登录。登录成功后会自动更新该条账户数据
          */
-        async accountRestart(pType: AccountType) {
+        async accountRestart(pType: PlatType) {
           const res = await accountLogin(pType);
           if (!res) return;
           message.success('登录成功！');
@@ -211,7 +211,7 @@ export const useImagePageStore = create(
         },
 
         // 按平台删除
-        delAccountByPalt(accountType: AccountType) {
+        delAccountByPalt(accountType: PlatType) {
           const imageAccounts = get().imageAccounts.filter(
             (v) => v.account.type !== accountType,
           );
