@@ -14,6 +14,8 @@ export default function ForgotPasswordPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [resetForm] = Form.useForm();
   const [resetCode, setResetCode] = useState<string>('');
+  const [isPolling, setIsPolling] = useState(false);
+  const [pollInterval, setPollInterval] = useState<NodeJS.Timeout | null>(null);
 
   // 处理发送重置密码邮件
   const handleSubmit = async (values: { mail: string }) => {
@@ -58,11 +60,46 @@ export default function ForgotPasswordPage() {
         return;
       }
 
-      if (response.code === 0) {
+      if (response.code === 0 && response.data?.token) {
         message.success('密码重置成功');
         router.push('/login');
       } else {
-        message.error(response.message || '重置失败');
+        // 开始轮询检查用户是否点击邮箱链接
+        const checkResetStatus = async () => {
+          try {
+            const statusResponse: any = await resetPasswordApi({
+              code: resetCode,
+              mail: form.getFieldValue('mail'),
+              password: values.password
+            });
+
+            if (statusResponse?.code === 0 && statusResponse.data?.token) {
+              message.success('密码重置成功');
+              router.push('/login');
+              return true;
+            }
+            return false;
+          } catch (error) {
+            return false;
+          }
+        };
+
+        // 设置轮询间隔
+        setIsPolling(true);
+        const interval = setInterval(async () => {
+          const isSuccess = await checkResetStatus();
+          if (isSuccess) {
+            if (pollInterval) {
+              clearInterval(pollInterval);
+              setPollInterval(null);
+            }
+            setIsPolling(false);
+          }
+        }, 2000);
+        setPollInterval(interval);
+
+        // 显示提示信息
+        message.info('请点击邮件中的重置链接完成密码重置');
       }
     } catch (error) {
       message.error('重置失败');
@@ -114,7 +151,15 @@ export default function ForgotPasswordPage() {
       <Modal
         title="重置密码"
         open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
+        onCancel={() => {
+          if (pollInterval) {
+            clearInterval(pollInterval);
+            setPollInterval(null);
+          }
+          setIsPolling(false);
+          setIsModalOpen(false);
+        }}
+        maskClosable={false}
         footer={null}
       >
         <Form
@@ -157,10 +202,10 @@ export default function ForgotPasswordPage() {
               type="primary" 
               htmlType="submit" 
               block 
-              loading={loading}
+              loading={loading || isPolling}
               className={styles.submitButton}
             >
-              确认重置
+              {isPolling ? '等待邮件确认...' : '确认重置'}
             </Button>
           </Form.Item>
         </Form>
