@@ -43,7 +43,6 @@ import usePubParamsVerify, {
 import { IVideoFile } from "@/app/[lng]/publish/components/Choose/VideoChoose";
 import { useRouter } from "next/navigation";
 import { useSystemStore } from "@/store/system";
-import { signInApi } from "@/api/signIn";
 import { generateUUID } from "@/utils";
 import { PubStatus } from "@/app/config/publishConfig";
 import { platManage } from "@/app/plat/PlatManage";
@@ -149,6 +148,7 @@ const VideoPubSetModal = memo(
           },
         },
       );
+      const recordId = useRef("");
 
       useEffect(() => {
         if (!currChooseAccountId)
@@ -157,13 +157,11 @@ const VideoPubSetModal = memo(
 
       // 发布进度获取
       const pubProgressData = useMemo(() => {
-        // TODO 发布进度处理
-        // return (
-        //   (noticeMap.get(NoticeType.PubNotice) || []).find(
-        //     (v) => v.id === recordId.current,
-        //   )?.pub?.progressList || []
-        // );
-        return [];
+        return (
+          (noticeMap.get(NoticeType.PubNotice) || []).find(
+            (v) => v.id === recordId.current,
+          )?.pub?.progressList || []
+        );
       }, [noticeMap]);
 
       // 当前选择的账户数据
@@ -177,7 +175,8 @@ const VideoPubSetModal = memo(
       }, [currChooseAccount, videoListChoose]);
 
       const pubCore = async () => {
-        setLoading(false);
+        setLoading(true);
+        setPubProgressModuleOpen(true);
 
         // await signInApi.createSignInRecord();
         const err = () => {
@@ -186,6 +185,7 @@ const VideoPubSetModal = memo(
         };
 
         const operateId = generateUUID();
+        recordId.current = operateId;
         // 发布记录通知消息初始化
         const initialNotice: NoticeItem = {
           title:

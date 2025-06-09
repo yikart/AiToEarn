@@ -24,6 +24,27 @@ export class KwaiPubCore {
     this.onProgress = onProgress;
   }
 
+  // 获取caption
+  getCaption() {
+    const { title, describe, topics } = this.videoPubParams;
+    let caption = "";
+    if (title) {
+      caption += `${title} `;
+    }
+
+    if (describe) {
+      caption += `${describe} `;
+    }
+
+    if (topics?.length !== 0) {
+      for (const topic of topics!) {
+        caption += `#${topic} `;
+      }
+    }
+
+    return caption.trim();
+  }
+
   // 视频发布
   async publishVideo(): Promise<IPublishResult> {
     try {
@@ -91,7 +112,7 @@ export class KwaiPubCore {
       console.log("分片上传完成：", completeRes);
 
       const formData = new FormData();
-      formData.append("caption", " #分享转发 标题1  #推广昨品  ");
+      formData.append("caption", this.getCaption());
       formData.append("cover", this.videoPubParams.cover!.file);
       const pubRes = await this.kwaiPlat.request({
         url: "/openapi/photo/publish",

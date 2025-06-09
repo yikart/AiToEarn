@@ -7,6 +7,7 @@ import {
   PublishVideoParams,
 } from "@/app/plat/plat.type";
 import { useBellMessageStroe } from "@/store/bellMessageStroe";
+import { parseTopicString } from "@/utils";
 
 class PlatManage {
   private getPlat(type: PlatType, params: IPlatConstrParams): PlatBase {
@@ -28,6 +29,15 @@ class PlatManage {
   ): Promise<IPublishResult[]> {
     const task: Promise<IPublishResult>[] = [];
     for (const pub of pubArr) {
+      const { topics, cleanedString } = parseTopicString(
+        pub.videoPubParams.describe || "",
+      );
+      pub.videoPubParams = {
+        ...pub.videoPubParams,
+        describe: cleanedString,
+        topics,
+      };
+
       task.push(
         this.getPlat(pub.account.type, {
           access_token: pub.access_token,
