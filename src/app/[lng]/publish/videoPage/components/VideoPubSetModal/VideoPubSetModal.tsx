@@ -7,11 +7,25 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Alert, Avatar, message, Modal, Switch, Tabs, Tooltip } from "antd";
+import {
+  Alert,
+  Avatar,
+  Button,
+  message,
+  Modal,
+  Space,
+  Switch,
+  Tabs,
+  Tooltip,
+} from "antd";
 import { useVideoPageStore } from "@/app/[lng]/publish/videoPage/useVideoPageStore";
 import { useShallow } from "zustand/react/shallow";
 import styles from "./videoPubSetModal.module.scss";
-import { useBellMessageStroe } from "@/store/bellMessageStroe";
+import {
+  NoticeItem,
+  NoticeType,
+  useBellMessageStroe,
+} from "@/store/bellMessageStroe";
 import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import VideoCoverSeting from "@/app/[lng]/publish/videoPage/components/VideoCoverSeting";
 import PubAccountDetModule, {
@@ -29,6 +43,12 @@ import usePubParamsVerify, {
 import { IVideoFile } from "@/app/[lng]/publish/components/Choose/VideoChoose";
 import { useRouter } from "next/navigation";
 import { useSystemStore } from "@/store/system";
+import { signInApi } from "@/api/signIn";
+import { generateUUID } from "@/utils";
+import { PubStatus } from "@/app/config/publishConfig";
+import { platManage } from "@/app/plat/PlatManage";
+import { useCommontStore } from "@/store/commont";
+import { PublishVideoParams } from "@/app/plat/plat.type";
 
 export interface IVideoPubSetModalRef {}
 
@@ -129,7 +149,6 @@ const VideoPubSetModal = memo(
           },
         },
       );
-      const recordId = useRef(-1);
 
       useEffect(() => {
         if (!currChooseAccountId)
@@ -158,115 +177,100 @@ const VideoPubSetModal = memo(
       }, [currChooseAccount, videoListChoose]);
 
       const pubCore = async () => {
-        // TODO 发布
-        // setLoading(false);
-        //
+        setLoading(false);
+
         // await signInApi.createSignInRecord();
-        // const err = () => {
-        //   setLoading(false);
-        //   message.error("网络繁忙，请稍后重试！");
-        // };
-        // // 创建一级记录
-        // const recordRes = await icpCreatePubRecord({
-        //   title: commonPubParams.title,
-        //   desc: commonPubParams.describe,
-        //   type: PubType.VIDEO,
-        //   timingTime: commonPubParams.timingTime,
-        //   videoPath: videoListChoose[0].video?.videoPath,
-        //   coverPath: videoListChoose[0].pubParams.cover?.imgPath,
-        //   commonCoverPath: commonPubParams.cover?.imgPath,
-        // });
-        // recordId.current = recordRes.id;
-        // if (!recordRes) return err();
-        //
-        // setPubProgressModuleOpen(true);
-        // setLoading(true);
-        //
-        // // 发布记录通知消息初始化
-        // const initialNotice: NoticeItem = {
-        //   title:
-        //     [
-        //       ...new Set(
-        //         videoListChoose.map(
-        //           (v) => AccountPlatInfoMap.get(v.account!.type)!.name,
-        //         ),
-        //       ),
-        //     ].join("、") + "发布任务",
-        //   time: recordRes.createTime!,
-        //   id: recordRes.id,
-        //   pub: {
-        //     status: PubStatus.UNPUBLISH,
-        //     progressList: [],
-        //   },
-        // };
-        //
-        // for (const vData of videoListChoose) {
-        //   const account = vData.account!;
-        //   const video = vData.video!;
-        //   // 创建二级记录
-        //   await icpCreateVideoPubRecord({
-        //     ...vData.pubParams,
-        //     type: account.type,
-        //     accountId: account.id,
-        //     pubRecordId: recordRes.id,
-        //     publishTime: new Date(),
-        //     desc: vData.pubParams.describe,
-        //     videoPath: video.videoPath,
-        //     coverPath: vData.pubParams.cover?.imgPath,
-        //   });
-        //
-        //   initialNotice.pub!.progressList.push({
-        //     account: vData.account!,
-        //     progress: 0,
-        //     msg: "加载中...",
-        //     id: vData.account!.id!,
-        //   });
-        // }
-        // const noticeList = noticeMap.get(NoticeType.PubNotice) || [];
-        // noticeList.unshift(initialNotice);
-        // addNotice(NoticeType.PubNotice, noticeList);
-        //
-        // // 发布
-        // const okRes = await icpPubVideo(recordRes.id);
-        // setLoading(false);
-        // close();
-        // setPubProgressModuleOpen(false);
-        //
-        // // 成功数据
-        // const successList = okRes.filter((v) => v.code === 1);
-        //
-        // initialNotice.pub!.status =
-        //   successList.length === okRes.length
-        //     ? PubStatus.RELEASED
-        //     : PubStatus.PartSuccess;
-        // addNotice(NoticeType.PubNotice, noticeList);
-        //
-        // setTimeout(() => {
-        //   useCommontStore.getState().notification!.open({
-        //     message: "发布结果",
-        //     description: (
-        //       <>
-        //         一共发布 {okRes.length} 条数据，成功 {successList.length}{" "}
-        //         条，失败 {okRes.length - successList.length} 条
-        //       </>
-        //     ),
-        //     showProgress: true,
-        //     btn: (
-        //       <Space>
-        //         <Button
-        //           type="primary"
-        //           size="small"
-        //           onClick={() => {
-        //             router.push("/publish/pubRecord");
-        //           }}
-        //         >
-        //           查看发布记录
-        //         </Button>
-        //       </Space>
-        //     ),
-        //     key: Date.now(),
-        //   });
-        // }, 10);
+        const err = () => {
+          setLoading(false);
+          message.error("网络繁忙，请稍后重试！");
+        };
+
+        const operateId = generateUUID();
+        // 发布记录通知消息初始化
+        const initialNotice: NoticeItem = {
+          title:
+            [
+              ...new Set(
+                videoListChoose.map(
+                  (v) => AccountPlatInfoMap.get(v.account!.type)!.name,
+                ),
+              ),
+            ].join("、") + "发布任务",
+          time: new Date(),
+          id: operateId,
+          pub: {
+            status: PubStatus.UNPUBLISH,
+            progressList: [],
+          },
+        };
+
+        const publishVideoParamsArr: PublishVideoParams[] = [];
+        for (const vData of videoListChoose) {
+          initialNotice.pub!.progressList.push({
+            account: vData.account!,
+            progress: 0,
+            msg: "加载中...",
+            id: vData.account!.id!,
+          });
+
+          publishVideoParamsArr.push({
+            videoPubParams: {
+              ...vData.pubParams,
+              video: vData.video!,
+            },
+            account: vData.account!,
+            access_token: vData.account!.access_token!,
+            refresh_token: vData.account!.refresh_token!,
+          });
+        }
+        const noticeList = noticeMap.get(NoticeType.PubNotice) || [];
+        noticeList.unshift(initialNotice);
+        addNotice(NoticeType.PubNotice, noticeList);
+
+        // 发布
+        const okRes = await platManage.publishVideo(
+          publishVideoParamsArr,
+          operateId,
+        );
+        setLoading(false);
+        close();
+        setPubProgressModuleOpen(false);
+
+        // 成功数据
+        const successList = okRes.filter((v) => v.success);
+
+        initialNotice.pub!.status =
+          successList.length === okRes.length
+            ? PubStatus.RELEASED
+            : PubStatus.PartSuccess;
+        addNotice(NoticeType.PubNotice, noticeList);
+
+        setTimeout(() => {
+          useCommontStore.getState().notification!.open({
+            message: "发布结果",
+            description: (
+              <>
+                一共发布 {okRes.length} 条数据，成功 {successList.length}{" "}
+                条，失败 {okRes.length - successList.length} 条
+              </>
+            ),
+            showProgress: true,
+            btn: (
+              <Space>
+                <Button
+                  type="primary"
+                  size="small"
+                  onClick={() => {
+                    router.push("/publish/pubRecord");
+                  }}
+                >
+                  查看发布记录
+                </Button>
+              </Space>
+            ),
+            key: Date.now(),
+          });
+        }, 10);
       };
 
       const handleOk = async () => {

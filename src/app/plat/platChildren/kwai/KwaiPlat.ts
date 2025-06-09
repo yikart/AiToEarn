@@ -5,7 +5,11 @@ import { requestPlatApi } from "@/utils/otherRequest";
 import { KwaiApiProxyUrl } from "@/constant";
 import { kwaiAppId } from "@/app/[lng]/accounts/plat/kwaiLogin";
 import { PlatType } from "@/app/config/platConfig";
-import {IPublishResult, IVideoPublishItem, PubProgressType} from "@/app/plat/plat.type";
+import {
+  IPublishResult,
+  IVideoPublishItem,
+  PubProgressType,
+} from "@/app/plat/plat.type";
 import { KwaiPubCore } from "@/app/plat/platChildren/kwai/KwaiPubCore";
 
 export class KwaiPlat extends PlatBase {
@@ -25,8 +29,8 @@ export class KwaiPlat extends PlatBase {
     };
   }
 
-  request(params: RequestParams) {
-    params.url = `${KwaiApiProxyUrl}${params.url}`;
+  request(params: RequestParams, isPrefix = true) {
+    params.url = `${(isPrefix && KwaiApiProxyUrl) || ""}${params.url}`;
     params.params = {
       access_token: this.access_token,
       app_id: kwaiAppId,
@@ -41,10 +45,13 @@ export class KwaiPlat extends PlatBase {
   ): Promise<IPublishResult> {
     const kwaiPubCore = new KwaiPubCore(this, videoPubParams, onProgress);
     const pubRes = await kwaiPubCore.publishVideo();
-    return {
-      worksId: pubRes.worksId,
-      worksUrl: pubRes.worksUrl,
-      success: true,
-    };
+
+    if (pubRes.success) {
+      onProgress(100, "视频发布完成");
+    } else {
+      onProgress(-1, "视频发布失败");
+    }
+
+    return pubRes;
   }
 }

@@ -4,6 +4,7 @@ import lodash from "lodash";
 // import { PublishProgressRes } from "../../electron/main/plat/pub/PubItemVideo";
 // import { onVideoPublishProgress } from "../icp/receiveMsg";
 import { PubStatus } from "@/app/config/publishConfig";
+import { PublishProgressRes } from "@/app/plat/plat.type";
 
 export interface NoticeItem {
   title: string;
@@ -53,22 +54,20 @@ export const useBellMessageStroe = create(
           set({ noticeMap });
         },
 
-        // 发布进度监听
-        videoPublishProgressInit() {
-          // onVideoPublishProgress((progressData) => {
-          //   const noticeMap = new Map(get().noticeMap);
-          //   const noticeList = noticeMap.get(NoticeType.PubNotice) || [];
-          //   const noticeItem = noticeList.find((v) => v.id === progressData.id);
-          //
-          //   noticeItem?.pub?.progressList.find((v, i) => {
-          //     if (v.account.id === progressData.account.id) {
-          //       noticeItem!.pub!.progressList[i] = progressData;
-          //       return true;
-          //     }
-          //   });
-          //
-          //   set({ noticeMap });
-          // });
+        // 发布进度设置
+        publishProgressSet(progressData: PublishProgressRes) {
+          const noticeMap = new Map(get().noticeMap);
+          const noticeList = noticeMap.get(NoticeType.PubNotice) || [];
+          const noticeItem = noticeList.find((v) => v.id === progressData.id);
+
+          noticeItem?.pub?.progressList.find((v, i) => {
+            if (v.account.id === progressData.account.id) {
+              noticeItem!.pub!.progressList[i] = progressData;
+              return true;
+            }
+          });
+
+          set({ noticeMap });
         },
       };
       return methods;

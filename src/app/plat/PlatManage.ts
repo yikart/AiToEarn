@@ -4,8 +4,9 @@ import { PlatBase } from "@/app/plat/PlatBase";
 import {
   IPlatConstrParams,
   IPublishResult,
-  IVideoPublishItem,
+  PublishVideoParams,
 } from "@/app/plat/plat.type";
+import { useBellMessageStroe } from "@/store/bellMessageStroe";
 
 class PlatManage {
   private getPlat(type: PlatType, params: IPlatConstrParams): PlatBase {
@@ -16,27 +17,34 @@ class PlatManage {
     return new KwaiPlat(params);
   }
 
+  /**
+   * 发布视频
+   * @param pubArr 发布参数数组
+   * @param id 本次操作的唯一标识
+   */
   public async publishVideo(
-    pubArr: {
-      videoPubParams: IVideoPublishItem;
-      platType: PlatType;
-      access_token: string;
-      refresh_token: string;
-    }[],
-  ) {
+    pubArr: PublishVideoParams[],
+    id: string,
+  ): Promise<IPublishResult[]> {
     const task: Promise<IPublishResult>[] = [];
     for (const pub of pubArr) {
       task.push(
-        this.getPlat(pub.platType, {
+        this.getPlat(pub.account.type, {
           access_token: pub.access_token,
           refresh_token: pub.refresh_token,
         }).publishVideo(pub.videoPubParams, (progress, msg) => {
-          console.log(progress, msg);
+          useBellMessageStroe.getState().publishProgressSet({
+            id,
+            account: pub.account,
+            progress,
+            msg,
+          });
         }),
       );
     }
     const pubRes = await Promise.all(task);
     console.log(pubRes);
+    return pubRes;
   }
 }
 export const platManage = new PlatManage();

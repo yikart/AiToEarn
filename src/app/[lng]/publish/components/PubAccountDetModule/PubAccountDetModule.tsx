@@ -133,6 +133,10 @@ const PubAccountDetModule = memo(
 
       const imperative: IPubAccountDetModuleRef = {
         async startDet() {
+          setOpen(true);
+          if (onDetFinish) {
+            onDetFinish(accounts);
+          }
           // TODO 账户检测
           // setProxyInvalidAccountMap(new Map());
           // setDisabledIdSet(new Set([]));

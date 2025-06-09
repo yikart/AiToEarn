@@ -40,7 +40,9 @@ class FetchService<T = Response> {
       }
 
       // body 参数处理
-      const fetchURL = requestParams.url.startsWith('http') ? requestParams.url : this.baseURL + requestParams.url;
+      const fetchURL = requestParams.url.startsWith("http")
+        ? requestParams.url
+        : this.baseURL + requestParams.url;
       if (!requestParams.body && requestParams.data) {
         // 检查是否为FormData
         if (requestParams.data instanceof FormData) {
@@ -55,10 +57,14 @@ class FetchService<T = Response> {
           requestParams.data = this._filterDictUndefined(requestParams.data);
           requestParams = {
             ...requestParams,
-            body: JSON.stringify(requestParams.data),
+            body: requestParams.body
+              ? requestParams.body
+              : JSON.stringify(requestParams.data),
             headers: {
               ...(requestParams["headers"] || {}),
-              "content-type": "application/json",
+              "content-type":
+                // @ts-ignore
+                requestParams["headers"]["Content-Type"] ?? "application/json",
             },
           };
         }

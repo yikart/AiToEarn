@@ -2,6 +2,7 @@
 import { SocialAccount } from "@/api/types/account.type";
 import { IPubParams } from "@/app/[lng]/publish/videoPage/videoPage.type";
 import { IVideoFile } from "@/app/[lng]/publish/components/Choose/VideoChoose";
+import { PlatType } from "@/app/config/platConfig";
 
 export interface IPlatConstrParams {
   access_token: string;
@@ -26,21 +27,13 @@ export interface IUsersItem {
   follower_count?: number;
 }
 
-// 视频发布进度返回值
+// 发布进度返回值
 export interface PublishProgressRes {
   // 为 -1 表示失败
   progress: number;
   msg: string;
   account: SocialAccount;
-  id: number;
-}
-
-// 视频发布返回值
-export interface PublishRes {
-  // 作品ID
-  worksId: string;
-  // 作品链接
-  worksUrl: string;
+  id: string;
 }
 
 // 视频发布
@@ -59,4 +52,13 @@ export interface IPublishResult {
   failMsg?: string;
   worksId: string;
   worksUrl: string;
+}
+
+// 视频发布参数
+export interface PublishVideoParams {
+  videoPubParams: IVideoPublishItem;
+  access_token: string;
+  refresh_token: string;
+  // 账户
+  account: SocialAccount;
 }

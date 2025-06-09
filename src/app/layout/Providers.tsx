@@ -1,9 +1,9 @@
 "use client";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { ConfigProvider, App } from "antd";
+import { ConfigProvider, App, notification } from "antd";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import {Suspense, useEffect} from "react";
+import { Suspense, useEffect } from "react";
 import type { Locale } from "antd/es/locale";
 import zh_CN from "antd/es/locale/zh_CN";
 import en_US from "antd/es/locale/en_US";
@@ -11,6 +11,7 @@ import { fallbackLng } from "@/app/i18n/settings";
 import useCssVariables from "@/app/hooks/useCssVariables";
 import { useAccountStore } from "@/store/account";
 import { useUserStore } from "@/store/user";
+import { useCommontStore } from "@/store/commont";
 
 // antd 语言获取
 const getAntdLang = (lang: string): Locale => {
@@ -31,6 +32,13 @@ export function Providers({
   lng: string;
 }) {
   const cssVariables = useCssVariables();
+  const [api, contextHolder] = notification.useNotification({
+    top: 74,
+  });
+
+  useEffect(() => {
+    useCommontStore.getState().setNotification(api);
+  }, [api]);
 
   if (useUserStore.getState().token) {
     useAccountStore.getState().accountInit();
@@ -52,7 +60,10 @@ export function Providers({
       >
         <App component={false}>
           <Suspense>
-            <AntdRegistry>{children}</AntdRegistry>
+            <AntdRegistry>
+              {contextHolder}
+              {children}
+            </AntdRegistry>
           </Suspense>
         </App>
       </ConfigProvider>
