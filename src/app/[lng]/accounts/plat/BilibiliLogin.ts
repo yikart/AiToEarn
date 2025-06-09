@@ -3,10 +3,21 @@ import { PlatType } from "@/app/config/platConfig";
 import { requestPlatApi } from "@/utils/otherRequest";
 import { KwaiPlat } from "@/app/plat/platChildren/kwai/KwaiPlat";
 import { createOrUpdateAccountApi } from "@/api/account";
-import { apiGetBilibiliLoginUrl } from "@/api/bilibili";
+import { apiGetBilibiliLoginUrl, apiCheckBilibiliAuth } from "@/api/bilibili";
+import { message } from "antd";
 
 export const kwaiAppId = "ks715790869885446758";
 export const kwaiAppSecret = "cqSvJvBSPJjd-4pBH_4N0Q";
+
+interface BilibiliLoginData {
+  taskId: string;
+  url: string;
+}
+
+interface AuthResponse {
+  code: number;
+  data: any;
+}
 
 /**
  * b站被点击
@@ -15,20 +26,50 @@ export const kwaiAppSecret = "cqSvJvBSPJjd-4pBH_4N0Q";
 export async function bilibiliSkip(platType: PlatType) {
   if (platType !== PlatType.BILIBILI) return;
 
-  const res = await bilibiliLogin();
-  // 获取跳转地
-  const url = res.url;
+  const res: any = await apiGetBilibiliLoginUrl('pc');
+  if (res?.code !== 0) return;
+  const url = res.data.url;
   window.open(`${url}`);
+
+  const bilibiliLoginRes = await bilibiliLogin(res.data.taskId);
+  
 }
 
-export function bilibiliLogin(): Promise<any> {
+export function bilibiliLogin(taskId:any): Promise<any> {
   return new Promise(async (resolve, reject) => {
     try {
-      // TODO: 类型根据页面判断
-      const res = await apiGetBilibiliLoginUrl('pc');
-      console.log("-----bilibiliLogin--", res);
 
-      resolve(res?.data);
+        // 开始轮询检查授权状态
+        const checkAuthStatus = async () => {
+          try {
+            const authRes = await apiCheckBilibiliAuth(taskId);
+            // if (authRes?.code === 0 && authRes?.data) {
+            //   message.success('授权成功');
+            //   resolve(authRes.data);
+            //   return true;
+            // }
+            return false;
+          } catch (error) {
+            console.error('检查授权状态失败:', error);
+            return false;
+          }
+        };
+
+        // 设置轮询间隔
+        const interval = setInterval(async () => {
+          const isSuccess = await checkAuthStatus();
+          if (isSuccess) {
+            clearInterval(interval);
+          }
+        }, 2000);
+
+        // 5分钟后自动停止轮询
+        setTimeout(() => {
+          clearInterval(interval);
+          message.error('授权超时，请重试');
+          reject(new Error('授权超时'));
+        }, 5 * 60 * 1000);
+     
     } catch (e) {
       reject(e);
     }
