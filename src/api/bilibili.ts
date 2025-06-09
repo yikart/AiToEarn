@@ -10,3 +10,14 @@ export const apiGetBilibiliLoginUrl = (type: "h5" | "pc") => {
     `plat/bilibili/auth/url/${type}`,
   );
 };
+
+/**
+ * 检查B站授权状态
+ * @param taskId 任务ID
+ * @returns
+ */
+export const apiCheckBilibiliAuth = (taskId: string) => {
+  return sxRequest.post<{ code: number; data: any }>(
+    `plat/bilibili/auth/create-account/${taskId}`,
+  );
+}; 
