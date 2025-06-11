@@ -4,7 +4,7 @@ import { requestPlatApi } from "@/utils/otherRequest";
 import { KwaiPlat } from "@/app/plat/platChildren/kwai/KwaiPlat";
 import { createOrUpdateAccountApi } from "@/api/account";
 import { apiGetBilibiliLoginUrl, apiCheckBilibiliAuth } from "@/api/bilibili";
-import { message } from "antd";
+import { useAccountStore } from "@/store/account";
 
 export const kwaiAppId = "ks715790869885446758";
 export const kwaiAppSecret = "cqSvJvBSPJjd-4pBH_4N0Q";
@@ -42,13 +42,17 @@ export function bilibiliLogin(taskId:any): Promise<any> {
         // 开始轮询检查授权状态
         const checkAuthStatus = async () => {
           try {
-            const authRes = await apiCheckBilibiliAuth(taskId);
-            // if (authRes?.code === 0 && authRes?.data) {
-            //   message.success('授权成功');
-            //   resolve(authRes.data);
-            //   return true;
-            // }
-            return false;
+            const authRess:any = await apiCheckBilibiliAuth(taskId);
+            let authRes = authRess.data;
+            if (authRes?.code === 0 && authRes?.data.status == 1) {
+              // message.success('授权成功');
+              // useAccountStore
+              const accountStore = useAccountStore.getState();
+              await accountStore.getAccountList();
+              resolve(authRes);
+              return true;
+            }
+            // return false;
           } catch (error) {
             console.error('检查授权状态失败:', error);
             return false;
@@ -66,7 +70,7 @@ export function bilibiliLogin(taskId:any): Promise<any> {
         // 5分钟后自动停止轮询
         setTimeout(() => {
           clearInterval(interval);
-          message.error('授权超时，请重试');
+          // message.error('授权超时，请重试');
           reject(new Error('授权超时'));
         }, 5 * 60 * 1000);
      
