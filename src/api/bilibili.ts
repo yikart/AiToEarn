@@ -28,9 +28,10 @@ export const apiCheckBilibiliAuth = (taskId: string) => {
  * @param accountId 账户ID
  * @returns
  */
-export const apiInitBilibiliVideo = (accountId: string) => {
+export const apiInitBilibiliVideo = (data: any) => {
   return sxRequest.post<{ code: number; data: any }>(
     `plat/bilibili/video/init`,
+    data,
   );
 };
 
@@ -43,6 +44,15 @@ export const apiInitBilibiliVideo = (accountId: string) => {
 export const apiUploadBilibiliCover = (accountId: string, data: any) => {
   return request({
     url: 'plat/bilibili/cover/upload',
+    method: 'POST',
+    body: data,
+  });
+};
+
+// 上傳視頻到bilibili
+export const apiUploadBilibilivideo = (upload_token: string, data: any) => {
+  return request({
+    url: 'https://openupos.bilivideo.com/video/v2/part/upload?upload_token='+upload_token,
     method: 'POST',
     body: data,
   });

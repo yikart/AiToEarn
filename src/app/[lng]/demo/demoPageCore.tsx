@@ -3,7 +3,7 @@
 import { useTransClient } from "@/app/i18n/client";
 import { useAccountStore } from "@/store/account";
 import { useEffect, useState } from "react";
-import { apiInitBilibiliVideo, apiUploadBilibiliCover, apiSubmitBilibiliArchive } from "@/api/bilibili";
+import { apiInitBilibiliVideo, apiUploadBilibiliCover, apiSubmitBilibiliArchive, apiUploadBilibilivideo } from "@/api/bilibili";
 import { getAccountListApi } from "@/api/account";
 
 interface Account {
@@ -35,10 +35,10 @@ export const DemoPageCore = () => {
 
   const handleInitVideo = async (accountId: string) => {
     try {
-      const res:any = await apiInitBilibiliVideo(accountId);
-      if (res?.data?.upload_token) {
-        setUploadToken(res.data.upload_token);
-        console.log('获取上传token成功:', res.data.upload_token);
+      const res:any = await apiInitBilibiliVideo({accountId,name:'files.mp4'});
+      if (res?.data?.data) {
+        setUploadToken(res.data.data);
+        console.log('获取上传token成功:', res.data.data);
       }
     } catch (error) {
       console.error('获取上传token失败:', error);
@@ -52,20 +52,12 @@ export const DemoPageCore = () => {
     }
 
     try {
-      const response = await fetch(
-        `https://openupos.bilivideo.com/video/v2/upload?upload_token=${uploadToken}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: file,
-        }
-      );
+      const formData = new FormData();
+      formData.append('file', file);
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log('视频上传成功:', result);
+      const res = await apiUploadBilibilivideo(uploadToken, formData);
+      if (res?.code === 0) {
+        console.log('视频上传成功:', res);
         return true;
       } else {
         throw new Error('视频上传失败');
