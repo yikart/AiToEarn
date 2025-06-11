@@ -46,6 +46,18 @@ function UserInfo() {
       label: (
         <div
           onClick={() => {
+            router.push("/material");
+          }}
+        >
+          素材库
+        </div>
+      ),
+    },
+    {
+      key: "3",
+      label: (
+        <div
+          onClick={() => {
             useUserStore.getState().logout();
             router.push("/");
           }}
