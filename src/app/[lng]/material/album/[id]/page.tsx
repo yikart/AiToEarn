@@ -20,7 +20,8 @@ interface Media {
 
 export default function AlbumPage() {
   const params = useParams();
-  const albumId = params._id as string;
+  const albumId = params.id as string;
+  console.log('idzhi id', albumId)
   
   const [mediaList, setMediaList] = useState<Media[]>([]);
   const [loading, setLoading] = useState(false);
@@ -36,7 +37,7 @@ export default function AlbumPage() {
   const fetchMediaList = async () => {
     try {
       setLoading(true);
-      const response:any = await getMediaList(currentPage, pageSize);
+      const response:any = await getMediaList(albumId, currentPage, pageSize);
       if (response?.data?.list) {
         setMediaList(response.data.list);
       } else {

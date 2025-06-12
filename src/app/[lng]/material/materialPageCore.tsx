@@ -182,12 +182,7 @@ export const MaterialPageCore = () => {
         <div className={styles.emptyContainer}>
           <h3>暂无媒体资源组</h3>
           <p>点击上方按钮创建媒体资源组</p>
-          <button 
-            className={styles.createButton}
-            onClick={() => setIsModalVisible(true)}
-          >
-            <span>创建媒体资源组</span>
-          </button>
+          
         </div>
       )}
 

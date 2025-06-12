@@ -41,8 +41,10 @@ export const deleteMedia = (id: string) => {
 };
 
 // 获取媒体资源列表
-export const getMediaList = (pageNo: number, pageSize: number) => {
-  return http.get(`/media/list/${pageNo}/${pageSize}`);
+export const getMediaList = (groupId: string, pageNo: number, pageSize: number) => {
+  return http.get(`/media/list/${pageNo}/${pageSize}`, {
+    groupId
+  });
 };
 
 // 更新媒体资源信息
