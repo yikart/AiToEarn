@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, Row, Col, Typography, Button, Modal, Input, Select, message, Popconfirm, Empty } from "antd";
+import { Modal, Input, Select, message, Popconfirm } from "antd";
 import { useRouter } from "next/navigation";
-import { PlusOutlined, PlayCircleOutlined, DeleteOutlined, EditOutlined, FolderAddOutlined } from "@ant-design/icons";
 import styles from "./styles/material.module.scss";
 import { createMediaGroup, deleteMediaGroup, getMediaGroupList, updateMediaGroupInfo } from "@/api/media";
 
-const { Title } = Typography;
 const { Option } = Select;
 const { TextArea } = Input;
 
@@ -118,38 +116,33 @@ export const MaterialPageCore = () => {
   return (
     <div className={styles.materialContainer}>
       <div className={styles.header}>
-        <Title level={2}>媒体资源组</Title>
-        <Button 
-          type="primary" 
-          icon={<PlusOutlined />}
+        <h2>媒体资源组</h2>
+        <button 
+          className={styles.createButton}
           onClick={() => setIsModalVisible(true)}
         >
-          创建媒体资源组
-        </Button>
+          <span>创建媒体资源组</span>
+        </button>
       </div>
 
       {groups.length > 0 ? (
-        <Row gutter={[24, 24]}>
+        <div className={styles.mediaGrid}>
           {groups.map((group) => (
-            <Col xs={24} sm={12} md={8} lg={6} key={group._id}>
-              <Card
-                hoverable
-                loading={loading}
-                cover={
-                  <div className={styles.coverWrapper}>
-                    <img alt={group.title} src={group.cover} />
-                    {group.type === 'video' && (
-                      <div className={styles.videoIcon}>
-                        <PlayCircleOutlined />
-                      </div>
-                    )}
+            <div key={group._id} className={styles.mediaCard} onClick={() => handleGroupClick(group._id)}>
+              <div className={styles.coverWrapper}>
+                <img alt={group.title} src={group.cover} />
+                {group.type === 'video' && (
+                  <div className={styles.videoIcon}>
+                    <span>▶</span>
                   </div>
-                }
-                actions={[
-                  <EditOutlined key="edit" onClick={(e) => {
+                )}
+                <div className={styles.cardActions}>
+                  <button onClick={(e) => {
                     e.stopPropagation();
                     showEditModal(group);
-                  }} />,
+                  }}>
+                    编辑
+                  </button>
                   <Popconfirm
                     title="确定要删除这个媒体资源组吗？"
                     onConfirm={(e) => {
@@ -160,44 +153,38 @@ export const MaterialPageCore = () => {
                     okText="确定"
                     cancelText="取消"
                   >
-                    <DeleteOutlined key="delete" onClick={(e) => e.stopPropagation()} />
+                    <button 
+                      className="delete"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      删除
+                    </button>
                   </Popconfirm>
-                ]}
-                onClick={() => handleGroupClick(group._id)}
-              >
-                <Card.Meta
-                  title={group.title}
-                  description={
-                    <div className={styles.albumInfo}>
-                      <div>{group.desc}</div>
-                      <div>
-                        <span>{group.type === 'video' ? '视频' : group.type === 'img' ? '图片' : ''}</span>
-                        <span>共 {group.count} 个资源</span>
-                      </div>
-                    </div>
-                  }
-                />
-              </Card>
-            </Col>
+                </div>
+              </div>
+              <div className={styles.cardContent}>
+                <h3 className={styles.cardTitle}>{group.title}</h3>
+                <div className={styles.albumInfo}>
+                  <div>{group.desc}</div>
+                  <div>
+                    <span>{group.type === 'video' ? '视频' : group.type === 'img' ? '图片' : ''}</span>
+                    <span>共 {group.count} 个资源</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           ))}
-        </Row>
+        </div>
       ) : (
         <div className={styles.emptyContainer}>
-          <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description={
-              <div className={styles.emptyDescription}>
-                <p>暂无媒体资源组</p>
-                <Button
-                  type="primary"
-                  icon={<FolderAddOutlined />}
-                  onClick={() => setIsModalVisible(true)}
-                >
-                  创建媒体资源组
-                </Button>
-              </div>
-            }
-          />
+          <h3>暂无媒体资源组</h3>
+          <p>点击上方按钮创建媒体资源组</p>
+          <button 
+            className={styles.createButton}
+            onClick={() => setIsModalVisible(true)}
+          >
+            <span>创建媒体资源组</span>
+          </button>
         </div>
       )}
 
