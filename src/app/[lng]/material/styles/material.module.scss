@@ -133,25 +133,34 @@
   opacity: 0;
   transition: opacity 0.3s;
   z-index: 1;
+}
 
-  button {
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    color: var(--grayColor8);
-    transition: all 0.3s;
-    font-size: var(--fs-sm);
-    backdrop-filter: blur(4px);
+.actionButton {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--grayColor8);
+  transition: all 0.3s;
+  font-size: var(--fs-sm);
+  backdrop-filter: blur(4px);
+  color: var(--theColor5);
+
+  &:hover {
+    background: white;
+    color: var(--theColor6);
+  }
+
+  &.delete {
+    color: var(--error-color);
 
     &:hover {
-      background: white;
-      color: var(--theColor5);
+      color: #ff7875;
     }
 
-    &.delete:hover {
-      color: var(--error-color);
+    &:active {
+      color: #d9363e;
     }
   }
 }

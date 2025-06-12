@@ -164,7 +164,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -175,28 +175,62 @@
   background: white;
   padding: 24px;
   border-radius: 8px;
-  max-width: 90%;
+  width: 90%;
+  max-width: 1200px;
   max-height: 90vh;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .modalHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 8px;
 
   h3 {
     margin: 0;
-    font-size: 20px;
+    font-size: var(--fs-lg);
+    color: var(--text-primary);
   }
 
   button {
     background: none;
     border: none;
-    font-size: 20px;
+    font-size: 24px;
     cursor: pointer;
-    color: #666;
+    color: var(--grayColor8);
+    padding: 4px;
+    line-height: 1;
+
+    &:hover {
+      color: var(--text-primary);
+    }
+  }
+}
+
+.previewContent {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+
+  img, video, audio {
+    max-width: 100%;
+    max-height: calc(90vh - 100px);
+    object-fit: contain;
+  }
+
+  video {
+    width: 100%;
+    height: auto;
+  }
+
+  audio {
+    width: 100%;
   }
 }
 

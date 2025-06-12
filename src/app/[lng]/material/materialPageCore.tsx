@@ -137,10 +137,13 @@ export const MaterialPageCore = () => {
                   </div>
                 )}
                 <div className={styles.cardActions}>
-                  <button onClick={(e) => {
-                    e.stopPropagation();
-                    showEditModal(group);
-                  }}>
+                  <button 
+                    className={styles.actionButton}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      showEditModal(group);
+                    }}
+                  >
                     编辑
                   </button>
                   <Popconfirm
@@ -154,7 +157,7 @@ export const MaterialPageCore = () => {
                     cancelText="取消"
                   >
                     <button 
-                      className="delete"
+                      className={`${styles.actionButton} ${styles.delete}`}
                       onClick={(e) => e.stopPropagation()}
                     >
                       删除
