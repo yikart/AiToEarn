@@ -43,7 +43,7 @@ export const apiInitBilibiliVideo = (data: any) => {
  */
 export const apiUploadBilibiliCover = (accountId: string, data: any) => {
   return request({
-    url: 'plat/bilibili/cover/upload',
+    url: `plat/bilibili/cover/upload/${accountId}`,
     method: 'POST',
     body: data,
   });
