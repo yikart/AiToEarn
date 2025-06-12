@@ -1,41 +1,81 @@
 .materialContainer {
   padding: 24px;
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1440px;
   margin: 0 auto;
+  box-sizing: border-box;
+}
 
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+
+  h2 {
+    margin: 0;
+    font-size: var(--fs-xl);
+    color: var(--text-primary);
+  }
+}
+
+.createButton {
+  background-color: var(--theColor5);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  font-size: var(--fs-md);
+
+  &:hover {
+    background-color: var(--theColor6);
   }
 
-  :global {
-    .ant-card {
-      transition: all 0.3s;
-      
-      &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
-    }
+  &:active {
+    background-color: var(--theColor7);
+  }
+}
 
-    .ant-card-cover {
-      img {
-        height: 200px;
-        object-fit: cover;
-      }
+.mediaGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.mediaCard {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    .cardActions {
+      opacity: 1;
     }
   }
 }
 
 .coverWrapper {
   position: relative;
-  width: 100%;
-  height: 200px;
+  padding-top: 56.25%; // 16:9 比例
+  background: var(--grayColor1);
   overflow: hidden;
 
   img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -44,25 +84,227 @@
 
 .videoIcon {
   position: absolute;
-  left: 12px;
-  bottom: 12px;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  padding: 8px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 50%;
-  font-size: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: white;
+  font-size: 24px;
+}
+
+.cardContent {
+  padding: 16px;
+}
+
+.cardTitle {
+  margin: 0 0 8px 0;
+  font-size: var(--fs-md);
+  color: var(--text-primary);
+  font-weight: 500;
 }
 
 .albumInfo {
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+
+  > div:first-child {
+    margin-bottom: 8px;
+  }
+
+  > div:last-child {
+    display: flex;
+    justify-content: space-between;
+    color: var(--grayColor8);
+  }
+}
+
+.cardActions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 1;
+
+  button {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--grayColor8);
+    transition: all 0.3s;
+    font-size: var(--fs-sm);
+    backdrop-filter: blur(4px);
+
+    &:hover {
+      background: white;
+      color: var(--theColor5);
+    }
+
+    &.delete:hover {
+      color: var(--error-color);
+    }
+  }
+}
+
+.emptyContainer {
+  text-align: center;
+  padding: 48px 24px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  h3 {
+    margin: 0 0 16px 0;
+    color: var(--text-primary);
+    font-size: var(--fs-lg);
+  }
+
+  p {
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    font-size: var(--fs-md);
+  }
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow: auto;
+}
+
+.modalHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: rgba(0, 0, 0, 0.45);
+  margin-bottom: 24px;
+
+  h3 {
+    margin: 0;
+    font-size: var(--fs-lg);
+    color: var(--text-primary);
+  }
+
+  button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--grayColor8);
+    padding: 4px;
+    line-height: 1;
+
+    &:hover {
+      color: var(--text-primary);
+    }
+  }
 }
 
-.createForm {
-  padding: 16px 0;
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: var(--fs-sm);
+  }
+
+  input, textarea, select {
+    padding: 8px 12px;
+    border: 1px solid var(--grayColor4);
+    border-radius: 4px;
+    font-size: var(--fs-md);
+    color: var(--text-primary);
+    background: white;
+
+    &:focus {
+      outline: none;
+      border-color: var(--theColor5);
+    }
+  }
+
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  select {
+    cursor: pointer;
+  }
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--grayColor2);
+}
+
+.modalButton {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: var(--fs-md);
+  transition: all 0.3s;
+
+  &.primary {
+    background: var(--theColor5);
+    color: white;
+    border: none;
+
+    &:hover {
+      background: var(--theColor6);
+    }
+
+    &:active {
+      background: var(--theColor7);
+    }
+  }
+
+  &.default {
+    background: white;
+    color: var(--text-primary);
+    border: 1px solid var(--grayColor4);
+
+    &:hover {
+      border-color: var(--theColor5);
+      color: var(--theColor5);
+    }
+  }
 } 

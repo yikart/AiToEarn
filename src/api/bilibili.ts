@@ -1,5 +1,5 @@
 // 创建或更新账户
-import sxRequest from "@/utils/request";
+import http from "@/utils/request";
 import { request } from '@/utils/request';
 
 /**
@@ -7,7 +7,7 @@ import { request } from '@/utils/request';
  * @returns
  */
 export const apiGetBilibiliLoginUrl = (type: "h5" | "pc") => {
-  return sxRequest.get<{ code: number; data: { taskId: string; url: string } }>(
+  return http.get<{ code: number; data: { taskId: string; url: string } }>(
     `plat/bilibili/auth/url/${type}`,
   );
 };
@@ -18,7 +18,7 @@ export const apiGetBilibiliLoginUrl = (type: "h5" | "pc") => {
  * @returns
  */
 export const apiCheckBilibiliAuth = (taskId: string) => {
-  return sxRequest.post<{ code: number; data: any }>(
+  return http.post<{ code: number; data: any }>(
     `plat/bilibili/auth/create-account/${taskId}`,
   );
 };
@@ -29,7 +29,7 @@ export const apiCheckBilibiliAuth = (taskId: string) => {
  * @returns
  */
 export const apiInitBilibiliVideo = (data: any) => {
-  return sxRequest.post<{ code: number; data: any }>(
+  return http.post<{ code: number; data: any }>(
     `plat/bilibili/video/init`,
     data,
   );
@@ -77,7 +77,7 @@ export const apiSubmitBilibiliArchive = (
     source: string;
   },
 ) => {
-  return sxRequest.post<{ code: number; data: any }>(
+  return http.post<{ code: number; data: any }>(
     `plat/bilibili/archive/add-by-utoken/${accountId}`,
     data,
   );

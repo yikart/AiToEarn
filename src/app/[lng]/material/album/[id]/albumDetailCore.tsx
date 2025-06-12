@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, Row, Col, Typography, Button, Upload, message } from "antd";
 import { useRouter } from "next/navigation";
 import { PlusOutlined, PlayCircleOutlined, PictureOutlined, SoundOutlined } from "@ant-design/icons";
-import styles from "./styles/albumDetail.module.scss";
+import styles from "./albumDetail.module.scss";
 
 const { Title } = Typography;
 
@@ -12,7 +12,7 @@ interface Material {
   id: string;
   name: string;
   url: string;
-  type: 'video' | 'image' | 'audio';
+  type: 'video' | 'img' | 'audio';
   createTime: string;
 }
 
@@ -25,7 +25,7 @@ export const AlbumDetailCore = ({ albumId }: AlbumDetailCoreProps) => {
   const [materials, setMaterials] = useState<Material[]>([]);
   const [albumInfo, setAlbumInfo] = useState({
     name: "视频素材",
-    type: "video" as 'video' | 'image' | 'audio',
+    type: "video" as 'video' | 'img' | 'audio',
     count: 0
   });
 
@@ -54,7 +54,7 @@ export const AlbumDetailCore = ({ albumId }: AlbumDetailCoreProps) => {
     switch (type) {
       case 'video':
         return <PlayCircleOutlined />;
-      case 'image':
+      case 'img':
         return <PictureOutlined />;
       case 'audio':
         return <SoundOutlined />;
@@ -69,11 +69,11 @@ export const AlbumDetailCore = ({ albumId }: AlbumDetailCoreProps) => {
         <div className={styles.titleSection}>
           <Title level={2}>{albumInfo.name}</Title>
           <span className={styles.typeTag}>
-            {albumInfo.type === 'video' ? '视频' : albumInfo.type === 'image' ? '图片' : '音频'}
+            {albumInfo.type === 'video' ? '视频' : albumInfo.type === 'img' ? '图片' : '音频'}
           </span>
         </div>
         <Upload
-          accept={albumInfo.type === 'video' ? 'video/*' : albumInfo.type === 'image' ? 'image/*' : 'audio/*'}
+          accept={albumInfo.type === 'video' ? 'video/*' : albumInfo.type === 'img' ? 'img/*' : 'audio/*'}
           showUploadList={false}
           beforeUpload={handleUpload}
         >

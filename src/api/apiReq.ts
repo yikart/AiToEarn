@@ -1,4 +1,4 @@
-import sxRequest from "@/utils/request";
+import http from "@/utils/request";
 import { UserInfo } from "@/store/user";
 
 export interface LoginResponse {
@@ -18,40 +18,40 @@ export interface RegistCheckParams {
 
 // 获取用户信息
 export const getUserInfoApi = () => {
-  return sxRequest.get<UserInfo>("user/mine");
+  return http.get<UserInfo>("user/mine");
 };
 
 // 更新用户信息
 export const updateUserInfoApi = (data: { name: string }) => {
-  return sxRequest.put<UserInfo>("user/info/update", data);
+  return http.put<UserInfo>("user/info/update", data);
 };
 
 export const getMoneyStampApi = () => {
-  return sxRequest.get<any>("cfg/money/stamp");
+  return http.get<any>("cfg/money/stamp");
 };
 
 export const fluxSchnellApi = (data: any) => {
-  return sxRequest.post<any>("experience-ai/text2image/flux_schnell", data);
+  return http.post<any>("experience-ai/text2image/flux_schnell", data);
 };
 
 // 邮箱登录接口
 export const loginWithMailApi = (data: { mail: string; password: string }) => {
-  return sxRequest.post<LoginResponse>("login/mail", data);
+  return http.post<LoginResponse>("login/mail", data);
 };
 
 // 获取注册链接
 export const getRegistUrlApi = (mail: string) => {
-  return sxRequest.get<LoginResponse>(`login/mail/regist/url?mail=${mail}`);
+  return http.get<LoginResponse>(`login/mail/regist/url?mail=${mail}`);
 };
 
 // 检查注册状态 post!!
 export const checkRegistStatusApi = (data: RegistCheckParams) => {
-  return sxRequest.post<LoginResponse>(`login/mail/regist/back`, data);
+  return http.post<LoginResponse>(`login/mail/regist/back`, data);
 };
 
 // 发送重置密码邮件
 export const sendResetPasswordMailApi = (data: { mail: string }) => {
-  return sxRequest.post<LoginResponse>("login/repassword/mail", data);
+  return http.post<LoginResponse>("login/repassword/mail", data);
 };
 
 // 重置密码
@@ -60,7 +60,7 @@ export const resetPasswordApi = (data: {
   mail: string;
   password: string;
 }) => {
-  return sxRequest.post<LoginResponse>("login/repassword/mail/back", data);
+  return http.post<LoginResponse>("login/repassword/mail/back", data);
 };
 
 // Google 登录参数
@@ -71,5 +71,5 @@ export interface GoogleLoginParams {
 
 // Google 登录
 export const googleLoginApi = (data: GoogleLoginParams) => {
-  return sxRequest.post<LoginResponse>("login/google", data);
+  return http.post<LoginResponse>("login/google", data);
 };
