@@ -50,9 +50,9 @@ export const apiUploadBilibiliCover = (accountId: string, data: any) => {
 };
 
 // 上傳視頻到bilibili
-export const apiUploadBilibilivideo = (upload_token: string, data: any) => {
+export const apiUploadBilibilivideo = (accountId:string, upload_token: string, data: any) => {
   return request({
-    url: 'https://openupos.bilivideo.com/video/v2/part/upload?upload_token='+upload_token,
+    url: `plat/bilibili/video/upload/${accountId}?uploadToken=${upload_token}`,
     method: 'POST',
     body: data,
   });
@@ -81,4 +81,43 @@ export const apiSubmitBilibiliArchive = (
     `plat/bilibili/archive/add-by-utoken/${accountId}`,
     data,
   );
+};
+
+/**
+ * 上传B站视频分片
+ * @param accountId 账户ID
+ * @param uploadToken 上传token
+ * @param partNumber 分片序号
+ * @param data 分片数据
+ * @returns
+ */
+export const apiUploadBilibiliVideoPart = (accountId: string, uploadToken: string, partNumber: number, data: any) => {
+  return request({
+    url: `plat/bilibili/video/part/upload/${accountId}`,
+    method: 'POST',
+    body: data,
+    headers: {
+      "Content-Type": "application/octet-stream",
+    },
+    params: {
+      uploadToken,
+      partNumber
+    }
+  });
+};
+
+/**
+ * 合并B站视频分片
+ * @param accountId 账户ID
+ * @param uploadToken 上传token
+ * @returns
+ */
+export const apiCompleteBilibiliVideo = (accountId: string, uploadToken: string) => {
+  return request({
+    url: `plat/bilibili/video/complete/${accountId}`,
+    method: 'POST',
+    params: {
+      uploadToken
+    }
+  });
 }; 
