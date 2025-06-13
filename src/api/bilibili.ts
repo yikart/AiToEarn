@@ -102,6 +102,7 @@ export const apiUploadBilibiliVideoPart = (
   data: any,
 ) => {
   const formData = new FormData();
+  formData.append("file", data);
 
   return request({
     url: `plat/bilibili/video/part/upload/${accountId}`,
@@ -127,7 +128,7 @@ export const apiCompleteBilibiliVideo = (
   return request({
     url: `plat/bilibili/video/complete/${accountId}`,
     method: "POST",
-    params: {
+    data: {
       uploadToken,
     },
   });
