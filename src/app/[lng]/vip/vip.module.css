@@ -2,15 +2,21 @@
   padding: 24px;
   max-width: 800px;
   margin: 0 auto;
+  text-align: center;
 }
 
-.card {
+.title {
+  font-size: 32px;
+  color: #333;
   margin-bottom: 24px;
 }
 
-.actions {
-  display: flex;
-  gap: 12px;
+.placeholder {
+  background-color: #f0f2f5;
+  padding: 48px;
+  border-radius: 8px;
+  font-size: 18px;
+  color: #666;
 }
 
 /* 会员卡片样式 */
@@ -122,32 +128,75 @@
   }
 }
 
-.normalUserCallToAction {
-  background-color: #f0f2f5;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-  margin-top: 24px;
+.priceOptions {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 32px;
 }
 
-.normalUserCallToAction p {
-  font-size: 16px;
-  color: #555;
-  margin-bottom: 16px;
+.priceCard {
+  border: 2px solid #eee;
+  border-radius: 12px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 280px;
+  position: relative;
+  text-align: left;
 }
 
-/* 移动端适配 */
-@media (max-width: 768px) {
-  .container {
-    padding: 16px;
-  }
-  
-  .card {
-    margin-top: 16px;
-  }
+.priceCard.selected {
+  border-color: #6a5acd;
+  box-shadow: 0 4px 12px rgba(106, 90, 205, 0.2);
+}
 
-  .actions {
-    flex-direction: column;
-    gap: 8px;
-  }
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: linear-gradient(to right, #ff7e5f, #feb47b);
+  color: white;
+  font-size: 12px;
+  padding: 4px 12px;
+  border-bottom-left-radius: 8px;
+  border-top-right-radius: 10px;
+}
+
+.priceCard h4 {
+  font-size: 18px;
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.originalPrice {
+  font-size: 14px;
+  color: #999;
+  text-decoration: line-through;
+  margin-right: 8px;
+}
+
+.discount {
+  font-size: 14px;
+  color: #e91e63;
+  font-weight: bold;
+}
+
+.currentPrice {
+  font-size: 32px;
+  font-weight: bold;
+  color: #6a5acd;
+  margin-top: 16px;
+}
+
+.currentPrice span {
+  font-size: 20px;
+}
+
+.subscriptionInfo {
+  font-size: 14px;
+  color: #999;
+  margin-bottom: 24px;
 } 

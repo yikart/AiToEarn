@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card, Descriptions, Button, message, Modal, Form, Input } from "antd";
+import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user";
 import { getUserInfoApi, updateUserInfoApi } from "@/api/apiReq";
@@ -13,6 +14,18 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
+
+  // 模拟会员状态，实际应从 userInfo 或其他接口获取
+  const isVip = userInfo?.isVip || false; // 假设 userInfo 中有一个 isVip 字段
+
+  // 会员权益数据
+  const vipBenefits = [
+    { icon: <CrownOutlined />, name: "专属标识" },
+    { icon: <TrophyOutlined />, name: "高级功能" },
+    { icon: <GiftOutlined />, name: "会员礼包" },
+    { icon: <StarOutlined />, name: "优先支持" },
+    { icon: <RocketOutlined />, name: "更多特权" },
+  ];
 
   // 获取用户信息
   const fetchUserInfo = async () => {
@@ -59,7 +72,7 @@ export default function ProfilePage() {
       }
 
       if (response.code === 0 && response.data) {
-        setUserInfo(response.data);
+        fetchUserInfo();
         message.success('更新成功');
         setIsModalOpen(false);
       } else {
@@ -70,12 +83,45 @@ export default function ProfilePage() {
     }
   };
 
+  const handleGoToVipPage = () => {
+    router.push('/vip'); // 跳转到开通会员页面
+  };
+
   if (loading) {
     return null;
   }
 
   return (
     <div className={styles.container}>
+      <div className={styles.vipCard}>
+        <div className={styles.vipContent}>
+          <div className={styles.vipHeader}>
+            <span className={styles.vipIcon}><CrownOutlined /></span>
+            <h2 className={styles.vipTitle}>PLUS会员</h2>
+          </div>
+          <p className={styles.vipDescription}>
+            开通会员解锁全部功能，立享8种权益
+          </p>
+          <div className={styles.benefitsGrid}>
+            {vipBenefits.map((benefit, index) => (
+              <div key={index} className={styles.benefitItem}>
+                <div className={styles.benefitIcon}>{benefit.icon}</div>
+                <p className={styles.benefitName}>{benefit.name}</p>
+              </div>
+            ))}
+          </div>
+          {isVip ? (
+            <Button className={styles.activateButton} disabled>
+              已开通会员
+            </Button>
+          ) : (
+            <button className={styles.activateButton} onClick={handleGoToVipPage}>
+              立即开通
+            </button>
+          )}
+        </div>
+      </div>
+
       <Card 
         title="个人信息" 
         className={styles.card}
@@ -97,14 +143,17 @@ export default function ProfilePage() {
           <Descriptions.Item label="账号状态">
             {userInfo?.status === 1 ? '正常' : '禁用'}
           </Descriptions.Item>
-          <Descriptions.Item label="创建时间">
-            {new Date(userInfo?.createTime || '').toLocaleString()}
-          </Descriptions.Item>
-          <Descriptions.Item label="最后更新">
-            {new Date(userInfo?.updateTime || '').toLocaleString()}
-          </Descriptions.Item>
         </Descriptions>
       </Card>
+
+      {!isVip && (
+        <div className={styles.normalUserCallToAction}>
+          <p>开通PLUS会员，体验更多高级功能！</p>
+          <button className={styles.activateButton} onClick={handleGoToVipPage}>
+            立即开通PLUS会员
+          </button>
+        </div>
+      )}
 
       <Modal
         title="修改用户名"

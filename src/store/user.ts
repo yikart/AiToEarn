@@ -12,6 +12,7 @@ export interface UserInfo {
   updateTime: string;
   _id: string;
   avatar?: string;
+  isVip?: boolean;
 }
 
 export interface IUserStore {
