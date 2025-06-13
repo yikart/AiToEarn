@@ -3,7 +3,14 @@
 import { useTransClient } from "@/app/i18n/client";
 import { useAccountStore } from "@/store/account";
 import { useEffect, useState } from "react";
-import { apiInitBilibiliVideo, apiUploadBilibiliCover, apiSubmitBilibiliArchive, apiUploadBilibilivideo, apiUploadBilibiliVideoPart, apiCompleteBilibiliVideo } from "@/api/bilibili";
+import {
+  apiInitBilibiliVideo,
+  apiUploadBilibiliCover,
+  apiSubmitBilibiliArchive,
+  apiUploadBilibilivideo,
+  apiUploadBilibiliVideoPart,
+  apiCompleteBilibiliVideo,
+} from "@/api/bilibili";
 import { getAccountListApi } from "@/api/account";
 import { calculateChunks, readBlobRange } from "@/app/plat/plat.util";
 
@@ -28,7 +35,7 @@ export const DemoPageCore = () => {
   useEffect(() => {
     const fetchAccounts = async () => {
       const result = await getAccountListApi();
-      console.log('accountList', result);
+      console.log("accountList", result);
       if (result?.code === 0 && result?.data) {
         setAccounts(result.data);
       }
@@ -38,42 +45,49 @@ export const DemoPageCore = () => {
 
   const handleInitVideo = async (accountId: string) => {
     try {
-      const res:any = await apiInitBilibiliVideo({accountId,name:'files.mp4'});
+      const res: any = await apiInitBilibiliVideo({
+        accountId,
+        name: "files.mp4",
+      });
       if (res?.data?.data) {
         setUploadToken(res.data.data);
-        console.log('获取上传token成功:', res.data.data);
+        console.log("获取上传token成功:", res.data.data);
       }
     } catch (error) {
-      console.error('获取上传token失败:', error);
+      console.error("获取上传token失败:", error);
     }
   };
 
-  const handleVideoUpload = async (accountId:string, file: File) => {
+  const handleVideoUpload = async (accountId: string, file: File) => {
     if (!uploadToken) {
-      console.error('请先获取上传token');
+      console.error("请先获取上传token");
       return;
     }
 
     try {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append("file", file);
 
-      const res = await apiUploadBilibilivideo( accountId, uploadToken, formData);
+      const res = await apiUploadBilibilivideo(
+        accountId,
+        uploadToken,
+        formData,
+      );
       if (res?.code === 0) {
-        console.log('视频上传成功:', res);
+        console.log("视频上传成功:", res);
         return true;
       } else {
-        throw new Error('视频上传失败');
+        throw new Error("视频上传失败");
       }
     } catch (error) {
-      console.error('视频上传失败:', error);
+      console.error("视频上传失败:", error);
       return false;
     }
   };
 
   const handleChunkedVideoUpload = async (accountId: string, file: File) => {
     if (!uploadToken) {
-      console.error('请先获取上传token');
+      console.error("请先获取上传token");
       return;
     }
 
@@ -89,32 +103,45 @@ export const DemoPageCore = () => {
       for (let i = 0; i < chunkRange.length; i++) {
         const range = chunkRange[i];
         // 获取要上传的视频分片
-        const chunk = await readBlobRange(file, range.start, range.end);
-        
+        // const chunk = await readBlobRange(file, range.start, range.end);
+        const sliced = file.slice(range.start, range.end);
+        // const blob = new Blob([chunk], { type: "application/octet-stream" });
+        console.log("上传分片:", sliced);
+
         // 上传分片
-        const res = await apiUploadBilibiliVideoPart(accountId, uploadToken, i, chunk);
+        const res = await apiUploadBilibiliVideoPart(
+          accountId,
+          uploadToken,
+          i + 1,
+          sliced,
+        );
         if (res?.code !== 0) {
           throw new Error(`分片 ${i} 上传失败`);
         }
-        
+
         // 更新进度
         const progress = Math.round(((i + 1) / chunkRange.length) * 100);
         setUploadProgress(progress);
-        console.log(`分片 ${i + 1}/${chunkRange.length} 上传成功，总进度：${progress}%`);
+        console.log(
+          `分片 ${i + 1}/${chunkRange.length} 上传成功，总进度：${progress}%`,
+        );
       }
 
       // 合并分片
-      console.log('开始合并分片...');
-      const completeRes = await apiCompleteBilibiliVideo(accountId, uploadToken);
+      console.log("开始合并分片...");
+      const completeRes = await apiCompleteBilibiliVideo(
+        accountId,
+        uploadToken,
+      );
       if (completeRes?.code !== 0) {
-        throw new Error('分片合并失败');
+        throw new Error("分片合并失败");
       }
 
-      console.log('视频上传完成');
+      console.log("视频上传完成");
       setUploadProgress(100);
       return true;
     } catch (error) {
-      console.error('视频上传失败:', error);
+      console.error("视频上传失败:", error);
       setUploadProgress(-1);
       return false;
     } finally {
@@ -124,21 +151,21 @@ export const DemoPageCore = () => {
 
   const handleUploadCover = async (accountId: string) => {
     if (!coverFile) {
-      console.error('请选择封面文件');
+      console.error("请选择封面文件");
       return null;
     }
 
     try {
       const formData = new FormData();
-      formData.append('file', coverFile);
-      const res:any = await apiUploadBilibiliCover(accountId, formData);
+      formData.append("file", coverFile);
+      const res: any = await apiUploadBilibiliCover(accountId, formData);
       if (res?.data?.url) {
-        console.log('封面上传成功:', res.data.url);
+        console.log("封面上传成功:", res.data.url);
         return res.data.url;
       }
       return null;
     } catch (error) {
-      console.error('封面上传失败:', error);
+      console.error("封面上传失败:", error);
       return null;
     }
   };
@@ -147,7 +174,7 @@ export const DemoPageCore = () => {
     try {
       const coverUrl = await handleUploadCover(accountId);
       if (!coverUrl) {
-        console.error('封面上传失败，无法提交稿件');
+        console.error("封面上传失败，无法提交稿件");
         return;
       }
 
@@ -159,20 +186,23 @@ export const DemoPageCore = () => {
         desc: "测试视频描述",
         tag: ["测试", "视频"],
         copyright: 0,
-        source: "测试来源"
+        source: "测试来源",
       };
 
       const res = await apiSubmitBilibiliArchive(accountId, archiveData);
-      console.log('稿件提交结果:', res);
+      console.log("稿件提交结果:", res);
     } catch (error) {
-      console.error('稿件提交失败:', error);
+      console.error("稿件提交失败:", error);
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, type: 'video' | 'cover') => {
+  const handleFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    type: "video" | "cover",
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (type === 'video') {
+      if (type === "video") {
         setSelectedFile(file);
       } else {
         setCoverFile(file);
@@ -189,46 +219,57 @@ export const DemoPageCore = () => {
           <div key={account.id}>
             <p>平台: {account.type}</p>
             <p>昵称: {account.nickname}</p>
-            <p>头像: <img src={account.avatar} alt="avatar" width={50} height={50} /></p>
-            <button onClick={() => handleInitVideo(account.id)}>获取上传Token</button>
-            
-            <div style={{ marginTop: '10px' }}>
+            <p>
+              头像:{" "}
+              <img src={account.avatar} alt="avatar" width={50} height={50} />
+            </p>
+            <button onClick={() => handleInitVideo(account.id)}>
+              获取上传Token
+            </button>
+
+            <div style={{ marginTop: "10px" }}>
               <p>上传视频</p>
               <input
                 type="file"
                 accept="video/*"
-                onChange={(e) => handleFileChange(e, 'video')}
+                onChange={(e) => handleFileChange(e, "video")}
                 disabled={isUploading}
               />
               {selectedFile && (
                 <>
-                  <button 
+                  <button
                     onClick={() => handleVideoUpload(account.id, selectedFile)}
                     disabled={isUploading}
                   >
                     普通上传
                   </button>
-                  <button 
-                    onClick={() => handleChunkedVideoUpload(account.id, selectedFile)}
+                  <button
+                    onClick={() =>
+                      handleChunkedVideoUpload(account.id, selectedFile)
+                    }
                     disabled={isUploading}
                   >
                     分片上传
                   </button>
                   {uploadProgress > 0 && (
-                    <div style={{ marginTop: '10px' }}>
-                      <div style={{ 
-                        width: '100%', 
-                        height: '20px', 
-                        backgroundColor: '#f0f0f0',
-                        borderRadius: '10px',
-                        overflow: 'hidden'
-                      }}>
-                        <div style={{
-                          width: `${uploadProgress}%`,
-                          height: '100%',
-                          backgroundColor: '#1890ff',
-                          transition: 'width 0.3s ease-in-out'
-                        }} />
+                    <div style={{ marginTop: "10px" }}>
+                      <div
+                        style={{
+                          width: "100%",
+                          height: "20px",
+                          backgroundColor: "#f0f0f0",
+                          borderRadius: "10px",
+                          overflow: "hidden",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: `${uploadProgress}%`,
+                            height: "100%",
+                            backgroundColor: "#1890ff",
+                            transition: "width 0.3s ease-in-out",
+                          }}
+                        />
                       </div>
                       <p>上传进度: {uploadProgress}%</p>
                     </div>
@@ -237,12 +278,12 @@ export const DemoPageCore = () => {
               )}
             </div>
 
-            <div style={{ marginTop: '10px' }}>
-            <p>上传封面</p>
+            <div style={{ marginTop: "10px" }}>
+              <p>上传封面</p>
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => handleFileChange(e, 'cover')}
+                onChange={(e) => handleFileChange(e, "cover")}
               />
               {coverFile && (
                 <button onClick={() => handleUploadCover(account.id)}>
@@ -251,7 +292,7 @@ export const DemoPageCore = () => {
               )}
             </div>
 
-            <div style={{ marginTop: '10px' }}>
+            <div style={{ marginTop: "10px" }}>
               <button onClick={() => handleSubmitArchive(account.id)}>
                 提交稿件
               </button>

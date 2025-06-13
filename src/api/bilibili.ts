@@ -1,6 +1,6 @@
 // 创建或更新账户
 import http from "@/utils/request";
-import { request } from '@/utils/request';
+import { request } from "@/utils/request";
 
 /**
  *  获取B站登录地址
@@ -44,16 +44,20 @@ export const apiInitBilibiliVideo = (data: any) => {
 export const apiUploadBilibiliCover = (accountId: string, data: any) => {
   return request({
     url: `plat/bilibili/cover/upload/${accountId}`,
-    method: 'POST',
+    method: "POST",
     body: data,
   });
 };
 
 // 上傳視頻到bilibili
-export const apiUploadBilibilivideo = (accountId:string, upload_token: string, data: any) => {
+export const apiUploadBilibilivideo = (
+  accountId: string,
+  upload_token: string,
+  data: any,
+) => {
   return request({
     url: `plat/bilibili/video/upload/${accountId}?uploadToken=${upload_token}`,
-    method: 'POST',
+    method: "POST",
     body: data,
   });
 };
@@ -91,18 +95,22 @@ export const apiSubmitBilibiliArchive = (
  * @param data 分片数据
  * @returns
  */
-export const apiUploadBilibiliVideoPart = (accountId: string, uploadToken: string, partNumber: number, data: any) => {
+export const apiUploadBilibiliVideoPart = (
+  accountId: string,
+  uploadToken: string,
+  partNumber: number,
+  data: any,
+) => {
+  const formData = new FormData();
+
   return request({
     url: `plat/bilibili/video/part/upload/${accountId}`,
-    method: 'POST',
-    body: data,
-    headers: {
-      "Content-Type": "application/octet-stream",
-    },
+    method: "POST",
+    body: formData,
     params: {
       uploadToken,
-      partNumber
-    }
+      partNumber,
+    },
   });
 };
 
@@ -112,12 +120,15 @@ export const apiUploadBilibiliVideoPart = (accountId: string, uploadToken: strin
  * @param uploadToken 上传token
  * @returns
  */
-export const apiCompleteBilibiliVideo = (accountId: string, uploadToken: string) => {
+export const apiCompleteBilibiliVideo = (
+  accountId: string,
+  uploadToken: string,
+) => {
   return request({
     url: `plat/bilibili/video/complete/${accountId}`,
-    method: 'POST',
+    method: "POST",
     params: {
-      uploadToken
-    }
+      uploadToken,
+    },
   });
-}; 
+};
