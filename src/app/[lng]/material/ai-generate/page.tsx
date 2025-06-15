@@ -277,15 +277,19 @@ export default function AIGeneratePage() {
               </div>
               {fireflyResult && (
                 <div className={styles.result}>
-                  <img src={getOssUrl(fireflyResult)} alt="生成的流光卡片" />
-                  <Button
-                    type="primary"
-                    onClick={handleUploadToMediaGroup}
-                    icon={<UploadOutlined />}
-                    style={{ marginTop: '16px' }}
-                  >
-                    上传至媒体组
-                  </Button>
+                  <div style={{ display: 'flex', flexDirection:'column', gap: '10px' }}>
+                    <img src={getOssUrl(fireflyResult)} alt="生成的流光卡片" style={{ maxWidth: '100%', borderRadius: '8px' }} />
+                    <Button
+                      type="primary"
+                      onClick={handleUploadToMediaGroup}
+                      icon={<UploadOutlined />}
+                      style={{
+                        padding: '1px'
+                      }}
+                    >
+                      上传至媒体组
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
