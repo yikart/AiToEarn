@@ -14,15 +14,16 @@
   margin-bottom: 24px;
   padding: 16px;
   background-color: #f8f9fa;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 
   .headerLeft {
     display: flex;
     align-items: center;
     gap: 16px;
 
-    h2 {
+    p {
       margin: 0;
       font-size: 20px;
       font-weight: 500;
@@ -34,7 +35,7 @@
       :global {
         .anticon {
           font-size: 24px;
-          color: #1890ff;
+          color: var(--theColor5);
         }
       }
     }
@@ -53,8 +54,8 @@
     border-radius: 4px;
 
     &:hover {
-      color: #1890ff;
-      background-color: #f0f7ff;
+      color: var(--theColor5);
+      background-color: rgba(166, 106, 228, 0.1);
     }
 
     :global {
@@ -67,9 +68,10 @@
 
 .content {
   background-color: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .tabs {
@@ -85,7 +87,7 @@
       transition: all 0.3s ease;
 
       &:hover {
-        color: #1890ff;
+        color: var(--theColor5);
       }
 
       :global {
@@ -98,13 +100,13 @@
 
     .ant-tabs-tab-active {
       .ant-tabs-tab-btn {
-        color: #1890ff;
+        color: var(--theColor5);
         font-weight: 500;
       }
     }
 
     .ant-tabs-ink-bar {
-      background-color: #1890ff;
+      background-color: var(--theColor5);
       height: 2px;
     }
   }
@@ -112,8 +114,8 @@
 
 .section {
   padding: 20px;
-  border: 1px solid #e8e8e8;
-  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
   background-color: #fff;
 }
 
@@ -121,6 +123,59 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  :global {
+    .ant-input, .ant-input-textarea {
+      background-color: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      color: #333;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+
+      &:hover, &:focus {
+        border-color: var(--theColor5);
+        box-shadow: 0 0 0 2px rgba(166, 106, 228, 0.2);
+      }
+    }
+
+    .ant-select {
+      .ant-select-selector {
+        background-color: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        color: #333;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+
+        &:hover, &:focus {
+          border-color: var(--theColor5);
+          box-shadow: 0 0 0 2px rgba(166, 106, 228, 0.2);
+        }
+      }
+    }
+
+    .ant-btn {
+      background-color: var(--theColor5);
+      border: none;
+      border-radius: 8px;
+      height: 40px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: var(--theColor6);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(166, 106, 228, 0.3);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+
+      .anticon {
+        margin-right: 8px;
+      }
+    }
+  }
 }
 
 .dimensions {
@@ -133,9 +188,9 @@
   text-align: center;
   padding: 24px;
   background-color: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 12px;
   animation: fadeIn 0.3s ease;
-  border: 1px solid #e8e8e8;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 
   :global {
     .ant-spin {
@@ -153,15 +208,15 @@
   margin-top: 16px;
   text-align: center;
   padding: 16px;
-  border: 1px dashed #d9d9d9;
-  border-radius: 8px;
+  border: 1px dashed rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
   animation: fadeIn 0.3s ease;
   background-color: #fff;
 
   img {
     max-width: 100%;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   }
 }
 

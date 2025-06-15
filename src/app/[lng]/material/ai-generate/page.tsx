@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { message, Input, Button, Select, Spin, Tabs } from "antd";
-import { ArrowLeftOutlined, RobotOutlined, FireOutlined, PictureOutlined, FileTextOutlined } from "@ant-design/icons";
+import { message, Input, Button, Select, Spin, Tabs, Row, Col, Modal } from "antd";
+import { ArrowLeftOutlined, RobotOutlined, FireOutlined, PictureOutlined, FileTextOutlined, UploadOutlined } from "@ant-design/icons";
 import styles from "./ai-generate.module.scss";
+import { textToImage, getTextToImageTaskResult, textToFireflyCard } from "@/api/ai";
+import { getOssUrl } from "@/utils/oss";
+import { getMediaGroupList, createMedia } from "@/api/media";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -16,12 +19,12 @@ export default function AIGeneratePage() {
   const albumId = params.id as string;
 
   const [prompt, setPrompt] = useState("");
-  const [width, setWidth] = useState(512);
-  const [height, setHeight] = useState(512);
+  const [width, setWidth] = useState(520);
+  const [height, setHeight] = useState(520);
   const [sessionIds, setSessionIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [taskId, setTaskId] = useState<string | null>(null);
-  const [result, setResult] = useState<string | null>(null);
+  const [result, setResult] = useState<string[] | null>(null);
   const [polling, setPolling] = useState(false);
 
   const [content, setContent] = useState("");
@@ -29,6 +32,26 @@ export default function AIGeneratePage() {
   const [temp, setTemp] = useState("tempA");
   const [loadingFirefly, setLoadingFirefly] = useState(false);
   const [fireflyResult, setFireflyResult] = useState<string | null>(null);
+
+  const [mediaGroups, setMediaGroups] = useState<any[]>([]);
+  const [selectedMediaGroup, setSelectedMediaGroup] = useState<string | null>(null);
+  const [uploadModalVisible, setUploadModalVisible] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [loadingMediaGroups, setLoadingMediaGroups] = useState(false);
+
+  const fetchMediaGroups = async () => {
+    try {
+      setLoadingMediaGroups(true);
+      const response: any = await getMediaGroupList(1, 100);
+      if (response.data) {
+        setMediaGroups(response.data.list || []);
+      }
+    } catch (error) {
+      message.error("获取媒体组列表失败");
+    } finally {
+      setLoadingMediaGroups(false);
+    }
+  };
 
   const handleTextToImage = async () => {
     if (!prompt) {
@@ -38,24 +61,17 @@ export default function AIGeneratePage() {
 
     try {
       setLoading(true);
-      const response = await fetch("/tools/ai/jm/task", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          prompt,
-          width,
-          height,
-          sessionIds,
-        }),
+      const response: any = await textToImage({
+        prompt,
+        width,
+        height,
+        sessionIds,
       });
 
-      const data = await response.json();
-      if (data.id) {
-        setTaskId(data.id);
+      if (response.data) {
+        setTaskId(response.data);
         setPolling(true);
-        pollTaskResult(data.id);
+        pollTaskResult(response.data);
       } else {
         message.error("生成任务创建失败");
       }
@@ -68,16 +84,15 @@ export default function AIGeneratePage() {
 
   const pollTaskResult = async (id: string) => {
     try {
-      const response = await fetch(`/tools/ai/jm/task/${id}`);
-      const data = await response.json();
-      if (data.status === "completed") {
-        setResult(data.result);
+      const response: any = await getTextToImageTaskResult(id);
+      if (response.data.status === "completed") {
+        setResult(response.data.imgList);
         setPolling(false);
-      } else if (data.status === "failed") {
+      } else if (response.data.status === "failed") {
         message.error("生成任务失败");
         setPolling(false);
       } else {
-        setTimeout(() => pollTaskResult(id), 1000);
+        setTimeout(() => pollTaskResult(id), 2000);
       }
     } catch (error) {
       message.error("获取任务结果失败");
@@ -93,21 +108,14 @@ export default function AIGeneratePage() {
 
     try {
       setLoadingFirefly(true);
-      const response = await fetch("/tools/ai/fireflycard", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          content,
-          temp,
-          title,
-        }),
+      const response: any = await textToFireflyCard({
+        content,
+        temp,
+        title,
       });
 
-      const data = await response.json();
-      if (data.url) {
-        setFireflyResult(data.url);
+      if (response.data) {
+        setFireflyResult(response.data);
       } else {
         message.error("生成流光卡片失败");
       }
@@ -115,6 +123,41 @@ export default function AIGeneratePage() {
       message.error("生成流光卡片失败");
     } finally {
       setLoadingFirefly(false);
+    }
+  };
+
+  const handleUploadToMediaGroup = async () => {
+    setSelectedMediaGroup(null);
+    await fetchMediaGroups();
+    setUploadModalVisible(true);
+  };
+
+  const handleUploadConfirm = async () => {
+    if (!selectedMediaGroup) {
+      message.error("请选择媒体组");
+      return;
+    }
+
+    try {
+      setUploading(true);
+      const response: any = await createMedia({
+        groupId: selectedMediaGroup,
+        url: fireflyResult,
+        type: "img",
+        title: title,
+        desc: ''
+      });
+
+      if (response.data) {
+        message.success("上传成功");
+        setUploadModalVisible(false);
+      } else {
+        message.error("上传失败");
+      }
+    } catch (error) {
+      message.error("上传失败");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -153,12 +196,14 @@ export default function AIGeneratePage() {
                     placeholder="宽度"
                     value={width}
                     onChange={(e) => setWidth(Number(e.target.value))}
+                    min={520}
                   />
                   <Input
                     type="number"
                     placeholder="高度"
                     value={height}
                     onChange={(e) => setHeight(Number(e.target.value))}
+                    min={520}
                   />
                 </div>
                 <Button
@@ -178,7 +223,13 @@ export default function AIGeneratePage() {
               )}
               {result && (
                 <div className={styles.result}>
-                  <img src={result} alt="生成的图片" />
+                  <Row gutter={[16, 16]}>
+                    {result.map((img, index) => (
+                      <Col key={index} xs={24} sm={12} md={8} lg={6}>
+                        <img src={img} alt={`生成的图片 ${index + 1}`} style={{ width: '100%', borderRadius: '8px' }} />
+                      </Col>
+                    ))}
+                  </Row>
                 </div>
               )}
             </div>
@@ -226,13 +277,43 @@ export default function AIGeneratePage() {
               </div>
               {fireflyResult && (
                 <div className={styles.result}>
-                  <img src={fireflyResult} alt="生成的流光卡片" />
+                  <img src={getOssUrl(fireflyResult)} alt="生成的流光卡片" />
+                  <Button
+                    type="primary"
+                    onClick={handleUploadToMediaGroup}
+                    icon={<UploadOutlined />}
+                    style={{ marginTop: '16px' }}
+                  >
+                    上传至媒体组
+                  </Button>
                 </div>
               )}
             </div>
           </TabPane>
         </Tabs>
       </div>
+
+      <Modal
+        title="选择媒体组"
+        open={uploadModalVisible}
+        onOk={handleUploadConfirm}
+        onCancel={() => setUploadModalVisible(false)}
+        confirmLoading={uploading}
+      >
+        <Select
+          placeholder="请选择媒体组"
+          value={selectedMediaGroup}
+          onChange={setSelectedMediaGroup}
+          style={{ width: '100%' }}
+          loading={loadingMediaGroups}
+        >
+          {mediaGroups.map((group) => (
+            <Option key={group._id} value={group._id}>
+              {group.title}
+            </Option>
+          ))}
+        </Select>
+      </Modal>
     </div>
   );
 } 
