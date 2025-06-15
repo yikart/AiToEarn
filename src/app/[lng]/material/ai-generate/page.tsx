@@ -2,10 +2,31 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { message, Input, Button, Select, Spin, Tabs, Row, Col, Modal } from "antd";
-import { ArrowLeftOutlined, RobotOutlined, FireOutlined, PictureOutlined, FileTextOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  message,
+  Input,
+  Button,
+  Select,
+  Spin,
+  Tabs,
+  Row,
+  Col,
+  Modal,
+} from "antd";
+import {
+  ArrowLeftOutlined,
+  RobotOutlined,
+  FireOutlined,
+  PictureOutlined,
+  FileTextOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import styles from "./ai-generate.module.scss";
-import { textToImage, getTextToImageTaskResult, textToFireflyCard } from "@/api/ai";
+import {
+  textToImage,
+  getTextToImageTaskResult,
+  textToFireflyCard,
+} from "@/api/ai";
 import { getOssUrl } from "@/utils/oss";
 import { getMediaGroupList, createMedia } from "@/api/media";
 
@@ -21,7 +42,11 @@ export default function AIGeneratePage() {
   const [prompt, setPrompt] = useState("");
   const [width, setWidth] = useState(520);
   const [height, setHeight] = useState(520);
-  const [sessionIds, setSessionIds] = useState<string[]>([]);
+  // TODO: 由用户自行传入
+  const [sessionIds, setSessionIds] = useState<string[]>([
+    "0e2bdef17755a3f121b608ec8a763f6b",
+    "7e90a4c9bb3c6c8b7056267f27395c78",
+  ]);
   const [loading, setLoading] = useState(false);
   const [taskId, setTaskId] = useState<string | null>(null);
   const [result, setResult] = useState<string[] | null>(null);
@@ -34,7 +59,9 @@ export default function AIGeneratePage() {
   const [fireflyResult, setFireflyResult] = useState<string | null>(null);
 
   const [mediaGroups, setMediaGroups] = useState<any[]>([]);
-  const [selectedMediaGroup, setSelectedMediaGroup] = useState<string | null>(null);
+  const [selectedMediaGroup, setSelectedMediaGroup] = useState<string | null>(
+    null,
+  );
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [loadingMediaGroups, setLoadingMediaGroups] = useState(false);
@@ -84,8 +111,9 @@ export default function AIGeneratePage() {
 
   const pollTaskResult = async (id: string) => {
     try {
-      const response: any = await getTextToImageTaskResult(id);
-      if (response.data.status === "completed") {
+      const response = await getTextToImageTaskResult(id);
+      if (!response) return; 
+      if (response.data.status === "success") {
         setResult(response.data.imgList);
         setPolling(false);
       } else if (response.data.status === "failed") {
@@ -145,7 +173,7 @@ export default function AIGeneratePage() {
         url: fireflyResult,
         type: "img",
         title: title,
-        desc: ''
+        desc: "",
       });
 
       if (response.data) {
@@ -168,18 +196,20 @@ export default function AIGeneratePage() {
           <button className={styles.backButton} onClick={() => router.back()}>
             <ArrowLeftOutlined />
           </button>
-          <p><RobotOutlined /> AI生成素材</p>
+          <p>
+            <RobotOutlined /> AI生成素材
+          </p>
         </div>
       </div>
 
       <div className={styles.content}>
         <Tabs defaultActiveKey="textToImage" className={styles.tabs}>
-          <TabPane 
+          <TabPane
             tab={
               <span>
                 <PictureOutlined /> 文生图
               </span>
-            } 
+            }
             key="textToImage"
           >
             <div className={styles.section}>
@@ -226,7 +256,11 @@ export default function AIGeneratePage() {
                   <Row gutter={[16, 16]}>
                     {result.map((img, index) => (
                       <Col key={index} xs={24} sm={12} md={8} lg={6}>
-                        <img src={img} alt={`生成的图片 ${index + 1}`} style={{ width: '100%', borderRadius: '8px' }} />
+                        <img
+                          src={img}
+                          alt={`生成的图片 ${index + 1}`}
+                          style={{ width: "100%", borderRadius: "8px" }}
+                        />
                       </Col>
                     ))}
                   </Row>
@@ -234,12 +268,12 @@ export default function AIGeneratePage() {
               )}
             </div>
           </TabPane>
-          <TabPane 
+          <TabPane
             tab={
               <span>
                 <FireOutlined /> 文生图文（流光卡片）
               </span>
-            } 
+            }
             key="textToFireflyCard"
           >
             <div className={styles.section}>
@@ -277,14 +311,24 @@ export default function AIGeneratePage() {
               </div>
               {fireflyResult && (
                 <div className={styles.result}>
-                  <div style={{ display: 'flex', flexDirection:'column', gap: '10px' }}>
-                    <img src={getOssUrl(fireflyResult)} alt="生成的流光卡片" style={{ maxWidth: '100%', borderRadius: '8px' }} />
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "10px",
+                    }}
+                  >
+                    <img
+                      src={getOssUrl(fireflyResult)}
+                      alt="生成的流光卡片"
+                      style={{ maxWidth: "100%", borderRadius: "8px" }}
+                    />
                     <Button
                       type="primary"
                       onClick={handleUploadToMediaGroup}
                       icon={<UploadOutlined />}
                       style={{
-                        padding: '1px'
+                        padding: "1px",
                       }}
                     >
                       上传至媒体组
@@ -308,7 +352,7 @@ export default function AIGeneratePage() {
           placeholder="请选择媒体组"
           value={selectedMediaGroup}
           onChange={setSelectedMediaGroup}
-          style={{ width: '100%' }}
+          style={{ width: "100%" }}
           loading={loadingMediaGroups}
         >
           {mediaGroups.map((group) => (
@@ -320,4 +364,4 @@ export default function AIGeneratePage() {
       </Modal>
     </div>
   );
-} 
+}

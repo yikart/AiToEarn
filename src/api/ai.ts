@@ -12,7 +12,11 @@ export const textToImage = (data: {
 
 // 获取文生图任务结果
 export const getTextToImageTaskResult = (id: string) => {
-  return http.get(`/tools/ai/jm/task/${id}`);
+  return http.get<{
+    imgList: string[];
+    status: string;
+    taskId: string;
+  }>(`/tools/ai/jm/task/${id}`);
 };
 
 // 文生图文（流光卡片）
@@ -22,4 +26,4 @@ export const textToFireflyCard = (data: {
   title: string;
 }) => {
   return http.post("/tools/ai/fireflycard", data);
-}; 
+};
