@@ -5,7 +5,7 @@ import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlin
 import styles from "./vip.module.css";
 
 export default function VipPage() {
-  const [selectedPlan, setSelectedPlan] = useState('month'); // 'month' or 'year'
+  const [selectedPlan, setSelectedPlan] = useState('month'); // 'month', 'halfYear', 'year', 'special'
 
   // 会员权益数据 (8个)
   const vipBenefits = [
@@ -16,12 +16,12 @@ export default function VipPage() {
     { icon: <DollarOutlined />, name: "优惠折扣" },
     { icon: <HistoryOutlined />, name: "无限时长" },
     { icon: <ThunderboltOutlined />, name: "极速体验" },
-    { icon: <RocketOutlined />, name: "更多特权" }, // 重新排序，因为 RocketOutlined 之前已经用过
+    { icon: <RocketOutlined />, name: "更多特权" },
   ];
 
   const handleActivate = () => {
     // 这里可以添加实际的开通逻辑，例如跳转到支付页面或调用支付接口
-    alert(`您选择了${selectedPlan === 'month' ? '月度会员' : '年度会员'}，即将开通。`);
+    alert(`您选择了${selectedPlan === 'month' ? '月度会员' : selectedPlan === 'halfYear' ? '半年会员' : selectedPlan === 'year' ? '年度会员' : '特价会员'}，即将开通。`);
   };
 
   return (
@@ -48,6 +48,18 @@ export default function VipPage() {
 
       <h3 className={styles.title}>选择开通时长</h3>
       <div className={styles.priceOptions}>
+      <div 
+          className={`${styles.priceCard} ${selectedPlan === 'special' ? styles.selected : ''}`}
+          onClick={() => setSelectedPlan('special')}
+        >
+          <span className={styles.badge}>限时特惠</span>
+          <h4>特价会员</h4>
+          <div>
+            <span className={styles.originalPrice}>¥298</span>
+            <span className={styles.discount}>3折</span>
+          </div>
+          <p className={styles.currentPrice}>¥<span>88</span></p>
+        </div>
         <div 
           className={`${styles.priceCard} ${selectedPlan === 'month' ? styles.selected : ''}`}
           onClick={() => setSelectedPlan('month')}
@@ -61,6 +73,18 @@ export default function VipPage() {
           <p className={styles.currentPrice}>¥<span>128</span></p>
         </div>
         <div 
+          className={`${styles.priceCard} ${selectedPlan === 'halfYear' ? styles.selected : ''}`}
+          onClick={() => setSelectedPlan('halfYear')}
+        >
+          <span className={styles.badge}>推荐</span>
+          <h4>半年会员</h4>
+          <div>
+            <span className={styles.originalPrice}>¥988</span>
+            <span className={styles.discount}>5.5折</span>
+          </div>
+          <p className={styles.currentPrice}>¥<span>548</span></p>
+        </div>
+        <div 
           className={`${styles.priceCard} ${selectedPlan === 'year' ? styles.selected : ''}`}
           onClick={() => setSelectedPlan('year')}
         >
@@ -72,6 +96,7 @@ export default function VipPage() {
           </div>
           <p className={styles.currentPrice}>¥<span>998</span></p>
         </div>
+        
       </div>
       
       <p className={styles.subscriptionInfo}>自动续订，随时取消</p>

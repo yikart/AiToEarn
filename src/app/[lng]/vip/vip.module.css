@@ -1,6 +1,6 @@
 .container {
   padding: 24px;
-  max-width: 800px;
+  max-width: 1440px;
   margin: 0 auto;
   text-align: center;
 }
@@ -133,6 +133,7 @@
   justify-content: center;
   gap: 24px;
   margin-bottom: 32px;
+  flex-wrap: wrap;
 }
 
 .priceCard {
@@ -142,7 +143,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   width: 100%;
-  max-width: 280px;
+  max-width: 240px;
   position: relative;
   text-align: left;
 }
