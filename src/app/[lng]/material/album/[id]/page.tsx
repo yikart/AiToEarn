@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { message, Popconfirm } from "antd";
 import styles from "./album.module.scss";
 import { createMedia, deleteMedia, getMediaList } from "@/api/media";
@@ -20,6 +20,7 @@ interface Media {
 
 export default function AlbumPage() {
   const params = useParams();
+  const router = useRouter();
   const albumId = params.id as string;
   console.log('idzhi id', albumId)
   
@@ -83,19 +84,32 @@ export default function AlbumPage() {
     }
   };
 
+  const handleAIGenerate = () => {
+    router.push(`/material/ai-generate`);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h2>媒体资源</h2>
-        <label className={styles.uploadButton}>
-          <input
-            type="file"
-            accept="image/*,video/*,audio/*"
-            onChange={handleUpload}
-            style={{ display: 'none' }}
-          />
-          <span>上传资源</span>
-        </label>
+        <div className={styles.headerActions}>
+          <label className={styles.uploadButton} onClick={handleAIGenerate}>
+              AI生成素材
+          </label>
+          
+          <label className={styles.uploadButton}>
+            <input
+              type="file"
+              accept="image/*,video/*,audio/*"
+              onChange={handleUpload}
+              style={{ display: 'none' }}
+            />
+            <span>上传资源</span>
+          </label>
+          
+        </div>
+
+        
       </div>
 
       <div className={styles.mediaGrid}>

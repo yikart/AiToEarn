@@ -1,0 +1,201 @@
+.container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #fff;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  .headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 500;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      :global {
+        .anticon {
+          font-size: 24px;
+          color: #1890ff;
+        }
+      }
+    }
+  }
+
+  .backButton {
+    padding: 8px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+
+    &:hover {
+      color: #1890ff;
+      background-color: #f0f7ff;
+    }
+
+    :global {
+      .anticon {
+        font-size: 20px;
+      }
+    }
+  }
+}
+
+.content {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tabs {
+  :global {
+    .ant-tabs-nav {
+      margin-bottom: 24px;
+    }
+
+    .ant-tabs-tab {
+      font-size: 15px;
+      padding: 12px 24px;
+      color: #666;
+      transition: all 0.3s ease;
+
+      &:hover {
+        color: #1890ff;
+      }
+
+      :global {
+        .anticon {
+          margin-right: 8px;
+          font-size: 16px;
+        }
+      }
+    }
+
+    .ant-tabs-tab-active {
+      .ant-tabs-tab-btn {
+        color: #1890ff;
+        font-weight: 500;
+      }
+    }
+
+    .ant-tabs-ink-bar {
+      background-color: #1890ff;
+      height: 2px;
+    }
+  }
+}
+
+.section {
+  padding: 20px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dimensions {
+  display: flex;
+  gap: 16px;
+}
+
+.polling {
+  margin-top: 16px;
+  text-align: center;
+  padding: 24px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  animation: fadeIn 0.3s ease;
+  border: 1px solid #e8e8e8;
+
+  :global {
+    .ant-spin {
+      margin-right: 8px;
+    }
+
+    .ant-spin-text {
+      font-size: 14px;
+      color: #666;
+    }
+  }
+}
+
+.result {
+  margin-top: 16px;
+  text-align: center;
+  padding: 16px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 8px;
+  animation: fadeIn 0.3s ease;
+  background-color: #fff;
+
+  img {
+    max-width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 添加响应式样式
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .content {
+    padding: 16px;
+  }
+
+  .tabs {
+    :global {
+      .ant-tabs-tab {
+        padding: 8px 16px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .section {
+    padding: 16px;
+  }
+} 

@@ -89,6 +89,13 @@
   opacity: 1;
 }
 
+.headerActions{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
 .actionButton {
   background: rgba(255, 255, 255, 0.9);
   border: none;
