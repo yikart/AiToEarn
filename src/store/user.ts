@@ -13,6 +13,12 @@ export interface UserInfo {
   _id: string;
   avatar?: string;
   isVip?: boolean;
+  vipInfo?: {
+    id: string;
+    cycleType: number;
+    expireTime: string;
+    _id: string;
+  };
 }
 
 export interface IUserStore {
