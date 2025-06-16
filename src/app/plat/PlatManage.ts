@@ -1,5 +1,6 @@
 import { PlatType } from "@/app/config/platConfig";
 import { KwaiPlat } from "@/app/plat/platChildren/kwai/KwaiPlat";
+import { BilibiliPlat } from "@/app/plat/platChildren/bilibili/BilibiliPlat";
 import { PlatBase } from "@/app/plat/PlatBase";
 import {
   IPlatConstrParams,
@@ -14,6 +15,8 @@ class PlatManage {
     switch (type) {
       case PlatType.KWAI:
         return new KwaiPlat(params);
+      case PlatType.BILIBILI:
+        return new BilibiliPlat(params);  
     }
     return new KwaiPlat(params);
   }
