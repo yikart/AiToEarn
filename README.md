@@ -9,7 +9,7 @@
 # AiToEarn
 
 ![GitHub stars](https://img.shields.io/github/stars/yikart/AttAiToEarn?color=fa6470)
-![GitHub license](https://img.shields.io/github/license/yikart/AttAiToEarn)
+![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
 [![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node&message=20.18.x%20&logo=node.js&color=3f893e)](https://nodejs.org/about/releases)
 
 [English](README_EN.md) | 简体中文
