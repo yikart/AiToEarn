@@ -2,7 +2,12 @@
 
 import { useTransClient } from "@/app/i18n/client";
 import { useEffect, useState } from "react";
-import { AccountType, apiCreatePublish, PubStatus } from "@/api/publish";
+import {
+  AccountType,
+  apiCreatePublish,
+  apiGetPublishList,
+  PubStatus,
+} from "@/api/publish";
 import { PubType } from "@/app/config/publishConfig";
 
 export const DemoPublish = () => {
@@ -25,7 +30,7 @@ export const DemoPublish = () => {
         videoUrl: "videoUrl",
         coverUrl: "coverUrl",
         imgList: ["imgList1", "imgList2"],
-        publishTime: (new Date()).toDateString(),
+        publishTime: new Date().toDateString(),
         status: PubStatus.RELEASED,
         option: {
           isAutoPublish: true,
@@ -42,11 +47,23 @@ export const DemoPublish = () => {
     }
   };
 
+  const getPublishList = async () => {
+    try {
+      const res: any = await apiGetPublishList(1, 10);
+      if (res?.data?.data) {
+        console.log("获取记录列表成功:", res.data.data);
+      }
+    } catch (error) {
+      console.error("获取记录列表失败:", error);
+    }
+  };
+
   return (
     <div>
       <div>========= 发布记录 ==============</div>
       <div>
         <button onClick={createPublish}>创建记录</button>
+        <button onClick={getPublishList}>获取记录列表</button>
       </div>
     </div>
   );

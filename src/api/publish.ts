@@ -44,18 +44,21 @@ export interface PublishListResponse {
 }
 
 // 获取发布列表
-export const apiGetPublishList = (pageNo: number, pageSize: number) => {
+export const apiGetPublishList = (
+  pageNo: number,
+  pageSize: number,
+  filter: {
+    readonly accountId?: string;
+    readonly accountType?: AccountType;
+    readonly type?: PubType;
+    readonly status?: PubStatus;
+    readonly time?: [Date, Date];
+  },
+) => {
   return request<PublishListResponse>({
     url: `/publish/list/${pageNo}/${pageSize}`,
     method: "GET",
-  });
-};
-
-// 获取草稿箱列表
-export const apiGetDraftsList = (pageNo: number, pageSize: number) => {
-  return request<PublishListResponse>({
-    url: `/publish/drafts/list/${pageNo}/${pageSize}`,
-    method: "GET",
+    params: filter,
   });
 };
 
