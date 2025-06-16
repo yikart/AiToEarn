@@ -22,6 +22,7 @@ import UserManageModal, { IUserManageModalRef } from "./UserManageModal";
 import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import { AccountStatus } from "@/app/config/accountConfig";
 import { SocialAccount } from "@/api/types/account.type";
+import { getOssUrl } from "@/utils/oss";
 
 export interface IAccountSidebarRef {}
 
@@ -66,7 +67,7 @@ const AccountPopoverInfo = ({
       onClick={(e) => e.stopPropagation()}
     >
       <div className="accountPopoverInfo_top">
-        <Avatar src={accountInfo.avatar} size="large" />
+        <Avatar src={getOssUrl(accountInfo.avatar)} size="large" />
         <div className="accountPopoverInfo_top-right">
           <div className="accountPopoverInfo-item">
             <p>昵称：</p>
@@ -244,7 +245,7 @@ const AccountSidebar = memo(
                               onAccountChange(account);
                             }}
                           >
-                            <Avatar src={account.avatar} size="large" />
+                            <Avatar src={getOssUrl(account.avatar)} size="large" />
                             <div className="accountList-item-right">
                               <div
                                 className="accountList-item-right-name"

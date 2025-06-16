@@ -209,7 +209,7 @@ export const DemoPageCore = () => {
         cover: coverUrl,
         tid: selectedPartition,
         noReprint: 0,
-        desc: "vv7维修保安上课方式大健康",
+        desc: "vv7维修保安上课方式大健康",    
         tag: ["vv7", "clientDome"],
         copyright: 1,
       };
