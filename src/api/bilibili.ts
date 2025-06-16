@@ -69,20 +69,11 @@ export const apiUploadBilibilivideo = (
  * @returns
  */
 export const apiSubmitBilibiliArchive = (
-  accountId: string,
-  data: {
-    title: string;
-    cover: string;
-    tid: number;
-    noReprint: number;
-    desc: string;
-    tag: string[];
-    copyright: number;
-    source: string;
-  },
+  uploadToken: string,
+  data: any
 ) => {
   return http.post<{ code: number; data: any }>(
-    `plat/bilibili/archive/add-by-utoken/${accountId}`,
+    `plat/bilibili/archive/add-by-utoken/${uploadToken}`,
     data,
   );
 };
@@ -132,4 +123,16 @@ export const apiCompleteBilibiliVideo = (
       uploadToken,
     },
   });
+};
+
+
+/**
+ * 获取B站分区列表
+ * @param uploadToken 上传token
+ * @returns
+ */
+export const apiGetBilibiliPartitions = (uploadToken: string) => {
+  return http.get<{ code: number; data: any }>(
+    `plat/bilibili/archive/type/list/${uploadToken}`
+  );
 };

@@ -10,6 +10,7 @@ import {
   apiUploadBilibilivideo,
   apiUploadBilibiliVideoPart,
   apiCompleteBilibiliVideo,
+  apiGetBilibiliPartitions,
 } from "@/api/bilibili";
 import { getAccountListApi } from "@/api/account";
 import { calculateChunks, readBlobRange } from "@/app/plat/plat.util";
@@ -19,6 +20,14 @@ interface Account {
   type: string;
   nickname: string;
   avatar: string;
+}
+
+interface Partition {
+  id: number;
+  name: string;
+  description: string;
+  parent: number;
+  children?: Partition[];
 }
 
 export const DemoPageCore = () => {
@@ -31,6 +40,9 @@ export const DemoPageCore = () => {
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const fileBlockSize = 4194304; // 4MB per chunk
+  const [coverUrl, setCoverUrl] = useState<string>("");
+  const [partitions, setPartitions] = useState<Partition[]>([]);
+  const [selectedPartition, setSelectedPartition] = useState<number>(21); // 默认选择日常分区
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -50,11 +62,25 @@ export const DemoPageCore = () => {
         name: "files.mp4",
       });
       if (res?.data?.data) {
-        setUploadToken(res.data.data);
-        console.log("获取上传token成功:", res.data.data);
+        const token = res.data.data;
+        setUploadToken(token);
+        console.log("获取上传token成功:", token);
+        // 获取分区列表
+        await fetchPartitions(token);
       }
     } catch (error) {
       console.error("获取上传token失败:", error);
+    }
+  };
+
+  const fetchPartitions = async (token: string) => {
+    try {
+      const res: any = await apiGetBilibiliPartitions(token);
+      if (res?.code === 0 && res?.data?.data) {
+        setPartitions(res.data.data);
+      }
+    } catch (error) {
+      console.error("获取分区列表失败:", error);
     }
   };
 
@@ -159,9 +185,11 @@ export const DemoPageCore = () => {
       const formData = new FormData();
       formData.append("file", coverFile);
       const res: any = await apiUploadBilibiliCover(accountId, formData);
-      if (res?.data?.url) {
-        console.log("封面上传成功:", res.data.url);
-        return res.data.url;
+      if (res?.data) {
+        console.log("封面上传成功:", res.data);
+        // 保存封面地址
+        setCoverUrl(res.data.url);
+        return res.data;
       }
       return null;
     } catch (error) {
@@ -172,24 +200,17 @@ export const DemoPageCore = () => {
 
   const handleSubmitArchive = async (accountId: string) => {
     try {
-      const coverUrl = await handleUploadCover(accountId);
-      if (!coverUrl) {
-        console.error("封面上传失败，无法提交稿件");
-        return;
-      }
-
       const archiveData = {
-        title: "测试视频标题",
+        title: "看看我的车阿达",
         cover: coverUrl,
-        tid: 1,
+        tid: selectedPartition,
         noReprint: 0,
-        desc: "测试视频描述",
-        tag: ["测试", "视频"],
-        copyright: 0,
-        source: "测试来源",
+        desc: "vv7维修保安上课方式大健康",
+        tag: ["vv7", "clientDome"],
+        copyright: 1,
       };
 
-      const res = await apiSubmitBilibiliArchive(accountId, archiveData);
+      const res = await apiSubmitBilibiliArchive(uploadToken, archiveData);
       console.log("稿件提交结果:", res);
     } catch (error) {
       console.error("稿件提交失败:", error);
@@ -290,6 +311,25 @@ export const DemoPageCore = () => {
                   上传封面
                 </button>
               )}
+            </div>
+
+            <div style={{ marginTop: "10px" }}>
+              <p>选择分区：</p>
+              <select 
+                value={selectedPartition} 
+                onChange={(e) => setSelectedPartition(Number(e.target.value))}
+                style={{ marginBottom: "10px" }}
+              >
+                {partitions && partitions.map((partition) => (
+                  <optgroup key={partition.id} label={partition.name}>
+                    {partition.children?.map((child: Partition) => (
+                      <option key={child.id} value={child.id}>
+                        {child.name} - {child.description}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
             </div>
 
             <div style={{ marginTop: "10px" }}>
