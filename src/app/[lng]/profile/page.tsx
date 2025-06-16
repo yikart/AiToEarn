@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card, Descriptions, Button, message, Modal, Form, Input } from "antd";
-import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined } from "@ant-design/icons";
+import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined, ThunderboltOutlined, HistoryOutlined, DollarOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user";
 import { getUserInfoApi, updateUserInfoApi } from "@/api/apiReq";
@@ -15,8 +15,10 @@ export default function ProfilePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
 
-  // 模拟会员状态，实际应从 userInfo 或其他接口获取
-  const isVip = userInfo?.isVip || false; // 假设 userInfo 中有一个 isVip 字段
+  // 获取会员状态和过期时间
+  const isVip = userInfo?.vipInfo?.id ? true : false;
+  const vipExpireTime = userInfo?.vipInfo?.expireTime ? new Date(userInfo.vipInfo.expireTime).toLocaleDateString() : '';
+  const vipCycleType = userInfo?.vipInfo?.cycleType === 1 ? '月度会员' : '年度会员';
 
   // 会员权益数据
   const vipBenefits = [
@@ -24,6 +26,9 @@ export default function ProfilePage() {
     { icon: <TrophyOutlined />, name: "高级功能" },
     { icon: <GiftOutlined />, name: "会员礼包" },
     { icon: <StarOutlined />, name: "优先支持" },
+    { icon: <DollarOutlined />, name: "优惠折扣" },
+    { icon: <HistoryOutlined />, name: "无限时长" },
+    { icon: <ThunderboltOutlined />, name: "极速体验" },
     { icon: <RocketOutlined />, name: "更多特权" },
   ];
 
@@ -84,7 +89,7 @@ export default function ProfilePage() {
   };
 
   const handleGoToVipPage = () => {
-    router.push('/vip'); // 跳转到开通会员页面
+    router.push('/vip');
   };
 
   if (loading) {
@@ -99,9 +104,14 @@ export default function ProfilePage() {
             <span className={styles.vipIcon}><CrownOutlined /></span>
             <h2 className={styles.vipTitle}>PLUS会员</h2>
           </div>
-          <p className={styles.vipDescription}>
-            开通会员解锁全部功能，立享8种权益
+          {isVip ? (<p className={styles.vipDescription}>
+            尊敬的VIP用户，您已解锁全部会员权益
           </p>
+          ) : (
+            <p className={styles.vipDescription}>
+              开通会员解锁全部功能，立享8种权益
+            </p>
+          )}
           <div className={styles.benefitsGrid}>
             {vipBenefits.map((benefit, index) => (
               <div key={index} className={styles.benefitItem}>
@@ -111,9 +121,8 @@ export default function ProfilePage() {
             ))}
           </div>
           {isVip ? (
-            <Button className={styles.activateButton} disabled>
-              已开通会员
-            </Button>
+            <div className={styles.vipInfo}>
+            </div>
           ) : (
             <button className={styles.activateButton} onClick={handleGoToVipPage}>
               立即开通
@@ -143,6 +152,12 @@ export default function ProfilePage() {
           <Descriptions.Item label="账号状态">
             {userInfo?.status === 1 ? '正常' : '禁用'}
           </Descriptions.Item>
+          {isVip && (
+            <>
+              <Descriptions.Item label="会员类型">{vipCycleType}</Descriptions.Item>
+              <Descriptions.Item label="会员到期时间">{vipExpireTime}</Descriptions.Item>
+            </>
+          )}
         </Descriptions>
       </Card>
 

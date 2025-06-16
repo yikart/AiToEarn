@@ -2,10 +2,15 @@
 
 import { useState } from "react";
 import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined, DollarOutlined, HistoryOutlined, ThunderboltOutlined } from "@ant-design/icons";
+import { message } from "antd";
+import { useRouter } from "next/navigation";
+import { setVipApi, VipCycleType } from "@/api/vip";
 import styles from "./vip.module.css";
 
 export default function VipPage() {
-  const [selectedPlan, setSelectedPlan] = useState('month'); // 'month', 'halfYear', 'year', 'special'
+  const router = useRouter();
+  const [selectedPlan, setSelectedPlan] = useState('month'); // 'month', 'year'
+  const [loading, setLoading] = useState(false);
 
   // 会员权益数据 (8个)
   const vipBenefits = [
@@ -19,9 +24,24 @@ export default function VipPage() {
     { icon: <RocketOutlined />, name: "更多特权" },
   ];
 
-  const handleActivate = () => {
-    // 这里可以添加实际的开通逻辑，例如跳转到支付页面或调用支付接口
-    alert(`您选择了${selectedPlan === 'month' ? '月度会员' : selectedPlan === 'halfYear' ? '半年会员' : selectedPlan === 'year' ? '年度会员' : '特价会员'}，即将开通。`);
+  const handleActivate = async () => {
+    try {
+      setLoading(true);
+      const cycleType = selectedPlan === 'month' ? VipCycleType.MONTH : VipCycleType.YEAR;
+      const response:any = await setVipApi(cycleType);
+      
+      if (response?.code === 0) {
+        message.success('开通成功');
+        router.push('/profile'); // 开通成功后跳转到个人中心
+      } else {
+        message.error(response?.msg || '开通失败');
+      }
+    } catch (error) {
+      console.error('开通会员失败:', error);
+      message.error('开通失败，请稍后重试');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -48,18 +68,6 @@ export default function VipPage() {
 
       <h3 className={styles.title}>选择开通时长</h3>
       <div className={styles.priceOptions}>
-      <div 
-          className={`${styles.priceCard} ${selectedPlan === 'special' ? styles.selected : ''}`}
-          onClick={() => setSelectedPlan('special')}
-        >
-          <span className={styles.badge}>限时特惠</span>
-          <h4>特价会员</h4>
-          <div>
-            <span className={styles.originalPrice}>¥298</span>
-            <span className={styles.discount}>3折</span>
-          </div>
-          <p className={styles.currentPrice}>¥<span>88</span></p>
-        </div>
         <div 
           className={`${styles.priceCard} ${selectedPlan === 'month' ? styles.selected : ''}`}
           onClick={() => setSelectedPlan('month')}
@@ -73,18 +81,6 @@ export default function VipPage() {
           <p className={styles.currentPrice}>¥<span>128</span></p>
         </div>
         <div 
-          className={`${styles.priceCard} ${selectedPlan === 'halfYear' ? styles.selected : ''}`}
-          onClick={() => setSelectedPlan('halfYear')}
-        >
-          <span className={styles.badge}>推荐</span>
-          <h4>半年会员</h4>
-          <div>
-            <span className={styles.originalPrice}>¥988</span>
-            <span className={styles.discount}>5.5折</span>
-          </div>
-          <p className={styles.currentPrice}>¥<span>548</span></p>
-        </div>
-        <div 
           className={`${styles.priceCard} ${selectedPlan === 'year' ? styles.selected : ''}`}
           onClick={() => setSelectedPlan('year')}
         >
@@ -96,13 +92,16 @@ export default function VipPage() {
           </div>
           <p className={styles.currentPrice}>¥<span>998</span></p>
         </div>
-        
       </div>
       
       <p className={styles.subscriptionInfo}>自动续订，随时取消</p>
 
-      <button className={styles.activateButton} onClick={handleActivate}>
-        立即开通
+      <button 
+        className={styles.activateButton} 
+        onClick={handleActivate}
+        disabled={loading}
+      >
+        {loading ? '开通中...' : '立即开通'}
       </button>
     </div>
   );
