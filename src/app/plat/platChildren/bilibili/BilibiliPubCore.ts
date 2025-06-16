@@ -1,4 +1,4 @@
-import { KwaiPlat } from "@/app/plat/platChildren/kwai/KwaiPlat";
+import { BilibiliPlat } from "@/app/plat/platChildren/bilibili/BilibiliPlat";
 import {
   IPublishResult,
   IVideoPublishItem,
@@ -8,14 +8,14 @@ import { calculateChunks, readBlobRange } from "@/app/plat/plat.util";
 import { KwaiApiUploadProxyUrl } from "@/constant";
 
 export class BilibiliPubCore {
-  private kwaiPlat: KwaiPlat;
+  private kwaiPlat: BilibiliPlat;
   private videoPubParams: IVideoPublishItem;
   private fileBlockSize = 4194304;
   // 发布进度
   private readonly onProgress: PubProgressType;
 
   constructor(
-    kwaiPlat: KwaiPlat,
+    kwaiPlat: BilibiliPlat,
     pubParams: IVideoPublishItem,
     onProgress: PubProgressType,
   ) {
@@ -47,6 +47,17 @@ export class BilibiliPubCore {
 
   // 视频发布
   async publishVideo(): Promise<IPublishResult> {
+    console.log("视频发布");
+    console.log(this.videoPubParams);
+    return {
+      worksId: "",
+      worksUrl: "",
+      success: true,
+    };
+
+
+
+
     try {
       const startUploadInfo = await this._startUploadVideo();
       this.onProgress(10, "发起上传完成...");
@@ -131,7 +142,7 @@ export class BilibiliPubCore {
         worksUrl: "",
         success: true,
       };
-    } catch (e) {
+    } catch (e:any) {
       console.error(e);
       return {
         worksId: "",
