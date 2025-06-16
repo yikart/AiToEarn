@@ -1,53 +1,53 @@
 "use client";
 
 import { useTransClient } from "@/app/i18n/client";
-import { useAccountStore } from "@/store/account";
 import { useEffect, useState } from "react";
-import { apiInitBilibiliVideo, apiUploadBilibilivideo } from "@/api/bilibili";
-import { getAccountListApi } from "@/api/account";
-import { apiCreatePublish } from "@/api/publish";
-
-interface Account {
-  id: string;
-  type: string;
-  nickname: string;
-  avatar: string;
-}
+import { AccountType, apiCreatePublish, PubStatus } from "@/api/publish";
+import { PubType } from "@/app/config/publishConfig";
 
 export const DemoPublish = () => {
   const { t } = useTransClient("demo");
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [uploadToken, setUploadToken] = useState<string>("");
 
   useEffect(() => {
-    const fetchAccounts = async () => {
-      const result = await getAccountListApi();
-      console.log("accountList", result);
-      if (result?.code === 0 && result?.data) {
-        setAccounts(result.data);
-      }
-    };
-    fetchAccounts();
+    //
   }, []);
 
   const createPublish = async () => {
     try {
-      // const res: any = await apiCreatePublish({
-      //   name: "files.mp4",
-      // });
-      // if (res?.data?.data) {
-      //   setUploadToken(res.data.data);
-      //   console.log("获取上传token成功:", res.data.data);
-      // }
+      const res: any = await apiCreatePublish({
+        flowId: "flowIdxxx",
+        type: PubType.VIDEO,
+        title: "title",
+        desc: "desc",
+        accountId: "111",
+        uid: "uid",
+        accountType: AccountType.KWAI,
+        videoUrl: "videoUrl",
+        coverUrl: "coverUrl",
+        imgList: ["imgList1", "imgList2"],
+        publishTime: (new Date()).toDateString(),
+        status: PubStatus.RELEASED,
+        option: {
+          isAutoPublish: true,
+          isAutoDelete: true,
+          isAutoCover: true,
+          isAutoImg: true,
+        },
+      });
+      if (res?.data?.data) {
+        console.log("创建记录成功:", res.data.data);
+      }
     } catch (error) {
-      console.error("获取上传token失败:", error);
+      console.error("创建记录失败:", error);
     }
   };
 
   return (
     <div>
-      <div>{t("demoText")}</div>
-      <div></div>
+      <div>========= 发布记录 ==============</div>
+      <div>
+        <button onClick={createPublish}>创建记录</button>
+      </div>
     </div>
   );
 };
