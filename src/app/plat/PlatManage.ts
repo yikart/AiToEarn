@@ -45,6 +45,7 @@ class PlatManage {
         this.getPlat(pub.account.type, {
           access_token: pub.access_token,
           refresh_token: pub.refresh_token,
+          account: pub.account,
         }).publishVideo(pub.videoPubParams, (progress, msg) => {
           useBellMessageStroe.getState().publishProgressSet({
             id,

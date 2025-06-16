@@ -9,6 +9,7 @@ import {
 export abstract class PlatBase {
   access_token: string;
   refresh_token: string;
+  account: SocialAccount;
 
   // 用户账户信息
   abstract getAccountInfo(): Promise<Partial<SocialAccount> | null>;
@@ -16,6 +17,7 @@ export abstract class PlatBase {
   constructor(params: IPlatConstrParams) {
     this.access_token = params.access_token;
     this.refresh_token = params.refresh_token;
+    this.account = params.account;
   }
 
   publishVideo(

@@ -7,6 +7,7 @@ import { PlatType } from "@/app/config/platConfig";
 export interface IPlatConstrParams {
   access_token: string;
   refresh_token: string;
+  account: SocialAccount;
 }
 
 export interface IMixItem {
