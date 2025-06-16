@@ -7,10 +7,8 @@ export interface PublishParams {
   desc: string;
   accountId: number;
   videoPath?: string;
-  imagePath?: string;
   timingTime?: string;
   coverPath?: string;
-  commonCoverPath?: string;
   publishTime?: string;
   status?: number;
 }
@@ -25,7 +23,7 @@ export interface PublishListResponse {
 }
 
 // 获取发布列表
-export const getPublishListApi = (pageNo: number, pageSize: number) => {
+export const apiGetPublishList = (pageNo: number, pageSize: number) => {
   return request<PublishListResponse>({
     url: `/publish/list/${pageNo}/${pageSize}`,
     method: "GET",
@@ -33,7 +31,7 @@ export const getPublishListApi = (pageNo: number, pageSize: number) => {
 };
 
 // 获取草稿箱列表
-export const getDraftsListApi = (pageNo: number, pageSize: number) => {
+export const apiGetDraftsList = (pageNo: number, pageSize: number) => {
   return request<PublishListResponse>({
     url: `/publish/drafts/list/${pageNo}/${pageSize}`,
     method: "GET",
@@ -41,7 +39,7 @@ export const getDraftsListApi = (pageNo: number, pageSize: number) => {
 };
 
 // 创建发布
-export const createPublishApi = (data: PublishParams) => {
+export const apiCreatePublish = (data: PublishParams) => {
   return request({
     url: "/publish",
     method: "POST",

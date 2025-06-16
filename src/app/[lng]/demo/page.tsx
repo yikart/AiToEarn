@@ -3,6 +3,7 @@ import { PageParams } from "@/app/globals";
 import * as React from "react";
 import { getMetadata } from "@/utils/general";
 import { DemoPageCore } from "@/app/[lng]/demo/demoPageCore";
+import { DemoPublish } from "@/app/[lng]/demo/demoPublish";
 
 export async function generateMetadata({ params }: PageParams) {
   const { lng } = await params;
@@ -23,6 +24,7 @@ export default async function Page({ params }: PageParams) {
     <>
       <div>{t("demoText")} 1</div>
       <DemoPageCore />
+      <DemoPublish />
     </>
   );
 }
