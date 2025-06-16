@@ -50,6 +50,9 @@ export const DemoPageCore = () => {
       console.log("accountList", result);
       if (result?.code === 0 && result?.data) {
         setAccounts(result.data);
+
+        const res = await fetchPartitions(result.data[0].id);
+        console.log("------ rew", res);
       }
     };
     fetchAccounts();
@@ -66,7 +69,6 @@ export const DemoPageCore = () => {
         setUploadToken(token);
         console.log("获取上传token成功:", token);
         // 获取分区列表
-        await fetchPartitions(token);
       }
     } catch (error) {
       console.error("获取上传token失败:", error);
@@ -315,20 +317,21 @@ export const DemoPageCore = () => {
 
             <div style={{ marginTop: "10px" }}>
               <p>选择分区：</p>
-              <select 
-                value={selectedPartition} 
+              <select
+                value={selectedPartition}
                 onChange={(e) => setSelectedPartition(Number(e.target.value))}
                 style={{ marginBottom: "10px" }}
               >
-                {partitions && partitions.map((partition) => (
-                  <optgroup key={partition.id} label={partition.name}>
-                    {partition.children?.map((child: Partition) => (
-                      <option key={child.id} value={child.id}>
-                        {child.name} - {child.description}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
+                {partitions &&
+                  partitions.map((partition) => (
+                    <optgroup key={partition.id} label={partition.name}>
+                      {partition.children?.map((child: Partition) => (
+                        <option key={child.id} value={child.id}>
+                          {child.name} - {child.description}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
               </select>
             </div>
 
