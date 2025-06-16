@@ -68,9 +68,9 @@ export const apiUploadBilibilivideo = (
  * @param data 稿件数据
  * @returns
  */
-export const apiSubmitBilibiliArchive = (uploadToken: string, data: any) => {
+export const apiSubmitBilibiliArchive = (data: any) => {
   return http.post<{ code: number; data: any }>(
-    `plat/bilibili/archive/add-by-utoken/${uploadToken}`,
+    `plat/bilibili/archive/add-by-utoken`,
     data,
   );
 };

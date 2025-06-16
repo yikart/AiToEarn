@@ -203,6 +203,8 @@ export const DemoPageCore = () => {
   const handleSubmitArchive = async (accountId: string) => {
     try {
       const archiveData = {
+        accountId,
+        uploadToken,
         title: "看看我的车阿达",
         cover: coverUrl,
         tid: selectedPartition,
@@ -212,7 +214,7 @@ export const DemoPageCore = () => {
         copyright: 1,
       };
 
-      const res = await apiSubmitBilibiliArchive(uploadToken, archiveData);
+      const res = await apiSubmitBilibiliArchive(archiveData);
       console.log("稿件提交结果:", res);
     } catch (error) {
       console.error("稿件提交失败:", error);
