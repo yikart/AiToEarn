@@ -9,7 +9,7 @@ import {
   PubStatus,
 } from "@/api/publish";
 import { PubType } from "@/app/config/publishConfig";
-import Page from "../pubRecord/page";
+// import Page from "../pubRecord/page";
 
 export const DemoPublish = () => {
   const { t } = useTransClient("demo");
@@ -69,12 +69,12 @@ export const DemoPublish = () => {
       
       <div style={{ marginTop: '20px' }}>
         <h3>发布记录列表组件测试：</h3>
-        <Page 
+        {/* <Page 
           height="400px"
           onChange={(record) => {
             console.log('选中的记录:', record);
           }}
-        />
+        /> */}
       </div>
     </div>
   );
