@@ -9,6 +9,7 @@ import {
   PubStatus,
 } from "@/api/publish";
 import { PubType } from "@/app/config/publishConfig";
+import Page from "../pubRecord/page";
 
 export const DemoPublish = () => {
   const { t } = useTransClient("demo");
@@ -22,8 +23,8 @@ export const DemoPublish = () => {
       const res: any = await apiCreatePublish({
         flowId: "flowIdxxx",
         type: PubType.VIDEO,
-        title: "title",
-        desc: "desc",
+        title: "测试视频标题",
+        desc: "测试视频描述",
         accountId: "111",
         uid: "uid",
         accountType: AccountType.KWAI,
@@ -49,7 +50,7 @@ export const DemoPublish = () => {
 
   const getPublishList = async () => {
     try {
-      const res: any = await apiGetPublishList(1, 10);
+      const res: any = await apiGetPublishList(1, 10, {});
       if (res?.data?.data) {
         console.log("获取记录列表成功:", res.data.data);
       }
@@ -64,6 +65,16 @@ export const DemoPublish = () => {
       <div>
         <button onClick={createPublish}>创建记录</button>
         <button onClick={getPublishList}>获取记录列表</button>
+      </div>
+      
+      <div style={{ marginTop: '20px' }}>
+        <h3>发布记录列表组件测试：</h3>
+        <Page 
+          height="400px"
+          onChange={(record) => {
+            console.log('选中的记录:', record);
+          }}
+        />
       </div>
     </div>
   );
