@@ -15,12 +15,12 @@ export interface MaterialCreateOption {
   title?: string;
   desc?: string;
   max?: number;
-  language?: '中文' | '英文';
+  language?: "中文" | "英文";
 }
 
 // 创建素材草稿组
-export const createMaterialGroup = (data: {
-  title: string;
+export const apiCreateMaterialGroup = (data: {
+  title?: string;
   desc?: string;
   readonly location?: number[];
   readonly publishTime?: string;
@@ -31,12 +31,12 @@ export const createMaterialGroup = (data: {
 };
 
 // 删除草稿素材组
-export const deleteMaterialGroup = (id: string) => {
+export const apiDeleteMaterialGroup = (id: string) => {
   return http.delete(`material/group/${id}`);
 };
 
 // 更新草稿素材组信息
-export const updateMaterialGroupInfo = (
+export const apiUpdateMaterialGroupInfo = (
   id: string,
   data: {
     title?: string;
@@ -47,12 +47,14 @@ export const updateMaterialGroupInfo = (
 };
 
 // 获取草稿素材组列表
-export const getMaterialGroupList = (pageNo: number, pageSize: number) => {
-  return http.get(`material/group/list/${pageNo}/${pageSize}`);
+export const apiGetMaterialGroupList = (pageNo: number, pageSize: number) => {
+  return http.get<{ list: any[]; total: number }>(
+    `material/group/list/${pageNo}/${pageSize}`,
+  );
 };
 
 // 创建草稿素材
-export const createMaterial = (data: {
+export const apiCreateMaterial = (data: {
   readonly groupId: string;
   readonly coverUrl?: string;
   mediaList: MaterialMedia[];
@@ -64,7 +66,7 @@ export const createMaterial = (data: {
 };
 
 // 批量生成草稿素材
-export const createMaterialList = (data: {
+export const apiCreateMaterialList = (data: {
   readonly groupId: string;
   readonly num: number;
   readonly option: MaterialCreateOption;
@@ -73,12 +75,12 @@ export const createMaterialList = (data: {
 };
 
 // 删除草稿素材
-export const deleteMaterial = (id: string) => {
+export const apiDeleteMaterial = (id: string) => {
   return http.delete(`material/${id}`);
 };
 
 // 获取草稿素材列表
-export const getMaterialList = (
+export const apiGetMaterialList = (
   groupId: string,
   pageNo: number,
   pageSize: number,
@@ -89,7 +91,7 @@ export const getMaterialList = (
 };
 
 // 更新草稿素材信息
-export const updateMaterialInfo = (
+export const apiUpdateMaterialInfo = (
   id: string,
   data: {
     title?: string;
