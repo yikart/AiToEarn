@@ -13,6 +13,8 @@ import {
   apiUploadBilibiliVideoPart,
   apiCompleteBilibiliVideo,
 } from "@/api/bilibili";
+import { apiCreatePublish, AccountType, PubStatus } from "@/api/publish";
+import { PubType } from "@/app/config/publishConfig";
 
 export class BilibiliPubCore {
   private kwaiPlat: BilibiliPlat;
@@ -50,6 +52,39 @@ export class BilibiliPubCore {
     }
 
     return caption.trim();
+  }
+
+  // 创建发布记录
+  private async createPublishRecord(result: any, coverUrl: string) {
+    try {
+      const publishData = {
+        flowId: `bilibili_${Date.now()}`, // 生成唯一的流程ID
+        type: PubType.VIDEO,
+        title: this.videoPubParams.title || '',
+        desc: this.videoPubParams.describe || '',
+        accountId: this.kwaiPlat.account.id,
+        uid: this.kwaiPlat.account.uid || '',
+        accountType: AccountType.BILIBILI,
+        videoUrl: result.worksUrl, // 使用构建的视频地址
+        coverUrl: coverUrl, // 使用实际上传的封面地址
+        imgList: [],
+        publishTime: new Date().toISOString(),
+        status: result.success ? PubStatus.RELEASED : PubStatus.FAIL,
+        option: {
+          worksId: result.worksId,
+          worksUrl: result.worksUrl,
+          platform: 'bilibili',
+          publishResult: result,
+        },
+      };
+
+      const res = await apiCreatePublish(publishData);
+      console.log('发布记录创建成功:', res);
+      return res;
+    } catch (error) {
+      console.error('创建发布记录失败:', error);
+      // 不抛出错误，避免影响主流程
+    }
   }
 
   // 视频发布
@@ -155,20 +190,32 @@ export class BilibiliPubCore {
       }
 
       this.onProgress?.(1, "发布成功");
-      return {
+
+      const result = {
         worksId: submitRes.data?.data || "",
         worksUrl: `https://www.bilibili.com/video/${submitRes.data?.data}`,
         success: true,
       };
+
+      // 5. 创建发布记录
+      await this.createPublishRecord(result, coverUrl);
+
+      return result;
     } catch (error:any) {
       console.error("发布视频失败:", error);
       this.onProgress?.(0, "发布失败");
-      return {
+      
+      const result = {
         worksId: "",
         worksUrl: "",
         success: false,
         failMsg: error instanceof Error ? error.message : "发布失败",
       };
+
+      // 即使发布失败也创建记录
+      await this.createPublishRecord(result, '');
+
+      return result;
     }
   }
 
