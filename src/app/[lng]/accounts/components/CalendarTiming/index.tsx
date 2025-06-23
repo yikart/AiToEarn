@@ -35,9 +35,11 @@ const CalendarTiming = memo(
           setCurrentDate(date);
         }
       };
+      const calendarTimingCalendarRef = useRef<HTMLDivElement>(null);
 
       // 动画触发函数
       const triggerAnimation = (dir: "left" | "right" | "fade") => {
+        calendarTimingCalendarRef.current!.scrollTop = 0;
         setDirection(dir);
         setAnimating(true);
       };
@@ -95,7 +97,10 @@ const CalendarTiming = memo(
             classNames={getTransitionClassNames(direction)}
             unmountOnExit
           >
-            <div className="calendarTiming-calendar">
+            <div
+              className="calendarTiming-calendar"
+              ref={calendarTimingCalendarRef}
+            >
               <FullCalendar
                 ref={calendarRef}
                 locale={getFullCalendarLang(lng)}

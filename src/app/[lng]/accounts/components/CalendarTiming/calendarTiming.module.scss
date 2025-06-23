@@ -45,6 +45,9 @@
         display: none;
       }
     }
+    .fc-scroller {
+      overflow: hidden !important;
+    }
     .calendarTiming-calendar {
       position: relative;
       overflow: auto;

@@ -6,9 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat: 日历完善">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/calendarTimingItem.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/calendarTimingItem.module.scss" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/calendarTiming.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/calendarTiming.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,7 +78,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1750677868216</updated>
-      <workItem from="1750677869133" duration="4935000" />
+      <workItem from="1750677869133" duration="5461000" />
     </task>
     <task id="LOCAL-00001" summary="feat: 日历完善">
       <option name="closed" value="true" />
@@ -89,7 +88,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750681213106</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="feat: 日历完善">
+      <option name="closed" value="true" />
+      <created>1750682966962</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1750682966962</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
