@@ -45,6 +45,9 @@ export default function CgMaterialPageCore() {
   const [batchModal, setBatchModal] = useState(false);
   const [batchTaskLoading, setBatchTaskLoading] = useState(false);
 
+  const [detailModal, setDetailModal] = useState(false);
+  const [detailData, setDetailData] = useState<any>(null);
+
   // 初始化加载草稿箱组
   useEffect(() => {
     fetchGroupList();
@@ -137,7 +140,7 @@ export default function CgMaterialPageCore() {
     setCreating(true);
     try {
       await apiCreateMaterial({
-        groupId: selectedMediaGroup._id,
+        groupId: selectedGroup._id,
         coverUrl: selectedCover,
         mediaList: mediaList
           .filter((m: any) => selectedMaterials.includes(m.url))
@@ -194,13 +197,6 @@ export default function CgMaterialPageCore() {
     }
   }
 
-  // 没有组时强制弹窗创建
-  useEffect(() => {
-    if (!groupLoading && groupList.length === 0) {
-      setCreateGroupModal(true);
-    }
-  }, [groupLoading, groupList]);
-
   return (
     <div className={styles.materialContainer}>
       <div className={styles.header}>
@@ -240,11 +236,31 @@ export default function CgMaterialPageCore() {
             <List
               grid={{gutter:16,column:3}}
               dataSource={materialList}
-              renderItem={item=>(
+              renderItem={item => (
                 <List.Item>
-                  <Card title={item.title} bordered>
-                    <div style={{color:'#888',marginBottom:8}}>{item.desc}</div>
-                    <div>创建时间：{item.createTime ? new Date(item.createTime).toLocaleString() : ''}</div>
+                  <Card
+                    hoverable
+                    onClick={() => { setDetailData(item); setDetailModal(true); }}
+                    cover={
+                      item.coverUrl ? (
+                        <img
+                          src={getOssUrl(item.coverUrl)}
+                          alt="cover"
+                          style={{ width: "100%", height: 120, objectFit: "cover", borderRadius: 6 }}
+                        />
+                      ) : null
+                    }
+                  >
+                    <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 4 }}>{item.title}</div>
+                    <div style={{ color: "#888", marginBottom: 4 }}>{item.desc}</div>
+                    <div>
+                      <span style={{ marginRight: 8, color: "#1677ff" }}>
+                        {item.type === MaterialType.ARTICLE ? "图文" : item.type === MaterialType.VIDEO ? "视频" : item.type}
+                      </span>
+                      <span style={{ color: item.status === 0 ? "#faad14" : "#52c41a" }}>
+                        {item.status === 0 ? "草稿" : "已发布"}
+                      </span>
+                    </div>
                   </Card>
                 </List.Item>
               )}
@@ -385,6 +401,58 @@ export default function CgMaterialPageCore() {
             <InputNumber min={1} max={20}/>
           </Form.Item>
         </Form>
+      </Modal>
+      {/* 详情弹窗 */}
+      <Modal
+        open={detailModal}
+        title="素材详情"
+        onCancel={() => setDetailModal(false)}
+        footer={null}
+        width={600}
+      >
+        {detailData && (
+          <div>
+            <div style={{ marginBottom: 16 }}>
+              <b>标题：</b>{detailData.title}
+            </div>
+            <div style={{ marginBottom: 16 }}>
+              <b>简介：</b>{detailData.desc}
+            </div>
+            <div style={{ marginBottom: 16 }}>
+              <b>类型：</b>
+              {detailData.type === MaterialType.ARTICLE ? "图文" : detailData.type === MaterialType.VIDEO ? "视频" : detailData.type}
+            </div>
+            <div style={{ marginBottom: 16 }}>
+              <b>状态：</b>
+              <span style={{ color: detailData.status === 0 ? "#faad14" : "#52c41a" }}>
+                {detailData.status === 0 ? "草稿" : "已发布"}
+              </span>
+            </div>
+            <div style={{ marginBottom: 16 }}>
+              <b>封面：</b>
+              {detailData.coverUrl && (
+                <img
+                  src={getOssUrl(detailData.coverUrl)}
+                  alt="cover"
+                  style={{ width: 120, height: 80, objectFit: "cover", borderRadius: 6, marginLeft: 8 }}
+                />
+              )}
+            </div>
+            <div style={{ marginBottom: 16 }}>
+              <b>素材内容：</b>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
+                {Array.isArray(detailData.mediaList) && detailData.mediaList.map((media: any, idx: number) => (
+                  <img
+                    key={idx}
+                    src={getOssUrl(media.url)}
+                    alt=""
+                    style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 4 }}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );
