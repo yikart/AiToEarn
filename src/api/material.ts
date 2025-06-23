@@ -11,13 +11,6 @@ export interface MaterialMedia {
   content?: string;
 }
 
-export interface MaterialCreateOption {
-  title?: string;
-  desc?: string;
-  max?: number;
-  language?: "中文" | "英文";
-}
-
 export interface NewMaterialTask {
   groupId: string;
   num: number;
@@ -30,6 +23,8 @@ export interface NewMaterialTask {
   mediaGroups: string[];
   coverGroup: string;
   option?: Record<string, any>;
+  textMax?: number;
+  language?: "中文" | "英文";
 }
 
 // 创建素材草稿组
