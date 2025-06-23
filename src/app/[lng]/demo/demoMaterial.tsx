@@ -4,27 +4,33 @@ import { useEffect, useState } from "react";
 import { getMediaGroupList } from "@/api/media";
 import {
   apiCreateMaterialGroup,
+  apiCreateMaterialTask,
+  apiStartMaterialTask,
   apiGetMaterialGroupList,
   MaterialType,
+  NewMaterialTask,
 } from "@/api/material";
 
 interface NewMaterialGroup {
   type: MaterialType;
   name: string;
-  prompt?: string;
-  title?: string;
   desc?: string;
-  location?: number[];
-  publishTime?: string;
-  mediaGroups?: string[];
-  coverGroup?: string;
-  option?: Record<string, any>;
 }
 
 export const DemoMaterial = () => {
   const [newMaterialGroup, setNewMaterialGroup] = useState<NewMaterialGroup>({
     type: MaterialType.ARTICLE,
     name: "测试素材组",
+    desc: "美景鉴赏者素材组",
+  });
+
+  const [taskId, setTaskId] = useState<string>("");
+  const [groupId, setGroupId] = useState<string>("");
+
+  const [newMaterialTask, setNewMaterialTask] = useState<NewMaterialTask>({
+    groupId,
+    num: 10,
+    aiModelTag: "ali",
     prompt: "语调优美，多用成语和感叹词。",
     title: "景色优美，人人共赏",
     desc: "作为一个美景鉴赏者",
@@ -49,6 +55,20 @@ export const DemoMaterial = () => {
     console.log("------ createMaterialGroup ---- ", res);
   }
 
+  async function createMaterialTask(groupId: string) {
+    const res = await apiCreateMaterialTask({
+      ...newMaterialTask,
+      groupId,
+    });
+    setGroupId(groupId);
+    console.log("------ createMaterialTask ---- ", res);
+  }
+
+  async function startMaterialTask() {
+    const res = await apiStartMaterialTask(taskId);
+    console.log("------ startMaterialTask ---- ", res);
+  }
+
   async function getMediaGroups() {
     // 获取素材组列表
     const res = await getMediaGroupList(1, 10);
@@ -60,15 +80,15 @@ export const DemoMaterial = () => {
   async function setCoverGroup(groupId: string) {
     console.log("----- setCoverGroup", groupId);
 
-    setNewMaterialGroup({
-      ...newMaterialGroup,
+    setNewMaterialTask({
+      ...newMaterialTask,
       coverGroup: groupId,
     });
   }
 
   // 设置媒体素材组
   async function setMediaGroup(groupId: string) {
-    newMaterialGroup.mediaGroups?.push(groupId);
+    newMaterialTask.mediaGroups?.push(groupId);
     setNewMaterialGroup({
       ...newMaterialGroup,
     });
@@ -79,21 +99,6 @@ export const DemoMaterial = () => {
     const res = await apiGetMaterialGroupList(1, 10);
     console.log("----- apiGetMaterialGroupList res", res);
     setMaterialGroupList(res?.data.list || []);
-  }
-
-  /**
-   * 批量创建素材
-   */
-  async function createMaterialList(groupId: string) {
-    const res:any = await apiCreateMaterialList({
-      groupId,
-      num: 10,
-      option: {
-        max: 10,
-        language: "中文",
-      },
-    });
-    console.log("------ createMaterialGroup ---- ", res);
   }
 
   return (
@@ -118,23 +123,12 @@ export const DemoMaterial = () => {
         <p>----- 媒体组列表 END -----</p>
       </div>
       <div>
-        <p>----- 素材信息 STR -----</p>
+        <p>----- 草稿组信息 STR -----</p>
         {newMaterialGroup && (
           <div>
             <div>{newMaterialGroup.type}</div>
             <div>{newMaterialGroup.name}</div>
-            <div>{newMaterialGroup.prompt}</div>
-            <div>{newMaterialGroup.title}</div>
             <div>{newMaterialGroup.desc}</div>
-            <div>{newMaterialGroup.location}</div>
-            <div>{newMaterialGroup.publishTime?.toString()}</div>
-            <div>
-              内容媒体组数组：
-              {newMaterialGroup.mediaGroups?.map((item) => (
-                <span>--{item}</span>
-              ))}
-            </div>
-            <div>封面媒体组ID：{newMaterialGroup.coverGroup}</div>
           </div>
         )}
         <p>----- 素材信息 END -----</p>
@@ -152,12 +146,33 @@ export const DemoMaterial = () => {
               <div>描述：{item.desc}</div>
               <div>封面素材组ID：{item.coverGroup}</div>
 
-              <button onClick={() => createMaterialList(item._id)}>
-                批量创建素材
-              </button>
+              <button onClick={() => createMaterialTask(item._id)}>创建任务</button>
             </div>
           ))}
         </div>
+
+        <p>----- 任务信息 STR -----</p>
+        {newMaterialGroup && (
+          <div>
+            <div>{newMaterialTask.groupId}</div>
+            <div>{newMaterialTask.title}</div>
+            <div>{newMaterialTask.desc}</div>
+            <div>{newMaterialTask.aiModelTag}</div>
+            <div>{newMaterialTask.prompt}</div>
+            <div>{newMaterialTask.location}</div>
+            <div>{newMaterialTask.publishTime?.toString()}</div>
+            <div>
+              内容媒体组数组：
+              {newMaterialTask.mediaGroups?.map((item) => (
+                <span>--{item}</span>
+              ))}
+            </div>
+            <div>封面媒体组ID：{newMaterialTask.coverGroup}</div>
+          </div>
+        )}
+        <p>----- 任务信息 END -----</p>
+
+        <button onClick={() => startMaterialTask()}>开始任务</button>
       </div>
     </div>
   );

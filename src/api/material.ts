@@ -18,6 +18,20 @@ export interface MaterialCreateOption {
   language?: "中文" | "英文";
 }
 
+export interface NewMaterialTask {
+  groupId: string;
+  num: number;
+  aiModelTag: string;
+  prompt: string;
+  title?: string;
+  desc?: string;
+  location?: number[];
+  publishTime?: string;
+  mediaGroups: string[];
+  coverGroup: string;
+  option?: Record<string, any>;
+}
+
 // 创建素材草稿组
 export const apiCreateMaterialGroup = (data: {
   type: MaterialType;
@@ -52,30 +66,18 @@ export const apiGetMaterialGroupList = (pageNo: number, pageSize: number) => {
 
 // 创建草稿素材
 export const apiCreateMaterial = (data: {
-    groupId: string;
-    coverUrl?: string;
+  groupId: string;
+  coverUrl?: string;
   mediaList: MaterialMedia[];
-    title: string;
-    desc?: string;
-    option?: Record<string, any>;
+  title: string;
+  desc?: string;
+  option?: Record<string, any>;
 }) => {
   return http.post("material", data);
 };
 
 // 创建批量生成草稿任务
-export const apiCreateMaterialTask = (data: {
-    groupId: string;
-    num: number;
-    aiModelTag: string;
-    prompt: string;
-    title?: string;
-    desc?: string;
-    location?: number[];
-    publishTime?: Date;
-    mediaGroups: string[];
-    coverGroup: string;
-    option?: Record<string, any>;
-}) => {
+export const apiCreateMaterialTask = (data: NewMaterialTask) => {
   return http.post("material/task/create", data);
 };
 
