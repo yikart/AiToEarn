@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { getMediaGroupList } from "@/api/media";
 import {
   apiCreateMaterialGroup,
-  apiCreateMaterialList,
   apiGetMaterialGroupList,
   MaterialType,
 } from "@/api/material";

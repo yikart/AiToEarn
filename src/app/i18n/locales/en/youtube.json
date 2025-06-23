@@ -7,5 +7,11 @@
   "pleaseEnterEmail": "Please enter your email address",
   "invalidEmail": "Please enter a valid email address",
   "authFailed": "Authorization failed, please try again later",
-  "checkAuth": "checkAuth"
-} 
+  "checkAuth": "checkAuth",
+  "uploadVideo": "Upload Video",
+  "needAuthFirst": "Need Auth First",
+  "uploadFailed": "Upload Failed",
+  "uploadSuccess": "Upload Success",
+  "checkFailed": "Check Failed",
+  "alreadyAuthorized": "Already Authorized"
+}
