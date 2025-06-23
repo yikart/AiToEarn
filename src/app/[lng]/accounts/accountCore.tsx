@@ -6,6 +6,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useEffect, useState } from "react";
 import { NoSSR } from "@kwooshung/react-no-ssr";
 import AccountSidebar from "@/app/[lng]/accounts/components/AccountSidebar/AccountSidebar";
+import CalendarTiming from "@/app/[lng]/accounts/components/CalendarTiming";
 
 export default function AccountPageCore() {
   const { accountInit } = useAccountStore(
@@ -29,6 +30,7 @@ export default function AccountPageCore() {
             setActiveAccountId(account.id);
           }}
         />
+        <CalendarTiming />
       </div>
     </NoSSR>
   );

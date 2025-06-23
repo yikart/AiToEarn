@@ -12,6 +12,17 @@
   }
 
   :global {
+    .ant-skeleton-paragraph {
+      margin-top: 15px !important;
+    }
+
+    .ant-skeleton {
+      display: flex !important;
+      align-items: center !important;
+      padding: 0 10px;
+      margin-bottom: 10px;
+    }
+
     .accountSidebar-userCount {
       display: inline-block;
       margin-left: 10px;

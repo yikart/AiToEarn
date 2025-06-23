@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import styles from "./AccountSidebar.module.scss";
-import { Avatar, Button, Collapse, Popover, Tooltip } from "antd";
+import { Avatar, Button, Collapse, Popover, Skeleton, Tooltip } from "antd";
 // import { accountLogin, acpAccountLoginCheck } from "@/icp/account";
 import AddAccountModal from "../AddAccountModal";
 import {
@@ -135,11 +135,13 @@ const AccountSidebar = memo(
         accountList: fullAccountList,
         getAccountList,
         accountGroupList,
+        accountLoading,
       } = useAccountStore(
         useShallow((state) => ({
           accountList: state.accountList,
           getAccountList: state.getAccountList,
           accountGroupList: state.accountGroupList,
+          accountLoading: state.accountLoading,
         })),
       );
       const [userManageModalOpen, setUserManageModalOpen] = useState(false);
@@ -200,84 +202,100 @@ const AccountSidebar = memo(
               </div>
             </div>
 
-            <Collapse
-              key={defaultActiveKey}
-              defaultActiveKey={defaultActiveKey}
-              items={accountGroupList.map((v) => {
-                return {
-                  key: v.id,
-                  label: (
-                    <>
-                      {v.name}
-                      <span className="accountSidebar-userCount">
-                        {v.children?.length}/
-                        {
-                          v.children?.map(
-                            (v) => v.status === AccountStatus.USABLE,
-                          ).length
-                        }
-                      </span>
-                    </>
-                  ),
-                  children: (
-                    <ul key={v.id} className="accountList">
-                      {v.children?.map((account) => {
-                        if (excludePlatforms.includes(account.type)) return "";
-                        const platInfo = AccountPlatInfoMap.get(account.type)!;
-                        return (
-                          <li
-                            className={[
-                              "accountList-item",
-                              `${activeAccountId === account.id ? "accountList-item--active" : ""}`,
-                              // 失效状态
-                              account.status === AccountStatus.DISABLE &&
-                                "accountList-item--disable",
-                            ].join(" ")}
-                            key={account.id}
-                            onClick={async () => {
-                              if (account.status === AccountStatus.DISABLE) {
-                                // TODO 账户登录
-                                // const res = await accountLogin(account.type);
-                                // if (!res) return;
-                                // message.success("账号登录成功！");
-                                // return;
-                              }
-                              onAccountChange(account);
-                            }}
-                          >
-                            <Avatar src={getOssUrl(account.avatar)} size="large" />
-                            <div className="accountList-item-right">
-                              <div
-                                className="accountList-item-right-name"
-                                title={account.nickname}
-                              >
-                                <Tooltip title={undefined}>
-                                  {account.nickname}
-                                </Tooltip>
-                              </div>
-                              <div className="accountList-item-right-footer">
-                                <p className="accountList-item-right-plat">
-                                  <img src={platInfo.icon} />
-                                  <span>{platInfo.name}</span>
-                                </p>
-                                <Popover
-                                  content={
-                                    <AccountPopoverInfo accountInfo={account} />
-                                  }
-                                  placement="right"
+            {accountLoading ? (
+              <>
+                <Skeleton avatar paragraph={{ rows: 1 }} active />
+                <Skeleton avatar paragraph={{ rows: 1 }} active />
+                <Skeleton avatar paragraph={{ rows: 1 }} active />
+              </>
+            ) : (
+              <Collapse
+                key={defaultActiveKey}
+                defaultActiveKey={defaultActiveKey}
+                items={accountGroupList.map((v) => {
+                  return {
+                    key: v.id,
+                    label: (
+                      <>
+                        {v.name}
+                        <span className="accountSidebar-userCount">
+                          {v.children?.length}/
+                          {
+                            v.children?.map(
+                              (v) => v.status === AccountStatus.USABLE,
+                            ).length
+                          }
+                        </span>
+                      </>
+                    ),
+                    children: (
+                      <ul key={v.id} className="accountList">
+                        {v.children?.map((account) => {
+                          if (excludePlatforms.includes(account.type))
+                            return "";
+                          const platInfo = AccountPlatInfoMap.get(
+                            account.type,
+                          )!;
+                          return (
+                            <li
+                              className={[
+                                "accountList-item",
+                                `${activeAccountId === account.id ? "accountList-item--active" : ""}`,
+                                // 失效状态
+                                account.status === AccountStatus.DISABLE &&
+                                  "accountList-item--disable",
+                              ].join(" ")}
+                              key={account.id}
+                              onClick={async () => {
+                                if (account.status === AccountStatus.DISABLE) {
+                                  // TODO 账户登录
+                                  // const res = await accountLogin(account.type);
+                                  // if (!res) return;
+                                  // message.success("账号登录成功！");
+                                  // return;
+                                }
+                                onAccountChange(account);
+                              }}
+                            >
+                              <Avatar
+                                src={getOssUrl(account.avatar)}
+                                size="large"
+                              />
+                              <div className="accountList-item-right">
+                                <div
+                                  className="accountList-item-right-name"
+                                  title={account.nickname}
                                 >
-                                  ...
-                                </Popover>
+                                  <Tooltip title={undefined}>
+                                    {account.nickname}
+                                  </Tooltip>
+                                </div>
+                                <div className="accountList-item-right-footer">
+                                  <p className="accountList-item-right-plat">
+                                    <img src={platInfo.icon} />
+                                    <span>{platInfo.name}</span>
+                                  </p>
+                                  <Popover
+                                    content={
+                                      <AccountPopoverInfo
+                                        accountInfo={account}
+                                      />
+                                    }
+                                    placement="right"
+                                  >
+                                    ...
+                                  </Popover>
+                                </div>
                               </div>
-                            </div>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  ),
-                };
-              })}
-            />
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    ),
+                  };
+                })}
+              />
+            )}
 
             <div className="accountSidebar-footer">
               <Button
