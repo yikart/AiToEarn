@@ -2,7 +2,8 @@ interface Resources {
   "account": {
     "title": "账户",
     "describe": "账户页面",
-    "today": "今天"
+    "today": "今天",
+    "addPost": "添加帖子"
   },
   "common": {
     "profile": "个人中心",

@@ -1230,7 +1230,7 @@ const HotContentNew: React.FC = () => {
         onMsgTypeClick={handleMsgTypeClick}
         onHotContentClick={handleResetExpandedStates}
         onViralTitleCategorySelect={handleViralTitleCategorySelect}
-        getImageUrl={getImageUrl}
+        // getImageUrl={getImageUrl}
       />
       <div className="main-content">
         {!expandedStates.topic && !expandedStates.hotEvent && !expandedStates.viralTitle && !expandedStates.talk && !expandedStates.hotPlatform ? (

@@ -10,10 +10,39 @@
   :global {
     .calendarTiming-toolbar {
       display: flex;
-      align-items: center;
-      margin-bottom: 10px;
+      justify-content: space-between;
       h1 {
-        margin: 0 10px;
+        margin: 0 15px 0 10px;
+        font-size: 18px;
+      }
+      &-left, &-right {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      &-right {
+
+      }
+    }
+    .fc-daygrid-day.fc-day-today {
+      background: transparent;
+      .calendarTimingItem-day {
+        background: var(--colorPrimary5);
+        color: #fff;
+      }
+    }
+    .fc-daygrid-day-frame {
+      display: flex;
+      .fc-daygrid-day-top {
+        display: flex;
+        flex: 1;
+        .fc-daygrid-day-number {
+          padding: 0;
+          flex: 1;
+        }
+      }
+      .fc-daygrid-day-events {
+        display: none;
       }
     }
     .calendarTiming-calendar {

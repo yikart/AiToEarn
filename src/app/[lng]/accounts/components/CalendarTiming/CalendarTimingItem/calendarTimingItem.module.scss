@@ -1,0 +1,46 @@
+.calendarTimingItem {
+  box-sizing: border-box;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  height: 200px;
+  font-weight: 600;
+  :global {
+    .calendarTimingItem-top {
+      display: flex;
+      justify-content: space-between;
+      .calendarTimingItem-top-day {
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+        text-align: center;
+        border-radius: 50%;
+        margin-bottom: 3px;
+      }
+    }
+    .calendarTimingItem-con {
+      .calendarTimingItem-con-btn2 {
+        display: none;
+      }
+      button {
+        width: 100%;
+        margin-bottom: 8px;
+        font-size: 12px;
+        padding: 0;
+        height: 26px !important;
+        &:hover {
+          .calendarTimingItem-con-btn2 {
+            display: block;
+          }
+          .calendarTimingItem-con-btn1 {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+.calendarTimingItemPast {
+  background: var(--grayColor1);
+}
