@@ -2,7 +2,8 @@ interface Resources {
   "account": {
     "title": "账户",
     "describe": "账户页面",
-    "today": "今天"
+    "today": "今天",
+    "addPost": "添加帖子"
   },
   "common": {
     "profile": "个人中心",
@@ -94,7 +95,13 @@ interface Resources {
     "invalidEmail": "请输入有效的邮箱地址",
     "authFailed": "授权失败，请稍后重试",
     "checkAuth": "检查授权",
-    "notAuthorized": "未授权"
+    "notAuthorized": "未授权",
+    "uploadVideo": "上传视频",
+    "needAuthFirst": "首先需要授权",
+    "uploadFailed": "上传失败",
+    "uploadSuccess": "上传成功",
+    "checkFailed": "检查失败",
+    "alreadyAuthorized": "已授权"
   }
 }
 

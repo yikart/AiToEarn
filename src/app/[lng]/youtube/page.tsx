@@ -97,6 +97,7 @@ const YouTubeAuth: React.FC = () => {
     try {
       const response = await getYouTubeAuthUrlApi(email);
       if (response?.data) {
+        // @ts-ignore
         window.open(response.data?.url, "_blank", "noopener,noreferrer");
       }
     } catch (error) {

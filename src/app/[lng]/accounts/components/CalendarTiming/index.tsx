@@ -12,17 +12,7 @@ import { DatesSetArg } from "@fullcalendar/core";
 import { Button } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { useTransClient } from "@/app/i18n/client";
-
-const events = [{ title: "Meeting", start: new Date() }];
-
-function renderEventContent(eventInfo: any) {
-  return (
-    <>
-      <b>{eventInfo.timeText}</b>
-      <i>{eventInfo.event.title}</i>
-    </>
-  );
-}
+import CalendarTimingItem from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem";
 
 export interface ICalendarTimingRef {}
 export interface ICalendarTimingProps {}
@@ -45,9 +35,11 @@ const CalendarTiming = memo(
           setCurrentDate(date);
         }
       };
+      const calendarTimingCalendarRef = useRef<HTMLDivElement>(null);
 
       // 动画触发函数
       const triggerAnimation = (dir: "left" | "right" | "fade") => {
+        calendarTimingCalendarRef.current!.scrollTop = 0;
         setDirection(dir);
         setAnimating(true);
       };
@@ -81,12 +73,23 @@ const CalendarTiming = memo(
       return (
         <div className={styles.calendarTiming}>
           <div className="calendarTiming-toolbar">
-            <Button type="text" icon={<LeftOutlined />} onClick={handlePrev} />
-            <Button type="text" icon={<RightOutlined />} onClick={handleNext} />
-            <h1>
-              {currentDate.getFullYear()}-{currentDate.getMonth() + 1}
-            </h1>
-            <Button onClick={handleToday}>{t("today")}</Button>
+            <div className="calendarTiming-toolbar-left">
+              <Button
+                type="text"
+                icon={<LeftOutlined />}
+                onClick={handlePrev}
+              />
+              <Button
+                type="text"
+                icon={<RightOutlined />}
+                onClick={handleNext}
+              />
+              <h1>
+                {currentDate.getFullYear()}-{currentDate.getMonth() + 1}
+              </h1>
+              <Button onClick={handleToday}>{t("today")}</Button>
+            </div>
+            <div className="calendarTiming-toolbar-right"></div>
           </div>
           <CSSTransition
             in={!animating}
@@ -94,7 +97,10 @@ const CalendarTiming = memo(
             classNames={getTransitionClassNames(direction)}
             unmountOnExit
           >
-            <div className="calendarTiming-calendar">
+            <div
+              className="calendarTiming-calendar"
+              ref={calendarTimingCalendarRef}
+            >
               <FullCalendar
                 ref={calendarRef}
                 locale={getFullCalendarLang(lng)}
@@ -103,8 +109,9 @@ const CalendarTiming = memo(
                 initialDate={currentDate}
                 headerToolbar={false}
                 stickyFooterScrollbar={true}
-                events={events}
-                eventContent={renderEventContent}
+                dayCellContent={(arg) => {
+                  return <CalendarTimingItem arg={arg} />;
+                }}
                 datesSet={handleDatesSet}
               />
             </div>

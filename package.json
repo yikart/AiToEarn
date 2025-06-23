@@ -6,7 +6,7 @@
     "postbuild": "next-sitemap",
     "dev": "next dev -p 6060",
     "dev:https": "next dev -p 6060 --experimental-https",
-    "build": "next build",
+    "build": "tsc && next build",
     "start": "next start",
     "lint": "next lint",
     "migrateToLocize": "locize migrate --project-id=01b2e5e8-6243-47d1-b36f-963dbb8bcae3 --api-key=c9805cd1-fd50-4d98-967a-383b39066de8 --path=./app/i18n/locales",
