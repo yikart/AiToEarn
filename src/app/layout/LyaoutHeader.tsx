@@ -58,6 +58,18 @@ function UserInfo() {
       label: (
         <div
           onClick={() => {
+            router.push("/cgmaterial");
+          }}
+        >
+          草稿箱
+        </div>
+      ),
+    },
+    {
+      key: "3",
+      label: (
+        <div
+          onClick={() => {
             useUserStore.getState().logout();
             router.push("/");
           }}
