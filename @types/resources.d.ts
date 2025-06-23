@@ -77,7 +77,8 @@ interface Resources {
     "accounts": "账户",
     "publish": "发布",
     "hotContent": "热门内容",
-    "hotContentNew": "热门内容新"
+    "hotContentNew": "热门内容新",
+    "navigation": "导航"
   },
   "translation": {
     "title": "AIToEarn官方网站",
