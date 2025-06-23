@@ -12,8 +12,20 @@ export const apiGetBilibiliLoginUrl = (type: "h5" | "pc") => {
   );
 };
 
+
 /**
  * 检查B站授权状态
+ * @param accointId 账号ID
+ * @returns
+ */
+export const apiCheckAccountAuthStatus = (accointId: string) => {
+  return http.get<{ code: number; data: boolean }>(
+    `plat/bilibili/auth/status/${accointId}`,
+  );
+};
+
+/**
+ * 获取B站授权状态
  * @param taskId 任务ID
  * @returns
  */
