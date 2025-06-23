@@ -1,4 +1,4 @@
-import { Platform } from '../platform';
+import { Platform } from "@/api/hot";
 
 export interface ViralTitle {
   _id: string;

@@ -71,7 +71,7 @@ export default function Page() {
   const [pubProgressModuleOpen, setPubProgressModuleOpen] = useState(false);
   // 主进程传过来的发布进度数据，key为用户id value为发布进度数据
   const [pubProgressMap, setPubProgressMap] = useState<
-    Map<number, PublishProgressRes>
+    Map<string, PublishProgressRes>
   >(new Map());
   // 敏感词检测
   const [sensitiveDetLoading, setSensitiveDetLoading] = useState(false);
@@ -287,7 +287,7 @@ export default function Page() {
             for (const [key, errVideoItem] of errParamsMap) {
               if (errVideoItem) {
                 const imageAccount = imageAccounts.find(
-                  (v) => v.account.id === +key,
+                  (v) => v.account.id === key,
                 )!;
                 const platType = imageAccount!.account.type;
                 const platActiveAccountMap = new Map(

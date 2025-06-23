@@ -17,7 +17,7 @@ export abstract class PlatBase {
   constructor(params: IPlatConstrParams) {
     this.access_token = params.access_token;
     this.refresh_token = params.refresh_token;
-    this.account = params.account;
+    this.account = params.account!;
   }
 
   publishVideo(
