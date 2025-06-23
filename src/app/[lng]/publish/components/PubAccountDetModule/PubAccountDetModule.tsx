@@ -63,14 +63,14 @@ const PubAccountDetModule = memo(
       const [open, setOpen] = useState(false);
       const [detLoading, setDetLoading] = useState(false);
       // 失效 ids
-      const [disabledIdSet, setDisabledIdSet] = useState<Set<number>>(
+      const [disabledIdSet, setDisabledIdSet] = useState<Set<string>>(
         new Set([]),
       );
       const [progress, setProgress] = useState(0);
       const [isFilterAccountOl, setIsFilterAccountOl] = useState(false);
       // 代理失效的账户组Map
       const [proxyInvalidAccountMap, setProxyInvalidAccountMap] = useState<
-        Map<number, AccountGroupItem>
+        Map<string, AccountGroupItem>
       >(new Map());
       const { accountGroupMap, getAccountList } = useAccountStore(
         useShallow((state) => ({

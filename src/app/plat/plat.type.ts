@@ -2,12 +2,11 @@
 import { SocialAccount } from "@/api/types/account.type";
 import { IPubParams } from "@/app/[lng]/publish/videoPage/videoPage.type";
 import { IVideoFile } from "@/app/[lng]/publish/components/Choose/VideoChoose";
-import { PlatType } from "@/app/config/platConfig";
 
 export interface IPlatConstrParams {
   access_token: string;
   refresh_token: string;
-  account: SocialAccount;
+  account?: SocialAccount;
 }
 
 export interface IMixItem {

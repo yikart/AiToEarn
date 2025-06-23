@@ -182,7 +182,7 @@ export const useImagePageStore = create(
         },
 
         // 按照账号id删除
-        delAccountById(accountId: number) {
+        delAccountById(accountId: string) {
           const imageAccounts = get().imageAccounts.filter(
             (v) => v.account.id !== accountId,
           );
@@ -205,9 +205,9 @@ export const useImagePageStore = create(
         addAccount(accounts: AccountInfo[]) {
           let imageAccounts = [...get().imageAccounts];
           // 新增账户
-          const accountSet = new Set<number>(accounts.map((v) => v.id));
+          const accountSet = new Set<string>(accounts.map((v) => v.id));
           // 已有账户
-          const existAccountSet = new Set<number>(
+          const existAccountSet = new Set<string>(
             imageAccounts.map((v) => v.account.id),
           );
           // 要添加到数据的账户
@@ -240,7 +240,7 @@ export const useImagePageStore = create(
         },
 
         // 设置单条数据的参数
-        setOnePubParams(pubParmas: IPubParams, id: number) {
+        setOnePubParams(pubParmas: IPubParams, id: string) {
           const imageAccounts = [...get().imageAccounts];
           const findedData = imageAccounts.find((v) => v.account.id === id);
           if (!findedData) return;
@@ -257,10 +257,10 @@ export const useImagePageStore = create(
         // 更新用户数据
         updateAccounts(accounts: AccountInfo[]) {
           const imageAccounts = [...get().imageAccounts];
-          const imageTextMap = new Map<number, IImageAccountItem>();
+          const imageTextMap = new Map<string, IImageAccountItem>();
 
           imageAccounts.map((v) => {
-            imageTextMap.set(v.account.id || 0, v);
+            imageTextMap.set(v.account.id || "0", v);
           });
 
           accounts.map((v) => {

@@ -2,8 +2,6 @@ import { ForwardedRef, forwardRef, memo, useMemo } from "react";
 import styles from "./imageParamsSet.module.scss";
 import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 import { Alert, Avatar, Tooltip } from "antd";
-import ImageParamsSet_Douyin from "./children/ImageParamsSet_Douyin";
-import ImageParamsSet_XHS from "./children/ImageParamsSet_XHS";
 import { IImageAccountItem } from "../../../imagePage.type";
 import { useImagePageStore } from "../../../useImagePageStore";
 import { useShallow } from "zustand/react/shallow";
@@ -136,14 +134,14 @@ const ParamsSettingDetails = memo(
             id={currAccountItem?.account.id}
           />
 
-          {(() => {
-            switch (activePlat) {
-              case PlatType.Douyin:
-                return <ImageParamsSet_Douyin />;
-              case PlatType.Xhs:
-                return <ImageParamsSet_XHS />;
-            }
-          })()}
+          {/*{(() => {*/}
+          {/*  switch (activePlat) {*/}
+          {/*    case PlatType.Douyin:*/}
+          {/*      return <ImageParamsSet_Douyin />;*/}
+          {/*    case PlatType.Xhs:*/}
+          {/*      return <ImageParamsSet_XHS />;*/}
+          {/*  }*/}
+          {/*})()}*/}
         </div>
       );
     },

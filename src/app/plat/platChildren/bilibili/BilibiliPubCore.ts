@@ -4,8 +4,7 @@ import {
   IVideoPublishItem,
   PubProgressType,
 } from "@/app/plat/plat.type";
-import { calculateChunks, readBlobRange } from "@/app/plat/plat.util";
-import { KwaiApiUploadProxyUrl } from "@/constant";
+import { calculateChunks } from "@/app/plat/plat.util";
 import {
   apiInitBilibiliVideo,
   apiUploadBilibiliCover,
@@ -60,10 +59,10 @@ export class BilibiliPubCore {
       const publishData = {
         flowId: `bilibili_${Date.now()}`, // 生成唯一的流程ID
         type: PubType.VIDEO,
-        title: this.videoPubParams.title || '',
-        desc: this.videoPubParams.describe || '',
+        title: this.videoPubParams.title || "",
+        desc: this.videoPubParams.describe || "",
         accountId: this.kwaiPlat.account.id,
-        uid: this.kwaiPlat.account.uid || '',
+        uid: this.kwaiPlat.account.uid || "",
         accountType: AccountType.BILIBILI,
         videoUrl: result.worksUrl, // 使用构建的视频地址
         coverUrl: coverUrl, // 使用实际上传的封面地址
@@ -73,23 +72,22 @@ export class BilibiliPubCore {
         option: {
           worksId: result.worksId,
           worksUrl: result.worksUrl,
-          platform: 'bilibili',
+          platform: "bilibili",
           publishResult: result,
         },
       };
 
       const res = await apiCreatePublish(publishData);
-      console.log('发布记录创建成功:', res);
+      console.log("发布记录创建成功:", res);
       return res;
     } catch (error) {
-      console.error('创建发布记录失败:', error);
+      console.error("创建发布记录失败:", error);
       // 不抛出错误，避免影响主流程
     }
   }
 
   // 视频发布
   async publishVideo(): Promise<IPublishResult> {
-
     console.log("视频发布");
     console.log(this.videoPubParams);
     console.log(this.kwaiPlat.account);
@@ -128,7 +126,7 @@ export class BilibiliPubCore {
           this.kwaiPlat.account.id,
           uploadToken,
           i + 1,
-          sliced
+          sliced,
         );
 
         if (res?.code !== 0) {
@@ -145,7 +143,7 @@ export class BilibiliPubCore {
       this.onProgress?.(0.7, "开始合并分片");
       const completeRes = await apiCompleteBilibiliVideo(
         this.kwaiPlat.account.id,
-        uploadToken
+        uploadToken,
       );
       if (completeRes?.code !== 0) {
         throw new Error("分片合并失败");
@@ -153,13 +151,13 @@ export class BilibiliPubCore {
       this.onProgress?.(0.8, "分片合并完成");
 
       // 3. 上传封面
-      let coverUrl:any = "";
+      let coverUrl: any = "";
       if (this.videoPubParams.cover?.file) {
         const formData = new FormData();
         formData.append("file", this.videoPubParams.cover.file);
         const coverRes = await apiUploadBilibiliCover(
           this.kwaiPlat.account.id,
-          formData
+          formData,
         );
         if (coverRes?.data) {
           coverUrl = coverRes.data;
@@ -174,7 +172,7 @@ export class BilibiliPubCore {
         uploadToken,
         title: this.videoPubParams.title,
         cover: coverUrl,
-        tid:  21, // 默认使用日常分区
+        tid: 21, // 默认使用日常分区
         // noReprint: this.videoPubParams.noReprint || 0,
         desc: this.videoPubParams.describe,
         tag: this.videoPubParams.topics || [],
@@ -182,7 +180,7 @@ export class BilibiliPubCore {
       };
 
       this.onProgress?.(0.95, "正在提交稿件");
-      const submitRes:any = await apiSubmitBilibiliArchive(archiveData);
+      const submitRes: any = await apiSubmitBilibiliArchive(archiveData);
       console.log("稿件提交结果:", submitRes);
 
       if (submitRes?.code !== 0) {
@@ -201,10 +199,10 @@ export class BilibiliPubCore {
       await this.createPublishRecord(result, coverUrl);
 
       return result;
-    } catch (error:any) {
+    } catch (error: any) {
       console.error("发布视频失败:", error);
       this.onProgress?.(0, "发布失败");
-      
+
       const result = {
         worksId: "",
         worksUrl: "",
@@ -213,7 +211,7 @@ export class BilibiliPubCore {
       };
 
       // 即使发布失败也创建记录
-      await this.createPublishRecord(result, '');
+      await this.createPublishRecord(result, "");
 
       return result;
     }

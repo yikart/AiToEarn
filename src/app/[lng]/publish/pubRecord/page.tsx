@@ -1,12 +1,26 @@
 "use client";
 
-import { useEffect, useMemo, useState } from 'react';
-import styles from './pubRecord.module.scss';
-import { apiGetPublishList, PubStatus, AccountType } from '@/api/publish';
-import { Button, Image, Select, Table, TableProps, Tag, Modal, Descriptions, Avatar, Space, Typography } from 'antd';
-import { formatTime } from '@/utils';
-import { PubType } from '@/app/config/publishConfig';
-import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig';
+import { useEffect, useMemo, useState } from "react";
+import styles from "./pubRecord.module.scss";
+import { apiGetPublishList, PubStatus, AccountType } from "@/api/publish";
+import {
+  Button,
+  Image,
+  Select,
+  Table,
+  TableProps,
+  Tag,
+  Modal,
+  Descriptions,
+  Typography,
+} from "antd";
+import { formatTime } from "@/utils";
+import { PubType } from "@/app/config/publishConfig";
+import { PubRecordStatusTag } from "@/app/layout/BellMessage";
+import {
+  ImageView,
+  PlatformView,
+} from "@/app/[lng]/publish/pubRecord/pubRecord.common";
 
 const { Text, Title } = Typography;
 
@@ -33,105 +47,21 @@ export interface PubRecordModel {
   [key: string]: any;
 }
 
-// 图片视图组件
-export const ImageView = ({
-  prm,
-  width,
-  height,
-}: {
-  prm: PubRecordModel;
-  width: number | string;
-  height: number | string;
-}) => {
-  const [imgUrl, setImgUrl] = useState('');
-
-  useEffect(() => {
-    // 优先使用 coverUrl，如果没有则使用 coverPath
-    const coverUrl = prm.coverUrl || prm.coverPath;
-    if (coverUrl) {
-      if (coverUrl.includes('https://') || coverUrl.includes('http://')) {
-        setImgUrl(coverUrl);
-      } else {
-        // 如果是本地路径，可以转换为 URL
-        setImgUrl(coverUrl);
-      }
-    }
-  }, [prm.coverUrl, prm.coverPath]);
-
-  const filename = useMemo(() => {
-    const videoUrl = prm.videoUrl || prm.videoPath;
-    if (videoUrl) {
-      return videoUrl.split('/').pop() || '未知文件';
-    }
-    return '未知文件';
-  }, [prm.videoUrl, prm.videoPath]);
-
-  return (
-    <div
-      className={styles['pubRecord-pubCon']}
-      style={{ minHeight: height + 'px' }}
-    >
-      {imgUrl ? (
-        <Image src={imgUrl} height={height} width={width} />
-      ) : (
-        <div style={{ width, height, backgroundColor: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <span>无封面</span>
-        </div>
-      )}
-      <span title={filename} className="pubRecord-pubCon-name">
-        {filename}
-      </span>
-    </div>
-  );
-};
-
-// 平台展示组件
-export const PlatformView = ({ accountType }: { accountType: AccountType }) => {
-  const platInfo = AccountPlatInfoMap.get(accountType as unknown as PlatType);
-  
-  if (!platInfo) {
-    return <Tag color="default">未知平台</Tag>;
-  }
-
-  return (
-    <Space>
-      <Avatar size="small" src={platInfo.icon} />
-      <Text>{platInfo.name}</Text>
-    </Space>
-  );
-};
-
-// 发布状态标签组件
-export const PubRecordStatusTag = ({ status }: { status: PubStatus }) => {
-  switch (status) {
-    case PubStatus.FAIL:
-      return <Tag color="error">发布失败</Tag>;
-    case PubStatus.RELEASED:
-      return <Tag color="success">发布成功</Tag>;
-    case PubStatus.PartSuccess:
-      return <Tag color="warning">部分发布成功</Tag>;
-    case PubStatus.UNPUBLISH:
-      return <Tag color="processing">未发布</Tag>;
-    default:
-      return <Tag color="default">未知状态</Tag>;
-  }
-};
-
 // 详情弹窗内容组件
 const DetailContent = ({ data }: { data: PubRecordModel }) => {
   const renderValue = (key: string, value: any) => {
     // 特殊字段处理
-    if (key === 'imgList' || key === 'imgUrlList') {
+    if (key === "imgList" || key === "imgUrlList") {
       if (Array.isArray(value) && value.length > 0) {
         return (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
             {value.map((url: string, index: number) => (
               <Image
                 key={index}
                 src={url}
                 width={80}
                 height={80}
-                style={{ objectFit: 'cover', borderRadius: '4px' }}
+                style={{ objectFit: "cover", borderRadius: "4px" }}
                 fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCYh2zi+oLMpMzyhRcASGUqqCZ16yno6CkYGRAQMDKMwhqj/fAIcloxgHQqxAjIHBEugw5sUIsSQpBobtQPdLciLEVJYzMPBHMDBsayhILEqEO4DxG0txmrERhM29nYGBddr//5/DGRjYNRkY/l7////39v///y4Dmn+LgeHANwDrkl1AuO+pmgAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAwqADAAQAAAABAAAAwwAAAAD9b/HnAAAHlklEQVR4Ae3dP3Ik1RnG4W+FgYxN"
               />
             ))}
@@ -141,14 +71,19 @@ const DetailContent = ({ data }: { data: PubRecordModel }) => {
       return <Text type="secondary">无图片</Text>;
     }
 
-    if (key === 'videoUrl' || key === 'coverUrl') {
-      if (value && typeof value === 'string') {
+    if (key === "videoUrl" || key === "coverUrl") {
+      if (value && typeof value === "string") {
         return (
           <div>
             <Text copyable>{value}</Text>
             {value.match(/\.(jpg|jpeg|png|gif|webp)$/i) && (
-              <div style={{ marginTop: '8px' }}>
-                <Image src={value} width={120} height={80} style={{ objectFit: 'cover' }} />
+              <div style={{ marginTop: "8px" }}>
+                <Image
+                  src={value}
+                  width={120}
+                  height={80}
+                  style={{ objectFit: "cover" }}
+                />
               </div>
             )}
           </div>
@@ -156,40 +91,56 @@ const DetailContent = ({ data }: { data: PubRecordModel }) => {
       }
     }
 
-    if (key === 'option' && typeof value === 'object') {
+    if (key === "option" && typeof value === "object") {
       return (
-        <div style={{ backgroundColor: '#f5f5f5', padding: '8px', borderRadius: '4px' }}>
-          <pre style={{ margin: 0, fontSize: '12px' }}>{JSON.stringify(value, null, 2)}</pre>
+        <div
+          style={{
+            backgroundColor: "#f5f5f5",
+            padding: "8px",
+            borderRadius: "4px",
+          }}
+        >
+          <pre style={{ margin: 0, fontSize: "12px" }}>
+            {JSON.stringify(value, null, 2)}
+          </pre>
         </div>
       );
     }
 
-    if (key === 'publishTime') {
+    if (key === "publishTime") {
       return <Text>{formatTime(value)}</Text>;
     }
 
-    if (key === 'status') {
+    if (key === "status") {
       return <PubRecordStatusTag status={value} />;
     }
 
-    if (key === 'type') {
+    if (key === "type") {
       const typeMap: Record<string, string> = {
-        [PubType.ARTICLE]: '文章发布',
-        [PubType.VIDEO]: '视频发布',
-        [PubType.ImageText]: '图文发布',
+        [PubType.ARTICLE]: "文章发布",
+        [PubType.VIDEO]: "视频发布",
+        [PubType.ImageText]: "图文发布",
       };
-      return <Tag color="blue">{typeMap[value] || '未知类型'}</Tag>;
+      return <Tag color="blue">{typeMap[value] || "未知类型"}</Tag>;
     }
 
-    if (key === 'accountType') {
+    if (key === "accountType") {
       return <PlatformView accountType={value} />;
     }
 
     // 默认处理
-    if (typeof value === 'object' && value !== null) {
+    if (typeof value === "object" && value !== null) {
       return (
-        <div style={{ backgroundColor: '#f5f5f5', padding: '8px', borderRadius: '4px' }}>
-          <pre style={{ margin: 0, fontSize: '12px' }}>{JSON.stringify(value, null, 2)}</pre>
+        <div
+          style={{
+            backgroundColor: "#f5f5f5",
+            padding: "8px",
+            borderRadius: "4px",
+          }}
+        >
+          <pre style={{ margin: 0, fontSize: "12px" }}>
+            {JSON.stringify(value, null, 2)}
+          </pre>
         </div>
       );
     }
@@ -198,39 +149,39 @@ const DetailContent = ({ data }: { data: PubRecordModel }) => {
   };
 
   const fieldLabels: Record<string, string> = {
-    id: '记录ID',
-    flowId: '流程ID',
-    type: '发布类型',
-    title: '标题',
-    desc: '描述',
-    accountId: '账户ID',
-    accountType: '平台类型',
-    uid: '用户ID',
-    videoUrl: '视频链接',
-    coverUrl: '封面链接',
-    imgList: '图片列表',
-    imgUrlList: '图片链接列表',
-    publishTime: '发布时间',
-    status: '发布状态',
-    option: '发布选项',
-    coverPath: '封面路径',
-    videoPath: '视频路径',
+    id: "记录ID",
+    flowId: "流程ID",
+    type: "发布类型",
+    title: "标题",
+    desc: "描述",
+    accountId: "账户ID",
+    accountType: "平台类型",
+    uid: "用户ID",
+    videoUrl: "视频链接",
+    coverUrl: "封面链接",
+    imgList: "图片列表",
+    imgUrlList: "图片链接列表",
+    publishTime: "发布时间",
+    status: "发布状态",
+    option: "发布选项",
+    coverPath: "封面路径",
+    videoPath: "视频路径",
   };
 
   return (
-    <div style={{ maxHeight: '60vh', overflow: 'auto' }}>
+    <div style={{ maxHeight: "60vh", overflow: "auto" }}>
       <Descriptions
         column={1}
         bordered
         size="small"
-        labelStyle={{ fontWeight: 'bold', width: '120px' }}
-        contentStyle={{ wordBreak: 'break-all' }}
+        labelStyle={{ fontWeight: "bold", width: "120px" }}
+        contentStyle={{ wordBreak: "break-all" }}
       >
         {Object.entries(data).map(([key, value]) => (
-          <Descriptions.Item 
-            label={fieldLabels[key] || key} 
+          <Descriptions.Item
+            label={fieldLabels[key] || key}
             key={key}
-            style={{ padding: '12px' }}
+            style={{ padding: "12px" }}
           >
             {renderValue(key, value)}
           </Descriptions.Item>
@@ -241,66 +192,63 @@ const DetailContent = ({ data }: { data: PubRecordModel }) => {
 };
 
 // 主页面组件
-export default function Page({
-  height = '75vh',
-  onChange,
-  defaultPubType,
-}: {
-  height?: string;
-  onChange?: (pubRecordModel: PubRecordModel) => void;
-  defaultPubType?: PubType;
-}) {
+export default function Page() {
   const [pubRecordList, setPubRecordList] = useState<PubRecordModel[]>([]);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailData, setDetailData] = useState<any>(null);
-  // 发布类型的筛选
-  const [pubType, setPubType] = useState<PubType | undefined>(defaultPubType);
+  const [pubType, setPubType] = useState<PubType | undefined>();
 
   const columns = useMemo(() => {
-    const columns: TableProps<PubRecordModel>['columns'] = [
+    const columns: TableProps<PubRecordModel>["columns"] = [
       {
-        title: '序号',
+        title: "序号",
         render: (text, prm, ind) => ind + 1,
         width: 70,
-        key: '序号',
+        key: "序号",
       },
       {
-        title: '发布内容',
+        title: "发布内容",
         render: (text, prm) => <ImageView prm={prm} width={30} height={50} />,
         width: 200,
-        key: '发布内容',
+        key: "发布内容",
       },
       {
-        title: '标题',
-        dataIndex: 'title',
-        key: 'title',
+        title: "标题",
+        dataIndex: "title",
+        key: "title",
         width: 200,
         render: (text) => (
-          <div style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <div
+            style={{
+              maxWidth: 180,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
             {text}
           </div>
         ),
       },
       {
-        title: '平台',
-        dataIndex: 'accountType',
-        key: 'accountType',
+        title: "平台",
+        dataIndex: "accountType",
+        key: "accountType",
         width: 120,
         render: (text, prm) => <PlatformView accountType={prm.accountType} />,
       },
       {
-        title: '发布时间',
-        dataIndex: 'publishTime',
-        key: 'publishTime',
+        title: "发布时间",
+        dataIndex: "publishTime",
+        key: "publishTime",
         render: (text, prm) => formatTime(prm.publishTime),
         width: 200,
       },
       {
-        title: '发布类型',
-        dataIndex: 'type',
-        key: 'type',
+        title: "发布类型",
+        dataIndex: "type",
+        key: "type",
         render: (_, prm) => {
           switch (prm.type) {
             case PubType.ARTICLE:
@@ -316,16 +264,16 @@ export default function Page({
         width: 120,
       },
       {
-        title: '状态',
-        dataIndex: 'status',
-        key: 'status',
+        title: "状态",
+        dataIndex: "status",
+        key: "status",
         render: (text, prm) => <PubRecordStatusTag status={prm.status} />,
         width: 100,
       },
       {
-        title: '操作',
+        title: "操作",
         width: 100,
-        key: '操作',
+        key: "操作",
         render: (text, prm) => (
           <>
             <Button
@@ -352,64 +300,33 @@ export default function Page({
   async function getPubList() {
     setLoading(true);
     try {
-      const res:any = await apiGetPublishList(
-        1,
-        10,
-        {
-          type: pubType,
-        }
-      );
+      const res: any = await apiGetPublishList(1, 10, {
+        type: pubType,
+      });
       if (res?.data?.list) {
         setPubRecordList(res.data.list);
       } else {
         setPubRecordList([]);
       }
     } catch (error) {
-      console.error('获取发布记录失败:', error);
+      console.error("获取发布记录失败:", error);
       setPubRecordList([]);
     } finally {
       setLoading(false);
     }
   }
 
-  useEffect(() => {
-    if (onChange) {
-      const selectedRecord = pubRecordList.find((v) => v.id === selectedRowKeys[0]);
-      if (selectedRecord) {
-        onChange(selectedRecord);
-      }
-    }
-  }, [selectedRowKeys, pubRecordList, onChange]);
-
-  const rowSelection: TableProps<PubRecordModel>['rowSelection'] = {
-    onChange: (
-      selectedRowKeys: React.Key[],
-      selectedRows: PubRecordModel[],
-    ) => {
-      setSelectedRowKeys(selectedRowKeys as number[]);
-    },
-    getCheckboxProps: (record: PubRecordModel) => ({
-      name: record.title,
-    }),
-    selectedRowKeys,
-  };
-
   return (
-    <div
-      className={[
-        styles.pubRecord,
-        onChange && styles['pubRecord-component'],
-      ].join(' ')}
-    >
+    <div className={[styles.pubRecord].join(" ")}>
       {/* 详情弹窗 */}
       <Modal
         open={detailOpen}
         title={
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Title level={4} style={{ margin: 0 }}>发布记录详情</Title>
-            {detailData && (
-              <Tag color="blue">ID: {detailData.id}</Tag>
-            )}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Title level={4} style={{ margin: 0 }}>
+              发布记录详情
+            </Title>
+            {detailData && <Tag color="blue">ID: {detailData.id}</Tag>}
           </div>
         }
         onCancel={() => setDetailOpen(false)}
@@ -420,37 +337,29 @@ export default function Page({
         {detailData && <DetailContent data={detailData} />}
       </Modal>
 
-      {!onChange && (
-        <div className="pubRecord-options">
-          <Select
-            style={{ width: 120 }}
-            placeholder="发布类型"
-            allowClear
-            value={pubType}
-            onChange={(e) => {
-              setPubType(e as PubType);
-            }}
-            options={[
-              { value: PubType.ARTICLE, label: '文章' },
-              { value: PubType.ImageText, label: '图文' },
-              { value: PubType.VIDEO, label: '视频' },
-            ]}
-          />
-        </div>
-      )}
+      <div className="pubRecord-options">
+        <Select
+          style={{ width: 120 }}
+          placeholder="发布类型"
+          allowClear
+          value={pubType}
+          onChange={(e) => {
+            setPubType(e as PubType);
+          }}
+          options={[
+            { value: PubType.ARTICLE, label: "文章" },
+            { value: PubType.ImageText, label: "图文" },
+            { value: PubType.VIDEO, label: "视频" },
+          ]}
+        />
+      </div>
 
       <Table<PubRecordModel>
         columns={columns}
         dataSource={pubRecordList}
-        scroll={{ y: height }}
+        scroll={{ y: "70vh" }}
         rowKey="id"
         loading={loading}
-        rowSelection={onChange ? { type: 'radio', ...rowSelection } : undefined}
-        onRow={(record) => ({
-          onClick: () => {
-            setSelectedRowKeys([record.id]);
-          },
-        })}
         pagination={{
           total: pubRecordList.length,
           pageSize: 10,

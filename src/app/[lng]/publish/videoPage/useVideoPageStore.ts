@@ -188,7 +188,7 @@ export const useVideoPageStore = create(
            * 已经存在的账户ID做个去重
            * 因为accounts会将所有选择的账户数据传入
            */
-          const existAccountsSet = new Set<number>();
+          const existAccountsSet = new Set<string>();
           newV.map((v) => v.account && existAccountsSet.add(v.account.id));
           accounts = accounts.filter((v) => !existAccountsSet.has(v.id));
 
@@ -302,10 +302,10 @@ export const useVideoPageStore = create(
           const newValue = [...get().videoListChoose];
           if (newValue.length === 0) return;
           // key=账户ID val= videoListChoose item
-          const videoListMap = new Map<number, IVideoChooseItem>();
+          const videoListMap = new Map<string, IVideoChooseItem>();
 
           newValue.map((v) => {
-            videoListMap.set(v.account?.id || 0, v);
+            videoListMap.set(v.account?.id || "0", v);
           });
 
           accounts.map((v) => {
