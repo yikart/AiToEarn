@@ -1,0 +1,36 @@
+.materialContainer {
+  padding: 32px 40px;
+  background: #fff;
+  border-radius: 8px;
+  min-height: 600px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cgMain {
+  margin-top: 24px;
+}
+
+.mediaCard {
+  background: #f7f8fa;
+  border-radius: 6px;
+  padding: 16px;
+  cursor: pointer;
+  transition: border 0.2s;
+  border: 1px solid #eee;
+  min-width: 120px;
+  text-align: center;
+}
+
+.mediaCard:hover {
+  border: 2px solid #1677ff;
+}
+
+.cardContent {
+  font-size: 14px;
+  color: #333;
+} 

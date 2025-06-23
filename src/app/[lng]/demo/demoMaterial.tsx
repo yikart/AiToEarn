@@ -85,7 +85,7 @@ export const DemoMaterial = () => {
    * 批量创建素材
    */
   async function createMaterialList(groupId: string) {
-    const res = await apiCreateMaterialList({
+    const res:any = await apiCreateMaterialList({
       groupId,
       num: 10,
       option: {

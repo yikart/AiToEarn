@@ -2,26 +2,27 @@ import { useTranslation } from "@/app/i18n";
 import { PageParams } from "@/app/globals";
 import * as React from "react";
 import { getMetadata } from "@/utils/general";
-import { MaterialPageCore } from "@/app/[lng]/material/materialPageCore";
+import dynamic from "next/dynamic";
+
+const CgMaterialPageCore = dynamic(
+  () => import("./cgmaterialPageCore").then(mod => mod.default || mod.CgMaterialPageCore),
+  { ssr: false }
+);
 
 export async function generateMetadata({ params }: PageParams) {
   const { lng } = await params;
-  const { t } = await useTranslation(lng, "material");
   return await getMetadata(
     {
-      title: "素材库",
+      title: "草稿箱",
     },
     lng,
   );
 }
 
-export default async function Page({ params }: PageParams) {
-  const { lng } = await params;
-  const { t } = await useTranslation(lng, "material");
-
+export default function Page({ params }: PageParams) {
   return (
     <>
-      <MaterialPageCore />
+      <CgMaterialPageCore />
     </>
   );
 } 

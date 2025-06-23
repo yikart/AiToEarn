@@ -52,29 +52,29 @@ export const apiGetMaterialGroupList = (pageNo: number, pageSize: number) => {
 
 // 创建草稿素材
 export const apiCreateMaterial = (data: {
-  readonly groupId: string;
-  readonly coverUrl?: string;
+    groupId: string;
+    coverUrl?: string;
   mediaList: MaterialMedia[];
-  readonly title: string;
-  readonly desc?: string;
-  readonly option?: Record<string, any>;
+    title: string;
+    desc?: string;
+    option?: Record<string, any>;
 }) => {
   return http.post("material", data);
 };
 
 // 创建批量生成草稿任务
 export const apiCreateMaterialTask = (data: {
-  readonly groupId: string;
-  readonly num: number;
-  readonly aiModelTag: string;
-  readonly prompt: string;
-  readonly title?: string;
-  readonly desc?: string;
-  readonly location?: number[];
-  readonly publishTime?: Date;
-  readonly mediaGroups: string[];
-  readonly coverGroup: string;
-  readonly option?: Record<string, any>;
+    groupId: string;
+    num: number;
+    aiModelTag: string;
+    prompt: string;
+    title?: string;
+    desc?: string;
+    location?: number[];
+    publishTime?: Date;
+    mediaGroups: string[];
+    coverGroup: string;
+    option?: Record<string, any>;
 }) => {
   return http.post("material/task/create", data);
 };
