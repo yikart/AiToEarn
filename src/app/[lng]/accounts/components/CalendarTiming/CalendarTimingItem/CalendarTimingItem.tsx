@@ -3,6 +3,7 @@ import styles from "./calendarTimingItem.module.scss";
 import { DayCellContentArg } from "@fullcalendar/core";
 import { Button } from "antd";
 import { useTransClient } from "@/app/i18n/client";
+import { PlusOutlined } from "@ant-design/icons";
 
 export interface ICalendarTimingItemRef {}
 
@@ -42,17 +43,21 @@ const CalendarTimingItem = memo(
             <div className="calendarTimingItem-top-day">
               {arg.date.getDate()}
             </div>
+
+            {argDate >= nowDate && (
+              <Button size="small" icon={<PlusOutlined />} />
+            )}
           </div>
 
           {argDate >= nowDate && (
             <div className="calendarTimingItem-con">
-              <Button size="small">
+              <Button size="small" type="dashed">
                 <div className="calendarTimingItem-con-btn1">04:12 PM</div>
                 <div className="calendarTimingItem-con-btn2">
                   {t("addPost")}
                 </div>
               </Button>
-              <Button size="small">
+              <Button size="small" type="dashed">
                 <div className="calendarTimingItem-con-btn1">05:34 PM</div>
                 <div className="calendarTimingItem-con-btn2">
                   {t("addPost")}

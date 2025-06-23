@@ -9,6 +9,7 @@
     .calendarTimingItem-top {
       display: flex;
       justify-content: space-between;
+      margin-bottom: 5px;
       .calendarTimingItem-top-day {
         width: 24px;
         height: 24px;
@@ -16,6 +17,10 @@
         text-align: center;
         border-radius: 50%;
         margin-bottom: 3px;
+      }
+      button {
+        font-size: var(--fs-xs);
+        display: none;
       }
     }
     .calendarTimingItem-con {
@@ -25,7 +30,7 @@
       button {
         width: 100%;
         margin-bottom: 8px;
-        font-size: 12px;
+        font-size: var(--fs-xs);
         padding: 0;
         height: 26px !important;
         &:hover {
@@ -35,6 +40,16 @@
           .calendarTimingItem-con-btn1 {
             display: none;
           }
+        }
+      }
+    }
+  }
+
+  &:hover {
+    :global {
+      .calendarTimingItem-top {
+        button {
+          display: block !important;
         }
       }
     }
