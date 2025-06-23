@@ -45,6 +45,11 @@ export default function CgMaterialPageCore() {
   const [batchModal, setBatchModal] = useState(false);
   const [batchTaskLoading, setBatchTaskLoading] = useState(false);
 
+  // 批量生成草稿相关
+  const [batchMediaGroups, setBatchMediaGroups] = useState<string[]>([]);
+  const [batchCoverGroup, setBatchCoverGroup] = useState<string>("");
+  const [batchLocation, setBatchLocation] = useState<[number, number]>([0, 0]);
+
   const [detailModal, setDetailModal] = useState(false);
   const [detailData, setDetailData] = useState<any>(null);
 
@@ -116,7 +121,7 @@ export default function CgMaterialPageCore() {
     setSelectedCover(null);
     setSelectedMaterials([]);
     const res = await getMediaGroupList(1, 50);
-    setMediaGroups(res?.data?.list || []);
+    setMediaGroups(((res?.data as any)?.list as any[]) || []);
   }
 
   // 选择媒体组后，加载资源
@@ -164,6 +169,30 @@ export default function CgMaterialPageCore() {
     }
   }
 
+  // 打开批量生成草稿弹窗时，拉取媒体组和定位
+  async function openBatchModal() {
+    setBatchModal(true);
+    // 拉取媒体组
+    const res = await getMediaGroupList(1, 50);
+    setMediaGroups(((res?.data as any)?.list as any[]) || []);
+    // 获取地理位置
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setBatchLocation([pos.coords.longitude, pos.coords.latitude]);
+          batchForm.setFieldsValue({ location: [pos.coords.longitude, pos.coords.latitude] });
+        },
+        () => {
+          setBatchLocation([0, 0]);
+          batchForm.setFieldsValue({ location: [0, 0] });
+        }
+      );
+    } else {
+      setBatchLocation([0, 0]);
+      batchForm.setFieldsValue({ location: [0, 0] });
+    }
+  }
+
   // 批量生成草稿
   async function handleBatchMaterial() {
     const values = await batchForm.validateFields();
@@ -176,10 +205,10 @@ export default function CgMaterialPageCore() {
         prompt: values.prompt,
         title: values.title,
         desc: values.desc,
-        location: [0, 0],
+        location: batchLocation,
         publishTime: new Date(),
-        mediaGroups: [],
-        coverGroup: "",
+        mediaGroups: batchMediaGroups, // 这里是 groupId 数组
+        coverGroup: batchCoverGroup,   // 这里是 groupId
         option: {},
       });
       const taskId = res?.data?._id;
@@ -213,7 +242,7 @@ export default function CgMaterialPageCore() {
               renderItem={item => (
                 <List.Item
                   style={{cursor:'pointer',background:selectedGroup?._id===item._id?'#e6f4ff':'#fff'}}
-                  onClick={()=>setSelectedGroup(item)}
+                  onClick={()=>setSelectedGroup(item as any)}
                 >
                   <div style={{fontWeight:500}}>{item.name || item.title}</div>
                 </List.Item>
@@ -229,7 +258,7 @@ export default function CgMaterialPageCore() {
             </div>
             <Space>
               <Button type="primary" onClick={openCreateMaterialModal} disabled={!selectedGroup}>创建素材</Button>
-              <Button onClick={()=>setBatchModal(true)} disabled={!selectedGroup}>批量生成草稿</Button>
+              <Button onClick={openBatchModal} disabled={!selectedGroup}>批量生成草稿</Button>
             </Space>
           </div>
           <Spin spinning={materialLoading}>
@@ -386,7 +415,7 @@ export default function CgMaterialPageCore() {
       >
         <Form form={batchForm} layout="vertical">
           <Form.Item label="大模型" name="model" rules={[{required:true,message:'请选择大模型'}]}>
-            <Select options={[{label:'图片1.0',value:'图片1.0'},{label:'文生图2.0',value:'文生图2.0'}]} style={{width:200}}/>
+            <Select options={[{label:'阿里1.0',value:'ali'},]} style={{width:200}}/>
           </Form.Item>
           <Form.Item label="提示词" name="prompt">
             <Input/>
@@ -397,8 +426,26 @@ export default function CgMaterialPageCore() {
           <Form.Item label="简介" name="desc">
             <TextArea rows={3}/>
           </Form.Item>
+          <Form.Item label="封面组" name="coverGroup" rules={[{required:true,message:'请选择封面组'}]}>
+            <Select
+              options={mediaGroups.map((g:any)=>({label:g.title,value:g._id}))}
+              style={{width:200}}
+              onChange={v=>setBatchCoverGroup(v)}
+            />
+          </Form.Item>
+          <Form.Item label="素材组" name="mediaGroups" rules={[{required:true,message:'请选择素材组'}]}>
+            <Select
+              mode="multiple"
+              options={mediaGroups.map((g:any)=>({label:g.title,value:g._id}))}
+              style={{width:300}}
+              onChange={v=>setBatchMediaGroups(v)}
+            />
+          </Form.Item>
           <Form.Item label="生成数量" name="num" initialValue={4} rules={[{required:true}]}> 
             <InputNumber min={1} max={20}/>
+          </Form.Item>
+          <Form.Item label="地理位置" name="location">
+            <Input value={batchLocation.join(',')} disabled />
           </Form.Item>
         </Form>
       </Modal>
