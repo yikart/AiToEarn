@@ -170,11 +170,12 @@ export class BilibiliPubCore {
       const archiveData = {
         accountId: this.kwaiPlat.account.id,
         uploadToken,
-        title: this.videoPubParams.title,
+        title: this.videoPubParams.title || "开心快乐每一天",
         cover: coverUrl,
         tid: 21, // 默认使用日常分区
         // noReprint: this.videoPubParams.noReprint || 0,
-        desc: this.videoPubParams.describe,
+        noReprint: 0,
+        desc: this.videoPubParams.describe || "开心快乐每一天",
         tag: this.videoPubParams.topics || [],
         copyright: 1,
       };
