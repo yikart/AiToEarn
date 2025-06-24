@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat: 发布弹框左右两侧显示隐藏过渡动画完成">
+    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat: 日历样式调整">
+      <change afterPath="$PROJECT_DIR$/src/assets/svgs/plat/bilibili.svg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/calendarTiming.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/calendarTiming.module.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/config/platConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/config/platConfig.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.module.scss" afterDir="false" />
     </list>
@@ -74,6 +74,11 @@
       </map>
     </option>
   </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\assets\svgs\plat" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="默认任务">
@@ -90,7 +95,7 @@
       <workItem from="1750763285511" duration="48000" />
       <workItem from="1750763342070" duration="32000" />
       <workItem from="1750763376065" duration="41000" />
-      <workItem from="1750763426455" duration="967000" />
+      <workItem from="1750763426455" duration="1460000" />
     </task>
     <task id="LOCAL-00001" summary="feat: 日历完善">
       <option name="closed" value="true" />
@@ -132,7 +137,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750759876887</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="feat: 日历样式调整">
+      <option name="closed" value="true" />
+      <created>1750764427509</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1750764427509</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -157,6 +170,7 @@
     <MESSAGE value="fix: 日历调整" />
     <MESSAGE value="feat: 发布大改" />
     <MESSAGE value="feat: 发布弹框左右两侧显示隐藏过渡动画完成" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 发布弹框左右两侧显示隐藏过渡动画完成" />
+    <MESSAGE value="feat: 日历样式调整" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 日历样式调整" />
   </component>
 </project>

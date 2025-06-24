@@ -71,7 +71,16 @@ const PublishDialog = memo(
                   <span className="publishDialog-con-head-title">发布作品</span>
                 </div>
                 <div className="publishDialog-con-acconts">
-
+                  {accounts.map((account) => {
+                    return (
+                      <div
+                        className="publishDialog-con-acconts-item"
+                        key={account.id}
+                      >
+                        1
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
               <div className="publishDialog-footer">
