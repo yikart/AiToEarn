@@ -67,6 +67,7 @@ export const apiCreateMaterial = (data: {
   title: string;
   desc?: string;
   option?: Record<string, any>;
+  location?: number[];
 }) => {
   return http.post("material", data);
 };

@@ -41,6 +41,8 @@ export default function CgMaterialPageCore() {
   const [mediaList, setMediaList] = useState<any[]>([]);
   const [selectedCover, setSelectedCover] = useState<string | null>(null);
   const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
+  // 单个素材位置
+  const [singleLocation, setSingleLocation] = useState<[number, number]>([0, 0]);
 
   // 创建/批量表单
   const [form] = Form.useForm();
@@ -142,6 +144,22 @@ export default function CgMaterialPageCore() {
     setSelectedMaterials([]);
     const res = await getMediaGroupList(1, 50);
     setMediaGroups(((res?.data as any)?.list as any[]) || []);
+    // 获取地理位置
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setSingleLocation([pos.coords.longitude, pos.coords.latitude]);
+          form.setFieldsValue({ location: [pos.coords.longitude, pos.coords.latitude] });
+        },
+        () => {
+          setSingleLocation([0, 0]);
+          form.setFieldsValue({ location: [0, 0] });
+        }
+      );
+    } else {
+      setSingleLocation([0, 0]);
+      form.setFieldsValue({ location: [0, 0] });
+    }
   }
 
   // 选择媒体组后，加载资源
@@ -177,6 +195,7 @@ export default function CgMaterialPageCore() {
         title: values.title,
         desc: values.desc,
         option: {},
+        location: singleLocation,
       });
       message.success('创建素材成功');
       setCreateModal(false);
@@ -377,6 +396,12 @@ export default function CgMaterialPageCore() {
                   {...handleGroupItemEvents(item)}
                 >
                   <div className={styles.groupName}>{item.name || item.title}</div>
+                  <div className={styles.descTypeInfo}>
+                    {item.desc && <span>{item.desc}</span>}
+                    <span>
+                      {item.type === MaterialType.ARTICLE ? '图文' : item.type === MaterialType.VIDEO ? '视频' : item.type}
+                    </span>
+                  </div>
                   <div className={styles.groupActions}>
                     <span
                       className={styles.groupActionBtn}
@@ -444,7 +469,7 @@ export default function CgMaterialPageCore() {
                         <img
                           src={getOssUrl(item.coverUrl)}
                           alt="cover"
-                          style={{ width: "100%", height: 120, objectFit: "cover", borderRadius: 6 }}
+                          style={{ width: "100%", objectFit: "cover", borderRadius: 6 }}
                         />
                       ) : null
                     }
@@ -571,6 +596,15 @@ export default function CgMaterialPageCore() {
           </Form.Item>
           <Form.Item label="简介" name="desc">
             <TextArea rows={3} />
+          </Form.Item>
+          <Form.Item label="地理位置" name="location">
+            <Input
+              value={singleLocation.join(',')}
+              onChange={e => {
+                const val = e.target.value.split(',').map((v: string) => Number(v.trim()));
+                setSingleLocation([val[0] || 0, val[1] || 0]);
+              }}
+            />
           </Form.Item>
         </Form>
       </Modal>
