@@ -42,6 +42,8 @@ const PublishDialog = memo(
           setAccountChoosed: state.setAccountChoosed,
         })),
       );
+      // 当前步骤，0=所有账号没有参数，要设置参数。 1=所有账号有参数，详细设置参数
+      const [step, setStep] = useState(0);
 
       // 关闭弹框并确认关闭
       const closeDialog = useCallback(() => {
@@ -67,6 +69,8 @@ const PublishDialog = memo(
       const openRight = useMemo(() => {
         return accountChoosed.length !== 0;
       }, [accountChoosed]);
+
+      // 获取
 
       return (
         <>
@@ -135,6 +139,24 @@ const PublishDialog = memo(
                     );
                   })}
                 </div>
+
+                {step === 0 ? (
+                  <>
+                    {accountChoosed.length === 0 && (
+                      <div className="publishDialog-con-tips">
+                        你的工作被保存了，选择一个账号来创建一个帖子。
+                      </div>
+                    )}
+                    {accountChoosed.length == 1 && (
+                      <div style={{ height: "500px" }}>{accountChoosed[0].type}</div>
+                    )}
+                    {accountChoosed.length >= 2 && (
+                      <div style={{ height: "500px" }}>通用参数</div>
+                    )}
+                  </>
+                ) : (
+                  <>第二步</>
+                )}
               </div>
               <div className="publishDialog-footer">
                 time

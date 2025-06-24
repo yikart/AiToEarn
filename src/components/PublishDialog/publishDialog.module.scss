@@ -60,6 +60,12 @@ $assistantWidth: 300px;
           }
         }
       }
+
+      &-tips {
+        text-align: center;
+        margin: 30px 0 0 0;
+        color: var(--grayColor7);
+      }
     }
     .publishDialog-footer {
       display: flex;
