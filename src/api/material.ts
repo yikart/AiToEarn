@@ -45,7 +45,7 @@ export const apiDeleteMaterialGroup = (id: string) => {
 export const apiUpdateMaterialGroupInfo = (
   id: string,
   data: {
-    title?: string;
+    name?: string;
     desc?: string;
   },
 ) => {

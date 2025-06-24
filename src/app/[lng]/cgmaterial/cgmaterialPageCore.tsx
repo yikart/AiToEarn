@@ -243,7 +243,7 @@ export default function CgMaterialPageCore() {
     if (!editGroupName) return message.warning("请输入新组名");
     setEditLoading(true);
     try {
-      await apiUpdateMaterialGroupInfo(editingGroup._id, { title: editGroupName });
+      await apiUpdateMaterialGroupInfo(editingGroup._id, { name: editGroupName });
       message.success("更新成功");
       setEditGroupModal(false);
       setEditGroupName("");
