@@ -5,12 +5,14 @@ import { ExclamationCircleFilled } from "@ant-design/icons";
 import PublishDialogAi from "@/components/PublishDialog/compoents/PublishDialogAi";
 import PublishDialogPreview from "@/components/PublishDialog/compoents/PublishDialogPreview";
 import { CSSTransition } from "react-transition-group";
+import { SocialAccount } from "@/api/types/account.type";
 
 export interface IPublishDialogRef {}
 
 export interface IPublishDialogProps {
   open: boolean;
   onClose: () => void;
+  accounts: SocialAccount[];
 }
 
 const { confirm } = Modal;
@@ -19,12 +21,11 @@ const { confirm } = Modal;
 const PublishDialog = memo(
   forwardRef(
     (
-      { open, onClose }: IPublishDialogProps,
+      { open, onClose, accounts }: IPublishDialogProps,
       ref: ForwardedRef<IPublishDialogRef>,
     ) => {
       const [openLeft, setOpenLeft] = useState(false);
       const [openRight, setOpenRight] = useState(false);
-      const [showB, setShowB] = useState(true);
 
       // 关闭弹框并确认关闭
       const closeDialog = useCallback(() => {
@@ -64,10 +65,18 @@ const PublishDialog = memo(
               <PublishDialogAi />
             </CSSTransition>
 
-            <div className="publishDialog-con">
-              <div className="publishDialogFooter-footer">
+            <div className="publishDialog-wrapper">
+              <div className="publishDialog-con">
+                <div className="publishDialog-con-head">
+                  <span className="publishDialog-con-head-title">发布作品</span>
+                </div>
+                <div className="publishDialog-con-acconts">
+
+                </div>
+              </div>
+              <div className="publishDialog-footer">
                 time
-                <div className="publishDialogFooter-footer-btns">
+                <div className="publishDialog-footer-btns">
                   <Button size="large" onClick={closeDialog}>
                     取消
                   </Button>

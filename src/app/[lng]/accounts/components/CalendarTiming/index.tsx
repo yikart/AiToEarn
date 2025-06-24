@@ -14,6 +14,8 @@ import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { useTransClient } from "@/app/i18n/client";
 import CalendarTimingItem from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem";
 import PublishDialog from "@/components/PublishDialog";
+import { useAccountStore } from "@/store/account";
+import { useShallow } from "zustand/react/shallow";
 
 export interface ICalendarTimingRef {}
 export interface ICalendarTimingProps {}
@@ -38,6 +40,11 @@ const CalendarTiming = memo(
       };
       const calendarTimingCalendarRef = useRef<HTMLDivElement>(null);
       const [publishDialogOpen, setPublishDialogOpen] = useState(false);
+      const { accountList } = useAccountStore(
+        useShallow((state) => ({
+          accountList: state.accountList,
+        })),
+      );
 
       // 动画触发函数
       const triggerAnimation = (dir: "left" | "right" | "fade") => {
@@ -77,6 +84,7 @@ const CalendarTiming = memo(
           <PublishDialog
             open={publishDialogOpen}
             onClose={() => setPublishDialogOpen(false)}
+            accounts={accountList}
           />
 
           <div className="calendarTiming-toolbar">

@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat: 发布大改">
-      <change afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogAi.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogPreview.tsx" afterDir="false" />
+    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat: 发布弹框左右两侧显示隐藏过渡动画完成">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/calendarTiming.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/calendarTiming.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.module.scss" afterDir="false" />
     </list>
@@ -42,26 +42,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "editor.reader.mode",
-    "ts.external.directory.path": "E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.reader.mode&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
+  <component name="ReactBuddySettings">
+    <option name="extensionsIgnore" value="true" />
+  </component>
   <component name="ReactDesignerToolWindowState">
     <option name="myId2Visible">
       <map>
@@ -70,13 +73,6 @@
         <entry key="com.intellij.reactbuddy.storybook" value="false" />
       </map>
     </option>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-WS-241.18034.50" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -87,6 +83,14 @@
       <option name="presentableId" value="Default" />
       <updated>1750677868216</updated>
       <workItem from="1750677869133" duration="5869000" />
+      <workItem from="1750760247427" duration="43000" />
+      <workItem from="1750760293021" duration="942000" />
+      <workItem from="1750763212319" duration="38000" />
+      <workItem from="1750763252811" duration="23000" />
+      <workItem from="1750763285511" duration="48000" />
+      <workItem from="1750763342070" duration="32000" />
+      <workItem from="1750763376065" duration="41000" />
+      <workItem from="1750763426455" duration="967000" />
     </task>
     <task id="LOCAL-00001" summary="feat: 日历完善">
       <option name="closed" value="true" />
@@ -120,7 +124,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750754877260</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="feat: 发布弹框左右两侧显示隐藏过渡动画完成">
+      <option name="closed" value="true" />
+      <created>1750759876887</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1750759876887</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -144,6 +156,7 @@
     <MESSAGE value="feat: 日历完善" />
     <MESSAGE value="fix: 日历调整" />
     <MESSAGE value="feat: 发布大改" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 发布大改" />
+    <MESSAGE value="feat: 发布弹框左右两侧显示隐藏过渡动画完成" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 发布弹框左右两侧显示隐藏过渡动画完成" />
   </component>
 </project>

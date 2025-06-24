@@ -6,22 +6,42 @@ $assistantWidth: 250px;
     .ant-modal-content {
       padding: 0 !important;
     }
-    .publishDialog-con {
+    .publishDialog-wrapper {
       background: #fff;
       min-height: 500px;
       position: relative;
       z-index: 10;
       border-radius: 8px;
       width: 700px;
-      .publishDialogFooter-footer {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .publishDialog-con {
+      box-sizing: border-box;
+      padding: 30px;
+      flex: 1;
+      &-head {
         display: flex;
         align-items: center;
-        //border-top: 1px solid var(--grayColor4);
         justify-content: space-between;
-        &-btns {
-          button {
-            margin-right: 10px;
-          }
+        margin-bottom: 40px;
+        &-title {
+          font-weight: 600;
+          font-size: var(--fs-md);
+        }
+      }
+    }
+    .publishDialog-footer {
+      display: flex;
+      align-items: center;
+      border-top: 1px solid var(--grayColor4);
+      justify-content: space-between;
+      box-sizing: border-box;
+      padding: 20px 30px;
+      &-btns {
+        button {
+          margin-right: 10px;
         }
       }
     }

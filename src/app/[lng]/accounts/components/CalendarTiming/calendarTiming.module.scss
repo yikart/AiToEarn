@@ -45,19 +45,21 @@
         display: none;
       }
     }
-    .fc-scroller {
-      overflow: hidden !important;
+    .fc-media-screen {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
     }
     .calendarTiming-calendar {
       position: relative;
-      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
       height: 100%;
       .fc-scrollgrid {
         border-top: none !important;
       }
       thead {
-        position: sticky;
-        top: 0;
         background: var(--whiteColor);
         z-index: 5;
         .fc-scroller-harness {
