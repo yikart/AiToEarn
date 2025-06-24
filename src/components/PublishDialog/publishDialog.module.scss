@@ -1,25 +1,76 @@
+$assistantWidth: 250px;
+
 .publishDialog {
+  width: auto !important;
   :global {
     .ant-modal-content {
       padding: 0 !important;
     }
     .publishDialog-con {
-      padding: 20px;
+      background: #fff;
+      min-height: 500px;
+      position: relative;
+      z-index: 10;
+      border-radius: 8px;
+      width: 700px;
+      .publishDialogFooter-footer {
+        display: flex;
+        align-items: center;
+        //border-top: 1px solid var(--grayColor4);
+        justify-content: space-between;
+        &-btns {
+          button {
+            margin-right: 10px;
+          }
+        }
+      }
+    }
+    .ant-modal-body {
+      display: flex;
+      justify-content: center;
+    }
+    .ant-modal-content {
+      background-color: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .right-enter, .left-enter {
+      width: 0;
+    }
+    .right-enter-active, .left-enter-active {
+      width: $assistantWidth;
+      transition: all 300ms;
+    }
+    .right-exit, .left-exit {
+      width: $assistantWidth;
+    }
+    .right-exit-active, .left-exit-active {
+      width: 0;
+      transition: all 300ms;
     }
   }
 }
 
-.publishDialogFooter {
-  display: flex;
-  align-items: center;
-  border-top: 1px solid var(--grayColor4);
-  padding: 20px;
-  justify-content: space-between;
+.publishDialogAi, .publishDialogPreview {
+  background: #fff;
+  width: $assistantWidth;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.publishDialogAi {
+  margin-right: 15px;
   :global {
-    .publishDialogFooter-btns {
-      button {
-        margin-right: 10px;
-      }
+    .publishDialogAi-wrapper {
+      min-width: $assistantWidth;
+    }
+  }
+}
+.publishDialogPreview {
+  margin-left: 15px;
+  :global {
+    .publishDialogPreview-wrapper {
+      min-width: $assistantWidth;
     }
   }
 }
