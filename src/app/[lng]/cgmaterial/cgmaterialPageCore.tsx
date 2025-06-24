@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button, Form, Input, Select, Modal, message, Space, InputNumber, List, Card, Spin } from "antd";
+import { Button, Form, Input, Select, Modal, message, Space, InputNumber, List, Card, Spin, Carousel } from "antd";
 import styles from "./styles/cgmaterial.module.scss";
 import {
   apiCreateMaterialGroup,
@@ -13,6 +13,7 @@ import {
   MaterialType,
   apiDeleteMaterialGroup,
   apiUpdateMaterialGroupInfo,
+  apiPreviewMaterialTask,
 } from "@/api/material";
 import { getMediaGroupList, getMediaList } from "@/api/media";
 import { getOssUrl } from "@/utils/oss";
@@ -52,6 +53,13 @@ export default function CgMaterialPageCore() {
   const [batchMediaGroups, setBatchMediaGroups] = useState<string[]>([]);
   const [batchCoverGroup, setBatchCoverGroup] = useState<string>("");
   const [batchLocation, setBatchLocation] = useState<[number, number]>([0, 0]);
+  // 预览相关
+  const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
+  const [lastTaskParams, setLastTaskParams] = useState<any>(null);
+  const [previewModal, setPreviewModal] = useState(false);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewList, setPreviewList] = useState<any[]>([]);
+  const [previewData, setPreviewData] = useState<any>(null);
 
   const [detailModal, setDetailModal] = useState(false);
   const [detailData, setDetailData] = useState<any>(null);
@@ -205,31 +213,77 @@ export default function CgMaterialPageCore() {
     }
   }
 
+  // 生成任务参数
+  function getBatchTaskParams() {
+    const values = batchForm.getFieldsValue();
+    return {
+      groupId: selectedGroup?._id,
+      num: values.num,
+      aiModelTag: values.model,
+      prompt: values.prompt,
+      title: values.title,
+      desc: values.desc,
+      location: batchLocation,
+      publishTime: new Date().toISOString(),
+      mediaGroups: batchMediaGroups,
+      coverGroup: batchCoverGroup,
+      option: {},
+    };
+  }
+
+  // 预览批量生成草稿
+  async function handlePreviewMaterial() {
+    const values = await batchForm.validateFields();
+    const params = getBatchTaskParams();
+    // 判断参数是否变化
+    if (!lastTaskParams || JSON.stringify(params) !== JSON.stringify(lastTaskParams)) {
+      setCurrentTaskId(null);
+      setLastTaskParams(params);
+    }
+    setPreviewLoading(true);
+    let taskId = currentTaskId;
+    try {
+      if (!taskId) {
+        const res = await apiCreateMaterialTask(params);
+        taskId = res?.data?._id || null;
+        setCurrentTaskId(taskId ?? null);
+      }
+      if (taskId) {
+        const res = await apiPreviewMaterialTask(taskId);
+        setPreviewData(res?.data?.data || null);
+        setPreviewModal(true);
+      } else {
+        message.error("获取预览失败");
+      }
+    } catch (e) {
+      message.error("获取预览失败");
+    } finally {
+      setPreviewLoading(false);
+    }
+  }
+
   // 批量生成草稿
   async function handleBatchMaterial() {
     const values = await batchForm.validateFields();
+    const params = getBatchTaskParams();
     setBatchTaskLoading(true);
     try {
-      const res = await apiCreateMaterialTask({
-        groupId: selectedGroup._id,
-        num: values.num,
-        aiModelTag: values.model,
-        prompt: values.prompt,
-        title: values.title,
-        desc: values.desc,
-        location: batchLocation,
-        publishTime: new Date().toISOString(),
-        mediaGroups: batchMediaGroups, // 这里是 groupId 数组
-        coverGroup: batchCoverGroup,   // 这里是 groupId
-        option: {},
-      });
-      const taskId = res?.data?._id;
+      let taskId = currentTaskId;
+      // 如果参数变化或没有taskId，重新创建
+      if (!lastTaskParams || JSON.stringify(params) !== JSON.stringify(lastTaskParams)) {
+        const res = await apiCreateMaterialTask(params);
+        taskId = res?.data?._id || null;
+        setCurrentTaskId(taskId ?? null);
+        setLastTaskParams(params);
+      }
       if (taskId) {
         await apiStartMaterialTask(taskId);
         message.success("批量生成任务已启动");
         setBatchModal(false);
         batchForm.resetFields();
         fetchMaterialList(selectedGroup._id);
+        setCurrentTaskId(null);
+        setLastTaskParams(null);
       }
     } catch (e) {
       message.error("批量生成草稿失败");
@@ -402,7 +456,7 @@ export default function CgMaterialPageCore() {
                         {item.type === MaterialType.ARTICLE ? "图文" : item.type === MaterialType.VIDEO ? "视频" : item.type}
                       </span>
                       <span style={{ color: item.status === 0 ? "#faad14" : "#52c41a" }}>
-                        {item.status === 0 ? "草稿" : "已发布"}
+                        {item.status === 0 ? "生成中" : "已生成"}
                       </span>
                     </div>
                   </Card>
@@ -527,6 +581,11 @@ export default function CgMaterialPageCore() {
         onOk={handleBatchMaterial}
         onCancel={()=>setBatchModal(false)}
         confirmLoading={batchTaskLoading}
+        footer={[
+          <Button key="preview" onClick={handlePreviewMaterial} loading={previewLoading} type="default">预览</Button>,
+          <Button key="submit" type="primary" onClick={handleBatchMaterial} loading={batchTaskLoading}>开始任务</Button>,
+          <Button key="cancel" onClick={()=>setBatchModal(false)}>取消</Button>,
+        ]}
       >
         <Form form={batchForm} layout="vertical">
           <Form.Item label="大模型" name="model" rules={[{required:true,message:'请选择大模型'}]}>
@@ -564,6 +623,44 @@ export default function CgMaterialPageCore() {
           </Form.Item>
         </Form>
       </Modal>
+      {/* 预览弹窗 */}
+      <Modal
+        open={previewModal}
+        title="生成预览"
+        onCancel={()=>setPreviewModal(false)}
+        footer={null}
+        width={700}
+      >
+        <Spin spinning={previewLoading}>
+          {!previewData ? (
+            <div style={{textAlign:'center',color:'#888'}}>暂无预览内容</div>
+          ) : (
+            <Card title={previewData.title} bordered>
+              <div style={{marginBottom:8}}><b>简介：</b>{previewData.desc}</div>
+              <div style={{marginBottom:8}}><b>类型：</b>{previewData.type === MaterialType.ARTICLE ? "图文" : previewData.type === MaterialType.VIDEO ? "视频" : previewData.type}</div>
+              <div style={{marginBottom:8}}><b>封面：</b>{previewData.coverUrl && <img src={getOssUrl(previewData.coverUrl)} alt="cover" style={{width:80,height:60,objectFit:'cover',borderRadius:4}}/>}</div>
+              <div style={{marginBottom:8}}><b>地理位置：</b>{Array.isArray(previewData.location) ? previewData.location.join(', ') : ''}</div>
+              <div><b>素材内容：</b>
+                {Array.isArray(previewData.mediaList) && previewData.mediaList.length > 0 ? (
+                  <Carousel dots style={{marginTop:8}}>
+                    {previewData.mediaList.map((media:any,idx:number)=>(
+                      <div key={idx}>
+                        <img
+                          src={getOssUrl(media.url)}
+                          alt="素材图片"
+                          style={{width:'100%',height:'320px',objectFit:'cover',borderRadius:8}}
+                        />
+                      </div>
+                    ))}
+                  </Carousel>
+                ) : (
+                  <div style={{color:'#888',marginTop:8}}>暂无素材内容</div>
+                )}
+              </div>
+            </Card>
+          )}
+        </Spin>
+      </Modal>
       {/* 详情弹窗 */}
       <Modal
         open={detailModal}
@@ -584,12 +681,7 @@ export default function CgMaterialPageCore() {
               <b>类型：</b>
               {detailData.type === MaterialType.ARTICLE ? "图文" : detailData.type === MaterialType.VIDEO ? "视频" : detailData.type}
             </div>
-            <div style={{ marginBottom: 16 }}>
-              <b>状态：</b>
-              <span style={{ color: detailData.status === 0 ? "#faad14" : "#52c41a" }}>
-                {detailData.status === 0 ? "草稿" : "已发布"}
-              </span>
-            </div>
+            
             <div style={{ marginBottom: 16 }}>
               <b>封面：</b>
               {detailData.coverUrl && (
@@ -602,16 +694,27 @@ export default function CgMaterialPageCore() {
             </div>
             <div style={{ marginBottom: 16 }}>
               <b>素材内容：</b>
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
-                {Array.isArray(detailData.mediaList) && detailData.mediaList.map((media: any, idx: number) => (
-                  <img
-                    key={idx}
-                    src={getOssUrl(media.url)}
-                    alt=""
-                    style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 4 }}
-                  />
-                ))}
-              </div>
+              {Array.isArray(detailData.mediaList) && detailData.mediaList.length > 0 ? (
+                <Carousel dots style={{marginTop:8}}>
+                  {detailData.mediaList.map((media: any, idx: number) => (
+                    <div key={idx}>
+                      <img
+                        src={getOssUrl(media.url)}
+                        alt="素材图片"
+                        style={{width:'100%',height:'320px',objectFit:'cover',borderRadius:8}}
+                      />
+                    </div>
+                  ))}
+                </Carousel>
+              ) : (
+                <div style={{color:'#888',marginTop:8}}>暂无素材内容</div>
+              )}
+            </div>
+            <div style={{ marginBottom: 16 }}>
+              <b>状态：</b>
+              <span style={{ color: detailData.status === 0 ? "#faad14" : "#52c41a" }}>
+                {detailData.status === 0 ? "生成中" : "已生成"}
+              </span>
             </div>
           </div>
         )}
