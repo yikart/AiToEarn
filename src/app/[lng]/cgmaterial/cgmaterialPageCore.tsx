@@ -11,9 +11,12 @@ import {
   apiCreateMaterialTask,
   apiStartMaterialTask,
   MaterialType,
+  apiDeleteMaterialGroup,
+  apiUpdateMaterialGroupInfo,
 } from "@/api/material";
 import { getMediaGroupList, getMediaList } from "@/api/media";
 import { getOssUrl } from "@/utils/oss";
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const { TextArea } = Input;
 
@@ -52,6 +55,15 @@ export default function CgMaterialPageCore() {
 
   const [detailModal, setDetailModal] = useState(false);
   const [detailData, setDetailData] = useState<any>(null);
+
+  // 编辑组相关
+  const [editGroupModal, setEditGroupModal] = useState(false);
+  const [editGroupName, setEditGroupName] = useState("");
+  const [editingGroup, setEditingGroup] = useState<any>(null);
+  const [editLoading, setEditLoading] = useState(false);
+
+  // 记录显示操作按钮的组id
+  const [showActionsId, setShowActionsId] = useState<string | null>(null);
 
   // 初始化加载草稿箱组
   useEffect(() => {
@@ -206,7 +218,7 @@ export default function CgMaterialPageCore() {
         title: values.title,
         desc: values.desc,
         location: batchLocation,
-        publishTime: new Date(),
+        publishTime: new Date().toISOString(),
         mediaGroups: batchMediaGroups, // 这里是 groupId 数组
         coverGroup: batchCoverGroup,   // 这里是 groupId
         option: {},
@@ -226,6 +238,69 @@ export default function CgMaterialPageCore() {
     }
   }
 
+  // 处理编辑组
+  async function handleEditGroup() {
+    if (!editGroupName) return message.warning("请输入新组名");
+    setEditLoading(true);
+    try {
+      await apiUpdateMaterialGroupInfo(editingGroup._id, { name: editGroupName });
+      message.success("更新成功");
+      setEditGroupModal(false);
+      setEditGroupName("");
+      setEditingGroup(null);
+      fetchGroupList();
+    } catch {
+      message.error("更新失败");
+    } finally {
+      setEditLoading(false);
+    }
+  }
+
+  // 组列表项事件：PC端长按，移动端左滑
+  function handleGroupItemEvents(item: any) {
+    let timer: any = null;
+    let startX = 0;
+    let moved = false;
+    return {
+      onPointerDown: (e: any) => {
+        if (e.pointerType === 'touch') {
+          startX = e.clientX;
+          moved = false;
+          const move = (ev: any) => {
+            if (Math.abs(ev.clientX - startX) > 40) {
+              setShowActionsId(item._id);
+              moved = true;
+              window.removeEventListener('pointermove', move);
+            }
+          };
+          window.addEventListener('pointermove', move);
+          const up = () => {
+            window.removeEventListener('pointermove', move);
+            window.removeEventListener('pointerup', up);
+            if (!moved) setTimeout(() => setShowActionsId(null), 2000);
+          };
+          window.addEventListener('pointerup', up);
+        } else {
+          timer = setTimeout(() => {
+            setShowActionsId(item._id);
+          }, 700);
+          const up = () => {
+            clearTimeout(timer);
+            window.removeEventListener('pointerup', up);
+            setTimeout(() => setShowActionsId(null), 2000);
+          };
+          window.addEventListener('pointerup', up);
+        }
+      },
+      onMouseLeave: () => {
+        setTimeout(() => setShowActionsId(null), 500);
+      },
+      onMouseEnter: () => {
+        setShowActionsId(item._id);
+      },
+    };
+  }
+
   return (
     <div className={styles.materialContainer}>
       <div className={styles.header}>
@@ -238,13 +313,53 @@ export default function CgMaterialPageCore() {
           <Spin spinning={groupLoading}>
             <List
               bordered
-              dataSource={groupList}
-              renderItem={item => (
+              dataSource={groupList as any[]}
+              renderItem={(item: any) => (
                 <List.Item
-                  style={{cursor:'pointer',background:selectedGroup?._id===item._id?'#e6f4ff':'#fff'}}
+                  className={styles.groupItem + (selectedGroup?._id===item._id ? ' ' + styles.selected : '') + (showActionsId===item._id ? ' ' + styles.showActions : '')}
+                  title={item.name || item.title}
+                  style={{position:'relative'}}
                   onClick={()=>setSelectedGroup(item as any)}
+                  {...handleGroupItemEvents(item)}
                 >
-                  <div style={{fontWeight:500}}>{item.name || item.title}</div>
+                  <div className={styles.groupName}>{item.name || item.title}</div>
+                  <div className={styles.groupActions}>
+                    <span
+                      className={styles.groupActionBtn}
+                      onClick={e => {
+                        e.stopPropagation();
+                        setEditingGroup(item);
+                        setEditGroupName(item.name || item.title || "");
+                        setEditGroupModal(true);
+                      }}
+                    >
+                      <EditOutlined /> 编辑
+                    </span>
+                    <span
+                      className={styles.groupActionBtn}
+                      onClick={e => {
+                        e.stopPropagation();
+                        Modal.confirm({
+                          title: '删除草稿组',
+                          content: `确定要删除"${item.name || item.title}"吗？`,
+                          okText: '删除',
+                          okType: 'danger',
+                          cancelText: '取消',
+                          onOk: async () => {
+                            try {
+                              await apiDeleteMaterialGroup(item._id);
+                              message.success('删除成功');
+                              fetchGroupList();
+                            } catch {
+                              message.error('删除失败');
+                            }
+                          },
+                        });
+                      }}
+                    >
+                      <DeleteOutlined /> 删除
+                    </span>
+                  </div>
                 </List.Item>
               )}
             />
@@ -500,6 +615,20 @@ export default function CgMaterialPageCore() {
             </div>
           </div>
         )}
+      </Modal>
+      {/* 编辑组名弹窗 */}
+      <Modal
+        open={editGroupModal}
+        title="编辑草稿箱组"
+        onOk={handleEditGroup}
+        onCancel={()=>setEditGroupModal(false)}
+        confirmLoading={editLoading}
+      >
+        <Input
+          placeholder="请输入新组名"
+          value={editGroupName}
+          onChange={e=>setEditGroupName(e.target.value)}
+        />
       </Modal>
     </div>
   );

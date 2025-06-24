@@ -45,7 +45,7 @@ export const apiDeleteMaterialGroup = (id: string) => {
 export const apiUpdateMaterialGroupInfo = (
   id: string,
   data: {
-    title?: string;
+    name?: string;
     desc?: string;
   },
 ) => {
@@ -73,7 +73,12 @@ export const apiCreateMaterial = (data: {
 
 // 创建批量生成草稿任务
 export const apiCreateMaterialTask = (data: NewMaterialTask) => {
-  return http.post("material/task/create", data);
+  return http.post<{ _id: string }>("material/task/create", data);
+};
+
+// 预览生成草稿任务
+export const apiPreviewMaterialTask = (taskId: string) => {
+  return http.get(`material/task/preview/${taskId}`);
 };
 
 // 开始批量生成草稿任务

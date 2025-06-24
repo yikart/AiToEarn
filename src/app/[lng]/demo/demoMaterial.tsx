@@ -5,11 +5,13 @@ import { getMediaGroupList } from "@/api/media";
 import {
   apiCreateMaterialGroup,
   apiCreateMaterialTask,
+  apiPreviewMaterialTask,
   apiStartMaterialTask,
   apiGetMaterialGroupList,
   MaterialType,
   NewMaterialTask,
 } from "@/api/material";
+import styles from "./demoMaterial.module.css";
 
 interface NewMaterialGroup {
   type: MaterialType;
@@ -55,17 +57,28 @@ export const DemoMaterial = () => {
     console.log("------ createMaterialGroup ---- ", res);
   }
 
+  /**
+   * 创建任务
+   * @param groupId
+   */
   async function createMaterialTask(groupId: string) {
     const res = await apiCreateMaterialTask({
       ...newMaterialTask,
       groupId,
     });
-    setGroupId(groupId);
     console.log("------ createMaterialTask ---- ", res);
+
+    setGroupId(groupId);
+    setTaskId(res!.data._id);
+  }
+
+  async function previewMaterialTask() {
+    const res = await apiPreviewMaterialTask(taskId);
+    console.log("------ startMaterialTask ---- ", res);
   }
 
   async function startMaterialTask() {
-    const res = await apiStartMaterialTask("68598003d2330bec633c14da");
+    const res = await apiStartMaterialTask(taskId);
     console.log("------ startMaterialTask ---- ", res);
   }
 
@@ -102,7 +115,7 @@ export const DemoMaterial = () => {
   }
 
   return (
-    <div>
+    <div className={styles.demoMaterial}>
       <div>========= 素材草稿 ==============</div>
       <div>
         <p>----- 媒体组列表 STR -----</p>
@@ -146,7 +159,9 @@ export const DemoMaterial = () => {
               <div>描述：{item.desc}</div>
               <div>封面素材组ID：{item.coverGroup}</div>
 
-              <button onClick={() => createMaterialTask(item._id)}>创建任务</button>
+              <button onClick={() => createMaterialTask(item._id)}>
+                创建任务
+              </button>
             </div>
           ))}
         </div>
@@ -172,6 +187,7 @@ export const DemoMaterial = () => {
         )}
         <p>----- 任务信息 END -----</p>
 
+        <button onClick={() => previewMaterialTask()}>预览</button>
         <button onClick={() => startMaterialTask()}>开始任务</button>
       </div>
     </div>
