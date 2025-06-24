@@ -13,6 +13,7 @@ import { Button } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { useTransClient } from "@/app/i18n/client";
 import CalendarTimingItem from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem";
+import PublishDialog from "@/components/PublishDialog";
 
 export interface ICalendarTimingRef {}
 export interface ICalendarTimingProps {}
@@ -36,6 +37,7 @@ const CalendarTiming = memo(
         }
       };
       const calendarTimingCalendarRef = useRef<HTMLDivElement>(null);
+      const [publishDialogOpen, setPublishDialogOpen] = useState(false);
 
       // 动画触发函数
       const triggerAnimation = (dir: "left" | "right" | "fade") => {
@@ -72,6 +74,11 @@ const CalendarTiming = memo(
 
       return (
         <div className={styles.calendarTiming}>
+          <PublishDialog
+            open={publishDialogOpen}
+            onClose={() => setPublishDialogOpen(false)}
+          />
+
           <div className="calendarTiming-toolbar">
             <div className="calendarTiming-toolbar-left">
               <Button
@@ -110,7 +117,14 @@ const CalendarTiming = memo(
                 headerToolbar={false}
                 stickyFooterScrollbar={true}
                 dayCellContent={(arg) => {
-                  return <CalendarTimingItem arg={arg} />;
+                  return (
+                    <CalendarTimingItem
+                      arg={arg}
+                      onClickPub={() => {
+                        setPublishDialogOpen(true);
+                      }}
+                    />
+                  );
                 }}
                 datesSet={handleDatesSet}
               />

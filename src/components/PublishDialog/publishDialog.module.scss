@@ -1,0 +1,25 @@
+.publishDialog {
+  :global {
+    .ant-modal-content {
+      padding: 0 !important;
+    }
+    .publishDialog-con {
+      padding: 20px;
+    }
+  }
+}
+
+.publishDialogFooter {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid var(--grayColor4);
+  padding: 20px;
+  justify-content: space-between;
+  :global {
+    .publishDialogFooter-btns {
+      button {
+        margin-right: 10px;
+      }
+    }
+  }
+}
