@@ -4,8 +4,8 @@
   justify-content: center;
   & > img {
     position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: 10%;
+    right: -10%;
     transform: translate(-10%, 20%);
     border-radius: 50%;
   }

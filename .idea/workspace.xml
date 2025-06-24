@@ -4,12 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat: 日历样式调整">
-      <change afterPath="$PROJECT_DIR$/src/assets/svgs/plat/bilibili.svg" afterDir="false" />
+    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat: 添加b站icon">
+      <change afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PubCommonParams.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/PublishDialog/plats/BilibParams.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/PublishDialog/plats/KwaiParams.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/PublishDialog/plats/plats.type.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/config/platConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/config/platConfig.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/AvatarPlat/avatarPlat.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/AvatarPlat/avatarPlat.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/AvatarPlat/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/AvatarPlat/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogPreview.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogPreview.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/usePublishDialog.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/usePublishDialog.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/oss.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/oss.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,6 +27,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="TypeScript JSX File" />
         <option value="tsx组件模板" />
       </list>
     </option>
@@ -42,26 +51,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.reader.mode&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "E:/project-dev/web/艺咖/aitoearn-web/src/components/PublishDialog/plats",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "editor.reader.mode",
+    "ts.external.directory.path": "E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="ReactBuddySettings">
     <option name="extensionsIgnore" value="true" />
   </component>
@@ -75,6 +85,9 @@
     </option>
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\components\PublishDialog\plats" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\assets\svgs\plat" />
     </key>
@@ -95,7 +108,7 @@
       <workItem from="1750763285511" duration="48000" />
       <workItem from="1750763342070" duration="32000" />
       <workItem from="1750763376065" duration="41000" />
-      <workItem from="1750763426455" duration="1460000" />
+      <workItem from="1750763426455" duration="6246000" />
     </task>
     <task id="LOCAL-00001" summary="feat: 日历完善">
       <option name="closed" value="true" />
@@ -145,7 +158,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750764427509</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="feat: 添加b站icon">
+      <option name="closed" value="true" />
+      <created>1750764927677</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1750764927677</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -171,6 +192,7 @@
     <MESSAGE value="feat: 发布大改" />
     <MESSAGE value="feat: 发布弹框左右两侧显示隐藏过渡动画完成" />
     <MESSAGE value="feat: 日历样式调整" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 日历样式调整" />
+    <MESSAGE value="feat: 添加b站icon" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 添加b站icon" />
   </component>
 </project>

@@ -1,4 +1,4 @@
-$assistantWidth: 250px;
+$assistantWidth: 300px;
 
 .publishDialog {
   width: auto !important;
@@ -8,18 +8,17 @@ $assistantWidth: 250px;
     }
     .publishDialog-wrapper {
       background: #fff;
-      min-height: 500px;
       position: relative;
       z-index: 10;
       border-radius: 8px;
-      width: 700px;
+      width: 720px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
     .publishDialog-con {
       box-sizing: border-box;
-      padding: 30px;
+      padding: 20px;
       flex: 1;
       &-head {
         display: flex;
@@ -32,7 +31,34 @@ $assistantWidth: 250px;
         }
       }
       &-acconts {
-
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 12px;
+        &-item {
+          border: 2px solid transparent;
+          border-radius: 50%;
+          &:active {
+            border-color: var(--colorPrimary4);
+          }
+          &--active {
+            img {
+              filter: grayscale(0) !important;
+            }
+          }
+          &-avatar {
+            cursor: pointer;
+            transition: 0.3s;
+            padding: 1px;
+            & > img {
+              filter: grayscale(100%);
+            }
+            &:hover {
+              img {
+                filter: grayscale(0);
+              }
+            }
+          }
+        }
       }
     }
     .publishDialog-footer {
@@ -41,7 +67,7 @@ $assistantWidth: 250px;
       border-top: 1px solid var(--grayColor4);
       justify-content: space-between;
       box-sizing: border-box;
-      padding: 20px 30px;
+      padding: 20px;
       &-btns {
         button {
           margin-right: 10px;
@@ -94,6 +120,21 @@ $assistantWidth: 250px;
   :global {
     .publishDialogPreview-wrapper {
       min-width: $assistantWidth;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+    }
+    .publishDialogPreview-title {
+      font-weight: 600;
+      font-size: var(--fs-md);
+      padding: 20px 20px 0 20px;
+    }
+    .publishDialogPreview-empty {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 }

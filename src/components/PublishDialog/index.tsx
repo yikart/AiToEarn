@@ -1,4 +1,11 @@
-import { ForwardedRef, forwardRef, memo, useCallback, useState } from "react";
+import {
+  ForwardedRef,
+  forwardRef,
+  memo,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import styles from "./publishDialog.module.scss";
 import { Button, Modal } from "antd";
 import { ExclamationCircleFilled } from "@ant-design/icons";
@@ -6,6 +13,10 @@ import PublishDialogAi from "@/components/PublishDialog/compoents/PublishDialogA
 import PublishDialogPreview from "@/components/PublishDialog/compoents/PublishDialogPreview";
 import { CSSTransition } from "react-transition-group";
 import { SocialAccount } from "@/api/types/account.type";
+import { AccountPlatInfoMap } from "@/app/config/platConfig";
+import AvatarPlat from "@/components/AvatarPlat";
+import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
+import { useShallow } from "zustand/react/shallow";
 
 export interface IPublishDialogRef {}
 
@@ -25,7 +36,12 @@ const PublishDialog = memo(
       ref: ForwardedRef<IPublishDialogRef>,
     ) => {
       const [openLeft, setOpenLeft] = useState(false);
-      const [openRight, setOpenRight] = useState(false);
+      const { setAccountChoosed, accountChoosed } = usePublishDialog(
+        useShallow((state) => ({
+          accountChoosed: state.accountChoosed,
+          setAccountChoosed: state.setAccountChoosed,
+        })),
+      );
 
       // 关闭弹框并确认关闭
       const closeDialog = useCallback(() => {
@@ -46,6 +62,11 @@ const PublishDialog = memo(
           },
         });
       }, [onClose]);
+
+      // 是否打开右侧预览
+      const openRight = useMemo(() => {
+        return accountChoosed.length !== 0;
+      }, [accountChoosed]);
 
       return (
         <>
@@ -72,12 +93,44 @@ const PublishDialog = memo(
                 </div>
                 <div className="publishDialog-con-acconts">
                   {accounts.map((account) => {
+                    const platConfig = AccountPlatInfoMap.get(account.type)!;
+                    const isChoosed = accountChoosed.find(
+                      (v) => v.id === account.id,
+                    );
+
                     return (
                       <div
-                        className="publishDialog-con-acconts-item"
+                        className={[
+                          "publishDialog-con-acconts-item",
+                          isChoosed
+                            ? "publishDialog-con-acconts-item--active"
+                            : "",
+                        ].join(" ")}
+                        style={{
+                          borderColor: isChoosed
+                            ? platConfig.themeColor
+                            : "transparent",
+                        }}
                         key={account.id}
+                        onClick={() => {
+                          const newAccountChoosed = [...accountChoosed];
+                          // 查找当前账户是否已被选择
+                          const index = newAccountChoosed.findIndex(
+                            (v) => v.id === account.id,
+                          );
+                          if (index !== -1) {
+                            newAccountChoosed.splice(index, 1);
+                          } else {
+                            newAccountChoosed.push(account);
+                          }
+                          setAccountChoosed(newAccountChoosed);
+                        }}
                       >
-                        1
+                        <AvatarPlat
+                          className="publishDialog-con-acconts-item-avatar"
+                          account={account}
+                          size="large"
+                        />
                       </div>
                     );
                   })}

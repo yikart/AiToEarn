@@ -1,10 +1,16 @@
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 import lodash from "lodash";
+import { SocialAccount } from "@/api/types/account.type";
 
-export interface IPublishDialogStore {}
+export interface IPublishDialogStore {
+  // 选择的账户
+  accountChoosed: SocialAccount[];
+}
 
-const store: IPublishDialogStore = {};
+const store: IPublishDialogStore = {
+  accountChoosed: [],
+};
 
 const getStore = () => {
   return lodash.cloneDeep(store);
@@ -21,6 +27,12 @@ export const usePublishDialog = create(
         clear() {
           set({
             ...getStore(),
+          });
+        },
+
+        setAccountChoosed(accountChoosed: SocialAccount[]) {
+          set({
+            accountChoosed,
           });
         },
       };

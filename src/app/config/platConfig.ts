@@ -14,6 +14,8 @@ export enum PlatType {
 }
 
 export interface IAccountPlatInfo {
+  // 平台主题颜色
+  themeColor: string;
   // 显示的icon
   icon: string;
   // 平台中文名称
@@ -69,6 +71,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         },
         topicMax: 4,
       },
+      themeColor: "#FF4D00",
     },
   ],
   [
@@ -85,6 +88,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         },
         topicMax: 4,
       },
+      themeColor: "blue",
     },
   ],
   [
@@ -102,6 +106,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         titleMax: 16,
         topicMax: 10,
       },
+      themeColor: "red",
     },
   ],
 ]);
