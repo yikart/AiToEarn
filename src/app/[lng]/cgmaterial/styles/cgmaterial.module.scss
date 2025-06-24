@@ -33,4 +33,70 @@
 .cardContent {
   font-size: 14px;
   color: #333;
+}
+
+.groupItem {
+  cursor: pointer;
+  background: #fff;
+  border-radius: 6px;
+  margin-bottom: 8px !important;
+  transition: box-shadow 0.2s, background 0.2s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  border: 1px solid #f0f0f0;
+  padding: 12px 16px !important;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  position: relative;
+}
+
+.groupItem:hover {
+  box-shadow: 0 2px 8px rgba(22,119,255,0.08);
+  background: #f0f7ff;
+}
+
+.selected {
+  background: #e6f4ff !important;
+  border: 1.5px solid #1677ff !important;
+}
+
+.groupName {
+  font-weight: 500;
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.groupActions {
+  display: flex;
+  gap: 8px;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 2;
+}
+
+.groupItem:hover .groupActions,
+.groupItem.showActions .groupActions {
+  opacity: 1;
+}
+
+.groupActionBtn {
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 13px;
+  color: #1677ff;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.groupActionBtn:hover {
+  background: #1677ff;
+  color: #fff;
 } 
