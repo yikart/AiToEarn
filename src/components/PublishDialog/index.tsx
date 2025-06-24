@@ -1,7 +1,10 @@
-import { ForwardedRef, forwardRef, memo, useCallback } from "react";
+import { ForwardedRef, forwardRef, memo, useCallback, useState } from "react";
 import styles from "./publishDialog.module.scss";
 import { Button, Modal } from "antd";
 import { ExclamationCircleFilled } from "@ant-design/icons";
+import PublishDialogAi from "@/components/PublishDialog/compoents/PublishDialogAi";
+import PublishDialogPreview from "@/components/PublishDialog/compoents/PublishDialogPreview";
+import { CSSTransition } from "react-transition-group";
 
 export interface IPublishDialogRef {}
 
@@ -19,12 +22,16 @@ const PublishDialog = memo(
       { open, onClose }: IPublishDialogProps,
       ref: ForwardedRef<IPublishDialogRef>,
     ) => {
+      const [openLeft, setOpenLeft] = useState(false);
+      const [openRight, setOpenRight] = useState(false);
+      const [showB, setShowB] = useState(true);
+
       // 关闭弹框并确认关闭
       const closeDialog = useCallback(() => {
         confirm({
           title: "放弃更改？",
           icon: <ExclamationCircleFilled />,
-          content: "您所做的任何更改都将永久丢失 ",
+          content: "您所做的任何更改都将永久丢失",
           okType: "danger",
           okButtonProps: {
             type: "primary",
@@ -44,13 +51,23 @@ const PublishDialog = memo(
           <Modal
             className={styles.publishDialog}
             closeIcon={false}
-            width={710}
             open={open}
             onCancel={closeDialog}
-            footer={
-              <div className={styles.publishDialogFooter}>
+            footer={null}
+          >
+            <CSSTransition
+              in={openLeft}
+              timeout={300}
+              classNames="left"
+              unmountOnExit
+            >
+              <PublishDialogAi />
+            </CSSTransition>
+
+            <div className="publishDialog-con">
+              <div className="publishDialogFooter-footer">
                 time
-                <div className="publishDialogFooter-btns">
+                <div className="publishDialogFooter-footer-btns">
                   <Button size="large" onClick={closeDialog}>
                     取消
                   </Button>
@@ -59,9 +76,16 @@ const PublishDialog = memo(
                   </Button>
                 </div>
               </div>
-            }
-          >
-            <div className="publishDialog-con"></div>
+            </div>
+
+            <CSSTransition
+              in={openRight}
+              timeout={300}
+              classNames="right"
+              unmountOnExit
+            >
+              <PublishDialogPreview />
+            </CSSTransition>
           </Modal>
         </>
       );
