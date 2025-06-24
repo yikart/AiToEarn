@@ -638,7 +638,17 @@ export default function CgMaterialPageCore() {
             <Card title={previewData.title} bordered>
               <div style={{marginBottom:8}}><b>简介：</b>{previewData.desc}</div>
               <div style={{marginBottom:8}}><b>类型：</b>{previewData.type === MaterialType.ARTICLE ? "图文" : previewData.type === MaterialType.VIDEO ? "视频" : previewData.type}</div>
-              <div style={{marginBottom:8}}><b>封面：</b>{previewData.coverUrl && <img src={getOssUrl(previewData.coverUrl)} alt="cover" style={{width:80,height:60,objectFit:'cover',borderRadius:4}}/>}</div>
+              <div style={{marginBottom:8}}><b>封面：</b>
+                <div style={{marginTop:4}}>
+                  {previewData.coverUrl && (
+                    <img
+                      src={getOssUrl(previewData.coverUrl)}
+                      alt="cover"
+                      style={{width:'100%',maxWidth:320,height:120,objectFit:'cover',borderRadius:8,display:'block'}}
+                    />
+                  )}
+                </div>
+              </div>
               <div style={{marginBottom:8}}><b>地理位置：</b>{Array.isArray(previewData.location) ? previewData.location.join(', ') : ''}</div>
               <div><b>素材内容：</b>
                 {Array.isArray(previewData.mediaList) && previewData.mediaList.length > 0 ? (
@@ -684,13 +694,15 @@ export default function CgMaterialPageCore() {
             
             <div style={{ marginBottom: 16 }}>
               <b>封面：</b>
-              {detailData.coverUrl && (
-                <img
-                  src={getOssUrl(detailData.coverUrl)}
-                  alt="cover"
-                  style={{ width: 120, height: 80, objectFit: "cover", borderRadius: 6, marginLeft: 8 }}
-                />
-              )}
+              <div style={{marginTop:4}}>
+                {detailData.coverUrl && (
+                  <img
+                    src={getOssUrl(detailData.coverUrl)}
+                    alt="cover"
+                    style={{width:'100%',maxWidth:320,height:120,objectFit:'cover',borderRadius:8,display:'block'}}
+                  />
+                )}
+              </div>
             </div>
             <div style={{ marginBottom: 16 }}>
               <b>素材内容：</b>
