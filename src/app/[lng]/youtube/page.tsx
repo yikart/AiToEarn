@@ -65,7 +65,7 @@ const YouTubeAuth: React.FC = () => {
     setCheckLoading(true);
     try {
       const response = await checkYouTubeAuthApi({
-        accountId: "117748783778429701407",
+        accountId: "684e21724e694186e5b61b59",
       });
 
       if (response?.data) {

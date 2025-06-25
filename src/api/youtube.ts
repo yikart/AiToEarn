@@ -5,7 +5,7 @@ export const getYouTubeAuthUrlApi = (mail: string) => {
   return request({
     url: '/plat/youtube/auth/url',
     method: 'GET',
-    params: { mail },
+    params: { type: 'pc' },
   });
 };
 
