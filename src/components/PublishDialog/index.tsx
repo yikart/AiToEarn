@@ -3,12 +3,13 @@ import {
   forwardRef,
   memo,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from "react";
 import styles from "./publishDialog.module.scss";
 import { Button, Modal } from "antd";
-import { ExclamationCircleFilled } from "@ant-design/icons";
+import { ArrowRightOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import PublishDialogAi from "@/components/PublishDialog/compoents/PublishDialogAi";
 import PublishDialogPreview from "@/components/PublishDialog/compoents/PublishDialogPreview";
 import { CSSTransition } from "react-transition-group";
@@ -18,6 +19,7 @@ import AvatarPlat from "@/components/AvatarPlat";
 import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
 import { useShallow } from "zustand/react/shallow";
 import PlatParamsSetting from "@/components/PublishDialog/compoents/PlatParamsSetting";
+import PubParmasTextarea from "@/components/PublishDialog/compoents/PubParmasTextarea";
 
 export interface IPublishDialogRef {}
 
@@ -37,14 +39,37 @@ const PublishDialog = memo(
       ref: ForwardedRef<IPublishDialogRef>,
     ) => {
       const [openLeft, setOpenLeft] = useState(false);
-      const { setAccountChoosed, accountChoosed } = usePublishDialog(
+      const {
+        pubListChoosed,
+        setPubListChoosed,
+        init,
+        clear,
+        pubList,
+        setStep,
+        step,
+        setAccountAllParams,
+        commonPubParams,
+      } = usePublishDialog(
         useShallow((state) => ({
-          accountChoosed: state.accountChoosed,
-          setAccountChoosed: state.setAccountChoosed,
+          pubListChoosed: state.pubListChoosed,
+          setPubListChoosed: state.setPubListChoosed,
+          init: state.init,
+          clear: state.clear,
+          pubList: state.pubList,
+          setStep: state.setStep,
+          step: state.step,
+          setAccountAllParams: state.setAccountAllParams,
+          commonPubParams: state.commonPubParams,
         })),
       );
-      // 当前步骤，0=所有账号没有参数，要设置参数。 1=所有账号有参数，详细设置参数
-      const [step, setStep] = useState(0);
+
+      useEffect(() => {
+        if (open) {
+          init(accounts);
+        } else {
+          clear();
+        }
+      }, [accounts, open]);
 
       // 关闭弹框并确认关闭
       const closeDialog = useCallback(() => {
@@ -68,10 +93,8 @@ const PublishDialog = memo(
 
       // 是否打开右侧预览
       const openRight = useMemo(() => {
-        return accountChoosed.length !== 0;
-      }, [accountChoosed]);
-
-      // 获取
+        return pubListChoosed.length !== 0;
+      }, [pubListChoosed]);
 
       return (
         <>
@@ -97,10 +120,12 @@ const PublishDialog = memo(
                   <span className="publishDialog-con-head-title">发布作品</span>
                 </div>
                 <div className="publishDialog-con-acconts">
-                  {accounts.map((account) => {
-                    const platConfig = AccountPlatInfoMap.get(account.type)!;
-                    const isChoosed = accountChoosed.find(
-                      (v) => v.id === account.id,
+                  {pubList.map((pubItem) => {
+                    const platConfig = AccountPlatInfoMap.get(
+                      pubItem.account.type,
+                    )!;
+                    const isChoosed = pubListChoosed.find(
+                      (v) => v.account.id === pubItem.account.id,
                     );
 
                     return (
@@ -116,24 +141,24 @@ const PublishDialog = memo(
                             ? platConfig.themeColor
                             : "transparent",
                         }}
-                        key={account.id}
+                        key={pubItem.account.id}
                         onClick={() => {
-                          const newAccountChoosed = [...accountChoosed];
+                          const newPubListChoosed = [...pubListChoosed];
                           // 查找当前账户是否已被选择
-                          const index = newAccountChoosed.findIndex(
-                            (v) => v.id === account.id,
+                          const index = newPubListChoosed.findIndex(
+                            (v) => v.account.id === pubItem.account.id,
                           );
                           if (index !== -1) {
-                            newAccountChoosed.splice(index, 1);
+                            newPubListChoosed.splice(index, 1);
                           } else {
-                            newAccountChoosed.push(account);
+                            newPubListChoosed.push(pubItem);
                           }
-                          setAccountChoosed(newAccountChoosed);
+                          setPubListChoosed(newPubListChoosed);
                         }}
                       >
                         <AvatarPlat
                           className="publishDialog-con-acconts-item-avatar"
-                          account={account}
+                          account={pubItem.account}
                           size="large"
                         />
                       </div>
@@ -142,35 +167,63 @@ const PublishDialog = memo(
                 </div>
 
                 <div className="publishDialog-paramsSet">
-                  <PlatParamsSetting />
                   {step === 0 ? (
                     <>
-                      {accountChoosed.length === 0 && (
-                        <div className="publishDialog-con-tips">
-                          你的工作被保存了，选择一个账号来创建一个帖子。
-                        </div>
+                      {pubListChoosed.length == 1 && (
+                        <PlatParamsSetting pubItem={pubListChoosed[0]} />
+                        // <div style={{ height: "500px" }}>
+                        //   {accountChoosed[0].type}
+                        // </div>
                       )}
-                      {accountChoosed.length == 1 && (
-                        <div style={{ height: "500px" }}>{accountChoosed[0].type}</div>
-                      )}
-                      {accountChoosed.length >= 2 && (
-                        <div style={{ height: "500px" }}>通用参数</div>
+                      {pubListChoosed.length >= 2 && (
+                        <PubParmasTextarea
+                          rows={16}
+                          desValue={commonPubParams.des}
+                          videoFileValue={commonPubParams.video}
+                          imageFileListValue={commonPubParams.images}
+                          onChange={(values) => {
+                            setAccountAllParams({
+                              ...values,
+                            });
+                          }}
+                        />
+                        // <div style={{ height: "500px" }}>通用参数</div>
                       )}
                     </>
                   ) : (
-                    <>第二步</>
+                    <>第二部</>
+                  )}
+
+                  {pubListChoosed.length === 0 && (
+                    <div className="publishDialog-con-tips">
+                      你的工作被保存了，选择一个账号来创建一个帖子。
+                    </div>
                   )}
                 </div>
               </div>
               <div className="publishDialog-footer">
                 time
                 <div className="publishDialog-footer-btns">
-                  <Button size="large" onClick={closeDialog}>
-                    取消
-                  </Button>
-                  <Button size="large" type="primary">
-                    确认
-                  </Button>
+                  {step === 0 && pubListChoosed.length >= 2 ? (
+                    <Button
+                      size="large"
+                      onClick={() => {
+                        setStep(1);
+                      }}
+                    >
+                      针对每个账户进行定制
+                      <ArrowRightOutlined />
+                    </Button>
+                  ) : (
+                    <>
+                      <Button size="large" onClick={closeDialog}>
+                        取消发布
+                      </Button>
+                      <Button size="large" type="primary">
+                        计划发布
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

@@ -162,6 +162,7 @@ export const useImagePageStore = create(
 
         // 设置通用发布参数
         setCommonPubParams(pubParmas: IPubParams) {
+          console.log(pubParmas);
           const commonPubParams = { ...get().commonPubParams };
           const imageAccounts = [...get().imageAccounts];
 

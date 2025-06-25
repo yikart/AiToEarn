@@ -1,3 +1,8 @@
 .platParamsSetting {
-
+  display: flex;
+  :global {
+    .platParamsSetting-icon {
+      margin-right: 10px;
+    }
+  }
 }

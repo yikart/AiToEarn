@@ -1,4 +1,5 @@
 import React, {
+  CSSProperties,
   ForwardedRef,
   forwardRef,
   memo,
@@ -21,6 +22,7 @@ import { IImgFile } from "@/app/[lng]/publish/components/Choose/ImgChoose";
 import { formatVideo } from "@/app/[lng]/publish/components/Choose/videoChoose.util";
 import { formatImg } from "@/app/[lng]/publish/components/Choose/ImgChoose.util";
 import VideoCoverSeting from "@/app/[lng]/publish/videoPage/components/VideoCoverSeting";
+import isEqual from "lodash/isEqual";
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -28,9 +30,11 @@ const { Dragger } = Upload;
 export interface IPubParmasTextareaRef {}
 
 export interface IPubParmasTextareaProps {
-  onChange: (value: string) => void;
-  // 上传change
-  onUpload: (files: { imgs?: IImgFile[]; video?: IVideoFile }) => void;
+  onChange: (values: {
+    imgs?: IImgFile[];
+    video?: IVideoFile;
+    value: string;
+  }) => void;
   rows?: number;
   // 视频数量限制
   videoMax?: number;
@@ -38,32 +42,64 @@ export interface IPubParmasTextareaProps {
   imageMax?: number;
   // 扩展内容
   extend?: React.ReactNode;
+  style?: CSSProperties;
+  imageFileListValue?: IImgFile[];
+  videoFileValue?: IVideoFile;
+  desValue?: string;
 }
 
 const PubParmasTextarea = memo(
   forwardRef(
     (
       {
+        style,
         onChange,
-        onUpload,
         rows = 12,
         videoMax = 1,
         imageMax = 20,
         extend,
+        imageFileListValue = [],
+        videoFileValue,
+        desValue = "",
       }: IPubParmasTextareaProps,
       ref: ForwardedRef<IPubParmasTextareaRef>,
     ) => {
-      const [value, setValue] = useState("");
+      const [value, setValue] = useState(desValue);
       const [previewData, setPreviewData] = useState<
         IImgFile | IVideoFile | undefined
       >(undefined);
       // 图片
-      const [imageFileList, setImageFileList] = useState<IImgFile[]>([]);
+      const [imageFileList, setImageFileList] =
+        useState<IImgFile[]>(imageFileListValue);
       // 视频
       const [videoFile, setVideoFile] = useState<IVideoFile | undefined>(
-        undefined,
+        videoFileValue,
       );
+      // 裁剪弹框
       const [videoCoverSetingModal, setVideoCoverSetingModal] = useState(false);
+
+      useEffect(() => {
+        const values = {
+          imgs: imageFileList,
+          video: videoFile,
+          value,
+        };
+        onChange(values);
+      }, [imageFileList, videoFile, value]);
+
+      useEffect(() => {
+        if (imageFileListValue.length === 0 && imageFileList.length === 0)
+          return;
+        if (isEqual(imageFileListValue, imageFileList)) {
+          setImageFileList(imageFileListValue);
+        }
+      }, [imageFileListValue]);
+      useEffect(() => {
+        setValue(desValue || "");
+      }, [desValue]);
+      useEffect(() => {
+        setVideoFile(videoFileValue);
+      }, [videoFileValue]);
 
       // 动态accept类型
       const uploadAccept = useMemo(() => {
@@ -86,19 +122,6 @@ const PubParmasTextarea = memo(
         // 视频和图片都没有，或者只选一种且未到上限
         return true;
       }, [videoFile, imageMax, videoMax, videoFile]);
-
-      useEffect(() => {
-        onChange(value);
-      }, [value]);
-
-      useEffect(() => {
-        const files = {
-          imgs: imageFileList,
-          video: videoFile,
-        };
-
-        onUpload(files);
-      }, [imageFileList, videoFile]);
 
       // 检查上传文件类型
       const checkFileListType = useCallback(
@@ -215,7 +238,7 @@ const PubParmasTextarea = memo(
             )}
           </Modal>
 
-          <div className={styles.pubParmasTextarea}>
+          <div className={styles.pubParmasTextarea} style={style}>
             <div className="pubParmasTextarea-input">
               <TextArea
                 placeholder="开始写"
@@ -376,10 +399,6 @@ const PubParmasTextarea = memo(
                   裁剪封面
                 </Button>
               )}
-            </div>
-
-            <div className="pubParmasTextarea-menus">
-              <div className="pubParmasTextarea-menus-item">1</div>
             </div>
 
             {extend && <div className="pubParmasTextarea-other">{extend}</div>}
