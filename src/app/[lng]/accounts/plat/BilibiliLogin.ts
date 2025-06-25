@@ -1,23 +1,9 @@
 import qs from "qs";
 import { PlatType } from "@/app/config/platConfig";
-import { requestPlatApi } from "@/utils/otherRequest";
-import { KwaiPlat } from "@/app/plat/platChildren/kwai/KwaiPlat";
-import { createOrUpdateAccountApi } from "@/api/account";
 import { apiGetBilibiliLoginUrl, apiCheckBilibiliAuth } from "@/api/bilibili";
 import { useAccountStore } from "@/store/account";
 
-export const kwaiAppId = "ks715790869885446758";
-export const kwaiAppSecret = "cqSvJvBSPJjd-4pBH_4N0Q";
 
-interface BilibiliLoginData {
-  taskId: string;
-  url: string;
-}
-
-interface AuthResponse {
-  code: number;
-  data: any;
-}
 
 /**
  * b站被点击
