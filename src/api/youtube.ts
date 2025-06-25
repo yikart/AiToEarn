@@ -11,9 +11,9 @@ export const getYouTubeAuthUrlApi = (mail: string) => {
 
 export const checkYouTubeAuthApi = ( data:any ) => {
   return request({
-    url: '/plat/youtube/auth/check',
+    url: `/plat/youtube/auth/status/${data.accountId}`,
     method: 'GET',
-    params: data,
+    params: {},
   });
 };
 
