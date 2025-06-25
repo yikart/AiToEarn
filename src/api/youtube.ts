@@ -24,6 +24,15 @@ export const uploadYouTubeVideoApi = (data: FormData) => {
   });
 };
 
+
+export const uploadYouTubeVideoSmallApi = (data: FormData) => {
+  return request({
+    url: '/plat/youtube/video/upload/small',
+    method: 'POST',
+    body: data,
+  });
+};
+
 export const getYouTubeListApi = (data: any) => {
   return request({
     url: '/plat/youtube/videos/list',

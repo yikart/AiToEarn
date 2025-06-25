@@ -1,6 +1,7 @@
 import { PlatType } from "@/app/config/platConfig";
 import { KwaiPlat } from "@/app/plat/platChildren/kwai/KwaiPlat";
 import { BilibiliPlat } from "@/app/plat/platChildren/bilibili/BilibiliPlat";
+import { YoutubePlat } from "@/app/plat/platChildren/youtube/YoutubePlat";
 import { PlatBase } from "@/app/plat/PlatBase";
 import {
   IPlatConstrParams,
@@ -17,6 +18,8 @@ class PlatManage {
         return new KwaiPlat(params);
       case PlatType.BILIBILI:
         return new BilibiliPlat(params);  
+      case PlatType.YouTube:
+          return new YoutubePlat(params);  
     }
     return new KwaiPlat(params);
   }

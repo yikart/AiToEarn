@@ -129,7 +129,7 @@ const YouTubeAuth: React.FC = () => {
       const response = await uploadYouTubeVideoApi(formData);
       if (response?.data) {
         message.success(t("uploadSuccess"));
-      }
+      } 
     } catch (error) {
       console.error("上传视频失败:", error);
       message.error(t("uploadFailed"));
