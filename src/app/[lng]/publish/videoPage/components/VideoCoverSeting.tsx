@@ -8,13 +8,12 @@ import {
 } from "react";
 import ImgChoose, { IImgFile } from "../../components/Choose/ImgChoose";
 import styles from "./videoCoverSeting.module.scss";
-import { Alert, Button, message, Modal, Slider, Spin } from "antd";
+import { Alert, Button, Modal, Slider, Spin } from "antd";
 import { IVideoFile } from "../../components/Choose/VideoChoose";
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
 import { useVideoPageStore } from "@/app/[lng]/publish/videoPage/useVideoPageStore";
 import { useShallow } from "zustand/react/shallow";
-import { CloseCircleOutlined } from "@ant-design/icons";
 import { formatImg } from "@/app/[lng]/publish/components/Choose/ImgChoose.util";
 import { VideoGrabFrame } from "@/app/[lng]/publish/components/Choose/videoChoose.util";
 
@@ -28,9 +27,10 @@ export interface IVideoCoverSetingProps {
   // 需要截帧的视频
   videoFile?: IVideoFile;
   // 保存图片的唯一值
-  saveImgId: string;
+  saveImgId?: string;
   // 关闭按钮点击事件，如果有这个事件就会显示关闭按钮
-  onClose?: () => void;
+  onClose: () => void;
+  videoCoverSetingModal: boolean;
 }
 
 // 视频封面设置
@@ -38,16 +38,16 @@ const VideoCoverSeting = memo(
   forwardRef(
     (
       {
+        videoCoverSetingModal,
         onChoosed,
         value,
         videoFile,
-        saveImgId,
+        saveImgId = "",
         onClose,
       }: IVideoCoverSetingProps,
       ref: ForwardedRef<IVideoCoverSetingRef>,
     ) => {
       const [imgFile, setImgFile] = useState<IImgFile>();
-      const [videoCoverSetingModal, setVideoCoverSetingModal] = useState(false);
       const cropper = useRef<Cropper>();
       const cropperImg = useRef<HTMLImageElement>(null);
       const [videoCoverLoading, setVideoCoverLoading] = useState(false);
@@ -81,7 +81,7 @@ const VideoCoverSeting = memo(
       };
 
       const close = () => {
-        setVideoCoverSetingModal(false);
+        onClose();
       };
 
       // 初始化裁剪工具
@@ -111,30 +111,30 @@ const VideoCoverSeting = memo(
 
       return (
         <>
-          <div
-            className={styles.videoCoverSeting}
-            onClick={() => {
-              if (!videoFile) return message.warning("您必须上传一个视频！");
-              setVideoCoverSetingModal(true);
-            }}
-          >
-            <div className="videoCoverSeting-img">
-              {value && (
-                <div className="videoCoverSeting-choosed">
-                  <img src={value?.imgUrl} />
-                  {onClose && (
-                    <CloseCircleOutlined
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onClose();
-                      }}
-                    />
-                  )}
-                </div>
-              )}
-            </div>
-            <div className="videoCoverSeting-text">上传图片</div>
-          </div>
+          {/*<div*/}
+          {/*  className={styles.videoCoverSeting}*/}
+          {/*  onClick={() => {*/}
+          {/*    if (!videoFile) return message.warning("您必须上传一个视频！");*/}
+          {/*    setVideoCoverSetingModal(true);*/}
+          {/*  }}*/}
+          {/*>*/}
+          {/*  <div className="videoCoverSeting-img">*/}
+          {/*    {value && (*/}
+          {/*      <div className="videoCoverSeting-choosed">*/}
+          {/*        <img src={value?.imgUrl} />*/}
+          {/*        {onClose && (*/}
+          {/*          <CloseCircleOutlined*/}
+          {/*            onClick={(e) => {*/}
+          {/*              e.stopPropagation();*/}
+          {/*              onClose();*/}
+          {/*            }}*/}
+          {/*          />*/}
+          {/*        )}*/}
+          {/*      </div>*/}
+          {/*    )}*/}
+          {/*  </div>*/}
+          {/*  <div className="videoCoverSeting-text">上传图片</div>*/}
+          {/*</div>*/}
 
           <Modal
             width={600}

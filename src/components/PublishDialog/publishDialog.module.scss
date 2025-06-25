@@ -67,6 +67,10 @@ $assistantWidth: 300px;
         color: var(--grayColor7);
       }
     }
+    .publishDialog-paramsSet {
+      max-height: 600px;
+      overflow: auto;
+    }
     .publishDialog-footer {
       display: flex;
       align-items: center;

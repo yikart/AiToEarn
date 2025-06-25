@@ -5,8 +5,10 @@
  * @LastEditors: nevin
  * @Description: 选择图片
  */
-import { Button } from "antd";
-import { FC } from "react";
+import { Button, message, Upload } from "antd";
+import { FC, useRef } from "react";
+import { RcFile } from "antd/es/upload";
+import { formatImg } from "@/app/[lng]/publish/components/Choose/ImgChoose.util";
 
 interface ImgChooseProps {
   // 单选就使用单选方法，多选就使用单选方法
@@ -33,64 +35,65 @@ export interface IImgFile {
   height: number;
 }
 
-// 根据图片在硬盘上的路径获取文件
-// export const getImgFile = async (path: string): Promise<IImgFile> => {
-//   const file = await icpGetFileStream(path);
-//   return await formatImg({ path, file });
-// };
-
 const ImgChoose: FC<ImgChooseProps> = ({
   onChoose,
   onMultipleChoose,
   children,
 }) => {
+  const chooseCount = useRef<number>(0);
+  const fileListRef = useRef<RcFile[]>([]);
+
   /**
    * 发送上传的事件
    */
   const handleUploadImg = async () => {
-    // TODO 上传图片
-    // try {
-    //   const result: {
-    //     path: string;
-    //     file: Uint8Array;
-    //   }[] = await window.ipcRenderer.invoke(
-    //     "ICP_VIEWS_CHOSE_IMG",
-    //     !!onMultipleChoose,
-    //   );
-    //   if (!result) return;
-    //   const tasks: Promise<IImgFile>[] = [];
-    //   for (const v of result) {
-    //     tasks.push(formatImg(v));
-    //   }
-    //   const imgFiles = await Promise.all(tasks);
-    //
-    //   if (onMultipleChoose) {
-    //     onMultipleChoose(imgFiles);
-    //   } else if (onChoose) {
-    //     onChoose(imgFiles[0]);
-    //   }
-    // } catch (error) {
-    //   message.error("选择图片失败");
-    //   console.error(error);
-    // }
+    try {
+      const tasks: Promise<IImgFile>[] = [];
+      for (const file of fileListRef.current) {
+        tasks.push(
+          formatImg({
+            path: file.name,
+            blob: file,
+          }),
+        );
+      }
+      const imgFiles = await Promise.all(tasks);
+      if (onMultipleChoose) {
+        onMultipleChoose(imgFiles);
+      } else if (onChoose) {
+        onChoose(imgFiles[0]);
+      }
+    } catch (e) {
+      message.error("选择图片失败");
+      console.error(e);
+    }
   };
 
   return (
-    <>
+    <Upload
+      accept="image/*"
+      multiple={!!onMultipleChoose}
+      beforeUpload={async (file, uploadFileList) => {
+        chooseCount.current++;
+        fileListRef.current = [...fileListRef.current, file];
+
+        if (chooseCount.current === uploadFileList.length) {
+          await handleUploadImg();
+          fileListRef.current = [];
+          chooseCount.current = 0;
+        }
+
+        return Upload.LIST_IGNORE;
+      }}
+    >
       {children ? (
-        <div
-          className="imgChoose"
-          onClick={handleUploadImg}
-          style={{ cursor: "pointer" }}
-        >
+        <div className="imgChoose" style={{ cursor: "pointer" }}>
           {children}
         </div>
       ) : (
-        <Button type="primary" onClick={handleUploadImg}>
-          选择图片
-        </Button>
+        <Button type="primary">选择图片</Button>
       )}
-    </>
+    </Upload>
   );
 };
 

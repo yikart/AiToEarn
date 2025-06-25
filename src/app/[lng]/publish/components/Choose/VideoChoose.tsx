@@ -9,7 +9,10 @@ import { Button, message, Upload } from "antd";
 import { FC, useRef } from "react";
 import { IImgFile } from "@/app/[lng]/publish/components/Choose/ImgChoose";
 import { RcFile } from "antd/es/upload";
-import { VideoGrabFrame } from "@/app/[lng]/publish/components/Choose/videoChoose.util";
+import {
+  formatVideo,
+  VideoGrabFrame,
+} from "@/app/[lng]/publish/components/Choose/videoChoose.util";
 
 interface VideoChooseProps {
   // 单选就使用单选方法，多选就使用单选方法
@@ -30,8 +33,6 @@ export interface IVideoFile {
   // 前端临时路径，注意不要存到数据库
   videoUrl: string;
   filename: string;
-  // 视频在硬盘上的路径
-  // videoPath: string;
   // 视频宽度
   width: number;
   // 视频高度
@@ -72,19 +73,6 @@ async function getVideoInfo(videoUrl: string): Promise<{
 //     ...videoInfo,
 //   };
 // };
-
-const formatVideo = async (file: RcFile): Promise<IVideoFile> => {
-  const videoUrl = URL.createObjectURL(file);
-  const videoInfo = await VideoGrabFrame(videoUrl, 0);
-
-  return {
-    filename: file.name,
-    videoUrl,
-    size: file.size!,
-    file: file,
-    ...videoInfo,
-  };
-};
 
 const VideoChoose: FC<VideoChooseProps> = ({
   onChoose,
@@ -136,17 +124,11 @@ const VideoChoose: FC<VideoChooseProps> = ({
       }}
     >
       {children ? (
-        <div
-          className="videoChoose"
-          onClick={handleUploadVideo}
-          style={{ cursor: "pointer" }}
-        >
+        <div className="videoChoose" style={{ cursor: "pointer" }}>
           {children}
         </div>
       ) : (
-        <Button type="primary" onClick={handleUploadVideo}>
-          选择视频
-        </Button>
+        <Button type="primary">选择视频</Button>
       )}
     </Upload>
   );
