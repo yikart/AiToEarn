@@ -17,6 +17,7 @@ import { AccountPlatInfoMap } from "@/app/config/platConfig";
 import AvatarPlat from "@/components/AvatarPlat";
 import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
 import { useShallow } from "zustand/react/shallow";
+import PlatParamsSetting from "@/components/PublishDialog/compoents/PlatParamsSetting";
 
 export interface IPublishDialogRef {}
 
@@ -140,23 +141,26 @@ const PublishDialog = memo(
                   })}
                 </div>
 
-                {step === 0 ? (
-                  <>
-                    {accountChoosed.length === 0 && (
-                      <div className="publishDialog-con-tips">
-                        你的工作被保存了，选择一个账号来创建一个帖子。
-                      </div>
-                    )}
-                    {accountChoosed.length == 1 && (
-                      <div style={{ height: "500px" }}>{accountChoosed[0].type}</div>
-                    )}
-                    {accountChoosed.length >= 2 && (
-                      <div style={{ height: "500px" }}>通用参数</div>
-                    )}
-                  </>
-                ) : (
-                  <>第二步</>
-                )}
+                <div className="publishDialog-paramsSet">
+                  <PlatParamsSetting />
+                  {step === 0 ? (
+                    <>
+                      {accountChoosed.length === 0 && (
+                        <div className="publishDialog-con-tips">
+                          你的工作被保存了，选择一个账号来创建一个帖子。
+                        </div>
+                      )}
+                      {accountChoosed.length == 1 && (
+                        <div style={{ height: "500px" }}>{accountChoosed[0].type}</div>
+                      )}
+                      {accountChoosed.length >= 2 && (
+                        <div style={{ height: "500px" }}>通用参数</div>
+                      )}
+                    </>
+                  ) : (
+                    <>第二步</>
+                  )}
+                </div>
               </div>
               <div className="publishDialog-footer">
                 time

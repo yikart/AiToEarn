@@ -2,12 +2,12 @@ import { ForwardedRef, forwardRef, memo } from "react";
 import {
   IPlatsParamsProps,
   IPlatsParamsRef,
-} from "@/components/PublishDialog/plats/plats.type";
+} from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/plats.type";
 
-const KwaiParams = memo(
+const BilibParams = memo(
   forwardRef(({}: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
-    return <div>快手</div>;
+    return <div>b站</div>;
   }),
 );
 
-export default KwaiParams;
+export default BilibParams;

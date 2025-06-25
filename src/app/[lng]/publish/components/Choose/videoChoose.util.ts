@@ -1,6 +1,21 @@
 // 视频截帧
 import { formatImg } from "@/app/[lng]/publish/components/Choose/ImgChoose.util";
 import { IImgFile } from "@/app/[lng]/publish/components/Choose/ImgChoose";
+import { RcFile } from "antd/es/upload";
+import { IVideoFile } from "@/app/[lng]/publish/components/Choose/VideoChoose";
+
+export const formatVideo = async (file: RcFile): Promise<IVideoFile> => {
+  const videoUrl = URL.createObjectURL(file);
+  const videoInfo = await VideoGrabFrame(videoUrl, 0);
+
+  return {
+    filename: file.name,
+    videoUrl,
+    size: file.size!,
+    file: file,
+    ...videoInfo,
+  };
+};
 
 export function VideoGrabFrame(
   videoUrl: string,
