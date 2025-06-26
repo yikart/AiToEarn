@@ -13,13 +13,21 @@ export const checkYouTubeAuthApi = ( data:any ) => {
   return request({
     url: `/plat/youtube/auth/status/${data.accountId}`,
     method: 'GET',
-    params: {},
   });
 };
 
 export const uploadYouTubeVideoApi = (data: FormData) => {
   return request({
     url: '/plat/youtube/videos/upload',
+    method: 'POST',
+    body: data,
+  });
+};
+
+
+export const uploadYouTubeVideoSmallApi = (data: FormData) => {
+  return request({
+    url: '/plat/youtube/video/upload/small',
     method: 'POST',
     body: data,
   });

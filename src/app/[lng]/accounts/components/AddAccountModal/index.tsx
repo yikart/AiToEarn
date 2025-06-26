@@ -5,6 +5,7 @@ import { AccountPlatInfoArr, PlatType } from "@/app/config/platConfig";
 import { SocialAccount } from "@/api/types/account.type";
 import { kwaiSkip } from "@/app/[lng]/accounts/plat/kwaiLogin";
 import { bilibiliSkip } from "../../plat/BilibiliLogin";
+import { youtubeSkip } from "../../plat/YoutubeLogin";
 
 export interface IAddAccountModalRef {}
 
@@ -54,6 +55,10 @@ const AddAccountModal = memo(
 
                             case PlatType.BILIBILI:
                               bilibiliSkip(key);
+
+                              case PlatType.YouTube:
+                                console.log('key',key)
+                                youtubeSkip(key);
                           }
                         }}
                       >

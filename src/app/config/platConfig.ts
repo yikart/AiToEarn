@@ -2,6 +2,7 @@ import { PubType } from "@/app/config/publishConfig";
 import ksSvg from "@/assets/svgs/plat/ks.svg";
 import bilibiliSvg from "@/assets/svgs/plat/bilibili.svg";
 import youtubeSvg from "@/assets/svgs/plat/youtube.svg";
+import douyinSvg from "@/assets/svgs/plat/douyin.svg";
 
 // 平台类型
 export enum PlatType {
@@ -96,6 +97,24 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     {
       name: "YouTube",
       icon: youtubeSvg.src,
+      url: "https://www.youtube.com/",
+      pubTypes: new Set([PubType.VIDEO]),
+      commonPubParamsConfig: {
+        timingMax: {
+          maxDate: 30,
+          timeOffset: 60,
+        },
+        titleMax: 16,
+        topicMax: 10,
+      },
+      themeColor: "red",
+    },
+  ],
+  [
+    PlatType.Douyin,
+    {
+      name: "Douyin",
+      icon: douyinSvg.src,
       url: "https://www.youtube.com/",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {

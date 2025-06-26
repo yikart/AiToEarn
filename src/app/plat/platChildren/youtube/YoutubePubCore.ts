@@ -1,4 +1,4 @@
-import { BilibiliPlat } from "@/app/plat/platChildren/bilibili/BilibiliPlat";
+import { YoutubePlat } from "./YoutubePlat";
 import {
   IPublishResult,
   IVideoPublishItem,
@@ -6,24 +6,25 @@ import {
 } from "@/app/plat/plat.type";
 import { calculateChunks } from "@/app/plat/plat.util";
 import {
-  apiInitBilibiliVideo,
-  apiUploadBilibiliCover,
-  apiSubmitBilibiliArchive,
-  apiUploadBilibiliVideoPart,
-  apiCompleteBilibiliVideo,
-} from "@/api/bilibili";
+  // apiInitBilibiliVideo,
+  // apiUploadBilibiliCover,
+  // apiSubmitBilibiliArchive,
+  // apiUploadBilibiliVideoPart,
+  // apiCompleteBilibiliVideo,
+  uploadYouTubeVideoSmallApi
+} from "@/api/youtube";
 import { apiCreatePublish, AccountType, PubStatus } from "@/api/publish";
 import { PubType } from "@/app/config/publishConfig";
 
-export class BilibiliPubCore {
-  private thisPlat: BilibiliPlat;
+export class YoutubePubCore {
+  private thisPlat: YoutubePlat;
   private videoPubParams: IVideoPublishItem;
   private fileBlockSize = 4194304;
   // 发布进度
   private readonly onProgress: PubProgressType;
 
   constructor(
-    thisPlat: BilibiliPlat,
+    thisPlat: YoutubePlat,
     pubParams: IVideoPublishItem,
     onProgress: PubProgressType,
   ) {
@@ -57,13 +58,13 @@ export class BilibiliPubCore {
   private async createPublishRecord(result: any, coverUrl: string) {
     try {
       const publishData = {
-        flowId: `bilibili_${Date.now()}`, // 生成唯一的流程ID
+        flowId: `youtube_${Date.now()}`, // 生成唯一的流程ID
         type: PubType.VIDEO,
         title: this.videoPubParams.title || "",
         desc: this.videoPubParams.describe || "",
         accountId: this.thisPlat.account.id,
         uid: this.thisPlat.account.uid || "",
-        accountType: AccountType.BILIBILI,
+        accountType: AccountType.YOUTUBE,
         videoUrl: result.worksUrl, // 使用构建的视频地址
         coverUrl: coverUrl, // 使用实际上传的封面地址
         imgList: [],
@@ -72,7 +73,7 @@ export class BilibiliPubCore {
         option: {
           worksId: result.worksId,
           worksUrl: result.worksUrl,
-          platform: "bilibili",
+          platform: "youtube",
           publishResult: result,
         },
       };
@@ -87,84 +88,30 @@ export class BilibiliPubCore {
   }
 
   // 视频发布
-  async publishVideo(): Promise<IPublishResult> { 
+  async publishVideo(): Promise<IPublishResult> {
     console.log("视频发布");
     console.log(this.videoPubParams);
     console.log(this.thisPlat.account);
 
     try {
-      // 1. 获取上传token
-      const initRes = await apiInitBilibiliVideo({
-        accountId: this.thisPlat.account.id,
-        name: this.videoPubParams.video.filename,
-      });
 
-      if (!initRes?.data?.data) {
-        throw new Error("获取上传token失败");
-      }
+      const formData = new FormData();
+      formData.append("file", this.videoPubParams.video.file);
+      formData.append("accountId", this.thisPlat.account.id);
+      formData.append("title", this.videoPubParams.title || "开心快乐每一天");
+      formData.append("description", this.videoPubParams.describe || "开心快乐每一天");
+      formData.append("privacyStatus", "private");
+      // if (selectedSection) {
+      //   formData.append("sectionId", selectedSection);
+      // }
 
-      const uploadToken = initRes.data.data;
-      console.log("获取上传token成功:", uploadToken);
-      this.onProgress?.(0.1, "获取上传token成功");
-
-      // 2. 上传视频（分片上传）
-      if (!this.videoPubParams.video.file) {
-        throw new Error("视频文件不存在");
-      }
-
-      const file = this.videoPubParams.video.file;
-      const chunkRange = calculateChunks(file.size, this.fileBlockSize);
-      console.log(`文件将被分为 ${chunkRange.length} 个分片`);
-
-      // 分片上传
-      for (let i = 0; i < chunkRange.length; i++) {
-        const range = chunkRange[i];
-        const sliced = file.slice(range.start, range.end);
-        console.log(`上传分片 ${i + 1}/${chunkRange.length}`);
-
-        const res = await apiUploadBilibiliVideoPart(
-          this.thisPlat.account.id,
-          uploadToken,
-          i + 1,
-          sliced,
-        );
-
-        if (res?.code !== 0) {
-          throw new Error(`分片 ${i + 1} 上传失败`);
-        }
-
-        // 更新进度
-        const progress = 0.1 + (0.6 * (i + 1)) / chunkRange.length;
-        this.onProgress?.(progress, `上传分片 ${i + 1}/${chunkRange.length}`);
-      }
-
-      // 合并分片
-      console.log("开始合并分片...");
-      this.onProgress?.(0.7, "开始合并分片");
-      const completeRes = await apiCompleteBilibiliVideo(
-        this.thisPlat.account.id,
-        uploadToken,
-      );
-      if (completeRes?.code !== 0) {
-        throw new Error("分片合并失败");
-      }
-      this.onProgress?.(0.8, "分片合并完成");
-
-      // 3. 上传封面
-      let coverUrl: any = "";
-      if (this.videoPubParams.cover?.file) {
-        const formData = new FormData();
-        formData.append("file", this.videoPubParams.cover.file);
-        const coverRes = await apiUploadBilibiliCover(
-          this.thisPlat.account.id,
-          formData,
-        );
-        if (coverRes?.data) {
-          coverUrl = coverRes.data;
-          console.log("封面上传成功:", coverUrl);
-          this.onProgress?.(0.9, "封面上传成功");
-        }
-      }
+      const response = await uploadYouTubeVideoSmallApi(formData);
+      console.log('response',response)
+      return {
+        worksId: "",
+        worksUrl: "",
+        success: true,
+      };
 
       // 4. 提交稿件
       const archiveData = {
