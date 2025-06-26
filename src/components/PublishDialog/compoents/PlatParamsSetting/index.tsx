@@ -1,13 +1,11 @@
 import { CSSProperties, ForwardedRef, forwardRef, memo, useMemo } from "react";
 import styles from "./platParamsSetting.module.scss";
-import {
-  PubItem,
-  usePublishDialog,
-} from "@/components/PublishDialog/usePublishDialog";
+import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
 import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import BilibParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/BilibParams";
 import KwaiParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/KwaiParams";
 import { useShallow } from "zustand/react/shallow";
+import { PubItem } from "@/components/PublishDialog/publishDialog.type";
 
 export interface IPlatParamsSettingRef {}
 
@@ -55,23 +53,26 @@ const PlatParamsSetting = memo(
             styles.platParamsSetting,
             !isExpand ? styles.platParamsSetting_expand : "",
           ].join(" ")}
+          onClick={(e) => e.stopPropagation()}
           style={style}
         >
-          <div className="platParamsSetting-icon">
-            <img src={platConfig.icon} style={{ borderRadius: "50%" }} />
-          </div>
-          {isExpand ? (
-            PlatItemComp
-          ) : (
-            <div
-              className="platParamsSetting-des"
-              onClick={() => {
-                setExpandedPubItem(pubItem);
-              }}
-            >
-              {pubItem.params.des}
+          <div className="platParamsSetting-wrapper">
+            <div className="platParamsSetting-icon">
+              <img src={platConfig.icon} style={{ borderRadius: "50%" }} />
             </div>
-          )}
+            {isExpand ? (
+              PlatItemComp
+            ) : (
+              <div
+                className="platParamsSetting-des"
+                onClick={() => {
+                  setExpandedPubItem(pubItem);
+                }}
+              >
+                {pubItem.params.des}
+              </div>
+            )}
+          </div>
         </div>
       );
     },

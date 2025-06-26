@@ -1,7 +1,8 @@
 .pubParmasTextarea {
   border: 1px solid var(--grayColor4);
   border-radius: 6px;
-
+  flex: 1;
+  text-align: left;
   :global {
     .pubParmasTextarea-input {
       padding: 15px;

@@ -2,19 +2,11 @@ import { create } from "zustand";
 import { combine } from "zustand/middleware";
 import lodash from "lodash";
 import { SocialAccount } from "@/api/types/account.type";
-import { IImgFile } from "@/app/[lng]/publish/components/Choose/ImgChoose";
-import { IVideoFile } from "@/app/[lng]/publish/components/Choose/VideoChoose";
-
-interface IPubParams {
-  des: string;
-  images?: IImgFile[];
-  video?: IVideoFile;
-}
-
-export interface PubItem {
-  account: SocialAccount;
-  params: IPubParams;
-}
+import {
+  IPubParams,
+  PubItem,
+} from "@/components/PublishDialog/publishDialog.type";
+import { ErrPubParamsMapType } from "@/components/PublishDialog/hooks/usePubParamsVerify";
 
 export interface IPublishDialogStore {
   // 选择的发布列表
@@ -27,6 +19,8 @@ export interface IPublishDialogStore {
   step: number;
   // 第二部时需要，展开的账户参数
   expandedPubItem?: PubItem;
+  // 错误提示
+  errParamsMap?: ErrPubParamsMapType;
 }
 
 const store: IPublishDialogStore = {
@@ -39,6 +33,7 @@ const store: IPublishDialogStore = {
     images: [],
   },
   expandedPubItem: undefined,
+  errParamsMap: undefined,
 };
 
 const getStore = () => {
@@ -52,14 +47,30 @@ export const usePublishDialog = create(
     },
     (set, get, storeApi) => {
       const methods = {
+        setPubListChoosed(pubListChoosed: PubItem[]) {
+          set({
+            pubListChoosed,
+          });
+        },
+        setExpandedPubItem(expandedPubItem: PubItem | undefined) {
+          set({
+            expandedPubItem,
+          });
+        },
+        setErrParamsMap(errParamsMap: ErrPubParamsMapType) {
+          set({
+            errParamsMap,
+          });
+        },
+        setStep(step: number) {
+          set({ step });
+        },
+
         // 清空所有数据
         clear() {
           set({
             ...getStore(),
           });
-        },
-        setStep(step: number) {
-          set({ step });
         },
 
         // 初始化发布参数
@@ -108,6 +119,7 @@ export const usePublishDialog = create(
         // 设置单个账号的参数
         setOnePubParams(pubParmas: Partial<IPubParams>, accountId: string) {
           const pubList = [...get().pubList];
+          let pubListChoosed = [...get().pubListChoosed];
           const findedData = pubList.find((v) => v.account.id === accountId);
           if (!findedData) return;
 
@@ -117,19 +129,15 @@ export const usePublishDialog = create(
             }
           }
 
+          pubListChoosed = pubListChoosed.map((v) => {
+            const findData = pubList.find((k) => k.account.id === v.account.id);
+            if (findData) return findData;
+            return v;
+          });
+
           set({
             pubList,
-          });
-        },
-
-        setPubListChoosed(pubListChoosed: PubItem[]) {
-          set({
             pubListChoosed,
-          });
-        },
-        setExpandedPubItem(expandedPubItem: PubItem | undefined) {
-          set({
-            expandedPubItem,
           });
         },
       };

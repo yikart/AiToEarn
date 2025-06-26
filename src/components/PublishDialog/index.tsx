@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import styles from "./publishDialog.module.scss";
-import { Button, Modal } from "antd";
+import { Button, message, Modal } from "antd";
 import { ArrowRightOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import PublishDialogAi from "@/components/PublishDialog/compoents/PublishDialogAi";
 import PublishDialogPreview from "@/components/PublishDialog/compoents/PublishDialogPreview";
@@ -20,6 +20,7 @@ import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
 import { useShallow } from "zustand/react/shallow";
 import PlatParamsSetting from "@/components/PublishDialog/compoents/PlatParamsSetting";
 import PubParmasTextarea from "@/components/PublishDialog/compoents/PubParmasTextarea";
+import usePubParamsVerify from "@/components/PublishDialog/hooks/usePubParamsVerify";
 
 export interface IPublishDialogRef {}
 
@@ -49,6 +50,9 @@ const PublishDialog = memo(
         step,
         setAccountAllParams,
         commonPubParams,
+        setExpandedPubItem,
+        expandedPubItem,
+        setErrParamsMap,
       } = usePublishDialog(
         useShallow((state) => ({
           pubListChoosed: state.pubListChoosed,
@@ -60,8 +64,12 @@ const PublishDialog = memo(
           step: state.step,
           setAccountAllParams: state.setAccountAllParams,
           commonPubParams: state.commonPubParams,
+          setExpandedPubItem: state.setExpandedPubItem,
+          expandedPubItem: state.expandedPubItem,
+          setErrParamsMap: state.setErrParamsMap,
         })),
       );
+      const { errParamsMap } = usePubParamsVerify(pubListChoosed);
 
       useEffect(() => {
         if (open) {
@@ -94,7 +102,19 @@ const PublishDialog = memo(
 
       // 是否打开右侧预览
       const openRight = useMemo(() => {
-        return pubListChoosed.length !== 0;
+        if (step === 0) {
+          return pubListChoosed.length !== 0;
+        } else {
+          return expandedPubItem !== undefined;
+        }
+      }, [pubListChoosed, expandedPubItem, step]);
+
+      useEffect(() => {
+        setErrParamsMap(errParamsMap);
+      }, [errParamsMap]);
+
+      const pubClick = useCallback(() => {
+        console.log("发布：", pubListChoosed);
       }, [pubListChoosed]);
 
       return (
@@ -116,7 +136,12 @@ const PublishDialog = memo(
               <PublishDialogAi />
             </CSSTransition>
 
-            <div className="publishDialog-wrapper">
+            <div
+              className="publishDialog-wrapper"
+              onClick={() => {
+                setExpandedPubItem(undefined);
+              }}
+            >
               <div className="publishDialog-con">
                 <div className="publishDialog-con-head">
                   <span className="publishDialog-con-head-title">发布作品</span>
@@ -144,7 +169,8 @@ const PublishDialog = memo(
                             : "transparent",
                         }}
                         key={pubItem.account.id}
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           const newPubListChoosed = [...pubListChoosed];
                           // 查找当前账户是否已被选择
                           const index = newPubListChoosed.findIndex(
@@ -233,7 +259,10 @@ const PublishDialog = memo(
                   )}
                 </div>
               </div>
-              <div className="publishDialog-footer">
+              <div
+                className="publishDialog-footer"
+                onClick={(e) => e.stopPropagation()}
+              >
                 time
                 <div className="publishDialog-footer-btns">
                   {step === 0 && pubListChoosed.length >= 2 ? (
@@ -251,7 +280,25 @@ const PublishDialog = memo(
                       <Button size="large" onClick={closeDialog}>
                         取消发布
                       </Button>
-                      <Button size="large" type="primary">
+                      <Button
+                        size="large"
+                        type="primary"
+                        onClick={() => {
+                          for (const [key, errVideoItem] of errParamsMap) {
+                            if (errVideoItem) {
+                              const pubItem = pubListChoosed.find(
+                                (v) => v.account.id === key,
+                              )!;
+                              if (step === 1) {
+                                setExpandedPubItem(pubItem);
+                              }
+                              message.warning(errVideoItem.parErrMsg);
+                              return;
+                            }
+                          }
+                          pubClick();
+                        }}
+                      >
                         计划发布
                       </Button>
                     </>

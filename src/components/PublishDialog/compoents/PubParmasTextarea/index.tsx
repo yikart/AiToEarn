@@ -46,6 +46,8 @@ export interface IPubParmasTextareaProps {
   imageMax?: number;
   // 扩展内容
   extend?: React.ReactNode;
+  // 在前面的扩展元素
+  beforeExtend?: React.ReactNode;
   style?: CSSProperties;
   imageFileListValue?: IImgFile[];
   videoFileValue?: IVideoFile;
@@ -65,6 +67,7 @@ const PubParmasTextarea = memo(
         imageFileListValue = [],
         videoFileValue,
         desValue = "",
+        beforeExtend
       }: IPubParmasTextareaProps,
       ref: ForwardedRef<IPubParmasTextareaRef>,
     ) => {
@@ -245,6 +248,7 @@ const PubParmasTextarea = memo(
 
           <div className={styles.pubParmasTextarea} style={style}>
             <div className="pubParmasTextarea-input">
+              {beforeExtend}
               <TextArea
                 ref={textareaRef}
                 placeholder="开始写"

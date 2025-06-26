@@ -1,8 +1,11 @@
 .platParamsSetting {
-  display: flex;
   :global {
+    .platParamsSetting-wrapper {
+      display: flex;
+      width: 100%;
+    }
     .platParamsSetting-icon {
-      margin-right: 10px;
+      margin: 5px 10px 0 0;
       img {
         width: 25px;
         height: 25px;
