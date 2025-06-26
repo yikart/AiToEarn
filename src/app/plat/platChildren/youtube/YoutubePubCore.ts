@@ -11,7 +11,8 @@ import {
   // apiSubmitBilibiliArchive,
   // apiUploadBilibiliVideoPart,
   // apiCompleteBilibiliVideo,
-  uploadYouTubeVideoSmallApi
+  uploadYouTubeVideoSmallApi,
+  getYouTubeChannelSectionsApi
 } from "@/api/youtube";
 import { apiCreatePublish, AccountType, PubStatus } from "@/api/publish";
 import { PubType } from "@/app/config/publishConfig";
@@ -55,7 +56,7 @@ export class YoutubePubCore {
   }
 
   // 创建发布记录
-  private async createPublishRecord(result: any, coverUrl: string) {
+  private async createPublishRecord(result: any, cheng: any,coverUrl: string, worksUrl:any, worksId:any) {
     try {
       const publishData = {
         flowId: `youtube_${Date.now()}`, // 生成唯一的流程ID
@@ -65,14 +66,14 @@ export class YoutubePubCore {
         accountId: this.thisPlat.account.id,
         uid: this.thisPlat.account.uid || "",
         accountType: AccountType.YOUTUBE,
-        videoUrl: result.worksUrl, // 使用构建的视频地址
+        videoUrl: worksUrl || '', // 使用构建的视频地址
         coverUrl: coverUrl, // 使用实际上传的封面地址
         imgList: [],
         publishTime: new Date().toISOString(),
-        status: result.success ? PubStatus.RELEASED : PubStatus.FAIL,
+        status: cheng ? PubStatus.RELEASED : PubStatus.FAIL,
         option: {
-          worksId: result.worksId,
-          worksUrl: result.worksUrl,
+          worksId: worksId || '',
+          worksUrl: worksUrl || '',
           platform: "youtube",
           publishResult: result,
         },
@@ -95,6 +96,16 @@ export class YoutubePubCore {
 
     try {
 
+
+      // 获取频道分区
+
+      const response1: any = await getYouTubeChannelSectionsApi({
+        accountId: this.thisPlat.account.id,
+        mine: true,
+      });
+      console.log('response1',response1)
+
+
       const formData = new FormData();
       formData.append("file", this.videoPubParams.video.file);
       formData.append("accountId", this.thisPlat.account.id);
@@ -104,31 +115,10 @@ export class YoutubePubCore {
       // if (selectedSection) {
       //   formData.append("sectionId", selectedSection);
       // }
-
-      const response = await uploadYouTubeVideoSmallApi(formData);
-      console.log('response',response)
-      return {
-        worksId: "",
-        worksUrl: "",
-        success: true,
-      };
-
-      // 4. 提交稿件
-      const archiveData = {
-        accountId: this.thisPlat.account.id,
-        uploadToken,
-        title: this.videoPubParams.title || "开心快乐每一天",
-        cover: coverUrl,
-        tid: 21, // 默认使用日常分区
-        // noReprint: this.videoPubParams.noReprint || 0,
-        noReprint: 0,
-        desc: this.videoPubParams.describe || "开心快乐每一天",
-        tag: this.videoPubParams.topics || [],
-        copyright: 1,
-      };
-
       this.onProgress?.(0.95, "正在提交稿件");
-      const submitRes: any = await apiSubmitBilibiliArchive(archiveData);
+
+      const submitRes:any = await uploadYouTubeVideoSmallApi(formData);
+
       console.log("稿件提交结果:", submitRes);
 
       if (submitRes?.code !== 0) {
@@ -138,13 +128,13 @@ export class YoutubePubCore {
       this.onProgress?.(1, "发布成功");
 
       const result = {
-        worksId: submitRes.data?.data || "",
-        worksUrl: `https://www.bilibili.com/video/${submitRes.data?.data}`,
+        worksId: submitRes.data?.id || "",
+        worksUrl: `https://www.youtube.com/watch?v=${submitRes.data?.id}`,
         success: true,
       };
 
       // 5. 创建发布记录
-      await this.createPublishRecord(result, coverUrl);
+      await this.createPublishRecord(result, true, submitRes.data?.id, `https://www.youtube.com/watch?v=${submitRes.data?.id}`, submitRes.data?.id);
 
       return result;
     } catch (error: any) {
@@ -159,7 +149,7 @@ export class YoutubePubCore {
       };
 
       // 即使发布失败也创建记录
-      await this.createPublishRecord(result, "");
+      await this.createPublishRecord(result, true, '', '', '');
 
       return result;
     }

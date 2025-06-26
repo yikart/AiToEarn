@@ -279,7 +279,7 @@ const PlatChoose = memo(
                               count={choosedAcountMap.get(key)?.length}
                               size="small"
                             >
-                              <img src={platInfo.icon} />
+                              <img style={{width: '25px'}} src={platInfo.icon} />
                             </Badge>
                           ),
                         };

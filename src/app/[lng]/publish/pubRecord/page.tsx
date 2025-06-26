@@ -198,6 +198,8 @@ export default function Page() {
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailData, setDetailData] = useState<any>(null);
   const [pubType, setPubType] = useState<PubType | undefined>();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   const columns = useMemo(() => {
     const columns: TableProps<PubRecordModel>["columns"] = [
@@ -294,23 +296,26 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    getPubList();
-  }, [pubType]);
+    getPubList(currentPage);
+  }, [pubType, currentPage]);
 
-  async function getPubList() {
+  async function getPubList(page = currentPage) {
     setLoading(true);
     try {
-      const res: any = await apiGetPublishList(1, 10, {
+      const res: any = await apiGetPublishList(page, 10, {
         type: pubType,
       });
       if (res?.data?.list) {
         setPubRecordList(res.data.list);
+        setTotalCount(res.data.totalCount || 0);
       } else {
         setPubRecordList([]);
+        setTotalCount(0);
       }
     } catch (error) {
       console.error("获取发布记录失败:", error);
       setPubRecordList([]);
+      setTotalCount(0);
     } finally {
       setLoading(false);
     }
@@ -361,10 +366,12 @@ export default function Page() {
         rowKey="id"
         loading={loading}
         pagination={{
-          total: pubRecordList.length,
+          total: totalCount,
           pageSize: 10,
+          current: currentPage,
           showSizeChanger: false,
           showQuickJumper: false,
+          onChange: (page) => setCurrentPage(page),
         }}
       />
     </div>

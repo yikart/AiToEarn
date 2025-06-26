@@ -1,4 +1,5 @@
-import { request } from '@/utils/request';
+import http from "@/utils/request";
+import { request } from "@/utils/request";
 
 // 获取 YouTube 授权 URL
 export const getYouTubeAuthUrlApi = (mail: string) => {
@@ -7,6 +8,18 @@ export const getYouTubeAuthUrlApi = (mail: string) => {
     method: 'GET',
     params: { type: 'pc' },
   });
+};
+
+
+/**
+ * 获取youtube授权状态
+ * @param taskId 任务ID
+ * @returns
+ */
+export const apiCheckYoutubeAuth = (taskId: string) => {
+  return http.post<{ code: number; data: any }>(
+    `/plat/youtube/auth/create-account/${taskId}`,
+  );
 };
 
 export const checkYouTubeAuthApi = ( data:any ) => {
@@ -43,7 +56,7 @@ export const getYouTubeListApi = (data: any) => {
 
 export const getYouTubeChannelSectionsApi = (data: any) => {
   return request({
-    url: '/plat/youtube/channels/list',
+    url: '/plat/youtube/video/categories',
     method: 'GET',
     params: data,
   });
