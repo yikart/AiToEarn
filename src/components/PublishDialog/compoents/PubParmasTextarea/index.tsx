@@ -6,6 +6,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { Button, Image, Input, message, Modal, Tooltip, Upload } from "antd";
@@ -23,6 +24,7 @@ import { formatVideo } from "@/app/[lng]/publish/components/Choose/videoChoose.u
 import { formatImg } from "@/app/[lng]/publish/components/Choose/ImgChoose.util";
 import VideoCoverSeting from "@/app/[lng]/publish/videoPage/components/VideoCoverSeting";
 import isEqual from "lodash/isEqual";
+import { TextAreaRef } from "antd/es/input/TextArea";
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -79,6 +81,7 @@ const PubParmasTextarea = memo(
       );
       // 裁剪弹框
       const [videoCoverSetingModal, setVideoCoverSetingModal] = useState(false);
+      const textareaRef = useRef<TextAreaRef>(null);
 
       useEffect(() => {
         const values = {
@@ -243,10 +246,22 @@ const PubParmasTextarea = memo(
           <div className={styles.pubParmasTextarea} style={style}>
             <div className="pubParmasTextarea-input">
               <TextArea
+                ref={textareaRef}
                 placeholder="开始写"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 rows={rows}
+                autoFocus={true}
+                onFocus={() => {
+                  setTimeout(() => {
+                    if (textareaRef.current) {
+                      const val =
+                        textareaRef.current.resizableTextArea!.textArea;
+                      const len = value.length;
+                      val.setSelectionRange(len, len);
+                    }
+                  }, 10);
+                }}
               />
               <ReactSortable
                 className="pubParmasTextarea-uploads"

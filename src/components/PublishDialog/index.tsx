@@ -67,6 +67,7 @@ const PublishDialog = memo(
         if (open) {
           init(accounts);
         } else {
+          setPubListChoosed([]);
           clear();
         }
       }, [accounts, open]);
@@ -214,9 +215,12 @@ const PublishDialog = memo(
                   ) : (
                     <>
                       {pubListChoosed.map((v) => {
-                        console.log(v);
                         return (
-                          <PlatParamsSetting pubItem={v} key={v.account.id} />
+                          <PlatParamsSetting
+                            pubItem={v}
+                            key={v.account.id}
+                            style={{ marginBottom: "12px" }}
+                          />
                         );
                       })}
                     </>

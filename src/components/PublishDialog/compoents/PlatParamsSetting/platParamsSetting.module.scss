@@ -3,6 +3,26 @@
   :global {
     .platParamsSetting-icon {
       margin-right: 10px;
+      img {
+        width: 25px;
+        height: 25px;
+      }
+    }
+    .platParamsSetting-des {
+      border: 1px solid var(--grayColor3);
+      width: 100%;
+      border-radius: 4px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding-left: 15px;
+      color: var(--grayColor11);
     }
   }
+}
+
+.platParamsSetting_expand {
+  display: flex;
+  align-items: center;
 }

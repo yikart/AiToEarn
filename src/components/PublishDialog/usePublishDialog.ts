@@ -127,6 +127,11 @@ export const usePublishDialog = create(
             pubListChoosed,
           });
         },
+        setExpandedPubItem(expandedPubItem: PubItem | undefined) {
+          set({
+            expandedPubItem,
+          });
+        },
       };
       return methods;
     },
