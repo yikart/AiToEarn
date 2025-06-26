@@ -25,6 +25,8 @@ export interface IPublishDialogStore {
   commonPubParams: IPubParams;
   // 当前步骤，0=所有账号没有参数，要设置参数。 1=所有账号有参数，详细设置参数
   step: number;
+  // 第二部时需要，展开的账户参数
+  expandedPubItem?: PubItem;
 }
 
 const store: IPublishDialogStore = {
@@ -36,6 +38,7 @@ const store: IPublishDialogStore = {
     video: undefined,
     images: [],
   },
+  expandedPubItem: undefined,
 };
 
 const getStore = () => {
@@ -99,6 +102,23 @@ export const usePublishDialog = create(
           set({
             pubList,
             commonPubParams,
+          });
+        },
+
+        // 设置单个账号的参数
+        setOnePubParams(pubParmas: Partial<IPubParams>, accountId: string) {
+          const pubList = [...get().pubList];
+          const findedData = pubList.find((v) => v.account.id === accountId);
+          if (!findedData) return;
+
+          for (const key in pubParmas) {
+            if (pubParmas.hasOwnProperty(key)) {
+              findedData.params[key as "des"] = pubParmas[key as "des"]!;
+            }
+          }
+
+          set({
+            pubList,
           });
         },
 

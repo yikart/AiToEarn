@@ -21,12 +21,6 @@ const PlatParamsSetting = memo(
       { pubItem }: IPlatParamsSettingProps,
       ref: ForwardedRef<IPlatParamsSettingRef>,
     ) => {
-      const { step } = usePublishDialog(
-        useShallow((state) => ({
-          step: state.step,
-        })),
-      );
-
       const platConfig = useMemo(() => {
         return AccountPlatInfoMap.get(pubItem.account.type)!;
       }, [pubItem]);

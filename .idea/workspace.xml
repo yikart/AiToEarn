@@ -4,14 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat: 发布弹框：上传图片/视频完成、裁剪图片，描述写入，完成。">
+    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat: 发布弹框整体设计">
+      <change afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/imagePage/useImagePageStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/publish/imagePage/useImagePageStore.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/platParamsSetting.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/platParamsSetting.module.scss" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/plats/BilibParams.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/plats/BilibParams.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/plats/KwaiParams.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/plats/KwaiParams.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/plats/plats.type.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/plats/plats.type.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PubParmasTextarea/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PubParmasTextarea/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.module.scss" afterDir="false" />
@@ -27,6 +25,7 @@
       <list>
         <option value="TypeScript JSX File" />
         <option value="tsx组件模板" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
@@ -88,8 +87,8 @@
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\components\PublishDialog\plats" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\components\PublishDialog\compoents\PubParmasTextarea" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\components\PublishDialog\compoents\PlatParamsSetting" />
+      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\components\PublishDialog\compoents\PubParmasTextarea" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\assets\svgs\plat" />
     </key>
   </component>
@@ -109,7 +108,7 @@
       <workItem from="1750763285511" duration="48000" />
       <workItem from="1750763342070" duration="32000" />
       <workItem from="1750763376065" duration="41000" />
-      <workItem from="1750763426455" duration="30631000" />
+      <workItem from="1750763426455" duration="35733000" />
     </task>
     <task id="LOCAL-00001" summary="feat: 日历完善">
       <option name="closed" value="true" />
@@ -191,7 +190,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750851652194</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="feat: 发布弹框整体设计">
+      <option name="closed" value="true" />
+      <created>1750859702156</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1750859702156</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -221,6 +228,7 @@
     <MESSAGE value="feat: 发布弹框开发中..." />
     <MESSAGE value="feat: 发布逻辑初步实现" />
     <MESSAGE value="feat: 发布弹框：上传图片/视频完成、裁剪图片，描述写入，完成。" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 发布弹框：上传图片/视频完成、裁剪图片，描述写入，完成。" />
+    <MESSAGE value="feat: 发布弹框整体设计" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 发布弹框整体设计" />
   </component>
 </project>

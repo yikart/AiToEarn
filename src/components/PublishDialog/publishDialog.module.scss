@@ -2,6 +2,8 @@ $assistantWidth: 300px;
 
 .publishDialog {
   width: auto !important;
+  margin: 0 auto;
+  display: inline-block;
   :global {
     .ant-modal-content {
       padding: 0 !important;

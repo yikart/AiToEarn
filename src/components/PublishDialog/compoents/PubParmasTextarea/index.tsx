@@ -29,12 +29,14 @@ const { Dragger } = Upload;
 
 export interface IPubParmasTextareaRef {}
 
+export interface IChangeParams {
+  imgs?: IImgFile[];
+  video?: IVideoFile;
+  value: string;
+}
+
 export interface IPubParmasTextareaProps {
-  onChange: (values: {
-    imgs?: IImgFile[];
-    video?: IVideoFile;
-    value: string;
-  }) => void;
+  onChange?: (values: IChangeParams) => void;
   rows?: number;
   // 视频数量限制
   videoMax?: number;
@@ -84,7 +86,7 @@ const PubParmasTextarea = memo(
           video: videoFile,
           value,
         };
-        onChange(values);
+        if (onChange) onChange(values);
       }, [imageFileList, videoFile, value]);
 
       useEffect(() => {

@@ -104,6 +104,7 @@ const PublishDialog = memo(
             open={open}
             onCancel={closeDialog}
             footer={null}
+            styles={{ wrapper: { textAlign: "center" } }}
           >
             <CSSTransition
               in={openLeft}
@@ -153,6 +154,28 @@ const PublishDialog = memo(
                           } else {
                             newPubListChoosed.push(pubItem);
                           }
+                          if (newPubListChoosed.length === 0 && step === 1) {
+                            const isBack = newPubListChoosed.every(
+                              (v) =>
+                                !v.params.des &&
+                                !v.params.video &&
+                                !v.params.images?.length,
+                            );
+                            if (isBack) {
+                              setStep(0);
+                            }
+                          }
+                          if (step === 0) {
+                            const isFront = newPubListChoosed.every(
+                              (v) =>
+                                v.params.des ||
+                                v.params.video ||
+                                v.params.images?.length,
+                            );
+                            if (isFront) {
+                              setStep(1);
+                            }
+                          }
                           setPubListChoosed(newPubListChoosed);
                         }}
                       >
@@ -171,9 +194,6 @@ const PublishDialog = memo(
                     <>
                       {pubListChoosed.length == 1 && (
                         <PlatParamsSetting pubItem={pubListChoosed[0]} />
-                        // <div style={{ height: "500px" }}>
-                        //   {accountChoosed[0].type}
-                        // </div>
                       )}
                       {pubListChoosed.length >= 2 && (
                         <PubParmasTextarea
@@ -183,15 +203,23 @@ const PublishDialog = memo(
                           imageFileListValue={commonPubParams.images}
                           onChange={(values) => {
                             setAccountAllParams({
-                              ...values,
+                              des: values.value,
+                              images: values.imgs,
+                              video: values.video,
                             });
                           }}
                         />
-                        // <div style={{ height: "500px" }}>通用参数</div>
                       )}
                     </>
                   ) : (
-                    <>第二部</>
+                    <>
+                      {pubListChoosed.map((v) => {
+                        console.log(v);
+                        return (
+                          <PlatParamsSetting pubItem={v} key={v.account.id} />
+                        );
+                      })}
+                    </>
                   )}
 
                   {pubListChoosed.length === 0 && (

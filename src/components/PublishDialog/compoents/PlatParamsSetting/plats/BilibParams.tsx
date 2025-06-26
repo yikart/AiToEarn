@@ -4,20 +4,16 @@ import {
   IPlatsParamsRef,
 } from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/plats.type";
 import PubParmasTextarea from "@/components/PublishDialog/compoents/PubParmasTextarea";
+import usePlatParamsCommon from "@/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon";
 
 const BilibParams = memo(
   forwardRef(
     ({ pubItem }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
+      const { pubParmasTextareaCommonParams } = usePlatParamsCommon(pubItem);
+
       return (
         <>
-          <PubParmasTextarea
-            desValue={pubItem.params.des}
-            imageFileListValue={pubItem.params.images}
-            videoFileValue={pubItem.params.video}
-            onChange={(v) => {
-              console.log(v);
-            }}
-          />
+          <PubParmasTextarea {...pubParmasTextareaCommonParams} />
         </>
       );
     },
