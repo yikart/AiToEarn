@@ -139,7 +139,9 @@ const PublishDialog = memo(
             <div
               className="publishDialog-wrapper"
               onClick={() => {
-                setExpandedPubItem(undefined);
+                if (step === 1) {
+                  setExpandedPubItem(undefined);
+                }
               }}
             >
               <div className="publishDialog-con">

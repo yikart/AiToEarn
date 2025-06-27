@@ -4,9 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="fix: 【PubParmasTextarea.tsx】修复了初始化后会执行onChange的bug">
+    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat: 1. 【发布作品弹框】填写发布参数时未选中的账户参数自动填写。&#10;2. 【发布作品弹框】切换步骤0-&gt;1保持展开状态">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogPreview.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogPreview.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.module.scss" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/usePublishDialog.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/usePublishDialog.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -107,7 +111,8 @@
       <workItem from="1750932869295" duration="11763000" />
       <workItem from="1750989950480" duration="7000" />
       <workItem from="1750989966702" duration="688000" />
-      <workItem from="1751010085244" duration="5249000" />
+      <workItem from="1751010085244" duration="6172000" />
+      <workItem from="1751023561603" duration="2850000" />
     </task>
     <task id="LOCAL-00001" summary="feat: 日历完善">
       <option name="closed" value="true" />
@@ -229,7 +234,15 @@
       <option name="project" value="LOCAL" />
       <updated>1751013073544</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="feat: 1. 【发布作品弹框】填写发布参数时未选中的账户参数自动填写。&#10;2. 【发布作品弹框】切换步骤0-&gt;1保持展开状态">
+      <option name="closed" value="true" />
+      <created>1751018123318</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1751018123318</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -264,6 +277,7 @@
     <MESSAGE value="feat: 【发布弹框】展开和隐藏、光标自动聚焦和自动到最后一位" />
     <MESSAGE value="feat: 【发布弹框】参数校验完成" />
     <MESSAGE value="fix: 【PubParmasTextarea.tsx】修复了初始化后会执行onChange的bug" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: 【PubParmasTextarea.tsx】修复了初始化后会执行onChange的bug" />
+    <MESSAGE value="feat: 1. 【发布作品弹框】填写发布参数时未选中的账户参数自动填写。&#10;2. 【发布作品弹框】切换步骤0-&gt;1保持展开状态" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 1. 【发布作品弹框】填写发布参数时未选中的账户参数自动填写。&#10;2. 【发布作品弹框】切换步骤0-&gt;1保持展开状态" />
   </component>
 </project>

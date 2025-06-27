@@ -121,6 +121,11 @@ export const usePublishDialog = create(
             pubList,
             commonPubParams,
             pubListChoosed,
+            expandedPubItem: get().expandedPubItem
+              ? pubList.find(
+                  (v) => v.account.id === get().expandedPubItem!.account.id,
+                )
+              : undefined,
           });
         },
 
@@ -154,6 +159,11 @@ export const usePublishDialog = create(
           set({
             pubList,
             pubListChoosed,
+            expandedPubItem: get().expandedPubItem
+              ? pubList.find(
+                  (v) => v.account.id === get().expandedPubItem!.account.id,
+                )
+              : undefined,
           });
         },
       };
