@@ -136,14 +136,22 @@ $assistantWidth: 330px;
         background: #fff;
         height: 100%;
         box-sizing: border-box;
-        padding: 30px 10px 0;
+        padding: 0 10px 0;
         display: flex;
         align-items: center;
         .swiper-pagination-bullet {
           background: var(--colorPrimary5);
         }
+        .swiper {
+          height: 100%;
+        }
+        .swiper-slide {
+          height: 100%;
+        }
         img {
           width: 100%;
+          height: 100%;
+          object-fit: contain;
         }
       }
       &-video {

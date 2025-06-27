@@ -1,3 +1,4 @@
+$boxHegiht: 110px;
 .pubParmasTextarea {
   border: 1px solid var(--grayColor4);
   border-radius: 6px;
@@ -17,8 +18,8 @@
 
     .ant-upload-wrapper {
       display: block;
-      width: 100px;
-      height: 100px;
+      width: 100%;
+      height: $boxHegiht;
       p {
         font-size: 12px;
       }
@@ -29,12 +30,12 @@
 
     .pubParmasTextarea-uploads {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       flex-wrap: wrap;
-      gap: 15px;
+      gap: 10px;
       &-item {
         //width: 98px;
-        height: 100px;
+        height: $boxHegiht;
         border: 1px solid var(--grayColor4);
         border-radius: 4px;
         box-sizing: border-box;

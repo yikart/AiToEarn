@@ -245,10 +245,18 @@ const PubParmasTextarea = memo(
                     style={{ width: "100%", maxHeight: "600px" }}
                   />
                 ) : (
-                  <Image
-                    src={(previewData as IImgFile).imgUrl}
-                    style={{ width: "100%" }}
-                  />
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Image
+                      src={(previewData as IImgFile).imgUrl}
+                      style={{ width: "100%", height: "400px" }}
+                    />
+                  </div>
                 )}
               </>
             )}

@@ -36,8 +36,9 @@ const PublishDialogPreview = memo(
         <div className={styles.publishDialogPreview}>
           <div className="publishDialogPreview-wrapper">
             <div className="publishDialogPreview-title">预览</div>
-            {expandedPubItem?.params.video ||
-            expandedPubItem?.params.images?.length !== 0 ? (
+            {expandedPubItem &&
+            (expandedPubItem?.params.video ||
+              expandedPubItem?.params.images?.length !== 0) ? (
               <div className="publishDialogPreview-preview">
                 {expandedPubItem?.params.video ? (
                   <div className="publishDialogPreview-preview-video">
@@ -66,7 +67,7 @@ const PublishDialogPreview = memo(
                         >
                           {expandedPubItem!.params.images!.map(
                             (image, index) => (
-                              <SwiperSlide key={index}>
+                              <SwiperSlide key={index + image.imgUrl}>
                                 <img
                                   src={image.imgUrl}
                                   alt={`Image ${index + 1}`}
