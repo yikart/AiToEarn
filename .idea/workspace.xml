@@ -4,12 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat: 【发布作品】图片和视频预览完成">
+    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat: 【发布弹框】预览样式调整">
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/BoxDragPreview.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarRecord.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CustomDragLayer.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/calendarRecord.module.scss" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PubParmasTextarea/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PubParmasTextarea/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PubParmasTextarea/pubCommonComps.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PubParmasTextarea/pubCommonComps.module.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogPreview.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogPreview.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,8 +24,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="TypeScript JSX File" />
-        <option value="tsx组件模板" />
         <option value="TypeScript File" />
+        <option value="tsx组件模板" />
       </list>
     </option>
   </component>
@@ -110,7 +114,8 @@
       <workItem from="1750989950480" duration="7000" />
       <workItem from="1750989966702" duration="688000" />
       <workItem from="1751010085244" duration="6172000" />
-      <workItem from="1751023561603" duration="4045000" />
+      <workItem from="1751023561603" duration="4162000" />
+      <workItem from="1751027862143" duration="4419000" />
     </task>
     <task id="LOCAL-00001" summary="feat: 日历完善">
       <option name="closed" value="true" />
@@ -248,7 +253,15 @@
       <option name="project" value="LOCAL" />
       <updated>1751026503209</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="feat: 【发布弹框】预览样式调整">
+      <option name="closed" value="true" />
+      <created>1751027720106</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1751027720106</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -285,6 +298,7 @@
     <MESSAGE value="fix: 【PubParmasTextarea.tsx】修复了初始化后会执行onChange的bug" />
     <MESSAGE value="feat: 1. 【发布作品弹框】填写发布参数时未选中的账户参数自动填写。&#10;2. 【发布作品弹框】切换步骤0-&gt;1保持展开状态" />
     <MESSAGE value="feat: 【发布作品】图片和视频预览完成" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 【发布作品】图片和视频预览完成" />
+    <MESSAGE value="feat: 【发布弹框】预览样式调整" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 【发布弹框】预览样式调整" />
   </component>
 </project>

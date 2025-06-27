@@ -4,6 +4,9 @@ import { DayCellContentArg } from "@fullcalendar/core";
 import { Button } from "antd";
 import { useTransClient } from "@/app/i18n/client";
 import { PlusOutlined } from "@ant-design/icons";
+import { useDrop } from "react-dnd";
+import CalendarRecord from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarRecord";
+import { CustomDragLayer } from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CustomDragLayer";
 
 export interface ICalendarTimingItemRef {}
 
@@ -32,9 +35,26 @@ const CalendarTimingItem = memo(
         today.getMonth(),
         today.getDate(),
       );
+      const [{ canDrop, isOver }, drop] = useDrop(
+        () => ({
+          accept: "box",
+          drop: () => ({
+            name: `move Dustbin`,
+            allowedDropEffect: "move",
+          }),
+          collect: (monitor: any) => ({
+            isOver: monitor.isOver(),
+            canDrop: monitor.canDrop(),
+          }),
+        }),
+        [],
+      );
 
       return (
         <div
+          ref={(node) => {
+            drop(node);
+          }}
           className={[
             styles.calendarTimingItem,
             argDate < nowDate ? styles.calendarTimingItemPast : "",
@@ -70,18 +90,8 @@ const CalendarTimingItem = memo(
                   {t("addPost")}
                 </div>
               </Button>
-              <Button
-                size="small"
-                type="dashed"
-                onClick={() => {
-                  onClickPub();
-                }}
-              >
-                <div className="calendarTimingItem-con-btn1">05:34 PM</div>
-                <div className="calendarTimingItem-con-btn2">
-                  {t("addPost")}
-                </div>
-              </Button>
+              <CustomDragLayer snapToGrid={false} />
+              <CalendarRecord />
             </div>
           )}
         </div>

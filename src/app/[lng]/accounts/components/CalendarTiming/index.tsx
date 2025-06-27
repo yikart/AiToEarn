@@ -16,6 +16,8 @@ import CalendarTimingItem from "@/app/[lng]/accounts/components/CalendarTiming/C
 import PublishDialog from "@/components/PublishDialog";
 import { useAccountStore } from "@/store/account";
 import { useShallow } from "zustand/react/shallow";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { DndProvider } from "react-dnd";
 
 export interface ICalendarTimingRef {}
 export interface ICalendarTimingProps {}
@@ -116,26 +118,28 @@ const CalendarTiming = memo(
               className="calendarTiming-calendar"
               ref={calendarTimingCalendarRef}
             >
-              <FullCalendar
-                ref={calendarRef}
-                locale={getFullCalendarLang(lng)}
-                plugins={[dayGridPlugin]}
-                initialView="dayGridMonth"
-                initialDate={currentDate}
-                headerToolbar={false}
-                stickyFooterScrollbar={true}
-                dayCellContent={(arg) => {
-                  return (
-                    <CalendarTimingItem
-                      arg={arg}
-                      onClickPub={() => {
-                        setPublishDialogOpen(true);
-                      }}
-                    />
-                  );
-                }}
-                datesSet={handleDatesSet}
-              />
+              <DndProvider backend={HTML5Backend}>
+                <FullCalendar
+                  ref={calendarRef}
+                  locale={getFullCalendarLang(lng)}
+                  plugins={[dayGridPlugin]}
+                  initialView="dayGridMonth"
+                  initialDate={currentDate}
+                  headerToolbar={false}
+                  stickyFooterScrollbar={true}
+                  dayCellContent={(arg) => {
+                    return (
+                      <CalendarTimingItem
+                        arg={arg}
+                        onClickPub={() => {
+                          setPublishDialogOpen(true);
+                        }}
+                      />
+                    );
+                  }}
+                  datesSet={handleDatesSet}
+                />
+              </DndProvider>
             </div>
           </CSSTransition>
         </div>
