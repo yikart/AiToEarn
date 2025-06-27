@@ -67,7 +67,7 @@ const PubParmasTextarea = memo(
         imageFileListValue = [],
         videoFileValue,
         desValue = "",
-        beforeExtend
+        beforeExtend,
       }: IPubParmasTextareaProps,
       ref: ForwardedRef<IPubParmasTextareaRef>,
     ) => {
@@ -85,8 +85,16 @@ const PubParmasTextarea = memo(
       // 裁剪弹框
       const [videoCoverSetingModal, setVideoCoverSetingModal] = useState(false);
       const textareaRef = useRef<TextAreaRef>(null);
+      const isFirst = useRef({
+        effect: true,
+        sort: true,
+      });
 
       useEffect(() => {
+        if (isFirst.current.effect) {
+          isFirst.current.effect = false;
+          return;
+        }
         const values = {
           imgs: imageFileList,
           video: videoFile,
@@ -271,7 +279,13 @@ const PubParmasTextarea = memo(
                 className="pubParmasTextarea-uploads"
                 list={imageFileList}
                 animation={250}
-                setList={setImageFileList}
+                setList={(newList) => {
+                  if (isFirst.current.sort) {
+                    isFirst.current.sort = false;
+                    return;
+                  }
+                  setImageFileList(newList);
+                }}
                 scrollSensitivity={100}
                 scrollSpeed={15}
                 id="id"

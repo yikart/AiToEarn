@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "postbuild": "next-sitemap",
-    "dev": "next dev -p 6060",
-    "dev:https": "next dev -p 6060 --experimental-https",
+    "dev": "next dev -p 6060 --experimental-https",
     "build": "tsc && next build",
     "start": "next start",
     "lint": "next lint",

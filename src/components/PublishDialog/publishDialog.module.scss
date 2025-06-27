@@ -131,6 +131,7 @@ $assistantWidth: 300px;
   margin-left: 15px;
   :global {
     .publishDialogPreview-wrapper {
+      text-align: left;
       min-width: $assistantWidth;
       display: flex;
       flex-direction: column;
