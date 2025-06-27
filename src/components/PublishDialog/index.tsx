@@ -203,6 +203,9 @@ const PublishDialog = memo(
                               setStep(1);
                             }
                           }
+                          if (newPubListChoosed.length === 1) {
+                            setExpandedPubItem(newPubListChoosed[0]);
+                          }
                           setPubListChoosed(newPubListChoosed);
                         }}
                       >
@@ -269,6 +272,7 @@ const PublishDialog = memo(
                     <Button
                       size="large"
                       onClick={() => {
+                        setExpandedPubItem(undefined);
                         setStep(1);
                       }}
                     >

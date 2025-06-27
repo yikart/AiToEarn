@@ -17,7 +17,7 @@ export interface IPublishDialogStore {
   commonPubParams: IPubParams;
   // 当前步骤，0=所有账号没有参数，要设置参数。 1=所有账号有参数，详细设置参数
   step: number;
-  // 第二部时需要，展开的账户参数
+  // 第二步时需要，展开的账户参数
   expandedPubItem?: PubItem;
   // 错误提示
   errParamsMap?: ErrPubParamsMapType;
@@ -98,6 +98,7 @@ export const usePublishDialog = create(
         setAccountAllParams(pubParmas: Partial<IPubParams>) {
           const pubList = [...get().pubList];
           const commonPubParams = { ...get().commonPubParams };
+          let pubListChoosed = [...get().pubListChoosed];
 
           for (const key in commonPubParams) {
             if (pubParmas.hasOwnProperty(key)) {
@@ -110,9 +111,16 @@ export const usePublishDialog = create(
             }
           }
 
+          pubListChoosed = pubListChoosed.map((v) => {
+            const findData = pubList.find((k) => k.account.id === v.account.id);
+            if (findData) return findData;
+            return v;
+          });
+
           set({
             pubList,
             commonPubParams,
+            pubListChoosed,
           });
         },
 
@@ -128,6 +136,14 @@ export const usePublishDialog = create(
               findedData.params[key as "des"] = pubParmas[key as "des"]!;
             }
           }
+
+          pubList.map((v) => {
+            if (!pubListChoosed.some((k) => k.account.id === v.account.id)) {
+              v.params.des = pubParmas.des || "";
+              v.params.video = pubParmas.video;
+              v.params.images = pubParmas.images;
+            }
+          });
 
           pubListChoosed = pubListChoosed.map((v) => {
             const findData = pubList.find((k) => k.account.id === v.account.id);
