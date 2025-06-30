@@ -39,10 +39,9 @@ const CalendarTimingItem = memo(
         () => ({
           accept: "box",
           drop: () => ({
-            name: `move Dustbin`,
-            allowedDropEffect: "move",
+            time: arg,
           }),
-          collect: (monitor: any) => ({
+          collect: (monitor) => ({
             isOver: monitor.isOver(),
             canDrop: monitor.canDrop(),
           }),
@@ -53,11 +52,15 @@ const CalendarTimingItem = memo(
       return (
         <div
           ref={(node) => {
-            drop(node);
+            if (argDate >= nowDate) {
+              drop(node);
+            }
           }}
           className={[
+            "calendarTimingItem--js",
             styles.calendarTimingItem,
             argDate < nowDate ? styles.calendarTimingItemPast : "",
+            isOver ? styles.calendarTimingItem_over : "",
           ].join(" ")}
         >
           <div className="calendarTimingItem-top">

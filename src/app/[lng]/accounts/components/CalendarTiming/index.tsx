@@ -1,4 +1,11 @@
-import { ForwardedRef, forwardRef, memo, useRef, useState } from "react";
+import {
+  ForwardedRef,
+  forwardRef,
+  memo,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import styles from "./calendarTiming.module.scss";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -18,6 +25,7 @@ import { useAccountStore } from "@/store/account";
 import { useShallow } from "zustand/react/shallow";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
+import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";
 
 export interface ICalendarTimingRef {}
 export interface ICalendarTimingProps {}
@@ -47,6 +55,36 @@ const CalendarTiming = memo(
           accountList: state.accountList,
         })),
       );
+      const { setCalendarCallWidth } = useCalendarTiming(
+        useShallow((state) => ({
+          setCalendarCallWidth: state.setCalendarCallWidth,
+        })),
+      );
+      const calendarTimingItemCallEl = useRef<HTMLDivElement | null>(null);
+
+      useEffect(() => {
+        window.addEventListener("resize", handleResize);
+
+        setTimeout(() => {
+          calendarTimingItemCallEl.current = document.querySelector(
+            ".calendarTimingItem--js",
+          )!;
+          handleResize();
+        }, 1);
+
+        // 清理事件监听
+        return () => window.removeEventListener("resize", handleResize);
+      }, []);
+
+      const handleResize = () => {
+        setTimeout(() => {
+          const el = calendarTimingItemCallEl.current!;
+          const style = window.getComputedStyle(el);
+          const paddingLeft = parseFloat(style.paddingLeft);
+          const paddingRight = parseFloat(style.paddingRight);
+          setCalendarCallWidth(el.clientWidth - (paddingLeft + paddingRight));
+        }, 1);
+      };
 
       // 动画触发函数
       const triggerAnimation = (dir: "left" | "right" | "fade") => {

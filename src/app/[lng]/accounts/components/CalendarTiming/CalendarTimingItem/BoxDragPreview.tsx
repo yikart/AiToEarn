@@ -1,23 +1,18 @@
 import type { CSSProperties, FC } from "react";
 import { memo, useEffect, useState } from "react";
-import { Button } from "antd";
+import RecordCore from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore";
 
 const styles: CSSProperties = {
   display: "inline-block",
   transform: "rotate(-7deg)",
   WebkitTransform: "rotate(-7deg)",
+  transition: "0.3s",
 };
 
-export interface BoxDragPreviewProps {
-  title: string;
-}
-
-export interface BoxDragPreviewState {
-  tickTock: any;
-}
+export interface BoxDragPreviewProps {}
 
 export const BoxDragPreview: FC<BoxDragPreviewProps> = memo(
-  function BoxDragPreview({ title }) {
+  function BoxDragPreview({}) {
     const [tickTock, setTickTock] = useState(false);
 
     useEffect(
@@ -30,7 +25,7 @@ export const BoxDragPreview: FC<BoxDragPreviewProps> = memo(
 
     return (
       <div style={styles}>
-        <Button style={{ width: "152px" }}>123456</Button>
+        <RecordCore />
       </div>
     );
   },
