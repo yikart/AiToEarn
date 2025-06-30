@@ -132,7 +132,7 @@ export const platformApi = {
   // 获取平台列表
   getPlatformList() {
     return request<Platform[]>({
-      url: `${APP_HOT_URL}/hotinfo/platform`,
+      url: `hotdata/hotinfo/platform`,
       method: 'GET'
     });
   },
@@ -140,7 +140,7 @@ export const platformApi = {
   // 获取平台榜单列表
   getPlatformRanking(platformId: string) {
     return request<PlatformRanking[]>({
-      url: `${APP_HOT_URL}/ranking/platform?platformId=${platformId}`,
+      url: `hotdata/ranking/platform?platformId=${platformId}`,
       method: 'GET'
     });
   },
@@ -167,7 +167,7 @@ export const platformApi = {
     }
 
     return request<RankingContentsResponse>({
-      url: `${APP_HOT_URL}/ranking/${rankingId}/contents`,
+      url: `hotdata/ranking/${rankingId}/contents`,
       method: 'GET',
       params,
     });
@@ -176,7 +176,7 @@ export const platformApi = {
   // 获取榜单分类
   getRankingLabel(rankingId: string) {
     return request<string[]>({
-      url: `${APP_HOT_URL}/ranking/label/${rankingId}`,
+      url: `hotdata/ranking/label/${rankingId}`,
       method: 'GET',
       
     });
@@ -185,7 +185,7 @@ export const platformApi = {
   // 获取榜单日期
   getRankingDates(rankingId: string) {
     return request<string[]>({
-      url: `${APP_HOT_URL}/ranking/hotinfo/${rankingId}/dates`,
+      url: `hotdata/ranking/hotinfo/${rankingId}/dates`,
       method: 'GET',
       
     });
@@ -197,7 +197,7 @@ export const platformApi = {
       platform: Platform;
       hotTopic: HotTopic;
     }[]>({
-      url: `${APP_HOT_URL}/hot-topics/all`,
+      url: `hotdata/hot-topics/all`,
       method: 'GET',
       
     });
@@ -208,7 +208,7 @@ export const platformApi = {
   // 获取所有专题标签
   getTopics() {
     return request<string[]>({
-      url: `${APP_HOT_URL}/topics/topics`,
+      url: `hotdata/topics/topics`,
       method: 'GET',
       
     });
@@ -217,7 +217,7 @@ export const platformApi = {
   // 获取所有专题类型1
   getMsgType() {
     return request<string[]>({
-      url: `${APP_HOT_URL}/topics/msgType`,
+      url: `hotdata/topics/msgType`,
       method: 'GET',
       
     });
@@ -226,7 +226,7 @@ export const platformApi = {
   // 获取所有专题分类
   getTopicLabels(msgType: string) {
     return request<string[]>({
-      url: `${APP_HOT_URL}/topics/labels/${msgType}`,
+      url: `hotdata/topics/labels/${msgType}`,
       method: 'GET',
       
     });
@@ -235,7 +235,7 @@ export const platformApi = {
   // 获取专题的时间类型
   getTopicTimeTypes(msgType: string) {
     return request<string[]>({
-      url: `${APP_HOT_URL}/topics/timeType/${msgType}`,
+      url: `hotdata/topics/timeType/${msgType}`,
       method: 'GET',
       
     });
@@ -254,7 +254,7 @@ export const platformApi = {
     pageSize?: number;
   }) {
     return request<Pagination<Topic>>({
-      url: `${APP_HOT_URL}/topics`,
+      url: `hotdata/topics`,
       method: 'GET',
       
       params,
@@ -265,7 +265,7 @@ export const platformApi = {
   // 获取有数据的平台列表
   findPlatformsWithData() {
     return request<Platform[]>({
-      url: `${APP_HOT_URL}/viral-titles/platforms`,
+      url: `hotdata/viral-titles/platforms`,
       method: 'GET',
       
     });
@@ -274,7 +274,7 @@ export const platformApi = {
   // 获取指定平台的分类列表
   findCategoriesByPlatform(platformId: string) {
     return request<string[]>({
-      url: `${APP_HOT_URL}/viral-titles/platforms/${platformId}/categories`,
+      url: `hotdata/viral-titles/platforms/${platformId}/categories`,
       method: 'GET',
       
     });
@@ -289,7 +289,7 @@ export const platformApi = {
       category: string;
       titles: ViralTitle[];
     }[]>({
-      url: `${APP_HOT_URL}/viral-titles/platforms/${platformId}/top-by-categories`,
+      url: `hotdata/viral-titles/platforms/${platformId}/top-by-categories`,
       method: 'GET',
       
       params: {
@@ -311,7 +311,7 @@ export const platformApi = {
     },
   ) {
     return request<Pagination<ViralTitle>>({
-      url: `${APP_HOT_URL}/viral-titles/platforms/${platformId}`,
+      url: `hotdata/viral-titles/platforms/${platformId}`,
       method: 'GET',
       
       params,
@@ -321,7 +321,7 @@ export const platformApi = {
   // 获取爆款标题的时间类型
   getViralTitleTimeTypes() {
     return request<string[]>({
-      url: `${APP_HOT_URL}/viral-titles/timeType`,
+      url: `hotdata/viral-titles/timeType`,
       method: 'GET',
       
     });
@@ -331,7 +331,7 @@ export const platformApi = {
   // 获取有数据的平台列表
   findTalksPlatforms() {
     return request<Platform[]>({
-      url: `${APP_HOT_URL}/talks/platforms`,
+      url: `hotdata/talks/platforms`,
       method: 'GET',
       
     });
@@ -340,7 +340,7 @@ export const platformApi = {
   // 获取话题栏目
   findTalksColumn(platformId: string) {
     return request<string[]>({
-      url: `${APP_HOT_URL}/talks/column`,
+      url: `hotdata/talks/column`,
       method: 'GET',
       params: {
         platformId,
@@ -352,7 +352,7 @@ export const platformApi = {
   // 获取小红书话题流量榜、流量扶持日期
   getXhsDates() {
     return request<string[]>({
-      url: `${APP_HOT_URL}/xhs/dates`,
+      url: `hotdata/xhs/dates`,
       method: 'GET',
       
     });
@@ -361,7 +361,7 @@ export const platformApi = {
   // 获取小红书话题流量榜、流量扶持分类
   getXhsCategories() {
     return request<string[]>({
-      url: `${APP_HOT_URL}/xhs/category`,
+      url: `hotdata/xhs/category`,
       method: 'GET',
       
     });
@@ -370,7 +370,7 @@ export const platformApi = {
   // 获取小红书话题流量榜
   getXhsSubjectsRank(data: { phone: string }) {
     return request<string>({
-      url: `${APP_HOT_URL}/xhs/contents`,
+      url: `hotdata/xhs/contents`,
       method: 'POST',
       data,
       
@@ -380,7 +380,7 @@ export const platformApi = {
   // 获取抖音榜单日期
   getDyDates() {
     return request<string[]>({
-      url: `${APP_HOT_URL}/dy/dates`,
+      url: `hotdata/dy/dates`,
       method: 'GET',
       
     });
@@ -389,7 +389,7 @@ export const platformApi = {
   // 获取AI工具榜数据
   getAiToolsRankingApi(data: GetAiToolsRankingApiParams) {
     return request<GetAiToolsRankingApiRes>({
-      url: `${APP_HOT_URL}/products/ranking/ai`,
+      url: `hotdata/products/ranking/ai`,
       method: 'POST',
       data: {
         ...data,
