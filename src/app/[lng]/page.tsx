@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import styles from "./styles/difyHome.module.scss";
 
 // 版本发布横幅
@@ -344,54 +345,110 @@ function CommunitySection() {
 
 // Footer
 function Footer() {
+  const [isHovered, setIsHovered] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // 背景图片数组
+  const backgroundImages = [
+    // '/src/assets/images/logo.png',
+    // '/src/assets/images/vipcard.png',
+    'https://picsum.photos/400/200?random=1',
+    'https://picsum.photos/400/200?random=2',
+    'https://picsum.photos/400/200?random=3',
+    'https://picsum.photos/400/200?random=4',
+  ];
+  
+  useEffect(() => {
+    if (isHovered) {
+      intervalRef.current = setInterval(() => {
+        setCurrentImageIndex(prev => (prev + 1) % backgroundImages.length);
+      }, 1000);
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      setCurrentImageIndex(0);
+    }
+    
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [isHovered, backgroundImages.length]);
+
   return (
     <footer className={styles.footer}>
       <div className={styles.footerContainer}>
-        <div className={styles.footerColumns}>
-          <div className={styles.footerColumn}>
-            <h4>RESOURCES</h4>
-            <a href="#docs">Docs</a>
-            <a href="#blog">Blog</a>
-            <a href="#education">Education</a>
-            <a href="#partner">Partner</a>
-            <a href="#support">Support</a>
-            <a href="#roadmap">Roadmap</a>
+        {/* 上半部分：Resources 和 Company */}
+        <div className={styles.footerTop}>
+          <div className={styles.footerColumns}>
+            <div className={styles.footerColumn}>
+              <h4>RESOURCES</h4>
+              <a href="#docs">Docs</a>
+              <a href="#blog">Blog</a>
+              <a href="#education">Education</a>
+              <a href="#partner">Partner</a>
+              <a href="#support">Support</a>
+              <a href="#roadmap">Roadmap</a>
+            </div>
+            
+            <div className={styles.footerColumn}>
+              <h4>COMPANY</h4>
+              <a href="#talk">Talk to Us</a>
+              <a href="#terms">Terms of Service</a>
+              <a href="#privacy">Privacy Policy</a>
+              <a href="#cookies">Cookie Settings</a>
+              <a href="#data">Data Protection Agreement</a>
+              <a href="#marketplace">Marketplace Agreement</a>
+              <a href="#brand">Brand Guidelines</a>
+            </div>
           </div>
           
-          <div className={styles.footerColumn}>
-            <h4>COMPANY</h4>
-            <a href="#talk">Talk to Us</a>
-            <a href="#terms">Terms of Service</a>
-            <a href="#privacy">Privacy Policy</a>
-            <a href="#cookies">Cookie Settings</a>
-            <a href="#data">Data Protection Agreement</a>
-            <a href="#marketplace">Marketplace Agreement</a>
-            <a href="#brand">Brand Guidelines</a>
+          <div className={styles.footerInfo}>
+            <div className={styles.footerText}>
+              Unlock Agentic AI with Dify. Develop, deploy, and manage autonomous agents, RAG pipelines, and more for teams at any scale, effortlessly.
+            </div>
+            
+            <div className={styles.socialLinks}>
+              <a href="#github">GitHub</a>
+              <a href="#discord">Discord</a>
+              <a href="#youtube">YouTube</a>
+              <a href="#linkedin">LinkedIn</a>
+              <a href="#twitter">Twitter</a>
+            </div>
           </div>
         </div>
         
+        {/* 下半部分：imagine if */}
         <div className={styles.footerBottom}>
-          <div className={styles.footerText}>
-            Unlock Agentic AI with Dify. Develop, deploy, and manage autonomous agents, RAG pipelines, and more for teams at any scale, effortlessly.
+          <div 
+            className={styles.bigText}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            imagine 
+            <span 
+              className={styles.ifText}
+              style={{
+                backgroundImage: isHovered ? `url(${backgroundImages[currentImageIndex]})` : 'none',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                color: isHovered ? 'transparent' : '#1f2937'
+              }}
+            >
+              if
+            </span>
           </div>
           
-          <div className={styles.socialLinks}>
-            <a href="#github">GitHub</a>
-            <a href="#discord">Discord</a>
-            <a href="#youtube">YouTube</a>
-            <a href="#linkedin">LinkedIn</a>
-            <a href="#twitter">Twitter</a>
+          <div className={styles.footerCopyright}>
+            <div className={styles.copyright}>© 2025 LangGenius, Inc.</div>
+            <div className={styles.tagline}>Build Production-Ready Agentic AI Solutions</div>
           </div>
-          
-          <div className={styles.certifications}>
-            {/* 认证图标 */}
-          </div>
-        </div>
-        
-        <div className={styles.footerCopyright}>
-          <div className={styles.bigText}>imagine if</div>
-          <div className={styles.copyright}>© 2025 LangGenius, Inc.</div>
-          <div className={styles.tagline}>Build Production-Ready Agentic AI Solutions</div>
         </div>
       </div>
     </footer>
