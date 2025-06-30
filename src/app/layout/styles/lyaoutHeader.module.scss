@@ -28,7 +28,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    @include wrapper;
+    //@include wrapper;
+    width: calc(100% - 60px);
+    margin: 0 auto;
 
     .layoutHeader_wrapper-left {
       display: flex;

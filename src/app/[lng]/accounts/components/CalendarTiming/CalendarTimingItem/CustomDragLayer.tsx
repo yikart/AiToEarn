@@ -1,7 +1,6 @@
 import type { CSSProperties, FC } from "react";
 import type { XYCoord } from "react-dnd";
 import { useDragLayer } from "react-dnd";
-import { Button } from "antd";
 import { BoxDragPreview } from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/BoxDragPreview";
 
 function snapToGrid(x: number, y: number): [number, number] {
@@ -70,9 +69,7 @@ export const CustomDragLayer: FC<CustomDragLayerProps> = (props) => {
       <div
         style={getItemStyles(initialOffset, currentOffset, props.snapToGrid)}
       >
-        <div>
-          <BoxDragPreview title="123" />
-        </div>
+        <BoxDragPreview />
       </div>
     </div>
   );

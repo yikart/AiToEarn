@@ -1,8 +1,8 @@
 import { ForwardedRef, forwardRef, memo, useEffect } from "react";
 import styles from "./calendarRecord.module.scss";
 import { DragSourceMonitor, useDrag } from "react-dnd";
-import { Button } from "antd";
 import { getEmptyImage } from "react-dnd-html5-backend";
+import RecordCore from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore";
 
 export interface ICalendarRecordRef {}
 
@@ -39,7 +39,7 @@ const CalendarRecord = memo(
           className={styles.calendarRecord}
           role="DraggableBox"
         >
-          <Button>123456</Button>
+          <RecordCore />
         </div>
       );
     },
