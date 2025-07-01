@@ -42,14 +42,6 @@ nextConfig.rewrites = async () => {
       source: `${process.env.NEXT_PUBLIC_API_URL_PROXY}:path*`,
       destination: `${process.env.NEXT_PUBLIC_API_URL}:path*`,
     },
-    {
-      source: `${process.env.NEXT_PUBLIC_API_PROXY}:path*`,
-      destination: `https://open.kuaishou.com/:path*`,
-    },
-    {
-      source: `${process.env.NEXT_PUBLIC_API_UPLOAD_PROXY}:path*`,
-      destination: `https://upload.kuaishouzt.com/:path*`,
-    },
   ];
 
   return {

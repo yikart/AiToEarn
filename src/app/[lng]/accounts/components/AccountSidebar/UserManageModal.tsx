@@ -8,7 +8,6 @@ import {
   useState,
 } from "react";
 import {
-  Avatar,
   Button,
   Drawer,
   message,
@@ -106,7 +105,8 @@ const UserManageModal = memo(
                 <div
                   className={`userManage-content-user ${am.status === AccountStatus.DISABLE ? "userManage-content-user--disable" : ""}`}
                 >
-                  <Avatar src={am.avatar} />
+                  {/*<Avatar src={am.avatar} />*/}
+                  <AvatarPlat account={am} size="large" />
                   <span
                     className="userManage-content-user-name"
                     title={am.nickname}

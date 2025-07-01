@@ -369,6 +369,11 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+        display: flex;
+        align-items: center;
+        &-name {
+          margin-left: 15px;
+        }
         &--disable {
           filter: grayscale(100%);
           opacity: 0.5;

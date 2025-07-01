@@ -5,16 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat: 拖动调整完成（目前等待接接口）">
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/api/plat/kwai.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/api/plat/types/kwai.type.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env.development" beforeDir="false" afterPath="$PROJECT_DIR$/.env.development" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/BoxDragPreview.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/BoxDragPreview.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarRecord.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarRecord.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CustomDragLayer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CustomDragLayer.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/calendarTimingItem.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/calendarTimingItem.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/next.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/AccountSidebar/AccountSidebar.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/AccountSidebar/AccountSidebar.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/AccountSidebar/UserManageModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/AccountSidebar/UserManageModal.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/layout/styles/lyaoutHeader.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout/styles/lyaoutHeader.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/plat/kwaiLogin.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/plat/kwaiLogin.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constant.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constant.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,7 +118,12 @@
       <workItem from="1751010085244" duration="6172000" />
       <workItem from="1751023561603" duration="4162000" />
       <workItem from="1751027862143" duration="5251000" />
-      <workItem from="1751248094372" duration="6605000" />
+      <workItem from="1751248094372" duration="6674000" />
+      <workItem from="1751263083581" duration="376000" />
+      <workItem from="1751273285905" duration="3882000" />
+      <workItem from="1751278214456" duration="955000" />
+      <workItem from="1751334170049" duration="2844000" />
+      <workItem from="1751351785412" duration="12693000" />
     </task>
     <task id="LOCAL-00001" summary="feat: 日历完善">
       <option name="closed" value="true" />
@@ -271,7 +277,15 @@
       <option name="project" value="LOCAL" />
       <updated>1751032440817</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="feat: 拖动调整完成（目前等待接接口）">
+      <option name="closed" value="true" />
+      <created>1751256097944</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1751256097944</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

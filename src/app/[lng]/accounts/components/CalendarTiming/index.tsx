@@ -82,8 +82,9 @@ const CalendarTiming = memo(
           const style = window.getComputedStyle(el);
           const paddingLeft = parseFloat(style.paddingLeft);
           const paddingRight = parseFloat(style.paddingRight);
+
           setCalendarCallWidth(el.clientWidth - (paddingLeft + paddingRight));
-        }, 1);
+        }, 100);
       };
 
       // 动画触发函数
