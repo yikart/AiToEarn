@@ -620,6 +620,27 @@ function Footer() {
             <div className={styles.copyright}>© 2025 LangGenius, Inc.</div>
             <div className={styles.tagline}>Build Production-Ready Agentic AI Solutions</div>
           </div>
+          
+          <div className={styles.dataDeletionDoc}>
+            <h1>Data Deletion Instructions</h1>
+            
+            {/* <p><strong>Last Updated:</strong> 2025.6.27</p> */}
+            
+            {/* <h2>For Pre-Launch Users:</h2> */}
+            <p>Our application is currently in pre-launch phase and does not store real user data. 
+            If you have interacted with our test systems, contact us for data removal.</p>
+            
+            <h2>Standard Procedure (Post-Launch):</h2>
+            <ol>
+                <li>Log in to your AiToEarn account</li>
+                <li>Navigate to Settings &gt; Privacy</li>
+                <li>Click "Request Account Deletion"</li>
+                <li>Confirmation will be sent to your registered email</li>
+            </ol>
+            
+            <h2>Contact for Assistance:</h2>
+            <p>Email: metat@aitoearning.com (Pre-launch inquiries only)</p>
+          </div>
         </div>
       </div>
     </footer>
