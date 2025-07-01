@@ -424,7 +424,15 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 80px;
-  align-items: center;
+  align-items: stretch;
+  min-height: 500px;
+}
+
+.buildLeft,
+.buildRight {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .buildTitle {
@@ -1317,6 +1325,10 @@
     font-size: 32px;
   }
   
+  .buildContent {
+    min-height: 400px;
+  }
+  
   .statsGrid {
     grid-template-columns: 1fr;
   }
@@ -1344,6 +1356,25 @@
   
   .footerText {
     font-size: 14px;
+  }
+  
+  // 轮播组件移动端适配
+  .imageCarousel {
+    height: 100%;
+  }
+  
+  .carouselHint {
+    display: none; // 移动端隐藏滚轮提示
+  }
+  
+  .carouselIndicators {
+    right: 15px;
+    gap: 10px;
+  }
+  
+  .indicator {
+    width: 10px;
+    height: 10px;
   }
 }
 
@@ -1401,6 +1432,112 @@
 
 .buildRight {
   animation: slideInRight 1s ease-out;
+}
+
+// 轮播组件样式
+.imageCarousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.carouselContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.carouselSlide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  
+  &.active {
+    opacity: 1;
+  }
+}
+
+.carouselImage {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  transition: transform 0.3s ease;
+  
+  .carouselSlide:hover & {
+    transform: scale(1.02);
+  }
+}
+
+.carouselIndicators {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 10;
+}
+
+.indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &.active {
+    background: #fff;
+    transform: scale(1.3);
+  }
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.8);
+  }
+}
+
+.carouselHint {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 10;
+  
+  .imageCarousel:hover & {
+    opacity: 1;
+  }
+}
+
+@keyframes carouselFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.carouselSlide.active {
+  animation: carouselFadeIn 0.5s ease-out;
 }
 
 .connectLeft {

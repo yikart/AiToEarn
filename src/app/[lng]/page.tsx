@@ -11,6 +11,9 @@ import wxSphIcon from '@/assets/svgs/plat/wx-sph.svg';
 import xhsIcon from '@/assets/svgs/plat/xhs.svg';
 import youtubeIcon from '@/assets/svgs/plat/youtube.svg';
 
+import logo from '@/assets/images/logo.png';
+import logo2 from '@/assets/images/vipcard.png';
+
 // 版本发布横幅
 function ReleaseBanner() {
   return (
@@ -193,6 +196,74 @@ function BrandBar() {
 
 // 功能介绍区
 function BuildSection() {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [autoRotate, setAutoRotate] = useState(true);
+  const images = [logo.src, logo2.src];
+  const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  
+  // 自动轮播
+  useEffect(() => {
+    if (autoRotate) {
+      autoRotateRef.current = setInterval(() => {
+        setCurrentImageIndex(prev => (prev + 1) % images.length);
+      }, 3000);
+    } else {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+        autoRotateRef.current = null;
+      }
+    }
+    
+    return () => {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+      }
+    };
+  }, [autoRotate, images.length]);
+  
+  // 滚轮控制
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      // 检查是否在轮播区域内
+      if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
+        e.preventDefault();
+        
+        if (e.deltaY > 0) {
+          // 向下滚动
+          if (currentImageIndex < images.length - 1) {
+            setCurrentImageIndex(prev => prev + 1);
+            setAutoRotate(false); // 用户操作时暂停自动轮播
+          } else {
+            // 到达最后一张图，恢复页面滚动
+            setAutoRotate(true);
+            return;
+          }
+        } else {
+          // 向上滚动
+          if (currentImageIndex > 0) {
+            setCurrentImageIndex(prev => prev - 1);
+            setAutoRotate(false);
+          }
+        }
+        
+        // 3秒后恢复自动轮播
+        setTimeout(() => {
+          setAutoRotate(true);
+        }, 3000);
+      }
+    };
+    
+    const carousel = carouselRef.current;
+    if (carousel) {
+      carousel.addEventListener('wheel', handleWheel, { passive: false });
+      
+      return () => {
+        carousel.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, [currentImageIndex, images.length]);
+
   return (
     <section className={styles.buildSection}>
       <div className={styles.buildContainer}>
@@ -227,8 +298,42 @@ function BuildSection() {
           </div>
           
           <div className={styles.buildRight}>
-            <div className={styles.productScreenshot}>
-              <img src="/api/placeholder/600/400" alt="Dify Workflow Interface" className={styles.screenshotImg} />
+            <div 
+              className={styles.imageCarousel}
+              ref={carouselRef}
+            >
+              <div className={styles.carouselContainer}>
+                {images.map((image, index) => (
+                  <div
+                    key={index}
+                    className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
+                  >
+                    <img 
+                      src={image} 
+                      alt={`AI ToEarn Feature ${index + 1}`} 
+                      className={styles.carouselImage}
+                    />
+                  </div>
+                ))}
+              </div>
+              
+              <div className={styles.carouselIndicators}>
+                {images.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`${styles.indicator} ${index === currentImageIndex ? styles.active : ''}`}
+                    onClick={() => {
+                      setCurrentImageIndex(index);
+                      setAutoRotate(false);
+                      setTimeout(() => setAutoRotate(true), 3000);
+                    }}
+                  />
+                ))}
+              </div>
+              
+              <div className={styles.carouselHint}>
+                <span>使用滚轮切换图片</span>
+              </div>
             </div>
           </div>
         </div>
