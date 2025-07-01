@@ -48,6 +48,69 @@ function Header() {
 
 // Hero 主标题区
 function Hero() {
+  const [displayedText, setDisplayedText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTypingComplete, setIsTypingComplete] = useState(false);
+  const [hideCursor, setHideCursor] = useState(false);
+  const [startTyping, setStartTyping] = useState(false);
+  
+  // 要显示的完整文本
+  const fullText = '成为最好用的内容营销\nAI Agent';
+  const typingSpeed = 120; // 打字速度（毫秒）
+  const initialDelay = 800; // 初始延迟（毫秒）
+  const cursorHideDelay = 2000; // 打字完成后光标消失的延迟
+  
+  useEffect(() => {
+    // 初始延迟后开始打字
+    const startTimer = setTimeout(() => {
+      setStartTyping(true);
+    }, initialDelay);
+    
+    return () => clearTimeout(startTimer);
+  }, []);
+  
+  useEffect(() => {
+    if (startTyping && currentIndex < fullText.length) {
+      const currentChar = fullText[currentIndex];
+      
+      // 根据字符类型调整打字速度
+      let currentSpeed = typingSpeed;
+      if (currentChar === '\n') {
+        currentSpeed = typingSpeed * 2; // 换行时稍作停顿
+      } else if (currentChar === ' ') {
+        currentSpeed = typingSpeed * 0.5; // 空格快一点
+      } else if (/[，。！？；：]/.test(currentChar)) {
+        currentSpeed = typingSpeed * 1.5; // 标点符号稍作停顿
+      } else {
+        // 添加一些随机性，使打字更自然
+        currentSpeed = typingSpeed + Math.random() * 50 - 25;
+      }
+      
+      const timer = setTimeout(() => {
+        setDisplayedText(prev => prev + fullText[currentIndex]);
+        setCurrentIndex(prev => prev + 1);
+      }, currentSpeed);
+      
+      return () => clearTimeout(timer);
+    } else if (currentIndex >= fullText.length && !isTypingComplete) {
+      setIsTypingComplete(true);
+      // 打字完成后延迟隐藏光标
+      setTimeout(() => {
+        setHideCursor(true);
+      }, cursorHideDelay);
+    }
+  }, [startTyping, currentIndex, fullText, typingSpeed, isTypingComplete, cursorHideDelay]);
+  
+  // 将文本转换为JSX，处理换行
+  const renderText = () => {
+    return displayedText.split('\n').map((line, index, array) => (
+      <span key={index}>
+        {line}
+        {index < array.length - 1 && <br />}
+      </span>
+    ));
+  };
+
   return (
     <section className={styles.hero}>
       <div className={styles.heroContainer}>
@@ -58,8 +121,8 @@ function Hero() {
         </div>
         
         <h1 className={styles.heroTitle}>
-          成为最好用的内容营销<br />
-          AI Agent
+          {renderText()}
+          <span className={`${styles.cursor} ${hideCursor ? styles.cursorHidden : styles.cursorVisible}`}>|</span>
         </h1>
         
         <p className={styles.heroSubtitle}>
@@ -74,8 +137,8 @@ function Hero() {
         </button>
       </div>
     </section>
-      );
-  }
+  );
+}
 
 // 品牌合作伙伴 Logo 区 - 社交媒体平台（无限滚动）
 function BrandBar() {

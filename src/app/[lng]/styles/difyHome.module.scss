@@ -115,12 +115,14 @@
   padding: 80px 0 120px;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   text-align: center;
+  min-height: 600px; // 确保整个hero区域有稳定的最小高度
 }
 
 .heroContainer {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 24px;
+  position: relative;
 }
 
 .githubStars {
@@ -153,6 +155,53 @@
   margin-bottom: 24px;
   color: #1f2937;
   letter-spacing: -2px;
+  min-height: 223px; // 固定高度，容纳两行文本
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden; // 防止内容溢出
+  
+  // 响应式高度调整
+  @media (max-width: 768px) {
+    font-size: 48px;
+    height: 140px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 36px;
+    height: 110px;
+  }
+}
+
+.cursor {
+  display: inline-block;
+  font-weight: 300;
+  color: #4f46e5;
+  margin-left: 3px;
+  font-size: 0.9em;
+  line-height: 1;
+  transition: opacity 0.15s ease-in-out;
+  animation: cursorBlink 1s infinite;
+}
+
+.cursorVisible {
+  opacity: 1;
+}
+
+.cursorHidden {
+  opacity: 0;
+  animation: none;
+}
+
+@keyframes cursorBlink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
 }
 
 .heroSubtitle {
