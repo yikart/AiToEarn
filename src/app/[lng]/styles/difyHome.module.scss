@@ -493,6 +493,289 @@
   color: #1f2937;
 }
 
+.downloadSection {
+  padding: 120px 0;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #581c87 100%);
+  overflow: hidden;
+  position: relative;
+}
+
+.downloadContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.downloadContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.downloadLeft {
+  color: white;
+}
+
+.downloadTitle {
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 24px;
+  color: white;
+}
+
+.downloadDescription {
+  font-size: 18px;
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
+
+.downloadButtons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.downloadBtn {
+  display: inline-flex;
+  background: #000;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  transition: all 0.3s ease;
+  border: 1px solid #333;
+  
+  &:hover {
+    background: #1a1a1a;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.downloadBtnContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.downloadIcon {
+  color: white;
+  flex-shrink: 0;
+}
+
+.downloadBtnText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.downloadOn {
+  font-size: 12px;
+  opacity: 0.8;
+  line-height: 1;
+}
+
+.downloadStore {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.downloadRight {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.phoneContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.phoneFrame {
+  width: 280px;
+  height: 600px;
+  background: #1a1a1a;
+  border-radius: 40px;
+  padding: 8px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.phoneScreen {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border-radius: 32px;
+  overflow: hidden;
+  position: relative;
+}
+
+.phoneStatusBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.phoneTime {
+  color: white;
+}
+
+.phoneSignals {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.phoneSignal,
+.phoneBattery {
+  width: 18px;
+  height: 10px;
+  background: white;
+  border-radius: 2px;
+}
+
+.phoneContent {
+  padding: 20px;
+  color: white;
+}
+
+.phoneHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  
+  h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+.phoneCounter {
+  background: #dc2626;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.phoneVideoCard {
+  background: #1f2937;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.phoneVideoTitle {
+  font-size: 14px;
+  color: #9ca3af;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.phoneVideoPreview {
+  width: 100%;
+  height: 120px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.phoneVideoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.phoneVideoMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.phoneCreatePrompt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #9ca3af;
+}
+
+.phoneAddBtn {
+  width: 40px;
+  height: 40px;
+  background: #374151;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: white;
+}
+
+.qrCode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.qrCodeImage {
+  width: 120px;
+  height: 120px;
+  background: white;
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.qrCodePattern {
+  width: 100%;
+  height: 100%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23000'/%3E%3Crect x='10' y='10' width='20' height='20' fill='%23fff'/%3E%3Crect x='40' y='10' width='20' height='20' fill='%23fff'/%3E%3Crect x='70' y='10' width='20' height='20' fill='%23fff'/%3E%3Crect x='10' y='40' width='20' height='20' fill='%23fff'/%3E%3Crect x='70' y='40' width='20' height='20' fill='%23fff'/%3E%3Crect x='10' y='70' width='20' height='20' fill='%23fff'/%3E%3Crect x='40' y='70' width='20' height='20' fill='%23fff'/%3E%3Crect x='70' y='70' width='20' height='20' fill='%23fff'/%3E%3C/svg%3E") no-repeat center;
+  background-size: contain;
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .downloadContent {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    text-align: center;
+  }
+  
+  .downloadTitle {
+    font-size: 36px;
+  }
+  
+  .phoneFrame {
+    width: 240px;
+    height: 500px;
+  }
+  
+  .phoneContainer {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .qrCodeImage {
+    width: 100px;
+    height: 100px;
+  }
+}
+
 .productionSection {
   padding: 120px 0;
   background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
@@ -649,14 +932,29 @@
 
 .communitySection {
   padding: 120px 0;
-  background: white;
+  background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 50%, #e7e5ff 100%);
   text-align: center;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, rgba(79, 70, 229, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
 }
 
 .communityContainer {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 24px;
+  position: relative;
+  z-index: 1;
 }
 
 .communityTitle {
@@ -664,16 +962,18 @@
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 24px;
-  color: #1f2937;
+  color: #1e293b;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .communitySubtitle {
   font-size: 18px;
-  color: #6b7280;
+  color: #475569;
   margin-bottom: 40px;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+  line-height: 1.6;
 }
 
 .communityButtons {
@@ -685,21 +985,23 @@
 
 .githubBtn,
 .discordBtn {
-  background: #4f46e5;
+  background: linear-gradient(135deg, #4f46e5 0%, #6d28d9 100%);
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
+  border-radius: 12px;
+  padding: 14px 28px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
   
   &:hover {
-    background: #4338ca;
-    transform: translateY(-1px);
+    background: linear-gradient(135deg, #4338ca 0%, #5b21b6 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
   }
 }
 
@@ -711,15 +1013,30 @@
 }
 
 .communityStat {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(79, 70, 229, 0.15);
+  }
+  
   .statNumber {
     font-size: 36px;
     font-weight: 800;
     color: #4f46e5;
     margin-bottom: 8px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
   
   .statLabel {
-    color: #6b7280;
+    color: #475569;
+    font-weight: 500;
   }
 }
 
