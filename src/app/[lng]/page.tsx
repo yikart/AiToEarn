@@ -3,6 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./styles/difyHome.module.scss";
 
+// 导入SVG图标
+import bilibiliIcon from '@/assets/svgs/plat/bilibili.svg';
+import douyinIcon from '@/assets/svgs/plat/douyin.svg';
+import ksIcon from '@/assets/svgs/plat/ks.svg';
+import wxSphIcon from '@/assets/svgs/plat/wx-sph.svg';
+import xhsIcon from '@/assets/svgs/plat/xhs.svg';
+import youtubeIcon from '@/assets/svgs/plat/youtube.svg';
+
 // 版本发布横幅
 function ReleaseBanner() {
   return (
@@ -24,16 +32,15 @@ function Header() {
     <header className={styles.header}>
       <div className={styles.headerContainer}>
         <div className={styles.logo}>
-          <span className={styles.logoText}>Dify</span>
+          <span className={styles.logoText}>AIToEran</span>
         </div>
         <nav className={styles.nav}>
-          <a href="#marketplace" className={styles.navLink}>Marketplace</a>
-          <a href="#pricing" className={styles.navLink}>Pricing</a>
-          <a href="#docs" className={styles.navLink}>Docs</a>
-          <a href="#blog" className={styles.navLink}>Blog</a>
-          <a href="#github" className={styles.navLink}>GitHub</a>
+          <a href="#marketplace" className={styles.navLink}>市场</a>
+          <a href="#pricing" className={styles.navLink}>价格</a>
+          <a href="#docs" className={styles.navLink}>问题</a>
+          <a href="#blog" className={styles.navLink}>博客</a>
         </nav>
-        <button className={styles.getStartedBtn}>Get Started</button>
+        <button className={styles.getStartedBtn}>立即开始</button>
       </div>
     </header>
   );
@@ -51,37 +58,71 @@ function Hero() {
         </div>
         
         <h1 className={styles.heroTitle}>
-          Build Production-Ready<br />
-          Agentic AI Solutions
+          成为最好用的内容营销<br />
+          AI Agent
         </h1>
         
         <p className={styles.heroSubtitle}>
-          Dify offers everything you need — agentic workflows, RAG pipelines, integrations, and observability — all in one place, putting AI power into your hands.
+        从今天起，使用AI轻松管理你的社交媒体。AITOEARN提供从灵感创意、内容制作，内容分发内容互动管理等一站式能力，让AI触手可及。
         </p>
         
         <button className={styles.heroBtn}>
-          Get Started
+          立即开始
           <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
       </div>
     </section>
-  );
-}
+      );
+  }
 
-// 品牌合作伙伴 Logo 区
+// 品牌合作伙伴 Logo 区 - 社交媒体平台（无限滚动）
 function BrandBar() {
+  // 平台数据配置
+  const platforms = [
+    { name: 'YouTube', hasIcon: true, iconPath: youtubeIcon.src },
+    { name: 'Rednote', hasIcon: true, iconPath: xhsIcon.src },
+    { name: 'Douyin', hasIcon: true, iconPath: douyinIcon.src },
+    { name: 'Kwai', hasIcon: true, iconPath: ksIcon.src },
+    { name: 'WeChat Channels', hasIcon: true, iconPath: wxSphIcon.src },
+    { name: 'bilibili', hasIcon: true, iconPath: bilibiliIcon.src },
+    { name: 'Facebook', hasIcon: false, icon: '📘' },
+    { name: 'Instagram', hasIcon: false, icon: '📷' },
+    { name: 'LinkedIn', hasIcon: false, icon: '💼' },
+    { name: 'Pinterest', hasIcon: false, icon: '📌' },
+    { name: 'Threads', hasIcon: false, icon: '🧵' },
+    { name: 'TikTok', hasIcon: false, icon: '🎵' },
+    { name: 'X (Twitter)', hasIcon: false, icon: '🐦' },
+  ];
+
+  // 为了实现无缝滚动，复制一份数据
+  const duplicatedPlatforms = [...platforms, ...platforms];
+
   return (
     <section className={styles.brandBar}>
       <div className={styles.brandContainer}>
-        <div className={styles.brandLogo}>Elly</div>
-        <div className={styles.brandLogo}>Panasonic</div>
-        <div className={styles.brandLogo}>TencentGlun</div>
-        <div className={styles.brandLogo}>RICOH</div>
-        <div className={styles.brandLogo}>ANKER</div>
-        <div className={styles.brandLogo}>Deloitte</div>
-        <div className={styles.brandLogo}>MAERSK</div>
+        <div className={styles.brandTitle}>支持的社交媒体平台</div>
+        <div className={styles.scrollContainer}>
+          <div className={styles.scrollTrack}>
+            {duplicatedPlatforms.map((platform, index) => (
+              <div key={index} className={styles.platformItem}>
+                <div className={styles.platformIcon}>
+                  {platform.hasIcon ? (
+                    <img 
+                      src={platform.iconPath} 
+                      alt={`${platform.name} logo`}
+                      className={styles.platformSvg}
+                    />
+                  ) : (
+                    <span className={styles.platformEmoji}>{platform.icon}</span>
+                  )}
+                </div>
+                <span className={styles.platformName}>{platform.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

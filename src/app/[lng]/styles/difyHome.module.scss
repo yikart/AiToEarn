@@ -194,31 +194,146 @@
 }
 
 .brandBar {
-  padding: 60px 0;
+  padding: 80px 0;
   background: white;
   border-bottom: 1px solid #e5e7eb;
+  overflow: hidden;
 }
 
 .brandContainer {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 40px;
+  text-align: center;
 }
 
-.brandLogo {
+.brandTitle {
   font-size: 24px;
-  font-weight: 600;
-  color: #9ca3af;
-  opacity: 0.7;
-  transition: opacity 0.3s ease;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 48px;
+  text-align: center;
+}
+
+.scrollContainer {
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+  
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  
+  &::before {
+    left: 0;
+    background: linear-gradient(to right, white, transparent);
+  }
+  
+  &::after {
+    right: 0;
+    background: linear-gradient(to left, white, transparent);
+  }
+}
+
+.scrollTrack {
+  display: flex;
+  animation: scrollLeft 60s linear infinite;
+  width: max-content;
   
   &:hover {
-    opacity: 1;
+    animation-play-state: paused;
   }
+}
+
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.platformItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 30px;
+  margin: 0 15px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-width: 120px;
+  flex-shrink: 0;
+  white-space: normal;
+  
+  &:hover {
+    background: #f8fafc;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.platformIcon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #f3f4f6;
+  transition: all 0.3s ease;
+}
+
+.platformSvg {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: grayscale(70%) opacity(0.8);
+  transition: all 0.3s ease;
+}
+
+.platformEmoji {
+  font-size: 24px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.platformName {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-align: center;
+  transition: color 0.3s ease;
+  line-height: 1.2;
+  max-width: 100px;
+}
+
+.platformItem:hover .platformSvg {
+  filter: grayscale(0%) opacity(1);
+  transform: scale(1.1);
+}
+
+.platformItem:hover .platformEmoji {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.platformItem:hover .platformName {
+  color: #374151;
+}
+
+.platformItem:hover .platformIcon {
+  background: #e0e7ff;
+  transform: scale(1.05);
 }
 
 .sectionBadge {
