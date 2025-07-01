@@ -191,37 +191,37 @@ function BrandBar() {
   );
 }
 
-// BUILD 功能介绍区
+// 功能介绍区
 function BuildSection() {
   return (
     <section className={styles.buildSection}>
       <div className={styles.buildContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
-          <span>BUILD</span>
+          <span>灵感创意</span>
         </div>
         
         <div className={styles.buildContent}>
           <div className={styles.buildLeft}>
             <h2 className={styles.buildTitle}>
-              From sketch to live,<br />
-              <span className={styles.titleBlue}>bring your AI vision to life and beyond.</span>
+              灵感枯竭? 
+              <span className={styles.titleBlue}>来看看全网有哪些热点吧</span>
             </h2>
             
             <div className={styles.featureList}>
               <div className={styles.featureItem}>
-                <h3>Sophisticated Workflow in Minutes</h3>
-                <p>Drag and drop to visually create AI apps and workflows that are capable of diverse tasks and evolving needs.</p>
+                <h3>AI热点抓取，全网热点一网打尽</h3>
+                <p>通过AI抓取全网热点，AI分析一键生成同款爆款内容,热点流量一网打尽</p>
               </div>
               
               <div className={styles.featureItem}>
-                <h3>Publish in the Way You Want</h3>
-                <p>Choose from flexible publishing options tailored to your diverse needs, while Dify's Backend-as-a-Service handles the complexities.</p>
+                <h3>国际站：YouTube 、 TikTok 、 Facebook 、 Instagram 、 LinkedIn 、 X (Twitter) 、 Rednote</h3>
+                <p>海外站热点抓取，让你第一时间了解最新动态</p>
               </div>
               
               <div className={styles.featureItem}>
-                <h3>Build Upon Other's Creation</h3>
-                <p>Loop everyone in to build AI workflow: Dify's DSL format makes it easy to save, share, and contribute seamless for the entire team.</p>
+                <h3>国内站：抖音 、 快手 、 微信 、 Bilibili</h3>
+                <p>支持国内站的热点抓取，让你不错过每一条热点流量</p>
               </div>
             </div>
           </div>
@@ -244,32 +244,37 @@ function ConnectSection() {
       <div className={styles.connectContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
-          <span>CONNECT</span>
+          <span>功能介绍</span>
         </div>
         
         <div className={styles.connectContent}>
           <div className={styles.connectLeft}>
             <h2 className={styles.connectTitle}>
-              Supercharge AI applications with <span className={styles.titleBlue}>global large language models, RAG pipelines, tools, agent strategies, and more.</span>
+            自媒体运营平台一站式解决方案 <span className={styles.titleBlue}>从灵感创意到内容制作，从内容分发到内容互动管理</span>
             </h2>
             
             <div className={styles.featureList}>
               <div className={styles.featureItem}>
-                <h3>Get Your Data LLM Ready</h3>
-                <p>Extract data from various sources, transform it, and index it into vector databases for optimal LLM use.</p>
+                <h3>内容创作</h3>
+                <p>AI内容创作，AI图片生成，图文创作等AI能力，让你的内容更加生动有趣</p>
                 <div className={styles.integrationLogos}>
                   {/* 集成服务 logos */}
                 </div>
               </div>
               
               <div className={styles.featureItem}>
-                <h3>Amplify with Any Global Large Language Models</h3>
-                <p>Access, switch and compare performance of different LLMs worldwide, including open-source, proprietary, and more.</p>
+                <h3>内容分发</h3>
+                <p>支持国内外多平台分发，让你的内容触达更多用户，一键式管理，让你的内容触达更多用户</p>
               </div>
               
               <div className={styles.featureItem}>
-                <h3>Add Wings with Tools</h3>
-                <p>Expand capabilities of your AI application with a versatile set of plugins.</p>
+                <h3>内容互动管理</h3>
+                <p>支持国内外多平台互动管理，让你的内容互动更加高效，一键式管理，让你的内容互动更加高效</p>
+              </div>
+
+              <div className={styles.featureItem}>
+                <h3>数据分析</h3>
+                <p>支持国内外多平台数据分析，让你的数据分析更加高效，一键式管理，让你的数据分析更加高效</p>
               </div>
             </div>
           </div>
@@ -291,27 +296,33 @@ function ProductionSection() {
     <section className={styles.productionSection}>
       <div className={styles.productionContainer}>
         <h2 className={styles.productionTitle}>
-          Production Ready since Day One<br />
-          <span className={styles.titleBlue}>You're All Set</span>
+          自媒体运营平台一站式解决方案<br />
+          <span className={styles.titleBlue}>从灵感创意到内容制作，从内容分发到内容互动管理</span>
         </h2>
         
         <div className={styles.productionFeatures}>
           <div className={styles.productionFeature}>
-            <div className={styles.featureNumber}>01</div>
-            <h3>Scalable</h3>
-            <p>Effortlessly handle increasing traffic and evolving needs.</p>
+            <div className={styles.featureNumber}>01</div> 
+            <h3>内容创作</h3>
+            <p>AI内容创作，AI图片生成，图文创作等AI能力，让你的内容更加生动有趣</p>
           </div>
           
           <div className={styles.productionFeature}>
             <div className={styles.featureNumber}>02</div>
-            <h3>Stable</h3>
-            <p>Operate with peace of mind knowing you have a rock-solid foundation.</p>
+            <h3>内容分发</h3>
+            <p>支持国内外多平台分发，让你的内容触达更多用户，一键式管理，让你的内容触达更多用户</p>
           </div>
           
           <div className={styles.productionFeature}>
             <div className={styles.featureNumber}>03</div>
-            <h3>Secure</h3>
-            <p>Enterprise-grade security for your critical data assets.</p>
+            <h3>内容互动管理</h3>
+            <p>支持国内外多平台互动管理，让你的内容互动更加高效，一键式管理，让你的内容互动更加高效</p>
+          </div>
+
+          <div className={styles.productionFeature}>
+            <div className={styles.featureNumber}>04</div>
+            <h3>数据分析</h3>
+            <p>支持国内外多平台数据分析，让你的数据分析更加高效，一键式管理，让你的数据分析更加高效</p>
           </div>
         </div>
       </div>
