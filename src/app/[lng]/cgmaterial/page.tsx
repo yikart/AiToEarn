@@ -5,6 +5,7 @@ import { getMetadata } from "@/utils/general";
 import dynamic from "next/dynamic";
 
 const CgMaterialPageCore = dynamic(
+  // @ts-ignore
   () => import("./cgmaterialPageCore").then(mod => mod.default || mod.CgMaterialPageCore),
   { ssr: false }
 );

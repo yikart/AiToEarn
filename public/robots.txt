@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.yikart.cn
+
+# Sitemaps
+Sitemap: https://www.yikart.cn/sitemap.xml

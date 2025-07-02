@@ -2,7 +2,7 @@
   "apps": [
     {
       "name": "aitoearn-web",
-      "cwd": ".next",
+      "cwd": "standalone",
       "script": "node server.js",
       "instances": "1",
       "exec_mode": "cluster",

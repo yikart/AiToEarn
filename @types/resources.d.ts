@@ -73,6 +73,7 @@ interface Resources {
     "registerError": "注册失败，请稍后重试",
     "googleLoginFailed": "Google 登录失败"
   },
+  "material": {},
   "route": {
     "home": "首页",
     "accounts": "账户",

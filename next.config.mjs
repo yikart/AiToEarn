@@ -8,6 +8,8 @@ const nextConfig = {
   experimental: {
     forceSwcTransforms: true,
   },
+  output: 'standalone',
+  productionBrowserSourceMaps: process.env.NEXT_PUBLIC_EVN === 'dev',
 };
 
 const CorsHeaders = [

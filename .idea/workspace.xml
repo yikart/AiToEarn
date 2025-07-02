@@ -4,96 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat: 授权改到后端">
-      <change afterPath="$PROJECT_DIR$/src/components/PublishDialog/PublishDialog.util.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PubParmasTextarea/VideoCoverSeting.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PubParmasTextarea/videoCoverSeting.module.scss" afterDir="false" />
+    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="refactor(发布): 旧发布和发布记录全部删除">
+      <change afterPath="$PROJECT_DIR$/src/app/i18n/locales/en/material.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/i18n/locales/zh-CN/material.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env.production" beforeDir="false" afterPath="$PROJECT_DIR$/.env.production" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/comment.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/AICreateTitle/AICreateTitle.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/AICreateTitle/aICreateTitle.module.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/AICreateTitle/useAICreateTitle.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/Choose/ImgChoose.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/Choose/ImgChoose.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/Choose/ImgChoose.util.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/Choose/VideoChoose.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/Choose/videoChoose.util.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/ChooseAccountModule/ChooseAccountModule.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/ChooseAccountModule/chooseAccountModule.module.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/ChooseAccountModule/components/PlatChoose.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/CommonComponents/CommonComponents.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/CommonComponents/CommonLocationSelect.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/CommonComponents/CommonScheduledTimeSelect.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/CommonComponents/CommonTopicSelect.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/CommonComponents/CommonUserSelect.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/CommonComponents/commonComponents.module.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/PubAccountDetModule/PubAccountDetModule.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/PubAccountDetModule/pubAccountDetModule.module.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/PubProgressModule/PubProgressModule.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/PubProgressModule/pubProgressModule.module.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/PublishSidebar.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/SupportPlat/SupportPlat.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/components/SupportPlat/supportPlat.module.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/hooks/usePubParamsVerify.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/imagePage/components/ImageLeftSetting/ImageLeftSetting.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/imagePage/components/ImageLeftSetting/ImgTextImagesView.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/imagePage/components/ImageLeftSetting/imgTextImagesView.module.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/imagePage/components/ImageRightSetting/ImageRightSetting.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/imagePage/components/ImageRightSetting/components/ImageParamsSet.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/imagePage/components/ImageRightSetting/components/ImageParamsSet.type.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/imagePage/components/ImageRightSetting/components/ImageRightSettingCommon.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/imagePage/components/ImageRightSetting/components/ParamsSettingDetails.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/imagePage/components/ImageRightSetting/components/children/hooks/useImagePlatParams.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/imagePage/components/ImageRightSetting/components/imageParamsSet.module.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/imagePage/image.module.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/imagePage/imagePage.type.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/imagePage/page.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/imagePage/useImagePageStore.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/layout.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/page.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/pubRecord/page.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/pubRecord/pubRecord.common.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/pubRecord/pubRecord.module.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/publish.module.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/comment.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/components/CommonPubSetting.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/components/NoChoosePage.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/components/VideoChooseItem.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/components/VideoCoverSeting.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/components/VideoPubSetModal/VideoPubSetModal.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_KWAI.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/components/VideoPubSetModal/children/hooks/useVideoPubSetModal.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/components/VideoPubSetModal/components/LocationSelect.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/components/VideoPubSetModal/components/TopicSelect.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/components/VideoPubSetModal/components/UserSelect.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/components/VideoPubSetModal/components/VideoPubSetModalCommon.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/components/VideoPubSetModal/components/VideoPubSetModalVideo.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/components/VideoPubSetModal/components/useDebounceFetcher.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/components/VideoPubSetModal/videoPubSetModal.module.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/components/VideoPubSetModal/videoPubSetModal.type.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/components/videoCoverSeting.module.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/images/importRecord.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/images/localUpload.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/page.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/useVideoPageStore.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/video.module.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/publish/videoPage/videoPage.type.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/layout/BellMessage/bellMessage.module.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/layout/BellMessage/index.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/layout/LyaoutHeader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout/LyaoutHeader.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/layout/routerData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout/routerData.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/plat/PlatBase.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/plat/PlatManage.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/plat/plat.type.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/plat/plat.util.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/plat/platChildren/bilibili/BilibiliPlat.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/plat/platChildren/bilibili/BilibiliPubCore.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/plat/platChildren/kwai/KwaiPlat.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/plat/platChildren/kwai/KwaiPubCore.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/plat/platChildren/youtube/YoutubePlat.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/plat/platChildren/youtube/YoutubePubCore.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/plats/plats.type.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/plats/plats.type.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PubParmasTextarea/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PubParmasTextarea/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.type.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.type.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/@types/resources.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/@types/resources.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/next.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pm2.json" beforeDir="false" afterPath="$PROJECT_DIR$/pm2.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/cgmaterial/cgmaterialPageCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/cgmaterial/cgmaterialPageCore.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/cgmaterial/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/cgmaterial/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/demo/demoPageCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/demo/demoPageCore.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store/bellMessageStroe.ts" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -207,7 +131,7 @@
       <workItem from="1751273285905" duration="3882000" />
       <workItem from="1751278214456" duration="955000" />
       <workItem from="1751334170049" duration="2844000" />
-      <workItem from="1751351785412" duration="16797000" />
+      <workItem from="1751351785412" duration="20814000" />
     </task>
     <task id="LOCAL-00001" summary="feat: 日历完善">
       <option name="closed" value="true" />
@@ -377,7 +301,15 @@
       <option name="project" value="LOCAL" />
       <updated>1751376590963</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="refactor(发布): 旧发布和发布记录全部删除">
+      <option name="closed" value="true" />
+      <created>1751441171457</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1751441171457</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -418,6 +350,7 @@
     <MESSAGE value="feat: 日历拖拽初步开发" />
     <MESSAGE value="feat: 拖动调整完成（目前等待接接口）" />
     <MESSAGE value="feat: 授权改到后端" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 授权改到后端" />
+    <MESSAGE value="refactor(发布): 旧发布和发布记录全部删除" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor(发布): 旧发布和发布记录全部删除" />
   </component>
 </project>

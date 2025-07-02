@@ -106,6 +106,7 @@ export default function CgMaterialPageCore() {
     setMaterialLoading(true);
     try {
       const res = await apiGetMaterialList(groupId, 1, 50);
+      // @ts-ignore
       setMaterialList(res?.data?.list || []);
     } catch (e) {
       message.error("获取草稿素材失败");
@@ -167,6 +168,7 @@ export default function CgMaterialPageCore() {
     setSelectedMediaGroup(group);
     setMediaGroupModal(false);
     const res = await getMediaList(group._id, 1, 100);
+    // @ts-ignore
     setMediaList(res?.data?.list || []);
     setSelectedCover(null);
     setSelectedMaterials([]);
@@ -269,6 +271,7 @@ export default function CgMaterialPageCore() {
       }
       if (taskId) {
         const res = await apiPreviewMaterialTask(taskId);
+        // @ts-ignore
         setPreviewData(res?.data?.data || null);
         setPreviewModal(true);
       } else {
