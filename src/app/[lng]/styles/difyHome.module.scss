@@ -490,7 +490,15 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 80px;
-  align-items: center;
+  align-items: stretch;
+  min-height: 500px;
+}
+
+.connectLeft,
+.connectRight {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .connectTitle {
