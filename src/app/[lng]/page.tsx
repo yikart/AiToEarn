@@ -194,11 +194,11 @@ function BrandBar() {
   );
 }
 
-// 功能介绍区
+// 灵感创意
 function BuildSection() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
-  const images = [logo.src, logo2.src];
+  const images = [logo.src];
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   
@@ -342,8 +342,76 @@ function BuildSection() {
   );
 }
 
-// CONNECT 功能介绍区
+// 功能介绍区
 function ConnectSection() {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [autoRotate, setAutoRotate] = useState(true);
+  const images = [logo.src, logo.src ]; // 功能介绍相关的图片
+  const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  
+  // 自动轮播
+  useEffect(() => {
+    if (autoRotate) {
+      autoRotateRef.current = setInterval(() => {
+        setCurrentImageIndex(prev => (prev + 1) % images.length);
+      }, 3000);
+    } else {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+        autoRotateRef.current = null;
+      }
+    }
+    
+    return () => {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+      }
+    };
+  }, [autoRotate, images.length]);
+  
+  // 滚轮控制
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      // 检查是否在轮播区域内
+      if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
+        e.preventDefault();
+        
+        if (e.deltaY > 0) {
+          // 向下滚动
+          if (currentImageIndex < images.length - 1) {
+            setCurrentImageIndex(prev => prev + 1);
+            setAutoRotate(false); // 用户操作时暂停自动轮播
+          } else {
+            // 到达最后一张图，恢复页面滚动
+            setAutoRotate(true);
+            return;
+          }
+        } else {
+          // 向上滚动
+          if (currentImageIndex > 0) {
+            setCurrentImageIndex(prev => prev - 1);
+            setAutoRotate(false);
+          }
+        }
+        
+        // 3秒后恢复自动轮播
+        setTimeout(() => {
+          setAutoRotate(true);
+        }, 3000);
+      }
+    };
+    
+    const carousel = carouselRef.current;
+    if (carousel) {
+      carousel.addEventListener('wheel', handleWheel, { passive: false });
+      
+      return () => {
+        carousel.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, [currentImageIndex, images.length]);
+
   return (
     <section className={styles.connectSection}>
       <div className={styles.connectContainer}>
@@ -385,8 +453,42 @@ function ConnectSection() {
           </div>
           
           <div className={styles.connectRight}>
-            <div className={styles.productScreenshot}>
-              <img src="/api/placeholder/600/400" alt="Dify Data Source Interface" className={styles.screenshotImg} />
+            <div 
+              className={styles.imageCarousel}
+              ref={carouselRef}
+            >
+              <div className={styles.carouselContainer}>
+                {images.map((image, index) => (
+                  <div
+                    key={index}
+                    className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
+                  >
+                    <img 
+                      src={image} 
+                      alt={`AI ToEarn Function ${index + 1}`} 
+                      className={styles.carouselImage}
+                    />
+                  </div>
+                ))}
+              </div>
+              
+              <div className={styles.carouselIndicators}>
+                {images.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`${styles.indicator} ${index === currentImageIndex ? styles.active : ''}`}
+                    onClick={() => {
+                      setCurrentImageIndex(index);
+                      setAutoRotate(false);
+                      setTimeout(() => setAutoRotate(true), 3000);
+                    }}
+                  />
+                ))}
+              </div>
+              
+              <div className={styles.carouselHint}>
+                <span>使用滚轮切换图片</span>
+              </div>
             </div>
           </div>
         </div>
@@ -497,16 +599,16 @@ function EnterpriseSection() {
       <div className={styles.enterpriseContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
-          <span>ENTERPRISE</span>
+          <span>企业级服务</span>
         </div>
         
         <h2 className={styles.enterpriseTitle}>
-          Solid AI Infrastructure<br />
-          <span className={styles.titleBlue}>for Enterprise Success</span>
+          专业的AI自媒体解决方案<br />
+          <span className={styles.titleBlue}>助力企业营销成功</span>
         </h2>
         
         <p className={styles.enterpriseSubtitle}>
-          The AI transformation for enterprise requires not just tools, but grounded infrastructure. Dify offers a reliable platform to distribute AI capabilities across multiple departments for unparalleled efficiency.
+          企业级AI营销转型不仅需要工具，更需要稳固的基础设施。AI ToEarn 提供可靠的平台，将AI内容创作能力分发到多个部门，实现无与伦比的营销效率。
         </p>
       </div>
     </section>
@@ -520,40 +622,40 @@ function StatsSection() {
       <div className={styles.statsContainer}>
         <div className={styles.statsGrid}>
           <div className={styles.statItem}>
-            <div className={styles.statNumber}>10K+</div>
-            <div className={styles.statLabel}>Teams</div>
+            <div className={styles.statNumber}>50K+</div>
+            <div className={styles.statLabel}>用户</div>
           </div>
           <div className={styles.statItem}>
-            <div className={styles.statNumber}>60+</div>
-            <div className={styles.statLabel}>Industries</div>
+            <div className={styles.statNumber}>15+</div>
+            <div className={styles.statLabel}>社交平台</div>
           </div>
           <div className={styles.statItem}>
-            <div className={styles.statNumber}>150+</div>
-            <div className={styles.statLabel}>Countries</div>
+            <div className={styles.statNumber}>100+</div>
+            <div className={styles.statLabel}>国家地区</div>
           </div>
           <div className={styles.statItem}>
-            <div className={styles.statNumber}>1M+</div>
-            <div className={styles.statLabel}>Applications</div>
+            <div className={styles.statNumber}>5M+</div>
+            <div className={styles.statLabel}>内容发布</div>
           </div>
         </div>
         
         <div className={styles.testimonialCard}>
           <div className={styles.testimonialContent}>
-            <p>"In this climate of perpetual beta, tools enabling rapid validation aren't just helpful, they're existential. For Volvo Cars, strategically navigating this AI frontier, this is where Dify delivers indispensable value."</p>
+            <p>"在内容营销竞争激烈的今天，快速验证和创作工具不仅有帮助，更是生存必需品。对于我们这样的营销公司来说，AI ToEarn 在这个AI前沿为我们提供了不可或缺的价值。"</p>
             <div className={styles.testimonialAuthor}>
-              <div className={styles.authorName}>EWEN WANG</div>
-              <div className={styles.authorTitle}>HEAD OF AI & DATA APAC</div>
+              <div className={styles.authorName}>李明</div>
+              <div className={styles.authorTitle}>某知名MCN机构 内容运营总监</div>
             </div>
           </div>
         </div>
         
         <div className={styles.caseStudies}>
           <div className={styles.caseStudy}>
-            <div className={styles.caseTitle}>Estimated an annual reduction of</div>
-            <div className={styles.caseNumber}>18,000 hours.</div>
+            <div className={styles.caseTitle}>预计每年节省创作时间</div>
+            <div className={styles.caseNumber}>50,000 小时</div>
           </div>
           <div className={styles.caseStudy}>
-            <div className={styles.caseTitle}>Enterprise Q&A Bot: Serve 19000+ employees across 20+ departments.</div>
+            <div className={styles.caseTitle}>AI营销助手：为500+企业客户提供跨平台内容分发服务</div>
           </div>
         </div>
       </div>
@@ -568,27 +670,27 @@ function CommunitySection() {
       <div className={styles.communityContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
-          <span>COMMUNITY</span>
+          <span>社区生态</span>
         </div>
         
         <h2 className={styles.communityTitle}>
-          Become Part of Our<br />
-          <span className={styles.titleBlue}>Vibrant Community</span>
+          加入我们的<br />
+          <span className={styles.titleBlue}>活跃创作者社区</span>
         </h2>
         
         <p className={styles.communitySubtitle}>
-          Dify is powered by the community of AI innovators worldwide. Join us and push the boundary of GenAI app development platform.
+          AI ToEarn 由全球AI内容创作者社区共同推动。加入我们，一起探索AI内容营销的无限边界。
         </p>
         
         <div className={styles.communityButtons}>
           <button className={styles.githubBtn}>
-            GitHub
+            微信群组
             <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
           <button className={styles.discordBtn}>
-            Discord Community
+            创作者交流群
             <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -597,21 +699,21 @@ function CommunitySection() {
         
         <div className={styles.communityStats}>
           <div className={styles.communityStat}>
-            <div className={styles.statNumber}>5M+</div>
-            <div className={styles.statLabel}>Downloads</div>
+            <div className={styles.statNumber}>20万+</div>
+            <div className={styles.statLabel}>下载量</div>
           </div>
           <div className={styles.communityStat}>
-            <div className={styles.statNumber}>105.2k</div>
-            <div className={styles.statLabel}>Stars</div>
+            <div className={styles.statNumber}>15K</div>
+            <div className={styles.statLabel}>社区成员</div>
           </div>
           <div className={styles.communityStat}>
-            <div className={styles.statNumber}>800+</div>
-            <div className={styles.statLabel}>Contributors</div>
+            <div className={styles.statNumber}>500+</div>
+            <div className={styles.statLabel}>活跃创作者</div>
           </div>
         </div>
         
         <div className={styles.tweets}>
-          {/* 推文卡片区域 */}
+          {/* 用户分享卡片区域 */}
         </div>
       </div>
     </section>
