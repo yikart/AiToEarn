@@ -28,11 +28,6 @@ export const routerData: IRouterDataItem[] = [
     path: "/accounts",
   },
   {
-    name: "发布",
-    translationKey: "publish",
-    path: "/publish",
-  },
-  {
     name: "热门内容",
     translationKey: "hotContent",
     path: "/hot-content",

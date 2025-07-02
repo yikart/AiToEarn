@@ -6,16 +6,19 @@ import {
   useRef,
   useState,
 } from "react";
-import ImgChoose, { IImgFile } from "../../components/Choose/ImgChoose";
 import styles from "./videoCoverSeting.module.scss";
 import { Alert, Button, Modal, Slider, Spin } from "antd";
-import { IVideoFile } from "../../components/Choose/VideoChoose";
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
-import { useVideoPageStore } from "@/app/[lng]/publish/videoPage/useVideoPageStore";
-import { useShallow } from "zustand/react/shallow";
-import { formatImg } from "@/app/[lng]/publish/components/Choose/ImgChoose.util";
-import { VideoGrabFrame } from "@/app/[lng]/publish/components/Choose/videoChoose.util";
+import {
+  formatImg,
+  VideoGrabFrame,
+} from "@/components/PublishDialog/PublishDialog.util";
+import {
+  IImgFile,
+  IVideoFile,
+} from "@/components/PublishDialog/publishDialog.type";
+import ImgChoose from "@/components/PublishDialog/compoents/Choose/ImgChoose";
 
 export interface IVideoCoverSetingRef {}
 
@@ -52,11 +55,6 @@ const VideoCoverSeting = memo(
       const cropperImg = useRef<HTMLImageElement>(null);
       const [videoCoverLoading, setVideoCoverLoading] = useState(false);
       const [sliderVal, setSliderVal] = useState(0);
-      const { operateId } = useVideoPageStore(
-        useShallow((state) => ({
-          operateId: state.operateId,
-        })),
-      );
 
       useEffect(() => {
         if (!videoCoverSetingModal) return;
@@ -111,31 +109,6 @@ const VideoCoverSeting = memo(
 
       return (
         <>
-          {/*<div*/}
-          {/*  className={styles.videoCoverSeting}*/}
-          {/*  onClick={() => {*/}
-          {/*    if (!videoFile) return message.warning("您必须上传一个视频！");*/}
-          {/*    setVideoCoverSetingModal(true);*/}
-          {/*  }}*/}
-          {/*>*/}
-          {/*  <div className="videoCoverSeting-img">*/}
-          {/*    {value && (*/}
-          {/*      <div className="videoCoverSeting-choosed">*/}
-          {/*        <img src={value?.imgUrl} />*/}
-          {/*        {onClose && (*/}
-          {/*          <CloseCircleOutlined*/}
-          {/*            onClick={(e) => {*/}
-          {/*              e.stopPropagation();*/}
-          {/*              onClose();*/}
-          {/*            }}*/}
-          {/*          />*/}
-          {/*        )}*/}
-          {/*      </div>*/}
-          {/*    )}*/}
-          {/*  </div>*/}
-          {/*  <div className="videoCoverSeting-text">上传图片</div>*/}
-          {/*</div>*/}
-
           <Modal
             width={600}
             title="设置封面"
@@ -147,7 +120,7 @@ const VideoCoverSeting = memo(
               canvas.toBlob(async function (blob) {
                 const cover = await formatImg({
                   blob: blob!,
-                  path: `${operateId}_${saveImgId}.${imgFile?.file.type.split("/")[1]}`,
+                  path: `${saveImgId}.${imgFile?.file.type.split("/")[1]}`,
                 });
                 onChoosed(cover);
                 close();

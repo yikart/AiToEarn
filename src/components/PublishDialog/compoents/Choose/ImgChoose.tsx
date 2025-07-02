@@ -1,14 +1,8 @@
-/*
- * @Author: nevin
- * @Date: 2025-01-22 21:59:36
- * @LastEditTime: 2025-02-11 21:45:34
- * @LastEditors: nevin
- * @Description: 选择图片
- */
 import { Button, message, Upload } from "antd";
 import { FC, useRef } from "react";
 import { RcFile } from "antd/es/upload";
-import { formatImg } from "@/app/[lng]/publish/components/Choose/ImgChoose.util";
+import { formatImg } from "@/components/PublishDialog/PublishDialog.util";
+import { IImgFile } from "@/components/PublishDialog/publishDialog.type";
 
 interface ImgChooseProps {
   // 单选就使用单选方法，多选就使用单选方法
@@ -18,21 +12,6 @@ interface ImgChooseProps {
   // 多选返回方法
   onMultipleChoose?: (_: IImgFile[]) => void;
   children?: React.ReactNode;
-}
-
-export interface IImgFile {
-  id: string;
-  size: number;
-  file: Blob;
-  // 前端临时路径，注意不要存到数据库
-  imgUrl: string;
-  filename: string;
-  // 图片在硬盘上的路径
-  imgPath: string;
-  // 图片宽度
-  width: number;
-  // 图片高度
-  height: number;
 }
 
 const ImgChoose: FC<ImgChooseProps> = ({

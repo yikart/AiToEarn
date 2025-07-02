@@ -17,7 +17,6 @@ import {
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useTransClient } from "@/app/i18n/client";
-import Bellmessage from "@/app/layout/BellMessage";
 
 export interface ILyaoutHeaderRef {}
 
@@ -146,12 +145,6 @@ const LyaoutHeader = memo(
             className={styles["layoutHeader_wrapper-right"]}
             suppressHydrationWarning={true}
           >
-            <Bellmessage>
-              <div style={{ cursor: "pointer" }}>
-                <BellOutlined />
-                <span style={{ marginLeft: "5px" }}>消息</span>
-              </div>
-            </Bellmessage>
             <Button
               type="text"
               icon={<GlobalOutlined />}

@@ -1,8 +1,9 @@
-// 视频截帧
-import { formatImg } from "@/app/[lng]/publish/components/Choose/ImgChoose.util";
-import { IImgFile } from "@/app/[lng]/publish/components/Choose/ImgChoose";
 import { RcFile } from "antd/es/upload";
-import { IVideoFile } from "@/app/[lng]/publish/components/Choose/VideoChoose";
+import {
+  IImgFile,
+  IVideoFile,
+} from "@/components/PublishDialog/publishDialog.type";
+import { generateUUID, getFilePathName } from "@/utils";
 
 export const formatVideo = async (file: RcFile): Promise<IVideoFile> => {
   const videoUrl = URL.createObjectURL(file);
@@ -71,3 +72,38 @@ export function VideoGrabFrame(
     video.load();
   });
 }
+
+export const formatImg = async ({
+  path,
+  file,
+  blob,
+}: {
+  path: string;
+  file?: Uint8Array;
+  blob?: Blob;
+}): Promise<IImgFile> => {
+  return new Promise((resolve) => {
+    const { filename, suffix } = getFilePathName(path);
+    if (!blob) {
+      blob = new Blob([file!], {
+        type: `image/${suffix}`,
+      });
+    }
+    const imgUrl = URL.createObjectURL(blob);
+
+    const img = new Image();
+    img.onload = () => {
+      resolve({
+        id: generateUUID(),
+        width: img.width,
+        height: img.height,
+        imgPath: path,
+        size: blob!.size,
+        filename,
+        file: blob!,
+        imgUrl,
+      });
+    };
+    img.src = imgUrl;
+  });
+};

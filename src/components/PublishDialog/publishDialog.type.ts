@@ -1,6 +1,35 @@
-import { IImgFile } from "@/app/[lng]/publish/components/Choose/ImgChoose";
-import { IVideoFile } from "@/app/[lng]/publish/components/Choose/VideoChoose";
 import { SocialAccount } from "@/api/types/account.type";
+
+export interface IImgFile {
+  id: string;
+  size: number;
+  file: Blob;
+  // 前端临时路径，注意不要存到数据库
+  imgUrl: string;
+  filename: string;
+  // 图片在硬盘上的路径
+  imgPath: string;
+  // 图片宽度
+  width: number;
+  // 图片高度
+  height: number;
+}
+
+export interface IVideoFile {
+  size: number;
+  file: Blob;
+  // 前端临时路径，注意不要存到数据库
+  videoUrl: string;
+  filename: string;
+  // 视频宽度
+  width: number;
+  // 视频高度
+  height: number;
+  // 视频下取整的时长,单位秒
+  duration: number;
+  // 视频首帧图片
+  cover: IImgFile;
+}
 
 export interface IPubParams {
   des: string;

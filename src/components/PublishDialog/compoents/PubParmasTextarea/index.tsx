@@ -18,13 +18,17 @@ import {
   CloseOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { IVideoFile } from "@/app/[lng]/publish/components/Choose/VideoChoose";
-import { IImgFile } from "@/app/[lng]/publish/components/Choose/ImgChoose";
-import { formatVideo } from "@/app/[lng]/publish/components/Choose/videoChoose.util";
-import { formatImg } from "@/app/[lng]/publish/components/Choose/ImgChoose.util";
-import VideoCoverSeting from "@/app/[lng]/publish/videoPage/components/VideoCoverSeting";
 import isEqual from "lodash/isEqual";
 import { TextAreaRef } from "antd/es/input/TextArea";
+import {
+  IImgFile,
+  IVideoFile,
+} from "@/components/PublishDialog/publishDialog.type";
+import {
+  formatImg,
+  formatVideo,
+} from "@/components/PublishDialog/PublishDialog.util";
+import VideoCoverSeting from "@/components/PublishDialog/compoents/PubParmasTextarea/VideoCoverSeting";
 
 const { TextArea } = Input;
 const { Dragger } = Upload;

@@ -1,4 +1,4 @@
-import { PubItem } from "@/components/PublishDialog/usePublishDialog";
+import { PubItem } from "@/components/PublishDialog/publishDialog.type";
 
 export interface IPlatsParamsRef {}
 
