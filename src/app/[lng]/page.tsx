@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import styles from "./styles/difyHome.module.scss";
+import { useTransClient } from "../i18n/client";
 
 // 导入SVG图标
 import bilibiliIcon from '@/assets/svgs/plat/bilibili.svg';
@@ -16,11 +17,13 @@ import logo2 from '@/assets/images/vipcard.png';
 
 // 版本发布横幅
 function ReleaseBanner() {
+  const { t } = useTransClient('home');
+  
   return (
     <div className={styles.releaseBanner}>
       <div className={styles.bannerContent}>
-        <span className={styles.releaseTag}>Release v1.5.0</span>
-        <span className={styles.releaseText}>Build and Extend AI Workflows with Plugins and a Thriving Marketplace.</span>
+        <span className={styles.releaseTag}>{t('releaseBanner.tag')}</span>
+        <span className={styles.releaseText}>{t('releaseBanner.text')}</span>
         <svg className={styles.arrowIcon} width="16" height="16" viewBox="0 0 16 16" fill="none">
           <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
@@ -31,19 +34,21 @@ function ReleaseBanner() {
 
 // Header 顶部导航
 function Header() {
+  const { t } = useTransClient('home');
+  
   return (
     <header className={styles.header}>
       <div className={styles.headerContainer}>
         <div className={styles.logo}>
-          <span className={styles.logoText}>AIToEran</span>
+          <span className={styles.logoText}>{t('header.logo')}</span>
         </div>
         <nav className={styles.nav}>
-          <a href="#marketplace" className={styles.navLink}>市场</a>
-          <a href="#pricing" className={styles.navLink}>价格</a>
-          <a href="#docs" className={styles.navLink}>问题</a>
-          <a href="#blog" className={styles.navLink}>博客</a>
+          <a href="#marketplace" className={styles.navLink}>{t('header.nav.marketplace')}</a>
+          <a href="#pricing" className={styles.navLink}>{t('header.nav.pricing')}</a>
+          <a href="#docs" className={styles.navLink}>{t('header.nav.docs')}</a>
+          <a href="#blog" className={styles.navLink}>{t('header.nav.blog')}</a>
         </nav>
-        <button className={styles.getStartedBtn}>立即开始</button>
+        <button className={styles.getStartedBtn}>{t('header.getStarted')}</button>
       </div>
     </header>
   );
@@ -51,6 +56,7 @@ function Header() {
 
 // Hero 主标题区
 function Hero() {
+  const { t } = useTransClient('home');
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTypingComplete, setIsTypingComplete] = useState(false);
@@ -58,7 +64,7 @@ function Hero() {
   const [startTyping, setStartTyping] = useState(false);
   
   // 要显示的完整文本
-  const fullText = '成为最好用的内容营销\nAI Agent';
+  const fullText = t('hero.title');
   const typingSpeed = 120; // 打字速度（毫秒）
   const initialDelay = 800; // 初始延迟（毫秒）
   const cursorHideDelay = 2000; // 打字完成后光标消失的延迟
@@ -118,9 +124,9 @@ function Hero() {
     <section className={styles.hero}>
       <div className={styles.heroContainer}>
         <div className={styles.githubStars}>
-          <span className={styles.starCount}>105.2k</span>
-          <span className={styles.starText}>stars on</span>
-          <span className={styles.githubText}>GitHub</span>
+          <span className={styles.starCount}>{t('hero.stars')}</span>
+          <span className={styles.starText}>{t('hero.starsText')}</span>
+          <span className={styles.githubText}>{t('hero.github')}</span>
         </div>
         
         <h1 className={styles.heroTitle}>
@@ -129,11 +135,11 @@ function Hero() {
         </h1>
         
         <p className={styles.heroSubtitle}>
-        从今天起，使用AI轻松管理你的社交媒体。AITOEARN提供从灵感创意、内容制作，内容分发内容互动管理等一站式能力，让AI触手可及。
+          {t('hero.subtitle')}
         </p>
         
         <button className={styles.heroBtn}>
-          立即开始
+          {t('hero.getStarted')}
           <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -145,6 +151,8 @@ function Hero() {
 
 // 品牌合作伙伴 Logo 区 - 社交媒体平台（无限滚动）
 function BrandBar() {
+  const { t } = useTransClient('home');
+  
   // 平台数据配置
   const platforms = [
     { name: 'YouTube', hasIcon: true, iconPath: youtubeIcon.src },
@@ -168,7 +176,7 @@ function BrandBar() {
   return (
     <section className={styles.brandBar}>
       <div className={styles.brandContainer}>
-        <div className={styles.brandTitle}>支持的社交媒体平台</div>
+        <div className={styles.brandTitle}>{t('brandBar.title')}</div>
         <div className={styles.scrollContainer}>
           <div className={styles.scrollTrack}>
             {duplicatedPlatforms.map((platform, index) => (
@@ -196,6 +204,7 @@ function BrandBar() {
 
 // 灵感创意
 function BuildSection() {
+  const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
   const images = [logo.src];
@@ -269,30 +278,30 @@ function BuildSection() {
       <div className={styles.buildContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
-          <span>灵感创意</span>
+          <span>{t('buildSection.badge')}</span>
         </div>
         
         <div className={styles.buildContent}>
           <div className={styles.buildLeft}>
             <h2 className={styles.buildTitle}>
-              灵感枯竭? 
-              <span className={styles.titleBlue}>来看看全网有哪些热点吧</span>
+              {t('buildSection.title')} 
+              <span className={styles.titleBlue}>{t('buildSection.titleBlue')}</span>
             </h2>
             
             <div className={styles.featureList}>
               <div className={styles.featureItem}>
-                <h3>AI热点抓取，全网热点一网打尽</h3>
-                <p>通过AI抓取全网热点，AI分析一键生成同款爆款内容,热点流量一网打尽</p>
+                <h3>{t('buildSection.features.hotTopic.title')}</h3>
+                <p>{t('buildSection.features.hotTopic.description')}</p>
               </div>
               
               <div className={styles.featureItem}>
-                <h3>国际站：YouTube 、 TikTok 、 Facebook 、 Instagram 、 LinkedIn 、 X (Twitter) 、 Rednote</h3>
-                <p>海外站热点抓取，让你第一时间了解最新动态</p>
+                <h3>{t('buildSection.features.international.title')}</h3>
+                <p>{t('buildSection.features.international.description')}</p>
               </div>
               
               <div className={styles.featureItem}>
-                <h3>国内站：抖音 、 快手 、 微信 、 Bilibili</h3>
-                <p>支持国内站的热点抓取，让你不错过每一条热点流量</p>
+                <h3>{t('buildSection.features.domestic.title')}</h3>
+                <p>{t('buildSection.features.domestic.description')}</p>
               </div>
             </div>
           </div>
@@ -332,7 +341,7 @@ function BuildSection() {
               </div>
               
               <div className={styles.carouselHint}>
-                <span>使用滚轮切换图片</span>
+                <span>{t('buildSection.carouselHint')}</span>
               </div>
             </div>
           </div>
@@ -344,6 +353,7 @@ function BuildSection() {
 
 // 功能介绍区
 function ConnectSection() {
+  const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
   const images = [logo.src, logo.src ]; // 功能介绍相关的图片
@@ -417,37 +427,37 @@ function ConnectSection() {
       <div className={styles.connectContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
-          <span>功能介绍</span>
+          <span>{t('connectSection.badge')}</span>
         </div>
         
         <div className={styles.connectContent}>
           <div className={styles.connectLeft}>
             <h2 className={styles.connectTitle}>
-            自媒体运营平台一站式解决方案 <span className={styles.titleBlue}>从灵感创意到内容制作，从内容分发到内容互动管理</span>
+            {t('connectSection.title')} <span className={styles.titleBlue}>{t('connectSection.titleBlue')}</span>
             </h2>
             
             <div className={styles.featureList}>
               <div className={styles.featureItem}>
-                <h3>内容创作</h3>
-                <p>AI内容创作，AI图片生成，图文创作等AI能力，让你的内容更加生动有趣</p>
+                <h3>{t('connectSection.features.creation.title')}</h3>
+                <p>{t('connectSection.features.creation.description')}</p>
                 <div className={styles.integrationLogos}>
                   {/* 集成服务 logos */}
                 </div>
               </div>
               
               <div className={styles.featureItem}>
-                <h3>内容分发</h3>
-                <p>支持国内外多平台分发，让你的内容触达更多用户，一键式管理，让你的内容触达更多用户</p>
+                <h3>{t('connectSection.features.distribution.title')}</h3>
+                <p>{t('connectSection.features.distribution.description')}</p>
               </div>
               
               <div className={styles.featureItem}>
-                <h3>内容互动管理</h3>
-                <p>支持国内外多平台互动管理，让你的内容互动更加高效，一键式管理，让你的内容互动更加高效</p>
+                <h3>{t('connectSection.features.interaction.title')}</h3>
+                <p>{t('connectSection.features.interaction.description')}</p>
               </div>
 
               <div className={styles.featureItem}>
-                <h3>数据分析</h3>
-                <p>支持国内外多平台数据分析，让你的数据分析更加高效，一键式管理，让你的数据分析更加高效</p>
+                <h3>{t('connectSection.features.analytics.title')}</h3>
+                <p>{t('connectSection.features.analytics.description')}</p>
               </div>
             </div>
           </div>
@@ -487,7 +497,7 @@ function ConnectSection() {
               </div>
               
               <div className={styles.carouselHint}>
-                <span>使用滚轮切换图片</span>
+                <span>{t('connectSection.carouselHint')}</span>
               </div>
             </div>
           </div>
@@ -499,18 +509,20 @@ function ConnectSection() {
 
 // 移动应用下载区
 function DownloadSection() {
+  const { t } = useTransClient('home');
+  
   return (
     <section className={styles.downloadSection}>
       <div className={styles.downloadContainer}>
         <div className={styles.downloadContent}>
           <div className={styles.downloadLeft}>
             <h2 className={styles.downloadTitle}>
-              随时随地开始创作<br />
-              <span className={styles.titleBlue}>移动端也能轻松管理</span>
+              {t('downloadSection.title')}<br />
+              <span className={styles.titleBlue}>{t('downloadSection.titleBlue')}</span>
             </h2>
             
             <p className={styles.downloadDescription}>
-              借助 AI ToEarn 移动应用，您的创作不再局限于桌面端。我们还为您提供 iOS 和 Android 移动应用，随时随地释放您的创造力，仅需一部手机即可！
+              {t('downloadSection.description')}
             </p>
             
             <div className={styles.downloadButtons}>
@@ -520,8 +532,8 @@ function DownloadSection() {
                     <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" fill="currentColor"/>
                   </svg>
                   <div className={styles.downloadBtnText}>
-                    <span className={styles.downloadOn}>Download on the</span>
-                    <span className={styles.downloadStore}>App Store</span>
+                    <span className={styles.downloadOn}>{t('downloadSection.appStore.text')}</span>
+                    <span className={styles.downloadStore}>{t('downloadSection.appStore.store')}</span>
                   </div>
                 </div>
               </a>
@@ -532,8 +544,8 @@ function DownloadSection() {
                     <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" fill="currentColor"/>
                   </svg>
                   <div className={styles.downloadBtnText}>
-                    <span className={styles.downloadOn}>GET IT ON</span>
-                    <span className={styles.downloadStore}>Google Play</span>
+                    <span className={styles.downloadOn}>{t('downloadSection.googlePlay.text')}</span>
+                    <span className={styles.downloadStore}>{t('downloadSection.googlePlay.store')}</span>
                   </div>
                 </div>
               </a>
@@ -594,21 +606,23 @@ function DownloadSection() {
 
 // Enterprise 区块
 function EnterpriseSection() {
+  const { t } = useTransClient('home');
+  
   return (
     <section className={styles.enterpriseSection}>
       <div className={styles.enterpriseContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
-          <span>企业级服务</span>
+          <span>{t('enterpriseSection.badge')}</span>
         </div>
         
         <h2 className={styles.enterpriseTitle}>
-          专业的AI自媒体解决方案<br />
-          <span className={styles.titleBlue}>助力企业营销成功</span>
+          {t('enterpriseSection.title')}<br />
+          <span className={styles.titleBlue}>{t('enterpriseSection.titleBlue')}</span>
         </h2>
         
         <p className={styles.enterpriseSubtitle}>
-          企业级AI营销转型不仅需要工具，更需要稳固的基础设施。AI ToEarn 提供可靠的平台，将AI内容创作能力分发到多个部门，实现无与伦比的营销效率。
+          {t('enterpriseSection.subtitle')}
         </p>
       </div>
     </section>
@@ -617,45 +631,47 @@ function EnterpriseSection() {
 
 // 数据统计区
 function StatsSection() {
+  const { t } = useTransClient('home');
+  
   return (
     <section className={styles.statsSection}>
       <div className={styles.statsContainer}>
         <div className={styles.statsGrid}>
           <div className={styles.statItem}>
-            <div className={styles.statNumber}>50K+</div>
-            <div className={styles.statLabel}>用户</div>
+            <div className={styles.statNumber}>{t('statsSection.stats.users.number')}</div>
+            <div className={styles.statLabel}>{t('statsSection.stats.users.label')}</div>
           </div>
           <div className={styles.statItem}>
-            <div className={styles.statNumber}>15+</div>
-            <div className={styles.statLabel}>社交平台</div>
+            <div className={styles.statNumber}>{t('statsSection.stats.platforms.number')}</div>
+            <div className={styles.statLabel}>{t('statsSection.stats.platforms.label')}</div>
           </div>
           <div className={styles.statItem}>
-            <div className={styles.statNumber}>100+</div>
-            <div className={styles.statLabel}>国家地区</div>
+            <div className={styles.statNumber}>{t('statsSection.stats.countries.number')}</div>
+            <div className={styles.statLabel}>{t('statsSection.stats.countries.label')}</div>
           </div>
           <div className={styles.statItem}>
-            <div className={styles.statNumber}>5M+</div>
-            <div className={styles.statLabel}>内容发布</div>
+            <div className={styles.statNumber}>{t('statsSection.stats.content.number')}</div>
+            <div className={styles.statLabel}>{t('statsSection.stats.content.label')}</div>
           </div>
         </div>
         
         <div className={styles.testimonialCard}>
           <div className={styles.testimonialContent}>
-            <p>"在内容营销竞争激烈的今天，快速验证和创作工具不仅有帮助，更是生存必需品。对于我们这样的营销公司来说，AI ToEarn 在这个AI前沿为我们提供了不可或缺的价值。"</p>
+            <p>"{t('statsSection.testimonial.quote')}"</p>
             <div className={styles.testimonialAuthor}>
-              <div className={styles.authorName}>李明</div>
-              <div className={styles.authorTitle}>某知名MCN机构 内容运营总监</div>
+              <div className={styles.authorName}>{t('statsSection.testimonial.author')}</div>
+              <div className={styles.authorTitle}>{t('statsSection.testimonial.title')}</div>
             </div>
           </div>
         </div>
         
         <div className={styles.caseStudies}>
           <div className={styles.caseStudy}>
-            <div className={styles.caseTitle}>预计每年节省创作时间</div>
-            <div className={styles.caseNumber}>50,000 小时</div>
+            <div className={styles.caseTitle}>{t('statsSection.caseStudies.timeSaved.title')}</div>
+            <div className={styles.caseNumber}>{t('statsSection.caseStudies.timeSaved.number')}</div>
           </div>
           <div className={styles.caseStudy}>
-            <div className={styles.caseTitle}>AI营销助手：为500+企业客户提供跨平台内容分发服务</div>
+            <div className={styles.caseTitle}>{t('statsSection.caseStudies.aiAssistant.title')}</div>
           </div>
         </div>
       </div>
@@ -665,32 +681,34 @@ function StatsSection() {
 
 // 社区区块
 function CommunitySection() {
+  const { t } = useTransClient('home');
+  
   return (
     <section className={styles.communitySection}>
       <div className={styles.communityContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
-          <span>社区生态</span>
+          <span>{t('communitySection.badge')}</span>
         </div>
         
         <h2 className={styles.communityTitle}>
-          加入我们的<br />
-          <span className={styles.titleBlue}>活跃创作者社区</span>
+          {t('communitySection.title')}<br />
+          <span className={styles.titleBlue}>{t('communitySection.titleBlue')}</span>
         </h2>
         
         <p className={styles.communitySubtitle}>
-          AI ToEarn 由全球AI内容创作者社区共同推动。加入我们，一起探索AI内容营销的无限边界。
+          {t('communitySection.subtitle')}
         </p>
         
         <div className={styles.communityButtons}>
           <button className={styles.githubBtn}>
-            微信群组
+            {t('communitySection.buttons.wechat')}
             <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
           <button className={styles.discordBtn}>
-            创作者交流群
+            {t('communitySection.buttons.community')}
             <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -699,16 +717,16 @@ function CommunitySection() {
         
         <div className={styles.communityStats}>
           <div className={styles.communityStat}>
-            <div className={styles.statNumber}>20万+</div>
-            <div className={styles.statLabel}>下载量</div>
+            <div className={styles.statNumber}>{t('communitySection.stats.downloads.number')}</div>
+            <div className={styles.statLabel}>{t('communitySection.stats.downloads.label')}</div>
           </div>
           <div className={styles.communityStat}>
-            <div className={styles.statNumber}>15K</div>
-            <div className={styles.statLabel}>社区成员</div>
+            <div className={styles.statNumber}>{t('communitySection.stats.members.number')}</div>
+            <div className={styles.statLabel}>{t('communitySection.stats.members.label')}</div>
           </div>
           <div className={styles.communityStat}>
-            <div className={styles.statNumber}>500+</div>
-            <div className={styles.statLabel}>活跃创作者</div>
+            <div className={styles.statNumber}>{t('communitySection.stats.creators.number')}</div>
+            <div className={styles.statLabel}>{t('communitySection.stats.creators.label')}</div>
           </div>
         </div>
         
@@ -722,6 +740,7 @@ function CommunitySection() {
 
 // Footer
 function Footer() {
+  const { t } = useTransClient('home');
   const [isHovered, setIsHovered] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -763,38 +782,38 @@ function Footer() {
         <div className={styles.footerTop}>
           <div className={styles.footerColumns}>
             <div className={styles.footerColumn}>
-              <h4>资源</h4>
-              <a href="#docs">文档</a>
-              <a href="#blog">博客</a>
-              <a href="#education">教育</a>
-              <a href="#partner">合作伙伴</a>
-              <a href="#support">服务支持</a>
-              <a href="#roadmap">产品线路图</a>
+              <h4>{t('footer.resources.title')}</h4>
+              <a href="#docs">{t('footer.resources.links.docs')}</a>
+              <a href="#blog">{t('footer.resources.links.blog')}</a>
+              <a href="#education">{t('footer.resources.links.education')}</a>
+              <a href="#partner">{t('footer.resources.links.partner')}</a>
+              <a href="#support">{t('footer.resources.links.support')}</a>
+              <a href="#roadmap">{t('footer.resources.links.roadmap')}</a>
             </div>
             
             <div className={styles.footerColumn}>
-              <h4>公司</h4>
-              <a href="#talk">联系我们</a>
-              <a href="#terms">服务条款</a>
-              <a href="#privacy">隐私政策</a>
-              <a href="#cookies">Cookie 设置</a>
-              <a href="#data">数据保护协议</a>
-              <a href="#marketplace">市场协议</a>
-              <a href="#brand">品牌指南</a>
+              <h4>{t('footer.company.title')}</h4>
+              <a href="#talk">{t('footer.company.links.talk')}</a>
+              <a href="#terms">{t('footer.company.links.terms')}</a>
+              <a href="#privacy">{t('footer.company.links.privacy')}</a>
+              <a href="#cookies">{t('footer.company.links.cookies')}</a>
+              <a href="#data">{t('footer.company.links.data')}</a>
+              <a href="#marketplace">{t('footer.company.links.marketplace')}</a>
+              <a href="#brand">{t('footer.company.links.brand')}</a>
             </div>
           </div>
           
           <div className={styles.footerInfo}>
             <div className={styles.footerText}>
-              AI ToEarn 自媒体运营平台一站式解决方案，从灵感创意到内容制作，从内容分发到内容互动管理
+              {t('footer.description')}
             </div>
             
             <div className={styles.socialLinks}>
-              <a href="#github">GitHub</a>
-              <a href="#discord">Discord</a>
-              <a href="#youtube">YouTube</a>
-              <a href="#linkedin">LinkedIn</a>
-              <a href="#twitter">Twitter</a>
+              <a href="#github">{t('footer.social.github')}</a>
+              <a href="#discord">{t('footer.social.discord')}</a>
+              <a href="#youtube">{t('footer.social.youtube')}</a>
+              <a href="#linkedin">{t('footer.social.linkedin')}</a>
+              <a href="#twitter">{t('footer.social.twitter')}</a>
             </div>
           </div>
         </div>
@@ -806,7 +825,7 @@ function Footer() {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            AI ToEarn 
+            {t('footer.bigText')} 
             <span 
               className={styles.ifText}
               style={{
@@ -824,29 +843,28 @@ function Footer() {
           </div>
           
           <div className={styles.footerCopyright}>
-            <div className={styles.copyright}>© 2025 LangGenius, Inc.</div>
-            <div className={styles.tagline}>Build Production-Ready Agentic AI Solutions</div>
+            <div className={styles.copyright}>{t('footer.copyright')}</div>
+            <div className={styles.tagline}>{t('footer.tagline')}</div>
           </div>
           
           <div className={styles.dataDeletionDoc}>
-            <h1>Data Deletion Instructions</h1>
+            <h1>{t('footer.dataDeletion.title')}</h1>
             
             {/* <p><strong>Last Updated:</strong> 2025.6.27</p> */}
             
             {/* <h2>For Pre-Launch Users:</h2> */}
-            <p>Our application is currently in pre-launch phase and does not store real user data. 
-            If you have interacted with our test systems, contact us for data removal.</p>
+            <p>{t('footer.dataDeletion.prelaunch')}</p>
             
-            <h2>Standard Procedure (Post-Launch):</h2>
+            <h2>{t('footer.dataDeletion.standardTitle')}</h2>
             <ol>
-                <li>Log in to your AiToEarn account</li>
-                <li>Navigate to Settings &gt; Privacy</li>
-                <li>Click "Request Account Deletion"</li>
-                <li>Confirmation will be sent to your registered email</li>
+                <li>{t('footer.dataDeletion.standardSteps.0')}</li>
+                <li>{t('footer.dataDeletion.standardSteps.1')}</li>
+                <li>{t('footer.dataDeletion.standardSteps.2')}</li>
+                <li>{t('footer.dataDeletion.standardSteps.3')}</li>
             </ol>
             
-            <h2>Contact for Assistance:</h2>
-            <p>Email: metat@aitoearning.com (Pre-launch inquiries only)</p>
+            <h2>{t('footer.dataDeletion.contactTitle')}</h2>
+            <p>{t('footer.dataDeletion.contactEmail')}</p>
           </div>
         </div>
       </div>
