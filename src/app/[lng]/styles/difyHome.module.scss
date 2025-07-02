@@ -511,7 +511,7 @@
 
 .downloadSection {
   padding: 120px 0;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #581c87 100%);
+  background: linear-gradient(135deg, #dbeafe 0%, #c7d2fe 50%, #ddd6fe 100%);
   overflow: hidden;
   position: relative;
 }
@@ -530,7 +530,7 @@
 }
 
 .downloadLeft {
-  color: white;
+  color: #1f2937;
 }
 
 .downloadTitle {
@@ -538,12 +538,12 @@
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 24px;
-  color: white;
+  color: #1f2937;
 }
 
 .downloadDescription {
   font-size: 18px;
-  color: #cbd5e1;
+  color: #374151;
   line-height: 1.6;
   margin-bottom: 40px;
 }
@@ -556,18 +556,18 @@
 
 .downloadBtn {
   display: inline-flex;
-  background: #000;
+  background: #4f46e5;
   color: white;
   text-decoration: none;
   border-radius: 8px;
   padding: 12px 20px;
   transition: all 0.3s ease;
-  border: 1px solid #333;
+  border: 1px solid #4338ca;
   
   &:hover {
-    background: #1a1a1a;
+    background: #4338ca;
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 24px rgba(79, 70, 229, 0.3);
   }
 }
 
