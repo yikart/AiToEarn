@@ -6,6 +6,7 @@ import { SocialAccount } from "@/api/types/account.type";
 import { kwaiSkip } from "@/app/[lng]/accounts/plat/kwaiLogin";
 import { bilibiliSkip } from "../../plat/BilibiliLogin";
 import { youtubeSkip } from "../../plat/YoutubeLogin";
+import { twitterSkip } from "../../plat/TwtterLogin";
 
 export interface IAddAccountModalRef {}
 
@@ -59,6 +60,9 @@ const AddAccountModal = memo(
                               case PlatType.YouTube:
                                 console.log('key',key)
                                 youtubeSkip(key);
+
+                            case PlatType.Twitter:
+                              twitterSkip(key);
                           }
                         }}
                       >

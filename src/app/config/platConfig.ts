@@ -3,6 +3,7 @@ import ksSvg from "@/assets/svgs/plat/ks.svg";
 import bilibiliSvg from "@/assets/svgs/plat/bilibili.svg";
 import youtubeSvg from "@/assets/svgs/plat/youtube.svg";
 import douyinSvg from "@/assets/svgs/plat/douyin.svg";
+import twitterSvg from "@/assets/svgs/plat/twtter.svg";
 
 // 平台类型
 export enum PlatType {
@@ -12,6 +13,7 @@ export enum PlatType {
   KWAI = "KWAI", // 快手
   YouTube = "youtube", // YouTube
   BILIBILI = "bilibili", // B站
+  Twitter = "twitter", // Twitter
 }
 
 export interface IAccountPlatInfo {
@@ -98,6 +100,24 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       name: "YouTube",
       icon: youtubeSvg.src,
       url: "https://www.youtube.com/",
+      pubTypes: new Set([PubType.VIDEO]),
+      commonPubParamsConfig: {
+        timingMax: {
+          maxDate: 30,
+          timeOffset: 60,
+        },
+        titleMax: 16,
+        topicMax: 10,
+      },
+      themeColor: "red",
+    },
+  ],
+  [
+    PlatType.Twitter,
+    {
+      name: "Twitter",
+      icon: twitterSvg.src,
+      url: "https://x.com/",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
         timingMax: {
