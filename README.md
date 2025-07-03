@@ -150,6 +150,12 @@ npm run dev
 <img src="./wechat.jpg" alt="wechat" width="500"/>
 
 ## 友情链接
+
+**[AWS云创计划](https://www.amazonaws.cn/en/campaign/ps-yunchuang/)**
+
+
+**[AI模型中转站](https://api.zyai.online/)**
+
 https://github.com/TMElyralab/MuseTalk
 
 https://github.com/5ime/video_spider
