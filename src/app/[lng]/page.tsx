@@ -12,11 +12,25 @@ import wxSphIcon from '@/assets/svgs/plat/wx-sph.svg';
 import xhsIcon from '@/assets/svgs/plat/xhs.svg';
 import youtubeIcon from '@/assets/svgs/plat/youtube.svg';
 import TwitterIcon from '@/assets/svgs/plat/twtter.svg';
+import FacebookIcon from '@/assets/svgs/plat/facebook.svg';
+import InstagramIcon from '@/assets/svgs/plat/instagram.svg';
+import LinkedInIcon from '@/assets/svgs/plat/linkedin.svg';
+import PinterestIcon from '@/assets/svgs/plat/pinterest.svg';
+import ThreadsIcon from '@/assets/svgs/plat/xiancheng.svg';
 
 import logo from '@/assets/images/logo.png';
-import logo2 from '@/assets/images/vipcard.png';
+import hotjietu1 from '@/assets/images/hotjietu1.png';
+import hotjietu2 from '@/assets/images/hotjietu2.png';
+import hotjietu3 from '@/assets/images/hotjietu3.png';
+import publish1 from '@/assets/images/publish1.png';
+import gongzhonghao from '@/assets/images/gongzhonghao.jpg';
+
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Button } from "antd";
+import { GlobalOutlined } from "@ant-design/icons";
+import { useUserStore } from "@/store/user"; 
 
 // 版本发布横幅
 function ReleaseBanner() {
@@ -38,7 +52,18 @@ function ReleaseBanner() {
 // Header 顶部导航
 function Header() {
   const { t } = useTransClient('home');
-  
+  const router = useRouter();
+  const userStore = useUserStore();
+
+  const userInfo = useUserStore((state) => state.userInfo)!;
+  const toggleLanguage = () => {
+    const newLng = userStore.lang === "zh-CN" ? "en" : "zh-CN";
+    userStore.setLang(newLng);
+    router.push(
+      `/${newLng}${location.pathname.replace(`/${userStore.lang}`, "")}`,
+    );
+  };
+
   return (
     <header className={styles.header}>
       <div className={styles.headerContainer}>
@@ -54,7 +79,24 @@ function Header() {
           <a href="#docs" className={styles.navLink}>{t('header.nav.docs')}</a>
           <a href="#blog" className={styles.navLink}>{t('header.nav.blog')}</a>
         </nav>
-        <button className={styles.getStartedBtn}>{t('header.getStarted')}</button>
+
+        <div className={styles.headerRight}>
+        <Button
+              type="text"
+              icon={<GlobalOutlined />}
+              onClick={toggleLanguage}
+              className={styles.languageButton}
+            >
+              {userStore.lang === "zh-CN" ? "EN" : "中文"}
+            </Button>
+
+            <button onClick={() => {
+              router.push("/accounts");
+            }} className={styles.getStartedBtn}>
+              {t('header.getStarted')}
+            </button>
+        </div>
+        
       </div>
     </header>
   );
@@ -68,7 +110,8 @@ function Hero() {
   const [isTypingComplete, setIsTypingComplete] = useState(false);
   const [hideCursor, setHideCursor] = useState(false);
   const [startTyping, setStartTyping] = useState(false);
-  
+  const router = useRouter();
+
   // 要显示的完整文本
   const fullText = t('hero.title');
   const typingSpeed = 120; // 打字速度（毫秒）
@@ -129,7 +172,9 @@ function Hero() {
   return (
     <section className={styles.hero}>
       <div className={styles.heroContainer}>
-        <div className={styles.githubStars}>
+        <div className={styles.githubStars} onClick={() => {
+          window.open('https://github.com/yikart/AiToEarn/releases/tag/v0.8.0', '_blank');
+        }}>
           <img src={'https://img.shields.io/github/stars/yikart/AiToEarn.svg'} alt="logo" className={styles.logo} />
           <span className={styles.starText}>{t('hero.starsText')}</span>
           <span className={styles.githubText}>{t('hero.github')}</span>
@@ -144,7 +189,9 @@ function Hero() {
           {t('hero.subtitle')}
         </p>
         
-        <button className={styles.heroBtn}>
+        <button onClick={() => {
+          router.push("/accounts");
+        }} className={styles.heroBtn}>
           {t('hero.getStarted')}
           <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -167,11 +214,11 @@ function BrandBar() {
     { name: '快手', hasIcon: true, iconPath: ksIcon.src },
     { name: '视频号', hasIcon: true, iconPath: wxSphIcon.src },
     { name: 'bilibili', hasIcon: true, iconPath: bilibiliIcon.src },
-    { name: 'Facebook', hasIcon: false, icon: '📘' },
-    { name: 'Instagram', hasIcon: false, icon: '📷' },
-    { name: 'LinkedIn', hasIcon: false, icon: '💼' },
-    { name: 'Pinterest', hasIcon: false, icon: '📌' },
-    { name: 'Threads', hasIcon: false, icon: '🧵' },
+    { name: 'Facebook', hasIcon: true, iconPath: FacebookIcon.src },
+    { name: 'Instagram', hasIcon: true, iconPath: InstagramIcon.src },
+    { name: 'LinkedIn', hasIcon: true, iconPath: LinkedInIcon.src },
+    { name: 'Pinterest', hasIcon: true, iconPath: PinterestIcon.src },
+    { name: 'Threads', hasIcon: true, iconPath: ThreadsIcon.src },
     { name: 'X (Twitter)', hasIcon: true, iconPath: TwitterIcon.src },
   ];
 
@@ -194,7 +241,7 @@ function BrandBar() {
                       className={styles.platformSvg}
                     />
                   ) : (
-                    <span className={styles.platformEmoji}>{platform.icon}</span>
+                    <span className={styles.platformEmoji}>{platform.name}</span>
                   )}
                 </div>
                 <span className={styles.platformName}>{platform.name}</span>
@@ -212,7 +259,7 @@ function BuildSection() {
   const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
-  const images = [logo.src];
+  const images = [hotjietu1.src, hotjietu2.src, hotjietu3.src];
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   
@@ -361,7 +408,7 @@ function ConnectSection() {
   const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
-  const images = [logo.src, logo.src ]; // 功能介绍相关的图片
+  const images = [hotjietu3.src, hotjietu2.src, hotjietu1.src ]; // 功能介绍相关的图片
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   
@@ -578,7 +625,7 @@ function DownloadSection() {
                     <div className={styles.phoneVideoCard}>
                       <span className={styles.phoneVideoTitle}>Example video</span>
                       <div className={styles.phoneVideoPreview}>
-                        <img src="/api/placeholder/300/200" alt="Video preview" className={styles.phoneVideoImg} />
+                        <img src={publish1.src} alt="Video preview" className={styles.phoneVideoImg} />
                       </div>
                       <div className={styles.phoneVideoMeta}>
                         <span>Consumer</span>
@@ -687,6 +734,7 @@ function StatsSection() {
 // 社区区块
 function CommunitySection() {
   const { t } = useTransClient('home');
+  const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   
   return (
     <section className={styles.communitySection}>
@@ -706,18 +754,43 @@ function CommunitySection() {
         </p>
         
         <div className={styles.communityButtons}>
-          <button className={styles.githubBtn}>
-            {t('communitySection.buttons.wechat')}
-            <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-          <button className={styles.discordBtn}>
-            {t('communitySection.buttons.community')}
-            <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
+          <div className={styles.buttonWrapper}>
+            <button 
+              className={styles.githubBtn}
+              onMouseEnter={() => setHoveredButton('wechat')}
+              onMouseLeave={() => setHoveredButton(null)}
+            >
+              {t('communitySection.buttons.wechat')}
+              <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            {hoveredButton === 'wechat' && (
+              <div className={styles.qrCodePopup}>
+                <Image src={gongzhonghao} alt="微信公众号" width={200} height={200} className={styles.qrCodeImage} />
+                <p className={styles.qrCodeText}>扫码关注微信公众号</p>
+              </div>
+            )}
+          </div>
+          
+          <div className={styles.buttonWrapper}>
+            <button 
+              className={styles.discordBtn}
+              onMouseEnter={() => setHoveredButton('community')}
+              onMouseLeave={() => setHoveredButton(null)}
+            >
+              {t('communitySection.buttons.community')}
+              <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            {hoveredButton === 'community' && (
+              <div className={styles.qrCodePopup}>
+                <Image src={gongzhonghao} alt="社区公众号" width={200} height={200} className={styles.qrCodeImage} />
+                <p className={styles.qrCodeText}>扫码加入社区群</p>
+              </div>
+            )}
+          </div>
         </div>
         
         <div className={styles.communityStats}>
@@ -786,7 +859,7 @@ function Footer() {
         {/* 上半部分：Resources 和 Company */}
         <div className={styles.footerTop}>
           <div className={styles.footerColumns}>
-            <div className={styles.footerColumn}>
+            {/* <div className={styles.footerColumn}>
               <h4>{t('footer.resources.title')}</h4>
               <a href="#docs">{t('footer.resources.links.docs')}</a>
               <a href="#blog">{t('footer.resources.links.blog')}</a>
@@ -794,17 +867,17 @@ function Footer() {
               <a href="#partner">{t('footer.resources.links.partner')}</a>
               <a href="#support">{t('footer.resources.links.support')}</a>
               <a href="#roadmap">{t('footer.resources.links.roadmap')}</a>
-            </div>
+            </div> */}
             
             <div className={styles.footerColumn}>
               <h4>{t('footer.company.title')}</h4>
-              <a href="#talk">{t('footer.company.links.talk')}</a>
+              {/* <a href="#talk">{t('footer.company.links.talk')}</a> */}
               <a href="#terms">{t('footer.company.links.terms')}</a>
               <a href="#privacy">{t('footer.company.links.privacy')}</a>
-              <a href="#cookies">{t('footer.company.links.cookies')}</a>
+              {/* <a href="#cookies">{t('footer.company.links.cookies')}</a> */}
               <a href="#data">{t('footer.company.links.data')}</a>
-              <a href="#marketplace">{t('footer.company.links.marketplace')}</a>
-              <a href="#brand">{t('footer.company.links.brand')}</a>
+              {/* <a href="#marketplace">{t('footer.company.links.marketplace')}</a> */}
+              {/* <a href="#brand">{t('footer.company.links.brand')}</a> */}
             </div>
           </div>
           
@@ -813,13 +886,13 @@ function Footer() {
               {t('footer.description')}
             </div>
             
-            <div className={styles.socialLinks}>
+            {/* <div className={styles.socialLinks}>
               <a href="#github">{t('footer.social.github')}</a>
               <a href="#discord">{t('footer.social.discord')}</a>
               <a href="#youtube">{t('footer.social.youtube')}</a>
               <a href="#linkedin">{t('footer.social.linkedin')}</a>
               <a href="#twitter">{t('footer.social.twitter')}</a>
-            </div>
+            </div> */}
           </div>
         </div>
         
@@ -843,7 +916,7 @@ function Footer() {
                 color: isHovered ? 'transparent' : '#733DEC'
               }}
             >
-              if
+              Earn
             </span>
           </div>
           
@@ -852,12 +925,12 @@ function Footer() {
             <div className={styles.tagline}>{t('footer.tagline')}</div>
           </div>
           
-          <div className={styles.dataDeletionDoc}>
+          {/* <div className={styles.dataDeletionDoc}>
             <h1>{t('footer.dataDeletion.title')}</h1>
             
-            {/* <p><strong>Last Updated:</strong> 2025.6.27</p> */}
+            <p><strong>Last Updated:</strong> 2025.6.27</p>
             
-            {/* <h2>For Pre-Launch Users:</h2> */}
+            <h2>For Pre-Launch Users:</h2>
             <p>{t('footer.dataDeletion.prelaunch')}</p>
             
             <h2>{t('footer.dataDeletion.standardTitle')}</h2>
@@ -870,7 +943,7 @@ function Footer() {
             
             <h2>{t('footer.dataDeletion.contactTitle')}</h2>
             <p>{t('footer.dataDeletion.contactEmail')}</p>
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>
@@ -886,9 +959,9 @@ export default function Home() {
       <BrandBar />
       <BuildSection />
       <ConnectSection />
-      <DownloadSection />
+      {/* <DownloadSection />
       <EnterpriseSection />
-      <StatsSection />
+      <StatsSection /> */}
       <CommunitySection />
       <Footer />
     </div>

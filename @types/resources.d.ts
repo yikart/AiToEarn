@@ -265,7 +265,7 @@ interface Resources {
         "linkedin": "LinkedIn",
         "twitter": "Twitter"
       },
-      "bigText": "AI ToEarn",
+      "bigText": "Let's Use AI To",
       "copyright": "© 2025 LangGenius, Inc.",
       "tagline": "Build Production-Ready Agentic AI Solutions",
       "dataDeletion": {

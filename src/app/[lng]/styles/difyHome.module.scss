@@ -106,7 +106,8 @@
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 12px 24px;
+  padding: 8px 24px;
+  margin-left: 10px;
   font-weight: 600;
   font-size: 16px;
   cursor: pointer;
@@ -340,8 +341,8 @@
 }
 
 .platformIcon {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -351,8 +352,8 @@
 }
 
 .platformSvg {
-  width: 32px;
-  height: 32px;
+  width: 45px;
+  height: 45px;
   object-fit: contain;
   filter: grayscale(70%) opacity(0.8);
   transition: all 0.3s ease;
@@ -1007,6 +1008,11 @@
   margin-bottom: 60px;
 }
 
+.buttonWrapper {
+  position: relative;
+  display: inline-block;
+}
+
 .githubBtn,
 .discordBtn {
   background: linear-gradient(135deg, #4f46e5 0%, #6d28d9 100%);
@@ -1026,6 +1032,59 @@
     background: linear-gradient(135deg, #4338ca 0%, #5b21b6 100%);
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
+  }
+}
+
+.qrCodePopup {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(79, 70, 229, 0.1);
+  z-index: 1000;
+  margin-top: 12px;
+  animation: fadeInUp 0.3s ease-out;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid white;
+  }
+}
+
+.qrCodeImage {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.qrCodeText {
+  text-align: center;
+  margin-top: 12px;
+  color: #4b5563;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 }
 
@@ -1089,10 +1148,10 @@
 }
 
 .footerTop {
-  flex: 1;
   display: flex;
   justify-content: space-between;
   margin-bottom: 60px;
+  line-height: 1.5;
 }
 
 .footerColumns {
@@ -1160,12 +1219,13 @@
   text-align: center;
   flex: 1;
   position: relative;
+  line-height: 2;
 }
 
 .bigText {
   font-size: 160px;
   font-weight: 900;
-  line-height: 0.85;
+  line-height: 1.2;
   color: #1f2937;
   margin-bottom: 40px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -1483,8 +1543,8 @@
 
 .carouselImage {
   width: 100%;
-  height: 100%;
-  object-fit: fill;
+  // height: 100%;
+  object-fit: cover;
   transition: transform 0.3s ease;
   
   .carouselSlide:hover & {
