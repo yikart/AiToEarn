@@ -227,5 +227,43 @@
     font-size: 16px;
     margin-bottom: 8px;
     line-height: 1.6;
+    
+    a {
+      color: #733DEC;
+      text-decoration: none;
+      transition: color 0.2s;
+      
+      &:hover {
+        color: #5B21B6;
+        text-decoration: underline;
+      }
+    }
   }
+}
+
+.contactTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.contactText {
+  color: #374151;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  
+  strong {
+    color: #111827;
+    font-weight: 600;
+  }
+}
+
+.contactInfo {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 24px 0;
 } 
