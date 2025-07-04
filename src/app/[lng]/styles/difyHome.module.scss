@@ -70,9 +70,17 @@
 }
 
 .logo {
-  font-size: 28px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
   font-weight: 700;
   color: #4f46e5;
+}
+
+.logoText {
+  margin-left: 15px;
 }
 
 .nav {

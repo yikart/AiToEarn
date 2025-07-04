@@ -11,9 +11,12 @@ import ksIcon from '@/assets/svgs/plat/ks.svg';
 import wxSphIcon from '@/assets/svgs/plat/wx-sph.svg';
 import xhsIcon from '@/assets/svgs/plat/xhs.svg';
 import youtubeIcon from '@/assets/svgs/plat/youtube.svg';
+import TwitterIcon from '@/assets/svgs/plat/twtter.svg';
 
 import logo from '@/assets/images/logo.png';
 import logo2 from '@/assets/images/vipcard.png';
+import Link from "next/link";
+import Image from "next/image";
 
 // 版本发布横幅
 function ReleaseBanner() {
@@ -39,9 +42,12 @@ function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.headerContainer}>
+      <Link href="/">
         <div className={styles.logo}>
+          <Image src={logo} alt="logo" width={50} />
           <span className={styles.logoText}>{t('header.logo')}</span>
         </div>
+        </Link>
         <nav className={styles.nav}>
           <a href="#marketplace" className={styles.navLink}>{t('header.nav.marketplace')}</a>
           <a href="#pricing" className={styles.navLink}>{t('header.nav.pricing')}</a>
@@ -124,7 +130,7 @@ function Hero() {
     <section className={styles.hero}>
       <div className={styles.heroContainer}>
         <div className={styles.githubStars}>
-          <span className={styles.starCount}>{t('hero.stars')}</span>
+          <img src={'https://img.shields.io/github/stars/yikart/AiToEarn.svg'} alt="logo" className={styles.logo} />
           <span className={styles.starText}>{t('hero.starsText')}</span>
           <span className={styles.githubText}>{t('hero.github')}</span>
         </div>
@@ -157,17 +163,16 @@ function BrandBar() {
   const platforms = [
     { name: 'YouTube', hasIcon: true, iconPath: youtubeIcon.src },
     { name: 'Rednote', hasIcon: true, iconPath: xhsIcon.src },
-    { name: 'Douyin', hasIcon: true, iconPath: douyinIcon.src },
-    { name: 'Kwai', hasIcon: true, iconPath: ksIcon.src },
-    { name: 'WeChat Channels', hasIcon: true, iconPath: wxSphIcon.src },
+    { name: '抖音(TikTok)', hasIcon: true, iconPath: douyinIcon.src },
+    { name: '快手', hasIcon: true, iconPath: ksIcon.src },
+    { name: '视频号', hasIcon: true, iconPath: wxSphIcon.src },
     { name: 'bilibili', hasIcon: true, iconPath: bilibiliIcon.src },
     { name: 'Facebook', hasIcon: false, icon: '📘' },
     { name: 'Instagram', hasIcon: false, icon: '📷' },
     { name: 'LinkedIn', hasIcon: false, icon: '💼' },
     { name: 'Pinterest', hasIcon: false, icon: '📌' },
     { name: 'Threads', hasIcon: false, icon: '🧵' },
-    { name: 'TikTok', hasIcon: false, icon: '🎵' },
-    { name: 'X (Twitter)', hasIcon: false, icon: '🐦' },
+    { name: 'X (Twitter)', hasIcon: true, iconPath: TwitterIcon.src },
   ];
 
   // 为了实现无缝滚动，复制一份数据
