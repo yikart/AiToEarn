@@ -52,17 +52,17 @@ const AddAccountModal = memo(
                         onClick={async () => {
                           switch (key) {
                             case PlatType.KWAI:
-                              kwaiSkip(key);
-
+                              await kwaiSkip(key);
+                              break;
                             case PlatType.BILIBILI:
-                              bilibiliSkip(key);
-
-                              case PlatType.YouTube:
-                                console.log('key',key)
-                                youtubeSkip(key);
-
+                              await bilibiliSkip(key);
+                              break;
+                            case PlatType.YouTube:
+                              await youtubeSkip(key);
+                              break;
                             case PlatType.Twitter:
-                              twitterSkip(key);
+                              await twitterSkip(key);
+                              break;
                           }
                         }}
                       >

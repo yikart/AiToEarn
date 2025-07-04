@@ -25,12 +25,10 @@ export interface PublishParams {
   desc?: string;
   accountId: string;
   accountType: AccountType;
-  uid: string;
   videoUrl?: string;
   coverUrl?: string;
   imgList?: string[];
   publishTime?: string;
-  status?: PubStatus;
   option?: any;
 }
 
@@ -65,7 +63,7 @@ export const apiGetPublishList = (
 // 创建发布
 export const apiCreatePublish = (data: PublishParams) => {
   return request({
-    url: "/publish",
+    url: "/plat/publish/create",
     method: "POST",
     data,
   });
