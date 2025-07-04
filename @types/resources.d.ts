@@ -252,7 +252,7 @@ interface Resources {
           "terms": "服务条款",
           "privacy": "隐私政策",
           "cookies": "Cookie 设置",
-          "data": "数据保护协议",
+          "data": "数据删除引导",
           "marketplace": "市场协议",
           "brand": "品牌指南"
         }

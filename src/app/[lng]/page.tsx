@@ -25,6 +25,10 @@ import hotjietu3 from '@/assets/images/hotjietu3.png';
 import publish1 from '@/assets/images/publish1.png';
 import gongzhonghao from '@/assets/images/gongzhonghao.jpg';
 
+import phonepublish1 from '@/assets/images/phonepublish1.png';
+import phonepublish2 from '@/assets/images/phonepublish2.png';
+import phonepublish3 from '@/assets/images/phonepublish3.png';
+
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -408,7 +412,7 @@ function ConnectSection() {
   const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
-  const images = [hotjietu3.src, hotjietu2.src, hotjietu1.src ]; // 功能介绍相关的图片
+  const images = [phonepublish1.src, phonepublish2.src, phonepublish3.src ]; // 功能介绍相关的图片
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   
@@ -880,7 +884,7 @@ function Footer() {
               }}>{t('footer.company.links.privacy')}</a>
               {/* <a href="#cookies">{t('footer.company.links.cookies')}</a> */}
               <a onClick={() => {
-                router.push("/websit/data-protection-agreement");
+                router.push("/websit/data-deletion");
               }}>{t('footer.company.links.data')}</a>
               {/* <a href="#marketplace">{t('footer.company.links.marketplace')}</a> */}
               {/* <a href="#brand">{t('footer.company.links.brand')}</a> */}

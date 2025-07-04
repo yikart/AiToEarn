@@ -26,8 +26,6 @@ function Header() {
 }
 
 export default function DataDeletionPage() {
-  const { t } = useTransClient('common');
-  
   return (
     <div className={styles.websitPage}>
       <Header />
@@ -36,71 +34,59 @@ export default function DataDeletionPage() {
         <div className={styles.container}>
           <div className={styles.header}>
             <h1 className={styles.title}>
-              申请删除数据
+              Data Deletion Instructions
             </h1>
             <p className={styles.lastUpdated}>
-              最后更新时间: 2024-12-26
+              Last Updated: 2025.6.27
             </p>
           </div>
           
           <div className={styles.content}>
             <section className={styles.section}>
-              <p className={styles.introduction}>
-                如果您希望删除您的个人数据，请按照以下步骤操作
-              </p>
-            </section>
-            
-            <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>对于预发布用户：</h2>
+              <h2 className={styles.sectionTitle}>For Pre-Launch Users:</h2>
               <p className={styles.sectionContent}>
-                我们目前处于预发布阶段，如需删除数据，请直接联系我们的支持团队。
+                Our application is currently in pre-launch phase and does not store real user data. 
+                If you have interacted with our test systems, contact us for data removal.
               </p>
             </section>
             
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>标准删除流程：</h2>
-              <ul className={styles.stepsList}>
+              <h2 className={styles.sectionTitle}>Standard Procedure (Post-Launch):</h2>
+              <ol className={styles.stepsList}>
                 <li className={styles.stepItem}>
                   <div className={styles.stepNumber}>1</div>
-                  <div className={styles.stepText}>登录您的账户并进入设置页面</div>
+                  <div className={styles.stepText}>Log in to your AiToEarn account</div>
                 </li>
                 <li className={styles.stepItem}>
                   <div className={styles.stepNumber}>2</div>
-                  <div className={styles.stepText}>点击「数据管理」选项</div>
+                  <div className={styles.stepText}>Navigate to Settings &gt; Privacy</div>
                 </li>
                 <li className={styles.stepItem}>
                   <div className={styles.stepNumber}>3</div>
-                  <div className={styles.stepText}>选择「删除我的数据」</div>
+                  <div className={styles.stepText}>Click "Request Account Deletion"</div>
                 </li>
                 <li className={styles.stepItem}>
                   <div className={styles.stepNumber}>4</div>
-                  <div className={styles.stepText}>确认删除操作并等待处理完成</div>
+                  <div className={styles.stepText}>Confirmation will be sent to your registered email</div>
                 </li>
-              </ul>
+              </ol>
             </section>
             
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>联系方式：</h2>
+              <h2 className={styles.sectionTitle}>Contact for Assistance:</h2>
               <div className={styles.contactInfo}>
-                <h3 className={styles.contactTitle}>数据删除申请</h3>
+                <h3 className={styles.contactTitle}>Pre-launch inquiries only</h3>
                 <p className={styles.contactText}>
-                  如需帮助，请发送邮件至：datadeletion@example.com
+                  <strong>Email:</strong> metat@aitoearning.com
                 </p>
               </div>
             </section>
             
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>处理时间：</h2>
-              <p className={styles.sectionContent}>
-                数据删除请求通常在 7-14 个工作日内处理完成。
-              </p>
-            </section>
-            
-            <section className={styles.section}>
               <div className={styles.warningBox}>
-                <h3 className={styles.warningTitle}>重要提示：</h3>
+                <h3 className={styles.warningTitle}>Important Note:</h3>
                 <p className={styles.warningText}>
-                  数据删除后无法恢复，请谨慎操作。某些法律要求保留的数据可能无法删除。
+                  This page will be automatically updated upon app launch
                 </p>
               </div>
             </section>
