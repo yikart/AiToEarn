@@ -16,7 +16,7 @@ export default function ProfilePage() {
   const [form] = Form.useForm();
 
   // 获取会员状态和过期时间
-  const isVip = userInfo?.vipInfo?.id ? true : false;
+  const isVip = userInfo?.vipInfo?.expireTime ? new Date(userInfo.vipInfo.expireTime) > new Date() : false;
   const vipExpireTime = userInfo?.vipInfo?.expireTime ? new Date(userInfo.vipInfo.expireTime).toLocaleDateString() : '';
   const vipCycleType = userInfo?.vipInfo?.cycleType === 1 ? '月度会员' : '年度会员';
 

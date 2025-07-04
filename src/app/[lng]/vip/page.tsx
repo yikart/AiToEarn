@@ -4,11 +4,13 @@ import { useState } from "react";
 import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined, DollarOutlined, HistoryOutlined, ThunderboltOutlined } from "@ant-design/icons";
 import { message } from "antd";
 import { useRouter } from "next/navigation";
-import { setVipApi, VipCycleType } from "@/api/vip";
+import { createPaymentOrderApi, PaymentType } from "@/api/vip";
+import { useUserStore } from "@/store/user";
 import styles from "./vip.module.css";
 
 export default function VipPage() {
   const router = useRouter();
+  const { userInfo } = useUserStore();
   const [selectedPlan, setSelectedPlan] = useState('month'); // 'month', 'year'
   const [loading, setLoading] = useState(false);
 
@@ -27,18 +29,42 @@ export default function VipPage() {
   const handleActivate = async () => {
     try {
       setLoading(true);
-      const cycleType = selectedPlan === 'month' ? VipCycleType.MONTH : VipCycleType.YEAR;
-      const response:any = await setVipApi(cycleType);
+      
+      // 检查用户是否已登录
+      if (!userInfo?.id) {
+        message.error('请先登录');
+        router.push('/login');
+        return;
+      }
+
+      // 根据选择的计划映射到支付类型
+      const paymentType = selectedPlan === 'month' ? PaymentType.ONCE_MONTH : PaymentType.ONCE_YEAR;
+      
+      // 创建支付订单
+      const response: any = await createPaymentOrderApi({
+        success_url: "http://localhost:3000/zh-CN/profile",
+        mode: "payment",
+        payment: paymentType,
+        metadata: {
+          userId: userInfo.id
+        }
+      });
       
       if (response?.code === 0) {
-        message.success('开通成功');
-        router.push('/profile'); // 开通成功后跳转到个人中心
+        message.success('支付订单创建成功');
+        // 直接跳转到支付页面
+        if (response.data?.url) {
+          // window.location.href = response.data.url;
+          window.open(response.data.url, '_blank');
+        } else {
+          message.error('未获取到支付链接');
+        }
       } else {
-        message.error(response?.msg || '开通失败');
+        message.error(response?.message || response?.msg || '创建支付订单失败');
       }
     } catch (error) {
-      console.error('开通会员失败:', error);
-      message.error('开通失败，请稍后重试');
+      console.error('创建支付订单失败:', error);
+      message.error('创建支付订单失败，请稍后重试');
     } finally {
       setLoading(false);
     }
@@ -78,7 +104,7 @@ export default function VipPage() {
             <span className={styles.originalPrice}>¥198</span>
             <span className={styles.discount}>6折</span>
           </div>
-          <p className={styles.currentPrice}>¥<span>128</span></p>
+          <p className={styles.currentPrice}>¥<span>118</span></p>
         </div>
         <div 
           className={`${styles.priceCard} ${selectedPlan === 'year' ? styles.selected : ''}`}
@@ -90,7 +116,7 @@ export default function VipPage() {
             <span className={styles.originalPrice}>¥1938</span>
             <span className={styles.discount}>5折</span>
           </div>
-          <p className={styles.currentPrice}>¥<span>998</span></p>
+          <p className={styles.currentPrice}>¥<span>888</span></p>
         </div>
       </div>
       
@@ -101,7 +127,7 @@ export default function VipPage() {
         onClick={handleActivate}
         disabled={loading}
       >
-        {loading ? '开通中...' : '立即开通'}
+        {loading ? '创建订单中...' : '立即开通'}
       </button>
     </div>
   );
