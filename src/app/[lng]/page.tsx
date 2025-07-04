@@ -822,7 +822,7 @@ function Footer() {
   const [isHovered, setIsHovered] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  
+  const router = useRouter();
   // 背景图片数组
   const backgroundImages = [
     // '/src/assets/images/logo.png',
@@ -872,10 +872,16 @@ function Footer() {
             <div className={styles.footerColumn}>
               <h4>{t('footer.company.title')}</h4>
               {/* <a href="#talk">{t('footer.company.links.talk')}</a> */}
-              <a href="#terms">{t('footer.company.links.terms')}</a>
-              <a href="#privacy">{t('footer.company.links.privacy')}</a>
+              <a onClick={() => {
+                router.push("/websit/terms-of-service");
+              }}>{t('footer.company.links.terms')}</a>
+              <a onClick={() => {
+                router.push("/websit/privacy-policy");
+              }}>{t('footer.company.links.privacy')}</a>
               {/* <a href="#cookies">{t('footer.company.links.cookies')}</a> */}
-              <a href="#data">{t('footer.company.links.data')}</a>
+              <a onClick={() => {
+                router.push("/websit/data-protection-agreement");
+              }}>{t('footer.company.links.data')}</a>
               {/* <a href="#marketplace">{t('footer.company.links.marketplace')}</a> */}
               {/* <a href="#brand">{t('footer.company.links.brand')}</a> */}
             </div>

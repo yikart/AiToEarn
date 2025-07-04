@@ -208,4 +208,24 @@
 .warningText {
   color: #a16207;
   font-size: 16px;
+}
+
+.subSectionTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 12px;
+  margin-top: 24px;
+}
+
+.listContent {
+  margin: 16px 0;
+  padding-left: 20px;
+  
+  li {
+    color: #374151;
+    font-size: 16px;
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
 } 
