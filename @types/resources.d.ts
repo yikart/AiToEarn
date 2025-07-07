@@ -88,7 +88,7 @@ interface Resources {
   },
   "home": {
     "releaseBanner": {
-      "tag": "Release v1.5.0",
+      "tag": "Release v0.8.0",
       "text": "通过插件和繁荣的市场构建和扩展AI工作流程。"
     },
     "header": {
