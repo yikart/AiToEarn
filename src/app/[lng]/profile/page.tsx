@@ -306,19 +306,7 @@ export default function ProfilePage() {
           >
             查看详情
           </Button>
-          {record.status === OrderStatus.SUCCEEDED && record.amount_refunded === 0 && (
-            <Popconfirm
-              title="确定要申请退款吗？"
-              onConfirm={(e) => {
-                e?.stopPropagation(); // 阻止行点击事件
-                handleRefund(record);
-              }}
-              okText="确定"
-              cancelText="取消"
-            >
-              <Button type="link" size="small" onClick={(e) => e.stopPropagation()}>退款</Button>
-            </Popconfirm>
-          )}
+          
           {record.url && record.status === OrderStatus.CREATED && (
             <Button 
               type="link" 
