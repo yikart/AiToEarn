@@ -38,7 +38,7 @@ export default function VipPage() {
       }
 
       // 根据选择的计划映射到支付类型
-      const paymentType = selectedPlan === 'month' ? PaymentType.ONCE_MONTH : PaymentType.ONCE_YEAR;
+      const paymentType = selectedPlan === 'month' ? PaymentType.MONTH : PaymentType.YEAR;
       
       // 创建支付订单
       const response: any = await createPaymentOrderApi({

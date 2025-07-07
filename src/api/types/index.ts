@@ -24,3 +24,6 @@ export class Pagination<T> {
     public readonly meta: IPaginationMeta,
   ) {}
 }
+
+// 导出支付相关类型
+export * from './payment';

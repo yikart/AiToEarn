@@ -1,12 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, Descriptions, Button, message, Modal, Form, Input } from "antd";
-import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined, ThunderboltOutlined, HistoryOutlined, DollarOutlined } from "@ant-design/icons";
+import { Card, Descriptions, Button, message, Modal, Form, Input, Tabs, Table, Tag, Popconfirm, DatePicker, Select, Space } from "antd";
+import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined, ThunderboltOutlined, HistoryOutlined, DollarOutlined, ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user";
 import { getUserInfoApi, updateUserInfoApi } from "@/api/apiReq";
+import { getOrderListApi, getOrderDetailApi, getSubscriptionListApi, refundOrderApi, unsubscribeApi } from "@/api/payment";
+import type { Order, Subscription, OrderListParams, RefundParams, UnsubscribeParams } from "@/api/types/payment";
+import { OrderStatus, PaymentType } from "@/api/types/payment";
 import styles from "./profile.module.css";
+
+const { TabPane } = Tabs;
+const { Option } = Select;
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -14,6 +20,22 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
+  
+  // 订单相关状态
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [subscriptionsLoading, setSubscriptionsLoading] = useState(false);
+  const [ordersPagination, setOrdersPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0
+  });
+  
+  // 订单详情弹窗状态
+  const [orderDetailVisible, setOrderDetailVisible] = useState(false);
+  const [orderDetailLoading, setOrderDetailLoading] = useState(false);
+  const [currentOrderDetail, setCurrentOrderDetail] = useState<Order | null>(null);
 
   // 获取会员状态和过期时间
   const isVip = userInfo?.vipInfo?.expireTime ? new Date(userInfo.vipInfo.expireTime) > new Date() : false;
@@ -50,6 +72,103 @@ export default function ProfilePage() {
       message.error('获取用户信息失败');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 获取订单列表
+  const fetchOrders = async (params: OrderListParams) => {
+    setOrdersLoading(true);
+    try {
+      const response = await getOrderListApi(params);
+      if (response?.code === 0 && response.data) {
+        const paginatedData = response.data;
+        setOrders(paginatedData.list);
+        setOrdersPagination({
+          current: params.page + 1, // API发送的是0开始的页码，UI显示需要加1
+          pageSize: params.size,
+          total: paginatedData.count
+        });
+      } else {
+        message.error(response?.message || '获取订单列表失败');
+      }
+    } catch (error) {
+      message.error('获取订单列表失败');
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+
+  // 获取订阅列表
+  const fetchSubscriptions = async () => {
+    setSubscriptionsLoading(true);
+    try {
+      const response = await getSubscriptionListApi();
+      if (response?.code === 0 && response.data) {
+        setSubscriptions(response.data);
+      } else {
+        message.error(response?.message || '获取订阅列表失败');
+      }
+    } catch (error) {
+      message.error('获取订阅列表失败');
+    } finally {
+      setSubscriptionsLoading(false);
+    }
+  };
+
+  // 处理退款
+  const handleRefund = async (order: Order) => {
+    try {
+      const params: RefundParams = {
+        charge: order.id,
+        payment_intent: order.payment_intent || order.id,
+        userId: userInfo?.id || ''
+      };
+      const response = await refundOrderApi(params);
+      if (response?.code === 0) {
+        message.success('退款申请已提交');
+        fetchOrders({ page: ordersPagination.current - 1, size: ordersPagination.pageSize });
+      } else {
+        message.error(response?.message || '退款失败');
+      }
+    } catch (error) {
+      message.error('退款失败');
+    }
+  };
+
+  // 处理退订
+  const handleUnsubscribe = async (subscription: Subscription) => {
+    try {
+      const params: UnsubscribeParams = {
+        id: subscription.id,
+        userId: userInfo?.id || ''
+      };
+      const response = await unsubscribeApi(params);
+      if (response?.code === 0) {
+        message.success('退订成功');
+        fetchSubscriptions();
+      } else {
+        message.error(response?.message || '退订失败');
+      }
+    } catch (error) {
+      message.error('退订失败');
+    }
+  };
+
+  // 获取订单详情
+  const fetchOrderDetail = async (orderId: string) => {
+    setOrderDetailLoading(true);
+    try {
+      const response:any = await getOrderDetailApi(orderId);
+      if (response?.code === 0 && response.data) {
+        setCurrentOrderDetail(response.data[0]);
+        setOrderDetailVisible(true);
+      } else {
+        message.error(response?.message || '获取订单详情失败');
+      }
+    } catch (error) {
+      message.error('获取订单详情失败');
+    } finally {
+      setOrderDetailLoading(false);
     }
   };
 
@@ -92,12 +211,191 @@ export default function ProfilePage() {
     router.push('/vip');
   };
 
-  if (loading) {
-    return null;
-  }
+  // 订单状态标签
+  const getOrderStatusTag = (status: OrderStatus) => {
+    const statusMap = {
+      [OrderStatus.SUCCEEDED]: { color: 'green', text: '支付成功' },
+      [OrderStatus.CREATED]: { color: 'orange', text: '等待支付' },
+      [OrderStatus.REFUNDED]: { color: 'purple', text: '退款成功' },
+      [OrderStatus.EXPIRED]: { color: 'red', text: '订单取消' }
+    };
+    const config = statusMap[status] || { color: 'default', text: `状态${status}` };
+    return <Tag color={config.color}>{config.text}</Tag>;
+  };
 
-  return (
-    <div className={styles.container}>
+  // 获取套餐类型显示文本
+  const getPaymentTypeText = (paymentType: string) => {
+    const typeMap = {
+      [PaymentType.MONTH]: '月度订阅',
+      [PaymentType.YEAR]: '年度订阅', 
+      [PaymentType.ONCE_MONTH]: '一次性月度',
+      [PaymentType.ONCE_YEAR]: '一次性年度'
+    };
+    return typeMap[paymentType as PaymentType] || paymentType || '未知';
+  };
+
+  // 订阅状态标签
+  const getSubscriptionStatusTag = (status: string) => {
+    const statusMap = {
+      active: { color: 'green', text: '活跃' },
+      cancelled: { color: 'red', text: '已取消' },
+      expired: { color: 'gray', text: '已过期' }
+    };
+    const config = statusMap[status as keyof typeof statusMap] || { color: 'default', text: status };
+    return <Tag color={config.color}>{config.text}</Tag>;
+  };
+
+  // 订单表格列
+  const orderColumns = [
+    {
+      title: '订单ID',
+      dataIndex: 'id',
+      key: 'id',
+      ellipsis: true,
+      width: 200,
+    },
+    {
+      title: '套餐类型',
+      dataIndex: 'metadata',
+      key: 'payment',
+      render: (metadata: any) => {
+        const paymentType = metadata?.payment;
+        return getPaymentTypeText(paymentType);
+      },
+    },
+    {
+      title: '金额',
+      dataIndex: 'amount',
+      key: 'amount',
+      render: (amount: number, record: Order) => {
+        const displayAmount = (amount / 100).toFixed(2); // Stripe金额通常以分为单位
+        const symbol = record.currency === 'usd' ? '$' : record.currency === 'cny' ? '¥' : record.currency?.toUpperCase();
+        return `${symbol}${displayAmount}`;
+      },
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status: OrderStatus) => getOrderStatusTag(status),
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'created',
+      key: 'created',
+      render: (timestamp: number) => new Date(timestamp * 1000).toLocaleString(),
+    },
+    {
+      title: '过期时间',
+      dataIndex: 'expires_at',
+      key: 'expires_at',
+      render: (timestamp: number) => new Date(timestamp * 1000).toLocaleString(),
+    },
+    {
+      title: '操作',
+      key: 'action',
+      render: (_: any, record: Order) => (
+        <Space>
+          <Button 
+            type="link" 
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation(); // 阻止行点击事件
+              fetchOrderDetail(record.id);
+            }}
+          >
+            查看详情
+          </Button>
+          {record.status === OrderStatus.SUCCEEDED && record.amount_refunded === 0 && (
+            <Popconfirm
+              title="确定要申请退款吗？"
+              onConfirm={(e) => {
+                e?.stopPropagation(); // 阻止行点击事件
+                handleRefund(record);
+              }}
+              okText="确定"
+              cancelText="取消"
+            >
+              <Button type="link" size="small" onClick={(e) => e.stopPropagation()}>退款</Button>
+            </Popconfirm>
+          )}
+          {record.url && record.status === OrderStatus.CREATED && (
+            <Button 
+              type="link" 
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation(); // 阻止行点击事件
+                window.open(record.url, '_blank');
+              }}
+            >
+              去支付
+            </Button>
+          )}
+        </Space>
+      ),
+    },
+  ];
+
+  // 订阅表格列
+  const subscriptionColumns = [
+    {
+      title: '订阅ID',
+      dataIndex: 'id',
+      key: 'id',
+      ellipsis: true,
+    },
+    {
+      title: '套餐名称',
+      dataIndex: 'planName',
+      key: 'planName',
+    },
+    {
+      title: '价格',
+      dataIndex: 'price',
+      key: 'price',
+      render: (price: string) => `¥${price}`,
+    },
+    {
+      title: '计费周期',
+      dataIndex: 'billingCycle',
+      key: 'billingCycle',
+      render: (cycle: string) => cycle === 'monthly' ? '月付' : '年付',
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status: string) => getSubscriptionStatusTag(status),
+    },
+    {
+      title: '到期时间',
+      dataIndex: 'expiresAt',
+      key: 'expiresAt',
+      render: (date: string) => new Date(date).toLocaleString(),
+    },
+    {
+      title: '操作',
+      key: 'action',
+      render: (_: any, record: Subscription) => (
+        <Space>
+          {record.status === 'active' && (
+            <Popconfirm
+              title="确定要退订吗？退订后将无法享受会员权益。"
+              onConfirm={() => handleUnsubscribe(record)}
+              okText="确定"
+              cancelText="取消"
+            >
+              <Button type="link" danger size="small">退订</Button>
+            </Popconfirm>
+          )}
+        </Space>
+      ),
+    },
+  ];
+
+  // 个人信息内容
+  const renderProfileContent = () => (
+    <>
       <div className={styles.vipCard}>
         <div className={styles.vipContent}>
           <div className={styles.vipHeader}>
@@ -169,6 +467,102 @@ export default function ProfilePage() {
           </button>
         </div>
       )}
+    </>
+  );
+
+  // 订单管理内容
+  const renderOrderContent = () => (
+    <div className={styles.orderContent}>
+      <Tabs defaultActiveKey="orders">
+        <TabPane tab="我的订单" key="orders">
+          <Card>
+            <Table
+              columns={orderColumns}
+              dataSource={orders}
+              loading={ordersLoading}
+              rowKey="_id"
+              onRow={(record) => ({
+                onClick: () => {
+                  fetchOrderDetail(record.id);
+                },
+                style: { cursor: 'pointer' }
+              })}
+              pagination={{
+                current: ordersPagination.current,
+                pageSize: ordersPagination.pageSize,
+                total: ordersPagination.total,
+                onChange: (page, size) => {
+                  fetchOrders({ page: page - 1, size: size || 10 });
+                },
+                showSizeChanger: true,
+                showQuickJumper: true,
+                showTotal: (total) => `共 ${total} 条记录`,
+                pageSizeOptions: ['10', '20', '50'],
+              }}
+              scroll={{ x: 1200 }} // 添加横向滚动以适应更多列
+              locale={{
+                emptyText: ordersLoading ? '加载中...' : '暂无订单记录'
+              }}
+            />
+          </Card>
+        </TabPane>
+        <TabPane tab="我的订阅" key="subscriptions">
+          <Card>
+            <Table
+              columns={subscriptionColumns}
+              dataSource={subscriptions}
+              loading={subscriptionsLoading}
+              rowKey="id"
+              pagination={false}
+              locale={{
+                emptyText: subscriptionsLoading ? '加载中...' : '暂无订阅记录'
+              }}
+            />
+          </Card>
+        </TabPane>
+      </Tabs>
+    </div>
+  );
+
+  if (loading) {
+    return null;
+  }
+
+  return (
+    <div className={styles.container}>
+      <Tabs 
+        defaultActiveKey="profile" 
+        size="large"
+        onChange={(key) => {
+          if (key === 'orders') {
+            fetchOrders({ page: 1, size: 10 });
+            fetchSubscriptions();
+          }
+        }}
+      >
+        <TabPane 
+          tab={
+            <span>
+              <UserOutlined />
+              个人信息
+            </span>
+          } 
+          key="profile"
+        >
+          {renderProfileContent()}
+        </TabPane>
+        <TabPane 
+          tab={
+            <span>
+              <ShoppingCartOutlined />
+              订单管理
+            </span>
+          } 
+          key="orders"
+        >
+          {renderOrderContent()}
+        </TabPane>
+      </Tabs>
 
       <Modal
         title="修改用户名"
@@ -199,6 +593,92 @@ export default function ProfilePage() {
             </Button>
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* 订单详情弹窗 */}
+      <Modal
+        title="订单详情"
+        open={orderDetailVisible}
+        onCancel={() => setOrderDetailVisible(false)}
+        className={styles.orderDetailModal}
+        footer={[
+          <Button key="close" onClick={() => setOrderDetailVisible(false)}>
+            关闭
+          </Button>,
+          currentOrderDetail?.url && currentOrderDetail?.status === OrderStatus.CREATED && (
+            <Button 
+              key="pay"
+              type="primary"
+              onClick={() => {
+                if (currentOrderDetail?.url) {
+                  window.open(currentOrderDetail.url, '_blank');
+                }
+              }}
+            >
+              前往支付
+            </Button>
+          )
+        ]}
+        width={600}
+        loading={orderDetailLoading}
+      >
+        {currentOrderDetail && (
+          <Descriptions bordered column={1} size="small">
+            <Descriptions.Item label="订单ID">{currentOrderDetail.id}</Descriptions.Item>
+            <Descriptions.Item label="内部ID">{currentOrderDetail._id}</Descriptions.Item>
+            <Descriptions.Item label="套餐类型">
+              {getPaymentTypeText(currentOrderDetail.metadata?.payment)}
+            </Descriptions.Item>
+            <Descriptions.Item label="订阅模式">{currentOrderDetail.mode}</Descriptions.Item>
+            <Descriptions.Item label="金额">
+              {(() => {
+                const displayAmount = (currentOrderDetail.amount / 100).toFixed(2);
+                const symbol = currentOrderDetail.currency === 'usd' ? '$' : 
+                              currentOrderDetail.currency === 'cny' ? '¥' : 
+                              currentOrderDetail.currency?.toUpperCase();
+                return `${symbol}${displayAmount}`;
+              })()}
+            </Descriptions.Item>
+            <Descriptions.Item label="已退款金额">
+              {(() => {
+                const displayAmount = (currentOrderDetail.amount_refunded / 100).toFixed(2);
+                const symbol = currentOrderDetail.currency === 'usd' ? '$' : 
+                              currentOrderDetail.currency === 'cny' ? '¥' : 
+                              currentOrderDetail.currency?.toUpperCase();
+                return `${symbol}${displayAmount}`;
+              })()}
+            </Descriptions.Item>
+            <Descriptions.Item label="状态">
+              {getOrderStatusTag(currentOrderDetail.status)}
+            </Descriptions.Item>
+            <Descriptions.Item label="创建时间">
+              {new Date(currentOrderDetail.created * 1000).toLocaleString()}
+            </Descriptions.Item>
+            <Descriptions.Item label="过期时间">
+              {new Date(currentOrderDetail.expires_at * 1000).toLocaleString()}
+            </Descriptions.Item>
+            <Descriptions.Item label="用户ID">{currentOrderDetail.userId}</Descriptions.Item>
+            <Descriptions.Item label="价格ID">{currentOrderDetail.price}</Descriptions.Item>
+            {currentOrderDetail.payment_intent && (
+              <Descriptions.Item label="Payment Intent">{currentOrderDetail.payment_intent}</Descriptions.Item>
+            )}
+            {currentOrderDetail.subscription && (
+              <Descriptions.Item label="订阅ID">{currentOrderDetail.subscription}</Descriptions.Item>
+            )}
+            {/* <Descriptions.Item label="成功页面">{currentOrderDetail.success_url}</Descriptions.Item> */}
+            {currentOrderDetail.url && (
+              <Descriptions.Item label="支付链接">
+                <Button 
+                  type="link" 
+                  size="small"
+                  onClick={() => window.open(currentOrderDetail.url, '_blank')}
+                >
+                  打开支付页面
+                </Button>
+              </Descriptions.Item>
+            )}
+          </Descriptions>
+        )}
       </Modal>
     </div>
   );

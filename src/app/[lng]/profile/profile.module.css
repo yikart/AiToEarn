@@ -1,7 +1,6 @@
 .container {
   padding: 24px;
-  max-width: 800px;
-  margin: 0 auto;
+  margin: 2px auto;
 }
 
 .card {
@@ -136,6 +135,72 @@
   margin-bottom: 16px;
 }
 
+/* 订单管理样式 */
+.orderContent {
+  margin-top: 16px;
+}
+
+.orderContent .ant-table-thead > tr > th {
+  background-color: #fafafa;
+  color: #262626;
+  font-weight: 600;
+}
+
+.orderContent .ant-table-tbody > tr:hover > td {
+  background-color: #f5f5f5;
+}
+
+.orderContent .ant-table-tbody > tr {
+  cursor: pointer;
+}
+
+.orderContent .ant-btn-link {
+  padding: 4px 8px;
+  height: auto;
+  border-radius: 4px;
+}
+
+.orderContent .ant-btn-link.ant-btn-dangerous {
+  color: #ff4d4f;
+}
+
+.orderContent .ant-btn-link.ant-btn-dangerous:hover {
+  background-color: #fff2f0;
+  border-color: #ffccc7;
+}
+
+.orderContent .ant-tag {
+  border-radius: 4px;
+  font-size: 12px;
+  padding: 2px 8px;
+}
+
+/* 订单详情弹窗样式 */
+.orderDetailModal .ant-descriptions-item-label {
+  background-color: #fafafa;
+  font-weight: 600;
+  width: 120px;
+}
+
+.orderDetailModal .ant-descriptions-item-content {
+  background-color: #fff;
+}
+
+/* 标签页样式 */
+.container .ant-tabs > .ant-tabs-nav .ant-tabs-tab {
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.container .ant-tabs > .ant-tabs-nav .ant-tabs-tab-active {
+  color: #1890ff;
+}
+
+.container .ant-tabs-content-holder {
+  padding-top: 16px;
+}
+
 /* 移动端适配 */
 @media (max-width: 768px) {
   .container {
@@ -149,5 +214,24 @@
   .actions {
     flex-direction: column;
     gap: 8px;
+  }
+
+  .benefitsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .orderContent .ant-table {
+    font-size: 12px;
+  }
+
+  .orderContent .ant-table-thead > tr > th,
+  .orderContent .ant-table-tbody > tr > td {
+    padding: 8px 4px;
+  }
+
+  .container .ant-tabs > .ant-tabs-nav .ant-tabs-tab {
+    padding: 8px 12px;
+    font-size: 14px;
   }
 } 
