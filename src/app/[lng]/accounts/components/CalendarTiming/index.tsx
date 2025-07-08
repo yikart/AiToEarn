@@ -27,6 +27,8 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";
 import { getPublishList } from "@/api/plat/publish";
+import { PublishRecordItem } from "@/api/plat/types/publish.types";
+import dayjs from "dayjs";
 
 export interface ICalendarTimingRef {}
 export interface ICalendarTimingProps {}
@@ -64,6 +66,10 @@ const CalendarTiming = memo(
       const calendarTimingItemCallEl = useRef<HTMLDivElement | null>(null);
       const publishDialogRef = useRef<IPublishDialogRef>(null);
       const [listLoading, setListLoading] = useState(false);
+      // 发布记录数据，key=年月日，value=发布记录
+      const [recordMap, setRecordMap] = useState<
+        Map<string, PublishRecordItem[]>
+      >(new Map());
 
       useEffect(() => {
         window.addEventListener("resize", handleResize);
@@ -89,8 +95,33 @@ const CalendarTiming = memo(
           filter: {},
         });
         setListLoading(false);
-        console.log(res);
-        console.log("发布记录");
+        if (!res) return;
+        const recordMap = new Map<string, PublishRecordItem[]>();
+        // 将数据分拣到对应天中
+        res?.data.list.map((v) => {
+          const days = dayjs(v.publishTime);
+          const timeStr = days.format("YYYY-MM-DD");
+          let list = recordMap.get(timeStr);
+          if (!list) {
+            list = [];
+            recordMap.set(timeStr, list);
+          }
+          list.push(v);
+          recordMap.set(timeStr, list);
+        });
+        // 对每一天的记录按照 publishTime 时间从早到晚排序
+        recordMap.forEach((v, k) => {
+          let list = recordMap.get(k);
+          if (list) {
+            list = list.sort(
+              (a, b) =>
+                new Date(a.publishTime).getTime() -
+                new Date(b.publishTime).getTime(),
+            );
+            recordMap.set(k, list);
+          }
+        });
+        setRecordMap(recordMap);
       };
 
       // 处理窗口大小变化
@@ -187,6 +218,9 @@ const CalendarTiming = memo(
                   dayCellContent={(arg) => {
                     return (
                       <CalendarTimingItem
+                        records={recordMap.get(
+                          dayjs(arg.date).format("YYYY-MM-DD"),
+                        )}
                         loading={listLoading}
                         arg={arg}
                         onClickPub={(date) => {

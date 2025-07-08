@@ -4,16 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat(日历): 日历-日期选择逻辑开发完成">
-      <change afterPath="$PROJECT_DIR$/src/api/plat/types/kwai.types.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/plat/types/publish.types.ts" afterDir="false" />
+    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat(日历): 发布记录列表接入">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/plat/types/kwai.type.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/plat/publish.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/publish.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/plat/types/publish.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/plat/types/publish.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/BoxDragPreview.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/BoxDragPreview.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarRecord.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarRecord.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CustomDragLayer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CustomDragLayer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/config/platConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/config/platConfig.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -134,7 +134,7 @@
       <workItem from="1751806982109" duration="7000" />
       <workItem from="1751853979086" duration="990000" />
       <workItem from="1751875610327" duration="15028000" />
-      <workItem from="1751969152766" duration="1525000" />
+      <workItem from="1751969152766" duration="3947000" />
     </task>
     <task id="LOCAL-00001" summary="feat: 日历完善">
       <option name="closed" value="true" />
@@ -336,7 +336,15 @@
       <option name="project" value="LOCAL" />
       <updated>1751962787283</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="feat(日历): 发布记录列表接入">
+      <option name="closed" value="true" />
+      <created>1751970702181</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1751970702181</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -393,6 +401,7 @@
     <MESSAGE value="fix: 修复类型错误，更改next配置" />
     <MESSAGE value="feat(demo): 添加定时测试demo，修复添加账号switch case语法错误问题" />
     <MESSAGE value="feat(日历): 日历-日期选择逻辑开发完成" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(日历): 日历-日期选择逻辑开发完成" />
+    <MESSAGE value="feat(日历): 发布记录列表接入" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(日历): 发布记录列表接入" />
   </component>
 </project>

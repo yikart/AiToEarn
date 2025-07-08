@@ -8,6 +8,7 @@ import { useDrop } from "react-dnd";
 import CalendarRecord from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarRecord";
 import { CustomDragLayer } from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CustomDragLayer";
 import dayjs from "dayjs";
+import { PublishRecordItem } from "@/api/plat/types/publish.types";
 
 export interface ICalendarTimingItemRef {}
 
@@ -15,12 +16,14 @@ export interface ICalendarTimingItemProps {
   arg: DayCellContentArg;
   onClickPub: (date: string) => void;
   loading: boolean;
+  // 发布记录数据
+  records?: PublishRecordItem[];
 }
 
 const CalendarTimingItem = memo(
   forwardRef(
     (
-      { arg, onClickPub, loading }: ICalendarTimingItemProps,
+      { arg, onClickPub, loading, records }: ICalendarTimingItemProps,
       ref: ForwardedRef<ICalendarTimingItemRef>,
     ) => {
       const { t } = useTransClient("account");
@@ -93,29 +96,39 @@ const CalendarTimingItem = memo(
               <Skeleton.Button active={true} block={true} size="small" />
             </>
           ) : (
-            <>
+            <div className="calendarTimingItem-con">
               {argDate >= nowDate && (
-                <div className="calendarTimingItem-con">
-                  <Button
-                    size="small"
-                    type="dashed"
-                    onClick={() => {
-                      const days = dayjs(arg.date)
-                        .set("hour", 16)
-                        .set("minute", 12);
-                      onClickPub(days.format());
-                    }}
-                  >
-                    <div className="calendarTimingItem-con-btn1">04:12 PM</div>
-                    <div className="calendarTimingItem-con-btn2">
-                      {t("addPost")}
-                    </div>
-                  </Button>
-                  <CustomDragLayer snapToGrid={false} />
-                  <CalendarRecord />
-                </div>
+                <Button
+                  size="small"
+                  type="dashed"
+                  onClick={() => {
+                    const days = dayjs(arg.date)
+                      .set("hour", 16)
+                      .set("minute", 12);
+                    onClickPub(days.format());
+                  }}
+                >
+                  <div className="calendarTimingItem-con-btn1">04:12 PM</div>
+                  <div className="calendarTimingItem-con-btn2">
+                    {t("addPost")}
+                  </div>
+                </Button>
               )}
-            </>
+
+              {records &&
+                records.map((v) => {
+                  return (
+                    <>
+                      <CustomDragLayer
+                        key={v.id + "1"}
+                        publishRecord={v}
+                        snapToGrid={false}
+                      />
+                      <CalendarRecord key={v.id + "2"} publishRecord={v} />
+                    </>
+                  );
+                })}
+            </div>
           )}
         </div>
       );

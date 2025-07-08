@@ -2,6 +2,7 @@ import type { CSSProperties, FC } from "react";
 import type { XYCoord } from "react-dnd";
 import { useDragLayer } from "react-dnd";
 import { BoxDragPreview } from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/BoxDragPreview";
+import { PublishRecordItem } from "@/api/plat/types/publish.types";
 
 function snapToGrid(x: number, y: number): [number, number] {
   const snappedX = Math.round(x / 32) * 32;
@@ -49,6 +50,7 @@ function getItemStyles(
 
 export interface CustomDragLayerProps {
   snapToGrid: boolean;
+  publishRecord: PublishRecordItem;
 }
 
 export const CustomDragLayer: FC<CustomDragLayerProps> = (props) => {
@@ -69,7 +71,7 @@ export const CustomDragLayer: FC<CustomDragLayerProps> = (props) => {
       <div
         style={getItemStyles(initialOffset, currentOffset, props.snapToGrid)}
       >
-        <BoxDragPreview />
+        <BoxDragPreview publishRecord={props.publishRecord} />
       </div>
     </div>
   );

@@ -3,14 +3,23 @@ import styles from "./calendarRecord.module.scss";
 import { DragSourceMonitor, useDrag } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
 import RecordCore from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore";
+import {
+  PublishRecordItem,
+  PublishStatus,
+} from "@/api/plat/types/publish.types";
 
 export interface ICalendarRecordRef {}
 
-export interface ICalendarRecordProps {}
+export interface ICalendarRecordProps {
+  publishRecord: PublishRecordItem;
+}
 
 const CalendarRecord = memo(
   forwardRef(
-    ({}: ICalendarRecordProps, ref: ForwardedRef<ICalendarRecordRef>) => {
+    (
+      { publishRecord }: ICalendarRecordProps,
+      ref: ForwardedRef<ICalendarRecordRef>,
+    ) => {
       const [{ opacity }, drag, preview] = useDrag(
         () => ({
           type: "box",
@@ -34,12 +43,14 @@ const CalendarRecord = memo(
         <div
           style={{ opacity: opacity }}
           ref={(node) => {
-            drag(node);
+            if (publishRecord.status === PublishStatus.UNPUBLISH) {
+              drag(node);
+            }
           }}
           className={styles.calendarRecord}
           role="DraggableBox"
         >
-          <RecordCore />
+          <RecordCore publishRecord={publishRecord} />
         </div>
       );
     },

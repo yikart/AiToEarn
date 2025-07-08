@@ -36,6 +36,7 @@ export interface GetPublishListParams {
   pageSize: number;
 }
 
+// 发布记录item数据
 export interface PublishRecordItem {
   dataId: string;
   id: string;

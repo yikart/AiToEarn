@@ -1,6 +1,7 @@
 import type { CSSProperties, FC } from "react";
 import { memo, useEffect, useState } from "react";
 import RecordCore from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore";
+import { PublishRecordItem } from "@/api/plat/types/publish.types";
 
 const styles: CSSProperties = {
   display: "inline-block",
@@ -9,10 +10,12 @@ const styles: CSSProperties = {
   transition: "0.3s",
 };
 
-export interface BoxDragPreviewProps {}
+export interface BoxDragPreviewProps {
+  publishRecord: PublishRecordItem;
+}
 
 export const BoxDragPreview: FC<BoxDragPreviewProps> = memo(
-  function BoxDragPreview({}) {
+  function BoxDragPreview({ publishRecord }) {
     const [tickTock, setTickTock] = useState(false);
 
     useEffect(
@@ -25,7 +28,7 @@ export const BoxDragPreview: FC<BoxDragPreviewProps> = memo(
 
     return (
       <div style={styles}>
-        <RecordCore />
+        <RecordCore publishRecord={publishRecord} />
       </div>
     );
   },

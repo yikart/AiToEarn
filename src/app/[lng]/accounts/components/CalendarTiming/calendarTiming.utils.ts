@@ -37,5 +37,3 @@ export function getTransitionClassNames(direction: "left" | "right" | "fade") {
     };
   }
 }
-
-
