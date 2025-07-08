@@ -20,12 +20,13 @@ import { Button } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { useTransClient } from "@/app/i18n/client";
 import CalendarTimingItem from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem";
-import PublishDialog from "@/components/PublishDialog";
+import PublishDialog, { IPublishDialogRef } from "@/components/PublishDialog";
 import { useAccountStore } from "@/store/account";
 import { useShallow } from "zustand/react/shallow";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";
+import dayjs from "dayjs";
 
 export interface ICalendarTimingRef {}
 export interface ICalendarTimingProps {}
@@ -61,6 +62,7 @@ const CalendarTiming = memo(
         })),
       );
       const calendarTimingItemCallEl = useRef<HTMLDivElement | null>(null);
+      const publishDialogRef = useRef<IPublishDialogRef>(null);
 
       useEffect(() => {
         window.addEventListener("resize", handleResize);
@@ -123,6 +125,7 @@ const CalendarTiming = memo(
       return (
         <div className={styles.calendarTiming}>
           <PublishDialog
+            ref={publishDialogRef}
             open={publishDialogOpen}
             onClose={() => setPublishDialogOpen(false)}
             accounts={accountList}
@@ -170,7 +173,8 @@ const CalendarTiming = memo(
                     return (
                       <CalendarTimingItem
                         arg={arg}
-                        onClickPub={() => {
+                        onClickPub={(date) => {
+                          publishDialogRef.current!.setPubTime(date);
                           setPublishDialogOpen(true);
                         }}
                       />

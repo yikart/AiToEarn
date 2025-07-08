@@ -7,12 +7,13 @@ import { PlusOutlined } from "@ant-design/icons";
 import { useDrop } from "react-dnd";
 import CalendarRecord from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarRecord";
 import { CustomDragLayer } from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CustomDragLayer";
+import dayjs from "dayjs";
 
 export interface ICalendarTimingItemRef {}
 
 export interface ICalendarTimingItemProps {
   arg: DayCellContentArg;
-  onClickPub: () => void;
+  onClickPub: (date: string) => void;
 }
 
 const CalendarTimingItem = memo(
@@ -73,7 +74,14 @@ const CalendarTimingItem = memo(
                 size="small"
                 icon={<PlusOutlined />}
                 onClick={() => {
-                  onClickPub();
+                  const days = dayjs(arg.date);
+                  const today = dayjs();
+
+                  if (today.date() === days.date()) {
+                    onClickPub(today.add(10, "minute").format());
+                  } else {
+                    onClickPub(days.format());
+                  }
                 }}
               />
             )}
@@ -85,7 +93,10 @@ const CalendarTimingItem = memo(
                 size="small"
                 type="dashed"
                 onClick={() => {
-                  onClickPub();
+                  const days = dayjs(arg.date)
+                    .set("hour", 16)
+                    .set("minute", 12);
+                  onClickPub(days.format());
                 }}
               >
                 <div className="calendarTimingItem-con-btn1">04:12 PM</div>

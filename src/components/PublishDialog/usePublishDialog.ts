@@ -21,10 +21,13 @@ export interface IPublishDialogStore {
   expandedPubItem?: PubItem;
   // 错误提示
   errParamsMap?: ErrPubParamsMapType;
+  // 发布时间
+  pubTime?: string;
 }
 
 const store: IPublishDialogStore = {
   pubListChoosed: [],
+  pubTime: undefined,
   pubList: [],
   step: 0,
   commonPubParams: {
@@ -64,6 +67,9 @@ export const usePublishDialog = create(
         },
         setStep(step: number) {
           set({ step });
+        },
+        setPubTime(pubTime: string | undefined) {
+          set({ pubTime });
         },
 
         // 清空所有数据

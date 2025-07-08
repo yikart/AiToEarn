@@ -4,13 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat(demo): 添加定时任务测试">
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/demo/pubDemo/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env.development" beforeDir="false" afterPath="$PROJECT_DIR$/.env.development" afterDir="false" />
+    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat(demo): 添加定时测试demo，修复添加账号switch case语法错误问题">
+      <change afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogDataPicker.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/publish.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/publish.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/AddAccountModal/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/AddAccountModal/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/robots.txt" beforeDir="false" afterPath="$PROJECT_DIR$/public/robots.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sitemap.xml" beforeDir="false" afterPath="$PROJECT_DIR$/public/sitemap.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/demo/demoPublish.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/demo/demoPublish.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PubCommonParams.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogAi.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogAi.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogPreview.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogPreview.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/usePublishDialog.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/usePublishDialog.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,8 +30,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="TypeScript File" />
-        <option value="tsx组件模板" />
         <option value="TypeScript JSX File" />
+        <option value="tsx组件模板" />
       </list>
     </option>
   </component>
@@ -126,7 +135,11 @@
       <workItem from="1751278214456" duration="955000" />
       <workItem from="1751334170049" duration="2844000" />
       <workItem from="1751351785412" duration="26981000" />
-      <workItem from="1751624107936" duration="2913000" />
+      <workItem from="1751624107936" duration="4186000" />
+      <workItem from="1751766571747" duration="1373000" />
+      <workItem from="1751806982109" duration="7000" />
+      <workItem from="1751853979086" duration="990000" />
+      <workItem from="1751875610327" duration="12461000" />
     </task>
     <task id="LOCAL-00001" summary="feat: 日历完善">
       <option name="closed" value="true" />
@@ -312,7 +325,15 @@
       <option name="project" value="LOCAL" />
       <updated>1751445479615</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="feat(demo): 添加定时测试demo，修复添加账号switch case语法错误问题">
+      <option name="closed" value="true" />
+      <created>1751632949416</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1751632949416</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -367,6 +388,7 @@
     <MESSAGE value="feat: 授权改到后端" />
     <MESSAGE value="refactor(发布): 旧发布和发布记录全部删除" />
     <MESSAGE value="fix: 修复类型错误，更改next配置" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: 修复类型错误，更改next配置" />
+    <MESSAGE value="feat(demo): 添加定时测试demo，修复添加账号switch case语法错误问题" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(demo): 添加定时测试demo，修复添加账号switch case语法错误问题" />
   </component>
 </project>

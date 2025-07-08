@@ -4,6 +4,7 @@ import {
   memo,
   useCallback,
   useEffect,
+  useImperativeHandle,
   useMemo,
   useState,
 } from "react";
@@ -21,8 +22,12 @@ import { useShallow } from "zustand/react/shallow";
 import PlatParamsSetting from "@/components/PublishDialog/compoents/PlatParamsSetting";
 import PubParmasTextarea from "@/components/PublishDialog/compoents/PubParmasTextarea";
 import usePubParamsVerify from "@/components/PublishDialog/hooks/usePubParamsVerify";
+import PublishDialogDataPicker from "@/components/PublishDialog/compoents/PublishDialogDataPicker";
 
-export interface IPublishDialogRef {}
+export interface IPublishDialogRef {
+  // 设置发布时间
+  setPubTime: (pubTime?: string) => void;
+}
 
 export interface IPublishDialogProps {
   open: boolean;
@@ -53,6 +58,7 @@ const PublishDialog = memo(
         setExpandedPubItem,
         expandedPubItem,
         setErrParamsMap,
+        setPubTime,
       } = usePublishDialog(
         useShallow((state) => ({
           pubListChoosed: state.pubListChoosed,
@@ -67,6 +73,7 @@ const PublishDialog = memo(
           setExpandedPubItem: state.setExpandedPubItem,
           expandedPubItem: state.expandedPubItem,
           setErrParamsMap: state.setErrParamsMap,
+          setPubTime: state.setPubTime,
         })),
       );
       const { errParamsMap } = usePubParamsVerify(pubListChoosed);
@@ -116,6 +123,11 @@ const PublishDialog = memo(
       const pubClick = useCallback(() => {
         console.log("发布：", pubListChoosed);
       }, [pubListChoosed]);
+
+      const imperativeHandle: IPublishDialogRef = {
+        setPubTime,
+      };
+      useImperativeHandle(ref, () => imperativeHandle);
 
       return (
         <>
@@ -268,7 +280,8 @@ const PublishDialog = memo(
                 className="publishDialog-footer"
                 onClick={(e) => e.stopPropagation()}
               >
-                time
+                <PublishDialogDataPicker />
+
                 <div className="publishDialog-footer-btns">
                   {step === 0 && pubListChoosed.length >= 2 ? (
                     <Button

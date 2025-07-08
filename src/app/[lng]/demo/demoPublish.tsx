@@ -22,10 +22,10 @@ export const DemoPublish = () => {
         type: PubType.VIDEO,
         title: "测试视频标题",
         desc: "测试视频描述",
-        accountId: "685a8d466d33f16378b7bdfe",
+        accountId: "686ba36565c9020dc1f3a043",
         accountType: AccountType.BILIBILI,
         videoUrl:
-          "https://v2.kwaicdn.com/ksc2/d2q1A45M3Dq7tzU1oxY-1trkIMKvM7_7SzRHFhPWMyv8MatfnrAhssXlVmWRVcok-zzQmyooCLGO_K-UXLRx547rxh4VnQ1uMCK4ljl6h8IANtgbCDdDnMvk7amRiyvfADYxi0GedqjHF8kF4iUDMjSl3kJTWbtbbjn8F-AK8UWG66m0W4rFjuSig1px-gxC.mp4?pkey=AAU8pxO15eRlb-oUBHkLPbqgb41b-i13g7MJXM_rILMMpOH-W8mR0-_V5teAff_N6MmFZN6abZXieAoDuAVUaWMDd1YGZCfB3B7qIv2MBHqsEPQC3-SRIQ5T8PTEKWP2a8c&tag=1-1751611371-unknown-0-csnzcnrvrd-0ae9c87425d902fe&clientCacheKey=3xnhic5vb7mq3n9_b.mp4&di=dfa08251&bp=14944&kwai-not-alloc=28&tt=b&ss=vpm",
+          "https://v2-zj-bjcm.kwaicdn.com/upic/2025/06/24/09/BMjAyNTA2MjQwOTI3MjlfNDQwMjk3NjY1Nl8xNjc1OTkwOTUzNzBfMl8z_b_Bea472124f75ea09e1483d87c112ede39.mp4?tag=1-1751887066-unknown-0-uqpbdciha7-0f5473b4478e400b&provider=self&clientCacheKey=3xcwhdmk5jcyv8y_b.mp4&di=dfa08272&bp=14944&x-ks-ptid=167599095370&Aecs=172.17.4.195&ocid=100001260&tt=b&ss=vpm",
         coverUrl: "https://education.yikart.cn/images/swiper/swiper1.png",
         // imgList: ["imgList1", "imgList2"],
         publishTime,
