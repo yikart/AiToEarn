@@ -14,6 +14,7 @@ export enum PlatType {
   YouTube = "youtube", // YouTube
   BILIBILI = "bilibili", // B站
   Twitter = "twitter", // Twitter
+  WxGzh = "wxGzh", // 微信公众号
 }
 
 export interface IAccountPlatInfo {

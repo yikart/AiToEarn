@@ -4,22 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat(demo): 添加定时测试demo，修复添加账号switch case语法错误问题">
-      <change afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogDataPicker.tsx" afterDir="false" />
+    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat(日历): 日历-日期选择逻辑开发完成">
+      <change afterPath="$PROJECT_DIR$/src/api/plat/types/kwai.types.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/api/plat/types/publish.types.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/robots.txt" beforeDir="false" afterPath="$PROJECT_DIR$/public/robots.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/sitemap.xml" beforeDir="false" afterPath="$PROJECT_DIR$/public/sitemap.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/plat/types/kwai.type.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/plat/publish.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/publish.ts" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/demo/demoPublish.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/demo/demoPublish.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PubCommonParams.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogAi.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogAi.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogPreview.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogPreview.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.module.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/usePublishDialog.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/usePublishDialog.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/config/platConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/config/platConfig.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,7 +69,7 @@
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.reader.mode&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;ts.external.directory.path&quot;: &quot;E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -139,7 +133,8 @@
       <workItem from="1751766571747" duration="1373000" />
       <workItem from="1751806982109" duration="7000" />
       <workItem from="1751853979086" duration="990000" />
-      <workItem from="1751875610327" duration="12461000" />
+      <workItem from="1751875610327" duration="15028000" />
+      <workItem from="1751969152766" duration="1525000" />
     </task>
     <task id="LOCAL-00001" summary="feat: 日历完善">
       <option name="closed" value="true" />
@@ -333,7 +328,15 @@
       <option name="project" value="LOCAL" />
       <updated>1751632949416</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="feat(日历): 日历-日期选择逻辑开发完成">
+      <option name="closed" value="true" />
+      <created>1751962787283</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1751962787283</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -389,6 +392,7 @@
     <MESSAGE value="refactor(发布): 旧发布和发布记录全部删除" />
     <MESSAGE value="fix: 修复类型错误，更改next配置" />
     <MESSAGE value="feat(demo): 添加定时测试demo，修复添加账号switch case语法错误问题" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(demo): 添加定时测试demo，修复添加账号switch case语法错误问题" />
+    <MESSAGE value="feat(日历): 日历-日期选择逻辑开发完成" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(日历): 日历-日期选择逻辑开发完成" />
   </component>
 </project>

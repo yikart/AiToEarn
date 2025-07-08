@@ -5,6 +5,7 @@
   "scripts": {
     "postbuild": "next-sitemap",
     "dev": "next dev --experimental-https -p 6060",
+    "dev:local": "cross-env NEXT_PUBLIC_API_URL=http://localhost:7000/api/ next dev --experimental-https -p 6060",
     "build": "tsc && next build && npm run copy-static",
     "copy-static": "xcopy public .next\\standalone\\public /E /I /Y && if exist .next\\static xcopy .next\\static .next\\standalone\\.next\\static /E /I /Y",
     "start": "next start",

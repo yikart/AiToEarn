@@ -1,7 +1,7 @@
 import { ForwardedRef, forwardRef, memo } from "react";
 import styles from "./calendarTimingItem.module.scss";
 import { DayCellContentArg } from "@fullcalendar/core";
-import { Button } from "antd";
+import { Button, Skeleton } from "antd";
 import { useTransClient } from "@/app/i18n/client";
 import { PlusOutlined } from "@ant-design/icons";
 import { useDrop } from "react-dnd";
@@ -14,12 +14,13 @@ export interface ICalendarTimingItemRef {}
 export interface ICalendarTimingItemProps {
   arg: DayCellContentArg;
   onClickPub: (date: string) => void;
+  loading: boolean;
 }
 
 const CalendarTimingItem = memo(
   forwardRef(
     (
-      { arg, onClickPub }: ICalendarTimingItemProps,
+      { arg, onClickPub, loading }: ICalendarTimingItemProps,
       ref: ForwardedRef<ICalendarTimingItemRef>,
     ) => {
       const { t } = useTransClient("account");
@@ -87,26 +88,34 @@ const CalendarTimingItem = memo(
             )}
           </div>
 
-          {argDate >= nowDate && (
-            <div className="calendarTimingItem-con">
-              <Button
-                size="small"
-                type="dashed"
-                onClick={() => {
-                  const days = dayjs(arg.date)
-                    .set("hour", 16)
-                    .set("minute", 12);
-                  onClickPub(days.format());
-                }}
-              >
-                <div className="calendarTimingItem-con-btn1">04:12 PM</div>
-                <div className="calendarTimingItem-con-btn2">
-                  {t("addPost")}
+          {loading ? (
+            <>
+              <Skeleton.Button active={true} block={true} size="small" />
+            </>
+          ) : (
+            <>
+              {argDate >= nowDate && (
+                <div className="calendarTimingItem-con">
+                  <Button
+                    size="small"
+                    type="dashed"
+                    onClick={() => {
+                      const days = dayjs(arg.date)
+                        .set("hour", 16)
+                        .set("minute", 12);
+                      onClickPub(days.format());
+                    }}
+                  >
+                    <div className="calendarTimingItem-con-btn1">04:12 PM</div>
+                    <div className="calendarTimingItem-con-btn2">
+                      {t("addPost")}
+                    </div>
+                  </Button>
+                  <CustomDragLayer snapToGrid={false} />
+                  <CalendarRecord />
                 </div>
-              </Button>
-              <CustomDragLayer snapToGrid={false} />
-              <CalendarRecord />
-            </div>
+              )}
+            </>
           )}
         </div>
       );

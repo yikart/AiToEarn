@@ -26,7 +26,7 @@ import { useShallow } from "zustand/react/shallow";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";
-import dayjs from "dayjs";
+import { getPublishList } from "@/api/plat/publish";
 
 export interface ICalendarTimingRef {}
 export interface ICalendarTimingProps {}
@@ -63,9 +63,11 @@ const CalendarTiming = memo(
       );
       const calendarTimingItemCallEl = useRef<HTMLDivElement | null>(null);
       const publishDialogRef = useRef<IPublishDialogRef>(null);
+      const [listLoading, setListLoading] = useState(false);
 
       useEffect(() => {
         window.addEventListener("resize", handleResize);
+        getPubRecord();
 
         setTimeout(() => {
           calendarTimingItemCallEl.current = document.querySelector(
@@ -78,6 +80,20 @@ const CalendarTiming = memo(
         return () => window.removeEventListener("resize", handleResize);
       }, []);
 
+      // 获取发布记录数据
+      const getPubRecord = async () => {
+        setListLoading(true);
+        const res = await getPublishList({
+          pageNo: 1,
+          pageSize: 500,
+          filter: {},
+        });
+        setListLoading(false);
+        console.log(res);
+        console.log("发布记录");
+      };
+
+      // 处理窗口大小变化
       const handleResize = () => {
         setTimeout(() => {
           const el = calendarTimingItemCallEl.current!;
@@ -104,7 +120,6 @@ const CalendarTiming = memo(
           setAnimating(false);
         }, 300);
       };
-
       const handleNext = () => {
         triggerAnimation("left");
         setTimeout(() => {
@@ -172,6 +187,7 @@ const CalendarTiming = memo(
                   dayCellContent={(arg) => {
                     return (
                       <CalendarTimingItem
+                        loading={listLoading}
                         arg={arg}
                         onClickPub={(date) => {
                           publishDialogRef.current!.setPubTime(date);
