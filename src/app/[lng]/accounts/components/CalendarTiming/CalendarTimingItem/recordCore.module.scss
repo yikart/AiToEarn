@@ -34,3 +34,64 @@
     }
   }
 }
+
+.recordDetails {
+  width: 450px;
+  box-sizing: border-box;
+  :global {
+    .recordDetails-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--grayColor2);
+      padding: 12px;
+      &-left {
+        font-weight: 600;
+        .anticon {
+          margin-left: 8px;
+        }
+      }
+    }
+
+    .recordDetails-center {
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--grayColor2);
+      &-left {
+      }
+      &-right {
+        img {
+          width: 145px;
+          height: 145px;
+          object-fit: contain;
+        }
+      }
+      &-title {
+        margin-left: 10px;
+        display: inline-block;
+        font-weight: 700;
+      }
+    }
+
+    .recordDetails-bottom {
+      padding: 12px;
+      display: flex;
+      justify-content: right;
+      :global {
+        .anticon {
+          font-size: 18px !important;
+          font-weight: 900 !important;
+        }
+      }
+    }
+  }
+}
+
+.recordPopover {
+  :global {
+    .ant-popover-inner {
+      padding: 0 !important;
+    }
+  }
+}

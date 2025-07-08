@@ -11,6 +11,8 @@ export interface AccountGroup extends AccountGroupItem {
 export interface IAccountStore {
   accountList: SocialAccount[];
   accountMap: Map<string, SocialAccount>;
+  // key=uid,value=账户
+  accountUidMap: Map<string, SocialAccount>;
   accountGroupList: AccountGroup[];
   accountGroupMap: Map<string, AccountGroup>;
   accountLoading: boolean;
@@ -23,6 +25,7 @@ const store: IAccountStore = {
   accountGroupList: [],
   accountGroupMap: new Map([]),
   accountMap: new Map([]),
+  accountUidMap: new Map([]),
   accountLoading: false,
 };
 
@@ -53,17 +56,20 @@ export const useAccountStore = create(
           set({ accountLoading: true });
 
           const accountMap = new Map<string, SocialAccount>([]);
+          const accountUidMap = new Map<string, SocialAccount>([]);
           const result = await getAccountListApi();
 
           if (result?.code !== 0) return;
 
           for (const item of result.data) {
             accountMap.set(item.id, item);
+            accountUidMap.set(item.uid, item);
           }
 
           set({
             accountList: result.data,
             accountMap,
+            accountUidMap,
           });
           await methods.getAccountGroup();
 

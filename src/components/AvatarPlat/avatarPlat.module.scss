@@ -1,6 +1,6 @@
 .avatarPlat {
   position: relative;
-  display: flex;
+  display: inline-block;
   justify-content: center;
   & > img {
     position: absolute;
