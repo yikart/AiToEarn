@@ -118,14 +118,10 @@ const CalendarTimingItem = memo(
               {records &&
                 records.map((v) => {
                   return (
-                    <>
-                      <CustomDragLayer
-                        key={v.id + "1"}
-                        publishRecord={v}
-                        snapToGrid={false}
-                      />
-                      <CalendarRecord key={v.id + "2"} publishRecord={v} />
-                    </>
+                    <div key={v.id}>
+                      <CustomDragLayer publishRecord={v} snapToGrid={false} />
+                      <CalendarRecord publishRecord={v} />
+                    </div>
                   );
                 })}
             </div>

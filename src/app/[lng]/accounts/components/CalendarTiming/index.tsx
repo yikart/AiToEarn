@@ -216,11 +216,11 @@ const CalendarTiming = memo(
                   headerToolbar={false}
                   stickyFooterScrollbar={true}
                   dayCellContent={(arg) => {
+                    const dateStr = dayjs(arg.date).format("YYYY-MM-DD");
                     return (
                       <CalendarTimingItem
-                        records={recordMap.get(
-                          dayjs(arg.date).format("YYYY-MM-DD"),
-                        )}
+                        key={dateStr}
+                        records={recordMap.get(dateStr)}
                         loading={listLoading}
                         arg={arg}
                         onClickPub={(date) => {

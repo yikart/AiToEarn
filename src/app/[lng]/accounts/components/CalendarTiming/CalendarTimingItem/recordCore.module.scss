@@ -1,0 +1,36 @@
+.recordCore {
+  display: flex !important;
+  justify-content: space-between !important;
+  box-sizing: border-box;
+  background: transparent !important;
+  padding: 0 5px !important;
+
+  :global {
+    .recordCore-left {
+      display: flex;
+      align-items: center;
+      &-date {
+        font-weight: 600;
+      }
+      img {
+        height: 100%;
+        margin-right: 6px;
+      }
+    }
+    .recordCore-right {
+      display: flex;
+      align-items: center;
+      img {
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+      }
+    }
+  }
+
+  &:hover {
+    :global {
+      background: #fff !important;
+    }
+  }
+}

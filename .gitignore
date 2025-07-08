@@ -37,4 +37,5 @@ next-env.d.ts
 
 certificates
 
-.idea
+.idea/
+*.idea/

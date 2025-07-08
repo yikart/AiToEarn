@@ -4,15 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="feat(日历): 发布记录列表接入">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/plat/types/publish.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/plat/types/publish.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/BoxDragPreview.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/BoxDragPreview.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarRecord.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarRecord.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CustomDragLayer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CustomDragLayer.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/calendarTimingItem.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/calendarTimingItem.module.scss" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -20,63 +18,31 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="TypeScript File" />
-        <option value="TypeScript JSX File" />
-        <option value="tsx组件模板" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
-    <option name="PUSH_AUTO_UPDATE" value="true" />
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="test" />
-      </map>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 0
-}</component>
-  <component name="ProjectId" id="2yuI7xRxgKTi9PWPJvL0MFi17ql" />
-  <component name="ProjectLevelVcsManager">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 4
+}]]></component>
+  <component name="ProjectId" id="2zamg25p8l4plGQi1IzdkD1GGzA" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/project-dev/web/艺咖/aitoearn-web&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="ReactBuddySettings">
-    <option name="extensionsIgnore" value="true" />
-  </component>
+}]]></component>
   <component name="ReactDesignerToolWindowState">
     <option name="myId2Visible">
       <map>
@@ -86,322 +52,19 @@
       </map>
     </option>
   </component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\components\PublishDialog\hooks" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\components\PublishDialog\compoents\PubParmasTextarea\components" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\components\PublishDialog\plats" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\components\PublishDialog\compoents" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\components\PublishDialog\compoents\PlatParamsSetting" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\components\PublishDialog\compoents\PubParmasTextarea" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\assets\svgs\plat" />
-    </key>
-  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="默认任务">
-      <changelist id="90ed3383-49aa-4e32-95a2-9f070c0da49b" name="更改" comment="" />
-      <created>1750677868216</created>
+      <changelist id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="" />
+      <created>1751977665735</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1750677868216</updated>
-      <workItem from="1750677869133" duration="5869000" />
-      <workItem from="1750760247427" duration="43000" />
-      <workItem from="1750760293021" duration="942000" />
-      <workItem from="1750763212319" duration="38000" />
-      <workItem from="1750763252811" duration="23000" />
-      <workItem from="1750763285511" duration="48000" />
-      <workItem from="1750763342070" duration="32000" />
-      <workItem from="1750763376065" duration="41000" />
-      <workItem from="1750763426455" duration="38708000" />
-      <workItem from="1750932869295" duration="11763000" />
-      <workItem from="1750989950480" duration="7000" />
-      <workItem from="1750989966702" duration="688000" />
-      <workItem from="1751010085244" duration="6172000" />
-      <workItem from="1751023561603" duration="4162000" />
-      <workItem from="1751027862143" duration="5251000" />
-      <workItem from="1751248094372" duration="6674000" />
-      <workItem from="1751263083581" duration="376000" />
-      <workItem from="1751273285905" duration="3882000" />
-      <workItem from="1751278214456" duration="955000" />
-      <workItem from="1751334170049" duration="2844000" />
-      <workItem from="1751351785412" duration="26981000" />
-      <workItem from="1751624107936" duration="4186000" />
-      <workItem from="1751766571747" duration="1373000" />
-      <workItem from="1751806982109" duration="7000" />
-      <workItem from="1751853979086" duration="990000" />
-      <workItem from="1751875610327" duration="15028000" />
-      <workItem from="1751969152766" duration="3947000" />
+      <updated>1751977665735</updated>
+      <workItem from="1751977666787" duration="855000" />
     </task>
-    <task id="LOCAL-00001" summary="feat: 日历完善">
-      <option name="closed" value="true" />
-      <created>1750681213106</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1750681213106</updated>
-    </task>
-    <task id="LOCAL-00002" summary="feat: 日历完善">
-      <option name="closed" value="true" />
-      <created>1750682966962</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1750682966962</updated>
-    </task>
-    <task id="LOCAL-00003" summary="fix: 日历调整">
-      <option name="closed" value="true" />
-      <created>1750683522810</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1750683522810</updated>
-    </task>
-    <task id="LOCAL-00004" summary="feat: 发布大改">
-      <option name="closed" value="true" />
-      <created>1750754877260</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1750754877260</updated>
-    </task>
-    <task id="LOCAL-00005" summary="feat: 发布弹框左右两侧显示隐藏过渡动画完成">
-      <option name="closed" value="true" />
-      <created>1750759876887</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1750759876887</updated>
-    </task>
-    <task id="LOCAL-00006" summary="feat: 日历样式调整">
-      <option name="closed" value="true" />
-      <created>1750764427509</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1750764427509</updated>
-    </task>
-    <task id="LOCAL-00007" summary="feat: 添加b站icon">
-      <option name="closed" value="true" />
-      <created>1750764927677</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1750764927677</updated>
-    </task>
-    <task id="LOCAL-00008" summary="feat: 发布弹框开发中...">
-      <option name="closed" value="true" />
-      <created>1750770307974</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1750770307974</updated>
-    </task>
-    <task id="LOCAL-00009" summary="feat: 发布逻辑初步实现">
-      <option name="closed" value="true" />
-      <created>1750772741634</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1750772741634</updated>
-    </task>
-    <task id="LOCAL-00010" summary="feat: 发布弹框：上传图片/视频完成、裁剪图片，描述写入，完成。">
-      <option name="closed" value="true" />
-      <created>1750851652194</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1750851652194</updated>
-    </task>
-    <task id="LOCAL-00011" summary="feat: 发布弹框整体设计">
-      <option name="closed" value="true" />
-      <created>1750859702156</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1750859702156</updated>
-    </task>
-    <task id="LOCAL-00012" summary="feat: 【发布弹框】精细化参数处理">
-      <option name="closed" value="true" />
-      <created>1750907902596</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1750907902596</updated>
-    </task>
-    <task id="LOCAL-00013" summary="feat: 【发布弹框】展开和隐藏、光标自动聚焦和自动到最后一位">
-      <option name="closed" value="true" />
-      <created>1750940945665</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1750940945665</updated>
-    </task>
-    <task id="LOCAL-00014" summary="feat: 【发布弹框】参数校验完成">
-      <option name="closed" value="true" />
-      <created>1750945952212</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1750945952212</updated>
-    </task>
-    <task id="LOCAL-00015" summary="fix: 【PubParmasTextarea.tsx】修复了初始化后会执行onChange的bug">
-      <option name="closed" value="true" />
-      <created>1751013073544</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1751013073544</updated>
-    </task>
-    <task id="LOCAL-00016" summary="feat: 1. 【发布作品弹框】填写发布参数时未选中的账户参数自动填写。&#10;2. 【发布作品弹框】切换步骤0-&gt;1保持展开状态">
-      <option name="closed" value="true" />
-      <created>1751018123318</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1751018123318</updated>
-    </task>
-    <task id="LOCAL-00017" summary="feat: 【发布作品】图片和视频预览完成">
-      <option name="closed" value="true" />
-      <created>1751026503209</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1751026503209</updated>
-    </task>
-    <task id="LOCAL-00018" summary="feat: 【发布弹框】预览样式调整">
-      <option name="closed" value="true" />
-      <created>1751027720106</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1751027720106</updated>
-    </task>
-    <task id="LOCAL-00019" summary="feat: 日历拖拽初步开发">
-      <option name="closed" value="true" />
-      <created>1751032440817</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1751032440817</updated>
-    </task>
-    <task id="LOCAL-00020" summary="feat: 拖动调整完成（目前等待接接口）">
-      <option name="closed" value="true" />
-      <created>1751256097944</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1751256097944</updated>
-    </task>
-    <task id="LOCAL-00021" summary="feat: 授权改到后端">
-      <option name="closed" value="true" />
-      <created>1751376590963</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1751376590963</updated>
-    </task>
-    <task id="LOCAL-00022" summary="refactor(发布): 旧发布和发布记录全部删除">
-      <option name="closed" value="true" />
-      <created>1751441171457</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1751441171457</updated>
-    </task>
-    <task id="LOCAL-00023" summary="fix: 修复类型错误，更改next配置">
-      <option name="closed" value="true" />
-      <created>1751445479615</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1751445479615</updated>
-    </task>
-    <task id="LOCAL-00024" summary="feat(demo): 添加定时测试demo，修复添加账号switch case语法错误问题">
-      <option name="closed" value="true" />
-      <created>1751632949416</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1751632949416</updated>
-    </task>
-    <task id="LOCAL-00025" summary="feat(日历): 日历-日期选择逻辑开发完成">
-      <option name="closed" value="true" />
-      <created>1751962787283</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1751962787283</updated>
-    </task>
-    <task id="LOCAL-00026" summary="feat(日历): 发布记录列表接入">
-      <option name="closed" value="true" />
-      <created>1751970702181</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1751970702181</updated>
-    </task>
-    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State>
-              <option name="FILTERS">
-                <map>
-                  <entry key="branch">
-                    <value>
-                      <list>
-                        <option value="master" />
-                      </list>
-                    </value>
-                  </entry>
-                </map>
-              </option>
-            </State>
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
-  <component name="VcsManagerConfiguration">
-    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
-    <option name="CHECK_NEW_TODO" value="false" />
-    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="feat: 日历完善" />
-    <MESSAGE value="fix: 日历调整" />
-    <MESSAGE value="feat: 发布大改" />
-    <MESSAGE value="feat: 发布弹框左右两侧显示隐藏过渡动画完成" />
-    <MESSAGE value="feat: 日历样式调整" />
-    <MESSAGE value="feat: 添加b站icon" />
-    <MESSAGE value="feat: 发布弹框开发中..." />
-    <MESSAGE value="feat: 发布逻辑初步实现" />
-    <MESSAGE value="feat: 发布弹框：上传图片/视频完成、裁剪图片，描述写入，完成。" />
-    <MESSAGE value="feat: 发布弹框整体设计" />
-    <MESSAGE value="feat: 【发布弹框】精细化参数处理" />
-    <MESSAGE value="feat: 【发布弹框】展开和隐藏、光标自动聚焦和自动到最后一位" />
-    <MESSAGE value="feat: 【发布弹框】参数校验完成" />
-    <MESSAGE value="fix: 【PubParmasTextarea.tsx】修复了初始化后会执行onChange的bug" />
-    <MESSAGE value="feat: 1. 【发布作品弹框】填写发布参数时未选中的账户参数自动填写。&#10;2. 【发布作品弹框】切换步骤0-&gt;1保持展开状态" />
-    <MESSAGE value="feat: 【发布作品】图片和视频预览完成" />
-    <MESSAGE value="feat: 【发布弹框】预览样式调整" />
-    <MESSAGE value="feat: 日历拖拽初步开发" />
-    <MESSAGE value="feat: 拖动调整完成（目前等待接接口）" />
-    <MESSAGE value="feat: 授权改到后端" />
-    <MESSAGE value="refactor(发布): 旧发布和发布记录全部删除" />
-    <MESSAGE value="fix: 修复类型错误，更改next配置" />
-    <MESSAGE value="feat(demo): 添加定时测试demo，修复添加账号switch case语法错误问题" />
-    <MESSAGE value="feat(日历): 日历-日期选择逻辑开发完成" />
-    <MESSAGE value="feat(日历): 发布记录列表接入" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(日历): 发布记录列表接入" />
   </component>
 </project>
