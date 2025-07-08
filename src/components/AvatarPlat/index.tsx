@@ -34,7 +34,7 @@ const AvatarPlat = memo(
           <div className={`${styles.avatarPlat} ${className}`}>
             <Avatar src={getAvatar(account.avatar)} size={size} />
             <img
-              src={plat.icon}
+              src={plat?.icon}
               style={{
                 width: size === "large" ? 16 : size === "default" ? 12.5 : 10,
               }}

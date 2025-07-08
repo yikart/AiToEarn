@@ -125,8 +125,8 @@ const UserManageModal = memo(
               const platInfo = AccountPlatInfoMap.get(am.type)!;
               return (
                 <div className="userManage-content-plat">
-                  <Tooltip title={platInfo.name}>
-                    <img src={platInfo.icon} />
+                  <Tooltip title={platInfo?.name}>
+                    <img src={platInfo?.icon} />
                   </Tooltip>
                 </div>
               );

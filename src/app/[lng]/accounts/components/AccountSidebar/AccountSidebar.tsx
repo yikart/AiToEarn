@@ -76,7 +76,7 @@ const AccountPopoverInfo = ({
           <div className="accountPopoverInfo-item">
             <p>平台：</p>
             <p>
-              <img src={platInfo.icon} />
+              <img src={platInfo?.icon} />
               {platInfo.name}
             </p>
           </div>
@@ -272,8 +272,8 @@ const AccountSidebar = memo(
                                 </div>
                                 <div className="accountList-item-right-footer">
                                   <p className="accountList-item-right-plat">
-                                    <img src={platInfo.icon} />
-                                    <span>{platInfo.name}</span>
+                                    <img src={platInfo?.icon} />
+                                    <span>{platInfo?.name}</span>
                                   </p>
                                   <Popover
                                     content={
