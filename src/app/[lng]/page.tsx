@@ -972,7 +972,7 @@ export default function Home() {
       {/* <DownloadSection />
       <EnterpriseSection />
       <StatsSection /> */}
-      <CommunitySection />
+      {/* <CommunitySection /> */}
       <Footer />
     </div>
   );
