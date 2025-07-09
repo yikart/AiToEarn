@@ -2,7 +2,7 @@ import { request } from '@/utils/request';
 import type { 
   Order, 
   OrderListParams, 
-  Subscription, 
+  SubscriptionListParams,
   RefundParams, 
   UnsubscribeParams,
   PaymentApiResponse,
@@ -33,10 +33,11 @@ export const getOrderDetailApi = (id: string) => {
 /**
  * 获取订阅列表
  */
-export const getSubscriptionListApi = () => {
-  return request<Subscription[]>({
+export const getSubscriptionListApi = (params: SubscriptionListParams) => {
+  return request<PaginatedResponse<Order>>({
     url: 'payment/subscription',
-    method: 'GET'
+    method: 'GET',
+    params
   });
 };
 
