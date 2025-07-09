@@ -2,8 +2,7 @@
 import { request } from "@/utils/request";
 import {
   GetPublishListParams,
-  PublishListResponse,
-  PublishParams,
+  PublishParams, PublishRecordItem
 } from "@/api/plat/types/publish.types";
 import { parseTopicString } from "@/utils";
 
@@ -22,7 +21,7 @@ export const apiCreatePublish = (data: PublishParams) => {
 
 // 查询发布列表
 export const getPublishList = (data: GetPublishListParams) => {
-  return request<PublishListResponse>({
+  return request<PublishRecordItem[]>({
     url: "/plat/publish/getList",
     method: "POST",
     data,

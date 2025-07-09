@@ -19,6 +19,8 @@ import {
   IVideoFile,
 } from "@/components/PublishDialog/publishDialog.type";
 import ImgChoose from "@/components/PublishDialog/compoents/Choose/ImgChoose";
+import { toolsApi } from "@/api/tools";
+import { OSS_URL } from "@/constant";
 
 export interface IVideoCoverSetingRef {}
 
@@ -55,6 +57,7 @@ const VideoCoverSeting = memo(
       const cropperImg = useRef<HTMLImageElement>(null);
       const [videoCoverLoading, setVideoCoverLoading] = useState(false);
       const [sliderVal, setSliderVal] = useState(0);
+      const [uploadLoing, setUploadLoing] = useState(false);
 
       useEffect(() => {
         if (!videoCoverSetingModal) return;
@@ -115,17 +118,35 @@ const VideoCoverSeting = memo(
             maskClosable={false}
             open={videoCoverSetingModal}
             onCancel={close}
-            onOk={async () => {
-              const canvas = cropper.current!.getCroppedCanvas();
-              canvas.toBlob(async function (blob) {
-                const cover = await formatImg({
-                  blob: blob!,
-                  path: `${saveImgId}.${imgFile?.file.type.split("/")[1]}`,
-                });
-                onChoosed(cover);
-                close();
-              }, "image/png");
-            }}
+            footer={
+              <>
+                <Button onClick={close}>取消</Button>
+                <Button
+                  loading={uploadLoing}
+                  type="primary"
+                  onClick={async () => {
+                    setUploadLoing(true);
+                    const canvas = cropper.current!.getCroppedCanvas();
+                    canvas.toBlob(async function (blob) {
+                      const cover = await formatImg({
+                        blob: blob!,
+                        path: `${saveImgId}.${imgFile?.file.type.split("/")[1]}`,
+                      });
+                      // 上传封面
+                      const uploadCoverRes = await toolsApi.uploadFileTemp(
+                        cover.file,
+                      );
+                      cover["ossUrl"] = `${OSS_URL}${uploadCoverRes}`;
+                      setUploadLoing(false);
+                      onChoosed(cover);
+                      close();
+                    }, "image/png");
+                  }}
+                >
+                  确定
+                </Button>
+              </>
+            }
           >
             <Spin spinning={videoCoverLoading}>
               <div className={styles.videoCoverSetingModal}>

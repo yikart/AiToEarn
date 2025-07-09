@@ -39,7 +39,7 @@ export interface IPublishDialogProps {
   open: boolean;
   onClose: () => void;
   accounts: SocialAccount[];
-  // 发布成功
+  // 发布成功事件
   onPubSuccess?: () => void;
 }
 
@@ -87,6 +87,7 @@ const PublishDialog = memo(
         })),
       );
       const { errParamsMap } = usePubParamsVerify(pubListChoosed);
+      const [createLoading, setCreateLoading] = useState(false);
 
       useEffect(() => {
         if (open) {
@@ -131,12 +132,13 @@ const PublishDialog = memo(
       }, [errParamsMap]);
 
       const pubClick = useCallback(async () => {
+        setCreateLoading(true);
         const publishTime = dayjs(pubTime ? pubTime : dayjs().add(6, "minute"))
           .utc()
           .format();
 
         for (const item of pubListChoosed) {
-          await apiCreatePublish({
+          const res = await apiCreatePublish({
             topics: [],
             flowId: item.account.uid,
             type: PubType.VIDEO,
@@ -144,9 +146,8 @@ const PublishDialog = memo(
             desc: item.params.des,
             accountId: item.account.account,
             accountType: item.account.type,
-            videoUrl:
-              "https://v2-zj-bjcm.kwaicdn.com/upic/2025/06/24/09/BMjAyNTA2MjQwOTI3MjlfNDQwMjk3NjY1Nl8xNjc1OTkwOTUzNzBfMl8z_b_Bea472124f75ea09e1483d87c112ede39.mp4?tag=1-1751887066-unknown-0-uqpbdciha7-0f5473b4478e400b&provider=self&clientCacheKey=3xcwhdmk5jcyv8y_b.mp4&di=dfa08272&bp=14944&x-ks-ptid=167599095370&Aecs=172.17.4.195&ocid=100001260&tt=b&ss=vpm",
-            coverUrl: "https://education.yikart.cn/images/swiper/swiper1.png",
+            videoUrl: item.params.video?.ossUrl,
+            coverUrl: item.params.video?.cover.ossUrl,
             publishTime,
             option: {
               isAutoPublish: true,
@@ -159,7 +160,12 @@ const PublishDialog = memo(
               },
             },
           });
+          if (res?.code !== 0) {
+            return setCreateLoading(false);
+          }
         }
+        onClose();
+        setCreateLoading(false);
 
         if (onPubSuccess) onPubSuccess();
       }, [pubListChoosed]);
@@ -342,6 +348,7 @@ const PublishDialog = memo(
                       <Button
                         size="large"
                         type="primary"
+                        loading={createLoading}
                         onClick={() => {
                           for (const [key, errVideoItem] of errParamsMap) {
                             if (errVideoItem) {

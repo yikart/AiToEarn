@@ -29,6 +29,9 @@ import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTimin
 import { getPublishList } from "@/api/plat/publish";
 import { PublishRecordItem } from "@/api/plat/types/publish.types";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 export interface ICalendarTimingRef {}
 export interface ICalendarTimingProps {}
@@ -87,41 +90,45 @@ const CalendarTiming = memo(
       }, []);
 
       // 获取发布记录数据
-      const getPubRecord = async () => {
-        setListLoading(true);
-        const res = await getPublishList({
-          pageNo: 1,
-          pageSize: 500,
-          filter: {},
-        });
-        setListLoading(false);
-        if (!res) return;
-        const recordMap = new Map<string, PublishRecordItem[]>();
-        // 将数据分拣到对应天中
-        res?.data.list.map((v) => {
-          const days = dayjs(v.publishTime);
-          const timeStr = days.format("YYYY-MM-DD");
-          let list = recordMap.get(timeStr);
-          if (!list) {
-            list = [];
+      const getPubRecord = () => {
+        setTimeout(async () => {
+          setListLoading(true);
+          const date = dayjs(calendarRef.current?.getApi().getDate());
+          const startOfMonth = date.startOf("month");
+          const endOfMonth = date.endOf("month");
+
+          const res = await getPublishList({
+            time: [startOfMonth.utc().format(), endOfMonth.utc().format()],
+          });
+          setListLoading(false);
+          if (!res) return;
+          const recordMap = new Map<string, PublishRecordItem[]>();
+          // 将数据分拣到对应天中
+          res?.data.map((v) => {
+            const days = dayjs(v.publishTime);
+            const timeStr = days.format("YYYY-MM-DD");
+            let list = recordMap.get(timeStr);
+            if (!list) {
+              list = [];
+              recordMap.set(timeStr, list);
+            }
+            list.push(v);
             recordMap.set(timeStr, list);
-          }
-          list.push(v);
-          recordMap.set(timeStr, list);
-        });
-        // 对每一天的记录按照 publishTime 时间从早到晚排序
-        recordMap.forEach((v, k) => {
-          let list = recordMap.get(k);
-          if (list) {
-            list = list.sort(
-              (a, b) =>
-                new Date(a.publishTime).getTime() -
-                new Date(b.publishTime).getTime(),
-            );
-            recordMap.set(k, list);
-          }
-        });
-        setRecordMap(recordMap);
+          });
+          // 对每一天的记录按照 publishTime 时间从早到晚排序
+          recordMap.forEach((v, k) => {
+            let list = recordMap.get(k);
+            if (list) {
+              list = list.sort(
+                (a, b) =>
+                  new Date(a.publishTime).getTime() -
+                  new Date(b.publishTime).getTime(),
+              );
+              recordMap.set(k, list);
+            }
+          });
+          setRecordMap(recordMap);
+        }, 10);
       };
 
       // 处理窗口大小变化
@@ -149,6 +156,7 @@ const CalendarTiming = memo(
         setTimeout(() => {
           calendarRef.current?.getApi().prev();
           setAnimating(false);
+          getPubRecord();
         }, 300);
       };
       const handleNext = () => {
@@ -156,15 +164,16 @@ const CalendarTiming = memo(
         setTimeout(() => {
           calendarRef.current?.getApi().next();
           setAnimating(false);
+          getPubRecord();
         }, 300);
       };
-
       // 点击Today按钮时
       const handleToday = () => {
         triggerAnimation("fade");
         setTimeout(() => {
           calendarRef.current?.getApi().today();
           setAnimating(false);
+          getPubRecord();
         }, 300);
       };
 
@@ -174,6 +183,9 @@ const CalendarTiming = memo(
             ref={publishDialogRef}
             open={publishDialogOpen}
             onClose={() => setPublishDialogOpen(false)}
+            onPubSuccess={() => {
+              getPubRecord();
+            }}
             accounts={accountList}
           />
 

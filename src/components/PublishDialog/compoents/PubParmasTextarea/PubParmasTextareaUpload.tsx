@@ -57,14 +57,23 @@ const PubParmasTextareaUpload = memo(
           setUploadCount(1);
           setUploadProgress(0);
           setUploadLoading(true);
-          const uploadRes = await toolsApi.uploadFileTemp(
+          // 上传视频
+          const uploadVideoRes = await toolsApi.uploadFileTemp(
             video.file,
             (prog) => {
-              setUploadProgress(prog);
+              setUploadProgress(prog === 100 ? 99 : prog);
             },
           );
+          setUploadProgress(100);
+          // 上传封面
+          const uploadCoverRes = await toolsApi.uploadFileTemp(
+            video.cover.file,
+          );
+
           setUploadLoading(false);
-          video["videoOssUrl"] = `${OSS_URL}${uploadRes}`;
+          video["ossUrl"] = `${OSS_URL}${uploadVideoRes}`;
+          video.cover["ossUrl"] = `${OSS_URL}${uploadCoverRes}`;
+
           onVideoUpdateFinish(video);
         },
         [onVideoUpdateFinish],
@@ -83,7 +92,7 @@ const PubParmasTextareaUpload = memo(
           const uploadImgCore = async (image: IImgFile): Promise<IImgFile> => {
             const uploadRes = await toolsApi.uploadFileTemp(image.file);
             uploadFinishCount++;
-            image["videoOssUrl"] = `${OSS_URL}${uploadRes}`;
+            image["ossUrl"] = `${OSS_URL}${uploadRes}`;
             setUploadProgress(
               Math.floor((uploadFinishCount / fileList.length) * 100),
             );

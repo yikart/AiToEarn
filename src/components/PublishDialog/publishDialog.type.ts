@@ -14,7 +14,7 @@ export interface IImgFile {
   // 图片高度
   height: number;
   // 前端上传到oss后的url
-  videoOssUrl: string;
+  ossUrl: string;
 }
 
 export interface IVideoFile {
@@ -23,7 +23,7 @@ export interface IVideoFile {
   // 前端临时路径，注意不要存到数据库
   videoUrl: string;
   // 前端上传到oss后的url
-  videoOssUrl: string;
+  ossUrl: string;
   filename: string;
   // 视频宽度
   width: number;

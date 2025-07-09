@@ -29,15 +29,11 @@ export interface PublishParams {
 
 // 查询发布列表入参
 export interface GetPublishListParams {
-  filter?: {
-    accountId?: string;
-    accountType?: PlatType;
-    type?: PubType;
-    status?: PublishStatus;
-    time?: [Date, Date];
-  };
-  pageNo: number;
-  pageSize: number;
+  accountId?: string;
+  accountType?: PlatType;
+  type?: PubType;
+  status?: PublishStatus;
+  time?: [string, string];
 }
 
 // 发布记录item数据
@@ -58,10 +54,4 @@ export interface PublishRecordItem {
   status: PublishStatus;
   errorMsg: string;
   option: any;
-}
-
-// 发布记录返回值
-export interface PublishListResponse {
-  totalCount: number;
-  list: PublishRecordItem[];
 }
