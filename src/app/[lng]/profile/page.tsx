@@ -43,9 +43,25 @@ export default function ProfilePage() {
   const [currentOrderDetail, setCurrentOrderDetail] = useState<Order | null>(null);
 
   // 获取会员状态和过期时间
-  const isVip = userInfo?.vipInfo?.expireTime ? new Date(userInfo.vipInfo.expireTime) > new Date() : false;
+  const isVip = userInfo?.vipInfo?.cycleType && userInfo.vipInfo.cycleType > 0 && 
+                userInfo?.vipInfo?.expireTime ? new Date(userInfo.vipInfo.expireTime) > new Date() : false;
   const vipExpireTime = userInfo?.vipInfo?.expireTime ? new Date(userInfo.vipInfo.expireTime).toLocaleDateString() : '';
-  const vipCycleType = userInfo?.vipInfo?.cycleType === 1 ? '月度会员' : '年度会员';
+  
+  // 获取会员类型显示文本
+  const getVipCycleTypeText = (cycleType: number) => {
+    switch (cycleType) {
+      case 0:
+        return '非会员';
+      case 1:
+        return '月度会员';
+      case 2:
+        return '年度会员';
+      default:
+        return '未知';
+    }
+  };
+  
+  const vipCycleType = getVipCycleTypeText(userInfo?.vipInfo?.cycleType || 0);
 
   // 会员权益数据
   const vipBenefits = [
@@ -355,7 +371,16 @@ export default function ProfilePage() {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: (status: OrderStatus) => getOrderStatusTag(status),
+      render: (status: OrderStatus) => {
+        const statusMap = {
+          1: { color: 'green', text: '订阅成功' },
+          2: { color: 'red', text: '已取消' },
+          3: { color: 'purple', text: '退款成功' },
+          4: { color: 'orange', text: '订单取消' }
+        };
+        const config = statusMap[status] || { color: 'default', text: `状态${status}` };
+        return <Tag color={config.color}>{config.text}</Tag>;
+      },
     },
     {
       title: '创建时间',
@@ -374,7 +399,7 @@ export default function ProfilePage() {
       key: 'action',
       render: (_: any, record: Order) => (
         <Space>
-          {record.status === OrderStatus.SUCCEEDED && (
+          {record.status === 1 && (
             <Popconfirm
               title="确定要退订吗？退订后将无法享受会员权益。"
               onConfirm={() => handleUnsubscribe(record)}
