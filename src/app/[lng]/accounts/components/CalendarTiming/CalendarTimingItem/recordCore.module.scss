@@ -59,6 +59,9 @@
       justify-content: space-between;
       border-bottom: 1px solid var(--grayColor2);
       &-left {
+        &-status {
+          margin-top: 15px;
+        }
       }
       &-right {
         img {
@@ -92,6 +95,14 @@
   :global {
     .ant-popover-inner {
       padding: 0 !important;
+    }
+  }
+}
+
+.pubStatus {
+  :global {
+    .anticon {
+      margin-left: 5px;
     }
   }
 }

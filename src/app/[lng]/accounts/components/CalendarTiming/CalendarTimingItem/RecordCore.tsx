@@ -1,14 +1,21 @@
 import { ForwardedRef, forwardRef, memo, useMemo } from "react";
-import { Button, Dropdown, Image, Popover } from "antd";
+import { Button, Dropdown, Image, Popover, Tag } from "antd";
 import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";
 import { useShallow } from "zustand/react/shallow";
-import { PublishRecordItem } from "@/api/plat/types/publish.types";
+import {
+  PublishRecordItem,
+  PublishStatus,
+} from "@/api/plat/types/publish.types";
 import styles from "./recordCore.module.scss";
 import dayjs from "dayjs";
 import { AccountPlatInfoMap } from "@/app/config/platConfig";
 import {
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  CloseCircleOutlined,
   FieldTimeOutlined,
   FullscreenOutlined,
+  LoadingOutlined,
   MoreOutlined,
 } from "@ant-design/icons";
 import AvatarPlat from "@/components/AvatarPlat";
@@ -20,6 +27,36 @@ export interface IRecordCoreRef {}
 export interface IRecordCoreProps {
   publishRecord: PublishRecordItem;
 }
+
+const PubStatus = ({ status }: { status: PublishStatus }) => {
+  return (
+    <div className={styles.pubStatus}>
+      {status === PublishStatus.FAIL ? (
+        <Tag color="error">
+          发布失败
+          <CloseCircleOutlined />
+        </Tag>
+      ) : status === PublishStatus.PUB_LOADING ? (
+        <Tag color="cyan">
+          发布中
+          <LoadingOutlined />
+        </Tag>
+      ) : status === PublishStatus.RELEASED ? (
+        <Tag color="success">
+          发布成功
+          <CheckCircleOutlined />
+        </Tag>
+      ) : status === PublishStatus.UNPUBLISH ? (
+        <Tag color="processing">
+          等待发布
+          <ClockCircleOutlined />
+        </Tag>
+      ) : (
+        <></>
+      )}
+    </div>
+  );
+};
 
 const RecordCore = memo(
   forwardRef(
@@ -76,10 +113,15 @@ const RecordCore = memo(
               </div>
               <div className="recordDetails-center">
                 <div className="recordDetails-center-left">
-                  <AvatarPlat account={account} size="large" />
-                  <span className="recordDetails-center-title">
-                    {account.nickname}
-                  </span>
+                  <div className="recordDetails-center-left-user">
+                    <AvatarPlat account={account} size="large" />
+                    <span className="recordDetails-center-title">
+                      {account.nickname}
+                    </span>
+                  </div>
+                  <div className="recordDetails-center-left-status">
+                    <PubStatus status={publishRecord.status} />
+                  </div>
                 </div>
                 <div className="recordDetails-center-right">
                   <Image src={publishRecord.coverUrl} />

@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 调整 index.tsx 中的日期格式化逻辑">
-      <change beforePath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix: platInfo添加一些非空判断">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/AccountSidebar/AccountSidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/AccountSidebar/AccountSidebar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/AccountSidebar/UserManageModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/AccountSidebar/UserManageModal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/AvatarPlat/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/AvatarPlat/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/recordCore.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/recordCore.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogPreview.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogPreview.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,6 +23,9 @@
   &quot;associatedIndex&quot;: 4
 }</component>
   <component name="ProjectId" id="2zamg25p8l4plGQi1IzdkD1GGzA" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -54,7 +56,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "project.propVCSSupport.CommitDialog",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "ts.external.directory.path": "E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
@@ -77,7 +79,7 @@
       <option name="presentableId" value="Default" />
       <updated>1751977665735</updated>
       <workItem from="1751977666787" duration="3372000" />
-      <workItem from="1751981060502" duration="1904000" />
+      <workItem from="1751981060502" duration="5059000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -95,7 +97,15 @@
       <option name="project" value="LOCAL" />
       <updated>1751980771015</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="fix: platInfo添加一些非空判断">
+      <option name="closed" value="true" />
+      <created>1751986703860</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1751986703860</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -106,6 +116,7 @@
     <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑" />
     <MESSAGE value="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 调整 index.tsx 中的日期格式化逻辑" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 调整 index.tsx 中的日期格式化逻辑" />
+    <MESSAGE value="fix: platInfo添加一些非空判断" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: platInfo添加一些非空判断" />
   </component>
 </project>
