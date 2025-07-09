@@ -48,16 +48,10 @@ export interface OrderListParams {
   size: number;
 }
 
-// 订阅信息
-export interface Subscription {
-  id: string;
-  userId: string;
-  planName: string;
-  status: 'active' | 'cancelled' | 'expired';
-  createdAt: string;
-  expiresAt: string;
-  price: string;
-  billingCycle: 'monthly' | 'yearly';
+// 订阅列表查询参数
+export interface SubscriptionListParams {
+  page: number;
+  size: number;
 }
 
 // 退款参数

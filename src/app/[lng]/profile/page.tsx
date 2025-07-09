@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user";
 import { getUserInfoApi, updateUserInfoApi } from "@/api/apiReq";
 import { getOrderListApi, getOrderDetailApi, getSubscriptionListApi, refundOrderApi, unsubscribeApi } from "@/api/payment";
-import type { Order, Subscription, OrderListParams, RefundParams, UnsubscribeParams } from "@/api/types/payment";
+import type { Order, OrderListParams, SubscriptionListParams, RefundParams, UnsubscribeParams } from "@/api/types/payment";
 import { OrderStatus, PaymentType } from "@/api/types/payment";
 import styles from "./profile.module.css";
 
@@ -23,10 +23,15 @@ export default function ProfilePage() {
   
   // 订单相关状态
   const [orders, setOrders] = useState<Order[]>([]);
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [subscriptions, setSubscriptions] = useState<Order[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [subscriptionsLoading, setSubscriptionsLoading] = useState(false);
   const [ordersPagination, setOrdersPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0
+  });
+  const [subscriptionsPagination, setSubscriptionsPagination] = useState({
     current: 1,
     pageSize: 10,
     total: 0
@@ -99,12 +104,18 @@ export default function ProfilePage() {
   };
 
   // 获取订阅列表
-  const fetchSubscriptions = async () => {
+  const fetchSubscriptions = async (params: SubscriptionListParams) => {
     setSubscriptionsLoading(true);
     try {
-      const response = await getSubscriptionListApi();
+      const response = await getSubscriptionListApi(params);
       if (response?.code === 0 && response.data) {
-        setSubscriptions(response.data);
+        const paginatedData = response.data;
+        setSubscriptions(paginatedData.list);
+        setSubscriptionsPagination({
+          current: params.page + 1, // API发送的是0开始的页码，UI显示需要加1
+          pageSize: params.size,
+          total: paginatedData.count
+        });
       } else {
         message.error(response?.message || '获取订阅列表失败');
       }
@@ -136,16 +147,16 @@ export default function ProfilePage() {
   };
 
   // 处理退订
-  const handleUnsubscribe = async (subscription: Subscription) => {
+  const handleUnsubscribe = async (order: Order) => {
     try {
       const params: UnsubscribeParams = {
-        id: subscription.id,
+        id: order.id,
         userId: userInfo?.id || ''
       };
       const response = await unsubscribeApi(params);
       if (response?.code === 0) {
         message.success('退订成功');
-        fetchSubscriptions();
+        fetchSubscriptions({ page: subscriptionsPagination.current - 1, size: subscriptionsPagination.pageSize });
       } else {
         message.error(response?.message || '退订失败');
       }
@@ -232,17 +243,6 @@ export default function ProfilePage() {
       [PaymentType.ONCE_YEAR]: '一次性年度'
     };
     return typeMap[paymentType as PaymentType] || paymentType || '未知';
-  };
-
-  // 订阅状态标签
-  const getSubscriptionStatusTag = (status: string) => {
-    const statusMap = {
-      active: { color: 'green', text: '活跃' },
-      cancelled: { color: 'red', text: '已取消' },
-      expired: { color: 'gray', text: '已过期' }
-    };
-    const config = statusMap[status as keyof typeof statusMap] || { color: 'default', text: status };
-    return <Tag color={config.color}>{config.text}</Tag>;
   };
 
   // 订单表格列
@@ -333,40 +333,48 @@ export default function ProfilePage() {
       ellipsis: true,
     },
     {
-      title: '套餐名称',
-      dataIndex: 'planName',
-      key: 'planName',
+      title: '套餐类型',
+      dataIndex: 'metadata',
+      key: 'payment',
+      render: (metadata: any) => {
+        const paymentType = metadata?.payment;
+        return getPaymentTypeText(paymentType);
+      },
     },
     {
-      title: '价格',
-      dataIndex: 'price',
-      key: 'price',
-      render: (price: string) => `¥${price}`,
-    },
-    {
-      title: '计费周期',
-      dataIndex: 'billingCycle',
-      key: 'billingCycle',
-      render: (cycle: string) => cycle === 'monthly' ? '月付' : '年付',
+      title: '金额',
+      dataIndex: 'amount',
+      key: 'amount',
+      render: (amount: number, record: Order) => {
+        const displayAmount = (amount / 100).toFixed(2); // Stripe金额通常以分为单位
+        const symbol = record.currency === 'usd' ? '$' : record.currency === 'cny' ? '¥' : record.currency?.toUpperCase();
+        return `${symbol}${displayAmount}`;
+      },
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: (status: string) => getSubscriptionStatusTag(status),
+      render: (status: OrderStatus) => getOrderStatusTag(status),
     },
     {
-      title: '到期时间',
-      dataIndex: 'expiresAt',
-      key: 'expiresAt',
-      render: (date: string) => new Date(date).toLocaleString(),
+      title: '创建时间',
+      dataIndex: 'created',
+      key: 'created',
+      render: (timestamp: number) => new Date(timestamp * 1000).toLocaleString(),
+    },
+    {
+      title: '过期时间',
+      dataIndex: 'expires_at',
+      key: 'expires_at',
+      render: (timestamp: number) => new Date(timestamp * 1000).toLocaleString(),
     },
     {
       title: '操作',
       key: 'action',
-      render: (_: any, record: Subscription) => (
+      render: (_: any, record: Order) => (
         <Space>
-          {record.status === 'active' && (
+          {record.status === OrderStatus.SUCCEEDED && (
             <Popconfirm
               title="确定要退订吗？退订后将无法享受会员权益。"
               onConfirm={() => handleUnsubscribe(record)}
@@ -501,7 +509,18 @@ export default function ProfilePage() {
               dataSource={subscriptions}
               loading={subscriptionsLoading}
               rowKey="id"
-              pagination={false}
+              pagination={{
+                current: subscriptionsPagination.current,
+                pageSize: subscriptionsPagination.pageSize,
+                total: subscriptionsPagination.total,
+                onChange: (page, size) => {
+                  fetchSubscriptions({ page: page - 1, size: size || 10 });
+                },
+                showSizeChanger: true,
+                showQuickJumper: true,
+                showTotal: (total) => `共 ${total} 条记录`,
+                pageSizeOptions: ['10', '20', '50'],
+              }}
               locale={{
                 emptyText: subscriptionsLoading ? '加载中...' : '暂无订阅记录'
               }}
@@ -523,8 +542,8 @@ export default function ProfilePage() {
         size="large"
         onChange={(key) => {
           if (key === 'orders') {
-            fetchOrders({ page: 1, size: 10 });
-            fetchSubscriptions();
+            fetchOrders({ page: 0, size: 10 });
+            fetchSubscriptions({ page: 0, size: 10 });
           }
         }}
       >
