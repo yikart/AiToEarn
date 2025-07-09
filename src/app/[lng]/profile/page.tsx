@@ -341,16 +341,16 @@ export default function ProfilePage() {
         return getPaymentTypeText(paymentType);
       },
     },
-    {
-      title: '金额',
-      dataIndex: 'amount',
-      key: 'amount',
-      render: (amount: number, record: Order) => {
-        const displayAmount = (amount / 100).toFixed(2); // Stripe金额通常以分为单位
-        const symbol = record.currency === 'usd' ? '$' : record.currency === 'cny' ? '¥' : record.currency?.toUpperCase();
-        return `${symbol}${displayAmount}`;
-      },
-    },
+    // {
+    //   title: '金额',
+    //   dataIndex: 'amount',
+    //   key: 'amount',
+    //   render: (amount: number, record: Order) => {
+    //     const displayAmount = (amount / 100).toFixed(2); // Stripe金额通常以分为单位
+    //     const symbol = record.currency === 'usd' ? '$' : record.currency === 'cny' ? '¥' : record.currency?.toUpperCase();
+    //     return `${symbol}${displayAmount}`;
+    //   },
+    // },
     {
       title: '状态',
       dataIndex: 'status',
@@ -363,12 +363,12 @@ export default function ProfilePage() {
       key: 'created',
       render: (timestamp: number) => new Date(timestamp * 1000).toLocaleString(),
     },
-    {
-      title: '过期时间',
-      dataIndex: 'expires_at',
-      key: 'expires_at',
-      render: (timestamp: number) => new Date(timestamp * 1000).toLocaleString(),
-    },
+    // {
+    //   title: '过期时间',
+    //   dataIndex: 'expires_at',
+    //   key: 'expires_at',
+    //   render: (timestamp: number) => new Date(timestamp * 1000).toLocaleString(),
+    // },
     {
       title: '操作',
       key: 'action',
