@@ -10,15 +10,19 @@ export enum PublishStatus {
 
 // 创建发布入参
 export interface PublishParams {
+  // 传入账号UID
   flowId: string;
   type: PubType;
   title: string;
   desc?: string;
+  // 传入 account
   accountId: string;
   accountType: PlatType;
   videoUrl?: string;
   coverUrl?: string;
   imgList?: string[];
+  // 话题
+  topics?: string[];
   publishTime?: string;
   option?: any;
 }

@@ -13,22 +13,16 @@ import { Button, Image, Input, message, Modal, Tooltip, Upload } from "antd";
 import styles from "@/components/PublishDialog/compoents/PubParmasTextarea/pubCommonComps.module.scss";
 import { ReactSortable } from "react-sortablejs";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import {
-  CaretRightOutlined,
-  CloseOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
+import { CaretRightOutlined, CloseOutlined } from "@ant-design/icons";
 import isEqual from "lodash/isEqual";
 import { TextAreaRef } from "antd/es/input/TextArea";
 import {
   IImgFile,
   IVideoFile,
 } from "@/components/PublishDialog/publishDialog.type";
-import {
-  formatImg,
-  formatVideo,
-} from "@/components/PublishDialog/PublishDialog.util";
+
 import VideoCoverSeting from "@/components/PublishDialog/compoents/PubParmasTextarea/VideoCoverSeting";
+import PubParmasTextareaUpload from "@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasTextareaUpload";
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -106,7 +100,6 @@ const PubParmasTextarea = memo(
         };
         if (onChange) onChange(values);
       }, [imageFileList, videoFile, value]);
-
       useEffect(() => {
         if (imageFileListValue.length === 0 && imageFileList.length === 0)
           return;
@@ -397,42 +390,18 @@ const PubParmasTextarea = memo(
                       }}
                       unmountOnExit
                     >
-                      <Tooltip title="上传图片或视频">
-                        <div onClick={(e) => e.stopPropagation()}>
-                          <Dragger
-                            accept={uploadAccept}
-                            multiple={true}
-                            listType="text"
-                            beforeUpload={async (file, fileList) => {
-                              if (!checkFileListType(fileList)) {
-                                return Upload.LIST_IGNORE;
-                              }
-                              if (file.type.startsWith("video/")) {
-                                // 视频
-                                const video = await formatVideo(file);
-                                // 封面
-                                setVideoFile(video);
-                              } else {
-                                // 图片
-                                const image = await formatImg({
-                                  blob: file!,
-                                  path: file.name,
-                                });
-                                setImageFileList((prevState) => {
-                                  const newState = [...prevState];
-                                  newState.push(image);
-                                  return newState;
-                                });
-                              }
-                              return false;
-                            }}
-                            showUploadList={false}
-                          >
-                            <PlusOutlined />
-                            <p>拖放 & 选择图片或视频</p>
-                          </Dragger>
-                        </div>
-                      </Tooltip>
+                      <PubParmasTextareaUpload
+                        checkFileListType={checkFileListType}
+                        uploadAccept={uploadAccept}
+                        onVideoUpdateFinish={(video) => {
+                          setVideoFile(video);
+                        }}
+                        onImgUpdateFinish={(imgs) => {
+                          setImageFileList((prevState) => {
+                            return [...prevState, ...imgs];
+                          });
+                        }}
+                      />
                     </CSSTransition>
                   )}
                 </TransitionGroup>

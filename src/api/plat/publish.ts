@@ -5,9 +5,14 @@ import {
   PublishListResponse,
   PublishParams,
 } from "@/api/plat/types/publish.types";
+import { parseTopicString } from "@/utils";
 
 // 创建发布
 export const apiCreatePublish = (data: PublishParams) => {
+  const { topics, cleanedString } = parseTopicString(data.desc || '');
+  data.topics = [...new Set(data.topics?.concat(topics))];
+  data.desc = cleanedString;
+
   return request({
     url: "/plat/publish/create",
     method: "POST",

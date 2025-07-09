@@ -7,6 +7,7 @@
  */
 import http, { request } from "@/utils/request";
 import { AiCreateType } from "./types/tools";
+import axios from "axios";
 
 export const toolsApi = {
   /**
@@ -92,18 +93,29 @@ export const toolsApi = {
   /**
    * 上传文件临时
    */
-  async uploadFileTemp(file: Blob) {
+  async uploadFileTemp(
+    file: Blob,
+    onProgress?: (prog: number) => void,
+  ): Promise<string> {
     const formData = new FormData();
     formData.append("file", file);
-    const res = await request<{ name: string }>({
-      url: "/oss/upload",
-      data: formData,
+
+    const res = await axios({
+      url: `${process.env.NEXT_PUBLIC_API_URL_PROXY}/oss/upload`,
       method: "POST",
+      data: formData,
       headers: {
         "Content-Type": "multipart/form-data",
       },
+      onUploadProgress: (progressEvent) => {
+        console.log(progressEvent);
+        const prog = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total!,
+        );
+        if (onProgress) onProgress(prog);
+      },
     });
-    return res!.data;
+    return res.data.data.name;
   },
 
   /**

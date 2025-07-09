@@ -77,10 +77,9 @@ class FetchService<T = Response> {
         params = new URLSearchParams(requestParams.params).toString();
       }
 
-      const res = await fetch(
-        params ? `${fetchURL}?${params}` : fetchURL,
-        requestParams,
-      );
+      const res = await fetch(params ? `${fetchURL}?${params}` : fetchURL, {
+        ...requestParams,
+      });
 
       if (this.responseInterceptor) {
         return resolve(this.responseInterceptor(res));

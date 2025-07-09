@@ -23,6 +23,12 @@ import PlatParamsSetting from "@/components/PublishDialog/compoents/PlatParamsSe
 import PubParmasTextarea from "@/components/PublishDialog/compoents/PubParmasTextarea";
 import usePubParamsVerify from "@/components/PublishDialog/hooks/usePubParamsVerify";
 import PublishDialogDataPicker from "@/components/PublishDialog/compoents/PublishDialogDataPicker";
+import { apiCreatePublish } from "@/api/plat/publish";
+import { PubType } from "@/app/config/publishConfig";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 export interface IPublishDialogRef {
   // 设置发布时间
@@ -33,6 +39,8 @@ export interface IPublishDialogProps {
   open: boolean;
   onClose: () => void;
   accounts: SocialAccount[];
+  // 发布成功
+  onPubSuccess?: () => void;
 }
 
 const { confirm } = Modal;
@@ -41,7 +49,7 @@ const { confirm } = Modal;
 const PublishDialog = memo(
   forwardRef(
     (
-      { open, onClose, accounts }: IPublishDialogProps,
+      { open, onClose, accounts, onPubSuccess }: IPublishDialogProps,
       ref: ForwardedRef<IPublishDialogRef>,
     ) => {
       const [openLeft, setOpenLeft] = useState(false);
@@ -59,6 +67,7 @@ const PublishDialog = memo(
         expandedPubItem,
         setErrParamsMap,
         setPubTime,
+        pubTime,
       } = usePublishDialog(
         useShallow((state) => ({
           pubListChoosed: state.pubListChoosed,
@@ -74,6 +83,7 @@ const PublishDialog = memo(
           expandedPubItem: state.expandedPubItem,
           setErrParamsMap: state.setErrParamsMap,
           setPubTime: state.setPubTime,
+          pubTime: state.pubTime,
         })),
       );
       const { errParamsMap } = usePubParamsVerify(pubListChoosed);
@@ -120,8 +130,38 @@ const PublishDialog = memo(
         setErrParamsMap(errParamsMap);
       }, [errParamsMap]);
 
-      const pubClick = useCallback(() => {
-        console.log("发布：", pubListChoosed);
+      const pubClick = useCallback(async () => {
+        const publishTime = dayjs(pubTime ? pubTime : dayjs().add(6, "minute"))
+          .utc()
+          .format();
+
+        for (const item of pubListChoosed) {
+          await apiCreatePublish({
+            topics: [],
+            flowId: item.account.uid,
+            type: PubType.VIDEO,
+            title: "",
+            desc: item.params.des,
+            accountId: item.account.account,
+            accountType: item.account.type,
+            videoUrl:
+              "https://v2-zj-bjcm.kwaicdn.com/upic/2025/06/24/09/BMjAyNTA2MjQwOTI3MjlfNDQwMjk3NjY1Nl8xNjc1OTkwOTUzNzBfMl8z_b_Bea472124f75ea09e1483d87c112ede39.mp4?tag=1-1751887066-unknown-0-uqpbdciha7-0f5473b4478e400b&provider=self&clientCacheKey=3xcwhdmk5jcyv8y_b.mp4&di=dfa08272&bp=14944&x-ks-ptid=167599095370&Aecs=172.17.4.195&ocid=100001260&tt=b&ss=vpm",
+            coverUrl: "https://education.yikart.cn/images/swiper/swiper1.png",
+            publishTime,
+            option: {
+              isAutoPublish: true,
+              isAutoDelete: true,
+              isAutoCover: true,
+              isAutoImg: true,
+              bilibili: {
+                tid: 21,
+                copyright: 1,
+              },
+            },
+          });
+        }
+
+        if (onPubSuccess) onPubSuccess();
       }, [pubListChoosed]);
 
       const imperativeHandle: IPublishDialogRef = {

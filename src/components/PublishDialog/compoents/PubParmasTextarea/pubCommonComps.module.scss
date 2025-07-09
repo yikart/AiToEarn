@@ -19,7 +19,7 @@ $boxHegiht: 110px;
     .ant-upload-wrapper {
       display: block;
       width: 100%;
-      height: $boxHegiht;
+      height: 100%;
       p {
         font-size: 12px;
       }
@@ -33,6 +33,31 @@ $boxHegiht: 110px;
       grid-template-columns: repeat(5, 1fr);
       flex-wrap: wrap;
       gap: 10px;
+      .pubParmasTextarea-uploads-upload {
+        position: relative;
+        height: $boxHegiht;
+        &-loading {
+          border: 1px dashed var(--colorPrimary3);
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 6px;
+        }
+        &-count {
+          position: absolute;
+          top: 5px;
+          right: 5px;
+          background: var(--colorPrimary5);
+          color: #fff;
+          width: 18px;
+          height: 18px;
+          line-height: 18px;
+          text-align: center;
+          border-radius: 50%;
+          font-size: var(--fs-xs);
+        }
+      }
       &-item {
         //width: 98px;
         height: $boxHegiht;
