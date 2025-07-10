@@ -61,3 +61,48 @@ export const getYouTubeChannelSectionsApi = (data: any) => {
     params: data,
   });
 };
+
+
+/**
+ * 获取facebook授权状态
+ * @param taskId 任务ID
+ * @returns
+ */
+export const getFacebookAuthUrlApi = (mail: string) => {
+  return request({
+    url: '/plat/meta/auth/url',
+    method: 'POST',
+    data: {
+      platform: 'facebook',
+    },
+  });
+};
+
+
+export const checkFacebookAuthApi = ( data:any ) => {
+  return request({
+    url: `/plat/meta/auth/info/${data.accountId}`,
+    method: 'GET',
+  });
+};
+
+
+/**
+ * 获取tiktok授权状态
+ * @param taskId 任务ID
+ * @returns
+ */
+export const getTiktokAuthUrlApi = (mail: string) => {
+  return request({
+    url: '/plat/tiktok/auth/url',
+    method: 'POST', 
+    data: { type: 'pc' },
+  });
+};
+
+export const checkTiktokAuthApi = ( data:any ) => {
+  return request({
+    url: `/plat/tiktok/auth/status/${data.accountId}`,
+    method: 'GET',
+  });
+};

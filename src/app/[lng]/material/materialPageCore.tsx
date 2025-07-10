@@ -5,6 +5,7 @@ import { Modal, Input, Select, message, Popconfirm } from "antd";
 import { useRouter } from "next/navigation";
 import styles from "./styles/material.module.scss";
 import { createMediaGroup, deleteMediaGroup, getMediaGroupList, updateMediaGroupInfo } from "@/api/media";
+import { getOssUrl } from "@/utils/oss";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -16,6 +17,14 @@ interface MediaGroup {
   cover: string;
   count: number;
   type: 'video' | 'img' | 'audio';
+  mediaList?: {
+    list: Array<{
+      _id: string;
+      url: string;
+      type: 'video' | 'img' | 'audio';
+    }>;
+    total: number;
+  };
 }
 
 export const MaterialPageCore = () => {
@@ -42,7 +51,20 @@ export const MaterialPageCore = () => {
       setLoading(true);
       const response:any = await getMediaGroupList(currentPage, pageSize);
       if (response?.data) {
-        setGroups(response.data.list);
+        // 处理每个组的封面和资源数量
+        const processedGroups = response.data.list.map((group: MediaGroup) => {
+          const mediaList = group.mediaList;
+          return {
+            ...group,
+            // 使用 mediaList 中第一张图片作为封面，如果没有则使用原封面
+            cover: mediaList && mediaList.list.length > 0 
+              ? getOssUrl(mediaList.list[0].url) 
+              : group.cover,
+            // 使用 mediaList 的 total 作为资源数量
+            count: mediaList ? mediaList.total : group.count
+          };
+        });
+        setGroups(processedGroups);
         setTotal(response.data.total);
       }
     } catch (error) {
@@ -52,8 +74,14 @@ export const MaterialPageCore = () => {
     }
   };
 
-  const handleGroupClick = (groupId: string) => {
-    router.push(`/material/album/${groupId}`);
+  const handleGroupClick = (group: MediaGroup) => {
+    // 通过 URL 参数传递组信息
+    const params = new URLSearchParams({
+      title: group.title,
+      type: group.type,
+      desc: group.desc
+    });
+    router.push(`/material/album/${group._id}?${params.toString()}`);
   };
 
   const handleCreateGroup = async () => {
@@ -128,7 +156,7 @@ export const MaterialPageCore = () => {
       {groups.length > 0 ? (
         <div className={styles.mediaGrid}>
           {groups.map((group) => (
-            <div key={group._id} className={styles.mediaCard} onClick={() => handleGroupClick(group._id)}>
+            <div key={group._id} className={styles.mediaCard} onClick={() => handleGroupClick(group)}>
               <div className={styles.coverWrapper}>
                 <img alt={group.title} src={group.cover} />
                 {group.type === 'video' && (
