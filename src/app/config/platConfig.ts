@@ -4,10 +4,11 @@ import bilibiliSvg from "@/assets/svgs/plat/bilibili.svg";
 import youtubeSvg from "@/assets/svgs/plat/youtube.svg";
 import douyinSvg from "@/assets/svgs/plat/douyin.svg";
 import twitterSvg from "@/assets/svgs/plat/twtter.svg";
+import facebookSvg from "@/assets/svgs/plat/facebook.svg";
 
 // 平台类型
 export enum PlatType {
-  Douyin = "douyin", // 抖音
+  Tiktok = "douyin", // 抖音
   Xhs = "xhs", // 小红书
   WxSph = "wxSph", // 微信视频号
   KWAI = "KWAI", // 快手
@@ -15,6 +16,7 @@ export enum PlatType {
   BILIBILI = "bilibili", // B站
   Twitter = "twitter", // Twitter
   WxGzh = "wxGzh", // 微信公众号
+  Facebook = "facebook", // Facebook
 }
 
 export interface IAccountPlatInfo {
@@ -132,11 +134,29 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     },
   ],
   [
-    PlatType.Douyin,
+    PlatType.Tiktok,
     {
       name: "TikTok",
       icon: douyinSvg.src,
       url: "https://www.tiktok.com/",
+      pubTypes: new Set([PubType.VIDEO]),
+      commonPubParamsConfig: {
+        timingMax: {
+          maxDate: 30,
+          timeOffset: 60,
+        },
+        titleMax: 16,
+        topicMax: 10,
+      },
+      themeColor: "red",
+    },
+  ],
+  [
+    PlatType.Facebook,
+    {
+      name: "Facebook",
+      icon: facebookSvg.src,
+      url: "https://www.facebook.com/",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
         timingMax: {

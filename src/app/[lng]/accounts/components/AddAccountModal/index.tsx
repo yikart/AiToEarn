@@ -7,6 +7,9 @@ import { kwaiSkip } from "@/app/[lng]/accounts/plat/kwaiLogin";
 import { bilibiliSkip } from "../../plat/BilibiliLogin";
 import { youtubeSkip } from "../../plat/YoutubeLogin";
 import { twitterSkip } from "../../plat/TwtterLogin";
+import { tiktokSkip } from "../../plat/TiktokLogin";
+import { facebookSkip } from "../../plat/FacebookLogin";
+
 
 export interface IAddAccountModalRef {}
 
@@ -62,6 +65,12 @@ const AddAccountModal = memo(
                               break;
                             case PlatType.Twitter:
                               await twitterSkip(key);
+                              break;
+                            case PlatType.Tiktok:
+                              await tiktokSkip(key);    
+                              break;
+                            case PlatType.Facebook:
+                              await facebookSkip(key);  
                               break;
                           }
                         }}
