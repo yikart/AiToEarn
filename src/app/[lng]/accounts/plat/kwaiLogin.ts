@@ -1,24 +1,25 @@
 import { PlatType } from "@/app/config/platConfig";
-import { addKwaiAccountApi, getKwaiAuthUrlApi } from "@/api/plat/kwai";
+import { createKwaiAuth, getKwaiAuthStatus } from "@/api/plat/kwai";
+import { sleep } from "@/utils";
+import { useAccountStore } from "@/store/account";
 
 export const kwaiAppId = "ks715790869885446758";
 
 export async function kwaiSkip(platType: PlatType) {
-  const res = await getKwaiAuthUrlApi(
-    "pc",
-    `${location.origin}/accounts/add?platType=${platType}`,
-  );
+  const res = await createKwaiAuth("pc");
   if (!res?.data) return;
-  window.open(res?.data);
-}
+  window.open(res?.data.url);
 
-export function kwaiLogin(code: string): Promise<boolean> {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const res = await addKwaiAccountApi(code);
-      resolve(!!res?.data);
-    } catch (e) {
-      reject(e);
+  let queryCount = 0;
+  while (queryCount < 120) {
+    const autoStatusRes = await getKwaiAuthStatus(res.data.taskId);
+    if (!autoStatusRes?.data) break;
+    if (autoStatusRes.data.status === 1) {
+      useAccountStore.getState().getAccountList();
+      break;
     }
-  });
+
+    queryCount++;
+    await sleep(1000);
+  }
 }

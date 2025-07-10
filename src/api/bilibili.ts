@@ -12,7 +12,6 @@ export const apiGetBilibiliLoginUrl = (type: "h5" | "pc") => {
   );
 };
 
-
 /**
  * 检查B站授权状态
  * @param accointId 账号ID

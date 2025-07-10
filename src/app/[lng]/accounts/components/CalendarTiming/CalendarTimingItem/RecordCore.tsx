@@ -116,7 +116,7 @@ const RecordCore = memo(
                   <div className="recordDetails-center-left-user">
                     <AvatarPlat account={account} size="large" />
                     <span className="recordDetails-center-title">
-                      {account.nickname}
+                      {account?.nickname}
                     </span>
                   </div>
                   <div className="recordDetails-center-left-status">
