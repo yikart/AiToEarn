@@ -26,8 +26,6 @@ import { useShallow } from "zustand/react/shallow";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";
-import { getPublishList } from "@/api/plat/publish";
-import { PublishRecordItem } from "@/api/plat/types/publish.types";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
@@ -61,20 +59,26 @@ const CalendarTiming = memo(
           accountList: state.accountList,
         })),
       );
-      const { setCalendarCallWidth } = useCalendarTiming(
+      const {
+        setCalendarCallWidth,
+        listLoading,
+        recordMap,
+        setCalendarRef,
+        getPubRecord,
+      } = useCalendarTiming(
         useShallow((state) => ({
           setCalendarCallWidth: state.setCalendarCallWidth,
+          listLoading: state.listLoading,
+          recordMap: state.recordMap,
+          getPubRecord: state.getPubRecord,
+          setCalendarRef: state.setCalendarRef,
         })),
       );
       const calendarTimingItemCallEl = useRef<HTMLDivElement | null>(null);
       const publishDialogRef = useRef<IPublishDialogRef>(null);
-      const [listLoading, setListLoading] = useState(false);
-      // 发布记录数据，key=年月日，value=发布记录
-      const [recordMap, setRecordMap] = useState<
-        Map<string, PublishRecordItem[]>
-      >(new Map());
 
       useEffect(() => {
+        setCalendarRef(calendarRef.current!);
         window.addEventListener("resize", handleResize);
         getPubRecord();
 
@@ -88,48 +92,6 @@ const CalendarTiming = memo(
         // 清理事件监听
         return () => window.removeEventListener("resize", handleResize);
       }, []);
-
-      // 获取发布记录数据
-      const getPubRecord = () => {
-        setTimeout(async () => {
-          setListLoading(true);
-          const date = dayjs(calendarRef.current?.getApi().getDate());
-          const startOfMonth = date.startOf("month");
-          const endOfMonth = date.endOf("month");
-
-          const res = await getPublishList({
-            time: [startOfMonth.utc().format(), endOfMonth.utc().format()],
-          });
-          setListLoading(false);
-          if (!res) return;
-          const recordMap = new Map<string, PublishRecordItem[]>();
-          // 将数据分拣到对应天中
-          res?.data.map((v) => {
-            const days = dayjs(v.publishTime);
-            const timeStr = days.format("YYYY-MM-DD");
-            let list = recordMap.get(timeStr);
-            if (!list) {
-              list = [];
-              recordMap.set(timeStr, list);
-            }
-            list.push(v);
-            recordMap.set(timeStr, list);
-          });
-          // 对每一天的记录按照 publishTime 时间从早到晚排序
-          recordMap.forEach((v, k) => {
-            let list = recordMap.get(k);
-            if (list) {
-              list = list.sort(
-                (a, b) =>
-                  new Date(a.publishTime).getTime() -
-                  new Date(b.publishTime).getTime(),
-              );
-              recordMap.set(k, list);
-            }
-          });
-          setRecordMap(recordMap);
-        }, 10);
-      };
 
       // 处理窗口大小变化
       const handleResize = () => {

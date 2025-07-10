@@ -1,4 +1,11 @@
-import { ForwardedRef, forwardRef, memo, useMemo } from "react";
+import {
+  ForwardedRef,
+  forwardRef,
+  memo,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Button, Dropdown, Image, Popover, Tag } from "antd";
 import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";
 import { useShallow } from "zustand/react/shallow";
@@ -21,6 +28,8 @@ import {
 import AvatarPlat from "@/components/AvatarPlat";
 import { useAccountStore } from "@/store/account";
 import type { MenuProps } from "antd";
+import { TooltipRef } from "antd/lib/tooltip";
+import { deletePublishRecordApi } from "@/api/plat/publish";
 
 export interface IRecordCoreRef {}
 
@@ -64,16 +73,21 @@ const RecordCore = memo(
       { publishRecord }: IRecordCoreProps,
       ref: ForwardedRef<IRecordCoreRef>,
     ) => {
-      const { calendarCallWidth } = useCalendarTiming(
-        useShallow((state) => ({
-          calendarCallWidth: state.calendarCallWidth,
-        })),
-      );
+      const { calendarCallWidth, setListLoading, getPubRecord } =
+        useCalendarTiming(
+          useShallow((state) => ({
+            calendarCallWidth: state.calendarCallWidth,
+            setListLoading: state.setListLoading,
+            getPubRecord: state.getPubRecord,
+          })),
+        );
       const { accountUidMap } = useAccountStore(
         useShallow((state) => ({
           accountUidMap: state.accountUidMap,
         })),
       );
+      const [popoverOpen, setPopoverOpen] = useState(false);
+      const popoverRef = useRef<TooltipRef>(null);
       const dropdownItems: MenuProps["items"] = [
         {
           key: "2",
@@ -83,6 +97,12 @@ const RecordCore = memo(
           key: "3",
           danger: true,
           label: "删除",
+          onClick: async () => {
+            setPopoverOpen(false);
+            setListLoading(true);
+            await deletePublishRecordApi(publishRecord.id);
+            getPubRecord();
+          },
         },
       ];
 
@@ -100,8 +120,11 @@ const RecordCore = memo(
 
       return (
         <Popover
+          ref={popoverRef}
           placement="right"
           rootClassName={styles.recordPopover}
+          open={popoverOpen}
+          onOpenChange={(e) => setPopoverOpen(e)}
           content={
             <div className={styles.recordDetails}>
               <div className="recordDetails-top">
