@@ -4,14 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix(日历): 解决一个诡异的bug，日历，拖动发布记录时，拖到比当前时间小的日历正常显示，拖到比当前时间大的日历时间会盖住发布记录。">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix: 快手授权修改完成，改为任务">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/bilibili.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/bilibili.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/plat/kwai.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/plat/kwai.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/plat/types/kwai.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/plat/types/kwai.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/AccountSidebar/AccountSidebar.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/AccountSidebar/AccountSidebar.module.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/plat/kwaiLogin.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/plat/kwaiLogin.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/add/accountAdd.module.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/add/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/AddAccountModal/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/AddAccountModal/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,7 +92,7 @@
       <workItem from="1751981060502" duration="18325000" />
       <workItem from="1752112076161" duration="3845000" />
       <workItem from="1752118620733" duration="566000" />
-      <workItem from="1752130881346" duration="8000000" />
+      <workItem from="1752130881346" duration="8746000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -161,7 +158,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752137830379</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="fix: 快手授权修改完成，改为任务">
+      <option name="closed" value="true" />
+      <created>1752145461148</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1752145461148</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -189,6 +194,7 @@
     <MESSAGE value="feat(发布弹框): 发布API接入完成" />
     <MESSAGE value="fix: 修复ts报错问题" />
     <MESSAGE value="fix(日历): 解决一个诡异的bug，日历，拖动发布记录时，拖到比当前时间小的日历正常显示，拖到比当前时间大的日历时间会盖住发布记录。" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix(日历): 解决一个诡异的bug，日历，拖动发布记录时，拖到比当前时间小的日历正常显示，拖到比当前时间大的日历时间会盖住发布记录。" />
+    <MESSAGE value="fix: 快手授权修改完成，改为任务" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: 快手授权修改完成，改为任务" />
   </component>
 </project>

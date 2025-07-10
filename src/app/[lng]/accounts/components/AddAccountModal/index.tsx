@@ -10,7 +10,6 @@ import { twitterSkip } from "../../plat/TwtterLogin";
 import { tiktokSkip } from "../../plat/TiktokLogin";
 import { facebookSkip } from "../../plat/FacebookLogin";
 
-
 export interface IAddAccountModalRef {}
 
 export interface IAddAccountModalProps {
@@ -67,10 +66,10 @@ const AddAccountModal = memo(
                               await twitterSkip(key);
                               break;
                             case PlatType.Tiktok:
-                              await tiktokSkip(key);    
+                              await tiktokSkip(key);
                               break;
                             case PlatType.Facebook:
-                              await facebookSkip(key);  
+                              await facebookSkip(key);
                               break;
                           }
                         }}
