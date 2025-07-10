@@ -13,7 +13,7 @@ function snapToGrid(x: number, y: number): [number, number] {
 const layerStyles: CSSProperties = {
   position: "fixed",
   pointerEvents: "none",
-  zIndex: 100,
+  zIndex: 1000,
   left: 0,
   top: 0,
   width: "100%",
@@ -63,13 +63,14 @@ export const CustomDragLayer: FC<CustomDragLayerProps> = (props) => {
       isDragging: monitor.isDragging(),
     }));
 
-  if (!isDragging) {
-    return null;
-  }
   return (
     <div style={layerStyles}>
       <div
-        style={getItemStyles(initialOffset, currentOffset, props.snapToGrid)}
+        style={{
+          ...getItemStyles(initialOffset, currentOffset, props.snapToGrid),
+          position: "relative",
+          zIndex: 10001111,
+        }}
       >
         <BoxDragPreview publishRecord={props.publishRecord} />
       </div>

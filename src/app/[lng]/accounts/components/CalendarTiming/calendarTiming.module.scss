@@ -37,6 +37,7 @@
         display: flex;
         flex: 1;
         .fc-daygrid-day-number {
+          z-index: auto;
           padding: 0;
           flex: 1;
         }

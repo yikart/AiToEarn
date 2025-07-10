@@ -4,9 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(发布弹框): 发布API接入完成">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix: 修复ts报错问题">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.type.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.type.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CustomDragLayer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CustomDragLayer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/recordCore.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/recordCore.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/calendarTiming.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/calendarTiming.module.scss" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,37 +41,37 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder0": "0",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder1": "1",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder2": "2",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder3": "3",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth0": "450",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth1": "450",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth2": "450",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth3": "449",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder0": "0",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder1": "1",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder2": "2",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder3": "3",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth0": "450",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth1": "450",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth2": "450",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth3": "449",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "ts.external.directory.path": "E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder0&quot;: &quot;0&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder1&quot;: &quot;1&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder2&quot;: &quot;2&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder3&quot;: &quot;3&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth0&quot;: &quot;450&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth1&quot;: &quot;450&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth2&quot;: &quot;450&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth3&quot;: &quot;449&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder0&quot;: &quot;0&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder1&quot;: &quot;1&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder2&quot;: &quot;2&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder3&quot;: &quot;3&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth0&quot;: &quot;450&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth1&quot;: &quot;450&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth2&quot;: &quot;450&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth3&quot;: &quot;449&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="ReactDesignerToolWindowState">
     <option name="myId2Visible">
       <map>
@@ -87,7 +90,10 @@
       <option name="presentableId" value="Default" />
       <updated>1751977665735</updated>
       <workItem from="1751977666787" duration="3372000" />
-      <workItem from="1751981060502" duration="18248000" />
+      <workItem from="1751981060502" duration="18325000" />
+      <workItem from="1752112076161" duration="3845000" />
+      <workItem from="1752118620733" duration="566000" />
+      <workItem from="1752130881346" duration="3552000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -137,11 +143,30 @@
       <option name="project" value="LOCAL" />
       <updated>1752066983987</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="fix: 修复ts报错问题">
+      <option name="closed" value="true" />
+      <created>1752067126597</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1752067126597</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
@@ -152,6 +177,7 @@
     <MESSAGE value="feat: 发布记录展示添加状态展示" />
     <MESSAGE value="feat(发布弹框): 上传图片和上传视频完成" />
     <MESSAGE value="feat(发布弹框): 发布API接入完成" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(发布弹框): 发布API接入完成" />
+    <MESSAGE value="fix: 修复ts报错问题" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: 修复ts报错问题" />
   </component>
 </project>

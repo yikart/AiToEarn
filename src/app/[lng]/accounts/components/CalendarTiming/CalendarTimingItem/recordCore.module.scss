@@ -2,7 +2,8 @@
   display: flex !important;
   justify-content: space-between !important;
   box-sizing: border-box;
-  background: transparent !important;
+  //background: transparent !important;
+  position: fixed;
   padding: 0 5px !important;
 
   :global {

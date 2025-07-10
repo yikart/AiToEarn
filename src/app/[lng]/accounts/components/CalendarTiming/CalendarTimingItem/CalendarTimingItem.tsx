@@ -90,7 +90,6 @@ const CalendarTimingItem = memo(
               />
             )}
           </div>
-
           {loading ? (
             <>
               <Skeleton.Button active={true} block={true} size="small" />
@@ -114,7 +113,6 @@ const CalendarTimingItem = memo(
                   </div>
                 </Button>
               )}
-
               {records &&
                 records.map((v) => {
                   return (
