@@ -134,9 +134,9 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
   [
     PlatType.Douyin,
     {
-      name: "Douyin",
+      name: "TikTok",
       icon: douyinSvg.src,
-      url: "https://www.youtube.com/",
+      url: "https://www.tiktok.com/",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
         timingMax: {
