@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { message, Popconfirm } from "antd";
 import styles from "./album.module.scss";
 import { createMedia, deleteMedia, getMediaList } from "@/api/media";
@@ -18,13 +18,22 @@ interface Media {
   desc: string;
 }
 
+interface MediaGroup {
+  _id: string;
+  title: string;
+  desc: string;
+  type: 'video' | 'img' | 'audio';
+}
+
 export default function AlbumPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const albumId = params.id as string;
   console.log('idzhi id', albumId)
   
   const [mediaList, setMediaList] = useState<Media[]>([]);
+  const [groupInfo, setGroupInfo] = useState<MediaGroup | null>(null);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 12;
@@ -32,8 +41,22 @@ export default function AlbumPage() {
   const [previewMedia, setPreviewMedia] = useState<Media | null>(null);
 
   useEffect(() => {
+    // 从 URL 参数获取组信息
+    const title = searchParams.get('title') || '';
+    const type = searchParams.get('type') as 'video' | 'img' | 'audio' || 'video';
+    const desc = searchParams.get('desc') || '';
+    
+    if (title) {
+      setGroupInfo({
+        _id: albumId,
+        title,
+        type,
+        desc
+      });
+    }
+    
     fetchMediaList();
-  }, [currentPage, albumId]);
+  }, [currentPage, albumId, searchParams]);
 
   const fetchMediaList = async () => {
     try {
@@ -52,9 +75,54 @@ export default function AlbumPage() {
     }
   };
 
+  // 根据资源组类型获取允许的文件类型
+  const getAcceptTypes = () => {
+    if (!groupInfo) return "image/*,video/*,audio/*";
+    
+    switch (groupInfo.type) {
+      case 'video':
+        return "video/*";
+      case 'img':
+        return "image/*";
+      case 'audio':
+        return "audio/*";
+      default:
+        return "image/*,video/*,audio/*";
+    }
+  };
+
+  // 验证文件类型是否匹配资源组类型
+  const validateFileType = (file: File): boolean => {
+    if (!groupInfo) return true;
+    
+    const fileType = file.type;
+    switch (groupInfo.type) {
+      case 'video':
+        return fileType.startsWith('video/');
+      case 'img':
+        return fileType.startsWith('image/');
+      case 'audio':
+        return fileType.startsWith('audio/');
+      default:
+        return true;
+    }
+  };
+
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    // 验证文件类型
+    if (!validateFileType(file)) {
+      const typeMap = {
+        'video': '视频',
+        'img': '图片',
+        'audio': '音频'
+      };
+      message.error(`此资源组只允许上传${typeMap[groupInfo!.type]}文件`);
+      event.target.value = ''; // 清空文件选择
+      return;
+    }
 
     try {
       const url = await uploadToOss(file);
@@ -88,10 +156,22 @@ export default function AlbumPage() {
     router.push(`/material/ai-generate`);
   };
 
+  // 获取资源类型显示文本
+  const getTypeText = () => {
+    if (!groupInfo) return '媒体资源';
+    
+    const typeMap = {
+      'video': '视频资源',
+      'img': '图片资源', 
+      'audio': '音频资源'
+    };
+    return typeMap[groupInfo.type];
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h2>媒体资源</h2>
+        <h2>{groupInfo ? `${groupInfo.title} - ${getTypeText()}` : '媒体资源'}</h2>
         <div className={styles.headerActions}>
           <label className={styles.uploadButton} onClick={handleAIGenerate}>
               AI生成素材
@@ -100,11 +180,11 @@ export default function AlbumPage() {
           <label className={styles.uploadButton}>
             <input
               type="file"
-              accept="image/*,video/*,audio/*"
+              accept={getAcceptTypes()}
               onChange={handleUpload}
               style={{ display: 'none' }}
             />
-            <span>上传资源</span>
+            <span>上传{groupInfo ? getTypeText().replace('资源', '') : '资源'}</span>
           </label>
           
         </div>
