@@ -163,7 +163,7 @@ const CalendarTimingItem = memo(
                   ) : (
                     <>
                       <DownOutlined style={{ marginRight: "8px" }} />
-                      显示更多
+                      {records.length - recordsLast?.length} 更多
                     </>
                   )}
                 </Button>

@@ -17,7 +17,7 @@ import {
 import { CSSTransition } from "react-transition-group";
 import { DatesSetArg } from "@fullcalendar/core";
 import { Button } from "antd";
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { LeftOutlined, PlusOutlined, RightOutlined } from "@ant-design/icons";
 import { useTransClient } from "@/app/i18n/client";
 import CalendarTimingItem from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem";
 import PublishDialog, { IPublishDialogRef } from "@/components/PublishDialog";
@@ -28,6 +28,8 @@ import { DndProvider } from "react-dnd";
 import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import AvatarPlat from "@/components/AvatarPlat";
+import AllPlatIcon from "@/app/[lng]/accounts/components/CalendarTiming/AllPlatIcon";
 
 dayjs.extend(utc);
 
@@ -54,9 +56,10 @@ const CalendarTiming = memo(
       };
       const calendarTimingCalendarRef = useRef<HTMLDivElement>(null);
       const [publishDialogOpen, setPublishDialogOpen] = useState(false);
-      const { accountList } = useAccountStore(
+      const { accountList, accountActive } = useAccountStore(
         useShallow((state) => ({
           accountList: state.accountList,
+          accountActive: state.accountActive,
         })),
       );
       const {
@@ -142,6 +145,7 @@ const CalendarTiming = memo(
       return (
         <div className={styles.calendarTiming}>
           <PublishDialog
+            defaultAccountId={accountActive?.id}
             ref={publishDialogRef}
             open={publishDialogOpen}
             onClose={() => setPublishDialogOpen(false)}
@@ -151,6 +155,44 @@ const CalendarTiming = memo(
             accounts={accountList}
           />
 
+          <div className="calendarTiming-header">
+            <div className="calendarTiming-header-user">
+              {!accountActive ? (
+                <>
+                  <AllPlatIcon />
+                  <div className="calendarTiming-header-user-details">
+                    <div className="calendarTiming-header-user-details-name">
+                      所有平台
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <AvatarPlat
+                    account={accountActive!}
+                    avatarWidth={50}
+                    width={18}
+                  />
+                  <div className="calendarTiming-header-user-details">
+                    <div className="calendarTiming-header-user-details-name">
+                      {accountActive.nickname}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="calendarTiming-header-options">
+              <Button
+                size="large"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setPublishDialogOpen(true);
+                }}
+              >
+                新建作品
+              </Button>
+            </div>
+          </div>
           <div className="calendarTiming-toolbar">
             <div className="calendarTiming-toolbar-left">
               <Button
@@ -168,7 +210,7 @@ const CalendarTiming = memo(
               </h1>
               <Button onClick={handleToday}>{t("today")}</Button>
             </div>
-            <div className="calendarTiming-toolbar-right">1</div>
+            <div className="calendarTiming-toolbar-right"></div>
           </div>
           <CSSTransition
             in={!animating}

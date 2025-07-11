@@ -16,6 +16,8 @@ export interface IAccountStore {
   accountGroupList: AccountGroup[];
   accountGroupMap: Map<string, AccountGroup>;
   accountLoading: boolean;
+  // 当前选择的账户
+  accountActive?: SocialAccount;
 }
 
 const store: IAccountStore = {
@@ -27,6 +29,7 @@ const store: IAccountStore = {
   accountMap: new Map([]),
   accountUidMap: new Map([]),
   accountLoading: false,
+  accountActive: undefined,
 };
 
 const getStore = () => {
@@ -44,6 +47,12 @@ export const useAccountStore = create(
         clear() {
           set({
             ...getStore(),
+          });
+        },
+        // 设置选择账户ID
+        setAccountActive(accountActive?: SocialAccount) {
+          set({
+            accountActive,
           });
         },
 

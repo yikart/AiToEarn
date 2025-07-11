@@ -3,18 +3,19 @@
 import styles from "./accounts.module.scss";
 import { useAccountStore } from "@/store/account";
 import { useShallow } from "zustand/react/shallow";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { NoSSR } from "@kwooshung/react-no-ssr";
 import AccountSidebar from "@/app/[lng]/accounts/components/AccountSidebar/AccountSidebar";
 import CalendarTiming from "@/app/[lng]/accounts/components/CalendarTiming";
 
 export default function AccountPageCore() {
-  const { accountInit } = useAccountStore(
+  const { accountInit, accountActive, setAccountActive } = useAccountStore(
     useShallow((state) => ({
       accountInit: state.accountInit,
+      setAccountActive: state.setAccountActive,
+      accountActive: state.accountActive,
     })),
   );
-  const [activeAccountId, setActiveAccountId] = useState("");
 
   useEffect(() => {
     accountInit();
@@ -24,10 +25,13 @@ export default function AccountPageCore() {
     <NoSSR>
       <div className={styles.accounts}>
         <AccountSidebar
-          activeAccountId={activeAccountId}
+          activeAccountId={accountActive?.id || ""}
           onAccountChange={(account) => {
-            console.log("change", account);
-            setActiveAccountId(account.id);
+            if (account.id === accountActive?.id) {
+              setAccountActive(undefined);
+            } else {
+              setAccountActive(account);
+            }
           }}
         />
         <CalendarTiming />

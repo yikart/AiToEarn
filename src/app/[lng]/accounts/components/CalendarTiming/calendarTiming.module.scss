@@ -4,10 +4,31 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 15px;
+  padding: 10px 15px 15px 15px;
   box-sizing: border-box;
 
   :global {
+    .calendarTiming-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      &-user {
+        display: flex;
+        align-items: center;
+        &-details {
+          margin-left: 15px;
+          &-name {
+            font-size: var(--fs-xl);
+            font-weight: 700;
+          }
+        }
+      }
+      &-options {
+
+      }
+    }
+
     .calendarTiming-toolbar {
       display: flex;
       justify-content: space-between;
@@ -123,4 +144,25 @@
 .fadeExitActive {
   opacity: 0;
   transition: opacity 300ms;
+}
+
+.allPlatIcon {
+  width: 50px;
+  height: 50px;
+  border: 1px solid var(--grayColor8);
+  border-radius: 50%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  ul {
+    display: flex;
+    li {
+      border: 2px solid #333;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin: 0.5px;
+    }
+  }
 }

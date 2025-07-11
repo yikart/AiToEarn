@@ -84,8 +84,12 @@ export const usePublishDialog = create(
           return lodash.cloneDeep(get().commonPubParams);
         },
 
-        // 初始化
-        init(account: SocialAccount[]) {
+        /**
+         * 初始化
+         * @param account
+         * @param defaultAccountId 默认选中的账户Id
+         */
+        init(account: SocialAccount[], defaultAccountId?: string) {
           const pubList: PubItem[] = [];
 
           account.map((v) => {
@@ -94,6 +98,12 @@ export const usePublishDialog = create(
               params: methods.pubParamsInit(),
             });
           });
+
+          if (defaultAccountId) {
+            methods.setPubListChoosed([
+              pubList.find((v) => v.account.id === defaultAccountId)!,
+            ]);
+          }
 
           set({
             pubList,

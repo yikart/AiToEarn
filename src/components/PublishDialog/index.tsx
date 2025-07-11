@@ -41,6 +41,8 @@ export interface IPublishDialogProps {
   accounts: SocialAccount[];
   // 发布成功事件
   onPubSuccess?: () => void;
+  // 默认选中的账户Id
+  defaultAccountId?: string;
 }
 
 const { confirm } = Modal;
@@ -49,7 +51,13 @@ const { confirm } = Modal;
 const PublishDialog = memo(
   forwardRef(
     (
-      { open, onClose, accounts, onPubSuccess }: IPublishDialogProps,
+      {
+        open,
+        onClose,
+        accounts,
+        onPubSuccess,
+        defaultAccountId,
+      }: IPublishDialogProps,
       ref: ForwardedRef<IPublishDialogRef>,
     ) => {
       const [openLeft, setOpenLeft] = useState(false);
@@ -91,7 +99,7 @@ const PublishDialog = memo(
 
       useEffect(() => {
         if (open) {
-          init(accounts);
+          init(accounts, defaultAccountId);
         } else {
           setPubListChoosed([]);
           clear();

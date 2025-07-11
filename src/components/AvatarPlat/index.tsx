@@ -12,6 +12,8 @@ export interface IAvatarPlatProps {
   account: SocialAccount;
   size?: AvatarSize;
   className?: string;
+  width?: number;
+  avatarWidth?: number;
 }
 
 const getAvatar = (url: string) => {
@@ -25,19 +27,35 @@ const getAvatar = (url: string) => {
 const AvatarPlat = memo(
   forwardRef(
     (
-      { account, size = "default", className }: IAvatarPlatProps,
+      {
+        account,
+        size = "default",
+        className,
+        width,
+        avatarWidth,
+      }: IAvatarPlatProps,
       ref: ForwardedRef<IAvatarPlatRef>,
     ) => {
       const plat = AccountPlatInfoMap.get(account.type)!;
       return (
         <>
           <div className={`${styles.avatarPlat} ${className}`}>
-            <Avatar src={getAvatar(account.avatar)} size={size} />
+            <Avatar
+              src={getAvatar(account.avatar)}
+              size={avatarWidth ? avatarWidth : size}
+            />
             <img
               src={plat?.icon}
-              style={{
-                width: size === "large" ? 16 : size === "default" ? 12.5 : 10,
-              }}
+              style={
+                !width
+                  ? {
+                      width:
+                        size === "large" ? 16 : size === "default" ? 12.5 : 10,
+                    }
+                  : {
+                      width,
+                    }
+              }
             />
           </div>
         </>
