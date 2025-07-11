@@ -4,9 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(日历): 删除任务、修改任务时间接入API，删除任务完成">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix(发布): 默认返回快手参数">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/plat/types/publish.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/plat/types/publish.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/recordCore.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/recordCore.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/config/platConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/config/platConfig.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/config/publishConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/config/publishConfig.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +98,7 @@
       <workItem from="1752118620733" duration="566000" />
       <workItem from="1752130881346" duration="11774000" />
       <workItem from="1752200550278" duration="253000" />
-      <workItem from="1752200816463" duration="3076000" />
+      <workItem from="1752200816463" duration="10299000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -182,7 +188,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752153478814</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="fix(发布): 默认返回快手参数">
+      <option name="closed" value="true" />
+      <created>1752219562256</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1752219562256</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -213,6 +227,7 @@
     <MESSAGE value="fix: 快手授权修改完成，改为任务" />
     <MESSAGE value="feat: 删除不需要的文件" />
     <MESSAGE value="feat(日历): 删除任务、修改任务时间接入API，删除任务完成" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(日历): 删除任务、修改任务时间接入API，删除任务完成" />
+    <MESSAGE value="fix(发布): 默认返回快手参数" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix(发布): 默认返回快手参数" />
   </component>
 </project>

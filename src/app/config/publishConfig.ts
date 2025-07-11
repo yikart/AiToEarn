@@ -1,7 +1,6 @@
 // 发布类型
 export enum PubType {
   VIDEO = "video", // 视频
-  ARTICLE = "article", // 文章
   ImageText = "image-text", // 图文
 }
 

@@ -20,7 +20,8 @@ export interface PublishParams {
   accountType: PlatType;
   videoUrl?: string;
   coverUrl?: string;
-  imgList?: string[];
+  // 图片列表
+  imgUrlList?: string[];
   // 话题
   topics?: string[];
   publishTime?: string;

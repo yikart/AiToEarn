@@ -168,7 +168,7 @@ const CalendarTiming = memo(
               </h1>
               <Button onClick={handleToday}>{t("today")}</Button>
             </div>
-            <div className="calendarTiming-toolbar-right"></div>
+            <div className="calendarTiming-toolbar-right">1</div>
           </div>
           <CSSTransition
             in={!animating}

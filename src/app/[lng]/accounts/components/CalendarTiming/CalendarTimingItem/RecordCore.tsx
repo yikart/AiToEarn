@@ -147,7 +147,30 @@ const RecordCore = memo(
                   </div>
                 </div>
                 <div className="recordDetails-center-right">
-                  <Image src={publishRecord.coverUrl} />
+                  {publishRecord.videoUrl ? (
+                    <>
+                      <Image
+                        src={publishRecord.coverUrl}
+                        preview={{
+                          destroyOnHidden: true,
+                          imageRender: () => (
+                            <video
+                              muted
+                              width="80%"
+                              height={500}
+                              controls
+                              src={publishRecord.videoUrl}
+                            />
+                          ),
+                          toolbarRender: () => null,
+                        }}
+                      />
+                    </>
+                  ) : (
+                    <Image.PreviewGroup items={publishRecord.imgUrlList}>
+                      <Image src={publishRecord.coverUrl} />
+                    </Image.PreviewGroup>
+                  )}
                 </div>
               </div>
               <div className="recordDetails-bottom">

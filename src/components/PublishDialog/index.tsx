@@ -141,13 +141,17 @@ const PublishDialog = memo(
           const res = await apiCreatePublish({
             topics: [],
             flowId: item.account.uid,
-            type: PubType.VIDEO,
-            title: "",
+            type: item.params.video?.cover.ossUrl
+              ? PubType.VIDEO
+              : PubType.ImageText,
+            title: "测试视频标题",
             desc: item.params.des,
             accountId: item.account.account,
             accountType: item.account.type,
             videoUrl: item.params.video?.ossUrl,
-            coverUrl: item.params.video?.cover.ossUrl,
+            coverUrl:
+              item.params.video?.cover.ossUrl || item.params.images![0].ossUrl!,
+            imgUrlList: item.params.images?.map((v) => v.ossUrl!),
             publishTime,
             option: {
               isAutoPublish: true,

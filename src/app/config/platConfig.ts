@@ -8,8 +8,7 @@ import facebookSvg from "@/assets/svgs/plat/facebook.svg";
 
 // 平台类型
 export enum PlatType {
-  Tiktok = "douyin", // 抖音
-  Xhs = "xhs", // 小红书
+  Tiktok = "tiktok", // tiktok
   WxSph = "wxSph", // 微信视频号
   KWAI = "KWAI", // 快手
   YouTube = "youtube", // YouTube
@@ -38,13 +37,6 @@ export interface IAccountPlatInfo {
   commonPubParamsConfig: {
     // title限制字数，可以不填，不填表示该平台无标题参数
     titleMax?: number;
-    // 定时发布，可以不填，不填表示该平台无定时发布参数
-    timingMax?: {
-      // 同 VideoPubSetModalCommon.maxDate
-      maxDate: number;
-      // 同 VideoPubSetModalCommon.timeOffset
-      timeOffset: number;
-    };
     // 话题数量限制
     topicMax: number;
     // 仅图文发布的限制参数
@@ -71,10 +63,6 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       url: "https://cp.kuaishou.com/profile",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
-        timingMax: {
-          maxDate: 13,
-          timeOffset: 60,
-        },
         topicMax: 4,
       },
       themeColor: "#FF4D00",
@@ -88,10 +76,6 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       url: "https://cp.kuaishou.com/profile",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
-        timingMax: {
-          maxDate: 13,
-          timeOffset: 60,
-        },
         topicMax: 4,
       },
       themeColor: "blue",
@@ -105,10 +89,6 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       url: "https://www.youtube.com/",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
-        timingMax: {
-          maxDate: 30,
-          timeOffset: 60,
-        },
         titleMax: 16,
         topicMax: 10,
       },
@@ -123,10 +103,6 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       url: "https://x.com/",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
-        timingMax: {
-          maxDate: 30,
-          timeOffset: 60,
-        },
         titleMax: 16,
         topicMax: 10,
       },
@@ -141,10 +117,6 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       url: "https://www.tiktok.com/",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
-        timingMax: {
-          maxDate: 30,
-          timeOffset: 60,
-        },
         titleMax: 16,
         topicMax: 10,
       },
@@ -159,10 +131,6 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       url: "https://www.facebook.com/",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
-        timingMax: {
-          maxDate: 30,
-          timeOffset: 60,
-        },
         titleMax: 16,
         topicMax: 10,
       },
