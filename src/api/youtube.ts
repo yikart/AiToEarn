@@ -79,9 +79,9 @@ export const getFacebookAuthUrlApi = (mail: string) => {
 };
 
 
-export const checkFacebookAuthApi = ( data:any ) => {
+export const checkFacebookAuthApi = ( taskId:any ) => {
   return request({
-    url: `/plat/meta/auth/info/${data.accountId}`,
+    url: `/plat/meta/auth/info/${taskId}`,
     method: 'GET',
   });
 };
@@ -100,9 +100,9 @@ export const getTiktokAuthUrlApi = (mail: string) => {
   });
 };
 
-export const checkTiktokAuthApi = ( data:any ) => {
+export const checkTiktokAuthApi = ( taskId:any ) => {
   return request({
-    url: `/plat/tiktok/auth/status/${data.accountId}`,
+    url: `/plat/tiktok/auth/info/${taskId}`,
     method: 'GET',
   });
 };
