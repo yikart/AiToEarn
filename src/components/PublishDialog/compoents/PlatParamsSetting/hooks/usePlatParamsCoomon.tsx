@@ -39,6 +39,7 @@ export default function usePlatParamsCommon(pubItem: PubItem) {
 
   const pubParmasTextareaCommonParams = useMemo(() => {
     const props: IPubParmasTextareaProps = {
+      platType: pubItem.account.type,
       onChange,
       desValue: pubItem.params.des,
       imageFileListValue: pubItem.params.images,

@@ -23,6 +23,8 @@ import {
 
 import VideoCoverSeting from "@/components/PublishDialog/compoents/PubParmasTextarea/VideoCoverSeting";
 import PubParmasTextareaUpload from "@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasTextareaUpload";
+import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
+import { PubType } from "@/app/config/publishConfig";
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -40,12 +42,12 @@ export interface IPubParmasTextareaProps {
   rows?: number;
   // 视频数量限制
   videoMax?: number;
-  // 图片数量限制
-  imageMax?: number;
   // 扩展内容
   extend?: React.ReactNode;
   // 在前面的扩展元素
   beforeExtend?: React.ReactNode;
+  // 平台类型
+  platType: PlatType;
   style?: CSSProperties;
   imageFileListValue?: IImgFile[];
   videoFileValue?: IVideoFile;
@@ -60,12 +62,12 @@ const PubParmasTextarea = memo(
         onChange,
         rows = 12,
         videoMax = 1,
-        imageMax = 20,
         extend,
         imageFileListValue = [],
         videoFileValue,
         desValue = "",
         beforeExtend,
+        platType,
       }: IPubParmasTextareaProps,
       ref: ForwardedRef<IPubParmasTextareaRef>,
     ) => {
@@ -114,14 +116,27 @@ const PubParmasTextarea = memo(
         setVideoFile(videoFileValue);
       }, [videoFileValue]);
 
+      const platConfig = useMemo(() => {
+        return AccountPlatInfoMap.get(platType)! || {};
+      }, [platType]);
+      const imageMax = useMemo(() => {
+        return platConfig.commonPubParamsConfig.imgTextConfig?.imagesMax || 10;
+      }, [platConfig]);
+
       // 动态accept类型
       const uploadAccept = useMemo(() => {
         const hasImage = imageFileList.length !== 0;
         const hasVideo = !!videoFile;
-        if (hasImage && !hasVideo) return "image/*";
-        if (!hasImage && hasVideo) return "video/*";
-        return "image/*,video/*";
-      }, [imageFileList, videoFile]);
+        if (hasImage && !hasVideo && platConfig.pubTypes.has(PubType.ImageText))
+          return "image/*";
+        if (!hasImage && hasVideo && platConfig.pubTypes.has(PubType.VIDEO))
+          return "video/*";
+
+        if (platConfig.pubTypes.has(PubType.ImageText)) return "image/*";
+        if (platConfig.pubTypes.has(PubType.VIDEO)) return "video/*";
+
+        return "video/*,image/*";
+      }, [imageFileList, videoFile, platConfig]);
 
       // 是否可见Dragger
       const canShowDragger = useMemo(() => {
@@ -162,6 +177,15 @@ const PubParmasTextarea = memo(
               key: "1",
             });
           };
+
+          if (uploadHasImage && !platConfig.pubTypes.has(PubType.ImageText)) {
+            messageOpen("该平台不支持上传图片");
+            return false;
+          }
+          if (uploadHasVideo && !platConfig.pubTypes.has(PubType.VIDEO)) {
+            messageOpen("该平台不支持上传视频");
+            return false;
+          }
 
           // 已有图片，只能传图片
           if (hasImageInList && !hasVideoInList && uploadHasVideo) {
@@ -209,7 +233,7 @@ const PubParmasTextarea = memo(
           }
           return true;
         },
-        [imageFileList, videoMax, imageMax, videoFile],
+        [imageFileList, videoMax, imageMax, videoFile, platConfig],
       );
 
       return (
