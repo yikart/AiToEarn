@@ -38,6 +38,8 @@ const PlatParamsSetting = memo(
             return <KwaiParams pubItem={pubItem} />;
           case PlatType.BILIBILI:
             return <BilibParams pubItem={pubItem} />;
+          default:
+            return <KwaiParams pubItem={pubItem} />;
         }
       }, [pubItem]);
 

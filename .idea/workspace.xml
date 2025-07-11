@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat: 删除不需要的文件">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(日历): 删除任务、修改任务时间接入API，删除任务完成">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/plat/publish.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/plat/publish.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/calendarTimingItem.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/calendarTimingItem.module.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,7 +90,9 @@
       <workItem from="1751981060502" duration="18325000" />
       <workItem from="1752112076161" duration="3845000" />
       <workItem from="1752118620733" duration="566000" />
-      <workItem from="1752130881346" duration="11328000" />
+      <workItem from="1752130881346" duration="11774000" />
+      <workItem from="1752200550278" duration="253000" />
+      <workItem from="1752200816463" duration="3076000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -176,7 +174,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752146202309</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="feat(日历): 删除任务、修改任务时间接入API，删除任务完成">
+      <option name="closed" value="true" />
+      <created>1752153478814</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1752153478814</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -206,6 +212,7 @@
     <MESSAGE value="fix(日历): 解决一个诡异的bug，日历，拖动发布记录时，拖到比当前时间小的日历正常显示，拖到比当前时间大的日历时间会盖住发布记录。" />
     <MESSAGE value="fix: 快手授权修改完成，改为任务" />
     <MESSAGE value="feat: 删除不需要的文件" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 删除不需要的文件" />
+    <MESSAGE value="feat(日历): 删除任务、修改任务时间接入API，删除任务完成" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(日历): 删除任务、修改任务时间接入API，删除任务完成" />
   </component>
 </project>
