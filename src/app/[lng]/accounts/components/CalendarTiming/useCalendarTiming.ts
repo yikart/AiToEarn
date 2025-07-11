@@ -2,9 +2,9 @@ import { create } from "zustand";
 import { combine } from "zustand/middleware";
 import lodash from "lodash";
 import { PublishRecordItem } from "@/api/plat/types/publish.types";
-import dayjs from "dayjs";
 import { getPublishList } from "@/api/plat/publish";
 import FullCalendar from "@fullcalendar/react";
+import { getDays } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 
 export interface ICalendarTimingStore {
   // 日历单元格宽度
@@ -51,7 +51,7 @@ export const useCalendarTiming = create(
         // 获取发布记录数据
         async getPubRecord() {
           methods.setListLoading(true);
-          const date = dayjs(get().calendarRef?.getApi().getDate());
+          const date = getDays(get().calendarRef?.getApi().getDate());
           const startOfMonth = date.startOf("month");
           const endOfMonth = date.endOf("month");
 
@@ -63,7 +63,7 @@ export const useCalendarTiming = create(
           const recordMap = new Map<string, PublishRecordItem[]>();
           // 将数据分拣到对应天中
           res?.data.map((v) => {
-            const days = dayjs(v.publishTime);
+            const days = getDays(v.publishTime);
             const timeStr = days.format("YYYY-MM-DD");
             let list = recordMap.get(timeStr);
             if (!list) {

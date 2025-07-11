@@ -15,7 +15,7 @@ import PublishDialogAi from "@/components/PublishDialog/compoents/PublishDialogA
 import PublishDialogPreview from "@/components/PublishDialog/compoents/PublishDialogPreview";
 import { CSSTransition } from "react-transition-group";
 import { SocialAccount } from "@/api/types/account.type";
-import { AccountPlatInfoMap } from "@/app/config/platConfig";
+import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import AvatarPlat from "@/components/AvatarPlat";
 import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
 import { useShallow } from "zustand/react/shallow";
@@ -25,10 +25,10 @@ import usePubParamsVerify from "@/components/PublishDialog/hooks/usePubParamsVer
 import PublishDialogDataPicker from "@/components/PublishDialog/compoents/PublishDialogDataPicker";
 import { apiCreatePublish } from "@/api/plat/publish";
 import { PubType } from "@/app/config/publishConfig";
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-
-dayjs.extend(utc);
+import {
+  getDays,
+  getUtcDays,
+} from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 
 export interface IPublishDialogRef {
   // 设置发布时间
@@ -141,9 +141,9 @@ const PublishDialog = memo(
 
       const pubClick = useCallback(async () => {
         setCreateLoading(true);
-        const publishTime = dayjs(pubTime ? pubTime : dayjs().add(6, "minute"))
-          .utc()
-          .format();
+        const publishTime = getUtcDays(
+          pubTime ? pubTime : getDays().add(6, "minute"),
+        ).format();
 
         for (const item of pubListChoosed) {
           const res = await apiCreatePublish({
@@ -299,6 +299,7 @@ const PublishDialog = memo(
                       )}
                       {pubListChoosed.length >= 2 && (
                         <PubParmasTextarea
+                          platType={PlatType.KWAI}
                           rows={16}
                           desValue={commonPubParams.des}
                           videoFileValue={commonPubParams.video}

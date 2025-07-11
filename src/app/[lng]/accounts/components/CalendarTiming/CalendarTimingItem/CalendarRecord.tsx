@@ -7,6 +7,8 @@ import {
   PublishRecordItem,
   PublishStatus,
 } from "@/api/plat/types/publish.types";
+import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";
+import { useShallow } from "zustand/react/shallow";
 
 export interface ICalendarRecordRef {}
 
@@ -20,12 +22,22 @@ const CalendarRecord = memo(
       { publishRecord }: ICalendarRecordProps,
       ref: ForwardedRef<ICalendarRecordRef>,
     ) => {
+      const { setRecordMap, recordMap,  } = useCalendarTiming(
+        useShallow((state) => ({
+          setRecordMap: state.setRecordMap,
+          recordMap: state.recordMap,
+        })),
+      );
       const [{ opacity }, drag, preview] = useDrag(
         () => ({
           type: "box",
-          item: { name: "1" },
+          item: { publishRecord },
           end(item, monitor) {
             const dropResult = monitor.getDropResult();
+            const { publishRecord } = item;
+            const newRecordMap = new Map(recordMap);
+            newRecordMap.delete(publishRecord.id);
+
             console.log(item, dropResult);
           },
           collect: (monitor: DragSourceMonitor) => ({

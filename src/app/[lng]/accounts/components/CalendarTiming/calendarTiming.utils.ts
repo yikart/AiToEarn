@@ -1,4 +1,8 @@
 import styles from "./calendarTiming.module.scss";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 // 日历国际化
 export const getFullCalendarLang = (lang: string) => {
@@ -36,4 +40,14 @@ export function getTransitionClassNames(direction: "left" | "right" | "fade") {
       exitActive: styles.fadeExitActive,
     };
   }
+}
+
+// 获取UTC days
+export function getUtcDays(date: dayjs.ConfigType) {
+  return dayjs(date).utc();
+}
+
+// 获取当前时区的days
+export function getDays(date?: dayjs.ConfigType) {
+  return dayjs(date);
 }

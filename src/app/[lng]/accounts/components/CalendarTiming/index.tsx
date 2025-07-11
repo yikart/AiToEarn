@@ -11,6 +11,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { useGetClientLng } from "@/hooks/useSystem";
 import {
+  getDays,
   getFullCalendarLang,
   getTransitionClassNames,
 } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
@@ -26,12 +27,8 @@ import { useShallow } from "zustand/react/shallow";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
 import AvatarPlat from "@/components/AvatarPlat";
 import AllPlatIcon from "@/app/[lng]/accounts/components/CalendarTiming/AllPlatIcon";
-
-dayjs.extend(utc);
 
 export interface ICalendarTimingRef {}
 export interface ICalendarTimingProps {}
@@ -232,7 +229,7 @@ const CalendarTiming = memo(
                   headerToolbar={false}
                   stickyFooterScrollbar={true}
                   dayCellContent={(arg) => {
-                    const dateStr = dayjs(arg.date).format("YYYY-MM-DD");
+                    const dateStr = getDays(arg.date).format("YYYY-MM-DD");
                     return (
                       <CalendarTimingItem
                         key={dateStr}
