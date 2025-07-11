@@ -9,6 +9,11 @@ import {
 } from "@/api/plat/types/publish.types";
 import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";
 import { useShallow } from "zustand/react/shallow";
+import {
+  getDays,
+  getUtcDays,
+} from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
+import { updatePublishRecordTimeApi } from "@/api/plat/publish";
 
 export interface ICalendarRecordRef {}
 
@@ -22,7 +27,7 @@ const CalendarRecord = memo(
       { publishRecord }: ICalendarRecordProps,
       ref: ForwardedRef<ICalendarRecordRef>,
     ) => {
-      const { setRecordMap, recordMap,  } = useCalendarTiming(
+      const { setRecordMap, recordMap } = useCalendarTiming(
         useShallow((state) => ({
           setRecordMap: state.setRecordMap,
           recordMap: state.recordMap,
@@ -33,18 +38,54 @@ const CalendarRecord = memo(
           type: "box",
           item: { publishRecord },
           end(item, monitor) {
-            const dropResult = monitor.getDropResult();
+            const dropResult: any = monitor.getDropResult();
+            if (!dropResult) return null;
+
             const { publishRecord } = item;
             const newRecordMap = new Map(recordMap);
-            newRecordMap.delete(publishRecord.id);
+            const days = getDays(publishRecord.publishTime);
+            const timeStr = days.format("YYYY-MM-DD");
+            const newTimeStr = getDays(dropResult!.time.date).format(
+              "YYYY-MM-DD",
+            );
 
-            console.log(item, dropResult);
+            // 更新时间
+            item.publishRecord.publishTime = dropResult!.time.date;
+            // 移除旧数据
+            newRecordMap.set(
+              timeStr,
+              newRecordMap
+                .get(timeStr)!
+                .filter((v) => v.id !== publishRecord.id),
+            );
+            // 添加新数据
+            let list = newRecordMap.get(newTimeStr);
+            if (!list) {
+              list = [];
+              newRecordMap.set(newTimeStr, list);
+            }
+            list.push(publishRecord);
+            // 排序
+            list = list.sort(
+              (a, b) =>
+                new Date(a.publishTime).getTime() -
+                new Date(b.publishTime).getTime(),
+            );
+            newRecordMap.set(newTimeStr, list);
+
+            setRecordMap(newRecordMap);
+
+            // 更新API
+            updatePublishRecordTimeApi({
+              id: publishRecord.id,
+              publishTime: getUtcDays(publishRecord.publishTime).format(),
+            });
           },
           collect: (monitor: DragSourceMonitor) => ({
             opacity: monitor.isDragging() ? 0 : 1,
           }),
         }),
-        [],
+        [recordMap],
       );
 
       useEffect(() => {

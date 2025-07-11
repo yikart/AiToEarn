@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(发布弹框): 发布弹框对不支持上传 图片/视频 的平台做了限制">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="chore(发布弹框): daysjs 时区统一管理">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarRecord.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarRecord.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,7 +92,7 @@
       <workItem from="1752118620733" duration="566000" />
       <workItem from="1752130881346" duration="11774000" />
       <workItem from="1752200550278" duration="253000" />
-      <workItem from="1752200816463" duration="17099000" />
+      <workItem from="1752200816463" duration="19995000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -226,7 +222,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752240016715</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="chore(发布弹框): daysjs 时区统一管理">
+      <option name="closed" value="true" />
+      <created>1752240837323</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1752240837323</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -262,6 +266,7 @@
     <MESSAGE value="feat(日历)：日历在同一个单元格发布记录太多会自动隐藏，并且显示按钮让用户点击查看更多" />
     <MESSAGE value="feat(发布弹框): 添加选择账户一系列逻辑： 1. 选择账户时，开启发布弹框会默认选择，右侧选择的账户。 2. 添加日历header选择用户展示的样式。" />
     <MESSAGE value="feat(发布弹框): 发布弹框对不支持上传 图片/视频 的平台做了限制" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(发布弹框): 发布弹框对不支持上传 图片/视频 的平台做了限制" />
+    <MESSAGE value="chore(发布弹框): daysjs 时区统一管理" />
+    <option name="LAST_COMMIT_MESSAGE" value="chore(发布弹框): daysjs 时区统一管理" />
   </component>
 </project>
