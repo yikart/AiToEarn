@@ -1,9 +1,9 @@
-import { ForwardedRef, forwardRef, memo } from "react";
+import { ForwardedRef, forwardRef, memo, useMemo, useState } from "react";
 import styles from "./calendarTimingItem.module.scss";
 import { DayCellContentArg } from "@fullcalendar/core";
 import { Button, Skeleton } from "antd";
 import { useTransClient } from "@/app/i18n/client";
-import { PlusOutlined } from "@ant-design/icons";
+import { DownOutlined, PlusOutlined, UpOutlined } from "@ant-design/icons";
 import { useDrop } from "react-dnd";
 import CalendarRecord from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarRecord";
 import { CustomDragLayer } from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CustomDragLayer";
@@ -40,6 +40,8 @@ const CalendarTimingItem = memo(
         today.getMonth(),
         today.getDate(),
       );
+      // [[小时，分钟]]
+      const [reservationsTimes, setReservationsTimes] = useState([[4, 12]]);
       const [{ canDrop, isOver }, drop] = useDrop(
         () => ({
           accept: "box",
@@ -53,6 +55,16 @@ const CalendarTimingItem = memo(
         }),
         [],
       );
+      const [isMore, setIsMore] = useState(false);
+
+      const recordsLast = useMemo(() => {
+        if (!records) return [];
+        if (isMore) {
+          return records;
+        } else {
+          return records?.slice(0, 3 - reservationsTimes.length);
+        }
+      }, [isMore, records, reservationsTimes]);
 
       return (
         <div
@@ -96,25 +108,31 @@ const CalendarTimingItem = memo(
             </>
           ) : (
             <div className="calendarTimingItem-con">
-              {argDate >= nowDate && (
-                <Button
-                  size="small"
-                  type="dashed"
-                  onClick={() => {
-                    const days = dayjs(arg.date)
-                      .set("hour", 16)
-                      .set("minute", 12);
-                    onClickPub(days.format());
-                  }}
-                >
-                  <div className="calendarTimingItem-con-btn1">04:12 PM</div>
-                  <div className="calendarTimingItem-con-btn2">
-                    {t("addPost")}
-                  </div>
-                </Button>
-              )}
+              {argDate >= nowDate &&
+                reservationsTimes.map((v, i) => {
+                  return (
+                    <Button
+                      key={i}
+                      size="small"
+                      type="dashed"
+                      onClick={() => {
+                        const days = dayjs(arg.date)
+                          .set("hour", v[0])
+                          .set("minute", v[1]);
+                        onClickPub(days.format());
+                      }}
+                    >
+                      <div className="calendarTimingItem-con-btn1">
+                        {v[0]}:{v[1]} PM
+                      </div>
+                      <div className="calendarTimingItem-con-btn2">
+                        {t("addPost")}
+                      </div>
+                    </Button>
+                  );
+                })}
               {records &&
-                records.map((v) => {
+                recordsLast.map((v) => {
                   return (
                     <div key={v.id}>
                       <CustomDragLayer publishRecord={v} snapToGrid={false} />
@@ -122,6 +140,34 @@ const CalendarTimingItem = memo(
                     </div>
                   );
                 })}
+
+              {records && records.length > 3 - reservationsTimes.length && (
+                <Button
+                  type="text"
+                  style={{
+                    height: "auto",
+                    width: "auto",
+                    padding: "3px 10px",
+                    fontSize: "var(--fs-sm)",
+                    marginBottom: "0",
+                  }}
+                  onClick={() => {
+                    setIsMore(!isMore);
+                  }}
+                >
+                  {isMore ? (
+                    <>
+                      <UpOutlined style={{ marginRight: "8px" }} />
+                      隐藏更多
+                    </>
+                  ) : (
+                    <>
+                      <DownOutlined style={{ marginRight: "8px" }} />
+                      显示更多
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
           )}
         </div>

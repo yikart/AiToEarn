@@ -4,15 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix(发布): 默认返回快手参数">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(日历)：细节调整，1. 发布记录查看，添加图片、视频分别处理。 2. 发布API添加图片处理">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/plat/types/publish.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/plat/types/publish.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/recordCore.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/recordCore.module.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/config/platConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/config/platConfig.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/config/publishConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/config/publishConfig.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/calendarTimingItem.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/calendarTimingItem.module.scss" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,7 +93,7 @@
       <workItem from="1752118620733" duration="566000" />
       <workItem from="1752130881346" duration="11774000" />
       <workItem from="1752200550278" duration="253000" />
-      <workItem from="1752200816463" duration="10299000" />
+      <workItem from="1752200816463" duration="12806000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -196,7 +191,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752219562256</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="feat(日历)：细节调整，1. 发布记录查看，添加图片、视频分别处理。 2. 发布API添加图片处理">
+      <option name="closed" value="true" />
+      <created>1752229429479</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1752229429479</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -228,6 +231,7 @@
     <MESSAGE value="feat: 删除不需要的文件" />
     <MESSAGE value="feat(日历): 删除任务、修改任务时间接入API，删除任务完成" />
     <MESSAGE value="fix(发布): 默认返回快手参数" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix(发布): 默认返回快手参数" />
+    <MESSAGE value="feat(日历)：细节调整，1. 发布记录查看，添加图片、视频分别处理。 2. 发布API添加图片处理" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(日历)：细节调整，1. 发布记录查看，添加图片、视频分别处理。 2. 发布API添加图片处理" />
   </component>
 </project>
