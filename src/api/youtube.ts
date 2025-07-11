@@ -102,7 +102,7 @@ export const getTiktokAuthUrlApi = (mail: string) => {
 
 export const checkTiktokAuthApi = ( taskId:any ) => {
   return request({
-    url: `/plat/tiktok/auth/status/${taskId}`,
+    url: `/plat/tiktok/auth/info/${taskId}`,
     method: 'GET',
   });
 };

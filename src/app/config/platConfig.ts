@@ -3,12 +3,14 @@ import ksSvg from "@/assets/svgs/plat/ks.svg";
 import bilibiliSvg from "@/assets/svgs/plat/bilibili.svg";
 import youtubeSvg from "@/assets/svgs/plat/youtube.svg";
 import douyinSvg from "@/assets/svgs/plat/douyin.svg";
+import tiktokSvg from "@/assets/svgs/plat/tiktok.svg";
 import twitterSvg from "@/assets/svgs/plat/twtter.svg";
 import facebookSvg from "@/assets/svgs/plat/facebook.svg";
 
 // 平台类型
 export enum PlatType {
-  Tiktok = "douyin", // 抖音
+  Tiktok = "tiktok", // 抖音
+  Douyin = "douyin", // 抖音
   Xhs = "xhs", // 小红书
   WxSph = "wxSph", // 微信视频号
   KWAI = "KWAI", // 快手
@@ -63,6 +65,23 @@ export interface IAccountPlatInfo {
 
 // 各个平台的信息
 export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
+  [
+    PlatType.Douyin,
+    {
+      name: "抖音",
+      icon: douyinSvg.src,
+      url: "https://www.douyin.com/",
+      pubTypes: new Set([PubType.VIDEO]),
+      commonPubParamsConfig: {
+        timingMax: {
+          maxDate: 13,
+          timeOffset: 60,
+        },
+        topicMax: 4,
+      },
+      themeColor: "#FF4D00",
+    },
+  ],
   [
     PlatType.KWAI,
     {
@@ -137,7 +156,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.Tiktok,
     {
       name: "TikTok",
-      icon: douyinSvg.src,
+      icon: tiktokSvg.src,
       url: "https://www.tiktok.com/",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
