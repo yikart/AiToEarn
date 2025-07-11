@@ -44,6 +44,8 @@ export interface IPubParams {
   video?: IVideoFile;
   // 话题
   topics?: string[];
+  // 标题
+  title?: string;
 }
 
 export interface PubItem {

@@ -93,6 +93,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
         topicMax: 4,
+        titleMax: 20,
       },
       themeColor: "blue",
     },

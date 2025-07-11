@@ -36,6 +36,13 @@ export default function usePubParamsVerify(data: PubItem[]) {
           });
         }
 
+        // 强制需要标题
+        if (v.account.type === PlatType.BILIBILI && !v.params.title) {
+          return errParamsMapTemp.set(v.account.id, {
+            parErrMsg: "标题是必须的",
+          });
+        }
+
         // 快手要求封面必须大于 400x400
         if (
           v.account?.type === PlatType.KWAI &&

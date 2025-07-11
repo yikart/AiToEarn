@@ -22,10 +22,20 @@
       padding-left: 15px;
       color: var(--grayColor11);
     }
+
+    .platParamsSetting-label {
+      flex-shrink: 0;
+      width: 90px;
+    }
   }
 }
 
 .platParamsSetting_expand {
+  display: flex;
+  align-items: center;
+}
+
+.commonTitleInput {
   display: flex;
   align-items: center;
 }

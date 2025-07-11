@@ -93,10 +93,6 @@ const CalendarTiming = memo(
         return () => window.removeEventListener("resize", handleResize);
       }, []);
 
-      useEffect(() => {
-        console.log(recordMap);
-      }, [recordMap]);
-
       // 处理窗口大小变化
       const handleResize = () => {
         setTimeout(() => {

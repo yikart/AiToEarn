@@ -5,6 +5,7 @@ import {
 } from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/plats.type";
 import PubParmasTextarea from "@/components/PublishDialog/compoents/PubParmasTextarea";
 import usePlatParamsCommon from "@/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon";
+import CommonTitleInput from "@/components/PublishDialog/compoents/PlatParamsSetting/common/CommonTitleInput";
 
 const BilibParams = memo(
   forwardRef(
@@ -13,7 +14,14 @@ const BilibParams = memo(
 
       return (
         <>
-          <PubParmasTextarea {...pubParmasTextareaCommonParams} />
+          <PubParmasTextarea
+            {...pubParmasTextareaCommonParams}
+            extend={
+              <>
+                <CommonTitleInput pubItem={pubItem} />
+              </>
+            }
+          />
         </>
       );
     },

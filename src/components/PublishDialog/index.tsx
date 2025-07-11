@@ -152,7 +152,7 @@ const PublishDialog = memo(
             type: item.params.video?.cover.ossUrl
               ? PubType.VIDEO
               : PubType.ImageText,
-            title: "测试视频标题",
+            title: item.params.title || "",
             desc: item.params.des,
             accountId: item.account.account,
             accountType: item.account.type,

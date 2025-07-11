@@ -31,6 +31,7 @@ const store: IPublishDialogStore = {
   pubList: [],
   step: 0,
   commonPubParams: {
+    title: "",
     des: "",
     video: undefined,
     images: [],
