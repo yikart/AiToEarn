@@ -9,6 +9,8 @@ import CalendarRecord from "@/app/[lng]/accounts/components/CalendarTiming/Calen
 import { CustomDragLayer } from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CustomDragLayer";
 import dayjs from "dayjs";
 import { PublishRecordItem } from "@/api/plat/types/publish.types";
+import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";
+import { useShallow } from "zustand/react/shallow";
 
 export interface ICalendarTimingItemRef {}
 
@@ -56,6 +58,11 @@ const CalendarTimingItem = memo(
         [],
       );
       const [isMore, setIsMore] = useState(false);
+      const { recordMap } = useCalendarTiming(
+        useShallow((state) => ({
+          recordMap: state.recordMap,
+        })),
+      );
 
       const recordsLast = useMemo(() => {
         if (!records) return [];
@@ -64,7 +71,7 @@ const CalendarTimingItem = memo(
         } else {
           return records?.slice(0, 3 - reservationsTimes.length);
         }
-      }, [isMore, records, reservationsTimes]);
+      }, [isMore, records, reservationsTimes, recordMap]);
 
       return (
         <div

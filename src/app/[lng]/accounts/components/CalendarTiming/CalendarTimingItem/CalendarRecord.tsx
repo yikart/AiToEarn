@@ -74,7 +74,6 @@ const CalendarRecord = memo(
             newRecordMap.set(newTimeStr, list);
 
             setRecordMap(newRecordMap);
-
             // 更新API
             updatePublishRecordTimeApi({
               id: publishRecord.id,
