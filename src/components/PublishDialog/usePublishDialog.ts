@@ -35,6 +35,13 @@ const store: IPublishDialogStore = {
     des: "",
     video: undefined,
     images: [],
+    option: {
+      bilibili: {
+        tid: undefined,
+        copyright: 1,
+        source: "",
+      },
+    },
   },
   expandedPubItem: undefined,
   errParamsMap: undefined,
@@ -184,6 +191,7 @@ export const usePublishDialog = create(
           });
         },
       };
+
       return methods;
     },
   ),

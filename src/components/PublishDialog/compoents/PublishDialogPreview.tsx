@@ -59,7 +59,9 @@ const PublishDialogPreview = memo(
                       <div className="publishDialogPreview-preview-video-top" />
                       <div className="publishDialogPreview-preview-images">
                         <Swiper
-                          loop={expandedPubItem!.params.images!.length > 1}
+                          loop={
+                            (expandedPubItem!.params.images?.length || 0) > 1
+                          }
                           modules={[Navigation, Pagination]}
                           pagination={{
                             clickable: true,

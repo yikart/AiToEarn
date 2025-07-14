@@ -1,6 +1,6 @@
 import qs from "qs";
 import { PlatType } from "@/app/config/platConfig";
-import { apiGetBilibiliLoginUrl, apiCheckBilibiliAuth } from "@/api/bilibili";
+import { apiGetBilibiliLoginUrl, apiCheckBilibiliAuth } from "@/api/plat/bilibili";
 import { useAccountStore } from "@/store/account";
 
 

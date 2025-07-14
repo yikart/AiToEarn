@@ -14,7 +14,6 @@ import {
   PublishStatus,
 } from "@/api/plat/types/publish.types";
 import styles from "./recordCore.module.scss";
-import dayjs from "dayjs";
 import { AccountPlatInfoMap } from "@/app/config/platConfig";
 import {
   CheckCircleOutlined,
@@ -30,6 +29,7 @@ import { useAccountStore } from "@/store/account";
 import type { MenuProps } from "antd";
 import { TooltipRef } from "antd/lib/tooltip";
 import { deletePublishRecordApi } from "@/api/plat/publish";
+import { getDays } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 
 export interface IRecordCoreRef {}
 
@@ -92,6 +92,9 @@ const RecordCore = memo(
         {
           key: "2",
           label: "复制链接",
+          onClick: async () => {
+            await navigator.clipboard.writeText(publishRecord.workLink);
+          },
         },
         {
           key: "3",
@@ -107,7 +110,7 @@ const RecordCore = memo(
       ];
 
       const days = useMemo(() => {
-        return dayjs(publishRecord.publishTime);
+        return getDays(publishRecord.publishTime);
       }, [publishRecord]);
 
       const account = useMemo(() => {
@@ -188,7 +191,7 @@ const RecordCore = memo(
           >
             <div className="recordCore-left">
               <img src={platIcon} />
-              <div className="recordCore-left-date">{days.format("HH:MM")}</div>
+              <div className="recordCore-left-date">{days.format("HH:mm")}</div>
             </div>
             <div className="recordCore-right">
               <img src={publishRecord.coverUrl} />

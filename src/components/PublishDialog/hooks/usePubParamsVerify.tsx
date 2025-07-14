@@ -35,12 +35,28 @@ export default function usePubParamsVerify(data: PubItem[]) {
             parErrMsg: "请上传图片或视频",
           });
         }
-
         // 强制需要标题
         if (v.account.type === PlatType.BILIBILI && !v.params.title) {
           return errParamsMapTemp.set(v.account.id, {
             parErrMsg: "标题是必须的",
           });
+        }
+
+        // b站的强制校验
+        if (v.account.type === PlatType.BILIBILI) {
+          if (!v.params.option.bilibili?.tid) {
+            return errParamsMapTemp.set(v.account.id, {
+              parErrMsg: "您必须选择分区！",
+            });
+          }
+          if (
+            v.params.option.bilibili.copyright === 2 &&
+            !v.params.option.bilibili.source
+          ) {
+            return errParamsMapTemp.set(v.account.id, {
+              parErrMsg: "转载时必须填写转载来源",
+            });
+          }
         }
 
         // 快手要求封面必须大于 400x400

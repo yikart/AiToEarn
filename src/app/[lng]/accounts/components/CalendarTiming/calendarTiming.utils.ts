@@ -1,8 +1,10 @@
 import styles from "./calendarTiming.module.scss";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
 dayjs.extend(utc);
+dayjs.extend(timezone);
 
 // 日历国际化
 export const getFullCalendarLang = (lang: string) => {

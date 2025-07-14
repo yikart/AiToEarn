@@ -53,5 +53,5 @@ export default function usePlatParamsCommon(pubItem: PubItem) {
     return props;
   }, [currErrItem, onChange, pubItem]);
 
-  return { pubParmasTextareaCommonParams };
+  return { pubParmasTextareaCommonParams, setOnePubParams };
 }

@@ -35,6 +35,19 @@ export interface IVideoFile {
   cover: IImgFile;
 }
 
+// 发布 每个平台的独有参数
+export interface IPlatOption {
+  bilibili?: {
+    // 分区ID，由获取分区信息接口得到
+    tid?: number;
+    // 1-原创，2-转载(转载时source必填)
+    copyright?: number;
+    // 如果copyright为转载，则此字段表示转载来源
+    source?: string;
+  };
+}
+
+// 发布参数
 export interface IPubParams {
   des: string;
   // 视频和图片不能同时存在，存在图片本次发布则为图文，存在视频则本次发布为视频发布 --------------
@@ -46,9 +59,21 @@ export interface IPubParams {
   topics?: string[];
   // 标题
   title?: string;
+  // 发布 每个平台的独有参数
+  option: IPlatOption;
 }
 
+// 发布数据 item
 export interface PubItem {
   account: SocialAccount;
   params: IPubParams;
+}
+
+// b站分区 item
+export interface BiblPartItem {
+  description: string;
+  id: number;
+  name: string;
+  parent: number;
+  children: BiblPartItem[];
 }

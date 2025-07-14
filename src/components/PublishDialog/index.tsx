@@ -161,16 +161,7 @@ const PublishDialog = memo(
               item.params.video?.cover.ossUrl || item.params.images![0].ossUrl!,
             imgUrlList: item.params.images?.map((v) => v.ossUrl!),
             publishTime,
-            option: {
-              isAutoPublish: true,
-              isAutoDelete: true,
-              isAutoCover: true,
-              isAutoImg: true,
-              bilibili: {
-                tid: 21,
-                copyright: 1,
-              },
-            },
+            option: item.params.option,
           });
           if (res?.code !== 0) {
             return setCreateLoading(false);

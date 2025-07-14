@@ -1,5 +1,6 @@
 import { PubType } from "@/app/config/publishConfig";
 import { PlatType } from "@/app/config/platConfig";
+import { IPlatOption } from "@/components/PublishDialog/publishDialog.type";
 
 export enum PublishStatus {
   FAIL = -1, // 发布失败
@@ -25,7 +26,7 @@ export interface PublishParams {
   // 话题
   topics?: string[];
   publishTime?: string;
-  option?: any;
+  option?: IPlatOption;
 }
 
 // 查询发布列表入参
@@ -42,6 +43,7 @@ export interface PublishRecordItem {
   dataId: string;
   id: string;
   flowId: string;
+  workLink: string;
   type: string;
   title: string;
   desc: string;

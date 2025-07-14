@@ -92,8 +92,8 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       url: "https://cp.kuaishou.com/profile",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
-        topicMax: 4,
-        titleMax: 20,
+        topicMax: 10,
+        titleMax: 80,
       },
       themeColor: "blue",
     },

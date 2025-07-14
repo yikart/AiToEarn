@@ -108,7 +108,6 @@ export const toolsApi = {
         "Content-Type": "multipart/form-data",
       },
       onUploadProgress: (progressEvent) => {
-        console.log(progressEvent);
         const prog = Math.round(
           (progressEvent.loaded * 100) / progressEvent.total!,
         );
