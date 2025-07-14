@@ -6,7 +6,7 @@ import { useAccountStore } from "@/store/account";
 
 
 /**
- * b站被点击
+ * Tiktok被点击
  * @param platType
  */
 export async function tiktokSkip(platType: PlatType) {
