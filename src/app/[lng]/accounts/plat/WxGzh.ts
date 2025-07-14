@@ -17,7 +17,7 @@ export async function wxGzhSkip(platType: PlatType) {
   const url = res.data.url;
   window.open(`${url}`);
 
-  const wxGzhLoginRes = await wxGzhLogin(res.data.taskId);
+  const wxGzhLoginRes = await wxGzhLogin(res.data.id);
   
 }
 
