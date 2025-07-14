@@ -4,18 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix(日历): 修复更新的问题">
-      <change afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/common/CommonTitleInput.tsx" afterDir="false" />
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(发布)：b站添加标题参数">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/config/platConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/config/platConfig.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/platParamsSetting.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/platParamsSetting.module.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/plats/BilibParams.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/plats/BilibParams.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PubParmasTextarea/pubCommonComps.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PubParmasTextarea/pubCommonComps.module.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/hooks/usePubParamsVerify.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/hooks/usePubParamsVerify.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.type.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.type.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/usePublishDialog.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/usePublishDialog.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,7 +94,8 @@
       <workItem from="1752118620733" duration="566000" />
       <workItem from="1752130881346" duration="11774000" />
       <workItem from="1752200550278" duration="253000" />
-      <workItem from="1752200816463" duration="23446000" />
+      <workItem from="1752200816463" duration="23828000" />
+      <workItem from="1752459064500" duration="2377000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -256,7 +249,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752244094407</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="feat(发布)：b站添加标题参数">
+      <option name="closed" value="true" />
+      <created>1752247253122</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1752247253122</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -295,6 +296,7 @@
     <MESSAGE value="chore(发布弹框): daysjs 时区统一管理" />
     <MESSAGE value="chore(发布弹框): 拖动修改发布时间完成" />
     <MESSAGE value="fix(日历): 修复更新的问题" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix(日历): 修复更新的问题" />
+    <MESSAGE value="feat(发布)：b站添加标题参数" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(发布)：b站添加标题参数" />
   </component>
 </project>

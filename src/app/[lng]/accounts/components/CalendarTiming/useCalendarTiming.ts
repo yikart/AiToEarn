@@ -5,6 +5,7 @@ import { PublishRecordItem } from "@/api/plat/types/publish.types";
 import { getPublishList } from "@/api/plat/publish";
 import FullCalendar from "@fullcalendar/react";
 import { getDays } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
+import { useAccountStore } from "@/store/account";
 
 export interface ICalendarTimingStore {
   // 日历单元格宽度
@@ -57,6 +58,7 @@ export const useCalendarTiming = create(
 
           const res = await getPublishList({
             time: [startOfMonth.utc().format(), endOfMonth.utc().format()],
+            accountType: useAccountStore.getState().accountActive?.type,
           });
           methods.setListLoading(false);
           if (!res) return;
