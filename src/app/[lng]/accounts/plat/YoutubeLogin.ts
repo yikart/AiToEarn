@@ -1,6 +1,6 @@
 import qs from "qs";
 import { PlatType } from "@/app/config/platConfig";
-import { getYouTubeAuthUrlApi, apiCheckYoutubeAuth } from "@/api/youtube";
+import { getYouTubeAuthUrlApi, apiCheckYoutubeAuth } from "@/api/platAuth";
 import { useAccountStore } from "@/store/account";
 
 

@@ -1,6 +1,6 @@
 import qs from "qs";
 import { PlatType } from "@/app/config/platConfig";
-import { checkTiktokAuthApi, getTiktokAuthUrlApi } from "@/api/youtube";
+import { checkTiktokAuthApi, getTiktokAuthUrlApi } from "@/api/platAuth";
 import { useAccountStore } from "@/store/account";
 
 
