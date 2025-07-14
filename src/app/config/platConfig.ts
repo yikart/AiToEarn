@@ -6,6 +6,7 @@ import douyinSvg from "@/assets/svgs/plat/douyin.svg";
 import tiktokSvg from "@/assets/svgs/plat/tiktok.svg";
 import twitterSvg from "@/assets/svgs/plat/twtter.svg";
 import facebookSvg from "@/assets/svgs/plat/facebook.svg";
+import wxGzhSvg from "@/assets/svgs/plat/wx-sph.svg";  
 
 // 平台类型
 export enum PlatType {
@@ -109,7 +110,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         titleMax: 16,
         topicMax: 10,
       },
-      themeColor: "red",
+      themeColor: "blue",
     },
   ],
   [
@@ -123,7 +124,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         titleMax: 16,
         topicMax: 10,
       },
-      themeColor: "red",
+      themeColor: "blue",
     },
   ],
   [
@@ -137,7 +138,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         titleMax: 16,
         topicMax: 10,
       },
-      themeColor: "red",
+      themeColor: "black",
     },
   ],
   [
@@ -151,7 +152,21 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         titleMax: 16,
         topicMax: 10,
       },
-      themeColor: "red",
+      themeColor: "blue",
+    },
+  ],
+  [
+    PlatType.WxGzh,
+    {
+      name: "微信公众号",
+      icon: wxGzhSvg.src,
+      url: "https://mp.weixin.qq.com/",
+      pubTypes: new Set([PubType.VIDEO]),
+      commonPubParamsConfig: {
+        titleMax: 16,
+        topicMax: 10,
+      },
+      themeColor: "green",
     },
   ],
 ]);

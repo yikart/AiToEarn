@@ -106,3 +106,20 @@ export const checkTiktokAuthApi = ( taskId:any ) => {
     method: 'GET',
   });
 };
+
+
+// 微信授权
+export const getWxGzhAuthUrlApi = (mail: string) => {
+  return request({
+    url: '/plat/wxGzh/auth/url/pc',
+    method: 'GET', 
+    params: { type: 'pc' },
+  });
+};
+
+export const checkWxGzAuthApi = ( taskId:any ) => {
+  return request({
+    url: `/plat/wxGzh/auth/info/${taskId}`,
+    method: 'GET',
+  });
+};
