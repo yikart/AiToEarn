@@ -216,7 +216,7 @@ function BrandBar() {
     { name: 'Rednote', hasIcon: true, iconPath: xhsIcon.src },
     { name: '抖音(TikTok)', hasIcon: true, iconPath: douyinIcon.src },
     { name: '快手', hasIcon: true, iconPath: ksIcon.src },
-    { name: '视频号', hasIcon: true, iconPath: wxSphIcon.src },
+    { name: '公众号', hasIcon: true, iconPath: wxSphIcon.src },
     { name: 'bilibili', hasIcon: true, iconPath: bilibiliIcon.src },
     { name: 'Facebook', hasIcon: true, iconPath: FacebookIcon.src },
     { name: 'Instagram', hasIcon: true, iconPath: InstagramIcon.src },
