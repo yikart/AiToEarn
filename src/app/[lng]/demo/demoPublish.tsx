@@ -27,7 +27,7 @@ export const DemoPublish = () => {
         // imgList: ["imgList1", "imgList2"],
         publishTime,
         option: {
-          isAutoPublish: true,
+          isAutoPublish: true, 
           isAutoDelete: true,
           isAutoCover: true,
           isAutoImg: true,

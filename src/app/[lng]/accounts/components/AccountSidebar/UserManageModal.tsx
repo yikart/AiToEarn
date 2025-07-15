@@ -126,7 +126,10 @@ const UserManageModal = memo(
               return (
                 <div className="userManage-content-plat">
                   <Tooltip title={platInfo?.name}>
-                    <img src={platInfo?.icon} />
+                    <img src={platInfo?.icon} style={{
+                      width: "20px",
+                      height: "20px",
+                    }} />
                   </Tooltip>
                 </div>
               );
