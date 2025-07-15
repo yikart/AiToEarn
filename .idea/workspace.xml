@@ -4,13 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="chore: 测试静态站点">
-      <change afterPath="$PROJECT_DIR$/src/components/ChooseAccountModule/ChooseAccountModule.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/ChooseAccountModule/chooseAccountModule.module.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/ChooseAccountModule/components/PlatChoose.tsx" afterDir="false" />
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat: 尝试多语言SEO优化，添加静态站点配置">
+      <change afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/next-sitemap.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/next-sitemap.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/next.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sitemap.xml" beforeDir="false" afterPath="$PROJECT_DIR$/public/sitemap.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/demo111/page.tsx" beforeDir="false" />
     </list>
-    <list id="46060a5d-0c4f-44c0-b456-d80eb5b8a41b" name="选择用户弹框恢复" comment="选择用户弹框恢复" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -45,6 +47,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
     "FileHistory.git4idea.history.GitHistoryProvider_flatOrder0": "0",
     "FileHistory.git4idea.history.GitHistoryProvider_flatOrder1": "1",
     "FileHistory.git4idea.history.GitHistoryProvider_flatOrder2": "2",
@@ -97,7 +100,7 @@
   <component name="TaskManager">
     <task active="true" id="Default" summary="默认任务">
       <changelist id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="" />
-      <changelist id="46060a5d-0c4f-44c0-b456-d80eb5b8a41b" name="选择用户弹框恢复" comment="" />
+      <changelist id="" name="选择用户弹框恢复" comment="" />
       <created>1751977665735</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -113,7 +116,7 @@
       <workItem from="1752498765091" duration="2121000" />
       <workItem from="1752543943603" duration="2208000" />
       <workItem from="1752546939831" duration="7230000" />
-      <workItem from="1752567594292" duration="4172000" />
+      <workItem from="1752567594292" duration="7739000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -331,7 +334,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752571476186</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="feat: 恢复选择账户弹框">
+      <option name="closed" value="true" />
+      <created>1752571839374</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1752571839374</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -382,8 +393,7 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="feat: 发布记录展示添加状态展示" />
-    <MESSAGE value="feat(发布弹框): 上传图片和上传视频完成" />
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="feat(发布弹框): 发布API接入完成" />
     <MESSAGE value="fix: 修复ts报错问题" />
     <MESSAGE value="fix(日历): 解决一个诡异的bug，日历，拖动发布记录时，拖到比当前时间小的日历正常显示，拖到比当前时间大的日历时间会盖住发布记录。" />
@@ -407,6 +417,8 @@
     <MESSAGE value="fix(日历): 删除最佳时间" />
     <MESSAGE value="chore: 测试静态站点" />
     <MESSAGE value="选择用户弹框恢复" />
-    <option name="LAST_COMMIT_MESSAGE" value="选择用户弹框恢复" />
+    <MESSAGE value="feat: 恢复选择账户弹框" />
+    <MESSAGE value="feat: 尝试多语言SEO优化，添加静态站点配置" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 尝试多语言SEO优化，添加静态站点配置" />
   </component>
 </project>
