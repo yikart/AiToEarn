@@ -26,7 +26,7 @@ export interface PublishParams {
   // 话题
   topics?: string[];
   publishTime?: string;
-  option?: IPlatOption;
+  option?: any;
 }
 
 // 查询发布列表入参

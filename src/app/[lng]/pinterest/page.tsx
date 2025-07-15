@@ -122,7 +122,7 @@ export default function PinterestPage() {
   };
 
   // 加载boards
-  const loadBoards = async (page = 0, size = 20) => {
+  const loadBoards = async (page = 1, size = 20) => {
     if (!selectedAccount) return;
     
     try {
@@ -143,7 +143,7 @@ export default function PinterestPage() {
   const loadPins = async (page = 1, size = 10) => {
     try {
       setLoading(true);
-      const response = await getPinterestPinListApi({ page: page - 1, size });
+      const response = await getPinterestPinListApi({ page: page, size });
       if (response?.code === 0) {
         setPins(response.data.items);
         setTotal(response.data.total);
