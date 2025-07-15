@@ -31,6 +31,7 @@
     "cookies-next": "^4.3.0",
     "cropperjs": "^1.6.2",
     "dayjs": "^1.11.13",
+    "glob": "^11.0.3",
     "i18next": "24.2.3",
     "i18next-browser-languagedetector": "8.0.4",
     "i18next-resources-to-backend": "1.2.1",
