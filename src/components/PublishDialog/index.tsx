@@ -255,12 +255,12 @@ const PublishDialog = memo(
                               setStep(0);
                             }
                           }
-                          if (step === 0) {
+                          if (step === 0 && newPubListChoosed.length !== 0) {
                             const isFront = newPubListChoosed.every(
                               (v) =>
                                 v.params.des ||
                                 v.params.video ||
-                                v.params.images?.length,
+                                v.params.images?.length !== 0,
                             );
                             if (isFront) {
                               setStep(1);
