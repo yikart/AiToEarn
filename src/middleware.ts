@@ -16,7 +16,11 @@ export function middleware(req: NextRequest) {
   if (ProxyUrls.find((v) => req.nextUrl.pathname.includes(v!))) {
     return NextResponse.next();
   }
-  if (["/robots.txt", "/sitemap.xml"].find((v) => req.nextUrl.pathname.includes(v!))) {
+  if (
+    ["/robots.txt", "/sitemap.xml"].find((v) =>
+      req.nextUrl.pathname.includes(v!),
+    )
+  ) {
     return NextResponse.next();
   }
 
