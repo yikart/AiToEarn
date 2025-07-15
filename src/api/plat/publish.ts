@@ -48,3 +48,11 @@ export const deletePublishRecordApi = (id: string) => {
     method: "DELETE",
   });
 };
+
+// 立即发布任务
+export const nowPubTaskApi = (id: string) => {
+  return request({
+    url: `/plat/publish/nowPubTask/${id}`,
+    method: "POST",
+  });
+};

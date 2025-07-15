@@ -84,6 +84,9 @@
       display: flex;
       justify-content: right;
       :global {
+        button {
+          margin-left: 10px;
+        }
         .anticon {
           font-size: 18px !important;
           font-weight: 900 !important;

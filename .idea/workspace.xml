@@ -4,9 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix(日历)：修复了单元格没有预期时间但是发布记录还是不会填满单元格的问题。">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix(发布弹框): 修复右侧预览不正常隐藏的问题">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/plat/publish.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/plat/publish.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/recordCore.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/recordCore.module.scss" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store/account.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/account.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +110,7 @@
       <workItem from="1752459064500" duration="10175000" />
       <workItem from="1752498765091" duration="2121000" />
       <workItem from="1752543943603" duration="2208000" />
-      <workItem from="1752546939831" duration="2147000" />
+      <workItem from="1752546939831" duration="6622000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -292,7 +296,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752546046166</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="fix(发布弹框): 修复右侧预览不正常隐藏的问题">
+      <option name="closed" value="true" />
+      <created>1752551524945</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1752551524945</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -335,6 +347,7 @@
     <MESSAGE value="feat(发布)：发布记录添加账户筛选API" />
     <MESSAGE value="feat(发布)：1. b站添加是否转载、选择分区参数。 2. 发布记录展示时间修复，将后端返回的时间转为当前时区给用户展示。 3. b站添加强制拦截，分区、转载不选择会强制拦截用户。" />
     <MESSAGE value="fix(日历)：修复了单元格没有预期时间但是发布记录还是不会填满单元格的问题。" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix(日历)：修复了单元格没有预期时间但是发布记录还是不会填满单元格的问题。" />
+    <MESSAGE value="fix(发布弹框): 修复右侧预览不正常隐藏的问题" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix(发布弹框): 修复右侧预览不正常隐藏的问题" />
   </component>
 </project>

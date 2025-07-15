@@ -23,12 +23,13 @@ import {
   FullscreenOutlined,
   LoadingOutlined,
   MoreOutlined,
+  SendOutlined,
 } from "@ant-design/icons";
 import AvatarPlat from "@/components/AvatarPlat";
 import { useAccountStore } from "@/store/account";
 import type { MenuProps } from "antd";
 import { TooltipRef } from "antd/lib/tooltip";
-import { deletePublishRecordApi } from "@/api/plat/publish";
+import { deletePublishRecordApi, nowPubTaskApi } from "@/api/plat/publish";
 import { getDays } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 
 export interface IRecordCoreRef {}
@@ -81,9 +82,9 @@ const RecordCore = memo(
             getPubRecord: state.getPubRecord,
           })),
         );
-      const { accountUidMap } = useAccountStore(
+      const { accountAccountMap } = useAccountStore(
         useShallow((state) => ({
-          accountUidMap: state.accountUidMap,
+          accountAccountMap: state.accountAccountMap,
         })),
       );
       const [popoverOpen, setPopoverOpen] = useState(false);
@@ -114,8 +115,8 @@ const RecordCore = memo(
       }, [publishRecord]);
 
       const account = useMemo(() => {
-        return accountUidMap.get(publishRecord.flowId)!;
-      }, [accountUidMap, publishRecord.flowId]);
+        return accountAccountMap.get(publishRecord.accountId)!;
+      }, [accountAccountMap, publishRecord.accountId]);
 
       const platIcon = useMemo(() => {
         return AccountPlatInfoMap.get(publishRecord.accountType)?.icon;
@@ -177,6 +178,15 @@ const RecordCore = memo(
                 </div>
               </div>
               <div className="recordDetails-bottom">
+                <Button
+                  icon={<SendOutlined />}
+                  onClick={async () => {
+                    await nowPubTaskApi(publishRecord.id);
+                    getPubRecord();
+                  }}
+                >
+                  立即发布
+                </Button>
                 <Dropdown menu={{ items: dropdownItems }} placement="top">
                   <Button icon={<MoreOutlined />} />
                 </Dropdown>

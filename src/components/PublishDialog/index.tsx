@@ -29,6 +29,7 @@ import {
   getDays,
   getUtcDays,
 } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
+import { generateUUID } from "@/utils";
 
 export interface IPublishDialogRef {
   // 设置发布时间
@@ -145,10 +146,11 @@ const PublishDialog = memo(
           pubTime ? pubTime : getDays().add(6, "minute"),
         ).format();
 
+        const flowId = generateUUID();
         for (const item of pubListChoosed) {
           const res = await apiCreatePublish({
             topics: [],
-            flowId: item.account.uid,
+            flowId: flowId,
             type: item.params.video?.cover.ossUrl
               ? PubType.VIDEO
               : PubType.ImageText,
@@ -244,6 +246,7 @@ const PublishDialog = memo(
                           } else {
                             newPubListChoosed.push(pubItem);
                           }
+                          // 是否自动回到第一步
                           if (newPubListChoosed.length === 0 && step === 1) {
                             const isBack = newPubListChoosed.every(
                               (v) =>
@@ -255,6 +258,7 @@ const PublishDialog = memo(
                               setStep(0);
                             }
                           }
+                          // 是否自动前往第二步
                           if (step === 0 && newPubListChoosed.length !== 0) {
                             const isFront = newPubListChoosed.every(
                               (v) =>
