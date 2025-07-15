@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button, Form, Input, Select, Modal, message, Space, InputNumber, List, Card, Spin, Carousel } from "antd";
+import { Button, Form, Input, Select, Modal, message, Space, InputNumber, List, Card, Spin, Carousel, Avatar } from "antd";
 import styles from "./styles/cgmaterial.module.scss";
 import {
   apiCreateMaterialGroup,
@@ -17,7 +17,11 @@ import {
 } from "@/api/material";
 import { getMediaGroupList, getMediaList } from "@/api/media";
 import { getOssUrl } from "@/utils/oss";
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, PlusOutlined, ImportOutlined, FileTextOutlined, FolderOpenOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import { getAccountListApi } from "@/api/account";
+import { getPublishList } from "@/api/plat/publish";
+import { PlatType } from "@/app/config/platConfig";
+import { PublishStatus } from "@/api/plat/types/publish.types";
 
 const { TextArea } = Input;
 
@@ -26,7 +30,6 @@ export default function CgMaterialPageCore() {
   const [groupList, setGroupList] = useState<any[]>([]);
   const [groupLoading, setGroupLoading] = useState(false);
   const [createGroupModal, setCreateGroupModal] = useState(false);
-  const [newGroupTitle, setNewGroupTitle] = useState("");
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
 
   // 组内草稿素材相关
@@ -47,6 +50,7 @@ export default function CgMaterialPageCore() {
   // 创建/批量表单
   const [form] = Form.useForm();
   const [batchForm] = Form.useForm();
+  const [createGroupForm] = Form.useForm();
   const [creating, setCreating] = useState(false);
   const [batchModal, setBatchModal] = useState(false);
   const [batchTaskLoading, setBatchTaskLoading] = useState(false);
@@ -74,6 +78,14 @@ export default function CgMaterialPageCore() {
 
   // 记录显示操作按钮的组id
   const [showActionsId, setShowActionsId] = useState<string | null>(null);
+
+  // 导入功能相关
+  const [importModal, setImportModal] = useState(false);
+  const [accountList, setAccountList] = useState<any[]>([]);
+  const [selectedAccount, setSelectedAccount] = useState<any>(null);
+  const [publishList, setPublishList] = useState<any[]>([]);
+  const [selectedPublishItems, setSelectedPublishItems] = useState<string[]>([]);
+  const [importLoading, setImportLoading] = useState(false);
 
   // 初始化加载草稿箱组
   useEffect(() => {
@@ -117,20 +129,25 @@ export default function CgMaterialPageCore() {
 
   // 创建草稿箱组
   async function handleCreateGroup() {
-    if (!newGroupTitle) return message.warning("请输入草稿箱组名称");
-    setCreating(true);
     try {
+      const values = await createGroupForm.validateFields();
+      setCreating(true);
       await apiCreateMaterialGroup({
-        type: MaterialType.ARTICLE,
-        name: newGroupTitle,
+        type: values.type,
+        name: values.name,
+        desc: values.desc || '',
       });
       message.success("创建草稿箱组成功");
       setCreateGroupModal(false);
-      setNewGroupTitle("");
+      createGroupForm.resetFields();
       fetchGroupList();
-    } catch (e) {
-      message.error("创建草稿箱组失败");
-    } finally {
+          } catch (e: any) {
+        if (e?.errorFields) {
+          message.warning("请完善表单信息");
+        } else {
+          message.error("创建草稿箱组失败");
+        }
+      } finally {
       setCreating(false);
     }
   }
@@ -332,6 +349,93 @@ export default function CgMaterialPageCore() {
     }
   }
 
+  // 打开导入弹窗
+  async function openImportModal() {
+    setImportModal(true);
+    try {
+      const res = await getAccountListApi();
+      setAccountList(res?.data || []);
+    } catch (e) {
+      message.error("获取账户列表失败");
+    }
+  }
+
+  // 选择账户后获取发布列表
+  async function handleSelectAccount(account: any) {
+    setSelectedAccount(account);
+    try {
+      const res = await getPublishList({
+        accountId: account.id,
+        accountType: account.type as PlatType,
+        status: PublishStatus.RELEASED, // 只获取已发布的内容
+      });
+      setPublishList(res?.data || []);
+    } catch (e) {
+      message.error("获取发布列表失败");
+      setPublishList([]);
+    }
+  }
+
+  // 导入选中的发布内容到草稿箱
+  async function handleImportPublishItems() {
+    if (!selectedAccount || selectedPublishItems.length === 0) {
+      message.warning('请选择要导入的发布内容');
+      return;
+    }
+    
+    if (!selectedGroup) {
+      message.warning('请先选择草稿箱组');
+      return;
+    }
+
+    setImportLoading(true);
+    try {
+      const importPromises = selectedPublishItems.map(async (itemId) => {
+        const publishItem = publishList.find(item => item.id === itemId);
+        if (!publishItem) return;
+
+        // 构造素材数据
+        const mediaList = [];
+                 if (publishItem.imgUrlList && publishItem.imgUrlList.length > 0) {
+           mediaList.push(...publishItem.imgUrlList.map((url: string) => ({
+             url,
+             type: 'image',
+             content: '',
+           })));
+         }
+        if (publishItem.videoUrl) {
+          mediaList.push({
+            url: publishItem.videoUrl,
+            type: 'video',
+            content: '',
+          });
+        }
+
+        return apiCreateMaterial({
+          groupId: selectedGroup._id,
+          coverUrl: publishItem.coverUrl || publishItem.imgUrlList?.[0] || '',
+          mediaList,
+          title: publishItem.title,
+          desc: publishItem.desc,
+          option: publishItem.option || {},
+          location: [0, 0], // 默认位置
+        });
+      });
+
+      await Promise.all(importPromises);
+      message.success(`成功导入 ${selectedPublishItems.length} 条内容到草稿箱`);
+      setImportModal(false);
+      setSelectedPublishItems([]);
+      setSelectedAccount(null);
+      setPublishList([]);
+      fetchMaterialList(selectedGroup._id);
+    } catch (e) {
+      message.error('导入失败');
+    } finally {
+      setImportLoading(false);
+    }
+  }
+
   // 组列表项事件：PC端长按，移动端左滑
   function handleGroupItemEvents(item: any) {
     let timer: any = null;
@@ -377,137 +481,350 @@ export default function CgMaterialPageCore() {
     };
   }
 
+  // 获取平台显示名称
+  function getPlatformName(type: string) {
+    const platformNames: Record<string, string> = {
+      'tiktok': 'TikTok',
+      'youtube': 'YouTube', 
+      'twitter': 'Twitter',
+      'bilibili': '哔哩哔哩',
+      'KWAI': '快手',
+      'douyin': '抖音',
+      'xhs': '小红书',
+      'wxSph': '微信视频号',
+      'wxGzh': '微信公众号',
+      'facebook': 'Facebook',
+    };
+    return platformNames[type] || type;
+  }
+
   return (
     <div className={styles.materialContainer}>
       <div className={styles.header}>
         <h2>AI草稿箱</h2>
-        <Button type="primary" onClick={()=>setCreateGroupModal(true)}>新建草稿箱组</Button>
-      </div>
-      <div style={{display:'flex',gap:32,marginTop:24}}>
-        {/* 左侧组列表 */}
-        <div style={{width:260}}>
-          <Spin spinning={groupLoading}>
-            <List
-              bordered
-              dataSource={groupList as any[]}
-              renderItem={(item: any) => (
-                <List.Item
-                  className={styles.groupItem + (selectedGroup?._id===item._id ? ' ' + styles.selected : '') + (showActionsId===item._id ? ' ' + styles.showActions : '')}
-                  title={item.name || item.title}
-                  style={{position:'relative'}}
-                  onClick={()=>setSelectedGroup(item as any)}
-                  {...handleGroupItemEvents(item)}
-                >
-                  <div className={styles.groupName}>{item.name || item.title}</div>
-                  <div className={styles.descTypeInfo}>
-                    {item.desc && <span>{item.desc}</span>}
-                    <span>
-                      {item.type === MaterialType.ARTICLE ? '图文' : item.type === MaterialType.VIDEO ? '视频' : item.type}
-                    </span>
-                  </div>
-                  <div className={styles.groupActions}>
-                    <span
-                      className={styles.groupActionBtn}
-                      onClick={e => {
-                        e.stopPropagation();
-                        setEditingGroup(item);
-                        setEditGroupName(item.name || item.title || "");
-                        setEditGroupModal(true);
-                      }}
-                    >
-                      <EditOutlined /> 编辑
-                    </span>
-                    <span
-                      className={styles.groupActionBtn}
-                      onClick={e => {
-                        e.stopPropagation();
-                        Modal.confirm({
-                          title: '删除草稿组',
-                          content: `确定要删除"${item.name || item.title}"吗？`,
-                          okText: '删除',
-                          okType: 'danger',
-                          cancelText: '取消',
-                          onOk: async () => {
-                            try {
-                              await apiDeleteMaterialGroup(item._id);
-                              message.success('删除成功');
-                              fetchGroupList();
-                            } catch {
-                              message.error('删除失败');
-                            }
-                          },
-                        });
-                      }}
-                    >
-                      <DeleteOutlined /> 删除
-                    </span>
-                  </div>
-                </List.Item>
-              )}
-            />
-          </Spin>
+        <div className={styles.headerActions}>
+          <Button 
+            className={`${styles.actionButton} ${styles.importButton}`}
+            onClick={openImportModal}
+            icon={<ImportOutlined />}
+          >
+            导入发布内容
+          </Button>
+          <Button 
+            className={styles.actionButton}
+            onClick={() => setCreateGroupModal(true)}
+            icon={<PlusOutlined />}
+          >
+            新建草稿箱组
+          </Button>
         </div>
-        {/* 右侧组内素材列表及操作 */}
-        <div style={{flex:1,minWidth:360}}>
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
-            <div style={{fontWeight:600,fontSize:18}}>
-              {selectedGroup?.name || selectedGroup?.title || '未选择组'}
-            </div>
-            <Space>
-              <Button type="primary" onClick={openCreateMaterialModal} disabled={!selectedGroup}>创建素材</Button>
-              <Button onClick={openBatchModal} disabled={!selectedGroup}>批量生成草稿</Button>
-            </Space>
+      </div>
+      
+      <div className={styles.cgMain}>
+        {/* 左侧边栏 */}
+        <div className={styles.sidebar}>
+          <div className={styles.groupListContainer}>
+            <Spin spinning={groupLoading}>
+              {groupList.length === 0 ? (
+                <div className={styles.emptyState}>
+                  <div className={styles.emptyIcon}>
+                    <FolderOpenOutlined />
+                  </div>
+                  <h3>暂无草稿箱组</h3>
+                  <p>创建您的第一个草稿箱组开始整理素材</p>
+                </div>
+              ) : (
+                <List
+                  dataSource={groupList as any[]}
+                  renderItem={(item: any) => (
+                    <List.Item
+                      className={styles.groupItem + (selectedGroup?._id===item._id ? ' ' + styles.selected : '') + (showActionsId===item._id ? ' ' + styles.showActions : '')}
+                      onClick={()=>setSelectedGroup(item as any)}
+                      {...handleGroupItemEvents(item)}
+                    >
+                      <div className={styles.groupName} style={{ marginTop: 10, paddingLeft: 10 }}>{item.name || item.title}</div>
+                      <div className={styles.descTypeInfo} style={{ marginBottom: 10, paddingLeft: 10, paddingRight: 10 }}>
+                        <span>{item.desc || '暂无描述'}</span>
+                        <span className={styles.typeTag}>
+                          {item.type === MaterialType.ARTICLE ? '图文' : item.type === MaterialType.VIDEO ? '视频' : item.type}
+                        </span>
+                      </div>
+                      <div className={styles.groupActions}>
+                        <span
+                          className={styles.groupActionBtn}
+                          onClick={e => {
+                            e.stopPropagation();
+                            setEditingGroup(item);
+                            setEditGroupName(item.name || item.title || "");
+                            setEditGroupModal(true);
+                          }}
+                        >
+                          <EditOutlined /> 编辑
+                        </span>
+                        <span
+                          className={styles.groupActionBtn}
+                          onClick={e => {
+                            e.stopPropagation();
+                            Modal.confirm({
+                              title: '删除草稿组',
+                              content: `确定要删除"${item.name || item.title}"吗？`,
+                              okText: '删除',
+                              okType: 'danger',
+                              cancelText: '取消',
+                              onOk: async () => {
+                                try {
+                                  await apiDeleteMaterialGroup(item._id);
+                                  message.success('删除成功');
+                                  fetchGroupList();
+                                } catch {
+                                  message.error('删除失败');
+                                }
+                              },
+                            });
+                          }}
+                        >
+                          <DeleteOutlined /> 删除
+                        </span>
+                      </div>
+                    </List.Item>
+                  )}
+                />
+              )}
+            </Spin>
           </div>
-          <Spin spinning={materialLoading}>
-            <List
-              grid={{gutter:16,column:3}}
-              dataSource={materialList}
-              renderItem={item => (
-                <List.Item>
-                  <Card
-                    hoverable
-                    onClick={() => { setDetailData(item); setDetailModal(true); }}
-                    cover={
-                      item.coverUrl ? (
-                        <img
-                          src={getOssUrl(item.coverUrl)}
-                          alt="cover"
-                          style={{ width: "100%", objectFit: "cover", borderRadius: 6 }}
-                        />
-                      ) : null
-                    }
-                  >
-                    <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 4 }}>{item.title}</div>
-                    <div style={{ color: "#888", marginBottom: 4 }}>{item.desc}</div>
-                    <div>
-                      <span style={{ marginRight: 8, color: "#1677ff" }}>
-                        {item.type === MaterialType.ARTICLE ? "图文" : item.type === MaterialType.VIDEO ? "视频" : item.type}
-                      </span>
-                      <span style={{ color: item.status === 0 ? "#faad14" : "#52c41a" }}>
-                        {item.status === 0 ? "生成中" : "已生成"}
-                      </span>
-                    </div>
-                  </Card>
-                </List.Item>
+        </div>
+
+        {/* 右侧内容区域 */}
+        <div className={styles.contentArea}>
+          <div className={styles.contentHeader}>
+            <div className={styles.contentTitle}>
+              {selectedGroup?.name || selectedGroup?.title || '请选择草稿箱组'}
+            </div>
+            <div className={styles.contentActions}>
+              <Button 
+                className={styles.actionButton}
+                onClick={openCreateMaterialModal} 
+                disabled={!selectedGroup}
+                icon={<PlusOutlined />}
+              >
+                创建素材
+              </Button>
+              <Button 
+                className={styles.actionButton}
+                onClick={openBatchModal} 
+                disabled={!selectedGroup}
+                icon={<FileTextOutlined />}
+              >
+                批量生成草稿
+              </Button>
+            </div>
+          </div>
+
+          <div className={styles.materialListContainer}>
+            <Spin spinning={materialLoading}>
+              {!selectedGroup ? (
+                <div className={styles.emptyState}>
+                  <div className={styles.emptyIcon}>
+                    <FolderOpenOutlined />
+                  </div>
+                  <h3>请选择草稿箱组</h3>
+                  <p>从左侧选择一个草稿箱组来查看其中的素材</p>
+                </div>
+              ) : materialList.length === 0 ? (
+                <div className={styles.emptyState}>
+                  <div className={styles.emptyIcon}>
+                    <FileTextOutlined />
+                  </div>
+                  <h3>暂无草稿素材</h3>
+                  <p>创建您的第一个素材或批量生成草稿</p>
+                </div>
+              ) : (
+                <List
+                  grid={{gutter: [16, 16], column: 3}}
+                  dataSource={materialList}
+                  renderItem={item => (
+                    <List.Item>
+                      <div
+                        className={styles.materialCard}
+                        onClick={() => { setDetailData(item); setDetailModal(true); }}
+                      >
+                        {item.coverUrl && (
+                          <img
+                            src={getOssUrl(item.coverUrl)}
+                            alt="cover"
+                            className={styles.cardCover}
+                          />
+                        )}
+                        <div className={styles.cardContent}>
+                          <div className={styles.cardTitle}>{item.title}</div>
+                          <div className={styles.cardDesc}>{item.desc}</div>
+                          <div className={styles.cardMeta}>
+                            <span className={styles.typeLabel}>
+                              {item.type === MaterialType.ARTICLE ? "图文" : item.type === MaterialType.VIDEO ? "视频" : item.type}
+                            </span>
+                            <span className={`${styles.statusLabel} ${item.status === 0 ? styles.generating : styles.completed}`}>
+                              {item.status === 0 ? "生成中" : "已生成"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </List.Item>
+                  )}
+                />
               )}
-            />
-          </Spin>
+            </Spin>
+          </div>
         </div>
       </div>
+
       {/* 创建草稿箱组弹窗 */}
       <Modal
         open={createGroupModal}
         title="新建草稿箱组"
         onOk={handleCreateGroup}
-        onCancel={()=>setCreateGroupModal(false)}
+        onCancel={() => {
+          setCreateGroupModal(false);
+          createGroupForm.resetFields();
+        }}
         confirmLoading={creating}
+        width={500}
       >
-        <Input
-          placeholder="请输入草稿箱组名称"
-          value={newGroupTitle}
-          onChange={e=>setNewGroupTitle(e.target.value)}
-        />
+        <Form form={createGroupForm} layout="vertical">
+          <Form.Item 
+            label="组名称" 
+            name="name" 
+            rules={[{ required: true, message: '请输入草稿箱组名称' }]}
+          >
+            <Input placeholder="请输入草稿箱组名称" />
+          </Form.Item>
+          
+          <Form.Item 
+            label="类型" 
+            name="type" 
+            rules={[{ required: true, message: '请选择草稿类型' }]}
+            initialValue={MaterialType.ARTICLE}
+          >
+            <Select placeholder="请选择草稿类型">
+              <Select.Option value={MaterialType.ARTICLE}>
+                <FileTextOutlined style={{ marginRight: 8, color: '#52c41a' }} />
+                图文草稿
+              </Select.Option>
+              <Select.Option value={MaterialType.VIDEO}>
+                <VideoCameraOutlined style={{ marginRight: 8, color: '#1890ff' }} />
+                视频草稿
+              </Select.Option>
+            </Select>
+          </Form.Item>
+          
+          <Form.Item label="描述" name="desc">
+            <TextArea 
+              rows={3} 
+              placeholder="请输入草稿箱组描述（可选）"
+              maxLength={200}
+              showCount
+            />
+          </Form.Item>
+        </Form>
       </Modal>
+
+      {/* 导入发布内容弹窗 */}
+      <Modal
+        open={importModal}
+        title="导入已有发布内容"
+        onOk={handleImportPublishItems}
+        onCancel={() => {
+          setImportModal(false);
+          setSelectedAccount(null);
+          setPublishList([]);
+          setSelectedPublishItems([]);
+        }}
+        confirmLoading={importLoading}
+        width={800}
+        okText="导入选中内容"
+        okButtonProps={{ disabled: selectedPublishItems.length === 0 }}
+      >
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontWeight: 600, marginBottom: 8 }}>选择账户</div>
+          <List
+            bordered
+            style={{ maxHeight: 200, overflow: 'auto' }}
+            dataSource={accountList}
+            renderItem={account => (
+              <List.Item
+                style={{ 
+                  cursor: 'pointer', 
+                  background: selectedAccount?.id === account.id ? '#e6f4ff' : '#fff',
+                  padding: '12px 16px'
+                }}
+                onClick={() => handleSelectAccount(account)}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <Avatar src={account.avatar} size={32}>
+                    {account.nickname?.charAt(0)}
+                  </Avatar>
+                  <div>
+                    <div style={{ fontWeight: 500 }}>{account.nickname}</div>
+                    <div style={{ fontSize: 12, color: '#666' }}>
+                      {getPlatformName(account.type)} • {account.workCount} 作品
+                    </div>
+                  </div>
+                </div>
+              </List.Item>
+            )}
+          />
+        </div>
+
+        {selectedAccount && (
+          <div>
+            <div style={{ fontWeight: 600, marginBottom: 8 }}>
+              {selectedAccount.nickname} 的发布内容 (选择要导入的内容)
+            </div>
+            <List
+              bordered
+              style={{ maxHeight: 300, overflow: 'auto' }}
+              dataSource={publishList}
+              renderItem={item => (
+                <List.Item
+                  style={{ 
+                    cursor: 'pointer',
+                    background: selectedPublishItems.includes(item.id) ? '#e6f4ff' : '#fff',
+                    padding: '12px 16px'
+                  }}
+                  onClick={() => {
+                    setSelectedPublishItems(prev =>
+                      prev.includes(item.id)
+                        ? prev.filter(id => id !== item.id)
+                        : [...prev, item.id]
+                    );
+                  }}
+                >
+                  <div style={{ display: 'flex', gap: 12, width: '100%' }}>
+                    {(item.coverUrl || item.imgUrlList?.[0]) && (
+                      <img
+                        src={getOssUrl(item.coverUrl || item.imgUrlList[0])}
+                        alt="cover"
+                        style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 6 }}
+                      />
+                    )}
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 500, marginBottom: 4 }}>{item.title}</div>
+                      <div style={{ fontSize: 12, color: '#666', marginBottom: 4 }}>
+                        {item.desc?.substring(0, 100)}{item.desc?.length > 100 ? '...' : ''}
+                      </div>
+                      <div style={{ fontSize: 12, color: '#999' }}>
+                        {new Date(item.publishTime).toLocaleDateString()}
+                        {item.imgUrlList?.length > 0 && ` • ${item.imgUrlList.length} 张图片`}
+                        {item.videoUrl && ' • 包含视频'}
+                      </div>
+                    </div>
+                  </div>
+                </List.Item>
+              )}
+            />
+          </div>
+        )}
+      </Modal>
+
       {/* 创建素材弹窗 */}
       <Modal
         open={createModal}
@@ -523,16 +840,94 @@ export default function CgMaterialPageCore() {
           title="选择媒体组"
           onCancel={() => setMediaGroupModal(false)}
           footer={null}
-          width={600}
+          width={700}
         >
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ color: '#666', fontSize: 14 }}>
+              选择一个媒体组来获取其中的图片和视频资源
+            </div>
+          </div>
           <List
+            grid={{ gutter: 16, column: 2 }}
             dataSource={mediaGroups}
             renderItem={item => (
-              <List.Item
-                style={{ cursor: 'pointer', background: selectedMediaGroup?._id === item._id ? '#e6f4ff' : '#fff' }}
-                onClick={() => handleSelectMediaGroup(item)}
-              >
-                <div style={{ fontWeight: 500 }}>{item.title}</div>
+              <List.Item>
+                <div
+                  className={styles.mediaCard}
+                  style={{
+                    background: selectedMediaGroup?._id === item._id ? 
+                      'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)' : 
+                      '#FAEFFC',
+                    border: selectedMediaGroup?._id === item._id ? 
+                      '2px solid #667eea' : '2px solid transparent',
+                    padding: '20px',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    minHeight: '100px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    textAlign: 'center'
+                  }}
+                  onClick={() => handleSelectMediaGroup(item)}
+                  onMouseEnter={(e) => {
+                    if (selectedMediaGroup?._id !== item._id) {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.2)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (selectedMediaGroup?._id !== item._id) {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }
+                  }}
+                >
+                  <div style={{ 
+                    fontSize: 24, 
+                    marginBottom: 8,
+                    color: selectedMediaGroup?._id === item._id ? '#667eea' : '#bdc3c7'
+                  }}>
+                    <FolderOpenOutlined />
+                  </div>
+                  <div style={{ 
+                    fontWeight: 600, 
+                    fontSize: 16,
+                    color: '#2c3e50',
+                    marginBottom: 4
+                  }}>
+                    {item.title}
+                  </div>
+                  {item.desc && (
+                    <div style={{ 
+                      fontSize: 12, 
+                      color: '#7f8c8d',
+                      lineHeight: 1.4
+                    }}>
+                      {item.desc}
+                    </div>
+                  )}
+                  {selectedMediaGroup?._id === item._id && (
+                    <div style={{
+                      position: 'absolute',
+                      top: 8,
+                      right: 8,
+                      width: 20,
+                      height: 20,
+                      borderRadius: '50%',
+                      background: '#667eea',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'white',
+                      fontSize: 12
+                    }}>
+                      ✓
+                    </div>
+                  )}
+                </div>
               </List.Item>
             )}
           />

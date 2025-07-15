@@ -12,7 +12,7 @@ interface Media {
   _id: string;
   name: string;
   url: string;
-  type: 'video' | 'img' | 'audio';
+  type: 'video' | 'img';
   description?: string;
   title: string;
   desc: string;
@@ -22,7 +22,7 @@ interface MediaGroup {
   _id: string;
   title: string;
   desc: string;
-  type: 'video' | 'img' | 'audio';
+  type: 'video' | 'img';
 }
 
 export default function AlbumPage() {
@@ -43,7 +43,7 @@ export default function AlbumPage() {
   useEffect(() => {
     // 从 URL 参数获取组信息
     const title = searchParams.get('title') || '';
-    const type = searchParams.get('type') as 'video' | 'img' | 'audio' || 'video';
+    const type = searchParams.get('type') as 'video' | 'img' || 'video';
     const desc = searchParams.get('desc') || '';
     
     if (title) {
@@ -84,10 +84,8 @@ export default function AlbumPage() {
         return "video/*";
       case 'img':
         return "image/*";
-      case 'audio':
-        return "audio/*";
       default:
-        return "image/*,video/*,audio/*";
+        return "image/*,video/*";
     }
   };
 
@@ -101,8 +99,6 @@ export default function AlbumPage() {
         return fileType.startsWith('video/');
       case 'img':
         return fileType.startsWith('image/');
-      case 'audio':
-        return fileType.startsWith('audio/');
       default:
         return true;
     }
@@ -114,12 +110,11 @@ export default function AlbumPage() {
 
     // 验证文件类型
     if (!validateFileType(file)) {
-      const typeMap = {
-        'video': '视频',
-        'img': '图片',
-        'audio': '音频'
-      };
-      message.error(`此资源组只允许上传${typeMap[groupInfo!.type]}文件`);
+          const typeMap = {
+      'video': '视频',
+      'img': '图片'
+    };
+      message.error(`此资源组只允许上传${typeMap[groupInfo!.type]}文件`); 
       event.target.value = ''; // 清空文件选择
       return;
     }
@@ -129,7 +124,7 @@ export default function AlbumPage() {
       
       await createMedia({
         groupId: albumId,
-        type: file.type.startsWith('video/') ? 'video' : file.type.startsWith('image/') ? 'img' : 'audio',
+        type: file.type.startsWith('video/') ? 'video' : file.type.startsWith('image/') ? 'img' : 'img',  // 音频暂时不支持     
         url,
         title: file.name,
         desc: ''
@@ -162,8 +157,7 @@ export default function AlbumPage() {
     
     const typeMap = {
       'video': '视频资源',
-      'img': '图片资源', 
-      'audio': '音频资源'
+      'img': '图片资源'
     };
     return typeMap[groupInfo.type];
   };

@@ -4,7 +4,7 @@ import http from "@/utils/request";
 export const createMediaGroup = (data: {
   title: string;
   desc: string;
-  type: "video" | "img" | "audio";
+  type: "video" | "img";
 }) => {
   return http.post("media/group", data);
 };
@@ -27,7 +27,7 @@ export const updateMediaGroupInfo = (
   data: {
     title?: string;
     desc?: string;
-    type?: "video" | "img" | "audio";
+    type?: "video" | "img";
   },
 ) => {
   return http.post(`media/group/info/${id}`, data);

@@ -12,7 +12,7 @@ interface Material {
   id: string;
   name: string;
   url: string;
-  type: 'video' | 'img' | 'audio';
+  type: 'video' | 'img';
   createTime: string;
 }
 
@@ -25,7 +25,7 @@ export const AlbumDetailCore = ({ albumId }: AlbumDetailCoreProps) => {
   const [materials, setMaterials] = useState<Material[]>([]);
   const [albumInfo, setAlbumInfo] = useState({
     name: "视频素材",
-    type: "video" as 'video' | 'img' | 'audio',
+    type: "video" as 'video' | 'img',
     count: 0
   });
 
@@ -69,11 +69,11 @@ export const AlbumDetailCore = ({ albumId }: AlbumDetailCoreProps) => {
         <div className={styles.titleSection}>
           <Title level={2}>{albumInfo.name}</Title>
           <span className={styles.typeTag}>
-            {albumInfo.type === 'video' ? '视频' : albumInfo.type === 'img' ? '图片' : '音频'}
+            {albumInfo.type === 'video' ? '视频' : '图片'}
           </span>
         </div>
         <Upload
-          accept={albumInfo.type === 'video' ? 'video/*' : albumInfo.type === 'img' ? 'img/*' : 'audio/*'}
+          accept={albumInfo.type === 'video' ? 'video/*' : 'image/*'}
           showUploadList={false}
           beforeUpload={handleUpload}
         >
