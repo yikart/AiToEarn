@@ -392,6 +392,7 @@
   cursor: pointer;
   transition: all 0.3s;
   background: #fafafa;
+  position: relative;
   
   &:hover {
     border-color: #e60023;
@@ -422,6 +423,45 @@
   max-height: 300px;
   border-radius: 8px;
   object-fit: contain;
+}
+
+.uploadLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.uploadSuccess {
+  position: relative;
+}
+
+.uploadStatus {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.successText {
+  color: #52c41a;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.urlDisplay {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+  font-size: 12px;
 }
 
 .colorPicker {

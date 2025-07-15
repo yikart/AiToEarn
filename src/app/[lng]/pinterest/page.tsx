@@ -50,6 +50,8 @@ import {
   getPinterestBoardApi,
   getPinterestPinApi
 } from "@/api/pinterest";
+import { uploadToOss } from "@/api/oss";
+import { getOssUrl } from "@/utils/oss";
 
 const { Search } = Input;
 const { TextArea } = Input;
@@ -89,6 +91,8 @@ export default function PinterestPage() {
   // 图片上传
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 初始化数据
@@ -194,8 +198,8 @@ export default function PinterestPage() {
 
   // 创建Pin
   const handleCreatePin = async (values: any) => {
-    if (!imageFile) {
-      message.error("请上传图片");
+    if (!imageUrl) {
+      message.error("请先上传图片");
       return;
     }
 
@@ -212,21 +216,8 @@ export default function PinterestPage() {
         alt_text: values.alt_text,
         media_source: {
           source_type: "image_url",
-          content_type: imageFile.type,
-          data: imagePreview,
-          url: imagePreview
-        },
-        items: [{
-          title: values.title,
-          description: values.description,
-          link: values.link,
-          media_source: {
-            source_type: "image_url",
-            content_type: imageFile.type,
-            data: imagePreview,
-            url: imagePreview
-          }
-        }]
+          url: imageUrl
+        }
       };
 
       const response = await createPinterestPinApi(pinData);
@@ -234,8 +225,7 @@ export default function PinterestPage() {
         message.success("Pin创建成功");
         setPinModalVisible(false);
         pinForm.resetFields();
-        setImageFile(null);
-        setImagePreview("");
+        resetImageUpload();
         loadPins(currentPage, pageSize);
       }
     } catch (error) {
@@ -261,20 +251,53 @@ export default function PinterestPage() {
     }
   };
 
+  // 重置图片上传状态
+  const resetImageUpload = () => {
+    setImageFile(null);
+    setImagePreview("");
+    setImageUrl("");
+    setUploading(false);
+  };
+
   // 图片上传处理
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      if (file.type.startsWith("image/")) {
-        setImageFile(file);
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setImagePreview(e.target?.result as string);
-        };
-        reader.readAsDataURL(file);
-      } else {
-        message.error("请选择图片文件");
-      }
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      message.error("请选择图片文件");
+      return;
+    }
+
+    // 检查文件大小 (限制10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      message.error("图片大小不能超过10MB");
+      return;
+    }
+
+    try {
+      setUploading(true);
+      setImageFile(file);
+
+      // 生成预览图
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+
+      // 上传到OSS
+      const ossFileName = await uploadToOss(file);
+      const fullImageUrl = getOssUrl(ossFileName);
+      
+      setImageUrl(fullImageUrl);
+      message.success("图片上传成功");
+    } catch (error) {
+      console.error("图片上传失败:", error);
+      message.error("图片上传失败，请重试");
+      resetImageUpload();
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -702,8 +725,7 @@ export default function PinterestPage() {
         open={pinModalVisible}
         onCancel={() => {
           setPinModalVisible(false);
-          setImageFile(null);
-          setImagePreview("");
+          resetImageUpload();
         }}
         footer={null}
         className={styles.modal}
@@ -732,18 +754,38 @@ export default function PinterestPage() {
             label="上传图片"
             required
           >
-            <div className={styles.uploadArea} onClick={() => fileInputRef.current?.click()}>
-              {imagePreview ? (
-                <img 
-                  src={imagePreview} 
-                  alt="预览" 
-                  className={styles.previewImage}
-                />
+            <div className={styles.uploadArea} onClick={() => !uploading && fileInputRef.current?.click()}>
+              {uploading ? (
+                <div className={styles.uploadLoading}>
+                  <Spin size="large" />
+                  <div className={styles.uploadText}>正在上传到OSS...</div>
+                </div>
+              ) : imagePreview ? (
+                <div className={styles.uploadSuccess}>
+                  <img 
+                    src={imagePreview} 
+                    alt="预览" 
+                    className={styles.previewImage}
+                  />
+                  <div className={styles.uploadStatus}>
+                    <span className={styles.successText}>✓ 上传成功</span>
+                    <Button 
+                      size="small" 
+                      type="link" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        resetImageUpload();
+                      }}
+                    >
+                      重新上传
+                    </Button>
+                  </div>
+                </div>
               ) : (
                 <div>
                   <UploadOutlined className={styles.uploadIcon} />
-                  <div className={styles.uploadText}>点击上传图片</div>
-                  <div className={styles.uploadHint}>支持JPG、PNG、GIF格式</div>
+                  <div className={styles.uploadText}>点击上传图片到OSS</div>
+                  <div className={styles.uploadHint}>支持JPG、PNG、GIF格式，最大10MB</div>
                 </div>
               )}
             </div>
@@ -754,6 +796,11 @@ export default function PinterestPage() {
               onChange={handleImageUpload}
               style={{ display: "none" }}
             />
+            {imageUrl && (
+              <div className={styles.urlDisplay}>
+                <Text type="secondary" ellipsis>OSS地址: {imageUrl}</Text>
+              </div>
+            )}
           </Form.Item>
           
           <Form.Item
