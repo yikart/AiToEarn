@@ -94,6 +94,7 @@ export default function PinterestPage() {
   // 初始化数据
   useEffect(() => {
     loadAccountList();
+    loadBoards(1, 20);
   }, []);
 
   // 当选中账户时，加载boards
@@ -129,8 +130,8 @@ export default function PinterestPage() {
       setLoading(true);
       const response = await getPinterestBoardListApi({ page, size });
       if (response?.code === 0) {
-        setBoards(response.data.items);
-        setTotal(response.data.total);
+        setBoards(response.data.list);
+        setTotal(response.data.count);
       }
     } catch (error) {
       message.error("加载Board列表失败");
@@ -145,8 +146,8 @@ export default function PinterestPage() {
       setLoading(true);
       const response = await getPinterestPinListApi({ page: page, size });
       if (response?.code === 0) {
-        setPins(response.data.items);
-        setTotal(response.data.total);
+        setPins(response.data.list);
+        setTotal(response.data.count);
         setCurrentPage(page);
         setPageSize(size);
       }
@@ -311,14 +312,14 @@ export default function PinterestPage() {
 
   // 过滤boards
   const filteredBoards = boards.filter(board => 
-    board.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-    board.description.toLowerCase().includes(searchKeyword.toLowerCase())
+    board.name?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+    (board.description && board.description.toLowerCase().includes(searchKeyword.toLowerCase()))
   );
 
   // 过滤pins
   const filteredPins = pins.filter(pin => 
-    pin.title.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-    pin.description.toLowerCase().includes(searchKeyword.toLowerCase())
+    pin.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+    (pin.description && pin.description.toLowerCase().includes(searchKeyword.toLowerCase()))
   );
 
   // Tab标签
@@ -327,8 +328,8 @@ export default function PinterestPage() {
       key: "boards",
       label: (
         <span>
-          <BarsOutlined />
-          我的Board
+          <BarsOutlined /> 
+           我的Board
         </span>
       )
     },
@@ -336,8 +337,8 @@ export default function PinterestPage() {
       key: "pins",
       label: (
         <span>
-          <PushpinOutlined />
-          我的Pin
+          <PushpinOutlined /> 
+           我的Pin
         </span>
       )
     }
@@ -347,7 +348,8 @@ export default function PinterestPage() {
     <div className={styles.container}>
       <div className={styles.header}>
         <Title level={2} className={styles.title}>
-          <PictureOutlined /> Pinterest 管理
+          {/* <PictureOutlined />  */}
+          Pinterest 管理
         </Title>
         <div className={styles.actions}>
           <Select
@@ -383,33 +385,37 @@ export default function PinterestPage() {
 
       {selectedAccount && (
         <Card className={styles.statsCard}>
-          <Row gutter={[16, 16]}>
-            <Col span={6}>
+          <Row gutter={[24, 16]}>
+            <Col xs={12} sm={6}>
               <Statistic 
                 title="关注者" 
-                value={selectedAccount.follower_count}
+                value={selectedAccount.follower_count || 0}
                 prefix={<UserOutlined />}
+                formatter={(value) => value?.toLocaleString()}
               />
             </Col>
-                         <Col span={6}>
-               <Statistic 
-                 title="Board数量" 
-                 value={selectedAccount.board_count}
-                 prefix={<BarsOutlined />}
-               />
-             </Col>
-            <Col span={6}>
+            <Col xs={12} sm={6}>
+              <Statistic 
+                title="Board数量" 
+                value={selectedAccount.board_count || 0}
+                prefix={<BarsOutlined />}
+                formatter={(value) => value?.toLocaleString()}
+              />
+            </Col>
+            <Col xs={12} sm={6}>
               <Statistic 
                 title="Pin数量" 
-                value={selectedAccount.pin_count}
+                value={selectedAccount.pin_count || 0}
                 prefix={<PushpinOutlined />}
+                formatter={(value) => value?.toLocaleString()}
               />
             </Col>
-            <Col span={6}>
+            <Col xs={12} sm={6}>
               <Statistic 
                 title="月观看量" 
-                value={selectedAccount.monthly_views}
+                value={selectedAccount.monthly_views || 0}
                 prefix={<BarChartOutlined />}
+                formatter={(value) => value?.toLocaleString()}
               />
             </Col>
           </Row>
@@ -476,11 +482,10 @@ export default function PinterestPage() {
                           <img 
                             src={board.media.image_cover_url} 
                             alt={board.name}
-                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
                           />
-                                                 ) : (
-                           <BarsOutlined />
-                         )}
+                        ) : (
+                          <BarsOutlined />
+                        )}
                       </div>
                     }
                     actions={[
@@ -489,6 +494,7 @@ export default function PinterestPage() {
                         type="link" 
                         icon={<EyeOutlined />}
                         onClick={() => handleViewBoard(board)}
+                        size="small"
                       >
                         查看
                       </Button>,
@@ -503,30 +509,37 @@ export default function PinterestPage() {
                           type="link" 
                           icon={<DeleteOutlined />}
                           danger
+                          size="small"
                         >
                           删除
                         </Button>
                       </Popconfirm>
                     ]}
                   >
-                    <Card.Meta
-                      title={board.name}
-                      description={
+                    <div className={styles.boardCardMeta}>
+                      <Card.Meta
+                        title={board.name}
+                        description={board.description || "暂无描述"}
+                      />
+                      <div className={styles.boardBadges}>
                         <div>
-                          <Text type="secondary" ellipsis>
-                            {board.description}
-                          </Text>
-                          <div style={{ marginTop: 8 }}>
-                            <Badge count={board.pin_count} showZero>
-                              <Text type="secondary">Pins</Text>
-                            </Badge>
-                            <Badge count={board.follower_count} showZero style={{ marginLeft: 16 }}>
-                              <Text type="secondary">关注者</Text>
-                            </Badge>
-                          </div>
+                          <span className={styles.badgeText}>Pins</span>
+                          <Badge 
+                            count={board.pin_count || 0} 
+                            showZero 
+                            style={{ backgroundColor: '#e60023' }}
+                          />
                         </div>
-                      }
-                    />
+                        <div>
+                          <span className={styles.badgeText}>关注者</span>
+                          <Badge 
+                            count={board.follower_count || 0} 
+                            showZero
+                            style={{ backgroundColor: '#e60023' }}
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </Card>
                 ))
               )}
@@ -556,7 +569,6 @@ export default function PinterestPage() {
                             <img 
                               src={pin.media.images["400x300"].url} 
                               alt={pin.title}
-                              style={{ width: "100%", height: "100%", objectFit: "cover" }}
                             />
                           ) : (
                             <PictureOutlined />
@@ -569,6 +581,7 @@ export default function PinterestPage() {
                           type="link" 
                           icon={<EyeOutlined />}
                           onClick={() => handleViewPin(pin)}
+                          size="small"
                         >
                           查看
                         </Button>,
@@ -579,6 +592,7 @@ export default function PinterestPage() {
                             icon={<LinkOutlined />}
                             href={pin.link}
                             target="_blank"
+                            size="small"
                           >
                             链接
                           </Button>
@@ -594,20 +608,19 @@ export default function PinterestPage() {
                             type="link" 
                             icon={<DeleteOutlined />}
                             danger
+                            size="small"
                           >
                             删除
                           </Button>
                         </Popconfirm>
                       ].filter(Boolean)}
                     >
-                      <Card.Meta
-                        title={pin.title}
-                                                 description={
-                           <Text type="secondary" ellipsis>
-                             {pin.description}
-                           </Text>
-                         }
-                      />
+                      <div className={styles.pinCardMeta}>
+                        <Card.Meta
+                          title={pin.title}
+                          description={pin.description || "暂无描述"}
+                        />
+                      </div>
                     </Card>
                   ))
                 )}
