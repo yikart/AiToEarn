@@ -1,6 +1,6 @@
 import qs from "qs";
 import { PlatType } from "@/app/config/platConfig";
-import { getFacebookAuthUrlApi, checkFacebookAuthApi } from "@/api/youtube";
+import { getFacebookAuthUrlApi, checkFacebookAuthApi } from "@/api/platAuth";
 import { useAccountStore } from "@/store/account";
 
 

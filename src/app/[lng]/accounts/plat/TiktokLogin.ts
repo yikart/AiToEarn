@@ -1,12 +1,12 @@
 import qs from "qs";
 import { PlatType } from "@/app/config/platConfig";
-import { checkTiktokAuthApi, getTiktokAuthUrlApi } from "@/api/youtube";
+import { checkTiktokAuthApi, getTiktokAuthUrlApi } from "@/api/platAuth";
 import { useAccountStore } from "@/store/account";
 
 
 
 /**
- * b站被点击
+ * Tiktok被点击
  * @param platType
  */
 export async function tiktokSkip(platType: PlatType) {

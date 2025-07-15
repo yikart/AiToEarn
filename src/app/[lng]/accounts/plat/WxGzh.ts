@@ -1,33 +1,33 @@
 import qs from "qs";
 import { PlatType } from "@/app/config/platConfig";
-import { getYouTubeAuthUrlApi, apiCheckYoutubeAuth } from "@/api/platAuth";
+import { checkWxGzAuthApi, getWxGzhAuthUrlApi } from "@/api/platAuth";
 import { useAccountStore } from "@/store/account";
 
 
 
 /**
- * b站被点击
+ * 微信被点击
  * @param platType
  */
-export async function youtubeSkip(platType: PlatType) {
-  if (platType !== PlatType.YouTube) return;
+export async function wxGzhSkip(platType: PlatType) {
+  if (platType !== PlatType.WxGzh) return;
 
-  const res: any = await getYouTubeAuthUrlApi('pc');
+  const res: any = await getWxGzhAuthUrlApi('pc');
   if (res?.code !== 0) return;
   const url = res.data.url;
   window.open(`${url}`);
 
-  const bilibiliLoginRes = await bilibiliLogin(res.data.taskId);
+  const wxGzhLoginRes = await wxGzhLogin(res.data.id);
   
 }
 
-export function bilibiliLogin(taskId:any): Promise<any> {
+export function wxGzhLogin(taskId:any): Promise<any> {
   return new Promise(async (resolve, reject) => {
     try {
         // 开始轮询检查授权状态
         const checkAuthStatus = async () => {
           try {
-            const authRess:any = await apiCheckYoutubeAuth(taskId);
+            const authRess:any = await checkWxGzAuthApi(taskId);
             let authRes = authRess;
             console.log('authRes', authRes)
             if (authRes?.code === 0 && authRes?.data.status == 1) {
