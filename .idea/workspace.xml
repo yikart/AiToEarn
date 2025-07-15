@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix(发布弹框): 修复右侧预览不正常隐藏的问题">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(发布弹框): 立即发布接入API">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/plat/publish.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/plat/publish.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/recordCore.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/recordCore.module.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/store/account.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/account.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,7 +66,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Code Search&quot;,
     &quot;ts.external.directory.path&quot;: &quot;E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -110,7 +106,8 @@
       <workItem from="1752459064500" duration="10175000" />
       <workItem from="1752498765091" duration="2121000" />
       <workItem from="1752543943603" duration="2208000" />
-      <workItem from="1752546939831" duration="6622000" />
+      <workItem from="1752546939831" duration="7230000" />
+      <workItem from="1752567594292" duration="46000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -304,7 +301,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752551524945</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="feat(发布弹框): 立即发布接入API">
+      <option name="closed" value="true" />
+      <created>1752562558508</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1752562558508</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -348,6 +353,7 @@
     <MESSAGE value="feat(发布)：1. b站添加是否转载、选择分区参数。 2. 发布记录展示时间修复，将后端返回的时间转为当前时区给用户展示。 3. b站添加强制拦截，分区、转载不选择会强制拦截用户。" />
     <MESSAGE value="fix(日历)：修复了单元格没有预期时间但是发布记录还是不会填满单元格的问题。" />
     <MESSAGE value="fix(发布弹框): 修复右侧预览不正常隐藏的问题" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix(发布弹框): 修复右侧预览不正常隐藏的问题" />
+    <MESSAGE value="feat(发布弹框): 立即发布接入API" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(发布弹框): 立即发布接入API" />
   </component>
 </project>

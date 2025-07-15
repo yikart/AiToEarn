@@ -42,8 +42,8 @@ const CalendarTimingItem = memo(
         today.getMonth(),
         today.getDate(),
       );
-      // [[小时，分钟]]
-      const [reservationsTimes, setReservationsTimes] = useState([[4, 12]]);
+      // [[小时，分钟]] [[4, 12]]
+      const [reservationsTimes, setReservationsTimes] = useState([]);
       const [{ canDrop, isOver }, drop] = useDrop(
         () => ({
           accept: "box",
