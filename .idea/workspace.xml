@@ -4,23 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(发布)：b站">
-      <change afterPath="$PROJECT_DIR$/src/components/PublishDialog/usePublishDialogData.ts" afterDir="false" />
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(发布)：1. b站添加是否转载、选择分区参数。 2. 发布记录展示时间修复，将后端返回的时间转为当前时区给用户展示。 3. b站添加强制拦截，分区、转载不选择会强制拦截用户。">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/bilibili.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/plat/bilibili.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/plat/types/publish.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/plat/types/publish.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/tools.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/tools.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/plat/BilibiliLogin.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/plat/BilibiliLogin.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/config/platConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/config/platConfig.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/platParamsSetting.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/platParamsSetting.module.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/plats/BilibParams.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PlatParamsSetting/plats/BilibParams.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogPreview.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogPreview.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/hooks/usePubParamsVerify.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/hooks/usePubParamsVerify.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.type.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.type.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/usePublishDialog.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/usePublishDialog.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/middleware.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/middleware.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,6 +72,9 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="ReactBuddySettings">
+    <option name="extensionsIgnore" value="true" />
+  </component>
   <component name="ReactDesignerToolWindowState">
     <option name="myId2Visible">
       <map>
@@ -114,7 +104,9 @@
       <workItem from="1752130881346" duration="11774000" />
       <workItem from="1752200550278" duration="253000" />
       <workItem from="1752200816463" duration="23828000" />
-      <workItem from="1752459064500" duration="8438000" />
+      <workItem from="1752459064500" duration="10175000" />
+      <workItem from="1752498765091" duration="2121000" />
+      <workItem from="1752543943603" duration="2011000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -284,7 +276,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752479070015</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="feat(发布)：1. b站添加是否转载、选择分区参数。 2. 发布记录展示时间修复，将后端返回的时间转为当前时区给用户展示。 3. b站添加强制拦截，分区、转载不选择会强制拦截用户。">
+      <option name="closed" value="true" />
+      <created>1752488650807</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1752488650807</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -325,6 +325,7 @@
     <MESSAGE value="fix(日历): 修复更新的问题" />
     <MESSAGE value="feat(发布)：b站添加标题参数" />
     <MESSAGE value="feat(发布)：发布记录添加账户筛选API" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(发布)：发布记录添加账户筛选API" />
+    <MESSAGE value="feat(发布)：1. b站添加是否转载、选择分区参数。 2. 发布记录展示时间修复，将后端返回的时间转为当前时区给用户展示。 3. b站添加强制拦截，分区、转载不选择会强制拦截用户。" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(发布)：1. b站添加是否转载、选择分区参数。 2. 发布记录展示时间修复，将后端返回的时间转为当前时区给用户展示。 3. b站添加强制拦截，分区、转载不选择会强制拦截用户。" />
   </component>
 </project>

@@ -64,14 +64,18 @@ const CalendarTimingItem = memo(
         })),
       );
 
+      const reservationsTimesLast = useMemo(() => {
+        return argDate >= nowDate ? reservationsTimes : [];
+      }, [reservationsTimes]);
+
       const recordsLast = useMemo(() => {
         if (!records) return [];
         if (isMore) {
           return records;
         } else {
-          return records?.slice(0, 3 - reservationsTimes.length);
+          return records?.slice(0, 3 - reservationsTimesLast.length);
         }
-      }, [isMore, records, reservationsTimes, recordMap]);
+      }, [isMore, records, reservationsTimesLast, recordMap]);
 
       return (
         <div
@@ -116,7 +120,7 @@ const CalendarTimingItem = memo(
           ) : (
             <div className="calendarTimingItem-con">
               {argDate >= nowDate &&
-                reservationsTimes.map((v, i) => {
+                reservationsTimesLast.map((v, i) => {
                   return (
                     <Button
                       key={i}
@@ -148,7 +152,7 @@ const CalendarTimingItem = memo(
                   );
                 })}
 
-              {records && records.length > 3 - reservationsTimes.length && (
+              {records && records.length > 3 - reservationsTimesLast.length && (
                 <Button
                   type="text"
                   style={{
