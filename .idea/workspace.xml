@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(发布弹框): 立即发布接入API">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix(日历): 删除最佳时间">
+      <change afterPath="$PROJECT_DIR$/src/app/demo111/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/next-sitemap.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/next-sitemap.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/robots.txt" beforeDir="false" afterPath="$PROJECT_DIR$/public/robots.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,6 +20,7 @@
       <list>
         <option value="vue3组件模板" />
         <option value="tsx组件模板" />
+        <option value="TypeScript JSX File" />
       </list>
     </option>
   </component>
@@ -107,7 +110,7 @@
       <workItem from="1752498765091" duration="2121000" />
       <workItem from="1752543943603" duration="2208000" />
       <workItem from="1752546939831" duration="7230000" />
-      <workItem from="1752567594292" duration="46000" />
+      <workItem from="1752567594292" duration="3714000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -309,11 +312,23 @@
       <option name="project" value="LOCAL" />
       <updated>1752562558508</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="fix(日历): 删除最佳时间">
+      <option name="closed" value="true" />
+      <created>1752567697244</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1752567697244</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="robots.txt" />
+    <option featureType="com.intellij.fileTypeFactory" implementationName="sitemap.xml" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -329,7 +344,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑" />
     <MESSAGE value="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 调整 index.tsx 中的日期格式化逻辑" />
     <MESSAGE value="fix: platInfo添加一些非空判断" />
     <MESSAGE value="feat: 发布记录展示添加状态展示" />
@@ -354,6 +368,7 @@
     <MESSAGE value="fix(日历)：修复了单元格没有预期时间但是发布记录还是不会填满单元格的问题。" />
     <MESSAGE value="fix(发布弹框): 修复右侧预览不正常隐藏的问题" />
     <MESSAGE value="feat(发布弹框): 立即发布接入API" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(发布弹框): 立即发布接入API" />
+    <MESSAGE value="fix(日历): 删除最佳时间" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix(日历): 删除最佳时间" />
   </component>
 </project>

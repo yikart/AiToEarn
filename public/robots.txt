@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://www.yikart.cn
+Host: https://apitest.aiearn.ai
 
 # Sitemaps
-Sitemap: https://www.yikart.cn/sitemap.xml
+Sitemap: https://apitest.aiearn.ai/sitemap.xml
