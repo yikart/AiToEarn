@@ -4,12 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix(日历): 删除最佳时间">
-      <change afterPath="$PROJECT_DIR$/src/app/demo111/page.tsx" afterDir="false" />
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="chore: 测试静态站点">
+      <change afterPath="$PROJECT_DIR$/src/components/ChooseAccountModule/ChooseAccountModule.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/ChooseAccountModule/chooseAccountModule.module.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/ChooseAccountModule/components/PlatChoose.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/next-sitemap.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/next-sitemap.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/robots.txt" beforeDir="false" afterPath="$PROJECT_DIR$/public/robots.txt" afterDir="false" />
     </list>
+    <list id="46060a5d-0c4f-44c0-b456-d80eb5b8a41b" name="选择用户弹框恢复" comment="选择用户弹框恢复" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -42,38 +43,38 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder0&quot;: &quot;0&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder1&quot;: &quot;1&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder2&quot;: &quot;2&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder3&quot;: &quot;3&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth0&quot;: &quot;450&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth1&quot;: &quot;450&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth2&quot;: &quot;450&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth3&quot;: &quot;449&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder0&quot;: &quot;0&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder1&quot;: &quot;1&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder2&quot;: &quot;2&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder3&quot;: &quot;3&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth0&quot;: &quot;450&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth1&quot;: &quot;450&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth2&quot;: &quot;450&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth3&quot;: &quot;449&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/project-dev/web/艺咖/aitoearn-web/src/api/plat&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;Code Search&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder0": "0",
+    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder1": "1",
+    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder2": "2",
+    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder3": "3",
+    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth0": "450",
+    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth1": "450",
+    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth2": "450",
+    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth3": "449",
+    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder0": "0",
+    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder1": "1",
+    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder2": "2",
+    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder3": "3",
+    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth0": "450",
+    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth1": "450",
+    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth2": "450",
+    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth3": "449",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "E:/project-dev/web/艺咖/aitoearn-web/src/components",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "Code Search",
+    "ts.external.directory.path": "E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="ReactBuddySettings">
     <option name="extensionsIgnore" value="true" />
   </component>
@@ -88,6 +89,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\components" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\api\plat" />
     </key>
   </component>
@@ -95,6 +97,7 @@
   <component name="TaskManager">
     <task active="true" id="Default" summary="默认任务">
       <changelist id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="" />
+      <changelist id="46060a5d-0c4f-44c0-b456-d80eb5b8a41b" name="选择用户弹框恢复" comment="" />
       <created>1751977665735</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -110,7 +113,7 @@
       <workItem from="1752498765091" duration="2121000" />
       <workItem from="1752543943603" duration="2208000" />
       <workItem from="1752546939831" duration="7230000" />
-      <workItem from="1752567594292" duration="3714000" />
+      <workItem from="1752567594292" duration="4172000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -320,7 +323,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752567697244</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="chore: 测试静态站点">
+      <option name="closed" value="true" />
+      <created>1752571476186</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1752571476186</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -331,11 +342,38 @@
     <option featureType="com.intellij.fileTypeFactory" implementationName="sitemap.xml" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="User">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="*" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="user">
+                    <value>
+                      <list>
+                        <option value="*" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -344,8 +382,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 调整 index.tsx 中的日期格式化逻辑" />
-    <MESSAGE value="fix: platInfo添加一些非空判断" />
     <MESSAGE value="feat: 发布记录展示添加状态展示" />
     <MESSAGE value="feat(发布弹框): 上传图片和上传视频完成" />
     <MESSAGE value="feat(发布弹框): 发布API接入完成" />
@@ -369,6 +405,8 @@
     <MESSAGE value="fix(发布弹框): 修复右侧预览不正常隐藏的问题" />
     <MESSAGE value="feat(发布弹框): 立即发布接入API" />
     <MESSAGE value="fix(日历): 删除最佳时间" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix(日历): 删除最佳时间" />
+    <MESSAGE value="chore: 测试静态站点" />
+    <MESSAGE value="选择用户弹框恢复" />
+    <option name="LAST_COMMIT_MESSAGE" value="选择用户弹框恢复" />
   </component>
 </project>
