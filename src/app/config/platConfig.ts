@@ -6,7 +6,8 @@ import douyinSvg from "@/assets/svgs/plat/douyin.svg";
 import tiktokSvg from "@/assets/svgs/plat/tiktok.svg";
 import twitterSvg from "@/assets/svgs/plat/twtter.svg";
 import facebookSvg from "@/assets/svgs/plat/facebook.svg";
-import wxGzhSvg from "@/assets/svgs/plat/wx-sph.svg";  
+import wxGzhSvg from "@/assets/svgs/plat/wx-gzh.svg";  
+import wxSphSvg from "@/assets/svgs/plat/wx-sph.svg";
 
 // 平台类型
 export enum PlatType {
