@@ -1,6 +1,6 @@
 import qs from "qs";
 import { PlatType } from "@/app/config/platConfig";
-import { getFacebookAuthUrlApi, checkMetaAuthApi } from "@/api/platAuth";
+import { getInstagramAuthUrlApi, checkMetaAuthApi } from "@/api/platAuth";
 import { useAccountStore } from "@/store/account";
 
 
@@ -9,19 +9,19 @@ import { useAccountStore } from "@/store/account";
  * b站被点击
  * @param platType
  */
-export async function facebookSkip(platType: PlatType) {
-  if (platType !== PlatType.Facebook) return;
+export async function instagramSkip(platType: PlatType) {
+  if (platType !== PlatType.Instagram) return;
 
-  const res: any = await getFacebookAuthUrlApi('pc');
+  const res: any = await getInstagramAuthUrlApi('pc');
   if (res?.code !== 0) return;
   const url = res.data.url;
   window.open(`${url}`);
 
-  const facebookLoginRes = await facebookLogin(res.data.taskId);
+  const instagramLoginRes = await instagramLogin(res.data.taskId);
   
 }
 
-export function facebookLogin(taskId:any): Promise<any> {
+export function instagramLogin(taskId:any): Promise<any> {
   return new Promise(async (resolve, reject) => {
     try {
         // 开始轮询检查授权状态

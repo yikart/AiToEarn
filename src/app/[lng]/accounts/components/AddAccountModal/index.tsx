@@ -9,6 +9,8 @@ import { youtubeSkip } from "../../plat/YoutubeLogin";
 import { twitterSkip } from "../../plat/TwtterLogin";
 import { tiktokSkip } from "../../plat/TiktokLogin";
 import { facebookSkip } from "../../plat/FacebookLogin";
+import { instagramSkip } from "../../plat/InstagramLogin";
+import { threadsSkip } from "../../plat/ThreadsLogin";
 import { wxGzhSkip } from "../../plat/WxGzh";
 
 export interface IAddAccountModalRef {}
@@ -71,6 +73,12 @@ const AddAccountModal = memo(
                               break;
                             case PlatType.Facebook:
                               await facebookSkip(key);
+                              break;
+                            case PlatType.Instagram:
+                              await instagramSkip(key);
+                              break;
+                            case PlatType.Threads:
+                              await threadsSkip(key);
                               break;
                             case PlatType.WxGzh:
                               await wxGzhSkip(key);

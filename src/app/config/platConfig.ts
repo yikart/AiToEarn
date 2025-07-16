@@ -6,6 +6,8 @@ import douyinSvg from "@/assets/svgs/plat/douyin.svg";
 import tiktokSvg from "@/assets/svgs/plat/tiktok.svg";
 import twitterSvg from "@/assets/svgs/plat/twtter.svg";
 import facebookSvg from "@/assets/svgs/plat/facebook.svg";
+import instagramSvg from "@/assets/svgs/plat/instagram.svg";
+import threadsSvg from "@/assets/svgs/plat/xiancheng.svg";
 import wxGzhSvg from "@/assets/svgs/plat/wx-gzh.svg";  
 import wxSphSvg from "@/assets/svgs/plat/wx-sph.svg";
 
@@ -21,6 +23,8 @@ export enum PlatType {
   Twitter = "twitter", // Twitter
   WxGzh = "wxGzh", // 微信公众号
   Facebook = "facebook", // Facebook
+  Instagram = "instagram", // Instagram
+  Threads = "threads", // Threads
 }
 
 export interface IAccountPlatInfo {
@@ -168,6 +172,34 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         topicMax: 10,
       },
       themeColor: "green",
+    },
+  ],
+  [
+    PlatType.Instagram,
+    {
+      name: "Instagram",
+      icon: instagramSvg.src,
+      url: "https://www.instagram.com/",
+      pubTypes: new Set([PubType.VIDEO]),
+      commonPubParamsConfig: {
+        titleMax: 16,
+        topicMax: 10,
+      },
+      themeColor: "blue",
+    },
+  ],
+  [
+    PlatType.Threads,
+    {
+      name: "Threads",
+      icon: threadsSvg.src,
+      url: "https://www.threads.net/",
+      pubTypes: new Set([PubType.VIDEO]),
+      commonPubParamsConfig: {
+        titleMax: 16,
+        topicMax: 10,
+      },
+      themeColor: "blue",
     },
   ],
 ]);

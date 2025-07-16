@@ -494,6 +494,8 @@ export default function CgMaterialPageCore() {
       'wxSph': '微信视频号',
       'wxGzh': '微信公众号',
       'facebook': 'Facebook',
+      'instagram': 'Instagram',
+      'threads': 'Threads',
     };
     return platformNames[type] || type;
   }

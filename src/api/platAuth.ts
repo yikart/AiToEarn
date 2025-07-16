@@ -79,12 +79,47 @@ export const getFacebookAuthUrlApi = (mail: string) => {
 };
 
 
-export const checkFacebookAuthApi = ( taskId:any ) => {
+export const checkMetaAuthApi = ( taskId:any ) => {
   return request({
     url: `plat/meta/auth/info/${taskId}`,
     method: 'GET',
   });
 };
+
+
+/**
+ * 获取instagram授权状态
+ * @param taskId 任务ID
+ * @returns
+ */
+export const getInstagramAuthUrlApi = (mail: string) => {
+  return request({
+    url: 'plat/meta/auth/url',
+    method: 'POST',
+    data: {
+      platform: 'instagram',
+    },
+  });
+};
+
+
+
+/**
+ * 获取threads授权状态
+ * @param taskId 任务ID
+ * @returns
+ */
+export const getThreadsAuthUrlApi = (mail: string) => {
+  return request({
+    url: 'plat/meta/auth/url',
+    method: 'POST',
+    data: {
+      platform: 'threads',
+    },
+  });
+};
+
+
 
 
 /**
