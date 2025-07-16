@@ -10,11 +10,6 @@ const nextConfig = {
   },
   output: 'standalone',
   productionBrowserSourceMaps: process.env.NEXT_PUBLIC_EVN === 'dev',
-  i18n: {
-    locales: ['en', 'zh-CN'],
-    defaultLocale: 'en',
-    localeDetection: true,
-  },
 };
 
 const CorsHeaders = [
@@ -39,6 +34,7 @@ nextConfig.headers = async () => {
     {
       source: "/api/:path*",
       headers: CorsHeaders,
+
     },
   ];
 };
