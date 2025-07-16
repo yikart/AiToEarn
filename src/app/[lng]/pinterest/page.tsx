@@ -52,12 +52,35 @@ import {
 } from "@/api/pinterest";
 import { uploadToOss } from "@/api/oss";
 import { getOssUrl } from "@/utils/oss";
+import { useTransClient } from "@/app/i18n/client";
 
 const { Search } = Input;
 const { TextArea } = Input;
 const { Text, Title } = Typography;
 
+// 自定义颜色选择器组件
+const CustomColorPicker = ({ value, onChange }: { value?: string; onChange?: (value: string) => void }) => {
+  const { t } = useTransClient('pinterest');
+  
+  return (
+    <div className={styles.colorPickerContainer}>
+      <input
+        type="color"
+        className={styles.colorPicker}
+        value={value || "#e60023"}
+        onChange={(e) => onChange?.(e.target.value)}
+      />
+      <Text type="secondary" className={styles.colorPickerTip}>
+        {t('pin.dominantColorTip')}
+      </Text>
+    </div>
+  );
+};
+
 export default function PinterestPage() {
+  // 翻译函数
+  const { t } = useTransClient('pinterest');
+
   // 状态管理
   const [activeTab, setActiveTab] = useState("boards");
   const [loading, setLoading] = useState(false);
@@ -119,48 +142,48 @@ export default function PinterestPage() {
           setSelectedAccount(response.data.items[0]);
         }
       }
-    } catch (error) {
-      message.error("加载账户列表失败");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 加载boards
-  const loadBoards = async (page = 1, size = 20) => {
-    if (!selectedAccount) return;
-    
-    try {
-      setLoading(true);
-      const response = await getPinterestBoardListApi({ page, size });
-      if (response?.code === 0) {
-        setBoards(response.data.list);
-        setTotal(response.data.count);
+          } catch (error) {
+        message.error(t('messages.loadAccountsFailed'));
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      message.error("加载Board列表失败");
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  // 加载pins
-  const loadPins = async (page = 1, size = 10) => {
-    try {
-      setLoading(true);
-      const response = await getPinterestPinListApi({ page: page, size });
-      if (response?.code === 0) {
-        setPins(response.data.list);
-        setTotal(response.data.count);
-        setCurrentPage(page);
-        setPageSize(size);
+    // 加载boards
+    const loadBoards = async (page = 1, size = 20) => {
+      if (!selectedAccount) return;
+
+      try {
+        setLoading(true);
+        const response = await getPinterestBoardListApi({ page, size });
+        if (response?.code === 0) {
+          setBoards(response.data.list);
+          setTotal(response.data.count);
+        }
+      } catch (error) {
+        message.error(t('messages.loadBoardsFailed'));
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      message.error("加载Pin列表失败");
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    // 加载pins
+    const loadPins = async (page = 1, size = 10) => {
+      try {
+        setLoading(true);
+        const response = await getPinterestPinListApi({ page: page, size });
+        if (response?.code === 0) {
+          setPins(response.data.list);
+          setTotal(response.data.count);
+          setCurrentPage(page);
+          setPageSize(size);
+        }
+      } catch (error) {
+        message.error(t('messages.loadPinsFailed'));
+      } finally {
+        setLoading(false);
+      }
+    };
 
   // 创建Board
   const handleCreateBoard = async (values: any) => {
@@ -168,13 +191,13 @@ export default function PinterestPage() {
       setLoading(true);
       const response = await createPinterestBoardApi(values);
       if (response?.code === 0) {
-        message.success("Board创建成功");
+        message.success(t('messages.boardCreateSuccess'));
         setBoardModalVisible(false);
         boardForm.resetFields();
         loadBoards();
       }
     } catch (error) {
-      message.error("创建Board失败");
+      message.error(t('messages.boardCreateFailed'));
     } finally {
       setLoading(false);
     }
@@ -186,11 +209,11 @@ export default function PinterestPage() {
       setLoading(true);
       const response = await deletePinterestBoardApi(boardId);
       if (response?.code === 0) {
-        message.success("Board删除成功");
+        message.success(t('messages.boardDeleteSuccess'));
         loadBoards();
       }
     } catch (error) {
-      message.error("删除Board失败");
+      message.error(t('messages.boardDeleteFailed'));
     } finally {
       setLoading(false);
     }
@@ -199,7 +222,7 @@ export default function PinterestPage() {
   // 创建Pin
   const handleCreatePin = async (values: any) => {
     if (!imageUrl) {
-      message.error("请先上传图片");
+      message.error(t('messages.uploadImageFirst'));
       return;
     }
 
@@ -222,14 +245,14 @@ export default function PinterestPage() {
 
       const response = await createPinterestPinApi(pinData);
       if (response?.code === 0) {
-        message.success("Pin创建成功");
+        message.success(t('messages.pinCreateSuccess'));
         setPinModalVisible(false);
         pinForm.resetFields();
         resetImageUpload();
         loadPins(currentPage, pageSize);
       }
     } catch (error) {
-      message.error("创建Pin失败");
+      message.error(t('messages.pinCreateFailed'));
     } finally {
       setLoading(false);
     }
@@ -241,11 +264,11 @@ export default function PinterestPage() {
       setLoading(true);
       const response = await deletePinterestPinApi(pinId);
       if (response?.code === 0) {
-        message.success("Pin删除成功");
+        message.success(t('messages.pinDeleteSuccess'));
         loadPins(currentPage, pageSize);
       }
     } catch (error) {
-      message.error("删除Pin失败");
+      message.error(t('messages.pinDeleteFailed'));
     } finally {
       setLoading(false);
     }
@@ -265,13 +288,13 @@ export default function PinterestPage() {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      message.error("请选择图片文件");
+      message.error(t('messages.selectImageFile'));
       return;
     }
 
     // 检查文件大小 (限制10MB)
     if (file.size > 10 * 1024 * 1024) {
-      message.error("图片大小不能超过10MB");
+      message.error(t('messages.imageSizeLimit'));
       return;
     }
 
@@ -291,10 +314,10 @@ export default function PinterestPage() {
       const fullImageUrl = getOssUrl(ossFileName);
       
       setImageUrl(fullImageUrl);
-      message.success("图片上传成功");
+      message.success(t('messages.imageUploadSuccess'));
     } catch (error) {
       console.error("图片上传失败:", error);
-      message.error("图片上传失败，请重试");
+      message.error(t('messages.imageUploadFailed'));
       resetImageUpload();
     } finally {
       setUploading(false);
@@ -311,7 +334,7 @@ export default function PinterestPage() {
         setBoardDetailModalVisible(true);
       }
     } catch (error) {
-      message.error("获取Board详情失败");
+      message.error(t('messages.getBoardDetailFailed'));
     } finally {
       setLoading(false);
     }
@@ -327,7 +350,7 @@ export default function PinterestPage() {
         setPinDetailModalVisible(true);
       }
     } catch (error) {
-      message.error("获取Pin详情失败");
+      message.error(t('messages.getPinDetailFailed'));
     } finally {
       setLoading(false);
     }
@@ -342,7 +365,10 @@ export default function PinterestPage() {
   // 过滤pins
   const filteredPins = pins.filter(pin => 
     pin.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-    (pin.description && pin.description.toLowerCase().includes(searchKeyword.toLowerCase()))
+    (pin.description && pin.description.toLowerCase().includes(searchKeyword.toLowerCase())) ||
+    (pin.note && pin.note.toLowerCase().includes(searchKeyword.toLowerCase())) ||
+    (pin.alt_text && pin.alt_text.toLowerCase().includes(searchKeyword.toLowerCase())) ||
+    (pin.creative_type && pin.creative_type.toLowerCase().includes(searchKeyword.toLowerCase()))
   );
 
   // Tab标签
@@ -352,7 +378,7 @@ export default function PinterestPage() {
       label: (
         <span>
           <BarsOutlined /> 
-           我的Board
+           {t('tabs.boards')}
         </span>
       )
     },
@@ -361,7 +387,7 @@ export default function PinterestPage() {
       label: (
         <span>
           <PushpinOutlined /> 
-           我的Pin
+           {t('tabs.pins')}
         </span>
       )
     }
@@ -372,12 +398,12 @@ export default function PinterestPage() {
       <div className={styles.header}>
         <Title level={2} className={styles.title}>
           {/* <PictureOutlined />  */}
-          Pinterest 管理
+          {t('title')}
         </Title>
         <div className={styles.actions}>
           <Select
             style={{ width: 200 }}
-            placeholder="选择账户"
+            placeholder={t('actions.selectAccount')}
             value={selectedAccount?.id}
             onChange={(value) => {
               const account = accounts.find(acc => acc.id === value);
@@ -401,7 +427,7 @@ export default function PinterestPage() {
             }}
             className={styles.refreshButton}
           >
-            刷新
+            {t('actions.refresh')}
           </Button>
         </div>
       </div>
@@ -411,7 +437,7 @@ export default function PinterestPage() {
           <Row gutter={[24, 16]}>
             <Col xs={12} sm={6}>
               <Statistic 
-                title="关注者" 
+                title={t('stats.followers')} 
                 value={selectedAccount.follower_count || 0}
                 prefix={<UserOutlined />}
                 formatter={(value) => value?.toLocaleString()}
@@ -419,7 +445,7 @@ export default function PinterestPage() {
             </Col>
             <Col xs={12} sm={6}>
               <Statistic 
-                title="Board数量" 
+                title={t('stats.boardCount')} 
                 value={selectedAccount.board_count || 0}
                 prefix={<BarsOutlined />}
                 formatter={(value) => value?.toLocaleString()}
@@ -427,7 +453,7 @@ export default function PinterestPage() {
             </Col>
             <Col xs={12} sm={6}>
               <Statistic 
-                title="Pin数量" 
+                title={t('stats.pinCount')} 
                 value={selectedAccount.pin_count || 0}
                 prefix={<PushpinOutlined />}
                 formatter={(value) => value?.toLocaleString()}
@@ -435,7 +461,7 @@ export default function PinterestPage() {
             </Col>
             <Col xs={12} sm={6}>
               <Statistic 
-                title="月观看量" 
+                title={t('stats.monthlyViews')} 
                 value={selectedAccount.monthly_views || 0}
                 prefix={<BarChartOutlined />}
                 formatter={(value) => value?.toLocaleString()}
@@ -448,7 +474,7 @@ export default function PinterestPage() {
       <div className={styles.content}>
         <div className={styles.filterSection}>
           <Search
-            placeholder="搜索..."
+            placeholder={t('actions.search')}
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}
             className={styles.searchBox}
@@ -466,7 +492,7 @@ export default function PinterestPage() {
               }
             }}
           >
-            {activeTab === "boards" ? "创建Board" : "创建Pin"}
+            {activeTab === "boards" ? t('actions.createBoard') : t('actions.createPin')}
           </Button>
         </div>
 
@@ -491,7 +517,7 @@ export default function PinterestPage() {
                 </div>
               ) : filteredBoards.length === 0 ? (
                 <Empty 
-                  description="暂无Board"
+                  description={t('empty.noBoards')}
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
                 />
               ) : (
@@ -519,14 +545,14 @@ export default function PinterestPage() {
                         onClick={() => handleViewBoard(board)}
                         size="small"
                       >
-                        查看
+                        {t('actions.view')}
                       </Button>,
                       <Popconfirm
                         key="delete"
-                        title="确定删除此Board吗？"
+                        title={t('board.deleteConfirm')}
                         onConfirm={() => handleDeleteBoard(board.id)}
-                        okText="确定"
-                        cancelText="取消"
+                        okText={t('confirm.ok')}
+                        cancelText={t('confirm.cancel')}
                       >
                         <Button 
                           type="link" 
@@ -534,7 +560,7 @@ export default function PinterestPage() {
                           danger
                           size="small"
                         >
-                          删除
+                          {t('actions.delete')}
                         </Button>
                       </Popconfirm>
                     ]}
@@ -542,11 +568,11 @@ export default function PinterestPage() {
                     <div className={styles.boardCardMeta}>
                       <Card.Meta
                         title={board.name}
-                        description={board.description || "暂无描述"}
+                        description={board.description || t('board.noDescription')}
                       />
                       <div className={styles.boardBadges}>
                         <div>
-                          <span className={styles.badgeText}>Pins</span>
+                          <span className={styles.badgeText}>{t('badges.pins')}</span>
                           <Badge 
                             count={board.pin_count || 0} 
                             showZero 
@@ -554,7 +580,7 @@ export default function PinterestPage() {
                           />
                         </div>
                         <div>
-                          <span className={styles.badgeText}>关注者</span>
+                          <span className={styles.badgeText}>{t('badges.followers')}</span>
                           <Badge 
                             count={board.follower_count || 0} 
                             showZero
@@ -578,7 +604,7 @@ export default function PinterestPage() {
                   </div>
                 ) : filteredPins.length === 0 ? (
                   <Empty 
-                    description="暂无Pin"
+                    description={t('empty.noPins')}
                     image={Empty.PRESENTED_IMAGE_SIMPLE}
                   />
                 ) : (
@@ -588,14 +614,14 @@ export default function PinterestPage() {
                       className={styles.pinCard}
                       cover={
                         <div className={styles.pinImage}>
-                          {pin.media?.images?.["400x300"]?.url ? (
-                            <img 
-                              src={pin.media.images["400x300"].url} 
-                              alt={pin.title}
-                            />
-                          ) : (
-                            <PictureOutlined />
-                          )}
+                                                  {pin.media?.images?.["600x"]?.url ? (
+                          <img 
+                            src={pin.media.images["600x"].url} 
+                            alt={pin.alt_text || pin.title || t('pin.imageAlt')}
+                          />
+                        ) : (
+                          <PictureOutlined />
+                        )}
                         </div>
                       }
                       actions={[
@@ -606,7 +632,7 @@ export default function PinterestPage() {
                           onClick={() => handleViewPin(pin)}
                           size="small"
                         >
-                          查看
+                          {t('actions.view')}
                         </Button>,
                         pin.link && (
                           <Button 
@@ -617,15 +643,15 @@ export default function PinterestPage() {
                             target="_blank"
                             size="small"
                           >
-                            链接
+                            {t('actions.link')}
                           </Button>
                         ),
                         <Popconfirm
                           key="delete"
-                          title="确定删除此Pin吗？"
+                          title={t('pin.deleteConfirm')}
                           onConfirm={() => handleDeletePin(pin.id)}
-                          okText="确定"
-                          cancelText="取消"
+                          okText={t('confirm.ok')}
+                          cancelText={t('confirm.cancel')}
                         >
                           <Button 
                             type="link" 
@@ -633,7 +659,7 @@ export default function PinterestPage() {
                             danger
                             size="small"
                           >
-                            删除
+                            {t('actions.delete')}
                           </Button>
                         </Popconfirm>
                       ].filter(Boolean)}
@@ -641,8 +667,24 @@ export default function PinterestPage() {
                       <div className={styles.pinCardMeta}>
                         <Card.Meta
                           title={pin.title}
-                          description={pin.description || "暂无描述"}
+                          description={pin.description || pin.note || t('pin.noDescription')}
                         />
+                        <div className={styles.pinMetadata}>
+                          {pin.creative_type && (
+                            <Badge 
+                              text={pin.creative_type} 
+                              size="small" 
+                              style={{ marginRight: 8 }}
+                            />
+                          )}
+                          {pin.is_owner && (
+                            <Badge 
+                              text={t('badges.owner')} 
+                              color="green" 
+                              size="small" 
+                            />
+                          )}
+                        </div>
                       </div>
                     </Card>
                   ))
@@ -659,7 +701,10 @@ export default function PinterestPage() {
                     showSizeChanger
                     showQuickJumper
                     showTotal={(total, range) => 
-                      `第 ${range[0]}-${range[1]} 条，共 ${total} 条`
+                      t('pagination.total', { 
+                        range: `${range[0]}-${range[1]}`, 
+                        total: total 
+                      })
                     }
                   />
                 </div>
@@ -671,7 +716,7 @@ export default function PinterestPage() {
 
       {/* 创建Board模态框 */}
       <Modal
-        title="创建新Board"
+        title={t('board.createTitle')}
         open={boardModalVisible}
         onCancel={() => setBoardModalVisible(false)}
         footer={null}
@@ -683,37 +728,37 @@ export default function PinterestPage() {
           layout="vertical"
         >
           <Form.Item
-            label="Board名称"
+            label={t('board.name')}
             name="name"
-            rules={[{ required: true, message: "请输入Board名称" }]}
+            rules={[{ required: true, message: t('validation.boardNameRequired') }]}
           >
-            <Input placeholder="输入Board名称" />
+            <Input placeholder={t('board.namePlaceholder')} />
           </Form.Item>
           
           <Form.Item
-            label="描述"
+            label={t('board.description')}
             name="description"
           >
             <TextArea 
-              placeholder="输入Board描述" 
+              placeholder={t('board.descriptionPlaceholder')} 
               rows={3}
             />
           </Form.Item>
           
           <Form.Item
-            label="隐私设置"
+            label={t('board.privacy')}
             name="privacy"
             initialValue="PUBLIC"
           >
             <Select>
-              <Select.Option value="PUBLIC">公开</Select.Option>
-              <Select.Option value="PRIVATE">私有</Select.Option>
+              <Select.Option value="PUBLIC">{t('board.public')}</Select.Option>
+              <Select.Option value="PRIVATE">{t('board.private')}</Select.Option>
             </Select>
           </Form.Item>
 
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={loading} block>
-              创建Board
+              {t('board.createButton')}
             </Button>
           </Form.Item>
         </Form>
@@ -721,7 +766,7 @@ export default function PinterestPage() {
 
       {/* 创建Pin模态框 */}
       <Modal
-        title="创建新Pin"
+        title={t('pin.createTitle')}
         open={pinModalVisible}
         onCancel={() => {
           setPinModalVisible(false);
@@ -737,11 +782,11 @@ export default function PinterestPage() {
           layout="vertical"
         >
           <Form.Item
-            label="选择Board"
+            label={t('pin.selectBoard')}
             name="board_id"
-            rules={[{ required: true, message: "请选择Board" }]}
+            rules={[{ required: true, message: t('validation.selectBoardRequired') }]}
           >
-            <Select placeholder="选择要发布到的Board">
+            <Select placeholder={t('pin.selectBoardPlaceholder')}>
               {boards.map(board => (
                 <Select.Option key={board.id} value={board.id}>
                   {board.name}
@@ -751,14 +796,14 @@ export default function PinterestPage() {
           </Form.Item>
 
           <Form.Item
-            label="上传图片"
+            label={t('pin.uploadImage')}
             required
           >
             <div className={styles.uploadArea} onClick={() => !uploading && fileInputRef.current?.click()}>
               {uploading ? (
                 <div className={styles.uploadLoading}>
                   <Spin size="large" />
-                  <div className={styles.uploadText}>正在上传到OSS...</div>
+                  <div className={styles.uploadText}>{t('pin.uploading')}</div>
                 </div>
               ) : imagePreview ? (
                 <div className={styles.uploadSuccess}>
@@ -768,7 +813,7 @@ export default function PinterestPage() {
                     className={styles.previewImage}
                   />
                   <div className={styles.uploadStatus}>
-                    <span className={styles.successText}>✓ 上传成功</span>
+                    <span className={styles.successText}>{t('pin.uploadSuccess')}</span>
                     <Button 
                       size="small" 
                       type="link" 
@@ -777,15 +822,15 @@ export default function PinterestPage() {
                         resetImageUpload();
                       }}
                     >
-                      重新上传
+                      {t('pin.reupload')}
                     </Button>
                   </div>
                 </div>
               ) : (
                 <div>
                   <UploadOutlined className={styles.uploadIcon} />
-                  <div className={styles.uploadText}>点击上传图片到OSS</div>
-                  <div className={styles.uploadHint}>支持JPG、PNG、GIF格式，最大10MB</div>
+                  <div className={styles.uploadText}>{t('pin.uploadImagePlaceholder')}</div>
+                  <div className={styles.uploadHint}>{t('pin.uploadHint')}</div>
                 </div>
               )}
             </div>
@@ -798,61 +843,55 @@ export default function PinterestPage() {
             />
             {imageUrl && (
               <div className={styles.urlDisplay}>
-                <Text type="secondary" ellipsis>OSS地址: {imageUrl}</Text>
+                <Text type="secondary" ellipsis>{t('pin.ossUrl')}: {imageUrl}</Text>
               </div>
             )}
           </Form.Item>
           
           <Form.Item
-            label="标题"
+            label={t('pin.title')}
             name="title"
-            rules={[{ required: true, message: "请输入标题" }]}
+            rules={[{ required: true, message: t('validation.titleRequired') }]}
           >
-            <Input placeholder="输入Pin标题" />
+            <Input placeholder={t('pin.titlePlaceholder')} />
           </Form.Item>
           
           <Form.Item
-            label="描述"
+            label={t('pin.description')}
             name="description"
-            rules={[{ required: true, message: "请输入描述" }]}
+            rules={[{ required: true, message: t('validation.descriptionRequired') }]}
           >
             <TextArea 
-              placeholder="输入Pin描述" 
+              placeholder={t('pin.descriptionPlaceholder')} 
               rows={3}
             />
           </Form.Item>
           
           <Form.Item
-            label="链接"
+            label={t('pin.link')}
             name="link"
           >
-            <Input placeholder="输入目标链接（可选）" />
+            <Input placeholder={t('pin.linkPlaceholder')} />
           </Form.Item>
           
           <Form.Item
-            label="Alt文本"
+            label={t('pin.altText')}
             name="alt_text"
           >
-            <Input placeholder="输入图片Alt文本（可选）" />
+            <Input placeholder={t('pin.altTextPlaceholder')} />
           </Form.Item>
           
           <Form.Item
-            label="主色调"
+            label={t('pin.dominantColor')}
             name="dominant_color"
+            initialValue="#e60023"
           >
-            <div className={styles.colorPicker}>
-              <input
-                type="color"
-                className={styles.colorInput}
-                defaultValue="#e60023"
-              />
-              <Text type="secondary">选择Pin的主色调</Text>
-            </div>
+            <CustomColorPicker />
           </Form.Item>
 
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={loading} block>
-              创建Pin
+              {t('pin.createButton')}
             </Button>
           </Form.Item>
         </Form>
@@ -860,7 +899,7 @@ export default function PinterestPage() {
 
       {/* Board详情模态框 */}
       <Modal
-        title="Board详情"
+        title={t('board.detailTitle')}
         open={boardDetailModalVisible}
         onCancel={() => setBoardDetailModalVisible(false)}
         footer={null}
@@ -873,15 +912,15 @@ export default function PinterestPage() {
             <Divider />
             <Row gutter={[16, 16]}>
               <Col span={12}>
-                <Statistic title="Pin数量" value={selectedBoard.pin_count} />
+                <Statistic title={t('stats.pinCount')} value={selectedBoard.pin_count} />
               </Col>
               <Col span={12}>
-                <Statistic title="关注者" value={selectedBoard.follower_count} />
+                <Statistic title={t('stats.followers')} value={selectedBoard.follower_count} />
               </Col>
             </Row>
             <Divider />
             <Text type="secondary">
-              创建时间: {new Date(selectedBoard.created_at).toLocaleDateString()}
+              {t('board.createTime')}: {new Date(selectedBoard.created_at).toLocaleDateString()}
             </Text>
           </div>
         )}
@@ -889,36 +928,122 @@ export default function PinterestPage() {
 
       {/* Pin详情模态框 */}
       <Modal
-        title="Pin详情"
+        title={t('pin.detailTitle')}
         open={pinDetailModalVisible}
         onCancel={() => setPinDetailModalVisible(false)}
         footer={null}
-        width={600}
+        width={700}
       >
         {selectedPin && (
           <div>
             <Title level={4}>{selectedPin.title}</Title>
-            <Text type="secondary">{selectedPin.description}</Text>
+            <Text type="secondary">{selectedPin.description || selectedPin.note}</Text>
             <Divider />
-            {selectedPin.media?.images?.["600x"]?.url && (
+            
+            {/* 图片显示 - 优先使用高清图片 */}
+            {selectedPin.media?.images && (
               <div style={{ textAlign: "center", marginBottom: 16 }}>
                 <img 
-                  src={selectedPin.media.images["600x"].url} 
-                  alt={selectedPin.title}
-                  style={{ maxWidth: "100%", maxHeight: "400px" }}
+                  src={
+                    selectedPin.media.images["1200x"]?.url || 
+                    selectedPin.media.images["600x"]?.url || 
+                    selectedPin.media.images["400x300"]?.url
+                  }
+                  alt={selectedPin.alt_text || selectedPin.title || t('pin.imageAlt')}
+                  style={{ maxWidth: "100%", maxHeight: "400px", borderRadius: "8px" }}
                 />
               </div>
             )}
+
+            {/* Pin信息 */}
+            <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+              <Col span={12}>
+                <Text strong>{t('pin.pinId')}: </Text>
+                <Text copyable>{selectedPin.id}</Text>
+              </Col>
+              <Col span={12}>
+                <Text strong>{t('pin.boardId')}: </Text>
+                <Text copyable>{selectedPin.board_id}</Text>
+              </Col>
+              {selectedPin.creative_type && (
+                <Col span={12}>
+                  <Text strong>{t('pin.creativeType')}: </Text>
+                  <Badge text={selectedPin.creative_type} />
+                </Col>
+              )}
+              {selectedPin.dominant_color && (
+                <Col span={12}>
+                  <Text strong>{t('pin.dominantColor')}: </Text>
+                  <div style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                    <div 
+                      style={{ 
+                        width: 20, 
+                        height: 20, 
+                        backgroundColor: selectedPin.dominant_color,
+                        borderRadius: "4px",
+                        border: "1px solid #d9d9d9"
+                      }}
+                    />
+                    <Text>{selectedPin.dominant_color}</Text>
+                  </div>
+                </Col>
+              )}
+            </Row>
+
+            {/* 状态信息 */}
+            <Row gutter={[16, 8]} style={{ marginBottom: 16 }}>
+              <Col span={8}>
+                <Text strong>{t('pin.isOwner')}: </Text>
+                <Badge 
+                  color={selectedPin.is_owner ? "green" : "default"} 
+                  text={selectedPin.is_owner ? t('badges.yes') : t('badges.no')} 
+                />
+              </Col>
+              <Col span={8}>
+                <Text strong>{t('pin.isRemovable')}: </Text>
+                <Badge 
+                  color={selectedPin.is_removable ? "green" : "red"} 
+                  text={selectedPin.is_removable ? t('badges.yes') : t('badges.no')} 
+                />
+              </Col>
+              <Col span={8}>
+                <Text strong>{t('pin.isStandard')}: </Text>
+                <Badge 
+                  color={selectedPin.is_standard ? "blue" : "default"} 
+                  text={selectedPin.is_standard ? t('badges.yes') : t('badges.no')} 
+                />
+              </Col>
+            </Row>
+
+            {/* 链接信息 */}
             {selectedPin.link && (
               <div style={{ marginBottom: 16 }}>
-                <Text strong>链接: </Text>
+                <Text strong>{t('pin.link')}: </Text>
                 <a href={selectedPin.link} target="_blank" rel="noopener noreferrer">
                   {selectedPin.link}
                 </a>
               </div>
             )}
+
+            {/* Alt文本 */}
+            {selectedPin.alt_text && (
+              <div style={{ marginBottom: 16 }}>
+                <Text strong>{t('pin.altText')}: </Text>
+                <Text>{selectedPin.alt_text}</Text>
+              </div>
+            )}
+
+            {/* Board拥有者信息 */}
+            {selectedPin.board_owner && (
+              <div style={{ marginBottom: 16 }}>
+                <Text strong>{t('pin.boardOwner')}: </Text>
+                <Text>@{selectedPin.board_owner.username}</Text>
+              </div>
+            )}
+
+            <Divider />
             <Text type="secondary">
-              创建时间: {new Date(selectedPin.created_at).toLocaleDateString()}
+              {t('board.createTime')}: {new Date(selectedPin.created_at).toLocaleDateString('zh-CN')}
             </Text>
           </div>
         )}

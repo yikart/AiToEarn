@@ -283,6 +283,123 @@ interface Resources {
       }
     }
   },
+  "pinterest": {
+    "title": "Pinterest 管理",
+    "tabs": {
+      "boards": "我的Board",
+      "pins": "我的Pin"
+    },
+    "actions": {
+      "selectAccount": "选择账户",
+      "refresh": "刷新",
+      "createBoard": "创建Board",
+      "createPin": "创建Pin",
+      "search": "搜索...",
+      "view": "查看",
+      "edit": "编辑",
+      "delete": "删除",
+      "link": "链接"
+    },
+    "stats": {
+      "followers": "关注者",
+      "boardCount": "Board数量",
+      "pinCount": "Pin数量",
+      "monthlyViews": "月观看量"
+    },
+    "board": {
+      "createTitle": "创建新Board",
+      "name": "Board名称",
+      "namePlaceholder": "输入Board名称",
+      "description": "描述",
+      "descriptionPlaceholder": "输入Board描述",
+      "privacy": "隐私设置",
+      "public": "公开",
+      "private": "私有",
+      "createButton": "创建Board",
+      "deleteConfirm": "确定删除此Board吗？",
+      "detailTitle": "Board详情",
+      "createTime": "创建时间",
+      "noDescription": "暂无描述"
+    },
+    "pin": {
+      "createTitle": "创建新Pin",
+      "selectBoard": "选择Board",
+      "selectBoardPlaceholder": "选择要发布到的Board",
+      "uploadImage": "上传图片",
+      "uploadImagePlaceholder": "点击上传图片到OSS",
+      "uploadHint": "支持JPG、PNG、GIF格式，最大10MB",
+      "uploading": "正在上传到OSS...",
+      "uploadSuccess": "✓ 上传成功",
+      "reupload": "重新上传",
+      "ossUrl": "OSS地址",
+      "title": "标题",
+      "titlePlaceholder": "输入Pin标题",
+      "description": "描述",
+      "descriptionPlaceholder": "输入Pin描述",
+      "link": "链接",
+      "linkPlaceholder": "输入目标链接（可选）",
+      "altText": "Alt文本",
+      "altTextPlaceholder": "输入图片Alt文本（可选）",
+      "dominantColor": "主色调",
+      "dominantColorTip": "选择Pin的主色调",
+      "createButton": "创建Pin",
+      "deleteConfirm": "确定删除此Pin吗？",
+      "detailTitle": "Pin详情",
+      "pinId": "Pin ID",
+      "boardId": "Board ID",
+      "creativeType": "创作类型",
+      "boardOwner": "Board拥有者",
+      "isOwner": "拥有者",
+      "isRemovable": "可移除",
+      "isStandard": "标准Pin",
+      "noDescription": "暂无描述",
+      "imageAlt": "Pin图片"
+    },
+    "badges": {
+      "pins": "Pins",
+      "followers": "关注者",
+      "owner": "拥有者",
+      "yes": "是",
+      "no": "否"
+    },
+    "empty": {
+      "noBoards": "暂无Board",
+      "noPins": "暂无Pin"
+    },
+    "pagination": {
+      "total": "第 {range} 条，共 {total} 条"
+    },
+    "messages": {
+      "loadAccountsFailed": "加载账户列表失败",
+      "loadBoardsFailed": "加载Board列表失败",
+      "loadPinsFailed": "加载Pin列表失败",
+      "boardCreateSuccess": "Board创建成功",
+      "boardCreateFailed": "创建Board失败",
+      "boardDeleteSuccess": "Board删除成功",
+      "boardDeleteFailed": "删除Board失败",
+      "pinCreateSuccess": "Pin创建成功",
+      "pinCreateFailed": "创建Pin失败",
+      "pinDeleteSuccess": "Pin删除成功",
+      "pinDeleteFailed": "删除Pin失败",
+      "getBoardDetailFailed": "获取Board详情失败",
+      "getPinDetailFailed": "获取Pin详情失败",
+      "uploadImageFirst": "请先上传图片",
+      "selectImageFile": "请选择图片文件",
+      "imageSizeLimit": "图片大小不能超过10MB",
+      "imageUploadSuccess": "图片上传成功",
+      "imageUploadFailed": "图片上传失败，请重试"
+    },
+    "validation": {
+      "boardNameRequired": "请输入Board名称",
+      "selectBoardRequired": "请选择Board",
+      "titleRequired": "请输入标题",
+      "descriptionRequired": "请输入描述"
+    },
+    "confirm": {
+      "ok": "确定",
+      "cancel": "取消"
+    }
+  },
   "youtube": {
     "youtubeAuth": "YouTube 授权",
     "authDescription": "请输入您的邮箱地址以获取 YouTube 授权",

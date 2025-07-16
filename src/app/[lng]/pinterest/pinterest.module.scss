@@ -341,6 +341,23 @@
     font-size: 12px;
     color: rgba(0, 0, 0, 0.65);
     line-height: 1.4;
+    margin-bottom: 8px;
+  }
+}
+
+.pinMetadata {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  
+  :global(.ant-badge) {
+    font-size: 11px;
+    
+    :global(.ant-badge-status-text) {
+      font-size: 11px;
+      color: rgba(0, 0, 0, 0.65);
+    }
   }
 }
 
@@ -482,6 +499,53 @@
     border-color: #e60023;
     box-shadow: 0 0 0 2px rgba(230, 0, 35, 0.2);
   }
+}
+
+// 颜色选择器样式
+.colorPickerContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.colorPicker {
+  width: 60px;
+  height: 32px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  outline: none;
+  background: none;
+  
+  &::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  &::-webkit-color-swatch {
+    border: none;
+    border-radius: 5px;
+  }
+  
+  &::-moz-color-swatch {
+    border: none;
+    border-radius: 5px;
+  }
+  
+  &:focus {
+    border-color: #e60023;
+    box-shadow: 0 0 0 2px rgba(230, 0, 35, 0.2);
+  }
+  
+  &:hover {
+    border-color: #e60023;
+  }
+}
+
+.colorPickerTip {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.65);
 }
 
 // 过渡动画
