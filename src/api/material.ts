@@ -113,3 +113,18 @@ export const apiUpdateMaterialInfo = (
 ) => {
   return http.put(`material/info/${id}`, data);
 };
+
+// 更新草稿素材完整信息
+export const apiUpdateMaterial = (
+  id: string,
+  data: {
+    coverUrl?: string;
+    mediaList?: MaterialMedia[];
+    title?: string;
+    desc?: string;
+    location?: number[];
+    option?: Record<string, any>;
+  },
+) => {
+  return http.put(`material/info/${id}`, data);
+};

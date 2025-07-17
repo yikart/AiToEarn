@@ -327,12 +327,21 @@
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid #f0f0f0;
-  cursor: pointer;
+  position: relative;
 
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     border-color: #667eea;
+
+    .cardActions {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .cardMain {
+    cursor: pointer;
   }
 
   .cardCover {
@@ -393,6 +402,39 @@
           background: rgba(82, 196, 26, 0.1);
           color: #52c41a;
         }
+      }
+    }
+  }
+
+  .cardActions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 10;
+
+    .editButton {
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      border-radius: 6px;
+      color: #667eea;
+      font-size: 12px;
+      padding: 4px 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+
+      &:hover {
+        background: rgba(255, 255, 255, 1);
+        color: #5a6fd8;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      :global(.anticon) {
+        font-size: 12px;
+        margin-right: 4px;
       }
     }
   }

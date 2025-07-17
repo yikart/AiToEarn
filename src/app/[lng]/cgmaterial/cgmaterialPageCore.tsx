@@ -14,6 +14,7 @@ import {
   apiDeleteMaterialGroup,
   apiUpdateMaterialGroupInfo,
   apiPreviewMaterialTask,
+  apiUpdateMaterial,
 } from "@/api/material";
 import { getMediaGroupList, getMediaList } from "@/api/media";
 import { getOssUrl } from "@/utils/oss";
@@ -75,6 +76,18 @@ export default function CgMaterialPageCore() {
   const [editGroupName, setEditGroupName] = useState("");
   const [editingGroup, setEditingGroup] = useState<any>(null);
   const [editLoading, setEditLoading] = useState(false);
+
+  // 编辑素材相关
+  const [editMaterialModal, setEditMaterialModal] = useState(false);
+  const [editingMaterial, setEditingMaterial] = useState<any>(null);
+  const [editMaterialForm] = Form.useForm();
+  const [editMaterialLoading, setEditMaterialLoading] = useState(false);
+  const [editMaterialMediaGroups, setEditMaterialMediaGroups] = useState<any[]>([]);
+  const [editMaterialSelectedGroup, setEditMaterialSelectedGroup] = useState<any>(null);
+  const [editMaterialMediaList, setEditMaterialMediaList] = useState<any[]>([]);
+  const [editMaterialSelectedCover, setEditMaterialSelectedCover] = useState<string | null>(null);
+  const [editMaterialSelectedMaterials, setEditMaterialSelectedMaterials] = useState<string[]>([]);
+  const [editMaterialLocation, setEditMaterialLocation] = useState<[number, number]>([0, 0]);
 
   // 记录显示操作按钮的组id
   const [showActionsId, setShowActionsId] = useState<string | null>(null);
@@ -346,6 +359,91 @@ export default function CgMaterialPageCore() {
       message.error("更新失败");
     } finally {
       setEditLoading(false);
+    }
+  }
+
+  // 打开编辑素材弹窗
+  async function openEditMaterialModal(material: any) {
+    setEditingMaterial(material);
+    setEditMaterialModal(true);
+    
+    // 加载媒体组
+    const res = await getMediaGroupList(1, 50);
+    setEditMaterialMediaGroups(((res?.data as any)?.list as any[]) || []);
+    
+    // 设置表单初始值
+    editMaterialForm.setFieldsValue({
+      title: material.title,
+      desc: material.desc,
+      location: material.location || [0, 0],
+    });
+    
+    // 设置封面和素材
+    setEditMaterialSelectedCover(material.coverUrl || null);
+    setEditMaterialSelectedMaterials(material.mediaList?.map((m: any) => m.url) || []);
+    setEditMaterialLocation(material.location || [0, 0]);
+    
+    // 获取地理位置
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setEditMaterialLocation([pos.coords.longitude, pos.coords.latitude]);
+          editMaterialForm.setFieldsValue({ location: [pos.coords.longitude, pos.coords.latitude] });
+        },
+        () => {
+          setEditMaterialLocation([0, 0]);
+          editMaterialForm.setFieldsValue({ location: [0, 0] });
+        }
+      );
+    } else {
+      setEditMaterialLocation([0, 0]);
+      editMaterialForm.setFieldsValue({ location: [0, 0] });
+    }
+  }
+
+  // 选择编辑素材的媒体组
+  async function handleEditMaterialSelectGroup(group: any) {
+    setEditMaterialSelectedGroup(group);
+    const res = await getMediaList(group._id, 1, 100);
+    setEditMaterialMediaList(((res?.data as any)?.list as any[]) || []);
+  }
+
+  // 更新素材
+  async function handleUpdateMaterial() {
+    await editMaterialForm.validateFields();
+    const values = editMaterialForm.getFieldsValue();
+    
+    if (!editMaterialSelectedCover || editMaterialSelectedMaterials.length === 0) {
+      message.warning('请完整选择封面和素材');
+      return;
+    }
+    
+    setEditMaterialLoading(true);
+    try {
+      await apiUpdateMaterial(editingMaterial._id, {
+        coverUrl: editMaterialSelectedCover,
+        mediaList: editMaterialMediaList
+          .filter((m: any) => editMaterialSelectedMaterials.includes(m.url))
+          .map((m: any) => ({
+            url: m.url,
+            type: m.type,
+            content: m.content || '',
+          })),
+        title: values.title,
+        desc: values.desc,
+        location: editMaterialLocation,
+        option: editingMaterial.option || {},
+      });
+      
+      message.success('更新素材成功');
+      setEditMaterialModal(false);
+      setEditingMaterial(null);
+      editMaterialForm.resetFields();
+      fetchMaterialList(selectedGroup._id);
+    } catch (e) {
+      message.error('更新素材失败');
+    } finally {
+      setEditMaterialLoading(false);
     }
   }
 
@@ -646,28 +744,44 @@ export default function CgMaterialPageCore() {
                   dataSource={materialList}
                   renderItem={item => (
                     <List.Item>
-                      <div
-                        className={styles.materialCard}
-                        onClick={() => { setDetailData(item); setDetailModal(true); }}
-                      >
-                        {item.coverUrl && (
-                          <img
-                            src={getOssUrl(item.coverUrl)}
-                            alt="cover"
-                            className={styles.cardCover}
-                          />
-                        )}
-                        <div className={styles.cardContent}>
-                          <div className={styles.cardTitle}>{item.title}</div>
-                          <div className={styles.cardDesc}>{item.desc}</div>
-                          <div className={styles.cardMeta}>
-                            <span className={styles.typeLabel}>
-                              {item.type === MaterialType.ARTICLE ? "图文" : item.type === MaterialType.VIDEO ? "视频" : item.type}
-                            </span>
-                            <span className={`${styles.statusLabel} ${item.status === 0 ? styles.generating : styles.completed}`}>
-                              {item.status === 0 ? "生成中" : "已生成"}
-                            </span>
+                      <div className={styles.materialCard}>
+                        <div
+                          className={styles.cardMain}
+                          onClick={() => { setDetailData(item); setDetailModal(true); }}
+                        >
+                          {item.coverUrl && (
+                            <img
+                              src={getOssUrl(item.coverUrl)}
+                              alt="cover"
+                              className={styles.cardCover}
+                            />
+                          )}
+                          <div className={styles.cardContent}>
+                            <div className={styles.cardTitle}>{item.title}</div>
+                            <div className={styles.cardDesc}>{item.desc}</div>
+                            <div className={styles.cardMeta}>
+                              <span className={styles.typeLabel}>
+                                {item.type === MaterialType.ARTICLE ? "图文" : item.type === MaterialType.VIDEO ? "视频" : item.type}
+                              </span>
+                              <span className={`${styles.statusLabel} ${item.status === 0 ? styles.generating : styles.completed}`}>
+                                {item.status === 0 ? "生成中" : "已生成"}
+                              </span>
+                            </div>
                           </div>
+                        </div>
+                        <div className={styles.cardActions}>
+                          <Button
+                            type="text"
+                            size="small"
+                            icon={<EditOutlined />}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEditMaterialModal(item);
+                            }}
+                            className={styles.editButton}
+                          >
+                            编辑
+                          </Button>
                         </div>
                       </div>
                     </List.Item>
@@ -1178,6 +1292,184 @@ export default function CgMaterialPageCore() {
           value={editGroupName}
           onChange={e=>setEditGroupName(e.target.value)}
         />
+      </Modal>
+
+      {/* 编辑素材弹窗 */}
+      <Modal
+        open={editMaterialModal}
+        title="编辑素材"
+        onOk={handleUpdateMaterial}
+        onCancel={() => {
+          setEditMaterialModal(false);
+          setEditingMaterial(null);
+          editMaterialForm.resetFields();
+        }}
+        confirmLoading={editMaterialLoading}
+        width={700}
+      >
+        {/* 媒体组选择 */}
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontWeight: 500, marginBottom: 8 }}>选择媒体组</div>
+          <List
+            grid={{ gutter: 16, column: 2 }}
+            dataSource={editMaterialMediaGroups}
+            renderItem={item => (
+              <List.Item>
+                <div
+                  className={styles.mediaCard}
+                  style={{
+                    background: editMaterialSelectedGroup?._id === item._id ? 
+                      'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)' : 
+                      '#FAEFFC',
+                    border: editMaterialSelectedGroup?._id === item._id ? 
+                      '2px solid #667eea' : '2px solid transparent',
+                    padding: '20px',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    minHeight: '100px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    textAlign: 'center'
+                  }}
+                  onClick={() => handleEditMaterialSelectGroup(item)}
+                  onMouseEnter={(e) => {
+                    if (editMaterialSelectedGroup?._id !== item._id) {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.2)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (editMaterialSelectedGroup?._id !== item._id) {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }
+                  }}
+                >
+                  <div style={{ 
+                    fontSize: 24, 
+                    marginBottom: 8,
+                    color: editMaterialSelectedGroup?._id === item._id ? '#667eea' : '#bdc3c7'
+                  }}>
+                    <FolderOpenOutlined />
+                  </div>
+                  <div style={{ 
+                    fontWeight: 600, 
+                    fontSize: 16,
+                    color: '#2c3e50',
+                    marginBottom: 4
+                  }}>
+                    {item.title}
+                  </div>
+                  {item.desc && (
+                    <div style={{ 
+                      fontSize: 12, 
+                      color: '#7f8c8d',
+                      lineHeight: 1.4
+                    }}>
+                      {item.desc}
+                    </div>
+                  )}
+                  {editMaterialSelectedGroup?._id === item._id && (
+                    <div style={{
+                      position: 'absolute',
+                      top: 8,
+                      right: 8,
+                      width: 20,
+                      height: 20,
+                      borderRadius: '50%',
+                      background: '#667eea',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'white',
+                      fontSize: 12
+                    }}>
+                      ✓
+                    </div>
+                  )}
+                </div>
+              </List.Item>
+            )}
+          />
+        </div>
+
+        {/* 资源选择区 */}
+        {editMaterialSelectedGroup && (
+          <>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontWeight: 500, marginBottom: 8 }}>选择封面（单选）</div>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {editMaterialMediaList.map((media: any) => (
+                  <img
+                    key={media._id}
+                    src={getOssUrl(media.url)}
+                    alt=""
+                    style={{
+                      width: 60,
+                      height: 60,
+                      border: editMaterialSelectedCover === media.url ? '2px solid #1677ff' : '1px solid #eee',
+                      borderRadius: 4,
+                      cursor: 'pointer',
+                      objectFit: 'cover',
+                    }}
+                    onClick={() => setEditMaterialSelectedCover(media.url)}
+                  />
+                ))}
+              </div>
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontWeight: 500, marginBottom: 8 }}>选择素材（多选）</div>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {editMaterialMediaList.map((media: any) => (
+                  <img
+                    key={media._id}
+                    src={getOssUrl(media.url)}
+                    alt=""
+                    style={{
+                      width: 60,
+                      height: 60,
+                      border: editMaterialSelectedMaterials.includes(media.url) ? '2px solid #1677ff' : '1px solid #eee',
+                      borderRadius: 4,
+                      cursor: 'pointer',
+                      objectFit: 'cover',
+                      opacity: editMaterialSelectedCover === media.url ? 0.5 : 1,
+                    }}
+                    onClick={() => {
+                      if (editMaterialSelectedCover === media.url) return;
+                      setEditMaterialSelectedMaterials(prev =>
+                        prev.includes(media.url)
+                          ? prev.filter(url => url !== media.url)
+                          : [...prev, media.url]
+                      );
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* 表单区 */}
+        <Form form={editMaterialForm} layout="vertical">
+          <Form.Item label="标题" name="title" rules={[{ required: true, message: '请输入标题' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="简介" name="desc">
+            <TextArea rows={3} />
+          </Form.Item>
+          <Form.Item label="地理位置" name="location">
+            <Input
+              value={editMaterialLocation.join(',')}
+              onChange={e => {
+                const val = e.target.value.split(',').map((v: string) => Number(v.trim()));
+                setEditMaterialLocation([val[0] || 0, val[1] || 0]);
+              }}
+            />
+          </Form.Item>
+        </Form>
       </Modal>
     </div>
   );
