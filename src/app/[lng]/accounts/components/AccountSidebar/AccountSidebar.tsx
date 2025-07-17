@@ -19,10 +19,12 @@ import {
 import { useShallow } from "zustand/react/shallow";
 import { useAccountStore } from "@/store/account";
 import UserManageModal, { IUserManageModalRef } from "./UserManageModal";
+import MCPManagerModal, { IMCPManagerModalRef } from "./MCPManagerModal";
 import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import { AccountStatus } from "@/app/config/accountConfig";
 import { SocialAccount } from "@/api/types/account.type";
 import { getOssUrl } from "@/utils/oss";
+import ChooseAccountModule from "@/components/ChooseAccountModule/ChooseAccountModule";
 
 export interface IAccountSidebarRef {}
 
@@ -146,6 +148,8 @@ const AccountSidebar = memo(
       );
       const [userManageModalOpen, setUserManageModalOpen] = useState(false);
       const userManageModalRef = useRef<IUserManageModalRef>(null);
+      const [mcpManagerModalOpen, setMcpManagerModalOpen] = useState(false);
+      const mcpManagerModalRef = useRef<IMCPManagerModalRef>(null);
 
       // 在组件内部过滤账号列表，而不是在 useAccountStore 中过滤
       const accountList = useMemo(() => {
@@ -164,6 +168,11 @@ const AccountSidebar = memo(
             ref={userManageModalRef}
             open={userManageModalOpen}
             onCancel={() => setUserManageModalOpen(false)}
+          />
+          <MCPManagerModal
+            ref={mcpManagerModalRef}
+            open={mcpManagerModalOpen}
+            onClose={setMcpManagerModalOpen}
           />
           {/*TODO 在线状态检测 */}
           {/*<PubAccountDetModule*/}
@@ -199,6 +208,17 @@ const AccountSidebar = memo(
                     }}
                   ></Button>
                 </Tooltip>
+              </div>
+                    {/* mcp 按钮 */}
+              <div className="accountSidebar-top-box">
+                {/* 按钮蓝紫色渐变 */}
+                <Button 
+                  type="primary" 
+                  style={{background: 'linear-gradient(90deg, #625BF2 0%, #925BF2 100%)'}}
+                  onClick={() => setMcpManagerModalOpen(true)}
+                >
+                   MCP 管理器
+                </Button>
               </div>
             </div>
 
