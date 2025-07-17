@@ -7,26 +7,26 @@ import {
   useRef,
   useState,
 } from "react";
-import { Modal, Tabs } from "antd";
-import PlatChoose, {
-  IPlatChooseProps,
-  IPlatChooseRef,
-} from "@/components/ChooseAccountModule/components/PlatChoose";
+import { Modal } from "antd";
+import SimpleAccountChoose, {
+  ISimpleAccountChooseProps,
+  ISimpleAccountChooseRef,
+} from "@/components/ChooseAccountModule/components/SimpleAccountChoose";
 import { SocialAccount } from "@/api/types/account.type";
 
 export interface IChooseAccountModuleRef {
-  getPlatChooseRef: () => IPlatChooseRef | null;
+  getSimpleAccountChooseRef: () => ISimpleAccountChooseRef | null;
 }
 
 export interface IChooseAccountModuleProps {
   open: boolean;
   onClose: (open: boolean) => void;
-  // 按平台props
-  platChooseProps?: IPlatChooseProps;
-  // 按平台选择确认
-  onPlatConfirm?: (accounts: SocialAccount[]) => void;
-  // 按平台选择change
-  onPlatChange?: (accounts: SocialAccount[], account: SocialAccount) => void;
+  // 简化账户选择props
+  simpleAccountChooseProps?: ISimpleAccountChooseProps;
+  // 账户选择确认
+  onAccountConfirm?: (accounts: SocialAccount[]) => void;
+  // 账户选择change
+  onAccountChange?: (accounts: SocialAccount[], account: SocialAccount) => void;
 }
 
 const ChooseAccountModule = memo(
@@ -35,24 +35,24 @@ const ChooseAccountModule = memo(
       {
         open,
         onClose,
-        onPlatConfirm,
-        onPlatChange,
-        platChooseProps,
+        onAccountConfirm,
+        onAccountChange,
+        simpleAccountChooseProps,
       }: IChooseAccountModuleProps,
       ref: ForwardedRef<IChooseAccountModuleRef>,
     ) => {
       const [newChoosedAccounts, setNewChoosedAccounts] = useState<
         SocialAccount[]
       >([]);
-      const platChooseRef = useRef<IPlatChooseRef>(null);
+      const simpleAccountChooseRef = useRef<ISimpleAccountChooseRef>(null);
 
       const handleOk = () => {
-        if (onPlatConfirm) onPlatConfirm(newChoosedAccounts);
+        if (onAccountConfirm) onAccountConfirm(newChoosedAccounts);
         close();
       };
 
       const handleCancel = () => {
-        setNewChoosedAccounts(platChooseProps?.choosedAccounts || []);
+        setNewChoosedAccounts(simpleAccountChooseProps?.choosedAccounts || []);
         close();
       };
 
@@ -61,16 +61,16 @@ const ChooseAccountModule = memo(
       };
 
       useEffect(() => {
-        setTimeout(() => platChooseRef.current?.recover(), 1);
-      }, [platChooseProps?.choosedAccounts]);
+        setTimeout(() => simpleAccountChooseRef.current?.recover(), 1);
+      }, [simpleAccountChooseProps?.choosedAccounts]);
 
       useEffect(() => {
-        platChooseRef.current?.init();
+        simpleAccountChooseRef.current?.init();
       }, [open]);
 
       const ImperativeHandle: IChooseAccountModuleRef = {
-        getPlatChooseRef() {
-          return platChooseRef.current;
+        getSimpleAccountChooseRef() {
+          return simpleAccountChooseRef.current;
         },
       };
       useImperativeHandle(ref, () => ImperativeHandle);
@@ -83,32 +83,19 @@ const ChooseAccountModule = memo(
           onOk={handleOk}
           onCancel={handleCancel}
         >
-          <Tabs
-            defaultActiveKey="1"
-            items={[
-              {
-                key: "1",
-                label: "按平台选择",
-                children: (
-                  <>
-                    {platChooseProps && (
-                      <PlatChoose
-                        {...platChooseProps}
-                        disableAllSelect={
-                          platChooseProps.disableAllSelect || false
-                        }
-                        ref={platChooseRef}
-                        onChange={(aList, account) => {
-                          setNewChoosedAccounts(aList);
-                          if (onPlatChange) onPlatChange(aList, account);
-                        }}
-                      />
-                    )}
-                  </>
-                ),
-              },
-            ]}
-          />
+          {simpleAccountChooseProps && (
+            <SimpleAccountChoose
+              {...simpleAccountChooseProps}
+              disableAllSelect={
+                simpleAccountChooseProps.disableAllSelect || false
+              }
+              ref={simpleAccountChooseRef}
+              onChange={(accounts: SocialAccount[], account: SocialAccount) => {
+                setNewChoosedAccounts(accounts);
+                if (onAccountChange) onAccountChange(accounts, account);
+              }}
+            />
+          )}
         </Modal>
       );
     },

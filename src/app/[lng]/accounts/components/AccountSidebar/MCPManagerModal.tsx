@@ -3,7 +3,6 @@ import { Modal, Button, List, Avatar, Tag, Space, message, Empty } from "antd";
 import { PlusOutlined, CopyOutlined, DeleteOutlined, KeyOutlined } from "@ant-design/icons";
 import ChooseAccountModule from "@/components/ChooseAccountModule/ChooseAccountModule";
 import { SocialAccount } from "@/api/types/account.type";
-import { PubType } from "@/app/config/publishConfig";
 import styles from "./MCPManagerModal.module.scss";
 
 export interface IMCPManagerModalRef {
@@ -184,9 +183,8 @@ const MCPManagerModal = memo(
           <ChooseAccountModule
             open={isCreateModalOpen}
             onClose={setIsCreateModalOpen}
-            onPlatConfirm={handleAccountConfirm}
-            platChooseProps={{
-              pubType: PubType.VIDEO, // 根据实际需要调整
+            onAccountConfirm={handleAccountConfirm}
+            simpleAccountChooseProps={{
               choosedAccounts: selectedAccounts,
               disableAllSelect: false,
               isCancelChooseAccount: true,
