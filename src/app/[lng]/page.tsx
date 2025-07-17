@@ -875,19 +875,15 @@ function Footer() {
             
             <div className={styles.footerColumn}>
               <h4>{t('footer.company.title')}</h4>
-              {/* <a href="#talk">{t('footer.company.links.talk')}</a> */}
               <a onClick={() => {
                 router.push("/websit/terms-of-service");
               }}>{t('footer.company.links.terms')}</a>
               <a onClick={() => {
                 router.push("/websit/privacy-policy");
               }}>{t('footer.company.links.privacy')}</a>
-              {/* <a href="#cookies">{t('footer.company.links.cookies')}</a> */}
               <a onClick={() => {
                 router.push("/websit/data-deletion");
               }}>{t('footer.company.links.data')}</a>
-              {/* <a href="#marketplace">{t('footer.company.links.marketplace')}</a> */}
-              {/* <a href="#brand">{t('footer.company.links.brand')}</a> */}
             </div>
           </div>
           

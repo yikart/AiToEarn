@@ -1174,10 +1174,28 @@
     text-decoration: none;
     margin-bottom: 16px;
     font-size: 15px;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    position: relative;
     
     &:hover {
       color: #1f2937;
+      transform: translateX(4px);
+    }
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #4f46e5;
+      transition: width 0.2s ease;
+    }
+    
+    &:hover::after {
+      width: 100%;
     }
   }
 }
