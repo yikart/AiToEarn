@@ -44,13 +44,13 @@ export default function PrivacyPolicyPage() {
           <div className={styles.content}>
             <section className={styles.section}>
               <p className={styles.introduction}>
-                Aitoearn provides this Privacy Policy to inform you of our policies and procedures regarding the collection, use, protection, and disclosure of Personal Information received from your use of this website, located at https://aiearn.ai ("Site"), as well as all related websites including our subdomains, applications, browser extensions, and other services provided by us (collectively, together with the Site, our "Service"), and in connection with our customer, vendor, and partner relationships.
+              Aitoearn provides this Privacy Policy to inform you of our policies and procedures regarding the collection, use, protection, and disclosure of Personal Information received from your use of this website, located at https://www.aitoearn.ai (“Site”), as well as all related websites including our subdomains, applications, browser extensions, and other services provided by us (collectively, together with the Site, our “Service”), and in connection with our customer, vendor, and partner relationships. This Privacy Policy also tells you about your rights and choices with respect to your Personal Information, and how you can reach us to update your contact information or get answers to questions you may have about our privacy practices.
               </p>
               <p className={styles.sectionContent}>
-                This Privacy Policy also tells you about your rights and choices with respect to your Personal Information, and how you can reach us to update your contact information or get answers to questions you may have about our privacy practices.
+              In addition to the activities described in this Privacy Policy, we may process Personal Information on behalf of our commercial customers when they use the Service. We process such Personal Information as a data processor of our commercial customers, which are the entities responsible for the data processing. To understand how a commercial customer processes your Personal Information, please refer to that customer’s privacy policy.
               </p>
               <p className={styles.sectionContent}>
-                Registration with, use of, and access to the Service is subject to this Privacy Policy and our Terms of Use located at https://aiearn.ai/legal#terms.
+                Registration with, use of, and access to the Service is subject to this Privacy Policy and our Terms of Use located at https://aitoearn.ai/en/websit/terms-of-service.
               </p>
             </section>
             
@@ -68,8 +68,7 @@ export default function PrivacyPolicyPage() {
                 <li><a href="#section7">7. Data Transfers</a></li>
                 <li><a href="#section8">8. Children's Privacy</a></li>
                 <li><a href="#section9">9. Updates to this Privacy Policy</a></li>
-                <li><a href="#section10">10. Your California Privacy Rights</a></li>
-                <li><a href="#section11">11. How to Contact Us</a></li>
+                <li><a href="#section11">10. How to Contact Us</a></li>
               </ul>
             </section>
 
@@ -221,7 +220,7 @@ export default function PrivacyPolicyPage() {
             <section className={styles.section} id="section6">
               <h2 className={styles.sectionTitle}>6. Your Rights and Choices</h2>
               <p className={styles.sectionContent}>
-                If you decide at any time that you no longer wish to receive marketing communications from us, please follow the unsubscribe instructions provided in any of the communications. You may also opt out from receiving commercial email from us by sending your request to us by email at hello@aiearn.ai.
+                If you decide at any time that you no longer wish to receive marketing communications from us, please follow the unsubscribe instructions provided in any of the communications. You may also opt out from receiving commercial email from us by sending your request to us by email at hello@aitoearn.ai.
               </p>
               <p className={styles.sectionContent}>
                 In certain jurisdictions you have the right to request access and receive information about the personal information we maintain about you, to update and correct inaccuracies in your personal information, to restrict or object to the processing of your personal information, to have the information blocked, anonymized or deleted, as appropriate, or to exercise your right to data portability to transfer your personal information to another company.
@@ -244,7 +243,7 @@ export default function PrivacyPolicyPage() {
             <section className={styles.section} id="section8">
               <h2 className={styles.sectionTitle}>8. Children's Privacy</h2>
               <p className={styles.sectionContent}>
-                The site is not directed to persons under 16. If a parent or guardian becomes aware that his or her child has provided us with personal information without their consent, he or she should contact us at hello@aiearn.ai. We do not knowingly collect personal information from children under 16. If we become aware that a child under 16 has provided us with personal information, we will delete such information from our files.
+                The site is not directed to persons under 16. If a parent or guardian becomes aware that his or her child has provided us with personal information without their consent, he or she should contact us at hello@aitoearn.ai. We do not knowingly collect personal information from children under 16. If we become aware that a child under 16 has provided us with personal information, we will delete such information from our files.
               </p>
             </section>
 
@@ -258,26 +257,20 @@ export default function PrivacyPolicyPage() {
               </p>
             </section>
 
-            <section className={styles.section} id="section10">
-              <h2 className={styles.sectionTitle}>10. Your California Privacy Rights</h2>
-              <p className={styles.sectionContent}>
-                California law affords california residents certain additional rights regarding our collection and use of your personal information. To learn more about your california privacy rights, please visit our Privacy Notice for California Residents.
-              </p>
-            </section>
 
             <section className={styles.section} id="section11">
-              <h2 className={styles.sectionTitle}>11. How to Contact Us</h2>
+              <h2 className={styles.sectionTitle}>10. How to Contact Us</h2>
               <div className={styles.contactInfo}>
                 <h3 className={styles.contactTitle}>Contact Information</h3>
                 <p className={styles.contactText}>
                   Aitoearn Inc. is the entity responsible for the processing of your personal information. If you have any questions or comments regarding this privacy policy, or if you would like to exercise your rights to your personal information, you may contact us:
                 </p>
                 <p className={styles.contactText}>
-                  <strong>Email:</strong> hello@aiearn.ai<br/>
-                  <strong>Privacy Questions:</strong> privacy@aiearn.ai
+                  <strong>Email:</strong> hello@aitoearn.ai<br/>
+                  <strong>Privacy Questions:</strong> privacy@aitoearn.ai
                 </p>
                 <p className={styles.contactText}>
-                  If you have any thoughts or questions about this privacy policy please let us know at hello@aiearn.ai
+                  If you have any thoughts or questions about this privacy policy please let us know at hello@aitoearn.ai
                 </p>
               </div>
             </section>

@@ -51,11 +51,11 @@ export default function TermsOfServicePage() {
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Aitoearn, Inc Terms of Use</h2>
               <p className={styles.sectionContent}>
-                Welcome, and thank you for your interest in Aitoearn, Inc. ("Aitoearn," "we," or "us") and our website at aiearn.ai, along with our related websites, networks, hosted applications, mobile or other downloadable applications, and other services provided by us (collectively, the "Service"). These Terms of Use are a legally binding contract between you and Aitoearn regarding your use of the Service.
+                Welcome, and thank you for your interest in Aitoearn, Inc. ("Aitoearn," "we," or "us") and our website at aitoearn.ai, along with our related websites, networks, hosted applications, mobile or other downloadable applications, and other services provided by us (collectively, the "Service"). These Terms of Use are a legally binding contract between you and Aitoearn regarding your use of the Service.
               </p>
               <p className={styles.sectionContent}>
                 <strong>PLEASE READ THE FOLLOWING TERMS CAREFULLY:</strong><br/>
-                BY CLICKING "I ACCEPT,"OR BY DOWNLOADING, INSTALLING, OR OTHERWISE ACCESSING OR USING THE SERVICE, YOU AGREE THAT YOU HAVE READ AND UNDERSTOOD, AND, AS A CONDITION TO YOUR USE OF THE SERVICE, YOU AGREE TO BE BOUND BY, THE FOLLOWING TERMS AND CONDITIONS, INCLUDING Aitoearn'S PRIVACY POLICY https://aiearn.ai/legal#privacy-policy AND ANY ADDITIONAL TERMS AND POLICIES Aitoearn MAY PROVIDE FROM TIME TO TIME (TOGETHER, THESE "TERMS").
+                BY CLICKING "I ACCEPT,"OR BY DOWNLOADING, INSTALLING, OR OTHERWISE ACCESSING OR USING THE SERVICE, YOU AGREE THAT YOU HAVE READ AND UNDERSTOOD, AND, AS A CONDITION TO YOUR USE OF THE SERVICE, YOU AGREE TO BE BOUND BY, THE FOLLOWING TERMS AND CONDITIONS, INCLUDING Aitoearn'S PRIVACY POLICY https://aitoearn.ai/en/websit/privacy-policy AND ANY ADDITIONAL TERMS AND POLICIES Aitoearn MAY PROVIDE FROM TIME TO TIME (TOGETHER, THESE "TERMS").
               </p>
               <p className={styles.sectionContent}>
                 <strong>Arbitration NOTICE.</strong> Except for certain kinds of disputes described in Section 14, you agree that disputes arising under these Terms will be resolved by binding, individual arbitration, and BY ACCEPTING THESE TERMS, YOU AND Aitoearn ARE EACH WAIVING THE RIGHT TO A TRIAL BY JURY OR TO PARTICIPATE IN ANY CLASS ACTION OR REPRESENTATIVE PROCEEDING.
@@ -84,7 +84,7 @@ export default function TermsOfServicePage() {
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>3. Accounts and Registration</h2>
               <p className={styles.sectionContent}>
-                To access most features of the Service, you must register for an account. When you register for an account, you may be required to provide us with some information about yourself, such as your name, email address, or other contact information. You agree that the information you provide to us is accurate, complete, and not misleading, and that you will keep it accurate and up to date at all times. When you register, you will be asked to create a password. You are solely responsible for maintaining the confidentiality of your account and password, and you accept responsibility for all activities that occur under your account. If you believe that your account is no longer secure, then you should immediately notify us at hello@aiearn.ai.
+                To access most features of the Service, you must register for an account. When you register for an account, you may be required to provide us with some information about yourself, such as your name, email address, or other contact information. You agree that the information you provide to us is accurate, complete, and not misleading, and that you will keep it accurate and up to date at all times. When you register, you will be asked to create a password. You are solely responsible for maintaining the confidentiality of your account and password, and you accept responsibility for all activities that occur under your account. If you believe that your account is no longer secure, then you should immediately notify us at hello@aitoearn.ai.
               </p>
             </section>
 
@@ -183,7 +183,7 @@ export default function TermsOfServicePage() {
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>14. Contact Information</h2>
               <p className={styles.sectionContent}>
-                The Service is offered by Aitoearn, Inc. You may contact us by emailing us at hello@aiearn.ai.
+                The Service is offered by Aitoearn, Inc. You may contact us by emailing us at hello@aitoearn.ai.
               </p>
             </section>
           </div>
