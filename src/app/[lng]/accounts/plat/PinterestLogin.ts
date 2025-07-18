@@ -14,7 +14,7 @@ export async function pinterestSkip(platType: PlatType) {
 
   const res: any = await getPinterestAuthUrlApi('pc');
   if (res?.code !== 0) return;
-  const url = res.data.url;
+  const url = res.data.uri;
   window.open(`${url}`);
 
   const pinterestLoginRes = await pinterestLogin(res.data.taskId);

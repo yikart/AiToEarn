@@ -124,34 +124,28 @@ export default function PinterestPage() {
     loadBoards(1, 20);
   }, []);
 
-  // 当选中账户时，加载boards
-  useEffect(() => {
-    if (selectedAccount) {
-      loadBoards();
-    }
-  }, [selectedAccount]);
 
   // 加载账户列表
   const loadAccountList = async () => {
-    try {
-      setLoading(true);
-      const response = await getPinterestAccountListApi();
-      if (response?.code === 0) {
-        setAccounts(response.data.items);
-        if (response.data.items.length > 0) {
-          setSelectedAccount(response.data.items[0]);
-        }
-      }
-          } catch (error) {
-        message.error(t('messages.loadAccountsFailed'));
-      } finally {
-        setLoading(false);
-      }
+    // try {
+    //   setLoading(true);
+    //   const response = await getPinterestAccountListApi();
+    //   if (response?.code === 0) {
+    //     setAccounts(response.data.items);
+    //     if (response.data.items.length > 0) {
+    //       setSelectedAccount(response.data.items[0]);
+    //     }
+    //   }
+    //       } catch (error) {
+    //     message.error(t('messages.loadAccountsFailed'));
+    //   } finally {
+    //     setLoading(false);
+    //   }
     };
 
     // 加载boards
     const loadBoards = async (page = 1, size = 20) => {
-      if (!selectedAccount) return;
+      // if (!selectedAccount) return;
 
       try {
         setLoading(true);
