@@ -17,8 +17,8 @@ import {
 } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 import { CSSTransition } from "react-transition-group";
 import { DatesSetArg } from "@fullcalendar/core";
-import { Button } from "antd";
-import { LeftOutlined, PlusOutlined, RightOutlined } from "@ant-design/icons";
+import { Button, Tabs } from "antd";
+import { LeftOutlined, PlusOutlined, RightOutlined, CalendarOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { useTransClient } from "@/app/i18n/client";
 import CalendarTimingItem from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem";
 import PublishDialog, { IPublishDialogRef } from "@/components/PublishDialog";
@@ -29,6 +29,7 @@ import { DndProvider } from "react-dnd";
 import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";
 import AvatarPlat from "@/components/AvatarPlat";
 import AllPlatIcon from "@/app/[lng]/accounts/components/CalendarTiming/AllPlatIcon";
+import ListMode from "@/app/[lng]/accounts/components/CalendarTiming/ListMode";
 
 export interface ICalendarTimingRef {}
 export interface ICalendarTimingProps {}
@@ -45,6 +46,7 @@ const CalendarTiming = memo(
       );
       const { t } = useTransClient("account");
       const [currentDate, setCurrentDate] = useState<Date>(new Date());
+      const [activeMode, setActiveMode] = useState<"calendar" | "list">("calendar");
       const handleDatesSet = (arg: DatesSetArg) => {
         const date = calendarRef.current?.getApi().getDate();
         if (date) {
@@ -196,62 +198,102 @@ const CalendarTiming = memo(
           </div>
           <div className="calendarTiming-toolbar">
             <div className="calendarTiming-toolbar-left">
-              <Button
-                type="text"
-                icon={<LeftOutlined />}
-                onClick={handlePrev}
-              />
-              <Button
-                type="text"
-                icon={<RightOutlined />}
-                onClick={handleNext}
-              />
-              <h1>
-                {currentDate.getFullYear()}-{currentDate.getMonth() + 1}
-              </h1>
-              <Button onClick={handleToday}>{t("today")}</Button>
+              {activeMode === "calendar" && (
+                <>
+                  <Button
+                    type="text"
+                    icon={<LeftOutlined />}
+                    onClick={handlePrev}
+                  />
+                  <Button
+                    type="text"
+                    icon={<RightOutlined />}
+                    onClick={handleNext}
+                  />
+                  <h1>
+                    {currentDate.getFullYear()}-{currentDate.getMonth() + 1}
+                  </h1>
+                  <Button onClick={handleToday}>{t("today")}</Button>
+                </>
+              )}
             </div>
-            <div className="calendarTiming-toolbar-right"></div>
+            <div className="calendarTiming-toolbar-right">
+              <Tabs
+                activeKey={activeMode}
+                onChange={(key) => setActiveMode(key as "calendar" | "list")}
+                items={[
+                  {
+                    key: "calendar",
+                    label: (
+                      <span>
+                        <CalendarOutlined />
+                        日历模式
+                      </span>
+                    ),
+                  },
+                  {
+                    key: "list",
+                    label: (
+                      <span>
+                        <UnorderedListOutlined />
+                        列表模式
+                      </span>
+                    ),
+                  },
+                ]}
+                size="small"
+                className={styles.modeTabs}
+              />
+            </div>
           </div>
-          <CSSTransition
-            in={!animating}
-            timeout={300}
-            classNames={getTransitionClassNames(direction)}
-            unmountOnExit
-          >
-            <div
-              className="calendarTiming-calendar"
-              ref={calendarTimingCalendarRef}
+          {activeMode === "calendar" ? (
+            <CSSTransition
+              in={!animating}
+              timeout={300}
+              classNames={getTransitionClassNames(direction)}
+              unmountOnExit
             >
-              <DndProvider backend={HTML5Backend}>
-                <FullCalendar
-                  ref={calendarRef}
-                  locale={getFullCalendarLang(lng)}
-                  plugins={[dayGridPlugin]}
-                  initialView="dayGridMonth"
-                  initialDate={currentDate}
-                  headerToolbar={false}
-                  stickyFooterScrollbar={true}
-                  dayCellContent={(arg) => {
-                    const dateStr = getDays(arg.date).format("YYYY-MM-DD");
-                    return (
-                      <CalendarTimingItem
-                        key={dateStr}
-                        records={recordMap.get(dateStr)}
-                        loading={listLoading}
-                        arg={arg}
-                        onClickPub={(date) => {
-                          publishDialogRef.current!.setPubTime(date);
-                          setPublishDialogOpen(true);
-                        }}
-                      />
-                    );
-                  }}
-                  datesSet={handleDatesSet}
-                />
-              </DndProvider>
-            </div>
-          </CSSTransition>
+              <div
+                className="calendarTiming-calendar"
+                ref={calendarTimingCalendarRef}
+              >
+                <DndProvider backend={HTML5Backend}>
+                  <FullCalendar
+                    ref={calendarRef}
+                    locale={getFullCalendarLang(lng)}
+                    plugins={[dayGridPlugin]}
+                    initialView="dayGridMonth"
+                    initialDate={currentDate}
+                    headerToolbar={false}
+                    stickyFooterScrollbar={true}
+                    dayCellContent={(arg) => {
+                      const dateStr = getDays(arg.date).format("YYYY-MM-DD");
+                      return (
+                        <CalendarTimingItem
+                          key={dateStr}
+                          records={recordMap.get(dateStr)}
+                          loading={listLoading}
+                          arg={arg}
+                          onClickPub={(date) => {
+                            publishDialogRef.current!.setPubTime(date);
+                            setPublishDialogOpen(true);
+                          }}
+                        />
+                      );
+                    }}
+                    datesSet={handleDatesSet}
+                  />
+                </DndProvider>
+              </div>
+            </CSSTransition>
+          ) : (
+            <ListMode 
+              onClickPub={(date) => {
+                publishDialogRef.current!.setPubTime(date);
+                setPublishDialogOpen(true);
+              }}
+            />
+          )}
         </div>
       );
     },

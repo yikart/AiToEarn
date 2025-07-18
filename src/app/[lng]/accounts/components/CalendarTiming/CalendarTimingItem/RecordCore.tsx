@@ -31,6 +31,9 @@ import type { MenuProps } from "antd";
 import { TooltipRef } from "antd/lib/tooltip";
 import { deletePublishRecordApi, nowPubTaskApi } from "@/api/plat/publish";
 import { getDays } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
+import { getOssUrl } from "@/utils/oss";
+
+
 
 export interface IRecordCoreRef {}
 
@@ -154,7 +157,7 @@ const RecordCore = memo(
                   {publishRecord.videoUrl ? (
                     <>
                       <Image
-                        src={publishRecord.coverUrl}
+                        src={getOssUrl(publishRecord.coverUrl || "")}
                         preview={{
                           destroyOnHidden: true,
                           imageRender: () => (
@@ -172,7 +175,7 @@ const RecordCore = memo(
                     </>
                   ) : (
                     <Image.PreviewGroup items={publishRecord.imgUrlList}>
-                      <Image src={publishRecord.coverUrl} />
+                      <Image src={getOssUrl(publishRecord.coverUrl || "")} />
                     </Image.PreviewGroup>
                   )}
                 </div>
@@ -204,7 +207,7 @@ const RecordCore = memo(
               <div className="recordCore-left-date">{days.format("HH:mm")}</div>
             </div>
             <div className="recordCore-right">
-              <img src={publishRecord.coverUrl} />
+              <img src={getOssUrl(publishRecord.coverUrl || "")} />
             </div>
           </Button>
         </Popover>

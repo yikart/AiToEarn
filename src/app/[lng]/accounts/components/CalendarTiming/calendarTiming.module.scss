@@ -45,6 +45,24 @@
 
       }
     }
+
+    .modeTabs {
+      :global {
+        .ant-tabs-tab {
+          padding: 4px 12px;
+          font-size: var(--fs-sm);
+          
+          .anticon {
+            margin-right: 4px;
+          }
+        }
+        
+        .ant-tabs-tab-active {
+          background: var(--colorPrimary1);
+          border-radius: 6px;
+        }
+      }
+    }
     .fc-daygrid-day.fc-day-today {
       background: transparent;
       .calendarTimingItem-top-day {

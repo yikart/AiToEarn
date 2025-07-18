@@ -52,7 +52,7 @@ export const useCalendarTiming = create(
         // 获取发布记录数据
         async getPubRecord() {
           methods.setListLoading(true);
-          const date = getDays(get().calendarRef?.getApi().getDate());
+          const date = getDays(get().calendarRef?.getApi().getDate() || new Date());
           const startOfMonth = date.startOf("month");
           const endOfMonth = date.endOf("month");
 
