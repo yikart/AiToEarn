@@ -120,8 +120,6 @@ export const getThreadsAuthUrlApi = (mail: string) => {
 };
 
 
-
-
 /**
  * 获取tiktok授权状态
  * @param taskId 任务ID
@@ -155,6 +153,27 @@ export const getWxGzhAuthUrlApi = (mail: string) => {
 export const checkWxGzAuthApi = ( taskId:any ) => {
   return request({
     url: `plat/wxGzh/auth/create-account/${taskId}`,
+    method: 'GET',
+  });
+};
+
+
+/**
+ * 获取facebook授权状态
+ * @param taskId 任务ID
+ * @returns
+ */
+export const getPinterestAuthUrlApi = (mail: string) => {
+  return request({
+    url: 'plat/pinterest/getAuth',
+    method: 'GET',
+  });
+};
+
+
+export const checkPinterestAuthApi = ( taskId:any ) => {
+  return request({
+    url: `plat/pinterest/checkAuth`,
     method: 'GET',
   });
 };

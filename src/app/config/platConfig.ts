@@ -10,6 +10,7 @@ import instagramSvg from "@/assets/svgs/plat/instagram.svg";
 import threadsSvg from "@/assets/svgs/plat/xiancheng.svg";
 import wxGzhSvg from "@/assets/svgs/plat/wx-gzh.svg";  
 import wxSphSvg from "@/assets/svgs/plat/wx-sph.svg";
+import pinterestSvg from "@/assets/svgs/plat/pinterest.svg";
 
 // 平台类型
 export enum PlatType {
@@ -25,6 +26,7 @@ export enum PlatType {
   Facebook = "facebook", // Facebook
   Instagram = "instagram", // Instagram
   Threads = "threads", // Threads
+  Pinterest = "pinterest", // Pinterest
 }
 
 export interface IAccountPlatInfo {
@@ -63,7 +65,7 @@ export interface IAccountPlatInfo {
 }
 
 // 各个平台的信息
-export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
+export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([ 
   [
     PlatType.Douyin,
     {
@@ -200,6 +202,20 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         topicMax: 10,
       },
       themeColor: "blue",
+    },
+  ],
+  [
+    PlatType.Pinterest,
+    {
+      name: "Pinterest",
+      icon: pinterestSvg.src,
+      url: "https://www.pinterest.com/",
+      pubTypes: new Set([PubType.VIDEO]),
+      commonPubParamsConfig: {
+        titleMax: 16,
+        topicMax: 10,
+      },
+      themeColor: "#CC2025",
     },
   ],
 ]);

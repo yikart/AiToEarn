@@ -12,6 +12,7 @@ import { facebookSkip } from "../../plat/FacebookLogin";
 import { instagramSkip } from "../../plat/InstagramLogin";
 import { threadsSkip } from "../../plat/ThreadsLogin";
 import { wxGzhSkip } from "../../plat/WxGzh";
+import { pinterestSkip } from "../../plat/PinterestLogin";
 
 export interface IAddAccountModalRef {}
 
@@ -82,6 +83,9 @@ const AddAccountModal = memo(
                               break;
                             case PlatType.WxGzh:
                               await wxGzhSkip(key);
+                              break;
+                            case PlatType.Pinterest:
+                              await pinterestSkip(key);
                               break;
                           }
                         }}
