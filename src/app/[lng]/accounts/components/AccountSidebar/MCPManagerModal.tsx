@@ -9,6 +9,7 @@ import {
   apiGetMCPKeyList, 
   apiCreateMCPRef,    
 } from "@/api/mcp";
+import MCPKeyDetailModal from "./MCPKeyDetailModal";
 import styles from "./MCPManagerModal.module.scss";
 
 export interface IMCPManagerModalRef {
@@ -34,6 +35,8 @@ const MCPManagerModal = memo(
       const [total, setTotal] = useState(0);
       const [createForm] = Form.useForm();
       const [showAccountSelector, setShowAccountSelector] = useState(false);
+      const [showDetailModal, setShowDetailModal] = useState(false);
+      const [selectedKeyInfo, setSelectedKeyInfo] = useState<any>(null);
 
       // 获取MCP Key列表
       const fetchMCPKeys = async () => {
@@ -166,40 +169,51 @@ const MCPManagerModal = memo(
               </div>
             ) : (
               <>
-                <List
-                  className={styles.mcpKeyList}
-                  dataSource={mcpKeys}
-                  loading={loading}
-                  renderItem={(item) => (
-                    <List.Item
-                      actions={[
-                        <Button 
-                          key="copy" 
-                          type="link" 
-                          icon={<CopyOutlined />}
-                          onClick={() => handleCopyKey(item.key)}
+                                    <List
+                      className={styles.mcpKeyList}
+                      dataSource={mcpKeys}
+                      loading={loading}
+                      renderItem={(item) => (
+                        <List.Item
+                          actions={[
+                            <Button 
+                              key="copy" 
+                              type="link" 
+                              icon={<CopyOutlined />}
+                              onClick={() => handleCopyKey(item.key)}
+                            >
+                              复制
+                            </Button>,
+                            <Button 
+                              key="detail" 
+                              type="link" 
+                              icon={<KeyOutlined />}
+                              onClick={() => {
+                                setSelectedKeyInfo(item);
+                                setShowDetailModal(true);
+                              }}
+                            >
+                              详情
+                            </Button>,
+                            <Button 
+                              key="delete" 
+                              type="link" 
+                              danger
+                              icon={<DeleteOutlined />}
+                              onClick={() => handleDeleteKey(item.key)}
+                              loading={loading}
+                            >
+                              删除
+                            </Button>
+                          ]}
                         >
-                          复制
-                        </Button>,
-                        <Button 
-                          key="delete" 
-                          type="link" 
-                          danger
-                          icon={<DeleteOutlined />}
-                          onClick={() => handleDeleteKey(item.key)}
-                          loading={loading}
-                        >
-                          删除
-                        </Button>
-                      ]}
-                    >
                       <List.Item.Meta
                         avatar={<Avatar style={{ background: 'linear-gradient(90deg, #625BF2 0%, #925BF2 100%)' }}>MCP</Avatar>}
                         title={
                           <Space>
                             <span>{item.name}</span>
-                            <Tag color={item.status === 'active' ? 'green' : 'red'}>
-                              {item.status === 'active' ? '活跃' : '非活跃'}
+                            <Tag color={item.status === 0 ? 'green' : 'red'}>
+                              {item.status === 0 ? '可用' : '不可用'}
                             </Tag>
                           </Space>
                         }
@@ -344,6 +358,17 @@ const MCPManagerModal = memo(
               disableAllSelect: false,
               isCancelChooseAccount: true,
             }}
+          />
+          
+          <MCPKeyDetailModal
+            open={showDetailModal}
+            onClose={(open) => {
+              setShowDetailModal(open);
+              if (!open) {
+                setSelectedKeyInfo(null);
+              }
+            }}
+            keyInfo={selectedKeyInfo}
           />
         </>
       );
