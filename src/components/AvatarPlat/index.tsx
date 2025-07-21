@@ -36,7 +36,18 @@ const AvatarPlat = memo(
       }: IAvatarPlatProps,
       ref: ForwardedRef<IAvatarPlatRef>,
     ) => {
-      const plat = AccountPlatInfoMap.get(account.type)!;
+      // 添加防护检查
+      if (!account || !account.type) {
+        console.warn('AvatarPlat: account or account.type is undefined', account);
+        return null;
+      }
+
+      const plat = AccountPlatInfoMap.get(account.type);
+      if (!plat) {
+        console.warn('AvatarPlat: platform not found for type', account.type);
+        return null;
+      }
+
       return (
         <>
           <div className={`${styles.avatarPlat} ${className}`}>
@@ -45,7 +56,7 @@ const AvatarPlat = memo(
               size={avatarWidth ? avatarWidth : size}
             />
             <img
-              src={plat?.icon}
+              src={plat.icon}
               style={
                 !width
                   ? {
