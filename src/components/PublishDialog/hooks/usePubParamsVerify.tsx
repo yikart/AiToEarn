@@ -59,6 +59,15 @@ export default function usePubParamsVerify(data: PubItem[]) {
           }
         }
 
+        // Facebook的强制校验
+        if (v.account.type === PlatType.Facebook) {
+          if (!v.params.option.facebook?.pageId) {
+            return errParamsMapTemp.set(v.account.id, {
+              parErrMsg: "您必须选择页面！",
+            });
+          }
+        }
+
         // 快手要求封面必须大于 400x400
         if (
           v.account?.type === PlatType.KWAI &&

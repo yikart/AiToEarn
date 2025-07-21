@@ -41,6 +41,9 @@ const store: IPublishDialogStore = {
         copyright: 1,
         source: "",
       },
+      facebook: {
+        pageId: undefined,
+      },
     },
   },
   expandedPubItem: undefined,

@@ -3,16 +3,20 @@ import { combine } from "zustand/middleware";
 import lodash from "lodash";
 import { BiblPartItem } from "@/components/PublishDialog/publishDialog.type";
 import { apiGetBilibiliPartitions } from "@/api/plat/bilibili";
+import { apiGetFacebookPages, FacebookPageItem } from "@/api/plat/facebook";
 import { useAccountStore } from "@/store/account";
 import { PlatType } from "@/app/config/platConfig";
 
 export interface IPublishDialogDataStore {
   // b站分区列表
   bilibiliPartitions: BiblPartItem[];
+  // Facebook页面列表
+  facebookPages: FacebookPageItem[];
 }
 
 const store: IPublishDialogDataStore = {
   bilibiliPartitions: [],
+  facebookPages: [],
 };
 
 const getStore = () => {
@@ -40,6 +44,19 @@ export const usePublishDialogData = create(
           );
           set({
             bilibiliPartitions: res?.data,
+          });
+          return res?.data;
+        },
+        // 获取Facebook页面列表
+        async getFacebookPages() {
+          if (get().facebookPages.length !== 0) return;
+          const res:any = await apiGetFacebookPages(
+            useAccountStore
+              .getState()
+              .accountList.find((v) => v.type === PlatType.Facebook)!.account,
+          );
+          set({
+            facebookPages: res?.data || [],
           });
           return res?.data;
         },

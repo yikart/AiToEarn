@@ -45,6 +45,10 @@ export interface IPlatOption {
     // 如果copyright为转载，则此字段表示转载来源
     source?: string;
   };
+  facebook?: {
+    // 页面ID，由获取Facebook页面信息接口得到
+    pageId?: string;
+  };
 }
 
 // 发布参数

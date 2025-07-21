@@ -42,7 +42,7 @@ const BilibParams = memo(
                   <div className="platParamsSetting-label">分区</div>
                   <Select
                     style={{ width: "100%" }}
-                    options={bilibiliPartitions}
+                    options={bilibiliPartitions} 
                     value={pubItem.params.option.bilibili?.tid}
                     onChange={(value) => {
                       const option = pubItem.params.option;

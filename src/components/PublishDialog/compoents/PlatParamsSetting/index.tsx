@@ -4,6 +4,7 @@ import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
 import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import BilibParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/BilibParams";
 import KwaiParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/KwaiParams";
+import FacebookParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/FacebookParams";
 import { useShallow } from "zustand/react/shallow";
 import { PubItem } from "@/components/PublishDialog/publishDialog.type";
 
@@ -38,6 +39,8 @@ const PlatParamsSetting = memo(
             return <KwaiParams pubItem={pubItem} />;
           case PlatType.BILIBILI:
             return <BilibParams pubItem={pubItem} />;
+          case PlatType.Facebook:
+            return <FacebookParams pubItem={pubItem} />;
           default:
             return <KwaiParams pubItem={pubItem} />;
         }
