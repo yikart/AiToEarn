@@ -46,7 +46,10 @@ const FacebookParams = memo(
                     value={pubItem.params.option.facebook?.pageId}
                     onChange={(value) => {
                       const option = pubItem.params.option;
-                      option.facebook!.pageId = value;
+                      if (!option.facebook) {
+                        option.facebook = {};
+                      }
+                      option.facebook.pageId = value;
                       setOnePubParams(
                         {
                           option,

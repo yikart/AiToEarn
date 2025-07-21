@@ -50,11 +50,16 @@ export const usePublishDialogData = create(
         // 获取Facebook页面列表
         async getFacebookPages() {
           if (get().facebookPages.length !== 0) return;
-          const res:any = await apiGetFacebookPages(
-            useAccountStore
-              .getState()
-              .accountList.find((v) => v.type === PlatType.Facebook)!.account,
-          );
+          const facebookAccount = useAccountStore
+            .getState()
+            .accountList.find((v) => v.type === PlatType.Facebook);
+          
+          if (!facebookAccount) {
+            console.warn('没有找到Facebook账户');
+            return;
+          }
+          
+          const res:any = await apiGetFacebookPages(facebookAccount.account);
           set({
             facebookPages: res?.data || [],
           });

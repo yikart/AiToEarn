@@ -165,7 +165,7 @@ export const usePublishDialog = create(
 
           for (const key in pubParmas) {
             if (pubParmas.hasOwnProperty(key)) {
-              findedData.params[key as "des"] = pubParmas[key as "des"]!;
+              (findedData.params as any)[key] = (pubParmas as any)[key];
             }
           }
 
