@@ -203,7 +203,7 @@ const RecordCore = memo(
             style={{ width: calendarCallWidth + "px" }}
           >
             <div className="recordCore-left">
-              <img src={platIcon}  style={{width: '30px', height: '30px'}}/>
+              <img src={platIcon}  style={{width: '25px', height: '25px'}}/>
               <div className="recordCore-left-date">{days.format("HH:mm")}</div>
             </div>
             <div className="recordCore-right">
