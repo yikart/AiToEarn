@@ -117,11 +117,11 @@ const MCPKeyDetailModal = memo(
                 <div className={styles.keyHeader}>
                   <div className={styles.keyName}>
                     <span className={styles.label}>Key名称:</span>
-                    <span className={styles.value}>{keyInfo.name}</span>
+                    <span className={styles.value}>{keyInfo.desc}</span>
                   </div>
                   <Space>
-                    <Tag color={keyInfo.status === 0 ? 'green' : 'red'}>
-                      {keyInfo.status === 0 ? '可用' : '不可用'}
+                    <Tag color={keyInfo.status === 1 ? 'green' : 'red'}>
+                      {keyInfo.status === 1 ? '可用' : '不可用'}
                     </Tag>
                     <Button 
                       type="link" 

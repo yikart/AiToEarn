@@ -211,9 +211,9 @@ const MCPManagerModal = memo(
                         avatar={<Avatar style={{ background: 'linear-gradient(90deg, #625BF2 0%, #925BF2 100%)' }}>MCP</Avatar>}
                         title={
                           <Space>
-                            <span>{item.name}</span>
-                            <Tag color={item.status === 0 ? 'green' : 'red'}>
-                              {item.status === 0 ? '可用' : '不可用'}
+                            <span>{item.desc}</span>
+                            <Tag color={item.status === 1 ? 'green' : 'red'}>
+                              {item.status === 1 ? '可用' : '不可用'}
                             </Tag>
                           </Space>
                         }
