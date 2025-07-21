@@ -29,7 +29,8 @@ export function bilibiliLogin(taskId:any): Promise<any> {
         const checkAuthStatus = async () => {
           try {
             const authRess:any = await apiCheckBilibiliAuth(taskId);
-            let authRes = authRess.data;
+            console.log('authRess', authRess);
+            let authRes = authRess;
             if (authRes?.code === 0 && authRes?.data.status == 1) {
               // message.success('授权成功');
               // useAccountStore
