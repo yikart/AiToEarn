@@ -131,6 +131,59 @@
       }
     }
 
+    .simpleAccountChoose-groups {
+      flex: 1;
+      max-height: 400px;
+      overflow-y: auto;
+
+      .ant-collapse {
+        border: none;
+        background: transparent;
+
+        .ant-collapse-item {
+          border: 1px solid #e9ecef;
+          border-radius: 8px;
+          margin-bottom: 12px;
+          background: #fff;
+
+          .ant-collapse-header {
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid #e9ecef;
+
+            .ant-collapse-header-text {
+              flex: 1;
+            }
+
+            .ant-collapse-expand-icon {
+              color: #625BF2;
+            }
+          }
+
+          .ant-collapse-content {
+            border: none;
+            background: transparent;
+
+            .ant-collapse-content-box {
+              padding: 16px;
+            }
+          }
+        }
+      }
+
+      .simpleAccountChoose-group-header {
+        display: flex;
+        align-items: center;
+        width: 100%;
+
+        .ant-checkbox-wrapper {
+          font-weight: 500;
+          color: #333;
+        }
+      }
+    }
+
     .simpleAccountChoose-accounts {
       flex: 1;
       display: grid;
