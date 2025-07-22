@@ -47,7 +47,7 @@ export interface IPlatOption {
   };
   facebook?: {
     // 页面ID，由获取Facebook页面信息接口得到
-    pageId?: string;
+    page_id?: string;
   };
 }
 

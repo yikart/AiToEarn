@@ -42,7 +42,7 @@ const store: IPublishDialogStore = {
         source: "",
       },
       facebook: {
-        pageId: undefined,
+        page_id: undefined, 
       },
     },
   },

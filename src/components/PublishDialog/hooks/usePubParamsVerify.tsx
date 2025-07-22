@@ -74,7 +74,7 @@ export default function usePubParamsVerify(data: PubItem[]) {
 
         // Facebook的强制校验
         if (v.account.type === PlatType.Facebook) {
-          if (!v.params.option.facebook?.pageId) {
+          if (!v.params.option.facebook?.page_id) {    
             return setErrorMsg("您必须选择页面!");
           }
         }

@@ -43,13 +43,13 @@ const FacebookParams = memo(
                   <Select
                     style={{ width: "100%" }}
                     options={facebookPages}
-                    value={pubItem.params.option.facebook?.pageId}
+                    value={pubItem.params.option.facebook?.page_id} 
                     onChange={(value) => {
                       const option = pubItem.params.option;
                       if (!option.facebook) {
                         option.facebook = {};
                       }
-                      option.facebook.pageId = value;
+                      option.facebook.page_id = value;
                       setOnePubParams(
                         {
                           option,
