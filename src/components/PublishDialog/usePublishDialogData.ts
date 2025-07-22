@@ -1,9 +1,10 @@
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 import lodash from "lodash";
-import { BiblPartItem } from "@/components/PublishDialog/publishDialog.type";
+import { BiblPartItem, YouTubeCategoryItem } from "@/components/PublishDialog/publishDialog.type";
 import { apiGetBilibiliPartitions } from "@/api/plat/bilibili";
 import { apiGetFacebookPages, FacebookPageItem } from "@/api/plat/facebook";
+import { apiGetYouTubeCategories } from "@/api/plat/youtube";
 import { useAccountStore } from "@/store/account";
 import { PlatType } from "@/app/config/platConfig";
 
@@ -12,11 +13,14 @@ export interface IPublishDialogDataStore {
   bilibiliPartitions: BiblPartItem[];
   // Facebook页面列表
   facebookPages: FacebookPageItem[];
+  // YouTube视频分类列表
+  youTubeCategories: YouTubeCategoryItem[];
 }
 
 const store: IPublishDialogDataStore = {
   bilibiliPartitions: [],
   facebookPages: [],
+  youTubeCategories: [],
 };
 
 const getStore = () => {
@@ -62,6 +66,24 @@ export const usePublishDialogData = create(
           const res:any = await apiGetFacebookPages(facebookAccount.account);
           set({
             facebookPages: res?.data || [],
+          });
+          return res?.data;
+        },
+        // 获取YouTube视频分类
+        async getYouTubeCategories() {
+          if (get().youTubeCategories.length !== 0) return;
+          const youtubeAccount = useAccountStore
+            .getState()
+            .accountList.find((v) => v.type === PlatType.YouTube);
+          
+          if (!youtubeAccount) {
+            console.warn('没有找到YouTube账户');
+            return;
+          }
+          
+          const res:any = await apiGetYouTubeCategories(youtubeAccount.account);
+          set({
+            youTubeCategories: res?.data || [],
           });
           return res?.data;
         },

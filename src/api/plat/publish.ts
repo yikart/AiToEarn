@@ -26,6 +26,11 @@ const filterOptionByPlatform = (option: any, accountType: PlatType): any => {
         filteredOption.facebook = option.facebook;
       }
       break;
+    case PlatType.YouTube:
+      if (option.youtube) {
+        filteredOption.youtube = option.youtube;
+      }
+      break;
     // 可以根据需要添加其他平台的处理
     default:
       // 对于没有特殊参数要求的平台，返回空对象

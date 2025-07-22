@@ -49,6 +49,12 @@ export interface IPlatOption {
     // 页面ID，由获取Facebook页面信息接口得到
     page_id?: string;
   };
+  youtube?: {
+    // 隐私状态：public、unlisted、private
+    privacyStatus?: string;
+    // 视频分类ID
+    categoryId?: string;
+  };
 }
 
 // 发布参数
@@ -80,4 +86,11 @@ export interface BiblPartItem {
   name: string;
   parent: number;
   children: BiblPartItem[];
+}
+
+// YouTube视频分类 item
+export interface YouTubeCategoryItem {
+  id: string;
+  name: string;
+  description?: string;
 }
