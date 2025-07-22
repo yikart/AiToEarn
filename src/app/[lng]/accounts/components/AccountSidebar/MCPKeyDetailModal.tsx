@@ -3,6 +3,8 @@ import { Modal, Button, List, Avatar, Tag, Space, message, Empty, Pagination, Po
 import { CopyOutlined, DeleteOutlined, KeyOutlined, UserOutlined } from "@ant-design/icons";
 import { SocialAccount } from "@/api/types/account.type";
 import { apiGetMCPRefList, apiDeleteMCPRef } from "@/api/mcp";
+import { getAccountListApi } from "@/api/account";
+import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import styles from "./MCPKeyDetailModal.module.scss";
 
 export interface IMCPKeyDetailModalRef {
@@ -25,6 +27,29 @@ const MCPKeyDetailModal = memo(
       const [currentPage, setCurrentPage] = useState(1);
       const [pageSize, setPageSize] = useState(10);
       const [total, setTotal] = useState(0);
+      const [accountList, setAccountList] = useState<SocialAccount[]>([]);
+
+      // 获取平台信息
+      const getPlatformInfo = (platformType: string) => {
+        const platInfo = AccountPlatInfoMap.get(platformType as PlatType);
+        return {
+          name: platInfo?.name || '未知平台',
+          icon: platInfo?.icon || '',
+          themeColor: platInfo?.themeColor || '#999'
+        };
+      };
+
+      // 获取所有账户列表
+      const fetchAccountList = async () => {
+        try {
+          const res: any = await getAccountListApi();
+          if (res?.code === 0) {
+            setAccountList(res.data || []);
+          }
+        } catch (error) {
+          console.error('获取账户列表失败:', error);
+        }
+      };
 
       // 获取关联账户列表
       const fetchRefList = async () => {
@@ -34,7 +59,18 @@ const MCPKeyDetailModal = memo(
           setLoading(true);
           const res: any = await apiGetMCPRefList(currentPage, pageSize, keyInfo.key);
           if (res?.code === 0) {
-            setRefList(res.data.list || []);
+            const refListData = res.data.list || [];
+            
+            // 将账户ID映射到完整的账户信息
+            const enrichedRefList = refListData.map((refItem: any) => {
+              const accountInfo = accountList.find(account => account.id === refItem);
+              return {
+                ...refItem,
+                account: accountInfo || null
+              };
+            });
+            
+            setRefList(enrichedRefList);
             setTotal(res.data.total || 0);
           }
         } catch (error) {
@@ -45,10 +81,16 @@ const MCPKeyDetailModal = memo(
       };
 
       useEffect(() => {
-        if (open && keyInfo) {
+        if (open) {
+          fetchAccountList();
+        }
+      }, [open]);
+
+      useEffect(() => {
+        if (open && keyInfo && accountList.length > 0) {
           fetchRefList();
         }
-      }, [open, keyInfo, currentPage, pageSize]);
+      }, [open, keyInfo, currentPage, pageSize, accountList]);
 
       const handleCopyKey = (key: string) => {
         navigator.clipboard.writeText(key);
@@ -56,6 +98,7 @@ const MCPKeyDetailModal = memo(
       };
 
       const handleUnlinkAccount = async (accountId: string) => {
+        console.log(accountId);
         try {
           const res = await apiDeleteMCPRef({
             key: keyInfo.key,
@@ -167,38 +210,55 @@ const MCPKeyDetailModal = memo(
                       className={styles.refList}
                       dataSource={refList}
                       loading={loading}
-                      renderItem={(item) => (
-                        <List.Item
-                          actions={[
-                            <Popconfirm
-                              title="确定要解除关联吗？"
-                              onConfirm={() => handleUnlinkAccount(item.accountId)}
-                              okText="确定"
-                              cancelText="取消"
-                            >
-                              <Button 
-                                key="unlink" 
-                                type="link" 
-                                danger
-                                icon={<DeleteOutlined />}
+                      renderItem={(item) => {
+                        const platformInfo = getPlatformInfo(item.account?.type);
+                        return (
+                          <List.Item
+                            actions={[
+                              <Popconfirm
+                                title="确定要解除关联吗？"
+                                onConfirm={() => handleUnlinkAccount(item.account.id)}
+                                okText="确定"
+                                cancelText="取消"
                               >
-                                解除关联
-                              </Button>
-                            </Popconfirm>
-                          ]}
-                        >
-                          <List.Item.Meta
-                            avatar={<Avatar src={item.account?.avatar} />}
-                            title={item.account?.nickname || '未知账户'}
-                            description={
-                              <div>
-                                <div>账户ID: {item.accountId}</div>
-                                <div>关联时间: {item.createdAt}</div>
-                              </div>
-                            }
-                          />
-                        </List.Item>
-                      )}
+                                <Button 
+                                  key="unlink" 
+                                  type="link" 
+                                  danger
+                                  icon={<DeleteOutlined />}
+                                >
+                                  解除关联
+                                </Button>
+                              </Popconfirm>
+                            ]}
+                          >
+                            <List.Item.Meta
+                              avatar={<Avatar src={item.account?.avatar} />}
+                              title={item.account?.nickname || '未知账户'}
+                              description={
+                                <div>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    {platformInfo.icon && (
+                                      <img 
+                                        src={platformInfo.icon} 
+                                        alt={platformInfo.name}
+                                        style={{ 
+                                          width: '16px', 
+                                          height: '16px',
+                                          borderRadius: '2px'
+                                        }} 
+                                      />
+                                    )}
+                                    <span style={{ color: platformInfo.themeColor }}>
+                                      {platformInfo.name}
+                                    </span>
+                                  </div>
+                                </div>
+                              }
+                            />
+                          </List.Item>
+                        );
+                      }}
                     />
                     
                     {total > 0 && (
