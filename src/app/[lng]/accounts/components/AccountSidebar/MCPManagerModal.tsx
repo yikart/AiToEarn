@@ -11,6 +11,7 @@ import {
 } from "@/api/mcp";
 import MCPKeyDetailModal from "./MCPKeyDetailModal";
 import styles from "./MCPManagerModal.module.scss";
+import dayjs from "dayjs";
 
 export interface IMCPManagerModalRef {
   open: () => void;
@@ -71,7 +72,7 @@ const MCPManagerModal = memo(
           
           // 创建MCP Key
           const createParams: any = {
-            name: newKeyName,
+            desc: newKeyName,
             accounts: accounts.map(account => account.id)
           };
           
@@ -224,12 +225,12 @@ const MCPManagerModal = memo(
                             </div>
                             <div className="keyInfo">
                               <div className="infoItem">
-                                <span className="label">创建时间:</span>
-                                <span>{item.createdAt}</span>
+                                <span className="label">创建时间: </span>
+                                <span>  {dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss')}</span> 
                               </div>
                               <div className="infoItem">
-                                <span className="label">关联账户:</span>
-                                <span>{item.accounts?.length} 个</span>
+                                <span className="label">关联账户: </span>
+                                <span> {item.accountNum} 个</span>
                               </div>
                             </div>
                           </div>
