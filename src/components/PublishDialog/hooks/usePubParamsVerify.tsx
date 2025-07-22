@@ -35,15 +35,15 @@ export default function usePubParamsVerify(data: PubItem[]) {
             parErrMsg: "请上传图片或视频",
           });
         }
-        // 强制需要标题
-        if (v.account.type === PlatType.BILIBILI && !v.params.title) {
-          return errParamsMapTemp.set(v.account.id, {
-            parErrMsg: "标题是必须的",
-          });
-        }
 
         // b站的强制校验
         if (v.account.type === PlatType.BILIBILI) {
+          // 强制需要标题
+          if (!v.params.title) {
+            return errParamsMapTemp.set(v.account.id, {
+              parErrMsg: "标题是必须的",
+            });
+          }
           if (!v.params.option.bilibili?.tid) {
             return errParamsMapTemp.set(v.account.id, {
               parErrMsg: "您必须选择分区！",

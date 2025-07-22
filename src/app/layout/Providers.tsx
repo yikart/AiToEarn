@@ -3,7 +3,7 @@
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ConfigProvider, App, notification } from "antd";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useMemo } from "react";
 import type { Locale } from "antd/es/locale";
 import zh_CN from "antd/es/locale/zh_CN";
 import en_US from "antd/es/locale/en_US";

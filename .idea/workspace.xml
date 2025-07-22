@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="AutoImportSettings">
-    <option name="autoReloadType" value="SELECTIVE" />
+    <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat: 尝试多语言SEO优化，添加静态站点配置">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix: 解决404问题">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/next.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/layout/Providers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout/Providers.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/hooks/usePubParamsVerify.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/hooks/usePubParamsVerify.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -60,8 +64,14 @@
     &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth2&quot;: &quot;450&quot;,
     &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth3&quot;: &quot;449&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;E:/project-dev/web/艺咖/aitoearn-web/src/components&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -69,6 +79,7 @@
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
     &quot;ts.external.directory.path&quot;: &quot;E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -114,7 +125,17 @@
       <workItem from="1752584771781" duration="30000" />
       <workItem from="1752584814578" duration="687000" />
       <workItem from="1752585528140" duration="210000" />
-      <workItem from="1752631107036" duration="363000" />
+      <workItem from="1752631107036" duration="4455000" />
+      <workItem from="1752665692400" duration="3000" />
+      <workItem from="1752665730893" duration="748000" />
+      <workItem from="1752738413265" duration="84000" />
+      <workItem from="1752804252535" duration="15000" />
+      <workItem from="1752804870916" duration="14000" />
+      <workItem from="1752828239202" duration="20000" />
+      <workItem from="1753063047098" duration="105000" />
+      <workItem from="1753092552922" duration="175000" />
+      <workItem from="1753097558939" duration="57000" />
+      <workItem from="1753150834781" duration="233000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -348,7 +369,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752575382612</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="fix: 解决404问题">
+      <option name="closed" value="true" />
+      <created>1752631493942</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1752631493942</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -388,7 +417,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="feat(发布弹框): 发布API接入完成" />
     <MESSAGE value="fix: 修复ts报错问题" />
     <MESSAGE value="fix(日历): 解决一个诡异的bug，日历，拖动发布记录时，拖到比当前时间小的日历正常显示，拖到比当前时间大的日历时间会盖住发布记录。" />
     <MESSAGE value="fix: 快手授权修改完成，改为任务" />
@@ -413,6 +441,7 @@
     <MESSAGE value="选择用户弹框恢复" />
     <MESSAGE value="feat: 恢复选择账户弹框" />
     <MESSAGE value="feat: 尝试多语言SEO优化，添加静态站点配置" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 尝试多语言SEO优化，添加静态站点配置" />
+    <MESSAGE value="fix: 解决404问题" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: 解决404问题" />
   </component>
 </project>
