@@ -11,7 +11,7 @@ import styles from "./vip.module.css";
 export default function VipPage() {
   const router = useRouter();
   const { userInfo } = useUserStore();
-  const [selectedPlan, setSelectedPlan] = useState('month'); // 'month', 'year'
+  const [selectedPlan, setSelectedPlan] = useState('onceMonth'); // 'onceMonth', 'month', 'year'
   const [loading, setLoading] = useState(false);
 
   // 会员权益数据 (8个)
@@ -38,7 +38,20 @@ export default function VipPage() {
       }
 
       // 根据选择的计划映射到支付类型
-      const paymentType = selectedPlan === 'month' ? PaymentType.MONTH : PaymentType.YEAR;
+      let paymentType;
+      switch (selectedPlan) {
+        case 'onceMonth':
+          paymentType = PaymentType.ONCE_MONTH;
+          break;
+        case 'month':
+          paymentType = PaymentType.MONTH;
+          break;
+        case 'year':
+          paymentType = PaymentType.YEAR;
+          break;
+        default:
+          paymentType = PaymentType.ONCE_MONTH;
+      }
       
       // 创建支付订单
       const response: any = await createPaymentOrderApi({
@@ -95,28 +108,41 @@ export default function VipPage() {
       <h3 className={styles.title}>选择开通时长</h3>
       <div className={styles.priceOptions}>
         <div 
+          className={`${styles.priceCard} ${selectedPlan === 'onceMonth' ? styles.selected : ''}`}
+          onClick={() => setSelectedPlan('onceMonth')}
+        >
+          <span className={styles.badge}>一次性</span>
+          <h4>月度会员</h4>
+          <div>
+            <span className={styles.originalPrice}>$20</span>
+            <span className={styles.discount}>一次性</span>
+          </div>
+          <p className={styles.currentPrice}>$<span>20</span></p>
+        </div>
+        <div 
           className={`${styles.priceCard} ${selectedPlan === 'month' ? styles.selected : ''}`}
           onClick={() => setSelectedPlan('month')}
         >
-          <span className={styles.badge}>最多选择</span>
-          <h4>月度会员</h4>
+          <span className={styles.badge}>25%优惠</span>
+          <h4>月费会员</h4>
           <div>
-            <span className={styles.originalPrice}>¥198</span>
-            <span className={styles.discount}>6折</span>
+            <span className={styles.originalPrice}>$20</span>
+            <span className={styles.discount}>25%优惠</span>
           </div>
-          <p className={styles.currentPrice}>¥<span>118</span></p>
+          <p className={styles.currentPrice}>$<span>15</span>/月</p>
         </div>
         <div 
           className={`${styles.priceCard} ${selectedPlan === 'year' ? styles.selected : ''}`}
           onClick={() => setSelectedPlan('year')}
         >
-          <span className={styles.badge}>最高优惠</span>
-          <h4>年度会员</h4>
+          <span className={styles.badge}>50%优惠</span>
+          <h4>年费会员</h4>
           <div>
-            <span className={styles.originalPrice}>¥1938</span>
-            <span className={styles.discount}>5折</span>
+            <span className={styles.originalPrice}>$180</span>
+            <span className={styles.discount}>50%优惠</span>
           </div>
-          <p className={styles.currentPrice}>¥<span>888</span></p>
+          <p className={styles.currentPrice}>$<span>120</span>/年</p>
+          <p className={styles.monthlyPrice}>约$10/月</p>
         </div>
       </div>
       

@@ -200,4 +200,11 @@
   font-size: 14px;
   color: #999;
   margin-bottom: 24px;
+}
+
+.monthlyPrice {
+  font-size: 14px;
+  color: #666;
+  margin-top: 8px;
+  font-style: italic;
 } 
