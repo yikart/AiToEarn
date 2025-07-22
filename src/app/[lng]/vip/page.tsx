@@ -10,7 +10,7 @@ import styles from "./vip.module.css";
 
 export default function VipPage() {
   const router = useRouter();
-  const { userInfo } = useUserStore();
+  const { userInfo, lang } = useUserStore();
   const [selectedPlan, setSelectedPlan] = useState('onceMonth'); // 'onceMonth', 'month', 'year'
   const [loading, setLoading] = useState(false);
 
@@ -60,7 +60,7 @@ export default function VipPage() {
       
       // 创建支付订单
       const response: any = await createPaymentOrderApi({
-        success_url: "http://localhost:3000/zh-CN/profile",
+        success_url: lang === 'zh-CN' ? "/zh-CN/profile" : "/en/profile",
         mode: paymentMethod,
         payment: paymentType,
         metadata: {
