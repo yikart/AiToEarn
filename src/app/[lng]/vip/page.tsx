@@ -39,24 +39,29 @@ export default function VipPage() {
 
       // 根据选择的计划映射到支付类型
       let paymentType;
+      let paymentMethod;
       switch (selectedPlan) {
         case 'onceMonth':
           paymentType = PaymentType.ONCE_MONTH;
+          paymentMethod = 'payment';
           break;
         case 'month':
           paymentType = PaymentType.MONTH;
+          paymentMethod = 'subscription';
           break;
         case 'year':
           paymentType = PaymentType.YEAR;
+          paymentMethod = 'subscription';
           break;
         default:
           paymentType = PaymentType.ONCE_MONTH;
+          paymentMethod = 'payment';
       }
       
       // 创建支付订单
       const response: any = await createPaymentOrderApi({
         success_url: "http://localhost:3000/zh-CN/profile",
-        mode: "payment",
+        mode: paymentMethod,
         payment: paymentType,
         metadata: {
           userId: userInfo.id
