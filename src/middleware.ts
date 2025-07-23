@@ -17,9 +17,15 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
   if (
-    ["/robots.txt", "/sitemap.xml"].find((v) =>
-      req.nextUrl.pathname.includes(v!),
-    )
+    [
+      "/robots.txt",
+      "/sitemap.xml",
+      "/sitemap-0.xml",
+      "/sitemap-1.xml",
+      "/sitemap-2.xml",
+      "/sitemap-3.xml",
+      "/sitemap-4.xml",
+    ].find((v) => req.nextUrl.pathname.includes(v!))
   ) {
     return NextResponse.next();
   }
