@@ -1,1 +1,31 @@
-{}
+{
+  "aiGenerate": {
+    "title": "AI生成",
+    "backToAlbum": "返回相册",
+    "textToImage": "文生图",
+    "fireflyCard": "Firefly卡片",
+    "prompt": "提示词",
+    "promptPlaceholder": "请输入提示词",
+    "width": "宽度",
+    "height": "高度",
+    "generate": "生成",
+    "generating": "生成中...",
+    "content": "内容",
+    "contentPlaceholder": "请输入内容",
+    "title": "标题",
+    "titlePlaceholder": "请输入标题",
+    "template": "模板",
+    "uploadToMediaGroup": "上传到媒体组",
+    "selectMediaGroup": "选择媒体组",
+    "selectMediaGroupPlaceholder": "请选择媒体组",
+    "upload": "上传",
+    "uploading": "上传中...",
+    "uploadSuccess": "上传成功",
+    "uploadFailed": "上传失败",
+    "getMediaGroupListFailed": "获取媒体组列表失败",
+    "pleaseEnterPrompt": "请输入提示词",
+    "pleaseSelectMediaGroup": "请选择媒体组",
+    "pleaseEnterContent": "请输入内容",
+    "pleaseEnterTitle": "请输入标题"
+  }
+}

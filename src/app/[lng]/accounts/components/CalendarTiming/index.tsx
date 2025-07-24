@@ -165,7 +165,7 @@ const CalendarTiming = memo(
                   <AllPlatIcon />
                   <div className="calendarTiming-header-user-details">
                     <div className="calendarTiming-header-user-details-name">
-                      所有平台
+                      {t("allPlatforms")}
                     </div>
                   </div>
                 </>
@@ -192,7 +192,7 @@ const CalendarTiming = memo(
                   setPublishDialogOpen(true);
                 }}
               >
-                新建作品
+                {t("newWork")}
               </Button>
             </div>
           </div>
@@ -227,7 +227,7 @@ const CalendarTiming = memo(
                     label: (
                       <span>
                         <CalendarOutlined />
-                        日历模式
+                        {t("calendarMode")}
                       </span>
                     ),
                   },
@@ -236,7 +236,7 @@ const CalendarTiming = memo(
                     label: (
                       <span>
                         <UnorderedListOutlined />
-                        列表模式
+                        {t("listMode")}
                       </span>
                     ),
                   },

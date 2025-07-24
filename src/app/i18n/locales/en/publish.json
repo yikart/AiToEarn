@@ -1,0 +1,24 @@
+{
+  "title": "Publish",
+  "confirmClose": {
+    "title": "Discard changes?",
+    "content": "All changes will be lost"
+  },
+  "buttons": {
+    "customizePerAccount": "Customize per account",
+    "cancelPublish": "Cancel",
+    "schedulePublish": "Schedule",
+    "publishNow": "Publish now",
+    "copyLink": "Copy link",
+    "delete": "Delete"
+  },
+  "tips": {
+    "workSaved": "Work saved. Select an account to create a post."
+  },
+  "status": {
+    "publishFailed": "Failed",
+    "publishing": "Publishing",
+    "publishSuccess": "Success",
+    "waitingPublish": "Waiting"
+  }
+} 

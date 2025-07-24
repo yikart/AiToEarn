@@ -29,6 +29,7 @@ import {
 } from "@/api/ai";
 import { getOssUrl } from "@/utils/oss";
 import { getMediaGroupList, createMedia } from "@/api/media";
+import { useTransClient } from "@/app/i18n/client";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -37,6 +38,7 @@ const { TabPane } = Tabs;
 export default function AIGeneratePage() {
   const params = useParams();
   const router = useRouter();
+  const { t } = useTransClient('material');
   const albumId = params.id as string;
 
   const [prompt, setPrompt] = useState("");
@@ -74,7 +76,7 @@ export default function AIGeneratePage() {
         setMediaGroups(response.data.list || []);
       }
     } catch (error) {
-      message.error("获取媒体组列表失败");
+      message.error(t('aiGenerate.getMediaGroupListFailed'));
     } finally {
       setLoadingMediaGroups(false);
     }
@@ -82,7 +84,7 @@ export default function AIGeneratePage() {
 
   const handleTextToImage = async () => {
     if (!prompt) {
-      message.error("请输入提示词");
+      message.error(t('aiGenerate.pleaseEnterPrompt'));
       return;
     }
 
@@ -177,13 +179,13 @@ export default function AIGeneratePage() {
       });
 
       if (response.data) {
-        message.success("上传成功");
+        message.success(t('aiGenerate.uploadSuccess'));
         setUploadModalVisible(false);
       } else {
-        message.error("上传失败");
+        message.error(t('aiGenerate.uploadFailed'));
       }
     } catch (error) {
-      message.error("上传失败");
+      message.error(t('aiGenerate.uploadFailed'));
     } finally {
       setUploading(false);
     }
@@ -197,7 +199,7 @@ export default function AIGeneratePage() {
             <ArrowLeftOutlined />
           </button>
           <p>
-            <RobotOutlined /> AI生成素材
+            <RobotOutlined /> {t('aiGenerate.title')}
           </p>
         </div>
       </div>
@@ -207,7 +209,7 @@ export default function AIGeneratePage() {
           <TabPane
             tab={
               <span>
-                <PictureOutlined /> 文生图
+                <PictureOutlined /> {t('aiGenerate.textToImage')}
               </span>
             }
             key="textToImage"
@@ -215,7 +217,7 @@ export default function AIGeneratePage() {
             <div className={styles.section}>
               <div className={styles.form}>
                 <TextArea
-                  placeholder="请输入提示词"
+                  placeholder={t('aiGenerate.promptPlaceholder')}
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   rows={4}
@@ -223,14 +225,14 @@ export default function AIGeneratePage() {
                 <div className={styles.dimensions}>
                   <Input
                     type="number"
-                    placeholder="宽度"
+                    placeholder={t('aiGenerate.width')}
                     value={width}
                     onChange={(e) => setWidth(Number(e.target.value))}
                     min={520}
                   />
                   <Input
                     type="number"
-                    placeholder="高度"
+                    placeholder={t('aiGenerate.height')}
                     value={height}
                     onChange={(e) => setHeight(Number(e.target.value))}
                     min={520}
@@ -243,12 +245,12 @@ export default function AIGeneratePage() {
                   disabled={!prompt}
                   icon={<PictureOutlined />}
                 >
-                  生成图片
+                  {t('aiGenerate.generate')}
                 </Button>
               </div>
               {polling && (
                 <div className={styles.polling}>
-                  <Spin tip="正在生成图片，请稍候..." />
+                  <Spin tip={t('aiGenerate.generating')} />
                 </div>
               )}
               {result && (
@@ -258,7 +260,7 @@ export default function AIGeneratePage() {
                       <Col key={index} xs={24} sm={12} md={8} lg={6}>
                         <img
                           src={img}
-                          alt={`生成的图片 ${index + 1}`}
+                          alt={`${t('aiGenerate.textToImage')} ${index + 1}`}
                           style={{ width: "100%", borderRadius: "8px" }}
                         />
                       </Col>
@@ -271,7 +273,7 @@ export default function AIGeneratePage() {
           <TabPane
             tab={
               <span>
-                <FireOutlined /> 文生图文（流光卡片）
+                <FireOutlined /> {t('aiGenerate.fireflyCard')}
               </span>
             }
             key="textToFireflyCard"
@@ -279,13 +281,13 @@ export default function AIGeneratePage() {
             <div className={styles.section}>
               <div className={styles.form}>
                 <Input
-                  placeholder="请输入标题"
+                  placeholder={t('aiGenerate.titlePlaceholder')}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   prefix={<FileTextOutlined />}
                 />
                 <TextArea
-                  placeholder="请输入内容"
+                  placeholder={t('aiGenerate.contentPlaceholder')}
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   rows={4}
@@ -295,9 +297,9 @@ export default function AIGeneratePage() {
                   onChange={setTemp}
                   style={{ width: "100%" }}
                 >
-                  <Option value="tempA">模板A</Option>
-                  <Option value="tempB">模板B</Option>
-                  <Option value="tempC">模板C</Option>
+                  <Option value="tempA">{t('aiGenerate.template')} A</Option>
+                  <Option value="tempB">{t('aiGenerate.template')} B</Option>
+                  <Option value="tempC">{t('aiGenerate.template')} C</Option>
                 </Select>
                 <Button
                   type="primary"
@@ -306,7 +308,7 @@ export default function AIGeneratePage() {
                   disabled={!content || !title}
                   icon={<FireOutlined />}
                 >
-                  生成流光卡片
+                  {t('aiGenerate.generate')}
                 </Button>
               </div>
               {fireflyResult && (
@@ -320,7 +322,7 @@ export default function AIGeneratePage() {
                   >
                     <img
                       src={getOssUrl(fireflyResult)}
-                      alt="生成的流光卡片"
+                      alt={t('aiGenerate.fireflyCard')}
                       style={{ maxWidth: "100%", borderRadius: "8px" }}
                     />
                     <Button
@@ -331,7 +333,7 @@ export default function AIGeneratePage() {
                         padding: "1px",
                       }}
                     >
-                      上传至媒体组
+                      {t('aiGenerate.uploadToMediaGroup')}
                     </Button>
                   </div>
                 </div>
@@ -342,14 +344,14 @@ export default function AIGeneratePage() {
       </div>
 
       <Modal
-        title="选择媒体组"
+        title={t('aiGenerate.selectMediaGroup')}
         open={uploadModalVisible}
         onOk={handleUploadConfirm}
         onCancel={() => setUploadModalVisible(false)}
         confirmLoading={uploading}
       >
         <Select
-          placeholder="请选择媒体组"
+          placeholder={t('aiGenerate.selectMediaGroupPlaceholder')}
           value={selectedMediaGroup}
           onChange={setSelectedMediaGroup}
           style={{ width: "100%" }}

@@ -1,0 +1,25 @@
+{
+  "title": "PLUS Member",
+  "description": "Upgrade to unlock all features with 8 benefits",
+  "activateNow": "Activate Now",
+  "pleaseLoginFirst": "Please login first",
+  "paymentOrderCreated": "Payment order created",
+  "paymentLinkNotFound": "Payment link not found",
+  "createPaymentOrderFailed": "Failed to create payment order",
+  "createPaymentOrderError": "Failed to create payment order, please try again",
+  "vipBenefits": {
+    "exclusiveBadge": "Badge",
+    "advancedFeatures": "Advanced",
+    "memberGift": "Gifts",
+    "prioritySupport": "Priority",
+    "discount": "Discount",
+    "unlimitedTime": "Unlimited",
+    "fastExperience": "Fast",
+    "morePrivileges": "More"
+  },
+  "plans": {
+    "onceMonth": "One-time Monthly",
+    "month": "Monthly",
+    "year": "Yearly"
+  }
+} 

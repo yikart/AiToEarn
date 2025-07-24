@@ -30,6 +30,7 @@ import {
   getUtcDays,
 } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 import { generateUUID } from "@/utils";
+import { useTransClient } from "@/app/i18n/client";
 
 export interface IPublishDialogRef {
   // 设置发布时间
@@ -97,6 +98,7 @@ const PublishDialog = memo(
       );
       const { errParamsMap } = usePubParamsVerify(pubListChoosed);
       const [createLoading, setCreateLoading] = useState(false);
+      const { t } = useTransClient("publish");
 
       useEffect(() => {
         if (open) {
@@ -110,9 +112,9 @@ const PublishDialog = memo(
       // 关闭弹框并确认关闭
       const closeDialog = useCallback(() => {
         confirm({
-          title: "放弃更改？",
+          title: t("confirmClose.title"),
           icon: <ExclamationCircleFilled />,
-          content: "您所做的任何更改都将永久丢失",
+          content: t("confirmClose.content"),
           okType: "danger",
           okButtonProps: {
             type: "primary",
@@ -125,7 +127,7 @@ const PublishDialog = memo(
             onClose();
           },
         });
-      }, [onClose]);
+      }, [onClose, t]);
 
       // 是否打开右侧预览
       const openRight = useMemo(() => {
@@ -259,7 +261,7 @@ const PublishDialog = memo(
                             }
                           }
                           // 是否自动前往第二步
-                          if (step === 0 && newPubListChoosed.length !== 0) {
+                          if (step === 0 && newPubListChoosed.length !== 0) { 
                             const isFront = newPubListChoosed.every(
                               (v) =>
                                 v.params.des ||

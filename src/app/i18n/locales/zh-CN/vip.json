@@ -1,0 +1,25 @@
+{
+  "title": "PLUS会员",
+  "description": "开通会员解锁全部功能，立享8种权益",
+  "activateNow": "立即开通",
+  "pleaseLoginFirst": "请先登录",
+  "paymentOrderCreated": "支付订单创建成功",
+  "paymentLinkNotFound": "未获取到支付链接",
+  "createPaymentOrderFailed": "创建支付订单失败",
+  "createPaymentOrderError": "创建支付订单失败，请稍后重试",
+  "vipBenefits": {
+    "exclusiveBadge": "专属标识",
+    "advancedFeatures": "高级功能",
+    "memberGift": "会员礼包",
+    "prioritySupport": "优先支持",
+    "discount": "优惠折扣",
+    "unlimitedTime": "无限时长",
+    "fastExperience": "极速体验",
+    "morePrivileges": "更多特权"
+  },
+  "plans": {
+    "onceMonth": "一次性月度",
+    "month": "月度订阅",
+    "year": "年度订阅"
+  }
+} 

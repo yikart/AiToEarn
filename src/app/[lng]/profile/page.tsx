@@ -10,6 +10,7 @@ import { getOrderListApi, getOrderDetailApi, getSubscriptionListApi, refundOrder
 import type { Order, OrderListParams, SubscriptionListParams, RefundParams, UnsubscribeParams } from "@/api/types/payment";
 import { OrderStatus, PaymentType } from "@/api/types/payment";
 import styles from "./profile.module.css";
+import { useTransClient } from "@/app/i18n/client";
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -17,6 +18,7 @@ const { Option } = Select;
 export default function ProfilePage() {
   const router = useRouter();
   const { userInfo, setUserInfo, clearLoginStatus, token } = useUserStore();
+  const { t } = useTransClient('profile');
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
@@ -51,13 +53,13 @@ export default function ProfilePage() {
   const getVipCycleTypeText = (cycleType: number) => {
     switch (cycleType) {
       case 0:
-        return '非会员';
+        return t('nonMember');
       case 1:
-        return '月度会员';
+        return t('monthlyMember');
       case 2:
-        return '年度会员';
+        return t('yearlyMember');
       default:
-        return '未知';
+        return t('unknown');
     }
   };
   
@@ -65,14 +67,14 @@ export default function ProfilePage() {
 
   // 会员权益数据
   const vipBenefits = [
-    { icon: <CrownOutlined />, name: "专属标识" },
-    { icon: <TrophyOutlined />, name: "高级功能" },
-    { icon: <GiftOutlined />, name: "会员礼包" },
-    { icon: <StarOutlined />, name: "优先支持" },
-    { icon: <DollarOutlined />, name: "优惠折扣" },
-    { icon: <HistoryOutlined />, name: "无限时长" },
-    { icon: <ThunderboltOutlined />, name: "极速体验" },
-    { icon: <RocketOutlined />, name: "更多特权" },
+    { icon: <CrownOutlined />, name: t('vipBenefits.exclusiveBadge') },
+    { icon: <TrophyOutlined />, name: t('vipBenefits.advancedFeatures') },
+    { icon: <GiftOutlined />, name: t('vipBenefits.memberGift') },
+    { icon: <StarOutlined />, name: t('vipBenefits.prioritySupport') },
+    { icon: <DollarOutlined />, name: t('vipBenefits.discount') },
+    { icon: <HistoryOutlined />, name: t('vipBenefits.unlimitedTime') },
+    { icon: <ThunderboltOutlined />, name: t('vipBenefits.fastExperience') },
+    { icon: <RocketOutlined />, name: t('vipBenefits.morePrivileges') },
   ];
 
   // 获取用户信息
@@ -80,17 +82,17 @@ export default function ProfilePage() {
     try {
       const response: any = await getUserInfoApi();
       if (!response) {
-        message.error('获取用户信息失败');
+        message.error(t('getUserInfoFailed'));
         return;
       }
       
       if (response.code === 0 && response.data) {
         setUserInfo(response.data);
       } else {
-        message.error(response.message || '获取用户信息失败');
+        message.error(response.message || t('getUserInfoFailed'));
       }
     } catch (error) {
-      message.error('获取用户信息失败');
+      message.error(t('getUserInfoFailed'));
     } finally {
       setLoading(false);
     }
@@ -110,10 +112,10 @@ export default function ProfilePage() {
           total: paginatedData.count
         });
       } else {
-        message.error(response?.message || '获取订单列表失败');
+        message.error(response?.message || t('getOrderListFailed'));
       }
     } catch (error) {
-      message.error('获取订单列表失败');
+      message.error(t('getOrderListFailed'));
     } finally {
       setOrdersLoading(false);
     }
@@ -133,10 +135,10 @@ export default function ProfilePage() {
           total: paginatedData.count
         });
       } else {
-        message.error(response?.message || '获取订阅列表失败');
+        message.error(response?.message || t('getSubscriptionListFailed'));
       }
     } catch (error) {
-      message.error('获取订阅列表失败');
+      message.error(t('getSubscriptionListFailed'));
     } finally {
       setSubscriptionsLoading(false);
     }
@@ -152,13 +154,13 @@ export default function ProfilePage() {
       };
       const response = await refundOrderApi(params);
       if (response?.code === 0) {
-        message.success('退款申请已提交');
+        message.success(t('refundSubmitted'));
         fetchOrders({ page: ordersPagination.current - 1, size: ordersPagination.pageSize });
       } else {
-        message.error(response?.message || '退款失败');
+        message.error(response?.message || t('refundFailed'));
       }
     } catch (error) {
-      message.error('退款失败');
+      message.error(t('refundFailed'));
     }
   };
 
@@ -171,13 +173,13 @@ export default function ProfilePage() {
       };
       const response = await unsubscribeApi(params);
       if (response?.code === 0) {
-        message.success('退订成功');
+        message.success(t('unsubscribeSuccess'));
         fetchSubscriptions({ page: subscriptionsPagination.current - 1, size: subscriptionsPagination.pageSize });
       } else {
-        message.error(response?.message || '退订失败');
+        message.error(response?.message || t('unsubscribeFailed'));
       }
     } catch (error) {
-      message.error('退订失败');
+      message.error(t('unsubscribeFailed'));
     }
   };
 
@@ -190,10 +192,10 @@ export default function ProfilePage() {
         setCurrentOrderDetail(response.data[0]);
         setOrderDetailVisible(true);
       } else {
-        message.error(response?.message || '获取订单详情失败');
+        message.error(response?.message || t('getOrderDetailFailed'));
       }
     } catch (error) {
-      message.error('获取订单详情失败');
+      message.error(t('getOrderDetailFailed'));
     } finally {
       setOrderDetailLoading(false);
     }
@@ -201,7 +203,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!token) {
-      message.error('请先登录');
+      message.error(t('pleaseLoginFirst'));
       router.push('/login');
       return;
     }
@@ -210,7 +212,7 @@ export default function ProfilePage() {
 
   const handleLogout = () => {
     clearLoginStatus();
-    message.success('退出登录成功');
+    message.success(t('logoutSuccess'));
     router.push('/login');
   };
 
@@ -218,19 +220,19 @@ export default function ProfilePage() {
     try {
       const response: any = await updateUserInfoApi(values);
       if (!response) {
-        message.error('更新失败');
+        message.error(t('updateFailed'));
         return;
       }
 
       if (response.code === 0 && response.data) {
         fetchUserInfo();
-        message.success('更新成功');
+        message.success(t('updateSuccess'));
         setIsModalOpen(false);
       } else {
-        message.error(response.message || '更新失败');
+        message.error(response.message || t('updateFailed'));
       }
     } catch (error) {
-      message.error('更新失败');
+      message.error(t('updateFailed'));
     }
   };
 
@@ -241,10 +243,10 @@ export default function ProfilePage() {
   // 订单状态标签
   const getOrderStatusTag = (status: OrderStatus) => {
     const statusMap = {
-      [OrderStatus.SUCCEEDED]: { color: 'green', text: '支付成功' },
-      [OrderStatus.CREATED]: { color: 'orange', text: '等待支付' },
-      [OrderStatus.REFUNDED]: { color: 'purple', text: '退款成功' },
-      [OrderStatus.EXPIRED]: { color: 'red', text: '订单取消' }
+      [OrderStatus.SUCCEEDED]: { color: 'green', text: t('paymentSuccess') },
+      [OrderStatus.CREATED]: { color: 'orange', text: t('waitingForPayment') },
+      [OrderStatus.REFUNDED]: { color: 'purple', text: t('refundSuccess') },
+      [OrderStatus.EXPIRED]: { color: 'red', text: t('orderCancelled') }
     };
     const config = statusMap[status] || { color: 'default', text: `状态${status}` };
     return <Tag color={config.color}>{config.text}</Tag>;
@@ -253,25 +255,25 @@ export default function ProfilePage() {
   // 获取套餐类型显示文本
   const getPaymentTypeText = (paymentType: string) => {
     const typeMap = {
-      [PaymentType.MONTH]: '月度订阅',
-      [PaymentType.YEAR]: '年度订阅', 
-      [PaymentType.ONCE_MONTH]: '一次性月度',
-      [PaymentType.ONCE_YEAR]: '一次性年度'
+      [PaymentType.MONTH]: t('monthlySubscription'),
+      [PaymentType.YEAR]: t('yearlySubscription'), 
+      [PaymentType.ONCE_MONTH]: t('oneTimeMonthly'),
+      [PaymentType.ONCE_YEAR]: t('oneTimeYearly')
     };
-    return typeMap[paymentType as PaymentType] || paymentType || '未知';
+    return typeMap[paymentType as PaymentType] || paymentType || t('unknown');
   };
 
   // 订单表格列
   const orderColumns = [
     {
-      title: '订单ID',
+      title: t('orderId'),
       dataIndex: 'id',
       key: 'id',
       ellipsis: true,
       width: 200,
     },
     {
-      title: '套餐类型',
+      title: t('packageType'),
       dataIndex: 'metadata',
       key: 'payment',
       render: (metadata: any) => {
@@ -280,7 +282,7 @@ export default function ProfilePage() {
       },
     },
     {
-      title: '金额',
+      title: t('amount'),
       dataIndex: 'amount',
       key: 'amount',
       render: (amount: number, record: Order) => {
@@ -290,25 +292,25 @@ export default function ProfilePage() {
       },
     },
     {
-      title: '状态',
+      title: t('status'),
       dataIndex: 'status',
       key: 'status',
       render: (status: OrderStatus) => getOrderStatusTag(status),
     },
     {
-      title: '创建时间',
+      title: t('createTime'),
       dataIndex: 'created',
       key: 'created',
       render: (timestamp: number) => new Date(timestamp * 1000).toLocaleString(),
     },
     {
-      title: '过期时间',
+      title: t('expireTime'),
       dataIndex: 'expires_at',
       key: 'expires_at',
       render: (timestamp: number) => new Date(timestamp * 1000).toLocaleString(),
     },
     {
-      title: '操作',
+      title: t('actions'),
       key: 'action',
       render: (_: any, record: Order) => (
         <Space>
@@ -320,7 +322,7 @@ export default function ProfilePage() {
               fetchOrderDetail(record.id);
             }}
           >
-            查看详情
+            {t('viewDetails')}
           </Button>
           
           {record.url && record.status === OrderStatus.CREATED && (
@@ -332,7 +334,7 @@ export default function ProfilePage() {
                 window.open(record.url, '_blank');
               }}
             >
-              去支付
+              {t('goToPay')}
             </Button>
           )}
         </Space>
@@ -343,13 +345,13 @@ export default function ProfilePage() {
   // 订阅表格列
   const subscriptionColumns = [
     {
-      title: '订阅ID',
+      title: t('subscriptionId'),
       dataIndex: 'id',
       key: 'id',
       ellipsis: true,
     },
     {
-      title: '套餐类型',
+      title: t('packageType'),
       dataIndex: 'metadata',
       key: 'payment',
       render: (metadata: any) => {
@@ -368,22 +370,22 @@ export default function ProfilePage() {
     //   },
     // },
     {
-      title: '状态',
+      title: t('status'),
       dataIndex: 'status',
       key: 'status',
       render: (status: OrderStatus) => {
         const statusMap = {
-          1: { color: 'green', text: '订阅成功' },
-          2: { color: 'red', text: '已取消' },
-          3: { color: 'purple', text: '退款成功' },
-          4: { color: 'orange', text: '订单取消' }
+          1: { color: 'green', text: t('subscriptionSuccess') },
+          2: { color: 'red', text: t('subscriptionCancelled') },
+          3: { color: 'purple', text: t('refundSuccess') },
+          4: { color: 'orange', text: t('orderCancelled') }
         };
         const config = statusMap[status] || { color: 'default', text: `状态${status}` };
         return <Tag color={config.color}>{config.text}</Tag>;
       },
     },
     {
-      title: '创建时间',
+      title: t('createTime'),
       dataIndex: 'created',
       key: 'created',
       render: (timestamp: number) => new Date(timestamp * 1000).toLocaleString(),
@@ -395,18 +397,18 @@ export default function ProfilePage() {
     //   render: (timestamp: number) => new Date(timestamp * 1000).toLocaleString(),
     // },
     {
-      title: '操作',
+      title: t('actions'),
       key: 'action',
       render: (_: any, record: Order) => (
         <Space>
           {record.status === 1 && (
             <Popconfirm
-              title="确定要退订吗？退订后将无法享受会员权益。"
+              title={t('cancelSubscriptionConfirm')}
               onConfirm={() => handleUnsubscribe(record)}
-              okText="确定"
-              cancelText="取消"
+              okText={t('confirm')}
+              cancelText={t('cancel')}
             >
-              <Button type="link" danger size="small">退订</Button>
+              <Button type="link" danger size="small">{t('cancelSubscription')}</Button>
             </Popconfirm>
           )}
         </Space>
@@ -421,14 +423,14 @@ export default function ProfilePage() {
         <div className={styles.vipContent}>
           <div className={styles.vipHeader}>
             <span className={styles.vipIcon}><CrownOutlined /></span>
-            <h2 className={styles.vipTitle}>PLUS会员</h2>
+            <h2 className={styles.vipTitle}>{t('plusMember')}</h2>
           </div>
           {isVip ? (<p className={styles.vipDescription}>
-            尊敬的VIP用户，您已解锁全部会员权益
+            {t('vipUserGreeting')}
           </p>
           ) : (
             <p className={styles.vipDescription}>
-              开通会员解锁全部功能，立享8种权益
+              {t('vipDescription')}
             </p>
           )}
           <div className={styles.benefitsGrid}>
@@ -444,37 +446,37 @@ export default function ProfilePage() {
             </div>
           ) : (
             <button className={styles.activateButton} onClick={handleGoToVipPage}>
-              立即开通
+              {t('activateNow')}
             </button>
           )}
         </div>
       </div>
 
       <Card 
-        title="个人信息" 
+        title={t('personalInfo')} 
         className={styles.card}
         extra={
           <div className={styles.actions}>
             <Button type="primary" onClick={() => setIsModalOpen(true)}>
-              修改用户名
+              {t('modifyUsername')}
             </Button>
             <Button type="primary" danger onClick={handleLogout}>
-              退出登录
+              {t('logout')}
             </Button>
           </div>
         }
       >
         <Descriptions bordered column={1}>
-          <Descriptions.Item label="用户ID">{userInfo?.id}</Descriptions.Item>
-          <Descriptions.Item label="用户名">{userInfo?.name}</Descriptions.Item>
-          <Descriptions.Item label="邮箱">{userInfo?.mail}</Descriptions.Item>
-          <Descriptions.Item label="账号状态">
-            {userInfo?.status === 1 ? '正常' : '禁用'}
+          <Descriptions.Item label={t('userId')}>{userInfo?.id}</Descriptions.Item>
+          <Descriptions.Item label={t('username')}>{userInfo?.name}</Descriptions.Item>
+          <Descriptions.Item label={t('email')}>{userInfo?.mail}</Descriptions.Item>
+          <Descriptions.Item label={t('accountStatus')}>
+            {userInfo?.status === 1 ? t('normal') : t('disabled')}
           </Descriptions.Item>
           {isVip && (
             <>
-              <Descriptions.Item label="会员类型">{vipCycleType}</Descriptions.Item>
-              <Descriptions.Item label="会员到期时间">{vipExpireTime}</Descriptions.Item>
+              <Descriptions.Item label={t('memberType')}>{vipCycleType}</Descriptions.Item>
+              <Descriptions.Item label={t('memberExpireTime')}>{vipExpireTime}</Descriptions.Item>
             </>
           )}
         </Descriptions>
@@ -482,9 +484,9 @@ export default function ProfilePage() {
 
       {!isVip && (
         <div className={styles.normalUserCallToAction}>
-          <p>开通PLUS会员，体验更多高级功能！</p>
+          <p>{t('upgradeCallToAction')}</p>
           <button className={styles.activateButton} onClick={handleGoToVipPage}>
-            立即开通PLUS会员
+            {t('activatePlusMember')}
           </button>
         </div>
       )}
@@ -495,7 +497,7 @@ export default function ProfilePage() {
   const renderOrderContent = () => (
     <div className={styles.orderContent}>
       <Tabs defaultActiveKey="orders">
-        <TabPane tab="我的订单" key="orders">
+        <TabPane tab={t('myOrders')} key="orders">
           <Card>
             <Table
               columns={orderColumns}
@@ -517,17 +519,17 @@ export default function ProfilePage() {
                 },
                 showSizeChanger: true,
                 showQuickJumper: true,
-                showTotal: (total) => `共 ${total} 条记录`,
+                showTotal: (total) => t('totalRecords', { total }),
                 pageSizeOptions: ['10', '20', '50'],
               }}
               scroll={{ x: 1200 }} // 添加横向滚动以适应更多列
               locale={{
-                emptyText: ordersLoading ? '加载中...' : '暂无订单记录'
+                emptyText: ordersLoading ? t('loading') : t('noOrderRecords')
               }}
             />
           </Card>
         </TabPane>
-        <TabPane tab="我的订阅" key="subscriptions">
+        <TabPane tab={t('mySubscriptions')} key="subscriptions">
           <Card>
             <Table
               columns={subscriptionColumns}
@@ -543,11 +545,11 @@ export default function ProfilePage() {
                 },
                 showSizeChanger: true,
                 showQuickJumper: true,
-                showTotal: (total) => `共 ${total} 条记录`,
+                showTotal: (total) => t('totalRecords', { total }),
                 pageSizeOptions: ['10', '20', '50'],
               }}
               locale={{
-                emptyText: subscriptionsLoading ? '加载中...' : '暂无订阅记录'
+                emptyText: subscriptionsLoading ? t('loading') : t('noSubscriptionRecords')
               }}
             />
           </Card>
@@ -576,7 +578,7 @@ export default function ProfilePage() {
           tab={
             <span>
               <UserOutlined />
-              个人信息
+              {t('personalInfo')}
             </span>
           } 
           key="profile"
@@ -587,7 +589,7 @@ export default function ProfilePage() {
           tab={
             <span>
               <ShoppingCartOutlined />
-              订单管理
+              {t('orderManagement')}
             </span>
           } 
           key="orders"
@@ -597,7 +599,7 @@ export default function ProfilePage() {
       </Tabs>
 
       <Modal
-        title="修改用户名"
+        title={t('modifyUsername')}
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         footer={null}
@@ -610,18 +612,18 @@ export default function ProfilePage() {
         >
           <Form.Item
             name="name"
-            label="用户名"
+            label={t('username')}
             rules={[
-              { required: true, message: '请输入用户名' },
-              { min: 2, message: '用户名长度不能小于2个字符' },
-              { max: 20, message: '用户名长度不能超过20个字符' }
+              { required: true, message: t('pleaseEnterUsername') },
+              { min: 2, message: t('usernameLengthMin') },
+              { max: 20, message: t('usernameLengthMax') }
             ]}
           >
-            <Input placeholder="请输入用户名" />
+            <Input placeholder={t('pleaseEnterUsername')} />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" block>
-              确认修改
+              {t('confirmModify')}
             </Button>
           </Form.Item>
         </Form>
@@ -629,13 +631,13 @@ export default function ProfilePage() {
 
       {/* 订单详情弹窗 */}
       <Modal
-        title="订单详情"
+        title={t('orderDetails')}
         open={orderDetailVisible}
         onCancel={() => setOrderDetailVisible(false)}
         className={styles.orderDetailModal}
         footer={[
           <Button key="close" onClick={() => setOrderDetailVisible(false)}>
-            关闭
+            {t('close')}
           </Button>,
           currentOrderDetail?.url && currentOrderDetail?.status === OrderStatus.CREATED && (
             <Button 
@@ -647,7 +649,7 @@ export default function ProfilePage() {
                 }
               }}
             >
-              前往支付
+              {t('goToPayment')}
             </Button>
           )
         ]}
@@ -656,13 +658,13 @@ export default function ProfilePage() {
       >
         {currentOrderDetail && (
           <Descriptions bordered column={1} size="small">
-            <Descriptions.Item label="订单ID">{currentOrderDetail.id}</Descriptions.Item>
-            <Descriptions.Item label="内部ID">{currentOrderDetail._id}</Descriptions.Item>
-            <Descriptions.Item label="套餐类型">
+            <Descriptions.Item label={t('orderId')}>{currentOrderDetail.id}</Descriptions.Item>
+            <Descriptions.Item label={t('internalId')}>{currentOrderDetail._id}</Descriptions.Item>
+            <Descriptions.Item label={t('packageType')}>
               {getPaymentTypeText(currentOrderDetail.metadata?.payment)}
             </Descriptions.Item>
-            <Descriptions.Item label="订阅模式">{currentOrderDetail.mode}</Descriptions.Item>
-            <Descriptions.Item label="金额">
+            <Descriptions.Item label={t('subscriptionMode')}>{currentOrderDetail.mode}</Descriptions.Item>
+            <Descriptions.Item label={t('amount')}>
               {(() => {
                 const displayAmount = (currentOrderDetail.amount / 100).toFixed(2);
                 const symbol = currentOrderDetail.currency === 'usd' ? '$' : 
@@ -671,7 +673,7 @@ export default function ProfilePage() {
                 return `${symbol}${displayAmount}`;
               })()}
             </Descriptions.Item>
-            <Descriptions.Item label="已退款金额">
+            <Descriptions.Item label={t('refundedAmount')}>
               {(() => {
                 const displayAmount = (currentOrderDetail.amount_refunded / 100).toFixed(2);
                 const symbol = currentOrderDetail.currency === 'usd' ? '$' : 
@@ -680,32 +682,32 @@ export default function ProfilePage() {
                 return `${symbol}${displayAmount}`;
               })()}
             </Descriptions.Item>
-            <Descriptions.Item label="状态">
+            <Descriptions.Item label={t('status')}>
               {getOrderStatusTag(currentOrderDetail.status)}
             </Descriptions.Item>
-            <Descriptions.Item label="创建时间">
+            <Descriptions.Item label={t('createTime')}>
               {new Date(currentOrderDetail.created * 1000).toLocaleString()}
             </Descriptions.Item>
-            <Descriptions.Item label="过期时间">
+            <Descriptions.Item label={t('expireTime')}>
               {new Date(currentOrderDetail.expires_at * 1000).toLocaleString()}
             </Descriptions.Item>
-            <Descriptions.Item label="用户ID">{currentOrderDetail.userId}</Descriptions.Item>
+            <Descriptions.Item label={t('userId')}>{currentOrderDetail.userId}</Descriptions.Item>
             <Descriptions.Item label="价格ID">{currentOrderDetail.price}</Descriptions.Item>
             {currentOrderDetail.payment_intent && (
-              <Descriptions.Item label="Payment Intent">{currentOrderDetail.payment_intent}</Descriptions.Item>
+              <Descriptions.Item label={t('paymentIntent')}>{currentOrderDetail.payment_intent}</Descriptions.Item>
             )}
             {currentOrderDetail.subscription && (
-              <Descriptions.Item label="订阅ID">{currentOrderDetail.subscription}</Descriptions.Item>
+              <Descriptions.Item label={t('subscriptionId')}>{currentOrderDetail.subscription}</Descriptions.Item>
             )}
             {/* <Descriptions.Item label="成功页面">{currentOrderDetail.success_url}</Descriptions.Item> */}
             {currentOrderDetail.url && (
-              <Descriptions.Item label="支付链接">
+              <Descriptions.Item label={t('paymentLink')}>
                 <Button 
                   type="link" 
                   size="small"
                   onClick={() => window.open(currentOrderDetail.url, '_blank')}
                 >
-                  打开支付页面
+                  {t('openPaymentPage')}
                 </Button>
               </Descriptions.Item>
             )}

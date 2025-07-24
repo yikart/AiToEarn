@@ -1,0 +1,24 @@
+{
+  "title": "发布作品",
+  "confirmClose": {
+    "title": "放弃更改？",
+    "content": "您所做的任何更改都将永久丢失"
+  },
+  "buttons": {
+    "customizePerAccount": "针对每个账户进行定制",
+    "cancelPublish": "取消发布",
+    "schedulePublish": "计划发布",
+    "publishNow": "立即发布",
+    "copyLink": "复制链接",
+    "delete": "删除"
+  },
+  "tips": {
+    "workSaved": "你的工作被保存了，选择一个账号来创建一个帖子。"
+  },
+  "status": {
+    "publishFailed": "发布失败",
+    "publishing": "发布中",
+    "publishSuccess": "发布成功",
+    "waitingPublish": "等待发布"
+  }
+} 

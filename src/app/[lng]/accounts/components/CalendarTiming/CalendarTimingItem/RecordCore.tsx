@@ -31,7 +31,7 @@ import type { MenuProps } from "antd";
 import { TooltipRef } from "antd/lib/tooltip";
 import { deletePublishRecordApi, nowPubTaskApi } from "@/api/plat/publish";
 import { getDays } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
-import { getOssUrl } from "@/utils/oss";
+import { getOssUrl } from "@/utils/oss"; 
 
 
 

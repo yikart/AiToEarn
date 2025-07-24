@@ -1,1 +1,31 @@
-{}
+{
+  "aiGenerate": {
+    "title": "AI Generate",
+    "backToAlbum": "Back to Album",
+    "textToImage": "Text to Image",
+    "fireflyCard": "Firefly Card",
+    "prompt": "Prompt",
+    "promptPlaceholder": "Enter prompt",
+    "width": "Width",
+    "height": "Height",
+    "generate": "Generate",
+    "generating": "Generating...",
+    "content": "Content",
+    "contentPlaceholder": "Enter content",
+    "title": "Title",
+    "titlePlaceholder": "Enter title",
+    "template": "Template",
+    "uploadToMediaGroup": "Upload to Media Group",
+    "selectMediaGroup": "Select Media Group",
+    "selectMediaGroupPlaceholder": "Please select media group",
+    "upload": "Upload",
+    "uploading": "Uploading...",
+    "uploadSuccess": "Upload successful",
+    "uploadFailed": "Upload failed",
+    "getMediaGroupListFailed": "Failed to get media group list",
+    "pleaseEnterPrompt": "Please enter prompt",
+    "pleaseSelectMediaGroup": "Please select media group",
+    "pleaseEnterContent": "Please enter content",
+    "pleaseEnterTitle": "Please enter title"
+  }
+}

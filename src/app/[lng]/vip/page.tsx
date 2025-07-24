@@ -7,23 +7,25 @@ import { useRouter } from "next/navigation";
 import { createPaymentOrderApi, PaymentType } from "@/api/vip";
 import { useUserStore } from "@/store/user";
 import styles from "./vip.module.css";
+import { useTransClient } from "@/app/i18n/client";
 
 export default function VipPage() {
   const router = useRouter();
   const { userInfo, lang } = useUserStore();
+  const { t } = useTransClient('vip');
   const [selectedPlan, setSelectedPlan] = useState('onceMonth'); // 'onceMonth', 'month', 'year'
   const [loading, setLoading] = useState(false);
 
   // 会员权益数据 (8个)
   const vipBenefits = [
-    { icon: <CrownOutlined />, name: "专属标识" },
-    { icon: <TrophyOutlined />, name: "高级功能" },
-    { icon: <GiftOutlined />, name: "会员礼包" },
-    { icon: <StarOutlined />, name: "优先支持" },
-    { icon: <DollarOutlined />, name: "优惠折扣" },
-    { icon: <HistoryOutlined />, name: "无限时长" },
-    { icon: <ThunderboltOutlined />, name: "极速体验" },
-    { icon: <RocketOutlined />, name: "更多特权" },
+    { icon: <CrownOutlined />, name: t('vipBenefits.exclusiveBadge') },
+    { icon: <TrophyOutlined />, name: t('vipBenefits.advancedFeatures') },
+    { icon: <GiftOutlined />, name: t('vipBenefits.memberGift') },
+    { icon: <StarOutlined />, name: t('vipBenefits.prioritySupport') },
+    { icon: <DollarOutlined />, name: t('vipBenefits.discount') },
+    { icon: <HistoryOutlined />, name: t('vipBenefits.unlimitedTime') },
+    { icon: <ThunderboltOutlined />, name: t('vipBenefits.fastExperience') },
+    { icon: <RocketOutlined />, name: t('vipBenefits.morePrivileges') },
   ];
 
   const handleActivate = async () => {
@@ -32,7 +34,7 @@ export default function VipPage() {
       
       // 检查用户是否已登录
       if (!userInfo?.id) {
-        message.error('请先登录');
+        message.error(t('pleaseLoginFirst'));
         router.push('/login');
         return;
       }
@@ -69,20 +71,20 @@ export default function VipPage() {
       });
       
       if (response?.code === 0) {
-        message.success('支付订单创建成功');
+        message.success(t('paymentOrderCreated'));
         // 直接跳转到支付页面
         if (response.data?.url) {
           // window.location.href = response.data.url;
           window.open(response.data.url, '_blank');
         } else {
-          message.error('未获取到支付链接');
+          message.error(t('paymentLinkNotFound'));
         }
       } else {
-        message.error(response?.message || response?.msg || '创建支付订单失败');
+        message.error(response?.message || response?.msg || t('createPaymentOrderFailed'));
       }
     } catch (error) {
       console.error('创建支付订单失败:', error);
-      message.error('创建支付订单失败，请稍后重试');
+      message.error(t('createPaymentOrderError'));
     } finally {
       setLoading(false);
     }
@@ -94,10 +96,10 @@ export default function VipPage() {
         <div className={styles.vipContent}>
           <div className={styles.vipHeader}>
             <span className={styles.vipIcon}><CrownOutlined /></span>
-            <h2 className={styles.vipTitle}>PLUS会员</h2>
+            <h2 className={styles.vipTitle}>{t('title')}</h2>
           </div>
           <p className={styles.vipDescription}>
-            开通会员解锁全部功能，立享8种权益
+            {t('description')}
           </p>
           <div className={styles.benefitsGrid}>
             {vipBenefits.map((benefit, index) => (
@@ -158,7 +160,7 @@ export default function VipPage() {
         onClick={handleActivate}
         disabled={loading}
       >
-        {loading ? '创建订单中...' : '立即开通'}
+        {loading ? t('createPaymentOrderFailed') : t('activateNow')}
       </button>
     </div>
   );

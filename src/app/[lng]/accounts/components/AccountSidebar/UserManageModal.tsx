@@ -32,6 +32,7 @@ import { AccountPlatInfoMap } from "@/app/config/platConfig";
 import { AccountStatus } from "@/app/config/accountConfig";
 import AvatarPlat from "@/components/AvatarPlat";
 import { deleteAccountsApi, updateAccountApi } from "@/api/account";
+import { useTransClient } from "@/app/i18n/client";
 
 export interface IUserManageModalRef {
   setActiveGroup: (groupId: string) => void;
@@ -76,6 +77,7 @@ const UserManageModal = memo(
       { open, onCancel }: IUserManageModalProps,
       ref: ForwardedRef<IUserManageModalRef>,
     ) => {
+      const { t } = useTransClient("account");
       const { accountList, getAccountList, accountGroupList, accountMap } =
         useAccountStore(
           useShallow((state) => ({
@@ -138,7 +140,7 @@ const UserManageModal = memo(
             key: "nickname",
           },
           {
-            title: "账号状态",
+            title: t("accountStatus"),
             render: (text, am) => {
               return (
                 <>
@@ -150,7 +152,7 @@ const UserManageModal = memo(
                           marginRight: "3px",
                         }}
                       />
-                      在线
+                      {t("online")}
                     </>
                   ) : (
                     <>
@@ -160,7 +162,7 @@ const UserManageModal = memo(
                           marginRight: "3px",
                         }}
                       />
-                      离线
+                      {t("offline")}
                     </>
                   )}
                 </>

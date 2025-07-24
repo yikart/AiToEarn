@@ -25,6 +25,7 @@ import { AccountStatus } from "@/app/config/accountConfig";
 import { SocialAccount } from "@/api/types/account.type";
 import { getOssUrl } from "@/utils/oss";
 import ChooseAccountModule from "@/components/ChooseAccountModule/ChooseAccountModule";
+import { useTransClient } from "@/app/i18n/client";
 
 export interface IAccountSidebarRef {}
 
@@ -38,11 +39,13 @@ export interface IAccountSidebarProps {
 }
 
 const AccountStatusView = ({ account }: { account: SocialAccount }) => {
+  const { t } = useTransClient("account");
+  
   if (account.status === AccountStatus.USABLE) {
     return (
       <>
         <CheckCircleOutlined style={{ color: "var(--successColor)" }} />
-        在线
+        {t("online")}
       </>
     );
   }
@@ -50,7 +53,7 @@ const AccountStatusView = ({ account }: { account: SocialAccount }) => {
   return (
     <>
       <WarningOutlined style={{ color: "var(--warningColor)" }} />
-      离线
+      {t("offline")}
     </>
   );
 };
@@ -60,6 +63,7 @@ const AccountPopoverInfo = ({
 }: {
   accountInfo: SocialAccount;
 }) => {
+  const { t } = useTransClient("account");
   const platInfo = AccountPlatInfoMap.get(accountInfo.type)!;
   const [detLoading, setDetLoading] = useState(false);
 
@@ -72,11 +76,11 @@ const AccountPopoverInfo = ({
         <Avatar src={getOssUrl(accountInfo.avatar)} size="large" />
         <div className="accountPopoverInfo_top-right">
           <div className="accountPopoverInfo-item">
-            <p>昵称：</p>
+            <p>{t("nickname")}：</p>
             <p>{accountInfo.nickname}</p>
           </div>
           <div className="accountPopoverInfo-item">
-            <p>平台：</p>
+            <p>{t("platform")}：</p>
             <p>
               <img src={platInfo?.icon} />
               {platInfo.name}
@@ -86,7 +90,7 @@ const AccountPopoverInfo = ({
       </div>
 
       <div className="accountPopoverInfo-item">
-        <p>登录状态：</p>
+        <p>{t("loginStatus")}：</p>
         <p>
           <AccountStatusView account={accountInfo} />
           <Button
@@ -113,7 +117,7 @@ const AccountPopoverInfo = ({
               // }, 500);
             }}
           >
-            登录状态检测
+            {t("checkLoginStatus")}
           </Button>
         </p>
       </div>
@@ -131,6 +135,7 @@ const AccountSidebar = memo(
       }: IAccountSidebarProps,
       ref: ForwardedRef<IAccountSidebarRef>,
     ) => {
+      const { t } = useTransClient("account");
       const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
       const pubAccountDetModuleRef = useRef<any>(null);
       const {
@@ -196,9 +201,9 @@ const AccountSidebar = memo(
                   }}
                 >
                   <UserOutlined />
-                  账号管理器
+                  {t("accountManager")}
                 </Button>
-                <Tooltip title="添加账号">
+                <Tooltip title={t("addAccount")}>
                   <Button
                     type="primary"
                     className="accountSidebar-top-addUser"
@@ -217,7 +222,7 @@ const AccountSidebar = memo(
                   style={{background: 'linear-gradient(90deg, #625BF2 0%, #925BF2 100%)'}}
                   onClick={() => setMcpManagerModalOpen(true)}
                 >
-                   MCP 管理器
+                   {t("mcpManager")}
                 </Button>
               </div>
             </div>
@@ -324,7 +329,7 @@ const AccountSidebar = memo(
                   pubAccountDetModuleRef.current?.startDet();
                 }}
               >
-                一键检测登录状态
+                {t("checkAllLoginStatus")}
               </Button>
             </div>
           </div>
