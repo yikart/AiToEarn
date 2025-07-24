@@ -31,7 +31,8 @@ import type { MenuProps } from "antd";
 import { TooltipRef } from "antd/lib/tooltip";
 import { deletePublishRecordApi, nowPubTaskApi } from "@/api/plat/publish";
 import { getDays } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
-import { getOssUrl } from "@/utils/oss"; 
+import { getOssUrl } from "@/utils/oss";
+import { useTransClient } from "@/app/i18n/client"; 
 
 
 
@@ -42,26 +43,28 @@ export interface IRecordCoreProps {
 }
 
 const PubStatus = ({ status }: { status: PublishStatus }) => {
+  const { t } = useTransClient("publish");
+  
   return (
     <div className={styles.pubStatus}>
       {status === PublishStatus.FAIL ? (
         <Tag color="error">
-          发布失败
+          {t("status.publishFailed")}
           <CloseCircleOutlined />
         </Tag>
       ) : status === PublishStatus.PUB_LOADING ? (
         <Tag color="cyan">
-          发布中
+          {t("status.publishing")}
           <LoadingOutlined />
         </Tag>
       ) : status === PublishStatus.RELEASED ? (
         <Tag color="success">
-          发布成功
+          {t("status.publishSuccess")}
           <CheckCircleOutlined />
         </Tag>
       ) : status === PublishStatus.UNPUBLISH ? (
         <Tag color="processing">
-          等待发布
+          {t("status.waitingPublish")}
           <ClockCircleOutlined />
         </Tag>
       ) : (
@@ -92,10 +95,12 @@ const RecordCore = memo(
       );
       const [popoverOpen, setPopoverOpen] = useState(false);
       const popoverRef = useRef<TooltipRef>(null);
+      const { t } = useTransClient("publish");
+      
       const dropdownItems: MenuProps["items"] = [
         {
           key: "2",
-          label: "复制链接",
+          label: t("buttons.copyLink"),
           onClick: async () => {
             await navigator.clipboard.writeText(publishRecord.workLink);
           },
@@ -103,7 +108,7 @@ const RecordCore = memo(
         {
           key: "3",
           danger: true,
-          label: "删除",
+          label: t("buttons.delete"),
           onClick: async () => {
             setPopoverOpen(false);
             setListLoading(true);
@@ -188,7 +193,7 @@ const RecordCore = memo(
                     getPubRecord();
                   }}
                 >
-                  立即发布
+                  {t("buttons.publishNow")}
                 </Button>
                 <Dropdown menu={{ items: dropdownItems }} placement="top">
                   <Button icon={<MoreOutlined />} />

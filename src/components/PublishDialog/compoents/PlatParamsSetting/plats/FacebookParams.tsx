@@ -10,10 +10,12 @@ import { usePublishDialogData } from "@/components/PublishDialog/usePublishDialo
 import { useShallow } from "zustand/react/shallow";
 import styles from "../platParamsSetting.module.scss";
 import { Select } from "antd";
+import { useTransClient } from "@/app/i18n/client";
 
 const FacebookParams = memo(
   forwardRef(
     ({ pubItem }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
+      const { t } = useTransClient("publish");
       const { pubParmasTextareaCommonParams, setOnePubParams } =
         usePlatParamsCommon(pubItem);
       const { getFacebookPages, facebookPages } =
@@ -39,7 +41,7 @@ const FacebookParams = memo(
                   className={styles.commonTitleInput}
                   style={{ marginTop: "10px" }}
                 >
-                  <div className="platParamsSetting-label">页面</div>
+                  <div className="platParamsSetting-label">{t("form.page")}</div>
                   <Select
                     style={{ width: "100%" }}
                     options={facebookPages}
@@ -58,7 +60,7 @@ const FacebookParams = memo(
                       );
                     }}
                     showSearch={true}
-                    placeholder="请选择页面"
+                    placeholder={t("form.pagePlaceholder")}
                     fieldNames={{
                       label: "name",
                       value: "id",

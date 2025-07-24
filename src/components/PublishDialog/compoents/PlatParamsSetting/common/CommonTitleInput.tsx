@@ -5,6 +5,7 @@ import { AccountPlatInfoMap } from "@/app/config/platConfig";
 import { PubItem } from "@/components/PublishDialog/publishDialog.type";
 import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
 import { useShallow } from "zustand/react/shallow";
+import { useTransClient } from "@/app/i18n/client";
 
 export interface ICommonTitleInputRef {}
 
@@ -18,6 +19,7 @@ const CommonTitleInput = memo(
       { pubItem }: ICommonTitleInputProps,
       ref: ForwardedRef<ICommonTitleInputRef>,
     ) => {
+      const { t } = useTransClient("publish");
       const platConfig = useMemo(() => {
         return AccountPlatInfoMap.get(pubItem.account.type)!;
       }, [pubItem]);
@@ -31,11 +33,11 @@ const CommonTitleInput = memo(
 
       return (
         <div className={styles.commonTitleInput}>
-          <div className="platParamsSetting-label">标题</div>
+          <div className="platParamsSetting-label">{t("form.title")}</div>
           <Input
             value={pubItem.params.title}
             maxLength={platConfig.commonPubParamsConfig.titleMax || 20}
-            placeholder="请输入标题"
+            placeholder={t("form.titlePlaceholder")}
             showCount
             onChange={(e) => {
               setOnePubParams(

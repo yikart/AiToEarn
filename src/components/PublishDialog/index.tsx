@@ -210,9 +210,9 @@ const PublishDialog = memo(
               }}
             >
               <div className="publishDialog-con">
-                <div className="publishDialog-con-head">
-                  <span className="publishDialog-con-head-title">发布作品</span>
-                </div>
+                                 <div className="publishDialog-con-head">
+                   <span className="publishDialog-con-head-title">{t("title")}</span>
+                 </div>
                 <div className="publishDialog-con-acconts">
                   {pubList.map((pubItem) => {
                     const platConfig = AccountPlatInfoMap.get(
@@ -325,11 +325,11 @@ const PublishDialog = memo(
                     </>
                   )}
 
-                  {pubListChoosed.length === 0 && (
-                    <div className="publishDialog-con-tips">
-                      你的工作被保存了，选择一个账号来创建一个帖子。
-                    </div>
-                  )}
+                                     {pubListChoosed.length === 0 && (
+                     <div className="publishDialog-con-tips">
+                       {t("tips.workSaved")}
+                     </div>
+                   )}
                 </div>
               </div>
               <div
@@ -340,43 +340,43 @@ const PublishDialog = memo(
 
                 <div className="publishDialog-footer-btns">
                   {step === 0 && pubListChoosed.length >= 2 ? (
-                    <Button
-                      size="large"
-                      onClick={() => {
-                        setExpandedPubItem(undefined);
-                        setStep(1);
-                      }}
-                    >
-                      针对每个账户进行定制
-                      <ArrowRightOutlined />
-                    </Button>
+                                         <Button
+                       size="large"
+                       onClick={() => {
+                         setExpandedPubItem(undefined);
+                         setStep(1);
+                       }}
+                     >
+                       {t("buttons.customizePerAccount")}
+                       <ArrowRightOutlined />
+                     </Button>
                   ) : (
                     <>
-                      <Button size="large" onClick={closeDialog}>
-                        取消发布
-                      </Button>
-                      <Button
-                        size="large"
-                        type="primary"
-                        loading={createLoading}
-                        onClick={() => {
-                          for (const [key, errVideoItem] of errParamsMap) {
-                            if (errVideoItem) {
-                              const pubItem = pubListChoosed.find(
-                                (v) => v.account.id === key,
-                              )!;
-                              if (step === 1) {
-                                setExpandedPubItem(pubItem);
-                              }
-                              message.warning(errVideoItem.parErrMsg);
-                              return;
-                            }
-                          }
-                          pubClick();
-                        }}
-                      >
-                        计划发布
-                      </Button>
+                                             <Button size="large" onClick={closeDialog}>
+                         {t("buttons.cancelPublish")}
+                       </Button>
+                                             <Button
+                         size="large"
+                         type="primary"
+                         loading={createLoading}
+                         onClick={() => {
+                           for (const [key, errVideoItem] of errParamsMap) {
+                             if (errVideoItem) {
+                               const pubItem = pubListChoosed.find(
+                                 (v) => v.account.id === key,
+                               )!;
+                               if (step === 1) {
+                                 setExpandedPubItem(pubItem);
+                               }
+                               message.warning(errVideoItem.parErrMsg);
+                               return;
+                             }
+                           }
+                           pubClick();
+                         }}
+                       >
+                         {t("buttons.schedulePublish")}
+                       </Button>
                     </>
                   )}
                 </div>

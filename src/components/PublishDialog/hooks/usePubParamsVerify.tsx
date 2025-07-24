@@ -38,7 +38,7 @@ export default function usePubParamsVerify(data: PubItem[]) {
       (() => {
         // ------------------------  通用参数校验  ------------------------
 
-        // 图片或者视频校验，视频和图片必须要上传一个
+        // 图片或者视频校验，视频和图片必须要上传一个 
         if (v.params.images?.length === 0 && !v.params.video) {
           return setErrorMsg("请上传图片或视频");
         }

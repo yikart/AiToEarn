@@ -20,5 +20,27 @@
     "publishing": "Publishing",
     "publishSuccess": "Success",
     "waitingPublish": "Waiting"
+  },
+  "form": {
+    "title": "Title",
+    "titlePlaceholder": "Enter title",
+    "partition": "Partition",
+    "partitionPlaceholder": "Select partition",
+    "type": "Type",
+    "original": "Original",
+    "reprint": "Reprint",
+    "source": "Source",
+    "sourcePlaceholder": "Please specify source, time, location (e.g. from https://www.xxxx.com/yyyy)",
+    "page": "Page",
+    "pagePlaceholder": "Select page",
+    "privacyStatus": "Privacy",
+    "public": "Public",
+    "unlisted": "Unlisted",
+    "private": "Private",
+    "region": "Region",
+    "regionPlaceholder": "Select region",
+    "category": "Category",
+    "categoryPlaceholder": "Select category",
+    "categoryPlaceholderDisabled": "Select region first"
   }
 } 

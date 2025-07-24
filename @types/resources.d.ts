@@ -581,6 +581,52 @@ interface Resources {
       "fastExperience": "极速体验",
       "morePrivileges": "更多特权"
     }
+  },
+  "publish": {
+    "title": "发布作品",
+    "confirmClose": {
+      "title": "放弃更改？",
+      "content": "您所做的任何更改都将永久丢失"
+    },
+    "buttons": {
+      "customizePerAccount": "针对每个账户进行定制",
+      "cancelPublish": "取消发布",
+      "schedulePublish": "计划发布",
+      "publishNow": "立即发布",
+      "copyLink": "复制链接",
+      "delete": "删除"
+    },
+    "tips": {
+      "workSaved": "你的工作被保存了，选择一个账号来创建一个帖子。"
+    },
+    "status": {
+      "publishFailed": "发布失败",
+      "publishing": "发布中",
+      "publishSuccess": "发布成功",
+      "waitingPublish": "等待发布"
+    },
+    "form": {
+      "title": "标题",
+      "titlePlaceholder": "请输入标题",
+      "partition": "分区",
+      "partitionPlaceholder": "请选择分区",
+      "type": "类型",
+      "original": "原创",
+      "reprint": "转载",
+      "source": "转载来源",
+      "sourcePlaceholder": "转载视频请注明来源、时间、地点(例：转自https://www.xxxx.com/yyyy)",
+      "page": "页面",
+      "pagePlaceholder": "请选择页面",
+      "privacyStatus": "隐私状态",
+      "public": "公开",
+      "unlisted": "不公开",
+      "private": "私人",
+      "region": "国区",
+      "regionPlaceholder": "请选择国区",
+      "category": "视频分类",
+      "categoryPlaceholder": "请选择视频分类",
+      "categoryPlaceholderDisabled": "请先选择国区"
+    }
   }
 }
 
