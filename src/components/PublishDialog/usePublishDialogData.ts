@@ -108,7 +108,7 @@ export const usePublishDialogData = create(
           
           const res:any = await apiGetYouTubeCategories(youtubeAccount.account, regionCode);
           set({
-            youTubeCategories: res?.data || [],
+            youTubeCategories: res?.data.items || [],
           });
           return res?.data;
         },

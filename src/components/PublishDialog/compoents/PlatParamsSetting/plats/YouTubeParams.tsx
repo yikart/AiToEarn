@@ -136,8 +136,8 @@ const YouTubeParams = memo(
                     placeholder={pubItem.params.option.youtube?.regionCode ? "请选择视频分类" : "请先选择国区"}
                     disabled={!pubItem.params.option.youtube?.regionCode}
                     fieldNames={{
-                      label: "name",
-                      value: "id",
+                      label: "etag",
+                      value: "etag",
                     }}
                   />
                 </div>
