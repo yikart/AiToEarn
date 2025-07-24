@@ -52,6 +52,8 @@ export interface IPlatOption {
   youtube?: {
     // 隐私状态：public、unlisted、private
     privacyStatus?: string;
+    // 国区代码
+    regionCode?: string;
     // 视频分类ID
     categoryId?: string;
   };

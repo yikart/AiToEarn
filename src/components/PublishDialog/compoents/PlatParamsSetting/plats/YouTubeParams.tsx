@@ -17,17 +17,31 @@ const YouTubeParams = memo(
     ({ pubItem }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
       const { pubParmasTextareaCommonParams, setOnePubParams } =
         usePlatParamsCommon(pubItem);
-      const { getYouTubeCategories, youTubeCategories } =
-        usePublishDialogData(
-          useShallow((state) => ({
-            getYouTubeCategories: state.getYouTubeCategories,
-            youTubeCategories: state.youTubeCategories,
-          })),
-        );
+      const { 
+        getYouTubeRegions, 
+        getYouTubeCategories, 
+        youTubeRegions, 
+        youTubeCategories 
+      } = usePublishDialogData(
+        useShallow((state) => ({
+          getYouTubeRegions: state.getYouTubeRegions,
+          getYouTubeCategories: state.getYouTubeCategories,
+          youTubeRegions: state.youTubeRegions,
+          youTubeCategories: state.youTubeCategories,
+        })),
+      );
 
       useEffect(() => {
-        getYouTubeCategories();
-      }, [getYouTubeCategories]);
+        getYouTubeRegions();
+      }, [getYouTubeRegions]);
+
+      // 当国区变化时，重新获取视频分类
+      useEffect(() => {
+        const regionCode = pubItem.params.option.youtube?.regionCode;
+        if (regionCode) {
+          getYouTubeCategories(regionCode);
+        }
+      }, [pubItem.params.option.youtube?.regionCode, getYouTubeCategories]);
 
       return (
         <>
@@ -68,6 +82,38 @@ const YouTubeParams = memo(
                   className={styles.commonTitleInput}
                   style={{ marginTop: "10px" }}
                 >
+                  <div className="platParamsSetting-label">国区</div>
+                  <Select
+                    style={{ width: "100%" }}
+                    options={youTubeRegions.map((item) => ({
+                      label: item,
+                      value: item,
+                    }))}
+                    value={pubItem.params.option.youtube?.regionCode}
+                    onChange={(value) => {
+                      const option = pubItem.params.option;
+                      if (!option.youtube) {
+                        option.youtube = {};
+                      }
+                      option.youtube.regionCode = value;
+                      // 清空之前选择的视频分类
+                      option.youtube.categoryId = undefined;
+                      setOnePubParams(
+                        {
+                          option,
+                        },
+                        pubItem.account.id,
+                      );
+                    }}
+                    showSearch={true}
+                    placeholder="请选择国区"
+                  />
+                </div>
+
+                <div
+                  className={styles.commonTitleInput}
+                  style={{ marginTop: "10px" }}
+                >
                   <div className="platParamsSetting-label">视频分类</div>
                   <Select
                     style={{ width: "100%" }}
@@ -87,7 +133,8 @@ const YouTubeParams = memo(
                       );
                     }}
                     showSearch={true}
-                    placeholder="请选择视频分类"
+                    placeholder={pubItem.params.option.youtube?.regionCode ? "请选择视频分类" : "请先选择国区"}
+                    disabled={!pubItem.params.option.youtube?.regionCode}
                     fieldNames={{
                       label: "name",
                       value: "id",
