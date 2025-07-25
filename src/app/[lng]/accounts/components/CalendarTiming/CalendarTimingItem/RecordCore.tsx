@@ -141,7 +141,7 @@ const RecordCore = memo(
             <div className={styles.recordDetails}>
               <div className="recordDetails-top">
                 <div className="recordDetails-top-left">
-                  {days.format("YYYY-MM-DD HH:MM")}
+                  {days.format("YYYY-MM-DD HH:mm")}
                   <FieldTimeOutlined />
                 </div>
                 <Button icon={<FullscreenOutlined />} size="small" />
