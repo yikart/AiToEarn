@@ -49,7 +49,7 @@ export function Providers({
   }, [lng]);
 
   return (
-    <GoogleOAuthProvider clientId="471394506793-t2g4mg90vr8qgpq5stbua0b22pofqrne.apps.googleusercontent.com"> 
+    <GoogleOAuthProvider clientId="1094109734611-flskoscgp609mecqk9ablvc6i3205vqk.apps.googleusercontent.com"> 
       <ConfigProvider
         locale={getAntdLang(lng)}
         theme={{
