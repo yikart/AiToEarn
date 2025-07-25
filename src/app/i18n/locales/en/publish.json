@@ -42,5 +42,24 @@
     "category": "Category",
     "categoryPlaceholder": "Select category",
     "categoryPlaceholderDisabled": "Select region first"
+  },
+  "upload": {
+    "finishingUp": "Finishing up...",
+    "uploadImageOrVideo": "Upload image or video",
+    "dragAndSelect": "Drag & select image or video"
+  },
+  "validation": {
+    "uploadImageOrVideo": "Please upload image or video",
+    "topicMaxExceeded": "{{platformName}} topics cannot exceed {{maxCount}}",
+    "topicFormatError": "Topics in description must be separated by spaces, such as: \"#topic1 #topic2\"",
+    "titleRequired": "Title is required",
+    "partitionRequired": "You must select a partition!",
+    "sourceRequired": "Source must be filled when reprinting!",
+    "pageRequired": "You must select a page!",
+    "coverSizeError": "Cover minimum size 400*400!"
+  },
+  "preview": {
+    "title": "Preview",
+    "emptyDescription": "See your work preview here"
   }
 } 

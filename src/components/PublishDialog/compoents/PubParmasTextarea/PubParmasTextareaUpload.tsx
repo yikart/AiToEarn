@@ -19,6 +19,7 @@ import {
 import { toolsApi } from "@/api/tools";
 import { OSS_URL } from "@/constant";
 import { RcFile } from "antd/es/upload";
+import { useTransClient } from "@/app/i18n/client";
 
 const { Dragger } = Upload;
 
@@ -50,6 +51,7 @@ const PubParmasTextareaUpload = memo(
       const [uploadLoading, setUploadLoading] = useState(false);
       const chooseCount = useRef<number>(0);
       const fileListRef = useRef<RcFile[]>([]);
+      const { t } = useTransClient("publish");
 
       // 上传视频
       const uploadVideo = useCallback(
@@ -137,7 +139,7 @@ const PubParmasTextareaUpload = memo(
                             color: "var(--theColor6)",
                           }}
                         >
-                          Finishing up…
+                          {t("upload.finishingUp")}
                         </span>
                       )
                     : undefined
@@ -150,7 +152,7 @@ const PubParmasTextareaUpload = memo(
               )}
             </div>
           ) : (
-            <Tooltip title="上传图片或视频">
+            <Tooltip title={t("upload.uploadImageOrVideo")}>
               <Dragger
                 accept={uploadAccept}
                 multiple={true}
@@ -177,7 +179,7 @@ const PubParmasTextareaUpload = memo(
                 showUploadList={false}
               >
                 <PlusOutlined />
-                <p>拖放 & 选择图片或视频</p>
+                <p>{t("upload.dragAndSelect")}</p>
               </Dragger>
             </Tooltip>
           )}

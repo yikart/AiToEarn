@@ -42,5 +42,24 @@
     "category": "视频分类",
     "categoryPlaceholder": "请选择视频分类",
     "categoryPlaceholderDisabled": "请先选择国区"
+  },
+  "upload": {
+    "finishingUp": "正在完成...",
+    "uploadImageOrVideo": "上传图片或视频",
+    "dragAndSelect": "拖放 & 选择图片或视频"
+  },
+  "validation": {
+    "uploadImageOrVideo": "请上传图片或视频",
+    "topicMaxExceeded": "{{platformName}}话题最多不能超过{{maxCount}}个",
+    "topicFormatError": "描述中的话题必须使用空格分割，如：\"#话题1 #话题2\"",
+    "titleRequired": "标题是必须的",
+    "partitionRequired": "您必须选择分区!",
+    "sourceRequired": "转载时必须填写转载来源!",
+    "pageRequired": "您必须选择页面!",
+    "coverSizeError": "封面最小尺寸400*400!"
+  },
+  "preview": {
+    "title": "预览",
+    "emptyDescription": "在这里看到你的作品预览"
   }
 } 

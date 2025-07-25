@@ -40,8 +40,9 @@ export default function LoginPage() {
       
       if (response.code === 0) {
         if (response.data.type === 'regist') {
-          // 用户未注册，显示弹窗提示
+          // 用户未注册，显示弹窗提示，并设置表单的默认密码值
           setRegistCode(response.data.code || '');
+          form.setFieldsValue({ password: password }); // 设置密码字段的默认值
           setIsModalOpen(true);
           setIsChecking(true);
         } else if (response.data.token) {
@@ -86,6 +87,7 @@ export default function LoginPage() {
             setIsActivating(false);
             setIsChecking(false);
             setIsModalOpen(false);
+            form.resetFields(); // 重置表单
             setToken(response.data.token);
             if (response.data.userInfo) {
               setUserInfo(response.data.userInfo);
@@ -215,6 +217,7 @@ export default function LoginPage() {
           setIsModalOpen(false);
           setIsChecking(false);
           setIsActivating(false);
+          form.resetFields(); // 重置表单
           if (activationTimer) {
             clearInterval(activationTimer);
           }

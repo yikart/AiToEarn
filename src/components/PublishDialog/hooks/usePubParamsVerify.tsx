@@ -3,6 +3,7 @@ import { parseTopicString } from "@/utils";
 import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import { PubItem } from "@/components/PublishDialog/publishDialog.type";
 import { Alert } from "antd";
+import { useTransClient } from "@/app/i18n/client";
 
 export interface ErrPubParamsItem {
   // 参数错误提示消息
@@ -18,6 +19,7 @@ export type ErrPubParamsMapType = Map<string | number, ErrPubParamsItem>;
 export default function usePubParamsVerify(data: PubItem[]) {
   // 用于判断描述中的话题是否符合规范
   const descTopicRegex = /#\S+#\S+/;
+  const { t } = useTransClient("publish");
 
   // 错误参数，发布之前会检测错误参数，防止平台无法发布
   const errParamsMap = useMemo(() => {
@@ -40,17 +42,15 @@ export default function usePubParamsVerify(data: PubItem[]) {
 
         // 图片或者视频校验，视频和图片必须要上传一个 
         if (v.params.images?.length === 0 && !v.params.video) {
-          return setErrorMsg("请上传图片或视频");
+          return setErrorMsg(t("validation.uploadImageOrVideo"));
         }
         // 话题校验
         if (topicsAll.length > topicMax) {
-          return setErrorMsg(`${platInfo.name}话题最多不能超过${topicMax}个`);
+          return setErrorMsg(t("validation.topicMaxExceeded", { platformName: platInfo.name, maxCount: topicMax }));
         }
         // 判断描述中的话题中间是否用空格分割，如：#话题1#话题2#话题3 这种格式错误
         if (descTopicRegex.test(v.params.des || "")) {
-          return setErrorMsg(
-            `描述中的话题必须使用空格分割，如：“#话题1 #话题2”`,
-          );
+          return setErrorMsg(t("validation.topicFormatError"));
         }
 
         // ------------------------  单个平台参数校验  ------------------------
@@ -59,23 +59,23 @@ export default function usePubParamsVerify(data: PubItem[]) {
         if (v.account.type === PlatType.BILIBILI) {
           // 强制需要标题
           if (!v.params.title) {
-            return setErrorMsg("标题是必须的");
+            return setErrorMsg(t("validation.titleRequired"));
           }
           if (!v.params.option.bilibili?.tid) {
-            return setErrorMsg("您必须选择分区!");
+            return setErrorMsg(t("validation.partitionRequired"));
           }
           if (
             v.params.option.bilibili.copyright === 2 &&
             !v.params.option.bilibili.source
           ) {
-            return setErrorMsg("转载时必须填写转载来源!");
+            return setErrorMsg(t("validation.sourceRequired"));
           }
         }
 
         // Facebook的强制校验
         if (v.account.type === PlatType.Facebook) {
           if (!v.params.option.facebook?.page_id) {    
-            return setErrorMsg("您必须选择页面!");
+            return setErrorMsg(t("validation.pageRequired"));
           }
         }
 
@@ -86,13 +86,13 @@ export default function usePubParamsVerify(data: PubItem[]) {
             (v.params.video.cover.width < 400 ||
               v.params.video.cover.height < 400)
           ) {
-            return setErrorMsg("封面最小尺寸400*400!");
+            return setErrorMsg(t("validation.coverSizeError"));
           }
         }
       })();
     }
     return errParamsMapTemp;
-  }, [data]);
+  }, [data, t]);
 
   return {
     errParamsMap,
