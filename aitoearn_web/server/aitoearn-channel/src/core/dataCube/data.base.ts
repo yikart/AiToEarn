@@ -1,0 +1,30 @@
+import {
+  ChannelAccountDataBulk,
+  ChannelAccountDataCube,
+  ChannelArcDataBulk,
+  ChannelArcDataCube,
+} from '../plat/common';
+
+export abstract class DataCubeBase {
+  // 获取账号的统计数据
+  abstract getAccountDataCube(
+    accountId: string,
+  ): Promise<ChannelAccountDataCube>;
+
+  // 获取账号的增量数据
+  abstract getAccountDataBulk(
+    accountId: string,
+  ): Promise<ChannelAccountDataBulk>;
+
+  // 获取作品的统计数据
+  abstract getArcDataCube(
+    accountId: string,
+    dataId: string,
+  ): Promise<ChannelArcDataCube>;
+
+  // 获取作品的增量数据
+  abstract getArcDataBulk(
+    accountId: string,
+    dataId: string,
+  ): Promise<ChannelArcDataBulk>;
+}

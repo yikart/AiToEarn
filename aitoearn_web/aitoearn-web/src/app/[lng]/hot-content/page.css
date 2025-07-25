@@ -1,0 +1,960 @@
+.hot-content-layout {
+  background: #f0f2f5;
+}
+
+.main-content {
+  flex-grow: 1;
+  margin: 24px;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 预览弹窗样式 */
+.preview-modal .ant-modal-content {
+  padding: 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.preview-modal .ant-modal-header {
+  margin: 0;
+  padding: 16px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.preview-modal .ant-modal-body {
+  padding: 0;
+}
+
+/* 响应式布局 */
+@media screen and (max-width: 768px) {
+  .main-content {
+    margin: 12px;
+  }
+
+  .preview-modal {
+    width: 100% !important;
+    max-width: 100%;
+    margin: 0;
+    top: 0;
+    padding: 0;
+  }
+
+  .preview-modal .ant-modal-content {
+    border-radius: 0;
+  }
+}
+
+/* 热点事件样式 */
+.hot-events-container {
+  width: 100%;
+  flex-grow: 1;
+  padding: 24px;
+  background: #f0f2f5;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.hot-events-container .grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.hot-topic-card {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  height: 451px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.hot-topic-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.hot-topic-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f7f7f7;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.hot-topic-item:hover {
+  background-color: #f9fafb;
+}
+
+.hot-topic-item:last-child {
+  border-bottom: none;
+}
+
+.hot-topic-details {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  min-width: 0;
+}
+
+.hot-value-trend {
+  flex-shrink: 0;
+  width: 40px;
+  height: 16px;
+}
+
+.hot-value-trend svg {
+  width: 100%;
+  height: 100%;
+}
+
+.hot-value-trend polyline {
+  stroke: #ff4d4f;
+  stroke-width: 1.5;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.3s ease;
+}
+
+.hot-topic-item:hover .hot-value-trend polyline {
+  stroke: #ff7875;
+}
+
+.platform-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #ffffff;
+  border-radius: 8px 8px 0 0;
+  flex-shrink: 0;
+}
+
+.platform-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  margin-right: 8px;
+  object-fit: contain;
+}
+
+.platform-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.hot-topic-content {
+  flex: 1;
+  padding: 8px 16px;
+  overflow-y: auto;
+}
+
+.hot-topic-rank {
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.hot-topic-rank.top-3 {
+  color: #ff4d4f;
+}
+
+.hot-topic-title {
+  flex: 1;
+  margin: 0 12px 0 8px;
+  font-size: 14px;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hot-topic-metrics {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.hot-topic-value {
+  font-size: 13px;
+  color: #ff4d4f;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.hot-topic-trend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hot-topic-trend.up {
+  color: #ff4d4f;
+}
+
+.hot-topic-trend.down {
+  color: #52c41a;
+}
+
+/* 加载状态样式 */
+.loading-container,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  min-height: 200px;
+  width: 100%;
+}
+
+.loading-text,
+.empty-state-text {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.empty-state-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+  color: #d1d5db;
+}
+
+/* 响应式布局调整 */
+@media screen and (max-width: 768px) {
+  .hot-events-container {
+    padding: 12px;
+    min-height: calc(100vh - 24px);
+  }
+
+  .main-content {
+    margin: 12px;
+  }
+
+  .hot-topic-card {
+    min-height: 350px;
+  }
+
+  .hot-topic-content {
+    padding: 8px 12px;
+  }
+
+  .platform-header {
+    padding: 10px 12px;
+  }
+
+  .platform-name {
+    font-size: 14px;
+  }
+
+  .hot-topic-rank {
+    font-size: 13px;
+  }
+
+  .hot-topic-title {
+    font-size: 13px;
+    margin: 0 8px;
+  }
+
+  .hot-topic-value {
+    font-size: 12px;
+  }
+
+  .hot-value-trend {
+    width: 30px;
+  }
+}
+
+/* 热点事件样式 */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af;
+}
+
+/* 标题列表容器 */
+.viral-title-list {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* 列表项 */
+.viral-title-list-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.viral-title-list-item:last-child {
+  border-bottom: none;
+}
+
+.viral-title-list-item:hover {
+  background-color: #f9fafb;
+}
+
+.list-item-rank {
+  font-size: 16px;
+  font-weight: bold;
+  width: 40px; /* 固定宽度 */
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.list-item-rank.top {
+  color: #a66ae4;
+}
+
+.list-item-details {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  min-width: 0; /* 允许flex项缩小 */
+}
+
+.list-item-category {
+  font-size: 14px;
+  color: #666;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.list-item-title {
+  font-size: 15px;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* 标题不换行 */
+  flex-grow: 1;
+  margin-right: 12px;
+}
+
+.list-item-engagement {
+  font-size: 14px;
+  color: #a66ae4; /* 互动量使用主题色 */
+  font-weight: 500;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* 查看更多按钮 */
+.view-more-button {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.view-more-btn {
+  padding: 8px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #a66ae4;
+  border: 1px solid #a66ae4;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.view-more-btn:hover {
+  background: #a66ae4;
+  color: #fff;
+}
+
+/* 加载和空状态 */
+.loading-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  color: #666;
+}
+
+.empty-state-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+/* 筛选区域 */
+.viral-title-filter {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.filter-section {
+  margin-bottom: 16px;
+}
+
+.filter-section:last-child {
+  margin-bottom: 0;
+}
+
+.filter-label {
+  color: #666;
+  font-size: 14px;
+  margin-right: 12px;
+}
+
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-button {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+  background: #f5f5f5;
+  color: #333;
+}
+
+.filter-button.active {
+  background: #a66ae4;
+  color: #fff;
+}
+
+.filter-button:hover {
+  background: #e6e6e6;
+}
+
+.filter-button.active:hover {
+  background: #8f5bc4;
+}
+
+/* 分类标题样式 */
+.category-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 16px 0;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.category-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e8e8e8;
+  margin-left: 16px;
+}
+
+/* 热门专题样式 */
+.topic-container {
+  width: 100%;
+  flex-grow: 1;
+  padding: 24px;
+  background: #f0f2f5;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.topic-filter-container {
+  padding: 16px;
+  margin-bottom: 16px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.topic-filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.topic-filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.topic-filter-section {
+  display: flex;
+  align-items: center;
+}
+
+.topic-filter-label {
+  margin-right: 12px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.topic-filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.topic-filter-button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.topic-filter-button.active {
+  background-color: #a66ae4;
+  color: white;
+}
+
+.topic-filter-button:not(.active):hover {
+  background-color: #f3e8ff;
+  color: #a66ae4;
+}
+
+.topic-list-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.topic-loading-state,
+.topic-empty-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 32px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.topic-loading-text,
+.topic-empty-state-text {
+  margin-top: 12px;
+}
+
+.topic-list-header {
+  display: grid;
+  grid-template-columns: 60px 100px auto 80px repeat(4, 80px);
+  padding: 16px;
+  font-size: 14px;
+  color: #6b7280;
+  background-color: #f9fafb;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.topic-header-col {
+  text-align: center;
+}
+
+.topic-header-col.rank-col {
+  text-align: center;
+}
+
+.topic-header-col.cover-col {
+  text-align: left;
+  padding-left: 8px;
+}
+
+.topic-header-col.info-col {
+  text-align: left;
+  padding-left: 8px;
+}
+
+.topic-header-col.category-col {
+  text-align: center;
+}
+
+.topic-header-col.stats-col {
+  text-align: center;
+}
+
+.topic-list-item {
+  display: grid;
+  grid-template-columns: 60px 100px auto 80px repeat(4, 80px);
+  align-items: center;
+  padding: 20px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.topic-list-item:hover {
+  background-color: #f9fafb;
+}
+
+.topic-item-col {
+  text-align: center;
+}
+
+.topic-item-col.rank-col {
+  font-size: 18px;
+  font-weight: bold;
+  color: #f97316; /* Orange 500 */
+  text-align: center;
+}
+
+.topic-item-col.cover-col {
+  text-align: left;
+  padding-left: 8px;
+}
+
+.topic-item-cover-wrapper {
+  position: relative;
+  width: 90px; /* Adjusted width */
+  height: 50px; /* Adjusted height */
+  overflow: hidden;
+  background-color: #e5e7eb; /* Gray 100 */
+  border-radius: 8px; /* Large rounded corners */
+}
+
+.topic-item-cover-image {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.topic-item-cover-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  color: #9ca3af; /* Gray 400 */
+  font-size: 12px;
+}
+
+.topic-item-cover-video-tag {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  padding: 4px 8px;
+  font-size: 10px; /* Adjusted font size */
+  color: white;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+}
+
+.topic-item-col.info-col {
+  text-align: left;
+  padding-left: 16px; /* Increased padding */
+}
+
+.topic-item-title {
+  font-size: 16px; /* Base font size */
+  font-weight: 500; /* Medium font weight */
+  /* max-height: 40px; /* Limit title height to 2 lines */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Limit to 2 lines */
+  -webkit-box-orient: vertical;
+  text-align: left; /* Ensure text aligns left */
+  margin-bottom: 8px; /* Space below title */
+}
+
+.topic-item-title:hover {
+  color: #a66ae4; /* Primary color on hover */
+}
+
+.topic-item-author-info {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.topic-author-details {
+  display: flex;
+  align-items: center;
+}
+
+.topic-author-avatar {
+  width: 20px; /* Avatar size */
+  height: 20px; /* Avatar size */
+  margin-right: 4px; /* Space after avatar */
+  border-radius: 50%; /* Circular avatar */
+}
+
+.topic-author-avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 4px;
+  background-color: #e5e7eb;
+  border-radius: 50%;
+}
+
+.topic-author-name {
+  margin-right: 8px; /* Space after author name */
+  font-size: 14px; /* Author name font size */
+  color: #4b5563; /* Gray 600 */
+}
+
+.topic-author-fans,
+.topic-publish-time {
+  font-size: 12px; /* Smaller font size for fans and time */
+  color: #9ca3af; /* Gray 400 */
+}
+
+.topic-author-fans {
+  margin-right: 8px;
+}
+
+.topic-item-col.category-col {
+  text-align: center;
+}
+
+.topic-item-category {
+  font-size: 14px;
+  color: #4b5563; /* Gray 600 */
+}
+
+.topic-item-subcategory {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #9ca3af; /* Gray 400 */
+}
+
+.topic-item-col.stats-col {
+  text-align: center;
+}
+
+.topic-stat-value {
+  font-size: 16px; /* Larger font for stats */
+  font-weight: 500;
+  color: #a66ae4; /* Primary color */
+}
+
+.topic-stat-label {
+  font-size: 12px;
+  color: #9ca3af; /* Gray 400 */
+  margin-top: 4px;
+}
+
+.topic-pagination-container {
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+}
+
+/* 热门专题响应式调整 */
+@media screen and (max-width: 1200px) {
+  .topic-list-header,
+  .topic-list-item {
+    grid-template-columns: 40px 80px auto 60px repeat(4, 60px); /* Adjusted grid columns */
+  }
+
+  .topic-header-col.rank-col,
+  .topic-item-col.rank-col {
+    width: 40px;
+    font-size: 16px;
+  }
+
+  .topic-header-col.cover-col,
+  .topic-item-col.cover-col {
+    width: 80px;
+    padding-left: 4px;
+  }
+
+  .topic-item-cover-wrapper {
+    width: 70px; /* Adjusted width */
+    height: 40px; /* Adjusted height */
+  }
+
+  .topic-header-col.info-col,
+  .topic-item-col.info-col {
+    padding-left: 12px; /* Adjusted padding */
+  }
+
+  .topic-item-title {
+    font-size: 14px; /* Adjusted font size */
+  }
+
+  .topic-header-col.category-col,
+  .topic-item-col.category-col {
+    width: 60px;
+  }
+
+  .topic-header-col.stats-col,
+  .topic-item-col.stats-col {
+    width: 60px;
+  }
+
+  .topic-stat-value {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .topic-container {
+    padding: 12px;
+  }
+
+  .topic-filter-container {
+    padding: 12px;
+  }
+
+  .topic-filter-options {
+    gap: 12px;
+  }
+
+  .topic-filter-group {
+    gap: 6px;
+  }
+
+  .topic-filter-label {
+    margin-right: 8px;
+    font-size: 12px;
+  }
+
+  .topic-filter-button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .topic-list-header,
+  .topic-list-item {
+    grid-template-columns: 30px 60px auto 50px repeat(4, 50px); /* Further adjusted grid columns */
+  }
+
+  .topic-header-col.rank-col,
+  .topic-item-col.rank-col {
+    width: 30px;
+    font-size: 14px;
+  }
+
+  .topic-header-col.cover-col,
+  .topic-item-col.cover-col {
+    width: 60px;
+    padding-left: 2px;
+  }
+
+  .topic-item-cover-wrapper {
+    width: 50px;
+    height: 30px;
+    border-radius: 4px;
+  }
+
+  .topic-item-cover-placeholder {
+    font-size: 10px;
+  }
+
+  .topic-item-cover-video-tag {
+    bottom: 4px;
+    right: 4px;
+    padding: 2px 4px;
+    font-size: 8px;
+    border-radius: 2px;
+  }
+
+  .topic-header-col.info-col,
+  .topic-item-col.info-col {
+    padding-left: 8px;
+  }
+
+  .topic-item-title {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  .topic-item-author-info {
+    margin-top: 4px;
+  }
+
+  .topic-author-avatar,
+  .topic-author-avatar-placeholder {
+    width: 16px;
+    height: 16px;
+    margin-right: 2px;
+  }
+
+  .topic-author-name,
+  .topic-author-fans,
+  .topic-publish-time {
+    font-size: 10px;
+  }
+
+  .topic-author-name {
+    margin-right: 4px;
+  }
+
+  .topic-header-col.category-col,
+  .topic-item-col.category-col {
+    width: 50px;
+  }
+
+  .topic-item-category {
+    font-size: 12px;
+  }
+
+  .topic-item-subcategory {
+    font-size: 10px;
+  }
+
+  .topic-header-col.stats-col,
+  .topic-item-col.stats-col {
+    width: 50px;
+  }
+
+  .topic-stat-value {
+    font-size: 12px;
+  }
+
+  .topic-stat-label {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  .topic-pagination-container {
+    padding: 16px;
+  }
+} 

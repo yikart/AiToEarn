@@ -1,0 +1,29 @@
+.container {
+  padding: 24px;
+  margin: 2px auto;
+}
+
+.card {
+  margin-bottom: 24px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+  
+  .card {
+    margin-top: 16px;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+} 

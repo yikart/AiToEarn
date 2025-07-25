@@ -1,0 +1,12 @@
+.avatarPlat {
+  position: relative;
+  display: inline-block;
+  justify-content: center;
+  & > img {
+    position: absolute;
+    bottom: 10%;
+    right: -10%;
+    transform: translate(-10%, 20%);
+    border-radius: 50%;
+  }
+}

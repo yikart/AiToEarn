@@ -1,0 +1,66 @@
+{
+  "profile": "个人中心",
+  "logout": "退出登录",
+  "unknownUser": "未知用户",
+  "login": "登录",
+  "websit": {
+    "termsOfService": {
+      "title": "用户协议",
+      "lastUpdated": "最后更新时间",
+      "content": {
+        "introduction": "欢迎使用我们的服务。在使用本服务前，请仔细阅读以下条款和条件。",
+        "acceptance": "1. 接受条款",
+        "acceptanceContent": "通过访问和使用本服务，您同意受本用户协议的约束。如果您不同意这些条款，请不要使用本服务。",
+        "serviceDescription": "2. 服务说明",
+        "serviceDescriptionContent": "本服务是一个AI内容创作平台，帮助用户生成和管理多媒体内容。",
+        "userResponsibilities": "3. 用户责任",
+        "userResponsibilitiesContent": "用户应确保其使用本服务的行为符合当地法律法规，不得用于非法目的。",
+        "privacy": "4. 隐私保护",
+        "privacyContent": "我们重视您的隐私，详细信息请参阅我们的隐私政策。",
+        "termination": "5. 服务终止",
+        "terminationContent": "我们保留在任何时候终止或暂停服务的权利。",
+        "contact": "6. 联系我们",
+        "contactContent": "如有任何问题，请通过邮件联系我们：support@example.com"
+      }
+    },
+    "privacyPolicy": {
+      "title": "隐私政策",
+      "lastUpdated": "最后更新时间",
+      "content": {
+        "introduction": "本隐私政策说明我们如何收集、使用和保护您的个人信息。",
+        "informationCollection": "1. 信息收集",
+        "informationCollectionContent": "我们收集您主动提供的信息以及您使用服务时自动收集的信息。",
+        "informationUse": "2. 信息使用",
+        "informationUseContent": "我们使用收集的信息来提供、维护和改进我们的服务。",
+        "informationSharing": "3. 信息共享",
+        "informationSharingContent": "我们不会向第三方出售、交易或转让您的个人信息。",
+        "dataSecurity": "4. 数据安全",
+        "dataSecurityContent": "我们采用适当的安全措施来保护您的个人信息。",
+        "userRights": "5. 用户权利",
+        "userRightsContent": "您有权访问、更正或删除您的个人信息。",
+        "contact": "6. 联系我们",
+        "contactContent": "如有隐私相关问题，请联系我们：privacy@example.com"
+      }
+    },
+    "dataDeletion": {
+      "title": "申请删除数据",
+      "subtitle": "如果您希望删除您的个人数据，请按照以下步骤操作",
+      "lastUpdated": "最后更新时间",
+      "prelaunchNote": "对于预发布用户：",
+      "prelaunchContent": "我们目前处于预发布阶段，如需删除数据，请直接联系我们的支持团队。",
+      "standardProcedure": "标准删除流程：",
+              "steps": [
+          "登录您的账户并进入设置页面",
+          "点击「数据管理」选项",
+          "选择「删除我的数据」",
+          "确认删除操作并等待处理完成"
+        ],
+      "contactInfo": "联系方式：",
+      "contactEmail": "如需帮助，请发送邮件至：datadeletion@example.com",
+      "processingTime": "处理时间：",
+      "processingTimeContent": "数据删除请求通常在 7-14 个工作日内处理完成。",
+      "importantNote": "重要提示：",
+      "importantNoteContent": "数据删除后无法恢复，请谨慎操作。某些法律要求保留的数据可能无法删除。"
+    }
+  }
+} 

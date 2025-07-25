@@ -1,0 +1,18 @@
+{
+  "youtubeAuth": "YouTube 授权",
+  "authDescription": "请输入您的邮箱地址以获取 YouTube 授权",
+  "email": "邮箱",
+  "enterEmail": "请输入邮箱地址",
+  "authorize": "授权",
+  "pleaseEnterEmail": "请输入邮箱地址",
+  "invalidEmail": "请输入有效的邮箱地址",
+  "authFailed": "授权失败，请稍后重试",
+  "checkAuth": "检查授权",
+  "notAuthorized": "未授权",
+  "uploadVideo": "上传视频",
+  "needAuthFirst": "首先需要授权",
+  "uploadFailed": "上传失败",
+  "uploadSuccess": "上传成功",
+  "checkFailed": "检查失败",
+  "alreadyAuthorized": "已授权"
+}
