@@ -148,8 +148,8 @@ export default function VipPage() {
             <span className={styles.originalPrice}>$180</span>
             <span className={styles.discount}>50%优惠</span>
           </div>
-          <p className={styles.currentPrice}>$<span>120</span>/年</p>
-          <p className={styles.monthlyPrice}>约$10/月</p>
+          <p className={styles.currentPrice}>$<span>10</span>/月</p>
+          <p className={styles.monthlyPrice}>$120/年</p>
         </div>
       </div>
       
