@@ -1,13 +1,13 @@
 "use client";
 
-import { ForwardedRef, forwardRef, memo, useEffect, useRef } from "react";
+import { ForwardedRef, forwardRef, memo, useEffect, useRef, useState } from "react";
 import styles from "./styles/lyaoutHeader.module.scss";
 import { useUserStore } from "@/store/user"; 
 import Link from "next/link";
 import Image from "next/image";
 import LayoutNav from "@/app/layout/layoutNav";
 import { NoSSR } from "@kwooshung/react-no-ssr";
-import { Button, Dropdown, MenuProps } from "antd";
+import { Button, Dropdown, MenuProps, Badge } from "antd";
 import logo from "@/assets/images/logo.png";
 import defaultAvatar from "./images/defaultAvatar.jpg";
 import {
@@ -17,6 +17,8 @@ import {
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useTransClient } from "@/app/i18n/client";
+import NotificationPanel from "@/components/NotificationPanel";
+import { useNotification } from "@/hooks/useNotification";
 
 export interface ILyaoutHeaderRef {}
 
@@ -45,6 +47,18 @@ function UserInfo() {
       label: (
         <div
           onClick={() => {
+            router.push("/notification");
+          }}
+        >
+          消息通知
+        </div>
+      ),
+    },
+    {
+      key: "3",
+      label: (
+        <div
+          onClick={() => {
             router.push("/material");
           }}
         >
@@ -53,7 +67,7 @@ function UserInfo() {
       ),
     },
     {
-      key: "3",
+      key: "4",
       label: (
         <div
           onClick={() => {
@@ -65,7 +79,7 @@ function UserInfo() {
       ),
     },
     {
-      key: "4",
+      key: "5",
       label: (
         <div
           onClick={() => {
@@ -106,6 +120,8 @@ const LyaoutHeader = memo(
     const layoutHeader = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const { t } = useTransClient("common");
+    const [notificationVisible, setNotificationVisible] = useState(false);
+    const { unreadCount } = useNotification();
 
     const toggleLanguage = () => {
       const newLng = userStore.lang === "zh-CN" ? "en" : "zh-CN";
@@ -130,45 +146,63 @@ const LyaoutHeader = memo(
     }, []);
 
     return (
-      <div ref={layoutHeader} className={styles.layoutHeader}>
-        <div className={styles.layoutHeader_wrapper}>
-          <div className={styles["layoutHeader_wrapper-left"]}>
-            <h1 className={styles["layoutHeader_wrapper-logo"]}>
-              <Link href="/">
-                <Image src={logo} alt="logo" width={50} />
-              </Link>
-            </h1>
-            <LayoutNav />
-          </div>
+      <>
+        <div ref={layoutHeader} className={styles.layoutHeader}>
+          <div className={styles.layoutHeader_wrapper}>
+            <div className={styles["layoutHeader_wrapper-left"]}>
+              <h1 className={styles["layoutHeader_wrapper-logo"]}>
+                <Link href="/">
+                  <Image src={logo} alt="logo" width={50} />
+                </Link>
+              </h1>
+              <LayoutNav />
+            </div>
 
-          <div
-            className={styles["layoutHeader_wrapper-right"]}
-            suppressHydrationWarning={true}
-          >
-            <Button
-              type="text"
-              icon={<GlobalOutlined />}
-              onClick={toggleLanguage}
-              className={styles.languageButton}
+            <div
+              className={styles["layoutHeader_wrapper-right"]}
+              suppressHydrationWarning={true}
             >
-              {userStore.lang === "zh-CN" ? "EN" : "中文"}
-            </Button>
-            <NoSSR>
-              {userStore.token ? (
-                <UserInfo />
-              ) : (
-                <Button
-                  onClick={() => {
-                    router.push("/login");
-                  }}
-                >
-                  {t("login")}
-                </Button>
-              )}
-            </NoSSR>
+              <Button
+                type="text"
+                icon={<GlobalOutlined />}
+                onClick={toggleLanguage}
+                className={styles.languageButton}
+              >
+                {userStore.lang === "zh-CN" ? "EN" : "中文"}
+              </Button>
+              <NoSSR>
+                {userStore.token && (
+                  <Badge count={unreadCount} size="small">
+                    <Button
+                      type="text"
+                      icon={<BellOutlined />}
+                      onClick={() => setNotificationVisible(true)}
+                      className={styles.notificationButton}
+                    />
+                  </Badge>
+                )}
+                {userStore.token ? (
+                  <UserInfo />
+                ) : (
+                  <Button
+                    onClick={() => {
+                      router.push("/login");
+                    }}
+                  >
+                    {t("login")}
+                  </Button>
+                )}
+              </NoSSR>
+            </div>
           </div>
         </div>
-      </div>
+        
+        {/* 通知面板 */}
+        <NotificationPanel 
+          visible={notificationVisible} 
+          onClose={() => setNotificationVisible(false)} 
+        />
+      </>
     );
   }),
 );
