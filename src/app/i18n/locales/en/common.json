@@ -3,6 +3,18 @@
   "logout": "Logout",
   "unknownUser": "Unknown User",
   "login": "Login",
+  "notifications": "Notifications",
+  "noNotifications": "No notifications",
+  "markAllAsRead": "Mark all as read",
+  "markAsRead": "Mark as read",
+  "unreadCount": "Unread messages",
+  "viewAll": "View all",
+  "notificationTypes": {
+    "system": "System Notification",
+    "user": "User Notification",
+    "material": "Material Notification",
+    "other": "Other Notification"
+  },
   "websit": {
     "termsOfService": {
       "title": "Terms of Service",

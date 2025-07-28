@@ -4,7 +4,7 @@ import { Dictionary, IFetchServiceConfig, RequestParams } from "./types";
  * 泛型：
  * T=返回类型
  */
-class FetchService<T = Response> {
+class FetchService<T = Response> { 
   baseURL: string;
   // 请求拦截
   requestInterceptor?: (

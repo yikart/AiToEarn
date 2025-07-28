@@ -3,6 +3,18 @@
   "logout": "退出登录",
   "unknownUser": "未知用户",
   "login": "登录",
+  "notifications": "消息通知",
+  "noNotifications": "暂无消息",
+  "markAllAsRead": "全部标记为已读",
+  "markAsRead": "标记为已读",
+  "unreadCount": "未读消息",
+  "viewAll": "查看全部",
+  "notificationTypes": {
+    "system": "系统通知",
+    "user": "用户通知",
+    "material": "素材通知",
+    "other": "其他通知"
+  },
   "websit": {
     "termsOfService": {
       "title": "用户协议",
