@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Badge, Button, List, Modal, message, Spin, Empty } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
 import { useTransClient } from "@/app/i18n/client";
+import { useUserStore } from "@/store/user";
 import { 
   getNotificationList, 
   markNotificationAsRead, 
@@ -20,6 +21,7 @@ interface NotificationPanelProps {
 
 const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose }) => {
   const { t } = useTransClient("common");
+  const token = useUserStore((state) => state.token);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -28,6 +30,12 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
 
   // 获取通知列表
   const fetchNotifications = async () => {
+    // 如果没有登录信息，不发送请求
+    if (!token) {
+      setNotifications([]);
+      return;
+    }
+
     try {
       setLoading(true);
       const response = await getNotificationList({ page: 1, pageSize: 20 });
@@ -43,6 +51,12 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
 
   // 获取未读数量
   const fetchUnreadCount = async () => {
+    // 如果没有登录信息，不发送请求
+    if (!token) {
+      setUnreadCount(0);
+      return;
+    }
+
     try {
       const response = await getUnreadCount();
       if (response && response.data) {
@@ -118,12 +132,12 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
       fetchNotifications();
       fetchUnreadCount();
     }
-  }, [visible]);
+  }, [visible, token]);
 
   return (
     <>
       <Modal
-        title="消息通知"
+        title="消息通知1"
         open={visible}
         onCancel={onClose}
         footer={[
