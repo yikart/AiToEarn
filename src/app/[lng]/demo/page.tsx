@@ -7,6 +7,7 @@ import { DemoPublish } from "@/app/[lng]/demo/demoPublish";
 import { DemoMaterial } from "@/app/[lng]/demo/demoMaterial";
 import { DemoData } from "./demoData";
 import { DemoInteract } from "./demoInteract";
+import { DemoFile } from "./demoFile";
 
 export async function generateMetadata({ params }: PageParams) {
   const { lng } = await params;
@@ -31,6 +32,7 @@ export default async function Page({ params }: PageParams) {
       <DemoMaterial />
       <DemoData />
       <DemoInteract />
+      <DemoFile />
     </>
   );
 }
