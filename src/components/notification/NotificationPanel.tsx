@@ -137,7 +137,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
   return (
     <>
       <Modal
-        title="消息通知"
+        title="消息通知1"
         open={visible}
         onCancel={onClose}
         footer={[
