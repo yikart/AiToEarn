@@ -3,6 +3,7 @@ import { combine } from "zustand/middleware";
 import lodash from "lodash";
 import { AccountGroupItem, SocialAccount } from "@/api/types/account.type";
 import { getAccountGroupApi, getAccountListApi } from "@/api/account";
+import { PlatType } from "@/app/config/platConfig";
 
 export interface AccountGroup extends AccountGroupItem {
   children: SocialAccount[];
@@ -69,14 +70,22 @@ export const useAccountStore = create(
           const result = await getAccountListApi();
 
           if (result?.code !== 0) return;
+          const accountList: SocialAccount[] = [];
 
           for (const item of result.data) {
+            if (
+              item.type === PlatType.Xhs ||
+              item.type === PlatType.Douyin ||
+              item.type === PlatType.WxSph
+            )
+              continue;
             accountMap.set(item.id, item);
             accountAccountMap.set(item.account, item);
+            accountList.push(item);
           }
 
           set({
-            accountList: result.data,
+            accountList,
             accountMap,
             accountAccountMap,
           });

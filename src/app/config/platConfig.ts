@@ -65,7 +65,7 @@ export interface IAccountPlatInfo {
 }
 
 // 各个平台的信息
-export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([ 
+export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
   [
     PlatType.Douyin,
     {
