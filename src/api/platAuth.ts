@@ -175,5 +175,8 @@ export const checkPinterestAuthApi = ( taskId:any ) => {
   return request({
     url: `plat/pinterest/checkAuth`,
     method: 'GET',
+    params: {
+      taskId: taskId,
+    },
   });
 };

@@ -39,7 +39,6 @@ import {
 } from "@ant-design/icons";
 import styles from "./pinterest.module.scss";
 import {
-  getPinterestAccountListApi,
   getPinterestBoardListApi,
   createPinterestBoardApi,
   deletePinterestBoardApi,
@@ -50,6 +49,8 @@ import {
   getPinterestBoardApi,
   getPinterestPinApi
 } from "@/api/pinterest";
+import { getAccountListApi } from "@/api/account";
+import { PlatType } from "@/app/config/platConfig";
 import { uploadToOss } from "@/api/oss";
 import { getOssUrl } from "@/utils/oss";
 import { useTransClient } from "@/app/i18n/client";
@@ -121,38 +122,50 @@ export default function PinterestPage() {
   // 初始化数据
   useEffect(() => {
     loadAccountList();
-    loadBoards(1, 20);
   }, []);
+
+  // 当selectedAccount变化时重新加载数据
+  useEffect(() => {
+    if (selectedAccount?.id) {
+      if (activeTab === "boards") {
+        loadBoards(1, 20);
+      } else {
+        loadPins(1, 10);
+      }
+    }
+  }, [selectedAccount, activeTab]);
 
 
   // 加载账户列表
   const loadAccountList = async () => {
-    // try {
-    //   setLoading(true);
-    //   const response = await getPinterestAccountListApi();
-    //   if (response?.code === 0) {
-    //     setAccounts(response.data.items);
-    //     if (response.data.items.length > 0) {
-    //       setSelectedAccount(response.data.items[0]);
-    //     }
-    //   }
-    //       } catch (error) {
-    //     message.error(t('messages.loadAccountsFailed'));
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    };
+    try {
+      setLoading(true);
+      const response = await getAccountListApi();
+      if (response?.code === 0) {
+        // 过滤出Pinterest账户
+        const pinterestAccounts = response.data.filter((account: any) => account.type === PlatType.Pinterest);
+        setAccounts(pinterestAccounts);
+        if (pinterestAccounts.length > 0) {
+          setSelectedAccount(pinterestAccounts[0]);
+        }
+      }
+    } catch (error) {
+      message.error(t('messages.loadAccountsFailed'));
+    } finally {
+      setLoading(false);
+    }
+  };
 
     // 加载boards
     const loadBoards = async (page = 1, size = 20) => {
-      // if (!selectedAccount) return;
+      if (!selectedAccount?.id) return;
 
       try {
         setLoading(true);
-        const response = await getPinterestBoardListApi({ page, size });
+        const response = await getPinterestBoardListApi({ page, size }, selectedAccount.account);
         if (response?.code === 0) {
-          setBoards(response.data.list);
-          setTotal(response.data.count);
+          setBoards(response.data?.list || []);
+          setTotal(response.data?.count || 0);
         }
       } catch (error) {
         message.error(t('messages.loadBoardsFailed'));
@@ -163,12 +176,14 @@ export default function PinterestPage() {
 
     // 加载pins
     const loadPins = async (page = 1, size = 10) => {
+      if (!selectedAccount?.id) return;
+
       try {
         setLoading(true);
-        const response = await getPinterestPinListApi({ page: page, size });
+        const response = await getPinterestPinListApi({ page: page, size }, selectedAccount.account);
         if (response?.code === 0) {
-          setPins(response.data.list);
-          setTotal(response.data.count);
+          setPins(response.data?.list || []);
+          setTotal(response.data?.count || 0);
           setCurrentPage(page);
           setPageSize(size);
         }
@@ -181,14 +196,19 @@ export default function PinterestPage() {
 
   // 创建Board
   const handleCreateBoard = async (values: any) => {
+    if (!selectedAccount?.id) {
+      message.error(t('messages.loadAccountsFailed'));
+      return;
+    }
+
     try {
       setLoading(true);
-      const response = await createPinterestBoardApi(values);
+      const response = await createPinterestBoardApi(values, selectedAccount.account);
       if (response?.code === 0) {
         message.success(t('messages.boardCreateSuccess'));
         setBoardModalVisible(false);
         boardForm.resetFields();
-        loadBoards();
+        loadBoards(1, 20);
       }
     } catch (error) {
       message.error(t('messages.boardCreateFailed'));
@@ -199,12 +219,17 @@ export default function PinterestPage() {
 
   // 删除Board
   const handleDeleteBoard = async (boardId: string) => {
+    if (!selectedAccount?.id) {
+      message.error(t('messages.loadAccountsFailed'));
+      return;
+    }
+
     try {
       setLoading(true);
-      const response = await deletePinterestBoardApi(boardId);
+      const response = await deletePinterestBoardApi(boardId, selectedAccount.account);
       if (response?.code === 0) {
         message.success(t('messages.boardDeleteSuccess'));
-        loadBoards();
+        loadBoards(1, 20);
       }
     } catch (error) {
       message.error(t('messages.boardDeleteFailed'));
@@ -220,11 +245,14 @@ export default function PinterestPage() {
       return;
     }
 
+    if (!selectedAccount?.id) {
+      message.error(t('messages.loadAccountsFailed'));
+      return;
+    }
+
     try {
       setLoading(true);
-      
-      // 构造Pin数据
-      const pinData: any = {
+      const pinData = {
         board_id: values.board_id,
         link: values.link,
         title: values.title,
@@ -237,7 +265,7 @@ export default function PinterestPage() {
         }
       };
 
-      const response = await createPinterestPinApi(pinData);
+      const response = await createPinterestPinApi(pinData, selectedAccount.account);
       if (response?.code === 0) {
         message.success(t('messages.pinCreateSuccess'));
         setPinModalVisible(false);
@@ -254,9 +282,14 @@ export default function PinterestPage() {
 
   // 删除Pin
   const handleDeletePin = async (pinId: string) => {
+    if (!selectedAccount?.id) {
+      message.error(t('messages.loadAccountsFailed'));
+      return;
+    }
+
     try {
       setLoading(true);
-      const response = await deletePinterestPinApi(pinId);
+      const response = await deletePinterestPinApi(pinId, selectedAccount.account);
       if (response?.code === 0) {
         message.success(t('messages.pinDeleteSuccess'));
         loadPins(currentPage, pageSize);
@@ -320,9 +353,14 @@ export default function PinterestPage() {
 
   // 查看Board详情
   const handleViewBoard = async (board: any) => {
+    if (!selectedAccount?.id) {
+      message.error(t('messages.loadAccountsFailed'));
+      return;
+    }
+
     try {
       setLoading(true);
-      const response = await getPinterestBoardApi(board.id);
+      const response = await getPinterestBoardApi(board.id, selectedAccount.account);
       if (response?.code === 0) {
         setSelectedBoard(response.data);
         setBoardDetailModalVisible(true);
@@ -336,9 +374,14 @@ export default function PinterestPage() {
 
   // 查看Pin详情
   const handleViewPin = async (pin: any) => {
+    if (!selectedAccount?.id) {
+      message.error(t('messages.loadAccountsFailed'));
+      return;
+    }
+
     try {
       setLoading(true);
-      const response = await getPinterestPinApi(pin.id);
+      const response = await getPinterestPinApi(pin.id, selectedAccount.account);
       if (response?.code === 0) {
         setSelectedPin(response.data);
         setPinDetailModalVisible(true);
@@ -352,17 +395,21 @@ export default function PinterestPage() {
 
   // 过滤boards
   const filteredBoards = boards.filter(board => 
-    board.name?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-    (board.description && board.description.toLowerCase().includes(searchKeyword.toLowerCase()))
+    board && (
+      board.name?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      (board.description && board.description.toLowerCase().includes(searchKeyword.toLowerCase()))
+    )
   );
 
   // 过滤pins
   const filteredPins = pins.filter(pin => 
-    pin.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-    (pin.description && pin.description.toLowerCase().includes(searchKeyword.toLowerCase())) ||
-    (pin.note && pin.note.toLowerCase().includes(searchKeyword.toLowerCase())) ||
-    (pin.alt_text && pin.alt_text.toLowerCase().includes(searchKeyword.toLowerCase())) ||
-    (pin.creative_type && pin.creative_type.toLowerCase().includes(searchKeyword.toLowerCase()))
+    pin && (
+      pin.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      (pin.description && pin.description.toLowerCase().includes(searchKeyword.toLowerCase())) ||
+      (pin.note && pin.note.toLowerCase().includes(searchKeyword.toLowerCase())) ||
+      (pin.alt_text && pin.alt_text.toLowerCase().includes(searchKeyword.toLowerCase())) ||
+      (pin.creative_type && pin.creative_type.toLowerCase().includes(searchKeyword.toLowerCase()))
+    )
   );
 
   // Tab标签
@@ -406,7 +453,7 @@ export default function PinterestPage() {
           >
             {accounts.map(account => (
               <Select.Option key={account.id} value={account.id}>
-                {account.name}
+                {account.nickname}
               </Select.Option>
             ))}
           </Select>
@@ -414,7 +461,7 @@ export default function PinterestPage() {
             icon={<ReloadOutlined />} 
             onClick={() => {
               if (activeTab === "boards") {
-                loadBoards();
+                loadBoards(1, 20);
               } else {
                 loadPins(currentPage, pageSize);
               }
@@ -432,7 +479,7 @@ export default function PinterestPage() {
             <Col xs={12} sm={6}>
               <Statistic 
                 title={t('stats.followers')} 
-                value={selectedAccount.follower_count || 0}
+                value={selectedAccount.fansCount || 0}
                 prefix={<UserOutlined />}
                 formatter={(value) => value?.toLocaleString()}
               />
@@ -448,7 +495,7 @@ export default function PinterestPage() {
             <Col xs={12} sm={6}>
               <Statistic 
                 title={t('stats.pinCount')} 
-                value={selectedAccount.pin_count || 0}
+                value={selectedAccount.workCount || 0}
                 prefix={<PushpinOutlined />}
                 formatter={(value) => value?.toLocaleString()}
               />
@@ -456,7 +503,7 @@ export default function PinterestPage() {
             <Col xs={12} sm={6}>
               <Statistic 
                 title={t('stats.monthlyViews')} 
-                value={selectedAccount.monthly_views || 0}
+                value={selectedAccount.readCount || 0}
                 prefix={<BarChartOutlined />}
                 formatter={(value) => value?.toLocaleString()}
               />
@@ -482,7 +529,7 @@ export default function PinterestPage() {
                 setBoardModalVisible(true);
               } else {
                 setPinModalVisible(true);
-                loadBoards(); // 为创建Pin加载boards
+                loadBoards(1, 20); // 为创建Pin加载boards
               }
             }}
           >
@@ -495,7 +542,7 @@ export default function PinterestPage() {
           onChange={(key) => {
             setActiveTab(key);
             if (key === "pins") {
-              loadPins();
+              loadPins(1, 10);
             }
           }}
           items={tabItems}
@@ -515,76 +562,78 @@ export default function PinterestPage() {
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
                 />
               ) : (
-                filteredBoards.map(board => (
-                  <Card
-                    key={board.id}
-                    className={styles.boardCard}
-                    cover={
-                      <div className={styles.boardImage}>
-                        {board.media?.image_cover_url ? (
-                          <img 
-                            src={board.media.image_cover_url} 
-                            alt={board.name}
-                          />
-                        ) : (
-                          <BarsOutlined />
-                        )}
-                      </div>
-                    }
-                    actions={[
-                      <Button 
-                        key="view"
-                        type="link" 
-                        icon={<EyeOutlined />}
-                        onClick={() => handleViewBoard(board)}
-                        size="small"
-                      >
-                        {t('actions.view')}
-                      </Button>,
-                      <Popconfirm
-                        key="delete"
-                        title={t('board.deleteConfirm')}
-                        onConfirm={() => handleDeleteBoard(board.id)}
-                        okText={t('confirm.ok')}
-                        cancelText={t('confirm.cancel')}
-                      >
+                filteredBoards.map(board => 
+                  board && (
+                    <Card
+                      key={board.id}
+                      className={styles.boardCard}
+                      cover={
+                        <div className={styles.boardImage}>
+                          {board.media?.image_cover_url ? (
+                            <img 
+                              src={board.media.image_cover_url} 
+                              alt={board.name}
+                            />
+                          ) : (
+                            <BarsOutlined />
+                          )}
+                        </div>
+                      }
+                      actions={[
                         <Button 
+                          key="view"
                           type="link" 
-                          icon={<DeleteOutlined />}
-                          danger
+                          icon={<EyeOutlined />}
+                          onClick={() => handleViewBoard(board)}
                           size="small"
                         >
-                          {t('actions.delete')}
-                        </Button>
-                      </Popconfirm>
-                    ]}
-                  >
-                    <div className={styles.boardCardMeta}>
-                      <Card.Meta
-                        title={board.name}
-                        description={board.description || t('board.noDescription')}
-                      />
-                      <div className={styles.boardBadges}>
-                        <div>
-                          <span className={styles.badgeText}>{t('badges.pins')}</span>
-                          <Badge 
-                            count={board.pin_count || 0} 
-                            showZero 
-                            style={{ backgroundColor: '#e60023' }}
-                          />
-                        </div>
-                        <div>
-                          <span className={styles.badgeText}>{t('badges.followers')}</span>
-                          <Badge 
-                            count={board.follower_count || 0} 
-                            showZero
-                            style={{ backgroundColor: '#e60023' }}
-                          />
+                          {t('actions.view')}
+                        </Button>,
+                        <Popconfirm
+                          key="delete"
+                          title={t('board.deleteConfirm')}
+                          onConfirm={() => handleDeleteBoard(board.id)}
+                          okText={t('confirm.ok')}
+                          cancelText={t('confirm.cancel')}
+                        >
+                          <Button 
+                            type="link" 
+                            icon={<DeleteOutlined />}
+                            danger
+                            size="small"
+                          >
+                            {t('actions.delete')}
+                          </Button>
+                        </Popconfirm>
+                      ]}
+                    >
+                      <div className={styles.boardCardMeta}>
+                        <Card.Meta
+                          title={board.name}
+                          description={board.description || t('board.noDescription')}
+                        />
+                        <div className={styles.boardBadges}>
+                          <div>
+                            <span className={styles.badgeText}>{t('badges.pins')}</span>
+                            <Badge 
+                              count={board.pin_count || 0} 
+                              showZero 
+                              style={{ backgroundColor: '#e60023' }}
+                            />
+                          </div>
+                          <div>
+                            <span className={styles.badgeText}>{t('badges.followers')}</span>
+                            <Badge 
+                              count={board.follower_count || 0} 
+                              showZero
+                              style={{ backgroundColor: '#e60023' }}
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Card>
-                ))
+                    </Card>
+                  )
+                )
               )}
             </div>
           )}
@@ -602,86 +651,88 @@ export default function PinterestPage() {
                     image={Empty.PRESENTED_IMAGE_SIMPLE}
                   />
                 ) : (
-                  filteredPins.map(pin => (
-                    <Card
-                      key={pin.id}
-                      className={styles.pinCard}
-                      cover={
-                        <div className={styles.pinImage}>
-                                                  {pin.media?.images?.["600x"]?.url ? (
-                          <img 
-                            src={pin.media.images["600x"].url} 
-                            alt={pin.alt_text || pin.title || t('pin.imageAlt')}
+                  filteredPins.map(pin => 
+                    pin && (
+                      <Card
+                        key={pin.id}
+                        className={styles.pinCard}
+                        cover={
+                          <div className={styles.pinImage}>
+                            {pin.media?.images?.["600x"]?.url ? (
+                              <img 
+                                src={pin.media.images["600x"].url} 
+                                alt={pin.alt_text || pin.title || t('pin.imageAlt')}
+                              />
+                            ) : (
+                              <PictureOutlined />
+                            )}
+                          </div>
+                        }
+                        actions={[
+                          <Button 
+                            key="view"
+                            type="link" 
+                            icon={<EyeOutlined />}
+                            onClick={() => handleViewPin(pin)}
+                            size="small"
+                          >
+                            {t('actions.view')}
+                          </Button>,
+                          pin.link && (
+                            <Button 
+                              key="link"
+                              type="link" 
+                              icon={<LinkOutlined />}
+                              href={pin.link}
+                              target="_blank"
+                              size="small"
+                            >
+                              {t('actions.link')}
+                            </Button>
+                          ),
+                          <Popconfirm
+                            key="delete"
+                            title={t('pin.deleteConfirm')}
+                            onConfirm={() => handleDeletePin(pin.id)}
+                            okText={t('confirm.ok')}
+                            cancelText={t('confirm.cancel')}
+                          >
+                            <Button 
+                              type="link" 
+                              icon={<DeleteOutlined />}
+                              danger
+                              size="small"
+                            >
+                              {t('actions.delete')}
+                            </Button>
+                          </Popconfirm>
+                        ].filter(Boolean)}
+                      >
+                        <div className={styles.pinCardMeta}>
+                          <Card.Meta
+                            title={pin.title}
+                            description={pin.description || pin.note || t('pin.noDescription')}
                           />
-                        ) : (
-                          <PictureOutlined />
-                        )}
+                          <div className={styles.pinMetadata}>
+                            {pin.creative_type && (
+                              <Badge 
+                                text={pin.creative_type} 
+                                size="small" 
+                                style={{ marginRight: 8 }}
+                              />
+                            )}
+                            {pin.is_owner && (
+                              <Badge 
+                                text={t('badges.owner')} 
+                                color="green" 
+                                size="small" 
+                              />
+                            )}
+                          </div>
                         </div>
-                      }
-                      actions={[
-                        <Button 
-                          key="view"
-                          type="link" 
-                          icon={<EyeOutlined />}
-                          onClick={() => handleViewPin(pin)}
-                          size="small"
-                        >
-                          {t('actions.view')}
-                        </Button>,
-                        pin.link && (
-                          <Button 
-                            key="link"
-                            type="link" 
-                            icon={<LinkOutlined />}
-                            href={pin.link}
-                            target="_blank"
-                            size="small"
-                          >
-                            {t('actions.link')}
-                          </Button>
-                        ),
-                        <Popconfirm
-                          key="delete"
-                          title={t('pin.deleteConfirm')}
-                          onConfirm={() => handleDeletePin(pin.id)}
-                          okText={t('confirm.ok')}
-                          cancelText={t('confirm.cancel')}
-                        >
-                          <Button 
-                            type="link" 
-                            icon={<DeleteOutlined />}
-                            danger
-                            size="small"
-                          >
-                            {t('actions.delete')}
-                          </Button>
-                        </Popconfirm>
-                      ].filter(Boolean)}
-                    >
-                      <div className={styles.pinCardMeta}>
-                        <Card.Meta
-                          title={pin.title}
-                          description={pin.description || pin.note || t('pin.noDescription')}
-                        />
-                        <div className={styles.pinMetadata}>
-                          {pin.creative_type && (
-                            <Badge 
-                              text={pin.creative_type} 
-                              size="small" 
-                              style={{ marginRight: 8 }}
-                            />
-                          )}
-                          {pin.is_owner && (
-                            <Badge 
-                              text={t('badges.owner')} 
-                              color="green" 
-                              size="small" 
-                            />
-                          )}
-                        </div>
-                      </div>
-                    </Card>
-                  ))
+                      </Card>
+                    )
+                  )
                 )}
               </div>
               
@@ -781,11 +832,13 @@ export default function PinterestPage() {
             rules={[{ required: true, message: t('validation.selectBoardRequired') }]}
           >
             <Select placeholder={t('pin.selectBoardPlaceholder')}>
-              {boards.map(board => (
-                <Select.Option key={board.id} value={board.id}>
-                  {board.name}
-                </Select.Option>
-              ))}
+              {boards?.map(board => 
+                board && (
+                  <Select.Option key={board.id} value={board.id}>
+                    {board.name}
+                  </Select.Option>
+                )
+              )}
             </Select>
           </Form.Item>
 
