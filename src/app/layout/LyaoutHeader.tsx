@@ -17,7 +17,7 @@ import {
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useTransClient } from "@/app/i18n/client";
-import NotificationPanel from "@/components/NotificationPanel";
+import NotificationPanel from "@/components/notification/NotificationPanel";
 import { useNotification } from "@/hooks/useNotification";
 
 export interface ILyaoutHeaderRef {}
