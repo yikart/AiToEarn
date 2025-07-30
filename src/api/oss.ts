@@ -8,7 +8,7 @@ export const uploadToOss = async (file: File) => {
     formData.append("file", file);
 
     const res: any = await request({
-      url: "/oss/upload",
+      url: "/file/upload",
       method: "POST",
       body: formData,
     });
