@@ -12,7 +12,7 @@ export const uploadToOss = async (file: File) => {
       method: "POST",
       body: formData,
     });
-    return res?.data.name;
+    return res?.data.key;
   } catch (error) {
     console.error("上传文件失败:", error);
     throw error;
