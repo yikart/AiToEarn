@@ -7,7 +7,7 @@
   "buttons": {
     "customizePerAccount": "针对每个账户进行定制",
     "cancelPublish": "取消发布",
-    "schedulePublish": "计划发布",
+    "schedulePublish": "立即发布",
     "publishNow": "立即发布",
     "copyLink": "复制链接",
     "delete": "删除"

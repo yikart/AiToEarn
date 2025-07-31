@@ -1,0 +1,21 @@
+.facebookPagesModal {
+  .pageList {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .pageItem {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .selectAll {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+} 

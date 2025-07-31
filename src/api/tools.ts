@@ -101,7 +101,7 @@ export const toolsApi = {
     formData.append("file", file);
 
     const res = await axios({
-      url: `${process.env.NEXT_PUBLIC_API_URL_PROXY}/oss/upload`,
+      url: `${process.env.NEXT_PUBLIC_API_URL_PROXY}/file/upload`,
       method: "POST",
       data: formData,
       headers: {
@@ -114,7 +114,7 @@ export const toolsApi = {
         if (onProgress) onProgress(prog);
       },
     });
-    return res.data.data.name;
+    return res.data.data.key;
   },
 
   /**

@@ -79,6 +79,8 @@ export const getFacebookAuthUrlApi = (mail: string) => {
 };
 
 
+
+
 export const checkMetaAuthApi = ( taskId:any ) => {
   return request({
     url: `plat/meta/auth/info/${taskId}`,

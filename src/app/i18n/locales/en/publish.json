@@ -7,7 +7,7 @@
   "buttons": {
     "customizePerAccount": "Customize per account",
     "cancelPublish": "Cancel",
-    "schedulePublish": "Schedule",
+    "schedulePublish": "Publish now",
     "publishNow": "Publish now",
     "copyLink": "Copy link",
     "delete": "Delete"

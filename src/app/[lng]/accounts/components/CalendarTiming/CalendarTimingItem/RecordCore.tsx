@@ -186,15 +186,17 @@ const RecordCore = memo(
                 </div>
               </div>
               <div className="recordDetails-bottom">
-                <Button
-                  icon={<SendOutlined />}
-                  onClick={async () => {
-                    await nowPubTaskApi(publishRecord.id);
-                    getPubRecord();
-                  }}
-                >
-                  {t("buttons.publishNow")}
-                </Button>
+                {publishRecord.status !== PublishStatus.RELEASED && (
+                  <Button
+                    icon={<SendOutlined />}
+                    onClick={async () => {
+                      await nowPubTaskApi(publishRecord.id);
+                      getPubRecord();
+                    }}
+                  >
+                    {t("buttons.publishNow")} 
+                  </Button>
+                )}
                 <Dropdown menu={{ items: dropdownItems }} placement="top">
                   <Button icon={<MoreOutlined />} />
                 </Dropdown>

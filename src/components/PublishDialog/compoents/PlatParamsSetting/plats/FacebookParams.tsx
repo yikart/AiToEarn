@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, memo, useEffect } from "react";
+import { ForwardedRef, forwardRef, memo } from "react";
 import {
   IPlatsParamsProps,
   IPlatsParamsRef,
@@ -6,10 +6,8 @@ import {
 import PubParmasTextarea from "@/components/PublishDialog/compoents/PubParmasTextarea";
 import usePlatParamsCommon from "@/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon";
 import CommonTitleInput from "@/components/PublishDialog/compoents/PlatParamsSetting/common/CommonTitleInput";
-import { usePublishDialogData } from "@/components/PublishDialog/usePublishDialogData";
-import { useShallow } from "zustand/react/shallow";
 import styles from "../platParamsSetting.module.scss";
-import { Select } from "antd";
+import { Radio } from "antd";
 import { useTransClient } from "@/app/i18n/client";
 
 const FacebookParams = memo(
@@ -18,17 +16,6 @@ const FacebookParams = memo(
       const { t } = useTransClient("publish");
       const { pubParmasTextareaCommonParams, setOnePubParams } =
         usePlatParamsCommon(pubItem);
-      const { getFacebookPages, facebookPages } =
-        usePublishDialogData(
-          useShallow((state) => ({
-            getFacebookPages: state.getFacebookPages,
-            facebookPages: state.facebookPages,
-          })),
-        );
-
-      useEffect(() => {
-        getFacebookPages();
-      }, [getFacebookPages]);
 
       return (
         <>
@@ -41,17 +28,15 @@ const FacebookParams = memo(
                   className={styles.commonTitleInput}
                   style={{ marginTop: "10px" }}
                 >
-                  <div className="platParamsSetting-label">{t("form.page")}</div>
-                  <Select
-                    style={{ width: "100%" }}
-                    options={facebookPages}
-                    value={pubItem.params.option.facebook?.page_id} 
-                    onChange={(value) => {
+                  <div className="platParamsSetting-label">{t("form.type")}</div>
+                  <Radio.Group
+                    value={pubItem.params.option.facebook?.content_category || 'video'}
+                    onChange={(e) => {
                       const option = pubItem.params.option;
                       if (!option.facebook) {
                         option.facebook = {};
                       }
-                      option.facebook.page_id = value;
+                      option.facebook.content_category = e.target.value;
                       setOnePubParams(
                         {
                           option,
@@ -59,13 +44,11 @@ const FacebookParams = memo(
                         pubItem.account.id,
                       );
                     }}
-                    showSearch={true}
-                    placeholder={t("form.pagePlaceholder")}
-                    fieldNames={{
-                      label: "name",
-                      value: "id",
-                    }}
-                  />
+                  >
+                    <Radio value="video">Post</Radio>
+                    <Radio value="reel">Reel</Radio>
+                    <Radio value="story">Story</Radio>
+                  </Radio.Group>
                 </div>
               </>
             }

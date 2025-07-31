@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, memo } from "react";
+import { ForwardedRef, forwardRef, memo, useState } from "react";
 import styles from "./AddAccountModal.module.scss";
 import { Button, Modal, Tooltip } from "antd";
 import { AccountPlatInfoArr, PlatType } from "@/app/config/platConfig";
@@ -8,7 +8,7 @@ import { bilibiliSkip } from "../../plat/BilibiliLogin";
 import { youtubeSkip } from "../../plat/YoutubeLogin";
 import { twitterSkip } from "../../plat/TwtterLogin";
 import { tiktokSkip } from "../../plat/TiktokLogin";
-import { facebookSkip } from "../../plat/FacebookLogin";
+import { facebookSkip, FacebookPagesModal } from "../../plat/FacebookLogin";
 import { instagramSkip } from "../../plat/InstagramLogin";
 import { threadsSkip } from "../../plat/ThreadsLogin";
 import { wxGzhSkip } from "../../plat/WxGzh";
@@ -28,12 +28,26 @@ const AddAccountModal = memo(
       { open, onClose, onAddSuccess }: IAddAccountModalProps,
       ref: ForwardedRef<IAddAccountModalRef>,
     ) => {
+      const [showFacebookPagesModal, setShowFacebookPagesModal] = useState(false);
+
       const handleOk = () => {
         onClose();
       };
 
       const handleCancel = () => {
         onClose();
+      };
+
+      // 处理Facebook授权成功后的页面选择
+      const handleFacebookAuthSuccess = () => {
+        setShowFacebookPagesModal(true);
+      };
+
+      // 处理Facebook页面选择成功
+      const handleFacebookPagesSuccess = () => {
+        setShowFacebookPagesModal(false);
+        onClose();
+        // 可以在这里添加成功提示或其他逻辑
       };
 
       return (
@@ -73,7 +87,13 @@ const AddAccountModal = memo(
                               await tiktokSkip(key);
                               break;
                             case PlatType.Facebook:
-                              await facebookSkip(key);
+                              try {
+                                await facebookSkip(key);
+                                // Facebook授权成功后显示页面选择弹窗
+                                handleFacebookAuthSuccess();
+                              } catch (error) {
+                                console.error('Facebook授权失败:', error);
+                              }
                               break;
                             case PlatType.Instagram:
                               await instagramSkip(key);
@@ -102,6 +122,13 @@ const AddAccountModal = memo(
               </div>
             </div>
           </Modal>
+
+          {/* Facebook页面选择弹窗 */}
+          <FacebookPagesModal
+            open={showFacebookPagesModal}
+            onClose={() => setShowFacebookPagesModal(false)}
+            onSuccess={handleFacebookPagesSuccess}
+          />
         </>
       );
     },
