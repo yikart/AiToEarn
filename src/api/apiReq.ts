@@ -1,5 +1,6 @@
 import http from "@/utils/request";
 import { UserInfo } from "@/store/user";
+import md5 from "blueimp-md5";
 
 export interface LoginResponse {
   type: "regist" | "login"; // 登录类型：regist-需要注册，login-直接登录
@@ -36,7 +37,11 @@ export const fluxSchnellApi = (data: any) => {
 
 // 邮箱登录接口
 export const loginWithMailApi = (data: { mail: string; password: string }) => {
-  return http.post<LoginResponse>("login/mail", data);
+  const hash = md5(data.password);
+  return http.post<LoginResponse>("login/mail", {
+    ...data,
+    password: hash,
+  });
 };
 
 // 获取注册链接
@@ -60,7 +65,11 @@ export const resetPasswordApi = (data: {
   mail: string;
   password: string;
 }) => {
-  return http.post<LoginResponse>("login/repassword/mail/back", data);
+  const hash = md5(data.password);
+  return http.post<LoginResponse>("login/repassword/mail/back", {
+    ...data,
+    password: hash,
+  });
 };
 
 // Google 登录参数

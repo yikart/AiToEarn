@@ -3,8 +3,6 @@ import { createKwaiAuth, getKwaiAuthStatus } from "@/api/plat/kwai";
 import { sleep } from "@/utils";
 import { useAccountStore } from "@/store/account";
 
-export const kwaiAppId = "ks715790869885446758";
-
 export async function kwaiSkip(platType: PlatType) {
   const res = await createKwaiAuth("pc");
   if (!res?.data) return;

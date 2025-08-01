@@ -9,12 +9,12 @@ export const createKwaiAuth = (type: "h5" | "pc") => {
   return http.get<{
     url: string;
     taskId: string;
-  }>(`plat/kwai/auth/url/${type}`);
+  }>(`/plat/kwai/auth/url/${type}`);
 };
 
-// 获取账号授权状态回调
+// 获取账号授权状态
 export const getKwaiAuthStatus = (taskId: string) => {
   return http.post<GetKwaiAuthStatusRes>(
-    `plat/kwai/auth/create-account/${taskId}`,
+    `/plat/kwai/auth/create-account/${taskId}`,
   );
 };

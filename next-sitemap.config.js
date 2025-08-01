@@ -2,7 +2,7 @@ const glob = require("glob");
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: "https://apitest.aiearn.ai",
+  siteUrl: process.env.NEXT_PUBLIC_HOST_URL,
   generateRobotsTxt: true,
   sitemapSize: 7000,
 
