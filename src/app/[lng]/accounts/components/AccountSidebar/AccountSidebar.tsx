@@ -2,6 +2,7 @@ import {
   ForwardedRef,
   forwardRef,
   memo,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -24,7 +25,6 @@ import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import { AccountStatus } from "@/app/config/accountConfig";
 import { SocialAccount } from "@/api/types/account.type";
 import { getOssUrl } from "@/utils/oss";
-import ChooseAccountModule from "@/components/ChooseAccountModule/ChooseAccountModule";
 import { useTransClient } from "@/app/i18n/client";
 
 export interface IAccountSidebarRef {}
@@ -40,7 +40,7 @@ export interface IAccountSidebarProps {
 
 const AccountStatusView = ({ account }: { account: SocialAccount }) => {
   const { t } = useTransClient("account");
-  
+
   if (account.status === AccountStatus.USABLE) {
     return (
       <>
@@ -214,15 +214,18 @@ const AccountSidebar = memo(
                   ></Button>
                 </Tooltip>
               </div>
-                    {/* mcp 按钮 */}
+              {/* mcp 按钮 */}
               <div className="accountSidebar-top-box">
                 {/* 按钮蓝紫色渐变 */}
-                <Button 
-                  type="primary" 
-                  style={{background: 'linear-gradient(90deg, #625BF2 0%, #925BF2 100%)'}}
+                <Button
+                  type="primary"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, #625BF2 0%, #925BF2 100%)",
+                  }}
                   onClick={() => setMcpManagerModalOpen(true)}
                 >
-                   {t("mcpManager")}
+                  {t("mcpManager")}
                 </Button>
               </div>
             </div>

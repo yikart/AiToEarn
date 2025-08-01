@@ -51,7 +51,11 @@ export const getRegistUrlApi = (mail: string) => {
 
 // 检查注册状态 post!!
 export const checkRegistStatusApi = (data: RegistCheckParams) => {
-  return http.post<LoginResponse>(`login/mail/regist/back`, data);
+  const hash = md5(data.password);
+  return http.post<LoginResponse>(`login/mail/regist/back`, {
+    ...data,
+    password: hash,
+  });
 };
 
 // 发送重置密码邮件
