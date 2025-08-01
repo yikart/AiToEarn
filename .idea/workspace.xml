@@ -4,17 +4,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix: 账号过滤不支持的三个平台：视频号、小红书、抖音">
-      <change beforePath="$PROJECT_DIR$/.env.development" beforeDir="false" afterPath="$PROJECT_DIR$/.env.development" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env.production" beforeDir="false" afterPath="$PROJECT_DIR$/.env.production" afterDir="false" />
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat: password 密码登录、重置密码，添加md5加密">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/next-sitemap.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/next-sitemap.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/apiReq.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/apiReq.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/plat/kwai.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/plat/kwai.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/plat/kwaiLogin.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/plat/kwaiLogin.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/robots.txt" beforeDir="false" afterPath="$PROJECT_DIR$/public/robots.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sitemap.xml" beforeDir="false" afterPath="$PROJECT_DIR$/public/sitemap.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -173,7 +166,8 @@
       <workItem from="1753798078949" duration="901000" />
       <workItem from="1753861179139" duration="9000" />
       <workItem from="1754040377625" duration="1212000" />
-      <workItem from="1754042077113" duration="1820000" />
+      <workItem from="1754042077113" duration="2348000" />
+      <workItem from="1754044730693" duration="454000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -455,7 +449,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753789563113</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="feat: password 密码登录、重置密码，添加md5加密">
+      <option name="closed" value="true" />
+      <created>1754043972876</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1754043972876</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -495,7 +497,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="fix(发布): 默认返回快手参数" />
     <MESSAGE value="feat(日历)：细节调整，1. 发布记录查看，添加图片、视频分别处理。 2. 发布API添加图片处理" />
     <MESSAGE value="feat(日历)：日历在同一个单元格发布记录太多会自动隐藏，并且显示按钮让用户点击查看更多" />
     <MESSAGE value="feat(发布弹框): 添加选择账户一系列逻辑： 1. 选择账户时，开启发布弹框会默认选择，右侧选择的账户。 2. 添加日历header选择用户展示的样式。" />
@@ -520,6 +521,7 @@
     <MESSAGE value="fix(seo): 站点地图修复" />
     <MESSAGE value="fix(日历)：发布时间格式修复" />
     <MESSAGE value="fix: 账号过滤不支持的三个平台：视频号、小红书、抖音" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: 账号过滤不支持的三个平台：视频号、小红书、抖音" />
+    <MESSAGE value="feat: password 密码登录、重置密码，添加md5加密" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: password 密码登录、重置密码，添加md5加密" />
   </component>
 </project>

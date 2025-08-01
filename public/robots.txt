@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://apitest.aiearn.ai
+Host: https://dev.aitoearn.ai
 
 # Sitemaps
-Sitemap: https://apitest.aiearn.ai/sitemap.xml
+Sitemap: https://dev.aitoearn.ai/sitemap.xml
