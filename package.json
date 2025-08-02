@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "postbuild": "next-sitemap",
-    "dev": "next dev",
+    "dev": "next dev -p 6060",
     "dev:local": "cross-env NEXT_PUBLIC_API_URL=http://localhost:7000/api/ next dev",
     "build": "next build",
     "build:copy": "tsc && next build && npm run copy-static",
