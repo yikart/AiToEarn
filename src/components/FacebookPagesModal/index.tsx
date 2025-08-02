@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Checkbox, List, Button, message, Spin } from 'antd';
+import { Modal, Checkbox, List, Button, message, Spin, Avatar } from 'antd';
 import { apiGetFacebookPages, apiSubmitFacebookPages } from '@/api/plat/facebook';
 import { useAccountStore } from '@/store/account';
 import styles from './index.module.scss';
@@ -7,6 +7,7 @@ import styles from './index.module.scss';
 export interface FacebookPageItem {
   id: string;
   name: string;
+  profile_picture_url?: string;
 }
 
 interface FacebookPagesModalProps {
@@ -137,7 +138,16 @@ const FacebookPagesModal: React.FC<FacebookPagesModalProps> = ({
                 checked={selectedPageIds.includes(page.id)}
                 onChange={(e) => handlePageChange(page.id, e.target.checked)}
               >
-                {page.name}
+                <div className={styles.pageInfo}>
+                  <Avatar 
+                    src={page.profile_picture_url} 
+                    size={32}
+                    className={styles.pageAvatar}
+                  >
+                    {page.name?.charAt(0)}
+                  </Avatar>
+                  <span className={styles.pageName}>{page.name}</span>
+                </div>
               </Checkbox>
             </List.Item>
           )}
