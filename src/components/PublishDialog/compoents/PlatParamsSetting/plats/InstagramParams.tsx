@@ -20,18 +20,18 @@ const InstagramParams = memo(
       // 初始化Instagram参数
       useEffect(() => {
         const option = pubItem.params.option;
-        console.log('InstagramParams - Current option:', option);
-        console.log('InstagramParams - Current instagram:', option.instagram);
-        
+        console.log("InstagramParams - Current option:", option);
+        console.log("InstagramParams - Current instagram:", option.instagram);
+
         if (!option.instagram || !option.instagram.content_category) {
-          console.log('InstagramParams - Setting default instagram option');
+          console.log("InstagramParams - Setting default instagram option");
           setOnePubParams(
             {
               option: {
                 ...option,
                 instagram: {
                   ...option.instagram,
-                  content_category: 'video',
+                  content_category: "video",
                 },
               },
             },
@@ -51,12 +51,20 @@ const InstagramParams = memo(
                   className={styles.commonTitleInput}
                   style={{ marginTop: "10px" }}
                 >
-                  <div className="platParamsSetting-label">{t("form.type")}</div>
+                  <div className="platParamsSetting-label">
+                    {t("form.type")}
+                  </div>
                   <Radio.Group
-                    value={pubItem.params.option.instagram?.content_category || 'video'}
+                    value={
+                      pubItem.params.option.instagram?.content_category ||
+                      "video"
+                    }
                     onChange={(e) => {
                       const option = pubItem.params.option;
-                      console.log('InstagramParams - onChange:', e.target.value);
+                      console.log(
+                        "InstagramParams - onChange:",
+                        e.target.value,
+                      );
                       setOnePubParams(
                         {
                           option: {
@@ -85,4 +93,4 @@ const InstagramParams = memo(
   ),
 );
 
-export default InstagramParams; 
+export default InstagramParams;

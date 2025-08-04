@@ -168,10 +168,7 @@ export const usePublishDialog = create(
 
           // 使用lodash的merge来正确处理嵌套对象
           if (pubParmas.option) {
-            console.log('Setting option:', pubParmas.option);
-            console.log('Current option:', findedData.params.option);
             findedData.params.option = lodash.merge({}, findedData.params.option, pubParmas.option);
-            console.log('Merged option:', findedData.params.option);
           }
 
           for (const key in pubParmas) {
