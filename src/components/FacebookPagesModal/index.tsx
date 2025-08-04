@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Checkbox, List, Button, message, Spin, Avatar } from 'antd';
 import { apiGetFacebookPages, apiSubmitFacebookPages } from '@/api/plat/facebook';
 import { useAccountStore } from '@/store/account';
+import { useTranslation } from 'react-i18next';
 import styles from './index.module.scss';
 
 export interface FacebookPageItem {
@@ -21,6 +22,7 @@ const FacebookPagesModal: React.FC<FacebookPagesModalProps> = ({
   onClose,
   onSuccess,
 }) => {
+  const { t } = useTranslation('account');
   const [pages, setPages] = useState<FacebookPageItem[]>([]);
   const [selectedPageIds, setSelectedPageIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -35,11 +37,11 @@ const FacebookPagesModal: React.FC<FacebookPagesModalProps> = ({
       if (res?.code === 0) {
         setPages(res.data || []);
       } else {
-        message.error('获取页面列表失败');
+        message.error(t('facebookPages.fetchError' as any));
       }
     } catch (error) {
       console.error('获取Facebook页面列表失败:', error);
-      message.error('获取页面列表失败');
+      message.error(t('facebookPages.fetchError' as any));
     } finally {
       setLoading(false);
     }
@@ -48,7 +50,7 @@ const FacebookPagesModal: React.FC<FacebookPagesModalProps> = ({
   // 提交选择的页面
   const handleSubmit = async () => {
     if (selectedPageIds.length === 0) {
-      message.warning('请至少选择一个页面');
+      message.warning(t('facebookPages.selectAtLeastOne' as any));
       return;
     }
 
@@ -56,17 +58,17 @@ const FacebookPagesModal: React.FC<FacebookPagesModalProps> = ({
     try {
       const res = await apiSubmitFacebookPages(selectedPageIds);
       if (res?.code === 0) {
-        message.success('页面选择成功');
+        message.success(t('facebookPages.submitSuccess' as any));
         // 刷新账户列表
         await accountStore.getAccountList();
         onSuccess();
         onClose();
       } else {
-        message.error('页面选择失败');
+        message.error(t('facebookPages.submitError' as any));
       }
     } catch (error) {
       console.error('提交页面选择失败:', error);
-      message.error('页面选择失败');
+      message.error(t('facebookPages.submitError' as any));
     } finally {
       setSubmitting(false);
     }
@@ -99,12 +101,12 @@ const FacebookPagesModal: React.FC<FacebookPagesModalProps> = ({
 
   return (
     <Modal
-      title="选择Facebook页面"
+      title={t('facebookPages.title' as any)}
       open={open}
       onCancel={onClose}
       footer={[
         <Button key="cancel" onClick={onClose}>
-          取消
+          {t('facebookPages.cancel' as any)}
         </Button>,
         <Button
           key="submit"
@@ -112,7 +114,7 @@ const FacebookPagesModal: React.FC<FacebookPagesModalProps> = ({
           loading={submitting}
           onClick={handleSubmit}
         >
-          确认选择
+          {t('facebookPages.confirm' as any)}
         </Button>,
       ]}
       width={600}
@@ -124,7 +126,7 @@ const FacebookPagesModal: React.FC<FacebookPagesModalProps> = ({
           indeterminate={selectedPageIds.length > 0 && selectedPageIds.length < pages.length}
           onChange={(e) => handleSelectAll(e.target.checked)}
         >
-          全选
+          {t('facebookPages.selectAll' as any)}
         </Checkbox>
       </div>
 
@@ -152,7 +154,7 @@ const FacebookPagesModal: React.FC<FacebookPagesModalProps> = ({
             </List.Item>
           )}
           locale={{
-            emptyText: loading ? '加载中...' : '暂无可用页面',
+            emptyText: loading ? t('facebookPages.loading' as any) : t('facebookPages.noPages' as any),
           }}
         />
       </Spin>

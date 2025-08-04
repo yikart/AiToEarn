@@ -142,10 +142,10 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
         onCancel={onClose}
         footer={[
           <Button key="markAll" onClick={handleMarkAllAsRead} disabled={unreadCount === 0}>
-            全部标记为已读
+            {t('markAllAsRead')}
           </Button>,
           <Button key="close" onClick={onClose}>
-            关闭
+            {t('actions.cancel')}
           </Button>
         ]}
         width={600}
@@ -160,14 +160,14 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                   className={`${styles.notificationItem} ${!item.isRead ? styles.unread : ""}`}
                   actions={[
                     !item.isRead && (
-                      <Button
-                        key="mark"
-                        type="text"
-                        size="small"
-                        icon={<CheckOutlined />}
-                        onClick={() => handleMarkAsRead(item.id)}
+                                              <Button
+                          key="mark"
+                          type="text"
+                          size="small"
+                          icon={<CheckOutlined />}
+                          onClick={() => handleMarkAsRead(item.id)}
                                               >
-                          标记为已读
+                          {t('markAsRead')}
                         </Button>
                     )
                   ]}
@@ -196,7 +196,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                           size="small" 
                           onClick={() => handleViewDetail(item)}
                         >
-                          查看详情
+                          {t('viewAll')}
                         </Button>
                       </div>
                     }
@@ -205,19 +205,19 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
               )}
             />
           ) : (
-            <Empty description="暂无消息" />
+            <Empty description={t('noNotifications')} />
           )}
         </Spin>
       </Modal>
 
       {/* 通知详情弹窗 */}
       <Modal
-        title="通知详情"
+        title={t('notifications')}
         open={detailModalVisible}
         onCancel={() => setDetailModalVisible(false)}
         footer={[
           <Button key="close" onClick={() => setDetailModalVisible(false)}>
-            关闭
+            {t('actions.cancel')}
           </Button>
         ]}
         width={500}

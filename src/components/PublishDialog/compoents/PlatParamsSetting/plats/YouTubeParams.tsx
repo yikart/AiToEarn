@@ -37,6 +37,23 @@ const YouTubeParams = memo(
         getYouTubeRegions();
       }, [getYouTubeRegions]);
 
+      // 初始化YouTube参数
+      useEffect(() => {
+        const option = pubItem.params.option;
+        if (!option.youtube) {
+          option.youtube = {};
+        }
+        if (!option.youtube.privacyStatus) {
+          option.youtube.privacyStatus = 'public';
+          setOnePubParams(
+            {
+              option,
+            },
+            pubItem.account.id,
+          );
+        }
+      }, [pubItem.account.id]);
+
       // 当国区变化时，重新获取视频分类
       useEffect(() => {
         const regionCode = pubItem.params.option.youtube?.regionCode;

@@ -21,5 +21,17 @@
   "normal": "正常",
   "disabled": "禁用",
   "unknownPlatform": "未知平台",
-  "unknownAccount": "未知账户"
+  "unknownAccount": "未知账户",
+  "facebookPages": {
+    "title": "选择Facebook页面",
+    "selectAll": "全选",
+    "cancel": "取消",
+    "confirm": "确认选择",
+    "loading": "加载中...",
+    "noPages": "暂无可用页面",
+    "fetchError": "获取页面列表失败",
+    "submitError": "页面选择失败",
+    "submitSuccess": "页面选择成功",
+    "selectAtLeastOne": "请至少选择一个页面"
+  }
 }

@@ -10,23 +10,27 @@ import styles from "../platParamsSetting.module.scss";
 import { Radio } from "antd";
 import { useTransClient } from "@/app/i18n/client";
 
-const FacebookParams = memo(
+const InstagramParams = memo(
   forwardRef(
     ({ pubItem }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
       const { t } = useTransClient("publish");
       const { pubParmasTextareaCommonParams, setOnePubParams } =
         usePlatParamsCommon(pubItem);
 
-      // 初始化Facebook参数
+      // 初始化Instagram参数
       useEffect(() => {
         const option = pubItem.params.option;
-        if (!option.facebook || !option.facebook.content_category) {
+        console.log('InstagramParams - Current option:', option);
+        console.log('InstagramParams - Current instagram:', option.instagram);
+        
+        if (!option.instagram || !option.instagram.content_category) {
+          console.log('InstagramParams - Setting default instagram option');
           setOnePubParams(
             {
               option: {
                 ...option,
-                facebook: {
-                  ...option.facebook,
+                instagram: {
+                  ...option.instagram,
                   content_category: 'video',
                 },
               },
@@ -49,15 +53,16 @@ const FacebookParams = memo(
                 >
                   <div className="platParamsSetting-label">{t("form.type")}</div>
                   <Radio.Group
-                    value={pubItem.params.option.facebook?.content_category || 'video'}
+                    value={pubItem.params.option.instagram?.content_category || 'video'}
                     onChange={(e) => {
                       const option = pubItem.params.option;
+                      console.log('InstagramParams - onChange:', e.target.value);
                       setOnePubParams(
                         {
                           option: {
                             ...option,
-                            facebook: {
-                              ...option.facebook,
+                            instagram: {
+                              ...option.instagram,
                               content_category: e.target.value,
                             },
                           },
@@ -80,4 +85,4 @@ const FacebookParams = memo(
   ),
 );
 
-export default FacebookParams; 
+export default InstagramParams; 

@@ -30,6 +30,23 @@ const BilibParams = memo(
         getBilibiliPartitions();
       }, [getBilibiliPartitions]);
 
+      // 初始化Bilibili参数
+      useEffect(() => {
+        const option = pubItem.params.option;
+        if (!option.bilibili) {
+          option.bilibili = {};
+        }
+        if (!option.bilibili.copyright) {
+          option.bilibili.copyright = 1;
+          setOnePubParams(
+            {
+              option,
+            },
+            pubItem.account.id,
+          );
+        }
+      }, [pubItem.account.id]);
+
       return (
         <>
           <PubParmasTextarea

@@ -9,6 +9,16 @@
   "markAsRead": "Mark as read",
   "unreadCount": "Unread messages",
   "viewAll": "View all",
+  "actions": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "selectAll": "Select All",
+    "loading": "Loading...",
+    "noData": "No data",
+    "noImage": "No image",
+    "noDescription": "No description",
+    "noContent": "No content"
+  },
   "notificationTypes": {
     "system": "System Notification",
     "user": "User Notification",

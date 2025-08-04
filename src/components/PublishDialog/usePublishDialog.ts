@@ -44,6 +44,9 @@ const store: IPublishDialogStore = {
       facebook: {
         page_id: undefined, 
       },
+      instagram: {
+        content_category: undefined,
+      },
     },
   },
   expandedPubItem: undefined,
@@ -163,8 +166,16 @@ export const usePublishDialog = create(
           const findedData = pubList.find((v) => v.account.id === accountId);
           if (!findedData) return;
 
+          // 使用lodash的merge来正确处理嵌套对象
+          if (pubParmas.option) {
+            console.log('Setting option:', pubParmas.option);
+            console.log('Current option:', findedData.params.option);
+            findedData.params.option = lodash.merge({}, findedData.params.option, pubParmas.option);
+            console.log('Merged option:', findedData.params.option);
+          }
+
           for (const key in pubParmas) {
-            if (pubParmas.hasOwnProperty(key)) {
+            if (pubParmas.hasOwnProperty(key) && key !== 'option') {
               (findedData.params as any)[key] = (pubParmas as any)[key];
             }
           }

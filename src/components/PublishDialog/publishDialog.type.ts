@@ -51,6 +51,10 @@ export interface IPlatOption {
     // 内容类型：video(Post)、reel(Reel)、story(Story)
     content_category?: string;
   };
+  instagram?: {
+    // 内容类型：video(Post)、reel(Reel)、story(Story)
+    content_category?: string;
+  };
   youtube?: {
     // 隐私状态：public、unlisted、private
     privacyStatus?: string;

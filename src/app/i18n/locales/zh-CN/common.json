@@ -9,6 +9,16 @@
   "markAsRead": "标记为已读",
   "unreadCount": "未读消息",
   "viewAll": "查看全部",
+  "actions": {
+    "cancel": "取消",
+    "confirm": "确认",
+    "selectAll": "全选",
+    "loading": "加载中...",
+    "noData": "暂无数据",
+    "noImage": "暂无图片",
+    "noDescription": "暂无描述",
+    "noContent": "暂无内容"
+  },
   "notificationTypes": {
     "system": "系统通知",
     "user": "用户通知",

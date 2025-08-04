@@ -21,5 +21,17 @@
   "normal": "Normal",
   "disabled": "Disabled",
   "unknownPlatform": "Unknown Platform",
-  "unknownAccount": "Unknown Account"
+  "unknownAccount": "Unknown Account",
+  "facebookPages": {
+    "title": "Select Facebook Pages",
+    "selectAll": "Select All",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "noPages": "No pages available",
+    "fetchError": "Failed to fetch pages",
+    "submitError": "Failed to select pages",
+    "submitSuccess": "Pages selected successfully",
+    "selectAtLeastOne": "Please select at least one page"
+  }
 }
