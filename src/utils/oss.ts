@@ -1,5 +1,5 @@
 // 获取OSS域名
-export const OSS_DOMAIN = 'https://ai-to-earn.oss-cn-beijing.aliyuncs.com';
+export const OSS_DOMAIN = 'https://aitoearn.s3.ap-southeast-1.amazonaws.com';
 
 // 获取完整的OSS URL
 export const getOssUrl = (path: string) => {
