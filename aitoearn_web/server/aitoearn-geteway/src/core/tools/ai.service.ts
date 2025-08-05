@@ -28,13 +28,50 @@ export enum FireflycardTempTypes {
 }
 @Injectable()
 export class AiToolsService {
-  openai: OpenAI
+  private baseURL: string = 'https://api.gpt.ge' // 新的API基础URL
 
   constructor(private readonly redisService: RedisService) {
-    this.openai = new OpenAI({
-      apiKey: config.ai.qwenKey,
-      baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
-    })
+    // 不再初始化OpenAI客户端，直接使用HTTP请求
+  }
+
+  /**
+   * 通用聊天接口调用
+   */
+  private async chatCompletion(params: {
+    model: string;
+    messages: Array<{ role: string; content: string }>;
+    temperature?: number;
+    max_tokens?: number;
+    stream?: boolean;
+  }): Promise<any> {
+    const requestBody = {
+      model: params.model || 'gpt-4o',
+      messages: params.messages,
+      temperature: params.temperature || 0.7,
+      max_tokens: params.max_tokens || 1000,
+      stream: params.stream || false,
+    };
+
+    try {
+      const response = await fetch(`${this.baseURL}/v1/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${config.ai.qwenKey}`, // 复用现有的key
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Chat completion error:', error);
+      throw error;
+    }
   }
 
   /**
@@ -44,56 +81,29 @@ export class AiToolsService {
    * @param max
    * @returns
    */
-  async videoAiTitle(url: string, min?: 5, max?: 50) {
-    const completion = await this.openai.chat.completions.create({
-      model: 'qwen-omni-turbo', // 模型列表：https://help.aliyun.com/zh/model-studio/getting-started/models
-      stream: true,
-      messages: [
-        {
-          role: 'system',
-          content: [
-            {
-              type: 'text',
-              text: '你是一个短视频创作者,请帮我作品进行智能标题设置,只需要返回标题',
-            },
-          ],
-        },
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'video_url',
-              video_url: {
-                url,
-              },
-            },
-            {
-              type: 'text',
-              text: `给视频设置一个标题,长度为${min}到${max}个字. 只需要返回该标题`,
-            },
-          ] as any,
-        },
-      ],
-      stream_options: {
-        include_usage: true,
-      },
-      modalities: ['text'],
-    })
-    let res = ''
+  async videoAiTitle(url: string, min = 5, max = 50): Promise<string> {
+    try {
+      const result = await this.chatCompletion({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content: '你是一个短视频创作者,请帮我作品进行智能标题设置,只需要返回标题',
+          },
+          {
+            role: 'user',
+            content: `给视频设置一个标题,长度为${min}到${max}个字. 只需要返回该标题。视频URL: ${url}`,
+          },
+        ],
+        temperature: 0.8,
+        max_tokens: max + 20,
+      });
 
-    for await (const chunk of completion) {
-      if (Array.isArray(chunk.choices) && chunk.choices.length > 0) {
-        const content = chunk.choices[0].delta.content
-        if (content === null)
-          return res
-        res += content
-      }
-      else {
-        console.log(chunk.usage)
-      }
+      return result?.choices?.[0]?.message?.content || '';
+    } catch (error) {
+      console.error('videoAiTitle error:', error);
+      return '';
     }
-
-    return res
   }
 
   /**
@@ -110,52 +120,29 @@ export class AiToolsService {
     desc = '无',
     max = 50,
   ): Promise<string> {
-    const completion = await this.openai.chat.completions.create({
-      stream: true,
-      model: 'qwen-omni-turbo',
-      messages: [
-        {
-          role: 'system',
-          content: `你是我的好友,请对我发的短视频的作品或者朋友圈短视频作品进行评论,我会提供作品的封面图. 请用中文回复,并且回复内容不超过${max}字.只需要返回评论内容.`,
-        },
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'image_url',
-              image_url: {
-                url: imgUrl,
-              },
-            },
-            {
-              type: 'text',
-              text: `作品标题: ${title}, 作品描述: ${desc}`,
-            },
-          ],
-        },
-      ],
-      stream_options: {
-        include_usage: true,
-      },
-      modalities: ['text'],
-    })
+    try {
+      // 注意：图片处理可能需要特殊处理，这里简化处理
+      const result = await this.chatCompletion({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content: `你是我的好友,请对我发的短视频的作品或者朋友圈短视频作品进行评论,我会提供作品的信息. 请用中文回复,并且回复内容不超过${max}字.只需要返回评论内容.`,
+          },
+          {
+            role: 'user',
+            content: `作品标题: ${title}, 作品描述: ${desc}, 图片URL: ${imgUrl}`,
+          },
+        ],
+        temperature: 0.8,
+        max_tokens: max + 20,
+      });
 
-    let res = ''
-
-    for await (const chunk of completion) {
-      if (Array.isArray(chunk.choices) && chunk.choices.length > 0) {
-        console.log(chunk.choices[0].delta)
-        const content = chunk.choices[0].delta.content
-        if (content === null)
-          return res
-        res += content
-      }
-      else {
-        console.log(chunk.usage)
-      }
+      return result?.choices?.[0]?.message?.content || '';
+    } catch (error) {
+      console.error('reviewImgByAi error:', error);
+      return '';
     }
-
-    return res
   }
 
   // 智能评论
@@ -164,41 +151,28 @@ export class AiToolsService {
     desc = '无',
     max = 50,
   ): Promise<string> {
-    const completion = await this.openai.chat.completions.create({
-      stream: true,
-      model: 'qwen-omni-turbo',
-      messages: [
-        {
-          role: 'system',
-          content: `你是我的好友,请对我发的短视频作品或者朋友圈作品进行评论. 请用中文回复,并且回复内容不超过${max}字.只需要返回评论内容.`,
-        },
-        {
-          role: 'user',
-          content: `作品标题: ${title}, 作品描述: ${desc}`,
-        },
-      ],
-      stream_options: {
-        include_usage: true,
-      },
-      modalities: ['text'],
-    })
+    try {
+      const result = await this.chatCompletion({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content: `你是我的好友,请对我发的短视频作品或者朋友圈作品进行评论. 请用中文回复,并且回复内容不超过${max}字.只需要返回评论内容.`,
+          },
+          {
+            role: 'user',
+            content: `作品标题: ${title}, 作品描述: ${desc}`,
+          },
+        ],
+        temperature: 0.8,
+        max_tokens: max + 20,
+      });
 
-    let res = ''
-
-    for await (const chunk of completion) {
-      if (Array.isArray(chunk.choices) && chunk.choices.length > 0) {
-        console.log(chunk.choices[0].delta)
-        const content = chunk.choices[0].delta.content
-        if (content === null)
-          return res
-        res += content
-      }
-      else {
-        console.log(chunk.usage)
-      }
+      return result?.choices?.[0]?.message?.content || '';
+    } catch (error) {
+      console.error('reviewAi error:', error);
+      return '';
     }
-
-    return res
   }
 
   /**
@@ -214,41 +188,63 @@ export class AiToolsService {
     desc = '无',
     max = 50,
   ): Promise<string> {
-    const completion = await this.openai.chat.completions.create({
-      stream: true,
-      model: 'qwen-omni-turbo',
-      messages: [
-        {
-          role: 'system',
-          content: `你是一个风趣幽默又有分寸的文字创作者的助手,请帮我对别人对我作品的评论进行回复. 请用中文回复,并且回复内容不超过${max}字.只需要返回你的回复内容.`,
-        },
-        {
-          role: 'user',
-          content: `作品标题: ${title}, 作品描述: ${desc}, 评论内容: ${content}`,
-        },
-      ],
-      stream_options: {
-        include_usage: true,
-      },
-      modalities: ['text'],
-    })
+    try {
+      const result = await this.chatCompletion({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content: `你是一个风趣幽默又有分寸的文字创作者的助手,请帮我对别人对我作品的评论进行回复. 请用中文回复,并且回复内容不超过${max}字.只需要返回你的回复内容.`,
+          },
+          {
+            role: 'user',
+            content: `作品标题: ${title}, 作品描述: ${desc}, 评论内容: ${content}`,
+          },
+        ],
+        temperature: 0.7,
+        max_tokens: max + 20,
+      });
 
-    let res = ''
-
-    for await (const chunk of completion) {
-      if (Array.isArray(chunk.choices) && chunk.choices.length > 0) {
-        console.log(chunk.choices[0].delta)
-        const content = chunk.choices[0].delta.content
-        if (content === null)
-          return res
-        res += content
-      }
-      else {
-        console.log(chunk.usage)
-      }
+      return result?.choices?.[0]?.message?.content || '';
+    } catch (error) {
+      console.error('reviewAiRecover error:', error);
+      return '';
     }
+  }
 
-    return res
+  /**
+   * 根据主旨和提示词生成评论
+   * @param subject 评论主旨
+   * @param prompt 提示词
+   * @param max 最大字数
+   */
+  async generateComment(
+    subject: string,
+    prompt: string = '请为以下内容生成一条友善、自然的评论',
+    max = 100,
+  ): Promise<string> {
+    try {
+      const result = await this.chatCompletion({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content: prompt,
+          },
+          {
+            role: 'user',
+            content: `评论主旨: ${subject}`,
+          },
+        ],
+        temperature: 0.8,
+        max_tokens: max + 20,
+      });
+
+      return result?.choices?.[0]?.message?.content || '';
+    } catch (error) {
+      console.error('generateComment error:', error);
+      return '';
+    }
   }
 
   /**
