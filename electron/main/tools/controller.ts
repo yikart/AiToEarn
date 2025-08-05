@@ -74,5 +74,36 @@ export class ToolsController {
     clearOldLogs();
   }
 
+  /**
+   * AI生成评论
+   */
+  @Icp('ai-generate-comment')
+  async aiGenerateComment(
+    event: Electron.IpcMainInvokeEvent,
+    data: { subject: string; prompt: string; max?: number },
+  ): Promise<string> {
+    try {
+      const result = await toolsApi.aiGenerateComment(data);
+      return result;
+    } catch (error) {
+      console.log('--- ai-generate-comment error ---', error);
+      return '';
+    }
+  }
 
-}
+  /**
+   * AI回复评论
+   */
+  @Icp('ai-recover-review')
+  async aiRecoverReview(
+    event: Electron.IpcMainInvokeEvent,
+    data: { content: string; title?: string; desc?: string; max?: number },
+  ): Promise<string> {
+    try {
+      const result = await toolsApi.aiRecoverReview(data);
+      return result;
+    } catch (error) {
+      console.log('--- ai-recover-review error ---', error);
+      return '';
+    }
+  }

@@ -1,0 +1,186 @@
+.aiCommentManager {
+  padding: 1.5rem;
+  background: var(--bg-primary);
+  min-height: 100vh;
+
+  .title {
+    color: var(--text-primary) !important;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .inputSection {
+    .inputCard {
+      height: fit-content;
+    }
+
+    .input, .textarea {
+      background: var(--bg-tertiary) !important;
+      border-color: var(--border-color) !important;
+      color: var(--text-primary) !important;
+      
+      &:focus, &:hover {
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2) !important;
+      }
+      
+      &::placeholder {
+        color: var(--text-muted) !important;
+      }
+    }
+
+    .progressSection {
+      padding: 1rem;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      
+      .progress {
+        margin-top: 0.5rem;
+      }
+    }
+
+    .generateBtn {
+      width: 100%;
+      height: 3rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      border: none !important;
+      font-size: 1.1rem;
+      font-weight: 600;
+      
+      &:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%) !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+      }
+    }
+  }
+
+  .resultSection {
+    .resultCard {
+      .resultContent {
+        padding: 1rem;
+        background: var(--bg-tertiary);
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        min-height: 100px;
+        white-space: pre-wrap;
+        line-height: 1.6;
+      }
+
+      .copyBtn {
+        background: var(--bg-tertiary) !important;
+        border-color: var(--border-color) !important;
+        color: var(--text-primary) !important;
+        
+        &:hover {
+          border-color: #667eea !important;
+          color: #667eea !important;
+        }
+      }
+    }
+  }
+
+  .historySection {
+    grid-column: 1 / -1;
+    
+    .historyCard {
+      .historyHeader {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-primary);
+        font-size: 1.1rem;
+      }
+
+      .historyItem {
+        background: var(--bg-tertiary);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+
+        &:hover {
+          border-color: var(--border-hover);
+          background: rgba(38, 38, 38, 0.8);
+        }
+
+        .historyContent {
+          width: 100%;
+
+          .historyMeta {
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+          }
+
+          .historyResult {
+            padding: 0.5rem;
+            background: rgba(15, 15, 15, 0.5);
+            border-radius: 4px;
+            color: var(--text-primary);
+            line-height: 1.6;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Ant Design 暗黑主题覆盖 */
+:global {
+  .ant-card {
+    background: var(--bg-secondary) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+
+    .ant-card-body {
+      color: var(--text-primary) !important;
+    }
+  }
+
+  .ant-typography {
+    color: var(--text-primary) !important;
+  }
+
+  .ant-typography-caption {
+    color: var(--text-muted) !important;
+  }
+
+  .ant-list {
+    color: var(--text-primary) !important;
+
+    .ant-list-item {
+      border-color: var(--border-color) !important;
+    }
+  }
+
+  .ant-progress {
+    .ant-progress-text {
+      color: var(--text-primary) !important;
+    }
+  }
+
+  .ant-btn {
+    &.ant-btn-text {
+      color: var(--text-secondary) !important;
+      
+      &:hover {
+        color: #667eea !important;
+        background: rgba(102, 126, 234, 0.1) !important;
+      }
+    }
+  }
+}

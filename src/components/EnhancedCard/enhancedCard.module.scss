@@ -1,0 +1,91 @@
+.enhancedCard {
+  position: relative;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  
+  &:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(102, 126, 234, 0.1);
+  }
+}
+
+.glowEffect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cardContent {
+  position: relative;
+  z-index: 2;
+  padding: 1.5rem;
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(10px);
+  height: 100%;
+  
+  /* 确保内容文字可见 */
+  color: var(--text-primary);
+}
+
+/* 为不同大小的卡片提供变体 */
+.enhancedCard.small {
+  .cardContent {
+    padding: 1rem;
+  }
+}
+
+.enhancedCard.large {
+  .cardContent {
+    padding: 2rem;
+  }
+}
+
+/* 特殊光效变体 */
+.enhancedCard.purple-glow {
+  .glowEffect {
+    background: radial-gradient(
+      600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(118, 75, 162, 0.15),
+      transparent 40%
+    );
+  }
+}
+
+.enhancedCard.blue-glow {
+  .glowEffect {
+    background: radial-gradient(
+      600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(102, 126, 234, 0.15),
+      transparent 40%
+    );
+  }
+}
+
+/* 禁用状态 */
+.enhancedCard.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  
+  &:hover {
+    transform: none;
+    border-color: var(--border-color);
+    box-shadow: none;
+  }
+  
+  .glowEffect {
+    display: none;
+  }
+}

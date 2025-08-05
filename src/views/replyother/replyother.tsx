@@ -64,6 +64,7 @@ import { icpCreateInteractionOneKey } from '@/icp/replyother';
 import { useUserStore } from '@/store/user';
 import { taskApi } from '@/api/task';
 import {PlatType} from "@@/AccountEnum";
+import AiCommentManager from '@/components/AiCommentManager';
 
 export default function Page() {
   const userStore = useUserStore();
@@ -1884,6 +1885,16 @@ export default function Page() {
                         />
                       </div>
                     ),
+                  },
+                  {
+                    key: '5',
+                    label: (
+                      <span>
+                        <RobotOutlined />
+                        AI评论管理
+                      </span>
+                    ),
+                    children: <AiCommentManager />,
                   },
                 ]}
               />

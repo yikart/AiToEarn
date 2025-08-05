@@ -26,7 +26,6 @@ import {
 import { LayoutBody } from '@/layout/LayoutBody';
 
 // 页面组件
-import Login from '@/views/login';
 import Trending from '@/views/trending';
 import Account from '@/views/account';
 import Publish from '@/views/publish/page';
@@ -178,7 +177,8 @@ export const router: CustomRouteObject[] = [
       // },
     ],
   },
-  { path: '/login', element: <Login /> },
+  // Redirect any unknown routes to main app
+  { path: '*', element: <Navigate to="/" replace /> },
 ];
 
 export default createHashRouter(router);

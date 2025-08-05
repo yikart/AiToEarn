@@ -1,22 +1,34 @@
-/*  全局css变量 */
+/*  全局css变量 - 暗黑主题 */
 :root {
-  /* 中性面板色组---------------------------------------------------- */
-  --whiteColor1: #fff;
-  --grayColor0: rgb(247,250,250);
-  --grayColor1: #F3F3F3;
-  --grayColor2: #EEEEEE;
-  --grayColor3: #E7E7E7;
-  --grayColor4: #DCDCDC;
-  --grayColor5: #C5C5C5;
-  --grayColor6: #A6A6A6;
-  --grayColor7: #8B8B8B;
-  --grayColor8: #777777;
-  --grayColor9: #5E5E5E;
-  --grayColor10: #4B4B4B;
-  --grayColor11: #383838;
-  --grayColor12: #2C2C2C;
-  --grayColor13: #242424;
-  --grayColor14: #181818;
+  /* 暗黑主题色组---------------------------------------------------- */
+  --whiteColor1: #1a1a1a;
+  --grayColor0: #0f0f0f;
+  --grayColor1: #141414;
+  --grayColor2: #1a1a1a;
+  --grayColor3: #1f1f1f;
+  --grayColor4: #262626;
+  --grayColor5: #2e2e2e;
+  --grayColor6: #404040;
+  --grayColor7: #595959;
+  --grayColor8: #737373;
+  --grayColor9: #8c8c8c;
+  --grayColor10: #a6a6a6;
+  --grayColor11: #bfbfbf;
+  --grayColor12: #d9d9d9;
+  --grayColor13: #f0f0f0;
+  --grayColor14: #ffffff;
+
+  /* 暗黑主题背景和文字颜色 */
+  --bg-primary: #0f0f0f;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #262626;
+  --text-primary: #ffffff;
+  --text-secondary: #d9d9d9;
+  --text-muted: #8c8c8c;
+  
+  /* 边框颜色 */
+  --border-color: #333333;
+  --border-hover: #555555;
 
   /* 超大号字 */
   --fs-xl: 20px;
@@ -29,18 +41,17 @@
   /* 超小号字 */
   --fs-xs: 12px;
 
-  /*
-    主题颜色逻辑在：main.tsx
-   */
+  /* 渐变背景色 - 暗黑主题适配 */
+  --gradientBackColor: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  /* 卡片光效渐变色 */
+  --cardGlowGradient: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+  --cardHoverGlow: rgba(102, 126, 234, 0.15);
 
-  /* 渐变背景色 */
-  --gradientBackColor: linear-gradient(to right, #c565ef, #55D9ED);
-  /*--gradientBackColor: linear-gradient(to right, #7881fd, #f2c3cf);*/
-
-  /* 警告色 */
-  --warningColor: #d48806;
+  /* 警告色 - 暗黑主题适配 */
+  --warningColor: #faad14;
   /* 错误色 */
-  --errerColor: red;
+  --errerColor: #ff4d4f;
   /* 成功色 */
-  --successColor: rgb(47, 178, 122);
+  --successColor: #52c41a;
 }
