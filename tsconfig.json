@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/aitoearn-monorepo-e2e"
+    },
+    {
+      "path": "./apps/aitoearn-monorepo"
+    }
+  ]
+}
