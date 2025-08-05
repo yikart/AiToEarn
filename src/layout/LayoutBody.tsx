@@ -10,24 +10,24 @@ import { useBellMessageStroe } from '../store/bellMessageStroe';
 export const LayoutBody = () => {
   const userStore = useUserStore();
 
-  // 查询用户信息
-  const queryUserInfo = async () => {
-    let count = 0;
-    while (true) {
-      const res = await userStore.getUserInfo().catch(() => false);
-      if (res || count >= 10) break;
-      await sleep(1000);
-      count++;
-    }
+  // 免登录初始化
+  const initWithoutLogin = async () => {
+    // 设置免登录状态
+    userStore.setToken({ token: 'no-login-required', exp: Date.now() + 86400000 });
+    userStore.getUserInfo({
+      uid: 'guest',
+      username: '免登录用户',
+      email: '',
+      mobile: '',
+      avatar: '',
+      status: 1,
+    } as any);
   };
 
   useEffect(() => {
     useBellMessageStroe.getState().videoPublishProgressInit();
-    if (userStore.token) {
-      queryUserInfo();
-    } else {
-      userStore.logout();
-    }
+    // 直接初始化，无需登录
+    initWithoutLogin();
   }, []);
 
   // 添加键盘事件监听
@@ -46,16 +46,9 @@ export const LayoutBody = () => {
   }, []);
 
   useEffect(() => {
-    if (userStore.token) {
-      useAccountStore.getState().init();
-    } else {
-      useAccountStore.getState().clear();
-    }
+    // 始终初始化账户状态
+    useAccountStore.getState().init();
   }, [userStore.token]);
-
-  if (!userStore.token) {
-    return <Navigate to="/login" replace />;
-  }
 
   return (
     <div className={styles.layoutBody}>

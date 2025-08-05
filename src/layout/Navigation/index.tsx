@@ -70,6 +70,12 @@ const Navigation = () => {
       <div className="navigation_drag" />
 
       <div className="navigation-userinfo">
+        {/* 免登录状态显示 */}
+        <div className="navigation-icon" style={{ color: '#52c41a' }}>
+          <span className="navigation-icon-text">✓ 已免登录</span>
+        </div>
+        <div className="navigation-line"></div>
+
         <Popover
           content={<SignInCard ref={signInCardRef} />}
           trigger="hover"
