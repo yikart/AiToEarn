@@ -20,7 +20,7 @@ const PublishDialogPreview = memo(
       {}: IPublishDialogPreviewProps,
       ref: ForwardedRef<IPublishDialogPreviewRef>,
     ) => {
-      const { t } = useTranslation('publish');
+      const { t } = useTranslation("publish");
       const { expandedPubItem } = usePublishDialog(
         useShallow((state) => ({
           expandedPubItem: state.expandedPubItem,
@@ -38,10 +38,13 @@ const PublishDialogPreview = memo(
       return (
         <div className={styles.publishDialogPreview}>
           <div className="publishDialogPreview-wrapper">
-            <div className="publishDialogPreview-title">{t('preview.title')}</div>
+            <div className="publishDialogPreview-title">
+              {t("preview.title")}
+            </div>
             {expandedPubItem &&
             (expandedPubItem?.params.video ||
-              expandedPubItem?.params.images?.length !== 0) ? (
+              (expandedPubItem?.params.images &&
+                expandedPubItem?.params.images?.length !== 0)) ? (
               <div className="publishDialogPreview-preview">
                 {expandedPubItem?.params.video ? (
                   <div className="publishDialogPreview-preview-video">
@@ -89,7 +92,7 @@ const PublishDialogPreview = memo(
               </div>
             ) : (
               <div className="publishDialogPreview-empty">
-                <Empty description={t('preview.emptyDescription')} />
+                <Empty description={t("preview.emptyDescription")} />
               </div>
             )}
           </div>
