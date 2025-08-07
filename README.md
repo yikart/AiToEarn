@@ -144,6 +144,9 @@ npm run dev
    xattr -r -d com.apple.quarantine /Applications/哎呦赚AiToEarn.app
   ```
 
+## AiToEarn Web 项目
+[AiToEarn Web 项目](./aitoearn_web/README.md)
+
 ## 加我微信
 辛苦备注一下 AiToEarn
 
