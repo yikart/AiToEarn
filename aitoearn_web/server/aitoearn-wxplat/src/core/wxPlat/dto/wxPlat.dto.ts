@@ -9,6 +9,15 @@ export class GetAuthUrlDto {
   @IsString({ message: '类型 pc h5' })
   @Expose()
   readonly type: 'pc' | 'h5'
+
+  @IsString({ message: '应用标识' })
+  @Expose()
+  readonly key: string
+
+  @IsString({ message: '透传数据' })
+  @IsOptional()
+  @Expose()
+  readonly stat?: string
 }
 
 export class DisposeAuthTaskDto {

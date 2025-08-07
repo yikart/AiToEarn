@@ -43,13 +43,14 @@ export class PlatWxGzhNatsApi {
     return res
   }
 
-  async createAccountAndSetAccessToken(taskId: string, query: AuthBackQueryDto) {
+  async createAccountAndSetAccessToken(query: {
+    taskId: string
+    auth_code: string
+    expires_in: number
+  }) {
     const res = await this.natsService.sendMessage<null>(
       NatsApi.plat.wxGzh.createAccountAndSetAccessToken,
-      {
-        taskId,
-        ...query,
-      },
+      query,
     )
 
     return res

@@ -37,16 +37,18 @@ export class ServerService {
    * 给服务发送授权消息
    * @returns
    */
-  async sendAuthBack(url: string, query: AuthBackQueryDto) {
+  async sendAuthBack(url: string, data: AuthBackQueryDto & {
+    stat: string
+  }) {
     try {
-      const result = await axios.post<string>(url, query)
+      const result = await axios.post<string>(url, data)
 
-      Logger.debug('getComponentAccessToken---result', result.data)
+      Logger.debug('sendAuthBack---result', result.data)
       return result.data
     }
     catch (error) {
       Logger.error(
-        '------ Error wxPlat sendCallbackMsg: ------',
+        '------ Error wxPlat sendAuthBack: ------',
         error,
       )
       return null

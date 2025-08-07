@@ -15,7 +15,6 @@ import { decode } from './WXMsgCrypto';
 
 @Injectable()
 export class WxPlatService {
-  private authBackHost = '';
   private encodingAESKey = '';
   private componentAccessTokenCacheKey = 'wxPlat:component_access_token';
 
@@ -24,7 +23,6 @@ export class WxPlatService {
     private readonly wxPlatApiService: WxPlatApiService,
   ) {
     this.encodingAESKey = config.wxPlat.encodingAESKey;
-    this.authBackHost = config.wxPlat.authBackHost;
   }
 
   decryptWXData(data: string) {
@@ -94,16 +92,15 @@ export class WxPlatService {
 
   /**
    * 获取授权页面链接
-   * @param key
+   * @param redirectUri
    * @param type
    * @returns
    */
-  async getAuthPageUrl(key: string, type: 'h5' | 'pc'): Promise<string> {
+  async getAuthPageUrl(redirectUri: string, type: 'h5' | 'pc'): Promise<string> {
     const componentAccessToken = await this.getComponentAccessToken();
     if (!componentAccessToken)
       throw new AppException(ExceptionCode.File, '不存在平台授权令牌');
 
-    const redirectUri = `${this.authBackHost}/wxPlat/auth/back/${key}`;
 
     const res
       = await this.wxPlatApiService.getPreAuthCode(componentAccessToken);

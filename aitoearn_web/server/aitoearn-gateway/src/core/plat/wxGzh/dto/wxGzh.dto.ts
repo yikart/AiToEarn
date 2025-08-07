@@ -178,6 +178,10 @@ export class GetUserCumulateData extends AccountIdDto {
 }
 
 export class AuthBackQueryDto {
+  @IsString({ message: ' 透传数据（任务ID）' })
+  @Expose()
+  readonly stat: string
+
   @IsString({ message: '授权码' })
   @Expose()
   readonly auth_code: string

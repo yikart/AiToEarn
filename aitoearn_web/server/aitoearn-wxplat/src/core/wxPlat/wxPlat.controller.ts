@@ -7,7 +7,7 @@ import {
   Param,
   Post,
   Query,
-  Render,
+  Res,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -26,7 +26,7 @@ import {
 } from './dto/wxPlat.dto';
 import { ServerService } from './server.service';
 import { WxPlatService } from './wxPlat.service';
-
+import { Response } from 'express';
 @Controller('wxPlat')
 export class WxPlatController {
   logger = new Logger(WxPlatController.name);
@@ -123,59 +123,48 @@ export class WxPlatController {
    */
   @HttpCode(200)
   @UseGuards(OrgGuard)
-  @Get('auth/back/:key')
+  @Get('auth/back/:key/:stat')
   async authBackGet(
     @Param('key') key: string,
+    @Param('stat') stat: string,
     @Query() query: AuthBackQueryDto,
   ) {
     const { authUrlMap } = config;
     const url = authUrlMap[key];
     if (!url)
       return 'success'
-    return await this.serverService.sendAuthBack(authUrlMap[key], query);
+    return await this.serverService.sendAuthBack(authUrlMap[key], {
+      ...query,
+      stat
+    });
   }
   // -------- 接收回调 END --------
 
   /**
    * 获取授权URL
    */
-  @Get('auth/url/:key')
+  @Get('auth/url')
   async getAuthUrl(
-    @Param('key') key: string,
     @Query() query: GetAuthUrlDto,
   ) {
-    const outUrl = `${config.wxPlat.authBackHost}/wxPlat/auth/page/${query.type}/${key}`;
-    return outUrl;
+    return `${config.wxPlat.authBackHost}/wxPlat/auth/page?stat=${query.stat}&key=${query.key}&type=${query.type}`;
   }
 
   /**
    * 获取授权页面
    */
-  @Get('auth/page/pc/:key')
-  @UseGuards(OrgGuard)
-  @Render('auth/pc')
-  async getAuthPagePc(
-    @Param('key') key: string,
+  @Get('auth/page')
+  async getAuthPage(
+    @Query() query: GetAuthUrlDto,
+    @Res() res: Response
   ) {
-    const authUrl = await this.wxPlatService.getAuthPageUrl(key, 'pc');
-    // 处理url，转base64
-    return {
-      url: authUrl,
-    }
-  }
-
-  /**
-   * 获取授权页面
-   */
-  @Get('auth/page/h5/:key')
-  @Render('auth/h5')
-  async getAuthPageH5(
-    @Param('key') key: string,
-  ) {
-    const authUrl = await this.wxPlatService.getAuthPageUrl(key, 'h5');
-    return {
-      url: authUrl,
-    }
+    const redirectUri = `${config.wxPlat.authBackHost}/wxPlat/auth/back/${query.key}/${query.stat}`;
+    const authUrl = await this.wxPlatService.getAuthPageUrl(redirectUri, query.type);
+  
+    return res.render(
+      `auth/${query.type}`,
+      { url: authUrl },
+    );
   }
 
   /**
