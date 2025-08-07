@@ -2,9 +2,7 @@ import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Queue } from 'bullmq'
-
 import { Model } from 'mongoose'
-import { FileToolsService } from '@/core/file/fileTools.service'
 import { ThreadsService } from '@/core/plat/meta/threads.service'
 import { PublishRecord } from '@/libs/database/schema/publishRecord.schema'
 import { PublishTask } from '@/libs/database/schema/publishTask.schema'
@@ -23,7 +21,6 @@ export class ThreadPubService extends PublishBase {
     readonly publishRecordModel: Model<PublishRecord>,
     @InjectQueue('bull_publish') publishQueue: Queue,
     readonly threadsService: ThreadsService,
-    private readonly fileToolsService: FileToolsService,
   ) {
     super(publishTaskModel, publishRecordModel, publishQueue)
   }
@@ -64,10 +61,9 @@ export class ThreadPubService extends PublishBase {
       }
     }
     if (videoUrl) {
-      const downloadULR = videoUrl.replace('undefined', 'https://ai-to-earn.oss-cn-beijing.aliyuncs.com/')
       const createContainerReq: ThreadsContainerRequest = {
         media_type: 'VIDEO',
-        video_url: downloadULR,
+        video_url: videoUrl,
       }
       if (imgUrlList && imgUrlList.length > 0) {
         createContainerReq.is_carousel_item = true;

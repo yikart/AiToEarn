@@ -13,6 +13,12 @@ export class UserIdDto {
   readonly userId: string
 }
 
+export class PagesSelectionDto extends UserIdDto {
+  @IsArray()
+  @Expose()
+  readonly pageIds: string[]
+}
+
 export class GetAuthUrlDto extends UserIdDto {
   @IsArray()
   @IsOptional()
@@ -29,10 +35,6 @@ export class GetAuthInfoDto {
 }
 
 export class CreateAccountAndSetAccessTokenDto {
-  @IsString()
-  @Expose()
-  readonly taskId: string
-
   @IsString()
   @Expose()
   readonly code: string

@@ -21,7 +21,7 @@ export enum PublishStatus {
   versionKey: false,
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
-  timestamps: false,
+  timestamps: true,
 })
 export class PublishTask extends BaseTemp {
   id: string
@@ -108,9 +108,9 @@ export class PublishTask extends BaseTemp {
 
   // 队列 ID
   @Prop({
-    required: true,
+    required: false,
   })
-  queueId: string
+  queueId?: string
 
   // 此任务是否进入队列
   @Prop({
@@ -137,7 +137,7 @@ export class PublishTask extends BaseTemp {
     required: false,
     type: mongoose.Schema.Types.Mixed,
   })
-  option: PlatPulOption
+  option?: PlatPulOption
 }
 
 export const PublishTaskSchema = SchemaFactory.createForClass(PublishTask)

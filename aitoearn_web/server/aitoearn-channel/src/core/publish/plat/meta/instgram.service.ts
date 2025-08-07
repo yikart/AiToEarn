@@ -88,10 +88,10 @@ export class InstagramPublishService extends PublishBase implements MetaPostPubl
       }
 
       if (videoUrl) {
-        const downloadULR = videoUrl.replace('undefined', 'https://ai-to-earn.oss-cn-beijing.aliyuncs.com/')
         const createContainerReq: CreateMediaContainerRequest = {
-          video_url: downloadULR,
+          video_url: videoUrl,
           media_type: containerType,
+          caption: publishTask.desc || publishTask.title || '',
         }
         if (containerType === 'CAROUSEL') {
           createContainerReq.is_carousel_item = true
@@ -197,6 +197,7 @@ export class InstagramPublishService extends PublishBase implements MetaPostPubl
         const createContainerReq: CreateMediaContainerRequest = {
           media_type: containerTypes,
           children: containerIdList,
+          caption: task.title,
         }
         const postContainer = await this.instagramService.createMediaContainer(
           task.accountId,

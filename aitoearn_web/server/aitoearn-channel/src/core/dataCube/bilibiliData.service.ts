@@ -31,8 +31,16 @@ export class BilibiliDataService extends DataCubeBase {
   }
 
   async getArcDataCube(accountId: string, dataId: string) {
-    Logger.log('getArcDataCube', accountId, dataId);
-    return {};
+    const res = await this.bilibiliService.getArcStat(accountId, dataId);
+
+    return {
+      fensNum: res.favorite,
+      playNum: res.view,
+      commentNum: res.reply,
+      likeNum: res.like,
+      shareNum: res.share,
+      collectNum: res.favorite,
+    };
   }
 
   async getArcDataBulk(accountId: string, dataId: string) {

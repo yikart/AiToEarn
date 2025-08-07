@@ -1,11 +1,12 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { Injectable, Logger } from '@nestjs/common'
 import { v4 as uuidV4 } from 'uuid'
-import { getCurrentTimestamp } from '@/common'
+import { chunkedDownloadFile, fileUrlToBlob, getCurrentTimestamp, getFileSizeFromUrl, getFileTypeFromUrl } from '@/common'
 import { config } from '@/config'
 import { AccountService } from '@/core/account/account.service'
 import { RedisService } from '@/libs'
-import { TwitterOAuthCredential, XChunkedMediaUploadRequest, XCreatePostRequest, XMediaUploadInitRequest } from '@/libs/twitter/twitter.interfaces'
+import { XMediaCategory, XMediaType } from '@/libs/twitter/twitter.enum'
+import { TwitterOAuthCredential, XChunkedMediaUploadRequest, XCreatePostRequest, XMediaUploadInitRequest, XMediaUploadResponse } from '@/libs/twitter/twitter.interfaces'
 import { TwitterService as TwitterApiService } from '@/libs/twitter/twitter.service'
 import { AccountType, NewAccount } from '@/transports/account/common'
 import { TWITTER_TIME_CONSTANTS, TwitterRedisKeys } from './constants'
@@ -140,7 +141,10 @@ export class TwitterService {
     const authTaskInfo = await this.getOAuth2TaskInfo(state)
     if (!authTaskInfo) {
       this.logger.error(`OAuth task not found for state: ${state}`)
-      return null
+      return {
+        status: 0,
+        message: '授权任务不存在或已过期',
+      }
     }
 
     // 延长授权任务时间
@@ -155,13 +159,17 @@ export class TwitterService {
     )
     if (!credential) {
       this.logger.error(`Failed to get access token for state: ${state}`)
-      return null
+      return {
+        status: 0,
+        message: '获取访问令牌失败',
+      }
     }
 
     // fetch twitter user profile
     const userProfile = await this.twitterApiService.getUserInfo(
       credential.access_token,
     )
+    this.logger.log(userProfile)
 
     // 创建账号数据
     const newAccountData = new NewAccount({
@@ -187,7 +195,10 @@ export class TwitterService {
       this.logger.error(
         `Failed to create account for userId: ${authTaskInfo.userId}, twitterId: ${userProfile.id}`,
       )
-      return null
+      return {
+        status: 0,
+        message: '创建账号失败',
+      }
     }
     const tokenSaved = await this.saveOAuthCredential(
       accountInfo.id,
@@ -197,7 +208,10 @@ export class TwitterService {
       this.logger.error(
         `Failed to save access token for accountId: ${accountInfo.id}`,
       )
-      return null
+      return {
+        status: 0,
+        message: '保存访问令牌失败',
+      }
     }
     const taskUpdated = await this.updateAuthTaskStatus(
       state,
@@ -209,9 +223,16 @@ export class TwitterService {
       this.logger.error(
         `Failed to update auth task status for state: ${state}, accountId: ${accountInfo.id}`,
       )
-      return null
+      return {
+        status: 0,
+        message: '更新任务状态失败',
+      }
     }
-    return accountInfo
+    return {
+      status: 1,
+      message: '授权成功',
+      accountId: accountInfo.id,
+    }
   }
 
   private async saveOAuthCredential(
@@ -306,5 +327,173 @@ export class TwitterService {
       return null
     }
     return await this.twitterApiService.createPost(credential.access_token, post)
+  }
+
+  public async getMediaUploadStatus(
+    userId: string,
+    mediaId: string,
+  ): Promise<XMediaUploadResponse | null> {
+    const credential = await this.authorize(userId)
+    if (!credential) {
+      this.logger.warn(`No access token found for userId: ${userId}`)
+      return null
+    }
+    return await this.twitterApiService.getMediaStatus(
+      credential.access_token,
+      mediaId,
+    )
+  }
+
+  async publishPost(
+    accountId: string,
+    imgUrlList: string[] | null,
+    videoUrl: string | null,
+    text: string,
+  ) {
+    this.logger.log('dopub', accountId, imgUrlList, videoUrl, text)
+    const twitterMediaIDs: string[] = []
+    if (imgUrlList) {
+      for (const imgUrl of imgUrlList) {
+        const imgBlob = await fileUrlToBlob(imgUrl)
+        if (!imgBlob) {
+          this.logger.error('图片下载失败')
+          return null
+        }
+        this.logger.log('imgBlob', imgBlob.blob.size)
+        const fileName = getFileTypeFromUrl(imgUrl)
+        const ext = fileName.split('.').pop()?.toLowerCase()
+        const mimeType = ext === 'jpg' ? 'image/jpeg' : `image/${ext}`
+        const initUploadReq: XMediaUploadInitRequest = {
+          media_type: mimeType as XMediaType,
+          total_bytes: imgBlob.blob.size,
+          media_category: XMediaCategory.TWEET_IMAGE,
+          shared: false,
+        }
+        this.logger.log('initMediaUpload', initUploadReq)
+        const initUploadRes = await this.initMediaUpload(
+          accountId,
+          initUploadReq,
+        )
+        this.logger.log(initUploadRes)
+        if (!initUploadRes || !initUploadRes.data.id) {
+          this.logger.error('图片初始化上传失败')
+          return null
+        }
+        const uploadReq: XChunkedMediaUploadRequest = {
+          media_id: initUploadRes.data.id,
+          media: Buffer.from(await imgBlob.blob.arrayBuffer()),
+          segment_index: 0,
+        }
+        this.logger.log('chunkedMediaUploadRequest', uploadReq)
+        const updateRes = await this.chunkedMediaUploadRequest(
+          accountId,
+          uploadReq,
+        )
+        this.logger.log(updateRes)
+        if (!updateRes || !updateRes.data.expires_at) {
+          this.logger.error('图片分片上传失败')
+          return null
+        }
+        const finalizeUploadRes = await this.finalizeMediaUpload(
+          accountId,
+          initUploadRes.data.id,
+        )
+        this.logger.log(finalizeUploadRes)
+        if (!finalizeUploadRes || !finalizeUploadRes.data.id) {
+          this.logger.error('确认图片上传失败')
+          return null
+        }
+        twitterMediaIDs.push(initUploadRes.data.id)
+      }
+    }
+
+    if (videoUrl) {
+      const fileName = getFileTypeFromUrl(videoUrl, true)
+      const ext = fileName.split('.').pop()?.toLowerCase()
+      const mimeType = ext === 'mp4' ? 'video/mp4' : `video/${ext}`
+
+      const contentLength = await getFileSizeFromUrl(videoUrl)
+      if (!contentLength) {
+        this.logger.error('视频信息解析失败')
+        return null
+      }
+      const initUploadReq: XMediaUploadInitRequest = {
+        media_type: mimeType as XMediaType,
+        total_bytes: contentLength,
+        media_category: XMediaCategory.TWEET_VIDEO,
+        shared: false,
+      }
+
+      const initUploadRes = await this.initMediaUpload(
+        accountId,
+        initUploadReq,
+      )
+      this.logger.log(initUploadRes)
+      if (!initUploadRes || !initUploadRes.data.id) {
+        this.logger.error('视频初始化上传失败')
+        return null
+      }
+      const chunkSize = 5 * 1024 * 1024 // 5MB
+
+      const totalParts = Math.ceil(contentLength / chunkSize)
+      for (let partNumber = 0; partNumber < totalParts; partNumber++) {
+        const start = partNumber * chunkSize
+        const end = Math.min(start + chunkSize, contentLength - 1)
+        const range: [number, number] = [start, end]
+        const videoBlob = await chunkedDownloadFile(videoUrl, range)
+        if (!videoBlob) {
+          this.logger.error('视频分片下载失败')
+          return null
+        }
+        this.logger.log('start', start, 'end', end, 'size', videoBlob.length)
+        const uploadReq: XChunkedMediaUploadRequest = {
+          media: videoBlob,
+          media_id: initUploadRes.data.id,
+          segment_index: partNumber,
+        }
+        this.logger.log('chunkedMediaUploadRequest', uploadReq)
+        const upload = await this.chunkedMediaUploadRequest(
+          accountId,
+          uploadReq,
+        )
+        this.logger.log(upload)
+        if (!upload || !upload.data.expires_at) {
+          this.logger.error('视频分片上传失败')
+          return null
+        }
+      }
+      const finalizeUploadRes = await this.finalizeMediaUpload(
+        accountId,
+        initUploadRes.data.id,
+      )
+      this.logger.log(finalizeUploadRes)
+      if (!finalizeUploadRes || !finalizeUploadRes.data.id) {
+        this.logger.error('确认视频上传完成失败')
+        return null
+      }
+      twitterMediaIDs.push(initUploadRes.data.id)
+    }
+    this.logger.log('twitterMediaIDs', twitterMediaIDs)
+    const status = await this.getMediaUploadStatus(
+      accountId,
+      twitterMediaIDs[0],
+    )
+    this.logger.log('getMediaUploadStatus', status)
+    // const postMedia: PostMedia = {
+    //   media_ids: twitterMediaIDs,
+    // }
+    // const post: XCreatePostRequest = {
+    //   text,
+    //   media: postMedia,
+    // }
+    // const createPostRes = await this.createPost(
+    //   accountId,
+    //   post,
+    // )
+    // this.logger.log(createPostRes)
+    // if (!createPostRes || !createPostRes.data.id) {
+    //   this.logger.error('推文创建失败')
+    //   return null
+    // }
   }
 }

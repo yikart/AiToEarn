@@ -23,6 +23,7 @@ import {
   PlatToken,
   TokenStatus,
 } from '@/libs/database/schema/platToken.schema'
+import { GetChannelsListParams, GetVideosListParams } from '@/libs/youtube/comment'
 import { YoutubeApiService } from '@/libs/youtube/youtubeApi.service'
 import { AccountType, NewAccount } from '@/transports/account/common'
 
@@ -205,13 +206,11 @@ export class YoutubeService {
    * @returns
    */
   async setAccessToken(taskId: any, code: string) {
-    // const { code, state } = data
-    // this.logger.log('------- setAccessToken-------')
     const hadState = await this.redisService.get<AuthTaskInfo>(
       `youtube:authTask:${taskId}`,
     )
 
-    this.logger.log('--hadState:--', hadState)
+    this.logger.log(`--hadState:-- ${hadState}`)
     if (!hadState)
       return null
     if (hadState?.state !== taskId)
@@ -234,14 +233,13 @@ export class YoutubeService {
         },
       )
 
-      // console.log(response);
-      this.logger.log(response)
+      // this.logger.log(`response:-- ${response}`)
       const accessTokenInfo = response.data
       const access_token = accessTokenInfo.access_token
       const refresh_token = accessTokenInfo.refresh_token
       const expires_in = accessTokenInfo.expires_in
       const id_token = accessTokenInfo.id_token
-
+      this.logger.log(`response2:-- ${response.data}, ${accessTokenInfo.id_token}`)
       // 验证ID令牌以获取用户信息
       this.initializeYouTubeClient(access_token)
       const ticket = await this.oauth2Client.verifyIdToken({
@@ -254,7 +252,7 @@ export class YoutubeService {
       const email = payload.email
       // this.logger.log('youtube callback payload:', payload)
       const userId = hadState.userId
-      this.logger.log('-----userId:----', userId, '-----googleId:----', googleId)
+      this.logger.log(`-----userId:---- ${userId} , googleId:---- ${googleId}`)
       // 获取YouTube频道信息，用于更新账号数据库
       const accountInfo: any = await this.updateYouTubeAccountInfo(
         userId,
@@ -365,11 +363,11 @@ export class YoutubeService {
       })
 
       if (!response.data.items || response.data.items.length === 0) {
-        this.logger.log('获取YouTube频道信息失败')
+        this.logger.log(`获取YouTube频道信息失败`)
         hasChannel = false
         // 如果没有频道或获取频道信息失败，则从Google用户信息获取
         if (!hasChannel) {
-          this.logger.log('无法获取YouTube频道信息，将从Google用户信息获取')
+          this.logger.log(`无法获取YouTube频道信息，将从Google用户信息获取`)
           try {
             const responseGoogle = await axios.get(
               'https://www.googleapis.com/oauth2/v3/userinfo',
@@ -425,7 +423,8 @@ export class YoutubeService {
       // 然后单独设置 loginTime
       (channelInfo as any).loginTime = new Date();
       (channelInfo as any).lastStatsTime = new Date()
-
+      // console.log(channelInfo)
+      this.logger.log(`channelInfo:-- ${channelInfo}`)
       const accountInfo = await this.accountService.createAccount(
         {
           userId,
@@ -434,7 +433,8 @@ export class YoutubeService {
         },
         channelInfo,
       )
-      this.logger.log('----- accountInfo', accountInfo)
+      // console.log('----- accountInfo', accountInfo)
+      // this.logger.log('----- accountInfo', accountInfo)
 
       if (!accountInfo)
         return null
@@ -446,7 +446,7 @@ export class YoutubeService {
         platform: AccountType.YOUTUBE,
       })
 
-      this.logger.log('--是否存在账号--', existingToken)
+      this.logger.log(`--是否存在accountToken账号-- ${existingToken}`)
       if (existingToken) {
         // console.log("存在YouTube账号Token");
         // 更新现有Token
@@ -700,6 +700,7 @@ export class YoutubeService {
     myRating?: boolean,
     maxResults?: number,
     pageToken?: string,
+    // params: GetVideosListParams,
   ) {
     const accessToken = await this.getUserAccessToken(accountId)
     if (!accessToken)
@@ -1894,6 +1895,7 @@ export class YoutubeService {
    * @param mine 是否查询自己的频道
    * @returns 频道列表
    */
+  // async getChannelsList(params: GetChannelsListParams) {
   async getChannelsList(accountId: string, forHandle?: string, forUsername?: string, id?: string[], mine?: boolean, maxResults?: number, pageToken?: string) {
     const accessToken = await this.getUserAccessToken(accountId)
     if (!accessToken) {
@@ -1912,29 +1914,6 @@ export class YoutubeService {
       ...(maxResults && { maxResults }),
       ...(pageToken && { pageToken }),
     }
-
-    // // 根据参数选择 `id` 或 `forUsername`
-    // if (id) {
-    //   requestParams.id = id // 如果提供了 id, 使用 id
-    // }
-    // else if (handle) {
-    //   requestParams.forHandle = handle // 如果提供了 handle, 使用 handle
-    // }
-    // else if (userName) {
-    //   requestParams.forUsername = userName // 如果提供了 userName, 使用 userName
-    // }
-    // else if (mine !== undefined) {
-    //   // 如果 mine 被传递且是布尔值, 可以检查是否为 `true`
-    //   if (mine) {
-    //     requestParams.mine = true // 请求当前登录用户的频道
-    //   }
-    // }
-    // if (maxResults) {
-    //   requestParams.maxResults = maxResults // 如果提供了 handle, 使用 handle
-    // }
-    // if (pageToken) {
-    //   requestParams.pageToken = pageToken // 如果提供了 handle, 使用 handle
-    // }
 
     try {
       // const channels
@@ -2188,23 +2167,4 @@ export class YoutubeService {
       return false
     }
   }
-
-  // // 视频发布
-  // async videoPub(accountId: string, pubParams: KwaiVideoPubParams) {
-  //   const accountToken = await this.getAccessTokenAndRefresh(accountId)
-  //   if (accountToken === null) {
-  //     throw new Error('快手账户过期')
-  //   }
-  //   return await this.kwaiApiService.publishVideo(accountToken, pubParams)
-  // }
-
-  /**
-   * 视频发布 发布视频接口为异步发布，该接口返回结果后，不代表视频已经同步发布到用户P页。如关心最终发布结果，需要自行判断。
-   * @param accountToken
-   * @param pubParams 视频发布参数
-   */
-  // async publishVideo(
-  //   accountToken: string,
-  //   pubParams: KwaiVideoPubParams,
-  // )
 }

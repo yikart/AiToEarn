@@ -18,7 +18,7 @@ export enum Currency {
 
 export interface CreateBoardBody {
   name: string // board名称;
-  userId?: string
+  accountId?: string
 }
 
 export interface CreatePinBody {
@@ -32,7 +32,7 @@ export interface CreatePinBody {
   media_id?: string
   url?: string
   items?: CreatePinBodyItem[]
-  userId?: string
+  accountId?: string
 
 }
 
@@ -63,7 +63,9 @@ export enum ILoginStatus {
 
 export interface AuthInfo {
   status: number
-  userId: string
+  userId?: string
+  taskId?: string
+  accountId?: string
   access_token?: string
   expires_in?: number
 }

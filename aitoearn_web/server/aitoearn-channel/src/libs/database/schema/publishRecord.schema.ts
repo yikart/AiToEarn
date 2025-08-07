@@ -14,7 +14,7 @@ import { PublishTask } from './publishTask.schema'
   versionKey: false,
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
-  timestamps: false,
+  timestamps: true,
 })
 export class PublishRecord extends PublishTask {
   @Prop({

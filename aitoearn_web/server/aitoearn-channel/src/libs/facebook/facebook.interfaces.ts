@@ -1,17 +1,17 @@
-export interface FacebookInitialUploadRequest {
+export interface FacebookInitialVideoUploadRequest {
   upload_phase: 'start' | 'transfer' | 'finish' | 'cancel'
   file_size: number
   published: boolean
 }
 
-export interface FacebookInitialUploadResponse {
+export interface FacebookInitialVideoUploadResponse {
   video_id: string
   upload_session_id: string
   start_offset: number
   end_offset: number
 }
 
-export interface ChunkedFileUploadRequest {
+export interface ChunkedVideoUploadRequest {
   published: boolean
   upload_phase: 'start' | 'transfer' | 'finish' | 'cancel'
   upload_session_id: string
@@ -20,22 +20,22 @@ export interface ChunkedFileUploadRequest {
   video_file_chunk: Buffer
 }
 
-export interface finalizeUploadRequest {
+export interface finalizeVideoUploadRequest {
   upload_phase: 'start' | 'transfer' | 'finish' | 'cancel'
   upload_session_id: string
   published: boolean
 }
 
-export interface finalizeUploadResponse {
+export interface finalizeVideoUploadResponse {
   success: boolean
 }
 
-export interface ChunkedFileUploadResponse {
+export interface ChunkedVideoUploadResponse {
   start_offset: number
   end_offset: number
 }
 
-export interface ResumeFileUploadRequest {
+export interface ResumeVideoUploadRequest {
   uploadSessionId: string
 }
 
@@ -48,14 +48,14 @@ export interface FacebookPost {
   embeddable?: boolean
 }
 
-export interface PublishUploadedVideoPostRequest {
+export interface PublishVideoPostRequest {
   description?: string
   title?: string
   crossposted_video_id: string
   published: boolean
 }
 
-export interface publishUploadedVideoPostResponse {
+export interface publishVideoPostResponse {
   id: string
 }
 
@@ -96,8 +96,19 @@ export interface PageAccessTokenResponse {
 }
 
 export interface FacebookObjectInfo {
+  status: {
+    video_status?: string
+    uploading_phase?: {
+      status: string
+    }
+    processing_phase?: {
+      status: string
+    }
+    publishing_phase?: {
+      status: string
+    }
+  }
   id: string
-  status: string
 }
 
 export interface FacebookInsightsValue {
@@ -131,16 +142,16 @@ export interface FacebookPaginationCursor {
 }
 
 export interface FacebookPagination {
-  cursors: FacebookPaginationCursor
+  cursors?: FacebookPaginationCursor
   next: string
   previous: string
 }
 
 export interface FacebookInsightsRequest {
-  metric: string[]
-  period: 'day' | 'week' | 'days_28' | 'month' | 'lifetime' | 'total_over_range'
+  metric: string,
+  period?: 'day' | 'week' | 'days_28' | 'month' | 'lifetime' | 'total_over_range'
   // enum{today, yesterday, this_month, last_month, this_quarter, maximum, data_maximum, last_3d, last_7d, last_14d, last_28d, last_30d, last_90d, last_week_mon_sun, last_week_sun_sat, last_quarter, last_year, this_week_mon_today, this_week_sun_today, this_year}
-  date_preset: 'today' | 'yesterday' | 'this_month'
+  date_preset?: 'today' | 'yesterday' | 'this_month'
     | 'last_month' | 'this_quarter' | 'maximum'
     | 'data_maximum' | 'last_3d' | 'last_7d'
     | 'last_14d' | 'last_28d' | 'last_30d'
@@ -162,8 +173,82 @@ export interface FacebookPageDetailRequest {
   fields: string,
 }
 
+export interface FacebookPagePicture {
+  data: {
+    url: string
+  }
+}
 export interface FacebookPageDetailResponse {
   id: string,
   fan_count: number,
   followers_count: number,
+  picture?: FacebookPagePicture
+}
+
+export interface FacebookPublishedPostRequest {
+  summary?: boolean
+}
+
+export interface FacebookPagePost {
+  id: string
+  created_time: string
+  message: string
+}
+
+export interface FacebookPublishedPostSummary {
+  total_count: number
+}
+
+export interface FacebookPublishedPostResponse {
+  data: FacebookPagePost[]
+  paging: FacebookPagination
+  summary?: FacebookPublishedPostSummary
+}
+
+export interface FacebookPostDetailRequest {
+  field: string,
+  summary?: boolean
+}
+
+export interface FacebookPostDetailResponse {
+  id: string
+  created_time: string
+  shares?: { count: number }
+}
+
+export interface FacebookPostEdgesRequest {
+  summary: boolean
+  type?: 'LIKE'
+}
+export interface FacebookPostEdgesResponse {
+  summary?: {
+    total_count: number
+  }
+}
+
+export interface FacebookReelRequest {
+  upload_phase: 'start' | 'finish'
+  video_state?: 'draft' | 'published' | 'scheduled'
+  video_id?: string
+  title?: string
+  description?: string
+  scheduled_publish_time?: number
+}
+
+export interface FacebookReelResponse {
+  video_id?: string,
+  upload_url?: string,
+  success?: boolean,
+  message?: string,
+  post_id?: string,
+}
+
+export interface FacebookReelUploadRequest {
+  offset: number
+  file_size: number
+  file: Buffer
+}
+
+export interface FacebookReelUploadResponse {
+  success: boolean
 }

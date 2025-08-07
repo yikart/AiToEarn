@@ -21,7 +21,8 @@ export class AppException extends HttpException {
     }
 
     const payload = {
-      code, message,
+      code,
+      message,
       data,
     }
 

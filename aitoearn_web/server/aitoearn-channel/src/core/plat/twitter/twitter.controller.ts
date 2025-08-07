@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common'
+import { Body, Controller, Get, Post, Query } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
 import { NatsMessagePattern } from '@/common'
 import {
@@ -57,11 +57,18 @@ export class TwitterController {
     })
   }
 
+  @Post('publish')
+  async publishPost(
+    @Body() data: { imgUrlList: string[], videoUrl: string, desc: string, accountId: string },
+  ) {
+    return await this.twitterService.publishPost(data.accountId, data.imgUrlList, data.videoUrl, data.desc)
+  }
+
   // NATS message pattern for post oauth callback
   // get access token and create account
   @NatsMessagePattern('plat.twitter.createAccountAndSetAccessToken')
   async postOAuth2Callback(@Payload() data: CreateAccountAndSetAccessTokenDto) {
-    return await this.twitterService.postOAuth2Callback(data.taskId, {
+    return await this.twitterService.postOAuth2Callback(data.state, {
       code: data.code,
       state: data.state,
     })

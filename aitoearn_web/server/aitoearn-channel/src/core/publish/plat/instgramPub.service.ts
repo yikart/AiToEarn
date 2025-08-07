@@ -72,10 +72,10 @@ export class InstagramPubService extends PublishBase {
       }
 
       if (videoUrl) {
-        const downloadULR = videoUrl.replace('undefined', 'https://ai-to-earn.oss-cn-beijing.aliyuncs.com/')
         const createContainerReq: CreateMediaContainerRequest = {
-          video_url: downloadULR,
+          video_url: videoUrl,
           media_type: InstagramMediaType.REELS,
+          caption: publishTask.title || '',
         }
         if (containerType === 'CAROUSEL') {
           createContainerReq.is_carousel_item = true

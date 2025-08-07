@@ -1,4 +1,4 @@
-import { InstagramInsightsMetricTimeframe, InstagramInsightsMetricType, InstagramInsightsPeriod, InstagramInsightsResultBreakdown, InstagramMediaInsightsPeriod, InstagramMediaInsightsResultBreakdown, InstagramMediaType } from './instagram.enum'
+import { InstagramInsightsMetricTimeframe, InstagramInsightsMetricType, InstagramInsightsResultBreakdown, InstagramMediaInsightsResultBreakdown, InstagramMediaType } from './instagram.enum'
 
 export interface ProductTag {
   product_id: string
@@ -64,10 +64,10 @@ export interface ChunkedMediaUploadRequest extends CreateMediaContainerRequest {
 }
 
 export interface InstagramInsightsRequest {
-  metric: string[]
-  metric_type: InstagramInsightsMetricType
+  metric: string,
+  metric_type?: 'time_series' | 'total_value'
   breakdown?: InstagramInsightsResultBreakdown
-  period?: InstagramInsightsPeriod
+  period?: 'day' | 'lifetime'
   since?: number
   until?: number
   timeframe?: InstagramInsightsMetricTimeframe
@@ -93,6 +93,7 @@ export interface InstagramInsightsResult {
   period: string
   title: string
   total_value?: InstagramInsightsValue[]
+  values: InstagramInsightsValue[]
 }
 
 export interface InstagramPaginationCursor {
@@ -110,10 +111,10 @@ export interface InstagramInsightsResponse {
   paging: InstagramPagination
 }
 
-export interface MediaInsightsRequest {
+export interface InstagramMediaInsightsRequest {
   breakdown?: InstagramMediaInsightsResultBreakdown
-  metric: string[]
-  period?: InstagramMediaInsightsPeriod
+  metric: string,
+  period?: 'day' | 'lifetime' | 'week'
   metric_type?: InstagramInsightsMetricType
   since?: number
   until?: number

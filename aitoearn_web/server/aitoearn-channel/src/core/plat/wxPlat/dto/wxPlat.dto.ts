@@ -6,13 +6,6 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator'
-/*
- * @Author: nevin
- * @Date: 2024-06-17 20:12:31
- * @LastEditTime: 2025-05-06 15:49:03
- * @LastEditors: nevin
- * @Description: 用户
- */
 import { AddArchiveData } from '@/libs/bilibili/comment'
 
 export class AccountIdDto {

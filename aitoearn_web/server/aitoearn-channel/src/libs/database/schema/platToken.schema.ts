@@ -13,7 +13,7 @@ export enum TokenStatus {
   versionKey: false,
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
-  timestamps: false,
+  timestamps: true,
 })
 export class PlatToken extends BaseTemp {
   @Prop({

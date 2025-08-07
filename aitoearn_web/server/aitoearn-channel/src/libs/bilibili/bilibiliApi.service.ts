@@ -46,7 +46,7 @@ export class BilibiliApiService {
     const state = getRandomString(8)
     const url
       = type === 'h5'
-        ? `https://account.bilibili.com/h5/account-h5/auth/oauth?navhide=1&callback=close&gourl=${gourl}&client_id=${this.appId}&state=${state}`
+        ? `https://account.bilibili.com/h5/account-h5/auth/oauth?navhide=1&callback=skip&gourl=${gourl}&client_id=${this.appId}&state=${state}`
         : `https://account.bilibili.com/pc/account-pc/auth/oauth?client_id=${this.appId}&gourl=${gourl}&state=${state}`
 
     return {
@@ -607,7 +607,7 @@ export class BilibiliApiService {
       return result.data.data
     }
     catch (error) {
-      console.error('-------- getUserStat bilibili error ------', error)
+      Logger.error('-------- getUserStat bilibili error ------', error)
       return {
         arc_passed_total: 0,
         follower: 0,
@@ -663,7 +663,7 @@ export class BilibiliApiService {
       return result.data.data
     }
     catch (error) {
-      console.error('-------- getArcStat bilibili error ------', error)
+      Logger.error('-------- getArcStat bilibili error ------', error)
       return {
         coin: 0,
         danmaku: 0,

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>授权登录结果</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .logo {
+      margin-bottom: 30px;
+    }
+
+    .logo-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+
+    .logo-icon::before {
+      content: "✓";
+      color: white;
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    h3 {
+      color: #333;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 30px;
+    }
+
+    .status-card {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 25px;
+      text-align: left;
+    }
+
+    .status-item {
+      margin-bottom: 15px;
+      display: flex;
+    }
+
+    .status-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .status-label {
+      font-weight: 600;
+      color: #495057;
+      min-width: 80px;
+      margin-right: 10px;
+    }
+
+    .status-value {
+      color: #212529;
+      word-break: break-all;
+    }
+
+    .success {
+      border-left: 4px solid #28a745;
+    }
+
+    .error {
+      border-left: 4px solid #dc3545;
+    }
+
+    .processing {
+      border-left: 4px solid #ffc107;
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .success .status-indicator {
+      background-color: #28a745;
+    }
+
+    .error .status-indicator {
+      background-color: #dc3545;
+    }
+
+    .processing .status-indicator {
+      background-color: #ffc107;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    .message {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #6c757d;
+      margin-bottom: 30px;
+    }
+
+    .account-info {
+      background: #e9ecef;
+      border-radius: 6px;
+      padding: 12px 15px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      color: #495057;
+      word-break: break-all;
+    }
+
+    .redirect-message {
+      margin-top: 25px;
+      font-size: 14px;
+      color: #6c757d;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top-color: #667eea;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px 20px;
+      }
+
+      h3 {
+        font-size: 20px;
+      }
+
+      .status-label {
+        min-width: 70px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="logo">
+      <div class="logo-icon"></div>
+    </div>
+
+    <h3>授权登录</h3>
+
+    <div class="status-card <%= status === 'success' ? 'success' : (status === 'error' ? 'error' : 'processing') %>">
+      <div class="status-item">
+        <span class="status-indicator"></span>
+        <span class="status-label">状态:</span>
+        <span class="status-value">
+          <% if (status==='success' ) { %>
+            授权成功
+            <% } else if (status==='error' ) { %>
+              授权失败
+              <% } else { %>
+                处理中
+                <% } %>
+        </span>
+      </div>
+
+      <% if (typeof message !=='undefined' && message) { %>
+        <div class="status-item">
+          <span class="status-label">信息:</span>
+          <span class="status-value">
+            <%= message %>
+          </span>
+        </div>
+        <% } %>
+
+          <% if (typeof accountId !=='undefined' && accountId) { %>
+            <div class="status-item">
+              <span class="status-label">账户:</span>
+              <span class="status-value">
+                <%= accountId %>
+              </span>
+            </div>
+            <% } %>
+    </div>
+
+    <% if (status==='success' ) { %>
+      <div class="message">
+        授权登录已完成，您现在可以关闭此页面或返回应用。
+      </div>
+      <% } else if (status==='error' ) { %>
+        <div class="message">
+          授权登录失败，请检查信息后重试。
+        </div>
+        <% } else { %>
+          <div class="message">
+            <span class="spinner"></span>
+            正在处理授权请求，请稍候...
+          </div>
+          <% } %>
+
+            <% if (typeof accountId !=='undefined' && accountId) { %>
+              <div class="account-info">
+                账户ID: <%= accountId %>
+              </div>
+              <% } %>
+
+                <div class="redirect-message">
+                  页面将在 <span id="countdown">5</span> 秒后自动关闭
+                </div>
+  </div>
+
+  <script>
+    // 自动倒计时关闭页面
+    let countdown = 5;
+    const countdownElement = document.getElementById('countdown');
+
+    const countdownInterval = setInterval(() => {
+      countdown--;
+      countdownElement.textContent = countdown;
+
+      if (countdown <= 0) {
+        clearInterval(countdownInterval);
+        // 尝试关闭窗口，如果无法关闭则提示用户手动关闭
+        window.close();
+      }
+    }, 1000);
+
+    // 如果是成功状态，可以考虑自动跳转到应用主页
+    // if (status === 'success') {
+    //   setTimeout(() => {
+    //     // 这里可以添加跳转逻辑，如果需要的话
+    //     // window.location.href = '/dashboard';
+    //   }, 3000);
+    // }
+  </script>
+</body>
+
+</html>

@@ -87,7 +87,7 @@ export class UserVipInfo {
   versionKey: false,
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
-  timestamps: false,
+  timestamps: true,
 })
 export class User extends BaseTemp {
   id: string

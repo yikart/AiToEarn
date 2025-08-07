@@ -34,9 +34,14 @@ export interface FacebookPageInfo {
   expires_in: number
 }
 
+export interface FacebookPageCredentials extends FacebookPageInfo {
+  facebook_user_id: string
+}
+
 export interface FacebookPage {
   id: string
   name: string
+  profile_picture_url?: string
 }
 
 export interface FacebookAccountResponse {
@@ -46,4 +51,10 @@ export interface FacebookAccountResponse {
 export interface MetaObjectInfo {
   id: string
   status: string
+}
+
+export interface SelectFacebookPagesResponse {
+  success: boolean
+  message?: string
+  selectedPageIds: string[]
 }

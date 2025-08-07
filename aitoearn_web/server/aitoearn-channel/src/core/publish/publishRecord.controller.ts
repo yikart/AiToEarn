@@ -9,12 +9,26 @@ import { Controller } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
 import { AsyncApiSub } from 'nestjs-asyncapi'
 import { NatsMessagePattern } from '@/common'
-import { PublishRecordIdDto, PublishRecordListFilterDto } from './dto/publish.dto'
+import { CreatePublishRecordDto, PublishRecordIdDto, PublishRecordListFilterDto } from './dto/publish.dto'
 import { PublishRecordService } from './publishRecord.service'
 
 @Controller()
 export class PublishRecordController {
   constructor(private readonly publishRecordService: PublishRecordService) {}
+
+  @AsyncApiSub({
+    description: '创建发布记录',
+    summary: '创建发布记录',
+    channel: 'publish.publishRecord.createRecord',
+    message: {
+      payload: CreatePublishRecordDto,
+    },
+  })
+  @NatsMessagePattern('publish.publishRecord.createRecord')
+  async createPublishRecord(@Payload() data: CreatePublishRecordDto) {
+    const res = await this.publishRecordService.createPublishRecord(data)
+    return res
+  }
 
   @AsyncApiSub({
     description: '删除发布记录',
@@ -24,6 +38,7 @@ export class PublishRecordController {
       payload: PublishRecordIdDto,
     },
   })
+  @NatsMessagePattern('publish.publishRecord.delete')
   async deletePublishRecord(@Payload() data: PublishRecordIdDto) {
     const res = await this.publishRecordService.deletePublishRecordById(
       data.id,

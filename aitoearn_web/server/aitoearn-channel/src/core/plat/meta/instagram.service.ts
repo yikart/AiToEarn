@@ -2,7 +2,16 @@ import { Injectable, Logger } from '@nestjs/common'
 import { getCurrentTimestamp } from '@/common'
 import { config } from '@/config'
 import { RedisService } from '@/libs'
-import { ChunkedMediaUploadRequest, CreateMediaContainerRequest, CreateMediaContainerResponse, InstagramInsightsRequest, InstagramInsightsResponse, InstagramUserInfoRequest, InstagramUserInfoResponse } from '@/libs/instagram/instagram.interfaces'
+import {
+  ChunkedMediaUploadRequest,
+  CreateMediaContainerRequest,
+  CreateMediaContainerResponse,
+  InstagramInsightsRequest,
+  InstagramInsightsResponse,
+  InstagramMediaInsightsRequest,
+  InstagramUserInfoRequest,
+  InstagramUserInfoResponse,
+} from '@/libs/instagram/instagram.interfaces'
 import { InstagramService as InstagramAPIService } from '@/libs/instagram/instagram.service'
 import { META_TIME_CONSTANTS, MetaRedisKeys } from './constants'
 import { MetaUserOAuthCredential } from './meta.interfaces'
@@ -144,9 +153,8 @@ export class InstagramService {
     return await this.instagramAPIService.getObjectInfo(credential.access_token, objectId, fields)
   }
 
-  async getInsights(
+  async getAccountInsights(
     accountId: string,
-    accessToken: string,
     query: InstagramInsightsRequest,
     requestURL?: string,
   ): Promise<InstagramInsightsResponse | null> {
@@ -155,15 +163,15 @@ export class InstagramService {
       this.logger.error(`No valid access token found for accountId: ${accountId}`)
       return null
     }
-    return await this.instagramAPIService.getInsights(
-      accessToken,
+    return await this.instagramAPIService.getAccountInsights(
+      credential.access_token,
       credential.user_id,
       query,
       requestURL,
     )
   }
 
-  async getUserInfo(
+  async getAccountInfo(
     accountId: string,
     query: InstagramUserInfoRequest,
   ): Promise<InstagramUserInfoResponse | null> {
@@ -172,9 +180,26 @@ export class InstagramService {
       this.logger.error(`No valid access token found for accountId: ${accountId}`)
       return null
     }
-    return await this.instagramAPIService.getUserInfo(
+    return await this.instagramAPIService.getAccountInfo(
       credential.user_id,
       credential.access_token,
+      query,
+    )
+  }
+
+  async getMediaInsights(
+    accountId: string,
+    mediaId: string,
+    query: InstagramMediaInsightsRequest,
+  ): Promise<InstagramInsightsResponse | null> {
+    const credential = await this.authorize(accountId)
+    if (!credential) {
+      this.logger.error(`No valid access token found for accountId: ${accountId}`)
+      return null
+    }
+    return await this.instagramAPIService.getMediaInsights(
+      credential.access_token,
+      mediaId,
       query,
     )
   }

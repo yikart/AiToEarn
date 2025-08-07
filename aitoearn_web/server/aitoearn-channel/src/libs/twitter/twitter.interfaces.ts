@@ -43,6 +43,7 @@ export interface TwitterFollowingResponse {
 }
 
 export interface XMediaUploadInitRequest {
+  // command: 'INIT' | 'APPEND' | 'FINALIZE'
   media_type: XMediaType
   total_bytes: number
   media_category: XMediaCategory
@@ -50,7 +51,7 @@ export interface XMediaUploadInitRequest {
 }
 
 export interface XMediaUploadProcessingInfo {
-  state: string
+  state: 'succeeded' | 'in_progress' | 'pending' | 'failed'
   progress_percent?: number
   check_after_secs?: number
 }
@@ -61,6 +62,8 @@ export interface XMediaUploadResponseData {
   expires_after_secs: number
   size: number
   processing_info: XMediaUploadProcessingInfo
+  expires_at?: string // ISO 8601 format
+  state?: string // e.g., "succeeded", "failed"
 }
 
 export interface XMediaUploadResponse {
@@ -70,10 +73,8 @@ export interface XMediaUploadResponse {
 
 export interface XChunkedMediaUploadRequest {
   media: Buffer
-  media_category: XMediaCategory
-  additional_owners?: string[]
-  media_type?: XMediaType
-  shared?: boolean
+  media_id: string,
+  segment_index: number
 }
 
 export interface Geo {

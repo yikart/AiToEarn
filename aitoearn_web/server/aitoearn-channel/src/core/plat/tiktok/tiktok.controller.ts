@@ -80,7 +80,7 @@ export class TiktokController {
     @Payload() data: CreateAccountAndSetAccessTokenDto,
   ) {
     return await this.tiktokService.createAccountAndSetAccessToken(
-      data.taskId,
+      data.state,
       {
         code: data.code,
         state: data.state,

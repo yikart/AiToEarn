@@ -60,7 +60,7 @@ export interface WxPlatAuthorizerInfo {
   authorizer_appid: string // 授权方 appid
   authorizer_access_token: string // 接口调用令牌（在授权的公众号/小程序具备 API 权限时，才有此返回值）
   expires_in: number // authorizer_access_token 的有效期（在授权的公众号/小程序具备API权限时，才有此返回值），单位：秒
-  authorizer_refresh_token: string // 刷新令牌（在
+  authorizer_refresh_token: string // 刷新令牌
   func_info: {
     funcscope_category: {
       id: number // 1;

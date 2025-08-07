@@ -3,6 +3,7 @@ import { NestApplication, NestFactory } from '@nestjs/core'
 import { MicroserviceOptions, Transport } from '@nestjs/microservices'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { AsyncApiDocumentBuilder, AsyncApiModule } from 'nestjs-asyncapi'
+import { Logger as PinoLogger } from 'nestjs-pino'
 import z from 'zod/v4'
 import { config } from '@/config'
 import { AppModule } from './app.module'
@@ -14,6 +15,7 @@ async function bootstrap() {
   const app = await NestFactory.create<
     NestApplication & NestExpressApplication
   >(AppModule)
+  app.useLogger(app.get(PinoLogger))
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.NATS,
     options: {
@@ -22,6 +24,8 @@ async function bootstrap() {
       user: config.nats.user,
       pass: config.nats.pass,
     },
+  }, {
+    inheritAppConfig: true,
   })
   await app.startAllMicroservices()
 

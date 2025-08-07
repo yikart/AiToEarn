@@ -12,8 +12,8 @@ import { ExceptionCode } from '@/common/enums/exception-code.enum';
 import { config } from '@/config';
 import { AccountService } from '@/core/account/account.service';
 import { RedisService } from '@/libs';
+import { MyWxPlatApiService } from '@/libs/myWxPlat/myWxPlatApi.service';
 import { WxPlatAuthorizerInfo } from '@/libs/wxPlat/comment';
-import { WxPlatApiService } from '@/libs/wxPlat/wxPlatApi.service';
 import { AccountType, NewAccount } from '@/transports/account/common';
 import { AuthTaskInfo } from '../common';
 import { WxPlatAuthInfo } from './common';
@@ -21,19 +21,14 @@ import { decode } from './WXMsgCrypto';
 
 @Injectable()
 export class WxPlatService {
-  private authBackHost = '';
-  private prefix = '';
   private encodingAESKey = '';
-  private componentAccessTokenCacheKey = 'wxPlat:component_access_token';
 
   constructor(
     private readonly redisService: RedisService,
-    private readonly wxPlatApiService: WxPlatApiService,
+    private readonly myWxPlatApiService: MyWxPlatApiService,
     private readonly accountService: AccountService,
   ) {
-    this.prefix = config.nats.prefix;
     this.encodingAESKey = config.wxPlat.encodingAESKey;
-    this.authBackHost = config.wxPlat.authBackHost;
   }
 
   private getAuthDataCacheKey(taskId: string) {
@@ -55,67 +50,6 @@ export class WxPlatService {
   }
 
   /**
-   * 设置三方平台票据
-   * @param componentVerifyTicket
-   */
-  async setComponentVerifyTicket(componentVerifyTicket: string) {
-    const value = await this.getComponentVerifyTicket();
-    if (value)
-      return true;
-
-    const res = await this.redisService.setKey<string>(
-      `wxPlat:component_verify_ticket`,
-      componentVerifyTicket,
-      11 * 60 * 60,
-    );
-    return res;
-  }
-
-  /**
-   * 获取三方平台票据
-   */
-  getComponentVerifyTicket() {
-    return this.redisService.get<string>(
-      `wxPlat:component_verify_ticket`,
-      false,
-    );
-  }
-
-  /**
-   * 获取component_access_token企业授权token
-   * @returns
-   */
-  private async getComponentAccessToken(): Promise<string | null> {
-    const token = await this.redisService.get<string>(
-      this.componentAccessTokenCacheKey,
-      false,
-    );
-    if (token)
-      return token;
-
-    const componentVerifyTicket = await this.getComponentVerifyTicket();
-    if (!componentVerifyTicket)
-      return null;
-
-    const res = await this.wxPlatApiService.getComponentAccessToken(
-      componentVerifyTicket,
-    );
-
-    Logger.debug('----- setComponentAccessToken -----', res);
-    if (!res)
-      return null;
-
-    // 缓存
-    const setValue = await this.redisService.setKey(
-      this.componentAccessTokenCacheKey,
-      res.component_access_token,
-      res.expires_in - 1200,
-    );
-
-    return setValue ? res.component_access_token : null;
-  }
-
-  /**
    * 创建用户授权任务
    */
   async createAuthTask(
@@ -130,7 +64,7 @@ export class WxPlatService {
   ) {
     const taskId = uuidv4();
 
-    const authUrl = await this.getAuthPageUrl(taskId, data.type);
+    const authUrl = await this.getAuthPageUrl(data.type);
     if (!authUrl)
       throw new AppException(ExceptionCode.File, '不存在平台授权令牌');
 
@@ -169,28 +103,15 @@ export class WxPlatService {
 
   /**
    * 获取授权页面链接
-   * @param userId
    * @param type
    * @returns
    */
-  async getAuthPageUrl(taskId: string, type: 'h5' | 'pc'): Promise<string> {
-    const componentAccessToken = await this.getComponentAccessToken();
-    if (!componentAccessToken)
+  async getAuthPageUrl(type: 'h5' | 'pc'): Promise<string> {
+    const res = await this.myWxPlatApiService.getAuthPageUrl(type);
+    if (!res)
       throw new AppException(ExceptionCode.File, '不存在平台授权令牌');
 
-    const redirectUri = `${this.authBackHost}/wxPlat/auth/back/${taskId}`;
-
-    const res
-      = await this.wxPlatApiService.getPreAuthCode(componentAccessToken);
-    if (!res)
-      throw new AppException(ExceptionCode.File, '获取预授权码失败');
-
-    const outUrl = this.wxPlatApiService.getAuthPageUrl(
-      res.pre_auth_code,
-      redirectUri,
-      type,
-    );
-    return outUrl;
+    return res;
   }
 
   async checkAuth(accountId: string): Promise<{
@@ -238,24 +159,14 @@ export class WxPlatService {
     void this.redisService.setPexire(this.getAuthDataCacheKey(taskId), 60 * 3);
 
     // 根据授权码获取授权信息
-    const componentAccessToken = await this.getComponentAccessToken();
-    if (!componentAccessToken)
+    const auth = await this.myWxPlatApiService.getQueryAuth(authData.authCode);
+    if (!auth) {
+      void this.redisService.del(this.getAuthDataCacheKey(taskId));
       return null;
-
-    const auth = await this.wxPlatApiService.getQueryAuth(
-      componentAccessToken,
-      authData.authCode,
-    );
-    if (!auth)
-      return null;
-
+    }
     const { authorizer_appid, expires_in } = auth;
 
-    // 获取授权方的账号信息
-    const authInfo = await this.wxPlatApiService.getAuthorizerInfo(
-      componentAccessToken,
-      authorizer_appid,
-    );
+    const authInfo = await this.myWxPlatApiService.getAuthorizerInfo(authorizer_appid);
     if (!authInfo)
       return null;
 
@@ -331,13 +242,7 @@ export class WxPlatService {
         if (overTime < 60 * 10)
           return info;
 
-        // 快超时就重新获取
-        const componentAccessToken = await this.getComponentAccessToken();
-        if (!componentAccessToken)
-          throw new Error('获取授权方令牌失败');
-
-        const newInfo = await this.wxPlatApiService.getAuthorizerAccessToken(
-          componentAccessToken,
+        const newInfo = await this.myWxPlatApiService.getAuthorizerAccessToken(
           info.authorizer_appid,
           info.authorizer_refresh_token,
         );
@@ -363,13 +268,7 @@ export class WxPlatService {
       if (!refreshToken)
         throw new Error('获取授权方刷新令牌失败');
 
-      // 快超时就重新获取
-      const componentAccessToken = await this.getComponentAccessToken();
-      if (!componentAccessToken)
-        throw new Error('获取授权方令牌失败');
-
-      const newInfo = await this.wxPlatApiService.getAuthorizerAccessToken(
-        componentAccessToken,
+      const newInfo = await this.myWxPlatApiService.getAuthorizerAccessToken(
         accountInfo.uid,
         refreshToken,
       );

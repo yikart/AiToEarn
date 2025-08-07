@@ -6,15 +6,14 @@
  * @Description:
  */
 
-import { encryptPassword, getRandomString } from '@common/utils'
+import { getRandomString } from '@common/utils'
 import { User } from '@libs/database/schema'
 
 export class NewUserByMail extends User {
-  constructor(mail: string, inPassword: string) {
+  constructor(mail: string, password: string, salt: string) {
     super()
     this.mail = mail
     this.name = `用户_${getRandomString(8)}`
-    const { password, salt } = encryptPassword(inPassword)
     this.password = password
     this.salt = salt
   }

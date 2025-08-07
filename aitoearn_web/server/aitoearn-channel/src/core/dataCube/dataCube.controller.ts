@@ -13,6 +13,7 @@ import { AccountService } from '../account/account.service';
 import { BilibiliDataService } from './bilibiliData.service';
 import { DataCubeBase } from './data.base';
 import { AccountDto, ArcDto } from './dto/dataCube.dto';
+import { YoutubeDataService } from './youtubeData.service';
 
 @Controller()
 export class DataCubeController {
@@ -21,8 +22,10 @@ export class DataCubeController {
   constructor(
     readonly accountService: AccountService,
     readonly bilibiliDataService: BilibiliDataService,
+    readonly youtubeDataService: YoutubeDataService,
   ) {
     this.dataCubeMap.set(AccountType.BILIBILI, bilibiliDataService);
+    this.dataCubeMap.set(AccountType.YOUTUBE, youtubeDataService);
   }
 
   private async getDataCube(accountId: string) {

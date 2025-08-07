@@ -3,9 +3,9 @@ import { NestApplication, NestFactory } from '@nestjs/core'
 import { MicroserviceOptions, Transport } from '@nestjs/microservices'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import * as bodyParser from 'body-parser'
+import { Logger as PinoLogger } from 'nestjs-pino'
 import z from 'zod/v4'
 import { config } from '@/config'
-import { name, version } from '../package.json'
 import { AppModule } from './app.module'
 // import { AsyncApiDocumentBuilder, AsyncApiModule } from 'nestjs-asyncapi'
 
@@ -16,6 +16,7 @@ async function bootstrap() {
   const app = await NestFactory.create<
     NestApplication & NestExpressApplication
   >(AppModule)
+  app.useLogger(app.get(PinoLogger))
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.NATS,
@@ -51,14 +52,13 @@ async function bootstrap() {
   app.use(bodyParser.text({ type: 'application/xml' }))
   app.use(bodyParser.text({ type: 'text/xml' }))
   await app.listen(config.port, () => {
-    // 获取文件package.json里的版本号的值
-    Logger.log(`---(^_^) nats server start---: ${name}[${version}]`)
+    Logger.log(`---(^_^) nats server start---`)
     Logger.log(
-      `---(^_^) http server start---: ${name}[${version}]-- http://localhost:${config.port}`,
+      `---(^_^) http server start--- http://localhost:${config.port}`,
     )
     if (config.docs?.enabled) {
       Logger.log(
-        `---(^_^) nats docs start---: ${name}[${version}]-- http://localhost:${config.port}${config.docs.path}`,
+        `---(^_^) nats docs start--- http://localhost:${config.port}${config.docs.path}`,
       )
     }
   })

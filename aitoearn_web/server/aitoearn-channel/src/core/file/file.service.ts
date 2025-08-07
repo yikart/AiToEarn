@@ -1,50 +1,29 @@
-import { Duplex } from 'node:stream'
-import { HttpStatus, Injectable, Logger } from '@nestjs/common'
-import * as OSS from 'ali-oss'
-import axios from 'axios'
-import dayjs from 'dayjs'
-import { v4 as uuidv4 } from 'uuid'
-import { config } from '@/config'
-import { AliOSSService } from '@/libs/ali-oss/ali-oss.service'
+import { Injectable } from '@nestjs/common';
+import * as mime from 'mime-types';
+import moment from 'moment';
+import { v4 as uuidv4 } from 'uuid';
+import { config } from '@/config';
+import { S3Service } from '@/libs/aws-s3/s3.service';
 
 @Injectable()
 export class FileService {
-  private HOST_URL: string
-  private NODE_ENV: string
-  private client: OSS
-  constructor(
-    private readonly ossService: AliOSSService,
-  ) {
-    this.HOST_URL = config.oss.hostUrl
-    this.NODE_ENV = config.env
-    this.client = this.ossService.client
-  }
+  constructor(private readonly s3Service: S3Service) {}
 
   private getNewFilePath(opt: {
-    path: string
-    newName?: string
-    permanent?: boolean
+    path: string;
+    newName?: string;
+    permanent?: boolean;
   }) {
-    let { path, newName } = opt
+    let { path, newName } = opt;
 
-    path = `${this.NODE_ENV}/${opt.permanent ? '' : 'temp/'}${path || `nopath/${dayjs().format('YYYYMM')}`}`
-    path = path.replace('//', '/')
-    newName = newName || uuidv4()
+    path = `${config.env}/${opt.permanent ? '' : 'temp/'}${path || `nopath/${moment().format('YYYYMM')}`}`;
+    path = path.replace('//', '/');
+    newName = newName || uuidv4();
 
     return {
       path,
       newName,
-    }
-  }
-
-  /**
-   * 获取完整url中的文件名即去除host域名
-   * @param url
-   * @returns
-   */
-  getFileNameFromUrl(url: string) {
-    const tempStr = url.split(`${this.HOST_URL}/`)
-    return tempStr.length <= 0 ? '' : tempStr[tempStr.length - 1]
+    };
   }
 
   /**
@@ -61,180 +40,138 @@ export class FileService {
     newName?: string,
     permanent?: boolean,
   ) {
-    const { buffer, originalname } = file
-    const fileExtension = originalname.split('.').pop()?.toLowerCase() || ''
+    const { path: newPath, newName: newFileName } = this.getNewFilePath({
+      path,
+      newName,
+      permanent,
+    });
+    const filePath = `${newPath}/${newFileName}.${mime.extension(file.mimetype)}`;
+    const res = await this.s3Service.uploadFile(
+      filePath,
+      file.buffer,
+      file.mimetype,
+    );
 
-    const ret = this.getNewFilePath({ path, newName, permanent })
-    path = ret.path
-    newName = ret.newName
-
-    const stream = new Duplex()
-    stream.push(buffer)
-    stream.push(null)
-
-    try {
-      const upRes = await this.client.putStream(
-        `${path}/${newName}.${fileExtension}`,
-        stream,
-      )
-
-      const {
-        name,
-        res: { status },
-      } = upRes
-
-      if (status !== HttpStatus.OK)
-        throw new Error('文件上传失败')
-
-      return {
-        name,
-      }
-    }
-    catch (error) {
-      Logger.error(error)
-
-      return {
-        name: '',
-      }
-    }
-  }
-
-  /**
-   * 去除文件前置
-   * @param filePath
-   */
-  private noHostFilePath(filePath: string) {
-    const hostUrl = config.oss.hostUrl
-
-    const _hostUrl = hostUrl.replace('https', 'http')
-    if (filePath.indexOf(_hostUrl) === 0) {
-      filePath = filePath.replace(`${_hostUrl}/`, '')
-      return this.noHostFilePath(filePath)
-    }
-
-    return filePath
-  }
-
-  /**
-   * 将临时目录文件转到新的目录文件
-   * @param filePath 原文件地址
-   * @param newFilePath 不填就是去除temp标识
-   * @returns
-   */
-  async changeFilePath(
-    filePath: string,
-    newFilePath?: string,
-  ): Promise<string> {
-    // 干掉前置
-    filePath = this.noHostFilePath(filePath)
-
-    // 复制文件
-    newFilePath = newFilePath || filePath.replace('temp/', '')
-
-    if (filePath === newFilePath)
-      return filePath
-
-    try {
-      const {
-        res: { status },
-      } = await this.client.copy(newFilePath, filePath)
-      if (status !== HttpStatus.OK)
-        throw new Error('文件上传失败')
-      return newFilePath
-    }
-    catch (error) {
-      Logger.error('========== error', error)
-      throw error
-    }
+    return res;
   }
 
   /**
    * 上传二进制流文件
    * @param buffer 二进制流 base64格式
-   * @param path 路径
-   * @param permanent 是否为永久目录，默认临时
+   * @param option
+   * @param option.path 路径
+   * @param option.permanent 是否为永久目录，默认临时
+   * @param option.fileType 文件后缀
    */
   async uploadByStream(
     buffer: Buffer, // base64格式(不带前缀)
     option: {
-      path?: string
-      permanent?: boolean
-      fileType: string
+      path?: string;
+      permanent?: boolean;
+      fileType: string;
     },
   ): Promise<string> {
-    const { path, permanent, fileType } = option
-    const objectName = `${this.NODE_ENV}/${permanent ? '' : 'temp/'}${path || 'nopath'}${`/${dayjs().format('YYYYMM')}/${uuidv4()}.${fileType}`}`
+    const { path, permanent, fileType } = option;
+    const objectName = `${config.env}/${permanent ? '' : 'temp/'}${path || 'nopath'}${`/${moment().format('YYYYMM')}/${uuidv4()}.${fileType}`}`;
+    const res = await this.s3Service.uploadFile(
+      objectName,
+      buffer,
+      `application/${fileType}`,
+    );
 
-    // 上传到阿里云
-    try {
-      const res = await this.client.put(objectName, buffer)
-      return res.name
-    }
-    catch (error) {
-      Logger.error('----- uploadByBase64 error -----', error)
-      return ''
-    }
+    return res.key;
   }
 
-  /**
-   * 根据网络地址上传到阿里云
-   * @param url
-   * @param option
-   * @returns
-   */
+  // 根据URL上传文件
   async upFileByUrl(
     url: string,
-    option: {
-      path?: string
-      permanent?: boolean // 是否为永久目录，默认临时
-    },
-  ) {
-    const { path, permanent } = option
-    let fileType = ''
-    if (url.includes('.'))
-      fileType = url.split('.').pop() || ''
+    option: { path?: string; permanent?: boolean; fileType?: string },
+  ): Promise<string> {
+    const { path, permanent, fileType } = option;
+    const objectName = `${config.env}/${permanent ? '' : 'temp/'}${path || 'nopath'}${`/${moment().format('YYYYMM')}/${uuidv4()}.${fileType || 'jpg'}`}`;
+    const res = await this.s3Service.uploadFile(
+      objectName,
+      Buffer.from(url, 'base64'),
+      `application/${fileType || 'octet-stream'}`,
+    );
 
-    const objectName = `${this.NODE_ENV}/${permanent ? '' : 'temp/'}${path || 'nopath'}${`/${dayjs().format('YYYYMM')}/${uuidv4()}.${fileType}`}`
-
-    try {
-      const response = await axios.get(url, { responseType: 'arraybuffer' })
-      const buffer = Buffer.from(response.data)
-
-      const res = await this.client.put(objectName, buffer)
-      return res.name
-    }
-    catch (error) {
-      Logger.error(error)
-      return ''
-    }
+    return res.key;
   }
 
   /**
-   * TODO: 未完成 未使用 上传base64图片
+   * 初始化分片
+   * @param path
+   * @param fileType
+   * @returns
    */
-  async uploadByBuffer(
-    base64Img: string,
-    path?: string,
-    permanent?: boolean,
-  ): Promise<string> {
-    const imageBuffer = Buffer.from(base64Img, 'base64')
-    const objectName = `${this.NODE_ENV}/${permanent ? '' : 'temp/'}${`nopath/${dayjs().format('YYYYMM')}/${uuidv4()}.png`}`
-    try {
-      const {
-        url,
-        res: { status },
-      } = await this.client.put(objectName, imageBuffer)
+  async initiateMultipartUpload(path: string, fileType: string) {
+    const { path: newPath, newName: newFileName } = this.getNewFilePath({
+      path,
+    });
+    const filePath = `${newPath}/${newFileName}.${mime.extension(fileType)}`;
+    const res = await this.s3Service.initiateMultipartUpload(filePath);
+    return {
+      uploadId: res,
+      fileId: filePath,
+    };
+  }
 
-      if (status === 200) {
-        return url
-      }
-      else {
-        return ''
-      }
-    }
-    catch (error) {
-      Logger.error('-------- ali-oss upload error ------', error)
-      return ''
-    }
+  /**
+   * 上传分片数据
+   * @param fileId
+   * @param uploadId
+   * @param partNumber
+   * @param partData
+   * @returns
+   */
+  async uploadPart(
+    fileId: string,
+    uploadId: string,
+    partNumber: number,
+    partData: Buffer,
+  ) {
+    const res = await this.s3Service.uploadPart(
+      fileId,
+      uploadId,
+      partNumber,
+      partData,
+    );
+
+    return {
+      PartNumber: partNumber,
+      ETag: res.ETag,
+    };
+  }
+
+  /**
+   * 合并分片
+   * @param key
+   * @param uploadId
+   * @param parts
+   * @returns
+   */
+  async completeMultipartUpload(
+    key: string,
+    uploadId: string,
+    parts: { PartNumber: number; ETag: string }[],
+  ) {
+    const res = await this.s3Service.completeMultipartUpload(
+      key,
+      uploadId,
+      parts,
+    );
+
+    return res;
+  }
+
+  /**
+   * 文件路径转换为url
+   * @param url 参考标题
+   * @returns
+   */
+  filePathToUrl(url: string): string {
+    if (url.startsWith('http'))
+      return url;
+    return `${config.awsS3.hostUrl}/${url}`;
   }
 }

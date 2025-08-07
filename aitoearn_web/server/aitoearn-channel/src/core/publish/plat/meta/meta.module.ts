@@ -2,6 +2,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose';
 import { MetaModule } from '@/core/plat/meta/meta.module';
+import { TwitterModule } from '@/core/plat/twitter/twitter.module';
 import { MetaContainer, MetaContainerSchema } from '@/libs/database/schema/metaContainer.schema';
 import { PublishRecord, PublishRecordSchema } from '@/libs/database/schema/publishRecord.schema';
 import { PublishTask, PublishTaskSchema } from '@/libs/database/schema/publishTask.schema';
@@ -10,6 +11,7 @@ import { FacebookPublishService } from './facebook.service';
 import { InstagramPublishService } from './instgram.service';
 import { MetaPublishService } from './meta.service';
 import { ThreadsPublishService } from './threads.service';
+import { TwitterPublishService } from './twitter.service';
 
 @Module({
   controllers: [],
@@ -19,6 +21,7 @@ import { ThreadsPublishService } from './threads.service';
     InstagramPublishService,
     ThreadsPublishService,
     MetaContainerService,
+    TwitterPublishService,
   ],
   exports: [
     MetaPublishService,
@@ -26,9 +29,11 @@ import { ThreadsPublishService } from './threads.service';
     InstagramPublishService,
     ThreadsPublishService,
     MetaContainerService,
+    TwitterPublishService,
   ],
   imports: [
     MetaModule,
+    TwitterModule,
     BullModule.registerQueue({
       name: 'bull_publish',
     }),
@@ -37,7 +42,7 @@ import { ThreadsPublishService } from './threads.service';
       prefix: 'meta:',
       defaultJobOptions: {
         attempts: 0,
-        delay: 60000, // 60 seconds
+        delay: 20000, // 20 seconds
         removeOnComplete: true,
       },
     }),

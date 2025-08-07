@@ -19,20 +19,20 @@ export class PinterestController {
 
   // 创建board
   @NatsMessagePattern('plat.pinterest.getBoardList')
-  getBoardList(@Payload() data: { userId: string }) {
-    return this.pinterestService.getBoardList(data.userId)
+  getBoardList(@Payload() data: { accountId: string }) {
+    return this.pinterestService.getBoardList(data.accountId)
   }
 
   // 获取单个board
   @NatsMessagePattern('plat.pinterest.getBoardById')
-  getBoardById(@Payload() data: { id: string, userId: string }) {
-    return this.pinterestService.getBoardById(data.id, data.userId)
+  getBoardById(@Payload() data: { id: string, accountId: string }) {
+    return this.pinterestService.getBoardById(data.id, data.accountId)
   }
 
   // 删除单个board
   @NatsMessagePattern('plat.pinterest.delBoardById')
-  delBoardById(@Payload() data: { id: string, userId: string }) {
-    return this.pinterestService.delBoardById(data.id, data.userId)
+  delBoardById(@Payload() data: { id: string, accountId: string }) {
+    return this.pinterestService.delBoardById(data.id, data.accountId)
   }
 
   // 创建pin
@@ -43,20 +43,20 @@ export class PinterestController {
 
   // 获取pin
   @NatsMessagePattern('plat.pinterest.getPinById')
-  getPinById(@Payload() data: { id: string, userId: string }) {
-    return this.pinterestService.getPinById(data.id, data.userId)
+  getPinById(@Payload() data: { id: string, accountId: string }) {
+    return this.pinterestService.getPinById(data.id, data.accountId)
   }
 
   // 获取pin
   @NatsMessagePattern('plat.pinterest.getPinList')
-  getPinList(@Payload() data: { userId: string }) {
-    return this.pinterestService.getPinList(data.userId)
+  getPinList(@Payload() data: { accountId: string }) {
+    return this.pinterestService.getPinList(data.accountId)
   }
 
   // 删除pin
   @NatsMessagePattern('plat.pinterest.delPinById')
-  delPinById(@Payload() data: { id: string, userId: string }) {
-    return this.pinterestService.delPinById(data.id, data.userId)
+  delPinById(@Payload() data: { id: string, accountId: string }) {
+    return this.pinterestService.delPinById(data.id, data.accountId)
   }
 
   // 获取授权地址
@@ -74,7 +74,7 @@ export class PinterestController {
   // 查询授权结果
   // 获取授权地址
   @NatsMessagePattern('plat.pinterest.checkAuth')
-  checkAuth(@Payload() data: { userId: string }) {
-    return this.pinterestService.checkAuth(data.userId)
+  checkAuth(@Payload() data: { taskId: string }) {
+    return this.pinterestService.checkAuth(data.taskId)
   }
 }

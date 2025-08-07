@@ -1,14 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
-import { config } from '@/config'
 import { MetaOAuthLongLivedCredential } from '@/core/plat/meta/meta.interfaces'
-import { ThreadsAccountInsightsRequest, ThreadsAccountInsightsResponse, ThreadsContainerRequest, ThreadsObjectInfo, ThreadsPostResponse } from './threads.interfaces'
+import { ThreadsOAuth2Config } from './constants'
+import {
+  publicProfileResponse,
+  ThreadsContainerRequest,
+  ThreadsInsightsRequest,
+  ThreadsInsightsResponse,
+  ThreadsObjectInfo,
+  ThreadsPostResponse,
+} from './threads.interfaces'
 
 @Injectable()
 export class ThreadsService {
   private readonly logger = new Logger(ThreadsService.name)
-  private readonly longLivedAccessTokenURL: string = config.meta.threads.longLivedAccessTokenURL
-  private readonly apiBaseUrl: string = config.meta.threads.apiBaseUrl
+  private readonly longLivedAccessTokenURL: string = ThreadsOAuth2Config.longLivedAccessTokenURL
+  private readonly apiBaseUrl: string = ThreadsOAuth2Config.apiBaseUrl
 
   async refreshOAuthCredential(refresh_token: string) {
     const lParams: Record<string, string> = {
@@ -61,10 +68,11 @@ export class ThreadsService {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
+        params: {
+          creation_id: creationId,
+        },
       }
-      const formData = new FormData()
-      formData.append('creation_id', creationId)
-      const response: AxiosResponse<any> = await axios.post(url, formData, config)
+      const response: AxiosResponse<any> = await axios.post(url, config)
       return response.data
     }
     catch (error) {
@@ -100,8 +108,8 @@ export class ThreadsService {
   async getAccountInsights(
     threadsUserId: string,
     accessToken: string,
-    query: ThreadsAccountInsightsRequest,
-  ): Promise<ThreadsAccountInsightsResponse> {
+    query: ThreadsInsightsRequest,
+  ): Promise<ThreadsInsightsResponse> {
     const url = `${this.apiBaseUrl}${threadsUserId}/threads_insights`
     const config: AxiosRequestConfig = {
       headers: {
@@ -109,7 +117,53 @@ export class ThreadsService {
       },
       params: query,
     }
-    const response: AxiosResponse<ThreadsAccountInsightsResponse> = await axios.get(url, config)
+    const response: AxiosResponse<ThreadsInsightsResponse> = await axios.get(url, config)
+    return response.data
+  }
+
+  async getPublicProfile(
+    accessToken: string,
+    username: string,
+  ): Promise<publicProfileResponse> {
+    const url = `${this.apiBaseUrl}public_profile`
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      params: { username },
+    }
+    const response: AxiosResponse<any> = await axios.get(url, config)
+    return response.data
+  }
+
+  async getMediaInsights(
+    mediaId: string,
+    accessToken: string,
+    query: ThreadsInsightsRequest,
+  ): Promise<ThreadsInsightsResponse> {
+    const url = `${this.apiBaseUrl}${mediaId}/threads_insights`
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      params: query,
+    }
+    const response: AxiosResponse<ThreadsInsightsResponse> = await axios.get(url, config)
+    return response.data
+  }
+
+  async getAccountAllPosts(
+    igUserId: string,
+    accessToken: string,
+    reqURL?: string,
+  ): Promise<ThreadsPostResponse> {
+    const url = reqURL || `${this.apiBaseUrl}${igUserId}/threads`
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+    const response: AxiosResponse<ThreadsPostResponse> = await axios.get(url, config)
     return response.data
   }
 }

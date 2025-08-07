@@ -7,9 +7,12 @@
  */
 import { Global, Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
+import mongoose from 'mongoose'
 import { config } from '@/config'
 import { Id, IdSchema } from './id.schema'
 import { IdService } from './id.service'
+
+mongoose.set('transactionAsyncLocalStorage', true)
 
 @Global()
 @Module({

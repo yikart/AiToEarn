@@ -6,3 +6,23 @@ export interface AccessToken {
   token_type?: string
   id_token?: string
 }
+
+// 获取频道列表参数
+export interface GetChannelsListParams {
+  accountId: string;
+  forHandle?: string;
+  forUsername?: string;
+  id?: string[];
+  mine?: boolean;
+  maxResults?: number;
+  pageToken?: string;
+}
+
+export interface GetVideosListParams {
+  accountId: string;
+  chart?: string,
+  id?: string
+  myRating?: boolean
+  maxResults?: number
+  pageToken?: string
+}

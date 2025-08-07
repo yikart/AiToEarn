@@ -1,17 +1,10 @@
 import { InjectQueue } from '@nestjs/bullmq'
-/*
- * @Author: nevin
- * @Date: 2025-02-15 20:59:55
- * @LastEditTime: 2025-04-27 17:58:21
- * @LastEditors: nevin
- * @Description: b站
- */
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { AccountType } from '@transports/account/common'
 import { Queue } from 'bullmq'
 import { Model } from 'mongoose'
-import { FileToolsService } from '@/core/file/fileTools.service'
+import { getFileSizeFromUrl, streamDownloadAndUpload } from '@/common'
 import { YoutubeService } from '@/core/plat/youtube/youtube.service'
 import { PublishRecord } from '@/libs/database/schema/publishRecord.schema'
 import { PublishStatus, PublishTask } from '@/libs/database/schema/publishTask.schema'
@@ -29,7 +22,6 @@ export class YoutubePubService extends PublishBase {
     readonly publishRecordModel: Model<PublishRecord>,
     @InjectQueue('bull_publish') publishQueue: Queue,
     readonly youtubeService: YoutubeService,
-    private readonly fileToolsService: FileToolsService,
   ) {
     super(publishTaskModel, publishRecordModel, publishQueue)
   }
@@ -75,7 +67,7 @@ export class YoutubePubService extends PublishBase {
 
       Logger.log('TaskInfo:----', TaskInfo)
       //   const fileName = this.fileToolsService.getFileTypeFromUrl(TaskInfo.videoUrl)
-      const contentLength = await this.fileToolsService.getFileSizeFromUrl(TaskInfo.videoUrl)
+      const contentLength = await getFileSizeFromUrl(TaskInfo.videoUrl)
       Logger.log('视频大小：----', contentLength)
       if (!contentLength) {
         res.message = '视频大小获取失败'
@@ -99,7 +91,7 @@ export class YoutubePubService extends PublishBase {
       }
 
       // 视频URL分片上传
-      void this.fileToolsService.streamDownloadAndUpload(
+      void streamDownloadAndUpload(
         TaskInfo.videoUrl,
         async (upData: Buffer, partNumber: number) => {
           Logger.log(`分片：${partNumber}`)

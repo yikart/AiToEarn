@@ -156,75 +156,115 @@ export class TwitterService {
   }
 
   async initMediaUpload(accessToken: string, req: XMediaUploadInitRequest): Promise<XMediaUploadResponse> {
-    const url = `${this.apiBaseUrl}/media/upload`
-    const config: AxiosRequestConfig = {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      data: req,
+    try {
+      const url = `${this.apiBaseUrl}/media/upload/initialize`
+      const config: AxiosRequestConfig = {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+      const response: AxiosResponse<XMediaUploadResponse> = await axios.post(
+        url,
+        req,
+        config,
+      )
+      return response.data
     }
-    const response: AxiosResponse<XMediaUploadResponse> = await axios.post(
-      url,
-      config,
-    )
-    return response.data
+    catch (error) {
+      if (axios.isAxiosError(error)) {
+        this.logger.error(`Error initializing media upload: ${error.message}`, error.stack)
+      }
+      throw error
+    }
   }
 
   async chunkedMediaUploadRequest(
     accessToken: string,
     req: XChunkedMediaUploadRequest,
   ): Promise<XMediaUploadResponse> {
-    const url = `${this.apiBaseUrl}/media/upload`
-    const config: AxiosRequestConfig = {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      data: req,
+    try {
+      const url = `${this.apiBaseUrl}/media/upload/${req.media_id}/append`
+      const config: AxiosRequestConfig = {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          // 'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+      const formData = new FormData()
+      formData.append('media', new Blob([req.media]))
+      formData.append('segment_index', req.segment_index.toString())
+      this.logger.log(url, formData)
+      const response: AxiosResponse<XMediaUploadResponse> = await axios.post(
+        url,
+        formData,
+        config,
+      )
+      return response.data
     }
-    const response: AxiosResponse<XMediaUploadResponse> = await axios.post(
-      url,
-      config,
-    )
-    return response.data
+    catch (error) {
+      if (axios.isAxiosError(error)) {
+        this.logger.error(`Error uploading media chunk: ${error.message}`, error.stack)
+      }
+      throw error
+    }
   }
 
   async finalizeMediaUpload(
     accessToken: string,
     mediaId: string,
   ): Promise<XMediaUploadResponse> {
-    const url = `${this.apiBaseUrl}/media/upload/${mediaId}/finalize`
-    const config: AxiosRequestConfig = {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
+    try {
+      const url = `${this.apiBaseUrl}/media/upload/${mediaId}/finalize`
+      const config: AxiosRequestConfig = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+      // const formData = new FormData()
+      // formData.append('command', 'FINALIZE')
+      // formData.append('media_id', mediaId)
+      const response: AxiosResponse<XMediaUploadResponse> = await axios.post(
+        url,
+        {},
+        config,
+      )
+      return response.data
     }
-    const response: AxiosResponse<XMediaUploadResponse> = await axios.post(
-      url,
-      config,
-    )
-    return response.data
+    catch (error) {
+      if (axios.isAxiosError(error)) {
+        this.logger.error(`Error finalizing media upload: ${error.message}`, error.stack)
+      }
+      throw error
+    }
   }
 
   async createPost(
     accessToken: string,
-    post: XCreatePostRequest,
+    tweet: XCreatePostRequest,
   ): Promise<XCreatePostResponse> {
-    const url = `${this.apiBaseUrl}/tweets`
-    const config: AxiosRequestConfig = {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
+    try {
+      const url = `${this.apiBaseUrl}/tweets`
+      const config: AxiosRequestConfig = {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+      const response: AxiosResponse<XCreatePostResponse> = await axios.post(
+        url,
+        tweet,
+        config,
+      )
+      return response.data
     }
-    const response: AxiosResponse<XCreatePostResponse> = await axios.post(
-      url,
-      post,
-      config,
-    )
-    return response.data
+    catch (error) {
+      if (error.response) {
+        this.logger.error(`Error creating post: ${error.message}`)
+      }
+      throw error
+    }
   }
 
   async getPostDetail(
@@ -243,6 +283,26 @@ export class TwitterService {
       },
     }
     const response: AxiosResponse<XCreatePostResponse> = await axios.get(
+      url,
+      config,
+    )
+    return response.data
+  }
+
+  async getMediaStatus(
+    accessToken: string,
+    mediaId: string,
+  ): Promise<XMediaUploadResponse> {
+    const url = `${this.apiBaseUrl}/media/upload`
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      params: {
+        media_id: mediaId,
+      },
+    }
+    const response: AxiosResponse<XMediaUploadResponse> = await axios.get(
       url,
       config,
     )

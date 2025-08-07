@@ -1,4 +1,4 @@
-import { GenderEnum } from '@libs/database/schema'
+import { GenderEnum, UserStatus } from '@libs/database/schema'
 /*
  * @Author: nevin
  * @Date: 2024-06-17 20:12:31
@@ -72,6 +72,16 @@ export class UpdateUserInfoDto {
   readonly desc?: string
 }
 
+export class UpdateUserStatusDto {
+  @IsString({ message: 'ID' })
+  @Expose()
+  readonly id: string
+
+  @IsEnum(UserStatus, { message: '状态' })
+  @Expose()
+  readonly status: UserStatus
+}
+
 export class NewMailDto {
   @ApiProperty({ title: '邮箱', required: true })
   @IsEmail({}, { message: '邮箱' })
@@ -81,6 +91,10 @@ export class NewMailDto {
   @IsString({ message: '密码' })
   @Expose()
   readonly password: string
+
+  @IsString({ message: '密码盐' })
+  @Expose()
+  readonly salt: string
 
   @IsString({ message: '邀请码' })
   @IsOptional()
@@ -152,6 +166,10 @@ export class UpdateUserPasswordDto {
   @IsString({ message: '密码' })
   @Expose()
   readonly password: string
+
+  @IsString({ message: '盐' })
+  @Expose()
+  readonly salt: string
 }
 
 export class GoogleLoginDto {

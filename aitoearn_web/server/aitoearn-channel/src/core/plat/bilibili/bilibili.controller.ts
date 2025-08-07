@@ -1,7 +1,7 @@
-import { Controller } from '@nestjs/common'
-import { Payload } from '@nestjs/microservices'
-import { NatsMessagePattern } from '@/common'
-import { BilibiliService } from './bilibili.service'
+import { Controller, Get, Logger } from '@nestjs/common';
+import { Payload } from '@nestjs/microservices';
+import { NatsMessagePattern } from '@/common';
+import { BilibiliService } from './bilibili.service';
 import {
   AccountIdDto,
   ArchiveListDto,
@@ -10,33 +10,40 @@ import {
   GetAuthInfoDto,
   GetAuthUrlDto,
   GetHeaderDto,
-} from './dto/bilibili.dto'
+} from './dto/bilibili.dto';
 
 @Controller('bilibili')
 export class BilibiliController {
   constructor(private readonly bilibiliService: BilibiliService) {}
+
+  @Get('config')
+  async getBilibiliConfig(
+  ) {
+    return this.bilibiliService.getBilibiliConfig();
+  }
+
   // 创建授权任务
   @NatsMessagePattern('plat.bilibili.auth')
   createAuthTask(@Payload() data: GetAuthUrlDto) {
     const res = this.bilibiliService.createAuthTask({
       userId: data.userId,
       type: data.type,
-    })
-    return res
+    });
+    return res;
   }
 
   // 查询认证信息
   @NatsMessagePattern('plat.bilibili.getAuthInfo')
   getAuthInfo(@Payload() data: GetAuthInfoDto) {
-    const res = this.bilibiliService.getAuthInfo(data.taskId)
-    return res
+    const res = this.bilibiliService.getAuthInfo(data.taskId);
+    return res;
   }
 
   // 查询账号的认证信息
   @NatsMessagePattern('plat.bilibili.getAccountAuthInfo')
   getAccountAuthInfo(@Payload() data: AccountIdDto) {
-    const res = this.bilibiliService.getAccountAuthInfo(data.accountId)
-    return res
+    const res = this.bilibiliService.getAccountAuthInfo(data.accountId);
+    return res;
   }
 
   // 获取鉴权头
@@ -45,8 +52,8 @@ export class BilibiliController {
     const res = this.bilibiliService.generateHeader(data.accountId, {
       body: data.body,
       isForm: data.isForm,
-    })
-    return res
+    });
+    return res;
   }
 
   // 创建账号并设置授权Token
@@ -60,21 +67,21 @@ export class BilibiliController {
         code: data.code,
         state: data.state,
       },
-    )
-    return res
+    );
+    return res;
   }
 
   // 查询账号已授权权限列表
   @NatsMessagePattern('bilibili.account.scopes')
   async getAccountScopes(@Payload() data: AccountIdDto) {
-    const res = await this.bilibiliService.getAccountScopes(data.accountId)
-    return res
+    const res = await this.bilibiliService.getAccountScopes(data.accountId);
+    return res;
   }
 
   // 获取分区列表
   @NatsMessagePattern('plat.bilibili.archiveTypeList')
   async archiveTypeList(@Payload() data: AccountIdDto) {
-    return await this.bilibiliService.archiveTypeList(data.accountId)
+    return await this.bilibiliService.archiveTypeList(data.accountId);
   }
 
   @NatsMessagePattern('plat.bilibili.archiveList')
@@ -83,12 +90,12 @@ export class BilibiliController {
       ps: data.page.pageSize,
       pn: data.page.pageNo!,
       status: data.filter.status,
-    })
+    });
   }
 
   @NatsMessagePattern('plat.bilibili.userStat')
   async getUserStat(@Payload() data: AccountIdDto) {
-    return await this.bilibiliService.getUserStat(data.accountId)
+    return await this.bilibiliService.getUserStat(data.accountId);
   }
 
   @NatsMessagePattern('plat.bilibili.arcStat')
@@ -96,11 +103,11 @@ export class BilibiliController {
     return await this.bilibiliService.getArcStat(
       data.accountId,
       data.resourceId,
-    )
+    );
   }
 
   @NatsMessagePattern('plat.bilibili.arcIncStat')
   async getArcIncStat(@Payload() data: AccountIdDto) {
-    return await this.bilibiliService.getArcIncStat(data.accountId)
+    return await this.bilibiliService.getArcIncStat(data.accountId);
   }
 }

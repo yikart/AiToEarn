@@ -41,10 +41,10 @@ export class CreateBoardBodyDto {
   @Expose()
   readonly name: string
 
-  @IsString({ message: '名称' })
+  @IsString({ message: '用户id' })
   @Expose()
   @IsOptional()
-  readonly userId?: string
+  readonly accountId?: string
 }
 
 export class MediaSource {
@@ -79,6 +79,11 @@ export class CreatePinBodyDto {
   @IsString({ message: '此 Pin 所属的板块。' })
   @Expose()
   readonly board_id: string
+
+  @IsString({ message: '用户id' })
+  @Expose()
+  @IsOptional()
+  readonly accountId?: string
 
   @IsString({ message: '点击连接' })
   @IsOptional()

@@ -1,21 +1,21 @@
-import { HttpModule } from '@nestjs/axios'
+/*
+ * @Author: nevin
+ * @Date: 2022-03-03 16:50:53
+ * @LastEditors: nevin
+ * @LastEditTime: 2024-06-24 17:48:23
+ * @Description: 文件存储
+ */
 import { Global, Module } from '@nestjs/common'
 import { config } from '@/config'
-import { AliOSSModule } from '@/libs/ali-oss/ali-oss.module'
+import { S3Module } from '@/libs/aws-s3/s3.module'
 import { FileService } from './file.service'
-import { FileToolsService } from './fileTools.service'
 
 @Global()
 @Module({
   imports: [
-    HttpModule,
-    AliOSSModule.forRootAsync({
-      useFactory: () => {
-        return config.oss.options
-      },
-    }),
+    S3Module.forRoot(config.awsS3),
   ],
-  providers: [FileService, FileToolsService],
-  exports: [FileService, FileToolsService],
+  providers: [FileService],
+  exports: [FileService],
 })
 export class FileModule {}

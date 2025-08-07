@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose'
 import { AccountType } from '@transports/account/common'
 import { Queue } from 'bullmq'
 import { Model } from 'mongoose'
-import { FileToolsService } from '@/core/file/fileTools.service'
+import { fileUrlToBase64, getFileTypeFromUrl, streamDownloadAndUpload } from '@/common'
 import { BilibiliService } from '@/core/plat/bilibili/bilibili.service'
 import { PublishRecord } from '@/libs/database/schema/publishRecord.schema'
 import { PublishStatus, PublishTask } from '@/libs/database/schema/publishTask.schema'
@@ -22,7 +22,6 @@ export class BilibiliPubService extends PublishBase {
     readonly publishRecordModel: Model<PublishRecord>,
     @InjectQueue('bull_publish') publishQueue: Queue,
     readonly bilibiliService: BilibiliService,
-    private readonly fileToolsService: FileToolsService,
   ) {
     super(publishTaskModel, publishRecordModel, publishQueue)
   }
@@ -52,7 +51,7 @@ export class BilibiliPubService extends PublishBase {
       // 有封面
       if (coverUrl) {
         Logger.log('正在上传封面...')
-        const urlBase64 = await this.fileToolsService.fileUrlToBase64(coverUrl)
+        const urlBase64 = await fileUrlToBase64(coverUrl)
         const coverRes = await this.bilibiliService.coverUpload(
           accountId,
           urlBase64,
@@ -71,7 +70,7 @@ export class BilibiliPubService extends PublishBase {
         res.noRetry = true
         return resolve(res)
       }
-      const fileName = this.fileToolsService.getFileTypeFromUrl(videoUrl)
+      const fileName = getFileTypeFromUrl(videoUrl)
 
       Logger.log('正在分片上传...')
       // 视频分片上传初始化
@@ -86,7 +85,7 @@ export class BilibiliPubService extends PublishBase {
       }
 
       // 视频URL分片上传
-      void this.fileToolsService.streamDownloadAndUpload(
+      void streamDownloadAndUpload(
         videoUrl,
         async (upData: Buffer, partNumber: number) => {
           Logger.log(`分片：${partNumber}`)

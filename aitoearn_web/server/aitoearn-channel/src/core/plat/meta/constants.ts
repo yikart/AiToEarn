@@ -13,8 +13,8 @@ export class MetaRedisKeys {
     return `${platform}:access_token:${accountId}`
   }
 
-  static getUserPageAccessTokenKey(platform: string, accountId: string, pageId: string): string {
-    return `${platform}:page:access_token:${accountId}:${pageId}`
+  static getUserPageAccessTokenKey(platform: string, pageId: string): string {
+    return `${platform}:page:access_token:${pageId}`
   }
 
   static getUserPageListKey(platform: string, accountId: string): string {

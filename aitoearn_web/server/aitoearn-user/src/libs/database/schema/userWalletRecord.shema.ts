@@ -26,7 +26,7 @@ export enum UserWalletRecordStatus {
   versionKey: false,
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
-  timestamps: false,
+  timestamps: true,
 })
 export class UserWalletRecord extends BaseTemp {
   id: string

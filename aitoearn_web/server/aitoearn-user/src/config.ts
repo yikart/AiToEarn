@@ -38,7 +38,34 @@ const natsConfigSchema = z.object({
   prefix: z.string().default(''),
 })
 
+const logLevelSchema = z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace'])
+
+export const cloudWatchLoggerConfigSchema = z.object({
+  enable: z.boolean().default(false),
+  level: logLevelSchema.default('debug'),
+  region: z.string(),
+  accessKeyId: z.string(),
+  secretAccessKey: z.string(),
+  group: z.string(),
+  stream: z.string().optional(),
+  prefix: z.string().optional(),
+})
+
+export const consoleLoggerConfigSchema = z.object({
+  enable: z.boolean().default(true),
+  colorize: z.boolean().default(true),
+  level: logLevelSchema.default('info'),
+  singleLine: z.boolean().default(false),
+  translateTime: z.boolean().default(true),
+})
+
+export const loggerConfigSchema = z.object({
+  cloudWatch: cloudWatchLoggerConfigSchema.optional(),
+  console: consoleLoggerConfigSchema.optional(),
+})
+
 export const configSchema = z.object({
+  logger: loggerConfigSchema.default({}),
   ...serverConfigSchema.shape,
   redis: redisConfigSchema,
   mongodb: mongoConfigSchema,

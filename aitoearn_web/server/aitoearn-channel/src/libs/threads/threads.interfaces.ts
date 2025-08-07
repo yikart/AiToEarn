@@ -24,29 +24,48 @@ export interface ThreadsObjectInfo {
   status: string
 }
 
-export interface ThreadsAccountInsightsRequest {
+export interface ThreadsInsightsRequest {
   metric: string,
   since?: number
   until?: number
 }
 
-export interface ThreadsAccountInsightsMetricTotalValue {
+export interface ThreadsInsightsMetricTotalValue {
   value: number
 }
-export interface ThreadsAccountInsightsMetricResult {
+export interface ThreadsInsightsMetricResult {
   id: string
   name: string
   title: string
   description: string
   period: string
-  total_value: ThreadsAccountInsightsMetricTotalValue
+  total_value?: ThreadsInsightsMetricTotalValue
+  values?: ThreadsInsightsMetricTotalValue[]
 }
 
 export interface ThreadsPagination {
   next: string
   previous: string
 }
-export interface ThreadsAccountInsightsResponse {
-  data: ThreadsAccountInsightsMetricResult[]
+export interface ThreadsInsightsResponse {
+  data: ThreadsInsightsMetricResult[]
+  paging: ThreadsPagination
+}
+
+export interface publicProfileResponse {
+  follower_count: number
+  likes_count: number
+  quotes_count: number
+  replies_count: number
+  reposts_count: number
+  views_count: number
+}
+
+export interface ThreadsPost {
+  id: string
+}
+
+export interface ThreadsPostResponse {
+  data: ThreadsPost[],
   paging: ThreadsPagination
 }

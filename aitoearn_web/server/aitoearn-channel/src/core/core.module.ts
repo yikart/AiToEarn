@@ -1,4 +1,3 @@
-import { FileModule } from '@core/file/file.module';
 import { PinterestModule } from '@core/plat/pinterest/pinterest.module';
 import { PublishModule } from '@core/publish/publish.module';
 import { Module } from '@nestjs/common';
@@ -6,6 +5,7 @@ import { McpModule as TheMcpModule } from '@rekog/mcp-nest'
 import { SkKeyAuthGuard } from '@/common/guards/skKeyAuth.guard';
 import { AccountModule } from './account/account.module';
 import { DataCubeModule } from './dataCube/dataCube.module';
+import { FileModule } from './file/file.module';
 import { InteracteModule } from './interact/interact.module';
 import { McpModule } from './mcp/mcp.module';
 import { MetaModule } from './plat/meta/meta.module';
@@ -19,6 +19,7 @@ import { TestModule } from './test/test.module';
 @Module({
   imports: [
     TestModule,
+    FileModule,
     SkKeyModule,
     McpModule,
     TheMcpModule.forRoot({
@@ -28,7 +29,6 @@ import { TestModule } from './test/test.module';
     }),
     AccountModule,
     PublishModule,
-    FileModule,
     TwitterModule,
     MetaModule,
     TiktokModule,

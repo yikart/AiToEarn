@@ -31,10 +31,10 @@ WORKDIR /app
 
 COPY package.json ./
 
-COPY --from=build /app/dist/ dist
-
 COPY --from=prod-deps /app/node_modules/ node_modules
 
-RUN echo "require('./dist/src/main.js')" > index.js
+COPY --from=build /app/dist/ dist
+
+RUN echo "require('./dist/main.js')" > index.js
 
 CMD node index.js -c config.js

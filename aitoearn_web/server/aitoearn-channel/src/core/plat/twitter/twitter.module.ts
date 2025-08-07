@@ -9,5 +9,6 @@ import { TwitterService } from './twitter.service'
   ],
   controllers: [TwitterController],
   providers: [TwitterService],
+  exports: [TwitterService],
 })
 export class TwitterModule {}

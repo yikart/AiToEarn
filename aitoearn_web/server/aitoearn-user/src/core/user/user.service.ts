@@ -1,13 +1,6 @@
 import * as crypto from 'node:crypto'
 import { User, UserStatus, UserWallet } from '@libs/database/schema'
 import { RedisService } from '@libs/redis'
-/*
- * @Author: nevin
- * @Date: 2024-08-15 11:15:28
- * @LastEditTime: 2024-11-04 14:39:44
- * @LastEditors: nevin
- * @Description:
- */
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { google } from 'googleapis'
@@ -89,9 +82,10 @@ export class UserService {
   async createUserByMail(
     mail: string,
     password: string,
+    salt: string,
     inviteCode?: string,
   ): Promise<User> {
-    const newData = new NewUserByMail(mail, password)
+    const newData = new NewUserByMail(mail, password, salt)
     newData.inviteCode = inviteCode
 
     const res = await this.userModel.create(newData)
@@ -103,6 +97,15 @@ export class UserService {
     const res = await this.userModel.updateOne(
       { _id: id },
       { $set: { ...newData } },
+    )
+    return res.modifiedCount > 0
+  }
+
+  // 更新状态
+  async updateUserStatus(id: string, status: UserStatus): Promise<boolean> {
+    const res = await this.userModel.updateOne(
+      { _id: id },
+      { $set: { status } },
     )
     return res.modifiedCount > 0
   }

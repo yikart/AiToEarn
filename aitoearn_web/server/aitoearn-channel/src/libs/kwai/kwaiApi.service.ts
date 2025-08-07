@@ -1,7 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common'
-import axios from 'axios'
-import { config } from '@/config'
-import { FileToolsService } from '@/core/file/fileTools.service'
+import { Injectable, Logger } from '@nestjs/common';
+import axios from 'axios';
+import { fileUrlToBase64, streamDownloadAndUpload } from '@/common';
+import { config } from '@/config';
 import {
   KwaiAccessTokenResponse,
   KwaiPublishVideoInfo,
@@ -9,24 +9,22 @@ import {
   KwaiUserInfo,
   KwaiVideoPubParams,
   KwaiVideoPubResult,
-} from './kwaiApi.interfaces'
+} from './kwaiApi.interfaces';
 
 @Injectable()
 export class KwaiApiService {
-  private readonly appId: string
-  private readonly appSecret: string
-  private readonly authBackHost
+  private readonly appId: string;
+  private readonly appSecret: string;
+  private readonly authBackHost;
   // 快手开放平台地址
-  private kwaiHost = 'https://open.kuaishou.com'
-  private readonly logger = new Logger(KwaiApiService.name)
+  private kwaiHost = 'https://open.kuaishou.com';
+  private readonly logger = new Logger(KwaiApiService.name);
 
-  constructor(
-    private readonly fileToolsService: FileToolsService,
-  ) {
-    const cfg = config.kwai
-    this.appId = cfg.id
-    this.appSecret = cfg.secret
-    this.authBackHost = cfg.authBackHost
+  constructor() {
+    const cfg = config.kwai;
+    this.appId = cfg.id;
+    this.appSecret = cfg.secret;
+    this.authBackHost = cfg.authBackHost;
   }
 
   /**
@@ -43,12 +41,12 @@ export class KwaiApiService {
           refresh_token,
           grant_type: 'refresh_token',
         },
-      })
-      return res.data
+      });
+      return res.data;
     }
     catch (e) {
-      this.logger.error(e)
-      throw new Error('快手刷新token失败')
+      this.logger.error(e);
+      throw new Error('快手刷新token失败');
     }
   }
 
@@ -64,9 +62,9 @@ export class KwaiApiService {
       response_type: 'code',
       ...(type === 'pc' ? { ua: 'pc' } : {}),
       redirect_uri: `${this.authBackHost}/${taskId}`,
-    })
-    const authParams = params.toString()
-    return `${this.kwaiHost}/oauth2/authorize?${authParams}`
+    });
+    const authParams = params.toString();
+    return `${this.kwaiHost}/oauth2/authorize?${authParams}`;
   }
 
   /**
@@ -84,14 +82,14 @@ export class KwaiApiService {
           code,
           grant_type: 'authorization_code',
         },
-      })
+      });
       if (res.data?.result !== 1)
-        throw new Error('快手accessToken 获取失败！')
-      return res.data
+        throw new Error('快手accessToken 获取失败！');
+      return res.data;
     }
     catch (e) {
-      this.logger.error(e)
-      throw new Error('快手获取快手token失败')
+      this.logger.error(e);
+      throw new Error('快手获取快手token失败');
     }
   }
 
@@ -102,22 +100,22 @@ export class KwaiApiService {
   async getAccountInfo({ accessToken }: { accessToken: string }) {
     try {
       const res = await axios<{
-        result: number
-        user_info: KwaiUserInfo
+        result: number;
+        user_info: KwaiUserInfo;
       }>({
         url: `${this.kwaiHost}/openapi/user_info`,
         params: {
           app_id: this.appId,
           access_token: accessToken,
         },
-      })
+      });
       if (!res.data.user_info)
-        throw new Error('快手获取快手账号信息失败！')
-      return res.data.user_info
+        throw new Error('快手获取快手账号信息失败！');
+      return res.data.user_info;
     }
     catch (e) {
-      this.logger.error(e)
-      throw new Error('快手获取快手账号信息失败')
+      this.logger.error(e);
+      throw new Error('快手获取快手账号信息失败');
     }
   }
 
@@ -126,7 +124,7 @@ export class KwaiApiService {
    */
   async startUpload(accessToken: string) {
     try {
-      Logger.log('startUpload')
+      Logger.log('startUpload');
       const res = await axios<KwaiStartUpload>({
         url: `${this.kwaiHost}/openapi/photo/start_upload`,
         method: 'POST',
@@ -134,13 +132,13 @@ export class KwaiApiService {
           app_id: this.appId,
           access_token: accessToken,
         },
-      })
-      Logger.log('startUpload111111111111')
-      return res.data
+      });
+      Logger.log('startUpload111111111111');
+      return res.data;
     }
     catch (e) {
-      this.logger.error(e)
-      throw new Error('快手发起上传失败')
+      this.logger.error(e);
+      throw new Error('快手发起上传失败');
     }
   }
 
@@ -159,7 +157,7 @@ export class KwaiApiService {
   ) {
     try {
       const res = await axios<{
-        result: number
+        result: number;
       }>({
         url: `http://${endpoint}/api/upload/fragment`,
         method: 'POST',
@@ -171,12 +169,12 @@ export class KwaiApiService {
           'Content-Type': 'application/octet-stream',
         },
         data: video,
-      })
-      return res.data
+      });
+      return res.data;
     }
     catch (e) {
-      this.logger.error(e)
-      throw new Error('快手分片上传失败')
+      this.logger.error(e);
+      throw new Error('快手分片上传失败');
     }
   }
 
@@ -194,7 +192,7 @@ export class KwaiApiService {
     try {
       const res = await axios<{
         // 1 成功
-        result: number
+        result: number;
       }>({
         url: `http://${endpoint}/api/upload/complete`,
         method: 'POST',
@@ -202,31 +200,31 @@ export class KwaiApiService {
           fragment_count,
           upload_token,
         },
-      })
-      return res.data
+      });
+      return res.data;
     }
     catch (e) {
-      this.logger.error(e)
-      throw new Error('快手完成分片上传失败')
+      this.logger.error(e);
+      throw new Error('快手完成分片上传失败');
     }
   }
 
   // 处理描述和话题，获取caption
   getCaption(params: KwaiVideoPubParams) {
-    const { describe, topics } = params
-    let caption = ''
+    const { describe, topics } = params;
+    let caption = '';
 
     if (describe) {
-      caption += `${describe} `
+      caption += `${describe} `;
     }
 
     if (topics && topics.length !== 0) {
       for (const topic of topics) {
-        caption += `#${topic} `
+        caption += `#${topic} `;
       }
     }
 
-    return caption.trim()
+    return caption.trim();
   }
 
   /**
@@ -240,24 +238,23 @@ export class KwaiApiService {
   ): Promise<KwaiVideoPubResult> {
     return new Promise(async (resolve) => {
       try {
-        const { coverUrl, videoUrl } = pubParams
+        const { coverUrl, videoUrl } = pubParams;
 
         // 发起上传
-        const startUploadInfo = await this.startUpload(accountToken)
+        const startUploadInfo = await this.startUpload(accountToken);
         if (startUploadInfo.result !== 1)
-          throw new Error('发起上传失败')
+          throw new Error('发起上传失败');
 
         // 获取封面
-        const coverBase64
-          = await this.fileToolsService.fileUrlToBase64(coverUrl)
+        const coverBase64 = await fileUrlToBase64(coverUrl);
 
-        const buffer = Buffer.from(coverBase64, 'base64')
-        const coverBlob = new Blob([buffer], { type: 'image/jpeg' })
+        const buffer = Buffer.from(coverBase64, 'base64');
+        const coverBlob = new Blob([buffer], { type: 'image/jpeg' });
 
-        Logger.log('封面获取成功：', coverBlob)
+        Logger.log('封面获取成功：', coverBlob);
 
         // 视频URL分片上传
-        void this.fileToolsService.streamDownloadAndUpload(
+        void streamDownloadAndUpload(
           videoUrl,
           async (upData: Buffer, partNumber: number) => {
             const res = await this.fragmentUploadVideo(
@@ -265,10 +262,10 @@ export class KwaiApiService {
               partNumber - 1,
               startUploadInfo.endpoint,
               upData,
-            )
-            Logger.log('分片：', partNumber, res)
+            );
+            Logger.log('分片：', partNumber, res);
             if (res.result !== 1)
-              throw new Error('分片上传失败')
+              throw new Error('分片上传失败');
           },
           async (partCount) => {
             // 合并
@@ -276,17 +273,17 @@ export class KwaiApiService {
               startUploadInfo.upload_token,
               partCount - 1,
               startUploadInfo.endpoint,
-            )
+            );
             if (res.result !== 1)
-              throw new Error('合并分片上传失败')
+              throw new Error('合并分片上传失败');
 
             // 发布
-            const formData = new FormData()
-            formData.append('caption', this.getCaption(pubParams))
-            formData.append('cover', coverBlob)
+            const formData = new FormData();
+            formData.append('caption', this.getCaption(pubParams));
+            formData.append('cover', coverBlob);
             const pubRes = await axios<{
-              video_info: KwaiPublishVideoInfo
-              result: number
+              video_info: KwaiPublishVideoInfo;
+              result: number;
             }>({
               url: `${this.kwaiHost}/openapi/photo/publish`,
               method: 'POST',
@@ -296,25 +293,25 @@ export class KwaiApiService {
                 access_token: accountToken,
               },
               data: formData,
-            })
+            });
             if (pubRes.data.result !== 1)
-              throw new Error('视频发布失败！')
+              throw new Error('视频发布失败！');
 
             resolve({
               success: true,
               worksId: pubRes.data.video_info.photo_id,
-            })
+            });
           },
           4194304,
-        )
+        );
       }
       catch (e) {
-        this.logger.error(e)
+        this.logger.error(e);
         resolve({
           success: false,
           failMsg: e.message || '发布错误',
-        })
+        });
       }
-    })
+    });
   }
 }

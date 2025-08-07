@@ -2,7 +2,6 @@ import { Global, Module } from '@nestjs/common'
 import { ClientsModule, Transport } from '@nestjs/microservices'
 import { config } from '@/config'
 import { AccountNatsApi } from './account/account.natsApi'
-import { ChannelNatsApi } from './channel/channel.natsApi'
 import { NatsService } from './nats.service'
 
 @Global()
@@ -28,12 +27,10 @@ import { NatsService } from './nats.service'
   providers: [
     NatsService,
     AccountNatsApi,
-    ChannelNatsApi,
   ],
   exports: [
     NatsService,
     AccountNatsApi,
-    ChannelNatsApi,
   ],
 })
 export class NatsModule {}

@@ -3,10 +3,32 @@ import axios, { AxiosResponse } from 'axios'
 import { getCurrentTimestamp } from '@/common'
 import { config } from '@/config'
 import { RedisService } from '@/libs'
-import { ChunkedFileUploadRequest, ChunkedFileUploadResponse, FacebookInitialUploadRequest, FacebookInitialUploadResponse, FacebookInsightsRequest, FacebookInsightsResponse, FacebookPageDetailRequest, FacebookPageDetailResponse, FacebookPublishedPostRequest, FacebookPublishedPostResponse, finalizeUploadRequest, finalizeUploadResponse, PublishMediaPostResponse, PublishUploadedVideoPostRequest, publishUploadedVideoPostResponse, UploadPhotoResponse } from '@/libs/facebook/facebook.interfaces'
+import {
+  ChunkedVideoUploadRequest,
+  ChunkedVideoUploadResponse,
+  FacebookInitialVideoUploadRequest,
+  FacebookInitialVideoUploadResponse,
+  FacebookInsightsRequest,
+  FacebookInsightsResponse,
+  FacebookObjectInfo,
+  FacebookPageDetailRequest,
+  FacebookPageDetailResponse,
+  FacebookPublishedPostRequest,
+  FacebookPublishedPostResponse,
+  FacebookReelRequest,
+  FacebookReelResponse,
+  FacebookReelUploadRequest,
+  FacebookReelUploadResponse,
+  finalizeVideoUploadRequest,
+  finalizeVideoUploadResponse,
+  PublishMediaPostResponse,
+  PublishVideoPostRequest,
+  publishVideoPostResponse,
+  UploadPhotoResponse,
+} from '@/libs/facebook/facebook.interfaces'
 import { FacebookService as FacebookAPIService } from '@/libs/facebook/facebook.service'
 import { META_TIME_CONSTANTS, metaOAuth2ConfigMap, MetaRedisKeys } from './constants'
-import { FacebookAccountResponse, FacebookPageInfo, MetaUserOAuthCredential } from './meta.interfaces'
+import { FacebookAccountResponse, FacebookPageCredentials, MetaUserOAuthCredential } from './meta.interfaces'
 
 @Injectable()
 export class FacebookService {
@@ -86,60 +108,52 @@ export class FacebookService {
 
   private async authorizePage(
     accountId: string,
-    pageId: string,
-  ): Promise<FacebookPageInfo | null> {
-    const credential = await this.redisService.get<FacebookPageInfo>(
-      MetaRedisKeys.getUserPageAccessTokenKey('facebook', accountId, pageId),
+  ): Promise<FacebookPageCredentials | null> {
+    const pageCredential = await this.redisService.get<FacebookPageCredentials>(
+      MetaRedisKeys.getUserPageAccessTokenKey('facebook', accountId),
     )
-    if (!credential) {
+    if (!pageCredential) {
       this.logger.warn(`No access token found for accountId: ${accountId}`)
       return null
     }
     const now = getCurrentTimestamp()
-    const tokenExpiredAt = now + credential.expires_in
+    const tokenExpiredAt = now + pageCredential.expires_in
     const requestTime
       = tokenExpiredAt - META_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
     if (requestTime <= now) {
       this.logger.debug(
         `Access token for accountId: ${accountId} is expired, refreshing...`,
       )
-      const userCredential = await this.authorize(accountId)
+      const userCredential = await this.authorize(pageCredential.facebook_user_id)
       if (!userCredential) {
         this.logger.error(
-          `Failed to refresh access token for accountId: ${accountId}`,
+          `Failed to refresh access token for facebook accountId: ${pageCredential.facebook_user_id}`,
         )
         return null
       }
       const fbAccountInfo = await this.getUserAccount(
-        credential.access_token,
+        userCredential.access_token,
       )
-      let pageAccountInfo: FacebookPageInfo | null = null;
+      let newPageCredential: FacebookPageCredentials | null = null
       if (fbAccountInfo.length > 0) {
-        for (const account of fbAccountInfo) {
-          account.expires_in = 86400;
-          if (account.id === pageId) {
-            pageAccountInfo = account
+        for (const fbAccount of fbAccountInfo) {
+          fbAccount.expires_in = userCredential.expires_in;
+          const credential = { ...fbAccount, facebook_user_id: userCredential.user_id, expires_in: userCredential.expires_in }
+          if (fbAccount.id === pageCredential.id) {
+            newPageCredential = credential
           }
           await this.redisService.setKey(
             MetaRedisKeys.getUserPageAccessTokenKey(
               'facebook',
-              credential.id,
-              account.id,
+              fbAccount.id,
             ),
-            account,
+            credential,
           )
         }
-        await this.redisService.setKey(
-          MetaRedisKeys.getUserPageListKey(
-            'facebook',
-            credential.id,
-          ),
-          JSON.stringify(fbAccountInfo),
-        )
       }
-      return pageAccountInfo;
+      return newPageCredential;
     }
-    return credential;
+    return pageCredential;
   }
 
   private async refreshOAuthCredential(refresh_token: string) {
@@ -168,84 +182,78 @@ export class FacebookService {
 
   async initVideoUpload(
     accountId: string,
-    pageId: string,
-    req: FacebookInitialUploadRequest,
-  ): Promise<FacebookInitialUploadResponse | null> {
-    const credential = await this.authorizePage(accountId, pageId)
+    req: FacebookInitialVideoUploadRequest,
+  ): Promise<FacebookInitialVideoUploadResponse | null> {
+    const credential = await this.authorizePage(accountId)
     if (!credential) {
       this.logger.error(`No valid access token found for accountId: ${accountId}`)
       return null
     }
-    return await this.facebookAPIService.initMediaUpload(pageId, credential.access_token, req)
+    return await this.facebookAPIService.initVideoUpload(credential.id, credential.access_token, req)
   }
 
   async chunkedMediaUpload(
     accountId: string,
-    pageId: string,
-    req: ChunkedFileUploadRequest,
-  ): Promise<ChunkedFileUploadResponse | null> {
-    const credential = await this.authorizePage(accountId, pageId)
+    req: ChunkedVideoUploadRequest,
+  ): Promise<ChunkedVideoUploadResponse | null> {
+    const credential = await this.authorizePage(accountId)
     if (!credential) {
       this.logger.error(`No valid access token found for accountId: ${accountId}`)
       return null
     }
-    return await this.facebookAPIService.chunkedMediaUploadRequest(pageId, credential.access_token, req)
+    return await this.facebookAPIService.chunkedVideoUploadRequest(credential.id, credential.access_token, req)
   }
 
   async finalizeMediaUpload(
     accountId: string,
-    pageId: string,
-    req: finalizeUploadRequest,
-  ): Promise<finalizeUploadResponse | null> {
-    const credential = await this.authorizePage(accountId, pageId)
+    req: finalizeVideoUploadRequest,
+  ): Promise<finalizeVideoUploadResponse | null> {
+    const credential = await this.authorizePage(accountId)
     if (!credential) {
       this.logger.error(`No valid access token found for accountId: ${accountId}`)
       return null
     }
-    return this.facebookAPIService.finalizeMediaUpload(pageId, credential.access_token, req)
+    return this.facebookAPIService.finalizeVideoUpload(credential.id, credential.access_token, req)
   }
 
   async publishVideoPost(
     accountId: string,
-    pageId: string,
-    req: PublishUploadedVideoPostRequest,
-  ): Promise<publishUploadedVideoPostResponse | null> {
-    const credential = await this.authorizePage(accountId, pageId)
+    req: PublishVideoPostRequest,
+  ): Promise<publishVideoPostResponse | null> {
+    const credential = await this.authorizePage(accountId)
     if (!credential) {
       this.logger.error(`No valid access token found for accountId: ${accountId}`)
       return null
     }
-    return await this.facebookAPIService.publishUploadedVideoPost(pageId, credential.access_token, req)
+    return await this.facebookAPIService.publishVideoPost(credential.id, credential.access_token, req)
   }
 
   async uploadImage(
     accountId: string,
-    pageId: string,
     file: Buffer,
   ): Promise<UploadPhotoResponse | null> {
-    const credential = await this.authorizePage(accountId, pageId)
+    const credential = await this.authorizePage(accountId)
     if (!credential) {
       this.logger.error(`No valid access token found for accountId: ${accountId}`)
       return null
     }
-    return await this.facebookAPIService.uploadPostPhotoByFile(pageId, credential.access_token, file)
+    return await this.facebookAPIService.uploadPostPhotoByFile(credential.id, credential.access_token, file)
   }
 
   async publicPhotoPost(
     accountId: string,
-    pageId: string,
     imageUrlList: string[],
   ): Promise<PublishMediaPostResponse | null> {
-    const credential = await this.authorizePage(accountId, pageId)
+    const credential = await this.authorizePage(accountId)
     if (!credential) {
       this.logger.error(`No valid access token found for accountId: ${accountId}`)
       return null
     }
-    return await this.facebookAPIService.publishMultiplePhotoPost(pageId, credential.access_token, imageUrlList)
+    return await this.facebookAPIService.publishMultiplePhotoPost(credential.id, credential.access_token, imageUrlList)
   }
 
-  async getObjectInfo(accountId, objectId: string, pageId: string, fields?: string): Promise<any> {
-    const credential = await this.authorizePage(accountId, pageId)
+  async getObjectInfo(accountId, objectId: string, fields?: string): Promise<FacebookObjectInfo | null> {
+    const credential = await this.authorizePage(accountId)
     if (!credential) {
       this.logger.error(`No valid access token found for accountId: ${accountId}`)
       return null
@@ -255,40 +263,170 @@ export class FacebookService {
 
   async getPageInsights(
     accountId: string,
-    pageId: string,
     req: FacebookInsightsRequest,
   ): Promise<FacebookInsightsResponse | null> {
-    const credential = await this.authorizePage(accountId, pageId)
+    const credential = await this.authorizePage(accountId)
     if (!credential) {
       this.logger.error(`No valid access token found for accountId: ${accountId}`)
       return null
     }
-    return await this.facebookAPIService.getPageInsights(pageId, credential.access_token, req)
+    return await this.facebookAPIService.getPageInsights(credential.id, credential.access_token, req)
   }
 
   async getPageDetail(
     accountId: string,
-    pageId: string,
     query: FacebookPageDetailRequest,
   ): Promise<FacebookPageDetailResponse | null> {
-    const credential = await this.authorizePage(accountId, pageId)
+    const credential = await this.authorizePage(accountId)
     if (!credential) {
       this.logger.error(`No valid access token found for accountId: ${accountId}`)
       return null
     }
-    return await this.facebookAPIService.getPageDetails(pageId, credential.access_token, query)
+    return await this.facebookAPIService.getPageDetails(credential.id, credential.access_token, query)
   }
 
   async getPagePublishedPosts(
     accountId: string,
-    pageId: string,
     query: FacebookPublishedPostRequest,
   ): Promise<FacebookPublishedPostResponse | null> {
-    const credential = await this.authorizePage(accountId, pageId)
+    const credential = await this.authorizePage(accountId)
     if (!credential) {
       this.logger.error(`No valid access token found for accountId: ${accountId}`)
       return null
     }
-    return await this.facebookAPIService.getPagePublishedPosts(pageId, credential.access_token, query)
+    return await this.facebookAPIService.getPagePublishedPosts(credential.id, credential.access_token, query)
+  }
+
+  async getAccountInsights(
+    accountId: string,
+  ) {
+    const pageInsights = await this.getPageInsights(accountId, {
+      metric: 'page_video_views',
+      period: 'lifetime',
+    })
+    const pageDetail = await this.getPageDetail(accountId, { fields: 'followers_count' })
+    const fensNum = pageDetail?.followers_count || 0
+    const playNum = pageInsights?.data.find(
+      item => item.name === 'page_video_views',
+    )?.values[0].value || 0
+    return {
+      fensNum,
+      playNum,
+    }
+  }
+
+  async getPostInsights(
+    accountId: string,
+    postId: string,
+  ) {
+    const credential = await this.authorizePage(accountId)
+    if (!credential) {
+      this.logger.error(`No valid access token found for accountId: ${accountId}`)
+      return null
+    }
+    const postInsightReq: FacebookInsightsRequest = {
+      metric: 'post_reactions_like_total,post_video_views',
+      period: 'lifetime',
+    }
+    const objectId = `${credential.id}_${postId}`
+    const postInsights = await this.facebookAPIService.getFacebookObjectInsights(objectId, credential.access_token, postInsightReq)
+    const postDetail = await this.facebookAPIService.getPagePostDetails(
+      objectId,
+      credential.access_token,
+      { field: 'shares' },
+    )
+    const comments = await this.facebookAPIService.getPostComments(
+      objectId,
+      credential.access_token,
+      { summary: true, type: 'LIKE' },
+    )
+    const viewCount = postInsights?.data.find(
+      item => item.name === 'post_video_views',
+    )?.values[0].value || 0
+    const likeCount = postInsights?.data.find(
+      item => item.name === 'post_reactions_like_total',
+    )?.values[0].value || 0
+    const commentCount = comments?.summary?.total_count || 0
+    const shareCount = postDetail?.shares?.count || 0
+    return {
+      playNum: viewCount,
+      commentNum: commentCount,
+      likeNum: likeCount,
+      shareNum: shareCount,
+    }
+  }
+
+  async initReelUpload(
+    accountId: string,
+    req: FacebookReelRequest,
+  ): Promise<FacebookReelResponse | null> {
+    const credential = await this.authorizePage(accountId)
+    if (!credential) {
+      this.logger.error(`No valid access token found for accountId: ${accountId}`)
+      return null
+    }
+    return await this.facebookAPIService.initReelUpload(credential.id, credential.access_token, req)
+  }
+
+  async uploadReel(
+    accountId: string,
+    uploadURL: string,
+    req: FacebookReelUploadRequest,
+  ): Promise<FacebookReelUploadResponse | null> {
+    const credential = await this.authorizePage(accountId)
+    if (!credential) {
+      this.logger.error(`No valid access token found for accountId: ${accountId}`)
+      return null
+    }
+    return await this.facebookAPIService.uploadReel(credential.access_token, uploadURL, req)
+  }
+
+  async publishReel(
+    accountId: string,
+    req: FacebookReelRequest,
+  ): Promise<FacebookReelResponse | null> {
+    const credential = await this.authorizePage(accountId)
+    if (!credential) {
+      this.logger.error(`No valid access token found for accountId: ${accountId}`)
+      return null
+    }
+    return await this.facebookAPIService.publishReelPost(credential.id, credential.access_token, req)
+  }
+
+  async initStoryUpload(
+    accountId: string,
+    req: FacebookReelRequest,
+  ): Promise<FacebookReelResponse | null> {
+    const credential = await this.authorizePage(accountId)
+    if (!credential) {
+      this.logger.error(`No valid access token found for accountId: ${accountId}`)
+      return null
+    }
+    return await this.facebookAPIService.initStoryUpload(credential.id, credential.access_token, req)
+  }
+
+  async uploadStory(
+    accountId: string,
+    uploadURL: string,
+    req: FacebookReelUploadRequest,
+  ): Promise<FacebookReelUploadResponse | null> {
+    const credential = await this.authorizePage(accountId)
+    if (!credential) {
+      this.logger.error(`No valid access token found for accountId: ${accountId}`)
+      return null
+    }
+    return await this.facebookAPIService.uploadStory(credential.access_token, uploadURL, req)
+  }
+
+  async publishStory(
+    accountId: string,
+    req: FacebookReelRequest,
+  ): Promise<FacebookReelResponse | null> {
+    const credential = await this.authorizePage(accountId)
+    if (!credential) {
+      this.logger.error(`No valid access token found for accountId: ${accountId}`)
+      return null
+    }
+    return await this.facebookAPIService.publishStoryPost(credential.id, credential.access_token, req)
   }
 }

@@ -2,41 +2,49 @@ import { Injectable, Logger } from '@nestjs/common'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { config } from '@/config'
 import { MetaOAuthLongLivedCredential } from '@/core/plat/meta/meta.interfaces'
+import { FacebookOAuth2Config } from './constants'
 import {
-  ChunkedFileUploadRequest,
-  ChunkedFileUploadResponse,
-  FacebookInitialUploadRequest,
-  FacebookInitialUploadResponse,
+  ChunkedVideoUploadRequest,
+  ChunkedVideoUploadResponse,
+  FacebookInitialVideoUploadRequest,
+  FacebookInitialVideoUploadResponse,
   FacebookInsightsRequest,
   FacebookInsightsResponse,
   FacebookObjectInfo,
   FacebookPageDetailRequest,
   FacebookPageDetailResponse,
-  finalizeUploadRequest,
-  finalizeUploadResponse,
+  FacebookPostDetailRequest,
+  FacebookPostDetailResponse,
+  FacebookPostEdgesRequest,
+  FacebookPostEdgesResponse,
+  FacebookPublishedPostRequest,
+  FacebookPublishedPostResponse,
+  FacebookReelRequest,
+  FacebookReelResponse,
+  FacebookReelUploadRequest,
+  FacebookReelUploadResponse,
+  finalizeVideoUploadRequest,
+  finalizeVideoUploadResponse,
   PageAccessTokenResponse,
   PublishMediaPostResponse,
-  PublishUploadedVideoPostRequest,
-  publishUploadedVideoPostResponse,
   PublishVideoForPageRequest,
   PublishVideoForPageResponse,
+  PublishVideoPostRequest,
+  publishVideoPostResponse,
   UploadPhotoResponse,
 } from './facebook.interfaces'
 
 @Injectable()
 export class FacebookService {
   private readonly logger = new Logger(FacebookService.name)
-  private readonly appId: string
   private readonly clientSecret: string = config.meta.facebook.clientSecret
   private readonly clientId: string = config.meta.facebook.clientId
-  private readonly longLivedAccessTokenURL: string = config.meta.facebook.longLivedAccessTokenURL
+  private readonly longLivedAccessTokenURL: string = FacebookOAuth2Config.longLivedAccessTokenURL
 
   private readonly apiHost: string = 'https://graph.facebook.com/'
   private readonly apiBaseUrl: string = 'https://graph.facebook.com/v23.0'
 
-  constructor() {
-    this.appId = config.meta.facebook.appId
-  }
+  constructor() {}
 
   async refreshOAuthCredential(refresh_token: string) {
     const lParams: Record<string, string> = {
@@ -54,7 +62,7 @@ export class FacebookService {
     return llTokenResponse.data
   }
 
-  async initMediaUpload(pageId: string, pageAccessToken: string, req: FacebookInitialUploadRequest): Promise<FacebookInitialUploadResponse> {
+  async initVideoUpload(pageId: string, pageAccessToken: string, req: FacebookInitialVideoUploadRequest): Promise<FacebookInitialVideoUploadResponse> {
     const url = `${this.apiBaseUrl}/${pageId}/videos`
     const config: AxiosRequestConfig = {
       headers: {
@@ -65,7 +73,7 @@ export class FacebookService {
     formData.append('upload_phase', req.upload_phase)
     formData.append('file_size', req.file_size.toString())
     formData.append('published', req.published.toString())
-    const response: AxiosResponse<FacebookInitialUploadResponse> = await axios.post(
+    const response: AxiosResponse<FacebookInitialVideoUploadResponse> = await axios.post(
       url,
       formData,
       config,
@@ -87,11 +95,11 @@ export class FacebookService {
     return response.data
   }
 
-  async chunkedMediaUploadRequest(
+  async chunkedVideoUploadRequest(
     pageId: string,
     pageAccessToken: string,
-    req: ChunkedFileUploadRequest,
-  ): Promise<ChunkedFileUploadResponse> {
+    req: ChunkedVideoUploadRequest,
+  ): Promise<ChunkedVideoUploadResponse> {
     const url = `${this.apiBaseUrl}/${pageId}/videos`
     const config: AxiosRequestConfig = {
       headers: {
@@ -105,7 +113,7 @@ export class FacebookService {
     formData.append('start_offset', req.start_offset.toString())
     formData.append('end_offset', req.end_offset.toString())
     formData.append('published', req.published.toString())
-    const response: AxiosResponse<ChunkedFileUploadResponse> = await axios.post(
+    const response: AxiosResponse<ChunkedVideoUploadResponse> = await axios.post(
       url,
       formData,
       config,
@@ -113,11 +121,11 @@ export class FacebookService {
     return response.data
   }
 
-  async finalizeMediaUpload(
+  async finalizeVideoUpload(
     pageId: string,
     pageAccessToken: string,
-    req: finalizeUploadRequest,
-  ): Promise<finalizeUploadResponse> {
+    req: finalizeVideoUploadRequest,
+  ): Promise<finalizeVideoUploadResponse> {
     const url = `${this.apiBaseUrl}/${pageId}/videos`
     const config: AxiosRequestConfig = {
       headers: {
@@ -125,7 +133,7 @@ export class FacebookService {
         'Content-Type': 'application/json',
       },
     }
-    const response: AxiosResponse<finalizeUploadResponse> = await axios.post(
+    const response: AxiosResponse<finalizeVideoUploadResponse> = await axios.post(
       url,
       req,
       config,
@@ -139,18 +147,18 @@ export class FacebookService {
   // see https://developers.facebook.com/docs/graph-api/reference/page/videos/?locale=en_US#Creating
   // https://developers.facebook.com/docs/pages-api/posts#publish-a-video
   // https://stackoverflow.com/questions/47284140/facebook-graph-api-publish-post-with-multiple-videos-and-photos
-  async publishUploadedVideoPost(
+  async publishVideoPost(
     pageId: string,
     pageAccessToken: string,
-    req: PublishUploadedVideoPostRequest,
-  ): Promise<publishUploadedVideoPostResponse> {
+    req: PublishVideoPostRequest,
+  ): Promise<publishVideoPostResponse> {
     const url = `${this.apiBaseUrl}/${pageId}/videos`
     const config: AxiosRequestConfig = {
       headers: {
         Authorization: `Bearer ${pageAccessToken}`,
       },
     }
-    const response: AxiosResponse<publishUploadedVideoPostResponse> = await axios.post(
+    const response: AxiosResponse<publishVideoPostResponse> = await axios.post(
       url,
       req,
       config,
@@ -183,7 +191,7 @@ export class FacebookService {
 
   // upload a photo to a page by image URL
   // see https://developers.facebook.com/docs/graph-api/reference/page/photos/#upload
-  async uploadPostPhotoByImgURL(
+  async uploadPhotoPostByImgURL(
     pageId: string,
     pageAccessToken: string,
     imageURL: string,
@@ -382,5 +390,260 @@ export class FacebookService {
       }
       throw new Error(`Error fetching page details, pageId: ${pageId}, req: ${JSON.stringify(query)}`, { cause: error })
     }
+  }
+
+  async getPagePublishedPosts(
+    pageId: string,
+    pageAccessToken: string,
+    query: FacebookPublishedPostRequest,
+  ): Promise<FacebookPublishedPostResponse> {
+    try {
+      const url = `${this.apiBaseUrl}/${pageId}/published_posts`
+      const config: AxiosRequestConfig = {
+        headers: {
+          Authorization: `Bearer ${pageAccessToken}`,
+        },
+        params: query,
+      }
+      const response: AxiosResponse<FacebookPublishedPostResponse> = await axios.get(
+        url,
+        config,
+      )
+      return response.data
+    }
+    catch (error) {
+      if (error.response) {
+        this.logger.error(`Error fetching published posts pageId: ${pageId}, req: ${JSON.stringify(query)}: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+      }
+      throw new Error(`Error fetching published posts, pageId: ${pageId}, req: ${JSON.stringify(query)}`, { cause: error })
+    }
+  }
+
+  async getPagePostDetails(
+    postId: string,
+    pageAccessToken: string,
+    query: FacebookPostDetailRequest,
+  ): Promise<FacebookPostDetailResponse> {
+    try {
+      const url = `${this.apiBaseUrl}/${postId}`
+      const config: AxiosRequestConfig = {
+        headers: {
+          Authorization: `Bearer ${pageAccessToken}`,
+        },
+        params: query,
+      }
+      const response: AxiosResponse<FacebookPostDetailResponse> = await axios.get(
+        url,
+        config,
+      )
+      return response.data
+    }
+    catch (error) {
+      if (error.response) {
+        this.logger.error(`Error fetching post details for post ${postId} on page ${postId}: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+      }
+      throw new Error(`Error fetching post details for post ${postId} on page ${postId}`, { cause: error })
+    }
+  }
+
+  async getPostComments(
+    postId: string,
+    pageAccessToken: string,
+    query: FacebookPostEdgesRequest,
+  ): Promise<FacebookPostEdgesResponse | null> {
+    try {
+      const url = `${this.apiBaseUrl}/${postId}/comments`
+      const config: AxiosRequestConfig = {
+        headers: {
+          Authorization: `Bearer ${pageAccessToken}`,
+        },
+        params: query,
+      }
+      const response: AxiosResponse<FacebookPostEdgesResponse> = await axios.get(
+        url,
+        config,
+      )
+      return response.data
+    }
+    catch (error) {
+      if (error.response) {
+        this.logger.error(`Error fetching comments for post ${postId}: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+      }
+      throw new Error(`Error fetching comments for post ${postId}`, { cause: error })
+    }
+  }
+
+  async getPostReactions(
+    postId: string,
+    pageAccessToken: string,
+    query: FacebookPostEdgesRequest,
+  ): Promise<FacebookPostEdgesResponse | null> {
+    try {
+      const url = `${this.apiBaseUrl}/${postId}/reactions`
+      const config: AxiosRequestConfig = {
+        headers: {
+          Authorization: `Bearer ${pageAccessToken}`,
+        },
+        params: query,
+      }
+      const response: AxiosResponse<FacebookPostEdgesResponse> = await axios.get(
+        url,
+        config,
+      )
+      return response.data
+    }
+    catch (error) {
+      if (error.response) {
+        this.logger.error(`Error fetching reactions for post ${postId}: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+      }
+      throw new Error(`Error fetching reactions for post ${postId}`, { cause: error })
+    }
+  }
+
+  // get insights for a specific object (like a post or page)
+  // see https://developers.facebook.com/docs/graph-api/reference/post/insights/
+  // post views and likes query: metric=post_reactions_like_total,post_video_views&period=lifetime
+  async getFacebookObjectInsights(
+    objectId: string,
+    pageAccessToken: string,
+    query: FacebookInsightsRequest,
+    requestURL?: string,
+  ): Promise<FacebookInsightsResponse> {
+    try {
+      const url = requestURL || `${this.apiBaseUrl}/${objectId}/insights`
+      const config: AxiosRequestConfig = {
+        headers: {
+          Authorization: `Bearer ${pageAccessToken}`,
+        },
+        params: query,
+      }
+      const response: AxiosResponse<FacebookInsightsResponse> = await axios.get(
+        url,
+        config,
+      )
+      return response.data || null
+    }
+    catch (error) {
+      if (error.response) {
+        this.logger.error(`Error fetching page insights pageId: ${objectId}, req: ${JSON.stringify(query)}: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+      }
+      throw new Error(`Error fetching page insights, objectId: ${objectId}, req: ${JSON.stringify(query)}`, { cause: error })
+    }
+  }
+
+  async initReelUpload(
+    pageId: string,
+    pageAccessToken: string,
+    req: FacebookReelRequest,
+  ): Promise<FacebookReelResponse> {
+    const url = `${this.apiBaseUrl}/${pageId}/video_reels`
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: `Bearer ${pageAccessToken}`,
+      },
+    }
+    const formData = new FormData()
+    formData.append('upload_phase', req.upload_phase)
+    const response: AxiosResponse<FacebookReelResponse> = await axios.post(
+      url,
+      formData,
+      config,
+    )
+    return response.data
+  }
+
+  async uploadReel(
+    pageAccessToken: string,
+    uploadURL: string,
+    req: FacebookReelUploadRequest,
+  ): Promise<FacebookReelUploadResponse> {
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: `Bearer ${pageAccessToken}`,
+      },
+    }
+    const response: AxiosResponse<FacebookReelUploadResponse> = await axios.post(
+      uploadURL,
+      req,
+      config,
+    )
+    return response.data
+  }
+
+  async publishReelPost(
+    pageId: string,
+    pageAccessToken: string,
+    req: FacebookReelRequest,
+  ): Promise<FacebookReelResponse> {
+    const url = `${this.apiBaseUrl}/${pageId}/video_reels`
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: `Bearer ${pageAccessToken}`,
+      },
+    }
+    const response: AxiosResponse<FacebookReelResponse> = await axios.post(
+      url,
+      req,
+      config,
+    )
+    return response.data
+  }
+
+  async initStoryUpload(
+    pageId: string,
+    pageAccessToken: string,
+    req: FacebookReelRequest,
+  ): Promise<FacebookReelResponse> {
+    const url = `${this.apiBaseUrl}/${pageId}/video_stories`
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: `Bearer ${pageAccessToken}`,
+      },
+    }
+    const formData = new FormData()
+    formData.append('upload_phase', req.upload_phase)
+    const response: AxiosResponse<FacebookReelResponse> = await axios.post(
+      url,
+      formData,
+      config,
+    )
+    return response.data
+  }
+
+  async uploadStory(
+    pageAccessToken: string,
+    uploadURL: string,
+    req: FacebookReelUploadRequest,
+  ): Promise<FacebookReelUploadResponse> {
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: `Bearer ${pageAccessToken}`,
+      },
+    }
+    const response: AxiosResponse<FacebookReelUploadResponse> = await axios.post(
+      uploadURL,
+      req,
+      config,
+    )
+    return response.data
+  }
+
+  async publishStoryPost(
+    pageId: string,
+    pageAccessToken: string,
+    req: FacebookReelRequest,
+  ): Promise<FacebookReelResponse> {
+    const url = `${this.apiBaseUrl}/${pageId}/video_stories`
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: `Bearer ${pageAccessToken}`,
+      },
+    }
+    const response: AxiosResponse<FacebookReelResponse> = await axios.post(
+      url,
+      req,
+      config,
+    )
+    return response.data
   }
 }

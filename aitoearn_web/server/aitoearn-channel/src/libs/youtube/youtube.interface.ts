@@ -93,6 +93,6 @@ export interface YoutubePublishVideoInfo {
   comment_count: number
   // 作品观看数
   view_count: number
-  // 	作品状态(是否还在处理中，不能观看)
+  // 作品状态(是否还在处理中，不能观看)
   pending: boolean
 }

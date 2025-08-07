@@ -2,26 +2,26 @@ import { Injectable, Logger } from '@nestjs/common'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { config } from '@/config'
 import { MetaOAuthLongLivedCredential } from '@/core/plat/meta/meta.interfaces'
+import { InstagramOAuth2Config } from './constants'
 import {
   ChunkedMediaUploadRequest,
   CreateMediaContainerRequest,
   CreateMediaContainerResponse,
   InstagramInsightsRequest,
   InstagramInsightsResponse,
+  InstagramMediaInsightsRequest,
   InstagramObjectInfo,
   InstagramUserInfoRequest,
   InstagramUserInfoResponse,
-  MediaInsightsRequest,
 } from './instagram.interfaces'
 
 @Injectable()
 export class InstagramService {
   private readonly logger = new Logger(InstagramService.name)
-  private readonly appId: string = config.meta.instagram.appId
   private readonly clientSecret: string = config.meta.instagram.clientSecret
   private readonly clientId: string = config.meta.instagram.clientId
-  private readonly refreshAccessToken: string = config.meta.instagram.refreshTokenURL
-  private readonly apiBaseUrl: string = config.meta.instagram.apiBaseUrl
+  private readonly refreshAccessToken: string = InstagramOAuth2Config.refreshTokenURL
+  private readonly apiBaseUrl: string = InstagramOAuth2Config.apiBaseUrl
 
   async refreshOAuthCredential(refresh_token: string) {
     const lParams: Record<string, string> = {
@@ -149,10 +149,10 @@ export class InstagramService {
     return response.data
   }
 
-  async getMetricsForMedia(
+  async getMediaInsights(
     mediaId: string,
     accessToken: string,
-    req: MediaInsightsRequest,
+    req: InstagramMediaInsightsRequest,
   ) {
     const url = `${this.apiBaseUrl}/${mediaId}/insights`
     const config: AxiosRequestConfig = {
@@ -189,7 +189,7 @@ export class InstagramService {
     return response.data
   }
 
-  async getInsights(
+  async getAccountInsights(
     accessToken: string,
     igUserId: string,
     query: InstagramInsightsRequest,
@@ -214,12 +214,27 @@ export class InstagramService {
     }
   }
 
-  async getUserInfo(
+  async getAccountInfo(
     userId: string,
     accessToken: string,
     query: InstagramUserInfoRequest,
   ): Promise<InstagramUserInfoResponse> {
     const url = `${this.apiBaseUrl}/${userId}`
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      params: query,
+    }
+    const response: AxiosResponse<InstagramUserInfoResponse> = await axios.get(url, config)
+    return response.data
+  }
+
+  async getUserProfile(
+    accessToken: string,
+    query: InstagramUserInfoRequest,
+  ): Promise<InstagramUserInfoResponse> {
+    const url = `${this.apiBaseUrl}/me`
     const config: AxiosRequestConfig = {
       headers: {
         Authorization: `Bearer ${accessToken}`,

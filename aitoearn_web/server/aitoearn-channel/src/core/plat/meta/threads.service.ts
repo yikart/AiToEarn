@@ -2,7 +2,13 @@ import { Injectable, Logger } from '@nestjs/common'
 import { getCurrentTimestamp } from '@/common'
 import { config } from '@/config'
 import { RedisService } from '@/libs'
-import { ThreadsAccountInsightsRequest, ThreadsAccountInsightsResponse, ThreadsContainerRequest, ThreadsPostResponse } from '@/libs/threads/threads.interfaces'
+import {
+  publicProfileResponse,
+  ThreadsContainerRequest,
+  ThreadsInsightsRequest,
+  ThreadsInsightsResponse,
+  ThreadsPostResponse,
+} from '@/libs/threads/threads.interfaces'
 import { ThreadsService as ThreadsAPIService } from '@/libs/threads/threads.service'
 import { META_TIME_CONSTANTS, MetaRedisKeys } from './constants'
 import { MetaUserOAuthCredential } from './meta.interfaces'
@@ -131,8 +137,8 @@ export class ThreadsService {
 
   async getAccountInsights(
     accountId: string,
-    query: ThreadsAccountInsightsRequest,
-  ): Promise<ThreadsAccountInsightsResponse | null> {
+    query: ThreadsInsightsRequest,
+  ): Promise<ThreadsInsightsResponse | null> {
     const credential = await this.authorize(accountId)
     if (!credential) {
       this.logger.error(`No valid access token found for accountId: ${accountId}`)
@@ -142,6 +148,54 @@ export class ThreadsService {
       credential.user_id,
       credential.access_token,
       query,
+    )
+  }
+
+  async getMediaInsights(
+    accountId: string,
+    mediaId: string,
+    query: ThreadsInsightsRequest,
+  ): Promise<ThreadsInsightsResponse | null> {
+    const credential = await this.authorize(accountId)
+    if (!credential) {
+      this.logger.error(`No valid access token found for accountId: ${accountId}`)
+      return null
+    }
+    return await this.threadsAPIService.getMediaInsights(
+      mediaId,
+      credential.access_token,
+      query,
+    )
+  }
+
+  async getPublicProfile(
+    accountId: string,
+    username: string,
+  ): Promise<publicProfileResponse | null> {
+    const credential = await this.authorize(accountId)
+    if (!credential) {
+      this.logger.error(`No valid access token found for accountId: ${accountId}`)
+      return null
+    }
+    return await this.threadsAPIService.getPublicProfile(
+      credential.access_token,
+      username,
+    )
+  }
+
+  async getAllPosts(
+    accountId: string,
+    reqURL?: string,
+  ): Promise<ThreadsPostResponse | null> {
+    const credential = await this.authorize(accountId)
+    if (!credential) {
+      this.logger.error(`No valid access token found for accountId: ${accountId}`)
+      return null
+    }
+    return await this.threadsAPIService.getAccountAllPosts(
+      credential.user_id,
+      credential.access_token,
+      reqURL,
     )
   }
 }

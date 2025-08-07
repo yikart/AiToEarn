@@ -88,6 +88,27 @@ export const CreatePublishSchema = z.object({
 })
 export class CreatePublishDto extends createZodDto(CreatePublishSchema) {}
 
+export const CreatePublishRecordSchema = z.object({
+  flowId: z.string({ required_error: '流水ID' }).optional(),
+  dataId: z.string({ required_error: '账户ID' }),
+  accountId: z.string({ required_error: '账户ID' }),
+  accountType: z.nativeEnum(AccountType, { required_error: '平台类型' }),
+  type: z.nativeEnum(PublishType, { required_error: '类型' }),
+  title: z.string().optional(),
+  desc: z.string().optional(),
+  videoUrl: z.string().optional(),
+  coverUrl: z.string().optional(),
+  imgList: z.array(z.string()).optional(),
+  publishTime: z
+    .date()
+    .default(() => new Date()),
+  topics: z.array(z.string()),
+  option: z.object({
+    bilibili: BiliBiliPublishOptionSchema.optional(),
+  }).optional(),
+})
+export class CreatePublishRecordDto extends createZodDto(CreatePublishRecordSchema) {}
+
 export class PublishRecordListFilterDto {
   @IsString({ message: '用户ID' })
   @Expose()

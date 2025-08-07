@@ -17,6 +17,7 @@ import { BilibiliModule } from '../plat/bilibili/bilibili.module'
 import { KwaiModule } from '../plat/kwai/kwai.module'
 import { MetaModule } from '../plat/meta/meta.module'
 import { TiktokModule } from '../plat/tiktok/tiktok.module'
+import { TwitterModule } from '../plat/twitter/twitter.module'
 import { WxPlatModule } from '../plat/wxPlat/wxPlat.module'
 import { YoutubeModule } from '../plat/youtube/youtube.module'
 import { BilibiliPubService } from './plat/bilibiliPub.service'
@@ -50,7 +51,7 @@ import { PublishTaskService } from './publishTask.service'
       prefix: 'meta:',
       defaultJobOptions: {
         attempts: 3,
-        delay: 60000, // 60 seconds
+        delay: 20000, // 20 seconds
         removeOnComplete: true,
       },
     }),
@@ -61,6 +62,7 @@ import { PublishTaskService } from './publishTask.service'
     MetaModule,
     TiktokModule,
     MetaPublishModule,
+    TwitterModule,
   ],
   providers: [
     PublishRecordService,
@@ -75,6 +77,7 @@ import { PublishTaskService } from './publishTask.service'
     ThreadsPublishService,
     TiktokPubService,
     MetaPublishWorker,
+    ThreadsPublishService,
   ],
   controllers: [PublishRecordController, PublishTaskController],
   exports: [PublishRecordService, PublishTaskService],

@@ -22,6 +22,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@alexlau811/pino-cloudwatch": "^0.10.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/microservices": "^11.1.2",
@@ -41,7 +42,11 @@
     "nats": "^2.29.3",
     "nest-typed-config": "^2.10.1",
     "nestjs-asyncapi": "^1.4.0",
+    "nestjs-pino": "^4.4.0",
     "nestjs-zod": "^4.3.1",
+    "pino": "^9.7.0",
+    "pino-http": "^10.5.0",
+    "pino-pretty": "^13.1.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "zod": "^3.25.67"

@@ -94,7 +94,7 @@ export class PinterestApiService {
     const result: any = await axios.get(uri, { headers }).catch((err: any) => {
       return Logger.error(
         '----- pinterest Error getBoardList: ----',
-        err.message,
+        err,
       );
     });
     const list = _.get(result, 'data.items');

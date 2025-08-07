@@ -80,10 +80,9 @@ export class ThreadsPublishService extends PublishBase implements MetaPostPublis
         }
       }
       if (videoUrl) {
-        const downloadULR = videoUrl.replace('undefined', 'https://ai-to-earn.oss-cn-beijing.aliyuncs.com/')
         const createContainerReq: ThreadsContainerRequest = {
           media_type: 'VIDEO',
-          video_url: downloadULR,
+          video_url: videoUrl,
         }
         if (imgUrlList && imgUrlList.length > 0) {
           createContainerReq.is_carousel_item = true;
@@ -109,7 +108,11 @@ export class ThreadsPublishService extends PublishBase implements MetaPostPublis
         'threads:media:task',
         task,
         {
-          attempts: 0,
+          attempts: 3,
+          backoff: {
+            type: 'fixed',
+            delay: 5000,
+          },
           removeOnComplete: true,
           removeOnFail: true,
         },

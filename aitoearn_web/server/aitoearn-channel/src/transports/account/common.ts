@@ -12,6 +12,7 @@ export enum AccountType {
   FACEBOOK = 'facebook', // facebook
   INSTAGRAM = 'instagram', // instagram
   THREADS = 'threads', // threads
+  PINTEREST = 'pinterest',
 }
 
 export enum AccountStatus {

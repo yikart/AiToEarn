@@ -1,5 +1,32 @@
 import { createZodDto, selectConfig } from '@common/utils'
 import { z } from 'zod/v4'
+import { s3ConfigSchema } from './libs/aws-s3/s3.config'
+
+const logLevelSchema = z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace'])
+
+export const cloudWatchLoggerConfigSchema = z.object({
+  enable: z.boolean().default(false),
+  level: logLevelSchema.default('debug'),
+  region: z.string(),
+  accessKeyId: z.string(),
+  secretAccessKey: z.string(),
+  group: z.string(),
+  stream: z.string().optional(),
+  prefix: z.string().optional(),
+})
+
+export const consoleLoggerConfigSchema = z.object({
+  enable: z.boolean().default(true),
+  colorize: z.boolean().default(true),
+  level: logLevelSchema.default('info'),
+  singleLine: z.boolean().default(false),
+  translateTime: z.boolean().default(true),
+})
+
+export const loggerConfigSchema = z.object({
+  cloudWatch: cloudWatchLoggerConfigSchema.optional(),
+  console: consoleLoggerConfigSchema.optional(),
+})
 
 // 服务器配置
 const serverConfigSchema = z.object({
@@ -39,19 +66,6 @@ const natsConfigSchema = z.object({
   prefix: z.string().default(''),
 })
 
-// OSS配置
-const OssOptionSchema = z.object({
-  region: z.string().default(''),
-  accessKeyId: z.string().default(''),
-  accessKeySecret: z.string().default(''),
-  bucket: z.string().default(''),
-  secret: z.string().default('true'),
-})
-const OssConfigSchema = z.object({
-  options: OssOptionSchema,
-  hostUrl: z.string().default('nats://127.0.0.1:4222'),
-})
-
 // bullmq配置
 const BullmqConnectionSchema = z.object({
   host: z.string().default('127.0.0.1'),
@@ -89,6 +103,7 @@ const PinterestSchema = z.object({
   secret: z.string().default(''),
   baseUrl: z.string().default(''),
   authBackHost: z.string().default(''),
+  test_authorization: z.string().default(''),
 })
 
 // tiktok配置
@@ -114,6 +129,13 @@ const WxPlatSchema = z.object({
   authBackHost: z.string().default(''),
 })
 
+// 自建微信三方平台服务
+const MyWxPlatSchema = z.object({
+  id: z.string().default(''),
+  secret: z.string().default(''),
+  hostUrl: z.string().default(''),
+})
+
 // youtube配置
 const YoutubeSchema = z.object({
   id: z.string().default(''),
@@ -122,25 +144,10 @@ const YoutubeSchema = z.object({
 })
 
 const OAuth2ConfigSchema = z.object({
-  pkce: z.boolean().default(false),
-  shortLived: z.boolean().default(true),
   clientId: z.string().default(''),
   clientSecret: z.string().default(''),
   configId: z.string().default(''),
-  appId: z.string().default(''),
   redirectUri: z.string().default(''),
-  apiBaseUrl: z.string().default(''),
-  authURL: z.string().default(''),
-  accessTokenURL: z.string().default(''),
-  longLivedAccessTokenURL: z.string().default(''),
-  refreshTokenURL: z.string().default(''),
-  userProfileURL: z.string().default(''),
-  pageAccountURL: z.string().default(''),
-  requestAccessTokenMethod: z.string().default('POST'),
-  defaultScopes: z.array(z.string()).default([]),
-  longLivedGrantType: z.string().default(''),
-  longLivedParamsMap: z.record(z.string(), z.string()).default({}),
-  scopesSeparator: z.string().default(' '),
 })
 
 const MetaOAuth2ConfigSchema = z.object({
@@ -150,11 +157,12 @@ const MetaOAuth2ConfigSchema = z.object({
 })
 
 export const configSchema = z.object({
+  logger: loggerConfigSchema.default({}),
   ...serverConfigSchema.shape,
   redis: redisConfigSchema,
   mongodb: mongoConfigSchema,
   nats: natsConfigSchema,
-  oss: OssConfigSchema,
+  awsS3: s3ConfigSchema,
   bullmq: BullmqSchema,
   bilibili: BilibiliSchema,
   kwai: kwaiSchema,
@@ -163,6 +171,7 @@ export const configSchema = z.object({
   tiktok: TiktokSchema,
   twitter: TwitterSchema,
   wxPlat: WxPlatSchema,
+  myWxPlat: MyWxPlatSchema,
   youtube: YoutubeSchema,
   meta: MetaOAuth2ConfigSchema,
 })

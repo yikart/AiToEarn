@@ -7,6 +7,7 @@ import {
   NewMailDto,
   UpdateUserInfoDto,
   UpdateUserPasswordDto,
+  UpdateUserStatusDto,
   UserInfoDto,
   UserMailDto,
 } from './dto/user.dto'
@@ -23,6 +24,7 @@ export class UserController {
     return this.userService.createUserByMail(
       data.mail,
       data.password,
+      data.salt,
       data.inviteCode,
     )
   }
@@ -44,11 +46,16 @@ export class UserController {
     return this.userService.updateUserInfo(data.id, data)
   }
 
+  // 更新用户状态
+  @NatsMessagePattern('user.user.updateUserStatus')
+  updateUserStatus(@Payload() data: UpdateUserStatusDto) {
+    return this.userService.updateUserStatus(data.id, data.status)
+  }
+
   // 更新用户密码
   @NatsMessagePattern('user.user.updateUserPassword')
   updateUserPassword(@Payload() data: UpdateUserPasswordDto) {
-    const { password, salt } = encryptPassword(data.password)
-    return this.userService.updateUserPassword(data.id, { password, salt })
+    return this.userService.updateUserPassword(data.id, { password: data.password, salt: data.salt })
   }
 
   // 谷歌登录创建账号

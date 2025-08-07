@@ -10,7 +10,6 @@ import { Injectable, Logger } from '@nestjs/common'
 import { AppException, getCurrentTimestamp } from '@/common'
 import { config } from '@/config'
 import { AccountService } from '@/core/account/account.service'
-import { FileService } from '@/core/file/file.service'
 import { RedisService } from '@/libs'
 import { TiktokPostMode } from '@/libs/tiktok/tiktok.enum'
 import {
@@ -49,7 +48,6 @@ export class TiktokService {
     private readonly redisService: RedisService,
     private readonly tiktokApiService: TiktokApiService,
     private readonly accountService: AccountService,
-    private readonly fileService: FileService,
   ) {
     this.authCallbackHost = config.tiktok.redirectUri
     this.natsPrefix = config.nats.prefix
@@ -101,8 +99,12 @@ export class TiktokService {
     const authTaskInfo = await this.redisService.get<AuthTaskInfo>(
       TiktokRedisKeys.getAuthTaskKey(taskId),
     )
-    if (!authTaskInfo)
-      return null
+    if (!authTaskInfo) {
+      return {
+        status: 0,
+        message: '授权任务不存在或已过期',
+      }
+    }
 
     // 延长授权任务时间
     void this.redisService.setPexire(
@@ -112,8 +114,12 @@ export class TiktokService {
 
     // 获取访问令牌
     const accessTokenInfo = await this.tiktokApiService.getAccessToken(code)
-    if (!accessTokenInfo)
-      return null
+    if (!accessTokenInfo) {
+      return {
+        status: 0,
+        message: '获取访问令牌失败',
+      }
+    }
     // 获取TikTok用户信息
     const userInfo = await this.fetchUserInfo(
       accessTokenInfo.access_token,
@@ -139,17 +145,24 @@ export class TiktokService {
       newAccountData,
     )
 
-    if (!accountInfo)
-      return null
+    if (!accountInfo) {
+      return {
+        status: 0,
+        message: '创建账号失败',
+      }
+    }
 
     // 保存访问令牌
     const tokenSaved = await this.saveAccessToken(
       accountInfo.id,
       accessTokenInfo,
     )
-    if (!tokenSaved)
-      return null
-
+    if (!tokenSaved) {
+      return {
+        status: 0,
+        message: '保存访问令牌失败',
+      }
+    }
     // 更新任务状态
     const taskUpdated = await this.updateAuthTaskStatus(
       taskId,
@@ -157,7 +170,16 @@ export class TiktokService {
       accountInfo.id,
     )
 
-    return taskUpdated ? accountInfo : null
+    return taskUpdated
+      ? {
+          status: 1,
+          message: '授权成功',
+          accountId: accountInfo.id,
+        }
+      : {
+          status: 0,
+          message: '更新任务状态失败',
+        }
   }
 
   /**
@@ -327,16 +349,6 @@ export class TiktokService {
     accessToken: string,
   ): Promise<TiktokCreatorInfo> {
     return await this.tiktokApiService.getCreatorInfo(accessToken)
-  }
-
-  /**
-   * 处理头像URL
-   */
-  private async processAvatarUrl(avatarUrl: string): Promise<string> {
-    return await this.fileService.upFileByUrl(avatarUrl, {
-      path: 'account/avatar',
-      permanent: true,
-    })
   }
 
   /**

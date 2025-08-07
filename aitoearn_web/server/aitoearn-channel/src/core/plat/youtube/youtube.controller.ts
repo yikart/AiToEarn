@@ -55,27 +55,27 @@ export class YoutubeController {
   ) {}
 
   // 获取AccessToken,并记录到用户，给平台回调用
-  @Get('auth/callback')
-  async getAccessToken(
-    @Query()
-    query: {
-      code: string
-      state: string
-    },
-  ) {
-    // const { taskId, prefix } = JSON.parse(decodeURIComponent(query.state));
-    const stateData = JSON.parse(decodeURIComponent(query.state))
-    this.logger.log('stateData-----:', stateData)
-    const taskId = stateData.originalState // Use originalState as taskId
-    // const prefix = stateData.prefix
-    const rcode = query.code
-    // this.logger.log('taskId:--', taskId, rcode)
-    const res = await this.youtubeService.setAccessToken(
-      taskId,
-      rcode,
-    )
-    return res
-  }
+  // @Get('auth/callback')
+  // async getAccessToken(
+  //   @Query()
+  //   query: {
+  //     code: string
+  //     state: string
+  //   },
+  // ) {
+  //   // const { taskId, prefix } = JSON.parse(decodeURIComponent(query.state));
+  //   const stateData = JSON.parse(decodeURIComponent(query.state))
+  //   this.logger.log('stateData-----:', stateData)
+  //   const taskId = stateData.originalState // Use originalState as taskId
+  //   // const prefix = stateData.prefix
+  //   const rcode = query.code
+  //   // this.logger.log('taskId:--', taskId, rcode)
+  //   const res = await this.youtubeService.setAccessToken(
+  //     taskId,
+  //     rcode,
+  //   )
+  //   return res
+  // }
 
   // 获取页面的认证URL
   @NatsMessagePattern('plat.youtube.authUrl')
@@ -92,6 +92,7 @@ export class YoutubeController {
   // 查询用户的认证信息
   @NatsMessagePattern('plat.youtube.getAuthInfo')
   getAuthInfo(@Payload() data: GetAuthInfoDto) {
+    this.logger.log('taskId--', data.taskId)
     const res = this.youtubeService.getAuthInfo(data.taskId)
     return res
   }
@@ -106,7 +107,7 @@ export class YoutubeController {
   // 设置授权Token
   @NatsMessagePattern('plat.youtube.setAccessToken')
   async setAccessToken(@Payload() data: CreateAccountAndSetAccessTokenDto) {
-    this.logger.log('channel:--setAccessToken:', data.taskId, data.code)
+    this.logger.log(`channel:--setAccessToken: ${data.taskId} , ${data.code}`)
     const res = await this.youtubeService.setAccessToken(data.taskId, data.code)
     return res
   }

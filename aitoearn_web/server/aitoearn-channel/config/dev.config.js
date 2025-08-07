@@ -1,96 +1,21 @@
-const {
-  REDIS_HOST,
-  REDIS_PORT,
-  REDIS_PASSWORD,
-} = process.env
-const {
-  MONGODB_HOST,
-  MONGODB_PORT,
-  MONGODB_USERNAME,
-  MONGODB_PASSWORD,
-} = process.env
-
-const {
-  NATS_HOST,
-  NATS_PORT,
-  NATS_USERNAME,
-  NATS_PASSWORD,
-} = process.env
-
-const {
-  OSS_KEY_ID,
-  OSS_KEY_SECRET,
-  OSS_BUCKET,
-  OSS_REGION,
-} = process.env
-
-const {
-  BILIBILI_ID,
-  BILIBILI_SECRET,
-  BILIBILI_AUTH_HOST,
-} = process.env
-
-const {
-  GOOGLE_ID,
-  GOOGLE_SECRET,
-  GOOGLE_AUTH_HOST,
-} = process.env
-
-const {
-  KWAI_ID,
-  KWAI_SECRET,
-  KWAI_AUTH_HOST,
-} = process.env
-
-const {
-  PINTEREST_ID,
-  PINTEREST_SECRET,
-  PINTEREST_AUTH_HOST,
-} = process.env
-
-const {
-  TIKTOK_ID,
-  TIKTOK_SECRET,
-  TIKTOK_REDIRECT_URI,
-} = process.env
-
-const {
-  TWITTER_ID,
-  TWITTER_SECRET,
-  TWITTER_REDIRECT_URI,
-} = process.env
-
-const {
-  FACEBOOK_CLIENT_ID,
-  FACEBOOK_CLIENT_SECRET,
-  FACEBOOK_CONFIG_ID,
-} = process.env
-
-const {
-  THREADS_CLIENT_ID,
-  THREADS_CLIENT_SECRET,
-  THREADS_REDIRECT_URI,
-} = process.env
-
-const {
-  INSTAGRAM_CLIENT_ID,
-  INSTAGRAM_CLIENT_SECRET,
-  INSTAGRAM_REDIRECT_URI,
-} = process.env
-
-const {
-  WX_PLAT_ID,
-  WX_PLAT_SECRET,
-  WX_PLAT_TOKEN,
-  WX_PLAT_AES_KEY,
-  WX_PLAT_AUTH_HOST,
-} = process.env
-
-const {
-  YOUTOBE_ID,
-  YOUTOBE_SECRET,
-  YOUTOBE_SECRET_AUTH_HOST,
-} = process.env
+const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = process.env;
+const { MONGODB_HOST, MONGODB_PORT, MONGODB_USERNAME, MONGODB_PASSWORD }
+  = process.env;
+const { NATS_HOST, NATS_PORT, NATS_USERNAME, NATS_PASSWORD } = process.env;
+const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } = process.env;
+const { BILIBILI_ID, BILIBILI_SECRET } = process.env;
+const { KWAI_ID, KWAI_SECRET } = process.env;
+const { PINTEREST_ID, PINTEREST_SECRET, PINTEREST_TEST_AUTH } = process.env;
+const { TIKTOK_CLIENT_ID, TIKTOK_CLIENT_SECRET } = process.env;
+const { TWITTER_CLIENT_ID, TWITTER_CLIENT_SECRET } = process.env;
+const { META_FACEBOOK_CLIENT_ID, META_FACEBOOK_CLIENT_SECRET, META_FACEBOOK_CONFIG_ID } = process.env;
+const { META_THREADS_CLIENT_ID, META_THREADS_CLIENT_SECRET } = process.env;
+const { META_INSTAGRAM_CLIENT_ID, META_INSTAGRAM_CLIENT_SECRET } = process.env;
+const { WX_PLAT_ID, WX_PLAT_SECRET, WX_PLAT_TOKEN, WX_PLAT_ENCODING_AES_KEY } = process.env;
+const { MY_WX_PLAT_SECRET, MY_WX_PLAT_ID } = process.env;
+const { YOUTUBE_ID, YOUTUBE_SECRET } = process.env;
+// 添加 Google 配置环境变量
+const { GOOGLE_ID, GOOGLE_SECRET, GOOGLE_AUTH_BACK_HOST } = process.env;
 
 module.exports = {
   port: 7001,
@@ -100,6 +25,20 @@ module.exports = {
     enabled: false,
     path: '/doc',
   },
+  logger: {
+    console: {
+      enable: true,
+      level: 'debug',
+    },
+    cloudWatch: {
+      enable: true,
+      region: 'ap-southeast-1',
+      accessKeyId: AWS_ACCESS_KEY_ID,
+      secretAccessKey: AWS_SECRET_ACCESS_KEY,
+      group: 'aitoearn-apps',
+      prefix: 'dev',
+    },
+  },
   redis: {
     host: REDIS_HOST,
     port: Number(REDIS_PORT),
@@ -108,25 +47,24 @@ module.exports = {
     connectTimeout: 10000,
   },
   mongodb: {
-    uri: `mongodb://${MONGODB_USERNAME}:${encodeURIComponent(MONGODB_PASSWORD)}@${MONGODB_HOST}:${MONGODB_PORT}/?tls=true&tlsCAFile=global-bundle.pem&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false`,
-    dbName: 'aitoearn_dev',
+    uri: `mongodb://${MONGODB_USERNAME}:${encodeURIComponent(MONGODB_PASSWORD)}@${MONGODB_HOST}:${MONGODB_PORT}/`,
+    dbName: 'aitoearn',
   },
   nats: {
     name: 'aitoearn-channel-dev',
-    servers: [`nats://${NATS_USERNAME}:${NATS_PASSWORD}@${NATS_HOST}:${NATS_PORT}`],
+    servers: [
+      `nats://${NATS_USERNAME}:${NATS_PASSWORD}@${NATS_HOST}:${NATS_PORT}`,
+    ],
     user: NATS_USERNAME,
     pass: NATS_PASSWORD,
     prefix: 'dev',
   },
-  oss: {
-    options: {
-      region: OSS_REGION,
-      accessKeyId: OSS_KEY_ID,
-      accessKeySecret: OSS_KEY_SECRET,
-      bucket: OSS_BUCKET,
-      secret: 'true',
-    },
-    hostUrl: 'https://file.aitoearn.com',
+  awsS3: {
+    region: 'ap-southeast-1',
+    accessKeyId: AWS_ACCESS_KEY_ID,
+    secretAccessKey: AWS_SECRET_ACCESS_KEY,
+    bucketName: 'aitoearn',
+    hostUrl: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com',
   },
   bullmq: {
     connection: {
@@ -139,49 +77,51 @@ module.exports = {
   bilibili: {
     id: BILIBILI_ID,
     secret: BILIBILI_SECRET,
-    authBackHost: BILIBILI_AUTH_HOST,
+    authBackHost: 'https://dev.aitoearn.ai/baseUrlProxy/plat/bilibili/auth/back',
   },
   google: {
     id: GOOGLE_ID,
     secret: GOOGLE_SECRET,
-    authBackHost: GOOGLE_AUTH_HOST,
+    authBackHost: GOOGLE_AUTH_BACK_HOST,
   },
   kwai: {
     id: KWAI_ID,
     secret: KWAI_SECRET,
-    authBackHost: KWAI_AUTH_HOST,
+    authBackHost: 'https://dev.aitoearn.ai/baseUrlProxy/plat/kwai/auth/back',
   },
   pinterest: {
     id: PINTEREST_ID,
     secret: PINTEREST_SECRET,
-    authBackHost: PINTEREST_AUTH_HOST,
+    authBackHost: 'https://dev.aitoearn.ai/baseUrlProxy/plat/pinterest/authWebhook',
     baseUrl: 'https://api-sandbox.pinterest.com',
+    test_authorization: PINTEREST_TEST_AUTH,
   },
   tiktok: {
-    clientId: TIKTOK_ID,
-    clientSecret: TIKTOK_SECRET,
-    redirectUri: TIKTOK_REDIRECT_URI,
+    clientId: TIKTOK_CLIENT_ID,
+    clientSecret: TIKTOK_CLIENT_SECRET,
+    redirectUri: 'https://dev.aitoearn.ai/platcallback/tiktok/auth/callback',
   },
   twitter: {
-    clientId: TWITTER_ID,
-    clientSecret: TWITTER_SECRET,
-    redirectUri: TWITTER_REDIRECT_URI,
+    clientId: TWITTER_CLIENT_ID,
+    clientSecret: TWITTER_CLIENT_SECRET,
+    redirectUri: 'https://dev.aitoearn.ai/platcallback/twitter/auth/callback',
   },
   meta: {
     facebook: {
-      clientId: FACEBOOK_CLIENT_ID,
-      clientSecret: FACEBOOK_CLIENT_SECRET,
-      configId: FACEBOOK_CONFIG_ID,
+      clientId: META_FACEBOOK_CLIENT_ID,
+      clientSecret: META_FACEBOOK_CLIENT_SECRET,
+      configId: META_FACEBOOK_CONFIG_ID,
+      redirectUri: 'https://dev.aitoearn.ai/api/plat/meta/auth/back',
     },
     threads: {
-      clientId: THREADS_CLIENT_ID,
-      clientSecret: THREADS_CLIENT_SECRET,
-      redirectUri: THREADS_REDIRECT_URI,
+      clientId: META_THREADS_CLIENT_ID,
+      clientSecret: META_THREADS_CLIENT_SECRET,
+      redirectUri: 'https://dev.aitoearn.ai/api/plat/meta/auth/back',
     },
     instagram: {
-      clientId: INSTAGRAM_CLIENT_ID,
-      clientSecret: INSTAGRAM_CLIENT_SECRET,
-      redirectUri: INSTAGRAM_REDIRECT_URI,
+      clientId: META_INSTAGRAM_CLIENT_ID,
+      clientSecret: META_INSTAGRAM_CLIENT_SECRET,
+      redirectUri: 'https://dev.aitoearn.ai/api/plat/meta/auth/back',
     },
   },
 
@@ -189,13 +129,18 @@ module.exports = {
     id: WX_PLAT_ID,
     secret: WX_PLAT_SECRET,
     token: WX_PLAT_TOKEN,
-    encodingAESKey: WX_PLAT_AES_KEY,
-    authBackHost: WX_PLAT_AUTH_HOST,
+    encodingAESKey: WX_PLAT_ENCODING_AES_KEY,
+    authBackHost: 'https://dev.aitoearn.ai/platcallback',
+  },
+  myWxPlat: {
+    id: MY_WX_PLAT_ID,
+    secret: MY_WX_PLAT_SECRET,
+    hostUrl: 'https://mcp.aitoearn.cn',
   },
   youtube: {
-    id: YOUTOBE_ID,
-    secret: YOUTOBE_SECRET,
+    id: YOUTUBE_ID,
+    secret: YOUTUBE_SECRET,
     authBackHost:
-      YOUTOBE_SECRET_AUTH_HOST,
+      'https://dev.aitoearn.ai/api/plat/youtube/auth/callback',
   },
-}
+};

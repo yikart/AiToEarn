@@ -18,7 +18,7 @@ export enum WalletAccountType {
   versionKey: false,
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
-  timestamps: false,
+  timestamps: true,
 })
 export class UserWalletAccount extends BaseTemp {
   id: string

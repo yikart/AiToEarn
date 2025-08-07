@@ -5,7 +5,7 @@ import { AccountType } from '@transports/account/common'
 
 import { Queue } from 'bullmq'
 import { Model } from 'mongoose'
-import { FileToolsService } from '@/core/file/fileTools.service'
+import { chunkedDownloadFile, fileUrlToBlob, getFileSizeFromUrl, getFileTypeFromUrl } from '@/common'
 import { TwitterService } from '@/core/plat/twitter/twitter.service'
 import { PublishRecord } from '@/libs/database/schema/publishRecord.schema'
 import { PublishTask } from '@/libs/database/schema/publishTask.schema'
@@ -25,7 +25,6 @@ export class TwitterPubService extends PublishBase {
     readonly publishRecordModel: Model<PublishRecord>,
     @InjectQueue('bull_publish') publishQueue: Queue,
     readonly twitterService: TwitterService,
-    private readonly fileToolsService: FileToolsService,
   ) {
     super(publishTaskModel, publishRecordModel, publishQueue)
   }
@@ -52,12 +51,12 @@ export class TwitterPubService extends PublishBase {
     const twitterMediaIDs: string[] = []
     if (imgUrlList) {
       for (const imgUrl of imgUrlList) {
-        const imgBlob = await this.fileToolsService.fileUrlToBlob(imgUrl)
+        const imgBlob = await fileUrlToBlob(imgUrl)
         if (!imgBlob) {
           res.message = '图片下载失败'
           return res
         }
-        const fileName = this.fileToolsService.getFileTypeFromUrl(imgUrl)
+        const fileName = getFileTypeFromUrl(imgUrl)
         const ext = fileName.split('.').pop()?.toLowerCase()
         const mimeType = ext === 'jpg' ? 'image/jpeg' : `image/${ext}`
         const initUploadReq: XMediaUploadInitRequest = {
@@ -76,35 +75,36 @@ export class TwitterPubService extends PublishBase {
         }
         const uploadReq: XChunkedMediaUploadRequest = {
           media: Buffer.from(await imgBlob.blob.arrayBuffer()),
-          media_category: XMediaCategory.TWEET_IMAGE,
-          media_type: mimeType as XMediaType,
+          media_id: initUploadRes.data.id,
+          segment_index: 0,
         }
+
         const updateRes = await this.twitterService.chunkedMediaUploadRequest(
           accountId,
           uploadReq,
         )
-        if (!updateRes || !updateRes.data.id) {
+        if (!updateRes || !updateRes.data.expires_at) {
           res.message = '图片分片上传失败'
           return res
         }
         const finalizeUploadRes = await this.twitterService.finalizeMediaUpload(
           accountId,
-          updateRes.data.id,
+          initUploadRes.data.id,
         )
         if (!finalizeUploadRes || !finalizeUploadRes.data.id) {
           res.message = '确认图片上传失败'
           return res
         }
-        twitterMediaIDs.push(updateRes.data.id)
+        twitterMediaIDs.push(initUploadRes.data.id)
       }
     }
 
     if (videoUrl) {
-      const fileName = this.fileToolsService.getFileTypeFromUrl(videoUrl, true)
+      const fileName = getFileTypeFromUrl(videoUrl, true)
       const ext = fileName.split('.').pop()?.toLowerCase()
       const mimeType = ext === 'mp4' ? 'video/mp4' : `video/${ext}`
 
-      const contentLength = await this.fileToolsService.getFileSizeFromUrl(videoUrl)
+      const contentLength = await getFileSizeFromUrl(videoUrl)
       if (!contentLength) {
         res.message = '视频信息解析失败'
         return res
@@ -128,9 +128,9 @@ export class TwitterPubService extends PublishBase {
       const totalParts = Math.ceil(contentLength / chunkSize)
       for (let partNumber = 0; partNumber < totalParts; partNumber++) {
         const start = partNumber * chunkSize
-        const end = Math.min(start + chunkSize - 1, contentLength - 1)
+        const end = Math.min(start + chunkSize, contentLength - 1)
         const range: [number, number] = [start, end]
-        const videoBlob = await this.fileToolsService.chunkedDownloadFile(videoUrl, range)
+        const videoBlob = await chunkedDownloadFile(videoUrl, range)
         if (!videoBlob) {
           res.message = '视频分片下载失败'
           return res
@@ -138,14 +138,14 @@ export class TwitterPubService extends PublishBase {
 
         const uploadReq: XChunkedMediaUploadRequest = {
           media: videoBlob,
-          media_category: XMediaCategory.TWEET_VIDEO,
-          media_type: mimeType as XMediaType,
+          media_id: initUploadRes.data.id,
+          segment_index: partNumber,
         }
         const upload = await this.twitterService.chunkedMediaUploadRequest(
           accountId,
           uploadReq,
         )
-        if (!upload || !upload.data.id) {
+        if (!upload || !upload.data.expires_at) {
           res.message = '视频分片上传失败'
           return res
         }

@@ -18,6 +18,7 @@ import { kwaiPubService } from './plat/kwaiPub.service'
 import { FacebookPublishService } from './plat/meta/facebook.service'
 import { InstagramPublishService } from './plat/meta/instgram.service'
 import { ThreadsPublishService } from './plat/meta/threads.service'
+import { TwitterPublishService } from './plat/meta/twitter.service'
 import { PublishBase } from './plat/publish.base'
 import { TiktokPubService } from './plat/tiktokPub.service'
 import { WxGzhPubService } from './plat/wxGzhPub.service'
@@ -41,6 +42,7 @@ export class PublishTaskService {
     private readonly instagramPubService: InstagramPublishService,
     private readonly threadPubService: ThreadsPublishService,
     private readonly tiktokPubService: TiktokPubService,
+    private readonly twitterPubService: TwitterPublishService,
     @InjectQueue('bull_publish') private readonly publishQueue: Queue,
   ) {
     this.publishMap.set(AccountType.BILIBILI, this.bilibiliPubService)
@@ -51,6 +53,7 @@ export class PublishTaskService {
     this.publishMap.set(AccountType.THREADS, this.threadPubService)
     this.publishMap.set(AccountType.WxGzh, this.wxGzhPubService)
     this.publishMap.set(AccountType.TIKTOK, this.tiktokPubService)
+    this.publishMap.set(AccountType.TWITTER, this.twitterPubService)
 
     // 清除队列中的任务
     // (async () => {
@@ -190,7 +193,7 @@ export class PublishTaskService {
     if (!task) {
       throw new AppException(1, '任务不存在')
     }
-    if (task.inQueue) {
+    if (task.inQueue && !!task.queueId) {
       await this.deleteQueueTask(task.queueId)
     }
 
@@ -210,7 +213,7 @@ export class PublishTaskService {
       { _id: id, userId },
       { publishTime },
     )
-    if (task.inQueue) {
+    if (task.inQueue && !!task.queueId) {
       await this.deleteQueueTask(task.queueId)
     }
     return res.modifiedCount > 0

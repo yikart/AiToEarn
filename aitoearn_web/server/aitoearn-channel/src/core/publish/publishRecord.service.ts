@@ -10,23 +10,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, RootFilterQuery } from 'mongoose';
 import { PublishRecord } from '@/libs/database/schema/publishRecord.schema';
 import { PublishTask } from '@/libs/database/schema/publishTask.schema';
-import { AccountType } from '@/transports/account/common';
 import { PublishRecordListFilterDto } from './dto/publish.dto';
-import { BilibiliPubService } from './plat/bilibiliPub.service';
-import { PublishBase } from './plat/publish.base';
 
 @Injectable()
 export class PublishRecordService {
-  private readonly publishMap = new Map<AccountType, PublishBase>();
-
   constructor(
     @InjectModel(PublishRecord.name)
     private readonly publishRecordModel: Model<PublishRecord>,
     @InjectModel(PublishTask.name)
     private readonly publishTaskModel: Model<PublishTask>,
-    private readonly bilibiliPubService: BilibiliPubService,
   ) {
-    this.publishMap.set(AccountType.BILIBILI, this.bilibiliPubService);
   }
 
   /**
@@ -82,5 +75,11 @@ export class PublishRecordService {
   ) {
     const res = await this.publishRecordModel.updateOne(filter, { $set: data });
     return res.modifiedCount > 0;
+  }
+
+  // 创建
+  async createPublishRecord(data: Partial<PublishRecord>) {
+    const res = await this.publishRecordModel.create(data);
+    return res;
   }
 }

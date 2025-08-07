@@ -1,11 +1,9 @@
 import { InjectQueue } from '@nestjs/bullmq'
-
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Queue } from 'bullmq'
 import { Model } from 'mongoose'
-
-import { FileToolsService } from '@/core/file/fileTools.service'
+import { chunkedDownloadFile, getFileSizeFromUrl, getFileTypeFromUrl } from '@/common'
 import { PostInfoDto, VideoFileUploadSourceDto } from '@/core/plat/tiktok/dto/tiktok.dto'
 import { TiktokService } from '@/core/plat/tiktok/tiktok.service'
 import { PublishRecord } from '@/libs/database/schema/publishRecord.schema'
@@ -26,7 +24,6 @@ export class TiktokPubService extends PublishBase {
     readonly publishRecordModel: Model<PublishRecord>,
     @InjectQueue('bull_publish') publishQueue: Queue,
     readonly tiktokService: TiktokService,
-    private readonly fileToolsService: FileToolsService,
   ) {
     super(publishTaskModel, publishRecordModel, publishQueue)
   }
@@ -53,11 +50,11 @@ export class TiktokPubService extends PublishBase {
 
     if (videoUrl) {
       const downloadULR = videoUrl.replace('undefined', 'https://ai-to-earn.oss-cn-beijing.aliyuncs.com/')
-      const fileName = this.fileToolsService.getFileTypeFromUrl(downloadULR, true)
+      const fileName = getFileTypeFromUrl(downloadULR, true)
       const ext = fileName.split('.').pop()?.toLowerCase()
       const mimeType = ext === 'mp4' ? 'video/mp4' : `video/${ext}`
 
-      const contentLength = await this.fileToolsService.getFileSizeFromUrl(downloadULR)
+      const contentLength = await getFileSizeFromUrl(downloadULR)
       if (!contentLength) {
         res.message = '视频信息解析失败'
         return res
@@ -94,7 +91,7 @@ export class TiktokPubService extends PublishBase {
         const start = partNumber * chunkSize
         const end = Math.min(start + chunkSize - 1, contentLength - 1)
         const range: [number, number] = [start, end]
-        const videoBlob = await this.fileToolsService.chunkedDownloadFile(downloadULR, range)
+        const videoBlob = await chunkedDownloadFile(downloadULR, range)
         if (!videoBlob) {
           res.message = '视频分片下载失败'
           return res
