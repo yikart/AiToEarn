@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
+    "target": "es2021",
+    "baseUrl": ".",
+    "rootDir": "src",
+    "types": [
+      "node"
+    ],
+    "strictBindCallApply": true,
+    "strictNullChecks": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "emitDeclarationOnly": false,
+    "outDir": "dist",
+    "forceConsistentCasingInFileNames": true
+  },
+  "references": [],
+  "include": [
+    "src/**/*.ts"
+  ]
+}

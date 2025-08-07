@@ -44,3 +44,5 @@ Thumbs.db
 .github/instructions/nx.instructions.md
 
 test-output
+
+*/**/local.config.js

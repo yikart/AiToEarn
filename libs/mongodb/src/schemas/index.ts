@@ -1,0 +1,6 @@
+export * from './points-record.schema'
+export * from './timestamp.schema'
+export * from './user-wallet-account.schema'
+export * from './user-wallet-record.schema'
+export * from './user-wallet.schema'
+export * from './user.schema'

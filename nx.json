@@ -33,7 +33,8 @@
           "buildDepsName": "build-deps",
           "watchDepsName": "watch-deps"
         }
-      }
+      },
+      "exclude": []
     },
     {
       "plugin": "@nx/webpack/plugin",
@@ -50,15 +51,6 @@
       "options": {
         "targetName": "lint"
       }
-    },
-    {
-      "plugin": "@nx/jest/plugin",
-      "options": {
-        "targetName": "test"
-      },
-      "exclude": [
-        "apps/aitoearn-monorepo-e2e/**/*"
-      ]
     }
   ],
   "targetDefaults": {

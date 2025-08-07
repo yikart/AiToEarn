@@ -1,13 +1,22 @@
 {
   "extends": "./tsconfig.base.json",
   "compileOnSave": false,
-  "files": [],
   "references": [
     {
-      "path": "./apps/aitoearn-monorepo-e2e"
+      "path": "./libs/common"
     },
     {
-      "path": "./apps/aitoearn-monorepo"
+      "path": "./libs/aws-s3"
+    },
+    {
+      "path": "./libs/mongodb"
+    },
+    {
+      "path": "./libs/redis"
+    },
+    {
+      "path": "./libs/base-nats-client"
     }
-  ]
+  ],
+  "files": []
 }

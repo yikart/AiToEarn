@@ -1,0 +1,61 @@
+{
+  "name": "@aitoearn/common",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "development": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "dependencies": {
+    "@aws-sdk/client-cloudwatch-logs": "^3.859.0",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/microservices": "^11.1.5",
+    "@nestjs/platform-express": "^11.0.0",
+    "@nestjs/swagger": "^11.2.0",
+    "@scalar/nestjs-api-reference": "^0.5.12",
+    "commander": "^14.0.0",
+    "express": "^5.1.0",
+    "nest-typed-config": "^2.10.1",
+    "nestjs-pino": "^4.4.0",
+    "pino": "^9.7.0",
+    "pino-pretty": "^13.1.1",
+    "rxjs": "^7.8.0",
+    "tslib": "^2.3.0",
+    "zod": "^4.0.15"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "executor": "@nx/js:tsc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "dist/libs/common",
+          "tsConfig": "libs/common/tsconfig.lib.json",
+          "packageJson": "libs/common/package.json",
+          "main": "libs/common/src/index.ts",
+          "assets": [
+            "libs/common/*.md"
+          ]
+        }
+      },
+      "lint": {
+        "executor": "@nx/eslint:lint",
+        "outputs": ["{options.outputFile}"],
+        "options": {
+          "fix": true
+        }
+      }
+    }
+  }
+}

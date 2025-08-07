@@ -1,0 +1,47 @@
+{
+  "name": "@aitoearn/base-nats-client",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "development": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "dependencies": {
+    "@nestjs/common": "^11.0.0",
+    "tslib": "^2.3.0"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "executor": "@nx/js:tsc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "dist/libs/base-nats-client",
+          "tsConfig": "libs/base-nats-client/tsconfig.lib.json",
+          "packageJson": "libs/base-nats-client/package.json",
+          "main": "libs/base-nats-client/src/index.ts",
+          "assets": [
+            "libs/base-nats-client/*.md"
+          ]
+        }
+      },
+      "lint": {
+        "executor": "@nx/eslint:lint",
+        "outputs": ["{options.outputFile}"],
+        "options": {
+          "fix": true
+        }
+      }
+    }
+  }
+}
