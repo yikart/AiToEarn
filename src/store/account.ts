@@ -68,6 +68,7 @@ export const useAccountStore = create(
           const accountMap = new Map<string, SocialAccount>([]);
           const accountAccountMap = new Map<string, SocialAccount>([]);
           const result = await getAccountListApi();
+          set({ accountLoading: false });
 
           if (result?.code !== 0) return;
           const accountList: SocialAccount[] = [];
@@ -90,8 +91,6 @@ export const useAccountStore = create(
             accountAccountMap,
           });
           await methods.getAccountGroup();
-
-          set({ accountLoading: false });
         },
 
         // 获取用户组的数据并且将用户放到对应组下

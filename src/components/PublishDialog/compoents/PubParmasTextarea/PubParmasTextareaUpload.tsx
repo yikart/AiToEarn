@@ -155,7 +155,7 @@ const PubParmasTextareaUpload = memo(
             <Tooltip title={t("upload.uploadImageOrVideo")}>
               <Dragger
                 accept={uploadAccept}
-                multiple={true}
+                multiple={!uploadAccept.includes("video")}
                 listType="text"
                 beforeUpload={async (file, uploadFileList) => {
                   if (!checkFileListType(uploadFileList)) {
