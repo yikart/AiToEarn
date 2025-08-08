@@ -2,9 +2,10 @@ import {
   CallToolResult,
   GetPromptResult,
 } from '@modelcontextprotocol/sdk/types';
-import { Controller } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
 import { Prompt, Tool } from '@rekog/mcp-nest';
 import { plainToInstance } from 'class-transformer';
+import moment from 'moment';
 import { AppException } from '@/common';
 import { ExceptionCode } from '@/common/enums/exception-code.enum';
 import { AccountType } from '@/transports/account/common';
@@ -58,6 +59,21 @@ export class McpController {
   async createPub(data: CreatePublishDto) {
     data = plainToInstance(CreatePublishDto, data);
 
+    let publishTimeDate: Date = new Date(Date.now() + 2 * 60 * 1000);
+    try {
+      const { publishTime } = data;
+      if (publishTime) {
+        publishTimeDate = moment(publishTime).toDate();
+        if (publishTimeDate.getTime() < Date.now()) {
+          throw new AppException(1, '发布时间不能小于当前时间');
+        }
+      }
+    }
+    catch (error) {
+      Logger.error('mcp publish createPub', error);
+      throw new AppException(1, '发布时间格式有误');
+    }
+
     const accountInfo = await this.accountService.getAccountInfo(
       data.accountId,
     );
@@ -88,6 +104,7 @@ export class McpController {
         userId: accountInfo.userId,
         accountType: accountInfo.type,
         ...data,
+        publishTime: publishTimeDate,
         imgUrlList: imgUrlList?.split(','),
         topics: topics?.split(','),
       });

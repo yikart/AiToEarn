@@ -3,11 +3,13 @@ import {
   Controller,
   Get,
   HttpCode,
+  Logger,
   Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
+import moment from 'moment';
 import { AppException } from '@/common';
 import { ExceptionCode } from '@/common/enums/exception-code.enum';
 import { GetSkKey, SkKeyAuthGuard } from '@/common/guards/skKeyAuth.guard';
@@ -26,7 +28,7 @@ export class PluginController {
     private readonly skKeyService: SkKeyService,
     private readonly publishTaskService: PublishTaskService,
     private readonly publishRecordService: PublishRecordService,
-  ) {}
+  ) { }
 
   /**
    * 获取key的账号列表
@@ -49,38 +51,76 @@ export class PluginController {
   @HttpCode(200)
   @UseGuards(SkKeyAuthGuard)
   @Post('publish/create')
-  async createPub(@Body() data: CreatePublishDto) {
-    data = plainToInstance(CreatePublishDto, data);
-
-    const accountInfo = await this.accountService.getAccountInfo(
-      data.accountId,
-    );
-    if (!accountInfo)
-      throw new AppException(ExceptionCode.File, '账号信息获取失败');
-    const { imgUrlList, topics } = data;
-
-    // B站默认值
-    if (accountInfo.type === AccountType.BILIBILI) {
-      (data as any).option = {
-        bilibili: {
-          tid: 160,
-          copyright: 1,
-        },
-      };
+  async createPub(@Body() body: CreatePublishDto) {
+    // 发布时间处理
+    let publishTimeDate: Date = new Date(Date.now() + 2 * 60 * 1000);
+    try {
+      const { publishTime } = body;
+      if (publishTime) {
+        publishTimeDate = moment(publishTime).toDate();
+        if (publishTimeDate.getTime() < Date.now()) {
+          throw new AppException(1, '发布时间不能小于当前时间');
+        }
+      }
     }
+    catch (error) {
+      Logger.error('mcp publish createPub', error);
+      throw new AppException(1, '发布时间格式有误');
+    }
+    try {
+      body = plainToInstance(CreatePublishDto, body);
 
-    const ret = await this.publishTaskService.createPub({
-      inQueue: false,
-      queueId: '',
-      uid: accountInfo.uid,
-      userId: accountInfo.userId,
-      accountType: accountInfo.type,
-      ...data,
-      imgUrlList: imgUrlList?.split(','),
-      topics: topics?.split(','),
-    });
+      const accountInfo = await this.accountService.getAccountInfo(
+        body.accountId,
+      );
+      if (!accountInfo)
+        throw new AppException(ExceptionCode.File, '账号信息获取失败');
+      const { imgUrlList, topics } = body;
 
-    return ret;
+      // B站默认值
+      if (accountInfo.type === AccountType.BILIBILI) {
+        (body as any).option = {
+          bilibili: {
+            tid: 160,
+            copyright: 1,
+          },
+        };
+      }
+
+      if (accountInfo.type === AccountType.FACEBOOK) {
+        (body as any).option = {
+          facebook: {
+            content_category: 'video',
+          },
+        };
+      }
+
+      if (accountInfo.type === AccountType.INSTAGRAM) {
+        (body as any).option = {
+          instagram: {
+            content_category: 'video',
+          },
+        };
+      }
+
+      const ret = await this.publishTaskService.createPub({
+        inQueue: false,
+        queueId: '',
+        uid: accountInfo.uid,
+        userId: accountInfo.userId,
+        accountType: accountInfo.type,
+        ...body,
+        publishTime: publishTimeDate,
+        imgUrlList: imgUrlList?.split(','),
+        topics: topics?.split(','),
+      });
+
+      return ret;
+    }
+    catch (error) {
+      Logger.debug('----------- in createPub error ------------', error);
+      Logger.error(error);
+    }
   }
 
   /**

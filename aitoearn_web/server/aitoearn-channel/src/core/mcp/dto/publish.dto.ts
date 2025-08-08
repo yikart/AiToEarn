@@ -11,9 +11,7 @@ export const CreatePublishSchema = z.object({
   videoUrl: z.string().optional(),
   coverUrl: z.string().optional(),
   imgUrlList: z.string().optional(),
-  publishTime: z
-    .date()
-    .default(() => new Date()),
+  publishTime: z.string().optional(),
   topics: z.string(),
 })
 export class CreatePublishDto extends createZodDto(CreatePublishSchema) {}
