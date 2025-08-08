@@ -38,6 +38,7 @@ export class SkKeyService {
   // 删除
   async del(key: string): Promise<boolean> {
     const res = await this.skKeyModel.deleteOne({ key });
+    this.skKeyRefAccountModel.deleteMany({ key });
     return res.deletedCount > 0;
   }
 
