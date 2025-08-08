@@ -28,7 +28,7 @@ export default function usePubParamsVerify(data: PubItem[]) {
     for (const v of data) {
       const platInfo = AccountPlatInfoMap.get(v.account!.type)!;
       const { topics } = parseTopicString(v.params.des || "");
-      const topicsAll = [...new Set(v.params.topics?.concat(topics))];
+      const topicsAll = [...new Set((v.params.topics ?? []).concat(topics))];
       const { topicMax } = platInfo.commonPubParamsConfig;
 
       const setErrorMsg = (msg: string) => {
@@ -66,6 +66,7 @@ export default function usePubParamsVerify(data: PubItem[]) {
           if (!v.params.title) {
             return setErrorMsg(t("validation.titleRequired"));
           }
+          console.log(topicsAll);
           // 强制需要话题
           if (topicsAll.length === 0) {
             return setErrorMsg(t("validation.topicRequired"));
