@@ -64,7 +64,7 @@ export class WxPlatService {
   ) {
     const taskId = uuidv4();
 
-    const authUrl = await this.getAuthPageUrl(data.type);
+    const authUrl = await this.getAuthPageUrl(data.type, taskId);
     if (!authUrl)
       throw new AppException(ExceptionCode.File, '不存在平台授权令牌');
 
@@ -104,10 +104,11 @@ export class WxPlatService {
   /**
    * 获取授权页面链接
    * @param type
+   * @param stat
    * @returns
    */
-  async getAuthPageUrl(type: 'h5' | 'pc'): Promise<string> {
-    const res = await this.myWxPlatApiService.getAuthPageUrl(type);
+  async getAuthPageUrl(type: 'h5' | 'pc', stat?: string): Promise<string> {
+    const res = await this.myWxPlatApiService.getAuthPageUrl(type, stat);
     if (!res)
       throw new AppException(ExceptionCode.File, '不存在平台授权令牌');
 

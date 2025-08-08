@@ -24,19 +24,18 @@ export class MyWxPlatApiService {
 
   /**
    * 获取授权链接
-   * @param preAuthCode
-   * @param redirectUri
    * @param type
+   * @param stat 透传数据
    * @returns
    */
-  async getAuthPageUrl(type: 'h5' | 'pc') {
+  async getAuthPageUrl(type: 'h5' | 'pc', stat?: string) {
     try {
       const result = await axios.get<{
         data: string
         code: string
         messgage: string
       }>(
-        `${this.hostUrl}/wxPlat/auth/url/${this.id}?type=${type}`,
+        `${this.hostUrl}/wxPlat/auth/url?type=${type}&key=${this.id}&stat=${stat}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -50,7 +49,7 @@ export class MyWxPlatApiService {
       return result.data.data
     }
     catch (error) {
-      Logger.error('------ Error wxPlat getQueryAuth: ------', error)
+      Logger.error('------ Error wxPlat getAuthPageUrl: ------', error)
       return null
     }
   }
