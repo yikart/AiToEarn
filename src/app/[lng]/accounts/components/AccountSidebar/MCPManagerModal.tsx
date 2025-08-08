@@ -89,10 +89,10 @@ const MCPManagerModal = memo(
               try {
                 await apiCreateMCPRef({
                   key: createdKey,
-                  accountId: account.id
+                  accountId: account.account
                 });
               } catch (error) {
-                console.error(`创建关联失败: ${account.id}`, error);
+                console.error(`创建关联失败: ${account.account}`, error);
               }
             }
           }
