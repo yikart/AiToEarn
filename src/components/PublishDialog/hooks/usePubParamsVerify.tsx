@@ -40,13 +40,18 @@ export default function usePubParamsVerify(data: PubItem[]) {
       (() => {
         // ------------------------  通用参数校验  ------------------------
 
-        // 图片或者视频校验，视频和图片必须要上传一个 
+        // 图片或者视频校验，视频和图片必须要上传一个
         if (v.params.images?.length === 0 && !v.params.video) {
           return setErrorMsg(t("validation.uploadImageOrVideo"));
         }
         // 话题校验
         if (topicsAll.length > topicMax) {
-          return setErrorMsg(t("validation.topicMaxExceeded", { platformName: platInfo.name, maxCount: topicMax }));
+          return setErrorMsg(
+            t("validation.topicMaxExceeded", {
+              platformName: platInfo.name,
+              maxCount: topicMax,
+            }),
+          );
         }
         // 判断描述中的话题中间是否用空格分割，如：#话题1#话题2#话题3 这种格式错误
         if (descTopicRegex.test(v.params.des || "")) {
@@ -61,6 +66,10 @@ export default function usePubParamsVerify(data: PubItem[]) {
           if (!v.params.title) {
             return setErrorMsg(t("validation.titleRequired"));
           }
+          // 强制需要话题
+          if (topicsAll.length === 0) {
+            return setErrorMsg(t("validation.topicRequired"));
+          }
           if (!v.params.option.bilibili?.tid) {
             return setErrorMsg(t("validation.partitionRequired"));
           }
@@ -71,7 +80,6 @@ export default function usePubParamsVerify(data: PubItem[]) {
             return setErrorMsg(t("validation.sourceRequired"));
           }
         }
-
 
         // 快手的强制校验
         if (v.account.type === PlatType.KWAI) {

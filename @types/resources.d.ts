@@ -22,7 +22,19 @@ interface Resources {
     "normal": "正常",
     "disabled": "禁用",
     "unknownPlatform": "未知平台",
-    "unknownAccount": "未知账户"
+    "unknownAccount": "未知账户",
+    "facebookPages": {
+      "title": "选择Facebook页面",
+      "selectAll": "全选",
+      "cancel": "取消",
+      "confirm": "确认选择",
+      "loading": "加载中...",
+      "noPages": "暂无可用页面",
+      "fetchError": "获取页面列表失败",
+      "submitError": "页面选择失败",
+      "submitSuccess": "页面选择成功",
+      "selectAtLeastOne": "请至少选择一个页面"
+    }
   },
   "common": {
     "profile": "个人中心",
@@ -115,107 +127,6 @@ interface Resources {
   "demo": {
     "demoText": "测试文字",
     "title": "测试页面标题"
-  },
-  "hot-content": {
-    "all": "全部",
-    "loading": "加载中...",
-    "noData": "暂无数据",
-    "rank": "排名",
-    "cover": "封面",
-    "title": "标题",
-    "author": "作者",
-    "category": "分类",
-    "likes": "点赞",
-    "shares": "分享",
-    "comments": "评论数",
-    "collections": "收藏数",
-    "publishTime": "发布于",
-    "fans": "粉丝",
-    "viewMore": "查看更多",
-    "timeRange": "时间范围",
-    "filter": "筛选",
-    "hotTopics": "热门专题",
-    "viralTitles": "爆款标题",
-    "topics": "专题",
-    "engagement": "互动量",
-    "rising": "热",
-    "noHotTopics": "暂无热点数据",
-    "noViralTitles": "暂无爆款标题数据",
-    "noTopicData": "暂无专题数据",
-    "total": "共",
-    "items": "条",
-    "video": "视频",
-    "noImage": "暂无图片",
-    "platform": "平台",
-    "hotEvents": "热点事件",
-    "hotContent": "热点内容"
-  },
-  "login": {
-    "welcomeBack": "哎呦赚",
-    "emailPlaceholder": "邮箱",
-    "passwordPlaceholder": "密码",
-    "login": "登录/注册",
-    "or": "或",
-    "forgotPassword": "忘记密码？",
-    "completeRegistration": "完成注册",
-    "setPassword": "设置密码",
-    "passwordRequired": "请输入密码",
-    "passwordMinLength": "密码长度不能小于6位",
-    "enterPassword": "请输入密码",
-    "inviteCode": "邀请码（选填）",
-    "enterInviteCode": "请输入邀请码",
-    "waitingForActivation": "等待激活中...",
-    "loginSuccess": "登录成功",
-    "loginFailed": "登录失败",
-    "loginError": "登录失败，请稍后重试",
-    "activationEmailSent": "激活链接已发送至邮箱，请查收并点击激活",
-    "registerSuccess": "注册成功，已自动登录",
-    "checkStatusError": "检查注册状态失败",
-    "registerError": "注册失败，请稍后重试",
-    "googleLoginFailed": "Google 登录失败"
-  },
-  "material": {
-    "aiGenerate": {
-      "title": "AI生成",
-      "backToAlbum": "返回相册",
-      "textToImage": "文生图",
-      "fireflyCard": "Firefly卡片",
-      "prompt": "提示词",
-      "promptPlaceholder": "请输入提示词",
-      "width": "宽度",
-      "height": "高度",
-      "generate": "生成",
-      "generating": "生成中...",
-      "content": "内容",
-      "contentPlaceholder": "请输入内容",
-      "title": "标题",
-      "titlePlaceholder": "请输入标题",
-      "template": "模板",
-      "uploadToMediaGroup": "上传到媒体组",
-      "selectMediaGroup": "选择媒体组",
-      "selectMediaGroupPlaceholder": "请选择媒体组",
-      "upload": "上传",
-      "uploading": "上传中...",
-      "uploadSuccess": "上传成功",
-      "uploadFailed": "上传失败",
-      "getMediaGroupListFailed": "获取媒体组列表失败",
-      "pleaseEnterPrompt": "请输入提示词",
-      "pleaseSelectMediaGroup": "请选择媒体组",
-      "pleaseEnterContent": "请输入内容",
-      "pleaseEnterTitle": "请输入标题"
-    }
-  },
-  "route": {
-    "home": "首页",
-    "accounts": "账户",
-    "publish": "发布",
-    "hotContent": "热门内容",
-    "hotContentNew": "热门内容新",
-    "navigation": "导航"
-  },
-  "translation": {
-    "title": "AIToEarn官方网站",
-    "content": "最好用的开源矩阵工具"
   },
   "home": {
     "releaseBanner": {
@@ -397,21 +308,109 @@ interface Resources {
         "twitter": "Twitter"
       },
       "bigText": "Let's Use AI To",
-      "copyright": "© 2025 LangGenius, Inc.",
-      "tagline": "Build Production-Ready Agentic AI Solutions",
+      "copyright": "© 2025 AITOEARN, Corp.",
+      "tagline": "",
       "dataDeletion": {
         "title": "Data Deletion Instructions",
         "prelaunch": "Our application is currently in pre-launch phase and does not store real user data. If you have interacted with our test systems, contact us for data removal.",
         "standardTitle": "Standard Procedure (Post-Launch):",
         "standardSteps": [
           "Log in to your AiToEarn account",
-          "Navigate to Settings > Privacy", 
+          "Navigate to Settings > Privacy",
           "Click \"Request Account Deletion\"",
           "Confirmation will be sent to your registered email"
         ],
         "contactTitle": "Contact for Assistance:",
         "contactEmail": "Email: metat@aitoearning.com (Pre-launch inquiries only)"
       }
+    }
+  },
+  "hot-content": {
+    "all": "全部",
+    "loading": "加载中...",
+    "noData": "暂无数据",
+    "rank": "排名",
+    "cover": "封面",
+    "title": "标题",
+    "author": "作者",
+    "category": "分类",
+    "likes": "点赞",
+    "shares": "分享",
+    "comments": "评论数",
+    "collections": "收藏数",
+    "publishTime": "发布于",
+    "fans": "粉丝",
+    "viewMore": "查看更多",
+    "timeRange": "时间范围",
+    "filter": "筛选",
+    "hotTopics": "热门专题",
+    "viralTitles": "爆款标题",
+    "topics": "专题",
+    "engagement": "互动量",
+    "rising": "热",
+    "noHotTopics": "暂无热点数据",
+    "noViralTitles": "暂无爆款标题数据",
+    "noTopicData": "暂无专题数据",
+    "total": "共",
+    "items": "条",
+    "video": "视频",
+    "noImage": "暂无图片",
+    "platform": "平台",
+    "hotEvents": "热点事件",
+    "hotContent": "热点内容"
+  },
+  "login": {
+    "welcomeBack": "哎呦赚",
+    "emailPlaceholder": "邮箱",
+    "passwordPlaceholder": "密码",
+    "login": "登录/注册",
+    "or": "或",
+    "forgotPassword": "忘记密码？",
+    "completeRegistration": "完成注册",
+    "setPassword": "设置密码",
+    "passwordRequired": "请输入密码",
+    "passwordMinLength": "密码长度不能小于6位",
+    "enterPassword": "请输入密码",
+    "inviteCode": "邀请码（选填）",
+    "enterInviteCode": "请输入邀请码",
+    "waitingForActivation": "等待激活中...",
+    "loginSuccess": "登录成功",
+    "loginFailed": "登录失败",
+    "loginError": "登录失败，请稍后重试",
+    "activationEmailSent": "激活链接已发送至邮箱，请查收并点击激活",
+    "registerSuccess": "注册成功，已自动登录",
+    "checkStatusError": "检查注册状态失败",
+    "registerError": "注册失败，请稍后重试",
+    "googleLoginFailed": "Google 登录失败"
+  },
+  "material": {
+    "aiGenerate": {
+      "title": "标题",
+      "backToAlbum": "返回相册",
+      "textToImage": "文生图",
+      "fireflyCard": "Firefly卡片",
+      "prompt": "提示词",
+      "promptPlaceholder": "请输入提示词",
+      "width": "宽度",
+      "height": "高度",
+      "generate": "生成",
+      "generating": "生成中...",
+      "content": "内容",
+      "contentPlaceholder": "请输入内容",
+      "titlePlaceholder": "请输入标题",
+      "template": "模板",
+      "uploadToMediaGroup": "上传到媒体组",
+      "selectMediaGroup": "选择媒体组",
+      "selectMediaGroupPlaceholder": "请选择媒体组",
+      "upload": "上传",
+      "uploading": "上传中...",
+      "uploadSuccess": "上传成功",
+      "uploadFailed": "上传失败",
+      "getMediaGroupListFailed": "获取媒体组列表失败",
+      "pleaseEnterPrompt": "请输入提示词",
+      "pleaseSelectMediaGroup": "请选择媒体组",
+      "pleaseEnterContent": "请输入内容",
+      "pleaseEnterTitle": "请输入标题"
     }
   },
   "pinterest": {
@@ -531,49 +530,6 @@ interface Resources {
       "cancel": "取消"
     }
   },
-  "youtube": {
-    "youtubeAuth": "YouTube 授权",
-    "authDescription": "请输入您的邮箱地址以获取 YouTube 授权",
-    "email": "邮箱",
-    "enterEmail": "请输入邮箱地址",
-    "authorize": "授权",
-    "pleaseEnterEmail": "请输入邮箱地址",
-    "invalidEmail": "请输入有效的邮箱地址",
-    "authFailed": "授权失败，请稍后重试",
-    "checkAuth": "检查授权",
-    "notAuthorized": "未授权",
-    "uploadVideo": "上传视频",
-    "needAuthFirst": "首先需要授权",
-    "uploadFailed": "上传失败",
-    "uploadSuccess": "上传成功",
-    "checkFailed": "检查失败",
-    "alreadyAuthorized": "已授权"
-  },
-  "vip": {
-    "title": "PLUS会员",
-    "description": "开通会员解锁全部功能，立享8种权益",
-    "activateNow": "立即开通",
-    "pleaseLoginFirst": "请先登录",
-    "paymentOrderCreated": "支付订单创建成功",
-    "paymentLinkNotFound": "未获取到支付链接",
-    "createPaymentOrderFailed": "创建支付订单失败",
-    "createPaymentOrderError": "创建支付订单失败，请稍后重试",
-    "vipBenefits": {
-      "exclusiveBadge": "专属标识",
-      "advancedFeatures": "高级功能",
-      "memberGift": "会员礼包",
-      "prioritySupport": "优先支持",
-      "discount": "优惠折扣",
-      "unlimitedTime": "无限时长",
-      "fastExperience": "极速体验",
-      "morePrivileges": "更多特权"
-    },
-    "plans": {
-      "onceMonth": "一次性月度",
-      "month": "月度订阅",
-      "year": "年度订阅"
-    }
-  },
   "profile": {
     "personalInfo": "个人信息",
     "orderManagement": "订单管理",
@@ -620,7 +576,6 @@ interface Resources {
     "subscriptionMode": "订阅模式",
     "refundedAmount": "已退款金额",
     "paymentIntent": "Payment Intent",
-    "subscriptionId": "订阅ID",
     "paymentLink": "支付链接",
     "openPaymentPage": "打开支付页面",
     "totalRecords": "共 {total} 条记录",
@@ -673,7 +628,7 @@ interface Resources {
     "buttons": {
       "customizePerAccount": "针对每个账户进行定制",
       "cancelPublish": "取消发布",
-      "schedulePublish": "计划发布",
+      "schedulePublish": "立即发布",
       "publishNow": "立即发布",
       "copyLink": "复制链接",
       "delete": "删除"
@@ -719,6 +674,7 @@ interface Resources {
       "topicMaxExceeded": "{{platformName}}话题最多不能超过{{maxCount}}个",
       "topicFormatError": "描述中的话题必须使用空格分割，如：\"#话题1 #话题2\"",
       "titleRequired": "标题是必须的",
+      "topicRequired": "话题是必须的",
       "partitionRequired": "您必须选择分区!",
       "sourceRequired": "转载时必须填写转载来源!",
       "pageRequired": "您必须选择页面!",
@@ -728,6 +684,61 @@ interface Resources {
       "title": "预览",
       "emptyDescription": "在这里看到你的作品预览"
     }
+  },
+  "route": {
+    "home": "首页",
+    "accounts": "账户",
+    "publish": "发布",
+    "hotContent": "热门内容",
+    "hotContentNew": "热门内容新",
+    "navigation": "导航"
+  },
+  "translation": {
+    "title": "AIToEarn官方网站",
+    "content": "最好用的开源矩阵工具"
+  },
+  "vip": {
+    "title": "PLUS会员",
+    "description": "开通会员解锁全部功能，立享8种权益",
+    "activateNow": "立即开通",
+    "pleaseLoginFirst": "请先登录",
+    "paymentOrderCreated": "支付订单创建成功",
+    "paymentLinkNotFound": "未获取到支付链接",
+    "createPaymentOrderFailed": "创建支付订单失败",
+    "createPaymentOrderError": "创建支付订单失败，请稍后重试",
+    "vipBenefits": {
+      "exclusiveBadge": "专属标识",
+      "advancedFeatures": "高级功能",
+      "memberGift": "会员礼包",
+      "prioritySupport": "优先支持",
+      "discount": "优惠折扣",
+      "unlimitedTime": "无限时长",
+      "fastExperience": "极速体验",
+      "morePrivileges": "更多特权"
+    },
+    "plans": {
+      "onceMonth": "一次性月度",
+      "month": "月度订阅",
+      "year": "年度订阅"
+    }
+  },
+  "youtube": {
+    "youtubeAuth": "YouTube 授权",
+    "authDescription": "请输入您的邮箱地址以获取 YouTube 授权",
+    "email": "邮箱",
+    "enterEmail": "请输入邮箱地址",
+    "authorize": "授权",
+    "pleaseEnterEmail": "请输入邮箱地址",
+    "invalidEmail": "请输入有效的邮箱地址",
+    "authFailed": "授权失败，请稍后重试",
+    "checkAuth": "检查授权",
+    "notAuthorized": "未授权",
+    "uploadVideo": "上传视频",
+    "needAuthFirst": "首先需要授权",
+    "uploadFailed": "上传失败",
+    "uploadSuccess": "上传成功",
+    "checkFailed": "检查失败",
+    "alreadyAuthorized": "已授权"
   }
 }
 
