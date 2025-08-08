@@ -82,17 +82,34 @@ export class FileService {
     return res.key;
   }
 
-  // 根据URL上传文件
+  /**
+   * aws 根据URL上传文件
+   * @param url 远程地址
+   * @param option
+   * @returns
+   */
   async upFileByUrl(
     url: string,
-    option: { path?: string; permanent?: boolean; fileType?: string },
+    option: { path?: string; permanent?: boolean; },
   ): Promise<string> {
-    const { path, permanent, fileType } = option;
-    const objectName = `${config.env}/${permanent ? '' : 'temp/'}${path || 'nopath'}${`/${moment().format('YYYYMM')}/${uuidv4()}.${fileType || 'jpg'}`}`;
+    const { path, permanent } = option;
+    // 从URL下载文件内容
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to download file from URL: ${url}`);
+    }
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    // 根据响应内容类型获取文件后缀
+    const contentType = response.headers.get('content-type') || 'application/octet-stream';
+    const fileType = mime.extension(contentType) || 'jpg';
+    const objectName = `${config.env}/${permanent ? '' : 'temp/'}${path || 'nopath'}${`/${moment().format('YYYYMM')}/${uuidv4()}.${fileType}`}`;
+
     const res = await this.s3Service.uploadFile(
       objectName,
-      Buffer.from(url, 'base64'),
-      `application/${fileType || 'octet-stream'}`,
+      buffer,
+      contentType,
     );
 
     return res.key;

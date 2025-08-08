@@ -54,27 +54,25 @@ export class PluginController {
   async createPub(@Body() body: CreatePublishDto) {
     // 发布时间处理
     let publishTimeDate: Date = new Date(Date.now() + 2 * 60 * 1000);
-    try {
-      const { publishTime } = body;
-      if (publishTime) {
-        publishTimeDate = moment(publishTime).toDate();
-        if (publishTimeDate.getTime() < Date.now()) {
-          throw new AppException(1, '发布时间不能小于当前时间');
-        }
-      }
+    const { publishTime } = body;
+
+    // 如果publishTime为空，或者转换时间有误，则使用publishTimeDate
+    if (!publishTime || !moment(publishTime).isValid()) {
+      publishTimeDate = new Date(Date.now() + 2 * 60 * 1000);
     }
-    catch (error) {
-      Logger.error('mcp publish createPub', error);
-      throw new AppException(1, '发布时间格式有误');
+    else {
+      publishTimeDate = new Date(publishTime);
     }
+
     try {
       body = plainToInstance(CreatePublishDto, body);
 
       const accountInfo = await this.accountService.getAccountInfo(
         body.accountId,
       );
-      if (!accountInfo)
+      if (!accountInfo) {
         throw new AppException(ExceptionCode.File, '账号信息获取失败');
+      }
       const { imgUrlList, topics } = body;
 
       // B站默认值
@@ -118,8 +116,8 @@ export class PluginController {
       return ret;
     }
     catch (error) {
-      Logger.debug('----------- in createPub error ------------', error);
-      Logger.error(error);
+      Logger.debug('----------- plugin createPub error ------------', error);
+      Logger.error('----------- plugin createPub error ------------', error);
     }
   }
 
