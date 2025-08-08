@@ -467,6 +467,12 @@ export class CreatePublishDto {
   @Expose()
   readonly publishTime?: Date
 
+  @ApiProperty({ title: '话题列表', required: false })
+  @IsArray({ message: '话题列表' })
+  @IsOptional()
+  @Expose()
+  topics?: string[]
+  
   @ApiProperty({
     title: '其他配置',
     required: false,

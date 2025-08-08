@@ -27,6 +27,7 @@ export interface NewPublishData<T extends PlatOptons> {
   readonly videoUrl?: string
   readonly coverUrl?: string
   readonly imgList?: string[]
+  topics?: string[]
   readonly publishTime?: Date
   readonly option?: T
 }
