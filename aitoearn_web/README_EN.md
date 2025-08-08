@@ -10,12 +10,19 @@
 
 ## Project Introduction
 
-AiToEarn WEB project implements matrix publishing across 11 platforms on the web side: Twitter, TikTok, Facebook, Instagram, Threads, Pinterest 
+AiToEarn WEB project implements matrix publishing across 11 platforms on the web side: 
+
 ![Douyin](https://lf1-cdn-tos.bytegoofy.com/goofy/ies/douyin_web/public/favicon.ico 'Douyin') Douyin
 ![Bilibili](https://i0.hdslb.com/bfs/static/jinkela/long/images/favicon.ico 'Bilibili') Bilibili
 ![Kuaishou](https://s1-111422.kwimgs.com/kos/nlav111422/ks-web/favicon.ico 'Kuaishou') Kuaishou
 ![WeChat Official Accounts](https://res.wx.qq.com/a/wx_fed/assets/res/NTI4MWU5.ico 'WeChat Official Accounts') WeChat Official Accounts
-![YouTube](https://ts1.tc.mm.bing.net/th/id/ODF.cUjlg4bwA5-JhXB6Kg6qZA?w=32&h=32&qlt=70&pcl=fffffa&o=7&cb=thws4&pid=1.2&rm=3 'YouTube') YouTube
+![YouTube](https://www.youtube.com/s/desktop/3ad23781/img/logos/favicon.ico 'YouTube') YouTube
+![Twitter](https://abs.twimg.com/responsive-web/client-web/icon-svg.ea5ff4aa.svg 'Twitter') Twitter
+![TikTok](https://www.tiktok.com/favicon.ico 'TikTok') TikTok
+![Facebook](https://static.xx.fbcdn.net/rsrc.php/y1/r/ay1hV6OlegS.ico 'Facebook') Facebook
+![Instagram](https://static.cdninstagram.com/rsrc.php/y4/r/QaBlI0OZiks.ico 'Instagram') Instagram
+![Threads](https://static.cdninstagram.com/rsrc.php/ye/r/lEu8iVizmNW.ico 'Threads') Threads
+![Pinterest](https://s.pinimg.com/webapp/logo_transparent_144x144-3da7a67b.png 'Pinterest') Pinterest
 Matrix publishing across 11 platforms
 
 ## Backend Modules
