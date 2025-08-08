@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Progress, Tooltip, Upload } from "antd";
+import { message, Progress, Tooltip, Upload } from "antd";
 import {
   formatImg,
   formatVideo,
@@ -59,24 +59,30 @@ const PubParmasTextareaUpload = memo(
           setUploadCount(1);
           setUploadProgress(0);
           setUploadLoading(true);
-          // 上传视频
-          const uploadVideoRes = await toolsApi.uploadFileTemp(
-            video.file,
-            (prog) => {
-              setUploadProgress(prog === 100 ? 99 : prog);
-            },
-          );
-          setUploadProgress(100);
-          // 上传封面
-          const uploadCoverRes = await toolsApi.uploadFileTemp(
-            video.cover.file,
-          );
+          try {
+            // 上传视频
+            const uploadVideoRes = await toolsApi.uploadFileTemp(
+              video.file,
+              (prog) => {
+                setUploadProgress(prog === 100 ? 99 : prog);
+              },
+            );
+            setUploadProgress(100);
+            // 上传封面
+            const uploadCoverRes = await toolsApi.uploadFileTemp(
+              video.cover.file,
+            );
 
-          setUploadLoading(false);
-          video["ossUrl"] = `${OSS_URL}${uploadVideoRes}`;
-          video.cover["ossUrl"] = `${OSS_URL}${uploadCoverRes}`;
+            setUploadLoading(false);
+            video["ossUrl"] = `${OSS_URL}${uploadVideoRes}`;
+            video.cover["ossUrl"] = `${OSS_URL}${uploadCoverRes}`;
 
-          onVideoUpdateFinish(video);
+            onVideoUpdateFinish(video);
+          } catch (e) {
+            console.error(e);
+            setUploadLoading(false);
+            message.error("上传失败，请稍后重试");
+          }
         },
         [onVideoUpdateFinish],
       );
