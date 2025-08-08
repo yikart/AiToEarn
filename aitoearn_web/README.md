@@ -37,7 +37,7 @@ AiToEarn的WEB项目，web端实现: Twitter，TikTok，Facebook，Instagram，T
 ```
 2. `aitoearn-channel` - 渠道模块
 ```tree
-├── config                                   不同环境的配置文件
+├── config                                   不同环境的配置文件(各个三方平台的开发者key和密钥，微信三方平台在aitoearn-wxplay项目配置文件配置)
 │
 ├── src                                      
 │   ├── common                               公共模块

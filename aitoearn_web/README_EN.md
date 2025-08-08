@@ -37,7 +37,8 @@ Matrix publishing across 11 platforms
 ```
 2. aitoearn-channel - Channel module
 ```tree
-├── config                                   Configuration files for different environments
+├── config                      
+│             Configuration files for different environments （Developer keys and keys of various third-party platforms，The wechat third-party platform is configured in the │             aitoearn-wxplay project configuration file）
 │
 ├── src                                      
 │   ├── common                               Common module
