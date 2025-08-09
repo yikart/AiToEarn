@@ -32,10 +32,11 @@ Tiktok、Youtube、Facebook、Instagram、Threads、Twitter、Pinterest
 
 ## 正在实现中
 - MAC客户端实现
-- Web端，APP端实现
-- 内容安全审查
+- Web端优化
+- APP端实现
+- 内容安全审查实现
 - 私信功能对接
-- 公众号，bilibili等一系列社交媒体平台
+- 公众号，bilibili等一系列社交媒体平台优化
 - 指纹浏览器
 - MCP支持
 
