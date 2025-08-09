@@ -19,7 +19,7 @@
 AI内容制作，分发，出售。
 
 一键分发支持平台：
-抖音，小红书，视频号，快手，bilibili，公众号
+抖音、小红书、视频号、快手、bilibili、公众号、
 Tiktok、Youtube、Facebook、Instagram、Threads、Twitter、Pinterest
 
 ## 里程碑
