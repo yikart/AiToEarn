@@ -10,22 +10,22 @@
 
 ## 项目介绍
 
-AiToEarn的WEB项目，web端实现: Pinterest 
+AiToEarn的WEB项目，web端实现: 
+<div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap; margin: 20px 0;">
+    <img src="https://lf1-cdn-tos.bytegoofy.com/goofy/ies/douyin_web/public/favicon.ico" title="抖音" alt="抖音" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://i0.hdslb.com/bfs/static/jinkela/long/images/favicon.ico" title="B站" alt="B站" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://s1-111422.kwimgs.com/kos/nlav111422/ks-web/favicon.ico" title="快手" alt="快手" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://res.wx.qq.com/a/wx_fed/assets/res/NTI4MWU5.ico" title="微信公众号" alt="微信公众号" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://www.youtube.com/s/desktop/3ad23781/img/logos/favicon.ico" title="YouTube" alt="YouTube" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://abs.twimg.com/responsive-web/client-web/icon-svg.ea5ff4aa.svg" title="Twitter" alt="Twitter" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://www.tiktok.com/favicon.ico" title="TikTok" alt="TikTok" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://static.xx.fbcdn.net/rsrc.php/y1/r/ay1hV6OlegS.ico" title="Facebook" alt="Facebook" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://static.cdninstagram.com/rsrc.php/y4/r/QaBlI0OZiks.ico" title="Instagram" alt="Instagram" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://static.cdninstagram.com/rsrc.php/ye/r/lEu8iVizmNW.ico" title="Threads" alt="Threads" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://s.pinimg.com/webapp/logo_transparent_144x144-3da7a67b.png" title="Pinterest" alt="Pinterest" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+</div>
 
-![抖音](https://lf1-cdn-tos.bytegoofy.com/goofy/ies/douyin_web/public/favicon.ico '抖音') 抖音
-![B站](https://i0.hdslb.com/bfs/static/jinkela/long/images/favicon.ico 'B站') B站
-![快手](https://s1-111422.kwimgs.com/kos/nlav111422/ks-web/favicon.ico '快手') 快手
-![微信公众号](https://res.wx.qq.com/a/wx_fed/assets/res/NTI4MWU5.ico '微信公众号') 微信公众号
-![YouTube](https://www.youtube.com/s/desktop/3ad23781/img/logos/favicon.ico 'YouTube') YouTube
-![Twitter](https://abs.twimg.com/responsive-web/client-web/icon-svg.ea5ff4aa.svg 'Twitter') Twitter
-![TikTok](https://www.tiktok.com/favicon.ico 'TikTok') TikTok
-![Facebook](https://static.xx.fbcdn.net/rsrc.php/y1/r/ay1hV6OlegS.ico 'Facebook') Facebook
-![Instagram](https://static.cdninstagram.com/rsrc.php/y4/r/QaBlI0OZiks.ico 'Instagram') Instagram
-![Threads](https://static.cdninstagram.com/rsrc.php/ye/r/lEu8iVizmNW.ico 'Threads') Threads
-![Pinterest](https://s.pinimg.com/webapp/logo_transparent_144x144-3da7a67b.png 'Pinterest') Pinterest
-
-
-11个平台的矩阵发布
+抖音、小红书、快手、bilibili、公众号、 Tiktok、Youtube、Facebook、Instagram、Threads、Twitter、Pinterest等12个平台的矩阵发布
 
 ## 后端模块
 

@@ -18,11 +18,27 @@
 
 AI内容制作，分发，出售。
 
+一键分发支持平台：
+抖音、小红书、视频号、快手、bilibili、公众号、
+Tiktok、Youtube、Facebook、Instagram、Threads、Twitter、Pinterest
+
 ## 里程碑
-- 2025.2.26 发布0.1.1版本
-- 2025.3.15 发布0.2.0版本
-- 2025.4.18 发布0.6.0版本
-- **[5月20日最新版本 0.8.0](https://github.com/yikart/AiToEarn/releases/tag/v0.8.0)**
+- 2025.2.26 发布win-0.1.1版本
+- 2025.3.15 发布win-0.2.0版本
+- 2025.4.18 发布win-0.6.0版本
+- 2025.5.20 发布win-0.8.0版本
+- 2025.8.8 [发布win-0.8.1版本](https://github.com/yikart/AiToEarn/releases/tag/v0.8.1)
+- 2025.8.8 [发布web-0.1-beta版本](./aitoearn_web/README.md)
+
+## 正在实现中
+- MAC客户端实现
+- Web端优化
+- APP端实现
+- 内容安全审查实现
+- 私信功能对接
+- 公众号，bilibili等一系列社交媒体平台优化
+- 指纹浏览器
+- MCP支持
 
 ## [常见问题](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
 
@@ -33,6 +49,7 @@ AI内容制作，分发，出售。
 ![小红书](https://www.xiaohongshu.com/favicon.ico '小红书') 小红书
 ![视频号](https://res.wx.qq.com/t/wx_fed/finder/helper/finder-helper-web/res/favicon-v2.ico '视频号') 视频号
 ![快手](https://s1-111422.kwimgs.com/kos/nlav111422/ks-web/favicon.ico '快手') 快手
+新增bilibili，公众号、Tiktok、Youtube、Facebook、Instagram、Threads、Twitter、Pinterest
   - 支持Qwen大模型一键填写参数
 <img src="./presentation/post.png" alt="post" width="500"/>
 
@@ -65,18 +82,9 @@ AI内容制作，分发，出售。
  
 - AI工具排行榜
 <img src="./presentation/tool_rank.png" alt="post" width="500"/>
- 
-
-## 正在实现中
-- MAC客户端实现
-- Web端，APP端实现
-- 内容安全审查（30%）
-- 私信功能对接
-- 公众号，bilibili发布实现
-- 后端开源（目标七月份）
 
 ## 快速开始
-[直接下载最新版本0.8.0(windows)](https://github.com/yikart/AiToEarn/releases/download/v0.8.0/AiToEarn-0.8.0.exe)
+[直接下载最新版本0.8.1(windows)](https://github.com/yikart/AiToEarn/releases/download/0.8.1/AiToEarn-0.8.1.exe)
 
 
 ```sh
@@ -143,9 +151,6 @@ npm run dev
 - ```shell
    xattr -r -d com.apple.quarantine /Applications/哎呦赚AiToEarn.app
   ```
-
-## AiToEarn Web 项目
-[AiToEarn Web 项目](./aitoearn_web/README.md)
 
 ## 加我微信
 辛苦备注一下 AiToEarn
