@@ -25,7 +25,7 @@ AiToEarn的WEB项目，web端实现:
     <img src="https://s.pinimg.com/webapp/logo_transparent_144x144-3da7a67b.png" title="Pinterest" alt="Pinterest" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
 </div>
 
-抖音、小红书、视频号、快手、bilibili、公众号、 Tiktok、Youtube、Facebook、Instagram、Threads、Twitter、Pinterest等11个平台的矩阵发布
+抖音、小红书、快手、bilibili、公众号、 Tiktok、Youtube、Facebook、Instagram、Threads、Twitter、Pinterest等12个平台的矩阵发布
 
 ## 后端模块
 
