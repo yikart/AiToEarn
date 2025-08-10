@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common'
+import { Public } from '@/auth/auth.guard'
 import { OrgGuard } from '@/common/interceptor/transform.interceptor'
 import { PlatWxGzhNatsApi } from '@/transports/channel/wxGzh.natsApi'
 import { CallbackMsgData } from './common'
@@ -12,19 +13,19 @@ export class WxPlatController {
 
   /**
    * 接收授权回调
-   * @param taskId
    * @param query
    * @returns
    */
+  @Public()
   @UseGuards(OrgGuard)
   @Post('auth/back')
   async authBackGet(
-    @Query() query: AuthBackQueryDto,
+    @Body() body: AuthBackQueryDto,
   ) {
     await this.platWxGzhNatsApi.createAccountAndSetAccessToken({
-      taskId: query.stat,
-      auth_code: query.auth_code,
-      expires_in: query.expires_in,
+      taskId: body.stat,
+      auth_code: body.auth_code,
+      expires_in: body.expires_in,
     })
     return 'success'
   }
@@ -34,6 +35,7 @@ export class WxPlatController {
    * @param body
    * @returns
    */
+  @Public()
   @UseGuards(OrgGuard)
   @Post('callback/msg')
   async callbackMsg(

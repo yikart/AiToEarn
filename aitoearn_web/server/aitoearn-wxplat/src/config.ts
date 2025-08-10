@@ -38,7 +38,7 @@ export const configSchema = z.object({
   redis: redisConfigSchema,
   wxPlat: WxPlatSchema,
   msgUrlList: z.array(z.string()).default([]),
-  authUrlMap: z.object().default({}),
+  authUrlMap: z.any().default({}),
 })
 
 export class AppConfig extends createZodDto(configSchema) {}

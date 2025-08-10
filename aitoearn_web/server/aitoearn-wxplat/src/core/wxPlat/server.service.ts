@@ -39,19 +39,14 @@ export class ServerService {
    */
   async sendAuthBack(url: string, data: AuthBackQueryDto & {
     stat: string
-  }) {
+  }): Promise<boolean> {
     try {
       const result = await axios.post<string>(url, data)
-
-      Logger.debug('sendAuthBack---result', result.data)
-      return result.data
+      return result.data === 'success'
     }
     catch (error) {
-      Logger.error(
-        '------ Error wxPlat sendAuthBack: ------',
-        error,
-      )
-      return null
+      Logger.debug('sendAuthBack---error', error)
+      return false
     }
   }
 }

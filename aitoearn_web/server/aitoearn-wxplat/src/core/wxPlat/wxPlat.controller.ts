@@ -7,10 +7,12 @@ import {
   Param,
   Post,
   Query,
+  Render,
   Res,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { OrgGuard } from '@/common';
 import { XmlParseInterceptor } from '@/common/interceptors/xml.interceptor';
 import { strUtil } from '@/common/utils/str.util';
@@ -26,14 +28,15 @@ import {
 } from './dto/wxPlat.dto';
 import { ServerService } from './server.service';
 import { WxPlatService } from './wxPlat.service';
-import { Response } from 'express';
+
 @Controller('wxPlat')
 export class WxPlatController {
   logger = new Logger(WxPlatController.name);
   constructor(
     private readonly wxPlatService: WxPlatService,
     private readonly serverService: ServerService,
-  ) { }
+  ) {
+  }
 
   // -------- 接收回调 STR --------
 
@@ -123,6 +126,7 @@ export class WxPlatController {
    */
   @HttpCode(200)
   @UseGuards(OrgGuard)
+  @Render('back/res')
   @Get('auth/back/:key/:stat')
   async authBackGet(
     @Param('key') key: string,
@@ -131,12 +135,29 @@ export class WxPlatController {
   ) {
     const { authUrlMap } = config;
     const url = authUrlMap[key];
-    if (!url)
-      return 'success'
-    return await this.serverService.sendAuthBack(authUrlMap[key], {
+
+    if (!url) {
+      return {
+        success: false,
+        message: 'Authorization failed',
+      }
+    }
+    const res = await this.serverService.sendAuthBack(url, {
       ...query,
-      stat
+      stat,
     });
+
+    if (!res) {
+      return {
+        success: false,
+        message: 'Authorization failed',
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Authorization successful',
+    }
   }
   // -------- 接收回调 END --------
 
@@ -156,11 +177,11 @@ export class WxPlatController {
   @Get('auth/page')
   async getAuthPage(
     @Query() query: GetAuthUrlDto,
-    @Res() res: Response
+    @Res() res: Response,
   ) {
     const redirectUri = `${config.wxPlat.authBackHost}/wxPlat/auth/back/${query.key}/${query.stat}`;
     const authUrl = await this.wxPlatService.getAuthPageUrl(redirectUri, query.type);
-  
+
     return res.render(
       `auth/${query.type}`,
       { url: authUrl },
