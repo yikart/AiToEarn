@@ -183,6 +183,11 @@
   gap: 16px;
 }
 
+.options {
+  display: flex;
+  gap: 16px;
+}
+
 .polling {
   margin-top: 16px;
   text-align: center;
@@ -252,5 +257,11 @@
 
   .section {
     padding: 16px;
+  }
+
+  .dimensions,
+  .options {
+    flex-direction: column;
+    gap: 12px;
   }
 } 

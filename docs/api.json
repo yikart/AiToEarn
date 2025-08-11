@@ -11980,7 +11980,7 @@
                         "type": "string"
                     },
                     "description": {
-                        "type": "string"
+                        "type": "string" 
                     },
                     "inputModalities": {
                         "description": "输入模态",

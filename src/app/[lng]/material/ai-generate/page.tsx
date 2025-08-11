@@ -23,9 +23,9 @@ import {
 } from "@ant-design/icons";
 import styles from "./ai-generate.module.scss";
 import {
-  textToImage,
-  getTextToImageTaskResult,
-  textToFireflyCard,
+  generateImage,
+  generateFireflyCard,
+  getImageGenerationModels,
 } from "@/api/ai";
 import { getOssUrl } from "@/utils/oss";
 import { getMediaGroupList, createMedia } from "@/api/media";
@@ -42,17 +42,13 @@ export default function AIGeneratePage() {
   const albumId = params.id as string;
 
   const [prompt, setPrompt] = useState("");
-  const [width, setWidth] = useState(520);
-  const [height, setHeight] = useState(520);
-  // TODO: 由用户自行传入
-  const [sessionIds, setSessionIds] = useState<string[]>([
-    "0e2bdef17755a3f121b608ec8a763f6b",
-    "7e90a4c9bb3c6c8b7056267f27395c78",
-  ]);
+  const [size, setSize] = useState("1024x1024");
+  const [n, setN] = useState(1);
+  const [quality, setQuality] = useState<"standard" | "hd">("standard");
+  const [style, setStyle] = useState<"vivid" | "natural">("vivid");
+  const [model, setModel] = useState("");
   const [loading, setLoading] = useState(false);
-  const [taskId, setTaskId] = useState<string | null>(null);
   const [result, setResult] = useState<string[] | null>(null);
-  const [polling, setPolling] = useState(false);
 
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
@@ -67,6 +63,27 @@ export default function AIGeneratePage() {
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [loadingMediaGroups, setLoadingMediaGroups] = useState(false);
+
+  const [imageModels, setImageModels] = useState<any[]>([]);
+
+  // 获取图片生成模型
+  const fetchImageModels = async () => {
+    try {
+      const response: any = await getImageGenerationModels();
+      if (response.data) {
+        setImageModels(response.data);
+        if (response.data.length > 0) {
+          setModel(response.data[0].name);
+        }
+      }
+    } catch (error) {
+      console.error("获取图片生成模型失败:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchImageModels();
+  }, []);
 
   const fetchMediaGroups = async () => {
     try {
@@ -90,43 +107,26 @@ export default function AIGeneratePage() {
 
     try {
       setLoading(true);
-      const response: any = await textToImage({
+      const response: any = await generateImage({
         prompt,
-        width,
-        height,
-        sessionIds,
+        n,
+        quality,
+        style,
+        size,
+        model,
+        response_format: "url",
       });
 
-      if (response.data) {
-        setTaskId(response.data);
-        setPolling(true);
-        pollTaskResult(response.data);
+      if (response.data && response.data.list) {
+        const imageUrls = response.data.list.map((item: any) => item.url);
+        setResult(imageUrls);
       } else {
-        message.error("生成任务创建失败");
+        message.error("生成图片失败");
       }
     } catch (error) {
-      message.error("生成任务创建失败");
+      message.error("生成图片失败");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const pollTaskResult = async (id: string) => {
-    try {
-      const response = await getTextToImageTaskResult(id);
-      if (!response) return; 
-      if (response.data.status === "success") {
-        setResult(response.data.imgList);
-        setPolling(false);
-      } else if (response.data.status === "failed") {
-        message.error("生成任务失败");
-        setPolling(false);
-      } else {
-        setTimeout(() => pollTaskResult(id), 2000);
-      }
-    } catch (error) {
-      message.error("获取任务结果失败");
-      setPolling(false);
     }
   };
 
@@ -138,14 +138,16 @@ export default function AIGeneratePage() {
 
     try {
       setLoadingFirefly(true);
-      const response: any = await textToFireflyCard({
+      const response: any = await generateFireflyCard({
+
+        
         content,
         temp,
         title,
       });
 
-      if (response.data) {
-        setFireflyResult(response.data);
+      if (response.data && response.data.image) {
+        setFireflyResult(response.data.image);
       } else {
         message.error("生成流光卡片失败");
       }
@@ -170,9 +172,11 @@ export default function AIGeneratePage() {
 
     try {
       setUploading(true);
+      // 将base64数据转换为可用的URL格式
+      const imageUrl = `data:image/png;base64,${fireflyResult}`;
       const response: any = await createMedia({
         groupId: selectedMediaGroup,
-        url: fireflyResult,
+        url: imageUrl,
         type: "img",
         title: title,
         desc: "",
@@ -223,21 +227,61 @@ export default function AIGeneratePage() {
                   rows={4}
                 />
                 <div className={styles.dimensions}>
-                  <Input
-                    type="number"
-                    placeholder={t('aiGenerate.width')}
-                    value={width}
-                    onChange={(e) => setWidth(Number(e.target.value))}
-                    min={520}
-                  />
-                  <Input
-                    type="number"
-                    placeholder={t('aiGenerate.height')}
-                    value={height}
-                    onChange={(e) => setHeight(Number(e.target.value))}
-                    min={520}
-                  />
+                  <Select
+                    placeholder="选择尺寸"
+                    value={size}
+                    onChange={setSize}
+                    style={{ width: "100%" }}
+                  >
+                    <Option value="1024x1024">1024x1024</Option>
+                    <Option value="1792x1024">1792x1024</Option>
+                    <Option value="1024x1792">1024x1792</Option>
+                  </Select>
+                  <Select
+                    placeholder="生成数量"
+                    value={n}
+                    onChange={setN}
+                    style={{ width: "100%" }}
+                  >
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
+                      <Option key={num} value={num}>{num}</Option>
+                    ))}
+                  </Select>
                 </div>
+                <div className={styles.options}>
+                  <Select
+                    placeholder="图片质量"
+                    value={quality}
+                    onChange={setQuality}
+                    style={{ width: "100%" }}
+                  >
+                    <Option value="standard">标准</Option>
+                    <Option value="hd">高清</Option>
+                  </Select>
+                  <Select
+                    placeholder="图片风格"
+                    value={style}
+                    onChange={setStyle}
+                    style={{ width: "100%" }}
+                  >
+                    <Option value="vivid">生动</Option>
+                    <Option value="natural">自然</Option>
+                  </Select>
+                </div>
+                {imageModels.length > 0 && (
+                  <Select
+                    placeholder="选择模型"
+                    value={model}
+                    onChange={setModel}
+                    style={{ width: "100%" }}
+                  >
+                    {imageModels.map((modelItem) => (
+                      <Option key={modelItem.name} value={modelItem.name}>
+                        {modelItem.description || modelItem.name}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
                 <Button
                   type="primary"
                   onClick={handleTextToImage}
@@ -248,11 +292,6 @@ export default function AIGeneratePage() {
                   {t('aiGenerate.generate')}
                 </Button>
               </div>
-              {polling && (
-                <div className={styles.polling}>
-                  <Spin tip={t('aiGenerate.generating')} />
-                </div>
-              )}
               {result && (
                 <div className={styles.result}>
                   <Row gutter={[16, 16]}>
@@ -300,6 +339,14 @@ export default function AIGeneratePage() {
                   <Option value="tempA">{t('aiGenerate.template')} A</Option>
                   <Option value="tempB">{t('aiGenerate.template')} B</Option>
                   <Option value="tempC">{t('aiGenerate.template')} C</Option>
+                  <Option value="tempJin">金卡模板</Option>
+                  <Option value="tempMemo">备忘录模板</Option>
+                  <Option value="tempEasy">简约模板</Option>
+                  <Option value="tempBlackSun">黑日模板</Option>
+                  <Option value="tempE">模板 E</Option>
+                  <Option value="tempWrite">写作模板</Option>
+                  <Option value="code">代码模板</Option>
+                  <Option value="tempD">模板 D</Option>
                 </Select>
                 <Button
                   type="primary"
@@ -321,7 +368,7 @@ export default function AIGeneratePage() {
                     }}
                   >
                     <img
-                      src={getOssUrl(fireflyResult)}
+                      src={`data:image/png;base64,${fireflyResult}`}
                       alt={t('aiGenerate.fireflyCard')}
                       style={{ maxWidth: "100%", borderRadius: "8px" }}
                     />

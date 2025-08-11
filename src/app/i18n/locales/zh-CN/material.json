@@ -12,7 +12,6 @@
     "generating": "生成中...",
     "content": "内容",
     "contentPlaceholder": "请输入内容",
-    "title": "标题",
     "titlePlaceholder": "请输入标题",
     "template": "模板",
     "uploadToMediaGroup": "上传到媒体组",
@@ -26,6 +25,23 @@
     "pleaseEnterPrompt": "请输入提示词",
     "pleaseSelectMediaGroup": "请选择媒体组",
     "pleaseEnterContent": "请输入内容",
-    "pleaseEnterTitle": "请输入标题"
+    "pleaseEnterTitle": "请输入标题",
+    "selectSize": "选择尺寸",
+    "generateCount": "生成数量",
+    "imageQuality": "图片质量",
+    "imageStyle": "图片风格",
+    "selectModel": "选择模型",
+    "standard": "标准",
+    "hd": "高清",
+    "vivid": "生动",
+    "natural": "自然",
+    "goldCardTemplate": "金卡模板",
+    "memoTemplate": "备忘录模板",
+    "simpleTemplate": "简约模板",
+    "blackSunTemplate": "黑日模板",
+    "templateE": "模板 E",
+    "writingTemplate": "写作模板",
+    "codeTemplate": "代码模板",
+    "templateD": "模板 D"
   }
 }

@@ -12,7 +12,6 @@
     "generating": "Generating...",
     "content": "Content",
     "contentPlaceholder": "Enter content",
-    "title": "Title",
     "titlePlaceholder": "Enter title",
     "template": "Template",
     "uploadToMediaGroup": "Upload to Media Group",
@@ -26,6 +25,23 @@
     "pleaseEnterPrompt": "Please enter prompt",
     "pleaseSelectMediaGroup": "Please select media group",
     "pleaseEnterContent": "Please enter content",
-    "pleaseEnterTitle": "Please enter title"
+    "pleaseEnterTitle": "Please enter title",
+    "selectSize": "Select Size",
+    "generateCount": "Generate Count",
+    "imageQuality": "Image Quality",
+    "imageStyle": "Image Style",
+    "selectModel": "Select Model",
+    "standard": "Standard",
+    "hd": "HD",
+    "vivid": "Vivid",
+    "natural": "Natural",
+    "goldCardTemplate": "Gold Card Template",
+    "memoTemplate": "Memo Template",
+    "simpleTemplate": "Simple Template",
+    "blackSunTemplate": "Black Sun Template",
+    "templateE": "Template E",
+    "writingTemplate": "Writing Template",
+    "codeTemplate": "Code Template",
+    "templateD": "Template D"
   }
 }
