@@ -52,8 +52,10 @@ export class PluginController {
   @UseGuards(SkKeyAuthGuard)
   @Post('publish/create')
   async createPub(@Body() body: CreatePublishDto) {
+    body = plainToInstance(CreatePublishDto, body);
     // 发布时间处理
     let publishTimeDate: Date = new Date(Date.now() + 2 * 60 * 1000);
+
     const { publishTime } = body;
 
     // 如果publishTime为空，或者转换时间有误，则使用publishTimeDate
@@ -65,8 +67,6 @@ export class PluginController {
     }
 
     try {
-      body = plainToInstance(CreatePublishDto, body);
-
       const accountInfo = await this.accountService.getAccountInfo(
         body.accountId,
       );

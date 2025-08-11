@@ -133,7 +133,7 @@ export class WxGzhApiService {
       return result.data;
     }
     catch (error) {
-      Logger.log('Error during component_access_token:', error);
+      Logger.log('wx Error during addMaterial:', error);
       return null;
     }
   }
@@ -198,7 +198,9 @@ export class WxGzhApiService {
         errmsg?: string; // 'invalid media_id';
       }>(
         `https://api.weixin.qq.com/cgi-bin/draft/add?access_token=${accessToken}`,
-        data,
+        {
+          articles: [data],
+        },
       );
 
       return result.data;

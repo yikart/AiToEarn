@@ -265,7 +265,9 @@ export class WxPlatService {
       // 查看长期的刷新令牌
       const refreshToken = await this.redisService.get<string>(
         this.getAuthRefreshTokenCacheKey(accountId),
+        false,
       );
+
       if (!refreshToken)
         throw new Error('获取授权方刷新令牌失败');
 
@@ -273,6 +275,7 @@ export class WxPlatService {
         accountInfo.uid,
         refreshToken,
       );
+
       if (!newInfo)
         throw new Error('获取授权方令牌失败');
       return newInfo;
