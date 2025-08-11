@@ -5510,39 +5510,6 @@
                 ]
             }
         },
-        "/api/tools/ai/fireflycard": {
-            "post": {
-                "description": "AI文字转绚丽卡片图",
-                "operationId": "AiToolsController_fireflycard",
-                "parameters": [],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/AdminFireflycardDto"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "default": {
-                        "description": "返回图片地址",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                },
-                "summary": "流光卡片",
-                "tags": [
-                    "AI工具"
-                ]
-            }
-        },
         "/api/tools/ai/markdown": {
             "post": {
                 "description": "文字转Markdown",
@@ -5604,71 +5571,6 @@
                     }
                 },
                 "summary": "获取AI的mk结果",
-                "tags": [
-                    "AI工具"
-                ]
-            }
-        },
-        "/api/tools/ai/jm/task": {
-            "post": {
-                "description": "获取即梦文生图任务ID,0e2bdef17755a3f121b608ec8a763f6b,7e90a4c9bb3c6c8b7056267f27395c78",
-                "operationId": "AiToolsController_upJmImgTask",
-                "parameters": [],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/AdminJmTaskDto"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "default": {
-                        "description": "任务ID",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                },
-                "summary": "即梦文生图",
-                "tags": [
-                    "AI工具"
-                ]
-            }
-        },
-        "/api/tools/ai/jm/task/{id}": {
-            "get": {
-                "description": "获取即梦文生图结果",
-                "operationId": "AiToolsController_getJmImgTaskRes",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "required": true,
-                        "in": "path",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "default": {
-                        "description": "Markdown文本",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "summary": "获取即梦文生图结果",
                 "tags": [
                     "AI工具"
                 ]
@@ -9919,40 +9821,6 @@
                     "content"
                 ]
             },
-            "AdminFireflycardDto": {
-                "type": "object",
-                "properties": {
-                    "content": {
-                        "type": "string",
-                        "title": "内容"
-                    },
-                    "temp": {
-                        "type": "string",
-                        "description": "模板",
-                        "enum": [
-                            "tempA",
-                            "tempB",
-                            "tempC",
-                            "tempJin",
-                            "tempMemo",
-                            "tempEasy",
-                            "tempBlackSun",
-                            "tempE",
-                            "tempWrite",
-                            "code",
-                            "tempD"
-                        ]
-                    },
-                    "title": {
-                        "type": "string",
-                        "title": "标题"
-                    }
-                },
-                "required": [
-                    "content",
-                    "temp"
-                ]
-            },
             "AdminAiMarkdownDto": {
                 "type": "object",
                 "properties": {
@@ -9968,36 +9836,6 @@
                 "required": [
                     "prompt",
                     "content"
-                ]
-            },
-            "AdminJmTaskDto": {
-                "type": "object",
-                "properties": {
-                    "prompt": {
-                        "type": "string",
-                        "title": "提示词"
-                    },
-                    "width": {
-                        "type": "number",
-                        "title": "宽度"
-                    },
-                    "height": {
-                        "type": "number",
-                        "title": "高度"
-                    },
-                    "sessionIds": {
-                        "title": "sessionIds",
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "required": [
-                    "prompt",
-                    "width",
-                    "height",
-                    "sessionIds"
                 ]
             },
             "TextModerationDto": {
