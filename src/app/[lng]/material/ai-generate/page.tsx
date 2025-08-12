@@ -292,7 +292,7 @@ export default function AIGeneratePage() {
 
   const handleUploadToMediaGroup = async (type: string = 'img') => {
     setSelectedMediaGroup(null);
-    await fetchMediaGroups(type);
+    await fetchMediaGroups(type as "video" | "img");
     setUploadModalVisible(true);
   };
 
