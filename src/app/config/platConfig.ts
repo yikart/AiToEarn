@@ -55,6 +55,8 @@ export interface IAccountPlatInfo {
       imagesMax: number;
     };
   };
+  // 是否在PC端不显示
+  pcNoThis?: boolean;
   // 平台提示
   tips?: {
     // 添加账号时候的提示
@@ -77,6 +79,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         topicMax: 4,
       },
       themeColor: "#FF4D00",
+      pcNoThis: true,
     },
   ],
   [
