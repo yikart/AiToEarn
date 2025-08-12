@@ -65,7 +65,9 @@ const AddAccountModal = memo(
               <div className="addAccountModal_plats">
                 {AccountPlatInfoArr.map(([key, value]) => {
                   return (
+                     !value.pcNoThis &&
                     <Tooltip title={value.tips?.account} key={key}>
+                     
                       <Button
                         type="text"
                         className="addAccountModal_plats-item"
@@ -110,12 +112,16 @@ const AddAccountModal = memo(
                           }
                         }}
                       >
+                       
                         <div className="addAccountModal_plats-item-con">
                           {/*<LoadingOutlined style={{ fontSize: '20px' }} />*/}
                           <img src={value.icon} />
                           <span>{value.name}</span>
                         </div>
+                        
+                        
                       </Button>
+                
                     </Tooltip>
                   );
                 })}

@@ -83,7 +83,7 @@ const AccountPopoverInfo = ({
             <p>{t("platform")}：</p>
             <p>
               <img src={platInfo?.icon} />
-              {platInfo.name}
+              {platInfo.name }
             </p>
           </div>
         </div>
