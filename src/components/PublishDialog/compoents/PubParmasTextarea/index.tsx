@@ -132,6 +132,11 @@ const PubParmasTextarea = memo(
         if (!hasImage && hasVideo && platConfig.pubTypes.has(PubType.VIDEO))
           return "video/*";
 
+        if (
+          platConfig.pubTypes.has(PubType.ImageText) &&
+          platConfig.pubTypes.has(PubType.VIDEO)
+        )
+          return "video/*,image/*";
         if (platConfig.pubTypes.has(PubType.ImageText)) return "image/*";
         if (platConfig.pubTypes.has(PubType.VIDEO)) return "video/*";
 

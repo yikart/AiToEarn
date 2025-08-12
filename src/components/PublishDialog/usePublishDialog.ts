@@ -7,6 +7,8 @@ import {
   PubItem,
 } from "@/components/PublishDialog/publishDialog.type";
 import { ErrPubParamsMapType } from "@/components/PublishDialog/hooks/usePubParamsVerify";
+import { AccountPlatInfoMap } from "@/app/config/platConfig";
+import { PubType } from "@/app/config/publishConfig";
 
 export interface IPublishDialogStore {
   // 选择的发布列表
@@ -42,7 +44,7 @@ const store: IPublishDialogStore = {
         source: "",
       },
       facebook: {
-        page_id: undefined, 
+        page_id: undefined,
       },
       instagram: {
         content_category: undefined,
@@ -135,9 +137,20 @@ export const usePublishDialog = create(
               const keyType = key as "des";
               const val = pubParmas[keyType];
               commonPubParams[keyType] = pubParmas[keyType]!;
-              pubList.map((v) => {
+
+              for (let i = 0; i < pubList.length; i++) {
+                const v = pubList[i];
+                const platConfig = AccountPlatInfoMap.get(v.account.type)!;
+                if (
+                  (key === "video" &&
+                    !platConfig.pubTypes.has(PubType.VIDEO)) ||
+                  (key === "images" &&
+                    !platConfig.pubTypes.has(PubType.ImageText))
+                ) {
+                  continue;
+                }
                 v.params[keyType] = val!;
-              });
+              }
             }
           }
 
@@ -168,22 +181,35 @@ export const usePublishDialog = create(
 
           // 使用lodash的merge来正确处理嵌套对象
           if (pubParmas.option) {
-            findedData.params.option = lodash.merge({}, findedData.params.option, pubParmas.option);
+            findedData.params.option = lodash.merge(
+              {},
+              findedData.params.option,
+              pubParmas.option,
+            );
           }
 
           for (const key in pubParmas) {
-            if (pubParmas.hasOwnProperty(key) && key !== 'option') {
+            if (pubParmas.hasOwnProperty(key) && key !== "option") {
               (findedData.params as any)[key] = (pubParmas as any)[key];
             }
           }
 
-          pubList.map((v) => {
+          for (let i = 0; i < pubList.length; i++) {
+            const v = pubList[i];
+            const platConfig = AccountPlatInfoMap.get(v.account.type)!;
             if (!pubListChoosed.some((k) => k.account.id === v.account.id)) {
               v.params.des = pubParmas.des || "";
-              v.params.video = pubParmas.video;
-              v.params.images = pubParmas.images;
+              if (platConfig.pubTypes.has(PubType.VIDEO) && pubParmas.video) {
+                v.params.video = pubParmas.video;
+              }
+              if (
+                platConfig.pubTypes.has(PubType.ImageText) &&
+                pubParmas.images
+              ) {
+                v.params.images = pubParmas.images;
+              }
             }
-          });
+          }
 
           pubListChoosed = pubListChoosed.map((v) => {
             const findData = pubList.find((k) => k.account.id === v.account.id);

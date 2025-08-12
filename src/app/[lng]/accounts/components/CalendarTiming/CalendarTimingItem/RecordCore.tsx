@@ -32,9 +32,7 @@ import { TooltipRef } from "antd/lib/tooltip";
 import { deletePublishRecordApi, nowPubTaskApi } from "@/api/plat/publish";
 import { getDays } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 import { getOssUrl } from "@/utils/oss";
-import { useTransClient } from "@/app/i18n/client"; 
-
-
+import { useTransClient } from "@/app/i18n/client";
 
 export interface IRecordCoreRef {}
 
@@ -44,7 +42,7 @@ export interface IRecordCoreProps {
 
 const PubStatus = ({ status }: { status: PublishStatus }) => {
   const { t } = useTransClient("publish");
-  
+
   return (
     <div className={styles.pubStatus}>
       {status === PublishStatus.FAIL ? (
@@ -96,27 +94,36 @@ const RecordCore = memo(
       const [popoverOpen, setPopoverOpen] = useState(false);
       const popoverRef = useRef<TooltipRef>(null);
       const { t } = useTransClient("publish");
-      
-      const dropdownItems: MenuProps["items"] = [
-        {
-          key: "2",
-          label: t("buttons.copyLink"),
-          onClick: async () => {
-            await navigator.clipboard.writeText(publishRecord.workLink);
-          },
-        },
-        {
-          key: "3",
-          danger: true,
-          label: t("buttons.delete"),
-          onClick: async () => {
-            setPopoverOpen(false);
-            setListLoading(true);
-            await deletePublishRecordApi(publishRecord.id);
-            getPubRecord();
-          },
-        },
-      ];
+
+      const dropdownItems: MenuProps["items"] = useMemo(() => {
+        if (publishRecord.workLink) {
+          return [
+            {
+              key: "2",
+              label: t("buttons.copyLink"),
+              onClick: async () => {
+                await navigator.clipboard.writeText(publishRecord.workLink);
+              },
+            },
+          ];
+        }
+
+        if (publishRecord.status === PublishStatus.UNPUBLISH) {
+          return [
+            {
+              key: "3",
+              danger: true,
+              label: t("buttons.delete"),
+              onClick: async () => {
+                setPopoverOpen(false);
+                setListLoading(true);
+                await deletePublishRecordApi(publishRecord.id);
+                getPubRecord();
+              },
+            },
+          ];
+        }
+      }, [publishRecord]);
 
       const days = useMemo(() => {
         return getDays(publishRecord.publishTime);
@@ -194,7 +201,7 @@ const RecordCore = memo(
                       getPubRecord();
                     }}
                   >
-                    {t("buttons.publishNow")} 
+                    {t("buttons.publishNow")}
                   </Button>
                 )}
                 <Dropdown menu={{ items: dropdownItems }} placement="top">
@@ -210,7 +217,7 @@ const RecordCore = memo(
             style={{ width: calendarCallWidth + "px" }}
           >
             <div className="recordCore-left">
-              <img src={platIcon}  style={{width: '25px', height: '25px'}}/>
+              <img src={platIcon} style={{ width: "25px", height: "25px" }} />
               <div className="recordCore-left-date">{days.format("HH:mm")}</div>
             </div>
             <div className="recordCore-right">

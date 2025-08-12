@@ -149,7 +149,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
           </Button>
         ]}
         width={600}
-        destroyOnClose
+        destroyOnHidden
       >
         <Spin spinning={loading}>
           {notifications.length > 0 ? (

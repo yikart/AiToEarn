@@ -18,17 +18,12 @@ const PublishDialogDataPicker = memo(
       {}: IPublishDialogDataPickerProps,
       ref: ForwardedRef<IPublishDialogDataPickerRef>,
     ) => {
-      const { pubTime } = usePublishDialog(
+      const { pubTime, setPubTime } = usePublishDialog(
         useShallow((state) => ({
           pubTime: state.pubTime,
+          setPubTime: state.setPubTime,
         })),
       );
-
-      const onOk = (
-        value: DatePickerProps["value"] | RangePickerProps["value"],
-      ) => {
-        console.log("onOk: ", value);
-      };
 
       // 禁用今天之前的日期
       const disabledDate = (current: dayjs.Dayjs) => {
@@ -94,11 +89,9 @@ const PublishDialogDataPicker = memo(
           allowClear={false}
           disabledDate={disabledDate}
           disabledTime={disabledDateTime}
-          onChange={(value, dateString) => {
-            console.log("Selected Time: ", value);
-            console.log("Formatted Selected Time: ", dateString);
+          onChange={(value) => {
+            setPubTime(value ? value.format() : undefined);
           }}
-          onOk={onOk}
         />
       ) : (
         <div />

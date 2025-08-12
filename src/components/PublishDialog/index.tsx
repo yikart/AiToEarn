@@ -296,7 +296,7 @@ const PublishDialog = memo(
                       )}
                       {pubListChoosed.length >= 2 && (
                         <PubParmasTextarea
-                          platType={PlatType.KWAI}
+                          platType={PlatType.Instagram}
                           rows={16}
                           desValue={commonPubParams.des}
                           videoFileValue={commonPubParams.video}
