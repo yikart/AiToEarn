@@ -2,17 +2,21 @@ import qs from "qs";
 import { PlatType } from "@/app/config/platConfig";
 import { getPinterestAuthUrlApi, checkPinterestAuthApi } from "@/api/platAuth";
 import { useAccountStore } from "@/store/account";
-
+import { useUserStore } from "@/store/user";
 
 
 /**
- * b站被点击
+ * Pinterest被点击
  * @param platType
  */
 export async function pinterestSkip(platType: PlatType) {
   if (platType !== PlatType.Pinterest) return;
 
   const res: any = await getPinterestAuthUrlApi('pc');
+  if (res?.code == 1) {
+          useUserStore.getState().logout();
+          return
+        }
   if (res?.code !== 0) return;
   const url = res.data.uri;
   window.open(`${url}`);

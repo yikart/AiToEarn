@@ -1,8 +1,8 @@
 import qs from "qs";
 import { PlatType } from "@/app/config/platConfig";
-import { getTwitterAuthUrlApi, apiCheckTwitterAuth } from "@/api/twitter";
+import { getTwitterAuthUrlApi, apiCheckTwitterAuth } from "@/api/twitter"; 
 import { useAccountStore } from "@/store/account";
-
+import { useUserStore } from "@/store/user";
 
 
 /**
@@ -13,6 +13,10 @@ export async function twitterSkip(platType: PlatType) {
   if (platType !== PlatType.Twitter) return;
 
   const res: any = await getTwitterAuthUrlApi('pc');
+    if (res?.code == 1) {
+              useUserStore.getState().logout();
+              return
+            }
   if (res?.code !== 0) return;
   const url = res.data.url;
   window.open(`${url}`);
