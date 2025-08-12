@@ -139,8 +139,6 @@ export default function AIGeneratePage() {
     try {
       setLoadingFirefly(true);
       const response: any = await generateFireflyCard({
-
-        
         content,
         temp,
         title,
@@ -368,7 +366,7 @@ export default function AIGeneratePage() {
                     }}
                   >
                     <img
-                      src={`data:image/png;base64,${fireflyResult}`}
+                      src={getOssUrl(fireflyResult)}
                       alt={t('aiGenerate.fireflyCard')}
                       style={{ maxWidth: "100%", borderRadius: "8px" }}
                     />
