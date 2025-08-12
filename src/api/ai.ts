@@ -58,6 +58,24 @@ export const getVideoGenerationModels = () => {
   return http.get("/ai/models/video/generation");
 };
 
+// 视频生成
+export const generateVideo = (data: {
+  model: string;
+  prompt: string;
+  image?: string;
+  mode?: string;
+  size?: string;
+  duration?: number;
+  metadata?: Record<string, any>;
+}) => {
+  return http.post("/ai/video/generations", data);
+};
+
+// 查询视频任务状态
+export const getVideoTaskStatus = (taskId: string) => {
+  return http.get(`/ai/video/generations/${taskId}`);
+};
+
 // 保留旧的接口以保持向后兼容性（可选）
 // 文生图 - 旧接口（已废弃）
 export const textToImage = (data: {

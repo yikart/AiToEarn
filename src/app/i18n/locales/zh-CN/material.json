@@ -4,6 +4,7 @@
     "backToAlbum": "返回相册",
     "textToImage": "文生图",
     "fireflyCard": "Firefly卡片",
+    "videoGeneration": "视频生成",
     "prompt": "提示词",
     "promptPlaceholder": "请输入提示词",
     "width": "宽度",
@@ -42,6 +43,24 @@
     "templateE": "模板 E",
     "writingTemplate": "写作模板",
     "codeTemplate": "代码模板",
-    "templateD": "模板 D"
+    "templateD": "模板 D",
+    "videoPromptPlaceholder": "请输入视频描述",
+    "videoDuration": "视频时长",
+    "videoSize": "视频尺寸",
+    "videoMode": "生成模式",
+    "uploadImage": "上传图片",
+    "imageUrlPlaceholder": "图片URL或base64",
+    "taskStatus": "任务状态",
+    "taskSubmitted": "任务已提交",
+    "taskProcessing": "任务处理中",
+    "taskCompleted": "任务完成",
+    "taskFailed": "任务失败",
+    "checkStatus": "检查状态",
+    "videoGenerationFailed": "视频生成失败",
+    "videoGenerationSuccess": "视频生成成功",
+    "pleaseEnterVideoPrompt": "请输入视频描述",
+    "pleaseSelectVideoModel": "请选择视频模型",
+    "videoUploadSuccess": "视频上传成功",
+    "videoUploadFailed": "视频上传失败"
   }
 }

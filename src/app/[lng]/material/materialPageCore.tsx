@@ -9,7 +9,8 @@ import {
   PictureOutlined,
   FolderOutlined,
   EditOutlined,
-  DeleteOutlined
+  DeleteOutlined,
+  RobotOutlined
 } from "@ant-design/icons";
 import styles from "./styles/material.module.scss";
 import { createMediaGroup, getMediaGroupList, deleteMediaGroup, updateMediaGroupInfo } from "@/api/media";
@@ -299,14 +300,23 @@ export const MaterialPageCore = () => {
   return (
     <div className={styles.materialContainer}>
       <div className={styles.header}>
-                 <h3>媒体资源管理</h3>
-        <button 
-          className={styles.createButton}
-          onClick={() => setIsModalVisible(true)}
-        >
-          <PlusOutlined />
-          <span>创建媒体资源组</span>
-        </button>
+        <h3>媒体资源管理</h3>
+        <div className={styles.headerActions}>
+          <button 
+            className={styles.aiGenerateButton}
+            onClick={() => router.push('/material/ai-generate?tab=videoGeneration')}
+          >
+            <RobotOutlined />
+            <span>AI视频生成</span>
+          </button>
+          <button 
+            className={styles.createButton}
+            onClick={() => setIsModalVisible(true)}
+          >
+            <PlusOutlined />
+            <span>创建媒体资源组</span>
+          </button>
+        </div>
       </div>
 
       {groups.length > 0 ? (

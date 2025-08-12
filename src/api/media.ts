@@ -15,9 +15,16 @@ export const deleteMediaGroup = (id: string) => {
 };
 
 // 获取媒体资源组列表
-export const getMediaGroupList = (pageNo: number, pageSize: number) => {
+export const getMediaGroupList = (
+  pageNo: number,
+  pageSize: number,
+  type? : "video" | "img",
+) => {
   return http.get<{ list: any[]; total: number }>(
     `media/group/list/${pageNo}/${pageSize}`,
+    {
+      type,
+    },
   );
 };
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import {
   message,
   Input,
@@ -12,6 +12,7 @@ import {
   Row,
   Col,
   Modal,
+  Progress,
 } from "antd";
 import {
   ArrowLeftOutlined,
@@ -20,12 +21,16 @@ import {
   PictureOutlined,
   FileTextOutlined,
   UploadOutlined,
+  VideoCameraOutlined,
 } from "@ant-design/icons";
 import styles from "./ai-generate.module.scss";
 import {
   generateImage,
   generateFireflyCard,
   getImageGenerationModels,
+  generateVideo,
+  getVideoTaskStatus,
+  getVideoGenerationModels,
 } from "@/api/ai";
 import { getOssUrl } from "@/utils/oss";
 import { getMediaGroupList, createMedia } from "@/api/media";
@@ -38,8 +43,12 @@ const { TabPane } = Tabs;
 export default function AIGeneratePage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { t } = useTransClient('material');
   const albumId = params.id as string;
+
+  // 从URL参数获取默认标签
+  const defaultTab = searchParams.get('tab') || 'textToImage';
 
   const [prompt, setPrompt] = useState("");
   const [size, setSize] = useState("1024x1024");
@@ -56,6 +65,20 @@ export default function AIGeneratePage() {
   const [loadingFirefly, setLoadingFirefly] = useState(false);
   const [fireflyResult, setFireflyResult] = useState<string | null>(null);
 
+  // 视频生成相关状态
+  const [videoPrompt, setVideoPrompt] = useState("");
+  const [videoModel, setVideoModel] = useState("");
+  const [videoSize, setVideoSize] = useState("1024x576");
+  const [videoDuration, setVideoDuration] = useState(4);
+  const [videoMode, setVideoMode] = useState("text2video");
+  const [videoImage, setVideoImage] = useState("");
+  const [loadingVideo, setLoadingVideo] = useState(false);
+  const [videoTaskId, setVideoTaskId] = useState<string | null>(null);
+  const [videoStatus, setVideoStatus] = useState<string>("");
+  const [videoResult, setVideoResult] = useState<string | null>(null);
+  const [checkingStatus, setCheckingStatus] = useState(false);
+  const [videoProgress, setVideoProgress] = useState(0);
+
   const [mediaGroups, setMediaGroups] = useState<any[]>([]);
   const [selectedMediaGroup, setSelectedMediaGroup] = useState<string | null>(
     null,
@@ -65,6 +88,7 @@ export default function AIGeneratePage() {
   const [loadingMediaGroups, setLoadingMediaGroups] = useState(false);
 
   const [imageModels, setImageModels] = useState<any[]>([]);
+  const [videoModels, setVideoModels] = useState<any[]>([]);
 
   // 获取图片生成模型
   const fetchImageModels = async () => {
@@ -81,14 +105,30 @@ export default function AIGeneratePage() {
     }
   };
 
+  // 获取视频生成模型
+  const fetchVideoModels = async () => {
+    try {
+      const response: any = await getVideoGenerationModels();
+      if (response.data) {
+        setVideoModels(response.data);
+        if (response.data.length > 0) {
+          setVideoModel(response.data[0].name);
+        }
+      }
+    } catch (error) {
+      console.error("获取视频生成模型失败:", error);
+    }
+  };
+
   useEffect(() => {
     fetchImageModels();
+    fetchVideoModels();
   }, []);
 
-  const fetchMediaGroups = async () => {
+  const fetchMediaGroups = async (type: "video" | "img" = 'img') => {
     try {
       setLoadingMediaGroups(true);
-      const response: any = await getMediaGroupList(1, 100);
+      const response: any = await getMediaGroupList(1, 100, type);
       if (response.data) {
         setMediaGroups(response.data.list || []);
       }
@@ -156,9 +196,103 @@ export default function AIGeneratePage() {
     }
   };
 
-  const handleUploadToMediaGroup = async () => {
+  const handleVideoGeneration = async () => {
+    if (!videoPrompt) {
+      message.error("请输入视频描述");
+      return;
+    }
+
+    if (!videoModel) {
+      message.error("请选择视频模型");
+      return;
+    }
+
+    try {
+      setLoadingVideo(true);
+      setVideoStatus("submitted");
+      setVideoProgress(10);
+
+      const requestData: any = {
+        model: videoModel,
+        prompt: videoPrompt,
+        size: videoSize,
+        duration: videoDuration,
+        mode: videoMode,
+      };
+
+      if (videoImage) {
+        requestData.image = videoImage;
+      }
+
+      const response: any = await generateVideo(requestData);
+
+      if (response.data && response.data.task_id) {
+        setVideoTaskId(response.data.task_id);
+        setVideoStatus(response.data.status);
+        message.success("任务已提交");
+        
+        // 开始轮询任务状态
+        pollVideoTaskStatus(response.data.task_id);
+      } else {
+        message.error("视频生成失败");
+        setVideoStatus("");
+      }
+    } catch (error) {
+      message.error("视频生成失败");
+      setVideoStatus("");
+    } finally {
+      setLoadingVideo(false);
+    }
+  };
+
+  const pollVideoTaskStatus = async (taskId: string) => {
+    const checkStatus = async () => {
+      try {
+        setCheckingStatus(true);
+        const response: any = await getVideoTaskStatus(taskId);
+        
+        if (response.data) {
+          const { status, fail_reason } = response.data;
+          setVideoStatus(status);
+          
+          if (status === "SUCCESS") {
+            setVideoResult(fail_reason); // 成功时fail_reason字段包含视频URL
+            setVideoProgress(100);
+            message.success("视频生成成功");
+            return true;
+          } else if (status === "FAILED") {
+            setVideoProgress(0);
+            message.error(fail_reason || "视频生成失败");
+            return true;
+          } else {
+            // 处理中，继续轮询
+            setVideoProgress(response.data.progress);
+            return false;
+          }
+        }
+        return false;
+      } catch (error) {
+        console.error("检查视频任务状态失败:", error);
+        return false;
+      } finally {
+        setCheckingStatus(false);
+      }
+    };
+
+    // 轮询逻辑
+    const poll = async () => {
+      const isCompleted = await checkStatus();
+      if (!isCompleted) {
+        setTimeout(poll, 5000); // 每5秒检查一次
+      }
+    };
+
+    poll();
+  };
+
+  const handleUploadToMediaGroup = async (type: string = 'img') => {
     setSelectedMediaGroup(null);
-    await fetchMediaGroups();
+    await fetchMediaGroups(type);
     setUploadModalVisible(true);
   };
 
@@ -170,24 +304,25 @@ export default function AIGeneratePage() {
 
     try {
       setUploading(true);
-      // 将base64数据转换为可用的URL格式
-      const imageUrl = `data:image/png;base64,${fireflyResult}`;
+      const mediaUrl = videoResult || fireflyResult;
+      const mediaType = videoResult ? "video" : "img";
+      
       const response: any = await createMedia({
         groupId: selectedMediaGroup,
-        url: imageUrl,
-        type: "img",
-        title: title,
+        url: mediaUrl,
+        type: mediaType,
+        title: videoResult ? videoPrompt : title,
         desc: "",
       });
 
       if (response.data) {
-        message.success(t('aiGenerate.uploadSuccess'));
+        message.success(videoResult ? "视频上传成功" : t('aiGenerate.uploadSuccess'));
         setUploadModalVisible(false);
       } else {
-        message.error(t('aiGenerate.uploadFailed'));
+        message.error(videoResult ? "视频上传失败" : t('aiGenerate.uploadFailed'));
       }
     } catch (error) {
-      message.error(t('aiGenerate.uploadFailed'));
+      message.error(videoResult ? "视频上传失败" : t('aiGenerate.uploadFailed'));
     } finally {
       setUploading(false);
     }
@@ -207,7 +342,7 @@ export default function AIGeneratePage() {
       </div>
 
       <div className={styles.content}>
-        <Tabs defaultActiveKey="textToImage" className={styles.tabs}>
+        <Tabs defaultActiveKey={defaultTab} className={styles.tabs}>
           <TabPane
             tab={
               <span>
@@ -372,7 +507,7 @@ export default function AIGeneratePage() {
                     />
                     <Button
                       type="primary"
-                      onClick={handleUploadToMediaGroup}
+                      onClick={() => handleUploadToMediaGroup('img')}
                       icon={<UploadOutlined />}
                       style={{
                         padding: "1px",
@@ -381,6 +516,136 @@ export default function AIGeneratePage() {
                       {t('aiGenerate.uploadToMediaGroup')}
                     </Button>
                   </div>
+                </div>
+              )}
+            </div>
+          </TabPane>
+          <TabPane
+            tab={
+              <span>
+                <VideoCameraOutlined /> {t('aiGenerate.videoGeneration')}
+              </span>
+            }
+            key="videoGeneration"
+          >
+            <div className={styles.section}>
+              <div className={styles.form}>
+                <TextArea
+                  placeholder={t('aiGenerate.videoPromptPlaceholder')}
+                  value={videoPrompt}
+                  onChange={(e) => setVideoPrompt(e.target.value)}
+                  rows={4}
+                />
+                <div className={styles.dimensions}>
+                  <Select
+                    placeholder={t('aiGenerate.videoSize')}
+                    value={videoSize}
+                    onChange={setVideoSize}
+                    style={{ width: "100%" }}
+                  >
+                    <Option value="1024x576">1024x576 (16:9)</Option>
+                    <Option value="576x1024">576x1024 (9:16)</Option>
+                    <Option value="1024x1024">1024x1024 (1:1)</Option>
+                  </Select>
+                  <Select
+                    placeholder={t('aiGenerate.videoDuration')}
+                    value={videoDuration}
+                    onChange={setVideoDuration}
+                    style={{ width: "100%" }}
+                  >
+                    <Option value={4}>4秒</Option>
+                    <Option value={8}>8秒</Option>
+                    <Option value={12}>12秒</Option>
+                    <Option value={16}>16秒</Option>
+                  </Select>
+                </div>
+                <div className={styles.options}>
+                  <Select
+                    placeholder={t('aiGenerate.videoMode')}
+                    value={videoMode}
+                    onChange={setVideoMode}
+                    style={{ width: "100%" }}
+                  >
+                    <Option value="text2video">文本转视频</Option>
+                    <Option value="image2video">图片转视频</Option>
+                  </Select>
+                  {videoMode === "image2video" && (
+                    <Input
+                      placeholder={t('aiGenerate.imageUrlPlaceholder')}
+                      value={videoImage}
+                      onChange={(e) => setVideoImage(e.target.value)}
+                      style={{ width: "100%" }}
+                    />
+                  )}
+                </div>
+                {videoModels.length > 0 && (
+                  <Select
+                    placeholder="选择视频模型"
+                    value={videoModel}
+                    onChange={setVideoModel}
+                    style={{ width: "100%" }}
+                  >
+                    {videoModels.map((modelItem) => (
+                      <Option key={modelItem.name} value={modelItem.name}>
+                        {modelItem.description || modelItem.name}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+                <Button
+                  type="primary"
+                  onClick={handleVideoGeneration}
+                  loading={loadingVideo}
+                  disabled={!videoPrompt || !videoModel}
+                  icon={<VideoCameraOutlined />}
+                >
+                  {t('aiGenerate.generate')}
+                </Button>
+              </div>
+              
+              {/* 视频生成状态和结果 */}
+              {(videoStatus || videoResult) && (
+                <div className={styles.result}>
+                  {videoStatus && (
+                    <div style={{ marginBottom: "16px" }}>
+                      <div style={{ marginBottom: "8px" }}>
+                        <strong>{t('aiGenerate.taskStatus')}: </strong>
+                        {videoStatus === "submitted" && t('aiGenerate.taskSubmitted')}
+                        {videoStatus === "processing" && t('aiGenerate.taskProcessing')}
+                        {videoStatus === "completed" && t('aiGenerate.taskCompleted')}
+                        {videoStatus === "failed" && t('aiGenerate.taskFailed')}
+                      </div>
+                      {videoProgress > 0 && videoProgress < 100 && (
+                        <Progress percent={videoProgress} status="active" />
+                      )}
+                    </div>
+                  )}
+                  
+                  {videoResult && (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "10px",
+                      }}
+                    >
+                      <video
+                        src={getOssUrl(videoResult)}
+                        controls
+                        style={{ maxWidth: "100%", borderRadius: "8px" }}
+                      />
+                      <Button
+                        type="primary"
+                        onClick={() => handleUploadToMediaGroup('video')}
+                        icon={<UploadOutlined />}
+                        style={{
+                          padding: "1px",
+                        }}
+                      >
+                        {t('aiGenerate.uploadToMediaGroup')}
+                      </Button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -404,7 +669,7 @@ export default function AIGeneratePage() {
         >
           {mediaGroups.map((group) => (
             <Option key={group._id} value={group._id}>
-              {group.title}
+              {group.title} - {group.type}
             </Option>
           ))}
         </Select>
