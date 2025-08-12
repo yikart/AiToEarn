@@ -103,11 +103,7 @@ const PubParmasTextarea = memo(
         if (onChange) onChange(values);
       }, [imageFileList, videoFile, value]);
       useEffect(() => {
-        if (imageFileListValue.length === 0 && imageFileList.length === 0)
-          return;
-        if (isEqual(imageFileListValue, imageFileList)) {
-          setImageFileList(imageFileListValue);
-        }
+        setImageFileList(imageFileListValue ?? []);
       }, [imageFileListValue]);
       useEffect(() => {
         setValue(desValue || "");
