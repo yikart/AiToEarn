@@ -55,6 +55,8 @@ export interface IAccountPlatInfo {
       imagesMax: number;
     };
   };
+  // 是否在PC端不显示
+  pcNoThis?: boolean;
   // 平台提示
   tips?: {
     // 添加账号时候的提示
@@ -66,6 +68,20 @@ export interface IAccountPlatInfo {
 
 // 各个平台的信息
 export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
+    [
+    PlatType.Tiktok,
+    {
+      name: "TikTok",
+      icon: tiktokSvg.src,
+      url: "https://www.tiktok.com/",
+      pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
+      commonPubParamsConfig: {
+        titleMax: 16,
+        topicMax: 10,
+      },
+      themeColor: "black",
+    },
+  ],
   [
     PlatType.Douyin,
     {
@@ -77,6 +93,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         topicMax: 4,
       },
       themeColor: "#FF4D00",
+      pcNoThis: true,
     },
   ],
   [
@@ -134,20 +151,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       themeColor: "blue",
     },
   ],
-  [
-    PlatType.Tiktok,
-    {
-      name: "TikTok",
-      icon: tiktokSvg.src,
-      url: "https://www.tiktok.com/",
-      pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
-      commonPubParamsConfig: {
-        titleMax: 16,
-        topicMax: 10,
-      },
-      themeColor: "black",
-    },
-  ],
+
   [
     PlatType.Facebook,
     {

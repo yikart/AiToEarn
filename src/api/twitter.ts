@@ -2,7 +2,7 @@ import http from "@/utils/request";
 import { request } from "@/utils/request";
 
 // 获取 Twitter 授权 URL
-export const getTwitterAuthUrlApi = (mail: string) => {
+export const getTwitterAuthUrlApi = (mail: string) => { 
   return request({
     url: '/plat/twitter/auth/url',
     method: 'POST',

@@ -5,6 +5,7 @@ import { useAccountStore } from "@/store/account";
 
 // 导入Facebook页面选择弹窗
 import FacebookPagesModal from "@/components/FacebookPagesModal";
+import { useUserStore } from "@/store/user";
 
 /**
  * Facebook被点击
@@ -14,6 +15,10 @@ export async function facebookSkip(platType: PlatType) {
   if (platType !== PlatType.Facebook) return;
 
   const res: any = await getFacebookAuthUrlApi('pc');
+    if (res?.code == 1) {
+      useUserStore.getState().logout();
+      return
+    }
   if (res?.code !== 0) return;
   const url = res.data.url;
   window.open(`${url}`);

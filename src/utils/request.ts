@@ -43,11 +43,11 @@ export async function request<T>(params: RequestParams) {
 
     if (res.status === 401) {
       // useUserStore.getState().logout();
-      message.error({
-        key: "NoPermission",
-        content: "登录状态过期，请重新登录",
-      });
-      return null;
+      // message.error({
+      //   key: "NoPermission",
+      //   content: "登录状态过期，请重新登录",
+      // });
+      return data;
     }
 
     if (data.code !== 0) {

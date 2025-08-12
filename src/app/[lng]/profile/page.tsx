@@ -473,6 +473,8 @@ export default function ProfilePage() {
           <Descriptions.Item label={t('accountStatus')}>
             {userInfo?.status === 1 ? t('normal') : t('disabled')}
           </Descriptions.Item>
+          <Descriptions.Item label='邀请码'>{userInfo?.popularizeCode}</Descriptions.Item>
+          <Descriptions.Item label='我的积分'>{userInfo?.score}</Descriptions.Item>
           {isVip && (
             <>
               <Descriptions.Item label={t('memberType')}>{vipCycleType}</Descriptions.Item>
