@@ -47,7 +47,7 @@ export async function request<T>(params: RequestParams) {
       //   key: "NoPermission",
       //   content: "登录状态过期，请重新登录",
       // });
-      return null;
+      return data;
     }
 
     if (data.code !== 0) {

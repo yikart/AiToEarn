@@ -68,6 +68,20 @@ export interface IAccountPlatInfo {
 
 // 各个平台的信息
 export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
+    [
+    PlatType.Tiktok,
+    {
+      name: "TikTok",
+      icon: tiktokSvg.src,
+      url: "https://www.tiktok.com/",
+      pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
+      commonPubParamsConfig: {
+        titleMax: 16,
+        topicMax: 10,
+      },
+      themeColor: "black",
+    },
+  ],
   [
     PlatType.Douyin,
     {
@@ -137,20 +151,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       themeColor: "blue",
     },
   ],
-  [
-    PlatType.Tiktok,
-    {
-      name: "TikTok",
-      icon: tiktokSvg.src,
-      url: "https://www.tiktok.com/",
-      pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
-      commonPubParamsConfig: {
-        titleMax: 16,
-        topicMax: 10,
-      },
-      themeColor: "black",
-    },
-  ],
+
   [
     PlatType.Facebook,
     {
