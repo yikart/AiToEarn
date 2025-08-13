@@ -1,6 +1,5 @@
 .container {
   padding: 24px;
-  max-width: 1200px;
   margin: 0 auto;
   background-color: #fff;
   min-height: 100vh;
@@ -225,6 +224,97 @@
   }
 }
 
+// 模板选择网格
+.templateGrid {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 4px 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+  }
+}
+
+.templateCard {
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  flex-shrink: 0;
+  width: 160px;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  }
+}
+
+.templateCardActive {
+  border-color: var(--theColor5) !important;
+  box-shadow: 0 0 0 3px rgba(166, 106, 228, 0.2), 0 4px 12px rgba(166, 106, 228, 0.15) !important;
+  transform: translateY(-1px);
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 2px solid var(--theColor5);
+    border-radius: 12px;
+    pointer-events: none;
+    animation: pulse 2s infinite;
+  }
+}
+
+.templateThumb {
+  position: relative;
+  width: 100%;
+  /* 维持 800x500 比例 = 5:3 */
+  padding-top: 62.5%;
+  background: #f6f7f9;
+
+  img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.templateLabel {
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #444;
+  text-align: left;
+  font-weight: 500;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -233,6 +323,18 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
   }
 }
 
@@ -263,5 +365,13 @@
   .options {
     flex-direction: column;
     gap: 12px;
+  }
+
+  .templateGrid {
+    gap: 8px;
+    
+    .templateCard {
+      width: 140px;
+    }
   }
 } 

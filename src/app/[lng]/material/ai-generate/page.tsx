@@ -64,6 +64,18 @@ export default function AIGeneratePage() {
   const [temp, setTemp] = useState("tempA");
   const [loadingFirefly, setLoadingFirefly] = useState(false);
   const [fireflyResult, setFireflyResult] = useState<string | null>(null);
+  const TEMPLATE_BASE = "https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/firefly";
+  const templateList = [
+    { key: "tempA", name: "默认" },
+    { key: "tempB", name: "透明" },
+    { key: "tempC", name: "金句" },
+    { key: "tempJin", name: "书摘" },
+    { key: "tempMemo", name: "便当" },
+    { key: "tempEasy", name: "边框" },
+    { key: "tempE", name: "边框" },
+    { key: "tempWrite", name: "手写" },
+    { key: "tempD", name: "图片" },
+  ];
 
   // 视频生成相关状态
   const [videoPrompt, setVideoPrompt] = useState("");
@@ -464,23 +476,25 @@ export default function AIGeneratePage() {
                   onChange={(e) => setContent(e.target.value)}
                   rows={4}
                 />
-                <Select
-                  value={temp}
-                  onChange={setTemp}
-                  style={{ width: "100%" }}
-                >
-                  <Option value="tempA">{t('aiGenerate.template')} A</Option>
-                  <Option value="tempB">{t('aiGenerate.template')} B</Option>
-                  <Option value="tempC">{t('aiGenerate.template')} C</Option>
-                  <Option value="tempJin">金卡模板</Option>
-                  <Option value="tempMemo">备忘录模板</Option>
-                  <Option value="tempEasy">简约模板</Option>
-                  <Option value="tempBlackSun">黑日模板</Option>
-                  <Option value="tempE">模板 E</Option>
-                  <Option value="tempWrite">写作模板</Option>
-                  <Option value="code">代码模板</Option>
-                  <Option value="tempD">模板 D</Option>
-                </Select>
+                <div className={styles.templateGrid}>
+                  {templateList.map((item) => (
+                    <div
+                      key={item.key}
+                      className={`${styles.templateCard} ${temp === item.key ? styles.templateCardActive : ""}`}
+                      onClick={() => setTemp(item.key)}
+                    >
+                      <div className={styles.templateThumb}>
+                        <img
+                          src={`${TEMPLATE_BASE}/${item.key}.png`}
+                          alt={`${t('aiGenerate.template')} ${item.name}`}
+                        />
+                      </div>
+                      <div className={styles.templateLabel}>
+                        {item.name}
+                      </div>
+                    </div>
+                  ))}
+                </div>
                 <Button
                   type="primary"
                   onClick={handleTextToFireflyCard}
