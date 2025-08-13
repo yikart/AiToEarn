@@ -795,7 +795,7 @@ const PublishDialog = memo(
                             {Array.isArray(item.mediaList) &&
                               item.mediaList[0] && (
                                 <img
-                                  src={getOssUrl(item.mediaList[0].url)}
+                                  src={getOssUrl(item.coverUrl)}
                                   alt=""
                                   style={{
                                     position: "absolute",
