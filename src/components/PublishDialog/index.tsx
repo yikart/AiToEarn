@@ -468,7 +468,7 @@ const PublishDialog = memo(
                         setLibraryModalOpen(true);
                       }}
                     >
-                      选择素材库
+                      选择素材
                     </Button>
                     <Button
                       size="small"
