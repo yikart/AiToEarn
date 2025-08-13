@@ -10,7 +10,6 @@ import {
   apiCreateMaterial,
   apiCreateMaterialTask,
   apiStartMaterialTask,
-  MaterialType,
   apiDeleteMaterialGroup,
   apiUpdateMaterialGroupInfo,
   apiPreviewMaterialTask,
@@ -24,6 +23,7 @@ import { getPublishList } from "@/api/plat/publish";
 import { PlatType } from "@/app/config/platConfig";
 import { PublishStatus } from "@/api/plat/types/publish.types";
 import { useTransClient } from "@/app/i18n/client";
+import { PubType } from "@/app/config/publishConfig";
 
 const { TextArea } = Input;
 
@@ -667,7 +667,7 @@ export default function CgMaterialPageCore() {
                       <div className={styles.descTypeInfo} style={{ marginBottom: 10, paddingLeft: 10, paddingRight: 10 }}>
                         <span>{item.desc || '暂无描述'}</span>
                         <span className={styles.typeTag}>
-                          {item.type === MaterialType.ARTICLE ? '图文' : item.type === MaterialType.VIDEO ? '视频' : item.type}
+                          {item.type === PubType.ImageText ? '图文' : item.type === PubType.VIDEO ? '视频' : item.type}
                         </span>
                       </div>
                       <div className={styles.groupActions}>
@@ -782,7 +782,7 @@ export default function CgMaterialPageCore() {
                             <div className={styles.cardDesc}>{item.desc}</div>
                             <div className={styles.cardMeta}>
                               <span className={styles.typeLabel}>
-                                {item.type === MaterialType.ARTICLE ? "图文" : item.type === MaterialType.VIDEO ? "视频" : item.type}
+                                {item.type === PubType.ImageText ? "图文" : item.type === PubType.VIDEO ? "视频" : item.type}
                               </span>
                               <span className={`${styles.statusLabel} ${item.status === 0 ? styles.generating : styles.completed}`}>
                                 {item.status === 0 ? "生成中" : "已生成"}
@@ -839,14 +839,14 @@ export default function CgMaterialPageCore() {
             label="类型" 
             name="type" 
             rules={[{ required: true, message: '请选择草稿类型' }]}
-            initialValue={MaterialType.ARTICLE}
+            initialValue={PubType.ImageText}
           >
             <Select placeholder="请选择草稿类型">
-              <Select.Option value={MaterialType.ARTICLE}>
+              <Select.Option value={PubType.ImageText}>
                 <FileTextOutlined style={{ marginRight: 8, color: '#52c41a' }} />
                 图文草稿
               </Select.Option>
-              <Select.Option value={MaterialType.VIDEO}>
+              <Select.Option value={PubType.VIDEO}>
                 <VideoCameraOutlined style={{ marginRight: 8, color: '#1890ff' }} />
                 视频草稿
               </Select.Option>
@@ -1233,7 +1233,7 @@ export default function CgMaterialPageCore() {
           ) : (
             <Card title={previewData.title} bordered>
               <div style={{marginBottom:8}}><b>简介：</b>{previewData.desc}</div>
-              <div style={{marginBottom:8}}><b>类型：</b>{previewData.type === MaterialType.ARTICLE ? "图文" : previewData.type === MaterialType.VIDEO ? "视频" : previewData.type}</div>
+              <div style={{marginBottom:8}}><b>类型：</b>{previewData.type === PubType.ImageText ? "图文" : previewData.type === PubType.VIDEO ? "视频" : previewData.type}</div>
               <div style={{marginBottom:8}}><b>封面：</b>
                 <div style={{marginTop:4}}>
                   {previewData.coverUrl && (
@@ -1285,7 +1285,7 @@ export default function CgMaterialPageCore() {
             </div>
             <div style={{ marginBottom: 16 }}>
               <b>类型：</b>
-              {detailData.type === MaterialType.ARTICLE ? "图文" : detailData.type === MaterialType.VIDEO ? "视频" : detailData.type}
+              {detailData.type === PubType.ImageText ? "图文" : detailData.type === PubType.VIDEO ? "视频" : detailData.type}
             </div>
             
             <div style={{ marginBottom: 16 }}>

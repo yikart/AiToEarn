@@ -1,13 +1,9 @@
 import http from "@/utils/request";
-
-export enum MaterialType {
-  VIDEO = "video", // 视频
-  ARTICLE = "article", // 文章
-}
+import { PubType } from "@/app/config/publishConfig";
 
 export interface MaterialMedia {
   url: string;
-  type: MaterialType;
+  type: PubType;
   content?: string;
 }
 
@@ -29,7 +25,7 @@ export interface NewMaterialTask {
 
 // 创建素材草稿组
 export const apiCreateMaterialGroup = (data: {
-  type: MaterialType;
+  type: PubType;
   name: string;
   desc?: string;
 }) => {

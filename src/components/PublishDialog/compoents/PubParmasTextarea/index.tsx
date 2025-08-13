@@ -327,7 +327,7 @@ const PubParmasTextarea = memo(
                   {/* 图像 ------------------------------------------- */}
                   {imageFileList.map((v, i) => (
                     <CSSTransition
-                      key={v.id}
+                      key={v.id || v.imgUrl}
                       timeout={300}
                       classNames={{
                         enter: styles.itemEnter,
@@ -432,7 +432,7 @@ const PubParmasTextarea = memo(
                 </TransitionGroup>
               </ReactSortable>
 
-              {videoFile && (
+              {videoFile && videoFile.file && (
                 <Button
                   style={{ marginTop: "10px" }}
                   onClick={() => setVideoCoverSetingModal(true)}

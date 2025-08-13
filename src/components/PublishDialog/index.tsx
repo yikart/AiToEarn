@@ -10,7 +10,13 @@ import {
 } from "react";
 import styles from "./publishDialog.module.scss";
 import { Button, message, Modal, List, Spin } from "antd";
-import { ArrowRightOutlined, ExclamationCircleFilled, FileTextOutlined, FolderOpenOutlined, PictureOutlined } from "@ant-design/icons";
+import {
+  ArrowRightOutlined,
+  ExclamationCircleFilled,
+  FileTextOutlined,
+  FolderOpenOutlined,
+  PictureOutlined,
+} from "@ant-design/icons";
 import PublishDialogAi from "@/components/PublishDialog/compoents/PublishDialogAi";
 import PublishDialogPreview from "@/components/PublishDialog/compoents/PublishDialogPreview";
 import { CSSTransition } from "react-transition-group";
@@ -31,7 +37,7 @@ import {
 } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 import { generateUUID } from "@/utils";
 import { useTransClient } from "@/app/i18n/client";
-import { apiGetMaterialGroupList, apiGetMaterialList, MaterialType } from "@/api/material";
+import { apiGetMaterialGroupList, apiGetMaterialList } from "@/api/material";
 import { getMediaGroupList, getMediaList } from "@/api/media";
 import { getOssUrl } from "@/utils/oss";
 
@@ -117,18 +123,24 @@ const PublishDialog = memo(
       const [libraryModalOpen, setLibraryModalOpen] = useState(false);
       const [libraryGroupLoading, setLibraryGroupLoading] = useState(false);
       const [libraryGroups, setLibraryGroups] = useState<any[]>([]);
-      const [selectedLibraryGroup, setSelectedLibraryGroup] = useState<any | null>(null);
+      const [selectedLibraryGroup, setSelectedLibraryGroup] = useState<
+        any | null
+      >(null);
       const [libraryLoading, setLibraryLoading] = useState(false);
       const [libraryItems, setLibraryItems] = useState<any[]>([]);
 
       // 过滤可用类型（根据当前步骤和账户选择）
       const allowImage = useMemo(() => {
         if (step === 1 && expandedPubItem) {
-          const platConfig = AccountPlatInfoMap.get(expandedPubItem.account.type)!;
+          const platConfig = AccountPlatInfoMap.get(
+            expandedPubItem.account.type,
+          )!;
           return platConfig.pubTypes.has(PubType.ImageText);
         }
         if (pubListChoosed.length === 1) {
-          const platConfig = AccountPlatInfoMap.get(pubListChoosed[0].account.type)!;
+          const platConfig = AccountPlatInfoMap.get(
+            pubListChoosed[0].account.type,
+          )!;
           return platConfig.pubTypes.has(PubType.ImageText);
         }
         return true;
@@ -136,11 +148,15 @@ const PublishDialog = memo(
 
       const allowVideo = useMemo(() => {
         if (step === 1 && expandedPubItem) {
-          const platConfig = AccountPlatInfoMap.get(expandedPubItem.account.type)!;
+          const platConfig = AccountPlatInfoMap.get(
+            expandedPubItem.account.type,
+          )!;
           return platConfig.pubTypes.has(PubType.VIDEO);
         }
         if (pubListChoosed.length === 1) {
-          const platConfig = AccountPlatInfoMap.get(pubListChoosed[0].account.type)!;
+          const platConfig = AccountPlatInfoMap.get(
+            pubListChoosed[0].account.type,
+          )!;
           return platConfig.pubTypes.has(PubType.VIDEO);
         }
         return true;
@@ -152,8 +168,8 @@ const PublishDialog = memo(
           const res: any = await apiGetMaterialGroupList(1, 100);
           const list = res?.data?.list || [];
           const filtered = list.filter((g: any) => {
-            if (g.type === MaterialType.ARTICLE) return allowImage;
-            if (g.type === MaterialType.VIDEO) return allowVideo;
+            if (g.type === PubType.ImageText) return allowImage;
+            if (g.type === PubType.VIDEO) return allowVideo;
             return true;
           });
           setGroups(filtered);
@@ -181,8 +197,8 @@ const PublishDialog = memo(
           const res: any = await getMediaGroupList(1, 100);
           const list = res?.data?.list || [];
           const filtered = list.filter((g: any) => {
-            if (g.type === 'img') return allowImage;
-            if (g.type === 'video') return allowVideo;
+            if (g.type === "img") return allowImage;
+            if (g.type === "video") return allowVideo;
             return true;
           });
           setLibraryGroups(filtered);
@@ -264,62 +280,92 @@ const PublishDialog = memo(
       }, [onClose, t]);
 
       // 选择草稿后填充参数
-      const applyDraft = useCallback((draft: any) => {
-        const nextParams: any = {};
-        if (draft.title) nextParams.title = draft.title;
-        if (draft.desc) nextParams.des = draft.desc;
-        
-        // 处理媒体内容
-        if (Array.isArray(draft.mediaList) && draft.mediaList.length > 0) {
-          const videos = draft.mediaList.filter((m: any) => m.type === MaterialType.VIDEO);
-          const images = draft.mediaList.filter((m: any) => m.type === MaterialType.ARTICLE);
-          
-          // 如果有视频，设置视频参数
-          if (videos.length > 0) {
-            const firstVideo = videos[0];
-            nextParams.video = {
-              ossUrl: getOssUrl(firstVideo.url),
-              cover: draft.coverUrl ? { ossUrl: getOssUrl(draft.coverUrl) } : undefined,
-            };
-          }
-          
-          // 如果有图片，设置图片参数
-          if (images.length > 0) {
-            nextParams.images = images.map((m: any) => ({ ossUrl: getOssUrl(m.url) }));
-          }
-        }
+      const applyDraft = useCallback(
+        (draft: any) => {
+          const nextParams: any = {};
+          if (draft.title) nextParams.title = draft.title;
+          if (draft.desc) nextParams.des = draft.desc;
 
-        if (step === 1 && expandedPubItem) {
-          setOnePubParams(nextParams, expandedPubItem.account.id);
-        } else {
-          setAccountAllParams(nextParams);
-        }
-        setDraftModalOpen(false);
-        message.success("草稿已应用");
-      }, [setAccountAllParams, setOnePubParams, step, expandedPubItem]);
+          // 处理媒体内容
+          if (Array.isArray(draft.mediaList) && draft.mediaList.length > 0) {
+            const videos = draft.mediaList.filter(
+              (m: any) => m.type === PubType.VIDEO,
+            );
+            const images = draft.mediaList.filter(
+              (m: any) => m.type !== PubType.VIDEO,
+            );
+
+            // 如果有视频，设置视频参数
+            if (videos.length > 0) {
+              const firstVideo = videos[0];
+              const ossUrl = getOssUrl(firstVideo.url);
+              const coverOss = getOssUrl(draft.coverUrl);
+              nextParams.video = {
+                ossUrl: ossUrl,
+                videoUrl: ossUrl,
+                cover: {
+                  ossUrl: coverOss,
+                  imgUrl: coverOss,
+                },
+              };
+            }
+
+            // 如果有图片，设置图片参数
+            if (images.length > 0) {
+              nextParams.images = images.map((v: any) => {
+                const ossUrl = getOssUrl(v.url);
+                return {
+                  ossUrl,
+                  imgUrl: ossUrl,
+                };
+              });
+            }
+          }
+          console.log(draft);
+
+          console.log(nextParams);
+          if (step === 1 && expandedPubItem) {
+            setOnePubParams(nextParams, expandedPubItem.account.id);
+          } else {
+            setAccountAllParams(nextParams);
+          }
+          setDraftModalOpen(false);
+          message.success("草稿已应用");
+        },
+        [setAccountAllParams, setOnePubParams, step, expandedPubItem],
+      );
 
       // 选择素材库内容后填充参数
-      const applyLibraryItem = useCallback((item: any) => {
-        const nextParams: any = {};
-        
-        // 处理媒体内容
-        if (item.type === 'video') {
-          nextParams.video = {
-            ossUrl: getOssUrl(item.url),
-            cover: item.cover ? { ossUrl: getOssUrl(item.cover) } : undefined,
-          };
-        } else if (item.type === 'img') {
-          nextParams.images = [{ ossUrl: getOssUrl(item.url) }];
-        }
+      const applyLibraryItem = useCallback(
+        (item: any) => {
+          const nextParams: any = {};
+          const ossUrl = getOssUrl(item.url);
 
-        if (step === 1 && expandedPubItem) {
-          setOnePubParams(nextParams, expandedPubItem.account.id);
-        } else {
-          setAccountAllParams(nextParams);
-        }
-        setLibraryModalOpen(false);
-        message.success("素材已应用");
-      }, [setAccountAllParams, setOnePubParams, step, expandedPubItem]);
+          // 处理媒体内容
+          if (item.type === "video") {
+            const coverOss = item.cover;
+            nextParams.video = {
+              ossUrl,
+              videoUrl: ossUrl,
+              cover: {
+                ossUrl: coverOss,
+                imgUrl: coverOss,
+              },
+            };
+          } else if (item.type === "img") {
+            nextParams.images = [{ ossUrl, imgUrl: ossUrl }];
+          }
+
+          if (step === 1 && expandedPubItem) {
+            setOnePubParams(nextParams, expandedPubItem.account.id);
+          } else {
+            setAccountAllParams(nextParams);
+          }
+          setLibraryModalOpen(false);
+          message.success("素材已应用");
+        },
+        [setAccountAllParams, setOnePubParams, step, expandedPubItem],
+      );
 
       // 是否打开右侧预览
       const openRight = useMemo(() => {
@@ -402,13 +448,36 @@ const PublishDialog = memo(
               }}
             >
               <div className="publishDialog-con">
-                <div className="publishDialog-con-head" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span className="publishDialog-con-head-title">{t("title")}</span>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <Button size="small" icon={<PictureOutlined />} onClick={(e) => { e.stopPropagation(); setLibraryModalOpen(true); }}>
+                <div
+                  className="publishDialog-con-head"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span className="publishDialog-con-head-title">
+                    {t("title")}
+                  </span>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <Button
+                      size="small"
+                      icon={<PictureOutlined />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setLibraryModalOpen(true);
+                      }}
+                    >
                       选择素材库
                     </Button>
-                    <Button size="small" icon={<FileTextOutlined />} onClick={(e) => { e.stopPropagation(); setDraftModalOpen(true); }}>
+                    <Button
+                      size="small"
+                      icon={<FileTextOutlined />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDraftModalOpen(true);
+                      }}
+                    >
                       选择草稿
                     </Button>
                   </div>
@@ -461,7 +530,7 @@ const PublishDialog = memo(
                             }
                           }
                           // 是否自动前往第二步
-                          if (step === 0 && newPubListChoosed.length !== 0) { 
+                          if (step === 0 && newPubListChoosed.length !== 0) {
                             const isFront = newPubListChoosed.every(
                               (v) =>
                                 v.params.des ||
@@ -496,7 +565,7 @@ const PublishDialog = memo(
                       )}
                       {pubListChoosed.length >= 2 && (
                         <PubParmasTextarea
-                          key={`${commonPubParams.images?.length || 0}-${commonPubParams.video ? 'video' : 'no-video'}-${commonPubParams.des?.length || 0}`}
+                          key={`${commonPubParams.images?.length || 0}-${commonPubParams.video ? "video" : "no-video"}-${commonPubParams.des?.length || 0}`}
                           platType={PlatType.Instagram}
                           rows={16}
                           desValue={commonPubParams.des}
@@ -605,7 +674,9 @@ const PublishDialog = memo(
             {!selectedGroup ? (
               <div>
                 {groupLoading ? (
-                  <div style={{ textAlign: 'center', padding: 24 }}><Spin /></div>
+                  <div style={{ textAlign: "center", padding: 24 }}>
+                    <Spin />
+                  </div>
                 ) : (
                   <List
                     grid={{ gutter: 16, column: 2 }}
@@ -615,38 +686,70 @@ const PublishDialog = memo(
                       <List.Item>
                         <div
                           style={{
-                            background: '#FAEFFC',
-                            border: '2px solid transparent',
-                            padding: '16px',
-                            borderRadius: '12px',
-                            cursor: 'pointer',
-                            transition: 'all 0.3s ease',
-                            minHeight: '80px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            textAlign: 'center',
-                            position: 'relative'
+                            background: "#FAEFFC",
+                            border: "2px solid transparent",
+                            padding: "16px",
+                            borderRadius: "12px",
+                            cursor: "pointer",
+                            transition: "all 0.3s ease",
+                            minHeight: "80px",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            textAlign: "center",
+                            position: "relative",
                           }}
                           onClick={() => setSelectedGroup(item)}
                         >
-                          <div style={{ fontSize: 24, marginBottom: 8, color: '#667eea' }}>
+                          <div
+                            style={{
+                              fontSize: 24,
+                              marginBottom: 8,
+                              color: "#667eea",
+                            }}
+                          >
                             <FolderOpenOutlined />
                           </div>
-                          <div style={{ fontWeight: 600, fontSize: 16, color: '#2c3e50', marginBottom: 4 }}>
+                          <div
+                            style={{
+                              fontWeight: 600,
+                              fontSize: 16,
+                              color: "#2c3e50",
+                              marginBottom: 4,
+                            }}
+                          >
                             {item.name || item.title}
                           </div>
                           {item.desc && (
-                            <div style={{ fontSize: 12, color: '#7f8c8d', lineHeight: 1.4 }}>
+                            <div
+                              style={{
+                                fontSize: 12,
+                                color: "#7f8c8d",
+                                lineHeight: 1.4,
+                              }}
+                            >
                               {item.desc}
                             </div>
                           )}
-                          <div style={{
-                            position: 'absolute', top: 8, left: 8, padding: '2px 8px', borderRadius: '12px', fontSize: 10,
-                            color: '#fff', background: item.type === MaterialType.ARTICLE ? '#52c41a' : '#1890ff'
-                          }}>
-                            {item.type === MaterialType.ARTICLE ? '图文组' : '视频组'}
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: 8,
+                              left: 8,
+                              padding: "2px 8px",
+                              borderRadius: "12px",
+                              fontSize: 10,
+                              color: "#fff",
+                              background:
+                                item.type === PubType.ImageText
+                                  ? "#52c41a"
+                                  : "#1890ff",
+                            }}
+                          >
+                            {item.type === PubType.ImageText
+                              ? "图文组"
+                              : "视频组"}
                           </div>
                         </div>
                       </List.Item>
@@ -662,7 +765,9 @@ const PublishDialog = memo(
                   </Button>
                 </div>
                 {draftLoading ? (
-                  <div style={{ textAlign: 'center', padding: 24 }}><Spin /></div>
+                  <div style={{ textAlign: "center", padding: 24 }}>
+                    <Spin />
+                  </div>
                 ) : (
                   <List
                     grid={{ gutter: 16, column: 2 }}
@@ -672,22 +777,44 @@ const PublishDialog = memo(
                       <List.Item>
                         <div
                           style={{
-                            border: '1px solid #eee', borderRadius: 8, overflow: 'hidden', cursor: 'pointer'
+                            border: "1px solid #eee",
+                            borderRadius: 8,
+                            overflow: "hidden",
+                            cursor: "pointer",
                           }}
                           onClick={() => applyDraft(item)}
                         >
-                          <div style={{ width: '100%', paddingTop: '56%', position: 'relative', background: '#f7f7f7' }}>
-                            {Array.isArray(item.mediaList) && item.mediaList[0] && (
-                              <img
-                                src={getOssUrl(item.mediaList[0].url)}
-                                alt=""
-                                style={{ position: 'absolute', left: 0, top: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-                              />
-                            )}
+                          <div
+                            style={{
+                              width: "100%",
+                              paddingTop: "56%",
+                              position: "relative",
+                              background: "#f7f7f7",
+                            }}
+                          >
+                            {Array.isArray(item.mediaList) &&
+                              item.mediaList[0] && (
+                                <img
+                                  src={getOssUrl(item.mediaList[0].url)}
+                                  alt=""
+                                  style={{
+                                    position: "absolute",
+                                    left: 0,
+                                    top: 0,
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              )}
                           </div>
                           <div style={{ padding: 8 }}>
-                            <div style={{ fontWeight: 600 }}>{item.title || '-'}</div>
-                            <div style={{ fontSize: 12, color: '#999' }}>{item.desc || ''}</div>
+                            <div style={{ fontWeight: 600 }}>
+                              {item.title || "-"}
+                            </div>
+                            <div style={{ fontSize: 12, color: "#999" }}>
+                              {item.desc || ""}
+                            </div>
                           </div>
                         </div>
                       </List.Item>
@@ -709,7 +836,9 @@ const PublishDialog = memo(
             {!selectedLibraryGroup ? (
               <div>
                 {libraryGroupLoading ? (
-                  <div style={{ textAlign: 'center', padding: 24 }}><Spin /></div>
+                  <div style={{ textAlign: "center", padding: 24 }}>
+                    <Spin />
+                  </div>
                 ) : (
                   <List
                     grid={{ gutter: 16, column: 2 }}
@@ -719,38 +848,66 @@ const PublishDialog = memo(
                       <List.Item>
                         <div
                           style={{
-                            background: '#F0F8FF',
-                            border: '2px solid transparent',
-                            padding: '16px',
-                            borderRadius: '12px',
-                            cursor: 'pointer',
-                            transition: 'all 0.3s ease',
-                            minHeight: '80px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            textAlign: 'center',
-                            position: 'relative'
+                            background: "#F0F8FF",
+                            border: "2px solid transparent",
+                            padding: "16px",
+                            borderRadius: "12px",
+                            cursor: "pointer",
+                            transition: "all 0.3s ease",
+                            minHeight: "80px",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            textAlign: "center",
+                            position: "relative",
                           }}
                           onClick={() => setSelectedLibraryGroup(item)}
                         >
-                          <div style={{ fontSize: 24, marginBottom: 8, color: '#1890ff' }}>
+                          <div
+                            style={{
+                              fontSize: 24,
+                              marginBottom: 8,
+                              color: "#1890ff",
+                            }}
+                          >
                             <PictureOutlined />
                           </div>
-                          <div style={{ fontWeight: 600, fontSize: 16, color: '#2c3e50', marginBottom: 4 }}>
+                          <div
+                            style={{
+                              fontWeight: 600,
+                              fontSize: 16,
+                              color: "#2c3e50",
+                              marginBottom: 4,
+                            }}
+                          >
                             {item.title}
                           </div>
                           {item.desc && (
-                            <div style={{ fontSize: 12, color: '#7f8c8d', lineHeight: 1.4 }}>
+                            <div
+                              style={{
+                                fontSize: 12,
+                                color: "#7f8c8d",
+                                lineHeight: 1.4,
+                              }}
+                            >
                               {item.desc}
                             </div>
                           )}
-                          <div style={{
-                            position: 'absolute', top: 8, left: 8, padding: '2px 8px', borderRadius: '12px', fontSize: 10,
-                            color: '#fff', background: item.type === 'img' ? '#52c41a' : '#1890ff'
-                          }}>
-                            {item.type === 'img' ? '图片组' : '视频组'}
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: 8,
+                              left: 8,
+                              padding: "2px 8px",
+                              borderRadius: "12px",
+                              fontSize: 10,
+                              color: "#fff",
+                              background:
+                                item.type === "img" ? "#52c41a" : "#1890ff",
+                            }}
+                          >
+                            {item.type === "img" ? "图片组" : "视频组"}
                           </div>
                         </div>
                       </List.Item>
@@ -761,12 +918,17 @@ const PublishDialog = memo(
             ) : (
               <div>
                 <div style={{ marginBottom: 12 }}>
-                  <Button type="link" onClick={() => setSelectedLibraryGroup(null)}>
+                  <Button
+                    type="link"
+                    onClick={() => setSelectedLibraryGroup(null)}
+                  >
                     返回素材库组
                   </Button>
                 </div>
                 {libraryLoading ? (
-                  <div style={{ textAlign: 'center', padding: 24 }}><Spin /></div>
+                  <div style={{ textAlign: "center", padding: 24 }}>
+                    <Spin />
+                  </div>
                 ) : (
                   <List
                     grid={{ gutter: 16, column: 2 }}
@@ -776,20 +938,41 @@ const PublishDialog = memo(
                       <List.Item>
                         <div
                           style={{
-                            border: '1px solid #eee', borderRadius: 8, overflow: 'hidden', cursor: 'pointer'
+                            border: "1px solid #eee",
+                            borderRadius: 8,
+                            overflow: "hidden",
+                            cursor: "pointer",
                           }}
                           onClick={() => applyLibraryItem(item)}
                         >
-                          <div style={{ width: '100%', paddingTop: '56%', position: 'relative', background: '#f7f7f7' }}>
+                          <div
+                            style={{
+                              width: "100%",
+                              paddingTop: "56%",
+                              position: "relative",
+                              background: "#f7f7f7",
+                            }}
+                          >
                             <img
                               src={getOssUrl(item.url)}
                               alt=""
-                              style={{ position: 'absolute', left: 0, top: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                              style={{
+                                position: "absolute",
+                                left: 0,
+                                top: 0,
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                              }}
                             />
                           </div>
                           <div style={{ padding: 8 }}>
-                            <div style={{ fontWeight: 600 }}>{item.title || '-'}</div>
-                            <div style={{ fontSize: 12, color: '#999' }}>{item.desc || ''}</div>
+                            <div style={{ fontWeight: 600 }}>
+                              {item.title || "-"}
+                            </div>
+                            <div style={{ fontSize: 12, color: "#999" }}>
+                              {item.desc || ""}
+                            </div>
                           </div>
                         </div>
                       </List.Item>
