@@ -1,19 +1,19 @@
 {
-  "title": "Publish",
+  "title": "Publish Work",
   "confirmClose": {
-    "title": "Discard changes?",
-    "content": "All changes will be lost"
+    "title": "Confirm Close",
+    "content": "After closing, the filled content will be lost. Are you sure to close?"
   },
   "buttons": {
     "customizePerAccount": "Customize per account",
-    "cancelPublish": "Cancel",
-    "schedulePublish": "Publish now",
+    "cancelPublish": "Cancel Publish",
+    "schedulePublish": "Schedule Publish",
     "publishNow": "Publish now",
     "copyLink": "Copy link",
     "delete": "Delete"
   },
   "tips": {
-    "workSaved": "Work saved. Select an account to create a post."
+    "workSaved": "Please select the account to publish"
   },
   "status": {
     "publishFailed": "Failed",
@@ -64,14 +64,21 @@
     "emptyDescription": "See your work preview here"
   },
   "draft": {
-    "selectDraft": "Select draft",
-    "selectDraftGroup": "Select draft group",
-    "selectDraftItem": "Select draft",
-    "noDraftGroups": "No draft groups",
-    "noDrafts": "No drafts in this group",
-    "backToGroups": "Back to groups",
-    "selectDraftSuccess": "Draft applied",
-    "imageGroup": "Image group",
-    "videoGroup": "Video group"
+    "selectDraft": "Select Draft",
+    "selectDraftGroup": "Select Draft Group",
+    "selectDraftItem": "Select Draft",
+    "noDraftGroups": "No Draft Groups",
+    "noDrafts": "No Drafts in This Group",
+    "backToGroups": "Back to Groups",
+    "selectDraftSuccess": "Draft Applied",
+    "imageGroup": "Image Group",
+    "videoGroup": "Video Group",
+    "selectLibrary": "Select Library",
+    "selectLibraryItem": "Select Material",
+    "selectLibraryGroup": "Select Library Group",
+    "noLibraryGroups": "No Library Groups",
+    "backToLibraryGroups": "Back to Library Groups",
+    "noLibraryItems": "No Materials in This Group",
+    "selectLibrarySuccess": "Material Applied"
   }
 } 

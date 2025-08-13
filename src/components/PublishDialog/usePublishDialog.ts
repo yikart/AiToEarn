@@ -132,25 +132,41 @@ export const usePublishDialog = create(
           const commonPubParams = { ...get().commonPubParams };
           let pubListChoosed = [...get().pubListChoosed];
 
-          for (const key in commonPubParams) {
+          // 更新 commonPubParams
+          for (const key in pubParmas) {
             if (pubParmas.hasOwnProperty(key)) {
-              const keyType = key as "des";
-              const val = pubParmas[keyType];
-              commonPubParams[keyType] = pubParmas[keyType]!;
+              (commonPubParams as any)[key] = (pubParmas as any)[key];
+            }
+          }
 
-              for (let i = 0; i < pubList.length; i++) {
-                const v = pubList[i];
-                const platConfig = AccountPlatInfoMap.get(v.account.type)!;
-                if (
-                  (key === "video" &&
-                    !platConfig.pubTypes.has(PubType.VIDEO)) ||
-                  (key === "images" &&
-                    !platConfig.pubTypes.has(PubType.ImageText))
-                ) {
-                  continue;
-                }
-                v.params[keyType] = val!;
-              }
+          // 更新所有账户的参数
+          for (let i = 0; i < pubList.length; i++) {
+            const v = pubList[i];
+            const platConfig = AccountPlatInfoMap.get(v.account.type)!;
+            
+            // 更新描述
+            if (pubParmas.des !== undefined) {
+              v.params.des = pubParmas.des;
+            }
+            
+            // 更新标题
+            if (pubParmas.title !== undefined) {
+              v.params.title = pubParmas.title;
+            }
+            
+            // 更新视频（如果平台支持）
+            if (pubParmas.video !== undefined && platConfig.pubTypes.has(PubType.VIDEO)) {
+              v.params.video = pubParmas.video;
+            }
+            
+            // 更新图片（如果平台支持）
+            if (pubParmas.images !== undefined && platConfig.pubTypes.has(PubType.ImageText)) {
+              v.params.images = pubParmas.images;
+            }
+            
+            // 更新选项
+            if (pubParmas.option) {
+              v.params.option = lodash.merge({}, v.params.option, pubParmas.option);
             }
           }
 
