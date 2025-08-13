@@ -17,16 +17,60 @@
 
 ## Overview
 
-One-click publishing tool for multiple social media platforms, such as douyin, red book, wechat channels, kuaishou.
+AI content production, distribution, and trade.
+
+One stop social media management tools: Douyin, Red Note, wechat video channel, wechat official account, Kwai， bilibili、  Tiktok, Youtube, Facebook, Instagram, Threads, Twitter, Pinterest
 
 ## Supported Platforms
 
-![Douyin](https://lf1-cdn-tos.bytegoofy.com/goofy/ies/douyin_web/public/favicon.ico 'Douyin') Douyin (TikTok)  
-![Xiaohongshu](https://www.xiaohongshu.com/favicon.ico 'Xiaohongshu') Xiaohongshu (Little Red Book)  
-![WeChat Channels](https://res.wx.qq.com/t/wx_fed/finder/helper/finder-helper-web/res/favicon-v2.ico 'WeChat Channels') WeChat Channels  
-![Kuaishou](https://s1-111422.kwimgs.com/kos/nlav111422/ks-web/favicon.ico 'Kuaishou') Kuaishou
+<div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap; margin: 20px 0;">
+    <img src="https://lf1-cdn-tos.bytegoofy.com/goofy/ies/douyin_web/public/favicon.ico" title="抖音" alt="抖音" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://i0.hdslb.com/bfs/static/jinkela/long/images/favicon.ico" title="B站" alt="B站" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://s1-111422.kwimgs.com/kos/nlav111422/ks-web/favicon.ico" title="快手" alt="快手" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://res.wx.qq.com/a/wx_fed/assets/res/NTI4MWU5.ico" title="微信公众号" alt="微信公众号" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://www.youtube.com/s/desktop/3ad23781/img/logos/favicon.ico" title="YouTube" alt="YouTube" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://abs.twimg.com/responsive-web/client-web/icon-svg.ea5ff4aa.svg" title="Twitter" alt="Twitter" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://www.tiktok.com/favicon.ico" title="TikTok" alt="TikTok" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://static.xx.fbcdn.net/rsrc.php/y1/r/ay1hV6OlegS.ico" title="Facebook" alt="Facebook" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://static.cdninstagram.com/rsrc.php/y4/r/QaBlI0OZiks.ico" title="Instagram" alt="Instagram" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://static.cdninstagram.com/rsrc.php/ye/r/lEu8iVizmNW.ico" title="Threads" alt="Threads" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://s.pinimg.com/webapp/logo_transparent_144x144-3da7a67b.png" title="Pinterest" alt="Pinterest" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+</div>
 
-## Quick Start
+## Quick Start Web
+
+1.  **Start the Backend Service Modules**
+
+      - **Local Launch:** Create a `local.config.js` file in the `config` directory (copy and modify the `dev.config.js` file).
+      - ```sh
+        pnpm i
+        pnpm run dev:local
+        ```
+
+2.  **Start the Frontend Project: `aitoearn-web`**
+
+      - ```sh
+        pnpm i
+        pnpm run dev
+        ```
+
+-----
+
+### Creating and Using a Workflow
+
+3.  **Add Platform Accounts** on the frontend page.
+<img src="./workflow/img/account.jpeg" alt="post" width="500"/>
+
+4.  **Create an `skkey`** to link multiple accounts.
+<img src="./workflow/img/skkey.jpg" alt="post" width="500"/>
+
+5.  **Create a workflow** on the workflow platform (or import a template from the `workflow` folder).
+
+6.  **Use the `skkey`** in the workflow's parameter settings to publish content.
+<img src="./workflow/img/fl.jpg" alt="post" width="500"/>
+
+
+## Quick Start Windows
 
 ```sh
 # Clone the project
