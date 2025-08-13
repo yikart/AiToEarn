@@ -23,10 +23,31 @@ import { getAccountListApi } from "@/api/account";
 import { getPublishList } from "@/api/plat/publish";
 import { PlatType } from "@/app/config/platConfig";
 import { PublishStatus } from "@/api/plat/types/publish.types";
+import { useTransClient } from "@/app/i18n/client";
 
 const { TextArea } = Input;
 
 export default function CgMaterialPageCore() {
+  // const { t } = useTransClient('cgmaterial');
+  
+  // 简单的多语言支持函数
+  const t = (key: string) => {
+    const translations: Record<string, string> = {
+      'selectMediaGroup': '选择媒体组',
+      'selectMediaGroupDesc': '选择一个媒体组来获取其中的图片和视频资源',
+      'mediaGroupType.img': '图片组',
+      'mediaGroupType.video': '视频组', 
+      'mediaGroupType.mixed': '混合组',
+      'selectCover': '选择封面（单选）',
+      'selectMaterials': '选择素材（多选）',
+      'title': '标题',
+      'description': '简介',
+      'location': '地理位置',
+      'mediaCount': '个资源'
+    };
+    return translations[key] || key;
+  };
+  
   // 草稿箱组相关
   const [groupList, setGroupList] = useState<any[]>([]);
   const [groupLoading, setGroupLoading] = useState(false);
@@ -953,14 +974,14 @@ export default function CgMaterialPageCore() {
         {/* 媒体组选择弹窗 */}
         <Modal
           open={mediaGroupModal}
-          title="选择媒体组"
+          title={t('selectMediaGroup')}
           onCancel={() => setMediaGroupModal(false)}
           footer={null}
           width={700}
         >
           <div style={{ marginBottom: 16 }}>
             <div style={{ color: '#666', fontSize: 14 }}>
-              选择一个媒体组来获取其中的图片和视频资源
+              {t('selectMediaGroupDesc')}
             </div>
           </div>
           <List
@@ -1016,15 +1037,41 @@ export default function CgMaterialPageCore() {
                   }}>
                     {item.title}
                   </div>
+                  {/* 类型标签 */}
+                  <div style={{
+                    position: 'absolute',
+                    top: 8,
+                    left: 8,
+                    padding: '2px 8px',
+                    borderRadius: '12px',
+                    fontSize: '10px',
+                    fontWeight: '500',
+                    color: '#fff',
+                    background: item.type === 'img' ? '#52c41a' : 
+                               item.type === 'video' ? '#1890ff' : '#722ed1',
+                    zIndex: 1
+                  }}>
+                    {item.type === 'img' ? t('mediaGroupType.img') : 
+                     item.type === 'video' ? t('mediaGroupType.video') : t('mediaGroupType.mixed')}
+                  </div>
                   {item.desc && (
                     <div style={{ 
                       fontSize: 12, 
                       color: '#7f8c8d',
-                      lineHeight: 1.4
+                      lineHeight: 1.4,
+                      marginTop: 4
                     }}>
                       {item.desc}
                     </div>
                   )}
+                  {/* 资源数量 */}
+                  <div style={{
+                    fontSize: 11,
+                    color: '#95a5a6',
+                    marginTop: 4
+                  }}>
+                    {item.mediaCount || 0} {t('mediaCount')}
+                  </div>
                   {selectedMediaGroup?._id === item._id && (
                     <div style={{
                       position: 'absolute',
@@ -1038,7 +1085,8 @@ export default function CgMaterialPageCore() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       color: 'white',
-                      fontSize: 12
+                      fontSize: 12,
+                      zIndex: 2
                     }}>
                       ✓
                     </div>
@@ -1052,7 +1100,7 @@ export default function CgMaterialPageCore() {
         {selectedMediaGroup && (
           <>
             <div style={{ marginBottom: 12 }}>
-              <div style={{ fontWeight: 500, marginBottom: 8 }}>选择封面（单选）</div>
+              <div style={{ fontWeight: 500, marginBottom: 8 }}>{t('selectCover')}</div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {mediaList.map((media: any) => (
                   <img
@@ -1073,7 +1121,7 @@ export default function CgMaterialPageCore() {
               </div>
             </div>
             <div style={{ marginBottom: 12 }}>
-              <div style={{ fontWeight: 500, marginBottom: 8 }}>选择素材（多选）</div>
+              <div style={{ fontWeight: 500, marginBottom: 8 }}>{t('selectMaterials')}</div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {mediaList.map((media: any) => (
                   <img
@@ -1105,13 +1153,13 @@ export default function CgMaterialPageCore() {
         )}
         {/* 表单区 */}
         <Form form={form} layout="vertical">
-          <Form.Item label="标题" name="title" rules={[{ required: true, message: '请输入标题' }]}>
+          <Form.Item label={t('title')} name="title" rules={[{ required: true, message: '请输入标题' }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="简介" name="desc">
+          <Form.Item label={t('description')} name="desc">
             <TextArea rows={3} />
           </Form.Item>
-          <Form.Item label="地理位置" name="location">
+          <Form.Item label={t('location')} name="location">
             <Input
               value={singleLocation.join(',')}
               onChange={e => {

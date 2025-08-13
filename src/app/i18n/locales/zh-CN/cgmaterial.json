@@ -1,0 +1,23 @@
+{
+  "createMaterial": "创建素材",
+  "selectMediaGroup": "选择媒体组",
+  "selectMediaGroupDesc": "选择一个媒体组来获取其中的图片和视频资源",
+  "mediaGroupType": {
+    "img": "图片组",
+    "video": "视频组",
+    "mixed": "混合组"
+  },
+  "selectCover": "选择封面（单选）",
+  "selectMaterials": "选择素材（多选）",
+  "title": "标题",
+  "titlePlaceholder": "请输入标题",
+  "description": "简介",
+  "descriptionPlaceholder": "请输入简介",
+  "location": "地理位置",
+  "locationPlaceholder": "请输入地理位置坐标",
+  "create": "创建",
+  "cancel": "取消",
+  "mediaCount": "{{count}}个资源",
+  "noMediaGroups": "暂无媒体组",
+  "noMediaInGroup": "该媒体组暂无资源"
+}

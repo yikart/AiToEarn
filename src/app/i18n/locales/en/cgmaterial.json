@@ -1,0 +1,23 @@
+{
+  "createMaterial": "Create Material",
+  "selectMediaGroup": "Select Media Group",
+  "selectMediaGroupDesc": "Select a media group to get images and videos from it",
+  "mediaGroupType": {
+    "img": "Image Group",
+    "video": "Video Group",
+    "mixed": "Mixed Group"
+  },
+  "selectCover": "Select Cover (Single)",
+  "selectMaterials": "Select Materials (Multiple)",
+  "title": "Title",
+  "titlePlaceholder": "Enter title",
+  "description": "Description",
+  "descriptionPlaceholder": "Enter description",
+  "location": "Location",
+  "locationPlaceholder": "Enter location coordinates",
+  "create": "Create",
+  "cancel": "Cancel",
+  "mediaCount": "{{count}} items",
+  "noMediaGroups": "No media groups",
+  "noMediaInGroup": "No media in this group"
+}
