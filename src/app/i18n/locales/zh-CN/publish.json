@@ -62,5 +62,16 @@
   "preview": {
     "title": "预览",
     "emptyDescription": "在这里看到你的作品预览"
+  },
+  "draft": {
+    "selectDraft": "选择草稿",
+    "selectDraftGroup": "选择草稿箱组",
+    "selectDraftItem": "选择草稿",
+    "noDraftGroups": "暂无草稿箱组",
+    "noDrafts": "该组暂无草稿",
+    "backToGroups": "返回草稿箱组",
+    "selectDraftSuccess": "草稿已应用",
+    "imageGroup": "图文组",
+    "videoGroup": "视频组"
   }
 } 

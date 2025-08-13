@@ -9,8 +9,8 @@ import {
   useState,
 } from "react";
 import styles from "./publishDialog.module.scss";
-import { Button, message, Modal } from "antd";
-import { ArrowRightOutlined, ExclamationCircleFilled } from "@ant-design/icons";
+import { Button, message, Modal, List, Spin } from "antd";
+import { ArrowRightOutlined, ExclamationCircleFilled, FileTextOutlined, FolderOpenOutlined } from "@ant-design/icons";
 import PublishDialogAi from "@/components/PublishDialog/compoents/PublishDialogAi";
 import PublishDialogPreview from "@/components/PublishDialog/compoents/PublishDialogPreview";
 import { CSSTransition } from "react-transition-group";
@@ -31,6 +31,8 @@ import {
 } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 import { generateUUID } from "@/utils";
 import { useTransClient } from "@/app/i18n/client";
+import { apiGetMaterialGroupList, apiGetMaterialList, MaterialType } from "@/api/material";
+import { getOssUrl } from "@/utils/oss";
 
 export interface IPublishDialogRef {
   // 设置发布时间
@@ -78,6 +80,7 @@ const PublishDialog = memo(
         setErrParamsMap,
         setPubTime,
         pubTime,
+        setOnePubParams,
       } = usePublishDialog(
         useShallow((state) => ({
           pubListChoosed: state.pubListChoosed,
@@ -94,11 +97,87 @@ const PublishDialog = memo(
           setErrParamsMap: state.setErrParamsMap,
           setPubTime: state.setPubTime,
           pubTime: state.pubTime,
+          setOnePubParams: state.setOnePubParams,
         })),
       );
       const { errParamsMap } = usePubParamsVerify(pubListChoosed);
       const [createLoading, setCreateLoading] = useState(false);
       const { t } = useTransClient("publish");
+
+      // 草稿选择弹窗/数据
+      const [draftModalOpen, setDraftModalOpen] = useState(false);
+      const [groupLoading, setGroupLoading] = useState(false);
+      const [groups, setGroups] = useState<any[]>([]);
+      const [selectedGroup, setSelectedGroup] = useState<any | null>(null);
+      const [draftLoading, setDraftLoading] = useState(false);
+      const [drafts, setDrafts] = useState<any[]>([]);
+
+      // 过滤可用类型（根据当前步骤和账户选择）
+      const allowImage = useMemo(() => {
+        if (step === 1 && expandedPubItem) {
+          const platConfig = AccountPlatInfoMap.get(expandedPubItem.account.type)!;
+          return platConfig.pubTypes.has(PubType.ImageText);
+        }
+        if (pubListChoosed.length === 1) {
+          const platConfig = AccountPlatInfoMap.get(pubListChoosed[0].account.type)!;
+          return platConfig.pubTypes.has(PubType.ImageText);
+        }
+        return true;
+      }, [step, expandedPubItem, pubListChoosed]);
+
+      const allowVideo = useMemo(() => {
+        if (step === 1 && expandedPubItem) {
+          const platConfig = AccountPlatInfoMap.get(expandedPubItem.account.type)!;
+          return platConfig.pubTypes.has(PubType.VIDEO);
+        }
+        if (pubListChoosed.length === 1) {
+          const platConfig = AccountPlatInfoMap.get(pubListChoosed[0].account.type)!;
+          return platConfig.pubTypes.has(PubType.VIDEO);
+        }
+        return true;
+      }, [step, expandedPubItem, pubListChoosed]);
+
+      const fetchGroups = useCallback(async () => {
+        try {
+          setGroupLoading(true);
+          const res: any = await apiGetMaterialGroupList(1, 100);
+          const list = res?.data?.list || [];
+          const filtered = list.filter((g: any) => {
+            if (g.type === MaterialType.ARTICLE) return allowImage;
+            if (g.type === MaterialType.VIDEO) return allowVideo;
+            return true;
+          });
+          setGroups(filtered);
+        } catch (e) {
+        } finally {
+          setGroupLoading(false);
+        }
+      }, [allowImage, allowVideo]);
+
+      const fetchDrafts = useCallback(async (groupId: string) => {
+        try {
+          setDraftLoading(true);
+          const res: any = await apiGetMaterialList(groupId, 1, 100);
+          setDrafts(res?.data?.list || []);
+        } catch (e) {
+        } finally {
+          setDraftLoading(false);
+        }
+      }, []);
+
+      useEffect(() => {
+        if (draftModalOpen) {
+          setSelectedGroup(null);
+          setDrafts([]);
+          fetchGroups();
+        }
+      }, [draftModalOpen, fetchGroups]);
+
+      useEffect(() => {
+        if (selectedGroup?._id) {
+          fetchDrafts(selectedGroup._id);
+        }
+      }, [selectedGroup, fetchDrafts]);
 
       useEffect(() => {
         if (open) {
@@ -128,6 +207,36 @@ const PublishDialog = memo(
           },
         });
       }, [onClose, t]);
+
+      // 选择草稿后填充参数
+      const applyDraft = useCallback((draft: any) => {
+        const nextParams: any = {};
+        if (draft.title) nextParams.title = draft.title;
+        if (draft.desc) nextParams.des = draft.desc;
+        // mediaList: [{url,type}]
+        const hasVideo = Array.isArray(draft.mediaList) && draft.mediaList.some((m: any) => m.type === MaterialType.VIDEO);
+        const hasImage = Array.isArray(draft.mediaList) && draft.mediaList.some((m: any) => m.type === MaterialType.ARTICLE);
+        if (hasVideo) {
+          const firstVideo = draft.mediaList.find((m: any) => m.type === MaterialType.VIDEO);
+          nextParams.video = {
+            ossUrl: firstVideo?.url,
+            cover: draft.coverUrl ? { ossUrl: draft.coverUrl } : undefined,
+          };
+        }
+        if (hasImage) {
+          nextParams.images = draft.mediaList
+            .filter((m: any) => m.type === MaterialType.ARTICLE)
+            .map((m: any) => ({ ossUrl: m.url }));
+        }
+
+        if (step === 1 && expandedPubItem) {
+          setOnePubParams(nextParams, expandedPubItem.account.id);
+        } else {
+          setAccountAllParams(nextParams);
+        }
+        setDraftModalOpen(false);
+        message.success("草稿已应用");
+      }, [setAccountAllParams, setOnePubParams, step, expandedPubItem]);
 
       // 是否打开右侧预览
       const openRight = useMemo(() => {
@@ -210,9 +319,12 @@ const PublishDialog = memo(
               }}
             >
               <div className="publishDialog-con">
-                                 <div className="publishDialog-con-head">
-                   <span className="publishDialog-con-head-title">{t("title")}</span>
-                 </div>
+                <div className="publishDialog-con-head" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span className="publishDialog-con-head-title">{t("title")}</span>
+                  <Button size="small" icon={<FileTextOutlined />} onClick={(e) => { e.stopPropagation(); setDraftModalOpen(true); }}>
+                    选择草稿
+                  </Button>
+                </div>
                 <div className="publishDialog-con-acconts">
                   {pubList.map((pubItem) => {
                     const platConfig = AccountPlatInfoMap.get(
@@ -325,11 +437,11 @@ const PublishDialog = memo(
                     </>
                   )}
 
-                                     {pubListChoosed.length === 0 && (
-                     <div className="publishDialog-con-tips">
-                       {t("tips.workSaved")}
-                     </div>
-                   )}
+                  {pubListChoosed.length === 0 && (
+                    <div className="publishDialog-con-tips">
+                      {t("tips.workSaved")}
+                    </div>
+                  )}
                 </div>
               </div>
               <div
@@ -340,43 +452,43 @@ const PublishDialog = memo(
 
                 <div className="publishDialog-footer-btns">
                   {step === 0 && pubListChoosed.length >= 2 ? (
-                                         <Button
-                       size="large"
-                       onClick={() => {
-                         setExpandedPubItem(undefined);
-                         setStep(1);
-                       }}
-                     >
-                       {t("buttons.customizePerAccount")}
-                       <ArrowRightOutlined />
-                     </Button>
+                    <Button
+                      size="large"
+                      onClick={() => {
+                        setExpandedPubItem(undefined);
+                        setStep(1);
+                      }}
+                    >
+                      {t("buttons.customizePerAccount")}
+                      <ArrowRightOutlined />
+                    </Button>
                   ) : (
                     <>
-                                             <Button size="large" onClick={closeDialog}>
-                         {t("buttons.cancelPublish")}
-                       </Button>
-                                             <Button
-                         size="large"
-                         type="primary"
-                         loading={createLoading}
-                         onClick={() => {
-                           for (const [key, errVideoItem] of errParamsMap) {
-                             if (errVideoItem) {
-                               const pubItem = pubListChoosed.find(
-                                 (v) => v.account.id === key,
-                               )!;
-                               if (step === 1) {
-                                 setExpandedPubItem(pubItem);
-                               }
-                               message.warning(errVideoItem.parErrMsg);
-                               return;
-                             }
-                           }
-                           pubClick();
-                         }}
-                       >
-                         {t("buttons.schedulePublish")}
-                       </Button>
+                      <Button size="large" onClick={closeDialog}>
+                        {t("buttons.cancelPublish")}
+                      </Button>
+                      <Button
+                        size="large"
+                        type="primary"
+                        loading={createLoading}
+                        onClick={() => {
+                          for (const [key, errVideoItem] of errParamsMap) {
+                            if (errVideoItem) {
+                              const pubItem = pubListChoosed.find(
+                                (v) => v.account.id === key,
+                              )!;
+                              if (step === 1) {
+                                setExpandedPubItem(pubItem);
+                              }
+                              message.warning(errVideoItem.parErrMsg);
+                              return;
+                            }
+                          }
+                          pubClick();
+                        }}
+                      >
+                        {t("buttons.schedulePublish")}
+                      </Button>
                     </>
                   )}
                 </div>
@@ -391,6 +503,110 @@ const PublishDialog = memo(
             >
               <PublishDialogPreview />
             </CSSTransition>
+          </Modal>
+
+          {/* 选择草稿弹窗 */}
+          <Modal
+            open={draftModalOpen}
+            onCancel={() => setDraftModalOpen(false)}
+            footer={null}
+            title={selectedGroup ? "选择草稿" : "选择草稿箱组"}
+            width={720}
+          >
+            {!selectedGroup ? (
+              <div>
+                {groupLoading ? (
+                  <div style={{ textAlign: 'center', padding: 24 }}><Spin /></div>
+                ) : (
+                  <List
+                    grid={{ gutter: 16, column: 2 }}
+                    dataSource={groups}
+                    locale={{ emptyText: "暂无草稿箱组" }}
+                    renderItem={(item: any) => (
+                      <List.Item>
+                        <div
+                          style={{
+                            background: '#FAEFFC',
+                            border: '2px solid transparent',
+                            padding: '16px',
+                            borderRadius: '12px',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                            minHeight: '80px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            textAlign: 'center',
+                            position: 'relative'
+                          }}
+                          onClick={() => setSelectedGroup(item)}
+                        >
+                          <div style={{ fontSize: 24, marginBottom: 8, color: '#667eea' }}>
+                            <FolderOpenOutlined />
+                          </div>
+                          <div style={{ fontWeight: 600, fontSize: 16, color: '#2c3e50', marginBottom: 4 }}>
+                            {item.name || item.title}
+                          </div>
+                          {item.desc && (
+                            <div style={{ fontSize: 12, color: '#7f8c8d', lineHeight: 1.4 }}>
+                              {item.desc}
+                            </div>
+                          )}
+                          <div style={{
+                            position: 'absolute', top: 8, left: 8, padding: '2px 8px', borderRadius: '12px', fontSize: 10,
+                            color: '#fff', background: item.type === MaterialType.ARTICLE ? '#52c41a' : '#1890ff'
+                          }}>
+                            {item.type === MaterialType.ARTICLE ? '图文组' : '视频组'}
+                          </div>
+                        </div>
+                      </List.Item>
+                    )}
+                  />
+                )}
+              </div>
+            ) : (
+              <div>
+                <div style={{ marginBottom: 12 }}>
+                  <Button type="link" onClick={() => setSelectedGroup(null)}>
+                    返回草稿箱组
+                  </Button>
+                </div>
+                {draftLoading ? (
+                  <div style={{ textAlign: 'center', padding: 24 }}><Spin /></div>
+                ) : (
+                  <List
+                    grid={{ gutter: 16, column: 2 }}
+                    dataSource={drafts}
+                    locale={{ emptyText: "该组暂无草稿" }}
+                    renderItem={(item: any) => (
+                      <List.Item>
+                        <div
+                          style={{
+                            border: '1px solid #eee', borderRadius: 8, overflow: 'hidden', cursor: 'pointer'
+                          }}
+                          onClick={() => applyDraft(item)}
+                        >
+                          <div style={{ width: '100%', paddingTop: '56%', position: 'relative', background: '#f7f7f7' }}>
+                            {Array.isArray(item.mediaList) && item.mediaList[0] && (
+                              <img
+                                src={getOssUrl(item.mediaList[0].url)}
+                                alt=""
+                                style={{ position: 'absolute', left: 0, top: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                              />
+                            )}
+                          </div>
+                          <div style={{ padding: 8 }}>
+                            <div style={{ fontWeight: 600 }}>{item.title || '-'}</div>
+                            <div style={{ fontSize: 12, color: '#999' }}>{item.desc || ''}</div>
+                          </div>
+                        </div>
+                      </List.Item>
+                    )}
+                  />
+                )}
+              </div>
+            )}
           </Modal>
         </>
       );

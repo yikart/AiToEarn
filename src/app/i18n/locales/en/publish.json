@@ -62,5 +62,16 @@
   "preview": {
     "title": "Preview",
     "emptyDescription": "See your work preview here"
+  },
+  "draft": {
+    "selectDraft": "Select draft",
+    "selectDraftGroup": "Select draft group",
+    "selectDraftItem": "Select draft",
+    "noDraftGroups": "No draft groups",
+    "noDrafts": "No drafts in this group",
+    "backToGroups": "Back to groups",
+    "selectDraftSuccess": "Draft applied",
+    "imageGroup": "Image group",
+    "videoGroup": "Video group"
   }
 } 
