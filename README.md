@@ -19,7 +19,7 @@
 
 AI content production, distribution, and trade.
 
-One stop social media management tools: Douyin, Red Note, wechat video channel, wechat official account, Kwai， bilibili、  Tiktok, Youtube, Facebook, Instagram, Threads, Twitter, Pinterest
+One stop social media management tools: Douyin, Red Note, wechat video channel, wechat official account, Kwai, bilibili, Tiktok, Youtube, Facebook, Instagram, Threads, Twitter, Pinterest
 
 ## Supported Platforms
 
