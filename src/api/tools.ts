@@ -97,6 +97,16 @@ export const toolsApi = {
     file: Blob,
     onProgress?: (prog: number) => void,
   ): Promise<string> {
+    const fileSize = file.size;
+    const fileName = (file as any).name || 'file';
+    const contentType = file.type || 'application/octet-stream';
+    
+    // 如果文件大于10MB，使用分片上传
+    if (fileSize > (10 * 1024 * 1024)) {
+      return this.uploadFileTempMultipart(file, fileName, contentType, onProgress);
+    }
+    
+    // 小于10MB，使用普通上传
     const formData = new FormData();
     formData.append("file", file);
 
@@ -115,6 +125,94 @@ export const toolsApi = {
       },
     });
     return res.data.data.key;
+  },
+
+  /**
+   * 分片上传文件临时
+   */
+  async uploadFileTempMultipart(
+    file: Blob,
+    fileName: string,
+    contentType: string,
+    onProgress?: (prog: number) => void,
+  ): Promise<string> {
+    try {
+      // 1. 初始化分片上传
+      const initResponse = await axios({
+        url: `${process.env.NEXT_PUBLIC_API_URL_PROXY}/file/uploadPart/init`,
+        method: "POST",
+        data: {
+          fileName,
+          secondPath: "uploads",
+          fileSize: file.size,
+          contentType,
+        },
+      });
+
+      if (initResponse.data.code != 0) {
+        throw new Error("初始化上传失败");
+      }
+
+      const { fileId, uploadId } = initResponse.data.data;
+      console.log("初始化分片上传成功:", fileId, uploadId);
+
+      // 2. 分片上传文件
+      const chunkSize = 5 * 1024 * 1024; // 5MB per chunk
+      const chunks = Math.ceil(file.size / chunkSize);
+      const parts = [];
+
+      for (let i = 0; i < chunks; i++) {
+        const start = i * chunkSize;
+        const end = Math.min(start + chunkSize, file.size);
+        const chunk = file.slice(start, end);
+
+        // 上传分片
+        const formData = new FormData();
+        formData.append("file", chunk);
+        
+        const partResponse = await axios({
+          url: `${process.env.NEXT_PUBLIC_API_URL_PROXY}/file/uploadPart/upload`,
+          method: "POST",
+          data: formData,
+          params: {
+            fileId,
+            uploadId,
+            partNumber: i + 1,
+          },
+        });
+
+        if (partResponse.data.code != 0) {
+          throw new Error("分片上传失败");
+        }
+
+        parts.push({
+          PartNumber: partResponse.data.data.PartNumber,
+          ETag: partResponse.data.data.ETag,
+        });
+
+        // 更新进度
+        const currentProgress = Math.round(((i + 1) / chunks) * 100);
+        if (onProgress) onProgress(currentProgress);
+        console.log(`分片 ${i + 1}/${chunks} 上传完成`);
+      }
+
+             // 3. 完成分片上传
+       await axios({
+         url: `${process.env.NEXT_PUBLIC_API_URL_PROXY}/file/uploadPart/complete`,
+         method: "POST",
+         data: {
+           fileId,
+           uploadId,
+           parts,
+         },
+       });
+
+       // 文件地址在初始化时就已经返回了
+       return fileId;
+    } catch (error) {
+      console.error("分片上传失败:", error);
+      throw error;
+    }
   },
 
   /**
