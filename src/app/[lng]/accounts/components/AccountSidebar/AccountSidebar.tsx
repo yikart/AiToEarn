@@ -93,32 +93,32 @@ const AccountPopoverInfo = ({
         <p>{t("loginStatus")}：</p>
         <p>
           <AccountStatusView account={accountInfo} />
-          <Button
-            type="link"
-            style={{ padding: "0 0 0 5px" }}
-            loading={detLoading}
-            onClick={async () => {
-              // TODO 登录状态检测
-              // setDetLoading(true);
-              // const res = await acpAccountLoginCheck(
-              //   accountInfo!.type,
-              //   accountInfo!.uid,
-              // );
-              // message.success(
-              //   `登录状态检测完成：${res.status === AccountStatus.USABLE ? "在线" : "离线，请重新登录"}`,
-              // );
-              // setTimeout(async () => {
-              //   setDetLoading(false);
-              //   if (res.status === AccountStatus.DISABLE) {
-              //     const res = await accountLogin(accountInfo.type);
-              //     if (!res) return;
-              //     message.success("账号更新成功！");
-              //   }
-              // }, 500);
-            }}
-          >
-            {t("checkLoginStatus")}
-          </Button>
+          {/*<Button*/}
+          {/*  type="link"*/}
+          {/*  style={{ padding: "0 0 0 5px" }}*/}
+          {/*  loading={detLoading}*/}
+          {/*  onClick={async () => {*/}
+          {/*    // TODO 登录状态检测*/}
+          {/*    // setDetLoading(true);*/}
+          {/*    // const res = await acpAccountLoginCheck(*/}
+          {/*    //   accountInfo!.type,*/}
+          {/*    //   accountInfo!.uid,*/}
+          {/*    // );*/}
+          {/*    // message.success(*/}
+          {/*    //   `登录状态检测完成：${res.status === AccountStatus.USABLE ? "在线" : "离线，请重新登录"}`,*/}
+          {/*    // );*/}
+          {/*    // setTimeout(async () => {*/}
+          {/*    //   setDetLoading(false);*/}
+          {/*    //   if (res.status === AccountStatus.DISABLE) {*/}
+          {/*    //     const res = await accountLogin(accountInfo.type);*/}
+          {/*    //     if (!res) return;*/}
+          {/*    //     message.success("账号更新成功！");*/}
+          {/*    //   }*/}
+          {/*    // }, 500);*/}
+          {/*  }}*/}
+          {/*>*/}
+          {/*  {t("checkLoginStatus")}*/}
+          {/*</Button>*/}
         </p>
       </div>
     </div>
@@ -325,16 +325,16 @@ const AccountSidebar = memo(
               />
             )}
 
-            <div className="accountSidebar-footer">
-              <Button
-                type="link"
-                onClick={() => {
-                  pubAccountDetModuleRef.current?.startDet();
-                }}
-              >
-                {t("checkAllLoginStatus")}
-              </Button>
-            </div>
+            {/*<div className="accountSidebar-footer">*/}
+            {/*  <Button*/}
+            {/*    type="link"*/}
+            {/*    onClick={() => {*/}
+            {/*      pubAccountDetModuleRef.current?.startDet();*/}
+            {/*    }}*/}
+            {/*  >*/}
+            {/*    {t("checkAllLoginStatus")}*/}
+            {/*  </Button>*/}
+            {/*</div>*/}
           </div>
         </>
       );
