@@ -49,6 +49,15 @@
     "dragAndSelect": "拖放 & 选择图片或视频"
   },
   "validation": {
+    "facebookStoryNoDes": "Facebook Story不支持填写描述",
+    "facebookReelNoImage": "Facebook Reel不支持上传图片",
+    "instagramStoryNoDes": "Instagram Story不支持填写描述",
+    "instagramReelNoImage": "Instagram Reel不支持上传图片",
+    "instagramPostNoVideo": "Instagram post不支持上传视频",
+    "titleMaxExceeded": "{{platformName}}标题最多{{maxCount}}字",
+    "descriptionMaxExceeded": "{{platformName}}描述最多{{maxCount}}字",
+    "descriptionRequired": "描述是必须的",
+    "imageMaxExceeded": "{{platformName}}图片最多不能超过{{maxCount}}张",
     "uploadImageOrVideo": "请上传图片或视频",
     "topicMaxExceeded": "{{platformName}}话题最多不能超过{{maxCount}}个",
     "topicFormatError": "描述中的话题必须使用空格分割，如：\"#话题1 #话题2\"",

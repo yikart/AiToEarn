@@ -8,8 +8,7 @@ import twitterSvg from "@/assets/svgs/plat/twtter.svg";
 import facebookSvg from "@/assets/svgs/plat/facebook.svg";
 import instagramSvg from "@/assets/svgs/plat/instagram.svg";
 import threadsSvg from "@/assets/svgs/plat/xiancheng.svg";
-import wxGzhSvg from "@/assets/svgs/plat/wx-gzh.svg";  
-import wxSphSvg from "@/assets/svgs/plat/wx-sph.svg";
+import wxGzhSvg from "@/assets/svgs/plat/wx-gzh.svg";
 import pinterestSvg from "@/assets/svgs/plat/pinterest.svg";
 
 // 平台类型
@@ -50,10 +49,10 @@ export interface IAccountPlatInfo {
     titleMax?: number;
     // 话题数量限制
     topicMax: number;
-    // 仅图文发布的限制参数
-    imgTextConfig?: {
-      imagesMax: number;
-    };
+    // 描述字数限制
+    desMax: number;
+    // 图片数量限制
+    imagesMax?: number;
   };
   // 是否在PC端不显示
   pcNoThis?: boolean;
@@ -68,7 +67,7 @@ export interface IAccountPlatInfo {
 
 // 各个平台的信息
 export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
-    [
+  [
     PlatType.Tiktok,
     {
       name: "TikTok",
@@ -77,7 +76,8 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
       commonPubParamsConfig: {
         titleMax: 16,
-        topicMax: 10,
+        topicMax: 100,
+        desMax: 4000,
       },
       themeColor: "black",
     },
@@ -90,7 +90,9 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       url: "https://www.douyin.com/",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
-        topicMax: 4,
+        titleMax: 30,
+        topicMax: 5,
+        desMax: 1000,
       },
       themeColor: "#FF4D00",
       pcNoThis: true,
@@ -105,6 +107,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
         topicMax: 4,
+        desMax: 500,
       },
       themeColor: "#FF4D00",
     },
@@ -119,6 +122,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       commonPubParamsConfig: {
         topicMax: 10,
         titleMax: 80,
+        desMax: 2000,
       },
       themeColor: "blue",
     },
@@ -131,8 +135,9 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       url: "https://www.youtube.com/",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
-        titleMax: 16,
-        topicMax: 10,
+        titleMax: 100,
+        topicMax: 100,
+        desMax: 5000,
       },
       themeColor: "blue",
     },
@@ -146,7 +151,9 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText, PubType.Article]),
       commonPubParamsConfig: {
         titleMax: 16,
-        topicMax: 10,
+        topicMax: 100,
+        desMax: 280,
+        imagesMax: 4,
       },
       themeColor: "blue",
     },
@@ -159,8 +166,10 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       url: "https://www.facebook.com/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
       commonPubParamsConfig: {
-        titleMax: 16,
-        topicMax: 10,
+        titleMax: 80,
+        topicMax: 100,
+        desMax: 5000,
+        imagesMax: 10,
       },
       themeColor: "blue",
     },
@@ -175,6 +184,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       commonPubParamsConfig: {
         titleMax: 16,
         topicMax: 10,
+        desMax: 2200,
       },
       themeColor: "green",
     },
@@ -187,8 +197,10 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       url: "https://www.instagram.com/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
       commonPubParamsConfig: {
-        titleMax: 16,
-        topicMax: 10,
+        titleMax: 80,
+        topicMax: 100,
+        desMax: 2200,
+        imagesMax: 10,
       },
       themeColor: "blue",
     },
@@ -201,8 +213,10 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       url: "https://www.threads.net/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText, PubType.Article]),
       commonPubParamsConfig: {
-        titleMax: 16,
-        topicMax: 10,
+        titleMax: 80,
+        topicMax: 100,
+        desMax: 500,
+        imagesMax: 20,
       },
       themeColor: "blue",
     },
@@ -217,6 +231,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       commonPubParamsConfig: {
         titleMax: 16,
         topicMax: 10,
+        desMax: 2200,
       },
       themeColor: "#CC2025",
     },

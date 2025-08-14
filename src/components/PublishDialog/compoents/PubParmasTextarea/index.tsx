@@ -116,7 +116,7 @@ const PubParmasTextarea = memo(
         return AccountPlatInfoMap.get(platType)! || {};
       }, [platType]);
       const imageMax = useMemo(() => {
-        return platConfig.commonPubParamsConfig.imgTextConfig?.imagesMax || 10;
+        return platConfig.commonPubParamsConfig?.imagesMax || 10;
       }, [platConfig]);
 
       // 动态accept类型

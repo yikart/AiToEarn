@@ -4,6 +4,7 @@ import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import { PubItem } from "@/components/PublishDialog/publishDialog.type";
 import { Alert } from "antd";
 import { useTransClient } from "@/app/i18n/client";
+import { PubType } from "@/app/config/publishConfig";
 
 export interface ErrPubParamsItem {
   // 参数错误提示消息
@@ -40,11 +41,70 @@ export default function usePubParamsVerify(data: PubItem[]) {
       (() => {
         // ------------------------  通用参数校验  ------------------------
 
-        // 图片或者视频校验，视频和图片必须要上传一个
-        if (v.params.images?.length === 0 && !v.params.video) {
-          return setErrorMsg(t("validation.uploadImageOrVideo"));
+        // 描述校验
+        if (
+          (v.account.type === PlatType.Threads ||
+            v.account.type === PlatType.Twitter) &&
+          !v.params.des
+        ) {
+          return setErrorMsg(t("validation.descriptionRequired"));
         }
-        // 话题校验
+
+        // 标题字数校验
+        if (
+          v.params.title &&
+          v.params.title.length > platInfo.commonPubParamsConfig.titleMax!
+        ) {
+          return setErrorMsg(
+            t("validation.titleMaxExceeded", {
+              platformName: platInfo.name,
+              maxCount: platInfo.commonPubParamsConfig.titleMax,
+            }),
+          );
+        }
+
+        // 描述字数校验
+        if (
+          v.params.des &&
+          v.params.des.length > platInfo.commonPubParamsConfig.desMax
+        ) {
+          return setErrorMsg(
+            t("validation.descriptionMaxExceeded", {
+              platformName: platInfo.name,
+              maxCount: platInfo.commonPubParamsConfig.desMax,
+            }),
+          );
+        }
+
+        // 图片数量校验
+        if (
+          platInfo.pubTypes.has(PubType.ImageText) &&
+          (v.params.images?.length || 0) > 1 &&
+          v.params.images!.length > platInfo.commonPubParamsConfig.imagesMax!
+        ) {
+          return setErrorMsg(
+            t("validation.imageMaxExceeded", {
+              platformName: platInfo.name,
+              maxCount: platInfo.commonPubParamsConfig.imagesMax,
+            }),
+          );
+        }
+
+        if (
+          v.params.option.instagram?.content_category !== "story" &&
+          v.params.option.facebook?.content_category !== "story"
+        ) {
+          // 图片或者视频校验，视频和图片必须要上传一个
+          if (
+            !platInfo.pubTypes.has(PubType.Article) &&
+            v.params.images?.length === 0 &&
+            !v.params.video
+          ) {
+            return setErrorMsg(t("validation.uploadImageOrVideo"));
+          }
+        }
+
+        // 话题数量校验
         if (topicsAll.length > topicMax) {
           return setErrorMsg(
             t("validation.topicMaxExceeded", {
@@ -53,6 +113,7 @@ export default function usePubParamsVerify(data: PubItem[]) {
             }),
           );
         }
+
         // 判断描述中的话题中间是否用空格分割，如：#话题1#话题2#话题3 这种格式错误
         if (descTopicRegex.test(v.params.des || "")) {
           return setErrorMsg(t("validation.topicFormatError"));
@@ -81,14 +142,45 @@ export default function usePubParamsVerify(data: PubItem[]) {
           }
         }
 
-        // 快手的强制校验
-        if (v.account.type === PlatType.KWAI) {
-          if (
-            v.params.video?.cover &&
-            (v.params.video.cover.width < 400 ||
-              v.params.video.cover.height < 400)
-          ) {
-            return setErrorMsg(t("validation.coverSizeError"));
+        // facebook的强制校验
+        if (v.account.type === PlatType.Facebook) {
+          switch (v.params.option.instagram?.content_category) {
+            case "reel":
+              // facebook reel 不支持图片，只支持视频 + 描述
+              if (v.params.video) {
+                return setErrorMsg(t("validation.facebookReelNoImage"));
+              }
+              break;
+            case "story":
+              // facebook story 只能选择图片、视频，不能有描述
+              if (v.params.des) {
+                return setErrorMsg(t("validation.facebookStoryNoDes"));
+              }
+              break;
+          }
+        }
+
+        // instagram的强制校验
+        if (v.account.type === PlatType.Instagram) {
+          switch (v.params.option.instagram?.content_category) {
+            case "post":
+              // instagram post不能上传视频，必须上传图片
+              if (v.params.video) {
+                return setErrorMsg(t("validation.instagramPostNoVideo"));
+              }
+              break;
+            case "reel":
+              // instagram reel 不能上传图片，必须上传视频
+              if (v.params.video) {
+                return setErrorMsg(t("validation.instagramReelNoImage"));
+              }
+              break;
+            case "story":
+              // instagram story 只能选择图片、视频，不能有描述
+              if (v.params.des) {
+                return setErrorMsg(t("validation.instagramStoryNoDes"));
+              }
+              break;
           }
         }
       })();

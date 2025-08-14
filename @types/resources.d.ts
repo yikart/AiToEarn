@@ -36,6 +36,29 @@ interface Resources {
       "selectAtLeastOne": "请至少选择一个页面"
     }
   },
+  "cgmaterial": {
+    "createMaterial": "创建素材",
+    "selectMediaGroup": "选择媒体组",
+    "selectMediaGroupDesc": "选择一个媒体组来获取其中的图片和视频资源",
+    "mediaGroupType": {
+      "img": "图片组",
+      "video": "视频组",
+      "mixed": "混合组"
+    },
+    "selectCover": "选择封面（单选）",
+    "selectMaterials": "选择素材（多选）",
+    "title": "标题",
+    "titlePlaceholder": "请输入标题",
+    "description": "简介",
+    "descriptionPlaceholder": "请输入简介",
+    "location": "地理位置",
+    "locationPlaceholder": "请输入地理位置坐标",
+    "create": "创建",
+    "cancel": "取消",
+    "mediaCount": "{{count}}个资源",
+    "noMediaGroups": "暂无媒体组",
+    "noMediaInGroup": "该媒体组暂无资源"
+  },
   "common": {
     "profile": "个人中心",
     "logout": "退出登录",
@@ -385,10 +408,11 @@ interface Resources {
   },
   "material": {
     "aiGenerate": {
-      "title": "标题",
+      "title": "AI生成",
       "backToAlbum": "返回相册",
       "textToImage": "文生图",
       "fireflyCard": "Firefly卡片",
+      "videoGeneration": "视频生成",
       "prompt": "提示词",
       "promptPlaceholder": "请输入提示词",
       "width": "宽度",
@@ -400,21 +424,7 @@ interface Resources {
       "titlePlaceholder": "请输入标题",
       "template": "模板",
       "uploadToMediaGroup": "上传到媒体组",
-      "videoGeneration": "视频生成",
-      "videoPromptPlaceholder": "请输入视频提示词",
-      "videoSize": "视频尺寸",
-      "videoDuration": "视频时长",
-      "videoFPS": "视频帧率",
-      "videoBitrate": "视频码率",
-      "videoQuality": "视频质量",
-      "videoMode": "视频模式",
-      "imageUrlPlaceholder": "请输入图片URL",
       "selectMediaGroup": "选择媒体组",
-      "taskStatus": "任务状态",
-      "taskSubmitted": "任务已提交",
-      "taskProcessing": "任务处理中",
-      "taskCompleted": "任务已完成",
-      "taskFailed": "任务失败",
       "selectMediaGroupPlaceholder": "请选择媒体组",
       "upload": "上传",
       "uploading": "上传中...",
@@ -424,7 +434,42 @@ interface Resources {
       "pleaseEnterPrompt": "请输入提示词",
       "pleaseSelectMediaGroup": "请选择媒体组",
       "pleaseEnterContent": "请输入内容",
-      "pleaseEnterTitle": "请输入标题"
+      "pleaseEnterTitle": "请输入标题",
+      "selectSize": "选择尺寸",
+      "generateCount": "生成数量",
+      "imageQuality": "图片质量",
+      "imageStyle": "图片风格",
+      "selectModel": "选择模型",
+      "standard": "标准",
+      "hd": "高清",
+      "vivid": "生动",
+      "natural": "自然",
+      "goldCardTemplate": "金卡模板",
+      "memoTemplate": "备忘录模板",
+      "simpleTemplate": "简约模板",
+      "blackSunTemplate": "黑日模板",
+      "templateE": "模板 E",
+      "writingTemplate": "写作模板",
+      "codeTemplate": "代码模板",
+      "templateD": "模板 D",
+      "videoPromptPlaceholder": "请输入视频描述",
+      "videoDuration": "视频时长",
+      "videoSize": "视频尺寸",
+      "videoMode": "生成模式",
+      "uploadImage": "上传图片",
+      "imageUrlPlaceholder": "图片URL或base64",
+      "taskStatus": "任务状态",
+      "taskSubmitted": "任务已提交",
+      "taskProcessing": "任务处理中",
+      "taskCompleted": "任务完成",
+      "taskFailed": "任务失败",
+      "checkStatus": "检查状态",
+      "videoGenerationFailed": "视频生成失败",
+      "videoGenerationSuccess": "视频生成成功",
+      "pleaseEnterVideoPrompt": "请输入视频描述",
+      "pleaseSelectVideoModel": "请选择视频模型",
+      "videoUploadSuccess": "视频上传成功",
+      "videoUploadFailed": "视频上传失败"
     }
   },
   "pinterest": {
@@ -636,19 +681,19 @@ interface Resources {
   "publish": {
     "title": "发布作品",
     "confirmClose": {
-      "title": "放弃更改？",
-      "content": "您所做的任何更改都将永久丢失"
+      "title": "确认关闭",
+      "content": "关闭后，已填写的内容将丢失，是否确认关闭？"
     },
     "buttons": {
-      "customizePerAccount": "针对每个账户进行定制",
+      "customizePerAccount": "自定义每个账户",
       "cancelPublish": "取消发布",
-      "schedulePublish": "立即发布",
+      "schedulePublish": "定时发布",
       "publishNow": "立即发布",
       "copyLink": "复制链接",
       "delete": "删除"
     },
     "tips": {
-      "workSaved": "你的工作被保存了，选择一个账号来创建一个帖子。"
+      "workSaved": "请选择要发布的账户"
     },
     "status": {
       "publishFailed": "发布失败",
@@ -684,6 +729,15 @@ interface Resources {
       "dragAndSelect": "拖放 & 选择图片或视频"
     },
     "validation": {
+      "facebookStoryNoDes": "Facebook Story不支持填写描述",
+      "facebookReelNoImage": "Facebook Reel不支持上传图片",
+      "instagramStoryNoDes": "Instagram Story不支持填写描述",
+      "instagramReelNoImage": "Instagram Reel不支持上传图片",
+      "instagramPostNoVideo": "Instagram post不支持上传视频",
+      "titleMaxExceeded": "{{platformName}}标题最多{{maxCount}}字",
+      "descriptionMaxExceeded": "{{platformName}}描述最多{{maxCount}}字",
+      "descriptionRequired": "描述是必须的",
+      "imageMaxExceeded": "{{platformName}}图片最多不能超过{{maxCount}}张",
       "uploadImageOrVideo": "请上传图片或视频",
       "topicMaxExceeded": "{{platformName}}话题最多不能超过{{maxCount}}个",
       "topicFormatError": "描述中的话题必须使用空格分割，如：\"#话题1 #话题2\"",
@@ -697,6 +751,24 @@ interface Resources {
     "preview": {
       "title": "预览",
       "emptyDescription": "在这里看到你的作品预览"
+    },
+    "draft": {
+      "selectDraft": "选择草稿",
+      "selectDraftGroup": "选择草稿箱组",
+      "selectDraftItem": "选择草稿",
+      "noDraftGroups": "暂无草稿箱组",
+      "noDrafts": "该组暂无草稿",
+      "backToGroups": "返回草稿箱组",
+      "selectDraftSuccess": "草稿已应用",
+      "imageGroup": "图文组",
+      "videoGroup": "视频组",
+      "selectLibrary": "选择素材库",
+      "selectLibraryItem": "选择素材",
+      "selectLibraryGroup": "选择素材库组",
+      "noLibraryGroups": "暂无素材库组",
+      "backToLibraryGroups": "返回素材库组",
+      "noLibraryItems": "该组暂无素材",
+      "selectLibrarySuccess": "素材已应用"
     }
   },
   "route": {

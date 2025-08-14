@@ -48,11 +48,11 @@ export interface IPlatOption {
   facebook?: {
     // 页面ID，由获取Facebook页面信息接口得到
     page_id?: string;
-    // 内容类型：video(Post)、reel(Reel)、story(Story)
+    // 内容类型：post(Post)、reel(Reel)、story(Story)
     content_category?: string;
   };
   instagram?: {
-    // 内容类型：video(Post)、reel(Reel)、story(Story)
+    // 内容类型：post(Post)、reel(Reel)、story(Story)
     content_category?: string;
   };
   youtube?: {

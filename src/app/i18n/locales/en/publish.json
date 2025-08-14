@@ -49,6 +49,15 @@
     "dragAndSelect": "Drag & select image or video"
   },
   "validation": {
+    "facebookStoryNoDes": "Facebook Story does not support description",
+    "facebookReelNoImage": "Facebook Reel does not support image upload",
+    "instagramStoryNoDes": "Instagram Story does not support description",
+    "instagramReelNoImage": "Instagram Reel does not support image upload",
+    "instagramPostNoVideo": "Instagram post does not support video upload",
+    "titleMaxExceeded": "{{platformName}} title cannot exceed {{maxCount}} characters",
+    "descriptionMaxExceeded": "{{platformName}} description cannot exceed {{maxCount}} characters",
+    "descriptionRequired": "Description is required",
+    "imageMaxExceeded": "{{platformName}} images cannot exceed {{maxCount}}",
     "uploadImageOrVideo": "Please upload image or video",
     "topicMaxExceeded": "{{platformName}} topics cannot exceed {{maxCount}}",
     "topicFormatError": "Topics in description must be separated by spaces, such as: \"#topic1 #topic2\"",

@@ -27,7 +27,7 @@ const FacebookParams = memo(
                 ...option,
                 facebook: {
                   ...option.facebook,
-                  content_category: 'video',
+                  content_category: "post",
                 },
               },
             },
@@ -47,9 +47,14 @@ const FacebookParams = memo(
                   className={styles.commonTitleInput}
                   style={{ marginTop: "10px" }}
                 >
-                  <div className="platParamsSetting-label">{t("form.type")}</div>
+                  <div className="platParamsSetting-label">
+                    {t("form.type")}
+                  </div>
                   <Radio.Group
-                    value={pubItem.params.option.facebook?.content_category || 'video'}
+                    value={
+                      pubItem.params.option.facebook?.content_category ||
+                      "video"
+                    }
                     onChange={(e) => {
                       const option = pubItem.params.option;
                       setOnePubParams(
@@ -80,4 +85,4 @@ const FacebookParams = memo(
   ),
 );
 
-export default FacebookParams; 
+export default FacebookParams;

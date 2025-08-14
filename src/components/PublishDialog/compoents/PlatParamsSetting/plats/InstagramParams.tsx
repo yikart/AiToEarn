@@ -31,7 +31,7 @@ const InstagramParams = memo(
                 ...option,
                 instagram: {
                   ...option.instagram,
-                  content_category: "video",
+                  content_category: "post",
                 },
               },
             },
