@@ -161,6 +161,7 @@ interface Resources {
       "nav": {
         "marketplace": "市场",
         "pricing": "价格",
+        "status": "状态",
         "docs": "问题",
         "blog": "博客"
       },
