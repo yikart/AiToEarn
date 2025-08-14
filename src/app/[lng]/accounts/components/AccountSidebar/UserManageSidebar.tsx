@@ -129,7 +129,7 @@ const UserManageSidebar = memo(
           </ControlledMenu>
 
           <Modal
-            title={createGroupId === "-1" ? "新建列表" : "重命名列表"}
+            title={createGroupId === "-1" ? "新建空间" : "重命名空间"}
             open={openCreateGroup}
             onCancel={createGroupCancel}
             footer={
@@ -163,10 +163,10 @@ const UserManageSidebar = memo(
             }
           >
             <div className={styles.createGroup}>
-              <label>列表名</label>
+              <label>空间名</label>
               <Input
                 value={groupName}
-                placeholder="请输入列表名称"
+                placeholder="请输入空间名称"
                 onChange={(e) => setGroupName(e.target.value)}
               />
             </div>
@@ -189,7 +189,7 @@ const UserManageSidebar = memo(
                 </span>
               </div>
               <div className="userManage-sidebar-list">
-                <p className="userManage-sidebar-list-title">列表</p>
+                <p className="userManage-sidebar-list-title">空间</p>
 
                 <ReactSortable
                   className="userManage-sidebar-list-sortable"
@@ -252,7 +252,7 @@ const UserManageSidebar = memo(
                   setOpenCreateGroup(true);
                 }}
               >
-                新建列表
+                新建空间
               </Button>
             </div>
           </div>

@@ -43,7 +43,7 @@ function ReleaseBanner() {
   return (
     <div className={styles.releaseBanner}>
       <div className={styles.bannerContent}>
-        <span className={styles.releaseTag}>{t('releaseBanner.tag')}</span>
+        {/* <span className={styles.releaseTag}>{t('releaseBanner.tag')}</span> */}
         <span className={styles.releaseText}>{t('releaseBanner.text')}</span>
         <svg className={styles.arrowIcon} width="16" height="16" viewBox="0 0 16 16" fill="none">
           <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -79,7 +79,7 @@ function Header() {
         </Link>
         <nav className={styles.nav}>
           {/* <a href="#marketplace" className={styles.navLink}>{t('header.nav.marketplace')}</a> */}
-          <a href="#pricing" className={styles.navLink}>{t('header.nav.pricing')}</a>
+          <a href="/pricing" className={styles.navLink}>{t('header.nav.pricing')}</a>
           <a href="https://status.aitoearn.ai/" target="_blank" rel="noopener noreferrer" className={styles.navLink}>{t('header.nav.status' as any)}</a>
           {/* <a href="#docs" className={styles.navLink}>{t('header.nav.docs')}</a> */}
           {/* <a href="#blog" className={styles.navLink}>{t('header.nav.blog')}</a> */}
@@ -960,7 +960,7 @@ function Footer() {
 export default function Home() {
   return (
     <div className={styles.difyHome}>
-      <ReleaseBanner />
+      {/* <ReleaseBanner /> */}
       <Header />
       <Hero />
       <BrandBar />

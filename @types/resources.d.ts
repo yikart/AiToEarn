@@ -59,6 +59,79 @@ interface Resources {
     "noMediaGroups": "暂无媒体组",
     "noMediaInGroup": "该媒体组暂无资源"
   },
+  "pricing": {
+    "title": "套餐与定价",
+    "subtitle": "选择最适合您需求的套餐，开始您的AI创作之旅",
+    "monthly": "月付",
+    "yearly": "年付",
+    "save50": "省50%",
+    "month": "月",
+    "credits": "积分",
+    "videos": "视频",
+    "images": "图片",
+    "flashSale50": "限时5折",
+    "mostPopular": "最受欢迎",
+    "plans": {
+      "free": {
+        "name": "Free",
+        "credits": "最高60 积分",
+        "videos": "每月最高可生成60个视频",
+        "images": "每月最高可生成120张图片",
+        "button": "立即开始"
+      },
+      "plus": {
+        "name": "Plus",
+        "credits": "700积分",
+        "videos": "每月最高可生成700个视频",
+        "images": "每月最高可生成1400张图片",
+        "button": "立即购买"
+      }
+    },
+    "features": {
+      "textModeration": "文本内容安全审查",
+      "imageModeration": "图片内容安全审查",
+      "videoModeration": "视频内容安全审查",
+      "multiModel": "多模型一站式支持",
+      "textToVideo": "文字转视频",
+      "imageToVideo": "图像转视频",
+      "videoToVideo": "视频到视频",
+      "consistentCharacter": "一致的角色视频",
+      "aiAnimation": "AI动画生成",
+      "aiImage": "AI图像生成",
+      "voiceClone": "声音克隆",
+      "voiceSynthesis": "声音合成",
+      "fasterSpeed": "更快的生成速度",
+      "withWatermark": "含水印输出",
+      "noWatermark": "无水印输出",
+      "storage500M": "存储空间500M",
+      "storage5G": "存储空间5G"
+    },
+    "faq": {
+      "title": "常见问题",
+      "items": [
+        {
+          "question": "如何选择合适的套餐？",
+          "answer": "如果您是个人用户或刚开始使用AI创作，建议选择Free套餐体验。如果您需要更多功能和更高的使用限制，Plus套餐是更好的选择。"
+        },
+        {
+          "question": "可以随时升级或降级套餐吗？",
+          "answer": "是的，您可以随时升级到更高套餐。降级将在当前计费周期结束后生效。"
+        },
+        {
+          "question": "积分是如何计算的？",
+          "answer": "积分根据您生成的内容类型和复杂度计算。视频生成消耗更多积分，图片生成消耗较少积分。"
+        },
+        {
+          "question": "支持哪些支付方式？",
+          "answer": "我们支持信用卡、借记卡、PayPal等多种支付方式，确保安全便捷的支付体验。"
+        },
+        {
+          "question": "有退款政策吗？",
+          "answer": "我们提供7天无理由退款保证。如果您对服务不满意，可以在购买后7天内申请全额退款。"
+        }
+      ]
+    }
+  },
   "common": {
     "profile": "个人中心",
     "logout": "退出登录",

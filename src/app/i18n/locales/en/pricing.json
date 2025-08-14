@@ -1,0 +1,73 @@
+{
+  "title": "Plans & Pricing",
+  "subtitle": "Choose the plan that best fits your needs and start your AI creation journey",
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "save50": "Save 50%",
+  "month": "mo",
+  "credits": "Credits",
+  "videos": "Videos",
+  "images": "Images",
+  "flashSale50": "Flash Sale 50%",
+  "mostPopular": "Most Popular",
+  "plans": {
+    "free": {
+      "name": "Free",
+      "credits": "60 Credits",
+      "videos": "60 Videos/month",
+      "images": "120 Images/month",
+      "button": "Get Started"
+    },
+    "plus": {
+      "name": "Plus",
+      "credits": "700 Credits",
+      "videos": "700 Videos/month",
+      "images": "1400 Images/month",
+      "button": "Get Plus"
+    }
+  },
+  "features": {
+    "textModeration": "Text Moderation",
+    "imageModeration": "Image Moderation",
+    "videoModeration": "Video Moderation",
+    "multiModel": "Multi-Model Support",
+    "textToVideo": "Text to Video",
+    "imageToVideo": "Image to Video",
+    "videoToVideo": "Video to Video",
+    "consistentCharacter": "Consistent Character",
+    "aiAnimation": "AI Animation",
+    "aiImage": "AI Image",
+    "voiceClone": "Voice Clone",
+    "voiceSynthesis": "Voice Synthesis",
+    "fasterSpeed": "Faster Speed",
+    "withWatermark": "With Watermark",
+    "noWatermark": "No Watermark",
+    "storage500M": "500M Storage",
+    "storage5G": "5G Storage"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "items": [
+      {
+        "question": "How do I choose the right plan?",
+        "answer": "If you're an individual user or just starting with AI creation, we recommend trying the Free plan first. If you need more features and higher usage limits, the Plus plan is a better choice."
+      },
+      {
+        "question": "Can I upgrade or downgrade my plan anytime?",
+        "answer": "Yes, you can upgrade to a higher plan at any time. Downgrades will take effect at the end of your current billing cycle."
+      },
+      {
+        "question": "How are credits calculated?",
+        "answer": "Credits are calculated based on the type and complexity of content you generate. Video generation consumes more credits, while image generation uses fewer credits."
+      },
+      {
+        "question": "What payment methods do you support?",
+        "answer": "We support various payment methods including credit cards, debit cards, PayPal, and more to ensure a secure and convenient payment experience."
+      },
+      {
+        "question": "Do you have a refund policy?",
+        "answer": "We offer a 7-day money-back guarantee. If you're not satisfied with our service, you can request a full refund within 7 days of purchase."
+      }
+    ]
+  }
+}
