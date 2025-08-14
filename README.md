@@ -37,6 +37,24 @@ One stop social media management tools: Douyin, Red Note, wechat video channel, 
     <img src="https://s.pinimg.com/webapp/logo_transparent_144x144-3da7a67b.png" title="Pinterest" alt="Pinterest" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
 </div>
 
+## Milestones
+* **2025.2.26:** Released win-0.1.1
+* **2025.3.15:** Released win-0.2.0
+* **2025.4.18:** Released win-0.6.0
+* **2025.5.20:** Released win-0.8.0
+* **2025.8.8:** Released win-0.8.1
+* **2025.8.8:** Released web-0.1-beta
+
+---
+
+## In Progress
+* Mac client implementation
+* Web-based optimization
+* App-side implementation
+* Optimizing our social media AI functions
+* Antidetect browser environment
+* MCP support
+
 ## Quick Start Web
 
 1.  **Start the Backend Service Modules**
@@ -59,15 +77,15 @@ One stop social media management tools: Douyin, Red Note, wechat video channel, 
 ### Creating and Using a Workflow
 
 3.  **Add Platform Accounts** on the frontend page.
-<img src="./workflow/img/account.jpeg" alt="post" width="500"/>
+<img src="./aitoearn_web/workflow/img/account.jpeg" alt="post" width="500"/>
 
 4.  **Create an `skkey`** to link multiple accounts.
-<img src="./workflow/img/skkey.jpg" alt="post" width="500"/>
+<img src="./aitoearn_web/workflow/img/skkey.jpg" alt="post" width="500"/>
 
 5.  **Create a workflow** on the workflow platform (or import a template from the `workflow` folder).
 
 6.  **Use the `skkey`** in the workflow's parameter settings to publish content.
-<img src="./workflow/img/fl.jpg" alt="post" width="500"/>
+<img src="./aitoearn_web/workflow/img/fl.jpeg" alt="post" width="500"/>
 
 
 ## Quick Start Windows
@@ -136,3 +154,7 @@ npm run dev
 ## Other explanations
 
 Regarding the MAC package, as Apple has strict requirements for applications, this project is still in the trial stage. Please package it yourself or set the ignore security policy
+
+## Contact Me
+https://t.me/harryyyy2025
+
