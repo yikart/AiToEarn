@@ -131,20 +131,6 @@ const LyaoutHeader = memo(
       );
     };
 
-    useEffect(() => {
-      setTimeout(() => {
-        let layoutHeaderHegiht = "0px";
-        layoutHeaderHegiht = layoutHeader.current!.offsetHeight + "px";
-
-        document.body.style.paddingTop = layoutHeaderHegiht;
-
-        document.documentElement.style.setProperty(
-          `--layoutHeaderHegiht`,
-          layoutHeaderHegiht,
-        );
-      }, 2);
-    }, []);
-
     return (
       <>
         <div ref={layoutHeader} className={styles.layoutHeader}>

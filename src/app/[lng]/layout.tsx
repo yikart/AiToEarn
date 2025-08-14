@@ -33,8 +33,17 @@ export default async function RootLayout({
     <html lang={lng} dir={dir(lng)}>
       <body>
         <Providers lng={lng}>
-          <ConditionalHeader />
-          {children}
+          <div
+            style={{
+              height: "100vh",
+              display: "flex",
+              flexDirection: "column",
+              minHeight: '0'
+            }}
+          >
+            <ConditionalHeader />
+            {children}
+          </div>
         </Providers>
       </body>
     </html>

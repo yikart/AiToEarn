@@ -1,5 +1,7 @@
 .hot-content-layout {
   background: #f0f2f5;
+  height: 100%;
+  min-height: 0;
 }
 
 .main-content {

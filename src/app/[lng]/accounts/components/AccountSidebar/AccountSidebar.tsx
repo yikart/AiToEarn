@@ -40,7 +40,6 @@ export interface IAccountSidebarProps {
 
 const AccountStatusView = ({ account }: { account: SocialAccount }) => {
   const { t } = useTransClient("account");
-
   if (account.status === AccountStatus.USABLE) {
     return (
       <>
