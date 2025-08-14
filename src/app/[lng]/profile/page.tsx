@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { Card, Descriptions, Button, message, Modal, Form, Input, Tabs, Table, Tag, Popconfirm, DatePicker, Select, Space } from "antd";
-import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined, ThunderboltOutlined, HistoryOutlined, DollarOutlined, ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
+import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined, ThunderboltOutlined, HistoryOutlined, DollarOutlined, ShoppingCartOutlined, UserOutlined, GiftFilled } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user";
-import { getUserInfoApi, updateUserInfoApi } from "@/api/apiReq";
+import { getUserInfoApi, updateUserInfoApi, getPointsRecordsApi } from "@/api/apiReq";
 import { getOrderListApi, getOrderDetailApi, getSubscriptionListApi, refundOrderApi, unsubscribeApi } from "@/api/payment";
 import type { Order, OrderListParams, SubscriptionListParams, RefundParams, UnsubscribeParams } from "@/api/types/payment";
 import { OrderStatus, PaymentType } from "@/api/types/payment";
@@ -43,6 +43,15 @@ export default function ProfilePage() {
   const [orderDetailVisible, setOrderDetailVisible] = useState(false);
   const [orderDetailLoading, setOrderDetailLoading] = useState(false);
   const [currentOrderDetail, setCurrentOrderDetail] = useState<Order | null>(null);
+
+  // 积分记录相关状态
+  const [pointsRecords, setPointsRecords] = useState<any[]>([]);
+  const [pointsLoading, setPointsLoading] = useState(false);
+  const [pointsPagination, setPointsPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0
+  });
 
   // 获取会员状态和过期时间
   const isVip = userInfo?.vipInfo?.cycleType && userInfo.vipInfo.cycleType > 0 && 
@@ -141,6 +150,29 @@ export default function ProfilePage() {
       message.error(t('getSubscriptionListFailed'));
     } finally {
       setSubscriptionsLoading(false);
+    }
+  };
+
+  // 获取积分记录
+  const fetchPointsRecords = async (params: { page: number; pageSize: number }) => {
+    setPointsLoading(true);
+    try {
+      const response = await getPointsRecordsApi(params);
+      if (response?.code === 0 && response.data) {
+        const paginatedData = response.data;
+        setPointsRecords(paginatedData.list || []);
+        setPointsPagination({
+          current: params.page,
+          pageSize: params.pageSize,
+          total: paginatedData.count || 0
+        });
+      } else {
+        message.error(response?.message || '获取积分记录失败');
+      }
+    } catch (error) {
+      message.error('获取积分记录失败');
+    } finally {
+      setPointsLoading(false);
     }
   };
 
@@ -416,6 +448,47 @@ export default function ProfilePage() {
     },
   ];
 
+  // 积分记录表格列
+  const pointsColumns = [
+    {
+      title: t('points.pointsChange'),
+      dataIndex: 'points',
+      key: 'points',
+      render: (points: number) => (
+        <span style={{ color: points > 0 ? '#52c41a' : '#ff4d4f', fontWeight: 'bold' }}>
+          {points > 0 ? '+' : ''}{points}
+        </span>
+      ),
+    },
+    {
+      title: t('points.changeType'),
+      dataIndex: 'type',
+      key: 'type',
+      render: (type: string) => {
+        const typeMap: { [key: string]: { color: string; text: string } } = {
+          'earn': { color: 'green', text: t('points.earn') },
+          'spend': { color: 'red', text: t('points.spend') },
+          'refund': { color: 'blue', text: t('points.refund') },
+          'expire': { color: 'orange', text: t('points.expire') }
+        };
+        const config = typeMap[type] || { color: 'default', text: type };
+        return <Tag color={config.color}>{config.text}</Tag>;
+      },
+    },
+    {
+      title: t('points.description'),
+      dataIndex: 'description',
+      key: 'description',
+      ellipsis: true,
+    },
+    {
+      title: t('points.time'),
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (timestamp: string) => new Date(timestamp).toLocaleString(),
+    },
+  ];
+
   // 个人信息内容
   const renderProfileContent = () => (
     <>
@@ -449,6 +522,22 @@ export default function ProfilePage() {
               {t('activateNow')}
             </button>
           )}
+        </div>
+      </div>
+
+      {/* 积分记录卡片 */}
+      <div className={styles.pointsCard}>
+        <div className={styles.pointsContent}>
+          <div className={styles.pointsHeader}>
+            <div>
+              <span style={{ marginRight: '8px' }}><GiftFilled /></span>
+              <span className={styles.pointsTitle}>{t('points.myPoints')}</span>
+            </div>
+            <span className={styles.pointsCount}>{userInfo?.score || 0}</span>
+          </div>
+          <p className={styles.pointsDescription}>
+            {t('points.pointsDescription')}
+          </p>
         </div>
       </div>
 
@@ -560,6 +649,36 @@ export default function ProfilePage() {
     </div>
   );
 
+  // 积分记录内容
+  const renderPointsContent = () => (
+    <div className={styles.orderContent}>
+      <Card>
+        <Table
+          columns={pointsColumns}
+          dataSource={pointsRecords}
+          loading={pointsLoading}
+          rowKey="id"
+          className={styles.pointsTable}
+          pagination={{
+            current: pointsPagination.current,
+            pageSize: pointsPagination.pageSize,
+            total: pointsPagination.total,
+            onChange: (page, size) => {
+              fetchPointsRecords({ page, pageSize: size || 10 });
+            },
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: (total) => t('points.totalRecords', { total }),
+            pageSizeOptions: ['10', '20', '50'],
+          }}
+          locale={{
+            emptyText: pointsLoading ? t('loading') : t('points.noPointsRecords')
+          }}
+        />
+      </Card>
+    </div>
+  );
+
   if (loading) {
     return null;
   }
@@ -573,6 +692,8 @@ export default function ProfilePage() {
           if (key === 'orders') {
             fetchOrders({ page: 0, size: 10 });
             fetchSubscriptions({ page: 0, size: 10 });
+          } else if (key === 'points') {
+            fetchPointsRecords({ page: 1, pageSize: 10 });
           }
         }}
       >
@@ -597,6 +718,17 @@ export default function ProfilePage() {
           key="orders"
         >
           {renderOrderContent()}
+        </TabPane>
+        <TabPane 
+          tab={
+            <span>
+              <GiftFilled />
+              {t('points.title')}
+            </span>
+          } 
+          key="points"
+        >
+          {renderPointsContent()}
         </TabPane>
       </Tabs>
 

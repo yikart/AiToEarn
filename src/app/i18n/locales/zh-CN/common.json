@@ -25,6 +25,11 @@
     "material": "素材通知",
     "other": "其他通知"
   },
+  "header": {
+    "messages": "消息通知",
+    "materialLibrary": "素材库",
+    "draftBox": "草稿箱"
+  },
   "websit": {
     "termsOfService": {
       "title": "用户协议",

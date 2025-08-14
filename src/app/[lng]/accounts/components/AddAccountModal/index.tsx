@@ -3,6 +3,7 @@ import styles from "./AddAccountModal.module.scss";
 import { Button, Modal, Tooltip } from "antd";
 import { AccountPlatInfoArr, PlatType } from "@/app/config/platConfig";
 import { SocialAccount } from "@/api/types/account.type";
+import { useTransClient } from "@/app/i18n/client";
 import { kwaiSkip } from "@/app/[lng]/accounts/plat/kwaiLogin";
 import { bilibiliSkip } from "../../plat/BilibiliLogin";
 import { youtubeSkip } from "../../plat/YoutubeLogin";
@@ -28,6 +29,7 @@ const AddAccountModal = memo(
       { open, onClose, onAddSuccess }: IAddAccountModalProps,
       ref: ForwardedRef<IAddAccountModalRef>,
     ) => {
+      const { t } = useTransClient('account');
       const [showFacebookPagesModal, setShowFacebookPagesModal] = useState(false);
 
       const handleOk = () => {
@@ -53,7 +55,7 @@ const AddAccountModal = memo(
       return (
         <>
           <Modal
-            title="账号添加"
+            title={t('addAccountModal.title')}
             open={open}
             onOk={handleOk}
             onCancel={handleCancel}
@@ -61,7 +63,7 @@ const AddAccountModal = memo(
             width={650}
           >
             <div className={styles.addAccountModal}>
-              <h1>选择平台添加账号</h1>
+              <h1>{t('addAccountModal.subtitle')}</h1>
               <div className="addAccountModal_plats">
                 {AccountPlatInfoArr.map(([key, value]) => {
                   return (

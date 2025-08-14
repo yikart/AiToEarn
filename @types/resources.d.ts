@@ -5,7 +5,7 @@ interface Resources {
     "today": "今天",
     "addPost": "添加帖子",
     "calendarMode": "日历模式",
-    "listMode": "列表模式",
+    "listModeTab": "列表模式",
     "newWork": "新建作品",
     "allPlatforms": "所有平台",
     "accountManager": "账号管理器",
@@ -23,6 +23,10 @@ interface Resources {
     "disabled": "禁用",
     "unknownPlatform": "未知平台",
     "unknownAccount": "未知账户",
+    "addAccountModal": {
+      "title": "账号添加",
+      "subtitle": "选择平台添加账号"
+    },
     "facebookPages": {
       "title": "选择Facebook页面",
       "selectAll": "全选",
@@ -34,6 +38,12 @@ interface Resources {
       "submitError": "页面选择失败",
       "submitSuccess": "页面选择成功",
       "selectAtLeastOne": "请至少选择一个页面"
+    },
+    "listMode": {
+      "title": "发布计划列表",
+      "recordCount": "共 {{count}} 条发布计划",
+      "newWork": "新建作品",
+      "noRecords": "暂无发布计划"
     }
   },
   "cgmaterial": {
@@ -158,6 +168,11 @@ interface Resources {
       "user": "用户通知",
       "material": "素材通知",
       "other": "其他通知"
+    },
+    "header": {
+      "messages": "消息通知",
+      "materialLibrary": "素材库",
+      "draftBox": "草稿箱"
     },
     "websit": {
       "termsOfService": {
@@ -750,6 +765,21 @@ interface Resources {
       "unlimitedTime": "无限时长",
       "fastExperience": "极速体验",
       "morePrivileges": "更多特权"
+    },
+    "points": {
+      "title": "积分记录",
+      "myPoints": "我的积分",
+      "pointsDescription": "查看您的积分变动记录和使用情况",
+      "pointsChange": "积分变动",
+      "changeType": "变动类型",
+      "description": "描述",
+      "time": "时间",
+      "earn": "获得",
+      "spend": "消费",
+      "refund": "退还",
+      "expire": "过期",
+      "noPointsRecords": "暂无积分记录",
+      "totalRecords": "共 {{total}} 条记录"
     }
   },
   "publish": {
@@ -843,6 +873,10 @@ interface Resources {
       "backToLibraryGroups": "返回素材库组",
       "noLibraryItems": "该组暂无素材",
       "selectLibrarySuccess": "素材已应用"
+    },
+    "actions": {
+      "selectMaterial": "选择素材",
+      "selectDraft": "选择草稿"
     }
   },
   "route": {

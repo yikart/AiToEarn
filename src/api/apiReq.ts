@@ -86,3 +86,11 @@ export interface GoogleLoginParams {
 export const googleLoginApi = (data: GoogleLoginParams) => {
   return http.post<LoginResponse>("login/google", data);
 };
+
+// 积分记录相关API
+export const getPointsRecordsApi = async (params: { page: number; pageSize: number }) => {
+  const res = await http.get<any>(`user/points/records`, 
+    params,
+  );
+  return res;
+};

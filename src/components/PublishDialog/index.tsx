@@ -330,7 +330,7 @@ const PublishDialog = memo(
             setAccountAllParams(nextParams);
           }
           setDraftModalOpen(false);
-          message.success("草稿已应用");
+          message.success(t("draft.selectDraftSuccess"));
         },
         [setAccountAllParams, setOnePubParams, step, expandedPubItem],
       );
@@ -362,7 +362,7 @@ const PublishDialog = memo(
             setAccountAllParams(nextParams);
           }
           setLibraryModalOpen(false);
-          message.success("素材已应用");
+          message.success(t("draft.selectLibrarySuccess"));
         },
         [setAccountAllParams, setOnePubParams, step, expandedPubItem],
       );
@@ -468,7 +468,7 @@ const PublishDialog = memo(
                         setLibraryModalOpen(true);
                       }}
                     >
-                      选择素材
+                      {t("actions.selectMaterial")}
                     </Button>
                     <Button
                       size="small"
@@ -478,7 +478,7 @@ const PublishDialog = memo(
                         setDraftModalOpen(true);
                       }}
                     >
-                      选择草稿
+                      {t("actions.selectDraft")}
                     </Button>
                   </div>
                 </div>
@@ -663,12 +663,12 @@ const PublishDialog = memo(
             </CSSTransition>
           </Modal>
 
-          {/* 选择草稿弹窗 */}
+          {/* Draft Selection Modal */}
           <Modal
             open={draftModalOpen}
             onCancel={() => setDraftModalOpen(false)}
             footer={null}
-            title={selectedGroup ? "选择草稿" : "选择草稿箱组"}
+            title={selectedGroup ? t("draft.selectDraftItem") : t("draft.selectDraftGroup")}
             width={720}
           >
             {!selectedGroup ? (
@@ -681,7 +681,7 @@ const PublishDialog = memo(
                   <List
                     grid={{ gutter: 16, column: 2 }}
                     dataSource={groups}
-                    locale={{ emptyText: "暂无草稿箱组" }}
+                    locale={{ emptyText: t("draft.noDraftGroups") }}
                     renderItem={(item: any) => (
                       <List.Item>
                         <div
@@ -748,8 +748,8 @@ const PublishDialog = memo(
                             }}
                           >
                             {item.type === PubType.ImageText
-                              ? "图文组"
-                              : "视频组"}
+                              ? t("draft.imageGroup")
+                              : t("draft.videoGroup")}
                           </div>
                         </div>
                       </List.Item>
@@ -761,7 +761,7 @@ const PublishDialog = memo(
               <div>
                 <div style={{ marginBottom: 12 }}>
                   <Button type="link" onClick={() => setSelectedGroup(null)}>
-                    返回草稿箱组
+                    {t("draft.backToGroups")}
                   </Button>
                 </div>
                 {draftLoading ? (
@@ -772,7 +772,7 @@ const PublishDialog = memo(
                   <List
                     grid={{ gutter: 16, column: 2 }}
                     dataSource={drafts}
-                    locale={{ emptyText: "该组暂无草稿" }}
+                    locale={{ emptyText: t("draft.noDrafts") }}
                     renderItem={(item: any) => (
                       <List.Item>
                         <div
@@ -825,12 +825,12 @@ const PublishDialog = memo(
             )}
           </Modal>
 
-          {/* 选择素材库弹窗 */}
+          {/* Material Library Selection Modal */}
           <Modal
             open={libraryModalOpen}
             onCancel={() => setLibraryModalOpen(false)}
             footer={null}
-            title={selectedLibraryGroup ? "选择素材" : "选择素材库组"}
+            title={selectedLibraryGroup ? t("draft.selectLibraryItem") : t("draft.selectLibraryGroup")}
             width={720}
           >
             {!selectedLibraryGroup ? (
@@ -843,7 +843,7 @@ const PublishDialog = memo(
                   <List
                     grid={{ gutter: 16, column: 2 }}
                     dataSource={libraryGroups}
-                    locale={{ emptyText: "暂无素材库组" }}
+                    locale={{ emptyText: t("draft.noLibraryGroups") }}
                     renderItem={(item: any) => (
                       <List.Item>
                         <div
@@ -907,7 +907,7 @@ const PublishDialog = memo(
                                 item.type === "img" ? "#52c41a" : "#1890ff",
                             }}
                           >
-                            {item.type === "img" ? "图片组" : "视频组"}
+                            {item.type === "img" ? t("draft.imageGroup") : t("draft.videoGroup")}
                           </div>
                         </div>
                       </List.Item>
@@ -922,7 +922,7 @@ const PublishDialog = memo(
                     type="link"
                     onClick={() => setSelectedLibraryGroup(null)}
                   >
-                    返回素材库组
+                    {t("draft.backToLibraryGroups")}
                   </Button>
                 </div>
                 {libraryLoading ? (
@@ -933,7 +933,7 @@ const PublishDialog = memo(
                   <List
                     grid={{ gutter: 16, column: 2 }}
                     dataSource={libraryItems}
-                    locale={{ emptyText: "该组暂无素材" }}
+                    locale={{ emptyText: t("draft.noLibraryItems") }}
                     renderItem={(item: any) => (
                       <List.Item>
                         <div

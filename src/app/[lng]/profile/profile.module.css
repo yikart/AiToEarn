@@ -1,28 +1,29 @@
 .container {
   padding: 24px;
-  margin: 2px auto;
 }
 
 .card {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .actions {
   display: flex;
-  gap: 12px;
+  gap: 8px;
 }
 
 /* 会员卡片样式 */
 .vipCard {
   background: url('/assets/images/vipcard.png') no-repeat center center;
   background-size: cover;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 24px;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
   color: #fff;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .vipCard::before {
@@ -34,7 +35,7 @@
   bottom: 0;
   background: linear-gradient(to right, #2B2F36, #4E4C4D);
   z-index: 0;
-  border-radius: 12px;
+  border-radius: 8px;
 }
 
 .vipContent {
@@ -48,38 +49,38 @@
 .vipHeader {
   display: flex;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .vipIcon {
-  width: 32px;
-  height: 32px;
-  margin-right: 8px;
+  width: 24px;
+  height: 24px;
+  margin-right: 6px;
   background-color: rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .vipTitle {
-  font-size: 24px;
+  font-size: 18px;
   font-weight: bold;
   color: #fce2a9; /* 金色 */
 }
 
 .vipDescription {
-  font-size: 14px;
+  font-size: 12px;
   color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .benefitsGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 32px;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
 .benefitItem {
@@ -87,19 +88,19 @@
 }
 
 .benefitIcon {
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   background-color: rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  margin: 0 auto 8px auto;
+  border-radius: 6px;
+  margin: 0 auto 6px auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 18px;
 }
 
 .benefitName {
-  font-size: 13px;
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.9);
 }
 
@@ -107,9 +108,9 @@
   background: linear-gradient(to right, #6a5acd, #a64dd8); /* 紫色渐变 */
   border: none;
   color: white;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 18px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
   font-weight: bold;
   cursor: pointer;
   width: 100%;
@@ -117,33 +118,89 @@
 
   &:hover {
     opacity: 0.9;
-    transform: translateY(-2px);
+    transform: translateY(-1px);
   }
 }
 
 .normalUserCallToAction {
   background-color: #f0f2f5;
-  padding: 20px;
-  border-radius: 8px;
+  padding: 16px;
+  border-radius: 6px;
   text-align: center;
-  margin-top: 24px;
+  margin-top: 16px;
 }
 
 .normalUserCallToAction p {
-  font-size: 16px;
+  font-size: 14px;
   color: #555;
+  margin-bottom: 12px;
+}
+
+/* 积分记录卡片样式 */
+.pointsCard {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
+  padding: 16px;
   margin-bottom: 16px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pointsCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  z-index: 0;
+  border-radius: 8px;
+}
+
+.pointsContent {
+  position: relative;
+  z-index: 1;
+}
+
+.pointsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.pointsTitle {
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.pointsCount {
+  font-size: 20px;
+  font-weight: bold;
+  color: #fce2a9;
+}
+
+.pointsDescription {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 12px;
 }
 
 /* 订单管理样式 */
 .orderContent {
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .orderContent .ant-table-thead > tr > th {
   background-color: #fafafa;
   color: #262626;
   font-weight: 600;
+  font-size: 12px;
+  padding: 8px 12px;
 }
 
 .orderContent .ant-table-tbody > tr:hover > td {
@@ -154,10 +211,16 @@
   cursor: pointer;
 }
 
+.orderContent .ant-table-tbody > tr > td {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
 .orderContent .ant-btn-link {
-  padding: 4px 8px;
+  padding: 2px 6px;
   height: auto;
   border-radius: 4px;
+  font-size: 12px;
 }
 
 .orderContent .ant-btn-link.ant-btn-dangerous {
@@ -171,25 +234,47 @@
 
 .orderContent .ant-tag {
   border-radius: 4px;
-  font-size: 12px;
-  padding: 2px 8px;
+  font-size: 11px;
+  padding: 1px 6px;
 }
 
 /* 订单详情弹窗样式 */
 .orderDetailModal .ant-descriptions-item-label {
   background-color: #fafafa;
   font-weight: 600;
-  width: 120px;
+  width: 100px;
+  font-size: 12px;
 }
 
 .orderDetailModal .ant-descriptions-item-content {
   background-color: #fff;
+  font-size: 12px;
+}
+
+/* 积分记录表格样式 */
+.pointsTable .ant-table-thead > tr > th {
+  background-color: #fafafa;
+  color: #262626;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 8px 12px;
+}
+
+.pointsTable .ant-table-tbody > tr > td {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+.pointsTable .ant-tag {
+  border-radius: 4px;
+  font-size: 11px;
+  padding: 1px 6px;
 }
 
 /* 标签页样式 */
 .container .ant-tabs > .ant-tabs-nav .ant-tabs-tab {
-  padding: 12px 16px;
-  font-size: 16px;
+  padding: 8px 12px;
+  font-size: 14px;
   font-weight: 500;
 }
 
@@ -198,40 +283,77 @@
 }
 
 .container .ant-tabs-content-holder {
-  padding-top: 16px;
+  padding-top: 12px;
+}
+
+/* 积分记录表格样式 */
+.pointsTable .ant-table-thead > tr > th {
+  background-color: #fafafa;
+  color: #262626;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 8px 12px;
+}
+
+.pointsTable .ant-table-tbody > tr > td {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+.pointsTable .ant-tag {
+  border-radius: 4px;
+  font-size: 11px;
+  padding: 1px 6px;
 }
 
 /* 移动端适配 */
 @media (max-width: 768px) {
   .container {
-    padding: 16px;
+    padding: 12px;
   }
   
   .card {
-    margin-top: 16px;
+    margin-bottom: 12px;
   }
 
   .actions {
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
   }
 
   .benefitsGrid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 8px;
   }
 
   .orderContent .ant-table {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .orderContent .ant-table-thead > tr > th,
   .orderContent .ant-table-tbody > tr > td {
-    padding: 8px 4px;
+    padding: 6px 4px;
   }
 
   .container .ant-tabs > .ant-tabs-nav .ant-tabs-tab {
-    padding: 8px 12px;
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  .vipCard,
+  .pointsCard {
+    padding: 12px;
+  }
+
+  .vipTitle {
+    font-size: 16px;
+  }
+
+  .pointsTitle {
     font-size: 14px;
+  }
+
+  .pointsCount {
+    font-size: 18px;
   }
 } 

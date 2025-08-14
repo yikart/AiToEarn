@@ -89,5 +89,9 @@
     "backToLibraryGroups": "Back to Library Groups",
     "noLibraryItems": "No Materials in This Group",
     "selectLibrarySuccess": "Material Applied"
+  },
+  "actions": {
+    "selectMaterial": "Select Material",
+    "selectDraft": "Select Draft"
   }
 } 

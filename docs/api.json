@@ -134,21 +134,11 @@
                 ]
             }
         },
-        "/api/user/vip/set": {
+        "/api/user/vip/set/experience": {
             "put": {
-                "description": "更新用户VIP信息",
-                "operationId": "UserController_updateVipInfo",
+                "description": "设置用户体验VIP信息",
+                "operationId": "UserController_setVipExperience",
                 "parameters": [],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UpdateVipInfoDto"
-                            }
-                        }
-                    }
-                },
                 "responses": {
                     "default": {
                         "description": "",
@@ -161,7 +151,43 @@
                         }
                     }
                 },
-                "summary": "更新用户VIP信息",
+                "summary": "设置用户体验VIP信息",
+                "tags": [
+                    "用户"
+                ]
+            }
+        },
+        "/api/user/points/records": {
+            "get": {
+                "operationId": "UserController_getMyPointsRecords",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "required": true,
+                        "in": "query",
+                        "description": "页码",
+                        "schema": {
+                            "default": 1,
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "required": true,
+                        "in": "query",
+                        "description": "每页数量",
+                        "schema": {
+                            "default": 10,
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                },
+                "summary": "获取我的积分记录",
                 "tags": [
                     "用户"
                 ]
@@ -522,6 +548,32 @@
                 },
                 "tags": [
                     "指纹浏览器"
+                ]
+            }
+        },
+        "/api/appConfigs/{appId}": {
+            "get": {
+                "description": "获取配置",
+                "operationId": "AppConfigsController_getAppConfigList",
+                "parameters": [],
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "获取配置",
+                "tags": [
+                    "应用配置"
                 ]
             }
         },
@@ -2472,134 +2524,6 @@
                 ]
             }
         },
-        "/api/plat/youtube/video/upload/small": {
-            "post": {
-                "operationId": "YoutubeController_uploadVideo",
-                "parameters": [],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UploadSmallVideoDto"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "default": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "summary": "上传视频到YouTube",
-                "tags": [
-                    "plat/youtube - YouTube平台"
-                ]
-            }
-        },
-        "/api/plat/youtube/video/upload/init": {
-            "post": {
-                "operationId": "YoutubeController_initVideoUpload",
-                "parameters": [],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/InitVideoUploadDto"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "default": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "summary": "初始化视频分片上传",
-                "tags": [
-                    "plat/youtube - YouTube平台"
-                ]
-            }
-        },
-        "/api/plat/youtube/video/upload/part": {
-            "post": {
-                "operationId": "YoutubeController_uploadVideoPart",
-                "parameters": [],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UploadVideoPartDto"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "default": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "summary": "上传视频分片",
-                "tags": [
-                    "plat/youtube - YouTube平台"
-                ]
-            }
-        },
-        "/api/plat/youtube/video/upload/complete": {
-            "post": {
-                "operationId": "YoutubeController_videoComplete",
-                "parameters": [],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UploadVideoCompleteDto"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "default": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "summary": "完成视频上传",
-                "tags": [
-                    "plat/youtube - YouTube平台"
-                ]
-            }
-        },
         "/api/plat/youtube/comment/threads/insert": {
             "post": {
                 "operationId": "YoutubeController_insertCommentThreads",
@@ -3374,6 +3298,37 @@
                         "required": false,
                         "in": "query",
                         "description": "分页令牌",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "获取频道列表",
+                "tags": [
+                    "plat/youtube - YouTube平台"
+                ]
+            }
+        },
+        "/api/plat/youtube/channel/update/channelId/{accountId}": {
+            "get": {
+                "operationId": "YoutubeController_updateChannelId",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "required": true,
+                        "in": "path",
                         "schema": {
                             "type": "string"
                         }
@@ -6551,12 +6506,12 @@
                 ]
             }
         },
-        "/api/task/{id}": {
+        "/api/task/opportunity/{opportunityId}": {
             "get": {
                 "operationId": "TaskController_getTaskInfo",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "opportunityId",
                         "required": true,
                         "in": "path",
                         "schema": {
@@ -6570,7 +6525,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/TaskVo"
+                                    "$ref": "#/components/schemas/TaskWithOpportunityVo"
                                 }
                             }
                         }
@@ -7505,23 +7460,6 @@
                 "type": "object",
                 "properties": {}
             },
-            "UpdateVipInfoDto": {
-                "type": "object",
-                "properties": {
-                    "cycleType": {
-                        "type": "number",
-                        "description": "充值时间周期类型",
-                        "enum": [
-                            0,
-                            1,
-                            2
-                        ]
-                    }
-                },
-                "required": [
-                    "cycleType"
-                ]
-            },
             "MailLoginDto": {
                 "type": "object",
                 "properties": {
@@ -8322,8 +8260,7 @@
                     }
                 },
                 "required": [
-                    "id",
-                    "publishTime"
+                    "id"
                 ]
             },
             "AddArcCommentDto": {
@@ -8551,143 +8488,6 @@
             "AuthBackQueryDto": {
                 "type": "object",
                 "properties": {}
-            },
-            "UploadSmallVideoDto": {
-                "type": "object",
-                "properties": {
-                    "accountId": {
-                        "type": "string",
-                        "description": "账号ID"
-                    },
-                    "title": {
-                        "type": "string",
-                        "description": "视频标题"
-                    },
-                    "description": {
-                        "type": "string",
-                        "description": "视频描述"
-                    },
-                    "privacyStatus": {
-                        "type": "string",
-                        "description": "隐私状态",
-                        "enum": [
-                            "public",
-                            "private",
-                            "unlisted"
-                        ]
-                    },
-                    "keywords": {
-                        "type": "string",
-                        "description": "关键词，多个关键词用英文逗号分隔"
-                    },
-                    "categoryId": {
-                        "type": "string",
-                        "description": "视频类别ID"
-                    },
-                    "publishAt": {
-                        "type": "string",
-                        "description": "发布时间, 符合 ISO 8601 标准的日期时间字符串"
-                    }
-                },
-                "required": [
-                    "accountId",
-                    "title",
-                    "description",
-                    "privacyStatus"
-                ]
-            },
-            "InitVideoUploadDto": {
-                "type": "object",
-                "properties": {
-                    "accountId": {
-                        "type": "string",
-                        "description": "账号ID"
-                    },
-                    "title": {
-                        "type": "string",
-                        "description": "视频标题"
-                    },
-                    "description": {
-                        "type": "string",
-                        "description": "视频描述"
-                    },
-                    "keywords": {
-                        "type": "string",
-                        "description": "关键词, 多个关键词用英文逗号分隔"
-                    },
-                    "categoryId": {
-                        "type": "string",
-                        "description": "视频类别ID"
-                    },
-                    "privacyStatus": {
-                        "type": "string",
-                        "description": "隐私状态",
-                        "enum": [
-                            "public",
-                            "private",
-                            "unlisted"
-                        ]
-                    },
-                    "publishAt": {
-                        "type": "string",
-                        "description": "发布时间，符合ISO 8601标准的日期时间字符串"
-                    },
-                    "contentLength": {
-                        "type": "number",
-                        "description": "视频文件总大小，字节数"
-                    }
-                },
-                "required": [
-                    "accountId",
-                    "title",
-                    "description",
-                    "privacyStatus",
-                    "contentLength"
-                ]
-            },
-            "UploadVideoPartDto": {
-                "type": "object",
-                "properties": {
-                    "accountId": {
-                        "type": "string",
-                        "description": "账号ID"
-                    },
-                    "uploadToken": {
-                        "type": "string",
-                        "title": "上传token"
-                    },
-                    "partNumber": {
-                        "type": "number",
-                        "title": "分片索引"
-                    }
-                },
-                "required": [
-                    "accountId",
-                    "uploadToken",
-                    "partNumber"
-                ]
-            },
-            "UploadVideoCompleteDto": {
-                "type": "object",
-                "properties": {
-                    "accountId": {
-                        "type": "string",
-                        "description": "账号ID"
-                    },
-                    "uploadToken": {
-                        "type": "string",
-                        "description": "上传令牌"
-                    },
-                    "totalSize": {
-                        "type": "number",
-                        "description": "视频文件总大小，字节数"
-                    }
-                },
-                "required": [
-                    "accountId",
-                    "uploadToken",
-                    "totalSize"
-                ]
             },
             "InsertCommentThreadsDto": {
                 "type": "object",
@@ -10231,7 +10031,7 @@
                     "id"
                 ]
             },
-            "TaskVo": {
+            "TaskWithOpportunityVo": {
                 "$schema": "https://json-schema.org/draft/2020-12/schema",
                 "type": "object",
                 "properties": {
@@ -10272,9 +10072,6 @@
                     "taskData": {
                         "type": "object",
                         "properties": {
-                            "type": {
-                                "type": "string"
-                            },
                             "targetWorksId": {
                                 "type": "string"
                             },
@@ -10285,10 +10082,11 @@
                                 "type": "string"
                             }
                         },
-                        "required": [
-                            "type"
-                        ],
                         "additionalProperties": false
+                    },
+                    "materials": {
+                        "type": "array",
+                        "items": {}
                     },
                     "createdAt": {
                         "type": "string",
@@ -10297,6 +10095,19 @@
                     "updatedAt": {
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "opportunityId": {
+                        "type": "string"
+                    },
+                    "opportunityStatus": {
+                        "type": "string"
+                    },
+                    "expiredAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "accountId": {
+                        "type": "string"
                     }
                 },
                 "required": [
@@ -10311,7 +10122,11 @@
                     "status",
                     "accountTypes",
                     "createdAt",
-                    "updatedAt"
+                    "updatedAt",
+                    "opportunityId",
+                    "opportunityStatus",
+                    "expiredAt",
+                    "accountId"
                 ],
                 "additionalProperties": false
             },
@@ -10336,24 +10151,14 @@
                         "type": "string",
                         "minLength": 1
                     },
-                    "accountType": {
-                        "type": "string",
-                        "minLength": 1
-                    },
-                    "uid": {
-                        "type": "string",
-                        "minLength": 1
-                    },
-                    "account": {
+                    "opportunityId": {
                         "type": "string",
                         "minLength": 1
                     }
                 },
                 "required": [
                     "taskId",
-                    "accountType",
-                    "uid",
-                    "account"
+                    "opportunityId"
                 ],
                 "additionalProperties": false
             },
@@ -11980,7 +11785,7 @@
                         "type": "string"
                     },
                     "description": {
-                        "type": "string" 
+                        "type": "string"
                     },
                     "inputModalities": {
                         "description": "输入模态",

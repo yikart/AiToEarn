@@ -4,7 +4,7 @@
   "today": "Today",
   "addPost": "Add a Post",
   "calendarMode": "Calendar Mode",
-  "listMode": "List Mode",
+  "listModeTab": "List Mode",
   "newWork": "New Work",
   "allPlatforms": "All Platforms",
   "accountManager": "Acct Manager",
@@ -22,6 +22,10 @@
   "disabled": "Disabled",
   "unknownPlatform": "Unknown Platform",
   "unknownAccount": "Unknown Account",
+  "addAccountModal": {
+    "title": "Add Account",
+    "subtitle": "Select Platform"
+  },
   "facebookPages": {
     "title": "Select Facebook Pages",
     "selectAll": "Select All",
@@ -33,5 +37,11 @@
     "submitError": "Failed to select pages",
     "submitSuccess": "Pages selected successfully",
     "selectAtLeastOne": "Please select at least one page"
+  },
+  "listMode": {
+    "title": "Publish Plans",
+    "recordCount": "{{count}} plans total",
+    "newWork": "New Work",
+    "noRecords": "No publish plans"
   }
 }
