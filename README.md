@@ -13,7 +13,7 @@
 ![GitHub license](https://img.shields.io/github/license/yikart/AttAiToEarn)
 [![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node&message=20.18.x%20&logo=node.js&color=3f893e)](https://nodejs.org/about/releases)
 
-[简体中文](README.zh-CN.md) | English
+[简体中文](README_CN.md) | English
 
 ## Overview
 
