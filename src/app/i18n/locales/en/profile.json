@@ -86,5 +86,20 @@
     "unlimitedTime": "Unlimited",
     "fastExperience": "Fast",
     "morePrivileges": "More"
+  },
+  "points": {
+    "title": "Points Records",
+    "myPoints": "My Points",
+    "pointsDescription": "View your points change history and usage",
+    "pointsChange": "Points Change",
+    "changeType": "Change Type",
+    "description": "Description",
+    "time": "Time",
+    "earn": "Earn",
+    "spend": "Spend",
+    "refund": "Refund",
+    "expire": "Expire",
+    "noPointsRecords": "No points records",
+    "totalRecords": "{{total}} records total"
   }
 } 

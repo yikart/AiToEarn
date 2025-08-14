@@ -42,18 +42,18 @@ function UserInfo() {
         </div>
       ),
     },
-    {
-      key: "2",
-      label: (
-        <div
-          onClick={() => {
-            router.push("/notification");
-          }}
-        >
-          {t("header.messages")}
-        </div>
-      ),
-    },
+    // {
+    //   key: "2",
+    //   label: (
+    //     <div
+    //       onClick={() => {
+    //         router.push("/notification");
+    //       }}
+    //     >
+    //       {t("header.messages")}
+    //     </div>
+    //   ),
+    // },
     {
       key: "3",
       label: (

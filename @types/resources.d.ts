@@ -765,6 +765,21 @@ interface Resources {
       "unlimitedTime": "无限时长",
       "fastExperience": "极速体验",
       "morePrivileges": "更多特权"
+    },
+    "points": {
+      "title": "积分记录",
+      "myPoints": "我的积分",
+      "pointsDescription": "查看您的积分变动记录和使用情况",
+      "pointsChange": "积分变动",
+      "changeType": "变动类型",
+      "description": "描述",
+      "time": "时间",
+      "earn": "获得",
+      "spend": "消费",
+      "refund": "退还",
+      "expire": "过期",
+      "noPointsRecords": "暂无积分记录",
+      "totalRecords": "共 {{total}} 条记录"
     }
   },
   "publish": {
