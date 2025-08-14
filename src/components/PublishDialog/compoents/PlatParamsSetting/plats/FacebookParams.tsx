@@ -66,7 +66,7 @@ const FacebookParams = memo(
                       );
                     }}
                   >
-                    <Radio value="video">Post</Radio>
+                    <Radio value="post">Post</Radio>
                     <Radio value="reel">Reel</Radio>
                     <Radio value="story">Story</Radio>
                   </Radio.Group>

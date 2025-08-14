@@ -143,7 +143,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       name: "Twitter",
       icon: twitterSvg.src,
       url: "https://x.com/",
-      pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
+      pubTypes: new Set([PubType.VIDEO, PubType.ImageText, PubType.Article]),
       commonPubParamsConfig: {
         titleMax: 16,
         topicMax: 10,
@@ -151,7 +151,6 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       themeColor: "blue",
     },
   ],
-
   [
     PlatType.Facebook,
     {
@@ -172,7 +171,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       name: "微信公众号",
       icon: wxGzhSvg.src,
       url: "https://mp.weixin.qq.com/",
-      pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
+      pubTypes: new Set([PubType.VIDEO, PubType.ImageText, PubType.Article]),
       commonPubParamsConfig: {
         titleMax: 16,
         topicMax: 10,
@@ -200,7 +199,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       name: "Threads",
       icon: threadsSvg.src,
       url: "https://www.threads.net/",
-      pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
+      pubTypes: new Set([PubType.VIDEO, PubType.ImageText, PubType.Article]),
       commonPubParamsConfig: {
         titleMax: 16,
         topicMax: 10,

@@ -66,7 +66,6 @@ export default function usePubParamsVerify(data: PubItem[]) {
           if (!v.params.title) {
             return setErrorMsg(t("validation.titleRequired"));
           }
-          console.log(topicsAll);
           // 强制需要话题
           if (topicsAll.length === 0) {
             return setErrorMsg(t("validation.topicRequired"));
