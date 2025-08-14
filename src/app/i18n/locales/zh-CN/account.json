@@ -22,6 +22,10 @@
   "disabled": "禁用",
   "unknownPlatform": "未知平台",
   "unknownAccount": "未知账户",
+  "addAccountModal": {
+    "title": "账号添加",
+    "subtitle": "选择平台添加账号"
+  },
   "facebookPages": {
     "title": "选择Facebook页面",
     "selectAll": "全选",

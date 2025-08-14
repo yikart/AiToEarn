@@ -23,6 +23,10 @@ interface Resources {
     "disabled": "禁用",
     "unknownPlatform": "未知平台",
     "unknownAccount": "未知账户",
+    "addAccountModal": {
+      "title": "账号添加",
+      "subtitle": "选择平台添加账号"
+    },
     "facebookPages": {
       "title": "选择Facebook页面",
       "selectAll": "全选",
@@ -158,6 +162,11 @@ interface Resources {
       "user": "用户通知",
       "material": "素材通知",
       "other": "其他通知"
+    },
+    "header": {
+      "messages": "消息通知",
+      "materialLibrary": "素材库",
+      "draftBox": "草稿箱"
     },
     "websit": {
       "termsOfService": {
@@ -843,6 +852,10 @@ interface Resources {
       "backToLibraryGroups": "返回素材库组",
       "noLibraryItems": "该组暂无素材",
       "selectLibrarySuccess": "素材已应用"
+    },
+    "actions": {
+      "selectMaterial": "选择素材",
+      "selectDraft": "选择草稿"
     }
   },
   "route": {

@@ -22,6 +22,10 @@
   "disabled": "Disabled",
   "unknownPlatform": "Unknown Platform",
   "unknownAccount": "Unknown Account",
+  "addAccountModal": {
+    "title": "Add Account",
+    "subtitle": "Select Platform"
+  },
   "facebookPages": {
     "title": "Select Facebook Pages",
     "selectAll": "Select All",

@@ -25,6 +25,11 @@
     "material": "Material Notification",
     "other": "Other Notification"
   },
+  "header": {
+    "messages": "Messages",
+    "materialLibrary": "Material Library",
+    "draftBox": "Draft Box"
+  },
   "websit": {
     "termsOfService": {
       "title": "Terms of Service",

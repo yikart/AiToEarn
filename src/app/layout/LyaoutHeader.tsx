@@ -50,7 +50,7 @@ function UserInfo() {
             router.push("/notification");
           }}
         >
-          消息通知
+          {t("header.messages")}
         </div>
       ),
     },
@@ -62,7 +62,7 @@ function UserInfo() {
             router.push("/material");
           }}
         >
-          素材库
+          {t("header.materialLibrary")}
         </div>
       ),
     },
@@ -74,7 +74,7 @@ function UserInfo() {
             router.push("/cgmaterial");
           }}
         >
-          草稿箱
+          {t("header.draftBox")}
         </div>
       ),
     },
@@ -100,7 +100,7 @@ function UserInfo() {
           <Image
             className={styles["layoutHeader-userinfo-avatar"]}
             src={userInfo?.avatar || defaultAvatar}
-            alt="头像"
+            alt={t("profile")}
             width={35}
             height={35}
           />
@@ -138,7 +138,7 @@ const LyaoutHeader = memo(
             <div className={styles["layoutHeader_wrapper-left"]}>
               <h1 className={styles["layoutHeader_wrapper-logo"]}>
                 <Link href="/">
-                  <Image src={logo} alt="logo" width={50} />
+                  <Image src={logo} alt="AIToEarn" width={50} />
                 </Link>
               </h1>
               <LayoutNav />
@@ -183,7 +183,7 @@ const LyaoutHeader = memo(
           </div>
         </div>
         
-        {/* 通知面板 */}
+        {/* Notification Panel */}
         <NotificationPanel 
           visible={notificationVisible} 
           onClose={() => setNotificationVisible(false)} 
