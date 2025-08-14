@@ -97,7 +97,7 @@ AiToEarn的WEB项目，web端实现:
 
 4. 在工作流平台创建工作流（或导入模板-workflow文件夹）
 5. 在工作流的参数设置使用 `skkey` 进行内容发布
-<img src="./workflow/img/fl.jpg" alt="post" width="500"/>
+<img src="./workflow/img/fl.jpeg" alt="post" width="500"/>
 
 ## 工作流平台使用的接口
 
