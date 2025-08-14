@@ -108,12 +108,14 @@ npm run rebuild
 npm run dev
 ```
 
-## Upper Frame
 
+
+
+<details>
+<summary><h3>Catalogue</h3></summary>
+<upper><h4>Upper Frame</h4></upper>
 - vite [template-react-ts](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts)
 - Electron + react [electron-vite-react](https://github.com/electron-vite/electron-vite-react)
-
-## Catalogue
 
 \_🚨 By default, files in the 'electron' folder will be built to 'dis-electron'
 
@@ -150,6 +152,7 @@ npm run dev
 ├── public                                  Same as Vite template's public
 └── src                                     Renderer process source (React)
 ```
+</details>
 
 ## Other explanations
 
