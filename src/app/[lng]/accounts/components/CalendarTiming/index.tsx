@@ -236,7 +236,7 @@ const CalendarTiming = memo(
                     label: (
                       <span>
                         <UnorderedListOutlined />
-                        {t("listMode")}
+                        {t("listModeTab")}
                       </span>
                     ),
                   },

@@ -4,7 +4,7 @@
   "today": "今天",
   "addPost": "添加帖子",
   "calendarMode": "日历模式",
-  "listMode": "列表模式",
+  "listModeTab": "列表模式",
   "newWork": "新建作品",
   "allPlatforms": "所有平台",
   "accountManager": "账号管理器",
@@ -37,5 +37,11 @@
     "submitError": "页面选择失败",
     "submitSuccess": "页面选择成功",
     "selectAtLeastOne": "请至少选择一个页面"
+  },
+  "listMode": {
+    "title": "发布计划列表",
+    "recordCount": "共 {{count}} 条发布计划",
+    "newWork": "新建作品",
+    "noRecords": "暂无发布计划"
   }
 }
