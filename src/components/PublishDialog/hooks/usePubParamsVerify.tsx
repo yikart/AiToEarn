@@ -147,7 +147,7 @@ export default function usePubParamsVerify(data: PubItem[]) {
           switch (v.params.option.instagram?.content_category) {
             case "reel":
               // facebook reel 不支持图片，只支持视频 + 描述
-              if (v.params.video) {
+              if ((v.params.images?.length || 0) !== 0) {
                 return setErrorMsg(t("validation.facebookReelNoImage"));
               }
               break;
@@ -171,7 +171,7 @@ export default function usePubParamsVerify(data: PubItem[]) {
               break;
             case "reel":
               // instagram reel 不能上传图片，必须上传视频
-              if (v.params.video) {
+              if ((v.params.images?.length || 0) !== 0) {
                 return setErrorMsg(t("validation.instagramReelNoImage"));
               }
               break;
