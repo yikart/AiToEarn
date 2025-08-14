@@ -79,7 +79,7 @@ function Header() {
         </Link>
         <nav className={styles.nav}>
           {/* <a href="#marketplace" className={styles.navLink}>{t('header.nav.marketplace')}</a> */}
-          <a href="#pricing" className={styles.navLink}>{t('header.nav.pricing')}</a>
+          <a href="/pricing" className={styles.navLink}>{t('header.nav.pricing')}</a>
           <a href="https://status.aitoearn.ai/" target="_blank" rel="noopener noreferrer" className={styles.navLink}>{t('header.nav.status' as any)}</a>
           {/* <a href="#docs" className={styles.navLink}>{t('header.nav.docs')}</a> */}
           {/* <a href="#blog" className={styles.navLink}>{t('header.nav.blog')}</a> */}
