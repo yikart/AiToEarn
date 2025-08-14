@@ -1,6 +1,6 @@
 .pricingPage {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #ffffff;
   padding: 40px 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
@@ -14,13 +14,13 @@
 .header {
   text-align: center;
   margin-bottom: 60px;
-  color: white;
+  color: #333;
 
   .title {
     font-size: 3rem;
     font-weight: 700;
     margin-bottom: 16px;
-    background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -28,7 +28,7 @@
 
   .subtitle {
     font-size: 1.25rem;
-    opacity: 0.9;
+    color: #666;
     max-width: 600px;
     margin: 0 auto;
   }
@@ -40,17 +40,16 @@
   margin-bottom: 60px;
 
   .toggleContainer {
-    background: rgba(255, 255, 255, 0.1);
+    background: #f5f5f5;
     border-radius: 50px;
     padding: 4px;
     display: flex;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid #e0e0e0;
 
     .toggleButton {
       background: transparent;
       border: none;
-      color: white;
+      color: #666;
       padding: 12px 24px;
       border-radius: 50px;
       cursor: pointer;
@@ -63,13 +62,13 @@
       gap: 8px;
 
       &.active {
-        background: white;
-        color: #667eea;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        background: #667eea;
+        color: white;
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
       }
 
       &:hover:not(.active) {
-        background: rgba(255, 255, 255, 0.1);
+        background: #e8e8e8;
       }
 
       .saveBadge {
@@ -104,6 +103,17 @@
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+  }
+
+  // Free套餐特殊样式
+  &:not(.popular) {
+    border: 2px solid #e0e0e0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    
+    &:hover {
+      border-color: #667eea;
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.15);
+    }
   }
 
   &.popular {

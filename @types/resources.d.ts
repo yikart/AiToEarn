@@ -71,6 +71,41 @@ interface Resources {
     "images": "图片",
     "flashSale50": "限时5折",
     "mostPopular": "最受欢迎",
+    "plans": {
+      "free": {
+        "name": "Free",
+        "credits": "最高60 积分",
+        "videos": "每月最高可生成60个视频",
+        "images": "每月最高可生成120张图片",
+        "button": "立即开始"
+      },
+      "plus": {
+        "name": "Plus",
+        "credits": "700积分",
+        "videos": "每月最高可生成700个视频",
+        "images": "每月最高可生成1400张图片",
+        "button": "立即购买"
+      }
+    },
+    "features": {
+      "textModeration": "文本内容安全审查",
+      "imageModeration": "图片内容安全审查",
+      "videoModeration": "视频内容安全审查",
+      "multiModel": "多模型一站式支持",
+      "textToVideo": "文字转视频",
+      "imageToVideo": "图像转视频",
+      "videoToVideo": "视频到视频",
+      "consistentCharacter": "一致的角色视频",
+      "aiAnimation": "AI动画生成",
+      "aiImage": "AI图像生成",
+      "voiceClone": "声音克隆",
+      "voiceSynthesis": "声音合成",
+      "fasterSpeed": "更快的生成速度",
+      "withWatermark": "含水印输出",
+      "noWatermark": "无水印输出",
+      "storage500M": "存储空间500M",
+      "storage5G": "存储空间5G"
+    },
     "faq": {
       "title": "常见问题",
       "items": [
