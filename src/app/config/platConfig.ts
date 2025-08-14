@@ -75,9 +75,9 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       url: "https://www.tiktok.com/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
       commonPubParamsConfig: {
-        titleMax: 16,
         topicMax: 100,
         desMax: 4000,
+        imagesMax: 10,
       },
       themeColor: "black",
     },
@@ -150,7 +150,6 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       url: "https://x.com/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText, PubType.Article]),
       commonPubParamsConfig: {
-        titleMax: 16,
         topicMax: 100,
         desMax: 280,
         imagesMax: 4,
@@ -182,9 +181,9 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       url: "https://mp.weixin.qq.com/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText, PubType.Article]),
       commonPubParamsConfig: {
-        titleMax: 16,
         topicMax: 10,
         desMax: 2200,
+        imagesMax: 20,
       },
       themeColor: "green",
     },
@@ -230,7 +229,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
         titleMax: 16,
-        topicMax: 10,
+        topicMax: 100,
         desMax: 2200,
       },
       themeColor: "#CC2025",
