@@ -4,10 +4,11 @@
     "text": "Build and Extend AI Workflows with Plugins and a Thriving Marketplace."
   },
   "header": {
-    "logo": "AIToEarn",
+    "logo": "Aitorarn",
     "nav": {
       "marketplace": "Marketplace",
       "pricing": "Pricing",
+      "status": "Status",
       "docs": "Docs",
       "blog": "Blog"
     },
