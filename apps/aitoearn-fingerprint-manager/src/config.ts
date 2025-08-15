@@ -1,0 +1,10 @@
+import { baseConfig, createZodDto, selectConfig } from '@aitoearn/common'
+import z from 'zod'
+
+export const appConfigSchema = z.object({
+  ...baseConfig.shape,
+})
+
+export class AppConfig extends createZodDto(appConfigSchema) {}
+
+export const config = selectConfig(AppConfig)
