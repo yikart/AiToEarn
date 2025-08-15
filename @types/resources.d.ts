@@ -772,6 +772,7 @@ interface Resources {
       "myPoints": "我的积分",
       "pointsDescription": "查看您的积分变动记录和使用情况",
       "pointsChange": "积分变动",
+      "balance": "余额",
       "changeType": "变动类型",
       "description": "描述",
       "time": "时间",
@@ -779,6 +780,8 @@ interface Resources {
       "spend": "消费",
       "refund": "退还",
       "expire": "过期",
+      "aiService": "AI服务",
+      "userRegister": "用户注册",
       "noPointsRecords": "暂无积分记录",
       "totalRecords": "共 {{total}} 条记录"
     }
