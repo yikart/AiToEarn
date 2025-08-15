@@ -14,7 +14,7 @@ export const uploadToOss = async (file: File, onProgress?: (prog: number) => voi
     formData.append("file", file);
 
     const res: any = await request({
-      url: "/file/upload",
+      url: "file/upload",
       method: "POST",
       body: formData,
     });
@@ -30,7 +30,7 @@ export const uploadToOssMultipart = async (file: File, onProgress?: (prog: numbe
   try {
     // 1. 初始化分片上传
     const initResponse: any = await request({
-      url: "/file/uploadPart/init",
+      url: "file/uploadPart/init",
       method: "POST",
       data: {
         fileName: file.name,
@@ -61,7 +61,7 @@ export const uploadToOssMultipart = async (file: File, onProgress?: (prog: numbe
       formData.append("file", chunk);
       
       const partResponse: any = await request({
-        url: "/file/uploadPart/upload",
+        url: "file/uploadPart/upload",
         method: "POST",
         data: formData,
         params: {
@@ -87,7 +87,7 @@ export const uploadToOssMultipart = async (file: File, onProgress?: (prog: numbe
 
          // 3. 完成分片上传
      await request({
-       url: "/file/uploadPart/complete",
+       url: "file/uploadPart/complete",
        method: "POST",
        data: {
          fileId,

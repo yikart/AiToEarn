@@ -11,7 +11,7 @@ export const generateImage = (data: {
   style?: "vivid" | "natural";
   user?: string;
 }) => {
-  return http.post("/ai/image/generate", data);
+  return http.post("ai/image/generate", data);
 };
 
 // 流光卡片生成 - 新的接口
@@ -40,22 +40,22 @@ export const generateFireflyCard = (data: {
     };
   };
 }) => {
-  return http.post("/ai/fireflycard", data);
+  return http.post("ai/fireflycard", data);
 };
 
 // 获取图片生成模型参数
 export const getImageGenerationModels = () => {
-  return http.get("/ai/models/image/generation");
+  return http.get("ai/models/image/generation");
 };
 
 // 获取图片编辑模型参数
 export const getImageEditModels = () => {
-  return http.get("/ai/models/image/edit");
+  return http.get("ai/models/image/edit");
 };
 
 // 获取视频生成模型参数
 export const getVideoGenerationModels = () => {
-  return http.get("/ai/models/video/generation");
+  return http.get("ai/models/video/generation");
 };
 
 // 视频生成
@@ -68,12 +68,12 @@ export const generateVideo = (data: {
   duration?: number;
   metadata?: Record<string, any>;
 }) => {
-  return http.post("/ai/video/generations", data);
+  return http.post("ai/video/generations", data);
 };
 
 // 查询视频任务状态
 export const getVideoTaskStatus = (taskId: string) => {
-  return http.get(`/ai/video/generations/${taskId}`);
+  return http.get(`ai/video/generations/${taskId}`);
 };
 
 // 保留旧的接口以保持向后兼容性（可选）
@@ -84,7 +84,7 @@ export const textToImage = (data: {
   height: number;
   sessionIds: string[];
 }) => {
-  return http.post("/tools/ai/jm/task", data);
+  return http.post("tools/ai/jm/task", data);
 };
 
 // 获取文生图任务结果 - 旧接口（已废弃）
@@ -93,7 +93,7 @@ export const getTextToImageTaskResult = (id: string) => {
     imgList: string[];
     status: string;
     taskId: string;
-  }>(`/tools/ai/jm/task/${id}`);
+  }>(`tools/ai/jm/task/${id}`);
 };
 
 // 文生图文（流光卡片）- 旧接口（已废弃）
@@ -102,5 +102,5 @@ export const textToFireflyCard = (data: {
   temp: string;
   title: string;
 }) => {
-  return http.post("/tools/ai/fireflycard", data);
+  return http.post("tools/ai/fireflycard", data);
 };

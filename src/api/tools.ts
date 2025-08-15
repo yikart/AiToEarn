@@ -17,7 +17,7 @@ export const toolsApi = {
    * @param max
    */
   async apiVideoAiTitle(url: string, type: AiCreateType, max: number) {
-    const res = await http.post<string>("/tools/ai/video/title", {
+    const res = await http.post<string>("tools/ai/video/title", {
       url,
       type,
       max: max - 10,
@@ -34,7 +34,7 @@ export const toolsApi = {
     desc?: string;
     max?: number;
   }) {
-    const res = await http.post<string>("/tools/ai/reviewImg", data);
+    const res = await http.post<string>("tools/ai/reviewImg", data);
     return res!.data;
   },
 
@@ -42,7 +42,7 @@ export const toolsApi = {
    * 智能评论
    */
   async apiReviewAi(data: { title: string; desc?: string; max?: number }) {
-    const res = await http.post<string>("/tools/ai/review", data);
+    const res = await http.post<string>("tools/ai/review", data);
     return res!.data;
   },
 
@@ -55,7 +55,7 @@ export const toolsApi = {
     desc?: string;
     max?: number;
   }) {
-    const res = await http.post<string>("/tools/ai/recover/review", data);
+    const res = await http.post<string>("tools/ai/recover/review", data);
     return res!.data;
   },
 
@@ -63,7 +63,7 @@ export const toolsApi = {
    * 生成AI的html图文 弃用: 时间太长得走sse
    */
   async aiArticleHtml(content: string) {
-    const res = await http.post<string>("/tools/ai/article/html", {
+    const res = await http.post<string>("tools/ai/article/html", {
       content,
     });
     return res!.data;
@@ -80,7 +80,7 @@ export const toolsApi = {
     formData.append("file", file);
 
     const res = await request<{ name: string }>({
-      url: "/oss/upload/permanent",
+      url: "oss/upload/permanent",
       data: formData,
       method: "POST",
       headers: {
@@ -111,7 +111,7 @@ export const toolsApi = {
     formData.append("file", file);
 
     const res = await axios({
-      url: `${process.env.NEXT_PUBLIC_API_URL_PROXY}/file/upload`,
+      url: `${process.env.NEXT_PUBLIC_API_URL}/file/upload`,
       method: "POST",
       data: formData,
       headers: {
@@ -139,7 +139,7 @@ export const toolsApi = {
     try {
       // 1. 初始化分片上传
       const initResponse = await axios({
-        url: `${process.env.NEXT_PUBLIC_API_URL_PROXY}/file/uploadPart/init`,
+        url: `${process.env.NEXT_PUBLIC_API_URL}/file/uploadPart/init`,
         method: "POST",
         data: {
           fileName,
@@ -171,7 +171,7 @@ export const toolsApi = {
         formData.append("file", chunk);
         
         const partResponse = await axios({
-          url: `${process.env.NEXT_PUBLIC_API_URL_PROXY}/file/uploadPart/upload`,
+          url: `${process.env.NEXT_PUBLIC_API_URL}/file/uploadPart/upload`,
           method: "POST",
           data: formData,
           params: {
@@ -198,7 +198,7 @@ export const toolsApi = {
 
              // 3. 完成分片上传
        await axios({
-         url: `${process.env.NEXT_PUBLIC_API_URL_PROXY}/file/uploadPart/complete`,
+         url: `${process.env.NEXT_PUBLIC_API_URL}/file/uploadPart/complete`,
          method: "POST",
          data: {
            fileId,
@@ -219,7 +219,7 @@ export const toolsApi = {
    * 文本内容安全
    */
   async textModeration(content: string) {
-    const res = await http.post<string>("/tools/common/text/moderation", {
+    const res = await http.post<string>("tools/common/text/moderation", {
       content,
     });
     return res!.data;

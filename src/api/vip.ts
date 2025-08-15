@@ -27,7 +27,7 @@ export interface CreatePaymentOrderParams {
 // 创建支付订单
 export const createPaymentOrderApi = (params: CreatePaymentOrderParams) => {
   return request({
-    url: '/payment/checkout',
+    url: 'payment/checkout',
     method: 'POST',
     data: params
   });
@@ -36,7 +36,7 @@ export const createPaymentOrderApi = (params: CreatePaymentOrderParams) => {
 // 设置会员类型
 export const setVipApi = (cycleType: VipCycleType) => {
   return request({
-    url: '/user/vip/set',
+    url: 'user/vip/set',
     method: 'PUT',
     data: {
       cycleType

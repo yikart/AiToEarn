@@ -29,7 +29,7 @@ export const apiCreatePublish = (data: PublishParams) => {
   data.option = filterOptionByPlatform(data.option, data.accountType);
 
   return request({
-    url: "/plat/publish/create",
+    url: "plat/publish/create",
     method: "POST",
     data,
   });
@@ -38,7 +38,7 @@ export const apiCreatePublish = (data: PublishParams) => {
 // 查询发布列表
 export const getPublishList = (data: GetPublishListParams) => {
   return request<PublishRecordItem[]>({
-    url: "/plat/publish/getList",
+    url: "plat/publish/getList",
     method: "POST",
     data,
   });
@@ -50,7 +50,7 @@ export const updatePublishRecordTimeApi = (data: {
   publishTime: string;
 }) => {
   return request({
-    url: "/plat/publish/updateTaskTime",
+    url: "plat/publish/updateTaskTime",
     method: "POST",
     data,
   });
@@ -59,7 +59,7 @@ export const updatePublishRecordTimeApi = (data: {
 // 删除发布任务
 export const deletePublishRecordApi = (id: string) => {
   return request({
-    url: `/plat/publish/delete/${id}`,
+    url: `plat/publish/delete/${id}`,
     method: "DELETE",
   });
 };
@@ -67,7 +67,7 @@ export const deletePublishRecordApi = (id: string) => {
 // 立即发布任务
 export const nowPubTaskApi = (id: string) => {
   return request({
-    url: `/plat/publish/nowPubTask/${id}`,
+    url: `plat/publish/nowPubTask/${id}`,
     method: "POST",
   });
 };

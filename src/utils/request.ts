@@ -11,7 +11,7 @@ type ResponseType<T> = {
 };
 
 const fetchService = new FetchService({
-  baseURL: `${process.env.NEXT_PUBLIC_API_URL_PROXY}`,
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/`,
   requestInterceptor(requestParams) {
     const token = useUserStore.getState().token;
 
