@@ -4,11 +4,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat: password 密码登录、重置密码，添加md5加密">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix: 修复发布记录Dropdown报错">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/apiReq.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/apiReq.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/accountCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/accountCore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/accounts/components/AccountSidebar/AccountSidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/accounts/components/AccountSidebar/AccountSidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/@types/resources.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/@types/resources.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/i18n/client.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/i18n/client.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/i18n/locales/en/account.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/i18n/locales/en/account.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/i18n/locales/zh-CN/account.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/i18n/locales/zh-CN/account.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store/account.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/account.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,6 +37,7 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -170,6 +173,16 @@
       <workItem from="1754042077113" duration="2348000" />
       <workItem from="1754044730693" duration="454000" />
       <workItem from="1754047243768" duration="1000000" />
+      <workItem from="1755225150122" duration="612000" />
+      <workItem from="1755226313826" duration="1275000" />
+      <workItem from="1755227809233" duration="31000" />
+      <workItem from="1755228511604" duration="692000" />
+      <workItem from="1755244619445" duration="36000" />
+      <workItem from="1755244670513" duration="1000" />
+      <workItem from="1755246170094" duration="785000" />
+      <workItem from="1755248310749" duration="19000" />
+      <workItem from="1755248688075" duration="30000" />
+      <workItem from="1755248861702" duration="1258000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -459,7 +472,31 @@
       <option name="project" value="LOCAL" />
       <updated>1754043972876</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="fix: 将之前转发的逻辑改为直连">
+      <option name="closed" value="true" />
+      <created>1755227480731</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1755227480731</updated>
+    </task>
+    <task id="LOCAL-00038" summary="fix: 删除代理地址">
+      <option name="closed" value="true" />
+      <created>1755227592381</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1755227592381</updated>
+    </task>
+    <task id="LOCAL-00039" summary="fix: 修复发布记录Dropdown报错">
+      <option name="closed" value="true" />
+      <created>1755246915725</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1755246915725</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -489,7 +526,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -499,9 +548,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="feat(日历)：细节调整，1. 发布记录查看，添加图片、视频分别处理。 2. 发布API添加图片处理" />
-    <MESSAGE value="feat(日历)：日历在同一个单元格发布记录太多会自动隐藏，并且显示按钮让用户点击查看更多" />
-    <MESSAGE value="feat(发布弹框): 添加选择账户一系列逻辑： 1. 选择账户时，开启发布弹框会默认选择，右侧选择的账户。 2. 添加日历header选择用户展示的样式。" />
     <MESSAGE value="feat(发布弹框): 发布弹框对不支持上传 图片/视频 的平台做了限制" />
     <MESSAGE value="chore(发布弹框): daysjs 时区统一管理" />
     <MESSAGE value="chore(发布弹框): 拖动修改发布时间完成" />
@@ -524,6 +570,9 @@
     <MESSAGE value="fix(日历)：发布时间格式修复" />
     <MESSAGE value="fix: 账号过滤不支持的三个平台：视频号、小红书、抖音" />
     <MESSAGE value="feat: password 密码登录、重置密码，添加md5加密" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: password 密码登录、重置密码，添加md5加密" />
+    <MESSAGE value="fix: 将之前转发的逻辑改为直连" />
+    <MESSAGE value="fix: 删除代理地址" />
+    <MESSAGE value="fix: 修复发布记录Dropdown报错" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: 修复发布记录Dropdown报错" />
   </component>
 </project>

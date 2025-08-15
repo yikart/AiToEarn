@@ -2,6 +2,7 @@
   "title": "account",
   "describe": "account Page",
   "today": "Today",
+  "defaultSpace": "Default Space",
   "addPost": "Add a Post",
   "calendarMode": "Calendar Mode",
   "listModeTab": "List Mode",

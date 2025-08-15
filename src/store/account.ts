@@ -4,6 +4,7 @@ import lodash from "lodash";
 import { AccountGroupItem, SocialAccount } from "@/api/types/account.type";
 import { getAccountGroupApi, getAccountListApi } from "@/api/account";
 import { PlatType } from "@/app/config/platConfig";
+import { directTrans } from "@/app/i18n/client";
 
 export interface AccountGroup extends AccountGroupItem {
   children: SocialAccount[];
@@ -100,6 +101,12 @@ export const useAccountStore = create(
 
           if (!groupList) return;
           if (groupList.length === 0) return;
+          groupList.map((v) => {
+            v.name = v.isDefault
+              ? directTrans("account", "defaultSpace")
+              : v.name;
+          });
+
           const accountGroupList: AccountGroup[] = [];
           // key=组ID，val=账户ID
           const accountGroupMap = new Map<string, AccountGroup>();
