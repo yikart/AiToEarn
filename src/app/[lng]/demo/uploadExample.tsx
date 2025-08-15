@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { uploadToOss } from "@/api/oss";
-import { tools } from "@/api/tools";
+import { toolsApi } from "@/api/tools";
 
 export const UploadExample = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -35,7 +35,7 @@ export const UploadExample = () => {
         });
       } else {
         // 使用 uploadFileTemp
-        key = await tools.uploadFileTemp(file, (prog) => {
+        key = await toolsApi.uploadFileTemp(file, (prog) => {
           setProgress(prog);
         });
       }
