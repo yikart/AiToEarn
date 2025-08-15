@@ -16,7 +16,11 @@
     "outDir": "dist",
     "forceConsistentCasingInFileNames": true
   },
-  "references": [],
+  "references": [
+    {
+      "path": "../common/tsconfig.lib.json"
+    }
+  ],
   "include": [
     "src/**/*.ts"
   ]

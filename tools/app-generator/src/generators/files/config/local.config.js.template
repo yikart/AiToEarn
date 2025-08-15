@@ -1,0 +1,21 @@
+module.exports = {
+  port: <%= port %>,
+  globalPrefix: 'api',
+  openapi: {
+    enable: true,
+    title: '<%= name %> API',
+    path: '/docs',
+  },
+  logger: {
+    console: {
+      enable: true,
+      level: 'trace',
+    },
+  },
+  nats: {
+    name: '<%= name %>',
+    servers: ['nats://localhost:4222'],
+    prefix: '<%= fileName %>',
+  },
+  enableBadRequestDetails: true,
+}

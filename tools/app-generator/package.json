@@ -1,0 +1,63 @@
+{
+  "name": "@aitoearn/app-generator",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "development": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "nx": {
+    "targets": {
+      "build": {
+        "executor": "@nx/js:tsc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "tools/app-generator/dist",
+          "main": "tools/app-generator/src/index.ts",
+          "tsConfig": "tools/app-generator/tsconfig.lib.json",
+          "rootDir": "tools/app-generator/src",
+          "generatePackageJson": false,
+          "assets": [
+            {
+              "input": "./tools/app-generator/src",
+              "glob": "**/!(*.ts)",
+              "output": "."
+            },
+            {
+              "input": "./tools/app-generator/src",
+              "glob": "**/*.d.ts",
+              "output": "."
+            }
+          ]
+        }
+      },
+      "lint": {
+        "executor": "@nx/eslint:lint",
+        "outputs": ["{options.outputFile}"],
+        "options": {
+          "fix": true
+        }
+      }
+    }
+  },
+  "files": [
+    "!**/*.tsbuildinfo",
+    "dist",
+    "generators.json"
+  ],
+  "dependencies": {
+    "@nx/devkit": "21.3.11",
+    "tslib": "^2.3.0"
+  },
+  "generators": "./generators.json"
+}

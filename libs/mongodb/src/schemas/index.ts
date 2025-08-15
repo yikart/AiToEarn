@@ -1,3 +1,6 @@
+export * from './browser-environment.schema'
+export * from './browser-profile.schema'
+export * from './multilogin-account.schema'
 export * from './points-record.schema'
 export * from './timestamp.schema'
 export * from './user-wallet-account.schema'

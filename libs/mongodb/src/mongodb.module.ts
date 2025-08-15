@@ -9,7 +9,18 @@ import type { MongodbConfig } from './mongodb.config'
 import { Global } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import mongoose from 'mongoose'
-import { PointsRecord, PointsRecordSchema, User, UserSchema } from './schemas'
+import {
+  BrowserEnvironment,
+  BrowserEnvironmentSchema,
+  BrowserProfile,
+  BrowserProfileSchema,
+  MultiloginAccounts,
+  MultiloginAccountSchema,
+  PointsRecord,
+  PointsRecordSchema,
+  User,
+  UserSchema,
+} from './schemas'
 
 mongoose.set('transactionAsyncLocalStorage', true)
 
@@ -19,6 +30,9 @@ export class MongodbModule {
     const forFeature = MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: PointsRecord.name, schema: PointsRecordSchema },
+      { name: BrowserEnvironment.name, schema: BrowserEnvironmentSchema },
+      { name: BrowserProfile.name, schema: BrowserProfileSchema },
+      { name: MultiloginAccounts.name, schema: MultiloginAccountSchema },
     ])
 
     return {

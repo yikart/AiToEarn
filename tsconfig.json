@@ -16,6 +16,12 @@
     },
     {
       "path": "./libs/base-nats-client"
+    },
+    {
+      "path": "./apps/aitoearn-fingerprint-manager"
+    },
+    {
+      "path": "./tools/app-generator"
     }
   ],
   "files": []
