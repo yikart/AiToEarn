@@ -92,6 +92,7 @@
     "myPoints": "My Points",
     "pointsDescription": "View your points change history and usage",
     "pointsChange": "Points Change",
+    "balance": "Balance",
     "changeType": "Change Type",
     "description": "Description",
     "time": "Time",
@@ -99,6 +100,8 @@
     "spend": "Spend",
     "refund": "Refund",
     "expire": "Expire",
+    "aiService": "AI Service",
+    "userRegister": "User Register",
     "noPointsRecords": "No points records",
     "totalRecords": "{{total}} records total"
   }

@@ -53,6 +53,18 @@ export default function ProfilePage() {
     total: 0
   });
 
+  // 积分记录类型定义
+  interface PointsRecord {
+    id: string;
+    userId: string;
+    amount: number;
+    balance: number;
+    type: string;
+    description: string;
+    metadata?: any;
+    createdAt?: string;
+  }
+  
   // 获取会员状态和过期时间
   const isVip = userInfo?.vipInfo?.cycleType && userInfo.vipInfo.cycleType > 0 && 
                 userInfo?.vipInfo?.expireTime ? new Date(userInfo.vipInfo.expireTime) > new Date() : false;
@@ -164,7 +176,7 @@ export default function ProfilePage() {
         setPointsPagination({
           current: params.page,
           pageSize: params.pageSize,
-          total: paginatedData.count || 0
+          total: paginatedData.total || 0
         });
       } else {
         message.error(response?.message || '获取积分记录失败');
@@ -452,11 +464,21 @@ export default function ProfilePage() {
   const pointsColumns = [
     {
       title: t('points.pointsChange'),
-      dataIndex: 'points',
-      key: 'points',
-      render: (points: number) => (
-        <span style={{ color: points > 0 ? '#52c41a' : '#ff4d4f', fontWeight: 'bold' }}>
-          {points > 0 ? '+' : ''}{points}
+      dataIndex: 'amount',
+      key: 'amount',
+      render: (amount: number) => (
+        <span style={{ color: amount > 0 ? '#52c41a' : '#ff4d4f', fontWeight: 'bold' }}>
+          {amount > 0 ? '+' : ''}{amount}
+        </span>
+      ),
+    },
+    {
+      title: t('points.balance'),
+      dataIndex: 'balance',
+      key: 'balance',
+      render: (balance: number) => (
+        <span style={{ fontWeight: 'bold' }}>
+          {balance}
         </span>
       ),
     },
@@ -466,6 +488,8 @@ export default function ProfilePage() {
       key: 'type',
       render: (type: string) => {
         const typeMap: { [key: string]: { color: string; text: string } } = {
+          'ai_service': { color: 'green', text: t('points.aiService') },
+          'user_register': { color: 'blue', text: t('points.userRegister') },
           'earn': { color: 'green', text: t('points.earn') },
           'spend': { color: 'red', text: t('points.spend') },
           'refund': { color: 'blue', text: t('points.refund') },
@@ -480,12 +504,6 @@ export default function ProfilePage() {
       dataIndex: 'description',
       key: 'description',
       ellipsis: true,
-    },
-    {
-      title: t('points.time'),
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      render: (timestamp: string) => new Date(timestamp).toLocaleString(),
     },
   ];
 

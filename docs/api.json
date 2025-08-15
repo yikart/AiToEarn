@@ -184,7 +184,14 @@
                 ],
                 "responses": {
                     "default": {
-                        "description": ""
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PointsRecordsVo"
+                                }
+                            }
+                        }
                     }
                 },
                 "summary": "获取我的积分记录",
@@ -4765,6 +4772,204 @@
                 ]
             }
         },
+        "/api/channel/interactionRecord": {
+            "post": {
+                "operationId": "InteractionRecordController_add",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AddInteractionRecordDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "添加渠道互动记录",
+                "tags": [
+                    "渠道互动记录"
+                ]
+            }
+        },
+        "/api/channel/interactionRecord/list/{pageNo}/{pageSize}": {
+            "get": {
+                "operationId": "InteractionRecordController_getArcCommentList",
+                "parameters": [
+                    {
+                        "name": "pageNo",
+                        "required": true,
+                        "in": "path",
+                        "description": "页码",
+                        "schema": {
+                            "title": "页码",
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "required": true,
+                        "in": "path",
+                        "description": "页数",
+                        "schema": {
+                            "title": "页数",
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                },
+                "summary": "获取渠道互动记录列表",
+                "tags": [
+                    "渠道互动记录"
+                ]
+            }
+        },
+        "/api/channel/interactionRecord/{id}": {
+            "delete": {
+                "operationId": "InteractionRecordController_replyComment",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "删除记录",
+                "tags": [
+                    "渠道互动记录"
+                ]
+            }
+        },
+        "/api/channel/replyCommentRecord": {
+            "post": {
+                "operationId": "ReplyCommentRecordController_add",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AddReplyCommentRecordDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "添加评论回复记录",
+                "tags": [
+                    "评论回复记录"
+                ]
+            }
+        },
+        "/api/channel/replyCommentRecord/list/{pageNo}/{pageSize}": {
+            "get": {
+                "operationId": "ReplyCommentRecordController_getArcCommentList",
+                "parameters": [
+                    {
+                        "name": "pageNo",
+                        "required": true,
+                        "in": "path",
+                        "description": "页码",
+                        "schema": {
+                            "title": "页码",
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "required": true,
+                        "in": "path",
+                        "description": "页数",
+                        "schema": {
+                            "title": "页数",
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                },
+                "summary": "获取评论回复记录列表",
+                "tags": [
+                    "评论回复记录"
+                ]
+            }
+        },
+        "/api/channel/replyCommentRecord/{id}": {
+            "delete": {
+                "operationId": "ReplyCommentRecordController_replyComment",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "删除评论回复记录",
+                "tags": [
+                    "评论回复记录"
+                ]
+            }
+        },
         "/api/account/login": {
             "post": {
                 "operationId": "AccountController_createOrUpdateAccount",
@@ -7460,6 +7665,70 @@
                 "type": "object",
                 "properties": {}
             },
+            "PointsRecordsVo": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                    "list": {
+                        "description": "积分记录列表",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "description": "记录ID",
+                                    "type": "string"
+                                },
+                                "userId": {
+                                    "description": "用户ID",
+                                    "type": "string"
+                                },
+                                "amount": {
+                                    "description": "积分变动数量",
+                                    "type": "number"
+                                },
+                                "balance": {
+                                    "description": "变动后余额",
+                                    "type": "number"
+                                },
+                                "type": {
+                                    "description": "积分变动类型, ai_service ai 生成, user_register 用户注册",
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "description": "积分变动描述",
+                                    "type": "string"
+                                },
+                                "metadata": {
+                                    "description": "额外信息",
+                                    "type": "object",
+                                    "propertyNames": {
+                                        "type": "string"
+                                    },
+                                    "additionalProperties": {}
+                                }
+                            },
+                            "required": [
+                                "id",
+                                "userId",
+                                "amount",
+                                "balance",
+                                "type"
+                            ],
+                            "additionalProperties": false
+                        }
+                    },
+                    "total": {
+                        "description": "总记录数",
+                        "type": "number"
+                    }
+                },
+                "required": [
+                    "list",
+                    "total"
+                ],
+                "additionalProperties": false
+            },
             "MailLoginDto": {
                 "type": "object",
                 "properties": {
@@ -9151,6 +9420,114 @@
                     "pageIds"
                 ]
             },
+            "AddInteractionRecordDto": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                    "accountId": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "douyin",
+                            "xhs",
+                            "wxSph",
+                            "KWAI",
+                            "youtube",
+                            "wxGzh",
+                            "bilibili",
+                            "twitter",
+                            "tiktok",
+                            "facebook",
+                            "instagram",
+                            "threads"
+                        ]
+                    },
+                    "worksId": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "worksTitle": {
+                        "type": "string"
+                    },
+                    "worksCover": {
+                        "type": "string"
+                    },
+                    "worksContent": {
+                        "type": "string"
+                    },
+                    "commentContent": {
+                        "type": "string"
+                    },
+                    "commentRemark": {
+                        "type": "string"
+                    },
+                    "commentTime": {},
+                    "likeTime": {},
+                    "collectTime": {}
+                },
+                "required": [
+                    "accountId",
+                    "type",
+                    "worksId",
+                    "commentTime",
+                    "likeTime",
+                    "collectTime"
+                ],
+                "additionalProperties": false
+            },
+            "AddReplyCommentRecordDto": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                    "accountId": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "douyin",
+                            "xhs",
+                            "wxSph",
+                            "KWAI",
+                            "youtube",
+                            "wxGzh",
+                            "bilibili",
+                            "twitter",
+                            "tiktok",
+                            "facebook",
+                            "instagram",
+                            "threads"
+                        ]
+                    },
+                    "commentId": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "worksId": {
+                        "type": "string"
+                    },
+                    "commentContent": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "replyContent": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "accountId",
+                    "type",
+                    "commentId",
+                    "commentContent",
+                    "replyContent"
+                ],
+                "additionalProperties": false
+            },
             "CreateAccountDto": {
                 "type": "object",
                 "properties": {
@@ -9463,6 +9840,10 @@
                         "type": "number",
                         "description": "组排序，默认为 1"
                     },
+                    "proxyIp": {
+                        "type": "string",
+                        "description": "代理IP"
+                    },
                     "browserConfig": {
                         "type": "object",
                         "description": "浏览器配置必须为JSON格式"
@@ -9471,6 +9852,7 @@
                 "required": [
                     "name",
                     "rank",
+                    "proxyIp",
                     "browserConfig"
                 ]
             },
@@ -9485,6 +9867,10 @@
                         "type": "number",
                         "description": "组排序，默认为 1"
                     },
+                    "proxyIp": {
+                        "type": "string",
+                        "description": "代理IP"
+                    },
                     "browserConfig": {
                         "type": "object",
                         "description": "浏览器配置必须为JSON格式"
@@ -9497,6 +9883,7 @@
                 "required": [
                     "name",
                     "rank",
+                    "proxyIp",
                     "browserConfig",
                     "id"
                 ]
