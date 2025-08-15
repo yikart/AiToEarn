@@ -179,7 +179,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       name: "微信公众号",
       icon: wxGzhSvg.src,
       url: "https://mp.weixin.qq.com/",
-      pubTypes: new Set([PubType.VIDEO, PubType.ImageText, PubType.Article]),
+      pubTypes: new Set([PubType.ImageText, PubType.Article]),
       commonPubParamsConfig: {
         topicMax: 10,
         desMax: 2200,

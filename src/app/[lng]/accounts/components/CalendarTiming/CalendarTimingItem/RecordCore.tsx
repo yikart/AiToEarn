@@ -204,9 +204,11 @@ const RecordCore = memo(
                     {t("buttons.publishNow")}
                   </Button>
                 )}
-                <Dropdown menu={{ items: dropdownItems }} placement="top">
-                  <Button icon={<MoreOutlined />} />
-                </Dropdown>
+                {dropdownItems && dropdownItems.length > 0 && (
+                  <Dropdown menu={{ items: dropdownItems }} placement="top">
+                    <Button icon={<MoreOutlined />} />
+                  </Dropdown>
+                )}
               </div>
             </div>
           }
