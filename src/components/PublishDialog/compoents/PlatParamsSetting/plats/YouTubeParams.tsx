@@ -136,7 +136,10 @@ const YouTubeParams = memo(
                   <div className="platParamsSetting-label">{t("form.category")}</div>
                   <Select
                     style={{ width: "100%" }}
-                    options={youTubeCategories}
+                    options={youTubeCategories.map((item) => ({
+                      label: item.snippet.title,
+                      value: item.id,
+                    }))}
                     value={pubItem.params.option.youtube?.categoryId}
                     onChange={(value) => {
                       const option = pubItem.params.option;
@@ -154,10 +157,6 @@ const YouTubeParams = memo(
                     showSearch={true}
                     placeholder={pubItem.params.option.youtube?.regionCode ? t("form.categoryPlaceholder") : t("form.categoryPlaceholderDisabled")}
                     disabled={!pubItem.params.option.youtube?.regionCode}
-                    fieldNames={{
-                      label: "etag",
-                      value: "etag",
-                    }}
                   />
                 </div>
               </>

@@ -99,6 +99,8 @@ export interface BiblPartItem {
 // YouTube视频分类 item
 export interface YouTubeCategoryItem {
   id: string;
-  name: string;
-  description?: string;
+  snippet: {
+    title: string;
+    description?: string;
+  };
 }
