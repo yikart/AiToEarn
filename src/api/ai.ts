@@ -104,3 +104,17 @@ export const textToFireflyCard = (data: {
 }) => {
   return http.post("tools/ai/fireflycard", data);
 };
+
+// Markdown转卡片图片
+export const generateMd2Card = (data: {
+  markdown: string;
+  theme: string;
+  themeMode?: string;
+  width?: number;
+  height?: number;
+  splitMode?: string;
+  mdxMode?: boolean;
+  overHiddenMode?: boolean;
+}) => {
+  return http.post("ai/md2card", data);
+};

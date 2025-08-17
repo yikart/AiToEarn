@@ -31,10 +31,12 @@ import {
   generateVideo,
   getVideoTaskStatus,
   getVideoGenerationModels,
+  generateMd2Card,
 } from "@/api/ai";
 import { getOssUrl } from "@/utils/oss";
 import { getMediaGroupList, createMedia } from "@/api/media";
 import { useTransClient } from "@/app/i18n/client";
+import { md2CardTemplates, defaultMarkdown } from "./md2card";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -90,6 +92,18 @@ export default function AIGeneratePage() {
   const [videoResult, setVideoResult] = useState<string | null>(null);
   const [checkingStatus, setCheckingStatus] = useState(false);
   const [videoProgress, setVideoProgress] = useState(0);
+
+  // md2card相关状态
+  const [markdownContent, setMarkdownContent] = useState(defaultMarkdown);
+  const [selectedTheme, setSelectedTheme] = useState("apple-notes");
+  const [themeMode, setThemeMode] = useState("light");
+  const [cardWidth, setCardWidth] = useState(440);
+  const [cardHeight, setCardHeight] = useState(586);
+  const [splitMode, setSplitMode] = useState("noSplit");
+  const [mdxMode, setMdxMode] = useState(false);
+  const [overHiddenMode, setOverHiddenMode] = useState(false);
+  const [loadingMd2Card, setLoadingMd2Card] = useState(false);
+  const [md2CardResult, setMd2CardResult] = useState<string | null>(null);
 
   const [mediaGroups, setMediaGroups] = useState<any[]>([]);
   const [selectedMediaGroup, setSelectedMediaGroup] = useState<string | null>(
@@ -302,6 +316,37 @@ export default function AIGeneratePage() {
     poll();
   };
 
+  const handleMd2CardGeneration = async () => {
+    if (!markdownContent) {
+      message.error("请输入Markdown内容");
+      return;
+    }
+
+    try {
+      setLoadingMd2Card(true);
+      const response: any = await generateMd2Card({
+        markdown: markdownContent,
+        theme: selectedTheme,
+        themeMode,
+        width: cardWidth,
+        height: cardHeight,
+        splitMode,
+        mdxMode,
+        overHiddenMode,
+      });
+
+      if (response.data && response.data.image) {
+        setMd2CardResult(response.data.image);
+      } else {
+        message.error("生成卡片失败");
+      }
+    } catch (error) {
+      message.error("生成卡片失败");
+    } finally {
+      setLoadingMd2Card(false);
+    }
+  };
+
   const handleUploadToMediaGroup = async (type: string = 'img') => {
     setSelectedMediaGroup(null);
     await fetchMediaGroups(type as "video" | "img");
@@ -316,7 +361,7 @@ export default function AIGeneratePage() {
 
     try {
       setUploading(true);
-      const mediaUrl = videoResult || fireflyResult;
+      const mediaUrl = videoResult || fireflyResult || md2CardResult;
       const mediaType = videoResult ? "video" : "img";
       
       const response: any = await createMedia({
@@ -328,13 +373,13 @@ export default function AIGeneratePage() {
       });
 
       if (response.data) {
-        message.success(videoResult ? "视频上传成功" : t('aiGenerate.uploadSuccess'));
+        message.success(videoResult ? "视频上传成功" : md2CardResult ? "卡片上传成功" : t('aiGenerate.uploadSuccess'));
         setUploadModalVisible(false);
       } else {
-        message.error(videoResult ? "视频上传失败" : t('aiGenerate.uploadFailed'));
+        message.error(videoResult ? "视频上传失败" : md2CardResult ? "卡片上传失败" : t('aiGenerate.uploadFailed'));
       }
     } catch (error) {
-      message.error(videoResult ? "视频上传失败" : t('aiGenerate.uploadFailed'));
+      message.error(videoResult ? "视频上传失败" : md2CardResult ? "卡片上传失败" : t('aiGenerate.uploadFailed'));
     } finally {
       setUploading(false);
     }
@@ -660,6 +705,129 @@ export default function AIGeneratePage() {
                       </Button>
                     </div>
                   )}
+                </div>
+              )}
+            </div>
+          </TabPane>
+          <TabPane
+            tab={
+              <span>
+                <FileTextOutlined /> Markdown转卡片
+              </span>
+            }
+            key="md2card"
+          >
+            <div className={styles.section}>
+              <div className={styles.form}>
+                <TextArea
+                  placeholder="请输入Markdown内容"
+                  value={markdownContent}
+                  onChange={(e) => setMarkdownContent(e.target.value)}
+                  rows={8}
+                />
+                <div className={styles.dimensions}>
+                  <Select
+                    placeholder="选择主题"
+                    value={selectedTheme}
+                    onChange={setSelectedTheme}
+                    style={{ width: "100%" }}
+                  >
+                    {md2CardTemplates.map((theme) => (
+                      <Option key={theme.id} value={theme.id}>
+                        {theme.nameCn}
+                      </Option>
+                    ))}
+                  </Select>
+                  <Select
+                    placeholder="主题模式"
+                    value={themeMode}
+                    onChange={setThemeMode}
+                    style={{ width: "100%" }}
+                  >
+                    <Option value="light">浅色模式</Option>
+                    <Option value="dark">深色模式</Option>
+                  </Select>
+                </div>
+                <div className={styles.options}>
+                  <Input
+                    placeholder="卡片宽度"
+                    type="number"
+                    value={cardWidth}
+                    onChange={(e) => setCardWidth(Number(e.target.value))}
+                    style={{ width: "100%" }}
+                  />
+                  <Input
+                    placeholder="卡片高度"
+                    type="number"
+                    value={cardHeight}
+                    onChange={(e) => setCardHeight(Number(e.target.value))}
+                    style={{ width: "100%" }}
+                  />
+                </div>
+                <div className={styles.options}>
+                  <Select
+                    placeholder="分割模式"
+                    value={splitMode}
+                    onChange={setSplitMode}
+                    style={{ width: "100%" }}
+                  >
+                    <Option value="noSplit">不分割</Option>
+                    <Option value="split">分割</Option>
+                  </Select>
+                  <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={mdxMode}
+                        onChange={(e) => setMdxMode(e.target.checked)}
+                      />
+                      MDX模式
+                    </label>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={overHiddenMode}
+                        onChange={(e) => setOverHiddenMode(e.target.checked)}
+                      />
+                      溢出隐藏
+                    </label>
+                  </div>
+                </div>
+                <Button
+                  type="primary"
+                  onClick={handleMd2CardGeneration}
+                  loading={loadingMd2Card}
+                  disabled={!markdownContent}
+                  icon={<FileTextOutlined />}
+                >
+                  生成卡片
+                </Button>
+              </div>
+              {md2CardResult && (
+                <div className={styles.result}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "10px",
+                    }}
+                  >
+                    <img
+                      src={getOssUrl(md2CardResult)}
+                      alt="Markdown卡片"
+                      style={{ maxWidth: "100%", borderRadius: "8px" }}
+                    />
+                    <Button
+                      type="primary"
+                      onClick={() => handleUploadToMediaGroup('img')}
+                      icon={<UploadOutlined />}
+                      style={{
+                        padding: "1px",
+                      }}
+                    >
+                      {t('aiGenerate.uploadToMediaGroup')}
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>

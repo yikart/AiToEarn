@@ -61,6 +61,24 @@
     "pleaseEnterVideoPrompt": "请输入视频描述",
     "pleaseSelectVideoModel": "请选择视频模型",
     "videoUploadSuccess": "视频上传成功",
-    "videoUploadFailed": "视频上传失败"
+    "videoUploadFailed": "视频上传失败",
+    "md2card": "Markdown转卡片",
+    "markdownPlaceholder": "请输入Markdown内容",
+    "selectTheme": "选择主题",
+    "themeMode": "主题模式",
+    "lightMode": "浅色模式",
+    "darkMode": "深色模式",
+    "cardWidth": "卡片宽度",
+    "cardHeight": "卡片高度",
+    "splitMode": "分割模式",
+    "noSplit": "不分割",
+    "split": "分割",
+    "mdxMode": "MDX模式",
+    "overHiddenMode": "溢出隐藏",
+    "generateCard": "生成卡片",
+    "cardGenerationFailed": "卡片生成失败",
+    "cardUploadSuccess": "卡片上传成功",
+    "cardUploadFailed": "卡片上传失败",
+    "pleaseEnterMarkdown": "请输入Markdown内容"
   }
 }
