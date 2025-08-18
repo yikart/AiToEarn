@@ -1,5 +1,5 @@
 {
-  "name": "@aitoearn/base-nats-client",
+  "name": "@aitoearn/ucloud",
   "version": "0.0.1",
   "private": true,
   "exports": {
@@ -15,8 +15,11 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
+    "@aitoearn/common": "workspace:^",
     "@nestjs/common": "^11.0.0",
-    "tslib": "^2.3.0"
+    "@ucloud-sdks/ucloud-sdk-js": "^0.2.3",
+    "tslib": "^2.3.0",
+    "zod": "^4.0.15"
   },
   "nx": {
     "targets": {
@@ -26,12 +29,12 @@
           "{options.outputPath}"
         ],
         "options": {
-          "outputPath": "dist/libs/base-nats-client",
-          "tsConfig": "libs/base-nats-client/tsconfig.lib.json",
-          "packageJson": "libs/base-nats-client/package.json",
-          "main": "libs/base-nats-client/src/index.ts",
+          "outputPath": "dist/libs/ucloud",
+          "tsConfig": "libs/ucloud/tsconfig.lib.json",
+          "packageJson": "libs/ucloud/package.json",
+          "main": "libs/ucloud/src/index.ts",
           "assets": [
-            "libs/base-nats-client/*.md"
+            "libs/ucloud/*.md"
           ]
         }
       },

@@ -7,4 +7,8 @@ export enum ResponseCode {
 
   // 10100 (s3)
   S3PutObjectError = 10100,
+
+  // 11000 (multilogin-account)
+  MultiloginAccountNotFound = 11000,
+  MultiloginAccountProfilesExceeded = 11001,
 }

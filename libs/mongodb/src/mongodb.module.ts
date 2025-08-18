@@ -9,39 +9,23 @@ import type { MongodbConfig } from './mongodb.config'
 import { Global } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import mongoose from 'mongoose'
-import {
-  BrowserEnvironment,
-  BrowserEnvironmentSchema,
-  BrowserProfile,
-  BrowserProfileSchema,
-  MultiloginAccounts,
-  MultiloginAccountSchema,
-  PointsRecord,
-  PointsRecordSchema,
-  User,
-  UserSchema,
-} from './schemas'
+import { repositories } from './repositories'
+import { schemas } from './schemas'
 
 mongoose.set('transactionAsyncLocalStorage', true)
 
 @Global()
 export class MongodbModule {
   static forRoot(config: MongodbConfig) {
-    const forFeature = MongooseModule.forFeature([
-      { name: User.name, schema: UserSchema },
-      { name: PointsRecord.name, schema: PointsRecordSchema },
-      { name: BrowserEnvironment.name, schema: BrowserEnvironmentSchema },
-      { name: BrowserProfile.name, schema: BrowserProfileSchema },
-      { name: MultiloginAccounts.name, schema: MultiloginAccountSchema },
-    ])
+    const forFeature = MongooseModule.forFeature([...schemas])
 
     return {
       imports: [
         MongooseModule.forRoot(config.uri, config),
         forFeature,
       ],
-      providers: [],
-      exports: [forFeature],
+      providers: [...repositories],
+      exports: [forFeature, ...repositories],
       module: MongodbModule,
       global: true,
     }

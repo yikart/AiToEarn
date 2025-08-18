@@ -1,0 +1,51 @@
+{
+  "name": "@aitoearn/nats-client",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "development": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "dependencies": {
+    "@aitoearn/common": "workspace:^",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/microservices": "^11.0.0",
+    "rxjs": "^7.8.0",
+    "tslib": "^2.3.0",
+    "zod": "^4.0.15"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "executor": "@nx/js:tsc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "dist/libs/nats-client",
+          "tsConfig": "libs/nats-client/tsconfig.lib.json",
+          "packageJson": "libs/nats-client/package.json",
+          "main": "libs/nats-client/src/index.ts",
+          "assets": [
+            "libs/nats-client/*.md"
+          ]
+        }
+      },
+      "lint": {
+        "executor": "@nx/eslint:lint",
+        "outputs": ["{options.outputFile}"],
+        "options": {
+          "fix": true
+        }
+      }
+    }
+  }
+}

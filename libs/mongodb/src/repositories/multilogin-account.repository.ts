@@ -1,39 +1,44 @@
+import { Pagination } from '@aitoearn/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+import { Document, FilterQuery, Model } from 'mongoose'
 import { MultiloginAccounts } from '../schemas'
+import { BaseRepository } from './base.repository'
 
-export class MultiloginAccountRepository {
+export type MultiloginAccountDocument = MultiloginAccounts & Document
+
+export interface ListMultiloginAccountParams extends Pagination {
+  username?: string
+  minMaxProfiles?: number
+  maxMaxProfiles?: number
+  hasAvailableSlots?: boolean
+}
+
+export class MultiloginAccountRepository extends BaseRepository<MultiloginAccountDocument> {
   constructor(
-    @InjectModel(MultiloginAccounts.name) private readonly multiloginAccountModel: Model<MultiloginAccounts>,
-  ) {}
-
-  async getById(id: string) {
-    return await this.multiloginAccountModel.findById(id).exec()
+    @InjectModel(MultiloginAccounts.name) multiloginAccountModel: Model<MultiloginAccountDocument>,
+  ) {
+    super(multiloginAccountModel)
   }
 
-  async create(data: Partial<MultiloginAccounts>) {
-    const created = new this.multiloginAccountModel(data)
-    return await created.save()
-  }
+  async listWithPagination(params: ListMultiloginAccountParams): Promise<[MultiloginAccountDocument[], number]> {
+    const { page, pageSize, username, minMaxProfiles, maxMaxProfiles, hasAvailableSlots } = params
 
-  async updateById(id: string, data: Partial<MultiloginAccounts>) {
-    return await this.multiloginAccountModel.findByIdAndUpdate(id, data, { new: true }).exec()
-  }
+    const filter: FilterQuery<MultiloginAccountDocument> = {}
+    if (username)
+      filter.username = username
+    if (minMaxProfiles !== undefined)
+      filter.maxProfiles = { $gte: minMaxProfiles }
+    if (maxMaxProfiles !== undefined)
+      filter.maxProfiles = { ...filter.maxProfiles, $lte: maxMaxProfiles }
+    if (hasAvailableSlots === true)
+      filter.$expr = { $lt: ['$currentProfiles', '$maxProfiles'] }
+    else if (hasAvailableSlots === false)
+      filter.$expr = { $gte: ['$currentProfiles', '$maxProfiles'] }
 
-  async listWithPagination(filter: Record<string, unknown>, page: number, limit: number) {
-    const skip = (page - 1) * limit
-    const items = await this.multiloginAccountModel
-      .find(filter)
-      .skip(skip)
-      .limit(limit)
-      .exec()
-
-    const total = await this.multiloginAccountModel.countDocuments(filter).exec()
-    return {
-      items,
-      total,
+    return await this.findWithPagination({
       page,
-      limit,
-    }
+      pageSize,
+      filter,
+    })
   }
 }

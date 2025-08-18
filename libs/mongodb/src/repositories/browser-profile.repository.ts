@@ -1,39 +1,39 @@
+import { Pagination } from '@aitoearn/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+import { Document, FilterQuery, Model } from 'mongoose'
 import { BrowserProfile } from '../schemas'
+import { BaseRepository } from './base.repository'
 
-export class BrowserProfileRepository {
+export type BrowserProfileDocument = BrowserProfile & Document
+
+export interface ListBrowserProfileParams extends Pagination {
+  accountId?: string
+  profileId?: string
+  environmentId?: string
+}
+
+export class BrowserProfileRepository extends BaseRepository<BrowserProfileDocument> {
   constructor(
-    @InjectModel(BrowserProfile.name) private readonly browserProfileModel: Model<BrowserProfile>,
-  ) {}
-
-  async getById(id: string) {
-    return await this.browserProfileModel.findById(id).exec()
+    @InjectModel(BrowserProfile.name) browserProfileModel: Model<BrowserProfileDocument>,
+  ) {
+    super(browserProfileModel)
   }
 
-  async create(data: Partial<BrowserProfile>) {
-    const created = new this.browserProfileModel(data)
-    return await created.save()
-  }
+  async listWithPagination(params: ListBrowserProfileParams): Promise<[BrowserProfileDocument[], number]> {
+    const { page, pageSize, accountId, profileId, environmentId } = params
 
-  async updateById(id: string, data: Partial<BrowserProfile>) {
-    return await this.browserProfileModel.findByIdAndUpdate(id, data, { new: true }).exec()
-  }
+    const filter: FilterQuery<BrowserProfileDocument> = {}
+    if (accountId)
+      filter.accountId = accountId
+    if (profileId)
+      filter.profileId = profileId
+    if (environmentId)
+      filter.environmentId = environmentId
 
-  async listWithPagination(filter: Record<string, unknown>, page: number, limit: number) {
-    const skip = (page - 1) * limit
-    const items = await this.browserProfileModel
-      .find(filter)
-      .skip(skip)
-      .limit(limit)
-      .exec()
-
-    const total = await this.browserProfileModel.countDocuments(filter).exec()
-    return {
-      items,
-      total,
+    return await this.findWithPagination({
       page,
-      limit,
-    }
+      pageSize,
+      filter,
+    })
   }
 }

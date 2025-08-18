@@ -57,7 +57,9 @@
       },
       "lint": {
         "executor": "@nx/eslint:lint",
-        "outputs": ["{options.outputFile}"],
+        "outputs": [
+          "{options.outputFile}"
+        ],
         "options": {
           "fix": true
         }
@@ -66,7 +68,9 @@
   },
   "dependencies": {
     "@aitoearn/common": "workspace:^",
+    "@aitoearn/mongodb": "workspace:^",
     "@nestjs/common": "^11.0.0",
+    "@nestjs/microservices": "^11.1.5",
     "@nx/webpack": "21.3.11",
     "zod": "^4.0.15"
   }

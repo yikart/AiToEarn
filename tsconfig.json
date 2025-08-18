@@ -22,6 +22,15 @@
     },
     {
       "path": "./tools/app-generator"
+    },
+    {
+      "path": "./libs"
+    },
+    {
+      "path": "./libs/ucloud"
+    },
+    {
+      "path": "./fingerprint-manager-client"
     }
   ],
   "files": []
