@@ -12,8 +12,13 @@ import {
   markAllNotificationsAsRead,
   getUnreadCount,
   deleteNotifications,
-  type NotificationItem 
+  getTaskDetail,
+  acceptTask,
+  type NotificationItem,
+  type TaskItem
 } from "@/api/notification";
+import { getOssUrl } from "@/utils/oss";
+import { PubType } from "@/app/config/publishConfig";
 import styles from "./NotificationPanel.module.scss";
 
 interface NotificationPanelProps {
@@ -28,7 +33,9 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
   const [loading, setLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [selectedNotification, setSelectedNotification] = useState<NotificationItem | null>(null);
+  const [selectedTask, setSelectedTask] = useState<TaskItem | null>(null);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [taskLoading, setTaskLoading] = useState(false);
 
   // 获取通知列表
   const fetchNotifications = async () => {
@@ -97,10 +104,15 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
   const handleViewDetail = async (notification: NotificationItem) => {
     try {
       // 调用API获取通知详情
-      const response = await getNotificationDetail(notification.id);
-      if (response && response.data && response.data.data) {
-        setSelectedNotification(response.data.data);
+      const response:any = await getNotificationDetail(notification.id);
+      if (response && response.data && response.code == 0) {
+        setSelectedNotification(response.data);
         setDetailModalVisible(true);
+        
+        // 如果是任务提醒类型且有relatedId，获取任务详情
+        if (notification.type === 'task_reminder' && notification.relatedId) {
+          await fetchTaskDetail(notification.relatedId);
+        }
         
         // 如果是未读状态，标记为已读
         if (notification.status === 'unread') {
@@ -112,6 +124,42 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
     } catch (error) {
       message.error("获取通知详情失败");
       console.error("获取通知详情失败:", error);
+    }
+  };
+
+  // 获取任务详情
+  const fetchTaskDetail = async (opportunityId: string) => {
+    try {
+      setTaskLoading(true);
+      const response: any = await getTaskDetail(opportunityId);
+      if (response && response.data && response.code === 0) {
+        setSelectedTask(response.data);
+      } else {
+        console.error("获取任务详情失败");
+      }
+    } catch (error) {
+      console.error("获取任务详情失败:", error);
+    } finally {
+      setTaskLoading(false);
+    }
+  };
+
+  // 接受任务
+  const handleAcceptTask = async () => {
+    if (!selectedTask) return;
+    
+    try {
+      const response: any = await acceptTask(selectedTask.id, selectedTask.opportunityId);
+      if (response && response.code === 0) {
+        message.success("接任务成功！");
+        // 重新获取任务详情以更新状态
+        await fetchTaskDetail(selectedTask.opportunityId);
+      } else {
+        message.error("接任务失败");
+      }
+    } catch (error) {
+      message.error("接任务失败");
+      console.error("接任务失败:", error);
     }
   };
 
@@ -165,6 +213,36 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
     } catch (error) {
       message.error("删除失败");
     }
+  };
+
+  // 获取平台显示名称
+  const getPlatformName = (type: string) => {
+    const platformNames: Record<string, string> = {
+      'tiktok': 'TikTok',
+      'youtube': 'YouTube', 
+      'twitter': 'Twitter',
+      'bilibili': '哔哩哔哩',
+      'KWAI': '快手',
+      'douyin': '抖音',
+      'xhs': '小红书',
+      'wxSph': '微信视频号',
+      'wxGzh': '微信公众号',
+      'facebook': 'Facebook',
+      'instagram': 'Instagram',
+      'threads': 'Threads',
+      'pinterest': 'Pinterest',
+    };
+    return platformNames[type] || type;
+  };
+
+  // 获取任务类型显示名称
+  const getTaskTypeName = (type: string) => {
+    const taskTypeNames: Record<string, string> = {
+      'video': '视频',
+      'article': '图文',
+      'article2': '纯文字',
+    };
+    return taskTypeNames[type] || type;
   };
 
   useEffect(() => {
@@ -298,14 +376,21 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
             <span style={{ fontSize: '16px', fontWeight: '600' }}>通知详情</span>
           </div>
         }
-        open={detailModalVisible}
-        onCancel={() => setDetailModalVisible(false)}
-        footer={[
-          <Button key="close" onClick={() => setDetailModalVisible(false)} type="primary">
-            关闭
-          </Button>
-        ]}
-        width={600}
+        zIndex={2000}
+                 open={detailModalVisible}
+         onCancel={() => {
+           setDetailModalVisible(false);
+           setSelectedTask(null);
+         }}
+                 footer={[
+           <Button key="close" onClick={() => {
+             setDetailModalVisible(false);
+             setSelectedTask(null);
+           }} type="primary">
+             关闭
+           </Button>
+         ]}
+        width={800}
         styles={{
           header: {
             borderBottom: '1px solid #f0f0f0',
@@ -316,10 +401,10 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
           }
         }}
       >
-        {selectedNotification && (
-          <div className={styles.notificationDetail}>
-            <h3>{selectedNotification.title}</h3>
-                         <div className={styles.meta}>
+                 {selectedNotification && (
+           <div className={styles.notificationDetail}>
+             <h3>{selectedNotification.title}</h3>
+             <div className={styles.meta}>
                <span>
                  <Tag color={getNotificationTypeColor(selectedNotification.type)}>
                    {getNotificationTypeText(selectedNotification.type)}
@@ -332,16 +417,144 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                  </span>
                  {selectedNotification.readAt && (
                    <span style={{ color: '#52c41a' }}>
-                    已读时间: {formatTime(selectedNotification.readAt)}
+                     已读时间: {formatTime(selectedNotification.readAt)}
                    </span>
                  )}
                </div>
              </div>
-            <div className={styles.content}>
-              {selectedNotification.content}
-            </div>
-          </div>
-        )}
+             <div className={styles.content}>
+               {selectedNotification.content}
+             </div>
+             
+             {/* 任务详情部分 */}
+             {selectedNotification.type === 'task_reminder' && (
+               <div className={styles.taskDetail}>
+                 <h4 style={{ marginBottom: '16px', color: '#1890ff' }}>任务详情</h4>
+                 <Spin spinning={taskLoading}>
+                   {selectedTask ? (
+                     <div className={styles.taskInfo}>
+                       <div className={styles.taskHeader}>
+                         <h5>{selectedTask.title}</h5>
+                         <Tag color={selectedTask.status === 'active' ? 'green' : 'red'}>
+                           {selectedTask.status === 'active' ? '进行中' : '已结束'}
+                         </Tag>
+                       </div>
+                       <div className={styles.taskContent}>
+                         <p><strong>描述：</strong>
+                           <div dangerouslySetInnerHTML={{ __html: selectedTask.description }} />
+                         </p>
+                         <p><strong>奖励：</strong>¥{selectedTask.reward}</p>
+                         {/* <p><strong>招募人数：</strong>{selectedTask.currentRecruits}/{selectedTask.maxRecruits}</p> */}
+
+                                                   <p><strong>任务类型：</strong>
+                            <Tag color="blue" style={{ marginLeft: '4px' }}>
+                              {getTaskTypeName(selectedTask.type)}
+                            </Tag>
+                          </p>
+                         {selectedTask.accountTypes && selectedTask.accountTypes.length > 0 && (
+                           <p><strong>账号类型：</strong>
+                             {selectedTask.accountTypes.map(type => (
+                               <Tag key={type} style={{ marginLeft: '4px' }}>{getPlatformName(type)}</Tag>
+                             ))}
+                           </p>
+                         )}
+                         
+                         {/* 任务素材展示 */}
+                         {selectedTask.materials && selectedTask.materials.length > 0 && (
+                           <div style={{ marginTop: '16px' }}>
+                             <p><strong>任务素材：</strong></p>
+                             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                               {selectedTask.materials.map((material: any, index: number) => (
+                                 <div key={index} style={{ 
+                                   border: '1px solid #e8e8e8', 
+                                   borderRadius: '8px', 
+                                   padding: '8px',
+                                   maxWidth: '200px'
+                                 }}>
+                                   <div style={{ fontSize: '12px', fontWeight: '500', marginBottom: '4px' }}>
+                                     {material.title}
+                                   </div>
+                                   {material.coverUrl && (
+                                     <img
+                                       src={getOssUrl(material.coverUrl)}
+                                       alt="cover"
+                                       style={{
+                                         width: '100%',
+                                         height: '100px',
+                                         objectFit: 'cover',
+                                         borderRadius: '4px',
+                                         marginBottom: '4px'
+                                       }}
+                                     />
+                                   )}
+                                   <div style={{ fontSize: '11px', color: '#666', lineHeight: '1.3' }}>
+                                     {material.desc?.substring(0, 50)}{material.desc?.length > 50 ? '...' : ''}
+                                   </div>
+                                   {material.mediaList && material.mediaList.length > 0 && (
+                                     <div style={{ 
+                                       display: 'flex', 
+                                       gap: '4px', 
+                                       marginTop: '4px',
+                                       flexWrap: 'wrap'
+                                     }}>
+                                       {material.mediaList.slice(0, 3).map((media: any, mediaIndex: number) => (
+                                         <img
+                                           key={mediaIndex}
+                                           src={getOssUrl(media.url)}
+                                           alt="media"
+                                           style={{
+                                             width: '40px',
+                                             height: '40px',
+                                             objectFit: 'cover',
+                                             borderRadius: '2px'
+                                           }}
+                                         />
+                                       ))}
+                                       {material.mediaList.length > 3 && (
+                                         <div style={{
+                                           width: '40px',
+                                           height: '40px',
+                                           background: '#f0f0f0',
+                                           borderRadius: '2px',
+                                           display: 'flex',
+                                           alignItems: 'center',
+                                           justifyContent: 'center',
+                                           fontSize: '10px',
+                                           color: '#666'
+                                         }}>
+                                           +{material.mediaList.length - 3}
+                                         </div>
+                                       )}
+                                     </div>
+                                   )}
+                                 </div>
+                               ))}
+                             </div>
+                           </div>
+                         )}
+                       </div>
+                       {selectedTask.status === 'active' && selectedTask.currentRecruits < selectedTask.maxRecruits && (
+                         <div className={styles.taskActions}>
+                           <Button 
+                             type="primary" 
+                             onClick={handleAcceptTask}
+                             style={{ marginTop: '12px' }}
+                           >
+                             接受任务
+                           </Button>
+                         </div>
+                       )}
+                     </div>
+                   ) : !taskLoading && (
+                     <div style={{ textAlign: 'center', color: '#999' }}>
+                       暂无任务详情
+                     </div>
+                   )}
+                 </Spin>
+               </div>
+             )}
+           </div>
+         )}
       </Modal>
     </>
   );

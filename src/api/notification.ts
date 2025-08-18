@@ -39,7 +39,7 @@ export const getNotificationList = (params: {
 
 // 获取通知详情
 export const getNotificationDetail = (id: string) => {
-  return http.get<NotificationDetailResponse>(`notification/${id}`);
+  return http.get(`notification/${id}`);
 };
 
 // 标记通知为已读
@@ -60,4 +60,46 @@ export const getUnreadCount = () => {
 // 删除通知
 export const deleteNotifications = (notificationIds: string[]) => {
   return http.delete("notification",  { notificationIds } );
+}; 
+
+// 任务相关类型定义
+export interface TaskData {
+  targetWorksId: string;
+  targetAuthorId: string;
+  platform: string;
+}
+
+export interface TaskItem {
+  id: string;
+  title: string;
+  description: string;
+  type: string;
+  maxRecruits: number;
+  currentRecruits: number;
+  deadline: string;
+  reward: number;
+  status: string;
+  accountTypes: string[];
+  taskData: TaskData;
+  materials: string[];
+  createdAt: string;
+  updatedAt: string;
+  opportunityId: string;
+  opportunityStatus: string;
+  expiredAt: string;
+  accountId: string;
+}
+
+export interface TaskResponse {
+  data: TaskItem;
+}
+
+// 获取任务详情
+export const getTaskDetail = (opportunityId: string) => {
+  return http.get<TaskResponse>(`task/opportunity/${opportunityId}`);
+};
+
+// 接受任务
+export const acceptTask = (taskId: string, opportunityId: string) => {
+  return http.post("task/accept", { taskId, opportunityId });
 }; 
