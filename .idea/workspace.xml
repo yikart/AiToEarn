@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix: 修复发布记录Dropdown报错">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix: 默认空间国际化">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/@types/resources.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/@types/resources.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/i18n/client.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/i18n/client.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/i18n/locales/en/account.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/i18n/locales/en/account.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/i18n/locales/zh-CN/account.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/i18n/locales/zh-CN/account.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/store/account.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/account.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/hooks/usePubParamsVerify.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/hooks/usePubParamsVerify.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -182,7 +178,10 @@
       <workItem from="1755246170094" duration="785000" />
       <workItem from="1755248310749" duration="19000" />
       <workItem from="1755248688075" duration="30000" />
-      <workItem from="1755248861702" duration="1258000" />
+      <workItem from="1755248861702" duration="1282000" />
+      <workItem from="1755250365882" duration="16000" />
+      <workItem from="1755264622809" duration="72000" />
+      <workItem from="1755484080021" duration="342000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -496,7 +495,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755246915725</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="fix: 默认空间国际化">
+      <option name="closed" value="true" />
+      <created>1755250153811</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1755250153811</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -548,7 +555,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="feat(发布弹框): 发布弹框对不支持上传 图片/视频 的平台做了限制" />
     <MESSAGE value="chore(发布弹框): daysjs 时区统一管理" />
     <MESSAGE value="chore(发布弹框): 拖动修改发布时间完成" />
     <MESSAGE value="fix(日历): 修复更新的问题" />
@@ -573,6 +579,7 @@
     <MESSAGE value="fix: 将之前转发的逻辑改为直连" />
     <MESSAGE value="fix: 删除代理地址" />
     <MESSAGE value="fix: 修复发布记录Dropdown报错" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: 修复发布记录Dropdown报错" />
+    <MESSAGE value="fix: 默认空间国际化" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: 默认空间国际化" />
   </component>
 </project>

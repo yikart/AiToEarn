@@ -90,18 +90,13 @@ export default function usePubParamsVerify(data: PubItem[]) {
           );
         }
 
+        // 图片或者视频校验，视频和图片必须要上传一个
         if (
-          v.params.option.instagram?.content_category !== "story" &&
-          v.params.option.facebook?.content_category !== "story"
+          !platInfo.pubTypes.has(PubType.Article) &&
+          v.params.images?.length === 0 &&
+          !v.params.video
         ) {
-          // 图片或者视频校验，视频和图片必须要上传一个
-          if (
-            !platInfo.pubTypes.has(PubType.Article) &&
-            v.params.images?.length === 0 &&
-            !v.params.video
-          ) {
-            return setErrorMsg(t("validation.uploadImageOrVideo"));
-          }
+          return setErrorMsg(t("validation.uploadImageOrVideo"));
         }
 
         // 话题数量校验
@@ -144,7 +139,7 @@ export default function usePubParamsVerify(data: PubItem[]) {
 
         // facebook的强制校验
         if (v.account.type === PlatType.Facebook) {
-          switch (v.params.option.instagram?.content_category) {
+          switch (v.params.option.facebook?.content_category) {
             case "reel":
               // facebook reel 不支持图片，只支持视频 + 描述
               if ((v.params.images?.length || 0) !== 0) {
