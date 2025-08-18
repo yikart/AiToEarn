@@ -61,24 +61,6 @@
     "pleaseEnterVideoPrompt": "Please enter video description",
     "pleaseSelectVideoModel": "Please select video model",
     "videoUploadSuccess": "Video upload successful",
-    "videoUploadFailed": "Video upload failed",
-    "md2card": "Markdown to Card",
-    "markdownPlaceholder": "Enter Markdown content",
-    "selectTheme": "Select Theme",
-    "themeMode": "Theme Mode",
-    "lightMode": "Light Mode",
-    "darkMode": "Dark Mode",
-    "cardWidth": "Card Width",
-    "cardHeight": "Card Height",
-    "splitMode": "Split Mode",
-    "noSplit": "No Split",
-    "split": "Split",
-    "mdxMode": "MDX Mode",
-    "overHiddenMode": "Overflow Hidden",
-    "generateCard": "Generate Card",
-    "cardGenerationFailed": "Card generation failed",
-    "cardUploadSuccess": "Card upload successful",
-    "cardUploadFailed": "Card upload failed",
-    "pleaseEnterMarkdown": "Please enter Markdown content"
+    "videoUploadFailed": "Video upload failed"
   }
 }

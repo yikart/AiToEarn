@@ -544,7 +544,7 @@ export default function ProfilePage() {
       </div>
 
       {/* 积分记录卡片 */}
-      <div className={styles.pointsCard}>
+      {/* <div className={styles.pointsCard}>
         <div className={styles.pointsContent}>
           <div className={styles.pointsHeader}>
             <div>
@@ -557,7 +557,7 @@ export default function ProfilePage() {
             {t('points.pointsDescription')}
           </p>
         </div>
-      </div>
+      </div> */}
 
       <Card 
         title={t('personalInfo')} 
