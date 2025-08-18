@@ -335,8 +335,8 @@ export default function AIGeneratePage() {
         overHiddenMode,
       });
 
-      if (response.data && response.data.image) {
-        setMd2CardResult(response.data.image);
+      if (response.data && response.data.images && response.data.images.length > 0) {
+        setMd2CardResult(response.data.images[0].url);
       } else {
         message.error("生成卡片失败");
       }
