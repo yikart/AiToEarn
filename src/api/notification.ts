@@ -4,10 +4,13 @@ export interface NotificationItem {
   id: string;
   title: string;
   content: string;
-  type: "system" | "user" | "material" | "other";
-  isRead: boolean;
+  type: "system" | "user" | "material" | "other" | "task_reminder";
+  status: "read" | "unread";
+  readAt?: string;
   createdAt: string;
   updatedAt: string;
+  relatedId?: string;
+  userId?: string;
 }
 
 export interface NotificationListResponse {
@@ -31,7 +34,7 @@ export const getNotificationList = (params: {
   pageSize?: number;
   type?: string;
 }) => {
-  return http.get<NotificationListResponse>("notification", { params });
+  return http.get<NotificationListResponse>("notification", params );
 };
 
 // 获取通知详情
@@ -40,8 +43,8 @@ export const getNotificationDetail = (id: string) => {
 };
 
 // 标记通知为已读
-export const markNotificationAsRead = (id: string) => {
-  return http.put(`notification/read`, { id });
+export const markNotificationAsRead = (notificationIds: string[]) => {
+  return http.put(`notification/read`, { notificationIds });
 };
 
 // 全部标记为已读
@@ -52,4 +55,9 @@ export const markAllNotificationsAsRead = () => {
 // 获取未读数量
 export const getUnreadCount = () => {
   return http.get<UnreadCountResponse>("notification/unread-count");
+};
+
+// 删除通知
+export const deleteNotifications = (notificationIds: string[]) => {
+  return http.delete("notification",  { notificationIds } );
 }; 

@@ -1,16 +1,23 @@
 .notificationItem {
-  padding: 12px 0;
+  padding: 16px;
   border-bottom: 1px solid #f0f0f0;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   &:hover {
-    background-color: #fafafa;
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
   &.unread {
-    background-color: #f6ffed;
-    border-left: 3px solid #52c41a;
+    background: linear-gradient(135deg, #f6ffed 0%, #e6f7ff 100%);
+    position: relative;
+    padding-left: 10px !important;
+
   }
 }
 
@@ -18,7 +25,10 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 16px;
+  color: #262626;
+  margin-bottom: 8px;
 }
 
 .notificationContent {
@@ -29,47 +39,64 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
-  font-size: 12px;
-  color: #666;
-
-  .type {
-    background-color: #f0f0f0;
-    padding: 2px 6px;
-    border-radius: 4px;
-  }
+  margin-bottom: 12px;
+  font-size: 13px;
 
   .time {
-    color: #999;
+    color: #8c8c8c;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
   }
 }
 
 .content {
-  color: #333;
-  line-height: 1.5;
-  margin-bottom: 8px;
+  color: #595959;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  font-size: 14px;
+  background: #fafafa;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 3px solid #d9d9d9;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .notificationDetail {
   h3 {
-    margin-bottom: 16px;
-    color: #333;
+    margin-bottom: 20px;
+    color: #262626;
+    font-size: 18px;
+    font-weight: 600;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 12px;
   }
 
   .meta {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 16px;
-    padding: 8px 12px;
-    background-color: #f5f5f5;
-    border-radius: 4px;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 8px;
     font-size: 14px;
     color: #666;
+    border: 1px solid #e9ecef;
   }
 
   .content {
-    line-height: 1.6;
-    color: #333;
+    line-height: 1.8;
+    color: #595959;
     white-space: pre-wrap;
+    background: #fafafa;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #f0f0f0;
+    font-size: 15px;
   }
 } 

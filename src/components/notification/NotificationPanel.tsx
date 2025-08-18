@@ -1,15 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Badge, Button, List, Modal, message, Spin, Empty } from "antd";
-import { CheckOutlined } from "@ant-design/icons";
+import { Badge, Button, List, Modal, message, Spin, Empty, Popconfirm, Tooltip, Tag } from "antd";
+import { CheckOutlined, DeleteOutlined, EyeOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import { useTransClient } from "@/app/i18n/client";
 import { useUserStore } from "@/store/user";
 import { 
   getNotificationList, 
+  getNotificationDetail,
   markNotificationAsRead, 
   markAllNotificationsAsRead,
   getUnreadCount,
+  deleteNotifications,
   type NotificationItem 
 } from "@/api/notification";
 import styles from "./NotificationPanel.module.scss";
@@ -70,7 +72,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
   // 标记单个通知为已读
   const handleMarkAsRead = async (id: string) => {
     try {
-      await markNotificationAsRead(id);
+      await markNotificationAsRead([id]);
       message.success("标记成功");
       fetchNotifications();
       fetchUnreadCount();
@@ -92,11 +94,24 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
   };
 
   // 查看通知详情
-  const handleViewDetail = (notification: NotificationItem) => {
-    setSelectedNotification(notification);
-    setDetailModalVisible(true);
-    if (!notification.isRead) {
-      handleMarkAsRead(notification.id);
+  const handleViewDetail = async (notification: NotificationItem) => {
+    try {
+      // 调用API获取通知详情
+      const response = await getNotificationDetail(notification.id);
+      if (response && response.data && response.data.data) {
+        setSelectedNotification(response.data.data);
+        setDetailModalVisible(true);
+        
+        // 如果是未读状态，标记为已读
+        if (notification.status === 'unread') {
+          handleMarkAsRead(notification.id);
+        }
+      } else {
+        message.error("获取通知详情失败");
+      }
+    } catch (error) {
+      message.error("获取通知详情失败");
+      console.error("获取通知详情失败:", error);
     }
   };
 
@@ -122,9 +137,34 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
       system: "系统通知",
       user: "用户通知", 
       material: "素材通知",
+      task_reminder: "任务提醒",
       other: "其他通知"
     };
     return typeMap[type] || type;
+  };
+
+  // 获取通知类型颜色
+  const getNotificationTypeColor = (type: string) => {
+    const colorMap: Record<string, string> = {
+      system: "blue",
+      user: "green", 
+      material: "orange",
+      task_reminder: "red",
+      other: "default"
+    };
+    return colorMap[type] || "default";
+  };
+
+  // 删除通知
+  const handleDeleteNotification = async (id: string) => {
+    try {
+      await deleteNotifications([id]);
+      message.success("删除成功");
+      fetchNotifications();
+      fetchUnreadCount();
+    } catch (error) {
+      message.error("删除失败");
+    }
   };
 
   useEffect(() => {
@@ -137,19 +177,34 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
   return (
     <>
       <Modal
-        title="消息通知"
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Badge count={unreadCount} size="small">
+              <span style={{ fontSize: '16px', fontWeight: '600' }}>消息通知</span>
+            </Badge>
+          </div>
+        }
         open={visible}
         onCancel={onClose}
         footer={[
-          <Button key="markAll" onClick={handleMarkAllAsRead} disabled={unreadCount === 0}>
+          <Button key="markAll" onClick={handleMarkAllAsRead} disabled={unreadCount === 0} type="primary">
             {t('markAllAsRead')}
           </Button>,
           <Button key="close" onClick={onClose}>
             {t('actions.cancel')}
           </Button>
         ]}
-        width={600}
+        width={700}
         destroyOnHidden
+        styles={{
+          header: {
+            borderBottom: '1px solid #f0f0f0',
+            paddingBottom: '16px'
+          },
+          body: {
+            padding: '6px'
+          }
+        }}
       >
         <Spin spinning={loading}>
           {notifications.length > 0 ? (
@@ -157,33 +212,54 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
               dataSource={notifications}
               renderItem={(item) => (
                 <List.Item
-                  className={`${styles.notificationItem} ${!item.isRead ? styles.unread : ""}`}
+                  className={`${styles.notificationItem} ${item.status === 'unread' ? styles.unread : ""}`}
                   actions={[
-                    !item.isRead && (
-                                              <Button
-                          key="mark"
-                          type="text"
-                          size="small"
-                          icon={<CheckOutlined />}
-                          onClick={() => handleMarkAsRead(item.id)}
-                                              >
-                          {t('markAsRead')}
-                        </Button>
-                    )
+                    item.status === 'unread' && (
+                      <Button
+                        key="mark"
+                        type="text"
+                        size="small"
+                        icon={<CheckOutlined />}
+                        onClick={() => handleMarkAsRead(item.id)}
+                      >
+                        {t('markAsRead')}
+                      </Button>
+                    ),
+                    <Popconfirm
+                      key="delete"
+                      title="确定要删除这条通知吗？"
+                      onConfirm={() => handleDeleteNotification(item.id)}
+                      okText="确定"
+                      cancelText="取消"
+                    >
+                      <Button
+                        type="text"
+                        size="small"
+                        danger
+                        icon={<DeleteOutlined />}
+                      >
+                        删除
+                      </Button>
+                    </Popconfirm>
                   ]}
                 >
                   <List.Item.Meta
                     title={
                       <div className={styles.notificationTitle}>
                         <span>{item.title}</span>
-                        {!item.isRead && <Badge status="processing" />}
+                        {item.status === 'unread' && <Badge status="processing" />}
                       </div>
                     }
                     description={
                       <div className={styles.notificationContent}>
                         <div className={styles.notificationMeta}>
-                          <span className={styles.type}>{getNotificationTypeText(item.type)}</span>
-                          <span className={styles.time}>{formatTime(item.createdAt)}</span>
+                          <Tag color={getNotificationTypeColor(item.type)}>
+                            {getNotificationTypeText(item.type)}
+                          </Tag>
+                          <span className={styles.time}>
+                            <ClockCircleOutlined style={{ marginRight: 4 }} />
+                            {formatTime(item.createdAt)}
+                          </span>
                         </div>
                         <div className={styles.content}>
                           {item.content.length > 100 
@@ -191,13 +267,18 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                             : item.content
                           }
                         </div>
-                        <Button 
-                          type="link" 
-                          size="small" 
-                          onClick={() => handleViewDetail(item)}
-                        >
-                          {t('viewAll')}
-                        </Button>
+                        <div className={styles.actions}>
+                          <Tooltip title="查看详情">
+                            <Button 
+                              type="link" 
+                              size="small" 
+                              icon={<EyeOutlined />}
+                              onClick={() => handleViewDetail(item)}
+                            >
+                              {t('viewAll')}
+                            </Button>
+                          </Tooltip>
+                        </div>
                       </div>
                     }
                   />
@@ -212,23 +293,50 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
 
       {/* 通知详情弹窗 */}
       <Modal
-        title={t('notifications')}
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '16px', fontWeight: '600' }}>通知详情</span>
+          </div>
+        }
         open={detailModalVisible}
         onCancel={() => setDetailModalVisible(false)}
         footer={[
-          <Button key="close" onClick={() => setDetailModalVisible(false)}>
-            {t('actions.cancel')}
+          <Button key="close" onClick={() => setDetailModalVisible(false)} type="primary">
+            关闭
           </Button>
         ]}
-        width={500}
+        width={600}
+        styles={{
+          header: {
+            borderBottom: '1px solid #f0f0f0',
+            paddingBottom: '16px'
+          },
+          body: {
+            padding: '24px'
+          }
+        }}
       >
         {selectedNotification && (
           <div className={styles.notificationDetail}>
             <h3>{selectedNotification.title}</h3>
-            <div className={styles.meta}>
-              <span>类型: {getNotificationTypeText(selectedNotification.type)}</span>
-              <span>时间: {formatTime(selectedNotification.createdAt)}</span>
-            </div>
+                         <div className={styles.meta}>
+               <span>
+                 <Tag color={getNotificationTypeColor(selectedNotification.type)}>
+                   {getNotificationTypeText(selectedNotification.type)}
+                 </Tag>
+               </span>
+               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                 <span>
+                   <ClockCircleOutlined style={{ marginRight: 4 }} />
+                   创建时间: {formatTime(selectedNotification.createdAt)}
+                 </span>
+                 {selectedNotification.readAt && (
+                   <span style={{ color: '#52c41a' }}>
+                    已读时间: {formatTime(selectedNotification.readAt)}
+                   </span>
+                 )}
+               </div>
+             </div>
             <div className={styles.content}>
               {selectedNotification.content}
             </div>
