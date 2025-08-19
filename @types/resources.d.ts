@@ -48,6 +48,7 @@ interface Resources {
     }
   },
   "cgmaterial": {
+    "title": "AI草稿箱",
     "createMaterial": "创建素材",
     "selectMediaGroup": "选择媒体组",
     "selectMediaGroupDesc": "选择一个媒体组来获取其中的图片和视频资源",
@@ -68,7 +69,80 @@ interface Resources {
     "cancel": "取消",
     "mediaCount": "{{count}}个资源",
     "noMediaGroups": "暂无媒体组",
-    "noMediaInGroup": "该媒体组暂无资源"
+    "noMediaInGroup": "该媒体组暂无资源",
+    "header": {
+      "title": "AI草稿箱",
+      "importContent": "导入发布内容",
+      "createGroup": "新建草稿箱组"
+    },
+    "sidebar": {
+      "noGroups": "暂无草稿箱组",
+      "noGroupsDesc": "创建您的第一个草稿箱组开始整理素材",
+      "editGroup": "编辑草稿箱组",
+      "deleteGroup": "删除草稿箱组",
+      "deleteConfirm": "确定要删除这个草稿箱组吗？",
+      "groupName": "组名称",
+      "groupNamePlaceholder": "请输入草稿箱组名称",
+      "groupType": "类型",
+      "groupDesc": "描述",
+      "groupDescPlaceholder": "请输入草稿箱组描述（可选）",
+      "imageTextDraft": "图文草稿",
+      "videoDraft": "视频草稿",
+      "createSuccess": "创建草稿箱组成功",
+      "createFailed": "创建草稿箱组失败",
+      "updateSuccess": "更新草稿箱组成功",
+      "updateFailed": "更新草稿箱组失败",
+      "deleteSuccess": "删除草稿箱组成功",
+      "deleteFailed": "删除草稿箱组失败"
+    },
+    "material": {
+      "edit": "编辑",
+      "delete": "删除",
+      "deleteConfirm": "确定要删除这个素材吗？",
+      "imageText": "图文",
+      "video": "视频",
+      "generating": "生成中",
+      "completed": "已生成",
+      "editMaterial": "编辑素材",
+      "createSuccess": "创建素材成功",
+      "createFailed": "创建素材失败",
+      "updateSuccess": "更新素材成功",
+      "updateFailed": "更新素材失败",
+      "deleteSuccess": "删除素材成功",
+      "deleteFailed": "删除素材失败"
+    },
+    "import": {
+      "title": "导入已有发布内容",
+      "selectAccount": "选择账户",
+      "selectContent": "选择要导入的内容",
+      "importSelected": "导入选中内容",
+      "works": "作品",
+      "importSuccess": "导入成功",
+      "importFailed": "导入失败"
+    },
+    "batch": {
+      "title": "批量生成草稿",
+      "selectMediaGroups": "选择媒体组",
+      "selectCoverGroup": "选择封面组",
+      "selectVideoGroup": "选择视频组",
+      "location": "位置",
+      "generate": "生成",
+      "generating": "生成中...",
+      "generateSuccess": "批量生成成功",
+      "generateFailed": "批量生成失败"
+    },
+    "preview": {
+      "title": "预览生成结果",
+      "previewing": "预览中...",
+      "previewSuccess": "预览成功",
+      "previewFailed": "预览失败"
+    },
+    "modal": {
+      "ok": "确定",
+      "cancel": "取消",
+      "close": "关闭",
+      "pleaseCompleteForm": "请完善表单信息"
+    }
   },
   "common": {
     "profile": "个人中心",

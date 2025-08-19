@@ -1,4 +1,5 @@
 {
+  "title": "AI Draft Box",
   "createMaterial": "Create Material",
   "selectMediaGroup": "Select Media Group",
   "selectMediaGroupDesc": "Select a media group to get images and videos from it",
@@ -19,5 +20,78 @@
   "cancel": "Cancel",
   "mediaCount": "{{count}} items",
   "noMediaGroups": "No media groups",
-  "noMediaInGroup": "No media in this group"
+  "noMediaInGroup": "No media in this group",
+  "header": {
+    "title": "AI Draft Box",
+    "importContent": "Import Content",
+    "createGroup": "New Draft Group"
+  },
+  "sidebar": {
+    "noGroups": "No draft groups",
+    "noGroupsDesc": "Create your first draft group to organize materials",
+    "editGroup": "Edit Draft Group",
+    "deleteGroup": "Delete Draft Group",
+    "deleteConfirm": "Delete this draft group?",
+    "groupName": "Group Name",
+    "groupNamePlaceholder": "Enter draft group name",
+    "groupType": "Type",
+    "groupDesc": "Description",
+    "groupDescPlaceholder": "Enter description (optional)",
+    "imageTextDraft": "Image Text Draft",
+    "videoDraft": "Video Draft",
+    "createSuccess": "Created successfully",
+    "createFailed": "Create failed",
+    "updateSuccess": "Updated successfully",
+    "updateFailed": "Update failed",
+    "deleteSuccess": "Deleted successfully",
+    "deleteFailed": "Delete failed"
+  },
+      "material": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteConfirm": "Delete this material?",
+      "imageText": "Image Text",
+      "video": "Video",
+      "generating": "Generating",
+      "completed": "Completed",
+      "editMaterial": "Edit Material",
+      "createSuccess": "Created successfully",
+      "createFailed": "Create failed",
+      "updateSuccess": "Updated successfully",
+      "updateFailed": "Update failed",
+      "deleteSuccess": "Deleted successfully",
+      "deleteFailed": "Delete failed"
+    },
+  "import": {
+    "title": "Import Published Content",
+    "selectAccount": "Select Account",
+    "selectContent": "Select content to import",
+    "importSelected": "Import Selected",
+    "works": "works",
+    "importSuccess": "Import successful",
+    "importFailed": "Import failed"
+  },
+  "batch": {
+    "title": "Batch Generate Drafts",
+    "selectMediaGroups": "Select Media Groups",
+    "selectCoverGroup": "Select Cover Group",
+    "selectVideoGroup": "Select Video Group",
+    "location": "Location",
+    "generate": "Generate",
+    "generating": "Generating...",
+    "generateSuccess": "Batch generate successful",
+    "generateFailed": "Batch generate failed"
+  },
+  "preview": {
+    "title": "Preview Results",
+    "previewing": "Previewing...",
+    "previewSuccess": "Preview successful",
+    "previewFailed": "Preview failed"
+  },
+  "modal": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "close": "Close",
+    "pleaseCompleteForm": "Please complete form information"
+  }
 }
