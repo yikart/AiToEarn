@@ -2,5 +2,3 @@ packages:
   - "apps/*"
   - "libs/*"
   - "tools/*"
-  - "libs"
-  - "fingerprint-manager-client"

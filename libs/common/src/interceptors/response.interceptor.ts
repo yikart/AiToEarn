@@ -53,7 +53,7 @@ export class ResponseInterceptor implements NestInterceptor {
 
           return {
             data,
-            code: ExceptionCode.Success,
+            code: ResponseCode.Success,
             message: '请求成功',
           }
         }),

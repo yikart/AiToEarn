@@ -1,52 +1,16 @@
 {
   "name": "@aitoearn/mongodb",
+  "type": "commonjs",
   "version": "0.0.1",
-  "private": true,
-  "exports": {
-    "./package.json": "./package.json",
-    ".": {
-      "development": "./src/index.ts",
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
-    }
-  },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
   "dependencies": {
     "@aitoearn/common": "workspace:^",
     "@nestjs/common": "^11.0.0",
     "@nestjs/mongoose": "^11.0.3",
     "mongodb": "^6.18.0",
-    "mongoose": "^8.17.0",
+    "mongoose": "^8.17.2",
     "tslib": "^2.3.0",
-    "zod": "^4.0.15"
-  },
-  "nx": {
-    "targets": {
-      "build": {
-        "executor": "@nx/js:tsc",
-        "outputs": [
-          "{options.outputPath}"
-        ],
-        "options": {
-          "outputPath": "dist/libs/mongodb",
-          "tsConfig": "libs/mongodb/tsconfig.lib.json",
-          "packageJson": "libs/mongodb/package.json",
-          "main": "libs/mongodb/src/index.ts",
-          "assets": [
-            "libs/mongodb/*.md"
-          ]
-        }
-      },
-      "lint": {
-        "executor": "@nx/eslint:lint",
-        "outputs": ["{options.outputFile}"],
-        "options": {
-          "fix": true
-        }
-      }
-    }
+    "zod": "^4.0.17"
   }
 }

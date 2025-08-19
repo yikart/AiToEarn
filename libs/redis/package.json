@@ -1,50 +1,14 @@
 {
   "name": "@aitoearn/redis",
+  "type": "commonjs",
   "version": "0.0.1",
-  "private": true,
-  "exports": {
-    "./package.json": "./package.json",
-    ".": {
-      "development": "./src/index.ts",
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
-    }
-  },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
   "dependencies": {
-    "@aitoearn/common": "workspace:^",
+    "@aitoearn/common": "0.0.1",
     "@nestjs/common": "^11.0.0",
     "ioredis": "^5.7.0",
     "tslib": "^2.3.0",
-    "zod": "^4.0.15"
-  },
-  "nx": {
-    "targets": {
-      "build": {
-        "executor": "@nx/js:tsc",
-        "outputs": [
-          "{options.outputPath}"
-        ],
-        "options": {
-          "outputPath": "dist/libs/redis",
-          "tsConfig": "libs/redis/tsconfig.lib.json",
-          "packageJson": "libs/redis/package.json",
-          "main": "libs/redis/src/index.ts",
-          "assets": [
-            "libs/redis/*.md"
-          ]
-        }
-      },
-      "lint": {
-        "executor": "@nx/eslint:lint",
-        "outputs": ["{options.outputFile}"],
-        "options": {
-          "fix": true
-        }
-      }
-    }
+    "zod": "^4.0.17"
   }
 }

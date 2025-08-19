@@ -1,13 +1,11 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
-    "baseUrl": ".",
-    "rootDir": "src",
+    "target": "es2021",
     "types": ["node"],
-    "emitDeclarationOnly": false,
-    "outDir": "dist"
+    "noImplicitAny": true,
+    "declaration": true,
+    "outDir": "../../dist/out-tsc"
   },
-  "references": [],
   "include": ["src/**/*.ts"]
 }

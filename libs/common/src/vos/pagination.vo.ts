@@ -14,7 +14,7 @@ export function createPaginationVo<T>(dataSchema: z.ZodType<T>, id?: string) {
   class PaginationVo extends createZodDto(PaginationVoSchema, id) {
     constructor(data: T[], total: number, pagination: Pagination) {
       super()
-      Object.assign(this, super.create({
+      Object.assign(this, PaginationVo.create({
         page: pagination.page,
         pageSize: pagination.pageSize,
         totalPages: Math.ceil(total / pagination.pageSize),

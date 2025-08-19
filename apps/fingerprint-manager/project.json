@@ -1,0 +1,91 @@
+{
+  "name": "fingerprint-manager",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/fingerprint-manager/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "webpack-cli build",
+        "args": ["--node-env=production"],
+        "cwd": "apps/fingerprint-manager"
+      },
+      "configurations": {
+        "development": {
+          "args": ["--node-env=development"]
+        }
+      }
+    },
+    "prune-lockfile": {
+      "dependsOn": ["build"],
+      "cache": true,
+      "executor": "@nx/js:prune-lockfile",
+      "outputs": [
+        "{workspaceRoot}/dist/apps/fingerprint-manager/package.json",
+        "{workspaceRoot}/dist/apps/fingerprint-manager/pnpm-lock.yaml"
+      ],
+      "options": {
+        "buildTarget": "build"
+      }
+    },
+    "copy-workspace-modules": {
+      "dependsOn": ["build"],
+      "cache": true,
+      "outputs": [
+        "{workspaceRoot}/dist/apps/fingerprint-manager/workspace_modules"
+      ],
+      "executor": "@nx/js:copy-workspace-modules",
+      "options": {
+        "buildTarget": "build"
+      }
+    },
+    "prune": {
+      "dependsOn": ["prune-lockfile", "copy-workspace-modules"],
+      "executor": "nx:noop"
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "local",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "fingerprint-manager:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "local": {
+          "buildTarget": "fingerprint-manager:build:development",
+          "args": [
+            "-c",
+            "{workspaceRoot}/apps/fingerprint-manager/config/local.config.js"
+          ]
+        },
+        "dev": {
+          "buildTarget": "fingerprint-manager:build:development",
+          "args": [
+            "-c",
+            "{workspaceRoot}/apps/fingerprint-manager/config/dev.config.js"
+          ]
+        },
+        "prod": {
+          "buildTarget": "fingerprint-manager:build:production",
+          "args": [
+            "-c",
+            "{workspaceRoot}/apps/fingerprint-manager/config/prod.config.js"
+          ]
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "fix": true
+      }
+    }
+  }
+}

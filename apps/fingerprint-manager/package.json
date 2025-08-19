@@ -1,0 +1,13 @@
+{
+  "name": "@aitoearn/fingerprint-manager",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@aitoearn/common": "workspace:^",
+    "@aitoearn/mongodb": "0.0.1",
+    "@aitoearn/ucloud": "0.0.1",
+    "@nestjs/common": "^11.0.0",
+    "@nx/webpack": "21.4.0",
+    "zod": "^4.0.17"
+  }
+}

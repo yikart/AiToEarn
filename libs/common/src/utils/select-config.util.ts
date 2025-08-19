@@ -22,7 +22,7 @@ export function selectConfig<
         program
           .requiredOption('-c --config <config>', 'config path')
           .parse(process.argv)
-          .opts().config,
+          .opts()['config'],
       ),
     }),
   })

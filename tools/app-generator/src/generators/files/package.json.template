@@ -2,68 +2,6 @@
   "name": "@aitoearn/<%= name %>",
   "version": "0.0.1",
   "private": true,
-  "nx": {
-    "name": "<%= name %>",
-    "targets": {
-      "build": {
-        "executor": "nx:run-commands",
-        "options": {
-          "command": "webpack-cli build",
-          "args": [
-            "--node-env=production"
-          ]
-        },
-        "configurations": {
-          "development": {
-            "args": [
-              "--node-env=development"
-            ]
-          }
-        }
-      },
-      "serve": {
-        "executor": "@nx/js:node",
-        "defaultConfiguration": "local",
-        "dependsOn": [
-          "build"
-        ],
-        "options": {
-          "buildTarget": "<%= name %>:build",
-          "runBuildTargetDependencies": false
-        },
-        "configurations": {
-          "local": {
-            "buildTarget": "<%= name %>:build:development",
-            "args": [
-              "-c",
-              "apps/<%= name %>/config/local.config.js"
-            ]
-          },
-          "dev": {
-            "buildTarget": "<%= name %>:build:development",
-            "args": [
-              "-c",
-              "apps/<%= name %>/config/dev.config.js"
-            ]
-          },
-          "prod": {
-            "buildTarget": "<%= name %>:build:production",
-            "args": [
-              "-c",
-              "apps/<%= name %>/config/prod.config.js"
-            ]
-          }
-        }
-      },
-      "lint": {
-        "executor": "@nx/eslint:lint",
-        "outputs": ["{options.outputFile}"],
-        "options": {
-          "fix": true
-        }
-      }
-    }
-  },
   "dependencies": {
     "@aitoearn/common": "workspace:^"
   }

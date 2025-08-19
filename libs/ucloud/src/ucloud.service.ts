@@ -11,8 +11,8 @@ export class UCloudService {
 
   constructor(readonly client: Client) {
     this.uAccountClient = client.uaccount()
-    this.compShareClient = new CompShareClient(client.config)
-    this.ulHostClient = new ULHostClient(client.config)
+    this.compShareClient = new CompShareClient(client['config'])
+    this.ulHostClient = new ULHostClient(client['config'])
   }
 
   /**

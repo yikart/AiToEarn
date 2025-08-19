@@ -17,7 +17,7 @@ export class MultiloginAccountService {
    * 创建Multilogin账号
    */
   async create(createDto: CreateMultiloginAccountDto) {
-    await this.multiloginAccountRepository.create({
+    return await this.multiloginAccountRepository.create({
       ...createDto,
       currentProfiles: 0,
     })
@@ -52,6 +52,7 @@ export class MultiloginAccountService {
     if (!account) {
       throw new AppException(ResponseCode.MultiloginAccountNotFound)
     }
+    return account
   }
 
   /**

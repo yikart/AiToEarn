@@ -30,7 +30,7 @@ export function patchNestJsSwagger() {
     schemas,
     schemaRefsStack,
   ) {
-    if (this && this.isLazyTypeFunc(type)) {
+    if (this && this['isLazyTypeFunc'](type)) {
       const factory = type as () => Type<unknown>
       type = factory()
     }

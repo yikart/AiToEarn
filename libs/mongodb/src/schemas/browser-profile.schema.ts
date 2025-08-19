@@ -23,9 +23,9 @@ export class BrowserProfile extends WithTimestampSchema {
   profileId: string
 
   @Prop({
-    required: true,
+    required: false,
   })
-  environmentId: string
+  environmentId?: string
 
   @Prop({
     required: true,

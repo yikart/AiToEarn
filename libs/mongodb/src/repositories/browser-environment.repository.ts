@@ -10,7 +10,6 @@ export interface ListBrowserEnvironmentParams extends Pagination {
   userId?: string
   region?: BrowserEnvironmentRegion
   status?: BrowserEnvironmentStatus
-  profileId?: string
 }
 
 export class BrowserEnvironmentRepository extends BaseRepository<BrowserEnvironmentDocument> {
@@ -21,7 +20,7 @@ export class BrowserEnvironmentRepository extends BaseRepository<BrowserEnvironm
   }
 
   async listWithPagination(params: ListBrowserEnvironmentParams): Promise<[BrowserEnvironmentDocument[], number]> {
-    const { page, pageSize, userId, region, status, profileId } = params
+    const { page, pageSize, userId, region, status } = params
 
     const filter: FilterQuery<BrowserEnvironmentDocument> = {}
     if (userId)
@@ -30,8 +29,6 @@ export class BrowserEnvironmentRepository extends BaseRepository<BrowserEnvironm
       filter.region = region
     if (status)
       filter.status = status
-    if (profileId)
-      filter.profileId = profileId
 
     return await this.findWithPagination({
       page,

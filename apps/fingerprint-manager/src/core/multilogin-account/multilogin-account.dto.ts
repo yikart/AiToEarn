@@ -1,4 +1,4 @@
-import { createZodDto } from '@aitoearn/common'
+import { createZodDto, PaginationDtoSchema } from '@aitoearn/common'
 import z from 'zod'
 
 export const CreateMultiloginAccountDtoSchema = z.object({
@@ -19,8 +19,7 @@ export const UpdateMultiloginAccountDtoSchema = z.object({
 export class UpdateMultiloginAccountDto extends createZodDto(UpdateMultiloginAccountDtoSchema) {}
 
 export const ListMultiloginAccountsDtoSchema = z.object({
-  page: z.coerce.number().int().min(1).default(1),
-  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+  ...PaginationDtoSchema.shape,
   username: z.string().optional(),
   minMaxProfiles: z.coerce.number().int().min(1).optional(),
   maxMaxProfiles: z.coerce.number().int().min(1).optional(),

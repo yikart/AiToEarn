@@ -1,8 +1,8 @@
-import type { ZodDto } from '@common/utils'
 import type { ArgumentMetadata, PipeTransform } from '@nestjs/common'
 import type { ZodType } from 'zod'
-import { isZodDto, zodValidate } from '@common/utils'
+import type { ZodDto } from '../utils'
 import { ValidationPipe } from '@nestjs/common'
+import { isZodDto, zodValidate } from '../utils'
 
 export class ZodValidationPipe extends ValidationPipe implements PipeTransform {
   constructor(private schemaOrDto?: ZodType | ZodDto) {

@@ -76,6 +76,13 @@ export class BaseRepository<TDocument extends Document> {
   }
 
   /**
+   * 批量删除文档
+   */
+  async deleteMany(filter: FilterQuery<TDocument>): Promise<void> {
+    await this.model.deleteMany(filter).exec()
+  }
+
+  /**
    * 分页查询
    */
   async findWithPagination(params: PaginationParams<TDocument>): Promise<[TDocument[], number]> {

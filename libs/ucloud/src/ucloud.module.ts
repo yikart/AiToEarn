@@ -7,7 +7,7 @@ import { UCloudService } from './ucloud.service'
 
 @Module({})
 export class UCloudModule {
-  static register(config: UCloudConfig): DynamicModule {
+  static forRoot(config: UCloudConfig): DynamicModule {
     return {
       module: UCloudModule,
       providers: [

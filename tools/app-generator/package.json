@@ -14,42 +14,6 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "nx": {
-    "targets": {
-      "build": {
-        "executor": "@nx/js:tsc",
-        "outputs": [
-          "{options.outputPath}"
-        ],
-        "options": {
-          "outputPath": "tools/app-generator/dist",
-          "main": "tools/app-generator/src/index.ts",
-          "tsConfig": "tools/app-generator/tsconfig.lib.json",
-          "rootDir": "tools/app-generator/src",
-          "generatePackageJson": false,
-          "assets": [
-            {
-              "input": "./tools/app-generator/src",
-              "glob": "**/!(*.ts)",
-              "output": "."
-            },
-            {
-              "input": "./tools/app-generator/src",
-              "glob": "**/*.d.ts",
-              "output": "."
-            }
-          ]
-        }
-      },
-      "lint": {
-        "executor": "@nx/eslint:lint",
-        "outputs": ["{options.outputFile}"],
-        "options": {
-          "fix": true
-        }
-      }
-    }
-  },
   "files": [
     "!**/*.tsbuildinfo",
     "dist",
