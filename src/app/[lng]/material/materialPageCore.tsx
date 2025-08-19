@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Input, Modal, Popconfirm, Select, message } from "antd";
+import { useTransClient } from "@/app/i18n/client";
 import { 
   PlusOutlined, 
   VideoCameraOutlined, 
@@ -111,6 +112,7 @@ const VideoThumbnail = ({ videoUrl, className, onLoad }: {
 
 export const MaterialPageCore = () => {
   const router = useRouter();
+  const { t } = useTransClient("material");
   const [groups, setGroups] = useState<MediaGroup[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -150,7 +152,7 @@ export const MaterialPageCore = () => {
         setTotal(response.data.total);
       }
     } catch (error) {
-      message.error('获取媒体资源组列表失败');
+      message.error(t('mediaManagement.getListFailed'));
     } finally {
       setLoading(false);
     }
@@ -175,23 +177,23 @@ export const MaterialPageCore = () => {
         desc: newGroupDesc,
         type: newGroupType
       });
-      message.success('创建媒体资源组成功');
+      message.success(t('mediaManagement.createSuccess'));
       fetchGroups();
       setIsModalVisible(false);
       setNewGroupTitle("");
       setNewGroupDesc("");
     } catch (error) {
-      message.error('创建媒体资源组失败');
+      message.error(t('mediaManagement.createFailed'));
     }
   };
 
   const handleDeleteGroup = async (groupId: string) => {
     try {
               await deleteMediaGroup(groupId);
-      message.success('删除媒体资源组成功');
+      message.success(t('mediaManagement.deleteSuccess'));
       fetchGroups();
     } catch (error) {
-      message.error('删除媒体资源组失败');
+      message.error(t('mediaManagement.deleteFailed'));
     }
   };
 
@@ -204,14 +206,14 @@ export const MaterialPageCore = () => {
         desc: newGroupDesc,
         type: newGroupType
       });
-      message.success('更新媒体资源组成功');
+      message.success(t('mediaManagement.updateSuccess'));
       fetchGroups();
       setIsEditModalVisible(false);
       setEditingGroup(null);
       setNewGroupTitle("");
       setNewGroupDesc("");
     } catch (error) {
-      message.error('更新媒体资源组失败');
+      message.error(t('mediaManagement.updateFailed'));
     }
   };
 
@@ -300,21 +302,21 @@ export const MaterialPageCore = () => {
   return (
     <div className={styles.materialContainer}>
       <div className={styles.header}>
-        <h3>媒体资源管理</h3>
+        <h3>{t('mediaManagement.title')}</h3>
         <div className={styles.headerActions}>
           <button 
             className={styles.aiGenerateButton}
             onClick={() => router.push('/material/ai-generate?tab=videoGeneration')}
           >
             <RobotOutlined />
-            <span>AI视频生成</span>
+            <span>{t('mediaManagement.aiVideoGenerate')}</span>
           </button>
           <button 
             className={styles.createButton}
             onClick={() => setIsModalVisible(true)}
           >
             <PlusOutlined />
-            <span>创建媒体资源组</span>
+            <span>{t('mediaManagement.createGroup')}</span>
           </button>
         </div>
       </div>
@@ -336,14 +338,14 @@ export const MaterialPageCore = () => {
                     <EditOutlined />
                   </button>
                   <Popconfirm
-                    title="确定要删除这个媒体资源组吗？"
+                    title={t('mediaManagement.deleteConfirm')}
                     onConfirm={(e) => {
                       e?.stopPropagation();
                       handleDeleteGroup(group._id);
                     }}
                     onCancel={(e) => e?.stopPropagation()}
-                    okText="确定"
-                    cancelText="取消"
+                    okText={t('mediaManagement.delete')}
+                    cancelText={t('mediaManagement.cancel')}
                   >
                     <button 
                       className={`${styles.actionButton} ${styles.delete}`}
@@ -355,24 +357,24 @@ export const MaterialPageCore = () => {
                 </div>
                 <div className={styles.resourceBadge}>
                   <span className={styles.badgeText}>
-                    {group.count} 个资源
+                    {group.count}{t('mediaManagement.resources')}
                   </span>
                 </div>
               </div>
               <div className={styles.cardContent}>
                 <h3 className={styles.cardTitle}>{group.title}</h3>
                 <div className={styles.albumInfo}>
-                  <p className={styles.description}>{group.desc || '暂无描述'}</p>
+                  <p className={styles.description}>{group.desc || t('mediaManagement.noDescription')}</p>
                   <div className={styles.typeTag}>
                     {group.type === 'video' ? (
                       <>
                         <VideoCameraOutlined />
-                        <span>视频</span>
+                        <span>{t('mediaManagement.video')}</span>
                       </>
                     ) : (
                       <>
                         <PictureOutlined />
-                        <span>图片</span>
+                        <span>{t('mediaManagement.image')}</span>
                       </>
                     )}
                   </div>
@@ -386,21 +388,21 @@ export const MaterialPageCore = () => {
           <div className={styles.emptyIcon}>
             <FolderOutlined />
           </div>
-          <h3>暂无媒体资源组</h3>
-          <p>创建您的第一个媒体资源组，开始管理您的素材</p>
+          <h3>{t('mediaManagement.noGroups')}</h3>
+          <p>{t('mediaManagement.noGroupsDesc')}</p>
           <button 
             className={styles.emptyCreateButton}
             onClick={() => setIsModalVisible(true)}
           >
             <PlusOutlined />
-            立即创建
+            {t('mediaManagement.createNow')}
           </button>
         </div>
       )}
 
       {/* Modal components */}
       <Modal
-        title="创建媒体资源组"
+        title={t('mediaManagement.createGroup')}
         open={isModalVisible}
         onOk={handleCreateGroup}
         onCancel={() => {
@@ -409,81 +411,81 @@ export const MaterialPageCore = () => {
           setNewGroupDesc("");
           setNewGroupType('video');
         }}
-        okText="创建"
-        cancelText="取消"
+        okText={t('mediaManagement.create')}
+        cancelText={t('mediaManagement.cancel')}
         confirmLoading={loading}
       >
         <div className={styles.form}>
           <div className={styles.formGroup}>
-            <label>资源组名称</label>
+            <label>{t('mediaManagement.groupName')}</label>
             <Input
               value={newGroupTitle}
               onChange={(e) => setNewGroupTitle(e.target.value)}
-              placeholder="请输入资源组名称"
+              placeholder={t('mediaManagement.groupNamePlaceholder')}
             />
           </div>
           <div className={styles.formGroup}>
-            <label>描述</label>
+            <label>{t('mediaManagement.description')}</label>
             <Input.TextArea
               value={newGroupDesc}
               onChange={(e) => setNewGroupDesc(e.target.value)}
-              placeholder="请输入描述（可选）"
+              placeholder={t('mediaManagement.descriptionPlaceholder')}
               rows={3}
             />
           </div>
           <div className={styles.formGroup}>
-            <label>类型</label>
+            <label>{t('mediaManagement.type')}</label>
             <Select
               value={newGroupType}
               onChange={(value) => setNewGroupType(value)}
               style={{ width: '100%' }}
             >
-              <Select.Option value="video">视频</Select.Option>
-              <Select.Option value="img">图片</Select.Option>
+              <Select.Option value="video">{t('mediaManagement.video')}</Select.Option>
+              <Select.Option value="img">{t('mediaManagement.image')}</Select.Option>
             </Select>
           </div>
         </div>
       </Modal>
 
       <Modal
-        title="编辑媒体资源组"
+        title={t('mediaManagement.editGroup')}
         open={isEditModalVisible}
         onOk={handleUpdateGroup}
         onCancel={() => {
           setIsEditModalVisible(false);
           setEditingGroup(null);
         }}
-        okText="保存"
-        cancelText="取消"
+        okText={t('mediaManagement.save')}
+        cancelText={t('mediaManagement.cancel')}
         confirmLoading={loading}
       >
         {editingGroup && (
           <div className={styles.form}>
             <div className={styles.formGroup}>
-              <label>资源组名称</label>
+              <label>{t('mediaManagement.groupName')}</label>
               <Input
                 value={editingGroup.title}
                 onChange={(e) => setEditingGroup({
                   ...editingGroup,
                   title: e.target.value
                 })}
-                placeholder="请输入资源组名称"
+                placeholder={t('mediaManagement.groupNamePlaceholder')}
               />
             </div>
             <div className={styles.formGroup}>
-              <label>描述</label>
+              <label>{t('mediaManagement.description')}</label>
               <Input.TextArea
                 value={editingGroup.desc}
                 onChange={(e) => setEditingGroup({
                   ...editingGroup,
                   desc: e.target.value
                 })}
-                placeholder="请输入描述（可选）"
+                placeholder={t('mediaManagement.descriptionPlaceholder')}
                 rows={3}
               />
             </div>
             <div className={styles.formGroup}>
-              <label>类型</label>
+              <label>{t('mediaManagement.type')}</label>
               <Select
                 value={editingGroup.type}
                 onChange={(value) => setEditingGroup({
@@ -492,8 +494,8 @@ export const MaterialPageCore = () => {
                 })}
                 style={{ width: '100%' }}
               >
-                <Select.Option value="video">视频</Select.Option>
-                <Select.Option value="img">图片</Select.Option>
+                <Select.Option value="video">{t('mediaManagement.video')}</Select.Option>
+                <Select.Option value="img">{t('mediaManagement.image')}</Select.Option>
               </Select>
             </div>
           </div>
