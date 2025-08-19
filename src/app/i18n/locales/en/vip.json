@@ -7,6 +7,21 @@
   "paymentLinkNotFound": "Payment link not found",
   "createPaymentOrderFailed": "Failed to create payment order",
   "createPaymentOrderError": "Failed to create payment order, please try again",
+  "trialNotice": {
+    "badge": "🎉 New User Exclusive",
+    "description": "Choose monthly or yearly subscription to enjoy 7-day free trial!"
+  },
+  "trialText": {
+    "month": "Free for first 7 days, then $15/month",
+    "year": "Free for first 7 days, then $120/year"
+  },
+  "badge": {
+    "onceMonth": "One-time",
+    "month": "7-day Free Trial",
+    "year": "7-day Free Trial",
+    "monthOld": "25% Off",
+    "yearOld": "50% Off"
+  },
   "vipBenefits": {
     "exclusiveBadge": "Badge",
     "advancedFeatures": "Advanced",

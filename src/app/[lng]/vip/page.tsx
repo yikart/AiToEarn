@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined, DollarOutlined, HistoryOutlined, ThunderboltOutlined } from "@ant-design/icons";
 import { message } from "antd";
 import { useRouter } from "next/navigation";
@@ -13,8 +13,18 @@ export default function VipPage() {
   const router = useRouter();
   const { userInfo, lang } = useUserStore();
   const { t } = useTransClient('vip');
-  const [selectedPlan, setSelectedPlan] = useState('onceMonth'); // 'onceMonth', 'month', 'year'
+  const [selectedPlan, setSelectedPlan] = useState('month'); // 默认选择连续月费会员
   const [loading, setLoading] = useState(false);
+  const [canUseTrial, setCanUseTrial] = useState(false); // 是否可以使用免费试用
+
+  // 检查用户是否可以享受免费试用
+  useEffect(() => {
+    if (userInfo) {
+      // 如果用户没有vipInfo，说明从未开过会员，可以享受免费试用
+      const hasVipInfo = userInfo.vipInfo && Object.keys(userInfo.vipInfo).length > 0;
+      setCanUseTrial(!hasVipInfo);
+    }
+  }, [userInfo]);
 
   // 会员权益数据 (8个)
   const vipBenefits = [
@@ -42,6 +52,8 @@ export default function VipPage() {
       // 根据选择的计划映射到支付类型
       let paymentType;
       let paymentMethod;
+      let flagTrialPeriodDays = 0; // 默认不给免费试用
+
       switch (selectedPlan) {
         case 'onceMonth':
           paymentType = PaymentType.ONCE_MONTH;
@@ -50,14 +62,19 @@ export default function VipPage() {
         case 'month':
           paymentType = PaymentType.MONTH;
           paymentMethod = 'subscription';
+          // 如果是订阅模式且用户从未开过会员，给免费试用
+          flagTrialPeriodDays = canUseTrial ? 1 : 0;
           break;
         case 'year':
           paymentType = PaymentType.YEAR;
           paymentMethod = 'subscription';
+          // 如果是订阅模式且用户从未开过会员，给免费试用
+          flagTrialPeriodDays = canUseTrial ? 1 : 0;
           break;
         default:
-          paymentType = PaymentType.ONCE_MONTH;
-          paymentMethod = 'payment';
+          paymentType = PaymentType.MONTH;
+          paymentMethod = 'subscription';
+          flagTrialPeriodDays = canUseTrial ? 1 : 0;
       }
       
       // 创建支付订单
@@ -65,6 +82,7 @@ export default function VipPage() {
         success_url: lang === 'zh-CN' ? "/zh-CN/profile" : "/en/profile",
         mode: paymentMethod,
         payment: paymentType,
+        flagTrialPeriodDays,
         metadata: {
           userId: userInfo.id
         }
@@ -113,16 +131,25 @@ export default function VipPage() {
       </div>
 
       <h3 className={styles.title}>选择开通时长</h3>
+      
+      {/* 免费试用提示 */}
+      {canUseTrial && (
+        <div className={styles.trialNotice}>
+          <span className={styles.trialBadge}>{t('trialNotice.badge')}</span>
+          <p>{t('trialNotice.description')}</p>
+        </div>
+      )}
+
       <div className={styles.priceOptions}>
         <div 
           className={`${styles.priceCard} ${selectedPlan === 'onceMonth' ? styles.selected : ''}`}
           onClick={() => setSelectedPlan('onceMonth')}
         >
-          <span className={styles.badge}>一次性</span>
+          <span className={styles.badge}>{t('badge.onceMonth')}</span>
           <h4>月度会员</h4>
           <div>
             <span className={styles.originalPrice}>$20</span>
-            <span className={styles.discount}>一次性</span>
+            <span className={styles.discount}>{t('badge.onceMonth')}</span>
           </div>
           <p className={styles.currentPrice}>$<span>20</span></p>
         </div>
@@ -130,26 +157,40 @@ export default function VipPage() {
           className={`${styles.priceCard} ${selectedPlan === 'month' ? styles.selected : ''}`}
           onClick={() => setSelectedPlan('month')}
         >
-          <span className={styles.badge}>25%优惠</span>
+          <span className={styles.badge}>
+            {canUseTrial ? t('badge.month') : t('badge.monthOld')}
+          </span>
           <h4>月费会员</h4>
           <div>
             <span className={styles.originalPrice}>$20</span>
-            <span className={styles.discount}>25%优惠</span>
+            <span className={styles.discount}>
+              {canUseTrial ? t('badge.month') : t('badge.monthOld')}
+            </span>
           </div>
           <p className={styles.currentPrice}>$<span>15</span>/月</p>
+          {canUseTrial && (
+            <p className={styles.trialText}>{t('trialText.month')}</p>
+          )}
         </div>
         <div 
           className={`${styles.priceCard} ${selectedPlan === 'year' ? styles.selected : ''}`}
           onClick={() => setSelectedPlan('year')}
         >
-          <span className={styles.badge}>50%优惠</span>
+          <span className={styles.badge}>
+            {canUseTrial ? t('badge.year') : t('badge.yearOld')}
+          </span>
           <h4>年费会员</h4>
           <div>
             <span className={styles.originalPrice}>$180</span>
-            <span className={styles.discount}>50%优惠</span>
+            <span className={styles.discount}>
+              {canUseTrial ? t('badge.year') : t('badge.yearOld')}
+            </span>
           </div>
           <p className={styles.currentPrice}>$<span>10</span>/月</p>
           <p className={styles.monthlyPrice}>$120/年</p>
+          {canUseTrial && (
+            <p className={styles.trialText}>{t('trialText.year')}</p>
+          )}
         </div>
       </div>
       

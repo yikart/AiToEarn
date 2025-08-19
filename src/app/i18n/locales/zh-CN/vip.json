@@ -7,6 +7,21 @@
   "paymentLinkNotFound": "未获取到支付链接",
   "createPaymentOrderFailed": "创建支付订单失败",
   "createPaymentOrderError": "创建支付订单失败，请稍后重试",
+  "trialNotice": {
+    "badge": "🎉 新用户专享",
+    "description": "选择连续包月或连续包年，可享受7天免费试用期！"
+  },
+  "trialText": {
+    "month": "前7天免费，之后$15/月",
+    "year": "前7天免费，之后$120/年"
+  },
+  "badge": {
+    "onceMonth": "一次性",
+    "month": "7天免费试用",
+    "year": "7天免费试用",
+    "monthOld": "25%优惠",
+    "yearOld": "50%优惠"
+  },
   "vipBenefits": {
     "exclusiveBadge": "专属标识",
     "advancedFeatures": "高级功能",

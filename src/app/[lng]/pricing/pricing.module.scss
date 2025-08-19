@@ -1,6 +1,5 @@
 .pricingPage {
-  min-height: 100vh;
-  background: #ffffff;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   padding: 40px 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
@@ -14,23 +13,25 @@
 .header {
   text-align: center;
   margin-bottom: 60px;
-  color: #333;
+  color: #1f2937;
 
   .title {
     font-size: 3rem;
-    font-weight: 700;
+    font-weight: 800;
     margin-bottom: 16px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    letter-spacing: -1px;
   }
 
   .subtitle {
     font-size: 1.25rem;
-    color: #666;
+    color: #6b7280;
     max-width: 600px;
     margin: 0 auto;
+    font-weight: 500;
   }
 }
 
@@ -40,21 +41,22 @@
   margin-bottom: 60px;
 
   .toggleContainer {
-    background: #f5f5f5;
+    background: #ffffff;
     border-radius: 50px;
-    padding: 4px;
+    padding: 6px;
     display: flex;
-    border: 1px solid #e0e0e0;
+    border: 2px solid #e5e7eb;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
     .toggleButton {
       background: transparent;
       border: none;
-      color: #666;
+      color: #6b7280;
       padding: 12px 24px;
       border-radius: 50px;
       cursor: pointer;
       font-size: 1rem;
-      font-weight: 500;
+      font-weight: 600;
       transition: all 0.3s ease;
       position: relative;
       display: flex;
@@ -62,23 +64,25 @@
       gap: 8px;
 
       &.active {
-        background: #667eea;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
         color: white;
-        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 20px rgba(79, 70, 229, 0.4);
       }
 
       &:hover:not(.active) {
-        background: #e8e8e8;
+        background: #f3f4f6;
+        color: #374151;
       }
 
       .saveBadge {
-        background: #ff6b6b;
+        background: #ef4444;
         color: white;
-        padding: 2px 8px;
+        padding: 4px 10px;
         border-radius: 12px;
         font-size: 0.75rem;
-        font-weight: 600;
+        font-weight: 700;
         margin-left: 4px;
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
       }
     }
   }
@@ -86,39 +90,40 @@
 
 .pricingCards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
   gap: 30px;
   margin-bottom: 80px;
 }
 
 .pricingCard {
   background: white;
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 40px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
   position: relative;
   transition: all 0.3s ease;
   border: 2px solid transparent;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
   }
 
   // Free套餐特殊样式
   &:not(.popular) {
-    border: 2px solid #e0e0e0;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 2px solid #e5e7eb;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
     
     &:hover {
-      border-color: #667eea;
-      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.15);
+      border-color: #4f46e5;
+      box-shadow: 0 15px 40px rgba(79, 70, 229, 0.15);
     }
   }
 
   &.popular {
-    border-color: #667eea;
+    border-color: #4f46e5;
     transform: scale(1.05);
+    box-shadow: 0 25px 50px rgba(79, 70, 229, 0.15);
 
     &::before {
       content: '';
@@ -127,8 +132,8 @@
       left: -2px;
       right: -2px;
       bottom: -2px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 20px;
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      border-radius: 24px;
       z-index: -1;
     }
   }
@@ -137,13 +142,13 @@
     position: absolute;
     top: -12px;
     right: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
     color: white;
-    padding: 8px 16px;
+    padding: 10px 18px;
     border-radius: 20px;
     font-size: 0.875rem;
-    font-weight: 600;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
   }
 }
 
@@ -153,8 +158,8 @@
 
   .planName {
     font-size: 2rem;
-    font-weight: 700;
-    color: #333;
+    font-weight: 800;
+    color: #1f2937;
     margin-bottom: 16px;
   }
 
@@ -162,15 +167,15 @@
     .originalPrice {
       display: block;
       font-size: 1.125rem;
-      color: #999;
+      color: #9ca3af;
       text-decoration: line-through;
       margin-bottom: 4px;
     }
 
     .price {
       font-size: 2.5rem;
-      font-weight: 700;
-      color: #667eea;
+      font-weight: 800;
+      color: #4f46e5;
       display: flex;
       align-items: baseline;
       justify-content: center;
@@ -178,8 +183,8 @@
 
       .period {
         font-size: 1rem;
-        color: #666;
-        font-weight: 400;
+        color: #6b7280;
+        font-weight: 500;
       }
     }
   }
@@ -188,28 +193,30 @@
 .planFeatures {
   .mainFeatures {
     margin-bottom: 30px;
-    padding: 20px;
-    background: #f8f9ff;
-    border-radius: 12px;
+    padding: 24px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
 
     .featureItem {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
 
       &:last-child {
         margin-bottom: 0;
       }
 
       .featureLabel {
-        font-weight: 500;
-        color: #666;
+        font-weight: 600;
+        color: #374151;
       }
 
       .featureValue {
-        font-weight: 600;
-        color: #333;
+        font-weight: 700;
+        color: #1f2937;
+        font-size: 1.1rem;
       }
     }
   }
@@ -220,29 +227,37 @@
     .featureRow {
       display: flex;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       gap: 12px;
 
       .checkIcon {
-        color: #52c41a;
+        color: #10b981;
         font-size: 1.125rem;
         flex-shrink: 0;
+        background: #ecfdf5;
+        padding: 4px;
+        border-radius: 50%;
       }
 
       .closeIcon {
-        color: #ff4d4f;
+        color: #ef4444;
         font-size: 1.125rem;
         flex-shrink: 0;
+        background: #fef2f2;
+        padding: 4px;
+        border-radius: 50%;
       }
 
       .featureText {
         font-size: 0.95rem;
-        color: #333;
-        line-height: 1.4;
+        color: #1f2937;
+        line-height: 1.5;
+        font-weight: 500;
 
         &.disabled {
-          color: #999;
+          color: #9ca3af;
           text-decoration: line-through;
+          font-weight: 400;
         }
       }
     }
@@ -251,46 +266,52 @@
 
 .ctaButton {
   width: 100%;
-  height: 48px;
-  border-radius: 12px;
+  height: 52px;
+  border-radius: 16px;
   font-size: 1.125rem;
-  font-weight: 600;
+  font-weight: 700;
   border: none;
   transition: all 0.3s ease;
 
   &.ant-btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+      background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
     }
   }
 
   &.ant-btn-default {
-    background: #f5f5f5;
-    color: #333;
-    border: 2px solid #e0e0e0;
+    background: #ffffff;
+    color: #374151;
+    border: 2px solid #d1d5db;
+    font-weight: 600;
 
     &:hover {
-      background: #e8e8e8;
-      border-color: #d0d0d0;
+      background: #f9fafb;
+      border-color: #4f46e5;
+      color: #4f46e5;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
   }
 }
 
 .faqSection {
   background: white;
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 60px 40px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
 
   .faqTitle {
     text-align: center;
     font-size: 2.5rem;
-    font-weight: 700;
-    color: #333;
+    font-weight: 800;
+    color: #1f2937;
     margin-bottom: 40px;
   }
 
@@ -300,10 +321,11 @@
 
     .faqItem {
       margin-bottom: 30px;
-      padding: 20px;
-      background: #f8f9ff;
-      border-radius: 12px;
-      border-left: 4px solid #667eea;
+      padding: 24px;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border-radius: 16px;
+      border-left: 4px solid #4f46e5;
+      border: 1px solid #e5e7eb;
 
       &:last-child {
         margin-bottom: 0;
@@ -311,15 +333,16 @@
 
       .faqQuestion {
         font-size: 1.125rem;
-        font-weight: 600;
-        color: #333;
+        font-weight: 700;
+        color: #1f2937;
         margin-bottom: 8px;
       }
 
       .faqAnswer {
-        color: #666;
+        color: #6b7280;
         line-height: 1.6;
         margin: 0;
+        font-weight: 500;
       }
     }
   }

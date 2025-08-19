@@ -1,7 +1,5 @@
 .container {
   padding: 24px;
-  max-width: 1440px;
-  margin: 0 auto;
   text-align: center;
 }
 
@@ -17,6 +15,44 @@
   border-radius: 8px;
   font-size: 18px;
   color: #666;
+}
+
+/* 免费试用提示样式 */
+.trialNotice {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.trialBadge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.trialNotice p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.trialText {
+  font-size: 12px;
+  color: #10b981;
+  font-weight: 600;
+  margin-top: 8px;
+  background: #ecfdf5;
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
 }
 
 /* 会员卡片样式 */
