@@ -1084,6 +1084,7 @@ export default function CgMaterialPageCore() {
             label="组名称" 
             name="name" 
             rules={[{ required: true, message: '请输入草稿箱组名称' }]}
+            initialValue="DraftboxGroup"
           >
             <Input placeholder="请输入草稿箱组名称" />
           </Form.Item>
