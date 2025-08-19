@@ -121,9 +121,15 @@ export default function PricingPage() {
                     </span>
                   )}
                   <div className={styles.price}>
-                    ${plan.price} USD
+                    <span className={styles.currency}>$</span>
+                    <span className={styles.amount}>{plan.price}</span>
                     <span className={styles.period}>/{t('month')}</span>
                   </div>
+                  {billingCycle === 'yearly' && plan.price > 0 && (
+                    <div className={styles.monthlyPrice}>
+                      ${(plan.price * 12).toFixed(0)} USD/{t('yearly')}
+                    </div>
+                  )}
                 </div>
               </div>
 
