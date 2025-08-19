@@ -815,6 +815,20 @@ interface Resources {
       "userRegister": "用户注册",
       "noPointsRecords": "暂无积分记录",
       "totalRecords": "共 {{total}} 条记录"
+    },
+    "freeTrial": {
+      "title": "🎉 免费会员体验",
+      "congratulations": "恭喜您获得7天免费会员体验！",
+      "description": "作为新用户，您可以享受7天的免费会员权益，体验所有高级功能，包括：",
+      "unlimitedAI": "✓ 无限制AI生成",
+      "priorityProcessing": "✓ 优先处理",
+      "advancedModels": "✓ 高级模型",
+      "dedicatedSupport": "✓ 专属客服",
+      "noAds": "✓ 无广告体验",
+      "morePrivileges": "✓ 更多特权",
+      "completelyFree": "🎁 完全免费，无需支付任何费用",
+      "claimNow": "立即领取",
+      "later": "稍后再说"
     }
   },
   "publish": {

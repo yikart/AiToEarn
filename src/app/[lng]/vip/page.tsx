@@ -141,18 +141,7 @@ export default function VipPage() {
       )}
 
       <div className={styles.priceOptions}>
-        <div 
-          className={`${styles.priceCard} ${selectedPlan === 'onceMonth' ? styles.selected : ''}`}
-          onClick={() => setSelectedPlan('onceMonth')}
-        >
-          <span className={styles.badge}>{t('badge.onceMonth')}</span>
-          <h4>月度会员</h4>
-          <div>
-            <span className={styles.originalPrice}>$20</span>
-            <span className={styles.discount}>{t('badge.onceMonth')}</span>
-          </div>
-          <p className={styles.currentPrice}>$<span>20</span></p>
-        </div>
+        
         <div 
           className={`${styles.priceCard} ${selectedPlan === 'month' ? styles.selected : ''}`}
           onClick={() => setSelectedPlan('month')}
@@ -191,6 +180,18 @@ export default function VipPage() {
           {canUseTrial && (
             <p className={styles.trialText}>{t('trialText.year')}</p>
           )}
+        </div>
+        <div 
+          className={`${styles.priceCard} ${selectedPlan === 'onceMonth' ? styles.selected : ''}`}
+          onClick={() => setSelectedPlan('onceMonth')}
+        >
+          <span className={styles.badge}>{t('badge.onceMonth')}</span>
+          <h4>月度会员</h4>
+          <div>
+            <span className={styles.originalPrice}>$20</span>
+            <span className={styles.discount}>{t('badge.onceMonth')}</span>
+          </div>
+          <p className={styles.currentPrice}>$<span>20</span></p>
         </div>
       </div>
       

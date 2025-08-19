@@ -104,5 +104,19 @@
     "userRegister": "User Register",
     "noPointsRecords": "No points records",
     "totalRecords": "{{total}} records total"
+  },
+  "freeTrial": {
+    "title": "🎉 Free Member Trial",
+    "congratulations": "Congratulations! You've earned a 7-day free member trial!",
+    "description": "As a new user, you can enjoy 7 days of free member benefits and experience all premium features, including:",
+    "unlimitedAI": "✓ Unlimited AI Generation",
+    "priorityProcessing": "✓ Priority Processing",
+    "advancedModels": "✓ Advanced Models",
+    "dedicatedSupport": "✓ Dedicated Support",
+    "noAds": "✓ Ad-Free Experience",
+    "morePrivileges": "✓ More Privileges",
+    "completelyFree": "🎁 Completely free, no payment required",
+    "claimNow": "Claim Now",
+    "later": "Later"
   }
 } 

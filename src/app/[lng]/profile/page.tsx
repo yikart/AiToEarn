@@ -23,6 +23,18 @@ export default function ProfilePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
   
+  // 免费会员提示弹框状态
+  const [freeTrialModalVisible, setFreeTrialModalVisible] = useState(false);
+  const [hasShownFreeTrial, setHasShownFreeTrial] = useState(false);
+  
+  // 检查是否已经显示过免费会员提示
+  useEffect(() => {
+    const hasShown = localStorage.getItem('freeTrialShown');
+    if (hasShown) {
+      setHasShownFreeTrial(true);
+    }
+  }, []);
+  
   // 订单相关状态
   const [orders, setOrders] = useState<Order[]>([]);
   const [subscriptions, setSubscriptions] = useState<Order[]>([]);
@@ -70,6 +82,9 @@ export default function ProfilePage() {
                 userInfo?.vipInfo?.expireTime ? new Date(userInfo.vipInfo.expireTime) > new Date() : false;
   const vipExpireTime = userInfo?.vipInfo?.expireTime ? new Date(userInfo.vipInfo.expireTime).toLocaleDateString() : '';
   
+  // 检查用户是否从未开过会员
+  const hasNeverBeenVip = !userInfo?.vipInfo || Object.keys(userInfo.vipInfo).length === 0;
+  
   // 获取会员类型显示文本
   const getVipCycleTypeText = (cycleType: number) => {
     switch (cycleType) {
@@ -109,6 +124,16 @@ export default function ProfilePage() {
       
       if (response.code === 0 && response.data) {
         setUserInfo(response.data);
+        
+        // 检查是否需要显示免费会员提示
+        const hasVipInfo = response.data.vipInfo && Object.keys(response.data.vipInfo).length > 0;
+        if (!hasVipInfo && !hasShownFreeTrial) {
+          // 延迟显示弹框，确保页面加载完成
+          setTimeout(() => {
+            setFreeTrialModalVisible(true);
+            setHasShownFreeTrial(true);
+          }, 2000); // 增加延迟时间，让用户先看到页面内容
+        }
       } else {
         message.error(response.message || t('getUserInfoFailed'));
       }
@@ -282,6 +307,18 @@ export default function ProfilePage() {
 
   const handleGoToVipPage = () => {
     router.push('/vip');
+  };
+
+  // 处理免费会员弹框
+  const handleFreeTrialModalOk = () => {
+    setFreeTrialModalVisible(false);
+    localStorage.setItem('freeTrialShown', 'true');
+    router.push('/vip');
+  };
+
+  const handleFreeTrialModalCancel = () => {
+    setFreeTrialModalVisible(false);
+    localStorage.setItem('freeTrialShown', 'true');
   };
 
   // 订单状态标签
@@ -865,6 +902,71 @@ export default function ProfilePage() {
             )}
           </Descriptions>
         )}
+      </Modal>
+
+      {/* 免费会员提示弹框 */}
+      <Modal
+        title={
+          <div style={{ textAlign: 'center', fontSize: '18px', fontWeight: 'bold', color: '#C026D2' }}>
+            {t('freeTrial.title')}
+          </div>
+        }
+        open={freeTrialModalVisible}
+        onOk={handleFreeTrialModalOk}
+        onCancel={handleFreeTrialModalCancel}
+        okText={t('freeTrial.claimNow')}
+        cancelText={t('freeTrial.later')}
+        okButtonProps={{
+          style: {
+            backgroundColor: '#C026D2',
+            borderColor: '#C026D2',
+            borderRadius: '8px',
+            fontWeight: '600'
+          }
+        }}
+        cancelButtonProps={{
+          style: {
+            borderRadius: '8px',
+            fontWeight: '600'
+          }
+        }}
+        width={500}
+        centered
+        maskClosable={false}
+        closable={false}
+      >
+        <div style={{ textAlign: 'center', padding: '20px 0' }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>👑</div>
+          <h3 style={{ color: '#1f2937', marginBottom: '12px', fontSize: '16px' }}>
+            {t('freeTrial.congratulations')}
+          </h3>
+          <p style={{ color: '#6b7280', lineHeight: '1.6', marginBottom: '20px' }}>
+            {t('freeTrial.description')}
+          </p>
+          <div style={{ 
+            background: '#f8fafc', 
+            borderRadius: '12px', 
+            padding: '16px', 
+            marginBottom: '20px',
+            border: '1px solid #e2e8f0'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <span style={{ color: '#374151', fontSize: '14px' }}>{t('freeTrial.unlimitedAI')}</span>
+              <span style={{ color: '#374151', fontSize: '14px' }}>{t('freeTrial.priorityProcessing')}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <span style={{ color: '#374151', fontSize: '14px' }}>{t('freeTrial.advancedModels')}</span>
+              <span style={{ color: '#374151', fontSize: '14px' }}>{t('freeTrial.dedicatedSupport')}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#374151', fontSize: '14px' }}>{t('freeTrial.noAds')}</span>
+              <span style={{ color: '#374151', fontSize: '14px' }}>{t('freeTrial.morePrivileges')}</span>
+            </div>
+          </div>
+          <p style={{ color: '#C026D2', fontSize: '14px', fontWeight: '600' }}>
+            {t('freeTrial.completelyFree')}
+          </p>
+        </div>
       </Modal>
     </div>
   );
