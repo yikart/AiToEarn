@@ -28,7 +28,25 @@ import { PubType } from "@/app/config/publishConfig";
 const { TextArea } = Input;
 
 export default function CgMaterialPageCore() {
-  const { t } = useTransClient('cgmaterial');
+  // const { t } = useTransClient('cgmaterial');
+  
+  // 简单的多语言支持函数
+  const t = (key: string) => {
+    const translations: Record<string, string> = {
+      'selectMediaGroup': '选择媒体组',
+      'selectMediaGroupDesc': '选择一个媒体组来获取其中的图片和视频资源',
+      'mediaGroupType.img': '图片组',
+      'mediaGroupType.video': '视频组', 
+      'mediaGroupType.mixed': '混合组',
+      'selectCover': '选择封面（单选）',
+      'selectMaterials': '选择素材（多选）',
+      'title': '标题',
+      'description': '简介',
+      'location': '地理位置',
+      'mediaCount': '个资源'
+    };
+    return translations[key] || key;
+  };
   
   // 草稿箱组相关
   const [groupList, setGroupList] = useState<any[]>([]);
@@ -182,9 +200,9 @@ export default function CgMaterialPageCore() {
       fetchGroupList();
           } catch (e: any) {
         if (e?.errorFields) {
-          message.warning(t('modal.pleaseCompleteForm'));
+          message.warning("请完善表单信息");
         } else {
-          message.error(t('sidebar.createFailed'));
+          message.error("创建草稿箱组失败");
         }
       } finally {
       setCreating(false);
@@ -355,7 +373,7 @@ export default function CgMaterialPageCore() {
         option: {},
         location: singleLocation,
       });
-      message.success(t('material.createSuccess'));
+      message.success('创建素材成功');
       setCreateModal(false);
       // 重置创建素材相关状态
       setSelectedMediaGroup(null);
@@ -372,7 +390,7 @@ export default function CgMaterialPageCore() {
       form.resetFields();
       fetchMaterialList(selectedGroup._id);
     } catch (e) {
-      message.error(t('material.createFailed'));
+      message.error('创建素材失败');
     } finally {
       setCreating(false);
     }
@@ -841,21 +859,21 @@ export default function CgMaterialPageCore() {
   return (
     <div className={styles.materialContainer}>
       <div className={styles.header}>
-        <h2>{t('header.title')}</h2>
+        <h2>AI草稿箱</h2>
         <div className={styles.headerActions}>
           <Button 
             className={`${styles.actionButton} ${styles.importButton}`}
             onClick={openImportModal}
             icon={<ImportOutlined />}
           >
-            {t('header.importContent')}
+            导入发布内容
           </Button>
           <Button 
             className={styles.actionButton}
             onClick={() => setCreateGroupModal(true)}
             icon={<PlusOutlined />}
           >
-            {t('header.createGroup')}
+            新建草稿箱组
           </Button>
         </div>
       </div>
@@ -870,8 +888,8 @@ export default function CgMaterialPageCore() {
                   <div className={styles.emptyIcon}>
                     <FolderOpenOutlined />
                   </div>
-                  <h3>{t('sidebar.noGroups')}</h3>
-                  <p>{t('sidebar.noGroupsDesc')}</p>
+                  <h3>暂无草稿箱组</h3>
+                  <p>创建您的第一个草稿箱组开始整理素材</p>
                 </div>
               ) : (
                 <List
@@ -1017,10 +1035,10 @@ export default function CgMaterialPageCore() {
                             <div className={styles.cardDesc}>{item.desc}</div>
                             <div className={styles.cardMeta}>
                               <span className={styles.typeLabel}>
-                                {item.type === PubType.ImageText ? t('material.imageText') : item.type === PubType.VIDEO ? t('material.video') : item.type}
+                                {item.type === PubType.ImageText ? "图文" : item.type === PubType.VIDEO ? "视频" : item.type}
                               </span>
                               <span className={`${styles.statusLabel} ${item.status === 0 ? styles.generating : styles.completed}`}>
-                                {item.status === 0 ? t('material.generating') : t('material.completed')}
+                                {item.status === 0 ? "生成中" : "已生成"}
                               </span>
                             </div>
                           </div>
@@ -1036,7 +1054,7 @@ export default function CgMaterialPageCore() {
                             }}
                             className={styles.editButton}
                           >
-                            {t('material.edit')}
+                            编辑
                           </Button>
                         </div>
                       </div>
@@ -1052,7 +1070,7 @@ export default function CgMaterialPageCore() {
       {/* 创建草稿箱组弹窗 */}
       <Modal
         open={createGroupModal}
-        title={t('header.createGroup')}
+        title="新建草稿箱组"
         onOk={handleCreateGroup}
         onCancel={() => {
           setCreateGroupModal(false);
@@ -1063,35 +1081,35 @@ export default function CgMaterialPageCore() {
       >
         <Form form={createGroupForm} layout="vertical">
           <Form.Item 
-            label={t('sidebar.groupName')} 
+            label="组名称" 
             name="name" 
-            rules={[{ required: true, message: t('sidebar.groupNamePlaceholder') }]}
+            rules={[{ required: true, message: '请输入草稿箱组名称' }]}
           >
-            <Input placeholder={t('sidebar.groupNamePlaceholder')} />
+            <Input placeholder="请输入草稿箱组名称" />
           </Form.Item>
           
           <Form.Item 
-            label={t('sidebar.groupType')} 
+            label="类型" 
             name="type" 
-            rules={[{ required: true, message: t('sidebar.groupType') }]}
+            rules={[{ required: true, message: '请选择草稿类型' }]}
             initialValue={PubType.ImageText}
           >
-            <Select placeholder={t('sidebar.groupType')}>
+            <Select placeholder="请选择草稿类型">
               <Select.Option value={PubType.ImageText}>
                 <FileTextOutlined style={{ marginRight: 8, color: '#52c41a' }} />
-                {t('sidebar.imageTextDraft')}
+                图文草稿
               </Select.Option>
               <Select.Option value={PubType.VIDEO}>
                 <VideoCameraOutlined style={{ marginRight: 8, color: '#1890ff' }} />
-                {t('sidebar.videoDraft')}
+                视频草稿
               </Select.Option>
             </Select>
           </Form.Item>
           
-          <Form.Item label={t('sidebar.groupDesc')} name="desc">
+          <Form.Item label="描述" name="desc">
             <TextArea 
               rows={3} 
-              placeholder={t('sidebar.groupDescPlaceholder')}
+              placeholder="请输入草稿箱组描述（可选）"
               maxLength={200}
               showCount
             />
@@ -1102,7 +1120,7 @@ export default function CgMaterialPageCore() {
       {/* 导入发布内容弹窗 */}
       <Modal
         open={importModal}
-        title={t('import.title')}
+        title="导入已有发布内容"
         onOk={handleImportPublishItems}
         onCancel={() => {
           setImportModal(false);
@@ -1112,11 +1130,11 @@ export default function CgMaterialPageCore() {
         }}
         confirmLoading={importLoading}
         width={800}
-        okText={t('import.importSelected')}
+        okText="导入选中内容"
         okButtonProps={{ disabled: selectedPublishItems.length === 0 }}
       >
         <div style={{ marginBottom: 16 }}>
-          <div style={{ fontWeight: 600, marginBottom: 8 }}>{t('import.selectAccount')}</div>
+          <div style={{ fontWeight: 600, marginBottom: 8 }}>选择账户</div>
           <List
             bordered
             style={{ maxHeight: 200, overflow: 'auto' }}
@@ -1137,7 +1155,7 @@ export default function CgMaterialPageCore() {
                   <div>
                     <div style={{ fontWeight: 500 }}>{account.nickname}</div>
                     <div style={{ fontSize: 12, color: '#666' }}>
-                      {getPlatformName(account.type)} • {account.workCount} {t('import.works')}
+                      {getPlatformName(account.type)} • {account.workCount} 作品
                     </div>
                   </div>
                 </div>
@@ -1149,7 +1167,7 @@ export default function CgMaterialPageCore() {
         {selectedAccount && (
           <div>
             <div style={{ fontWeight: 600, marginBottom: 8 }}>
-              {selectedAccount.nickname} {t('import.selectContent')}
+              {selectedAccount.nickname} 的发布内容 (选择要导入的内容)
             </div>
             <List
               bordered
@@ -1993,13 +2011,13 @@ export default function CgMaterialPageCore() {
       {/* 编辑组名弹窗 */}
       <Modal
         open={editGroupModal}
-        title={t('sidebar.editGroup')}
+        title="编辑草稿箱组"
         onOk={handleEditGroup}
         onCancel={()=>setEditGroupModal(false)}
         confirmLoading={editLoading}
       >
         <Input
-          placeholder={t('sidebar.groupNamePlaceholder')}
+          placeholder="请输入新组名"
           value={editGroupName}
           onChange={e=>setEditGroupName(e.target.value)}
         />
@@ -2008,7 +2026,7 @@ export default function CgMaterialPageCore() {
       {/* 编辑素材弹窗 */}
       <Modal
         open={editMaterialModal}
-        title={t('material.editMaterial')}
+        title="编辑素材"
         onOk={handleUpdateMaterial}
         onCancel={() => {
           setEditMaterialModal(false);

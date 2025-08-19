@@ -3,7 +3,6 @@
   color: #1a1a1a;
   line-height: 1.6;
   overflow-x: hidden;
-  padding-bottom: 85vh;
   position: relative;
   z-index: 2;
 }
@@ -1124,22 +1123,16 @@
 }
 
 .footer {
-  bottom: 0;
-  flex: none;
-  height: 85vh;
-  left: calc(50.00000000000002% - 100% / 2);
-  pointer-events: auto;
-  position: fixed;
+  position: relative;
   width: 100%;
-  z-index: -1;
   background: #ffffff;
   color: #1f2937;
   border-top: 1px solid #e5e7eb;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  margin-top: 60px;
 }
 
 .footerContainer {
-  height: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 60px 40px 40px;
@@ -1245,7 +1238,7 @@
   font-weight: 900;
   line-height: 1.2;
   color: #1f2937;
-  margin-bottom: 40px;
+  margin-bottom: 220px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   cursor: pointer;
 }
@@ -1351,7 +1344,7 @@
   }
   
   .footer {
-    height: 90vh;
+    margin-top: 40px;
   }
   
   .footerContainer {
@@ -1432,7 +1425,7 @@
   }
   
   .footer {
-    height: 95vh;
+    margin-top: 30px;
   }
   
   .footerContainer {
