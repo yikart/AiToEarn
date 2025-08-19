@@ -68,15 +68,15 @@ export default function AIGeneratePage() {
   const [fireflyResult, setFireflyResult] = useState<string | null>(null);
   const TEMPLATE_BASE = "https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/firefly";
   const templateList = [
-    { key: "tempA", name: "默认" },
-    { key: "tempB", name: "透明" },
-    { key: "tempC", name: "金句" },
-    { key: "tempJin", name: "书摘" },
-    { key: "tempMemo", name: "便当" },
-    { key: "tempEasy", name: "边框" },
-    { key: "tempE", name: "边框" },
-    { key: "tempWrite", name: "手写" },
-    { key: "tempD", name: "图片" },
+    { key: "tempA", name: t('aiGenerate.templateA') },
+    { key: "tempB", name: t('aiGenerate.templateB') },
+    { key: "tempC", name: t('aiGenerate.templateC') },
+    { key: "tempJin", name: t('aiGenerate.templateJin') },
+    { key: "tempMemo", name: t('aiGenerate.templateMemo') },
+    { key: "tempEasy", name: t('aiGenerate.templateEasy') },
+    { key: "tempE", name: t('aiGenerate.templateE') },
+    { key: "tempWrite", name: t('aiGenerate.templateWrite') },
+    { key: "tempD", name: t('aiGenerate.templateD') },
   ];
 
   // 视频生成相关状态
@@ -187,10 +187,10 @@ export default function AIGeneratePage() {
         const imageUrls = response.data.list.map((item: any) => item.url);
         setResult(imageUrls);
       } else {
-        message.error("生成图片失败");
+        message.error(t('aiGenerate.imageGenerationFailed'));
       }
     } catch (error) {
-      message.error("生成图片失败");
+      message.error(t('aiGenerate.imageGenerationFailed'));
     } finally {
       setLoading(false);
     }
@@ -198,7 +198,7 @@ export default function AIGeneratePage() {
 
   const handleTextToFireflyCard = async () => {
     if (!content || !title) {
-      message.error("请输入内容和标题");
+      message.error(t('aiGenerate.pleaseEnterContentAndTitle'));
       return;
     }
 
@@ -213,10 +213,10 @@ export default function AIGeneratePage() {
       if (response.data && response.data.image) {
         setFireflyResult(response.data.image);
       } else {
-        message.error("生成流光卡片失败");
+        message.error(t('aiGenerate.fireflyCardGenerationFailed'));
       }
     } catch (error) {
-      message.error("生成流光卡片失败");
+      message.error(t('aiGenerate.fireflyCardGenerationFailed'));
     } finally {
       setLoadingFirefly(false);
     }
@@ -224,12 +224,12 @@ export default function AIGeneratePage() {
 
   const handleVideoGeneration = async () => {
     if (!videoPrompt) {
-      message.error("请输入视频描述");
+      message.error(t('aiGenerate.pleaseEnterVideoDescription'));
       return;
     }
 
     if (!videoModel) {
-      message.error("请选择视频模型");
+      message.error(t('aiGenerate.pleaseSelectVideoModel'));
       return;
     }
 
@@ -255,16 +255,16 @@ export default function AIGeneratePage() {
       if (response.data && response.data.task_id) {
         setVideoTaskId(response.data.task_id);
         setVideoStatus(response.data.status);
-        message.success("任务已提交");
+        message.success(t('aiGenerate.taskSubmittedSuccess'));
         
         // 开始轮询任务状态
         pollVideoTaskStatus(response.data.task_id);
       } else {
-        message.error("视频生成失败");
+        message.error(t('aiGenerate.videoGenerationFailed'));
         setVideoStatus("");
       }
     } catch (error) {
-      message.error("视频生成失败");
+      message.error(t('aiGenerate.videoGenerationFailed'));
       setVideoStatus("");
     } finally {
       setLoadingVideo(false);
@@ -284,11 +284,11 @@ export default function AIGeneratePage() {
           if (status === "SUCCESS") {
             setVideoResult(fail_reason); // 成功时fail_reason字段包含视频URL
             setVideoProgress(100);
-            message.success("视频生成成功");
+            message.success(t('aiGenerate.videoGenerationSuccess'));
             return true;
           } else if (status === "FAILED") {
             setVideoProgress(0);
-            message.error(fail_reason || "视频生成失败");
+            message.error(fail_reason || t('aiGenerate.videoGenerationFailed'));
             return true;
           } else {
             // 处理中，继续轮询
@@ -298,7 +298,7 @@ export default function AIGeneratePage() {
         }
         return false;
       } catch (error) {
-        console.error("检查视频任务状态失败:", error);
+        console.error(t('aiGenerate.checkVideoTaskStatusFailed'), error);
         return false;
       } finally {
         setCheckingStatus(false);
@@ -318,7 +318,7 @@ export default function AIGeneratePage() {
 
   const handleMd2CardGeneration = async () => {
     if (!markdownContent) {
-      message.error("请输入Markdown内容");
+      message.error(t('aiGenerate.pleaseEnterMarkdown'));
       return;
     }
 
@@ -338,10 +338,10 @@ export default function AIGeneratePage() {
       if (response.data && response.data.images && response.data.images.length > 0) {
         setMd2CardResult(response.data.images[0].url);
       } else {
-        message.error("生成卡片失败");
+        message.error(t('aiGenerate.cardGenerationFailed'));
       }
     } catch (error) {
-      message.error("生成卡片失败");
+      message.error(t('aiGenerate.cardGenerationFailed'));
     } finally {
       setLoadingMd2Card(false);
     }
@@ -355,7 +355,7 @@ export default function AIGeneratePage() {
 
   const handleUploadConfirm = async () => {
     if (!selectedMediaGroup) {
-      message.error("请选择媒体组");
+      message.error(t('aiGenerate.pleaseSelectMediaGroup'));
       return;
     }
 
@@ -373,13 +373,13 @@ export default function AIGeneratePage() {
       });
 
       if (response.data) {
-        message.success(videoResult ? "视频上传成功" : md2CardResult ? "卡片上传成功" : t('aiGenerate.uploadSuccess'));
+        message.success(videoResult ? t('aiGenerate.videoUploadSuccess') : md2CardResult ? t('aiGenerate.cardUploadSuccess') : t('aiGenerate.uploadSuccess'));
         setUploadModalVisible(false);
       } else {
-        message.error(videoResult ? "视频上传失败" : md2CardResult ? "卡片上传失败" : t('aiGenerate.uploadFailed'));
+        message.error(videoResult ? t('aiGenerate.videoUploadFailed') : md2CardResult ? t('aiGenerate.cardUploadFailed') : t('aiGenerate.uploadFailed'));
       }
     } catch (error) {
-      message.error(videoResult ? "视频上传失败" : md2CardResult ? "卡片上传失败" : t('aiGenerate.uploadFailed'));
+      message.error(videoResult ? t('aiGenerate.videoUploadFailed') : md2CardResult ? t('aiGenerate.cardUploadFailed') : t('aiGenerate.uploadFailed'));
     } finally {
       setUploading(false);
     }
@@ -418,7 +418,7 @@ export default function AIGeneratePage() {
                 />
                 <div className={styles.dimensions}>
                   <Select
-                    placeholder="选择尺寸"
+                    placeholder={t('aiGenerate.selectSizePlaceholder')}
                     value={size}
                     onChange={setSize}
                     style={{ width: "100%" }}
@@ -428,7 +428,7 @@ export default function AIGeneratePage() {
                     <Option value="1024x1792">1024x1792</Option>
                   </Select>
                   <Select
-                    placeholder="生成数量"
+                    placeholder={t('aiGenerate.generateCountPlaceholder')}
                     value={n}
                     onChange={setN}
                     style={{ width: "100%" }}
@@ -440,27 +440,27 @@ export default function AIGeneratePage() {
                 </div>
                 <div className={styles.options}>
                   <Select
-                    placeholder="图片质量"
+                    placeholder={t('aiGenerate.imageQualityPlaceholder')}
                     value={quality}
                     onChange={setQuality}
                     style={{ width: "100%" }}
                   >
-                    <Option value="standard">标准</Option>
-                    <Option value="hd">高清</Option>
+                    <Option value="standard">{t('aiGenerate.standard')}</Option>
+                    <Option value="hd">{t('aiGenerate.hd')}</Option>
                   </Select>
                   <Select
-                    placeholder="图片风格"
+                    placeholder={t('aiGenerate.imageStylePlaceholder')}
                     value={style}
                     onChange={setStyle}
                     style={{ width: "100%" }}
                   >
-                    <Option value="vivid">生动</Option>
-                    <Option value="natural">自然</Option>
+                    <Option value="vivid">{t('aiGenerate.vivid')}</Option>
+                    <Option value="natural">{t('aiGenerate.natural')}</Option>
                   </Select>
                 </div>
                 {imageModels.length > 0 && (
                   <Select
-                    placeholder="选择模型"
+                    placeholder={t('aiGenerate.selectModelPlaceholder')}
                     value={model}
                     onChange={setModel}
                     style={{ width: "100%" }}
@@ -612,10 +612,10 @@ export default function AIGeneratePage() {
                     onChange={setVideoDuration}
                     style={{ width: "100%" }}
                   >
-                    <Option value={4}>4秒</Option>
-                    <Option value={8}>8秒</Option>
-                    <Option value={12}>12秒</Option>
-                    <Option value={16}>16秒</Option>
+                    <Option value={4}>4{t('aiGenerate.seconds')}</Option>
+                    <Option value={8}>8{t('aiGenerate.seconds')}</Option>
+                    <Option value={12}>12{t('aiGenerate.seconds')}</Option>
+                    <Option value={16}>16{t('aiGenerate.seconds')}</Option>
                   </Select>
                 </div>
                 <div className={styles.options}>
@@ -625,8 +625,8 @@ export default function AIGeneratePage() {
                     onChange={setVideoMode}
                     style={{ width: "100%" }}
                   >
-                    <Option value="text2video">文本转视频</Option>
-                    <Option value="image2video">图片转视频</Option>
+                    <Option value="text2video">{t('aiGenerate.textToVideo')}</Option>
+                    <Option value="image2video">{t('aiGenerate.imageToVideo')}</Option>
                   </Select>
                   {videoMode === "image2video" && (
                     <Input
@@ -639,7 +639,7 @@ export default function AIGeneratePage() {
                 </div>
                 {videoModels.length > 0 && (
                   <Select
-                    placeholder="选择视频模型"
+                    placeholder={t('aiGenerate.selectVideoModelPlaceholder')}
                     value={videoModel}
                     onChange={setVideoModel}
                     style={{ width: "100%" }}
@@ -712,7 +712,7 @@ export default function AIGeneratePage() {
           <TabPane
             tab={
               <span>
-                <FileTextOutlined /> Markdown转卡片
+                <FileTextOutlined /> {t('aiGenerate.markdownToCard')}
               </span>
             }
             key="md2card"
@@ -720,14 +720,14 @@ export default function AIGeneratePage() {
             <div className={styles.section}>
               <div className={styles.form}>
                 <TextArea
-                  placeholder="请输入Markdown内容"
+                  placeholder={t('aiGenerate.markdownPlaceholder')}
                   value={markdownContent}
                   onChange={(e) => setMarkdownContent(e.target.value)}
                   rows={8}
                 />
                 <div className={styles.dimensions}>
                   <Select
-                    placeholder="选择主题"
+                    placeholder={t('aiGenerate.selectThemePlaceholder')}
                     value={selectedTheme}
                     onChange={setSelectedTheme}
                     style={{ width: "100%" }}
@@ -739,25 +739,25 @@ export default function AIGeneratePage() {
                     ))}
                   </Select>
                   <Select
-                    placeholder="主题模式"
+                    placeholder={t('aiGenerate.themeModePlaceholder')}
                     value={themeMode}
                     onChange={setThemeMode}
                     style={{ width: "100%" }}
                   >
-                    <Option value="light">浅色模式</Option>
-                    <Option value="dark">深色模式</Option>
+                    <Option value="light">{t('aiGenerate.lightMode')}</Option>
+                    <Option value="dark">{t('aiGenerate.darkMode')}</Option>
                   </Select>
                 </div>
                 <div className={styles.options}>
                   <Input
-                    placeholder="卡片宽度"
+                    placeholder={t('aiGenerate.cardWidthPlaceholder')}
                     type="number"
                     value={cardWidth}
                     onChange={(e) => setCardWidth(Number(e.target.value))}
                     style={{ width: "100%" }}
                   />
                   <Input
-                    placeholder="卡片高度"
+                    placeholder={t('aiGenerate.cardHeightPlaceholder')}
                     type="number"
                     value={cardHeight}
                     onChange={(e) => setCardHeight(Number(e.target.value))}
@@ -766,13 +766,13 @@ export default function AIGeneratePage() {
                 </div>
                 <div className={styles.options}>
                   <Select
-                    placeholder="分割模式"
+                    placeholder={t('aiGenerate.splitModePlaceholder')}
                     value={splitMode}
                     onChange={setSplitMode}
                     style={{ width: "100%" }}
                   >
-                    <Option value="noSplit">不分割</Option>
-                    <Option value="split">分割</Option>
+                    <Option value="noSplit">{t('aiGenerate.noSplit')}</Option>
+                    <Option value="split">{t('aiGenerate.split')}</Option>
                   </Select>
                   <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
                     <label>
@@ -781,7 +781,7 @@ export default function AIGeneratePage() {
                         checked={mdxMode}
                         onChange={(e) => setMdxMode(e.target.checked)}
                       />
-                      MDX模式
+                      {t('aiGenerate.mdxMode')}
                     </label>
                     <label>
                       <input
@@ -789,7 +789,7 @@ export default function AIGeneratePage() {
                         checked={overHiddenMode}
                         onChange={(e) => setOverHiddenMode(e.target.checked)}
                       />
-                      溢出隐藏
+                      {t('aiGenerate.overHiddenMode')}
                     </label>
                   </div>
                 </div>
@@ -800,7 +800,7 @@ export default function AIGeneratePage() {
                   disabled={!markdownContent}
                   icon={<FileTextOutlined />}
                 >
-                  生成卡片
+                  {t('aiGenerate.generateCard')}
                 </Button>
               </div>
               {md2CardResult && (
@@ -814,7 +814,7 @@ export default function AIGeneratePage() {
                   >
                     <img
                       src={getOssUrl(md2CardResult)}
-                      alt="Markdown卡片"
+                      alt={t('aiGenerate.markdownCard')}
                       style={{ maxWidth: "100%", borderRadius: "8px" }}
                     />
                     <Button

@@ -28,25 +28,7 @@ import { PubType } from "@/app/config/publishConfig";
 const { TextArea } = Input;
 
 export default function CgMaterialPageCore() {
-  // const { t } = useTransClient('cgmaterial');
-  
-  // 简单的多语言支持函数
-  const t = (key: string) => {
-    const translations: Record<string, string> = {
-      'selectMediaGroup': '选择媒体组',
-      'selectMediaGroupDesc': '选择一个媒体组来获取其中的图片和视频资源',
-      'mediaGroupType.img': '图片组',
-      'mediaGroupType.video': '视频组', 
-      'mediaGroupType.mixed': '混合组',
-      'selectCover': '选择封面（单选）',
-      'selectMaterials': '选择素材（多选）',
-      'title': '标题',
-      'description': '简介',
-      'location': '地理位置',
-      'mediaCount': '个资源'
-    };
-    return translations[key] || key;
-  };
+  const { t } = useTransClient('cgmaterial');
   
   // 草稿箱组相关
   const [groupList, setGroupList] = useState<any[]>([]);
@@ -158,7 +140,7 @@ export default function CgMaterialPageCore() {
         setSelectedGroup(res.data.list[0]);
       }
     } catch (e) {
-      message.error("获取草稿箱组失败");
+      message.error(t('createGroup.getGroupsFailed'));
     } finally {
       setGroupLoading(false);
     }
@@ -178,7 +160,7 @@ export default function CgMaterialPageCore() {
       // @ts-ignore
       setMaterialList(res?.data?.list || []);
     } catch (e) {
-      message.error("获取草稿素材失败");
+      message.error(t('createGroup.getMaterialsFailed'));
     } finally {
       setMaterialLoading(false);
     }
@@ -194,15 +176,15 @@ export default function CgMaterialPageCore() {
         name: values.name,
         desc: values.desc || '',
       });
-      message.success("创建草稿箱组成功");
+      message.success(t('createGroup.createSuccess'));
       setCreateGroupModal(false);
       createGroupForm.resetFields();
       fetchGroupList();
           } catch (e: any) {
         if (e?.errorFields) {
-          message.warning("请完善表单信息");
+          message.warning(t('pleaseCompleteForm'));
         } else {
-          message.error("创建草稿箱组失败");
+          message.error(t('createGroup.createFailed'));
         }
       } finally {
       setCreating(false);
@@ -304,11 +286,11 @@ export default function CgMaterialPageCore() {
     if (selectedGroup.type === PubType.ImageText) {
       // 图文组：必须有媒体组、封面和素材，且都是图片
       if (!selectedMediaGroup) {
-        message.warning('请选择媒体组');
+        message.warning(t('createMaterial.selectMediaGroup'));
         return;
       }
       if (!selectedCover || selectedMaterials.length === 0) {
-        message.warning('请完整选择封面和素材');
+        message.warning(t('createMaterial.selectCoverAndMaterials'));
         return;
       }
       // 检查是否都是图片类型
@@ -317,38 +299,38 @@ export default function CgMaterialPageCore() {
       );
       const hasVideo = selectedMediaItems.some((m: any) => m.type === 'video');
       if (hasVideo) {
-        message.warning('图文组不能选择视频素材');
+        message.warning(t('createMaterial.imageGroupOnly'));
         return;
       }
     } else if (selectedGroup.type === PubType.VIDEO) {
       // 视频组：必须有封面组、视频组、封面和视频素材
       if (!selectedCoverGroup) {
-        message.warning('请选择封面组（图片组）');
+        message.warning(t('createMaterial.selectCoverGroupRequired'));
         return;
       }
       if (!selectedVideoGroup) {
-        message.warning('请选择视频组');
+        message.warning(t('createMaterial.selectVideoGroupRequired'));
         return;
       }
       if (!selectedCover) {
-        message.warning('请选择封面（图片）');
+        message.warning(t('createMaterial.selectCoverRequired'));
         return;
       }
       if (selectedMaterials.length === 0) {
-        message.warning('请选择视频素材');
+        message.warning(t('createMaterial.selectVideoRequired'));
         return;
       }
       // 检查封面是否为图片
       const coverItem = coverList.find((m: any) => m.url === selectedCover);
       if (coverItem && coverItem.type !== 'img') {
-        message.warning('封面必须是图片');
+        message.warning(t('createMaterial.coverMustBeImage'));
         return;
       }
       // 检查素材是否都是视频
       const selectedMediaItems = videoList.filter((m: any) => selectedMaterials.includes(m.url));
       const hasImage = selectedMediaItems.some((m: any) => m.type === 'img');
       if (hasImage) {
-        message.warning('视频组只能选择视频素材');
+        message.warning(t('createMaterial.videoGroupOnly'));
         return;
       }
     }
@@ -373,7 +355,7 @@ export default function CgMaterialPageCore() {
         option: {},
         location: singleLocation,
       });
-      message.success('创建素材成功');
+      message.success(t('createMaterial.createSuccess'));
       setCreateModal(false);
       // 重置创建素材相关状态
       setSelectedMediaGroup(null);
@@ -390,7 +372,7 @@ export default function CgMaterialPageCore() {
       form.resetFields();
       fetchMaterialList(selectedGroup._id);
     } catch (e) {
-      message.error('创建素材失败');
+      message.error(t('createMaterial.createFailed'));
     } finally {
       setCreating(false);
     }
@@ -859,21 +841,21 @@ export default function CgMaterialPageCore() {
   return (
     <div className={styles.materialContainer}>
       <div className={styles.header}>
-        <h2>AI草稿箱</h2>
+        <h2>{t('header.title')}</h2>
         <div className={styles.headerActions}>
           <Button 
             className={`${styles.actionButton} ${styles.importButton}`}
             onClick={openImportModal}
             icon={<ImportOutlined />}
           >
-            导入发布内容
+            {t('header.importContent')}
           </Button>
           <Button 
             className={styles.actionButton}
             onClick={() => setCreateGroupModal(true)}
             icon={<PlusOutlined />}
           >
-            新建草稿箱组
+            {t('header.createGroup')}
           </Button>
         </div>
       </div>
@@ -888,8 +870,8 @@ export default function CgMaterialPageCore() {
                   <div className={styles.emptyIcon}>
                     <FolderOpenOutlined />
                   </div>
-                  <h3>暂无草稿箱组</h3>
-                  <p>创建您的第一个草稿箱组开始整理素材</p>
+                  <h3>{t('sidebar.noGroups')}</h3>
+                  <p>{t('sidebar.noGroupsDesc')}</p>
                 </div>
               ) : (
                 <List
@@ -902,7 +884,7 @@ export default function CgMaterialPageCore() {
                     >
                       <div className={styles.groupName} style={{ marginTop: 10, paddingLeft: 10 }}>{item.name || item.title}</div>
                       <div className={styles.descTypeInfo} style={{ marginBottom: 10, paddingLeft: 10, paddingRight: 10 }}>
-                        <span>{item.desc || '暂无描述'}</span>
+                        <span>{item.desc || t('sidebar.noDesc')}</span>
                         <span className={styles.typeTag}>
                           {item.type === PubType.ImageText ? '图文' : item.type === PubType.VIDEO ? '视频' : item.type}
                         </span>
@@ -917,31 +899,31 @@ export default function CgMaterialPageCore() {
                             setEditGroupModal(true);
                           }}
                         >
-                          <EditOutlined /> 编辑
+                          <EditOutlined /> {t('sidebar.edit')}
                         </span>
                         <span
                           className={styles.groupActionBtn}
                           onClick={e => {
                             e.stopPropagation();
                             Modal.confirm({
-                              title: '删除草稿组',
-                              content: `确定要删除"${item.name || item.title}"吗？`,
-                              okText: '删除',
+                              title: t('sidebar.deleteConfirm'),
+                              content: t('sidebar.deleteConfirmDesc', { name: item.name || item.title }),
+                              okText: t('sidebar.delete'),
                               okType: 'danger',
-                              cancelText: '取消',
+                              cancelText: t('batchGenerate.cancel'),
                               onOk: async () => {
                                 try {
                                   await apiDeleteMaterialGroup(item._id);
-                                  message.success('删除成功');
+                                  message.success(t('sidebar.deleteSuccess'));
                                   fetchGroupList();
                                 } catch {
-                                  message.error('删除失败');
+                                  message.error(t('sidebar.deleteFailed'));
                                 }
                               },
                             });
                           }}
                         >
-                          <DeleteOutlined /> 删除
+                          <DeleteOutlined /> {t('sidebar.delete')}
                         </span>
                       </div>
                     </List.Item>
@@ -956,7 +938,7 @@ export default function CgMaterialPageCore() {
         <div className={styles.contentArea}>
           <div className={styles.contentHeader}>
             <div className={styles.contentTitle}>
-              {selectedGroup?.name || selectedGroup?.title || '请选择草稿箱组'}
+              {selectedGroup?.name || selectedGroup?.title || t('sidebar.selectGroup')}
             </div>
             <div className={styles.contentActions}>
               <Button 
@@ -965,7 +947,7 @@ export default function CgMaterialPageCore() {
                 disabled={!selectedGroup}
                 icon={<PlusOutlined />}
               >
-                创建素材
+                {t('content.createMaterial')}
               </Button>
               <Button 
                 className={styles.actionButton}
@@ -973,7 +955,7 @@ export default function CgMaterialPageCore() {
                 disabled={!selectedGroup}
                 icon={<FileTextOutlined />}
               >
-                批量生成草稿
+                {t('content.batchGenerate')}
               </Button>
             </div>
           </div>
@@ -985,16 +967,16 @@ export default function CgMaterialPageCore() {
                   <div className={styles.emptyIcon}>
                     <FolderOpenOutlined />
                   </div>
-                  <h3>请选择草稿箱组</h3>
-                  <p>从左侧选择一个草稿箱组来查看其中的素材</p>
+                  <h3>{t('sidebar.selectGroup')}</h3>
+                  <p>{t('sidebar.selectGroupDesc')}</p>
                 </div>
               ) : materialList.length === 0 ? (
                 <div className={styles.emptyState}>
                   <div className={styles.emptyIcon}>
                     <FileTextOutlined />
                   </div>
-                  <h3>暂无草稿素材</h3>
-                  <p>创建您的第一个素材或批量生成草稿</p>
+                  <h3>{t('content.noMaterials')}</h3>
+                  <p>{t('content.noMaterialsDesc')}</p>
                 </div>
               ) : (
                 <List
@@ -1038,7 +1020,7 @@ export default function CgMaterialPageCore() {
                                 {item.type === PubType.ImageText ? "图文" : item.type === PubType.VIDEO ? "视频" : item.type}
                               </span>
                               <span className={`${styles.statusLabel} ${item.status === 0 ? styles.generating : styles.completed}`}>
-                                {item.status === 0 ? "生成中" : "已生成"}
+                                {item.status === 0 ? t('content.generating') : t('content.completed')}
                               </span>
                             </div>
                           </div>
@@ -1054,7 +1036,7 @@ export default function CgMaterialPageCore() {
                             }}
                             className={styles.editButton}
                           >
-                            编辑
+                            {t('content.edit')}
                           </Button>
                         </div>
                       </div>
@@ -1070,7 +1052,7 @@ export default function CgMaterialPageCore() {
       {/* 创建草稿箱组弹窗 */}
       <Modal
         open={createGroupModal}
-        title="新建草稿箱组"
+        title={t('createGroup.title')}
         onOk={handleCreateGroup}
         onCancel={() => {
           setCreateGroupModal(false);
@@ -1081,12 +1063,12 @@ export default function CgMaterialPageCore() {
       >
         <Form form={createGroupForm} layout="vertical">
           <Form.Item 
-            label="组名称" 
+            label={t('createGroup.name')} 
             name="name" 
-            rules={[{ required: true, message: '请输入草稿箱组名称' }]}
+            rules={[{ required: true, message: t('createGroup.namePlaceholder') }]}
             initialValue="DraftboxGroup"
           >
-            <Input placeholder="请输入草稿箱组名称" />
+            <Input placeholder={t('createGroup.namePlaceholder')} />
           </Form.Item>
           
           <Form.Item 
@@ -1244,14 +1226,14 @@ export default function CgMaterialPageCore() {
         {selectedGroup?.type === PubType.ImageText && (
           <Modal
             open={mediaGroupModal}
-            title={t('selectMediaGroup')}
+            title={t('createMaterial.selectCoverGroup')}
             onCancel={() => setMediaGroupModal(false)}
             footer={null}
             width={700}
           >
             <div style={{ marginBottom: 16 }}>
               <div style={{ color: '#666', fontSize: 14 }}>
-                {t('selectMediaGroupDesc')}
+                {t('createMaterial.selectCoverGroupDesc')}
               </div>
             </div>
             <List
