@@ -48,6 +48,8 @@ export default function AIGeneratePage() {
   const searchParams = useSearchParams();
   const { t } = useTransClient('material');
   const albumId = params.id as string;
+  const lng = (params as any).lng as string;
+  const isEnglishLang = typeof lng === "string" ? lng.toLowerCase().startsWith("en") : false;
 
   // 从URL参数获取默认标签
   const defaultTab = searchParams.get('tab') || 'textToImage';
@@ -727,18 +729,6 @@ export default function AIGeneratePage() {
                 />
                 <div className={styles.dimensions}>
                   <Select
-                    placeholder={t('aiGenerate.selectThemePlaceholder')}
-                    value={selectedTheme}
-                    onChange={setSelectedTheme}
-                    style={{ width: "100%" }}
-                  >
-                    {md2CardTemplates.map((theme) => (
-                      <Option key={theme.id} value={theme.id}>
-                        {theme.nameCn}
-                      </Option>
-                    ))}
-                  </Select>
-                  <Select
                     placeholder={t('aiGenerate.themeModePlaceholder')}
                     value={themeMode}
                     onChange={setThemeMode}
@@ -747,6 +737,20 @@ export default function AIGeneratePage() {
                     <Option value="light">{t('aiGenerate.lightMode')}</Option>
                     <Option value="dark">{t('aiGenerate.darkMode')}</Option>
                   </Select>
+                </div>
+                <div className={styles.templateGrid}>
+                  {md2CardTemplates.map((theme) => (
+                    <div
+                      key={theme.id}
+                      className={`${styles.templateCard} ${selectedTheme === theme.id ? styles.templateCardActive : ""}`}
+                      onClick={() => setSelectedTheme(theme.id)}
+                    >
+                      <div className={styles.templateThumb}>
+                        <img src={theme.preview} alt={isEnglishLang ? theme.nameEn : theme.nameCn} />
+                      </div>
+                      <div className={styles.templateLabel}>{isEnglishLang ? theme.nameEn : theme.nameCn}</div>
+                    </div>
+                  ))}
                 </div>
                 <div className={styles.options}>
                   <Input
