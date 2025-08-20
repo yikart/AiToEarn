@@ -44,5 +44,9 @@
     "recordCount": "共 {{count}} 条发布计划",
     "newWork": "新建作品",
     "noRecords": "暂无发布计划"
-  }
+  },
+  "chooseSpace": "选择空间",
+  "pleaseChooseSpace": "请选择空间",
+  "accountAddedToSpace": "账号已添加到空间",
+  "noNewAccountDetected": "未检测到新账号，稍后可在账号管理器中手动调整空间"
 }

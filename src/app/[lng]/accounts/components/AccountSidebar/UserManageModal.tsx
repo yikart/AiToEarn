@@ -33,6 +33,7 @@ import { AccountStatus } from "@/app/config/accountConfig";
 import AvatarPlat from "@/components/AvatarPlat";
 import { deleteAccountsApi, updateAccountApi } from "@/api/account";
 import { useTransClient } from "@/app/i18n/client";
+import AddAccountModal from "../AddAccountModal";
 
 export interface IUserManageModalRef {
   setActiveGroup: (groupId: string) => void;
@@ -97,6 +98,11 @@ const UserManageModal = memo(
       const isUpdateRank = useRef(false);
       const [deleteLoading, setDeleteLoading] = useState(false);
       const [cutLoading, setCutLoading] = useState(false);
+      const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
+      const [chooseGroupOpen, setChooseGroupOpen] = useState(false);
+      const [chosenGroupId, setChosenGroupId] = useState<string | undefined>(undefined);
+      const preAccountIds = useRef<Set<string>>(new Set());
+      const pendingGroupIdRef = useRef<string | null>(null);
 
       const columns = useMemo(() => {
         const columns: TableProps<SocialAccount>["columns"] = [
@@ -245,6 +251,48 @@ const UserManageModal = memo(
       };
       useImperativeHandle(ref, () => imperativeHandle);
 
+      const openAddAccountFlow = () => {
+        const currentGroupId = activeGroup;
+        close();
+        if (currentGroupId === allUser.current) {
+          setChosenGroupId(accountGroupList[0]?.id);
+          setChooseGroupOpen(true);
+        } else {
+          pendingGroupIdRef.current = currentGroupId;
+          preAccountIds.current = new Set(
+            (useAccountStore.getState().accountList || []).map((v) => v.id),
+          );
+          setIsAddAccountOpen(true);
+        }
+      };
+
+      const assignNewAccountsToGroup = async () => {
+        if (!pendingGroupIdRef.current) return;
+        const targetGroupId = pendingGroupIdRef.current;
+        for (let i = 0; i < 8; i++) {
+          await getAccountList();
+          const currList = useAccountStore.getState().accountList || [];
+          const newAccounts = currList.filter((a) => !preAccountIds.current.has(a.id));
+          if (newAccounts.length > 0) {
+            for (const acc of newAccounts) {
+              try {
+                await updateAccountApi({ id: acc.id, groupId: targetGroupId });
+              } catch (e) {
+                // ignore
+              }
+            }
+            await getAccountList();
+            message.success(t("accountAddedToSpace" as any));
+            pendingGroupIdRef.current = null;
+            preAccountIds.current = new Set();
+            return;
+          }
+          await new Promise((r) => setTimeout(r, 1500));
+        }
+        message.warning(t("noNewAccountDetected" as any));
+        pendingGroupIdRef.current = null;
+      };
+
       return (
         <>
           <Modal
@@ -298,7 +346,7 @@ const UserManageModal = memo(
 
           <Modal
             open={open}
-            title="账号管理器"
+            title={t("accountManager")}
             zIndex={1001}
             footer={null}
             width={1000}
@@ -317,9 +365,9 @@ const UserManageModal = memo(
                 />
 
                 <div className="userManage-content">
-                  {/*<div className="userManage-content-head">*/}
-                  {/*  <div></div>*/}
-                  {/*</div>*/}
+                  <div className="userManage-content-head" style={{ marginBottom: "8px", display: "flex", justifyContent: "flex-end" }}>
+                    <Button type="primary" onClick={openAddAccountFlow}>{t("addAccount")}</Button>
+                  </div>
                   <Table<SocialAccount>
                     columns={columns}
                     dataSource={accountListLast}
@@ -366,6 +414,48 @@ const UserManageModal = memo(
               </div>
             </Spin>
           </Modal>
+          <Modal
+            open={chooseGroupOpen}
+            title={t("chooseSpace" as any)}
+            onCancel={() => setChooseGroupOpen(false)}
+            onOk={() => {
+              if (!chosenGroupId) return message.warning(t("pleaseChooseSpace" as any));
+              pendingGroupIdRef.current = chosenGroupId;
+              preAccountIds.current = new Set(
+                (useAccountStore.getState().accountList || []).map((v) => v.id),
+              );
+              setChooseGroupOpen(false);
+              setIsAddAccountOpen(true);
+            }}
+            width={420}
+          >
+            <Select
+              style={{ width: "100%" }}
+              placeholder={t("pleaseChooseSpace" as any)}
+              value={chosenGroupId}
+              onChange={setChosenGroupId}
+              options={accountGroupList.map((g) => ({ value: g.id, label: g.name }))}
+            />
+          </Modal>
+
+          <AddAccountModal
+            open={isAddAccountOpen}
+            onClose={async () => {
+              setIsAddAccountOpen(false);
+              await assignNewAccountsToGroup();
+            }}
+            onAddSuccess={async (acc) => {
+              try {
+                if (pendingGroupIdRef.current) {
+                  await updateAccountApi({ id: acc.id, groupId: pendingGroupIdRef.current });
+                  message.success(t("accountAddedToSpace" as any));
+                }
+              } finally {
+                pendingGroupIdRef.current = null;
+                await getAccountList();
+              }
+            }}
+          />
         </>
       );
     },

@@ -10,7 +10,6 @@ import {
 import styles from "./AccountSidebar.module.scss";
 import { Avatar, Button, Collapse, Popover, Skeleton, Tooltip } from "antd";
 // import { accountLogin, acpAccountLoginCheck } from "@/icp/account";
-import AddAccountModal from "../AddAccountModal";
 import {
   CheckCircleOutlined,
   PlusOutlined,
@@ -135,7 +134,6 @@ const AccountSidebar = memo(
       ref: ForwardedRef<IAccountSidebarRef>,
     ) => {
       const { t } = useTransClient("account");
-      const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
       const pubAccountDetModuleRef = useRef<any>(null);
       const {
         accountList: fullAccountList,
@@ -186,11 +184,7 @@ const AccountSidebar = memo(
           {/*  accounts={accountList}*/}
           {/*  isFooter={false}*/}
           {/*/>*/}
-          <AddAccountModal
-            open={isAccountModalOpen}
-            onClose={() => setIsAccountModalOpen(false)}
-            onAddSuccess={getAccountList}
-          />
+          
           <div className={styles.accountSidebar}>
             <div className="accountSidebar-top">
               <div className="accountSidebar-top-box">
@@ -202,16 +196,7 @@ const AccountSidebar = memo(
                   <UserOutlined />
                   {t("accountManager")}
                 </Button>
-                <Tooltip title={t("addAccount")}>
-                  <Button
-                    type="primary"
-                    className="accountSidebar-top-addUser"
-                    icon={<PlusOutlined />}
-                    onClick={() => {
-                      setIsAccountModalOpen(true);
-                    }}
-                  ></Button>
-                </Tooltip>
+                
               </div>
               {/* mcp 按钮 */}
               <div className="accountSidebar-top-box">

@@ -202,7 +202,7 @@ export default function VipPage() {
         onClick={handleActivate}
         disabled={loading}
       >
-        {loading ? t('createPaymentOrderFailed') : t('activateNow')}
+        {t('activateNow')}
       </button>
     </div>
   );
