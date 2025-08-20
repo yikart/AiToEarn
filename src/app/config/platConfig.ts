@@ -9,6 +9,7 @@ import facebookSvg from "@/assets/svgs/plat/facebook.svg";
 import instagramSvg from "@/assets/svgs/plat/instagram.svg";
 import threadsSvg from "@/assets/svgs/plat/xiancheng.svg";
 import wxGzhSvg from "@/assets/svgs/plat/wx-gzh.svg";
+import gongzhonghaoSvg from "@/assets/svgs/plat/gongzhonghao.png";
 import pinterestSvg from "@/assets/svgs/plat/pinterest.svg";
 
 // 平台类型
@@ -115,7 +116,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
   [
     PlatType.BILIBILI,
     {
-      name: "B站",
+      name: "Bilibili",
       icon: bilibiliSvg.src,
       url: "https://cp.kuaishou.com/profile",
       pubTypes: new Set([PubType.VIDEO]),
@@ -177,7 +178,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.WxGzh,
     {
       name: "微信公众号",
-      icon: wxGzhSvg.src,
+      icon: gongzhonghaoSvg.src,
       url: "https://mp.weixin.qq.com/",
       pubTypes: new Set([PubType.ImageText, PubType.Article]),
       commonPubParamsConfig: {

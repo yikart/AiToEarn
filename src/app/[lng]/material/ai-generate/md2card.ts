@@ -33,29 +33,22 @@ export const md2CardTemplates: Md2CardTemplate[] = [
 ];
 
 // 默认的Markdown内容
-export const defaultMarkdown = `# 默认 markdown
+export const defaultMarkdown = `# Default Markdown
 
-这是一个示例的Markdown内容，您可以在这里输入您想要转换的内容。
+This is a sample Markdown content. You can type the content you want to convert here.
 
-## 功能特点
+## Features
 
-- 支持多种主题样式
-- 可自定义尺寸
-- 支持分割模式
-- 支持MDX模式
+- Supports multiple theme styles
+- Customizable size
+- Split mode supported
+- MDX mode supported
 
-## 使用方法
+## How to Use
 
-1. 输入您的Markdown内容
-2. 选择合适的主题
-3. 调整参数设置
-4. 点击生成按钮
-
-> 这是一个引用示例
-
-\`\`\`javascript
-// 代码示例
-console.log('Hello, World!');
-\`\`\`
+1. Enter your Markdown content
+2. Choose a suitable theme
+3. Adjust parameter settings
+4. Click the generate button
 `;
 

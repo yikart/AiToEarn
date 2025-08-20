@@ -17,11 +17,11 @@ export interface IRouterDataItem {
 }
 
 export const routerData: IRouterDataItem[] = [
-  {
-    name: "首页",
-    translationKey: "home",
-    path: "/",
-  },
+  // {
+  //   name: "首页",
+  //   translationKey: "home",
+  //   path: "/",
+  // },
   {
     name: "账户",
     translationKey: "accounts",
@@ -32,11 +32,11 @@ export const routerData: IRouterDataItem[] = [
     translationKey: "hotContent",
     path: "/hot-content",
   },
-  // {
-  //   name: "Youtobe",
-  //   translationKey: "youtube",
-  //   path: "/youtube",
-  // },
+  {
+    name: "AI工具",
+    translationKey: "AI Tools",
+    path: "/material/ai-generate",
+  },
 ];
 
 const recursion = (
