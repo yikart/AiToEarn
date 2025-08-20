@@ -6,6 +6,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useEffect,
 } from "react";
 import {
   Button,
@@ -103,6 +104,8 @@ const UserManageModal = memo(
       const [chosenGroupId, setChosenGroupId] = useState<string | undefined>(undefined);
       const preAccountIds = useRef<Set<string>>(new Set());
       const pendingGroupIdRef = useRef<string | null>(null);
+      const isAssigningRef = useRef(false);
+      const snapshotReadyRef = useRef(false);
 
       const columns = useMemo(() => {
         const columns: TableProps<SocialAccount>["columns"] = [
@@ -251,7 +254,7 @@ const UserManageModal = memo(
       };
       useImperativeHandle(ref, () => imperativeHandle);
 
-      const openAddAccountFlow = () => {
+      const openAddAccountFlow = async () => {
         const currentGroupId = activeGroup;
         close();
         if (currentGroupId === allUser.current) {
@@ -259,39 +262,44 @@ const UserManageModal = memo(
           setChooseGroupOpen(true);
         } else {
           pendingGroupIdRef.current = currentGroupId;
+          if ((useAccountStore.getState().accountList || []).length === 0) {
+            await getAccountList();
+          }
           preAccountIds.current = new Set(
             (useAccountStore.getState().accountList || []).map((v) => v.id),
           );
+          snapshotReadyRef.current = true;
           setIsAddAccountOpen(true);
         }
       };
 
-      const assignNewAccountsToGroup = async () => {
-        if (!pendingGroupIdRef.current) return;
-        const targetGroupId = pendingGroupIdRef.current;
-        for (let i = 0; i < 8; i++) {
-          await getAccountList();
-          const currList = useAccountStore.getState().accountList || [];
+      useEffect(() => {
+        const maybeAssign = async () => {
+          if (!pendingGroupIdRef.current) return;
+          if (isAssigningRef.current) return;
+          if (!snapshotReadyRef.current) return;
+          const currList = accountList || [];
           const newAccounts = currList.filter((a) => !preAccountIds.current.has(a.id));
-          if (newAccounts.length > 0) {
+          if (newAccounts.length === 0) return;
+          isAssigningRef.current = true;
+          try {
+            const targetGroupId = pendingGroupIdRef.current!;
             for (const acc of newAccounts) {
               try {
                 await updateAccountApi({ id: acc.id, groupId: targetGroupId });
-              } catch (e) {
-                // ignore
-              }
+              } catch {}
             }
             await getAccountList();
             message.success(t("accountAddedToSpace" as any));
+          } finally {
             pendingGroupIdRef.current = null;
             preAccountIds.current = new Set();
-            return;
+            isAssigningRef.current = false;
+            snapshotReadyRef.current = false;
           }
-          await new Promise((r) => setTimeout(r, 1500));
-        }
-        message.warning(t("noNewAccountDetected" as any));
-        pendingGroupIdRef.current = null;
-      };
+        };
+        maybeAssign();
+      }, [accountList]);
 
       return (
         <>
@@ -418,12 +426,16 @@ const UserManageModal = memo(
             open={chooseGroupOpen}
             title={t("chooseSpace" as any)}
             onCancel={() => setChooseGroupOpen(false)}
-            onOk={() => {
+            onOk={async () => {
               if (!chosenGroupId) return message.warning(t("pleaseChooseSpace" as any));
               pendingGroupIdRef.current = chosenGroupId;
+              if ((useAccountStore.getState().accountList || []).length === 0) {
+                await getAccountList();
+              }
               preAccountIds.current = new Set(
                 (useAccountStore.getState().accountList || []).map((v) => v.id),
               );
+              snapshotReadyRef.current = true;
               setChooseGroupOpen(false);
               setIsAddAccountOpen(true);
             }}
@@ -442,7 +454,6 @@ const UserManageModal = memo(
             open={isAddAccountOpen}
             onClose={async () => {
               setIsAddAccountOpen(false);
-              await assignNewAccountsToGroup();
             }}
             onAddSuccess={async (acc) => {
               try {
