@@ -469,7 +469,7 @@ export default function AIGeneratePage() {
                   >
                     {imageModels.map((modelItem) => (
                       <Option key={modelItem.name} value={modelItem.name}>
-                        {modelItem.description || modelItem.name}
+                        {modelItem.name}
                       </Option>
                     ))}
                   </Select>
@@ -648,7 +648,7 @@ export default function AIGeneratePage() {
                   >
                     {videoModels.map((modelItem) => (
                       <Option key={modelItem.name} value={modelItem.name}>
-                        {modelItem.description || modelItem.name}
+                        {modelItem.name}
                       </Option>
                     ))}
                   </Select>
