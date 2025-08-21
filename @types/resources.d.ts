@@ -687,7 +687,9 @@ interface Resources {
       "templateJin": "书摘",
       "templateMemo": "便当",
       "templateEasy": "边框",
-      "templateWrite": "手写"
+      "templateWrite": "手写",
+      "pleaseUploadFirstFrame": "请上传首帧图片",
+      "pleaseUploadTailFrame": "请上传尾帧图片"
     }
   },
   "pinterest": {

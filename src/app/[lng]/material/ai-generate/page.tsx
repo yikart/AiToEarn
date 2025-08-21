@@ -172,11 +172,11 @@ export default function AIGeneratePage() {
   const filteredVideoModels = useMemo(() => {
     if (!Array.isArray(videoModels)) return [] as any[];
     if (videoMode === "text2video") {
-      return (videoModels as any[]).filter((m: any) => (m?.modes || []).includes("text"));
+      return (videoModels as any[]).filter((m: any) => (m?.modes || []).includes("text2video"));
     }
     return (videoModels as any[]).filter((m: any) => {
       const modes: string[] = m?.modes || [];
-      return modes.includes("first_frame") || modes.includes("last_frame");
+      return modes.includes("image2video");
     });
   }, [videoModels, videoMode]);
 
@@ -204,6 +204,14 @@ export default function AIGeneratePage() {
         if (response.data.length > 0) {
           const first = response.data[0];
           setVideoModel(first.name);
+          // 根据第一个模型的 modes 设置默认模式
+          if (first?.modes?.length) {
+            if (first.modes.includes("text2video")) {
+              setVideoMode("text2video");
+            } else if (first.modes.includes("image2video")) {
+              setVideoMode("image2video");
+            }
+          }
           if (first?.durations?.length) {
             setVideoDuration(first.durations[0]);
           }
@@ -248,11 +256,11 @@ export default function AIGeneratePage() {
       setVideoSize(sizes[0]);
     }
     // 按模型能力清理不支持的首/尾帧，避免带上无效参数
-    const modes: string[] = (current as any)?.modes || [];
-    if (!modes.includes('first_frame') && videoImage) {
+    const supportedParams: string[] = (current as any)?.supportedParameters || [];
+    if (!supportedParams.includes('image') && videoImage) {
       setVideoImage("");
     }
-    if (!modes.includes('last_frame') && videoImageTail) {
+    if (!supportedParams.includes('image_tail') && videoImageTail) {
       setVideoImageTail("");
     }
   }, [videoModel, videoModels]);
@@ -339,6 +347,24 @@ export default function AIGeneratePage() {
       return;
     }
 
+    // 检查必传参数 - 只在 image2video 模式下检查图片参数
+    if (videoMode === 'image2video') {
+      const current: any = (filteredVideoModels as any[]).find((m: any) => m.name === videoModel) || {};
+      const supportedParams: string[] = current?.supportedParameters || [];
+      
+      // 如果模型要求 image 参数但用户没有上传首帧，则拦截
+      if (supportedParams.includes('image') && !videoImage) {
+        message.error(t('aiGenerate.pleaseUploadFirstFrame'));
+        return;
+      }
+      
+      // 如果模型要求 image_tail 参数但用户没有上传尾帧，则拦截
+      if (supportedParams.includes('image_tail') && !videoImageTail) {
+        message.error(t('aiGenerate.pleaseUploadTailFrame'));
+        return;
+      }
+    }
+
     try {
       setLoadingVideo(true);
       setVideoStatus("submitted");
@@ -351,14 +377,18 @@ export default function AIGeneratePage() {
         duration: videoDuration,
       };
 
-      // 根据当前模型能力决定携带哪些帧参数
+      // 根据当前模型能力和模式决定携带哪些帧参数
       const current: any = (filteredVideoModels as any[]).find((m: any) => m.name === videoModel) || {};
-      const modes: string[] = current?.modes || [];
-      if (modes.includes('first_frame') && videoImage) {
-        requestData.image = videoImage;
-      }
-      if (modes.includes('last_frame') && videoImageTail) {
-        requestData.image_tail = videoImageTail;
+      const supportedParams: string[] = current?.supportedParameters || [];
+      
+      // 只在 image2video 模式下携带图片参数
+      if (videoMode === 'image2video') {
+        if (supportedParams.includes('image') && videoImage) {
+          requestData.image = videoImage;
+        }
+        if (supportedParams.includes('image_tail') && videoImageTail) {
+          requestData.image_tail = videoImageTail;
+        }
       }
 
       const response: any = await generateVideo(requestData);
@@ -795,10 +825,10 @@ export default function AIGeneratePage() {
                 <div className={styles.options}>
                   {(() => {
                     const selected: any = (filteredVideoModels as any[]).find((m: any) => m.name === videoModel) || {};
-                    const allowedModes: string[] = selected?.modes || [];
+                    const supportedParams: string[] = selected?.supportedParameters || [];
                     return (
                       <>
-                        {videoMode === 'image2video' && allowedModes.includes('first_frame') && (
+                        {videoMode === 'image2video' && supportedParams.includes('image') && (
                           <div style={{ display: "flex", alignItems: "center", gap: 12, width: "100%" }}>
                             <Button onClick={handlePickFirstFrame} loading={uploadingFirstFrame}>
                               {t('aiGenerate.uploadImage')} - {t('aiGenerate.firstFrame')}
@@ -819,7 +849,7 @@ export default function AIGeneratePage() {
                             />
                           </div>
                         )}
-                        {videoMode === 'image2video' && allowedModes.includes('last_frame') && (
+                        {videoMode === 'image2video' && supportedParams.includes('image_tail') && (
                           <div style={{ display: "flex", alignItems: "center", gap: 12, width: "100%" }}>
                             <Button onClick={handlePickTailFrame} loading={uploadingTailFrame}>
                               {t('aiGenerate.uploadImage')} - {t('aiGenerate.tailFrame')}

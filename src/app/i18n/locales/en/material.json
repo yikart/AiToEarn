@@ -142,6 +142,8 @@
       "templateJin": "Book",
       "templateMemo": "Memo",
       "templateEasy": "Border",
-      "templateWrite": "Handwriting"
+      "templateWrite": "Handwriting",
+    "pleaseUploadFirstFrame": "Please upload first frame image",
+    "pleaseUploadTailFrame": "Please upload tail frame image"
   }
 }
