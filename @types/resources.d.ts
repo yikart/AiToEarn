@@ -3,7 +3,7 @@ interface Resources {
     "title": "账户",
     "describe": "账户页面",
     "today": "今天",
-    "defaultSpace": "默认空间",
+    "defaultSpace": "defaultSpace",
     "addPost": "添加帖子",
     "calendarMode": "日历模式",
     "listModeTab": "列表模式",
@@ -45,6 +45,15 @@ interface Resources {
       "recordCount": "共 {{count}} 条发布计划",
       "newWork": "新建作品",
       "noRecords": "暂无发布计划"
+    },
+    "chooseSpace": "选择空间",
+    "pleaseChooseSpace": "请选择空间",
+    "accountAddedToSpace": "账号已添加到空间",
+    "noNewAccountDetected": "未检测到新账号，稍后可在账号管理器中手动调整空间",
+    "ipInfo": {
+      "loading": "获取IP信息中...",
+      "error": "IP信息获取失败",
+      "tooltip": "ASN: {{asn}}\n组织: {{org}}"
     }
   },
   "cgmaterial": {

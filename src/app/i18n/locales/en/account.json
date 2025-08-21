@@ -48,5 +48,10 @@
   "chooseSpace": "Choose Space",
   "pleaseChooseSpace": "Please choose a space",
   "accountAddedToSpace": "Account has been added to the space",
-  "noNewAccountDetected": "No new account detected; you can adjust the space later in Account Manager"
+  "noNewAccountDetected": "No new account detected; you can adjust the space later in Account Manager",
+  "ipInfo": {
+    "loading": "Getting IP info...",
+    "error": "Failed to get IP info",
+    "tooltip": "ASN: {{asn}}\nOrganization: {{org}}"
+  }
 }

@@ -25,6 +25,7 @@ import { AccountStatus } from "@/app/config/accountConfig";
 import { SocialAccount } from "@/api/types/account.type";
 import { getOssUrl } from "@/utils/oss";
 import { useTransClient } from "@/app/i18n/client";
+import { getIpLocation, IpLocationInfo, formatLocationInfo } from "@/utils/ipLocation";
 
 export interface IAccountSidebarRef {}
 
@@ -152,6 +153,10 @@ const AccountSidebar = memo(
       const userManageModalRef = useRef<IUserManageModalRef>(null);
       const [mcpManagerModalOpen, setMcpManagerModalOpen] = useState(false);
       const mcpManagerModalRef = useRef<IMCPManagerModalRef>(null);
+      
+      // IP地理位置信息状态
+      const [ipLocationInfo, setIpLocationInfo] = useState<IpLocationInfo | null>(null);
+      const [ipLocationLoading, setIpLocationLoading] = useState(false);
 
       // 在组件内部过滤账号列表，而不是在 useAccountStore 中过滤
       const accountList = useMemo(() => {
@@ -163,6 +168,24 @@ const AccountSidebar = memo(
       const defaultActiveKey = useMemo(() => {
         return accountGroupList.find((v) => v.isDefault)?.id;
       }, [accountGroupList]);
+
+      // 获取IP地理位置信息
+      useEffect(() => {
+        const fetchIpLocation = async () => {
+          try {
+            setIpLocationLoading(true);
+            const info = await getIpLocation();
+            setIpLocationInfo(info);
+          } catch (error) {
+            console.error('获取IP地理位置信息失败:', error);
+          } finally {
+            setIpLocationLoading(false);
+          }
+        };
+
+        // 只在组件挂载时获取一次IP信息
+        fetchIpLocation();
+      }, []);
 
       return (
         <>
@@ -225,19 +248,41 @@ const AccountSidebar = memo(
                 key={defaultActiveKey}
                 defaultActiveKey={defaultActiveKey}
                 items={accountGroupList.map((v) => {
+                  // 为默认分组添加IP和地址信息
+                  const isDefaultGroup = v.isDefault;
+                  const showIpInfo = isDefaultGroup && ipLocationInfo;
+                  
                   return {
                     key: v.id,
                     label: (
                       <>
-                        {v.name}
-                        <span className="accountSidebar-userCount">
-                          {v.children?.length}/
-                          {
-                            v.children?.map(
-                              (v) => v.status === AccountStatus.USABLE,
-                            ).length
-                          }
-                        </span>
+                        <div className="accountSidebar-groupLabel">
+                          <span className="accountSidebar-groupName">{v.name}</span>
+                          <span className="accountSidebar-userCount">
+                            {v.children?.length}/
+                            {
+                              v.children?.map(
+                                (v) => v.status === AccountStatus.USABLE,
+                              ).length
+                            }
+                          </span>
+                          {/* 在默认分组中显示IP和地址信息 */}
+                          {isDefaultGroup && (
+                            <div className="accountSidebar-ipInfo">
+                              {ipLocationLoading ? (
+                                <span className="accountSidebar-ipLoading">{t("ipInfo.loading")}</span>
+                              ) : showIpInfo ? (
+                                <Tooltip title={t("ipInfo.tooltip", { asn: ipLocationInfo.asn, org: ipLocationInfo.org })}>
+                                  <span className="accountSidebar-ipText">
+                                    {formatLocationInfo(ipLocationInfo)}
+                                  </span>
+                                </Tooltip>
+                              ) : (
+                                <span className="accountSidebar-ipError">{t("ipInfo.error")}</span>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </>
                     ),
                     children: (

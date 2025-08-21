@@ -99,27 +99,15 @@ const UserManageSidebar = memo(
                           color: "var(--colorPrimary6)",
                         }}
                       >
-                        {rightClickOperateData!.name}
+                        {rightClickOperateData?.name}
                       </span>
-                      ，删除后该列表下的账号将被移动到
-                      <span
-                        style={{
-                          color: "var(--colorPrimary6)",
-                        }}
-                      >
-                        默认列表
-                      </span>
-                      中
+                      ？
                     </>
                   ),
-                  async onOk() {
-                    const res = await deleteAccountGroupApi([
-                      rightClickOperateData!.id,
-                    ]);
-                    if (res?.data) {
-                      message.success("删除成功！");
-                      await getAccountList();
-                    }
+                  onOk: async () => {
+                    await deleteAccountGroupApi([rightClickOperateData!.id]);
+                    await getAccountGroup();
+                    message.success("删除成功");
                   },
                 });
               }}
@@ -129,15 +117,14 @@ const UserManageSidebar = memo(
           </ControlledMenu>
 
           <Modal
-            title={createGroupId === "-1" ? "新建空间" : "重命名空间"}
             open={openCreateGroup}
+            title={createGroupId === "-1" ? "新建空间" : "重命名空间"}
             onCancel={createGroupCancel}
             footer={
               <>
                 <Button onClick={createGroupCancel}>取消</Button>
                 <Button
                   type="primary"
-                  disabled={groupName.length === 0}
                   onClick={async () => {
                     setCreateGroupLoading(true);
                     if (createGroupId === "-1") {

@@ -18,6 +18,8 @@ import {
   Table,
   TableProps,
   Tooltip,
+  Card,
+  Space,
 } from "antd";
 import styles from "./AccountSidebar.module.scss";
 import { useAccountStore } from "@/store/account";
@@ -26,6 +28,8 @@ import {
   CheckCircleOutlined,
   DeleteOutlined,
   WarningOutlined,
+  GlobalOutlined,
+  EnvironmentOutlined,
 } from "@ant-design/icons";
 import UserManageSidebar from "./UserManageSidebar";
 import { SocialAccount } from "@/api/types/account.type";
@@ -35,6 +39,7 @@ import AvatarPlat from "@/components/AvatarPlat";
 import { deleteAccountsApi, updateAccountApi } from "@/api/account";
 import { useTransClient } from "@/app/i18n/client";
 import AddAccountModal from "../AddAccountModal";
+import { getIpLocation, IpLocationInfo, formatLocationInfo } from "@/utils/ipLocation";
 
 export interface IUserManageModalRef {
   setActiveGroup: (groupId: string) => void;
@@ -70,6 +75,132 @@ const UserGroupSelect = ({
       options={accountGroupList}
       onChange={onChange}
     />
+  );
+};
+
+// 空间信息展示组件
+const SpaceInfoCard = ({ 
+  activeGroup, 
+  accountGroupList, 
+  allUser 
+}: { 
+  activeGroup: string; 
+  accountGroupList: any[]; 
+  allUser: string;
+}) => {
+  const { t } = useTransClient("account");
+  const [ipLocationInfo, setIpLocationInfo] = useState<IpLocationInfo | null>(null);
+  const [ipLocationLoading, setIpLocationLoading] = useState(false);
+
+  // 获取IP地理位置信息
+  useEffect(() => {
+    const fetchIpLocation = async () => {
+      try {
+        setIpLocationLoading(true);
+        const info = await getIpLocation();
+        setIpLocationInfo(info);
+      } catch (error) {
+        console.error('获取IP地理位置信息失败:', error);
+      } finally {
+        setIpLocationLoading(false);
+      }
+    };
+
+    // 只在组件挂载时获取一次IP信息
+    fetchIpLocation();
+  }, []);
+
+  // 如果是全部账号，不显示信息卡片
+  if (activeGroup === allUser) {
+    return null;
+  }
+
+  // 获取当前选中的空间信息
+  const currentSpace = accountGroupList.find(group => group.id === activeGroup);
+  if (!currentSpace) return null;
+
+  return (
+    <Card 
+      size="small" 
+      style={{ 
+        marginBottom: '16px',
+        backgroundColor: 'var(--grayColor1)',
+        border: '1px solid var(--grayColor3)'
+      }}
+    >
+      <Space direction="vertical" size="small" style={{ width: '100%' }}>
+        {/* <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ 
+            fontSize: 'var(--fs-xs)', 
+            color: 'var(--grayColor6)',
+            backgroundColor: 'var(--grayColor2)',
+            padding: '2px 8px',
+            borderRadius: '12px'
+          }}>
+            {currentSpace.children?.length || 0} 个账号
+          </span>
+        </div> */}
+        
+        {/* 默认空间显示IP和属地信息 */}
+        {currentSpace.isDefault && (
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px',
+            padding: '8px',
+            backgroundColor: 'var(--grayColor2)',
+            borderRadius: '6px'
+          }}>
+            <GlobalOutlined style={{ color: 'var(--colorPrimary5)' }} />
+            <span style={{ fontSize: 'var(--fs-xs)', color: 'var(--grayColor7)' }}>
+              {t("ipInfo.loading")}
+            </span>
+            {ipLocationLoading ? (
+              <span style={{ color: 'var(--colorPrimary5)', fontStyle: 'italic' }}>
+                {t("ipInfo.loading")}
+              </span>
+            ) : ipLocationInfo ? (
+              <Tooltip title={t("ipInfo.tooltip", { asn: ipLocationInfo.asn, org: ipLocationInfo.org })}>
+                <span style={{ 
+                  color: 'var(--grayColor7)',
+                  cursor: 'help',
+                  fontWeight: '500'
+                }}>
+                  {formatLocationInfo(ipLocationInfo)}
+                </span>
+              </Tooltip>
+            ) : (
+              <span style={{ color: 'var(--errorColor)', fontStyle: 'italic' }}>
+                {t("ipInfo.error")}
+              </span>
+            )}
+          </div>
+        )}
+        
+        {/* 空间创建时间等信息 */}
+        <div style={{ 
+          fontSize: 'var(--fs-xs)', 
+          color: 'var(--grayColor6)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px'
+        }}>
+          <EnvironmentOutlined />
+          <span>空间ID: {currentSpace.id}</span>
+          {currentSpace.isDefault && (
+            <span style={{ 
+              color: 'var(--colorPrimary5)',
+              backgroundColor: 'var(--colorPrimary1)',
+              padding: '1px 6px',
+              borderRadius: '10px',
+              fontSize: 'var(--fs-xs)'
+            }}>
+              defaultSpace
+            </span>
+          )}
+        </div>
+      </Space>
+    </Card>
   );
 };
 
@@ -373,6 +504,13 @@ const UserManageModal = memo(
                 />
 
                 <div className="userManage-content">
+                  {/* 空间信息卡片 - 显示在右侧上方 */}
+                  <SpaceInfoCard 
+                    activeGroup={activeGroup}
+                    accountGroupList={accountGroupList}
+                    allUser={allUser.current}
+                  />
+                  
                   <div className="userManage-content-head" style={{ marginBottom: "8px", display: "flex", justifyContent: "flex-end" }}>
                     <Button type="primary" onClick={openAddAccountFlow}>{t("addAccount")}</Button>
                   </div>
