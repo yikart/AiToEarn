@@ -158,19 +158,23 @@
       height: 40px;
       font-size: 15px;
       transition: all 0.3s ease;
+      color: #fff;
 
       &:hover {
         background-color: var(--theColor6);
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(166, 106, 228, 0.3);
+        color: #fff;
       }
 
       &:active {
         transform: translateY(0);
+        color: #fff;
       }
 
       .anticon {
         margin-right: 8px;
+        color: #fff;
       }
     }
   }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import {
   message,
@@ -34,6 +34,7 @@ import {
   generateMd2Card,
 } from "@/api/ai";
 import { getOssUrl } from "@/utils/oss";
+import { uploadToOss } from "@/api/oss";
 import { getMediaGroupList, createMedia } from "@/api/media";
 import { useTransClient } from "@/app/i18n/client";
 import { md2CardTemplates, defaultMarkdown } from "./md2card";
@@ -84,16 +85,65 @@ export default function AIGeneratePage() {
   // 视频生成相关状态
   const [videoPrompt, setVideoPrompt] = useState("");
   const [videoModel, setVideoModel] = useState("");
-  const [videoSize, setVideoSize] = useState("1024x576");
-  const [videoDuration, setVideoDuration] = useState(4);
+  const [videoSize, setVideoSize] = useState("720p");
+  const [videoDuration, setVideoDuration] = useState(5);
   const [videoMode, setVideoMode] = useState("text2video");
   const [videoImage, setVideoImage] = useState("");
+  const [videoImageTail, setVideoImageTail] = useState("");
   const [loadingVideo, setLoadingVideo] = useState(false);
   const [videoTaskId, setVideoTaskId] = useState<string | null>(null);
   const [videoStatus, setVideoStatus] = useState<string>("");
   const [videoResult, setVideoResult] = useState<string | null>(null);
   const [checkingStatus, setCheckingStatus] = useState(false);
   const [videoProgress, setVideoProgress] = useState(0);
+
+  // 首帧/尾帧上传相关
+  const firstFrameInputRef = useRef<HTMLInputElement | null>(null);
+  const tailFrameInputRef = useRef<HTMLInputElement | null>(null);
+  const [uploadingFirstFrame, setUploadingFirstFrame] = useState(false);
+  const [uploadingTailFrame, setUploadingTailFrame] = useState(false);
+
+  const handlePickFirstFrame = () => {
+    firstFrameInputRef.current?.click();
+  };
+
+  const handlePickTailFrame = () => {
+    tailFrameInputRef.current?.click();
+  };
+
+  const handleFirstFrameChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    try {
+      setUploadingFirstFrame(true);
+      const key = await uploadToOss(file);
+      const url = getOssUrl(key);
+      setVideoImage(url);
+      message.success(t('aiGenerate.uploadSuccess'));
+    } catch (err) {
+      message.error(t('aiGenerate.uploadFailed'));
+    } finally {
+      setUploadingFirstFrame(false);
+      if (e.target) e.target.value = "";
+    }
+  };
+
+  const handleTailFrameChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    try {
+      setUploadingTailFrame(true);
+      const key = await uploadToOss(file);
+      const url = getOssUrl(key);
+      setVideoImageTail(url);
+      message.success(t('aiGenerate.uploadSuccess'));
+    } catch (err) {
+      message.error(t('aiGenerate.uploadFailed'));
+    } finally {
+      setUploadingTailFrame(false);
+      if (e.target) e.target.value = "";
+    }
+  };
 
   // md2card相关状态
   const [markdownContent, setMarkdownContent] = useState(defaultMarkdown);
@@ -118,6 +168,18 @@ export default function AIGeneratePage() {
   const [imageModels, setImageModels] = useState<any[]>([]);
   const [videoModels, setVideoModels] = useState<any[]>([]);
 
+  // 根据模式过滤视频模型列表
+  const filteredVideoModels = useMemo(() => {
+    if (!Array.isArray(videoModels)) return [] as any[];
+    if (videoMode === "text2video") {
+      return (videoModels as any[]).filter((m: any) => (m?.modes || []).includes("text"));
+    }
+    return (videoModels as any[]).filter((m: any) => {
+      const modes: string[] = m?.modes || [];
+      return modes.includes("first_frame") || modes.includes("last_frame");
+    });
+  }, [videoModels, videoMode]);
+
   // 获取图片生成模型
   const fetchImageModels = async () => {
     try {
@@ -140,7 +202,14 @@ export default function AIGeneratePage() {
       if (response.data) {
         setVideoModels(response.data);
         if (response.data.length > 0) {
-          setVideoModel(response.data[0].name);
+          const first = response.data[0];
+          setVideoModel(first.name);
+          if (first?.durations?.length) {
+            setVideoDuration(first.durations[0]);
+          }
+          if (first?.sizes?.length) {
+            setVideoSize(first.sizes[0]);
+          }
         }
       }
     } catch (error) {
@@ -152,6 +221,41 @@ export default function AIGeneratePage() {
     fetchImageModels();
     fetchVideoModels();
   }, []);
+
+  // 模式变化时，重置模型为过滤后的第一个；切换到文生视频时清空图片
+  useEffect(() => {
+    if ((filteredVideoModels as any[]).length > 0) {
+      if (!(filteredVideoModels as any[]).find((m: any) => m.name === videoModel)) {
+        setVideoModel((filteredVideoModels as any[])[0].name);
+      }
+    }
+    if (videoMode === 'text2video') {
+      setVideoImage("");
+      setVideoImageTail("");
+    }
+  }, [videoMode, filteredVideoModels]);
+
+  // 切换模型时，根据模型能力校正模式/时长/尺寸（仅校正 size/duration）
+  useEffect(() => {
+    if (!videoModel || !videoModels?.length) return;
+    const current = (videoModels as any[]).find((m) => m.name === videoModel);
+    if (!current) return;
+    const { durations = [], sizes = [] } = current || {};
+    if (durations.length && !durations.includes(videoDuration)) {
+      setVideoDuration(durations[0]);
+    }
+    if (sizes.length && !sizes.includes(videoSize)) {
+      setVideoSize(sizes[0]);
+    }
+    // 按模型能力清理不支持的首/尾帧，避免带上无效参数
+    const modes: string[] = (current as any)?.modes || [];
+    if (!modes.includes('first_frame') && videoImage) {
+      setVideoImage("");
+    }
+    if (!modes.includes('last_frame') && videoImageTail) {
+      setVideoImageTail("");
+    }
+  }, [videoModel, videoModels]);
 
   const fetchMediaGroups = async (type: "video" | "img" = 'img') => {
     try {
@@ -245,11 +349,16 @@ export default function AIGeneratePage() {
         prompt: videoPrompt,
         size: videoSize,
         duration: videoDuration,
-        mode: videoMode,
       };
 
-      if (videoImage) {
+      // 根据当前模型能力决定携带哪些帧参数
+      const current: any = (filteredVideoModels as any[]).find((m: any) => m.name === videoModel) || {};
+      const modes: string[] = current?.modes || [];
+      if (modes.includes('first_frame') && videoImage) {
         requestData.image = videoImage;
+      }
+      if (modes.includes('last_frame') && videoImageTail) {
+        requestData.image_tail = videoImageTail;
       }
 
       const response: any = await generateVideo(requestData);
@@ -280,23 +389,38 @@ export default function AIGeneratePage() {
         const response: any = await getVideoTaskStatus(taskId);
         
         if (response.data) {
-          const { status, fail_reason } = response.data;
-          setVideoStatus(status);
-          
-          if (status === "SUCCESS") {
-            setVideoResult(fail_reason); // 成功时fail_reason字段包含视频URL
+          const { status, fail_reason, progress } = response.data;
+          // 规范化状态以匹配UI展示
+          const up = typeof status === 'string' ? status.toUpperCase() : '';
+          const normalizedStatus = up === 'SUCCESS' ? 'completed'
+            : up === 'FAILED' ? 'failed'
+            : up === 'PROCESSING' ? 'processing'
+            : up === 'NOT_START' || up === 'NOT_STARTED' || up === 'QUEUED' || up === 'PENDING' ? 'submitted'
+            : (status || '').toString().toLowerCase();
+          setVideoStatus(normalizedStatus);
+
+          // 解析进度：可能是 "0%"、0-1 或 0-100
+          let percent = 0;
+          if (typeof progress === 'string') {
+            const m = progress.match(/(\d+)/);
+            percent = m ? Number(m[1]) : 0;
+          } else if (typeof progress === 'number') {
+            percent = progress > -1 ? Math.round(progress) : Math.round(progress * 100);
+          }
+
+          if (normalizedStatus === 'completed') {
+            setVideoResult(fail_reason); // 成功时 fail_reason 字段包含视频URL
             setVideoProgress(100);
             message.success(t('aiGenerate.videoGenerationSuccess'));
             return true;
-          } else if (status === "FAILED") {
+          }
+          if (normalizedStatus === 'failed') {
             setVideoProgress(0);
             message.error(fail_reason || t('aiGenerate.videoGenerationFailed'));
             return true;
-          } else {
-            // 处理中，继续轮询
-            setVideoProgress(response.data.progress);
-            return false;
           }
+          setVideoProgress(percent);
+          return false;
         }
         return false;
       } catch (error) {
@@ -589,6 +713,8 @@ export default function AIGeneratePage() {
             }
             key="videoGeneration"
           >
+
+            
             <div className={styles.section}>
               <div className={styles.form}>
                 <TextArea
@@ -597,29 +723,8 @@ export default function AIGeneratePage() {
                   onChange={(e) => setVideoPrompt(e.target.value)}
                   rows={4}
                 />
-                <div className={styles.dimensions}>
-                  <Select
-                    placeholder={t('aiGenerate.videoSize')}
-                    value={videoSize}
-                    onChange={setVideoSize}
-                    style={{ width: "100%" }}
-                  >
-                    <Option value="1024x576">1024x576 (16:9)</Option>
-                    <Option value="576x1024">576x1024 (9:16)</Option>
-                    <Option value="1024x1024">1024x1024 (1:1)</Option>
-                  </Select>
-                  <Select
-                    placeholder={t('aiGenerate.videoDuration')}
-                    value={videoDuration}
-                    onChange={setVideoDuration}
-                    style={{ width: "100%" }}
-                  >
-                    <Option value={4}>4{t('aiGenerate.seconds')}</Option>
-                    <Option value={8}>8{t('aiGenerate.seconds')}</Option>
-                    <Option value={12}>12{t('aiGenerate.seconds')}</Option>
-                    <Option value={16}>16{t('aiGenerate.seconds')}</Option>
-                  </Select>
-                </div>
+
+                {/* 模式选择：仅显示两项 Tab 下拉：文生成视频/图文转视频 */}
                 <div className={styles.options}>
                   <Select
                     placeholder={t('aiGenerate.videoMode')}
@@ -630,29 +735,115 @@ export default function AIGeneratePage() {
                     <Option value="text2video">{t('aiGenerate.textToVideo')}</Option>
                     <Option value="image2video">{t('aiGenerate.imageToVideo')}</Option>
                   </Select>
-                  {videoMode === "image2video" && (
-                    <Input
-                      placeholder={t('aiGenerate.imageUrlPlaceholder')}
-                      value={videoImage}
-                      onChange={(e) => setVideoImage(e.target.value)}
-                      style={{ width: "100%" }}
-                    />
-                  )}
                 </div>
-                {videoModels.length > 0 && (
+
+                {Array.isArray(filteredVideoModels) && filteredVideoModels.length > 0 && (
+                  <div style={{ width: "100%" }}>
+                    <Select
+                      placeholder={t('aiGenerate.selectVideoModelPlaceholder')}
+                      value={videoModel}
+                      onChange={setVideoModel}
+                      style={{ width: "100%" }}
+                    >
+                      {(filteredVideoModels as any[]).map((modelItem: any) => (
+                        <Option key={modelItem.name} value={modelItem.name}>
+                          {modelItem.name}
+                        </Option>
+                      ))}
+                    </Select>
+                    {/* {(() => {
+                      const selected: any = ((filteredVideoModels as any[]) || []).find((m: any) => m.name === videoModel);
+                      if (!selected?.description) return null;
+                      return (
+                        <div style={{ marginTop: 6, color: '#888', fontSize: 12 }}>{selected.description}</div>
+                      );
+                    })()} */}
+                  </div>
+                )}
+                <div className={styles.dimensions}>
                   <Select
-                    placeholder={t('aiGenerate.selectVideoModelPlaceholder')}
-                    value={videoModel}
-                    onChange={setVideoModel}
+                    placeholder={t('aiGenerate.videoSize')}
+                    value={videoSize}
+                    onChange={setVideoSize}
                     style={{ width: "100%" }}
                   >
-                    {videoModels.map((modelItem) => (
-                      <Option key={modelItem.name} value={modelItem.name}>
-                        {modelItem.name}
-                      </Option>
-                    ))}
+                    {(() => {
+                      const selected: any = (filteredVideoModels as any[]).find((m: any) => m.name === videoModel) || {};
+                      const sizes: string[] = selected?.sizes || [];
+                      return sizes.map((s) => (
+                        <Option key={s} value={s}>{s}</Option>
+                      ));
+                    })()}
                   </Select>
-                )}
+                  <Select
+                    placeholder={t('aiGenerate.videoDuration')}
+                    value={videoDuration}
+                    onChange={setVideoDuration}
+                    style={{ width: "100%" }}
+                  >
+                    {(() => {
+                      const selected: any = (filteredVideoModels as any[]).find((m: any) => m.name === videoModel) || {};
+                      const durations: number[] = selected?.durations || [];
+                      return durations.map((d) => (
+                        <Option key={d} value={d}>{d}{t('aiGenerate.seconds')}</Option>
+                      ));
+                    })()}
+                  </Select>
+                </div>
+
+                {/* 首帧/尾帧上传控件：按选择的模式显示 */}
+                <div className={styles.options}>
+                  {(() => {
+                    const selected: any = (filteredVideoModels as any[]).find((m: any) => m.name === videoModel) || {};
+                    const allowedModes: string[] = selected?.modes || [];
+                    return (
+                      <>
+                        {videoMode === 'image2video' && allowedModes.includes('first_frame') && (
+                          <div style={{ display: "flex", alignItems: "center", gap: 12, width: "100%" }}>
+                            <Button onClick={handlePickFirstFrame} loading={uploadingFirstFrame}>
+                              {t('aiGenerate.uploadImage')} - {t('aiGenerate.firstFrame')}
+                            </Button>
+                            {videoImage && (
+                              <img
+                                src={videoImage}
+                                alt={t('aiGenerate.firstFrame')}
+                                style={{ width: 160, height: 90, objectFit: 'cover', borderRadius: 6, border: '1px solid #eee' }}
+                              />
+                            )}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              ref={firstFrameInputRef}
+                              onChange={handleFirstFrameChange}
+                              style={{ display: "none" }}
+                            />
+                          </div>
+                        )}
+                        {videoMode === 'image2video' && allowedModes.includes('last_frame') && (
+                          <div style={{ display: "flex", alignItems: "center", gap: 12, width: "100%" }}>
+                            <Button onClick={handlePickTailFrame} loading={uploadingTailFrame}>
+                              {t('aiGenerate.uploadImage')} - {t('aiGenerate.tailFrame')}
+                            </Button>
+                            {videoImageTail && (
+                              <img
+                                src={videoImageTail}
+                                alt={t('aiGenerate.tailFrame')}
+                                style={{ width: 160, height: 90, objectFit: 'cover', borderRadius: 6, border: '1px solid #eee' }}
+                              />
+                            )}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              ref={tailFrameInputRef}
+                              onChange={handleTailFrameChange}
+                              style={{ display: "none" }}
+                            />
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
+                </div>
                 <Button
                   type="primary"
                   onClick={handleVideoGeneration}

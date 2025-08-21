@@ -57,3 +57,4 @@ export const getAppDownloadConfig = (platformKey: string): AppDownloadConfig | n
 export const getTasksRequiringApp = (accountTypes: string[]): string[] => {
   return accountTypes.filter(type => APP_DOWNLOAD_CONFIGS[type]);
 };
+

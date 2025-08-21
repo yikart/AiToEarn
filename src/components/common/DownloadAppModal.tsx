@@ -153,3 +153,4 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
 };
 
 export default DownloadAppModal;
+

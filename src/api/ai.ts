@@ -63,6 +63,7 @@ export const generateVideo = (data: {
   model: string;
   prompt: string;
   image?: string;
+  image_tail?: string;
   mode?: string;
   size?: string;
   duration?: number;

@@ -80,6 +80,8 @@
     "videoSize": "Video Size",
     "videoMode": "Generation Mode",
     "uploadImage": "Upload Image",
+    "firstFrame": "First Frame",
+    "tailFrame": "Tail Frame",
     "imageUrlPlaceholder": "Image URL or base64",
     "taskStatus": "Task Status",
     "taskSubmitted": "Task Submitted",
