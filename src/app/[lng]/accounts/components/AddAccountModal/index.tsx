@@ -90,31 +90,28 @@ const AddAccountModal = memo(
         };
       }, [open, targetGroupId, accountGroupList]);
 
-      // 根据是否CN过滤可添加平台
-      const displayPlatInfoArr = useMemo(() => {
+      // 判断平台是否在当前属地可用
+      const isPlatformAvailable = (platType: PlatType): boolean => {
+        if (isCnSpace === null) return true; // 未确定属地时显示所有平台
+        
+        const cnOnlyPlatforms = new Set<PlatType>([
+          PlatType.Xhs,
+          PlatType.Douyin,
+          PlatType.KWAI,
+          PlatType.WxGzh,
+          PlatType.BILIBILI,
+        ]);
+        
         if (isCnSpace === true) {
-          const allowSet = new Set<PlatType>([
-            PlatType.KWAI,
-            PlatType.BILIBILI,
-            PlatType.WxGzh,
-            PlatType.Douyin,
-            PlatType.Xhs,
-          ]);
-          return AccountPlatInfoArr.filter(([key]) => allowSet.has(key as PlatType));
+          // 中国属地：仅国内平台可用
+          return cnOnlyPlatforms.has(platType);
+        } else {
+          // 非中国属地：国内平台不可用
+          return !cnOnlyPlatforms.has(platType);
         }
-        if (isCnSpace === false) {
-          // 非中国属地时隐藏国内平台：小红书、抖音、快手、公众号
-          const disallowSet = new Set<PlatType>([
-            PlatType.Xhs,
-            PlatType.Douyin,
-            PlatType.KWAI,
-            PlatType.WxGzh,
-            PlatType.BILIBILI,
-          ]);
-          return AccountPlatInfoArr.filter(([key]) => !disallowSet.has(key as PlatType));
-        }
-        return AccountPlatInfoArr;
-      }, [isCnSpace]);
+      };
+
+
 
       const handleOk = () => {
         onClose();
@@ -149,15 +146,21 @@ const AddAccountModal = memo(
             <div className={styles.addAccountModal}>
               <h1>{t('addAccountModal.subtitle')}</h1>
               <div className="addAccountModal_plats">
-                {displayPlatInfoArr.map(([key, value]) => {
+                {AccountPlatInfoArr.map(([key, value]) => {
+                  const isAvailable = isPlatformAvailable(key as PlatType);
                   return (
                     //  !value.pcNoThis &&
                     <Tooltip title={value.tips?.account} key={key}>
                       
                       <Button
                         type="text"
-                        className="addAccountModal_plats-item"
+                        className={`addAccountModal_plats-item ${!isAvailable ? 'disabled' : ''}`}
+                        disabled={!isAvailable}
                         onClick={async () => {
+                          // 如果平台在当前属地不可用，则提示
+                          if (!isAvailable) {
+                            return;
+                          }
                           // 如果该平台在PC端不可用，则提示下载Aitoearn App
                           if (value.pcNoThis) {
                             setDownloadPlatform(value.name);
@@ -207,8 +210,8 @@ const AddAccountModal = memo(
                        
                         <div className="addAccountModal_plats-item-con">
                           {/*<LoadingOutlined style={{ fontSize: '20px' }} />*/}
-                          <img src={value.icon} />
-                          <span>{value.name}</span>
+                          <img src={value.icon} style={{ opacity: isAvailable ? 1 : 0.5 }} />
+                          <span style={{ opacity: isAvailable ? 1 : 0.5 }}>{value.name}</span>
                         </div>
                         
                         
@@ -218,6 +221,23 @@ const AddAccountModal = memo(
                   );
                 })}
               </div>
+              {/* 属地限制提示 */}
+              {isCnSpace !== null && (
+                <div style={{ 
+                  marginTop: '16px', 
+                  padding: '12px', 
+                  backgroundColor: 'var(--grayColor1)', 
+                  borderRadius: '6px',
+                  fontSize: 'var(--fs-xs)',
+                  color: 'var(--grayColor6)',
+                  textAlign: 'center'
+                }}>
+                  {isCnSpace ? 
+                    '当前空间为中国属地，仅显示国内平台' : 
+                    '当前空间为非中国属地，国内平台暂不可用'
+                  }
+                </div>
+              )}
             </div>
           </Modal>
 
