@@ -1,4 +1,3 @@
-import { MongodbModule } from '@aitoearn/mongodb'
 import { Module } from '@nestjs/common'
 import { CloudInstanceModule } from '../cloud-instance'
 import { MultiloginAccountModule } from '../multilogin-account'
@@ -7,7 +6,6 @@ import { BrowserEnvironmentService } from './browser-environment.service'
 
 @Module({
   imports: [
-    MongodbModule,
     CloudInstanceModule,
     MultiloginAccountModule,
   ],

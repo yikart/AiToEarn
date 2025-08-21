@@ -1,0 +1,15 @@
+{
+  "name": "@aitoearn/redlock",
+  "type": "commonjs",
+  "version": "0.0.1",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "@aitoearn/common": "workspace:*",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "ioredis": "^5.7.0",
+    "tslib": "^2.3.0",
+    "zod": "^4.0.17"
+  }
+}

@@ -5,7 +5,7 @@
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
-    "@aitoearn/common": "0.0.1",
+    "@aitoearn/common": "workspace:*",
     "@aws-sdk/client-s3": "^3.859.0",
     "@aws-sdk/s3-request-presigner": "^3.859.0",
     "@nestjs/common": "^11.0.0",

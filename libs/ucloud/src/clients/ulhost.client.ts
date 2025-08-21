@@ -107,6 +107,53 @@ export interface DescribeULHostInstanceRequest {
   Limit?: number
 }
 
+export enum ULHostState {
+  // 初始化
+  Initializing = 'Initializing',
+  // 启动中
+  Starting = 'Starting',
+  // 运行中
+  Running = 'Running',
+  // 关机中
+  Stopping = 'Stopping',
+  // 关机
+  Stopped = 'Stopped',
+  // 安装失败
+  InstallFail = 'Install Fail',
+  // 重启中
+  Rebooting = 'Rebooting',
+  // 未知(空字符串，获取状态超时或出错)
+  Unknown = '',
+
+}
+
+export interface PrivateIPSet {
+  IPMode: 'IPv4' | 'IPv6'
+  Default?: boolean
+  Mac?: string
+  Weight?: number
+  Type: 'Private'
+  IP: string
+  VPCId?: string
+  SubnetId?: string
+  NetworkInterfaceId?: string
+}
+
+export interface PublicIpSet {
+  IPMode: 'IPv4' | 'IPv6'
+  Default?: boolean
+  Mac?: string
+  Weight?: number
+  Type: 'Internation' | 'Bgp'
+  IPId: string
+  IP: string
+  Bandwidth?: number
+  VPCId?: string
+  SubnetId?: string
+  NetworkInterfaceId?: string
+}
+export type UHostIPSet = PrivateIPSet | PublicIpSet
+
 /**
  * 轻量应用云主机实例信息
  */
@@ -122,11 +169,11 @@ export interface ULHostInstance {
   /** 内存大小 */
   Memory: number
   /** 实例状态 */
-  State: string
+  State: ULHostState
   /** 计费类型 */
   ChargeType: string
   /** IP集合 */
-  IPSet: unknown[]
+  IPSet: UHostIPSet[]
   /** 磁盘集合 */
   DiskSet: unknown[]
   /** 过期详情 */

@@ -53,7 +53,7 @@ export class BaseRepository<TDocument extends Document> {
   /**
    * 更新单个文档
    */
-  async updateOne(
+  protected async updateOne(
     filter: FilterQuery<TDocument>,
     update: UpdateDocumentType<TDocument>,
     options?: QueryOptions<TDocument>,
@@ -71,7 +71,7 @@ export class BaseRepository<TDocument extends Document> {
   /**
    * 删除单个文档
    */
-  async deleteOne(filter: FilterQuery<TDocument>, options?: QueryOptions<TDocument>): Promise<TDocument | null> {
+  protected async deleteOne(filter: FilterQuery<TDocument>, options?: QueryOptions<TDocument>): Promise<TDocument | null> {
     return await this.model.findOneAndDelete(filter, options).exec()
   }
 
@@ -102,28 +102,28 @@ export class BaseRepository<TDocument extends Document> {
   /**
    * 查找单个文档
    */
-  async findOne(filter: FilterQuery<TDocument>, options?: QueryOptions<TDocument>): Promise<TDocument | null> {
+  protected async findOne(filter: FilterQuery<TDocument>, options?: QueryOptions<TDocument>): Promise<TDocument | null> {
     return await this.model.findOne(filter, undefined, options).exec()
   }
 
   /**
    * 查找多个文档
    */
-  async find(filter: FilterQuery<TDocument> = {}, options?: QueryOptions<TDocument>): Promise<TDocument[]> {
+  protected async find(filter: FilterQuery<TDocument> = {}, options?: QueryOptions<TDocument>): Promise<TDocument[]> {
     return await this.model.find(filter, undefined, options).exec()
   }
 
   /**
    * 统计文档数量
    */
-  async count(filter: FilterQuery<TDocument> = {}): Promise<number> {
+  protected async count(filter: FilterQuery<TDocument> = {}): Promise<number> {
     return await this.model.countDocuments(filter).exec()
   }
 
   /**
    * 检查文档是否存在
    */
-  async exists(filter: FilterQuery<TDocument>): Promise<boolean> {
+  protected async exists(filter: FilterQuery<TDocument>): Promise<boolean> {
     const result = await this.model.exists(filter).exec()
     return result !== null
   }

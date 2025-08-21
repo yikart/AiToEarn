@@ -14,6 +14,7 @@
     "@scalar/nestjs-api-reference": "^0.5.12",
     "commander": "^14.0.0",
     "express": "^5.1.0",
+    "nanoid": "^5.0.8",
     "nest-typed-config": "^2.10.1",
     "nestjs-pino": "^4.4.0",
     "pino": "^9.7.0",

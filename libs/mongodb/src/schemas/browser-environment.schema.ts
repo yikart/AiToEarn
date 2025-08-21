@@ -37,6 +37,9 @@ export class BrowserEnvironment extends WithTimestampSchema {
     required: true,
   })
   ip: string
+
+  @Prop()
+  password?: string
 }
 
 export const BrowserEnvironmentSchema = SchemaFactory.createForClass(BrowserEnvironment)

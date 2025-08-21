@@ -3,11 +3,16 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "@aitoearn/common": "workspace:^",
-    "@aitoearn/mongodb": "0.0.1",
-    "@aitoearn/ucloud": "0.0.1",
+    "@aitoearn/common": "workspace:*",
+    "@aitoearn/mongodb": "workspace:*",
+    "@aitoearn/multilogin": "workspace:*",
+    "@aitoearn/redlock": "workspace:*",
+    "@aitoearn/ucloud": "workspace:*",
     "@nestjs/common": "^11.0.0",
+    "@nestjs/microservices": "^11.1.6",
+    "@nestjs/schedule": "^6.0.0",
     "@nx/webpack": "21.4.0",
+    "tslib": "^2.3.0",
     "zod": "^4.0.17"
   }
 }

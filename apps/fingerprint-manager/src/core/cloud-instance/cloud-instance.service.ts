@@ -1,19 +1,20 @@
-import { AppException, BrowserEnvironmentRegion, CloudInstanceStatus, ResponseCode } from '@aitoearn/common'
-import { CreateULHostInstanceRequest, UCloudService } from '@aitoearn/ucloud'
+import { AppException, BrowserEnvironmentRegion, CloudInstanceStatus, generateSecurePassword, ResponseCode } from '@aitoearn/common'
+import { CreateULHostInstanceRequest, UCloudService, UHostIPSet, ULHostState } from '@aitoearn/ucloud'
 import { Injectable } from '@nestjs/common'
-import { CreateCloudInstanceDto, InstanceStatusDto, ULHostInstanceInfoDto } from './cloud-instance.dto'
+import { config } from '../../config'
 
 @Injectable()
 export class CloudInstanceService {
   constructor(private readonly ucloudService: UCloudService) {}
 
-  async createInstance(dto: CreateCloudInstanceDto): Promise<ULHostInstanceInfoDto> {
+  async createInstance(region: BrowserEnvironmentRegion, name?: string) {
+    const password = generateSecurePassword()
     const request: CreateULHostInstanceRequest = {
-      Region: dto.region,
-      ImageId: dto.imageId,
-      BundleId: dto.bundleId,
-      Password: btoa(this.generateSecurePassword()),
-      Name: dto.name || `browser-env-${Date.now()}`,
+      Region: region,
+      ImageId: config.ucloud.imageId,
+      BundleId: config.ucloud.bundleId,
+      Password: password,
+      Name: name,
     }
 
     const response = await this.ucloudService.ulHost.createULHostInstance(request)
@@ -22,28 +23,30 @@ export class CloudInstanceService {
       throw new AppException(ResponseCode.UCloudInstanceCreationFailed, response.Message)
     }
 
-    return await this.getInstanceWithIp(response.ULHostId, dto.region)
+    const instanceInfo = await this.getInstanceWithIp(response.ULHostId, region)
+    return {
+      password,
+      ...instanceInfo,
+    }
   }
 
-  async getInstanceStatus(instanceId: string, region: BrowserEnvironmentRegion): Promise<InstanceStatusDto> {
+  async getInstanceStatus(instanceId: string, region: BrowserEnvironmentRegion) {
     const response = await this.ucloudService.ulHost.describeULHostInstance({
       Region: region,
       ULHostIds: [instanceId],
     })
 
     if (response.RetCode !== 0 || !response.ULHostInstanceSets.length) {
-      throw new AppException(ResponseCode.UCloudInstanceNotFound, 'Instance not found')
+      throw new AppException(ResponseCode.UCloudInstanceNotFound)
     }
 
     const instance = response.ULHostInstanceSets[0]
-    const publicIp = this.extractPublicIp(instance.IPSet)
-    const privateIp = this.extractPrivateIp(instance.IPSet)
+    const ip = this.extractIp(instance.IPSet)
 
     return {
-      instanceId: instance.ULHostId,
+      id: instance.ULHostId,
       status: this.mapUCloudStatus(instance.State),
-      publicIp,
-      privateIp,
+      ip,
     }
   }
 
@@ -60,13 +63,13 @@ export class CloudInstanceService {
       }
 
       if (status.status === CloudInstanceStatus.Error) {
-        throw new AppException(ResponseCode.UCloudInstanceError, 'Instance failed to start')
+        throw new AppException(ResponseCode.UCloudInstanceError)
       }
 
       await new Promise(resolve => setTimeout(resolve, pollInterval))
     }
 
-    throw new AppException(ResponseCode.UCloudInstanceTimeout, `Instance ${instanceId} failed to become ready within ${timeoutMinutes} minutes`)
+    throw new AppException(ResponseCode.UCloudInstanceTimeout)
   }
 
   async deleteInstance(instanceId: string, region: BrowserEnvironmentRegion): Promise<void> {
@@ -80,70 +83,37 @@ export class CloudInstanceService {
     }
   }
 
-  private async getInstanceWithIp(instanceId: string, region: BrowserEnvironmentRegion): Promise<ULHostInstanceInfoDto> {
-    await new Promise(resolve => setTimeout(resolve, 2000))
-
-    const status = await this.getInstanceStatus(instanceId, region)
+  private async getInstanceWithIp(id: string, region: BrowserEnvironmentRegion) {
+    const status = await this.getInstanceStatus(id, region)
 
     return {
-      ULHostId: instanceId,
-      publicIp: status.publicIp || '',
-      privateIp: status.privateIp,
+      id,
+      ip: status.ip,
       status: status.status,
       region,
     }
   }
 
-  private mapUCloudStatus(ucloudStatus: string): CloudInstanceStatus {
-    const statusMapping: Record<string, CloudInstanceStatus> = {
-      'Initializing': CloudInstanceStatus.Creating,
-      'Starting': CloudInstanceStatus.Creating,
-      'Running': CloudInstanceStatus.Running,
-      'Stopping': CloudInstanceStatus.Stopped,
-      'Stopped': CloudInstanceStatus.Stopped,
-      'Rebooting': CloudInstanceStatus.Creating,
-      'Install Fail': CloudInstanceStatus.Error,
-      'ResizeFail': CloudInstanceStatus.Error,
+  private mapUCloudStatus(ucloudStatus: ULHostState): CloudInstanceStatus {
+    const statusMapping: Record<ULHostState, CloudInstanceStatus> = {
+      [ULHostState.Initializing]: CloudInstanceStatus.Creating,
+      [ULHostState.Starting]: CloudInstanceStatus.Creating,
+      [ULHostState.Running]: CloudInstanceStatus.Running,
+      [ULHostState.Stopping]: CloudInstanceStatus.Stopped,
+      [ULHostState.Stopped]: CloudInstanceStatus.Stopped,
+      [ULHostState.InstallFail]: CloudInstanceStatus.Error,
+      [ULHostState.Rebooting]: CloudInstanceStatus.Error,
+      [ULHostState.Unknown]: CloudInstanceStatus.Error,
     }
-    return statusMapping[ucloudStatus] || CloudInstanceStatus.Error
+    return statusMapping[ucloudStatus]
   }
 
-  private extractPublicIp(ipSet: unknown[]): string {
-    if (!Array.isArray(ipSet))
-      return ''
-
+  private extractIp(ipSet: UHostIPSet[]): string | undefined {
     for (const ip of ipSet) {
-      if (typeof ip === 'object' && ip !== null) {
-        const ipObj = ip as { Type?: string, IP?: string }
-        if (ipObj.Type === 'Public' || ipObj.Type === 'International') {
-          return ipObj.IP || ''
-        }
-      }
-    }
-    return ''
-  }
-
-  private extractPrivateIp(ipSet: unknown[]): string | undefined {
-    if (!Array.isArray(ipSet))
-      return undefined
-
-    for (const ip of ipSet) {
-      if (typeof ip === 'object' && ip !== null) {
-        const ipObj = ip as { Type?: string, IP?: string }
-        if (ipObj.Type === 'Private') {
-          return ipObj.IP
-        }
+      if (ip.Type !== 'Private') {
+        return ip.IP
       }
     }
     return undefined
-  }
-
-  private generateSecurePassword(): string {
-    const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789'
-    let password = ''
-    for (let i = 0; i < 12; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length))
-    }
-    return password
   }
 }

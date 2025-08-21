@@ -6,16 +6,16 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "nx:run-commands",
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "command": "webpack-cli build",
-        "args": ["--node-env=production"],
-        "cwd": "apps/fingerprint-manager"
-      },
-      "configurations": {
-        "development": {
-          "args": ["--node-env=development"]
-        }
+        "outputPath": "dist/apps/fingerprint-manager",
+        "tsConfig": "apps/fingerprint-manager/tsconfig.app.json",
+        "packageJson": "apps/fingerprint-manager/package.json",
+        "main": "apps/fingerprint-manager/src/index.ts",
+        "assets": ["apps/fingerprint-manager/*.md"],
+        "generatePackageJson": true,
+        "clean": true
       }
     },
     "prune-lockfile": {

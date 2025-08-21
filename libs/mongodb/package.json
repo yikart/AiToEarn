@@ -5,7 +5,7 @@
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
-    "@aitoearn/common": "workspace:^",
+    "@aitoearn/common": "workspace:*",
     "@nestjs/common": "^11.0.0",
     "@nestjs/mongoose": "^11.0.3",
     "mongodb": "^6.18.0",
