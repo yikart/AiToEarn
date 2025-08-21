@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, memo, useState } from "react";
+import { ForwardedRef, forwardRef, memo, useEffect, useMemo, useState } from "react";
 import styles from "./AddAccountModal.module.scss";
 import { Button, Modal, Tooltip } from "antd";
 import { AccountPlatInfoArr, PlatType } from "@/app/config/platConfig";
@@ -14,6 +14,9 @@ import { instagramSkip } from "../../plat/InstagramLogin";
 import { threadsSkip } from "../../plat/ThreadsLogin";
 import { wxGzhSkip } from "../../plat/WxGzh";
 import { pinterestSkip } from "../../plat/PinterestLogin";
+import { useAccountStore } from "@/store/account";
+import { getIpLocation, IpLocationInfo } from "@/utils/ipLocation";
+import DownloadAppModal from "@/components/common/DownloadAppModal";
 
 export interface IAddAccountModalRef {}
 
@@ -21,16 +24,97 @@ export interface IAddAccountModalProps {
   open: boolean;
   onClose: () => void;
   onAddSuccess: (accountInfo: SocialAccount) => void;
+  // 目标空间ID，用于根据空间属地(CN)过滤可添加平台
+  targetGroupId?: string;
 }
 
 const AddAccountModal = memo(
   forwardRef(
     (
-      { open, onClose, onAddSuccess }: IAddAccountModalProps,
+      { open, onClose, onAddSuccess, targetGroupId }: IAddAccountModalProps,
       ref: ForwardedRef<IAddAccountModalRef>,
     ) => {
       const { t } = useTransClient('account');
       const [showFacebookPagesModal, setShowFacebookPagesModal] = useState(false);
+      const accountGroupList = useAccountStore((state) => state.accountGroupList);
+      const [downloadVisible, setDownloadVisible] = useState(false);
+      const [downloadPlatform, setDownloadPlatform] = useState<string>("");
+      const aitoearnDownloadUrl = process.env.NEXT_PUBLIC_AITOEARN_APP_DOWNLOAD_URL || "";
+
+      // 判断location是否属于中国（CN）
+      const isLocationCN = (location?: string | null): boolean => {
+        if (!location) return false;
+        const upper = location.toUpperCase();
+        return upper.startsWith('CN') || upper.includes('CHINA') || location.includes('中国');
+      };
+
+      // 当前目标空间是否视为中国属地
+      const [isCnSpace, setIsCnSpace] = useState<boolean | null>(null);
+      const [isLocLoading, setIsLocLoading] = useState(false);
+
+      useEffect(() => {
+        if (!open || !targetGroupId) {
+          setIsCnSpace(null);
+          setIsLocLoading(false);
+          return;
+        }
+
+        const currentSpace = (accountGroupList || []).find((g: any) => g.id === targetGroupId);
+        if (!currentSpace) {
+          setIsCnSpace(null);
+          return;
+        }
+
+        const shouldUseLocal = !currentSpace.proxyIp || currentSpace.proxyIp === '';
+        if (!shouldUseLocal && currentSpace.ip && currentSpace.location) {
+          setIsCnSpace(isLocationCN(currentSpace.location));
+          return;
+        }
+
+        let cancelled = false;
+        const fetchLocal = async () => {
+          try {
+            setIsLocLoading(true);
+            const info: IpLocationInfo = await getIpLocation();
+            if (!cancelled) setIsCnSpace(isLocationCN(info.location));
+          } catch {
+            if (!cancelled) setIsCnSpace(null);
+          } finally {
+            if (!cancelled) setIsLocLoading(false);
+          }
+        };
+        fetchLocal();
+
+        return () => {
+          cancelled = true;
+        };
+      }, [open, targetGroupId, accountGroupList]);
+
+      // 根据是否CN过滤可添加平台
+      const displayPlatInfoArr = useMemo(() => {
+        if (isCnSpace === true) {
+          const allowSet = new Set<PlatType>([
+            PlatType.KWAI,
+            PlatType.BILIBILI,
+            PlatType.WxGzh,
+            PlatType.Douyin,
+            PlatType.Xhs,
+          ]);
+          return AccountPlatInfoArr.filter(([key]) => allowSet.has(key as PlatType));
+        }
+        if (isCnSpace === false) {
+          // 非中国属地时隐藏国内平台：小红书、抖音、快手、公众号
+          const disallowSet = new Set<PlatType>([
+            PlatType.Xhs,
+            PlatType.Douyin,
+            PlatType.KWAI,
+            PlatType.WxGzh,
+            PlatType.BILIBILI,
+          ]);
+          return AccountPlatInfoArr.filter(([key]) => !disallowSet.has(key as PlatType));
+        }
+        return AccountPlatInfoArr;
+      }, [isCnSpace]);
 
       const handleOk = () => {
         onClose();
@@ -65,15 +149,21 @@ const AddAccountModal = memo(
             <div className={styles.addAccountModal}>
               <h1>{t('addAccountModal.subtitle')}</h1>
               <div className="addAccountModal_plats">
-                {AccountPlatInfoArr.map(([key, value]) => {
+                {displayPlatInfoArr.map(([key, value]) => {
                   return (
-                     !value.pcNoThis &&
+                    //  !value.pcNoThis &&
                     <Tooltip title={value.tips?.account} key={key}>
-                     
+                      
                       <Button
                         type="text"
                         className="addAccountModal_plats-item"
                         onClick={async () => {
+                          // 如果该平台在PC端不可用，则提示下载Aitoearn App
+                          if (value.pcNoThis) {
+                            setDownloadPlatform(value.name);
+                            setDownloadVisible(true);
+                            return;
+                          }
                           switch (key) {
                             case PlatType.KWAI:
                               await kwaiSkip(key);
@@ -136,6 +226,15 @@ const AddAccountModal = memo(
             open={showFacebookPagesModal}
             onClose={() => setShowFacebookPagesModal(false)}
             onSuccess={handleFacebookPagesSuccess}
+          />
+
+          {/* 下载Aitoearn App提示弹窗 */}
+          <DownloadAppModal
+            visible={downloadVisible}
+            onClose={() => setDownloadVisible(false)}
+            platform={downloadPlatform}
+            appName={"Aitoearn App"}
+            downloadUrl={aitoearnDownloadUrl}
           />
         </>
       );

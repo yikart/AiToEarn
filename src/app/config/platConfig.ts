@@ -11,6 +11,7 @@ import threadsSvg from "@/assets/svgs/plat/xiancheng.svg";
 import wxGzhSvg from "@/assets/svgs/plat/wx-gzh.svg";
 import gongzhonghaoSvg from "@/assets/svgs/plat/gongzhonghao.png";
 import pinterestSvg from "@/assets/svgs/plat/pinterest.svg";
+import xhsSvg from "@/assets/svgs/plat/xhs.svg";
 
 // 平台类型
 export enum PlatType {
@@ -68,19 +69,21 @@ export interface IAccountPlatInfo {
 
 // 各个平台的信息
 export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
+  
   [
-    PlatType.Tiktok,
+    PlatType.Xhs,
     {
-      name: "TikTok",
-      icon: tiktokSvg.src,
-      url: "https://www.tiktok.com/",
-      pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
+      name: "小红书",
+      icon: xhsSvg.src,
+      url: "https://www.xiaohongshu.com/",
+      themeColor: "red",
+      pubTypes: new Set([]),
       commonPubParamsConfig: {
+        titleMax: 100,
         topicMax: 100,
-        desMax: 4000,
-        imagesMax: 10,
+        desMax: 1000,
       },
-      themeColor: "black",
+      pcNoThis: true,
     },
   ],
   [
@@ -89,7 +92,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       name: "抖音",
       icon: douyinSvg.src,
       url: "https://www.douyin.com/",
-      pubTypes: new Set([PubType.VIDEO]),
+      pubTypes: new Set([]),
       commonPubParamsConfig: {
         titleMax: 30,
         topicMax: 5,
@@ -126,6 +129,36 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         desMax: 2000,
       },
       themeColor: "blue",
+    },
+  ],
+  [
+    PlatType.WxGzh,
+    {
+      name: "微信公众号",
+      icon: gongzhonghaoSvg.src,
+      url: "https://mp.weixin.qq.com/",
+      pubTypes: new Set([PubType.ImageText, PubType.Article]),
+      commonPubParamsConfig: {
+        topicMax: 10,
+        desMax: 2200,
+        imagesMax: 20,
+      },
+      themeColor: "green",
+    },
+  ],
+  [
+    PlatType.Tiktok,
+    {
+      name: "TikTok",
+      icon: tiktokSvg.src,
+      url: "https://www.tiktok.com/",
+      pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
+      commonPubParamsConfig: {
+        topicMax: 100,
+        desMax: 4000,
+        imagesMax: 10,
+      },
+      themeColor: "black",
     },
   ],
   [
@@ -172,21 +205,6 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         imagesMax: 10,
       },
       themeColor: "blue",
-    },
-  ],
-  [
-    PlatType.WxGzh,
-    {
-      name: "微信公众号",
-      icon: gongzhonghaoSvg.src,
-      url: "https://mp.weixin.qq.com/",
-      pubTypes: new Set([PubType.ImageText, PubType.Article]),
-      commonPubParamsConfig: {
-        topicMax: 10,
-        desMax: 2200,
-        imagesMax: 20,
-      },
-      themeColor: "green",
     },
   ],
   [

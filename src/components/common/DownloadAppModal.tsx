@@ -1,7 +1,8 @@
 import React from 'react';
 import { Modal, Button, Space, Typography } from 'antd';
-import { DownloadOutlined, MobileOutlined, QrcodeOutlined } from '@ant-design/icons';
+import { DownloadOutlined, QrcodeOutlined } from '@ant-design/icons';
 import { useTransClient } from '@/app/i18n/client';
+import logo from '@/assets/images/logo.png';
 
 const { Text, Paragraph } = Typography;
 
@@ -21,8 +22,8 @@ interface DownloadAppModalProps {
 const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
   visible,
   onClose,
-  platform = "小红书",
-  appName = "小红书App",
+  platform = "",
+  appName = "Aitoearn App",
   downloadUrl,
   qrCodeUrl
 }) => {
@@ -46,7 +47,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
     <Modal
       title={
         <Space>
-          <MobileOutlined style={{ color: '#1890ff' }} />
+          <img src={logo.src} alt="Aitoearn" style={{ width: 20, height: 20, borderRadius: 4 }} />
           <span>下载{appName}</span>
         </Space>
       }
@@ -73,16 +74,16 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
     >
       <div style={{ textAlign: 'center', padding: '20px 0' }}>
         <div style={{ marginBottom: '24px' }}>
-          <MobileOutlined style={{ fontSize: '48px', color: '#1890ff' }} />
+          <img src={logo.src} alt="Aitoearn" style={{ width: 56, height: 56, borderRadius: 12 }} />
         </div>
         
         <Typography.Title level={4} style={{ marginBottom: '16px' }}>
-          请在{platform}App中操作
+          请在{appName}中操作添加
         </Typography.Title>
         
         <Paragraph style={{ color: '#666', marginBottom: '24px' }}>
-          为了更好的用户体验和功能完整性，{platform}相关操作需要在移动端App中进行。
-          请下载并安装{appName}后继续操作。
+          为了更好的用户体验和功能完整性，该操作需要在 {appName} 中完成账号添加。
+          请下载并安装 {appName} 后继续操作。
         </Paragraph>
 
         {qrCodeUrl && (

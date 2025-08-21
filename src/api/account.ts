@@ -69,6 +69,20 @@ export const deleteAccountGroupApi = (ids: string[]) => {
 };
 
 // 获取所有账户组
-export const getAccountGroupApi = () => {
-  return http.get<AccountGroupItem[]>("accountGroup/getList");
+export const getAccountGroupApi = async () => {
+  const res:any = await http.get<AccountGroupItem[]>("accountGroup/getList");
+  console.log(res.data);
+  // res.data.push({
+  //   id: "68a6d3e5861d0b23ca010123",
+  //   ip: "188.166.188.86",
+  //   isDefault: false,
+  //   location: "AU",
+  //   name: "测试外网",
+  //   proxyIp: "188.166.188.86",
+  //   rank: 1,
+  //   userId: "689aea2a2b50f147c09f01bc",
+  //   _id: "68a6d3e5861d0b23ca010123",
+  // });
+  
+  return res;
 };

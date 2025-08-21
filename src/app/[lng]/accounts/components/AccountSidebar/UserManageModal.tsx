@@ -255,6 +255,7 @@ const UserManageModal = memo(
       const [deleteLoading, setDeleteLoading] = useState(false);
       const [cutLoading, setCutLoading] = useState(false);
       const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
+      const [targetGroupIdForModal, setTargetGroupIdForModal] = useState<string | undefined>(undefined);
       const [chooseGroupOpen, setChooseGroupOpen] = useState(false);
       const [chosenGroupId, setChosenGroupId] = useState<string | undefined>(undefined);
       const preAccountIds = useRef<Set<string>>(new Set());
@@ -417,6 +418,7 @@ const UserManageModal = memo(
           setChooseGroupOpen(true);
         } else {
           pendingGroupIdRef.current = currentGroupId;
+          setTargetGroupIdForModal(currentGroupId);
           if ((useAccountStore.getState().accountList || []).length === 0) {
             await getAccountList();
           }
@@ -591,6 +593,7 @@ const UserManageModal = memo(
             onOk={async () => {
               if (!chosenGroupId) return message.warning(t("pleaseChooseSpace" as any));
               pendingGroupIdRef.current = chosenGroupId;
+              setTargetGroupIdForModal(chosenGroupId);
               if ((useAccountStore.getState().accountList || []).length === 0) {
                 await getAccountList();
               }
@@ -616,6 +619,7 @@ const UserManageModal = memo(
             open={isAddAccountOpen}
             onClose={async () => {
               setIsAddAccountOpen(false);
+              setTargetGroupIdForModal(undefined);
             }}
             onAddSuccess={async (acc) => {
               try {
@@ -628,6 +632,7 @@ const UserManageModal = memo(
                 await getAccountList();
               }
             }}
+            targetGroupId={targetGroupIdForModal}
           />
         </>
       );
