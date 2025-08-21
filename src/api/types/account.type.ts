@@ -46,4 +46,7 @@ export interface AccountGroupItem {
   name: string;
   rank: number;
   isDefault: boolean;
+  proxyIp?: string;
+  ip?: string;
+  location?: string;
 }

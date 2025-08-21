@@ -141,8 +141,9 @@ const SpaceInfoCard = ({
           </span>
         </div> */}
         
-        {/* 默认空间显示IP和属地信息 */}
-        {currentSpace.isDefault && (
+        {/* 根据proxyIp判断显示IP和属地信息 */}
+        {(!currentSpace.proxyIp || currentSpace.proxyIp === "") ? (
+          // 本地IP显示
           <div style={{ 
             display: 'flex', 
             alignItems: 'center', 
@@ -175,6 +176,29 @@ const SpaceInfoCard = ({
               </span>
             )}
           </div>
+        ) : (
+          // 数据中的IP显示
+          currentSpace.ip && currentSpace.location && (
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px',
+              padding: '8px',
+              backgroundColor: 'var(--grayColor2)',
+              borderRadius: '6px'
+            }}>
+              <GlobalOutlined style={{ color: 'var(--colorPrimary5)' }} />
+              <Tooltip title={`IP: ${currentSpace.ip}\n位置: ${currentSpace.location}`}>
+                <span style={{ 
+                  color: 'var(--grayColor7)',
+                  cursor: 'help',
+                  fontWeight: '500'
+                }}>
+                  {currentSpace.ip} | {currentSpace.location}
+                </span>
+              </Tooltip>
+            </div>
+          )
         )}
         
         {/* 空间创建时间等信息 */}

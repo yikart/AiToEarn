@@ -266,12 +266,13 @@ const AccountSidebar = memo(
                               ).length
                             }
                           </span>
-                          {/* 在默认分组中显示IP和地址信息 */}
-                          {isDefaultGroup && (
+                          {/* 根据proxyIp判断显示IP信息 */}
+                          {(!v.proxyIp || v.proxyIp === "") ? (
+                            // 本地IP显示
                             <div className="accountSidebar-ipInfo">
                               {ipLocationLoading ? (
                                 <span className="accountSidebar-ipLoading">{t("ipInfo.loading")}</span>
-                              ) : showIpInfo ? (
+                              ) : ipLocationInfo ? (
                                 <Tooltip title={t("ipInfo.tooltip", { asn: ipLocationInfo.asn, org: ipLocationInfo.org })}>
                                   <span className="accountSidebar-ipText">
                                     {formatLocationInfo(ipLocationInfo)}
@@ -281,6 +282,17 @@ const AccountSidebar = memo(
                                 <span className="accountSidebar-ipError">{t("ipInfo.error")}</span>
                               )}
                             </div>
+                          ) : (
+                            // 数据中的IP显示
+                            v.ip && v.location && (
+                              <div className="accountSidebar-ipInfo">
+                                <Tooltip title={`IP: ${v.ip}\n位置: ${v.location}`}>
+                                  <span className="accountSidebar-ipText">
+                                    {v.ip} | {v.location}
+                                  </span>
+                                </Tooltip>
+                              </div>
+                            )
                           )}
                         </div>
                       </>
