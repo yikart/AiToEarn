@@ -19,6 +19,8 @@ import {
 } from "@/api/notification";
 import { getOssUrl } from "@/utils/oss";
 import { PubType } from "@/app/config/publishConfig";
+import { getAppDownloadConfig, getTasksRequiringApp } from "@/app/config/appDownloadConfig";
+import DownloadAppModal from "@/components/common/DownloadAppModal";
 import styles from "./NotificationPanel.module.scss";
 
 interface NotificationPanelProps {
@@ -36,6 +38,15 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
   const [selectedTask, setSelectedTask] = useState<TaskItem | null>(null);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [taskLoading, setTaskLoading] = useState(false);
+  
+  // 下载App弹窗状态
+  const [downloadAppVisible, setDownloadAppVisible] = useState(false);
+  const [downloadAppConfig, setDownloadAppConfig] = useState({
+    platform: "",
+    appName: "",
+    downloadUrl: "",
+    qrCodeUrl: "" as string | undefined
+  });
 
   // 获取通知列表
   const fetchNotifications = async () => {
@@ -161,6 +172,38 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
       message.error("接任务失败");
       console.error("接任务失败:", error);
     }
+  };
+
+  // 检查任务类型并显示相应的操作提示
+  const handleTaskAction = (task: TaskItem) => {
+    if (!task.accountTypes || task.accountTypes.length === 0) {
+      // 没有账号类型限制，直接接取任务
+      handleAcceptTask();
+      return;
+    }
+
+    // 检查需要App操作的平台
+    const appRequiredPlatforms = getTasksRequiringApp(task.accountTypes);
+    
+    if (appRequiredPlatforms.length > 0) {
+      // 有需要App操作的平台，显示第一个平台的下载提示
+      const firstPlatform = appRequiredPlatforms[0];
+      const config = getAppDownloadConfig(firstPlatform);
+      
+      if (config) {
+        setDownloadAppConfig({
+          platform: config.platform,
+          appName: config.appName,
+          downloadUrl: config.downloadUrl,
+          qrCodeUrl: config.qrCodeUrl
+        });
+        setDownloadAppVisible(true);
+        return;
+      }
+    }
+    
+    // 其他任务类型正常接取
+    handleAcceptTask();
   };
 
   // 格式化时间
@@ -535,9 +578,33 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                        </div>
                        {selectedTask.status === 'active' && selectedTask.currentRecruits < selectedTask.maxRecruits && (
                          <div className={styles.taskActions}>
+                           {/* 需要App操作的平台提示 */}
+                           {selectedTask.accountTypes && selectedTask.accountTypes.length > 0 && (
+                             (() => {
+                               const appRequiredPlatforms = getTasksRequiringApp(selectedTask.accountTypes);
+                               if (appRequiredPlatforms.length > 0) {
+                                 const platformNames = appRequiredPlatforms.map(p => getAppDownloadConfig(p)?.platform).filter(Boolean);
+                                 return (
+                                   <div style={{ 
+                                     marginBottom: '12px',
+                                     padding: '12px',
+                                     backgroundColor: '#fff7e6',
+                                     border: '1px solid #ffd591',
+                                     borderRadius: '6px',
+                                     color: '#d46b08'
+                                   }}>
+                                     <strong>⚠️ 注意：</strong>
+                                     {platformNames.join('、')}任务需要在移动端App中操作，请下载对应App后继续。
+                                   </div>
+                                 );
+                               }
+                               return null;
+                             })()
+                           )}
+                           
                            <Button 
                              type="primary" 
-                             onClick={handleAcceptTask}
+                             onClick={() => handleTaskAction(selectedTask)}
                              style={{ marginTop: '12px' }}
                            >
                              接受任务
@@ -556,6 +623,16 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
            </div>
          )}
       </Modal>
+      
+      {/* 下载App提示弹窗 */}
+      <DownloadAppModal
+        visible={downloadAppVisible}
+        onClose={() => setDownloadAppVisible(false)}
+        platform={downloadAppConfig.platform}
+        appName={downloadAppConfig.appName}
+        downloadUrl={downloadAppConfig.downloadUrl}
+        qrCodeUrl={downloadAppConfig.qrCodeUrl}
+      />
     </>
   );
 };
