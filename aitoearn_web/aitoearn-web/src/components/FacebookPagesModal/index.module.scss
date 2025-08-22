@@ -1,0 +1,36 @@
+.facebookPagesModal {
+  .pageList {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .pageItem {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .pageInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .pageAvatar {
+    flex-shrink: 0;
+  }
+
+  .pageName {
+    font-size: 14px;
+    color: #333;
+  }
+
+  .selectAll {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+} 

@@ -1,13 +1,13 @@
 "use client";
 
-import { ForwardedRef, forwardRef, memo, useEffect, useRef } from "react";
+import { ForwardedRef, forwardRef, memo, useEffect, useRef, useState } from "react";
 import styles from "./styles/lyaoutHeader.module.scss";
 import { useUserStore } from "@/store/user"; 
 import Link from "next/link";
 import Image from "next/image";
 import LayoutNav from "@/app/layout/layoutNav";
 import { NoSSR } from "@kwooshung/react-no-ssr";
-import { Button, Dropdown, MenuProps } from "antd";
+import { Button, Dropdown, MenuProps, Badge } from "antd";
 import logo from "@/assets/images/logo.png";
 import defaultAvatar from "./images/defaultAvatar.jpg";
 import {
@@ -17,6 +17,8 @@ import {
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useTransClient } from "@/app/i18n/client";
+import NotificationPanel from "@/components/notification/NotificationPanel";
+import { useNotification } from "@/hooks/useNotification";
 
 export interface ILyaoutHeaderRef {}
 
@@ -40,32 +42,44 @@ function UserInfo() {
         </div>
       ),
     },
+    // {
+    //   key: "2",
+    //   label: (
+    //     <div
+    //       onClick={() => {
+    //         router.push("/notification");
+    //       }}
+    //     >
+    //       {t("header.messages")}
+    //     </div>
+    //   ),
+    // },
     {
-      key: "2",
+      key: "3",
       label: (
         <div
           onClick={() => {
             router.push("/material");
           }}
         >
-          素材库
+          {t("header.materialLibrary")}
         </div>
       ),
     },
     {
-      key: "3",
+      key: "4",
       label: (
         <div
           onClick={() => {
             router.push("/cgmaterial");
           }}
         >
-          草稿箱
+          {t("header.draftBox")}
         </div>
       ),
     },
     {
-      key: "4",
+      key: "5",
       label: (
         <div
           onClick={() => {
@@ -86,7 +100,7 @@ function UserInfo() {
           <Image
             className={styles["layoutHeader-userinfo-avatar"]}
             src={userInfo?.avatar || defaultAvatar}
-            alt="头像"
+            alt={t("profile")}
             width={35}
             height={35}
           />
@@ -106,6 +120,8 @@ const LyaoutHeader = memo(
     const layoutHeader = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const { t } = useTransClient("common");
+    const [notificationVisible, setNotificationVisible] = useState(false);
+    const { unreadCount } = useNotification();
 
     const toggleLanguage = () => {
       const newLng = userStore.lang === "zh-CN" ? "en" : "zh-CN";
@@ -115,60 +131,64 @@ const LyaoutHeader = memo(
       );
     };
 
-    useEffect(() => {
-      setTimeout(() => {
-        let layoutHeaderHegiht = "0px";
-        layoutHeaderHegiht = layoutHeader.current!.offsetHeight + "px";
-
-        document.body.style.paddingTop = layoutHeaderHegiht;
-
-        document.documentElement.style.setProperty(
-          `--layoutHeaderHegiht`,
-          layoutHeaderHegiht,
-        );
-      }, 2);
-    }, []);
-
     return (
-      <div ref={layoutHeader} className={styles.layoutHeader}>
-        <div className={styles.layoutHeader_wrapper}>
-          <div className={styles["layoutHeader_wrapper-left"]}>
-            <h1 className={styles["layoutHeader_wrapper-logo"]}>
-              <Link href="/">
-                <Image src={logo} alt="logo" width={50} />
-              </Link>
-            </h1>
-            <LayoutNav />
-          </div>
+      <>
+        <div ref={layoutHeader} className={styles.layoutHeader}>
+          <div className={styles.layoutHeader_wrapper}>
+            <div className={styles["layoutHeader_wrapper-left"]}>
+              <h1 className={styles["layoutHeader_wrapper-logo"]}>
+                <Link href="/">
+                  <Image src={logo} alt="AIToEarn" width={50} />
+                </Link>
+              </h1>
+              <LayoutNav />
+            </div>
 
-          <div
-            className={styles["layoutHeader_wrapper-right"]}
-            suppressHydrationWarning={true}
-          >
-            <Button
-              type="text"
-              icon={<GlobalOutlined />}
-              onClick={toggleLanguage}
-              className={styles.languageButton}
+            <div
+              className={styles["layoutHeader_wrapper-right"]}
+              suppressHydrationWarning={true}
             >
-              {userStore.lang === "zh-CN" ? "EN" : "中文"}
-            </Button>
-            <NoSSR>
-              {userStore.token ? (
-                <UserInfo />
-              ) : (
-                <Button
-                  onClick={() => {
-                    router.push("/login");
-                  }}
-                >
-                  {t("login")}
-                </Button>
-              )}
-            </NoSSR>
+              <Button
+                type="text"
+                icon={<GlobalOutlined />}
+                onClick={toggleLanguage}
+                className={styles.languageButton}
+              >
+                {userStore.lang === "zh-CN" ? "EN" : "中文"}
+              </Button>
+              <NoSSR>
+                {userStore.token && (
+                  <Badge count={unreadCount} size="small">
+                    <Button
+                      type="text"
+                      icon={<BellOutlined />}
+                      onClick={() => setNotificationVisible(true)}
+                      className={styles.notificationButton}
+                    />
+                  </Badge>
+                )}
+                {userStore.token ? (
+                  <UserInfo />
+                ) : (
+                  <Button
+                    onClick={() => {
+                      router.push("/login");
+                    }}
+                  >
+                    {t("login")}
+                  </Button>
+                )}
+              </NoSSR>
+            </div>
           </div>
         </div>
-      </div>
+        
+        {/* Notification Panel */}
+        <NotificationPanel 
+          visible={notificationVisible} 
+          onClose={() => setNotificationVisible(false)} 
+        />
+      </>
     );
   }),
 );

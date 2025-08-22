@@ -15,7 +15,7 @@ function Header() {
         </div>
         <nav className={styles.nav}>
           <a href="#marketplace" className={styles.navLink}>{t('header.nav.marketplace')}</a>
-          <a href="#pricing" className={styles.navLink}>{t('header.nav.pricing')}</a>
+
           <a href="#docs" className={styles.navLink}>{t('header.nav.docs')}</a>
           <a href="#blog" className={styles.navLink}>{t('header.nav.blog')}</a>
         </nav>
@@ -88,20 +88,7 @@ export default function TermsOfServicePage() {
               </p>
             </section>
 
-            <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>4. Payment Terms</h2>
-              <p className={styles.sectionContent}>
-                Some features of the Service may require you to pay fees upon registering for the applicable subscription. Before you pay any fees, you will have an opportunity to review and accept the fees that you will be charged. All fees are in U.S. Dollars and are non-refundable unless otherwise specifically provided for in these Terms. Fees vary based on the plan, with different pricing schemes for individual users and organizations.
-              </p>
-              <h3 className={styles.subSectionTitle}>4.1 Price</h3>
-              <p className={styles.sectionContent}>
-                Aitoearn reserves the right to determine pricing for the Service. Aitoearn will make reasonable efforts to keep pricing information published on our website up to date. We encourage you to check our pricing page periodically for current pricing information. If you cancel your subscription you may forego your current price.
-              </p>
-              <h3 className={styles.subSectionTitle}>4.2 Authorization</h3>
-              <p className={styles.sectionContent}>
-                You authorize Aitoearn to charge all sums for the orders that you make and any level of Service you select as described in these Terms or published by Aitoearn, including all applicable taxes, to the payment method specified in your account. If you pay any fees with a credit card, then Aitoearn may seek pre-authorization of your credit card account prior to your purchase to verify that the credit card is valid and has the necessary funds or credit available to cover your purchase.
-              </p>
-            </section>
+
 
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>5. LICENSE TO Aitoearn SERVICES</h2>

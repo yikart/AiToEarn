@@ -15,7 +15,7 @@ function Header() {
         </div>
         <nav className={styles.nav}>
           <a href="#marketplace" className={styles.navLink}>{t('header.nav.marketplace')}</a>
-          <a href="#pricing" className={styles.navLink}>{t('header.nav.pricing')}</a>
+
           <a href="#docs" className={styles.navLink}>{t('header.nav.docs')}</a>
           <a href="#blog" className={styles.navLink}>{t('header.nav.blog')}</a>
         </nav>
@@ -44,7 +44,7 @@ export default function PrivacyPolicyPage() {
           <div className={styles.content}>
             <section className={styles.section}>
               <p className={styles.introduction}>
-              Aitoearn provides this Privacy Policy to inform you of our policies and procedures regarding the collection, use, protection, and disclosure of Personal Information received from your use of this website, located at https://www.aitoearn.ai (“Site”), as well as all related websites including our subdomains, applications, browser extensions, and other services provided by us (collectively, together with the Site, our “Service”), and in connection with our customer, vendor, and partner relationships. This Privacy Policy also tells you about your rights and choices with respect to your Personal Information, and how you can reach us to update your contact information or get answers to questions you may have about our privacy practices.
+              Aitoearn provides this Privacy Policy to inform you of our policies and procedures regarding the collection, use, protection, and disclosure of Personal Information received from your use of this website, located at https://aitoearn.ai (“Site”), as well as all related websites including our subdomains, applications, browser extensions, and other services provided by us (collectively, together with the Site, our “Service”), and in connection with our customer, vendor, and partner relationships. This Privacy Policy also tells you about your rights and choices with respect to your Personal Information, and how you can reach us to update your contact information or get answers to questions you may have about our privacy practices.
               </p>
               <p className={styles.sectionContent}>
               In addition to the activities described in this Privacy Policy, we may process Personal Information on behalf of our commercial customers when they use the Service. We process such Personal Information as a data processor of our commercial customers, which are the entities responsible for the data processing. To understand how a commercial customer processes your Personal Information, please refer to that customer’s privacy policy.
@@ -95,10 +95,7 @@ export default function PrivacyPolicyPage() {
                 We may collect information through your communications with our customer support team or other communications that you may send us and their contents.
               </p>
 
-              <h3 className={styles.subSectionTitle}>Making a Purchase</h3>
-              <p className={styles.sectionContent}>
-                When you make payments through the Service, you will need to provide Personal Information such as your credit card number and billing address.
-              </p>
+
 
               <h3 className={styles.subSectionTitle}>Social Media</h3>
               <p className={styles.sectionContent}>
@@ -166,7 +163,7 @@ export default function PrivacyPolicyPage() {
                 We may use the Personal Information we obtain about you to:
               </p>
               <ul className={styles.listContent}>
-                <li>create and manage your account, provide our Service, process payments, and respond to your inquiries;</li>
+                <li>create and manage your account, provide our Service, and respond to your inquiries;</li>
                 <li>manage account authentication such as two-factor authentication;</li>
                 <li>communicate with you to verify your account and for informational and operational purposes;</li>
                 <li>tailor our Service (e.g., we may use cookies and similar technologies to remember your preferences);</li>

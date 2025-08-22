@@ -103,11 +103,7 @@ const PubParmasTextarea = memo(
         if (onChange) onChange(values);
       }, [imageFileList, videoFile, value]);
       useEffect(() => {
-        if (imageFileListValue.length === 0 && imageFileList.length === 0)
-          return;
-        if (isEqual(imageFileListValue, imageFileList)) {
-          setImageFileList(imageFileListValue);
-        }
+        setImageFileList(imageFileListValue ?? []);
       }, [imageFileListValue]);
       useEffect(() => {
         setValue(desValue || "");
@@ -120,7 +116,7 @@ const PubParmasTextarea = memo(
         return AccountPlatInfoMap.get(platType)! || {};
       }, [platType]);
       const imageMax = useMemo(() => {
-        return platConfig.commonPubParamsConfig.imgTextConfig?.imagesMax || 10;
+        return platConfig.commonPubParamsConfig?.imagesMax || 10;
       }, [platConfig]);
 
       // 动态accept类型
@@ -132,6 +128,11 @@ const PubParmasTextarea = memo(
         if (!hasImage && hasVideo && platConfig.pubTypes.has(PubType.VIDEO))
           return "video/*";
 
+        if (
+          platConfig.pubTypes.has(PubType.ImageText) &&
+          platConfig.pubTypes.has(PubType.VIDEO)
+        )
+          return "video/*,image/*";
         if (platConfig.pubTypes.has(PubType.ImageText)) return "image/*";
         if (platConfig.pubTypes.has(PubType.VIDEO)) return "video/*";
 
@@ -326,7 +327,7 @@ const PubParmasTextarea = memo(
                   {/* 图像 ------------------------------------------- */}
                   {imageFileList.map((v, i) => (
                     <CSSTransition
-                      key={v.id}
+                      key={v.id || v.imgUrl}
                       timeout={300}
                       classNames={{
                         enter: styles.itemEnter,
@@ -431,7 +432,7 @@ const PubParmasTextarea = memo(
                 </TransitionGroup>
               </ReactSortable>
 
-              {videoFile && (
+              {videoFile && videoFile.file && (
                 <Button
                   style={{ marginTop: "10px" }}
                   onClick={() => setVideoCoverSetingModal(true)}

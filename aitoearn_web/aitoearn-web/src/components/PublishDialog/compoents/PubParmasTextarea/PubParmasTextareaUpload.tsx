@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Progress, Tooltip, Upload } from "antd";
+import { message, Progress, Tooltip, Upload } from "antd";
 import {
   formatImg,
   formatVideo,
@@ -19,6 +19,7 @@ import {
 import { toolsApi } from "@/api/tools";
 import { OSS_URL } from "@/constant";
 import { RcFile } from "antd/es/upload";
+import { useTransClient } from "@/app/i18n/client";
 
 const { Dragger } = Upload;
 
@@ -50,6 +51,7 @@ const PubParmasTextareaUpload = memo(
       const [uploadLoading, setUploadLoading] = useState(false);
       const chooseCount = useRef<number>(0);
       const fileListRef = useRef<RcFile[]>([]);
+      const { t } = useTransClient("publish");
 
       // 上传视频
       const uploadVideo = useCallback(
@@ -57,24 +59,30 @@ const PubParmasTextareaUpload = memo(
           setUploadCount(1);
           setUploadProgress(0);
           setUploadLoading(true);
-          // 上传视频
-          const uploadVideoRes = await toolsApi.uploadFileTemp(
-            video.file,
-            (prog) => {
-              setUploadProgress(prog === 100 ? 99 : prog);
-            },
-          );
-          setUploadProgress(100);
-          // 上传封面
-          const uploadCoverRes = await toolsApi.uploadFileTemp(
-            video.cover.file,
-          );
+          try {
+            // 上传视频
+            const uploadVideoRes = await toolsApi.uploadFileTemp(
+              video.file,
+              (prog) => {
+                setUploadProgress(prog === 100 ? 99 : prog);
+              },
+            );
+            setUploadProgress(100);
+            // 上传封面
+            const uploadCoverRes = await toolsApi.uploadFileTemp(
+              video.cover.file,
+            );
 
-          setUploadLoading(false);
-          video["ossUrl"] = `${OSS_URL}${uploadVideoRes}`;
-          video.cover["ossUrl"] = `${OSS_URL}${uploadCoverRes}`;
+            setUploadLoading(false);
+            video["ossUrl"] = `${OSS_URL}${uploadVideoRes}`;
+            video.cover["ossUrl"] = `${OSS_URL}${uploadCoverRes}`;
 
-          onVideoUpdateFinish(video);
+            onVideoUpdateFinish(video);
+          } catch (e) {
+            console.error(e);
+            setUploadLoading(false);
+            message.error("上传失败，请稍后重试");
+          }
         },
         [onVideoUpdateFinish],
       );
@@ -137,7 +145,7 @@ const PubParmasTextareaUpload = memo(
                             color: "var(--theColor6)",
                           }}
                         >
-                          Finishing up…
+                          {t("upload.finishingUp")}
                         </span>
                       )
                     : undefined
@@ -150,10 +158,10 @@ const PubParmasTextareaUpload = memo(
               )}
             </div>
           ) : (
-            <Tooltip title="上传图片或视频">
+            <Tooltip title={t("upload.uploadImageOrVideo")}>
               <Dragger
                 accept={uploadAccept}
-                multiple={true}
+                multiple={uploadAccept.includes("image")}
                 listType="text"
                 beforeUpload={async (file, uploadFileList) => {
                   if (!checkFileListType(uploadFileList)) {
@@ -177,7 +185,7 @@ const PubParmasTextareaUpload = memo(
                 showUploadList={false}
               >
                 <PlusOutlined />
-                <p>拖放 & 选择图片或视频</p>
+                <p>{t("upload.dragAndSelect")}</p>
               </Dragger>
             </Tooltip>
           )}

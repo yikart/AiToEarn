@@ -34,22 +34,8 @@ nextConfig.headers = async () => {
     {
       source: "/api/:path*",
       headers: CorsHeaders,
-
     },
   ];
-};
-
-nextConfig.rewrites = async () => {
-  const ret = [
-    {
-      source: `${process.env.NEXT_PUBLIC_API_URL_PROXY}:path*`,
-      destination: `${process.env.NEXT_PUBLIC_API_URL}:path*`,
-    },
-  ];
-
-  return {
-    beforeFiles: ret,
-  };
 };
 
 export default nextConfig;

@@ -70,3 +70,14 @@ export function useTransClient<
 }
 
 export default i18next;
+
+// 静态方法，注意这个方法的国际化不会自动更新
+export function directTrans<Ns extends FlatNamespace>(
+  ns: Ns,
+  key: string,
+): string {
+  // @ts-ignore
+  const t = (key: string) => i18next.t(key, { ns });
+  // @ts-ignore
+  return t(key);
+}

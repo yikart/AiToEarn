@@ -12,6 +12,15 @@ export interface UserInfo {
   updateTime: string;
   _id: string;
   avatar?: string;
+  isVip?: boolean;
+  score?: number;
+  popularizeCode?: string;
+  vipInfo?: {
+    id: string;
+    cycleType: number;
+    expireTime: string;
+    _id: string;
+  };
 }
 
 export interface IUserStore {

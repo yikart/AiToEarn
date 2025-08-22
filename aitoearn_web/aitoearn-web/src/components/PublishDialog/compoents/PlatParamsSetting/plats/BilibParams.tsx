@@ -10,10 +10,12 @@ import { usePublishDialogData } from "@/components/PublishDialog/usePublishDialo
 import { useShallow } from "zustand/react/shallow";
 import styles from "../platParamsSetting.module.scss";
 import { Input, Radio, Select } from "antd";
+import { useTransClient } from "@/app/i18n/client";
 
 const BilibParams = memo(
   forwardRef(
     ({ pubItem }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
+      const { t } = useTransClient("publish");
       const { pubParmasTextareaCommonParams, setOnePubParams } =
         usePlatParamsCommon(pubItem);
       const { getBilibiliPartitions, bilibiliPartitions } =
@@ -28,6 +30,23 @@ const BilibParams = memo(
         getBilibiliPartitions();
       }, [getBilibiliPartitions]);
 
+      // 初始化Bilibili参数
+      useEffect(() => {
+        const option = pubItem.params.option;
+        if (!option.bilibili) {
+          option.bilibili = {};
+        }
+        if (!option.bilibili.copyright) {
+          option.bilibili.copyright = 1;
+          setOnePubParams(
+            {
+              option,
+            },
+            pubItem.account.id,
+          );
+        }
+      }, [pubItem.account.id]);
+
       return (
         <>
           <PubParmasTextarea
@@ -39,7 +58,7 @@ const BilibParams = memo(
                   className={styles.commonTitleInput}
                   style={{ marginTop: "10px" }}
                 >
-                  <div className="platParamsSetting-label">分区</div>
+                  <div className="platParamsSetting-label">{t("form.partition")}</div>
                   <Select
                     style={{ width: "100%" }}
                     options={bilibiliPartitions} 
@@ -55,7 +74,7 @@ const BilibParams = memo(
                       );
                     }}
                     showSearch={true}
-                    placeholder="请选择分区"
+                    placeholder={t("form.partitionPlaceholder")}
                     fieldNames={{
                       label: "name",
                       value: "id",
@@ -67,12 +86,12 @@ const BilibParams = memo(
                   className={styles.commonTitleInput}
                   style={{ marginTop: "10px" }}
                 >
-                  <div className="platParamsSetting-label">类型</div>
+                  <div className="platParamsSetting-label">{t("form.type")}</div>
                   <Radio.Group
                     value={pubItem.params.option.bilibili?.copyright}
                     options={[
-                      { value: 1, label: "原创" },
-                      { value: 2, label: "转载" },
+                      { value: 1, label: t("form.original") },
+                      { value: 2, label: t("form.reprint") },
                     ]}
                     onChange={(e) => {
                       const option = pubItem.params.option;
@@ -96,8 +115,8 @@ const BilibParams = memo(
                     className={styles.commonTitleInput}
                     style={{ marginTop: "10px" }}
                   >
-                    <div className="platParamsSetting-label">转载来源</div>
-                    <Input placeholder="转载视频请注明来源、时间、地点(例：转自https://www.xxxx.com/yyyy)" />
+                    <div className="platParamsSetting-label">{t("form.source")}</div>
+                    <Input placeholder={t("form.sourcePlaceholder")} />
                   </div>
                 )}
               </>

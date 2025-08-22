@@ -15,7 +15,7 @@ function Header() {
         </div>
         <nav className={styles.nav}>
           <a href="#marketplace" className={styles.navLink}>{t('header.nav.marketplace')}</a>
-          <a href="#pricing" className={styles.navLink}>{t('header.nav.pricing')}</a>
+
           <a href="#docs" className={styles.navLink}>{t('header.nav.docs')}</a>
           <a href="#blog" className={styles.navLink}>{t('header.nav.blog')}</a>
         </nav>
@@ -97,7 +97,7 @@ export default function DataProtectionAgreementPage() {
                 We may share your personal data with:
               </p>
               <ul className={styles.listContent}>
-                <li><strong>Service Providers:</strong> Cloud hosting, analytics, payment processing, customer support</li>
+                <li><strong>Service Providers:</strong> Cloud hosting, analytics, customer support</li>
                 <li><strong>Social Media Platforms:</strong> When you connect and publish content to external platforms</li>
                 <li><strong>Legal Authorities:</strong> When required by law or to protect our legal rights</li>
                 <li><strong>Business Partners:</strong> With your explicit consent for specific integrations</li>

@@ -94,9 +94,9 @@ const SimpleAccountChoose = memo(
           // key=组ID，val=账户组
           const accountGroupMap = new Map<string, AccountGroup>();
 
-          const defaultGroup = groupList.find((v) => v.isDefault)!;
+          const defaultGroup = groupList.find((v:any) => v.isDefault)!;
 
-          groupList.map((v) => {
+          groupList.map((v:any) => {
             const accountGroupItem = {
               ...v,
               children: [],

@@ -85,6 +85,7 @@ export const formatImg = async ({
   return new Promise((resolve) => {
     const { filename, suffix } = getFilePathName(path);
     if (!blob) {
+      // @ts-ignore
       blob = new Blob([file!], {
         type: `image/${suffix}`,
       });

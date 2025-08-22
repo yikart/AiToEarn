@@ -25,5 +25,4 @@ export class Pagination<T> {
   ) {}
 }
 
-// 导出支付相关类型
-export * from './payment';
+

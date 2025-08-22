@@ -3,6 +3,8 @@ import { combine } from "zustand/middleware";
 import lodash from "lodash";
 import { AccountGroupItem, SocialAccount } from "@/api/types/account.type";
 import { getAccountGroupApi, getAccountListApi } from "@/api/account";
+import { PlatType } from "@/app/config/platConfig";
+import { directTrans } from "@/app/i18n/client";
 
 export interface AccountGroup extends AccountGroupItem {
   children: SocialAccount[];
@@ -67,22 +69,29 @@ export const useAccountStore = create(
           const accountMap = new Map<string, SocialAccount>([]);
           const accountAccountMap = new Map<string, SocialAccount>([]);
           const result = await getAccountListApi();
+          set({ accountLoading: false });
 
           if (result?.code !== 0) return;
+          const accountList: SocialAccount[] = [];
 
           for (const item of result.data) {
+            if (
+              item.type === PlatType.Xhs ||
+              item.type === PlatType.Douyin ||
+              item.type === PlatType.WxSph
+            )
+              continue;
             accountMap.set(item.id, item);
             accountAccountMap.set(item.account, item);
+            accountList.push(item);
           }
 
           set({
-            accountList: result.data,
+            accountList,
             accountMap,
             accountAccountMap,
           });
           await methods.getAccountGroup();
-
-          set({ accountLoading: false });
         },
 
         // 获取用户组的数据并且将用户放到对应组下
@@ -92,6 +101,12 @@ export const useAccountStore = create(
 
           if (!groupList) return;
           if (groupList.length === 0) return;
+          groupList.map((v) => {
+            v.name = v.isDefault
+              ? directTrans("account", "defaultSpace")
+              : v.name;
+          });
+
           const accountGroupList: AccountGroup[] = [];
           // key=组ID，val=账户ID
           const accountGroupMap = new Map<string, AccountGroup>();

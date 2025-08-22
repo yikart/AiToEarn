@@ -79,6 +79,8 @@ export const getFacebookAuthUrlApi = (mail: string) => {
 };
 
 
+
+
 export const checkMetaAuthApi = ( taskId:any ) => {
   return request({
     url: `plat/meta/auth/info/${taskId}`,
@@ -175,5 +177,8 @@ export const checkPinterestAuthApi = ( taskId:any ) => {
   return request({
     url: `plat/pinterest/checkAuth`,
     method: 'GET',
+    params: {
+      taskId: taskId,
+    },
   });
 };

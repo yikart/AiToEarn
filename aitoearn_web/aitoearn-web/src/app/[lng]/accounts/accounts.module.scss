@@ -1,4 +1,6 @@
 .accounts {
-  @include height_100vh;
   display: flex;
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
 }

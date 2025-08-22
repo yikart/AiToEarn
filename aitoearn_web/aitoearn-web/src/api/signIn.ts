@@ -16,7 +16,7 @@ export const signInApi = {
    * 创建签到
    */
   async createSignInRecord(type: SignInType = SignInType.PUL_VIDEO) {
-    const res = await http.post<any>(`/reward/signIn`, {
+    const res = await http.post<any>(`reward/signIn`, {
       type,
     });
     return res!.data;
@@ -26,7 +26,7 @@ export const signInApi = {
    * 获取签到列表
    */
   async getSignInList(params: { type: SignInType; time?: [Date, Date] }) {
-    const res = await http.get<any>(`/reward/signIn/list`, {
+    const res = await http.get<any>(`reward/signIn/list`, {
       isToken: true,
       params,
     });

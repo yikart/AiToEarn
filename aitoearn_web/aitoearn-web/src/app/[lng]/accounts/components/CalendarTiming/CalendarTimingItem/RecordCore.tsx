@@ -32,8 +32,7 @@ import { TooltipRef } from "antd/lib/tooltip";
 import { deletePublishRecordApi, nowPubTaskApi } from "@/api/plat/publish";
 import { getDays } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 import { getOssUrl } from "@/utils/oss";
-
-
+import { useTransClient } from "@/app/i18n/client";
 
 export interface IRecordCoreRef {}
 
@@ -42,26 +41,28 @@ export interface IRecordCoreProps {
 }
 
 const PubStatus = ({ status }: { status: PublishStatus }) => {
+  const { t } = useTransClient("publish");
+
   return (
     <div className={styles.pubStatus}>
       {status === PublishStatus.FAIL ? (
         <Tag color="error">
-          发布失败
+          {t("status.publishFailed")}
           <CloseCircleOutlined />
         </Tag>
       ) : status === PublishStatus.PUB_LOADING ? (
         <Tag color="cyan">
-          发布中
+          {t("status.publishing")}
           <LoadingOutlined />
         </Tag>
       ) : status === PublishStatus.RELEASED ? (
         <Tag color="success">
-          发布成功
+          {t("status.publishSuccess")}
           <CheckCircleOutlined />
         </Tag>
       ) : status === PublishStatus.UNPUBLISH ? (
         <Tag color="processing">
-          等待发布
+          {t("status.waitingPublish")}
           <ClockCircleOutlined />
         </Tag>
       ) : (
@@ -92,26 +93,37 @@ const RecordCore = memo(
       );
       const [popoverOpen, setPopoverOpen] = useState(false);
       const popoverRef = useRef<TooltipRef>(null);
-      const dropdownItems: MenuProps["items"] = [
-        {
-          key: "2",
-          label: "复制链接",
-          onClick: async () => {
-            await navigator.clipboard.writeText(publishRecord.workLink);
-          },
-        },
-        {
-          key: "3",
-          danger: true,
-          label: "删除",
-          onClick: async () => {
-            setPopoverOpen(false);
-            setListLoading(true);
-            await deletePublishRecordApi(publishRecord.id);
-            getPubRecord();
-          },
-        },
-      ];
+      const { t } = useTransClient("publish");
+
+      const dropdownItems: MenuProps["items"] = useMemo(() => {
+        if (publishRecord.workLink) {
+          return [
+            {
+              key: "2",
+              label: t("buttons.copyLink"),
+              onClick: async () => {
+                await navigator.clipboard.writeText(publishRecord.workLink);
+              },
+            },
+          ];
+        }
+
+        if (publishRecord.status === PublishStatus.UNPUBLISH) {
+          return [
+            {
+              key: "3",
+              danger: true,
+              label: t("buttons.delete"),
+              onClick: async () => {
+                setPopoverOpen(false);
+                setListLoading(true);
+                await deletePublishRecordApi(publishRecord.id);
+                getPubRecord();
+              },
+            },
+          ];
+        }
+      }, [publishRecord]);
 
       const days = useMemo(() => {
         return getDays(publishRecord.publishTime);
@@ -136,7 +148,7 @@ const RecordCore = memo(
             <div className={styles.recordDetails}>
               <div className="recordDetails-top">
                 <div className="recordDetails-top-left">
-                  {days.format("YYYY-MM-DD HH:MM")}
+                  {days.format("YYYY-MM-DD HH:mm")}
                   <FieldTimeOutlined />
                 </div>
                 <Button icon={<FullscreenOutlined />} size="small" />
@@ -181,18 +193,22 @@ const RecordCore = memo(
                 </div>
               </div>
               <div className="recordDetails-bottom">
-                <Button
-                  icon={<SendOutlined />}
-                  onClick={async () => {
-                    await nowPubTaskApi(publishRecord.id);
-                    getPubRecord();
-                  }}
-                >
-                  立即发布
-                </Button>
-                <Dropdown menu={{ items: dropdownItems }} placement="top">
-                  <Button icon={<MoreOutlined />} />
-                </Dropdown>
+                {publishRecord.status !== PublishStatus.RELEASED && (
+                  <Button
+                    icon={<SendOutlined />}
+                    onClick={async () => {
+                      await nowPubTaskApi(publishRecord.id);
+                      getPubRecord();
+                    }}
+                  >
+                    {t("buttons.publishNow")}
+                  </Button>
+                )}
+                {dropdownItems && dropdownItems.length > 0 && (
+                  <Dropdown menu={{ items: dropdownItems }} placement="top">
+                    <Button icon={<MoreOutlined />} />
+                  </Dropdown>
+                )}
               </div>
             </div>
           }
@@ -203,7 +219,7 @@ const RecordCore = memo(
             style={{ width: calendarCallWidth + "px" }}
           >
             <div className="recordCore-left">
-              <img src={platIcon}  style={{width: '25px', height: '25px'}}/>
+              <img src={platIcon} style={{ width: "25px", height: "25px" }} />
               <div className="recordCore-left-date">{days.format("HH:mm")}</div>
             </div>
             <div className="recordCore-right">

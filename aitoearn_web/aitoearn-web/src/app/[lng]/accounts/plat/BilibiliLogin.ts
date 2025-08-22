@@ -2,7 +2,7 @@ import qs from "qs";
 import { PlatType } from "@/app/config/platConfig";
 import { apiGetBilibiliLoginUrl, apiCheckBilibiliAuth } from "@/api/plat/bilibili";
 import { useAccountStore } from "@/store/account";
-
+import { useUserStore } from "@/store/user";
 
 
 /**
@@ -13,6 +13,10 @@ export async function bilibiliSkip(platType: PlatType) {
   if (platType !== PlatType.BILIBILI) return;
 
   const res: any = await apiGetBilibiliLoginUrl('pc');
+  if (res?.code == 1) {
+    useUserStore.getState().logout();
+    return
+  }
   if (res?.code !== 0) return;
   const url = res.data.url;
   window.open(`${url}`);

@@ -8,20 +8,20 @@ import {
   apiPreviewMaterialTask,
   apiStartMaterialTask,
   apiGetMaterialGroupList,
-  MaterialType,
   NewMaterialTask,
 } from "@/api/material";
 import styles from "./demoMaterial.module.css";
+import { PubType } from "@/app/config/publishConfig";
 
 interface NewMaterialGroup {
-  type: MaterialType;
+  type: PubType;
   name: string;
   desc?: string;
 }
 
 export const DemoMaterial = () => {
   const [newMaterialGroup, setNewMaterialGroup] = useState<NewMaterialGroup>({
-    type: MaterialType.ARTICLE,
+    type: PubType.ImageText,
     name: "测试素材组",
     desc: "美景鉴赏者素材组",
   });

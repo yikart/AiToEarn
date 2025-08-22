@@ -1,0 +1,97 @@
+{
+  "title": "Publish Work",
+  "confirmClose": {
+    "title": "Confirm Close",
+    "content": "After closing, the filled content will be lost. Are you sure to close?"
+  },
+  "buttons": {
+    "customizePerAccount": "Customize per account",
+    "cancelPublish": "Cancel Publish",
+    "schedulePublish": "Schedule Publish",
+    "publishNow": "Publish now",
+    "copyLink": "Copy link",
+    "delete": "Delete"
+  },
+  "tips": {
+    "workSaved": "Please select the account to publish"
+  },
+  "status": {
+    "publishFailed": "Failed",
+    "publishing": "Publishing",
+    "publishSuccess": "Success",
+    "waitingPublish": "Waiting"
+  },
+  "form": {
+    "title": "Title",
+    "titlePlaceholder": "Enter title",
+    "partition": "Partition",
+    "partitionPlaceholder": "Select partition",
+    "type": "Type",
+    "original": "Original",
+    "reprint": "Reprint",
+    "source": "Source",
+    "sourcePlaceholder": "Please specify source, time, location (e.g. from https://www.xxxx.com/yyyy)",
+    "page": "Page",
+    "pagePlaceholder": "Select page",
+    "privacyStatus": "Privacy",
+    "public": "Public",
+    "unlisted": "Unlisted",
+    "private": "Private",
+    "region": "Region",
+    "regionPlaceholder": "Select region",
+    "category": "Category",
+    "categoryPlaceholder": "Select category",
+    "categoryPlaceholderDisabled": "Select region first"
+  },
+  "upload": {
+    "finishingUp": "Finishing up...",
+    "uploadImageOrVideo": "Upload image or video",
+    "dragAndSelect": "Drag & select image or video"
+  },
+  "validation": {
+    "facebookStoryNoDes": "Facebook Story does not support description",
+    "facebookReelNoImage": "Facebook Reel does not support image upload",
+    "instagramStoryNoDes": "Instagram Story does not support description",
+    "instagramReelNoImage": "Instagram Reel does not support image upload",
+    "instagramPostNoVideo": "Instagram post does not support video upload",
+    "titleMaxExceeded": "{{platformName}} title cannot exceed {{maxCount}} characters",
+    "descriptionMaxExceeded": "{{platformName}} description cannot exceed {{maxCount}} characters",
+    "descriptionRequired": "Description is required",
+    "imageMaxExceeded": "{{platformName}} images cannot exceed {{maxCount}}",
+    "uploadImageOrVideo": "Please upload image or video",
+    "topicMaxExceeded": "{{platformName}} topics cannot exceed {{maxCount}}",
+    "topicFormatError": "Topics in description must be separated by spaces, such as: \"#topic1 #topic2\"",
+    "titleRequired": "Title is required",
+    "topicRequired": "Topic is required",
+    "partitionRequired": "You must select a partition!",
+    "sourceRequired": "Source must be filled when reprinting!",
+    "pageRequired": "You must select a page!",
+    "coverSizeError": "Cover minimum size 400*400!"
+  },
+  "preview": {
+    "title": "Preview",
+    "emptyDescription": "See your work preview here"
+  },
+  "draft": {
+    "selectDraft": "Select Draft",
+    "selectDraftGroup": "Select Draft Group",
+    "selectDraftItem": "Select Draft",
+    "noDraftGroups": "No Draft Groups",
+    "noDrafts": "No Drafts in This Group",
+    "backToGroups": "Back to Groups",
+    "selectDraftSuccess": "Draft Applied",
+    "imageGroup": "Image Group",
+    "videoGroup": "Video Group",
+    "selectLibrary": "Select Library",
+    "selectLibraryItem": "Select Material",
+    "selectLibraryGroup": "Select Library Group",
+    "noLibraryGroups": "No Library Groups",
+    "backToLibraryGroups": "Back to Library Groups",
+    "noLibraryItems": "No Materials in This Group",
+    "selectLibrarySuccess": "Material Applied"
+  },
+  "actions": {
+    "selectMaterial": "Select Material",
+    "selectDraft": "Select Draft"
+  }
+} 

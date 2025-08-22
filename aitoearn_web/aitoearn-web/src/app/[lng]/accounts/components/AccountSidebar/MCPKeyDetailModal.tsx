@@ -6,6 +6,7 @@ import { apiGetMCPRefList, apiDeleteMCPRef } from "@/api/mcp";
 import { getAccountListApi } from "@/api/account";
 import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import styles from "./MCPKeyDetailModal.module.scss";
+import { useTransClient } from "@/app/i18n/client";
 
 export interface IMCPKeyDetailModalRef {
   open: (keyInfo: any) => void;
@@ -21,6 +22,7 @@ export interface IMCPKeyDetailModalProps {
 const MCPKeyDetailModal = memo(
   forwardRef<IMCPKeyDetailModalRef, IMCPKeyDetailModalProps>(
     ({ open, onClose, keyInfo: propKeyInfo }, ref) => {
+      const { t } = useTransClient("account");
       const [keyInfo, setKeyInfo] = useState<any>(null);
       const [refList, setRefList] = useState<any[]>([]);
       const [loading, setLoading] = useState(false);
@@ -33,7 +35,7 @@ const MCPKeyDetailModal = memo(
       const getPlatformInfo = (platformType: string) => {
         const platInfo = AccountPlatInfoMap.get(platformType as PlatType);
         return {
-          name: platInfo?.name || '未知平台',
+          name: platInfo?.name || t("unknownPlatform"),
           icon: platInfo?.icon || '',
           themeColor: platInfo?.themeColor || '#999'
         };
@@ -234,7 +236,7 @@ const MCPKeyDetailModal = memo(
                           >
                             <List.Item.Meta
                               avatar={<Avatar src={item.account?.avatar} />}
-                              title={item.account?.nickname || '未知账户'}
+                              title={item.account?.nickname || t("unknownAccount")}
                               description={
                                 <div>
                                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

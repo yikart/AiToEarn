@@ -2,8 +2,6 @@
   width: 100%;
   padding: 6px 0;
   background: var(--whiteColor);
-  position: fixed;
-  top: 0;
   z-index: 1000;
 
   .layoutHeaderBell {
@@ -68,6 +66,46 @@
       display: flex;
       align-items: center;
       gap: 16px;
+
+      .notificationButton {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background-color: #f5f5f5;
+          transform: scale(1.05);
+        }
+        
+        .anticon {
+          font-size: 18px;
+          color: #666;
+        }
+      }
+
+      .languageButton {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background-color: #f5f5f5;
+          transform: scale(1.05);
+        }
+        
+        .anticon {
+          font-size: 16px;
+          color: #666;
+        }
+      }
     }
   }
 }

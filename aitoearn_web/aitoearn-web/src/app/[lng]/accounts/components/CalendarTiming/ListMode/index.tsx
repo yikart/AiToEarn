@@ -66,7 +66,7 @@ const ListMode = memo(
           <div className={styles.listMode}>
             <div className={styles.listHeader}>
               <div className={styles.listHeaderLeft}>
-                <h3>发布计划列表</h3>
+                <h3>{t('listMode.title' as any)}</h3>
               </div>
             </div>
             <div className={styles.listContent}>
@@ -84,9 +84,9 @@ const ListMode = memo(
         <div className={styles.listMode}>
           <div className={styles.listHeader}>
             <div className={styles.listHeaderLeft}>
-              <h3>发布计划列表</h3>
+              <h3>{t('listMode.title' as any)}</h3>
               <span className={styles.recordCount}>
-                共 {sortedRecords.length} 条发布计划
+                {t('listMode.recordCount' as any, { count: sortedRecords.length })}
               </span>
             </div>
             <div className={styles.listHeaderRight}>
@@ -103,7 +103,7 @@ const ListMode = memo(
                   }
                 }}
               >
-                新建作品
+                {t('listMode.newWork' as any)}
               </Button>
             </div>
           </div>
@@ -117,7 +117,7 @@ const ListMode = memo(
                 />
               ) : (
                 <Empty
-                  description="暂无发布计划"
+                  description={t('listMode.noRecords' as any)}
                   className={styles.emptyState}
                 />
               )}

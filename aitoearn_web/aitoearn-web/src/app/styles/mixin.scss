@@ -27,10 +27,6 @@
   }
 }
 
-@mixin height_100vh() {
-  height: calc(100vh - var(--layoutHeaderHegiht));
-}
-
 // antd table 布局 100%
 @mixin table-flex-container-with-selectors() {
   .ant-table-wrapper,

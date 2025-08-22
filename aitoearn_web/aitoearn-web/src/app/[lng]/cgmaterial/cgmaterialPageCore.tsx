@@ -10,7 +10,6 @@ import {
   apiCreateMaterial,
   apiCreateMaterialTask,
   apiStartMaterialTask,
-  MaterialType,
   apiDeleteMaterialGroup,
   apiUpdateMaterialGroupInfo,
   apiPreviewMaterialTask,
@@ -23,10 +22,14 @@ import { getAccountListApi } from "@/api/account";
 import { getPublishList } from "@/api/plat/publish";
 import { PlatType } from "@/app/config/platConfig";
 import { PublishStatus } from "@/api/plat/types/publish.types";
+import { useTransClient } from "@/app/i18n/client";
+import { PubType } from "@/app/config/publishConfig";
 
 const { TextArea } = Input;
 
 export default function CgMaterialPageCore() {
+  const { t } = useTransClient('cgmaterial');
+  
   // 草稿箱组相关
   const [groupList, setGroupList] = useState<any[]>([]);
   const [groupLoading, setGroupLoading] = useState(false);
@@ -45,6 +48,17 @@ export default function CgMaterialPageCore() {
   const [mediaList, setMediaList] = useState<any[]>([]);
   const [selectedCover, setSelectedCover] = useState<string | null>(null);
   const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
+  
+  // 视频组专用：封面组和视频组分别选择
+  const [coverGroupModal, setCoverGroupModal] = useState(false);
+  const [videoGroupModal, setVideoGroupModal] = useState(false);
+  const [coverGroups, setCoverGroups] = useState<any[]>([]);
+  const [videoGroups, setVideoGroups] = useState<any[]>([]);
+  const [selectedCoverGroup, setSelectedCoverGroup] = useState<any>(null);
+  const [selectedVideoGroup, setSelectedVideoGroup] = useState<any>(null);
+  const [coverList, setCoverList] = useState<any[]>([]);
+  const [videoList, setVideoList] = useState<any[]>([]);
+  
   // 单个素材位置
   const [singleLocation, setSingleLocation] = useState<[number, number]>([0, 0]);
 
@@ -88,6 +102,18 @@ export default function CgMaterialPageCore() {
   const [editMaterialSelectedCover, setEditMaterialSelectedCover] = useState<string | null>(null);
   const [editMaterialSelectedMaterials, setEditMaterialSelectedMaterials] = useState<string[]>([]);
   const [editMaterialLocation, setEditMaterialLocation] = useState<[number, number]>([0, 0]);
+  
+  // 编辑素材：视频组专用状态
+  const [editMaterialCoverGroups, setEditMaterialCoverGroups] = useState<any[]>([]);
+  const [editMaterialVideoGroups, setEditMaterialVideoGroups] = useState<any[]>([]);
+  const [editMaterialSelectedCoverGroup, setEditMaterialSelectedCoverGroup] = useState<any>(null);
+  const [editMaterialSelectedVideoGroup, setEditMaterialSelectedVideoGroup] = useState<any>(null);
+  const [editMaterialCoverList, setEditMaterialCoverList] = useState<any[]>([]);
+  const [editMaterialVideoList, setEditMaterialVideoList] = useState<any[]>([]);
+  
+  // 编辑素材弹窗状态
+  const [editMaterialCoverGroupModal, setEditMaterialCoverGroupModal] = useState(false);
+  const [editMaterialVideoGroupModal, setEditMaterialVideoGroupModal] = useState(false);
 
   // 记录显示操作按钮的组id
   const [showActionsId, setShowActionsId] = useState<string | null>(null);
@@ -114,7 +140,7 @@ export default function CgMaterialPageCore() {
         setSelectedGroup(res.data.list[0]);
       }
     } catch (e) {
-      message.error("获取草稿箱组失败");
+      message.error(t('createGroup.getGroupsFailed'));
     } finally {
       setGroupLoading(false);
     }
@@ -134,7 +160,7 @@ export default function CgMaterialPageCore() {
       // @ts-ignore
       setMaterialList(res?.data?.list || []);
     } catch (e) {
-      message.error("获取草稿素材失败");
+      message.error(t('createGroup.getMaterialsFailed'));
     } finally {
       setMaterialLoading(false);
     }
@@ -150,15 +176,15 @@ export default function CgMaterialPageCore() {
         name: values.name,
         desc: values.desc || '',
       });
-      message.success("创建草稿箱组成功");
+      message.success(t('createGroup.createSuccess'));
       setCreateGroupModal(false);
       createGroupForm.resetFields();
       fetchGroupList();
           } catch (e: any) {
         if (e?.errorFields) {
-          message.warning("请完善表单信息");
+          message.warning(t('pleaseCompleteForm'));
         } else {
-          message.error("创建草稿箱组失败");
+          message.error(t('createGroup.createFailed'));
         }
       } finally {
       setCreating(false);
@@ -173,8 +199,35 @@ export default function CgMaterialPageCore() {
     setMediaList([]);
     setSelectedCover(null);
     setSelectedMaterials([]);
+    
+    // 重置视频组专用状态
+    setSelectedCoverGroup(null);
+    setSelectedVideoGroup(null);
+    setCoverList([]);
+    setVideoList([]);
+    
+    // 根据草稿箱组类型过滤媒体组
     const res = await getMediaGroupList(1, 50);
-    setMediaGroups(((res?.data as any)?.list as any[]) || []);
+    const allGroups = ((res?.data as any)?.list as any[]) || [];
+    
+    // 根据当前选中的草稿箱组类型过滤媒体组
+    if (selectedGroup) {
+      if (selectedGroup.type === PubType.ImageText) {
+        // 图文组：只能选择图片组
+        const filteredGroups = allGroups.filter((g: any) => g.type === 'img');
+        setMediaGroups(filteredGroups);
+      } else if (selectedGroup.type === PubType.VIDEO) {
+        // 视频组：分别设置封面组（图片组）和视频组
+        const imgGroups = allGroups.filter((g: any) => g.type === 'img');
+        const videoGroups = allGroups.filter((g: any) => g.type === 'video');
+        setCoverGroups(imgGroups);
+        setVideoGroups(videoGroups);
+        setMediaGroups([]); // 清空普通媒体组
+      }
+    } else {
+      setMediaGroups(allGroups);
+    }
+    
     // 获取地理位置
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -204,20 +257,93 @@ export default function CgMaterialPageCore() {
     setSelectedMaterials([]);
   }
 
+  // 选择封面组后，加载封面资源
+  async function handleSelectCoverGroup(group: any) {
+    setSelectedCoverGroup(group);
+    setCoverGroupModal(false);
+    const res = await getMediaList(group._id, 1, 100);
+    // @ts-ignore
+    setCoverList(res?.data?.list || []);
+    setSelectedCover(null);
+  }
+
+  // 选择视频组后，加载视频资源
+  async function handleSelectVideoGroup(group: any) {
+    setSelectedVideoGroup(group);
+    setVideoGroupModal(false);
+    const res = await getMediaList(group._id, 1, 100);
+    // @ts-ignore
+    setVideoList(res?.data?.list || []);
+    setSelectedMaterials([]);
+  }
+
   // 创建单个素材
   async function handleCreateMaterial() {
     await form.validateFields(); // 先校验
     const values = form.getFieldsValue(); // 再获取所有值
-    if (!selectedMediaGroup || !selectedCover || selectedMaterials.length === 0) {
-      message.warning('请完整选择媒体组、封面和素材');
-      return;
+    
+    // 根据草稿箱组类型进行不同的验证
+    if (selectedGroup.type === PubType.ImageText) {
+      // 图文组：必须有媒体组、封面和素材，且都是图片
+      if (!selectedMediaGroup) {
+        message.warning(t('createMaterial.selectMediaGroup'));
+        return;
+      }
+      if (!selectedCover || selectedMaterials.length === 0) {
+        message.warning(t('createMaterial.selectCoverAndMaterials'));
+        return;
+      }
+      // 检查是否都是图片类型
+      const selectedMediaItems = mediaList.filter((m: any) => 
+        selectedMaterials.includes(m.url) || selectedCover === m.url
+      );
+      const hasVideo = selectedMediaItems.some((m: any) => m.type === 'video');
+      if (hasVideo) {
+        message.warning(t('createMaterial.imageGroupOnly'));
+        return;
+      }
+    } else if (selectedGroup.type === PubType.VIDEO) {
+      // 视频组：必须有封面组、视频组、封面和视频素材
+      if (!selectedCoverGroup) {
+        message.warning(t('createMaterial.selectCoverGroupRequired'));
+        return;
+      }
+      if (!selectedVideoGroup) {
+        message.warning(t('createMaterial.selectVideoGroupRequired'));
+        return;
+      }
+      if (!selectedCover) {
+        message.warning(t('createMaterial.selectCoverRequired'));
+        return;
+      }
+      if (selectedMaterials.length === 0) {
+        message.warning(t('createMaterial.selectVideoRequired'));
+        return;
+      }
+      // 检查封面是否为图片
+      const coverItem = coverList.find((m: any) => m.url === selectedCover);
+      if (coverItem && coverItem.type !== 'img') {
+        message.warning(t('createMaterial.coverMustBeImage'));
+        return;
+      }
+      // 检查素材是否都是视频
+      const selectedMediaItems = videoList.filter((m: any) => selectedMaterials.includes(m.url));
+      const hasImage = selectedMediaItems.some((m: any) => m.type === 'img');
+      if (hasImage) {
+        message.warning(t('createMaterial.videoGroupOnly'));
+        return;
+      }
     }
+    
     setCreating(true);
     try {
+      // 根据类型使用不同的媒体列表
+      const finalMediaList = selectedGroup.type === PubType.VIDEO ? videoList : mediaList;
+      
       await apiCreateMaterial({
         groupId: selectedGroup._id,
-        coverUrl: selectedCover,
-        mediaList: mediaList
+        coverUrl: selectedCover || undefined,
+        mediaList: finalMediaList
           .filter((m: any) => selectedMaterials.includes(m.url))
           .map((m: any) => ({
             url: m.url,
@@ -229,12 +355,24 @@ export default function CgMaterialPageCore() {
         option: {},
         location: singleLocation,
       });
-      message.success('创建素材成功');
+      message.success(t('createMaterial.createSuccess'));
       setCreateModal(false);
-      fetchMaterialList(selectedGroup._id);
+      // 重置创建素材相关状态
+      setSelectedMediaGroup(null);
+      setMediaList([]);
+      setSelectedCover(null);
+      setSelectedMaterials([]);
+      setSelectedCoverGroup(null);
+      setSelectedVideoGroup(null);
+      setCoverList([]);
+      setVideoList([]);
+      setMediaGroupModal(false);
+      setCoverGroupModal(false);
+      setVideoGroupModal(false);
       form.resetFields();
+      fetchMaterialList(selectedGroup._id);
     } catch (e) {
-      message.error('创建素材失败');
+      message.error(t('createMaterial.createFailed'));
     } finally {
       setCreating(false);
     }
@@ -367,9 +505,33 @@ export default function CgMaterialPageCore() {
     setEditingMaterial(material);
     setEditMaterialModal(true);
     
+    // 重置视频组专用状态
+    setEditMaterialSelectedCoverGroup(null);
+    setEditMaterialSelectedVideoGroup(null);
+    setEditMaterialCoverList([]);
+    setEditMaterialVideoList([]);
+    
     // 加载媒体组
     const res = await getMediaGroupList(1, 50);
-    setEditMaterialMediaGroups(((res?.data as any)?.list as any[]) || []);
+    const allGroups = ((res?.data as any)?.list as any[]) || [];
+    
+    // 根据草稿箱组类型过滤媒体组
+    if (selectedGroup) {
+      if (selectedGroup.type === PubType.ImageText) {
+        // 图文组：只能选择图片组
+        const filteredGroups = allGroups.filter((g: any) => g.type === 'img');
+        setEditMaterialMediaGroups(filteredGroups);
+      } else if (selectedGroup.type === PubType.VIDEO) {
+        // 视频组：分别设置封面组（图片组）和视频组
+        const imgGroups = allGroups.filter((g: any) => g.type === 'img');
+        const videoGroups = allGroups.filter((g: any) => g.type === 'video');
+        setEditMaterialCoverGroups(imgGroups);
+        setEditMaterialVideoGroups(videoGroups);
+        setEditMaterialMediaGroups([]); // 清空普通媒体组
+      }
+    } else {
+      setEditMaterialMediaGroups(allGroups);
+    }
     
     // 设置表单初始值
     editMaterialForm.setFieldsValue({
@@ -408,21 +570,88 @@ export default function CgMaterialPageCore() {
     setEditMaterialMediaList(((res?.data as any)?.list as any[]) || []);
   }
 
+  // 选择编辑素材的封面组
+  async function handleEditMaterialSelectCoverGroup(group: any) {
+    setEditMaterialSelectedCoverGroup(group);
+    setEditMaterialCoverGroupModal(false);
+    const res = await getMediaList(group._id, 1, 100);
+    setEditMaterialCoverList(((res?.data as any)?.list as any[]) || []);
+  }
+
+  // 选择编辑素材的视频组
+  async function handleEditMaterialSelectVideoGroup(group: any) {
+    setEditMaterialSelectedVideoGroup(group);
+    setEditMaterialVideoGroupModal(false);
+    const res = await getMediaList(group._id, 1, 100);
+    setEditMaterialVideoList(((res?.data as any)?.list as any[]) || []);
+  }
+
   // 更新素材
   async function handleUpdateMaterial() {
     await editMaterialForm.validateFields();
     const values = editMaterialForm.getFieldsValue();
     
-    if (!editMaterialSelectedCover || editMaterialSelectedMaterials.length === 0) {
-      message.warning('请完整选择封面和素材');
-      return;
+    // 根据草稿箱组类型进行不同的验证
+    if (selectedGroup.type === PubType.ImageText) {
+      // 图文组：必须有媒体组、封面和素材，且都是图片
+      if (!editMaterialSelectedGroup) {
+        message.warning('请选择媒体组');
+        return;
+      }
+      if (!editMaterialSelectedCover || editMaterialSelectedMaterials.length === 0) {
+        message.warning('请完整选择封面和素材');
+        return;
+      }
+      // 检查是否都是图片类型
+      const selectedMediaItems = editMaterialMediaList.filter((m: any) => 
+        editMaterialSelectedMaterials.includes(m.url) || editMaterialSelectedCover === m.url
+      );
+      const hasVideo = selectedMediaItems.some((m: any) => m.type === 'video');
+      if (hasVideo) {
+        message.warning('图文组不能选择视频素材');
+        return;
+      }
+    } else if (selectedGroup.type === PubType.VIDEO) {
+      // 视频组：必须有封面组、视频组、封面和视频素材
+      if (!editMaterialSelectedCoverGroup) {
+        message.warning('请选择封面组（图片组）');
+        return;
+      }
+      if (!editMaterialSelectedVideoGroup) {
+        message.warning('请选择视频组');
+        return;
+      }
+      if (!editMaterialSelectedCover) {
+        message.warning('请选择封面（图片）');
+        return;
+      }
+      if (editMaterialSelectedMaterials.length === 0) {
+        message.warning('请选择视频素材');
+        return;
+      }
+      // 检查封面是否为图片
+      const coverItem = editMaterialCoverList.find((m: any) => m.url === editMaterialSelectedCover);
+      if (coverItem && coverItem.type !== 'img') {
+        message.warning('封面必须是图片');
+        return;
+      }
+      // 检查素材是否都是视频
+      const selectedMediaItems = editMaterialVideoList.filter((m: any) => editMaterialSelectedMaterials.includes(m.url));
+      const hasImage = selectedMediaItems.some((m: any) => m.type === 'img');
+      if (hasImage) {
+        message.warning('视频组只能选择视频素材');
+        return;
+      }
     }
     
     setEditMaterialLoading(true);
     try {
+      // 根据类型使用不同的媒体列表
+      const finalMediaList = selectedGroup.type === PubType.VIDEO ? editMaterialVideoList : editMaterialMediaList;
+      
       await apiUpdateMaterial(editingMaterial._id, {
-        coverUrl: editMaterialSelectedCover,
-        mediaList: editMaterialMediaList
+        coverUrl: editMaterialSelectedCover || undefined,
+        mediaList: finalMediaList
           .filter((m: any) => editMaterialSelectedMaterials.includes(m.url))
           .map((m: any) => ({
             url: m.url,
@@ -438,6 +667,17 @@ export default function CgMaterialPageCore() {
       message.success('更新素材成功');
       setEditMaterialModal(false);
       setEditingMaterial(null);
+      // 重置编辑素材相关状态
+      setEditMaterialSelectedGroup(null);
+      setEditMaterialMediaList([]);
+      setEditMaterialSelectedCover(null);
+      setEditMaterialSelectedMaterials([]);
+      setEditMaterialSelectedCoverGroup(null);
+      setEditMaterialSelectedVideoGroup(null);
+      setEditMaterialCoverList([]);
+      setEditMaterialVideoList([]);
+      setEditMaterialCoverGroupModal(false);
+      setEditMaterialVideoGroupModal(false);
       editMaterialForm.resetFields();
       fetchMaterialList(selectedGroup._id);
     } catch (e) {
@@ -601,21 +841,21 @@ export default function CgMaterialPageCore() {
   return (
     <div className={styles.materialContainer}>
       <div className={styles.header}>
-        <h2>AI草稿箱</h2>
+        <h2>{t('header.title')}</h2>
         <div className={styles.headerActions}>
           <Button 
             className={`${styles.actionButton} ${styles.importButton}`}
             onClick={openImportModal}
             icon={<ImportOutlined />}
           >
-            导入发布内容
+            {t('header.importContent')}
           </Button>
           <Button 
             className={styles.actionButton}
             onClick={() => setCreateGroupModal(true)}
             icon={<PlusOutlined />}
           >
-            新建草稿箱组
+            {t('header.createGroup')}
           </Button>
         </div>
       </div>
@@ -630,8 +870,8 @@ export default function CgMaterialPageCore() {
                   <div className={styles.emptyIcon}>
                     <FolderOpenOutlined />
                   </div>
-                  <h3>暂无草稿箱组</h3>
-                  <p>创建您的第一个草稿箱组开始整理素材</p>
+                  <h3>{t('sidebar.noGroups')}</h3>
+                  <p>{t('sidebar.noGroupsDesc')}</p>
                 </div>
               ) : (
                 <List
@@ -644,9 +884,9 @@ export default function CgMaterialPageCore() {
                     >
                       <div className={styles.groupName} style={{ marginTop: 10, paddingLeft: 10 }}>{item.name || item.title}</div>
                       <div className={styles.descTypeInfo} style={{ marginBottom: 10, paddingLeft: 10, paddingRight: 10 }}>
-                        <span>{item.desc || '暂无描述'}</span>
+                        <span>{item.desc || t('sidebar.noDesc')}</span>
                         <span className={styles.typeTag}>
-                          {item.type === MaterialType.ARTICLE ? '图文' : item.type === MaterialType.VIDEO ? '视频' : item.type}
+                          {item.type === PubType.ImageText ? '图文' : item.type === PubType.VIDEO ? '视频' : item.type}
                         </span>
                       </div>
                       <div className={styles.groupActions}>
@@ -659,31 +899,31 @@ export default function CgMaterialPageCore() {
                             setEditGroupModal(true);
                           }}
                         >
-                          <EditOutlined /> 编辑
+                          <EditOutlined /> {t('sidebar.edit')}
                         </span>
                         <span
                           className={styles.groupActionBtn}
                           onClick={e => {
                             e.stopPropagation();
                             Modal.confirm({
-                              title: '删除草稿组',
-                              content: `确定要删除"${item.name || item.title}"吗？`,
-                              okText: '删除',
+                              title: t('sidebar.deleteConfirm'),
+                              content: t('sidebar.deleteConfirmDesc', { name: item.name || item.title }),
+                              okText: t('sidebar.delete'),
                               okType: 'danger',
-                              cancelText: '取消',
+                              cancelText: t('batchGenerate.cancel'),
                               onOk: async () => {
                                 try {
                                   await apiDeleteMaterialGroup(item._id);
-                                  message.success('删除成功');
+                                  message.success(t('sidebar.deleteSuccess'));
                                   fetchGroupList();
                                 } catch {
-                                  message.error('删除失败');
+                                  message.error(t('sidebar.deleteFailed'));
                                 }
                               },
                             });
                           }}
                         >
-                          <DeleteOutlined /> 删除
+                          <DeleteOutlined /> {t('sidebar.delete')}
                         </span>
                       </div>
                     </List.Item>
@@ -698,7 +938,7 @@ export default function CgMaterialPageCore() {
         <div className={styles.contentArea}>
           <div className={styles.contentHeader}>
             <div className={styles.contentTitle}>
-              {selectedGroup?.name || selectedGroup?.title || '请选择草稿箱组'}
+              {selectedGroup?.name || selectedGroup?.title || t('sidebar.selectGroup')}
             </div>
             <div className={styles.contentActions}>
               <Button 
@@ -707,7 +947,7 @@ export default function CgMaterialPageCore() {
                 disabled={!selectedGroup}
                 icon={<PlusOutlined />}
               >
-                创建素材
+                {t('content.createMaterial')}
               </Button>
               <Button 
                 className={styles.actionButton}
@@ -715,7 +955,7 @@ export default function CgMaterialPageCore() {
                 disabled={!selectedGroup}
                 icon={<FileTextOutlined />}
               >
-                批量生成草稿
+                {t('content.batchGenerate')}
               </Button>
             </div>
           </div>
@@ -727,16 +967,16 @@ export default function CgMaterialPageCore() {
                   <div className={styles.emptyIcon}>
                     <FolderOpenOutlined />
                   </div>
-                  <h3>请选择草稿箱组</h3>
-                  <p>从左侧选择一个草稿箱组来查看其中的素材</p>
+                  <h3>{t('sidebar.selectGroup')}</h3>
+                  <p>{t('sidebar.selectGroupDesc')}</p>
                 </div>
               ) : materialList.length === 0 ? (
                 <div className={styles.emptyState}>
                   <div className={styles.emptyIcon}>
                     <FileTextOutlined />
                   </div>
-                  <h3>暂无草稿素材</h3>
-                  <p>创建您的第一个素材或批量生成草稿</p>
+                  <h3>{t('content.noMaterials')}</h3>
+                  <p>{t('content.noMaterialsDesc')}</p>
                 </div>
               ) : (
                 <List
@@ -750,21 +990,37 @@ export default function CgMaterialPageCore() {
                           onClick={() => { setDetailData(item); setDetailModal(true); }}
                         >
                           {item.coverUrl && (
-                            <img
-                              src={getOssUrl(item.coverUrl)}
-                              alt="cover"
-                              className={styles.cardCover}
-                            />
+                            selectedGroup?.type === PubType.VIDEO && item.mediaList?.some((m: any) => m.type === 'video') ? (
+                              // <video
+                              //   src={getOssUrl(item.coverUrl)}
+                              //   className={styles.cardCover}
+                              //   muted
+                              //   loop
+                              //   onMouseEnter={(e) => (e.target as HTMLVideoElement).play()}
+                              //   onMouseLeave={(e) => (e.target as HTMLVideoElement).pause()}
+                              // />
+                              <img
+                                src={getOssUrl(item.coverUrl)}
+                                alt="cover"
+                                className={styles.cardCover}
+                              />
+                            ) : (
+                              <img
+                                src={getOssUrl(item.coverUrl)}
+                                alt="cover"
+                                className={styles.cardCover}
+                              />
+                            )
                           )}
                           <div className={styles.cardContent}>
                             <div className={styles.cardTitle}>{item.title}</div>
                             <div className={styles.cardDesc}>{item.desc}</div>
                             <div className={styles.cardMeta}>
                               <span className={styles.typeLabel}>
-                                {item.type === MaterialType.ARTICLE ? "图文" : item.type === MaterialType.VIDEO ? "视频" : item.type}
+                                {item.type === PubType.ImageText ? "图文" : item.type === PubType.VIDEO ? "视频" : item.type}
                               </span>
                               <span className={`${styles.statusLabel} ${item.status === 0 ? styles.generating : styles.completed}`}>
-                                {item.status === 0 ? "生成中" : "已生成"}
+                                {item.status === 0 ? t('content.generating') : t('content.completed')}
                               </span>
                             </div>
                           </div>
@@ -780,7 +1036,7 @@ export default function CgMaterialPageCore() {
                             }}
                             className={styles.editButton}
                           >
-                            编辑
+                            {t('content.edit')}
                           </Button>
                         </div>
                       </div>
@@ -796,7 +1052,7 @@ export default function CgMaterialPageCore() {
       {/* 创建草稿箱组弹窗 */}
       <Modal
         open={createGroupModal}
-        title="新建草稿箱组"
+        title={t('createGroup.title')}
         onOk={handleCreateGroup}
         onCancel={() => {
           setCreateGroupModal(false);
@@ -807,25 +1063,26 @@ export default function CgMaterialPageCore() {
       >
         <Form form={createGroupForm} layout="vertical">
           <Form.Item 
-            label="组名称" 
+            label={t('createGroup.name')} 
             name="name" 
-            rules={[{ required: true, message: '请输入草稿箱组名称' }]}
+            rules={[{ required: true, message: t('createGroup.namePlaceholder') }]}
+            initialValue="DraftboxGroup"
           >
-            <Input placeholder="请输入草稿箱组名称" />
+            <Input placeholder={t('createGroup.namePlaceholder')} />
           </Form.Item>
           
           <Form.Item 
             label="类型" 
             name="type" 
             rules={[{ required: true, message: '请选择草稿类型' }]}
-            initialValue={MaterialType.ARTICLE}
+            initialValue={PubType.ImageText}
           >
             <Select placeholder="请选择草稿类型">
-              <Select.Option value={MaterialType.ARTICLE}>
+              <Select.Option value={PubType.ImageText}>
                 <FileTextOutlined style={{ marginRight: 8, color: '#52c41a' }} />
                 图文草稿
               </Select.Option>
-              <Select.Option value={MaterialType.VIDEO}>
+              <Select.Option value={PubType.VIDEO}>
                 <VideoCameraOutlined style={{ marginRight: 8, color: '#1890ff' }} />
                 视频草稿
               </Select.Option>
@@ -946,113 +1203,412 @@ export default function CgMaterialPageCore() {
         open={createModal}
         title="创建素材"
         onOk={handleCreateMaterial}
-        onCancel={()=>setCreateModal(false)}
+        onCancel={() => {
+          setCreateModal(false);
+          // 重置创建素材相关状态
+          setSelectedMediaGroup(null);
+          setMediaList([]);
+          setSelectedCover(null);
+          setSelectedMaterials([]);
+          setSelectedCoverGroup(null);
+          setSelectedVideoGroup(null);
+          setCoverList([]);
+          setVideoList([]);
+          setMediaGroupModal(false);
+          setCoverGroupModal(false);
+          setVideoGroupModal(false);
+          form.resetFields();
+        }}
         confirmLoading={creating}
         width={700}
       >
-        {/* 媒体组选择弹窗 */}
-        <Modal
-          open={mediaGroupModal}
-          title="选择媒体组"
-          onCancel={() => setMediaGroupModal(false)}
-          footer={null}
-          width={700}
-        >
-          <div style={{ marginBottom: 16 }}>
-            <div style={{ color: '#666', fontSize: 14 }}>
-              选择一个媒体组来获取其中的图片和视频资源
+        {/* 图文组：媒体组选择弹窗 */}
+        {selectedGroup?.type === PubType.ImageText && (
+          <Modal
+            open={mediaGroupModal}
+            title={t('createMaterial.selectCoverGroup')}
+            onCancel={() => setMediaGroupModal(false)}
+            footer={null}
+            width={700}
+          >
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ color: '#666', fontSize: 14 }}>
+                {t('createMaterial.selectCoverGroupDesc')}
+              </div>
             </div>
-          </div>
-          <List
-            grid={{ gutter: 16, column: 2 }}
-            dataSource={mediaGroups}
-            renderItem={item => (
-              <List.Item>
-                <div
-                  className={styles.mediaCard}
-                  style={{
-                    background: selectedMediaGroup?._id === item._id ? 
-                      'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)' : 
-                      '#FAEFFC',
-                    border: selectedMediaGroup?._id === item._id ? 
-                      '2px solid #667eea' : '2px solid transparent',
-                    padding: '20px',
-                    borderRadius: '12px',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    minHeight: '100px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    textAlign: 'center'
-                  }}
-                  onClick={() => handleSelectMediaGroup(item)}
-                  onMouseEnter={(e) => {
-                    if (selectedMediaGroup?._id !== item._id) {
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.2)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (selectedMediaGroup?._id !== item._id) {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }
-                  }}
-                >
-                  <div style={{ 
-                    fontSize: 24, 
-                    marginBottom: 8,
-                    color: selectedMediaGroup?._id === item._id ? '#667eea' : '#bdc3c7'
-                  }}>
-                    <FolderOpenOutlined />
-                  </div>
-                  <div style={{ 
-                    fontWeight: 600, 
-                    fontSize: 16,
-                    color: '#2c3e50',
-                    marginBottom: 4
-                  }}>
-                    {item.title}
-                  </div>
-                  {item.desc && (
+            <List
+              grid={{ gutter: 16, column: 2 }}
+              dataSource={mediaGroups}
+              renderItem={item => (
+                <List.Item>
+                  <div
+                    className={styles.mediaCard}
+                    style={{
+                      background: selectedMediaGroup?._id === item._id ? 
+                        'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)' : 
+                        '#FAEFFC',
+                      border: selectedMediaGroup?._id === item._id ? 
+                        '2px solid #667eea' : '2px solid transparent',
+                      padding: '20px',
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      minHeight: '100px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      textAlign: 'center'
+                    }}
+                    onClick={() => handleSelectMediaGroup(item)}
+                    onMouseEnter={(e) => {
+                      if (selectedMediaGroup?._id !== item._id) {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.2)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (selectedMediaGroup?._id !== item._id) {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }
+                    }}
+                  >
                     <div style={{ 
-                      fontSize: 12, 
-                      color: '#7f8c8d',
-                      lineHeight: 1.4
+                      fontSize: 24, 
+                      marginBottom: 8,
+                      color: selectedMediaGroup?._id === item._id ? '#667eea' : '#bdc3c7'
                     }}>
-                      {item.desc}
+                      <FolderOpenOutlined />
                     </div>
-                  )}
-                  {selectedMediaGroup?._id === item._id && (
+                    <div style={{ 
+                      fontWeight: 600, 
+                      fontSize: 16,
+                      color: '#2c3e50',
+                      marginBottom: 4
+                    }}>
+                      {item.title}
+                    </div>
+                    {/* 类型标签 */}
                     <div style={{
                       position: 'absolute',
                       top: 8,
-                      right: 8,
-                      width: 20,
-                      height: 20,
-                      borderRadius: '50%',
-                      background: '#667eea',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'white',
-                      fontSize: 12
+                      left: 8,
+                      padding: '2px 8px',
+                      borderRadius: '12px',
+                      fontSize: '10px',
+                      fontWeight: '500',
+                      color: '#fff',
+                      background: item.type === 'img' ? '#52c41a' : 
+                                 item.type === 'video' ? '#1890ff' : '#722ed1',
+                      zIndex: 1
                     }}>
-                      ✓
+                      {item.type === 'img' ? t('mediaGroupType.img') : 
+                       item.type === 'video' ? t('mediaGroupType.video') : t('mediaGroupType.mixed')}
                     </div>
-                  )}
-                </div>
-              </List.Item>
-            )}
-          />
-        </Modal>
-        {/* 资源选择区 */}
-        {selectedMediaGroup && (
+                    {item.desc && (
+                      <div style={{ 
+                        fontSize: 12, 
+                        color: '#7f8c8d',
+                        lineHeight: 1.4,
+                        marginTop: 4
+                      }}>
+                        {item.desc}
+                      </div>
+                    )}
+                    {/* 资源数量 */}
+                    <div style={{
+                      fontSize: 11,
+                      color: '#95a5a6',
+                      marginTop: 4
+                    }}>
+                      {item.mediaCount || 0} {t('mediaCount')}
+                    </div>
+                    {selectedMediaGroup?._id === item._id && (
+                      <div style={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                        width: 20,
+                        height: 20,
+                        borderRadius: '50%',
+                        background: '#667eea',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontSize: 12,
+                        zIndex: 2
+                      }}>
+                        ✓
+                      </div>
+                    )}
+                  </div>
+                </List.Item>
+              )}
+            />
+          </Modal>
+        )}
+
+        {/* 视频组：封面组选择弹窗 */}
+        {selectedGroup?.type === PubType.VIDEO && (
+          <Modal
+            open={coverGroupModal}
+            title="选择封面组（图片组）"
+            onCancel={() => setCoverGroupModal(false)}
+            footer={null}
+            width={700}
+          >
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ color: '#666', fontSize: 14 }}>
+                选择一个图片组作为封面来源
+              </div>
+            </div>
+            <List
+              grid={{ gutter: 16, column: 2 }}
+              dataSource={coverGroups}
+              renderItem={item => (
+                <List.Item>
+                  <div
+                    className={styles.mediaCard}
+                    style={{
+                      background: selectedCoverGroup?._id === item._id ? 
+                        'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)' : 
+                        '#FAEFFC',
+                      border: selectedCoverGroup?._id === item._id ? 
+                        '2px solid #667eea' : '2px solid transparent',
+                      padding: '20px',
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      minHeight: '100px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      textAlign: 'center'
+                    }}
+                    onClick={() => handleSelectCoverGroup(item)}
+                    onMouseEnter={(e) => {
+                      if (selectedCoverGroup?._id !== item._id) {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.2)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (selectedCoverGroup?._id !== item._id) {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }
+                    }}
+                  >
+                    <div style={{ 
+                      fontSize: 24, 
+                      marginBottom: 8,
+                      color: selectedCoverGroup?._id === item._id ? '#667eea' : '#bdc3c7'
+                    }}>
+                      <FolderOpenOutlined />
+                    </div>
+                    <div style={{ 
+                      fontWeight: 600, 
+                      fontSize: 16,
+                      color: '#2c3e50',
+                      marginBottom: 4
+                    }}>
+                      {item.title}
+                    </div>
+                    {/* 类型标签 */}
+                    <div style={{
+                      position: 'absolute',
+                      top: 8,
+                      left: 8,
+                      padding: '2px 8px',
+                      borderRadius: '12px',
+                      fontSize: '10px',
+                      fontWeight: '500',
+                      color: '#fff',
+                      background: '#52c41a',
+                      zIndex: 1
+                    }}>
+                      {t('mediaGroupType.img')}
+                    </div>
+                    {item.desc && (
+                      <div style={{ 
+                        fontSize: 12, 
+                        color: '#7f8c8d',
+                        lineHeight: 1.4,
+                        marginTop: 4
+                      }}>
+                        {item.desc}
+                      </div>
+                    )}
+                    {/* 资源数量 */}
+                    <div style={{
+                      fontSize: 11,
+                      color: '#95a5a6',
+                      marginTop: 4
+                    }}>
+                      {item.mediaCount || 0} {t('mediaCount')}
+                    </div>
+                    {selectedCoverGroup?._id === item._id && (
+                      <div style={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                        width: 20,
+                        height: 20,
+                        borderRadius: '50%',
+                        background: '#667eea',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontSize: 12,
+                        zIndex: 2
+                      }}>
+                        ✓
+                      </div>
+                    )}
+                  </div>
+                </List.Item>
+              )}
+            />
+          </Modal>
+        )}
+
+        {/* 视频组：视频组选择弹窗 */}
+        {selectedGroup?.type === PubType.VIDEO && (
+          <Modal
+            open={videoGroupModal}
+            title="选择视频组"
+            onCancel={() => setVideoGroupModal(false)}
+            footer={null}
+            width={700}
+          >
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ color: '#666', fontSize: 14 }}>
+                选择一个视频组作为视频素材来源
+              </div>
+            </div>
+            <List
+              grid={{ gutter: 16, column: 2 }}
+              dataSource={videoGroups}
+              renderItem={item => (
+                <List.Item>
+                  <div
+                    className={styles.mediaCard}
+                    style={{
+                      background: selectedVideoGroup?._id === item._id ? 
+                        'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)' : 
+                        '#FAEFFC',
+                      border: selectedVideoGroup?._id === item._id ? 
+                        '2px solid #667eea' : '2px solid transparent',
+                      padding: '20px',
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      minHeight: '100px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      textAlign: 'center'
+                    }}
+                    onClick={() => handleSelectVideoGroup(item)}
+                    onMouseEnter={(e) => {
+                      if (selectedVideoGroup?._id !== item._id) {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.2)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (selectedVideoGroup?._id !== item._id) {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }
+                    }}
+                  >
+                    <div style={{ 
+                      fontSize: 24, 
+                      marginBottom: 8,
+                      color: selectedVideoGroup?._id === item._id ? '#667eea' : '#bdc3c7'
+                    }}>
+                      <VideoCameraOutlined />
+                    </div>
+                    <div style={{ 
+                      fontWeight: 600, 
+                      fontSize: 16,
+                      color: '#2c3e50',
+                      marginBottom: 4
+                    }}>
+                      {item.title}
+                    </div>
+                    {/* 类型标签 */}
+                    <div style={{
+                      position: 'absolute',
+                      top: 8,
+                      left: 8,
+                      padding: '2px 8px',
+                      borderRadius: '12px',
+                      fontSize: '10px',
+                      fontWeight: '500',
+                      color: '#fff',
+                      background: '#1890ff',
+                      zIndex: 1
+                    }}>
+                      {t('mediaGroupType.video')}
+                    </div>
+                    {item.desc && (
+                      <div style={{ 
+                        fontSize: 12, 
+                        color: '#7f8c8d',
+                        lineHeight: 1.4,
+                        marginTop: 4
+                      }}>
+                        {item.desc}
+                      </div>
+                    )}
+                    {/* 资源数量 */}
+                    <div style={{
+                      fontSize: 11,
+                      color: '#95a5a6',
+                      marginTop: 4
+                    }}>
+                      {item.mediaCount || 0} {t('mediaCount')}
+                    </div>
+                    {selectedVideoGroup?._id === item._id && (
+                      <div style={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                        width: 20,
+                        height: 20,
+                        borderRadius: '50%',
+                        background: '#667eea',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontSize: 12,
+                        zIndex: 2
+                      }}>
+                        ✓
+                      </div>
+                    )}
+                  </div>
+                </List.Item>
+              )}
+            />
+          </Modal>
+        )}
+
+        {/* 图文组：资源选择区 */}
+        {selectedGroup?.type === PubType.ImageText && selectedMediaGroup && (
           <>
             <div style={{ marginBottom: 12 }}>
-              <div style={{ fontWeight: 500, marginBottom: 8 }}>选择封面（单选）</div>
+              <div style={{ fontWeight: 500, marginBottom: 8 }}>
+                {t('selectCover')}
+              </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {mediaList.map((media: any) => (
                   <img
@@ -1073,7 +1629,9 @@ export default function CgMaterialPageCore() {
               </div>
             </div>
             <div style={{ marginBottom: 12 }}>
-              <div style={{ fontWeight: 500, marginBottom: 8 }}>选择素材（多选）</div>
+              <div style={{ fontWeight: 500, marginBottom: 8 }}>
+                {t('selectMaterials')}
+              </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {mediaList.map((media: any) => (
                   <img
@@ -1103,15 +1661,159 @@ export default function CgMaterialPageCore() {
             </div>
           </>
         )}
+
+        {/* 视频组：资源选择区 */}
+        {selectedGroup?.type === PubType.VIDEO && (
+          <>
+            {/* 封面组选择按钮 */}
+            {!selectedCoverGroup && (
+              <div style={{ marginBottom: 16 }}>
+                <Button 
+                  type="dashed" 
+                  onClick={() => setCoverGroupModal(true)}
+                  style={{ width: '100%', height: 60 }}
+                >
+                  <FolderOpenOutlined style={{ marginRight: 8 }} />
+                  选择封面组（图片组）
+                </Button>
+              </div>
+            )}
+
+            {/* 视频组选择按钮 */}
+            {!selectedVideoGroup && (
+              <div style={{ marginBottom: 16 }}>
+                <Button 
+                  type="dashed" 
+                  onClick={() => setVideoGroupModal(true)}
+                  style={{ width: '100%', height: 60 }}
+                >
+                  <VideoCameraOutlined style={{ marginRight: 8 }} />
+                  选择视频组
+                </Button>
+              </div>
+            )}
+
+            {/* 封面选择区 */}
+            {selectedCoverGroup && (
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <div style={{ fontWeight: 500 }}>
+                    选择封面（图片，单选）
+                  </div>
+                  <Button 
+                    type="link" 
+                    size="small"
+                    onClick={() => {
+                      setSelectedCoverGroup(null);
+                      setCoverList([]);
+                      setSelectedCover(null);
+                    }}
+                  >
+                    重新选择封面组
+                  </Button>
+                </div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {coverList.map((media: any) => (
+                    <img
+                      key={media._id}
+                      src={getOssUrl(media.url)}
+                      alt=""
+                      style={{
+                        width: 60,
+                        height: 60,
+                        border: selectedCover === media.url ? '2px solid #1677ff' : '1px solid #eee',
+                        borderRadius: 4,
+                        cursor: 'pointer',
+                        objectFit: 'cover',
+                        opacity: media.type !== 'img' ? 0.3 : 1,
+                      }}
+                      onClick={() => {
+                        if (media.type !== 'img') {
+                          message.warning('封面必须是图片');
+                          return;
+                        }
+                        setSelectedCover(media.url);
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 视频素材选择区 */}
+            {selectedVideoGroup && (
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <div style={{ fontWeight: 500 }}>
+                    选择视频素材（单选）
+                  </div>
+                  <Button 
+                    type="link" 
+                    size="small"
+                    onClick={() => {
+                      setSelectedVideoGroup(null);
+                      setVideoList([]);
+                      setSelectedMaterials([]);
+                    }}
+                  >
+                    重新选择视频组
+                  </Button>
+                </div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {videoList.map((media: any) => (
+                    media.type === 'video' ? (
+                      <video
+                        key={media._id}
+                        src={getOssUrl(media.url)}
+                        style={{
+                          width: 60,
+                          height: 60,
+                          border: selectedMaterials.includes(media.url) ? '2px solid #1677ff' : '1px solid #eee',
+                          borderRadius: 4,
+                          cursor: 'pointer',
+                          objectFit: 'cover',
+                        }}
+                        onClick={() => setSelectedMaterials([media.url])}
+                        muted
+                        loop
+                        onMouseEnter={(e) => (e.target as HTMLVideoElement).play()}
+                        onMouseLeave={(e) => (e.target as HTMLVideoElement).pause()}
+                      />
+                    ) : (
+                      <img
+                        key={media._id}
+                        src={getOssUrl(media.url)}
+                        alt=""
+                        style={{
+                          width: 60,
+                          height: 60,
+                          border: selectedMaterials.includes(media.url) ? '2px solid #1677ff' : '1px solid #eee',
+                          borderRadius: 4,
+                          cursor: 'pointer',
+                          objectFit: 'cover',
+                          opacity: 0.3,
+                        }}
+                        onClick={() => {
+                          message.warning('视频组只能选择视频素材');
+                        }}
+                      />
+                    )
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
         {/* 表单区 */}
         <Form form={form} layout="vertical">
-          <Form.Item label="标题" name="title" rules={[{ required: true, message: '请输入标题' }]}>
+          <Form.Item label={t('title')} name="title" rules={[{ required: true, message: '请输入标题' }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="简介" name="desc">
+          <Form.Item label={t('description')} name="desc">
             <TextArea rows={3} />
           </Form.Item>
-          <Form.Item label="地理位置" name="location">
+          <Form.Item label={t('location')} name="location">
             <Input
               value={singleLocation.join(',')}
               onChange={e => {
@@ -1185,7 +1887,7 @@ export default function CgMaterialPageCore() {
           ) : (
             <Card title={previewData.title} bordered>
               <div style={{marginBottom:8}}><b>简介：</b>{previewData.desc}</div>
-              <div style={{marginBottom:8}}><b>类型：</b>{previewData.type === MaterialType.ARTICLE ? "图文" : previewData.type === MaterialType.VIDEO ? "视频" : previewData.type}</div>
+              <div style={{marginBottom:8}}><b>类型：</b>{previewData.type === PubType.ImageText ? "图文" : previewData.type === PubType.VIDEO ? "视频" : previewData.type}</div>
               <div style={{marginBottom:8}}><b>封面：</b>
                 <div style={{marginTop:4}}>
                   {previewData.coverUrl && (
@@ -1237,18 +1939,20 @@ export default function CgMaterialPageCore() {
             </div>
             <div style={{ marginBottom: 16 }}>
               <b>类型：</b>
-              {detailData.type === MaterialType.ARTICLE ? "图文" : detailData.type === MaterialType.VIDEO ? "视频" : detailData.type}
+              {detailData.type === PubType.ImageText ? "图文" : detailData.type === PubType.VIDEO ? "视频" : detailData.type}
             </div>
             
             <div style={{ marginBottom: 16 }}>
               <b>封面：</b>
               <div style={{marginTop:4}}>
                 {detailData.coverUrl && (
-                  <img
-                    src={getOssUrl(detailData.coverUrl)}
-                    alt="cover"
-                    style={{width:'100%',maxWidth:320,height:120,objectFit:'cover',borderRadius:8,display:'block'}}
-                  />
+                  
+                    <img
+                      src={getOssUrl(detailData.coverUrl)}
+                      alt="cover"
+                      style={{maxWidth:320, objectFit:'cover',borderRadius:8,display:'block'}}
+                    />
+                  
                 )}
               </div>
             </div>
@@ -1258,11 +1962,19 @@ export default function CgMaterialPageCore() {
                 <Carousel dots style={{marginTop:8}}>
                   {detailData.mediaList.map((media: any, idx: number) => (
                     <div key={idx}>
-                      <img
-                        src={getOssUrl(media.url)}
-                        alt="素材图片"
-                        style={{width:'100%',height:'320px',objectFit:'cover',borderRadius:8}}
-                      />
+                      {media.type === 'video' ? (
+                        <video
+                          src={getOssUrl(media.url)}
+                          controls
+                          style={{width:'100%',height:'320px',objectFit:'cover',borderRadius:8}}
+                        />
+                      ) : (
+                        <img
+                          src={getOssUrl(media.url)}
+                          alt="素材图片"
+                          style={{width:'100%',height:'320px',objectFit:'cover',borderRadius:8}}
+                        />
+                      )}
                     </div>
                   ))}
                 </Carousel>
@@ -1303,104 +2015,370 @@ export default function CgMaterialPageCore() {
           setEditMaterialModal(false);
           setEditingMaterial(null);
           editMaterialForm.resetFields();
+          // 重置编辑素材相关状态
+          setEditMaterialSelectedGroup(null);
+          setEditMaterialMediaList([]);
+          setEditMaterialSelectedCover(null);
+          setEditMaterialSelectedMaterials([]);
+          setEditMaterialSelectedCoverGroup(null);
+          setEditMaterialSelectedVideoGroup(null);
+          setEditMaterialCoverList([]);
+          setEditMaterialVideoList([]);
+          setEditMaterialCoverGroupModal(false);
+          setEditMaterialVideoGroupModal(false);
         }}
         confirmLoading={editMaterialLoading}
         width={700}
       >
-        {/* 媒体组选择 */}
-        <div style={{ marginBottom: 16 }}>
-          <div style={{ fontWeight: 500, marginBottom: 8 }}>选择媒体组</div>
-          <List
-            grid={{ gutter: 16, column: 2 }}
-            dataSource={editMaterialMediaGroups}
-            renderItem={item => (
-              <List.Item>
-                <div
-                  className={styles.mediaCard}
-                  style={{
-                    background: editMaterialSelectedGroup?._id === item._id ? 
-                      'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)' : 
-                      '#FAEFFC',
-                    border: editMaterialSelectedGroup?._id === item._id ? 
-                      '2px solid #667eea' : '2px solid transparent',
-                    padding: '20px',
-                    borderRadius: '12px',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    minHeight: '100px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    textAlign: 'center'
-                  }}
-                  onClick={() => handleEditMaterialSelectGroup(item)}
-                  onMouseEnter={(e) => {
-                    if (editMaterialSelectedGroup?._id !== item._id) {
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.2)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (editMaterialSelectedGroup?._id !== item._id) {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }
-                  }}
-                >
-                  <div style={{ 
-                    fontSize: 24, 
-                    marginBottom: 8,
-                    color: editMaterialSelectedGroup?._id === item._id ? '#667eea' : '#bdc3c7'
-                  }}>
-                    <FolderOpenOutlined />
-                  </div>
-                  <div style={{ 
-                    fontWeight: 600, 
-                    fontSize: 16,
-                    color: '#2c3e50',
-                    marginBottom: 4
-                  }}>
-                    {item.title}
-                  </div>
-                  {item.desc && (
+        {/* 编辑素材：封面组选择弹窗 */}
+        {selectedGroup?.type === PubType.VIDEO && (
+          <Modal
+            open={editMaterialCoverGroupModal}
+            title="选择封面组（图片组）"
+            onCancel={() => setEditMaterialCoverGroupModal(false)}
+            footer={null}
+            width={700}
+          >
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ color: '#666', fontSize: 14 }}>
+                选择一个图片组作为封面来源
+              </div>
+            </div>
+            <List
+              grid={{ gutter: 16, column: 2 }}
+              dataSource={editMaterialCoverGroups}
+              renderItem={item => (
+                <List.Item>
+                  <div
+                    className={styles.mediaCard}
+                    style={{
+                      background: editMaterialSelectedCoverGroup?._id === item._id ? 
+                        'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)' : 
+                        '#FAEFFC',
+                      border: editMaterialSelectedCoverGroup?._id === item._id ? 
+                        '2px solid #667eea' : '2px solid transparent',
+                      padding: '20px',
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      minHeight: '100px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      textAlign: 'center'
+                    }}
+                    onClick={() => handleEditMaterialSelectCoverGroup(item)}
+                    onMouseEnter={(e) => {
+                      if (editMaterialSelectedCoverGroup?._id !== item._id) {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.2)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (editMaterialSelectedCoverGroup?._id !== item._id) {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }
+                    }}
+                  >
                     <div style={{ 
-                      fontSize: 12, 
-                      color: '#7f8c8d',
-                      lineHeight: 1.4
+                      fontSize: 24, 
+                      marginBottom: 8,
+                      color: editMaterialSelectedCoverGroup?._id === item._id ? '#667eea' : '#bdc3c7'
                     }}>
-                      {item.desc}
+                      <FolderOpenOutlined />
                     </div>
-                  )}
-                  {editMaterialSelectedGroup?._id === item._id && (
+                    <div style={{ 
+                      fontWeight: 600, 
+                      fontSize: 16,
+                      color: '#2c3e50',
+                      marginBottom: 4
+                    }}>
+                      {item.title}
+                    </div>
+                    {/* 类型标签 */}
                     <div style={{
                       position: 'absolute',
                       top: 8,
-                      right: 8,
-                      width: 20,
-                      height: 20,
-                      borderRadius: '50%',
-                      background: '#667eea',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'white',
-                      fontSize: 12
+                      left: 8,
+                      padding: '2px 8px',
+                      borderRadius: '12px',
+                      fontSize: '10px',
+                      fontWeight: '500',
+                      color: '#fff',
+                      background: '#52c41a',
+                      zIndex: 1
                     }}>
-                      ✓
+                      {t('mediaGroupType.img')}
                     </div>
-                  )}
-                </div>
-              </List.Item>
-            )}
-          />
-        </div>
+                    {item.desc && (
+                      <div style={{ 
+                        fontSize: 12, 
+                        color: '#7f8c8d',
+                        lineHeight: 1.4,
+                        marginTop: 4
+                      }}>
+                        {item.desc}
+                      </div>
+                    )}
+                    {/* 资源数量 */}
+                    <div style={{
+                      fontSize: 11,
+                      color: '#95a5a6',
+                      marginTop: 4
+                    }}>
+                      {item.mediaCount || 0} {t('mediaCount')}
+                    </div>
+                    {editMaterialSelectedCoverGroup?._id === item._id && (
+                      <div style={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                        width: 20,
+                        height: 20,
+                        borderRadius: '50%',
+                        background: '#667eea',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontSize: 12,
+                        zIndex: 2
+                      }}>
+                        ✓
+                      </div>
+                    )}
+                  </div>
+                </List.Item>
+              )}
+            />
+          </Modal>
+        )}
 
-        {/* 资源选择区 */}
-        {editMaterialSelectedGroup && (
+        {/* 编辑素材：视频组选择弹窗 */}
+        {selectedGroup?.type === PubType.VIDEO && (
+          <Modal
+            open={editMaterialVideoGroupModal}
+            title="选择视频组"
+            onCancel={() => setEditMaterialVideoGroupModal(false)}
+            footer={null}
+            width={700}
+          >
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ color: '#666', fontSize: 14 }}>
+                选择一个视频组作为视频素材来源
+              </div>
+            </div>
+            <List
+              grid={{ gutter: 16, column: 2 }}
+              dataSource={editMaterialVideoGroups}
+              renderItem={item => (
+                <List.Item>
+                  <div
+                    className={styles.mediaCard}
+                    style={{
+                      background: editMaterialSelectedVideoGroup?._id === item._id ? 
+                        'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)' : 
+                        '#FAEFFC',
+                      border: editMaterialSelectedVideoGroup?._id === item._id ? 
+                        '2px solid #667eea' : '2px solid transparent',
+                      padding: '20px',
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      minHeight: '100px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      textAlign: 'center'
+                    }}
+                    onClick={() => handleEditMaterialSelectVideoGroup(item)}
+                    onMouseEnter={(e) => {
+                      if (editMaterialSelectedVideoGroup?._id !== item._id) {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.2)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (editMaterialSelectedVideoGroup?._id !== item._id) {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }
+                    }}
+                  >
+                    <div style={{ 
+                      fontSize: 24, 
+                      marginBottom: 8,
+                      color: editMaterialSelectedVideoGroup?._id === item._id ? '#667eea' : '#bdc3c7'
+                    }}>
+                      <VideoCameraOutlined />
+                    </div>
+                    <div style={{ 
+                      fontWeight: 600, 
+                      fontSize: 16,
+                      color: '#2c3e50',
+                      marginBottom: 4
+                    }}>
+                      {item.title}
+                    </div>
+                    {/* 类型标签 */}
+                    <div style={{
+                      position: 'absolute',
+                      top: 8,
+                      left: 8,
+                      padding: '2px 8px',
+                      borderRadius: '12px',
+                      fontSize: '10px',
+                      fontWeight: '500',
+                      color: '#fff',
+                      background: '#1890ff',
+                      zIndex: 1
+                    }}>
+                      {t('mediaGroupType.video')}
+                    </div>
+                    {item.desc && (
+                      <div style={{ 
+                        fontSize: 12, 
+                        color: '#7f8c8d',
+                        lineHeight: 1.4,
+                        marginTop: 4
+                      }}>
+                        {item.desc}
+                      </div>
+                    )}
+                    {/* 资源数量 */}
+                    <div style={{
+                      fontSize: 11,
+                      color: '#95a5a6',
+                      marginTop: 4
+                    }}>
+                      {item.mediaCount || 0} {t('mediaCount')}
+                    </div>
+                    {editMaterialSelectedVideoGroup?._id === item._id && (
+                      <div style={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                        width: 20,
+                        height: 20,
+                        borderRadius: '50%',
+                        background: '#667eea',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontSize: 12,
+                        zIndex: 2
+                      }}>
+                        ✓
+                      </div>
+                    )}
+                  </div>
+                </List.Item>
+              )}
+            />
+          </Modal>
+        )}
+        {/* 图文组：媒体组选择 */}
+        {selectedGroup?.type === PubType.ImageText && (
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontWeight: 500, marginBottom: 8 }}>选择媒体组</div>
+            <List
+              grid={{ gutter: 16, column: 2 }}
+              dataSource={editMaterialMediaGroups}
+              renderItem={item => (
+                <List.Item>
+                  <div
+                    className={styles.mediaCard}
+                    style={{
+                      background: editMaterialSelectedGroup?._id === item._id ? 
+                        'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)' : 
+                        '#FAEFFC',
+                      border: editMaterialSelectedGroup?._id === item._id ? 
+                        '2px solid #667eea' : '2px solid transparent',
+                      padding: '20px',
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      minHeight: '100px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      textAlign: 'center'
+                    }}
+                    onClick={() => handleEditMaterialSelectGroup(item)}
+                    onMouseEnter={(e) => {
+                      if (editMaterialSelectedGroup?._id !== item._id) {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.2)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (editMaterialSelectedGroup?._id !== item._id) {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }
+                    }}
+                  >
+                    <div style={{ 
+                      fontSize: 24, 
+                      marginBottom: 8,
+                      color: editMaterialSelectedGroup?._id === item._id ? '#667eea' : '#bdc3c7'
+                    }}>
+                      <FolderOpenOutlined />
+                    </div>
+                    <div style={{ 
+                      fontWeight: 600, 
+                      fontSize: 16,
+                      color: '#2c3e50',
+                      marginBottom: 4
+                    }}>
+                      {item.title}
+                    </div>
+                    {item.desc && (
+                      <div style={{ 
+                        fontSize: 12, 
+                        color: '#7f8c8d',
+                        lineHeight: 1.4
+                      }}>
+                        {item.desc}
+                      </div>
+                    )}
+                    {editMaterialSelectedGroup?._id === item._id && (
+                      <div style={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                        width: 20,
+                        height: 20,
+                        borderRadius: '50%',
+                        background: '#667eea',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontSize: 12
+                      }}>
+                        ✓
+                      </div>
+                    )}
+                  </div>
+                </List.Item>
+              )}
+            />
+          </div>
+        )}
+
+        {/* 图文组：资源选择区 */}
+        {selectedGroup?.type === PubType.ImageText && editMaterialSelectedGroup && (
           <>
             <div style={{ marginBottom: 12 }}>
-              <div style={{ fontWeight: 500, marginBottom: 8 }}>选择封面（单选）</div>
+              <div style={{ fontWeight: 500, marginBottom: 8 }}>
+                选择封面（单选）
+              </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {editMaterialMediaList.map((media: any) => (
                   <img
@@ -1421,7 +2399,9 @@ export default function CgMaterialPageCore() {
               </div>
             </div>
             <div style={{ marginBottom: 12 }}>
-              <div style={{ fontWeight: 500, marginBottom: 8 }}>选择素材（多选）</div>
+              <div style={{ fontWeight: 500, marginBottom: 8 }}>
+                选择素材（多选）
+              </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {editMaterialMediaList.map((media: any) => (
                   <img
@@ -1449,6 +2429,149 @@ export default function CgMaterialPageCore() {
                 ))}
               </div>
             </div>
+          </>
+        )}
+
+        {/* 视频组：资源选择区 */}
+        {selectedGroup?.type === PubType.VIDEO && (
+          <>
+            {/* 封面组选择按钮 */}
+            {!editMaterialSelectedCoverGroup && (
+              <div style={{ marginBottom: 16 }}>
+                <Button 
+                  type="dashed" 
+                  onClick={() => setEditMaterialCoverGroupModal(true)}
+                  style={{ width: '100%', height: 60 }}
+                >
+                  <FolderOpenOutlined style={{ marginRight: 8 }} />
+                  选择封面组（图片组）
+                </Button>
+              </div>
+            )}
+
+            {/* 视频组选择按钮 */}
+            {!editMaterialSelectedVideoGroup && (
+              <div style={{ marginBottom: 16 }}>
+                <Button 
+                  type="dashed" 
+                  onClick={() => setEditMaterialVideoGroupModal(true)}
+                  style={{ width: '100%', height: 60 }}
+                >
+                  <VideoCameraOutlined style={{ marginRight: 8 }} />
+                  选择视频组
+                </Button>
+              </div>
+            )}
+
+            {/* 封面选择区 */}
+            {editMaterialSelectedCoverGroup && (
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <div style={{ fontWeight: 500 }}>
+                    选择封面（图片，单选）
+                  </div>
+                  <Button 
+                    type="link" 
+                    size="small"
+                    onClick={() => {
+                      setEditMaterialSelectedCoverGroup(null);
+                      setEditMaterialCoverList([]);
+                      setEditMaterialSelectedCover(null);
+                    }}
+                  >
+                    重新选择封面组
+                  </Button>
+                </div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {editMaterialCoverList.map((media: any) => (
+                    <img
+                      key={media._id}
+                      src={getOssUrl(media.url)}
+                      alt=""
+                      style={{
+                        width: 60,
+                        height: 60,
+                        border: editMaterialSelectedCover === media.url ? '2px solid #1677ff' : '1px solid #eee',
+                        borderRadius: 4,
+                        cursor: 'pointer',
+                        objectFit: 'cover',
+                        opacity: media.type !== 'img' ? 0.3 : 1,
+                      }}
+                      onClick={() => {
+                        if (media.type !== 'img') {
+                          message.warning('封面必须是图片');
+                          return;
+                        }
+                        setEditMaterialSelectedCover(media.url);
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 视频素材选择区 */}
+            {editMaterialSelectedVideoGroup && (
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <div style={{ fontWeight: 500 }}>
+                    选择视频素材（单选）
+                  </div>
+                  <Button 
+                    type="link" 
+                    size="small"
+                    onClick={() => {
+                      setEditMaterialSelectedVideoGroup(null);
+                      setEditMaterialVideoList([]);
+                      setEditMaterialSelectedMaterials([]);
+                    }}
+                  >
+                    重新选择视频组
+                  </Button>
+                </div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {editMaterialVideoList.map((media: any) => (
+                    media.type === 'video' ? (
+                      <video
+                        key={media._id}
+                        src={getOssUrl(media.url)}
+                        style={{
+                          width: 60,
+                          height: 60,
+                          border: editMaterialSelectedMaterials.includes(media.url) ? '2px solid #1677ff' : '1px solid #eee',
+                          borderRadius: 4,
+                          cursor: 'pointer',
+                          objectFit: 'cover',
+                        }}
+                        onClick={() => setEditMaterialSelectedMaterials([media.url])}
+                        muted
+                        loop
+                        onMouseEnter={(e) => (e.target as HTMLVideoElement).play()}
+                        onMouseLeave={(e) => (e.target as HTMLVideoElement).pause()}
+                      />
+                    ) : (
+                      <img
+                        key={media._id}
+                        src={getOssUrl(media.url)}
+                        alt=""
+                        style={{
+                          width: 60,
+                          height: 60,
+                          border: editMaterialSelectedMaterials.includes(media.url) ? '2px solid #1677ff' : '1px solid #eee',
+                          borderRadius: 4,
+                          cursor: 'pointer',
+                          objectFit: 'cover',
+                          opacity: 0.3,
+                        }}
+                        onClick={() => {
+                          message.warning('视频组只能选择视频素材');
+                        }}
+                      />
+                    )
+                  ))}
+                </div>
+              </div>
+            )}
           </>
         )}
 

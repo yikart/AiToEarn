@@ -5,6 +5,7 @@ import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import BilibParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/BilibParams";
 import KwaiParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/KwaiParams";
 import FacebookParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/FacebookParams";
+import InstagramParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/InstagramParams";
 import YouTubeParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/YouTubeParams";
 import { useShallow } from "zustand/react/shallow";
 import { PubItem } from "@/components/PublishDialog/publishDialog.type";
@@ -42,6 +43,8 @@ const PlatParamsSetting = memo(
             return <BilibParams pubItem={pubItem} />;
           case PlatType.Facebook:
             return <FacebookParams pubItem={pubItem} />;
+          case PlatType.Instagram:
+            return <InstagramParams pubItem={pubItem} />;
           case PlatType.YouTube:
             return <YouTubeParams pubItem={pubItem} />;
           default:

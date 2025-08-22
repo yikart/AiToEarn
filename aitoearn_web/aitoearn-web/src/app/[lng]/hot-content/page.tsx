@@ -620,7 +620,7 @@ const HotContentNew: React.FC = () => {
 
   // 获取图片URL
   const getImageUrl = (path: string) => {
-    return path.startsWith('http') ? path : `${process.env.NEXT_PUBLIC_API_URL}${path}`;
+    return path.startsWith('http') ? path : `${process.env.NEXT_PUBLIC_HOST_URL}/api/${path}`;
   };
 
   // 格式化数字

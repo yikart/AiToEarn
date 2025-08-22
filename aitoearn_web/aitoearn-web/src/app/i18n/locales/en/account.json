@@ -2,5 +2,56 @@
   "title": "account",
   "describe": "account Page",
   "today": "Today",
-  "addPost": "Add a Post"
+  "defaultSpace": "Default Space",
+  "addPost": "Add a Post",
+  "calendarMode": "Calendar Mode",
+  "listModeTab": "List Mode",
+  "newWork": "New Work",
+  "allPlatforms": "All Platforms",
+  "accountManager": "Acct Manager",
+  "addAccount": "Add Account",
+  "mcpManager": "MCP Manager",
+  "online": "Online",
+  "offline": "Offline",
+  "checkLoginStatus": "Check Login Status",
+  "checkAllLoginStatus": "Check All Login Status",
+  "nickname": "Nickname",
+  "platform": "Platform",
+  "loginStatus": "Login Status",
+  "accountStatus": "Account Status",
+  "normal": "Normal",
+  "disabled": "Disabled",
+  "unknownPlatform": "Unknown Platform",
+  "unknownAccount": "Unknown Account",
+  "addAccountModal": {
+    "title": "Add Account",
+    "subtitle": "Select Platform"
+  },
+  "facebookPages": {
+    "title": "Select Facebook Pages",
+    "selectAll": "Select All",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "noPages": "No pages available",
+    "fetchError": "Failed to fetch pages",
+    "submitError": "Failed to select pages",
+    "submitSuccess": "Pages selected successfully",
+    "selectAtLeastOne": "Please select at least one page"
+  },
+  "listMode": {
+    "title": "Publish Plans",
+    "recordCount": "{{count}} plans total",
+    "newWork": "New Work",
+    "noRecords": "No publish plans"
+  },
+  "chooseSpace": "Choose Space",
+  "pleaseChooseSpace": "Please choose a space",
+  "accountAddedToSpace": "Account has been added to the space",
+  "noNewAccountDetected": "No new account detected; you can adjust the space later in Account Manager",
+  "ipInfo": {
+    "loading": "Getting IP info...",
+    "error": "Failed to get IP info",
+    "tooltip": "ASN: {{asn}}\nOrganization: {{org}}"
+  }
 }

@@ -2,6 +2,7 @@ import {
   ForwardedRef,
   forwardRef,
   memo,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -9,7 +10,6 @@ import {
 import styles from "./AccountSidebar.module.scss";
 import { Avatar, Button, Collapse, Popover, Skeleton, Tooltip } from "antd";
 // import { accountLogin, acpAccountLoginCheck } from "@/icp/account";
-import AddAccountModal from "../AddAccountModal";
 import {
   CheckCircleOutlined,
   PlusOutlined,
@@ -24,7 +24,8 @@ import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import { AccountStatus } from "@/app/config/accountConfig";
 import { SocialAccount } from "@/api/types/account.type";
 import { getOssUrl } from "@/utils/oss";
-import ChooseAccountModule from "@/components/ChooseAccountModule/ChooseAccountModule";
+import { useTransClient } from "@/app/i18n/client";
+import { getIpLocation, IpLocationInfo, formatLocationInfo } from "@/utils/ipLocation";
 
 export interface IAccountSidebarRef {}
 
@@ -38,11 +39,12 @@ export interface IAccountSidebarProps {
 }
 
 const AccountStatusView = ({ account }: { account: SocialAccount }) => {
+  const { t } = useTransClient("account");
   if (account.status === AccountStatus.USABLE) {
     return (
       <>
         <CheckCircleOutlined style={{ color: "var(--successColor)" }} />
-        在线
+        {t("online")}
       </>
     );
   }
@@ -50,7 +52,7 @@ const AccountStatusView = ({ account }: { account: SocialAccount }) => {
   return (
     <>
       <WarningOutlined style={{ color: "var(--warningColor)" }} />
-      离线
+      {t("offline")}
     </>
   );
 };
@@ -60,6 +62,7 @@ const AccountPopoverInfo = ({
 }: {
   accountInfo: SocialAccount;
 }) => {
+  const { t } = useTransClient("account");
   const platInfo = AccountPlatInfoMap.get(accountInfo.type)!;
   const [detLoading, setDetLoading] = useState(false);
 
@@ -72,49 +75,49 @@ const AccountPopoverInfo = ({
         <Avatar src={getOssUrl(accountInfo.avatar)} size="large" />
         <div className="accountPopoverInfo_top-right">
           <div className="accountPopoverInfo-item">
-            <p>昵称：</p>
+            <p>{t("nickname")}：</p>
             <p>{accountInfo.nickname}</p>
           </div>
           <div className="accountPopoverInfo-item">
-            <p>平台：</p>
+            <p>{t("platform")}：</p>
             <p>
               <img src={platInfo?.icon} />
-              {platInfo.name}
+              {platInfo.name }
             </p>
           </div>
         </div>
       </div>
 
       <div className="accountPopoverInfo-item">
-        <p>登录状态：</p>
+        <p>{t("loginStatus")}：</p>
         <p>
           <AccountStatusView account={accountInfo} />
-          <Button
-            type="link"
-            style={{ padding: "0 0 0 5px" }}
-            loading={detLoading}
-            onClick={async () => {
-              // TODO 登录状态检测
-              // setDetLoading(true);
-              // const res = await acpAccountLoginCheck(
-              //   accountInfo!.type,
-              //   accountInfo!.uid,
-              // );
-              // message.success(
-              //   `登录状态检测完成：${res.status === AccountStatus.USABLE ? "在线" : "离线，请重新登录"}`,
-              // );
-              // setTimeout(async () => {
-              //   setDetLoading(false);
-              //   if (res.status === AccountStatus.DISABLE) {
-              //     const res = await accountLogin(accountInfo.type);
-              //     if (!res) return;
-              //     message.success("账号更新成功！");
-              //   }
-              // }, 500);
-            }}
-          >
-            登录状态检测
-          </Button>
+          {/*<Button*/}
+          {/*  type="link"*/}
+          {/*  style={{ padding: "0 0 0 5px" }}*/}
+          {/*  loading={detLoading}*/}
+          {/*  onClick={async () => {*/}
+          {/*    // TODO 登录状态检测*/}
+          {/*    // setDetLoading(true);*/}
+          {/*    // const res = await acpAccountLoginCheck(*/}
+          {/*    //   accountInfo!.type,*/}
+          {/*    //   accountInfo!.uid,*/}
+          {/*    // );*/}
+          {/*    // message.success(*/}
+          {/*    //   `登录状态检测完成：${res.status === AccountStatus.USABLE ? "在线" : "离线，请重新登录"}`,*/}
+          {/*    // );*/}
+          {/*    // setTimeout(async () => {*/}
+          {/*    //   setDetLoading(false);*/}
+          {/*    //   if (res.status === AccountStatus.DISABLE) {*/}
+          {/*    //     const res = await accountLogin(accountInfo.type);*/}
+          {/*    //     if (!res) return;*/}
+          {/*    //     message.success("账号更新成功！");*/}
+          {/*    //   }*/}
+          {/*    // }, 500);*/}
+          {/*  }}*/}
+          {/*>*/}
+          {/*  {t("checkLoginStatus")}*/}
+          {/*</Button>*/}
         </p>
       </div>
     </div>
@@ -131,7 +134,7 @@ const AccountSidebar = memo(
       }: IAccountSidebarProps,
       ref: ForwardedRef<IAccountSidebarRef>,
     ) => {
-      const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
+      const { t } = useTransClient("account");
       const pubAccountDetModuleRef = useRef<any>(null);
       const {
         accountList: fullAccountList,
@@ -150,6 +153,10 @@ const AccountSidebar = memo(
       const userManageModalRef = useRef<IUserManageModalRef>(null);
       const [mcpManagerModalOpen, setMcpManagerModalOpen] = useState(false);
       const mcpManagerModalRef = useRef<IMCPManagerModalRef>(null);
+      
+      // IP地理位置信息状态
+      const [ipLocationInfo, setIpLocationInfo] = useState<IpLocationInfo | null>(null);
+      const [ipLocationLoading, setIpLocationLoading] = useState(false);
 
       // 在组件内部过滤账号列表，而不是在 useAccountStore 中过滤
       const accountList = useMemo(() => {
@@ -161,6 +168,24 @@ const AccountSidebar = memo(
       const defaultActiveKey = useMemo(() => {
         return accountGroupList.find((v) => v.isDefault)?.id;
       }, [accountGroupList]);
+
+      // 获取IP地理位置信息
+      useEffect(() => {
+        const fetchIpLocation = async () => {
+          try {
+            setIpLocationLoading(true);
+            const info = await getIpLocation();
+            setIpLocationInfo(info);
+          } catch (error) {
+            console.error('获取IP地理位置信息失败:', error);
+          } finally {
+            setIpLocationLoading(false);
+          }
+        };
+
+        // 只在组件挂载时获取一次IP信息
+        fetchIpLocation();
+      }, []);
 
       return (
         <>
@@ -182,11 +207,7 @@ const AccountSidebar = memo(
           {/*  accounts={accountList}*/}
           {/*  isFooter={false}*/}
           {/*/>*/}
-          <AddAccountModal
-            open={isAccountModalOpen}
-            onClose={() => setIsAccountModalOpen(false)}
-            onAddSuccess={getAccountList}
-          />
+          
           <div className={styles.accountSidebar}>
             <div className="accountSidebar-top">
               <div className="accountSidebar-top-box">
@@ -196,28 +217,22 @@ const AccountSidebar = memo(
                   }}
                 >
                   <UserOutlined />
-                  账号管理器
+                  {t("accountManager")}
                 </Button>
-                <Tooltip title="添加账号">
-                  <Button
-                    type="primary"
-                    className="accountSidebar-top-addUser"
-                    icon={<PlusOutlined />}
-                    onClick={() => {
-                      setIsAccountModalOpen(true);
-                    }}
-                  ></Button>
-                </Tooltip>
+                
               </div>
-                    {/* mcp 按钮 */}
+              {/* mcp 按钮 */}
               <div className="accountSidebar-top-box">
                 {/* 按钮蓝紫色渐变 */}
-                <Button 
-                  type="primary" 
-                  style={{background: 'linear-gradient(90deg, #625BF2 0%, #925BF2 100%)'}}
+                <Button
+                  type="primary"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, #625BF2 0%, #925BF2 100%)",
+                  }}
                   onClick={() => setMcpManagerModalOpen(true)}
                 >
-                   MCP 管理器
+                  {t("mcpManager")}
                 </Button>
               </div>
             </div>
@@ -233,19 +248,53 @@ const AccountSidebar = memo(
                 key={defaultActiveKey}
                 defaultActiveKey={defaultActiveKey}
                 items={accountGroupList.map((v) => {
+                  // 为默认分组添加IP和地址信息
+                  const isDefaultGroup = v.isDefault;
+                  const showIpInfo = isDefaultGroup && ipLocationInfo;
+                  
                   return {
                     key: v.id,
                     label: (
                       <>
-                        {v.name}
-                        <span className="accountSidebar-userCount">
-                          {v.children?.length}/
-                          {
-                            v.children?.map(
-                              (v) => v.status === AccountStatus.USABLE,
-                            ).length
-                          }
-                        </span>
+                        <div className="accountSidebar-groupLabel">
+                          <span className="accountSidebar-groupName">{v.name}</span>
+                          <span className="accountSidebar-userCount">
+                            {v.children?.length}/
+                            {
+                              v.children?.map(
+                                (v) => v.status === AccountStatus.USABLE,
+                              ).length
+                            }
+                          </span>
+                          {/* 根据proxyIp判断显示IP信息 */}
+                          {(!v.proxyIp || v.proxyIp === "") ? (
+                            // 本地IP显示
+                            <div className="accountSidebar-ipInfo">
+                              {ipLocationLoading ? (
+                                <span className="accountSidebar-ipLoading">{t("ipInfo.loading")}</span>
+                              ) : ipLocationInfo ? (
+                                <Tooltip title={t("ipInfo.tooltip", { asn: ipLocationInfo.asn, org: ipLocationInfo.org })}>
+                                  <span className="accountSidebar-ipText">
+                                    {formatLocationInfo(ipLocationInfo)}
+                                  </span>
+                                </Tooltip>
+                              ) : (
+                                <span className="accountSidebar-ipError">{t("ipInfo.error")}</span>
+                              )}
+                            </div>
+                          ) : (
+                            // 数据中的IP显示
+                            v.ip && v.location && (
+                              <div className="accountSidebar-ipInfo">
+                                <Tooltip title={`IP: ${v.ip}\n位置: ${v.location}`}>
+                                  <span className="accountSidebar-ipText">
+                                    {v.ip} | {v.location}
+                                  </span>
+                                </Tooltip>
+                              </div>
+                            )
+                          )}
+                        </div>
                       </>
                     ),
                     children: (
@@ -317,16 +366,16 @@ const AccountSidebar = memo(
               />
             )}
 
-            <div className="accountSidebar-footer">
-              <Button
-                type="link"
-                onClick={() => {
-                  pubAccountDetModuleRef.current?.startDet();
-                }}
-              >
-                一键检测登录状态
-              </Button>
-            </div>
+            {/*<div className="accountSidebar-footer">*/}
+            {/*  <Button*/}
+            {/*    type="link"*/}
+            {/*    onClick={() => {*/}
+            {/*      pubAccountDetModuleRef.current?.startDet();*/}
+            {/*    }}*/}
+            {/*  >*/}
+            {/*    {t("checkAllLoginStatus")}*/}
+            {/*  </Button>*/}
+            {/*</div>*/}
           </div>
         </>
       );

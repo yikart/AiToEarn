@@ -30,7 +30,6 @@ export default function AlbumPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const albumId = params.id as string;
-  console.log('idzhi id', albumId)
   
   const [mediaList, setMediaList] = useState<Media[]>([]);
   const [groupInfo, setGroupInfo] = useState<MediaGroup | null>(null);

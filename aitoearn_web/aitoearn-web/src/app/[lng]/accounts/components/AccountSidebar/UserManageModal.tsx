@@ -6,6 +6,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useEffect,
 } from "react";
 import {
   Button,
@@ -17,6 +18,8 @@ import {
   Table,
   TableProps,
   Tooltip,
+  Card,
+  Space,
 } from "antd";
 import styles from "./AccountSidebar.module.scss";
 import { useAccountStore } from "@/store/account";
@@ -25,6 +28,8 @@ import {
   CheckCircleOutlined,
   DeleteOutlined,
   WarningOutlined,
+  GlobalOutlined,
+  EnvironmentOutlined,
 } from "@ant-design/icons";
 import UserManageSidebar from "./UserManageSidebar";
 import { SocialAccount } from "@/api/types/account.type";
@@ -32,6 +37,9 @@ import { AccountPlatInfoMap } from "@/app/config/platConfig";
 import { AccountStatus } from "@/app/config/accountConfig";
 import AvatarPlat from "@/components/AvatarPlat";
 import { deleteAccountsApi, updateAccountApi } from "@/api/account";
+import { useTransClient } from "@/app/i18n/client";
+import AddAccountModal from "../AddAccountModal";
+import { getIpLocation, IpLocationInfo, formatLocationInfo } from "@/utils/ipLocation";
 
 export interface IUserManageModalRef {
   setActiveGroup: (groupId: string) => void;
@@ -70,12 +78,163 @@ const UserGroupSelect = ({
   );
 };
 
+// 空间信息展示组件
+const SpaceInfoCard = ({ 
+  activeGroup, 
+  accountGroupList, 
+  allUser 
+}: { 
+  activeGroup: string; 
+  accountGroupList: any[]; 
+  allUser: string;
+}) => {
+  const { t } = useTransClient("account");
+  const [ipLocationInfo, setIpLocationInfo] = useState<IpLocationInfo | null>(null);
+  const [ipLocationLoading, setIpLocationLoading] = useState(false);
+
+  // 获取IP地理位置信息
+  useEffect(() => {
+    const fetchIpLocation = async () => {
+      try {
+        setIpLocationLoading(true);
+        const info = await getIpLocation();
+        setIpLocationInfo(info);
+      } catch (error) {
+        console.error('获取IP地理位置信息失败:', error);
+      } finally {
+        setIpLocationLoading(false);
+      }
+    };
+
+    // 只在组件挂载时获取一次IP信息
+    fetchIpLocation();
+  }, []);
+
+  // 如果是全部账号，不显示信息卡片
+  if (activeGroup === allUser) {
+    return null;
+  }
+
+  // 获取当前选中的空间信息
+  const currentSpace = accountGroupList.find(group => group.id === activeGroup);
+  if (!currentSpace) return null;
+
+  return (
+    <Card 
+      size="small" 
+      style={{ 
+        marginBottom: '16px',
+        backgroundColor: 'var(--grayColor1)',
+        border: '1px solid var(--grayColor3)'
+      }}
+    >
+      <Space direction="vertical" size="small" style={{ width: '100%' }}>
+        {/* <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ 
+            fontSize: 'var(--fs-xs)', 
+            color: 'var(--grayColor6)',
+            backgroundColor: 'var(--grayColor2)',
+            padding: '2px 8px',
+            borderRadius: '12px'
+          }}>
+            {currentSpace.children?.length || 0} 个账号
+          </span>
+        </div> */}
+        
+        {/* 根据proxyIp判断显示IP和属地信息 */}
+        {(!currentSpace.proxyIp || currentSpace.proxyIp === "") ? (
+          // 本地IP显示
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px',
+            padding: '8px',
+            backgroundColor: 'var(--grayColor2)',
+            borderRadius: '6px'
+          }}>
+            <GlobalOutlined style={{ color: 'var(--colorPrimary5)' }} />
+            <span style={{ fontSize: 'var(--fs-xs)', color: 'var(--grayColor7)' }}>
+              {t("ipInfo.loading")}
+            </span>
+            {ipLocationLoading ? (
+              <span style={{ color: 'var(--colorPrimary5)', fontStyle: 'italic' }}>
+                {t("ipInfo.loading")}
+              </span>
+            ) : ipLocationInfo ? (
+              <Tooltip title={t("ipInfo.tooltip", { asn: ipLocationInfo.asn, org: ipLocationInfo.org })}>
+                <span style={{ 
+                  color: 'var(--grayColor7)',
+                  cursor: 'help',
+                  fontWeight: '500'
+                }}>
+                  {formatLocationInfo(ipLocationInfo)}
+                </span>
+              </Tooltip>
+            ) : (
+              <span style={{ color: 'var(--errorColor)', fontStyle: 'italic' }}>
+                {t("ipInfo.error")}
+              </span>
+            )}
+          </div>
+        ) : (
+          // 数据中的IP显示
+          currentSpace.ip && currentSpace.location && (
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px',
+              padding: '8px',
+              backgroundColor: 'var(--grayColor2)',
+              borderRadius: '6px'
+            }}>
+              <GlobalOutlined style={{ color: 'var(--colorPrimary5)' }} />
+              <Tooltip title={`IP: ${currentSpace.ip}\n位置: ${currentSpace.location}`}>
+                <span style={{ 
+                  color: 'var(--grayColor7)',
+                  cursor: 'help',
+                  fontWeight: '500'
+                }}>
+                  {currentSpace.ip} | {currentSpace.location}
+                </span>
+              </Tooltip>
+            </div>
+          )
+        )}
+        
+        {/* 空间创建时间等信息 */}
+        <div style={{ 
+          fontSize: 'var(--fs-xs)', 
+          color: 'var(--grayColor6)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px'
+        }}>
+          <EnvironmentOutlined />
+          <span>空间ID: {currentSpace.id}</span>
+          {currentSpace.isDefault && (
+            <span style={{ 
+              color: 'var(--colorPrimary5)',
+              backgroundColor: 'var(--colorPrimary1)',
+              padding: '1px 6px',
+              borderRadius: '10px',
+              fontSize: 'var(--fs-xs)'
+            }}>
+              defaultSpace
+            </span>
+          )}
+        </div>
+      </Space>
+    </Card>
+  );
+};
+
 const UserManageModal = memo(
   forwardRef(
     (
       { open, onCancel }: IUserManageModalProps,
       ref: ForwardedRef<IUserManageModalRef>,
     ) => {
+      const { t } = useTransClient("account");
       const { accountList, getAccountList, accountGroupList, accountMap } =
         useAccountStore(
           useShallow((state) => ({
@@ -95,6 +254,14 @@ const UserManageModal = memo(
       const isUpdateRank = useRef(false);
       const [deleteLoading, setDeleteLoading] = useState(false);
       const [cutLoading, setCutLoading] = useState(false);
+      const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
+      const [targetGroupIdForModal, setTargetGroupIdForModal] = useState<string | undefined>(undefined);
+      const [chooseGroupOpen, setChooseGroupOpen] = useState(false);
+      const [chosenGroupId, setChosenGroupId] = useState<string | undefined>(undefined);
+      const preAccountIds = useRef<Set<string>>(new Set());
+      const pendingGroupIdRef = useRef<string | null>(null);
+      const isAssigningRef = useRef(false);
+      const snapshotReadyRef = useRef(false);
 
       const columns = useMemo(() => {
         const columns: TableProps<SocialAccount>["columns"] = [
@@ -138,7 +305,7 @@ const UserManageModal = memo(
             key: "nickname",
           },
           {
-            title: "账号状态",
+            title: t("accountStatus"),
             render: (text, am) => {
               return (
                 <>
@@ -150,7 +317,7 @@ const UserManageModal = memo(
                           marginRight: "3px",
                         }}
                       />
-                      在线
+                      {t("online")}
                     </>
                   ) : (
                     <>
@@ -160,7 +327,7 @@ const UserManageModal = memo(
                           marginRight: "3px",
                         }}
                       />
-                      离线
+                      {t("offline")}
                     </>
                   )}
                 </>
@@ -243,6 +410,54 @@ const UserManageModal = memo(
       };
       useImperativeHandle(ref, () => imperativeHandle);
 
+      const openAddAccountFlow = async () => {
+        const currentGroupId = activeGroup;
+        close();
+        if (currentGroupId === allUser.current) {
+          setChosenGroupId(accountGroupList[0]?.id);
+          setChooseGroupOpen(true);
+        } else {
+          pendingGroupIdRef.current = currentGroupId;
+          setTargetGroupIdForModal(currentGroupId);
+          if ((useAccountStore.getState().accountList || []).length === 0) {
+            await getAccountList();
+          }
+          preAccountIds.current = new Set(
+            (useAccountStore.getState().accountList || []).map((v) => v.id),
+          );
+          snapshotReadyRef.current = true;
+          setIsAddAccountOpen(true);
+        }
+      };
+
+      useEffect(() => {
+        const maybeAssign = async () => {
+          if (!pendingGroupIdRef.current) return;
+          if (isAssigningRef.current) return;
+          if (!snapshotReadyRef.current) return;
+          const currList = accountList || [];
+          const newAccounts = currList.filter((a) => !preAccountIds.current.has(a.id));
+          if (newAccounts.length === 0) return;
+          isAssigningRef.current = true;
+          try {
+            const targetGroupId = pendingGroupIdRef.current!;
+            for (const acc of newAccounts) {
+              try {
+                await updateAccountApi({ id: acc.id, groupId: targetGroupId });
+              } catch {}
+            }
+            await getAccountList();
+            message.success(t("accountAddedToSpace" as any));
+          } finally {
+            pendingGroupIdRef.current = null;
+            preAccountIds.current = new Set();
+            isAssigningRef.current = false;
+            snapshotReadyRef.current = false;
+          }
+        };
+        maybeAssign();
+      }, [accountList]);
+
       return (
         <>
           <Modal
@@ -296,7 +511,7 @@ const UserManageModal = memo(
 
           <Modal
             open={open}
-            title="账号管理器"
+            title={t("accountManager")}
             zIndex={1001}
             footer={null}
             width={1000}
@@ -315,9 +530,16 @@ const UserManageModal = memo(
                 />
 
                 <div className="userManage-content">
-                  {/*<div className="userManage-content-head">*/}
-                  {/*  <div></div>*/}
-                  {/*</div>*/}
+                  {/* 空间信息卡片 - 显示在右侧上方 */}
+                  <SpaceInfoCard 
+                    activeGroup={activeGroup}
+                    accountGroupList={accountGroupList}
+                    allUser={allUser.current}
+                  />
+                  
+                  <div className="userManage-content-head" style={{ marginBottom: "8px", display: "flex", justifyContent: "flex-end" }}>
+                    <Button type="primary" onClick={openAddAccountFlow}>{t("addAccount")}</Button>
+                  </div>
                   <Table<SocialAccount>
                     columns={columns}
                     dataSource={accountListLast}
@@ -364,6 +586,54 @@ const UserManageModal = memo(
               </div>
             </Spin>
           </Modal>
+          <Modal
+            open={chooseGroupOpen}
+            title={t("chooseSpace" as any)}
+            onCancel={() => setChooseGroupOpen(false)}
+            onOk={async () => {
+              if (!chosenGroupId) return message.warning(t("pleaseChooseSpace" as any));
+              pendingGroupIdRef.current = chosenGroupId;
+              setTargetGroupIdForModal(chosenGroupId);
+              if ((useAccountStore.getState().accountList || []).length === 0) {
+                await getAccountList();
+              }
+              preAccountIds.current = new Set(
+                (useAccountStore.getState().accountList || []).map((v) => v.id),
+              );
+              snapshotReadyRef.current = true;
+              setChooseGroupOpen(false);
+              setIsAddAccountOpen(true);
+            }}
+            width={420}
+          >
+            <Select
+              style={{ width: "100%" }}
+              placeholder={t("pleaseChooseSpace" as any)}
+              value={chosenGroupId}
+              onChange={setChosenGroupId}
+              options={accountGroupList.map((g) => ({ value: g.id, label: g.name }))}
+            />
+          </Modal>
+
+          <AddAccountModal
+            open={isAddAccountOpen}
+            onClose={async () => {
+              setIsAddAccountOpen(false);
+              setTargetGroupIdForModal(undefined);
+            }}
+            onAddSuccess={async (acc) => {
+              try {
+                if (pendingGroupIdRef.current) {
+                  await updateAccountApi({ id: acc.id, groupId: pendingGroupIdRef.current });
+                  message.success(t("accountAddedToSpace" as any));
+                }
+              } finally {
+                pendingGroupIdRef.current = null;
+                await getAccountList();
+              }
+            }}
+            targetGroupId={targetGroupIdForModal}
+          />
         </>
       );
     },

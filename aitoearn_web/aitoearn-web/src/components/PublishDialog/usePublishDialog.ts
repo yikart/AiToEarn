@@ -7,6 +7,8 @@ import {
   PubItem,
 } from "@/components/PublishDialog/publishDialog.type";
 import { ErrPubParamsMapType } from "@/components/PublishDialog/hooks/usePubParamsVerify";
+import { AccountPlatInfoMap } from "@/app/config/platConfig";
+import { PubType } from "@/app/config/publishConfig";
 
 export interface IPublishDialogStore {
   // 选择的发布列表
@@ -42,7 +44,10 @@ const store: IPublishDialogStore = {
         source: "",
       },
       facebook: {
-        page_id: undefined, 
+        page_id: undefined,
+      },
+      instagram: {
+        content_category: undefined,
       },
     },
   },
@@ -127,14 +132,41 @@ export const usePublishDialog = create(
           const commonPubParams = { ...get().commonPubParams };
           let pubListChoosed = [...get().pubListChoosed];
 
-          for (const key in commonPubParams) {
+          // 更新 commonPubParams
+          for (const key in pubParmas) {
             if (pubParmas.hasOwnProperty(key)) {
-              const keyType = key as "des";
-              const val = pubParmas[keyType];
-              commonPubParams[keyType] = pubParmas[keyType]!;
-              pubList.map((v) => {
-                v.params[keyType] = val!;
-              });
+              (commonPubParams as any)[key] = (pubParmas as any)[key];
+            }
+          }
+
+          // 更新所有账户的参数
+          for (let i = 0; i < pubList.length; i++) {
+            const v = pubList[i];
+            const platConfig = AccountPlatInfoMap.get(v.account.type)!;
+            
+            // 更新描述
+            if (pubParmas.des !== undefined) {
+              v.params.des = pubParmas.des;
+            }
+            
+            // 更新标题
+            if (pubParmas.title !== undefined) {
+              v.params.title = pubParmas.title;
+            }
+            
+            // 更新视频（如果平台支持）
+            if (pubParmas.video !== undefined && platConfig.pubTypes.has(PubType.VIDEO)) {
+              v.params.video = pubParmas.video;
+            }
+            
+            // 更新图片（如果平台支持）
+            if (pubParmas.images !== undefined && platConfig.pubTypes.has(PubType.ImageText)) {
+              v.params.images = pubParmas.images;
+            }
+            
+            // 更新选项
+            if (pubParmas.option) {
+              v.params.option = lodash.merge({}, v.params.option, pubParmas.option);
             }
           }
 
@@ -163,19 +195,37 @@ export const usePublishDialog = create(
           const findedData = pubList.find((v) => v.account.id === accountId);
           if (!findedData) return;
 
+          // 使用lodash的merge来正确处理嵌套对象
+          if (pubParmas.option) {
+            findedData.params.option = lodash.merge(
+              {},
+              findedData.params.option,
+              pubParmas.option,
+            );
+          }
+
           for (const key in pubParmas) {
-            if (pubParmas.hasOwnProperty(key)) {
+            if (pubParmas.hasOwnProperty(key) && key !== "option") {
               (findedData.params as any)[key] = (pubParmas as any)[key];
             }
           }
 
-          pubList.map((v) => {
+          for (let i = 0; i < pubList.length; i++) {
+            const v = pubList[i];
+            const platConfig = AccountPlatInfoMap.get(v.account.type)!;
             if (!pubListChoosed.some((k) => k.account.id === v.account.id)) {
               v.params.des = pubParmas.des || "";
-              v.params.video = pubParmas.video;
-              v.params.images = pubParmas.images;
+              if (platConfig.pubTypes.has(PubType.VIDEO) && pubParmas.video) {
+                v.params.video = pubParmas.video;
+              }
+              if (
+                platConfig.pubTypes.has(PubType.ImageText) &&
+                pubParmas.images
+              ) {
+                v.params.images = pubParmas.images;
+              }
             }
-          });
+          }
 
           pubListChoosed = pubListChoosed.map((v) => {
             const findData = pubList.find((k) => k.account.id === v.account.id);

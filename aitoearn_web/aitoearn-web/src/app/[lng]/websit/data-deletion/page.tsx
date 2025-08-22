@@ -15,7 +15,7 @@ function Header() {
         </div>
         <nav className={styles.nav}>
           <a href="#marketplace" className={styles.navLink}>{t('header.nav.marketplace')}</a>
-          <a href="#pricing" className={styles.navLink}>{t('header.nav.pricing')}</a>
+
           <a href="#docs" className={styles.navLink}>{t('header.nav.docs')}</a>
           <a href="#blog" className={styles.navLink}>{t('header.nav.blog')}</a>
         </nav>

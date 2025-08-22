@@ -17,7 +17,7 @@ export interface IAvatarPlatProps {
 }
 
 const getAvatar = (url: string) => {
-  if (url.includes("https://")) {
+  if (url?.includes("https://")) {
     return url;
   } else {
     return `${OSS_DOMAIN}/` + url;

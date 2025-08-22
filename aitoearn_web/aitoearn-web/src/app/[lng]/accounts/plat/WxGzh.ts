@@ -2,7 +2,7 @@ import qs from "qs";
 import { PlatType } from "@/app/config/platConfig";
 import { checkWxGzAuthApi, getWxGzhAuthUrlApi } from "@/api/platAuth";
 import { useAccountStore } from "@/store/account";
-
+import { useUserStore } from "@/store/user";
 
 
 /**
@@ -13,6 +13,10 @@ export async function wxGzhSkip(platType: PlatType) {
   if (platType !== PlatType.WxGzh) return;
 
   const res: any = await getWxGzhAuthUrlApi('pc');
+  if (res?.code == 1) {
+              useUserStore.getState().logout();
+              return
+            }
   if (res?.code !== 0) return;
   const url = res.data.url;
   window.open(`${url}`);

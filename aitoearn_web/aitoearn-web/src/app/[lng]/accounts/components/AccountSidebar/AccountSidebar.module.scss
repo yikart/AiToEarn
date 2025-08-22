@@ -29,6 +29,50 @@
       color: var(--grayColor6);
     }
 
+    .accountSidebar-groupLabel {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .accountSidebar-groupName {
+      font-weight: 500;
+    }
+
+    .accountSidebar-ipInfo {
+      font-size: var(--fs-xs);
+      color: var(--grayColor6);
+      max-width: 130px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .accountSidebar-ipLoading {
+      color: var(--colorPrimary5);
+      font-style: italic;
+    }
+
+    .accountSidebar-ipText {
+      cursor: help;
+      padding: 2px 6px;
+      background: var(--grayColor2);
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: var(--grayColor3);
+        color: var(--grayColor7);
+      }
+    }
+
+    .accountSidebar-ipError {
+      color: var(--errorColor);
+      font-style: italic;
+    }
+
     .accountSidebar-top {
       flex-shrink: 0;
       padding: 0 10px;
@@ -182,7 +226,7 @@
   .userManageDeleteHitModal-users {
     display: grid;
     gap: 15px;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(7, 1fr);
     margin-top: 10px;
     li {
       display: flex;
@@ -270,8 +314,12 @@
       }
       &-left {
         display: flex;
+        align-items: center;
+        flex: 1;
+        min-width: 0;
       }
       &-name {
+        font-weight: 500;
       }
       &-count {
         color: var(--grayColor8);

@@ -43,7 +43,7 @@ function ReleaseBanner() {
   return (
     <div className={styles.releaseBanner}>
       <div className={styles.bannerContent}>
-        <span className={styles.releaseTag}>{t('releaseBanner.tag')}</span>
+        {/* <span className={styles.releaseTag}>{t('releaseBanner.tag')}</span> */}
         <span className={styles.releaseText}>{t('releaseBanner.text')}</span>
         <svg className={styles.arrowIcon} width="16" height="16" viewBox="0 0 16 16" fill="none">
           <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -78,10 +78,11 @@ function Header() {
         </div>
         </Link>
         <nav className={styles.nav}>
-          <a href="#marketplace" className={styles.navLink}>{t('header.nav.marketplace')}</a>
-          <a href="#pricing" className={styles.navLink}>{t('header.nav.pricing')}</a>
-          <a href="#docs" className={styles.navLink}>{t('header.nav.docs')}</a>
-          <a href="#blog" className={styles.navLink}>{t('header.nav.blog')}</a>
+          {/* <a href="#marketplace" className={styles.navLink}>{t('header.nav.marketplace')}</a> */}
+
+          <a href="https://status.aitoearn.ai/" target="_blank" rel="noopener noreferrer" className={styles.navLink}>{t('header.nav.status' as any)}</a>
+          {/* <a href="#docs" className={styles.navLink}>{t('header.nav.docs')}</a> */}
+          {/* <a href="#blog" className={styles.navLink}>{t('header.nav.blog')}</a> */}
         </nav>
 
         <div className={styles.headerRight}>
@@ -830,7 +831,7 @@ function Footer() {
   // 背景图片数组
   const backgroundImages = [
     // '/src/assets/images/logo.png',
-    // '/src/assets/images/vipcard.png',
+
     'https://picsum.photos/400/200?random=1',
     'https://picsum.photos/400/200?random=2',
     'https://picsum.photos/400/200?random=3',
@@ -959,7 +960,7 @@ function Footer() {
 export default function Home() {
   return (
     <div className={styles.difyHome}>
-      <ReleaseBanner />
+      {/* <ReleaseBanner /> */}
       <Header />
       <Hero />
       <BrandBar />
