@@ -378,3 +378,44 @@
     }
   }
 } 
+
+// 图片要求提示样式
+.imageRequirements {
+  background-color: #f0f8ff;
+  border: 1px solid #d6e4ff;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 20px;
+
+  h4 {
+    margin: 0 0 8px 0;
+    color: #1890ff;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .requirementsList {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .requirementItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #666;
+  }
+
+  .requirementLabel {
+    font-weight: 500;
+    color: #333;
+    min-width: 70px;
+  }
+
+  .requirementValue {
+    color: #1890ff;
+    font-weight: 500;
+  }
+} 

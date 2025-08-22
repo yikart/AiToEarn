@@ -103,6 +103,33 @@ export default function AIGeneratePage() {
   const [uploadingFirstFrame, setUploadingFirstFrame] = useState(false);
   const [uploadingTailFrame, setUploadingTailFrame] = useState(false);
 
+  // 文件大小限制常量（字节）
+  const MAX_IMAGE_SIZE = 30 * 1024 * 1024; // 30MB
+
+  /**
+   * 检查文件大小是否在限制范围内
+   */
+  const checkFileSize = (file: File): boolean => {
+    if (file.size > MAX_IMAGE_SIZE) {
+      const sizeInMB = (MAX_IMAGE_SIZE / (1024 * 1024)).toFixed(0);
+      message.error(`图片大小限制: ${sizeInMB}MB`);
+      return false;
+    }
+    return true;
+  };
+
+  /**
+   * 检查图片文件格式
+   */
+  const checkImageFormat = (file: File): boolean => {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      message.error(`支持格式: JPG, PNG, WEBP`);
+      return false;
+    }
+    return true;
+  };
+
   const handlePickFirstFrame = () => {
     firstFrameInputRef.current?.click();
   };
@@ -114,6 +141,13 @@ export default function AIGeneratePage() {
   const handleFirstFrameChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
+    
+    // 检查文件大小和格式
+    if (!checkFileSize(file) || !checkImageFormat(file)) {
+      if (e.target) e.target.value = "";
+      return;
+    }
+    
     try {
       setUploadingFirstFrame(true);
       const key = await uploadToOss(file);
@@ -131,6 +165,13 @@ export default function AIGeneratePage() {
   const handleTailFrameChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
+    
+    // 检查文件大小和格式
+    if (!checkFileSize(file) || !checkImageFormat(file)) {
+      if (e.target) e.target.value = "";
+      return;
+    }
+    
     try {
       setUploadingTailFrame(true);
       const key = await uploadToOss(file);
@@ -744,7 +785,7 @@ export default function AIGeneratePage() {
             key="videoGeneration"
           >
 
-            
+
             <div className={styles.section}>
               <div className={styles.form}>
                 <TextArea
@@ -781,13 +822,6 @@ export default function AIGeneratePage() {
                         </Option>
                       ))}
                     </Select>
-                    {/* {(() => {
-                      const selected: any = ((filteredVideoModels as any[]) || []).find((m: any) => m.name === videoModel);
-                      if (!selected?.description) return null;
-                      return (
-                        <div style={{ marginTop: 6, color: '#888', fontSize: 12 }}>{selected.description}</div>
-                      );
-                    })()} */}
                   </div>
                 )}
                 <div className={styles.dimensions}>
@@ -930,6 +964,29 @@ export default function AIGeneratePage() {
                   )}
                 </div>
               )}
+              
+              {/* 图片要求提示 */}
+              <div className={styles.imageRequirements}>
+                <h4>图片要求</h4>
+                <div className={styles.requirementsList}>
+                  <div className={styles.requirementItem}>
+                    <span className={styles.requirementLabel}>宽高比范围:</span>
+                    <span className={styles.requirementValue}>(0.4, 2.5)</span>
+                  </div>
+                  <div className={styles.requirementItem}>
+                    <span className={styles.requirementLabel}>宽高长度范围:</span>
+                    <span className={styles.requirementValue}>(300px, 6000px)</span>
+                  </div>
+                  <div className={styles.requirementItem}>
+                    <span className={styles.requirementLabel}>图片大小限制:</span>
+                    <span className={styles.requirementValue}>小于30MB</span>
+                  </div>
+                  <div className={styles.requirementItem}>
+                    <span className={styles.requirementLabel}>支持格式:</span>
+                    <span className={styles.requirementValue}>JPG, PNG, WEBP</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </TabPane>
           <TabPane

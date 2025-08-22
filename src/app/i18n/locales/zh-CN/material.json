@@ -149,6 +149,15 @@
       "templateEasy": "边框",
       "templateWrite": "手写",
     "pleaseUploadFirstFrame": "请上传首帧图片",
-    "pleaseUploadTailFrame": "请上传尾帧图片"
+    "pleaseUploadTailFrame": "请上传尾帧图片",
+    "imageRequirements": "图片要求",
+    "aspectRatioRange": "宽高比范围",
+    "aspectRatioRangeValue": "(0.4, 2.5)",
+    "dimensionRange": "宽高长度范围",
+    "dimensionRangeValue": "(300px, 6000px)",
+    "imageSizeLimit": "图片大小限制",
+    "imageSizeLimitValue": "小于30MB",
+    "imageFormatSupport": "支持格式",
+    "imageFormatSupportValue": "JPG, PNG, WEBP"
   }
 }

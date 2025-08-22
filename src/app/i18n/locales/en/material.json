@@ -144,6 +144,15 @@
       "templateEasy": "Border",
       "templateWrite": "Handwriting",
     "pleaseUploadFirstFrame": "Please upload first frame image",
-    "pleaseUploadTailFrame": "Please upload tail frame image"
+    "pleaseUploadTailFrame": "Please upload tail frame image",
+    "imageRequirements": "Image Requirements",
+    "aspectRatioRange": "Aspect Ratio Range",
+    "aspectRatioRangeValue": "(0.4, 2.5)",
+    "dimensionRange": "Dimension Range",
+    "dimensionRangeValue": "(300px, 6000px)",
+    "imageSizeLimit": "Image Size Limit",
+    "imageSizeLimitValue": "Less than 30MB",
+    "imageFormatSupport": "Supported Formats",
+    "imageFormatSupportValue": "JPG, PNG, WEBP"
   }
 }
