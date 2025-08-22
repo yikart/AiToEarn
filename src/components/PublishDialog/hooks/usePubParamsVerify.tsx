@@ -137,6 +137,14 @@ export default function usePubParamsVerify(data: PubItem[]) {
           }
         }
 
+        // 微信公众号的强制校验
+        if (v.account.type === PlatType.WxGzh) {
+          // 强制需要标题
+          if (!v.params.title) {
+            return setErrorMsg(t("validation.titleRequired"));
+          }
+        }
+
         // facebook的强制校验
         if (v.account.type === PlatType.Facebook) {
           switch (v.params.option.facebook?.content_category) {

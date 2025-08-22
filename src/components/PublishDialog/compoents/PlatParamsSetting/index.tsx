@@ -7,6 +7,7 @@ import KwaiParams from "@/components/PublishDialog/compoents/PlatParamsSetting/p
 import FacebookParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/FacebookParams";
 import InstagramParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/InstagramParams";
 import YouTubeParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/YouTubeParams";
+import WxGzhParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/WxGzhParams";
 import { useShallow } from "zustand/react/shallow";
 import { PubItem } from "@/components/PublishDialog/publishDialog.type";
 
@@ -41,6 +42,8 @@ const PlatParamsSetting = memo(
             return <KwaiParams pubItem={pubItem} />;
           case PlatType.BILIBILI:
             return <BilibParams pubItem={pubItem} />;
+          case PlatType.WxGzh:
+            return <WxGzhParams pubItem={pubItem} />;
           case PlatType.Facebook:
             return <FacebookParams pubItem={pubItem} />;
           case PlatType.Instagram:
