@@ -101,7 +101,7 @@ export const useAccountStore = create(
 
           if (!groupList) return;
           if (groupList.length === 0) return;
-          groupList.map((v) => {
+          groupList.map((v:any) => {
             v.name = v.isDefault
               ? directTrans("account", "defaultSpace")
               : v.name;
@@ -111,9 +111,9 @@ export const useAccountStore = create(
           // key=组ID，val=账户ID
           const accountGroupMap = new Map<string, AccountGroup>();
 
-          const defaultGroup = groupList.find((v) => v.isDefault)!;
+          const defaultGroup = groupList.find((v:any) => v.isDefault)!;
 
-          groupList.map((v) => {
+          groupList.map((v:any) => {
             const accountGroupItem = {
               ...v,
               children: [],
