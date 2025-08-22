@@ -1,9 +1,10 @@
 import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 import { InjectModel } from '@nestjs/mongoose'
 import { Queue } from 'bullmq'
 import { Model } from 'mongoose'
-import { chunkedDownloadFile, getFileSizeFromUrl, getFileTypeFromUrl } from '@/common'
+import { chunkedDownloadFile, getFileTypeFromUrl, getRemoteFileSize } from '@/common'
 import { PostInfoDto, VideoFileUploadSourceDto } from '@/core/plat/tiktok/dto/tiktok.dto'
 import { TiktokService } from '@/core/plat/tiktok/tiktok.service'
 import { PublishRecord } from '@/libs/database/schema/publishRecord.schema'
@@ -16,16 +17,20 @@ import { PublishBase } from './publish.base'
 @Injectable()
 export class TiktokPubService extends PublishBase {
   queueName: string = 'tiktok'
+  private readonly logger = new Logger(TiktokPubService.name, {
+    timestamp: true,
+  });
 
   constructor(
+    readonly eventEmitter: EventEmitter2,
     @InjectModel(PublishTask.name)
     readonly publishTaskModel: Model<PublishTask>,
-    @InjectModel(PublishRecord.name)
+     @InjectModel(PublishRecord.name)
     readonly publishRecordModel: Model<PublishRecord>,
-    @InjectQueue('bull_publish') publishQueue: Queue,
+    @InjectQueue('post_publish') publishQueue: Queue,
     readonly tiktokService: TiktokService,
   ) {
-    super(publishTaskModel, publishRecordModel, publishQueue)
+    super(eventEmitter, publishTaskModel, publishQueue)
   }
 
   // TODO: 校验账户授权状态
@@ -49,12 +54,11 @@ export class TiktokPubService extends PublishBase {
     const { accountId, videoUrl } = publishTask
 
     if (videoUrl) {
-      const downloadULR = videoUrl.replace('undefined', 'https://ai-to-earn.oss-cn-beijing.aliyuncs.com/')
-      const fileName = getFileTypeFromUrl(downloadULR, true)
+      const fileName = getFileTypeFromUrl(videoUrl, true)
       const ext = fileName.split('.').pop()?.toLowerCase()
       const mimeType = ext === 'mp4' ? 'video/mp4' : `video/${ext}`
 
-      const contentLength = await getFileSizeFromUrl(downloadULR)
+      const contentLength = await getRemoteFileSize(videoUrl)
       if (!contentLength) {
         res.message = '视频信息解析失败'
         return res
@@ -65,8 +69,8 @@ export class TiktokPubService extends PublishBase {
       }
 
       const postInfo: PostInfoDto = {
-        description: publishTask.desc,
-        privacy_level: TiktokPrivacyLevel.SELF_ONLY,
+        title: publishTask.desc,
+        privacy_level: TiktokPrivacyLevel.PUBLIC,
         brand_content_toggle: false,
         brand_organic_toggle: false,
       }
@@ -82,6 +86,7 @@ export class TiktokPubService extends PublishBase {
         postInfo,
         sourceInfo,
       )
+      this.logger.log(`视频初始化上传结果: ${JSON.stringify(initUploadRes)}`)
       if (!initUploadRes || !initUploadRes.upload_url) {
         res.message = '视频初始化上传失败'
         return res
@@ -91,27 +96,29 @@ export class TiktokPubService extends PublishBase {
         const start = partNumber * chunkSize
         const end = Math.min(start + chunkSize - 1, contentLength - 1)
         const range: [number, number] = [start, end]
-        const videoBlob = await chunkedDownloadFile(downloadULR, range)
+        const videoBlob = await chunkedDownloadFile(videoUrl, range)
         if (!videoBlob) {
           res.message = '视频分片下载失败'
           return res
         }
 
-        await this.tiktokService.chunkedUploadVideoFile(
+        const uploadResult = await this.tiktokService.chunkedUploadVideoFile(
           initUploadRes.upload_url,
           videoBlob,
           partNumber,
           contentLength,
           mimeType,
         )
+        this.logger.log(`视频分片上传完成: ${JSON.stringify(uploadResult)}`)
       }
-      publishTask.status = PublishStatus.PUB_LOADING
-      await this.publishRecordModel.create({
+
+      publishTask.status = PublishStatus.PUBLISHING
+      await this.createPublishRecord({
         ...publishTask,
         dataId: initUploadRes.publish_id,
         publishTime: new Date(),
       })
-      res.status = PublishStatus.RELEASED
+      res.status = PublishStatus.PUBLISHING
       res.message = '发布任务已提交，等待处理'
       // 完成发布任务
       // await this.overPublishTask(publishTask, initUploadRes.publish_id)
@@ -130,34 +137,37 @@ export class TiktokPubService extends PublishBase {
   async handleTiktokPostWebhook(dto: TiktokWebhookDto): Promise<void> {
     try {
       const content = JSON.parse(dto.content);
-      if (dto.event.startsWith('post.publish')) {
+      if (!dto.event.startsWith('post.publish')) {
+        this.logger.error(`未知 TikTok 事件类型: ${dto.event}`);
         return
       }
       const publishId = content?.publish_id;
       if (!publishId) {
-        Logger.error(`invalid publish_id in webhook: ${JSON.stringify(content)}`);
+        this.logger.error(`invalid publish_id in webhook: ${JSON.stringify(content)}`);
         return;
       }
       const publishRecord = await this.getPublishRecord(dto.user_openid, publishId);
       if (!publishRecord) {
-        Logger.error(`未找到发布记录: ${publishId}, 用户: ${dto.user_openid}`);
+        this.logger.error(`未找到发布记录: ${publishId}, 用户: ${dto.user_openid}`);
         return;
       }
       switch (dto.event) {
         case 'post.publish.failed':
-          publishRecord.status = PublishStatus.FAIL;
+          this.logger.error(`发布失败: ${JSON.stringify(content)}`);
+          publishRecord.status = PublishStatus.FAILED;
           publishRecord.errorMsg = content.reason || '发布失败';
           await this.publishRecordModel.updateOne(
             { _id: publishRecord._id },
             { $set: publishRecord },
           );
           await this.publishTaskModel.updateOne({ _id: publishRecord._id }, {
-            status: PublishStatus.FAIL,
+            status: PublishStatus.FAILED,
             errorMsg: content.reason || '发布失败',
           });
           break;
         case 'post.publish.complete':
-          publishRecord.status = PublishStatus.RELEASED;
+          this.logger.log(`发布成功: ${JSON.stringify(content)}`);
+          publishRecord.status = PublishStatus.PUBLISHED;
           await this.publishRecordModel.updateOne(
             { _id: publishRecord._id },
             { $set: publishRecord },
@@ -165,7 +175,8 @@ export class TiktokPubService extends PublishBase {
           this.publishTaskModel.deleteOne({ _id: publishRecord.id });
           break;
         case 'post.publish.inbox_delivered':
-          publishRecord.status = PublishStatus.RELEASED;
+          this.logger.log(`发布已送达: ${JSON.stringify(content)}`);
+          publishRecord.status = PublishStatus.PUBLISHED;
           await this.publishRecordModel.updateOne(
             { _id: publishRecord._id },
             { $set: publishRecord },
@@ -173,7 +184,7 @@ export class TiktokPubService extends PublishBase {
           this.publishTaskModel.deleteOne({ _id: publishRecord.id });
           break;
         case 'post.publish.publicly_available':
-          publishRecord.status = PublishStatus.RELEASED;
+          publishRecord.status = PublishStatus.PUBLISHED;
           publishRecord.dataId = content.post_id || publishRecord.dataId;
           await this.publishRecordModel.updateOne(
             { _id: publishRecord._id },
@@ -181,12 +192,12 @@ export class TiktokPubService extends PublishBase {
           );
           break;
         default:
-          Logger.warn(`未知事件类型: ${dto.event}`);
+          this.logger.error(`未知事件类型: ${dto.event}`);
           break;
       }
     }
     catch (error) {
-      Logger.error(`处理 TikTok webhook 失败: ${error.message}`, error.stack);
+      this.logger.error(`处理 TikTok webhook 失败: ${error.message}`, error.stack);
     }
   }
 }

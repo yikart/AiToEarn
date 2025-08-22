@@ -1,22 +1,10 @@
 import {
-  Body,
   Controller,
-  Get,
-  HttpCode,
   Logger,
-  Param,
-  Post,
-  Query,
-  UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { Payload } from '@nestjs/microservices';
-import { NatsMessagePattern, OrgGuard } from '@/common';
-import { XmlParseInterceptor } from '@/common/interceptors/xml.interceptor';
+import { NatsMessagePattern } from '@/common';
 import { PublishRecordService } from '@/core/publish/publishRecord.service';
-import {
-  CallbackMsgData,
-} from '@/libs/wxPlat/comment';
 import {
   DisposeAuthTaskDto,
   GetAuthUrlDto,
@@ -94,7 +82,6 @@ export class WxPlatController {
    */
   @NatsMessagePattern('channel.wxPlat.createAccountAndSetAccessToken')
   async disposeAuthTask(@Payload() data: DisposeAuthTaskDto) {
-    Logger.log('createAccountAndSetAccessToken---', data);
     const res = await this.wxPlatService.createAccountAndSetAccessToken(
       data.taskId,
       {

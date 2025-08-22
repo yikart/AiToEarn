@@ -1,23 +1,22 @@
+import { Injectable } from '@nestjs/common'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 import { Queue } from 'bullmq'
 import { Model } from 'mongoose'
 import { PublishRecord } from '@/libs/database/schema/publishRecord.schema'
 import { PublishStatus, PublishTask } from '@/libs/database/schema/publishTask.schema'
 import { DoPubRes } from '../common'
 
-// @Injectable()
+@Injectable()
 export abstract class PublishBase {
   protected readonly queueName: string = 'unknown'
-  // 并发数量
-  protected readonly queueAttempts: number = 3
-  // 延迟时间
-  protected readonly queueDelay: number = 5
+  protected readonly queueAttempts: number = 3 // 并发数量
+  protected readonly queueDelay: number = 5 // 延迟时间
 
   constructor(
+    readonly eventEmitter: EventEmitter2,
     readonly publishTaskModel: Model<PublishTask>,
-    readonly publishRecordModel: Model<PublishRecord>,
     readonly publishQueue: Queue,
-  ) {
-  }
+  ) {}
 
   // 检测授权是否失效
   abstract checkAuth(accountId: string): Promise<{
@@ -32,11 +31,17 @@ export abstract class PublishBase {
     return await this.publishTaskModel.create(newData)
   }
 
-  private async createPublishRecord(newData: PublishRecord) {
-    return await this.publishRecordModel.create({
-      ...newData,
-      publishTime: new Date(),
-    })
+  protected async createPublishRecord(newData: PublishRecord) {
+    newData.publishTime = newData.publishTime || new Date()
+    this.eventEmitter.emit(
+      'publishRecord.create',
+      newData,
+    );
+
+    // return await this.publishRecordService.createPublishRecord({
+    //   ...newData,
+    //   publishTime: new Date(),
+    // })
   }
 
   /**
@@ -45,13 +50,14 @@ export abstract class PublishBase {
    * @param doNum
    * @returns
    */
-  async pushPubTask(newData: PublishTask, doNum = 0): Promise<boolean> {
-    await this.publishQueueOpen(newData.id)
+  async pushPubTask(task: PublishTask, attempts = 0): Promise<boolean> {
+    await this.publishQueueOpen(task.id)
     const jobRes = await this.publishQueue.add(
       `publish_${this.queueName}`,
       {
-        id: newData.id,
-        doNum: doNum++, // 进行次数
+        taskId: task.id,
+        attempts: attempts++,
+        jobId: task.queueId,
       },
       {
         attempts: this.queueAttempts,
@@ -60,14 +66,15 @@ export abstract class PublishBase {
           delay: this.queueDelay, // 每次重试间隔 5 秒
         },
         removeOnComplete: true,
-        jobId: newData.queueId, // 确保任务id唯一，防止重复执行
+        removeOnFail: true,
+        jobId: task.queueId, // 确保任务id唯一，防止重复执行
       },
     )
-    return jobRes.id === newData.queueId
+    return jobRes.id === task.queueId
   }
 
   // 将数据的队列状态改为 true
-  private async publishQueueOpen(id: string) {
+  async publishQueueOpen(id: string) {
     this.publishTaskModel.updateOne({ _id: id }, { inQueue: true })
   }
 
@@ -87,7 +94,7 @@ export abstract class PublishBase {
     workLink: string
     dataOption?: Record<string, any>
   }) {
-    newData.status = PublishStatus.RELEASED
+    newData.status = PublishStatus.PUBLISHED
     await this.createPublishRecord({
       ...newData,
       ...(data || {}),

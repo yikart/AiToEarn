@@ -1,10 +1,13 @@
 import { BullModule } from '@nestjs/bullmq'
 import { forwardRef, Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
+import { Account, AccountSchema } from '@/libs/database/schema/account.schema'
 import {
-  MetaContainer,
-  MetaContainerSchema,
-} from '@/libs/database/schema/metaContainer.schema'
+  PostMediaContainer,
+  PostMediaContainerSchema,
+} from '@/libs/database/schema/postMediaContainer.schema'
+import { PublishDayInfo, PublishDayInfoSchema } from '@/libs/database/schema/publishDayInfo.schema'
+import { PublishInfo, PublishInfoSchema } from '@/libs/database/schema/publishInfo.schema'
 import {
   PublishRecord,
   PublishRecordSchema,
@@ -30,7 +33,7 @@ import { ThreadsPublishService } from './plat/meta/threads.service'
 import { TiktokPubService } from './plat/tiktokPub.service'
 import { WxGzhPubService } from './plat/wxGzhPub.service'
 import { YoutubePubService } from './plat/youtubePub.service'
-import { BullPublish } from './publish.bull'
+import { PostPublishWorker } from './postPublish.worker'
 import { PublishRecordController } from './publishRecord.controller'
 import { PublishRecordService } from './publishRecord.service'
 import { PublishTaskController } from './publishTask.controller'
@@ -39,18 +42,19 @@ import { PublishTaskService } from './publishTask.service'
 @Module({
   imports: [
     MongooseModule.forFeature([
+      { name: Account.name, schema: AccountSchema },
+      { name: PublishInfo.name, schema: PublishInfoSchema },
+      { name: PublishDayInfo.name, schema: PublishDayInfoSchema },
       { name: PublishRecord.name, schema: PublishRecordSchema },
       { name: PublishTask.name, schema: PublishTaskSchema },
-      { name: MetaContainer.name, schema: MetaContainerSchema },
+      { name: PostMediaContainer.name, schema: PostMediaContainerSchema },
     ]),
     BullModule.registerQueue({
-      name: 'bull_publish',
+      name: 'post_publish',
     }),
     BullModule.registerQueue({
-      name: 'meta_media_task',
-      prefix: 'meta:',
+      name: 'post_media_task',
       defaultJobOptions: {
-        attempts: 3,
         delay: 20000, // 20 seconds
         removeOnComplete: true,
       },
@@ -67,7 +71,7 @@ import { PublishTaskService } from './publishTask.service'
   providers: [
     PublishRecordService,
     PublishTaskService,
-    BullPublish,
+    PostPublishWorker,
     BilibiliPubService,
     kwaiPubService,
     YoutubePubService,

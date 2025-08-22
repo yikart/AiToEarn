@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { HttpResult } from 'src/common/filters/httpException.filter'
+import { HttpResult } from '../interfaces'
 
 @Injectable()
 export class OrgGuard implements CanActivate {

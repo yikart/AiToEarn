@@ -17,7 +17,7 @@ export interface ChunkedVideoUploadRequest {
   upload_session_id: string
   start_offset: number
   end_offset: number
-  video_file_chunk: Buffer
+  video_file_chunk: Buffer<ArrayBuffer>
 }
 
 export interface finalizeVideoUploadRequest {
@@ -40,12 +40,22 @@ export interface ResumeVideoUploadRequest {
 }
 
 export interface FacebookPost {
-  page_id: string
+  page_id?: string
   content_category?: string
   content_tags?: string[]
   custom_labels?: string[]
   direct_share_status?: number,
   embeddable?: boolean
+}
+
+export interface PublishFeedPostRequest {
+  message: string
+  published: boolean
+  link?: string
+}
+
+export interface publishFeedPostResponse {
+  id: string
 }
 
 export interface PublishVideoPostRequest {
@@ -246,9 +256,13 @@ export interface FacebookReelResponse {
 export interface FacebookReelUploadRequest {
   offset: number
   file_size: number
-  file: Buffer
+  file: Buffer<ArrayBuffer>
 }
 
 export interface FacebookReelUploadResponse {
   success: boolean
+}
+
+export interface FacebookPhotoStoryRequest {
+  photo_id: string
 }

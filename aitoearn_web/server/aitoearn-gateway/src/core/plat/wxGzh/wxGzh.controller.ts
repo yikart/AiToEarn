@@ -5,12 +5,11 @@
  * @LastEditors: nevin
  * @Description: wxgzh
  */
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common'
+import { Controller, Get, Param, Query } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { GetToken } from '@/auth/auth.guard'
 import { TokenInfo } from '@/auth/interfaces/auth.interfaces'
-import { OrgGuard } from '@/common/interceptor/transform.interceptor'
-import { AuthBackQueryDto, GetUserCumulateData } from './dto/wxGzh.dto'
+import { GetUserCumulateData } from './dto/wxGzh.dto'
 import { WxGzhService } from './wxGzh.service'
 
 @ApiTags('plat/wxGzh - 微信公众号')

@@ -32,11 +32,11 @@ export class ThreadsService {
   }
 
   async createItemContainer(
-    igUserId: string,
+    threadUserId: string,
     accessToken: string,
     req: ThreadsContainerRequest,
   ): Promise<ThreadsPostResponse> {
-    const url = `${this.apiBaseUrl}${igUserId}/threads`
+    const url = `${this.apiBaseUrl}${threadUserId}/threads`
     const config: AxiosRequestConfig = {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -58,26 +58,23 @@ export class ThreadsService {
   }
 
   async publishPost(
-    igUserId: string,
+    threadUserId: string,
     accessToken: string,
     creationId: string,
   ): Promise<ThreadsPostResponse> {
+    const url = `${this.apiBaseUrl}${threadUserId}/threads_publish?creation_id=${creationId}`
     try {
-      const url = `${this.apiBaseUrl}${igUserId}/threads_publish`
       const config: AxiosRequestConfig = {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-        params: {
-          creation_id: creationId,
-        },
       }
-      const response: AxiosResponse<any> = await axios.post(url, config)
+      const response: AxiosResponse<any> = await axios.post(url, {}, config)
       return response.data
     }
     catch (error) {
       if (error.response) {
-        this.logger.error(`Error response from Threads API: ${JSON.stringify(error.response.data)}`, error.stack)
+        this.logger.error(`Error response from Threads API,URI ${url} thread userId ${threadUserId}, token ${accessToken}, ${JSON.stringify(error.response.error)}`, error.stack)
       }
       this.logger.error(`Error publishing post: ${error.message}`, error.stack)
       throw new Error(`Failed to publish post: ${error.message}`)
@@ -153,11 +150,11 @@ export class ThreadsService {
   }
 
   async getAccountAllPosts(
-    igUserId: string,
+    threadUserId: string,
     accessToken: string,
     reqURL?: string,
   ): Promise<ThreadsPostResponse> {
-    const url = reqURL || `${this.apiBaseUrl}${igUserId}/threads`
+    const url = reqURL || `${this.apiBaseUrl}${threadUserId}/threads`
     const config: AxiosRequestConfig = {
       headers: {
         Authorization: `Bearer ${accessToken}`,

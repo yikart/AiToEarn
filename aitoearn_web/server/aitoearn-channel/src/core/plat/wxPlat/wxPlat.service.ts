@@ -142,84 +142,92 @@ export class WxPlatService {
     taskId: string,
     authData: { authCode: string; expiresIn: number },
   ) {
-    const taskInfo = await this.redisService.get<AuthTaskInfo<WxPlatAuthInfo>>(
-      this.getAuthDataCacheKey(taskId),
-    );
-    if (!taskInfo || !taskInfo.data)
-      return null;
-    if (taskInfo.status === 1)
-      return null;
+    try {
+      const taskInfo = await this.redisService.get<AuthTaskInfo<WxPlatAuthInfo>>(
+        this.getAuthDataCacheKey(taskId),
+      );
+      if (!taskInfo || !taskInfo.data)
+        return { status: 0, message: '任务不存在或已完成' };
+      if (taskInfo.status === 1)
+        return { status: 0, message: '任务已完成' };
 
-    // 计算是否超时
-    if (Date.now() - taskInfo.data.createTime > authData.expiresIn * 1000) {
-      void this.redisService.del(this.getAuthDataCacheKey(taskId));
-      return null;
-    }
+      // 计算是否超时
+      if (Date.now() - taskInfo.data.createTime > authData.expiresIn * 1000) {
+        void this.redisService.del(this.getAuthDataCacheKey(taskId));
+        return { status: 0, message: '任务已超时' };
+      }
 
-    // 延长授权时间
-    void this.redisService.setPexire(this.getAuthDataCacheKey(taskId), 60 * 3);
+      // 延长授权时间
+      void this.redisService.setPexire(this.getAuthDataCacheKey(taskId), 60 * 3);
 
-    // 根据授权码获取授权信息
-    const auth = await this.myWxPlatApiService.getQueryAuth(authData.authCode);
-    if (!auth) {
-      void this.redisService.del(this.getAuthDataCacheKey(taskId));
-      return null;
-    }
-    const { authorizer_appid, expires_in } = auth;
+      // 根据授权码获取授权信息
+      const auth = await this.myWxPlatApiService.getQueryAuth(authData.authCode);
+      if (!auth) {
+        void this.redisService.del(this.getAuthDataCacheKey(taskId));
+        return { status: 0, message: '获取授权信缓存失败' };
+      }
+      const { authorizer_appid, expires_in } = auth;
 
-    const authInfo = await this.myWxPlatApiService.getAuthorizerInfo(authorizer_appid);
-    if (!authInfo)
-      return null;
+      const authInfo = await this.myWxPlatApiService.getAuthorizerInfo(authorizer_appid);
+      if (!authInfo)
+        return { status: 0, message: '获取授权信息失败' };
 
-    // 创建本平台的平台账号
-    const newData = new NewAccount({
-      userId: taskInfo.data.userId,
-      type: AccountType.WxGzh,
-      uid: authorizer_appid,
-      account: authInfo.user_name,
-      avatar: authInfo.head_img,
-      nickname: authInfo.nick_name,
-    });
-
-    const accountInfo = await this.accountService.createAccount(
-      {
+      // 创建本平台的平台账号
+      const newData = new NewAccount({
         userId: taskInfo.data.userId,
         type: AccountType.WxGzh,
         uid: authorizer_appid,
-      },
-      newData,
-    );
-    if (!accountInfo)
-      return null;
+        account: authInfo.user_name,
+        avatar: authInfo.head_img,
+        nickname: authInfo.nick_name,
+      });
 
-    // 设置授权信息
-    const setRes = await this.redisService.setKey<WxPlatAuthorizerInfo>(
-      this.getAuthAccessTokenCacheKey(accountInfo.id),
-      auth,
-      expires_in,
-    );
+      const accountInfo = await this.accountService.createAccount(
+        {
+          userId: taskInfo.data.userId,
+          type: AccountType.WxGzh,
+          uid: authorizer_appid,
+        },
+        newData,
+      );
+      if (!accountInfo)
+        return { status: 0, message: '添加账号失败' };
 
-    // 设置29天的刷新令牌
-    await this.redisService.setKey<string>(
-      this.getAuthRefreshTokenCacheKey(accountInfo.id),
-      auth.authorizer_refresh_token,
-      2592000,
-    );
+      // 设置授权信息
+      const setRes = await this.redisService.setKey<WxPlatAuthorizerInfo>(
+        this.getAuthAccessTokenCacheKey(accountInfo.id),
+        auth,
+        expires_in,
+      );
 
-    if (!setRes)
-      return null;
+      // 设置29天的刷新令牌
+      await this.redisService.setKey<string>(
+        this.getAuthRefreshTokenCacheKey(accountInfo.id),
+        auth.authorizer_refresh_token,
+        2592000,
+      );
 
-    // 更新任务信息
-    taskInfo.status = 1;
-    taskInfo.data.accountId = accountInfo.id;
+      if (!setRes)
+        return { status: 0, message: '设置授权信息缓存失败' };
 
-    const res = await this.redisService.setKey<AuthTaskInfo<WxPlatAuthInfo>>(
-      this.getAuthDataCacheKey(taskId),
-      taskInfo,
-      60 * 5,
-    );
+      // 更新任务信息
+      taskInfo.status = 1;
+      taskInfo.data.accountId = accountInfo.id;
 
-    return res ? accountInfo : null;
+      const res = await this.redisService.setKey<AuthTaskInfo<WxPlatAuthInfo>>(
+        this.getAuthDataCacheKey(taskId),
+        taskInfo,
+        60 * 5,
+      );
+      if (!res)
+        return { status: 0, message: '更新任务信息失败' };
+
+      return { status: 1, message: '添加账号成功', accountId: accountInfo.id };
+    }
+    catch (error) {
+      Logger.error('createAccountAndSetAccessToken error:', error);
+      return { status: 0, message: `添加账号失败: ${error.message}` };
+    }
   }
 
   /**

@@ -1,5 +1,5 @@
 import { OrgGuard } from '@common/interceptor/transform.interceptor'
-import { Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common'
+import { Controller, Get, Param, Post, Query, Render, UseGuards } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { AccountNatsApi } from '@transports/account/account.natsApi'
 import { PlatKwaiNatsApi } from '@transports/plat/kwai.natsApi'
@@ -41,6 +41,7 @@ export class KwaiController {
   @Public()
   @UseGuards(OrgGuard)
   @Get('auth/back/:taskId')
+  @Render('auth/back')
   async getAccessToken(
     @Param('taskId') taskId: string,
     @Query()

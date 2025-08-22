@@ -13,6 +13,7 @@ import {
   Param,
   Post,
   Query,
+  Render,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -37,7 +38,7 @@ import {
   GetVideoCategoriesDto,
   GetVideoRateDto,
   GetVideosListDto,
-  InitVideoUploadDto,
+  // InitVideoUploadDto,
   InsertCommentDto,
   InsertCommentThreadsDto,
   InsertPlayItemsDto,
@@ -47,9 +48,9 @@ import {
   UpdatePlayItemsDto,
   UpdatePlayListDto,
   UpdateVideoDto,
-  UploadSmallVideoDto,
-  UploadVideoCompleteDto,
-  UploadVideoPartDto,
+  // UploadSmallVideoDto,
+  // UploadVideoCompleteDto,
+  // UploadVideoPartDto,
   VideoRateDto,
 } from './dto/youtube.dto'
 import { YoutubeService } from './youtube.service'
@@ -86,6 +87,7 @@ export class YoutubeController {
   @Public()
   @UseGuards(OrgGuard)
   @Get('auth/callback')
+  @Render('auth/back')
   async getAccessToken(
     @Query()
     query: {
@@ -165,96 +167,96 @@ export class YoutubeController {
     )
   }
 
-  @ApiOperation({ summary: '上传视频到YouTube' })
-  @Post('video/upload/small')
-  @UseInterceptors(FileInterceptor('file'))
-  async uploadVideo(
-    @GetToken() token: TokenInfo,
-    @Body() body: UploadSmallVideoDto,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
-    return await this.youtubeService.uploadVideo(
-      body.accountId,
-      file.buffer,
-      file.originalname,
-      body.title,
-      body.description,
-      body.privacyStatus,
-      body.keywords,
-      body.categoryId,
-      body.publishAt,
-    )
-  }
+  // @ApiOperation({ summary: '上传视频到YouTube' })
+  // @Post('video/upload/small')
+  // @UseInterceptors(FileInterceptor('file'))
+  // async uploadVideo(
+  //   @GetToken() token: TokenInfo,
+  //   @Body() body: UploadSmallVideoDto,
+  //   @UploadedFile() file: Express.Multer.File,
+  // ) {
+  //   return await this.youtubeService.uploadVideo(
+  //     body.accountId,
+  //     file.buffer,
+  //     file.originalname,
+  //     body.title,
+  //     body.description,
+  //     body.privacyStatus,
+  //     body.keywords,
+  //     body.categoryId,
+  //     body.publishAt,
+  //   )
+  // }
 
-  @ApiOperation({ summary: '初始化视频分片上传' })
-  @Post('video/upload/init')
-  async initVideoUpload(
-    @GetToken() token: TokenInfo,
-    @Body()
-    body: InitVideoUploadDto,
-  ) {
-    this.logger.log('接收到初始化视频上传请求:', {
-      ...body,
-      contentLength: body.contentLength,
-    })
+  // @ApiOperation({ summary: '初始化视频分片上传' })
+  // @Post('video/upload/init')
+  // async initVideoUpload(
+  //   @GetToken() token: TokenInfo,
+  //   @Body()
+  //   body: InitVideoUploadDto,
+  // ) {
+  //   this.logger.log('接收到初始化视频上传请求:', {
+  //     ...body,
+  //     contentLength: body.contentLength,
+  //   })
 
-    return await this.youtubeService.initVideoUpload(
-      body.accountId,
-      body.title,
-      body.description,
-      body.keywords,
-      body.categoryId,
-      body.privacyStatus,
-      body.publishAt,
-      body.contentLength,
-    )
-  }
+  //   return await this.youtubeService.initVideoUpload(
+  //     body.accountId,
+  //     body.title,
+  //     body.description,
+  //     body.keywords,
+  //     body.categoryId,
+  //     body.privacyStatus,
+  //     body.publishAt,
+  //     body.contentLength,
+  //   )
+  // }
 
-  @ApiOperation({ summary: '上传视频分片' })
-  @Post('video/upload/part')
-  @UseInterceptors(FileInterceptor('file'))
-  async uploadVideoPart(
-    @GetToken() token: TokenInfo,
-    @Body()
-    body: UploadVideoPartDto,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
-    // 确保partNumber是有效值，并转换为数字
-    const partNumber
-      = body.partNumber !== undefined
-        ? typeof body.partNumber === 'string'
-          ? Number.parseInt(body.partNumber, 10)
-          : body.partNumber
-        : 0
+  // @ApiOperation({ summary: '上传视频分片' })
+  // @Post('video/upload/part')
+  // @UseInterceptors(FileInterceptor('file'))
+  // async uploadVideoPart(
+  //   @GetToken() token: TokenInfo,
+  //   @Body()
+  //   body: UploadVideoPartDto,
+  //   @UploadedFile() file: Express.Multer.File,
+  // ) {
+  //   // 确保partNumber是有效值，并转换为数字
+  //   const partNumber
+  //     = body.partNumber !== undefined
+  //       ? typeof body.partNumber === 'string'
+  //         ? Number.parseInt(body.partNumber, 10)
+  //         : body.partNumber
+  //       : 0
 
-    console.log('接收到上传视频分片请求:', {
-      accountId: body.accountId,
-      uploadToken: body.uploadToken,
-      partNumber,
-      fileSize: file?.buffer?.length || 0,
-    })
+  //   console.log('接收到上传视频分片请求:', {
+  //     accountId: body.accountId,
+  //     uploadToken: body.uploadToken,
+  //     partNumber,
+  //     fileSize: file?.buffer?.length || 0,
+  //   })
 
-    return await this.youtubeService.uploadVideoPart(
-      body.accountId,
-      file.buffer,
-      body.uploadToken,
-      partNumber,
-    )
-  }
+  //   return await this.youtubeService.uploadVideoPart(
+  //     body.accountId,
+  //     file.buffer,
+  //     body.uploadToken,
+  //     partNumber,
+  //   )
+  // }
 
-  @ApiOperation({ summary: '完成视频上传' })
-  @Post('video/upload/complete')
-  async videoComplete(
-    @GetToken() token: TokenInfo,
-    @Body()
-    body: UploadVideoCompleteDto,
-  ) {
-    return await this.youtubeService.videoComplete(
-      body.accountId,
-      body.uploadToken,
-      body.totalSize,
-    )
-  }
+  // @ApiOperation({ summary: '完成视频上传' })
+  // @Post('video/upload/complete')
+  // async videoComplete(
+  //   @GetToken() token: TokenInfo,
+  //   @Body()
+  //   body: UploadVideoCompleteDto,
+  // ) {
+  //   return await this.youtubeService.videoComplete(
+  //     body.accountId,
+  //     body.uploadToken,
+  //     body.totalSize,
+  //   )
+  // }
 
   // 创建评论会话
   @ApiOperation({ summary: '创建评论会话' })
@@ -550,6 +552,18 @@ export class YoutubeController {
       query?.mine,
       query?.maxResults,
       query?.pageToken,
+    )
+  }
+
+  // 更新账号频道ID
+  @ApiOperation({ summary: '获取频道列表' })
+  @Get('channel/update/channelId/:accountId')
+  async updateChannelId(
+    @GetToken() token: TokenInfo,
+    @Param('accountId') accountId: string,
+  ) {
+    return await this.youtubeService.updateChannelId(
+      accountId,
     )
   }
 

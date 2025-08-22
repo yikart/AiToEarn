@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { BilibiliModule } from './bilibili/bilibili.module'
 import { DataCubeModule } from './dataCube/dataCube.module'
-import { InteractController } from './interact.controller'
+import { InteractController } from '../channel/interact/interact.controller'
 import { KwaiModule } from './kwai/kwai.module'
 import { MetaModule } from './meta/meta.module'
 import { PinterestModule } from './pinterest/pinterest.module'

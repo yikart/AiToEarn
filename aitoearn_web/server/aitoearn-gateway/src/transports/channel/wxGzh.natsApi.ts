@@ -1,12 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { NatsService } from 'src/transports/nats.service'
-import { AuthBackQueryDto } from '@/core/plat/wxGzh/dto/wxGzh.dto'
 import { NatsApi } from '../api'
+import { BaseNatsApi } from '../base.natsApi'
 
 @Injectable()
-export class PlatWxGzhNatsApi {
-  constructor(private readonly natsService: NatsService) {}
-
+export class PlatWxGzhNatsApi extends BaseNatsApi {
   /**
    * 创建授权任务
    * @param userId
@@ -15,7 +12,7 @@ export class PlatWxGzhNatsApi {
    * @returns
    */
   async createAuthTask(userId: string, type: 'pc' | 'h5', prefix?: string) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       url: string
       taskId: string
     }>(NatsApi.plat.wxGzh.auth, {
@@ -33,7 +30,7 @@ export class PlatWxGzhNatsApi {
    * @returns
    */
   async getAuthTaskInfo(taskId: string) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.wxGzh.getAuthInfo,
       {
         taskId,
@@ -48,7 +45,7 @@ export class PlatWxGzhNatsApi {
     auth_code: string
     expires_in: number
   }) {
-    const res = await this.natsService.sendMessage<null>(
+    const res = await this.sendMessage<null>(
       NatsApi.plat.wxGzh.createAccountAndSetAccessToken,
       query,
     )
@@ -62,7 +59,7 @@ export class PlatWxGzhNatsApi {
     article_url?: string
     article_id: string
   }) {
-    const res = await this.natsService.sendMessage<null>(
+    const res = await this.sendMessage<null>(
       NatsApi.plat.wxGzh.updatePublishRecord,
       data,
     )
@@ -76,7 +73,7 @@ export class PlatWxGzhNatsApi {
    * @returns
    */
   async getAccountAuthInfo(accountId: string) {
-    const res = await this.natsService.sendMessage<null>(
+    const res = await this.sendMessage<null>(
       NatsApi.plat.bilibili.getAccountAuthInfo,
       {
         accountId,
@@ -94,7 +91,7 @@ export class PlatWxGzhNatsApi {
    * @returns
    */
   async getUserCumulate(accountId: string, beginDate: string, endDate: string) {
-    const res = await this.natsService.sendMessage<null>(
+    const res = await this.sendMessage<null>(
       NatsApi.plat.wxGzh.getUserCumulate,
       {
         accountId,
@@ -114,7 +111,7 @@ export class PlatWxGzhNatsApi {
    * @returns
    */
   async getUserRead(accountId: string, beginDate: string, endDate: string) {
-    const res = await this.natsService.sendMessage<null>(
+    const res = await this.sendMessage<null>(
       NatsApi.plat.wxGzh.getUserRead,
       {
         accountId,

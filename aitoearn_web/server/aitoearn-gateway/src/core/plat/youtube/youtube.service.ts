@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { AppHttpException } from 'src/common/filters/httpException.filter'
 import { RedisService } from 'src/libs/redis/redis.service'
 import { AccountNatsApi } from 'src/transports/account/account.natsApi'
 import { PlatYoutubeNatsApi } from 'src/transports/plat/youtube.natsApi'
 import { AddAccount } from '../plat.utils'
+import { AppException } from '@/common/exceptions'
 
 @Injectable()
 export class YoutubeService {
@@ -66,7 +66,7 @@ export class YoutubeService {
       )
     this.logger.log(code, data, message)
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -97,7 +97,7 @@ export class YoutubeService {
       pageToken,
     )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -138,7 +138,7 @@ export class YoutubeService {
       publishAt,
     )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -183,7 +183,7 @@ export class YoutubeService {
         contentLength,
       )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
     return data
   }
 
@@ -216,7 +216,7 @@ export class YoutubeService {
         partNumber,
       )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -238,7 +238,7 @@ export class YoutubeService {
       totalSize,
     )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -268,7 +268,7 @@ export class YoutubeService {
         pageToken,
       )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -288,7 +288,7 @@ export class YoutubeService {
         textOriginal,
       )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -316,7 +316,7 @@ export class YoutubeService {
         searchTerms,
       )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -333,7 +333,7 @@ export class YoutubeService {
       textOriginal,
     )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -346,7 +346,7 @@ export class YoutubeService {
       textOriginal,
     )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -366,7 +366,7 @@ export class YoutubeService {
         banAuthor,
       )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -378,7 +378,7 @@ export class YoutubeService {
       id,
     )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -390,7 +390,7 @@ export class YoutubeService {
       id,
     )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -403,7 +403,7 @@ export class YoutubeService {
       rating,
     )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -415,7 +415,7 @@ export class YoutubeService {
       id,
     )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -446,7 +446,7 @@ export class YoutubeService {
       recordingDate,
     )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -466,7 +466,7 @@ export class YoutubeService {
         privacyStatus,
       )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -486,7 +486,7 @@ export class YoutubeService {
         description,
       )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -496,7 +496,7 @@ export class YoutubeService {
     const { code, data, message }
       = await this.platYoutubeNatsApi.deletePlaylist(accountId, id)
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -519,7 +519,7 @@ export class YoutubeService {
       pageToken,
     )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -545,7 +545,7 @@ export class YoutubeService {
         endAt,
       )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -569,7 +569,7 @@ export class YoutubeService {
         videoId,
       )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -597,7 +597,7 @@ export class YoutubeService {
         endAt,
       )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -607,7 +607,7 @@ export class YoutubeService {
     const { code, data, message }
       = await this.platYoutubeNatsApi.deletePlayListItems(accountId, id)
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
     return data
   }
 
@@ -632,7 +632,7 @@ export class YoutubeService {
         pageToken,
       )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
     return data
   }
 
@@ -651,7 +651,7 @@ export class YoutubeService {
         mine,
       )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
     return data
   }
 
@@ -660,5 +660,28 @@ export class YoutubeService {
       `youtube:common:params`,
       true,
     )
+  }
+
+  // 更新账号 channelId
+  async updateChannelId(accountId: string) {
+    const accountInfo = await this.accountNatsApi.getAccountByParam({ account: accountId })
+
+    const channelInfo = await this.getChannelsList(accountId, undefined, undefined, undefined, true)
+
+    const fetchedChannelId = channelInfo.id
+
+    if (fetchedChannelId && typeof fetchedChannelId === 'string' && fetchedChannelId.trim() !== '') {
+      if (accountInfo) {
+        const currentChannelId = accountInfo.channelId || ''
+        if (currentChannelId !== fetchedChannelId) {
+          this.logger.log(`更新频道 channelId: ${currentChannelId} -> ${fetchedChannelId}`)
+          await this.accountNatsApi.updateAccountInfo(
+            accountInfo.id,
+            { channelId: fetchedChannelId },
+          )
+        }
+      }
+    }
+    return fetchedChannelId
   }
 }

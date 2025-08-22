@@ -1,5 +1,4 @@
 import { NatsMessagePattern } from '@common/decorators'
-import { encryptPassword } from '@common/utils'
 import { Controller, Logger } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
 import {

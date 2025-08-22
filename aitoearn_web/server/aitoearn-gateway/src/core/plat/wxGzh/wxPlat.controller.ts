@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Post, UseGuards } from '@nestjs/common'
 import { Public } from '@/auth/auth.guard'
 import { OrgGuard } from '@/common/interceptor/transform.interceptor'
 import { PlatWxGzhNatsApi } from '@/transports/channel/wxGzh.natsApi'

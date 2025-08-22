@@ -7,8 +7,8 @@
  */
 import { Injectable, Logger } from '@nestjs/common'
 import { TableDto } from 'src/common/dto/table.dto'
-import { NatsService } from 'src/transports/nats.service'
 import { NatsApi } from '../api'
+import { BaseNatsApi } from '../base.natsApi'
 import {
   Material,
   MaterialFilter,
@@ -22,23 +22,16 @@ import {
 } from './common'
 
 @Injectable()
-export class MaterialNatsApi {
-  constructor(private readonly natsService: NatsService) {}
-
+export class MaterialNatsApi extends BaseNatsApi {
   /**
-   * 初始化组
-   * @param userId
+   * 测试
    * @returns
    */
-  async createDefault(userId: string) {
-    Logger.log('createDefault====================', userId)
-    const res = await this.natsService.sendMessage<boolean>(
-      NatsApi.content.materialGroup.createDefault,
-      {
-        userId,
-      },
+  async test() {
+    const res = await this.sendMessage<Material>(
+      'content.material.test',
+      { id: 1 },
     )
-
     return res
   }
 
@@ -48,7 +41,7 @@ export class MaterialNatsApi {
    * @returns
    */
   async create(newData: NewMaterial) {
-    const res = await this.natsService.sendMessage<Material>(
+    const res = await this.sendMessage<Material>(
       NatsApi.content.material.create,
       newData,
     )
@@ -62,7 +55,7 @@ export class MaterialNatsApi {
    * @returns
    */
   async createTask(newData: NewMaterialTask) {
-    const res = await this.natsService.sendMessage<MaterialTask>(
+    const res = await this.sendMessage<MaterialTask>(
       NatsApi.content.material.createTask,
       newData,
     )
@@ -76,7 +69,7 @@ export class MaterialNatsApi {
    * @returns
    */
   async preview(taskId: string) {
-    const res = await this.natsService.sendMessage<Material>(
+    const res = await this.sendMessage<Material>(
       NatsApi.content.material.preview,
       { id: taskId },
     )
@@ -90,7 +83,7 @@ export class MaterialNatsApi {
    * @returns
    */
   async startTask(taskId: string) {
-    const res = await this.natsService.sendMessage<string>(
+    const res = await this.sendMessage<string>(
       NatsApi.content.material.startTask,
       { id: taskId },
     )
@@ -104,7 +97,7 @@ export class MaterialNatsApi {
    * @returns
    */
   async del(id: string) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.content.material.del,
       { id },
     )
@@ -119,7 +112,7 @@ export class MaterialNatsApi {
    * @returns
    */
   async updateInfo(id: string, newData: UpMaterial) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.content.material.updateInfo,
       { id, ...newData },
     )
@@ -133,7 +126,7 @@ export class MaterialNatsApi {
    * @returns
    */
   async getInfo(id: string) {
-    const res = await this.natsService.sendMessage<Material>(
+    const res = await this.sendMessage<Material>(
       NatsApi.content.material.info,
       { id },
     )
@@ -148,7 +141,7 @@ export class MaterialNatsApi {
    * @returns
    */
   async getList(page: TableDto, filter: MaterialFilter) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       list: Material[]
       total: number
     }>(NatsApi.content.material.list, {
@@ -166,7 +159,7 @@ export class MaterialNatsApi {
    * @returns
    */
   async createGroup(newData: NewMaterialGroup) {
-    const res = await this.natsService.sendMessage<MaterialGroup>(
+    const res = await this.sendMessage<MaterialGroup>(
       NatsApi.content.materialGroup.create,
       newData,
     )
@@ -180,7 +173,7 @@ export class MaterialNatsApi {
    * @returns
    */
   async delGroup(id: string) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.content.materialGroup.del,
       { id },
     )
@@ -195,7 +188,7 @@ export class MaterialNatsApi {
    * @returns
    */
   async updateGroupInfo(id: string, newData: UpdateMaterialGroup) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.content.materialGroup.updateInfo,
       { id, ...newData },
     )
@@ -209,7 +202,7 @@ export class MaterialNatsApi {
    * @returns
    */
   async getGroupInfo(id: string) {
-    const res = await this.natsService.sendMessage<MaterialGroup>(
+    const res = await this.sendMessage<MaterialGroup>(
       NatsApi.content.materialGroup.info,
       { id },
     )
@@ -230,7 +223,7 @@ export class MaterialNatsApi {
       title?: string
     },
   ) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       list: MaterialGroup[]
       total: number
     }>(NatsApi.content.materialGroup.list, {

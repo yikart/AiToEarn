@@ -2,6 +2,8 @@ import {
   Controller,
   Get,
   Logger,
+  Param,
+  Post,
   Query,
 } from '@nestjs/common'
 
@@ -79,8 +81,8 @@ export class YoutubeController {
 
   // 获取页面的认证URL
   @NatsMessagePattern('plat.youtube.authUrl')
-  getAuthUrl(@Payload() data: GetAuthUrlDto) {
-    const res = this.youtubeService.getAuthUrl(
+  async getAuthUrl(@Payload() data: GetAuthUrlDto) {
+    const res = await this.youtubeService.getAuthUrl(
       data.userId,
       data.mail,
       data.type,
@@ -91,16 +93,16 @@ export class YoutubeController {
 
   // 查询用户的认证信息
   @NatsMessagePattern('plat.youtube.getAuthInfo')
-  getAuthInfo(@Payload() data: GetAuthInfoDto) {
+  async getAuthInfo(@Payload() data: GetAuthInfoDto) {
     this.logger.log('taskId--', data.taskId)
-    const res = this.youtubeService.getAuthInfo(data.taskId)
+    const res = await this.youtubeService.getAuthInfo(data.taskId)
     return res
   }
 
   // 查询账号的认证信息
   @NatsMessagePattern('plat.youtube.getAccountAuthInfo')
-  getAccountAuthInfo(@Payload() data: AccountIdDto) {
-    const res = this.youtubeService.getUserAccessToken(data.accountId)
+  async getAccountAuthInfo(@Payload() data: AccountIdDto) {
+    const res = await this.youtubeService.getUserAccessToken(data.accountId)
     return res
   }
 
@@ -129,22 +131,31 @@ export class YoutubeController {
 
   // 查询账号是否授权
   @NatsMessagePattern('plat.youtube.isAuthorized')
-  isAuthorized(@Payload() data: AccountIdDto) {
-    const res = this.youtubeService.isAuthorized(data.accountId)
+  async isAuthorized(@Payload() data: AccountIdDto) {
+    const res = await this.youtubeService.isAuthorized(data.accountId)
+    return res
+  }
+
+  // 刷新令牌token
+  @Post('auth/crawler/refresh-token/:accountId')
+  async PostRefreshToken(
+    @Param('accountId') accountId: string,
+  ) {
+    const res = this.youtubeService.getUserAccessToken(accountId)
     return res
   }
 
   // 刷新令牌token
   @NatsMessagePattern('plat.youtube.refreshToken')
-  refreshToken(@Payload() data: AccountIdDto) {
-    const res = this.youtubeService.getUserAccessToken(data.accountId)
+  async refreshToken(@Payload() data: AccountIdDto) {
+    const res = await this.youtubeService.getUserAccessToken(data.accountId)
     return res
   }
 
   // 获取视频类别
   @NatsMessagePattern('plat.youtube.getVideoCategories')
-  getVideoCategories(@Payload() data: VideoCategoriesDto) {
-    const res = this.youtubeService.getVideoCategoriesList(
+  async getVideoCategories(@Payload() data: VideoCategoriesDto) {
+    const res = await this.youtubeService.getVideoCategoriesList(
       data.accountId,
       data?.id,
       data?.regionCode,

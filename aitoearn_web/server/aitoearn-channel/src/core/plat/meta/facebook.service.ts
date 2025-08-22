@@ -21,6 +21,8 @@ import {
   FacebookReelUploadResponse,
   finalizeVideoUploadRequest,
   finalizeVideoUploadResponse,
+  PublishFeedPostRequest,
+  publishFeedPostResponse,
   PublishMediaPostResponse,
   PublishVideoPostRequest,
   publishVideoPostResponse,
@@ -216,6 +218,18 @@ export class FacebookService {
     return this.facebookAPIService.finalizeVideoUpload(credential.id, credential.access_token, req)
   }
 
+  async publishFeedPost(
+    accountId: string,
+    req: PublishFeedPostRequest,
+  ): Promise<publishFeedPostResponse | null> {
+    const credential = await this.authorizePage(accountId)
+    if (!credential) {
+      this.logger.error(`No valid access token found for accountId: ${accountId}`)
+      return null
+    }
+    return await this.facebookAPIService.publishFeedPost(credential.id, credential.access_token, req)
+  }
+
   async publishVideoPost(
     accountId: string,
     req: PublishVideoPostRequest,
@@ -230,7 +244,7 @@ export class FacebookService {
 
   async uploadImage(
     accountId: string,
-    file: Buffer,
+    file: Blob,
   ): Promise<UploadPhotoResponse | null> {
     const credential = await this.authorizePage(accountId)
     if (!credential) {
@@ -243,13 +257,14 @@ export class FacebookService {
   async publicPhotoPost(
     accountId: string,
     imageUrlList: string[],
+    caption?: string,
   ): Promise<PublishMediaPostResponse | null> {
     const credential = await this.authorizePage(accountId)
     if (!credential) {
       this.logger.error(`No valid access token found for accountId: ${accountId}`)
       return null
     }
-    return await this.facebookAPIService.publishMultiplePhotoPost(credential.id, credential.access_token, imageUrlList)
+    return await this.facebookAPIService.publishMultiplePhotoPost(credential.id, credential.access_token, imageUrlList, caption)
   }
 
   async getObjectInfo(accountId, objectId: string, fields?: string): Promise<FacebookObjectInfo | null> {
@@ -393,7 +408,7 @@ export class FacebookService {
     return await this.facebookAPIService.publishReelPost(credential.id, credential.access_token, req)
   }
 
-  async initStoryUpload(
+  async initVideoStoryUpload(
     accountId: string,
     req: FacebookReelRequest,
   ): Promise<FacebookReelResponse | null> {
@@ -402,10 +417,10 @@ export class FacebookService {
       this.logger.error(`No valid access token found for accountId: ${accountId}`)
       return null
     }
-    return await this.facebookAPIService.initStoryUpload(credential.id, credential.access_token, req)
+    return await this.facebookAPIService.initVideoStoryUpload(credential.id, credential.access_token, req)
   }
 
-  async uploadStory(
+  async uploadVideoStory(
     accountId: string,
     uploadURL: string,
     req: FacebookReelUploadRequest,
@@ -415,10 +430,10 @@ export class FacebookService {
       this.logger.error(`No valid access token found for accountId: ${accountId}`)
       return null
     }
-    return await this.facebookAPIService.uploadStory(credential.access_token, uploadURL, req)
+    return await this.facebookAPIService.uploadVideoStory(credential.access_token, uploadURL, req)
   }
 
-  async publishStory(
+  async publishVideoStory(
     accountId: string,
     req: FacebookReelRequest,
   ): Promise<FacebookReelResponse | null> {
@@ -427,6 +442,18 @@ export class FacebookService {
       this.logger.error(`No valid access token found for accountId: ${accountId}`)
       return null
     }
-    return await this.facebookAPIService.publishStoryPost(credential.id, credential.access_token, req)
+    return await this.facebookAPIService.publishVideoStoryPost(credential.id, credential.access_token, req)
+  }
+
+  async publishPhotoStory(
+    accountId: string,
+    photoId: string,
+  ): Promise<FacebookReelResponse | null> {
+    const credential = await this.authorizePage(accountId)
+    if (!credential) {
+      this.logger.error(`No valid access token found for accountId: ${accountId}`)
+      return null
+    }
+    return await this.facebookAPIService.publishPhotoStoryPost(credential.id, credential.access_token, photoId)
   }
 }

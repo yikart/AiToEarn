@@ -2,7 +2,6 @@ import * as fs from 'node:fs'
 import path from 'node:path'
 import { Logger } from '@nestjs/common'
 import axios, { AxiosResponse } from 'axios'
-import { firstValueFrom } from 'rxjs'
 import { v4 as uuidv4 } from 'uuid'
 
 enum Type {
@@ -165,7 +164,7 @@ export async function streamDownloadAndUpload(
     let partNumber = 1
 
     // 获取总大小
-    const headResponse: AxiosResponse<unknown> = await firstValueFrom(this.httpService.head(url))
+    const headResponse: AxiosResponse<unknown> = await axios.head(url)
     const totalSize = Number.parseInt(
       headResponse.headers['content-length'],
       10,
@@ -174,15 +173,13 @@ export async function streamDownloadAndUpload(
     for (let start = 0; start < totalSize; start += chunkSize) {
       const end = Math.min(start + chunkSize - 1, totalSize - 1)
       const range = `bytes=${start}-${end}`
-      const rangeRes: AxiosResponse<unknown> = await firstValueFrom(
-        this.httpService.get(url, {
-          responseType: 'stream',
-          headers: {
-            Range: range,
-          },
-        }),
-      )
-      const buffer = await this.incomingMessageToBuffer(rangeRes.data)
+      const rangeRes: AxiosResponse<unknown> = await axios.get(url, {
+        responseType: 'stream',
+        headers: {
+          Range: range,
+        },
+      })
+      const buffer = await incomingMessageToBuffer(rangeRes.data)
       await upFn(buffer, partNumber)
       partNumber++
     }
@@ -201,7 +198,7 @@ export async function streamDownloadAndUpload(
  */
 export async function getFileSizeFromUrl(url: string): Promise<number> {
   try {
-    const headResponse: AxiosResponse<unknown> = await firstValueFrom(this.httpService.head(url))
+    const headResponse: AxiosResponse<unknown> = await axios.head(url)
     const contentLength = Number.parseInt(
       headResponse.headers['content-length'],
       10,
@@ -222,7 +219,7 @@ export async function getFileSizeFromUrl(url: string): Promise<number> {
 export async function chunkedDownloadFile(
   url: string,
   range: [number, number],
-): Promise<Buffer> {
+): Promise<Buffer<ArrayBuffer>> {
   try {
     const chunk = await axios.get<ArrayBuffer>(url, {
       responseType: 'arraybuffer',
@@ -251,4 +248,14 @@ export async function getRemoteFileSize(url: string): Promise<number> {
     Logger.error(`Failed to get remote file metadata: ${error}, URL: ${url}`)
     throw new Error(`Failed to get remote file metadata: ${error}, URL: ${url}`)
   }
+}
+
+// 将可读流转换为Buffer
+function incomingMessageToBuffer(stream: any): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = []
+    stream.on('data', (chunk: Buffer) => chunks.push(chunk))
+    stream.on('end', () => resolve(Buffer.concat(chunks)))
+    stream.on('error', reject)
+  })
 }

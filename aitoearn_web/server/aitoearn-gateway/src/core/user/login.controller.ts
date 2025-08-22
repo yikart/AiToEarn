@@ -1,5 +1,4 @@
 import { ErrHttpBack } from '@common/filters/httpException.code'
-import { AppHttpException } from '@common/filters/httpException.filter'
 import { OrgGuard } from '@common/interceptor/transform.interceptor'
 import { getRandomString } from '@common/utils'
 import { encryptPassword, validatePassWord } from '@common/utils/password.util'
@@ -21,6 +20,7 @@ import {
   UserCancelDto,
 } from './dto/login.dto'
 import { UserService } from './user.service'
+import { AppException } from '@/common/exceptions'
 
 interface UserMailRegistCache {
   code: string
@@ -49,7 +49,7 @@ export class LoginController {
     const userInfo = await this.userService.getUserInfoByMail(mail, true)
     if (!!userInfo && userInfo.status !== UserStatus.DELETE) {
       if (userInfo.status === UserStatus.STOP)
-        throw new AppHttpException(ErrHttpBack.err_user_status)
+        throw new AppException(ErrHttpBack.err_user_status)
 
       // 校验密码
       const isOk = validatePassWord(
@@ -59,8 +59,7 @@ export class LoginController {
       )
 
       if (!isOk)
-        throw new AppHttpException(ErrHttpBack.err_user_password)
-
+        throw new AppException(ErrHttpBack.err_user_password, 'password is error')
       const token = this.authService.generateToken(userInfo)
       const TokenInfo = this.authService.decodeToken(token)
 
@@ -91,7 +90,7 @@ export class LoginController {
     })
 
     if (!mailRes)
-      throw new AppHttpException(ErrHttpBack.err_mail_send_fail)
+      throw new AppException(ErrHttpBack.err_mail_send_fail)
 
     await this.redisService.setKey<UserMailRegistCache>(
       `userMailRegist:${mail}`,
@@ -170,7 +169,7 @@ export class LoginController {
       `userMailRegist:${mail}`,
     )
     if (!rData)
-      throw new AppHttpException(ErrHttpBack.err_user_code_nohad)
+      throw new AppException(ErrHttpBack.err_user_code_nohad)
 
     if (rData.status !== 1) {
       return {
@@ -179,13 +178,13 @@ export class LoginController {
     }
 
     if (rData.code !== code)
-      throw new AppHttpException(ErrHttpBack.err_user_code_nohad)
+      throw new AppException(ErrHttpBack.err_user_code_nohad)
 
     if (inviteCode) {
       const inviteUserInfo
         = await this.userService.getUserByPopularizeCode(inviteCode)
       if (!inviteUserInfo)
-        throw new AppHttpException(ErrHttpBack.err_user_pop_code_null)
+        throw new AppException(ErrHttpBack.err_user_pop_code_null)
     }
 
     // 生成加盐密码
@@ -221,7 +220,7 @@ export class LoginController {
     const userInfo = await this.userService.getUserInfoByMail(mail)
 
     if (!userInfo || userInfo.status === UserStatus.DELETE)
-      throw new AppHttpException(ErrHttpBack.err_user_no_had)
+      throw new AppException(ErrHttpBack.err_user_no_had)
 
     // 没有进行创建逻辑
     const code = getRandomString(6, true)
@@ -232,7 +231,7 @@ export class LoginController {
       60 * 5,
     )
     if (!rRes)
-      throw new AppHttpException(ErrHttpBack.err_mail_send_fail)
+      throw new AppException(ErrHttpBack.err_mail_send_fail)
 
     // 发验证码邮件,邮箱号和code
     const mailRes = await this.mailService.sendEmail({
@@ -245,7 +244,7 @@ export class LoginController {
     })
 
     if (!mailRes)
-      throw new AppHttpException(ErrHttpBack.err_mail_send_fail)
+      throw new AppException(ErrHttpBack.err_mail_send_fail)
 
     return code
   }
@@ -296,7 +295,7 @@ export class LoginController {
       `userMailRepassword:${mail}`,
     )
     if (!rRes || rRes.code !== code)
-      throw new AppHttpException(ErrHttpBack.err_user_code_nohad)
+      throw new AppException(ErrHttpBack.err_user_code_nohad)
 
     if (!rRes.status) {
       return {
@@ -306,7 +305,7 @@ export class LoginController {
 
     const userInfo = await this.userService.getUserInfoByMail(mail)
     if (!userInfo || userInfo.status === UserStatus.DELETE)
-      throw new AppHttpException(ErrHttpBack.err_user_had)
+      throw new AppException(ErrHttpBack.err_user_had)
 
     const { password: resPassword, salt: resSalt } = encryptPassword(password)
 
@@ -317,7 +316,7 @@ export class LoginController {
     )
 
     if (!res)
-      throw new AppHttpException(ErrHttpBack.fail)
+      throw new AppException(ErrHttpBack.fail)
 
     const token = this.authService.generateToken(userInfo)
     const TokenInfo = this.authService.decodeToken(token)
@@ -343,7 +342,7 @@ export class LoginController {
     )
     if (!!userInfo && userInfo.status !== UserStatus.DELETE) {
       if (userInfo.status === UserStatus.STOP)
-        throw new AppHttpException(ErrHttpBack.err_user_status)
+        throw new AppException(ErrHttpBack.err_user_status)
     }
     const tokenInfo = {
       id: userInfo.id,
@@ -369,7 +368,7 @@ export class LoginController {
   async getCancelMailCode(@GetToken() token: TokenInfo) {
     const userInfo = await this.userService.getUserInfoById(token.id)
     if (!userInfo || userInfo.status === UserStatus.DELETE)
-      throw new AppHttpException(ErrHttpBack.err_user_status)
+      throw new AppException(ErrHttpBack.err_user_status)
 
     const code = getRandomString(6, true)
 
@@ -403,7 +402,7 @@ export class LoginController {
       `userCancelCode:${token.mail}`,
     )
     if (cacheCode !== code)
-      throw new AppHttpException(ErrHttpBack.err_user_code_nohad)
+      throw new AppException(ErrHttpBack.err_user_code_nohad)
 
     const res = await this.userService.updateUserStatus(token.id, UserStatus.DELETE)
     return res

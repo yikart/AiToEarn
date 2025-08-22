@@ -1,15 +1,13 @@
-const {
-  REDIS_HOST,
-  REDIS_PORT,
+const { 
+  REDIS_HOST, 
+  REDIS_PORT, 
   REDIS_PASSWORD,
-  WX_PLAT_ID,
-  WX_PLAT_SECRET,
-  WX_PLAT_TOKEN,
-  WX_PLAT_ENCODING_AES_KEY
+  WXPLAT_SECRET,
+  WXPLAT_ENCODING_AES_KEY
 } = process.env;
 
 module.exports = {
-  port: 7001,
+  port: 7000,
   env: 'development',
   enableBadRequestDetails: true,
   docs: {
@@ -24,20 +22,18 @@ module.exports = {
     connectTimeout: 10000,
   },
   wxPlat: {
-    id: WX_PLAT_ID,
-    secret: WX_PLAT_SECRET,
-    token: WX_PLAT_TOKEN,
-    encodingAESKey: WX_PLAT_ENCODING_AES_KEY,
-    authBackHost: 'https://mcp.aitoearn.cn',
+    id: 'x',
+    secret: WXPLAT_SECRET,
+    token: 'x',
+    encodingAESKey: WXPLAT_ENCODING_AES_KEY,
+    authBackHost: 'https://mcp.x.cn',
   },
   msgUrlList: [
-    'https://local.aitoearn.ai',
-    'https://dev.aitoearn.ai',
-    'https://aitoearn.ai',
+    'https://dev.x.ai/api/plat/wx/callback/msg',
+    'https://x.ai/api/plat/wx/callback/msg',
   ],
   authUrlMap: {
-    local: 'https://local.aitoearn.ai',
-    dev: 'https://dev.aitoearn.ai',
-    prod: 'https://aitoearn.ai',
+    dev: 'https://dev.x.ai/api/plat/wx/auth/back',
+    prod: 'https://x.ai/api/plat/wx/auth/back',
   },
 };

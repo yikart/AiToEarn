@@ -15,11 +15,8 @@ const notificationVoSchema = z.object({
 })
 
 const notificationListVoSchema = z.object({
-  items: z.array(notificationVoSchema),
+  list: z.array(notificationVoSchema),
   total: z.number().int().min(0),
-  page: z.number().int().min(1),
-  pageSize: z.number().int().min(1),
-  totalPages: z.number().int().min(0),
 })
 
 const unreadCountVoSchema = z.object({

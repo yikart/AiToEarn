@@ -6,13 +6,11 @@
  * @Description: TikTok Platform NATS API
  */
 import { Injectable } from '@nestjs/common'
-import { NatsService } from 'src/transports/nats.service'
 import { NatsApi } from '../api'
+import { BaseNatsApi } from '../base.natsApi'
 
 @Injectable()
-export class PlatTiktokNatsApi {
-  constructor(private readonly natsService: NatsService) {}
-
+export class PlatTiktokNatsApi extends BaseNatsApi {
   /**
    * 获取授权页面URL
    * @param userId 用户ID
@@ -20,7 +18,7 @@ export class PlatTiktokNatsApi {
    * @returns
    */
   async getAuthUrl(userId: string, scopes?: string[]) {
-    const res = await this.natsService.sendMessage<string>(
+    const res = await this.sendMessage<string>(
       NatsApi.plat.tiktok.authUrl,
       {
         userId,
@@ -37,7 +35,7 @@ export class PlatTiktokNatsApi {
    * @returns
    */
   async getAuthInfo(taskId: string) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.tiktok.getAuthInfo,
       {
         taskId,
@@ -58,7 +56,7 @@ export class PlatTiktokNatsApi {
     code: string,
     state: string,
   ) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       status: 0 | 1
       message?: string
       accountId?: string
@@ -80,7 +78,7 @@ export class PlatTiktokNatsApi {
    * @returns
    */
   async refreshAccessToken(accountId: string, refreshToken: string) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.tiktok.refreshAccessToken,
       {
         accountId,
@@ -97,7 +95,7 @@ export class PlatTiktokNatsApi {
    * @returns
    */
   async revokeAccessToken(accountId: string) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.tiktok.revokeAccessToken,
       {
         accountId,
@@ -113,7 +111,7 @@ export class PlatTiktokNatsApi {
    * @returns
    */
   async getCreatorInfo(accountId: string) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.tiktok.getCreatorInfo,
       {
         accountId,
@@ -131,7 +129,7 @@ export class PlatTiktokNatsApi {
    * @returns
    */
   async initVideoPublish(accountId: string, postInfo: any, sourceInfo: any) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.tiktok.initVideoPublish,
       {
         accountId,
@@ -157,7 +155,7 @@ export class PlatTiktokNatsApi {
     postInfo: any,
     sourceInfo: any,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.tiktok.initPhotoPublish,
       {
         accountId,
@@ -177,7 +175,7 @@ export class PlatTiktokNatsApi {
    * @returns
    */
   async getPublishStatus(accountId: string, publishId: string) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.tiktok.getPublishStatus,
       {
         accountId,
@@ -200,7 +198,7 @@ export class PlatTiktokNatsApi {
     videoBase64: string,
     contentType: string,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.tiktok.uploadVideoFile,
       {
         uploadUrl,
@@ -218,7 +216,7 @@ export class PlatTiktokNatsApi {
    * @returns
    */
   async handleWebhookEvent(event: any) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.tiktok.handleWebhookEvent,
       event,
     )

@@ -15,6 +15,22 @@ export class CreateAccountGroupDto {
   @Expose()
   rank?: number
 
+  @IsString({ message: 'IP' })
+  @IsOptional()
+  @Expose()
+  ip?: string
+
+  @IsString({ message: '地址' })
+  @IsOptional()
+  @Expose()
+  location?: string
+
+  @ApiProperty({ description: '代理IP' })
+  @IsString({ message: '代理IP' })
+  @IsOptional()
+  @Expose()
+  proxyIp?: string
+
   @ApiProperty({ description: '浏览器配置必须为JSON格式' })
   @IsJSON()
   @IsOptional()

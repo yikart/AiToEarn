@@ -1,9 +1,10 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { GetToken } from '@/auth/auth.guard'
+import { GetToken, Public } from '@/auth/auth.guard'
 import { TokenInfo } from '@/auth/interfaces/auth.interfaces'
 import { AiService } from './ai.service'
 import {
+  ChatModelVo,
   FireflycardResponseVo,
   ImageEditModelVo,
   ImageGenerationModelVo,
@@ -212,6 +213,7 @@ export class AiController {
   }
 
   @ApiOperation({ summary: '获取图片生成模型参数' })
+  @Public()
   @Get('models/image/generation')
   async getImageGenerationModels(): Promise<ImageGenerationModelVo[]> {
     const response = await this.aiService.getImageGenerationModels()
@@ -219,6 +221,7 @@ export class AiController {
   }
 
   @ApiOperation({ summary: '获取图片编辑模型参数' })
+  @Public()
   @Get('models/image/edit')
   async getImageEditModels(): Promise<ImageEditModelVo[]> {
     const response = await this.aiService.getImageEditModels()
@@ -226,9 +229,18 @@ export class AiController {
   }
 
   @ApiOperation({ summary: '获取视频生成模型参数' })
+  @Public()
   @Get('models/video/generation')
   async getVideoGenerationModels(): Promise<VideoGenerationModelVo[]> {
     const response = await this.aiService.getVideoGenerationModels()
     return response.map(item => VideoGenerationModelVo.create(item))
+  }
+
+  @ApiOperation({ summary: '获取对话模型参数' })
+  @Public()
+  @Get('models/chat')
+  async getChatModels(): Promise<ChatModelVo[]> {
+    const response = await this.aiService.getChatModels()
+    return response.map(item => ChatModelVo.create(item))
   }
 }

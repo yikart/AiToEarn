@@ -6,6 +6,6 @@
  * @Description: 时间模板
  */
 export class BaseTemp {
-  createAt: Date
+  createdAt: Date
   updatedAt: Date
 }

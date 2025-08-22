@@ -4,7 +4,7 @@ import { AccountType } from '@/transports/account/comment'
 import { FacebookPostOptions, InstagramPostOptions, ThreadsPostOptions } from '@/transports/channel/meta.common'
 import { WxGzhPublishOption } from '@/transports/channel/wxGzh.common'
 
-export interface PlatOptons {
+export interface PlatOptions {
   bilibili?: BilibiliPublishOption
   youtube?: YoutubePublishOption
   wxGzh?: WxGzhPublishOption
@@ -18,7 +18,7 @@ export enum PublishType {
   ARTICLE = 'article', // 文章
 }
 
-export interface NewPublishData<T extends PlatOptons> {
+export interface NewPublishData<T extends PlatOptions> {
   readonly flowId: string
   readonly accountId: string
   readonly type: PublishType

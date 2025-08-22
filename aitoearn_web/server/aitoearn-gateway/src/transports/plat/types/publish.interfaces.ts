@@ -20,3 +20,10 @@ export interface PublishRecordItem {
   errorMsg: string
   option: any
 }
+
+export interface PublishDayInfo {
+  userId: string
+  publishTotal: number
+  createAt: Date
+  updatedAt: Date
+}

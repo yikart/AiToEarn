@@ -70,6 +70,9 @@ export class InstagramService {
       return response.data
     }
     catch (error) {
+      if (error.response) {
+        this.logger.error(`Error response from Instagram API: ${JSON.stringify(error.response.data)}`, error.stack)
+      }
       this.logger.error(`Failed to create media container: ${error.message}`, error.stack)
       throw new Error('Failed to create media container')
     }

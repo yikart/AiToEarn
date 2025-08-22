@@ -1,18 +1,16 @@
 import { Injectable } from '@nestjs/common'
 import { AccountGroup } from 'src/core/account/accountGroup/comment'
-import { NatsService } from 'src/transports/nats.service'
 import { NatsApi } from '../api'
+import { BaseNatsApi } from '../base.natsApi'
 
 @Injectable()
-export class AccountGroupNatsApi {
-  constructor(private readonly natsService: NatsService) {}
-
+export class AccountGroupNatsApi extends BaseNatsApi {
   /**
    * 添加或者更新组
    * @param accountGroup
    */
   async createGroup(newData: Partial<AccountGroup>) {
-    const res = await this.natsService.sendMessage<AccountGroup>(
+    const res = await this.sendMessage<AccountGroup>(
       NatsApi.account.group.create,
       newData,
     )
@@ -26,7 +24,7 @@ export class AccountGroupNatsApi {
    * @param newData
    */
   async updateGroup(id: string, newData: Partial<AccountGroup>) {
-    const res = await this.natsService.sendMessage<AccountGroup>(
+    const res = await this.sendMessage<AccountGroup>(
       NatsApi.account.group.update,
       { id, ...newData },
     )
@@ -40,7 +38,7 @@ export class AccountGroupNatsApi {
    * @param userId
    */
   async deleteAccountGroup(ids: string[], userId: string) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.account.group.deleteList,
       { ids, userId },
     )
@@ -50,7 +48,7 @@ export class AccountGroupNatsApi {
 
   // 获取所有组
   async getAccountGroup(userId: string) {
-    const res = await this.natsService.sendMessage<AccountGroup[]>(
+    const res = await this.sendMessage<AccountGroup[]>(
       NatsApi.account.group.getList,
       { userId },
     )

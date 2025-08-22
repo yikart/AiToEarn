@@ -13,6 +13,34 @@ export class VipService {
     private readonly userModel: Model<User>,
   ) { }
 
+  private vipAddExpireTime(userVipCycleType: UserVipCycleType): {
+    num: number
+    type: 'day' | 'month' | 'year'
+  } {
+    switch (userVipCycleType) {
+      case UserVipCycleType.EXPERIENCE:
+        return {
+          num: 7,
+          type: 'day',
+        }
+      case UserVipCycleType.MONTH:
+        return {
+          num: 1,
+          type: 'month',
+        }
+      case UserVipCycleType.YEAR:
+        return {
+          num: 12,
+          type: 'month',
+        }
+      default:
+        return {
+          num: 0,
+          type: 'day',
+        }
+    }
+  }
+
   /**
    * 设置会员信息
    * @param userId
@@ -29,14 +57,12 @@ export class VipService {
     if (!user)
       throw new AppException(ExceptionCode.UserNotFound)
 
-    // 根据充值的时间类型决定过期时间，使用day.js
+    const addInfo = this.vipAddExpireTime(userVipCycleType)
+
+    // 根据充值的时间类型决定过期时间
     const expireTime = dayjs().add(
-      userVipCycleType === UserVipCycleType.MONTH
-        ? 1
-        : userVipCycleType === UserVipCycleType.YEAR
-          ? 12
-          : 0,
-      'month',
+      addInfo.num,
+      addInfo.type,
     )
 
     // 2. 没有会员信息或者已经过期，设置会员信息
@@ -53,12 +79,8 @@ export class VipService {
       const tartTime = user.vipInfo.expireTime
       user.vipInfo.expireTime = dayjs(tartTime)
         .add(
-          userVipCycleType === UserVipCycleType.MONTH
-            ? 1
-            : userVipCycleType === UserVipCycleType.YEAR
-              ? 12
-              : 0,
-          'month',
+          addInfo.num,
+          addInfo.type,
         )
         .toDate()
     }

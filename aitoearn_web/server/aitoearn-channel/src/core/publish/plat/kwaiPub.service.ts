@@ -16,20 +16,20 @@ import { PublishRecord } from '@/libs/database/schema/publishRecord.schema'
 import { PublishStatus, PublishTask } from '@/libs/database/schema/publishTask.schema'
 import { DoPubRes } from '../common'
 import { PublishBase } from './publish.base'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 
 @Injectable()
 export class kwaiPubService extends PublishBase {
   queueName: string = AccountType.KWAI
 
   constructor(
+    readonly eventEmitter: EventEmitter2,
     @InjectModel(PublishTask.name)
     readonly publishTaskModel: Model<PublishTask>,
-    @InjectModel(PublishRecord.name)
-    readonly publishRecordModel: Model<PublishRecord>,
-    @InjectQueue('bull_publish') publishQueue: Queue,
+    @InjectQueue('post_publish') publishQueue: Queue,
     readonly kwaiService: KwaiService,
   ) {
-    super(publishTaskModel, publishRecordModel, publishQueue)
+    super(eventEmitter, publishTaskModel, publishQueue)
   }
 
   // TODO: 校验账户授权状态
@@ -59,20 +59,20 @@ export class kwaiPubService extends PublishBase {
         })
         return {
           message: '发布成功',
-          status: PublishStatus.RELEASED,
+          status: PublishStatus.PUBLISHED,
         }
       }
       else {
         return {
           message: res.failMsg || '发布失败，未知原因',
-          status: PublishStatus.FAIL,
+          status: PublishStatus.FAILED,
         }
       }
     }
     catch (e) {
       return {
         message: e.message || '发布失败，未知原因',
-        status: PublishStatus.FAIL,
+        status: PublishStatus.FAILED,
       }
     }
   }

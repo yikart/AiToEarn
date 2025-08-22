@@ -10,10 +10,10 @@ export enum PublishType {
 }
 
 export enum PublishStatus {
-  FAIL = -1, // 发布失败
-  UNPUBLISH = 0, // 未发布
-  RELEASED = 1, // 已发布
-  PUB_LOADING = 2, // 发布中
+  FAILED = -1, // 发布失败
+  WaitingForPublish = 0, // 未发布
+  PUBLISHED = 1, // 已发布
+  PUBLISHING = 2, // 发布中
 }
 
 @Schema({
@@ -102,7 +102,7 @@ export class PublishTask extends BaseTemp {
   @Prop({
     required: true,
     enum: PublishStatus,
-    default: PublishStatus.UNPUBLISH,
+    default: PublishStatus.WaitingForPublish,
   })
   status: PublishStatus
 

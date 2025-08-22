@@ -34,7 +34,7 @@ export interface PlatPulOption {
 export interface NewPulData<T extends PlatPulOption>
   extends Omit<
     PublishTask,
-    'id' | 'option' | 'status' | 'createAt' | 'updatedAt'
+    'id' | 'option' | 'status' | 'createdAt' | 'updatedAt'
   > {
   option?: T;
 }

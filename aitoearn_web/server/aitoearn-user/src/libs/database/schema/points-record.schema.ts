@@ -45,12 +45,6 @@ export class PointsRecord extends BaseTemp {
     default: {},
   })
   metadata?: Record<string, any>
-
-  @Prop({
-    required: true,
-    default: Date.now,
-  })
-  createdAt: Date
 }
 
 export const PointsRecordSchema = SchemaFactory.createForClass(PointsRecord)

@@ -1,18 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { OnEvent } from '@nestjs/event-emitter'
 import { TableDto } from 'src/common/dto/table.dto'
 import { Media, MediaType, NewMedia } from 'src/transports/content/common'
 import { MediaNatsApi } from 'src/transports/content/media.natsApi'
-import { User } from '@/transports/user/comment'
 
 @Injectable()
 export class MediaService {
   constructor(private readonly mediaNatsApi: MediaNatsApi) {}
-
-  @OnEvent('user.created', { async: true })
-  async createDefault(data: { user: User }) {
-    return this.mediaNatsApi.createDefault(data.user.id)
-  }
 
   /**
    * 创建

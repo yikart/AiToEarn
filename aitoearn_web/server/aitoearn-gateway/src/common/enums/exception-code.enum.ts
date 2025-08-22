@@ -1,6 +1,7 @@
 export enum ExceptionCode {
   Success = 0,
 
+  NatsMessageError = 10000,
   // 通用错误码 (10xxx)
   InvalidRequest = 10001,
   Unauthorized = 10002,

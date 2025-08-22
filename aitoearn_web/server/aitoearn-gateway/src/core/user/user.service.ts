@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { User, UserStatus, UserVipCycleType } from 'src/transports/user/comment'
 import { UserNatsApi } from 'src/transports/user/user.natsApi'
 import { UserVipNatsApi } from 'src/transports/user/vip.natsApi'
+import { UserPointsNatsApi } from '@/transports/user/points.natsApi'
 import { UpdateUserInfoDto } from './dto/user.dto'
 
 @Injectable()
@@ -9,6 +10,7 @@ export class UserService {
   constructor(
     private readonly userNatsApi: UserNatsApi,
     private readonly userVipNatsApi: UserVipNatsApi,
+    private readonly userPointsNatsApi: UserPointsNatsApi,
   ) {}
 
   /**
@@ -64,8 +66,9 @@ export class UserService {
 
   /**
    * 更新用户密码
-   * @param mail
+   * @param id
    * @param password
+   * @param salt
    * @returns
    */
   async updateUserPassword(id: string, password: string, salt: string): Promise<boolean> {
@@ -132,5 +135,10 @@ export class UserService {
     const res = await this.userVipNatsApi.setUserVipInfo(userId, cycleType)
 
     return res
+  }
+
+  /** 获取我的积分记录 */
+  async getMyPointsRecords(userId: string, page = 1, pageSize = 10) {
+    return await this.userPointsNatsApi.getRecords(userId, page, pageSize)
   }
 }

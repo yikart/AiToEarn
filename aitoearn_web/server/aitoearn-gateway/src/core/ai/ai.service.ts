@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import {
+  ChatModel,
   FireflycardGenerationRequest,
   ImageEditModel,
   ImageGenerationModel,
@@ -142,5 +143,13 @@ export class AiService {
    */
   async getVideoGenerationModels(): Promise<VideoGenerationModel[]> {
     return await this.aiNatsApi.getVideoGenerationModels()
+  }
+
+  /**
+   * 获取对话模型参数
+   * @returns 对话模型参数列表
+   */
+  async getChatModels(): Promise<ChatModel[]> {
+    return await this.aiNatsApi.getChatModels()
   }
 }

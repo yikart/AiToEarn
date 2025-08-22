@@ -1,11 +1,13 @@
 import * as crypto from 'node:crypto'
-import { User, UserStatus, UserWallet } from '@libs/database/schema'
+import { User, UserStatus } from '@libs/database/schema'
 import { RedisService } from '@libs/redis'
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { google } from 'googleapis'
 import { Model } from 'mongoose'
-import { NewUserByGoogle, NewUserByMail } from './class/user.class'
+import { NatsService } from '@/transports/nats.service'
+import { PointsService } from '../points/points.service'
+import { NewUser, UserCreateType } from './class/user.class'
 
 @Injectable()
 export class UserService {
@@ -14,12 +16,10 @@ export class UserService {
 
   constructor(
     private readonly redisService: RedisService,
-
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
-
-    @InjectModel(UserWallet.name)
-    private readonly userWalletModel: Model<UserWallet>,
+    private readonly pointsService: PointsService,
+    private readonly natsService: NatsService,
   ) {
     this.oauth2Client = new google.auth.OAuth2()
   }
@@ -85,10 +85,14 @@ export class UserService {
     salt: string,
     inviteCode?: string,
   ): Promise<User> {
-    const newData = new NewUserByMail(mail, password, salt)
+    const newData = new NewUser(UserCreateType.mail, mail, {
+      password,
+      salt,
+    })
     newData.inviteCode = inviteCode
 
     const res = await this.userModel.create(newData)
+    this.afterCreate(res)
     return res
   }
 
@@ -112,11 +116,10 @@ export class UserService {
 
   /**
    * 生成推广码
-   * @param userId
+   * @param userInfo
    * @returns
    */
-  async generateUsePopularizeCode(userId: string) {
-    const userInfo = await this.getUserInfoById(userId)
+  async generateUsePopularizeCode(userInfo: User) {
     if (!userInfo)
       return null
     // 先对手机号进行哈希处理
@@ -130,7 +133,7 @@ export class UserService {
 
     const hash = crypto
       .createHash('sha256')
-      .update(userId)
+      .update(userInfo.id)
       .update(combinedSalt)
       .digest('hex')
 
@@ -144,10 +147,10 @@ export class UserService {
 
     // 更新用户的推广码
     await this.userModel.updateOne(
-      { _id: userId },
+      { _id: userInfo.id },
       { $set: { popularizeCode: code } },
     )
-    this.redisService.del(`UserInfo:${userId}`)
+    this.redisService.del(`UserInfo:${userInfo.id}`)
 
     return code
   }
@@ -155,10 +158,9 @@ export class UserService {
   /**
    * 更新用户密码
    * @param mail
-   * @param password
+   * @param newData
    * @returns
    */
-  // 更新密码
   async updateUserPassword(
     id: string,
     newData: {
@@ -182,7 +184,8 @@ export class UserService {
 
   /**
    * 邮箱创建谷歌用户
-   * @param googleAccount
+   * @param clientId
+   * @param credential
    * @returns
    */
   async getUserInfoByGoogle(
@@ -219,9 +222,52 @@ export class UserService {
       refreshToken: null,
     }
 
-    const newData = new NewUserByGoogle(googleUser.email, googleAccount)
+    const newData = new NewUser(UserCreateType.google, googleUser.email, googleAccount)
 
-    await this.userModel.create(newData)
-    return newData
+    const res = await this.userModel.create(newData)
+    this.afterCreate(res)
+    return res
+  }
+
+  /**
+   * 用户创建后
+   * @param user
+   * @returns
+   */
+  private async afterCreate(
+    user: User,
+  ) {
+    // 发送用户创建广播
+    this.natsService.publishEvent('user.create', { userId: user.id })
+
+    // 生成推广码
+    this.generateUsePopularizeCode(user)
+    // 用户创建积分
+    this.pointsService.addPoints({
+      userId: user.id,
+      amount: 10,
+      type: 'user_register',
+      description: '用户注册成功，获得10积分',
+    })
+
+    if (user.inviteCode) {
+      const inviteUser = await this.getUserByPopularizeCode(user.inviteCode)
+      if (inviteUser) {
+        this.pointsService.addPoints({
+          userId: inviteUser.id,
+          amount: 20,
+          type: 'user_invite',
+          description: '用户邀请成功，获得20积分',
+        })
+
+        this.pointsService.addPoints({
+          userId: user.id,
+          amount: 20,
+          type: 'user_invite',
+          description: '被用户邀请成功，获得20积分',
+        })
+      }
+    }
+    // 积分
   }
 }

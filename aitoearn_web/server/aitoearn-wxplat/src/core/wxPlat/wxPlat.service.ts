@@ -101,7 +101,6 @@ export class WxPlatService {
     if (!componentAccessToken)
       throw new AppException(ExceptionCode.File, '不存在平台授权令牌');
 
-
     const res
       = await this.wxPlatApiService.getPreAuthCode(componentAccessToken);
     if (!res)

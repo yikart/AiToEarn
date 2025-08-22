@@ -16,11 +16,6 @@ export class GetAuthInfoDto {
 }
 
 export class CreateAccountAndSetAccessTokenDto {
-  @ApiProperty({ title: '任务ID', required: true })
-  @IsString({ message: '任务ID不能为空' })
-  @Expose()
-  readonly taskId: string
-
   @ApiProperty({ title: '授权码', required: true })
   @IsString({ message: '授权码不能为空' })
   @Expose()

@@ -11,6 +11,7 @@ export enum AccountType {
   Facebook = 'facebook', // Facebook
   Instagram = 'instagram', // Instagram
   Threads = 'threads', // Threads
+  Pinterest = 'pinterest', // Pinterest
 }
 
 export enum AccountStatus {
@@ -41,6 +42,7 @@ export interface Account {
   income: number
   groupId: string
   status: AccountStatus // 登录状态，用于判断是否失效
+  channelId: string
 }
 
 export interface AccountGroup {

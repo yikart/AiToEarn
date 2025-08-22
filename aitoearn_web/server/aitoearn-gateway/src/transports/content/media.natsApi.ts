@@ -7,37 +7,19 @@
  */
 import { Injectable } from '@nestjs/common'
 import { TableDto } from 'src/common/dto/table.dto'
-import { NatsService } from 'src/transports/nats.service'
 import { NatsApi } from '../api'
+import { BaseNatsApi } from '../base.natsApi'
 import { Media, MediaGroup, MediaType, NewMedia } from './common'
 
 @Injectable()
-export class MediaNatsApi {
-  constructor(private readonly natsService: NatsService) {}
-
-  /**
-   * 初始化组
-   * @param userId
-   * @returns
-   */
-  async createDefault(userId: string) {
-    const res = await this.natsService.sendMessage<boolean>(
-      NatsApi.content.mediaGroup.createDefault,
-      {
-        userId,
-      },
-    )
-
-    return res
-  }
-
+export class MediaNatsApi extends BaseNatsApi {
   /**
    * 创建媒体
    * @param newData
    * @returns
    */
   async create(newData: NewMedia) {
-    const res = await this.natsService.sendMessage<Media>(
+    const res = await this.sendMessage<Media>(
       NatsApi.content.media.create,
       newData,
     )
@@ -51,7 +33,7 @@ export class MediaNatsApi {
    * @returns
    */
   async del(id: string) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.content.media.del,
       { id },
     )
@@ -65,7 +47,7 @@ export class MediaNatsApi {
    * @returns
    */
   async getInfo(id: string) {
-    const res = await this.natsService.sendMessage<Media>(
+    const res = await this.sendMessage<Media>(
       NatsApi.content.media.info,
       { id },
     )
@@ -80,7 +62,7 @@ export class MediaNatsApi {
    * @returns
    */
   async getList(page: TableDto, filter: { userId: string, groupId?: string, type?: MediaType }) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       list: Media[]
       total: number
     }>(NatsApi.content.media.list, {
@@ -103,7 +85,7 @@ export class MediaNatsApi {
     type: MediaType
     desc?: string
   }) {
-    const res = await this.natsService.sendMessage<MediaGroup>(
+    const res = await this.sendMessage<MediaGroup>(
       NatsApi.content.mediaGroup.create,
       newData,
     )
@@ -117,7 +99,7 @@ export class MediaNatsApi {
    * @returns
    */
   async delGroup(id: string) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.content.mediaGroup.del,
       { id },
     )
@@ -135,7 +117,7 @@ export class MediaNatsApi {
     id: string,
     newData: { title?: string, desc?: string },
   ) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.content.mediaGroup.update,
       { id, ...newData },
     )
@@ -149,7 +131,7 @@ export class MediaNatsApi {
    * @returns
    */
   async getGroupInfo(id: string) {
-    const res = await this.natsService.sendMessage<MediaGroup>(
+    const res = await this.sendMessage<MediaGroup>(
       NatsApi.content.mediaGroup.info,
       { id },
     )
@@ -171,7 +153,7 @@ export class MediaNatsApi {
       type?: MediaType
     },
   ) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       list: MediaGroup[]
       total: number
     }>(NatsApi.content.mediaGroup.list, {

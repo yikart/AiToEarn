@@ -12,7 +12,7 @@ import { Controller } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
 import { ExceptionCode } from '@/common/enums/exception-code.enum'
 import { AppException } from '@/common/exceptions'
-import { UserIdDto } from './dto/user.dto'
+import { GetUserByPopularizeCodeDto, UserIdDto } from './dto/user.dto'
 import { UserService } from './user.service'
 
 @Controller('user/pop')
@@ -30,5 +30,14 @@ export class UserPopController {
 
     const res = await this.userService.generateUsePopularizeCode(userInfo.id)
     return res
+  }
+
+  @NatsMessagePattern('user.user.getUserByPopularizeCode')
+  async getUserByPopularizeCode(@Payload() data: GetUserByPopularizeCodeDto) {
+    const userInfo = await this.userService.getUserByPopularizeCode(data.code)
+    if (!userInfo)
+      throw new AppException(ExceptionCode.UserNotFound)
+
+    return userInfo
   }
 }

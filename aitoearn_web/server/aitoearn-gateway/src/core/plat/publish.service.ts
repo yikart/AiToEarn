@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common'
 import { PlatPublishNatsApi } from 'src/transports/plat/publish.natsApi'
-import { NewPublishData, NewPublishRecordData, PlatOptons } from './common'
-import { PubRecordListFilterDto } from './dto/publish.dto'
+import { TableDto } from '@/common/dto/table.dto'
+import { NewPublishData, NewPublishRecordData, PlatOptions } from './common'
+import { PublishDayInfoListFiltersDto, PubRecordListFilterDto } from './dto/publish.dto'
 
 @Injectable()
 export class PublishService {
   constructor(private readonly platPublishNatsApi: PlatPublishNatsApi) {}
 
-  async create(newData: NewPublishData<PlatOptons>) {
+  async create(newData: NewPublishData<PlatOptions>) {
     const res = await this.platPublishNatsApi.create(newData)
     return res
   }
@@ -27,5 +28,14 @@ export class PublishService {
       ...data,
       userId,
     })
+  }
+
+  async publishInfoData(userId: string) {
+    const res = await this.platPublishNatsApi.getPublishInfoData(userId)
+    return res
+  }
+
+  async publishDataInfoList(userId: string, data: PublishDayInfoListFiltersDto, page: TableDto) {
+    return await this.platPublishNatsApi.publishDataInfoList(userId, data, page)
   }
 }

@@ -137,9 +137,26 @@ export class ImageEditModelVo extends createZodDto(imageEditModelSchema) {}
 const videoGenerationModelSchema = z.object({
   name: z.string().describe('模型名称'),
   description: z.string().describe('模型描述'),
-  modes: z.array(z.string()).describe('支持的模式'),
+  modes: z.array(z.string()).describe('支持的模式, text2video, image2video'),
   sizes: z.array(z.string()).describe('支持的尺寸'),
   durations: z.array(z.number()).describe('支持的时长'),
+  supportedParameters: z.array(z.string()).describe('支持的参数, image, image_tail'),
 })
 
 export class VideoGenerationModelVo extends createZodDto(videoGenerationModelSchema) {}
+
+// 对话模型参数 VO
+const chatModelSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  inputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])).describe('输入模态'),
+  outputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])).describe('输出模态'),
+  pricing: z.object({
+    prompt: z.string(),
+    completion: z.string(),
+    image: z.string().optional(),
+    audio: z.string().optional(),
+  }),
+})
+
+export class ChatModelVo extends createZodDto(chatModelSchema) {}

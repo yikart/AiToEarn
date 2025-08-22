@@ -11,8 +11,10 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Render,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
@@ -20,6 +22,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { GetToken, Public } from 'src/auth/auth.guard'
 import { TokenInfo } from 'src/auth/interfaces/auth.interfaces'
 import { PlatTiktokNatsApi } from 'src/transports/plat/tiktok.natsApi'
+import { OrgGuard } from '@/common/interceptor/transform.interceptor'
 import { AccountNatsApi } from '../../../transports/account/account.natsApi'
 import {
   CreateAccountAndSetAccessTokenDto,
@@ -57,11 +60,12 @@ export class TiktokController {
   }
 
   @Public()
+  @UseGuards(OrgGuard)
   @ApiOperation({ summary: '创建账号并设置授权Token' })
   @Get('auth/back')
   @Render('auth/back')
   async createAccountAndSetAccessToken(
-    @Body() data: CreateAccountAndSetAccessTokenDto,
+    @Query() data: CreateAccountAndSetAccessTokenDto,
   ) {
     return await this.platTiktokNatsApi.createAccountAndSetAccessToken(
       data.code,

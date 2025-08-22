@@ -8,4 +8,8 @@ export class UserTaskService {
   async getUserTaskList(userId: string, status?: string) {
     return await this.userTaskNatsApi.getUserTaskList(userId, status)
   }
+
+  async getUserTask(userId: string, id: string) {
+    return await this.userTaskNatsApi.getUserTask(userId, id)
+  }
 }

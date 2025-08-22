@@ -1,15 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import { NatsService } from 'src/transports/nats.service'
 import { TableDto } from '@/common/dto/table.dto'
 import { SkKey } from '@/core/plat/skKey/common'
 import { NatsApi } from '../api'
+import { BaseNatsApi } from '../base.natsApi'
 
 @Injectable()
-export class ChannelSkKeyNatsApi {
-  constructor(private readonly natsService: NatsService) {}
-
+export class ChannelSkKeyNatsApi extends BaseNatsApi {
   async create(userId: string, desc?: string) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       key: string
     }>(NatsApi.channel.skKey.create, {
       userId,
@@ -20,7 +18,7 @@ export class ChannelSkKeyNatsApi {
   }
 
   async del(key: string) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.channel.skKey.del,
       {
         key,
@@ -31,7 +29,7 @@ export class ChannelSkKeyNatsApi {
   }
 
   async upInfo(key: string, desc: string) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.channel.skKey.upInfo,
       {
         key,
@@ -43,7 +41,7 @@ export class ChannelSkKeyNatsApi {
   }
 
   async getInfo(key: string) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       key: string
       desc: string
     }>(NatsApi.channel.skKey.getInfo, {
@@ -59,7 +57,7 @@ export class ChannelSkKeyNatsApi {
       userId: string
     },
   ) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       list: SkKey
       total: number
     }>(NatsApi.channel.skKey.list, {
@@ -71,7 +69,7 @@ export class ChannelSkKeyNatsApi {
   }
 
   async addRefAccount(key: string, accountId: string) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       key: string
       accountId: string
     }>(NatsApi.channel.skKey.addRefAccount, {
@@ -83,7 +81,7 @@ export class ChannelSkKeyNatsApi {
   }
 
   async delRefAccount(key: string, accountId: string) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.channel.skKey.delRefAccount,
       {
         key,
@@ -95,7 +93,7 @@ export class ChannelSkKeyNatsApi {
   }
 
   async getRefAccountList(key: string, page: TableDto) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.channel.skKey.getRefAccountList,
       {
         key,

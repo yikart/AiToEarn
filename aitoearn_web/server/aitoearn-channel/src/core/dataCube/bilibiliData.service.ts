@@ -6,13 +6,28 @@
  * @Description: b站-统计数据
  */
 import { Injectable, Logger } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
+import { AccountNatsApi } from '@/transports/account/account.natsApi';
+import { AccountType } from '@/transports/account/common';
 import { BilibiliService } from '../plat/bilibili/bilibili.service';
 import { DataCubeBase } from './data.base';
 
 @Injectable()
 export class BilibiliDataService extends DataCubeBase {
-  constructor(readonly bilibiliService: BilibiliService) {
+  constructor(
+    readonly bilibiliService: BilibiliService,
+    readonly accountNatsApi: AccountNatsApi,
+  ) {
     super();
+  }
+
+  @OnEvent(`account.create.${AccountType.BILIBILI}`)
+  async accountPortraitReport(accountId: string) {
+    const res = await this.getAccountDataCube(accountId)
+    this.accountNatsApi.updateAccountStatistics(accountId, {
+      workCount: res.arcNum,
+      fansCount: res.fensNum,
+    })
   }
 
   async getAccountDataCube(accountId: string) {

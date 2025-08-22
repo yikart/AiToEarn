@@ -72,7 +72,7 @@ export interface XMediaUploadResponse {
 }
 
 export interface XChunkedMediaUploadRequest {
-  media: Buffer
+  media: Blob,
   media_id: string,
   segment_index: number
 }
@@ -110,23 +110,13 @@ export interface XCreatePostRequest {
   direct_message_deep_link?: string
   for_super_followers_only?: boolean
   geo?: Geo
-  media: PostMedia
+  media?: PostMedia
   nullcast?: boolean
   poll?: PostPoll
   quote_tweet_id?: string
   reply?: postReply
   reply_settings?: PostPollReplySettings
-  text: string
-}
-
-export interface XCreatePostResponseData {
-  id: string
-  text: string
-}
-
-export interface XCreatePostResponse {
-  data: XCreatePostResponseData
-  errors?: TwitterAPIError[]
+  text?: string
 }
 
 export interface XGetPostDetailRequest {
@@ -171,5 +161,61 @@ export interface XGetPostDetailResponseData {
 
 export interface XGetPostDetailResponse {
   data: XGetPostDetailResponseData
+  errors?: TwitterAPIError[]
+}
+
+export interface RePostResponseData {
+  id: string
+  retweeted: boolean
+}
+
+export interface LikePostResponseData {
+  liked: boolean
+}
+
+export interface CreatePostResponseData {
+  id: string
+  text: string
+}
+
+export interface DeletePostResponseData {
+  deleted: boolean
+}
+
+export interface PublicMetrics {
+  retweet_count: number
+  reply_count: number
+  like_count: number
+  quote_count: number
+  impression_count: number
+  bookmark_count: number
+}
+export interface XPostDetailResponseData {
+  public_metrics: PublicMetrics
+  id: string
+  text: string
+}
+export interface XCreatePostResponse {
+  data: CreatePostResponseData
+  errors?: TwitterAPIError[]
+}
+
+export interface XDeletePostResponse {
+  data: DeletePostResponseData
+  errors?: TwitterAPIError[]
+}
+
+export interface XLikePostResponse {
+  data: LikePostResponseData
+  errors?: TwitterAPIError[]
+}
+
+export interface XRePostResponse {
+  data: RePostResponseData
+  errors?: TwitterAPIError[]
+}
+
+export interface XPostDetailResponse {
+  data: XPostDetailResponseData
   errors?: TwitterAPIError[]
 }

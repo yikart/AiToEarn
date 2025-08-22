@@ -1,11 +1,26 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
+import { AccountNatsApi } from '@/transports/account/account.natsApi';
+import { AccountType } from '@/transports/account/common';
 import { ThreadsService } from '../plat/meta/threads.service';
 import { DataCubeBase } from './data.base';
 
 @Injectable()
 export class ThreadsDataService extends DataCubeBase {
-  constructor(readonly threadsService: ThreadsService) {
+  constructor(readonly threadsService: ThreadsService, readonly accountNatsApi: AccountNatsApi) {
     super();
+  }
+
+  @OnEvent(`account.create.${AccountType.THREADS}`)
+  async accountPortraitReport(accountId: string) {
+    const res = await this.getAccountDataCube(accountId)
+    this.accountNatsApi.updateAccountStatistics(accountId, {
+      likeCount: res.likeNum,
+      commentCount: res.commentNum,
+      readCount: res.playNum,
+      collectCount: res.shareNum,
+      fansCount: res.fensNum,
+    })
   }
 
   async getAccountDataCube(accountId: string) {

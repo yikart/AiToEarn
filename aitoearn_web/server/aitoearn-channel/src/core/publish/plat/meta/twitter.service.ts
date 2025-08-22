@@ -1,19 +1,20 @@
 import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 import { InjectModel } from '@nestjs/mongoose'
 import { AccountType } from '@transports/account/common'
 import { Queue } from 'bullmq'
 import { Model } from 'mongoose'
 import { chunkedDownloadFile, fileUrlToBlob, getFileTypeFromUrl, getRemoteFileSize } from '@/common'
 import { TwitterService } from '@/core/plat/twitter/twitter.service'
-import { MetaMediaStatus } from '@/libs/database/schema/metaContainer.schema'
-import { PublishRecord } from '@/libs/database/schema/publishRecord.schema'
+import { Account } from '@/libs/database/schema/account.schema'
+import { PostMediaStatus, PostSubCategory } from '@/libs/database/schema/postMediaContainer.schema'
 import { PublishStatus, PublishTask } from '@/libs/database/schema/publishTask.schema'
 import { XMediaCategory, XMediaType } from '@/libs/twitter/twitter.enum'
 import { PostMedia, XChunkedMediaUploadRequest, XCreatePostRequest, XMediaUploadInitRequest } from '@/libs/twitter/twitter.interfaces'
 import { DoPubRes } from '../../common'
 import { PublishBase } from '../publish.base'
-import { MetaContainerService } from './container.service'
+import { PostMediaContainerService } from './container.service'
 import { MetaPostPublisher, PublishMetaPostTask } from './meta.interface'
 
 @Injectable()
@@ -26,18 +27,19 @@ export class TwitterPublishService extends PublishBase implements MetaPostPublis
   })
 
   constructor(
+    readonly eventEmitter: EventEmitter2,
+    @InjectModel(Account.name)
+    readonly AccountModel: Model<Account>,
     @InjectModel(PublishTask.name)
     readonly publishTaskModel: Model<PublishTask>,
-    @InjectModel(PublishRecord.name)
-    readonly publishRecordModel: Model<PublishRecord>,
-    @InjectQueue('bull_publish') publishQueue: Queue,
-    @InjectQueue('meta_media_task') metaMediaTaskQueue: Queue,
+    @InjectQueue('post_publish') publishQueue: Queue,
+    @InjectQueue('post_media_task') metaMediaTaskQueue: Queue,
     readonly twitterService: TwitterService,
-    private readonly metaContainerService: MetaContainerService,
+    private readonly postMediaContainerService: PostMediaContainerService,
   ) {
-    super(publishTaskModel, publishRecordModel, publishQueue)
+    super(eventEmitter, publishTaskModel, publishQueue)
     this.metaMediaTaskQueue = metaMediaTaskQueue
-    this.metaContainerService = metaContainerService
+    this.postMediaContainerService = postMediaContainerService
   }
 
   // TODO: 校验账户授权状态
@@ -83,8 +85,9 @@ export class TwitterPublishService extends PublishBase implements MetaPostPublis
           res.message = '图片初始化上传失败'
           return res
         }
+        this.logger.log(`initUploadRes: ${JSON.stringify(initUploadRes)}`)
         const uploadReq: XChunkedMediaUploadRequest = {
-          media: Buffer.from(await imgBlob.blob.arrayBuffer()),
+          media: await imgBlob.blob,
           media_id: initUploadRes.data.id,
           segment_index: 0,
         }
@@ -97,6 +100,7 @@ export class TwitterPublishService extends PublishBase implements MetaPostPublis
           res.message = '图片分片上传失败'
           return res
         }
+        this.logger.log(`chunkedMediaUploadRequest: ${JSON.stringify(updateRes)}`)
         const finalizeUploadRes = await this.twitterService.finalizeMediaUpload(
           accountId,
           initUploadRes.data.id,
@@ -105,12 +109,15 @@ export class TwitterPublishService extends PublishBase implements MetaPostPublis
           res.message = '确认图片上传失败'
           return res
         }
-        await this.metaContainerService.createMetaPostMedia({
+        this.logger.log(`finalizeMediaUpload: ${JSON.stringify(finalizeUploadRes)}`)
+        await this.postMediaContainerService.createMetaPostMedia({
+          accountId: publishTask.accountId,
           publishId: publishTask.id,
           userId: publishTask.userId,
           platform: 'twitter',
           taskId: initUploadRes.data.id,
-          status: MetaMediaStatus.CREATED,
+          status: PostMediaStatus.FINISHED,
+          subCategory: PostSubCategory.PHOTO,
         })
       }
     }
@@ -153,7 +160,7 @@ export class TwitterPublishService extends PublishBase implements MetaPostPublis
         }
 
         const uploadReq: XChunkedMediaUploadRequest = {
-          media: videoBlob,
+          media: new Blob([videoBlob]),
           media_id: initUploadRes.data.id,
           segment_index: partNumber,
         }
@@ -174,21 +181,25 @@ export class TwitterPublishService extends PublishBase implements MetaPostPublis
         res.message = '确认视频上传完成失败'
         return res
       }
-      await this.metaContainerService.createMetaPostMedia({
+      await this.postMediaContainerService.createMetaPostMedia({
         accountId: publishTask.accountId,
         publishId: publishTask.id,
         userId: publishTask.userId,
         platform: 'twitter',
         taskId: initUploadRes.data.id,
-        status: MetaMediaStatus.CREATED,
+        status: PostMediaStatus.CREATED,
+        subCategory: PostSubCategory.VIDEO,
       })
     }
     const task: PublishMetaPostTask = {
       id: publishTask.id,
     }
     await this.metaMediaTaskQueue.add(
-      'twitter:media:task',
-      task,
+      `twitter:media:task:${task.id}`,
+      {
+        taskId: task.id,
+        attempts: 0,
+      },
       {
         attempts: 0,
         removeOnComplete: true,
@@ -196,7 +207,7 @@ export class TwitterPublishService extends PublishBase implements MetaPostPublis
       },
     )
 
-    res.status = PublishStatus.PUB_LOADING
+    res.status = PublishStatus.PUBLISHING
     res.message = '发布中'
     return res;
   }
@@ -204,15 +215,15 @@ export class TwitterPublishService extends PublishBase implements MetaPostPublis
   async publish(task: PublishTask): Promise<DoPubRes> {
     try {
       this.logger.log(`publish: Starting to process task ID: ${task.id}`);
-      const medias = await this.metaContainerService.getContainers(task.id);
+      const medias = await this.postMediaContainerService.getContainers(task.id);
       if (!medias || medias.length === 0) {
         return {
-          status: PublishStatus.FAIL,
+          status: PublishStatus.FAILED,
           message: '没有找到媒体文件',
           noRetry: true,
         }
       }
-      const unProcessedMedias = medias.filter(media => media.status !== MetaMediaStatus.FINISHED);
+      const unProcessedMedias = medias.filter(media => media.status !== PostMediaStatus.FINISHED);
       this.logger.log(`Found ${medias.length} media files for task ID: ${task.id}`);
       let processedCount = 0;
       for (const media of unProcessedMedias) {
@@ -224,29 +235,29 @@ export class TwitterPublishService extends PublishBase implements MetaPostPublis
         this.logger.log(`Media status for task ID ${task.id}, media ID ${media.taskId}: ${JSON.stringify(mediaStatusInfo)}`);
         if (mediaStatusInfo.data.processing_info.state === 'failed') {
           this.logger.error(`Media processing failed for task ID: ${task.id}, media ID: ${media.taskId}`);
-          await this.metaContainerService.updateContainer(media.id, { status: MetaMediaStatus.FAILED });
+          await this.postMediaContainerService.updateContainer(media.id, { status: PostMediaStatus.FAILED });
           return {
-            status: PublishStatus.FAIL,
+            status: PublishStatus.FAILED,
             message: '资源处理失败',
             noRetry: true,
           }
         }
-        let mediaStatus = MetaMediaStatus.CREATED
+        let mediaStatus = PostMediaStatus.CREATED
         if (mediaStatusInfo.data.processing_info.state === 'in_progress') {
-          mediaStatus = MetaMediaStatus.IN_PROGRESS;
+          mediaStatus = PostMediaStatus.IN_PROGRESS;
         }
         if (mediaStatusInfo.data.processing_info.state === 'succeeded') {
           this.logger.log(`Media processing finished for task ID: ${task.id}, media ID: ${media.taskId}`);
-          mediaStatus = MetaMediaStatus.FINISHED;
+          mediaStatus = PostMediaStatus.FINISHED;
           processedCount++;
         }
-        await this.metaContainerService.updateContainer(media.id, { status: mediaStatus });
+        await this.postMediaContainerService.updateContainer(media.id, { status: mediaStatus });
       }
       const isMediaCompleted = processedCount === unProcessedMedias.length;
       if (!isMediaCompleted) {
         this.logger.warn(`Not all media files processed for task ID: ${task.id}. Processed: ${processedCount}, Total: ${medias.length}`);
         return {
-          status: PublishStatus.PUB_LOADING,
+          status: PublishStatus.PUBLISHING,
           message: '媒体文件处理中',
         }
       }
@@ -266,25 +277,29 @@ export class TwitterPublishService extends PublishBase implements MetaPostPublis
       if (!createPostRes || !createPostRes.data.id) {
         this.logger.log(`Failed to publish media container for task ID: ${task.id}`);
         return {
-          status: PublishStatus.FAIL,
+          status: PublishStatus.FAILED,
           message: '发布媒体容器失败',
           noRetry: true,
         }
       }
-      const permalink = `https://x.com/${task.accountId}/status/${createPostRes.data.id}`;
+      let permalink = `https://x.com/${task.uid}/status/${createPostRes.data.id}`;
+      const account = await this.AccountModel.findOne({ _id: task.accountId });
+      if (account && account.account) {
+        permalink = `https://x.com/${account.account}/status/${createPostRes.data.id}`;
+      }
 
       this.logger.log(`Successfully published media container for task ID: ${task.id}`);
       await this.overPublishTask(task, createPostRes.data.id, { workLink: permalink });
       this.logger.log(`completed: Task ID ${task.id} processed successfully`);
       return {
-        status: PublishStatus.RELEASED,
+        status: PublishStatus.PUBLISHED,
         message: '所有媒体文件已处理完成',
       }
     }
     catch (error) {
       this.logger.error(`Error processing task ID ${task.id}: ${error.message || error}`);
       return {
-        status: PublishStatus.FAIL,
+        status: PublishStatus.FAILED,
         message: `发布失败: ${error.message || error}`,
         noRetry: true,
       }

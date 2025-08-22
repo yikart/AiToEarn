@@ -21,6 +21,7 @@ import { PublishTaskService } from './publishTask.service';
 
 @Controller()
 export class PublishTaskController {
+  private readonly logger = new Logger(PublishTaskController.name);
   constructor(
     private readonly publishTaskService: PublishTaskService,
     private readonly accountService: AccountService,
@@ -30,6 +31,7 @@ export class PublishTaskController {
   @NatsMessagePattern('plat.publish.create')
   async createPub(@Payload() data: CreatePublishDto) {
     try {
+      this.logger.log(`Creating publish task with data: ${JSON.stringify(data)}`);
       data.publishTime = new Date(data.publishTime);
 
       const accountInfo = await this.accountService.getAccountInfo(
@@ -48,7 +50,7 @@ export class PublishTaskController {
       return res;
     }
     catch (e) {
-      Logger.log(e);
+      this.logger.error(e);
       return new AppException(ExceptionCode.File, e);
     }
   }
@@ -83,20 +85,21 @@ export class PublishTaskController {
 
     const { status, message, noRetry }
       = await this.publishTaskService.doPub(info);
-    Logger.log(`发布任务${info.id}执行结果：${status} ${message} ${noRetry}`);
+    this.logger.log(`立即发布任务${info.id}执行结果：${status} ${message} ${noRetry}`);
+    this.logger.log(`发布任务${info.id}执行结果：${status} ${message} ${noRetry}`);
 
     return status;
   }
 
   @NatsMessagePattern('publish.tiktok.post.webhook')
   async handleTiktokWebhook(@Payload() data: any) {
-    Logger.log(`Received TikTok webhook: ${JSON.stringify(data)}`);
+    this.logger.log(`Received TikTok webhook: ${JSON.stringify(data)}`);
     try {
       const dto: TiktokWebhookDto = TiktokWebhookSchema.parse(data);
       await this.publishTaskService.handleTiktokPostWebhook(dto);
     }
     catch (error) {
-      Logger.error(`Error handling TikTok webhook: ${error.message}`, error.stack);
+      this.logger.error(`Error handling TikTok webhook: ${error.message}`, error.stack);
       throw new AppException(ExceptionCode.File, '处理 TikTok webhook 失败');
     }
     return { status: 'success', message: 'Webhook processed' };

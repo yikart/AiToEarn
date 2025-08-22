@@ -1,5 +1,5 @@
 import {
-  TaskDetail,
+  TaskWithOpportunityDetail,
   TotalAmountResult,
   UserTaskDetail,
 } from '@core/task/task.interface'
@@ -9,11 +9,11 @@ import { BaseNatsApi } from '../base.natsApi'
 
 @Injectable()
 export class TaskNatsApi extends BaseNatsApi {
-  async getTaskInfo(taskId: string): Promise<TaskDetail> {
-    return await this.sendMessage<TaskDetail>(
-      NatsApi.task.task.info,
+  async getTaskInfoByOpportunityId(opportunityId: string): Promise<TaskWithOpportunityDetail> {
+    return await this.sendMessage<TaskWithOpportunityDetail>(
+      NatsApi.task.task.infoByOpportunityId,
       {
-        id: taskId,
+        opportunityId,
       },
     )
   }
@@ -28,11 +28,8 @@ export class TaskNatsApi extends BaseNatsApi {
   }
 
   async acceptTask(acceptTaskData: {
-    taskId: string
+    opportunityId: string
     userId: string
-    accountType: string
-    uid: string
-    account: string
   }): Promise<UserTaskDetail> {
     return await this.sendMessage<UserTaskDetail>(
       NatsApi.task.task.accept,

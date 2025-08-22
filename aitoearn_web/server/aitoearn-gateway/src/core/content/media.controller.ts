@@ -18,7 +18,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { GetToken } from 'src/auth/auth.guard'
 import { TokenInfo } from 'src/auth/interfaces/auth.interfaces'
 import { TableDto } from 'src/common/dto/table.dto'
-import { MediaGroup, MediaType } from 'src/transports/content/common'
+import { MediaGroup } from 'src/transports/content/common'
 import { MediaNatsApi } from '@/transports/content/media.natsApi'
 import { CreateMediaDto, MediaFilterDto } from './dto/media.dto'
 import {
@@ -33,18 +33,6 @@ import { MediaService } from './media.service'
 export class MediaController {
   constructor(private readonly mediaService: MediaService, private readonly mediaNatsApi: MediaNatsApi,
   ) { }
-
-  @ApiOperation({
-    summary: '初始化媒体库',
-    description: '初始化媒体库',
-  })
-  @Post('default')
-  async createDefault(
-    @GetToken() token: TokenInfo,
-  ) {
-    const res = await this.mediaNatsApi.createDefault(token.id)
-    return res
-  }
 
   @ApiOperation({
     description: '创建媒体资源',

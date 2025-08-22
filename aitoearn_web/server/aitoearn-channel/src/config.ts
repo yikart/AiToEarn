@@ -75,6 +75,7 @@ const BullmqConnectionSchema = z.object({
 })
 const BullmqSchema = z.object({
   connection: BullmqConnectionSchema,
+  prefix: z.string().optional(),
 })
 
 const kwaiSchema = z.object({

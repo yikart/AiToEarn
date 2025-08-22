@@ -23,7 +23,8 @@ export class BilibiliService {
     private readonly bilibiliApiService: BilibiliApiService,
     private readonly accountService: AccountService,
     private readonly fileService: FileService,
-  ) {}
+  ) {
+  }
 
   async getBilibiliConfig() {
     return config.bilibili;

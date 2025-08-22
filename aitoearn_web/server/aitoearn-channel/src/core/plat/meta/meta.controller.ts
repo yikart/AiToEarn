@@ -104,12 +104,32 @@ export class MetaController {
     )
   }
 
+  @NatsMessagePattern('plat.meta.facebook.post.insights')
+  async getFacebookPostInsights(
+    @Payload() data: { userId: string; postId: string; },
+  ) {
+    return await this.facebookService.getPostInsights(
+      data.userId,
+      data.postId,
+    )
+  }
+
   @NatsMessagePattern('plat.meta.facebook.page.published_posts')
   async getFacebookPagePosts(
     @Payload() data: { userId: string; pageId: string; query: FacebookPublishedPostRequest },
   ) {
     return await this.facebookService.getPagePublishedPosts(
       data.userId,
+      data.query,
+    )
+  }
+
+  @NatsMessagePattern('plat.meta.instagram.account.info')
+  async getInstagramAccountInfo(
+    @Payload() data: { accountId: string; query?: any },
+  ) {
+    return await this.instagramService.getAccountInfo(
+      data.accountId,
       data.query,
     )
   }

@@ -1,13 +1,12 @@
-import { CRON_SCAN_WINDOW_MS, IMMEDIATE_PUSH_THRESHOLD_MS, TIMED_TASK_INTERVAL } from '@core/publish/constant'
+import { IMMEDIATE_PUSH_THRESHOLD_MS, PUSH_SCHEDULED_TASK_CRON_EXPRESSION, PUSH_SCHEDULED_TASK_QUERY_WINDOW_MS } from '@core/publish/constant'
 import { InjectQueue } from '@nestjs/bullmq'
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Interval } from '@nestjs/schedule'
+import { Cron } from '@nestjs/schedule'
 import { Queue } from 'bullmq'
 import { Model, RootFilterQuery } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
-import { AppException, sleep } from '@/common'
-import { RedisService } from '@/libs'
+import { AppException } from '@/common'
 import { PublishRecord } from '@/libs/database/schema/publishRecord.schema'
 import { PublishStatus, PublishTask } from '@/libs/database/schema/publishTask.schema'
 import { AccountType } from '@/transports/account/common'
@@ -25,70 +24,47 @@ import { WxGzhPubService } from './plat/wxGzhPub.service'
 import { YoutubePubService } from './plat/youtubePub.service'
 
 @Injectable()
-export class PublishTaskService {
-  private readonly publishMap = new Map<AccountType, PublishBase>()
+export class PublishTaskService implements OnModuleDestroy {
+  private readonly publishServiceMap = new Map<AccountType, PublishBase>()
+  private readonly logger = new Logger(PublishTaskService.name)
 
   constructor(
     @InjectModel(PublishTask.name)
     private readonly publishTaskModel: Model<PublishTask>,
-    @InjectModel(PublishRecord.name)
-    private readonly publishRecordModel: Model<PublishRecord>,
     private readonly bilibiliPubService: BilibiliPubService,
     private readonly kwaiPubService: kwaiPubService,
     private readonly youtubePubService: YoutubePubService,
-    private readonly redisService: RedisService,
     private readonly wxGzhPubService: WxGzhPubService,
     private readonly facebookPubService: FacebookPublishService,
     private readonly instagramPubService: InstagramPublishService,
     private readonly threadPubService: ThreadsPublishService,
     private readonly tiktokPubService: TiktokPubService,
     private readonly twitterPubService: TwitterPublishService,
-    @InjectQueue('bull_publish') private readonly publishQueue: Queue,
+    @InjectQueue('post_publish') private readonly publishQueue: Queue,
   ) {
-    this.publishMap.set(AccountType.BILIBILI, this.bilibiliPubService)
-    this.publishMap.set(AccountType.KWAI, this.kwaiPubService)
-    this.publishMap.set(AccountType.YOUTUBE, this.youtubePubService);
-    this.publishMap.set(AccountType.FACEBOOK, this.facebookPubService)
-    this.publishMap.set(AccountType.INSTAGRAM, this.instagramPubService)
-    this.publishMap.set(AccountType.THREADS, this.threadPubService)
-    this.publishMap.set(AccountType.WxGzh, this.wxGzhPubService)
-    this.publishMap.set(AccountType.TIKTOK, this.tiktokPubService)
-    this.publishMap.set(AccountType.TWITTER, this.twitterPubService)
-
-    // 清除队列中的任务
-    // (async () => {
-    //   Logger.log('------------------------------')
-    //   const waitingCount = await this.publishQueue.getWaitingCount()
-    //   const delayedCount = await this.publishQueue.getDelayedCount()
-    //   const active = await this.publishQueue.getActive()
-    //   Logger.log(`waitingCount：${waitingCount}`)
-    //   Logger.log(`delayedCount：${delayedCount}`)
-    //   Logger.log(`active：${active}`)
-    //
-    //   await this.publishQueue.pause()
-    //   while (!(await this.publishQueue.isPaused())) {
-    //     await new Promise(resolve => setTimeout(resolve, 100)) // 等待队列真正暂停
-    //   }
-    //   await this.publishQueue.obliterate({ force: true })
-    // })()
+    this.publishServiceMap.set(AccountType.BILIBILI, this.bilibiliPubService)
+    this.publishServiceMap.set(AccountType.KWAI, this.kwaiPubService)
+    this.publishServiceMap.set(AccountType.YOUTUBE, this.youtubePubService);
+    this.publishServiceMap.set(AccountType.FACEBOOK, this.facebookPubService)
+    this.publishServiceMap.set(AccountType.INSTAGRAM, this.instagramPubService)
+    this.publishServiceMap.set(AccountType.THREADS, this.threadPubService)
+    this.publishServiceMap.set(AccountType.WxGzh, this.wxGzhPubService)
+    this.publishServiceMap.set(AccountType.TIKTOK, this.tiktokPubService)
+    this.publishServiceMap.set(AccountType.TWITTER, this.twitterPubService)
   }
 
-  async createPub(newData: NewPulData<PlatPulOption>) {
-    const { publishTime } = newData
-    newData['queueId'] = `publish_${newData.accountType}:${uuidv4()}`
-    const newTask = await this.publishTaskModel.create(newData)
+  async createPub(taskInfo: NewPulData<PlatPulOption>) {
+    const { publishTime, accountType } = taskInfo
+    taskInfo['queueId'] = `publish:${accountType}:${uuidv4()}`
+    const newTask = await this.publishTaskModel.create(taskInfo)
 
-    if (publishTime.getTime() > Date.now() + IMMEDIATE_PUSH_THRESHOLD_MS)
+    const publishImmediately = publishTime.getTime() < (Date.now() + IMMEDIATE_PUSH_THRESHOLD_MS)
+    if (!publishImmediately)
       return newTask
 
-    // 两小时内，直接推送任务
-    const server = this.publishMap.get(newData.accountType)
-    if (!server)
-      throw new AppException(1, '未找到该平台的发布服务')
-
-    const res = await server.pushPubTask(newTask)
+    const res = await this.pushPubTask(newTask)
     if (!res)
-      throw new AppException(1, '创建发布任务失败！')
+      throw new AppException(1, `task publish failed, accountType: ${accountType}`)
     return newTask
   }
 
@@ -98,14 +74,13 @@ export class PublishTaskService {
    * @returns
    */
   async pushPubTask(publishTask: PublishTask) {
-    // 两小时内，直接推送任务
-    const server = this.publishMap.get(publishTask.accountType)
-    if (!server)
-      throw new AppException(1, '未找到该平台的发布服务')
+    const pubService = this.publishServiceMap.get(publishTask.accountType)
+    if (!pubService)
+      throw new AppException(1, `publish service for ${publishTask.accountType} not found`)
 
-    const res = await server.pushPubTask(publishTask)
+    const res = await pubService.pushPubTask(publishTask)
     if (!res)
-      throw new AppException(1, '推送发布任务失败')
+      throw new AppException(1, `task publish failed, accountType: ${publishTask.accountType}`)
     return res
   }
 
@@ -115,19 +90,23 @@ export class PublishTaskService {
    * @returns 推送结果
    */
   async doPub(publishTask: PublishTask) {
-    const server = this.publishMap.get(publishTask.accountType)
-    Logger.log(`开始执行发布任务 ${publishTask.id}`, server)
-    if (!server) {
+    const pubService = this.publishServiceMap.get(publishTask.accountType)
+    this.logger.log(`Processing Publish Task: ${publishTask.id}, Account Type: ${publishTask.accountType}`)
+    if (!pubService) {
       return {
-        status: PublishStatus.FAIL,
-        message: '未找到该平台的发布服务',
+        status: PublishStatus.FAILED,
+        message: `publish service for ${publishTask.accountType} not found`,
         noRetry: true,
       }
     }
-    await this.upPublishTaskStatus(publishTask.id, {
-      status: PublishStatus.PUB_LOADING,
+    await this.updatePublishTaskStatus(publishTask.id, {
+      status: PublishStatus.PUBLISHING,
     })
-    const res = await server.doPub(publishTask)
+    console.log('doPublishTask-------------', pubService);
+    
+    const res = await pubService.doPub(publishTask)
+    console.log('doPublishTask-------------222222222', res);
+
     return res
   }
 
@@ -143,7 +122,7 @@ export class PublishTaskService {
   ): Promise<PublishTask[]> {
     const filters: RootFilterQuery<PublishTask> = {
       publishTime: { $gte: start, $lte: end },
-      status: PublishStatus.UNPUBLISH,
+      status: PublishStatus.WaitingForPublish,
     }
     const list = await this.publishTaskModel.find(filters).sort({
       publishTime: 1,
@@ -158,7 +137,7 @@ export class PublishTaskService {
    * @param newData
    * @returns
    */
-  async upPublishTaskStatus(
+  async updatePublishTaskStatus(
     id: string,
     newData: {
       errorMsg?: string
@@ -225,20 +204,20 @@ export class PublishTaskService {
   }
 
   // 立即发布任务
-  async nowPubTask(id: string) {
-    const newDataDoc = await this.getPublishTaskInfo(id)
-    const newData = newDataDoc!.toObject()
-    if (!newData) {
-      throw new AppException(1, '任务不存在')
+  async publishTaskNow(id: string) {
+    const taskDoc = await this.getPublishTaskInfo(id)
+    const taskInfo = taskDoc!.toObject()
+    if (!taskInfo) {
+      throw new AppException(1, 'publish task not found')
     }
-    if (newData.status !== PublishStatus.UNPUBLISH) {
-      throw new AppException(1, '任务无法发布')
+    if (taskInfo.status !== PublishStatus.WaitingForPublish) {
+      throw new AppException(1, 'task has been published or is in progress')
     }
-    const server = this.publishMap.get(newData.accountType)
+    const pubService = this.publishServiceMap.get(taskInfo.accountType)
 
-    newData.publishTime = new Date()
-    await this.publishTaskModel.updateOne({ _id: id }, newData)
-    server?.pushPubTask(newData)
+    taskInfo.publishTime = new Date()
+    await this.publishTaskModel.updateOne({ _id: id }, taskInfo)
+    await pubService?.pushPubTask(taskInfo)
     return true
   }
 
@@ -246,23 +225,38 @@ export class PublishTaskService {
     return this.tiktokPubService.handleTiktokPostWebhook(data)
   }
 
-  // 定时任务
-  @Interval(TIMED_TASK_INTERVAL)
-  async handleCron() {
-    void this.redisService.setKey('platPublish:task', Date.now(), 60 * 30)
-    // 获取当前时间和一个半小时后的时间
-    const start = new Date()
-    const end = new Date(start.getTime() + CRON_SCAN_WINDOW_MS)
+  // push scheduled publish tasks
+  @Cron(PUSH_SCHEDULED_TASK_CRON_EXPRESSION, { waitForCompletion: true })
+  async pushScheduledPubTasks() {
+    this.logger.log(`Start pushing scheduled publish tasks, current time: ${new Date().toISOString()}`)
+    try {
+      const start = new Date()
+      const end = new Date(start.getTime() + PUSH_SCHEDULED_TASK_QUERY_WINDOW_MS)
 
-    const taskList = await this.getPublishTaskListByTime(start, end)
-    Logger.log(
-      `--------- 定时任务检测 start（${start.toUTCString()}）- end（${end.toUTCString()}），推送${taskList.length}条任务 ---------`,
-    )
+      const tasks = await this.getPublishTaskListByTime(start, end)
+      if (tasks.length === 0) {
+        this.logger.log(`Pushing scheduled publish tasks from ${start.toISOString()} to ${end.toISOString()}: No scheduled publish tasks found`)
+        this.logger.log(`Pushing scheduled publish tasks completed, current time: ${new Date().toISOString()}`)
+        return
+      }
+      this.logger.log(
+        `Pushing scheduled publish tasks from ${start.toISOString()} to ${end.toISOString()}, found ${tasks.length} tasks`,
+      )
 
-    taskList.forEach((pubilshTask) => {
-      void this.pushPubTask(pubilshTask)
-    })
-    await sleep(1000 * 60)
-    void this.redisService.del('platPublish:task')
+      for (const task of tasks) {
+        await this.pushPubTask(task)
+      }
+      this.logger.log(`Pushing scheduled publish tasks completed, current time: ${new Date().toISOString()}`)
+    }
+    catch (error) {
+      this.logger.error(`Error pushing scheduled publish tasks: ${error.message}`, error.stack)
+      this.logger.log(`Pushing scheduled publish tasks completed, current time: ${new Date().toISOString()}`)
+    }
+  }
+
+  async onModuleDestroy() {
+    this.logger.log('Module is being destroyed, closing publish queue...')
+    await this.publishQueue.close()
+    this.logger.log('Publish queue closed successfully')
   }
 }

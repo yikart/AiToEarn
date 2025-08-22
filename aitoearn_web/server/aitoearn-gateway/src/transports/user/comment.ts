@@ -14,6 +14,17 @@ export interface UserEarnInfo {
   cycleInterval: number
 }
 
+export enum UserVipCycleType {
+  NONE = 0, // 未认证
+  MONTH = 1, // 月
+  YEAR = 2, // 年
+  EXPERIENCE = 3, // 体验
+}
+export class UserVipInfo {
+  cycleType: UserVipCycleType
+  expireTime: Date
+}
+
 export interface User {
   id: string
   name: string
@@ -27,6 +38,8 @@ export interface User {
   inviteCode?: string // 我填写的邀请码
   earnInfo?: UserEarnInfo
   googleAccount?: GoogleAccount // 谷歌账号信息
+  vipInfo?: UserVipInfo // 会员信息
+  score: number // 积分字段
 }
 
 export interface GoogleLoginInfo {
@@ -39,12 +52,6 @@ export interface GoogleAccount {
   email: string
   refreshToken?: string
   expiresAt?: number
-}
-
-export enum UserVipCycleType {
-  NONE = 0, // 未认证
-  MONTH = 1, // 月
-  YEAR = 2, // 年
 }
 
 export class UserCreatedEvent {

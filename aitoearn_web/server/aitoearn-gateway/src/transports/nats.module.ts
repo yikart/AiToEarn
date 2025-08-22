@@ -1,6 +1,4 @@
-import { HttpExceptionFilter } from '@common/filters/httpException.filter'
 import { Global, Module } from '@nestjs/common'
-import { APP_FILTER } from '@nestjs/core'
 import { ClientsModule, Transport } from '@nestjs/microservices'
 import { FingerprintNatsApi } from '@transports/account/fingerprint.natsApi'
 import { config } from '@/config'
@@ -9,13 +7,16 @@ import { AccountGroupNatsApi } from './account/accountGroup.natsApi'
 import { AiNatsApi } from './ai/ai.natsApi'
 import { PlatBilibiliNatsApi } from './channel/bilibili.natsApi'
 import { DataCubeNatsApi } from './channel/dataCube.natsApi'
-import { InteractNatsApi } from './channel/interact.natsApi'
+import { InteractNatsApi } from './channel/interact/interact.natsApi'
+import { InteractionRecordNatsApi } from './channel/interact/interactionRecord.natsApi'
+import { ReplyCommentRecordNatsApi } from './channel/interact/replyCommentRecord.natsApi'
 import { PlatMetaNatsApi } from './channel/meta.natsApi'
 import { PlatWxGzhNatsApi } from './channel/wxGzh.natsApi'
 import { MaterialNatsApi } from './content/material.natsApi'
 import { MediaNatsApi } from './content/media.natsApi'
 import { NatsService } from './nats.service'
 import { NotificationNatsApi } from './notification/notification.natsApi'
+import { AppConfigsNatsApi } from './other/appConfigs.natsApi'
 import { FeedbackNatsApi } from './other/feedback.natsApi'
 import { GologinNatsApi } from './other/gologin.natsApi'
 import { PaymentNatsApi } from './payment/payment.natsApi'
@@ -26,9 +27,11 @@ import { ChannelSkKeyNatsApi } from './plat/skKeyNatsApi.natsApi'
 import { PlatTiktokNatsApi } from './plat/tiktok.natsApi'
 import { PlatTwitterNatsApi } from './plat/twitter.natsApi'
 import { PlatYoutubeNatsApi } from './plat/youtube.natsApi'
+import { StatisticsNatsApi } from './statistics/statistics.natsApi'
 import { TaskMaterialNatsApi } from './task/material.natsApi'
 import { TaskNatsApi } from './task/task.natsApi'
 import { UserTaskNatsApi } from './task/user-task.natsApi'
+import { UserPointsNatsApi } from './user/points.natsApi'
 import { UserNatsApi } from './user/user.natsApi'
 import { UserVipNatsApi } from './user/vip.natsApi'
 
@@ -49,10 +52,6 @@ import { UserVipNatsApi } from './user/vip.natsApi'
     ]),
   ],
   providers: [
-    {
-      provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
-    },
     NatsService,
     AccountNatsApi,
     AccountGroupNatsApi,
@@ -67,6 +66,7 @@ import { UserVipNatsApi } from './user/vip.natsApi'
     MaterialNatsApi,
     MediaNatsApi,
     UserVipNatsApi,
+    UserPointsNatsApi,
     PlatWxGzhNatsApi,
     PlatPublishNatsApi,
     PlatPinterestNatsApi,
@@ -81,6 +81,10 @@ import { UserVipNatsApi } from './user/vip.natsApi'
     InteractNatsApi,
     ChannelSkKeyNatsApi,
     FingerprintNatsApi,
+    StatisticsNatsApi,
+    AppConfigsNatsApi,
+    ReplyCommentRecordNatsApi,
+    InteractionRecordNatsApi,
   ],
   exports: [
     NatsService,
@@ -98,6 +102,7 @@ import { UserVipNatsApi } from './user/vip.natsApi'
     MaterialNatsApi,
     MediaNatsApi,
     UserVipNatsApi,
+    UserPointsNatsApi,
     PlatWxGzhNatsApi,
     PlatPublishNatsApi,
     PlatPinterestNatsApi,
@@ -111,6 +116,10 @@ import { UserVipNatsApi } from './user/vip.natsApi'
     DataCubeNatsApi,
     InteractNatsApi,
     ChannelSkKeyNatsApi,
+    StatisticsNatsApi,
+    AppConfigsNatsApi,
+    ReplyCommentRecordNatsApi,
+    InteractionRecordNatsApi,
   ],
 })
 export class NatsModule {}

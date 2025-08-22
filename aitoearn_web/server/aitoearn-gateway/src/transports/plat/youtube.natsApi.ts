@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common'
-import { NatsService } from 'src/transports/nats.service'
 import { NatsApi } from '../api'
+import { BaseNatsApi } from '../base.natsApi'
 import { AccessToken } from '../channel/bilibili.common'
 
 @Injectable()
-export class PlatYoutubeNatsApi {
-  constructor(private readonly natsService: NatsService) {}
-
+export class PlatYoutubeNatsApi extends BaseNatsApi {
   /**
    * 获取授权页面URL
+   * @param userId
    * @param mail
+   * @param type
+   * @param prefix
    * @returns
    */
   async getAuthUrl(
@@ -18,7 +19,7 @@ export class PlatYoutubeNatsApi {
     type: 'pc' | 'h5',
     prefix?: string,
   ) {
-    const res = await this.natsService.sendMessage<string>(
+    const res = await this.sendMessage<string>(
       NatsApi.plat.youtube.authUrl,
       {
         userId,
@@ -33,7 +34,8 @@ export class PlatYoutubeNatsApi {
 
   /**
    * 创建账号
-   * @param mail
+   * @param data
+   * @param prefix
    * @returns
    */
   async setAccessToken(
@@ -44,7 +46,7 @@ export class PlatYoutubeNatsApi {
     },
     prefix?: string,
   ) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.plat.youtube.setAccessToken,
       data,
       prefix,
@@ -59,7 +61,7 @@ export class PlatYoutubeNatsApi {
    * @returns
    */
   async getAccountAuthInfo(accountId: string) {
-    const res = await this.natsService.sendMessage<AccessToken | null>(
+    const res = await this.sendMessage<AccessToken | null>(
       NatsApi.plat.youtube.getAccountAuthInfo,
       {
         accountId,
@@ -72,11 +74,10 @@ export class PlatYoutubeNatsApi {
   /**
    * 创建账号并设置授权Token
    * @param taskId 任务ID
-   * @param data 授权数据
    * @returns
    */
   async getAuthInfo(taskId: string) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.getAuthInfo,
       {
         taskId,
@@ -92,7 +93,7 @@ export class PlatYoutubeNatsApi {
    * @returns
    */
   async isAuthorized(accountId: string) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.plat.youtube.isAuthorized,
       {
         accountId,
@@ -108,7 +109,7 @@ export class PlatYoutubeNatsApi {
    * @returns
    */
   async refreshToken(accountId: string) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.plat.youtube.refreshToken,
       {
         accountId,
@@ -130,7 +131,7 @@ export class PlatYoutubeNatsApi {
     id?: string,
     regionCode?: string,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.getVideoCategories,
       {
         accountId,
@@ -138,8 +139,6 @@ export class PlatYoutubeNatsApi {
         regionCode,
       },
     )
-    // console.log('----------');
-    // console.log(res);
     return res
   }
 
@@ -160,7 +159,7 @@ export class PlatYoutubeNatsApi {
     maxResults?: number,
     pageToken?: string,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.getVideosList,
       {
         accountId,
@@ -199,7 +198,7 @@ export class PlatYoutubeNatsApi {
     categoryId?: string,
     publishAt?: string,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.uploadVideo,
       {
         accountId,
@@ -260,7 +259,7 @@ export class PlatYoutubeNatsApi {
 
     console.log('实际发送的NATS负载:', JSON.stringify(payload))
 
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.initVideoUpload,
       payload,
     )
@@ -282,7 +281,7 @@ export class PlatYoutubeNatsApi {
     uploadToken: string,
     partNumber: number,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.uploadVideoPart,
       {
         accountId,
@@ -322,7 +321,7 @@ export class PlatYoutubeNatsApi {
 
     console.log('实际发送的NATS负载:', JSON.stringify(payload))
 
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.videoComplete,
       payload,
     )
@@ -346,7 +345,7 @@ export class PlatYoutubeNatsApi {
     maxResults?: number,
     pageToken?: string,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.getCommentsList,
       {
         accountId,
@@ -367,7 +366,7 @@ export class PlatYoutubeNatsApi {
     videoId: string,
     textOriginal: string,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.insertCommentThreads,
       {
         accountId,
@@ -391,7 +390,7 @@ export class PlatYoutubeNatsApi {
     order?: string,
     searchTerms?: string,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.getCommentThreadsList,
       {
         accountId,
@@ -414,7 +413,7 @@ export class PlatYoutubeNatsApi {
     parentId: string,
     textOriginal: string,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.insertComment,
       {
         accountId,
@@ -432,7 +431,7 @@ export class PlatYoutubeNatsApi {
     parentId: string,
     textOriginal: string,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.updateComment,
       {
         accountId,
@@ -446,7 +445,7 @@ export class PlatYoutubeNatsApi {
 
   // 删除评论
   async deleteComment(accountId: string, id: string) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.deleteComment,
       {
         accountId,
@@ -464,7 +463,7 @@ export class PlatYoutubeNatsApi {
     moderationStatus?: string,
     banAuthor?: boolean,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.setModerationStatusComments,
       {
         accountId,
@@ -479,7 +478,7 @@ export class PlatYoutubeNatsApi {
 
   // 对视频点赞、踩
   async setVideoRate(accountId: string, id: string, rating: string) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.setVideoRate,
       {
         accountId,
@@ -493,7 +492,7 @@ export class PlatYoutubeNatsApi {
 
   // 获取视频的点赞、踩数
   async getVideoRate(accountId: string, id: string) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.getVideoRate,
       {
         accountId,
@@ -506,7 +505,7 @@ export class PlatYoutubeNatsApi {
 
   // 删除视频
   async deleteVideo(accountId: string, id: string) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.deleteVideo,
       {
         accountId,
@@ -530,7 +529,7 @@ export class PlatYoutubeNatsApi {
     publishAt?: string,
     recordingDate?: string,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.updateVideo,
       {
         accountId,
@@ -556,7 +555,7 @@ export class PlatYoutubeNatsApi {
     description?: string,
     privacyStatus?: string,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.createPlaylist,
       {
         accountId,
@@ -578,7 +577,7 @@ export class PlatYoutubeNatsApi {
     maxResults?: number,
     pageToken?: string,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.getPlayList,
       {
         accountId,
@@ -600,7 +599,7 @@ export class PlatYoutubeNatsApi {
     title: string,
     description?: string,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.updatePlaylist,
       {
         accountId,
@@ -615,7 +614,7 @@ export class PlatYoutubeNatsApi {
 
   // 删除播放列表
   async deletePlaylist(accountId: string, id: string) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.deletePlaylist,
       {
         accountId,
@@ -636,7 +635,7 @@ export class PlatYoutubeNatsApi {
     startAt?: string,
     endAt?: string,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.insertPlayListItems,
       {
         accountId,
@@ -661,7 +660,7 @@ export class PlatYoutubeNatsApi {
     pageToken?: string,
     videoId?: string,
   ) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       code: number
       message: string
       data: any
@@ -688,7 +687,7 @@ export class PlatYoutubeNatsApi {
     startAt?: string,
     endAt?: string,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.updatePlayListItems,
       {
         accountId,
@@ -707,7 +706,7 @@ export class PlatYoutubeNatsApi {
 
   // 删除播放列表项
   async deletePlayListItems(accountId: string, id: string) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       code: number
       message: string
       data: any
@@ -729,7 +728,7 @@ export class PlatYoutubeNatsApi {
     maxResults?: number,
     pageToken?: string,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.getChannelsList,
       {
         accountId,
@@ -752,7 +751,7 @@ export class PlatYoutubeNatsApi {
     id?: string,
     mine?: boolean,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.youtube.getChannelsSectionsList,
       {
         accountId,

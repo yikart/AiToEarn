@@ -12,7 +12,7 @@ import {
  * @LastEditors: white
  * @Description: 用户
  */
-import { Country, Currency, SourceType } from '@/libs/pinterest/comment'
+import { Country, Currency, SourceType } from '@/libs/pinterest/common'
 
 export class CreateAccountBodyDto {
   @IsString({ message: '国家' })

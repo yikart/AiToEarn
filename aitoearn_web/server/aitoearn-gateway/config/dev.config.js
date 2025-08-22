@@ -11,19 +11,19 @@ const {
   NATS_PASSWORD,
 } = process.env
 
-// 添加 AWS 凭证环境变量
-const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } = process.env;
+const { 
+  MONGODB_USERNAME,
+  MONGODB_PASSWORD,
+  CLOUDWATCH_ACCESS_KEY_ID,
+  CLOUDWATCH_SECRET_ACCESS_KEY,
+  S3_ACCESS_KEY_ID,
+  S3_SECRET_ACCESS_KEY,
+  MAIL_PASSWORD,
+  AI_QWEN_KEY,
+  JWT_SECRET
+} = process.env
 
-// 添加邮件认证环境变量
-const { MAIL_USER, MAIL_PASS } = process.env;
-
-// 添加 Qwen API 密钥环境变量
-const { QWEN_API_KEY } = process.env;
-
-// 添加 JWT 密钥环境变量
-const { JWT_SECRET } = process.env;
-
-module.exports = {  
+module.exports = {
   port: 7000,
   enableBadRequestDetails: true,
   docs: {
@@ -38,8 +38,8 @@ module.exports = {
     cloudWatch: {
       enable: true,
       region: 'ap-southeast-1',
-      accessKeyId: AWS_ACCESS_KEY_ID,
-      secretAccessKey: AWS_SECRET_ACCESS_KEY,
+      accessKeyId: CLOUDWATCH_ACCESS_KEY_ID,
+      secretAccessKey: CLOUDWATCH_SECRET_ACCESS_KEY,
       group: 'aitoearn-apps',
       prefix: 'dev',
     },
@@ -52,7 +52,7 @@ module.exports = {
     connectTimeout: 10000,
   },
   mongodb: {
-    uri: `mongodb://root:yikart%402025@dev.aitoearn.ai:27017/aitoearn?authSource=admin&directConnection=true`,
+    uri: `mongodb://${MONGODB_USERNAME}:${encodeURIComponent(MONGODB_PASSWORD)}@dev.x.ai:27017/aitoearn?authSource=admin&directConnection=true`,
     dbName: 'aitoearn',
   },
   nats: {
@@ -62,44 +62,51 @@ module.exports = {
     pass: NATS_PASSWORD,
     prefix: 'dev',
   },
+
+  // 邮件配置
   mail: {
     transport: {
-      host: 'smtp.feishu.cn',
+      host: 'smtp.x.cn',
       port: 587,
       secure: false,
       auth: {
-        user: MAIL_USER,
-        pass: MAIL_PASS,
+        user: 'hello@x.ai',
+        pass: MAIL_PASSWORD,
       },
     },
     defaults: {
-      from: 'hello@aiearn.ai',
+      from: 'hello@x.ai',
     },
   },
 
   awsS3: {
     region: 'ap-southeast-1',
-    accessKeyId: AWS_ACCESS_KEY_ID,
-    secretAccessKey: AWS_SECRET_ACCESS_KEY,
-    bucketName: 'aitoearn',
+    accessKeyId: S3_ACCESS_KEY_ID,
+    secretAccessKey: S3_SECRET_ACCESS_KEY,
+    bucketName: 'x',
   },
   payment: {
-    successfulCallback: 'https://dev.aitoearn.ai',
+    successfulCallback: 'https://dev.x.ai',
   },
   pinterest: {
     redirect_url: '/en/pinterest',
   },
   ai: {
-    qwenKey: QWEN_API_KEY,
+    qwenKey: AI_QWEN_KEY,
   },
+
+  // JWT 配置
   jwt: {
     secret: JWT_SECRET,
     expiresIn: '30d',
   },
+
   tms: {
 
   },
+
+  // 环境配置
   environment: 'development',
-  mailBackHost: 'https://dev.aitoearn.ai',
-  channelAuthBackUrl: 'https://dev.aitoearn.ai/en/accounts',
+  mailBackHost: 'https://x.ai',
+  channelAuthBackUrl: 'https://x.ai/en/accounts',
 }

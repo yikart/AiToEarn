@@ -5,16 +5,18 @@
  * @LastEditors: nevin
  * @Description: 发布
  */
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common'
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { PlatPublishNatsApi } from '@transports/plat/publish.natsApi'
 import { plainToInstance } from 'class-transformer'
 import { GetToken } from '@/auth/auth.guard'
 import { TokenInfo } from '@/auth/interfaces/auth.interfaces'
+import { TableDto } from '@/common/dto/table.dto'
 import { PublishRecordItemDto } from './dto/publish-response.dto'
 import {
   CreatePublishDto,
   CreatePublishRecordDto,
+  PublishDayInfoListFiltersDto,
   PubRecordListFilterDto,
   UpdatePublishRecordTimeDto,
 } from './dto/publish.dto'
@@ -95,5 +97,21 @@ export class PublishController {
   @Post('nowPubTask/:id')
   async nowPubTask(@GetToken() token: TokenInfo, @Param('id') id: string) {
     return this.platPublishNatsApi.nowPubTask(id)
+  }
+
+  @ApiOperation({ summary: '获取发布信息数据' })
+  @Get('publishInfo/data')
+  async publishInfoData(@GetToken() token: TokenInfo) {
+    return this.publishService.publishInfoData(token.id)
+  }
+
+  @ApiOperation({ summary: '获取每天发布信息数据列表' })
+  @Get('publishDayInfo/list/:pageNo/:pageSize')
+  async publishDataInfoList(
+    @GetToken() token: TokenInfo,
+    @Param() param: TableDto,
+    @Query() query: PublishDayInfoListFiltersDto,
+  ) {
+    return this.publishService.publishDataInfoList(token.id, query, param)
   }
 }

@@ -7,7 +7,7 @@ import { AccountService } from '@/core/account/account.service'
 import { RedisService } from '@/libs'
 import { KwaiAccessTokenResponse, KwaiVideoPubParams } from '@/libs/kwai/kwaiApi.interfaces'
 import { KwaiApiService } from '@/libs/kwai/kwaiApi.service'
-import { AccountType, NewAccount } from '@/transports/account/common'
+import { AccountStatus, AccountType, NewAccount } from '@/transports/account/common'
 
 @Injectable()
 export class KwaiService {
@@ -15,7 +15,7 @@ export class KwaiService {
     private readonly kwaiApiService: KwaiApiService,
     private readonly redisService: RedisService,
     private readonly accountService: AccountService,
-  ) {}
+  ) { }
 
   // 根据accountID获取 AccessToken
   async getAccountTokenInfo(accountId: string) {
@@ -124,25 +124,31 @@ export class KwaiService {
       cacheKey,
     )
     if (!taskInfo || taskInfo.status !== 0 || !taskInfo.data)
-      return null
+      return { status: 0, message: '任务不存在或已完成' }
 
     // 延长授权时间
     void this.redisService.setPexire(cacheKey, 60 * 3)
 
-    const account = await this.addKwaiAccount(code, taskInfo.data.userId)
-    if (account) {
-      // 更新任务信息
-      taskInfo.status = 1
-      taskInfo.data['accountId'] = account.id
-      await this.redisService.setKey<AuthTaskInfo<BilibiliAuthInfo>>(
-        cacheKey,
-        taskInfo,
-        60 * 3,
-      )
-      return account
+    try {
+      const account = await this.addKwaiAccount(code, taskInfo.data.userId)
+      if (account) {
+        // 更新任务信息
+        taskInfo.status = 1
+        taskInfo.data['accountId'] = account.id
+        await this.redisService.setKey<AuthTaskInfo<BilibiliAuthInfo>>(
+          cacheKey,
+          taskInfo,
+          60 * 3,
+        )
+        return { status: 1, message: '添加账号成功', accountId: account.id }
+      }
+      else {
+        return { status: 0, message: '添加账号失败' }
+      }
     }
-    else {
-      return null
+    catch (error) {
+      Logger.error('createAccountAndSetAccessToken error:', error)
+      return { status: 0, message: `添加账号失败: ${error.message}` }
     }
   }
 
@@ -178,6 +184,7 @@ export class KwaiService {
       account: accountTokenInfo.open_id,
       avatar: kwaiUserInfo.bigHead,
       nickname: kwaiUserInfo.name,
+      status: AccountStatus.NORMAL,
     })
 
     const accountInfo = await this.accountService.createAccount(

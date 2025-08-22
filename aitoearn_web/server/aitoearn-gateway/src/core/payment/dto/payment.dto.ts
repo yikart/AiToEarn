@@ -18,6 +18,7 @@ import {
 import {
   ICheckoutMode,
   ICheckoutStatus,
+  IFlagTrialPeriodDays,
   IMetadata,
   IPayment,
   IWebhookType,
@@ -69,6 +70,12 @@ export class CheckoutBodyDto {
   @Expose()
   readonly mode: ICheckoutMode
 
+  @ApiProperty({ title: '订阅模式下是否给七天免费试用时长， 0 - 不给，   1-给', enum: IFlagTrialPeriodDays })
+  @IsNumber({}, { message: '订阅模式下是否给七天免费试用时长， 0 - 不给，   1-给' })
+  @Expose()
+  @IsOptional()
+  readonly flagTrialPeriodDays: IFlagTrialPeriodDays = IFlagTrialPeriodDays.false
+
   @ApiProperty({ title: 'aitoearn订单信息', required: false })
   @ValidateNested()
   @Type(() => MetadataDto)
@@ -76,6 +83,7 @@ export class CheckoutBodyDto {
   @IsOptional()
   metadata: MetadataDto
 }
+
 export class DiscountsDto {
   @IsString({ message: '优惠券id' })
   @IsOptional()

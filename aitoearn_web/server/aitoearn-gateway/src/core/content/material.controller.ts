@@ -36,18 +36,6 @@ export class MaterialController {
   ) {}
 
   @ApiOperation({
-    summary: '初始化草稿',
-    description: '初始化草稿',
-  })
-  @Post('default')
-  async createDefault(
-    @GetToken() token: TokenInfo,
-  ) {
-    const res = await this.materialNatsApi.createDefault(token.id)
-    return res
-  }
-
-  @ApiOperation({
     summary: '创建草稿',
     description: '创建草稿',
   })

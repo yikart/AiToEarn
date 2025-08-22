@@ -1,21 +1,41 @@
 const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = process.env;
 const { MONGODB_HOST, MONGODB_PORT, MONGODB_USERNAME, MONGODB_PASSWORD }
   = process.env;
+
 const { NATS_HOST, NATS_PORT, NATS_USERNAME, NATS_PASSWORD } = process.env;
-const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } = process.env;
-const { BILIBILI_ID, BILIBILI_SECRET } = process.env;
-const { KWAI_ID, KWAI_SECRET } = process.env;
-const { PINTEREST_ID, PINTEREST_SECRET, PINTEREST_TEST_AUTH } = process.env;
-const { TIKTOK_CLIENT_ID, TIKTOK_CLIENT_SECRET } = process.env;
-const { TWITTER_CLIENT_ID, TWITTER_CLIENT_SECRET } = process.env;
-const { META_FACEBOOK_CLIENT_ID, META_FACEBOOK_CLIENT_SECRET, META_FACEBOOK_CONFIG_ID } = process.env;
-const { META_THREADS_CLIENT_ID, META_THREADS_CLIENT_SECRET } = process.env;
-const { META_INSTAGRAM_CLIENT_ID, META_INSTAGRAM_CLIENT_SECRET } = process.env;
-const { WX_PLAT_ID, WX_PLAT_SECRET, WX_PLAT_TOKEN, WX_PLAT_ENCODING_AES_KEY } = process.env;
-const { MY_WX_PLAT_SECRET, MY_WX_PLAT_ID } = process.env;
-const { YOUTUBE_ID, YOUTUBE_SECRET } = process.env;
-// 添加 Google 配置环境变量
-const { GOOGLE_ID, GOOGLE_SECRET, GOOGLE_AUTH_BACK_HOST } = process.env;
+
+// 新增环境变量定义
+const { 
+  CLOUDWATCH_ACCESS_KEY_ID,
+  CLOUDWATCH_SECRET_ACCESS_KEY,
+  S3_ACCESS_KEY_ID,
+  S3_SECRET_ACCESS_KEY,
+  BILIBILI_SECRET,
+  KWAI_SECRET,
+  PINTEREST_SECRET,
+  TIKTOK_CLIENT_SECRET,
+  TWITTER_CLIENT_SECRET,
+  META_FACEBOOK_CLIENT_SECRET,
+  META_THREADS_CLIENT_SECRET,
+  META_INSTAGRAM_CLIENT_SECRET,
+  WXPLAT_SECRET,
+  WXPLAT_ENCODING_AES_KEY,
+  YOUTUBE_SECRET,
+  // 新增Google OAuth相关环境变量
+  GOOGLE_OAUTH_CLIENT_ID,
+  GOOGLE_OAUTH_CLIENT_SECRET,
+  GOOGLE_AUTH_BACK_HOST,
+  BILIBILI_AUTH_BACK_HOST,
+  KWAI_AUTH_BACK_HOST,
+  PINTEREST_AUTH_BACK_HOST,
+  TIKTOK_REDIRECT_URI,
+  TWITTER_REDIRECT_URI,
+  META_FACEBOOK_REDIRECT_URI,
+  META_THREADS_REDIRECT_URI,
+  META_INSTAGRAM_REDIRECT_URI,
+  WXPLAT_AUTH_BACK_HOST,
+  YOUTUBE_AUTH_BACK_HOST
+} = process.env;
 
 module.exports = {
   port: 7001,
@@ -33,8 +53,8 @@ module.exports = {
     cloudWatch: {
       enable: true,
       region: 'ap-southeast-1',
-      accessKeyId: AWS_ACCESS_KEY_ID,
-      secretAccessKey: AWS_SECRET_ACCESS_KEY,
+      accessKeyId: CLOUDWATCH_ACCESS_KEY_ID,
+      secretAccessKey: CLOUDWATCH_SECRET_ACCESS_KEY,
       group: 'aitoearn-apps',
       prefix: 'dev',
     },
@@ -48,7 +68,7 @@ module.exports = {
   },
   mongodb: {
     uri: `mongodb://${MONGODB_USERNAME}:${encodeURIComponent(MONGODB_PASSWORD)}@${MONGODB_HOST}:${MONGODB_PORT}/`,
-    dbName: 'aitoearn',
+    dbName: 'aitoearn_channel',
   },
   nats: {
     name: 'aitoearn-channel-dev',
@@ -61,10 +81,10 @@ module.exports = {
   },
   awsS3: {
     region: 'ap-southeast-1',
-    accessKeyId: AWS_ACCESS_KEY_ID,
-    secretAccessKey: AWS_SECRET_ACCESS_KEY,
+    accessKeyId: S3_ACCESS_KEY_ID,
+    secretAccessKey: S3_SECRET_ACCESS_KEY,
     bucketName: 'aitoearn',
-    hostUrl: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com',
+    hostUrl: 'https://x.com',
   },
   bullmq: {
     connection: {
@@ -73,74 +93,73 @@ module.exports = {
       password: REDIS_PASSWORD,
       db: 2,
     },
+    prefix: 'dev',
   },
   bilibili: {
-    id: BILIBILI_ID,
+    id: '366126e90baf4f25',
     secret: BILIBILI_SECRET,
-    authBackHost: 'https://dev.aitoearn.ai/baseUrlProxy/plat/bilibili/auth/back',
   },
   google: {
-    id: GOOGLE_ID,
-    secret: GOOGLE_SECRET,
-    authBackHost: GOOGLE_AUTH_BACK_HOST,
+    id: GOOGLE_OAUTH_CLIENT_ID || '',
+    secret: GOOGLE_OAUTH_CLIENT_SECRET || '',
+    authBackHost: GOOGLE_AUTH_BACK_HOST || '',
   },
   kwai: {
-    id: KWAI_ID,
+    id: 'x',
     secret: KWAI_SECRET,
-    authBackHost: 'https://dev.aitoearn.ai/baseUrlProxy/plat/kwai/auth/back',
+    authBackHost: KWAI_AUTH_BACK_HOST,
   },
   pinterest: {
-    id: PINTEREST_ID,
+    id: '1521759',
     secret: PINTEREST_SECRET,
-    authBackHost: 'https://dev.aitoearn.ai/baseUrlProxy/plat/pinterest/authWebhook',
-    baseUrl: 'https://api-sandbox.pinterest.com',
-    test_authorization: PINTEREST_TEST_AUTH,
+    authBackHost: PINTEREST_AUTH_BACK_HOST,
+    baseUrl: 'https://x.com',
   },
   tiktok: {
-    clientId: TIKTOK_CLIENT_ID,
+    clientId: 'x',
     clientSecret: TIKTOK_CLIENT_SECRET,
-    redirectUri: 'https://dev.aitoearn.ai/platcallback/tiktok/auth/callback',
+    redirectUri: TIKTOK_REDIRECT_URI,
   },
   twitter: {
-    clientId: TWITTER_CLIENT_ID,
+    clientId: 'x',
     clientSecret: TWITTER_CLIENT_SECRET,
-    redirectUri: 'https://dev.aitoearn.ai/platcallback/twitter/auth/callback',
+    redirectUri: TWITTER_REDIRECT_URI,
   },
   meta: {
     facebook: {
-      clientId: META_FACEBOOK_CLIENT_ID,
+      clientId: 'x',
       clientSecret: META_FACEBOOK_CLIENT_SECRET,
-      configId: META_FACEBOOK_CONFIG_ID,
-      redirectUri: 'https://dev.aitoearn.ai/api/plat/meta/auth/back',
+      configId: 'x',
+      redirectUri: META_FACEBOOK_REDIRECT_URI,
     },
     threads: {
-      clientId: META_THREADS_CLIENT_ID,
+      clientId: 'x',
       clientSecret: META_THREADS_CLIENT_SECRET,
-      redirectUri: 'https://dev.aitoearn.ai/api/plat/meta/auth/back',
+      redirectUri: META_THREADS_REDIRECT_URI,
     },
     instagram: {
-      clientId: META_INSTAGRAM_CLIENT_ID,
+      clientId: 'x',
       clientSecret: META_INSTAGRAM_CLIENT_SECRET,
-      redirectUri: 'https://dev.aitoearn.ai/api/plat/meta/auth/back',
+      redirectUri: META_INSTAGRAM_REDIRECT_URI,
     },
   },
 
   wxPlat: {
-    id: WX_PLAT_ID,
-    secret: WX_PLAT_SECRET,
-    token: WX_PLAT_TOKEN,
-    encodingAESKey: WX_PLAT_ENCODING_AES_KEY,
-    authBackHost: 'https://dev.aitoearn.ai/platcallback',
+    id: 'x',
+    secret: WXPLAT_SECRET,
+    token: 'aitoearn',
+    encodingAESKey: WXPLAT_ENCODING_AES_KEY,
+    authBackHost: WXPLAT_AUTH_BACK_HOST,
   },
   myWxPlat: {
-    id: MY_WX_PLAT_ID,
-    secret: MY_WX_PLAT_SECRET,
-    hostUrl: 'https://mcp.aitoearn.cn',
+    id: 'dev',
+    secret: WXPLAT_SECRET,
+    hostUrl: 'https://x.ai',
   },
   youtube: {
-    id: YOUTUBE_ID,
+    id: 'x',
     secret: YOUTUBE_SECRET,
     authBackHost:
-      'https://dev.aitoearn.ai/api/plat/youtube/auth/callback',
+      YOUTUBE_AUTH_BACK_HOST,
   },
 };

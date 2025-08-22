@@ -1,11 +1,12 @@
 // 消息内容类型
 export interface MessageContent {
-  type: 'text' | 'image_url'
+  type: 'text' | 'image_url' | string
   text?: string
   image_url?: {
     url: string
     detail?: 'auto' | 'low' | 'high'
   }
+  [key: string]: unknown
 }
 
 // 聊天消息
@@ -310,9 +311,24 @@ export interface VideoGenerationModel {
   modes: string[]
   sizes: string[]
   durations: number[]
+  supportedParameters: string[]
 }
 
 // 获取模型参数请求接口
 export interface GetModelParamsRequest {
   userId: string
+}
+
+// 对话模型参数接口
+export interface ChatModel {
+  name: string
+  description: string
+  inputModalities: ('text' | 'image' | 'video' | 'audio')[]
+  outputModalities: ('text' | 'image' | 'video' | 'audio')[]
+  pricing: {
+    prompt: string
+    completion: string
+    image: string
+    audio: string
+  }
 }

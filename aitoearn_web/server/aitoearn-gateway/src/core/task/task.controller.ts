@@ -4,7 +4,7 @@ import { GetToken } from '@/auth/auth.guard'
 import { TokenInfo } from '@/auth/interfaces/auth.interfaces'
 import { AcceptTaskDto } from './task.dto'
 import { TaskService } from './task.service'
-import { TaskVo, TotalAmountVo, UserTaskVo } from './task.vo'
+import { TaskWithOpportunityVo, TotalAmountVo, UserTaskVo } from './task.vo'
 
 @ApiTags('task - 任务')
 @Controller('task')
@@ -12,10 +12,10 @@ export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @ApiOperation({ summary: '获取任务信息' })
-  @Get(':id')
-  async getTaskInfo(@Param('id') id: string): Promise<TaskVo> {
-    const result = await this.taskService.getTaskInfo(id)
-    return TaskVo.create(result)
+  @Get('opportunity/:opportunityId')
+  async getTaskInfo(@Param('opportunityId') opportunityId: string): Promise<TaskWithOpportunityVo> {
+    const result = await this.taskService.getTaskInfoByOpportunityId(opportunityId)
+    return TaskWithOpportunityVo.create(result)
   }
 
   @ApiOperation({ summary: '获取进行中任务的金额总数' })

@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common'
-import { NatsService } from 'src/transports/nats.service'
 import { NatsApi } from '../api'
+import { BaseNatsApi } from '../base.natsApi'
 
 @Injectable()
-export class PlatMetaNatsApi {
-  constructor(private readonly natsService: NatsService) {}
-
+export class PlatMetaNatsApi extends BaseNatsApi {
   async getAuthUrl(userId: string, platform: string) {
-    const res = await this.natsService.sendMessage<string>(
+    console.log('getAuthUrl', userId, platform)
+    const res = await this.sendMessage<any>(
       NatsApi.plat.meta.authUrl,
       {
         userId,
@@ -18,7 +17,7 @@ export class PlatMetaNatsApi {
   }
 
   async getAuthInfo(taskId: string) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.meta.getAuthInfo,
       {
         taskId,
@@ -29,7 +28,7 @@ export class PlatMetaNatsApi {
   }
 
   async getFacebookPages(userId: string) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.meta.getFacebookPages,
       {
         userId,
@@ -42,7 +41,7 @@ export class PlatMetaNatsApi {
     userId: string,
     pageIds: string[],
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.meta.selectFacebookPages,
       {
         userId,
@@ -56,7 +55,7 @@ export class PlatMetaNatsApi {
     code: string,
     state: string,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.meta.createAccountAndSetAccessToken,
       {
         code,
@@ -68,14 +67,12 @@ export class PlatMetaNatsApi {
 
   async getFacebookPagePublishedPosts(
     userId: string,
-    pageId: string,
     query: any,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.meta.getFacebookPagePublishedPosts,
       {
         userId,
-        pageId,
         query,
       },
     )
@@ -84,14 +81,102 @@ export class PlatMetaNatsApi {
 
   async getFacebookPageInsights(
     userId: string,
-    pageId: string,
     query: any,
   ) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.meta.getFacebookPageInsights,
       {
         userId,
-        pageId,
+        query,
+      },
+    )
+    return res
+  }
+
+  async getFacebookPostInsights(
+    userId: string,
+    postId: string,
+    query: any,
+  ) {
+    const res = await this.sendMessage<any>(
+      NatsApi.plat.meta.getFacebookPostInsights,
+      {
+        userId,
+        postId,
+        query,
+      },
+    )
+    return res
+  }
+
+  async getInstagramAccountInfo(
+    userId: string,
+    query: any,
+  ) {
+    const res = await this.sendMessage<any>(
+      NatsApi.plat.meta.getInstagramAccountInfo,
+      {
+        userId,
+        query,
+      },
+    )
+    return res
+  }
+
+  async getInstagramAccountInsights(
+    userId: string,
+    query: any,
+  ) {
+    const res = await this.sendMessage<any>(
+      NatsApi.plat.meta.getInstagramAccountInsights,
+      {
+        userId,
+        query,
+      },
+    )
+    return res
+  }
+
+  async getInstagramPostInsights(
+    userId: string,
+    postId: string,
+    query: any,
+  ) {
+    const res = await this.sendMessage<any>(
+      NatsApi.plat.meta.getInstagramPostInsights,
+      {
+        userId,
+        postId,
+        query,
+      },
+    )
+    return res
+  }
+
+  async getThreadsAccountInsights(
+    userId: string,
+    query: any,
+  ) {
+    const res = await this.sendMessage<any>(
+      NatsApi.plat.meta.getThreadsAccountInsights,
+      {
+        userId,
+        query,
+      },
+    )
+    return res
+  }
+
+  async getThreadsPostInsights(
+    userId: string,
+    postId: string,
+    query: any,
+  ) {
+    const res = await this.sendMessage<any>(
+      NatsApi.plat.meta.getThreadsPostInsights,
+      {
+        userId,
+        postId,
         query,
       },
     )

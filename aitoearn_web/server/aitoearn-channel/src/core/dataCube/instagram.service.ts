@@ -1,12 +1,24 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 import { InstagramInsightsRequest, InstagramMediaInsightsRequest } from '@/libs/instagram/instagram.interfaces';
+import { AccountNatsApi } from '@/transports/account/account.natsApi';
+import { AccountType } from '@/transports/account/common';
 import { InstagramService } from '../plat/meta/instagram.service';
 import { DataCubeBase } from './data.base';
 
 @Injectable()
 export class InstagramDataService extends DataCubeBase {
-  constructor(readonly instagramService: InstagramService) {
+  constructor(readonly instagramService: InstagramService, readonly accountNatsApi: AccountNatsApi) {
     super();
+  }
+
+  @OnEvent(`account.create.${AccountType.INSTAGRAM}`)
+  async accountPortraitReport(accountId: string) {
+    const res = await this.getAccountDataCube(accountId)
+    this.accountNatsApi.updateAccountStatistics(accountId, {
+      workCount: res.arcNum,
+      fansCount: res.fensNum,
+    })
   }
 
   async getAccountDataCube(accountId: string) {

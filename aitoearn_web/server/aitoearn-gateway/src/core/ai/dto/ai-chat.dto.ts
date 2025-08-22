@@ -10,8 +10,21 @@ const messageContentSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('image_url'),
     image_url: z.object({
-      url: z.string().url().describe('图片链接'),
+      url: z.url().describe('图片链接'),
       detail: z.enum(['auto', 'low', 'high']).optional().describe('图片处理质量'),
+    }),
+  }),
+  z.object({
+    type: z.literal('video_url'),
+    video_url: z.object({
+      url: z.url().describe('图片链接'),
+    }),
+  }),
+  z.object({
+    type: z.literal('input_audio'),
+    input_audio: z.object({
+      data: z.url().describe('图片链接'),
+      format: z.string(),
     }),
   }),
 ])

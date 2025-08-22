@@ -68,19 +68,8 @@ export class MetaController {
   }
 
   // Todo: Only allow internal service access
-  @ApiOperation({ summary: '获取指定用户的Facebook Pages' })
-  @Get('facebook/:userId/pages')
-  async getFacebookPagesByUserId(
-    @GetToken() token: TokenInfo,
-    @Param('userId') userId: string,
-  ) {
-    const res = await this.platMetaNatsApi.getFacebookPages(userId)
-    return res
-  }
-
-  // Todo: Only allow internal service access
   @ApiOperation({ summary: '获取Facebook Page的已发布帖子列表' })
-  @Get('facebook/:accountId/:pageId/published_posts')
+  @Get('facebook/:accountId/published_posts')
   async getFacebookPagePublishedPosts(
     @GetToken() token: TokenInfo,
     @Param('accountId') accountId: string,
@@ -89,20 +78,86 @@ export class MetaController {
   ) {
     return await this.platMetaNatsApi.getFacebookPagePublishedPosts(
       accountId,
-      pageId,
       query,
     )
   }
 
   // Todo: Only allow internal service access
   @ApiOperation({ summary: '获取Facebook Page的Insights数据' })
-  @Get('facebook/:accountId/:pageId/insights')
+  @Get('facebook/:accountId/insights')
   async getFacebookPageInsights(
     @GetToken() token: TokenInfo,
     @Param('accountId') accountId: string,
-    @Param('pageId') pageId: string,
     @Query() query: any,
   ) {
-    return await this.platMetaNatsApi.getFacebookPageInsights(accountId, pageId, query)
+    return await this.platMetaNatsApi.getFacebookPageInsights(accountId, query)
+  }
+
+  @ApiOperation({ summary: '获取Facebook Page的Insights数据' })
+  @Get('facebook/:accountId/:postId/insights')
+  async getFacebookPostInsights(
+    @GetToken() token: TokenInfo,
+    @Param('accountId') accountId: string,
+    @Param('postId') postId: string,
+    @Query() query: any,
+  ) {
+    return await this.platMetaNatsApi.getFacebookPostInsights(accountId, postId, query)
+  }
+
+  // Todo: Only allow internal service access
+  @ApiOperation({ summary: '获取Instagram Account的Insights数据' })
+  @Get('instagram/:accountId')
+  async getInstagramAccountInfo(
+    @GetToken() token: TokenInfo,
+    @Param('accountId') accountId: string,
+    @Query() query: any,
+  ) {
+    return await this.platMetaNatsApi.getInstagramAccountInfo(accountId, query)
+  }
+
+  // Todo: Only allow internal service access
+  @ApiOperation({ summary: '获取Instagram Account的Insights数据' })
+  @Get('instagram/:accountId/insights')
+  async getInstagramAccountInsights(
+    @GetToken() token: TokenInfo,
+    @Param('accountId') accountId: string,
+    @Query() query: any,
+  ) {
+    return await this.platMetaNatsApi.getInstagramAccountInsights(accountId, query)
+  }
+
+  // Todo: Only allow internal service access
+  @ApiOperation({ summary: 'Instagram Post的Insights数据' })
+  @Get('instagram/:accountId/:postId/insights')
+  async getInstagramPostInsights(
+    @GetToken() token: TokenInfo,
+    @Param('accountId') accountId: string,
+    @Param('postId') postId: string,
+    @Query() query: any,
+  ) {
+    return await this.platMetaNatsApi.getInstagramPostInsights(accountId, postId, query)
+  }
+
+  // Todo: Only allow internal service access
+  @ApiOperation({ summary: 'threads Account的Insights数据' })
+  @Get('threads/:accountId/insights')
+  async getThreadsAccountInsights(
+    @GetToken() token: TokenInfo,
+    @Param('accountId') accountId: string,
+    @Query() query: any,
+  ) {
+    return await this.platMetaNatsApi.getThreadsAccountInsights(accountId, query)
+  }
+
+  // Todo: Only allow internal service access
+  @ApiOperation({ summary: '获取Facebook Page的Insights数据' })
+  @Get('threads/:accountId/:postId/insights')
+  async getThreadsPostInsights(
+    @GetToken() token: TokenInfo,
+    @Param('accountId') accountId: string,
+    @Param('postId') postId: string,
+    @Query() query: any,
+  ) {
+    return await this.platMetaNatsApi.getThreadsPostInsights(accountId, postId, query)
   }
 }

@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common'
 import * as mime from 'mime-types'
 import * as moment from 'moment'
 import { v4 as uuidv4 } from 'uuid'
+import { AppException } from '@/common/exceptions'
 import { ErrHttpBack } from '@/common/filters/httpException.code'
-import { AppHttpException } from '@/common/filters/httpException.filter'
 import { config } from '@/config'
 import { S3Service } from '@/libs/aws-s3/s3.service'
 
@@ -174,7 +174,7 @@ export class FileService {
     }
     catch (error) {
       Logger.error(error)
-      throw new AppHttpException(ErrHttpBack.fail)
+      throw new AppException(ErrHttpBack.fail)
     }
   }
 
@@ -204,7 +204,7 @@ export class FileService {
     }
     catch (error) {
       Logger.error(error)
-      throw new AppHttpException(ErrHttpBack.fail)
+      throw new AppException(ErrHttpBack.fail)
     }
   }
 }

@@ -33,7 +33,7 @@ import { z } from 'zod/v4'
 import { FacebookPostOptions, InstagramPostOptions, ThreadsPostOptions } from '@/transports/channel/meta.common'
 import { WxGzhPublishOption } from '@/transports/channel/wxGzh.common'
 import { YoutubePublishOption } from '@/transports/plat/youtube.common'
-import { PlatOptons, PublishType } from '../common'
+import { PlatOptions, PublishType } from '../common'
 
 class GzhPublishOptionDto implements WxGzhPublishOption {
   @ApiProperty({
@@ -324,7 +324,7 @@ class ThreadsPostOptionsDto implements ThreadsPostOptions {
   readonly topic_tags?: string
 }
 
-class PublishOptionDto implements PlatOptons {
+class PublishOptionDto implements PlatOptions {
   @ApiProperty({
     title: 'B站参数',
     required: false,
@@ -472,7 +472,7 @@ export class CreatePublishDto {
   @IsOptional()
   @Expose()
   topics?: string[]
-  
+
   @ApiProperty({
     title: '其他配置',
     required: false,
@@ -539,14 +539,18 @@ export class PubRecordListFilterDto {
 
 export class UpdatePublishRecordTimeDto {
   @ApiProperty({ title: '数据ID' })
+  @IsString({ message: '数据ID' })
   @Expose()
   id: string
 
-  @ApiProperty({ title: '新的发布时间' })
-  @IsDate({ message: '新的发布时间必须是有效的日期，日期为UTC时间' })
-  @Transform(({ value }) =>
-    value ? value.map((v: string) => new Date(v)) : undefined,
-  )
+  @ApiProperty({ title: '新的发布时间', required: false })
+  @IsDate({ message: '新的发布时间必须是有效的日期，日期为UTC时间\'' })
+  @Transform(({ value }) => {
+    if (!value)
+      return undefined
+    return new Date(value)
+  })
+  @IsOptional()
   @Expose()
   publishTime: Date
 }
@@ -570,3 +574,8 @@ export const createPublishRecordSchema = z.object({
   option: z.any(),
 })
 export class CreatePublishRecordDto extends createZodDto(createPublishRecordSchema) {}
+
+export const PublishDayInfoListFiltersSchema = z.object({
+  time: z.tuple([z.date(), z.date()]).optional(),
+})
+export class PublishDayInfoListFiltersDto extends createZodDto(PublishDayInfoListFiltersSchema) {}

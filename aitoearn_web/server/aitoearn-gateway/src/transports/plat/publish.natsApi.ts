@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common'
-import { NewPublishData, NewPublishRecordData, PlatOptons } from 'src/core/plat/common'
-import { NatsService } from 'src/transports/nats.service'
+import { NewPublishData, NewPublishRecordData, PlatOptions } from 'src/core/plat/common'
+import { TableDto } from '@/common/dto/table.dto'
+import { PublishDayInfoListFiltersDto } from '@/core/plat/dto/publish.dto'
 import { AccountType } from '../account/comment'
 import { NatsApi } from '../api'
+import { BaseNatsApi } from '../base.natsApi'
 import { PubType } from '../content/common'
-import { PublishRecordItem } from './types/publish.interfaces'
+import { PublishDayInfo, PublishRecordItem } from './types/publish.interfaces'
 
 export enum PublishStatus {
   FAIL = -1, // 发布失败
@@ -14,16 +16,14 @@ export enum PublishStatus {
 }
 
 @Injectable()
-export class PlatPublishNatsApi {
-  constructor(private readonly natsService: NatsService) {}
-
+export class PlatPublishNatsApi extends BaseNatsApi {
   /**
    * 创建发布
    * @returns
    * @param newData
    */
-  async create(newData: NewPublishData<PlatOptons>) {
-    const res = await this.natsService.sendMessage<boolean>(
+  async create(newData: NewPublishData<PlatOptions>) {
+    const res = await this.sendMessage<boolean>(
       NatsApi.plat.publish.create,
       newData,
     )
@@ -37,7 +37,7 @@ export class PlatPublishNatsApi {
    * @param id
    */
   async run(id: string) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.plat.publish.run,
       { id },
     )
@@ -51,7 +51,7 @@ export class PlatPublishNatsApi {
    * @param newData
    */
   async createRecord(newData: NewPublishRecordData) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.plat.publish.createRecord,
       newData,
     )
@@ -68,7 +68,7 @@ export class PlatPublishNatsApi {
     status?: PublishStatus
     time?: [Date, Date]
   }) {
-    return await this.natsService.sendMessage<{
+    return await this.sendMessage<{
       totalCount: number
       list: PublishRecordItem[]
     }>(NatsApi.plat.publish.getList, {
@@ -82,7 +82,7 @@ export class PlatPublishNatsApi {
     userId: string
     id: string
   }) {
-    return await this.natsService.sendMessage<boolean>(
+    return await this.sendMessage<boolean>(
       NatsApi.plat.publish.changeTime,
       data,
     )
@@ -90,7 +90,7 @@ export class PlatPublishNatsApi {
 
   // 删除发布任务
   async deletePublishRecord(data: { userId: string, id: string }) {
-    return await this.natsService.sendMessage<boolean>(
+    return await this.sendMessage<boolean>(
       NatsApi.plat.publish.delete,
       data,
     )
@@ -98,11 +98,34 @@ export class PlatPublishNatsApi {
 
   // 立即发布任务
   async nowPubTask(id: string) {
-    return await this.natsService.sendMessage<boolean>(
+    return await this.sendMessage<boolean>(
       NatsApi.plat.publish.nowPubTask,
       {
         id,
       },
     )
+  }
+
+  // 获取发布数据信息
+  async getPublishInfoData(userId: string) {
+    return await this.sendMessage<{
+      totalCount: number
+      list: PublishRecordItem[]
+    }>(NatsApi.channel.publish.publishInfo.data, {
+      userId,
+    })
+  }
+
+  async publishDataInfoList(userId: string, data: PublishDayInfoListFiltersDto, page: TableDto) {
+    return await this.sendMessage<{
+      total: number
+      list: PublishDayInfo[]
+    }>(NatsApi.channel.publish.PublishDayInfo.list, {
+      filters: {
+        userId,
+        ...data,
+      },
+      page,
+    })
   }
 }

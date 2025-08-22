@@ -25,6 +25,8 @@ export class GetAuthUrlDto extends UserIdDto {
   @Expose()
   readonly scopes?: string[]
 
+  @IsString()
+  @Expose()
   readonly platform: string // Optional, can be 'facebook', 'instagram', or 'thread'
 }
 

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model, UpdateQuery } from 'mongoose'
 import { TableDto } from '@/common/global/dto/table.dto'
@@ -12,6 +13,7 @@ export class AccountService {
     @InjectModel(Account.name)
     private readonly accountModel: Model<Account>,
     private readonly accountNatsApi: AccountNatsApi,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   /**
@@ -60,6 +62,8 @@ export class AccountService {
       })
       if (natsRes.code)
         throw new Error(natsRes.message)
+      // 触发账户创建或更新事件
+      this.eventEmitter.emit(`account.create.${newOrUpdatedAccount?.type}`, newOrUpdatedAccount?.id)
     }
     catch (error) {
       Logger.error(error)

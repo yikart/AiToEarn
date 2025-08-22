@@ -29,10 +29,6 @@ export class GetAuthInfoDto {
 export class CreateAccountAndSetAccessTokenDto {
   @IsString()
   @Expose()
-  readonly taskId: string
-
-  @IsString()
-  @Expose()
   readonly code: string
 
   @IsString()

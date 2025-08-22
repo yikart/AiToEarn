@@ -1,51 +1,43 @@
 import { createZodDto } from '@common/utils'
+import { taskVoSchema } from '@core/task/task.vo'
 import { z } from 'zod/v4'
+
+export const autoDataVoSchema = z.object({
+  status: z.union([z.literal(-1), z.literal(0), z.literal(1)]).optional(),
+  message: z.string().optional(),
+})
 
 export const userTaskVoSchema = z.object({
   id: z.string(),
-  taskId: z.string(),
-  userId: z.string(),
+  userId: z.any(),
+  taskId: z.any(),
+  accountId: z.string(),
   status: z.string(),
-  accountType: z.string(),
-  uid: z.string(),
-  account: z.string(),
+  keepTime: z.number(),
+  submissionUrl: z.string().optional(),
+  taskMaterialId: z.string().optional(),
+  screenshotUrls: z.array(z.string()).optional(),
+  qrCodeScanResult: z.string().optional(),
+  submissionTime: z.date().optional(),
+  completionTime: z.date().optional(),
+  rejectionReason: z.string().optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
+  isFirstTimeSubmission: z.boolean(),
+  verificationNote: z.string().optional(),
   reward: z.number(),
-  createdAt: z.date(),
-  updatedAt: z.date().optional(),
+  rewardTime: z.date().optional(),
+  verifiedBy: z.any().optional(),
+  autoData: autoDataVoSchema.optional(),
+})
+
+export const userTaskListVoSchema = z.object({
+  list: z.array(userTaskVoSchema),
+  total: z.number(),
+})
+export const userTaskWithTaskVoSchema = userTaskVoSchema.extend({
+  task: taskVoSchema,
 })
 
 export class UserTaskVo extends createZodDto(userTaskVoSchema) {}
-
-export const userTaskWithTaskVoSchema = z.object({
-  id: z.string(),
-  taskId: z.string(),
-  userId: z.string(),
-  status: z.string(),
-  accountType: z.string(),
-  uid: z.string(),
-  account: z.string(),
-  reward: z.number(),
-  createdAt: z.date(),
-  updatedAt: z.date().optional(),
-  task: z
-    .object({
-      id: z.string(),
-      title: z.string(),
-      description: z.string(),
-      type: z.string(),
-      deadline: z.date(),
-      status: z.string(),
-    })
-    .optional(),
-})
-
-export class UserTaskWithTaskVo extends createZodDto(
-  userTaskWithTaskVoSchema,
-) {}
-
-export const userTaskListVoSchema = z.object({
-  list: z.array(userTaskWithTaskVoSchema),
-  total: z.number(),
-})
-
 export class UserTaskListVo extends createZodDto(userTaskListVoSchema) {}
+export class UserTaskWithTaskVo extends createZodDto(userTaskWithTaskVoSchema) {}

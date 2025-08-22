@@ -61,11 +61,11 @@ export interface publicProfileResponse {
   views_count: number
 }
 
-export interface ThreadsPost {
+export interface ThreadsPostItem {
   id: string
 }
 
 export interface ThreadsPostResponse {
-  data: ThreadsPost[],
+  data: ThreadsPostItem[],
   paging: ThreadsPagination
 }

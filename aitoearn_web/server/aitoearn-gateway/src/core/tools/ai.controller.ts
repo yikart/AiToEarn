@@ -20,8 +20,6 @@ import {
 import {
   AdminAiIdDto,
   AdminAiMarkdownDto,
-  AdminFireflycardDto,
-  AdminJmTaskDto,
 } from './dto/aiAdmin.dto'
 
 @ApiTags('AI工具')
@@ -137,33 +135,6 @@ export class AiToolsController {
   }
 
   @ApiOperation({
-    summary: '流光卡片',
-    description: 'AI文字转绚丽卡片图',
-  })
-  @ApiResponse({
-    description: '返回图片地址',
-    type: String,
-  })
-  @Post('fireflycard')
-  async fireflycard(
-    @Body() body: AdminFireflycardDto,
-  ) {
-    // 二进制文件流
-    const res = await this.aiToolsService.fireflycard(
-      body.content,
-      body.temp,
-      body.title,
-    )
-
-    const fileRes = await this.fileService.uploadByStream(res, {
-      path: 'fireflycard',
-      fileType: 'png',
-    })
-
-    return fileRes
-  }
-
-  @ApiOperation({
     summary: '文字转Markdown',
     description: '文字转Markdown',
   })
@@ -188,36 +159,6 @@ export class AiToolsController {
   @Get('markdown/:id')
   async getAiMarkdown(@Param() param: AdminAiIdDto) {
     const res = await this.aiToolsService.getAiMarkdown(param.id)
-    return res
-  }
-
-  @ApiOperation({
-    summary: '即梦文生图',
-    description:
-      '获取即梦文生图任务ID,0e2bdef17755a3f121b608ec8a763f6b,7e90a4c9bb3c6c8b7056267f27395c78',
-  })
-  @ApiResponse({
-    description: '任务ID',
-    type: String,
-  })
-  @Post('jm/task')
-  async upJmImgTask(@Body() body: AdminJmTaskDto) {
-    const res = await this.aiToolsService.upJmImgTask(body)
-
-    return res
-  }
-
-  @ApiOperation({
-    summary: '获取即梦文生图结果',
-    description: '获取即梦文生图结果',
-  })
-  @ApiResponse({
-    description: 'Markdown文本',
-    type: Object,
-  })
-  @Get('jm/task/:id')
-  async getJmImgTaskRes(@Param('id') id: string) {
-    const res = await this.aiToolsService.getJmImgTaskRes(id)
     return res
   }
 }

@@ -5,18 +5,24 @@ export interface TaskDetail {
   type: string
   maxRecruits: number
   currentRecruits: number
-  deadline: Date
+  deadline: string
   reward: number
   status: string
   accountTypes: string[]
   taskData?: {
-    type: string
     targetWorksId?: string
     targetAuthorId?: string
     platform?: string
   }
-  createdAt: Date
-  updatedAt: Date
+  createdAt: string
+  updatedAt: string
+}
+
+export interface TaskWithOpportunityDetail extends TaskDetail {
+  opportunityId: string
+  opportunityStatus: string
+  expiredAt: string
+  accountId: string
 }
 
 export interface TotalAmountResult {
@@ -31,6 +37,7 @@ export interface UserTaskDetail {
   accountType: string
   uid: string
   account: string
+  accountId: string
   reward: number
-  createdAt: Date
+  createdAt: string
 }

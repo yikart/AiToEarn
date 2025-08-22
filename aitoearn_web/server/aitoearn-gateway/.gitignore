@@ -55,3 +55,4 @@ pids
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 package-lock.json
+/config/local.config.js

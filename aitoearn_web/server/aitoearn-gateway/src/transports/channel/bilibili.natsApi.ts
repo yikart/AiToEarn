@@ -1,20 +1,18 @@
 import { Injectable } from '@nestjs/common'
 import { TableDto } from 'src/common/dto/table.dto'
-import { NatsService } from 'src/transports/nats.service'
 import { NatsApi } from '../api'
+import { BaseNatsApi } from '../base.natsApi'
 import { AccessToken, AddArchiveData, ArchiveStatus } from './bilibili.common'
 
 @Injectable()
-export class PlatBilibiliNatsApi {
-  constructor(private readonly natsService: NatsService) {}
-
+export class PlatBilibiliNatsApi extends BaseNatsApi {
   /**
    * 获取账号的授权信息
    * @param accountId
    * @returns
    */
   async getAccountAuthInfo(accountId: string) {
-    const res = await this.natsService.sendMessage<AccessToken | null>(
+    const res = await this.sendMessage<AccessToken | null>(
       NatsApi.plat.bilibili.getAccountAuthInfo,
       {
         accountId,
@@ -31,7 +29,7 @@ export class PlatBilibiliNatsApi {
    * @returns
    */
   async getAuth(userId: string, type: 'pc' | 'h5') {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       url: string
       taskId: string
     }>(NatsApi.plat.bilibili.auth, {
@@ -52,7 +50,7 @@ export class PlatBilibiliNatsApi {
     code: string
     state: string
   }) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       status: 0 | 1
       message?: string
       accountId?: string
@@ -72,7 +70,7 @@ export class PlatBilibiliNatsApi {
    * @returns
    */
   async videoInit(accountId: string, name: string, utype = 0) {
-    const res = await this.natsService.sendMessage<string>(
+    const res = await this.sendMessage<string>(
       NatsApi.plat.bilibili.videoInit,
       {
         accountId,
@@ -98,7 +96,7 @@ export class PlatBilibiliNatsApi {
     uploadToken: string,
     partNumber: number,
   ) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       code: number
       message: string
     }>(NatsApi.plat.bilibili.uploadVideoPart, {
@@ -118,7 +116,7 @@ export class PlatBilibiliNatsApi {
    * @returns
    */
   async videoComplete(accountId: string, uploadToken: string) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       code: number
       message: string
     }>(NatsApi.plat.bilibili.videoComplete, {
@@ -136,7 +134,7 @@ export class PlatBilibiliNatsApi {
    * @returns
    */
   async coverUpload(accountId: string, file: string) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       code: number
       message: string
     }>(NatsApi.plat.bilibili.coverUpload, {
@@ -155,7 +153,7 @@ export class PlatBilibiliNatsApi {
    * @returns
    */
   async uploadLitVideo(accountId: string, file: string, uploadToken: string) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       code: number
       message: string
     }>(NatsApi.plat.bilibili.uploadLitVideo, {
@@ -170,6 +168,8 @@ export class PlatBilibiliNatsApi {
   /**
    * 稿件发布
    * @param userId
+   * @param uploadToken
+   * @param data
    * @returns
    */
   async archiveAddByUtoken(
@@ -177,7 +177,7 @@ export class PlatBilibiliNatsApi {
     uploadToken: string,
     data: AddArchiveData,
   ) {
-    const res = await this.natsService.sendMessage<string>(
+    const res = await this.sendMessage<string>(
       NatsApi.plat.bilibili.archiveAddByUtoken,
       {
         accountId,
@@ -195,7 +195,7 @@ export class PlatBilibiliNatsApi {
    * @returns
    */
   async archiveTypeList(accountId: string) {
-    const res = await this.natsService.sendMessage<string>(
+    const res = await this.sendMessage<string>(
       NatsApi.plat.bilibili.archiveTypeList,
       {
         accountId,
@@ -208,11 +208,10 @@ export class PlatBilibiliNatsApi {
   /**
    * 创建账号并设置授权Token
    * @param taskId 任务ID
-   * @param data 授权数据
    * @returns
    */
   async getAuthInfo(taskId: string) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.bilibili.getAuthInfo,
       {
         taskId,
@@ -234,7 +233,7 @@ export class PlatBilibiliNatsApi {
       status?: ArchiveStatus
     },
   ) {
-    const res = await this.natsService.sendMessage<string>(
+    const res = await this.sendMessage<string>(
       NatsApi.plat.bilibili.archiveList,
       {
         accountId,
@@ -252,7 +251,7 @@ export class PlatBilibiliNatsApi {
    * @returns
    */
   async getUserStat(accountId: string) {
-    const res = await this.natsService.sendMessage<string>(
+    const res = await this.sendMessage<string>(
       NatsApi.plat.bilibili.userStat,
       {
         accountId,
@@ -269,7 +268,7 @@ export class PlatBilibiliNatsApi {
    * @returns
    */
   async getArcStat(accountId: string, resourceId: string) {
-    const res = await this.natsService.sendMessage<string>(
+    const res = await this.sendMessage<string>(
       NatsApi.plat.bilibili.arcStat,
       {
         accountId,
@@ -286,7 +285,7 @@ export class PlatBilibiliNatsApi {
    * @returns
    */
   async getArcIncStat(accountId: string) {
-    const res = await this.natsService.sendMessage<string>(
+    const res = await this.sendMessage<string>(
       NatsApi.plat.bilibili.arcIncStat,
       {
         accountId,

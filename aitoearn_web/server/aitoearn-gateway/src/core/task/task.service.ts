@@ -6,8 +6,8 @@ import { AcceptTaskDto } from './task.dto'
 export class TaskService {
   constructor(private readonly taskNatsApi: TaskNatsApi) {}
 
-  async getTaskInfo(taskId: string) {
-    return await this.taskNatsApi.getTaskInfo(taskId)
+  async getTaskInfoByOpportunityId(opportunityId: string) {
+    return await this.taskNatsApi.getTaskInfoByOpportunityId(opportunityId)
   }
 
   async getTotalRewardAmount(userId: string) {
@@ -16,7 +16,7 @@ export class TaskService {
 
   async acceptTask(userId: string, acceptTaskDto: AcceptTaskDto) {
     return await this.taskNatsApi.acceptTask({
-      ...acceptTaskDto,
+      opportunityId: acceptTaskDto.opportunityId,
       userId,
     })
   }

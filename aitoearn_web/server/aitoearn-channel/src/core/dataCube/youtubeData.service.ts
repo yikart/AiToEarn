@@ -6,13 +6,26 @@
  * @Description: YouTube-统计数据
  */
 import { Injectable, Logger } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
+import { AccountNatsApi } from '@/transports/account/account.natsApi';
+import { AccountType } from '@/transports/account/common';
 import { YoutubeService } from '../plat/youtube/youtube.service';
 import { DataCubeBase } from './data.base';
 
 @Injectable()
 export class YoutubeDataService extends DataCubeBase {
-  constructor(readonly youtubeService: YoutubeService) {
+  constructor(readonly youtubeService: YoutubeService, readonly accountNatsApi: AccountNatsApi) {
     super();
+  }
+
+  @OnEvent(`account.create.${AccountType.WxGzh}`)
+  async accountPortraitReport(accountId: string) {
+    const res = await this.getAccountDataCube(accountId)
+    this.accountNatsApi.updateAccountStatistics(accountId, {
+      fansCount: res.fensNum,
+      workCount: res.arcNum,
+      readCount: res.playNum,
+    })
   }
 
   // 账户数据

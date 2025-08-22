@@ -2,6 +2,7 @@ import { NatsMessagePattern } from '@common/decorators'
 import { Controller, Get, Logger } from '@nestjs/common'
 import { Ctx, NatsContext, Payload } from '@nestjs/microservices'
 import { AppService } from './app.service'
+import { AppException } from './common'
 
 @Controller()
 export class AppController {
@@ -16,8 +17,9 @@ export class AppController {
 
   @NatsMessagePattern('user.ping')
   pong(@Payload() data: number[], @Ctx() context: NatsContext) {
-    this.logger.debug(`Subject: ${context.getSubject()}`)
-    this.logger.debug(`Data:`, data)
+    console.log('------------')
+    throw new AppException(10001, '1111')
+
     return {
       message: 'Pong',
     }

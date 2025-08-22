@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { NatsService } from 'src/transports/nats.service'
 import { NatsApi } from '../api'
+import { BaseNatsApi } from '../base.natsApi'
 
 @Injectable()
-export class PlatTwitterNatsApi {
-  constructor(private readonly natsService: NatsService) {}
-
+export class PlatTwitterNatsApi extends BaseNatsApi {
   async getAuthUrl(userId: string, scopes?: string[]) {
-    const res = await this.natsService.sendMessage<string>(
+    const res = await this.sendMessage<string>(
       NatsApi.plat.twitter.authUrl,
       {
         userId,
@@ -18,7 +16,7 @@ export class PlatTwitterNatsApi {
   }
 
   async getAuthInfo(taskId: string) {
-    const res = await this.natsService.sendMessage<any>(
+    const res = await this.sendMessage<any>(
       NatsApi.plat.twitter.getAuthInfo,
       {
         taskId,
@@ -32,7 +30,7 @@ export class PlatTwitterNatsApi {
     code: string,
     state: string,
   ) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       status: 0 | 1
       message?: string
       accountId?: string

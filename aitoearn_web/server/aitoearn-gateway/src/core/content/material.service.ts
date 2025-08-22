@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
 import { TableDto } from 'src/common/dto/table.dto'
 import {
@@ -15,11 +15,6 @@ import { User } from '@/transports/user/comment'
 @Injectable()
 export class MaterialService {
   constructor(private readonly materialNatsApi: MaterialNatsApi) { }
-
-  @OnEvent('user.created', { async: true })
-  async createDefault(data: { user: User }) {
-    return this.materialNatsApi.createDefault(data.user.id)
-  }
 
   /**
    * 创建

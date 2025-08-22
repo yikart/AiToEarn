@@ -1,5 +1,5 @@
 import * as path from 'node:path'
-import { AppExceptionFilter } from '@common/filters/AppException.filter'
+import { GlobalExceptionFilter } from '@common/filters/global-exception.filter'
 import { LoggerMiddleware } from '@common/middleware/log.middleware'
 import { ZodValidationPipe } from '@common/pipes'
 import { CoreModule } from '@core/core.module'
@@ -73,7 +73,7 @@ if (config.logger.console?.enable) {
     },
     {
       provide: APP_FILTER,
-      useClass: AppExceptionFilter,
+      useValue: new GlobalExceptionFilter({ returnBadRequestDetails: true }),
     },
     AppService,
   ],

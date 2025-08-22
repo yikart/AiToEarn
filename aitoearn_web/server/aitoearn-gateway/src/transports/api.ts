@@ -16,13 +16,20 @@ export const NatsApi = {
     },
     task: {
       list: 'user.task.list',
+      get: 'user.task.get',
+    },
+    points: {
+      get: 'user.points.get',
+      getRecords: 'user.points.getRecords',
+      add: 'user.points.add',
+      deduct: 'user.points.deduct',
     },
   },
   account: {
     account: {
       create: 'account.account.create',
       getUserAccounts: 'account.account.getUserAccounts',
-      getAccountInfoById: 'account.account.getAccountInfoById',
+      getAccountInfoById: 'account.account.getAccountInfo',
       updateAccountInfo: 'account.account.updateAccountInfo',
       updateAccountStatistics: 'account.account.updateAccountStatistics',
       updateAccountStatus: 'account.account.updateAccountStatus',
@@ -55,6 +62,16 @@ export const NatsApi = {
       replyComment: 'channel.interact.replyComment',
       delComment: 'channel.interact.delComment',
     },
+    interactionRecord: {
+      add: 'channel.interactionRecord.add',
+      list: 'channel.interactionRecord.list',
+      del: 'channel.interactionRecord.del',
+    },
+    replyCommentRecord: {
+      add: 'channel.replyCommentRecord.add',
+      list: 'channel.replyCommentRecord.list',
+      del: 'channel.replyCommentRecord.del',
+    },
     skKey: {
       create: 'channel.skKey.create',
       del: 'channel.skKey.del',
@@ -65,6 +82,14 @@ export const NatsApi = {
       delRefAccount: 'channel.skKey.delRefAccount',
       getRefAccountList: 'channel.skKey.getRefAccountList',
     },
+    publish: {
+      publishInfo: {
+        data: 'publish.publishInfo.data',
+      },
+      PublishDayInfo: {
+        list: 'publish.PublishDayInfo.list',
+      },
+    },
   },
   plat: {
     publish: {
@@ -74,7 +99,7 @@ export const NatsApi = {
       getList: 'publish.publishRecord.list',
       changeTime: 'publish.task.changeTime',
       delete: 'publish.task.delete',
-      nowPubTask: 'publish.task.nowPubTask',
+      nowPubTask: 'publish.task.run',
     },
     bilibili: {
       getHeader: 'plat.bilibili.getHeader',
@@ -192,7 +217,13 @@ export const NatsApi = {
       getFacebookPages: 'plat.meta.facebook.pages',
       getFacebookPagePublishedPosts: 'plat.meta.facebook.page.published_posts',
       getFacebookPageInsights: 'plat.meta.facebook.page.insights',
+      getFacebookPostInsights: 'plat.meta.facebook.post.insights',
       selectFacebookPages: 'plat.meta.facebook.pages.selection',
+      getInstagramAccountInfo: 'plat.meta.instagram.account.info',
+      getInstagramAccountInsights: 'plat.meta.instagram.account.insights',
+      getInstagramPostInsights: 'plat.meta.instagram.post.insights',
+      getThreadsAccountInsights: 'plat.meta.threads.account.insights',
+      getThreadsPostInsights: 'plat.meta.threads.post.insights',
     },
   },
   publish: {
@@ -216,7 +247,6 @@ export const NatsApi = {
       list: 'content.material.list',
     },
     materialGroup: {
-      createDefault: 'content.materialGroup.createDefault',
       create: 'content.materialGroup.create',
       del: 'content.materialGroup.delete',
       updateInfo: 'content.materialGroup.update',
@@ -230,7 +260,6 @@ export const NatsApi = {
       list: 'content.media.list',
     },
     mediaGroup: {
-      createDefault: 'content.mediaGroup.createDefault',
       create: 'content.mediaGroup.create',
       del: 'content.mediaGroup.delete',
       update: 'content.mediaGroup.update',
@@ -241,6 +270,9 @@ export const NatsApi = {
   other: {
     feedback: {
       create: 'other.feedback.create',
+    },
+    appConfigs: {
+      list: 'other.appConfigs.list',
     },
     gologin: {
       doTest: 'other.gologin.doTest',
@@ -257,7 +289,7 @@ export const NatsApi = {
   },
   task: {
     task: {
-      info: 'task.task.info',
+      infoByOpportunityId: 'task.task.infoByOpportunityId',
       rewardAmount: 'task.task.rewardAmount',
       accept: 'task.task.accept',
     },
@@ -277,6 +309,9 @@ export const NatsApi = {
     },
   },
   ai: {
+    chat: {
+      models: 'ai.chat.models',
+    },
     user: {
       chat: 'ai.user.chat',
       logs: 'ai.user.logs',
@@ -292,6 +327,14 @@ export const NatsApi = {
       imageGenerationModels: 'ai.user.image.generation.models',
       imageEditModels: 'ai.user.image.edit.models',
       videoGenerationModels: 'ai.user.video.generation.models',
+    },
+  },
+  statistics: {
+    account: {
+      getAccountDataLatest: 'statistics.account.getAccountDataLatest',
+      getAccountDataIncrease: 'statistics.account.getAccountDataIncrease',
+      getAccountDataByParams: 'statistics.account.getAccountDataByParams',
+      getAccountDataPeriod: 'statistics.account.getAccountDataPeriod',
     },
   },
 }

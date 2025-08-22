@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common'
-import { NatsService } from 'src/transports/nats.service'
 import { NatsApi } from '../api'
+import { BaseNatsApi } from '../base.natsApi'
 import { Account, AccountStatus, AccountType } from './comment'
 
 @Injectable()
-export class AccountNatsApi {
-  constructor(private readonly natsService: NatsService) {}
-
+export class AccountNatsApi extends BaseNatsApi {
   /**
    * 添加或更新账号
    @param newData
    * @returns
    */
   async createAccount(newData: Partial<Account>): Promise<Account> {
-    const res = await this.natsService.sendMessage<Account>(
+    const res = await this.sendMessage<Account>(
       NatsApi.account.account.create,
       {
         account: {
@@ -35,7 +33,7 @@ export class AccountNatsApi {
    * @returns
    */
   async updateAccountInfo(id: string, data: any) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.account.account.updateAccountInfo,
       { id, ...data },
     )
@@ -46,10 +44,10 @@ export class AccountNatsApi {
   /**
    * 根据用户id获取账号
    */
-  async getAccountInfoById(id: string) {
-    const res = await this.natsService.sendMessage<Account>(
+  async getAccountInfoById(accountId: string) {
+    const res = await this.sendMessage<Account>(
       NatsApi.account.account.getAccountInfoById,
-      { id },
+      { accountId },
     )
 
     return res
@@ -62,7 +60,7 @@ export class AccountNatsApi {
    * @returns
    */
   async updateAccountStatus(id: string, status: AccountStatus) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.account.account.updateAccountStatus,
       { id, status },
     )
@@ -76,7 +74,7 @@ export class AccountNatsApi {
    * @returns
    */
   async getUserAccounts(userId: string) {
-    const res = await this.natsService.sendMessage<Account[]>(
+    const res = await this.sendMessage<Account[]>(
       NatsApi.account.account.getUserAccounts,
       { userId },
     )
@@ -91,7 +89,7 @@ export class AccountNatsApi {
    * @returns
    */
   async getAccountListByIds(userId: string, ids: string[]) {
-    const res = await this.natsService.sendMessage<Account[]>(
+    const res = await this.sendMessage<Account[]>(
       NatsApi.account.account.getAccountListByIds,
       { userId, ids },
     )
@@ -106,7 +104,7 @@ export class AccountNatsApi {
    * @returns
    */
   async getAccountStatistics(userId: string, type?: AccountType) {
-    const res = await this.natsService.sendMessage<{
+    const res = await this.sendMessage<{
       accountTotal: number
       list: Account[]
       fansCount?: number
@@ -126,7 +124,7 @@ export class AccountNatsApi {
    * @returns
    */
   async getUserAccountCount(userId: string) {
-    const res = await this.natsService.sendMessage<number>(
+    const res = await this.sendMessage<number>(
       NatsApi.account.account.getUserAccountCount,
       { userId },
     )
@@ -141,7 +139,7 @@ export class AccountNatsApi {
    * @returns
    */
   async deleteAccount(id: string, userId: string): Promise<boolean> {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.account.account.deleteUserAccount,
       { userId, accountId: id },
     )
@@ -151,7 +149,7 @@ export class AccountNatsApi {
 
   // 删除多个账户
   async deleteAccounts(ids: string[], userId: string) {
-    const res = await this.natsService.sendMessage<boolean>(
+    const res = await this.sendMessage<boolean>(
       NatsApi.account.account.deleteUserAccounts,
       { userId, ids },
     )
@@ -170,7 +168,7 @@ export class AccountNatsApi {
     income?: number,
     workCount?: number,
   ) {
-    const res = await this.natsService.sendMessage<number>(
+    const res = await this.sendMessage<number>(
       NatsApi.account.account.updateAccountStatistics,
       {
         account: id,
@@ -191,7 +189,7 @@ export class AccountNatsApi {
    * 根据查询参数获取账号
    */
   async getAccountByParam(param: { [key: string]: string }) {
-    const res = await this.natsService.sendMessage<Account>(
+    const res = await this.sendMessage<Account>(
       NatsApi.account.account.getAccountByParam,
       { param },
     )

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>授权登录结果</title>
+  <title>Authorization Result</title>
   <style>
     * {
       margin: 0;
@@ -215,70 +215,61 @@
       <div class="logo-icon"></div>
     </div>
 
-    <h3>授权登录</h3>
+    <h3>Authorization Login</h3>
 
-    <div class="status-card <%= status === 'success' ? 'success' : (status === 'error' ? 'error' : 'processing') %>">
+    <div class="status-card <%= status === 1 ? 'success' : (status === 0 ? 'error' : 'processing') %>">
       <div class="status-item">
         <span class="status-indicator"></span>
-        <span class="status-label">状态:</span>
+        <span class="status-label">Status:</span>
         <span class="status-value">
-          <% if (status==='success' ) { %>
-            授权成功
+          <% if (status===1 ) { %>
+            Authorization Successful
             <% } else if (status==='error' ) { %>
-              授权失败
+              Authorization Failed
               <% } else { %>
-                处理中
+                Processing
                 <% } %>
         </span>
       </div>
 
       <% if (typeof message !=='undefined' && message) { %>
         <div class="status-item">
-          <span class="status-label">信息:</span>
+          <span class="status-label">Message:</span>
           <span class="status-value">
             <%= message %>
           </span>
         </div>
         <% } %>
-
-          <% if (typeof accountId !=='undefined' && accountId) { %>
-            <div class="status-item">
-              <span class="status-label">账户:</span>
-              <span class="status-value">
-                <%= accountId %>
-              </span>
-            </div>
-            <% } %>
     </div>
 
-    <% if (status==='success' ) { %>
+    <% if (status===1 ) { %>
       <div class="message">
-        授权登录已完成，您现在可以关闭此页面或返回应用。
+        Authorization completed. You can now close this page or return to the application.
       </div>
-      <% } else if (status==='error' ) { %>
+      <% } else if (status===0 ) { %>
         <div class="message">
-          授权登录失败，请检查信息后重试。
+          Authorization failed. Please check the information and try again.
         </div>
         <% } else { %>
           <div class="message">
             <span class="spinner"></span>
-            正在处理授权请求，请稍候...
+            Processing authorization request, please wait...
           </div>
           <% } %>
 
             <% if (typeof accountId !=='undefined' && accountId) { %>
               <div class="account-info">
-                账户ID: <%= accountId %>
+                Account ID: <%= accountId %>
               </div>
               <% } %>
 
                 <div class="redirect-message">
-                  页面将在 <span id="countdown">5</span> 秒后自动关闭
+                  Page will automatically close in <span id="countdown">5</span> seconds
                 </div>
   </div>
 
   <script>
-    // 自动倒计时关闭页面
+    // Auto countdown to close page
     let countdown = 5;
     const countdownElement = document.getElementById('countdown');
 
@@ -288,15 +279,15 @@
 
       if (countdown <= 0) {
         clearInterval(countdownInterval);
-        // 尝试关闭窗口，如果无法关闭则提示用户手动关闭
+        // Try to close window, if unable to close then prompt user to close manually
         window.close();
       }
     }, 1000);
 
-    // 如果是成功状态，可以考虑自动跳转到应用主页
+    // If successful status, consider auto redirect to application homepage
     // if (status === 'success') {
     //   setTimeout(() => {
-    //     // 这里可以添加跳转逻辑，如果需要的话
+    //     // Can add redirect logic here if needed
     //     // window.location.href = '/dashboard';
     //   }, 3000);
     // }

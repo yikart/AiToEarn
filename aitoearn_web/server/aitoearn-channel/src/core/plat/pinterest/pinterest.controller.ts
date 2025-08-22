@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common'
+import { Controller, Post } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
 import { NatsMessagePattern } from '@/common'
 import { CreateBoardBodyDto, CreatePinBodyDto, WebhookDto } from './dto/pinterest.dto';
@@ -12,12 +12,13 @@ export class PinterestController {
   }
 
   // 创建board
+  @Post('/board')
   @NatsMessagePattern('plat.pinterest.createBoard')
   createBoard(@Payload() data: CreateBoardBodyDto) {
     return this.pinterestService.createBoard(data)
   }
 
-  // 创建board
+  // board list
   @NatsMessagePattern('plat.pinterest.getBoardList')
   getBoardList(@Payload() data: { accountId: string }) {
     return this.pinterestService.getBoardList(data.accountId)
@@ -36,6 +37,7 @@ export class PinterestController {
   }
 
   // 创建pin
+  @Post('/pin')
   @NatsMessagePattern('plat.pinterest.createPin')
   createPin(@Payload() data: CreatePinBodyDto) {
     return this.pinterestService.createPin(data)
@@ -48,6 +50,7 @@ export class PinterestController {
   }
 
   // 获取pin
+  @Post('')
   @NatsMessagePattern('plat.pinterest.getPinList')
   getPinList(@Payload() data: { accountId: string }) {
     return this.pinterestService.getPinList(data.accountId)

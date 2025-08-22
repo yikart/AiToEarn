@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { NatsService } from 'src/transports/nats.service'
 import { NatsApi } from '../api'
+import { BaseNatsApi } from '../base.natsApi'
 import {
   ChannelAccountDataBulk,
   ChannelAccountDataCube,
@@ -9,15 +9,13 @@ import {
 } from './common'
 
 @Injectable()
-export class DataCubeNatsApi {
-  constructor(private readonly natsService: NatsService) {}
-
+export class DataCubeNatsApi extends BaseNatsApi {
   /**
    * 获取账号数据
    * @returns
    */
   async getAccountDataCube(accountId: string) {
-    const res = await this.natsService.sendMessage<ChannelAccountDataCube>(
+    const res = await this.sendMessage<ChannelAccountDataCube>(
       NatsApi.channel.dataCube.getAccountDataCube,
       {
         accountId,
@@ -31,7 +29,7 @@ export class DataCubeNatsApi {
    * @returns
    */
   async getAccountDataBulk(accountId: string) {
-    const res = await this.natsService.sendMessage<ChannelAccountDataBulk>(
+    const res = await this.sendMessage<ChannelAccountDataBulk>(
       NatsApi.channel.dataCube.getAccountDataBulk,
       {
         accountId,
@@ -47,7 +45,7 @@ export class DataCubeNatsApi {
    * @returns
    */
   async getArcDataCube(accountId: string, dataId: string) {
-    const res = await this.natsService.sendMessage<ChannelArcDataCube>(
+    const res = await this.sendMessage<ChannelArcDataCube>(
       NatsApi.channel.dataCube.getArcDataCube,
       {
         accountId,
@@ -64,7 +62,7 @@ export class DataCubeNatsApi {
    * @returns
    */
   async getArcDataBulk(accountId: string, dataId: string) {
-    const res = await this.natsService.sendMessage<ChannelArcDataBulk>(
+    const res = await this.sendMessage<ChannelArcDataBulk>(
       NatsApi.channel.dataCube.getArcDataBulk,
       {
         accountId,

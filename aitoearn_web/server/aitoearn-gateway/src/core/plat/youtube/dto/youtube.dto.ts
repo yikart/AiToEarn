@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Expose, Type } from 'class-transformer'
+import { Expose, Transform, Type } from 'class-transformer'
 import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator'
 
 /**
@@ -70,6 +70,7 @@ export class GetVideosListDto extends AccountIdDto {
     required: false,
   })
   @IsBoolean({ message: 'myRating必须是布尔值' })
+  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
   @IsOptional()
   @Expose()
   readonly myRating?: boolean
@@ -441,6 +442,7 @@ export class SetCommentThreadsModerationStatusDto extends AccountIdDto {
   @IsBoolean({
     message: '是否自动拒绝评论作者撰写的任何其他评论 将作者加入黑名单,',
   })
+  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
   @IsOptional()
   @Expose()
   readonly banAuthor?: boolean
@@ -635,6 +637,7 @@ export class GetPlayListDto extends AccountIdDto {
     required: false,
   })
   @IsBoolean({ message: '我的播放列表' })
+  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
   @IsOptional()
   @Expose()
   readonly mine?: boolean
@@ -733,6 +736,7 @@ export class GetPlayItemsDto extends AccountIdDto {
     required: false,
   })
   @IsBoolean({ message: '我的播放列表' })
+  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
   @IsOptional()
   @Expose()
   readonly playlistId?: string
@@ -947,6 +951,7 @@ export class GetChannelsListDto extends AccountIdDto {
     message:
       '我的频道,注意：forHandle、forUsername、id、mine 必须有且只能有一个',
   })
+  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
   @IsOptional()
   @Expose()
   readonly mine?: boolean
@@ -1006,6 +1011,7 @@ export class GetChannelsSectionsListDto extends AccountIdDto {
     message:
       '是否查询自己的板块, 注意：channelId、id、mine，必须有且只能有一个',
   })
+  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
   @IsOptional()
   @Expose()
   readonly mine?: boolean

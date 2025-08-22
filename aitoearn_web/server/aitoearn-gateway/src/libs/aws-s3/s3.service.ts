@@ -9,8 +9,8 @@ import {
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { Injectable, Logger } from '@nestjs/common'
+import { AppException } from '@/common/exceptions'
 import { ErrHttpBack } from '@/common/filters/httpException.code'
-import { AppHttpException } from '@/common/filters/httpException.filter'
 
 @Injectable()
 export class S3Service {
@@ -54,7 +54,7 @@ export class S3Service {
     }
     catch (error) {
       Logger.debug(error)
-      throw new AppHttpException(ErrHttpBack.fail)
+      throw new AppException(ErrHttpBack.fail)
     }
   }
 
@@ -101,7 +101,7 @@ export class S3Service {
     }
     catch (error) {
       Logger.debug(error)
-      throw new AppHttpException(ErrHttpBack.fail)
+      throw new AppException(ErrHttpBack.fail)
     }
   }
 
@@ -214,5 +214,33 @@ export class S3Service {
     })
 
     await client.send(command)
+  }
+
+  /**
+   * 获取某个目录的总空间大小
+   * @param prefix
+   * @param bucketName
+   * @returns
+   */
+  async getDirectorySize(
+    prefix: string,
+    bucketName?: string,
+  ): Promise<number> {
+    bucketName = bucketName || this.defaultBucket
+    const client = this.getClient(bucketName)
+    let totalSize = 0
+
+    const command = new GetObjectCommand({
+      Bucket: bucketName,
+      Key: prefix,
+    })
+    try {
+      const response = await client.send(command)
+      totalSize += response.ContentLength || 0
+    }
+    catch (error) {
+      Logger.debug(error)
+    }
+    return totalSize
   }
 }

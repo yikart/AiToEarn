@@ -12,25 +12,31 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common'
-import { HttpResult } from './httpException.filter'
 
 // 全部错误
-@Catch(Error)
+@Catch()
 export class AppExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(AppExceptionFilter.name)
+  constructor() {
+    console.log('AppExceptionFilter init')
+  }
+
   catch(error: Error, host: ArgumentsHost) {
+    console.log('AppExceptionFilter catch---------')
     const ctx = host.switchToHttp()
     const response = ctx.getResponse()
     const request = ctx.getRequest()
 
-    Logger.error({
+    this.logger.error({
       url: request.originalUrl,
-      level: 'error',
       message: `系统出错：${response.originalUrl}`,
       mate: error.stack,
       stack: error.stack,
     })
 
-    const errorResponse: HttpResult<string> = {
+    console.log('xxxxxxxxxxxxxx', error)
+
+    const errorResponse = {
       message: '系统出错：',
       code: 1, // 自定义code
       url: request.originalUrl, // 错误的url地址

@@ -88,3 +88,8 @@ export enum ICheckoutStatus {
   refunded = 3, // --status 3  退款成功
   expired = 4, //  订单取消
 }
+
+export enum IFlagTrialPeriodDays {
+  false = 0,
+  true = 1,
+}

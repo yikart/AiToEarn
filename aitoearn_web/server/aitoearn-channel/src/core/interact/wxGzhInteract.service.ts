@@ -17,6 +17,13 @@ export class WxGzhInteractService extends InteracteBase {
     super();
   }
 
+  /**
+   * 创建文章评论
+   * @param account
+   * @param dataId
+   * @param content
+   * @returns
+   */
   async addArcComment(account: Account, dataId: string, content: string) {
     Logger.log('addArcComment', account.id, dataId, content);
     return true;

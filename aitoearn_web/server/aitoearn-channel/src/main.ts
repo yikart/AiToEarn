@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common'
+import { Logger, ShutdownSignal } from '@nestjs/common'
 import { NestApplication, NestFactory } from '@nestjs/core'
 import { MicroserviceOptions, Transport } from '@nestjs/microservices'
 import { NestExpressApplication } from '@nestjs/platform-express'
@@ -26,6 +26,8 @@ async function bootstrap() {
       user: config.nats.user,
       pass: config.nats.pass,
     },
+  }, {
+    inheritAppConfig: true,
   })
   await app.startAllMicroservices()
 
@@ -51,6 +53,9 @@ async function bootstrap() {
   // @nestjs/schedule 必须依赖 HTTP 服务启动（即 app.listen(...)），否则定时任务不会执行。
   app.use(bodyParser.text({ type: 'application/xml' }))
   app.use(bodyParser.text({ type: 'text/xml' }))
+  // enable shutdown hooks
+  app.enableShutdownHooks([ShutdownSignal.SIGTERM, ShutdownSignal.SIGINT])
+
   await app.listen(config.port, () => {
     Logger.log(`---(^_^) nats server start---`)
     Logger.log(

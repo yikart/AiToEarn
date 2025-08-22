@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { WxPlatApiModule } from '@/libs/wxPlat/wxPlatApi.module';
+import { ServerService } from './server.service';
 import { WxPlatController } from './wxPlat.controller';
 import { WxPlatService } from './wxPlat.service';
-import { ServerService } from './server.service';
 
 @Module({
   imports: [WxPlatApiModule],

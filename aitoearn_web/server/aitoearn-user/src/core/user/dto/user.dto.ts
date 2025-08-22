@@ -183,3 +183,9 @@ export class GoogleLoginDto {
   @Expose()
   credential: string
 }
+
+export class GetUserByPopularizeCodeDto {
+  @IsString({ message: '推广码' })
+  @Expose()
+  readonly code: string
+}

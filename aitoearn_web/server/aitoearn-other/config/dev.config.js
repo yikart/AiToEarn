@@ -11,7 +11,6 @@ const {
   NATS_PASSWORD,
 } = process.env
 
-// 新增环境变量定义
 const {
   MONGODB_USERNAME,
   MONGODB_PASSWORD,
@@ -40,7 +39,7 @@ module.exports = {
       region: 'ap-southeast-1',
       accessKeyId: CLOUDWATCH_ACCESS_KEY_ID,
       secretAccessKey: CLOUDWATCH_SECRET_ACCESS_KEY,
-      group: 'aitoearn-apps',
+      group: 'x-apps',
       prefix: 'dev',
     },
   },
@@ -52,11 +51,11 @@ module.exports = {
     connectTimeout: 10000,
   },
   mongodb: {
-    uri: `mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/aitoearn?authSource=${MONGODB_AUTH_SOURCE}&directConnection=true`,
-    dbName: 'aitoearn',
+    uri: `mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/x?authSource=${MONGODB_AUTH_SOURCE}&directConnection=true`,
+    dbName: 'x',
   },
   nats: {
-    name: 'aitoearn-other-dev',
+    name: 'x-other-dev',
     servers: [`nats://${NATS_USERNAME}:${NATS_PASSWORD}@${NATS_HOST}:${NATS_PORT}`],
     user: NATS_USERNAME,
     pass: NATS_PASSWORD,

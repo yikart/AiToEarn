@@ -3,6 +3,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices'
 import { config } from '@/config'
 import { AccountNatsApi } from './account/account.natsApi'
 import { NatsService } from './nats.service'
+import { PointsNatsApi } from './user/points.natsApi'
 
 @Global()
 @Module({
@@ -14,7 +15,7 @@ import { NatsService } from './nats.service'
           return {
             transport: Transport.NATS,
             options: {
-              name: 'aitoearn-plat-clent',
+              name: config.nats.name,
               servers: config.nats.servers,
               user: config.nats.user,
               pass: config.nats.pass,
@@ -27,10 +28,12 @@ import { NatsService } from './nats.service'
   providers: [
     NatsService,
     AccountNatsApi,
+    PointsNatsApi,
   ],
   exports: [
     NatsService,
     AccountNatsApi,
+    PointsNatsApi,
   ],
 })
 export class NatsModule {}

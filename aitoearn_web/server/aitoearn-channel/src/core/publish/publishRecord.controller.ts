@@ -9,7 +9,7 @@ import { Controller } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
 import { AsyncApiSub } from 'nestjs-asyncapi'
 import { NatsMessagePattern } from '@/common'
-import { CreatePublishRecordDto, PublishRecordIdDto, PublishRecordListFilterDto } from './dto/publish.dto'
+import { CreatePublishRecordDto, PublishDayInfoListDto, PublishRecordIdDto, PublishRecordListFilterDto } from './dto/publish.dto'
 import { PublishRecordService } from './publishRecord.service'
 
 @Controller()
@@ -71,6 +71,18 @@ export class PublishRecordController {
   @NatsMessagePattern('publish.publishRecord.list')
   async getPublishRecordList(@Payload() data: PublishRecordListFilterDto) {
     const res = await this.publishRecordService.getPublishRecordList(data)
+    return res
+  }
+
+  @NatsMessagePattern('publish.publishInfo.data')
+  async getPublishInfoData(@Payload() data: { userId: string }) {
+    const res = await this.publishRecordService.getPublishInfoData(data.userId)
+    return res
+  }
+
+  @NatsMessagePattern('publish.PublishDayInfo.list')
+  async getPublishDayInfoList(@Payload() data: PublishDayInfoListDto) {
+    const res = await this.publishRecordService.getPublishDayInfoList(data.filters, data.page)
     return res
   }
 }

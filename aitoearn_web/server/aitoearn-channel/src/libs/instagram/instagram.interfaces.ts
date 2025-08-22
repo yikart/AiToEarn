@@ -13,6 +13,7 @@ export interface UserTag {
 }
 
 export interface InstagramPost {
+  content_category?: string
   alt_text?: string
   caption?: string
   collaborators?: string[]

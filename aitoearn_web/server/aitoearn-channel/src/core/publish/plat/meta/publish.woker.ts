@@ -1,13 +1,16 @@
-import { Processor, WorkerHost } from '@nestjs/bullmq';
-import { Logger } from '@nestjs/common';
+import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
+import { Logger, OnModuleDestroy } from '@nestjs/common';
 import { Job } from 'bullmq';
 import { PublishStatus } from '@/libs/database/schema/publishTask.schema';
 import { PublishTaskService } from '../../publishTask.service';
-import { PublishMetaPostTask } from './meta.interface';
 import { MetaPublishService } from './meta.service';
 
-@Processor('meta_media_task', {})
-export class MetaPublishWorker extends WorkerHost {
+@Processor('post_media_task', {
+  concurrency: 3,
+  stalledInterval: 15000,
+  maxStalledCount: 1,
+})
+export class MetaPublishWorker extends WorkerHost implements OnModuleDestroy {
   private readonly logger = new Logger(MetaPublishWorker.name);
   constructor(
     readonly publishTaskService: PublishTaskService,
@@ -16,31 +19,76 @@ export class MetaPublishWorker extends WorkerHost {
     super();
   }
 
-  async process(job: Job<PublishMetaPostTask>): Promise<any> {
-    this.logger.log(`Processing Meta Post Publish Task: ${job.data.id}`);
-    const publishTaskInfo = await this.publishTaskService.getPublishTaskInfo(job.data.id);
-    const publishTask = publishTaskInfo!.toObject()
-    if (!publishTask) {
-      this.logger.error(`Publish task not found: ${job.data.id}`);
-      throw new Error(`Publish task not found: ${job.data.id}`);
-    }
-    publishTask.publishTime = new Date()
-    this.logger.log(`Publish task details: ${JSON.stringify(publishTask)}`);
-    const { status, message, noRetry }
-      = await this.metaPublishService.publishPost(publishTask)
+  async process(job: Job<{
+    taskId: string,
+    attempts: number
+  }>): Promise<any> {
+    this.logger.log(`[task-${job.data.taskId}] Processing Meta Post Publish Task: ${job.data.taskId}`);
+    try {
+      const publishTaskInfo = await this.publishTaskService.getPublishTaskInfo(job.data.taskId);
+      const publishTask = publishTaskInfo!.toObject()
+      if (!publishTask) {
+        this.logger.error(`[task-${job.data.taskId}] Publish task not found: ${job.data.taskId}`);
+        return;
+      }
+      publishTask.publishTime = new Date()
+      this.logger.log(`[task-${job.data.taskId}] Publish task details: ${JSON.stringify(publishTask)}`);
+      const { status, message } = await this.metaPublishService.publishPost(publishTask);
 
-    this.logger.log(`Publish task status: ${status}, message: ${message}`);
-    if (status === PublishStatus.FAIL) {
-      if (!noRetry)
-        throw new Error(message)
-      await job.moveToFailed(new Error('任务失败，不再重试'), 'completed') // 直接标记为失败且不重试
+      if (status !== PublishStatus.PUBLISHED) {
+        this.logger.error(`[task-${job.data.taskId}] Publish task failed: ${job.data.taskId}, Message: ${message}`);
+        throw new Error(message);
+      }
+      this.logger.debug(`[task-${job.data.taskId}] Publish task details: ${JSON.stringify(publishTask)}`);
+      return { status: 'success', message: 'Post published successfully' };
+    }
+    catch (error) {
+      this.logger.error(`[task-${job.data.taskId}] Error processing job ${job.id}: ${error.message}`, error.stack);
+      throw new Error(`[task-${job.data.taskId}] Job ${job.id} failed: ${error.message}`, { cause: error });
+    }
+  }
+
+  @OnWorkerEvent('completed')
+  async onCompleted(job: Job<{
+    taskId: string
+    attempts: number,
+    jobId?: string
+  }>) {
+    const { taskId, attempts, jobId } = job.data
+    this.logger.log(`[task-${job.data.taskId}] Processing completed for job ${jobId}, taskId: ${taskId}, Attempts: ${attempts}`);
+  }
+
+  @OnWorkerEvent('failed')
+  async onFailed(job: Job<{
+    taskId: string
+    attempts: number,
+    jobId?: string
+  }>, error: Error) {
+    const { taskId } = job.data
+    if (job.attemptsMade === job.opts.attempts) {
+      this.logger.error(`[task-${job.data.taskId}] Job ${taskId} failed after all attempts: ${error.message}`);
+      await this.publishTaskService.updatePublishTaskStatus(taskId, {
+        status: PublishStatus.FAILED,
+        errorMsg: error.message,
+      })
+      this.logger.log(`[task-${job.data.taskId}] Publish task ${taskId} marked as failed after all attempts. and removed from queue.`);
       return
     }
+    this.logger.warn(`[task-${job.data.taskId}] Job ${taskId} failed, retrying... Attempts made: ${job.attemptsMade}`);
+  }
 
-    if (status === PublishStatus.RELEASED) {
-      void job.isCompleted()
-    }
-    this.logger.debug(`Publish task details: ${JSON.stringify(publishTask)}`);
-    return { status: 'success', message: 'Post published successfully' };
+  @OnWorkerEvent('stalled')
+  onStalled(job: Job<{
+    taskId: string
+    attempts: number,
+    jobId?: string
+  }>) {
+    this.logger.error(`[task-${job.data.taskId}] Job stalled: ${job.id}`);
+  }
+
+  async onModuleDestroy() {
+    this.logger.log('PostMediaTaskWorker is being destroyed, closing worker...');
+    await this.worker.close();
+    this.logger.log('PostMediaTaskWorker closed successfully');
   }
 }

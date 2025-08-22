@@ -5,7 +5,7 @@
  * @Description: Pinterest
  */
 import { Injectable, Logger } from '@nestjs/common';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import * as _ from 'lodash';
 import { base64encode } from 'nodejs-base64';
 import qs from 'qs';
@@ -13,7 +13,8 @@ import { config } from '@/config';
 import {
   CreateBoardBody,
   CreatePinBody,
-} from './comment';
+  UserInfo,
+} from './common';
 
 @Injectable()
 export class PinterestApiService {
@@ -28,6 +29,23 @@ export class PinterestApiService {
     this.appSecret = cfg.secret;
     this.baseUrl = cfg.baseUrl;
     this.redirect_uri = cfg.authBackHost;
+  }
+
+  /**
+   * 获取用户信息
+   * @param access_token
+   * @returns
+   */
+  async getAccountInfo(access_token: string): Promise<UserInfo> {
+    const uri = `${this.baseUrl}/v5/user_account?`;
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${access_token}`,
+    }
+    const response: AxiosResponse<UserInfo> = await axios
+      .get(uri, { headers })
+
+    return response.data;
   }
 
   /**

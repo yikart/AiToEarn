@@ -120,12 +120,13 @@ export class TiktokService {
         message: '获取访问令牌失败',
       }
     }
+    this.logger.log(`获取访问令牌成功: ${JSON.stringify(accessTokenInfo)}`)
     // 获取TikTok用户信息
     const userInfo = await this.fetchUserInfo(
       accessTokenInfo.access_token,
     )
 
-    this.logger.debug(`TikTok user info: ${JSON.stringify(userInfo)}`)
+    this.logger.log(`TikTok user info: ${JSON.stringify(userInfo)}`)
     // 创建账号数据
     const newAccountData = new NewAccount({
       userId: authTaskInfo.userId,

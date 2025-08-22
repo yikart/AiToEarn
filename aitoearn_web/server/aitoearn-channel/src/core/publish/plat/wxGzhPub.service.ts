@@ -1,11 +1,11 @@
 import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 import { InjectModel } from '@nestjs/mongoose'
 import { AccountType } from '@transports/account/common'
 import { Queue } from 'bullmq'
 import { Model } from 'mongoose'
 import { WxGzhService } from '@/core/plat/wxPlat/wxGzh.service'
-import { PublishRecord } from '@/libs/database/schema/publishRecord.schema'
 import {
   PublishTask,
   PublishType,
@@ -20,14 +20,13 @@ export class WxGzhPubService extends PublishBase {
   queueName: string = AccountType.WxGzh
 
   constructor(
+    readonly eventEmitter: EventEmitter2,
     @InjectModel(PublishTask.name)
     readonly publishTaskModel: Model<PublishTask>,
-    @InjectModel(PublishRecord.name)
-    readonly publishRecordModel: Model<PublishRecord>,
-    @InjectQueue('bull_publish') publishQueue: Queue,
+    @InjectQueue('post_publish') publishQueue: Queue,
     readonly wxGzhService: WxGzhService,
   ) {
-    super(publishTaskModel, publishRecordModel, publishQueue)
+    super(eventEmitter, publishTaskModel, publishQueue)
   }
 
   async checkAuth(accountId: string): Promise<{
@@ -38,6 +37,7 @@ export class WxGzhPubService extends PublishBase {
   }
 
   async doPub(publishTask: PublishTask) {
+    // 开始任务
     const res: DoPubRes = {
       status: -1,
       message: '任务不存在',
@@ -123,6 +123,7 @@ export class WxGzhPubService extends PublishBase {
       accountId,
       draftAddRes.media_id,
     )
+
     if (freePublishRes.errcode) {
       res.message = `发布任务创建失败: ${freePublishRes.errmsg}`
       return res

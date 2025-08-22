@@ -1,13 +1,6 @@
-/*
- * @Author: AI Assistant
- * @Date: 2025-01-08 00:00:00
- * @LastEditTime: 2025-01-08 00:00:00
- * @LastEditors: AI Assistant
- * @Description: TikTok Platform Service
- */
 import { Injectable } from '@nestjs/common'
-import { AppHttpException } from 'src/common/filters/httpException.filter'
 import { PlatTiktokNatsApi } from 'src/transports/plat/tiktok.natsApi'
+import { AppException } from '@/common/exceptions'
 
 @Injectable()
 export class TiktokService {
@@ -36,7 +29,7 @@ export class TiktokService {
         contentType,
       )
     if (code)
-      throw new AppHttpException(code, message)
+      throw new AppException(code, message)
 
     return data
   }
@@ -67,7 +60,7 @@ export class TiktokService {
       return await this.platTiktokNatsApi.handleWebhookEvent(event)
     }
     catch (error) {
-      throw new AppHttpException(500, '处理Webhook事件失败')
+      throw new AppException(500, '处理Webhook事件失败')
     }
   }
 }

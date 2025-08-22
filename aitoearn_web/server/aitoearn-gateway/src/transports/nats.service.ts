@@ -2,11 +2,14 @@ import { Inject, Injectable, Logger } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
 import { lastValueFrom } from 'rxjs'
 import { ErrHttpBack } from 'src/common/filters/httpException.code'
-import { AppHttpException } from 'src/common/filters/httpException.filter'
+import { AppException } from '@/common/exceptions'
 import { config } from '@/config'
+import { NatsRes } from './comment'
 
 @Injectable()
 export class NatsService {
+  logger = new Logger(NatsService.name)
+
   private prefix = ''
   constructor(
     @Inject('AITOEARN_SERVICE') private readonly client: ClientProxy,
@@ -29,19 +32,20 @@ export class NatsService {
    * @param data
    * @returns
    */
-  async sendMessage<T>(pattern: string, data: unknown, prefix?: string) {
+  async sendMessage<T>(pattern: string, data: unknown, prefix?: string): Promise<T> {
     const path = `${prefix || this.prefix}.${pattern}`
     const ret = this.client.send<T>(path, data)
 
     try {
-      const res = await lastValueFrom(ret)
+      const res = await lastValueFrom<T>(ret)
       return res
     }
     catch (error) {
-      Logger.error(`-------- nats 【${path}】 message error ------`, error)
-      Logger.debug(error, `-------- nats 【${path}】 message error ------`)
-
-      throw new AppHttpException(ErrHttpBack.fail)
+      this.logger.error({
+        error,
+        pattern,
+      })
+      throw new AppException(ErrHttpBack.fail, error.message)
     }
   }
 }

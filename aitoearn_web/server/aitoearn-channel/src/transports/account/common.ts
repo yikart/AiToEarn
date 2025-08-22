@@ -33,6 +33,7 @@ export interface Account {
   avatar: string
   nickname: string
   status: AccountStatus // 登录状态，用于判断是否失效
+  channelId?: string
 }
 
 export class NewAccount implements Partial<Account> {
@@ -40,16 +41,28 @@ export class NewAccount implements Partial<Account> {
     userId: string
     type: AccountType
     uid: string
-    account?: string // 部分平台的补充ID
+    account: string
     loginCookie?: string
     access_token?: string
     refresh_token?: string
     token?: string
-    avatar: string
+    avatar?: string
     nickname: string
     lastStatsTime?: Date
     loginTime?: Date
+    channelId?: string
+    status?: AccountStatus
   }) {
     Object.assign(this, data)
   }
+}
+
+export interface UpdateAccountStatisticsData {
+  workCount?: number
+  fansCount?: number
+  readCount?: number
+  likeCount?: number
+  collectCount?: number
+  commentCount?: number
+  income?: number
 }

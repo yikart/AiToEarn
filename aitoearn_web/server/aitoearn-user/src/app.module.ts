@@ -2,15 +2,15 @@ import { ZodValidationPipe } from '@common/pipes/zod-validation.pipe'
 import { DbMongoModule } from '@libs/database'
 import { RedisModule } from '@libs/redis'
 import { Module } from '@nestjs/common'
-import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core'
+import { APP_FILTER, APP_PIPE } from '@nestjs/core'
 import { LoggerModule } from 'nestjs-pino'
 import { TransportTargetOptions } from 'pino'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { ResponseInterceptor } from './common'
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
 import { config } from './config'
 import { CoreModule } from './core/core.module'
+import { NatsModule } from './transports/nats.module'
 
 const targets: TransportTargetOptions[] = []
 if (config.logger.cloudWatch?.enable) {
@@ -43,6 +43,7 @@ if (config.logger.console?.enable) {
         },
       },
     }),
+    NatsModule,
     RedisModule,
     DbMongoModule,
     CoreModule,

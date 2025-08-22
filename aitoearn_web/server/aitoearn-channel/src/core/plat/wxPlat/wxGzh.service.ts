@@ -94,8 +94,8 @@ export class WxGzhService {
       introduction?: string
     },
   ) {
-    const blobFile = await fileUrlToBlob(this.fileService.filePathToUrl(fileUrl))
     const accessToken = await this.getAccessToken(accountId)
+    const blobFile = await fileUrlToBlob(this.fileService.filePathToUrl(fileUrl))
     const res = await this.wxGzhApiService.addMaterial(
       accessToken,
       type,

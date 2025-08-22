@@ -88,11 +88,6 @@ export class UserNatsApi {
       },
     )
 
-    this.eventEmitter.emit(
-      'user.created',
-      new UserCreatedEvent(res),
-    )
-
     return res
   }
 

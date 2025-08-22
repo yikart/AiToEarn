@@ -5,7 +5,7 @@
  * @LastEditors: nevin
  * @Description: 测试
  */
-import { Controller, Get } from '@nestjs/common'
+import { Controller, Get, HttpException } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Public } from 'src/auth/auth.guard'
 import { TestService } from './test.service'
@@ -18,8 +18,9 @@ export class TestController {
   ) {}
 
   @Public()
-  @Get('addDefaultContent')
+  @Get('test')
   addDefaultContent() {
-    this.testService.addDefaultContent()
+    return this.testService.addDefaultContent()
+    // throw new Error('测试异常')
   }
 }

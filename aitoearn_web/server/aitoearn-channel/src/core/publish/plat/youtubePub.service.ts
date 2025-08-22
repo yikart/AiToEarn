@@ -1,12 +1,12 @@
 import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 import { InjectModel } from '@nestjs/mongoose'
 import { AccountType } from '@transports/account/common'
 import { Queue } from 'bullmq'
 import { Model } from 'mongoose'
 import { getFileSizeFromUrl, streamDownloadAndUpload } from '@/common'
 import { YoutubeService } from '@/core/plat/youtube/youtube.service'
-import { PublishRecord } from '@/libs/database/schema/publishRecord.schema'
 import { PublishStatus, PublishTask } from '@/libs/database/schema/publishTask.schema'
 import { DoPubRes } from '../common'
 import { PublishBase } from './publish.base'
@@ -16,14 +16,13 @@ export class YoutubePubService extends PublishBase {
   queueName: string = AccountType.YOUTUBE
 
   constructor(
+    readonly eventEmitter: EventEmitter2,
     @InjectModel(PublishTask.name)
     readonly publishTaskModel: Model<PublishTask>,
-    @InjectModel(PublishRecord.name)
-    readonly publishRecordModel: Model<PublishRecord>,
-    @InjectQueue('bull_publish') publishQueue: Queue,
+    @InjectQueue('post_publish') publishQueue: Queue,
     readonly youtubeService: YoutubeService,
   ) {
-    super(publishTaskModel, publishRecordModel, publishQueue)
+    super(eventEmitter, publishTaskModel, publishQueue)
   }
 
   // TODO: 校验账户授权状态
@@ -157,7 +156,7 @@ export class YoutubePubService extends PublishBase {
       ).catch((e) => {
         resolve({
           message: e.message,
-          status: PublishStatus.FAIL,
+          status: PublishStatus.FAILED,
         })
       })
     })

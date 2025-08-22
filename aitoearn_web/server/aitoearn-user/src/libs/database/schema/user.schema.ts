@@ -29,6 +29,7 @@ export enum UserVipCycleType {
   NONE = 0, // 未认证
   MONTH = 1, // 月
   YEAR = 2, // 年
+  EXPERIENCE = 3, // 体验
 }
 
 @Schema({

@@ -216,11 +216,11 @@ export class WxPlatController {
   @Get('authorizerAccessToken')
   async getAuthorizerAccessToken(
     @Query() query: {
-      authorizerAppid: string;
+      authorizerAppId: string;
       authorizerRefreshToken: string;
     },
   ) {
-    const res = await this.wxPlatService.getAuthorizerAccessToken(query.authorizerAppid, query.authorizerRefreshToken);
+    const res = await this.wxPlatService.getAuthorizerAccessToken(query.authorizerAppId, query.authorizerRefreshToken);
     return res;
   }
 }

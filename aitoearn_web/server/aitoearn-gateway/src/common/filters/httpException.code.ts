@@ -21,6 +21,7 @@ export enum ErrHttpBack {
   err_user_pop_code_null = 10001005,
   err_user_status = 10001006,
   err_user_password = 10001007,
+  err_user_vip_had = 10010001,
 }
 
 export const ErrHttpBackMap: Map<ErrHttpBack, ErrorHttpBack> = new Map([
@@ -54,5 +55,9 @@ export const ErrHttpBackMap: Map<ErrHttpBack, ErrorHttpBack> = new Map([
   [
     ErrHttpBack.err_user_pop_code_null,
     { errCode: 1, message: '用户推广码不存在' },
+  ],
+  [
+    ErrHttpBack.err_user_vip_had,
+    { errCode: ErrHttpBack.err_user_vip_had, message: '请勿重复设置体验VIP' },
   ],
 ])

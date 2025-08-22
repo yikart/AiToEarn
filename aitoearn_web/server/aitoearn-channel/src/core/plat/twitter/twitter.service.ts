@@ -6,7 +6,7 @@ import { config } from '@/config'
 import { AccountService } from '@/core/account/account.service'
 import { RedisService } from '@/libs'
 import { XMediaCategory, XMediaType } from '@/libs/twitter/twitter.enum'
-import { TwitterOAuthCredential, XChunkedMediaUploadRequest, XCreatePostRequest, XMediaUploadInitRequest, XMediaUploadResponse } from '@/libs/twitter/twitter.interfaces'
+import { TwitterOAuthCredential, XChunkedMediaUploadRequest, XCreatePostRequest, XCreatePostResponse, XDeletePostResponse, XLikePostResponse, XMediaUploadInitRequest, XMediaUploadResponse, XPostDetailResponse, XRePostResponse } from '@/libs/twitter/twitter.interfaces'
 import { TwitterService as TwitterApiService } from '@/libs/twitter/twitter.service'
 import { AccountType, NewAccount } from '@/transports/account/common'
 import { TWITTER_TIME_CONSTANTS, TwitterRedisKeys } from './constants'
@@ -64,10 +64,7 @@ export class TwitterService {
       return null
     }
     const now = getCurrentTimestamp()
-    const tokenExpiredAt = now + credential.expires_in
-    const requestTime
-      = tokenExpiredAt - TWITTER_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
-    if (requestTime <= now) {
+    if (now >= credential.expires_in) {
       this.logger.debug(
         `Access token for accountId: ${accountId} is expired, refreshing...`,
       )
@@ -239,12 +236,13 @@ export class TwitterService {
     accountId: string,
     tokenInfo: TwitterOAuthCredential,
   ): Promise<boolean> {
+    const now = getCurrentTimestamp()
     const expireTime
-      = tokenInfo.expires_in - TWITTER_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
+      = now + tokenInfo.expires_in - TWITTER_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
+    tokenInfo.expires_in = expireTime
     return await this.redisService.setKey(
       TwitterRedisKeys.getAccessTokenKey(accountId),
       tokenInfo,
-      expireTime,
     )
   }
 
@@ -329,6 +327,18 @@ export class TwitterService {
     return await this.twitterApiService.createPost(credential.access_token, post)
   }
 
+  public async deletePost(userId: string, tweetId: string): Promise<XDeletePostResponse | null> {
+    const credential = await this.authorize(userId)
+    if (!credential) {
+      this.logger.warn(`No access token found for userId: ${userId}`)
+      return null
+    }
+    return await this.twitterApiService.deletePost(
+      credential.access_token,
+      tweetId,
+    )
+  }
+
   public async getMediaUploadStatus(
     userId: string,
     mediaId: string,
@@ -381,7 +391,7 @@ export class TwitterService {
         }
         const uploadReq: XChunkedMediaUploadRequest = {
           media_id: initUploadRes.data.id,
-          media: Buffer.from(await imgBlob.blob.arrayBuffer()),
+          media: await imgBlob.blob,
           segment_index: 0,
         }
         this.logger.log('chunkedMediaUploadRequest', uploadReq)
@@ -447,7 +457,7 @@ export class TwitterService {
         }
         this.logger.log('start', start, 'end', end, 'size', videoBlob.length)
         const uploadReq: XChunkedMediaUploadRequest = {
-          media: videoBlob,
+          media: new Blob([videoBlob]),
           media_id: initUploadRes.data.id,
           segment_index: partNumber,
         }
@@ -479,21 +489,114 @@ export class TwitterService {
       twitterMediaIDs[0],
     )
     this.logger.log('getMediaUploadStatus', status)
-    // const postMedia: PostMedia = {
-    //   media_ids: twitterMediaIDs,
-    // }
-    // const post: XCreatePostRequest = {
-    //   text,
-    //   media: postMedia,
-    // }
-    // const createPostRes = await this.createPost(
-    //   accountId,
-    //   post,
-    // )
-    // this.logger.log(createPostRes)
-    // if (!createPostRes || !createPostRes.data.id) {
-    //   this.logger.error('推文创建失败')
-    //   return null
-    // }
+  }
+
+  async getTweetDetail(
+    userId: string,
+    tweetId: string,
+  ): Promise<XPostDetailResponse | null> {
+    const credential = await this.authorize(userId)
+    if (!credential) {
+      this.logger.warn(`No access token found for userId: ${userId}`)
+      return null
+    }
+    return await this.twitterApiService.getPostDetail(
+      credential.access_token,
+      tweetId,
+    )
+  }
+
+  async repost(
+    userId: string,
+    tweetId: string,
+  ): Promise<XRePostResponse | null> {
+    const credential = await this.authorize(userId)
+    if (!credential) {
+      this.logger.warn(`No access token found for userId: ${userId}`)
+      return null
+    }
+    return await this.twitterApiService.repost(
+      userId,
+      credential.access_token,
+      tweetId,
+    )
+  }
+
+  async unRepost(
+    userId: string,
+    tweetId: string,
+  ): Promise<XRePostResponse | null> {
+    const credential = await this.authorize(userId)
+    if (!credential) {
+      this.logger.warn(`No access token found for userId: ${userId}`)
+      return null
+    }
+    return await this.twitterApiService.unRepost(
+      userId,
+      credential.access_token,
+      tweetId,
+    )
+  }
+
+  async likePost(
+    userId: string,
+    tweetId: string,
+  ): Promise<XLikePostResponse | null> {
+    const credential = await this.authorize(userId)
+    if (!credential) {
+      this.logger.warn(`No access token found for userId: ${userId}`)
+      return null
+    }
+    return await this.twitterApiService.likePost(
+      userId,
+      credential.access_token,
+      tweetId,
+    )
+  }
+
+  async unlikePost(
+    userId: string,
+    tweetId: string,
+  ): Promise<XLikePostResponse | null> {
+    const credential = await this.authorize(userId)
+    if (!credential) {
+      this.logger.warn(`No access token found for userId: ${userId}`)
+      return null
+    }
+    return await this.twitterApiService.unlikePost(
+      userId,
+      credential.access_token,
+      tweetId,
+    )
+  }
+
+  public async replyPost(userId: string, tweetId: string, text: string):
+  Promise<XCreatePostResponse | null> {
+    const credential = await this.authorize(userId)
+    if (!credential) {
+      this.logger.warn(`No access token found for userId: ${userId}`)
+      return null
+    }
+    const post: XCreatePostRequest = {
+      text,
+      reply: {
+        in_reply_to_tweet_id: tweetId,
+      },
+    }
+    return await this.twitterApiService.createPost(credential.access_token, post)
+  }
+
+  public async quotePost(userId: string, tweetId: string, text: string):
+  Promise<XCreatePostResponse | null> {
+    const credential = await this.authorize(userId)
+    if (!credential) {
+      this.logger.warn(`No access token found for userId: ${userId}`)
+      return null
+    }
+    const post: XCreatePostRequest = {
+      text,
+      quote_tweet_id: tweetId,
+    }
+    return await this.twitterApiService.createPost(credential.access_token, post)
   }
 }

@@ -45,9 +45,9 @@ export class Account extends BaseTemp {
   loginTime?: Date
 
   @Prop({
-    required: true,
+    required: false,
   })
-  avatar: string
+  avatar?: string
 
   @Prop({
     required: true,

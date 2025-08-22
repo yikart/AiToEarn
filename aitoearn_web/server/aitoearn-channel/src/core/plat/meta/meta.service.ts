@@ -41,6 +41,7 @@ export class MetaService {
     platform: string,
     oAuth2Scopes?: string[],
   ) {
+    this.logger.log(`Generating authorize URL for userId: ${userId}, platform: ${platform}, configMap: ${JSON.stringify(metaOAuth2ConfigMap)}`)
     const scopes
       = oAuth2Scopes
         || metaOAuth2ConfigMap[platform].defaultScopes
@@ -327,7 +328,10 @@ export class MetaService {
     )
     if (!authTaskInfo) {
       this.logger.error(`OAuth task not found for state: ${state}`)
-      return null
+      return {
+        status: 0,
+        message: '授权任务不存在或已过期',
+      }
     }
 
     void this.redisService.setPexire(
@@ -335,65 +339,125 @@ export class MetaService {
       META_TIME_CONSTANTS.AUTH_TASK_EXTEND,
     )
 
+    try {
     // get access token
-    const credential = await this.getOAuthCredential(code, authTaskInfo)
-    if (!credential) {
-      this.logger.error(`Failed to get access token for state: ${state}`)
-      return null
-    }
-
-    // fetch user profile
-    const userProfile = await this.getUserProfile(
-      credential.access_token,
-      authTaskInfo.platform,
-    )
-
-    //
-    if (metaOAuth2ConfigMap[authTaskInfo.platform].pageAccountURL) {
-      this.logger.log(
-        `Fetching Facebook pages for userId: ${authTaskInfo.userId}, platform: ${authTaskInfo.platform}`,
-      )
-      const fbAccountInfo = await this.getFacebookAccount(
-        credential.access_token,
-        metaOAuth2ConfigMap[authTaskInfo.platform].pageAccountURL,
-      )
-      this.logger.log(
-        `Fetched ${fbAccountInfo.length} pages for userId: ${authTaskInfo.userId}, platform: ${authTaskInfo.platform}`,
-      )
-      if (fbAccountInfo.length > 0) {
-        const pages: FacebookPage[] = []
-        for (const fbAccount of fbAccountInfo) {
-          const pageDetail = await this.getPageDetails(fbAccount.id, fbAccount.access_token, {
-            fields: 'picture',
-          })
-          await this.redisService.setKey(
-            MetaRedisKeys.getUserPageAccessTokenKey(
-              authTaskInfo.platform,
-              fbAccount.id,
-            ),
-            { ...fbAccount, facebook_user_id: userProfile.id, expires_in: credential.expires_in } as FacebookPageCredentials,
-          )
-          pages.push({
-            id: fbAccount.id,
-            name: fbAccount.name,
-            profile_picture_url: pageDetail?.picture?.data?.url,
-          })
+      const credential = await this.getOAuthCredential(code, authTaskInfo)
+      if (!credential) {
+        this.logger.error(`Failed to get access token for state: ${state}`)
+        return {
+          status: 0,
+          message: '获取访问令牌失败',
         }
-        await this.redisService.setKey(
-          MetaRedisKeys.getUserPageListKey(
-            authTaskInfo.platform,
-            authTaskInfo.userId,
-          ),
-          pages,
-        )
       }
+      this.logger.log(`Access token retrieved for userId: ${authTaskInfo.userId}, platform: ${authTaskInfo.platform}, credential: ${JSON.stringify(credential)}`)
+
+      // fetch user profile
+      const userProfile = await this.getUserProfile(
+        credential.access_token,
+        authTaskInfo.platform,
+      )
+
+      //
+      if (metaOAuth2ConfigMap[authTaskInfo.platform].pageAccountURL) {
+        this.logger.log(
+          `Fetching Facebook pages for userId: ${authTaskInfo.userId}, platform: ${authTaskInfo.platform}`,
+        )
+        const fbAccountInfo = await this.getFacebookAccount(
+          credential.access_token,
+          metaOAuth2ConfigMap[authTaskInfo.platform].pageAccountURL,
+        )
+        this.logger.log(
+          `Fetched ${fbAccountInfo.length} pages for userId: ${authTaskInfo.userId}, platform: ${authTaskInfo.platform}`,
+        )
+        if (fbAccountInfo.length > 0) {
+          const pages: FacebookPage[] = []
+          for (const fbAccount of fbAccountInfo) {
+            const pageDetail = await this.getPageDetails(fbAccount.id, fbAccount.access_token, {
+              fields: 'picture',
+            })
+            await this.redisService.setKey(
+              MetaRedisKeys.getUserPageAccessTokenKey(
+                authTaskInfo.platform,
+                fbAccount.id,
+              ),
+              { ...fbAccount, facebook_user_id: userProfile.id, expires_in: credential.expires_in } as FacebookPageCredentials,
+            )
+            pages.push({
+              id: fbAccount.id,
+              name: fbAccount.name,
+              profile_picture_url: pageDetail?.picture?.data?.url,
+            })
+          }
+          await this.redisService.setKey(
+            MetaRedisKeys.getUserPageListKey(
+              authTaskInfo.platform,
+              authTaskInfo.userId,
+            ),
+            pages,
+          )
+        }
+        const userCredential = {
+          ...credential,
+          user_id: userProfile.id,
+        } as MetaUserOAuthCredential
+
+        const tokenSaved = await this.saveOAuthCredential(
+          authTaskInfo.userId,
+          userCredential,
+          authTaskInfo.platform,
+        )
+
+        if (!tokenSaved) {
+          this.logger.error(
+            `Failed to save access token for accountId: ${'accountInfo.id'}`,
+          )
+          return {
+            status: 0,
+            message: '保存访问令牌失败',
+          }
+        }
+        const taskUpdated = await this.updateAuthTaskStatus(
+          state,
+          authTaskInfo,
+          authTaskInfo.userId,
+        )
+
+        if (!taskUpdated) {
+          this.logger.error(
+            `Failed to update auth task status for state: ${state}, accountId: ${authTaskInfo.userId}`,
+          )
+          return {
+            status: 0,
+            message: '更新授权任务状态失败',
+          }
+        }
+        return {
+          status: 1,
+          message: '授权成功',
+          accountId: authTaskInfo.userId,
+        };
+      }
+
+      const accountType = authTaskInfo.platform.toLowerCase() as AccountType
+      const accountInfo = await this.createAccount(
+        authTaskInfo.userId,
+        accountType,
+        userProfile,
+      )
+      if (!accountInfo) {
+        this.logger.error(
+          `Failed to create account for userId: ${authTaskInfo.userId}, twitterId: ${userProfile.id}`,
+        )
+        return null
+      }
+
       const userCredential = {
         ...credential,
         user_id: userProfile.id,
       } as MetaUserOAuthCredential
 
       const tokenSaved = await this.saveOAuthCredential(
-        authTaskInfo.userId,
+        accountInfo.id,
         userCredential,
         authTaskInfo.platform,
       )
@@ -407,64 +471,31 @@ export class MetaService {
       const taskUpdated = await this.updateAuthTaskStatus(
         state,
         authTaskInfo,
-        authTaskInfo.userId,
+        accountInfo.id,
       )
 
       if (!taskUpdated) {
         this.logger.error(
-          `Failed to update auth task status for state: ${state}, accountId: ${authTaskInfo.userId}`,
+          `Failed to update auth task status for state: ${state}, accountId: ${accountInfo.id}`,
         )
         return null
       }
-      return null;
+      return accountInfo
     }
-
-    const accountType = authTaskInfo.platform.toLowerCase() as AccountType
-    const accountInfo = await this.createAccount(
-      authTaskInfo.userId,
-      accountType,
-      userProfile,
-    )
-    if (!accountInfo) {
+    catch (error) {
+      if (error.response) {
+        this.logger.error(`Error in OAuth2 callback: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+      }
       this.logger.error(
-        `Failed to create account for userId: ${authTaskInfo.userId}, twitterId: ${userProfile.id}`,
+        `Error processing OAuth2 callback for state: ${state}, code: ${code}, error: ${error.message}`,
+        error.stack,
       )
       return null
     }
-
-    const userCredential = {
-      ...credential,
-      user_id: userProfile.id,
-    } as MetaUserOAuthCredential
-
-    const tokenSaved = await this.saveOAuthCredential(
-      accountInfo.id,
-      userCredential,
-      authTaskInfo.platform,
-    )
-
-    if (!tokenSaved) {
-      this.logger.error(
-        `Failed to save access token for accountId: ${'accountInfo.id'}`,
-      )
-      return null
-    }
-    const taskUpdated = await this.updateAuthTaskStatus(
-      state,
-      authTaskInfo,
-      accountInfo.id,
-    )
-
-    if (!taskUpdated) {
-      this.logger.error(
-        `Failed to update auth task status for state: ${state}, accountId: ${accountInfo.id}`,
-      )
-      return null
-    }
-    return accountInfo
   }
 
   private async createAccount(userId: string, accountType: AccountType, userProfile: Record<string, any>): Promise<Account | null> {
+    this.logger.log(`Creating account for userId: ${userId}, platform: ${accountType}, userProfile: ${JSON.stringify(userProfile)}`)
     const newAccountData = new NewAccount({
       userId,
       type: accountType,
@@ -473,7 +504,8 @@ export class MetaService {
       avatar:
         userProfile.profile_picture_url
         || userProfile.threads_profile_picture_url
-        || userProfile.picture?.data?.url,
+        || userProfile.picture?.data?.url
+        || '',
       nickname: userProfile.username || userProfile.name,
       lastStatsTime: new Date(),
       loginTime: new Date(),

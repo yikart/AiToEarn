@@ -10,8 +10,12 @@ import {
   XChunkedMediaUploadRequest,
   XCreatePostRequest,
   XCreatePostResponse,
+  XDeletePostResponse,
+  XLikePostResponse,
   XMediaUploadInitRequest,
   XMediaUploadResponse,
+  XPostDetailResponse,
+  XRePostResponse,
 } from './twitter.interfaces'
 
 @Injectable()
@@ -267,10 +271,27 @@ export class TwitterService {
     }
   }
 
+  async deletePost(
+    accessToken: string,
+    postId: string,
+  ): Promise<XDeletePostResponse> {
+    const url = `${this.apiBaseUrl}/tweets/${postId}`
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+    const response: AxiosResponse<XDeletePostResponse> = await axios.delete(
+      url,
+      config,
+    )
+    return response.data
+  }
+
   async getPostDetail(
     accessToken: string,
     postId: string,
-  ): Promise<XCreatePostResponse> {
+  ): Promise<XPostDetailResponse> {
     const url = `${this.apiBaseUrl}/tweets/${postId}`
     const config: AxiosRequestConfig = {
       headers: {
@@ -282,7 +303,7 @@ export class TwitterService {
         'user.fields': 'id,name,username,profile_image_url,verified',
       },
     }
-    const response: AxiosResponse<XCreatePostResponse> = await axios.get(
+    const response: AxiosResponse<XPostDetailResponse> = await axios.get(
       url,
       config,
     )
@@ -303,6 +324,82 @@ export class TwitterService {
       },
     }
     const response: AxiosResponse<XMediaUploadResponse> = await axios.get(
+      url,
+      config,
+    )
+    return response.data
+  }
+
+  async repost(
+    userId: string,
+    accessToken: string,
+    tweetId: string,
+  ): Promise<XRePostResponse> {
+    const url = `${this.apiBaseUrl}/2/${userId}/retweets`
+    const config: AxiosRequestConfig = {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    }
+    const response: AxiosResponse<XRePostResponse> = await axios.post(
+      url,
+      { tweet_id: tweetId },
+      config,
+    )
+    return response.data
+  }
+
+  async unRepost(
+    userId: string,
+    accessToken: string,
+    tweetId: string,
+  ): Promise<XRePostResponse> {
+    const url = `${this.apiBaseUrl}/2/${userId}/retweets/${tweetId}`
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+    const response: AxiosResponse<XRePostResponse> = await axios.delete(
+      url,
+      config,
+    )
+    return response.data
+  }
+
+  async likePost(
+    userId: string,
+    accessToken: string,
+    tweetId: string,
+  ): Promise<XLikePostResponse> {
+    const url = `${this.apiBaseUrl}/2/${userId}/likes`
+    const config: AxiosRequestConfig = {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    }
+    const response: AxiosResponse<XLikePostResponse> = await axios.post(
+      url,
+      { tweet_id: tweetId },
+      config,
+    )
+    return response.data
+  }
+
+  async unlikePost(
+    userId: string,
+    accessToken: string,
+    tweetId: string,
+  ): Promise<XLikePostResponse> {
+    const url = `${this.apiBaseUrl}/2/${userId}/likes/${tweetId}`
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+    const response: AxiosResponse<XLikePostResponse> = await axios.delete(
       url,
       config,
     )

@@ -25,6 +25,7 @@ import {
 } from '@/libs/database/schema/platToken.schema'
 import { GetChannelsListParams, GetVideosListParams } from '@/libs/youtube/comment'
 import { YoutubeApiService } from '@/libs/youtube/youtubeApi.service'
+import { AccountNatsApi } from '@/transports/account/account.natsApi'
 import { AccountType, NewAccount } from '@/transports/account/common'
 
 interface AuthTaskInfo {
@@ -52,6 +53,7 @@ export class YoutubeService {
     private readonly redisService: RedisService,
     private readonly youtubeApiService: YoutubeApiService,
     private readonly accountService: AccountService,
+    private readonly accountNatsApi: AccountNatsApi,
 
     @InjectModel(PlatToken.name)
     private PlatTokenModel: Model<PlatToken>,
@@ -80,14 +82,14 @@ export class YoutubeService {
   ) {
     const { code } = data
 
-    const hadState = await this.redisService.get<AuthTaskInfo>(
+    const authTask = await this.redisService.get<AuthTaskInfo>(
       `youtube:authTask:${taskId}`,
     )
 
-    if (!hadState)
-      return null
-    if (hadState?.state !== taskId)
-      return null
+    if (!authTask || authTask?.state !== taskId) {
+      this.logger.error(`无效的任务ID: ${taskId}`)
+      return { status: 0, message: '无效的任务ID' }
+    }
     try {
       // 使用授权码获取访问令牌和刷新令牌
       const params = new URLSearchParams({
@@ -121,7 +123,7 @@ export class YoutubeService {
       const googleId = payload.sub
       const email = payload.email
       // console.log("payload:", payload);
-      const userId = hadState.userId
+      const userId = authTask.userId
       // console.log('-----userId:----', userId)
       // 获取YouTube频道信息，用于更新账号数据库
       const accountInfo: any = await this.updateYouTubeAccountInfo(
@@ -178,24 +180,26 @@ export class YoutubeService {
       }
 
       // 更新任务信息
-      hadState.status = 1
-      hadState.accountId = accountInfo.id
-      hadState.mail = email
+      authTask.status = 1
+      authTask.accountId = accountInfo.id
+      authTask.mail = email
       res = await this.redisService.setKey<AuthTaskInfo>(
         `youtube:authTask:${taskId}`,
-        hadState,
+        authTask,
         60 * 3,
       )
 
       // // 返回系统令牌
       this.logger.log('最终返回', res)
-      return res ? { accountInfo, expires_in } : null
+      if (!res)
+        return { status: 0, message: '更新任务信息失败' }
+      return { status: 1, message: '添加账号成功', accountId: accountInfo.id }
 
       // return results;
     }
     catch (error) {
       this.logger.log('处理授权码失败:', error)
-      return error
+      return { status: 0, message: `授权失败: ${error.message}` }
     }
   }
 
@@ -265,45 +269,11 @@ export class YoutubeService {
 
       // console.log('获取到的accountInfo:', accountInfo);
       // 缓存令牌
-      let res = await this.redisService.setKey(
+      await this.redisService.setKey(
         `youtube:accessToken:${accountInfo.id}`,
         accessTokenInfo,
         expires_in,
       )
-
-      // 查询AccountToken数据库里是否存在令牌，如果存在，且上面获得refresh_token 存在，且不为空或null，则更新
-      // 如果不存在，则创建
-      let accountToken = await this.PlatTokenModel.findOne({
-        platform: AccountType.YOUTUBE,
-        accountId: accountInfo.id,
-      })
-
-      if (accountToken) {
-        // 更新现有令牌
-        if (refresh_token && refresh_token.trim() !== '') {
-          accountToken.refreshToken = refresh_token
-        }
-
-        accountToken.expiresAt = new Date(
-          (getCurrentTimestamp() + expires_in) * 1000,
-        )
-        accountToken.updatedAt = new Date()
-        await accountToken.save()
-      }
-      else {
-        // 创建新的令牌记录
-        accountToken = await this.PlatTokenModel.create({
-          userId,
-          platform: AccountType.YOUTUBE,
-          accountId: accountInfo.id,
-          uid: googleId,
-          refreshToken: refresh_token,
-          status: TokenStatus.NORMAL,
-          createTime: new Date(),
-          updateTime: new Date(),
-          expiresAt: new Date((getCurrentTimestamp() + expires_in) * 1000),
-        })
-      }
 
       // 更新任务信息
       hadState.status = 1
@@ -312,23 +282,31 @@ export class YoutubeService {
       hadState.nickname = accountInfo.nickname
       hadState.mail = email
       hadState.uid = googleId
-      res = await this.redisService.setKey<AuthTaskInfo>(
+      await this.redisService.setKey<AuthTaskInfo>(
         `youtube:authTask:${taskId}`,
         hadState,
         60 * 3,
       )
 
       // // 返回系统令牌
-      // console.log('最终返回', res);
-      return res ? { accountInfo, expires_in } : null
+      console.log('最终返回', accountInfo);
+      return {
+        status: 1,
+        message: '授权成功',
+        accountId: accountInfo.id,
+      }
 
       // return results;
     }
     catch (error) {
-      this.logger.log('处理授权码失败:', error)
+      this.logger.log(`处理授权码失败: ${error}`)
       // console.error('处理授权码失败:', error)
       // throw new Error('授权失败');
-      return null
+      return {
+        status: 0,
+        message: '处理授权码失败',
+        accountId: error,
+      }
     }
   }
 
@@ -354,6 +332,7 @@ export class YoutubeService {
       let newAccount = email
       let newNickname = ''
       let newAvatar = ''
+      let channelId = ''
 
       let hasChannel = false
       // 获取当前用户的YouTube频道信息
@@ -398,25 +377,25 @@ export class YoutubeService {
         hasChannel = true
         const channel = response.data.items[0]
         // 使用频道信息更新账号数据
-        // newAccount = channel.snippet.customUrl || channel.id
+        channelId = channel.id
         newAccount = channel.id
         newNickname = channel.snippet.title
         newAvatar = channel.snippet.thumbnails.default.url
         // channelInfo.fansCount = parseInt(channel.statistics.subscriberCount) || 0;
         // channelInfo.workCount = parseInt(channel.statistics.videoCount) || 0;
         // channelInfo.readCount = parseInt(channel.statistics.viewCount) || 0;
-        this.logger.log('成功获取YouTube频道信息:', channel.snippet.title)
+        this.logger.log(`成功获取YouTube频道信息: ${channel.snippet.title}`)
       }
 
       const channelInfo = new NewAccount({
         userId,
         type: AccountType.YOUTUBE,
         uid: googleId,
-        // googleId: googleId,
+        channelId,
         account: newAccount,
         nickname: newNickname,
         avatar: newAvatar,
-        // loginTime: new Date(),
+        refresh_token: refreshToken,
       });
       // console.log("youtube channelInfo:",channelInfo);
 
@@ -434,51 +413,16 @@ export class YoutubeService {
         channelInfo,
       )
       // console.log('----- accountInfo', accountInfo)
-      // this.logger.log('----- accountInfo', accountInfo)
 
       if (!accountInfo)
-        return null
-
-      // 检查是否存在账号Token
-      const existingToken = await this.PlatTokenModel.findOne({
-        // userId: userId,
-        accountId: accountInfo.id,
-        platform: AccountType.YOUTUBE,
-      })
-
-      this.logger.log(`--是否存在accountToken账号-- ${existingToken}`)
-      if (existingToken) {
-        // console.log("存在YouTube账号Token");
-        // 更新现有Token
-        await this.PlatTokenModel.findOneAndUpdate(
-          { accountId: accountInfo.id, platform: AccountType.YOUTUBE },
-          { refreshToken, updateTime: new Date() },
-        )
-        this.logger.log('成功更新YouTube账号Token')
-      }
-      else {
-        // console.log("不存在YouTube账号Token");
-        // 创建新Token
-        await this.PlatTokenModel.create({
-          userId,
-          accountId: accountInfo.id,
-          uid: googleId,
-          platform: AccountType.YOUTUBE,
-          refreshToken,
-          expiresAt: new Date((getCurrentTimestamp() + expires_in) * 1000),
-          status: TokenStatus.NORMAL,
-          createTime: new Date(),
-          updateTime: new Date(),
-        })
-        this.logger.log('成功创建YouTube账号Token')
-      }
+        return '创建账号失败'
 
       return accountInfo
     }
     catch (error) {
       this.logger.error('更新YouTube账号信息失败:', error)
       // 不抛出异常，避免影响授权流程
-      return null
+      return `更新YouTube账号信息失败`
     }
   }
 
@@ -492,6 +436,7 @@ export class YoutubeService {
     accountId: string,
     refreshToken: string,
   ): Promise<string> {
+    console.log(accountId, refreshToken)
     const accessTokenInfo
       = await this.youtubeApiService.refreshAccessToken(refreshToken)
     if (!accessTokenInfo)
@@ -515,7 +460,8 @@ export class YoutubeService {
    * @returns 访问令牌
    */
   async getUserAccessToken(accountId: string): Promise<string> {
-    // this.logger.log('获取访问令牌，accountId:', accountId)
+    this.logger.log('获取访问令牌，accountId:', accountId)
+    console.log(accountId)
 
     // 先检查Redis缓存
     const cachedToken = await this.redisService.get<AccessToken>(
@@ -527,24 +473,26 @@ export class YoutubeService {
     }
 
     // 如果缓存中没有，尝试刷新
-    const accountTokenInfo = await this.PlatTokenModel.findOne({
-      accountId,
-    })
-    // this.logger.log('accountTokenInfo:', accountTokenInfo)
-    // console.log('accountTokenInfo:', accountTokenInfo);
-    if (!accountTokenInfo || !accountTokenInfo.refreshToken) {
+    // const accountTokenInfo = await this.accountService.findOne({
+    //   accountId,
+    // })
+    const result = await this.accountNatsApi.getAccountByParam({ account: accountId })
+    // 从结果中获取refresh_token - 根据实际返回结构处理
+    const refreshToken = result.data?.refresh_token || (result as any).refresh_token
+    console.log('resolved refresh_token:', refreshToken)
+    if (!refreshToken) {
       this.logger.error('无效的账号或刷新令牌丢失')
-      return ''
+      return '无效的账号或刷新令牌丢失'
     }
 
     // 刷新并获取新令牌
     const refreshResult = await this.refreshAccessToken(
       accountId,
-      accountTokenInfo.refreshToken,
+      refreshToken,
     )
     if (!refreshResult) {
       this.logger.error('刷新令牌后未能获取访问令牌')
-      return ''
+      return '刷新令牌失败'
     }
 
     // 刷新后再次从Redis获取
@@ -553,7 +501,6 @@ export class YoutubeService {
     )
     // console.log('newToken:', newToken);
     if (!newToken || !newToken.access_token) {
-      // throw new BadRequestException('刷新令牌后未能获取访问令牌');
       // console.log('刷新令牌后未能获取访问令牌');
       return ''
     }
@@ -628,7 +575,7 @@ export class YoutubeService {
       { state, status: 0, userId, mail },
       60 * 5,
     )
-    this.logger.log('youtubeService getAuthUrl rRes:', rRes)
+    this.logger.log(`youtubeService getAuthUrl rRes: ${rRes}`)
     return rRes
       ? {
           url: authUrl.toString(),
@@ -1902,6 +1849,7 @@ export class YoutubeService {
       this.logger.error('获取访问令牌失败')
       return '获取访问令牌失败'
     }
+
     this.initializeYouTubeClient(accessToken)
     // 根据传入的参数来选择一个有效的请求参数
     const requestParams: any = {
@@ -1919,7 +1867,8 @@ export class YoutubeService {
       // const channels
       //   = await this.youtubeApiService.getChannelsList(requestParams)
       // return channels
-      this.logger.log(requestParams)
+      // this.logger.log(requestParams)
+      console.log(requestParams)
       const response = await this.youtubeClient.channels.list(requestParams)
       return response
     }
@@ -1949,11 +1898,6 @@ export class YoutubeService {
       // 构造请求体
       const requestBody: any = {
         id: ChannelId,
-        // snippet: {
-        //   playlistId: playlistId,
-        //   resourceId: resourceId,
-        // },
-        // contentDetails: {},
       }
 
       // 如果传递了 note，则添加到请求体

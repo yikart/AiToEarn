@@ -14,7 +14,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm i --frozen-lockfile;
 
 COPY nest-cli.json tsconfig.json ./
 COPY src ./src
-COPY config ./config
+
 
 RUN nest build;
 

@@ -137,6 +137,8 @@ export class WxPlatApiService {
     authorizerAppId: string,
     authorizerRefreshToken: string,
   ) {
+    console.log('getAuthorizerAccessToken---args', { componentAccessToken, authorizerAppId, authorizerRefreshToken });
+    
     try {
       const result = await axios.post<{
         authorizer_access_token: string
@@ -152,6 +154,7 @@ export class WxPlatApiService {
           authorizer_refresh_token: authorizerRefreshToken,
         },
       )
+      console.log('getAuthorizerAccessToken---result', result.data);
 
       if (result.data.errcode)
         throw new Error(result.data.errcode + (result.data.errmsg || ''))

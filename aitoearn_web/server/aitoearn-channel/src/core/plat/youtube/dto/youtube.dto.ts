@@ -1,4 +1,4 @@
-import { Expose, Type } from 'class-transformer'
+import { Expose, Transform, Type } from 'class-transformer'
 import {
   IsBoolean,
   IsEmail,
@@ -83,6 +83,7 @@ export class VideosListDto extends AccountIdDto {
   readonly id?: string
 
   @IsBoolean({ message: '是否喜欢' })
+  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
   @IsOptional()
   @Expose()
   readonly myRating?: boolean
@@ -238,6 +239,7 @@ export class GetChannelsListDto extends AccountIdDto {
   readonly id?: string
 
   @IsBoolean({ message: '我的频道,注意：forHandle、forUsername、id、mine 必须有且只能有一个' })
+  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
   @IsOptional()
   @Expose()
   readonly mine?: boolean
@@ -270,6 +272,7 @@ export class UpdateChannelsDto extends AccountIdDto {
   readonly userName?: string
 
   @IsString({ message: 'mine' })
+  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
   @IsOptional()
   @Expose()
   readonly mine?: boolean
@@ -388,6 +391,7 @@ export class SetCommentThreadsModerationStatusDto extends AccountIdDto {
   readonly moderationStatus: string
 
   @IsBoolean({ message: '是否自动拒绝评论作者撰写的任何其他评论 将作者加入黑名单,' })
+  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
   @IsOptional()
   @Expose()
   readonly banAuthor?: boolean
@@ -500,6 +504,7 @@ export class GetPlayListDto extends AccountIdDto {
   readonly id?: string
 
   @IsBoolean({ message: '我的播放列表, 注意：channelId、id、mine，必须有且只能有一个' })
+  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
   @IsOptional()
   @Expose()
   readonly mine?: boolean
@@ -666,6 +671,7 @@ export class ChannelsSectionsListDto extends AccountIdDto {
   readonly id?: string
 
   @IsBoolean({ message: '是否查询自己的板块, 注意：channelId、id、mine，必须有且只能有一个' })
+  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
   @IsOptional()
   @Expose()
   readonly mine?: boolean

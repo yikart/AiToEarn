@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { NatsApi } from '../api'
 import { NatsService } from '../nats.service'
-import { Account, AccountType, NewAccount } from './common'
+import { Account, AccountType, NewAccount, UpdateAccountStatisticsData } from './common'
 
 @Injectable()
 export class AccountNatsApi {
@@ -45,6 +45,31 @@ export class AccountNatsApi {
     return await this.natsService.sendMessage<Account>(
       NatsApi.account.account.getAccountInfo,
       { accountId },
+    )
+  }
+
+  /**
+   * 获取账户ID
+   * @param accountId
+   * @returns
+   */
+  async getAccountByParam(params: { [key: string]: string }) {
+    return await this.natsService.sendMessage<Account>(
+      NatsApi.account.account.getAccountByParam,
+      params,
+    )
+  }
+
+  /**
+   * 更新用户账户统计信息
+   * @param accountId
+   * @param data
+   * @returns
+   */
+  async updateAccountStatistics(accountId: string, data: UpdateAccountStatisticsData) {
+    return await this.natsService.sendMessage<Account>(
+      NatsApi.account.account.updateAccountStatistics,
+      { accountId, ...data },
     )
   }
 }

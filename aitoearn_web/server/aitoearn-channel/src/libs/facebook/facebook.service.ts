@@ -26,6 +26,7 @@ import {
   finalizeVideoUploadRequest,
   finalizeVideoUploadResponse,
   PageAccessTokenResponse,
+  PublishFeedPostRequest,
   PublishMediaPostResponse,
   PublishVideoForPageRequest,
   PublishVideoForPageResponse,
@@ -44,7 +45,7 @@ export class FacebookService {
   private readonly apiHost: string = 'https://graph.facebook.com/'
   private readonly apiBaseUrl: string = 'https://graph.facebook.com/v23.0'
 
-  constructor() {}
+  constructor() { }
 
   async refreshOAuthCredential(refresh_token: string) {
     const lParams: Record<string, string> = {
@@ -63,22 +64,30 @@ export class FacebookService {
   }
 
   async initVideoUpload(pageId: string, pageAccessToken: string, req: FacebookInitialVideoUploadRequest): Promise<FacebookInitialVideoUploadResponse> {
-    const url = `${this.apiBaseUrl}/${pageId}/videos`
-    const config: AxiosRequestConfig = {
-      headers: {
-        Authorization: `Bearer ${pageAccessToken}`,
-      },
+    try {
+      const url = `${this.apiBaseUrl}/${pageId}/videos`
+      const config: AxiosRequestConfig = {
+        headers: {
+          Authorization: `Bearer ${pageAccessToken}`,
+        },
+      }
+      const formData = new FormData()
+      formData.append('upload_phase', req.upload_phase)
+      formData.append('file_size', req.file_size.toString())
+      formData.append('published', req.published.toString())
+      const response: AxiosResponse<FacebookInitialVideoUploadResponse> = await axios.post(
+        url,
+        formData,
+        config,
+      )
+      return response.data
     }
-    const formData = new FormData()
-    formData.append('upload_phase', req.upload_phase)
-    formData.append('file_size', req.file_size.toString())
-    formData.append('published', req.published.toString())
-    const response: AxiosResponse<FacebookInitialVideoUploadResponse> = await axios.post(
-      url,
-      formData,
-      config,
-    )
-    return response.data
+    catch (error) {
+      if (error.response) {
+        this.logger.error(`Error initializing video upload for pageId: ${pageId}, error: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+      }
+      throw new Error(`Error initializing video upload for pageId: ${pageId}`, { cause: error })
+    }
   }
 
   async getPageAccessToken(accessToken: string): Promise<PageAccessTokenResponse> {
@@ -221,7 +230,7 @@ export class FacebookService {
   async uploadPostPhotoByFile(
     pageId: string,
     pageAccessToken: string,
-    file: Buffer,
+    file: Blob,
   ): Promise<UploadPhotoResponse> {
     const url = `${this.apiBaseUrl}/${pageId}/photos`
     const config: AxiosRequestConfig = {
@@ -234,8 +243,12 @@ export class FacebookService {
         source: file,
       },
     }
+    const formData = new FormData()
+    formData.append('published', 'false')
+    formData.append('source', file) // assuming JPEG, adjust as needed
     const response: AxiosResponse<UploadPhotoResponse> = await axios.postForm(
       url,
+      formData,
       config,
     )
     return response.data
@@ -271,32 +284,7 @@ export class FacebookService {
     pageId: string,
     pageAccessToken: string,
     imageIDList: string[],
-  ): Promise<PublishMediaPostResponse> {
-    const url = `${this.apiBaseUrl}/${pageId}/photos`
-    const config: AxiosRequestConfig = {
-      headers: {
-        'Authorization': `Bearer ${pageAccessToken}`,
-        'Content-Type': 'application/json',
-      },
-      data: {
-        published: true, // immediately publish
-        attached_media: imageIDList.map(id => ({ media_fbid: id })),
-      },
-    }
-    const response: AxiosResponse<PublishMediaPostResponse> = await axios.post(
-      url,
-      config,
-    )
-    return response.data
-  }
-
-  // https://developers.facebook.com/docs/graph-api/reference/page/photos/#Creating
-  // https://developers.facebook.com/docs/graph-api/reference/v23.0/page/feed#publish
-  // https://developers.facebook.com/docs/graph-api/reference/page/photos/#upload
-  async publishPlainTextPost(
-    pageId: string,
-    pageAccessToken: string,
-    message: string,
+    caption?: string,
   ): Promise<PublishMediaPostResponse> {
     const url = `${this.apiBaseUrl}/${pageId}/feed`
     const config: AxiosRequestConfig = {
@@ -304,13 +292,52 @@ export class FacebookService {
         'Authorization': `Bearer ${pageAccessToken}`,
         'Content-Type': 'application/json',
       },
-      data: {
-        message,
-        published: true, // immediately publish
+    }
+    try {
+      this.logger.log(`Publishing multiple photo post for pageId: ${pageId}, imageIDList: ${JSON.stringify(imageIDList)}, caption: ${caption}`)
+      // formData.append('attached_media', JSON.stringify(imageIDList.map(id => ({ media_fbid: id }))))
+      // if (caption) {
+      //   formData.append('caption', caption)
+      // }
+      const data = {
+        attached_media: imageIDList.map(id => ({ media_fbid: id })),
+        message: caption || '',
+        published: true,
+      }
+      const response: AxiosResponse<PublishMediaPostResponse> = await axios.post(
+        url,
+        data,
+        config,
+      )
+      return response.data
+    }
+    catch (error) {
+      if (error.response) {
+        this.logger.error(`Failed to publish multiple photo post: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+      }
+      this.logger.error(`Failed to publish multiple photo post: ${error.message}`)
+      throw new Error(`Failed to publish multiple photo post: ${error.message}`, { cause: error })
+    }
+  }
+
+  // https://developers.facebook.com/docs/graph-api/reference/page/photos/#Creating
+  // https://developers.facebook.com/docs/graph-api/reference/v23.0/page/feed#publish
+  // https://developers.facebook.com/docs/graph-api/reference/page/photos/#upload
+  async publishFeedPost(
+    pageId: string,
+    pageAccessToken: string,
+    req: PublishFeedPostRequest,
+  ): Promise<PublishMediaPostResponse> {
+    const url = `${this.apiBaseUrl}/${pageId}/feed`
+    const config: AxiosRequestConfig = {
+      headers: {
+        'Authorization': `Bearer ${pageAccessToken}`,
+        'Content-Type': 'application/json',
       },
     }
     const response: AxiosResponse<PublishMediaPostResponse> = await axios.post(
       url,
+      req,
       config,
     )
     return response.data
@@ -559,15 +586,33 @@ export class FacebookService {
   ): Promise<FacebookReelUploadResponse> {
     const config: AxiosRequestConfig = {
       headers: {
-        Authorization: `Bearer ${pageAccessToken}`,
+        'Authorization': `Bearer ${pageAccessToken}`,
+        'Content-type': 'application/octet-stream',
+        'offset': req.offset.toString(),
+        'file_size': req.file_size.toString(),
       },
     }
-    const response: AxiosResponse<FacebookReelUploadResponse> = await axios.post(
-      uploadURL,
-      req,
-      config,
-    )
-    return response.data
+    this.logger.log(`Authorization: Bearer ${pageAccessToken}`)
+    this.logger.log(`Uploading reel with offset: ${req.offset}, file_size: ${req.file_size}`)
+    this.logger.log(`Upload URL: ${uploadURL}`)
+    this.logger.log(`file size: ${req.file.length}`)
+    try {
+      const response: AxiosResponse<FacebookReelUploadResponse> = await axios.post(
+        uploadURL,
+        req.file,
+        config,
+      )
+      const data = response.data
+      this.logger.log(`Reel upload response: ${JSON.stringify(data)}`)
+      return data
+    }
+    catch (error) {
+      if (error.response) {
+        this.logger.error(`Error uploading reel: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+      }
+      this.logger.error(`Error uploading reel: ${error.message}`)
+      throw new Error(`Error uploading reel: ${error.message}`, { cause: error })
+    }
   }
 
   async publishReelPost(
@@ -589,7 +634,7 @@ export class FacebookService {
     return response.data
   }
 
-  async initStoryUpload(
+  async initVideoStoryUpload(
     pageId: string,
     pageAccessToken: string,
     req: FacebookReelRequest,
@@ -610,25 +655,28 @@ export class FacebookService {
     return response.data
   }
 
-  async uploadStory(
+  async uploadVideoStory(
     pageAccessToken: string,
     uploadURL: string,
     req: FacebookReelUploadRequest,
   ): Promise<FacebookReelUploadResponse> {
     const config: AxiosRequestConfig = {
       headers: {
-        Authorization: `Bearer ${pageAccessToken}`,
+        'Authorization': `Bearer ${pageAccessToken}`,
+        'Content-type': 'application/octet-stream',
+        'offset': req.offset.toString(),
+        'file_size': req.file_size.toString(),
       },
     }
     const response: AxiosResponse<FacebookReelUploadResponse> = await axios.post(
       uploadURL,
-      req,
+      req.file,
       config,
     )
     return response.data
   }
 
-  async publishStoryPost(
+  async publishVideoStoryPost(
     pageId: string,
     pageAccessToken: string,
     req: FacebookReelRequest,
@@ -642,6 +690,27 @@ export class FacebookService {
     const response: AxiosResponse<FacebookReelResponse> = await axios.post(
       url,
       req,
+      config,
+    )
+    return response.data
+  }
+
+  async publishPhotoStoryPost(
+    pageId: string,
+    pageAccessToken: string,
+    photo_id: string,
+  ): Promise<FacebookReelResponse> {
+    const url = `${this.apiBaseUrl}/${pageId}/photo_stories`
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: `Bearer ${pageAccessToken}`,
+      },
+    }
+    const response: AxiosResponse<FacebookReelResponse> = await axios.post(
+      url,
+      {
+        photo_id,
+      },
       config,
     )
     return response.data

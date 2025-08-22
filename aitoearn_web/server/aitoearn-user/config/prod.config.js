@@ -11,13 +11,13 @@ const {
   NATS_PASSWORD,
 } = process.env
 
-// 添加 MongoDB 认证信息环境变量
-const {
+const { 
   MONGODB_USERNAME,
-  MONGODB_PASSWORD
+  MONGODB_PASSWORD,
+  CLOUDWATCH_ACCESS_KEY_ID,
+  CLOUDWATCH_SECRET_ACCESS_KEY 
 } = process.env
-// 添加 AWS 凭证环境变量
-const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } = process.env;
+
 module.exports = {
   port: 3001,
   enableBadRequestDetails: true,
@@ -33,10 +33,10 @@ module.exports = {
     cloudWatch: {
       enable: true,
       region: 'ap-southeast-1',
-      accessKeyId: AWS_ACCESS_KEY_ID,
-      secretAccessKey: AWS_SECRET_ACCESS_KEY,
-      group: 'aitoearn-apps',
-      prefix: 'prod',
+      accessKeyId: CLOUDWATCH_ACCESS_KEY_ID,
+      secretAccessKey: CLOUDWATCH_SECRET_ACCESS_KEY,
+      group: 'x-apps',
+      prefix: 'dev',
     },
   },
   redis: {
@@ -47,15 +47,14 @@ module.exports = {
     connectTimeout: 10000,
   },
   mongodb: {
-    // 使用环境变量替换硬编码的 MongoDB 认证信息
-    uri: `mongodb://${MONGODB_USERNAME}:${encodeURIComponent(MONGODB_PASSWORD)}@dev.aitoearn.ai:27017/aitoearn?authSource=admin&directConnection=true`,
-    dbName: 'aitoearn',
+    uri: `mongodb://${MONGODB_USERNAME}:${encodeURIComponent(MONGODB_PASSWORD)}@dev.x.ai:27017/x?authSource=admin&directConnection=true`,
+    dbName: 'x',
   },
   nats: {
-    name: 'aitoearn-user-dev',
+    name: 'x-user-dev',
     servers: [`nats://${NATS_USERNAME}:${NATS_PASSWORD}@${NATS_HOST}:${NATS_PORT}`],
     user: NATS_USERNAME,
     pass: NATS_PASSWORD,
-    prefix: 'prod',
+    prefix: 'dev',
   },
 }

@@ -13,12 +13,15 @@ import {
   Param,
   Post,
   Query,
+  Render,
   Res,
+  UseGuards,
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
 import { GetToken, Public } from 'src/auth/auth.guard'
 import { TokenInfo } from 'src/auth/interfaces/auth.interfaces'
+import { OrgGuard } from '@/common/interceptor/transform.interceptor'
 import { config } from '@/config'
 import {
   CreateBoardBodyDto,
@@ -103,10 +106,10 @@ export class PinterestController {
   }
 
   @Public()
+  @UseGuards(OrgGuard)
   @Get('authWebhook')
+  @Render('auth/back')
   authWebhook(@Query() query: any, @Res() res: Response) {
-    this.pinterestService.authWebhook(query)
-    const url = ` ${this.mailBackHost}${this.redirect_url}`
-    res.redirect(301, url)
+    return this.pinterestService.authWebhook(query)
   }
 }

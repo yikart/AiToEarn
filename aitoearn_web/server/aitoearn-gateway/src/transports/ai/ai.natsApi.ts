@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { NatsApi } from '../api'
 import { BaseNatsApi } from '../base.natsApi'
 import {
+  ChatModel,
   FireflycardGenerationRequest,
   FireflycardGenerationResponse,
   ImageEditModel,
@@ -196,6 +197,17 @@ export class AiNatsApi extends BaseNatsApi {
   async getVideoGenerationModels(): Promise<VideoGenerationModel[]> {
     return await this.sendMessage<VideoGenerationModel[]>(
       NatsApi.ai.user.videoGenerationModels,
+      {},
+    )
+  }
+
+  /**
+   * 获取图片编辑模型参数
+   * @returns 图片编辑模型参数列表
+   */
+  async getChatModels(): Promise<ChatModel[]> {
+    return await this.sendMessage<ChatModel[]>(
+      NatsApi.ai.chat.models,
       {},
     )
   }

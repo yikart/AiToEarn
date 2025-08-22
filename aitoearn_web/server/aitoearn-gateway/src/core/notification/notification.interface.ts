@@ -12,11 +12,8 @@ export interface NotificationDetail {
 }
 
 export interface NotificationListResult {
-  items: NotificationDetail[]
+  list: NotificationDetail[]
   total: number
-  page: number
-  pageSize: number
-  totalPages: number
 }
 
 export interface UnreadCountResult {
