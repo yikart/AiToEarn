@@ -3,14 +3,16 @@
  * @Date: 2025-01-17 19:25:28
  * @LastEditTime: 2025-02-24 19:37:13
  * @LastEditors: nevin
- * @Description:
+ * @Description: 
 -->
 # AiToEarn Web
+
 [English](README_EN.md) | 简体中文
 
 ## 项目介绍
 
-AiToEarn的WEB项目，web端实现: 
+AiToEarn 的 WEB 项目，实现多平台内容发布的 Web 端应用。支持以下 12 个主流社交媒体平台：
+
 <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap; margin: 20px 0;">
     <img src="https://lf1-cdn-tos.bytegoofy.com/goofy/ies/douyin_web/public/favicon.ico" title="抖音" alt="抖音" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
     <img src="https://i0.hdslb.com/bfs/static/jinkela/long/images/favicon.ico" title="B站" alt="B站" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
@@ -25,12 +27,36 @@ AiToEarn的WEB项目，web端实现:
     <img src="https://s.pinimg.com/webapp/logo_transparent_144x144-3da7a67b.png" title="Pinterest" alt="Pinterest" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
 </div>
 
-抖音、小红书、快手、bilibili、公众号、 Tiktok、Youtube、Facebook、Instagram、Threads、Twitter、Pinterest等12个平台的矩阵发布
+**支持平台矩阵发布：** 抖音、小红书、快手、Bilibili、微信公众号、Tiktok、Youtube、Facebook、Instagram、Threads、Twitter、Pinterest
 
-## 后端模块
+项目地址：[Aitoearn](https://aitoearn.ai)
 
-1. `aitoearn-gateway` - 网关模块
-```tree
+## 目录结构
+
+### Web 前端
+
+**技术栈：**
+- React
+- TypeScript
+- next
+
+**启动命令：**
+```bash
+pnpm run dev
+```
+
+### 服务端
+
+**技术栈：**
+- NestJS nodejs 框架
+- NATS 消息队列
+- MongoDB
+- Redis
+- AWS S3
+- BullMQ
+
+#### 1. `aitoearn-gateway` - 网关模块
+```
 ├── config                                   不同环境的配置文件
 │
 ├── src                                      
@@ -44,8 +70,9 @@ AiToEarn的WEB项目，web端实现:
 │   ├── transports                           通信模块
 │   └── views                                视图
 ```
-2. `aitoearn-channel` - 渠道模块
-```tree
+
+#### 2. `aitoearn-channel` - 渠道模块
+```
 ├── config                                   不同环境的配置文件(各个三方平台的开发者key和密钥，微信三方平台在aitoearn-wxplay项目配置文件配置)
 │
 ├── src                                      
@@ -64,41 +91,70 @@ AiToEarn的WEB项目，web端实现:
 │   ├── transports                           通信模块
 │   └── views    
 ```
-3. `aitoearn-user` - 用户模块
-4. `aitoearn-wxplat` - 微信三方平台服务(解耦开发环境)
 
-## 后端技术栈
+#### 3. `aitoearn-user` - 用户模块
 
-- NestJS nodejs 框架
-- NATS 消息队列
-- MongoDB
-- Redis
-- AWS S3
-- BullMQ
+#### 4. `aitoearn-wxplat` - 微信三方平台服务(解耦开发环境)
+
+**快速启动：**
+```bash
+npm run dev:local
+```
+## MCP服务
+
+### 1. 配置平台账号
+
+在前端页面添加平台账号：
+<img src="./workflow/img/account.jpeg" alt="添加平台账号" width="500"/>
+
+### 2. 创建关联多个账号的 `skkey`
+
+<img src="./workflow/img/skkey.jpg" alt="创建skkey" width="500"/>
+
+### 3. 创建和配置工作流
+
+- 在工作流平台创建工作流（或导入模板-workflow文件夹）
+- 在工作流的参数设置中使用 `skkey` 进行内容发布
+<img src="./workflow/img/fl.jpeg" alt="工作流发布" width="500"/>
+
+### 工作流平台使用的接口
+`aitoearn-channel\src\core\mcp\plugin.controller.ts`
+
+## 高级设置
+### 平台申请和设置 ###
+1. [Bilibili](CHANNEL_Md/BILIBILI.md)
+1. [微信三方平台](CHANNEL_Md/WXPLAT.md)
+
+
+
+## 计划
+- 添加更多平台
+- 添加更多功能
 
 ## 使用方法
 
-1. 分别启动后端服务模块：
-   本地启动：config目录下创建local.config.js文件（复制dev.config.js文件修改配置）
-   ```sh
-   pnpm i 
-   pnpm run dev:local
-   ```
-2. 启动前端项目：`aitoearn-web`
-   ```sh
-   pnpm i
-   pnpm run dev
-   ```
-3. 在前端页面进行添加平台账号
-<img src="./workflow/img/account.jpeg" alt="post" width="500"/>
+### 1. 启动后端服务模块
 
-4. 创建关联多个账号的 `skkey`
-<img src="./workflow/img/skkey.jpg" alt="post" width="500"/>
+本地启动：在 config 目录下创建 `local.config.js` 文件（复制 `dev.config.js` 文件并修改配置）
 
-4. 在工作流平台创建工作流（或导入模板-workflow文件夹）
-5. 在工作流的参数设置使用 `skkey` 进行内容发布
-<img src="./workflow/img/fl.jpeg" alt="post" width="500"/>
+```bash
+pnpm install
+pnpm run dev:local
+```
 
-## 工作流平台使用的接口
+### 2. 启动前端项目 `aitoearn-web`
 
-`aitoearn-channel\src\core\mcp\plugin.controller.ts`
+```bash
+pnpm install
+pnpm run dev
+```
+## 贡献指南
+
+请查看 [贡献指南](CONTRIBUTING.md) 了解如何参与项目开发。
+
+## 联系我们
+
+如有任何问题，请通过以下方式联系我们：
+
+- 提交 GitHub Issues
+- 发送邮件至 [contact@aitoearn.ai](mailto:contact@aitoearn.ai)

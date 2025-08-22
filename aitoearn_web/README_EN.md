@@ -3,32 +3,60 @@
  * @Date: 2025-01-17 19:25:28
  * @LastEditTime: 2025-02-24 19:37:13
  * @LastEditors: nevin
- * @Description:
+ * @Description: 
 -->
 # AiToEarn Web
-[简体中文](README.md) | English
+
+[English](README_EN.md) | 简体中文
 
 ## Project Introduction
 
-AiToEarn WEB project implements matrix publishing across 11 platforms on the web side: 
+AiToEarn's WEB project is a web application that implements multi-platform content publishing. It supports the following 12 major social media platforms:
 
-![Douyin](https://lf1-cdn-tos.bytegoofy.com/goofy/ies/douyin_web/public/favicon.ico 'Douyin') Douyin
-![Bilibili](https://i0.hdslb.com/bfs/static/jinkela/long/images/favicon.ico 'Bilibili') Bilibili
-![Kuaishou](https://s1-111422.kwimgs.com/kos/nlav111422/ks-web/favicon.ico 'Kuaishou') Kuaishou
-![WeChat Official Accounts](https://res.wx.qq.com/a/wx_fed/assets/res/NTI4MWU5.ico 'WeChat Official Accounts') WeChat Official Accounts
-![YouTube](https://www.youtube.com/s/desktop/3ad23781/img/logos/favicon.ico 'YouTube') YouTube
-![Twitter](https://abs.twimg.com/responsive-web/client-web/icon-svg.ea5ff4aa.svg 'Twitter') Twitter
-![TikTok](https://www.tiktok.com/favicon.ico 'TikTok') TikTok
-![Facebook](https://static.xx.fbcdn.net/rsrc.php/y1/r/ay1hV6OlegS.ico 'Facebook') Facebook
-![Instagram](https://static.cdninstagram.com/rsrc.php/y4/r/QaBlI0OZiks.ico 'Instagram') Instagram
-![Threads](https://static.cdninstagram.com/rsrc.php/ye/r/lEu8iVizmNW.ico 'Threads') Threads
-![Pinterest](https://s.pinimg.com/webapp/logo_transparent_144x144-3da7a67b.png 'Pinterest') Pinterest
-Matrix publishing across 11 platforms
+<div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap; margin: 20px 0;">
+    <img src="https://lf1-cdn-tos.bytegoofy.com/goofy/ies/douyin_web/public/favicon.ico" title="抖音" alt="抖音" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://i0.hdslb.com/bfs/static/jinkela/long/images/favicon.ico" title="B站" alt="B站" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://s1-111422.kwimgs.com/kos/nlav111422/ks-web/favicon.ico" title="快手" alt="快手" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://res.wx.qq.com/a/wx_fed/assets/res/NTI4MWU5.ico" title="微信公众号" alt="微信公众号" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://www.youtube.com/s/desktop/3ad23781/img/logos/favicon.ico" title="YouTube" alt="YouTube" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://abs.twimg.com/responsive-web/client-web/icon-svg.ea5ff4aa.svg" title="Twitter" alt="Twitter" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://www.tiktok.com/favicon.ico" title="TikTok" alt="TikTok" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://static.xx.fbcdn.net/rsrc.php/y1/r/ay1hV6OlegS.ico" title="Facebook" alt="Facebook" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://static.cdninstagram.com/rsrc.php/y4/r/QaBlI0OZiks.ico" title="Instagram" alt="Instagram" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://static.cdninstagram.com/rsrc.php/ye/r/lEu8iVizmNW.ico" title="Threads" alt="Threads" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://s.pinimg.com/webapp/logo_transparent_144x144-3da7a67b.png" title="Pinterest" alt="Pinterest" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+</div>
 
-## Backend Modules
+**Supported Platforms for Matrix Publishing:** Douyin, Xiaohongshu, Kuaishou, Bilibili, WeChat Official Accounts, TikTok, YouTube, Facebook, Instagram, Threads, Twitter, Pinterest
 
-1. `aitoearn-gateway` - Gateway module
-```tree
+Project URL: [Aitoearn](https://aitoearn.ai)
+
+## Directory Structure
+
+### Web Frontend
+
+**Technology Stack:**
+- React
+- TypeScript
+- next
+
+**Startup Command:**
+```bash
+pnpm run dev
+```
+
+### Backend
+
+**Technology Stack:**
+- NestJS Node.js framework
+- NATS message queue
+- MongoDB
+- Redis
+- AWS S3
+- BullMQ
+
+#### 1. `aitoearn-gateway` - Gateway Module
+```
 ├── config                                   Configuration files for different environments
 │
 ├── src                                      
@@ -42,10 +70,10 @@ Matrix publishing across 11 platforms
 │   ├── transports                           Communication module
 │   └── views                                Views
 ```
-2. aitoearn-channel - Channel module
-```tree
-├── config                      
-│             Configuration files for different environments （Developer keys and keys of various third-party platforms，The wechat third-party platform is configured in the │             aitoearn-wxplay project configuration file）
+
+#### 2. `aitoearn-channel` - Channel Module
+```
+├── config                                   Configuration files for different environments (developer keys and secrets for various third-party platforms, WeChat third-party platform configured in aitoearn-wxplay project configuration file)
 │
 ├── src                                      
 │   ├── common                               Common module
@@ -63,34 +91,70 @@ Matrix publishing across 11 platforms
 │   ├── transports                           Communication module
 │   └── views    
 ```
-3. aitoearn-user - User module
-4. aitoearn-wxplat - WeChat third-party platform service (decoupled development environment)
 
-## Backend Technology Stack
-NestJS Node.js framework
-NATS Message queue
-MongoDB
-Redis
-AWS S3
-BullMQ
-## Usage Instructions
-1. Start backend service modules separately: Local startup: Create local.config.js file in config directory (copy dev.config.js file and modify configuration)
-```sh
-pnpm i 
+#### 3. `aitoearn-user` - User Module
+
+#### 4. `aitoearn-wxplat` - WeChat Third-Party Platform Service (Decoupled Development Environment)
+
+**Quick Start:**
+```bash
+npm run dev:local
+```
+## MCP Service
+
+### 1. Configure Platform Accounts
+
+Add platform accounts on the frontend page:
+<img src="./workflow/img/account.jpeg" alt="Add Platform Account" width="500"/>
+
+### 2. Create `skkey` Associated with Multiple Accounts
+
+<img src="./workflow/img/skkey.jpg" alt="Create skkey" width="500"/>
+
+### 3. Create and Configure Workflows
+
+- Create workflows on the workflow platform (or import templates from the workflow folder)
+- Use `skkey` in workflow parameter settings for content publishing
+<img src="./workflow/img/fl.jpeg" alt="Workflow Publishing" width="500"/>
+
+### Interface Used by Workflow Platform
+`aitoearn-channel\src\core\mcp\plugin.controller.ts`
+
+## Advanced Settings
+### Platform Application and Setup ###
+1. [Bilibili](CHANNEL_Md/BILIBILI_EN.md)
+1. [WeChat Third-Party Platform](CHANNEL_Md/WXPLAT_EN.md)
+
+
+
+## Roadmap
+- Add more platforms
+- Add more features
+
+## Usage
+
+### 1. Start Backend Service Modules
+
+Local startup: Create a `local.config.js` file in the config directory (copy the `dev.config.js` file and modify the configuration)
+
+```bash
+pnpm install
 pnpm run dev:local
 ```
-2. Start frontend project: aitoearn-web
-```sh
-pnpm i 
+
+### 2. Start Frontend Project `aitoearn-web`
+
+```bash
+pnpm install
 pnpm run dev
 ```
-3. Add platform accounts on the frontend page
-   <img src="./workflow/img/account.jpeg" alt="post" width="500"/>
-4. Create skkey associated with multiple accounts
-   <img src="./workflow/img/skkey.jpg" alt="post" width="500"/>
-5. Create workflows on the workflow platform (or import templates from workflow folder)
-6. Use skkey for content publishing in workflow parameter settings
-   <img src="./workflow/img/fl.jpg" alt="post" width="500"/>
+## Contribution Guide
 
-## Workflow Platform Interface
-aitoearn-channel\src\core\mcp\plugin.controller.ts
+Please see [Contribution Guide](CONTRIBUTING_EN.md) for information on how to contribute to the project development.
+
+## Contact Us
+
+If you have any questions, please contact us through the following ways:
+
+- Submit GitHub Issues
+- Send email to [contact@aitoearn.ai](mailto:contact@aitoearn.ai)
