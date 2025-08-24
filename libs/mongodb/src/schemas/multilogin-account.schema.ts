@@ -15,7 +15,7 @@ export class MultiloginAccounts extends WithTimestampSchema {
   @Prop({
     required: true,
   })
-  username: string
+  email: string
 
   @Prop({
     required: true,
@@ -33,6 +33,12 @@ export class MultiloginAccounts extends WithTimestampSchema {
     required: true,
   })
   currentProfiles: number
+
+  @Prop({
+    type: String,
+    required: false,
+  })
+  token?: string
 }
 
 export const MultiloginAccountSchema = SchemaFactory.createForClass(MultiloginAccounts)

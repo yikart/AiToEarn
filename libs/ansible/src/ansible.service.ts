@@ -1,8 +1,6 @@
 import { spawn } from 'node:child_process'
-import * as fs from 'node:fs'
-import * as path from 'node:path'
 import { Injectable, Logger } from '@nestjs/common'
-import { defaultAnsibleConfig } from './ansible.config'
+import { AnsibleConfig } from './ansible.config'
 import {
   AnsibleCommandException,
   AnsibleException,
@@ -11,7 +9,6 @@ import {
 } from './ansible.exception'
 import {
   AdHocOptions,
-  AnsibleConfig,
   AnsibleResult,
   Inventory,
   InventoryGroup,
@@ -22,11 +19,8 @@ import {
 @Injectable()
 export class AnsibleService {
   private readonly logger = new Logger(AnsibleService.name)
-  private readonly config: Required<AnsibleConfig>
 
-  constructor(config: AnsibleConfig = {}) {
-    this.config = { ...defaultAnsibleConfig, ...config } as Required<AnsibleConfig>
-    this.validateConfig()
+  constructor(private readonly config: AnsibleConfig) {
   }
 
   /**
@@ -95,11 +89,8 @@ export class AnsibleService {
   /**
    * Get inventory information
    */
-  async getInventory(inventoryPath?: string): Promise<Inventory> {
-    const invPath = inventoryPath || this.config.inventoryPath
-    if (!invPath) {
-      throw new AnsibleInventoryException('No inventory path specified', '')
-    }
+  async getInventory(inventoryPath: string): Promise<Inventory> {
+    const invPath = inventoryPath
 
     const command = ['ansible-inventory', '-i', invPath, '--list']
 
@@ -138,34 +129,7 @@ export class AnsibleService {
     return this.runCommand(hosts, 'setup', undefined, options)
   }
 
-  private validateConfig(): void {
-    // Validate paths exist if specified
-    if (this.config.inventoryPath && !fs.existsSync(this.config.inventoryPath)) {
-      throw new AnsibleException(`Inventory path does not exist: ${this.config.inventoryPath}`)
-    }
-
-    if (this.config.playbookPath && !fs.existsSync(this.config.playbookPath)) {
-      throw new AnsibleException(`Playbook path does not exist: ${this.config.playbookPath}`)
-    }
-
-    if (this.config.configFile && !fs.existsSync(this.config.configFile)) {
-      throw new AnsibleException(`Config file does not exist: ${this.config.configFile}`)
-    }
-
-    if (this.config.privateKeyFile && !fs.existsSync(this.config.privateKeyFile)) {
-      throw new AnsibleException(`Private key file does not exist: ${this.config.privateKeyFile}`)
-    }
-  }
-
   private resolvePlaybookPath(playbookName: string): string {
-    if (path.isAbsolute(playbookName)) {
-      return playbookName
-    }
-
-    if (this.config.playbookPath) {
-      return path.join(this.config.playbookPath, playbookName)
-    }
-
     return playbookName
   }
 
@@ -173,8 +137,8 @@ export class AnsibleService {
     const command = ['ansible-playbook']
 
     // Add inventory
-    if (options.inventory || this.config.inventoryPath) {
-      command.push('-i', options.inventory || this.config.inventoryPath!)
+    if (options.inventory) {
+      command.push('-i', options.inventory)
     }
 
     // Add limit
@@ -229,16 +193,6 @@ export class AnsibleService {
       }
     }
 
-    // Add config file
-    if (this.config.configFile) {
-      command.push('--ansible-config', this.config.configFile)
-    }
-
-    // Add private key
-    if (this.config.privateKeyFile) {
-      command.push('--private-key', this.config.privateKeyFile)
-    }
-
     // Add forks
     if (this.config.forks !== 5) {
       command.push('--forks', this.config.forks.toString())
@@ -262,8 +216,8 @@ export class AnsibleService {
     command.push(hosts)
 
     // Add inventory
-    if (options.inventory || this.config.inventoryPath) {
-      command.push('-i', options.inventory || this.config.inventoryPath!)
+    if (options.inventory) {
+      command.push('-i', options.inventory)
     }
 
     // Add module
@@ -300,16 +254,6 @@ export class AnsibleService {
     // Add timeout
     if (options.timeout) {
       command.push('--timeout', options.timeout.toString())
-    }
-
-    // Add config file
-    if (this.config.configFile) {
-      command.push('--ansible-config', this.config.configFile)
-    }
-
-    // Add private key
-    if (this.config.privateKeyFile) {
-      command.push('--private-key', this.config.privateKeyFile)
     }
 
     return command

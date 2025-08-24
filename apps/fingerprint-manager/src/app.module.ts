@@ -1,5 +1,4 @@
 import { MongodbModule } from '@aitoearn/mongodb'
-import { MultiloginModule } from '@aitoearn/multilogin'
 import { RedlockModule } from '@aitoearn/redlock'
 import { UCloudModule } from '@aitoearn/ucloud'
 import { Module } from '@nestjs/common'
@@ -14,7 +13,6 @@ import { SchedulerModule } from './scheduler'
   imports: [
     MongodbModule.forRoot(config.mongodb),
     UCloudModule.forRoot(config.ucloud),
-    MultiloginModule.forRoot(config.multilogin),
     RedlockModule.forRoot(config.redlock),
     MultiloginAccountModule,
     BrowserEnvironmentModule,

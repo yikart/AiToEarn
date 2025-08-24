@@ -53,7 +53,7 @@ export class CloudInstanceService {
   async waitForInstanceReady(instanceId: string, region: BrowserEnvironmentRegion, timeoutMinutes = 10): Promise<void> {
     const timeoutMs = timeoutMinutes * 60 * 1000
     const startTime = Date.now()
-    const pollInterval = 10000
+    const pollInterval = 5000
 
     while (Date.now() - startTime < timeoutMs) {
       const status = await this.getInstanceStatus(instanceId, region)

@@ -26,13 +26,13 @@ export class MultiloginAccountController {
 
   @MessagePattern('multilogin-account.list')
   async list(@Payload() listDto: ListMultiloginAccountsDto): Promise<MultiloginAccountListVo> {
-    const [accounts, total] = await this.multiloginAccountService.findWithPagination(listDto)
+    const [accounts, total] = await this.multiloginAccountService.listWithPagination(listDto)
     return new MultiloginAccountListVo(accounts, total, listDto)
   }
 
   @MessagePattern('multilogin-account.getById')
   async getById(@Payload() getDto: IdDto): Promise<MultiloginAccountVo> {
-    const account = await this.multiloginAccountService.findById(getDto.id)
+    const account = await this.multiloginAccountService.getById(getDto.id)
     return MultiloginAccountVo.create(account)
   }
 

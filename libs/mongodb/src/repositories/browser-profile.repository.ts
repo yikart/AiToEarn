@@ -41,6 +41,14 @@ export class BrowserProfileRepository extends BaseRepository<BrowserProfileDocum
     return await this.find({ environmentId })
   }
 
+  async listByEnvironmentId(environmentId: string): Promise<BrowserProfileDocument[]> {
+    return await this.findByEnvironmentId(environmentId)
+  }
+
+  async getByEnvironmentId(environmentId: string): Promise<BrowserProfileDocument | null> {
+    return await this.findOne({ environmentId })
+  }
+
   async deleteByEnvironmentId(environmentId: string): Promise<void> {
     await this.deleteMany({ environmentId })
   }

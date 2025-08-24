@@ -33,6 +33,13 @@ export class MultiloginAccountService {
   }
 
   /**
+   * 分页列出Multilogin账号列表
+   */
+  async listWithPagination(dto: ListMultiloginAccountsDto) {
+    return await this.findWithPagination(dto)
+  }
+
+  /**
    * 根据ID查询Multilogin账号
    */
   async findById(id: string) {
@@ -41,6 +48,13 @@ export class MultiloginAccountService {
       throw new AppException(ResponseCode.MultiloginAccountNotFound)
     }
     return account
+  }
+
+  /**
+   * 根据ID获取Multilogin账号
+   */
+  async getById(id: string) {
+    return await this.findById(id)
   }
 
   /**
@@ -69,7 +83,7 @@ export class MultiloginAccountService {
    * 增加当前配置数
    */
   async incrementCurrentProfiles(id: string, increment = 1) {
-    const account = await this.findById(id)
+    const account = await this.getById(id)
     const newCurrentProfiles = account.currentProfiles + increment
 
     if (newCurrentProfiles > account.maxProfiles) {
@@ -85,7 +99,7 @@ export class MultiloginAccountService {
    * 减少当前配置数
    */
   async decrementCurrentProfiles(id: string, decrement = 1) {
-    const account = await this.findById(id)
+    const account = await this.getById(id)
     const newCurrentProfiles = Math.max(0, account.currentProfiles - decrement)
 
     return await this.multiloginAccountRepository.updateById(id, {
@@ -103,5 +117,12 @@ export class MultiloginAccountService {
       hasAvailableSlots: true,
     })
     return accounts
+  }
+
+  /**
+   * 列出有可用槽位的账号
+   */
+  async listAccountsWithAvailableSlots(limit = 10) {
+    return await this.findAccountsWithAvailableSlots(limit)
   }
 }

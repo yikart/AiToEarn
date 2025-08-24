@@ -1,0 +1,40 @@
+{
+  "multilogin": {
+    "email": "user@example.com",
+    "password": "your_multilogin_password",
+    "token": "optional_access_token_instead_of_email_password"
+  },
+  "folderId": "your-folder-id",
+  "profileId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  "url": "https://example.com",
+  "cookies": [
+    {
+      "name": "session_token",
+      "value": "abc123xyz",
+      "domain": ".example.com",
+      "path": "/",
+      "secure": true,
+      "httpOnly": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "user_preference",
+      "value": "dark_mode",
+      "domain": ".example.com",
+      "path": "/",
+      "secure": false,
+      "httpOnly": false,
+      "sameSite": "Strict"
+    }
+  ],
+  "localStorage": [
+    {
+      "name": "user_token",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+    },
+    {
+      "name": "theme_preference",
+      "value": "dark"
+    }
+  ]
+}

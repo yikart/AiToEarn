@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "@aitoearn/ansible": "workspace:*",
     "@aitoearn/common": "workspace:*",
     "@aitoearn/mongodb": "workspace:*",
     "@aitoearn/multilogin": "workspace:*",
@@ -12,7 +13,11 @@
     "@nestjs/microservices": "^11.1.6",
     "@nestjs/schedule": "^6.0.0",
     "@nx/webpack": "21.4.0",
+    "js-yaml": "^4.1.0",
     "tslib": "^2.3.0",
     "zod": "^4.0.17"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9"
   }
 }

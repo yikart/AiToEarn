@@ -3,23 +3,30 @@ import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios'
 import {
   MultiloginError,
   MultiloginRateLimitError,
-} from '../multilogin.exception'
+} from './multilogin.exception'
 import {
+  AllProfilesStatusResponse,
+  AllQuickProfilesStatusResponse,
   AuthRefreshTokenRequest,
   AuthResponse,
   AuthRevokeTokenRequest,
   AuthSignInRequest,
   AutomationTokenResponse,
-  BrowserCore,
+  BrowserCoreListResponse,
   ConvertQBPRequest,
+  ConvertQBPResponse,
   CookieExportResponse,
   CookieImportRequest,
+  CookieImportResponse,
   CreateFolderRequest,
   CreateFolderResponse,
   CreateProfileRequest,
   CreateProfileResponse,
   FolderListItem,
   FoldersResponse,
+  LoadBrowserCoreResponse,
+  LoadedBrowserCoresResponse,
+  MultiloginClientConfig,
   ProfileRemoveRequest,
   ProfileResponse,
   ProfileSearchRequest,
@@ -27,7 +34,6 @@ import {
   ProfileStatus,
   QuickProfileRequest,
   RemoveFoldersRequest,
-  StartProfileRequest,
   TokenListResponse,
   UpdateFolderRequest,
   UpdateProfileRequest,
@@ -35,21 +41,8 @@ import {
   ValidateProxyResponse,
   VersionResponse,
   WorkspacesResponse,
-} from '../multilogin.interface'
+} from './multilogin.interface'
 
-export interface MultiloginClientConfig {
-  profileBaseUrl?: string
-  launcherBaseUrl?: string
-  timeout?: number
-  email: string
-  password: string
-  token?: string
-}
-
-/**
- * 统一的 Multilogin 客户端，集成了 Profile API 和 Launcher API
- * 支持自动 token 管理和 401 错误重试机制
- */
 export class MultiloginClient {
   private httpClient: AxiosInstance
   private launcherClient: AxiosInstance
@@ -58,11 +51,13 @@ export class MultiloginClient {
   private password: string
   private isRefreshing = false
   private refreshPromise?: Promise<void>
+  private onTokenRefresh?: (token: string) => void | Promise<void>
 
   constructor(config: MultiloginClientConfig) {
     this.email = config.email
     this.password = config.password
     this.token = config.token
+    this.onTokenRefresh = config.onTokenRefresh
 
     // 创建 Profile API 的 HTTP 客户端
     this.httpClient = this.createHttpClient(
@@ -99,7 +94,6 @@ export class MultiloginClient {
       return config
     })
 
-    // 添加响应拦截器，处理 401 错误
     client.interceptors.response.use(
       response => response,
       async (error) => {
@@ -139,19 +133,16 @@ export class MultiloginClient {
    * 刷新 automation token
    */
   private async refreshAutomationToken(): Promise<void> {
-    // 首先使用用户凭据登录获取临时 token
-    const authResponse = await this.signInInternal({
+    await this.signIn({
       email: this.email,
       password: this.password,
     })
 
-    // 设置临时 token
-    this.token = authResponse.data.token
-
-    // 获取长效 automation token
-    const automationTokenResponse = await this.getAutomationTokenInternal()
-    // 使用长效 automation token 替换临时 token
-    this.token = automationTokenResponse.data.token
+    // 获取 automation token
+    const automationTokenResponse: AxiosResponse<AutomationTokenResponse> = await this.httpClient.get(
+      '/workspace/automation_token',
+    )
+    await this.setToken(automationTokenResponse.data.data.token)
   }
 
   /**
@@ -175,9 +166,26 @@ export class MultiloginClient {
     await this.refreshPromise
   }
 
+  /**
+   * 设置token并触发hook
+   */
+  private async setToken(newToken: string): Promise<void> {
+    this.token = newToken
+    if (this.onTokenRefresh) {
+      await this.onTokenRefresh(newToken)
+    }
+  }
+
+  /**
+   * 获取当前token
+   */
+  public getToken(): string | undefined {
+    return this.token
+  }
+
   // ==================== Profile API Methods ====================
 
-  private async signInInternal(request: AuthSignInRequest): Promise<AuthResponse> {
+  async signIn(request: AuthSignInRequest): Promise<AuthResponse> {
     // 对密码进行 MD5 哈希处理
     const hashedPassword = createHash('md5').update(request.password).digest('hex')
     const requestWithHashedPassword = {
@@ -189,13 +197,8 @@ export class MultiloginClient {
       '/user/signin',
       requestWithHashedPassword,
     )
+    this.token = response.data.data.token
     return response.data
-  }
-
-  async signIn(request: AuthSignInRequest): Promise<AuthResponse> {
-    const response = await this.signInInternal(request)
-    this.token = response.data.token
-    return response
   }
 
   async refreshToken(request: AuthRefreshTokenRequest): Promise<AuthResponse> {
@@ -213,10 +216,11 @@ export class MultiloginClient {
 
   async changePassword(currentPassword: string, newPassword: string): Promise<void> {
     // 对密码进行 MD5 哈希处理
+    const hashedCurrentPassword = createHash('md5').update(currentPassword).digest('hex')
     const hashedNewPassword = createHash('md5').update(newPassword).digest('hex')
 
     await this.httpClient.post('/user/change_password', {
-      password: currentPassword,
+      password: hashedCurrentPassword,
       new_password: hashedNewPassword,
     })
   }
@@ -231,17 +235,13 @@ export class MultiloginClient {
     return response.data
   }
 
-  private async getAutomationTokenInternal(expirationPeriod?: number): Promise<AutomationTokenResponse> {
+  async getAutomationToken(expirationPeriod?: string): Promise<AutomationTokenResponse> {
     const params = expirationPeriod ? { expiration_period: expirationPeriod } : {}
     const response: AxiosResponse<AutomationTokenResponse> = await this.httpClient.get(
       '/workspace/automation_token',
       { params },
     )
     return response.data
-  }
-
-  async getAutomationToken(expirationPeriod?: number): Promise<AutomationTokenResponse> {
-    return await this.getAutomationTokenInternal(expirationPeriod)
   }
 
   async searchProfiles(request: ProfileSearchRequest): Promise<ProfileSearchResponse> {
@@ -265,7 +265,7 @@ export class MultiloginClient {
       profile_id: profileId,
       ...profile,
     }
-    await this.httpClient.put('/profile/update', request)
+    await this.httpClient.post('/profile/update', request)
   }
 
   async deleteProfile(profileId: string, permanently = false): Promise<void> {
@@ -331,17 +331,9 @@ export class MultiloginClient {
     return response.data
   }
 
-  async startQuickProfileV3(request: QuickProfileRequest): Promise<ProfileResponse> {
+  async startQuickProfile(request: QuickProfileRequest): Promise<ProfileResponse> {
     const response: AxiosResponse<ProfileResponse> = await this.launcherClient.post(
       '/api/v3/profile/quick',
-      request,
-    )
-    return response.data
-  }
-
-  async startQuickProfile(request: StartProfileRequest): Promise<ProfileResponse> {
-    const response: AxiosResponse<ProfileResponse> = await this.launcherClient.post(
-      '/api/v2/profile/quick',
       request,
     )
     return response.data
@@ -367,38 +359,56 @@ export class MultiloginClient {
     return response.data
   }
 
-  async getAllProfilesStatus(): Promise<ProfileStatus[]> {
-    const response: AxiosResponse<ProfileStatus[]> = await this.launcherClient.get(
+  async getAllProfilesStatus(): Promise<AllProfilesStatusResponse> {
+    const response: AxiosResponse<AllProfilesStatusResponse> = await this.launcherClient.get(
       '/api/v1/profile/statuses',
     )
     return response.data
   }
 
-  async getAllQuickProfilesStatus(): Promise<ProfileStatus[]> {
-    const response: AxiosResponse<ProfileStatus[]> = await this.launcherClient.get(
+  async getAllQuickProfilesStatus(): Promise<AllQuickProfilesStatusResponse> {
+    const response: AxiosResponse<AllQuickProfilesStatusResponse> = await this.launcherClient.get(
       '/api/v1/profile/quick/statuses',
     )
     return response.data
   }
 
-  async getLoadedBrowserCores(): Promise<BrowserCore[]> {
-    const response: AxiosResponse<BrowserCore[]> = await this.launcherClient.get(
-      '/api/v1/core/loaded',
+  async getLoadedBrowserCores(): Promise<LoadedBrowserCoresResponse> {
+    const response: AxiosResponse<LoadedBrowserCoresResponse> = await this.launcherClient.get(
+      '/api/v1/loaded_browser_cores',
     )
     return response.data
   }
 
-  async getBrowserCoreList(): Promise<BrowserCore[]> {
-    const response: AxiosResponse<BrowserCore[]> = await this.launcherClient.get('/api/v1/core/list')
+  async getBrowserCoreList(): Promise<BrowserCoreListResponse> {
+    const response: AxiosResponse<BrowserCoreListResponse> = await this.launcherClient.get('/bcs/core/list')
     return response.data
   }
 
-  async loadBrowserCore(coreType: string, version: string): Promise<void> {
-    await this.launcherClient.get(`/api/v1/core/load/${coreType}/${version}`)
+  async loadBrowserCore(coreType: string, version: string): Promise<LoadBrowserCoreResponse> {
+    const response: AxiosResponse<LoadBrowserCoreResponse> = await this.launcherClient.get(
+      '/api/v1/load_browser_core',
+      {
+        params: {
+          browser_type: coreType,
+          version,
+        },
+      },
+    )
+    return response.data
   }
 
-  async deleteBrowserCore(coreType: string, version: string): Promise<void> {
-    await this.launcherClient.delete(`/api/v1/core/delete/${coreType}/${version}`)
+  async deleteBrowserCore(coreType: string, version: string): Promise<LoadBrowserCoreResponse> {
+    const response: AxiosResponse<LoadBrowserCoreResponse> = await this.launcherClient.delete(
+      '/api/v1/delete_browser_core',
+      {
+        params: {
+          browser_type: coreType,
+          version,
+        },
+      },
+    )
+    return response.data
   }
 
   async validateProxy(request: ValidateProxyRequest): Promise<ValidateProxyResponse> {
@@ -409,18 +419,27 @@ export class MultiloginClient {
     return response.data
   }
 
-  async importCookies(request: CookieImportRequest): Promise<void> {
-    await this.launcherClient.post('/api/v1/cookies/import', request)
-  }
-
-  async exportCookies(profileId: string): Promise<CookieExportResponse> {
-    const response: AxiosResponse<CookieExportResponse> = await this.launcherClient.get(
-      `/api/v1/cookies/export/${profileId}`,
+  async importCookies(request: CookieImportRequest): Promise<CookieImportResponse> {
+    const response: AxiosResponse<CookieImportResponse> = await this.launcherClient.post(
+      '/api/v1/cookie_import',
+      request,
     )
     return response.data
   }
 
-  async convertQBPToProfile(request: ConvertQBPRequest): Promise<void> {
-    await this.launcherClient.post('/api/v1/profile/quick/save', request)
+  async exportCookies(profileId: string): Promise<CookieExportResponse> {
+    const response: AxiosResponse<CookieExportResponse> = await this.launcherClient.post(
+      '/api/v1/cookie_export',
+      { profile_id: profileId },
+    )
+    return response.data
+  }
+
+  async convertQBPToProfile(request: ConvertQBPRequest): Promise<ConvertQBPResponse> {
+    const response: AxiosResponse<ConvertQBPResponse> = await this.launcherClient.post(
+      '/api/v1/profile/quick/save',
+      request,
+    )
+    return response.data
   }
 }

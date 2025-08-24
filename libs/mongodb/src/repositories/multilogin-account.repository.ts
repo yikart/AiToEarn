@@ -7,7 +7,7 @@ import { BaseRepository } from './base.repository'
 export type MultiloginAccountDocument = MultiloginAccounts & Document
 
 export interface ListMultiloginAccountParams extends Pagination {
-  username?: string
+  email?: string
   minMaxProfiles?: number
   maxMaxProfiles?: number
   hasAvailableSlots?: boolean
@@ -21,11 +21,11 @@ export class MultiloginAccountRepository extends BaseRepository<MultiloginAccoun
   }
 
   async listWithPagination(params: ListMultiloginAccountParams): Promise<[MultiloginAccountDocument[], number]> {
-    const { page, pageSize, username, minMaxProfiles, maxMaxProfiles, hasAvailableSlots } = params
+    const { page, pageSize, email, minMaxProfiles, maxMaxProfiles, hasAvailableSlots } = params
 
     const filter: FilterQuery<MultiloginAccountDocument> = {}
-    if (username)
-      filter.username = username
+    if (email)
+      filter.email = email
     if (minMaxProfiles !== undefined)
       filter.maxProfiles = { $gte: minMaxProfiles }
     if (maxMaxProfiles !== undefined)

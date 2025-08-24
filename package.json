@@ -21,6 +21,7 @@
     "@ucloud-sdks/ucloud-sdk-js": "^0.2.3",
     "commander": "^14.0.0",
     "express": "5.1.0",
+    "ioredis": "^5.7.0",
     "mongodb": "^6.18.0",
     "mongoose": "^8.17.2",
     "nest-typed-config": "^2.10.1",
@@ -30,7 +31,6 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.0",
     "tslib": "^2.3.0",
-    "ioredis": "^5.7.0",
     "zod": "^4.0.17"
   },
   "devDependencies": {

@@ -1,0 +1,11 @@
+{
+  "name": "@aitoearn/browser-automation-worker",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@aitoearn/multilogin": "workspace:*",
+    "@nx/webpack": "21.4.0",
+    "commander": "^14.0.0",
+    "playwright": "^1.40.0"
+  }
+}

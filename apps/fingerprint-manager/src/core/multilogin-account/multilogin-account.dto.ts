@@ -2,7 +2,7 @@ import { createZodDto, PaginationDtoSchema } from '@aitoearn/common'
 import z from 'zod'
 
 export const CreateMultiloginAccountDtoSchema = z.object({
-  username: z.string().min(1),
+  email: z.string().min(1),
   password: z.string().min(1),
   maxProfiles: z.number().int().min(1).default(10),
 })
@@ -11,16 +11,17 @@ export class CreateMultiloginAccountDto extends createZodDto(CreateMultiloginAcc
 
 export const UpdateMultiloginAccountDtoSchema = z.object({
   id: z.string().min(1),
-  username: z.string().min(1).optional(),
+  email: z.string().min(1).optional(),
   password: z.string().min(1).optional(),
   maxProfiles: z.number().int().min(1).optional(),
+  token: z.string().optional(),
 })
 
 export class UpdateMultiloginAccountDto extends createZodDto(UpdateMultiloginAccountDtoSchema) {}
 
 export const ListMultiloginAccountsDtoSchema = z.object({
   ...PaginationDtoSchema.shape,
-  username: z.string().optional(),
+  email: z.string().optional(),
   minMaxProfiles: z.coerce.number().int().min(1).optional(),
   maxMaxProfiles: z.coerce.number().int().min(1).optional(),
   hasAvailableSlots: z.coerce.boolean().optional(),

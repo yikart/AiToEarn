@@ -29,6 +29,7 @@ export class BrowserProfile extends WithTimestampSchema {
 
   @Prop({
     required: true,
+    type: Object,
   })
   config: Record<string, unknown>
 }

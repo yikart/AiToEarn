@@ -31,8 +31,8 @@
       "@aitoearn/multilogin": ["libs/multilogin/src/index.ts"],
       "@aitoearn/nats-client": ["libs/nats-client/src/index.ts"],
       "@aitoearn/redis": ["libs/redis/src/index.ts"],
-      "@aitoearn/ucloud": ["libs/ucloud/src/index.ts"],
-      "@aitoearn/redlock": ["libs/redlock/src/index.ts"]
+      "@aitoearn/redlock": ["libs/redlock/src/index.ts"],
+      "@aitoearn/ucloud": ["libs/ucloud/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

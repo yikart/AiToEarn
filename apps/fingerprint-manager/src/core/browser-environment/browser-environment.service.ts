@@ -1,7 +1,7 @@
 import { AppException, BrowserEnvironmentStatus, ResponseCode } from '@aitoearn/common'
 import { BrowserEnvironmentRepository, BrowserProfileRepository } from '@aitoearn/mongodb'
-import { MultiloginService } from '@aitoearn/multilogin'
 import { Injectable } from '@nestjs/common'
+import { MultiloginHelper } from '../../common/helpers'
 import { config } from '../../config'
 import { CloudInstanceService } from '../cloud-instance'
 import { MultiloginAccountService } from '../multilogin-account'
@@ -17,7 +17,7 @@ export class BrowserEnvironmentService {
     private readonly browserProfileRepository: BrowserProfileRepository,
     private readonly multiloginAccountService: MultiloginAccountService,
     private readonly cloudInstanceService: CloudInstanceService,
-    private readonly multiloginService: MultiloginService,
+    private readonly multiloginHelper: MultiloginHelper,
   ) {}
 
   async createEnvironment(dto: CreateBrowserEnvironmentDto) {
@@ -72,7 +72,7 @@ export class BrowserEnvironmentService {
       throw new AppException(ResponseCode.BrowserEnvironmentNotFound)
     }
 
-    const profiles = await this.browserProfileRepository.findByEnvironmentId(environmentId)
+    const profiles = await this.browserProfileRepository.listByEnvironmentId(environmentId)
     for (const profile of profiles) {
       await this.multiloginAccountService.decrementCurrentProfiles(profile.accountId)
     }
@@ -82,7 +82,7 @@ export class BrowserEnvironmentService {
   }
 
   private async allocateMultiloginAccount() {
-    const accounts = await this.multiloginAccountService.findAccountsWithAvailableSlots(1)
+    const accounts = await this.multiloginAccountService.listAccountsWithAvailableSlots(1)
 
     if (accounts.length === 0) {
       throw new AppException(ResponseCode.NoAvailableMultiloginAccount)
@@ -94,32 +94,24 @@ export class BrowserEnvironmentService {
     return optimalAccount
   }
 
-  // 部署逻辑移至scheduler
-  // private async deployBrowserAgent(_instanceIp: string): Promise<void> {
-  //   ...
-  // }
-
   private async createMultiloginProfile(name: string): Promise<string> {
     // 获取 Multilogin 账户实例
-    const accounts = await this.multiloginAccountService.findAccountsWithAvailableSlots(1)
+    const accounts = await this.multiloginAccountService.listAccountsWithAvailableSlots(1)
     if (accounts.length === 0) {
       throw new AppException(ResponseCode.NoAvailableMultiloginAccount)
     }
 
     const account = accounts[0]
-    const client = await this.multiloginService.getAccount(
-      account.username,
-      account.password,
-    )
+    const client = await this.multiloginHelper.withAccount(account)
 
     // 默认的 profile 参数
     const defaultParameters = {
       flags: {
-        screen_masking: true,
-        graphics_masking: true,
-        navigator_masking: true,
+        screen_masking: 'mask',
+        graphics_masking: 'mask',
+        navigator_masking: 'mask',
       },
-    }
+    } as const
 
     const response = await client.createProfile({
       folder_id: config.multilogin.folderId,

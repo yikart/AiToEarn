@@ -12,7 +12,7 @@
         "outputPath": "dist/apps/fingerprint-manager",
         "tsConfig": "apps/fingerprint-manager/tsconfig.app.json",
         "packageJson": "apps/fingerprint-manager/package.json",
-        "main": "apps/fingerprint-manager/src/index.ts",
+        "main": "apps/fingerprint-manager/src/main.ts",
         "assets": ["apps/fingerprint-manager/*.md"],
         "generatePackageJson": true,
         "clean": true

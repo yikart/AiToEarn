@@ -1,14 +1,3 @@
-export interface AnsibleConfig {
-  inventoryPath?: string
-  playbookPath?: string
-  configFile?: string
-  privateKeyFile?: string
-  vaultPasswordFile?: string
-  timeout?: number
-  forks?: number
-  verbosity?: number
-}
-
 export interface PlaybookOptions {
   inventory?: string
   limit?: string
