@@ -834,7 +834,7 @@ export default function AIGeneratePage() {
                     >
                       {(filteredVideoModels as any[]).map((modelItem: any) => (
                         <Option key={modelItem.name} value={modelItem.name}>
-                          {modelItem.name}
+                          {modelItem.description}
                         </Option>
                       ))}
                     </Select>
