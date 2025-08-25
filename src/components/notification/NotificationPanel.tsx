@@ -22,6 +22,7 @@ import { PubType } from "@/app/config/publishConfig";
 import { getAppDownloadConfig, getTasksRequiringApp } from "@/app/config/appDownloadConfig";
 import DownloadAppModal from "@/components/common/DownloadAppModal";
 import styles from "./NotificationPanel.module.scss";
+import { useParams } from "next/navigation";
 
 interface NotificationPanelProps {
   visible: boolean;
@@ -260,6 +261,13 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
 
   // 获取平台显示名称
   const getPlatformName = (type: string) => {
+    const { lng } = useParams();
+    
+    if (lng === 'en') {
+      return type;
+    }
+    
+    // 中文显示名称
     const platformNames: Record<string, string> = {
       'tiktok': 'TikTok',
       'youtube': 'YouTube', 

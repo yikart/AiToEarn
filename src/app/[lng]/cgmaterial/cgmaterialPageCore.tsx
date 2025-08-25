@@ -24,11 +24,13 @@ import { PlatType } from "@/app/config/platConfig";
 import { PublishStatus } from "@/api/plat/types/publish.types";
 import { useTransClient } from "@/app/i18n/client";
 import { PubType } from "@/app/config/publishConfig";
+import { useParams } from "next/navigation";
 
 const { TextArea } = Input;
 
 export default function CgMaterialPageCore() {
   const { t } = useTransClient('cgmaterial');
+  const { lng } = useParams();
   
   // 草稿箱组相关
   const [groupList, setGroupList] = useState<any[]>([]);
@@ -821,6 +823,11 @@ export default function CgMaterialPageCore() {
 
   // 获取平台显示名称
   function getPlatformName(type: string) {
+    if (lng === 'en') {
+      return type;
+    }
+    
+    // 中文显示名称
     const platformNames: Record<string, string> = {
       'tiktok': 'TikTok',
       'youtube': 'YouTube', 

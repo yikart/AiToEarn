@@ -131,6 +131,8 @@
       "wechat": "微信群组",
       "community": "创作者交流群"
     },
+    "wechatPopup": "扫码关注微信公众号",
+    "communityPopup": "扫码加入社区群",
     "stats": {
       "downloads": {
         "number": "20万+",

@@ -131,6 +131,8 @@
       "wechat": "WeChat Group",
       "community": "Creator Community"
     },
+    "wechatPopup": "Scan QR code to follow WeChat Official Account",
+    "communityPopup": "Scan QR code to join community group",
     "stats": {
       "downloads": {
         "number": "200K+",
