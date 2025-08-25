@@ -293,7 +293,7 @@ interface Resources {
       "text": "通过插件和繁荣的市场构建和扩展AI工作流程。"
     },
     "header": {
-      "logo": "Aitorarn",
+      "logo": "Aitoearn",
       "nav": {
         "marketplace": "市场",
         "pricing": "价格",
