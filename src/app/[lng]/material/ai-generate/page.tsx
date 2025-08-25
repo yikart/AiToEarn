@@ -112,7 +112,7 @@ export default function AIGeneratePage() {
   const checkFileSize = (file: File): boolean => {
     if (file.size > MAX_IMAGE_SIZE) {
       const sizeInMB = (MAX_IMAGE_SIZE / (1024 * 1024)).toFixed(0);
-      message.error(`图片大小限制: ${sizeInMB}MB`);
+      message.error(`${t('aiGenerate.imageSizeLimit' as any)}: ${sizeInMB}MB`);
       return false;
     }
     return true;
@@ -124,7 +124,7 @@ export default function AIGeneratePage() {
   const checkImageFormat = (file: File): boolean => {
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      message.error(`支持格式: JPG, PNG, WEBP`);
+      message.error(`${t('aiGenerate.imageFormatSupport' as any)}: JPG, PNG, WEBP`);
       return false;
     }
     return true;
@@ -209,6 +209,12 @@ export default function AIGeneratePage() {
   const [imageModels, setImageModels] = useState<any[]>([]);
   const [videoModels, setVideoModels] = useState<any[]>([]);
 
+  // 模型积分消耗映射
+  const modelCreditCosts: Record<string, number> = {
+    'gpt-image-1': 1,
+    'doubao-seedream-3-0-t2i-250415': 2.6
+  };
+
   // 根据模式过滤视频模型列表
   const filteredVideoModels = useMemo(() => {
     if (!Array.isArray(videoModels)) return [] as any[];
@@ -232,7 +238,7 @@ export default function AIGeneratePage() {
         }
       }
     } catch (error) {
-      console.error("获取图片生成模型失败:", error);
+      console.error(t('aiGenerate.getImageModelsFailed' as any), error);
     }
   };
 
@@ -262,7 +268,7 @@ export default function AIGeneratePage() {
         }
       }
     } catch (error) {
-      console.error("获取视频生成模型失败:", error);
+      console.error(t('aiGenerate.getVideoModelsFailed' as any), error);
     }
   };
 
@@ -662,12 +668,22 @@ export default function AIGeneratePage() {
                     onChange={setModel}
                     style={{ width: "100%" }}
                   >
-                    {imageModels.map((modelItem) => (
-                      <Option key={modelItem.name} value={modelItem.name}>
-                        {modelItem.name}
-                      </Option>
-                    ))}
+                    {imageModels.map((modelItem) => {
+                      const creditCost = modelCreditCosts[modelItem.name] || 0;
+                      return (
+                        <Option key={modelItem.name} value={modelItem.name}>
+                          {modelItem.name} {creditCost > 0 && `(${t('aiGenerate.estimatedCreditCost' as any)} ${creditCost} ${t('aiGenerate.credits' as any)})`}
+                        </Option>
+                      );
+                    })}
                   </Select>
+                )}
+                {model && modelCreditCosts[model] && (
+                  <div className={styles.creditCostInfo}>
+                    <span style={{ color: '#1890ff', fontSize: '14px' }}>
+                      💰 {t('aiGenerate.estimatedCreditCost' as any)}: {modelCreditCosts[model]} {t('aiGenerate.credits' as any)}
+                    </span>
+                  </div>
                 )}
                 <Button
                   type="primary"
@@ -967,23 +983,23 @@ export default function AIGeneratePage() {
               
               {/* 图片要求提示 */}
               <div className={styles.imageRequirements}>
-                <h4>图片要求</h4>
+                <h4>{t('aiGenerate.imageRequirements' as any)}</h4>
                 <div className={styles.requirementsList}>
                   <div className={styles.requirementItem}>
-                    <span className={styles.requirementLabel}>宽高比范围:</span>
-                    <span className={styles.requirementValue}>(0.4, 2.5)</span>
+                    <span className={styles.requirementLabel}>{t('aiGenerate.aspectRatioRange' as any)}:</span>
+                    <span className={styles.requirementValue}>{t('aiGenerate.aspectRatioRangeValue' as any)}</span>
                   </div>
                   <div className={styles.requirementItem}>
-                    <span className={styles.requirementLabel}>宽高长度范围:</span>
-                    <span className={styles.requirementValue}>(300px, 6000px)</span>
+                    <span className={styles.requirementLabel}>{t('aiGenerate.dimensionRange' as any)}:</span>
+                    <span className={styles.requirementValue}>{t('aiGenerate.dimensionRangeValue' as any)}</span>
                   </div>
                   <div className={styles.requirementItem}>
-                    <span className={styles.requirementLabel}>图片大小限制:</span>
-                    <span className={styles.requirementValue}>小于30MB</span>
+                    <span className={styles.requirementLabel}>{t('aiGenerate.imageSizeLimit' as any)}:</span>
+                    <span className={styles.requirementValue}>{t('aiGenerate.imageSizeLimitValue' as any)}</span>
                   </div>
                   <div className={styles.requirementItem}>
-                    <span className={styles.requirementLabel}>支持格式:</span>
-                    <span className={styles.requirementValue}>JPG, PNG, WEBP</span>
+                    <span className={styles.requirementLabel}>{t('aiGenerate.imageFormatSupport' as any)}:</span>
+                    <span className={styles.requirementValue}>{t('aiGenerate.imageFormatSupportValue' as any)}</span>
                   </div>
                 </div>
               </div>

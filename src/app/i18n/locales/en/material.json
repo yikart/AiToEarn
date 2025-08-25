@@ -153,6 +153,10 @@
     "imageSizeLimit": "Image Size Limit",
     "imageSizeLimitValue": "Less than 30MB",
     "imageFormatSupport": "Supported Formats",
-    "imageFormatSupportValue": "JPG, PNG, WEBP"
+    "imageFormatSupportValue": "JPG, PNG, WEBP",
+    "estimatedCreditCost": "Estimated Credit Cost",
+    "credits": "credits",
+    "getImageModelsFailed": "Failed to get image generation models",
+    "getVideoModelsFailed": "Failed to get video generation models"
   }
 }
