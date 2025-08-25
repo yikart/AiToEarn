@@ -1322,7 +1322,7 @@ export default function CgMaterialPageCore() {
                       color: '#95a5a6',
                       marginTop: 4
                     }}>
-                      {item.mediaCount || 0} {t('mediaCount')}
+                      {item.mediaList.total || 0} {t('mediaCount')}
                     </div>
                     {selectedMediaGroup?._id === item._id && (
                       <div style={{
