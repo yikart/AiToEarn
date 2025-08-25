@@ -26,13 +26,11 @@ function getNameTag(child: IRouterDataItem, iconLoca: number = 1) {
     <>
       {!child.children ? (
         <Link href={path || "/"} target={path[0] === "/" ? "_self" : "_blank"}>
-          {/*@ts-ignore*/}
-          {t(child.translationKey)}
+          {t(child.translationKey as any)}
         </Link>
       ) : (
         <span>
-          {/*@ts-ignore*/}
-          {t(child.translationKey)}
+          {t(child.translationKey as any)}
           {child.children &&
             (iconLoca === 0 ? <UpOutlined /> : <RightOutlined />)}
         </span>
@@ -92,6 +90,7 @@ function ChildNav({
   const [height, setHeight] = useState("auto");
   const animaTime = 0.3;
   const timer = useRef<NodeJS.Timeout>();
+  const { t } = useTransClient("route");
 
   useEffect(() => {
     if (!elRef.current) return;
@@ -148,7 +147,7 @@ function ChildNav({
                     )}
                   </div>
                   <span className={styles["layoutNavPC-one-text"]}>
-                    {v1.name}
+                    {t(v1.translationKey as any)}
                   </span>
                   {v1.children && <RightOutlined />}
                 </ParcelTag>
@@ -217,10 +216,10 @@ function NavPE() {
 
   const translatedMenuItems = routerData.map((item) => ({
     key: item.path || item.name,
-    label: t(item.translationKey),
+    label: t(item.translationKey as any),
     children: item.children?.map((child) => ({
       key: child.path || child.name,
-      label: t(child.translationKey),
+      label: t(child.translationKey as any),
     })),
   }));
 
