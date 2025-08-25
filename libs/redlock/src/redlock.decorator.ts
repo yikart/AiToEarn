@@ -11,6 +11,7 @@ export const REDLOCK_METADATA = Symbol('REDLOCK_METADATA')
 
 export function Redlock(
   key: string | ((...args: unknown[]) => string),
+  // secs
   ttl?: number,
   options?: { retryDelay?: number, retryCount?: number },
 ): MethodDecorator {

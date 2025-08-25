@@ -1,12 +1,12 @@
 import * as fs from 'node:fs'
-import { AnsibleService } from '@aitoearn/ansible'
-import { AppException, BrowserEnvironmentStatus, ResponseCode } from '@aitoearn/common'
-import { BrowserEnvironment, BrowserEnvironmentRepository, BrowserProfileRepository } from '@aitoearn/mongodb'
-import { Redlock } from '@aitoearn/redlock'
 import { Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
+import { AnsibleService } from '@yikart/ansible'
+import { AppException, BrowserEnvironmentStatus, ResponseCode } from '@yikart/common'
+import { BrowserEnvironment, BrowserEnvironmentRepository, BrowserProfileRepository } from '@yikart/mongodb'
+import { Redlock } from '@yikart/redlock'
 import * as yaml from 'js-yaml'
-import { RedlockLockKey } from '../common/enums'
+import { RedlockKey } from '../common/enums'
 import { config } from '../config'
 import { CloudInstanceService } from '../core/cloud-instance'
 import { MultiloginAccountService } from '../core/multilogin-account'
@@ -24,12 +24,12 @@ export class EnvironmentConfigScheduler {
   ) {}
 
   @Cron(CronExpression.EVERY_30_SECONDS)
-  @Redlock(RedlockLockKey.EnvironmentConfigTask, 25000)
+  @Redlock(RedlockKey.EnvironmentConfigTask)
   async processEnvironmentConfiguration() {
     const [environments] = await this.browserEnvironmentRepository.listWithPagination({
       status: BrowserEnvironmentStatus.Creating,
       page: 1,
-      pageSize: 50, // 每次处理最多50个环境
+      pageSize: 50,
     })
 
     if (environments.length === 0) {
@@ -38,42 +38,34 @@ export class EnvironmentConfigScheduler {
 
     this.logger.log(`找到 ${environments.length} 个待配置的环境`)
 
-    // 并发处理多个环境
     const promises = environments.map(environment =>
-      this.doConfigureEnvironment(environment.id),
+      this.doConfigureEnvironment(environment),
     )
 
     await Promise.allSettled(promises)
   }
 
-  @Redlock(RedlockLockKey.EnvConfig, 60000)
-  private async doConfigureEnvironment(environmentId: string): Promise<void> {
-    this.logger.debug(`开始配置环境: ${environmentId}`)
-
-    const environment = await this.browserEnvironmentRepository.getById(environmentId)
-    if (!environment) {
-      this.logger.warn(`环境 ${environmentId} 不存在`)
-      return
-    }
+  @Redlock(env => RedlockKey.EnvConfig((env as BrowserEnvironment).id))
+  private async doConfigureEnvironment(environment: BrowserEnvironment): Promise<void> {
+    this.logger.debug(`开始配置环境: ${environment.id}`)
 
     if (environment.status !== BrowserEnvironmentStatus.Creating) {
       return
     }
 
-    await this.browserEnvironmentRepository.updateById(environmentId, {
-      status: BrowserEnvironmentStatus.Configuring,
-    })
-    await this.cloudInstanceService.waitForInstanceReady(environment.instanceId, environment.region)
-
     try {
+      await this.cloudInstanceService.waitForInstanceReady(environment.instanceId, environment.region)
       await this.deployBrowserAgent(environment)
     }
     catch (error) {
-      this.logger.error(`环境 ${environmentId} 配置过程中发生错误`, error)
-
-      await this.browserEnvironmentRepository.updateById(environmentId, {
-        status: BrowserEnvironmentStatus.Error,
+      this.logger.error({
+        message: `环境 ${environment.id} 配置过程中发生错误`,
+        error,
       })
+
+      // await this.browserEnvironmentRepository.updateById(environment.id, {
+      //   status: BrowserEnvironmentStatus.Error,
+      // })
     }
   }
 
@@ -98,16 +90,6 @@ export class EnvironmentConfigScheduler {
                 ansible_ssh_pass: environment.password,
                 ansible_python_interpreter: '/usr/bin/python3',
               },
-            },
-            vars: {
-              ansible_ssh_common_args: '-o StrictHostKeyChecking=no',
-              monorepo_git_url: 'https://github.com/your-org/aitoearn-monorepo.git',
-              git_branch: 'main',
-              node_version: '18',
-              pnpm_version: '8',
-              browser_timeout: 30,
-              max_concurrent_tasks: 1,
-              cleanup_config: true,
             },
           },
         },
@@ -143,10 +125,10 @@ export class EnvironmentConfigScheduler {
         hosts: 'browser_hosts',
         become: true,
         vars: {
-          monorepo_git_url: config.multilogin.agent.gitUrl,
-          git_branch: config.multilogin.agent.gitBranch,
-          task_config_file: tempTaskConfigPath,
           node_version: '22',
+          task_config_file: tempTaskConfigPath,
+          monorepo_git_url: 'https://github.com/yikart/aitoearn-monorepo.git',
+          git_branch: 'main',
         },
         tasks: [
           {
@@ -214,11 +196,7 @@ export class EnvironmentConfigScheduler {
     // 使用Ansible执行浏览器自动化任务部署
     const result = await this.ansibleService.runPlaybook(tempPlaybookPath, {
       inventory: tempInventoryPath,
-      extraVars: {
-        monorepo_git_url: config.multilogin.agent.gitUrl,
-        git_branch: config.multilogin.agent.gitBranch,
-        task_config_file: tempTaskConfigPath,
-      },
+      sshCommonArgs: '-o ControlMaster=no',
     })
 
     if (fs.existsSync(tempInventoryPath)) {

@@ -110,7 +110,6 @@ export async function startApplication(Module: Type<unknown>, config: BaseConfig
     },
   }, {
     inheritAppConfig: true,
-    deferInitialization: true,
   })
 
   if (config.globalPrefix)

@@ -1,0 +1,133 @@
+### NATS Test Application - Task Interface Tests
+### Base URL: http://localhost:7010
+
+
+### 创建环境
+POST http://localhost:7010/api/send
+Content-Type: application/json
+
+{
+  "pattern": "fingerprint.environment.create",
+  "data": {
+    "userId": "689aea21dae1d20e37380db7",
+    "region": "uk-london",
+    "profileName": "test-profile"
+  }
+}
+
+### 查询环境列表
+POST http://localhost:7010/api/send
+Content-Type: application/json
+
+{
+  "pattern": "fingerprint.environment.list",
+  "data": {
+    "userId": "689aea21dae1d20e37380db7",
+    "region": "us-ws",
+    "status": "ready",
+    "page": 1,
+    "pageSize": 10
+  }
+}
+
+### 获取环境状态
+POST http://localhost:7010/api/send
+Content-Type: application/json
+
+{
+  "pattern": "fingerprint.environment.status",
+  "data": {
+    "environmentId": "环境ID"
+  }
+}
+
+### 删除环境
+POST http://localhost:7010/api/send
+Content-Type: application/json
+
+{
+  "pattern": "fingerprint.environment.delete",
+  "data": {
+    "environmentId": "环境ID"
+  }
+}
+
+### 查询浏览器配置文件列表
+POST http://localhost:7010/api/send
+Content-Type: application/json
+
+{
+  "pattern": "fingerprint.profile.list",
+  "data": {
+    "accountId": "账户ID",
+    "profileId": "配置文件ID",
+    "environmentId": "环境ID",
+    "page": 1,
+    "pageSize": 10
+  }
+}
+
+### 创建 Multilogin 账户
+POST http://localhost:7010/api/send
+Content-Type: application/json
+
+{
+  "pattern": "multilogin-account.create",
+  "data": {
+    "email": "meta@yikarting.com",
+    "password": "Yika888666!",
+    "maxProfiles": 10
+  }
+}
+
+### 查询 Multilogin 账户列表
+POST http://localhost:7010/api/send
+Content-Type: application/json
+
+{
+  "pattern": "multilogin-account.list",
+  "data": {
+    "email": "test@example.com",
+    "minMaxProfiles": 1,
+    "maxMaxProfiles": 100,
+    "hasAvailableSlots": true,
+    "page": 1,
+    "pageSize": 10
+  }
+}
+
+### 获取 Multilogin 账户详情
+POST http://localhost:7010/api/send
+Content-Type: application/json
+
+{
+  "pattern": "multilogin-account.getById",
+  "data": {
+    "id": "账户ID"
+  }
+}
+
+### 更新 Multilogin 账户
+POST http://localhost:7010/api/send
+Content-Type: application/json
+
+{
+  "pattern": "multilogin-account.update",
+  "data": {
+    "id": "账户ID",
+    "email": "newemail@example.com",
+    "password": "newpassword123",
+    "maxProfiles": 10
+  }
+}
+
+### 删除 Multilogin 账户
+POST http://localhost:7010/api/send
+Content-Type: application/json
+
+{
+  "pattern": "multilogin-account.remove",
+  "data": {
+    "id": "账户ID"
+  }
+}

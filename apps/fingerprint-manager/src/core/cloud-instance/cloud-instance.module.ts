@@ -1,5 +1,5 @@
-import { UCloudModule } from '@aitoearn/ucloud'
 import { Module } from '@nestjs/common'
+import { UCloudModule } from '@yikart/ucloud'
 import { CloudInstanceService } from './cloud-instance.service'
 
 @Module({

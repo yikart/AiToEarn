@@ -1,6 +1,6 @@
-import { AppException } from '@aitoearn/common'
 import { Inject, Injectable } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
+import { AppException } from '@yikart/common'
 import { lastValueFrom } from 'rxjs'
 import { NatsConfig } from './nats.config'
 

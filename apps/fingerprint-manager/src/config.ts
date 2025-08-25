@@ -1,7 +1,8 @@
-import { baseConfig, createZodDto, selectConfig } from '@aitoearn/common'
-import { mongodbConfigSchema } from '@aitoearn/mongodb'
-import { RedlockConfigSchema } from '@aitoearn/redlock'
-import { ucloudConfigSchema } from '@aitoearn/ucloud'
+import { ansibleConfigSchema } from '@yikart/ansible'
+import { baseConfig, createZodDto, selectConfig } from '@yikart/common'
+import { mongodbConfigSchema } from '@yikart/mongodb'
+import { RedlockConfigSchema } from '@yikart/redlock'
+import { ucloudConfigSchema } from '@yikart/ucloud'
 import z from 'zod'
 
 export const appConfigSchema = z.object({
@@ -24,13 +25,7 @@ export const appConfigSchema = z.object({
       gitBranch: z.string(),
     }),
   }),
-  ansible: z.object({
-    inventoryPath: z.string(),
-    playbookPath: z.string(),
-    verbosity: z.number().default(1),
-    timeout: z.number().default(300),
-    forks: z.number().default(5),
-  }),
+  ansible: ansibleConfigSchema,
   redlock: RedlockConfigSchema,
 })
 

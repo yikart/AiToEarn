@@ -1,5 +1,5 @@
-import { NatsClientModule } from '@aitoearn/nats-client'
 import { DynamicModule, Module } from '@nestjs/common'
+import { NatsClientModule } from '@yikart/nats-client'
 import { FingerprintManagerClient } from './fingerprint-manager.client'
 import { FingerprintManagerConfig } from './fingerprint-manager.config'
 

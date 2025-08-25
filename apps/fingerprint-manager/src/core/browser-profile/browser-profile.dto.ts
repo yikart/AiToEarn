@@ -1,4 +1,4 @@
-import { createZodDto, PaginationDtoSchema } from '@aitoearn/common'
+import { createZodDto, PaginationDtoSchema } from '@yikart/common'
 import { z } from 'zod'
 
 export const listBrowserProfilesSchema = z.object({

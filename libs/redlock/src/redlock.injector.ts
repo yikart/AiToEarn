@@ -1,6 +1,5 @@
 import type { Injectable } from '@nestjs/common/interfaces'
 import type { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper'
-import { createHash } from 'node:crypto'
 import { Injectable as InjectableDec, Logger, OnModuleInit } from '@nestjs/common'
 import { MetadataScanner, ModulesContainer } from '@nestjs/core'
 import { RedlockConfig } from './redlock.config'
@@ -73,25 +72,6 @@ export class RedlockInjector implements OnModuleInit {
     }
   }
 
-  private generateArgsHash(args: unknown[]): string {
-    try {
-      const argsString = JSON.stringify(args, (key, value) => {
-        if (typeof value === 'function') {
-          return value.toString()
-        }
-        if (value && typeof value === 'object' && value.constructor !== Object && value.constructor !== Array) {
-          return '[Object]'
-        }
-        return value
-      })
-      return createHash('sha256').update(argsString).digest('hex').substring(0, 8)
-    }
-    catch {
-      const fallback = args.map((arg, index) => `${index}:${typeof arg}`).join('-')
-      return createHash('sha256').update(fallback).digest('hex').substring(0, 8)
-    }
-  }
-
   private wrapMethod(
     originalMethod: (...args: unknown[]) => unknown,
     methodName: string,
@@ -104,8 +84,7 @@ export class RedlockInjector implements OnModuleInit {
     return new Proxy(originalMethod, {
       apply: async (target, thisArg, args: unknown[]) => {
         const baseKey = typeof options.key === 'function' ? options.key(...args) : options.key
-        const argsHash = this.generateArgsHash(args)
-        const lockKey = `lock:${baseKey}:${argsHash}`
+        const lockKey = `lock:${baseKey}`
         const lockValue = `${Date.now()}-${Math.random()}`
         const ttl = options.ttl ?? this.config.ttl
         const retryDelay = options.retryDelay ?? this.config.retryDelay
@@ -133,22 +112,11 @@ export class RedlockInjector implements OnModuleInit {
 
         logger.debug(`Acquired lock ${lockKey} for ${className}.${methodName}, executing method`)
 
-        try {
-          const result = Reflect.apply(target, thisArg, args)
-
-          if (result instanceof Promise) {
-            return result.finally(async () => {
-              await lockService.releaseLock(lockKey, lockValue)
-              logger.debug(`Released lock ${lockKey} for ${className}.${methodName}`)
-            })
-          }
-
-          return result
-        }
-        finally {
+        const result = (async () => Reflect.apply(target, thisArg, args))()
+        return result.finally(async () => {
           await lockService.releaseLock(lockKey, lockValue)
           logger.debug(`Released lock ${lockKey} for ${className}.${methodName}`)
-        }
+        })
       },
     })
   }

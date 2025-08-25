@@ -1,4 +1,4 @@
-import { createPaginationVo, createZodDto } from '@aitoearn/common'
+import { createPaginationVo, createZodDto } from '@yikart/common'
 import z from 'zod'
 
 // Multilogin账号VO

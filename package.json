@@ -1,9 +1,10 @@
 {
-  "name": "@aitoearn/source",
+  "name": "@yikart/source",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
     "prepare": "npx simple-git-hooks",
+    "postinstall": "scripts/install-ansible.sh",
     "lint": "nx run-many --target=lint --nxBail --outputStyle=static"
   },
   "private": true,
@@ -24,6 +25,7 @@
     "ioredis": "^5.7.0",
     "mongodb": "^6.18.0",
     "mongoose": "^8.17.2",
+    "nats": "^2.29.3",
     "nest-typed-config": "^2.10.1",
     "nestjs-pino": "^4.4.0",
     "pino": "9.7.0",
@@ -61,7 +63,7 @@
     "tslib": "^2.3.0",
     "typescript": "~5.8.2",
     "typescript-eslint": "^8.29.0",
-    "verdaccio": "^6.0.5",
+
     "webpack-cli": "^5.1.4"
   },
   "simple-git-hooks": {
@@ -79,7 +81,8 @@
       "@scarf/scarf",
       "nestjs-pino",
       "simple-git-hooks",
-      "unrs-resolver"
+      "unrs-resolver",
+      "oxc-resolver"
     ]
   },
   "nx": {

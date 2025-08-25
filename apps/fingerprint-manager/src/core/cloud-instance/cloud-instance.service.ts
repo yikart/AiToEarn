@@ -1,6 +1,7 @@
-import { AppException, BrowserEnvironmentRegion, CloudInstanceStatus, generateSecurePassword, ResponseCode } from '@aitoearn/common'
-import { CreateULHostInstanceRequest, UCloudService, UHostIPSet, ULHostState } from '@aitoearn/ucloud'
 import { Injectable } from '@nestjs/common'
+import { AppException, BrowserEnvironmentRegion, CloudInstanceStatus, generateSecurePassword, ResponseCode } from '@yikart/common'
+import { CreateULHostInstanceRequest, UCloudService, UHostIPSet, ULHostState } from '@yikart/ucloud'
+import { delay, EMPTY, expand, from, lastValueFrom, of, switchMap, timeout } from 'rxjs'
 import { config } from '../../config'
 
 @Injectable()
@@ -10,10 +11,13 @@ export class CloudInstanceService {
   async createInstance(region: BrowserEnvironmentRegion, name?: string) {
     const password = generateSecurePassword()
     const request: CreateULHostInstanceRequest = {
+      ProjectId: config.ucloud.projectId,
       Region: region,
       ImageId: config.ucloud.imageId,
       BundleId: config.ucloud.bundleId,
-      Password: password,
+      // ChargeType: 'Month',
+      Quantity: 1,
+      Password: btoa(password),
       Name: name,
     }
 
@@ -52,24 +56,33 @@ export class CloudInstanceService {
 
   async waitForInstanceReady(instanceId: string, region: BrowserEnvironmentRegion, timeoutMinutes = 10): Promise<void> {
     const timeoutMs = timeoutMinutes * 60 * 1000
-    const startTime = Date.now()
     const pollInterval = 5000
 
-    while (Date.now() - startTime < timeoutMs) {
-      const status = await this.getInstanceStatus(instanceId, region)
+    const checkInstanceStatus = () => this.getInstanceStatus(instanceId, region)
 
-      if (status.status === CloudInstanceStatus.Running) {
-        return
+    await lastValueFrom(
+      of(null).pipe(
+        delay(0),
+        switchMap(() => from(checkInstanceStatus())),
+        expand((status) => {
+          if (status.status === CloudInstanceStatus.Running) {
+            return EMPTY
+          }
+
+          if (status.status === CloudInstanceStatus.Error) {
+            throw new AppException(ResponseCode.UCloudInstanceError)
+          }
+
+          return from(checkInstanceStatus()).pipe(delay(pollInterval))
+        }),
+        timeout(timeoutMs),
+      ),
+    ).catch((error) => {
+      if (error.name === 'TimeoutError') {
+        throw new AppException(ResponseCode.UCloudInstanceTimeout)
       }
-
-      if (status.status === CloudInstanceStatus.Error) {
-        throw new AppException(ResponseCode.UCloudInstanceError)
-      }
-
-      await new Promise(resolve => setTimeout(resolve, pollInterval))
-    }
-
-    throw new AppException(ResponseCode.UCloudInstanceTimeout)
+      throw error
+    })
   }
 
   async deleteInstance(instanceId: string, region: BrowserEnvironmentRegion): Promise<void> {

@@ -1,4 +1,4 @@
-import { BrowserEnvironmentRegion, BrowserEnvironmentStatus } from '@aitoearn/common'
+import { BrowserEnvironmentRegion, BrowserEnvironmentStatus } from '@yikart/common'
 
 // 浏览器环境相关的数据类型定义
 export interface BrowserEnvironment {

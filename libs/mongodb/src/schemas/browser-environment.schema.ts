@@ -1,5 +1,5 @@
-import { BrowserEnvironmentRegion, BrowserEnvironmentStatus } from '@aitoearn/common'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { BrowserEnvironmentRegion, BrowserEnvironmentStatus } from '@yikart/common'
 import { WithTimestampSchema } from './timestamp.schema'
 
 @Schema({

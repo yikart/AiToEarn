@@ -1,6 +1,5 @@
 export enum BrowserEnvironmentStatus {
   Creating = 'creating',
-  Configuring = 'configuring',
   Ready = 'ready',
   Error = 'error',
   Terminated = 'terminated',

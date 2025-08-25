@@ -1,4 +1,4 @@
-import { createPaginationVo, createZodDto } from '@aitoearn/common'
+import { createPaginationVo, createZodDto } from '@yikart/common'
 import z from 'zod'
 
 // 浏览器Profile VO

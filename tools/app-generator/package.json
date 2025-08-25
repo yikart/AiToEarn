@@ -1,5 +1,5 @@
 {
-  "name": "@aitoearn/app-generator",
+  "name": "@yikart/app-generator",
   "version": "0.0.1",
   "private": true,
   "exports": {
@@ -20,7 +20,7 @@
     "generators.json"
   ],
   "dependencies": {
-    "@nx/devkit": "21.3.11",
+    "@nx/devkit": "21.4.0",
     "tslib": "^2.3.0"
   },
   "generators": "./generators.json"

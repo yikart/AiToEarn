@@ -1,6 +1,6 @@
-import { AppException, ResponseCode } from '@aitoearn/common'
-import { BrowserProfileRepository } from '@aitoearn/mongodb'
 import { Injectable } from '@nestjs/common'
+import { AppException, ResponseCode } from '@yikart/common'
+import { BrowserProfileRepository } from '@yikart/mongodb'
 import {
   ListBrowserProfilesDto,
 } from './browser-profile.dto'

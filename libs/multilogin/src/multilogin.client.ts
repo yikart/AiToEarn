@@ -72,7 +72,7 @@ export class MultiloginClient {
     )
   }
 
-  private createHttpClient(baseUrl: string, timeout = 30000): AxiosInstance {
+  private createHttpClient(baseUrl: string, timeout = 10000): AxiosInstance {
     const client = axios.create({
       baseURL: baseUrl,
       timeout,
@@ -83,7 +83,6 @@ export class MultiloginClient {
 
     // 添加请求拦截器，自动添加认证头
     client.interceptors.request.use(async (config) => {
-      // 如果没有 token 但有用户名密码，先获取 token
       if (!this.token) {
         await this.refreshTokenIfNeeded()
       }
@@ -186,16 +185,21 @@ export class MultiloginClient {
   // ==================== Profile API Methods ====================
 
   async signIn(request: AuthSignInRequest): Promise<AuthResponse> {
-    // 对密码进行 MD5 哈希处理
     const hashedPassword = createHash('md5').update(request.password).digest('hex')
     const requestWithHashedPassword = {
       ...request,
       password: hashedPassword,
     }
 
-    const response: AxiosResponse<AuthResponse> = await this.httpClient.post(
-      '/user/signin',
+    const response: AxiosResponse<AuthResponse> = await axios.post(
+      `${this.httpClient.defaults.baseURL}/user/signin`,
       requestWithHashedPassword,
+      {
+        timeout: this.httpClient.defaults.timeout,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
     )
     this.token = response.data.data.token
     return response.data

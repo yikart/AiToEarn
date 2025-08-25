@@ -1,10 +1,10 @@
-import { createZodDto } from '@aitoearn/common'
+import { createZodDto } from '@yikart/common'
 import { z } from 'zod'
 
 export const ucloudConfigSchema = z.object({
   publicKey: z.string(),
   privateKey: z.string(),
-  projectId: z.string().optional(),
+  projectId: z.string(),
   region: z.string().optional(),
   baseUrl: z.string().optional(),
   timeout: z.number().optional(),

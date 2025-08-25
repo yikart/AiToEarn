@@ -3,7 +3,6 @@ import type {
   UploadPartCommandOutput,
 } from '@aws-sdk/client-s3'
 import type { S3Config } from './s3.config'
-import { AppException, ResponseCode } from '@aitoearn/common'
 import {
   CompleteMultipartUploadCommand,
   CreateMultipartUploadCommand,
@@ -13,6 +12,7 @@ import {
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { Injectable, Logger } from '@nestjs/common'
+import { AppException, ResponseCode } from '@yikart/common'
 
 @Injectable()
 export class S3Service {

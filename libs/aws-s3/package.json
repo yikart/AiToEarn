@@ -1,14 +1,14 @@
 {
-  "name": "@aitoearn/aws-s3",
+  "name": "@yikart/aws-s3",
   "type": "commonjs",
   "version": "0.0.1",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
-    "@aitoearn/common": "workspace:*",
     "@aws-sdk/client-s3": "^3.859.0",
     "@aws-sdk/s3-request-presigner": "^3.859.0",
     "@nestjs/common": "^11.0.0",
+    "@yikart/common": "workspace:*",
     "tslib": "^2.3.0",
     "zod": "^4.0.17"
   }

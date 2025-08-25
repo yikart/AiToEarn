@@ -1,5 +1,6 @@
-import { spawn } from 'node:child_process'
+import { execSync } from 'node:child_process'
 import { Injectable, Logger } from '@nestjs/common'
+import { execa } from 'execa'
 import { AnsibleConfig } from './ansible.config'
 import {
   AnsibleCommandException,
@@ -21,6 +22,37 @@ export class AnsibleService {
   private readonly logger = new Logger(AnsibleService.name)
 
   constructor(private readonly config: AnsibleConfig) {
+    this.checkAnsibleInstallation()
+  }
+
+  /**
+   * Check if Ansible CLI is installed on the system
+   */
+  private checkAnsibleInstallation(): void {
+    if (this.isAnsibleInstalled()) {
+      this.logger.debug('Ansible CLI is available')
+    }
+    else {
+      const errorMessage = 'Ansible CLI is not installed. Please run: pnpm install to automatically install it, or install manually with: pip3 install ansible'
+      this.logger.error(errorMessage)
+      throw new AnsibleException(
+        errorMessage,
+        'ansible-playbook --version',
+      )
+    }
+  }
+
+  /**
+   * Check if Ansible CLI is available without throwing an error
+   */
+  private isAnsibleInstalled(): boolean {
+    try {
+      execSync('ansible-playbook --version', { stdio: 'ignore' })
+      return true
+    }
+    catch {
+      return false
+    }
   }
 
   /**
@@ -158,7 +190,7 @@ export class AnsibleService {
 
     // Add extra vars
     if (options.extraVars) {
-      command.push('--extra-vars', JSON.stringify(options.extraVars))
+      command.push('--extra-vars', `'${JSON.stringify(options.extraVars)}'`)
     }
 
     // Add check mode
@@ -187,10 +219,34 @@ export class AnsibleService {
 
     // Add verbosity
     if (options.verbose || this.config.verbosity > 0) {
-      const verbosity = this.config.verbosity
+      const verbosity = Math.max(options.verbose ? 1 : 0, this.config.verbosity)
       if (verbosity > 0) {
         command.push(`-${'v'.repeat(verbosity)}`)
       }
+    }
+
+    if (options.connection) {
+      command.push('--connection', options.connection)
+    }
+
+    if (options.user) {
+      command.push('--user', options.user)
+    }
+
+    if (options.askPass) {
+      command.push('--ask-pass')
+    }
+
+    if (options.privateKeyFile) {
+      command.push('--private-key', options.privateKeyFile)
+    }
+
+    if (options.sshCommonArgs) {
+      command.push('--ssh-common-args', options.sshCommonArgs)
+    }
+
+    if (options.sshExtraArgs) {
+      command.push('--ssh-extra-args', options.sshExtraArgs)
     }
 
     // Add forks
@@ -235,7 +291,7 @@ export class AnsibleService {
 
     // Add extra vars
     if (options.extraVars) {
-      command.push('--extra-vars', JSON.stringify(options.extraVars))
+      command.push('--extra-vars', `'${JSON.stringify(options.extraVars)}'`)
     }
 
     // Add become options
@@ -256,66 +312,65 @@ export class AnsibleService {
       command.push('--timeout', options.timeout.toString())
     }
 
+    if (options.connection) {
+      command.push('--connection', options.connection)
+    }
+
+    if (options.user) {
+      command.push('--user', options.user)
+    }
+
+    if (options.askPass) {
+      command.push('--ask-pass')
+    }
+
+    if (options.privateKeyFile) {
+      command.push('--private-key', options.privateKeyFile)
+    }
+
+    if (options.sshCommonArgs) {
+      command.push('--ssh-common-args', options.sshCommonArgs)
+    }
+
+    if (options.sshExtraArgs) {
+      command.push('--ssh-extra-args', options.sshExtraArgs)
+    }
+
     return command
   }
 
   private async executeCommand(command: string[]): Promise<AnsibleResult> {
-    const startTime = Date.now()
     const commandStr = command.join(' ')
 
     this.logger.debug(`Executing command: ${commandStr}`)
 
-    return new Promise((resolve, reject) => {
-      const childProcess = spawn(command[0], command.slice(1), {
-        stdio: ['pipe', 'pipe', 'pipe'],
-        env: { ...process.env },
-      })
-
-      let stdout = ''
-      let stderr = ''
-
-      childProcess.stdout?.on('data', (data: Buffer) => {
-        stdout += data.toString()
-      })
-
-      childProcess.stderr?.on('data', (data: Buffer) => {
-        stderr += data.toString()
-      })
-
-      childProcess.on('close', (code: number | null) => {
-        const duration = Date.now() - startTime
-        const result: AnsibleResult = {
-          success: code === 0,
-          stdout,
-          stderr,
-          exitCode: code || 0,
-          duration,
-          command: commandStr,
-        }
-
-        this.logger.debug(`Command completed in ${duration}ms with exit code ${code}`)
-        resolve(result)
-      })
-
-      childProcess.on('error', (error: Error) => {
-        this.logger.error(`Command failed: ${error.message}`)
-        reject(new AnsibleException(
-          `Failed to execute command: ${error.message}`,
-          commandStr,
-        ))
-      })
-
-      // Set timeout
-      setTimeout(() => {
-        if (!childProcess.killed) {
-          childProcess.kill('SIGTERM')
-          reject(new AnsibleException(
-            `Command timed out after ${this.config.timeout}ms`,
-            commandStr,
-          ))
-        }
-      }, this.config.timeout)
+    const result = await execa(command[0], command.slice(1), {
+      timeout: this.config.timeout * 60 * 1000,
+      reject: false,
     })
+
+    this.logger.debug({
+      result,
+    })
+
+    if (result.timedOut) {
+      throw new AnsibleException(
+        `Command timed out after ${this.config.timeout}ms`,
+        commandStr,
+      )
+    }
+
+    const ansibleResult: AnsibleResult = {
+      success: result.exitCode === 0,
+      ...result,
+    }
+
+    this.logger.debug({
+      message: `Command completed in ${result.durationMs}ms with exit code ${result.exitCode}`,
+      ...ansibleResult,
+    })
+
+    return ansibleResult
   }
 
   private parseInventoryOutput(output: string): Inventory {

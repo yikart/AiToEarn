@@ -1,5 +1,6 @@
 import { Controller } from '@nestjs/common'
-import { MessagePattern, Payload } from '@nestjs/microservices'
+import { Payload } from '@nestjs/microservices'
+import { NatsMessagePattern } from '@yikart/common'
 import {
   CreateBrowserEnvironmentDto,
   DeleteBrowserEnvironmentDto,
@@ -16,25 +17,25 @@ import {
 export class BrowserEnvironmentController {
   constructor(private readonly browserEnvironmentService: BrowserEnvironmentService) {}
 
-  @MessagePattern('fingerprint.environment.create')
+  @NatsMessagePattern('fingerprint.environment.create')
   async createEnvironment(@Payload() dto: CreateBrowserEnvironmentDto): Promise<BrowserEnvironmentVo> {
     const environment = await this.browserEnvironmentService.createEnvironment(dto)
     return BrowserEnvironmentVo.create(environment)
   }
 
-  @MessagePattern('fingerprint.environment.list')
+  @NatsMessagePattern('fingerprint.environment.list')
   async listEnvironments(@Payload() dto: ListBrowserEnvironmentsDto): Promise<BrowserEnvironmentListVo> {
     const [environments, total] = await this.browserEnvironmentService.listEnvironments(dto)
     return new BrowserEnvironmentListVo(environments, total, dto)
   }
 
-  @MessagePattern('fingerprint.environment.status')
+  @NatsMessagePattern('fingerprint.environment.status')
   async getEnvironmentStatus(@Payload() dto: GetBrowserEnvironmentStatusDto): Promise<BrowserEnvironmentVo> {
     const environment = await this.browserEnvironmentService.getEnvironmentStatus(dto.environmentId)
     return BrowserEnvironmentVo.create(environment)
   }
 
-  @MessagePattern('fingerprint.environment.delete')
+  @NatsMessagePattern('fingerprint.environment.delete')
   async deleteEnvironment(@Payload() dto: DeleteBrowserEnvironmentDto): Promise<void> {
     await this.browserEnvironmentService.deleteEnvironment(dto.environmentId)
   }

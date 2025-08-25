@@ -1,4 +1,4 @@
-import { BrowserEnvironmentRegion, BrowserEnvironmentStatus, createPaginationVo, createZodDto } from '@aitoearn/common'
+import { BrowserEnvironmentRegion, BrowserEnvironmentStatus, createPaginationVo, createZodDto } from '@yikart/common'
 import z from 'zod'
 
 // 浏览器环境VO

@@ -1,6 +1,6 @@
-import { AppException, ResponseCode } from '@aitoearn/common'
-import { MultiloginAccountRepository } from '@aitoearn/mongodb'
 import { Injectable } from '@nestjs/common'
+import { AppException, ResponseCode } from '@yikart/common'
+import { MultiloginAccountRepository } from '@yikart/mongodb'
 import {
   CreateMultiloginAccountDto,
   ListMultiloginAccountsDto,

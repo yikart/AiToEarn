@@ -1,4 +1,4 @@
-import { Pagination } from '@aitoearn/common'
+import { Pagination } from '@yikart/common'
 import { Document, FilterQuery, Model, QueryOptions, UpdateQuery } from 'mongoose'
 
 export interface PaginationParams<TDocument> extends Pagination {

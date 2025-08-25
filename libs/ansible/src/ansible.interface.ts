@@ -11,6 +11,13 @@ export interface PlaybookOptions {
   becomeUser?: string
   becomeMethod?: string
   askBecomePass?: boolean
+  // SSH connection options
+  connection?: string
+  user?: string
+  askPass?: boolean
+  privateKeyFile?: string
+  sshCommonArgs?: string
+  sshExtraArgs?: string
 }
 
 export interface AdHocOptions {
@@ -23,15 +30,20 @@ export interface AdHocOptions {
   becomeUser?: string
   forks?: number
   timeout?: number
+  // SSH connection options
+  connection?: string
+  user?: string
+  askPass?: boolean
+  privateKeyFile?: string
+  sshCommonArgs?: string
+  sshExtraArgs?: string
 }
 
 export interface AnsibleResult {
   success: boolean
   stdout: string
   stderr: string
-  exitCode: number
-  duration: number
-  command: string
+  exitCode?: number
 }
 
 export interface InventoryHost {

@@ -1,4 +1,4 @@
-# @aitoearn/ansible
+# @yikart/ansible
 
 A TypeScript library for interacting with Ansible automation platform.
 
@@ -13,7 +13,7 @@ A TypeScript library for interacting with Ansible automation platform.
 ## Installation
 
 ```bash
-npm install @aitoearn/ansible
+npm install @yikart/ansible
 ```
 
 ## Usage

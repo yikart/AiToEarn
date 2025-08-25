@@ -1,4 +1,4 @@
-import { BrowserEnvironmentRegion, BrowserEnvironmentStatus, createZodDto, PaginationDtoSchema } from '@aitoearn/common'
+import { BrowserEnvironmentRegion, BrowserEnvironmentStatus, createZodDto, PaginationDtoSchema } from '@yikart/common'
 import { z } from 'zod'
 
 export const createBrowserEnvironmentSchema = z.object({

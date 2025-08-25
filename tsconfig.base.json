@@ -25,14 +25,15 @@
     "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
-      "@aitoearn/aws-s3": ["libs/aws-s3/src/index.ts"],
-      "@aitoearn/common": ["libs/common/src/index.ts"],
-      "@aitoearn/mongodb": ["libs/mongodb/src/index.ts"],
-      "@aitoearn/multilogin": ["libs/multilogin/src/index.ts"],
-      "@aitoearn/nats-client": ["libs/nats-client/src/index.ts"],
-      "@aitoearn/redis": ["libs/redis/src/index.ts"],
-      "@aitoearn/redlock": ["libs/redlock/src/index.ts"],
-      "@aitoearn/ucloud": ["libs/ucloud/src/index.ts"]
+      "@yikart/aws-s3": ["libs/aws-s3/src/index.ts"],
+      "@yikart/common": ["libs/common/src/index.ts"],
+      "@yikart/mongodb": ["libs/mongodb/src/index.ts"],
+      "@yikart/multilogin": ["libs/multilogin/src/index.ts"],
+      "@yikart/nats-client": ["libs/nats-client/src/index.ts"],
+      "@yikart/redis": ["libs/redis/src/index.ts"],
+      "@yikart/redlock": ["libs/redlock/src/index.ts"],
+      "@yikart/ucloud": ["libs/ucloud/src/index.ts"],
+      "@yikart/ansible": ["libs/ansible/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

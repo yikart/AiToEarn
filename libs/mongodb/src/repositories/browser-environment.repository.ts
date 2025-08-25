@@ -1,5 +1,5 @@
-import { BrowserEnvironmentRegion, BrowserEnvironmentStatus, Pagination } from '@aitoearn/common'
 import { InjectModel } from '@nestjs/mongoose'
+import { BrowserEnvironmentRegion, BrowserEnvironmentStatus, Pagination } from '@yikart/common'
 import { Document, FilterQuery, Model } from 'mongoose'
 import { BrowserEnvironment } from '../schemas'
 import { BaseRepository } from './base.repository'

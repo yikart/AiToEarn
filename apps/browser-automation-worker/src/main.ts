@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { readFileSync } from 'node:fs'
-import { MultiloginClient } from '@aitoearn/multilogin'
+import { MultiloginClient } from '@yikart/multilogin'
 import { Command } from 'commander'
 import { chromium } from 'playwright'
 import { BrowserTaskConfig } from './interfaces'

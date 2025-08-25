@@ -1,5 +1,5 @@
-import { NatsClient } from '@aitoearn/nats-client'
 import { Injectable } from '@nestjs/common'
+import { NatsClient } from '@yikart/nats-client'
 import {
   BrowserEnvironment,
   BrowserProfile,

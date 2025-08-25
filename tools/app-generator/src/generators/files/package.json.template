@@ -1,8 +1,8 @@
 {
-  "name": "@aitoearn/<%= name %>",
+  "name": "@yikart/<%= name %>",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "@aitoearn/common": "workspace:^"
+    "@yikart/common": "workspace:^"
   }
 }

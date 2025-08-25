@@ -18,10 +18,11 @@ mongoose.set('transactionAsyncLocalStorage', true)
 export class MongodbModule {
   static forRoot(config: MongodbConfig) {
     const forFeature = MongooseModule.forFeature([...schemas])
+    const { uri, ...options } = config
 
     return {
       imports: [
-        MongooseModule.forRoot(config.uri, config),
+        MongooseModule.forRoot(uri, options),
         forFeature,
       ],
       providers: [...repositories],

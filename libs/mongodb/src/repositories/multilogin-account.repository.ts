@@ -1,5 +1,5 @@
-import { Pagination } from '@aitoearn/common'
 import { InjectModel } from '@nestjs/mongoose'
+import { Pagination } from '@yikart/common'
 import { Document, FilterQuery, Model } from 'mongoose'
 import { MultiloginAccounts } from '../schemas'
 import { BaseRepository } from './base.repository'

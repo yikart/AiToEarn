@@ -16,21 +16,14 @@ export enum ResponseCode {
   // 12000 (browser-environment)
   BrowserEnvironmentNotFound = 12000,
   BrowserEnvironmentCreationFailed = 12001,
-  BrowserEnvironmentQueryFailed = 12002,
-  BrowserEnvironmentDeletionFailed = 12003,
 
   // 12100 (cloud-instance)
   UCloudInstanceCreationFailed = 12100,
   UCloudInstanceNotFound = 12101,
-  UCloudInstanceQueryFailed = 12102,
   UCloudInstanceError = 12103,
   UCloudInstanceTimeout = 12104,
   UCloudInstanceDeletionFailed = 12105,
 
   // 12200 (browser-profile)
   BrowserProfileNotFound = 12200,
-  BrowserProfileCreationFailed = 12201,
-  BrowserProfileQueryFailed = 12202,
-  BrowserProfileReleaseFailed = 12203,
-  MultiloginProfileCreationFailed = 12204,
 }

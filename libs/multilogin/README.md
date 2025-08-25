@@ -1,4 +1,4 @@
-# @aitoearn/multilogin
+# @yikart/multilogin
 
 NestJS 模块，用于 Multilogin X API 集成。
 
@@ -14,7 +14,7 @@ NestJS 模块，用于 Multilogin X API 集成。
 ## 安装
 
 ```bash
-pnpm add @aitoearn/multilogin
+pnpm add @yikart/multilogin
 ```
 
 ## 使用方法

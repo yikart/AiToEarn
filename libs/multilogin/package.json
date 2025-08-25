@@ -1,7 +1,8 @@
 {
-  "name": "@aitoearn/multilogin",
+  "name": "@yikart/multilogin",
   "type": "commonjs",
   "version": "0.0.1",
+  "repository": "https://github.com/yikart/aitoearn-monorepo.git",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {

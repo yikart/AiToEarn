@@ -1,4 +1,4 @@
-import { createZodDto } from '@aitoearn/common'
+import { createZodDto } from '@yikart/common'
 import z from 'zod'
 
 // Fingerprint Manager 客户端配置

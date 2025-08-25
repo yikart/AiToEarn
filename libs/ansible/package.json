@@ -1,11 +1,13 @@
 {
-  "name": "@aitoearn/ansible",
+  "name": "@yikart/ansible",
   "type": "commonjs",
   "version": "0.0.1",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
     "@nestjs/common": "^11.0.0",
+    "@yikart/common": "workspace:*",
+    "execa": "^9.6.0",
     "tslib": "^2.3.0",
     "zod": "^4.0.17"
   }

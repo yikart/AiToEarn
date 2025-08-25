@@ -1,5 +1,5 @@
-import { MongodbModule } from '@aitoearn/mongodb'
 import { Module } from '@nestjs/common'
+import { MongodbModule } from '@yikart/mongodb'
 import { BrowserProfileController } from './browser-profile.controller'
 import { BrowserProfileService } from './browser-profile.service'
 

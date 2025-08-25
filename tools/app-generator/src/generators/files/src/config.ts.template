@@ -1,4 +1,4 @@
-import { baseConfig, createZodDto, selectConfig } from '@aitoearn/common'
+import { baseConfig, createZodDto, selectConfig } from '@yikart/common'
 import z from 'zod'
 
 export const appConfigSchema = z.object({

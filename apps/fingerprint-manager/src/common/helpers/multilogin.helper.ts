@@ -1,6 +1,6 @@
-import { MultiloginAccountRepository } from '@aitoearn/mongodb'
-import { MultiloginClient } from '@aitoearn/multilogin'
 import { Injectable } from '@nestjs/common'
+import { MultiloginAccountRepository } from '@yikart/mongodb'
+import { MultiloginClient } from '@yikart/multilogin'
 import { config } from '../../config'
 
 interface Account {

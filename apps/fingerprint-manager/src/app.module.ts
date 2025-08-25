@@ -1,7 +1,8 @@
-import { MongodbModule } from '@aitoearn/mongodb'
-import { RedlockModule } from '@aitoearn/redlock'
-import { UCloudModule } from '@aitoearn/ucloud'
 import { Module } from '@nestjs/common'
+import { MongodbModule } from '@yikart/mongodb'
+import { RedlockModule } from '@yikart/redlock'
+import { UCloudModule } from '@yikart/ucloud'
+import { HelpersModule } from './common/helpers/helpers.module'
 import { config } from './config'
 import { BrowserEnvironmentModule } from './core/browser-environment'
 import { BrowserProfileModule } from './core/browser-profile'
@@ -14,6 +15,7 @@ import { SchedulerModule } from './scheduler'
     MongodbModule.forRoot(config.mongodb),
     UCloudModule.forRoot(config.ucloud),
     RedlockModule.forRoot(config.redlock),
+    HelpersModule,
     MultiloginAccountModule,
     BrowserEnvironmentModule,
     BrowserProfileModule,
