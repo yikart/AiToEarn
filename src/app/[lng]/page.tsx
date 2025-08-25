@@ -7,8 +7,10 @@ import { useTransClient } from "../i18n/client";
 // 导入SVG图标
 import bilibiliIcon from '@/assets/svgs/plat/bilibili.svg';
 import douyinIcon from '@/assets/svgs/plat/douyin.svg';
+import tiktokIcon from '@/assets/svgs/plat/tiktok.svg';
 import ksIcon from '@/assets/svgs/plat/ks.svg';
 import wxSphIcon from '@/assets/svgs/plat/wx-sph.svg';
+import gongzhonghaoIcon from '@/assets/svgs/plat/gongzhonghao.png';
 import xhsIcon from '@/assets/svgs/plat/xhs.svg';
 import youtubeIcon from '@/assets/svgs/plat/youtube.svg';
 import TwitterIcon from '@/assets/svgs/plat/twtter.svg';
@@ -35,6 +37,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "antd";
 import { GlobalOutlined } from "@ant-design/icons";
 import { useUserStore } from "@/store/user"; 
+import { useParams } from "next/navigation";
 
 // 版本发布横幅
 function ReleaseBanner() {
@@ -210,25 +213,36 @@ function Hero() {
 // 品牌合作伙伴 Logo 区 - 社交媒体平台（无限滚动）
 function BrandBar() {
   const { t } = useTransClient('home');
+  const { lng } = useParams();
   
   // 平台数据配置
   const platforms = [
-    { name: 'YouTube', hasIcon: true, iconPath: youtubeIcon.src },
-    { name: 'Rednote', hasIcon: true, iconPath: xhsIcon.src },
-    { name: '抖音(TikTok)', hasIcon: true, iconPath: douyinIcon.src },
-    { name: '快手', hasIcon: true, iconPath: ksIcon.src },
-    { name: '公众号', hasIcon: true, iconPath: wxSphIcon.src },
-    { name: 'bilibili', hasIcon: true, iconPath: bilibiliIcon.src },
-    { name: 'Facebook', hasIcon: true, iconPath: FacebookIcon.src },
-    { name: 'Instagram', hasIcon: true, iconPath: InstagramIcon.src },
-    { name: 'LinkedIn', hasIcon: true, iconPath: LinkedInIcon.src },
-    { name: 'Pinterest', hasIcon: true, iconPath: PinterestIcon.src },
-    { name: 'Threads', hasIcon: true, iconPath: ThreadsIcon.src },
-    { name: 'X (Twitter)', hasIcon: true, iconPath: TwitterIcon.src },
+    { name: 'YouTube', key: 'YouTube', hasIcon: true, iconPath: youtubeIcon.src },
+    { name: 'TikTok', key: 'TikTok', hasIcon: true, iconPath: tiktokIcon.src },
+    { name: '小红书', key: 'Rednote', hasIcon: true, iconPath: xhsIcon.src },
+    { name: '抖音', key: 'Douyin', hasIcon: true, iconPath: douyinIcon.src },
+    { name: '快手', key: 'Kwai', hasIcon: true, iconPath: ksIcon.src },
+    { name: '公众号', key: 'Wechat Offical Account', hasIcon: true, iconPath: gongzhonghaoIcon.src },
+    { name: '视频号', key: 'Wechat Channels', hasIcon: true, iconPath: wxSphIcon.src },
+    { name: 'Bilibili', key: 'Bilibili', hasIcon: true, iconPath: bilibiliIcon.src },
+    { name: 'Facebook', key: 'Facebook', hasIcon: true, iconPath: FacebookIcon.src },
+    { name: 'Instagram', key: 'Instagram', hasIcon: true, iconPath: InstagramIcon.src },
+    { name: 'LinkedIn', key: 'LinkedIn', hasIcon: true, iconPath: LinkedInIcon.src },
+    { name: 'Pinterest', key: 'Pinterest', hasIcon: true, iconPath: PinterestIcon.src },
+    { name: 'Threads', key: 'Threads', hasIcon: true, iconPath: ThreadsIcon.src },
+    { name: 'X (Twitter)', key: 'X (Twitter)', hasIcon: true, iconPath: TwitterIcon.src },
   ];
 
   // 为了实现无缝滚动，复制一份数据
   const duplicatedPlatforms = [...platforms, ...platforms];
+
+  // 获取平台显示名称
+  const getPlatformDisplayName = (platform: any) => {
+    if (lng === 'en') {
+      return platform.key;
+    }
+    return platform.name;
+  };
 
   return (
     <section className={styles.brandBar}>
@@ -242,14 +256,14 @@ function BrandBar() {
                   {platform.hasIcon ? (
                     <img 
                       src={platform.iconPath} 
-                      alt={`${platform.name} logo`}
+                      alt={`${getPlatformDisplayName(platform)} logo`}
                       className={styles.platformSvg}
                     />
                   ) : (
-                    <span className={styles.platformEmoji}>{platform.name}</span>
+                    <span className={styles.platformEmoji}>{getPlatformDisplayName(platform)}</span>
                   )}
                 </div>
-                <span className={styles.platformName}>{platform.name}</span>
+                <span className={styles.platformName}>{getPlatformDisplayName(platform)}</span>
               </div>
             ))}
           </div>
@@ -773,7 +787,7 @@ function CommunitySection() {
             {hoveredButton === 'wechat' && (
               <div className={styles.qrCodePopup}>
                 <Image src={gongzhonghao} alt="微信公众号" width={200} height={200} className={styles.qrCodeImage} />
-                <p className={styles.qrCodeText}>扫码关注微信公众号</p>
+                <p className={styles.qrCodeText}>{t('communitySection.wechatPopup' as any)}</p>
               </div>
             )}
           </div>
@@ -792,7 +806,7 @@ function CommunitySection() {
             {hoveredButton === 'community' && (
               <div className={styles.qrCodePopup}>
                 <Image src={gongzhonghao} alt="社区公众号" width={200} height={200} className={styles.qrCodeImage} />
-                <p className={styles.qrCodeText}>扫码加入社区群</p>
+                <p className={styles.qrCodeText}>{t('communitySection.communityPopup' as any)}</p>
               </div>
             )}
           </div>
