@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useSearchParams } from "next/navigation";
 import styles from "./calendarTiming.module.scss";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -38,6 +39,7 @@ const CalendarTiming = memo(
   forwardRef(
     ({}: ICalendarTimingProps, ref: ForwardedRef<ICalendarTimingRef>) => {
       const lng = useGetClientLng();
+      const searchParams = useSearchParams();
       const calendarRef = useRef<FullCalendar | null>(null);
       const [animating, setAnimating] = useState(false);
       // 方向：'left'（下月）、'right'（上月）、'fade'（今天）
@@ -93,6 +95,36 @@ const CalendarTiming = memo(
 
         // 清理事件监听
         return () => window.removeEventListener("resize", handleResize);
+      }, []);
+
+      // 监听 URL 参数，自动打开发布弹窗
+      useEffect(() => {
+        const openPublish = searchParams.get('openPublish');
+        const fromSignIn = searchParams.get('fromSignIn');
+        
+        if (openPublish === 'true' && fromSignIn === 'true') {
+          setPublishDialogOpen(true);
+          // 清除 URL 参数，避免刷新页面时重复打开
+          const url = new URL(window.location.href);
+          url.searchParams.delete('openPublish');
+          url.searchParams.delete('fromSignIn');
+          window.history.replaceState({}, '', url.toString());
+        }
+      }, [searchParams]);
+
+      // 监听自定义事件，打开发布弹窗
+      useEffect(() => {
+        const handleOpenPublishDialog = (event: CustomEvent) => {
+          if (event.detail?.fromSignIn) {
+            setPublishDialogOpen(true);
+          }
+        };
+
+        window.addEventListener('openPublishDialog', handleOpenPublishDialog as EventListener);
+        
+        return () => {
+          window.removeEventListener('openPublishDialog', handleOpenPublishDialog as EventListener);
+        };
       }, []);
 
       useEffect(() => {

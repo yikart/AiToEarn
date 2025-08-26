@@ -18,6 +18,34 @@ export interface SignInResponse {
   data?: any;
 }
 
+export interface PublishDayInfo {
+  _id: string;
+  userId: string;
+  publishTotal: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PublishDayInfoResponse {
+  total: number;
+  list: PublishDayInfo[];
+}
+
+export interface PublishInfoData {
+  _id: string;
+  userId: string;
+  days: number; // 连续签到天数
+  createdAt: string;
+  updatedAt: string;
+  upInfoDate: string;
+  id: string;
+}
+
+export interface PublishInfoResponse {
+  code: number;
+  data: PublishInfoData;
+}
+
 export const signInApi = {
   /**
    * 创建签到
@@ -32,12 +60,17 @@ export const signInApi = {
   /**
    * 获取签到日历数据
    */
-  async getSignInCalendar(year: number, month: number) {
-    const res = await http.get<any>(`reward/signIn/calendar`, {
-      isToken: true,
-      params: { year, month },
-    });
+  async getSignInCalendar(year: number, month: number): Promise<PublishDayInfoResponse> {
+    const res = await http.get<PublishDayInfoResponse>(`plat/publish/publishDayInfo/list/1/99`);
     return res!.data;
+  },
+
+  /**
+   * 获取连续签到天数
+   */
+  async getConsecutiveDays(): Promise<PublishInfoResponse> {
+    const res:any = await http.get<PublishInfoResponse>(`plat/publish/publishInfo/data`);
+    return res;
   },
 
 

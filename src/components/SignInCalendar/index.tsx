@@ -4,8 +4,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Button, Modal, Calendar, Badge, message } from 'antd';
 import { CalendarOutlined, CheckOutlined } from '@ant-design/icons';
 import { useTransClient } from '@/app/i18n/client';
-import { signInApi, SignInType, SignInResponse } from '@/api/signIn';
+import { signInApi, SignInType, SignInResponse, PublishDayInfoResponse, PublishInfoResponse } from '@/api/signIn';
 import { useUserStore } from '@/store/user';
+import { useRouter } from 'next/navigation';
 import styles from './SignInCalendar.module.scss';
 
 interface SignInCalendarProps {
@@ -21,6 +22,7 @@ interface CalendarData {
 const SignInCalendar: React.FC<SignInCalendarProps> = ({ className }) => {
   const { t } = useTransClient('common');
   const userStore = useUserStore();
+  const router = useRouter();
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [calendarData, setCalendarData] = useState<CalendarData>({
@@ -38,8 +40,43 @@ const SignInCalendar: React.FC<SignInCalendarProps> = ({ className }) => {
   const fetchCalendarData = async () => {
     try {
       setLoading(true);
-      const data = await signInApi.getSignInCalendar(currentYear, currentMonth);
-      setCalendarData(data);
+      
+      // 并行获取日历数据和连续签到天数
+      const [calendarResponse, consecutiveResponse] = await Promise.all([
+        signInApi.getSignInCalendar(currentYear, currentMonth),
+        signInApi.getConsecutiveDays()
+      ]);
+      
+      // 处理日历数据，将 createdAt 转换为签到日期
+      const signedDates: string[] = [];
+      let todaySigned = false;
+      let consecutiveDays = 0;
+      
+      if (calendarResponse.list && calendarResponse.list.length > 0) {
+        // 提取所有签到日期
+        calendarResponse.list.forEach(item => {
+          const date = new Date(item.createdAt);
+          const dateStr = date.toISOString().split('T')[0]; // 格式: YYYY-MM-DD
+          signedDates.push(dateStr);
+          
+          // 检查今天是否已签到
+          const today = new Date().toISOString().split('T')[0];
+          if (dateStr === today) {
+            todaySigned = true;
+          }
+        });
+      }
+      
+      // 从连续签到接口获取连续签到天数
+      if (consecutiveResponse && consecutiveResponse.data) {
+        consecutiveDays = consecutiveResponse.data.days || 0;
+      }
+      
+      setCalendarData({
+        signedDates,
+        todaySigned,
+        consecutiveDays
+      });
     } catch (error) {
       console.error('获取签到日历数据失败:', error);
     } finally {
@@ -49,31 +86,24 @@ const SignInCalendar: React.FC<SignInCalendarProps> = ({ className }) => {
 
   // 签到
   const handleSignIn = async () => {
-    if (calendarData.todaySigned) {
-      message.warning(t('signIn.alreadySignedIn'));
-      return;
-    }
+    // if (calendarData.todaySigned) {
+    //   message.warning(t('signIn.alreadySignedIn'));
+    //   return;
+    // }
 
-    try {
-      setLoading(true);
-      const result: SignInResponse = await signInApi.createSignInRecord(SignInType.PUL_VIDEO);
-      message.success(t('signIn.signInSuccess'));
-      
-      // 如果签到成功返回了新的积分，更新用户信息
-      if (result && result.score !== undefined) {
-        userStore.setUserInfo({
-          ...userStore.userInfo,
-          score: result.score
-        } as any);
-      }
-      
-      // 重新获取日历数据
-      await fetchCalendarData();
-    } catch (error) {
-      console.error('签到失败:', error);
-      message.error(t('signIn.signInFailed'));
-    } finally {
-      setLoading(false);
+    // 关闭当前弹窗
+    setVisible(false);
+    
+    // 跳转到 accounts 页面并传递参数表示需要打开发布弹窗
+    const currentPath = window.location.pathname;
+    if (currentPath === '/accounts' || currentPath.startsWith('/accounts/')) {
+      // 如果已经在 accounts 页面，触发打开发布弹窗的事件
+      window.dispatchEvent(new CustomEvent('openPublishDialog', {
+        detail: { fromSignIn: true }
+      }));
+    } else {
+      // 如果不在 accounts 页面，使用路由跳转并传递参数
+      router.push('/accounts?openPublish=true&fromSignIn=true');
     }
   };
 
@@ -180,8 +210,7 @@ const SignInCalendar: React.FC<SignInCalendarProps> = ({ className }) => {
             type="primary"
             size="large"
             onClick={handleSignIn}
-            loading={loading}
-            disabled={calendarData.todaySigned}
+            // disabled={calendarData.todaySigned}
             className={styles.signInActionButton}
             block
           >
