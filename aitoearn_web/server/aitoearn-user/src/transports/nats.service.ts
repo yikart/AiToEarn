@@ -45,8 +45,8 @@ export class NatsService {
       return res
     }
     catch (error) {
-      Logger.error(`-------- nats 【${path}】 message error ------`, error)
-      Logger.debug(error, `-------- nats 【${path}】 message error ------`)
+      Logger.error(`-------- nats --${path}-- message error ------`, error)
+      Logger.debug(error, `-------- nats --${path}-- message error ------`)
 
       throw error
     }
