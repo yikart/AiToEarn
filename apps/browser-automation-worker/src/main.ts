@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs'
 import { MultiloginClient } from '@yikart/multilogin'
 import { Command } from 'commander'
 import { chromium } from 'playwright'
-import { BrowserTaskConfig } from './interfaces'
+import { BrowserTaskConfig, Cookie } from './interfaces'
 
 const program = new Command()
 
@@ -34,9 +34,15 @@ async function main() {
     throw new Error('Invalid configuration: missing multilogin credentials (either token or email/password required)')
   }
 
-  if (!config.folderId || !config.profileId || !config.url) {
-    throw new Error('Invalid configuration: missing folderId, profileId or url')
+  if (!config.folderId || !config.profileId) {
+    throw new Error('Invalid configuration: missing folderId or profileId')
   }
+
+  if (!config.windows || config.windows.length === 0) {
+    throw new Error('Invalid configuration: missing windows configuration')
+  }
+
+  console.log(`🪟 Will open ${config.windows.length} browser window(s)`)
 
   console.log(`🔐 Connecting to Multilogin with ${config.multilogin.token ? 'token' : `email: ${config.multilogin.email}`}`)
 
@@ -63,47 +69,63 @@ async function main() {
   console.log(`🔌 Connecting to browser at: ${browserURL}`)
   const browser = await chromium.connectOverCDP(browserURL, { timeout: 10000 })
   const context = browser.contexts()[0]
-  const page = await context.newPage()
 
-  console.log(`📍 Navigating to: ${config.url}`)
-  await page.goto(config.url, { waitUntil: 'networkidle' })
+  // 获取现有页面
+  let pages = context.pages()
 
-  if (config.cookies && config.cookies.length > 0) {
-    console.log(`🍪 Setting ${config.cookies.length} cookies`)
-
-    await context.addCookies(config.cookies.map(cookie => ({
-      name: cookie.name,
-      value: cookie.value,
-      domain: cookie.domain || new URL(config.url).hostname,
-      path: cookie.path || '/',
-      expires: cookie.expires,
-      httpOnly: cookie.httpOnly || false,
-      secure: cookie.secure || false,
-      sameSite: cookie.sameSite || 'Lax',
-    })))
-
-    console.log('✅ Cookies set successfully')
-
-    console.log('🔄 Reloading page to apply cookies')
-    await page.reload({ waitUntil: 'networkidle' })
+  // 如果没有足够的页面，创建新页面
+  while (pages.length < config.windows.length) {
+    await context.newPage()
+    pages = context.pages()
   }
 
-  if (config.localStorage && config.localStorage.length > 0) {
-    console.log(`💾 Setting ${config.localStorage.length} items in localStorage`)
+  console.log(`🪟 Found ${pages.length} existing pages, processing ${config.windows.length} windows...`)
 
-    for (const item of config.localStorage) {
-      await page.evaluate((item) => {
-        localStorage.setItem(item.name, item.value)
-      }, item)
+  // 同步处理所有窗口
+  await Promise.all(config.windows.map(async (windowConfig, i) => {
+    const page = pages[i]
+    console.log(`\n🪟 Processing Window ${i + 1}...`)
+
+    console.log(`📍 Navigating to: ${windowConfig.url}`)
+    await page.goto(windowConfig.url)
+
+    // 设置cookies
+    if (windowConfig.cookies && windowConfig.cookies.length > 0) {
+      console.log(`🍪 Setting ${windowConfig.cookies.length} cookies for Window ${i + 1}`)
+
+      await context.addCookies(windowConfig.cookies.map((cookie: Cookie) => ({
+        name: cookie.name,
+        value: cookie.value,
+        domain: cookie.domain || new URL(windowConfig.url).hostname,
+        path: cookie.path || '/',
+        expires: cookie.expires,
+        httpOnly: cookie.httpOnly || false,
+        secure: cookie.secure || false,
+        sameSite: cookie.sameSite || 'Lax',
+      })))
+
+      console.log(`✅ Cookies set successfully for Window ${i + 1}`)
     }
 
-    console.log('✅ localStorage data set successfully')
+    // 设置localStorage
+    if (windowConfig.localStorage && windowConfig.localStorage.length > 0) {
+      console.log(`💾 Setting ${windowConfig.localStorage.length} items in localStorage for Window ${i + 1}`)
 
-    console.log('🔄 Reloading page to apply localStorage data')
-    await page.reload({ waitUntil: 'networkidle' })
-  }
+      for (const item of windowConfig.localStorage) {
+        await page.evaluate((item) => {
+          localStorage.setItem(item.name, item.value)
+        }, item)
+      }
 
-  console.log('✅ Task completed successfully')
+      console.log(`✅ localStorage data set successfully for Window ${i + 1}`)
+    }
+    await page.reload()
+
+    console.log(`✅ Window ${i + 1} setup completed`)
+  }))
+
+  console.log(`\n🎉 All ${config.windows.length} window(s) have been processed!`)
+  console.log('💡 Browser windows will remain open for manual interaction.')
 }
 
 main().catch((error) => {

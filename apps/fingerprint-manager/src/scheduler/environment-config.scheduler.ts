@@ -100,12 +100,22 @@ export class EnvironmentConfigScheduler {
     // 动态生成task.json配置文件内容
     const taskConfig = {
       multilogin: multiloginAccount,
-      task: {
-        profileId: profile.profileId,
-        folderId: config.multilogin.folderId,
-        url: config.multilogin.agent.url,
-        cookies: [],
-      },
+      folderId: config.multilogin.folderId,
+      profileId: profile.profileId,
+      windows: [
+        {
+          url: 'https://aitoearn.ai',
+          localStorage: [
+            {
+              name: 'User',
+              value: '{"state":{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtYWlsIjoibDE0OTEyNTU3ODFAZ21haWwuY29tIiwiaWQiOiI2ODlmNDBiMmVhZjY1ZjYwMDJkNDYzMmIiLCJuYW1lIjoi55So5oi3Xzh1bnM0d0xCIiwiaWF0IjoxNzU2MjAwNjEwLCJleHAiOjE3NTg3OTI2MTB9.YyqKpVdQFiFOY7dlLfXA_r3vQPpRdM2DxUiMXy5iksg","userInfo":{"_id":"689f40b2eaf65f6002d4632b","name":"用户_8uns4wLB","mail":"l1491255781@gmail.com","status":1,"googleAccount":{"googleId":"108483019791958614324","email":"l1491255781@gmail.com","refreshToken":null},"score":10,"updatedAt":"2025-08-15T14:14:10.873Z","createdAt":"2025-08-15T14:14:10.832Z","popularizeCode":"95KXR","id":"689f40b2eaf65f6002d4632b"},"isAddAccountPorxy":false,"lang":"zh-CN","lastUpdateTime":0,"_hasHydrated":true},"version":0}',
+            },
+          ],
+        },
+        {
+          url: 'https://ping0.cc/',
+        },
+      ],
     }
 
     // 创建临时文件

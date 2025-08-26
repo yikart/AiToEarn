@@ -5,8 +5,10 @@
 ## 功能特性
 
 - 🚀 使用 Multilogin 启动和管理浏览器配置文件
+- 🪟 支持同时打开多个浏览器窗口
 - 🎯 自动导航到指定 URL
-- 🍪 支持设置 cookies
+- 🍪 为每个窗口独立设置 cookies
+- 💾 为每个窗口独立设置 localStorage
 - 📄 通过配置文件传递参数
 - 🛡️ 完整的错误处理和日志记录
 
@@ -26,7 +28,9 @@ pnpm nx build browser-automation-worker
 
 ### 1. 创建配置文件
 
-创建一个 JSON 配置文件，包含 Multilogin 凭据和任务参数：
+#### 配置文件
+
+创建一个 JSON 配置文件，支持同时打开多个浏览器窗口：
 
 ```json
 {
@@ -37,26 +41,63 @@ pnpm nx build browser-automation-worker
   },
   "folderId": "your-folder-id",
   "profileId": "your-profile-id",
-  "url": "https://target-website.com",
-  "cookies": [
+  "windows": [
     {
-      "name": "session_id",
-      "value": "abc123xyz",
-      "domain": ".target-website.com",
-      "path": "/",
-      "secure": true,
-      "httpOnly": false,
-      "sameSite": "Lax"
+      "windowName": "Google Search",
+      "url": "https://www.google.com",
+      "cookies": [
+        {
+          "name": "search_preference",
+          "value": "advanced",
+          "domain": ".google.com",
+          "path": "/",
+          "secure": true,
+          "httpOnly": false,
+          "sameSite": "Lax"
+        }
+      ],
+      "localStorage": [
+        {
+          "name": "theme",
+          "value": "dark"
+        }
+      ]
+    },
+    {
+      "windowName": "GitHub",
+      "url": "https://github.com",
+      "cookies": [
+        {
+          "name": "user_session",
+          "value": "your-session-token",
+          "domain": ".github.com",
+          "path": "/",
+          "secure": true,
+          "httpOnly": true,
+          "sameSite": "Lax"
+        }
+      ],
+      "localStorage": [
+        {
+          "name": "preferred_color_mode",
+          "value": "dark"
+        }
+      ]
     }
   ]
 }
 ```
 
+]
+}
+
+````
+
 ### 2. 运行工具
 
 ```bash
-node dist/apps/browser-automation-worker/main.js --config /path/to/your/task.json
-```
+node dist/apps/browser-automation-worker/main.js --config example-multi-window-task.json
+````
 
 ## 配置文件格式
 
@@ -68,9 +109,10 @@ node dist/apps/browser-automation-worker/main.js --config /path/to/your/task.jso
   - `token` (可选): Multilogin 访问令牌，如果提供则优先使用，无需 email/password
 - `folderId`: Multilogin 文件夹 ID，包含要使用的配置文件
 - `profileId`: Multilogin 浏览器配置文件 ID
-- `url`: 要访问的目标 URL
-- `cookies` (可选): 要设置的 HTTP cookie 数组
-- `localStorage` (可选): 要设置的 localStorage 数据数组
+- `windows`: 窗口配置数组，每个元素包含：
+  - `url`: 要访问的目标 URL
+  - `cookies` (可选): 要设置的 HTTP cookie 数组
+  - `localStorage` (可选): 要设置的 localStorage 数据数组
 
 ### Cookie 数据格式
 

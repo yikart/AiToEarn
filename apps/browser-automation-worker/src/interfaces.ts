@@ -20,11 +20,15 @@ export interface LocalStorageItem {
   value: string
 }
 
+export interface WindowConfig {
+  url: string
+  cookies?: Cookie[]
+  localStorage?: LocalStorageItem[]
+}
+
 export interface BrowserTaskConfig {
   multilogin: MultiloginConfig
   folderId: string
   profileId: string
-  url: string
-  cookies?: Cookie[]
-  localStorage?: LocalStorageItem[]
+  windows: WindowConfig[]
 }
