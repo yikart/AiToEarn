@@ -31,7 +31,7 @@ jobs:
 
       - name: Build and prune browser-automation-worker
         run: |
-          pnpm nx build browser-automation-worker
+          pnpm nx build browser-automation-worker --no-cloud
           echo "Build completed, checking output directory..."
           ls -la dist/apps/browser-automation-worker/
           echo "Checking package.json dependencies..."
