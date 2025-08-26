@@ -111,25 +111,45 @@
   justify-content: center;
 }
 
-.signInBadge {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  
-     .ant-badge-count {
-     background: #52c41a;
-     box-shadow: none;
-     min-width: 18px;
-     height: 18px;
-     line-height: 18px;
-     border-radius: 50%;
-     font-size: 12px;
-   }
+.dateContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  gap: 2px;
 }
+
+.signInStatus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.signedCircle {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #52c41a;
+  border: 1px solid #52c41a;
+}
+
+.emptyCircle {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid #d9d9d9;
+  background-color: transparent;
+}
+
+
 
 .dateText {
   font-size: 14px;
   color: #333;
+  line-height: 1;
   
   &.today {
     color: #1890ff;
@@ -218,9 +238,15 @@
        height: 36px;
      }
      
-     .dateText {
-       font-size: 13px;
-     }
+           .dateText {
+        font-size: 13px;
+      }
+      
+      .signedCircle,
+      .emptyCircle {
+        width: 6px;
+        height: 6px;
+      }
    }
   
   .signInInfo {

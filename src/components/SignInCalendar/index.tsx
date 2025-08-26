@@ -115,15 +115,18 @@ const SignInCalendar: React.FC<SignInCalendarProps> = ({ className }) => {
     
     return (
       <div className={styles.calendarCell}>
-                 {isSigned && (
-           <Badge 
-             count={<CheckOutlined style={{ color: '#52c41a', fontSize: '14px' }} />}
-             className={styles.signInBadge}
-           />
-         )}
-        <span className={`${styles.dateText} ${isToday ? styles.today : ''}`}>
-          {isToday ? t('signIn.today') : value.date()}
-        </span>
+        <div className={styles.dateContainer}>
+          <span className={`${styles.dateText} ${isToday ? styles.today : ''}`}>
+            {isToday ? t('signIn.today') : value.date()}
+          </span>
+          <div className={`${styles.signInStatus} ${isSigned ? styles.signed : styles.notSigned}`}>
+            {isSigned ? (
+              <div className={styles.signedCircle} />
+            ) : (
+              <div className={styles.emptyCircle} />
+            )}
+          </div>
+        </div>
       </div>
     );
   };
