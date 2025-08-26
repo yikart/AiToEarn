@@ -27,10 +27,10 @@ TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest
 4. [MCP Service (Coming Soon)](#mcp-service-coming-soon)
 5. [Advanced Setup](#advanced-setup)
 6. [Contribution Guide](#contribution-guide)
-7. [Connect on WeChat](#connect-on-wechat)
+7. [Contact](#contact)
 8. [Milestones](#milestones)
 9. [FAQ](#faq)
-10. [Community & Friends](#community--friends)
+10. [Recommended](#recommended)
 
 
 ## Quick Start (Web)
@@ -179,7 +179,7 @@ AiToEarn integrates with many official APIs. Developer key setup guides:
 See [Contribution Guide](./aitoearn_web/CONTRIBUTING.md) to get started.
 
 
-## Contact Me
+## Contact
 https://t.me/harryyyy2025
 
 
@@ -197,8 +197,7 @@ https://t.me/harryyyy2025
 ## [FAQ](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
 
 
-
-## Recommended Projects
+## Recommended
 
 **[AWS Activate Program](https://www.amazonaws.cn/en/campaign/ps-yunchuang/)**
 
