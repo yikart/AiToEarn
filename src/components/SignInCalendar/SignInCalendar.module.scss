@@ -24,9 +24,9 @@
     padding: 16px 24px;
   }
   
-  .ant-modal-body {
-    padding: 24px;
-  }
+     .ant-modal-body {
+     padding: 28px;
+   }
 }
 
 .modalHeader {
@@ -34,6 +34,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  padding-top: 20px;
   
   span {
     font-size: 16px;
@@ -54,6 +55,7 @@
 }
 
 .calendarContainer {
+  padding-top: 0px;
   .ant-picker-calendar {
     border: none;
     
@@ -62,28 +64,28 @@
       margin-bottom: 16px;
     }
     
-    .ant-picker-calendar-date {
-      border: none;
-      padding: 4px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      
-      &:hover {
-        background-color: #f5f5f5;
-      }
-    }
+         .ant-picker-calendar-date {
+       border: none;
+       padding: 6px;
+       height: 40px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       
+       &:hover {
+         background-color: #f5f5f5;
+       }
+     }
     
     .ant-picker-calendar-date-today {
       background-color: #e6f7ff;
       border: 1px solid #1890ff;
     }
     
-    .ant-picker-calendar-date-value {
-      font-size: 12px;
-      line-height: 1;
-    }
+         .ant-picker-calendar-date-value {
+       font-size: 14px;
+       line-height: 1;
+     }
     
     .ant-picker-calendar-date-content {
       height: auto;
@@ -94,10 +96,10 @@
 
 .calendarHeader {
   text-align: center;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   color: #333;
-  padding: 8px 0;
+  padding: 10px 0;
 }
 
 .calendarCell {
@@ -114,19 +116,19 @@
   top: 2px;
   right: 2px;
   
-  .ant-badge-count {
-    background: #52c41a;
-    box-shadow: none;
-    min-width: 16px;
-    height: 16px;
-    line-height: 16px;
-    border-radius: 50%;
-    font-size: 10px;
-  }
+     .ant-badge-count {
+     background: #52c41a;
+     box-shadow: none;
+     min-width: 18px;
+     height: 18px;
+     line-height: 18px;
+     border-radius: 50%;
+     font-size: 12px;
+   }
 }
 
 .dateText {
-  font-size: 12px;
+  font-size: 14px;
   color: #333;
   
   &.today {
@@ -136,52 +138,52 @@
 }
 
 .signInRules {
-  margin: 20px 0;
-  padding: 16px;
+  margin: 24px 0;
+  padding: 20px;
   background-color: #f8f9fa;
   border-radius: 8px;
   
-  h4 {
-    margin: 0 0 12px 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-  }
-  
-  ul {
-    margin: 0;
-    padding-left: 16px;
-    
-    li {
-      margin-bottom: 8px;
-      font-size: 12px;
-      color: #666;
-      line-height: 1.4;
-      
-      &:last-child {
-        margin-bottom: 0;
-      }
-    }
-  }
+     h4 {
+     margin: 0 0 12px 0;
+     font-size: 16px;
+     font-weight: 600;
+     color: #333;
+   }
+   
+   ul {
+     margin: 0;
+     padding-left: 16px;
+     
+     li {
+       margin-bottom: 8px;
+       font-size: 14px;
+       color: #666;
+       line-height: 1.4;
+       
+       &:last-child {
+         margin-bottom: 0;
+       }
+     }
+   }
 }
 
 .signInInfo {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
-  padding: 12px 16px;
+  margin-bottom: 24px;
+  padding: 16px 20px;
   background-color: #f0f8ff;
   border-radius: 6px;
   
-  .infoItem {
-    font-size: 13px;
-    color: #1890ff;
-    font-weight: 500;
-  }
+     .infoItem {
+     font-size: 15px;
+     color: #1890ff;
+     font-weight: 500;
+   }
 }
 
 .signInActionButton {
-  height: 44px;
+  height: 48px;
   font-size: 16px;
   font-weight: 600;
   border-radius: 8px;
@@ -207,19 +209,19 @@
   .signInModal {
     .ant-modal {
       width: 90% !important;
-      max-width: 450px;
+      max-width: 550px;
     }
   }
   
-  .calendarContainer {
-    .ant-picker-calendar-date {
-      height: 28px;
-    }
-    
-    .dateText {
-      font-size: 11px;
-    }
-  }
+     .calendarContainer {
+     .ant-picker-calendar-date {
+       height: 36px;
+     }
+     
+     .dateText {
+       font-size: 13px;
+     }
+   }
   
   .signInInfo {
     flex-direction: column;

@@ -18,7 +18,7 @@ export interface RegistCheckParams {
 }
 
 // 获取用户信息
-export const getUserInfoApi = () => {
+export const getUserInfoApi = () => { 
   return http.get<UserInfo>("user/mine");
 };
 

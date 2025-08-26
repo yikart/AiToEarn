@@ -4,7 +4,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Button, Modal, Calendar, Badge, message } from 'antd';
 import { CalendarOutlined, CheckOutlined } from '@ant-design/icons';
 import { useTransClient } from '@/app/i18n/client';
-import { signInApi, SignInType } from '@/api/signIn';
+import { signInApi, SignInType, SignInResponse } from '@/api/signIn';
+import { useUserStore } from '@/store/user';
 import styles from './SignInCalendar.module.scss';
 
 interface SignInCalendarProps {
@@ -15,18 +16,17 @@ interface CalendarData {
   signedDates: string[]; // 已签到的日期数组，格式: "YYYY-MM-DD"
   todaySigned: boolean; // 今天是否已签到
   consecutiveDays: number; // 连续签到天数
-  totalPoints: number; // 总积分
 }
 
 const SignInCalendar: React.FC<SignInCalendarProps> = ({ className }) => {
   const { t } = useTransClient('common');
+  const userStore = useUserStore();
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [calendarData, setCalendarData] = useState<CalendarData>({
     signedDates: [],
     todaySigned: false,
-    consecutiveDays: 0,
-    totalPoints: 0
+    consecutiveDays: 0
   });
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -56,8 +56,17 @@ const SignInCalendar: React.FC<SignInCalendarProps> = ({ className }) => {
 
     try {
       setLoading(true);
-      await signInApi.createSignInRecord(SignInType.PUL_VIDEO);
+      const result: SignInResponse = await signInApi.createSignInRecord(SignInType.PUL_VIDEO);
       message.success(t('signIn.signInSuccess'));
+      
+      // 如果签到成功返回了新的积分，更新用户信息
+      if (result && result.score !== undefined) {
+        userStore.setUserInfo({
+          ...userStore.userInfo,
+          score: result.score
+        } as any);
+      }
+      
       // 重新获取日历数据
       await fetchCalendarData();
     } catch (error) {
@@ -76,12 +85,12 @@ const SignInCalendar: React.FC<SignInCalendarProps> = ({ className }) => {
     
     return (
       <div className={styles.calendarCell}>
-        {isSigned && (
-          <Badge 
-            count={<CheckOutlined style={{ color: '#52c41a', fontSize: '12px' }} />}
-            className={styles.signInBadge}
-          />
-        )}
+                 {isSigned && (
+           <Badge 
+             count={<CheckOutlined style={{ color: '#52c41a', fontSize: '14px' }} />}
+             className={styles.signInBadge}
+           />
+         )}
         <span className={`${styles.dateText} ${isToday ? styles.today : ''}`}>
           {isToday ? t('signIn.today') : value.date()}
         </span>
@@ -119,8 +128,8 @@ const SignInCalendar: React.FC<SignInCalendarProps> = ({ className }) => {
               type="link" 
               className={styles.pointsLink}
               onClick={() => {
-                // 跳转到积分页面
-                window.open('/points', '_blank');
+                // 跳转到个人中心页面
+                window.open('/profile', '_blank');
               }}
             >
               {t('signIn.myPoints')} &gt;
@@ -130,7 +139,7 @@ const SignInCalendar: React.FC<SignInCalendarProps> = ({ className }) => {
         open={visible}
         onCancel={() => setVisible(false)}
         footer={null}
-        width={500}
+        width={600}
         className={styles.signInModal}
       >
         <div className={styles.calendarContainer}>
@@ -163,7 +172,7 @@ const SignInCalendar: React.FC<SignInCalendarProps> = ({ className }) => {
               <span>{t('signIn.consecutiveDays')}: {calendarData.consecutiveDays}</span>
             </div>
             <div className={styles.infoItem}>
-              <span>{t('signIn.totalPoints')}: {calendarData.totalPoints}</span>
+              <span>{t('signIn.totalPoints')}: {userStore.userInfo?.score || 0}</span>
             </div>
           </div>
           

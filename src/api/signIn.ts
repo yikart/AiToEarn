@@ -11,24 +11,20 @@ export enum SignInType {
   PUL_VIDEO = "pul_video",
 }
 
+export interface SignInResponse {
+  success: boolean;
+  message?: string;
+  score?: number; // 签到后更新的积分
+  data?: any;
+}
+
 export const signInApi = {
   /**
    * 创建签到
    */
-  async createSignInRecord(type: SignInType = SignInType.PUL_VIDEO) {
-    const res = await http.post<any>(`reward/signIn`, {
+  async createSignInRecord(type: SignInType = SignInType.PUL_VIDEO): Promise<SignInResponse> {
+    const res = await http.post<SignInResponse>(`reward/signIn`, {
       type,
-    });
-    return res!.data;
-  },
-
-  /**
-   * 获取签到列表
-   */
-  async getSignInList(params: { type: SignInType; time?: [Date, Date] }) {
-    const res = await http.get<any>(`reward/signIn/list`, {
-      isToken: true,
-      params,
     });
     return res!.data;
   },
@@ -44,13 +40,5 @@ export const signInApi = {
     return res!.data;
   },
 
-  /**
-   * 获取用户积分信息
-   */
-  async getUserPoints() {
-    const res = await http.get<any>(`reward/points`, {
-      isToken: true,
-    });
-    return res!.data;
-  },
+
 };
