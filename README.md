@@ -1,3 +1,5 @@
+[![MSeeP.ai Security Assessment Badge](https://mseep.net/pr/yikart-aitoearn-badge.png)](https://mseep.ai/app/yikart-aitoearn)
+
 
 # [Aitoearn: The Best Open-Source AI Agent for Content Marketing](https://aitoearn.ai)
 
