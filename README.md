@@ -1,107 +1,75 @@
-<!--
- * @Author: nevin
- * @Date: 2025-01-17 19:25:28
- * @LastEditTime: 2025-02-24 20:17:47
- * @LastEditors: nevin
- * @Description:
--->
 
-# AiToEarn
+# [Aitoearn: The Best Open-Source AI Agent for Content Marketing](https://aitoearn.ai)
+
 
 ![GitHub stars](https://img.shields.io/github/stars/yikart/AttAiToEarn?color=fa6470)
-![GitHub issues](https://img.shields.io/github/issues/yikart/AttAiToEarn?color=d8b22d)
-![GitHub license](https://img.shields.io/github/license/yikart/AttAiToEarn)
-[![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node&message=20.18.x%20&logo=node.js&color=3f893e)](https://nodejs.org/about/releases)
+![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
+[![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node\&message=20.18.x%20\&logo=node.js\&color=3f893e)](https://nodejs.org/about/releases)
 
-[简体中文](README_CN.md) | English
-
-## Overview
-
-AI content production, distribution, and trade.
-
-One stop social media management tools: Douyin, Red Note, wechat video channel, wechat official account, Kwai, bilibili, Tiktok, Youtube, Facebook, Instagram, Threads, Twitter, Pinterest
-
-## Supported Platforms
-
-<div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap; margin: 20px 0;">
-    <img src="https://lf1-cdn-tos.bytegoofy.com/goofy/ies/douyin_web/public/favicon.ico" title="抖音" alt="抖音" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
-    <img src="https://i0.hdslb.com/bfs/static/jinkela/long/images/favicon.ico" title="B站" alt="B站" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
-    <img src="https://s1-111422.kwimgs.com/kos/nlav111422/ks-web/favicon.ico" title="快手" alt="快手" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
-    <img src="https://res.wx.qq.com/a/wx_fed/assets/res/NTI4MWU5.ico" title="微信公众号" alt="微信公众号" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
-    <img src="https://www.youtube.com/s/desktop/3ad23781/img/logos/favicon.ico" title="YouTube" alt="YouTube" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
-    <img src="https://abs.twimg.com/responsive-web/client-web/icon-svg.ea5ff4aa.svg" title="Twitter" alt="Twitter" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
-    <img src="https://www.tiktok.com/favicon.ico" title="TikTok" alt="TikTok" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
-    <img src="https://static.xx.fbcdn.net/rsrc.php/y1/r/ay1hV6OlegS.ico" title="Facebook" alt="Facebook" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
-    <img src="https://static.cdninstagram.com/rsrc.php/y4/r/QaBlI0OZiks.ico" title="Instagram" alt="Instagram" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
-    <img src="https://static.cdninstagram.com/rsrc.php/ye/r/lEu8iVizmNW.ico" title="Threads" alt="Threads" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
-    <img src="https://s.pinimg.com/webapp/logo_transparent_144x144-3da7a67b.png" title="Pinterest" alt="Pinterest" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
-</div>
-
-## Milestones
-* **2025.2.26:** Released win-0.1.1
-* **2025.3.15:** Released win-0.2.0
-* **2025.4.18:** Released win-0.6.0
-* **2025.5.20:** Released win-0.8.0
-* **2025.8.8:** Released win-0.8.1
-* **2025.8.8:** Released web-0.1-beta
-
----
-
-## In Progress
-* Mac client implementation
-* Web-based optimization
-* App-side implementation
-* Optimizing our social media AI functions
-* Antidetect browser environment
-* MCP support
-
-## Quick Start Web
-
-1.  **Start the Backend Service Modules**
-
-      - **Local Launch:** Create a `local.config.js` file in the `config` directory (copy and modify the `dev.config.js` file).
-      - ```sh
-        pnpm i
-        pnpm run dev:local
-        ```
-
-2.  **Start the Frontend Project: `aitoearn-web`**
-
-      - ```sh
-        pnpm i
-        pnpm run dev
-        ```
-
------
-
-### Creating and Using a Workflow
-
-3.  **Add Platform Accounts** on the frontend page.
-<img src="./aitoearn_web/workflow/img/account.jpeg" alt="post" width="500"/>
-
-4.  **Create an `skkey`** to link multiple accounts.
-<img src="./aitoearn_web/workflow/img/skkey.jpg" alt="post" width="500"/>
-
-5.  **Create a workflow** on the workflow platform (or import a template from the `workflow` folder).
-
-6.  **Use the `skkey`** in the workflow's parameter settings to publish content.
-<img src="./aitoearn_web/workflow/img/fl.jpeg" alt="post" width="500"/>
+[简体中文](README.md) | English
 
 
-## Quick Start Windows
+
+**Create · Publish · Engage · Monetize — all in one platform.**
+
+AiToEarn helps creators, brands, and businesses build, distribute, and monetize content with **AI-powered automation** across the world’s most popular platforms.
+
+Supported Channels:
+Douyin, Xiaohongshu (Rednote), WeChat Channels, Kuaishou, Bilibili, WeChat Official Accounts,
+TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest
+
+
+## Table of Contents
+
+1. [Quick Start (Web)](#quick-start-web)
+2. [Quick Start (Windows)](#quick-start-windows)
+3. [Key Features](#key-features)
+4. [MCP Service (Coming Soon)](#mcp-service-coming-soon)
+5. [Advanced Setup](#advanced-setup)
+6. [Contribution Guide](#contribution-guide)
+7. [Connect on WeChat](#connect-on-wechat)
+8. [Milestones](#milestones)
+9. [FAQ](#faq)
+10. [Community & Friends](#community--friends)
+
+
+## Quick Start (Web)
+
+### 1. Start the backend service
+
+[👉 Try the web version](https://aitoearn.ai)
+
+For local setup:
+Create a `local.config.js` file under the `config` directory (copy from `./aitoearn_web/server/aitoearn-user/config/dev.config.js` and adjust configs).
+
+```bash
+pnpm install
+pnpm run dev:local
+```
+
+### 2. Start the frontend `aitoearn-web`
+
+```bash
+pnpm install
+pnpm run dev
+```
+
+
+## Quick Start (Windows)
+
+[⬇️ Download the latest Windows version (0.8.1)](https://github.com/yikart/AiToEarn/releases/download/0.8.1/AiToEarn-0.8.1.exe)
 
 ```sh
-# Clone the project
+# Clone the repo
 git clone https://github.com/yikart/AttAiToEarn.git
 
-# Enter the project directory
+# Enter directory
 cd AttAiToEarn
 
 # Install dependencies
 npm i
 
-# To compile sqlite, better-sqlite3 depends on node-gyp and requires a local python environment. Please refer to the installation materials of node-gyp by yourself
-
+# Compile sqlite (better-sqlite3 requires node-gyp, Python must be installed locally)
 npm run rebuild
 
 # Start development
@@ -109,55 +77,139 @@ npm run dev
 ```
 
 
+## Key Features
+
+🚀 **AiToEarn is a full-stack AI-powered content growth & monetization platform.**
+From creative ideas, to multi-channel publishing, to analytics & monetization — AiToEarn helps you truly **Create · Publish · Engage · Monetize.**
 
 
-<details>
-<summary><h3>Catalogue</h3></summary>
-<upper><h4>Upper Frame</h4></upper>
-- vite [template-react-ts](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts)
-- Electron + react [electron-vite-react](https://github.com/electron-vite/electron-vite-react)
+### 1. Content Publishing — One-Click Multi-Platform
 
-\_🚨 By default, files in the 'electron' folder will be built to 'dis-electron'
+* **Distribute Everywhere**: Publish to the widest range of global platforms (Douyin, Kwai, WeChat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, Bluesky, YouTube Shorts, Pinterest, Google Business, Mastodon, X).
+* **(Coming soon) Smart Import**: Import historical content for fast re-editing & redistribution.
 
-```tree
-├── build                                    Build-related files
-│
-├── common                                   Shared types/constants between renderer and main processes
-│
-├── electron                                Electron source code
-│   ├── db                                  SQLite3 database
-│   │   ├── migrations                      Database migration scripts
-│   │   ├── models                          Database entities
-│   │   ├── scripts                         Database scripts
-│   │   └── index.ts                        Database entry
-│   ├── global                              Renderer process globals
-│   ├── main                                Main process source
-│   │   ├── api                             Business APIs
-│   │   ├── core                            Core modules (DI, decorators)
-│   │   └── ...                             Others
-│   ├── plat                                Third-party platforms
-│   ├── preload                             Preload-scripts
-│   ├── tray                                System tray
-│   └── util                                Utilities
-│
-├── public                                  Public assets
-│
-├── scripts                                 Build scripts
-│
-├── release                                 Build output
-│   └── {version}
-│       ├── {os}-{os_arch}                  Unpacked binaries
-│       └── {app_name}_{version}.{ext}      Installers
-│
-├── public                                  Same as Vite template's public
-└── src                                     Renderer process source (React)
-```
-</details>
+  * Example: Sync your Xiaohongshu posts to YouTube in one click.
+* **Calendar Scheduler**: Plan & coordinate content like a calendar across all platforms.
+<div style="display: flex; justify-content: space-around;">
+  <img src="presentation/app-screenshot/1. content publish/calendar.jpeg" width="30%">
+  <img src="presentation/app-screenshot/1. content publish/support_channels.jpeg" width="30%">
+</div>
 
-## Other explanations
+### 2. Content Hotspot — Viral Inspiration Engine
 
-Regarding the MAC package, as Apple has strict requirements for applications, this project is still in the trial stage. Please package it yourself or set the ignore security policy
+* **Case Library**: Explore how others create posts with 10,000+ likes.
+* **Trend Radar**: Discover the latest viral trends instantly, reduce creator anxiety.
+<div style="display: flex; justify-content: space-around;">
+  <img src="presentation/app-screenshot/2. content hotspot/hotspot.jpg" width="22%">
+  <img src="presentation/app-screenshot/2. content hotspot/hotspot2.jpeg" width="22%">
+  <img src="presentation/app-screenshot/2. content hotspot/hotspot3.jpeg" width="22%">
+  <img src="presentation/app-screenshot/2. content hotspot/hotspot4.jpeg" width="22%">
+</div>
+
+### 3. Content Search — Brand & Market Insights
+
+* **Brand Monitoring**: Track conversations about your brand in real-time.
+* **Content Discovery**: Search for posts, topics, and communities for targeted engagement.
+
+<div style="display:flex; justify-content:space-between; align-items:center;">
+  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch.gif" width="22%">
+  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch1.jpeg" width="22%">
+  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch2.jpeg" width="22%">
+  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch4.jpeg" width="22%">
+</div>
+
+
+### 4. Comments Search — Precision User Mining
+
+* **Smart Comment Search**: Detect high-conversion signals like “link please” or “how to buy.”
+* **Conversion Booster**: Reply instantly, drive higher engagement & sales.
+ <div style="display:flex; justify-content:space-between; align-items:center;">
+  <img src="presentation/app-screenshot/4. comments search/commentsearch.gif" width="30%">
+  <img src="presentation/app-screenshot/4. comments search/commentfilter.jpeg" width="30%">
+</div>
+
+### 5. Content Engagement — Growth Engine
+
+* **Unified Dashboard**: Manage all interactions in one place.
+* **Proactive Engagement**: Join trending conversations, connect with potential customers.
+* Turn **passive operations** into **active traffic growth.**
+
+ <div style="display:flex; justify-content:space-between; align-items:center;">
+  <img src="presentation/app-screenshot/5. content engagement/commentfilter2.jpeg" width="30%">
+</div>
+
+### 6. (Coming Soon) Content Analytics — Full-Funnel Data
+
+* **Cross-Platform Comparison**: One platform may block traffic, but others won’t.
+* **End-to-End Monitoring**: Track performance and build your path to 1M+ followers.
+
+<img src="./presentation/data_center.png" alt="post" width="500"/>
+
+### 7. (Coming Soon) AI Content Creation — End-to-End Assistant
+
+* **AI Copywriting**: Auto-generate titles, captions & descriptions.
+* **AI Commenting**: Engage proactively, attract traffic.
+* **Image & Card Generator**: Speed up content workflows.
+* **Supported AI Video Models**: Seedance, Kling, Hailuo, Veo, Medjourney, Sora, Pika, Runway.
+* **Supported AI Image Models**: GPT, Flux.
+* **Next**: Tag generator, smart DMs, video editing, AI avatars, translation for global distribution.
+
+
+### 8. (Coming Soon) Content Marketplace — Trade & Monetize
+
+* **Creators**: Sell your content directly, find buyers fast.
+* **Brands**: Purchase ready-made, high-quality content.
+* **AI-Powered Growth**:
+  **Let’s use AI to earn. Let’s earn money together!**
+
+
+## MCP Service (Coming Soon)
+
+
+## Advanced Setup
+
+AiToEarn integrates with many official APIs. Developer key setup guides:
+
+* [Bilibili](./aitoearn_web/CHANNEL_Md/BILIBILI.md)
+* [WeChat Official Accounts](./aitoearn_web/CHANNEL_Md/WXPLAT.md)
+
+
+## Contribution Guide
+
+See [Contribution Guide](./aitoearn_web/CONTRIBUTING.md) to get started.
+
 
 ## Contact Me
 https://t.me/harryyyy2025
+
+
+## Milestones
+
+* 2025.02.26 — Released win-0.1.1
+* 2025.03.15 — Released win-0.2.0
+* 2025.04.18 — Released win-0.6.0
+* 2025.05.20 — Released win-0.8.0
+* 2025.08.08 — [Released win-0.8.1](https://github.com/yikart/AiToEarn/releases/tag/v0.8.1)
+* 2025.08.08 — [Released web-0.1-beta](./aitoearn_web/README.md)
+
+---
+
+## [FAQ](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
+
+
+
+## Recommended Projects
+
+**[AWS Activate Program](https://www.amazonaws.cn/en/campaign/ps-yunchuang/)**
+
+**[AI Model Hub](https://api.zyai.online/)**
+
+* [https://github.com/TMElyralab/MuseTalk](https://github.com/TMElyralab/MuseTalk)
+* [https://github.com/5ime/video\_spider](https://github.com/5ime/video_spider)
+* [https://github.com/FunAudioLLM/CosyVoice?tab=readme-ov-file](https://github.com/FunAudioLLM/CosyVoice?tab=readme-ov-file)
+* [https://github.com/facefusion/facefusion](https://github.com/facefusion/facefusion)
+* [https://github.com/linyqh/NarratoAI](https://github.com/linyqh/NarratoAI)
+* [https://github.com/harry0703/MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo)
+
+
 
