@@ -215,6 +215,38 @@ export default function AIGeneratePage() {
     'doubao-seedream-3-0-t2i-250415': 2.6
   };
 
+  // 视频模型积分消耗映射 - 按模型、时长、分辨率组合
+  const videoModelCreditCosts: Record<string, Record<number, Record<string, number>>> = {
+    'doubao-seedance-1-0-pro-250528': {
+      5: { '480p': 7.2, '720p': 16.4, '1080p': 36.7 }
+    },
+    'Doubao-Seedance-Lite': {
+      5: { '480p': 7.2, '720p': 16.4, '1080p': 36.7 }
+    },
+    'doubao-seedance-1-0-lite-t2v-250428': {
+      5: { '480p': 7.2, '720p': 16.4, '1080p': 36.7 }
+    },
+    'wan2-1-14b-i2v-250225': {
+      5: { '480p': 12, '720p': 24, '1080p': 36 },
+      10: { '480p': 24, '720p': 48, '1080p': 72 }
+    },
+    'wan2-1-14b-t2v-250225': {
+      5: { '480p': 12, '720p': 24, '1080p': 36 },
+      10: { '480p': 24, '720p': 48, '1080p': 72 }
+    }
+  };
+
+  // 获取视频模型积分消耗
+  const getVideoModelCreditCost = (modelName: string, duration: number, size: string): number => {
+    const modelCosts = videoModelCreditCosts[modelName];
+    if (!modelCosts) return 0;
+    
+    const durationCosts = modelCosts[duration];
+    if (!durationCosts) return 0;
+    
+    return durationCosts[size] || 0;
+  };
+
   // 根据模式过滤视频模型列表
   const filteredVideoModels = useMemo(() => {
     if (!Array.isArray(videoModels)) return [] as any[];
@@ -832,11 +864,14 @@ export default function AIGeneratePage() {
                       onChange={setVideoModel}
                       style={{ width: "100%" }}
                     >
-                      {(filteredVideoModels as any[]).map((modelItem: any) => (
-                        <Option key={modelItem.name} value={modelItem.name}>
-                          {modelItem.description}
-                        </Option>
-                      ))}
+                      {(filteredVideoModels as any[]).map((modelItem: any) => {
+                        const creditCost = getVideoModelCreditCost(modelItem.name, videoDuration, videoSize);
+                        return (
+                          <Option key={modelItem.name} value={modelItem.name}>
+                            {modelItem.name} {creditCost > 0 && `(${t('aiGenerate.estimatedCreditCost' as any)} ${creditCost} ${t('aiGenerate.credits' as any)})`}
+                          </Option>
+                        );
+                      })}
                     </Select>
                   </div>
                 )}
@@ -924,6 +959,16 @@ export default function AIGeneratePage() {
                     );
                   })()}
                 </div>
+                
+                {/* 显示当前选择的视频模型积分消耗 */}
+                {videoModel && videoDuration && videoSize && (
+                  <div className={styles.creditCostInfo}>
+                    <span style={{ color: '#1890ff', fontSize: '14px' }}>
+                      💰 {t('aiGenerate.estimatedCreditCost' as any)}: {getVideoModelCreditCost(videoModel, videoDuration, videoSize)} {t('aiGenerate.credits' as any)}
+                    </span>
+                  </div>
+                )}
+                
                 <Button
                   type="primary"
                   onClick={handleVideoGeneration}
