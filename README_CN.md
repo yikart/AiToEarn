@@ -1,11 +1,3 @@
-<!--
- * @Author: nevin
- * @Date: 2025-01-17 19:25:28
- * @LastEditTime: 2025-02-24 19:37:13
- * @LastEditors: nevin
- * @Description:
--->
-
 # AiToEarn
 
 ![GitHub stars](https://img.shields.io/github/stars/yikart/AttAiToEarn?color=fa6470)
@@ -14,76 +6,45 @@
 
 [English](README_EN.md) | 简体中文
 
-## [最好用的开源内容营销AI Agent！](https://www.aitoearn.cn/aiToEarn)
+## [最好用的开源内容营销AI Agent！](https://aitoearn.ai)
 
-AI内容制作，分发，出售。
+AI内容制作，分发，互动，出售。
 
-一键分发支持平台：
+支持平台：
 抖音、小红书、视频号、快手、bilibili、公众号、
 Tiktok、Youtube、Facebook、Instagram、Threads、Twitter、Pinterest
 
-## 里程碑
-- 2025.2.26 发布win-0.1.1版本
-- 2025.3.15 发布win-0.2.0版本
-- 2025.4.18 发布win-0.6.0版本
-- 2025.5.20 发布win-0.8.0版本
-- 2025.8.8 [发布win-0.8.1版本](https://github.com/yikart/AiToEarn/releases/tag/v0.8.1)
-- 2025.8.8 [发布web-0.1-beta版本](./aitoearn_web/README.md)
+## 目录
+1. [快速开始（Web 版）](#快速开始web-版)
+2. [快速开始（Windows 版）](#快速开始windows-版)
+3. [核心功能](#核心功能)
+4. [MCP 服务（即将上线）](#mcp-服务即将上线)
+5. [高级设置](#高级设置)
+6. [贡献指南](#贡献指南)
+7. [加我微信](#加我微信)
+8. [里程碑](#里程碑)
+9. [常见问题](#常见问题)
+10. [友情链接](#友情链接)
 
-## 正在实现中
-- MAC客户端实现
-- Web端优化
-- APP端实现
-- 内容安全审查实现
-- 私信功能对接
-- 公众号，bilibili等一系列社交媒体平台优化
-- 指纹浏览器
-- MCP支持
+## 快速开始（Web 版）
+### 1. 启动后端服务模块
+[直接访问web网站](https://aitoearn.ai)
 
-## [常见问题](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
+本地启动：在 config 目录下创建 `local.config.js` 文件（复制 `./aitoearn_web/server/aitoearn-user/config/dev.config.js` 文件并修改配置）
 
-## 具体功能介绍
+```bash
+pnpm install
+pnpm run dev:local
+```
 
-- 视频、图文一键发布
-![抖音](https://lf1-cdn-tos.bytegoofy.com/goofy/ies/douyin_web/public/favicon.ico '抖音') 抖音
-![小红书](https://www.xiaohongshu.com/favicon.ico '小红书') 小红书
-![视频号](https://res.wx.qq.com/t/wx_fed/finder/helper/finder-helper-web/res/favicon-v2.ico '视频号') 视频号
-![快手](https://s1-111422.kwimgs.com/kos/nlav111422/ks-web/favicon.ico '快手') 快手
-新增bilibili，公众号、Tiktok、Youtube、Facebook、Instagram、Threads、Twitter、Pinterest
-  - 支持Qwen大模型一键填写参数
-<img src="./presentation/post.png" alt="post" width="500"/>
+### 2. 启动前端项目 `aitoearn-web`
 
+```bash
+pnpm install
+pnpm run dev
+```
 
-- AI评论自动回复
-  - 支持deepseek大模型
-- AI评论截流
-- AI评论搜索
-<img src="./presentation/comment_search.png" alt="post" width="500"/>
-
-
-
-- 实用AI工具
-  - 支持可以画图的GPT-4o
-  - 支持使用Musetalk制作数字人视频
-  - 支持短视频平台视频下载
-  - AI换脸
-  - 声音克隆
-  - 视频解说
-  - 一键成片
-  
-<img src="./presentation/4o.jpeg" alt="post" width="500"/>
-
-- 账号数据汇总分析
-<img src="./presentation/data_center.png" alt="post" width="500"/>
-
-- 全网热门内容观察
-  - 小红书低粉爆文排行榜
-  - 小红书，抖音，视频号，快手，bilibili，公众号分赛道热门内容排行榜
- 
-- AI工具排行榜
-<img src="./presentation/tool_rank.png" alt="post" width="500"/>
-
-## 快速开始
+## 快速开始（Windows 版）
 [直接下载最新版本0.8.1(windows)](https://github.com/yikart/AiToEarn/releases/download/0.8.1/AiToEarn-0.8.1.exe)
 
 
@@ -104,58 +65,128 @@ npm run rebuild
 npm run dev
 ```
 
-## 上层框架
+## 核心功能
 
-- vite官方 [template-react-ts](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts)
-- Electron + react [electron-vite-react](https://github.com/electron-vite/electron-vite-react)
+🚀Aitoearn 不只是一个内容管理工具，它是一整套 **AI 驱动的全链路内容增长与变现平台**。
+从创意灵感到多平台分发，再到数据分析和商业化，Aitoearn 让你的内容真正做到：
+**Create · Publish · Engage · Monetize**
 
-## 目录
 
-\_🚨 默认情况下, `electron` 文件夹下的文件将会被构建到 `dist-electron`
+### 1. Content Publishing — 一键发布 · 多平台触达
 
-```tree
-├── build                                    打包需要的一些文件
-│
-├── commont                                  渲染进程和系统进程共同需要的类型,常量等
-│
-├── electron                                 Electron 源码文件夹
-│   ├── db                                   sqlite3 数据库
-│   │   ├── migrations                       数据库迁移脚本文件
-│   │   ├── models                           数据库实体文件
-│   │   ├── scripts                          数据库脚本文件
-│   │   └── index.ts                         数据库入口文件
-│   ├── global                               渲染进程的全局变量
-│   ├── main                                 主进程源码
-│   │   ├── api                              业务接口api
-│   │   ├── core                             仿nestjs的核心模块(依赖注入、装饰器实现等)
-│   │   └── ...                              其他
-│   ├── plat                                 三方平台的代码
-│   ├── preload                              Preload-scripts 源码
-│   ├── tray                                 系统托盘
-│   └── util                                 工具
-│
-├── public                                   公共资源
-│
-├── scripts                                  构建脚本
-│
-├── release                                  构建后生成程序目录
-│   └── {version}
-│       ├── {os}-{os_arch}                   未打包的程序(绿色运行版)
-│       └── {app_name}_{version}.{ext}       应用安装文件
-│
-├── public                                   同 Vite 模板的 public
-└── src                                      渲染进程源码、React代码
-```
-## 其他说明
-- 关于MAC打包,目前有bug,我们还在努力解决
-- ```shell
-   xattr -r -d com.apple.quarantine /Applications/哎呦赚AiToEarn.app
-  ```
+* **多平台分发**：支持全球最多主流社交平台（Douyin, Kwai, Wechat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, Bluesky, YouTube Shorts, Pinterest, Google Business, Mastodon, X）。
+* **（即将上线）智能导入**：直接导入历史内容，快速编辑、二次分发。
+
+  * 例如：小红书创作者可一键同步到 YouTube，让更多用户看到。
+* **日历编排**：像操作日历一样规划内容，实现多平台协同发布。
+<div style="display: flex; justify-content: space-around;">
+  <img src="presentation/app-screenshot/1. content publish/calendar.jpeg" width="30%">
+  <img src="presentation/app-screenshot/1. content publish/support_channels.jpeg" width="30%">
+</div>
+
+
+
+### 2. Content Hotspot — 爆款灵感引擎
+
+* **爆款案例库**：随时查看他人如何打造 10,000+ 点赞的内容。
+* **趋势捕捉**：快速发现流行趋势，降低创作焦虑。
+<div style="display: flex; justify-content: space-around;">
+  <img src="presentation/app-screenshot/2. content hotspot/hotspot.jpg" width="22%">
+  <img src="presentation/app-screenshot/2. content hotspot/hotspot2.jpeg" width="22%">
+  <img src="presentation/app-screenshot/2. content hotspot/hotspot3.jpeg" width="22%">
+  <img src="presentation/app-screenshot/2. content hotspot/hotspot4.jpeg" width="22%">
+</div>
+
+
+
+### 3. Content Search — 品牌与市场洞察
+
+* **品牌监控**：实时追踪品牌相关讨论，第一时间响应。
+* **内容搜索**：找到目标帖子和话题，高效互动，精准拓展市场。
+<div style="display:flex; justify-content:space-between; align-items:center;">
+  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch.gif" width="22%">
+  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch1.jpeg" width="22%">
+  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch2.jpeg" width="22%">
+  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch4.jpeg" width="22%">
+</div>
+
+
+### 4. Comments Search — 精准用户挖掘
+
+* 用户真实需求往往藏在 **评论区**。
+* **智能评论搜索**：快速发现“求链接”“怎么购买”等高转化信号。
+* **精准转化**：主动回复，提升流量变现效率。
+ <div style="display:flex; justify-content:space-between; align-items:center;">
+  <img src="presentation/app-screenshot/4. comments search/commentsearch.gif" width="30%">
+  <img src="presentation/app-screenshot/4. comments search/commentfilter.jpeg" width="30%">
+</div>
+
+
+### 5. Content Engagement — 互动与增长引擎
+
+* **统一后台**：集中管理所有内容，互动零遗漏。
+* **主动运营**：参与热门话题，与潜在用户双向互动。
+* 把 **“被动内容运营”** 变成 **“主动流量经营”**。
+ <div style="display:flex; justify-content:space-between; align-items:center;">
+  <img src="presentation/app-screenshot/5. content engagement/commentfilter2.jpeg" width="30%">
+</div>
+
+
+### 6. （即将上线）Content Analytics — 全景化数据视图
+
+* **多平台对比**：一个平台不给流量，不代表所有平台不给。
+* **全链路监控**：追踪内容表现，助力打造下一个百万博主。
+<img src="./presentation/data_center.png" alt="post" width="500"/>
+
+### 7. （即将上线）AI Content Creation — 全流程 AI 助手
+
+* **AI 文案生成**：自动生成标题、描述，高效产出。
+* **AI 评论生成**：主动出击，获取流量。
+* **图文卡片生成**，全流程加速创作。
+* **支持主流 AI 视频模型**：Seedance, Kling, Hailuo, Veo, Medjourney, Sora, Pika, Runway。
+* **支持主流 AI 图片模型**：GPT, Flux。
+* **即将上线功能**：标签生成器、自动私信管理、智能剪辑、数字人生成、视频翻译 —— 助力多语言全球化内容分发。
+
+
+
+### 8. （即将上线）Content Marketplace — 内容交易与变现
+
+* **创作者变现**：在平台直接出售内容，让优质作品快速找到买家。
+* **品牌采购**：企业可直接购买现成内容，节省时间与成本。
+* **AI 赋能**：让创作变成收益 ——
+  **Let’s use AI to earn. Let’s earn money together!**
+
+
+
+
+## MCP 服务（即将上线！）
+
+## 高级设置
+Aitoearn使用了大量的官方开放接口，可以参考下述教程申请开发者key
+1. [Bilibili](./aitoearn_web/CHANNEL_Md/BILIBILI.md)
+1. [微信公众号](./aitoearn_web/CHANNEL_Md/WXPLAT.md)
+
+
+## 贡献指南
+请查看 [贡献指南](./aitoearn_web/CONTRIBUTING.md) 了解如何参与项目开发。
 
 ## 加我微信
 辛苦备注一下 AiToEarn
 
 <img src="./wechat.jpg" alt="wechat" width="500"/>
+
+
+## 里程碑
+- 2025.2.26 发布win-0.1.1版本
+- 2025.3.15 发布win-0.2.0版本
+- 2025.4.18 发布win-0.6.0版本
+- 2025.5.20 发布win-0.8.0版本
+- 2025.8.8 [发布win-0.8.1版本](https://github.com/yikart/AiToEarn/releases/tag/v0.8.1)
+- 2025.8.8 [发布web-0.1-beta版本](./aitoearn_web/README.md)
+
+
+## [常见问题](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
+
 
 ## 友情链接
 
