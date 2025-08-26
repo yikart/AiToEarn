@@ -5,6 +5,7 @@ import { AnsibleService } from '@yikart/ansible'
 import { AppException, BrowserEnvironmentStatus, ResponseCode } from '@yikart/common'
 import { BrowserEnvironment, BrowserEnvironmentRepository, BrowserProfileRepository } from '@yikart/mongodb'
 import { Redlock } from '@yikart/redlock'
+
 import * as yaml from 'js-yaml'
 import { RedlockKey } from '../common/enums'
 import { config } from '../config'
@@ -118,23 +119,41 @@ export class EnvironmentConfigScheduler {
     fs.writeFileSync(tempInventoryPath, inventoryYaml)
     fs.writeFileSync(tempTaskConfigPath, taskConfigJson)
 
-    // 定义内联 playbook 内容
     const playbookContent = [
       {
-        name: 'Execute Browser Automation Task',
+        name: 'Deploy Browser Automation Worker from GitHub Release',
         hosts: 'browser_hosts',
         become: true,
         vars: {
-          node_version: '22',
+          app_name: 'browser-automation-worker',
+          app_dir: '/opt/browser-automation',
+          github_repo: config.github.repo,
           task_config_file: tempTaskConfigPath,
-          monorepo_git_url: 'https://github.com/yikart/aitoearn-monorepo.git',
-          git_branch: 'main',
+          github_token: config.github.token,
         },
         tasks: [
           {
+            name: '获取最新 Release 版本',
+            uri: {
+              url: 'https://api.github.com/repos/{{ github_repo }}/releases/latest',
+              method: 'GET',
+              headers: {
+                'User-Agent': 'Ansible',
+                'Authorization': 'token {{ github_token }}',
+              },
+            },
+            register: 'release_info',
+          },
+          {
+            name: '设置版本变量',
+            set_fact: {
+              release_version: '{{ release_info.json.tag_name }}',
+            },
+          },
+          {
             name: '安装系统依赖',
             apt: {
-              name: ['nodejs', 'npm', 'git', 'curl'],
+              name: ['nodejs', 'npm', 'curl', 'wget'],
               state: 'present',
               update_cache: true,
             },
@@ -147,53 +166,85 @@ export class EnvironmentConfigScheduler {
             },
           },
           {
-            name: '创建工作目录',
+            name: '创建应用目录',
             file: {
-              path: '/opt/browser-automation',
+              path: '{{ app_dir }}',
               state: 'directory',
-              mode: '0755',
             },
           },
           {
-            name: '克隆代码仓库',
-            git: {
-              repo: '{{ monorepo_git_url }}',
-              dest: '/opt/browser-automation/monorepo',
-              version: '{{ git_branch }}',
-              force: true,
+            name: '清理旧的应用文件',
+            file: {
+              path: '{{ app_dir }}/{{ app_name }}',
+              state: 'absent',
             },
           },
           {
-            name: '安装依赖',
-            shell: 'pnpm install',
+            name: '创建应用子目录',
+            file: {
+              path: '{{ app_dir }}/{{ app_name }}',
+              state: 'directory',
+            },
+          },
+          {
+            name: '下载应用包',
+            get_url: {
+              url: 'https://github.com/{{ github_repo }}/releases/download/{{ release_version }}/{{ app_name }}-{{ release_version }}.tar.gz',
+              dest: '{{ app_dir }}/{{ app_name }}-{{ release_version }}.tar.gz',
+              timeout: 300,
+              headers: {
+                Authorization: `token ${config.github.token}`,
+              },
+            },
+          },
+          {
+            name: '解压应用包',
+            unarchive: {
+              src: '{{ app_dir }}/{{ app_name }}-{{ release_version }}.tar.gz',
+              dest: '{{ app_dir }}/{{ app_name }}',
+              remote_src: true,
+            },
+          },
+          {
+            name: '安装生产依赖',
+            shell: 'pnpm install --prod --frozen-lockfile',
             args: {
-              chdir: '/opt/browser-automation/monorepo',
+              chdir: '{{ app_dir }}/{{ app_name }}',
             },
           },
           {
             name: '复制任务配置文件',
             copy: {
               src: '{{ task_config_file }}',
-              dest: '/tmp/task.json',
-              mode: '0644',
+              dest: '{{ app_dir }}/task.json',
+            },
+            when: 'task_config_file is defined',
+          },
+          {
+            name: '启动应用',
+            shell: 'node main.js --config {{ app_dir }}/task.json > {{ app_dir }}/app.log',
+            args: {
+              chdir: '{{ app_dir }}/{{ app_name }}',
+            },
+            environment: {
+              NODE_ENV: 'production',
             },
           },
           {
-            name: '执行浏览器自动化任务',
-            shell: 'pnpm nx serve browser-automation-worker --config /tmp/task.json',
-            args: {
-              chdir: '/opt/browser-automation/monorepo',
+            name: '清理下载的压缩包',
+            file: {
+              path: '{{ app_dir }}/{{ app_name }}-{{ release_version }}.tar.gz',
+              state: 'absent',
             },
-            register: 'automation_result',
           },
         ],
       },
     ]
+
     const tempPlaybookPath = `/tmp/playbook-${environment.id}-${timestamp}.yml`
     const playbookYaml = yaml.dump(playbookContent)
     fs.writeFileSync(tempPlaybookPath, playbookYaml)
 
-    // 使用Ansible执行浏览器自动化任务部署
     const result = await this.ansibleService.runPlaybook(tempPlaybookPath, {
       inventory: tempInventoryPath,
       sshCommonArgs: '-o ControlMaster=no',

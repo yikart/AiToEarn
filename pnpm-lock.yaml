@@ -169,8 +169,8 @@ importers:
   apps/browser-automation-worker:
     dependencies:
       '@yikart/multilogin':
-        specifier: workspace:*
-        version: link:../../libs/multilogin
+        specifier: '*'
+        version: 0.0.1
       commander:
         specifier: ^14.0.0
         version: 14.0.0
@@ -234,8 +234,8 @@ importers:
         specifier: ^11.0.0
         version: 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@yikart/common':
-        specifier: workspace:*
-        version: link:../common
+        specifier: '*'
+        version: 0.0.1(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
       execa:
         specifier: ^9.6.0
         version: 9.6.0
@@ -258,8 +258,8 @@ importers:
         specifier: ^11.0.0
         version: 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@yikart/common':
-        specifier: workspace:*
-        version: link:../common
+        specifier: '*'
+        version: 0.0.1(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
@@ -403,8 +403,8 @@ importers:
         specifier: ^11.0.0
         version: 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@yikart/common':
-        specifier: workspace:*
-        version: link:../common
+        specifier: '*'
+        version: 0.0.1(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
       ioredis:
         specifier: ^5.7.0
         version: 5.7.0
@@ -445,8 +445,8 @@ importers:
         specifier: ^0.2.3
         version: 0.2.3
       '@yikart/common':
-        specifier: workspace:*
-        version: link:../common
+        specifier: '*'
+        version: 0.0.1(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
@@ -2921,6 +2921,9 @@ packages:
 
   '@yikart/common@0.0.1':
     resolution: {integrity: sha512-58AT56mAjOym8GnDUuIIk/BCxAT8vRPDNs1ysJP/vEcgQ8eIix1wibiT35p0u5EjjjzhCzm4HE1gsJ8XmzNjbQ==, tarball: https://npm.pkg.github.com/download/@yikart/common/0.0.1/0b855fef3e4dae1c835135eb8d6245f3413b6b7c}
+
+  '@yikart/multilogin@0.0.1':
+    resolution: {integrity: sha512-Xm3BvRGF5xtu14eTgz5K4Jnm6tSga3QXHYBR62gfES8QcIy+//xf5LT9SKp/da+Ty8H5hKGrWOURM+7WALzwWg==, tarball: https://npm.pkg.github.com/download/@yikart/multilogin/0.0.1/ed18f4cba0ac885cf0691f643146a735d0df2e7b}
 
   '@zkochan/js-yaml@0.0.7':
     resolution: {integrity: sha512-nrUSn7hzt7J6JWgWGz78ZYI8wj+gdIJdk0Ynjpp8l+trkn58Uqsf6RYrYkEK+3X18EX+TNdtJI0WxAtc+L84SQ==}
@@ -11481,6 +11484,13 @@ snapshots:
       - reflect-metadata
       - supports-color
       - typescript
+
+  '@yikart/multilogin@0.0.1':
+    dependencies:
+      axios: 1.11.0
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - debug
 
   '@zkochan/js-yaml@0.0.7':
     dependencies:

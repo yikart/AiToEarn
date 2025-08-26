@@ -2,9 +2,15 @@
   "name": "@yikart/multilogin",
   "type": "commonjs",
   "version": "0.0.1",
-  "repository": "https://github.com/yikart/aitoearn-monorepo.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yikart/aitoearn-monorepo.git"
+  },
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "dependencies": {
     "axios": "1.11.0",
     "tslib": "^2.3.0"

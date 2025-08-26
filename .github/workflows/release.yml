@@ -1,0 +1,78 @@
+name: Release Browser Automation Worker
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # 触发条件：推送版本标签，如 v1.0.0
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Build and prune browser-automation-worker
+        run: |
+          pnpm nx build browser-automation-worker
+          echo "Build completed, checking output directory..."
+          ls -la dist/apps/browser-automation-worker/
+      
+      - name: Create release package
+        run: |
+          cp .npmrc dist/apps/browser-automation-worker/
+          tar -czf browser-automation-worker-${GITHUB_REF#refs/tags/}.tar.gz -C dist/apps/browser-automation-worker .
+          echo "Package created: browser-automation-worker-${GITHUB_REF#refs/tags/}.tar.gz"
+          ls -la browser-automation-worker-*.tar.gz
+      
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Browser Automation Worker ${{ github.ref }}
+          body: |
+            ## Browser Automation Worker Release ${{ github.ref }}
+            
+            ### 部署说明
+            1. 下载 `browser-automation-worker-*.tar.gz` 文件
+            2. 解压到目标服务器
+            3. 在解压目录中运行 `pnpm install --prod` 安装依赖
+            4. 启动应用
+            
+            ### 包含内容
+            - 编译后的应用代码
+            - 生产环境 package.json
+            - 锁定的依赖版本文件
+            - 工作区模块
+          draft: false
+          prerelease: false
+      
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./browser-automation-worker-${{ github.ref_name }}.tar.gz
+          asset_name: browser-automation-worker-${{ github.ref_name }}.tar.gz
+          asset_content_type: application/gzip

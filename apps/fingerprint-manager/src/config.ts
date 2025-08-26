@@ -25,6 +25,10 @@ export const appConfigSchema = z.object({
       gitBranch: z.string(),
     }),
   }),
+  github: z.object({
+    token: z.string(),
+    repo: z.string(),
+  }),
   ansible: ansibleConfigSchema,
   redlock: RedlockConfigSchema,
 })
