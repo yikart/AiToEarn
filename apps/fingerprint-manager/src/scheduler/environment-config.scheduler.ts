@@ -43,7 +43,7 @@ export class EnvironmentConfigScheduler {
       this.doConfigureEnvironment(environment),
     )
 
-    await Promise.allSettled(promises)
+    await Promise.all(promises)
   }
 
   @Redlock(env => RedlockKey.EnvConfig((env as BrowserEnvironment).id))
@@ -143,13 +143,37 @@ export class EnvironmentConfigScheduler {
         },
         tasks: [
           {
+            name: '安装系统依赖',
+            apt: {
+              name: ['curl', 'ca-certificates', 'gnupg'],
+              state: 'present',
+              update_cache: true,
+            },
+          },
+          {
+            name: '添加 NodeSource v22.x 软件源',
+            shell: 'curl -fsSL https://deb.nodesource.com/setup_22.x | bash -',
+            args: {
+              creates: '/etc/apt/sources.list.d/nodesource.list',
+            },
+            register: 'nodesource_setup',
+            changed_when: `'## Run \`sudo apt-get install -y nodejs\` to install Node.js' in nodesource_setup.stdout`,
+          },
+          {
+            name: '安装 Node.js v22 (从 NodeSource 源)',
+            apt: {
+              name: ['nodejs'],
+              state: 'present',
+              update_cache: '{{ nodesource_setup.changed }}',
+            },
+          },
+          {
             name: '获取最新 Release 版本',
             uri: {
               url: 'https://api.github.com/repos/{{ github_repo }}/releases/latest',
               method: 'GET',
               headers: {
-                'User-Agent': 'Ansible',
-                'Authorization': 'token {{ github_token }}',
+                Authorization: 'token {{ github_token }}',
               },
             },
             register: 'release_info',
@@ -158,14 +182,13 @@ export class EnvironmentConfigScheduler {
             name: '设置版本变量',
             set_fact: {
               release_version: '{{ release_info.json.tag_name }}',
+              asset_filename: '{{ app_name }}-{{ release_info.json.tag_name }}.tar.gz',
             },
           },
           {
-            name: '安装系统依赖',
-            apt: {
-              name: ['nodejs', 'npm', 'curl', 'wget'],
-              state: 'present',
-              update_cache: true,
+            name: '从 Release 信息中提取资产下载 URL',
+            set_fact: {
+              asset_download_url: `{{ (release_info.json.assets | selectattr('name', 'equalto', asset_filename) | list | first).url }}`,
             },
           },
           {
@@ -198,26 +221,19 @@ export class EnvironmentConfigScheduler {
           },
           {
             name: '下载应用包',
-            get_url: {
-              url: 'https://github.com/{{ github_repo }}/releases/download/{{ release_version }}/{{ app_name }}-{{ release_version }}.tar.gz',
-              dest: '{{ app_dir }}/{{ app_name }}-{{ release_version }}.tar.gz',
-              timeout: 300,
-              headers: {
-                Authorization: `token ${config.github.token}`,
-              },
-            },
+            shell: `curl --fail -L -H "Authorization: Bearer {{ github_token }}" -H "Accept: application/octet-stream" -o {{ app_dir }}/{{ asset_filename }} "{{ asset_download_url }}"`,
           },
           {
             name: '解压应用包',
             unarchive: {
-              src: '{{ app_dir }}/{{ app_name }}-{{ release_version }}.tar.gz',
+              src: '{{ app_dir }}/{{ asset_filename }}',
               dest: '{{ app_dir }}/{{ app_name }}',
               remote_src: true,
             },
           },
           {
             name: '安装生产依赖',
-            shell: 'pnpm install --prod --frozen-lockfile',
+            shell: 'pnpm install --prod',
             args: {
               chdir: '{{ app_dir }}/{{ app_name }}',
             },
@@ -232,7 +248,7 @@ export class EnvironmentConfigScheduler {
           },
           {
             name: '启动应用',
-            shell: 'node main.js --config {{ app_dir }}/task.json > {{ app_dir }}/app.log',
+            shell: 'node src/main.js --config {{ app_dir }}/task.json > {{ app_dir }}/app.log',
             args: {
               chdir: '{{ app_dir }}/{{ app_name }}',
             },
