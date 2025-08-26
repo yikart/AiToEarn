@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { useTransClient } from "@/app/i18n/client";
 import NotificationPanel from "@/components/notification/NotificationPanel";
 import { useNotification } from "@/hooks/useNotification";
+import SignInCalendar from "@/components/SignInCalendar";
 
 export interface ILyaoutHeaderRef {}
 
@@ -157,6 +158,9 @@ const LyaoutHeader = memo(
                 {userStore.lang === "zh-CN" ? "EN" : "中文"}
               </Button>
               <NoSSR>
+                {userStore.token && (
+                  <SignInCalendar className={styles.signInCalendarButton} />
+                )}
                 {userStore.token && (
                   <Badge count={unreadCount} size="small">
                     <Button

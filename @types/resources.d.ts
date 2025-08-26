@@ -222,6 +222,23 @@ interface Resources {
       "materialLibrary": "素材库",
       "draftBox": "草稿箱"
     },
+    "signIn": {
+      "title": "每日签到得积分",
+      "myPoints": "我的积分",
+      "signIn": "签到",
+      "today": "今天",
+      "rules": "签到规则",
+      "rules1": "连续签到 1-7天, 每天1积分",
+      "rules2": "连续签到 8-21天, 每天2积分",
+      "rules3": "连续签到 22天以上, 每天3积分",
+      "signedIn": "已签到",
+      "notSignedIn": "未签到",
+      "signInSuccess": "签到成功",
+      "signInFailed": "签到失败",
+      "alreadySignedIn": "今日已签到",
+      "consecutiveDays": "连续签到天数",
+      "totalPoints": "总积分"
+    },
     "websit": {
       "termsOfService": {
         "title": "用户协议",

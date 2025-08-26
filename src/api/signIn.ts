@@ -32,4 +32,25 @@ export const signInApi = {
     });
     return res!.data;
   },
+
+  /**
+   * 获取签到日历数据
+   */
+  async getSignInCalendar(year: number, month: number) {
+    const res = await http.get<any>(`reward/signIn/calendar`, {
+      isToken: true,
+      params: { year, month },
+    });
+    return res!.data;
+  },
+
+  /**
+   * 获取用户积分信息
+   */
+  async getUserPoints() {
+    const res = await http.get<any>(`reward/points`, {
+      isToken: true,
+    });
+    return res!.data;
+  },
 };

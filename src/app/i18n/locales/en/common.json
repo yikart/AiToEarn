@@ -30,6 +30,23 @@
     "materialLibrary": "Material Library",
     "draftBox": "Draft Box"
   },
+  "signIn": {
+    "title": "Daily Sign-in to Earn Points",
+    "myPoints": "My Points",
+    "signIn": "Sign In",
+    "today": "Today",
+    "rules": "Sign-in Rules",
+    "rules1": "Consecutive sign-ins 1-7 days, 1 point per day",
+    "rules2": "Consecutive sign-ins 8-21 days, 2 points per day",
+    "rules3": "Consecutive sign-ins 22 days or more, 3 points per day",
+    "signedIn": "Signed In",
+    "notSignedIn": "Not Signed In",
+    "signInSuccess": "Sign-in successful",
+    "signInFailed": "Sign-in failed",
+    "alreadySignedIn": "Already signed in today",
+    "consecutiveDays": "Consecutive Days",
+    "totalPoints": "Total Points"
+  },
   "websit": {
     "termsOfService": {
       "title": "Terms of Service",
