@@ -116,8 +116,8 @@ const SignInCalendar: React.FC<SignInCalendarProps> = ({ className }) => {
     return (
       <div className={styles.calendarCell}>
         <div className={styles.dateContainer}>
-          <span className={`${styles.dateText} ${isToday ? styles.today : ''}`}>
-            {isToday ? t('signIn.today') : value.date()}
+          <span style={{ minHeight: '6px' }} className={`${styles.dateText} ${isToday ? styles.today : ''}`}>
+            {isToday ? t('signIn.today') : ''}
           </span>
           <div className={`${styles.signInStatus} ${isSigned ? styles.signed : styles.notSigned}`}>
             {isSigned ? (
