@@ -9,8 +9,7 @@ jobs:
   build-and-release:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      releases: write
+      contents: write
 
     steps:
       - name: Checkout code
