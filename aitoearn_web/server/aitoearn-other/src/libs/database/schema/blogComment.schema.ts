@@ -1,0 +1,32 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { BaseTemp } from './time.tamp'
+
+@Schema({
+  collection: 'blogComment',
+  versionKey: false,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+})
+export class Blog extends BaseTemp {
+  id: string
+
+  @Prop({
+    comment: '用户id',
+    required: true,
+  })
+  userId: string
+
+  @Prop({
+    comment: '博客id',
+    required: true,
+  })
+  blogId: string
+
+  @Prop({
+    comment: '内容',
+    default: '',
+  })
+  content: string
+}
+
+export const BlogSchema = SchemaFactory.createForClass(Blog)

@@ -6,19 +6,21 @@
  * @Description: 评论页面 reply
  */
 import { icpCreatorList, WorkData } from '@/icp/reply';
-import { Button, Col, Popconfirm, Row, Tabs, Tooltip, Card, Avatar, Typography, Divider, Spin } from 'antd';
+import {
+  Popconfirm,
+  Tabs,
+  Tooltip,
+  Card,
+  Typography,
+  Divider,
+  Spin,
+} from 'antd';
 import { useCallback, useRef, useState } from 'react';
 import AccountSidebar from '../account/components/AccountSidebar/AccountSidebar';
 import ReplyWorks, { ReplyWorksRef } from './components/replyWorks';
 import AddAutoRun, { AddAutoRunRef } from './components/addAutoRun';
 import CommentList, { CommentListRef } from './components/commentList';
-import {
-  AliwangwangOutlined,
-  CommentOutlined,
-  FieldTimeOutlined,
-  MenuUnfoldOutlined,
-  QuestionCircleOutlined,
-} from '@ant-design/icons';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import styles from './reply.module.scss';
 import AutoRun from './autoRun';
 import OneKeyReply, { OneKeyReplyRef } from './components/oneKeyReply';
@@ -140,33 +142,46 @@ export default function Page() {
                       <Card
                         hoverable
                         className={styles.cardContainer}
-                        cover={
-                          <img
-                            alt="example"
-                            src={item.coverUrl}
-                          />
-                        }
+                        cover={<img alt="example" src={item.coverUrl} />}
                         actions={[
                           <Tooltip key="comment-list" title="评论列表">
-                            <MenuUnfoldOutlined onClick={() => openCommentList(item)} />
+                            <span
+                              className=" cursor-pointer"
+                              onClick={() => openCommentList(item)}
+                            >
+                              评论列表
+                            </span>
                           </Tooltip>,
                           <Tooltip key="reply" title="评论作品">
-                            <CommentOutlined onClick={() => openReplyWorks(item)} />
+                            <span
+                              className=" cursor-pointer"
+                              onClick={() => openReplyWorks(item)}
+                            >
+                              评论作品
+                            </span>
                           </Tooltip>,
                           <Tooltip key="onekey" title="一键评论">
                             <Popconfirm
                               title="确认进行一键评论"
                               onConfirm={() => {
-                                Ref_OneKeyReply.current?.init(activeAccountId, item);
+                                Ref_OneKeyReply.current?.init(
+                                  activeAccountId,
+                                  item,
+                                );
                               }}
                               okText="是"
                               cancelText="否"
                             >
-                              <AliwangwangOutlined />
+                              <span className=" cursor-pointer">一键评论</span>
                             </Popconfirm>
                           </Tooltip>,
                           <Tooltip key="auto" title="自动评论">
-                            <FieldTimeOutlined onClick={() => openAddAutoRun(item)} />
+                            <span
+                              className="cursor-pointer"
+                              onClick={() => openAddAutoRun(item)}
+                            >
+                              自动评论
+                            </span>
                           </Tooltip>,
                         ]}
                       >

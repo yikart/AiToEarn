@@ -20,23 +20,24 @@ import {
 import { PublishVideoResult } from './module';
 import { VideoModel } from '../../db/models/video';
 import { PubItemVideo } from './pub/PubItemVideo';
-import { AccountType } from '../../../commont/AccountEnum';
+import { PlatType } from '../../../commont/AccountEnum';
 import { PubItemImgText } from './pub/PubItemImgText';
 import { ImgTextModel } from '../../db/models/imgText';
+import { EtEvent } from '../../global/event';
 
 class PlatController {
   // 所有平台
-  private readonly platforms = new Map<AccountType, PlatformBase>();
+  private readonly platforms = new Map<PlatType, PlatformBase>();
 
   constructor() {
-    this.platforms.set(AccountType.KWAI, kwai);
-    this.platforms.set(AccountType.Xhs, xhs);
-    this.platforms.set(AccountType.Douyin, douyin);
-    this.platforms.set(AccountType.WxSph, wxSph);
+    this.platforms.set(PlatType.KWAI, kwai);
+    this.platforms.set(PlatType.Xhs, xhs);
+    this.platforms.set(PlatType.Douyin, douyin);
+    this.platforms.set(PlatType.WxSph, wxSph);
   }
 
   // 获取平台类实例
-  private getPlatform(type: AccountType) {
+  private getPlatform(type: PlatType) {
     const platform = this.platforms.get(type);
     if (!platform) console.warn(`没有这个平台：${type}`);
 
@@ -48,7 +49,7 @@ class PlatController {
    * @param type 平台
    * @param params 参数
    */
-  public async platlogin(type: AccountType, params?: any) {
+  public async platlogin(type: PlatType, params?: any) {
     const platform = this.platforms.get(type)!;
     const res = await platform.login(params);
     if (!res || !res.loginCookie) return null;
@@ -65,7 +66,7 @@ class PlatController {
    * @param type 平台
    * @param account
    */
-  public async platLoginCheck(type: AccountType, account: AccountModel) {
+  public async platLoginCheck(type: PlatType, account: AccountModel) {
     const platform = this.platforms.get(type)!;
     return await platform.loginCheck(account);
   }
@@ -89,6 +90,13 @@ class PlatController {
           videoModel,
           platform,
         );
+
+        EtEvent.emit('ET_TRACING_VIDEO_PUL', {
+          accountId: videoModel.accountId,
+          dataId: videoModel.dataId,
+          desc: '发布成功！',
+        });
+
         tasks.push(pubItemVideo.publishVideo());
       }
     }
@@ -138,7 +146,7 @@ class PlatController {
    * @param type 平台
    * @param params 参数
    */
-  public async getAccountInfo(type: AccountType, params: IAccountInfoParams) {
+  public async getAccountInfo(type: PlatType, params: IAccountInfoParams) {
     const platform = this.platforms.get(type)!;
     return await platform.getAccountInfo(params);
   }

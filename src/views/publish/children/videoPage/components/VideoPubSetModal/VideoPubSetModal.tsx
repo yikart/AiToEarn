@@ -23,13 +23,13 @@ import { useShallow } from 'zustand/react/shallow';
 import styles from './videoPubSetModal.module.scss';
 import { AccountPlatInfoMap } from '@/views/account/comment';
 import VideoCoverSeting from '@/views/publish/children/videoPage/components/VideoCoverSeting';
-import { AccountType } from '@@/AccountEnum';
+import { PlatType } from '@@/AccountEnum';
 import {
   icpCreatePubRecord,
   icpCreateVideoPubRecord,
   icpPubVideo,
 } from '@/icp/publish';
-import { PubType } from '@@/publish/PublishEnum';
+import { PubStatus, PubType } from '@@/publish/PublishEnum';
 import { useNavigate } from 'react-router-dom';
 import PubAccountDetModule, {
   IPubAccountDetModuleRef,
@@ -38,18 +38,24 @@ import VideoPubSetModal_KWAI from '@/views/publish/children/videoPage/components
 import VideoPubSetModal_DouYin from '@/views/publish/children/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_DouYin';
 import VideoPubSetModal_XSH from '@/views/publish/children/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_XSH';
 import VideoPubSetModal_WxSph from '@/views/publish/children/videoPage/components/VideoPubSetModal/children/VideoPubSetModal_WxSph';
-import { onVideoPublishProgress } from '@/icp/receiveMsg';
 import PubProgressModule from '../../../../components/PubProgressModule/PubProgressModule';
-import { PublishProgressRes } from '../../../../../../../electron/main/plat/pub/PubItemVideo';
 import VideoPubSetModalVideo, {
   IVideoPubSetModalVideoRef,
 } from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/VideoPubSetModalVideo';
 import { usePubStroe } from '../../../../../../store/pubStroe';
 
 import usePubParamsVerify, {
+  PubParamsErrStatusEnum,
   PubParamsVerifyInfo,
 } from '../../../../hooks/usePubParamsVerify';
-import { useAccountStore } from '../../../../../../store/commont';
+import { useCommontStore } from '../../../../../../store/commont';
+import { IVideoFile } from '../../../../../../components/Choose/VideoChoose';
+import {
+  NoticeItem,
+  NoticeType,
+  useBellMessageStroe,
+} from '../../../../../../store/bellMessageStroe';
+import { signInApi } from '@/api/signIn';
 
 export interface IVideoPubSetModalRef {}
 
@@ -66,13 +72,13 @@ const PubSetModalChild = ({}: {}) => {
 
   const renderedComponent = useMemo(() => {
     switch (currChooseAccount?.account?.type) {
-      case AccountType.KWAI:
+      case PlatType.KWAI:
         return <VideoPubSetModal_KWAI />;
-      case AccountType.Douyin:
+      case PlatType.Douyin:
         return <VideoPubSetModal_DouYin />;
-      case AccountType.Xhs:
+      case PlatType.Xhs:
         return <VideoPubSetModal_XSH />;
-      case AccountType.WxSph:
+      case PlatType.WxSph:
         return <VideoPubSetModal_WxSph />;
     }
     return <></>;
@@ -89,6 +95,12 @@ const VideoPubSetModal = memo(
       ref: ForwardedRef<IVideoPubSetModalRef>,
     ) => {
       const navigate = useNavigate();
+      const { addNotice, noticeMap } = useBellMessageStroe(
+        useShallow((state) => ({
+          noticeMap: state.noticeMap,
+          addNotice: state.addNotice,
+        })),
+      );
       const {
         videoListChoose,
         setOnePubParams,
@@ -124,50 +136,47 @@ const VideoPubSetModal = memo(
       );
       const [loading, setLoading] = useState(false);
       const pubAccountDetModuleRef = useRef<IPubAccountDetModuleRef>(null);
-      // 主进程传过来的发布进度数据，key为用户id value为发布进度数据
-      const [pubProgressMap, setPubProgressMap] = useState<
-        Map<number, PublishProgressRes>
-      >(new Map());
       const [pubProgressModuleOpen, setPubProgressModuleOpen] = useState(false);
       const videoPubSetModalVideoRef = useRef<IVideoPubSetModalVideoRef>(null);
-      const { errParamsMap, warnParamsMap } = usePubParamsVerify(
+      const { errParamsMap, warnParamsMap } = usePubParamsVerify<IVideoFile>(
         videoListChoose.map((v) => {
           return {
             id: v.id,
             account: v.account,
             pubParams: v.pubParams,
+            other: v.video!,
           };
         }),
+        {
+          moreErrorVerifyCallback(item, errParamsMapTemp) {
+            if (
+              item?.account?.type === PlatType.Douyin &&
+              item.other?.duration > 3600
+            ) {
+              errParamsMapTemp.set(item.id, {
+                message: '视频错误',
+                errType: PubParamsErrStatusEnum.PARAMS,
+                parErrMsg: `抖音平台规定视频时长最多不能超过60分钟！`,
+              });
+            }
+          },
+        },
       );
-
-      useEffect(() => {
-        // 发布进度监听
-        return onVideoPublishProgress((progressData) => {
-          setPubProgressMap((prev) => {
-            const newMap = new Map(prev);
-            newMap.set(progressData.account.id!, progressData);
-            return newMap;
-          });
-        });
-      }, []);
+      const recordId = useRef(-1);
 
       useEffect(() => {
         if (!currChooseAccountId)
           setCurrChooseAccountId(videoListChoose[0]?.id);
       }, [videoListChoose]);
 
+      // 发布进度获取
       const pubProgressData = useMemo(() => {
-        return videoListChoose
-          .filter((v) => v.account && v.video)
-          .map((v) => {
-            const progress = pubProgressMap.get(v.account!.id);
-            return {
-              account: v.account!,
-              progress: progress?.progress || 0,
-              msg: progress?.msg || '',
-            };
-          });
-      }, [pubProgressMap, videoListChoose]);
+        return (
+          (noticeMap.get(NoticeType.PubNotice) || []).find(
+            (v) => v.id === recordId.current,
+          )?.pub?.progressList || []
+        );
+      }, [noticeMap]);
 
       // 当前选择的账户数据
       const currChooseAccount = useMemo(() => {
@@ -181,6 +190,8 @@ const VideoPubSetModal = memo(
 
       const pubCore = async () => {
         setLoading(false);
+
+        await signInApi.createSignInRecord();
         const err = () => {
           setLoading(false);
           message.error('网络繁忙，请稍后重试！');
@@ -196,10 +207,30 @@ const VideoPubSetModal = memo(
           coverPath: videoListChoose[0].pubParams.cover?.imgPath,
           commonCoverPath: commonPubParams.cover?.imgPath,
         });
+        recordId.current = recordRes.id;
         if (!recordRes) return err();
 
         setPubProgressModuleOpen(true);
         setLoading(true);
+
+        // 发布记录通知消息初始化
+        const initialNotice: NoticeItem = {
+          title:
+            [
+              ...new Set(
+                videoListChoose.map(
+                  (v) => AccountPlatInfoMap.get(v.account!.type)!.name,
+                ),
+              ),
+            ].join('、') + '发布任务',
+          time: recordRes.createTime!,
+          id: recordRes.id,
+          pub: {
+            status: PubStatus.UNPUBLISH,
+            progressList: [],
+          },
+        };
+
         for (const vData of videoListChoose) {
           const account = vData.account!;
           const video = vData.video!;
@@ -214,7 +245,19 @@ const VideoPubSetModal = memo(
             videoPath: video.videoPath,
             coverPath: vData.pubParams.cover?.imgPath,
           });
+
+          initialNotice.pub!.progressList.push({
+            account: vData.account!,
+            progress: 0,
+            msg: '加载中...',
+            id: vData.account!.id!,
+          });
         }
+        const noticeList = noticeMap.get(NoticeType.PubNotice) || [];
+        noticeList.unshift(initialNotice);
+        addNotice(NoticeType.PubNotice, noticeList);
+
+        // 发布
         const okRes = await icpPubVideo(recordRes.id);
         setLoading(false);
         close();
@@ -223,8 +266,15 @@ const VideoPubSetModal = memo(
 
         // 成功数据
         const successList = okRes.filter((v) => v.code === 1);
+
+        initialNotice.pub!.status =
+          successList.length === okRes.length
+            ? PubStatus.RELEASED
+            : PubStatus.PartSuccess;
+        addNotice(NoticeType.PubNotice, noticeList);
+
         setTimeout(() => {
-          useAccountStore.getState().notification!.open({
+          useCommontStore.getState().notification!.open({
             message: '发布结果',
             description: (
               <>
@@ -284,6 +334,7 @@ const VideoPubSetModal = memo(
           />
           <PubAccountDetModule
             ref={pubAccountDetModuleRef}
+            isCheckProxy={true}
             accounts={videoListChoose
               .map((v) => v.account)
               .filter((v) => v !== undefined)}

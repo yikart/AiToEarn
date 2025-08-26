@@ -15,22 +15,23 @@ import {
 } from '../../../../icp/publish';
 import {
   Button,
-  Checkbox, Empty,
+  Checkbox,
+  Empty,
   message,
   Modal,
   Select,
   SelectProps,
   Spin,
   Tabs,
-  Tooltip
-} from "antd";
+  Tooltip,
+} from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import styles from './commonComponents.module.scss';
 import { describeNumber } from '../../../../utils';
 import { onAccountLoginFinish } from '../../../../icp/receiveMsg';
 import { AccountInfo, AccountPlatInfoMap } from '../../../account/comment';
 import { ILableValue } from '../../../../../electron/db/models/video';
-import { AccountType } from '../../../../../commont/AccountEnum';
+import { PlatType } from '../../../../../commont/AccountEnum';
 
 interface DouyinCommonComponentsProps
   extends Omit<SelectProps<ILableValue[]>, 'options' | 'children'> {
@@ -251,7 +252,7 @@ export const CommonActivitySelect = ({
         onOk={() => {
           if (value.length > props.maxCount!) {
             message.warning(
-              `话题和活动最多可添加 ${AccountPlatInfoMap.get(AccountType.Douyin)?.commonPubParamsConfig.topicMax} 个`,
+              `话题和活动最多可添加 ${AccountPlatInfoMap.get(PlatType.Douyin)?.commonPubParamsConfig.topicMax} 个`,
             );
           } else {
             setActivityOpen(false);

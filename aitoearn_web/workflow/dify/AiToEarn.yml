@@ -1,0 +1,472 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: AiToEarn
+  use_icon_as_answer_icon: false
+dependencies: []
+kind: app
+version: 0.3.1
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: http-request
+      id: 1753251949465-source-1753252240600-target
+      selected: false
+      source: '1753251949465'
+      sourceHandle: source
+      target: '1753252240600'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 1753252240600--1753260717190-target
+      selected: false
+      source: '1753252240600'
+      sourceHandle: source
+      target: '1753260717190'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: iteration
+      id: 1753260717190-source-1753261055086-target
+      selected: false
+      source: '1753260717190'
+      sourceHandle: source
+      target: '1753261055086'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: iteration
+        targetType: end
+      id: 1753261055086--1753261099620-target
+      selected: false
+      source: '1753261055086'
+      sourceHandle: source
+      target: '1753261099620'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1753261055086'
+        sourceType: iteration-start
+        targetType: code
+      id: 1753261055086start-source-1753265292456-target
+      selected: false
+      source: 1753261055086start
+      sourceHandle: source
+      target: '1753265292456'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1753261055086'
+        sourceType: code
+        targetType: http-request
+      id: 1753265292456-source-1753271866402-target
+      selected: false
+      source: '1753265292456'
+      sourceHandle: source
+      target: '1753271866402'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: 开始
+        type: start
+        variables:
+        - label: skKey
+          max_length: 48
+          options: []
+          required: true
+          type: text-input
+          variable: skKey
+        - label: title
+          max_length: 48
+          options: []
+          required: true
+          type: text-input
+          variable: title
+        - label: desc
+          max_length: 48
+          options: []
+          required: true
+          type: text-input
+          variable: desc
+        - label: type
+          max_length: 48
+          options:
+          - video
+          - article
+          required: true
+          type: select
+          variable: type
+        - label: videoUrl
+          max_length: 200
+          options: []
+          required: false
+          type: text-input
+          variable: videoUrl
+        - label: coverUrl
+          max_length: 200
+          options: []
+          required: true
+          type: text-input
+          variable: coverUrl
+        - label: imgUrlList
+          max_length: 2000
+          options: []
+          required: false
+          type: paragraph
+          variable: imgUrlList
+        - label: publishTime
+          max_length: 48
+          options: []
+          required: true
+          type: text-input
+          variable: publishTime
+        - label: topics
+          max_length: 200
+          options: []
+          required: true
+          type: paragraph
+          variable: topics
+      height: 297
+      id: '1753251949465'
+      position:
+        x: 53.902873672086
+        y: 261
+      positionAbsolute:
+        x: 53.902873672086
+        y: 261
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 243
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data: []
+          type: none
+        desc: ''
+        headers: sk-key:{{#1753251949465.skKey#}}
+        method: GET
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: 获取账号列表
+        type: http-request
+        url: https://mcp.dev.aitoearn.ai/plugin/account/list
+        variables: []
+      height: 138
+      id: '1753252240600'
+      position:
+        x: 333
+        y: 261
+      positionAbsolute:
+        x: 333
+        y: 261
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 243
+    - data:
+        code: "\nfunction main({body}) {\n    return {\n        accountList: JSON.parse(body).data\n\
+          \    }\n}\n"
+        code_language: javascript
+        desc: ''
+        outputs:
+          accountList:
+            children: null
+            type: array[object]
+        selected: false
+        title: Prase account list
+        type: code
+        variables:
+        - value_selector:
+          - '1753252240600'
+          - body
+          value_type: string
+          variable: body
+      height: 53
+      id: '1753260717190'
+      position:
+        x: 636
+        y: 261
+      positionAbsolute:
+        x: 636
+        y: 261
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 243
+    - data:
+        desc: ''
+        error_handle_mode: terminated
+        height: 395
+        is_parallel: false
+        iterator_input_type: array[object]
+        iterator_selector:
+        - '1753260717190'
+        - accountList
+        output_selector:
+        - '1753265292456'
+        - accountId
+        output_type: array[string]
+        parallel_nums: 10
+        selected: false
+        start_node_id: 1753261055086start
+        title: 迭代
+        type: iteration
+        width: 837
+      height: 395
+      id: '1753261055086'
+      position:
+        x: 47.58759541415145
+        y: 689.3383964907954
+      positionAbsolute:
+        x: 47.58759541415145
+        y: 689.3383964907954
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 837
+      zIndex: 1
+    - data:
+        desc: ''
+        isInIteration: true
+        selected: false
+        title: ''
+        type: iteration-start
+      draggable: false
+      height: 48
+      id: 1753261055086start
+      parentId: '1753261055086'
+      position:
+        x: 24
+        y: 68
+      positionAbsolute:
+        x: 71.58759541415145
+        y: 757.3383964907954
+      selectable: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-iteration-start
+      width: 44
+      zIndex: 1002
+    - data:
+        desc: ''
+        outputs:
+        - value_selector: []
+          variable: resList
+        selected: false
+        title: 结束
+        type: end
+      height: 53
+      id: '1753261099620'
+      position:
+        x: 66.51967325118926
+        y: 1262.8998713904966
+      positionAbsolute:
+        x: 66.51967325118926
+        y: 1262.8998713904966
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 243
+    - data:
+        code: "\nfunction main({item}) {\n    return {\n        accountId: item.accountId\n\
+          \    }\n}\n"
+        code_language: javascript
+        desc: ''
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1753261055086'
+        outputs:
+          accountId:
+            children: null
+            type: string
+        selected: false
+        title: get accountId
+        type: code
+        variables:
+        - value_selector:
+          - '1753261055086'
+          - item
+          value_type: object
+          variable: item
+      height: 53
+      id: '1753265292456'
+      parentId: '1753261055086'
+      position:
+        x: 251.58798044054197
+        y: 103.49056320376275
+      positionAbsolute:
+        x: 299.1755758546934
+        y: 792.8289596945581
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 243
+      zIndex: 1002
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-1562
+            key: ''
+            type: text
+            value: '{"flowId":{{#sys.workflow_run_id#}},"accountId":{{#1753265292456.accountId#}},"type":{{#1753251949465.type#}},"title":{{#1753251949465.title#}},"desc":{{#1753251949465.desc#}},"videoUrl":{{#1753251949465.videoUrl#}},"coverUrl":{{#1753251949465.coverUrl#}},"imgUrlList:{{#1753251949465.imgUrlList#}},"publishTime":{{#1753251949465.publishTime#}},"topics":{{#1753251949465.topics#}}}'
+          type: json
+        desc: ''
+        headers: sk-key:{{#1753251949465.skKey#}}
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1753261055086'
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: true
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: Publish
+        type: http-request
+        url: https://mcp.dev.aitoearn.cn/plugin/publish/create
+        variables: []
+      height: 138
+      id: '1753271866402'
+      parentId: '1753261055086'
+      position:
+        x: 577.476406804605
+        y: 88.92520097208643
+      positionAbsolute:
+        x: 625.0640022187564
+        y: 778.2635974628818
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 243
+      zIndex: 1002
+    - data:
+        author: agent@aiearn.ai
+        desc: ''
+        height: 240
+        selected: false
+        showAuthor: true
+        text: '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"imgUrlList
+          --- Example ：“http://www.xxx.com/xxx/1.png,http://www.xx.com/xx/2.png“","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""},{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"topics
+          --- Example: \"beauty makeup,Sports\"","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}'
+        theme: blue
+        title: ''
+        type: ''
+        width: 286
+      height: 240
+      id: '1753337888305'
+      position:
+        x: -264.8939416724749
+        y: 360.0832884811733
+      positionAbsolute:
+        x: -264.8939416724749
+        y: 360.0832884811733
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-note
+      width: 286
+    viewport:
+      x: 468.0160911666835
+      y: -37.194002857965074
+      zoom: 0.7284416135218681

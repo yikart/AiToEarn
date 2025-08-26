@@ -5,7 +5,7 @@
  * @LastEditors: nevin
  * @Description: 任务
  */
-import { AccountType } from '../AccountEnum';
+import { PlatType } from '../AccountEnum';
 import { TimeTemp } from './apiServer';
 
 export enum TaskType {
@@ -45,6 +45,7 @@ export interface TaskVideo extends TaskData {
 
 export interface TaskArticle extends TaskData {
   imageList: string[];
+  topicList: string[];
 }
 
 export interface TaskPromotion extends TaskData {}
@@ -55,7 +56,7 @@ export interface TaskProduct extends TaskData {
 }
 
 export interface TaskInteraction extends TaskData {
-  accountType: AccountType; // 平台类型
+  accountType: PlatType; // 平台类型
   worksId: string; // 作品ID
   authorId?: string; // 作者ID
   commentContent?: string; // 评论内容,不填则使用AI
@@ -84,7 +85,7 @@ export interface Task<T extends TaskDataInfo> extends TimeTemp {
   firstTimeBonus: number; // 首次任务奖励
   reward: number; // 任务奖励金额
   status: TaskStatus; // 'active' | 'completed' | 'cancelled'
-  accountTypes: AccountType[];
+  accountTypes: PlatType[];
   isAccepted?: boolean; // 是否已经接受任务
   requirement?: string;
 }

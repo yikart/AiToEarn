@@ -6,30 +6,34 @@
  * @Description: 任务
  */
 import http, { hotHttp } from './request';
-import { MineTaskListParams, TaskListParams, UserTask } from './types/task';
+import {
+  ApplyTask,
+  MineTaskListParams,
+  TaskMaterial,
+  UserTask,
+} from './types/task';
 import { Task, TaskDataInfo } from 'commont/types/task';
 import { Pagination } from './types';
 import { UserWalletRecord } from './types/finance';
 
 export const taskApi = {
-
   /**
    * 获取评论搜索
    */
-  searchNotesTask(params:any) {
-    return hotHttp.get('/comment/search/notes/task', { 
+  searchNotesTask(params: any) {
+    return hotHttp.get('/comment/search/notes/task', {
       isToken: false,
-      params
+      params,
     });
   },
 
-  searchNotesResult(params:any) {
+  searchNotesResult(params: any) {
     return hotHttp.get<any>('/comment/search/notes', {
       isToken: false,
       params,
     });
   },
-  searchNotesList(params:any) {
+  searchNotesList(params: any) {
     return hotHttp.get<any>('/comment/search/notes/list', {
       isToken: false,
       params,
@@ -39,7 +43,7 @@ export const taskApi = {
   /**
    * 获取任务列表
    */
-  getTaskList<T extends TaskDataInfo>(params: TaskListParams) {
+  getTaskList<T extends TaskDataInfo>(params: any) {
     return http.get<Pagination<Task<T>>>('/tasks/list', {
       isToken: false,
       params,
@@ -70,14 +74,10 @@ export const taskApi = {
   /**
    * 申请任务
    */
-  taskApply<T extends TaskDataInfo>(id: string) {
-    return http.post<Task<T>>(
-      `/tasks/apply/${id}`,
-      {},
-      {
-        isToken: true,
-      },
-    );
+  taskApply<T extends TaskDataInfo>(id: string, data: ApplyTask) {
+    return http.post<Task<T>>(`/tasks/apply/${id}`, data, {
+      isToken: true,
+    });
   },
 
   /**
@@ -108,7 +108,26 @@ export const taskApi = {
       },
     );
   },
+
   // 删除搜索笔记任务
-  deleteSearchNotesTask: (data: { userId: string; taskType: string; taskId: string }) =>
-    hotHttp.post('/comment/search/notes/delete', data),
+  deleteSearchNotesTask: (data: {
+    userId: string;
+    taskType: string;
+    taskId: string;
+  }) => hotHttp.post('/comment/search/notes/delete', data),
+
+  // 统计合计进行中的任务的金额总数
+  getTotalAmountOfDoingTasks() {
+    return http.get<number>(`/tasks/reward/amount`, {
+      isToken: true,
+    });
+  },
+
+  /**
+   * 获取任务的最优素材
+   * @returns
+   */
+  getFristTaskMaterial(taskId: string) {
+    return http.get<TaskMaterial>(`/tasks/material/frist/${taskId}`);
+  },
 };

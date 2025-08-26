@@ -60,7 +60,8 @@ const Statistics = () => {
     open: false,
   });
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   useEffect(() => {
     getAccountStatistics();
@@ -304,6 +305,7 @@ const Statistics = () => {
   }
 
   async function getAccountStatistics7() {
+    setLoading(true);
     setDashboardData7([]);
     const res: any = statisticsInfo;
     const dataAll = [];

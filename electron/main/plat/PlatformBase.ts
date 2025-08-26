@@ -24,7 +24,7 @@ import {
   WorkData,
 } from './plat.type';
 import { PublishVideoResult } from './module';
-import { AccountType } from '../../../commont/AccountEnum';
+import { PlatType } from '../../../commont/AccountEnum';
 import { AccountModel } from '../../db/models/account';
 import { VideoModel } from '../../db/models/video';
 import { ImgTextModel } from '../../db/models/imgText';
@@ -34,9 +34,9 @@ import { ImgTextModel } from '../../db/models/imgText';
  */
 export abstract class PlatformBase {
   // 平台类型
-  protected readonly type: AccountType;
+  protected readonly type: PlatType;
 
-  constructor(type: AccountType) {
+  constructor(type: PlatType) {
     this.type = type;
   }
 
@@ -50,7 +50,12 @@ export abstract class PlatformBase {
    * 登录状态检测
    * @param account
    */
-  abstract loginCheck(account: AccountModel): Promise<boolean>;
+  abstract loginCheck(account: AccountModel): Promise<{
+    // true=在线，false=离线
+    online: boolean;
+    // 要额外更新的账户数据
+    account?: Partial<AccountModel>;
+  }>;
 
   /**
    * 获取该平台的用户信息
@@ -86,7 +91,7 @@ export abstract class PlatformBase {
     account: AccountModel,
     dataId: string,
     option?: any,
-  ): Promise<boolean>;
+  ): Promise<any>;
 
   /**
    * 收藏
@@ -96,7 +101,7 @@ export abstract class PlatformBase {
   abstract shoucangDyOther(
     account: AccountModel,
     pcursor?: string,
-  ): Promise<boolean>;
+  ): Promise<any>;
 
   /**
    * 获取作品列表

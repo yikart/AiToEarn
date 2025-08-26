@@ -8,22 +8,94 @@ import { AppDataSource } from '../../db';
 import { AccountModel } from '../../db/models/account';
 import { Injectable } from '../core/decorators';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
-import { AccountType } from '../../../commont/AccountEnum';
+import {
+  AccountStatus,
+  PlatType,
+  defaultAccountGroupId,
+} from '../../../commont/AccountEnum';
 import platController from '../plat/index';
+import { EtEvent } from '../../global/event';
+import { AccountGroupModel } from '../../db/models/accountGroup';
+import { getUserInfo } from '../user/comment';
 
 @Injectable()
 export class AccountService {
   private accountRepository: Repository<AccountModel>;
+  private accountGroupRepository: Repository<AccountGroupModel>;
 
   constructor() {
     this.accountRepository = AppDataSource.getRepository(AccountModel);
+    this.accountGroupRepository =
+      AppDataSource.getRepository(AccountGroupModel);
+  }
+
+  // 增加用户组数据
+  async addAccountGroup(data: Partial<AccountGroupModel>) {
+    return await this.accountGroupRepository.save({
+      ...data,
+    });
+  }
+  // 获取用户组数据
+  async getAccountGroup() {
+    return await this.accountGroupRepository.find();
+  }
+  // 删除用户组数据
+  async deleteAccountGroup(id: number) {
+    // 将删除的用户组下的账户账户的组id设置为默认组id
+    const accounts = await this.accountRepository.find({
+      where: { groupId: id },
+    });
+    await this.accountRepository.update(
+      { id: In(accounts.map((v) => v.id)) },
+      {
+        groupId: defaultAccountGroupId,
+      },
+    );
+
+    // 删除
+    return await this.accountGroupRepository.delete({
+      id: id,
+    });
+  }
+  // 修改用户组数据
+  async editAccountGroup(data: Partial<AccountGroupModel>) {
+    return await this.accountGroupRepository.update({ id: data.id }, data);
+  }
+
+  // 单个账号登录状态检测core
+  async checkAccountLoginCore(pType: PlatType, uid: string) {
+    const userInfo = getUserInfo();
+
+    const accountInfo = await this.getAccountInfo({
+      type: pType,
+      userId: userInfo.id,
+      uid: uid,
+    });
+    if (!accountInfo) return accountInfo;
+    // 取出cookie
+    if (!accountInfo.loginCookie) return accountInfo;
+
+    const res = await platController
+      .platLoginCheck(pType, accountInfo)
+      .catch(() => ({
+        online: false,
+        account: undefined,
+      }));
+
+    await this.updateAccountInfo(accountInfo.id, {
+      status: res.online ? AccountStatus.USABLE : AccountStatus.DISABLE,
+      ...(res.online && typeof res.account === 'object' ? res.account : {}),
+    });
+    const account = await this.getAccountById(accountInfo!.id!);
+
+    return account || accountInfo;
   }
 
   // 没有就添加有就更新cookie
   async addOrUpdateAccount(
     query: {
       userId: string;
-      type: AccountType;
+      type: PlatType;
       uid: string;
     },
     account: Partial<AccountModel>,
@@ -36,7 +108,16 @@ export class AccountService {
     const accountData = await this.accountRepository.findOne({ where: filter });
     account.loginTime = new Date();
     // 添加数据
-    if (!accountData) return await this.accountRepository.save(account);
+    if (!accountData) {
+      const newAccount = await this.accountRepository.save(account);
+      // 上报账号添加事件
+      EtEvent.emit('ET_TRACING_ACCOUNT_ADD', {
+        id: newAccount.id,
+        desc: '添加账户' + query.type,
+      });
+
+      return newAccount;
+    }
 
     // 更新数据
     await this.accountRepository.update(filter, account);
@@ -54,7 +135,7 @@ export class AccountService {
 
   // 获取账户信息
   async getAccountInfo(query: {
-    type: AccountType;
+    type: PlatType;
     userId: string;
     uid: string;
   }) {
@@ -62,7 +143,11 @@ export class AccountService {
   }
 
   // 获取所有账户
-  async getAccounts(userId: string) {
+  async getAccounts(userId?: string) {
+    if (!userId) {
+      const userInfo = getUserInfo();
+      userId = userInfo.id;
+    }
     return await this.accountRepository.find({ where: { userId } });
   }
 
@@ -84,7 +169,7 @@ export class AccountService {
    */
   async getAccountStatistics(
     userId: string,
-    type?: AccountType,
+    type?: PlatType,
   ): Promise<{
     accountTotal: number;
     list: AccountModel[];
@@ -146,10 +231,10 @@ export class AccountService {
     return accounts.reduce((acc, cur) => acc + (cur.fansCount || 0), 0);
   }
 
-  // 删除
-  async deleteAccount(id: number, userId: string) {
+  // 删除多个账户
+  async deleteAccounts(ids: number[], userId: string) {
     return await this.accountRepository.delete({
-      id,
+      id: In(ids),
       userId: userId,
     });
   }
@@ -158,6 +243,11 @@ export class AccountService {
   async updateAccountStatus(id: number, status: number) {
     await this.accountRepository.update(id, { status });
     return await this.accountRepository.findOne({ where: { id } });
+  }
+
+  // 更新用户信息
+  async updateAccountInfo(id: number, data: Partial<AccountModel>) {
+    return await this.accountRepository.update(id, data);
   }
 
   // 更新账户的统计信息

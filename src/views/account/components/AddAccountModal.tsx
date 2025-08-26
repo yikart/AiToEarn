@@ -1,6 +1,6 @@
 import { ForwardedRef, forwardRef, memo } from 'react';
 import styles from './AddAccountModal.module.scss';
-import { Button, message, Modal } from 'antd';
+import { Button, message, Modal, Tooltip } from 'antd';
 import { AccountInfo, AccountPlatInfoMap } from '@/views/account/comment';
 import { accountLogin } from '@/icp/account';
 
@@ -40,23 +40,24 @@ const AddAccountModal = memo(
             <div className="addAccountModal_plats">
               {Array.from(AccountPlatInfoMap).map(([key, value]) => {
                 return (
-                  <Button
-                    type="text"
-                    className="addAccountModal_plats-item"
-                    key={key}
-                    onClick={async () => {
-                      const res = await accountLogin(key);
-                      if (!res) return;
-                      message.success('账号添加成功');
-                      onAddSuccess(res);
-                    }}
-                  >
-                    <div className="addAccountModal_plats-item-con">
-                      {/*<LoadingOutlined style={{ fontSize: '20px' }} />*/}
-                      <img src={value.icon} />
-                      <span>{value.name}</span>
-                    </div>
-                  </Button>
+                  <Tooltip title={value.tips?.account} key={key}>
+                    <Button
+                      type="text"
+                      className="addAccountModal_plats-item"
+                      onClick={async () => {
+                        const res = await accountLogin(key);
+                        if (!res) return;
+                        message.success('账号添加成功');
+                        onAddSuccess(res);
+                      }}
+                    >
+                      <div className="addAccountModal_plats-item-con">
+                        {/*<LoadingOutlined style={{ fontSize: '20px' }} />*/}
+                        <img src={value.icon} />
+                        <span>{value.name}</span>
+                      </div>
+                    </Button>
+                  </Tooltip>
                 );
               })}
             </div>

@@ -24,7 +24,7 @@ import {
   DouyinPlatformSettingType,
   douyinService,
 } from '../../../../plat/douyin';
-import { AccountType } from '../../../../../commont/AccountEnum';
+import { PlatType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
 import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
 import { IRequestNetResult } from '../../../../plat/requestNet';
@@ -44,7 +44,7 @@ export type PubVideoOptin = {
 
 export class Douyin extends PlatformBase {
   constructor() {
-    super(AccountType.Douyin);
+    super(PlatType.Douyin);
   }
 
   /**
@@ -82,8 +82,11 @@ export class Douyin extends PlatformBase {
     }
   }
 
-  async loginCheck(account: AccountModel): Promise<boolean> {
-    return await douyinService.checkLoginStatus(account.loginCookie);
+  async loginCheck(account: AccountModel) {
+    const online = await douyinService.checkLoginStatus(account.loginCookie);
+    return {
+      online,
+    };
   }
 
   async getAccountInfo(params: IAccountInfoParams): Promise<AccountInfoTypeRV> {
@@ -128,7 +131,6 @@ export class Douyin extends PlatformBase {
           like: item.dianzan,
           forward: item.fenxiang,
           collect: 0,
-          
         });
       }
     } catch (error) {
@@ -199,6 +201,12 @@ export class Douyin extends PlatformBase {
    */
   async getsearchNodeList(account: AccountModel, qe: string, pageInfo?: any) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
+    console.log(
+      'getsearchNodeList',
+      pageInfo.count,
+      pageInfo.pcursor,
+      pageInfo.postFirstId,
+    );
     const res = await douyinService.getSearchNodeList(cookie, qe, {
       count: pageInfo.count,
       pcursor: pageInfo.pcursor,
@@ -206,16 +214,16 @@ export class Douyin extends PlatformBase {
     });
 
     const list: WorkData[] = [];
-    // console.log('------douyin getsearchNodeList res: ', res);
+    console.log('------douyin getsearchNodeList res: ', res.data.data);
     // console.log('------douyin getsearchNodeList res.data.cursor: ', res.data.cursor);
     for (const s of res.data.data) {
       const v = s.aweme_info;
       list.push({
         dataId: v.aweme_id,
-        readCount: v.note_card?.interact_info?.view_count,
-        likeCount: v.note_card?.interact_info?.liked_count,
-        collectCount: v.note_card?.interact_info?.collected_count,
-        commentCount: v.note_card?.interact_info?.comment_count,
+        readCount: v.statistics?.digg_count,
+        likeCount: v.statistics?.digg_count,
+        collectCount: v.statistics?.collect_count,
+        commentCount: v.statistics?.comment_count,
         title: v.desc,
         coverUrl: v.video.cover.url_list[0] || '',
         option: {
@@ -360,7 +368,7 @@ export class Douyin extends PlatformBase {
     };
   }
 
-  async dianzanDyOther( 
+  async dianzanDyOther(
     account: AccountModel,
     dataId: string, // 作品ID
   ): Promise<boolean> {
@@ -401,13 +409,21 @@ export class Douyin extends PlatformBase {
     content: string,
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
+    console.log('dataIddataId????:', dataId, content);
     const res = await douyinService.creatorCommentReplyOther(cookie, {
       aweme_id: dataId,
       text: content,
       one_level_comment_rank: -1,
+
+      // aweme_id: '7498682394024430907',
+      // comment_send_celltime: 46567,
+      // comment_video_celltime: 8969,
+      // one_level_comment_rank: -1,
+      // paste_edit_method: 'non_paste',
+      // text: '调',
     });
 
-    console.log('------ res', res);
+    console.log('-- 评论 ---- res', res);
 
     return res;
   }
@@ -476,8 +492,9 @@ export class Douyin extends PlatformBase {
   }
 
   pubParamsParse(params: WorkDataModel): DouyinPlatformSettingType {
-    const douyinParams = params.diffParams![AccountType.Douyin];
+    const douyinParams = params.diffParams![PlatType.Douyin];
     return {
+      proxyIp: params.proxyIp || '',
       userDeclare: douyinParams?.selfDeclare,
       activity: douyinParams?.activitys?.map((v) => {
         return {
@@ -530,7 +547,7 @@ export class Douyin extends PlatformBase {
       const result = await douyinService
         .publishVideoWorkApi(
           JSON.stringify(params.cookies),
-          undefined,
+          params?.token,
           params.videoPath!,
           this.pubParamsParse(params),
           callback,
@@ -576,9 +593,10 @@ export class Douyin extends PlatformBase {
       params.keyword,
       params.page,
     );
+
     return {
       status: this.getCode(usersRes),
-      data: usersRes.data.user_list.map((v) => {
+      data: usersRes?.data?.user_list?.map((v) => {
         return {
           image: 'https://p26.douyinpic.com/aweme/' + v.avatar_thumb.uri,
           id: v.uid,
@@ -617,7 +635,7 @@ export class Douyin extends PlatformBase {
       const result = await douyinService
         .publishImageWorkApi(
           JSON.stringify(params.cookies),
-          undefined,
+          params?.token,
           params.imagesPath,
           this.pubParamsParse(params),
         )
@@ -652,14 +670,16 @@ export class Douyin extends PlatformBase {
   }
 
   getCode(res: IRequestNetResult<any>) {
-    return res?.data?.status_code === 8 ? 401 : res?.status;
+    return res?.data?.status_code === 8 || res?.data?.status_code === 7
+      ? 401
+      : res?.status;
   }
 
   async getMixList(cookie: CookiesType) {
     const mixRes = await douyinService.getMixList(cookie);
     return {
       status: this.getCode(mixRes),
-      data: mixRes?.data.mix_list.map((v) => {
+      data: mixRes?.data.mix_list?.map((v) => {
         return {
           id: v.mix_id,
           name: v.mix_name,

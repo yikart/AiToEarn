@@ -13,12 +13,11 @@ import { getUserInfo } from '../../user/comment';
 import { VideoModel } from '../../../db/models/video';
 import { Between, FindOptionsWhere } from 'typeorm';
 import type { CorrectQuery } from '../../../global/table';
-import { PubStatus } from '../../../db/models/pubRecord';
 import { PublishService } from '../service';
 import platController from '../../plat';
 import { AccountService } from '../../account/service';
-import { AccountType } from '../../../../commont/AccountEnum';
-import lodash from 'lodash';
+import { PlatType } from '../../../../commont/AccountEnum';
+import { PubStatus } from '../../../../commont/publish/PublishEnum';
 
 @Controller()
 export class VideoPubController {
@@ -71,22 +70,37 @@ export class VideoPubController {
       const accountList = await this.accountService.getAccountsByIds(
         videoList.map((v) => v.accountId),
       );
+
+      // 获取代理IP
+      const groupModels = await this.accountService.getAccountGroup();
+      for (let i = 0; i < accountList.length; i++) {
+        const account = accountList[i];
+        const group = groupModels.find((v) => v.id === account.groupId);
+        if (group && group.proxyIp && group.proxyOpen) {
+          videoList[i].proxyIp = group.proxyIp;
+        }
+      }
+
       // 发布
       const pubRes = await platController.videoPublish(videoList, accountList);
 
       let successCount = 0;
       pubRes.map((v) => {
-        if (v.code === 1) successCount++;
+        if (v.code === 1) {
+          successCount++;
+        }
       });
+
       // 更改记录状态
-      await this.publishService.updatePubRecordStatus(
-        pubRecordId,
+      const theStatus =
         successCount === 0
           ? PubStatus.FAIL
           : successCount === pubRes.length
             ? PubStatus.RELEASED
-            : PubStatus.PartSuccess,
-      );
+            : PubStatus.PartSuccess;
+
+      await this.publishService.updatePubRecordStatus(pubRecordId, theStatus);
+
       return pubRes;
     } catch (e) {
       console.error(e);
@@ -102,7 +116,7 @@ export class VideoPubController {
     page: CorrectQuery,
     query: {
       pubRecardId?: number;
-      type?: AccountType;
+      type?: PlatType;
       time?: [string, string];
       title?: string;
     },
@@ -148,7 +162,7 @@ export class VideoPubController {
   @Icp('ICP_PUBLISH_GET_VIDEO_PUL_TYPE_COUNT')
   async getVideoPulTypeCount(
     event: Electron.IpcMainInvokeEvent,
-    type?: AccountType,
+    type?: PlatType,
   ): Promise<any> {
     const userInfo = getUserInfo();
     return await this.videoPubService.getVideoPulTypeCount(userInfo.id, type);

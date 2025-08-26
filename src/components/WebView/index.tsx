@@ -11,7 +11,7 @@ import styles from './webView.module.scss';
 import { Spin } from 'antd';
 import { ICookieParams } from '../../../electron/main/account/BrowserWindow/browserWindow';
 import { AccountInfo } from '../../views/account/comment';
-import { AccountType } from '../../../commont/AccountEnum';
+import { PlatType } from '../../../commont/AccountEnum';
 
 export interface IWebViewRef {}
 
@@ -39,13 +39,14 @@ const WebView = memo(
 
       useEffect(() => {
         console.log(cookieParams);
+        console.log(JSON.stringify(cookieParams));
         setLoading(true);
 
         webviewRef.current?.addEventListener('dom-ready', async (e) => {
           // 每个平台localStorage添加
           if (account) {
             let jsCode;
-            if (account?.type === AccountType.Douyin) {
+            if (account?.type === PlatType.Douyin) {
               jsCode = `
                 localStorage.setItem('douyin_web_hide_guide', '1');
                 localStorage.setItem('user_info', '{"uid":"${account.account}","nickname":"${account.nickname}","avatarUrl":"${account.avatar}"}');

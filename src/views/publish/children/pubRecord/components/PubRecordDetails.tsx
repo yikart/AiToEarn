@@ -10,7 +10,7 @@ import styles from '../pubRecord.module.scss';
 import { AccountPlatInfoMap } from '../../../../account/comment';
 import { formatTime } from '../../../../../utils';
 import { getVideoFile } from '../../../../../components/Choose/VideoChoose';
-import { AccountType } from '../../../../../../commont/AccountEnum';
+import { PlatType } from '../../../../../../commont/AccountEnum';
 import { IExamineVideo, ImageView } from '../page';
 import { PubRecordModel } from '../../../comment';
 import { useAccountStore } from '../../../../../store/account';
@@ -23,6 +23,7 @@ import { PubType } from '../../../../../../commont/publish/PublishEnum';
 import {
   icpGetImgTextList,
   icpGetPubVideoRecord,
+  PubStatusCnMap,
 } from '../../../../../icp/publish';
 
 export interface IPubRecordDetailsRef {
@@ -104,20 +105,16 @@ const PubRecordDetails = memo(
                   {pubRecordList?.map((v) => {
                     const account = accountMap.get(v.accountId);
                     const plat = AccountPlatInfoMap.get(v.type);
-                    let statusText = '';
+                    const statusText = PubStatusCnMap[v.status];
                     let className = '';
                     let tooltipText = '';
                     if (v.status === 1) {
-                      statusText = '发布成功';
                       className = 'pubRecord-record-item--success';
                     } else if (v.status === 0) {
-                      statusText = '发布中';
                       className = 'pubRecord-record-item--processing';
                     } else if (v.status === 2) {
-                      statusText = '发布失败';
                       className = 'pubRecord-record-item--fail';
                     } else if (v.status === 4) {
-                      statusText = '审核中';
                       tooltipText =
                         '快手需要几十秒时间审核您的作品，等待几十秒后刷新数据即可';
                       className = 'pubRecord-record-item--processing';
@@ -197,7 +194,7 @@ const PubRecordDetails = memo(
                                   url: '',
                                   account,
                                 };
-                                if (account?.type === AccountType.WxSph) {
+                                if (account?.type === PlatType.WxSph) {
                                   const videoFile = await getVideoFile(
                                     (v as VideoModel).videoPath!,
                                   );

@@ -11,10 +11,12 @@ import { getUserInfo } from '../user/comment';
 import platController from '../plat';
 import type { ICreateBrowserWindowParams } from './BrowserWindow/browserWindow';
 import { browserWindowController } from './BrowserWindow';
-import { AccountStatus, AccountType } from '../../../commont/AccountEnum';
+import { AccountStatus, PlatType } from '../../../commont/AccountEnum';
 import { AccountModel } from '../../db/models/account';
 import windowOperate from '../../util/windowOperate';
 import { SendChannelEnum } from '../../../commont/UtilsEnum';
+import { AccountGroupModel } from '../../db/models/accountGroup';
+import { proxyCheck } from '../../plat/coomont';
 
 @Controller()
 export class AccountController {
@@ -45,7 +47,7 @@ export class AccountController {
   @Icp('ICP_ACCOUNT_LOGIN')
   async accountLogin(
     event: Electron.IpcMainInvokeEvent,
-    pType: AccountType,
+    pType: PlatType,
   ): Promise<any> {
     const userInfo = getUserInfo();
 
@@ -69,35 +71,45 @@ export class AccountController {
   }
 
   /**
-   * 账户登录检测
+   * 账户登录检测-单个
    */
   @Icp('ICP_ACCOUNT_LOGIN_CHECK')
   async checkAccountLogin(
     event: Electron.IpcMainInvokeEvent,
-    pType: AccountType,
+    pType: PlatType,
     uid: string,
+    isSendEvent: boolean = true,
   ): Promise<AccountModel | null> {
-    const userInfo = getUserInfo();
+    const account = await this.accountService.checkAccountLoginCore(pType, uid);
+    if (isSendEvent) {
+      windowOperate.sendRenderMsg(SendChannelEnum.AccountLoginFinish, account);
+    }
+    return account;
+  }
 
-    const accountInfo = await this.accountService.getAccountInfo({
-      type: pType,
-      userId: userInfo.id,
-      uid: uid,
-    });
-    if (!accountInfo) return accountInfo;
-    // 取出cookie
-    if (!accountInfo.loginCookie) return accountInfo;
+  /**
+   * 账户登录检测-多个
+   */
+  @Icp('ICP_ACCOUNT_LOGIN_CHECK_MULTI')
+  async checkAccountLoginMulti(
+    event: Electron.IpcMainInvokeEvent,
+    checkAccounts: {
+      pType: PlatType;
+      uid: string;
+    }[],
+  ): Promise<(AccountModel | null)[]> {
+    const tasks: Promise<AccountModel | null>[] = [];
 
-    const res = await platController
-      .platLoginCheck(pType, accountInfo)
-      .catch(() => false);
-    console.log(res);
-    const account = await this.accountService.updateAccountStatus(
-      accountInfo!.id!,
-      res ? AccountStatus.USABLE : AccountStatus.DISABLE,
+    for (const { pType, uid } of checkAccounts) {
+      tasks.push(this.accountService.checkAccountLoginCore(pType, uid));
+    }
+    const accounts = await Promise.all(tasks);
+    windowOperate.sendRenderMsg(
+      SendChannelEnum.AccountLoginFinish,
+      accounts[0],
+      accounts,
     );
-    windowOperate.sendRenderMsg(SendChannelEnum.AccountLoginFinish, account);
-    return account || accountInfo;
+    return accounts;
   }
 
   // 更新用户状态
@@ -115,7 +127,7 @@ export class AccountController {
   @Icp('ICP_ACCOUNT_GET_INFO')
   async getAccountInfo(
     event: Electron.IpcMainInvokeEvent,
-    data: { type: AccountType; uid: string },
+    data: { type: PlatType; uid: string },
   ): Promise<any> {
     const userInfo = getUserInfo();
 
@@ -173,7 +185,7 @@ export class AccountController {
   @Icp('ICP_ACCOUNT_STATISTICS')
   async getAccountStatistics(
     event: Electron.IpcMainInvokeEvent,
-    type?: AccountType,
+    type?: PlatType,
   ): Promise<any> {
     const userInfo = getUserInfo();
     return this.accountService.getAccountStatistics(userInfo.id, type);
@@ -193,15 +205,65 @@ export class AccountController {
     return this.accountService.getAccountDashboard(account, time);
   }
 
-  // 删除
-  @Icp('ICP_ACCOUNT_DELETE')
+  // 删除账户
+  @Icp('ICP_ACCOUNTS_DELETE')
   async deleteAccount(
+    event: Electron.IpcMainInvokeEvent,
+    ids: number[],
+  ): Promise<any> {
+    const userInfo = getUserInfo();
+    return this.accountService.deleteAccounts(ids, userInfo.id);
+  }
+
+  // 修改账户的账户组
+  @Icp('ICP_ACCOUNTS_EDIT_GROUP')
+  async accountEditGroup(
+    event: Electron.IpcMainInvokeEvent,
+    id: number,
+    groupId: number,
+  ): Promise<any> {
+    return this.accountService.updateAccountInfo(id, {
+      groupId,
+    });
+  }
+
+  // 添加用户组数据
+  @Icp('ICP_ACCOUNTS_GROUP_ADD')
+  async addAccountGroup(
+    event: Electron.IpcMainInvokeEvent,
+    data: Partial<AccountGroupModel>,
+  ): Promise<any> {
+    return this.accountService.addAccountGroup(data);
+  }
+  // 获取用户组数据
+  @Icp('ICP_ACCOUNTS_GROUP_GET')
+  async getAccountGroup(event: Electron.IpcMainInvokeEvent): Promise<any> {
+    return this.accountService.getAccountGroup();
+  }
+  // 删除用户组数据
+  @Icp('ICP_ACCOUNTS_GROUP_DELETE')
+  async deleteAccountGroup(
     event: Electron.IpcMainInvokeEvent,
     id: number,
   ): Promise<any> {
-    const userInfo = getUserInfo();
+    return this.accountService.deleteAccountGroup(id);
+  }
+  // 编辑用户组数据
+  @Icp('ICP_ACCOUNTS_GROUP_EDIT')
+  async editAccountGroup(
+    event: Electron.IpcMainInvokeEvent,
+    data: Partial<AccountGroupModel>,
+  ): Promise<any> {
+    return this.accountService.editAccountGroup(data);
+  }
 
-    return this.accountService.deleteAccount(id, userInfo.id);
+  // 代理地址有效性检测
+  @Icp('ICP_ACCOUNTS_PROXY_CHECK')
+  async proxyCheck(
+    event: Electron.IpcMainInvokeEvent,
+    proxy: string,
+  ): Promise<any> {
+    return await proxyCheck(proxy);
   }
 
   @Et('ET_UP_ALL_ACCOUNT_STATISTICS') // 更新所有的账户的统计信息

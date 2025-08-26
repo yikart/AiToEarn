@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
-  "appId": "cn.yikart.aiToEarn",
+  "appId": "cn.aitoearn.pc",
   "productName": "哎哟赚AiToEarn",
   "asar": true,
   "asarUnpack": ["**/node_modules/sharp/**/*", "**/node_modules/@img/**/*"],
@@ -10,9 +10,9 @@
   "files": ["dist-electron", "dist"],
   "mac": {
     "gatekeeperAssess": false,
-  "hardenedRuntime": true,
-  "entitlements": "scripts/entitlements.mac.plist",
-  "entitlementsInherit": "scripts/entitlements.mac.plist",
+    "hardenedRuntime": true,
+    "entitlements": "scripts/entitlements.mac.plist",
+    "entitlementsInherit": "scripts/entitlements.mac.plist",
     "identity": null,
     "artifactName": "${productName}-${version}-${arch}.${ext}",
     "target": [
@@ -46,11 +46,6 @@
     {
       "from": "public/assets",
       "to": "assets",
-      "filter": ["**/*"]
-    },
-    {
-      "from": "public/bin",
-      "to": "bin",
       "filter": ["**/*"]
     }
   ]

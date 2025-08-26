@@ -1,4 +1,5 @@
 import { net } from 'electron';
+import { getUserToken } from '../user/comment';
 
 export interface IRequestNetResult<T> {
   status: number;
@@ -12,6 +13,7 @@ export interface IRequestNetParams {
   body?: any;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   isFile?: boolean;
+  isToken?: boolean;
 }
 
 const netRequest = <T = any>({
@@ -20,6 +22,7 @@ const netRequest = <T = any>({
   method,
   url,
   isFile,
+  isToken,
 }: IRequestNetParams): Promise<IRequestNetResult<T>> => {
   return new Promise((resolve, reject) => {
     const req = net.request({
@@ -34,6 +37,8 @@ const netRequest = <T = any>({
         req.setHeader(key, value);
       });
     }
+
+    if (isToken) req.setHeader('Authorization', `Bearer ${getUserToken()}`);
 
     // 处理响应
     req.on('response', (response) => {

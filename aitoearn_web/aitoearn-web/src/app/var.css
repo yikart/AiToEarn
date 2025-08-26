@@ -1,0 +1,84 @@
+/*  全局css变量 */
+:root {
+  /* 中性面板色组---------------------------------------------------- */
+  --whiteColor: #fff;
+  --grayColor0: rgb(247,250,250);
+  --grayColor1: #F3F3F3;
+  --grayColor2: #EEEEEE;
+  --grayColor3: #E7E7E7;
+  --grayColor4: #DCDCDC;
+  --grayColor5: #C5C5C5;
+  --grayColor6: #A6A6A6;
+  --grayColor7: #8B8B8B;
+  --grayColor8: #777777;
+  --grayColor9: #5E5E5E;
+  --grayColor10: #4B4B4B;
+  --grayColor11: #383838;
+  --grayColor12: #2C2C2C;
+  --grayColor13: #242424;
+  --grayColor14: #181818;
+
+  /* 头部高度 */
+  --layoutHeaderHegiht: 1px;
+
+  /* 超大号字 */
+  --fs-xl: 20px;
+  /* 大号字 */
+  --fs-lg: 18px;
+  /* 中号字 */
+  --fs-md: 16px;
+  /* 小号字 */
+  --fs-sm: 14px;
+  /* 超小号字 */
+  --fs-xs: 12px;
+
+  /*@media (min-width: 1600px) {*/
+  /*  --fs-xl: 22px;*/
+  /*  --fs-lg: 20px;*/
+  /*  --fs-md: 18px;*/
+  /*  --fs-sm: 16px;*/
+  /*  --fs-xs: 14px;*/
+  /*}*/
+
+  /* 主题色由浅到深 */
+  --theColor1: #faf0ff;
+  --theColor2: #f9f0ff;
+  --theColor3: #e4c5fc;
+  --theColor4: #c595f0;
+  --theColor5: #a66ae4;
+  --theColor6: #814dbd;
+  --theColor7: #603696;
+  --theColor8: #422370;
+  --theColor9: #29164a;
+  --primary-color: var(--theColor5);
+  /* 原先为：#D7B4F5 */
+  --primary-hover: var(--theColor6);
+  --colorPrimary1: var(--theColor1);
+  --colorPrimary2: var(--theColor2);
+  --colorPrimary3: var(--theColor3);
+  --colorPrimary4: var(--theColor4);
+  --colorPrimary5: var(--theColor5);
+  --colorPrimary6: var(--theColor6);
+  --colorPrimary7: var(--theColor7);
+  --colorPrimary8: var(--theColor8);
+  --colorPrimary9: var(--theColor9);
+
+  --primary-light: #f4ebff;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --bg-gray: #f9fafb;
+
+  /* 其它颜色 */
+  --text-color: #1f2937;
+  --border-color: #e5e7eb;
+  --background-color: #fff;
+  --card-background: #fff;
+  /* 错误颜色 */
+  --error-color: #ef4444;
+  /* 成功色 */
+  --success-color: #10b981;
+  /* 错误颜色 */
+  --errorColor: var(--error-color);
+  /* 成功色 */
+  --successColor: var(--success-color);
+}

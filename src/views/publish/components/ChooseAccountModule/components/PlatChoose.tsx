@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react';
 import useCssVariables from '@/hooks/useCssVariables';
-import { AccountType } from '../../../../../../commont/AccountEnum';
+import { PlatType } from '../../../../../../commont/AccountEnum';
 import { AccountInfo, AccountPlatInfoMap } from '@/views/account/comment';
 import styles from '@/views/publish/components/ChooseAccountModule/chooseAccountModule.module.scss';
 import {
@@ -36,13 +36,13 @@ export interface IPlatChooseRef {
   // 每次关闭弹框的时候需要初始化一些状态
   init: () => void;
   // 设置选中平台
-  setActivePlat: (activePlat: AccountType) => void;
+  setActivePlat: (activePlat: PlatType) => void;
 }
 
 export interface IPlatChooseProps {
   pubType: PubType;
   // 默认选择的平台
-  defaultPlat?: AccountType;
+  defaultPlat?: PlatType;
   onChange?: (
     choosedAcounts: AccountInfo[],
     choosedAcount: AccountInfo,
@@ -52,7 +52,7 @@ export interface IPlatChooseProps {
   // 按平台 是否禁用多选，true=禁用，false=不禁用
   disableAllSelect?: boolean;
   // 可选择的平台，默认为全部
-  allowPlatSet?: Set<AccountType>;
+  allowPlatSet?: Set<PlatType>;
   // 是否可以取消已经选择的账户，默认为 false
   isCancelChooseAccount?: boolean;
 }
@@ -74,13 +74,13 @@ const PlatChoose = memo(
       const cssVars = useCssVariables();
       // 所有账户数据
       const [accountMap, setAccountMap] = useState<
-        Map<AccountType, AccountInfo[]>
+        Map<PlatType, AccountInfo[]>
       >(new Map());
       // 当前选择的平台
-      const [activePlat, setActivePlat] = useState<AccountType | undefined>();
+      const [activePlat, setActivePlat] = useState<PlatType | undefined>();
       // 当前选择的账户数据
       const [choosedAcountMap, setChoosedAcountMap] = useState<
-        Map<AccountType, AccountInfo[]>
+        Map<PlatType, AccountInfo[]>
       >(new Map());
       // 每次change操作的数据
       const recentData = useRef<AccountInfo>();
@@ -92,7 +92,7 @@ const PlatChoose = memo(
 
       // 经过 allowPlatSet 过滤后的账户数据
       const accountMapLast = useMemo(() => {
-        const newVal = new Map<AccountType, AccountInfo[]>();
+        const newVal = new Map<PlatType, AccountInfo[]>();
         for (const [accountType, accountList] of accountMap) {
           if (!allowPlatSet ? true : allowPlatSet.has(accountType)) {
             newVal.set(accountType, accountList);
@@ -286,7 +286,7 @@ const PlatChoose = memo(
 
               <div className="platChoose-con">
                 {currAccountList && (
-                  <>
+                  <div className="platChoose-con-wrapper">
                     {!disableAllSelect ? (
                       <Checkbox
                         indeterminate={
@@ -369,7 +369,13 @@ const PlatChoose = memo(
                         );
                       })}
                     </div>
-                  </>
+                  </div>
+                )}
+
+                {AccountPlatInfoMap.get(activePlat!)?.tips && (
+                  <div className="platChoose-tips">
+                    {AccountPlatInfoMap.get(activePlat!)?.tips?.publish}
+                  </div>
                 )}
               </div>
             </>

@@ -5,57 +5,28 @@
  * @LastEditors: nevin
  * @Description: 测试页面
  */
-import { useState } from 'react';
-import VideoChoose, { IVideoFile } from '@/components/Choose/VideoChoose';
 import { Button } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { toolsApi } from '@/api/tools';
 
-export default function Text() {
-  const [videoPath, setVideoPath] = useState('');
-  const [fileInfo, setFileInfo] = useState('');
-
-  function addVideos(videoFiles: IVideoFile[]) {
-    console.log('---- videoFiles ----', videoFiles);
-
-    const theVideoPath = videoFiles[0].videoPath;
-    console.log('---- theVideoPath ----', theVideoPath);
-    setVideoPath(theVideoPath);
-  }
-
-  async function getFileMateInfo() {
-    const res = await window.ipcRenderer.invoke(
-      'ICP_GET_FILE_MATE_INFO',
-      videoPath,
-    );
-
-    setFileInfo(JSON.stringify(res));
-    console.log('---- res ----', res);
+export default function Test() {
+  async function testBtn() {
+    toolsApi
+      .aiArticleHtml(
+        '主图使用该图片https://ai-to-earn.oss-cn-beijing.aliyuncs.com/development/temp/nopath/202504/d8a3278e-fd0c-42cf-8339-02bf85b6c4e4.png生成一个卡通任务介绍页',
+      )
+      .then((res) => {
+        console.log('----------', res);
+      });
   }
 
   return (
     <div>
-      <p>{videoPath}</p>
-      <hr />
-      <p>{fileInfo}</p>
-      <hr />
-      <VideoChoose
-        onMultipleChoose={(videoFiles) => {
-          addVideos(videoFiles);
-        }}
-        onStartShoose={() => {}}
-        onChooseFail={() => {}}
-      >
-        <Button type="dashed" icon={<PlusOutlined />}>
-          批量添加
-        </Button>
-      </VideoChoose>
-
       <Button
         onClick={() => {
-          getFileMateInfo();
+          testBtn();
         }}
       >
-        获取文件信息
+        测试
       </Button>
     </div>
   );

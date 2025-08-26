@@ -14,3 +14,11 @@ export enum VisibleTypeEnum {
   // 好友可见
   Friend = 3,
 }
+
+export enum PubStatus {
+  UNPUBLISH = 0, // 未发布/草稿
+  RELEASED = 1, // 已发布
+  FAIL = 2, // 发布失败
+  PartSuccess = 3, // 部分成功
+  Audit = 4, // 审核中
+}

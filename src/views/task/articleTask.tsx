@@ -28,15 +28,14 @@ import {
 import styles from './task.module.scss';
 import { useState, useEffect, useRef } from 'react';
 import { taskApi } from '@/api/task';
-import { TaskArticle, TaskType, TaskVideo } from '@@/types/task';
+import { TaskType, TaskVideo } from '@@/types/task';
 import dayjs from 'dayjs';
 import { TaskInfoRef } from './components/popInfo';
 // import TaskInfo from './components/articleInfo';
 import ChooseAccountModule from '@/views/publish/components/ChooseAccountModule/ChooseAccountModule';
 import { PubType } from '@@/publish/PublishEnum';
-import { AccountType } from '@@/AccountEnum';
 import { usePubStroe } from '@/store/pubStroe';
-import { useAccountStore } from '@/store/commont';
+import { useCommontStore } from '@/store/commont';
 import { useNavigate } from 'react-router-dom';
 import { message } from 'antd';
 import {
@@ -202,24 +201,7 @@ export default function ArticleTask() {
   /**
    * 接受任务
    */
-  async function taskApply() {
-    if (!selectedTask) return;
-
-    try {
-      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
-      // 存储任务记录信息
-      if (res.code === 0 && res.data) {
-        setTaskRecord(res.data);
-        message.success('任务接受成功！');
-
-        handleCompleteTask();
-      } else {
-        message.error(res.msg || '接受任务失败，请稍后再试?');
-      }
-    } catch (error) {
-      message.error('接受任务失败，请稍后再试');
-    }
-  }
+  async function taskApply() {}
 
   /**
    * 完成任务
@@ -258,7 +240,7 @@ export default function ArticleTask() {
     // 创建一级记录
     const recordRes = await icpCreatePubRecord({
       title: selectedTask.title,
-      desc: selectedTask.description.replace(/<[^>]+>/g, ''),
+      desc: selectedTask.description,
       type: PubType.ImageText,
       coverPath: FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
     });
@@ -278,7 +260,7 @@ export default function ArticleTask() {
       // 创建二级记录
       await icpCreateImgTextPubRecord({
         title: selectedTask.title,
-        desc: selectedTask.description.replace(/<[^>]+>/g, ''),
+        desc: selectedTask.description,
         type: account.type,
         accountId: account.id,
         pubRecordId: recordRes.id,
@@ -299,7 +281,7 @@ export default function ArticleTask() {
     setPubProgressModuleOpen(false);
     usePubStroe.getState().clearImgTextPubSave();
     const successList = okRes.filter((v) => v.code === 1);
-    useAccountStore.getState().notification!.open({
+    useCommontStore.getState().notification!.open({
       message: '发布结果',
       description: (
         <>
@@ -428,9 +410,7 @@ export default function ArticleTask() {
                           showInfo={false}
                         />
                       </div>
-                      <Text type="secondary">
-                        {item.description.replace(/<[^>]+>/g, '')}
-                      </Text>
+                      <Text type="secondary">{item.description}</Text>
                       <div className={styles.taskDeadline}>
                         <Text type="secondary">
                           截止时间：{formatDate(item.deadline)}

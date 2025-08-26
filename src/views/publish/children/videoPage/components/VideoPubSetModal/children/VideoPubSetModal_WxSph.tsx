@@ -7,7 +7,7 @@ import { Checkbox, Input, Select, Spin } from 'antd';
 import { useVideoPageStore } from '@/views/publish/children/videoPage/useVideoPageStore';
 import { useShallow } from 'zustand/react/shallow';
 import LocationSelect from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/LocationSelect';
-import { AccountStatus, AccountType } from '@@/AccountEnum';
+import { AccountStatus, PlatType } from '@@/AccountEnum';
 import useDebounceFetcher from '@/views/publish/children/videoPage/components/VideoPubSetModal/components/useDebounceFetcher';
 import {
   DescTextArea,
@@ -67,11 +67,11 @@ const WXSphActivity = ({}: IVideoPubSetModalChildProps) => {
           };
         })}
         value={
-          currChooseAccount.pubParams!.diffParams![AccountType.WxSph]!.activity
+          currChooseAccount.pubParams!.diffParams![PlatType.WxSph]!.activity
         }
         onChange={(_, value) => {
           const newDiffParams = currChooseAccount.pubParams.diffParams!;
-          newDiffParams[AccountType.WxSph]!.activity = value as WxSphEventList;
+          newDiffParams[PlatType.WxSph]!.activity = value as WxSphEventList;
           setOnePubParams({
             diffParams: newDiffParams,
           });
@@ -153,12 +153,12 @@ const VideoPubSetModal_WxSph = memo(
           <Input
             placeholder="粘贴链接"
             value={
-              currChooseAccount?.pubParams.diffParams![AccountType.WxSph]!
+              currChooseAccount?.pubParams.diffParams![PlatType.WxSph]!
                 .extLink
             }
             onChange={(e) => {
               const newDiffParams = currChooseAccount.pubParams.diffParams!;
-              newDiffParams[AccountType.WxSph]!.extLink = e.target.value;
+              newDiffParams[PlatType.WxSph]!.extLink = e.target.value;
               setOnePubParams({
                 diffParams: newDiffParams,
               });
@@ -168,12 +168,12 @@ const VideoPubSetModal_WxSph = memo(
           <h1>声明原创</h1>
           <Checkbox
             checked={
-              currChooseAccount?.pubParams.diffParams![AccountType.WxSph]!
+              currChooseAccount?.pubParams.diffParams![PlatType.WxSph]!
                 .isOriginal
             }
             onChange={(e) => {
               const newDiffParams = currChooseAccount.pubParams.diffParams!;
-              newDiffParams[AccountType.WxSph]!.isOriginal = e.target.checked;
+              newDiffParams[PlatType.WxSph]!.isOriginal = e.target.checked;
               setOnePubParams({
                 diffParams: newDiffParams,
               });

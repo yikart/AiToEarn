@@ -1,4 +1,11 @@
 import { contextBridge, ipcRenderer } from 'electron';
+import { exposeUIKit } from '@electron-uikit/core/preload';
+
+try {
+  exposeUIKit();
+} catch (e) {
+  console.error(e);
+}
 
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', {

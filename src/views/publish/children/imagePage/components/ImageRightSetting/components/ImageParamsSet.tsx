@@ -2,7 +2,7 @@ import { ForwardedRef, forwardRef, memo, useEffect, useMemo } from 'react';
 import { useImagePageStore } from '../../../useImagePageStore';
 import { useShallow } from 'zustand/react/shallow';
 import styles from './imageParamsSet.module.scss';
-import { AccountType } from '../../../../../../../../commont/AccountEnum';
+import { PlatType } from '../../../../../../../../commont/AccountEnum';
 import { IImageAccountItem } from '../../../imagePage.type';
 import { AccountPlatInfoMap } from '../../../../../../account/comment';
 import { CloseOutlined, InfoOutlined } from '@ant-design/icons';
@@ -45,7 +45,7 @@ const ImageParamsSet = memo(
 
       const platAccountImagesMap = useMemo(() => {
         // 平台账户map
-        const platAccountMap = new Map<AccountType, IImageAccountItem[]>([]);
+        const platAccountMap = new Map<PlatType, IImageAccountItem[]>([]);
 
         for (const imageAccount of imageAccounts) {
           if (!platAccountMap.has(imageAccount.account.type)) {
@@ -64,7 +64,7 @@ const ImageParamsSet = memo(
 
         // 默认选中的平台map
         const newPlatActiveAccountMap = new Map<
-          AccountType,
+          PlatType,
           IImageAccountItem
         >();
 
@@ -105,7 +105,7 @@ const ImageParamsSet = memo(
       // key=平台，val==错误消息
       const errParamsPlatMap = useMemo(() => {
         if (!errParamsMap) return undefined;
-        const errParamsMapTemp = new Map<AccountType, ErrPubParamsItem>();
+        const errParamsMapTemp = new Map<PlatType, ErrPubParamsItem>();
         for (const [_, errParamsItem] of errParamsMap) {
           if (!errParamsMapTemp.has(errParamsItem.plat!)) {
             errParamsMapTemp.set(errParamsItem.plat!, errParamsItem);

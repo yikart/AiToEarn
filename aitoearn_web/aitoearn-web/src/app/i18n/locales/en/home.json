@@ -1,0 +1,198 @@
+{
+  "releaseBanner": {
+    "tag": "Release v0.8.0",
+    "text": "Build and Extend AI Workflows with Plugins and a Thriving Marketplace."
+  },
+  "header": {
+    "logo": "Aitorarn",
+    "nav": {
+      "marketplace": "Marketplace",
+      "pricing": "Pricing",
+      "status": "Status",
+      "docs": "Docs",
+      "blog": "Blog"
+    },
+    "getStarted": "Get Started"
+  },
+  "hero": {
+    "stars": "105.2k",
+    "starsText": "stars on",
+    "github": "GitHub",
+    "title": "The Best Content Marketing\nAI Agent",
+    "subtitle": "From today on, easily manage your social media with AI. AITOEARN provides one-stop capabilities from creative inspiration, content creation, content distribution to content interaction management, making AI within reach.",
+    "getStarted": "Get Started"
+  },
+  "brandBar": {
+    "title": "Supported Social Media Platforms"
+  },
+  "buildSection": {
+    "badge": "Creative Inspiration",
+    "title": "Out of Inspiration?",
+    "titleBlue": "Check out trending topics worldwide",
+    "features": {
+      "hotTopic": {
+        "title": "AI Trending Topic Extraction - Capture All Trending Content",
+        "description": "Through AI extraction of trending topics across the web, AI analysis generates similar viral content with one click, capturing all trending traffic"
+      },
+      "international": {
+        "title": "International Platforms: YouTube, TikTok, Facebook, Instagram, LinkedIn, X (Twitter), Rednote",
+        "description": "Overseas trending topic extraction to keep you informed of the latest developments"
+      },
+      "domestic": {
+        "title": "Domestic Platforms: Douyin, Kwai, WeChat, Bilibili",
+        "description": "Support for domestic platform trending extraction, ensuring you don't miss any trending traffic"
+      }
+    },
+    "carouselHint": "Use scroll wheel to switch images"
+  },
+  "connectSection": {
+    "badge": "Features",
+    "title": "One-Stop Social Media Management Platform",
+    "titleBlue": "From creative inspiration to content creation, from content distribution to content interaction management",
+    "features": {
+      "creation": {
+        "title": "Content Creation",
+        "description": "AI content creation, AI image generation, text and image creation, and other AI capabilities to make your content more vivid and interesting"
+      },
+      "distribution": {
+        "title": "Content Distribution",
+        "description": "Support multi-platform distribution both domestically and internationally, reaching more users with one-click management"
+      },
+      "interaction": {
+        "title": "Content Interaction Management",
+        "description": "Support multi-platform interaction management both domestically and internationally, making content interaction more efficient with one-click management"
+      },
+      "analytics": {
+        "title": "Data Analytics",
+        "description": "Support multi-platform data analytics both domestically and internationally, making data analysis more efficient with one-click management"
+      }
+    },
+    "carouselHint": "Use scroll wheel to switch images"
+  },
+  "downloadSection": {
+    "title": "Start Creating Anytime, Anywhere",
+    "titleBlue": "Easy Management on Mobile Too",
+    "description": "With the AI ToEarn mobile app, your creativity is no longer limited to desktop. We also provide iOS and Android mobile apps for you to unleash your creativity anytime, anywhere, with just one phone!",
+    "appStore": {
+      "text": "Download on the",
+      "store": "App Store"
+    },
+    "googlePlay": {
+      "text": "GET IT ON",
+      "store": "Google Play"
+    }
+  },
+  "enterpriseSection": {
+    "badge": "Enterprise Service",
+    "title": "Professional AI Social Media Solutions",
+    "titleBlue": "Powering Enterprise Marketing Success",
+    "subtitle": "Enterprise AI marketing transformation requires not just tools, but solid infrastructure. AI ToEarn provides a reliable platform to distribute AI content creation capabilities across multiple departments for unparalleled marketing efficiency."
+  },
+  "statsSection": {
+    "stats": {
+      "users": {
+        "number": "50K+",
+        "label": "Users"
+      },
+      "platforms": {
+        "number": "15+",
+        "label": "Social Platforms"
+      },
+      "countries": {
+        "number": "100+",
+        "label": "Countries"
+      },
+      "content": {
+        "number": "5M+",
+        "label": "Content Published"
+      }
+    },
+    "testimonial": {
+      "quote": "In today's highly competitive content marketing landscape, rapid validation and creation tools are not just helpful—they're essential for survival. For marketing companies like ours, AI ToEarn provides indispensable value in this AI frontier.",
+      "author": "John Smith",
+      "title": "Content Operations Director at Leading MCN Agency"
+    },
+    "caseStudies": {
+      "timeSaved": {
+        "title": "Estimated annual content creation time saved",
+        "number": "50,000 hours"
+      },
+      "aiAssistant": {
+        "title": "AI Marketing Assistant: Serving 500+ enterprise clients with cross-platform content distribution"
+      }
+    }
+  },
+  "communitySection": {
+    "badge": "Community Ecosystem",
+    "title": "Join Our",
+    "titleBlue": "Active Creator Community",
+    "subtitle": "AI ToEarn is powered by a global community of AI content creators. Join us to explore the infinite boundaries of AI content marketing.",
+    "buttons": {
+      "wechat": "WeChat Group",
+      "community": "Creator Community"
+    },
+    "stats": {
+      "downloads": {
+        "number": "200K+",
+        "label": "Downloads"
+      },
+      "members": {
+        "number": "15K",
+        "label": "Community Members"
+      },
+      "creators": {
+        "number": "500+",
+        "label": "Active Creators"
+      }
+    }
+  },
+  "footer": {
+    "resources": {
+      "title": "Resources",
+      "links": {
+        "docs": "Documentation",
+        "blog": "Blog",
+        "education": "Education",
+        "partner": "Partners",
+        "support": "Support",
+        "roadmap": "Roadmap"
+      }
+    },
+    "company": {
+      "title": "Company",
+      "links": {
+        "talk": "Contact Us",
+        "terms": "Terms of Service",
+        "privacy": "Privacy Policy",
+        "cookies": "Cookie Settings",
+        "data": "Data Protection Agreement",
+        "marketplace": "Marketplace Agreement",
+        "brand": "Brand Guidelines"
+      }
+    },
+    "description": "AI ToEarn one-stop social media management platform solution, from creative inspiration to content creation, from content distribution to content interaction management",
+    "social": {
+      "github": "GitHub",
+      "discord": "Discord",
+      "youtube": "YouTube",
+      "linkedin": "LinkedIn",
+      "twitter": "Twitter"
+    },
+    "bigText": "Let's Use AI To",
+    "copyright": "© 2025 AITOEARN, Corp.",
+    "tagline": "",
+    "dataDeletion": {
+      "title": "Data Deletion Instructions",
+      "prelaunch": "Our application is currently in pre-launch phase and does not store real user data. If you have interacted with our test systems, contact us for data removal.",
+      "standardTitle": "Standard Procedure (Post-Launch):",
+      "standardSteps": [
+        "Log in to your AiToEarn account",
+        "Navigate to Settings > Privacy", 
+        "Click \"Request Account Deletion\"",
+        "Confirmation will be sent to your registered email"
+      ],
+      "contactTitle": "Contact for Assistance:",
+      "contactEmail": "Email: metat@aitoearning.com (Pre-launch inquiries only)"
+    }
+  }
+} 

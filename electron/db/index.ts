@@ -20,6 +20,8 @@ import { AutoRunRecordModel } from './models/autoRunRecord';
 import { ImgTextModel } from './models/imgText';
 import { ReplyCommentRecordModel } from './models/replyCommentRecord';
 import { InteractionRecordModel } from './models/interactionRecord';
+import { AccountGroupModel } from './models/accountGroup';
+import { defaultAccountGroupId } from '../../commont/AccountEnum';
 
 const configPath = app.getPath('userData');
 const database = path.join(configPath, 'database.sqlite');
@@ -40,10 +42,27 @@ export const AppDataSource = new DataSource({
     ImgTextModel,
     ReplyCommentRecordModel,
     InteractionRecordModel,
+    AccountGroupModel,
   ], // 实体或模型表
   migrations: Object.values(migrations), // 迁移类
   migrationsRun: true, // 确保在连接时自动运行迁移
 });
+
+// 数据库默认数据添加
+async function sqliteDefaultDataInit() {
+  // 添加用户组 【默认列表】
+  const accountGroupRepository = AppDataSource.getRepository(AccountGroupModel);
+  const accountGroup = await accountGroupRepository.findOne({
+    where: { id: defaultAccountGroupId },
+  });
+  if (!accountGroup) {
+    await accountGroupRepository.save({
+      id: defaultAccountGroupId,
+      name: '默认列表',
+      rank: 0,
+    });
+  }
+}
 
 /**
  * 初始化sqlite3数据库
@@ -52,6 +71,7 @@ export async function initSqlite3Db() {
   if (!AppDataSource.isInitialized) {
     try {
       await AppDataSource.initialize();
+      await sqliteDefaultDataInit();
       // await AppDataSource.runMigrations(); // 上面已经有自动迁移
       return true;
     } catch (error) {

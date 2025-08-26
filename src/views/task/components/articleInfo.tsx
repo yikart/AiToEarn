@@ -1,5 +1,5 @@
 import { Button, Modal, Tag, Divider, Row, Col, message } from 'antd';
-import { Task, TaskStatusName, TaskTypeName, TaskArticle } from '@@/types/task';
+import { Task, TaskTypeName, TaskArticle } from '@@/types/task';
 import { PubType } from '@@/publish/PublishEnum';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { taskApi } from '@/api/task';
@@ -9,11 +9,10 @@ import {
   TeamOutlined,
   TagOutlined,
   DollarOutlined,
-  FileTextOutlined,
   CopyOutlined,
 } from '@ant-design/icons';
 import ChooseAccountModule from '@/views/publish/components/ChooseAccountModule/ChooseAccountModule';
-import { AccountType } from '@@/AccountEnum';
+import { PlatType } from '@@/AccountEnum';
 
 const FILE_BASE_URL = import.meta.env.VITE_APP_FILE_HOST;
 
@@ -51,27 +50,7 @@ const Com = forwardRef<TaskInfoRef, TaskInfoProps>((props: any, ref) => {
   /**
    * 接受任务
    */
-  async function taskApply() {
-    if (!taskInfo) return;
-
-    try {
-      const res: any = await taskApi.taskApply<TaskArticle>(taskInfo?._id);
-      if (res.code === 0 && res.data) {
-        setTaskRecord(res.data);
-        message.success('任务接受成功！');
-        setIsModalOpen(false);
-        setChooseAccountOpen(true);
-
-        if (onTaskApplied && typeof onTaskApplied === 'function') {
-          onTaskApplied();
-        }
-      } else {
-        message.error(res.msg || '接受任务失败，请稍后再试?');
-      }
-    } catch (error) {
-      message.error('接受任务失败，请稍后再试');
-    }
-  }
+  async function taskApply() {}
 
   /**
    * 完成任务
@@ -123,7 +102,7 @@ const Com = forwardRef<TaskInfoRef, TaskInfoProps>((props: any, ref) => {
         platChooseProps={{
           choosedAccounts: accountListChoose,
           pubType: PubType.ARTICLE,
-          allowPlatSet: new Set([AccountType.Douyin]),
+          allowPlatSet: new Set([PlatType.Douyin]),
         }}
         onPlatConfirm={async (aList) => {
           console.log('账号:', aList);
@@ -239,14 +218,18 @@ const Com = forwardRef<TaskInfoRef, TaskInfoProps>((props: any, ref) => {
                     <h3 className={styles.sectionTitle}>文章详情</h3>
                     <div className={styles.articleInfo}>
                       <div className={styles.articleInfoItem}>
-                        <span className={styles.articleInfoLabel}>文章标题:</span>
+                        <span className={styles.articleInfoLabel}>
+                          文章标题:
+                        </span>
                         <span className={styles.articleInfoValue}>
                           {taskInfo.dataInfo.title || '未知'}
                         </span>
                       </div>
 
                       <div className={styles.articleInfoItem}>
-                        <span className={styles.articleInfoLabel}>文章描述:</span>
+                        <span className={styles.articleInfoLabel}>
+                          文章描述:
+                        </span>
                         <span className={styles.articleInfoValue}>
                           {taskInfo.dataInfo.desc || '暂无描述'}
                         </span>
@@ -285,4 +268,4 @@ const Com = forwardRef<TaskInfoRef, TaskInfoProps>((props: any, ref) => {
 
 Com.displayName = 'ArticleInfo';
 
-export default Com; 
+export default Com;

@@ -23,17 +23,19 @@ import { PublishVideoResult } from '../../module';
 import { kwaiPub } from '../../../../plat/Kwai';
 import { IRequestNetResult } from '../../../../plat/requestNet';
 import { IKwaiUserInfoResponse } from '../../../../plat/Kwai/kwai.type';
-import { AccountType } from '../../../../../commont/AccountEnum';
+import { PlatType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
 import dayjs from 'dayjs';
 import { VideoModel } from '../../../../db/models/video';
-import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
-import { PubStatus } from '../../../../db/models/pubRecord';
+import {
+  PubStatus,
+  VisibleTypeEnum,
+} from '../../../../../commont/publish/PublishEnum';
 import KwaiPubListener from './KwaiPubListener';
 
 export class Kwai extends PlatformBase {
   constructor() {
-    super(AccountType.KWAI);
+    super(PlatType.KWAI);
   }
 
   /**
@@ -87,6 +89,7 @@ export class Kwai extends PlatformBase {
     return new Promise(async (resolve) => {
       const result = await kwaiPub
         .pubVideo({
+          proxy: params.proxyIp || '',
           publishTime: params.timingTime?.getTime(),
           mentions: params.mentionedUserInfo.map((v) => v.label),
           topics: params.topics || [],
@@ -143,13 +146,12 @@ export class Kwai extends PlatformBase {
   async getDashboard(account: AccountModel, time: string[] = []) {
     const res = await kwaiPub.getHomeOverview(JSON.parse(account.loginCookie));
     const dashboard: DashboardData[] = [];
-    const startTime = new Date(time[0]).getTime()-86400001;
-    const endTime = new Date(time[1]).getTime()+1;
+    const startTime = new Date(time[0]).getTime() - 86400001;
+    const endTime = new Date(time[1]).getTime() + 1;
 
     res?.data?.data?.basicData?.map((v1, i1) => {
       v1.trendData.map((v2, i2) => {
         const currTime = dayjs(v2.date, 'YYYYMMDD').valueOf();
-        console.log('currTime', currTime)
         if (currTime >= startTime && currTime <= endTime) {
           if (!dashboard[i2])
             dashboard[i2] = {
@@ -483,14 +485,18 @@ export class Kwai extends PlatformBase {
     return false;
   }
 
-  async loginCheck(account: AccountModel): Promise<boolean> {
+  async loginCheck(account: AccountModel) {
+    let online = false;
     try {
       const res = await kwaiPub.getAccountInfo(JSON.parse(account.loginCookie));
-      return !(res?.status !== 200 || !res?.data?.data?.userInfo?.userId);
+      online = !(res?.status !== 200 || !res?.data?.data?.userInfo?.userId);
     } catch (e) {
       console.warn('快手登录状态检测错误：', e);
-      return false;
+      online = false;
     }
+    return {
+      online,
+    };
   }
 
   async getTopics({

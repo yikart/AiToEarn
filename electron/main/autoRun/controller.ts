@@ -148,12 +148,15 @@ export class AutoRunController {
     if (!tag) return false;
 
     EtEvent.emit(tag, item);
+
+    console.log('---- autoRunStart ----');
     return true;
   }
 
   // 每5分钟进行一次自动启动
   @Scheduled('*/1 * * * *', 'all_auto_run_start')
   async syncAllAutoRunStart() {
+    console.log('---- syncAllAutoRunStart ----');
     try {
       const userInfo = getUserInfo();
 

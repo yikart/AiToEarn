@@ -14,8 +14,8 @@ import {
   type CorrectQuery,
   type pubRecordListQuery,
 } from '../../global/table';
-import { PubRecordModel, PubStatus } from '../../db/models/pubRecord';
-import { PubType } from '../../../commont/publish/PublishEnum';
+import { PubRecordModel } from '../../db/models/pubRecord';
+import { PubStatus, PubType } from '../../../commont/publish/PublishEnum';
 import { VideoPubService } from './video/service';
 import { VideoModel } from '../../db/models/video';
 import platController from '../plat';

@@ -7,7 +7,11 @@
  */
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { TempModel } from './temp';
-import { AccountStatus, AccountType } from '../../../commont/AccountEnum';
+import {
+  AccountStatus,
+  PlatType,
+  XhsAccountAbnormal,
+} from '../../../commont/AccountEnum';
 
 @Entity({ name: 'account' })
 export class AccountModel extends TempModel {
@@ -19,11 +23,11 @@ export class AccountModel extends TempModel {
 
   @Column({
     type: 'varchar',
-    enum: AccountType,
+    enum: PlatType,
     nullable: true,
     comment: '平台类型',
   })
-  type!: AccountType;
+  type!: PlatType;
 
   @Column({ type: 'varchar', nullable: false, comment: '登录cookie' })
   loginCookie!: string;
@@ -93,6 +97,12 @@ export class AccountModel extends TempModel {
   @Column({ type: 'bigint', nullable: false, comment: '收益', default: 0 })
   income?: number;
 
+  // 账号异常状态，异常状态无法发视频
+  @Column({ type: 'json', nullable: true })
+  abnormalStatus?: {
+    [PlatType.Xhs]: XhsAccountAbnormal;
+  };
+
   // 登录状态，判断是否失效
   @Column({
     type: 'tinyint',
@@ -101,4 +111,13 @@ export class AccountModel extends TempModel {
     default: AccountStatus.USABLE,
   })
   status?: AccountStatus;
+
+  // 关联组
+  @Column({
+    type: 'int',
+    nullable: false,
+    comment: '关联组，与 AccountGroupModel表 id关联',
+    default: 1,
+  })
+  groupId!: number;
 }

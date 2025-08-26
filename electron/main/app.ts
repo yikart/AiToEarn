@@ -18,6 +18,7 @@ import { AppService } from './service';
 import { ReplyModule } from './reply/module';
 import { AutoRunModule } from './autoRun/module';
 import { InteractionModule } from './interaction/module';
+import { TracingModule } from './tracing/module';
 
 @Module({
   imports: [
@@ -30,13 +31,19 @@ import { InteractionModule } from './interaction/module';
     ReplyModule,
     AutoRunModule,
     InteractionModule,
+    TracingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class App {
   constructor() {
-    initSqlite3Db();
+    this._init();
+  }
+
+  async _init() {
+    // 初始化数据库
+    await initSqlite3Db();
   }
 }
 

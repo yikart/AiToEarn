@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-02-07 20:00:47
- * @LastEditTime: 2025-03-19 14:27:53
+ * @LastEditTime: 2025-04-24 14:30:42
  * @LastEditors: nevin
  * @Description:
  */
@@ -9,11 +9,11 @@ import { AccountModel } from '../../../db/models/account';
 import { PubItemBase } from './PubItemBase';
 import { PlatformBase } from '../PlatformBase';
 import { ImgTextModel } from '../../../db/models/imgText';
-import { PubStatus } from '../../../db/models/pubRecord';
 import { EtEvent } from '../../../global/event';
 import { PublishProgressRes } from './PubItemVideo';
 import windowOperate from '../../../util/windowOperate';
 import { SendChannelEnum } from '../../../../commont/UtilsEnum';
+import { PubStatus } from '../../../../commont/publish/PublishEnum';
 
 /**
  * 视频发布单条处理逻辑
@@ -31,9 +31,10 @@ export class PubItemImgText extends PubItemBase {
   }
 
   async publishImgText() {
-    const params = {
+    const params: ImgTextModel = {
       ...this.imgTextModel,
       cookies: JSON.parse(this.accountModel.loginCookie),
+      token: this.accountModel.token,
     };
     console.log('图文发布原始参数：', params);
     const publishVideoResult = await this.platform.imgTextPublish(params);
@@ -49,6 +50,7 @@ export class PubItemImgText extends PubItemBase {
     }
     // 发布进度
     const progressRes: PublishProgressRes = {
+      id: 1,
       progress: publishVideoResult.code === 0 ? -1 : 100,
       msg: '',
       account: this.accountModel,
@@ -66,6 +68,7 @@ export class PubItemImgText extends PubItemBase {
    * 更新图文记录
    */
   async uploadRecord() {
+    this.imgTextModel.proxyIp = undefined;
     EtEvent.emit('ET_PUBLISH_UPDATE_IMG_TEXT_PUL', this.imgTextModel);
   }
 }

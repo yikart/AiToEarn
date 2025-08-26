@@ -24,7 +24,7 @@ import {
   xiaohongshuService,
   XSLPlatformSettingType,
 } from '../../../../plat/xiaohongshu';
-import { AccountType } from '../../../../../commont/AccountEnum';
+import { PlatType } from '../../../../../commont/AccountEnum';
 import { AccountModel } from '../../../../db/models/account';
 import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
 import { CookieToString } from '../../../../plat/utils';
@@ -34,7 +34,7 @@ import { ImgTextModel } from '../../../../db/models/imgText';
 
 export class Xhs extends PlatformBase {
   constructor() {
-    super(AccountType.Xhs);
+    super(PlatType.Xhs);
   }
 
   /**
@@ -73,16 +73,27 @@ export class Xhs extends PlatformBase {
     }
   }
 
-  async loginCheck(account: AccountModel): Promise<boolean> {
+  async loginCheck(account: AccountModel) {
     try {
       const userInfo = await xiaohongshuService.getUserInfo(
         JSON.parse(account.loginCookie),
       );
-      return !!userInfo.authorId;
+      return {
+        online: !!userInfo.authorId,
+        account: {
+          avatar: userInfo.avatar,
+          nickname: userInfo.nickname,
+          fansCount: userInfo.fansCount,
+          abnormalStatus: {
+            [PlatType.Xhs]: userInfo.diagnosis_status,
+          },
+        },
+      };
     } catch (error) {
-      console.log('-----xhs loginCheck-- error', error);
-
-      return false;
+      console.error(error);
+      return {
+        online: false,
+      };
     }
   }
 
@@ -409,34 +420,34 @@ export class Xhs extends PlatformBase {
   ) {
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const ret = await xiaohongshuService.commentPost(cookie, dataId, content);
-    console.log('------ createCommentByOther xhs ---', ret);
+    // console.log('------ createCommentByOther xhs ---', ret);
     return ret;
   }
 
   async dianzanDyOther(
     account: AccountModel,
     dataId: string, // 作品ID
-  ): Promise<boolean> {
+  ): Promise<any> {
     console.log('------ dianzanDyOther3333', dataId);
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await xiaohongshuService.likeNote(cookie, dataId);
 
-    console.log('------ res', res);
+    console.log('------ res 小红书点赞...: ', res);
 
-    return !!res;
+    return res;
   }
 
   async shoucangDyOther(
     account: AccountModel,
     dataId: string, // 作品ID
-  ): Promise<boolean> {
-    console.log('------ dianzanDyOther5555', dataId);
+  ): Promise<any> {
+    console.log('------ shoucangDyOther5555', dataId);
     const cookie: CookiesType = JSON.parse(account.loginCookie);
     const res = await xiaohongshuService.shoucangNote(cookie, dataId);
 
-    console.log('------ res', res);
+    // console.log('------ res', res);
 
-    return !!res;
+    return res;
   }
 
   async replyCommentByOther(
@@ -590,6 +601,7 @@ export class Xhs extends PlatformBase {
 
   pubParamsParse(params: WorkDataModel): XSLPlatformSettingType {
     return {
+      proxy: params.proxyIp || '',
       cover: params.coverPath || '',
       desc: params.desc,
       title: params.title,

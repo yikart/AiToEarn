@@ -13,18 +13,21 @@ import PubAccountDetModule, {
 } from '../../components/PubAccountDetModule/PubAccountDetModule';
 import { PublishProgressRes } from '../../../../../electron/main/plat/pub/PubItemVideo';
 import PubProgressModule from '../../components/PubProgressModule/PubProgressModule';
-import { onImgTextPublishProgress } from '../../../../icp/receiveMsg';
+import { onImgTextPublishProgress } from '@/icp/receiveMsg';
 import {
   icpCreateImgTextPubRecord,
   icpCreatePubRecord,
   icpPubImgText,
-} from '../../../../icp/publish';
-import { PubType } from '../../../../../commont/publish/PublishEnum';
-import { useAccountStore } from '../../../../store/commont';
+} from '@/icp/publish';
+import { PubType } from '@@/publish/PublishEnum';
+import { useCommontStore } from '@/store/commont';
 import { useNavigate } from 'react-router-dom';
-import { usePubStroe } from '../../../../store/pubStroe';
+import { usePubStroe } from '@/store/pubStroe';
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import { AccountPlatInfoMap } from '../../../account/comment';
+import { signInApi } from '@/api/signIn';
+import { toolsApi } from '@/api/tools';
+import { IImageAccountItem } from '@/views/publish/children/imagePage/imagePage.type';
+import { sensitivityLoading } from '@/utils';
 
 const { confirm } = Modal;
 
@@ -58,7 +61,7 @@ export default function Page() {
         id: v.account.id,
         account: v.account,
         pubParams: v.pubParams,
-      };
+      } as any;
     }),
     {
       moreWranVerifyCallback(item, wranParamsMapTemp, platInfo) {
@@ -84,6 +87,8 @@ export default function Page() {
     Map<number, PublishProgressRes>
   >(new Map());
   const navigate = useNavigate();
+  // 敏感词检测
+  const [sensitiveDetLoading, setSensitiveDetLoading] = useState(false);
 
   useEffect(() => {
     setErrParamsMap(errParamsMap, warnParamsMap);
@@ -123,9 +128,12 @@ export default function Page() {
     };
   }, []);
 
+  // 发布
   const pubCore = async () => {
     setPubProgressModuleOpen(true);
     setLoading(true);
+    await signInApi.createSignInRecord();
+
     const err = () => {
       setLoading(false);
       message.error('网络繁忙，请稍后重试！');
@@ -158,7 +166,7 @@ export default function Page() {
     setPubProgressModuleOpen(false);
     usePubStroe.getState().clearImgTextPubSave();
     const successList = okRes.filter((v) => v.code === 1);
-    useAccountStore.getState().notification!.open({
+    useCommontStore.getState().notification!.open({
       message: '发布结果',
       description: (
         <>
@@ -184,6 +192,7 @@ export default function Page() {
     });
   };
 
+  // 进度
   const pubProgressData = useMemo(() => {
     return imageAccounts.map((v) => {
       const progress = pubProgressMap.get(v.account!.id);
@@ -195,18 +204,33 @@ export default function Page() {
     });
   }, [pubProgressMap, imageAccounts]);
 
+  // 一键发布点击
   const pubClick = () => {
     pubAccountDetModuleRef.current!.startDet();
     setLoading(true);
   };
+
+  const sensitiveDetCore = async (
+    content: string,
+    accountItem: IImageAccountItem,
+  ) => {
+    const res = await toolsApi.textModeration(content);
+
+    return {
+      sensitive: res !== 'Normal',
+      accountItem,
+    };
+  };
+
   return (
     <div className={styles.image}>
       <PubProgressModule
         open={pubProgressModuleOpen}
-        pubProgressData={pubProgressData}
+        pubProgressData={pubProgressData as any}
         onClose={() => setPubProgressModuleOpen(false)}
       />
       <PubAccountDetModule
+        isCheckProxy={true}
         ref={pubAccountDetModuleRef}
         accounts={imageAccounts
           .map((v) => v.account)
@@ -239,8 +263,65 @@ export default function Page() {
           okText="确认"
           cancelText="取消"
         >
-          <Button style={{ marginRight: '20px' }}>一键清空</Button>
+          <Button>一键清空</Button>
         </Popconfirm>
+        <Button
+          loading={sensitiveDetLoading}
+          color="danger"
+          variant="solid"
+          disabled={imageAccounts.length === 0 || images.length === 0}
+          onClick={async () => {
+            setSensitiveDetLoading(true);
+            const core = async () => {
+              const tasks: Promise<{
+                // 作品
+                accountItem: IImageAccountItem;
+                // 是否敏感 true=敏感 false=正常
+                sensitive: boolean;
+              }>[] = [];
+              // 如果检测内容重复不会进行检测
+              const contentSet = new Set<string>();
+
+              imageAccounts.map((v) => {
+                const content = `
+                ${v.pubParams.title}
+                ${v.pubParams.describe}
+              `;
+                if (content.trim() !== '' && !contentSet.has(content)) {
+                  contentSet.add(content);
+                  tasks.push(sensitiveDetCore(content, v));
+                }
+              });
+              return await Promise.all(tasks);
+            };
+
+            const taskRes = await Promise.all([core(), sensitivityLoading()]);
+            const res = taskRes[0];
+
+            setSensitiveDetLoading(false);
+
+            if (res.length === 0) return message.success('检测正常');
+
+            if (res.every((v) => !v.sensitive)) {
+              message.success('检测正常');
+              return;
+            }
+            for (const { sensitive, accountItem } of res) {
+              if (sensitive) {
+                message.warning('检测到此条作品存在敏感信息！');
+                setActivePlat(accountItem.account.type);
+                const platActiveAccountMap = new Map(
+                  useImagePageStore.getState().platActiveAccountMap,
+                );
+                platActiveAccountMap.set(accountItem.account.type, accountItem);
+                setPlatActiveAccountMap(platActiveAccountMap);
+                break;
+              }
+            }
+          }}
+        >
+          内容安全检测
+        </Button>
         <Button
           loading={loading}
           type="primary"

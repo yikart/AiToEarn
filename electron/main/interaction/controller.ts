@@ -1,7 +1,7 @@
 /*
  * @Author: nevin
  * @Date: 2025-01-20 22:02:54
- * @LastEditTime: 2025-03-24 09:34:03
+ * @LastEditTime: 2025-04-27 09:51:25
  * @LastEditors: nevin
  * @Description: interaction Interaction 互动
  */
@@ -9,7 +9,7 @@ import windowOperate from '../../util/windowOperate';
 import { AutoRunModel, AutoRunType } from '../../db/models/autoRun';
 import { AccountService } from '../account/service';
 import { AutoRunService } from '../autoRun/service';
-import { Controller, Et, Icp, Inject } from '../core/decorators';
+import { Controller, Et, Icp, Inject, Scheduled } from '../core/decorators';
 import { InteractionService } from './service';
 import { SendChannelEnum } from '../../../commont/UtilsEnum';
 import type { WorkData } from '../plat/plat.type';
@@ -17,7 +17,9 @@ import { AutorWorksInteractionScheduleEvent } from '../../../commont/types/inter
 import { AutoInteractionCache } from './cacheData';
 import { getUserInfo } from '../user/comment';
 import type { CorrectQuery } from '../../global/table';
-import { AccountType } from '../../../commont/AccountEnum';
+import { PlatType } from '../../../commont/AccountEnum';
+import { taskApi } from '../api/taskApi';
+import platController from '../plat';
 
 @Controller()
 export class InteractionController {
@@ -48,7 +50,7 @@ export class InteractionController {
     const res = await this.interactionService.autorInteraction(
       account,
       [works],
-      option,
+      option as any,
       (e: {
         tag: AutorWorksInteractionScheduleEvent;
         status: -1 | 0 | 1;
@@ -77,6 +79,7 @@ export class InteractionController {
       likeProb?: any; // 点赞概率
       collectProb?: any; // 收藏概率
       commentProb?: any; // 评论概率
+      commentType: any; // 评论类型
     },
   ): Promise<any> {
     const account = await this.accountService.getAccountById(accountId);
@@ -155,7 +158,7 @@ export class InteractionController {
     page: CorrectQuery,
     query: {
       accountId?: number;
-      type?: AccountType;
+      type?: PlatType;
     },
   ): Promise<any> {
     const userInfo = getUserInfo();
@@ -175,5 +178,71 @@ export class InteractionController {
     event: Electron.IpcMainInvokeEvent,
   ): Promise<any | null> {
     return AutoInteractionCache.getInfo();
+  }
+
+  // 自动互动, 每10秒进行
+  @Scheduled('0 * * * * *', 'autoHudong')
+  async zidongHudong() {
+    // return;
+    console.log('自动互动 ing ...');
+    const res = await taskApi.getActivityTask();
+    console.log('---- getActivityTask ----', res);
+    const accountList = await this.accountService.getAccounts();
+    // console.log('---- accountList ----', accountList);
+    if (res.items.length > 0) {
+      for (const item of res.items) {
+        for (const accountType of item.accountTypes) {   
+          let myAccountTypeList = [];
+          for (const account of accountList) {
+            if (account.type === accountType && account.status === 0) {
+              myAccountTypeList.push(account);
+              // 申请任务
+              try {
+                const applyTaskRes = await taskApi.applyTask(item.id || item._id, {
+                  account: account.account,
+                  uid: account.uid,
+                  accountType: account.type,
+                });
+                console.log('---- applyTaskRes ----', applyTaskRes);
+                if (applyTaskRes.data.data?.data) {
+                  item.taskId = applyTaskRes.data.data?.data.id;
+                }
+              } catch (error) {
+                console.error('申请任务失败:', error);
+              }
+            }
+          }
+          // console.log('---- myAccountTypeList ----', myAccountTypeList);
+  
+          for (const account of myAccountTypeList) {
+            // console.log('---- account ----', account);
+            console.log('---- item.dataInfo?.commentContent ----', item.dataInfo?.commentContent);
+            const autorInteractionList = this.interactionService.getAutorInteractionList(account, [{
+              author: {id: item.dataInfo?.authorId || ''} ,
+                data : {id: item.dataInfo.worksId, xsec_token: item.dataInfo?.xsec_token || ''},
+                dataId : item.dataInfo.worksId,
+                option : {xsec_token: item.dataInfo?.xsec_token || ''},
+                title : item.title,
+            }], {
+              accountType: accountType,
+              commentContent: item.dataInfo?.commentContent,
+            });
+
+            // 提交完成任务
+            console.log('---- autorInteractionList ----', autorInteractionList);
+            let submitTasStr = '作品'+ item.dataInfo.worksId + '账户'+ account.nickname + '账户ID'+ account.uid;
+            console.log('item.taskId', item.taskId)
+            if (item.taskId) {
+              const submitTaskRes = await taskApi.submitTask(item.taskId, {
+                submissionUrl: submitTasStr,
+                screenshotUrls: [],
+                qrCodeScanResult: submitTasStr,
+              });
+            }
+            // console.log('---- submitTaskRes ----', submitTaskRes);
+          }
+        }
+      }
+    }
   }
 }

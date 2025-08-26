@@ -1,0 +1,107 @@
+{
+  "name": "aitoearn-other",
+  "version": "0.0.1",
+  "private": true,
+  "description": "",
+  "author": "",
+  "license": "UNLICENSED",
+  "scripts": {
+    "prepare": "mkdir -p .git/hooks && echo \"echo '{\\\"*.ts\\\":[\\\"eslint --fix\\\"]}' | npx lint-staged -c -\" > .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit",
+    "build": "nest build",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "start": "nest start",
+    "dev": "nest start --watch -- -c config/dev.config.js",
+    "dev:local": "nest start --watch -- -c config/local.config.js",
+    "debug": "nest start --debug --watch",
+    "prod": "node dist/main",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "jest --config ./test/jest-e2e.json"
+  },
+  "dependencies": {
+    "@alexlau811/pino-cloudwatch": "^0.10.0",
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/core": "^11.0.1",
+    "@nestjs/microservices": "^11.1.2",
+    "@nestjs/mongoose": "^11.0.3",
+    "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.2.0",
+    "axios": "^1.9.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "commander": "^14.0.0",
+    "dayjs": "^1.11.13",
+    "generative-bayesian-network": "^2.1.69",
+    "googleapis": "^150.0.1",
+    "ioredis": "^5.6.1",
+    "lodash": "^4.17.21",
+    "mongodb": "^6.16.0",
+    "mongoose": "^8.15.0",
+    "nats": "^2.29.3",
+    "nest-typed-config": "^2.10.1",
+    "nestjs-pino": "^4.4.0",
+    "nestjs-zod": "^4.3.1",
+    "pino": "^9.7.0",
+    "pino-http": "^10.5.0",
+    "pino-pretty": "^13.1.1",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^4.16.2",
+    "@nestjs/cli": "^11.0.0",
+    "@nestjs/schematics": "^11.0.0",
+    "@nestjs/testing": "^11.0.1",
+    "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.14",
+    "@types/lodash": "^4.17.20",
+    "@types/node": "^22.10.7",
+    "@types/supertest": "^6.0.2",
+    "eslint": "^9.18.0",
+    "eslint-plugin-format": "^1.0.1",
+    "globals": "^16.0.0",
+    "jest": "^29.7.0",
+    "lint-staged": "^16.1.2",
+    "prettier": "^3.4.2",
+    "source-map-support": "^0.5.21",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5",
+    "ts-loader": "^9.5.2",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.7.3"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@scarf/scarf",
+      "@swc/core"
+    ]
+  },
+  "lint-staged": {
+    "*.{js,mjs,ts}": [
+      "eslint --fix"
+    ]
+  }
+}

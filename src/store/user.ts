@@ -36,6 +36,7 @@ export const useUserStore = createPersistStore(
 
       // 退出登录
       logout() {
+        console.log('登出！');
         this.clearLoginStatus();
         if (window.location.href !== 'login') {
           router.navigate('/login');
@@ -49,7 +50,6 @@ export const useUserStore = createPersistStore(
           return;
         }
         const res = await userApi.getUserInfo();
-        console.log('user：', res);
         if (!res) return;
         set({ userInfo: res });
         return res;

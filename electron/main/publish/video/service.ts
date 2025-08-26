@@ -10,7 +10,7 @@ import { Injectable } from '../../core/decorators';
 import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { CorrectQuery, backPageData } from '../../../global/table';
 import { getUserInfo } from '../../user/comment';
-import { AccountType } from '../../../../commont/AccountEnum';
+import { PlatType } from '../../../../commont/AccountEnum';
 
 @Injectable()
 export class VideoPubService {
@@ -89,7 +89,7 @@ export class VideoPubService {
   }
 
   // 获取不同类型的视频发布的总数
-  async getVideoPulTypeCount(userId: string, type?: AccountType) {
+  async getVideoPulTypeCount(userId: string, type?: PlatType) {
     return await this.videoRepository.count({
       where: { userId: userId, type: type },
     });

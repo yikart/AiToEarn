@@ -1,0 +1,226 @@
+{
+  "name": "publish",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "publish",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "skKey",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "title",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "desc",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "type",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "video"
+                  },
+                  {
+                    "option": "article"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "coverUrl",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "videoUrl"
+            },
+            {
+              "fieldLabel": "imgUrlList"
+            },
+            {
+              "fieldLabel": "publishTime",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "topics"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -464,
+        -16
+      ],
+      "id": "b5fbc2da-dab0-4a87-b576-23fe4cd4a26b",
+      "name": "On form submission",
+      "webhookId": "e2f4d383-664a-4dc6-b567-2be2a2589077"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -16
+      ],
+      "id": "0a5ea742-25e7-44fa-9f39-ae0204fdaa12",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "url": "https://mcp.aitoearn.cn/plugin/account/list",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "sk-key",
+              "value": "={{ $json.skKey }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -256,
+        -16
+      ],
+      "id": "f3100c99-ea4d-4ce5-85e4-6758511cb96d",
+      "name": "get acount list"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://mcp.aitoearn.cn/plugin/publish/create",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "sk-key",
+              "value": "={{ $('On form submission').item.json.skKey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "title",
+              "value": "={{ $('On form submission').item.json.title }}"
+            },
+            {
+              "name": "desc",
+              "value": "={{ $('On form submission').item.json.desc }}"
+            },
+            {
+              "name": "accountId",
+              "value": "={{ $json.accountId }}"
+            },
+            {
+              "name": "type",
+              "value": "={{ $('On form submission').item.json.type }}"
+            },
+            {
+              "name": "coverUrl",
+              "value": "={{ $('On form submission').item.json.coverUrl }}"
+            },
+            {
+              "name": "videoUrl",
+              "value": "={{ $('On form submission').item.json.videoUrl }}"
+            },
+            {
+              "name": "imgUrlList",
+              "value": "={{ $('On form submission').item.json.imgUrlList }}"
+            },
+            {
+              "name": "publishTime",
+              "value": "={{ $('On form submission').item.json.submittedAt }}"
+            },
+            {
+              "name": "topics",
+              "value": "={{ $('On form submission').item.json.topics }}"
+            },
+            {
+              "name": "flowId",
+              "value": "={{ $workflow.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        160,
+        -16
+      ],
+      "id": "0e3f1d94-7822-4c90-85e8-02784709e855",
+      "name": "publish"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "get acount list",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "publish",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get acount list": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "publish": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "11829de1-0a34-4aa0-a39e-de808709ca2f",
+  "meta": {
+    "instanceId": "9376d2247e486793adc31b3d8a30547dab00f241f637b85644b85eba587538ad"
+  },
+  "id": "UbMSJheX1Rrh2ibe",
+  "tags": []
+}

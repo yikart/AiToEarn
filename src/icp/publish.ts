@@ -9,8 +9,8 @@
 import { CorrectQuery, CorrectResponse } from '@/global/table';
 import { PubRecordModel } from '@/views/publish/comment';
 import { VideoPul } from '@/views/publish/children/videoPage/comment';
-import { AccountType } from '../../commont/AccountEnum';
-import { PubType } from '../../commont/publish/PublishEnum';
+import { PlatType } from '../../commont/AccountEnum';
+import { PubStatus, PubType } from '../../commont/publish/PublishEnum';
 import {
   type IGetLocationDataParams,
   IGetLocationResponse,
@@ -35,6 +35,14 @@ import { PublishVideoResult } from '../../electron/main/plat/module';
 import { ImgTextModel } from '../../electron/db/models/imgText';
 import type { pubRecordListQuery } from '../../electron/global/table';
 
+export const PubStatusCnMap = {
+  [PubStatus.UNPUBLISH]: '未发布',
+  [PubStatus.RELEASED]: '已发布',
+  [PubStatus.FAIL]: '发布失败',
+  [PubStatus.PartSuccess]: '部分成功',
+  [PubStatus.Audit]: '审核中',
+};
+
 // 创建发布记录
 export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
   console.log('创建发布记录：', pubRecord);
@@ -43,6 +51,7 @@ export async function icpCreatePubRecord(pubRecord: Partial<PubRecordModel>) {
     {
       ...pubRecord,
       id: undefined,
+      status: PubStatus.UNPUBLISH,
     },
   );
   return res;
@@ -53,6 +62,9 @@ export async function icpCreateImgTextPubRecord(
   pubRecord: Partial<ImgTextModel>,
 ) {
   const platInfo = AccountPlatInfoMap.get(pubRecord.type!)!;
+  const { topics, cleanedString } = parseTopicString(pubRecord.desc || '');
+  pubRecord.topics = [...new Set(pubRecord.topics?.concat(topics))];
+  pubRecord.desc = cleanedString;
   pubRecord.imagesPath = [...pubRecord.imagesPath!].splice(
     0,
     platInfo.commonPubParamsConfig.imgTextConfig?.imagesMax,
@@ -179,7 +191,7 @@ export async function icpGetPubRecordItemList(page: CorrectQuery, id: number) {
  */
 export async function icpGetVideoPulList(
   page: CorrectQuery,
-  query: { type?: AccountType; time?: [string, string]; title?: string },
+  query: { type?: PlatType; time?: [string, string]; title?: string },
 ) {
   const res: CorrectResponse<VideoPul> = await window.ipcRenderer.invoke(
     'ICP_PUBLISH_GET_VIDEO_PUL_LIST',
@@ -199,7 +211,7 @@ export async function icpGetVideoPulInfo(id: number) {
 }
 
 // 获取不同类型的视频发布的总数
-export async function icpGetVideoPulTypeCount(type?: AccountType) {
+export async function icpGetVideoPulTypeCount(type?: PlatType) {
   const res: number = await window.ipcRenderer.invoke(
     'ICP_PUBLISH_GET_VIDEO_PUL_TYPE_COUNT',
     type,

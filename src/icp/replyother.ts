@@ -5,7 +5,7 @@
  * @LastEditors: nevin
  * @Description: 评论他人
  */
-import { AccountType } from '@@/AccountEnum';
+import { PlatType } from '@@/AccountEnum';
 export type WorkData = {
   dataId: string;
   readCount?: number;
@@ -210,7 +210,7 @@ export async function icpInteractionOneData(
 export async function icpCreateInteractionOneKey(
   accountId: number,
   worksList: WorkData[],
-  option: any
+  option: any,
 ) {
   const res: boolean = await window.ipcRenderer.invoke(
     'ICP_INTERACTION_ONE_KEY',
@@ -261,7 +261,7 @@ export async function ipcGetInteractionRecordList(
   },
   query: {
     accountId?: number;
-    type?: AccountType;
+    type?: PlatType;
   },
 ) {
   const res: string = await window.ipcRenderer.invoke(

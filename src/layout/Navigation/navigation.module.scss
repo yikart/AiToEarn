@@ -9,6 +9,29 @@
   :global {
     .navigation-userinfo {
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      .navigation-line {
+        width: 1px;
+        height: 15px;
+        background: #fff;
+        margin: 0 15px;
+      }
+    }
+
+    .navigation-icon {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      cursor: pointer;
+      .anticon {
+        font-size: var(--fs-xl);
+      }
+      &-text {
+        font-size: var(--fs-xs);
+      }
     }
 
     .navigation_drag {
@@ -41,6 +64,7 @@
         &-text {
           display: block;
           margin-top: 3px;
+          white-space: nowrap;
         }
         &-item {
           .anticon  {

@@ -1,0 +1,15 @@
+// 定义一个 SCSS 混合，包含选择器和样式
+@mixin table-flex-container-with-selectors {
+  .ant-table-wrapper,
+  .ant-spin-nested-loading,
+  .ant-table,
+  .ant-table-container,
+  .ant-table-body,
+  .ant-spin-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+    max-height: none !important;
+  }
+}

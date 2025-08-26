@@ -7,7 +7,7 @@
  */
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { TempModel } from './temp';
-import { AccountType } from '../../../commont/AccountEnum';
+import { PlatType } from '../../../commont/AccountEnum';
 
 @Entity({ name: 'interactionRecord' })
 export class InteractionRecordModel extends TempModel {
@@ -22,17 +22,20 @@ export class InteractionRecordModel extends TempModel {
 
   @Column({
     type: 'varchar',
-    enum: AccountType,
+    enum: PlatType,
     nullable: true,
     comment: '平台类型',
   })
-  type!: AccountType;
+  type!: PlatType;
 
   @Column({ type: 'varchar', nullable: false, comment: '作品Id' })
   worksId!: string;
 
   @Column({ type: 'varchar', nullable: true, comment: '作品标题' })
   worksTitle?: string;
+
+  @Column({ type: 'varchar', nullable: true, comment: '评论备注' })
+  commentRemark?: string;
 
   @Column({ type: 'varchar', nullable: true, comment: '封面' })
   worksCover?: string;

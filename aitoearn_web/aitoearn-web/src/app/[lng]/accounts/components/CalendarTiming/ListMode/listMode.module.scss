@@ -1,0 +1,120 @@
+.listMode {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 10px 15px 15px 15px;
+  box-sizing: border-box;
+
+  .listHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--grayColor8);
+
+    .listHeaderLeft {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      h3 {
+        margin: 0;
+        font-size: var(--fs-lg);
+        font-weight: 600;
+        color: var(--textColor);
+      }
+
+      .recordCount {
+        font-size: var(--fs-sm);
+        color: var(--grayColor6);
+      }
+    }
+
+    .listHeaderRight {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .listContent {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 5px;
+
+    .recordList {
+      background: transparent;
+
+      :global {
+        .ant-list-item {
+          padding: 12px 8px;
+          border-bottom: 1px solid var(--grayColor8);
+          transition: all 0.2s ease;
+          max-width: 100%;
+          box-sizing: border-box;
+
+          &:hover {
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 8px;
+            padding: 12px 4px;
+            margin: 0 -4px;
+            box-sizing: border-box;
+          }
+
+          &:last-child {
+            border-bottom: none;
+          }
+        }
+
+        .ant-list-item-actions {
+          margin-left: 12px;
+          flex-shrink: 0;
+        }
+      }
+    }
+
+    .emptyState {
+      margin-top: 60px;
+    }
+  }
+
+  .listItem {
+    .timeInfo {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      min-width: 60px;
+
+      .date {
+        font-size: var(--fs-sm);
+        color: var(--grayColor6);
+        font-weight: 500;
+      }
+
+      .time {
+        font-size: var(--fs-lg);
+        color: var(--textColor);
+        font-weight: 600;
+        margin-top: 2px;
+      }
+    }
+
+    .recordWrapper {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+    }
+  }
+
+  .skeletonItem {
+    padding: 12px 2px;
+    border-bottom: 1px solid var(--grayColor8);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+} 

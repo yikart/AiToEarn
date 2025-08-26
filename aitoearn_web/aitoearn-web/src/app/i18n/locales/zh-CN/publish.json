@@ -1,0 +1,97 @@
+{
+  "title": "发布作品",
+  "confirmClose": {
+    "title": "确认关闭",
+    "content": "关闭后，已填写的内容将丢失，是否确认关闭？"
+  },
+  "buttons": {
+    "customizePerAccount": "自定义每个账户",
+    "cancelPublish": "取消发布",
+    "schedulePublish": "定时发布",
+    "publishNow": "立即发布",
+    "copyLink": "复制链接",
+    "delete": "删除"
+  },
+  "tips": {
+    "workSaved": "请选择要发布的账户"
+  },
+  "status": {
+    "publishFailed": "发布失败",
+    "publishing": "发布中",
+    "publishSuccess": "发布成功",
+    "waitingPublish": "等待发布"
+  },
+  "form": {
+    "title": "标题",
+    "titlePlaceholder": "请输入标题",
+    "partition": "分区",
+    "partitionPlaceholder": "请选择分区",
+    "type": "类型",
+    "original": "原创",
+    "reprint": "转载",
+    "source": "转载来源",
+    "sourcePlaceholder": "转载视频请注明来源、时间、地点(例：转自https://www.xxxx.com/yyyy)",
+    "page": "页面",
+    "pagePlaceholder": "请选择页面",
+    "privacyStatus": "隐私状态",
+    "public": "公开",
+    "unlisted": "不公开",
+    "private": "私人",
+    "region": "国区",
+    "regionPlaceholder": "请选择国区",
+    "category": "视频分类",
+    "categoryPlaceholder": "请选择视频分类",
+    "categoryPlaceholderDisabled": "请先选择国区"
+  },
+  "upload": {
+    "finishingUp": "正在完成...",
+    "uploadImageOrVideo": "上传图片或视频",
+    "dragAndSelect": "拖放 & 选择图片或视频"
+  },
+  "validation": {
+    "facebookStoryNoDes": "Facebook Story不支持填写描述",
+    "facebookReelNoImage": "Facebook Reel不支持上传图片",
+    "instagramStoryNoDes": "Instagram Story不支持填写描述",
+    "instagramReelNoImage": "Instagram Reel不支持上传图片",
+    "instagramPostNoVideo": "Instagram post不支持上传视频",
+    "titleMaxExceeded": "{{platformName}}标题最多{{maxCount}}字",
+    "descriptionMaxExceeded": "{{platformName}}描述最多{{maxCount}}字",
+    "descriptionRequired": "描述是必须的",
+    "imageMaxExceeded": "{{platformName}}图片最多不能超过{{maxCount}}张",
+    "uploadImageOrVideo": "请上传图片或视频",
+    "topicMaxExceeded": "{{platformName}}话题最多不能超过{{maxCount}}个",
+    "topicFormatError": "描述中的话题必须使用空格分割，如：\"#话题1 #话题2\"",
+    "titleRequired": "标题是必须的",
+    "topicRequired": "话题是必须的",
+    "partitionRequired": "您必须选择分区!",
+    "sourceRequired": "转载时必须填写转载来源!",
+    "pageRequired": "您必须选择页面!",
+    "coverSizeError": "封面最小尺寸400*400!"
+  },
+  "preview": {
+    "title": "预览",
+    "emptyDescription": "在这里看到你的作品预览"
+  },
+  "draft": {
+    "selectDraft": "选择草稿",
+    "selectDraftGroup": "选择草稿箱组",
+    "selectDraftItem": "选择草稿",
+    "noDraftGroups": "暂无草稿箱组",
+    "noDrafts": "该组暂无草稿",
+    "backToGroups": "返回草稿箱组",
+    "selectDraftSuccess": "草稿已应用",
+    "imageGroup": "图文组",
+    "videoGroup": "视频组",
+    "selectLibrary": "选择素材库",
+    "selectLibraryItem": "选择素材",
+    "selectLibraryGroup": "选择素材库组",
+    "noLibraryGroups": "暂无素材库组",
+    "backToLibraryGroups": "返回素材库组",
+    "noLibraryItems": "该组暂无素材",
+    "selectLibrarySuccess": "素材已应用"
+  },
+  "actions": {
+    "selectMaterial": "选择素材",
+    "selectDraft": "选择草稿"
+  }
+} 

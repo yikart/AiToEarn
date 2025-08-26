@@ -4,7 +4,7 @@ import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { Alert, Avatar, Tooltip } from 'antd';
 import {
   AccountStatus,
-  AccountType,
+  PlatType,
 } from '../../../../../../../../commont/AccountEnum';
 import ImageParamsSet_Douyin from './children/ImageParamsSet_Douyin';
 import ImageParamsSet_XHS from './children/ImageParamsSet_XHS';
@@ -140,9 +140,9 @@ const ParamsSettingDetails = memo(
 
           {(() => {
             switch (activePlat) {
-              case AccountType.Douyin:
+              case PlatType.Douyin:
                 return <ImageParamsSet_Douyin />;
-              case AccountType.Xhs:
+              case PlatType.Xhs:
                 return <ImageParamsSet_XHS />;
             }
           })()}

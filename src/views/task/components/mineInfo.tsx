@@ -16,6 +16,7 @@ import {
   Divider,
   Space,
   Tooltip,
+  Alert,
 } from 'antd';
 import {
   Task,
@@ -255,6 +256,21 @@ const Com = forwardRef<MineTaskInfoRef>((props: any, ref) => {
                 </span>
               </div>
             </div>
+
+            {mineTaskInfo.status === UserTaskStatus.REJECTED && mineTaskInfo.verificationNote && (
+              <div className={styles.rejectionNote}>
+                <Alert
+                  type="error"
+                  showIcon
+                  message={
+                    <div>
+                      <div className={styles.rejectionTitle}>拒绝原因：</div>
+                      <div className={styles.rejectionContent}>{mineTaskInfo.verificationNote}</div>
+                    </div>
+                  }
+                />
+              </div>
+            )}
 
             <Divider />
 

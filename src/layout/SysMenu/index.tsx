@@ -1,24 +1,30 @@
-import {
-  DownOutlined,
+import Icon, {
   InfoCircleOutlined,
   CloudSyncOutlined,
   LogoutOutlined,
   UserOutlined,
   PhoneOutlined,
   IdcardOutlined,
+  WalletOutlined,
 } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
-import { Button, Dropdown, Avatar } from 'antd';
+import { Image, MenuProps } from 'antd';
+import { Button, Dropdown } from 'antd';
 import React, { useEffect, useState } from 'react';
 import Update from '@/components/update';
 import { useUserStore } from '@/store/user';
 import { ipcAppInfo } from '@/icp/app';
+import styles from './sysMenu.module.scss';
+import defaultAvatar from '@/assets/user/defaultAvatar.jpg';
+import Updatelog from '../UpdateLog';
+import Feedback from '@/assets/svgs/user/feedback.svg?react';
+import { useNavigate } from 'react-router-dom';
 
 const App: React.FC = () => {
   const [appInfo, setAppInfo] = useState<{ version: string }>({
     version: '',
   });
   const userStore = useUserStore();
+  const navigate = useNavigate();
 
   async function getAppInfo() {
     const res = await ipcAppInfo();
@@ -30,33 +36,51 @@ const App: React.FC = () => {
   }, []);
 
   const items: MenuProps['items'] = [
+    // {
+    //   key: 'userInfo',
+    //   label: (
+    //     <div className="px-2 py-2">
+    //       <div className="flex items-center space-x-2 mb-2">
+    //         <UserOutlined className="text-[#a66ae4]" />
+    //         <span className="text-gray-600">用户名：</span>
+    //         <span className="text-gray-900 font-medium">
+    //           {userStore.userInfo?.name || '-'}
+    //         </span>
+    //       </div>
+    //       <div className="flex items-center space-x-2 mb-2">
+    //         <IdcardOutlined className="text-[#a66ae4]" />
+    //         <span className="text-gray-600">ID：</span>
+    //         <span className="text-gray-900 font-medium">
+    //           {userStore.userInfo?.id || '-'}
+    //         </span>
+    //       </div>
+    //       <div className="flex items-center space-x-2">
+    //         <PhoneOutlined className="text-[#a66ae4]" />
+    //         <span className="text-gray-600">手机：</span>
+    //         <span className="text-gray-900 font-medium">
+    //           {userStore.userInfo?.phone || '-'}
+    //         </span>
+    //       </div>
+    //     </div>
+    //   ),
+    // },
+    // {
+    //   type: 'divider',
+    // },
     {
-      key: 'userInfo',
+      key: 'wallet',
       label: (
-        <div className="px-2 py-2">
-          <div className="flex items-center space-x-2 mb-2">
-            <UserOutlined className="text-[#a66ae4]" />
-            <span className="text-gray-600">用户名：</span>
-            <span className="text-gray-900 font-medium">
-              {userStore.userInfo?.name || '-'}
-            </span>
-          </div>
-          <div className="flex items-center space-x-2 mb-2">
-            <IdcardOutlined className="text-[#a66ae4]" />
-            <span className="text-gray-600">ID：</span>
-            <span className="text-gray-900 font-medium">
-              {userStore.userInfo?.id || '-'}
-            </span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <PhoneOutlined className="text-[#a66ae4]" />
-            <span className="text-gray-600">手机：</span>
-            <span className="text-gray-900 font-medium">
-              {userStore.userInfo?.phone || '-'}
-            </span>
-          </div>
-        </div>
+        <Button
+          type="text"
+          className="w-full text-left pl-0"
+          onClick={() => {
+            navigate('/finance/userWalletAccount');
+          }}
+        >
+          {'   '}我的钱包
+        </Button>
       ),
+      icon: <WalletOutlined className="text-[#a66ae4]" />,
     },
     {
       type: 'divider',
@@ -82,6 +106,14 @@ const App: React.FC = () => {
       type: 'divider',
     },
     {
+      key: '3',
+      label: <Updatelog />,
+      icon: <Icon component={Feedback} className="text-[#a66ae4]" />,
+    },
+    {
+      type: 'divider',
+    },
+    {
       key: '2',
       label: (
         <Button
@@ -102,21 +134,16 @@ const App: React.FC = () => {
   return (
     <Dropdown
       menu={{ items }}
-      trigger={['hover']}
-      placement="bottomRight"
+      placement="bottomCenter"
       overlayClassName="min-w-[240px]"
       overlayStyle={{ marginTop: '8px' }}
     >
-      <div className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-3 py-1.5 rounded-full transition-all duration-300 group">
-        <Avatar
-          size="small"
-          icon={<UserOutlined />}
-          className="bg-[#a66ae4] group-hover:shadow-sm transition-all duration-300"
-        />
-        <span className="text-gray-600 text-sm">
-          {userStore.userInfo?.name || '未登录'}
-        </span>
-        <DownOutlined className="text-gray-400 text-xs transition-transform duration-300 group-hover:rotate-180" />
+      <div 
+        className={styles.sysMenu}
+        onClick={() => navigate('/user/mine')}
+        style={{ cursor: 'pointer' }}
+      >
+        <Image className="sysMenu-avatar" src={defaultAvatar} preview={false} />
       </div>
     </Dropdown>
   );

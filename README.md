@@ -1,110 +1,163 @@
 <!--
  * @Author: nevin
  * @Date: 2025-01-17 19:25:28
- * @LastEditTime: 2025-02-24 19:37:13
+ * @LastEditTime: 2025-02-24 20:17:47
  * @LastEditors: nevin
  * @Description:
 -->
 
-# AiToEarn 哎哟赚
+# AiToEarn
 
 ![GitHub stars](https://img.shields.io/github/stars/yikart/AttAiToEarn?color=fa6470)
+![GitHub issues](https://img.shields.io/github/issues/yikart/AttAiToEarn?color=d8b22d)
 ![GitHub license](https://img.shields.io/github/license/yikart/AttAiToEarn)
 [![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node&message=20.18.x%20&logo=node.js&color=3f893e)](https://nodejs.org/about/releases)
 
-[English](README_EN.md) | 简体中文
+[简体中文](README_CN.md) | English
 
-## 一句话介绍
+## Overview
 
-抖音，小红书，视频号，快手等多个自媒体平台的一键发布工具
+AI content production, distribution, and trade.
 
-### 20250411更新:这周没有新版本了，非常抱歉，我们会尽快推进！
+One stop social media management tools: Douyin, Red Note, wechat video channel, wechat official account, Kwai, bilibili, Tiktok, Youtube, Facebook, Instagram, Threads, Twitter, Pinterest
 
-## 具体做了什么
+## Supported Platforms
 
-- 视频一键发布
-![抖音](https://lf1-cdn-tos.bytegoofy.com/goofy/ies/douyin_web/public/favicon.ico '抖音') 抖音
-![小红书](https://www.xiaohongshu.com/favicon.ico '小红书') 小红书
-![视频号](https://res.wx.qq.com/t/wx_fed/finder/helper/finder-helper-web/res/favicon-v2.ico '视频号') 视频号
-![快手](https://s1-111422.kwimgs.com/kos/nlav111422/ks-web/favicon.ico '快手') 快手 
+<div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap; margin: 20px 0;">
+    <img src="https://lf1-cdn-tos.bytegoofy.com/goofy/ies/douyin_web/public/favicon.ico" title="抖音" alt="抖音" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://i0.hdslb.com/bfs/static/jinkela/long/images/favicon.ico" title="B站" alt="B站" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://s1-111422.kwimgs.com/kos/nlav111422/ks-web/favicon.ico" title="快手" alt="快手" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://res.wx.qq.com/a/wx_fed/assets/res/NTI4MWU5.ico" title="微信公众号" alt="微信公众号" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://www.youtube.com/s/desktop/3ad23781/img/logos/favicon.ico" title="YouTube" alt="YouTube" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://abs.twimg.com/responsive-web/client-web/icon-svg.ea5ff4aa.svg" title="Twitter" alt="Twitter" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://www.tiktok.com/favicon.ico" title="TikTok" alt="TikTok" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://static.xx.fbcdn.net/rsrc.php/y1/r/ay1hV6OlegS.ico" title="Facebook" alt="Facebook" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://static.cdninstagram.com/rsrc.php/y4/r/QaBlI0OZiks.ico" title="Instagram" alt="Instagram" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://static.cdninstagram.com/rsrc.php/ye/r/lEu8iVizmNW.ico" title="Threads" alt="Threads" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://s.pinimg.com/webapp/logo_transparent_144x144-3da7a67b.png" title="Pinterest" alt="Pinterest" width="32" height="32" style="object-fit: contain; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+</div>
 
-- 全网热门内容观察
-  - 小红书低粉爆文排行榜
-  - 小红书，抖音，视频号，快手每日，每周分赛道热门内容排行榜
+## Milestones
+* **2025.2.26:** Released win-0.1.1
+* **2025.3.15:** Released win-0.2.0
+* **2025.4.18:** Released win-0.6.0
+* **2025.5.20:** Released win-0.8.0
+* **2025.8.8:** Released win-0.8.1
+* **2025.8.8:** Released web-0.1-beta
 
-## 正在实现中
-- 发布参数扩展，增加声明，位置，链接等参数，支持短视频带货等
-- 热门内容扩展，增加AI工具排行榜
-- AI自动评论
-- AI搜索评论
+---
 
-## 快速开始
+## In Progress
+* Mac client implementation
+* Web-based optimization
+* App-side implementation
+* Optimizing our social media AI functions
+* Antidetect browser environment
+* MCP support
+
+## Quick Start Web
+
+1.  **Start the Backend Service Modules**
+
+      - **Local Launch:** Create a `local.config.js` file in the `config` directory (copy and modify the `dev.config.js` file).
+      - ```sh
+        pnpm i
+        pnpm run dev:local
+        ```
+
+2.  **Start the Frontend Project: `aitoearn-web`**
+
+      - ```sh
+        pnpm i
+        pnpm run dev
+        ```
+
+-----
+
+### Creating and Using a Workflow
+
+3.  **Add Platform Accounts** on the frontend page.
+<img src="./aitoearn_web/workflow/img/account.jpeg" alt="post" width="500"/>
+
+4.  **Create an `skkey`** to link multiple accounts.
+<img src="./aitoearn_web/workflow/img/skkey.jpg" alt="post" width="500"/>
+
+5.  **Create a workflow** on the workflow platform (or import a template from the `workflow` folder).
+
+6.  **Use the `skkey`** in the workflow's parameter settings to publish content.
+<img src="./aitoearn_web/workflow/img/fl.jpeg" alt="post" width="500"/>
+
+
+## Quick Start Windows
 
 ```sh
-# 克隆项目
+# Clone the project
 git clone https://github.com/yikart/AttAiToEarn.git
 
-# 进入目录
+# Enter the project directory
 cd AttAiToEarn
 
-# 安装依赖
+# Install dependencies
 npm i
 
-# develop
+# To compile sqlite, better-sqlite3 depends on node-gyp and requires a local python environment. Please refer to the installation materials of node-gyp by yourself
+
+npm run rebuild
+
+# Start development
 npm run dev
 ```
 
-## 上层框架
 
-- vite官方 [template-react-ts](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts)
+
+
+<details>
+<summary><h3>Catalogue</h3></summary>
+<upper><h4>Upper Frame</h4></upper>
+- vite [template-react-ts](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts)
 - Electron + react [electron-vite-react](https://github.com/electron-vite/electron-vite-react)
 
-## 目录
-
-\_🚨 默认情况下, `electron` 文件夹下的文件将会被构建到 `dist-electron`
+\_🚨 By default, files in the 'electron' folder will be built to 'dis-electron'
 
 ```tree
-├── build                                    打包需要的一些文件
+├── build                                    Build-related files
 │
-├── commont                                  渲染进程和系统进程共同需要的类型,常量等
+├── common                                   Shared types/constants between renderer and main processes
 │
-├── electron                                 Electron 源码文件夹
-│   ├── db                                   sqlite3 数据库
-│   │   ├── migrations                       数据库迁移脚本文件
-│   │   ├── models                           数据库实体文件
-│   │   ├── scripts                          数据库脚本文件
-│   │   └── index.ts                         数据库入口文件
-│   ├── global                               渲染进程的全局变量
-│   ├── main                                 主进程源码
-│   │   ├── api                              业务接口api
-│   │   ├── core                             仿nestjs的核心模块(依赖注入、装饰器实现等)
-│   │   └── ...                              其他
-│   ├── plat                                 三方平台的代码
-│   ├── preload                              Preload-scripts 源码
-│   ├── tray                                 系统托盘
-│   └── util                                 工具
+├── electron                                Electron source code
+│   ├── db                                  SQLite3 database
+│   │   ├── migrations                      Database migration scripts
+│   │   ├── models                          Database entities
+│   │   ├── scripts                         Database scripts
+│   │   └── index.ts                        Database entry
+│   ├── global                              Renderer process globals
+│   ├── main                                Main process source
+│   │   ├── api                             Business APIs
+│   │   ├── core                            Core modules (DI, decorators)
+│   │   └── ...                             Others
+│   ├── plat                                Third-party platforms
+│   ├── preload                             Preload-scripts
+│   ├── tray                                System tray
+│   └── util                                Utilities
 │
-├── public                                   公共资源
+├── public                                  Public assets
 │
-├── scripts                                  构建脚本
+├── scripts                                 Build scripts
 │
-├── release                                  构建后生成程序目录
+├── release                                 Build output
 │   └── {version}
-│       ├── {os}-{os_arch}                   未打包的程序(绿色运行版)
-│       └── {app_name}_{version}.{ext}       应用安装文件
+│       ├── {os}-{os_arch}                  Unpacked binaries
+│       └── {app_name}_{version}.{ext}      Installers
 │
-├── public                                   同 Vite 模板的 public
-└── src                                      渲染进程源码、React代码
+├── public                                  Same as Vite template's public
+└── src                                     Renderer process source (React)
 ```
-## 其他说明
-- 关于MAC包,因为苹果对应用要求严格,本项目目前仍在尝试阶段,请自行打包,或设置忽略安全策略
-- ```shell
-   xattr -r -d com.apple.quarantine /Applications/哎呦赚AiToEarn.app
-  ```
-## 官网下载
-[https://www.aitoearn.cn/](https://www.aitoearn.cn/)
+</details>
 
-## 加我微信
-辛苦备注一下 AiToEarn
+## Other explanations
 
-<img src="./wechat.jpg" alt="wechat" width="500"/>
+Regarding the MAC package, as Apple has strict requirements for applications, this project is still in the trial stage. Please package it yourself or set the ignore security policy
+
+## Contact Me
+https://t.me/harryyyy2025
+

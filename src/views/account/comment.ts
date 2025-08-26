@@ -6,7 +6,7 @@
  * @Description: 账户
  */
 
-import { AccountType } from '../../../commont/AccountEnum';
+import { PlatType } from '../../../commont/AccountEnum';
 import { PubType } from '../../../commont/publish/PublishEnum';
 import ksSvg from '../../assets/svgs/account/ks.svg';
 import xhsSvg from '../../assets/svgs/account/xhs.svg';
@@ -45,14 +45,21 @@ export interface IAccountPlatInfo {
       imagesMax: number;
     };
   };
+  // 平台提示
+  tips?: {
+    // 添加账号时候的提示
+    account: string;
+    // 在发布时添加账号时候的提示
+    publish: string;
+  };
 }
 
 // 支持所有发布
 const PubTypeAll = new Set([PubType.ARTICLE, PubType.VIDEO, PubType.ImageText]);
 // 各个平台的信息
-export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
+export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
   [
-    AccountType.KWAI,
+    PlatType.KWAI,
     {
       name: '快手',
       icon: ksSvg,
@@ -68,7 +75,7 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
     },
   ],
   [
-    AccountType.Xhs,
+    PlatType.Xhs,
     {
       name: '小红书',
       icon: xhsSvg,
@@ -89,7 +96,7 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
     },
   ],
   [
-    AccountType.Douyin,
+    PlatType.Douyin,
     {
       name: '抖音',
       icon: douyinSvg,
@@ -106,10 +113,15 @@ export const AccountPlatInfoMap = new Map<AccountType, IAccountPlatInfo>([
           imagesMax: 35,
         },
       },
+      // tips: {
+      //   account: '首次登录的抖音号可能会频繁掉线，通常将在重登2-3次后趋于稳定',
+      //   publish:
+      //     '首次登录的抖音账号请先在账户单独完成一次内容发布后再做一键发布',
+      // },
     },
   ],
   [
-    AccountType.WxSph,
+    PlatType.WxSph,
     {
       name: '微信视频号',
       icon: wxSphSvg,

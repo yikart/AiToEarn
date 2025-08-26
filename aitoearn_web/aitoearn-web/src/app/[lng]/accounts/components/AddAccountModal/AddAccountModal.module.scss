@@ -1,0 +1,33 @@
+.addAccountModal {
+  :global {
+    h1 {
+      font-size: var(--fs-sm);
+      margin-bottom: 15px;
+    }
+    .addAccountModal_plats {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      max-height: 400px;
+      overflow-y: auto;
+      &-item {
+        padding: 13px 0;
+        border-radius: 8px;
+        height: auto;
+        white-space: nowrap;
+        &-con {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
+          img {
+            width: 35px;
+            margin-bottom: 4px;
+          }
+        }
+        span {
+          font-size: var(--fs-xs);
+        }
+      }
+    }
+  }
+}

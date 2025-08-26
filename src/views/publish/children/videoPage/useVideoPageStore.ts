@@ -8,9 +8,12 @@ import { generateUUID } from '@/utils';
 import { AccountInfo } from '@/views/account/comment';
 import { getVideoFile, IVideoFile } from '@/components/Choose/VideoChoose';
 import { accountLogin } from '@/icp/account';
-import { AccountType } from '../../../../../commont/AccountEnum';
+import { PlatType } from '../../../../../commont/AccountEnum';
 import { message } from 'antd';
-import { VisibleTypeEnum } from '../../../../../commont/publish/PublishEnum';
+import {
+  PubStatus,
+  VisibleTypeEnum,
+} from '../../../../../commont/publish/PublishEnum';
 import lodash from 'lodash';
 import { VideoModel } from '../../../../../electron/db/models/video';
 import { getImgFile, IImgFile } from '../../../../components/Choose/ImgChoose';
@@ -52,13 +55,13 @@ const store: IVideoPageStore = {
     timingTime: undefined,
     mixInfo: undefined,
     diffParams: {
-      [AccountType.Xhs]: {},
-      [AccountType.Douyin]: {
+      [PlatType.Xhs]: {},
+      [PlatType.Douyin]: {
         hotPoint: undefined,
         selfDeclare: undefined,
         activitys: [],
       },
-      [AccountType.WxSph]: {
+      [PlatType.WxSph]: {
         isOriginal: false,
         extLink: undefined,
         activity: undefined,
@@ -398,10 +401,12 @@ export const useVideoPageStore = create(
           try {
             methods.setOperateId();
 
-            commonPubParams = {
-              ...pubRecord,
-              describe: pubRecord?.desc,
-            };
+            for (const key in commonPubParams) {
+              if (pubRecord?.[key as 'title']) {
+                commonPubParams[key as 'title'] = pubRecord![key as 'title'];
+              }
+            }
+            commonPubParams['describe'] = pubRecord?.desc;
 
             if (pubRecord!.commonCoverPath) {
               const cover = await getImgFile(pubRecord!.commonCoverPath);
@@ -449,13 +454,20 @@ export const useVideoPageStore = create(
               videoFileMap.set(videoPath, video);
               coverFileMap.set(coverPath, cover);
 
+              pubRecord.status = PubStatus.UNPUBLISH;
+              pubRecord.id = undefined;
+              pubRecord.failMsg = undefined;
+              pubRecord.dataId = undefined;
+              pubRecord.previewVideoLink = undefined;
+              pubRecord.previewVideoLink = undefined;
+
               const pubParams = {
+                ...commonPubParams,
                 ...pubRecord,
                 cover: cover,
                 describe: pubRecord.desc,
+                id: undefined,
               };
-              pubParams.id = undefined;
-              pubParams.failMsg = '';
 
               videoListChoose.push({
                 id: generateUUID(),
@@ -547,7 +559,7 @@ export const useVideoPageStore = create(
         /**
          * 账户重新登录。登录成功后会自动更新该条账户数据
          */
-        async accountRestart(pType: AccountType) {
+        async accountRestart(pType: PlatType) {
           const res = await accountLogin(pType);
           if (!res) return;
           console.log(res);

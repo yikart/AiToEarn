@@ -1,6 +1,6 @@
 {
   "name": "aiToEarn",
-  "version": "0.6.0",
+  "version": "0.8.0",
   "main": "dist-electron/main/index.js",
   "description": "艺咖 win打包使用管理员的终端",
   "author": "艺咖",
@@ -15,6 +15,7 @@
     }
   },
   "type": "module",
+  "postinstall": "electron-builder install-app-deps",
   "scripts": {
     "dev": "chcp 65001 && vite",
     "dev:mac": "vite",
@@ -32,6 +33,9 @@
   "dependencies": {
     "@ant-design/colors": "^7.2.0",
     "@ant-design/icons": "^5.6.1",
+    "@electron-toolkit/preload": "^3.0.2",
+    "@electron-uikit/contextmenu": "^1.0.0",
+    "@electron-uikit/core": "^1.1.0",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@ffprobe-installer/ffprobe": "^2.1.2",
     "@types/form-data": "^2.5.2",
@@ -39,6 +43,7 @@
     "antd-img-crop": "^4.24.0",
     "axios": "^1.7.9",
     "better-sqlite3": "^11.8.1",
+    "build": "^0.1.4",
     "coordtransform": "^2.1.2",
     "crc32": "^0.2.2",
     "cropperjs": "^1.6.2",

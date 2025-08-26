@@ -1,0 +1,217 @@
+$assistantWidth: 330px;
+
+.publishDialog {
+  width: auto !important;
+  margin: 0 auto;
+  display: inline-block;
+  :global {
+    .ant-modal-content {
+      padding: 0 !important;
+    }
+    .publishDialog-wrapper {
+      background: #fff;
+      position: relative;
+      z-index: 10;
+      border-radius: 8px;
+      width: 720px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .publishDialog-con {
+      box-sizing: border-box;
+      padding: 20px;
+      flex: 1;
+      &-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        &-title {
+          font-weight: 600;
+          font-size: var(--fs-md);
+        }
+      }
+      &-acconts {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 12px;
+        &-item {
+          border: 2px solid transparent;
+          border-radius: 50%;
+          &:active {
+            border-color: var(--colorPrimary4);
+          }
+          &--active {
+            img {
+              filter: grayscale(0) !important;
+            }
+          }
+          &-avatar {
+            cursor: pointer;
+            transition: 0.3s;
+            padding: 1px;
+            & > img {
+              filter: grayscale(100%);
+            }
+            &:hover {
+              img {
+                filter: grayscale(0);
+              }
+            }
+          }
+        }
+      }
+
+      &-tips {
+        text-align: center;
+        color: var(--grayColor7);
+      }
+    }
+    .publishDialog-paramsSet {
+      margin-top: 30px;
+      max-height: 600px;
+      overflow: auto;
+    }
+    .publishDialog-footer {
+      display: flex;
+      align-items: center;
+      border-top: 1px solid var(--grayColor4);
+      justify-content: space-between;
+      box-sizing: border-box;
+      padding: 20px;
+      &-btns {
+        button {
+          margin-right: 10px;
+        }
+      }
+      &-time {
+
+      }
+    }
+    .ant-modal-body {
+      display: flex;
+      justify-content: center;
+    }
+    .ant-modal-content {
+      background-color: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .right-enter, .left-enter {
+      width: 0;
+    }
+    .right-enter-active, .left-enter-active {
+      width: $assistantWidth;
+      transition: all 300ms;
+    }
+    .right-exit, .left-exit {
+      width: $assistantWidth;
+    }
+    .right-exit-active, .left-exit-active {
+      width: 0;
+      transition: all 300ms;
+    }
+  }
+}
+
+.publishDialogAi, .publishDialogPreview {
+  background: #fff;
+  width: $assistantWidth;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.publishDialogAi {
+  margin-right: 15px;
+  :global {
+    .publishDialogAi-wrapper {
+      min-width: $assistantWidth;
+    }
+  }
+}
+.publishDialogPreview {
+  margin-left: 15px;
+  :global {
+    .publishDialogPreview-preview {
+      padding: 20px;
+      &-images {
+        background: #fff;
+        height: 100%;
+        box-sizing: border-box;
+        padding: 0 10px 0;
+        display: flex;
+        align-items: center;
+        .swiper-pagination-bullet {
+          background: var(--colorPrimary5);
+        }
+        .swiper {
+          height: 100%;
+        }
+        .swiper-slide {
+          height: 100%;
+        }
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
+      }
+      &-video {
+        background: black;
+        border-radius: 30px;
+        overflow: hidden;
+        box-sizing: border-box;
+        position: relative;
+        width: 100%;
+        height: 510px;
+        &-wrapper {
+          margin: 5px;
+          box-sizing: border-box;
+          height: 100%;
+          border-radius: 30px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+        &-top {
+          position: absolute;
+          width: 50%;
+          height: 20px;
+          z-index: 10;
+          border-radius: 0 0 15px 15px;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          background: black;
+        }
+        video {
+          width: 100%;
+          max-height: 100%;
+          object-fit: cover;
+          border-radius: 0;
+        }
+      }
+    }
+    .publishDialogPreview-wrapper {
+      text-align: left;
+      min-width: $assistantWidth;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+    }
+    .publishDialogPreview-title {
+      font-weight: 600;
+      font-size: var(--fs-md);
+      padding: 20px 20px 0 20px;
+    }
+    .publishDialogPreview-empty {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}

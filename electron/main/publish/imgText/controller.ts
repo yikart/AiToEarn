@@ -3,8 +3,8 @@ import { PublishService } from '../service';
 import { AccountService } from '../../account/service';
 import { ImgTextPubService } from './service';
 import { ImgTextModel } from '../../../db/models/imgText';
-import { PubStatus } from '../../../db/models/pubRecord';
 import platController from '../../plat';
+import { PubStatus } from '../../../../commont/publish/PublishEnum';
 
 @Controller()
 export class ImgTextPubController {
@@ -60,6 +60,16 @@ export class ImgTextPubController {
     const accountList = await this.accountService.getAccountsByIds(
       imgTextModels.map((v) => v.accountId),
     );
+
+    // 获取代理IP
+    const groupModels = await this.accountService.getAccountGroup();
+    for (let i = 0; i < accountList.length; i++) {
+      const account = accountList[i];
+      const group = groupModels.find((v) => v.id === account.groupId);
+      if (group && group.proxyIp && group.proxyOpen) {
+        imgTextModels[i].proxyIp = group.proxyIp;
+      }
+    }
 
     // 发布
     const pubRes = await platController.imgTextPublish(

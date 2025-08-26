@@ -19,7 +19,6 @@ import {
   ShopOutlined,
   MessageOutlined,
   AuditOutlined,
-  MoneyCollectOutlined,
   OpenAIOutlined,
 } from '@ant-design/icons';
 
@@ -45,6 +44,10 @@ import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
 import AiTool from '@/views/aiTool/index';
 import AiRanking from '../views/aiTool/children/aiRanking/index';
 import AiToolWebview from '../views/aiTool/children/aiToolWebview';
+import ExpectedIncome from '@/views/finance/expectedIncome';
+import Test from '@/views/test';
+import UserProfile from '@/views/user/mine/UserProfile';
+// import Test from '@/views/test';
 
 interface IRouterMeta {
   // 路由名称
@@ -109,10 +112,6 @@ export const router: CustomRouteObject[] = [
             path: 'image',
             element: <ImagePage />,
           },
-          // {
-          //   path: 'text',
-          //   element: <TextPage />,
-          // },
           { path: 'pubRecord', element: <PubRecord /> },
         ],
       },
@@ -154,17 +153,24 @@ export const router: CustomRouteObject[] = [
       {
         path: '/finance',
         element: <Finance />,
-        meta: { name: '钱包', icon: MoneyCollectOutlined },
+        // meta: { name: '钱包', icon: MoneyCollectOutlined },
         children: [
           { path: 'userWalletRecord', element: <UserWalletRecord /> },
           { path: 'userWalletAccount', element: <UserWalletAccount /> },
+          { path: 'expectedIncome', element: <ExpectedIncome /> },
         ],
       },
       // {
-      //   path: '/interaction',
-      //   element: <Interaction />,
-      //   meta: { name: '互动', icon: ShopOutlined },
+      //   path: '/test',
+      //   element: <Test />,
+      //   meta: { name: '测试', icon: ShopOutlined },
       // },
+      {
+        path: '/user',
+        children: [
+          { path: 'mine', element: <UserProfile /> },
+        ],
+      },
       // {
       //   path: '/test',
       //   element: <Test />,

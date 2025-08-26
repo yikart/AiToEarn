@@ -22,16 +22,6 @@
         align-items: center;
         overflow: hidden;
       }
-      &-avatar {
-        position: relative;
-        &-plat {
-          position: absolute;
-          bottom: 0;
-          right: 0;
-          border-radius: 50%;
-          width: 10px;
-        }
-      }
       &-name {
         white-space: nowrap;
         margin-top: 5px;
@@ -49,16 +39,30 @@
           display: none;
         }
       }
+      &-proxy {
+        color: var(--grayColor7);
+        font-size: var(--fs-xs);
+        white-space: nowrap;
+        width: 100%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
       &-disable {
         color: var(--errerColor);
         .pubAccountDetModule-accounts-disable-icon {
           display: inline-block;
+        }
+        .pubAccountDetModule-accounts-proxy {
+          color: var(--errerColor);
         }
       }
       &-ol {
         color: var(--successColor);
         .pubAccountDetModule-accounts-ol-icon {
           display: inline-block;
+        }
+        .pubAccountDetModule-accounts-proxy {
+          color: var(--successColor);
         }
       }
     }

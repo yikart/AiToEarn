@@ -3,9 +3,9 @@ import { EtEvent } from '../../../../global/event';
 import windowOperate from '../../../../util/windowOperate';
 import { SendChannelEnum } from '../../../../../commont/UtilsEnum';
 import { sleep } from '../../../../../commont/utils';
-import { PubStatus } from '../../../../db/models/pubRecord';
 import { VideoModel } from '../../../../db/models/video';
 import { AccountModel } from '../../../../db/models/account';
+import { PubStatus } from '../../../../../commont/publish/PublishEnum';
 
 /**
  * 快手发布监听器

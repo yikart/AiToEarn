@@ -31,8 +31,16 @@ export const userApi = {
   },
 
   // 更新用户信息
-  updateUserInfo(data: Partial<IUserInfo>) {
+  updateUserInfo(data: any) {
     return http.put<IUserInfo>('/user/info/update', data);
+  },
+
+  // 更新用户自动赚钱配置
+  setUserEarnInfo(data: {
+    readonly status: 0 | 1,
+    readonly cycleInterval: number;
+  }) {
+    return http.put<IUserInfo>('/user/config/earn', data);
   },
 
   // token刷新
@@ -78,5 +86,10 @@ export const userApi = {
   // 绑定手机号
   bindPhone(data: { phone: string; code: string; userId: string }) {
     return http.post('/api/user/bind-phone', data);
+  },
+
+  // 获取我的邀请码
+  getMinePopularizeCode() {
+    return http.get<string>('user/pop/code');
   },
 };

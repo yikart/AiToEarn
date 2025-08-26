@@ -1,0 +1,212 @@
+.profileContainer {
+  padding: 24px;
+  background-color: #f5f5f5;
+  min-height: calc(100vh - 64px);
+  position: relative;
+  overflow: hidden;
+
+  // 科技感背景效果
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      linear-gradient(90deg, rgba(166, 106, 228, 0.02) 1px, transparent 1px) 0 0 / 20px 20px,
+      linear-gradient(0deg, rgba(166, 106, 228, 0.02) 1px, transparent 1px) 0 0 / 20px 20px;
+    z-index: 0;
+  }
+
+  .profileHeader {
+    text-align: center;
+    margin: 40px 0 40px;
+    position: relative;
+    z-index: 1;
+
+    .profileAvatar {
+      margin-bottom: 24px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      h3{
+        margin-top: 10px;
+      }
+
+      :global(.ant-avatar) {
+        background: linear-gradient(135deg, #a66ae4 0%, #6a4ae4 100%);
+        box-shadow: 0 0 20px rgba(166, 106, 228, 0.2);
+        border: 4px solid #fff;
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
+
+        &:hover {
+          transform: scale(1.05);
+          box-shadow: 0 0 30px rgba(166, 106, 228, 0.4);
+        }
+      }
+    }
+
+    .profileName {
+      color: #333;
+      margin: 0;
+      font-weight: 500;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+      display: inline-block;
+    }
+  }
+
+  .profileContent {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+
+    .profileCard {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(166, 106, 228, 0.1);
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(166, 106, 228, 0.15);
+      }
+
+      :global(.ant-card-body) {
+        padding: 24px;
+      }
+    }
+
+    .infoSection {
+      width: 100%;
+    }
+
+    .infoGroup {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .infoItem {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      background: #fff;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(166, 106, 228, 0.1);
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom, #a66ae4, #6a4ae4);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(166, 106, 228, 0.1);
+
+        &::before {
+          opacity: 1;
+        }
+
+        .infoIcon {
+          transform: scale(1.1);
+          background: rgba(166, 106, 228, 0.1);
+        }
+      }
+
+      .infoIcon {
+        font-size: 24px;
+        color: #a66ae4;
+        margin-right: 16px;
+        background: rgba(166, 106, 228, 0.05);
+        padding: 12px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+      }
+
+      .infoContent {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .infoLabel {
+        color: #666;
+        font-size: 14px;
+      }
+
+      .infoValue {
+        color: #333;
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      .statusNormal {
+        color: #52c41a;
+        position: relative;
+        padding-left: 20px;
+
+        &::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 8px;
+          height: 8px;
+          background: #52c41a;
+          border-radius: 50%;
+        }
+      }
+
+      .statusAbnormal {
+        color: #ff4d4f;
+        position: relative;
+        padding-left: 20px;
+
+        &::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 8px;
+          height: 8px;
+          background: #ff4d4f;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+}
+
+// 添加响应式设计
+@media screen and (max-width: 768px) {
+  .profileContainer {
+    padding: 16px;
+
+    .profileContent {
+      .infoGroup {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+} 

@@ -67,6 +67,24 @@ export const toolsApi = {
   },
 
   /**
+   * 生成AI的html图文 弃用: 时间太长得走sse
+   */
+  aiArticleHtml(content: string) {
+    return http.post<string>(
+      '/tools/ai/article/html',
+      {
+        content,
+      },
+      {
+        isToken: true,
+      },
+    );
+  },
+
+  // TODO: sse生成AI的html图文
+  // /tools/ai/article/html/sse
+
+  /**
    * 上传文件
    */
   uploadFile(file: Blob) {
@@ -74,7 +92,11 @@ export const toolsApi = {
     formData.append('file', file);
     return http.post<{
       name: string;
-    }>('/oss/upload/permanent', formData);
+    }>('/oss/upload/permanent', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   },
 
   /**
@@ -90,5 +112,20 @@ export const toolsApi = {
         'Content-Type': 'multipart/form-data',
       },
     });
+  },
+
+  /**
+   * 文本内容安全
+   */
+  textModeration(content: string) {
+    return http.post<string>(
+      '/tools/common/text/moderation',
+      {
+        content,
+      },
+      {
+        isToken: true,
+      },
+    );
   },
 };

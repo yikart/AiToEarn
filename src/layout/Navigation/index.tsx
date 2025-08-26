@@ -10,14 +10,21 @@ import logo from '@/assets/logo.png';
 import styles from './navigation.module.scss';
 import { router } from '@/router';
 import SysMenu from '../SysMenu';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { ipcAppInfo } from '../../icp/app';
 import Windowcontrolbuttons from '../../components/WindowControlButtons/WindowControlButtons';
+import Bellmessage from '../BellMessage';
+import { BellOutlined } from '@ant-design/icons';
+import { Popover } from 'antd';
+import SignInCard from '@/components/SignInCard';
+import treeSvg from '@/assets/svgs/tree.svg';
 
 const Navigation = () => {
   const location = useLocation();
   const [pathname, setPathname] = useState('/');
   const [platform, setPlatform] = useState('');
+
+  const signInCardRef = useRef<any>(null);
 
   useEffect(() => {
     setPathname('/' + (location.pathname.split('/')[1] || ''));
@@ -63,7 +70,37 @@ const Navigation = () => {
       <div className="navigation_drag" />
 
       <div className="navigation-userinfo">
+        <Popover
+          content={<SignInCard ref={signInCardRef} />}
+          trigger="hover"
+          placement="bottom"
+          onOpenChange={(open) => {
+            if (open) {
+              signInCardRef.current?.fetchSignInList();
+            }
+          }}
+        >
+          <div className="navigation-icon">
+            <img
+              src={treeSvg}
+              alt="小树苗"
+              style={{ width: 20, height: 20, verticalAlign: 'middle' }}
+            />
+            <span className="navigation-icon-text">小树苗</span>
+          </div>
+        </Popover>
+        <div className="navigation-line"></div>
+
+        <Bellmessage>
+          <div className="navigation-icon">
+            <BellOutlined />
+            <span className="navigation-icon-text">消息</span>
+          </div>
+        </Bellmessage>
+
+        <div className="navigation-line"></div>
         <SysMenu />
+        <div className="navigation-line"></div>
       </div>
 
       <Windowcontrolbuttons />

@@ -7,19 +7,12 @@
  */
 import { useState, useEffect, useRef } from 'react';
 import {
-  ShoppingCartOutlined,
-  ShareAltOutlined,
-  VideoCameraOutlined,
   HistoryOutlined,
   WalletOutlined,
-  FileTextOutlined,
   CommentOutlined,
   UserOutlined,
   ClockCircleOutlined,
   CheckCircleOutlined,
-  PictureOutlined,
-  LeftOutlined,
-  RightOutlined,
 } from '@ant-design/icons';
 import {
   Card,
@@ -37,18 +30,13 @@ import {
   notification,
   Row,
   Col,
-  Divider,
   Carousel,
 } from 'antd';
 import { useInView } from 'react-intersection-observer';
 import styles from './task.module.scss';
 
 // 导入现有的任务组件
-import CarTask from './carTask';
-import PopTask from './popTask';
-import VideoTask from './videoTask';
 import MineTask from './mineTask';
-import ArticleTask from './articleTask';
 // import TaskInfo from './components/TaskInfo';
 import TaskInfo from './components/popInfo';
 // 移除 InteractionTask 导入
@@ -69,7 +57,7 @@ import {
   icpPubImgText,
 } from '@/icp/publish';
 import { usePubStroe } from '@/store/pubStroe';
-import { useAccountStore } from '@/store/commont';
+import { useCommontStore } from '@/store/commont';
 
 // 导入平台图标
 import KwaiIcon from '../../assets/svgs/account/ks.svg';
@@ -77,6 +65,8 @@ import WxSphIcon from '../../assets/svgs/account/wx-sph.svg';
 import XhsIcon from '../../assets/svgs/account/xhs.svg';
 import DouyinIcon from '../../assets/svgs/account/douyin.svg';
 import logo from '@/assets/logo.png';
+import { useImagePageStore } from '../publish/children/imagePage/useImagePageStore';
+import { useShallow } from 'zustand/react/shallow';
 
 const { Title, Text } = Typography;
 
@@ -128,11 +118,12 @@ export default function Task() {
   const [loading, setLoading] = useState(false);
   const [taskList, setTaskList] = useState<any[]>([]);
   const [pageInfo, setPageInfo] = useState({
-    pageNo: 1,
+    page: 1,
     pageSize: 20,
     totalCount: 0,
   });
   const [hasMore, setHasMore] = useState(true);
+  const [isOne, setIsOne] = useState(false);
   const selectedTaskRef = useRef<any>(null);
   const [selectedTask, setSelectedTask] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -141,6 +132,8 @@ export default function Task() {
   const [downloading, setDownloading] = useState(false);
   const Ref_TaskInfo = useRef<TaskInfoRef>(null);
   const [pubProgressModuleOpen, setPubProgressModuleOpen] = useState(false);
+  const [htmlContent, setHtmlContent] = useState<string>('');
+  const [htmlModalVisible, setHtmlModalVisible] = useState(false);
 
   // 使用 react-intersection-observer 监听底部元素
   const { ref: loadMoreRef, inView } = useInView({
@@ -166,9 +159,9 @@ export default function Task() {
 
     setLoading(true);
     try {
-      const nextPage = pageInfo.pageNo + 1;
+      const nextPage = pageInfo.page + 1;
       console.log('加载下一页:', nextPage);
-      setPageInfo((prev) => ({ ...prev, pageNo: nextPage }));
+      setPageInfo((prev) => ({ ...prev, page: nextPage }));
       await getTaskList(true);
     } catch (error) {
       console.error('加载更多失败:', error);
@@ -181,11 +174,7 @@ export default function Task() {
   async function getTaskList(isLoadMore = false) {
     setLoading(true);
     try {
-      const res = await taskApi.getTaskList<any>({
-        ...pageInfo,
-        // pageSize: 100,
-        // type: TaskType.INTERACTION,
-      });
+      const res = await taskApi.getTaskList<any>(pageInfo);
 
       if (isLoadMore) {
         setTaskList((prev) => [...prev, ...res.items]);
@@ -221,14 +210,14 @@ export default function Task() {
 
   // 初始加载数据
   useEffect(() => {
-    if (activeTab === 'interaction') {
-      setPageInfo({
-        pageNo: 1,
-        pageSize: 12,
-        totalCount: 0,
-      });
-      getTaskList();
-    }
+    // if (activeTab === 'interaction') {
+    //   setPageInfo({
+    //     page: 1,
+    //     pageSize: 2,
+    //     totalCount: 0,
+    //   });
+    //   getTaskList();
+    // }
   }, [activeTab]);
 
   // 任务进度监听
@@ -273,7 +262,27 @@ export default function Task() {
     });
   };
 
+  const { setCommonPubParams, setImages } = useImagePageStore(
+    useShallow((state) => ({
+      setCommonPubParams: state.setCommonPubParams,
+      setImages: state.setImages,
+    })),
+  );
+  // TODO 完善跳转逻辑
   const handleJoinTask = (task: any) => {
+    // if (task.isAccepted) {
+    //   setActiveTab('mine')
+    //   return
+    // }
+
+    // setCommonPubParams({
+    //   title: "标题1",
+    //   describe: "描述1",
+    //   topics: ["话题1","话题2"],
+    // });
+    // navigate('/publish/image');
+    // return;
+    // console.log('task@:', task);
     setSelectedTask(task);
 
     // 根据任务类型选择不同的处理逻辑
@@ -292,7 +301,7 @@ export default function Task() {
 
     // 根据任务类型选择不同的处理逻辑
     if (selectedTask.type === TaskType.ARTICLE) {
-      // 文章任务使用 pubCore 逻辑
+      // 文章任务使用 逻辑
       setChooseAccountOpen(true);
     } else {
       // 其他任务使用原有的互动任务逻辑
@@ -312,21 +321,101 @@ export default function Task() {
   /**
    * 接受任务
    */
-  async function taskApply() {
-    // 00.00 测试
-    // handleCompleteTask();
+  async function taskApply(params: any) {
+    // console.log('taskApply执行:', selectedTask);
+    const sucai: any = await taskApi.getFristTaskMaterial(selectedTask?._id);
+    console.log('sucai:', sucai);
     // return;
+    // 00.00 测试
     if (!selectedTask) return;
 
     try {
-      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id);
+      // 00.00 测试
+      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id, {
+        account: params.account,
+        accountType: params.accountType,
+        uid: params.uid,
+        taskMaterialId: sucai.id,
+      });
+
+      // const res: any = {
+      //   code: 0,
+      //   data: {
+      //   }
+      // }
+
       // 存储任务记录信息 00.00
-      console.log('jieshou :', res);
+      // console.log('jieshou :', res);
       if (res.code == 0 && res.data) {
         setTaskRecord(res.data);
         message.success('任务接受成功！');
 
-        handleCompleteTask();
+        // handleCompleteTask();
+
+        // console.log('selectedTask.dataInfo', selectedTask.dataInfo);
+
+        // pubCore(params);
+
+        let imageList = [];
+        for (let index = 0; index < sucai.imageList.length; index++) {
+          let element = sucai.imageList[index];
+          imageList.push({
+            id: '' + index,
+            // 前端临时路径，注意不要存到数据库
+            imgUrl: import.meta.env.VITE_APP_FILE_HOST + element.imageUrl,
+            filename: import.meta.env.VITE_APP_FILE_HOST + element.imageUrl,
+            // 图片在硬盘上的路径
+            imgPath: import.meta.env.VITE_APP_FILE_HOST + element.imageUrl,
+          });
+        }
+        console.log('imageList', imageList);
+
+        if (selectedTask.type == TaskType.ARTICLE) {
+          setCommonPubParams({
+            title: sucai.title || selectedTask.dataInfo?.title,
+            describe: sucai.desc || selectedTask.dataInfo?.desc,
+            topics: selectedTask.dataInfo?.topicList || [],
+            // images: imageList as any[],
+          });
+
+          setImages(imageList as any[]);
+          navigate('/publish/image');
+        }
+
+        // return;
+      } else {
+        message.error(res.msg || '接受任务失败，请稍后再试?');
+      }
+    } catch (error) {
+      message.error('接受任务失败，请稍后再试');
+    }
+  }
+
+  async function isoneFunc(params: any) {
+    if (params) {
+      await setIsOne(true);
+    } else {
+      await setIsOne(false);
+    }
+    setChooseAccountOpen(true);
+  }
+
+  async function taskApplyoney(params: any) {
+    console.log('------ taskApplyoney', selectedTask);
+    if (!selectedTask) return;
+
+    try {
+      const res: any = await taskApi.taskApply<TaskVideo>(selectedTask?._id, {
+        account: params.account,
+        accountType: params.accountType,
+        uid: params.uid,
+      });
+      // 存储任务记录信息 00.00
+      // console.log('jieshou :', res);
+      if (res.code == 0 && res.data) {
+        setTaskRecord(res.data);
+        setModalVisible(false);
+        message.success('任务接受成功！');
       } else {
         message.error(res.msg || '接受任务失败，请稍后再试?');
       }
@@ -342,24 +431,30 @@ export default function Task() {
   /**
    * 完成任务
    */
-  async function taskDone() {
+  async function taskDone(url?: string, taskRecordId?: string) {
     console.log('taskDone执行:', selectedTaskRef.current);
     if (!selectedTaskRef.current) return;
     const selectedTask = selectedTaskRef.current;
-    if (!selectedTask || !taskRecord) {
-      // message.error('任务信息不完整，无法完成任务');
+    if (!selectedTask) {
+      console.error(
+        '任务信息不完整，无法完成任务',
+        selectedTask,
+        '11:',
+        taskRecord,
+      );
       return;
     }
 
     try {
       // 使用任务记录的 ID 而不是任务 ID
-      const res = await taskApi.taskDone(taskRecord._id, {
-        submissionUrl: selectedTask.title,
+      console.log('taskRecordId', taskRecordId);
+      const res = await taskApi.taskDone(taskRecordId || taskRecord!._id, {
+        submissionUrl: url || selectedTask.title,
         screenshotUrls: [selectedTask.dataInfo?.imageList?.[0] || ''],
         qrCodeScanResult: selectedTask.title,
       });
       message.success('任务发布成功！');
-      refreshTaskList();
+      getTaskList();
     } catch (error) {
       message.error('完成任务失败，请稍后再试');
     }
@@ -367,7 +462,30 @@ export default function Task() {
 
   // 文章任务的发布核心逻辑
   const pubCore = async (account: any) => {
+    const sucai: any = await taskApi.getFristTaskMaterial(selectedTask?._id);
+    console.log('sucai:', sucai);
     if (!selectedTask) return;
+
+    const taskApplyRes: any = await taskApi.taskApply<TaskVideo>(
+      selectedTask?._id,
+      {
+        account: account.account,
+        accountType: account.type,
+        uid: account.uid,
+        taskMaterialId: sucai.id,
+      },
+    );
+    // 存储任务记录信息 00.00
+    console.log('taskApplyRes', taskApplyRes);
+    if (taskApplyRes.code == 0 && taskApplyRes.data) {
+      console.log('taskApplyRes.data', taskApplyRes.data);
+      setTaskRecord(taskApplyRes.data);
+
+      message.success('任务接受成功！');
+    } else {
+      message.error(taskApplyRes.msg || '接受任务失败，请稍后再试?');
+      return false;
+    }
 
     setPubProgressModuleOpen(true);
     setLoading(true);
@@ -377,56 +495,70 @@ export default function Task() {
     };
 
     // 00.00 测试
-    // console.log('pubCore', selectedTask);
+    // console.log('1', selectedTask);
     // return;
+
+    // topics: selectedTask.dataInfo?.topicList || [],
 
     // 创建一级记录
     const recordRes = await icpCreatePubRecord({
-      title: selectedTask.title,
-      desc: selectedTask.description.replace(/<[^>]+>/g, ''),
+      title: sucai.title || selectedTask.dataInfo?.title,
+      desc: sucai.desc || selectedTask.dataInfo?.desc,
       type: PubType.ImageText,
-      coverPath: FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
+      coverPath: FILE_BASE_URL + (sucai.coverUrl || ''),
     });
     if (!recordRes) return err();
 
     let pubList = [];
-    if (selectedTask.dataInfo?.imageList?.length > 1) {
-      pubList = selectedTask.dataInfo?.imageList.map(
-        (v: string) => FILE_BASE_URL + v,
-      );
+    console.log('sucai.imageList', sucai.imageList);
+    if (sucai.imageList.length) {
+      pubList = sucai.imageList.map((v: any) => {
+        console.log('v', v);
+        return FILE_BASE_URL + v.imageUrl;
+      });
     }
 
     console.log('pubList', pubList);
-    console.log(accountListChoose);
-    let allAccount = accountListChoose?.length ? accountListChoose : account;
-    console.log(allAccount);
+    console.log('accountListChoose', accountListChoose);
+
+    const allAccount = accountListChoose?.length
+      ? accountListChoose
+      : [account];
+    console.log('allAccount', allAccount);
 
     for (const account of allAccount) {
       // 创建二级记录
       await icpCreateImgTextPubRecord({
-        title: selectedTask.title,
-        desc: selectedTask.description.replace(/<[^>]+>/g, ''),
+        title: sucai.title || selectedTask.dataInfo?.title,
+        desc: sucai.desc || selectedTask.dataInfo?.desc,
         type: account.type,
+        topics: selectedTask.dataInfo?.topicList || [],
         accountId: account.id,
         pubRecordId: recordRes.id,
         publishTime: new Date(),
-        coverPath:
-          FILE_BASE_URL + (selectedTask.dataInfo?.imageList?.[0] || ''),
+        coverPath: FILE_BASE_URL + (sucai.coverUrl || ''),
         imagesPath: pubList,
       });
     }
 
     const okRes = await icpPubImgText(recordRes.id);
 
+    console.log('okRes', okRes);
+
     if (okRes.length > 0) {
-      taskDone();
+      for (let itemT of okRes) {
+        let thisling = itemT.previewVideoLink || itemT.dataId;
+        console.log('itemT.previewVideoLink', itemT.previewVideoLink)
+        taskDone(thisling, taskApplyRes.data.id);
+      }
     }
 
     setLoading(false);
     setPubProgressModuleOpen(false);
+    setModalVisible(false);
     usePubStroe.getState().clearImgTextPubSave();
     const successList = okRes.filter((v) => v.code === 1);
-    useAccountStore.getState().notification!.open({
+    useCommontStore.getState().notification!.open({
       message: '发布结果',
       description: (
         <>
@@ -520,8 +652,28 @@ export default function Task() {
 
     // 根据任务类型选择不同的处理逻辑
     if (selectedTask?.type === TaskType.ARTICLE) {
-      // 文章任务使用 pubCore 逻辑
-      await pubCore(aList[0]);
+      // 文章任务使用逻辑
+      console.log('文章任务使用逻辑');
+      if (isOne) {
+        for (const account of aList) {
+          taskApplyoney({
+            account: account.account,
+            accountType: account.type,
+            uid: account.uid,
+          });
+        }
+      } else {
+        for (const account of aList) {
+          // taskApply({
+          //   account: account.account,
+          //   accountType: account.type,
+          //   uid: account.uid,
+          // });
+
+          await pubCore(account);
+        }
+      }
+      // 00.00 测试
     } else {
       // 其他任务使用原有的互动任务逻辑
       await handleInteraction(aList[0]);
@@ -531,8 +683,8 @@ export default function Task() {
   // 刷新任务列表的函数
   const refreshTaskList = () => {
     setPageInfo({
-      pageSize: 12,
-      pageNo: 1,
+      pageSize: 20,
+      page: 1,
       totalCount: 0,
     });
     getTaskList();
@@ -616,23 +768,27 @@ export default function Task() {
                     </div>
                   }
                   actions={[
-                    <Space key="recruits">
-                      <UserOutlined />
-                      <Text>
-                        {item.currentRecruits}/{item.maxRecruits}
-                      </Text>
-                    </Space>,
-                    <Space key="time">
-                      <ClockCircleOutlined />
-                      <Text>{item.keepTime}分钟</Text>
-                    </Space>,
+                    // <Space key="recruits">
+                    //   <UserOutlined />
+                    //   <Text>
+                    //     {item.currentRecruits}
+                    //     {/* /{item.maxRecruits} */}
+                    //   </Text>
+                    // </Space>,
+                    // <Space key="time">
+                    //   <ClockCircleOutlined />
+                    //   <Text>{item.keepTime}分钟</Text>
+                    // </Space>,
                     <Button
                       type="primary"
                       key="join"
-                      disabled={item.isAccepted} // 00.00
+                      // disabled={item.isAccepted}
                       onClick={() => handleJoinTask(item)}
+                      // onClick={() => testSseFunc(item)}
+                      style={{ minWidth: '120px' }}
                     >
-                      {item.isAccepted ? '已参与' : '参与任务'}
+                      {/* {item.isAccepted ? '去完成任务' : '参与任务'} */}
+                      参与任务
                     </Button>,
                   ]}
                 >
@@ -641,7 +797,12 @@ export default function Task() {
                       <div className={styles.taskTitle}>
                         <Title level={5}>{item.title}</Title>
                         <Space>
-                          <Tag color="green">¥{item.reward}</Tag>
+                          <Tag
+                            color="green"
+                            style={{ fontSize: '16px', padding: '1px 18px' }}
+                          >
+                            ¥{item.reward}
+                          </Tag>
                           <Space size={4}>
                             {getPlatformTags(item.accountTypes)}
                           </Space>
@@ -651,22 +812,28 @@ export default function Task() {
                     description={
                       <div className={styles.taskInfo}>
                         <div className={styles.taskProgress}>
-                          <Progress
+                          {/* <Progress
                             percent={Math.round(
                               (item.currentRecruits / item.maxRecruits) * 100,
                             )}
                             size="small"
                             showInfo={false}
-                          />
+                          /> */}
                         </div>
-                        <Text type="secondary">
-                          {item.description.replace(/<[^>]+>/g, '')}
-                        </Text>
-                        <div className={styles.taskDeadline}>
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: item.description,
+                          }}
+                          className={styles.taskDescription}
+                        />
+                        {/* <Text type="secondary">
+                          {item.description}
+                        </Text> */}
+                        {/* <div className={styles.taskDeadline}>
                           <Text type="secondary">
                             截止时间：{formatDate(item.deadline)}
                           </Text>
-                        </div>
+                        </div> */}
                       </div>
                     }
                   />
@@ -700,16 +867,18 @@ export default function Task() {
           open={modalVisible}
           onCancel={() => setModalVisible(false)}
           footer={[
-            <Button key="cancel" onClick={() => setModalVisible(false)}>
-              取消
-            </Button>,
+            // <Button key="cancel" onClick={() => isoneFunc(true)}>
+            //   领取
+            // </Button>,
             <Button
               key="complete"
               type="primary"
               icon={<CheckCircleOutlined />}
-              onClick={taskApply}
+              onClick={() => {
+                isoneFunc(false);
+              }}
             >
-              一键完成
+              认可内容，自愿完成
             </Button>,
           ]}
           width={700}
@@ -721,11 +890,11 @@ export default function Task() {
                   <div className={styles.taskDetailHeader}>
                     <Title level={4}>{selectedTask.title}</Title>
                     <Space>
-                      <Tag color="green">¥{selectedTask.reward}</Tag>
                       <Tag color="blue">
                         {TaskTypeName.get(selectedTask.type as TaskType) ||
                           '未知任务'}
                       </Tag>
+                      <Tag color="green">赚 ¥{selectedTask.reward}</Tag>
                     </Space>
                   </div>
                 </Col>
@@ -762,17 +931,40 @@ export default function Task() {
                 <Col span={24}>
                   {/* <Divider orientation="left">任务信息</Divider> */}
                   <Descriptions column={1} bordered>
-                    <Descriptions.Item label="任务描述">
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: selectedTask.description,
-                        }}
-                        className={styles.taskDescription}
-                      />
-                    </Descriptions.Item>
-                    <Descriptions.Item label="评论内容">
-                      {selectedTask.dataInfo?.commentContent || 'AI智能评论'}
-                    </Descriptions.Item>
+                    {selectedTask.dataInfo?.title != '' && (
+                      <Descriptions.Item label="发布标题">
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: selectedTask.dataInfo?.title,
+                          }}
+                          className={styles.taskDescription}
+                        />
+                      </Descriptions.Item>
+                    )}
+
+                    {selectedTask.dataInfo?.desc && (
+                      <Descriptions.Item label="发布描述">
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              selectedTask.dataInfo?.desc ||
+                              '' +
+                                (selectedTask.dataInfo?.topicList?.length > 0
+                                  ? '<span style="color: #999; font-size: 12px; margin-left: 8px;">#' +
+                                    selectedTask.dataInfo.topicList.join(' #') +
+                                    '</span>'
+                                  : ''),
+                          }}
+                          className={styles.taskDescription}
+                        />
+                      </Descriptions.Item>
+                    )}
+
+                    {selectedTask.type !== TaskType.ARTICLE && (
+                      <Descriptions.Item label="评论内容">
+                        {selectedTask.dataInfo?.commentContent || 'AI智能评论'}
+                      </Descriptions.Item>
+                    )}
 
                     {selectedTask.dataInfo?.worksId && (
                       <Descriptions.Item label="作品ID">
@@ -780,16 +972,18 @@ export default function Task() {
                       </Descriptions.Item>
                     )}
 
-                    <Descriptions.Item label="任务时长">
+                    {/* <Descriptions.Item label="任务时长">
                       {selectedTask.keepTime}分钟
-                    </Descriptions.Item>
-                    <Descriptions.Item label="开始时间">
-                      {formatDate(selectedTask.createTime)}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="截止时间">
+                    </Descriptions.Item> */}
+
+                    {/* <Descriptions.Item label="起止时间">
+                      {formatDate(selectedTask.createTime)} - {formatDate(selectedTask.deadline)}
+                    </Descriptions.Item> */}
+
+                    {/* <Descriptions.Item label="截止时间">
                       {formatDate(selectedTask.deadline)}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="参与人数">
+                    </Descriptions.Item> */}
+                    {/* <Descriptions.Item label="参与人数">
                       <Progress
                         percent={Math.round(
                           (selectedTask.currentRecruits /
@@ -801,7 +995,7 @@ export default function Task() {
                           `${selectedTask.currentRecruits}/${selectedTask.maxRecruits}`
                         }
                       />
-                    </Descriptions.Item>
+                    </Descriptions.Item> */}
                     <Descriptions.Item label="支持平台">
                       <Space size={4}>
                         {getPlatformTags(selectedTask.accountTypes)}
@@ -818,6 +1012,81 @@ export default function Task() {
         <TaskInfo ref={Ref_TaskInfo} onTaskApplied={refreshTaskList} />
       </div>
     );
+  };
+
+  // 添加 SSE 处理方法
+  const testSseFunc = async (item: any) => {
+    try {
+      setHtmlContent(''); // 清空之前的内容
+      setHtmlModalVisible(true); // 显示模态框
+      const response = await fetch(
+        import.meta.env.VITE_APP_URL + '/tools/ai/article/html/sse',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            content: '生成一个卡通人物介绍页 带有图片 小红书图文流光卡片样式',
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('无法获取响应流');
+      }
+
+      let htmlString = '';
+      let isCollectingHtml = false;
+      let buffer = '';
+
+      // 处理响应流
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          console.log('流读取完成');
+          setHtmlContent(htmlString); // 设置最终的 HTML 内容
+          break;
+        }
+
+        // 将 Uint8Array 转换为文本
+        const text = new TextDecoder().decode(value);
+        buffer += text;
+
+        // 处理缓冲区中的完整行
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || ''; // 保留最后一个不完整的行
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+
+          // 检查是否是 data 行
+          if (line.startsWith('data:')) {
+            const data = line.slice(5).trim();
+
+            // 检查是否包含 ``` 标记
+            if (data.includes('```')) {
+              isCollectingHtml = !isCollectingHtml;
+              continue;
+            }
+
+            // 如果正在收集 HTML，则添加到结果中
+            if (isCollectingHtml) {
+              htmlString += data;
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('请求失败:', error);
+      message.error('连接失败，请稍后重试');
+      setHtmlModalVisible(false); // 发生错误时关闭模态框
+    }
   };
 
   return (
@@ -881,6 +1150,35 @@ export default function Task() {
 
       {/* 任务内容 */}
       <div className={styles.taskContent}>{renderTaskContent()}</div>
+
+      {/* HTML 预览模态框 */}
+      <Modal
+        title="HTML 预览"
+        open={htmlModalVisible}
+        onCancel={() => setHtmlModalVisible(false)}
+        width="80%"
+        footer={[
+          <Button key="close" onClick={() => setHtmlModalVisible(false)}>
+            关闭
+          </Button>,
+        ]}
+        bodyStyle={{
+          height: '70vh',
+          overflow: 'auto',
+          padding: '20px',
+        }}
+      >
+        {htmlContent ? (
+          <div
+            className={styles.htmlPreview}
+            dangerouslySetInnerHTML={{ __html: htmlContent }}
+          />
+        ) : (
+          <div style={{ textAlign: 'center', padding: '20px' }}>
+            <Spin tip="正在生成内容..." />
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

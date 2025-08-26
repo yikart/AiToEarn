@@ -1,0 +1,93 @@
+{
+  "profile": "Profile",
+  "logout": "Logout",
+  "unknownUser": "Unknown User",
+  "login": "Login",
+  "notifications": "Notifications",
+  "noNotifications": "No notifications",
+  "markAllAsRead": "Mark all as read",
+  "markAsRead": "Mark as read",
+  "unreadCount": "Unread messages",
+  "viewAll": "View all",
+  "actions": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "selectAll": "Select All",
+    "loading": "Loading...",
+    "noData": "No data",
+    "noImage": "No image",
+    "noDescription": "No description",
+    "noContent": "No content"
+  },
+  "notificationTypes": {
+    "system": "System Notification",
+    "user": "User Notification",
+    "material": "Material Notification",
+    "other": "Other Notification"
+  },
+  "header": {
+    "messages": "Messages",
+    "materialLibrary": "Material Library",
+    "draftBox": "Draft Box"
+  },
+  "websit": {
+    "termsOfService": {
+      "title": "Terms of Service",
+      "lastUpdated": "Last Updated",
+      "content": {
+        "introduction": "Welcome to our service. Please read the following terms and conditions carefully before using this service.",
+        "acceptance": "1. Acceptance of Terms",
+        "acceptanceContent": "By accessing and using this service, you agree to be bound by this User Agreement. If you do not agree to these terms, please do not use this service.",
+        "serviceDescription": "2. Service Description",
+        "serviceDescriptionContent": "This service is an AI content creation platform that helps users generate and manage multimedia content.",
+        "userResponsibilities": "3. User Responsibilities",
+        "userResponsibilitiesContent": "Users should ensure that their use of this service complies with local laws and regulations and shall not be used for illegal purposes.",
+        "privacy": "4. Privacy Protection",
+        "privacyContent": "We value your privacy. For detailed information, please refer to our Privacy Policy.",
+        "termination": "5. Service Termination",
+        "terminationContent": "We reserve the right to terminate or suspend the service at any time.",
+        "contact": "6. Contact Us",
+        "contactContent": "If you have any questions, please contact us via email: support@example.com"
+      }
+    },
+    "privacyPolicy": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last Updated",
+      "content": {
+        "introduction": "This Privacy Policy explains how we collect, use, and protect your personal information.",
+        "informationCollection": "1. Information Collection",
+        "informationCollectionContent": "We collect information you voluntarily provide and information automatically collected when you use our services.",
+        "informationUse": "2. Information Use",
+        "informationUseContent": "We use the collected information to provide, maintain, and improve our services.",
+        "informationSharing": "3. Information Sharing",
+        "informationSharingContent": "We do not sell, trade, or transfer your personal information to third parties.",
+        "dataSecurity": "4. Data Security",
+        "dataSecurityContent": "We implement appropriate security measures to protect your personal information.",
+        "userRights": "5. User Rights",
+        "userRightsContent": "You have the right to access, correct, or delete your personal information.",
+        "contact": "6. Contact Us",
+        "contactContent": "For privacy-related questions, please contact us: privacy@example.com"
+      }
+    },
+    "dataDeletion": {
+      "title": "Request Data Deletion",
+      "subtitle": "If you wish to delete your personal data, please follow these steps",
+      "lastUpdated": "Last Updated",
+      "prelaunchNote": "For Pre-Launch Users:",
+      "prelaunchContent": "We are currently in pre-launch phase. For data deletion, please contact our support team directly.",
+      "standardProcedure": "Standard Deletion Process:",
+      "steps": [
+        "Log into your account and go to the settings page",
+        "Click on 'Data Management' option",
+        "Select 'Delete My Data'",
+        "Confirm the deletion operation and wait for processing"
+      ],
+      "contactInfo": "Contact Information:",
+      "contactEmail": "For assistance, please send an email to: datadeletion@example.com",
+      "processingTime": "Processing Time:",
+      "processingTimeContent": "Data deletion requests are typically processed within 7-14 business days.",
+      "importantNote": "Important Note:",
+      "importantNoteContent": "Data cannot be recovered after deletion. Please proceed with caution. Some data required by law may not be deletable."
+    }
+  }
+} 

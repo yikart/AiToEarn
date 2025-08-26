@@ -6,8 +6,7 @@
  * @Description: 表格状数据
  */
 
-import { PubStatus } from '../db/models/pubRecord';
-import { PubType } from '../../commont/publish/PublishEnum';
+import { PubStatus, PubType } from '../../commont/publish/PublishEnum';
 
 export interface CorrectQuery {
   page_size: number;

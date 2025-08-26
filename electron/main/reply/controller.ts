@@ -18,7 +18,7 @@ import type { WorkData } from '../plat/plat.type';
 import { GlobleCache } from '../../global/cache';
 import { AutoReplyCache } from './cacheData';
 import type { CorrectQuery } from '../../global/table';
-import { AccountType } from '../../../commont/AccountEnum';
+import { PlatType } from '../../../commont/AccountEnum';
 import { getUserInfo } from '../user/comment';
 @Controller()
 export class ReplyController {
@@ -134,7 +134,11 @@ export class ReplyController {
     const account = await this.accountService.getAccountById(accountId);
     if (!account) return null;
 
+    console.log('------ 评论列表 start ------');
+
     const res = await platController.getCommentList(account, data, pcursor);
+    console.log('------ 评论列表 end ------', res);
+
     return res;
   }
 
@@ -372,7 +376,7 @@ export class ReplyController {
     page: CorrectQuery,
     query: {
       accountId?: number;
-      type?: AccountType;
+      type?: PlatType;
     },
   ): Promise<any> {
     const userInfo = getUserInfo();
