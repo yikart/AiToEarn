@@ -1,12 +1,11 @@
-# AiToEarn
-
+## [Aitoearn:最好用的开源内容营销AI Agent！](https://aitoearn.ai)
 ![GitHub stars](https://img.shields.io/github/stars/yikart/AttAiToEarn?color=fa6470)
 ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
 [![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node&message=20.18.x%20&logo=node.js&color=3f893e)](https://nodejs.org/about/releases)
 
 [English](README_EN.md) | 简体中文
 
-## [最好用的开源内容营销AI Agent！](https://aitoearn.ai)
+
 
 AI内容制作，分发，互动，出售。
 
