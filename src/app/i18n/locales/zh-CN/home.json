@@ -36,7 +36,7 @@
       },
       "international": {
         "title": "日历编排",
-        "description": "像操作日历一样规划内容，实现多平台协同发布。统一后台：集中管理所有内容，互动零遗漏。"
+        "description": "像操作日历一样规划内容，实现多平台协同发布。"
       }
     },
     "carouselHint": "使用滚轮切换图片"
@@ -132,6 +132,7 @@
     "title": "随时随地开始创作",
     "titleBlue": "移动端也能轻松管理",
     "description": "借助 AI ToEarn 移动应用，您的创作不再局限于桌面端。我们还为您提供App移动应用，随时随地释放您的创造力，仅需一部手机即可！",
+    "qrCodeText": "扫描二维码下载",
     "appStore": {
       "text": "Download on the",
       "store": "App Store"

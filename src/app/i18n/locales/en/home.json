@@ -27,8 +27,8 @@
   },
   "buildSection": {
     "badge": "Feature 1",
-    "title": "Content Publishing — One-Click Multi-Platform",
-    "titleBlue": "From creative ideas to multi-channel publishing, to analytics & monetization",
+    "title": "Content Publishing",
+    "titleBlue": " — One-Click Multi-Platform",
     "features": {
       "hotTopic": {
         "title": "Distribute Everywhere",
@@ -132,6 +132,7 @@
     "title": "Start Creating Anytime, Anywhere",
     "titleBlue": "Easy Management on Mobile Too",
     "description": "With the AI ToEarn mobile app, your creativity is no longer limited to desktop. We also provide iOS and Android mobile apps for you to unleash your creativity anytime, anywhere, with just one phone!",
+    "qrCodeText": "Scan QR Code to Download",
     "appStore": {
       "text": "Download on the",
       "store": "App Store"

@@ -288,6 +288,7 @@ function BrandBar() {
 
 // 1. Content Publishing — 一键发布 · 多平台触达
 function ContentPublishingSection() {
+  const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
   const images = [calendar.src, supportChannels.src];
@@ -356,25 +357,25 @@ function ContentPublishingSection() {
       <div className={styles.buildContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
-          <span>功能1</span>
+          <span>{t('buildSection.badge')}</span>
         </div>
         
         <div className={styles.buildContent}>
           <div className={styles.buildLeft}>
             <h2 className={styles.buildTitle}>
-              Content Publishing — 一键发布 · 多平台触达
-              <span className={styles.titleBlue}>从创意灵感到多平台分发，再到数据分析和商业化</span>
+              {t('buildSection.title')}
+              <span className={styles.titleBlue}>{t('buildSection.titleBlue')}</span>
             </h2>
             
                          <div className={styles.featureList}>
                <div className={styles.featureItem}>
-                 <h3>多平台分发</h3>
-                 <p>支持全球最多主流社交平台（Douyin, Kwai, Wechat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, Bluesky, YouTube Shorts, Pinterest, Google Business, Mastodon, X）。</p>
+                 <h3>{t('buildSection.features.hotTopic.title')}</h3>
+                 <p>{t('buildSection.features.hotTopic.description')}</p>
                </div>
                
                <div className={styles.featureItem}>
-                 <h3>日历编排</h3>
-                 <p>像操作日历一样规划内容，实现多平台协同发布。</p>
+                 <h3>{t('buildSection.features.international.title')}</h3>
+                 <p>{t('buildSection.features.international.description')}</p>
                </div>
              </div>
            </div>
@@ -426,6 +427,7 @@ function ContentPublishingSection() {
 
 // 2. Content Hotspot — 爆款灵感引擎
 function ContentHotspotSection() {
+  const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
   const images = [hotspot.src, hotspot2.src, hotspot3.src, hotspot4.src];
@@ -494,25 +496,25 @@ function ContentHotspotSection() {
       <div className={styles.buildContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
-          <span>功能2</span>
+          <span>{t('hotspotSection.badge' as any)}</span>
         </div>
         
         <div className={styles.buildContent}>
           <div className={styles.buildLeft}>
             <h2 className={styles.buildTitle}>
-              Content Hotspot — 爆款灵感引擎
-              <span className={styles.titleBlue}>爆款案例库与趋势捕捉</span>
+              {t('hotspotSection.title' as any)}
+              <span className={styles.titleBlue}>{t('hotspotSection.titleBlue' as any)}</span>
             </h2>
             
                          <div className={styles.featureList}>
                <div className={styles.featureItem}>
-                 <h3>爆款案例库</h3>
-                 <p>随时查看他人如何打造 10,000+ 点赞的内容。</p>
+                 <h3>{t('hotspotSection.features.hotTopic.title' as any)}</h3>
+                 <p>{t('hotspotSection.features.hotTopic.description' as any)}</p>
                </div>
                
                <div className={styles.featureItem}>
-                 <h3>趋势捕捉</h3>
-                 <p>快速发现流行趋势，降低创作焦虑。</p>
+                 <h3>{t('hotspotSection.features.international.title' as any)}</h3>
+                 <p>{t('hotspotSection.features.international.description' as any)}</p>
                </div>
              </div>
            </div>
@@ -564,6 +566,7 @@ function ContentHotspotSection() {
 
 // 3. Content Search — 品牌与市场洞察
 function ContentSearchSection() {
+  const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
   const images = [contentSearch.src, contentSearch1.src, contentSearch2.src, contentSearch4.src];
@@ -632,25 +635,25 @@ function ContentSearchSection() {
       <div className={styles.buildContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
-          <span>功能3</span>
+          <span>{t('searchSection.badge' as any)}</span>
         </div>
         
         <div className={styles.buildContent}>
           <div className={styles.buildLeft}>
             <h2 className={styles.buildTitle}>
-              Content Search — 品牌与市场洞察
-              <span className={styles.titleBlue}>品牌监控与内容搜索</span>
+              {t('searchSection.title' as any)}
+              <span className={styles.titleBlue}>{t('searchSection.titleBlue' as any)}</span>
             </h2>
             
                          <div className={styles.featureList}>
                <div className={styles.featureItem}>
-                 <h3>品牌监控</h3>
-                 <p>实时追踪品牌相关讨论，第一时间响应。</p>
+                 <h3>{t('searchSection.features.hotTopic.title' as any)}</h3>
+                 <p>{t('searchSection.features.hotTopic.description' as any)}</p>
                </div>
                
                <div className={styles.featureItem}>
-                 <h3>内容搜索</h3>
-                 <p>找到目标帖子和话题，高效互动，精准拓展市场。</p>
+                 <h3>{t('searchSection.features.international.title' as any)}</h3>
+                 <p>{t('searchSection.features.international.description' as any)}</p>
                </div>
              </div>
            </div>
@@ -702,6 +705,7 @@ function ContentSearchSection() {
 
 // 4. Comments Search — 精准用户挖掘
 function CommentsSearchSection() {
+  const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
   const images = [commentFilter.src];
@@ -770,25 +774,25 @@ function CommentsSearchSection() {
       <div className={styles.buildContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
-          <span>功能4</span>
+          <span>{t('commentsSection.badge' as any)}</span>
         </div>
         
         <div className={styles.buildContent}>
           <div className={styles.buildLeft}>
             <h2 className={styles.buildTitle}>
-              Comments Search — 精准用户挖掘
-              <span className={styles.titleBlue}>智能评论搜索与精准转化</span>
+              {t('commentsSection.title' as any)}
+              <span className={styles.titleBlue}>{t('commentsSection.titleBlue' as any)}</span>
             </h2>
             
                          <div className={styles.featureList}>
                <div className={styles.featureItem}>
-                 <h3>智能评论搜索</h3>
-                 <p>快速发现"求链接""怎么购买"等高转化信号。</p>
+                 <h3>{t('commentsSection.features.hotTopic.title' as any)}</h3>
+                 <p>{t('commentsSection.features.hotTopic.description' as any)}</p>
                </div>
                
                <div className={styles.featureItem}>
-                 <h3>精准转化</h3>
-                 <p>主动回复，提升流量变现效率。</p>
+                 <h3>{t('commentsSection.features.international.title' as any)}</h3>
+                 <p>{t('commentsSection.features.international.description' as any)}</p>
                </div>
              </div>
            </div>
@@ -840,6 +844,7 @@ function CommentsSearchSection() {
 
 // 5. Content Engagement — 互动与增长引擎
 function ContentEngagementSection() {
+  const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
   const images = [commentFilter2.src];
@@ -908,25 +913,25 @@ function ContentEngagementSection() {
       <div className={styles.buildContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
-          <span>功能5</span>
+          <span>{t('connectSection.badge' as any)}</span>
         </div>
         
         <div className={styles.buildContent}>
           <div className={styles.buildLeft}>
             <h2 className={styles.buildTitle}>
-              Content Engagement — 互动与增长引擎
-              <span className={styles.titleBlue}>统一后台与主动运营</span>
+              {t('connectSection.title' as any)}
+              <span className={styles.titleBlue}>{t('connectSection.titleBlue' as any)}</span>
             </h2>
             
                          <div className={styles.featureList}>
                <div className={styles.featureItem}>
-                 <h3>统一后台</h3>
-                 <p>集中管理所有内容，互动零遗漏。</p>
+                 <h3>{t('connectSection.features.creation.title' as any)}</h3>
+                 <p>{t('connectSection.features.creation.description' as any)}</p>
                </div>
                
                <div className={styles.featureItem}>
-                 <h3>主动运营</h3>
-                 <p>参与热门话题，与潜在用户双向互动。把"被动内容运营"变成"主动流量经营"。</p>
+                 <h3>{t('connectSection.features.distribution.title' as any)}</h3>
+                 <p>{t('connectSection.features.distribution.description' as any)}</p>
                </div>
              </div>
            </div>
@@ -978,40 +983,42 @@ function ContentEngagementSection() {
 
 // 6-8. 即将上线功能整合模块
 function UpcomingFeaturesSection() {
+  const { t } = useTransClient('home');
+  
   return (
     <section className={styles.buildSection}>
       <div className={styles.buildContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
-          <span>即将上线</span>
+          <span>{t('upcomingSection.badge' as any)}</span>
         </div>
         
         <div className={styles.buildContent}>
           <div className={styles.buildLeft}>
             <h2 className={styles.buildTitle}>
-              AI 驱动的全链路内容增长与变现平台
-              <span className={styles.titleBlue}>即将上线功能，敬请期待</span>
+              {t('upcomingSection.title' as any)}
+              <span className={styles.titleBlue}>{t('upcomingSection.titleBlue' as any)}</span>
             </h2>
             
             <div className={styles.featureList}>
               <div className={styles.featureItem}>
-                <h3>智能导入</h3>
-                <p>直接导入历史内容，快速编辑、二次分发。例如：小红书创作者可一键同步到 YouTube，让更多用户看到。</p>
+                <h3>{t('upcomingSection.features.smartImport.title' as any)}</h3>
+                <p>{t('upcomingSection.features.smartImport.description' as any)}</p>
               </div>
               
               <div className={styles.featureItem}>
-                <h3>Content Analytics — 全景化数据视图</h3>
-                <p>多平台对比：一个平台不给流量，不代表所有平台不给。全链路监控：追踪内容表现，助力打造下一个百万博主。</p>
+                <h3>{t('upcomingSection.features.analytics.title' as any)}</h3>
+                <p>{t('upcomingSection.features.analytics.description' as any)}</p>
               </div>
               
               <div className={styles.featureItem}>
-                <h3>AI Content Creation — 全流程 AI 助手</h3>
-                <p>AI 文案生成：自动生成标题、描述，高效产出。AI 评论生成：主动出击，获取流量。图文卡片生成，全流程加速创作。支持主流 AI 视频模型和图片模型。</p>
+                <h3>{t('upcomingSection.features.aiCreation.title' as any)}</h3>
+                <p>{t('upcomingSection.features.aiCreation.description' as any)}</p>
               </div>
               
               <div className={styles.featureItem}>
-                <h3>Content Marketplace — 内容交易与变现</h3>
-                <p>创作者变现：在平台直接出售内容，让优质作品快速找到买家。品牌采购：企业可直接购买现成内容，节省时间与成本。让创作变成收益 —— Let's use AI to earn. Let's earn money together!</p>
+                <h3>{t('upcomingSection.features.marketplace.title' as any)}</h3>
+                <p>{t('upcomingSection.features.marketplace.description' as any)}</p>
               </div>
             </div>
           </div>
@@ -1078,7 +1085,7 @@ function DownloadSection() {
                     size={120}
                   />
                 {/* </div> */}
-                <p className={styles.qrCodeText}>扫描二维码下载</p>
+                <p className={styles.qrCodeText}>{t('downloadSection.qrCodeText' as any)}</p>
               </div>
 
 
