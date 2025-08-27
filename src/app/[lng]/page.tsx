@@ -37,7 +37,6 @@ import contentSearch from '@/assets/images/app-screenshot/3. content search/cont
 import contentSearch1 from '@/assets/images/app-screenshot/3. content search/contentsearch1.jpeg';
 import contentSearch2 from '@/assets/images/app-screenshot/3. content search/contentsearch2.jpeg';
 import contentSearch4 from '@/assets/images/app-screenshot/3. content search/contentsearch4.jpeg';
-import commentSearch from '@/assets/images/app-screenshot/4. comments search/commentsearch.gif';
 import commentFilter from '@/assets/images/app-screenshot/4. comments search/commentfilter.jpeg';
 import commentFilter2 from '@/assets/images/app-screenshot/5. content engagement/commentfilter2.jpeg';
 
@@ -52,6 +51,7 @@ import { Button } from "antd";
 import { GlobalOutlined } from "@ant-design/icons";
 import { useUserStore } from "@/store/user"; 
 import { useParams } from "next/navigation";
+import { AndroidOutlined } from '@ant-design/icons';
 
 // 版本发布横幅
 function ReleaseBanner() {
@@ -367,35 +367,35 @@ function ContentPublishingSection() {
               <span className={styles.titleBlue}>从创意灵感到多平台分发，再到数据分析和商业化</span>
             </h2>
             
-            <div className={styles.featureList}>
-              <div className={styles.featureItem}>
-                <h3>多平台分发</h3>
-                <p>支持全球最多主流社交平台（Douyin, Kwai, Wechat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, Bluesky, YouTube Shorts, Pinterest, Google Business, Mastodon, X）。</p>
-              </div>
-              
-              <div className={styles.featureItem}>
-                <h3>日历编排</h3>
-                <p>像操作日历一样规划内容，实现多平台协同发布。</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className={styles.buildRight}>
-            <div 
-              className={styles.imageCarousel}
-              ref={carouselRef}
-            >
-              <div className={styles.carouselContainer}>
+                         <div className={styles.featureList}>
+               <div className={styles.featureItem}>
+                 <h3>多平台分发</h3>
+                 <p>支持全球最多主流社交平台（Douyin, Kwai, Wechat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, Bluesky, YouTube Shorts, Pinterest, Google Business, Mastodon, X）。</p>
+               </div>
+               
+               <div className={styles.featureItem}>
+                 <h3>日历编排</h3>
+                 <p>像操作日历一样规划内容，实现多平台协同发布。</p>
+               </div>
+             </div>
+           </div>
+           
+           <div className={styles.buildRight}>
+             <div 
+               className={styles.imageCarousel}
+               ref={carouselRef}
+             >
+               <div className={`${styles.carouselContainer} ${styles.mobileContainer}`}>
                 {images.map((image, index) => (
                   <div
                     key={index}
                     className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
                   >
-                    <img 
-                      src={image} 
-                      alt={`Content Publishing ${index + 1}`} 
-                      className={styles.carouselImage}
-                    />
+                                         <img 
+                       src={image} 
+                       alt={`Content Publishing ${index + 1}`} 
+                       className={styles.mobileCarouselImage}
+                     />
                   </div>
                 ))}
               </div>
@@ -505,35 +505,35 @@ function ContentHotspotSection() {
               <span className={styles.titleBlue}>爆款案例库与趋势捕捉</span>
             </h2>
             
-            <div className={styles.featureList}>
-              <div className={styles.featureItem}>
-                <h3>爆款案例库</h3>
-                <p>随时查看他人如何打造 10,000+ 点赞的内容。</p>
-              </div>
-              
-              <div className={styles.featureItem}>
-                <h3>趋势捕捉</h3>
-                <p>快速发现流行趋势，降低创作焦虑。</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className={styles.buildRight}>
-            <div 
-              className={styles.imageCarousel}
-              ref={carouselRef}
-            >
-              <div className={styles.carouselContainer}>
+                         <div className={styles.featureList}>
+               <div className={styles.featureItem}>
+                 <h3>爆款案例库</h3>
+                 <p>随时查看他人如何打造 10,000+ 点赞的内容。</p>
+               </div>
+               
+               <div className={styles.featureItem}>
+                 <h3>趋势捕捉</h3>
+                 <p>快速发现流行趋势，降低创作焦虑。</p>
+               </div>
+             </div>
+           </div>
+           
+           <div className={styles.buildRight}>
+             <div 
+               className={styles.imageCarousel}
+               ref={carouselRef}
+             >
+               <div className={`${styles.carouselContainer} ${styles.mobileContainer}`}>
                 {images.map((image, index) => (
                   <div
                     key={index}
                     className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
                   >
-                    <img 
-                      src={image} 
-                      alt={`Content Hotspot ${index + 1}`} 
-                      className={styles.carouselImage}
-                    />
+                                         <img 
+                       src={image} 
+                       alt={`Content Hotspot ${index + 1}`} 
+                       className={styles.mobileCarouselImage}
+                     />
                   </div>
                 ))}
               </div>
@@ -643,35 +643,35 @@ function ContentSearchSection() {
               <span className={styles.titleBlue}>品牌监控与内容搜索</span>
             </h2>
             
-            <div className={styles.featureList}>
-              <div className={styles.featureItem}>
-                <h3>品牌监控</h3>
-                <p>实时追踪品牌相关讨论，第一时间响应。</p>
-              </div>
-              
-              <div className={styles.featureItem}>
-                <h3>内容搜索</h3>
-                <p>找到目标帖子和话题，高效互动，精准拓展市场。</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className={styles.buildRight}>
-            <div 
-              className={styles.imageCarousel}
-              ref={carouselRef}
-            >
-              <div className={styles.carouselContainer}>
+                         <div className={styles.featureList}>
+               <div className={styles.featureItem}>
+                 <h3>品牌监控</h3>
+                 <p>实时追踪品牌相关讨论，第一时间响应。</p>
+               </div>
+               
+               <div className={styles.featureItem}>
+                 <h3>内容搜索</h3>
+                 <p>找到目标帖子和话题，高效互动，精准拓展市场。</p>
+               </div>
+             </div>
+           </div>
+           
+           <div className={styles.buildRight}>
+             <div 
+               className={styles.imageCarousel}
+               ref={carouselRef}
+             >
+               <div className={`${styles.carouselContainer} ${styles.mobileContainer}`}>
                 {images.map((image, index) => (
                   <div
                     key={index}
                     className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
                   >
-                    <img 
-                      src={image} 
-                      alt={`Content Search ${index + 1}`} 
-                      className={styles.carouselImage}
-                    />
+                                         <img 
+                       src={image} 
+                       alt={`Content Search ${index + 1}`} 
+                       className={styles.mobileCarouselImage}
+                     />
                   </div>
                 ))}
               </div>
@@ -705,7 +705,7 @@ function ContentSearchSection() {
 function CommentsSearchSection() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
-  const images = [commentSearch.src, commentFilter.src];
+  const images = [commentFilter.src];
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   
@@ -781,35 +781,35 @@ function CommentsSearchSection() {
               <span className={styles.titleBlue}>智能评论搜索与精准转化</span>
             </h2>
             
-            <div className={styles.featureList}>
-              <div className={styles.featureItem}>
-                <h3>智能评论搜索</h3>
-                <p>快速发现"求链接""怎么购买"等高转化信号。</p>
-              </div>
-              
-              <div className={styles.featureItem}>
-                <h3>精准转化</h3>
-                <p>主动回复，提升流量变现效率。</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className={styles.buildRight}>
-            <div 
-              className={styles.imageCarousel}
-              ref={carouselRef}
-            >
-              <div className={styles.carouselContainer}>
+                         <div className={styles.featureList}>
+               <div className={styles.featureItem}>
+                 <h3>智能评论搜索</h3>
+                 <p>快速发现"求链接""怎么购买"等高转化信号。</p>
+               </div>
+               
+               <div className={styles.featureItem}>
+                 <h3>精准转化</h3>
+                 <p>主动回复，提升流量变现效率。</p>
+               </div>
+             </div>
+           </div>
+           
+           <div className={styles.buildRight}>
+             <div 
+               className={styles.imageCarousel}
+               ref={carouselRef}
+             >
+               <div className={`${styles.carouselContainer} ${styles.mobileContainer}`}>
                 {images.map((image, index) => (
                   <div
                     key={index}
                     className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
                   >
-                    <img 
-                      src={image} 
-                      alt={`Comments Search ${index + 1}`} 
-                      className={styles.carouselImage}
-                    />
+                                         <img 
+                       src={image} 
+                       alt={`Comments Search ${index + 1}`} 
+                       className={styles.mobileCarouselImage}
+                     />
                   </div>
                 ))}
               </div>
@@ -919,35 +919,35 @@ function ContentEngagementSection() {
               <span className={styles.titleBlue}>统一后台与主动运营</span>
             </h2>
             
-            <div className={styles.featureList}>
-              <div className={styles.featureItem}>
-                <h3>统一后台</h3>
-                <p>集中管理所有内容，互动零遗漏。</p>
-              </div>
-              
-              <div className={styles.featureItem}>
-                <h3>主动运营</h3>
-                <p>参与热门话题，与潜在用户双向互动。把"被动内容运营"变成"主动流量经营"。</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className={styles.buildRight}>
-            <div 
-              className={styles.imageCarousel}
-              ref={carouselRef}
-            >
-              <div className={styles.carouselContainer}>
+                         <div className={styles.featureList}>
+               <div className={styles.featureItem}>
+                 <h3>统一后台</h3>
+                 <p>集中管理所有内容，互动零遗漏。</p>
+               </div>
+               
+               <div className={styles.featureItem}>
+                 <h3>主动运营</h3>
+                 <p>参与热门话题，与潜在用户双向互动。把"被动内容运营"变成"主动流量经营"。</p>
+               </div>
+             </div>
+           </div>
+           
+           <div className={styles.buildRight}>
+             <div 
+               className={styles.imageCarousel}
+               ref={carouselRef}
+             >
+               <div className={`${styles.carouselContainer} ${styles.mobileContainer}`}>
                 {images.map((image, index) => (
                   <div
                     key={index}
                     className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
                   >
-                    <img 
-                      src={image} 
-                      alt={`Content Engagement ${index + 1}`} 
-                      className={styles.carouselImage}
-                    />
+                                         <img 
+                       src={image} 
+                       alt={`Content Engagement ${index + 1}`} 
+                       className={styles.mobileCarouselImage}
+                     />
                   </div>
                 ))}
               </div>
@@ -980,14 +980,14 @@ function ContentEngagementSection() {
 // 6-8. 即将上线功能整合模块
 function UpcomingFeaturesSection() {
   return (
-    <section className={styles.buildSection}>
+    <section style={{marginTop: '100px'}} className={`${styles.buildSection} ${styles.upcomingFeaturesSection}`}>
       <div className={styles.buildContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
           <span>即将上线</span>
         </div>
         
-        <div className={styles.buildContent}>
+        <div className={`${styles.buildContent} ${styles.upcomingFeaturesLayout}`}>
           <div className={styles.buildLeft}>
             <h2 className={styles.buildTitle}>
               AI 驱动的全链路内容增长与变现平台
@@ -1017,19 +1017,19 @@ function UpcomingFeaturesSection() {
             </div>
           </div>
           
-          <div className={styles.buildRight}>
+          {/* <div className={styles.buildRight}>
             <div className={styles.imageCarousel}>
               <div className={styles.carouselContainer}>
                 <div className={`${styles.carouselSlide} ${styles.active}`}>
-                                                           <img 
-                       src={dataCenter.src} 
-                       alt="Data Center Analytics" 
-                       className={styles.carouselImage}
-                     />
+                  <img 
+                    src={dataCenter.src} 
+                    alt="Data Center Analytics" 
+                    className={styles.desktopCarouselImage}
+                  />
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>
@@ -1037,6 +1037,7 @@ function UpcomingFeaturesSection() {
 }
 
 // 移动应用下载区
+import { QRCode } from 'react-qrcode-logo';
 function DownloadSection() {
   const { t } = useTransClient('home');
   
@@ -1055,26 +1056,12 @@ function DownloadSection() {
             </p>
             
             <div className={styles.downloadButtons}>
-              <a href="#app-store" className={styles.downloadBtn}>
+              <a href="https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk" className={styles.downloadBtn} target="_blank" rel="noopener noreferrer">
                 <div className={styles.downloadBtnContent}>
-                  <svg className={styles.downloadIcon} width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" fill="currentColor"/>
-                  </svg>
+                  <AndroidOutlined className={styles.downloadIcon} style={{ fontSize: '24px' }} />
                   <div className={styles.downloadBtnText}>
-                    <span className={styles.downloadOn}>{t('downloadSection.appStore.text')}</span>
-                    <span className={styles.downloadStore}>{t('downloadSection.appStore.store')}</span>
-                  </div>
-                </div>
-              </a>
-              
-              <a href="#google-play" className={styles.downloadBtn}>
-                <div className={styles.downloadBtnContent}>
-                  <svg className={styles.downloadIcon} width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" fill="currentColor"/>
-                  </svg>
-                  <div className={styles.downloadBtnText}>
-                    <span className={styles.downloadOn}>{t('downloadSection.googlePlay.text')}</span>
-                    <span className={styles.downloadStore}>{t('downloadSection.googlePlay.store')}</span>
+                    <span className={styles.downloadOn}>立即下载</span>
+                    <span className={styles.downloadStore}>Android APK</span>
                   </div>
                 </div>
               </a>
@@ -1119,9 +1106,13 @@ function DownloadSection() {
               </div>
               
               <div className={styles.qrCode}>
-                <div className={styles.qrCodeImage}>
-                  <div className={styles.qrCodePattern}></div>
-                </div>
+                {/* <div className={styles.qrCodeImage}> */}
+                  <QRCode
+                    value="https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk"
+                    size={120}
+                  />
+                {/* </div> */}
+                <p className={styles.qrCodeText}>扫描二维码下载</p>
               </div>
             </div>
           </div>
@@ -1302,12 +1293,10 @@ function Footer() {
   const router = useRouter();
   // 背景图片数组
   const backgroundImages = [
-    // '/src/assets/images/logo.png',
-    // '/src/assets/images/vipcard.png',
-    'https://picsum.photos/400/200?random=1',
-    'https://picsum.photos/400/200?random=2',
-    'https://picsum.photos/400/200?random=3',
-    'https://picsum.photos/400/200?random=4',
+    hotspot.src,
+    hotspot2.src,
+    hotspot3.src,
+    hotspot4.src,
   ];
   
   useEffect(() => {
@@ -1392,7 +1381,8 @@ function Footer() {
                 backgroundPosition: 'center',
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
-                color: isHovered ? 'transparent' : '#733DEC'
+                color: isHovered ? 'transparent' : '#733DEC',
+                textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
               }}
             >
               Earn
@@ -1442,8 +1432,8 @@ export default function Home() {
       <CommentsSearchSection />
       <ContentEngagementSection />
       <UpcomingFeaturesSection />
-      {/* <DownloadSection />
-      <EnterpriseSection />
+      <DownloadSection />
+       {/*<EnterpriseSection />
       <StatsSection /> */}
       {/* <CommunitySection /> */}
       <Footer />

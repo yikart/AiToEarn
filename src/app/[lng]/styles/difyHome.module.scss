@@ -404,6 +404,18 @@
   font-weight: 600;
   color: #374151;
   margin-bottom: 32px;
+
+  // 即将上线模块特殊样式
+  .upcomingFeaturesSection & {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: 25px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
 }
 
 .badgeIcon {
@@ -411,15 +423,67 @@
   height: 8px;
   background: #4f46e5;
   border-radius: 50%;
+
+  // 即将上线模块特殊样式
+  .upcomingFeaturesSection & {
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    width: 12px;
+    height: 12px;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    animation: pulse 2s infinite;
+  }
 }
 
 .titleBlue {
   color: #4f46e5;
+
+  // 即将上线模块特殊样式
+  .upcomingFeaturesSection & {
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 900;
+  }
 }
 
 .buildSection {
-  padding: 120px 0;
+  padding: 80px 0;
   background: white;
+
+  // 即将上线模块特殊背景
+  &.upcomingFeaturesSection {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      opacity: 0.3;
+    }
+  }
+}
+
+// 脉冲动画
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .buildContainer {
@@ -434,6 +498,17 @@
   gap: 80px;
   align-items: stretch;
   min-height: 500px;
+
+  // 即将上线模块特殊布局 - 移除左右布局，使用居中布局
+  &.upcomingFeaturesLayout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 60px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
 }
 
 .buildLeft,
@@ -441,6 +516,12 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  // 即将上线模块特殊样式
+  .upcomingFeaturesLayout & {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 .buildTitle {
@@ -449,12 +530,30 @@
   line-height: 1.2;
   margin-bottom: 40px;
   color: #1f2937;
+
+  // 即将上线模块特殊样式
+  .upcomingFeaturesLayout & {
+    font-size: 56px;
+    margin-bottom: 50px;
+    background: #5b21b6;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 }
 
 .featureList {
   display: flex;
   flex-direction: column;
   gap: 32px;
+
+  // 即将上线模块特殊样式
+  .upcomingFeaturesLayout & {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 40px;
+    margin-bottom: 40px;
+  }
 }
 
 .featureItem {
@@ -468,6 +567,34 @@
   p {
     color: #6b7280;
     line-height: 1.6;
+  }
+
+  // 即将上线模块特殊样式
+  .upcomingFeaturesLayout & {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    h3 {
+      font-size: 22px;
+      color: #4f46e5;
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: #374151;
+      line-height: 1.7;
+    }
   }
 }
 
@@ -519,7 +646,6 @@
 
 .downloadSection {
   padding: 120px 0;
-  background: linear-gradient(135deg, #dbeafe 0%, #c7d2fe 50%, #ddd6fe 100%);
   overflow: hidden;
   position: relative;
 }
@@ -763,6 +889,29 @@
   border-radius: 8px;
   padding: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.qrCodeImg {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+.qrCodeIcon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qrCodeText {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #6b7280;
+  text-align: center;
+  font-weight: 500;
 }
 
 .qrCodePattern {
@@ -1129,7 +1278,7 @@
   color: #1f2937;
   border-top: 1px solid #e5e7eb;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
-  margin-top: 60px;
+  // margin-top: 60px;
 }
 
 .footerContainer {
@@ -1526,9 +1675,7 @@
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: hidden;
   border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
 
@@ -1536,12 +1683,20 @@
   position: relative;
   width: 100%;
   height: 100%;
+  
+  // 手机版图片容器特殊样式
+  &.mobileContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+  }
 }
 
 .carouselSlide {
   position: absolute;
   top: 0;
-  left: 0;
+  left: 180px;
   width: 100%;
   height: 100%;
   opacity: 0;
@@ -1560,6 +1715,51 @@
   
   .carouselSlide:hover & {
     transform: scale(1.02);
+  }
+}
+
+// 手机版竖屏图片样式 (9:16比例)
+.mobileCarouselImage {
+  width: 100%;
+  max-width: 280px; // 限制最大宽度，适合手机屏幕
+  height: auto;
+  object-fit: contain; // 保持比例
+  border-radius: 24px; // 圆角边框，模拟手机外观
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25); // 更深的阴影效果
+  transition: transform 0.3s ease;
+  border: 8px solid #1a1a1a; // 手机边框
+  background: #1a1a1a; // 手机背景色
+
+  .carouselSlide:hover & {
+    transform: scale(1.08);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  }
+}
+
+// 横屏图片样式
+.desktopCarouselImage {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 12px; // 圆角边框
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); // 阴影效果
+  transition: transform 0.3s ease;
+
+  .carouselSlide:hover & {
+    transform: scale(1.02);
+  }
+
+  // 即将上线模块特殊样式
+  .upcomingFeaturesLayout & {
+    max-width: 800px;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    transition: all 0.4s ease;
+
+    &:hover {
+      transform: scale(1.03);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+    }
   }
 }
 
