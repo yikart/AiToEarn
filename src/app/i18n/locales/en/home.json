@@ -26,48 +26,107 @@
     "title": "Supported Social Media Platforms"
   },
   "buildSection": {
-    "badge": "Creative Inspiration",
-    "title": "Out of Inspiration?",
-    "titleBlue": "Check out trending topics worldwide",
+    "badge": "Feature 1",
+    "title": "Content Publishing — One-Click Multi-Platform",
+    "titleBlue": "From creative ideas to multi-channel publishing, to analytics & monetization",
     "features": {
       "hotTopic": {
-        "title": "AI Trending Topic Extraction - Capture All Trending Content",
-        "description": "Through AI extraction of trending topics across the web, AI analysis generates similar viral content with one click, capturing all trending traffic"
+        "title": "Distribute Everywhere",
+        "description": "Publish to the widest range of global platforms (Douyin, Kwai, WeChat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, Bluesky, YouTube Shorts, Pinterest, Google Business, Mastodon, X)."
       },
       "international": {
-        "title": "International Platforms: YouTube, TikTok, Facebook, Instagram, LinkedIn, X (Twitter), Rednote",
-        "description": "Overseas trending topic extraction to keep you informed of the latest developments"
+        "title": "Calendar Scheduler",
+        "description": "Plan & coordinate content like a calendar across all platforms. Unified Dashboard: Manage all interactions in one place."
+      }
+    },
+    "carouselHint": "Use scroll wheel to switch images"
+  },
+  "hotspotSection": {
+    "badge": "Feature 2",
+    "title": "Content Hotspot — Viral Inspiration Engine",
+    "titleBlue": "Case Library & Trend Radar",
+    "features": {
+      "hotTopic": {
+        "title": "Case Library",
+        "description": "Explore how others create posts with 10,000+ likes."
       },
-      "domestic": {
-        "title": "Domestic Platforms: Douyin, Kwai, WeChat, Bilibili",
-        "description": "Support for domestic platform trending extraction, ensuring you don't miss any trending traffic"
+      "international": {
+        "title": "Trend Radar",
+        "description": "Discover the latest viral trends instantly, reduce creator anxiety."
+      }
+    },
+    "carouselHint": "Use scroll wheel to switch images"
+  },
+  "searchSection": {
+    "badge": "Feature 3",
+    "title": "Content Search — Brand & Market Insights",
+    "titleBlue": "Brand Monitoring & Content Discovery",
+    "features": {
+      "hotTopic": {
+        "title": "Brand Monitoring",
+        "description": "Track conversations about your brand in real-time."
+      },
+      "international": {
+        "title": "Content Discovery",
+        "description": "Search for posts, topics, and communities for targeted engagement."
+      }
+    },
+    "carouselHint": "Use scroll wheel to switch images"
+  },
+  "commentsSection": {
+    "badge": "Feature 4",
+    "title": "Comments Search — Precision User Mining",
+    "titleBlue": "Smart Comment Search & Conversion Booster",
+    "features": {
+      "hotTopic": {
+        "title": "Smart Comment Search",
+        "description": "Detect high-conversion signals like \"link please\" or \"how to buy.\""
+      },
+      "international": {
+        "title": "Conversion Booster",
+        "description": "Reply instantly, drive higher engagement & sales."
       }
     },
     "carouselHint": "Use scroll wheel to switch images"
   },
   "connectSection": {
-    "badge": "Features",
-    "title": "One-Stop Social Media Management Platform",
-    "titleBlue": "From creative inspiration to content creation, from content distribution to content interaction management",
+    "badge": "Feature 5",
+    "title": "Content Engagement — Growth Engine",
+    "titleBlue": "Unified Dashboard & Proactive Engagement",
     "features": {
       "creation": {
-        "title": "Content Creation",
-        "description": "AI content creation, AI image generation, text and image creation, and other AI capabilities to make your content more vivid and interesting"
+        "title": "Unified Dashboard",
+        "description": "Manage all interactions in one place."
       },
       "distribution": {
-        "title": "Content Distribution",
-        "description": "Support multi-platform distribution both domestically and internationally, reaching more users with one-click management"
-      },
-      "interaction": {
-        "title": "Content Interaction Management",
-        "description": "Support multi-platform interaction management both domestically and internationally, making content interaction more efficient with one-click management"
-      },
-      "analytics": {
-        "title": "Data Analytics",
-        "description": "Support multi-platform data analytics both domestically and internationally, making data analysis more efficient with one-click management"
+        "title": "Proactive Engagement",
+        "description": "Join trending conversations, connect with potential customers. Turn passive operations into active traffic growth."
       }
     },
     "carouselHint": "Use scroll wheel to switch images"
+  },
+  "upcomingSection": {
+    "badge": "Coming Soon",
+    "title": "Full-Stack AI-Powered Content Growth & Monetization Platform",
+    "titleBlue": "Coming Soon Features, Stay Tuned",
+    "features": {
+      "smartImport": {
+        "title": "Smart Import",
+        "description": "Import historical content for fast re-editing & redistribution. Example: Sync your Xiaohongshu posts to YouTube in one click."
+      },
+      "analytics": {
+        "title": "Content Analytics — Full-Funnel Data",
+        "description": "Cross-Platform Comparison: One platform may block traffic, but others won't. End-to-End Monitoring: Track performance and build your path to 1M+ followers."
+      },
+      "aiCreation": {
+        "title": "AI Content Creation — End-to-End Assistant",
+        "description": "AI Copywriting: Auto-generate titles, captions & descriptions. AI Commenting: Engage proactively, attract traffic. Image & Card Generator: Speed up content workflows. Supported AI Video Models and Image Models."
+      },
+      "marketplace": {
+        "title": "Content Marketplace — Trade & Monetize",
+        "description": "Creators: Sell your content directly, find buyers fast. Brands: Purchase ready-made, high-quality content. AI-Powered Growth: Let's use AI to earn. Let's earn money together!"
+      }
+    }
   },
   "downloadSection": {
     "title": "Start Creating Anytime, Anywhere",
