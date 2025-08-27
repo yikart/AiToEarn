@@ -1696,7 +1696,7 @@
 .carouselSlide {
   position: absolute;
   top: 0;
-  left: 180px;
+  left: 220px;
   width: 100%;
   height: 100%;
   opacity: 0;
@@ -1739,6 +1739,7 @@
 // 横屏图片样式
 .desktopCarouselImage {
   width: 100%;
+  max-width: 280px;
   height: auto;
   object-fit: cover;
   border-radius: 12px; // 圆角边框

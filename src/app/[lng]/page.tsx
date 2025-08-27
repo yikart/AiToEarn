@@ -43,7 +43,6 @@ import commentFilter2 from '@/assets/images/app-screenshot/5. content engagement
 import dataCenter from '@/assets/images/data_center.png';
 
 
-
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -980,14 +979,14 @@ function ContentEngagementSection() {
 // 6-8. 即将上线功能整合模块
 function UpcomingFeaturesSection() {
   return (
-    <section style={{marginTop: '100px'}} className={`${styles.buildSection} ${styles.upcomingFeaturesSection}`}>
+    <section className={styles.buildSection}>
       <div className={styles.buildContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
           <span>即将上线</span>
         </div>
         
-        <div className={`${styles.buildContent} ${styles.upcomingFeaturesLayout}`}>
+        <div className={styles.buildContent}>
           <div className={styles.buildLeft}>
             <h2 className={styles.buildTitle}>
               AI 驱动的全链路内容增长与变现平台
@@ -1017,19 +1016,20 @@ function UpcomingFeaturesSection() {
             </div>
           </div>
           
-          {/* <div className={styles.buildRight}>
+          <div className={styles.buildRight}>
             <div className={styles.imageCarousel}>
               <div className={styles.carouselContainer}>
-                <div className={`${styles.carouselSlide} ${styles.active}`}>
-                  <img 
-                    src={dataCenter.src} 
-                    alt="Data Center Analytics" 
-                    className={styles.desktopCarouselImage}
-                  />
-                </div>
+                                 <div className={`${styles.carouselSlide} ${styles.active}`}>
+                   <video 
+                     src={'https://aitoearn.s3.ap-southeast-1.amazonaws.com/production/temp/uploads/890044ad-c3a3-4a4c-8981-0eb72abff538.mp4'}
+                     controls
+                     className={styles.desktopCarouselImage}
+                     style={{ borderRadius: '16px', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.2)' }}
+                   />
+                 </div>
               </div>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </section>
@@ -1070,6 +1070,18 @@ function DownloadSection() {
           
           <div className={styles.downloadRight}>
             <div className={styles.phoneContainer}>
+
+            <div className={styles.qrCode}>
+                {/* <div className={styles.qrCodeImage}> */}
+                  <QRCode
+                    value="https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk"
+                    size={120}
+                  />
+                {/* </div> */}
+                <p className={styles.qrCodeText}>扫描二维码下载</p>
+              </div>
+
+
               <div className={styles.phoneFrame}>
                 <div className={styles.phoneScreen}>
                   <div className={styles.phoneStatusBar}>
@@ -1105,15 +1117,7 @@ function DownloadSection() {
                 </div>
               </div>
               
-              <div className={styles.qrCode}>
-                {/* <div className={styles.qrCodeImage}> */}
-                  <QRCode
-                    value="https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk"
-                    size={120}
-                  />
-                {/* </div> */}
-                <p className={styles.qrCodeText}>扫描二维码下载</p>
-              </div>
+              
             </div>
           </div>
         </div>
