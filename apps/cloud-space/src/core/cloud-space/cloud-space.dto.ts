@@ -1,0 +1,35 @@
+import { CloudSpaceRegion, CloudSpaceStatus, createZodDto, PaginationDtoSchema } from '@yikart/common'
+import { z } from 'zod'
+
+export const createCloudSpaceSchema = z.object({
+  userId: z.string(),
+  region: z.enum(CloudSpaceRegion),
+  profileName: z.string().optional(),
+  month: z.int().min(1).default(1),
+})
+
+export const listCloudSpacesSchema = z.object({
+  userId: z.string().optional(),
+  region: z.enum(CloudSpaceRegion).optional(),
+  status: z.enum(CloudSpaceStatus).optional(),
+  ...PaginationDtoSchema.shape,
+})
+
+export const getCloudSpaceStatusSchema = z.object({
+  cloudSpaceId: z.string(),
+})
+
+export const deleteCloudSpaceSchema = z.object({
+  cloudSpaceId: z.string(),
+})
+
+export const renewCloudSpaceSchema = z.object({
+  cloudSpaceId: z.string(),
+  month: z.int().min(1).default(1),
+})
+
+export class CreateCloudSpaceDto extends createZodDto(createCloudSpaceSchema) {}
+export class ListCloudSpacesDto extends createZodDto(listCloudSpacesSchema) {}
+export class GetCloudSpaceStatusDto extends createZodDto(getCloudSpaceStatusSchema) {}
+export class DeleteCloudSpaceDto extends createZodDto(deleteCloudSpaceSchema) {}
+export class RenewCloudSpaceDto extends createZodDto(renewCloudSpaceSchema) {}

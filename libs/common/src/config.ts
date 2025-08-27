@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const natsConfig = z.object({
+export const natsConfig = z.object({
   name: z.string().optional(),
   servers: z.array(z.string()).optional(),
   user: z.string().optional(),

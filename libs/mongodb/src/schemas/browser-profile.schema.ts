@@ -25,7 +25,7 @@ export class BrowserProfile extends WithTimestampSchema {
   @Prop({
     required: false,
   })
-  environmentId?: string
+  cloudSpaceId?: string
 
   @Prop({
     required: true,

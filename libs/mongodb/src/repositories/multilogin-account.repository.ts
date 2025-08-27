@@ -1,10 +1,10 @@
 import { InjectModel } from '@nestjs/mongoose'
 import { Pagination } from '@yikart/common'
 import { Document, FilterQuery, Model } from 'mongoose'
-import { MultiloginAccounts } from '../schemas'
+import { MultiloginAccount } from '../schemas'
 import { BaseRepository } from './base.repository'
 
-export type MultiloginAccountDocument = MultiloginAccounts & Document
+export type MultiloginAccountDocument = MultiloginAccount & Document
 
 export interface ListMultiloginAccountParams extends Pagination {
   email?: string
@@ -15,7 +15,7 @@ export interface ListMultiloginAccountParams extends Pagination {
 
 export class MultiloginAccountRepository extends BaseRepository<MultiloginAccountDocument> {
   constructor(
-    @InjectModel(MultiloginAccounts.name) multiloginAccountModel: Model<MultiloginAccountDocument>,
+    @InjectModel(MultiloginAccount.name) multiloginAccountModel: Model<MultiloginAccountDocument>,
   ) {
     super(multiloginAccountModel)
   }

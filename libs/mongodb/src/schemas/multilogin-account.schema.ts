@@ -9,7 +9,7 @@ import { WithTimestampSchema } from './timestamp.schema'
   timestamps: true,
   id: true,
 })
-export class MultiloginAccounts extends WithTimestampSchema {
+export class MultiloginAccount extends WithTimestampSchema {
   id: string
 
   @Prop({
@@ -41,4 +41,4 @@ export class MultiloginAccounts extends WithTimestampSchema {
   token?: string
 }
 
-export const MultiloginAccountSchema = SchemaFactory.createForClass(MultiloginAccounts)
+export const MultiloginAccountSchema = SchemaFactory.createForClass(MultiloginAccount)

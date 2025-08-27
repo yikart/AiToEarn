@@ -1,0 +1,25 @@
+{
+  "name": "@yikart/cloud-space",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/microservices": "^11.1.6",
+    "@nestjs/schedule": "^6.0.0",
+    "@nx/webpack": "21.4.0",
+    "@yikart/ansible": "workspace:*",
+    "@yikart/common": "workspace:*",
+    "@yikart/mongodb": "workspace:*",
+    "@yikart/multilogin": "workspace:*",
+    "@yikart/redlock": "workspace:*",
+    "@yikart/ucloud": "workspace:*",
+    "dayjs": "^1.11.14",
+    "js-yaml": "^4.1.0",
+    "rxjs": "^7.8.0",
+    "tslib": "^2.3.0",
+    "zod": "^4.0.17"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9"
+  }
+}

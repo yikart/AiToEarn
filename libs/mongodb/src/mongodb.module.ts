@@ -11,6 +11,7 @@ import { MongooseModule } from '@nestjs/mongoose'
 import mongoose from 'mongoose'
 import { repositories } from './repositories'
 import { schemas } from './schemas'
+import { TransactionalInjector } from './transactional.injector'
 
 mongoose.set('transactionAsyncLocalStorage', true)
 
@@ -25,8 +26,14 @@ export class MongodbModule {
         MongooseModule.forRoot(uri, options),
         forFeature,
       ],
-      providers: [...repositories],
-      exports: [forFeature, ...repositories],
+      providers: [
+        ...repositories,
+        TransactionalInjector,
+      ],
+      exports: [
+        forFeature,
+        ...repositories,
+      ],
       module: MongodbModule,
       global: true,
     }

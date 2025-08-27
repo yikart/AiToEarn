@@ -30,6 +30,7 @@
       "@yikart/mongodb": ["libs/mongodb/src/index.ts"],
       "@yikart/multilogin": ["libs/multilogin/src/index.ts"],
       "@yikart/nats-client": ["libs/nats-client/src/index.ts"],
+      "@yikart/cloud-space-client": ["libs/cloud-space-client/src/index.ts"],
       "@yikart/redis": ["libs/redis/src/index.ts"],
       "@yikart/redlock": ["libs/redlock/src/index.ts"],
       "@yikart/ucloud": ["libs/ucloud/src/index.ts"],

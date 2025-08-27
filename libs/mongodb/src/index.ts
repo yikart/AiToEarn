@@ -1,3 +1,4 @@
+export * from './decorators/transactional.decorator'
 export * from './mongodb.config'
 export * from './mongodb.module'
 export * from './repositories'

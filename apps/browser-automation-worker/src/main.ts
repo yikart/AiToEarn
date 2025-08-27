@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { readFileSync } from 'node:fs'
-import { MultiloginClient } from '@yikart/multilogin'
+import { MultiloginClient, MultiloginError } from '@yikart/multilogin'
 import { Command } from 'commander'
 import { chromium } from 'playwright'
 import { BrowserTaskConfig, Cookie } from './interfaces'
@@ -53,10 +53,36 @@ async function main() {
   })
 
   console.log(`🌐 Starting browser profile: ${config.profileId}`)
-  const profileData = await multiloginClient.startBrowserProfile(config.folderId, config.profileId, {
-    automation_type: 'playwright',
-    headless_mode: false,
-  })
+
+  let profileData
+  let retryCount = 0
+  const maxRetries = 3
+  const retryableErrorCodes = ['CORE_DOWNLOADING_STARTED', 'CORE_DOWNLOADING_ALREADY_STARTED', 'LOCK_PROFILE_ERROR']
+
+  while (retryCount <= maxRetries) {
+    try {
+      profileData = await multiloginClient.startBrowserProfile(config.folderId, config.profileId, {
+        automation_type: 'playwright',
+        headless_mode: false,
+      })
+      break
+    }
+    catch (error) {
+      if (error instanceof MultiloginError && error.response && typeof error.response === 'object') {
+        const response = error.response as { status?: { error_code?: string } }
+        const errorCode = response.status?.error_code
+
+        if (retryableErrorCodes.includes(errorCode as string) && retryCount < maxRetries) {
+          retryCount++
+          console.log(`⚠️ Retryable error (${errorCode}), attempt ${retryCount}/${maxRetries}. Retrying in 30 seconds...`)
+          await new Promise(resolve => setTimeout(resolve, 30000))
+          continue
+        }
+      }
+
+      throw error
+    }
+  }
 
   if (!profileData || !profileData.data || !profileData.data.port) {
     throw new Error('Failed to start browser profile or get port')
@@ -128,7 +154,9 @@ async function main() {
   console.log('💡 Browser windows will remain open for manual interaction.')
 }
 
-main().catch((error) => {
+main().then(() => {
+  process.exit(0)
+}).catch((error) => {
   console.error('❌ Error occurred:', (error as Error).message)
   console.error((error as Error).stack)
   process.exit(1)

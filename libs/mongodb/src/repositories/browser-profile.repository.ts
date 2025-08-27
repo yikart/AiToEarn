@@ -9,7 +9,7 @@ export type BrowserProfileDocument = BrowserProfile & Document
 export interface ListBrowserProfileParams extends Pagination {
   accountId?: string
   profileId?: string
-  environmentId?: string
+  cloudSpaceId?: string
 }
 
 export class BrowserProfileRepository extends BaseRepository<BrowserProfileDocument> {
@@ -20,15 +20,15 @@ export class BrowserProfileRepository extends BaseRepository<BrowserProfileDocum
   }
 
   async listWithPagination(params: ListBrowserProfileParams): Promise<[BrowserProfileDocument[], number]> {
-    const { page, pageSize, accountId, profileId, environmentId } = params
+    const { page, pageSize, accountId, profileId, cloudSpaceId } = params
 
     const filter: FilterQuery<BrowserProfileDocument> = {}
     if (accountId)
       filter.accountId = accountId
     if (profileId)
       filter.profileId = profileId
-    if (environmentId)
-      filter.environmentId = environmentId
+    if (cloudSpaceId)
+      filter.cloudSpaceId = cloudSpaceId
 
     return await this.findWithPagination({
       page,
@@ -37,19 +37,19 @@ export class BrowserProfileRepository extends BaseRepository<BrowserProfileDocum
     })
   }
 
-  async findByEnvironmentId(environmentId: string): Promise<BrowserProfileDocument[]> {
-    return await this.find({ environmentId })
+  async findByCloudSpaceId(cloudSpaceId: string): Promise<BrowserProfileDocument[]> {
+    return await this.find({ cloudSpaceId })
   }
 
-  async listByEnvironmentId(environmentId: string): Promise<BrowserProfileDocument[]> {
-    return await this.findByEnvironmentId(environmentId)
+  async listByCloudSpaceId(cloudSpaceId: string): Promise<BrowserProfileDocument[]> {
+    return await this.findByCloudSpaceId(cloudSpaceId)
   }
 
-  async getByEnvironmentId(environmentId: string): Promise<BrowserProfileDocument | null> {
-    return await this.findOne({ environmentId })
+  async getByCloudSpaceId(cloudSpaceId: string): Promise<BrowserProfileDocument | null> {
+    return await this.findOne({ cloudSpaceId })
   }
 
-  async deleteByEnvironmentId(environmentId: string): Promise<void> {
-    await this.deleteMany({ environmentId })
+  async deleteByCloudSpaceId(cloudSpaceId: string): Promise<void> {
+    await this.deleteMany({ cloudSpaceId })
   }
 }

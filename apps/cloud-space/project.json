@@ -1,0 +1,91 @@
+{
+  "name": "cloud-space",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/cloud-space/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/cloud-space",
+        "tsConfig": "apps/cloud-space/tsconfig.app.json",
+        "packageJson": "apps/cloud-space/package.json",
+        "main": "apps/cloud-space/src/main.ts",
+        "assets": ["apps/cloud-space/*.md"],
+        "generatePackageJson": true,
+        "clean": true
+      }
+    },
+    "prune-lockfile": {
+      "dependsOn": ["build"],
+      "cache": true,
+      "executor": "@nx/js:prune-lockfile",
+      "outputs": [
+        "{workspaceRoot}/dist/apps/cloud-space/package.json",
+        "{workspaceRoot}/dist/apps/cloud-space/pnpm-lock.yaml"
+      ],
+      "options": {
+        "buildTarget": "build"
+      }
+    },
+    "copy-workspace-modules": {
+      "dependsOn": ["build"],
+      "cache": true,
+      "outputs": [
+        "{workspaceRoot}/dist/apps/cloud-space/workspace_modules"
+      ],
+      "executor": "@nx/js:copy-workspace-modules",
+      "options": {
+        "buildTarget": "build"
+      }
+    },
+    "prune": {
+      "dependsOn": ["prune-lockfile", "copy-workspace-modules"],
+      "executor": "nx:noop"
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "local",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "cloud-space:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "local": {
+          "buildTarget": "cloud-space:build:development",
+          "args": [
+            "-c",
+            "{workspaceRoot}/apps/cloud-space/config/local.config.js"
+          ]
+        },
+        "dev": {
+          "buildTarget": "cloud-space:build:development",
+          "args": [
+            "-c",
+            "{workspaceRoot}/apps/cloud-space/config/dev.config.js"
+          ]
+        },
+        "prod": {
+          "buildTarget": "cloud-space:build:production",
+          "args": [
+            "-c",
+            "{workspaceRoot}/apps/cloud-space/config/prod.config.js"
+          ]
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "fix": true
+      }
+    }
+  }
+}

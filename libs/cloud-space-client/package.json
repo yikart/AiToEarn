@@ -1,14 +1,13 @@
 {
-  "name": "@yikart/nats-client",
+  "name": "@yikart/cloud-space-client",
   "type": "commonjs",
   "version": "0.0.1",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
     "@nestjs/common": "^11.0.0",
-    "@nestjs/microservices": "^11.1.6",
     "@yikart/common": "*",
-    "rxjs": "^7.8.0",
+    "@yikart/nats-client": "*",
     "tslib": "^2.3.0",
     "zod": "^4.0.17"
   }

@@ -13,9 +13,9 @@ export enum ResponseCode {
   MultiloginAccountProfilesExceeded = 11001,
   NoAvailableMultiloginAccount = 11002,
 
-  // 12000 (browser-environment)
-  BrowserEnvironmentNotFound = 12000,
-  BrowserEnvironmentCreationFailed = 12001,
+  // 12000 (cloud-space)
+  CloudSpaceNotFound = 12000,
+  CloudSpaceCreationFailed = 12001,
 
   // 12100 (cloud-instance)
   UCloudInstanceCreationFailed = 12100,
