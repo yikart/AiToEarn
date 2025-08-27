@@ -3,27 +3,120 @@
 }
 
 .card {
-  margin-bottom: 16px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(43, 47, 54, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  overflow: hidden;
+  position: relative;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(135deg, #fce2a9 0%, #ffd700 100%);
 }
 
 .actions {
   display: flex;
-  gap: 8px;
+  gap: 12px;
+}
+
+/* 个人信息卡片特殊样式 */
+.personalInfoCard {
+  background: linear-gradient(135deg, #2B2F36 0%, #4E4C4D 100%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(43, 47, 54, 0.2);
+}
+
+.personalInfoCard::before {
+  background: linear-gradient(135deg, #fce2a9 0%, #ffd700 100%);
+}
+
+.personalInfoCard .ant-card-head {
+  background: rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+.personalInfoCard .ant-card-head-title {
+  color: #fce2a9;
+  font-size: 18px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #fce2a9, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.personalInfoCard .ant-card-body {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+}
+
+.personalInfoCard .ant-descriptions-bordered .ant-descriptions-item-label {
+  background: rgba(252, 226, 169, 0.1);
+  color: #fce2a9;
+  font-weight: 600;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.personalInfoCard .ant-descriptions-bordered .ant-descriptions-item-content {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.personalInfoCard .ant-btn {
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.personalInfoCard .ant-btn-primary {
+  background: linear-gradient(135deg, #6a5acd 0%, #a64dd8 100%);
+  border: none;
+  box-shadow: 0 2px 8px rgba(106, 90, 205, 0.3);
+}
+
+.personalInfoCard .ant-btn-primary:hover {
+  background: linear-gradient(135deg, #7b68ee 0%, #b76dd9 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(106, 90, 205, 0.4);
+}
+
+.personalInfoCard .ant-btn-dangerous {
+  background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);
+  border: none;
+  box-shadow: 0 2px 8px rgba(255, 77, 79, 0.3);
+}
+
+.personalInfoCard .ant-btn-dangerous:hover {
+  background: linear-gradient(135deg, #ff7875 0%, #ffa39e 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 77, 79, 0.4);
 }
 
 /* 会员卡片样式 */
 .vipCard {
   background: url('/assets/images/vipcard.png') no-repeat center center;
   background-size: cover;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
   color: #fff;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(43, 47, 54, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .vipCard::before {
@@ -33,9 +126,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(to right, #2B2F36, #4E4C4D);
+  background: linear-gradient(135deg, #2B2F36 0%, #4E4C4D 100%);
   z-index: 0;
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
 .vipContent {
@@ -53,27 +146,33 @@
 }
 
 .vipIcon {
-  width: 24px;
-  height: 24px;
-  margin-right: 6px;
-  background-color: rgba(255, 255, 255, 0.2);
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;
+  background-color: rgba(252, 226, 169, 0.15);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 18px;
+  color: #fce2a9;
 }
 
 .vipTitle {
-  font-size: 18px;
-  font-weight: bold;
-  color: #fce2a9; /* 金色 */
+  font-size: 20px;
+  font-weight: 600;
+  color: #fce2a9;
+  background: linear-gradient(135deg, #fce2a9, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .vipDescription {
-  font-size: 12px;
+  font-size: 13px;
   color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 16px;
+  margin-bottom: 18px;
+  line-height: 1.4;
 }
 
 .benefitsGrid {
@@ -81,45 +180,112 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 16px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .benefitItem {
   text-align: center;
+  transition: all 0.3s ease;
+}
+
+.benefitItem:hover {
+  transform: translateY(-2px);
 }
 
 .benefitIcon {
   width: 36px;
   height: 36px;
-  background-color: rgba(255, 255, 255, 0.15);
-  border-radius: 6px;
-  margin: 0 auto 6px auto;
+  background-color: rgba(252, 226, 169, 0.15);
+  border-radius: 8px;
+  margin: 0 auto 8px auto;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
+  color: #fce2a9;
+  transition: all 0.3s ease;
+}
+
+.benefitItem:hover .benefitIcon {
+  background-color: rgba(252, 226, 169, 0.25);
+  transform: scale(1.1);
 }
 
 .benefitName {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.9);
+  color: #fce2a9;
+  font-weight: 500;
+  line-height: 1.3;
 }
 
 .activateButton {
-  background: linear-gradient(to right, #6a5acd, #a64dd8); /* 紫色渐变 */
-  border: none;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: bold;
+  background: linear-gradient(135deg, #fce2a9 0%, #ffd700 100%);
+  border: 2px solid rgba(252, 226, 169, 0.3);
+  color: #2B2F36;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
   width: 100%;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(252, 226, 169, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 
-  &:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-  }
+.activateButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.6s ease;
+}
+
+.activateButton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.activateButton:hover::before {
+  left: 100%;
+}
+
+.activateButton:hover::after {
+  opacity: 1;
+}
+
+.activateButton:hover {
+  background: linear-gradient(135deg, #ffd700 0%, #fce2a9 100%);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(252, 226, 169, 0.5);
+  border-color: rgba(252, 226, 169, 0.6);
+}
+
+.activateButton:active {
+  transform: translateY(-1px) scale(0.98);
+  box-shadow: 0 4px 12px rgba(252, 226, 169, 0.4);
+}
+
+.activateButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(252, 226, 169, 0.3), 0 4px 16px rgba(252, 226, 169, 0.3);
 }
 
 .normalUserCallToAction {
@@ -136,16 +302,17 @@
   margin-bottom: 12px;
 }
 
-/* 积分记录卡片样式 */
+/* 积分卡片样式 */
 .pointsCard {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
+  background: linear-gradient(135deg, #2B2F36 0%, #4E4C4D 100%);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
   color: #fff;
+  box-shadow: 0 4px 16px rgba(43, 47, 54, 0.2);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .pointsCard::before {
@@ -155,9 +322,13 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  z-index: 0;
-  border-radius: 8px;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
 }
 
 .pointsContent {
@@ -167,27 +338,140 @@
 
 .pointsHeader {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 12px;
+}
+
+.pointsTitleSection {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pointsIcon {
+  font-size: 20px;
+  color: #fce2a9;
+  background: rgba(252, 226, 169, 0.1);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .pointsTitle {
-  font-size: 16px;
-  font-weight: bold;
-  color: #fff;
-}
-
-.pointsCount {
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 18px;
+  font-weight: 600;
   color: #fce2a9;
 }
 
+.pointsCount {
+  font-size: 28px;
+  font-weight: bold;
+  color: #fce2a9;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #fce2a9, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .pointsDescription {
-  font-size: 12px;
+  font-size: 13px;
   color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+
+.pointsMethods {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 16px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.methodsTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fce2a9;
   margin-bottom: 12px;
+  margin-top: 0;
+}
+
+.methodsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.methodItem {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.methodItem::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.methodItem:hover::before {
+  left: 100%;
+}
+
+.methodItem:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  border-color: rgba(252, 226, 169, 0.3);
+}
+
+.methodIcon {
+  width: 32px;
+  height: 32px;
+  background: rgba(252, 226, 169, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px auto;
+  font-size: 16px;
+  color: #fce2a9;
+  transition: all 0.3s ease;
+}
+
+.methodItem:hover .methodIcon {
+  background: rgba(252, 226, 169, 0.25);
+  transform: scale(1.1);
+}
+
+.methodContent h5 {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fce2a9;
+  margin: 0 0 3px 0;
+}
+
+.methodContent p {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  line-height: 1.3;
 }
 
 /* 订单管理样式 */
@@ -345,15 +629,220 @@
     padding: 12px;
   }
 
-  .vipTitle {
+  .personalInfoCard .ant-card-head-title {
     font-size: 16px;
   }
 
-  .pointsTitle {
+  .personalInfoCard .ant-descriptions-bordered .ant-descriptions-item-label,
+  .personalInfoCard .ant-descriptions-bordered .ant-descriptions-item-content {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  .personalInfoCard .ant-btn {
+    font-size: 12px;
+    padding: 4px 12px;
+    height: 32px;
+  }
+
+  .vipTitle {
+    font-size: 18px;
+  }
+
+  .vipIcon {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+
+  .benefitsGrid {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .benefitIcon {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .benefitName {
+    font-size: 10px;
+  }
+
+  .activateButton {
+    padding: 12px 20px;
     font-size: 14px;
+    border-radius: 10px;
+  }
+
+  .pointsTitle {
+    font-size: 16px;
   }
 
   .pointsCount {
-    font-size: 18px;
+    font-size: 22px;
   }
+
+  .pointsIcon {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+
+  .methodsGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .methodItem {
+    padding: 10px;
+  }
+
+  .methodIcon {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+
+  .methodContent h5 {
+    font-size: 12px;
+  }
+
+  .methodContent p {
+    font-size: 10px;
+  }
+}
+
+/* 积分充值弹窗样式 */
+.rechargeContent {
+  padding: 20px 0;
+}
+
+.currentPoints {
+  background: linear-gradient(135deg, #2B2F36 0%, #4E4C4D 100%);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 24px;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(43, 47, 54, 0.2);
+}
+
+.pointsLabel {
+  display: block;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 8px;
+}
+
+.pointsValue {
+  display: block;
+  font-size: 28px;
+  font-weight: bold;
+  color: #fce2a9;
+  background: linear-gradient(135deg, #fce2a9, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.rechargeSection {
+  margin-bottom: 24px;
+}
+
+.rechargeSection h4 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.rechargeDescription {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.sliderContainer {
+  margin-bottom: 20px;
+}
+
+.sliderTrack {
+  position: relative;
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  margin-bottom: 8px;
+}
+
+.sliderHandle {
+  position: absolute;
+  top: -7px;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, #6a5acd 0%, #a64dd8 100%);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(106, 90, 205, 0.3);
+  border: 2px solid #fff;
+}
+
+.sliderHandle:hover {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, #7b68ee 0%, #b76dd9 100%);
+}
+
+.sliderLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #666;
+}
+
+.amountInput {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.amountInput span {
+  font-size: 14px;
+  color: #666;
+}
+
+.totalPrice {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.priceValue {
+  color: #6a5acd;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.rechargeButton {
+  background: linear-gradient(135deg, #6a5acd 0%, #a64dd8 100%);
+  border: none;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  color: #fff;
+}
+
+.rechargeButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(106, 90, 205, 0.3);
+  background: linear-gradient(135deg, #7b68ee 0%, #b76dd9 100%);
 } 

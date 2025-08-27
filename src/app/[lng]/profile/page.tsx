@@ -5,7 +5,7 @@ import { Card, Descriptions, Button, message, Modal, Form, Input, Tabs, Table, T
 import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined, ThunderboltOutlined, HistoryOutlined, DollarOutlined, ShoppingCartOutlined, UserOutlined, GiftFilled } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user";
-import { getUserInfoApi, updateUserInfoApi, getPointsRecordsApi } from "@/api/apiReq";
+import { getUserInfoApi, updateUserInfoApi, getPointsRecordsApi, rechargePointsApi } from "@/api/apiReq";
 import { getOrderListApi, getOrderDetailApi, getSubscriptionListApi, refundOrderApi, unsubscribeApi } from "@/api/payment";
 import type { Order, OrderListParams, SubscriptionListParams, RefundParams, UnsubscribeParams } from "@/api/types/payment";
 import { OrderStatus, PaymentType } from "@/api/types/payment";
@@ -64,6 +64,12 @@ export default function ProfilePage() {
     pageSize: 10,
     total: 0
   });
+
+  // 积分充值相关状态
+  const [pointsRechargeVisible, setPointsRechargeVisible] = useState(false);
+  const [rechargeAmount, setRechargeAmount] = useState(8);
+  const [rechargeForm] = Form.useForm();
+  const [isDragging, setIsDragging] = useState(false);
 
   // 积分记录类型定义
   interface PointsRecord {
@@ -279,6 +285,14 @@ export default function ProfilePage() {
     fetchUserInfo();
   }, [token, router]);
 
+  // 清理滑块事件监听器
+  useEffect(() => {
+    return () => {
+      document.removeEventListener('mousemove', handleSliderMouseMove);
+      document.removeEventListener('mouseup', handleSliderMouseUp);
+    };
+  }, []);
+
   const handleLogout = () => {
     clearLoginStatus();
     message.success(t('logoutSuccess'));
@@ -319,6 +333,79 @@ export default function ProfilePage() {
   const handleFreeTrialModalCancel = () => {
     setFreeTrialModalVisible(false);
     localStorage.setItem('freeTrialShown', 'true');
+  };
+
+  // 积分相关处理函数
+  const handleGoToPublish = () => {
+    router.push('/accounts');
+    // 这里可以添加唤起发布窗口的逻辑
+  };
+
+  const handleGoToVip = () => {
+    router.push('/vip');
+  };
+
+  const handleRechargePoints = () => {
+    setPointsRechargeVisible(true);
+  };
+
+  const handleRechargeSubmit = async (values: any) => {
+    try {
+      const totalPrice = rechargeAmount * 15; // 每1000积分15美元
+      const response = await rechargePointsApi({
+        amount: rechargeAmount,
+        totalPrice: totalPrice
+      });
+      
+      if (response?.code === 0) {
+        message.success('积分充值成功！');
+        setPointsRechargeVisible(false);
+        fetchUserInfo(); // 刷新用户信息
+      } else {
+        message.error(response?.message || '积分充值失败，请重试');
+      }
+    } catch (error) {
+      message.error('积分充值失败，请重试');
+    }
+  };
+
+  const handleRechargeCancel = () => {
+    setPointsRechargeVisible(false);
+  };
+
+  // 滑块拖动处理
+  const handleSliderMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    document.addEventListener('mousemove', handleSliderMouseMove);
+    document.addEventListener('mouseup', handleSliderMouseUp);
+  };
+
+  const handleSliderMouseMove = (e: MouseEvent) => {
+    if (!isDragging) return;
+    
+    const sliderTrack = document.querySelector(`.${styles.sliderTrack}`) as HTMLElement;
+    if (!sliderTrack) return;
+    
+    const rect = sliderTrack.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percentage = Math.max(0, Math.min(1, x / rect.width));
+    const newAmount = Math.round(percentage * 49) + 1; // 1-50
+    setRechargeAmount(newAmount);
+  };
+
+  const handleSliderMouseUp = () => {
+    setIsDragging(false);
+    document.removeEventListener('mousemove', handleSliderMouseMove);
+    document.removeEventListener('mouseup', handleSliderMouseUp);
+  };
+
+  const handleSliderClick = (e: React.MouseEvent) => {
+    const sliderTrack = e.currentTarget as HTMLElement;
+    const rect = sliderTrack.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percentage = Math.max(0, Math.min(1, x / rect.width));
+    const newAmount = Math.round(percentage * 49) + 1; // 1-50
+    setRechargeAmount(newAmount);
   };
 
   // 订单状态标签
@@ -547,7 +634,8 @@ export default function ProfilePage() {
   // 个人信息内容
   const renderProfileContent = () => (
     <>
-      <div className={styles.vipCard}>
+
+<div className={styles.vipCard}>
         <div className={styles.vipContent}>
           <div className={styles.vipHeader}>
             <span className={styles.vipIcon}><CrownOutlined /></span>
@@ -580,25 +668,67 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* 积分记录卡片 */}
-      {/* <div className={styles.pointsCard}>
+      
+      {/* 积分显示卡片 */}
+      <div className={styles.pointsCard}>
         <div className={styles.pointsContent}>
           <div className={styles.pointsHeader}>
-            <div>
-              <span style={{ marginRight: '8px' }}><GiftFilled /></span>
-              <span className={styles.pointsTitle}>{t('points.myPoints')}</span>
+            <div className={styles.pointsTitleSection}>
+              <span className={styles.pointsIcon}><GiftFilled /></span>
+              <span className={styles.pointsTitle}>我的积分</span>
             </div>
             <span className={styles.pointsCount}>{userInfo?.score || 0}</span>
           </div>
           <p className={styles.pointsDescription}>
-            {t('points.pointsDescription')}
+            积分可用于AI服务消费，通过发布内容、开通会员或购买积分获得
           </p>
+          
+          <div className={styles.pointsMethods}>
+            <h4 className={styles.methodsTitle}>获取积分的方法：</h4>
+            <div className={styles.methodsGrid}>
+              <div className={styles.methodItem} onClick={handleGoToPublish}>
+                <div className={styles.methodIcon}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                  </svg>
+                </div>
+                <div className={styles.methodContent}>
+                  <h5>发布</h5>
+                  <p>发布内容获得积分奖励</p>
+                </div>
+              </div>
+              
+              <div className={styles.methodItem} onClick={handleGoToVip}>
+                <div className={styles.methodIcon}>
+                  <CrownOutlined />
+                </div>
+                <div className={styles.methodContent}>
+                  <h5>开通会员</h5>
+                  <p>会员专享积分福利</p>
+                </div>
+              </div>
+              
+              <div className={styles.methodItem} onClick={handleRechargePoints}>
+                <div className={styles.methodIcon}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                </div>
+                <div className={styles.methodContent}>
+                  <h5>购买积分</h5>
+                  <p>直接充值获得积分</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div> */}
+      </div>
+
+
 
       <Card 
         title={t('personalInfo')} 
-        className={styles.card}
+        className={`${styles.card} ${styles.personalInfoCard}`}
         extra={
           <div className={styles.actions}>
             <Button type="primary" onClick={() => setIsModalOpen(true)}>
@@ -618,7 +748,6 @@ export default function ProfilePage() {
             {userInfo?.status === 1 ? t('normal') : t('disabled')}
           </Descriptions.Item>
           <Descriptions.Item label='邀请码'>{userInfo?.popularizeCode}</Descriptions.Item>
-          <Descriptions.Item label='我的积分'>{userInfo?.score}</Descriptions.Item>
           {isVip && (
             <>
               <Descriptions.Item label={t('memberType')}>{vipCycleType}</Descriptions.Item>
@@ -966,6 +1095,72 @@ export default function ProfilePage() {
           <p style={{ color: '#C026D2', fontSize: '14px', fontWeight: '600' }}>
             {t('freeTrial.completelyFree')}
           </p>
+        </div>
+      </Modal>
+
+      {/* 积分充值弹窗 */}
+      <Modal
+        title="购买积分"
+        open={pointsRechargeVisible}
+        onCancel={handleRechargeCancel}
+        footer={null}
+        width={500}
+        centered
+      >
+        <div className={styles.rechargeContent}>
+          <div className={styles.currentPoints}>
+            <span className={styles.pointsLabel}>账户积分</span>
+            <span className={styles.pointsValue}>{userInfo?.score || 0}</span>
+          </div>
+          
+          <div className={styles.rechargeSection}>
+            <h4>购买积分</h4>
+            <p className={styles.rechargeDescription}>每1000积分售价15美元，以此类推</p>
+            
+            <div className={styles.sliderContainer}>
+              <div 
+                className={styles.sliderTrack}
+                onClick={handleSliderClick}
+              >
+                <div 
+                  className={styles.sliderHandle}
+                  style={{ left: `${(rechargeAmount / 50) * 100}%` }}
+                  onMouseDown={handleSliderMouseDown}
+                />
+              </div>
+              <div className={styles.sliderLabels}>
+                <span>1K</span>
+                <span>50K</span>
+              </div>
+            </div>
+            
+            <div className={styles.amountInput}>
+              <Input
+                type="number"
+                value={rechargeAmount}
+                onChange={(e) => setRechargeAmount(Number(e.target.value))}
+                min={1}
+                max={50}
+                style={{ width: '80px', marginRight: '8px' }}
+              />
+              <span>*1000积分</span>
+            </div>
+            
+            <div className={styles.totalPrice}>
+              <span>总价：</span>
+              <span className={styles.priceValue}>${(rechargeAmount * 15).toFixed(2)}</span>
+            </div>
+          </div>
+          
+          <Button 
+            type="primary" 
+            size="large" 
+            block
+            onClick={() => handleRechargeSubmit({ amount: rechargeAmount })}
+            className={styles.rechargeButton}
+          >
+            立即购买
+          </Button>
         </div>
       </Modal>
     </div>
