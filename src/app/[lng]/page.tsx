@@ -4,7 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./styles/difyHome.module.scss";
 import { useTransClient } from "../i18n/client";
 
+import logo from '@/assets/images/logo.png';
+
 // 导入SVG图标
+import gongzhonghao from '@/assets/images/gongzhonghao.jpg';
 import bilibiliIcon from '@/assets/svgs/plat/bilibili.svg';
 import douyinIcon from '@/assets/svgs/plat/douyin.svg';
 import tiktokIcon from '@/assets/svgs/plat/tiktok.svg';
@@ -20,16 +23,27 @@ import LinkedInIcon from '@/assets/svgs/plat/linkedin.svg';
 import PinterestIcon from '@/assets/svgs/plat/pinterest.svg';
 import ThreadsIcon from '@/assets/svgs/plat/xiancheng.svg';
 
-import logo from '@/assets/images/logo.png';
-import hotjietu1 from '@/assets/images/hotjietu1.png';
-import hotjietu2 from '@/assets/images/hotjietu2.png';
-import hotjietu3 from '@/assets/images/hotjietu3.png';
+// 资料图片
 import publish1 from '@/assets/images/publish1.png';
-import gongzhonghao from '@/assets/images/gongzhonghao.jpg';
 
-import phonepublish1 from '@/assets/images/phonepublish1.png';
-import phonepublish2 from '@/assets/images/phonepublish2.png';
-import phonepublish3 from '@/assets/images/phonepublish3.png';
+
+import calendar from '@/assets/images/app-screenshot/1. content publish/calendar.jpeg';
+import supportChannels from '@/assets/images/app-screenshot/1. content publish/support_channels.jpeg';
+import hotspot from '@/assets/images/app-screenshot/2. content hotspot/hotspot.jpg';
+import hotspot2 from '@/assets/images/app-screenshot/2. content hotspot/hotspot2.jpeg';
+import hotspot3 from '@/assets/images/app-screenshot/2. content hotspot/hotspot3.jpeg';
+import hotspot4 from '@/assets/images/app-screenshot/2. content hotspot/hotspot4.jpeg';
+import contentSearch from '@/assets/images/app-screenshot/3. content search/contentsearch.gif';
+import contentSearch1 from '@/assets/images/app-screenshot/3. content search/contentsearch1.jpeg';
+import contentSearch2 from '@/assets/images/app-screenshot/3. content search/contentsearch2.jpeg';
+import contentSearch4 from '@/assets/images/app-screenshot/3. content search/contentsearch4.jpeg';
+import commentSearch from '@/assets/images/app-screenshot/4. comments search/commentsearch.gif';
+import commentFilter from '@/assets/images/app-screenshot/4. comments search/commentfilter.jpeg';
+import commentFilter2 from '@/assets/images/app-screenshot/5. content engagement/commentfilter2.jpeg';
+
+import dataCenter from '@/assets/images/data_center.png';
+
+
 
 import Link from "next/link";
 import Image from "next/image";
@@ -273,12 +287,11 @@ function BrandBar() {
   );
 }
 
-// 灵感创意
-function BuildSection() {
-  const { t } = useTransClient('home');
+// 1. Content Publishing — 一键发布 · 多平台触达
+function ContentPublishingSection() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
-  const images = [hotjietu1.src, hotjietu2.src, hotjietu3.src];
+  const images = [calendar.src, supportChannels.src];
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   
@@ -305,29 +318,24 @@ function BuildSection() {
   // 滚轮控制
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      // 检查是否在轮播区域内
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
         e.preventDefault();
         
         if (e.deltaY > 0) {
-          // 向下滚动
           if (currentImageIndex < images.length - 1) {
             setCurrentImageIndex(prev => prev + 1);
-            setAutoRotate(false); // 用户操作时暂停自动轮播
+            setAutoRotate(false);
           } else {
-            // 到达最后一张图，恢复页面滚动
             setAutoRotate(true);
             return;
           }
         } else {
-          // 向上滚动
           if (currentImageIndex > 0) {
             setCurrentImageIndex(prev => prev - 1);
             setAutoRotate(false);
           }
         }
         
-        // 3秒后恢复自动轮播
         setTimeout(() => {
           setAutoRotate(true);
         }, 3000);
@@ -349,30 +357,25 @@ function BuildSection() {
       <div className={styles.buildContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
-          <span>{t('buildSection.badge')}</span>
+          <span>功能1</span>
         </div>
         
         <div className={styles.buildContent}>
           <div className={styles.buildLeft}>
             <h2 className={styles.buildTitle}>
-              {t('buildSection.title')} 
-              <span className={styles.titleBlue}>{t('buildSection.titleBlue')}</span>
+              Content Publishing — 一键发布 · 多平台触达
+              <span className={styles.titleBlue}>从创意灵感到多平台分发，再到数据分析和商业化</span>
             </h2>
             
             <div className={styles.featureList}>
               <div className={styles.featureItem}>
-                <h3>{t('buildSection.features.hotTopic.title')}</h3>
-                <p>{t('buildSection.features.hotTopic.description')}</p>
+                <h3>多平台分发</h3>
+                <p>支持全球最多主流社交平台（Douyin, Kwai, Wechat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, Bluesky, YouTube Shorts, Pinterest, Google Business, Mastodon, X）。</p>
               </div>
               
               <div className={styles.featureItem}>
-                <h3>{t('buildSection.features.international.title')}</h3>
-                <p>{t('buildSection.features.international.description')}</p>
-              </div>
-              
-              <div className={styles.featureItem}>
-                <h3>{t('buildSection.features.domestic.title')}</h3>
-                <p>{t('buildSection.features.domestic.description')}</p>
+                <h3>日历编排</h3>
+                <p>像操作日历一样规划内容，实现多平台协同发布。</p>
               </div>
             </div>
           </div>
@@ -390,7 +393,7 @@ function BuildSection() {
                   >
                     <img 
                       src={image} 
-                      alt={`AI ToEarn Feature ${index + 1}`} 
+                      alt={`Content Publishing ${index + 1}`} 
                       className={styles.carouselImage}
                     />
                   </div>
@@ -412,7 +415,7 @@ function BuildSection() {
               </div>
               
               <div className={styles.carouselHint}>
-                <span>{t('buildSection.carouselHint')}</span>
+                <span>使用滚轮切换图片</span>
               </div>
             </div>
           </div>
@@ -422,12 +425,11 @@ function BuildSection() {
   );
 }
 
-// 功能介绍区
-function ConnectSection() {
-  const { t } = useTransClient('home');
+// 2. Content Hotspot — 爆款灵感引擎
+function ContentHotspotSection() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
-  const images = [phonepublish1.src, phonepublish2.src, phonepublish3.src ]; // 功能介绍相关的图片
+  const images = [hotspot.src, hotspot2.src, hotspot3.src, hotspot4.src];
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   
@@ -454,29 +456,24 @@ function ConnectSection() {
   // 滚轮控制
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      // 检查是否在轮播区域内
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
         e.preventDefault();
         
         if (e.deltaY > 0) {
-          // 向下滚动
           if (currentImageIndex < images.length - 1) {
             setCurrentImageIndex(prev => prev + 1);
-            setAutoRotate(false); // 用户操作时暂停自动轮播
+            setAutoRotate(false);
           } else {
-            // 到达最后一张图，恢复页面滚动
             setAutoRotate(true);
             return;
           }
         } else {
-          // 向上滚动
           if (currentImageIndex > 0) {
             setCurrentImageIndex(prev => prev - 1);
             setAutoRotate(false);
           }
         }
         
-        // 3秒后恢复自动轮播
         setTimeout(() => {
           setAutoRotate(true);
         }, 3000);
@@ -494,46 +491,34 @@ function ConnectSection() {
   }, [currentImageIndex, images.length]);
 
   return (
-    <section className={styles.connectSection}>
-      <div className={styles.connectContainer}>
+    <section className={styles.buildSection}>
+      <div className={styles.buildContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
-          <span>{t('connectSection.badge')}</span>
+          <span>功能2</span>
         </div>
         
-        <div className={styles.connectContent}>
-          <div className={styles.connectLeft}>
-            <h2 className={styles.connectTitle}>
-            {t('connectSection.title')} <span className={styles.titleBlue}>{t('connectSection.titleBlue')}</span>
+        <div className={styles.buildContent}>
+          <div className={styles.buildLeft}>
+            <h2 className={styles.buildTitle}>
+              Content Hotspot — 爆款灵感引擎
+              <span className={styles.titleBlue}>爆款案例库与趋势捕捉</span>
             </h2>
             
             <div className={styles.featureList}>
               <div className={styles.featureItem}>
-                <h3>{t('connectSection.features.creation.title')}</h3>
-                <p>{t('connectSection.features.creation.description')}</p>
-                <div className={styles.integrationLogos}>
-                  {/* 集成服务 logos */}
-                </div>
+                <h3>爆款案例库</h3>
+                <p>随时查看他人如何打造 10,000+ 点赞的内容。</p>
               </div>
               
               <div className={styles.featureItem}>
-                <h3>{t('connectSection.features.distribution.title')}</h3>
-                <p>{t('connectSection.features.distribution.description')}</p>
-              </div>
-              
-              <div className={styles.featureItem}>
-                <h3>{t('connectSection.features.interaction.title')}</h3>
-                <p>{t('connectSection.features.interaction.description')}</p>
-              </div>
-
-              <div className={styles.featureItem}>
-                <h3>{t('connectSection.features.analytics.title')}</h3>
-                <p>{t('connectSection.features.analytics.description')}</p>
+                <h3>趋势捕捉</h3>
+                <p>快速发现流行趋势，降低创作焦虑。</p>
               </div>
             </div>
           </div>
           
-          <div className={styles.connectRight}>
+          <div className={styles.buildRight}>
             <div 
               className={styles.imageCarousel}
               ref={carouselRef}
@@ -546,7 +531,7 @@ function ConnectSection() {
                   >
                     <img 
                       src={image} 
-                      alt={`AI ToEarn Function ${index + 1}`} 
+                      alt={`Content Hotspot ${index + 1}`} 
                       className={styles.carouselImage}
                     />
                   </div>
@@ -568,7 +553,480 @@ function ConnectSection() {
               </div>
               
               <div className={styles.carouselHint}>
-                <span>{t('connectSection.carouselHint')}</span>
+                <span>使用滚轮切换图片</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// 3. Content Search — 品牌与市场洞察
+function ContentSearchSection() {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [autoRotate, setAutoRotate] = useState(true);
+  const images = [contentSearch.src, contentSearch1.src, contentSearch2.src, contentSearch4.src];
+  const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  
+  // 自动轮播
+  useEffect(() => {
+    if (autoRotate) {
+      autoRotateRef.current = setInterval(() => {
+        setCurrentImageIndex(prev => (prev + 1) % images.length);
+      }, 3000);
+    } else {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+        autoRotateRef.current = null;
+      }
+    }
+    
+    return () => {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+      }
+    };
+  }, [autoRotate, images.length]);
+  
+  // 滚轮控制
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
+        e.preventDefault();
+        
+        if (e.deltaY > 0) {
+          if (currentImageIndex < images.length - 1) {
+            setCurrentImageIndex(prev => prev + 1);
+            setAutoRotate(false);
+          } else {
+            setAutoRotate(true);
+            return;
+          }
+        } else {
+          if (currentImageIndex > 0) {
+            setCurrentImageIndex(prev => prev - 1);
+            setAutoRotate(false);
+          }
+        }
+        
+        setTimeout(() => {
+          setAutoRotate(true);
+        }, 3000);
+      }
+    };
+    
+    const carousel = carouselRef.current;
+    if (carousel) {
+      carousel.addEventListener('wheel', handleWheel, { passive: false });
+      
+      return () => {
+        carousel.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, [currentImageIndex, images.length]);
+
+  return (
+    <section className={styles.buildSection}>
+      <div className={styles.buildContainer}>
+        <div className={styles.sectionBadge}>
+          <div className={styles.badgeIcon}></div>
+          <span>功能3</span>
+        </div>
+        
+        <div className={styles.buildContent}>
+          <div className={styles.buildLeft}>
+            <h2 className={styles.buildTitle}>
+              Content Search — 品牌与市场洞察
+              <span className={styles.titleBlue}>品牌监控与内容搜索</span>
+            </h2>
+            
+            <div className={styles.featureList}>
+              <div className={styles.featureItem}>
+                <h3>品牌监控</h3>
+                <p>实时追踪品牌相关讨论，第一时间响应。</p>
+              </div>
+              
+              <div className={styles.featureItem}>
+                <h3>内容搜索</h3>
+                <p>找到目标帖子和话题，高效互动，精准拓展市场。</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className={styles.buildRight}>
+            <div 
+              className={styles.imageCarousel}
+              ref={carouselRef}
+            >
+              <div className={styles.carouselContainer}>
+                {images.map((image, index) => (
+                  <div
+                    key={index}
+                    className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
+                  >
+                    <img 
+                      src={image} 
+                      alt={`Content Search ${index + 1}`} 
+                      className={styles.carouselImage}
+                    />
+                  </div>
+                ))}
+              </div>
+              
+              <div className={styles.carouselIndicators}>
+                {images.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`${styles.indicator} ${index === currentImageIndex ? styles.active : ''}`}
+                    onClick={() => {
+                      setCurrentImageIndex(index);
+                      setAutoRotate(false);
+                      setTimeout(() => setAutoRotate(true), 3000);
+                    }}
+                  />
+                ))}
+              </div>
+              
+              <div className={styles.carouselHint}>
+                <span>使用滚轮切换图片</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// 4. Comments Search — 精准用户挖掘
+function CommentsSearchSection() {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [autoRotate, setAutoRotate] = useState(true);
+  const images = [commentSearch.src, commentFilter.src];
+  const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  
+  // 自动轮播
+  useEffect(() => {
+    if (autoRotate) {
+      autoRotateRef.current = setInterval(() => {
+        setCurrentImageIndex(prev => (prev + 1) % images.length);
+      }, 3000);
+    } else {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+        autoRotateRef.current = null;
+      }
+    }
+    
+    return () => {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+      }
+    };
+  }, [autoRotate, images.length]);
+  
+  // 滚轮控制
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
+        e.preventDefault();
+        
+        if (e.deltaY > 0) {
+          if (currentImageIndex < images.length - 1) {
+            setCurrentImageIndex(prev => prev + 1);
+            setAutoRotate(false);
+          } else {
+            setAutoRotate(true);
+            return;
+          }
+        } else {
+          if (currentImageIndex > 0) {
+            setCurrentImageIndex(prev => prev - 1);
+            setAutoRotate(false);
+          }
+        }
+        
+        setTimeout(() => {
+          setAutoRotate(true);
+        }, 3000);
+      }
+    };
+    
+    const carousel = carouselRef.current;
+    if (carousel) {
+      carousel.addEventListener('wheel', handleWheel, { passive: false });
+      
+      return () => {
+        carousel.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, [currentImageIndex, images.length]);
+
+  return (
+    <section className={styles.buildSection}>
+      <div className={styles.buildContainer}>
+        <div className={styles.sectionBadge}>
+          <div className={styles.badgeIcon}></div>
+          <span>功能4</span>
+        </div>
+        
+        <div className={styles.buildContent}>
+          <div className={styles.buildLeft}>
+            <h2 className={styles.buildTitle}>
+              Comments Search — 精准用户挖掘
+              <span className={styles.titleBlue}>智能评论搜索与精准转化</span>
+            </h2>
+            
+            <div className={styles.featureList}>
+              <div className={styles.featureItem}>
+                <h3>智能评论搜索</h3>
+                <p>快速发现"求链接""怎么购买"等高转化信号。</p>
+              </div>
+              
+              <div className={styles.featureItem}>
+                <h3>精准转化</h3>
+                <p>主动回复，提升流量变现效率。</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className={styles.buildRight}>
+            <div 
+              className={styles.imageCarousel}
+              ref={carouselRef}
+            >
+              <div className={styles.carouselContainer}>
+                {images.map((image, index) => (
+                  <div
+                    key={index}
+                    className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
+                  >
+                    <img 
+                      src={image} 
+                      alt={`Comments Search ${index + 1}`} 
+                      className={styles.carouselImage}
+                    />
+                  </div>
+                ))}
+              </div>
+              
+              <div className={styles.carouselIndicators}>
+                {images.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`${styles.indicator} ${index === currentImageIndex ? styles.active : ''}`}
+                    onClick={() => {
+                      setCurrentImageIndex(index);
+                      setAutoRotate(false);
+                      setTimeout(() => setAutoRotate(true), 3000);
+                    }}
+                  />
+                ))}
+              </div>
+              
+              <div className={styles.carouselHint}>
+                <span>使用滚轮切换图片</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// 5. Content Engagement — 互动与增长引擎
+function ContentEngagementSection() {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [autoRotate, setAutoRotate] = useState(true);
+  const images = [commentFilter2.src];
+  const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  
+  // 自动轮播
+  useEffect(() => {
+    if (autoRotate) {
+      autoRotateRef.current = setInterval(() => {
+        setCurrentImageIndex(prev => (prev + 1) % images.length);
+      }, 3000);
+    } else {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+        autoRotateRef.current = null;
+      }
+    }
+    
+    return () => {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+      }
+    };
+  }, [autoRotate, images.length]);
+  
+  // 滚轮控制
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
+        e.preventDefault();
+        
+        if (e.deltaY > 0) {
+          if (currentImageIndex < images.length - 1) {
+            setCurrentImageIndex(prev => prev + 1);
+            setAutoRotate(false);
+          } else {
+            setAutoRotate(true);
+            return;
+          }
+        } else {
+          if (currentImageIndex > 0) {
+            setCurrentImageIndex(prev => prev - 1);
+            setAutoRotate(false);
+          }
+        }
+        
+        setTimeout(() => {
+          setAutoRotate(true);
+        }, 3000);
+      }
+    };
+    
+    const carousel = carouselRef.current;
+    if (carousel) {
+      carousel.addEventListener('wheel', handleWheel, { passive: false });
+      
+      return () => {
+        carousel.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, [currentImageIndex, images.length]);
+
+  return (
+    <section className={styles.buildSection}>
+      <div className={styles.buildContainer}>
+        <div className={styles.sectionBadge}>
+          <div className={styles.badgeIcon}></div>
+          <span>功能5</span>
+        </div>
+        
+        <div className={styles.buildContent}>
+          <div className={styles.buildLeft}>
+            <h2 className={styles.buildTitle}>
+              Content Engagement — 互动与增长引擎
+              <span className={styles.titleBlue}>统一后台与主动运营</span>
+            </h2>
+            
+            <div className={styles.featureList}>
+              <div className={styles.featureItem}>
+                <h3>统一后台</h3>
+                <p>集中管理所有内容，互动零遗漏。</p>
+              </div>
+              
+              <div className={styles.featureItem}>
+                <h3>主动运营</h3>
+                <p>参与热门话题，与潜在用户双向互动。把"被动内容运营"变成"主动流量经营"。</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className={styles.buildRight}>
+            <div 
+              className={styles.imageCarousel}
+              ref={carouselRef}
+            >
+              <div className={styles.carouselContainer}>
+                {images.map((image, index) => (
+                  <div
+                    key={index}
+                    className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
+                  >
+                    <img 
+                      src={image} 
+                      alt={`Content Engagement ${index + 1}`} 
+                      className={styles.carouselImage}
+                    />
+                  </div>
+                ))}
+              </div>
+              
+              <div className={styles.carouselIndicators}>
+                {images.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`${styles.indicator} ${index === currentImageIndex ? styles.active : ''}`}
+                    onClick={() => {
+                      setCurrentImageIndex(index);
+                      setAutoRotate(false);
+                      setTimeout(() => setAutoRotate(true), 3000);
+                    }}
+                  />
+                ))}
+              </div>
+              
+              <div className={styles.carouselHint}>
+                <span>使用滚轮切换图片</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// 6-8. 即将上线功能整合模块
+function UpcomingFeaturesSection() {
+  return (
+    <section className={styles.buildSection}>
+      <div className={styles.buildContainer}>
+        <div className={styles.sectionBadge}>
+          <div className={styles.badgeIcon}></div>
+          <span>即将上线</span>
+        </div>
+        
+        <div className={styles.buildContent}>
+          <div className={styles.buildLeft}>
+            <h2 className={styles.buildTitle}>
+              AI 驱动的全链路内容增长与变现平台
+              <span className={styles.titleBlue}>即将上线功能，敬请期待</span>
+            </h2>
+            
+            <div className={styles.featureList}>
+              <div className={styles.featureItem}>
+                <h3>智能导入</h3>
+                <p>直接导入历史内容，快速编辑、二次分发。例如：小红书创作者可一键同步到 YouTube，让更多用户看到。</p>
+              </div>
+              
+              <div className={styles.featureItem}>
+                <h3>Content Analytics — 全景化数据视图</h3>
+                <p>多平台对比：一个平台不给流量，不代表所有平台不给。全链路监控：追踪内容表现，助力打造下一个百万博主。</p>
+              </div>
+              
+              <div className={styles.featureItem}>
+                <h3>AI Content Creation — 全流程 AI 助手</h3>
+                <p>AI 文案生成：自动生成标题、描述，高效产出。AI 评论生成：主动出击，获取流量。图文卡片生成，全流程加速创作。支持主流 AI 视频模型和图片模型。</p>
+              </div>
+              
+              <div className={styles.featureItem}>
+                <h3>Content Marketplace — 内容交易与变现</h3>
+                <p>创作者变现：在平台直接出售内容，让优质作品快速找到买家。品牌采购：企业可直接购买现成内容，节省时间与成本。让创作变成收益 —— Let's use AI to earn. Let's earn money together!</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className={styles.buildRight}>
+            <div className={styles.imageCarousel}>
+              <div className={styles.carouselContainer}>
+                <div className={`${styles.carouselSlide} ${styles.active}`}>
+                                                           <img 
+                       src={dataCenter.src} 
+                       alt="Data Center Analytics" 
+                       className={styles.carouselImage}
+                     />
+                </div>
               </div>
             </div>
           </div>
@@ -978,8 +1436,12 @@ export default function Home() {
       <Header />
       <Hero />
       <BrandBar />
-      <BuildSection />
-      <ConnectSection />
+      <ContentPublishingSection />
+      <ContentHotspotSection />
+      <ContentSearchSection />
+      <CommentsSearchSection />
+      <ContentEngagementSection />
+      <UpcomingFeaturesSection />
       {/* <DownloadSection />
       <EnterpriseSection />
       <StatsSection /> */}
