@@ -41,21 +41,21 @@
       },
       "configurations": {
         "local": {
-          "buildTarget": "cloud-space:build:development",
+          "buildTarget": "aitoearn-cloud-space:build:development",
           "args": [
             "-c",
             "{workspaceRoot}/apps/aitoearn-cloud-space/config/local.config.js"
           ]
         },
         "dev": {
-          "buildTarget": "cloud-space:build:development",
+          "buildTarget": "aitoearn-cloud-space:build:development",
           "args": [
             "-c",
             "{workspaceRoot}/apps/aitoearn-cloud-space/config/dev.config.js"
           ]
         },
         "prod": {
-          "buildTarget": "cloud-space:build:production",
+          "buildTarget": "aitoearn-cloud-space:build:production",
           "args": [
             "-c",
             "{workspaceRoot}/apps/aitoearn-cloud-space/config/prod.config.js"

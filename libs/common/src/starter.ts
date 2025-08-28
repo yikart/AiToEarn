@@ -98,7 +98,7 @@ export async function startApplication(Module: Type<unknown>, config: BaseConfig
 
   app.useLogger(app.get(PinoLogger))
 
-  setupNatsMessagePattern(app.get(ModulesContainer), app.get(MetadataScanner), config.nats.prefix)
+  setupNatsMessagePattern(app.get(ModulesContainer), new MetadataScanner(), config.nats.prefix)
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.NATS,

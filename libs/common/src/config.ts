@@ -20,12 +20,13 @@ const logLevel = z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace'])
 export const cloudWatchLoggerConfig = z.object({
   enable: z.boolean().default(false),
   level: logLevel.default('debug'),
+  region: z.string(),
   group: z.string(),
   stream: z.string().optional(),
   entity: z.object({
     keyAttributes: z.record(z.string(), z.string()).optional(),
     attributes: z.record(z.string(), z.string()).optional(),
-  }),
+  }).optional(),
   accessKeyId: z.string().optional(),
   secretAccessKey: z.string().optional(),
 })

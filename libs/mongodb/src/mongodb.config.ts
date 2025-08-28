@@ -7,4 +7,5 @@ export const mongodbConfigSchema = z.object({
   autoIndex: z.boolean().optional(),
   autoCreate: z.boolean().optional(),
 })
+
 export class MongodbConfig extends createZodDto(mongodbConfigSchema) {}

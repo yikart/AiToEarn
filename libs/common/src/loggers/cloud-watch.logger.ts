@@ -1,5 +1,6 @@
 import type { CloudWatchLogsClientConfig, Entity } from '@aws-sdk/client-cloudwatch-logs'
 import type { DestinationStream } from 'pino'
+import * as os from 'node:os'
 import { CloudWatchLogsClient, CreateLogGroupCommand, CreateLogStreamCommand, PutLogEventsCommand } from '@aws-sdk/client-cloudwatch-logs'
 
 export interface CloudWatchLoggerOptions extends CloudWatchLogsClientConfig {
@@ -24,6 +25,8 @@ export class CloudWatchLogger implements DestinationStream {
       ...options,
       credentials,
     })
+
+    this.options.stream = options.stream || `${os.hostname()}-${process.pid}-${Date.now()}`
 
     this.createLogGroup().then(() => this.createLogStream())
   }

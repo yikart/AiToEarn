@@ -1,5 +1,4 @@
-import type { ZodType } from 'zod'
-import { z } from 'zod'
+import { z, ZodType } from 'zod'
 
 export interface ZodDto<
   TOutput = unknown,

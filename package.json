@@ -8,7 +8,8 @@
   },
   "private": true,
   "dependencies": {
-    "reflect-metadata": "^0.2.2"
+    "reflect-metadata": "^0.2.2",
+    "zod": "^4.0.17"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^5.2.1",
@@ -56,7 +57,12 @@
       "simple-git-hooks",
       "unrs-resolver",
       "oxc-resolver"
-    ]
+    ],
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "axios"
+      ]
+    }
   },
   "nx": {
     "includedScripts": []
