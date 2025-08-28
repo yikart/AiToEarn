@@ -1166,7 +1166,8 @@ interface Resources {
     },
     "actions": {
       "selectMaterial": "选择素材",
-      "selectDraft": "选择草稿"
+      "selectDraft": "选择草稿",
+      "cropCover": "裁剪封面"
     }
   },
   "route": {

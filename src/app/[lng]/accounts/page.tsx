@@ -15,6 +15,13 @@ export async function generateMetadata({ params }: PageParams) {
   );
 }
 
-export default function Page() {
-  return <AccountPageCore />;
+interface AccountsPageProps {
+  searchParams: {
+    platform?: string;
+    spaceId?: string;
+  };
+}
+
+export default function Page({ searchParams }: AccountsPageProps) {
+  return <AccountPageCore searchParams={searchParams} />;
 }

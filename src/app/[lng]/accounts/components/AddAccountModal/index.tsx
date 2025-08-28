@@ -32,12 +32,14 @@ export interface IAddAccountModalProps {
   targetGroupId?: string;
   // 是否显示空间选择器（当从AccountSidebar的"添加账号"按钮打开时显示）
   showSpaceSelector?: boolean;
+  // 自动触发平台，用于在打开时直接尝试跳转授权
+  autoTriggerPlatform?: PlatType;
 }
 
 const AddAccountModal = memo(
   forwardRef(
-    (
-      { open, onClose, onAddSuccess, targetGroupId, showSpaceSelector = false }: IAddAccountModalProps,
+          (
+        { open, onClose, onAddSuccess, targetGroupId, showSpaceSelector = false, autoTriggerPlatform }: IAddAccountModalProps,
       ref: ForwardedRef<IAddAccountModalRef>,
     ) => {
       const { t } = useTransClient('account');
@@ -130,10 +132,25 @@ const AddAccountModal = memo(
         };
       }, [open, selectedSpaceId]);
 
+      // 自动触发平台授权
+      useEffect(() => {
+        if (open && autoTriggerPlatform && selectedSpaceId) {
+          // 延迟一下确保弹窗完全打开
+          const timer = setTimeout(() => {
+            const platformInfo = AccountPlatInfoArr.find(([key]) => key === autoTriggerPlatform);
+            if (platformInfo) {
+              handlePlatformClick(autoTriggerPlatform, platformInfo[1]);
+            }
+          }, 500);
+          
+          return () => clearTimeout(timer);
+        }
+      }, [open, autoTriggerPlatform, selectedSpaceId]);
+
       // 判断平台是否在当前属地可用
       const isPlatformAvailable = (platType: PlatType): boolean => {
         // TODO: 暂时屏蔽国内平台 @@.@@
-        // return true;
+        return true;
         if (isCnSpace === null) return true; // 未确定属地时显示所有平台
         
         const cnOnlyPlatforms = new Set<PlatType>([
@@ -245,13 +262,13 @@ const AddAccountModal = memo(
           const targetGroup = accountGroupList.find(group => group.id === selectedSpaceId);
           const isDefaultSpace = targetGroup?.isDefault;
           
-          console.log('移动空间调试信息:', {
-            selectedSpaceId,
-            targetGroupName: targetGroup?.name,
-            isDefaultSpace,
-            showSpaceSelector,
-            spaceSelectionRequired
-          });
+          // console.log('移动空间调试信息:', {
+          //   selectedSpaceId,
+          //   targetGroupName: targetGroup?.name,
+          //   isDefaultSpace,
+          //   showSpaceSelector,
+          //   spaceSelectionRequired
+          // });
           
           // 只有当选择了非默认空间时才移动账号
           if (!isDefaultSpace) {

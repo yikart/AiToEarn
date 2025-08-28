@@ -92,6 +92,7 @@
   },
   "actions": {
     "selectMaterial": "Select Material",
-    "selectDraft": "Select Draft"
+    "selectDraft": "Select Draft",
+    "cropCover": "Crop Cover"
   }
 } 
