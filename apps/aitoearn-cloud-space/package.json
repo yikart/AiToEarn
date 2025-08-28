@@ -7,7 +7,7 @@
     "@nestjs/microservices": "^11.1.6",
     "@nestjs/schedule": "^6.0.0",
     "@yikart/ansible": "*",
-    "@yikart/common": "^0.0.3",
+    "@yikart/common": "^0.0.4",
     "@yikart/mongodb": "*",
     "@yikart/multilogin": "*",
     "@yikart/redlock": "*",
