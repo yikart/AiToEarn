@@ -62,4 +62,4 @@ COPY --from=build-app /app/dist/apps/${APP_NAME}/ ./
 
 RUN echo "require('./src/main.js')" > index.js
 
-CMD ["node", "index.js"]
+CMD node index.js -c config.js
