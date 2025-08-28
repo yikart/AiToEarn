@@ -1,7 +1,7 @@
 {
   "name": "@yikart/common",
   "type": "commonjs",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },

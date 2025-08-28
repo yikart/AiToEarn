@@ -21,5 +21,12 @@
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@scarf/scarf",
+      "nestjs-pino"
+    ]
   }
 }

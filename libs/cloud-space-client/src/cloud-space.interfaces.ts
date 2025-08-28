@@ -98,12 +98,3 @@ export interface ListMultiloginAccountsDto {
 export interface IdDto {
   id: string
 }
-
-// 通用分页响应类型
-export interface PaginationResponse<T> {
-  data: T[]
-  total: number
-  page: number
-  pageSize: number
-  totalPages: number
-}

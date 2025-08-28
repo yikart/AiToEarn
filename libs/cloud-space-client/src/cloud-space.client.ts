@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { PaginationVo } from '@yikart/common'
 import { NatsClient } from '@yikart/nats-client'
 import {
   BrowserProfile,
@@ -12,7 +13,6 @@ import {
   ListCloudSpacesDto,
   ListMultiloginAccountsDto,
   MultiloginAccount,
-  PaginationResponse,
   RenewCloudSpaceDto,
   UpdateMultiloginAccountDto,
 } from './cloud-space.interfaces'
@@ -26,8 +26,8 @@ export class CloudSpaceClient {
     return this.natsClient.send<CloudSpace>('cloud-space.create', dto)
   }
 
-  async listCloudSpaces(dto: ListCloudSpacesDto): Promise<PaginationResponse<CloudSpace>> {
-    return this.natsClient.send<PaginationResponse<CloudSpace>>('cloud-space.list', dto)
+  async listCloudSpaces(dto: ListCloudSpacesDto): Promise<PaginationVo<CloudSpace>> {
+    return this.natsClient.send<PaginationVo<CloudSpace>>('cloud-space.list', dto)
   }
 
   async getCloudSpaceStatus(dto: GetCloudSpaceStatusDto): Promise<CloudSpace> {
@@ -43,8 +43,8 @@ export class CloudSpaceClient {
   }
 
   // 浏览器Profile管理
-  async listProfiles(dto: ListBrowserProfilesDto): Promise<PaginationResponse<BrowserProfile>> {
-    return this.natsClient.send<PaginationResponse<BrowserProfile>>('cloud-space.profile.list', dto)
+  async listProfiles(dto: ListBrowserProfilesDto): Promise<PaginationVo<BrowserProfile>> {
+    return this.natsClient.send<PaginationVo<BrowserProfile>>('cloud-space.profile.list', dto)
   }
 
   // MultiLogin 账号管理
@@ -52,8 +52,8 @@ export class CloudSpaceClient {
     return this.natsClient.send<MultiloginAccount>('cloud-space.multilogin-account.create', dto)
   }
 
-  async listMultiloginAccounts(dto: ListMultiloginAccountsDto): Promise<PaginationResponse<MultiloginAccount>> {
-    return this.natsClient.send<PaginationResponse<MultiloginAccount>>('cloud-space.multilogin-account.list', dto)
+  async listMultiloginAccounts(dto: ListMultiloginAccountsDto): Promise<PaginationVo<MultiloginAccount>> {
+    return this.natsClient.send<PaginationVo<MultiloginAccount>>('cloud-space.multilogin-account.list', dto)
   }
 
   async getMultiloginAccountById(dto: IdDto): Promise<MultiloginAccount> {

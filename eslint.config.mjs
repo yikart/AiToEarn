@@ -1,5 +1,5 @@
 import antfu from '@antfu/eslint-config'
-import nx from '@nx/eslint-plugin'
+import * as nx from '@nx/eslint-plugin'
 import importPlugin from 'eslint-plugin-import'
 
 export default antfu(
