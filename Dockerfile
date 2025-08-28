@@ -25,7 +25,12 @@ ENV APP_NAME=${APP_NAME}
 COPY nx.json ./
 COPY tsconfig.base.json ./
 COPY project.json ./
-COPY apps/${APP_NAME} apps/${APP_NAME}
+COPY apps/${APP_NAME}/src apps/${APP_NAME}/src
+COPY apps/${APP_NAME}/package.json apps/${APP_NAME}/package.json
+COPY apps/${APP_NAME}/project.json apps/${APP_NAME}/project.json
+COPY apps/${APP_NAME}/tsconfig.json apps/${APP_NAME}/tsconfig.json
+COPY apps/${APP_NAME}/tsconfig.lib.json apps/${APP_NAME}/tsconfig.lib.json
+
 
 RUN --mount=type=cache,id=nx,target=/app/.nx/cache \
     pnpm nx build ${APP_NAME} --prod --excludeTaskDependencies
