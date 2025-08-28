@@ -709,10 +709,24 @@
     font-size: 12px;
   }
 
-  .methodContent p {
-    font-size: 10px;
-  }
-}
+     .methodContent p {
+     font-size: 10px;
+   }
+
+   .paymentSuccessTip {
+     padding: 10px;
+     margin-bottom: 12px;
+   }
+
+   .paymentSuccessTip p {
+     font-size: 12px;
+   }
+
+   .paymentSuccessButton {
+     font-size: 12px;
+     padding: 6px 12px;
+   }
+ }
 
 /* 积分充值弹窗样式 */
 .rechargeContent {
@@ -841,8 +855,41 @@
   color: #fff;
 }
 
-.rechargeButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(106, 90, 205, 0.3);
-  background: linear-gradient(135deg, #7b68ee 0%, #b76dd9 100%);
-} 
+ .rechargeButton:hover {
+   transform: translateY(-2px);
+   box-shadow: 0 4px 12px rgba(106, 90, 205, 0.3);
+   background: linear-gradient(135deg, #7b68ee 0%, #b76dd9 100%);
+ }
+
+ /* 支付成功提示样式 */
+ .paymentSuccessTip {
+   background: rgba(82, 196, 26, 0.1);
+   border: 1px solid rgba(82, 196, 26, 0.3);
+   border-radius: 8px;
+   padding: 12px;
+   margin-bottom: 16px;
+   text-align: center;
+   margin-top: 20px;
+ }
+
+ .paymentSuccessTip p {
+   color: #52c41a;
+   font-size: 13px;
+   margin-bottom: 8px;
+   font-weight: 500;
+ }
+
+ .paymentSuccessButton {
+   background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
+   border: none;
+   border-radius: 6px;
+   font-weight: 600;
+   transition: all 0.3s ease;
+   box-shadow: 0 2px 8px rgba(82, 196, 26, 0.3);
+ }
+
+ .paymentSuccessButton:hover {
+   background: linear-gradient(135deg, #73d13d 0%, #95de64 100%);
+   transform: translateY(-1px);
+   box-shadow: 0 4px 12px rgba(82, 196, 26, 0.4);
+ } 

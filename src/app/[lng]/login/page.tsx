@@ -93,7 +93,7 @@ export default function LoginPage() {
               setUserInfo(response.data.userInfo);
             }
             message.success(t('registerSuccess'));
-            router.push('/');
+            router.push('/accounts');
           }
         } catch (error) {
           console.error(t('checkStatusError'), error);

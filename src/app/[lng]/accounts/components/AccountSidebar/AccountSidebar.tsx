@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import styles from "./AccountSidebar.module.scss";
-import { Avatar, Button, Collapse, Popover, Skeleton, Tooltip } from "antd";
+import { Avatar, Button, Collapse, Popover, Skeleton, Tooltip, Modal, Input, message, Select } from "antd";
 // import { accountLogin, acpAccountLoginCheck } from "@/icp/account";
 import {
   CheckCircleOutlined,
@@ -25,7 +25,9 @@ import { AccountStatus } from "@/app/config/accountConfig";
 import { SocialAccount } from "@/api/types/account.type";
 import { getOssUrl } from "@/utils/oss";
 import { useTransClient } from "@/app/i18n/client";
-import { getIpLocation, IpLocationInfo, formatLocationInfo } from "@/utils/ipLocation";
+import { getIpLocation, IpLocationInfo, formatLocationInfo, extractCountry } from "@/utils/ipLocation";
+import { createAccountGroupApi, updateAccountApi } from "@/api/account";
+import AddAccountModal from "../AddAccountModal";
 
 export interface IAccountSidebarRef {}
 
@@ -139,12 +141,14 @@ const AccountSidebar = memo(
       const {
         accountList: fullAccountList,
         getAccountList,
+        getAccountGroup,
         accountGroupList,
         accountLoading,
       } = useAccountStore(
         useShallow((state) => ({
           accountList: state.accountList,
           getAccountList: state.getAccountList,
+          getAccountGroup: state.getAccountGroup,
           accountGroupList: state.accountGroupList,
           accountLoading: state.accountLoading,
         })),
@@ -157,6 +161,28 @@ const AccountSidebar = memo(
       // IP地理位置信息状态
       const [ipLocationInfo, setIpLocationInfo] = useState<IpLocationInfo | null>(null);
       const [ipLocationLoading, setIpLocationLoading] = useState(false);
+
+      // 新建空间状态
+      const [openCreateGroup, setOpenCreateGroup] = useState(false);
+      const [groupName, setGroupName] = useState("");
+      const [createGroupLoading, setCreateGroupLoading] = useState(false);
+
+      // 新建空间相关函数
+      const createGroupCancel = () => {
+        setOpenCreateGroup(false);
+        setGroupName("");
+      };
+
+      // 添加账号相关状态
+      const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
+      const [targetGroupIdForModal, setTargetGroupIdForModal] = useState<string | undefined>(undefined);
+      const [chooseGroupOpen, setChooseGroupOpen] = useState(false);
+      const [chosenGroupId, setChosenGroupId] = useState<string | undefined>(undefined);
+      const preAccountIds = useRef<Set<string>>(new Set());
+      const pendingGroupIdRef = useRef<string | null>(null);
+      const isAssigningRef = useRef(false);
+      const snapshotReadyRef = useRef(false);
+      const allUser = useRef("-1");
 
       // 在组件内部过滤账号列表，而不是在 useAccountStore 中过滤
       const accountList = useMemo(() => {
@@ -187,6 +213,62 @@ const AccountSidebar = memo(
         fetchIpLocation();
       }, []);
 
+      // 添加账号流程
+      const openAddAccountFlow = async () => {
+        if (accountGroupList.length === 0) {
+          message.error("请先创建空间");
+          return;
+        }
+        
+        // 如果有多个空间，让用户选择
+        if (accountGroupList.length > 1) {
+          setChosenGroupId(accountGroupList[0]?.id);
+          setChooseGroupOpen(true);
+        } else {
+          // 只有一个空间，直接使用
+          const currentGroupId = accountGroupList[0]?.id;
+          pendingGroupIdRef.current = currentGroupId;
+          setTargetGroupIdForModal(currentGroupId);
+          if ((useAccountStore.getState().accountList || []).length === 0) {
+            await getAccountList();
+          }
+          preAccountIds.current = new Set(
+            (useAccountStore.getState().accountList || []).map((v) => v.id),
+          );
+          snapshotReadyRef.current = true;
+          setIsAddAccountOpen(true);
+        }
+      };
+
+      // 监听账号列表变化，自动分配新账号到当前空间
+      useEffect(() => {
+        const maybeAssign = async () => {
+          if (!pendingGroupIdRef.current) return;
+          if (isAssigningRef.current) return;
+          if (!snapshotReadyRef.current) return;
+          const currList = fullAccountList || [];
+          const newAccounts = currList.filter((a) => !preAccountIds.current.has(a.id));
+          if (newAccounts.length === 0) return;
+          isAssigningRef.current = true;
+          try {
+            const targetGroupId = pendingGroupIdRef.current!;
+            for (const acc of newAccounts) {
+              try {
+                await updateAccountApi({ id: acc.id, groupId: targetGroupId });
+              } catch {}
+            }
+            await getAccountList();
+            message.success(t("accountAddedToSpace"));
+          } finally {
+            pendingGroupIdRef.current = null;
+            preAccountIds.current = new Set();
+            isAssigningRef.current = false;
+            snapshotReadyRef.current = false;
+          }
+        };
+        maybeAssign();
+      }, [fullAccountList]);
+
       return (
         <>
           <UserManageModal
@@ -199,6 +281,121 @@ const AccountSidebar = memo(
             open={mcpManagerModalOpen}
             onClose={setMcpManagerModalOpen}
           />
+
+          <AddAccountModal
+            open={isAddAccountOpen}
+            onClose={async () => {
+              setIsAddAccountOpen(false);
+              setTargetGroupIdForModal(undefined);
+            }}
+            onAddSuccess={async (acc) => {
+              try {
+                if (pendingGroupIdRef.current) {
+                  await updateAccountApi({ id: acc.id, groupId: pendingGroupIdRef.current });
+                  message.success(t("accountAddedToSpace"));
+                }
+              } finally {
+                pendingGroupIdRef.current = null;
+                await getAccountList();
+              }
+            }}
+            targetGroupId={targetGroupIdForModal}
+          />
+
+          {/* 选择空间Modal */}
+          <Modal
+            open={chooseGroupOpen}
+            title={t("chooseSpace")}
+            onCancel={() => setChooseGroupOpen(false)}
+            onOk={async () => {
+              if (!chosenGroupId) return message.warning(t("pleaseChooseSpace"));
+              pendingGroupIdRef.current = chosenGroupId;
+              setTargetGroupIdForModal(chosenGroupId);
+              if ((useAccountStore.getState().accountList || []).length === 0) {
+                await getAccountList();
+              }
+              preAccountIds.current = new Set(
+                (useAccountStore.getState().accountList || []).map((v) => v.id),
+              );
+              snapshotReadyRef.current = true;
+              setChooseGroupOpen(false);
+              setIsAddAccountOpen(true);
+            }}
+            width={420}
+          >
+            <Select
+              style={{ width: "100%" }}
+              placeholder={t("pleaseChooseSpace")}
+              value={chosenGroupId}
+              onChange={setChosenGroupId}
+              options={accountGroupList.map((g) => ({ value: g.id, label: g.name }))}
+            />
+          </Modal>
+
+          {/* 新建空间Modal */}
+          <Modal
+            open={openCreateGroup}
+            title={t("createSpace.title")}
+            onCancel={createGroupCancel}
+            footer={
+              <>
+                <Button onClick={createGroupCancel}>{t("createSpace.cancel")}</Button>
+                <Button
+                  type="primary"
+                  onClick={async () => {
+                    if (!groupName.trim()) {
+                      message.error(t("createSpace.nameRequired"));
+                      return;
+                    }
+                    setCreateGroupLoading(true);
+                    try {
+                      await createAccountGroupApi({
+                        name: groupName.trim(),
+                      });
+                      await getAccountGroup();
+                      message.success(t("createSpace.success"));
+                      createGroupCancel();
+                    } catch (error) {
+                      message.error(t("createSpace.failed"));
+                    } finally {
+                      setCreateGroupLoading(false);
+                    }
+                  }}
+                  loading={createGroupLoading}
+                >
+                  {t("createSpace.save")}
+                </Button>
+              </>
+            }
+          >
+            <div className={styles.createGroup}>
+              <label>{t("createSpace.name")}</label>
+              <Input
+                value={groupName}
+                placeholder={t("createSpace.namePlaceholder")}
+                onChange={(e) => setGroupName(e.target.value)}
+                onPressEnter={async () => {
+                  if (!groupName.trim()) {
+                    message.error(t("createSpace.nameRequired"));
+                    return;
+                  }
+                  setCreateGroupLoading(true);
+                  try {
+                    await createAccountGroupApi({
+                      name: groupName.trim(),
+                    });
+                    await getAccountGroup();
+                    message.success(t("createSpace.success"));
+                    createGroupCancel();
+                  } catch (error) {
+                    message.error(t("createSpace.failed"));
+                  } finally {
+                    setCreateGroupLoading(false);
+                  }
+                }}
+              />
+            </div>
+          </Modal>
           {/*TODO 在线状态检测 */}
           {/*<PubAccountDetModule*/}
           {/*  title="账号检测"*/}
@@ -252,7 +449,7 @@ const AccountSidebar = memo(
                   const isDefaultGroup = v.isDefault;
                   const showIpInfo = isDefaultGroup && ipLocationInfo;
                   
-                  return {
+                  return { 
                     key: v.id,
                     label: (
                       <>
@@ -288,13 +485,15 @@ const AccountSidebar = memo(
                               <div className="accountSidebar-ipInfo">
                                 <Tooltip title={`IP: ${v.ip}\n位置: ${v.location}`}>
                                   <span className="accountSidebar-ipText">
-                                    {v.ip} | {v.location}
+                                    {extractCountry(v.location)} | {v.ip}
                                   </span>
                                 </Tooltip>
                               </div>
                             )
                           )}
                         </div>
+                        
+                        
                       </>
                     ),
                     children: (
@@ -359,12 +558,39 @@ const AccountSidebar = memo(
                             </li>
                           );
                         })}
+                        
                       </ul>
                     ),
                   };
                 })}
               />
             )}
+
+            {/* 添加账号按钮 */}
+            <div style={{ padding: "10px", height: "100%", paddingTop: "20px" }}>
+              <Button
+                type="default"
+                icon={<PlusOutlined />}
+                onClick={openAddAccountFlow}
+                style={{ width: "100%" }}
+              >
+                {t("addAccount")}
+              </Button>
+            </div>
+
+            {/* 新建空间按钮 */}
+            <div style={{ padding: "10px", borderTop: "1px solid var(--grayColor3)" }}>
+                          <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setOpenCreateGroup(true);
+                }}
+                style={{ width: "100%" }}
+              >
+                {t("createSpace.button")}
+              </Button>
+            </div>
 
             {/*<div className="accountSidebar-footer">*/}
             {/*  <Button*/}

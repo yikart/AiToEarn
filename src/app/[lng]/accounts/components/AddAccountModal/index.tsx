@@ -53,6 +53,8 @@ const AddAccountModal = memo(
       const [isLocLoading, setIsLocLoading] = useState(false);
 
       useEffect(() => {
+
+        
         if (!open || !targetGroupId) {
           setIsCnSpace(null);
           setIsLocLoading(false);
@@ -92,10 +94,11 @@ const AddAccountModal = memo(
 
       // 判断平台是否在当前属地可用
       const isPlatformAvailable = (platType: PlatType): boolean => {
+        // TODO: 暂时屏蔽国内平台 @@.@@
+        // return true;
         if (isCnSpace === null) return true; // 未确定属地时显示所有平台
         
         const cnOnlyPlatforms = new Set<PlatType>([
-          PlatType.Xhs,
           PlatType.Douyin,
           PlatType.KWAI,
           PlatType.WxGzh,

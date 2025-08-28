@@ -11,15 +11,17 @@ export enum PaymentType {
   MONTH = 'month',        // 月度订阅
   YEAR = 'year',          // 年度订阅
   ONCE_MONTH = 'onceMonth', // 一次性月度
-  ONCE_YEAR = 'onceYear'   // 一次性年度
+  ONCE_YEAR = 'onceYear',   // 一次性年度
+  POINTS = 'points'       // 积分购买
 }
 
 // 创建支付订单参数接口
 export interface CreatePaymentOrderParams {
-  success_url: string;
+  success_url?: string;
   mode: string;
   payment: PaymentType;
   flagTrialPeriodDays?: number; // 订阅模式下是否给七天免费试用时长， 0 - 不给， 1-给
+  quantity?: number; // 购买数量，用于积分购买
   metadata: {
     userId: string;
   };

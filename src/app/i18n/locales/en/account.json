@@ -9,7 +9,7 @@
   "newWork": "New Work",
   "allPlatforms": "All Platforms",
   "accountManager": "Acct Manager",
-  "addAccount": "Add Account",
+  "addAccount": "Add Channels",
   "mcpManager": "MCP Manager",
   "online": "Online",
   "offline": "Offline",
@@ -53,5 +53,16 @@
     "loading": "Getting IP info...",
     "error": "Failed to get IP info",
     "tooltip": "ASN: {{asn}}\nOrganization: {{org}}"
+  },
+  "createSpace": {
+    "title": "Add space",
+    "button": "Add space",
+    "name": "Channel Name",
+    "namePlaceholder": "Enter channel name",
+    "cancel": "Cancel",
+    "save": "Save",
+    "success": "Channel created successfully",
+    "failed": "Failed to create channel",
+    "nameRequired": "Please enter channel name"
   }
 }

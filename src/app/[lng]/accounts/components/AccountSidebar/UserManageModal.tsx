@@ -39,7 +39,7 @@ import AvatarPlat from "@/components/AvatarPlat";
 import { deleteAccountsApi, updateAccountApi } from "@/api/account";
 import { useTransClient } from "@/app/i18n/client";
 import AddAccountModal from "../AddAccountModal";
-import { getIpLocation, IpLocationInfo, formatLocationInfo } from "@/utils/ipLocation";
+import { getIpLocation, IpLocationInfo, formatLocationInfo, extractCountry } from "@/utils/ipLocation";
 
 export interface IUserManageModalRef {
   setActiveGroup: (groupId: string) => void;
@@ -194,7 +194,7 @@ const SpaceInfoCard = ({
                   cursor: 'help',
                   fontWeight: '500'
                 }}>
-                  {currentSpace.ip} | {currentSpace.location}
+                  {extractCountry(currentSpace.location)} | {currentSpace.ip}
                 </span>
               </Tooltip>
             </div>
@@ -410,7 +410,7 @@ const UserManageModal = memo(
       };
       useImperativeHandle(ref, () => imperativeHandle);
 
-      const openAddAccountFlow = async () => {
+      const openAddAccountFlow = async () => { 
         const currentGroupId = activeGroup;
         close();
         if (currentGroupId === allUser.current) {
