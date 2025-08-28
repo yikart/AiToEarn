@@ -77,21 +77,20 @@ const AddAccountModal = memo(
         
         if (showSpaceSelector) {
           setSpaceSelectionRequired(true);
+          // 默认选择第一个默认空间
+          const defaultSpace = accountGroupList.find(group => group.isDefault);
+          if (defaultSpace && !selectedSpaceId) {
+            setSelectedSpaceId(defaultSpace.id);
+          }
         } else {
           setSpaceSelectionRequired(false);
           if (targetGroupId) {
             setSelectedSpaceId(targetGroupId);
           }
         }
-      }, [open, showSpaceSelector, targetGroupId]);
+      }, [open, showSpaceSelector, targetGroupId, accountGroupList, selectedSpaceId]);
 
-      // 设置默认空间选择 - 只有当没有指定targetGroupId时才自动选择第一个空间
-      useEffect(() => {
-        if (open && showSpaceSelector && accountGroupList.length > 0 && !selectedSpaceId && !targetGroupId) {
-          // 不自动选择第一个空间，让用户手动选择
-          // setSelectedSpaceId(accountGroupList[0]?.id);
-        }
-      }, [open, showSpaceSelector, accountGroupList, selectedSpaceId, targetGroupId]);
+
 
       useEffect(() => {
         if (!open || !selectedSpaceId) {
@@ -317,20 +316,18 @@ const AddAccountModal = memo(
               {spaceSelectionRequired && (
                 <div style={{ 
                   marginBottom: '20px',
-                  padding: '16px',
-                  backgroundColor: 'var(--grayColor1)',
-                  borderRadius: '8px',
-                  border: '1px solid var(--grayColor3)'
+                  paddingBottom: '16px',
+                  borderBottom: '1px solid var(--grayColor3)'
                 }}>
-                  <Space direction="vertical" size="small" style={{ width: '100%' }}>
-                    <Text strong style={{ fontSize: '14px' }}>{t('chooseSpace')}</Text>
-                                         <Select
-                       style={{ width: '100%' }}
-                       placeholder={t('pleaseChooseSpace')}
-                       value={selectedSpaceId}
-                       onChange={setSelectedSpaceId}
-                       options={accountGroupList.map((g) => ({ value: g.id, label: g.name }))}
-                     />
+                  <Space align="center" style={{ width: '100%' }}>
+                    <Text strong style={{ fontSize: '14px', minWidth: '80px' }}>{t('addAccountModal.addTo')}</Text>
+                    <Select
+                      style={{ width: '200px' }}
+                      placeholder={t('pleaseChooseSpace')}
+                      value={selectedSpaceId}
+                      onChange={setSelectedSpaceId}
+                      options={accountGroupList.map((g) => ({ value: g.id, label: g.name }))}
+                    />
                   </Space>
                 </div>
               )}
@@ -346,7 +343,7 @@ const AddAccountModal = memo(
                   fontSize: 'var(--fs-xs)',
                   color: 'var(--grayColor6)'
                 }}>
-                                     <Text>当前空间: {accountGroupList.find(g => g.id === selectedSpaceId)?.name}</Text>
+                  <Text>{t('addAccountModal.currentSpace')}: {accountGroupList.find(g => g.id === selectedSpaceId)?.name}</Text>
                 </div>
               )}
 
@@ -360,9 +357,13 @@ const AddAccountModal = memo(
                         className={`addAccountModal_plats-item ${!isAvailable ? 'disabled' : ''}`}
                         disabled={!isAvailable || (spaceSelectionRequired && !selectedSpaceId)}
                         onClick={() => handlePlatformClick(key as PlatType, value)}
+
                       >
                         <div className="addAccountModal_plats-item-con">
-                          <img src={value.icon} style={{ opacity: isAvailable ? 1 : 0.5 }} />
+                          <img 
+                            src={value.icon} 
+                            style={{ opacity: isAvailable ? 1 : 0.5 }} 
+                          />
                           <span style={{ opacity: isAvailable ? 1 : 0.5 }}>{value.name}</span>
                         </div>
                       </Button>
@@ -400,7 +401,7 @@ const AddAccountModal = memo(
                   color: 'var(--warningColor)',
                   textAlign: 'center'
                 }}>
-                                     请先选择空间
+                  {t('addAccountModal.pleaseChooseSpaceFirst')}
                 </div>
               )}
             </div>

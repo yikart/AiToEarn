@@ -26,7 +26,10 @@ interface Resources {
     "unknownAccount": "未知账户",
     "addAccountModal": {
       "title": "账号添加",
-      "subtitle": "选择平台添加账号"
+      "subtitle": "选择平台添加账号",
+      "currentSpace": "当前空间",
+      "pleaseChooseSpaceFirst": "请先选择空间",
+      "addTo": "添加到："
     },
     "facebookPages": {
       "title": "选择Facebook页面",
@@ -92,10 +95,7 @@ interface Resources {
       "platform": "平台",
       "space": "所属列表"
     },
-    "addAccountModal": {
-      "currentSpace": "当前空间",
-      "pleaseChooseSpaceFirst": "请先选择空间"
-    }
+
   },
   "cgmaterial": {
     "header": {

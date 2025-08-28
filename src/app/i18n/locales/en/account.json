@@ -25,7 +25,10 @@
   "unknownAccount": "Unknown Account",
   "addAccountModal": {
     "title": "Add Account",
-    "subtitle": "Select Platform"
+    "subtitle": "Select Platform",
+    "currentSpace": "Current Space",
+    "pleaseChooseSpaceFirst": "Please choose a space first",
+    "addTo": "Add to:"
   },
   "facebookPages": {
     "title": "Select Facebook Pages",
@@ -90,9 +93,5 @@
     "account": "Account",
     "platform": "Platform",
     "space": "Space"
-  },
-  "addAccountModal": {
-    "currentSpace": "Current Space",
-    "pleaseChooseSpaceFirst": "Please choose a space first"
   }
 }
