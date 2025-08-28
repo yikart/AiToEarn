@@ -10,6 +10,7 @@ export const cloudSpaceVoSchema = z.object({
   ip: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  remoteUrl: z.string().optional(),
 })
 
 export class CloudSpaceVo extends createZodDto(cloudSpaceVoSchema, 'CloudSpaceVo') {}

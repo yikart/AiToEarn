@@ -13,8 +13,9 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
     "@nestjs/mongoose": "^11.0.3",
-    "@yikart/common": "workspace:*",
+    "@yikart/common": "*",
     "mongodb": "^6.18.0",
     "mongoose": "^8.17.2",
     "tslib": "^2.3.0",

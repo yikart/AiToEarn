@@ -61,6 +61,7 @@ async function main() {
 
   while (retryCount <= maxRetries) {
     try {
+      await multiloginClient.unlockProfiles({ ids: [config.profileId] })
       profileData = await multiloginClient.startBrowserProfile(config.folderId, config.profileId, {
         automation_type: 'playwright',
         headless_mode: false,

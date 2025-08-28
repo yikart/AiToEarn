@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "prepare": "npx simple-git-hooks",
-    "postinstall": "scripts/install-ansible.sh",
+    "prepare": "command -v git >/dev/null 2>&1 && npx simple-git-hooks || echo 'Git not available, skipping git hooks setup'",
     "lint": "nx run-many --target=lint --nxBail --outputStyle=static"
   },
   "private": true,

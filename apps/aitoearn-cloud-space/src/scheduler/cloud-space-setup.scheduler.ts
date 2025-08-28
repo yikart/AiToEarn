@@ -97,7 +97,6 @@ export class CloudSpaceSetupScheduler {
       },
     }
 
-    // 动态生成task.json配置文件内容
     const taskConfig = {
       multilogin: multiloginAccount,
       folderId: config.multilogin.folderId,

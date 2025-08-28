@@ -8,6 +8,5 @@
     "playwright": "^1.40.0"
   },
   "devDependencies": {
-    "@nx/webpack": "21.4.0"
   }
 }

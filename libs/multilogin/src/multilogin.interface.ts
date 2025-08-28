@@ -519,6 +519,73 @@ export interface FoldersResponse extends MultiloginDataResponse<{
   folders: FolderListItem[]
 }> {}
 
+export interface UnlockProfilesRequest {
+  ids?: string[]
+}
+
+export interface UnlockProfilesResponse extends MultiloginStatusResponse {}
+
+export interface ProfileMetasRequest {
+  ids: string[]
+}
+
+export interface ProfileMetaItem {
+  id: string
+  is_auto_update: boolean
+  name: string
+  notes: string
+  parameters: {
+    fingerprint: Record<string, unknown>
+    flags: MaskingFlags
+    storage: StorageParameters
+  }
+  browser_type: BrowserType
+  core_version: number
+  os_type: OsType
+  created_at: string
+  created_by: string
+  in_use_by: string
+  last_launched_at: string
+  last_launched_by: string
+  last_launched_on: string
+  last_update_at: string
+  last_updated_by: string
+  removed_at: string
+  removed_by: string
+  status: string
+  folder_id: string
+  workspace_id: string
+}
+
+export interface ProfileMetasResponse extends MultiloginDataResponse<{
+  profiles: ProfileMetaItem[]
+}> {}
+
+export interface ProfileSummaryRequest {
+  meta_id: string
+}
+
+export interface ProfileSummaryData {
+  fonts: string[]
+  geolocation: GeolocationFingerprint
+  graphic: {
+    device_id: string
+    renderer: string
+    vendor: string
+    vendor_id: string
+  }
+  localization: LocalizationFingerprint
+  masking_options: Record<string, unknown>
+  media_devices: MediaDevicesFingerprint
+  navigator: NavigatorFingerprint
+  ports: number[]
+  screen: ScreenFingerprint
+  timezone: TimezoneFingerprint
+  webrtc: WebRTCFingerprint
+}
+
+export interface ProfileSummaryResponse extends MultiloginDataResponse<ProfileSummaryData> {}
+
 export interface MultiloginClientConfig {
   profileBaseUrl?: string
   launcherBaseUrl?: string

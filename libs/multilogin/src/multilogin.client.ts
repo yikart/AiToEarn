@@ -27,14 +27,19 @@ import {
   LoadBrowserCoreResponse,
   LoadedBrowserCoresResponse,
   MultiloginClientConfig,
+  ProfileMetasRequest,
+  ProfileMetasResponse,
   ProfileRemoveRequest,
   ProfileResponse,
   ProfileSearchRequest,
   ProfileSearchResponse,
   ProfileStatus,
+  ProfileSummaryResponse,
   QuickProfileRequest,
   RemoveFoldersRequest,
   TokenListResponse,
+  UnlockProfilesRequest,
+  UnlockProfilesResponse,
   UpdateFolderRequest,
   UpdateProfileRequest,
   ValidateProxyRequest,
@@ -72,7 +77,7 @@ export class MultiloginClient {
     )
   }
 
-  private createHttpClient(baseUrl: string, timeout = 10000): AxiosInstance {
+  private createHttpClient(baseUrl: string, timeout = 60000): AxiosInstance {
     const client = axios.create({
       baseURL: baseUrl,
       timeout,
@@ -443,6 +448,30 @@ export class MultiloginClient {
     const response: AxiosResponse<ConvertQBPResponse> = await this.launcherClient.post(
       '/api/v1/profile/quick/save',
       request,
+    )
+    return response.data
+  }
+
+  async unlockProfiles(request?: UnlockProfilesRequest): Promise<UnlockProfilesResponse> {
+    const response: AxiosResponse<UnlockProfilesResponse> = await this.httpClient.request({
+      method: 'GET',
+      url: '/bpds/profile/unlock_profiles',
+      data: request,
+    })
+    return response.data
+  }
+
+  async getProfileMetas(request: ProfileMetasRequest): Promise<ProfileMetasResponse> {
+    const response: AxiosResponse<ProfileMetasResponse> = await this.httpClient.post(
+      '/profile/metas',
+      request,
+    )
+    return response.data
+  }
+
+  async getProfileSummary(metaId: string): Promise<ProfileSummaryResponse> {
+    const response: AxiosResponse<ProfileSummaryResponse> = await this.httpClient.get(
+      `/profile/summary?meta_id=${metaId}`,
     )
     return response.data
   }
