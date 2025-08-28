@@ -43,7 +43,7 @@ export default antfu(
       '@nx/dependency-checks': [
         'error',
         {
-          ignoredDependencies: ['nats', 'axios'],
+          ignoredDependencies: ['nats', 'axios', 'zod'],
         },
       ],
     },

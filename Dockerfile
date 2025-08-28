@@ -29,7 +29,7 @@ COPY apps/${APP_NAME}/src apps/${APP_NAME}/src
 COPY apps/${APP_NAME}/package.json apps/${APP_NAME}/package.json
 COPY apps/${APP_NAME}/project.json apps/${APP_NAME}/project.json
 COPY apps/${APP_NAME}/tsconfig.json apps/${APP_NAME}/tsconfig.json
-COPY apps/${APP_NAME}/tsconfig.lib.json apps/${APP_NAME}/tsconfig.lib.json
+COPY apps/${APP_NAME}/tsconfig.app.json apps/${APP_NAME}/tsconfig.app.json
 
 
 RUN --mount=type=cache,id=nx,target=/app/.nx/cache \
