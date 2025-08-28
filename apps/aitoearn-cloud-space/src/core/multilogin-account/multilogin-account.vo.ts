@@ -5,6 +5,7 @@ import z from 'zod'
 export const multiloginAccountVoSchema = z.object({
   id: z.string(),
   email: z.string(),
+  password: z.string(),
   maxProfiles: z.number(),
   currentProfiles: z.number(),
   token: z.string().optional(),

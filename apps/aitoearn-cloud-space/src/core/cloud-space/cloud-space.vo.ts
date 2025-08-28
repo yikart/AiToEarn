@@ -5,11 +5,14 @@ import z from 'zod'
 export const cloudSpaceVoSchema = z.object({
   id: z.string(),
   userId: z.string(),
+  instanceId: z.string(),
   region: z.enum(CloudSpaceRegion),
   status: z.enum(CloudSpaceStatus),
   ip: z.string(),
+  password: z.string().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  expiredAt: z.date(),
   remoteUrl: z.string().optional(),
 })
 

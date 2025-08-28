@@ -14,7 +14,6 @@ export const UpdateMultiloginAccountDtoSchema = z.object({
   email: z.string().min(1).optional(),
   password: z.string().min(1).optional(),
   maxProfiles: z.number().int().min(1).optional(),
-  token: z.string().optional(),
 })
 
 export class UpdateMultiloginAccountDto extends createZodDto(UpdateMultiloginAccountDtoSchema) {}

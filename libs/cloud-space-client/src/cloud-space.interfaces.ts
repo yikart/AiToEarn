@@ -64,7 +64,8 @@ export interface ListBrowserProfilesDto {
 // MultiLogin 账号相关的数据类型定义
 export interface MultiloginAccount {
   id: string
-  username: string
+  email: string
+  password: string
   maxProfiles: number
   currentProfiles: number
   token?: string
@@ -73,14 +74,14 @@ export interface MultiloginAccount {
 }
 
 export interface CreateMultiloginAccountDto {
-  username: string
+  email: string
   password: string
   maxProfiles?: number
 }
 
 export interface UpdateMultiloginAccountDto {
   id: string
-  username?: string
+  email?: string
   password?: string
   maxProfiles?: number
 }
@@ -88,7 +89,7 @@ export interface UpdateMultiloginAccountDto {
 export interface ListMultiloginAccountsDto {
   page?: number
   pageSize?: number
-  username?: string
+  email?: string
   minMaxProfiles?: number
   maxMaxProfiles?: number
   hasAvailableSlots?: boolean

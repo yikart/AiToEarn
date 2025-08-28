@@ -35,20 +35,6 @@ export default antfu(
   },
   ...nx.configs['flat/base'],
   {
-    files: ['*.json'],
-    languageOptions: {
-      parser: 'jsonc-eslint-parser',
-    },
-    rules: {
-      '@nx/dependency-checks': [
-        'error',
-        {
-          checkObsoleteDependencies: false
-        },
-      ],
-    },
-  },
-  {
     files: [
       '**/*.ts',
       '**/*.tsx',

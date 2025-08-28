@@ -1,7 +1,7 @@
 {
   "name": "@yikart/cloud-space-client",
   "type": "commonjs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/yikart/aitoearn-monorepo.git"
@@ -15,7 +15,6 @@
     "@nestjs/common": "^11.0.0",
     "@yikart/common": "*",
     "@yikart/nats-client": "*",
-    "tslib": "^2.3.0",
-    "zod": "^4.0.17"
+    "tslib": "^2.3.0"
   }
 }
