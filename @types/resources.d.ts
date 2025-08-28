@@ -86,6 +86,11 @@ interface Resources {
       "cancel": "取消",
       "save": "保存",
       "spaceName": "空间名"
+    },
+    "userManageModal": {
+      "account": "账号",
+      "platform": "平台",
+      "space": "所属列表"
     }
   },
   "cgmaterial": {

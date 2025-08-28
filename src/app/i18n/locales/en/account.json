@@ -85,5 +85,10 @@
     "cancel": "Cancel",
     "save": "Save",
     "spaceName": "Space Name"
+  },
+  "userManageModal": {
+    "account": "Account",
+    "platform": "Platform",
+    "space": "Space"
   }
 }

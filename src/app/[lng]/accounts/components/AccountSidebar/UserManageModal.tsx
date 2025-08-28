@@ -266,7 +266,7 @@ const UserManageModal = memo(
       const columns = useMemo(() => {
         const columns: TableProps<SocialAccount>["columns"] = [
           {
-            title: "账号",
+            title: t("userManageModal.account"),
             render: (text, am) => {
               return (
                 <div
@@ -287,7 +287,7 @@ const UserManageModal = memo(
             key: "nickname",
           },
           {
-            title: "平台",
+            title: t("userManageModal.platform"),
             render: (text, am) => {
               const platInfo = AccountPlatInfoMap.get(am.type)!;
               return (
@@ -337,7 +337,7 @@ const UserManageModal = memo(
             key: "nickname",
           },
           {
-            title: "所属列表",
+            title: t("userManageModal.space"),
             render: (text, am) => {
               return (
                 <UserGroupSelect
