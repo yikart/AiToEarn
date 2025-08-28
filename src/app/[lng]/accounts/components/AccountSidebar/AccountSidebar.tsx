@@ -175,9 +175,6 @@ const AccountSidebar = memo(
 
       // 添加账号相关状态
       const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
-      const [targetGroupIdForModal, setTargetGroupIdForModal] = useState<string | undefined>(undefined);
-      const [chooseGroupOpen, setChooseGroupOpen] = useState(false);
-      const [chosenGroupId, setChosenGroupId] = useState<string | undefined>(undefined);
       const preAccountIds = useRef<Set<string>>(new Set());
       const pendingGroupIdRef = useRef<string | null>(null);
       const isAssigningRef = useRef(false);
@@ -220,24 +217,15 @@ const AccountSidebar = memo(
           return;
         }
         
-        // 如果有多个空间，让用户选择
-        if (accountGroupList.length > 1) {
-          setChosenGroupId(accountGroupList[0]?.id);
-          setChooseGroupOpen(true);
-        } else {
-          // 只有一个空间，直接使用
-          const currentGroupId = accountGroupList[0]?.id;
-          pendingGroupIdRef.current = currentGroupId;
-          setTargetGroupIdForModal(currentGroupId);
-          if ((useAccountStore.getState().accountList || []).length === 0) {
-            await getAccountList();
-          }
-          preAccountIds.current = new Set(
-            (useAccountStore.getState().accountList || []).map((v) => v.id),
-          );
-          snapshotReadyRef.current = true;
-          setIsAddAccountOpen(true);
+        // 直接打开AddAccountModal，让用户选择空间
+        if ((useAccountStore.getState().accountList || []).length === 0) {
+          await getAccountList();
         }
+        preAccountIds.current = new Set(
+          (useAccountStore.getState().accountList || []).map((v) => v.id),
+        );
+        snapshotReadyRef.current = true;
+        setIsAddAccountOpen(true);
       };
 
       // 监听账号列表变化，自动分配新账号到当前空间
@@ -286,7 +274,6 @@ const AccountSidebar = memo(
             open={isAddAccountOpen}
             onClose={async () => {
               setIsAddAccountOpen(false);
-              setTargetGroupIdForModal(undefined);
             }}
             onAddSuccess={async (acc) => {
               try {
@@ -299,38 +286,10 @@ const AccountSidebar = memo(
                 await getAccountList();
               }
             }}
-            targetGroupId={targetGroupIdForModal}
+            showSpaceSelector={true}
           />
 
-          {/* 选择空间Modal */}
-          <Modal
-            open={chooseGroupOpen}
-            title={t("chooseSpace")}
-            onCancel={() => setChooseGroupOpen(false)}
-            onOk={async () => {
-              if (!chosenGroupId) return message.warning(t("pleaseChooseSpace"));
-              pendingGroupIdRef.current = chosenGroupId;
-              setTargetGroupIdForModal(chosenGroupId);
-              if ((useAccountStore.getState().accountList || []).length === 0) {
-                await getAccountList();
-              }
-              preAccountIds.current = new Set(
-                (useAccountStore.getState().accountList || []).map((v) => v.id),
-              );
-              snapshotReadyRef.current = true;
-              setChooseGroupOpen(false);
-              setIsAddAccountOpen(true);
-            }}
-            width={420}
-          >
-            <Select
-              style={{ width: "100%" }}
-              placeholder={t("pleaseChooseSpace")}
-              value={chosenGroupId}
-              onChange={setChosenGroupId}
-              options={accountGroupList.map((g) => ({ value: g.id, label: g.name }))}
-            />
-          </Modal>
+
 
           {/* 新建空间Modal */}
           <Modal

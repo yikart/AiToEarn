@@ -90,5 +90,9 @@
     "account": "Account",
     "platform": "Platform",
     "space": "Space"
+  },
+  "addAccountModal": {
+    "currentSpace": "Current Space",
+    "pleaseChooseSpaceFirst": "Please choose a space first"
   }
 }

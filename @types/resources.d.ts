@@ -91,6 +91,10 @@ interface Resources {
       "account": "账号",
       "platform": "平台",
       "space": "所属列表"
+    },
+    "addAccountModal": {
+      "currentSpace": "当前空间",
+      "pleaseChooseSpaceFirst": "请先选择空间"
     }
   },
   "cgmaterial": {

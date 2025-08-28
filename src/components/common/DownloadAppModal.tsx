@@ -73,7 +73,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
       ]}
       width={520}
       centered
-      destroyOnClose
+      destroyOnHidden
     >
       <div style={{ textAlign: 'center', padding: '20px 0' }}>
         {/* App Logo */}

@@ -256,8 +256,6 @@ const UserManageModal = memo(
       const [cutLoading, setCutLoading] = useState(false);
       const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
       const [targetGroupIdForModal, setTargetGroupIdForModal] = useState<string | undefined>(undefined);
-      const [chooseGroupOpen, setChooseGroupOpen] = useState(false);
-      const [chosenGroupId, setChosenGroupId] = useState<string | undefined>(undefined);
       const preAccountIds = useRef<Set<string>>(new Set());
       const pendingGroupIdRef = useRef<string | null>(null);
       const isAssigningRef = useRef(false);
@@ -414,9 +412,10 @@ const UserManageModal = memo(
         const currentGroupId = activeGroup;
         close();
         if (currentGroupId === allUser.current) {
-          setChosenGroupId(accountGroupList[0]?.id);
-          setChooseGroupOpen(true);
+          // 如果选择的是"全部账号"，需要用户选择空间
+          setIsAddAccountOpen(true);
         } else {
+          // 如果选择的是具体空间，直接使用该空间
           pendingGroupIdRef.current = currentGroupId;
           setTargetGroupIdForModal(currentGroupId);
           if ((useAccountStore.getState().accountList || []).length === 0) {
@@ -586,34 +585,7 @@ const UserManageModal = memo(
               </div>
             </Spin>
           </Modal>
-          <Modal
-            open={chooseGroupOpen}
-            title={t("chooseSpace" as any)}
-            onCancel={() => setChooseGroupOpen(false)}
-            onOk={async () => {
-              if (!chosenGroupId) return message.warning(t("pleaseChooseSpace" as any));
-              pendingGroupIdRef.current = chosenGroupId;
-              setTargetGroupIdForModal(chosenGroupId);
-              if ((useAccountStore.getState().accountList || []).length === 0) {
-                await getAccountList();
-              }
-              preAccountIds.current = new Set(
-                (useAccountStore.getState().accountList || []).map((v) => v.id),
-              );
-              snapshotReadyRef.current = true;
-              setChooseGroupOpen(false);
-              setIsAddAccountOpen(true);
-            }}
-            width={420}
-          >
-            <Select
-              style={{ width: "100%" }}
-              placeholder={t("pleaseChooseSpace" as any)}
-              value={chosenGroupId}
-              onChange={setChosenGroupId}
-              options={accountGroupList.map((g) => ({ value: g.id, label: g.name }))}
-            />
-          </Modal>
+
 
           <AddAccountModal
             open={isAddAccountOpen}
@@ -633,6 +605,7 @@ const UserManageModal = memo(
               }
             }}
             targetGroupId={targetGroupIdForModal}
+            showSpaceSelector={activeGroup === allUser.current}
           />
         </>
       );
