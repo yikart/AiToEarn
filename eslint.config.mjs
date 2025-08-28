@@ -40,7 +40,12 @@ export default antfu(
       parser: 'jsonc-eslint-parser',
     },
     rules: {
-      '@nx/dependency-checks': 'error',
+      '@nx/dependency-checks': [
+        'error',
+        {
+          ignoredDependencies: ['nats', 'axios'],
+        },
+      ],
     },
   },
   {
