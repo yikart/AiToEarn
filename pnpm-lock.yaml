@@ -185,7 +185,7 @@ importers:
         version: 0.0.1(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.8.3)
       '@yikart/common':
         specifier: '*'
-        version: 0.0.1(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
+        version: 0.0.2(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
       '@yikart/mongodb':
         specifier: '*'
         version: 0.0.1(@nestjs/core@11.1.6)(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.8.3)
@@ -317,7 +317,7 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0
       nanoid:
-        specifier: ^5.0.8
+        specifier: 5.1.5
         version: 5.1.5
       nest-typed-config:
         specifier: ^2.10.1
@@ -2929,6 +2929,9 @@ packages:
 
   '@yikart/common@0.0.1':
     resolution: {integrity: sha512-58AT56mAjOym8GnDUuIIk/BCxAT8vRPDNs1ysJP/vEcgQ8eIix1wibiT35p0u5EjjjzhCzm4HE1gsJ8XmzNjbQ==, tarball: https://npm.pkg.github.com/download/@yikart/common/0.0.1/0b855fef3e4dae1c835135eb8d6245f3413b6b7c}
+
+  '@yikart/common@0.0.2':
+    resolution: {integrity: sha512-OC8/lpZhmJdieTCHMB76T79YT7BM3AHkLvBvA3pjbNTG8MuWqa5mGoS+XJ7PnzPPZaJ1QPCIJlavAs7H82g+4w==, tarball: https://npm.pkg.github.com/download/@yikart/common/0.0.2/b4446ffe4ffa8d6e483d87cab4e6571216fb0027}
 
   '@yikart/mongodb@0.0.1':
     resolution: {integrity: sha512-hNZK1EWXLoKdhRliNX8/MpqWwvNfEfueSt9y17wKNlNlGDWu++YRLGpcUWc0REMBMzj8deX98ElxJa0mq0X6Pg==, tarball: https://npm.pkg.github.com/download/@yikart/mongodb/0.0.1/4e939b9b4470fb3ed918192eeb9066bbd57faa02}
@@ -11472,7 +11475,7 @@ snapshots:
   '@yikart/ansible@0.0.1(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.8.3)':
     dependencies:
       '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
-      '@yikart/common': 0.0.1(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
+      '@yikart/common': 0.0.2(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
       execa: 9.6.0
       tslib: 2.8.1
       zod: 4.1.1
@@ -11536,11 +11539,50 @@ snapshots:
       - supports-color
       - typescript
 
+  '@yikart/common@0.0.2(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)':
+    dependencies:
+      '@aws-sdk/client-cloudwatch-logs': 3.873.0
+      '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/core': 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/microservices@11.1.6)(@nestjs/platform-express@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/microservices': 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(ioredis@5.7.0)(nats@2.29.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/platform-express': 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)
+      '@nestjs/swagger': 11.2.0(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)
+      '@scalar/nestjs-api-reference': 0.5.13
+      commander: 14.0.0
+      express: 5.1.0
+      nanoid: 5.1.5
+      nest-typed-config: 2.10.1(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.11.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.8.3)
+      nestjs-pino: 4.4.0(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(pino-http@10.5.0)(pino@9.7.0)(rxjs@7.8.2)
+      pino: 9.7.0
+      pino-pretty: 13.1.1
+      rxjs: 7.8.2
+      tslib: 2.8.1
+      zod: 4.1.1
+    transitivePeerDependencies:
+      - '@fastify/static'
+      - '@grpc/grpc-js'
+      - '@nestjs/websockets'
+      - amqp-connection-manager
+      - amqplib
+      - aws-crt
+      - axios
+      - cache-manager
+      - class-transformer
+      - class-validator
+      - ioredis
+      - kafkajs
+      - mqtt
+      - nats
+      - pino-http
+      - reflect-metadata
+      - supports-color
+      - typescript
+
   '@yikart/mongodb@0.0.1(@nestjs/core@11.1.6)(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.8.3)':
     dependencies:
       '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/mongoose': 11.0.3(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(mongoose@8.18.0)(rxjs@7.8.2)
-      '@yikart/common': 0.0.1(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
+      '@yikart/common': 0.0.2(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
       mongodb: 6.18.0
       mongoose: 8.18.0
       tslib: 2.8.1
@@ -11585,7 +11627,7 @@ snapshots:
     dependencies:
       '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/microservices': 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(ioredis@5.7.0)(nats@2.29.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)
-      '@yikart/common': 0.0.1(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
+      '@yikart/common': 0.0.2(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
       rxjs: 7.8.2
       tslib: 2.8.1
       zod: 4.1.1
@@ -11614,7 +11656,7 @@ snapshots:
     dependencies:
       '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/core': 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/microservices@11.1.6)(@nestjs/platform-express@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.2)
-      '@yikart/common': 0.0.1(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
+      '@yikart/common': 0.0.2(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
       ioredis: 5.7.0
       tslib: 2.8.1
       zod: 4.1.1
@@ -11644,7 +11686,7 @@ snapshots:
     dependencies:
       '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@ucloud-sdks/ucloud-sdk-js': 0.2.3
-      '@yikart/common': 0.0.1(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
+      '@yikart/common': 0.0.2(axios@1.11.0)(class-transformer@0.5.1)(class-validator@0.14.2)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
       tslib: 2.8.1
       zod: 4.1.1
     transitivePeerDependencies:

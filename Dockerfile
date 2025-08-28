@@ -22,10 +22,13 @@ FROM deps-install AS build-app
 ARG APP_NAME
 ENV APP_NAME=${APP_NAME}
 
-COPY . ./
+COPY nx.json ./
+COPY tsconfig.base.json ./
+COPY project.json ./
+COPY apps/${APP_NAME} apps/${APP_NAME}
 
 RUN --mount=type=cache,id=nx,target=/app/.nx/cache \
-    pnpm nx build ${APP_NAME} --prod
+    pnpm nx build ${APP_NAME} --prod --excludeTaskDependencies
 
 FROM base AS deps-prod
 ARG APP_NAME
@@ -53,7 +56,6 @@ RUN apt-get update && \
         apt-get clean; \
     fi
 
-# 复制生产依赖
 COPY --from=deps-prod /app/node_modules/ node_modules/
 
 COPY --from=build-app /app/dist/apps/${APP_NAME}/ ./
