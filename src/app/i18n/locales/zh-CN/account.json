@@ -64,5 +64,26 @@
     "success": "新建空间成功",
     "failed": "新建空间失败",
     "nameRequired": "请输入空间名称"
+  },
+  "locationRestriction": {
+    "cnSpace": "当前空间为中国属地，仅显示国内平台",
+    "nonCnSpace": "当前空间为非中国属地，国内平台暂不可用"
+  },
+  "userManageSidebar": {
+    "allAccounts": "全部账号",
+    "spaces": "空间",
+    "createSpace": "新建空间",
+    "spaceNamePlaceholder": "请输入空间名称",
+    "cannotOperateDefault": "不能操作默认列表",
+    "rename": "重命名",
+    "delete": "删除",
+    "confirmDelete": "提示",
+    "confirmDeleteContent": "请确认是否删除列表：",
+    "deleteSuccess": "删除成功",
+    "createSpaceTitle": "新建空间",
+    "renameSpaceTitle": "重命名空间",
+    "cancel": "取消",
+    "save": "保存",
+    "spaceName": "空间名"
   }
 }

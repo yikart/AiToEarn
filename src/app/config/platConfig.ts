@@ -9,6 +9,7 @@ import facebookSvg from "@/assets/svgs/plat/facebook.svg";
 import instagramSvg from "@/assets/svgs/plat/instagram.svg";
 import threadsSvg from "@/assets/svgs/plat/xiancheng.svg";
 import wxGzhSvg from "@/assets/svgs/plat/wx-gzh.svg";
+import wxSphSvg from "@/assets/svgs/plat/wx-sph.svg";
 import gongzhonghaoSvg from "@/assets/svgs/plat/gongzhonghao.png";
 import pinterestSvg from "@/assets/svgs/plat/pinterest.svg";
 import xhsSvg from "@/assets/svgs/plat/xhs.svg";
@@ -87,22 +88,6 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     },
   ],
   [
-    PlatType.Douyin,
-    {
-      name: "抖音",
-      icon: douyinSvg.src,
-      url: "https://www.douyin.com/",
-      pubTypes: new Set([]),
-      commonPubParamsConfig: {
-        titleMax: 30,
-        topicMax: 5,
-        desMax: 1000,
-      },
-      themeColor: "#FF4D00",
-      pcNoThis: true,
-    },
-  ],
-  [
     PlatType.KWAI,
     {
       name: "快手",
@@ -144,6 +129,39 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         imagesMax: 20,
       },
       themeColor: "green",
+    },
+  ],
+
+  [
+    PlatType.Douyin,
+    {
+      name: "抖音",
+      icon: douyinSvg.src,
+      url: "https://www.douyin.com/",
+      pubTypes: new Set([]),
+      commonPubParamsConfig: {
+        titleMax: 30,
+        topicMax: 5,
+        desMax: 1000,
+      },
+      themeColor: "#FF4D00",
+      pcNoThis: true,
+    },
+  ],
+  [
+    PlatType.WxSph,
+    {
+      name: "微信视频号",
+      icon: wxSphSvg.src, 
+      url: "https://mp.weixin.qq.com/",
+      pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
+      commonPubParamsConfig: {
+        titleMax: 100,
+        topicMax: 100,
+        desMax: 5000,
+      },
+      themeColor: "green",
+      pcNoThis: true,
     },
   ],
   [

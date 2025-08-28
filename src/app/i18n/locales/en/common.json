@@ -47,6 +47,17 @@
     "consecutiveDays": "Consecutive Days",
     "totalPoints": "Total Points"
   },
+  "downloadApp": {
+    "title": "Download {{appName}}",
+    "operationInApp": "Please operate in {{appName}} to add",
+    "description": "For better user experience and complete functionality, this operation needs to be completed in {{appName}} to add accounts. Please download and install {{appName}} to continue.",
+    "scanQrCode": "Scan QR code to download",
+    "downloadLink": "Download link:",
+    "copy": "Copy",
+    "close": "Close",
+    "downloadNow": "Download Now",
+    "tip": "💡 Tip: After installation, please log in to your account in the App, then try the related operation again"
+  },
   "websit": {
     "termsOfService": {
       "title": "Terms of Service",

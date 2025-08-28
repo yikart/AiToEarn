@@ -92,27 +92,33 @@ const AddAccountModal = memo(
         };
       }, [open, targetGroupId, accountGroupList]);
 
-      // 判断平台是否在当前属地可用
-      const isPlatformAvailable = (platType: PlatType): boolean => {
-        // TODO: 暂时屏蔽国内平台 @@.@@
-        // return true;
-        if (isCnSpace === null) return true; // 未确定属地时显示所有平台
-        
-        const cnOnlyPlatforms = new Set<PlatType>([
-          PlatType.Douyin,
-          PlatType.KWAI,
-          PlatType.WxGzh,
-          PlatType.BILIBILI,
-        ]);
-        
-        if (isCnSpace === true) {
-          // 中国属地：仅国内平台可用
-          return cnOnlyPlatforms.has(platType);
-        } else {
-          // 非中国属地：国内平台不可用
-          return !cnOnlyPlatforms.has(platType);
-        }
-      };
+             // 判断平台是否在当前属地可用
+       const isPlatformAvailable = (platType: PlatType): boolean => {
+         // TODO: 暂时屏蔽国内平台 @@.@@
+         // return true;
+         if (isCnSpace === null) return true; // 未确定属地时显示所有平台
+         
+         const cnOnlyPlatforms = new Set<PlatType>([
+           PlatType.Douyin,
+           PlatType.KWAI,
+           PlatType.WxGzh,
+           PlatType.WxSph,
+           PlatType.BILIBILI,
+         ]);
+         
+         // 小红书是全球平台，不受IP限制
+         if (platType === PlatType.Xhs) {
+           return true;
+         }
+         
+         if (isCnSpace === true) {
+           // 中国属地：仅国内平台可用
+           return cnOnlyPlatforms.has(platType);
+         } else {
+           // 非中国属地：国内平台不可用
+           return !cnOnlyPlatforms.has(platType);
+         }
+       };
 
 
 
@@ -236,8 +242,8 @@ const AddAccountModal = memo(
                   textAlign: 'center'
                 }}>
                   {isCnSpace ? 
-                    '当前空间为中国属地，仅显示国内平台' : 
-                    '当前空间为非中国属地，国内平台暂不可用'
+                    t('locationRestriction.cnSpace') : 
+                    t('locationRestriction.nonCnSpace')
                   }
                 </div>
               )}

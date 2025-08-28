@@ -65,6 +65,27 @@ interface Resources {
       "success": "新建空间成功",
       "failed": "新建空间失败",
       "nameRequired": "请输入空间名称"
+    },
+    "locationRestriction": {
+      "cnSpace": "当前空间为中国属地，仅显示国内平台",
+      "nonCnSpace": "当前空间为非中国属地，国内平台暂不可用"
+    },
+    "userManageSidebar": {
+      "allAccounts": "全部账号",
+      "spaces": "空间",
+      "createSpace": "新建空间",
+      "spaceNamePlaceholder": "请输入空间名称",
+      "cannotOperateDefault": "不能操作默认列表",
+      "rename": "重命名",
+      "delete": "删除",
+      "confirmDelete": "提示",
+      "confirmDeleteContent": "请确认是否删除列表：",
+      "deleteSuccess": "删除成功",
+      "createSpaceTitle": "新建空间",
+      "renameSpaceTitle": "重命名空间",
+      "cancel": "取消",
+      "save": "保存",
+      "spaceName": "空间名"
     }
   },
   "cgmaterial": {
@@ -232,6 +253,17 @@ interface Resources {
       "messages": "消息通知",
       "materialLibrary": "素材库",
       "draftBox": "草稿箱"
+    },
+    "downloadApp": {
+      "title": "下载{{appName}}",
+      "operationInApp": "请在{{appName}}中操作添加",
+      "description": "为了更好的用户体验和功能完整性，该操作需要在 {{appName}} 中完成账号添加。请下载并安装 {{appName}} 后继续操作。",
+      "scanQrCode": "扫描二维码下载",
+      "downloadLink": "下载链接：",
+      "copy": "复制",
+      "close": "关闭",
+      "downloadNow": "立即下载",
+      "tip": "💡 提示：安装完成后，请在App中登录您的账号，然后重新尝试相关操作"
     },
     "signIn": {
       "title": "每日签到得积分",

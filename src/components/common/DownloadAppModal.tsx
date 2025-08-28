@@ -1,8 +1,9 @@
-import React from 'react';
-import { Modal, Button, Space, Typography } from 'antd';
-import { DownloadOutlined, QrcodeOutlined } from '@ant-design/icons';
+import React, { useState } from 'react';
+import { Modal, Button, Space, Typography, message } from 'antd';
+import { DownloadOutlined, QrcodeOutlined, CopyOutlined, CheckOutlined } from '@ant-design/icons';
 import { useTransClient } from '@/app/i18n/client';
 import logo from '@/assets/images/logo.png';
+import { QRCode } from 'react-qrcode-logo';
 
 const { Text, Paragraph } = Typography;
 
@@ -25,21 +26,25 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
   platform = "",
   appName = "Aitoearn App",
   downloadUrl,
-  qrCodeUrl
+  qrCodeUrl = ''
 }) => {
   const { t } = useTransClient("common");
+  const [copySuccess, setCopySuccess] = useState(false);
 
   const handleDownload = () => {
-    if (downloadUrl) {
-      window.open(downloadUrl, '_blank');
-    }
+    const linkToOpen = downloadUrl || "https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk";
+    window.open(linkToOpen, '_blank');
   };
 
-  const handleCopyLink = () => {
-    if (downloadUrl) {
-      navigator.clipboard.writeText(downloadUrl).then(() => {
-        // 可以添加复制成功的提示
-      });
+  const handleCopyLink = async () => {
+    const linkToCopy = downloadUrl || "https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk";
+    try {
+      await navigator.clipboard.writeText(linkToCopy);
+      setCopySuccess(true);
+      message.success(t('downloadApp.copy') + '成功');
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (error) {
+      message.error('复制失败，请手动复制');
     }
   };
 
@@ -48,104 +53,123 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
       title={
         <Space>
           <img src={logo.src} alt="Aitoearn" style={{ width: 20, height: 20, borderRadius: 4 }} />
-          <span>下载{appName}</span>
+          <span>{t('downloadApp.title', { appName })}</span>
         </Space>
       }
       open={visible}
       onCancel={onClose}
       footer={[
         <Button key="close" onClick={onClose}>
-          关闭
+          {t('downloadApp.close')}
         </Button>,
-        downloadUrl && (
-          <Button 
-            key="download" 
-            type="primary" 
-            icon={<DownloadOutlined />}
-            onClick={handleDownload}
-          >
-            立即下载
-          </Button>
-        )
+        <Button 
+          key="download" 
+          type="primary" 
+          icon={<DownloadOutlined />}
+          onClick={handleDownload}
+        >
+          {t('downloadApp.downloadNow')}
+        </Button>
       ]}
-      width={500}
+      width={520}
       centered
       destroyOnClose
     >
       <div style={{ textAlign: 'center', padding: '20px 0' }}>
+        {/* App Logo */}
         <div style={{ marginBottom: '24px' }}>
-          <img src={logo.src} alt="Aitoearn" style={{ width: 56, height: 56, borderRadius: 12 }} />
+          <img src={logo.src} alt="Aitoearn" style={{ width: 64, height: 64, borderRadius: 16, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
         </div>
         
-        <Typography.Title level={4} style={{ marginBottom: '16px' }}>
-          请在{appName}中操作添加
+        {/* 标题 */}
+        <Typography.Title level={4} style={{ marginBottom: '16px', color: '#1f2937' }}>
+          {t('downloadApp.operationInApp', { appName })}
         </Typography.Title>
         
-        <Paragraph style={{ color: '#666', marginBottom: '24px' }}>
-          为了更好的用户体验和功能完整性，该操作需要在 {appName} 中完成账号添加。
-          请下载并安装 {appName} 后继续操作。
+        {/* 描述 */}
+        <Paragraph style={{ color: '#6b7280', marginBottom: '32px', fontSize: '14px', lineHeight: '1.6' }}>
+          {t('downloadApp.description', { appName })}
         </Paragraph>
 
-        {qrCodeUrl && (
-          <div style={{ marginBottom: '24px' }}>
-            <div style={{ marginBottom: '8px' }}>
-              <QrcodeOutlined style={{ marginRight: '4px' }} />
-              <Text strong>扫描二维码下载</Text>
-            </div>
-            <img 
-              src={qrCodeUrl} 
-              alt="下载二维码" 
-              style={{ 
-                width: '120px', 
-                height: '120px',
-                border: '1px solid #e8e8e8',
-                borderRadius: '8px'
-              }} 
+        {/* 二维码区域 */}
+        <div style={{ 
+          marginBottom: '32px', 
+          padding: '20px', 
+          backgroundColor: '#f9fafb', 
+          borderRadius: '12px',
+          border: '1px solid #e5e7eb'
+        }}>
+          <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <QrcodeOutlined style={{ color: '#6b7280' }} />
+            <Text strong style={{ color: '#374151' }}>{t('downloadApp.scanQrCode')}</Text>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <QRCode
+              value={downloadUrl || "https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk"}
+              size={140}
             />
           </div>
-        )}
+        </div>
 
-        {downloadUrl && (
-          <div style={{ marginBottom: '16px' }}>
-            <Space direction="vertical" size="small">
-              <Text type="secondary">下载链接：</Text>
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '8px',
-                justifyContent: 'center'
-              }}>
-                <Text 
-                  code 
-                  style={{ 
-                    maxWidth: '300px', 
-                    overflow: 'hidden', 
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  {downloadUrl}
-                </Text>
-                <Button 
-                  size="small" 
-                  onClick={handleCopyLink}
-                  type="text"
-                >
-                  复制
-                </Button>
-              </div>
-            </Space>
-          </div>
-        )}
+        {/* 下载链接区域 */}
+        <div style={{ 
+          marginBottom: '24px',
+          padding: '16px',
+          backgroundColor: '#f8fafc',
+          borderRadius: '8px',
+          border: '1px solid #e2e8f0'
+        }}>
+          <Space direction="vertical" size="small" style={{ width: '100%' }}>
+            <Text type="secondary" style={{ fontSize: '13px' }}>{t('downloadApp.downloadLink')}</Text>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px',
+              justifyContent: 'center',
+              backgroundColor: '#ffffff',
+              padding: '8px 12px',
+              borderRadius: '6px',
+              border: '1px solid #e2e8f0'
+            }}>
+              <Text 
+                code 
+                style={{ 
+                  maxWidth: '280px', 
+                  overflow: 'hidden', 
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  fontSize: '12px',
+                  color: '#475569'
+                }}
+              >
+                {downloadUrl || "https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk"}
+              </Text>
+              <Button 
+                size="small" 
+                onClick={handleCopyLink}
+                type="text"
+                icon={copySuccess ? <CheckOutlined style={{ color: '#10b981' }} /> : <CopyOutlined />}
+                style={{ 
+                  minWidth: 'auto',
+                  padding: '4px 8px',
+                  color: copySuccess ? '#10b981' : '#6b7280'
+                }}
+              >
+                {copySuccess ? '已复制' : t('downloadApp.copy')}
+              </Button>
+            </div>
+          </Space>
+        </div>
 
+        {/* 提示信息 */}
         <div style={{ 
           padding: '16px', 
-          backgroundColor: '#f6f8fa', 
+          backgroundColor: '#eff6ff', 
           borderRadius: '8px',
-          border: '1px solid #e1e4e8'
+          border: '1px solid #dbeafe'
         }}>
-          <Text type="secondary">
-            💡 提示：安装完成后，请在App中登录您的账号，然后重新尝试相关操作
+          <Text type="secondary" style={{ fontSize: '13px', color: '#1e40af' }}>
+            {t('downloadApp.tip')}
           </Text>
         </div>
       </div>
