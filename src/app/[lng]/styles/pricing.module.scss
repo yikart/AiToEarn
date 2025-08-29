@@ -1,6 +1,6 @@
 .pricingPage {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #ffffff;
   padding: 2rem 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
@@ -14,22 +14,19 @@
 .header {
   text-align: center;
   margin-bottom: 3rem;
-  color: white;
+  color: #2c3e50;
 }
 
 .title {
   font-size: 3.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
-  background: linear-gradient(45deg, #fff, #f0f0f0);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #2c3e50;
 }
 
 .subtitle {
   font-size: 1.25rem;
-  opacity: 0.9;
+  color: #7f8c8d;
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;
@@ -42,17 +39,16 @@
 }
 
 .toggleContainer {
-  background: rgba(255, 255, 255, 0.1);
+  background: #f8f9fa;
   border-radius: 50px;
   padding: 0.5rem;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid #e9ecef;
 }
 
 .toggleButton {
   background: transparent;
   border: none;
-  color: white;
+  color: #2c3e50;
   padding: 1rem 2rem;
   border-radius: 40px;
   font-size: 1rem;
@@ -64,8 +60,9 @@
 }
 
 .toggleButton.active {
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background: #667eea;
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
 .saveBadge {
@@ -95,12 +92,11 @@
 }
 
 .pricingCard {
-  background: rgba(255, 255, 255, 0.95);
+  background: #ffffff;
   border-radius: 24px;
   padding: 2.5rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid #e9ecef;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -361,11 +357,11 @@
 }
 
 .faqSection {
-  background: rgba(255, 255, 255, 0.95);
+  background: #ffffff;
   border-radius: 24px;
   padding: 3rem;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid #e9ecef;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
 .faqTitle {
