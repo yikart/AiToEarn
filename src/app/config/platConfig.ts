@@ -263,11 +263,12 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       name: "Pinterest",
       icon: pinterestSvg.src,
       url: "https://www.pinterest.com/",
-      pubTypes: new Set([PubType.VIDEO]),
+      pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
       commonPubParamsConfig: {
         titleMax: 16,
         topicMax: 100,
         desMax: 2200,
+        imagesMax: 1,
       },
       themeColor: "#CC2025",
     },

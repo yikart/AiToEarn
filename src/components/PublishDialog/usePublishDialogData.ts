@@ -121,8 +121,8 @@ export const usePublishDialogData = create(
           return res?.data;
         },
         // 获取Pinterest Board列表
-        async getPinterestBoards() {
-          if (get().pinterestBoards.length !== 0) return;
+        async getPinterestBoards(forceRefresh = false) {
+          if (!forceRefresh && get().pinterestBoards.length !== 0) return;
           const pinterestAccount = useAccountStore
             .getState()
             .accountList.find((v) => v.type === PlatType.Pinterest);

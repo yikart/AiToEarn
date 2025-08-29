@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, memo, useEffect } from "react";
+import { ForwardedRef, forwardRef, memo, useEffect, useState } from "react";
 import {
   IPlatsParamsProps,
   IPlatsParamsRef,
@@ -9,8 +9,12 @@ import CommonTitleInput from "@/components/PublishDialog/compoents/PlatParamsSet
 import { usePublishDialogData } from "@/components/PublishDialog/usePublishDialogData";
 import { useShallow } from "zustand/react/shallow";
 import styles from "../platParamsSetting.module.scss";
-import { Select } from "antd";
+import { Button, Tooltip, Input, List, message } from "antd";
 import { useTransClient } from "@/app/i18n/client";
+import { PushpinOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { createPinterestBoardApi } from "@/api/pinterest";
+import { useAccountStore } from "@/store/account";
+import { PlatType } from "@/app/config/platConfig";
 
 const PinterestParams = memo( 
   forwardRef(
@@ -25,6 +29,12 @@ const PinterestParams = memo(
             pinterestBoards: state.pinterestBoards,
           })),
         );
+
+      // 弹窗状态
+      const [boardTooltipVisible, setBoardTooltipVisible] = useState(false);
+      const [searchKeyword, setSearchKeyword] = useState("");
+      const [newBoardName, setNewBoardName] = useState("");
+      const [creatingBoard, setCreatingBoard] = useState(false);
 
       useEffect(() => {
         getPinterestBoards();
@@ -44,6 +54,83 @@ const PinterestParams = memo(
         );
       }, [pubItem.account.id]);
 
+      // 默认选择第一个Board
+      useEffect(() => {
+        if (pinterestBoards.length > 0 && !pubItem.params.option.pinterest?.boardId) {
+          const option = pubItem.params.option;
+          option.pinterest!.boardId = pinterestBoards[0].id;
+          setOnePubParams(
+            {
+              option,
+            },
+            pubItem.account.id,
+          );
+        }
+      }, [pinterestBoards, pubItem.params.option.pinterest?.boardId, pubItem.account.id]);
+
+      // 获取当前选中的Board信息
+      const selectedBoard = pinterestBoards.find(
+        board => board.id === pubItem.params.option.pinterest?.boardId
+      );
+
+      // 过滤Board列表
+      const filteredBoards = pinterestBoards.filter(board => 
+        board.name.toLowerCase().includes(searchKeyword.toLowerCase())
+      );
+
+      // 创建新Board
+      const handleCreateBoard = async () => {
+        if (!newBoardName.trim()) {
+          message.error("请输入Board名称");
+          return;
+        }
+
+        const pinterestAccount = useAccountStore
+          .getState()
+          .accountList.find((v) => v.type === PlatType.Pinterest);
+
+        if (!pinterestAccount) {
+          message.error("没有找到Pinterest账户");
+          return;
+        }
+
+        try {
+          setCreatingBoard(true);
+          const response = await createPinterestBoardApi(
+            { name: newBoardName.trim() }, 
+            pinterestAccount.account
+          );
+          
+          if (response?.code === 0) {
+            message.success("Board创建成功");
+            setNewBoardName("");
+            // 重新获取Board列表
+            await getPinterestBoards(true);
+          } else {
+            message.error("创建Board失败");
+          }
+        } catch (error) {
+          message.error("创建Board失败");
+        } finally {
+          setCreatingBoard(false);
+        }
+      };
+
+             
+       // 选择Board
+       const handleSelectBoard = (boardId: string) => {
+         const option = pubItem.params.option;
+         option.pinterest!.boardId = boardId;
+         setOnePubParams(
+           {
+             option,
+           },
+           pubItem.account.id,
+         );
+         setBoardTooltipVisible(false);
+         setSearchKeyword("");
+       };
+
       return (
         <>
           <PubParmasTextarea
@@ -55,32 +142,109 @@ const PinterestParams = memo(
                   className={styles.commonTitleInput}
                   style={{ marginTop: "10px" }}
                 >
-                  <div className="platParamsSetting-label">{t("form.board")}</div>
-                  <Select
-                    style={{ width: "100%" }}
-                    options={pinterestBoards} 
-                    value={pubItem.params.option.pinterest?.boardId}
-                    onChange={(value) => {
-                      const option = pubItem.params.option;
-                      option.pinterest!.boardId = value;
-                      setOnePubParams(
-                        {
-                          option,
-                        },
-                        pubItem.account.id,
-                      );
-                    }}
-                    showSearch={true}
-                    placeholder={t("form.boardPlaceholder")}
-                    fieldNames={{
-                      label: "name",
-                      value: "id",
-                    }}
-                  />
+                  <div className="platParamsSetting-label">Pinning</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <Button
+                      icon={<PushpinOutlined />}
+                      style={{ 
+                       border: "none"
+                      }}
+                    >
+                      {selectedBoard?.name || "请选择Board"}
+                    </Button>
+                                         <Tooltip
+                                               title={
+                          <div style={{ maxHeight: "400px", overflow: "auto" }}>
+                            <div style={{ marginBottom: "1px" }}>
+                              <Input
+                                placeholder="搜索Board..."
+                                prefix={<SearchOutlined />}
+                                value={searchKeyword}
+                                onChange={(e) => setSearchKeyword(e.target.value)}
+                                size="small"
+                                style={{ marginBottom: "12px" }}
+                              />
+                            </div>
+
+                            {/* Board列表 */}
+                            <List
+                              dataSource={filteredBoards}
+                              size="small"
+                              style={{ maxHeight: "200px", overflow: "auto" }}
+                              renderItem={(board) => (
+                                <List.Item
+                                  style={{ 
+                                    cursor: "pointer",
+                                    padding: "6px 8px",
+                                    borderRadius: "4px",
+                                    backgroundColor: board.id === pubItem.params.option.pinterest?.boardId ? "#f0f0f0" : "transparent"
+                                  }}
+                                  onClick={() => handleSelectBoard(board.id)}
+                                >
+                                  <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                                    <PushpinOutlined style={{ fontSize: "12px" }} />
+                                    <span style={{ fontSize: "12px" }}>{board.name}</span>
+                                    {board.id === pubItem.params.option.pinterest?.boardId && (
+                                      <span style={{ color: "#1890ff", fontSize: "10px" }}>(当前选择)</span>
+                                    )}
+                                  </div>
+                                </List.Item>
+                              )}
+                              locale={{
+                                emptyText: "暂无Board"
+                              }}
+                            />
+                            
+                            {/* 创建新Board */}
+                            <div style={{ 
+                              border: "1px solid #d9d9d9", 
+                              borderRadius: "4px", 
+                              padding: "8px",
+                              marginTop: "12px"
+                            }}>
+
+                              <div style={{ display: "flex", gap: "6px" }}>
+                                <Input
+                                  placeholder="输入Board名称"
+                                  value={newBoardName}
+                                  onChange={(e) => setNewBoardName(e.target.value)}
+                                  onPressEnter={handleCreateBoard}
+                                  size="small"
+                                />
+                                <Button
+                                  type="primary"
+                                  icon={<PlusOutlined />}
+                                  onClick={handleCreateBoard}
+                                  loading={creatingBoard}
+                                  size="small"
+                                >
+                                  创建
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        }
+                        open={boardTooltipVisible}
+                        onOpenChange={setBoardTooltipVisible}
+                        placement="top"
+                        trigger="click"
+                     >
+                       <Button
+                         onClick={() => setBoardTooltipVisible(!boardTooltipVisible)}
+                         style={{ 
+                           backgroundColor: "#f5f5f5", 
+                           border: "none",
+                           color: "#666"
+                         }}
+                       >
+                         Change
+                       </Button>
+                     </Tooltip>
+                  </div>
                 </div>
               </>
             }
-          />
+                     />
         </>
       );
     },
