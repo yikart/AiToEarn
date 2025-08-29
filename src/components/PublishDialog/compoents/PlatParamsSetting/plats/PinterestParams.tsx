@@ -19,7 +19,7 @@ import { PlatType } from "@/app/config/platConfig";
 const PinterestParams = memo( 
   forwardRef(
     ({ pubItem }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
-      const { t } = useTransClient("publish");
+      const { t } = useTransClient("pinterest");
       const { pubParmasTextareaCommonParams, setOnePubParams } =
         usePlatParamsCommon(pubItem);
       const { getPinterestBoards, pinterestBoards } =
@@ -81,7 +81,7 @@ const PinterestParams = memo(
       // 创建新Board
       const handleCreateBoard = async () => {
         if (!newBoardName.trim()) {
-          message.error("请输入Board名称");
+          message.error(t("validation.boardNameRequired"));
           return;
         }
 
@@ -90,7 +90,7 @@ const PinterestParams = memo(
           .accountList.find((v) => v.type === PlatType.Pinterest);
 
         if (!pinterestAccount) {
-          message.error("没有找到Pinterest账户");
+          message.error(t("messages.noAccountFound"));
           return;
         }
 
@@ -102,15 +102,15 @@ const PinterestParams = memo(
           );
           
           if (response?.code === 0) {
-            message.success("Board创建成功");
+            message.success(t("messages.boardCreateSuccess"));
             setNewBoardName("");
             // 重新获取Board列表
             await getPinterestBoards(true);
           } else {
-            message.error("创建Board失败");
+            message.error(t("messages.boardCreateFailed"));
           }
         } catch (error) {
-          message.error("创建Board失败");
+          message.error(t("messages.boardCreateFailed"));
         } finally {
           setCreatingBoard(false);
         }
@@ -142,7 +142,7 @@ const PinterestParams = memo(
                   className={styles.commonTitleInput}
                   style={{ marginTop: "10px" }}
                 >
-                  <div className="platParamsSetting-label">Pinning</div>
+                  <div className="platParamsSetting-label">{t("pin.selectBoard")}</div>
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <Button
                       icon={<PushpinOutlined />}
@@ -150,14 +150,14 @@ const PinterestParams = memo(
                        border: "none"
                       }}
                     >
-                      {selectedBoard?.name || "请选择Board"}
+                      {selectedBoard?.name || t("pin.selectBoardPlaceholder")}
                     </Button>
                                          <Tooltip
                                                title={
                           <div style={{ maxHeight: "400px", overflow: "auto" }}>
                             <div style={{ marginBottom: "1px" }}>
                               <Input
-                                placeholder="搜索Board..."
+                                placeholder={t("actions.search")}
                                 prefix={<SearchOutlined />}
                                 value={searchKeyword}
                                 onChange={(e) => setSearchKeyword(e.target.value)}
@@ -185,13 +185,13 @@ const PinterestParams = memo(
                                     <PushpinOutlined style={{ fontSize: "12px" }} />
                                     <span style={{ fontSize: "12px" }}>{board.name}</span>
                                     {board.id === pubItem.params.option.pinterest?.boardId && (
-                                      <span style={{ color: "#1890ff", fontSize: "10px" }}>(当前选择)</span>
+                                      <span style={{ color: "#1890ff", fontSize: "10px" }}>({t("badges.selected")})</span>
                                     )}
                                   </div>
                                 </List.Item>
                               )}
                               locale={{
-                                emptyText: "暂无Board"
+                                emptyText: t("empty.noBoards")
                               }}
                             />
                             
@@ -205,7 +205,7 @@ const PinterestParams = memo(
 
                               <div style={{ display: "flex", gap: "6px" }}>
                                 <Input
-                                  placeholder="输入Board名称"
+                                  placeholder={t("board.namePlaceholder")}
                                   value={newBoardName}
                                   onChange={(e) => setNewBoardName(e.target.value)}
                                   onPressEnter={handleCreateBoard}
@@ -218,7 +218,7 @@ const PinterestParams = memo(
                                   loading={creatingBoard}
                                   size="small"
                                 >
-                                  创建
+                                  {t("board.createButton")}
                                 </Button>
                               </div>
                             </div>
@@ -237,7 +237,7 @@ const PinterestParams = memo(
                            color: "#666"
                          }}
                        >
-                         Change
+                         {t("actions.change")}
                        </Button>
                      </Tooltip>
                   </div>

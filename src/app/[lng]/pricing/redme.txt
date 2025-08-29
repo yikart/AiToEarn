@@ -1,0 +1,41 @@
+Frequently Asked Questions (FAQ)
+1. What payment methods do you support?
+ We support multiple payment methods, including major credit cards (Visa, MasterCard, American Express) as well as Alipay.
+2. Can I use Alipay?
+ Yes. If you are using our services in China, you can purchase one-time services with Alipay.
+3. How are credits deducted for image and video generation?
+ Our pricing for image and video generation is aligned with the official channels. If bulk purchases from the official channels come with discounts, we will also pass those discounts on to you.
+AI视频模块升级
+4. Do my credits expire?
+ Our credit expiration policy is very flexible. Credits will only expire 12 calendar months after they are acquired, giving you plenty of time to use them.
+5. What if I need more credits?
+ You can earn free credits by publishing content daily.
+ In addition, you can get more credits by subscribing to a membership or purchasing credits directly.
+6. How can I check my credit status?
+ Simply click on your credit balance to view detailed changes and usage history.
+7. Are there any hidden fees?
+ No. The price you see is the price you pay. There are no hidden charges beyond the plan you select.
+
+
+
+
+---
+
+常见问题（FAQ）
+1. 你们支持哪些支付方式？
+ 我们支持多种支付方式，包括主要的信用卡（Visa、MasterCard、American Express）以及支付宝等。
+2. 可以使用支付宝吗？
+ 可以。如果您在中国使用我们的服务，可以通过支付宝购买一次性服务。
+3. 图片和视频生成时，积分是如何扣除的？
+ 我们的图片和视频生成定价与官方渠道保持一致。通常情况下，如果官方渠道有大额采购折扣，我们也会同步将这些优惠让利给您。
+把积分详情表展示给用户看
+AI视频模块升级
+4. 我的积分会过期吗？
+ 我们的积分过期机制非常宽松。积分自获取之日起 12 个自然月后才会过期，您有充足的时间使用。
+5. 如果我需要更多积分怎么办？
+ 您可以通过每天发布内容来获取免费积分。
+ 同时，也可以通过开通会员或直接购买积分的方式获得更多积分。
+6. 如何查看我的积分情况？
+ 点击您的积分余额，即可查看积分的变更明细。
+7. 是否存在隐藏费用？
+ 没有。您所看到的价格就是您最终支付的价格，不会有任何额外的隐性收费。

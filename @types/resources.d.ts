@@ -776,7 +776,8 @@ interface Resources {
       "view": "查看",
       "edit": "编辑",
       "delete": "删除",
-      "link": "链接"
+      "link": "链接",
+      "change": "更改"
     },
     "stats": {
       "followers": "关注者",
@@ -838,7 +839,8 @@ interface Resources {
       "followers": "关注者",
       "owner": "拥有者",
       "yes": "是",
-      "no": "否"
+      "no": "否",
+      "selected": "当前选择"
     },
     "empty": {
       "noBoards": "暂无Board",
@@ -865,7 +867,8 @@ interface Resources {
       "selectImageFile": "请选择图片文件",
       "imageSizeLimit": "图片大小不能超过10MB",
       "imageUploadSuccess": "图片上传成功",
-      "imageUploadFailed": "图片上传失败，请重试"
+      "imageUploadFailed": "图片上传失败，请重试",
+      "noAccountFound": "没有找到Pinterest账户"
     },
     "validation": {
       "boardNameRequired": "请输入Board名称",
