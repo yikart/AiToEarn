@@ -1,0 +1,21 @@
+{
+  "name": "@yikart/aitoearn-user-client",
+  "type": "commonjs",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yikart/aitoearn-monorepo.git"
+  },
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@yikart/common": "^0.0.5",
+    "@yikart/nats-client": "*",
+    "tslib": "^2.3.0",
+    "zod": "^4.0.17"
+  }
+}

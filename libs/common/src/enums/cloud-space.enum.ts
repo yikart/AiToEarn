@@ -1,5 +1,6 @@
 export enum CloudSpaceStatus {
   Creating = 'creating',
+  Configuring = 'configuring',
   Ready = 'ready',
   Error = 'error',
   Terminated = 'terminated',

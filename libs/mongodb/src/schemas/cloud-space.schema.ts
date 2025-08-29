@@ -21,6 +21,11 @@ export class CloudSpace extends WithTimestampSchema {
   @Prop({
     required: true,
   })
+  accountGroupId: string
+
+  @Prop({
+    required: true,
+  })
   instanceId: string
 
   @Prop({

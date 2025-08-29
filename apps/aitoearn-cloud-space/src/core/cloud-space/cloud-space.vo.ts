@@ -5,6 +5,7 @@ import z from 'zod'
 export const cloudSpaceVoSchema = z.object({
   id: z.string(),
   userId: z.string(),
+  accountGroupId: z.string(),
   instanceId: z.string(),
   region: z.enum(CloudSpaceRegion),
   status: z.enum(CloudSpaceStatus),

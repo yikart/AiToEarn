@@ -5,6 +5,7 @@ export const createCloudSpaceSchema = z.object({
   userId: z.string(),
   region: z.enum(CloudSpaceRegion),
   profileName: z.string().optional(),
+  accountGroupId: z.string(),
   month: z.int().min(1).default(1),
 })
 

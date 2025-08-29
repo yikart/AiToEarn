@@ -1,11 +1,20 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { AppException, CloudInstanceStatus, CloudSpaceRegion, generateSecurePassword, ResponseCode } from '@yikart/common'
 import { CreateULHostInstanceRequest, UCloudService, UHostIPSet, ULHostState } from '@yikart/ucloud'
-import { delay, EMPTY, expand, from, lastValueFrom, of, switchMap, timeout } from 'rxjs'
+import { bufferCount, concatMap, from, lastValueFrom, mergeMap, toArray } from 'rxjs'
 import { config } from '../../config'
+
+export interface InstanceRuntime {
+  instanceId: string
+  providerStatus: ULHostState
+  status: CloudInstanceStatus
+  ip?: string
+}
 
 @Injectable()
 export class CloudInstanceService {
+  private readonly logger = new Logger(CloudInstanceService.name)
+
   constructor(private readonly ucloudService: UCloudService) {}
 
   async createInstance(region: CloudSpaceRegion, month: number, name?: string) {
@@ -55,35 +64,39 @@ export class CloudInstanceService {
     }
   }
 
-  async waitForInstanceReady(instanceId: string, region: CloudSpaceRegion, timeoutMinutes = 10): Promise<void> {
-    const timeoutMs = timeoutMinutes * 60 * 1000
-    const pollInterval = 5000
+  async listInstanceStatus(instanceIds: string[], region: CloudSpaceRegion): Promise<InstanceRuntime[]> {
+    if (instanceIds.length === 0) {
+      return []
+    }
 
-    const checkInstanceStatus = () => this.getInstanceStatus(instanceId, region)
-
-    await lastValueFrom(
-      of(null).pipe(
-        delay(0),
-        switchMap(() => from(checkInstanceStatus())),
-        expand((status) => {
-          if (status.status === CloudInstanceStatus.Running) {
-            return EMPTY
+    return lastValueFrom(
+      from(instanceIds).pipe(
+        bufferCount(100),
+        concatMap(chunk =>
+          this.ucloudService.ulHost.describeULHostInstance({
+            Region: region,
+            ULHostIds: chunk,
+          }),
+        ),
+        mergeMap((response) => {
+          if (response.RetCode !== 0) {
+            this.logger.warn(`Failed to query instances in region ${region}: ${response.Message}`)
+            return []
           }
 
-          if (status.status === CloudInstanceStatus.Error) {
-            throw new AppException(ResponseCode.UCloudInstanceError)
-          }
-
-          return from(checkInstanceStatus()).pipe(delay(pollInterval))
+          return response.ULHostInstanceSets.map((instance) => {
+            const ip = this.extractIp(instance.IPSet)
+            return {
+              instanceId: instance.ULHostId,
+              providerStatus: instance.State,
+              status: this.mapUCloudStatus(instance.State),
+              ip,
+            }
+          })
         }),
-        timeout(timeoutMs),
+        toArray(),
       ),
-    ).catch((error) => {
-      if (error.name === 'TimeoutError') {
-        throw new AppException(ResponseCode.UCloudInstanceTimeout)
-      }
-      throw error
-    })
+    )
   }
 
   async deleteInstance(instanceId: string, region: CloudSpaceRegion): Promise<void> {

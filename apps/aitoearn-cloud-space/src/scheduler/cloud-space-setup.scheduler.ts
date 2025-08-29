@@ -1,14 +1,12 @@
-import * as fs from 'node:fs'
+import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
 import { AnsibleService } from '@yikart/ansible'
-import { AppException, CloudSpaceStatus, ResponseCode } from '@yikart/common'
+import { CloudInstanceStatus, CloudSpaceRegion, CloudSpaceStatus } from '@yikart/common'
 import { BrowserProfileRepository, CloudSpace, CloudSpaceRepository } from '@yikart/mongodb'
 import { Redlock } from '@yikart/redlock'
-
-import * as yaml from 'js-yaml'
-import { RedlockKey } from '../common/enums'
-import { config } from '../config'
+import { Queue } from 'bullmq'
+import { JobName, QueueName, RedlockKey } from '../common/enums'
 import { CloudInstanceService } from '../core/cloud-instance'
 import { MultiloginAccountService } from '../core/multilogin-account'
 
@@ -18,15 +16,21 @@ export class CloudSpaceSetupScheduler {
 
   constructor(
     private readonly cloudSpaceRepository: CloudSpaceRepository,
+    private readonly cloudInstanceService: CloudInstanceService,
     private readonly browserProfileRepository: BrowserProfileRepository,
     private readonly multiloginAccountService: MultiloginAccountService,
-    private readonly cloudInstanceService: CloudInstanceService,
     private readonly ansibleService: AnsibleService,
+    @InjectQueue(QueueName.CloudspaceConfigure) private readonly configQueue: Queue,
   ) {}
 
   @Cron(CronExpression.EVERY_30_SECONDS)
   @Redlock(RedlockKey.CloudSpaceConfigTask)
   async processCloudSpaceConfiguration() {
+    await this.processCreatingCloudSpaces()
+    await this.processConfiguringCloudSpaces()
+  }
+
+  private async processCreatingCloudSpaces() {
     const [cloudSpaces] = await this.cloudSpaceRepository.listWithPagination({
       status: CloudSpaceStatus.Creating,
       page: 1,
@@ -37,260 +41,63 @@ export class CloudSpaceSetupScheduler {
       return
     }
 
-    this.logger.log(`找到 ${cloudSpaces.length} 个待配置的环境`)
+    this.logger.log(`找到 ${cloudSpaces.length} 个Creating状态的环境`)
 
-    const promises = cloudSpaces.map(cloudSpace =>
-      this.doConfigureCloudSpace(cloudSpace),
-    )
+    const regionGroups = new Map<CloudSpaceRegion, CloudSpace[]>()
+    for (const cloudSpace of cloudSpaces) {
+      if (!regionGroups.has(cloudSpace.region)) {
+        regionGroups.set(cloudSpace.region, [])
+      }
+      regionGroups.get(cloudSpace.region)!.push(cloudSpace)
+    }
 
-    await Promise.all(promises)
+    for (const [region, regionCloudSpaces] of regionGroups) {
+      const instanceIds = regionCloudSpaces.map(cs => cs.instanceId)
+      const instanceStatuses = await this.cloudInstanceService.listInstanceStatus(instanceIds, region)
+
+      for (const cloudSpace of regionCloudSpaces) {
+        const instanceStatus = instanceStatuses.find(status => status.instanceId === cloudSpace.instanceId)
+
+        if (!instanceStatus) {
+          this.logger.warn(`未找到实例 ${cloudSpace.instanceId} 的状态信息`)
+          continue
+        }
+
+        if (instanceStatus.status === CloudInstanceStatus.Running) {
+          await this.enqueueConfigurationTask(cloudSpace, instanceStatus.ip)
+        }
+      }
+    }
   }
 
-  @Redlock(env => RedlockKey.EnvConfig((env as CloudSpace).id))
-  private async doConfigureCloudSpace(cloudSpace: CloudSpace): Promise<void> {
-    this.logger.debug(`开始配置环境: ${cloudSpace.id}`)
+  private async processConfiguringCloudSpaces() {
+    const [configuringSpaces] = await this.cloudSpaceRepository.listWithPagination({
+      status: CloudSpaceStatus.Configuring,
+      page: 1,
+      pageSize: 50,
+    })
 
-    if (cloudSpace.status !== CloudSpaceStatus.Creating) {
+    if (configuringSpaces.length === 0) {
       return
     }
 
-    try {
-      await this.cloudInstanceService.waitForInstanceReady(cloudSpace.instanceId, cloudSpace.region)
-      await this.deployBrowserAgent(cloudSpace)
-    }
-    catch (error) {
-      this.logger.error({
-        message: `环境 ${cloudSpace.id} 配置过程中发生错误`,
-        error,
-      })
+    this.logger.log(`检查 ${configuringSpaces.length} 个Configuring状态的环境`)
 
-      await this.cloudSpaceRepository.updateById(cloudSpace.id, {
-        status: CloudSpaceStatus.Error,
-      })
+    for (const cloudSpace of configuringSpaces) {
+      await this.enqueueConfigurationTask(cloudSpace)
     }
   }
 
-  private async deployBrowserAgent(cloudSpace: CloudSpace) {
-    this.logger.log(`Deploying browser agent for cloudSpace ${cloudSpace.id}`)
-
-    const profile = await this.browserProfileRepository.getByCloudSpaceId(cloudSpace.id)
-    if (!profile) {
-      throw new AppException(ResponseCode.BrowserProfileNotFound)
+  private async enqueueConfigurationTask(cloudSpace: CloudSpace, newIp?: string) {
+    if (newIp && newIp !== cloudSpace.ip) {
+      await this.cloudSpaceRepository.updateById(cloudSpace.id, { ip: newIp })
+      cloudSpace.ip = newIp
     }
 
-    const multiloginAccount = await this.multiloginAccountService.getById(profile.accountId)
-
-    const dynamicInventory = {
-      all: {
-        children: {
-          browser_hosts: {
-            hosts: {
-              [`browser-worker-${cloudSpace.id}`]: {
-                ansible_host: cloudSpace.ip,
-                ansible_user: 'ubuntu',
-                ansible_ssh_pass: cloudSpace.password,
-                ansible_python_interpreter: '/usr/bin/python3',
-              },
-            },
-          },
-        },
-      },
-    }
-
-    const taskConfig = {
-      multilogin: multiloginAccount,
-      folderId: config.multilogin.folderId,
-      profileId: profile.profileId,
-      windows: [
-        {
-          url: 'https://aitoearn.ai',
-          localStorage: [
-            {
-              name: 'User',
-              value: '{"state":{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtYWlsIjoibDE0OTEyNTU3ODFAZ21haWwuY29tIiwiaWQiOiI2ODlmNDBiMmVhZjY1ZjYwMDJkNDYzMmIiLCJuYW1lIjoi55So5oi3Xzh1bnM0d0xCIiwiaWF0IjoxNzU2MjAwNjEwLCJleHAiOjE3NTg3OTI2MTB9.YyqKpVdQFiFOY7dlLfXA_r3vQPpRdM2DxUiMXy5iksg","userInfo":{"_id":"689f40b2eaf65f6002d4632b","name":"用户_8uns4wLB","mail":"l1491255781@gmail.com","status":1,"googleAccount":{"googleId":"108483019791958614324","email":"l1491255781@gmail.com","refreshToken":null},"score":10,"updatedAt":"2025-08-15T14:14:10.873Z","createdAt":"2025-08-15T14:14:10.832Z","popularizeCode":"95KXR","id":"689f40b2eaf65f6002d4632b"},"isAddAccountPorxy":false,"lang":"zh-CN","lastUpdateTime":0,"_hasHydrated":true},"version":0}',
-            },
-          ],
-        },
-        {
-          url: 'https://ping0.cc/',
-        },
-      ],
-    }
-
-    // 创建临时文件
-    const timestamp = Date.now()
-    const tempInventoryPath = `/tmp/inventory-${cloudSpace.id}-${timestamp}.yml`
-    const tempTaskConfigPath = `/tmp/task-${cloudSpace.id}-${timestamp}.json`
-
-    const inventoryYaml = yaml.dump(dynamicInventory)
-    const taskConfigJson = JSON.stringify(taskConfig, null, 2)
-
-    fs.writeFileSync(tempInventoryPath, inventoryYaml)
-    fs.writeFileSync(tempTaskConfigPath, taskConfigJson)
-
-    const playbookContent = [
-      {
-        name: 'Deploy Browser Automation Worker from GitHub Release',
-        hosts: 'browser_hosts',
-        become: true,
-        vars: {
-          app_name: 'browser-automation-worker',
-          app_dir: '/opt/browser-automation',
-          github_repo: config.github.repo,
-          task_config_file: tempTaskConfigPath,
-          github_token: config.github.token,
-        },
-        tasks: [
-          {
-            name: '安装系统依赖',
-            apt: {
-              name: ['curl', 'ca-certificates', 'gnupg'],
-              state: 'present',
-              update_cache: true,
-            },
-          },
-          {
-            name: '添加 NodeSource v22.x 软件源',
-            shell: 'curl -fsSL https://deb.nodesource.com/setup_22.x | bash -',
-            args: {
-              creates: '/etc/apt/sources.list.d/nodesource.list',
-            },
-            register: 'nodesource_setup',
-            changed_when: `'## Run \`sudo apt-get install -y nodejs\` to install Node.js' in nodesource_setup.stdout`,
-          },
-          {
-            name: '安装 Node.js v22 (从 NodeSource 源)',
-            apt: {
-              name: ['nodejs'],
-              state: 'present',
-              update_cache: '{{ nodesource_setup.changed }}',
-            },
-          },
-          {
-            name: '获取最新 Release 版本',
-            uri: {
-              url: 'https://api.github.com/repos/{{ github_repo }}/releases/latest',
-              method: 'GET',
-              headers: {
-                Authorization: 'token {{ github_token }}',
-              },
-            },
-            register: 'release_info',
-          },
-          {
-            name: '设置版本变量',
-            set_fact: {
-              release_version: '{{ release_info.json.tag_name }}',
-              asset_filename: '{{ app_name }}-{{ release_info.json.tag_name }}.tar.gz',
-            },
-          },
-          {
-            name: '从 Release 信息中提取资产下载 URL',
-            set_fact: {
-              asset_download_url: `{{ (release_info.json.assets | selectattr('name', 'equalto', asset_filename) | list | first).url }}`,
-            },
-          },
-          {
-            name: '安装 pnpm',
-            shell: 'npm install -g pnpm',
-            args: {
-              creates: '/usr/local/bin/pnpm',
-            },
-          },
-          {
-            name: '创建应用目录',
-            file: {
-              path: '{{ app_dir }}',
-              state: 'directory',
-            },
-          },
-          {
-            name: '清理旧的应用文件',
-            file: {
-              path: '{{ app_dir }}/{{ app_name }}',
-              state: 'absent',
-            },
-          },
-          {
-            name: '创建应用子目录',
-            file: {
-              path: '{{ app_dir }}/{{ app_name }}',
-              state: 'directory',
-            },
-          },
-          {
-            name: '下载应用包',
-            shell: `curl --fail -L -H "Authorization: Bearer {{ github_token }}" -H "Accept: application/octet-stream" -o {{ app_dir }}/{{ asset_filename }} "{{ asset_download_url }}"`,
-          },
-          {
-            name: '解压应用包',
-            unarchive: {
-              src: '{{ app_dir }}/{{ asset_filename }}',
-              dest: '{{ app_dir }}/{{ app_name }}',
-              remote_src: true,
-            },
-          },
-          {
-            name: '安装生产依赖',
-            shell: 'pnpm install --prod',
-            args: {
-              chdir: '{{ app_dir }}/{{ app_name }}',
-            },
-          },
-          {
-            name: '复制任务配置文件',
-            copy: {
-              src: '{{ task_config_file }}',
-              dest: '{{ app_dir }}/task.json',
-            },
-            when: 'task_config_file is defined',
-          },
-          {
-            name: '启动应用',
-            shell: 'node src/main.js --config {{ app_dir }}/task.json > {{ app_dir }}/app.log',
-            args: {
-              chdir: '{{ app_dir }}/{{ app_name }}',
-            },
-            cloudSpace: {
-              NODE_ENV: 'production',
-            },
-          },
-          {
-            name: '清理下载的压缩包',
-            file: {
-              path: '{{ app_dir }}/{{ app_name }}-{{ release_version }}.tar.gz',
-              state: 'absent',
-            },
-          },
-        ],
-      },
-    ]
-
-    const tempPlaybookPath = `/tmp/playbook-${cloudSpace.id}-${timestamp}.yml`
-    const playbookYaml = yaml.dump(playbookContent)
-    fs.writeFileSync(tempPlaybookPath, playbookYaml)
-
-    const result = await this.ansibleService.runPlaybook(tempPlaybookPath, {
-      inventory: tempInventoryPath,
-      sshCommonArgs: '-o ControlMaster=no',
-    })
-
-    if (fs.existsSync(tempInventoryPath)) {
-      fs.unlinkSync(tempInventoryPath)
-    }
-    if (fs.existsSync(tempTaskConfigPath)) {
-      fs.unlinkSync(tempTaskConfigPath)
-    }
-    if (fs.existsSync(tempPlaybookPath)) {
-      fs.unlinkSync(tempPlaybookPath)
-    }
-
-    if (!result.success) {
-      throw new AppException(ResponseCode.CloudSpaceCreationFailed)
-    }
-
-    await this.cloudSpaceRepository.updateById(cloudSpace.id, {
-      status: CloudSpaceStatus.Ready,
-    })
+    await this.configQueue.add(
+      JobName.ConfigureCloudspace,
+      { cloudSpaceId: cloudSpace.id },
+      { jobId: cloudSpace.id }, // 使用cloudSpace.id作为jobId确保幂等性
+    )
   }
 }

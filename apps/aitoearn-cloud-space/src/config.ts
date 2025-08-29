@@ -5,6 +5,11 @@ import { RedlockConfigSchema } from '@yikart/redlock'
 import { ucloudConfigSchema } from '@yikart/ucloud'
 import z from 'zod'
 
+const jwtConfigSchema = z.object({
+  secret: z.string().default(''),
+  expiresIn: z.number().optional(),
+})
+
 export const appConfigSchema = z.object({
   ...baseConfig.shape,
   mongodb: mongodbConfigSchema,
@@ -31,6 +36,7 @@ export const appConfigSchema = z.object({
   }),
   ansible: ansibleConfigSchema,
   redlock: RedlockConfigSchema,
+  jwt: jwtConfigSchema,
 })
 
 export class AppConfig extends createZodDto(appConfigSchema) {}
