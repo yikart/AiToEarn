@@ -1140,6 +1140,7 @@ interface Resources {
       "partitionRequired": "您必须选择分区!",
       "sourceRequired": "转载时必须填写转载来源!",
       "pageRequired": "您必须选择页面!",
+      "boardRequired": "您必须选择Board!",
       "coverSizeError": "封面最小尺寸400*400!"
     },
     "preview": {
