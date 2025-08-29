@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import styles from "./styles/difyHome.module.scss";
+import pricingStyles from "./styles/pricing.module.scss";
 import { useTransClient } from "../i18n/client";
 
 import logo from '@/assets/images/logo.png';
@@ -46,8 +47,8 @@ import dataCenter from '@/assets/images/data_center.png';
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Button } from "antd";
-import { GlobalOutlined } from "@ant-design/icons";
+import { Button, Collapse } from "antd";
+import { GlobalOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useUserStore } from "@/store/user"; 
 import { useParams } from "next/navigation";
 import { AndroidOutlined } from '@ant-design/icons';
@@ -70,7 +71,7 @@ function ReleaseBanner() {
 }
 
 // Header 顶部导航
-function Header() {
+function Header({ currentModule, onModuleChange }: { currentModule: string, onModuleChange: (module: string) => void }) {
   const { t } = useTransClient('home');
   const router = useRouter();
   const userStore = useUserStore();
@@ -87,15 +88,22 @@ function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.headerContainer}>
-      <Link href="/">
-        <div className={styles.logo}>
-          <Image src={logo} alt="logo" width={50} />
-          <span className={styles.logoText}>{t('header.logo')}</span>
-        </div>
-        </Link>
+      <div 
+        className={styles.logo}
+        onClick={() => onModuleChange('home')}
+        style={{ cursor: 'pointer' }}
+      >
+        <Image src={logo} alt="logo" width={50} />
+        <span className={styles.logoText}>{t('header.logo')}</span>
+      </div>
         <nav className={styles.nav}>
           {/* <a href="#marketplace" className={styles.navLink}>{t('header.nav.marketplace')}</a> */}
-          <a href="/pricing" className={styles.navLink}>{t('header.nav.pricing')}</a>
+          <button 
+            className={`${styles.navLink} ${currentModule === 'pricing' ? styles.active : ''}`}
+            onClick={() => onModuleChange('pricing')}
+          >
+            {t('header.nav.pricing')}
+          </button>
           <a href="https://status.aitoearn.ai/" target="_blank" rel="noopener noreferrer" className={styles.navLink}>{t('header.nav.status' as any)}</a>
           {/* <a href="#docs" className={styles.navLink}>{t('header.nav.docs')}</a> */}
           {/* <a href="#blog" className={styles.navLink}>{t('header.nav.blog')}</a> */}
@@ -120,6 +128,238 @@ function Header() {
         
       </div>
     </header>
+  );
+}
+
+// Pricing 模块
+function PricingModule() {
+  const { t } = useTransClient('pricing');
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
+
+  const plans = [
+    {
+      name: t('plans.free.name'),
+      price: 0,
+      originalPrice: 0,
+      credits: t('plans.free.credits'),
+      videos: t('plans.free.videos'),
+      images: t('plans.free.images'),
+      features: [
+        { text: t('features.textModeration'), included: false },
+        { text: t('features.imageModeration'), included: false },
+        { text: t('features.videoModeration'), included: false },
+        { text: t('features.multiModel'), included: true },
+        { text: t('features.textToVideo'), included: true },
+        { text: t('features.imageToVideo'), included: true },
+        { text: t('features.videoToVideo'), included: true },
+        { text: t('features.consistentCharacter'), included: true },
+        { text: t('features.aiAnimation'), included: true },
+        { text: t('features.aiImage'), included: true },
+        { text: t('features.voiceClone'), included: true },
+        { text: t('features.voiceSynthesis'), included: true },
+        { text: t('features.fasterSpeed'), included: false },
+        { text: t('features.withWatermark'), included: true },
+        { text: t('features.storage500M'), included: true },
+      ],
+      buttonText: t('plans.free.button'),
+      buttonType: 'default' as const,
+      popular: false,
+    },
+    {
+      name: t('plans.plus.name'),
+      price: billingCycle === 'yearly' ? 10 : 15,
+      originalPrice: billingCycle === 'yearly' ? 20 : 15,
+      credits: t('plans.plus.credits'),
+      videos: t('plans.plus.videos'),
+      images: t('plans.plus.images'),
+      features: [
+        { text: t('features.textModeration'), included: true },
+        { text: t('features.imageModeration'), included: true },
+        { text: t('features.videoModeration'), included: true },
+        { text: t('features.multiModel'), included: true },
+        { text: t('features.textToVideo'), included: true },
+        { text: t('features.imageToVideo'), included: true },
+        { text: t('features.videoToVideo'), included: true },
+        { text: t('features.consistentCharacter'), included: true },
+        { text: t('features.aiAnimation'), included: true },
+        { text: t('features.aiImage'), included: true },
+        { text: t('features.voiceClone'), included: true },
+        { text: t('features.voiceSynthesis'), included: true },
+        { text: t('features.fasterSpeed'), included: true },
+        { text: t('features.noWatermark'), included: true },
+        { text: t('features.storage5G'), included: true },
+      ],
+      buttonText: t('plans.plus.button'),
+      buttonType: 'primary' as const,
+      popular: true,
+    },
+  ];
+
+  const faqItems = [
+    {
+      question: t('faq.paymentMethods.question'),
+      answer: t('faq.paymentMethods.answer')
+    },
+    {
+      question: t('faq.creditDeduction.question'),
+      answer: t('faq.creditDeduction.answer')
+    },
+    {
+      question: t('faq.creditExpiry.question'),
+      answer: t('faq.creditExpiry.answer')
+    },
+    {
+      question: t('faq.moreCredits.question'),
+      answer: t('faq.moreCredits.answer')
+    },
+    {
+      question: t('faq.checkCredits.question'),
+      answer: t('faq.checkCredits.answer')
+    },
+    {
+      question: t('faq.hiddenFees.question'),
+      answer: t('faq.hiddenFees.answer')
+    },
+    {
+      question: t('faq.refundPolicy.question'),
+      answer: t('faq.refundPolicy.answer')
+    }
+  ];
+
+  return (
+    <div className={pricingStyles.pricingPage}>
+      <div className={pricingStyles.container}>
+        
+        {/* Header */}
+        <div className={pricingStyles.header}>
+          <h1 className={pricingStyles.title}>{t('title')}</h1>
+          <p className={pricingStyles.subtitle}>{t('subtitle')}</p>
+        </div>
+
+        {/* Billing Toggle */}
+        <div className={pricingStyles.billingToggle}>
+          <div className={pricingStyles.toggleContainer}>
+            <button
+              className={`${pricingStyles.toggleButton} ${billingCycle === 'monthly' ? pricingStyles.active : ''}`}
+              onClick={() => setBillingCycle('monthly')}
+            >
+              {t('monthly')}
+              {billingCycle === 'monthly' && (
+                <span className={pricingStyles.saveBadge}>{t('save25')}</span>
+              )}
+            </button>
+            <button
+              className={`${pricingStyles.toggleButton} ${billingCycle === 'yearly' ? pricingStyles.active : ''}`}
+              onClick={() => setBillingCycle('yearly')}
+            >
+              {t('yearly')}
+              {billingCycle === 'yearly' && (
+                <span className={pricingStyles.saveBadge}>{t('save50')}</span>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Pricing Cards */}
+        <div className={pricingStyles.pricingCards}>
+          {plans.map((plan, index) => (
+            <div
+              key={plan.name}
+              className={`${pricingStyles.pricingCard} ${plan.popular ? pricingStyles.popular : ''}`}
+            >
+              {plan.popular && (
+                <div className={pricingStyles.popularBadge}>
+                  {billingCycle === 'yearly' ? t('flashSale50') : t('mostPopular')}
+                </div>
+              )}
+              
+              <div className={pricingStyles.cardHeader}>
+                <h2 className={pricingStyles.planName}>{plan.name}</h2>
+                <div className={pricingStyles.priceContainer}>
+                  {plan.originalPrice > plan.price && (
+                    <span className={pricingStyles.originalPrice}>
+                      ${plan.originalPrice} USD
+                    </span>
+                  )}
+                  <div className={pricingStyles.price}>
+                    <span className={pricingStyles.currency}>$</span>
+                    <span className={pricingStyles.amount}>{plan.price}</span>
+                    <span className={pricingStyles.period}>/{t('month')}</span>
+                  </div>
+                  {billingCycle === 'yearly' && plan.price > 0 && (
+                    <div className={pricingStyles.monthlyPrice}>
+                      ${(plan.price * 12).toFixed(0)} USD/{t('yearly')}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className={pricingStyles.planFeatures}>
+                <div className={pricingStyles.mainFeatures}>
+                  <div className={pricingStyles.featureItem}>
+                    <span className={pricingStyles.featureLabel}>{t('credits')}</span>
+                    <span className={pricingStyles.featureValue}>{plan.credits}</span>
+                  </div>
+                  <div className={pricingStyles.featureItem}>
+                    <span className={pricingStyles.featureLabel}>{t('videos')}</span>
+                    <span className={pricingStyles.featureValue}>{plan.videos}</span>
+                  </div>
+                  <div className={pricingStyles.featureItem}>
+                    <span className={pricingStyles.featureLabel}>{t('images')}</span>
+                    <span className={pricingStyles.featureValue}>{plan.images}</span>
+                  </div>
+                </div>
+
+                <div className={pricingStyles.featuresList}>
+                  {plan.features.map((feature, featureIndex) => (
+                    <div key={featureIndex} className={pricingStyles.featureRow}>
+                      {feature.included ? (
+                        <CheckOutlined className={pricingStyles.checkIcon} />
+                      ) : (
+                        <CloseOutlined className={pricingStyles.closeIcon} />
+                      )}
+                      <span className={`${pricingStyles.featureText} ${!feature.included ? pricingStyles.disabled : ''}`}>
+                        {feature.text}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <Button
+                type={plan.buttonType}
+                size="large"
+                className={pricingStyles.ctaButton}
+                onClick={() => {
+                  if (plan.name === t('plans.free.name')) {
+                    // 跳转到注册页面
+                    window.location.href = '/vip';
+                  } else {
+                    // 跳转到支付页面
+                    window.location.href = '/vip';
+                  }
+                }}
+              >
+                {plan.buttonText}
+              </Button>
+            </div>
+          ))}
+        </div>
+
+        {/* FAQ Section */}
+        <div className={pricingStyles.faqSection}>
+          <h2 className={pricingStyles.faqTitle}>{t('faq.title')}</h2>
+          <Collapse 
+            className={pricingStyles.faqCollapse}
+            items={faqItems.map((faq, index) => ({
+              key: index,
+              label: faq.question,
+              children: <p>{faq.answer}</p>
+            }))}
+          />
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -1431,23 +1671,54 @@ function Footer() {
 }
 
 export default function Home() {
+  const [currentModule, setCurrentModule] = useState('home');
+  const { lng } = useParams();
+  const router = useRouter();
+
+  // 检查URL参数来决定显示哪个模块
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const module = urlParams.get('module');
+    if (module === 'pricing') {
+      setCurrentModule('pricing');
+    } else {
+      setCurrentModule('home');
+    }
+  }, []);
+
+  // 处理模块切换
+  const handleModuleChange = (module: string) => {
+    setCurrentModule(module);
+    if (module === 'pricing') {
+      router.push(`/${lng}?module=pricing`);
+    } else {
+      router.push(`/${lng}`);
+    }
+  };
+
   return (
     <div className={styles.difyHome}>
       {/* <ReleaseBanner /> */}
-      <Header />
-      <Hero />
-      <BrandBar />
-      <ContentPublishingSection />
-      <ContentHotspotSection />
-      <ContentSearchSection />
-      <CommentsSearchSection />
-      <ContentEngagementSection />
-      <UpcomingFeaturesSection />
-      <DownloadSection />
-       {/*<EnterpriseSection />
-      <StatsSection /> */}
-      {/* <CommunitySection /> */}
-      <Footer />
+      <Header currentModule={currentModule} onModuleChange={handleModuleChange} />
+      {currentModule === 'pricing' ? (
+        <PricingModule />
+      ) : (
+        <>
+          <Hero />
+          <BrandBar />
+          <ContentPublishingSection />
+          <ContentHotspotSection />
+          <ContentSearchSection />
+          <CommentsSearchSection />
+          <ContentEngagementSection />
+          <UpcomingFeaturesSection />
+          <DownloadSection />
+          {/*<EnterpriseSection />
+          <StatsSection /> */}
+          {/* <CommunitySection /> */}
+          <Footer />
+        </>
+      )}
     </div>
   );
 }
