@@ -24,6 +24,7 @@ export default baseConfig.append(
             '{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}',
           ],
           checkObsoleteDependencies: false,
+          checkVersionMismatches: false,
         },
       ],
     },
