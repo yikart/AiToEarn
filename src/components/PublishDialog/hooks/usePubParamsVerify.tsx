@@ -186,6 +186,14 @@ export default function usePubParamsVerify(data: PubItem[]) {
               break;
           }
         }
+
+        // Pinterest的强制校验
+        if (v.account.type === PlatType.Pinterest) {
+          // 强制需要选择Board
+          if (!v.params.option.pinterest?.boardId) {
+            return setErrorMsg(t("validation.boardRequired"));
+          }
+        }
       })();
     }
     return errParamsMapTemp;

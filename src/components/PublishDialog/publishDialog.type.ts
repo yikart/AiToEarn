@@ -67,6 +67,10 @@ export interface IPlatOption {
     // 视频分类ID
     categoryId?: string;
   };
+  pinterest?: {
+    // Board ID，由获取Pinterest Board信息接口得到
+    boardId?: string;
+  };
 }
 
 // 发布参数
