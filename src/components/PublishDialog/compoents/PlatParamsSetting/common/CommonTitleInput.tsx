@@ -1,7 +1,7 @@
 import { ForwardedRef, forwardRef, memo, useMemo } from "react";
 import styles from "../platParamsSetting.module.scss";
 import { Input } from "antd";
-import { AccountPlatInfoMap } from "@/app/config/platConfig";
+import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import { PubItem } from "@/components/PublishDialog/publishDialog.type";
 import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
 import { useShallow } from "zustand/react/shallow";
@@ -31,9 +31,15 @@ const CommonTitleInput = memo(
         })),
       );
 
+      // 判断是否需要显示必填标识
+      const isRequired = pubItem.account.type === PlatType.Pinterest;
+
       return (
         <div className={styles.commonTitleInput}>
-          <div className="platParamsSetting-label">{t("form.title")}</div>
+          <div className="platParamsSetting-label">
+            {t("form.title")}
+            {isRequired && <span style={{ color: "#ff4d4f", marginLeft: "4px" }}>*</span>}
+          </div>
           <Input
             value={pubItem.params.title}
             maxLength={platConfig.commonPubParamsConfig.titleMax || 20}

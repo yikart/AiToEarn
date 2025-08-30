@@ -166,7 +166,10 @@ const PinterestParams = memo(
                   className={`${styles.commonTitleInput} ${styles.tooltipOverride}`}
                   style={{ marginTop: "10px" }}
                 >
-                  <div className="platParamsSetting-label">{t("pin.selectBoard")}</div>
+                  <div className="platParamsSetting-label">
+                    {t("pin.selectBoard")}
+                    <span style={{ color: "#ff4d4f", marginLeft: "4px" }}>*</span>
+                  </div>
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <Button
                       icon={<PushpinOutlined />}
