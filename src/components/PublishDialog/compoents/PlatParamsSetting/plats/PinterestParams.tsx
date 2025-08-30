@@ -16,6 +16,19 @@ import { createPinterestBoardApi } from "@/api/pinterest";
 import { useAccountStore } from "@/store/account";
 import { PlatType } from "@/app/config/platConfig";
 
+// 添加全局样式
+const tooltipStyles = `
+  .ant-tooltip .ant-tooltip-inner {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    border: 1px solid #d9d9d9 !important;
+  }
+  .ant-tooltip .ant-tooltip-arrow::before {
+    background-color: #ffffff !important;
+    border: 1px solid #d9d9d9 !important;
+  }
+`;
+
 const PinterestParams = memo( 
   forwardRef(
     ({ pubItem }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
@@ -39,6 +52,17 @@ const PinterestParams = memo(
       useEffect(() => {
         getPinterestBoards();
       }, [getPinterestBoards]);
+
+      // 添加样式到页面
+      useEffect(() => {
+        const styleElement = document.createElement('style');
+        styleElement.textContent = tooltipStyles;
+        document.head.appendChild(styleElement);
+        
+        return () => {
+          document.head.removeChild(styleElement);
+        };
+      }, []);
 
       // 初始化Pinterest参数
       useEffect(() => {
@@ -139,7 +163,7 @@ const PinterestParams = memo(
               <>
                 <CommonTitleInput pubItem={pubItem} />
                 <div
-                  className={styles.commonTitleInput}
+                  className={`${styles.commonTitleInput} ${styles.tooltipOverride}`}
                   style={{ marginTop: "10px" }}
                 >
                   <div className="platParamsSetting-label">{t("pin.selectBoard")}</div>
@@ -154,7 +178,7 @@ const PinterestParams = memo(
                     </Button>
                                          <Tooltip
                                                title={
-                          <div style={{ maxHeight: "400px", overflow: "auto" }}>
+                          <div style={{ maxHeight: "400px", overflow: "auto", background: "#ffffff" }}>
                             <div style={{ marginBottom: "1px" }}>
                               <Input
                                 placeholder={t("actions.search")}
