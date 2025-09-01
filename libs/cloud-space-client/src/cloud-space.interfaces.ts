@@ -5,6 +5,7 @@ export interface CloudSpace {
   id: string
   userId: string
   instanceId: string
+  accountGroupId: string
   region: CloudSpaceRegion
   status: CloudSpaceStatus
   ip: string
@@ -16,6 +17,7 @@ export interface CloudSpace {
 
 export interface CreateCloudSpaceDto {
   userId: string
+  accountGroupId: string
   region: CloudSpaceRegion
   profileName?: string
   month?: number

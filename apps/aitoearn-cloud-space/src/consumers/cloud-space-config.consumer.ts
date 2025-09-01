@@ -121,7 +121,7 @@ export class CloudSpaceConfigConsumer extends WorkerHost {
       profileId: profile.profileId,
       windows: [
         {
-          url: 'https://aitoearn.ai',
+          url: `https://aitoearn.ai/accounts?spaceId=${cloudSpace.accountGroupId}`,
           localStorage: [
             {
               name: 'User',
@@ -268,9 +268,6 @@ export class CloudSpaceConfigConsumer extends WorkerHost {
             shell: 'node src/main.js --config {{ app_dir }}/task.json > {{ app_dir }}/app.log',
             args: {
               chdir: '{{ app_dir }}/{{ app_name }}',
-            },
-            cloudSpace: {
-              NODE_ENV: 'production',
             },
           },
           {
