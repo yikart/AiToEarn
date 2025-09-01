@@ -123,7 +123,12 @@ npm run dev:local
 ## 高级设置
 ### 平台申请和设置 ###
 1. [Bilibili](CHANNEL_Md/BILIBILI.md)
-1. [微信三方平台](CHANNEL_Md/WXPLAT.md)
+2. [微信三方平台](CHANNEL_Md/WXPLAT.md)
+3. [Facebook](CHANNEL_Md/FACEBOOK.md)
+4. [Instagram](CHANNEL_Md/INSTAGRAM.md)
+5. [Threads](CHANNEL_Md/THREADS.md)
+6. [Tiktok](CHANNEL_Md/TIKTOK.md)
+7. [X](CHANNEL_Md/X.md) 
 
 
 

@@ -123,7 +123,12 @@ Add platform accounts on the frontend page:
 ## Advanced Settings
 ### Platform Application and Setup ###
 1. [Bilibili](CHANNEL_Md/BILIBILI_EN.md)
-1. [WeChat Third-Party Platform](CHANNEL_Md/WXPLAT_EN.md)
+2. [WeChat Third-Party Platform](CHANNEL_Md/WXPLAT_EN.md)
+3. [Facebook](CHANNEL_Md/FACEBOOK_EN.md)
+4. [Instagram](CHANNEL_Md/INSTAGRAM_EN.md)
+5. [Threads](CHANNEL_Md/THREADS_EN.md)
+6. [Tiktok](CHANNEL_Md/TIKTOK_EN.md)
+7. [X](CHANNEL_Md/X_EN.md)
 
 
 
