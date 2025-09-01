@@ -458,6 +458,17 @@ function Hero() {
             <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
+        <p
+          className={styles.heroMobileLink}
+          onClick={() => {
+            const el = document.getElementById('download');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+        >
+          use on mobile phone
+        </p>
       </div>
     </section>
   );
@@ -1289,7 +1300,7 @@ function DownloadSection() {
   const { t } = useTransClient('home');
   
   return (
-    <section className={styles.downloadSection}>
+    <section className={styles.downloadSection} id="download">
       <div className={styles.downloadContainer}>
         <div className={styles.downloadContent}>
           <div className={styles.downloadLeft}>
@@ -1309,6 +1320,15 @@ function DownloadSection() {
                   <div className={styles.downloadBtnText}>
                     <span className={styles.downloadOn}>立即下载</span>
                     <span className={styles.downloadStore}>Android APK</span>
+                  </div>
+                </div>
+              </a>
+              <a href="https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app" className={styles.downloadBtn} target="_blank" rel="noopener noreferrer">
+                <div className={styles.downloadBtnContent}>
+                  <AndroidOutlined className={styles.downloadIcon} style={{ fontSize: '24px' }} />
+                  <div className={styles.downloadBtnText}>
+                    <span className={styles.downloadOn}>Get it on</span>
+                    <span className={styles.downloadStore}>Google Play</span>
                   </div>
                 </div>
               </a>
