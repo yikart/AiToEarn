@@ -432,3 +432,84 @@
     font-size: 2rem;
   }
 }
+
+// 价格表格样式
+.pricingTableContainer {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.pricingTableContainer h4 {
+  margin: 0 0 1.5rem 0;
+  color: #2c3e50;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.pricingTableWrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.pricingTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  font-size: 0.875rem;
+  min-width: 800px;
+}
+
+.pricingTable th {
+  background: #667eea;
+  color: white;
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 1px solid #e9ecef;
+  white-space: nowrap;
+}
+
+.pricingTable td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #f1f3f4;
+  vertical-align: top;
+  word-wrap: break-word;
+  max-width: 200px;
+}
+
+.pricingTable tr:nth-child(even) {
+  background: #f8f9fa;
+}
+
+.pricingTable tr:hover {
+  background: #e3f2fd;
+}
+
+.pricingTable tr:last-child td {
+  border-bottom: none;
+}
+
+@media (max-width: 768px) {
+  .pricingTableContainer {
+    padding: 1rem;
+    margin-top: 1.5rem;
+  }
+  
+  .pricingTableContainer h4 {
+    font-size: 1.125rem;
+  }
+  
+  .pricingTable {
+    font-size: 0.75rem;
+    min-width: 600px;
+  }
+  
+  .pricingTable th,
+  .pricingTable td {
+    padding: 0.5rem;
+  }
+}
