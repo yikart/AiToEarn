@@ -193,7 +193,7 @@ export default function usePubParamsVerify(data: PubItem[]) {
           if (!v.params.title) {
             return setErrorMsg(t("validation.titleRequired"));
           }
-          // 强制需要选择Board
+          // 强制需要 选择Board
           if (!v.params.option.pinterest?.boardId) {
             return setErrorMsg(t("validation.boardRequired"));
           }
