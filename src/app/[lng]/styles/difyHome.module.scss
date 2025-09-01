@@ -272,6 +272,19 @@
   transform: translateX(2px);
 }
 
+.heroMobileLink {
+  font-size: 14px;
+  color: #4f46e5;
+  cursor: pointer;
+  text-decoration: underline;
+  margin: 0;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: #4338ca;
+  }
+}
+
 .brandBar {
   padding: 80px 0;
   background: white;
