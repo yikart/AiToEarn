@@ -460,6 +460,7 @@ function Hero() {
         </button>
         <p
           className={styles.heroMobileLink}
+          style={{ marginTop: '10px' }}
           onClick={() => {
             const el = document.getElementById('download');
             if (el) {
@@ -467,7 +468,7 @@ function Hero() {
             }
           }}
         >
-          use on mobile phone
+          {t('hero.useMobilePhone' as any)}
         </p>
       </div>
     </section>
