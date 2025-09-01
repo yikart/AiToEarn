@@ -1,17 +1,3 @@
-# 哎呦賺web端
-
-
-## 地址
-https://dev.aitoearn.ai
-
-## 测试服文档
-https://dev.aitoearn.ai/api/docs
-
-## 测试地址
-https://apitest.aitoearn.ai/api/
-
-
-
 
 gpt-5	大模型					大模型价格以官方价格为准	每百万tokens
 * 输入 9元
