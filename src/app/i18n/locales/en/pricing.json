@@ -73,10 +73,6 @@
     "hiddenFees": {
       "question": "Are there any hidden fees?",
       "answer": "No. The price you see is the price you pay. There are no hidden charges beyond the plan you select."
-    },
-    "refundPolicy": {
-      "question": "What is your refund policy?",
-      "answer": "We provide a 7-day money-back guarantee. If you are not satisfied with our service, you can request a full refund within 7 days of purchase."
     }
   }
 }
