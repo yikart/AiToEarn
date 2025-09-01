@@ -187,7 +187,7 @@ export default function usePubParamsVerify(data: PubItem[]) {
           }
         }
 
-        // Pinterest的强制校验
+        // Pinterest 的强制校验 
         if (v.account.type === PlatType.Pinterest) {
           // 强制需要标题
           if (!v.params.title) {
