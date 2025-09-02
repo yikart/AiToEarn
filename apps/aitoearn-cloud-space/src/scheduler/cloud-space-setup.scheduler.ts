@@ -1,14 +1,12 @@
 import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
-import { AnsibleService } from '@yikart/ansible'
 import { CloudInstanceStatus, CloudSpaceRegion, CloudSpaceStatus } from '@yikart/common'
-import { BrowserProfileRepository, CloudSpace, CloudSpaceRepository } from '@yikart/mongodb'
+import { CloudSpace, CloudSpaceRepository } from '@yikart/mongodb'
 import { Redlock } from '@yikart/redlock'
 import { Queue } from 'bullmq'
 import { JobName, QueueName, RedlockKey } from '../common/enums'
 import { CloudInstanceService } from '../core/cloud-instance'
-import { MultiloginAccountService } from '../core/multilogin-account'
 
 @Injectable()
 export class CloudSpaceSetupScheduler {
@@ -17,9 +15,6 @@ export class CloudSpaceSetupScheduler {
   constructor(
     private readonly cloudSpaceRepository: CloudSpaceRepository,
     private readonly cloudInstanceService: CloudInstanceService,
-    private readonly browserProfileRepository: BrowserProfileRepository,
-    private readonly multiloginAccountService: MultiloginAccountService,
-    private readonly ansibleService: AnsibleService,
     @InjectQueue(QueueName.CloudspaceConfigure) private readonly configQueue: Queue,
   ) {}
 
@@ -31,10 +26,8 @@ export class CloudSpaceSetupScheduler {
   }
 
   private async processCreatingCloudSpaces() {
-    const [cloudSpaces] = await this.cloudSpaceRepository.listWithPagination({
+    const cloudSpaces = await this.cloudSpaceRepository.listByStatus({
       status: CloudSpaceStatus.Creating,
-      page: 1,
-      pageSize: 50,
     })
 
     if (cloudSpaces.length === 0) {
@@ -71,10 +64,8 @@ export class CloudSpaceSetupScheduler {
   }
 
   private async processConfiguringCloudSpaces() {
-    const [configuringSpaces] = await this.cloudSpaceRepository.listWithPagination({
+    const configuringSpaces = await this.cloudSpaceRepository.listByStatus({
       status: CloudSpaceStatus.Configuring,
-      page: 1,
-      pageSize: 50,
     })
 
     if (configuringSpaces.length === 0) {

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { AitoearnUserClientModule } from '@yikart/aitoearn-user-client'
+import { AnsibleModule } from '@yikart/ansible'
 import { MongodbModule } from '@yikart/mongodb'
 import { RedlockModule } from '@yikart/redlock'
 import { UCloudModule } from '@yikart/ucloud'
@@ -18,6 +19,7 @@ import { SchedulerModule } from './scheduler'
     UCloudModule.forRoot(config.ucloud),
     RedlockModule.forRoot(config.redlock),
     AitoearnUserClientModule.forRoot(config.nats),
+    AnsibleModule.forRoot(config.ansible),
     HelpersModule,
     MultiloginAccountModule,
     CloudSpaceModule,

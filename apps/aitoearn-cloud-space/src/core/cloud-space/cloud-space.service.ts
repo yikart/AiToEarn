@@ -79,6 +79,30 @@ export class CloudSpaceService {
   }
 
   @Transactional()
+  async terminateCloudSpace(cloudSpaceId: string): Promise<void> {
+    const cloudSpace = await this.cloudSpaceRepository.getById(cloudSpaceId)
+    if (!cloudSpace) {
+      throw new AppException(ResponseCode.CloudSpaceNotFound)
+    }
+
+    // 如果已经是终止状态，直接返回
+    if (cloudSpace.status === CloudSpaceStatus.Terminated) {
+      return
+    }
+
+    // 更新云空间状态为已终止
+    await this.cloudSpaceRepository.updateById(cloudSpaceId, {
+      status: CloudSpaceStatus.Terminated,
+    })
+
+    // 删除云实例
+    await this.cloudInstanceService.deleteInstance(
+      cloudSpace.instanceId,
+      cloudSpace.region,
+    )
+  }
+
+  @Transactional()
   async deleteCloudSpace(cloudSpaceId: string): Promise<void> {
     const cloudSpace = await this.cloudSpaceRepository.getById(cloudSpaceId)
     if (!cloudSpace) {

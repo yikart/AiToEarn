@@ -12,6 +12,11 @@ export interface ListCloudSpaceParams extends Pagination {
   status?: CloudSpaceStatus
 }
 
+export interface FindCloudSpacesByDateRangeParams {
+  status: CloudSpaceStatus
+  expiredAt?: [Date, Date] | [undefined, Date] | [Date, undefined]
+}
+
 export class CloudSpaceRepository extends BaseRepository<CloudSpaceDocument> {
   constructor(
     @InjectModel(CloudSpace.name) cloudSpaceModel: Model<CloudSpaceDocument>,
@@ -35,5 +40,34 @@ export class CloudSpaceRepository extends BaseRepository<CloudSpaceDocument> {
       pageSize,
       filter,
     })
+  }
+
+  async listByStatus(params: FindCloudSpacesByDateRangeParams): Promise<CloudSpaceDocument[]> {
+    const { status, expiredAt } = params
+
+    const filter: FilterQuery<CloudSpaceDocument> = {
+      status,
+    }
+
+    if (expiredAt) {
+      const [start, end] = expiredAt
+      if (start && end) {
+        filter.expiredAt = {
+          $gt: start,
+          $lte: end,
+        }
+      }
+      else if (end) {
+        filter.expiredAt = { $lte: end }
+      }
+      else if (start) {
+        filter.expiredAt = { $gt: start }
+      }
+    }
+
+    return await this.model
+      .find(filter)
+      .sort({ expiredAt: 1 })
+      .exec()
   }
 }

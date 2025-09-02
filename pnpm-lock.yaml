@@ -166,9 +166,9 @@ importers:
 
   apps/browser-automation-worker:
     dependencies:
-      '@yikart/multilogin':
+      axios:
         specifier: '*'
-        version: 0.0.2
+        version: 1.11.0
       commander:
         specifier: ^14.0.0
         version: 14.0.0
@@ -190,6 +190,9 @@ importers:
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
+      zod:
+        specifier: ^4.0.17
+        version: 4.1.4
 
   libs/ansible:
     dependencies:
