@@ -35,78 +35,31 @@ interface MediaGroup {
     }>;
     total: number;
   };
+  previewMedia?: {
+    type: 'video' | 'img';
+    url: string;
+  } | null;
 }
 
-// 视频第一帧提取组件
+// 视频预览组件 - 由于 CORS 问题，直接显示预览框
 const VideoThumbnail = ({ videoUrl, className, onLoad }: { 
   videoUrl: string; 
   className?: string; 
   onLoad?: (thumbnail: string) => void;
 }) => {
-  const [thumbnail, setThumbnail] = useState<string>('');
-  const [loading, setLoading] = useState(true);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    
-    if (!video || !canvas) return;
-
-    const extractFrame = () => {
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      
-      const thumbnailUrl = canvas.toDataURL('image/jpeg', 0.8);
-      setThumbnail(thumbnailUrl);
-      setLoading(false);
-      onLoad?.(thumbnailUrl);
-    };
-
-    const handleLoadedData = () => {
-      video.currentTime = 0.1; // 获取0.1秒处的帧
-    };
-
-    const handleSeeked = () => {
-      extractFrame();
-    };
-
-    video.addEventListener('loadeddata', handleLoadedData);
-    video.addEventListener('seeked', handleSeeked);
-    
-    video.load();
-
-    return () => {
-      video.removeEventListener('loadeddata', handleLoadedData);
-      video.removeEventListener('seeked', handleSeeked);
-    };
-  }, [videoUrl, onLoad]);
-
+  // 直接显示视频预览框，不尝试加载视频（避免 CORS 问题）
   return (
-    <>
-      <video
-        ref={videoRef}
-        src={videoUrl}
-        style={{ display: 'none' }}
-        muted
-        preload="metadata"
-        crossOrigin="anonymous"
-      />
-      <canvas ref={canvasRef} style={{ display: 'none' }} />
-      {!loading && thumbnail && (
-        <img 
-          src={thumbnail} 
-          alt="Video thumbnail" 
-          className={className}
-        />
-      )}
-    </>
+    <div className={`${className} ${styles.videoPreview}`}>
+      <div className={styles.videoPreviewContent}>
+        <VideoCameraOutlined className={styles.videoPreviewIcon} />
+        <div className={styles.videoPreviewText}>视频预览</div>
+        <div className={styles.videoPreviewPlayButton}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M8 5v14l11-7z" fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -133,20 +86,35 @@ export const MaterialPageCore = () => {
   const fetchGroups = async () => {
     try {
       setLoading(true);
-              const response:any = await getMediaGroupList(currentPage, pageSize);
+      const response:any = await getMediaGroupList(currentPage, pageSize);
       if (response?.data) {
         // 处理每个组的封面和资源数量
         const processedGroups = response.data.list.map((group: MediaGroup) => {
           const mediaList = group.mediaList;
-          return {
+          
+          // 查找第一个视频或图片作为预览
+          let previewMedia = null;
+          if (mediaList && mediaList.list.length > 0) {
+            // 优先查找视频，如果没有视频则使用图片
+            previewMedia = mediaList.list.find(media => media.type === 'video') || mediaList.list[0];
+            console.log('Found preview media for group:', group.title, previewMedia);
+          }
+          
+          const processedGroup = {
             ...group,
-            // 使用 mediaList 中第一张图片作为封面，如果没有则使用原封面
-            cover: mediaList && mediaList.list.length > 0 
-              ? getOssUrl(mediaList.list[0].url) 
-              : group.cover,
+            // 使用找到的预览媒体作为封面
+            cover: previewMedia ? getOssUrl(previewMedia.url) : group.cover,
             // 使用 mediaList 的 total 作为资源数量
-            count: mediaList ? mediaList.total : group.count
+            count: mediaList ? mediaList.total : group.count,
+            // 保存预览媒体的类型和URL信息
+            previewMedia: previewMedia ? {
+              type: previewMedia.type,
+              url: previewMedia.url
+            } : null
           };
+          
+          console.log('Processed group:', group.title, processedGroup);
+          return processedGroup;
         });
         setGroups(processedGroups);
         setTotal(response.data.total);
@@ -227,43 +195,16 @@ export const MaterialPageCore = () => {
 
   // 获取封面图片或图标
   const getCoverDisplay = (group: MediaGroup) => {
-    // 如果有封面图片，显示图片
-    if (group.cover && group.cover !== '') {
-      return (
-        <div className={styles.coverContent}>
-          {group.type === 'video' ? (
-            <div className={styles.videoTypeIcon}>
-              <VideoCameraOutlined />
-              <VideoThumbnail 
-              videoUrl={group.cover}
-              className={styles.coverImage}
-            />
-            </div>
-          ):
-          (
-            <img 
-            alt={group.title} 
-            src={group.cover} 
-            className={styles.coverImage}
-          />
-          )
-          
-          }
-          
-          
-        </div>
-      );
-    }
-    
-    // 如果mediaList存在且有内容，显示第一个媒体
-    if (group.mediaList?.list && group.mediaList.list.length > 0) {
-      const firstMedia = group.mediaList.list[0];
-      
-      if (firstMedia.type === 'video') {
+    // 如果有预览媒体，优先显示预览媒体
+    if (group.previewMedia) {
+      console.log('Using preview media:', group.previewMedia);
+      if (group.previewMedia.type === 'video') {
+        const videoUrl = getOssUrl(group.previewMedia.url);
+        console.log('Video URL:', videoUrl);
         return (
           <div className={styles.coverContent}>
             <VideoThumbnail 
-              videoUrl={firstMedia.url}
+              videoUrl={videoUrl}
               className={styles.coverImage}
             />
             <div className={styles.videoTypeIcon}>
@@ -276,7 +217,97 @@ export const MaterialPageCore = () => {
           <div className={styles.coverContent}>
             <img 
               alt={group.title} 
-              src={firstMedia.url} 
+              src={getOssUrl(group.previewMedia.url)} 
+              className={styles.coverImage}
+            />
+            <div className={styles.imageTypeIcon}>
+              <PictureOutlined />
+            </div>
+          </div>
+        );
+      }
+    }
+
+    // 如果没有预览媒体但有 mediaList，尝试使用第一个媒体
+    if (group.mediaList?.list && group.mediaList.list.length > 0) {
+      const firstMedia = group.mediaList.list[0];
+      console.log('Using first media from mediaList:', firstMedia);
+      
+      if (firstMedia.type === 'video') {
+        const videoUrl = getOssUrl(firstMedia.url);
+        console.log('Video URL from mediaList:', videoUrl);
+        return (
+          <div className={styles.coverContent}>
+            <VideoThumbnail 
+              videoUrl={videoUrl}
+              className={styles.coverImage}
+            />
+            <div className={styles.videoTypeIcon}>
+              <VideoCameraOutlined />
+            </div>
+          </div>
+        );
+      } else {
+        return (
+          <div className={styles.coverContent}>
+            <img 
+              alt={group.title} 
+              src={getOssUrl(firstMedia.url)} 
+              className={styles.coverImage}
+            />
+            <div className={styles.imageTypeIcon}>
+              <PictureOutlined />
+            </div>
+          </div>
+        );
+      }
+    }
+    
+    // 如果有封面图片，显示图片
+    if (group.cover && group.cover !== '') {
+      return (
+        <div className={styles.coverContent}>
+          {group.type === 'video' ? (
+            <div className={styles.videoTypeIcon}>
+              <VideoCameraOutlined />
+              <VideoThumbnail 
+                videoUrl={group.cover}
+                className={styles.coverImage}
+              />
+            </div>
+          ) : (
+            <img 
+              alt={group.title} 
+              src={group.cover} 
+              className={styles.coverImage}
+            />
+          )}
+        </div>
+      );
+    }
+    
+    // 如果mediaList存在且有内容，显示第一个媒体
+    if (group.mediaList?.list && group.mediaList.list.length > 0) {
+      const firstMedia = group.mediaList.list[0];
+      
+      if (firstMedia.type === 'video') {
+        return (
+          <div className={styles.coverContent}>
+            <VideoThumbnail 
+              videoUrl={getOssUrl(firstMedia.url)}
+              className={styles.coverImage}
+            />
+            <div className={styles.videoTypeIcon}>
+              <VideoCameraOutlined />
+            </div>
+          </div>
+        );
+      } else {
+        return (
+          <div className={styles.coverContent}>
+            <img 
+              alt={group.title} 
+              src={getOssUrl(firstMedia.url)} 
               className={styles.coverImage}
             />
             <div className={styles.imageTypeIcon}>
