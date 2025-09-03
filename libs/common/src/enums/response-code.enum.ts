@@ -6,24 +6,29 @@ export enum ResponseCode {
   // 10000 (common)
 
   // 10100 (s3)
-  S3PutObjectError = 10100,
+  S3DownloadFileFailed = 10100,
 
   // 11000 (multilogin-account)
   MultiloginAccountNotFound = 11000,
   MultiloginAccountProfilesExceeded = 11001,
   NoAvailableMultiloginAccount = 11002,
 
-  // 12000 (cloud-space)
-  CloudSpaceNotFound = 12000,
-  CloudSpaceCreationFailed = 12001,
+  // 11100 (cloud-space)
+  CloudSpaceNotFound = 11100,
+  CloudSpaceCreationFailed = 11101,
 
-  // 12100 (cloud-instance)
-  UCloudInstanceCreationFailed = 12100,
-  UCloudInstanceNotFound = 12101,
-  UCloudInstanceError = 12103,
-  UCloudInstanceTimeout = 12104,
-  UCloudInstanceDeletionFailed = 12105,
+  // 11200 (cloud-instance)
+  UCloudInstanceCreationFailed = 11200,
+  UCloudInstanceNotFound = 11201,
+  UCloudInstanceDeletionFailed = 11202,
 
-  // 12200 (browser-profile)
-  BrowserProfileNotFound = 12200,
+  // 11300 (browser-profile)
+  BrowserProfileNotFound = 11300,
+
+  // 12000 (user)
+  UserPointsInsufficient = 12001,
+
+  // 13000 (ai)
+  InvalidModel = 13000,
+  AiCallFailed = 13001,
 }

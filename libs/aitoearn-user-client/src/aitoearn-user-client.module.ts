@@ -1,7 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common'
 import { NatsClientModule } from '@yikart/nats-client'
+import { AitoearnUserClient } from './aitoearn-user-client'
 import { AitoearnUserClientConfig } from './aitoearn-user-client.config'
-import { AitoearnUserClient } from './aitoearn-user.client'
 
 @Module({})
 export class AitoearnUserClientModule {

@@ -1,5 +1,6 @@
 export * from './exception.util'
 export * from './get-code-message.util'
+export * from './get-ext-by-mime-type.util'
 export * from './password-generator.util'
 export * from './select-config.util'
 export * from './setup-nats-message-pattern.util'

@@ -4,10 +4,15 @@ export enum ImageType {
   PNG = 'image/png',
   GIF = 'image/gif',
   BMP = 'image/bmp',
+  SVG = 'image/svg+xml',
+  ICO = 'image/vnd.microsoft.icon',
+  TIFF = 'image/tiff',
+  AVIF = 'image/avif',
+  HEIC = 'image/heic',
 }
 
-export enum ApplicationType {
-  CSV = 'application/vnd.ms-excel',
+export enum DocumentType {
+  XLS = 'application/vnd.ms-excel',
   XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   DOC = 'application/msword',
   DOCX = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -18,6 +23,11 @@ export enum ApplicationType {
 
 export enum VideoType {
   MP4 = 'video/mp4',
+  WEBM = 'video/webm',
+  MOV = 'video/quicktime',
+  AVI = 'video/x-msvideo',
+  FLV = 'video/x-flv',
+  MKV = 'video/x-matroska',
 }
 
 export enum AudioType {
@@ -25,6 +35,7 @@ export enum AudioType {
   OGG = 'audio/ogg',
   WAV = 'audio/wav',
   FLAC = 'audio/flac',
+  AAC = 'audio/aac',
 }
 
 export enum TextType {

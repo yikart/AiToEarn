@@ -144,7 +144,7 @@ export class MultiloginClient {
 
     // 获取 automation token
     const automationTokenResponse: AxiosResponse<AutomationTokenResponse> = await this.httpClient.get(
-      '/workspace/automation_token',
+      '/workspace/automation_token?expiration_period=no_exp',
     )
     await this.setToken(automationTokenResponse.data.data.token)
   }
