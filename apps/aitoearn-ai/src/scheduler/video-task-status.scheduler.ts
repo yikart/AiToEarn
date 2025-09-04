@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
 import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
+import { UserType } from '@yikart/common'
 import { AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import { config } from '../config'
 import { VideoService, VideoTaskStatusResponse } from '../libs/new-api'
@@ -48,7 +49,12 @@ export class VideoTaskStatusScheduler {
 
       if (result.status === 'SUCCESS') {
         if (task.points > 0 && task.userType === UserType.User) {
-          await this.deductUserPoints(userId, pricing, model)
+          await this.userClient.deductPoints({
+            userId: task.userId,
+            amount: task.points,
+            type: 'ai_service',
+            description: task.model,
+          })
         }
         await this.updateTaskStatus(task.id, AiLogStatus.Success, result)
 
