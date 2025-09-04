@@ -6,6 +6,7 @@ import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlin
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user";
 import { getUserInfoApi, updateUserInfoApi, getPointsRecordsApi } from "@/api/apiReq";
+import { createPaymentOrderApi, PaymentType as VipPaymentType } from "@/api/vip";
 import { getOrderListApi, getOrderDetailApi, getSubscriptionListApi, refundOrderApi, unsubscribeApi } from "@/api/payment";
 import type { Order, OrderListParams, SubscriptionListParams, RefundParams, UnsubscribeParams } from "@/api/types/payment";
 import { OrderStatus, PaymentType } from "@/api/types/payment";
@@ -64,6 +65,14 @@ export default function ProfilePage() {
     pageSize: 10,
     total: 0
   });
+
+  // 积分充值相关状态
+  const [pointsRechargeVisible, setPointsRechargeVisible] = useState(false);
+  const [rechargeAmount, setRechargeAmount] = useState(8);
+  const [rechargeForm] = Form.useForm();
+  const [isDragging, setIsDragging] = useState(false);
+  const [paymentOrderId, setPaymentOrderId] = useState<string | null>(null);
+  const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
 
   // 积分记录类型定义
   interface PointsRecord {
@@ -279,6 +288,14 @@ export default function ProfilePage() {
     fetchUserInfo();
   }, [token, router]);
 
+  // 清理滑块事件监听器
+  useEffect(() => {
+    return () => {
+      document.removeEventListener('mousemove', handleSliderMouseMove);
+      document.removeEventListener('mouseup', handleSliderMouseUp);
+    };
+  }, []);
+
   const handleLogout = () => {
     clearLoginStatus();
     message.success(t('logoutSuccess'));
@@ -319,6 +336,128 @@ export default function ProfilePage() {
   const handleFreeTrialModalCancel = () => {
     setFreeTrialModalVisible(false);
     localStorage.setItem('freeTrialShown', 'true');
+  };
+
+  // 积分相关处理函数
+  const handleGoToPublish = () => {
+    router.push('/accounts');
+    // 这里可以添加唤起发布窗口的逻辑
+  };
+
+  const handleGoToVip = () => {
+    router.push('/vip');
+  };
+
+  const handleRechargePoints = () => {
+    setPointsRechargeVisible(true);
+  };
+
+  const handleRechargeSubmit = async (values: any) => {
+    try {
+      const response = await createPaymentOrderApi({
+        success_url: `${window.location.origin}/profile`,
+        mode: 'payment',
+        payment: VipPaymentType.POINTS,
+        quantity: rechargeAmount, // 购买几份1000积分的资源包
+        metadata: {
+          userId: userInfo?.id || ''
+        }
+      });
+      
+      if (response?.code === 0 && response.data && typeof response.data === 'object' && 'url' in response.data) {
+        // 保存订单ID
+        if ('id' in response.data) {
+          setPaymentOrderId((response.data as any).id);
+          setShowPaymentSuccess(true);
+        }
+        // 跳转到支付页面
+        window.open((response.data as any).url, '_blank');
+        // setPointsRechargeVisible(false);
+        message.success(t('pointsPurchase.redirectingToPayment' as any));
+      } else {
+        message.error(response?.message || t('pointsPurchase.createOrderFailed' as any));
+      }
+    } catch (error) {
+      message.error(t('pointsPurchase.createOrderFailed' as any));
+    }
+  };
+
+  const handleRechargeCancel = () => {
+    setPointsRechargeVisible(false);
+    setPaymentOrderId(null);
+    setShowPaymentSuccess(false);
+  };
+
+  // 处理"我已支付"按钮点击
+  const handlePaymentSuccess = async () => {
+    if (!paymentOrderId) return;
+    
+    try {
+      const response = await getOrderDetailApi(paymentOrderId);
+      if (response?.code === 0 && response.data) {
+        const order = Array.isArray(response.data) ? response.data[0] : response.data;
+        // 检查订单状态：1=支付成功，2=等待支付，3=退款成功，4=订单取消
+        if (order.status === 1) {
+          message.success(t('pointsPurchase.purchaseSuccess' as any));
+          setShowPaymentSuccess(false);
+          setPaymentOrderId(null);
+          setPointsRechargeVisible(false);
+          // 刷新用户信息
+          fetchUserInfo();
+        } else if (order.status === 2) {
+          message.warning(t('pointsPurchase.paymentPending' as any));
+        } else if (order.status === 3) {
+          message.warning(t('pointsPurchase.orderRefunded' as any));
+          setShowPaymentSuccess(false);
+          setPaymentOrderId(null);
+        } else if (order.status === 4) {
+          message.warning(t('pointsPurchase.orderCancelled' as any));
+          setShowPaymentSuccess(false);
+          setPaymentOrderId(null);
+        } else {
+          message.warning(t('pointsPurchase.orderUnknown' as any));
+        }
+      } else {
+        message.error(t('pointsPurchase.queryFailed' as any));
+      }
+    } catch (error) {
+      message.error(t('pointsPurchase.queryFailed' as any));
+    }
+  };
+
+  // 滑块拖动处理
+  const handleSliderMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    document.addEventListener('mousemove', handleSliderMouseMove);
+    document.addEventListener('mouseup', handleSliderMouseUp);
+  };
+
+  const handleSliderMouseMove = (e: MouseEvent) => {
+    if (!isDragging) return;
+    
+    const sliderTrack = document.querySelector(`.${styles.sliderTrack}`) as HTMLElement;
+    if (!sliderTrack) return;
+    
+    const rect = sliderTrack.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percentage = Math.max(0, Math.min(1, x / rect.width));
+    const newAmount = Math.round(percentage * 49) + 1; // 1-50，只能选择1000的倍数
+    setRechargeAmount(newAmount);
+  };
+
+  const handleSliderMouseUp = () => {
+    setIsDragging(false);
+    document.removeEventListener('mousemove', handleSliderMouseMove);
+    document.removeEventListener('mouseup', handleSliderMouseUp);
+  };
+
+  const handleSliderClick = (e: React.MouseEvent) => {
+    const sliderTrack = e.currentTarget as HTMLElement;
+    const rect = sliderTrack.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percentage = Math.max(0, Math.min(1, x / rect.width));
+    const newAmount = Math.round(percentage * 49) + 1; // 1-50
+    setRechargeAmount(newAmount);
   };
 
   // 订单状态标签
@@ -525,12 +664,14 @@ export default function ProfilePage() {
       key: 'type',
       render: (type: string) => {
         const typeMap: { [key: string]: { color: string; text: string } } = {
-          'ai_service': { color: 'green', text: t('points.aiService') },
-          'user_register': { color: 'blue', text: t('points.userRegister') },
-          'earn': { color: 'green', text: t('points.earn') },
-          'spend': { color: 'red', text: t('points.spend') },
-          'refund': { color: 'blue', text: t('points.refund') },
-          'expire': { color: 'orange', text: t('points.expire') }
+          'ai_service': { color: 'green', text: t('points.aiService' as any) },
+          'user_register': { color: 'blue', text: t('points.userRegister' as any) },
+          'publish': { color: 'purple', text: t('points.publish' as any) },
+          'point': { color: 'cyan', text: t('points.point' as any) },
+          'earn': { color: 'green', text: t('points.earn' as any) },
+          'spend': { color: 'red', text: t('points.spend' as any) },
+          'refund': { color: 'blue', text: t('points.refund' as any) },
+          'expire': { color: 'orange', text: t('points.expire' as any) }
         };
         const config = typeMap[type] || { color: 'default', text: type };
         return <Tag color={config.color}>{config.text}</Tag>;
@@ -547,7 +688,8 @@ export default function ProfilePage() {
   // 个人信息内容
   const renderProfileContent = () => (
     <>
-      <div className={styles.vipCard}>
+
+<div className={styles.vipCard}>
         <div className={styles.vipContent}>
           <div className={styles.vipHeader}>
             <span className={styles.vipIcon}><CrownOutlined /></span>
@@ -580,12 +722,13 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* 积分记录卡片 */}
-      {/* <div className={styles.pointsCard}>
+      
+      {/* 积分显示卡片 */}
+      <div className={styles.pointsCard}>
         <div className={styles.pointsContent}>
           <div className={styles.pointsHeader}>
-            <div>
-              <span style={{ marginRight: '8px' }}><GiftFilled /></span>
+            <div className={styles.pointsTitleSection}>
+              <span className={styles.pointsIcon}><GiftFilled /></span>
               <span className={styles.pointsTitle}>{t('points.myPoints')}</span>
             </div>
             <span className={styles.pointsCount}>{userInfo?.score || 0}</span>
@@ -593,12 +736,53 @@ export default function ProfilePage() {
           <p className={styles.pointsDescription}>
             {t('points.pointsDescription')}
           </p>
+          
+          <div className={styles.pointsMethods}>
+            <h4 className={styles.methodsTitle}>{t('pointsPurchase.getPointsMethods' as any)}</h4>
+            <div className={styles.methodsGrid}>
+              <div className={styles.methodItem} onClick={handleGoToPublish}>
+                <div className={styles.methodIcon}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                  </svg>
+                </div>
+                <div className={styles.methodContent}>
+                  <h5>{t('pointsPurchase.publish' as any)}</h5>
+                  <p>{t('pointsPurchase.publishDesc' as any)}</p>
+                </div>
+              </div>
+              
+              <div className={styles.methodItem} onClick={handleGoToVip}>
+                <div className={styles.methodIcon}>
+                  <CrownOutlined />
+                </div>
+                <div className={styles.methodContent}>
+                  <h5>{t('pointsPurchase.vip' as any)}</h5>
+                  <p>{t('pointsPurchase.vipDesc' as any)}</p>
+                </div>
+              </div>
+              
+              <div className={styles.methodItem} onClick={handleRechargePoints}>
+                <div className={styles.methodIcon}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                </div>
+                <div className={styles.methodContent}>
+                  <h5>{t('pointsPurchase.buyPoints' as any)}</h5>
+                  <p>{t('pointsPurchase.buyPointsDesc' as any)}</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div> */}
+      </div>
+
+
 
       <Card 
         title={t('personalInfo')} 
-        className={styles.card}
+        className={`${styles.card} ${styles.personalInfoCard}`}
         extra={
           <div className={styles.actions}>
             <Button type="primary" onClick={() => setIsModalOpen(true)}>
@@ -618,7 +802,6 @@ export default function ProfilePage() {
             {userInfo?.status === 1 ? t('normal') : t('disabled')}
           </Descriptions.Item>
           <Descriptions.Item label='邀请码'>{userInfo?.popularizeCode}</Descriptions.Item>
-          <Descriptions.Item label='我的积分'>{userInfo?.score}</Descriptions.Item>
           {isVip && (
             <>
               <Descriptions.Item label={t('memberType')}>{vipCycleType}</Descriptions.Item>
@@ -966,6 +1149,99 @@ export default function ProfilePage() {
           <p style={{ color: '#C026D2', fontSize: '14px', fontWeight: '600' }}>
             {t('freeTrial.completelyFree')}
           </p>
+        </div>
+      </Modal>
+
+            {/* 积分充值弹窗 */}
+      <Modal
+        title={t('pointsPurchase.title' as any)}
+        open={pointsRechargeVisible}
+        onCancel={handleRechargeCancel}
+        footer={null}
+        width={500}
+        centered
+        maskClosable={false}
+        closable={true}
+      >
+        <div className={styles.rechargeContent}>
+          <div className={styles.currentPoints}>
+            <span className={styles.pointsLabel}>{t('pointsPurchase.currentPoints' as any)}</span>
+            <span className={styles.pointsValue}>{userInfo?.score || 0}</span>
+          </div>
+          
+          <div className={styles.rechargeSection}>
+            <h4>{t('pointsPurchase.selectAmount' as any)}</h4>
+            <p className={styles.rechargeDescription}>{t('pointsPurchase.description' as any)}</p>
+            
+            <div className={styles.sliderContainer}>
+              <div 
+                className={styles.sliderTrack}
+                onClick={handleSliderClick}
+              >
+                <div 
+                  className={styles.sliderHandle}
+                  style={{ left: `${(rechargeAmount / 50) * 100}%` }}
+                  onMouseDown={handleSliderMouseDown}
+                />
+              </div>
+              <div className={styles.sliderLabels}>
+                <span>1K</span>
+                <span>50K</span>
+              </div>
+            </div>
+            
+            <div className={styles.amountInput}>
+              <Input
+                type="number"
+                value={rechargeAmount}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  if (value >= 1 && value <= 50) {
+                    setRechargeAmount(value);
+                  }
+                }}
+                min={1}
+                max={50}
+                style={{ width: '80px', marginRight: '8px' }}
+              />
+              <span>*1000积分</span>
+            </div>
+            
+            <div className={styles.totalPrice}>
+              <span>{t('pointsPurchase.purchasePoints' as any)}：</span>
+              <span className={styles.priceValue}>{rechargeAmount * 1000}</span>
+            </div>
+            
+            <div className={styles.totalPrice}>
+              <span>{t('pointsPurchase.totalPrice' as any)}：</span>
+              <span className={styles.priceValue}>${(rechargeAmount * 15).toFixed(2)}</span>
+            </div>
+          </div>
+          
+          <Button 
+            type="primary" 
+            size="large" 
+            block
+            onClick={() => handleRechargeSubmit({ amount: rechargeAmount })}
+            className={styles.rechargeButton}
+            disabled={showPaymentSuccess}
+          >
+            {showPaymentSuccess ? t('pointsPurchase.paying' as any) : t('pointsPurchase.buyNow' as any)}
+          </Button>
+
+          {/* 支付成功提示 */}
+          {showPaymentSuccess && (
+            <div className={styles.paymentSuccessTip}>
+              <p>{t('pointsPurchase.paymentTip' as any)}</p>
+              <Button 
+                type="primary" 
+                onClick={handlePaymentSuccess}
+                className={styles.paymentSuccessButton}
+              >
+                {t('pointsPurchase.confirmPayment' as any)}
+              </Button>
+            </div>
+          )}
         </div>
       </Modal>
     </div>

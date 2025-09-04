@@ -2,9 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import styles from "./styles/difyHome.module.scss";
+import pricingStyles from "./styles/pricing.module.scss";
 import { useTransClient } from "../i18n/client";
 
+import logo from '@/assets/images/logo.png';
+
 // 导入SVG图标
+import gongzhonghao from '@/assets/images/gongzhonghao.jpg';
 import bilibiliIcon from '@/assets/svgs/plat/bilibili.svg';
 import douyinIcon from '@/assets/svgs/plat/douyin.svg';
 import tiktokIcon from '@/assets/svgs/plat/tiktok.svg';
@@ -20,24 +24,34 @@ import LinkedInIcon from '@/assets/svgs/plat/linkedin.svg';
 import PinterestIcon from '@/assets/svgs/plat/pinterest.svg';
 import ThreadsIcon from '@/assets/svgs/plat/xiancheng.svg';
 
-import logo from '@/assets/images/logo.png';
-import hotjietu1 from '@/assets/images/hotjietu1.png';
-import hotjietu2 from '@/assets/images/hotjietu2.png';
-import hotjietu3 from '@/assets/images/hotjietu3.png';
+// 资料图片
 import publish1 from '@/assets/images/publish1.png';
-import gongzhonghao from '@/assets/images/gongzhonghao.jpg';
 
-import phonepublish1 from '@/assets/images/phonepublish1.png';
-import phonepublish2 from '@/assets/images/phonepublish2.png';
-import phonepublish3 from '@/assets/images/phonepublish3.png';
+
+import calendar from '@/assets/images/app-screenshot/1. content publish/calendar.jpeg';
+import supportChannels from '@/assets/images/app-screenshot/1. content publish/support_channels.jpeg';
+import hotspot from '@/assets/images/app-screenshot/2. content hotspot/hotspot.jpg';
+import hotspot2 from '@/assets/images/app-screenshot/2. content hotspot/hotspot2.jpeg';
+import hotspot3 from '@/assets/images/app-screenshot/2. content hotspot/hotspot3.jpeg';
+import hotspot4 from '@/assets/images/app-screenshot/2. content hotspot/hotspot4.jpeg';
+import contentSearch from '@/assets/images/app-screenshot/3. content search/contentsearch.gif';
+import contentSearch1 from '@/assets/images/app-screenshot/3. content search/contentsearch1.jpeg';
+import contentSearch2 from '@/assets/images/app-screenshot/3. content search/contentsearch2.jpeg';
+import contentSearch4 from '@/assets/images/app-screenshot/3. content search/contentsearch4.jpeg';
+import commentFilter from '@/assets/images/app-screenshot/4. comments search/commentfilter.jpeg';
+import commentFilter2 from '@/assets/images/app-screenshot/5. content engagement/commentfilter2.jpeg';
+
+import dataCenter from '@/assets/images/data_center.png';
+
 
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Button } from "antd";
-import { GlobalOutlined } from "@ant-design/icons";
+import { Button, Collapse } from "antd";
+import { GlobalOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useUserStore } from "@/store/user"; 
 import { useParams } from "next/navigation";
+import { AndroidOutlined } from '@ant-design/icons';
 
 // 版本发布横幅
 function ReleaseBanner() {
@@ -57,7 +71,7 @@ function ReleaseBanner() {
 }
 
 // Header 顶部导航
-function Header() {
+function Header({ currentModule, onModuleChange }: { currentModule: string, onModuleChange: (module: string) => void }) {
   const { t } = useTransClient('home');
   const router = useRouter();
   const userStore = useUserStore();
@@ -74,15 +88,22 @@ function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.headerContainer}>
-      <Link href="/">
-        <div className={styles.logo}>
-          <Image src={logo} alt="logo" width={50} />
-          <span className={styles.logoText}>{t('header.logo')}</span>
-        </div>
-        </Link>
+      <div 
+        className={styles.logo}
+        onClick={() => onModuleChange('home')}
+        style={{ cursor: 'pointer' }}
+      >
+        <Image src={logo} alt="logo" width={50} />
+        <span className={styles.logoText}>{t('header.logo')}</span>
+      </div>
         <nav className={styles.nav}>
           {/* <a href="#marketplace" className={styles.navLink}>{t('header.nav.marketplace')}</a> */}
-          <a href="/pricing" className={styles.navLink}>{t('header.nav.pricing')}</a>
+          <button 
+            className={`${styles.navLink} ${currentModule === 'pricing' ? styles.active : ''}`}
+            onClick={() => onModuleChange('pricing')}
+          >
+            {t('header.nav.pricing')}
+          </button>
           <a href="https://status.aitoearn.ai/" target="_blank" rel="noopener noreferrer" className={styles.navLink}>{t('header.nav.status' as any)}</a>
           {/* <a href="#docs" className={styles.navLink}>{t('header.nav.docs')}</a> */}
           {/* <a href="#blog" className={styles.navLink}>{t('header.nav.blog')}</a> */}
@@ -107,6 +128,754 @@ function Header() {
         
       </div>
     </header>
+  );
+}
+
+// Pricing 模块
+function PricingModule() {
+  const { t } = useTransClient('pricing');
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
+  
+  // 直接使用 aaa.md 中的完整数据
+  const fallbackPricingData = [
+    {
+      model: "gpt-5",
+      type: "大模型",
+      duration: "",
+      resolution: "",
+      notes: "大模型价格以官方价格为准",
+      credits: "每百万tokens",
+      price: "输入 9元，输出 72",
+      channel: "yun"
+    },
+    {
+      model: "gpt-5-mini",
+      type: "大模型",
+      duration: "",
+      resolution: "",
+      notes: "",
+      credits: "",
+      price: "输入 1.8元，输出 14.4",
+      channel: "yun"
+    },
+    {
+      model: "gpt-5-nano",
+      type: "大模型",
+      duration: "",
+      resolution: "",
+      notes: "",
+      credits: "",
+      price: "输入 0.36元，输出 2.88",
+      channel: "yun"
+    },
+    {
+      model: "gemini-2.5-pro",
+      type: "大模型",
+      duration: "",
+      resolution: "支持视频",
+      notes: "",
+      credits: "",
+      price: "输入9元，输出 72",
+      channel: "yun"
+    },
+    {
+      model: "chatgpt-4o-latest",
+      type: "大模型",
+      duration: "",
+      resolution: "",
+      notes: "",
+      credits: "",
+      price: "输入 36元，输出 108",
+      channel: "yun"
+    },
+    {
+      model: "gemini-2.5-flash",
+      type: "大模型",
+      duration: "",
+      resolution: "支持视频",
+      notes: "",
+      credits: "",
+      price: "输入 2.16元，输出 18",
+      channel: "yun"
+    },
+    {
+      model: "qwen-vl-max-latest",
+      type: "大模型",
+      duration: "",
+      resolution: "",
+      notes: "",
+      credits: "",
+      price: "输入1.6元，输出4",
+      channel: "yun"
+    },
+    {
+      model: "kimi-k2-0711-preview",
+      type: "大模型",
+      duration: "",
+      resolution: "",
+      notes: "不支持图片",
+      credits: "",
+      price: "",
+      channel: "暂不接入"
+    },
+    {
+      model: "grok-4",
+      type: "大模型",
+      duration: "",
+      resolution: "",
+      notes: "不支持图片",
+      credits: "",
+      price: "",
+      channel: "暂不接入"
+    },
+    {
+      model: "claude-opus-4-1-20250805-thinking",
+      type: "大模型",
+      duration: "",
+      resolution: "",
+      notes: "不支持图片，不支持图片的不着急支持",
+      credits: "",
+      price: "",
+      channel: "暂不接入"
+    },
+    {
+      model: "qwen3-235b-a22b-07-25",
+      type: "大模型",
+      duration: "",
+      resolution: "",
+      notes: "不支持图片",
+      credits: "",
+      price: "",
+      channel: "暂不接入"
+    },
+    {
+      model: "deepseek-r1-0528",
+      type: "大模型",
+      duration: "",
+      resolution: "",
+      notes: "不支持图片",
+      credits: "",
+      price: "",
+      channel: "暂不接入"
+    },
+    {
+      model: "claude-sonnet-4-20250514-thinking",
+      type: "大模型",
+      duration: "",
+      resolution: "",
+      notes: "不支持图片",
+      credits: "",
+      price: "",
+      channel: "暂不接入"
+    },
+    {
+      model: "deepseek-v3-0324",
+      type: "大模型",
+      duration: "",
+      resolution: "",
+      notes: "不支持图片",
+      credits: "",
+      price: "",
+      channel: "暂不接入"
+    },
+    {
+      model: "gemini-2.5-flash-image",
+      type: "图片生成",
+      duration: "",
+      resolution: "",
+      notes: "又名nano banana，支持多图像输入",
+      credits: "1",
+      price: "0.27",
+      channel: "yun"
+    },
+    {
+      model: "seedream-3.0",
+      type: "图片生成",
+      duration: "",
+      resolution: "",
+      notes: "",
+      credits: "2.6",
+      price: "0.26",
+      channel: "官方"
+    },
+    {
+      model: "seededit-3.0",
+      type: "图片生成",
+      duration: "",
+      resolution: "",
+      notes: "图片编辑，传入图片需要满足以下条件：图片格式：jpeg、png。宽高比（宽/高）：在范围 (1/3, 3) 。宽高长度（px） > 14。大小：不超过 10MB。",
+      credits: "3",
+      price: "0.3",
+      channel: "官方"
+    },
+    {
+      model: "gpt-image-1",
+      type: "图片生成",
+      duration: "",
+      resolution: "",
+      notes: "支持图片编辑",
+      credits: "1",
+      price: "low $0.011-0.016, medium $0.042-0.063, high $0.167-0.25",
+      channel: "yun"
+    },
+    {
+      model: "FLUX.1 Kontext [max]",
+      type: "图片生成",
+      duration: "",
+      resolution: "",
+      notes: "支持图片编辑",
+      credits: "1.5",
+      price: "0.6",
+      channel: "yun"
+    },
+    {
+      model: "FLUX.1 Kontext [pro]",
+      type: "图片生成",
+      duration: "",
+      resolution: "",
+      notes: "支持图片编辑",
+      credits: "1",
+      price: "0.3",
+      channel: "yun"
+    },
+    {
+      model: "FLUX.1[dev]",
+      type: "图片生成",
+      duration: "",
+      resolution: "",
+      notes: "",
+      credits: "先不上",
+      price: "0.2",
+      channel: ""
+    },
+    {
+      model: "Flux 1.1 pro ultra",
+      type: "图片生成",
+      duration: "",
+      resolution: "",
+      notes: "",
+      credits: "4.5",
+      price: "0.45",
+      channel: "官方"
+    },
+    {
+      model: "Flux1.1 pro",
+      type: "图片生成",
+      duration: "",
+      resolution: "",
+      notes: "",
+      credits: "3",
+      price: "0.3",
+      channel: "官方"
+    },
+    {
+      model: "midjourney relax",
+      type: "视频生成",
+      duration: "5秒",
+      resolution: "",
+      notes: "",
+      credits: "免费",
+      price: "",
+      channel: "yun"
+    },
+    {
+      model: "midjourney fast/turbo",
+      type: "视频生成",
+      duration: "5秒",
+      resolution: "",
+      notes: "",
+      credits: "4",
+      price: "",
+      channel: "yun"
+    },
+    {
+      model: "kling1.5/1.6/2.1",
+      type: "视频生成",
+      duration: "5秒",
+      resolution: "720p",
+      notes: "",
+      credits: "20",
+      price: "2",
+      channel: "yun"
+    },
+    {
+      model: "kling1.5/1.6/2.1",
+      type: "视频生成",
+      duration: "10秒",
+      resolution: "720p",
+      notes: "",
+      credits: "40",
+      price: "4",
+      channel: "yun"
+    },
+    {
+      model: "kling1.5/1.6/2.1",
+      type: "视频生成",
+      duration: "5秒",
+      resolution: "1080p",
+      notes: "",
+      credits: "35",
+      price: "3.5",
+      channel: "yun"
+    },
+    {
+      model: "kling1.5/1.6/2.1",
+      type: "视频生成",
+      duration: "10秒",
+      resolution: "1080p",
+      notes: "",
+      credits: "70",
+      price: "7",
+      channel: "yun"
+    },
+    {
+      model: "kling1.6多图参考",
+      type: "视频生成",
+      duration: "5秒",
+      resolution: "720p",
+      notes: "",
+      credits: "20",
+      price: "2",
+      channel: "yun"
+    },
+    {
+      model: "kling1.6多图参考",
+      type: "视频生成",
+      duration: "10秒",
+      resolution: "720p",
+      notes: "",
+      credits: "40",
+      price: "4",
+      channel: "yun"
+    },
+    {
+      model: "kling1.6多图参考",
+      type: "视频生成",
+      duration: "5秒",
+      resolution: "1080p",
+      notes: "",
+      credits: "35",
+      price: "3.5",
+      channel: "yun"
+    },
+    {
+      model: "kling1.6多图参考",
+      type: "视频生成",
+      duration: "10秒",
+      resolution: "1080p",
+      notes: "",
+      credits: "70",
+      price: "7",
+      channel: "yun"
+    },
+    {
+      model: "kling2.1大师",
+      type: "视频生成",
+      duration: "5秒",
+      resolution: "1080p",
+      notes: "",
+      credits: "100",
+      price: "10",
+      channel: "yun"
+    },
+    {
+      model: "kling2.1大师",
+      type: "视频生成",
+      duration: "10秒",
+      resolution: "1080p",
+      notes: "",
+      credits: "200",
+      price: "20",
+      channel: "yun"
+    },
+    {
+      model: "wan2.2-plus",
+      type: "视频生成",
+      duration: "5秒",
+      resolution: "480p",
+      notes: "",
+      credits: "70",
+      price: "0.7",
+      channel: "yun"
+    },
+    {
+      model: "wan2.2-plus",
+      type: "视频生成",
+      duration: "5秒",
+      resolution: "1080p",
+      notes: "",
+      credits: "35",
+      price: "3.5",
+      channel: "yun"
+    },
+    {
+      model: "wan2.1-turbo(14b）",
+      type: "视频生成",
+      duration: "5秒",
+      resolution: "720p",
+      notes: "不要使用火山渠道",
+      credits: "12",
+      price: "1.2",
+      channel: "yun"
+    },
+    {
+      model: "wan2.1-plus",
+      type: "视频生成",
+      duration: "5秒",
+      resolution: "720p",
+      notes: "支持首尾帧",
+      credits: "35",
+      price: "3.5",
+      channel: "yun"
+    },
+    {
+      model: "wanx2.1-vace-plus",
+      type: "视频生成",
+      duration: "5秒",
+      resolution: "720p",
+      notes: "视频编辑",
+      credits: "35",
+      price: "3.5",
+      channel: "yun"
+    },
+    {
+      model: "seedance-1.0-pro",
+      type: "视频生成",
+      duration: "5秒",
+      resolution: "480p",
+      notes: "支持10秒",
+      credits: "7.2",
+      price: "0.72",
+      channel: "yun"
+    },
+    {
+      model: "seedance-1.0-pro",
+      type: "视频生成",
+      duration: "5秒",
+      resolution: "720p",
+      notes: "10秒价格翻倍就行",
+      credits: "16.4",
+      price: "1.64",
+      channel: "yun"
+    },
+    {
+      model: "seedance-1.0-pro",
+      type: "视频生成",
+      duration: "5秒",
+      resolution: "1080p",
+      notes: "",
+      credits: "36.7",
+      price: "3.67",
+      channel: "yun"
+    },
+    {
+      model: "seedance-1.0-lite",
+      type: "视频生成",
+      duration: "5秒",
+      resolution: "480p",
+      notes: "支持首尾帧",
+      credits: "5",
+      price: "0.5",
+      channel: "yun"
+    },
+    {
+      model: "seedance-1.0-lite",
+      type: "视频生成",
+      duration: "5秒",
+      resolution: "720p",
+      notes: "支持10秒",
+      credits: "11",
+      price: "1.1",
+      channel: "yun"
+    },
+    {
+      model: "seedance-1.0-lite",
+      type: "视频生成",
+      duration: "5秒",
+      resolution: "1080p",
+      notes: "10秒价格翻倍",
+      credits: "25",
+      price: "2.5",
+      channel: "yun"
+    }
+  ];
+
+  // 尝试从 i18n 获取数据，如果失败则使用备选数据
+  const getPricingData = () => {
+    try {
+      const rows = t('faq.creditDeduction.pricingTable.rows' as any);
+      if (Array.isArray(rows) && rows.length > 0) {
+        return rows;
+      }
+    } catch (error) {
+      console.error('Error loading pricing data from i18n:', error);
+    }
+    return fallbackPricingData;
+  };
+
+  const plans = [
+    {
+      name: t('plans.free.name'),
+      price: 0,
+      originalPrice: 0,
+      credits: t('plans.free.credits'),
+      videos: t('plans.free.videos'),
+      images: t('plans.free.images'),
+      features: [
+        { text: t('features.textModeration'), included: false },
+        { text: t('features.imageModeration'), included: false },
+        { text: t('features.videoModeration'), included: false },
+        { text: t('features.multiModel'), included: true },
+        { text: t('features.textToVideo'), included: true },
+        { text: t('features.imageToVideo'), included: true },
+        { text: t('features.videoToVideo'), included: true },
+        { text: t('features.consistentCharacter'), included: true },
+        { text: t('features.aiAnimation'), included: true },
+        { text: t('features.aiImage'), included: true },
+        { text: t('features.voiceClone'), included: true },
+        { text: t('features.voiceSynthesis'), included: true },
+        { text: t('features.fasterSpeed'), included: false },
+        { text: t('features.withWatermark'), included: true },
+        { text: t('features.storage500M'), included: true },
+      ],
+      buttonText: t('plans.free.button'),
+      buttonType: 'default' as const,
+      popular: false,
+    },
+    {
+      name: t('plans.plus.name'),
+      price: billingCycle === 'yearly' ? 10 : 15,
+      originalPrice: billingCycle === 'yearly' ? 20 : 15,
+      credits: t('plans.plus.credits'),
+      videos: t('plans.plus.videos'),
+      images: t('plans.plus.images'),
+      features: [
+        { text: t('features.textModeration'), included: true },
+        { text: t('features.imageModeration'), included: true },
+        { text: t('features.videoModeration'), included: true },
+        { text: t('features.multiModel'), included: true },
+        { text: t('features.textToVideo'), included: true },
+        { text: t('features.imageToVideo'), included: true },
+        { text: t('features.videoToVideo'), included: true },
+        { text: t('features.consistentCharacter'), included: true },
+        { text: t('features.aiAnimation'), included: true },
+        { text: t('features.aiImage'), included: true },
+        { text: t('features.voiceClone'), included: true },
+        { text: t('features.voiceSynthesis'), included: true },
+        { text: t('features.fasterSpeed'), included: true },
+        { text: t('features.noWatermark'), included: true },
+        { text: t('features.storage5G'), included: true },
+      ],
+      buttonText: t('plans.plus.button'),
+      buttonType: 'primary' as const,
+      popular: true,
+    },
+  ];
+
+  const faqItems = [
+    {
+      question: t('faq.paymentMethods.question'),
+      answer: t('faq.paymentMethods.answer')
+    },
+    {
+      question: t('faq.creditDeduction.question'),
+      answer: t('faq.creditDeduction.answer')
+    },
+    {
+      question: t('faq.creditExpiry.question'),
+      answer: t('faq.creditExpiry.answer')
+    },
+    {
+      question: t('faq.moreCredits.question'),
+      answer: t('faq.moreCredits.answer')
+    },
+    {
+      question: t('faq.checkCredits.question'),
+      answer: t('faq.checkCredits.answer')
+    },
+    {
+      question: t('faq.hiddenFees.question'),
+      answer: t('faq.hiddenFees.answer')
+    },
+    {
+      question: t('faq.refundPolicy.question'),
+      answer: t('faq.refundPolicy.answer')
+    }
+  ];
+
+  return (
+    <div className={pricingStyles.pricingPage}>
+      <div className={pricingStyles.container}>
+        
+        {/* Header */}
+        <div className={pricingStyles.header}>
+          <h1 className={pricingStyles.title}>{t('title')}</h1>
+          <p className={pricingStyles.subtitle}>{t('subtitle')}</p>
+        </div>
+
+        {/* Billing Toggle */}
+        <div className={pricingStyles.billingToggle}>
+          <div className={pricingStyles.toggleContainer}>
+            <button
+              className={`${pricingStyles.toggleButton} ${billingCycle === 'monthly' ? pricingStyles.active : ''}`}
+              onClick={() => setBillingCycle('monthly')}
+            >
+              {t('monthly')}
+              {billingCycle === 'monthly' && (
+                <span className={pricingStyles.saveBadge}>{t('save25')}</span>
+              )}
+            </button>
+            <button
+              className={`${pricingStyles.toggleButton} ${billingCycle === 'yearly' ? pricingStyles.active : ''}`}
+              onClick={() => setBillingCycle('yearly')}
+            >
+              {t('yearly')}
+              {billingCycle === 'yearly' && (
+                <span className={pricingStyles.saveBadge}>{t('save50')}</span>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Pricing Cards */}
+        <div className={pricingStyles.pricingCards}>
+          {plans.map((plan, index) => (
+            <div
+              key={plan.name}
+              className={`${pricingStyles.pricingCard} ${plan.popular ? pricingStyles.popular : ''}`}
+            >
+              {plan.popular && (
+                <div className={pricingStyles.popularBadge}>
+                  {billingCycle === 'yearly' ? t('flashSale50') : t('mostPopular')}
+                </div>
+              )}
+              
+              <div className={pricingStyles.cardHeader}>
+                <h2 className={pricingStyles.planName}>{plan.name}</h2>
+                <div className={pricingStyles.priceContainer}>
+                  {plan.originalPrice > plan.price && (
+                    <span className={pricingStyles.originalPrice}>
+                      ${plan.originalPrice} USD
+                    </span>
+                  )}
+                  <div className={pricingStyles.price}>
+                    <span className={pricingStyles.currency}>$</span>
+                    <span className={pricingStyles.amount}>{plan.price}</span>
+                    <span className={pricingStyles.period}>/{t('month')}</span>
+                  </div>
+                  {billingCycle === 'yearly' && plan.price > 0 && (
+                    <div className={pricingStyles.monthlyPrice}>
+                      ${(plan.price * 12).toFixed(0)} USD/{t('yearly')}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className={pricingStyles.planFeatures}>
+                <div className={pricingStyles.mainFeatures}>
+                  <div className={pricingStyles.featureItem}>
+                    <span className={pricingStyles.featureLabel}>{t('credits')}</span>
+                    <span className={pricingStyles.featureValue}>{plan.credits}</span>
+                  </div>
+                  <div className={pricingStyles.featureItem}>
+                    <span className={pricingStyles.featureLabel}>{t('videos')}</span>
+                    <span className={pricingStyles.featureValue}>{plan.videos}</span>
+                  </div>
+                  <div className={pricingStyles.featureItem}>
+                    <span className={pricingStyles.featureLabel}>{t('images')}</span>
+                    <span className={pricingStyles.featureValue}>{plan.images}</span>
+                  </div>
+                </div>
+
+                <div className={pricingStyles.featuresList}>
+                  {plan.features.map((feature, featureIndex) => (
+                    <div key={featureIndex} className={pricingStyles.featureRow}>
+                      {feature.included ? (
+                        <CheckOutlined className={pricingStyles.checkIcon} />
+                      ) : (
+                        <CloseOutlined className={pricingStyles.closeIcon} />
+                      )}
+                      <span className={`${pricingStyles.featureText} ${!feature.included ? pricingStyles.disabled : ''}`}>
+                        {feature.text}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <Button
+                type={plan.buttonType}
+                size="large"
+                className={pricingStyles.ctaButton}
+                onClick={() => {
+                  if (plan.name === t('plans.free.name')) {
+                    // 跳转到注册页面
+                    window.location.href = '/vip';
+                  } else {
+                    // 跳转到支付页面
+                    window.location.href = '/vip';
+                  }
+                }}
+              >
+                {plan.buttonText}
+              </Button>
+            </div>
+          ))}
+        </div>
+
+        {/* FAQ Section */}
+        <div className={pricingStyles.faqSection}>
+          <h2 className={pricingStyles.faqTitle}>{t('faq.title')}</h2>
+          <Collapse 
+            className={pricingStyles.faqCollapse}
+            items={faqItems.map((faq, index) => ({
+              key: index,
+              label: faq.question,
+              children: (
+                <div>
+                  <p>{faq.answer}</p>
+                  {faq.question === t('faq.creditDeduction.question') && (
+                    <div className={pricingStyles.pricingTableContainer}>
+                      <h4>{t('faq.creditDeduction.pricingTable.title' as any)}</h4>
+                      <div className={pricingStyles.pricingTableWrapper}>
+                        <table className={pricingStyles.pricingTable}>
+                          <thead>
+                            <tr>
+                              <th>{t('faq.creditDeduction.pricingTable.headers.model' as any)}</th>
+                              <th>{t('faq.creditDeduction.pricingTable.headers.type' as any)}</th>
+                              <th>{t('faq.creditDeduction.pricingTable.headers.duration' as any)}</th>
+                              <th>{t('faq.creditDeduction.pricingTable.headers.resolution' as any)}</th>
+                              {/* <th>{t('faq.creditDeduction.pricingTable.headers.notes' as any)}</th> */}
+                              <th>{t('faq.creditDeduction.pricingTable.headers.credits' as any)}</th>
+                              <th>{t('faq.creditDeduction.pricingTable.headers.price' as any)}</th>
+                              {/* <th>{t('faq.creditDeduction.pricingTable.headers.channel' as any)}</th> */}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {getPricingData().map((row: any, rowIndex: number) => (
+                              <tr key={rowIndex}>
+                                <td>{row.model}</td>
+                                <td>{row.type}</td>
+                                <td>{row.duration}</td>
+                                <td>{row.resolution}</td>
+                                {/* <td>{row.notes}</td> */}
+                                <td>{row.credits}</td>
+                                <td>{row.price}</td>
+                                {/* <td>{row.channel}</td> */}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )
+            }))}
+          />
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -205,6 +974,18 @@ function Hero() {
             <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
+        <p
+          className={styles.heroMobileLink}
+          style={{ marginTop: '10px' }}
+          onClick={() => {
+            const el = document.getElementById('download');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+        >
+          {t('hero.useMobilePhone' as any)}
+        </p>
       </div>
     </section>
   );
@@ -273,12 +1054,12 @@ function BrandBar() {
   );
 }
 
-// 灵感创意
-function BuildSection() {
+// 1. Content Publishing — 一键发布 · 多平台触达
+function ContentPublishingSection() {
   const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
-  const images = [hotjietu1.src, hotjietu2.src, hotjietu3.src];
+  const images = [calendar.src, supportChannels.src];
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   
@@ -305,29 +1086,24 @@ function BuildSection() {
   // 滚轮控制
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      // 检查是否在轮播区域内
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
         e.preventDefault();
         
         if (e.deltaY > 0) {
-          // 向下滚动
           if (currentImageIndex < images.length - 1) {
             setCurrentImageIndex(prev => prev + 1);
-            setAutoRotate(false); // 用户操作时暂停自动轮播
+            setAutoRotate(false);
           } else {
-            // 到达最后一张图，恢复页面滚动
             setAutoRotate(true);
             return;
           }
         } else {
-          // 向上滚动
           if (currentImageIndex > 0) {
             setCurrentImageIndex(prev => prev - 1);
             setAutoRotate(false);
           }
         }
         
-        // 3秒后恢复自动轮播
         setTimeout(() => {
           setAutoRotate(true);
         }, 3000);
@@ -355,44 +1131,39 @@ function BuildSection() {
         <div className={styles.buildContent}>
           <div className={styles.buildLeft}>
             <h2 className={styles.buildTitle}>
-              {t('buildSection.title')} 
+              {t('buildSection.title')}
               <span className={styles.titleBlue}>{t('buildSection.titleBlue')}</span>
             </h2>
             
-            <div className={styles.featureList}>
-              <div className={styles.featureItem}>
-                <h3>{t('buildSection.features.hotTopic.title')}</h3>
-                <p>{t('buildSection.features.hotTopic.description')}</p>
-              </div>
-              
-              <div className={styles.featureItem}>
-                <h3>{t('buildSection.features.international.title')}</h3>
-                <p>{t('buildSection.features.international.description')}</p>
-              </div>
-              
-              <div className={styles.featureItem}>
-                <h3>{t('buildSection.features.domestic.title')}</h3>
-                <p>{t('buildSection.features.domestic.description')}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className={styles.buildRight}>
-            <div 
-              className={styles.imageCarousel}
-              ref={carouselRef}
-            >
-              <div className={styles.carouselContainer}>
+                         <div className={styles.featureList}>
+               <div className={styles.featureItem}>
+                 <h3>{t('buildSection.features.hotTopic.title')}</h3>
+                 <p>{t('buildSection.features.hotTopic.description')}</p>
+               </div>
+               
+               <div className={styles.featureItem}>
+                 <h3>{t('buildSection.features.international.title')}</h3>
+                 <p>{t('buildSection.features.international.description')}</p>
+               </div>
+             </div>
+           </div>
+           
+           <div className={styles.buildRight}>
+             <div 
+               className={styles.imageCarousel}
+               ref={carouselRef}
+             >
+               <div className={`${styles.carouselContainer} ${styles.mobileContainer}`}>
                 {images.map((image, index) => (
                   <div
                     key={index}
                     className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
                   >
-                    <img 
-                      src={image} 
-                      alt={`AI ToEarn Feature ${index + 1}`} 
-                      className={styles.carouselImage}
-                    />
+                                         <img 
+                       src={image} 
+                       alt={`Content Publishing ${index + 1}`} 
+                       className={styles.mobileCarouselImage}
+                     />
                   </div>
                 ))}
               </div>
@@ -412,7 +1183,7 @@ function BuildSection() {
               </div>
               
               <div className={styles.carouselHint}>
-                <span>{t('buildSection.carouselHint')}</span>
+                <span>使用滚轮切换图片</span>
               </div>
             </div>
           </div>
@@ -422,12 +1193,12 @@ function BuildSection() {
   );
 }
 
-// 功能介绍区
-function ConnectSection() {
+// 2. Content Hotspot — 爆款灵感引擎
+function ContentHotspotSection() {
   const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
-  const images = [phonepublish1.src, phonepublish2.src, phonepublish3.src ]; // 功能介绍相关的图片
+  const images = [hotspot.src, hotspot2.src, hotspot3.src, hotspot4.src];
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   
@@ -454,29 +1225,24 @@ function ConnectSection() {
   // 滚轮控制
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      // 检查是否在轮播区域内
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
         e.preventDefault();
         
         if (e.deltaY > 0) {
-          // 向下滚动
           if (currentImageIndex < images.length - 1) {
             setCurrentImageIndex(prev => prev + 1);
-            setAutoRotate(false); // 用户操作时暂停自动轮播
+            setAutoRotate(false);
           } else {
-            // 到达最后一张图，恢复页面滚动
             setAutoRotate(true);
             return;
           }
         } else {
-          // 向上滚动
           if (currentImageIndex > 0) {
             setCurrentImageIndex(prev => prev - 1);
             setAutoRotate(false);
           }
         }
         
-        // 3秒后恢复自动轮播
         setTimeout(() => {
           setAutoRotate(true);
         }, 3000);
@@ -494,61 +1260,49 @@ function ConnectSection() {
   }, [currentImageIndex, images.length]);
 
   return (
-    <section className={styles.connectSection}>
-      <div className={styles.connectContainer}>
+    <section className={styles.buildSection}>
+      <div className={styles.buildContainer}>
         <div className={styles.sectionBadge}>
           <div className={styles.badgeIcon}></div>
-          <span>{t('connectSection.badge')}</span>
+          <span>{t('hotspotSection.badge' as any)}</span>
         </div>
         
-        <div className={styles.connectContent}>
-          <div className={styles.connectLeft}>
-            <h2 className={styles.connectTitle}>
-            {t('connectSection.title')} <span className={styles.titleBlue}>{t('connectSection.titleBlue')}</span>
+        <div className={styles.buildContent}>
+          <div className={styles.buildLeft}>
+            <h2 className={styles.buildTitle}>
+              {t('hotspotSection.title' as any)}
+              <span className={styles.titleBlue}>{t('hotspotSection.titleBlue' as any)}</span>
             </h2>
             
-            <div className={styles.featureList}>
-              <div className={styles.featureItem}>
-                <h3>{t('connectSection.features.creation.title')}</h3>
-                <p>{t('connectSection.features.creation.description')}</p>
-                <div className={styles.integrationLogos}>
-                  {/* 集成服务 logos */}
-                </div>
-              </div>
-              
-              <div className={styles.featureItem}>
-                <h3>{t('connectSection.features.distribution.title')}</h3>
-                <p>{t('connectSection.features.distribution.description')}</p>
-              </div>
-              
-              <div className={styles.featureItem}>
-                <h3>{t('connectSection.features.interaction.title')}</h3>
-                <p>{t('connectSection.features.interaction.description')}</p>
-              </div>
-
-              <div className={styles.featureItem}>
-                <h3>{t('connectSection.features.analytics.title')}</h3>
-                <p>{t('connectSection.features.analytics.description')}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className={styles.connectRight}>
-            <div 
-              className={styles.imageCarousel}
-              ref={carouselRef}
-            >
-              <div className={styles.carouselContainer}>
+                         <div className={styles.featureList}>
+               <div className={styles.featureItem}>
+                 <h3>{t('hotspotSection.features.hotTopic.title' as any)}</h3>
+                 <p>{t('hotspotSection.features.hotTopic.description' as any)}</p>
+               </div>
+               
+               <div className={styles.featureItem}>
+                 <h3>{t('hotspotSection.features.international.title' as any)}</h3>
+                 <p>{t('hotspotSection.features.international.description' as any)}</p>
+               </div>
+             </div>
+           </div>
+           
+           <div className={styles.buildRight}>
+             <div 
+               className={styles.imageCarousel}
+               ref={carouselRef}
+             >
+               <div className={`${styles.carouselContainer} ${styles.mobileContainer}`}>
                 {images.map((image, index) => (
                   <div
                     key={index}
                     className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
                   >
-                    <img 
-                      src={image} 
-                      alt={`AI ToEarn Function ${index + 1}`} 
-                      className={styles.carouselImage}
-                    />
+                                         <img 
+                       src={image} 
+                       alt={`Content Hotspot ${index + 1}`} 
+                       className={styles.mobileCarouselImage}
+                     />
                   </div>
                 ))}
               </div>
@@ -568,7 +1322,486 @@ function ConnectSection() {
               </div>
               
               <div className={styles.carouselHint}>
-                <span>{t('connectSection.carouselHint')}</span>
+                <span>使用滚轮切换图片</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// 3. Content Search — 品牌与市场洞察
+function ContentSearchSection() {
+  const { t } = useTransClient('home');
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [autoRotate, setAutoRotate] = useState(true);
+  const images = [contentSearch.src, contentSearch1.src, contentSearch2.src, contentSearch4.src];
+  const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  
+  // 自动轮播
+  useEffect(() => {
+    if (autoRotate) {
+      autoRotateRef.current = setInterval(() => {
+        setCurrentImageIndex(prev => (prev + 1) % images.length);
+      }, 3000);
+    } else {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+        autoRotateRef.current = null;
+      }
+    }
+    
+    return () => {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+      }
+    };
+  }, [autoRotate, images.length]);
+  
+  // 滚轮控制
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
+        e.preventDefault();
+        
+        if (e.deltaY > 0) {
+          if (currentImageIndex < images.length - 1) {
+            setCurrentImageIndex(prev => prev + 1);
+            setAutoRotate(false);
+          } else {
+            setAutoRotate(true);
+            return;
+          }
+        } else {
+          if (currentImageIndex > 0) {
+            setCurrentImageIndex(prev => prev - 1);
+            setAutoRotate(false);
+          }
+        }
+        
+        setTimeout(() => {
+          setAutoRotate(true);
+        }, 3000);
+      }
+    };
+    
+    const carousel = carouselRef.current;
+    if (carousel) {
+      carousel.addEventListener('wheel', handleWheel, { passive: false });
+      
+      return () => {
+        carousel.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, [currentImageIndex, images.length]);
+
+  return (
+    <section className={styles.buildSection}>
+      <div className={styles.buildContainer}>
+        <div className={styles.sectionBadge}>
+          <div className={styles.badgeIcon}></div>
+          <span>{t('searchSection.badge' as any)}</span>
+        </div>
+        
+        <div className={styles.buildContent}>
+          <div className={styles.buildLeft}>
+            <h2 className={styles.buildTitle}>
+              {t('searchSection.title' as any)}
+              <span className={styles.titleBlue}>{t('searchSection.titleBlue' as any)}</span>
+            </h2>
+            
+                         <div className={styles.featureList}>
+               <div className={styles.featureItem}>
+                 <h3>{t('searchSection.features.hotTopic.title' as any)}</h3>
+                 <p>{t('searchSection.features.hotTopic.description' as any)}</p>
+               </div>
+               
+               <div className={styles.featureItem}>
+                 <h3>{t('searchSection.features.international.title' as any)}</h3>
+                 <p>{t('searchSection.features.international.description' as any)}</p>
+               </div>
+             </div>
+           </div>
+           
+           <div className={styles.buildRight}>
+             <div 
+               className={styles.imageCarousel}
+               ref={carouselRef}
+             >
+               <div className={`${styles.carouselContainer} ${styles.mobileContainer}`}>
+                {images.map((image, index) => (
+                  <div
+                    key={index}
+                    className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
+                  >
+                                         <img 
+                       src={image} 
+                       alt={`Content Search ${index + 1}`} 
+                       className={styles.mobileCarouselImage}
+                     />
+                  </div>
+                ))}
+              </div>
+              
+              <div className={styles.carouselIndicators}>
+                {images.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`${styles.indicator} ${index === currentImageIndex ? styles.active : ''}`}
+                    onClick={() => {
+                      setCurrentImageIndex(index);
+                      setAutoRotate(false);
+                      setTimeout(() => setAutoRotate(true), 3000);
+                    }}
+                  />
+                ))}
+              </div>
+              
+              <div className={styles.carouselHint}>
+                <span>使用滚轮切换图片</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// 4. Comments Search — 精准用户挖掘
+function CommentsSearchSection() {
+  const { t } = useTransClient('home');
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [autoRotate, setAutoRotate] = useState(true);
+  const images = [commentFilter.src];
+  const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  
+  // 自动轮播
+  useEffect(() => {
+    if (autoRotate) {
+      autoRotateRef.current = setInterval(() => {
+        setCurrentImageIndex(prev => (prev + 1) % images.length);
+      }, 3000);
+    } else {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+        autoRotateRef.current = null;
+      }
+    }
+    
+    return () => {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+      }
+    };
+  }, [autoRotate, images.length]);
+  
+  // 滚轮控制
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
+        e.preventDefault();
+        
+        if (e.deltaY > 0) {
+          if (currentImageIndex < images.length - 1) {
+            setCurrentImageIndex(prev => prev + 1);
+            setAutoRotate(false);
+          } else {
+            setAutoRotate(true);
+            return;
+          }
+        } else {
+          if (currentImageIndex > 0) {
+            setCurrentImageIndex(prev => prev - 1);
+            setAutoRotate(false);
+          }
+        }
+        
+        setTimeout(() => {
+          setAutoRotate(true);
+        }, 3000);
+      }
+    };
+    
+    const carousel = carouselRef.current;
+    if (carousel) {
+      carousel.addEventListener('wheel', handleWheel, { passive: false });
+      
+      return () => {
+        carousel.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, [currentImageIndex, images.length]);
+
+  return (
+    <section className={styles.buildSection}>
+      <div className={styles.buildContainer}>
+        <div className={styles.sectionBadge}>
+          <div className={styles.badgeIcon}></div>
+          <span>{t('commentsSection.badge' as any)}</span>
+        </div>
+        
+        <div className={styles.buildContent}>
+          <div className={styles.buildLeft}>
+            <h2 className={styles.buildTitle}>
+              {t('commentsSection.title' as any)}
+              <span className={styles.titleBlue}>{t('commentsSection.titleBlue' as any)}</span>
+            </h2>
+            
+                         <div className={styles.featureList}>
+               <div className={styles.featureItem}>
+                 <h3>{t('commentsSection.features.hotTopic.title' as any)}</h3>
+                 <p>{t('commentsSection.features.hotTopic.description' as any)}</p>
+               </div>
+               
+               <div className={styles.featureItem}>
+                 <h3>{t('commentsSection.features.international.title' as any)}</h3>
+                 <p>{t('commentsSection.features.international.description' as any)}</p>
+               </div>
+             </div>
+           </div>
+           
+           <div className={styles.buildRight}>
+             <div 
+               className={styles.imageCarousel}
+               ref={carouselRef}
+             >
+               <div className={`${styles.carouselContainer} ${styles.mobileContainer}`}>
+                {images.map((image, index) => (
+                  <div
+                    key={index}
+                    className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
+                  >
+                                         <img 
+                       src={image} 
+                       alt={`Comments Search ${index + 1}`} 
+                       className={styles.mobileCarouselImage}
+                     />
+                  </div>
+                ))}
+              </div>
+              
+              <div className={styles.carouselIndicators}>
+                {images.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`${styles.indicator} ${index === currentImageIndex ? styles.active : ''}`}
+                    onClick={() => {
+                      setCurrentImageIndex(index);
+                      setAutoRotate(false);
+                      setTimeout(() => setAutoRotate(true), 3000);
+                    }}
+                  />
+                ))}
+              </div>
+              
+              <div className={styles.carouselHint}>
+                <span>使用滚轮切换图片</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// 5. Content Engagement — 互动与增长引擎
+function ContentEngagementSection() {
+  const { t } = useTransClient('home');
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [autoRotate, setAutoRotate] = useState(true);
+  const images = [commentFilter2.src];
+  const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  
+  // 自动轮播
+  useEffect(() => {
+    if (autoRotate) {
+      autoRotateRef.current = setInterval(() => {
+        setCurrentImageIndex(prev => (prev + 1) % images.length);
+      }, 3000);
+    } else {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+        autoRotateRef.current = null;
+      }
+    }
+    
+    return () => {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+      }
+    };
+  }, [autoRotate, images.length]);
+  
+  // 滚轮控制
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
+        e.preventDefault();
+        
+        if (e.deltaY > 0) {
+          if (currentImageIndex < images.length - 1) {
+            setCurrentImageIndex(prev => prev + 1);
+            setAutoRotate(false);
+          } else {
+            setAutoRotate(true);
+            return;
+          }
+        } else {
+          if (currentImageIndex > 0) {
+            setCurrentImageIndex(prev => prev - 1);
+            setAutoRotate(false);
+          }
+        }
+        
+        setTimeout(() => {
+          setAutoRotate(true);
+        }, 3000);
+      }
+    };
+    
+    const carousel = carouselRef.current;
+    if (carousel) {
+      carousel.addEventListener('wheel', handleWheel, { passive: false });
+      
+      return () => {
+        carousel.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, [currentImageIndex, images.length]);
+
+  return (
+    <section className={styles.buildSection}>
+      <div className={styles.buildContainer}>
+        <div className={styles.sectionBadge}>
+          <div className={styles.badgeIcon}></div>
+          <span>{t('connectSection.badge' as any)}</span>
+        </div>
+        
+        <div className={styles.buildContent}>
+          <div className={styles.buildLeft}>
+            <h2 className={styles.buildTitle}>
+              {t('connectSection.title' as any)}
+              <span className={styles.titleBlue}>{t('connectSection.titleBlue' as any)}</span>
+            </h2>
+            
+                         <div className={styles.featureList}>
+               <div className={styles.featureItem}>
+                 <h3>{t('connectSection.features.creation.title' as any)}</h3>
+                 <p>{t('connectSection.features.creation.description' as any)}</p>
+               </div>
+               
+               <div className={styles.featureItem}>
+                 <h3>{t('connectSection.features.distribution.title' as any)}</h3>
+                 <p>{t('connectSection.features.distribution.description' as any)}</p>
+               </div>
+             </div>
+           </div>
+           
+           <div className={styles.buildRight}>
+             <div 
+               className={styles.imageCarousel}
+               ref={carouselRef}
+             >
+               <div className={`${styles.carouselContainer} ${styles.mobileContainer}`}>
+                {images.map((image, index) => (
+                  <div
+                    key={index}
+                    className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
+                  >
+                                         <img 
+                       src={image} 
+                       alt={`Content Engagement ${index + 1}`} 
+                       className={styles.mobileCarouselImage}
+                     />
+                  </div>
+                ))}
+              </div>
+              
+              <div className={styles.carouselIndicators}>
+                {images.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`${styles.indicator} ${index === currentImageIndex ? styles.active : ''}`}
+                    onClick={() => {
+                      setCurrentImageIndex(index);
+                      setAutoRotate(false);
+                      setTimeout(() => setAutoRotate(true), 3000);
+                    }}
+                  />
+                ))}
+              </div>
+              
+              <div className={styles.carouselHint}>
+                <span>使用滚轮切换图片</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// 6-8. 即将上线功能整合模块
+function UpcomingFeaturesSection() {
+  const { t } = useTransClient('home');
+  
+  return (
+    <section className={styles.buildSection}>
+      <div className={styles.buildContainer}>
+        <div className={styles.sectionBadge}>
+          <div className={styles.badgeIcon}></div>
+          <span>{t('upcomingSection.badge' as any)}</span>
+        </div>
+        
+        <div className={styles.buildContent}>
+          <div className={styles.buildLeft}>
+            <h2 className={styles.buildTitle}>
+              {t('upcomingSection.title' as any)}
+              <span className={styles.titleBlue}>{t('upcomingSection.titleBlue' as any)}</span>
+            </h2>
+            
+            <div className={styles.featureList}>
+              <div className={styles.featureItem}>
+                <h3>{t('upcomingSection.features.smartImport.title' as any)}</h3>
+                <p>{t('upcomingSection.features.smartImport.description' as any)}</p>
+              </div>
+              
+              <div className={styles.featureItem}>
+                <h3>{t('upcomingSection.features.analytics.title' as any)}</h3>
+                <p>{t('upcomingSection.features.analytics.description' as any)}</p>
+              </div>
+              
+              <div className={styles.featureItem}>
+                <h3>{t('upcomingSection.features.aiCreation.title' as any)}</h3>
+                <p>{t('upcomingSection.features.aiCreation.description' as any)}</p>
+              </div>
+              
+              <div className={styles.featureItem}>
+                <h3>{t('upcomingSection.features.marketplace.title' as any)}</h3>
+                <p>{t('upcomingSection.features.marketplace.description' as any)}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className={styles.buildRight}>
+            <div className={styles.imageCarousel}>
+              <div className={styles.carouselContainer}>
+                                 <div className={`${styles.carouselSlide} ${styles.active}`}>
+                   <video 
+                     src={'https://aitoearn.s3.ap-southeast-1.amazonaws.com/production/temp/uploads/890044ad-c3a3-4a4c-8981-0eb72abff538.mp4'}
+                     controls
+                     className={styles.desktopCarouselImage}
+                     style={{ borderRadius: '16px', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.2)' }}
+                   />
+                 </div>
               </div>
             </div>
           </div>
@@ -579,11 +1812,12 @@ function ConnectSection() {
 }
 
 // 移动应用下载区
+import { QRCode } from 'react-qrcode-logo';
 function DownloadSection() {
   const { t } = useTransClient('home');
   
   return (
-    <section className={styles.downloadSection}>
+    <section className={styles.downloadSection} id="download">
       <div className={styles.downloadContainer}>
         <div className={styles.downloadContent}>
           <div className={styles.downloadLeft}>
@@ -597,26 +1831,21 @@ function DownloadSection() {
             </p>
             
             <div className={styles.downloadButtons}>
-              <a href="#app-store" className={styles.downloadBtn}>
+              <a href="https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk" className={styles.downloadBtn} target="_blank" rel="noopener noreferrer">
                 <div className={styles.downloadBtnContent}>
-                  <svg className={styles.downloadIcon} width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" fill="currentColor"/>
-                  </svg>
+                  <AndroidOutlined className={styles.downloadIcon} style={{ fontSize: '24px' }} />
                   <div className={styles.downloadBtnText}>
-                    <span className={styles.downloadOn}>{t('downloadSection.appStore.text')}</span>
-                    <span className={styles.downloadStore}>{t('downloadSection.appStore.store')}</span>
+                    <span className={styles.downloadOn}>立即下载</span>
+                    <span className={styles.downloadStore}>Android APK</span>
                   </div>
                 </div>
               </a>
-              
-              <a href="#google-play" className={styles.downloadBtn}>
+              <a href="https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app" className={styles.downloadBtn} target="_blank" rel="noopener noreferrer">
                 <div className={styles.downloadBtnContent}>
-                  <svg className={styles.downloadIcon} width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" fill="currentColor"/>
-                  </svg>
+                  <AndroidOutlined className={styles.downloadIcon} style={{ fontSize: '24px' }} />
                   <div className={styles.downloadBtnText}>
-                    <span className={styles.downloadOn}>{t('downloadSection.googlePlay.text')}</span>
-                    <span className={styles.downloadStore}>{t('downloadSection.googlePlay.store')}</span>
+                    <span className={styles.downloadOn}>Get it on</span>
+                    <span className={styles.downloadStore}>Google Play</span>
                   </div>
                 </div>
               </a>
@@ -625,6 +1854,18 @@ function DownloadSection() {
           
           <div className={styles.downloadRight}>
             <div className={styles.phoneContainer}>
+
+            <div className={styles.qrCode}>
+                {/* <div className={styles.qrCodeImage}> */}
+                  <QRCode
+                    value="https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk"
+                    size={120}
+                  />
+                {/* </div> */}
+                <p className={styles.qrCodeText}>{t('downloadSection.qrCodeText' as any)}</p>
+              </div>
+
+
               <div className={styles.phoneFrame}>
                 <div className={styles.phoneScreen}>
                   <div className={styles.phoneStatusBar}>
@@ -660,11 +1901,7 @@ function DownloadSection() {
                 </div>
               </div>
               
-              <div className={styles.qrCode}>
-                <div className={styles.qrCodeImage}>
-                  <div className={styles.qrCodePattern}></div>
-                </div>
-              </div>
+              
             </div>
           </div>
         </div>
@@ -844,12 +2081,10 @@ function Footer() {
   const router = useRouter();
   // 背景图片数组
   const backgroundImages = [
-    // '/src/assets/images/logo.png',
-    // '/src/assets/images/vipcard.png',
-    'https://picsum.photos/400/200?random=1',
-    'https://picsum.photos/400/200?random=2',
-    'https://picsum.photos/400/200?random=3',
-    'https://picsum.photos/400/200?random=4',
+    hotspot.src,
+    hotspot2.src,
+    hotspot3.src,
+    hotspot4.src,
   ];
   
   useEffect(() => {
@@ -934,7 +2169,8 @@ function Footer() {
                 backgroundPosition: 'center',
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
-                color: isHovered ? 'transparent' : '#733DEC'
+                color: isHovered ? 'transparent' : '#733DEC',
+                textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
               }}
             >
               Earn
@@ -972,19 +2208,54 @@ function Footer() {
 }
 
 export default function Home() {
+  const [currentModule, setCurrentModule] = useState('home');
+  const { lng } = useParams();
+  const router = useRouter();
+
+  // 检查URL参数来决定显示哪个模块
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const module = urlParams.get('module');
+    if (module === 'pricing') {
+      setCurrentModule('pricing');
+    } else {
+      setCurrentModule('home');
+    }
+  }, []);
+
+  // 处理模块切换
+  const handleModuleChange = (module: string) => {
+    setCurrentModule(module);
+    if (module === 'pricing') {
+      router.push(`/${lng}?module=pricing`);
+    } else {
+      router.push(`/${lng}`);
+    }
+  };
+
   return (
     <div className={styles.difyHome}>
       {/* <ReleaseBanner /> */}
-      <Header />
-      <Hero />
-      <BrandBar />
-      <BuildSection />
-      <ConnectSection />
-      {/* <DownloadSection />
-      <EnterpriseSection />
-      <StatsSection /> */}
-      {/* <CommunitySection /> */}
-      <Footer />
+      <Header currentModule={currentModule} onModuleChange={handleModuleChange} />
+      {currentModule === 'pricing' ? (
+        <PricingModule />
+      ) : (
+        <>
+          <Hero />
+          <BrandBar />
+          <ContentPublishingSection />
+          <ContentHotspotSection />
+          <ContentSearchSection />
+          <CommentsSearchSection />
+          <ContentEngagementSection />
+          <UpcomingFeaturesSection />
+          <DownloadSection />
+          {/*<EnterpriseSection />
+          <StatsSection /> */}
+          {/* <CommunitySection /> */}
+          <Footer />
+        </>
+      )}
     </div>
   );
 }

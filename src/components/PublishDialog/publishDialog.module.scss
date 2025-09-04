@@ -59,6 +59,18 @@ $assistantWidth: 330px;
                 filter: grayscale(0);
               }
             }
+            
+            // 未选中状态：保持置灰
+            &.disabled {
+              & > img {
+                filter: grayscale(100%);
+              }
+              &:hover {
+                img {
+                  filter: grayscale(100%);
+                }
+              }
+            }
           }
         }
       }

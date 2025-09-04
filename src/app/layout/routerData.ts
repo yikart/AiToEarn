@@ -34,7 +34,7 @@ export const routerData: IRouterDataItem[] = [
   },
   {
     name: "AI工具",
-    translationKey: "AI Tools",
+    translationKey: "aiTools",
     path: "/material/ai-generate",
   },
 ];

@@ -13,7 +13,8 @@
     "view": "View",
     "edit": "Edit",
     "delete": "Delete",
-    "link": "Link"
+    "link": "Link",
+    "change": "Change"
   },
   "stats": {
     "followers": "Followers",
@@ -38,7 +39,7 @@
   },
   "pin": {
     "createTitle": "Create New Pin",
-    "selectBoard": "Select Board",
+    "selectBoard": "Pinning To",
     "selectBoardPlaceholder": "Select board to publish to",
     "uploadImage": "Upload Image",
     "uploadImagePlaceholder": "Click to upload image to OSS",
@@ -75,7 +76,8 @@
     "followers": "Followers",
     "owner": "Owner",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "selected": "Selected"
   },
   "empty": {
     "noBoards": "No boards",
@@ -102,7 +104,8 @@
     "selectImageFile": "Please select an image file",
     "imageSizeLimit": "Image size cannot exceed 10MB",
     "imageUploadSuccess": "Image uploaded successfully",
-    "imageUploadFailed": "Image upload failed, please try again"
+    "imageUploadFailed": "Image upload failed, please try again",
+    "noAccountFound": "No Pinterest account found"
   },
   "validation": {
     "boardNameRequired": "Please enter board name",

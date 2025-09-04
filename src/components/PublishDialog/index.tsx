@@ -548,9 +548,10 @@ const PublishDialog = memo(
                         }}
                       >
                         <AvatarPlat
-                          className="publishDialog-con-acconts-item-avatar"
+                          className={`publishDialog-con-acconts-item-avatar ${!isChoosed ? 'disabled' : ''}`}
                           account={pubItem.account}
                           size="large"
+                          disabled={!isChoosed}
                         />
                       </div>
                     );

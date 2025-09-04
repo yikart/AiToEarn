@@ -17,6 +17,7 @@ import {
   updateAccountGroupApi,
 } from "@/api/account";
 import { AccountGroupItem } from "@/api/types/account.type";
+import { useTransClient } from "@/app/i18n/client";
 
 export interface IUserManageSidebarRef {}
 
@@ -37,6 +38,7 @@ const UserManageSidebar = memo(
       { activeGroup, allUser, onChange, onSortEnd }: IUserManageSidebarProps,
       ref: ForwardedRef<IUserManageSidebarRef>,
     ) => {
+      const { t } = useTransClient("account");
       const {
         accountGroupList,
         accountList,
@@ -84,16 +86,16 @@ const UserManageSidebar = memo(
                 setGroupName(rightClickOperateData!.name);
               }}
             >
-              重命名
+              {t("userManageSidebar.rename")}
             </MenuItem>
             <MenuItem
               onClick={() => {
                 confirm({
-                  title: "提示",
+                  title: t("userManageSidebar.confirmDelete"),
                   icon: <ExclamationCircleFilled />,
                   content: (
                     <>
-                      请确认是否删除列表：
+                      {t("userManageSidebar.confirmDeleteContent")}
                       <span
                         style={{
                           color: "var(--colorPrimary6)",
@@ -107,22 +109,22 @@ const UserManageSidebar = memo(
                   onOk: async () => {
                     await deleteAccountGroupApi([rightClickOperateData!.id]);
                     await getAccountGroup();
-                    message.success("删除成功");
+                    message.success(t("userManageSidebar.deleteSuccess"));
                   },
                 });
               }}
             >
-              删除
+              {t("userManageSidebar.delete")}
             </MenuItem>
           </ControlledMenu>
 
           <Modal
             open={openCreateGroup}
-            title={createGroupId === "-1" ? "新建空间" : "重命名空间"}
+            title={createGroupId === "-1" ? t("userManageSidebar.createSpaceTitle") : t("userManageSidebar.renameSpaceTitle")}
             onCancel={createGroupCancel}
             footer={
               <>
-                <Button onClick={createGroupCancel}>取消</Button>
+                <Button onClick={createGroupCancel}>{t("userManageSidebar.cancel")}</Button>
                 <Button
                   type="primary"
                   onClick={async () => {
@@ -144,16 +146,16 @@ const UserManageSidebar = memo(
                   }}
                   loading={createGroupLoading}
                 >
-                  保存
+                  {t("userManageSidebar.save")}
                 </Button>
               </>
             }
           >
             <div className={styles.createGroup}>
-              <label>空间名</label>
+              <label>{t("userManageSidebar.spaceName")}</label>
               <Input
                 value={groupName}
-                placeholder="请输入空间名称"
+                placeholder={t("userManageSidebar.spaceNamePlaceholder")}
                 onChange={(e) => setGroupName(e.target.value)}
               />
             </div>
@@ -170,13 +172,13 @@ const UserManageSidebar = memo(
                   onChange(allUser);
                 }}
               >
-                <span className="userManage-sidebar-name">全部账号</span>
+                <span className="userManage-sidebar-name">{t("userManageSidebar.allAccounts")}</span>
                 <span className="userManage-sidebar-count">
                   {accountList.length}
                 </span>
               </div>
               <div className="userManage-sidebar-list">
-                <p className="userManage-sidebar-list-title">空间</p>
+                <p className="userManage-sidebar-list-title">{t("userManageSidebar.spaces")}</p>
 
                 <ReactSortable
                   className="userManage-sidebar-list-sortable"
@@ -206,7 +208,7 @@ const UserManageSidebar = memo(
                         onContextMenu={(e) => {
                           e.preventDefault();
                           if (v.isDefault) {
-                            return message.error("不能操作默认列表");
+                            return message.error(t("userManageSidebar.cannotOperateDefault"));
                           }
                           setAnchorPoint({ x: e.clientX, y: e.clientY });
                           setOpen(true);
@@ -239,7 +241,7 @@ const UserManageSidebar = memo(
                   setOpenCreateGroup(true);
                 }}
               >
-                新建空间
+                {t("userManageSidebar.createSpace")}
               </Button>
             </div>
           </div>

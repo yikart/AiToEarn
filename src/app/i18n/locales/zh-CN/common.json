@@ -30,6 +30,34 @@
     "materialLibrary": "素材库",
     "draftBox": "草稿箱"
   },
+  "signIn": {
+    "title": "每日签到得积分",
+    "myPoints": "我的积分",
+    "signIn": "签到",
+    "today": "今天",
+    "rules": "签到规则",
+    "rules1": "连续签到 1-7天, 每天1积分",
+    "rules2": "连续签到 8-21天, 每天2积分",
+    "rules3": "连续签到 22天以上, 每天3积分",
+    "signedIn": "已签到",
+    "notSignedIn": "未签到",
+    "signInSuccess": "签到成功",
+    "signInFailed": "签到失败",
+    "alreadySignedIn": "今日已签到",
+    "consecutiveDays": "连续签到天数",
+    "totalPoints": "总积分"
+  },
+  "downloadApp": {
+    "title": "下载{{appName}}",
+    "operationInApp": "请在{{appName}}中操作添加",
+    "description": "为了更好的用户体验和功能完整性，该操作需要在 {{appName}} 中完成账号添加。请下载并安装 {{appName}} 后继续操作。",
+    "scanQrCode": "扫描二维码下载",
+    "downloadLink": "下载链接：",
+    "copy": "复制",
+    "close": "关闭",
+    "downloadNow": "立即下载",
+    "tip": "💡 提示：安装完成后，请在App中登录您的账号，然后重新尝试相关操作"
+  },
   "websit": {
     "termsOfService": {
       "title": "用户协议",

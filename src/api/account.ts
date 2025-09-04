@@ -71,7 +71,6 @@ export const deleteAccountGroupApi = (ids: string[]) => {
 // 获取所有账户组
 export const getAccountGroupApi = async () => {
   const res:any = await http.get<AccountGroupItem[]>("accountGroup/getList");
-  console.log(res.data);
   // res.data.push({
   //   id: "68a6d3e5861d0b23ca010123",
   //   ip: "188.166.188.86",

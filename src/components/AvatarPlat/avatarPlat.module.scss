@@ -9,4 +9,14 @@
     transform: translate(-10%, 20%);
     border-radius: 50%;
   }
+  
+  &.disabled {
+    filter: grayscale(100%);
+    opacity: 0.6;
+    
+    &:hover {
+      filter: grayscale(100%);
+      opacity: 0.6;
+    }
+  }
 }

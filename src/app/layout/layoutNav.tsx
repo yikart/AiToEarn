@@ -26,13 +26,11 @@ function getNameTag(child: IRouterDataItem, iconLoca: number = 1) {
     <>
       {!child.children ? (
         <Link href={path || "/"} target={path[0] === "/" ? "_self" : "_blank"}>
-          {/*@ts-ignore*/}
-          {t(child.translationKey)}
+          {t(child.translationKey as any)}
         </Link>
       ) : (
         <span>
-          {/*@ts-ignore*/}
-          {t(child.translationKey)}
+          {t(child.translationKey as any)}
           {child.children &&
             (iconLoca === 0 ? <UpOutlined /> : <RightOutlined />)}
         </span>
@@ -92,6 +90,7 @@ function ChildNav({
   const [height, setHeight] = useState("auto");
   const animaTime = 0.3;
   const timer = useRef<NodeJS.Timeout>();
+  const { t } = useTransClient("route");
 
   useEffect(() => {
     if (!elRef.current) return;
@@ -148,7 +147,7 @@ function ChildNav({
                     )}
                   </div>
                   <span className={styles["layoutNavPC-one-text"]}>
-                    {v1.name}
+                    {t(v1.translationKey as any)}
                   </span>
                   {v1.children && <RightOutlined />}
                 </ParcelTag>
@@ -166,6 +165,8 @@ function NavPC() {
   const [activeNav, setActiveNav] = useState("");
   const timer = useRef<NodeJS.Timeout>();
   const route = useSelectedLayoutSegments();
+  const { t } = useTransClient("route");
+  
   let currRouter = "/";
   if (route.length === 1) {
     currRouter = route[0];
@@ -192,7 +193,7 @@ function NavPC() {
             onMouseLeave={() => {
               timer.current = setTimeout(() => {
                 setActiveNav("");
-              }, 100);
+              }, 300);
             }}
           >
             {getNameTag(v1, 0)}
@@ -213,10 +214,13 @@ function NavPE() {
   const router = useRouter();
   const { t } = useTransClient("route");
 
-  const translatedMenuItems = peRouterData?.map((item) => ({
-    ...item,
-    // @ts-ignore
-    label: t(item.key as string),
+  const translatedMenuItems = routerData.map((item) => ({
+    key: item.path || item.name,
+    label: t(item.translationKey as any),
+    children: item.children?.map((child) => ({
+      key: child.path || child.name,
+      label: t(child.translationKey as any),
+    })),
   }));
 
   return (
@@ -240,7 +244,6 @@ function NavPE() {
           }}
           style={{ width: "100%" }}
           mode="inline"
-          // @ts-ignore
           items={translatedMenuItems}
         />
       </Drawer>

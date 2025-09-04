@@ -14,7 +14,9 @@ export async function kwaiSkip(platType: PlatType) {
   window.open(res?.data.url);
 
   let queryCount = 0;
-  while (queryCount < 120) {
+  const maxQueryCount = 30; // 最大轮询次数
+  
+  while (queryCount < maxQueryCount) {
     const autoStatusRes = await getKwaiAuthStatus(res.data.taskId);
     
     if (!autoStatusRes?.data) break;
@@ -25,5 +27,10 @@ export async function kwaiSkip(platType: PlatType) {
 
     queryCount++;
     await sleep(1000);
+  }
+  
+  // 如果达到最大轮询次数仍未成功，记录日志
+  if (queryCount >= maxQueryCount) {
+    console.log('快手授权达到最大轮询次数，停止轮询');
   }
 }

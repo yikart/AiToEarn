@@ -112,7 +112,7 @@ export default function AIGeneratePage() {
   const checkFileSize = (file: File): boolean => {
     if (file.size > MAX_IMAGE_SIZE) {
       const sizeInMB = (MAX_IMAGE_SIZE / (1024 * 1024)).toFixed(0);
-      message.error(`图片大小限制: ${sizeInMB}MB`);
+      message.error(`${t('aiGenerate.imageSizeLimit' as any)}: ${sizeInMB}MB`);
       return false;
     }
     return true;
@@ -124,7 +124,7 @@ export default function AIGeneratePage() {
   const checkImageFormat = (file: File): boolean => {
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      message.error(`支持格式: JPG, PNG, WEBP`);
+      message.error(`${t('aiGenerate.imageFormatSupport' as any)}: JPG, PNG, WEBP`);
       return false;
     }
     return true;
@@ -209,6 +209,45 @@ export default function AIGeneratePage() {
   const [imageModels, setImageModels] = useState<any[]>([]);
   const [videoModels, setVideoModels] = useState<any[]>([]);
 
+  // 模型积分消耗映射
+  const modelCreditCosts: Record<string, number> = {
+    'gpt-image-1': 1,
+    'doubao-seedream-3-0-t2i-250415': 2.6
+  };
+
+  // 视频模型积分消耗映射 - 按模型、时长、分辨率组合
+  const videoModelCreditCosts: Record<string, Record<number, Record<string, number>>> = {
+    'doubao-seedance-1-0-pro-250528': {
+      5: { '480p': 7.2, '720p': 16.4, '1080p': 36.7 },
+      10: { '480p': 14.4, '720p': 32.8, '1080p': 73.4 }
+    },
+    'doubao-seedance-1-0-lite-i2v-250428': {
+      5: { '480p': 5, '720p': 11, '1080p': 25 },
+      10: { '480p': 10, '720p': 22, '1080p': 45 }
+    },
+    'doubao-seedance-1-0-lite-t2v-250428': {
+      5: { '480p': 5, '720p': 11, '1080p': 25 },
+      10: { '480p': 10, '720p': 22, '1080p': 45 }
+    },
+    'wan2-1-14b-i2v-250225': {
+      5: { '480p': 12, '720p': 12, '1080p': 36 },
+    },
+    'wan2-1-14b-t2v-250225': {
+      5: { '480p': 12, '720p': 12, '1080p': 36 },
+    }
+  };
+
+  // 获取视频模型积分消耗
+  const getVideoModelCreditCost = (modelName: string, duration: number, size: string): number => {
+    const modelCosts = videoModelCreditCosts[modelName];
+    if (!modelCosts) return 0;
+    
+    const durationCosts = modelCosts[duration];
+    if (!durationCosts) return 0;
+    
+    return durationCosts[size] || 0;
+  };
+
   // 根据模式过滤视频模型列表
   const filteredVideoModels = useMemo(() => {
     if (!Array.isArray(videoModels)) return [] as any[];
@@ -232,7 +271,7 @@ export default function AIGeneratePage() {
         }
       }
     } catch (error) {
-      console.error("获取图片生成模型失败:", error);
+      console.error(t('aiGenerate.getImageModelsFailed' as any), error);
     }
   };
 
@@ -262,7 +301,7 @@ export default function AIGeneratePage() {
         }
       }
     } catch (error) {
-      console.error("获取视频生成模型失败:", error);
+      console.error(t('aiGenerate.getVideoModelsFailed' as any), error);
     }
   };
 
@@ -662,12 +701,22 @@ export default function AIGeneratePage() {
                     onChange={setModel}
                     style={{ width: "100%" }}
                   >
-                    {imageModels.map((modelItem) => (
-                      <Option key={modelItem.name} value={modelItem.name}>
-                        {modelItem.name}
-                      </Option>
-                    ))}
+                    {imageModels.map((modelItem) => {
+                      const creditCost = modelCreditCosts[modelItem.name] || 0;
+                      return (
+                        <Option key={modelItem.name} value={modelItem.name}>
+                          {modelItem.name} {creditCost > 0 && `(${t('aiGenerate.estimatedCreditCost' as any)} ${creditCost} ${t('aiGenerate.credits' as any)})`}
+                        </Option>
+                      );
+                    })}
                   </Select>
+                )}
+                {model && modelCreditCosts[model] && (
+                  <div className={styles.creditCostInfo}>
+                    <span style={{ color: '#1890ff', fontSize: '14px' }}>
+                      💰 {t('aiGenerate.estimatedCreditCost' as any)}: {modelCreditCosts[model]} {t('aiGenerate.credits' as any)}
+                    </span>
+                  </div>
                 )}
                 <Button
                   type="primary"
@@ -816,11 +865,14 @@ export default function AIGeneratePage() {
                       onChange={setVideoModel}
                       style={{ width: "100%" }}
                     >
-                      {(filteredVideoModels as any[]).map((modelItem: any) => (
-                        <Option key={modelItem.name} value={modelItem.name}>
-                          {modelItem.name}
-                        </Option>
-                      ))}
+                      {(filteredVideoModels as any[]).map((modelItem: any) => {
+                        const creditCost = getVideoModelCreditCost(modelItem.name, videoDuration, videoSize);
+                        return (
+                          <Option key={modelItem.name} value={modelItem.name}>
+                            {modelItem.name} {creditCost > 0 && `(${t('aiGenerate.estimatedCreditCost' as any)} ${creditCost} ${t('aiGenerate.credits' as any)})`}
+                          </Option>
+                        );
+                      })}
                     </Select>
                   </div>
                 )}
@@ -908,6 +960,16 @@ export default function AIGeneratePage() {
                     );
                   })()}
                 </div>
+                
+                {/* 显示当前选择的视频模型积分消耗 */}
+                {videoModel && videoDuration && videoSize && (
+                  <div className={styles.creditCostInfo}>
+                    <span style={{ color: '#1890ff', fontSize: '14px' }}>
+                      💰 {t('aiGenerate.estimatedCreditCost' as any)}: {getVideoModelCreditCost(videoModel, videoDuration, videoSize)} {t('aiGenerate.credits' as any)}
+                    </span>
+                  </div>
+                )}
+                
                 <Button
                   type="primary"
                   onClick={handleVideoGeneration}
@@ -967,23 +1029,23 @@ export default function AIGeneratePage() {
               
               {/* 图片要求提示 */}
               <div className={styles.imageRequirements}>
-                <h4>图片要求</h4>
+                <h4>{t('aiGenerate.imageRequirements' as any)}</h4>
                 <div className={styles.requirementsList}>
                   <div className={styles.requirementItem}>
-                    <span className={styles.requirementLabel}>宽高比范围:</span>
-                    <span className={styles.requirementValue}>(0.4, 2.5)</span>
+                    <span className={styles.requirementLabel}>{t('aiGenerate.aspectRatioRange' as any)}:</span>
+                    <span className={styles.requirementValue}>{t('aiGenerate.aspectRatioRangeValue' as any)}</span>
                   </div>
                   <div className={styles.requirementItem}>
-                    <span className={styles.requirementLabel}>宽高长度范围:</span>
-                    <span className={styles.requirementValue}>(300px, 6000px)</span>
+                    <span className={styles.requirementLabel}>{t('aiGenerate.dimensionRange' as any)}:</span>
+                    <span className={styles.requirementValue}>{t('aiGenerate.dimensionRangeValue' as any)}</span>
                   </div>
                   <div className={styles.requirementItem}>
-                    <span className={styles.requirementLabel}>图片大小限制:</span>
-                    <span className={styles.requirementValue}>小于30MB</span>
+                    <span className={styles.requirementLabel}>{t('aiGenerate.imageSizeLimit' as any)}:</span>
+                    <span className={styles.requirementValue}>{t('aiGenerate.imageSizeLimitValue' as any)}</span>
                   </div>
                   <div className={styles.requirementItem}>
-                    <span className={styles.requirementLabel}>支持格式:</span>
-                    <span className={styles.requirementValue}>JPG, PNG, WEBP</span>
+                    <span className={styles.requirementLabel}>{t('aiGenerate.imageFormatSupport' as any)}:</span>
+                    <span className={styles.requirementValue}>{t('aiGenerate.imageFormatSupportValue' as any)}</span>
                   </div>
                 </div>
               </div>

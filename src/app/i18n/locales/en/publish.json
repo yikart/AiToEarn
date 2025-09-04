@@ -41,7 +41,9 @@
     "regionPlaceholder": "Select region",
     "category": "Category",
     "categoryPlaceholder": "Select category",
-    "categoryPlaceholderDisabled": "Select region first"
+    "categoryPlaceholderDisabled": "Select region first",
+    "board": "Board",
+    "boardPlaceholder": "Select Board"
   },
   "upload": {
     "finishingUp": "Finishing up...",
@@ -66,6 +68,7 @@
     "partitionRequired": "You must select a partition!",
     "sourceRequired": "Source must be filled when reprinting!",
     "pageRequired": "You must select a page!",
+    "boardRequired": "You must select a Board!",
     "coverSizeError": "Cover minimum size 400*400!"
   },
   "preview": {
@@ -92,6 +95,7 @@
   },
   "actions": {
     "selectMaterial": "Select Material",
-    "selectDraft": "Select Draft"
+    "selectDraft": "Select Draft",
+    "cropCover": "Crop Cover"
   }
 } 

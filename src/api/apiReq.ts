@@ -18,7 +18,7 @@ export interface RegistCheckParams {
 }
 
 // 获取用户信息
-export const getUserInfoApi = () => {
+export const getUserInfoApi = () => { 
   return http.get<UserInfo>("user/mine");
 };
 
@@ -93,4 +93,14 @@ export const getPointsRecordsApi = async (params: { page: number; pageSize: numb
     params,
   );
   return res;
+};
+
+// 积分充值相关API
+export interface RechargePointsParams {
+  amount: number; // 充值数量（1000积分为单位）
+  totalPrice: number; // 总价格
+}
+
+export const rechargePointsApi = (data: RechargePointsParams) => {
+  return http.post<any>("user/points/recharge", data);
 };

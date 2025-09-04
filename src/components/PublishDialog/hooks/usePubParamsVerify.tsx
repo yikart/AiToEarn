@@ -180,6 +180,18 @@ export default function usePubParamsVerify(data: PubItem[]) {
               break;
           }
         }
+
+        // Pinterest 的强制校验 
+        if (v.account.type === PlatType.Pinterest) {
+          // 强制需要标题
+          if (!v.params.title) {
+            return setErrorMsg(t("validation.titleRequired"));
+          }
+          // 强制需要 选择Board
+          if (!v.params.option.pinterest?.boardId) {
+            return setErrorMsg(t("validation.boardRequired"));
+          }
+        }
       })();
     }
     return errParamsMapTemp;

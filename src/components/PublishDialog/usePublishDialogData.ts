@@ -5,6 +5,7 @@ import { BiblPartItem, YouTubeCategoryItem } from "@/components/PublishDialog/pu
 import { apiGetBilibiliPartitions } from "@/api/plat/bilibili";
 import { apiGetFacebookPages, FacebookPageItem } from "@/api/plat/facebook";
 import { apiGetYouTubeCategories, apiGetYouTubeRegions } from "@/api/plat/youtube";
+import { getPinterestBoardListApi } from "@/api/pinterest";
 import { useAccountStore } from "@/store/account";
 import { PlatType } from "@/app/config/platConfig";
 
@@ -17,6 +18,12 @@ export interface IPublishDialogDataStore {
   youTubeCategories: YouTubeCategoryItem[];
   // YouTube国区列表
   youTubeRegions: string[];
+  // Pinterest Board列表
+  pinterestBoards: Array<{
+    id: string;
+    name: string;
+    description?: string;
+  }>;
 }
 
 const store: IPublishDialogDataStore = {
@@ -24,6 +31,7 @@ const store: IPublishDialogDataStore = {
   facebookPages: [],
   youTubeCategories: [],
   youTubeRegions: [],
+  pinterestBoards: [],
 };
 
 const getStore = () => {
@@ -111,6 +119,24 @@ export const usePublishDialogData = create(
             youTubeCategories: res?.data.items || [],
           });
           return res?.data;
+        },
+        // 获取Pinterest Board列表
+        async getPinterestBoards(forceRefresh = false) {
+          if (!forceRefresh && get().pinterestBoards.length !== 0) return;
+          const pinterestAccount = useAccountStore
+            .getState()
+            .accountList.find((v) => v.type === PlatType.Pinterest);
+          
+          if (!pinterestAccount) {
+            console.warn('没有找到Pinterest账户');
+            return;
+          }
+          
+          const res:any = await getPinterestBoardListApi({ page: 1, size: 100 }, pinterestAccount.account);
+          set({
+            pinterestBoards: res?.data?.list || [],
+          });
+          return res?.data?.list;
         },
       };
 

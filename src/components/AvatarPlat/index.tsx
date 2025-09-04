@@ -14,6 +14,7 @@ export interface IAvatarPlatProps {
   className?: string;
   width?: number;
   avatarWidth?: number;
+  disabled?: boolean;
 }
 
 const getAvatar = (url: string) => {
@@ -33,6 +34,7 @@ const AvatarPlat = memo(
         className,
         width,
         avatarWidth,
+        disabled,
       }: IAvatarPlatProps,
       ref: ForwardedRef<IAvatarPlatRef>,
     ) => {
@@ -50,10 +52,11 @@ const AvatarPlat = memo(
 
       return (
         <>
-          <div className={`${styles.avatarPlat} ${className}`}>
+          <div className={`${styles.avatarPlat} ${className} ${disabled ? styles.disabled : ''}`}>
             <Avatar
               src={getAvatar(account.avatar)}
               size={avatarWidth ? avatarWidth : size}
+              style={disabled ? { opacity: 0.5 } : undefined}
             />
             <img
               src={plat.icon}
@@ -62,9 +65,11 @@ const AvatarPlat = memo(
                   ? {
                       width:
                         size === "large" ? 16 : size === "default" ? 12.5 : 10,
+                      opacity: disabled ? 0.5 : 1,
                     }
                   : {
                       width,
+                      opacity: disabled ? 0.5 : 1,
                     }
               }
             />
