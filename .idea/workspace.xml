@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix: 默认空间国际化">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix: 校验修复">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/hooks/usePubParamsVerify.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/hooks/usePubParamsVerify.tsx" afterDir="false" />
     </list>
@@ -181,7 +181,15 @@
       <workItem from="1755248861702" duration="1282000" />
       <workItem from="1755250365882" duration="16000" />
       <workItem from="1755264622809" duration="72000" />
-      <workItem from="1755484080021" duration="342000" />
+      <workItem from="1755484080021" duration="385000" />
+      <workItem from="1755484608688" duration="46000" />
+      <workItem from="1755592153030" duration="17000" />
+      <workItem from="1755592656980" duration="619000" />
+      <workItem from="1755850232694" duration="30000" />
+      <workItem from="1756092083221" duration="176000" />
+      <workItem from="1756218696332" duration="27000" />
+      <workItem from="1756800029903" duration="29000" />
+      <workItem from="1756968825319" duration="59000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -503,7 +511,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755250153811</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="fix: 校验修复">
+      <option name="closed" value="true" />
+      <created>1755484449640</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1755484449640</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -555,7 +571,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="chore(发布弹框): daysjs 时区统一管理" />
     <MESSAGE value="chore(发布弹框): 拖动修改发布时间完成" />
     <MESSAGE value="fix(日历): 修复更新的问题" />
     <MESSAGE value="feat(发布)：b站添加标题参数" />
@@ -580,6 +595,7 @@
     <MESSAGE value="fix: 删除代理地址" />
     <MESSAGE value="fix: 修复发布记录Dropdown报错" />
     <MESSAGE value="fix: 默认空间国际化" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: 默认空间国际化" />
+    <MESSAGE value="fix: 校验修复" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: 校验修复" />
   </component>
 </project>

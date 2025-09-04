@@ -9,6 +9,8 @@ import { PubType } from "@/app/config/publishConfig";
 export interface ErrPubParamsItem {
   // 参数错误提示消息
   parErrMsg?: string;
+  // 错误状态
+  errStatus?: boolean;
 }
 
 export type ErrPubParamsMapType = Map<string | number, ErrPubParamsItem>;
@@ -134,14 +136,6 @@ export default function usePubParamsVerify(data: PubItem[]) {
             !v.params.option.bilibili.source
           ) {
             return setErrorMsg(t("validation.sourceRequired"));
-          }
-        }
-
-        // 微信公众号的强制校验
-        if (v.account.type === PlatType.WxGzh) {
-          // 强制需要标题
-          if (!v.params.title) {
-            return setErrorMsg(t("validation.titleRequired"));
           }
         }
 
