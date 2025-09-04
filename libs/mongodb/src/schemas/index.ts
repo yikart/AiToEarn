@@ -1,3 +1,4 @@
+import { AiLog, AiLogSchema } from './ai-log.schema'
 import {
   BrowserProfile,
   BrowserProfileSchema,
@@ -19,11 +20,11 @@ import {
   UserSchema,
 } from './user.schema'
 
+export * from './ai-log.schema'
 export * from './browser-profile.schema'
 export * from './cloud-space.schema'
 export * from './multilogin-account.schema'
 export * from './points-record.schema'
-export * from './timestamp.schema'
 export * from './user-wallet-account.schema'
 export * from './user-wallet-record.schema'
 export * from './user-wallet.schema'
@@ -35,4 +36,5 @@ export const schemas = [
   { name: CloudSpace.name, schema: CloudSpaceSchema },
   { name: BrowserProfile.name, schema: BrowserProfileSchema },
   { name: MultiloginAccount.name, schema: MultiloginAccountSchema },
+  { name: AiLog.name, schema: AiLogSchema },
 ] as const

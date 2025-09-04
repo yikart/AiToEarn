@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
+import { AppException, ResponseCode } from '@yikart/common'
 import axios, { AxiosInstance, AxiosResponse } from 'axios'
-import { AppException, ExceptionCode } from '@/common'
 import {
   AdminLogQueryParams,
   ApiResponse,
@@ -50,7 +50,7 @@ export class NewApiService {
           this.logger.error('Response data:', error.response.data)
           this.logger.error('Response status:', error.response.status)
         }
-        throw new AppException(ExceptionCode.NewApiRequestFailed, error.message)
+        throw new AppException(ResponseCode.AiCallFailed, error.message)
       },
     )
 
@@ -81,7 +81,7 @@ export class NewApiService {
           message: `Request failed: ${options.method} ${options.url}`,
           data: response.data,
         })
-        throw new AppException(ExceptionCode.NewApiRequestFailed)
+        throw new AppException(ResponseCode.AiCallFailed)
       }
       return response.data.data
     }

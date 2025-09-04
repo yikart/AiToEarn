@@ -1,10 +1,8 @@
 import { InjectModel } from '@nestjs/mongoose'
 import { Pagination } from '@yikart/common'
-import { Document, FilterQuery, Model } from 'mongoose'
+import { FilterQuery, Model } from 'mongoose'
 import { BrowserProfile } from '../schemas'
 import { BaseRepository } from './base.repository'
-
-export type BrowserProfileDocument = BrowserProfile & Document
 
 export interface ListBrowserProfileParams extends Pagination {
   accountId?: string
@@ -12,17 +10,17 @@ export interface ListBrowserProfileParams extends Pagination {
   cloudSpaceId?: string
 }
 
-export class BrowserProfileRepository extends BaseRepository<BrowserProfileDocument> {
+export class BrowserProfileRepository extends BaseRepository<BrowserProfile> {
   constructor(
-    @InjectModel(BrowserProfile.name) browserProfileModel: Model<BrowserProfileDocument>,
+    @InjectModel(BrowserProfile.name) browserProfileModel: Model<BrowserProfile>,
   ) {
     super(browserProfileModel)
   }
 
-  async listWithPagination(params: ListBrowserProfileParams): Promise<[BrowserProfileDocument[], number]> {
+  async listWithPagination(params: ListBrowserProfileParams): Promise<[BrowserProfile[], number]> {
     const { page, pageSize, accountId, profileId, cloudSpaceId } = params
 
-    const filter: FilterQuery<BrowserProfileDocument> = {}
+    const filter: FilterQuery<BrowserProfile> = {}
     if (accountId)
       filter.accountId = accountId
     if (profileId)
@@ -37,15 +35,15 @@ export class BrowserProfileRepository extends BaseRepository<BrowserProfileDocum
     })
   }
 
-  async findByCloudSpaceId(cloudSpaceId: string): Promise<BrowserProfileDocument[]> {
+  async findByCloudSpaceId(cloudSpaceId: string): Promise<BrowserProfile[]> {
     return await this.find({ cloudSpaceId })
   }
 
-  async listByCloudSpaceId(cloudSpaceId: string): Promise<BrowserProfileDocument[]> {
+  async listByCloudSpaceId(cloudSpaceId: string): Promise<BrowserProfile[]> {
     return await this.findByCloudSpaceId(cloudSpaceId)
   }
 
-  async getByCloudSpaceId(cloudSpaceId: string): Promise<BrowserProfileDocument | null> {
+  async getByCloudSpaceId(cloudSpaceId: string): Promise<BrowserProfile | null> {
     return await this.findOne({ cloudSpaceId })
   }
 

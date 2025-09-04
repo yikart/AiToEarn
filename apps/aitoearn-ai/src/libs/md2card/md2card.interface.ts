@@ -10,8 +10,8 @@ export interface GenerateCardParams {
 }
 
 export interface GenerateCardResult {
-  images: Array<{
+  images: {
     url: string
     fileName: string
-  }>
+  }[]
 }

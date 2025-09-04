@@ -1,5 +1,5 @@
 import { FireflycardTempTypes } from '@libs/fireflycard'
-import { createZodDto } from '@yikart/common'
+import { createZodDto, UserType } from '@yikart/common'
 import { z } from 'zod'
 
 // 图片生成请求
@@ -31,7 +31,7 @@ const imageEditSchema = z.object({
 export class ImageEditDto extends createZodDto(imageEditSchema) {}
 
 // MD2Card生成请求
-const md2CardGenerationSchema = z.object({
+const md2CardSchema = z.object({
   markdown: z.string().describe('要转换的 Markdown 文本'),
   theme: z.string().default('apple-notes').optional().describe('卡片主题样式 ID'),
   themeMode: z.string().optional().describe('主题的模式 ID'),
@@ -42,7 +42,7 @@ const md2CardGenerationSchema = z.object({
   overHiddenMode: z.boolean().default(false).optional().describe('是否启用溢出隐藏模式'),
 })
 
-export class Md2CardGenerationDto extends createZodDto(md2CardGenerationSchema) {}
+export class Md2CardDto extends createZodDto(md2CardSchema) {}
 
 // Fireflycard模板类型枚举
 const fireflycardTempSchema = z.enum(FireflycardTempTypes)
@@ -85,7 +85,7 @@ const fireflycardSwitchConfigSchema = z.object({
 }).optional()
 
 // Fireflycard生成请求
-const fireflycardGenerationSchema = z.object({
+const fireflyCardSchema = z.object({
   content: z.string().min(1).describe('卡片内容'),
   temp: fireflycardTempSchema.default(FireflycardTempTypes.A).describe('模板类型'),
   title: z.string().optional().describe('标题'),
@@ -93,11 +93,12 @@ const fireflycardGenerationSchema = z.object({
   switchConfig: fireflycardSwitchConfigSchema.describe('开关配置'),
 })
 
-export class FireflycardGenerationDto extends createZodDto(fireflycardGenerationSchema) {}
+export class FireflyCardDto extends createZodDto(fireflyCardSchema) {}
 
 // 用户图片生成请求
 const userImageGenerationSchema = z.object({
-  userId: z.string().min(1).describe('用户ID'),
+  userId: z.string(),
+  userType: z.enum(UserType),
   ...imageGenerationSchema.shape,
 })
 
@@ -105,7 +106,8 @@ export class UserImageGenerationDto extends createZodDto(userImageGenerationSche
 
 // 用户图片编辑请求
 const userImageEditSchema = z.object({
-  userId: z.string().min(1).describe('用户ID'),
+  userId: z.string(),
+  userType: z.enum(UserType),
   ...imageEditSchema.shape,
 })
 
@@ -113,7 +115,17 @@ export class UserImageEditDto extends createZodDto(userImageEditSchema) {}
 
 // 用户Md2Card
 const userMd2CardSchema = z.object({
-  userId: z.string().min(1).describe('用户ID'),
-  ...imageEditSchema.shape,
+  userId: z.string(),
+  userType: z.enum(UserType),
+  ...md2CardSchema.shape,
 })
 export class UserMd2CardDto extends createZodDto(userMd2CardSchema) {}
+
+// Fireflycard生成请求
+const userFireflyCardSchema = z.object({
+  userId: z.string(),
+  userType: z.enum(UserType),
+  ...fireflyCardSchema.shape,
+})
+
+export class UserFireflyCardDto extends createZodDto(userFireflyCardSchema) {}

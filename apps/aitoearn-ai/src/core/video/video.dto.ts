@@ -1,4 +1,4 @@
-import { createZodDto } from '@yikart/common'
+import { createZodDto, UserType } from '@yikart/common'
 import { z } from 'zod'
 
 // 通用视频生成请求
@@ -24,7 +24,8 @@ export class VideoTaskQueryDto extends createZodDto(videoTaskQuerySchema) {}
 
 // 通用视频生成请求
 const userVideoGenerationRequestSchema = z.object({
-  userId: z.string().min(1).describe('用户ID'),
+  userId: z.string(),
+  userType: z.enum(UserType),
   ...videoGenerationRequestSchema.shape,
 })
 
@@ -32,7 +33,8 @@ export class UserVideoGenerationRequestDto extends createZodDto(userVideoGenerat
 
 // 通用视频任务状态查询
 const userVideoTaskQuerySchema = z.object({
-  userId: z.string().min(1).describe('用户ID'),
+  userId: z.string(),
+  userType: z.enum(UserType),
   ...videoTaskQuerySchema.shape,
 })
 

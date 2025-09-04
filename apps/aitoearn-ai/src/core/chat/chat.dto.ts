@@ -1,4 +1,4 @@
-import { createZodDto } from '@yikart/common'
+import { createZodDto, UserType } from '@yikart/common'
 import { z } from 'zod'
 
 export const messageContentTextSchema = z.object({
@@ -29,7 +29,7 @@ export const messageContentComplexSchema = z.union([
 ])
 
 const chatMessageSchema = z.object({
-  role: z.enum(['system', 'user', 'assistant']).describe('消息角色'),
+  role: z.string().describe('消息角色'),
   content: z.union([z.string(), z.array(messageContentComplexSchema)]).describe('消息内容'),
 })
 
@@ -47,6 +47,7 @@ export class ChatCompletionDto extends createZodDto(chatCompletionDtoSchema) {}
 
 const userChatCompletionDtoSchema = z.object({
   userId: z.string(),
+  userType: z.enum(UserType),
   ...chatCompletionDtoSchema.shape,
 })
 

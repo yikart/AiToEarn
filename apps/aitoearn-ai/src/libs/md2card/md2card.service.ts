@@ -1,6 +1,5 @@
-import { ExceptionCode } from '@common/enums'
-import { AppException } from '@common/exceptions'
 import { Injectable, Logger } from '@nestjs/common'
+import { AppException, ResponseCode } from '@yikart/common'
 import axios from 'axios'
 import { Md2cardConfig } from './md2card.config'
 import { GenerateCardParams, GenerateCardResult } from './md2card.interface'
@@ -38,7 +37,7 @@ export class Md2cardService {
     }
     catch (error: any) {
       this.logger.error(`MD2Card API 调用失败: ${error.message}`)
-      throw new AppException(ExceptionCode.Md2cardRequestFailed)
+      throw new AppException(ResponseCode.AiCallFailed)
     }
   }
 }

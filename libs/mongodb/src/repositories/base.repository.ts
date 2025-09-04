@@ -1,18 +1,16 @@
 import { Pagination } from '@yikart/common'
-import { Document, FilterQuery, Model, QueryOptions, UpdateQuery } from 'mongoose'
+import { FilterQuery, Model, QueryOptions, UpdateQuery } from 'mongoose'
 
 export interface PaginationParams<TDocument> extends Pagination {
   filter?: FilterQuery<TDocument>
   options?: QueryOptions<TDocument>
 }
 
-export type CreateDocumentType<TDocument> = TDocument extends Document
-  ? Partial<Omit<TDocument, keyof Document>>
-  : TDocument
+export type CreateDocumentType<TDocument> = Partial<TDocument>
 
 export type UpdateDocumentType<TDocument> = UpdateQuery<TDocument>
 
-export class BaseRepository<TDocument extends Document> {
+export class BaseRepository<TDocument> {
   constructor(
     protected readonly model: Model<TDocument>,
   ) {}
@@ -27,7 +25,7 @@ export class BaseRepository<TDocument extends Document> {
   /**
    * 创建新文档
    */
-  async create(data: CreateDocumentType<TDocument>): Promise<TDocument> {
+  async create(data: CreateDocumentType<TDocument>) {
     const created = new this.model(data)
     return await created.save()
   }
@@ -78,7 +76,7 @@ export class BaseRepository<TDocument extends Document> {
   /**
    * 批量删除文档
    */
-  async deleteMany(filter: FilterQuery<TDocument>): Promise<void> {
+  protected async deleteMany(filter: FilterQuery<TDocument>): Promise<void> {
     await this.model.deleteMany(filter).exec()
   }
 

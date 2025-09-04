@@ -18,6 +18,7 @@
     "@yikart/common": "*",
     "mongodb": "~6.18.0",
     "mongoose": "^8.18.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "zod": "^4.0.17"
   }
 }

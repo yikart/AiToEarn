@@ -1,23 +1,27 @@
 import path from 'node:path'
-import { FireflycardService } from '@libs/fireflycard'
-import { Md2cardService } from '@libs/md2card'
-import { OpenaiService } from '@libs/openai'
 import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
 import { S3Service } from '@yikart/aws-s3'
-import { AppException, getExtByMimeType, ImageType, ResponseCode } from '@yikart/common'
+import { AppException, getExtByMimeType, ImageType, ResponseCode, UserType } from '@yikart/common'
+import { AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import parseDataUri from 'data-urls'
 import OpenAI from 'openai'
-import { Uploadable } from 'openai/src/internal/uploads'
 import { config } from '../../config'
+import { FireflycardService } from '../../libs/fireflycard'
+import { Md2cardService } from '../../libs/md2card'
+import { OpenaiService } from '../../libs/openai'
 import {
-  FireflycardGenerationDto,
+  FireflyCardDto,
   ImageEditDto,
   ImageGenerationDto,
-  Md2CardGenerationDto,
+  Md2CardDto,
+  UserFireflyCardDto,
   UserImageEditDto,
   UserImageGenerationDto,
+  UserMd2CardDto,
 } from './image.dto'
+
+type Uploadable = File | Response
 
 @Injectable()
 export class ImageService {
@@ -29,6 +33,7 @@ export class ImageService {
     private readonly openaiService: OpenaiService,
     private readonly md2cardService: Md2cardService,
     private readonly userClient: AitoearnUserClient,
+    private readonly aiLogRepo: AiLogRepository,
   ) {}
 
   /**
@@ -134,7 +139,7 @@ export class ImageService {
   /**
    * MD2Card生成
    */
-  async md2Card(request: Md2CardGenerationDto) {
+  async md2Card(request: Md2CardDto) {
     const result = await this.md2cardService.generateCard(request)
 
     for (const image of result.images) {
@@ -147,7 +152,7 @@ export class ImageService {
   /**
    * Fireflycard生成
    */
-  async fireflyCard(request: FireflycardGenerationDto) {
+  async fireflyCard(request: FireflyCardDto) {
     const reponse = await this.fireflyCardService.createImage(request)
 
     const imagePath = await this.uploadImageToS3(reponse, 'ai/images/md2card')
@@ -175,61 +180,127 @@ export class ImageService {
   }
 
   /**
-   * 用户图片生成
+   * 获取图片模型价格
    */
-  async userImageGeneration(request: UserImageGenerationDto) {
-    const { userId, ...imageParams } = request
-
-    const modelConfig = config.ai.models.image.generation.find(m => m.name === imageParams.model)
+  private getImageModelPricing(model: string, kind: 'generation' | 'edit'): number {
+    const list = kind === 'generation' ? config.ai.models.image.generation : config.ai.models.image.edit
+    const modelConfig = list.find(m => m.name === model)
     if (!modelConfig) {
       throw new AppException(ResponseCode.InvalidModel)
     }
-    const pricing = Number(modelConfig.pricing)
+    return Number(modelConfig.pricing)
+  }
 
-    // 检查用户积分余额
-    const { balance } = await this.userClient.getPointsBalance({ userId })
-    if (balance < pricing) {
-      throw new AppException(ResponseCode.UserPointsInsufficient)
+  /**
+   * 统一的用户请求处理：校验余额、计费、扣费、日志
+   */
+  private async handleUserAiAction<T>(opts: {
+    userId: string
+    userType: UserType
+    model: string
+    type: AiLogType
+    pricing: number
+    request: Record<string, unknown>
+    run: () => Promise<T>
+  }): Promise<T> {
+    const { userId, userType, model, type, pricing, request, run } = opts
+
+    if (pricing > 0 && userType === UserType.User) {
+      const { balance } = await this.userClient.getPointsBalance({ userId })
+      if (balance < pricing) {
+        throw new AppException(ResponseCode.UserPointsInsufficient)
+      }
     }
 
-    // 使用已有的图片生成方法
-    const imageResult = await this.generation(imageParams)
+    const startedAt = new Date()
+    const result = await run()
+    const duration = Date.now() - startedAt.getTime()
 
-    await this.deductUserPoints(
+    if (pricing > 0 && userType === UserType.User) {
+      await this.deductUserPoints(userId, pricing, model)
+    }
+
+    await this.aiLogRepo.create({
       userId,
-      pricing,
-      imageParams.model,
-    )
+      userType,
+      model,
+      type,
+      points: pricing,
+      startedAt,
+      duration,
+      request,
+      status: AiLogStatus.Success,
+      response: result as Record<string, unknown>,
+    })
 
-    return imageResult
+    return result
+  }
+
+  /**
+   * 用户图片生成
+   */
+  async userGeneration(request: UserImageGenerationDto) {
+    const { userId, userType, ...params } = request
+
+    const pricing = this.getImageModelPricing(params.model, 'generation')
+
+    return await this.handleUserAiAction({
+      userId,
+      userType,
+      model: params.model,
+      type: AiLogType.Image,
+      pricing,
+      request: params,
+      run: () => this.generation({ ...params, user: userId }),
+    })
   }
 
   /**
    * 用户图片编辑
    */
-  async userImageEdit(request: UserImageEditDto) {
-    const { userId, ...editParams } = request
+  async userEdit(request: UserImageEditDto) {
+    const { userId, userType, ...params } = request
 
-    const modelConfig = config.ai.models.image.edit.find(m => m.name === editParams.model)
-    if (!modelConfig) {
-      throw new AppException(ResponseCode.InvalidModel)
-    }
-    const pricing = Number(modelConfig.pricing)
+    const pricing = this.getImageModelPricing(params.model, 'edit')
 
-    const { balance } = await this.userClient.getPointsBalance({ userId })
-    if (balance < pricing) {
-      throw new AppException(ResponseCode.UserPointsInsufficient)
-    }
-
-    const imageResult = await this.edit(editParams)
-
-    await this.deductUserPoints(
+    return await this.handleUserAiAction({
       userId,
+      userType,
+      model: params.model,
+      type: AiLogType.Image,
       pricing,
-      editParams.model,
-    )
+      request: params,
+      run: () => this.edit({ ...params, user: userId }),
+    })
+  }
 
-    return imageResult
+  async userMd2Card(request: UserMd2CardDto) {
+    const { userId, userType, ...params } = request
+    const pricing = 2
+
+    return await this.handleUserAiAction({
+      userId,
+      userType,
+      model: 'md2card',
+      type: AiLogType.Card,
+      pricing,
+      request: params,
+      run: () => this.md2Card(params),
+    })
+  }
+
+  async userFireFlyCard(request: UserFireflyCardDto) {
+    const { userId, userType, ...params } = request
+
+    return await this.handleUserAiAction({
+      userId,
+      userType,
+      model: 'fireflyCard',
+      type: AiLogType.Card,
+      pricing: 0,
+      request: params,
+      run: () => this.fireflyCard(params),
+    })
   }
 
   /**

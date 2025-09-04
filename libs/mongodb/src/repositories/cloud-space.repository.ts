@@ -1,10 +1,8 @@
 import { InjectModel } from '@nestjs/mongoose'
-import { CloudSpaceRegion, CloudSpaceStatus, Pagination } from '@yikart/common'
-import { Document, FilterQuery, Model } from 'mongoose'
+import { CloudSpaceRegion, CloudSpaceStatus, Pagination, RangeFilter } from '@yikart/common'
+import { FilterQuery, Model } from 'mongoose'
 import { CloudSpace } from '../schemas'
 import { BaseRepository } from './base.repository'
-
-export type CloudSpaceDocument = CloudSpace & Document
 
 export interface ListCloudSpaceParams extends Pagination {
   userId?: string
@@ -14,20 +12,20 @@ export interface ListCloudSpaceParams extends Pagination {
 
 export interface FindCloudSpacesByDateRangeParams {
   status: CloudSpaceStatus
-  expiredAt?: [Date, Date] | [undefined, Date] | [Date, undefined]
+  expiredAt?: RangeFilter<Date>
 }
 
-export class CloudSpaceRepository extends BaseRepository<CloudSpaceDocument> {
+export class CloudSpaceRepository extends BaseRepository<CloudSpace> {
   constructor(
-    @InjectModel(CloudSpace.name) cloudSpaceModel: Model<CloudSpaceDocument>,
+    @InjectModel(CloudSpace.name) cloudSpaceModel: Model<CloudSpace>,
   ) {
     super(cloudSpaceModel)
   }
 
-  async listWithPagination(params: ListCloudSpaceParams): Promise<[CloudSpaceDocument[], number]> {
+  async listWithPagination(params: ListCloudSpaceParams): Promise<[CloudSpace[], number]> {
     const { page, pageSize, userId, region, status } = params
 
-    const filter: FilterQuery<CloudSpaceDocument> = {}
+    const filter: FilterQuery<CloudSpace> = {}
     if (userId)
       filter.userId = userId
     if (region)
@@ -42,10 +40,10 @@ export class CloudSpaceRepository extends BaseRepository<CloudSpaceDocument> {
     })
   }
 
-  async listByStatus(params: FindCloudSpacesByDateRangeParams): Promise<CloudSpaceDocument[]> {
+  async listByStatus(params: FindCloudSpacesByDateRangeParams): Promise<CloudSpace[]> {
     const { status, expiredAt } = params
 
-    const filter: FilterQuery<CloudSpaceDocument> = {
+    const filter: FilterQuery<CloudSpace> = {
       status,
     }
 
@@ -61,7 +59,7 @@ export class CloudSpaceRepository extends BaseRepository<CloudSpaceDocument> {
         filter.expiredAt = { $lte: end }
       }
       else if (start) {
-        filter.expiredAt = { $gt: start }
+        filter.expiredAt = { $gte: start }
       }
     }
 

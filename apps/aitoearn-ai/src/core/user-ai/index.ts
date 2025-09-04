@@ -1,5 +1,0 @@
-export * from './user-ai.controller'
-export * from './user-ai.dto'
-export * from './user-ai.module'
-export * from './user-ai.service'
-export * from './user-ai.vo'

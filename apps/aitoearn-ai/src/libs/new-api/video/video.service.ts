@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
+import { AppException, ResponseCode } from '@yikart/common'
 import axios, { AxiosInstance, AxiosResponse } from 'axios'
-import { AppException, ExceptionCode } from '@/common'
 import { VideoConfig } from './video.config'
 import {
   VideoGenerationRequest,
@@ -48,7 +48,7 @@ export class VideoService {
           error: error.response.data,
           message: JSON.parse(error.response.data?.message || '{}').error?.message,
         })
-        throw new AppException(ExceptionCode.NewApiRequestFailed, JSON.parse(error.response.data?.message || '{}').error?.message || error.message)
+        throw new AppException(ResponseCode.AiCallFailed, JSON.parse(error.response.data?.message || '{}').error?.message || error.message)
       },
     )
 

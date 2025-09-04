@@ -1,10 +1,8 @@
 import { InjectModel } from '@nestjs/mongoose'
 import { Pagination } from '@yikart/common'
-import { Document, FilterQuery, Model } from 'mongoose'
+import { FilterQuery, Model } from 'mongoose'
 import { MultiloginAccount } from '../schemas'
 import { BaseRepository } from './base.repository'
-
-export type MultiloginAccountDocument = MultiloginAccount & Document
 
 export interface ListMultiloginAccountParams extends Pagination {
   email?: string
@@ -13,17 +11,17 @@ export interface ListMultiloginAccountParams extends Pagination {
   hasAvailableSlots?: boolean
 }
 
-export class MultiloginAccountRepository extends BaseRepository<MultiloginAccountDocument> {
+export class MultiloginAccountRepository extends BaseRepository<MultiloginAccount> {
   constructor(
-    @InjectModel(MultiloginAccount.name) multiloginAccountModel: Model<MultiloginAccountDocument>,
+    @InjectModel(MultiloginAccount.name) multiloginAccountModel: Model<MultiloginAccount>,
   ) {
     super(multiloginAccountModel)
   }
 
-  async listWithPagination(params: ListMultiloginAccountParams): Promise<[MultiloginAccountDocument[], number]> {
+  async listWithPagination(params: ListMultiloginAccountParams): Promise<[MultiloginAccount[], number]> {
     const { page, pageSize, email, minMaxProfiles, maxMaxProfiles, hasAvailableSlots } = params
 
-    const filter: FilterQuery<MultiloginAccountDocument> = {}
+    const filter: FilterQuery<MultiloginAccount> = {}
     if (email)
       filter.email = email
     if (minMaxProfiles !== undefined)

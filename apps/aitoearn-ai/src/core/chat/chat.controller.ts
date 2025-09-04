@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
 import { NatsMessagePattern } from '@yikart/common'
-import { ChatCompletionDto, UserChatCompletionDto } from './chat.dto'
+import { UserChatCompletionDto } from './chat.dto'
 import { ChatService } from './chat.service'
 import { ChatCompletionVo, ChatModelConfigVo } from './chat.vo'
 
@@ -12,13 +12,7 @@ export class ChatController {
   ) {}
 
   @NatsMessagePattern('ai.chat.completion')
-  async chatCompletion(@Payload() data: ChatCompletionDto): Promise<ChatCompletionVo> {
-    const response = await this.chatService.chatCompletion(data)
-    return ChatCompletionVo.create(response)
-  }
-
-  @NatsMessagePattern('ai.user.chat.completion')
-  async userAiChat(@Payload() data: UserChatCompletionDto): Promise<ChatCompletionVo> {
+  async chatCompletion(@Payload() data: UserChatCompletionDto): Promise<ChatCompletionVo> {
     const response = await this.chatService.userChatCompletion(data)
     return ChatCompletionVo.create(response)
   }

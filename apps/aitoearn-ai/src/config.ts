@@ -1,10 +1,10 @@
 import { fireflycardConfigSchema } from '@libs/fireflycard'
 import { md2cardConfigSchema } from '@libs/md2card'
-import { openaiConfigSchema } from '@libs/openai'
+import { newApiConfigSchema } from '@libs/new-api'
 import { s3ConfigSchema } from '@yikart/aws-s3'
 import { baseConfig, createZodDto, selectConfig } from '@yikart/common'
-import { mongodbConfigSchema } from '@yikart/mongodb'
 
+import { mongodbConfigSchema } from '@yikart/mongodb'
 import z from 'zod'
 
 const aiModelsConfigSchema = z.object({
@@ -65,7 +65,7 @@ export const aiConfigSchema = z.object({
   models: aiModelsConfigSchema,
   fireflycard: fireflycardConfigSchema,
   md2card: md2cardConfigSchema,
-  newApi: openaiConfigSchema,
+  newApi: newApiConfigSchema,
 })
 
 export const appConfigSchema = z.object({

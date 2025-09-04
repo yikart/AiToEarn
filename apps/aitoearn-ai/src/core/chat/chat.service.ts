@@ -1,11 +1,13 @@
-import { BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages'
+import { ChatMessage } from '@langchain/core/dist/messages/chat'
+import { BaseMessage } from '@langchain/core/messages'
 import { OpenAIClient } from '@langchain/openai'
-import { OpenaiService } from '@libs/openai'
 import { Injectable, Logger } from '@nestjs/common'
 import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
-import { AppException, ResponseCode } from '@yikart/common'
+import { AppException, ResponseCode, UserType } from '@yikart/common'
+import { AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import { BigNumber } from 'bignumber.js'
 import { config } from '../../config'
+import { OpenaiService } from '../../libs/openai'
 import { ChatCompletionDto, UserChatCompletionDto } from './chat.dto'
 
 @Injectable()
@@ -15,18 +17,14 @@ export class ChatService {
   constructor(
     private readonly openaiService: OpenaiService,
     private readonly userClient: AitoearnUserClient,
+    private readonly aiLogRepo: AiLogRepository,
   ) {}
 
   async chatCompletion(request: ChatCompletionDto) {
     const { messages, model, ...params } = request
 
     const langchainMessages: BaseMessage[] = messages.map((message) => {
-      if (message.role === 'system') {
-        return new SystemMessage(message)
-      }
-      else {
-        return new HumanMessage(message)
-      }
+      return new ChatMessage(message)
     })
 
     const result = await this.openaiService.createChatCompletion({
@@ -42,9 +40,9 @@ export class ChatService {
     }
 
     return {
-      content: result.content,
       model,
       usage,
+      ...result,
     }
   }
 
@@ -70,19 +68,24 @@ export class ChatService {
     })
   }
 
-  async userChatCompletion({ userId, ...params }: UserChatCompletionDto) {
+  async userChatCompletion({ userId, userType, ...params }: UserChatCompletionDto) {
     const modelConfig = config.ai.models.chat.find(m => m.name === params.model)
     if (!modelConfig) {
       throw new AppException(ResponseCode.InvalidModel)
     }
     const pricing = Number(modelConfig.pricing)
-
-    const { balance } = await this.userClient.getPointsBalance({ userId })
-    if (balance < pricing) {
-      throw new AppException(ResponseCode.UserPointsInsufficient)
+    if (userType === UserType.User) {
+      const { balance } = await this.userClient.getPointsBalance({ userId })
+      if (balance < pricing) {
+        throw new AppException(ResponseCode.UserPointsInsufficient)
+      }
     }
 
+    const startedAt = new Date()
+
     const result = await this.chatCompletion(params)
+
+    const duration = Date.now() - startedAt.getTime()
 
     const { usage } = result
 
@@ -90,12 +93,27 @@ export class ChatService {
     const completion = new BigNumber(usage.output_tokens).div('1000').times(modelConfig.pricing.completion)
     const points = prompt.plus(completion).toNumber()
 
-    await this.deductUserPoints(
+    if (userType === UserType.User) {
+      await this.deductUserPoints(
+        userId,
+        points,
+        modelConfig.name,
+        usage,
+      )
+    }
+
+    await this.aiLogRepo.create({
       userId,
-      points,
-      modelConfig.name,
-      usage,
-    )
+      userType,
+      model: params.model,
+      startedAt,
+      duration,
+      type: AiLogType.Chat,
+      points: pricing,
+      request: params,
+      response: result,
+      status: AiLogStatus.Success,
+    })
 
     return {
       ...result,

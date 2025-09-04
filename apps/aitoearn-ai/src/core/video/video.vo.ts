@@ -1,3 +1,4 @@
+import { createZodDto } from '@yikart/common'
 import { z } from 'zod'
 
 // 通用视频生成响应
