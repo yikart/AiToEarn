@@ -1,18 +1,15 @@
-import path from 'node:path'
 import { Injectable } from '@nestjs/common'
 import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
-import { S3Service } from '@yikart/aws-s3'
 import { AppException, ResponseCode, UserType } from '@yikart/common'
 import { AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import { config } from '../../config'
-import { VideoService as NewApiVideoService } from '../../libs/new-api'
+import { VideoService as NewApiVideoService, VideoTaskStatusResponse } from '../../libs/new-api'
 import { UserVideoGenerationRequestDto, UserVideoTaskQueryDto } from './video.dto'
 
 @Injectable()
 export class VideoService {
   constructor(
     private readonly videoService: NewApiVideoService,
-    private readonly s3Service: S3Service,
     private readonly userClient: AitoearnUserClient,
     private readonly aiLogRepo: AiLogRepository,
   ) {}
@@ -97,17 +94,18 @@ export class VideoService {
   async getVideoTaskStatus(request: UserVideoTaskQueryDto) {
     const { taskId } = request
 
-    const result = await this.videoService.getVideoTaskStatus({
-      apiKey: config.ai.newApi.apiKey,
-      taskId,
-    })
-
-    if (result.fail_reason && result.fail_reason.startsWith('http')) {
-      const filename = `${taskId}-${path.basename(result.fail_reason.split('?')[0])}`
-      const res = await this.s3Service.putObjectFromUrl(result.fail_reason, `ai/videos/${filename}`)
-      result.fail_reason = res.path
+    const aiLog = await this.aiLogRepo.getByTaskId(taskId)
+    if (aiLog == null) {
+      throw new AppException(ResponseCode.InvalidAiTaskId)
     }
-    return result
+    if (aiLog.status === AiLogStatus.Generating) {
+      const result = await this.videoService.getVideoTaskStatus({
+        apiKey: config.ai.newApi.apiKey,
+        taskId,
+      })
+      return result
+    }
+    return aiLog.response as unknown as VideoTaskStatusResponse
   }
 
   /**

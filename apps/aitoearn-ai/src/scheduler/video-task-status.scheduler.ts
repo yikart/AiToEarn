@@ -1,6 +1,8 @@
+import path from 'node:path'
 import { Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
 import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
+import { S3Service } from '@yikart/aws-s3'
 import { UserType } from '@yikart/common'
 import { AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import { config } from '../config'
@@ -14,6 +16,7 @@ export class VideoTaskStatusScheduler {
     private readonly aiLogRepo: AiLogRepository,
     private readonly videoService: VideoService,
     private readonly userClient: AitoearnUserClient,
+    private readonly s3Service: S3Service,
   ) {}
 
   /**
@@ -48,6 +51,11 @@ export class VideoTaskStatusScheduler {
       })
 
       if (result.status === 'SUCCESS') {
+        if (result.fail_reason && result.fail_reason.startsWith('http')) {
+          const filename = `${taskId}-${path.basename(result.fail_reason.split('?')[0])}`
+          const res = await this.s3Service.putObjectFromUrl(result.fail_reason, `ai/videos/${filename}`)
+          result.fail_reason = res.path
+        }
         if (task.points > 0 && task.userType === UserType.User) {
           await this.userClient.deductPoints({
             userId: task.userId,

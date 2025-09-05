@@ -1,11 +1,11 @@
-import { fireflycardConfigSchema } from '@libs/fireflycard'
-import { md2cardConfigSchema } from '@libs/md2card'
-import { newApiConfigSchema } from '@libs/new-api'
 import { s3ConfigSchema } from '@yikart/aws-s3'
 import { baseConfig, createZodDto, selectConfig } from '@yikart/common'
-
 import { mongodbConfigSchema } from '@yikart/mongodb'
 import z from 'zod'
+import { fireflycardConfigSchema } from './libs/fireflycard'
+
+import { md2cardConfigSchema } from './libs/md2card'
+import { newApiConfigSchema } from './libs/new-api'
 
 const aiModelsConfigSchema = z.object({
   chat: z.array(z.object({

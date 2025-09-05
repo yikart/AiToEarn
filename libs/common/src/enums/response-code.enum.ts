@@ -31,4 +31,5 @@ export enum ResponseCode {
   // 13000 (ai)
   InvalidModel = 13000,
   AiCallFailed = 13001,
+  InvalidAiTaskId = 13002,
 }
