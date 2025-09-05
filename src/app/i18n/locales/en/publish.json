@@ -122,7 +122,7 @@
     },
     "commercial": {
       "title": "Disclose video content",
-      "toggle": "Turn on to disclose that this video promotes goods or services in exchange for something of value. Your video could promote yourself, a third party, or both.",
+      "toggle": "Turn on to disclose that this video promotes goods orservices in exchange for something of value. Your video",
       "yourBrand": "Your Brand - You are promoting yourself or your own business. This content will be classified as Brand Organic.",
       "brandedContent": "Branded Content - You are promoting another brand or a third party. This content will be classified as Branded Content."
     },

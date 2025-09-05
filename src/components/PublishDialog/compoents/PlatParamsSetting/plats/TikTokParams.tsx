@@ -82,19 +82,45 @@ const TikTokParams = memo(
         }
       };
 
-      // 获取合规声明文本
-      const getComplianceText = () => {
+      // 获取合规声明文本和链接
+      const getComplianceContent = () => {
         const { brand_organic_toggle, brand_content_toggle } = pubItem.params.option.tiktok || {};
         
+        // 根据选择确定链接
+        const linkUrl = brand_content_toggle 
+          ? 'https://www.tiktok.com/legal/page/global/bc-policy/en'
+          : 'https://www.tiktok.com/legal/page/global/music-usage-confirmation/en';
+        
+        // 根据选择确定文本
+        let text = '';
         if (brand_organic_toggle && brand_content_toggle) {
-          return t('tiktok.compliance.both' as any);
+          text = t('tiktok.compliance.both' as any);
         } else if (brand_content_toggle) {
-          return t('tiktok.compliance.branded' as any);
+          text = t('tiktok.compliance.branded' as any);
         } else if (brand_organic_toggle) {
-          return t('tiktok.compliance.organic' as any);
+          text = t('tiktok.compliance.organic' as any);
         } else {
-          return t('tiktok.compliance.default' as any);
+          text = t('tiktok.compliance.default' as any);
         }
+        
+        // 返回整个文本作为可点击的链接
+        return (
+          // <></>
+          <a 
+            href={linkUrl} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{ 
+              color: '#1890ff', 
+              textDecoration: 'underline',
+              cursor: 'pointer',
+              display: 'block',
+              width: '100%'
+            }}
+          >
+            {text}
+          </a>
+        );
       };
 
       return (
@@ -103,7 +129,7 @@ const TikTokParams = memo(
             {...pubParmasTextareaCommonParams}
             extend={
               <>
-                <CommonTitleInput pubItem={pubItem} />
+                <CommonTitleInput pubItem={pubItem}  />
                 
                 {/* Creator Info Display */}
                 {creatorInfo && (
@@ -132,7 +158,7 @@ const TikTokParams = memo(
                   <div className={styles.commonTitleInput} style={{ marginTop: "10px" }}>
                                          <div className="platParamsSetting-label">{t('tiktok.privacy.title' as any)}</div>
                     <Select
-                      style={{ width: "100%" }}
+                      style={{ width: "100%", marginLeft: '3px' }}
                       value={pubItem.params.option.tiktok?.privacy_level}
                       onChange={(value) => {
                         const option = pubItem.params.option;
@@ -151,7 +177,7 @@ const TikTokParams = memo(
                 {/* Allow users to interact */}
                 <div className={styles.commonTitleInput} style={{ marginTop: "10px" }}>
                                      <div className="platParamsSetting-label">{t('tiktok.interactions.title' as any)}</div>
-                  <div style={{ display: 'flex', flexDirection: 'row', gap: '8px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'row', gap: '8px', marginLeft: '3px' }}>
                     <Checkbox
                       checked={!pubItem.params.option.tiktok?.comment_disabled}
                       disabled={creatorInfo?.comment_disabled}
@@ -191,7 +217,7 @@ const TikTokParams = memo(
                 {/* Commercial Content Disclosure */}
                 <div className={styles.commonTitleInput} style={{ marginTop: "10px" }}>
                                      <div className="platParamsSetting-label">{t('tiktok.commercial.title' as any)}</div>
-                  <div style={{ marginBottom: '8px' }}>
+                  <div style={{ marginBottom: '0px' }}>
                     {/* <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
                       当前状态: {JSON.stringify({
                         brand_organic_toggle: pubItem.params.option.tiktok?.brand_organic_toggle,
@@ -201,6 +227,8 @@ const TikTokParams = memo(
                     </div> */}
                     <Switch
                       checked={pubItem.params.option.tiktok?.brand_organic_toggle || pubItem.params.option.tiktok?.brand_content_toggle}
+                      size="small"
+                      style={{ marginTop: '2px', marginLeft: '3px' }}
                       onChange={(checked) => {
                         console.log('TikTok Switch changed:', checked);
                         const option = { ...pubItem.params.option };
@@ -235,7 +263,7 @@ const TikTokParams = memo(
                 </div>
 
                 {(pubItem.params.option.tiktok?.brand_organic_toggle || pubItem.params.option.tiktok?.brand_content_toggle) && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px', fontSize: '12px' }}>
                       <Checkbox
                         checked={pubItem.params.option.tiktok?.brand_organic_toggle}
                         onChange={(e) => {
@@ -274,20 +302,22 @@ const TikTokParams = memo(
                           setOnePubParams({ option }, pubItem.account.id);
                         }}
                       >
-                                                 {t('tiktok.commercial.brandedContent' as any)}
+                      {t('tiktok.commercial.brandedContent' as any)} 11
                       </Checkbox>
+
+                      {/* Compliance Declaration */}
+                      <div className={styles.commonTitleInput} style={{ marginTop: "10px" }}>
+                        <Alert
+                          description={getComplianceContent()}
+                          type="info"
+                          showIcon
+                          style={{ fontSize: '12px', padding: '3px 6px' }}
+                        />
+                      </div>
                     </div>
                   )}
 
-                {/* Compliance Declaration */}
-                <div className={styles.commonTitleInput} style={{ marginTop: "10px" }}>
-                  <Alert
-                    message={getComplianceText()}
-                    type="info"
-                    showIcon
-                    style={{ fontSize: '12px' }}
-                  />
-                </div>
+                
               </>
             }
           />
