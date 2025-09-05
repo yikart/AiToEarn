@@ -9,6 +9,7 @@ import InstagramParams from "@/components/PublishDialog/compoents/PlatParamsSett
 import YouTubeParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/YouTubeParams";
 import WxGzhParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/WxGzhParams";
 import PinterestParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/PinterestParams";
+import TikTokParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/TikTokParams";
 import { useShallow } from "zustand/react/shallow";
 import { PubItem } from "@/components/PublishDialog/publishDialog.type";
 
@@ -53,6 +54,8 @@ const PlatParamsSetting = memo(
             return <YouTubeParams pubItem={pubItem} />;
           case PlatType.Pinterest:
             return <PinterestParams pubItem={pubItem} />;
+          case PlatType.Tiktok:
+            return <TikTokParams pubItem={pubItem} />;
           default:
             return <KwaiParams pubItem={pubItem} />;
         }
