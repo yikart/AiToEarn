@@ -206,11 +206,12 @@ $assistantWidth: 330px;
         }
       }
       &-video-info {
-        background: rgba(0, 0, 0, 0.8);
+        background: rgba(0, 0, 0, 0.9);
         color: white;
         padding: 12px 16px;
         border-radius: 0 0 30px 30px;
         font-size: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
         &-item {
           display: flex;
           justify-content: space-between;
@@ -221,16 +222,18 @@ $assistantWidth: 330px;
           }
         }
         &-label {
-          font-weight: 500;
-          color: #ccc;
+          font-weight: 600;
+          color: #e0e0e0;
           min-width: 60px;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
         }
         &-value {
-          color: white;
-          font-weight: 400;
+          color: #ffffff;
+          font-weight: 500;
           text-align: right;
           flex: 1;
           margin-left: 8px;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
         }
       }
     }
