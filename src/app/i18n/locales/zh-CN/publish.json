@@ -97,5 +97,33 @@
     "selectMaterial": "选择素材",
     "selectDraft": "选择草稿",
     "cropCover": "裁剪封面"
+  },
+  "tiktok": {
+    "creatorInfo": "创作者信息",
+    "privacy": {
+      "title": "谁可以观看此视频",
+      "placeholder": "请选择隐私级别",
+      "public": "公开",
+      "friends": "朋友",
+      "private": "仅自己"
+    },
+    "interactions": {
+      "title": "允许用户",
+      "comment": "评论",
+      "duet": "合拍",
+      "stitch": "拼接"
+    },
+    "commercial": {
+      "title": "披露视频内容",
+      "toggle": "开启以披露此视频推广商品或服务以换取价值。",
+      "yourBrand": "您的品牌 - 您正在推广自己或自己的业务。此内容将被分类为品牌有机内容。",
+      "brandedContent": "品牌内容 - 您正在推广另一个品牌或第三方。此内容将被分类为品牌内容。"
+    },
+    "compliance": {
+      "default": "发布即表示您同意 TikTok 的音乐使用确认。",
+      "organic": "发布即表示您同意 TikTok 的音乐使用确认。",
+      "branded": "发布即表示您同意 TikTok 的品牌内容政策音乐使用确认。",
+      "both": "发布即表示您同意 TikTok 的品牌内容政策音乐使用确认。"
+    }
   }
 } 
