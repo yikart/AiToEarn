@@ -73,7 +73,14 @@
   },
   "preview": {
     "title": "Preview",
-    "emptyDescription": "See your work preview here"
+    "emptyDescription": "See your work preview here",
+    "videoInfo": {
+      "filename": "Filename",
+      "format": "Format",
+      "resolution": "Resolution",
+      "size": "Size",
+      "duration": "Duration"
+    }
   },
   "draft": {
     "selectDraft": "Select Draft",

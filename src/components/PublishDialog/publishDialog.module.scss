@@ -205,6 +205,34 @@ $assistantWidth: 330px;
           border-radius: 0;
         }
       }
+      &-video-info {
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 0 0 30px 30px;
+        font-size: 12px;
+        &-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 4px;
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+        &-label {
+          font-weight: 500;
+          color: #ccc;
+          min-width: 60px;
+        }
+        &-value {
+          color: white;
+          font-weight: 400;
+          text-align: right;
+          flex: 1;
+          margin-left: 8px;
+        }
+      }
     }
     .publishDialogPreview-wrapper {
       text-align: left;

@@ -73,7 +73,14 @@
   },
   "preview": {
     "title": "预览",
-    "emptyDescription": "在这里看到你的作品预览"
+    "emptyDescription": "在这里看到你的作品预览",
+    "videoInfo": {
+      "filename": "文件名",
+      "format": "格式",
+      "resolution": "分辨率",
+      "size": "大小",
+      "duration": "时长"
+    }
   },
   "draft": {
     "selectDraft": "选择草稿",
