@@ -18,7 +18,7 @@ const { Option } = Select;
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { userInfo, setUserInfo, clearLoginStatus, token } = useUserStore();
+  const { userInfo, setUserInfo, clearLoginStatus, token, lang } = useUserStore();
   const { t } = useTransClient('profile');
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -355,7 +355,7 @@ export default function ProfilePage() {
   const handleRechargeSubmit = async (values: any) => {
     try {
       const response = await createPaymentOrderApi({
-        success_url: `${window.location.origin}/profile`,
+        success_url: lang === 'zh-CN' ? "/zh-CN/profile" : "/en/profile",
         mode: 'payment',
         payment: VipPaymentType.POINTS,
         quantity: rechargeAmount, // 购买几份1000积分的资源包
