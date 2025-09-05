@@ -60,7 +60,10 @@ const TikTokParams = memo(
             brand_organic_toggle: false,
             brand_content_toggle: false,
           };
+          console.log('Initializing TikTok options:', option.tiktok);
           setOnePubParams({ option }, pubItem.account.id);
+        } else {
+          console.log('TikTok options already exist:', option.tiktok);
         }
         fetchCreatorInfo();
       }, [pubItem.account.id, pubItem.account.account]);
@@ -189,27 +192,65 @@ const TikTokParams = memo(
                 <div className={styles.commonTitleInput} style={{ marginTop: "10px" }}>
                                      <div className="platParamsSetting-label">{t('tiktok.commercial.title' as any)}</div>
                   <div style={{ marginBottom: '8px' }}>
+                    {/* <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
+                      当前状态: {JSON.stringify({
+                        brand_organic_toggle: pubItem.params.option.tiktok?.brand_organic_toggle,
+                        brand_content_toggle: pubItem.params.option.tiktok?.brand_content_toggle,
+                        switch_checked: pubItem.params.option.tiktok?.brand_organic_toggle || pubItem.params.option.tiktok?.brand_content_toggle
+                      })}
+                    </div> */}
                     <Switch
                       checked={pubItem.params.option.tiktok?.brand_organic_toggle || pubItem.params.option.tiktok?.brand_content_toggle}
                       onChange={(checked) => {
-                        const option = pubItem.params.option;
-                        if (!checked) {
-                          option.tiktok!.brand_organic_toggle = false;
-                          option.tiktok!.brand_content_toggle = false;
+                        console.log('TikTok Switch changed:', checked);
+                        const option = { ...pubItem.params.option };
+                        if (!option.tiktok) {
+                          option.tiktok = {
+                            privacy_level: '',
+                            comment_disabled: false,
+                            duet_disabled: false,
+                            stitch_disabled: false,
+                            brand_organic_toggle: false,
+                            brand_content_toggle: false,
+                          };
                         }
+                        
+                        if (!checked) {
+                          // 关闭时，清空所有商业内容选项
+                          option.tiktok.brand_organic_toggle = false;
+                          option.tiktok.brand_content_toggle = false;
+                        } else {
+                          // 开启时，默认选择"您的品牌"选项
+                          option.tiktok.brand_organic_toggle = true;
+                          option.tiktok.brand_content_toggle = false;
+                        }
+                        console.log('TikTok options after change:', option.tiktok);
                         setOnePubParams({ option }, pubItem.account.id);
                       }}
                     />
                                          <span style={{ marginLeft: '8px', fontSize: '11px' }}>{t('tiktok.commercial.toggle' as any)}</span>
                   </div>
                   
-                  {(pubItem.params.option.tiktok?.brand_organic_toggle || pubItem.params.option.tiktok?.brand_content_toggle) && (
+                
+                </div>
+
+                {(pubItem.params.option.tiktok?.brand_organic_toggle || pubItem.params.option.tiktok?.brand_content_toggle) && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
                       <Checkbox
                         checked={pubItem.params.option.tiktok?.brand_organic_toggle}
                         onChange={(e) => {
-                          const option = pubItem.params.option;
-                          option.tiktok!.brand_organic_toggle = e.target.checked;
+                          const option = { ...pubItem.params.option };
+                          if (!option.tiktok) {
+                            option.tiktok = {
+                              privacy_level: '',
+                              comment_disabled: false,
+                              duet_disabled: false,
+                              stitch_disabled: false,
+                              brand_organic_toggle: false,
+                              brand_content_toggle: false,
+                            };
+                          }
+                          option.tiktok.brand_organic_toggle = e.target.checked;
                           setOnePubParams({ option }, pubItem.account.id);
                         }}
                       >
@@ -218,8 +259,18 @@ const TikTokParams = memo(
                       <Checkbox
                         checked={pubItem.params.option.tiktok?.brand_content_toggle}
                         onChange={(e) => {
-                          const option = pubItem.params.option;
-                          option.tiktok!.brand_content_toggle = e.target.checked;
+                          const option = { ...pubItem.params.option };
+                          if (!option.tiktok) {
+                            option.tiktok = {
+                              privacy_level: '',
+                              comment_disabled: false,
+                              duet_disabled: false,
+                              stitch_disabled: false,
+                              brand_organic_toggle: false,
+                              brand_content_toggle: false,
+                            };
+                          }
+                          option.tiktok.brand_content_toggle = e.target.checked;
                           setOnePubParams({ option }, pubItem.account.id);
                         }}
                       >
@@ -227,7 +278,6 @@ const TikTokParams = memo(
                       </Checkbox>
                     </div>
                   )}
-                </div>
 
                 {/* Compliance Declaration */}
                 <div className={styles.commonTitleInput} style={{ marginTop: "10px" }}>
