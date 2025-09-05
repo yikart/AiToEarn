@@ -209,11 +209,11 @@ export default function AIGeneratePage() {
   const [imageModels, setImageModels] = useState<any[]>([]);
   const [videoModels, setVideoModels] = useState<any[]>([]);
 
-  // 模型积分消耗映射
-  const modelCreditCosts: Record<string, number> = {
-    'gpt-image-1': 1,
-    'doubao-seedream-3-0-t2i-250415': 2.6
-  };
+  // 模型积分消耗映射 - 现在从接口获取，不再写死
+  // const modelCreditCosts: Record<string, number> = {
+  //   'gpt-image-1': 1,
+  //   'doubao-seedream-3-0-t2i-250415': 2.6
+  // };
 
   // 视频模型积分消耗映射 - 按模型、时长、分辨率组合
   const videoModelCreditCosts: Record<string, Record<number, Record<string, number>>> = {
@@ -702,7 +702,7 @@ export default function AIGeneratePage() {
                     style={{ width: "100%" }}
                   >
                     {imageModels.map((modelItem) => {
-                      const creditCost = modelCreditCosts[modelItem.name] || 0;
+                      const creditCost = modelItem.pricing ? parseFloat(modelItem.pricing) : 0;
                       return (
                         <Option key={modelItem.name} value={modelItem.name}>
                           {modelItem.name} {creditCost > 0 && `(${t('aiGenerate.estimatedCreditCost' as any)} ${creditCost} ${t('aiGenerate.credits' as any)})`}
@@ -711,13 +711,17 @@ export default function AIGeneratePage() {
                     })}
                   </Select>
                 )}
-                {model && modelCreditCosts[model] && (
-                  <div className={styles.creditCostInfo}>
-                    <span style={{ color: '#1890ff', fontSize: '14px' }}>
-                      💰 {t('aiGenerate.estimatedCreditCost' as any)}: {modelCreditCosts[model]} {t('aiGenerate.credits' as any)}
-                    </span>
-                  </div>
-                )}
+                {model && (() => {
+                  const selectedModel = imageModels.find(m => m.name === model);
+                  const creditCost = selectedModel?.pricing ? parseFloat(selectedModel.pricing) : 0;
+                  return creditCost > 0 ? (
+                    <div className={styles.creditCostInfo}>
+                      <span style={{ color: '#1890ff', fontSize: '14px' }}>
+                        💰 {t('aiGenerate.estimatedCreditCost' as any)}: {creditCost} {t('aiGenerate.credits' as any)}
+                      </span>
+                    </div>
+                  ) : null;
+                })()}
                 <Button
                   type="primary"
                   onClick={handleTextToImage}
