@@ -400,8 +400,8 @@ const PublishDialog = memo(
             accountType: item.account.type,
             videoUrl: item.params.video?.ossUrl,
             coverUrl:
-              item.params.video?.cover.ossUrl || item.params.images![0].ossUrl!,
-            imgUrlList: item.params.images?.map((v) => v.ossUrl!),
+              item.params.video?.cover.ossUrl || (item.params.images && item.params.images.length > 0 ? item.params.images[0].ossUrl : undefined),
+            imgUrlList: item.params.images?.map((v) => v.ossUrl).filter((url): url is string => url !== undefined) || [],
             publishTime,
             option: item.params.option,
           });
