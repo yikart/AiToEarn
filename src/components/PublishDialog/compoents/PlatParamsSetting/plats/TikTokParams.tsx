@@ -9,7 +9,7 @@ import CommonTitleInput from "@/components/PublishDialog/compoents/PlatParamsSet
 import styles from "../platParamsSetting.module.scss";
 import { Select, Checkbox, Switch, Alert } from "antd";
 import { useTransClient } from "@/app/i18n/client";
-import { apiRequest } from "@/utils/request";
+import http from "@/utils/request";
 
 // TikTok Creator Info 接口类型
 interface TikTokCreatorInfo {
@@ -37,9 +37,9 @@ const TikTokParams = memo(
       const fetchCreatorInfo = async () => {
         try {
           setLoading(true);
-          const response = await apiRequest.get(`/api/plat/tiktok/creator/info/${pubItem.account.account}`);
-          if (response.data.code === 0) {
-            setCreatorInfo(response.data.data);
+          const response = await http.get<TikTokCreatorInfo>(`plat/tiktok/creator/info/${pubItem.account.account}`);
+          if (response && response.code === 0) {
+            setCreatorInfo(response.data as TikTokCreatorInfo);
           }
         } catch (error) {
           console.error('Failed to fetch TikTok creator info:', error);
@@ -69,11 +69,11 @@ const TikTokParams = memo(
       const getPrivacyLevelLabel = (value: string) => {
         switch (value) {
           case 'PUBLIC_TO_EVERYONE':
-            return t('tiktok.privacy.public');
+            return t('tiktok.privacy.public' as any);
           case 'MUTUAL_FOLLOW_FRIENDS':
-            return t('tiktok.privacy.friends');
+            return t('tiktok.privacy.friends' as any);
           case 'SELF_ONLY':
-            return t('tiktok.privacy.private');
+            return t('tiktok.privacy.private' as any);
           default:
             return value;
         }
@@ -84,13 +84,13 @@ const TikTokParams = memo(
         const { brand_organic_toggle, brand_content_toggle } = pubItem.params.option.tiktok || {};
         
         if (brand_organic_toggle && brand_content_toggle) {
-          return t('tiktok.compliance.both');
+          return t('tiktok.compliance.both' as any);
         } else if (brand_content_toggle) {
-          return t('tiktok.compliance.branded');
+          return t('tiktok.compliance.branded' as any);
         } else if (brand_organic_toggle) {
-          return t('tiktok.compliance.organic');
+          return t('tiktok.compliance.organic' as any);
         } else {
-          return t('tiktok.compliance.default');
+          return t('tiktok.compliance.default' as any);
         }
       };
 
@@ -105,13 +105,12 @@ const TikTokParams = memo(
                 {/* Creator Info Display */}
                 {creatorInfo && (
                   <div className={styles.commonTitleInput} style={{ marginTop: "10px" }}>
-                    <div className="platParamsSetting-label">{t('tiktok.creatorInfo')}</div>
+                                         <div className="platParamsSetting-label">{t('tiktok.creatorInfo' as any)}</div>
                     <div style={{ 
                       display: 'flex', 
                       alignItems: 'center', 
                       gap: '8px',
                       padding: '8px',
-                      background: '#f5f5f5',
                       borderRadius: '4px'
                     }}>
                       <img 
@@ -128,7 +127,7 @@ const TikTokParams = memo(
                 {/* Privacy Level Selection */}
                 {creatorInfo && (
                   <div className={styles.commonTitleInput} style={{ marginTop: "10px" }}>
-                    <div className="platParamsSetting-label">{t('tiktok.privacy.title')}</div>
+                                         <div className="platParamsSetting-label">{t('tiktok.privacy.title' as any)}</div>
                     <Select
                       style={{ width: "100%" }}
                       value={pubItem.params.option.tiktok?.privacy_level}
@@ -137,7 +136,7 @@ const TikTokParams = memo(
                         option.tiktok!.privacy_level = value;
                         setOnePubParams({ option }, pubItem.account.id);
                       }}
-                      placeholder={t('tiktok.privacy.placeholder')}
+                                             placeholder={t('tiktok.privacy.placeholder' as any)}
                       options={creatorInfo.privacy_level_options.map(level => ({
                         value: level,
                         label: getPrivacyLevelLabel(level)
@@ -148,7 +147,7 @@ const TikTokParams = memo(
 
                 {/* Allow users to interact */}
                 <div className={styles.commonTitleInput} style={{ marginTop: "10px" }}>
-                  <div className="platParamsSetting-label">{t('tiktok.interactions.title')}</div>
+                                     <div className="platParamsSetting-label">{t('tiktok.interactions.title' as any)}</div>
                   <div style={{ display: 'flex', flexDirection: 'row', gap: '8px' }}>
                     <Checkbox
                       checked={!pubItem.params.option.tiktok?.comment_disabled}
@@ -159,7 +158,7 @@ const TikTokParams = memo(
                         setOnePubParams({ option }, pubItem.account.id);
                       }}
                     >
-                      {t('tiktok.interactions.comment')}
+                                             {t('tiktok.interactions.comment' as any)}
                     </Checkbox>
                     <Checkbox
                       checked={!pubItem.params.option.tiktok?.duet_disabled}
@@ -170,7 +169,7 @@ const TikTokParams = memo(
                         setOnePubParams({ option }, pubItem.account.id);
                       }}
                     >
-                      {t('tiktok.interactions.duet')}
+                                             {t('tiktok.interactions.duet' as any)}
                     </Checkbox>
                     <Checkbox
                       checked={!pubItem.params.option.tiktok?.stitch_disabled}
@@ -181,14 +180,14 @@ const TikTokParams = memo(
                         setOnePubParams({ option }, pubItem.account.id);
                       }}
                     >
-                      {t('tiktok.interactions.stitch')}
+                                             {t('tiktok.interactions.stitch' as any)}
                     </Checkbox>
                   </div>
                 </div>
 
                 {/* Commercial Content Disclosure */}
                 <div className={styles.commonTitleInput} style={{ marginTop: "10px" }}>
-                  <div className="platParamsSetting-label">{t('tiktok.commercial.title')}</div>
+                                     <div className="platParamsSetting-label">{t('tiktok.commercial.title' as any)}</div>
                   <div style={{ marginBottom: '8px' }}>
                     <Switch
                       checked={pubItem.params.option.tiktok?.brand_organic_toggle || pubItem.params.option.tiktok?.brand_content_toggle}
@@ -201,7 +200,7 @@ const TikTokParams = memo(
                         setOnePubParams({ option }, pubItem.account.id);
                       }}
                     />
-                    <span style={{ marginLeft: '8px', fontSize: '11px' }}>{t('tiktok.commercial.toggle')}</span>
+                                         <span style={{ marginLeft: '8px', fontSize: '11px' }}>{t('tiktok.commercial.toggle' as any)}</span>
                   </div>
                   
                   {(pubItem.params.option.tiktok?.brand_organic_toggle || pubItem.params.option.tiktok?.brand_content_toggle) && (
@@ -214,7 +213,7 @@ const TikTokParams = memo(
                           setOnePubParams({ option }, pubItem.account.id);
                         }}
                       >
-                        {t('tiktok.commercial.yourBrand')}
+                                                 {t('tiktok.commercial.yourBrand' as any)}
                       </Checkbox>
                       <Checkbox
                         checked={pubItem.params.option.tiktok?.brand_content_toggle}
@@ -224,7 +223,7 @@ const TikTokParams = memo(
                           setOnePubParams({ option }, pubItem.account.id);
                         }}
                       >
-                        {t('tiktok.commercial.brandedContent')}
+                                                 {t('tiktok.commercial.brandedContent' as any)}
                       </Checkbox>
                     </div>
                   )}

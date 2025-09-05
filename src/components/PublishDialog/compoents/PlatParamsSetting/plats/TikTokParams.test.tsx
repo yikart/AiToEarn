@@ -18,8 +18,21 @@ jest.mock('@/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatP
 }));
 
 jest.mock('@/utils/request', () => ({
-  apiRequest: {
-    get: jest.fn(),
+  __esModule: true,
+  default: {
+    get: jest.fn().mockResolvedValue({
+      code: 0,
+      data: {
+        max_video_post_duration_sec: 3600,
+        privacy_level_options: ['PUBLIC_TO_EVERYONE', 'MUTUAL_FOLLOW_FRIENDS', 'SELF_ONLY'],
+        stitch_disabled: false,
+        comment_disabled: false,
+        creator_avatar_url: 'https://example.com/avatar.jpg',
+        creator_nickname: 'Test User',
+        creator_username: 'testuser',
+        duet_disabled: false,
+      },
+    }),
   },
 }));
 
