@@ -79,7 +79,7 @@ const PublishDialogPreview = memo(
                         poster={expandedPubItem.params.video?.cover.imgUrl}
                       />
                       {/* 视频信息显示 */}
-                      <div className="publishDialogPreview-video-info" style={{ color: '#fff' }}>
+                      <div className="publishDialogPreview-video-info" style={{ color: '#fff', fontSize: '11px' }}>
                         <div className="publishDialogPreview-video-info-item">
                           <span className="publishDialogPreview-video-info-label">{t('preview.videoInfo.filename' as any)}:</span>
                           <span className="publishDialogPreview-video-info-value">
