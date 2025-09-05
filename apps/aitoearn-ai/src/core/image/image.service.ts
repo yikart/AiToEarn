@@ -90,14 +90,26 @@ export class ImageService {
    * 图片生成
    */
   async generation(request: ImageGenerationDto) {
-    const { user, ...imageParams } = request
+    const { user, ...params } = request
+
+    if (params.model === 'gpt-image-1') {
+      delete params.response_format
+      delete params.style
+    }
+
     const imageResult = await this.openaiService.createImageGeneration({
-      ...imageParams,
+      ...params,
     } as Omit<OpenAI.Images.ImageGenerateParams, 'user'> & { apiKey?: string })
 
     for (const image of imageResult.data || []) {
       if (image.url) {
         image.url = await this.uploadImageToS3(image.url, `ai/images/${request.model}`, user)
+      }
+      if (image.b64_json) {
+        const fullPath = path.join(`ai/images/${request.model}`, user || '', `${Date.now().toString(36)}.png`)
+        const result = await this.s3Service.putObject(fullPath, Buffer.from(image.b64_json, 'base64'))
+        image.url = result.path
+        delete image.b64_json
       }
     }
 
@@ -112,20 +124,29 @@ export class ImageService {
    * 图片编辑
    */
   async edit(request: ImageEditDto) {
-    const { image, mask, user, ...editParams } = request
+    const { image, mask, user, ...params } = request
     const imageFile = await this.getUploadableByUrlOrDataUri(image, 'image')
     const maskFile = mask ? await this.getUploadableByUrlOrDataUri(mask, 'mask') : undefined
 
+    if (params.model === 'gpt-image-1') {
+      delete params.response_format
+    }
     const imageResult = await this.openaiService.createImageEdit({
-      ...editParams,
+      ...params,
       image: imageFile,
       mask: maskFile,
-      size: editParams.size as 'auto',
+      size: params.size as 'auto',
     })
 
     for (const image of imageResult.data || []) {
       if (image.url) {
         image.url = await this.uploadImageToS3(image.url, `ai/images/${request.model}`, user)
+      }
+      if (image.b64_json) {
+        const fullPath = path.join(`ai/images/${request.model}`, user || '', `${Date.now().toString(36)}.png`)
+        const result = await this.s3Service.putObject(fullPath, Buffer.from(image.b64_json, 'base64'))
+        image.url = result.path
+        delete image.b64_json
       }
     }
 
