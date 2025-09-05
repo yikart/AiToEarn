@@ -297,8 +297,8 @@ export default function AIGeneratePage() {
           if (first?.durations?.length) {
             setVideoDuration(first.durations[0]);
           }
-          if (first?.sizes?.length) {
-            setVideoSize(first.sizes[0]);
+          if (first?.resolutions?.length) {
+            setVideoSize(first.resolutions[0]);
           }
         }
       }
@@ -330,12 +330,12 @@ export default function AIGeneratePage() {
     if (!videoModel || !videoModels?.length) return;
     const current = (videoModels as any[]).find((m) => m.name === videoModel);
     if (!current) return;
-    const { durations = [], sizes = [] } = current || {};
+    const { durations = [], resolutions = [] } = current || {};
     if (durations.length && !durations.includes(videoDuration)) {
       setVideoDuration(durations[0]);
     }
-    if (sizes.length && !sizes.includes(videoSize)) {
-      setVideoSize(sizes[0]);
+    if (resolutions.length && !resolutions.includes(videoSize)) {
+      setVideoSize(resolutions[0]);
     }
     // 按模型能力清理不支持的首/尾帧，避免带上无效参数
     const supportedParams: string[] = (current as any)?.supportedParameters || [];
@@ -891,7 +891,7 @@ export default function AIGeneratePage() {
                   >
                     {(() => {
                       const selected: any = (filteredVideoModels as any[]).find((m: any) => m.name === videoModel) || {};
-                      const sizes: string[] = selected?.sizes || [];
+                      const sizes: string[] = selected?.resolutions || [];
                       return sizes.map((s) => (
                         <Option key={s} value={s}>{s}</Option>
                       ));
