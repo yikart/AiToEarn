@@ -215,37 +215,39 @@ export default function AIGeneratePage() {
   //   'doubao-seedream-3-0-t2i-250415': 2.6
   // };
 
-  // 视频模型积分消耗映射 - 按模型、时长、分辨率组合
-  const videoModelCreditCosts: Record<string, Record<number, Record<string, number>>> = {
-    'doubao-seedance-1-0-pro-250528': {
-      5: { '480p': 7.2, '720p': 16.4, '1080p': 36.7 },
-      10: { '480p': 14.4, '720p': 32.8, '1080p': 73.4 }
-    },
-    'doubao-seedance-1-0-lite-i2v-250428': {
-      5: { '480p': 5, '720p': 11, '1080p': 25 },
-      10: { '480p': 10, '720p': 22, '1080p': 45 }
-    },
-    'doubao-seedance-1-0-lite-t2v-250428': {
-      5: { '480p': 5, '720p': 11, '1080p': 25 },
-      10: { '480p': 10, '720p': 22, '1080p': 45 }
-    },
-    'wan2-1-14b-i2v-250225': {
-      5: { '480p': 12, '720p': 12, '1080p': 36 },
-    },
-    'wan2-1-14b-t2v-250225': {
-      5: { '480p': 12, '720p': 12, '1080p': 36 },
-    }
-  };
+  // 视频模型积分消耗映射 - 现在从接口获取，不再写死
+  // const videoModelCreditCosts: Record<string, Record<number, Record<string, number>>> = {
+  //   'doubao-seedance-1-0-pro-250528': {
+  //     5: { '480p': 7.2, '720p': 16.4, '1080p': 36.7 },
+  //     10: { '480p': 14.4, '720p': 32.8, '1080p': 73.4 }
+  //   },
+  //   'doubao-seedance-1-0-lite-i2v-250428': {
+  //     5: { '480p': 5, '720p': 11, '1080p': 25 },
+  //     10: { '480p': 10, '720p': 22, '1080p': 45 }
+  //   },
+  //   'doubao-seedance-1-0-lite-t2v-250428': {
+  //     5: { '480p': 5, '720p': 11, '1080p': 25 },
+  //     10: { '480p': 10, '720p': 22, '1080p': 45 }
+  //   },
+  //   'wan2-1-14b-i2v-250225': {
+  //     5: { '480p': 12, '720p': 12, '1080p': 36 },
+  //   },
+  //   'wan2-1-14b-t2v-250225': {
+  //     5: { '480p': 12, '720p': 12, '1080p': 36 },
+  //   }
+  // };
 
-  // 获取视频模型积分消耗
+  // 获取视频模型积分消耗 - 现在从接口数据获取
   const getVideoModelCreditCost = (modelName: string, duration: number, size: string): number => {
-    const modelCosts = videoModelCreditCosts[modelName];
-    if (!modelCosts) return 0;
+    const model = videoModels.find(m => m.name === modelName);
+    if (!model || !model.pricing || !Array.isArray(model.pricing)) return 0;
     
-    const durationCosts = modelCosts[duration];
-    if (!durationCosts) return 0;
+    // 在 pricing 数组中查找匹配的 duration 和 resolution
+    const pricingItem = model.pricing.find((item: any) => 
+      item.duration === duration && item.resolution === size
+    );
     
-    return durationCosts[size] || 0;
+    return pricingItem ? pricingItem.price : 0;
   };
 
   // 根据模式过滤视频模型列表
