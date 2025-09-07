@@ -850,7 +850,7 @@ export default function AIGeneratePage() {
                   rows={4}
                 />
 
-                {/* 模式选择：仅显示两项 Tab 下拉：文生成视频/图文转视频 */}
+                {/* 模式选择：仅显示两项base Tab 下拉：文生成视频/图文转视频 */}
                 <div className={styles.options}>
                   <Select
                     placeholder={t('aiGenerate.videoMode')}
