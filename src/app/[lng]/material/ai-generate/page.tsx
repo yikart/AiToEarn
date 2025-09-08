@@ -21,6 +21,8 @@ import shili23 from '@/assets/images/shili/image-ai-sample-2-3.jpeg';
 import shili24 from '@/assets/images/shili/image-ai-sample-2-4.jpeg';
 
 
+
+
 /**
  * AI 工具页（左右布局）
  * - 左侧：图标切换 图片/视频 两个模块
@@ -150,6 +152,7 @@ export default function AIGeneratePage() {
 
   // 自定义模型下拉
   const [showModelDropdown, setShowModelDropdown] = useState(false);
+  const [showVideoModelDropdown, setShowVideoModelDropdown] = useState(false);
 
   // 示例轮播
   const sampleImages = [shili21 as any, shili22 as any, shili23 as any, shili24 as any];
@@ -604,66 +607,125 @@ export default function AIGeneratePage() {
             </>
           ) : (
             <div className={styles.section}>
-              <div className={styles.form}>
-                <TextArea placeholder={t("aiGenerate.videoPromptPlaceholder")} value={videoPrompt} onChange={(e)=>setVideoPrompt(e.target.value)} rows={4} />
-                {(() => { if (videoMode !== activeVideoTab) setVideoMode(activeVideoTab); return null; })()}
-                {Array.isArray(filteredVideoModels) && (filteredVideoModels as any[]).length>0 && (
-                  <Select value={videoModel} onChange={setVideoModel} style={{ width: "100%" }}>
-                    {(filteredVideoModels as any[]).map((m:any)=>{ const credit=getVideoModelCreditCost(m.name, videoDuration, videoSize); return (<Option key={m.name} value={m.name}>{m.name} {credit>0 && `(${t('aiGenerate.estimatedCreditCost' as any)} ${credit} ${t('aiGenerate.credits' as any)})`}</Option>); })}
-                  </Select>
-                )}
-                <div className={styles.dimensions}>
-                  <Select value={videoSize} onChange={setVideoSize} style={{ width: "100%" }}>{(()=>{ const selected:any=(filteredVideoModels as any[]).find((m:any)=>m.name===videoModel)||{}; const sizes:string[]=selected?.resolutions||[]; return sizes.map((s)=> (<Option key={s} value={s}>{s}</Option>)); })()}</Select>
-                  <Select value={videoDuration} onChange={setVideoDuration} style={{ width: "100%" }}>{(()=>{ const selected:any=(filteredVideoModels as any[]).find((m:any)=>m.name===videoModel)||{}; const durs:number[]=selected?.durations||[]; return durs.map((d)=> (<Option key={d} value={d}>{d}{t('aiGenerate.seconds')}</Option>)); })()}</Select>
-                </div>
-                <div className={styles.options}>
-                  {(()=>{ const selected:any=(filteredVideoModels as any[]).find((m:any)=>m.name===videoModel)||{}; const supported:string[]=selected?.supportedParameters||[]; return (<>
-                    {videoMode==='image2video' && supported.includes('image') && (
-                      <div style={{ display:'flex', alignItems:'center', gap:12, width:'100%' }}>
-                        <Button onClick={handlePickFirstFrame} loading={uploadingFirstFrame}>{t('aiGenerate.uploadImage')} - {t('aiGenerate.firstFrame')}</Button>
-                        {videoImage && (<img src={videoImage} alt={t('aiGenerate.firstFrame')} style={{ width:160, height:90, objectFit:'cover', borderRadius:6, border:'1px solid #eee' }} />)}
-                        <input type="file" accept="image/*" ref={firstFrameInputRef} onChange={handleFirstFrameChange} style={{ display:'none' }} />
-                          </div>
-                        )}
-                    {videoMode==='image2video' && supported.includes('image_tail') && (
-                      <div style={{ display:'flex', alignItems:'center', gap:12, width:'100%' }}>
-                        <Button onClick={handlePickTailFrame} loading={uploadingTailFrame}>{t('aiGenerate.uploadImage')} - {t('aiGenerate.tailFrame')}</Button>
-                        {videoImageTail && (<img src={videoImageTail} alt={t('aiGenerate.tailFrame')} style={{ width:160, height:90, objectFit:'cover', borderRadius:6, border:'1px solid #eee' }} />)}
-                        <input type="file" accept="image/*" ref={tailFrameInputRef} onChange={handleTailFrameChange} style={{ display:'none' }} />
-                          </div>
-                        )}
-                  </>); })()}
-                </div>
-                {videoModel && videoDuration && videoSize && (
-                  <div className={styles.creditCostInfo}><span style={{ color:'#1890ff', fontSize:14 }}>💰 {t('aiGenerate.estimatedCreditCost' as any)}: {getVideoModelCreditCost(videoModel, videoDuration, videoSize)} {t('aiGenerate.credits' as any)}</span></div>
-                )}
-                <Button type="primary" onClick={handleVideoGeneration} loading={loadingVideo} disabled={!videoPrompt || !videoModel} icon={<VideoCameraOutlined />}>{t("aiGenerate.generate")}</Button>
-              </div>
-              
-              {(videoStatus || videoResult) && (
-                <div className={styles.result}>
-                  {videoStatus && (
-                    <div style={{ marginBottom:16 }}>
-                      <div style={{ marginBottom:8 }}>
-                        <strong>{t('aiGenerate.taskStatus')}: </strong>
-                        {videoStatus === 'submitted' && t('aiGenerate.taskSubmitted')}
-                        {videoStatus === 'processing' && t('aiGenerate.taskProcessing')}
-                        {videoStatus === 'completed' && t('aiGenerate.taskCompleted')}
-                        {videoStatus === 'failed' && t('aiGenerate.taskFailed')}
+              <div className={styles.twoColumn}>
+                <div className={styles.leftPanel}>
+                  <div className={styles.blockTitle}>{activeVideoTab==='text2video' ? t('aiGenerate.textToVideo') : t('aiGenerate.imageToVideo')}</div>
+                  {(() => { if (videoMode !== activeVideoTab) setVideoMode(activeVideoTab); return null; })()}
+
+                  <div className={styles.blockTitle} style={{ marginTop: 12 }}>{t('aiGenerate.selectModelPlaceholder')}</div>
+                  <div className={styles.modelSelect}>
+                    <button className={styles.modelSelectBtn} onClick={()=>setShowVideoModelDropdown((s)=>!s)}>
+                      <div className={styles.modelIcon}><VideoCameraOutlined /></div>
+                      <div className={styles.modelMain}>
+                        <div className={styles.modelHeader}>
+                          <span className={styles.modelName}>{videoModel || t('aiGenerate.selectModelPlaceholder')}</span>
+                        </div>
+                        <div className={styles.modelDesc}>{(() => { const m:any = (filteredVideoModels as any[]).find((x:any)=>x.name===videoModel); return m?.desc || ''; })()}</div>
                       </div>
-                      {videoProgress>0 && videoProgress<100 && (<Progress percent={videoProgress} status="active" />)}
-                    </div>
+                      <span className={styles.modelCaret}>▾</span>
+                    </button>
+                    {showVideoModelDropdown && (
+                      <div className={styles.modelDropdown}>
+                        <div className={styles.modelListScrollable}>
+                          {(filteredVideoModels as any[]).map((m:any)=>{
+                            const isActive = videoModel === m.name;
+                            return (
+                              <div key={m.name} className={`${styles.modelItem} ${isActive?styles.modelItemActive:''}`} onClick={()=>{ setVideoModel(m.name); setShowVideoModelDropdown(false); }}>
+                                <div className={styles.modelIcon}><VideoCameraOutlined /></div>
+                                <div className={styles.modelMain}>
+                                  <div className={styles.modelHeader}>
+                                    <span className={styles.modelName}>{m.name || ''}</span>
+                                    {m.latest ? <span className={styles.modelTag}>最新</span> : null}
+                                  </div>
+                                  <div className={styles.modelDesc}>{m.desc || ''}</div>
+                                  <div className={styles.modelMeta}>{m.eta || ''}</div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <TextArea placeholder={t('aiGenerate.videoPromptPlaceholder')} value={videoPrompt} onChange={(e)=>setVideoPrompt(e.target.value)} rows={4} />
+
+                  <div className={styles.dimensions}>
+                    <Select value={videoSize} onChange={setVideoSize} style={{ width: "100%" }}>{(()=>{ const selected:any=(filteredVideoModels as any[]).find((m:any)=>m.name===videoModel)||{}; const sizes:string[]=selected?.resolutions||[]; return sizes.map((s)=> (<Option key={s} value={s}>{s}</Option>)); })()}</Select>
+                    <Select value={videoDuration} onChange={setVideoDuration} style={{ width: "100%" }}>{(()=>{ const selected:any=(filteredVideoModels as any[]).find((m:any)=>m.name===videoModel)||{}; const durs:number[]=selected?.durations||[]; return durs.map((d)=> (<Option key={d} value={d}>{d}{t('aiGenerate.seconds')}</Option>)); })()}</Select>
+                  </div>
+                  <div className={styles.options}>
+                    {(()=>{ const selected:any=(filteredVideoModels as any[]).find((m:any)=>m.name===videoModel)||{}; const supported:string[]=selected?.supportedParameters||[]; return (<>
+                      {videoMode==='image2video' && supported.includes('image') && (
+                        <div className={styles.uploadPanel}>
+                          <div className={styles.uploadCard} onClick={handlePickFirstFrame}>
+                            {videoImage ? (
+                              <img src={videoImage} alt={t('aiGenerate.firstFrame')} />
+                            ) : (
+                              <div className={styles.uploadPlaceholder}>
+                                <span className={styles.uploadIcon}>+</span>
+                                <span className={styles.uploadText}>{t('aiGenerate.firstFrame')}</span>
+                              </div>
+                            )}
+                            <input type="file" accept="image/*" ref={firstFrameInputRef} onChange={handleFirstFrameChange} style={{ display:'none' }} />
+                          </div>
+                          {supported.includes('image_tail') && (
+                            <div className={styles.swapIcon}>↔</div>
+                          )}
+                          {videoMode==='image2video' && supported.includes('image_tail') && (
+                            <div className={styles.uploadCard} onClick={handlePickTailFrame}>
+                              {videoImageTail ? (
+                                <img src={videoImageTail} alt={t('aiGenerate.tailFrame')} />
+                              ) : (
+                                <div className={styles.uploadPlaceholder}>
+                                  <span className={styles.uploadIcon}>+</span>
+                                  <span className={styles.uploadText}>{t('aiGenerate.tailFrame')}</span>
+                                </div>
+                              )}
+                              <input type="file" accept="image/*" ref={tailFrameInputRef} onChange={handleTailFrameChange} style={{ display:'none' }} />
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </>); })()}
+                  </div>
+                  {videoModel && videoDuration && videoSize && (
+                    <div className={styles.creditCostInfo}><span style={{ color:'#1890ff', fontSize:14 }}>💰 {t('aiGenerate.estimatedCreditCost' as any)}: {getVideoModelCreditCost(videoModel, videoDuration, videoSize)} {t('aiGenerate.credits' as any)}</span></div>
                   )}
-                  {videoResult && (
-                    <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-                      <video src={getOssUrl(videoResult)} controls style={{ maxWidth:'100%', borderRadius:8 }} />
-                      <Button type="primary" onClick={()=>handleUploadToMediaGroup('video')} icon={<UploadOutlined />} style={{ padding:'1px' }}>{t('aiGenerate.uploadToMediaGroup')}</Button>
+                  <Button type="primary" onClick={handleVideoGeneration} loading={loadingVideo} disabled={!videoPrompt || !videoModel} icon={<VideoCameraOutlined />}>{t('aiGenerate.generate')}</Button>
+                </div>
+
+                <div className={styles.rightPanel}>
+                  {(videoStatus || videoResult) ? (
+                    <div className={styles.result}>
+                      {videoStatus && (
+                        <div style={{ marginBottom:16 }}>
+                          <div style={{ marginBottom:8 }}>
+                            <strong>{t('aiGenerate.taskStatus')}: </strong>
+                            {videoStatus === 'submitted' && t('aiGenerate.taskSubmitted')}
+                            {videoStatus === 'processing' && t('aiGenerate.taskProcessing')}
+                            {videoStatus === 'completed' && t('aiGenerate.taskCompleted')}
+                            {videoStatus === 'failed' && t('aiGenerate.taskFailed')}
+                          </div>
+                          {videoProgress>0 && videoProgress<100 && (<Progress percent={videoProgress} status="active" />)}
+                        </div>
+                      )}
+                      {videoResult && (
+                        <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+                          <video src={getOssUrl(videoResult)} controls style={{ maxWidth:'100%', borderRadius:8 }} />
+                          <Button type="primary" onClick={()=>handleUploadToMediaGroup('video')} icon={<UploadOutlined />} style={{ padding:'1px' }}>{t('aiGenerate.uploadToMediaGroup')}</Button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className={styles.result}>
+                      <video src={`https://videocdn.pollo.ai/web-cdn/pollo/production/cmdpciptx06gapw7fs1nlw1nv/wm/1755786765496-f4b85016-bcab-4c32-8214-f315609962b7.mp4`} controls style={{ maxWidth:'100%', borderRadius:8 }} />
                     </div>
                   )}
                 </div>
-              )}
-                </div>
-              )}
+              </div>
+            </div>
+          )}
             </div>
       </div>
 
