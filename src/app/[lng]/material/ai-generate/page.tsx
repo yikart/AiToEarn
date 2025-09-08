@@ -284,16 +284,7 @@ export default function AIGeneratePage() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <div className={styles.headerLeft}>
-          <button className={styles.backButton} onClick={() => router.back()}>
-            <ArrowLeftOutlined />
-          </button>
-          <p>
-            <RobotOutlined /> {t("aiGenerate.title")}
-          </p>
-        </div>
-      </div>
+    
 
       <div className={styles.mainLayout}>
         <div className={styles.leftSidebar}>

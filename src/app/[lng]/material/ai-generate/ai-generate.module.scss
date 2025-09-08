@@ -75,39 +75,55 @@
 // 新增：左右主布局
 .mainLayout {
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 110px 1fr;
   gap: 16px;
+  min-height: 100%;
 }
 
 .leftSidebar {
   background: #fff;
   border: 1px solid rgba(0,0,0,0.06);
   border-radius: 12px;
-  padding: 16px;
   display: flex;
   flex-direction: column;
 }
 
 .moduleTabs {
   display: flex;
-  gap: 12px;
+  gap: 1px;
 }
 
 .moduleTab {
-  width: 44px;
+  flex: 1;
   height: 44px;
-  border-radius: 10px;
-  border: 1px solid rgba(0,0,0,0.08);
-  background: #f8f9fa;
+  border: none;
+  background: #f5f6f8;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all .2s ease;
+  color: #666;
+
+  :global {
+    .anticon {
+      font-size: 18px;
+      color: inherit;
+      transition: color .2s ease;
+    }
+  }
 }
 
 .moduleTab:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.08); }
-.moduleTabActive { background: #fff; border-color: var(--theColor5); box-shadow: 0 0 0 2px rgba(166,106,228,.15); }
+.moduleTabActive {
+  background: var(--theColor5);
+  color: #fff;
+  box-shadow: 0 0 0 2px rgba(166,106,228,.15);
+
+  :global {
+    .anticon { color: #fff; }
+  }
+}
 
 .rightContent {
   background: #f8f9fa;
