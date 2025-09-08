@@ -72,6 +72,50 @@
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+// 新增：左右主布局
+.mainLayout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 16px;
+}
+
+.leftSidebar {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.moduleTabs {
+  display: flex;
+  gap: 12px;
+}
+
+.moduleTab {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.moduleTab:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+.moduleTabActive { background: #fff; border-color: var(--theColor5); box-shadow: 0 0 0 2px rgba(166,106,228,.15); }
+
+.rightContent {
+  background: #f8f9fa;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 12px;
+  padding: 16px;
+}
+
 .tabs {
   :global {
     .ant-tabs-nav {
@@ -350,6 +394,9 @@
   .content {
     padding: 16px;
   }
+
+  .mainLayout { grid-template-columns: 1fr; }
+  .leftSidebar { flex-direction: row; }
 
   .tabs {
     :global {
