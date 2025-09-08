@@ -309,7 +309,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
         title={
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Badge count={unreadCount} size="small">
-              <span style={{ fontSize: '16px', fontWeight: '600' }}>消息通知</span>
+              <span style={{ fontSize: '16px', fontWeight: '600' }}>消息通知1</span>
             </Badge>
           </div>
         }
