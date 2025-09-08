@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { message, Input, Button, Select, Row, Col, Modal, Progress } from "antd";
-import { ArrowLeftOutlined, RobotOutlined, FireOutlined, PictureOutlined, FileTextOutlined, UploadOutlined, VideoCameraOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, RobotOutlined, FireOutlined, PictureOutlined, FileTextOutlined, UploadOutlined, VideoCameraOutlined, DownloadOutlined } from "@ant-design/icons";
 import styles from "./ai-generate.module.scss";
 import { generateImage, generateFireflyCard, getImageGenerationModels, generateVideo, getVideoTaskStatus, getVideoGenerationModels, generateMd2Card } from "@/api/ai";
 import { getOssUrl } from "@/utils/oss";
@@ -174,6 +174,16 @@ export default function AIGeneratePage() {
     } catch (e) {
       message.error(t('aiGenerate.uploadFailed'));
     }
+  };
+
+  const handleDownloadUrl = (url: string) => {
+    const real = getOssUrl(url);
+    const a = document.createElement('a');
+    a.href = real;
+    a.download = real.split('/').pop() || 'image.png';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   const getVideoModelCreditCost = (modelName: string, duration: number, size: string): number => {
@@ -465,14 +475,16 @@ export default function AIGeneratePage() {
                           <Row gutter={[16,16]}>
                             {result.map((img, idx)=>(
                               <Col key={idx} xs={24} sm={12} md={12} lg={12}>
-                                <img src={getOssUrl(img)} alt={`${t('aiGenerate.textToImage')} ${idx+1}`} style={{ width: '100%', borderRadius: 8 }} />
+                                <div className={styles.imageCard}>
+                                  <img src={getOssUrl(img)} alt={`${t('aiGenerate.textToImage')} ${idx+1}`} />
+                                  <div className={styles.imageActions}>
+                                    <Button size="small" icon={<DownloadOutlined />} onClick={()=>handleDownloadUrl(img)} />
+                                    <Button size="small" type="primary" onClick={()=>handleUploadToMediaGroup('img', img)} icon={<UploadOutlined />} />
+                                  </div>
+                                </div>
                       </Col>
                     ))}
                   </Row>
-                          <div style={{ display:'flex', gap:10, justifyContent:'flex-end', marginTop: 12 }}>
-                            <Button onClick={handleSaveResults}>{t('aiGenerate.save' as any) || '保存到本地'}</Button>
-                            <Button type="primary" onClick={()=>handleUploadToMediaGroup('img', result && result[0] ? result[0] : undefined)} icon={<UploadOutlined />}>{t('aiGenerate.uploadToMediaGroup')}</Button>
-                          </div>
                         </div>
                       ) : (
                         <div className={styles.sampleCarousel}>

@@ -356,6 +356,10 @@
   }
 }
 
+.imageCard { position: relative; width: 100%; border-radius: 8px; overflow: hidden; }
+.imageCard img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.imageActions { position: absolute; right: 8px; bottom: 8px; display: flex; gap: 6px; }
+
 // 模板选择网格
 .templateGrid {
   display: flex;
