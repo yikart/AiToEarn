@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { message, Input, Button, Select, Tabs, Row, Col, Modal, Progress } from "antd";
+import { message, Input, Button, Select, Row, Col, Modal, Progress } from "antd";
 import { ArrowLeftOutlined, RobotOutlined, FireOutlined, PictureOutlined, FileTextOutlined, UploadOutlined, VideoCameraOutlined } from "@ant-design/icons";
 import styles from "./ai-generate.module.scss";
 import { generateImage, generateFireflyCard, getImageGenerationModels, generateVideo, getVideoTaskStatus, getVideoGenerationModels, generateMd2Card } from "@/api/ai";
@@ -14,7 +14,6 @@ import { md2CardTemplates, defaultMarkdown } from "./md2card";
 
 const { TextArea } = Input;
 const { Option } = Select;
-const { TabPane } = Tabs;
 
 /**
  * AI 工具页（左右布局）
@@ -30,9 +29,13 @@ export default function AIGeneratePage() {
   const isEnglishLang = typeof lng === "string" ? lng.toLowerCase().startsWith("en") : false;
 
   // 默认图片页签
-  const defaultTab = searchParams.get("tab") || "textToImage";
+  const defaultTab = (searchParams.get("tab") || "textToImage") as "textToImage" | "textToFireflyCard" | "md2card";
   // 左侧模块切换
   const [activeModule, setActiveModule] = useState<"image" | "video">("image");
+  // 图片子模块切换
+  const [activeImageTab, setActiveImageTab] = useState<"textToImage" | "textToFireflyCard" | "md2card">(defaultTab);
+  // 视频子模块切换
+  const [activeVideoTab, setActiveVideoTab] = useState<"text2video" | "image2video">("text2video");
 
   // 文生图
   const [prompt, setPrompt] = useState("");
@@ -296,12 +299,41 @@ export default function AIGeneratePage() {
               <VideoCameraOutlined />
             </button>
           </div>
+          {activeModule === "image" && (
+            <div className={styles.imageSubTabs}>
+              <button className={`${styles.subTab} ${activeImageTab==='textToImage' ? styles.subTabActive : ''}`} onClick={()=>setActiveImageTab('textToImage')}>
+                <div className="subTabIcon"><PictureOutlined /></div>
+                <div className="subTabLabel">{t("aiGenerate.textToImage")}</div>
+              </button>
+              <button className={`${styles.subTab} ${activeImageTab==='textToFireflyCard' ? styles.subTabActive : ''}`} onClick={()=>setActiveImageTab('textToFireflyCard')}>
+                <div className="subTabIcon"><FireOutlined /></div>
+                <div className="subTabLabel">{t("aiGenerate.fireflyCard")}</div>
+              </button>
+              <button className={`${styles.subTab} ${activeImageTab==='md2card' ? styles.subTabActive : ''}`} onClick={()=>setActiveImageTab('md2card')}>
+                <div className="subTabIcon"><FileTextOutlined /></div>
+                <div className="subTabLabel">{t("aiGenerate.markdownToCard")}</div>
+              </button>
+            </div>
+          )}
+
+          {activeModule === "video" && (
+            <div className={styles.imageSubTabs}>
+              <button className={`${styles.subTab} ${activeVideoTab==='text2video' ? styles.subTabActive : ''}`} onClick={()=>setActiveVideoTab('text2video')}>
+                <div className="subTabIcon"><VideoCameraOutlined /></div>
+                <div className="subTabLabel">{t('aiGenerate.textToVideo')}</div>
+              </button>
+              <button className={`${styles.subTab} ${activeVideoTab==='image2video' ? styles.subTabActive : ''}`} onClick={()=>setActiveVideoTab('image2video')}>
+                <div className="subTabIcon"><PictureOutlined /></div>
+                <div className="subTabLabel">{t('aiGenerate.imageToVideo')}</div>
+              </button>
+            </div>
+          )}
         </div>
 
         <div className={styles.rightContent}>
           {activeModule === "image" ? (
-            <Tabs defaultActiveKey={defaultTab} className={styles.tabs}>
-              <TabPane tab={<span><PictureOutlined /> {t("aiGenerate.textToImage")}</span>} key="textToImage">
+            <>
+              {activeImageTab === 'textToImage' && (
                 <div className={styles.section}>
                   <div className={styles.form}>
                     <TextArea placeholder={t("aiGenerate.promptPlaceholder")} value={prompt} onChange={(e) => setPrompt(e.target.value)} rows={4} />
@@ -348,9 +380,9 @@ export default function AIGeneratePage() {
                     </div>
                   )}
                 </div>
-              </TabPane>
+              )}
 
-              <TabPane tab={<span><FireOutlined /> {t("aiGenerate.fireflyCard")}</span>} key="textToFireflyCard">
+              {activeImageTab === 'textToFireflyCard' && (
                 <div className={styles.section}>
                   <div className={styles.form}>
                     <Input placeholder={t("aiGenerate.titlePlaceholder")} value={title} onChange={(e)=>setTitle(e.target.value)} prefix={<FileTextOutlined />} />
@@ -374,9 +406,9 @@ export default function AIGeneratePage() {
                     </div>
                   )}
                 </div>
-              </TabPane>
+              )}
 
-              <TabPane tab={<span><FileTextOutlined /> {t("aiGenerate.markdownToCard")}</span>} key="md2card">
+              {activeImageTab === 'md2card' && (
                 <div className={styles.section}>
                   <div className={styles.form}>
                     <TextArea placeholder={t("aiGenerate.markdownPlaceholder")} value={markdownContent} onChange={(e)=>setMarkdownContent(e.target.value)} rows={8} />
@@ -419,18 +451,13 @@ export default function AIGeneratePage() {
                     </div>
                   )}
                 </div>
-              </TabPane>
-            </Tabs>
+              )}
+            </>
           ) : (
             <div className={styles.section}>
               <div className={styles.form}>
                 <TextArea placeholder={t("aiGenerate.videoPromptPlaceholder")} value={videoPrompt} onChange={(e)=>setVideoPrompt(e.target.value)} rows={4} />
-                <div className={styles.options}>
-                  <Select value={videoMode} onChange={setVideoMode} style={{ width: "100%" }}>
-                    <Option value="text2video">{t("aiGenerate.textToVideo")}</Option>
-                    <Option value="image2video">{t("aiGenerate.imageToVideo")}</Option>
-                  </Select>
-                </div>
+                {(() => { if (videoMode !== activeVideoTab) setVideoMode(activeVideoTab); return null; })()}
                 {Array.isArray(filteredVideoModels) && (filteredVideoModels as any[]).length>0 && (
                   <Select value={videoModel} onChange={setVideoModel} style={{ width: "100%" }}>
                     {(filteredVideoModels as any[]).map((m:any)=>{ const credit=getVideoModelCreditCost(m.name, videoDuration, videoSize); return (<Option key={m.name} value={m.name}>{m.name} {credit>0 && `(${t('aiGenerate.estimatedCreditCost' as any)} ${credit} ${t('aiGenerate.credits' as any)})`}</Option>); })}
