@@ -113,7 +113,6 @@ export const MaterialPageCore = () => {
             } : null
           };
           
-          console.log('Processed group:', group.title, processedGroup);
           return processedGroup;
         });
         setGroups(processedGroups);

@@ -36,14 +36,17 @@ export default function AIGeneratePage() {
   const lng = (params as any).lng as string;
   const isEnglishLang = typeof lng === "string" ? lng.toLowerCase().startsWith("en") : false;
 
-  // 默认图片页签
-  const defaultTab = (searchParams.get("tab") || "textToImage") as "textToImage" | "textToFireflyCard" | "md2card";
+  // 根据 URL 初始化模块与子标签
+  const queryTab = (searchParams.get("tab") || "").toString();
+  const initIsVideo = ["videoGeneration", "text2video", "image2video"].includes(queryTab);
+  const initImageTab = ["textToImage", "textToFireflyCard", "md2card"].includes(queryTab) ? (queryTab as any) : "textToImage";
+  const initVideoTab = queryTab === "image2video" ? "image2video" : "text2video";
   // 左侧模块切换
-  const [activeModule, setActiveModule] = useState<"image" | "video">("image");
+  const [activeModule, setActiveModule] = useState<"image" | "video">(initIsVideo ? "video" : "image");
   // 图片子模块切换
-  const [activeImageTab, setActiveImageTab] = useState<"textToImage" | "textToFireflyCard" | "md2card">(defaultTab);
+  const [activeImageTab, setActiveImageTab] = useState<"textToImage" | "textToFireflyCard" | "md2card">(initImageTab);
   // 视频子模块切换
-  const [activeVideoTab, setActiveVideoTab] = useState<"text2video" | "image2video">("text2video");
+  const [activeVideoTab, setActiveVideoTab] = useState<"text2video" | "image2video">(initVideoTab);
 
   // 文生图
   const [prompt, setPrompt] = useState("");
@@ -222,6 +225,19 @@ export default function AIGeneratePage() {
     } catch (e) { console.error(e); }
   };
   useEffect(() => { fetchImageModels(); fetchVideoModels(); }, []);
+
+  // 根据 URL ?tab=... 初始化/响应切换模块与子标签
+  useEffect(() => {
+    const tab = searchParams.get('tab') || '';
+    if (!tab) return;
+    if (tab === 'videoGeneration' || tab === 'text2video' || tab === 'image2video') {
+      setActiveModule('video');
+      setActiveVideoTab(tab === 'image2video' ? 'image2video' : 'text2video');
+    } else if (tab === 'textToImage' || tab === 'textToFireflyCard' || tab === 'md2card') {
+      setActiveModule('image');
+      setActiveImageTab(tab as any);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if ((filteredVideoModels as any[]).length > 0) {
