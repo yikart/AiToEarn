@@ -506,73 +506,95 @@ export default function AIGeneratePage() {
               )}
 
               {activeImageTab === 'textToFireflyCard' && (
-            <div className={styles.section}>
-              <div className={styles.form}>
-                    <Input placeholder={t("aiGenerate.titlePlaceholder")} value={title} onChange={(e)=>setTitle(e.target.value)} prefix={<FileTextOutlined />} />
-                    <TextArea placeholder={t("aiGenerate.contentPlaceholder")} value={content} onChange={(e)=>setContent(e.target.value)} rows={4} />
-                <div className={styles.templateGrid}>
-                      {templateList.map((item)=> (
-                        <div key={item.key} className={`${styles.templateCard} ${temp===item.key?styles.templateCardActive:""}`} onClick={()=>setTemp(item.key)}>
-                          <div className={styles.templateThumb}><img src={`${TEMPLATE_BASE}/${item.key}.png`} alt={`${t('aiGenerate.template')} ${item.name}`} /></div>
-                          <div className={styles.templateLabel}>{item.name}</div>
+                <div className={styles.section}>
+                  <div className={styles.twoColumn}>
+                    <div className={styles.leftPanel}>
+                      <div className={styles.blockTitle}>{t('aiGenerate.fireflyCard')}</div>
+                      <Input placeholder={t("aiGenerate.titlePlaceholder")} value={title} onChange={(e)=>setTitle(e.target.value)} prefix={<FileTextOutlined />} />
+                      <TextArea placeholder={t("aiGenerate.contentPlaceholder")} value={content} onChange={(e)=>setContent(e.target.value)} rows={4} />
+                      <div className={styles.templateGrid}>
+                        {templateList.map((item)=> (
+                          <div key={item.key} className={`${styles.templateCard} ${temp===item.key?styles.templateCardActive:""}`} onClick={()=>setTemp(item.key)}>
+                            <div className={styles.templateThumb}><img src={`${TEMPLATE_BASE}/${item.key}.png`} alt={`${t('aiGenerate.template')} ${item.name}`} /></div>
+                            <div className={styles.templateLabel}>{item.name}</div>
+                          </div>
+                        ))}
+                      </div>
+                      <Button type="primary" onClick={handleTextToFireflyCard} loading={loadingFirefly} disabled={!content||!title} icon={<FireOutlined />}>{t("aiGenerate.generate")}</Button>
                     </div>
-                  ))}
-                </div>
-                    <Button type="primary" onClick={handleTextToFireflyCard} loading={loadingFirefly} disabled={!content||!title} icon={<FireOutlined />}>{t("aiGenerate.generate")}</Button>
-              </div>
-              {fireflyResult && (
-                <div className={styles.result}>
-                      <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-                        <img src={getOssUrl(fireflyResult)} alt={t('aiGenerate.fireflyCard')} style={{ maxWidth:'100%', borderRadius:8 }} />
-                        <Button type="primary" onClick={()=>handleUploadToMediaGroup('img')} icon={<UploadOutlined />} style={{ padding:'1px' }}>{t("aiGenerate.uploadToMediaGroup")}</Button>
+                    <div className={styles.rightPanel}>
+                      {fireflyResult && (
+                        <div className={styles.result}>
+                          <div className={styles.imageCard}>
+                            <img src={getOssUrl(fireflyResult)} alt={t('aiGenerate.fireflyCard')} />
+                            <div className={styles.imageActions}>
+                              <Button size="small" icon={<DownloadOutlined />} onClick={()=>handleDownloadUrl(fireflyResult)} />
+                              <Button size="small" type="primary" icon={<UploadOutlined />} onClick={()=>handleUploadToMediaGroup('img', fireflyResult)} />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              )}
-            </div>
               )}
 
               {activeImageTab === 'md2card' && (
-            <div className={styles.section}>
-              <div className={styles.form}>
-                    <TextArea placeholder={t("aiGenerate.markdownPlaceholder")} value={markdownContent} onChange={(e)=>setMarkdownContent(e.target.value)} rows={8} />
-                    <div className={styles.dimensions}>
-                      <Select value={themeMode} onChange={setThemeMode} style={{ width: "100%" }}>
-                        <Option value="light">{t("aiGenerate.lightMode")}</Option>
-                        <Option value="dark">{t("aiGenerate.darkMode")}</Option>
-                  </Select>
-                </div>
-                    <div className={styles.templateGrid}>
-                      {md2CardTemplates.map((theme)=> (
-                        <div key={theme.id} className={`${styles.templateCard} ${selectedTheme===theme.id?styles.templateCardActive:""}`} onClick={()=>setSelectedTheme(theme.id)}>
-                          <div className={styles.templateThumb}><img src={theme.preview} alt={isEnglishLang ? theme.nameEn : theme.nameCn} /></div>
-                          <div className={styles.templateLabel}>{isEnglishLang ? theme.nameEn : theme.nameCn}</div>
+                <div className={styles.section}>
+                  <div className={styles.twoColumn}>
+                    <div className={styles.leftPanel}>
+                      <div className={styles.blockTitle}>{t('aiGenerate.markdownToCard')}</div>
+                      <TextArea style={{ height: 100 }} placeholder={t("aiGenerate.markdownPlaceholder")} value={markdownContent} onChange={(e)=>setMarkdownContent(e.target.value)} rows={8} />
+                      <div className={styles.dimensions}>
+                        <Select value={themeMode} onChange={setThemeMode} style={{ width: "100%" }}>
+                          <Option value="light">{t("aiGenerate.lightMode")}</Option>
+                          <Option value="dark">{t("aiGenerate.darkMode")}</Option>
+                        </Select>
+                      </div>
+                      <div className={styles.templateGrid}>
+                        {md2CardTemplates.map((theme)=> (
+                          <div key={theme.id} className={`${styles.templateCard} ${selectedTheme===theme.id?styles.templateCardActive:""}`} onClick={()=>setSelectedTheme(theme.id)}>
+                            <div className={styles.templateThumb}><img src={theme.preview} alt={isEnglishLang ? theme.nameEn : theme.nameCn} /></div>
+                            <div className={styles.templateLabel}>{isEnglishLang ? theme.nameEn : theme.nameCn}</div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className={styles.options}>
+                        <Input placeholder={t("aiGenerate.cardWidthPlaceholder")} type="number" value={cardWidth} onChange={(e)=>setCardWidth(Number(e.target.value))} style={{ width: "100%" }} />
+                        <Input placeholder={t("aiGenerate.cardHeightPlaceholder")} type="number" value={cardHeight} onChange={(e)=>setCardHeight(Number(e.target.value))} style={{ width: "100%" }} />
+                      </div>
+                      <div className={styles.options}>
+                        <Select value={splitMode} onChange={setSplitMode} style={{ width: "100%" }}>
+                          <Option value="noSplit">{t("aiGenerate.noSplit")}</Option>
+                          <Option value="split">{t("aiGenerate.split")}</Option>
+                        </Select>
+                        <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+                          <label><input type="checkbox" checked={mdxMode} onChange={(e)=>setMdxMode(e.target.checked)} /> {t("aiGenerate.mdxMode")}</label>
+                          <label><input type="checkbox" checked={overHiddenMode} onChange={(e)=>setOverHiddenMode(e.target.checked)} /> {t("aiGenerate.overHiddenMode")}</label>
                         </div>
-                      ))}
+                      </div>
+                      <Button type="primary" onClick={handleMd2CardGeneration} loading={loadingMd2Card} disabled={!markdownContent} icon={<FileTextOutlined />}>{t("aiGenerate.generateCard")}</Button>
                     </div>
-                    <div className={styles.options}>
-                      <Input placeholder={t("aiGenerate.cardWidthPlaceholder")} type="number" value={cardWidth} onChange={(e)=>setCardWidth(Number(e.target.value))} style={{ width: "100%" }} />
-                      <Input placeholder={t("aiGenerate.cardHeightPlaceholder")} type="number" value={cardHeight} onChange={(e)=>setCardHeight(Number(e.target.value))} style={{ width: "100%" }} />
-                    </div>
-                    <div className={styles.options}>
-                      <Select value={splitMode} onChange={setSplitMode} style={{ width: "100%" }}>
-                        <Option value="noSplit">{t("aiGenerate.noSplit")}</Option>
-                        <Option value="split">{t("aiGenerate.split")}</Option>
-                    </Select>
-                      <div style={{ display:"flex", gap:8, alignItems:"center" }}>
-                        <label><input type="checkbox" checked={mdxMode} onChange={(e)=>setMdxMode(e.target.checked)} /> {t("aiGenerate.mdxMode")}</label>
-                        <label><input type="checkbox" checked={overHiddenMode} onChange={(e)=>setOverHiddenMode(e.target.checked)} /> {t("aiGenerate.overHiddenMode")}</label>
+                    <div className={styles.rightPanel}>
+                      <div className={styles.result}>
+                        <div className={styles.imageCard}>
+                          {md2CardResult ? (
+                            <img src={getOssUrl(md2CardResult)} alt={t('aiGenerate.markdownCard')} />
+                          ) : (
+                            (() => { const theme = md2CardTemplates.find((t)=>t.id===selectedTheme); return (
+                              <img src={theme?.preview} alt={isEnglishLang ? theme?.nameEn : theme?.nameCn} />
+                            ); })()
+                          )}
+                          {md2CardResult && (
+                            <div className={styles.imageActions}>
+                              <Button size="small" icon={<DownloadOutlined />} onClick={()=>handleDownloadUrl(md2CardResult)} />
+                              <Button size="small" type="primary" icon={<UploadOutlined />} onClick={()=>handleUploadToMediaGroup('img', md2CardResult)} />
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                    <Button type="primary" onClick={handleMd2CardGeneration} loading={loadingMd2Card} disabled={!markdownContent} icon={<FileTextOutlined />}>{t("aiGenerate.generateCard")}</Button>
                   </div>
-                  {md2CardResult && (
-                    <div className={styles.result}>
-                      <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-                        <img src={getOssUrl(md2CardResult)} alt={t('aiGenerate.markdownCard')} style={{ maxWidth:'100%', borderRadius:8 }} />
-                        <Button type="primary" onClick={()=>handleUploadToMediaGroup('img')} icon={<UploadOutlined />} style={{ padding:'1px' }}>{t("aiGenerate.uploadToMediaGroup")}</Button>
-                      </div>
-                  </div>
-                )}
                 </div>
               )}
             </>
