@@ -523,17 +523,21 @@ export default function AIGeneratePage() {
                       <Button type="primary" onClick={handleTextToFireflyCard} loading={loadingFirefly} disabled={!content||!title} icon={<FireOutlined />}>{t("aiGenerate.generate")}</Button>
                     </div>
                     <div className={styles.rightPanel}>
-                      {fireflyResult && (
-                        <div className={styles.result}>
-                          <div className={styles.imageCard}>
+                      <div className={styles.result}>
+                        <div className={styles.imageCard}>
+                          {fireflyResult ? (
                             <img src={getOssUrl(fireflyResult)} alt={t('aiGenerate.fireflyCard')} />
+                          ) : (
+                            <img src={`${TEMPLATE_BASE}/${temp}.png`} alt={t('aiGenerate.fireflyCard')} />
+                          )}
+                          {fireflyResult && (
                             <div className={styles.imageActions}>
                               <Button size="small" icon={<DownloadOutlined />} onClick={()=>handleDownloadUrl(fireflyResult)} />
                               <Button size="small" type="primary" icon={<UploadOutlined />} onClick={()=>handleUploadToMediaGroup('img', fireflyResult)} />
                             </div>
-                          </div>
+                          )}
                         </div>
-                      )}
+                      </div>
                     </div>
                   </div>
                 </div>
