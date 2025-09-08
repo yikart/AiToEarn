@@ -472,7 +472,7 @@ export default function AIGeneratePage() {
                     <div className={styles.rightPanel}>
                       {result ? (
                 <div className={styles.result}>
-                          <Row gutter={[16,16]}>
+                          <Row gutter={[16,16]} justify={'center'}>
                             {result.map((img, idx)=>(
                               <Col key={idx} xs={24} sm={12} md={12} lg={12}>
                                 <div className={styles.imageCard}>
