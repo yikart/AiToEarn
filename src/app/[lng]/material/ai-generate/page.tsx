@@ -15,6 +15,12 @@ import { md2CardTemplates, defaultMarkdown } from "./md2card";
 const { TextArea } = Input;
 const { Option } = Select;
 
+import shili21 from '@/assets/images/shili/image-ai-sample-2-1.webp';
+import shili22 from '@/assets/images/shili/image-ai-sample-2-2.jpeg';
+import shili23 from '@/assets/images/shili/image-ai-sample-2-3.jpeg';
+import shili24 from '@/assets/images/shili/image-ai-sample-2-4.jpeg';
+
+
 /**
  * AI 工具页（左右布局）
  * - 左侧：图标切换 图片/视频 两个模块
@@ -141,6 +147,15 @@ export default function AIGeneratePage() {
 
   const [imageModels, setImageModels] = useState<any[]>([]);
   const [videoModels, setVideoModels] = useState<any[]>([]);
+
+  // 自定义模型下拉
+  const [showModelDropdown, setShowModelDropdown] = useState(false);
+
+  // 示例轮播
+  const sampleImages = [shili21 as any, shili22 as any, shili23 as any, shili24 as any];
+  const [sampleIdx, setSampleIdx] = useState(0);
+  const handlePrevSample = () => setSampleIdx((p) => (p - 1 + sampleImages.length) % sampleImages.length);
+  const handleNextSample = () => setSampleIdx((p) => (p + 1) % sampleImages.length);
 
   const getVideoModelCreditCost = (modelName: string, duration: number, size: string): number => {
     const m = videoModels.find((v) => v.name === modelName);
@@ -340,23 +355,39 @@ export default function AIGeneratePage() {
                       <div className={styles.blockTitle}>{t('aiGenerate.textToImage')}</div>
 
                       <div className={styles.blockTitle} style={{ marginTop: 12 }}>{t('aiGenerate.selectModelPlaceholder')}</div>
-                      <div className={styles.modelList}>
-                        {imageModels.map((m:any)=>{
-                          const isActive = model === m.name;
-                          return (
-                            <div key={m.name} className={`${styles.modelItem} ${isActive?styles.modelItemActive:''}`} onClick={()=>setModel(m.name)}>
-                              <div className={styles.modelIcon}><PictureOutlined /></div>
-                              <div className={styles.modelMain}>
-                                <div className={styles.modelHeader}>
-                                  <span className={styles.modelName}>{m.name || ''}</span>
-                                  {m.latest ? <span className={styles.modelTag}>最新</span> : null}
-                                </div>
-                                <div className={styles.modelDesc}>{m.desc || ''}</div>
-                                <div className={styles.modelMeta}>{m.eta || ''}</div>
-                              </div>
+                      <div className={styles.modelSelect}>
+                        <button className={styles.modelSelectBtn} onClick={()=>setShowModelDropdown((s)=>!s)}>
+                          <div className={styles.modelIcon}><PictureOutlined /></div>
+                          <div className={styles.modelMain}>
+                            <div className={styles.modelHeader}>
+                              <span className={styles.modelName}>{model || t('aiGenerate.selectModelPlaceholder')}</span>
                             </div>
-                          );
-                        })}
+                            <div className={styles.modelDesc}>{(() => { const m:any = imageModels.find((x:any)=>x.name===model); return m?.desc || ''; })()}</div>
+                          </div>
+                          <span className={styles.modelCaret}>▾</span>
+                        </button>
+                        {showModelDropdown && (
+                          <div className={styles.modelDropdown}>
+                            <div className={styles.modelListScrollable}>
+                              {imageModels.map((m:any)=>{
+                                const isActive = model === m.name;
+                                return (
+                                  <div key={m.name} className={`${styles.modelItem} ${isActive?styles.modelItemActive:''}`} onClick={()=>{ setModel(m.name); setShowModelDropdown(false); }}>
+                                    <div className={styles.modelIcon}><PictureOutlined /></div>
+                                    <div className={styles.modelMain}>
+                                      <div className={styles.modelHeader}>
+                                        <span className={styles.modelName}>{m.name || ''}</span>
+                                        {m.latest ? <span className={styles.modelTag}>最新</span> : null}
+                                      </div>
+                                      <div className={styles.modelDesc}>{m.desc || ''}</div>
+                                      <div className={styles.modelMeta}>{m.eta || ''}</div>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       <div className={styles.blockTitle} style={{ marginTop: 16 }}>{t('aiGenerate.promptPlaceholder')}</div>
@@ -394,7 +425,7 @@ export default function AIGeneratePage() {
                       <Button type="primary" onClick={handleTextToImage} loading={loading} disabled={!prompt || !model} icon={<PictureOutlined />}>{t('aiGenerate.generate')}</Button>
                     </div>
                     <div className={styles.rightPanel}>
-                      {result && (
+                      {result ? (
                         <div className={styles.result}>
                           <Row gutter={[16,16]}>
                             {result.map((img, idx)=>(
@@ -403,6 +434,19 @@ export default function AIGeneratePage() {
                               </Col>
                             ))}
                           </Row>
+                        </div>
+                      ) : (
+                        <div className={styles.sampleCarousel}>
+                          <div className={styles.sampleStage}>
+                            <img src={sampleImages[sampleIdx].src || sampleImages[sampleIdx]} alt="sample" />
+                            <button className={styles.samplePrev} onClick={handlePrevSample}>‹</button>
+                            <button className={styles.sampleNext} onClick={handleNextSample}>›</button>
+                          </div>
+                          <div className={styles.sampleDots}>
+                            {sampleImages.map((_,i)=>(
+                              <span key={i} className={`${styles.sampleDot} ${i===sampleIdx?styles.sampleDotActive:''}`} onClick={()=>setSampleIdx(i)}></span>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>

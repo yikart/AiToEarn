@@ -150,9 +150,7 @@
 
 .rightContent {
   background: #f8f9fa;
-  border: 1px solid rgba(0,0,0,0.05);
-  
-  padding: 16px;
+
 }
 
 .tabs {
@@ -201,13 +199,18 @@
 }
 
 // 新增：textToImage 左右分栏
-.twoColumn { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.twoColumn { display: grid; grid-template-columns: 399px 1fr; gap: 16px; }
 .leftPanel { display: flex; flex-direction: column; gap: 12px; }
 .rightPanel { }
 
 .blockTitle { font-size: 14px; color: #999; }
 
 .modelList { display: flex; flex-direction: column; gap: 8px; }
+.modelSelect { position: relative; }
+.modelSelectBtn { width: 100%; display: flex; gap: 10px; align-items: center; padding: 10px; border: 1px solid rgba(0,0,0,.06); background: #fff; cursor: pointer; }
+.modelCaret { margin-left: auto; color: #999; }
+.modelDropdown { position: absolute; left: 0; right: 0; top: calc(100% + 6px); background: #fff; border: 1px solid rgba(0,0,0,.1); box-shadow: 0 8px 24px rgba(0,0,0,.08); z-index: 10; border-radius: 8px; }
+.modelListScrollable { max-height: 340px; overflow: auto; padding: 8px; display: flex; flex-direction: column; gap: 8px; }
 .modelItem {
   display: flex; gap: 10px; padding: 10px; border: 1px solid rgba(0,0,0,.06); background: #fafafa; cursor: pointer; transition: all .2s ease;
 }
@@ -228,6 +231,17 @@
 .pillGroup { display: flex; gap: 8px; align-items: center; }
 .pill { min-width: 36px; height: 36px; border-radius: 18px; background: #f5f6f8; border: 1px solid rgba(0,0,0,.06); color: #555; cursor: pointer; }
 .pillActive { background: var(--theColor5); color: #fff; border-color: transparent; }
+
+// 示例轮播
+.sampleCarousel { width: 100%; height: 100%; display: flex; flex-direction: column; gap: 10px; align-items: center; justify-content: center; }
+.sampleStage { position: relative; width: 100%; aspect-ratio: 16/10; background: #2a2a2a; border-radius: 8px; overflow: hidden; }
+.sampleStage img { width: 100%; height: 100%; object-fit: cover; }
+.samplePrev, .sampleNext { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 18px; background: rgba(0,0,0,.4); color: #fff; border: none; cursor: pointer; }
+.samplePrev { left: 10px; }
+.sampleNext { right: 10px; }
+.sampleDots { display: flex; gap: 6px; }
+.sampleDot { width: 6px; height: 6px; border-radius: 3px; background: #c9c9c9; cursor: pointer; }
+.sampleDotActive { background: var(--theColor5); }
 
 .form {
   display: flex;
