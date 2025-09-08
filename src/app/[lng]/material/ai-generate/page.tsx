@@ -157,6 +157,25 @@ export default function AIGeneratePage() {
   const handlePrevSample = () => setSampleIdx((p) => (p - 1 + sampleImages.length) % sampleImages.length);
   const handleNextSample = () => setSampleIdx((p) => (p + 1) % sampleImages.length);
 
+  // 保存结果到本地
+  const handleSaveResults = async () => {
+    try {
+      if (!result || !result.length) { message.warning(t('aiGenerate.imageGenerationFailed')); return; }
+      for (let i = 0; i < result.length; i++) {
+        const url = getOssUrl(result[i]);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `image_${i + 1}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+      message.success(t('aiGenerate.uploadSuccess'));
+    } catch (e) {
+      message.error(t('aiGenerate.uploadFailed'));
+    }
+  };
+
   const getVideoModelCreditCost = (modelName: string, duration: number, size: string): number => {
     const m = videoModels.find((v) => v.name === modelName);
     const item = m?.pricing?.find((p: any) => p.duration === duration && p.resolution === size);
@@ -273,7 +292,7 @@ export default function AIGeneratePage() {
           if (normalized === "failed") { setVideoProgress(0); message.error(fail_reason || t("aiGenerate.videoGenerationFailed")); return true; }
           setVideoProgress(percent); return false;
         }
-        return false;
+          return false;
       } catch { return false; } finally { setCheckingStatus(false); }
     };
     const poll = async () => { const done = await checkStatus(); if (!done) setTimeout(poll, 5000); };
@@ -286,14 +305,25 @@ export default function AIGeneratePage() {
     catch { message.error(t("aiGenerate.cardGenerationFailed")); } finally { setLoadingMd2Card(false); }
   };
 
-  const handleUploadToMediaGroup = async (type: string = "img") => { setSelectedMediaGroup(null); await fetchMediaGroups(type as any); setUploadModalVisible(true); };
+  const [currentUploadUrl, setCurrentUploadUrl] = useState<string | null>(null);
+  const handleUploadToMediaGroup = async (type: string = "img", url?: string) => {
+    setSelectedMediaGroup(null);
+    setCurrentUploadUrl(url || (videoResult || fireflyResult || md2CardResult) || null);
+    await fetchMediaGroups(type as any);
+    setUploadModalVisible(true);
+  };
   const handleUploadConfirm = async () => {
     if (!selectedMediaGroup) { message.error(t("aiGenerate.pleaseSelectMediaGroup")); return; }
     try {
       setUploading(true);
-      const mediaUrl = videoResult || fireflyResult || md2CardResult;
+      const mediaUrl = currentUploadUrl || videoResult || fireflyResult || md2CardResult;
       const mediaType = videoResult ? "video" : "img";
-      const res: any = await createMedia({ groupId: selectedMediaGroup, url: mediaUrl, type: mediaType, title: videoResult ? videoPrompt : title, desc: "" });
+      const now = new Date();
+      const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+      const usedModel = videoResult ? videoModel : model;
+      const uploadTitle = usedModel ? `${usedModel} ${timeStr}` : timeStr;
+      const uploadDesc = videoResult ? (videoPrompt || "") : (prompt || content || "");
+      const res: any = await createMedia({ groupId: selectedMediaGroup, url: mediaUrl, type: mediaType, title: uploadTitle, desc: uploadDesc });
       if (res.data) { message.success(videoResult ? t("aiGenerate.videoUploadSuccess") : md2CardResult ? t("aiGenerate.cardUploadSuccess") : t("aiGenerate.uploadSuccess")); setUploadModalVisible(false); }
       else { message.error(videoResult ? t("aiGenerate.videoUploadFailed") : md2CardResult ? t("aiGenerate.cardUploadFailed") : t("aiGenerate.uploadFailed")); }
     } catch { message.error(videoResult ? t("aiGenerate.videoUploadFailed") : md2CardResult ? t("aiGenerate.cardUploadFailed") : t("aiGenerate.uploadFailed")); }
@@ -309,11 +339,11 @@ export default function AIGeneratePage() {
           <div className={styles.moduleTabs}>
             <button title={t("aiGenerate.textToImage")} className={`${styles.moduleTab} ${activeModule === "image" ? styles.moduleTabActive : ""}`} onClick={() => setActiveModule("image")}>
               <PictureOutlined />
-            </button>
+          </button>
             <button title={t("aiGenerate.videoGeneration")} className={`${styles.moduleTab} ${activeModule === "video" ? styles.moduleTabActive : ""}`} onClick={() => setActiveModule("video")}>
               <VideoCameraOutlined />
             </button>
-          </div>
+        </div>
           {activeModule === "image" && (
             <div className={styles.imageSubTabs}>
               <button className={`${styles.subTab} ${activeImageTab==='textToImage' ? styles.subTabActive : ''}`} onClick={()=>setActiveImageTab('textToImage')}>
@@ -328,7 +358,7 @@ export default function AIGeneratePage() {
                 <div className="subTabIcon"><FileTextOutlined /></div>
                 <div className="subTabLabel">{t("aiGenerate.markdownToCard")}</div>
               </button>
-            </div>
+      </div>
           )}
 
           {activeModule === "video" && (
@@ -349,7 +379,7 @@ export default function AIGeneratePage() {
           {activeModule === "image" ? (
             <>
               {activeImageTab === 'textToImage' && (
-                <div className={styles.section}>
+            <div className={styles.section}>
                   <div className={styles.twoColumn}>
                     <div className={styles.leftPanel}>
                       <div className={styles.blockTitle}>{t('aiGenerate.textToImage')}</div>
@@ -390,7 +420,7 @@ export default function AIGeneratePage() {
                         )}
                       </div>
 
-                      <div className={styles.blockTitle} style={{ marginTop: 16 }}>{t('aiGenerate.promptPlaceholder')}</div>
+                      <div className={styles.blockTitle} style={{ marginTop: 1 }}>{t('aiGenerate.promptPlaceholder')}</div>
                       <TextArea value={prompt} onChange={(e)=>setPrompt(e.target.value)} rows={4} />
                       <div className={styles.exampleChips}>
                         {['延时绽放','绚丽花朵','海底世界','星空漫游','赛博城市'].map((w)=> (
@@ -398,42 +428,51 @@ export default function AIGeneratePage() {
                         ))}
                       </div>
 
-                      <div className={styles.blockTitle} style={{ marginTop: 16 }}>高级选项</div>
-                      <div className={styles.dimensions}>
+                      <div className={styles.blockTitle} style={{ marginTop: 6 }}>高级选项</div>
+                <div className={styles.dimensions}>
                         <Select value={size} onChange={setSize} style={{ width: '100%' }}>
-                          <Option value="1024x1024">1024x1024</Option>
-                          <Option value="1792x1024">1792x1024</Option>
-                          <Option value="1024x1792">1024x1792</Option>
-                        </Select>
-                        <div className={styles.pillGroup}>
-                          {[1,2,3,4].map((num)=> (
-                            <button key={num} className={`${styles.pill} ${n===num?styles.pillActive:''}`} onClick={()=>setN(num)}>{num}</button>
-                          ))}
+                    <Option value="1024x1024">1024x1024</Option>
+                    <Option value="1792x1024">1792x1024</Option>
+                    <Option value="1024x1792">1024x1792</Option>
+                  </Select>
+                      </div>
+                      <div className={styles.pillRow}>
+                        <div className={styles.blockTitle} style={{ marginBottom: 6 }}>输出图像数量</div>
+                        <div className={styles.pillGroupBox}>
+                          <div className={styles.pillGroup}>
+                            {[1,2,3,4].map((num)=> (
+                              <button key={num} className={`${styles.pill} ${n===num?styles.pillActive:''}`} onClick={()=>setN(num)}>{num}</button>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                      <div className={styles.options}>
+                </div>
+                <div className={styles.options}>
                         <Select value={quality} onChange={setQuality} style={{ width: '100%' }}>
-                          <Option value="standard">{t('aiGenerate.standard')}</Option>
-                          <Option value="hd">{t('aiGenerate.hd')}</Option>
-                        </Select>
+                    <Option value="standard">{t('aiGenerate.standard')}</Option>
+                    <Option value="hd">{t('aiGenerate.hd')}</Option>
+                  </Select>
                         <Select value={style} onChange={setStyle} style={{ width: '100%' }}>
-                          <Option value="vivid">{t('aiGenerate.vivid')}</Option>
-                          <Option value="natural">{t('aiGenerate.natural')}</Option>
-                        </Select>
-                      </div>
+                    <Option value="vivid">{t('aiGenerate.vivid')}</Option>
+                    <Option value="natural">{t('aiGenerate.natural')}</Option>
+                  </Select>
+                </div>
                       {model && (()=>{ const selected = imageModels.find((m:any)=>m.name===model); const credit = selected?.pricing ? parseFloat(selected.pricing) : 0; return credit>0 ? (<div className={styles.creditCostInfo}><span style={{color:'#1890ff',fontSize:'14px'}}>💰 {t('aiGenerate.estimatedCreditCost' as any)}: {credit} {t('aiGenerate.credits' as any)}</span></div>) : null; })()}
                       <Button type="primary" onClick={handleTextToImage} loading={loading} disabled={!prompt || !model} icon={<PictureOutlined />}>{t('aiGenerate.generate')}</Button>
                     </div>
                     <div className={styles.rightPanel}>
                       {result ? (
-                        <div className={styles.result}>
+                <div className={styles.result}>
                           <Row gutter={[16,16]}>
                             {result.map((img, idx)=>(
                               <Col key={idx} xs={24} sm={12} md={12} lg={12}>
-                                <img src={img} alt={`${t('aiGenerate.textToImage')} ${idx+1}`} style={{ width: '100%', borderRadius: 8 }} />
-                              </Col>
-                            ))}
-                          </Row>
+                                <img src={getOssUrl(img)} alt={`${t('aiGenerate.textToImage')} ${idx+1}`} style={{ width: '100%', borderRadius: 8 }} />
+                      </Col>
+                    ))}
+                  </Row>
+                          <div style={{ display:'flex', gap:10, justifyContent:'flex-end', marginTop: 12 }}>
+                            <Button onClick={handleSaveResults}>{t('aiGenerate.save' as any) || '保存到本地'}</Button>
+                            <Button type="primary" onClick={()=>handleUploadToMediaGroup('img', result && result[0] ? result[0] : undefined)} icon={<UploadOutlined />}>{t('aiGenerate.uploadToMediaGroup')}</Button>
+                          </div>
                         </div>
                       ) : (
                         <div className={styles.sampleCarousel}>
@@ -447,49 +486,49 @@ export default function AIGeneratePage() {
                               <span key={i} className={`${styles.sampleDot} ${i===sampleIdx?styles.sampleDotActive:''}`} onClick={()=>setSampleIdx(i)}></span>
                             ))}
                           </div>
-                        </div>
-                      )}
-                    </div>
+                </div>
+              )}
+            </div>
                   </div>
                 </div>
               )}
 
               {activeImageTab === 'textToFireflyCard' && (
-                <div className={styles.section}>
-                  <div className={styles.form}>
+            <div className={styles.section}>
+              <div className={styles.form}>
                     <Input placeholder={t("aiGenerate.titlePlaceholder")} value={title} onChange={(e)=>setTitle(e.target.value)} prefix={<FileTextOutlined />} />
                     <TextArea placeholder={t("aiGenerate.contentPlaceholder")} value={content} onChange={(e)=>setContent(e.target.value)} rows={4} />
-                    <div className={styles.templateGrid}>
+                <div className={styles.templateGrid}>
                       {templateList.map((item)=> (
                         <div key={item.key} className={`${styles.templateCard} ${temp===item.key?styles.templateCardActive:""}`} onClick={()=>setTemp(item.key)}>
                           <div className={styles.templateThumb}><img src={`${TEMPLATE_BASE}/${item.key}.png`} alt={`${t('aiGenerate.template')} ${item.name}`} /></div>
                           <div className={styles.templateLabel}>{item.name}</div>
-                        </div>
-                      ))}
                     </div>
+                  ))}
+                </div>
                     <Button type="primary" onClick={handleTextToFireflyCard} loading={loadingFirefly} disabled={!content||!title} icon={<FireOutlined />}>{t("aiGenerate.generate")}</Button>
-                  </div>
-                  {fireflyResult && (
-                    <div className={styles.result}>
+              </div>
+              {fireflyResult && (
+                <div className={styles.result}>
                       <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
                         <img src={getOssUrl(fireflyResult)} alt={t('aiGenerate.fireflyCard')} style={{ maxWidth:'100%', borderRadius:8 }} />
                         <Button type="primary" onClick={()=>handleUploadToMediaGroup('img')} icon={<UploadOutlined />} style={{ padding:'1px' }}>{t("aiGenerate.uploadToMediaGroup")}</Button>
-                      </div>
-                    </div>
-                  )}
+                  </div>
                 </div>
+              )}
+            </div>
               )}
 
               {activeImageTab === 'md2card' && (
-                <div className={styles.section}>
-                  <div className={styles.form}>
+            <div className={styles.section}>
+              <div className={styles.form}>
                     <TextArea placeholder={t("aiGenerate.markdownPlaceholder")} value={markdownContent} onChange={(e)=>setMarkdownContent(e.target.value)} rows={8} />
                     <div className={styles.dimensions}>
                       <Select value={themeMode} onChange={setThemeMode} style={{ width: "100%" }}>
                         <Option value="light">{t("aiGenerate.lightMode")}</Option>
                         <Option value="dark">{t("aiGenerate.darkMode")}</Option>
-                      </Select>
-                    </div>
+                  </Select>
+                </div>
                     <div className={styles.templateGrid}>
                       {md2CardTemplates.map((theme)=> (
                         <div key={theme.id} className={`${styles.templateCard} ${selectedTheme===theme.id?styles.templateCardActive:""}`} onClick={()=>setSelectedTheme(theme.id)}>
@@ -506,7 +545,7 @@ export default function AIGeneratePage() {
                       <Select value={splitMode} onChange={setSplitMode} style={{ width: "100%" }}>
                         <Option value="noSplit">{t("aiGenerate.noSplit")}</Option>
                         <Option value="split">{t("aiGenerate.split")}</Option>
-                      </Select>
+                    </Select>
                       <div style={{ display:"flex", gap:8, alignItems:"center" }}>
                         <label><input type="checkbox" checked={mdxMode} onChange={(e)=>setMdxMode(e.target.checked)} /> {t("aiGenerate.mdxMode")}</label>
                         <label><input type="checkbox" checked={overHiddenMode} onChange={(e)=>setOverHiddenMode(e.target.checked)} /> {t("aiGenerate.overHiddenMode")}</label>
@@ -520,8 +559,8 @@ export default function AIGeneratePage() {
                         <img src={getOssUrl(md2CardResult)} alt={t('aiGenerate.markdownCard')} style={{ maxWidth:'100%', borderRadius:8 }} />
                         <Button type="primary" onClick={()=>handleUploadToMediaGroup('img')} icon={<UploadOutlined />} style={{ padding:'1px' }}>{t("aiGenerate.uploadToMediaGroup")}</Button>
                       </div>
-                    </div>
-                  )}
+                  </div>
+                )}
                 </div>
               )}
             </>
@@ -546,15 +585,15 @@ export default function AIGeneratePage() {
                         <Button onClick={handlePickFirstFrame} loading={uploadingFirstFrame}>{t('aiGenerate.uploadImage')} - {t('aiGenerate.firstFrame')}</Button>
                         {videoImage && (<img src={videoImage} alt={t('aiGenerate.firstFrame')} style={{ width:160, height:90, objectFit:'cover', borderRadius:6, border:'1px solid #eee' }} />)}
                         <input type="file" accept="image/*" ref={firstFrameInputRef} onChange={handleFirstFrameChange} style={{ display:'none' }} />
-                      </div>
-                    )}
+                          </div>
+                        )}
                     {videoMode==='image2video' && supported.includes('image_tail') && (
                       <div style={{ display:'flex', alignItems:'center', gap:12, width:'100%' }}>
                         <Button onClick={handlePickTailFrame} loading={uploadingTailFrame}>{t('aiGenerate.uploadImage')} - {t('aiGenerate.tailFrame')}</Button>
                         {videoImageTail && (<img src={videoImageTail} alt={t('aiGenerate.tailFrame')} style={{ width:160, height:90, objectFit:'cover', borderRadius:6, border:'1px solid #eee' }} />)}
                         <input type="file" accept="image/*" ref={tailFrameInputRef} onChange={handleTailFrameChange} style={{ display:'none' }} />
-                      </div>
-                    )}
+                          </div>
+                        )}
                   </>); })()}
                 </div>
                 {videoModel && videoDuration && videoSize && (
@@ -562,7 +601,7 @@ export default function AIGeneratePage() {
                 )}
                 <Button type="primary" onClick={handleVideoGeneration} loading={loadingVideo} disabled={!videoPrompt || !videoModel} icon={<VideoCameraOutlined />}>{t("aiGenerate.generate")}</Button>
               </div>
-
+              
               {(videoStatus || videoResult) && (
                 <div className={styles.result}>
                   {videoStatus && (
@@ -585,9 +624,9 @@ export default function AIGeneratePage() {
                   )}
                 </div>
               )}
+                </div>
+              )}
             </div>
-          )}
-        </div>
       </div>
 
       <Modal title={t("aiGenerate.selectMediaGroup")} open={uploadModalVisible} onOk={handleUploadConfirm} onCancel={()=>setUploadModalVisible(false)} confirmLoading={uploading}>
