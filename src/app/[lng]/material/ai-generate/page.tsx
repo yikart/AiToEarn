@@ -335,50 +335,78 @@ export default function AIGeneratePage() {
             <>
               {activeImageTab === 'textToImage' && (
                 <div className={styles.section}>
-                  <div className={styles.form}>
-                    <TextArea placeholder={t("aiGenerate.promptPlaceholder")} value={prompt} onChange={(e) => setPrompt(e.target.value)} rows={4} />
-                    <div className={styles.dimensions}>
-                      <Select value={size} onChange={setSize} style={{ width: "100%" }}>
-                        <Option value="1024x1024">1024x1024</Option>
-                        <Option value="1792x1024">1792x1024</Option>
-                        <Option value="1024x1792">1024x1792</Option>
-                      </Select>
-                      <Select value={n} onChange={setN} style={{ width: "100%" }}>
-                        {[1,2,3,4,5,6,7,8,9,10].map((num)=> (<Option key={num} value={num}>{num}</Option>))}
-                      </Select>
-                    </div>
-                    <div className={styles.options}>
-                      <Select value={quality} onChange={setQuality} style={{ width: "100%" }}>
-                        <Option value="standard">{t("aiGenerate.standard")}</Option>
-                        <Option value="hd">{t("aiGenerate.hd")}</Option>
-                      </Select>
-                      <Select value={style} onChange={setStyle} style={{ width: "100%" }}>
-                        <Option value="vivid">{t("aiGenerate.vivid")}</Option>
-                        <Option value="natural">{t("aiGenerate.natural")}</Option>
-                      </Select>
-                    </div>
-                    {imageModels.length > 0 && (
-                      <Select value={model} onChange={setModel} style={{ width: "100%" }}>
+                  <div className={styles.twoColumn}>
+                    <div className={styles.leftPanel}>
+                      <div className={styles.blockTitle}>{t('aiGenerate.textToImage')}</div>
+
+                      <div className={styles.blockTitle} style={{ marginTop: 12 }}>{t('aiGenerate.selectModelPlaceholder')}</div>
+                      <div className={styles.modelList}>
                         {imageModels.map((m:any)=>{
-                          const creditCost = m.pricing ? parseFloat(m.pricing) : 0;
-                          return (<Option key={m.name} value={m.name}>{m.name} {creditCost>0 && `(${t('aiGenerate.estimatedCreditCost' as any)} ${creditCost} ${t('aiGenerate.credits' as any)})`}</Option>);
+                          const isActive = model === m.name;
+                          return (
+                            <div key={m.name} className={`${styles.modelItem} ${isActive?styles.modelItemActive:''}`} onClick={()=>setModel(m.name)}>
+                              <div className={styles.modelIcon}><PictureOutlined /></div>
+                              <div className={styles.modelMain}>
+                                <div className={styles.modelHeader}>
+                                  <span className={styles.modelName}>{m.name || ''}</span>
+                                  {m.latest ? <span className={styles.modelTag}>最新</span> : null}
+                                </div>
+                                <div className={styles.modelDesc}>{m.desc || ''}</div>
+                                <div className={styles.modelMeta}>{m.eta || ''}</div>
+                              </div>
+                            </div>
+                          );
                         })}
-                      </Select>
-                    )}
-                    {model && (()=>{ const selected = imageModels.find((m:any)=>m.name===model); const credit = selected?.pricing ? parseFloat(selected.pricing) : 0; return credit>0 ? (<div className={styles.creditCostInfo}><span style={{color:'#1890ff',fontSize:'14px'}}>💰 {t('aiGenerate.estimatedCreditCost' as any)}: {credit} {t('aiGenerate.credits' as any)}</span></div>) : null; })()}
-                    <Button type="primary" onClick={handleTextToImage} loading={loading} disabled={!prompt} icon={<PictureOutlined />}>{t("aiGenerate.generate")}</Button>
-                  </div>
-                  {result && (
-                    <div className={styles.result}>
-                      <Row gutter={[16,16]}>
-                        {result.map((img, idx)=>(
-                          <Col key={idx} xs={24} sm={12} md={8} lg={6}>
-                            <img src={img} alt={`${t('aiGenerate.textToImage')} ${idx+1}`} style={{ width: "100%", borderRadius: 8 }} />
-                          </Col>
+                      </div>
+
+                      <div className={styles.blockTitle} style={{ marginTop: 16 }}>{t('aiGenerate.promptPlaceholder')}</div>
+                      <TextArea value={prompt} onChange={(e)=>setPrompt(e.target.value)} rows={4} />
+                      <div className={styles.exampleChips}>
+                        {['延时绽放','绚丽花朵','海底世界','星空漫游','赛博城市'].map((w)=> (
+                          <span key={w} className={styles.exampleChip} onClick={()=>setPrompt(w)}>{w}</span>
                         ))}
-                      </Row>
+                      </div>
+
+                      <div className={styles.blockTitle} style={{ marginTop: 16 }}>高级选项</div>
+                      <div className={styles.dimensions}>
+                        <Select value={size} onChange={setSize} style={{ width: '100%' }}>
+                          <Option value="1024x1024">1024x1024</Option>
+                          <Option value="1792x1024">1792x1024</Option>
+                          <Option value="1024x1792">1024x1792</Option>
+                        </Select>
+                        <div className={styles.pillGroup}>
+                          {[1,2,3,4].map((num)=> (
+                            <button key={num} className={`${styles.pill} ${n===num?styles.pillActive:''}`} onClick={()=>setN(num)}>{num}</button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className={styles.options}>
+                        <Select value={quality} onChange={setQuality} style={{ width: '100%' }}>
+                          <Option value="standard">{t('aiGenerate.standard')}</Option>
+                          <Option value="hd">{t('aiGenerate.hd')}</Option>
+                        </Select>
+                        <Select value={style} onChange={setStyle} style={{ width: '100%' }}>
+                          <Option value="vivid">{t('aiGenerate.vivid')}</Option>
+                          <Option value="natural">{t('aiGenerate.natural')}</Option>
+                        </Select>
+                      </div>
+                      {model && (()=>{ const selected = imageModels.find((m:any)=>m.name===model); const credit = selected?.pricing ? parseFloat(selected.pricing) : 0; return credit>0 ? (<div className={styles.creditCostInfo}><span style={{color:'#1890ff',fontSize:'14px'}}>💰 {t('aiGenerate.estimatedCreditCost' as any)}: {credit} {t('aiGenerate.credits' as any)}</span></div>) : null; })()}
+                      <Button type="primary" onClick={handleTextToImage} loading={loading} disabled={!prompt || !model} icon={<PictureOutlined />}>{t('aiGenerate.generate')}</Button>
                     </div>
-                  )}
+                    <div className={styles.rightPanel}>
+                      {result && (
+                        <div className={styles.result}>
+                          <Row gutter={[16,16]}>
+                            {result.map((img, idx)=>(
+                              <Col key={idx} xs={24} sm={12} md={12} lg={12}>
+                                <img src={img} alt={`${t('aiGenerate.textToImage')} ${idx+1}`} style={{ width: '100%', borderRadius: 8 }} />
+                              </Col>
+                            ))}
+                          </Row>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               )}
 

@@ -200,6 +200,35 @@
   background-color: #fff;
 }
 
+// 新增：textToImage 左右分栏
+.twoColumn { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.leftPanel { display: flex; flex-direction: column; gap: 12px; }
+.rightPanel { }
+
+.blockTitle { font-size: 14px; color: #999; }
+
+.modelList { display: flex; flex-direction: column; gap: 8px; }
+.modelItem {
+  display: flex; gap: 10px; padding: 10px; border: 1px solid rgba(0,0,0,.06); background: #fafafa; cursor: pointer; transition: all .2s ease;
+}
+.modelItem:hover { background: #f0f1f3; }
+.modelItemActive { background: rgba(166,106,228,.12); border-color: rgba(166,106,228,.25); }
+.modelIcon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: var(--theColor5); }
+.modelMain { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.modelHeader { display: flex; align-items: center; gap: 6px; }
+.modelName { font-size: 14px; color: #333; font-weight: 500; }
+.modelTag { font-size: 11px; color: #fff; background: var(--theColor5); padding: 1px 6px; border-radius: 10px; }
+.modelDesc { font-size: 12px; color: #666; }
+.modelMeta { font-size: 12px; color: #999; }
+
+.exampleChips { display: flex; flex-wrap: wrap; gap: 8px; }
+.exampleChip { padding: 4px 8px; border-radius: 12px; background: #f5f6f8; color: #555; cursor: pointer; }
+.exampleChip:hover { background: #eef0f2; }
+
+.pillGroup { display: flex; gap: 8px; align-items: center; }
+.pill { min-width: 36px; height: 36px; border-radius: 18px; background: #f5f6f8; border: 1px solid rgba(0,0,0,.06); color: #555; cursor: pointer; }
+.pillActive { background: var(--theColor5); color: #fff; border-color: transparent; }
+
 .form {
   display: flex;
   flex-direction: column;
