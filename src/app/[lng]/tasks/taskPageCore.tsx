@@ -16,8 +16,8 @@ import {
 import { apiCreatePublish } from "@/api/plat/publish";
 import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import { getOssUrl } from "@/utils/oss";
-// import { getAppDownloadConfig, getTasksRequiringApp } from "@/app/config/appDownloadConfig";
-// import DownloadAppModal from "@/components/common/DownloadAppModal";
+import { getAppDownloadConfig, getTasksRequiringApp } from "@/app/config/appDownloadConfig";
+import DownloadAppModal from "@/components/common/DownloadAppModal";
 import styles from "./taskPageCore.module.scss";
 
 const { TabPane } = Tabs;
@@ -52,13 +52,13 @@ export default function TaskPageCore() {
   const [submittingTaskId, setSubmittingTaskId] = useState<string | null>(null);
   
   // 下载App弹窗状态 - 暂时注释
-  // const [downloadAppVisible, setDownloadAppVisible] = useState(false);
-  // const [downloadAppConfig, setDownloadAppConfig] = useState({
-  //   platform: "",
-  //   appName: "",
-  //   downloadUrl: "",
-  //   qrCodeUrl: "" as string | undefined
-  // });
+  const [downloadAppVisible, setDownloadAppVisible] = useState(false);
+  const [downloadAppConfig, setDownloadAppConfig] = useState({
+    platform: "",
+    appName: "",
+    downloadUrl: "",
+    qrCodeUrl: "" as string | undefined
+  });
 
   // 获取待接受任务列表
   const fetchPendingTasks = async () => {
@@ -266,20 +266,20 @@ export default function TaskPageCore() {
   };
 
   useEffect(() => {
-    // if (token) {
-    //   fetchPendingTasks();
-    //   fetchAcceptedTasks();
-    // }
+    if (token) {
+      fetchPendingTasks();
+      fetchAcceptedTasks();
+    }
   }, [token]);
 
   return (
     <div className={styles.taskPage}>
-      {/* <div className={styles.header}>
+      <div className={styles.header}>
         <h1>任务中心</h1>
         <p>接受任务，完成任务，获得奖励</p>
-      </div> */}
+      </div>
 
-      {/* <Tabs 
+      <Tabs 
         activeKey={activeTab} 
         onChange={setActiveTab}
         className={styles.tabs}
@@ -451,10 +451,10 @@ export default function TaskPageCore() {
             )}
           </Spin>
         </TabPane>
-      </Tabs> */}
+      </Tabs>
 
       {/* 提交任务弹窗 */}
-      {/* <Modal
+      <Modal
         title="提交任务"
         open={submitModalVisible}
         onCancel={() => setSubmitModalVisible(false)}
@@ -475,17 +475,17 @@ export default function TaskPageCore() {
         <p style={{ color: '#666', fontSize: '12px' }}>
           请确保您已经完成了任务要求，并提供了正确的提交链接。
         </p>
-      </Modal> */}
+      </Modal>
 
       {/* 下载App提示弹窗 */}
-      {/* <DownloadAppModal
+      <DownloadAppModal
         visible={downloadAppVisible}
         onClose={() => setDownloadAppVisible(false)}
         platform={downloadAppConfig.platform}
         appName={downloadAppConfig.appName}
         downloadUrl={downloadAppConfig.downloadUrl}
         qrCodeUrl={downloadAppConfig.qrCodeUrl}
-      /> */}
+      />
     </div>
   );
 }
