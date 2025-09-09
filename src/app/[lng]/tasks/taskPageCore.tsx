@@ -77,6 +77,11 @@ export default function TaskPageCore() {
   const [taskDetailLoading, setTaskDetailLoading] = useState(false);
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
   
+  // 已接受任务详情弹窗状态
+  const [acceptedTaskDetailModalVisible, setAcceptedTaskDetailModalVisible] = useState(false);
+  const [acceptedTaskDetail, setAcceptedTaskDetail] = useState<any>(null);
+  const [acceptedTaskDetailLoading, setAcceptedTaskDetailLoading] = useState(false);
+  
   // 媒体预览弹窗状态
   const [mediaPreviewVisible, setMediaPreviewVisible] = useState(false);
   const [previewMedia, setPreviewMedia] = useState<{
@@ -374,12 +379,12 @@ export default function TaskPageCore() {
   // 查看已接受任务详情
   const handleViewAcceptedTaskDetail = async (taskId: string) => {
     try {
-      setTaskDetailLoading(true);
+      setAcceptedTaskDetailLoading(true);
       setCurrentTaskId(taskId);
       const response: any = await apiGetUserTaskDetail(taskId);
       if (response && response.data && response.code === 0) {
-        setTaskDetail(response.data);
-        setTaskDetailModalVisible(true);
+        setAcceptedTaskDetail(response.data);
+        setAcceptedTaskDetailModalVisible(true);
       } else {
         message.error("获取任务详情失败");
       }
@@ -387,7 +392,7 @@ export default function TaskPageCore() {
       message.error("获取任务详情失败");
       console.error("获取任务详情失败:", error);
     } finally {
-      setTaskDetailLoading(false);
+      setAcceptedTaskDetailLoading(false);
     }
   };
 
@@ -551,10 +556,10 @@ export default function TaskPageCore() {
         }));
 
         // 第二步：发布任务
-        const publishAccount = getAccountById(taskDetail.accountId);
+        const publishAccount = getAccountById(acceptedTaskDetail.accountId);
         if (publishAccount) {
           // 处理素材链接，确保使用完整链接
-          const processedMaterials = taskDetail.materials?.map((material: any) => ({
+          const processedMaterials = acceptedTaskDetail.task?.materials?.map((material: any) => ({
             ...material,
             coverUrl: material.coverUrl ? getOssUrl(material.coverUrl) : undefined,
             mediaList: material.mediaList?.map((media: any) => ({
@@ -568,9 +573,9 @@ export default function TaskPageCore() {
             flowId: publishAccount.uid, // 使用账号的uid作为flowId
             accountType: publishAccount.type,
             accountId: publishAccount.account,
-            title: taskDetail.title,
-            desc: taskDetail.description,
-            type: taskDetail.type as any, // 转换为PubType
+            title: acceptedTaskDetail.task?.title,
+            desc: acceptedTaskDetail.task?.description,
+            type: acceptedTaskDetail.task?.type as any, // 转换为PubType
             // 处理素材数据
             videoUrl: processedMaterials?.[0]?.mediaList?.[0]?.type === 'video' ? 
                      getOssUrl(processedMaterials[0].mediaList[0].url) : undefined,
@@ -618,8 +623,8 @@ export default function TaskPageCore() {
               // 延迟1秒后关闭进度窗口并刷新任务列表
               setTimeout(() => {
                 setTaskProgressVisible(false);
-                setTaskDetailModalVisible(false);
-                setTaskDetail(null);
+                setAcceptedTaskDetailModalVisible(false);
+                setAcceptedTaskDetail(null);
                 setCurrentTaskId(null);
                 fetchAcceptedTasks();
               }, 1000);
@@ -716,7 +721,7 @@ export default function TaskPageCore() {
           tab={
             <span>
               <ClockCircleOutlined />
-              待接受任务
+              &nbsp; 待接受任务
             </span>
           } 
           key="pending"
@@ -832,7 +837,7 @@ export default function TaskPageCore() {
           tab={
             <span>
               <PlayCircleOutlined />
-              已接受任务
+              &nbsp; 已接受任务
             </span>
           } 
           key="accepted"
@@ -1259,7 +1264,7 @@ export default function TaskPageCore() {
                 }
                 
                 // 如果是已接受任务且状态为pending，显示完成任务按钮
-                if (currentTaskId && taskDetail.status === 'pending') {
+                if (currentTaskId && acceptedTaskDetail?.status === 'pending') {
                   return (
                     <div style={{ textAlign: 'center' }}>
                       <Button 
@@ -1278,6 +1283,359 @@ export default function TaskPageCore() {
               })()}
             </div>
           ) : !taskDetailLoading && (
+            <div style={{ textAlign: 'center', color: '#999' }}>
+              暂无任务详情
+            </div>
+          )}
+        </Spin>
+      </Modal>
+
+      {/* 已接受任务详情弹窗 */}
+      <Modal
+        title="任务详情"
+        open={acceptedTaskDetailModalVisible}
+        onCancel={() => {
+          setAcceptedTaskDetailModalVisible(false);
+          setAcceptedTaskDetail(null);
+        }}
+        footer={[
+          
+        ]}
+        width={800}
+        styles={{
+          header: {
+            borderBottom: '1px solid #f0f0f0',
+            paddingBottom: '16px'
+          },
+          body: {
+            padding: '24px'
+          }
+        }}
+      >
+        <Spin spinning={acceptedTaskDetailLoading}>
+          {acceptedTaskDetail ? (
+            <div>
+              {/* 视频发布风格布局 */}
+              <div style={{ 
+                display: 'flex', 
+                gap: '24px',
+                marginBottom: '24px'
+              }}>
+                {/* 左侧：视频/媒体内容 */}
+                <div style={{ flex: '0 0 400px' }}>
+                  {acceptedTaskDetail.task?.materials && acceptedTaskDetail.task.materials.length > 0 && (
+                    <div style={{ 
+                      border: '1px solid #e8e8e8', 
+                      borderRadius: '12px', 
+                      overflow: 'hidden',
+                      backgroundColor: '#000'
+                    }}>
+                      {acceptedTaskDetail.task.materials[0].mediaList && acceptedTaskDetail.task.materials[0].mediaList.length > 0 && (
+                        <div style={{ position: 'relative', cursor: 'pointer' }}>
+                          {acceptedTaskDetail.task.materials[0].mediaList[0].type === 'video' ? (
+                            <div 
+                              style={{
+                                position: 'relative',
+                                overflow: 'hidden'
+                              }}
+                              onClick={() => handleVideoCoverClick(acceptedTaskDetail.task.materials[0].mediaList[0], acceptedTaskDetail.task.title)}
+                            >
+                              {/* 视频封面图片 */}
+                              <img
+                                src={acceptedTaskDetail.task.materials[0].coverUrl ? getOssUrl(acceptedTaskDetail.task.materials[0].coverUrl) : getOssUrl(acceptedTaskDetail.task.materials[0].mediaList[0].url)}
+                                alt="video cover"
+                                style={{
+                                  width: '100%',
+                                  height: 'auto',
+                                  display: 'block'
+                                }}
+                              />
+                              {/* 播放按钮 */}
+                              <div style={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                color: 'white',
+                                fontSize: '24px',
+                                background: 'rgba(0,0,0,0.7)',
+                                borderRadius: '50%',
+                                width: '60px',
+                                height: '60px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease'
+                              }}>
+                                ▶
+                              </div>
+                            </div>
+                          ) : (
+                            <img
+                              src={getOssUrl(acceptedTaskDetail.task.materials[0].mediaList[0].url)}
+                              alt="media"
+                              style={{
+                                width: '100%',
+                                height: 'auto',
+                                display: 'block'
+                              }}
+                              onClick={() => handleMediaClick(acceptedTaskDetail.task.materials[0].mediaList[0], acceptedTaskDetail.task.title)}
+                            />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* 右侧：标题和描述 */}
+                <div style={{ flex: '1', minWidth: '300px' }}>
+                  {/* 标题区域 */}
+                  <div style={{ marginBottom: '16px' }}>
+                    <h2 style={{ 
+                      margin: '0 0 8px 0', 
+                      fontSize: '20px', 
+                      fontWeight: '600',
+                      lineHeight: '1.4',
+                      color: '#1a1a1a'
+                    }}>
+                      {acceptedTaskDetail.task?.title}
+                    </h2>
+                    
+                    {/* 发布账号信息 */}
+                    {acceptedTaskDetail.accountId && (() => {
+                      const publishAccount = getAccountById(acceptedTaskDetail.accountId);
+                      return publishAccount ? (
+                        <div style={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '8px',
+                          marginBottom: '12px'
+                        }}>
+                          <img
+                            src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
+                            alt="账号头像"
+                            style={{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '50%',
+                              objectFit: 'cover'
+                            }}
+                            onError={(e) => {
+                              e.currentTarget.src = '/default-avatar.png';
+                            }}
+                          />
+                          <div>
+                            <div style={{ 
+                              fontSize: '14px', 
+                              fontWeight: '500',
+                              color: '#1a1a1a'
+                            }}>
+                              {publishAccount.nickname}
+                            </div>
+                            <div style={{ 
+                              fontSize: '12px', 
+                              color: '#666'
+                            }}>
+                              {getPlatformName(publishAccount.type)}
+                            </div>
+                          </div>
+                        </div>
+                      ) : null;
+                    })()}
+                  </div>
+
+                  {/* 描述区域 */}
+                  <div style={{ 
+                    marginBottom: '16px',
+                    padding: '16px',
+                    backgroundColor: '#f8f9fa',
+                    borderRadius: '8px',
+                    border: '1px solid #e9ecef'
+                  }}>
+                    <div style={{ 
+                      fontSize: '14px', 
+                      lineHeight: '1.6',
+                      color: '#495057'
+                    }}>
+                      <div dangerouslySetInnerHTML={{ __html: acceptedTaskDetail.task?.description }} />
+                    </div>
+                  </div>
+
+                  {/* 任务信息卡片 */}
+                  <div style={{ 
+                    display: 'flex', 
+                    gap: '12px',
+                    marginBottom: '16px'
+                  }}>
+                    <div style={{ 
+                      flex: '1',
+                      padding: '12px',
+                      backgroundColor: '#fff3cd',
+                      border: '1px solid #ffeaa7',
+                      borderRadius: '8px',
+                      textAlign: 'center'
+                    }}>
+                      <div style={{ 
+                        fontSize: '12px', 
+                        color: '#856404',
+                        marginBottom: '4px'
+                      }}>
+                        奖励
+                      </div>
+                      <div style={{ 
+                        fontSize: '18px', 
+                        fontWeight: 'bold',
+                        color: '#d63031'
+                      }}>
+                        ¥{acceptedTaskDetail.reward}
+                      </div>
+                    </div>
+                    
+                    <div style={{ 
+                      flex: '1',
+                      padding: '12px',
+                      backgroundColor: '#d1ecf1',
+                      border: '1px solid #bee5eb',
+                      borderRadius: '8px',
+                      textAlign: 'center'
+                    }}>
+                      <div style={{ 
+                        fontSize: '12px', 
+                        color: '#0c5460',
+                        marginBottom: '4px'
+                      }}>
+                        类型
+                      </div>
+                      <div style={{ 
+                        fontSize: '14px', 
+                        fontWeight: '500',
+                        color: '#0c5460'
+                      }}>
+                        {getTaskTypeName(acceptedTaskDetail.task?.type)}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 任务状态信息 */}
+                  <div style={{ 
+                    display: 'flex', 
+                    gap: '12px',
+                    marginBottom: '16px'
+                  }}>
+                    <div style={{ 
+                      flex: '1',
+                      padding: '12px',
+                      backgroundColor: '#e2e3e5',
+                      border: '1px solid #d6d8db',
+                      borderRadius: '8px',
+                      textAlign: 'center'
+                    }}>
+                      <div style={{ 
+                        fontSize: '12px', 
+                        color: '#495057',
+                        marginBottom: '4px'
+                      }}>
+                        接受时间
+                      </div>
+                      <div style={{ 
+                        fontSize: '12px', 
+                        fontWeight: '500',
+                        color: '#495057'
+                      }}>
+                        {formatTime(acceptedTaskDetail.createdAt)}
+                      </div>
+                    </div>
+                    
+                    <div style={{ 
+                      flex: '1',
+                      padding: '12px',
+                      backgroundColor: '#e2e3e5',
+                      border: '1px solid #d6d8db',
+                      borderRadius: '8px',
+                      textAlign: 'center'
+                    }}>
+                      <div style={{ 
+                        fontSize: '12px', 
+                        color: '#495057',
+                        marginBottom: '4px'
+                      }}>
+                        提交时间
+                      </div>
+                      <div style={{ 
+                        fontSize: '12px', 
+                        fontWeight: '500',
+                        color: '#495057'
+                      }}>
+                        {acceptedTaskDetail.submissionTime ? formatTime(acceptedTaskDetail.submissionTime) : '未提交'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* 底部状态栏 */}
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                padding: '16px 0',
+                borderTop: '1px solid #e8e8e8',
+                marginTop: '16px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <Tag 
+                    color={getTaskStatusTag(acceptedTaskDetail.status).color}
+                    style={{ 
+                      fontSize: '12px',
+                      padding: '4px 8px'
+                    }}
+                  >
+                    {getTaskStatusTag(acceptedTaskDetail.status).text}
+                  </Tag>
+                  <span style={{ 
+                    fontSize: '12px', 
+                    color: '#666'
+                  }}>
+                    {acceptedTaskDetail.status === 'pending' ? '任务待完成' : 
+                     acceptedTaskDetail.status === 'doing' ? '任务已完成' : 
+                     '任务状态：' + acceptedTaskDetail.status}
+                  </span>
+                </div>
+                
+                <div style={{ 
+                  fontSize: '12px', 
+                  color: '#999'
+                }}>
+                  {acceptedTaskDetail.isFirstTimeSubmission && (
+                    <span style={{ color: '#52c41a' }}>首次提交</span>
+                  )}
+                </div>
+              </div>
+              
+              {/* 根据任务状态显示不同按钮 */}
+              {(() => {
+                // 如果是已接受任务且状态为pending，显示完成任务按钮
+                if (acceptedTaskDetail.status === 'pending') {
+                  return (
+                    <div style={{ textAlign: 'center', marginTop: '16px' }}>
+                      <Button 
+                        type="primary" 
+                        size="large"
+                        onClick={handleCompleteTask}
+                        style={{ marginTop: '12px' }}
+                      >
+                        完成任务
+                      </Button>
+                    </div>
+                  );
+                }
+                
+                return null;
+              })()}
+            </div>
+          ) : !acceptedTaskDetailLoading && (
             <div style={{ textAlign: 'center', color: '#999' }}>
               暂无任务详情
             </div>
