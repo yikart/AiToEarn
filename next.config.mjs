@@ -10,14 +10,14 @@ const nextConfig = {
   },
   output: 'standalone',
   productionBrowserSourceMaps: process.env.NEXT_PUBLIC_EVN === 'dev',
-  rewrites: async () => ({
-    beforeFiles: [
-      {
-        source: `/api/:path*`,
-        destination: "http://127.0.0.1:8000/api/:path*",
-      },
-    ],
-  }),
+  // rewrites: async () => ({
+  //   beforeFiles: [
+  //     {
+  //       source: `/api/:path*`,
+  //       destination: "http://127.0.0.1:8000/api/:path*",
+  //     },
+  //   ],
+  // }),
 };
 
 const CorsHeaders = [
