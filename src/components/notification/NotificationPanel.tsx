@@ -19,6 +19,7 @@ import {
 } from "@/api/notification";
 import { getAccountListApi } from "@/api/account";
 import { SocialAccount } from "@/api/types/account.type";
+import { apiCreatePublish } from "@/api/plat/publish";
 import { getOssUrl } from "@/utils/oss";
 import { PubType } from "@/app/config/publishConfig";
 import { getAppDownloadConfig, getTasksRequiringApp } from "@/app/config/appDownloadConfig";
@@ -61,6 +62,17 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
     url: string;
     title?: string;
   } | null>(null);
+
+  // 任务进度弹窗状态
+  const [taskProgressVisible, setTaskProgressVisible] = useState(false);
+  const [taskProgress, setTaskProgress] = useState({
+    currentStep: 0,
+    steps: [
+      { title: '正在接受任务...', status: 'processing' },
+      { title: '正在发布任务...', status: 'wait' },
+      { title: '发布完成', status: 'wait' }
+    ]
+  });
 
   // 获取通知列表
   const fetchNotifications = async () => {
@@ -361,6 +373,34 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
     return accountList.find(account => account.id === accountId) || null;
   };
 
+  // 处理媒体点击
+  const handleMediaClick = (media: any, materialTitle?: string, materialCoverUrl?: string) => {
+    if (media.type === 'video') {
+      setPreviewMedia({
+        type: 'video',
+        url: getOssUrl(media.url),
+        title: materialTitle
+      });
+    } else {
+      setPreviewMedia({
+        type: 'image',
+        url: getOssUrl(media.url),
+        title: materialTitle
+      });
+    }
+    setMediaPreviewVisible(true);
+  };
+
+  // 处理视频封面点击
+  const handleVideoCoverClick = (media: any, materialTitle?: string) => {
+    setPreviewMedia({
+      type: 'video',
+      url: getOssUrl(media.url),
+      title: materialTitle
+    });
+    setMediaPreviewVisible(true);
+  };
+
   useEffect(() => {
     if (visible) {
       fetchNotifications();
@@ -623,7 +663,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                                    <div style={{ fontSize: '12px', fontWeight: '500', marginBottom: '4px' }}>
                                      {material.title}
                                    </div>
-                                   {material.coverUrl && (
+                                   { (material.coverUrl && material.type !== "video") && (
                                      <img
                                        src={getOssUrl(material.coverUrl)}
                                        alt="cover"
@@ -647,28 +687,29 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                                        flexWrap: 'wrap'
                                      }}>
                                        {material.mediaList.slice(0, 3).map((media: any, mediaIndex: number) => (
-                                         <div key={mediaIndex} style={{ position: 'relative' }}>
+                                         <div key={mediaIndex} style={{ position: 'relative', cursor: 'pointer' }}>
                                            {media.type === 'video' ? (
-                                             <div style={{
-                                               width: '40px',
-                                               height: '40px',
-                                               background: '#000',
-                                               borderRadius: '2px',
-                                               display: 'flex',
-                                               alignItems: 'center',
-                                               justifyContent: 'center',
-                                               position: 'relative',
-                                               overflow: 'hidden'
-                                             }}>
-                                               <video
-                                                 src={getOssUrl(media.url)}
+                                             <div 
+                                               style={{
+                                                 width: '180px',
+                                                 height: '180px',
+                                                 borderRadius: '2px',
+                                                 position: 'relative',
+                                                 overflow: 'hidden'
+                                               }}
+                                               onClick={() => handleVideoCoverClick(media, material.title)}
+                                             >
+                                               {/* 视频封面图片 - 使用material.coverUrl */}
+                                               <img
+                                                 src={material.coverUrl ? getOssUrl(material.coverUrl) : getOssUrl(media.url)}
+                                                 alt="video cover"
                                                  style={{
                                                    width: '100%',
                                                    height: '100%',
                                                    objectFit: 'cover'
                                                  }}
-                                                 muted
                                                />
+                                               {/* 播放按钮 */}
                                                <div style={{
                                                  position: 'absolute',
                                                  top: '50%',
@@ -697,6 +738,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                                                  objectFit: 'cover',
                                                  borderRadius: '2px'
                                                }}
+                                               onClick={() => handleMediaClick(media, material.title)}
                                              />
                                            )}
                                          </div>
@@ -726,9 +768,9 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                        </div>
                        {selectedTask.status === 'active' && selectedTask.currentRecruits < selectedTask.maxRecruits && (
                          <div className={styles.taskActions}>
-                           {/* 需要App操作的平台提示 */}
+                           {/* 需要App操作的平台提示 - 只根据发布账号类型判断 */}
                            {(() => {
-                             // 优先根据发布账号类型判断
+                             // 只根据发布账号类型判断是否需要App操作
                              if (selectedTask.accountId) {
                                const publishAccount = getAccountById(selectedTask.accountId);
                                if (publishAccount) {
@@ -749,27 +791,6 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                                      </div>
                                    );
                                  }
-                               }
-                             }
-                             
-                             // 回退到原来的逻辑
-                             if (selectedTask.accountTypes && selectedTask.accountTypes.length > 0) {
-                               const appRequiredPlatforms = getTasksRequiringApp(selectedTask.accountTypes);
-                               if (appRequiredPlatforms.length > 0) {
-                                 const platformNames = appRequiredPlatforms.map(p => getAppDownloadConfig(p)?.platform).filter(Boolean);
-                                 return (
-                                   <div style={{ 
-                                     marginBottom: '12px',
-                                     padding: '12px',
-                                     backgroundColor: '#fff7e6',
-                                     border: '1px solid #ffd591',
-                                     borderRadius: '6px',
-                                     color: '#d46b08'
-                                   }}>
-                                     <strong>⚠️ 注意：</strong>
-                                     {platformNames.join('、')}任务需要在移动端App中操作，请下载对应App后继续。
-                                   </div>
-                                 );
                                }
                              }
                              return null;
@@ -806,6 +827,60 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
         downloadUrl={downloadAppConfig.downloadUrl}
         qrCodeUrl={downloadAppConfig.qrCodeUrl}
       />
+
+      {/* 媒体预览弹窗 */}
+      <Modal
+        title={previewMedia?.title || '媒体预览'}
+        open={mediaPreviewVisible}
+        onCancel={() => {
+          setMediaPreviewVisible(false);
+          setPreviewMedia(null);
+        }}
+        footer={[
+          <Button key="close" onClick={() => {
+            setMediaPreviewVisible(false);
+            setPreviewMedia(null);
+          }}>
+            关闭
+          </Button>
+        ]}
+        width={previewMedia?.type === 'video' ? 800 : 600}
+        zIndex={3000}
+        styles={{
+          body: {
+            padding: '24px',
+            textAlign: 'center'
+          }
+        }}
+      >
+        {previewMedia && (
+          <div>
+            {previewMedia.type === 'video' ? (
+              <video
+                src={previewMedia.url}
+                controls
+                style={{
+                  width: '100%',
+                  maxHeight: '500px',
+                  borderRadius: '8px'
+                }}
+                autoPlay
+              />
+            ) : (
+              <img
+                src={previewMedia.url}
+                alt="preview"
+                style={{
+                  width: '100%',
+                  maxHeight: '500px',
+                  objectFit: 'contain',
+                  borderRadius: '8px'
+                }}
+              />
+            )}
+          </div>
+        )}
+      </Modal>
     </>
   );
 };
