@@ -17,6 +17,8 @@ import {
   type NotificationItem,
   type TaskItem
 } from "@/api/notification";
+import { getAccountListApi } from "@/api/account";
+import { SocialAccount } from "@/api/types/account.type";
 import { getOssUrl } from "@/utils/oss";
 import { PubType } from "@/app/config/publishConfig";
 import { getAppDownloadConfig, getTasksRequiringApp } from "@/app/config/appDownloadConfig";
@@ -41,6 +43,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
   const [selectedTask, setSelectedTask] = useState<TaskItem | null>(null);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [taskLoading, setTaskLoading] = useState(false);
+  const [accountList, setAccountList] = useState<SocialAccount[]>([]);
   
   // 下载App弹窗状态
   const [downloadAppVisible, setDownloadAppVisible] = useState(false);
@@ -87,6 +90,23 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
       }
     } catch (error) {
       console.error("获取未读数量失败:", error);
+    }
+  };
+
+  // 获取账号列表
+  const fetchAccountList = async () => {
+    if (!token) {
+      setAccountList([]);
+      return;
+    }
+
+    try {
+      const response = await getAccountListApi();
+      if (response && response.data) {
+        setAccountList(response.data || []);
+      }
+    } catch (error) {
+      console.error("获取账号列表失败:", error);
     }
   };
 
@@ -182,6 +202,33 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
 
   // 检查任务类型并显示相应的操作提示
   const handleTaskAction = (task: TaskItem) => {
+    // 根据发布账号类型判断PC是否能接任务
+    if (task.accountId) {
+      const publishAccount = getAccountById(task.accountId);
+      if (publishAccount) {
+        // 检查发布账号的平台是否需要App操作
+        const appRequiredPlatforms = getTasksRequiringApp([publishAccount.type]);
+        
+        if (appRequiredPlatforms.length > 0) {
+          // 有需要App操作的平台，显示第一个平台的下载提示
+          const firstPlatform = appRequiredPlatforms[0];
+          const config = getAppDownloadConfig(firstPlatform);
+          
+          if (config) {
+            setDownloadAppConfig({
+              platform: config.platform,
+              appName: config.appName,
+              downloadUrl: config.downloadUrl,
+              qrCodeUrl: config.qrCodeUrl
+            });
+            setDownloadAppVisible(true);
+            return;
+          }
+        }
+      }
+    }
+
+    // 如果没有发布账号信息，回退到原来的逻辑
     if (!task.accountTypes || task.accountTypes.length === 0) {
       // 没有账号类型限制，直接接取任务
       handleAcceptTask();
@@ -301,10 +348,16 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
     return taskTypeNames[type] || type;
   };
 
+  // 根据accountId获取账号信息
+  const getAccountById = (accountId: string): SocialAccount | null => {
+    return accountList.find(account => account.id === accountId) || null;
+  };
+
   useEffect(() => {
     if (visible) {
       fetchNotifications();
       fetchUnreadCount();
+      fetchAccountList();
     }
   }, [visible, token]);
 
@@ -314,7 +367,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
         title={
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Badge count={unreadCount} size="small">
-              <span style={{ fontSize: '16px', fontWeight: '600' }}>消息通知1</span>
+              <span style={{ fontSize: '16px', fontWeight: '600' }}>消息通知</span>
             </Badge>
           </div>
         }
@@ -478,9 +531,9 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                  )}
                </div>
              </div>
-             <div className={styles.content}>
+             {/* <div className={styles.content}>
                {selectedNotification.content}
-             </div>
+             </div> */}
              
              {/* 任务详情部分 */}
              {selectedNotification.type === 'task_reminder' && (
@@ -499,6 +552,38 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                          <p><strong>描述：</strong>
                            <div dangerouslySetInnerHTML={{ __html: selectedTask.description }} />
                          </p>
+                         {/* 发布账号信息 */}
+                         {selectedTask.accountId && (() => {
+                           const publishAccount = getAccountById(selectedTask.accountId);
+                           return publishAccount ? (
+                             <p><strong>发布账号：</strong>
+                               <div style={{ display: 'flex', alignItems: 'center', marginLeft: '4px', gap: '8px' }}>
+                                 <img
+                                   src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
+                                   alt="账号头像"
+                                   style={{
+                                     width: '24px',
+                                     height: '24px',
+                                     borderRadius: '50%',
+                                     objectFit: 'cover'
+                                   }}
+                                   onError={(e) => {
+                                     e.currentTarget.src = '/default-avatar.png';
+                                   }}
+                                 />
+                                 <Tag color="green">
+                                   {getPlatformName(publishAccount.type)} - {publishAccount.nickname}
+                                 </Tag>
+                               </div>
+                             </p>
+                           ) : (
+                             <p><strong>发布账号：</strong>
+                               <Tag color="red" style={{ marginLeft: '4px' }}>
+                                 账号信息获取失败
+                               </Tag>
+                             </p>
+                           );
+                         })()}
                          <p><strong>奖励：</strong>¥{selectedTask.reward}</p>
                          {/* <p><strong>招募人数：</strong>{selectedTask.currentRecruits}/{selectedTask.maxRecruits}</p> */}
 
@@ -507,13 +592,13 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                               {getTaskTypeName(selectedTask.type)}
                             </Tag>
                           </p>
-                         {selectedTask.accountTypes && selectedTask.accountTypes.length > 0 && (
+                         {/* {selectedTask.accountTypes && selectedTask.accountTypes.length > 0 && (
                            <p><strong>账号类型：</strong>
                              {selectedTask.accountTypes.map(type => (
                                <Tag key={type} style={{ marginLeft: '4px' }}>{getPlatformName(type)}</Tag>
                              ))}
                            </p>
-                         )}
+                         )} */}
                          
                          {/* 任务素材展示 */}
                          {selectedTask.materials && selectedTask.materials.length > 0 && (
@@ -592,8 +677,33 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                        {selectedTask.status === 'active' && selectedTask.currentRecruits < selectedTask.maxRecruits && (
                          <div className={styles.taskActions}>
                            {/* 需要App操作的平台提示 */}
-                           {selectedTask.accountTypes && selectedTask.accountTypes.length > 0 && (
-                             (() => {
+                           {(() => {
+                             // 优先根据发布账号类型判断
+                             if (selectedTask.accountId) {
+                               const publishAccount = getAccountById(selectedTask.accountId);
+                               if (publishAccount) {
+                                 const appRequiredPlatforms = getTasksRequiringApp([publishAccount.type]);
+                                 if (appRequiredPlatforms.length > 0) {
+                                   const platformNames = appRequiredPlatforms.map(p => getAppDownloadConfig(p)?.platform).filter(Boolean);
+                                   return (
+                                     <div style={{ 
+                                       marginBottom: '12px',
+                                       padding: '12px',
+                                       backgroundColor: '#fff7e6',
+                                       border: '1px solid #ffd591',
+                                       borderRadius: '6px',
+                                       color: '#d46b08'
+                                     }}>
+                                       <strong>⚠️ 注意：</strong>
+                                       发布账号({getPlatformName(publishAccount.type)})的任务需要在移动端App中操作，请下载对应App后继续。
+                                     </div>
+                                   );
+                                 }
+                               }
+                             }
+                             
+                             // 回退到原来的逻辑
+                             if (selectedTask.accountTypes && selectedTask.accountTypes.length > 0) {
                                const appRequiredPlatforms = getTasksRequiringApp(selectedTask.accountTypes);
                                if (appRequiredPlatforms.length > 0) {
                                  const platformNames = appRequiredPlatforms.map(p => getAppDownloadConfig(p)?.platform).filter(Boolean);
@@ -611,9 +721,9 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                                    </div>
                                  );
                                }
-                               return null;
-                             })()
-                           )}
+                             }
+                             return null;
+                           })()}
                            
                            <Button 
                              type="primary" 
