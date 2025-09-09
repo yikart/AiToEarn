@@ -40,3 +40,4 @@ certificates
 
 .idea/
 *.idea/
+.env.development
