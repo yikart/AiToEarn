@@ -1,6 +1,6 @@
-import { FireflycardTempTypes } from '@libs/fireflycard'
 import { createZodDto, UserType } from '@yikart/common'
 import { z } from 'zod'
+import { FireflycardTempTypes } from '../../libs/fireflycard'
 
 // 图片生成请求
 const imageGenerationSchema = z.object({

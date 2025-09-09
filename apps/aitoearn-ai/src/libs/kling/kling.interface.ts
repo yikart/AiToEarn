@@ -31,12 +31,7 @@ export enum Mode {
 }
 
 // 视频时长枚举
-export enum Duration {
-  /** 5秒 */
-  Five = '5',
-  /** 10秒 */
-  Ten = '10',
-}
+export type Duration = '5' | '10' | string
 
 // 画面纵横比枚举
 export enum AspectRatio {
@@ -206,7 +201,7 @@ export interface Text2VideoGetTaskResponseData {
   /** 任务状态 */
   task_status: TaskStatus
   /** 任务状态信息，当任务失败时展示失败原因 */
-  task_status_msg?: string
+  task_status_msg: string
   /** 任务信息 */
   task_info: TaskInfo
   /** 任务结果 */
@@ -287,7 +282,7 @@ export interface Image2VideoGetTaskResponseData {
   /** 任务状态 */
   task_status: TaskStatus
   /** 任务状态信息，当任务失败时展示失败原因 */
-  task_status_msg?: string
+  task_status_msg: string
   /** 任务信息 */
   task_info: TaskInfo
   /** 任务结果 */
@@ -350,7 +345,7 @@ export interface MultiImage2VideoGetTaskResponseData {
   /** 任务状态 */
   task_status: TaskStatus
   /** 任务状态信息，当任务失败时展示失败原因 */
-  task_status_msg?: string
+  task_status_msg: string
   /** 任务信息 */
   task_info: TaskInfo
   /** 任务结果 */
@@ -476,7 +471,7 @@ export interface VideoEffectsGetTaskResponseData {
   /** 任务状态 */
   task_status: TaskStatus
   /** 任务状态信息，当任务失败时展示失败原因 */
-  task_status_msg?: string
+  task_status_msg: string
   /** 任务信息 */
   task_info: TaskInfo
   /** 任务结果 */
@@ -497,7 +492,7 @@ export interface LipSyncGetTaskResponseData {
   /** 任务状态 */
   task_status: TaskStatus
   /** 任务状态信息，当任务失败时展示失败原因 */
-  task_status_msg?: string
+  task_status_msg: string
   /** 任务信息 */
   task_info: LipSyncTaskInfo
   /** 任务结果 */
@@ -677,7 +672,7 @@ export interface MultiElementsGetTaskResponseData {
   /** 任务状态 */
   task_status: TaskStatus
   /** 任务状态信息，当任务失败时展示失败原因 */
-  task_status_msg?: string
+  task_status_msg: string
   /** 任务信息 */
   task_info: TaskInfo
   /** 任务结果 */

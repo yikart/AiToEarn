@@ -1,12 +1,11 @@
-import path from 'node:path'
 import { Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
 import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
 import { S3Service } from '@yikart/aws-s3'
-import { UserType } from '@yikart/common'
-import { AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
-import { config } from '../config'
-import { VideoService, VideoTaskStatusResponse } from '../libs/new-api'
+import { AiLog, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
+import { VideoService } from '../core/video'
+import { KlingService } from '../libs/kling'
+import { VolcengineService } from '../libs/volcengine'
 
 @Injectable()
 export class VideoTaskStatusScheduler {
@@ -17,6 +16,8 @@ export class VideoTaskStatusScheduler {
     private readonly videoService: VideoService,
     private readonly userClient: AitoearnUserClient,
     private readonly s3Service: S3Service,
+    private readonly klingService: KlingService,
+    private readonly volcengineService: VolcengineService,
   ) {}
 
   /**
@@ -26,7 +27,6 @@ export class VideoTaskStatusScheduler {
   async processVideoTaskStatus() {
     this.logger.log('开始检查视频生成任务状态')
 
-    // 查找所有正在生成中的视频任务
     const generatingTasks = await this.aiLogRepo.list({
       type: AiLogType.Video,
       status: AiLogStatus.Generating,
@@ -39,66 +39,30 @@ export class VideoTaskStatusScheduler {
     this.logger.log(`找到 ${generatingTasks.length} 个正在生成中的视频任务`)
 
     for (const task of generatingTasks) {
-      const taskId = task.taskId
-      if (!taskId) {
-        this.logger.warn(`任务 ${task.id} 缺少 taskId，跳过检查`)
-        continue
-      }
-
-      const result = await this.videoService.getVideoTaskStatus({
-        apiKey: config.ai.newApi.apiKey,
-        taskId,
-      })
-
-      if (result.status === 'SUCCESS') {
-        if (result.fail_reason && result.fail_reason.startsWith('http')) {
-          const filename = `${taskId}-${path.basename(result.fail_reason.split('?')[0])}`
-          const res = await this.s3Service.putObjectFromUrl(result.fail_reason, `ai/videos/${filename}`)
-          result.fail_reason = res.path
-        }
-        if (task.points > 0 && task.userType === UserType.User) {
-          await this.userClient.deductPoints({
-            userId: task.userId,
-            amount: task.points,
-            type: 'ai_service',
-            description: task.model,
-          })
-        }
-        await this.updateTaskStatus(task.id, AiLogStatus.Success, result)
-
-        this.logger.log(`视频任务 ${taskId} 已完成`)
-      }
-      else if (result.status === 'FAILURE' || result.status === 'UNKNOWN') {
-        await this.updateTaskStatus(task.id, AiLogStatus.Failed, result)
-        this.logger.log(`视频任务 ${taskId} 生成失败: ${result.fail_reason || '未知错误'}`)
-      }
+      await this.processTask(task)
     }
   }
 
   /**
-   * 更新任务状态
+   * 处理单个任务
    */
-  private async updateTaskStatus(
-    id: string,
-    status: AiLogStatus,
-    result: VideoTaskStatusResponse,
-  ) {
-    const task = await this.aiLogRepo.getById(id)
-
-    if (!task) {
-      this.logger.warn(`生成记录 ${id} 不存在`)
+  private async processTask(task: AiLog) {
+    const taskId = task.taskId
+    if (!taskId) {
+      this.logger.warn(`任务 ${task.id} 缺少 taskId，跳过检查`)
       return
     }
+    const channel = task.channel
 
-    const duration = Date.now() - task.startedAt.getTime()
-
-    await this.aiLogRepo.updateById(id, {
-      status,
-      duration,
-      response: result as unknown as Record<string, unknown>,
-      ...(status === AiLogStatus.Failed && {
-        errorMessage: result.fail_reason || '视频生成失败',
-      }),
-    })
+    if (channel === 'kling') {
+      await this.videoService.getKlingTask(task.userId, task.userType, task.id)
+    }
+    else if (channel === 'volcengine') {
+      const result = await this.volcengineService.getVideoGenerationTask(taskId)
+      await this.videoService.volcengineCallback(result)
+    }
+    else {
+      this.logger.warn(`任务 ${task.id} 未知的 channel: ${channel}，跳过检查`)
+    }
   }
 }

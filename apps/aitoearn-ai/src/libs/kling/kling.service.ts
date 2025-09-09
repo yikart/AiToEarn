@@ -74,6 +74,10 @@ export class KlingService {
     this.httpClient.interceptors.response.use((response) => {
       const klingResponse = response.data as KlingResponse<unknown>
       if (klingResponse.code !== 0) {
+        this.logger.error({
+          data: response.data,
+          msg: '可灵 api 调用失败',
+        })
         throw new AppException(ResponseCode.AiCallFailed, klingResponse.message)
       }
       return response

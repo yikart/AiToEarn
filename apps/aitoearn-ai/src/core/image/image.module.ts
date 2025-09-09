@@ -1,7 +1,7 @@
-import { FireflycardModule } from '@libs/fireflycard'
-import { Md2cardModule } from '@libs/md2card'
 import { Module } from '@nestjs/common'
 import { config } from '../../config'
+import { FireflycardModule } from '../../libs/fireflycard'
+import { Md2cardModule } from '../../libs/md2card'
 import { ImageController } from './image.controller'
 import { ImageService } from './image.service'
 

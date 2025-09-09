@@ -1,3 +1,13 @@
+export enum TaskStatus {
+  NotStart = 'NOT_START',
+  Submitted = 'SUBMITTED',
+  Queued = 'QUEUED',
+  InProgress = 'InProgress',
+  Failure = 'FAILURE',
+  Success = 'SUCCESS',
+  Unknown = 'UNKNOWN',
+}
+
 export interface VideoGenerationRequest {
   model: string // 模型名称
   prompt: string // 提示词
@@ -12,7 +22,7 @@ export interface VideoGenerationRequest {
 
 export interface VideoGenerationResponse {
   task_id: string
-  status: string
+  status: TaskStatus
   fail_reason: string
   action: string
   submit_time: number
@@ -32,7 +42,7 @@ export interface VideoTaskStatusRequest {
 export interface VideoTaskStatusResponse {
   task_id: string // 任务ID
   action: string // 任务动作
-  status: string // 任务状态
+  status: TaskStatus // 任务状态
   fail_reason?: string // 失败原因或视频URL
   submit_time: number // 提交时间
   start_time: number // 开始时间

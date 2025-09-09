@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { UserType } from '@yikart/common'
-import { AiLogStatus, AiLogType } from '../enums'
+import { AiLogChannel, AiLogStatus, AiLogType } from '../enums'
 import { WithTimestampSchema } from './timestamp.schema'
 
 @Schema({
@@ -42,6 +42,17 @@ export class AiLog extends WithTimestampSchema {
     required: true,
   })
   model: string
+
+  @Prop({
+    required: true,
+    enum: AiLogChannel,
+  })
+  channel: AiLogChannel
+
+  @Prop({
+    required: false,
+  })
+  action?: string
 
   @Prop({
     required: true,

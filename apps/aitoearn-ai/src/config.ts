@@ -4,8 +4,10 @@ import { mongodbConfigSchema } from '@yikart/mongodb'
 import z from 'zod'
 import { fireflycardConfigSchema } from './libs/fireflycard'
 
+import { klingConfigSchema } from './libs/kling'
 import { md2cardConfigSchema } from './libs/md2card'
 import { newApiConfigSchema } from './libs/new-api'
+import { volcengineConfigSchema } from './libs/volcengine'
 
 const aiModelsConfigSchema = z.object({
   chat: z.array(z.object({
@@ -40,6 +42,7 @@ const aiModelsConfigSchema = z.object({
     generation: z.array(z.object({
       name: z.string(),
       description: z.string(),
+      channel: z.string(),
       modes: z.array(z.enum(['text2video', 'image2video'])),
       resolutions: z.array(z.string()),
       durations: z.array(z.number()),
@@ -66,6 +69,14 @@ export const aiConfigSchema = z.object({
   fireflycard: fireflycardConfigSchema,
   md2card: md2cardConfigSchema,
   newApi: newApiConfigSchema,
+  kling: z.object({
+    ...klingConfigSchema.shape,
+    callbackUrl: z.string().optional(),
+  }),
+  volcengine: z.object({
+    ...volcengineConfigSchema.shape,
+    callbackUrl: z.string().optional(),
+  }),
 })
 
 export const appConfigSchema = z.object({

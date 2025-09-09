@@ -6,9 +6,6 @@
     "experimentalDecorators": true,
     "module": "commonjs",
     "paths": {
-      "@libs/*": [
-        "apps/aitoearn-ai/src/libs/*"
-      ]
     },
     "types": ["node"],
     "strict": true,

@@ -1,14 +1,84 @@
 import { createZodDto } from '@yikart/common'
 import { z } from 'zod'
 
-// 通用视频生成响应
-const videoGenerationResponseSchema = z.object({
-  task_id: z.string().describe('任务ID'),
-  status: z.string().describe('任务状态'),
-  message: z.string().optional().describe('响应消息'),
+// Kling视频生成响应
+const klingVideoGenerationResponseSchema = z.object({
+  task_id: z.string(),
+  task_status: z.string().optional(),
 })
 
+// Volcengine视频生成响应
+const volcengineVideoGenerationResponseSchema = z.object({
+  id: z.string(),
+})
+
+// 通用视频生成响应
+const videoGenerationResponseSchema = z.object({
+  task_id: z.string(),
+  status: z.string(),
+})
+
+export class KlingVideoGenerationResponseVo extends createZodDto(klingVideoGenerationResponseSchema) {}
+export class VolcengineVideoGenerationResponseVo extends createZodDto(volcengineVideoGenerationResponseSchema) {}
 export class VideoGenerationResponseVo extends createZodDto(videoGenerationResponseSchema) {}
+
+// Kling 任务状态响应 VO
+const klingTaskStatusResponseSchema = z.object({
+  task_id: z.string().describe('任务ID'),
+  task_status: z.string().describe('任务状态'),
+  task_status_msg: z.string().describe('任务状态信息'),
+  task_info: z.object({
+    parent_video: z.object({
+      id: z.string(),
+      url: z.string(),
+      duration: z.string(),
+    }).optional(),
+    external_task_id: z.string().optional(),
+  }).optional().describe('任务信息'),
+  task_result: z.object({
+    images: z.array(z.object({
+      index: z.number(),
+      url: z.string(),
+    })).optional(),
+    videos: z.array(z.object({
+      id: z.string(),
+      url: z.string(),
+      duration: z.string(),
+    })).optional(),
+  }).optional().describe('任务结果'),
+  created_at: z.number().describe('创建时间'),
+  updated_at: z.number().describe('更新时间'),
+})
+
+export class KlingTaskStatusResponseVo extends createZodDto(klingTaskStatusResponseSchema) {}
+
+// Volcengine 任务状态响应 VO
+const volcengineTaskStatusResponseSchema = z.object({
+  id: z.string().describe('任务ID'),
+  model: z.string().describe('模型名称'),
+  status: z.string().describe('任务状态'),
+  error: z.object({
+    message: z.string(),
+    code: z.string(),
+  }).nullable().describe('错误信息'),
+  created_at: z.number().describe('创建时间'),
+  updated_at: z.number().describe('更新时间'),
+  content: z.object({
+    video_url: z.string().optional(),
+    last_frame_url: z.string().optional(),
+  }).optional().describe('视频内容'),
+  seed: z.number().optional().describe('种子值'),
+  resolution: z.string().optional().describe('分辨率'),
+  ratio: z.string().optional().describe('宽高比'),
+  duration: z.number().optional().describe('时长'),
+  framespersecond: z.number().optional().describe('帧率'),
+  usage: z.object({
+    completion_tokens: z.number().optional(),
+    total_tokens: z.number().optional(),
+  }).optional().describe('使用量统计'),
+})
+
+export class VolcengineTaskStatusResponseVo extends createZodDto(volcengineTaskStatusResponseSchema) {}
 
 // 通用视频任务状态响应
 const videoTaskStatusResponseSchema = z.object({
@@ -20,7 +90,7 @@ const videoTaskStatusResponseSchema = z.object({
   start_time: z.number().describe('开始时间'),
   finish_time: z.number().describe('完成时间'),
   progress: z.string().describe('任务进度'),
-  data: z.record(z.string(), z.any()).describe('任务数据'),
+  data: z.any(),
 })
 
 export class VideoTaskStatusResponseVo extends createZodDto(videoTaskStatusResponseSchema) {}

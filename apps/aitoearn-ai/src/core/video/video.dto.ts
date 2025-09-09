@@ -1,5 +1,7 @@
 import { createZodDto, UserType } from '@yikart/common'
 import { z } from 'zod'
+import { TaskStatus as KlingTaskStatus, Mode } from '../../libs/kling'
+import { ContentType, ImageRole, TaskStatus } from '../../libs/volcengine'
 
 // 通用视频生成请求
 const videoGenerationRequestSchema = z.object({
@@ -39,3 +41,117 @@ const userVideoTaskQuerySchema = z.object({
 })
 
 export class UserVideoTaskQueryDto extends createZodDto(userVideoTaskQuerySchema) {}
+
+// Kling文生视频请求
+const klingText2VideoRequestSchema = z.object({
+  userId: z.string(),
+  userType: z.enum(UserType),
+  model_name: z.string().min(1).describe('模型名称'),
+  prompt: z.string().min(1).max(2500).describe('正向文本提示词'),
+  negative_prompt: z.string().max(2500).optional().describe('负向文本提示词'),
+  cfg_scale: z.number().min(0).max(1).optional().describe('生成视频的自由度'),
+  mode: z.enum(Mode).optional().describe('生成视频的模式'),
+  duration: z.enum(['5', '10']).optional().describe('生成视频时长'),
+  external_task_id: z.string().optional().describe('自定义任务ID'),
+})
+
+export class KlingText2VideoRequestDto extends createZodDto(klingText2VideoRequestSchema) {}
+
+// Volcengine视频生成请求
+const volcengineGenerationRequestSchema = z.object({
+  userId: z.string(),
+  userType: z.enum(UserType),
+  model: z.string().describe('模型ID或Endpoint ID'),
+  content: z.array(z.union([
+    z.object({
+      type: z.literal(ContentType.Text),
+      text: z.string(),
+    }),
+    z.object({
+      type: z.literal(ContentType.ImageUrl),
+      image_url: z.object({
+        url: z.string(),
+      }),
+      role: z.enum(ImageRole).optional(),
+    }),
+  ])).describe('输入内容'),
+  return_last_frame: z.boolean().optional().describe('是否返回尾帧图像'),
+})
+
+export class VolcengineGenerationRequestDto extends createZodDto(volcengineGenerationRequestSchema) {}
+
+// Kling回调接口DTO
+const klingCallbackSchema = z.object({
+  task_id: z.string().describe('任务ID'),
+  task_status: z.enum(KlingTaskStatus).describe('任务状态'),
+  task_status_msg: z.string().describe('任务状态信息'),
+  task_info: z.object({
+    parent_video: z.object({
+      id: z.string().describe('续写前的视频ID'),
+      url: z.string().describe('续写前视频的URL'),
+      duration: z.string().describe('续写前的视频总时长，单位s'),
+    }).optional(),
+    external_task_id: z.string().optional().describe('客户自定义任务ID'),
+  }).describe('任务创建时的参数信息'),
+  created_at: z.number().describe('任务创建时间，Unix时间戳、单位ms'),
+  updated_at: z.number().describe('任务更新时间，Unix时间戳、单位ms'),
+  task_result: z.object({
+    images: z.array(z.object({
+      index: z.number().describe('图片编号'),
+      url: z.string().describe('生成图片的URL'),
+    })).optional().describe('图片类任务的结果'),
+    videos: z.array(z.object({
+      id: z.string().describe('视频ID'),
+      url: z.string().describe('视频的URL'),
+      duration: z.string().describe('视频总时长，单位s'),
+    })).optional().describe('视频类任务的结果'),
+  }).optional().describe('任务结果'),
+})
+
+export class KlingCallbackDto extends createZodDto(klingCallbackSchema) {}
+
+// Volcengine回调接口DTO（与查询API返回格式一致）
+const volcengineCallbackSchema = z.object({
+  id: z.string(),
+  model: z.string(),
+  status: z.enum(TaskStatus),
+  created_at: z.number(),
+  updated_at: z.number(),
+  content: z.object({
+    video_url: z.string(),
+    last_frame_url: z.string().optional(),
+  }).optional(),
+  error: z.object({
+    message: z.string(),
+    code: z.string(),
+  }).optional().nullable(),
+  seed: z.number().optional(),
+  resolution: z.string().optional(),
+  ratio: z.string().optional(),
+  duration: z.number().optional(),
+  framespersecond: z.number().optional(),
+  usage: z.object({
+    completion_tokens: z.number(),
+    total_tokens: z.number(),
+  }).optional(),
+})
+
+export class VolcengineCallbackDto extends createZodDto(volcengineCallbackSchema) {}
+
+// Kling任务查询DTO
+const klingTaskQuerySchema = z.object({
+  userId: z.string(),
+  userType: z.enum(UserType),
+  taskId: z.string().min(1).describe('任务ID'),
+})
+
+export class KlingTaskQueryDto extends createZodDto(klingTaskQuerySchema) {}
+
+// Volcengine任务查询DTO
+const volcengineTaskQuerySchema = z.object({
+  userId: z.string(),
+  userType: z.enum(UserType),
+  taskId: z.string().min(1).describe('任务ID'),
+})
+
+export class VolcengineTaskQueryDto extends createZodDto(volcengineTaskQuerySchema) {}

@@ -10,3 +10,9 @@ export enum AiLogStatus {
   Success = 'success',
   Failed = 'failed',
 }
+
+export enum AiLogChannel {
+  NewApi = 'new-api',
+  Kling = 'kling',
+  Volcengine = 'volcengine',
+}

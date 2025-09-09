@@ -1,17 +1,43 @@
+import path from 'node:path'
 import { Injectable } from '@nestjs/common'
 import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
+import { S3Service } from '@yikart/aws-s3'
 import { AppException, ResponseCode, UserType } from '@yikart/common'
-import { AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
+import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
+import { KlingAction } from '../../common/enums/kling-action.enum'
 import { config } from '../../config'
-import { VideoService as NewApiVideoService, VideoTaskStatusResponse } from '../../libs/new-api'
-import { UserVideoGenerationRequestDto, UserVideoTaskQueryDto } from './video.dto'
+import {
+  KlingService,
+  TaskStatus as KlingTaskStatus,
+  Mode,
+  Text2VideoCreateTaskResponseData,
+  Text2VideoGetTaskResponseData,
+} from '../../libs/kling'
+import { TaskStatus, VideoGenerationResponse } from '../../libs/new-api'
+import {
+  ContentType,
+  CreateVideoGenerationTaskResponse,
+  GetVideoGenerationTaskResponse,
+  VolcengineService,
+  TaskStatus as VolcTaskStatus,
+} from '../../libs/volcengine'
+import {
+  KlingCallbackDto,
+  KlingText2VideoRequestDto,
+  UserVideoGenerationRequestDto,
+  UserVideoTaskQueryDto,
+  VolcengineCallbackDto,
+  VolcengineGenerationRequestDto,
+} from './video.dto'
 
 @Injectable()
 export class VideoService {
   constructor(
-    private readonly videoService: NewApiVideoService,
+    private readonly klingService: KlingService,
+    private readonly volcengineService: VolcengineService,
     private readonly userClient: AitoearnUserClient,
     private readonly aiLogRepo: AiLogRepository,
+    private readonly s3Service: S3Service,
   ) {}
 
   async calculateVideoGenerationPrice(params: {
@@ -53,12 +79,116 @@ export class VideoService {
   /**
    * 用户视频生成（通用接口）
    */
-  async userVideoGeneration({ userId, userType, ...params }: UserVideoGenerationRequestDto) {
+  async userVideoGeneration(request: UserVideoGenerationRequestDto) {
+    const { userId, userType, model, prompt, mode, duration } = request
+
+    // 查找模型配置以确定channel
+    const modelConfig = config.ai.models.video.generation.find(m => m.name === model)
+    if (!modelConfig) {
+      throw new AppException(ResponseCode.InvalidModel)
+    }
+
+    const channel = modelConfig.channel
+
+    if (channel === 'kling') {
+      const klingRequest: KlingText2VideoRequestDto = {
+        userId,
+        userType,
+        model_name: model,
+        prompt,
+        mode: mode === 'std' ? Mode.Std : mode === 'pro' ? Mode.Pro : undefined,
+        duration: duration ? duration.toString() as '5' | '10' : undefined,
+      }
+      const result = await this.klingText2Video(klingRequest)
+
+      return {
+        task_id: result.task_id,
+        status: TaskStatus.Submitted,
+        message: '',
+      }
+    }
+    else if (channel === 'volcengine') {
+      const volcengineRequest: VolcengineGenerationRequestDto = {
+        userId,
+        userType,
+        model,
+        content: [{
+          type: ContentType.Text,
+          text: prompt,
+        }],
+      }
+      const result = await this.volcengineCreate(volcengineRequest)
+
+      return {
+        task_id: result.id,
+        status: TaskStatus.Submitted,
+        message: '',
+      }
+    }
+    else {
+      throw new AppException(ResponseCode.InvalidModel)
+    }
+  }
+
+  /**
+   * 查询视频任务状态（纯数据库查询）
+   */
+  async getVideoTaskStatus(request: UserVideoTaskQueryDto) {
+    const { taskId } = request
+
+    const aiLog = await this.aiLogRepo.getByTaskId(taskId)
+
+    if (aiLog == null || aiLog.type !== AiLogType.Video) {
+      throw new AppException(ResponseCode.InvalidAiTaskId)
+    }
+
+    if (aiLog.status === AiLogStatus.Generating) {
+      return {
+        task_id: aiLog.id,
+        action: aiLog.channel === 'kling' ? 'text2video' : 'generation',
+        status: TaskStatus.InProgress,
+        fail_reason: '',
+        submit_time: Math.floor(aiLog.startedAt.getTime() / 1000),
+        start_time: Math.floor(aiLog.startedAt.getTime() / 1000),
+        finish_time: 0,
+        progress: '30%',
+        data: {},
+      }
+    }
+
+    if (!aiLog.response) {
+      throw new AppException(ResponseCode.InvalidAiTaskId)
+    }
+
+    if (aiLog.channel === 'kling') {
+      return await this.getKlingTaskResult(aiLog.response as unknown as Text2VideoGetTaskResponseData)
+    }
+    else if (aiLog.channel === 'volcengine') {
+      return await this.getVolcengineTaskResult(aiLog.response as unknown as GetVideoGenerationTaskResponse)
+    }
+    else {
+      return aiLog.response as unknown as VideoGenerationResponse
+    }
+  }
+
+  /**
+   * 获取视频生成模型参数
+   */
+  async getVideoGenerationModelParams() {
+    return config.ai.models.video.generation
+  }
+
+  /**
+   * Kling文生视频
+   */
+  async klingText2Video(request: KlingText2VideoRequestDto) {
+    const { userId, userType, model_name, duration, mode, ...params } = request
     const pricing = await this.calculateVideoGenerationPrice({
-      model: params.model,
-      resolution: params.size,
-      duration: params.duration,
+      model: model_name,
+      mode,
+      duration: duration ? Number(duration) : undefined,
     })
+
     if (userType === UserType.User) {
       const { balance } = await this.userClient.getPointsBalance({ userId })
       if (balance < pricing) {
@@ -67,51 +197,291 @@ export class VideoService {
     }
 
     const startedAt = new Date()
-    const result = await this.videoService.submitVideoGeneration({
-      apiKey: config.ai.newApi.apiKey,
+    const result = await this.klingService.createText2VideoTask({
       ...params,
+      mode,
+      duration,
+      callback_url: config.ai.kling.callbackUrl,
     })
 
-    await this.aiLogRepo.create({
+    const aiLog = await this.aiLogRepo.create({
       userId,
       userType,
-      taskId: result.task_id,
-      model: params.model,
+      taskId: result.data.task_id,
+      model: model_name,
+      channel: AiLogChannel.Kling,
+      action: KlingAction.Text2Video,
       startedAt,
       type: AiLogType.Video,
       points: pricing,
-      request: params,
-      response: result as unknown as Record<string, unknown>,
+      request: { ...params, mode, duration },
       status: AiLogStatus.Generating,
     })
 
-    return result
+    return {
+      ...result.data,
+      task_id: aiLog.id,
+    } as Text2VideoCreateTaskResponseData
   }
 
   /**
-   * 查询视频任务状态
+   * Kling回调处理
    */
-  async getVideoTaskStatus(request: UserVideoTaskQueryDto) {
-    const { taskId } = request
+  async klingCallback(callbackData: KlingCallbackDto) {
+    const { task_id, task_status, task_status_msg, task_result, updated_at } = callbackData
 
-    const aiLog = await this.aiLogRepo.getByTaskId(taskId)
-    if (aiLog == null) {
+    const aiLog = await this.aiLogRepo.getByTaskId(task_id)
+    if (!aiLog || aiLog.channel !== AiLogChannel.Kling) {
+      throw new AppException(ResponseCode.InvalidAiTaskId)
+    }
+
+    if (task_status !== KlingTaskStatus.Succeed && task_status !== KlingTaskStatus.Failed) {
+      return
+    }
+
+    let status: AiLogStatus
+    switch (task_status) {
+      case KlingTaskStatus.Succeed:
+        status = AiLogStatus.Success
+        break
+      case KlingTaskStatus.Failed:
+        status = AiLogStatus.Failed
+        break
+      default:
+        status = AiLogStatus.Generating
+        break
+    }
+
+    const duration = updated_at - aiLog.startedAt.getTime()
+    for (const video of task_result?.videos || []) {
+      const filename = `${aiLog.id}-${video.id}.mp4`
+      const fullPath = path.join(`ai/video/${aiLog.model}`, aiLog.userId, filename)
+      const result = await this.s3Service.putObjectFromUrl(video.url, fullPath)
+      video.url = result.path
+    }
+    for (const image of task_result?.images || []) {
+      const filename = `${aiLog.id}-${image.index}.png`
+      const fullPath = path.join(`ai/image/${aiLog.model}`, aiLog.userId, filename)
+      const result = await this.s3Service.putObjectFromUrl(image.url, fullPath)
+      image.url = result.path
+    }
+
+    await this.aiLogRepo.updateById(aiLog.id, {
+      status,
+      response: callbackData,
+      duration,
+      errorMessage: task_status === 'failed' ? task_status_msg : undefined,
+    })
+
+    // 如果任务完成且用户类型为User，扣除积分
+    if (status === AiLogStatus.Success && aiLog.userType === UserType.User) {
+      await this.userClient.deductPoints({
+        userId: aiLog.userId,
+        amount: aiLog.points,
+        type: 'ai_service',
+        description: aiLog.model,
+      })
+    }
+  }
+
+  /**
+   * 查询Kling任务状态
+   */
+  async getKlingTaskResult(data: Text2VideoGetTaskResponseData) {
+    return {
+      task_id: data.task_id,
+      action: 'text2video',
+      status: data.task_status,
+      fail_reason: data.task_status_msg || '',
+      submit_time: data.created_at,
+      start_time: data.created_at,
+      finish_time: data.updated_at,
+      progress: data.task_status === 'succeed' ? '100%' : '0%',
+      data: data.task_result || {},
+    }
+  }
+
+  async getKlingTask(userId: string, userType: UserType, taskId: string) {
+    const aiLog = await this.aiLogRepo.getByIdAndUserId(taskId, userId, userType)
+
+    if (aiLog == null || aiLog.type !== AiLogType.Video || aiLog.channel !== AiLogChannel.Kling) {
       throw new AppException(ResponseCode.InvalidAiTaskId)
     }
     if (aiLog.status === AiLogStatus.Generating) {
-      const result = await this.videoService.getVideoTaskStatus({
-        apiKey: config.ai.newApi.apiKey,
-        taskId,
-      })
+      let result: KlingCallbackDto
+      switch (aiLog.action) {
+        case KlingAction.Image2video:
+          result = (await this.klingService.getImage2VideoTask(aiLog.taskId)).data
+          break
+        case KlingAction.MultiImage2video:
+          result = (await this.klingService.getMultiImage2VideoTask(aiLog.taskId)).data
+          break
+        case KlingAction.MultiElements:
+          result = (await this.klingService.getMultiElementsTask(aiLog.taskId)).data
+          break
+        // case KlingAction.VideoExtend:
+        //   result = (await this.klingService.getVideoExtendTask(aiLog.taskId)).data
+        //   break
+        case KlingAction.LipSync:
+          result = (await this.klingService.getLipSyncTask(aiLog.taskId)).data
+          break
+        case KlingAction.Effects:
+          result = (await this.klingService.getVideoEffectsTask(aiLog.taskId)).data
+          break
+        case KlingAction.Text2Video:
+        default:
+          result = (await this.klingService.getText2VideoTask(aiLog.taskId)).data
+      }
+
+      if (result.task_status === KlingTaskStatus.Succeed) {
+        await this.klingCallback(result)
+      }
       return result
     }
-    return aiLog.response as unknown as VideoTaskStatusResponse
+    return aiLog.response as unknown as KlingCallbackDto
   }
 
   /**
-   * 获取视频生成模型参数
+   * Volcengine回调处理
    */
-  async getVideoGenerationModelParams() {
-    return config.ai.models.video.generation
+  async volcengineCallback(callbackData: VolcengineCallbackDto) {
+    const { id, status, updated_at, content } = callbackData
+
+    const aiLog = await this.aiLogRepo.getByTaskId(id)
+    if (!aiLog || aiLog.channel !== AiLogChannel.Volcengine) {
+      throw new AppException(ResponseCode.InvalidAiTaskId)
+    }
+
+    if (status !== VolcTaskStatus.Succeeded && status !== VolcTaskStatus.Failed) {
+      return
+    }
+
+    let aiLogStatus: AiLogStatus
+    switch (status) {
+      case VolcTaskStatus.Succeeded:
+        aiLogStatus = AiLogStatus.Success
+        break
+      case VolcTaskStatus.Failed:
+        aiLogStatus = AiLogStatus.Failed
+        break
+      default:
+        aiLogStatus = AiLogStatus.Generating
+        break
+    }
+
+    if (content) {
+      if (content.last_frame_url) {
+        const filename = `${aiLog.id}-last_frame_url.png`
+        const fullPath = path.join(`ai/video/${aiLog.model}`, aiLog.userId, filename)
+        const result = await this.s3Service.putObjectFromUrl(content.last_frame_url, fullPath)
+        content.last_frame_url = result.path
+      }
+
+      const filename = `${aiLog.id}.mp4`
+      const fullPath = path.join(`ai/video/${aiLog.model}`, aiLog.userId, filename)
+      const result = await this.s3Service.putObjectFromUrl(content.video_url, fullPath)
+      content.video_url = result.path
+    }
+
+    const duration = updated_at - aiLog.startedAt.getTime()
+
+    await this.aiLogRepo.updateById(aiLog.id, {
+      status: aiLogStatus,
+      response: callbackData,
+      duration,
+      errorMessage: status === 'failed' ? callbackData.error?.message : undefined,
+    })
+
+    // 如果任务完成且用户类型为User，扣除积分
+    if (aiLogStatus === AiLogStatus.Success && aiLog.userType === UserType.User) {
+      await this.userClient.deductPoints({
+        userId: aiLog.userId,
+        amount: aiLog.points,
+        type: 'ai_service',
+        description: aiLog.model,
+      })
+    }
+  }
+
+  /**
+   * Volcengine视频生成
+   */
+  async volcengineCreate(request: VolcengineGenerationRequestDto) {
+    const { userId, userType, model, content, ...params } = request
+
+    // 计费和日志前置逻辑
+    const pricing = await this.calculateVideoGenerationPrice({
+      model,
+    })
+
+    if (userType === UserType.User) {
+      const { balance } = await this.userClient.getPointsBalance({ userId })
+      if (balance < pricing) {
+        throw new AppException(ResponseCode.UserPointsInsufficient)
+      }
+    }
+
+    const startedAt = new Date()
+    const result = await this.volcengineService.createVideoGenerationTask({
+      ...params,
+      model,
+      content,
+      callback_url: config.ai.volcengine.callbackUrl,
+    })
+
+    const aiLog = await this.aiLogRepo.create({
+      userId,
+      userType,
+      taskId: result.id,
+      model,
+      channel: AiLogChannel.Volcengine,
+      startedAt,
+      type: AiLogType.Video,
+      points: pricing,
+      request: {
+        ...params,
+        model,
+        content,
+      },
+      status: AiLogStatus.Generating,
+    })
+
+    return {
+      ...result,
+      id: aiLog.id,
+    } as CreateVideoGenerationTaskResponse
+  }
+
+  /**
+   * 查询Volcengine任务状态
+   */
+  async getVolcengineTaskResult(result: GetVideoGenerationTaskResponse) {
+    return {
+      task_id: result.id,
+      action: 'generation',
+      status: result.status,
+      fail_reason: result.error?.message || '',
+      submit_time: result.created_at,
+      start_time: result.created_at,
+      finish_time: result.updated_at,
+      progress: result.status === 'succeeded' ? '100%' : '0%',
+      data: result.content || {},
+    }
+  }
+
+  async getVolcengineTask(userId: string, userType: UserType, taskId: string) {
+    const aiLog = await this.aiLogRepo.getByIdAndUserId(taskId, userId, userType)
+
+    if (aiLog == null || aiLog.type !== AiLogType.Video || aiLog.channel !== AiLogChannel.Volcengine) {
+      throw new AppException(ResponseCode.InvalidAiTaskId)
+    }
+    if (aiLog.status === AiLogStatus.Generating) {
+      const result = await this.volcengineService.getVideoGenerationTask(aiLog.taskId)
+      if (result.status === VolcTaskStatus.Succeeded) {
+        await this.volcengineCallback(result)
+      }
+      return result
+    }
+    return aiLog.response as unknown as GetVideoGenerationTaskResponse
   }
 }
