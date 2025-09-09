@@ -14,6 +14,7 @@ import {
   deleteNotifications,
   getTaskDetail,
   acceptTask,
+  submitTask,
   type NotificationItem,
   type TaskItem
 } from "@/api/notification";
@@ -71,7 +72,8 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
     steps: [
       { title: '正在接受任务...', status: 'processing' },
       { title: '正在发布任务...', status: 'wait' },
-      { title: '发布完成', status: 'wait' }
+      { title: '正在提交任务...', status: 'wait' },
+      { title: '任务完成', status: 'wait' }
     ]
   });
 
@@ -210,7 +212,8 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
       steps: [
         { title: '正在接受任务...', status: 'processing' },
         { title: '正在发布任务...', status: 'wait' },
-        { title: '发布完成', status: 'wait' }
+        { title: '正在提交任务...', status: 'wait' },
+        { title: '任务完成', status: 'wait' }
       ]
     });
     
@@ -246,7 +249,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
           const publishData = {
             flowId: publishAccount.uid, // 使用账号的uid作为flowId
             accountType: publishAccount.type,
-            accountId: selectedTask.accountId,
+            accountId: publishAccount.account,
             title: selectedTask.title,
             desc: selectedTask.description,
             type: selectedTask.type as any, // 转换为PubType
@@ -272,17 +275,39 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
               steps: [
                 { title: '正在接受任务...', status: 'finish' },
                 { title: '正在发布任务...', status: 'finish' },
-                { title: '发布完成', status: 'finish' }
+                { title: '正在提交任务...', status: 'processing' },
+                { title: '任务完成', status: 'wait' }
               ]
             }));
 
-            // 延迟1秒后关闭进度窗口并跳转
-            setTimeout(() => {
-              setTaskProgressVisible(false);
-              setDetailModalVisible(false);
-              setSelectedTask(null);
-              router.push(`/${lng}/tasks`);
-            }, 1000);
+            // 第三步：提交任务
+            // 从发布响应中获取userTaskId，如果没有则使用任务ID
+            const userTaskId = response.data.id;
+            const submitResponse: any = await submitTask(userTaskId);
+            
+            if (submitResponse && submitResponse.code === 0) {
+              // 更新进度：第三步完成，开始第四步
+              setTaskProgress(prev => ({
+                ...prev,
+                currentStep: 3,
+                steps: [
+                  { title: '正在接受任务...', status: 'finish' },
+                  { title: '正在发布任务...', status: 'finish' },
+                  { title: '正在提交任务...', status: 'finish' },
+                  { title: '任务完成', status: 'finish' }
+                ]
+              }));
+
+              // 延迟1秒后关闭进度窗口并跳转
+              setTimeout(() => {
+                setTaskProgressVisible(false);
+                setDetailModalVisible(false);
+                setSelectedTask(null);
+                router.push(`/${lng}/tasks`);
+              }, 1000);
+            } else {
+              throw new Error('提交任务失败');
+            }
           } else {
             throw new Error('发布任务失败');
           }
@@ -739,9 +764,9 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                                    padding: '8px',
                                    maxWidth: '200px'
                                  }}>
-                                   <div style={{ fontSize: '12px', fontWeight: '500', marginBottom: '4px' }}>
+                                   {/* <div style={{ fontSize: '12px', fontWeight: '500', marginBottom: '4px' }}>
                                      {material.title}
-                                   </div>
+                                   </div> */}
                                    { (material.coverUrl && material.type !== "video") && (
                                      <img
                                        src={getOssUrl(material.coverUrl)}
@@ -755,9 +780,9 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                                        }}
                                      />
                                    )}
-                                   <div style={{ fontSize: '11px', color: '#666', lineHeight: '1.3' }}>
+                                   {/* <div style={{ fontSize: '11px', color: '#666', lineHeight: '1.3' }}>
                                      {material.desc?.substring(0, 50)}{material.desc?.length > 50 ? '...' : ''}
-                                   </div>
+                                   </div> */}
                                    {material.mediaList && material.mediaList.length > 0 && (
                                      <div style={{ 
                                        display: 'flex', 
@@ -795,11 +820,11 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                                                  left: '50%',
                                                  transform: 'translate(-50%, -50%)',
                                                  color: 'white',
-                                                 fontSize: '12px',
+                                                 fontSize: '11px',
                                                  background: 'rgba(0,0,0,0.6)',
                                                  borderRadius: '50%',
-                                                 width: '16px',
-                                                 height: '16px',
+                                                 width: '26px',
+                                                 height: '26px',
                                                  display: 'flex',
                                                  alignItems: 'center',
                                                  justifyContent: 'center'
@@ -984,6 +1009,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
             status: step.status as 'wait' | 'process' | 'finish' | 'error',
             description: index === 0 ? '正在调用接受任务接口...' : 
                         index === 1 ? '正在调用发布任务接口...' : 
+                        index === 2 ? '正在调用提交任务接口...' :
                         '任务处理完成，即将跳转...'
           }))}
         />

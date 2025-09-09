@@ -100,6 +100,11 @@ export const getTaskDetail = (opportunityId: string) => {
 };
 
 // 接受任务
-export const acceptTask = (taskId: string, opportunityId: string) => { 
+export const acceptTask = (taskId: string, opportunityId: string) => {
   return http.post("task/accept", { taskId, opportunityId });
-}; 
+};
+
+// 提交任务
+export const submitTask = (userTaskId: string) => {
+  return http.post("task/submit", { userTaskId: userTaskId });
+};
