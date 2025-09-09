@@ -22,13 +22,58 @@
                 ]
             }
         },
-        "/api/test/addDefaultContent": {
+        "/api/test/test": {
             "get": {
                 "operationId": "TestController_addDefaultContent",
                 "parameters": [],
                 "responses": {
                     "default": {
-                        "description": ""
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "测试"
+                ]
+            }
+        },
+        "/api/test/setVip/{type}/{userId}": {
+            "get": {
+                "operationId": "TestController_setUserVipInfo",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "userId",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "tags": [
@@ -537,27 +582,6 @@
                 ]
             }
         },
-        "/api/gologin": {
-            "get": {
-                "operationId": "GologinController_toTest",
-                "parameters": [],
-                "responses": {
-                    "default": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "tags": [
-                    "指纹浏览器"
-                ]
-            }
-        },
         "/api/appConfigs/{appId}": {
             "get": {
                 "description": "获取配置",
@@ -975,6 +999,88 @@
                     }
                 },
                 "summary": "立即发布任务（在n天之后的任务想要立即发布）",
+                "tags": [
+                    "plat/publish - 平台发布"
+                ]
+            }
+        },
+        "/api/plat/publish/publishInfo/data": {
+            "get": {
+                "operationId": "PublishController_publishInfoData",
+                "parameters": [],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                },
+                "summary": "获取发布信息数据",
+                "tags": [
+                    "plat/publish - 平台发布"
+                ]
+            }
+        },
+        "/api/plat/publish/publishDayInfo/list/{pageNo}/{pageSize}": {
+            "get": {
+                "operationId": "PublishController_publishDataInfoList",
+                "parameters": [
+                    {
+                        "name": "pageNo",
+                        "required": true,
+                        "in": "path",
+                        "description": "页码",
+                        "schema": {
+                            "title": "页码",
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "required": true,
+                        "in": "path",
+                        "description": "页数",
+                        "schema": {
+                            "title": "页数",
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                },
+                "summary": "获取每天发布信息数据列表",
+                "tags": [
+                    "plat/publish - 平台发布"
+                ]
+            }
+        },
+        "/api/plat/publish/records/{id}": {
+            "get": {
+                "operationId": "PublishController_getPublishRecordDetail",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "获取发布记录详情",
                 "tags": [
                     "plat/publish - 平台发布"
                 ]
@@ -3353,7 +3459,7 @@
                         }
                     }
                 },
-                "summary": "获取频道列表",
+                "summary": "更新账号频道ID",
                 "tags": [
                     "plat/youtube - YouTube平台"
                 ]
@@ -3397,6 +3503,31 @@
                 "parameters": [],
                 "responses": {
                     "default": {
+                        "description": ""
+                    }
+                },
+                "summary": "获取通用数据",
+                "tags": [
+                    "plat/youtube - YouTube平台"
+                ]
+            }
+        },
+        "/api/plat/youtube/search": {
+            "post": {
+                "operationId": "YoutubeController_search",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SearchDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -3407,7 +3538,7 @@
                         }
                     }
                 },
-                "summary": "获取通用数据",
+                "summary": "搜索",
                 "tags": [
                     "plat/youtube - YouTube平台"
                 ]
@@ -3997,14 +4128,6 @@
                         "schema": {
                             "type": "string"
                         }
-                    },
-                    {
-                        "name": "accountId",
-                        "required": true,
-                        "in": "query",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 ],
                 "responses": {
@@ -4144,14 +4267,6 @@
                         "schema": {
                             "type": "string"
                         }
-                    },
-                    {
-                        "name": "accountId",
-                        "required": true,
-                        "in": "query",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 ],
                 "responses": {
@@ -4231,7 +4346,14 @@
                 "parameters": [],
                 "responses": {
                     "default": {
-                        "description": ""
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "tags": [
@@ -4356,7 +4478,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "string"
+                                    "type": "object"
                                 }
                             }
                         }
@@ -5238,7 +5360,8 @@
                                 "tiktok",
                                 "facebook",
                                 "instagram",
-                                "threads"
+                                "threads",
+                                "pinterest"
                             ]
                         }
                     }
@@ -5313,6 +5436,44 @@
                     }
                 },
                 "summary": "更新账户统计信息",
+                "tags": [
+                    "账户"
+                ]
+            }
+        },
+        "/api/account/list/spaceIds": {
+            "post": {
+                "operationId": "AccountController_getAccountListBySpaceIds",
+                "parameters": [
+                    {
+                        "name": "spaceIds",
+                        "required": true,
+                        "in": "query",
+                        "description": "空间ID数组",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "获取账户列表（根据空间ids）",
                 "tags": [
                     "账户"
                 ]
@@ -5769,29 +5930,6 @@
                 ]
             }
         },
-        "/api/material/default": {
-            "post": {
-                "description": "初始化草稿",
-                "operationId": "MaterialController_createDefault",
-                "parameters": [],
-                "responses": {
-                    "default": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "boolean"
-                                }
-                            }
-                        }
-                    }
-                },
-                "summary": "初始化草稿",
-                "tags": [
-                    "草稿"
-                ]
-            }
-        },
         "/api/material": {
             "post": {
                 "description": "创建草稿",
@@ -5998,7 +6136,7 @@
         },
         "/api/material/list/{pageNo}/{pageSize}": {
             "get": {
-                "description": "获取素材列表",
+                "description": "获取草稿列表",
                 "operationId": "MaterialController_getList",
                 "parameters": [
                     {
@@ -6059,7 +6197,7 @@
                         "description": ""
                     }
                 },
-                "summary": "获取素材列表",
+                "summary": "获取草稿列表",
                 "tags": [
                     "草稿"
                 ]
@@ -6067,7 +6205,7 @@
         },
         "/api/material/group": {
             "post": {
-                "description": "创建素材组",
+                "description": "创建草稿组",
                 "operationId": "MaterialController_createGroup",
                 "parameters": [],
                 "requestBody": {
@@ -6092,7 +6230,7 @@
                         }
                     }
                 },
-                "summary": "创建素材组",
+                "summary": "创建草稿组",
                 "tags": [
                     "草稿"
                 ]
@@ -6206,29 +6344,6 @@
                 "summary": "获取素材组列表",
                 "tags": [
                     "草稿"
-                ]
-            }
-        },
-        "/api/media/default": {
-            "post": {
-                "description": "初始化媒体库",
-                "operationId": "MediaController_createDefault",
-                "parameters": [],
-                "responses": {
-                    "default": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "boolean"
-                                }
-                            }
-                        }
-                    }
-                },
-                "summary": "初始化媒体库",
-                "tags": [
-                    "媒体资源"
                 ]
             }
         },
@@ -6521,7 +6636,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object"
+                                    "type": "string"
                                 }
                             }
                         }
@@ -6582,7 +6697,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object"
+                                    "type": "string"
                                 }
                             }
                         }
@@ -6711,7 +6826,170 @@
                 ]
             }
         },
-        "/api/task/opportunity/{opportunityId}": {
+        "/api/payment/success/page": {
+            "get": {
+                "operationId": "PaymentController_paySuccessPage",
+                "parameters": [],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "payment - strip支付中台"
+                ]
+            }
+        },
+        "/api/withdraw/create": {
+            "post": {
+                "operationId": "WithdrawController_create",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WithdrawCreateDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "创建提现",
+                "tags": [
+                    "withdraw - 提现"
+                ]
+            }
+        },
+        "/api/withdraw/info/{id}": {
+            "get": {
+                "operationId": "WithdrawController_getById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "信息",
+                "tags": [
+                    "withdraw - 提现"
+                ]
+            }
+        },
+        "/api/withdraw/list/{pageNo}/{pageSize}": {
+            "get": {
+                "operationId": "WithdrawController_subscription",
+                "parameters": [
+                    {
+                        "name": "pageNo",
+                        "required": true,
+                        "in": "path",
+                        "description": "页码",
+                        "schema": {
+                            "title": "页码",
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "required": true,
+                        "in": "path",
+                        "description": "页数",
+                        "schema": {
+                            "title": "页数",
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "列表",
+                "tags": [
+                    "withdraw - 提现"
+                ]
+            }
+        },
+        "/api/task/opportunity/list/{pageNo}/{pageSize}": {
+            "get": {
+                "operationId": "TaskController_getTaskOpportunityList",
+                "parameters": [
+                    {
+                        "name": "pageNo",
+                        "required": true,
+                        "in": "path",
+                        "description": "页码",
+                        "schema": {
+                            "title": "页码",
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "required": true,
+                        "in": "path",
+                        "description": "页数",
+                        "schema": {
+                            "title": "页数",
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "获取待接取的任务列表",
+                "tags": [
+                    "task - 任务"
+                ]
+            }
+        },
+        "/api/task/opportunity/info/{opportunityId}": {
             "get": {
                 "operationId": "TaskController_getTaskInfo",
                 "parameters": [
@@ -6796,6 +7074,38 @@
                 ]
             }
         },
+        "/api/task/submit": {
+            "post": {
+                "operationId": "TaskController_submitTask",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubmitTaskDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserTaskVo"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "用户提交完成任务",
+                "tags": [
+                    "task - 任务"
+                ]
+            }
+        },
         "/api/task/material/{id}": {
             "get": {
                 "operationId": "MaterialController_getMaterial",
@@ -6861,16 +7171,28 @@
                 ]
             }
         },
-        "/api/task/user-task": {
+        "/api/task/userTask/list/{pageNo}/{pageSize}": {
             "get": {
                 "operationId": "UserTaskController_getUserTaskList",
                 "parameters": [
                     {
-                        "name": "status",
+                        "name": "pageNo",
                         "required": true,
-                        "in": "query",
+                        "in": "path",
+                        "description": "页码",
                         "schema": {
-                            "type": "string"
+                            "title": "页码",
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "required": true,
+                        "in": "path",
+                        "description": "页数",
+                        "schema": {
+                            "title": "页数",
+                            "type": "number"
                         }
                     }
                 ],
@@ -6882,7 +7204,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/UserTaskWithTaskVo"
+                                        "type": "object"
                                     }
                                 }
                             }
@@ -6891,7 +7213,38 @@
                 },
                 "summary": "获取用户任务列表",
                 "tags": [
-                    "task/user-task - 用户任务"
+                    "task/userTask - 用户任务"
+                ]
+            }
+        },
+        "/api/task/userTask/info/{id}": {
+            "get": {
+                "operationId": "UserTaskController_getUserTaskById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "获取用户任务详情",
+                "tags": [
+                    "task/userTask - 用户任务"
                 ]
             }
         },
@@ -7604,6 +7957,250 @@
                     "statistics - 数据统计"
                 ]
             }
+        },
+        "/api/statistics/channels/latest-batch": {
+            "post": {
+                "operationId": "StatisticsController_getChannelDataLatestByUids",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BatchChannelLatestQueryDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "批量获取频道最新数据并汇总粉丝数",
+                "tags": [
+                    "statistics - 数据统计"
+                ]
+            }
+        },
+        "/api/statistics/channels/period-batch": {
+            "post": {
+                "operationId": "StatisticsController_getChannelDataPeriodByUids",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GetChannelDataPeriodByUidsDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "批量获取频道最新数据并汇总粉丝数",
+                "tags": [
+                    "statistics - 数据统计"
+                ]
+            }
+        },
+        "/api/cloud-spaces": {
+            "get": {
+                "description": "获取云空间列表，支持分页查询，可按关键词、状态、区域进行筛选",
+                "operationId": "CloudSpacesController_listCloudSpaces",
+                "parameters": [
+                    {
+                        "name": "",
+                        "required": true,
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/ListCloudSpacesDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {},
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "error": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "number",
+                                            "description": "错误码"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "错误消息"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "获取云空间列表",
+                "tags": [
+                    "云空间管理"
+                ]
+            }
+        },
+        "/api/cloud-spaces/{cloudSpaceId}/status": {
+            "get": {
+                "description": "根据云空间ID获取云空间的当前状态信息，包括运行状态、资源使用情况等",
+                "operationId": "CloudSpacesController_getCloudSpaceStatus",
+                "parameters": [
+                    {
+                        "name": "cloudSpaceId",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {},
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "error": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "number",
+                                            "description": "错误码"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "错误消息"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "获取云空间状态",
+                "tags": [
+                    "云空间管理"
+                ]
+            }
+        },
+        "/api/cloud-spaces/{cloudSpaceId}": {
+            "delete": {
+                "description": "根据云空间ID删除指定的云空间，此操作不可逆，请谨慎操作",
+                "operationId": "CloudSpacesController_deleteCloudSpace",
+                "parameters": [
+                    {
+                        "name": "cloudSpaceId",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {},
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "error": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "number",
+                                            "description": "错误码"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "错误消息"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "summary": "删除云空间",
+                "tags": [
+                    "云空间管理"
+                ]
+            }
         }
     },
     "info": {
@@ -7666,7 +8263,7 @@
                 "properties": {}
             },
             "PointsRecordsVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "list": {
@@ -7983,8 +8580,8 @@
                 "properties": {
                     "content_category": {
                         "type": "string",
-                        "title": "内容分类",
-                        "description": "内容分类"
+                        "title": "facebook post category",
+                        "description": "post category"
                     },
                     "content_tags": {
                         "title": "内容标签",
@@ -8104,6 +8701,41 @@
                     }
                 }
             },
+            "TiktokPostOptionsDto": {
+                "type": "object",
+                "properties": {
+                    "privacy_level": {
+                        "type": "string",
+                        "title": "privacy level",
+                        "description": "privacy level"
+                    },
+                    "disable_duet": {
+                        "type": "boolean",
+                        "title": "disable duet",
+                        "description": "disable duet"
+                    },
+                    "disable_stitch": {
+                        "type": "boolean",
+                        "title": "disable stitch",
+                        "description": "disable stitch"
+                    },
+                    "disable_comment": {
+                        "type": "boolean",
+                        "title": "disable comment",
+                        "description": "disable comment"
+                    },
+                    "brand_organic_toggle": {
+                        "type": "boolean",
+                        "title": "organic brand",
+                        "description": "organic brand"
+                    },
+                    "brand_content_toggle": {
+                        "type": "boolean",
+                        "title": "brand content",
+                        "description": "brand content"
+                    }
+                }
+            },
             "PublishOptionDto": {
                 "type": "object",
                 "properties": {
@@ -8160,6 +8792,15 @@
                                 "$ref": "#/components/schemas/ThreadsPostOptionsDto"
                             }
                         ]
+                    },
+                    "tiktok": {
+                        "title": "Tiktok参数",
+                        "description": "Tiktok参数",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/TiktokPostOptionsDto"
+                            }
+                        ]
                     }
                 }
             },
@@ -8207,7 +8848,8 @@
                             "tiktok",
                             "facebook",
                             "instagram",
-                            "threads"
+                            "threads",
+                            "pinterest"
                         ],
                         "description": "平台类型"
                     },
@@ -8258,7 +8900,7 @@
                 ]
             },
             "CreatePublishRecordDto": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "flowId": {
@@ -8278,6 +8920,9 @@
                         "type": "string"
                     },
                     "desc": {
+                        "type": "string"
+                    },
+                    "userTaskId": {
                         "type": "string"
                     },
                     "accountId": {
@@ -8303,7 +8948,8 @@
                             "tiktok",
                             "facebook",
                             "instagram",
-                            "threads"
+                            "threads",
+                            "pinterest"
                         ]
                     },
                     "uid": {
@@ -8363,7 +9009,8 @@
                             "tiktok",
                             "facebook",
                             "instagram",
-                            "threads"
+                            "threads",
+                            "pinterest"
                         ],
                         "description": "账户类型"
                     },
@@ -8446,7 +9093,8 @@
                             "tiktok",
                             "facebook",
                             "instagram",
-                            "threads"
+                            "threads",
+                            "pinterest"
                         ],
                         "description": "账号类型"
                     },
@@ -9232,6 +9880,77 @@
                     "accountId"
                 ]
             },
+            "SearchDto": {
+                "type": "object",
+                "properties": {
+                    "accountId": {
+                        "type": "string",
+                        "description": "账号ID",
+                        "example": "account_123"
+                    },
+                    "forMine": {
+                        "type": "boolean",
+                        "description": "是否搜索我的内容",
+                        "example": false
+                    },
+                    "maxResults": {
+                        "type": "number",
+                        "description": "最大结果数",
+                        "example": 10
+                    },
+                    "order": {
+                        "type": "string",
+                        "description": "排序方法",
+                        "enum": [
+                            "relevance",
+                            "date",
+                            "rating",
+                            "title",
+                            "videoCount",
+                            "viewCount"
+                        ],
+                        "example": "relevance"
+                    },
+                    "pageToken": {
+                        "type": "string",
+                        "description": "分页令牌",
+                        "example": "next_page_token"
+                    },
+                    "publishedBefore": {
+                        "type": "string",
+                        "description": "发布时间之前",
+                        "example": "2024-01-01T00:00:00Z"
+                    },
+                    "publishedAfter": {
+                        "type": "string",
+                        "description": "发布时间之后",
+                        "example": "2024-01-01T00:00:00Z"
+                    },
+                    "q": {
+                        "type": "string",
+                        "description": "搜索查询字词",
+                        "example": "编程教程"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "搜索类型",
+                        "enum": [
+                            "video",
+                            "channel",
+                            "playlist"
+                        ],
+                        "example": "video"
+                    },
+                    "videoCategoryId": {
+                        "type": "string",
+                        "description": "视频类别ID",
+                        "example": "22"
+                    }
+                },
+                "required": [
+                    "accountId"
+                ]
+            },
             "GetAuthUrlDto": {
                 "type": "object",
                 "properties": {
@@ -9375,6 +10094,10 @@
                         "type": "string",
                         "title": "描述"
                     },
+                    "decs": {
+                        "type": "string",
+                        "title": "描述"
+                    },
                     "dominant_color": {
                         "type": "string",
                         "title": "RGB表示的颜色 主引脚颜色。十六进制数，例如“#6E7874”"
@@ -9421,7 +10144,7 @@
                 ]
             },
             "AddInteractionRecordDto": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "accountId": {
@@ -9442,7 +10165,8 @@
                             "tiktok",
                             "facebook",
                             "instagram",
-                            "threads"
+                            "threads",
+                            "pinterest"
                         ]
                     },
                     "worksId": {
@@ -9464,22 +10188,25 @@
                     "commentRemark": {
                         "type": "string"
                     },
-                    "commentTime": {},
-                    "likeTime": {},
-                    "collectTime": {}
+                    "commentTime": {
+                        "type": "string"
+                    },
+                    "likeTime": {
+                        "type": "string"
+                    },
+                    "collectTime": {
+                        "type": "string"
+                    }
                 },
                 "required": [
                     "accountId",
                     "type",
-                    "worksId",
-                    "commentTime",
-                    "likeTime",
-                    "collectTime"
+                    "worksId"
                 ],
                 "additionalProperties": false
             },
             "AddReplyCommentRecordDto": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "accountId": {
@@ -9500,7 +10227,8 @@
                             "tiktok",
                             "facebook",
                             "instagram",
-                            "threads"
+                            "threads",
+                            "pinterest"
                         ]
                     },
                     "commentId": {
@@ -9554,7 +10282,8 @@
                             "tiktok",
                             "facebook",
                             "instagram",
-                            "threads"
+                            "threads",
+                            "pinterest"
                         ]
                     },
                     "loginCookie": {
@@ -9672,7 +10401,8 @@
                             "tiktok",
                             "facebook",
                             "instagram",
-                            "threads"
+                            "threads",
+                            "pinterest"
                         ]
                     },
                     "loginCookie": {
@@ -10347,12 +11077,13 @@
                     },
                     "payment": {
                         "type": "string",
-                        "title": "付款模式-连续包月-连续包年-一次性付",
+                        "title": "付款模式-连续包月-连续包年-一次性付-购买积分",
                         "enum": [
                             "month",
                             "year",
                             "onceYear",
-                            "onceMonth"
+                            "onceMonth",
+                            "points"
                         ]
                     },
                     "mode": {
@@ -10361,6 +11092,14 @@
                         "enum": [
                             "payment",
                             "subscription"
+                        ]
+                    },
+                    "flagTrialPeriodDays": {
+                        "type": "number",
+                        "title": "订阅模式下是否给七天免费试用时长， 0 - 不给，   1-给",
+                        "enum": [
+                            0,
+                            1
                         ]
                     },
                     "metadata": {
@@ -10374,7 +11113,8 @@
                 },
                 "required": [
                     "payment",
-                    "mode"
+                    "mode",
+                    "flagTrialPeriodDays"
                 ]
             },
             "RefundBodyDto": {
@@ -10418,8 +11158,46 @@
                     "id"
                 ]
             },
+            "WithdrawCreateDto": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "type": "object",
+                "properties": {
+                    "flowId": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "task",
+                            "reward"
+                        ]
+                    },
+                    "amount": {
+                        "type": "number",
+                        "minimum": 0
+                    },
+                    "relId": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "incomeRecordId": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "remark": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "type",
+                    "amount"
+                ],
+                "additionalProperties": false
+            },
             "TaskWithOpportunityVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "id": {
@@ -10441,8 +11219,7 @@
                         "type": "number"
                     },
                     "deadline": {
-                        "type": "string",
-                        "format": "date-time"
+                        "type": "string"
                     },
                     "reward": {
                         "type": "number"
@@ -10476,12 +11253,10 @@
                         "items": {}
                     },
                     "createdAt": {
-                        "type": "string",
-                        "format": "date-time"
+                        "type": "string"
                     },
                     "updatedAt": {
-                        "type": "string",
-                        "format": "date-time"
+                        "type": "string"
                     },
                     "opportunityId": {
                         "type": "string"
@@ -10490,8 +11265,7 @@
                         "type": "string"
                     },
                     "expiredAt": {
-                        "type": "string",
-                        "format": "date-time"
+                        "type": "string"
                     },
                     "accountId": {
                         "type": "string"
@@ -10518,7 +11292,7 @@
                 "additionalProperties": false
             },
             "TotalAmountVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "totalAmount": {
@@ -10531,26 +11305,21 @@
                 "additionalProperties": false
             },
             "AcceptTaskDto": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
-                    "taskId": {
-                        "type": "string",
-                        "minLength": 1
-                    },
                     "opportunityId": {
                         "type": "string",
                         "minLength": 1
                     }
                 },
                 "required": [
-                    "taskId",
                     "opportunityId"
                 ],
                 "additionalProperties": false
             },
             "UserTaskVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "id": {
@@ -10565,21 +11334,11 @@
                     "status": {
                         "type": "string"
                     },
-                    "accountType": {
-                        "type": "string"
-                    },
-                    "uid": {
-                        "type": "string"
-                    },
-                    "account": {
-                        "type": "string"
-                    },
                     "reward": {
                         "type": "number"
                     },
-                    "createdAt": {
-                        "type": "string",
-                        "format": "date-time"
+                    "accountId": {
+                        "type": "string"
                     }
                 },
                 "required": [
@@ -10587,16 +11346,27 @@
                     "taskId",
                     "userId",
                     "status",
-                    "accountType",
-                    "uid",
-                    "account",
                     "reward",
-                    "createdAt"
+                    "accountId"
+                ],
+                "additionalProperties": false
+            },
+            "SubmitTaskDto": {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "type": "object",
+                "properties": {
+                    "userTaskId": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "userTaskId"
                 ],
                 "additionalProperties": false
             },
             "MaterialVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "id": {
@@ -10651,91 +11421,8 @@
                 ],
                 "additionalProperties": false
             },
-            "UserTaskWithTaskVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "string"
-                    },
-                    "taskId": {
-                        "type": "string"
-                    },
-                    "userId": {
-                        "type": "string"
-                    },
-                    "status": {
-                        "type": "string"
-                    },
-                    "accountType": {
-                        "type": "string"
-                    },
-                    "uid": {
-                        "type": "string"
-                    },
-                    "account": {
-                        "type": "string"
-                    },
-                    "reward": {
-                        "type": "number"
-                    },
-                    "createdAt": {
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "updatedAt": {
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "task": {
-                        "type": "object",
-                        "properties": {
-                            "id": {
-                                "type": "string"
-                            },
-                            "title": {
-                                "type": "string"
-                            },
-                            "description": {
-                                "type": "string"
-                            },
-                            "type": {
-                                "type": "string"
-                            },
-                            "deadline": {
-                                "type": "string",
-                                "format": "date-time"
-                            },
-                            "status": {
-                                "type": "string"
-                            }
-                        },
-                        "required": [
-                            "id",
-                            "title",
-                            "description",
-                            "type",
-                            "deadline",
-                            "status"
-                        ],
-                        "additionalProperties": false
-                    }
-                },
-                "required": [
-                    "id",
-                    "taskId",
-                    "userId",
-                    "status",
-                    "accountType",
-                    "uid",
-                    "account",
-                    "reward",
-                    "createdAt"
-                ],
-                "additionalProperties": false
-            },
             "UnreadCountVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "count": {
@@ -10750,10 +11437,10 @@
                 "additionalProperties": false
             },
             "NotificationListVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
-                    "items": {
+                    "list": {
                         "type": "array",
                         "items": {
                             "type": "object",
@@ -10807,34 +11494,16 @@
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9007199254740991
-                    },
-                    "page": {
-                        "type": "integer",
-                        "minimum": 1,
-                        "maximum": 9007199254740991
-                    },
-                    "pageSize": {
-                        "type": "integer",
-                        "minimum": 1,
-                        "maximum": 9007199254740991
-                    },
-                    "totalPages": {
-                        "type": "integer",
-                        "minimum": 0,
-                        "maximum": 9007199254740991
                     }
                 },
                 "required": [
-                    "items",
-                    "total",
-                    "page",
-                    "pageSize",
-                    "totalPages"
+                    "list",
+                    "total"
                 ],
                 "additionalProperties": false
             },
             "NotificationVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "id": {
@@ -10882,7 +11551,7 @@
                 "additionalProperties": false
             },
             "MarkAsReadDto": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "notificationIds": {
@@ -10900,7 +11569,7 @@
                 "additionalProperties": false
             },
             "OperationResultVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "affectedCount": {
@@ -10912,7 +11581,7 @@
                 "additionalProperties": false
             },
             "BatchDeleteDto": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "notificationIds": {
@@ -10930,7 +11599,7 @@
                 "additionalProperties": false
             },
             "UserAiChatRequestDto": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "messages": {
@@ -11025,7 +11694,7 @@
                                                                 "type": "object",
                                                                 "properties": {
                                                                     "url": {
-                                                                        "description": "图片链接",
+                                                                        "description": "视频链接",
                                                                         "type": "string",
                                                                         "format": "uri"
                                                                     }
@@ -11053,7 +11722,7 @@
                                                                 "type": "object",
                                                                 "properties": {
                                                                     "data": {
-                                                                        "description": "图片链接",
+                                                                        "description": "音频链接",
                                                                         "type": "string",
                                                                         "format": "uri"
                                                                     },
@@ -11112,7 +11781,7 @@
                 "additionalProperties": false
             },
             "UserAiChatResponseVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "content": {
@@ -11160,7 +11829,7 @@
                 "additionalProperties": false
             },
             "UserLogsResponseVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "items": {
@@ -11232,7 +11901,7 @@
                 "additionalProperties": false
             },
             "UserImageGenerationRequestDto": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "prompt": {
@@ -11254,12 +11923,7 @@
                     },
                     "quality": {
                         "description": "图片质量",
-                        "default": "standard",
-                        "type": "string",
-                        "enum": [
-                            "standard",
-                            "hd"
-                        ]
+                        "type": "string"
                     },
                     "response_format": {
                         "description": "返回格式",
@@ -11272,17 +11936,11 @@
                     },
                     "size": {
                         "description": "图片尺寸",
-                        "default": "1024x1024",
                         "type": "string"
                     },
                     "style": {
                         "description": "图片风格",
-                        "default": "vivid",
-                        "type": "string",
-                        "enum": [
-                            "vivid",
-                            "natural"
-                        ]
+                        "type": "string"
                     },
                     "user": {
                         "description": "用户标识符",
@@ -11298,7 +11956,7 @@
                 "additionalProperties": false
             },
             "UserImageResponseVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "created": {
@@ -11358,7 +12016,7 @@
                 "additionalProperties": false
             },
             "UserImageEditRequestDto": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "image": {
@@ -11389,7 +12047,6 @@
                     },
                     "size": {
                         "description": "图片尺寸",
-                        "default": "1024x1024",
                         "type": "string"
                     },
                     "response_format": {
@@ -11416,7 +12073,7 @@
                 "additionalProperties": false
             },
             "UserImageVariationRequestDto": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "image": {
@@ -11437,7 +12094,6 @@
                     },
                     "size": {
                         "description": "图片尺寸",
-                        "default": "1024x1024",
                         "type": "string"
                     },
                     "response_format": {
@@ -11463,7 +12119,7 @@
                 "additionalProperties": false
             },
             "UserVideoGenerationRequestDto": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "base64": {
@@ -11539,7 +12195,7 @@
                 "additionalProperties": false
             },
             "MjVideoSubmitResponseVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "code": {
@@ -11578,7 +12234,7 @@
                 "additionalProperties": false
             },
             "MjTaskFetchResponseVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "id": {
@@ -11655,7 +12311,7 @@
                 "additionalProperties": false
             },
             "UserVideoGenerationDto": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "model": {
@@ -11671,6 +12327,10 @@
                     },
                     "image": {
                         "description": "图片URL或base64",
+                        "type": "string"
+                    },
+                    "image_tail": {
+                        "description": "尾帧图片URL或base64",
                         "type": "string"
                     },
                     "mode": {
@@ -11701,7 +12361,7 @@
                 "additionalProperties": false
             },
             "VideoGenerationResponseVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "task_id": {
@@ -11724,7 +12384,7 @@
                 "additionalProperties": false
             },
             "VideoTaskStatusResponseVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "task_id": {
@@ -11781,7 +12441,7 @@
                 "additionalProperties": false
             },
             "Md2CardRequestDto": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "markdown": {
@@ -11840,7 +12500,7 @@
                 "additionalProperties": false
             },
             "Md2CardResponseVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "images": {
@@ -11872,7 +12532,7 @@
                 "additionalProperties": false
             },
             "FireflycardRequestDto": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "content": {
@@ -12038,7 +12698,7 @@
                 "additionalProperties": false
             },
             "FireflycardResponseVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "image": {
@@ -12052,7 +12712,7 @@
                 "additionalProperties": false
             },
             "ImageGenerationModelVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "name": {
@@ -12083,6 +12743,9 @@
                         "items": {
                             "type": "string"
                         }
+                    },
+                    "pricing": {
+                        "type": "string"
                     }
                 },
                 "required": [
@@ -12090,12 +12753,13 @@
                     "description",
                     "sizes",
                     "qualities",
-                    "styles"
+                    "styles",
+                    "pricing"
                 ],
                 "additionalProperties": false
             },
             "ImageEditModelVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "name": {
@@ -12112,17 +12776,21 @@
                         "items": {
                             "type": "string"
                         }
+                    },
+                    "pricing": {
+                        "type": "string"
                     }
                 },
                 "required": [
                     "name",
                     "description",
-                    "sizes"
+                    "sizes",
+                    "pricing"
                 ],
                 "additionalProperties": false
             },
             "VideoGenerationModelVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "name": {
@@ -12140,7 +12808,7 @@
                             "type": "string"
                         }
                     },
-                    "sizes": {
+                    "resolutions": {
                         "description": "支持的尺寸",
                         "type": "array",
                         "items": {
@@ -12153,19 +12821,73 @@
                         "items": {
                             "type": "number"
                         }
+                    },
+                    "supportedParameters": {
+                        "description": "支持的参数",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "defaults": {
+                        "type": "object",
+                        "properties": {
+                            "resolution": {
+                                "type": "string"
+                            },
+                            "aspectRatio": {
+                                "type": "string"
+                            },
+                            "mode": {
+                                "type": "string"
+                            },
+                            "duration": {
+                                "type": "number"
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "pricing": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "resolution": {
+                                    "type": "string"
+                                },
+                                "aspectRatio": {
+                                    "type": "string"
+                                },
+                                "mode": {
+                                    "type": "string"
+                                },
+                                "duration": {
+                                    "type": "number"
+                                },
+                                "price": {
+                                    "type": "number"
+                                }
+                            },
+                            "required": [
+                                "price"
+                            ],
+                            "additionalProperties": false
+                        }
                     }
                 },
                 "required": [
                     "name",
                     "description",
                     "modes",
-                    "sizes",
-                    "durations"
+                    "resolutions",
+                    "durations",
+                    "supportedParameters",
+                    "pricing"
                 ],
                 "additionalProperties": false
             },
             "ChatModelVo": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
                 "properties": {
                     "name": {
@@ -12231,6 +12953,55 @@
                     "pricing"
                 ],
                 "additionalProperties": false
+            },
+            "PlatformUidQueryDto": {
+                "type": "object",
+                "properties": {
+                    "platform": {
+                        "type": "string",
+                        "description": "平台",
+                        "example": "bilibili"
+                    },
+                    "uid": {
+                        "type": "string",
+                        "description": "uid",
+                        "example": "123456"
+                    }
+                },
+                "required": [
+                    "platform",
+                    "uid"
+                ]
+            },
+            "BatchChannelLatestQueryDto": {
+                "type": "object",
+                "properties": {
+                    "queries": {
+                        "description": "查询数组",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PlatformUidQueryDto"
+                        }
+                    }
+                },
+                "required": [
+                    "queries"
+                ]
+            },
+            "GetChannelDataPeriodByUidsDto": {
+                "type": "object",
+                "properties": {
+                    "queries": {
+                        "description": "查询数组",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PlatformUidQueryDto"
+                        }
+                    }
+                },
+                "required": [
+                    "queries"
+                ]
             }
         }
     }
