@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Tabs, Card, Button, List, Tag, message, Spin, Empty, Modal, Input, Row, Col, Image, Tooltip } from "antd";
+import { Tabs, Card, Button, List, Tag, message, Spin, Empty, Modal, Input, Row, Col, Image, Tooltip, Pagination } from "antd";
 import { CheckOutlined, ClockCircleOutlined, PlayCircleOutlined, UploadOutlined, EyeOutlined } from "@ant-design/icons";
 import { useTransClient } from "@/app/i18n/client";
 import { useUserStore } from "@/store/user";
 import { 
   apiGetTaskOpportunityList, 
-  apiGetUserTaskList, 
+  apiGetUserTaskList,
+  apiGetUserTaskDetail, 
   apiAcceptTask, 
   apiSubmitTask,
   TaskOpportunity,
@@ -23,6 +24,7 @@ import { SocialAccount } from "@/api/types/account.type";
 import { getTaskDetail, acceptTask, submitTask } from "@/api/notification";
 import { getDays, getUtcDays } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 import { Steps } from "antd";
+import http from "@/utils/request";
 import styles from "./taskPageCore.module.scss";
 
 const { TabPane } = Tabs;
@@ -51,6 +53,18 @@ export default function TaskPageCore() {
   const [pendingTasks, setPendingTasks] = useState<TaskOpportunity[]>([]);
   const [acceptedTasks, setAcceptedTasks] = useState<UserTask[]>([]);
   const [loading, setLoading] = useState(false);
+  
+  // 分页状态
+  const [pendingPagination, setPendingPagination] = useState({
+    current: 1,
+    pageSize: 20,
+    total: 0
+  });
+  const [acceptedPagination, setAcceptedPagination] = useState({
+    current: 1,
+    pageSize: 20,
+    total: 0
+  });
   const [selectedTask, setSelectedTask] = useState<TaskOpportunity | null>(null);
   const [submitModalVisible, setSubmitModalVisible] = useState(false);
   const [submissionUrl, setSubmissionUrl] = useState("");
@@ -61,6 +75,16 @@ export default function TaskPageCore() {
   const [taskDetailModalVisible, setTaskDetailModalVisible] = useState(false);
   const [taskDetail, setTaskDetail] = useState<any>(null);
   const [taskDetailLoading, setTaskDetailLoading] = useState(false);
+  const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
+  
+  // 媒体预览弹窗状态
+  const [mediaPreviewVisible, setMediaPreviewVisible] = useState(false);
+  const [previewMedia, setPreviewMedia] = useState<{
+    type: 'video' | 'image';
+    url: string;
+    title?: string;
+  } | null>(null);
+  const [videoRef, setVideoRef] = useState<HTMLVideoElement | null>(null);
   
   // 任务进度弹窗状态
   const [taskProgressVisible, setTaskProgressVisible] = useState(false);
@@ -84,14 +108,19 @@ export default function TaskPageCore() {
   });
 
   // 获取待接受任务列表
-  const fetchPendingTasks = async () => {
+  const fetchPendingTasks = async (page: number = 1, pageSize: number = 20) => {
     if (!token) return;
     
     try {
       setLoading(true);
-      const response = await apiGetTaskOpportunityList({ page: 1, pageSize: 20 });
+      const response = await apiGetTaskOpportunityList({ page, pageSize });
       if (response && response.data) {
         setPendingTasks(response.data.list || []);
+        setPendingPagination(prev => ({
+          ...prev,
+          current: page,
+          total: (response.data as any).total || 0
+        }));
       } else {
         setPendingTasks([]);
       }
@@ -105,14 +134,19 @@ export default function TaskPageCore() {
   };
 
   // 获取已接受任务列表
-  const fetchAcceptedTasks = async () => {
+  const fetchAcceptedTasks = async (page: number = 1, pageSize: number = 20) => {
     if (!token) return;
     
     try {
       setLoading(true);
-      const response = await apiGetUserTaskList({ page: 1, pageSize: 20 });
+      const response = await apiGetUserTaskList({ page, pageSize });
       if (response && response.data) {
         setAcceptedTasks(response.data.list || []);
+        setAcceptedPagination(prev => ({
+          ...prev,
+          current: page,
+          total: (response.data as any).total || 0
+        }));
       } else {
         setAcceptedTasks([]);
       }
@@ -297,7 +331,8 @@ export default function TaskPageCore() {
   // 获取任务状态标签
   const getTaskStatusTag = (status: string) => {
     const statusMap: Record<string, { color: string; text: string }> = {
-      'pending': { color: 'orange', text: '待接受' },
+      'pending': { color: 'orange', text: '待完成' },
+      'doing': { color: 'green', text: '已完成' },
       'accepted': { color: 'blue', text: '已接受' },
       'completed': { color: 'green', text: '已完成' },
       'rejected': { color: 'red', text: '已拒绝' },
@@ -316,11 +351,32 @@ export default function TaskPageCore() {
     return platInfo?.icon || '';
   };
 
+
   // 查看任务详情
   const handleViewTaskDetail = async (opportunityId: string) => {
     try {
       setTaskDetailLoading(true);
       const response: any = await getTaskDetail(opportunityId);
+      if (response && response.data && response.code === 0) {
+        setTaskDetail(response.data);
+        setTaskDetailModalVisible(true);
+      } else {
+        message.error("获取任务详情失败");
+      }
+    } catch (error) {
+      message.error("获取任务详情失败");
+      console.error("获取任务详情失败:", error);
+    } finally {
+      setTaskDetailLoading(false);
+    }
+  };
+
+  // 查看已接受任务详情
+  const handleViewAcceptedTaskDetail = async (taskId: string) => {
+    try {
+      setTaskDetailLoading(true);
+      setCurrentTaskId(taskId);
+      const response: any = await apiGetUserTaskDetail(taskId);
       if (response && response.data && response.code === 0) {
         setTaskDetail(response.data);
         setTaskDetailModalVisible(true);
@@ -462,6 +518,180 @@ export default function TaskPageCore() {
     }
   };
 
+  // 完成任务
+  const handleCompleteTask = async () => {
+    if (!currentTaskId) return;
+    
+    // 显示进度弹窗
+    setTaskProgressVisible(true);
+    setTaskProgress({
+      currentStep: 0,
+      steps: [
+        { title: '正在完成任务...', status: 'processing' },
+        { title: '正在发布任务...', status: 'wait' },
+        { title: '正在提交任务...', status: 'wait' },
+        { title: '任务完成', status: 'wait' }
+      ]
+    });
+    
+    try {
+      // 第一步：完成任务（这里可能需要调用特定的API，暂时使用submitTask）
+      const response: any = await submitTask(currentTaskId);
+      if (response && response.code === 0) {
+        // 更新进度：第一步完成，开始第二步
+        setTaskProgress(prev => ({
+          ...prev,
+          currentStep: 1,
+          steps: [
+            { title: '正在完成任务...', status: 'finish' },
+            { title: '正在发布任务...', status: 'processing' },
+            { title: '正在提交任务...', status: 'wait' },
+            { title: '任务完成', status: 'wait' }
+          ]
+        }));
+
+        // 第二步：发布任务
+        const publishAccount = getAccountById(taskDetail.accountId);
+        if (publishAccount) {
+          // 处理素材链接，确保使用完整链接
+          const processedMaterials = taskDetail.materials?.map((material: any) => ({
+            ...material,
+            coverUrl: material.coverUrl ? getOssUrl(material.coverUrl) : undefined,
+            mediaList: material.mediaList?.map((media: any) => ({
+              ...media,
+              url: getOssUrl(media.url),
+              coverUrl: media.coverUrl ? getOssUrl(media.coverUrl) : undefined
+            }))
+          }));
+
+          const publishData = {
+            flowId: publishAccount.uid, // 使用账号的uid作为flowId
+            accountType: publishAccount.type,
+            accountId: publishAccount.account,
+            title: taskDetail.title,
+            desc: taskDetail.description,
+            type: taskDetail.type as any, // 转换为PubType
+            // 处理素材数据
+            videoUrl: processedMaterials?.[0]?.mediaList?.[0]?.type === 'video' ? 
+                     getOssUrl(processedMaterials[0].mediaList[0].url) : undefined,
+            coverUrl: processedMaterials?.[0]?.coverUrl,
+            imgUrlList: processedMaterials?.flatMap((material: any) => 
+              material.mediaList?.filter((media: any) => media.type !== 'video')
+                .map((media: any) => getOssUrl(media.url)) || []
+            ),
+            option: {},
+            topics: [],
+            publishTime: getUtcDays(getDays().add(6, "minute")).format()
+          };
+
+          const publishResponse: any = await apiCreatePublish(publishData);
+          if (publishResponse && publishResponse.code === 0) {
+            // 更新进度：第二步完成，开始第三步
+            setTaskProgress(prev => ({
+              ...prev,
+              currentStep: 2,
+              steps: [
+                { title: '正在完成任务...', status: 'finish' },
+                { title: '正在发布任务...', status: 'finish' },
+                { title: '正在提交任务...', status: 'processing' },
+                { title: '任务完成', status: 'wait' }
+              ]
+            }));
+
+            // 第三步：提交任务
+            const userTaskId = response.data.id;
+            const submitResponse: any = await submitTask(userTaskId);
+            
+            if (submitResponse && submitResponse.code === 0) {
+              // 更新进度：第三步完成，开始第四步
+              setTaskProgress(prev => ({
+                ...prev,
+                currentStep: 3,
+                steps: [
+                  { title: '正在完成任务...', status: 'finish' },
+                  { title: '正在发布任务...', status: 'finish' },
+                  { title: '正在提交任务...', status: 'finish' },
+                  { title: '任务完成', status: 'finish' }
+                ]
+              }));
+
+              // 延迟1秒后关闭进度窗口并刷新任务列表
+              setTimeout(() => {
+                setTaskProgressVisible(false);
+                setTaskDetailModalVisible(false);
+                setTaskDetail(null);
+                setCurrentTaskId(null);
+                fetchAcceptedTasks();
+              }, 1000);
+            } else {
+              throw new Error('提交任务失败');
+            }
+          } else {
+            throw new Error('发布任务失败');
+          }
+        } else {
+          throw new Error('找不到发布账号信息');
+        }
+      } else {
+        throw new Error('完成任务失败');
+      }
+    } catch (error) {
+      console.error("任务处理失败:", error);
+      message.error("任务处理失败");
+      setTaskProgressVisible(false);
+    }
+  };
+
+  // 处理待接受任务分页变化
+  const handlePendingPageChange = (page: number, pageSize?: number) => {
+    fetchPendingTasks(page, pageSize || pendingPagination.pageSize);
+  };
+
+  // 处理已接受任务分页变化
+  const handleAcceptedPageChange = (page: number, pageSize?: number) => {
+    fetchAcceptedTasks(page, pageSize || acceptedPagination.pageSize);
+  };
+
+  // 处理媒体点击
+  const handleMediaClick = (media: any, materialTitle?: string) => {
+    if (media.type === 'video') {
+      setPreviewMedia({
+        type: 'video',
+        url: getOssUrl(media.url),
+        title: materialTitle
+      });
+    } else {
+      setPreviewMedia({
+        type: 'image',
+        url: getOssUrl(media.url),
+        title: materialTitle
+      });
+    }
+    setMediaPreviewVisible(true);
+  };
+
+  // 处理视频封面点击
+  const handleVideoCoverClick = (media: any, materialTitle?: string) => {
+    setPreviewMedia({
+      type: 'video',
+      url: getOssUrl(media.url),
+      title: materialTitle
+    });
+    setMediaPreviewVisible(true);
+  };
+
+  // 关闭媒体预览
+  const handleCloseMediaPreview = () => {
+    // 停止视频播放
+    if (videoRef) {
+      videoRef.pause();
+      videoRef.currentTime = 0;
+    }
+    setMediaPreviewVisible(false);
+    setPreviewMedia(null);
+    setVideoRef(null);
+  };
+
   useEffect(() => {
     if (token) {
       fetchPendingTasks();
@@ -472,10 +702,10 @@ export default function TaskPageCore() {
 
   return (
     <div className={styles.taskPage}>
-      <div className={styles.header}>
+      {/* <div className={styles.header}>
         <h1>任务中心</h1>
         <p>接受任务，完成任务，获得奖励</p>
-      </div>
+      </div> */}
 
       <Tabs 
         activeKey={activeTab} 
@@ -493,8 +723,9 @@ export default function TaskPageCore() {
         >
           <Spin spinning={loading}>
             {pendingTasks.length > 0 ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '16px' }}>
-                {pendingTasks.map((task: any) => {
+              <div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+                  {pendingTasks.map((task: any) => {
                   const publishAccount = getAccountById(task.accountId);
                   return (
                     <Card 
@@ -576,6 +807,20 @@ export default function TaskPageCore() {
                     </Card>
                   );
                 })}
+                </div>
+                <div style={{ textAlign: 'center', marginTop: '16px' }}>
+                  <Pagination
+                    current={pendingPagination.current}
+                    pageSize={pendingPagination.pageSize}
+                    total={pendingPagination.total}
+                    onChange={handlePendingPageChange}
+                    onShowSizeChange={handlePendingPageChange}
+                    showSizeChanger
+                    showQuickJumper
+                    showTotal={(total, range) => `第 ${range[0]}-${range[1]} 条，共 ${total} 条`}
+                    pageSizeOptions={['10', '20', '50', '100']}
+                  />
+                </div>
               </div>
             ) : (
               <Empty description="暂无待接受任务" />
@@ -594,58 +839,107 @@ export default function TaskPageCore() {
         >
           <Spin spinning={loading}>
             {acceptedTasks.length > 0 ? (
-              <List
-                dataSource={acceptedTasks}
-                renderItem={(task: any) => (
-                  <List.Item>
-                    <Card className={styles.taskCard}>
+              <div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+                  {acceptedTasks.map((task: any) => {
+                  const publishAccount = getAccountById(task.accountId);
+                  return (
+                    <Card 
+                      key={task.id} 
+                      className={styles.taskCard}
+                      style={{ marginBottom: 0 }}
+                    >
                       <div className={styles.taskHeader}>
-                        <h3>{task.taskId}</h3>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <img 
+                            src={getPlatformIcon(task.accountType)} 
+                            alt="platform"
+                            style={{ width: '24px', height: '24px' }}
+                          />
+                          <h3 style={{ margin: 0, fontSize: '16px' }}>
+                            {getPlatformName(task.accountType)}任务
+                          </h3>
+                        </div>
                         <Tag color={getTaskStatusTag(task.status).color}>
                           {getTaskStatusTag(task.status).text}
                         </Tag>
                       </div>
+                      
                       <div className={styles.taskContent}>
-                        <p><strong>账号类型：</strong>
-                          <Tag color="blue" style={{ marginLeft: '4px' }}>
-                            {getPlatformName(task.accountType)}
-                          </Tag>
-                        </p>
-                        <p><strong>奖励：</strong>¥{task.reward}</p>
-                        <p><strong>保持时间：</strong>{task.keepTime}秒</p>
-                        {task.submissionUrl && (
-                          <p><strong>提交链接：</strong>
-                            <a href={task.submissionUrl} target="_blank" rel="noopener noreferrer">
-                              {task.submissionUrl}
-                            </a>
-                          </p>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                          <span><strong>接受时间：</strong>{formatTime(task.createdAt)}</span>
+                          <span> </span>
+                        </div>
+                        
+                        <div style={{ marginBottom: '12px' }}>
+                          <strong>奖励：</strong>
+                          <span style={{ color: '#f50', fontWeight: 'bold' }}>¥{task.reward}</span>
+                        </div>
+                        
+                        {/* 发布账号信息 */}
+                        {publishAccount && (
+                          <div style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '8px',
+                            padding: '8px',
+                            backgroundColor: '#f8f9fa',
+                            borderRadius: '6px',
+                            marginBottom: '12px'
+                          }}>
+                            <img
+                              src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
+                              alt="账号头像"
+                              style={{
+                                width: '32px',
+                                height: '32px',
+                                borderRadius: '50%',
+                                objectFit: 'cover'
+                              }}
+                              onError={(e) => {
+                                e.currentTarget.src = '/default-avatar.png';
+                              }}
+                            />
+                            <div>
+                              <div style={{ fontWeight: '500', fontSize: '14px' }}>
+                                {publishAccount.nickname}
+                              </div>
+                              <div style={{ fontSize: '12px', color: '#666' }}>
+                                {getPlatformName(publishAccount.type)}
+                              </div>
+                            </div>
+                          </div>
                         )}
                       </div>
+                      
                       <div className={styles.taskActions}>
-                        {task.status === 'accepted' && (
-                          <Button 
-                            type="primary" 
-                            onClick={() => handleSubmitTask(task)}
-                            icon={<UploadOutlined />}
-                          >
-                            提交任务
-                          </Button>
-                        )}
-                        {task.submissionUrl && (
-                          <Tooltip title="查看提交内容">
-                            <Button 
-                              icon={<EyeOutlined />}
-                              onClick={() => window.open(task.submissionUrl, '_blank')}
-                            >
-                              查看
-                            </Button>
-                          </Tooltip>
-                        )}
+                        <Button 
+                          type="primary" 
+                          onClick={() => handleViewAcceptedTaskDetail(task.id)}
+                          icon={<EyeOutlined />}
+                          style={{ width: '100%' }}
+                        >
+                          查看详情
+                        </Button>
                       </div>
                     </Card>
-                  </List.Item>
-                )}
-              />
+                  );
+                })}
+                </div>
+                <div style={{ textAlign: 'center', marginTop: '16px' }}>
+                  <Pagination
+                    current={acceptedPagination.current}
+                    pageSize={acceptedPagination.pageSize}
+                    total={acceptedPagination.total}
+                    onChange={handleAcceptedPageChange}
+                    onShowSizeChange={handleAcceptedPageChange}
+                    showSizeChanger
+                    showQuickJumper
+                    showTotal={(total, range) => `第 ${range[0]}-${range[1]} 条，共 ${total} 条`}
+                    pageSizeOptions={['10', '20', '50', '100']}
+                  />
+                </div>
+              </div>
             ) : (
               <Empty description="暂无已接受任务" />
             )}
@@ -686,12 +980,7 @@ export default function TaskPageCore() {
           setTaskDetail(null);
         }}
         footer={[
-          <Button key="close" onClick={() => {
-            setTaskDetailModalVisible(false);
-            setTaskDetail(null);
-          }} type="primary">
-            关闭
-          </Button>
+          
         ]}
         width={800}
         styles={{
@@ -707,71 +996,286 @@ export default function TaskPageCore() {
         <Spin spinning={taskDetailLoading}>
           {taskDetail ? (
             <div>
-              <div style={{ marginBottom: '16px' }}>
-                <h3>{taskDetail.title}</h3>
-                <Tag color={taskDetail.status === 'active' ? 'green' : 'red'}>
-                  {taskDetail.status === 'active' ? '进行中' : '已结束'}
-                </Tag>
-              </div>
-              
-              <div style={{ marginBottom: '16px' }}>
-                <p><strong>描述：</strong>
-                  <div dangerouslySetInnerHTML={{ __html: taskDetail.description }} />
-                </p>
-                
-                {/* 发布账号信息 */}
-                {taskDetail.accountId && (() => {
-                  const publishAccount = getAccountById(taskDetail.accountId);
-                  return publishAccount ? (
-                    <p><strong>发布账号：</strong>
-                      <div style={{ display: 'flex', alignItems: 'center', marginLeft: '4px', gap: '8px' }}>
-                        <img
-                          src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
-                          alt="账号头像"
-                          style={{
-                            width: '24px',
-                            height: '24px',
-                            borderRadius: '50%',
-                            objectFit: 'cover'
-                          }}
-                          onError={(e) => {
-                            e.currentTarget.src = '/default-avatar.png';
-                          }}
-                        />
-                        <Tag color="green">
-                          {getPlatformName(publishAccount.type)} - {publishAccount.nickname}
-                        </Tag>
-                      </div>
-                    </p>
-                  ) : (
-                    <p><strong>发布账号：</strong>
-                      <Tag color="red" style={{ marginLeft: '4px' }}>
-                        账号信息获取失败
-                      </Tag>
-                    </p>
-                  );
-                })()}
-                
-                <p><strong>奖励：</strong>¥{taskDetail.reward}</p>
-                <p><strong>任务类型：</strong>
-                  <Tag color="blue" style={{ marginLeft: '4px' }}>
-                    {getTaskTypeName(taskDetail.type)}
-                  </Tag>
-                </p>
-              </div>
-              
-              {taskDetail.status === 'active' && taskDetail.currentRecruits < taskDetail.maxRecruits && (
-                <div style={{ textAlign: 'center' }}>
-                  <Button 
-                    type="primary" 
-                    size="large"
-                    onClick={() => handleAcceptTaskFromDetail(taskDetail)}
-                    style={{ marginTop: '12px' }}
-                  >
-                    接受任务
-                  </Button>
+              {/* 视频发布风格布局 */}
+              <div style={{ 
+                display: 'flex', 
+                gap: '24px',
+                marginBottom: '24px'
+              }}>
+                {/* 左侧：视频/媒体内容 */}
+                <div style={{ flex: '0 0 400px' }}>
+                  {taskDetail.materials && taskDetail.materials.length > 0 && (
+                    <div style={{ 
+                      border: '1px solid #e8e8e8', 
+                      borderRadius: '12px', 
+                      overflow: 'hidden',
+                      backgroundColor: '#000'
+                    }}>
+                      {taskDetail.materials[0].mediaList && taskDetail.materials[0].mediaList.length > 0 && (
+                        <div style={{ position: 'relative', cursor: 'pointer' }}>
+                          {taskDetail.materials[0].mediaList[0].type === 'video' ? (
+                            <div 
+                              style={{
+                                position: 'relative',
+                                overflow: 'hidden'
+                              }}
+                              onClick={() => handleVideoCoverClick(taskDetail.materials[0].mediaList[0], taskDetail.title)}
+                            >
+                              {/* 视频封面图片 */}
+                              <img
+                                src={taskDetail.materials[0].coverUrl ? getOssUrl(taskDetail.materials[0].coverUrl) : getOssUrl(taskDetail.materials[0].mediaList[0].url)}
+                                alt="video cover"
+                                style={{
+                                  width: '100%',
+                                  height: 'auto',
+                                  display: 'block'
+                                }}
+                              />
+                              {/* 播放按钮 */}
+                              <div style={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                color: 'white',
+                                fontSize: '24px',
+                                background: 'rgba(0,0,0,0.7)',
+                                borderRadius: '50%',
+                                width: '60px',
+                                height: '60px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease'
+                              }}>
+                                ▶
+                              </div>
+                            </div>
+                          ) : (
+                            <img
+                              src={getOssUrl(taskDetail.materials[0].mediaList[0].url)}
+                              alt="media"
+                              style={{
+                                width: '100%',
+                                height: 'auto',
+                                display: 'block'
+                              }}
+                              onClick={() => handleMediaClick(taskDetail.materials[0].mediaList[0], taskDetail.title)}
+                            />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-              )}
+
+                {/* 右侧：标题和描述 */}
+                <div style={{ flex: '1', minWidth: '300px' }}>
+                  {/* 标题区域 */}
+                  <div style={{ marginBottom: '16px' }}>
+                    <h2 style={{ 
+                      margin: '0 0 8px 0', 
+                      fontSize: '20px', 
+                      fontWeight: '600',
+                      lineHeight: '1.4',
+                      color: '#1a1a1a'
+                    }}>
+                      {taskDetail.title}
+                    </h2>
+                    
+                    {/* 发布账号信息 */}
+                    {taskDetail.accountId && (() => {
+                      const publishAccount = getAccountById(taskDetail.accountId);
+                      return publishAccount ? (
+                        <div style={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '8px',
+                          marginBottom: '12px'
+                        }}>
+                          <img
+                            src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
+                            alt="账号头像"
+                            style={{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '50%',
+                              objectFit: 'cover'
+                            }}
+                            onError={(e) => {
+                              e.currentTarget.src = '/default-avatar.png';
+                            }}
+                          />
+                          <div>
+                            <div style={{ 
+                              fontSize: '14px', 
+                              fontWeight: '500',
+                              color: '#1a1a1a'
+                            }}>
+                              {publishAccount.nickname}
+                            </div>
+                            <div style={{ 
+                              fontSize: '12px', 
+                              color: '#666'
+                            }}>
+                              {getPlatformName(publishAccount.type)}
+                            </div>
+                          </div>
+                        </div>
+                      ) : null;
+                    })()}
+                  </div>
+
+                  {/* 描述区域 */}
+                  <div style={{ 
+                    marginBottom: '16px',
+                    padding: '16px',
+                    backgroundColor: '#f8f9fa',
+                    borderRadius: '8px',
+                    border: '1px solid #e9ecef'
+                  }}>
+                    <div style={{ 
+                      fontSize: '14px', 
+                      lineHeight: '1.6',
+                      color: '#495057'
+                    }}>
+                      <div dangerouslySetInnerHTML={{ __html: taskDetail.description }} />
+                    </div>
+                  </div>
+
+                  {/* 任务信息卡片 */}
+                  <div style={{ 
+                    display: 'flex', 
+                    gap: '12px',
+                    marginBottom: '16px'
+                  }}>
+                    <div style={{ 
+                      flex: '1',
+                      padding: '12px',
+                      backgroundColor: '#fff3cd',
+                      border: '1px solid #ffeaa7',
+                      borderRadius: '8px',
+                      textAlign: 'center'
+                    }}>
+                      <div style={{ 
+                        fontSize: '12px', 
+                        color: '#856404',
+                        marginBottom: '4px'
+                      }}>
+                        奖励
+                      </div>
+                      <div style={{ 
+                        fontSize: '18px', 
+                        fontWeight: 'bold',
+                        color: '#d63031'
+                      }}>
+                        ¥{taskDetail.reward}
+                      </div>
+                    </div>
+                    
+                    <div style={{ 
+                      flex: '1',
+                      padding: '12px',
+                      backgroundColor: '#d1ecf1',
+                      border: '1px solid #bee5eb',
+                      borderRadius: '8px',
+                      textAlign: 'center'
+                    }}>
+                      <div style={{ 
+                        fontSize: '12px', 
+                        color: '#0c5460',
+                        marginBottom: '4px'
+                      }}>
+                        类型
+                      </div>
+                      <div style={{ 
+                        fontSize: '14px', 
+                        fontWeight: '500',
+                        color: '#0c5460'
+                      }}>
+                        {getTaskTypeName(taskDetail.type)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* 底部状态栏 */}
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                padding: '16px 0',
+                borderTop: '1px solid #e8e8e8',
+                marginTop: '16px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <Tag 
+                    color={taskDetail.status === 'active' ? 'green' : 'red'}
+                    style={{ 
+                      fontSize: '12px',
+                      padding: '4px 8px'
+                    }}
+                  >
+                    {taskDetail.status === 'active' ? '进行中' : '已结束'}
+                  </Tag>
+                  <span style={{ 
+                    fontSize: '12px', 
+                    color: '#666'
+                  }}>
+                    {taskDetail.status === 'active' ? '任务正在进行中，可以接受' : '任务已结束'}
+                  </span>
+                </div>
+                
+                <div style={{ 
+                  fontSize: '12px', 
+                  color: '#999'
+                }}>
+                  {taskDetail.currentRecruits && taskDetail.maxRecruits && (
+                    <span>
+                      已接受 {taskDetail.currentRecruits}/{taskDetail.maxRecruits} 人
+                    </span>
+                  )}
+                </div>
+              </div>
+              
+              {/* 根据任务状态显示不同按钮 */}
+              {(() => {
+                // 如果是待接受任务，显示接受任务按钮
+                if (taskDetail.status === 'active' && taskDetail.currentRecruits < taskDetail.maxRecruits) {
+                  return (
+                    <div style={{ textAlign: 'center' }}>
+                      <Button 
+                        type="primary" 
+                        size="large"
+                        onClick={() => handleAcceptTaskFromDetail(taskDetail)}
+                        style={{ marginTop: '12px' }}
+                      >
+                        接受任务
+                      </Button>
+                    </div>
+                  );
+                }
+                
+                // 如果是已接受任务且状态为pending，显示完成任务按钮
+                if (currentTaskId && taskDetail.status === 'pending') {
+                  return (
+                    <div style={{ textAlign: 'center' }}>
+                      <Button 
+                        type="primary" 
+                        size="large"
+                        onClick={handleCompleteTask}
+                        style={{ marginTop: '12px' }}
+                      >
+                        完成任务
+                      </Button>
+                    </div>
+                  );
+                }
+                
+                return null;
+              })()}
             </div>
           ) : !taskDetailLoading && (
             <div style={{ textAlign: 'center', color: '#999' }}>
@@ -779,6 +1283,63 @@ export default function TaskPageCore() {
             </div>
           )}
         </Spin>
+      </Modal>
+
+      {/* 媒体预览弹窗 */}
+      <Modal
+        title={previewMedia?.title || '媒体预览'}
+        open={mediaPreviewVisible}
+        onCancel={handleCloseMediaPreview}
+        afterClose={handleCloseMediaPreview}
+        footer={[
+          <Button key="close" onClick={handleCloseMediaPreview}>
+            关闭
+          </Button>
+        ]}
+        width={previewMedia?.type === 'video' ? 800 : 600}
+        zIndex={3000}
+        destroyOnClose={true}
+        styles={{
+          body: {
+            padding: '24px',
+            textAlign: 'center'
+          }
+        }}
+      >
+        {previewMedia && (
+          <div>
+            {previewMedia.type === 'video' ? (
+              <video
+                ref={setVideoRef}
+                src={previewMedia.url}
+                controls
+                style={{
+                  width: '100%',
+                  maxHeight: '500px',
+                  borderRadius: '8px'
+                }}
+                autoPlay
+                onEnded={() => {
+                  // 视频播放结束时重置到开始
+                  if (videoRef) {
+                    videoRef.currentTime = 0;
+                  }
+                }}
+              />
+            ) : (
+              <img
+                src={previewMedia.url}
+                alt="preview"
+                style={{
+                  width: '100%',
+                  maxHeight: '500px',
+                  objectFit: 'contain',
+                  borderRadius: '8px'
+                }}
+              />
+            )}
+          </div>
+        )}
       </Modal>
 
       {/* 任务进度弹窗 */}
@@ -802,7 +1363,7 @@ export default function TaskPageCore() {
           items={taskProgress.steps.map((step, index) => ({
             title: step.title,
             status: step.status as 'wait' | 'process' | 'finish' | 'error',
-            description: index === 0 ? '正在调用接受任务接口...' : 
+            description: index === 0 ? (step.title.includes('完成任务') ? '正在调用完成任务接口...' : '正在调用接受任务接口...') : 
                         index === 1 ? '正在调用发布任务接口...' : 
                         index === 2 ? '正在调用提交任务接口...' :
                         '任务处理完成，即将跳转...'

@@ -83,7 +83,18 @@ export const apiGetUserTaskList = (params: {
   page?: number;
   pageSize?: number;
 }) => {
-  return http.get<{list: UserTask[]}>(`task/userTask/list/${params.page}/${params.pageSize}` );
+  return http.get<{list: UserTask[]}>(`task/userTask/list/${params.page}/${params.pageSize}` ); 
+  
+};
+
+
+/**
+ * 已接受的任务详情
+ * @param id 
+ * @returns 
+ */
+export const apiGetUserTaskDetail = (id: string) => {
+  return http.get<any>(`task/userTask/info/${id}`);
 };
 
 /**

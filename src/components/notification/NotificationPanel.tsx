@@ -42,6 +42,11 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [notificationPagination, setNotificationPagination] = useState({
+    current: 1,
+    pageSize: 20,
+    total: 0
+  });
   const [selectedNotification, setSelectedNotification] = useState<NotificationItem | null>(null);
   const [selectedTask, setSelectedTask] = useState<TaskItem | null>(null);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
@@ -64,6 +69,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
     url: string;
     title?: string;
   } | null>(null);
+  const [videoRef, setVideoRef] = useState<HTMLVideoElement | null>(null);
 
   // 任务进度弹窗状态
   const [taskProgressVisible, setTaskProgressVisible] = useState(false);
@@ -78,7 +84,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
   });
 
   // 获取通知列表
-  const fetchNotifications = async () => {
+  const fetchNotifications = async (page: number = 1, pageSize: number = 20) => {
     // 如果没有登录信息，不发送请求
     if (!token) {
       setNotifications([]);
@@ -87,9 +93,14 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
 
     try {
       setLoading(true);
-      const response = await getNotificationList({ page: 1, pageSize: 20 });
+      const response = await getNotificationList({ page, pageSize });
       if (response && response.data) {
         setNotifications(response.data.list || []);
+        setNotificationPagination(prev => ({
+          ...prev,
+          current: page,
+          total: response.data.total || 0
+        }));
       }
     } catch (error) {
       message.error("获取通知列表失败");
@@ -505,6 +516,23 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
     setMediaPreviewVisible(true);
   };
 
+  // 关闭媒体预览
+  const handleCloseMediaPreview = () => {
+    // 停止视频播放
+    if (videoRef) {
+      videoRef.pause();
+      videoRef.currentTime = 0;
+    }
+    setMediaPreviewVisible(false);
+    setPreviewMedia(null);
+    setVideoRef(null);
+  };
+
+  // 处理通知分页变化
+  const handleNotificationPageChange = (page: number, pageSize?: number) => {
+    fetchNotifications(page, pageSize || notificationPagination.pageSize);
+  };
+
   useEffect(() => {
     if (visible) {
       fetchNotifications();
@@ -549,6 +577,16 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
           {notifications.length > 0 ? (
             <List
               dataSource={notifications}
+              pagination={{
+                current: notificationPagination.current,
+                pageSize: notificationPagination.pageSize,
+                total: notificationPagination.total,
+                onChange: handleNotificationPageChange,
+                showSizeChanger: true,
+                showQuickJumper: true,
+                showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，共 ${total} 条`,
+                pageSizeOptions: ['10', '20', '50', '100']
+              }}
               renderItem={(item) => (
                 <List.Item
                   className={`${styles.notificationItem} ${item.status === 'unread' ? styles.unread : ""}`}
@@ -936,20 +974,16 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
       <Modal
         title={previewMedia?.title || '媒体预览'}
         open={mediaPreviewVisible}
-        onCancel={() => {
-          setMediaPreviewVisible(false);
-          setPreviewMedia(null);
-        }}
+        onCancel={handleCloseMediaPreview}
+        afterClose={handleCloseMediaPreview}
         footer={[
-          <Button key="close" onClick={() => {
-            setMediaPreviewVisible(false);
-            setPreviewMedia(null);
-          }}>
+          <Button key="close" onClick={handleCloseMediaPreview}>
             关闭
           </Button>
         ]}
         width={previewMedia?.type === 'video' ? 800 : 600}
         zIndex={3000}
+        destroyOnClose={true}
         styles={{
           body: {
             padding: '24px',
@@ -961,6 +995,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
           <div>
             {previewMedia.type === 'video' ? (
               <video
+                ref={setVideoRef}
                 src={previewMedia.url}
                 controls
                 style={{
@@ -969,6 +1004,12 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                   borderRadius: '8px'
                 }}
                 autoPlay
+                onEnded={() => {
+                  // 视频播放结束时重置到开始
+                  if (videoRef) {
+                    videoRef.currentTime = 0;
+                  }
+                }}
               />
             ) : (
               <img
