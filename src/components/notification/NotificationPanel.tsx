@@ -54,6 +54,14 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
     qrCodeUrl: "" as string | undefined
   });
 
+  // 媒体预览弹窗状态
+  const [mediaPreviewVisible, setMediaPreviewVisible] = useState(false);
+  const [previewMedia, setPreviewMedia] = useState<{
+    type: 'video' | 'image';
+    url: string;
+    title?: string;
+  } | null>(null);
+
   // 获取通知列表
   const fetchNotifications = async () => {
     // 如果没有登录信息，不发送请求
@@ -639,17 +647,59 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                                        flexWrap: 'wrap'
                                      }}>
                                        {material.mediaList.slice(0, 3).map((media: any, mediaIndex: number) => (
-                                         <img
-                                           key={mediaIndex}
-                                           src={getOssUrl(media.url)}
-                                           alt="media"
-                                           style={{
-                                             width: '40px',
-                                             height: '40px',
-                                             objectFit: 'cover',
-                                             borderRadius: '2px'
-                                           }}
-                                         />
+                                         <div key={mediaIndex} style={{ position: 'relative' }}>
+                                           {media.type === 'video' ? (
+                                             <div style={{
+                                               width: '40px',
+                                               height: '40px',
+                                               background: '#000',
+                                               borderRadius: '2px',
+                                               display: 'flex',
+                                               alignItems: 'center',
+                                               justifyContent: 'center',
+                                               position: 'relative',
+                                               overflow: 'hidden'
+                                             }}>
+                                               <video
+                                                 src={getOssUrl(media.url)}
+                                                 style={{
+                                                   width: '100%',
+                                                   height: '100%',
+                                                   objectFit: 'cover'
+                                                 }}
+                                                 muted
+                                               />
+                                               <div style={{
+                                                 position: 'absolute',
+                                                 top: '50%',
+                                                 left: '50%',
+                                                 transform: 'translate(-50%, -50%)',
+                                                 color: 'white',
+                                                 fontSize: '12px',
+                                                 background: 'rgba(0,0,0,0.6)',
+                                                 borderRadius: '50%',
+                                                 width: '16px',
+                                                 height: '16px',
+                                                 display: 'flex',
+                                                 alignItems: 'center',
+                                                 justifyContent: 'center'
+                                               }}>
+                                                 ▶
+                                               </div>
+                                             </div>
+                                           ) : (
+                                             <img
+                                               src={getOssUrl(media.url)}
+                                               alt="media"
+                                               style={{
+                                                 width: '40px',
+                                                 height: '40px',
+                                                 objectFit: 'cover',
+                                                 borderRadius: '2px'
+                                               }}
+                                             />
+                                           )}
+                                         </div>
                                        ))}
                                        {material.mediaList.length > 3 && (
                                          <div style={{
