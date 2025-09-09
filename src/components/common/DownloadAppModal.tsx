@@ -119,7 +119,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
               logoHeight={30}
               logoOpacity={0.8}
               qrStyle="squares"
-              eyeStyle="square"
+              eyeRadius={0}
               style={{ borderRadius: '8px' }}
             />
           )}
