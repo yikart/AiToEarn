@@ -1,0 +1,149 @@
+.taskPage {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #fff;
+  min-height: 100vh;
+
+  .header {
+    margin-bottom: 24px;
+    text-align: center;
+
+    h1 {
+      font-size: 28px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+
+    p {
+      font-size: 16px;
+      color: #666;
+      margin: 0;
+    }
+  }
+
+  .tabs {
+    .ant-tabs-tab {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .ant-tabs-content-holder {
+      padding-top: 16px;
+    }
+  }
+
+  .taskCard {
+    margin-bottom: 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .taskHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #f0f0f0;
+
+      h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin: 0;
+        flex: 1;
+      }
+    }
+
+    .taskContent {
+      margin-bottom: 20px;
+
+      p {
+        margin-bottom: 12px;
+        line-height: 1.6;
+        color: #333;
+
+        strong {
+          color: #1a1a1a;
+          font-weight: 600;
+        }
+      }
+
+      div {
+        margin-top: 8px;
+        line-height: 1.6;
+      }
+    }
+
+    .taskActions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      padding-top: 16px;
+      border-top: 1px solid #f0f0f0;
+
+      .ant-btn {
+        border-radius: 6px;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .ant-list-item {
+    padding: 0;
+    border: none;
+  }
+
+  .ant-empty {
+    margin: 60px 0;
+  }
+
+  .ant-spin-container {
+    min-height: 200px;
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .taskPage {
+    padding: 16px;
+
+    .header {
+      h1 {
+        font-size: 24px;
+      }
+
+      p {
+        font-size: 14px;
+      }
+    }
+
+    .taskCard {
+      .taskHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+
+        h3 {
+          font-size: 16px;
+        }
+      }
+
+      .taskActions {
+        flex-direction: column;
+        gap: 8px;
+
+        .ant-btn {
+          width: 100%;
+        }
+      }
+    }
+  }
+}

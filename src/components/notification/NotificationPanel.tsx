@@ -22,7 +22,7 @@ import { PubType } from "@/app/config/publishConfig";
 import { getAppDownloadConfig, getTasksRequiringApp } from "@/app/config/appDownloadConfig";
 import DownloadAppModal from "@/components/common/DownloadAppModal";
 import styles from "./NotificationPanel.module.scss";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 interface NotificationPanelProps {
   visible: boolean;
@@ -32,6 +32,8 @@ interface NotificationPanelProps {
 const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose }) => {
   const { t } = useTransClient("common");
   const token = useUserStore((state) => state.token);
+  const router = useRouter();
+  const { lng } = useParams();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -164,8 +166,11 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
       const response: any = await acceptTask(selectedTask.id, selectedTask.opportunityId);
       if (response && response.code === 0) {
         message.success("接任务成功！");
-        // 重新获取任务详情以更新状态
-        await fetchTaskDetail(selectedTask.opportunityId);
+        // 关闭详情弹窗
+        setDetailModalVisible(false);
+        setSelectedTask(null);
+        // 跳转到任务页面
+        router.push(`/${lng}/tasks`);
       } else {
         message.error("接任务失败");
       }

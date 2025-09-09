@@ -37,6 +37,11 @@ export const routerData: IRouterDataItem[] = [
     translationKey: "aiTools",
     path: "/material/ai-generate",
   },
+  {
+    name: "任务中心",
+    translationKey: "tasks",
+    path: "/tasks",
+  },
 ];
 
 const recursion = (

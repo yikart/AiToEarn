@@ -30,6 +30,7 @@
     "materialLibrary": "素材库",
     "draftBox": "草稿箱"
   },
+  "tasks": "任务中心",
   "signIn": {
     "title": "每日签到得积分",
     "myPoints": "我的积分",
