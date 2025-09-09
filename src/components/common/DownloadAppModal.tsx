@@ -94,71 +94,74 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
         {/* 二维码区域 */}
         <div style={{ 
           marginBottom: '32px', 
-          padding: '20px', 
-          backgroundColor: '#f9fafb', 
+          padding: '20px',
+          backgroundColor: '#f9fafb',
           borderRadius: '12px',
           border: '1px solid #e5e7eb'
         }}>
-          <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-            <QrcodeOutlined style={{ color: '#6b7280' }} />
-            <Text strong style={{ color: '#374151' }}>{t('downloadApp.scanQrCode')}</Text>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          {qrCodeUrl ? (
+            <img 
+              src={qrCodeUrl} 
+              alt="QR Code" 
+              style={{ 
+                width: 120, 
+                height: 120, 
+                borderRadius: '8px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+              }} 
+            />
+          ) : (
             <QRCode
               value={downloadUrl || "https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk"}
-              size={140}
+              size={120}
+              logoImage={logo.src}
+              logoWidth={30}
+              logoHeight={30}
+              logoOpacity={0.8}
+              qrStyle="squares"
+              eyeStyle="square"
+              style={{ borderRadius: '8px' }}
             />
-          </div>
+          )}
         </div>
 
         {/* 下载链接区域 */}
         <div style={{ 
           marginBottom: '24px',
           padding: '16px',
-          backgroundColor: '#f8fafc',
+          backgroundColor: '#f3f4f6',
           borderRadius: '8px',
-          border: '1px solid #e2e8f0'
+          border: '1px solid #d1d5db'
         }}>
-          <Space direction="vertical" size="small" style={{ width: '100%' }}>
-            <Text type="secondary" style={{ fontSize: '13px' }}>{t('downloadApp.downloadLink')}</Text>
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '8px',
-              justifyContent: 'center',
-              backgroundColor: '#ffffff',
-              padding: '8px 12px',
-              borderRadius: '6px',
-              border: '1px solid #e2e8f0'
-            }}>
-              <Text 
-                code 
-                style={{ 
-                  maxWidth: '280px', 
-                  overflow: 'hidden', 
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  fontSize: '12px',
-                  color: '#475569'
-                }}
-              >
-                {downloadUrl || "https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk"}
-              </Text>
-              <Button 
-                size="small" 
-                onClick={handleCopyLink}
-                type="text"
-                icon={copySuccess ? <CheckOutlined style={{ color: '#10b981' }} /> : <CopyOutlined />}
-                style={{ 
-                  minWidth: 'auto',
-                  padding: '4px 8px',
-                  color: copySuccess ? '#10b981' : '#6b7280'
-                }}
-              >
-                {copySuccess ? '已复制' : t('downloadApp.copy')}
-              </Button>
-            </div>
-          </Space>
+          <Text type="secondary" style={{ fontSize: '12px', display: 'block', marginBottom: '8px' }}>
+            下载链接
+          </Text>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between',
+            gap: '8px'
+          }}>
+            <Text 
+              code 
+              style={{ 
+                flex: 1, 
+                fontSize: '11px', 
+                wordBreak: 'break-all',
+                textAlign: 'left'
+              }}
+            >
+              {downloadUrl || "https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk"}
+            </Text>
+            <Button
+              size="small"
+              icon={copySuccess ? <CheckOutlined /> : <CopyOutlined />}
+              onClick={handleCopyLink}
+              type={copySuccess ? "primary" : "default"}
+            >
+              {copySuccess ? '已复制' : '复制'}
+            </Button>
+          </div>
         </div>
 
         {/* 提示信息 */}
@@ -178,4 +181,3 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
 };
 
 export default DownloadAppModal;
-

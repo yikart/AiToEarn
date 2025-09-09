@@ -78,12 +78,12 @@ export const apiAcceptTask = (opportunityId: string) => {
 };
 
 
-// 获取待接受的任务列表
+// 获取已接受的任务列表
 export const apiGetUserTaskList = (params: {
   page?: number;
   pageSize?: number;
 }) => {
-  return http.get<{list: TaskOpportunity[]}>(`task/userTask/list/${params.page}/${params.pageSize}` );
+  return http.get<{list: UserTask[]}>(`task/userTask/list/${params.page}/${params.pageSize}` );
 };
 
 /**

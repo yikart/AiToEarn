@@ -16,8 +16,8 @@ import {
 import { apiCreatePublish } from "@/api/plat/publish";
 import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import { getOssUrl } from "@/utils/oss";
-import { getAppDownloadConfig, getTasksRequiringApp } from "@/app/config/appDownloadConfig";
-import DownloadAppModal from "@/components/common/DownloadAppModal";
+// import { getAppDownloadConfig, getTasksRequiringApp } from "@/app/config/appDownloadConfig";
+// import DownloadAppModal from "@/components/common/DownloadAppModal";
 import styles from "./taskPageCore.module.scss";
 
 const { TabPane } = Tabs;
@@ -25,6 +25,21 @@ const { TabPane } = Tabs;
 export default function TaskPageCore() {
   const { t } = useTransClient("common");
   const token = useUserStore((state) => state.token);
+  
+  // 如果未登录，显示登录提示
+  if (!token) {
+    return (
+      <div className={styles.taskPage}>
+        <div className={styles.header}>
+          <h1>任务中心</h1>
+          <p>请先登录以查看任务</p>
+        </div>
+        <div style={{ textAlign: 'center', padding: '60px 0' }}>
+          <Empty description="请先登录" />
+        </div>
+      </div>
+    );
+  }
   
   // 状态管理
   const [activeTab, setActiveTab] = useState("pending"); // pending: 待接受, accepted: 已接受
@@ -36,14 +51,14 @@ export default function TaskPageCore() {
   const [submissionUrl, setSubmissionUrl] = useState("");
   const [submittingTaskId, setSubmittingTaskId] = useState<string | null>(null);
   
-  // 下载App弹窗状态
-  const [downloadAppVisible, setDownloadAppVisible] = useState(false);
-  const [downloadAppConfig, setDownloadAppConfig] = useState({
-    platform: "",
-    appName: "",
-    downloadUrl: "",
-    qrCodeUrl: "" as string | undefined
-  });
+  // 下载App弹窗状态 - 暂时注释
+  // const [downloadAppVisible, setDownloadAppVisible] = useState(false);
+  // const [downloadAppConfig, setDownloadAppConfig] = useState({
+  //   platform: "",
+  //   appName: "",
+  //   downloadUrl: "",
+  //   qrCodeUrl: "" as string | undefined
+  // });
 
   // 获取待接受任务列表
   const fetchPendingTasks = async () => {
@@ -54,9 +69,13 @@ export default function TaskPageCore() {
       const response = await apiGetTaskOpportunityList({ page: 1, pageSize: 20 });
       if (response && response.data) {
         setPendingTasks(response.data.list || []);
+      } else {
+        setPendingTasks([]);
       }
     } catch (error) {
+      console.error("获取待接受任务失败:", error);
       message.error("获取待接受任务失败");
+      setPendingTasks([]);
     } finally {
       setLoading(false);
     }
@@ -71,44 +90,52 @@ export default function TaskPageCore() {
       const response = await apiGetUserTaskList({ page: 1, pageSize: 20 });
       if (response && response.data) {
         setAcceptedTasks(response.data.list || []);
+      } else {
+        setAcceptedTasks([]);
       }
     } catch (error) {
+      console.error("获取已接受任务失败:", error);
       message.error("获取已接受任务失败");
+      setAcceptedTasks([]);
     } finally {
       setLoading(false);
     }
   };
 
   // 接受任务
-  const handleAcceptTask = async (task: TaskOpportunity) => {
-    if (!task.accountTypes || task.accountTypes.length === 0) {
-      // 没有账号类型限制，直接接取任务
-      await doAcceptTask(task);
-      return;
-    }
-
-    // 检查需要App操作的平台
-    const appRequiredPlatforms = getTasksRequiringApp(task.accountTypes);
-    
-    if (appRequiredPlatforms.length > 0) {
-      // 有需要App操作的平台，显示第一个平台的下载提示
-      const firstPlatform = appRequiredPlatforms[0];
-      const config = getAppDownloadConfig(firstPlatform);
-      
-      if (config) {
-        setDownloadAppConfig({
-          platform: config.platform,
-          appName: config.appName,
-          downloadUrl: config.downloadUrl,
-          qrCodeUrl: config.qrCodeUrl
-        });
-        setDownloadAppVisible(true);
-        return;
-      }
-    }
-    
-    // 其他任务类型正常接取
+  const handleAcceptTask = async (task: any ) => {
+    // 暂时简化，直接接受任务
     await doAcceptTask(task);
+    
+    // TODO: 添加平台限制检查
+    // if (!task.accountTypes || task.accountTypes.length === 0) {
+    //   // 没有账号类型限制，直接接取任务
+    //   await doAcceptTask(task);
+    //   return;
+    // }
+
+    // // 检查需要App操作的平台
+    // const appRequiredPlatforms = getTasksRequiringApp(task.accountTypes);
+    
+    // if (appRequiredPlatforms.length > 0) {
+    //   // 有需要App操作的平台，显示第一个平台的下载提示
+    //   const firstPlatform = appRequiredPlatforms[0];
+    //   const config = getAppDownloadConfig(firstPlatform);
+      
+    //   if (config) {
+    //     setDownloadAppConfig({
+    //       platform: config.platform,
+    //       appName: config.appName,
+    //       downloadUrl: config.downloadUrl,
+    //       qrCodeUrl: config.qrCodeUrl
+    //     });
+    //     setDownloadAppVisible(true);
+    //     return;
+    //   }
+    // }
+    
+    // // 其他任务类型正常接取
+    // await doAcceptTask(task);
   };
 
   // 执行接受任务
@@ -150,12 +177,14 @@ export default function TaskPageCore() {
       
       // 先发布任务
       const publishResponse = await apiCreatePublish({
-        accountType: selectedTask.accountType,
+        flowId: selectedTask.id,
+        type: 'video' as any, // 根据任务类型设置
+        accountId: selectedTask.accountId,
+        accountType: selectedTask.accountType as any,
         desc: `任务提交: ${selectedTask.taskId}`,
         title: `任务提交`,
         topics: [],
-        option: {},
-        mediaList: []
+        option: {}
       });
 
       if (publishResponse && publishResponse.code === 0) {
@@ -237,20 +266,20 @@ export default function TaskPageCore() {
   };
 
   useEffect(() => {
-    if (token) {
-      fetchPendingTasks();
-      fetchAcceptedTasks();
-    }
+    // if (token) {
+    //   fetchPendingTasks();
+    //   fetchAcceptedTasks();
+    // }
   }, [token]);
 
   return (
     <div className={styles.taskPage}>
-      <div className={styles.header}>
+      {/* <div className={styles.header}>
         <h1>任务中心</h1>
         <p>接受任务，完成任务，获得奖励</p>
-      </div>
+      </div> */}
 
-      <Tabs 
+      {/* <Tabs 
         activeKey={activeTab} 
         onChange={setActiveTab}
         className={styles.tabs}
@@ -268,7 +297,7 @@ export default function TaskPageCore() {
             {pendingTasks.length > 0 ? (
               <List
                 dataSource={pendingTasks}
-                renderItem={(task) => (
+                renderItem={(task: any) => (
                   <List.Item>
                     <Card className={styles.taskCard}>
                       <div className={styles.taskHeader}>
@@ -277,17 +306,21 @@ export default function TaskPageCore() {
                       </div>
                       <div className={styles.taskContent}>
                         <p><strong>描述：</strong>
-                          <div dangerouslySetInnerHTML={{ __html: task.description }} />
+                          {task.description ? (
+                            <div dangerouslySetInnerHTML={{ __html: task.description }} />
+                          ) : (
+                            <span>暂无描述</span>
+                          )}
                         </p>
-                        <p><strong>奖励：</strong>¥{task.reward}</p>
+                        <p><strong>奖励：</strong>¥{task.reward || 0}</p>
                         <p><strong>任务类型：</strong>
                           <Tag color="blue" style={{ marginLeft: '4px' }}>
-                            {getTaskTypeName(task.type)}
+                            {getTaskTypeName(task.type || 'video')}
                           </Tag>
                         </p>
                         {task.accountTypes && task.accountTypes.length > 0 && (
                           <p><strong>账号类型：</strong>
-                            {task.accountTypes.map(type => (
+                            {task.accountTypes.map((type: string) => (
                               <Tag key={type} style={{ marginLeft: '4px' }}>
                                 {getPlatformName(type)}
                               </Tag>
@@ -295,7 +328,6 @@ export default function TaskPageCore() {
                           </p>
                         )}
                         
-                        {/* 任务素材展示 */}
                         {task.materials && task.materials.length > 0 && (
                           <div style={{ marginTop: '16px' }}>
                             <p><strong>任务素材：</strong></p>
@@ -364,7 +396,7 @@ export default function TaskPageCore() {
             {acceptedTasks.length > 0 ? (
               <List
                 dataSource={acceptedTasks}
-                renderItem={(task) => (
+                renderItem={(task: any) => (
                   <List.Item>
                     <Card className={styles.taskCard}>
                       <div className={styles.taskHeader}>
@@ -419,10 +451,10 @@ export default function TaskPageCore() {
             )}
           </Spin>
         </TabPane>
-      </Tabs>
+      </Tabs> */}
 
       {/* 提交任务弹窗 */}
-      <Modal
+      {/* <Modal
         title="提交任务"
         open={submitModalVisible}
         onCancel={() => setSubmitModalVisible(false)}
@@ -443,17 +475,17 @@ export default function TaskPageCore() {
         <p style={{ color: '#666', fontSize: '12px' }}>
           请确保您已经完成了任务要求，并提供了正确的提交链接。
         </p>
-      </Modal>
+      </Modal> */}
 
       {/* 下载App提示弹窗 */}
-      <DownloadAppModal
+      {/* <DownloadAppModal
         visible={downloadAppVisible}
         onClose={() => setDownloadAppVisible(false)}
         platform={downloadAppConfig.platform}
         appName={downloadAppConfig.appName}
         downloadUrl={downloadAppConfig.downloadUrl}
         qrCodeUrl={downloadAppConfig.qrCodeUrl}
-      />
+      /> */}
     </div>
   );
 }
