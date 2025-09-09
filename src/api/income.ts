@@ -8,11 +8,25 @@ export const apiGetIncomeList = (page: {
   pageNo: number;
   pageSize: number;
 }, params: {
-  status?: number
+  type?: string
 }) => {
   return request<{ list: IncomeRecord[], tatol: number }>({
     url: `income/list/${page.pageNo}/${page.pageSize}`,
     method: 'GET',
     params
+  });
+};
+
+/**
+ * 提交提现
+ */
+export const apiSubmitWithdraw = (incomeRecordId: string, flowId?: string) => {
+  return request<any>({
+    url: `income/withdraw`,
+    method: 'POST',
+    data: {
+      incomeRecordId,
+      flowId
+    }
   });
 };

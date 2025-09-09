@@ -1,6 +1,6 @@
 "use client";
-import { apiGetIncomeList } from "@/api/income";
-import { apiAcceptTask, apiSubmitTask } from "@/api/task";
+import { apiGetIncomeList, apiSubmitWithdraw } from "@/api/income";
+import { apiAcceptTask } from "@/api/task";
 import { IncomeRecord } from "@/api/types/income";
 import { apiGetWithdrawRecordList } from "@/api/withdraw";
 import { useState } from "react";
@@ -16,9 +16,9 @@ export const DemoIncome = () => {
     setResult(res.data.list);
   }
 
-  async function acceptTask(opportunityId: string) {
+  async function submitWithdraw(opportunityId: string) {
     console.log(`----`, opportunityId);
-    const res = await apiAcceptTask(opportunityId)
+    const res = await apiSubmitWithdraw(opportunityId)
     console.log('----- res', res);
   }
 
@@ -41,7 +41,7 @@ export const DemoIncome = () => {
           {result.map((item) => (
             <div key={item._id}>
               <div>{item._id}</div>
-              <button onClick={() => acceptTask(item._id)}>申请提现</button>
+              <button onClick={() => submitWithdraw(item._id)}>申请提现</button>
             </div>
           ))}
         </div>
