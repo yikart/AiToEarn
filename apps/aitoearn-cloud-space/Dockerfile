@@ -1,4 +1,7 @@
-# 多阶段构建 Dockerfile (仅支持 Linux 系统，适配 k8s 环境)
+# aitoearn-cloud-space 应用专用 Dockerfile
+# 包含 Ansible 安装逻辑，适配 k8s 环境
+
+# 多阶段构建
 FROM node:22-alpine AS base
 
 # 安装 pnpm
@@ -21,9 +24,9 @@ RUN pnpm install --prod --frozen-lockfile
 FROM node:22-alpine AS production
 
 # 设置 APP_NAME 参数
-ARG APP_NAME
+ARG APP_NAME=aitoearn-cloud-space
 
-# 根据应用名称条件安装不同依赖
+# 安装系统依赖和 Ansible（仅针对 aitoearn-cloud-space）
 RUN apk update && \
     if [ "$APP_NAME" = "aitoearn-cloud-space" ]; then \
         apk add --no-cache curl gnupg openssh-client python3 py3-pip && \
@@ -44,12 +47,13 @@ COPY --from=base /app/package.json ./
 ENV NODE_ENV=production
 ENV APP_NAME=$APP_NAME
 
-# 启动应用 (端口和健康检查由 k8s 管理)
-# 根据 APP_NAME 启动对应的应用
-CMD if [ "$APP_NAME" = "aitoearn-cloud-space" ]; then \
-        node apps/aitoearn-cloud-space/main.js; \
-    elif [ "$APP_NAME" = "browser-automation-worker" ]; then \
-        node apps/browser-automation-worker/main.js; \
-    else \
-        node apps/aitoearn-ai/main.js; \
-    fi
+# 创建非 root 用户
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nestjs -u 1001 -G nodejs
+
+# 更改文件所有权
+RUN chown -R nestjs:nodejs /app
+USER nestjs
+
+# 启动应用
+CMD ["node", "apps/aitoearn-cloud-space/main.js"]

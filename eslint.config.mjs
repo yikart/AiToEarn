@@ -29,7 +29,6 @@ export default antfu(
       'jsdoc/require-returns-description': ['off'],
       'node/prefer-global/buffer': ['off'],
       'node/prefer-global/process': ['off'],
-      'no-console': ['error', { allow: [''] }],
       'imports/no-absolute-path': ['error'],
     },
   },
@@ -67,12 +66,22 @@ export default antfu(
       '**/*.tsx',
       '**/*.cts',
       '**/*.mts',
+    ],
+    rules: {
+      'no-console': ['error', { allow: [''] }],
+    },
+  },
+  {
+    files: [
+      '**/*.ts',
+      '**/*.tsx',
+      '**/*.cts',
+      '**/*.mts',
       '**/*.js',
       '**/*.jsx',
       '**/*.cjs',
       '**/*.mjs',
     ],
-    // Override or add rules here
     rules: {
     },
   },
