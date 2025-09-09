@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Badge, Button, List, Modal, message, Spin, Empty, Popconfirm, Tooltip, Tag } from "antd";
+import { Badge, Button, List, Modal, message, Spin, Empty, Popconfirm, Tooltip, Tag, Steps } from "antd";
 import { CheckOutlined, DeleteOutlined, EyeOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import { useTransClient } from "@/app/i18n/client";
 import { useUserStore } from "@/store/user";
@@ -26,6 +26,7 @@ import { getAppDownloadConfig, getTasksRequiringApp } from "@/app/config/appDown
 import DownloadAppModal from "@/components/common/DownloadAppModal";
 import styles from "./NotificationPanel.module.scss";
 import { useParams, useRouter } from "next/navigation";
+import { getDays, getUtcDays } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 
 interface NotificationPanelProps {
   visible: boolean;
@@ -202,21 +203,99 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
   const handleAcceptTask = async () => {
     if (!selectedTask) return;
     
+    // 显示进度弹窗
+    setTaskProgressVisible(true);
+    setTaskProgress({
+      currentStep: 0,
+      steps: [
+        { title: '正在接受任务...', status: 'processing' },
+        { title: '正在发布任务...', status: 'wait' },
+        { title: '发布完成', status: 'wait' }
+      ]
+    });
+    
     try {
+      // 第一步：接受任务
       const response: any = await acceptTask(selectedTask.id, selectedTask.opportunityId);
       if (response && response.code === 0) {
-        message.success("接任务成功！");
-        // 关闭详情弹窗
-        setDetailModalVisible(false);
-        setSelectedTask(null);
-        // 跳转到任务页面
-        router.push(`/${lng}/tasks`);
+        // 更新进度：第一步完成，开始第二步
+        setTaskProgress(prev => ({
+          ...prev,
+          currentStep: 1,
+          steps: [
+            { title: '正在接受任务...', status: 'finish' },
+            { title: '正在发布任务...', status: 'processing' },
+            { title: '发布完成', status: 'wait' }
+          ]
+        }));
+
+        // 第二步：发布任务
+        const publishAccount = getAccountById(selectedTask.accountId);
+        if (publishAccount) {
+          // 处理素材链接，确保使用完整链接
+          const processedMaterials = selectedTask.materials?.map((material: any) => ({
+            ...material,
+            coverUrl: material.coverUrl ? getOssUrl(material.coverUrl) : undefined,
+            mediaList: material.mediaList?.map((media: any) => ({
+              ...media,
+              url: getOssUrl(media.url),
+              coverUrl: media.coverUrl ? getOssUrl(media.coverUrl) : undefined
+            }))
+          }));
+
+          const publishData = {
+            flowId: publishAccount.uid, // 使用账号的uid作为flowId
+            accountType: publishAccount.type,
+            accountId: selectedTask.accountId,
+            title: selectedTask.title,
+            desc: selectedTask.description,
+            type: selectedTask.type as any, // 转换为PubType
+            // 处理素材数据
+            videoUrl: processedMaterials?.[0]?.mediaList?.[0]?.type === 'video' ? 
+                     getOssUrl(processedMaterials[0].mediaList[0].url) : undefined,
+            coverUrl: processedMaterials?.[0]?.coverUrl,
+            imgUrlList: processedMaterials?.flatMap((material: any) => 
+              material.mediaList?.filter((media: any) => media.type !== 'video')
+                .map((media: any) => getOssUrl(media.url)) || []
+            ),
+            option: {},
+            topics: [],
+            publishTime: getUtcDays(getDays().add(6, "minute")).format()
+          };
+
+          const publishResponse: any = await apiCreatePublish(publishData);
+          if (publishResponse && publishResponse.code === 0) {
+            // 更新进度：第二步完成，开始第三步
+            setTaskProgress(prev => ({
+              ...prev,
+              currentStep: 2,
+              steps: [
+                { title: '正在接受任务...', status: 'finish' },
+                { title: '正在发布任务...', status: 'finish' },
+                { title: '发布完成', status: 'finish' }
+              ]
+            }));
+
+            // 延迟1秒后关闭进度窗口并跳转
+            setTimeout(() => {
+              setTaskProgressVisible(false);
+              setDetailModalVisible(false);
+              setSelectedTask(null);
+              router.push(`/${lng}/tasks`);
+            }, 1000);
+          } else {
+            throw new Error('发布任务失败');
+          }
+        } else {
+          throw new Error('找不到发布账号信息');
+        }
       } else {
-        message.error("接任务失败");
+        throw new Error('接受任务失败');
       }
     } catch (error) {
-      message.error("接任务失败");
-      console.error("接任务失败:", error);
+      console.error("任务处理失败:", error);
+      message.error("任务处理失败");
+      setTaskProgressVisible(false);
     }
   };
 
@@ -880,6 +959,34 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
             )}
           </div>
         )}
+      </Modal>
+
+      {/* 任务进度弹窗 */}
+      <Modal
+        title="任务处理中..."
+        open={taskProgressVisible}
+        closable={false}
+        maskClosable={false}
+        footer={null}
+        width={500}
+        zIndex={3000}
+        styles={{
+          body: {
+            padding: '24px'
+          }
+        }}
+      >
+        <Steps
+          direction="vertical"
+          current={taskProgress.currentStep}
+          items={taskProgress.steps.map((step, index) => ({
+            title: step.title,
+            status: step.status as 'wait' | 'process' | 'finish' | 'error',
+            description: index === 0 ? '正在调用接受任务接口...' : 
+                        index === 1 ? '正在调用发布任务接口...' : 
+                        '任务处理完成，即将跳转...'
+          }))}
+        />
       </Modal>
     </>
   );
