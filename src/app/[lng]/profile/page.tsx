@@ -785,12 +785,12 @@ export default function ProfilePage() {
             <div className={styles.incomeTitleSection}>
               <span className={styles.incomeIcon}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 10.9 13 11.5 13 12h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
                 </svg>
               </span>
               <span className={styles.incomeTitle}>我的余额</span>
             </div>
-            <span className={styles.incomeCount}>${userInfo?.income || 0}</span>
+            <span className={styles.incomeCount}>￥ {userInfo?.income || 0}</span>
           </div>
           <p className={styles.incomeDescription}>
             通过完成任务获得的收入余额
@@ -801,7 +801,12 @@ export default function ProfilePage() {
               className={styles.incomeButton} 
               onClick={() => router.push('/income')}
             >
-              查看详情
+              <span className={styles.buttonIcon}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+                </svg>
+              </span>
+              <span>查看详情</span>
             </button>
           </div>
         </div>
