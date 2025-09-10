@@ -3,6 +3,8 @@ import { Payload } from '@nestjs/microservices'
 import { NatsMessagePattern } from '@yikart/common'
 import {
   KlingCallbackDto,
+  KlingImage2VideoRequestDto,
+  KlingMultiImage2VideoRequestDto,
   KlingTaskQueryDto,
   KlingText2VideoRequestDto,
   UserVideoGenerationRequestDto,
@@ -70,5 +72,19 @@ export class VideoController {
   @Post('/volcengine/callback')
   async volcengineCallback(@Body() data: VolcengineCallbackDto) {
     await this.videoService.volcengineCallback(data)
+  }
+
+  // ==================== Kling API 其他接口 ====================
+
+  @NatsMessagePattern('ai.video.kling.image2video')
+  async klingImage2Video(@Payload() request: KlingImage2VideoRequestDto): Promise<KlingVideoGenerationResponseVo> {
+    const response = await this.videoService.klingImage2Video(request)
+    return KlingVideoGenerationResponseVo.create(response)
+  }
+
+  @NatsMessagePattern('ai.video.kling.multi-image2video')
+  async klingMultiImage2Video(@Payload() request: KlingMultiImage2VideoRequestDto): Promise<KlingVideoGenerationResponseVo> {
+    const response = await this.videoService.klingMultiImage2Video(request)
+    return KlingVideoGenerationResponseVo.create(response)
   }
 }

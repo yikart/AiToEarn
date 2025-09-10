@@ -22,7 +22,7 @@ import {
   UserListResponse,
   UserMailDto,
   VipSetResponse,
-} from './aitoearn-user-client.interfaces'
+} from './aitoearn-user-client.interface'
 
 @Injectable()
 export class AitoearnUserClient {

@@ -7,9 +7,11 @@ import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/m
 import { KlingAction } from '../../common/enums/kling-action.enum'
 import { config } from '../../config'
 import {
+  Image2VideoCreateTaskResponseData,
   KlingService,
   TaskStatus as KlingTaskStatus,
   Mode,
+  MultiImage2VideoCreateTaskResponseData,
   Text2VideoCreateTaskResponseData,
   Text2VideoGetTaskResponseData,
 } from '../../libs/kling'
@@ -23,6 +25,8 @@ import {
 } from '../../libs/volcengine'
 import {
   KlingCallbackDto,
+  KlingImage2VideoRequestDto,
+  KlingMultiImage2VideoRequestDto,
   KlingText2VideoRequestDto,
   UserVideoGenerationRequestDto,
   UserVideoTaskQueryDto,
@@ -319,9 +323,9 @@ export class VideoService {
         case KlingAction.MultiElements:
           result = (await this.klingService.getMultiElementsTask(aiLog.taskId)).data
           break
-        // case KlingAction.VideoExtend:
-        //   result = (await this.klingService.getVideoExtendTask(aiLog.taskId)).data
-        //   break
+        case KlingAction.VideoExtend:
+          result = (await this.klingService.getVideoExtendTask(aiLog.taskId)).data
+          break
         case KlingAction.LipSync:
           result = (await this.klingService.getLipSyncTask(aiLog.taskId)).data
           break
@@ -483,5 +487,97 @@ export class VideoService {
       return result
     }
     return aiLog.response as unknown as GetVideoGenerationTaskResponse
+  }
+
+  /**
+   * Kling图生视频
+   */
+  async klingImage2Video(request: KlingImage2VideoRequestDto) {
+    const { userId, userType, model_name, duration, mode, ...params } = request
+    const pricing = await this.calculateVideoGenerationPrice({
+      model: model_name,
+      mode,
+      duration: duration ? Number(duration) : undefined,
+    })
+
+    if (userType === UserType.User) {
+      const { balance } = await this.userClient.getPointsBalance({ userId })
+      if (balance < pricing) {
+        throw new AppException(ResponseCode.UserPointsInsufficient)
+      }
+    }
+
+    const startedAt = new Date()
+    const result = await this.klingService.createImage2VideoTask({
+      ...params,
+      mode,
+      duration,
+      callback_url: config.ai.kling.callbackUrl,
+    })
+
+    const aiLog = await this.aiLogRepo.create({
+      userId,
+      userType,
+      taskId: result.data.task_id,
+      model: model_name,
+      channel: AiLogChannel.Kling,
+      action: KlingAction.Image2video,
+      startedAt,
+      type: AiLogType.Video,
+      points: pricing,
+      request: { ...params, mode, duration },
+      status: AiLogStatus.Generating,
+    })
+
+    return {
+      ...result.data,
+      task_id: aiLog.id,
+    } as Image2VideoCreateTaskResponseData
+  }
+
+  /**
+   * Kling多图生视频
+   */
+  async klingMultiImage2Video(request: KlingMultiImage2VideoRequestDto) {
+    const { userId, userType, model_name, duration, mode, ...params } = request
+    const pricing = await this.calculateVideoGenerationPrice({
+      model: model_name,
+      mode,
+      duration: duration ? Number(duration) : undefined,
+    })
+
+    if (userType === UserType.User) {
+      const { balance } = await this.userClient.getPointsBalance({ userId })
+      if (balance < pricing) {
+        throw new AppException(ResponseCode.UserPointsInsufficient)
+      }
+    }
+
+    const startedAt = new Date()
+    const result = await this.klingService.createMultiImage2VideoTask({
+      ...params,
+      mode,
+      duration,
+      callback_url: config.ai.kling.callbackUrl,
+    })
+
+    const aiLog = await this.aiLogRepo.create({
+      userId,
+      userType,
+      taskId: result.data.task_id,
+      model: model_name,
+      channel: AiLogChannel.Kling,
+      action: KlingAction.MultiImage2video,
+      startedAt,
+      type: AiLogType.Video,
+      points: pricing,
+      request: { ...params, mode, duration },
+      status: AiLogStatus.Generating,
+    })
+
+    return {
+      ...result.data,
+      task_id: aiLog.id,
+    } as MultiImage2VideoCreateTaskResponseData
   }
 }

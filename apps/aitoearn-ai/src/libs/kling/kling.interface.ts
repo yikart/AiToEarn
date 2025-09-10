@@ -110,6 +110,9 @@ export type LipSyncModel = 'kling-v1-6' | string
 export type VideoEffectsSingleImageModel = 'kling-v1-6' | string
 export type VideoEffectsInteractionModel = 'kling-v1' | 'kling-v1-5' | 'kling-v1-6' | string
 
+// 视频延长模型名称
+export type VideoExtendModel = 'kling-v1' | 'kling-v1-5' | 'kling-v1-6' | string
+
 // 运镜配置接口
 export interface CameraControlConfig {
   /** 水平运镜，控制摄像机在水平方向上的移动量（沿x轴平移） */
@@ -685,3 +688,58 @@ export interface MultiElementsGetTaskResponseData {
 
 // 多模态视频编辑查询任务列表响应数据接口
 export type MultiElementsGetTasksResponseData = MultiElementsGetTaskResponseData[]
+
+// ==================== 视频延长相关接口 ====================
+
+// 视频延长创建任务请求接口
+export interface VideoExtendCreateTaskRequest {
+  /** 模型名称 */
+  model_name?: VideoExtendModel
+  /** 视频ID */
+  video_id?: string
+  /** 视频URL */
+  video_url?: string
+  /** 延长时长，单位秒 */
+  extend_duration: Duration
+  /** 生成视频的模式 */
+  mode?: Mode
+  /** 本次任务结果回调通知地址 */
+  callback_url?: string
+  /** 自定义任务ID */
+  external_task_id?: string
+}
+
+// 视频延长创建任务响应数据接口
+export interface VideoExtendCreateTaskResponseData {
+  /** 任务ID，系统生成 */
+  task_id: string
+  /** 任务信息 */
+  task_info: TaskInfo
+  /** 任务状态 */
+  task_status: TaskStatus
+  /** 任务创建时间，Unix时间戳、单位ms */
+  created_at: number
+  /** 任务更新时间，Unix时间戳、单位ms */
+  updated_at: number
+}
+
+// 视频延长查询任务响应数据接口（单个）
+export interface VideoExtendGetTaskResponseData {
+  /** 任务ID，系统生成 */
+  task_id: string
+  /** 任务状态 */
+  task_status: TaskStatus
+  /** 任务状态信息，当任务失败时展示失败原因 */
+  task_status_msg: string
+  /** 任务信息 */
+  task_info: TaskInfo
+  /** 任务结果 */
+  task_result: TaskResult
+  /** 任务创建时间，Unix时间戳、单位ms */
+  created_at: number
+  /** 任务更新时间，Unix时间戳、单位ms */
+  updated_at: number
+}
+
+// 视频延长查询任务列表响应数据接口
+export type VideoExtendGetTasksResponseData = VideoExtendGetTaskResponseData[]

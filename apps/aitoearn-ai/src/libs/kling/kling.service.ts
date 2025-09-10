@@ -49,6 +49,12 @@ import {
   VideoEffectsCreateTaskResponseData,
   VideoEffectsGetTaskResponseData,
   VideoEffectsGetTasksResponseData,
+
+  // 视频延长相关类型
+  VideoExtendCreateTaskRequest,
+  VideoExtendCreateTaskResponseData,
+  VideoExtendGetTaskResponseData,
+  VideoExtendGetTasksResponseData,
 } from './kling.interface'
 
 @Injectable()
@@ -453,6 +459,55 @@ export class KlingService {
     const response: AxiosResponse<KlingResponse<VideoEffectsGetTasksResponseData>>
       = await this.httpClient.get(
         `${this.baseURL}/v1/videos/effects?pageNum=${pageNum}&pageSize=${pageSize}`,
+      )
+
+    return response.data
+  }
+
+  // ==================== 视频延长相关方法 ====================
+
+  /**
+   * 创建视频延长任务
+   * POST /v1/videos/video-extend
+   */
+  async createVideoExtendTask(
+    request: VideoExtendCreateTaskRequest,
+  ): Promise<KlingResponse<VideoExtendCreateTaskResponseData>> {
+    const response: AxiosResponse<KlingResponse<VideoExtendCreateTaskResponseData>>
+      = await this.httpClient.post(
+        `${this.baseURL}/v1/videos/video-extend`,
+        request,
+      )
+
+    return response.data
+  }
+
+  /**
+   * 查询视频延长任务（单个）
+   * GET /v1/videos/video-extend/{id}
+   */
+  async getVideoExtendTask(
+    taskId: string,
+  ): Promise<KlingResponse<VideoExtendGetTaskResponseData>> {
+    const response: AxiosResponse<KlingResponse<VideoExtendGetTaskResponseData>>
+      = await this.httpClient.get(
+        `${this.baseURL}/v1/videos/video-extend/${taskId}`,
+      )
+
+    return response.data
+  }
+
+  /**
+   * 查询视频延长任务列表
+   * GET /v1/videos/video-extend
+   */
+  async getVideoExtendTasks(
+    pageNum = 1,
+    pageSize = 30,
+  ): Promise<KlingResponse<VideoExtendGetTasksResponseData>> {
+    const response: AxiosResponse<KlingResponse<VideoExtendGetTasksResponseData>>
+      = await this.httpClient.get(
+        `${this.baseURL}/v1/videos/video-extend?pageNum=${pageNum}&pageSize=${pageSize}`,
       )
 
     return response.data
