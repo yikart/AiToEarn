@@ -4,9 +4,26 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix: 校验修复">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat: 微调">
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/HotContentCore.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentSidebar/hotContentSidebar.module.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentSidebar/index.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/hotContent.module.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/useHotContent.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/hooks/usePubParamsVerify.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/hooks/usePubParamsVerify.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hot-content/page.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hot-content/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/i18n/locales/en/translation.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/i18n/locales/en/translation.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/i18n/locales/zh-CN/translation.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/i18n/locales/zh-CN/translation.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/layout/routerData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout/routerData.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/hot-content/HotContent.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/hot-content/HotContent.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/hot-content/SideMenu.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/hot-content/SideMenu.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/notification/NotificationPanel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/notification/NotificationPanel.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,8 +37,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="vue3组件模板" />
-        <option value="tsx组件模板" />
         <option value="TypeScript JSX File" />
+        <option value="TypeScript File" />
+        <option value="tsx组件模板" />
       </list>
     </option>
   </component>
@@ -115,6 +133,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\project-dev\web\艺咖\aitoearn-web" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\components" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\api\plat" />
     </key>
@@ -189,7 +208,12 @@
       <workItem from="1756092083221" duration="176000" />
       <workItem from="1756218696332" duration="27000" />
       <workItem from="1756800029903" duration="29000" />
-      <workItem from="1756968825319" duration="59000" />
+      <workItem from="1756968825319" duration="137000" />
+      <workItem from="1756986614753" duration="30000" />
+      <workItem from="1756993756933" duration="14000" />
+      <workItem from="1757312591097" duration="83000" />
+      <workItem from="1757409572449" duration="62000" />
+      <workItem from="1757502277189" duration="6689000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -519,7 +543,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755484449640</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="feat: 微调">
+      <option name="closed" value="true" />
+      <created>1756968908393</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1756968908393</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -549,19 +581,7 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="FILTERS">
-                <map>
-                  <entry key="branch">
-                    <value>
-                      <list>
-                        <option value="main" />
-                      </list>
-                    </value>
-                  </entry>
-                </map>
-              </option>
-            </State>
+            <State />
           </value>
         </entry>
       </map>
@@ -571,7 +591,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="chore(发布弹框): 拖动修改发布时间完成" />
     <MESSAGE value="fix(日历): 修复更新的问题" />
     <MESSAGE value="feat(发布)：b站添加标题参数" />
     <MESSAGE value="feat(发布)：发布记录添加账户筛选API" />
@@ -596,6 +615,7 @@
     <MESSAGE value="fix: 修复发布记录Dropdown报错" />
     <MESSAGE value="fix: 默认空间国际化" />
     <MESSAGE value="fix: 校验修复" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: 校验修复" />
+    <MESSAGE value="feat: 微调" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 微调" />
   </component>
 </project>
