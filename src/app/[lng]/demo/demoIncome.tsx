@@ -34,7 +34,7 @@ export const DemoIncome = () => {
       <div>
         <button onClick={getIncomeList}>我的收入列表</button>
 
-        {/* 待接受任务列表 */}
+        {/* 我的收入列表 */}
         <div>
 
           {result.map((item) => (
@@ -47,7 +47,6 @@ export const DemoIncome = () => {
 
 
         <button onClick={getWithdrawRecordList}>获取我的提现列表</button>
-        {/* 已接受任务列表 */}
         <div>
 
           {userTaskList.map((item) => (
