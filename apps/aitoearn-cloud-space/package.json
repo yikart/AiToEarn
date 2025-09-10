@@ -9,7 +9,7 @@
     "@nestjs/schedule": "^6.0.0",
     "@yikart/aitoearn-user-client": "workspace:*",
     "@yikart/ansible": "*",
-    "@yikart/common": "^0.0.5",
+    "@yikart/common": "^0.0.6",
     "@yikart/mongodb": "*",
     "@yikart/multilogin": "*",
     "@yikart/redlock": "*",

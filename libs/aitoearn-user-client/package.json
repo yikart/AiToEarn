@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
-    "@yikart/common": "^0.0.5",
+    "@yikart/common": "^0.0.6",
     "@yikart/nats-client": "*",
     "tslib": "^2.3.0",
     "zod": "^4.0.17"
