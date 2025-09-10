@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY deps/ ./
 
-RUN pnpm install --prod
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod
 
 FROM node:22-alpine AS production
 
