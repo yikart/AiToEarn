@@ -41,7 +41,6 @@
       "inputs": ["production", "^production"]
     },
     "docker-context": {
-      "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"],
       "executor": "nx:run-commands",
@@ -51,7 +50,6 @@
       }
     },
     "docker-build": {
-      "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"],
       "executor": "nx:run-commands",

@@ -72,7 +72,7 @@ jobs:
       - name: Verify Docker context
         run: |
           echo "Checking if docker context directory exists..."
-          ls -la ./tmp/
+          ls -la ./
           if [ -d "./tmp/docker-context" ]; then
             echo "✅ Docker context directory exists"
             ls -la ./tmp/docker-context/
