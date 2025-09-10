@@ -896,12 +896,12 @@
 
 /* 余额卡片样式 */
 .incomeCard {
-  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  background: linear-gradient(135deg, #2B2F36 0%, #4E4C4D 100%);
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 20px;
   color: #fff;
-  box-shadow: 0 4px 16px rgba(30, 58, 138, 0.2);
+  box-shadow: 0 4px 16px rgba(43, 47, 54, 0.2);
   position: relative;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -938,8 +938,8 @@
 
 .incomeIcon {
   font-size: 20px;
-  color: #60a5fa;
-  background: rgba(96, 165, 250, 0.1);
+  color: #fce2a9;
+  background: rgba(252, 226, 169, 0.1);
   border-radius: 50%;
   width: 32px;
   height: 32px;
@@ -951,15 +951,15 @@
 .incomeTitle {
   font-size: 18px;
   font-weight: 600;
-  color: #60a5fa;
+  color: #fce2a9;
 }
 
 .incomeCount {
   font-size: 28px;
   font-weight: bold;
-  color: #60a5fa;
+  color: #fce2a9;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  background: linear-gradient(135deg, #60a5fa, #93c5fd);
+  background: linear-gradient(135deg, #fce2a9, #ffd700);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -978,10 +978,10 @@
 }
 
 .incomeButton {
-  background: linear-gradient(135deg, #60a5fa 0%, #93c5fd 100%);
-  border: 2px solid rgba(96, 165, 250, 0.3);
-  color: #1e3a8a;
-  padding: 12px 24px;
+  background: linear-gradient(135deg, #fce2a9 0%, #ffd700 100%);
+  border: 2px solid rgba(252, 226, 169, 0.3);
+  color: #2B2F36;
+  padding: 12px 20px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
@@ -989,7 +989,17 @@
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(96, 165, 250, 0.3);
+  box-shadow: 0 2px 8px rgba(252, 226, 169, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.buttonIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
 }
 
 .incomeButton::before {
@@ -1008,18 +1018,22 @@
 }
 
 .incomeButton:hover {
-  background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
+  background: linear-gradient(135deg, #ffd700 0%, #fce2a9 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(96, 165, 250, 0.4);
-  border-color: rgba(96, 165, 250, 0.6);
+  box-shadow: 0 4px 12px rgba(252, 226, 169, 0.4);
+  border-color: rgba(252, 226, 169, 0.6);
+}
+
+.incomeButton:hover .buttonIcon {
+  transform: translateX(2px);
 }
 
 .incomeButton:active {
   transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(96, 165, 250, 0.3);
+  box-shadow: 0 2px 6px rgba(252, 226, 169, 0.3);
 }
 
 .incomeButton:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3), 0 2px 8px rgba(96, 165, 250, 0.3);
+  box-shadow: 0 0 0 3px rgba(252, 226, 169, 0.3), 0 2px 8px rgba(252, 226, 169, 0.3);
 } 
