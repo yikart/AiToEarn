@@ -69,6 +69,8 @@
       "options": {
         "fix": true
       }
-    }
+    },
+    "docker-context": {},
+    "docker-build": {}
   }
 }

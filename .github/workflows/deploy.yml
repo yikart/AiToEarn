@@ -63,20 +63,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Cache Nx
-        uses: actions/cache@v4
-        with:
-          path: |
-            .nx/cache
-          key: ${{ runner.os }}-nx-${{ hashFiles('**/pnpm-lock.yaml', 'nx.json', 'project.json', '**/project.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nx-
-
       - name: Build application
-        run: npx nx run ${{ env.APP_NAME }}:build
+        run: pnpm nx run ${{ env.APP_NAME }}:build
 
       - name: Prepare Docker context
-        run: npx nx run ${{ env.APP_NAME }}:docker-context
+        run: pnpm nx run ${{ env.APP_NAME }}:docker-context
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
