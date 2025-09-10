@@ -18,7 +18,7 @@ const { Option } = Select;
 export default function IncomePage() {
   const router = useRouter();
   const { userInfo, token } = useUserStore();
-  const { t } = useTransClient('income');
+  const { t } = useTransClient('income' as any);
   
   // 收入记录相关状态
   const [incomeRecords, setIncomeRecords] = useState<IncomeRecord[]>([]);
@@ -53,10 +53,10 @@ export default function IncomePage() {
         setIncomePagination({
           current: page,
           pageSize,
-          total: response.data.total || 0
+          total: (response.data as any).total || 0
         });
       } else {
-        message.error(t('messages.getIncomeRecordsFailed'));
+        message.error(t('messages.getIncomeRecordsFailed' as any));
       }
     } catch (error) {
       message.error(t('messages.getIncomeRecordsFailed'));
@@ -78,7 +78,7 @@ export default function IncomePage() {
           total: response.data.total || 0
         });
       } else {
-        message.error(t('messages.getWithdrawRecordsFailed'));
+        message.error(t('messages.getWithdrawRecordsFailed' as any));
       }
     } catch (error) {
       message.error(t('messages.getWithdrawRecordsFailed'));
@@ -101,13 +101,13 @@ export default function IncomePage() {
     try {
       const response = await apiSubmitWithdraw(selectedIncomeRecord._id);
       if (response) {
-        message.success(t('messages.withdrawSubmitted'));
+        message.success(t('messages.withdrawSubmitted' as any));
         setWithdrawModalVisible(false);
         setSelectedIncomeRecord(null);
         // 刷新提现记录
         fetchWithdrawRecords(withdrawPagination.current, withdrawPagination.pageSize);
       } else {
-        message.error(t('messages.withdrawFailed'));
+        message.error(t('messages.withdrawFailed' as any));
       }
     } catch (error) {
       message.error(t('messages.withdrawFailed'));
@@ -119,9 +119,9 @@ export default function IncomePage() {
   // 获取收入类型显示文本
   const getIncomeTypeText = (type: string) => {
     const typeMap: { [key: string]: { color: string; text: string } } = {
-      'task': { color: 'green', text: t('incomeTypes.task') },
-      'task_back': { color: 'orange', text: t('incomeTypes.task_back') },
-      'reward_back': { color: 'blue', text: t('incomeTypes.reward_back') }
+      'task': { color: 'green', text: t('incomeTypes.task' as any) },
+      'task_back': { color: 'orange', text: t('incomeTypes.task_back' as any) },
+      'reward_back': { color: 'blue', text: t('incomeTypes.reward_back' as any) }
     };
     const config = typeMap[type] || { color: 'default', text: type };
     return <Tag color={config.color}>{config.text}</Tag>;
@@ -130,9 +130,9 @@ export default function IncomePage() {
   // 获取提现状态显示
   const getWithdrawStatusTag = (status: WithdrawRecordStatus) => {
     const statusMap = {
-      [WithdrawRecordStatus.WAIT]: { color: 'orange', text: t('withdrawStatus.wait'), icon: <ClockCircleOutlined /> },
-      [WithdrawRecordStatus.SUCCESS]: { color: 'green', text: t('withdrawStatus.success'), icon: <CheckCircleOutlined /> },
-      [WithdrawRecordStatus.FAIL]: { color: 'red', text: t('withdrawStatus.fail'), icon: <CloseCircleOutlined /> }
+      [WithdrawRecordStatus.WAIT]: { color: 'orange', text: t('withdrawStatus.wait' as any), icon: <ClockCircleOutlined /> },
+      [WithdrawRecordStatus.SUCCESS]: { color: 'green', text: t('withdrawStatus.success' as any), icon: <CheckCircleOutlined /> },
+      [WithdrawRecordStatus.FAIL]: { color: 'red', text: t('withdrawStatus.fail' as any), icon: <CloseCircleOutlined /> }
     };
     const config = statusMap[status] || { color: 'default', text: '未知状态', icon: null };
     return (
@@ -145,14 +145,14 @@ export default function IncomePage() {
   // 收入记录表格列
   const incomeColumns = [
     {
-      title: t('incomeId'),
+      title: t('incomeId' as any),
       dataIndex: '_id',
       key: '_id',
       ellipsis: true,
       width: 200,
     },
     {
-      title: t('amount'),
+      title: t('amount' as any),
       dataIndex: 'amount',
       key: 'amount',
       render: (amount: number) => (
@@ -162,25 +162,25 @@ export default function IncomePage() {
       ),
     },
     {
-      title: t('type'),
+      title: t('type' as any),
       dataIndex: 'type',
       key: 'type',
       render: (type: string) => getIncomeTypeText(type),
     },
     {
-      title: t('description'),
+      title: t('description' as any),
       dataIndex: 'desc',
       key: 'desc',
       ellipsis: true,
     },
     {
-      title: t('createTime'),
+      title: t('createTime' as any),
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (date: Date) => new Date(date).toLocaleString(),
     },
     {
-      title: t('actions'),
+      title: t('actions' as any),
       key: 'action',
       render: (_: any, record: IncomeRecord) => (
         <Space>
@@ -190,7 +190,7 @@ export default function IncomePage() {
             onClick={() => handleWithdraw(record)}
             disabled={record.type !== 'task'} // 只有任务收入可以提现
           >
-            {t('applyWithdraw')}
+            {t('applyWithdraw' as any)}
           </Button>
         </Space>
       ),
@@ -200,14 +200,14 @@ export default function IncomePage() {
   // 提现记录表格列
   const withdrawColumns = [
     {
-      title: t('withdrawId'),
+      title: t('withdrawId' as any),
       dataIndex: '_id',
       key: '_id',
       ellipsis: true,
       width: 200,
     },
     {
-      title: t('amount'),
+      title: t('amount' as any),
       dataIndex: 'amount',
       key: 'amount',
       render: (amount: number) => (
@@ -217,25 +217,25 @@ export default function IncomePage() {
       ),
     },
     {
-      title: t('status'),
+      title: t('status' as any),
       dataIndex: 'status',
       key: 'status',
       render: (status: WithdrawRecordStatus) => getWithdrawStatusTag(status),
     },
     {
-      title: t('description'),
+      title: t('description' as any),
       dataIndex: 'desc',
       key: 'desc',
       ellipsis: true,
     },
     {
-      title: t('createTime'),
+      title: t('createTime' as any),
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (date: Date) => new Date(date).toLocaleString(),
     },
     {
-      title: t('updateTime'),
+      title: t('updateTime' as any),
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       render: (date: Date) => new Date(date).toLocaleString(),
@@ -244,7 +244,7 @@ export default function IncomePage() {
 
   useEffect(() => {
     if (!token) {
-      message.error(t('messages.pleaseLoginFirst'));
+      message.error(t('messages.pleaseLoginFirst' as any));
       router.push('/login');
       return;
     }
@@ -264,8 +264,8 @@ export default function IncomePage() {
               <DollarOutlined />
             </div>
             <div className={styles.headerText}>
-              <h1 className={styles.headerTitle}>{t('title')}</h1>
-              <p className={styles.headerSubtitle}>{t('subtitle')}</p>
+              <h1 className={styles.headerTitle}>{t('title' as any)}</h1>
+              <p className={styles.headerSubtitle}>{t('subtitle' as any)}</p>
             </div>
           </div>
           <div className={styles.headerRight}>
@@ -274,8 +274,8 @@ export default function IncomePage() {
                 <WalletOutlined />
               </div>
               <div className={styles.balanceInfo}>
-                <div className={styles.balanceLabel}>{t('currentBalance')}</div>
-                <div className={styles.balanceAmount}>${userInfo?.income || 0}</div>
+                <div className={styles.balanceLabel}>{t('currentBalance' as any)}</div>
+                <div className={styles.balanceAmount}>￥ {userInfo?.income || 0}</div>
               </div>
             </div>
           </div>
@@ -289,7 +289,7 @@ export default function IncomePage() {
             tab={
               <span>
                 <DollarOutlined />
-                {t('incomeRecords')}
+                {t('incomeRecords' as any)}
               </span>
             } 
             key="income"
@@ -309,12 +309,12 @@ export default function IncomePage() {
                   },
                   showSizeChanger: true,
                   showQuickJumper: true,
-                  showTotal: (total) => t('messages.totalRecords', { total }),
+                  showTotal: (total) => t('messages.totalRecords' as any, { total }),
                   pageSizeOptions: ['10', '20', '50'],
                 }}
                 scroll={{ x: 800 }}
                 locale={{
-                  emptyText: incomeLoading ? t('messages.loading') : t('messages.noIncomeRecords')
+                  emptyText: incomeLoading ? t('messages.loading' as any) : t('messages.noIncomeRecords' as any)
                 }}
               />
             </Card>
@@ -324,7 +324,7 @@ export default function IncomePage() {
             tab={
               <span>
                 <HistoryOutlined />
-                {t('withdrawRecords')}
+                {t('withdrawRecords' as any)}
               </span>
             } 
             key="withdraw"
@@ -344,12 +344,12 @@ export default function IncomePage() {
                   },
                   showSizeChanger: true,
                   showQuickJumper: true,
-                  showTotal: (total) => t('messages.totalRecords', { total }),
+                  showTotal: (total) => t('messages.totalRecords' as any, { total }),
                   pageSizeOptions: ['10', '20', '50'],
                 }}
                 scroll={{ x: 800 }}
                 locale={{
-                  emptyText: withdrawLoading ? t('messages.loading') : t('messages.noWithdrawRecords')
+                  emptyText: withdrawLoading ? t('messages.loading' as any) : t('messages.noWithdrawRecords' as any)
                 }}
               />
             </Card>
@@ -359,7 +359,7 @@ export default function IncomePage() {
 
       {/* 提现确认弹窗 */}
       <Modal
-        title={t('confirmWithdraw')}
+        title={t('confirmWithdraw' as any)}
         open={withdrawModalVisible}
         onCancel={() => {
           setWithdrawModalVisible(false);
@@ -370,7 +370,7 @@ export default function IncomePage() {
             setWithdrawModalVisible(false);
             setSelectedIncomeRecord(null);
           }}>
-            {t('cancel')}
+            {t('cancel' as any)}
           </Button>,
           <Button 
             key="confirm" 
@@ -378,7 +378,7 @@ export default function IncomePage() {
             loading={withdrawSubmitting}
             onClick={handleConfirmWithdraw}
           >
-            {t('confirm')}
+            {t('confirm' as any)}
           </Button>
         ]}
         width={500}
@@ -388,27 +388,27 @@ export default function IncomePage() {
           <div className={styles.withdrawModalContent}>
             <div className={styles.withdrawInfo}>
               <div className={styles.withdrawItem}>
-                <span className={styles.withdrawLabel}>{t('incomeId')}：</span>
+                <span className={styles.withdrawLabel}>{t('incomeId' as any)}：</span>
                 <span className={styles.withdrawValue}>{selectedIncomeRecord._id}</span>
               </div>
               <div className={styles.withdrawItem}>
-                <span className={styles.withdrawLabel}>{t('withdrawAmount')}：</span>
+                <span className={styles.withdrawLabel}>{t('withdrawAmount' as any)}：</span>
                 <span className={styles.withdrawAmount}>${selectedIncomeRecord.amount.toFixed(2)}</span>
               </div>
               <div className={styles.withdrawItem}>
-                <span className={styles.withdrawLabel}>{t('incomeType')}：</span>
+                <span className={styles.withdrawLabel}>{t('incomeType' as any)}：</span>
                 <span>{getIncomeTypeText(selectedIncomeRecord.type)}</span>
               </div>
               {selectedIncomeRecord.desc && (
                 <div className={styles.withdrawItem}>
-                  <span className={styles.withdrawLabel}>{t('description')}：</span>
+                  <span className={styles.withdrawLabel}>{t('description' as any)}：</span>
                   <span className={styles.withdrawValue}>{selectedIncomeRecord.desc}</span>
                 </div>
               )}
             </div>
             <div className={styles.withdrawWarning}>
-              <p>{t('withdrawWarning')}</p>
-              <p>{t('withdrawWarning2')}</p>
+              <p>{t('withdrawWarning' as any)}</p>
+              <p>{t('withdrawWarning2' as any)}</p>
             </div>
           </div>
         )}
