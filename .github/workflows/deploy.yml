@@ -69,18 +69,6 @@ jobs:
       - name: Prepare Docker context
         run: pnpm nx run ${{ env.APP_NAME }}:docker-context
 
-      - name: Verify Docker context
-        run: |
-          echo "Checking if docker context directory exists..."
-          ls -la ./
-          if [ -d "./tmp/docker-context" ]; then
-            echo "✅ Docker context directory exists"
-            ls -la ./tmp/docker-context/
-          else
-            echo "❌ Docker context directory not found"
-            exit 1
-          fi
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 

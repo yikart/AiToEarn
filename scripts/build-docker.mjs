@@ -309,20 +309,10 @@ async function generateConfig(projects, graph, contextDir, verbose = false) {
   }
 
   if (verbose)
-    console.info(chalk.gray('  正在执行: pnpm install --lockfile-only --no-frozen-lockfile'))
-  const result = await $({ cwd: contextDir })`pnpm install --lockfile-only --no-frozen-lockfile`
+    console.info(chalk.gray('  正在执行: pnpm install --lockfile-only'))
+  const result = await $({ cwd: contextDir })`pnpm install --lockfile-only`
   if (verbose)
     console.info(chalk.gray(`  pnpm install 输出: ${result.stdout}`))
-
-  await new Promise(resolve => setTimeout(resolve, 100))
-
-  if (await fs.pathExists(lockPath)) {
-    if (verbose)
-      console.info(chalk.gray('  pnpm-lock.yaml 已重新生成'))
-  }
-  else {
-    throw new Error('pnpm-lock.yaml 文件未生成')
-  }
 
   if (verbose)
     console.info(chalk.green('Monorepo 配置生成完成'))
