@@ -778,7 +778,34 @@ export default function ProfilePage() {
         </div>
       </div>
 
-
+      {/* 余额显示卡片 */}
+      <div className={styles.incomeCard}>
+        <div className={styles.incomeContent}>
+          <div className={styles.incomeHeader}>
+            <div className={styles.incomeTitleSection}>
+              <span className={styles.incomeIcon}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+              </span>
+              <span className={styles.incomeTitle}>我的余额</span>
+            </div>
+            <span className={styles.incomeCount}>${userInfo?.income || 0}</span>
+          </div>
+          <p className={styles.incomeDescription}>
+            通过完成任务获得的收入余额
+          </p>
+          
+          <div className={styles.incomeActions}>
+            <button 
+              className={styles.incomeButton} 
+              onClick={() => router.push('/income')}
+            >
+              查看详情
+            </button>
+          </div>
+        </div>
+      </div>
 
       <Card 
         title={t('personalInfo')} 
