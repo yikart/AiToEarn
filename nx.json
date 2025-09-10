@@ -41,8 +41,6 @@
       "inputs": ["production", "^production"]
     },
     "docker-context": {
-      "dependsOn": ["^build"],
-      "inputs": ["production", "^production"],
       "executor": "nx:run-commands",
       "options": {
         "command": "node scripts/build-docker.mjs {projectName} --context-only",
@@ -50,8 +48,6 @@
       }
     },
     "docker-build": {
-      "dependsOn": ["^build"],
-      "inputs": ["production", "^production"],
       "executor": "nx:run-commands",
       "options": {
         "command": "node scripts/build-docker.mjs {projectName}",
