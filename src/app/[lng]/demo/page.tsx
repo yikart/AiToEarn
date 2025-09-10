@@ -2,7 +2,6 @@ import { useTranslation } from "@/app/i18n";
 import { PageParams } from "@/app/globals";
 import * as React from "react";
 import { getMetadata } from "@/utils/general";
-import { DemoPageCore } from "@/app/[lng]/demo/demoPageCore";
 import { DemoPublish } from "@/app/[lng]/demo/demoPublish";
 import { DemoData } from "./demoData";
 import { DemoInteract } from "./demoInteract";
@@ -31,7 +30,6 @@ export default async function Page({ params }: PageParams) {
       <DemoIncome />
       <DemoTask />
       <DemoNotification />
-      <DemoPageCore />
       <DemoPublish />
       <DemoData />
       <DemoInteract />
