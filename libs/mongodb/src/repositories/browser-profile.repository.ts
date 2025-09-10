@@ -17,7 +17,7 @@ export class BrowserProfileRepository extends BaseRepository<BrowserProfile> {
     super(browserProfileModel)
   }
 
-  async listWithPagination(params: ListBrowserProfileParams): Promise<[BrowserProfile[], number]> {
+  async listWithPagination(params: ListBrowserProfileParams) {
     const { page, pageSize, accountId, profileId, cloudSpaceId } = params
 
     const filter: FilterQuery<BrowserProfile> = {}

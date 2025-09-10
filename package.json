@@ -1,13 +1,14 @@
 {
   "name": "@yikart/source",
   "version": "0.0.0",
+  "private": true,
   "license": "MIT",
   "scripts": {
     "prepare": "command -v git >/dev/null 2>&1 && npx simple-git-hooks || echo 'Git not available, skipping git hooks setup'",
     "lint": "nx run-many --target=lint --nxBail --outputStyle=static"
   },
-  "private": true,
   "dependencies": {
+    "commander": "^14.0.0",
     "reflect-metadata": "^0.2.2",
     "zod": "^4.0.17"
   },
@@ -38,13 +39,8 @@
     "tslib": "^2.3.0",
     "typescript": "~5.8.2",
     "typescript-eslint": "^8.29.0",
-    "webpack-cli": "^5.1.4"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged"
-  },
-  "lint-staged": {
-    "*": "nx run-many --target=lint --nxBail --outputStyle=static"
+    "webpack-cli": "^5.1.4",
+    "zx": "^8.8.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -63,6 +59,12 @@
         "axios"
       ]
     }
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "*": "nx run-many --target=lint --nxBail --outputStyle=static"
   },
   "nx": {
     "includedScripts": []

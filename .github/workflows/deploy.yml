@@ -55,13 +55,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'pnpm'
-
-      - name: Install pnpm
-        run: npm install -g pnpm
-
+          cache: pnpm
+          
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Cache Nx
+        uses: actions/cache@v4
+        with:
+          path: |
+            .nx/cache
+          key: ${{ runner.os }}-nx-${{ hashFiles('**/pnpm-lock.yaml', 'nx.json', 'project.json', '**/project.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nx-
 
       - name: Build application
         run: npx nx run ${{ env.APP_NAME }}:build
@@ -92,26 +98,16 @@ jobs:
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Determine Dockerfile path
-        id: dockerfile
-        run: |
-          if [ -f "./apps/${{ env.APP_NAME }}/Dockerfile" ]; then
-            echo "path=./apps/${{ env.APP_NAME }}/Dockerfile" >> $GITHUB_OUTPUT
-          else
-            echo "path=./Dockerfile" >> $GITHUB_OUTPUT
-          fi
-
       - name: Build and push application
         uses: docker/build-push-action@v5
         with:
-          context: ./dist/docker-context/${{ env.APP_NAME }}
-          file: ${{ steps.dockerfile.outputs.path }}
-          platforms: ${{ github.event.inputs.architectures }}
+          context: ./tmp/docker-context
+          file: ./tmp/docker-context/Dockerfile
           push: true
+          tags: ${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}
+          platforms: ${{ github.event.inputs.architectures }}
           build-args: |
             APP_NAME=${{ env.APP_NAME }}
-          tags: |
-            ${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

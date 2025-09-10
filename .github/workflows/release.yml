@@ -6,7 +6,7 @@ on:
       - 'v*.*.*' # 触发条件：推送版本标签，如 v1.0.0
 
 env:
-  APP_NAME: 'browser-automation-worker'
+  APP_NAME: browser-automation-worker
   RELEASE_TAG: ${{ github.ref_name }}
 
 jobs:

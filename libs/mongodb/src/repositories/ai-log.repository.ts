@@ -30,7 +30,7 @@ export class AiLogRepository extends BaseRepository<AiLog> {
     super(aiLogModel)
   }
 
-  async listWithPagination(params: ListAiLogParams): Promise<[AiLog[], number]> {
+  async listWithPagination(params: ListAiLogParams) {
     const { page, pageSize, userId, userType, type, status, model, createdAt } = params
 
     const filter: FilterQuery<AiLog> = {}

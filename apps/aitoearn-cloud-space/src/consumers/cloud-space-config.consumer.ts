@@ -92,7 +92,7 @@ export class CloudSpaceConfigConsumer extends WorkerHost {
       },
     }
 
-    const user = await this.userClient.getUserById({ id: cloudSpace.userId })
+    const user = await this.userClient.getUserInfoById({ id: cloudSpace.userId })
 
     const token = jwt.sign(
       {

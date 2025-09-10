@@ -1,5 +1,5 @@
 import { Pagination } from '@yikart/common'
-import { FilterQuery, Model, QueryOptions, UpdateQuery } from 'mongoose'
+import { Document, FilterQuery, Model, QueryOptions, UpdateQuery } from 'mongoose'
 
 export interface PaginationParams<TDocument> extends Pagination {
   filter?: FilterQuery<TDocument>
@@ -83,7 +83,7 @@ export class BaseRepository<TDocument> {
   /**
    * 分页查询
    */
-  async findWithPagination(params: PaginationParams<TDocument>): Promise<[TDocument[], number]> {
+  async findWithPagination(params: PaginationParams<TDocument>): Promise<[Document<unknown, object, TDocument>[], number]> {
     const { page, pageSize, filter = {}, options = {} } = params
     const skip = (page - 1) * pageSize
 

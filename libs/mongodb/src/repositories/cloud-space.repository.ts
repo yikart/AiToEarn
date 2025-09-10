@@ -22,7 +22,7 @@ export class CloudSpaceRepository extends BaseRepository<CloudSpace> {
     super(cloudSpaceModel)
   }
 
-  async listWithPagination(params: ListCloudSpaceParams): Promise<[CloudSpace[], number]> {
+  async listWithPagination(params: ListCloudSpaceParams) {
     const { page, pageSize, userId, region, status } = params
 
     const filter: FilterQuery<CloudSpace> = {}

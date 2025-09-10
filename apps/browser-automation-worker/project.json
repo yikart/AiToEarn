@@ -64,13 +64,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
-      "options": {
-        "fix": true
-      }
+      "executor": "@nx/eslint:lint"
     }
   }
 }

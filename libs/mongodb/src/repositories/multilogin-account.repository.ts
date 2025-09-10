@@ -18,7 +18,7 @@ export class MultiloginAccountRepository extends BaseRepository<MultiloginAccoun
     super(multiloginAccountModel)
   }
 
-  async listWithPagination(params: ListMultiloginAccountParams): Promise<[MultiloginAccount[], number]> {
+  async listWithPagination(params: ListMultiloginAccountParams) {
     const { page, pageSize, email, minMaxProfiles, maxMaxProfiles, hasAvailableSlots } = params
 
     const filter: FilterQuery<MultiloginAccount> = {}

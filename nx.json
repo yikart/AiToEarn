@@ -9,7 +9,7 @@
     ],
     "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"]
   },
-
+  "nxCloudId": "68a45c67c639875b4be60423",
   "plugins": [
     {
       "plugin": "@nx/webpack/plugin",
@@ -40,36 +40,23 @@
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
     },
-    "build": {
-      "cache": true,
-      "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
-    },
-    "lint": {
-      "cache": true,
-      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
-    },
-    "test": {
-      "cache": true,
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
-    },
     "docker-context": {
       "cache": true,
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "inputs": ["production", "^production"],
       "executor": "nx:run-commands",
       "options": {
-        "command": "node scripts/prepare-docker-context.js {projectName}",
+        "command": "node scripts/build-docker.mjs {projectName} --context-only",
         "cwd": "{workspaceRoot}"
       }
     },
     "docker-build": {
       "cache": true,
-      "dependsOn": ["docker-context"],
+      "dependsOn": ["^build"],
       "inputs": ["production", "^production"],
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker build -t {projectName} --build-arg APP_NAME={projectName} -f Dockerfile ./dist/docker-context/{projectName}",
+        "command": "node scripts/build-docker.mjs {projectName}",
         "cwd": "{workspaceRoot}"
       }
     }

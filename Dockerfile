@@ -1,55 +1,34 @@
-# 多阶段构建 Dockerfile (仅支持 Linux 系统，适配 k8s 环境)
-FROM node:22-alpine AS base
+# 依赖安装阶段 - 仅复制依赖信息，不包含源代码
+FROM node:22-alpine AS deps
 
-# 安装 pnpm
 RUN npm install -g pnpm
 
-# 设置工作目录
 WORKDIR /app
 
-# 复制 pnpm 配置文件
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+# 复制依赖专用 workspace（仅包含 package.json 文件）
+COPY deps/ ./
 
-# 复制工作区包
+# 安装依赖 - 这一层可以被有效缓存，除非依赖发生变化
+RUN pnpm install --prod --frozen-lockfile
+
+# 生产构建阶段 - 复制实际的构建产物和代码
+FROM node:22-alpine AS production
+
+ARG APP_NAME
+
+WORKDIR /app
+
+# 从依赖阶段复制 node_modules 和配置文件
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/package.json ./
+COPY --from=deps /app/pnpm-workspace.yaml ./
+COPY --from=deps /app/.npmrc ./
+
+# 复制构建产物和代码（这些变化不会影响依赖缓存）
 COPY apps/ ./apps/
 COPY libs/ ./libs/
 
-# 安装生产依赖
-RUN pnpm install --prod --frozen-lockfile
-
-# 生产阶段
-FROM node:22-alpine AS production
-
-# 设置 APP_NAME 参数
-ARG APP_NAME
-
-# 根据应用名称条件安装不同依赖
-RUN apk update && \
-    if [ "$APP_NAME" = "aitoearn-cloud-space" ]; then \
-        apk add --no-cache curl gnupg openssh-client python3 py3-pip && \
-        pip3 install ansible && \
-        apk del py3-pip && \
-        rm -rf /var/cache/apk/*; \
-    fi
-
-WORKDIR /app
-
-# 复制应用和依赖
-COPY --from=base /app/node_modules ./node_modules
-COPY --from=base /app/apps ./apps
-COPY --from=base /app/libs ./libs
-COPY --from=base /app/package.json ./
-
-# 设置环境变量
 ENV NODE_ENV=production
 ENV APP_NAME=$APP_NAME
 
-# 启动应用 (端口和健康检查由 k8s 管理)
-# 根据 APP_NAME 启动对应的应用
-CMD if [ "$APP_NAME" = "aitoearn-cloud-space" ]; then \
-        node apps/aitoearn-cloud-space/main.js; \
-    elif [ "$APP_NAME" = "browser-automation-worker" ]; then \
-        node apps/browser-automation-worker/main.js; \
-    else \
-        node apps/aitoearn-ai/main.js; \
-    fi
+CMD node apps/${APP_NAME}/main.js

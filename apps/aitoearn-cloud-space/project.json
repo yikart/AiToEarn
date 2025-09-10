@@ -69,24 +69,6 @@
       "options": {
         "fix": true
       }
-    },
-    "docker-context": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["build"],
-      "cache": true,
-      "options": {
-        "command": "node scripts/prepare-docker-context.js aitoearn-cloud-space",
-        "cwd": "{workspaceRoot}"
-      }
-    },
-    "docker-build": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["docker-context"],
-      "cache": true,
-      "options": {
-        "command": "docker build -t aitoearn-cloud-space --build-arg APP_NAME=aitoearn-cloud-space -f apps/aitoearn-cloud-space/Dockerfile ./dist/docker-context/aitoearn-cloud-space",
-        "cwd": "{workspaceRoot}"
-      }
     }
   }
 }
