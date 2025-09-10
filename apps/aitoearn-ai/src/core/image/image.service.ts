@@ -201,6 +201,24 @@ export class ImageService {
   }
 
   /**
+   * 恢复用户积分
+   */
+  private async addUserPoints(
+    userId: string,
+    amount: number,
+    description: string,
+    metadata?: Record<string, unknown>,
+  ): Promise<void> {
+    await this.userClient.addPoints({
+      userId,
+      amount,
+      type: 'ai_service',
+      description,
+      metadata,
+    })
+  }
+
+  /**
    * 获取图片模型价格
    */
   private getImageModelPricing(model: string, kind: 'generation' | 'edit'): number {
@@ -231,15 +249,17 @@ export class ImageService {
       if (balance < pricing) {
         throw new AppException(ResponseCode.UserPointsInsufficient)
       }
+      await this.deductUserPoints(userId, pricing, model)
     }
 
     const startedAt = new Date()
-    const result = await run()
+    const result = await run().catch(async (e) => {
+      if (pricing > 0 && userType === UserType.User) {
+        await this.addUserPoints(userId, pricing, model)
+      }
+      throw e
+    })
     const duration = Date.now() - startedAt.getTime()
-
-    if (pricing > 0 && userType === UserType.User) {
-      await this.deductUserPoints(userId, pricing, model)
-    }
 
     await this.aiLogRepo.create({
       userId,

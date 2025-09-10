@@ -1,5 +1,5 @@
 import path from 'node:path'
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
 import { S3Service } from '@yikart/aws-s3'
 import { AppException, ResponseCode, UserType } from '@yikart/common'
@@ -20,6 +20,8 @@ import {
   ContentType,
   CreateVideoGenerationTaskResponse,
   GetVideoGenerationTaskResponse,
+  parseModelTextCommand,
+  serializeModelTextCommand,
   VolcengineService,
   TaskStatus as VolcTaskStatus,
 } from '../../libs/volcengine'
@@ -84,7 +86,7 @@ export class VideoService {
    * 用户视频生成（通用接口）
    */
   async userVideoGeneration(request: UserVideoGenerationRequestDto) {
-    const { userId, userType, model, prompt, mode, duration } = request
+    const { userId, userType, model, prompt, mode, duration, size } = request
 
     // 查找模型配置以确定channel
     const modelConfig = config.ai.models.video.generation.find(m => m.name === model)
@@ -112,14 +114,22 @@ export class VideoService {
       }
     }
     else if (channel === 'volcengine') {
+      const textCommand = parseModelTextCommand(prompt)
+
       const volcengineRequest: VolcengineGenerationRequestDto = {
         userId,
         userType,
         model,
-        content: [{
-          type: ContentType.Text,
-          text: prompt,
-        }],
+        content: [
+          {
+            type: ContentType.Text,
+            text: `${textCommand.prompt} ${serializeModelTextCommand({
+              ...textCommand.params,
+              duration,
+              resolution: size,
+            })}`,
+          },
+        ],
       }
       const result = await this.volcengineCreate(volcengineRequest)
 
@@ -198,6 +208,12 @@ export class VideoService {
       if (balance < pricing) {
         throw new AppException(ResponseCode.UserPointsInsufficient)
       }
+      await this.userClient.deductPoints({
+        userId,
+        amount: pricing,
+        type: 'ai_service',
+        description: model_name,
+      })
     }
 
     const startedAt = new Date()
@@ -277,9 +293,8 @@ export class VideoService {
       errorMessage: task_status === 'failed' ? task_status_msg : undefined,
     })
 
-    // 如果任务完成且用户类型为User，扣除积分
-    if (status === AiLogStatus.Success && aiLog.userType === UserType.User) {
-      await this.userClient.deductPoints({
+    if (status === AiLogStatus.Failed && aiLog.userType === UserType.User) {
+      await this.userClient.addPoints({
         userId: aiLog.userId,
         amount: aiLog.points,
         type: 'ai_service',
@@ -337,7 +352,7 @@ export class VideoService {
           result = (await this.klingService.getText2VideoTask(aiLog.taskId)).data
       }
 
-      if (result.task_status === KlingTaskStatus.Succeed) {
+      if (result.task_status === KlingTaskStatus.Succeed || result.task_status === KlingTaskStatus.Failed) {
         await this.klingCallback(result)
       }
       return result
@@ -396,9 +411,8 @@ export class VideoService {
       errorMessage: status === 'failed' ? callbackData.error?.message : undefined,
     })
 
-    // 如果任务完成且用户类型为User，扣除积分
-    if (aiLogStatus === AiLogStatus.Success && aiLog.userType === UserType.User) {
-      await this.userClient.deductPoints({
+    if (aiLogStatus === AiLogStatus.Failed && aiLog.userType === UserType.User) {
+      await this.userClient.addPoints({
         userId: aiLog.userId,
         amount: aiLog.points,
         type: 'ai_service',
@@ -413,8 +427,18 @@ export class VideoService {
   async volcengineCreate(request: VolcengineGenerationRequestDto) {
     const { userId, userType, model, content, ...params } = request
 
-    // 计费和日志前置逻辑
+    const prompt = content.find(c => c.type === ContentType.Text)?.text
+
+    if (!prompt) {
+      throw new BadRequestException('prompt is required')
+    }
+
+    const { params: modelParams } = parseModelTextCommand(prompt)
+
     const pricing = await this.calculateVideoGenerationPrice({
+      aspectRatio: modelParams.ratio,
+      resolution: modelParams.resolution,
+      duration: modelParams.duration,
       model,
     })
 
@@ -423,6 +447,13 @@ export class VideoService {
       if (balance < pricing) {
         throw new AppException(ResponseCode.UserPointsInsufficient)
       }
+
+      await this.userClient.deductPoints({
+        userId,
+        amount: pricing,
+        type: 'ai_service',
+        description: model,
+      })
     }
 
     const startedAt = new Date()
@@ -481,7 +512,7 @@ export class VideoService {
     }
     if (aiLog.status === AiLogStatus.Generating) {
       const result = await this.volcengineService.getVideoGenerationTask(aiLog.taskId)
-      if (result.status === VolcTaskStatus.Succeeded) {
+      if (result.status === VolcTaskStatus.Succeeded || result.status === VolcTaskStatus.Failed) {
         await this.volcengineCallback(result)
       }
       return result
