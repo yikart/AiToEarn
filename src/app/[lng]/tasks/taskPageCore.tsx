@@ -30,7 +30,7 @@ import styles from "./taskPageCore.module.scss";
 const { TabPane } = Tabs;
 
 export default function TaskPageCore() {
-  const { t } = useTransClient("common");
+  const { t } = useTransClient("task" as any);
   const token = useUserStore((state) => state.token);
   
   // 如果未登录，显示登录提示
@@ -38,11 +38,11 @@ export default function TaskPageCore() {
     return (
       <div className={styles.taskPage}>
         <div className={styles.header}>
-          <h1>任务中心</h1>
-          <p>请先登录以查看任务</p>
+          <h1>{t('title')}</h1>
+          <p>{t('messages.pleaseLoginFirst')}</p>
         </div>
         <div style={{ textAlign: 'center', padding: '60px 0' }}>
-          <Empty description="请先登录" />
+          <Empty description={t('messages.pleaseLoginFirst')} />
         </div>
       </div>
     );
@@ -96,10 +96,10 @@ export default function TaskPageCore() {
   const [taskProgress, setTaskProgress] = useState({
     currentStep: 0,
     steps: [
-      { title: '正在接受任务...', status: 'processing' },
-      { title: '正在发布任务...', status: 'wait' },
-      { title: '正在提交任务...', status: 'wait' },
-      { title: '任务完成', status: 'wait' }
+      { title: t('acceptingTask' as any), status: 'processing' },
+      { title: t('publishingTask' as any), status: 'wait' },
+      { title: t('submittingTask' as any), status: 'wait' },
+      { title: t('taskCompleted' as any), status: 'wait' }
     ]
   });
   
@@ -131,7 +131,7 @@ export default function TaskPageCore() {
       }
     } catch (error) {
       console.error("获取待接受任务失败:", error);
-      message.error("获取待接受任务失败");
+      message.error(t('messages.getPendingTasksFailed'));
       setPendingTasks([]);
     } finally {
       setLoading(false);
@@ -157,7 +157,7 @@ export default function TaskPageCore() {
       }
     } catch (error) {
       console.error("获取已接受任务失败:", error);
-      message.error("获取已接受任务失败");
+      message.error(t('messages.getAcceptedTasksFailed'));
       setAcceptedTasks([]);
     } finally {
       setLoading(false);
@@ -222,17 +222,17 @@ export default function TaskPageCore() {
     try {
       const response = await apiAcceptTask(task.id);
       if (response && response.code === 0) {
-        message.success("接受任务成功！");
+        message.success(t('messages.acceptTaskSuccess'));
         // 刷新任务列表
         fetchPendingTasks();
         fetchAcceptedTasks();
         // 切换到已接受任务标签
         setActiveTab("accepted");
       } else {
-        message.error("接受任务失败");
+        message.error(t('messages.acceptTaskFailed'));
       }
     } catch (error) {
-      message.error("接受任务失败");
+      message.error(t('messages.acceptTaskFailed'));
       console.error("接受任务失败:", error);
     }
   };
@@ -247,7 +247,7 @@ export default function TaskPageCore() {
   // 确认提交任务
   const confirmSubmitTask = async () => {
     if (!selectedTask || !submissionUrl.trim()) {
-      message.error("请输入提交链接");
+      message.error(t('modal.submitLink') + ' ' + t('messages.pleaseLoginFirst'));
       return;
     }
 
@@ -270,17 +270,17 @@ export default function TaskPageCore() {
         // 发布成功后提交任务
         const submitResponse = await apiSubmitTask(selectedTask.id, submissionUrl);
         if (submitResponse && submitResponse.code === 0) {
-          message.success("任务提交成功！");
+          message.success(t('messages.submitTaskSuccess'));
           setSubmitModalVisible(false);
           fetchAcceptedTasks();
         } else {
-          message.error("任务提交失败");
+          message.error(t('messages.submitTaskFailed'));
         }
       } else {
-        message.error("发布任务失败");
+        message.error(t('messages.publishTaskFailed'));
       }
     } catch (error) {
-      message.error("任务提交失败");
+      message.error(t('messages.submitTaskFailed'));
       console.error("任务提交失败:", error);
     } finally {
       setSubmittingTaskId(null);
@@ -290,19 +290,19 @@ export default function TaskPageCore() {
   // 获取平台显示名称
   const getPlatformName = (type: string) => {
     const platformNames: Record<string, string> = {
-      'tiktok': 'TikTok',
-      'youtube': 'YouTube', 
-      'twitter': 'Twitter',
-      'bilibili': '哔哩哔哩',
-      'KWAI': '快手',
-      'douyin': '抖音',
-      'xhs': '小红书',
-      'wxSph': '微信视频号',
-      'wxGzh': '微信公众号',
-      'facebook': 'Facebook',
-      'instagram': 'Instagram',
-      'threads': 'Threads',
-      'pinterest': 'Pinterest',
+      'tiktok': t('platforms.tiktok' as any),
+      'youtube': t('platforms.youtube' as any), 
+      'twitter': t('platforms.twitter' as any),
+      'bilibili': t('platforms.bilibili' as any),
+      'KWAI': t('platforms.KWAI' as any),
+      'douyin': t('platforms.douyin' as any),
+      'xhs': t('platforms.xhs' as any),
+      'wxSph': t('platforms.wxSph' as any),
+      'wxGzh': t('platforms.wxGzh' as any),
+      'facebook': t('platforms.facebook' as any),
+      'instagram': t('platforms.instagram' as any),
+      'threads': t('platforms.threads' as any),
+      'pinterest': t('platforms.pinterest' as any),
     };
     return platformNames[type] || type;
   };
@@ -310,9 +310,9 @@ export default function TaskPageCore() {
   // 获取任务类型显示名称
   const getTaskTypeName = (type: string) => {
     const taskTypeNames: Record<string, string> = {
-      'video': '视频',
-      'article': '图文',
-      'article2': '纯文字',
+      'video': t('taskTypes.video' as any),
+      'article': t('taskTypes.article' as any),
+      'article2': t('taskTypes.article2' as any),
     };
     return taskTypeNames[type] || type;
   };
@@ -326,21 +326,21 @@ export default function TaskPageCore() {
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-    if (minutes < 1) return "刚刚";
-    if (minutes < 60) return `${minutes}分钟前`;
-    if (hours < 24) return `${hours}小时前`;
-    if (days < 7) return `${days}天前`;
+    if (minutes < 1) return t('time.justNow' as any);
+    if (minutes < 60) return t('time.minutesAgo' as any, { minutes });
+    if (hours < 24) return t('time.hoursAgo' as any, { hours });
+    if (days < 7) return t('time.daysAgo' as any, { days });
     return date.toLocaleDateString();
   };
 
   // 获取任务状态标签
   const getTaskStatusTag = (status: string) => {
     const statusMap: Record<string, { color: string; text: string }> = {
-      'pending': { color: 'orange', text: '待完成' },
-      'doing': { color: 'green', text: '已完成' },
-      'accepted': { color: 'blue', text: '已接受' },
-      'completed': { color: 'green', text: '已完成' },
-      'rejected': { color: 'red', text: '已拒绝' },
+      'pending': { color: 'orange', text: t('taskStatus.pending' as any) },
+      'doing': { color: 'green', text: t('taskStatus.doing' as any) },
+      'accepted': { color: 'blue', text: t('taskStatus.accepted' as any) },
+      'completed': { color: 'green', text: t('taskStatus.completed' as any) },
+      'rejected': { color: 'red', text: t('taskStatus.rejected' as any) },
     };
     return statusMap[status] || { color: 'default', text: status };
   };
@@ -366,10 +366,10 @@ export default function TaskPageCore() {
         setTaskDetail(response.data);
         setTaskDetailModalVisible(true);
       } else {
-        message.error("获取任务详情失败");
+        message.error(t('messages.getTaskDetailFailed'));
       }
     } catch (error) {
-      message.error("获取任务详情失败");
+      message.error(t('messages.getTaskDetailFailed'));
       console.error("获取任务详情失败:", error);
     } finally {
       setTaskDetailLoading(false);
@@ -386,10 +386,10 @@ export default function TaskPageCore() {
         setAcceptedTaskDetail(response.data);
         setAcceptedTaskDetailModalVisible(true);
       } else {
-        message.error("获取任务详情失败");
+        message.error(t('messages.getTaskDetailFailed'));
       }
     } catch (error) {
-      message.error("获取任务详情失败");
+      message.error(t('messages.getTaskDetailFailed'));
       console.error("获取任务详情失败:", error);
     } finally {
       setAcceptedTaskDetailLoading(false);
@@ -424,10 +424,10 @@ export default function TaskPageCore() {
           ...prev,
           currentStep: 1,
           steps: [
-            { title: '正在接受任务...', status: 'finish' },
-            { title: '正在发布任务...', status: 'processing' },
-            { title: '正在提交任务...', status: 'wait' },
-            { title: '任务完成', status: 'wait' }
+            { title: t('acceptingTask' as any), status: 'finish' },
+            { title: t('publishingTask' as any), status: 'processing' },
+            { title: t('submittingTask' as any), status: 'wait' },
+            { title: t('taskCompleted' as any), status: 'wait' }
           ]
         }));
 
@@ -472,10 +472,10 @@ export default function TaskPageCore() {
               ...prev,
               currentStep: 2,
               steps: [
-                { title: '正在接受任务...', status: 'finish' },
-                { title: '正在发布任务...', status: 'finish' },
-                { title: '正在提交任务...', status: 'processing' },
-                { title: '任务完成', status: 'wait' }
+                { title: t('acceptingTask' as any), status: 'finish' },
+                { title: t('publishingTask' as any), status: 'finish' },
+                { title: t('submittingTask' as any), status: 'processing' },
+                { title: t('taskCompleted' as any), status: 'wait' }
               ]
             }));
 
@@ -489,10 +489,10 @@ export default function TaskPageCore() {
                 ...prev,
                 currentStep: 3,
                 steps: [
-                  { title: '正在接受任务...', status: 'finish' },
-                  { title: '正在发布任务...', status: 'finish' },
-                  { title: '正在提交任务...', status: 'finish' },
-                  { title: '任务完成', status: 'finish' }
+                  { title: t('acceptingTask' as any), status: 'finish' },
+                  { title: t('publishingTask' as any), status: 'finish' },
+                  { title: t('submittingTask' as any), status: 'finish' },
+                  { title: t('taskCompleted' as any), status: 'finish' }
                 ]
               }));
 
@@ -532,10 +532,10 @@ export default function TaskPageCore() {
     setTaskProgress({
       currentStep: 0,
       steps: [
-        { title: '正在完成任务...', status: 'processing' },
-        { title: '正在发布任务...', status: 'wait' },
-        { title: '正在提交任务...', status: 'wait' },
-        { title: '任务完成', status: 'wait' }
+        { title: t('completeTask' as any), status: 'processing' },
+        { title: t('publishingTask' as any), status: 'wait' },
+        { title: t('submittingTask' as any), status: 'wait' },
+        { title: t('taskCompleted' as any), status: 'wait' }
       ]
     });
     
@@ -721,7 +721,7 @@ export default function TaskPageCore() {
           tab={
             <span>
               <ClockCircleOutlined />
-              &nbsp; 待接受任务
+              &nbsp; {t('pendingTasks')}
             </span>
           } 
           key="pending"
@@ -746,20 +746,20 @@ export default function TaskPageCore() {
                             style={{ width: '24px', height: '24px' }}
                           />
                           <h3 style={{ margin: 0, fontSize: '16px' }}>
-                            {getPlatformName(task.accountType)}任务
+{getPlatformName(task.accountType)}{t('taskInfo.type' as any)}
                           </h3>
                         </div>
-                        <Tag color="orange">待接受</Tag>
+                        <Tag color="orange">{t('taskStatus.pending' as any)}</Tag>
                       </div>
                       
                       <div className={styles.taskContent}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                          <span><strong>发布时间：</strong>{formatTime(task.createdAt)}</span>
-                          <span><strong>结束时间：</strong>{formatTime(task.expiredAt)}</span>
+                          <span><strong>{t('taskInfo.publishTime' as any)}：</strong>{formatTime(task.createdAt)}</span>
+                          <span><strong>{t('taskInfo.endTime' as any)}：</strong>{formatTime(task.expiredAt)}</span>
                         </div>
                         
                         <div style={{ marginBottom: '12px' }}>
-                          <strong>奖励：</strong>
+                          <strong>{t('taskInfo.reward' as any)}：</strong>
                           <span style={{ color: '#f50', fontWeight: 'bold' }}>¥{task.reward}</span>
                         </div>
                         
@@ -806,7 +806,7 @@ export default function TaskPageCore() {
                           icon={<EyeOutlined />}
                           style={{ width: '100%' }}
                         >
-                          查看详情
+                          {t('viewDetails')}
                         </Button>
                       </div>
                     </Card>
@@ -822,13 +822,13 @@ export default function TaskPageCore() {
                     onShowSizeChange={handlePendingPageChange}
                     showSizeChanger
                     showQuickJumper
-                    showTotal={(total, range) => `第 ${range[0]}-${range[1]} 条，共 ${total} 条`}
+                    showTotal={(total, range) => t('messages.pageInfo' as any, { start: range[0], end: range[1], total })}
                     pageSizeOptions={['10', '20', '50', '100']}
                   />
                 </div>
               </div>
             ) : (
-              <Empty description="暂无待接受任务" />
+              <Empty description={t('messages.noPendingTasks')} />
             )}
           </Spin>
         </TabPane>
@@ -837,7 +837,7 @@ export default function TaskPageCore() {
           tab={
             <span>
               <PlayCircleOutlined />
-              &nbsp; 已接受任务
+              &nbsp; {t('acceptedTasks')}
             </span>
           } 
           key="accepted"
@@ -862,7 +862,7 @@ export default function TaskPageCore() {
                             style={{ width: '24px', height: '24px' }}
                           />
                           <h3 style={{ margin: 0, fontSize: '16px' }}>
-                            {getPlatformName(task.accountType)}任务
+{getPlatformName(task.accountType)}{t('taskInfo.type' as any)}
                           </h3>
                         </div>
                         <Tag color={getTaskStatusTag(task.status).color}>
@@ -872,12 +872,12 @@ export default function TaskPageCore() {
                       
                       <div className={styles.taskContent}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                          <span><strong>接受时间：</strong>{formatTime(task.createdAt)}</span>
+                          <span><strong>{t('taskInfo.acceptTime' as any)}：</strong>{formatTime(task.createdAt)}</span>
                           <span> </span>
                         </div>
                         
                         <div style={{ marginBottom: '12px' }}>
-                          <strong>奖励：</strong>
+                          <strong>{t('taskInfo.reward' as any)}：</strong>
                           <span style={{ color: '#f50', fontWeight: 'bold' }}>¥{task.reward}</span>
                         </div>
                         
@@ -924,7 +924,7 @@ export default function TaskPageCore() {
                           icon={<EyeOutlined />}
                           style={{ width: '100%' }}
                         >
-                          查看详情
+                          {t('viewDetails')}
                         </Button>
                       </div>
                     </Card>
@@ -940,13 +940,13 @@ export default function TaskPageCore() {
                     onShowSizeChange={handleAcceptedPageChange}
                     showSizeChanger
                     showQuickJumper
-                    showTotal={(total, range) => `第 ${range[0]}-${range[1]} 条，共 ${total} 条`}
+                    showTotal={(total, range) => t('messages.pageInfo' as any, { start: range[0], end: range[1], total })}
                     pageSizeOptions={['10', '20', '50', '100']}
                   />
                 </div>
               </div>
             ) : (
-              <Empty description="暂无已接受任务" />
+              <Empty description={t('messages.noAcceptedTasks')} />
             )}
           </Spin>
         </TabPane>
@@ -954,31 +954,31 @@ export default function TaskPageCore() {
 
       {/* 提交任务弹窗 */}
       <Modal
-        title="提交任务"
+        title={t('modal.submitTask')}
         open={submitModalVisible}
         onCancel={() => setSubmitModalVisible(false)}
         onOk={confirmSubmitTask}
         confirmLoading={submittingTaskId !== null}
-        okText="确认提交"
-        cancelText="取消"
+        okText={t('modal.confirmSubmit')}
+        cancelText={t('modal.cancel')}
       >
         <div style={{ marginBottom: '16px' }}>
-          <label>提交链接：</label>
+          <label>{t('modal.submitLink')}：</label>
           <Input
             value={submissionUrl}
             onChange={(e) => setSubmissionUrl(e.target.value)}
-            placeholder="请输入任务完成后的链接"
+            placeholder={t('modal.submitLinkPlaceholder')}
             style={{ marginTop: '8px' }}
           />
         </div>
         <p style={{ color: '#666', fontSize: '12px' }}>
-          请确保您已经完成了任务要求，并提供了正确的提交链接。
+          {t('modal.submitTip')}
         </p>
       </Modal>
 
       {/* 任务详情弹窗 */}
       <Modal
-        title="任务详情"
+        title={t('taskDetails')}
         open={taskDetailModalVisible}
         onCancel={() => {
           setTaskDetailModalVisible(false);
@@ -1168,7 +1168,7 @@ export default function TaskPageCore() {
                         color: '#856404',
                         marginBottom: '4px'
                       }}>
-                        奖励
+                        {t('taskInfo.reward' as any)}
                       </div>
                       <div style={{ 
                         fontSize: '18px', 
@@ -1192,7 +1192,7 @@ export default function TaskPageCore() {
                         color: '#0c5460',
                         marginBottom: '4px'
                       }}>
-                        类型
+                        {t('taskInfo.type' as any)}
                       </div>
                       <div style={{ 
                         fontSize: '14px', 
@@ -1257,7 +1257,7 @@ export default function TaskPageCore() {
                         onClick={() => handleAcceptTaskFromDetail(taskDetail)}
                         style={{ marginTop: '12px' }}
                       >
-                        接受任务
+                        {t('acceptTask')}
                       </Button>
                     </div>
                   );
@@ -1273,7 +1273,7 @@ export default function TaskPageCore() {
                         onClick={handleCompleteTask}
                         style={{ marginTop: '12px' }}
                       >
-                        完成任务
+                        {t('completeTask')}
                       </Button>
                     </div>
                   );
@@ -1284,7 +1284,7 @@ export default function TaskPageCore() {
             </div>
           ) : !taskDetailLoading && (
             <div style={{ textAlign: 'center', color: '#999' }}>
-              暂无任务详情
+              {t('messages.noTaskDetails')}
             </div>
           )}
         </Spin>
@@ -1292,7 +1292,7 @@ export default function TaskPageCore() {
 
       {/* 已接受任务详情弹窗 */}
       <Modal
-        title="任务详情"
+        title={t('taskDetails')}
         open={acceptedTaskDetailModalVisible}
         onCancel={() => {
           setAcceptedTaskDetailModalVisible(false);
@@ -1482,7 +1482,7 @@ export default function TaskPageCore() {
                         color: '#856404',
                         marginBottom: '4px'
                       }}>
-                        奖励
+                        {t('taskInfo.reward' as any)}
                       </div>
                       <div style={{ 
                         fontSize: '18px', 
@@ -1506,7 +1506,7 @@ export default function TaskPageCore() {
                         color: '#0c5460',
                         marginBottom: '4px'
                       }}>
-                        类型
+                        {t('taskInfo.type' as any)}
                       </div>
                       <div style={{ 
                         fontSize: '14px', 
@@ -1626,7 +1626,7 @@ export default function TaskPageCore() {
                         onClick={handleCompleteTask}
                         style={{ marginTop: '12px' }}
                       >
-                        完成任务
+                        {t('completeTask')}
                       </Button>
                     </div>
                   );
@@ -1637,7 +1637,7 @@ export default function TaskPageCore() {
             </div>
           ) : !acceptedTaskDetailLoading && (
             <div style={{ textAlign: 'center', color: '#999' }}>
-              暂无任务详情
+              {t('messages.noTaskDetails')}
             </div>
           )}
         </Spin>
@@ -1645,13 +1645,13 @@ export default function TaskPageCore() {
 
       {/* 媒体预览弹窗 */}
       <Modal
-        title={previewMedia?.title || '媒体预览'}
+        title={previewMedia?.title || t('modal.mediaPreview')}
         open={mediaPreviewVisible}
         onCancel={handleCloseMediaPreview}
         afterClose={handleCloseMediaPreview}
         footer={[
           <Button key="close" onClick={handleCloseMediaPreview}>
-            关闭
+            {t('modal.close')}
           </Button>
         ]}
         width={previewMedia?.type === 'video' ? 800 : 600}
@@ -1702,7 +1702,7 @@ export default function TaskPageCore() {
 
       {/* 任务进度弹窗 */}
       <Modal
-        title="任务处理中..."
+        title={t('taskProcessing')}
         open={taskProgressVisible}
         closable={false}
         maskClosable={false}
@@ -1721,10 +1721,10 @@ export default function TaskPageCore() {
           items={taskProgress.steps.map((step, index) => ({
             title: step.title,
             status: step.status as 'wait' | 'process' | 'finish' | 'error',
-            description: index === 0 ? (step.title.includes('完成任务') ? '正在调用完成任务接口...' : '正在调用接受任务接口...') : 
-                        index === 1 ? '正在调用发布任务接口...' : 
-                        index === 2 ? '正在调用提交任务接口...' :
-                        '任务处理完成，即将跳转...'
+            description: index === 0 ? (step.title.includes(t('completeTask' as any)) ? t('messages.taskProcessFailed') : t('messages.taskProcessFailed')) : 
+                        index === 1 ? t('messages.taskProcessFailed') : 
+                        index === 2 ? t('messages.taskProcessFailed') :
+                        t('messages.taskProcessFailed')
           }))}
         />
       </Modal>
