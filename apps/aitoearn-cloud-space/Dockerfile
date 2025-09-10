@@ -1,29 +1,29 @@
-FROM node:22-alpine AS base
+FROM node:22-alpine AS deps
 
 RUN npm install -g pnpm
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
-COPY libs/ ./libs/
-COPY apps/ ./apps/
+COPY deps/ ./
 
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm install --prod
 
 FROM node:22-alpine AS production
 
 ARG APP_NAME
 RUN apk add --no-cache curl gnupg openssh-client python3 py3-pip && \
     pip3 install --break-system-packages ansible && \
-    apk del py3-pip && \
-    rm -rf /var/cache/apk/*;
+    apk del py3-pip;
 
 WORKDIR /app
 
-COPY --from=base /app/node_modules ./node_modules
-COPY --from=base /app/package.json ./
-COPY --from=base /app/apps ./apps
-COPY --from=base /app/libs ./libs
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/package.json ./
+COPY --from=deps /app/pnpm-workspace.yaml ./
+COPY --from=deps /app/.npmrc ./
+
+COPY apps/ ./apps/
+COPY libs/ ./libs/
 
 ENV NODE_ENV=production
 ENV APP_NAME=$APP_NAME

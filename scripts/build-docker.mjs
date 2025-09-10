@@ -178,17 +178,6 @@ async function createDepsWorkspace(projects, graph, contextDir, verbose = false)
     }
   }
 
-  // 在 deps 目录中生成 pnpm-lock.yaml
-  if (verbose)
-    console.info(chalk.yellow('为依赖 workspace 生成 pnpm-lock.yaml...'))
-
-  if (verbose)
-    console.info(chalk.gray('  正在执行: pnpm install --lockfile-only --no-frozen-lockfile'))
-
-  const result = await $({ cwd: depsDir })`pnpm install --lockfile-only --no-frozen-lockfile`
-  if (verbose)
-    console.info(chalk.gray(`  pnpm install 输出: ${result.stdout}`))
-
   if (verbose)
     console.info(chalk.green('依赖专用 workspace 创建完成'))
 
@@ -298,21 +287,6 @@ async function generateConfig(projects, graph, contextDir, verbose = false) {
   }
 
   await resetDependencies(projects, contextDir, verbose)
-
-  if (verbose)
-    console.info(chalk.yellow('重新生成 pnpm-lock.yaml...'))
-
-  const lockPath = path.join(contextDir, 'pnpm-lock.yaml')
-  const hasOld = await fs.pathExists(lockPath)
-  if (verbose && hasOld) {
-    console.info(chalk.gray('  发现旧的 pnpm-lock.yaml，将被覆盖'))
-  }
-
-  if (verbose)
-    console.info(chalk.gray('  正在执行: pnpm install --lockfile-only'))
-  const result = await $({ cwd: contextDir })`pnpm install --lockfile-only`
-  if (verbose)
-    console.info(chalk.gray(`  pnpm install 输出: ${result.stdout}`))
 
   if (verbose)
     console.info(chalk.green('Monorepo 配置生成完成'))
