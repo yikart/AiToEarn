@@ -1,7 +1,6 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq'
 import { Logger } from '@nestjs/common'
-import { CloudSpaceStatus } from '@yikart/common'
-import { CloudSpaceRepository } from '@yikart/mongodb'
+import { CloudSpaceRepository, CloudSpaceStatus } from '@yikart/mongodb'
 import { Job } from 'bullmq'
 import { QueueName } from '../common/enums'
 import { CloudSpaceService } from '../core/cloud-space'

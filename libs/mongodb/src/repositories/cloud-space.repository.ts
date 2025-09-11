@@ -1,6 +1,7 @@
 import { InjectModel } from '@nestjs/mongoose'
-import { CloudSpaceRegion, CloudSpaceStatus, Pagination, RangeFilter } from '@yikart/common'
+import { Pagination, RangeFilter } from '@yikart/common'
 import { FilterQuery, Model } from 'mongoose'
+import { CloudSpaceRegion, CloudSpaceStatus } from '../enums'
 import { CloudSpace } from '../schemas'
 import { BaseRepository } from './base.repository'
 

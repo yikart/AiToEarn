@@ -1,4 +1,5 @@
-import { CloudSpaceRegion, CloudSpaceStatus, createZodDto, PaginationDtoSchema } from '@yikart/common'
+import { createZodDto, PaginationDtoSchema } from '@yikart/common'
+import { CloudSpaceRegion, CloudSpaceStatus } from '@yikart/mongodb'
 import { z } from 'zod'
 
 export const createCloudSpaceSchema = z.object({

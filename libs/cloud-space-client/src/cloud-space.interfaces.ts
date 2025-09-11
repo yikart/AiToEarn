@@ -1,4 +1,19 @@
-import { CloudSpaceRegion, CloudSpaceStatus } from '@yikart/common'
+export enum CloudSpaceStatus {
+  Creating = 'creating',
+  Configuring = 'configuring',
+  Ready = 'ready',
+  Error = 'error',
+  Terminated = 'terminated',
+}
+
+export enum CloudSpaceRegion {
+  Washington = 'us-ws',
+  LosAngeles = 'us-ca',
+  London = 'uk-london',
+  Singapore = 'sg',
+  Tokyo = 'jpn-tky',
+  Hongkong = 'hk',
+}
 
 // 浏览器环境相关的数据类型定义
 export interface CloudSpace {

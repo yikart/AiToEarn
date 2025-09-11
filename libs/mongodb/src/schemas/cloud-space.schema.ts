@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { CloudSpaceRegion, CloudSpaceStatus } from '@yikart/common'
+import { CloudSpaceRegion, CloudSpaceStatus } from '../enums'
 import { WithTimestampSchema } from './timestamp.schema'
 
 @Schema({

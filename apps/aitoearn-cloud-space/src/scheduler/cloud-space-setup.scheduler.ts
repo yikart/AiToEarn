@@ -1,11 +1,10 @@
 import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
-import { CloudInstanceStatus, CloudSpaceRegion, CloudSpaceStatus } from '@yikart/common'
-import { CloudSpace, CloudSpaceRepository } from '@yikart/mongodb'
+import { CloudSpace, CloudSpaceRegion, CloudSpaceRepository, CloudSpaceStatus } from '@yikart/mongodb'
 import { Redlock } from '@yikart/redlock'
 import { Queue } from 'bullmq'
-import { JobName, QueueName, RedlockKey } from '../common/enums'
+import { CloudInstanceStatus, JobName, QueueName, RedlockKey } from '../common/enums'
 import { CloudInstanceService } from '../core/cloud-instance'
 
 @Injectable()

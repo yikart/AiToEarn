@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common'
-import { AppException, CloudSpaceStatus, ResponseCode } from '@yikart/common'
-import { BrowserProfileRepository, CloudSpaceRepository, MultiloginAccount, Transactional } from '@yikart/mongodb'
+import { AppException, ResponseCode } from '@yikart/common'
+import {
+  BrowserProfileRepository,
+  CloudSpaceRepository,
+  CloudSpaceStatus,
+  MultiloginAccount,
+  Transactional,
+} from '@yikart/mongodb'
 import { ProfileParameters } from '@yikart/multilogin'
 import dayjs from 'dayjs'
 import { MultiloginHelper } from '../../common/helpers'

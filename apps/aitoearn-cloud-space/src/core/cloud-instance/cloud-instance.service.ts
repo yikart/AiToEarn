@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { AppException, CloudInstanceStatus, CloudSpaceRegion, generateSecurePassword, ResponseCode } from '@yikart/common'
+import { AppException, generateSecurePassword, ResponseCode } from '@yikart/common'
+import { CloudSpaceRegion } from '@yikart/mongodb'
 import { CreateULHostInstanceRequest, UCloudService, UHostIPSet, ULHostState } from '@yikart/ucloud'
 import { bufferCount, concatMap, from, lastValueFrom, mergeMap, toArray } from 'rxjs'
+import { CloudInstanceStatus } from '../../common/enums'
 import { config } from '../../config'
 
 export interface InstanceRuntime {

@@ -1,4 +1,5 @@
-import { CloudSpaceRegion, CloudSpaceStatus, createPaginationVo, createZodDto } from '@yikart/common'
+import { createPaginationVo, createZodDto } from '@yikart/common'
+import { CloudSpaceRegion, CloudSpaceStatus } from '@yikart/mongodb'
 import z from 'zod'
 
 // 浏览器环境VO
