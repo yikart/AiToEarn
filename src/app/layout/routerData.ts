@@ -30,7 +30,7 @@ export const routerData: IRouterDataItem[] = [
   {
     name: "热门内容",
     translationKey: "hotContent",
-    path: "/hotContent",
+    path: "/hot-content",
   },
   {
     name: "AI工具",

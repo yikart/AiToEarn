@@ -18,7 +18,6 @@ export async function generateMetadata({
   return {
     title: t("title"),
     description: t("content"),
-    keywords: t("keywords"),
   };
 }
 
@@ -39,7 +38,7 @@ export default async function RootLayout({
               height: "100vh",
               display: "flex",
               flexDirection: "column",
-              minHeight: "0",
+              minHeight: '0'
             }}
           >
             <ConditionalHeader />
