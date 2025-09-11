@@ -1,7 +1,7 @@
 import { ansibleConfigSchema } from '@yikart/ansible'
 import { baseConfig, createZodDto, selectConfig } from '@yikart/common'
 import { mongodbConfigSchema } from '@yikart/mongodb'
-import { RedlockConfigSchema } from '@yikart/redlock'
+import { redlockConfigSchema } from '@yikart/redlock'
 import { ucloudConfigSchema } from '@yikart/ucloud'
 import z from 'zod'
 
@@ -34,8 +34,16 @@ export const appConfigSchema = z.object({
     token: z.string(),
     repo: z.string(),
   }),
+  redis: z.object({
+    host: z.string().optional(),
+    port: z.number().optional(),
+    keepAlive: z.number().optional(),
+    username: z.string().optional(),
+    password: z.string().optional(),
+    db: z.number().optional(),
+  }),
   ansible: ansibleConfigSchema,
-  redlock: RedlockConfigSchema,
+  redlock: redlockConfigSchema,
   jwt: jwtConfigSchema,
 })
 

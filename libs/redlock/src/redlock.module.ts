@@ -17,8 +17,7 @@ export class RedlockModule {
         {
           provide: Redis,
           useFactory: (config: RedlockConfig) => {
-            const { keyPrefix, ...connectionConfig } = config.redis
-            return new Redis(connectionConfig)
+            return new Redis(config.redis)
           },
           inject: [RedlockConfig],
         },
