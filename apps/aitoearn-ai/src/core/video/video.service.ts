@@ -4,7 +4,7 @@ import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
 import { S3Service } from '@yikart/aws-s3'
 import { AppException, ResponseCode, UserType } from '@yikart/common'
 import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
-import { KlingAction } from '../../common/enums/kling-action.enum'
+import { KlingAction, TaskStatus } from '../../common/enums'
 import { config } from '../../config'
 import {
   Image2VideoCreateTaskResponseData,
@@ -15,7 +15,6 @@ import {
   Text2VideoCreateTaskResponseData,
   Text2VideoGetTaskResponseData,
 } from '../../libs/kling'
-import { TaskStatus, VideoGenerationResponse } from '../../libs/new-api'
 import {
   ContentType,
   CreateVideoGenerationTaskResponse,
@@ -35,6 +34,7 @@ import {
   VolcengineCallbackDto,
   VolcengineGenerationRequestDto,
 } from './video.dto'
+import { VideoTaskStatusResponseVo } from './video.vo'
 
 @Injectable()
 export class VideoService {
@@ -181,7 +181,7 @@ export class VideoService {
       return await this.getVolcengineTaskResult(aiLog.response as unknown as GetVideoGenerationTaskResponse)
     }
     else {
-      return aiLog.response as unknown as VideoGenerationResponse
+      return aiLog.response as unknown as VideoTaskStatusResponseVo
     }
   }
 
