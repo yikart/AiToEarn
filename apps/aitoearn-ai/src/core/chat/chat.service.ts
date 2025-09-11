@@ -4,7 +4,7 @@ import { OpenAIClient } from '@langchain/openai'
 import { Injectable, Logger } from '@nestjs/common'
 import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
 import { AppException, ResponseCode, UserType } from '@yikart/common'
-import { AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
+import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import { BigNumber } from 'bignumber.js'
 import { config } from '../../config'
 import { OpenaiService } from '../../libs/openai'
@@ -106,6 +106,7 @@ export class ChatService {
       userId,
       userType,
       model: params.model,
+      channel: AiLogChannel.NewApi,
       startedAt,
       duration,
       type: AiLogType.Chat,

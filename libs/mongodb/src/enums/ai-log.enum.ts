@@ -13,6 +13,8 @@ export enum AiLogStatus {
 
 export enum AiLogChannel {
   NewApi = 'new-api',
+  Md2Card = 'md2card',
+  FireflyCard = 'fireflyCard',
   Kling = 'kling',
   Volcengine = 'volcengine',
 }

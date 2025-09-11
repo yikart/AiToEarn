@@ -34,7 +34,6 @@ import {
   VolcengineCallbackDto,
   VolcengineGenerationRequestDto,
 } from './video.dto'
-import { VideoTaskStatusResponseVo } from './video.vo'
 
 @Injectable()
 export class VideoService {
@@ -145,7 +144,7 @@ export class VideoService {
   }
 
   /**
-   * 查询视频任务状态（纯数据库查询）
+   * 查询视频任务状态
    */
   async getVideoTaskStatus(request: UserVideoTaskQueryDto) {
     const { taskId } = request
@@ -174,14 +173,14 @@ export class VideoService {
       throw new AppException(ResponseCode.InvalidAiTaskId)
     }
 
-    if (aiLog.channel === 'kling') {
+    if (aiLog.channel === AiLogChannel.Kling) {
       return await this.getKlingTaskResult(aiLog.response as unknown as Text2VideoGetTaskResponseData)
     }
-    else if (aiLog.channel === 'volcengine') {
+    else if (aiLog.channel === AiLogChannel.Volcengine) {
       return await this.getVolcengineTaskResult(aiLog.response as unknown as GetVideoGenerationTaskResponse)
     }
     else {
-      return aiLog.response as unknown as VideoTaskStatusResponseVo
+      throw new AppException(ResponseCode.InvalidAiTaskId)
     }
   }
 

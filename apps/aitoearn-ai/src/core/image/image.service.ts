@@ -3,7 +3,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
 import { S3Service } from '@yikart/aws-s3'
 import { AppException, getExtByMimeType, ImageType, ResponseCode, UserType } from '@yikart/common'
-import { AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
+import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import parseDataUri from 'data-urls'
 import OpenAI from 'openai'
 import { config } from '../../config'
@@ -237,12 +237,13 @@ export class ImageService {
     userId: string
     userType: UserType
     model: string
+    channel?: AiLogChannel
     type: AiLogType
     pricing: number
     request: Record<string, unknown>
     run: () => Promise<T>
   }): Promise<T> {
-    const { userId, userType, model, type, pricing, request, run } = opts
+    const { userId, userType, model, channel, type, pricing, request, run } = opts
 
     if (pricing > 0 && userType === UserType.User) {
       const { balance } = await this.userClient.getPointsBalance({ userId })
@@ -265,6 +266,7 @@ export class ImageService {
       userId,
       userType,
       model,
+      channel: channel ?? AiLogChannel.NewApi,
       type,
       points: pricing,
       startedAt,
@@ -323,6 +325,7 @@ export class ImageService {
       userId,
       userType,
       model: 'md2card',
+      channel: AiLogChannel.Md2Card,
       type: AiLogType.Card,
       pricing,
       request: params,
@@ -337,6 +340,7 @@ export class ImageService {
       userId,
       userType,
       model: 'fireflyCard',
+      channel: AiLogChannel.FireflyCard,
       type: AiLogType.Card,
       pricing: 0,
       request: params,

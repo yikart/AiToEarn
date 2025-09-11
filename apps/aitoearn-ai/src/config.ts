@@ -1,6 +1,6 @@
 import { s3ConfigSchema } from '@yikart/aws-s3'
 import { baseConfig, createZodDto, selectConfig } from '@yikart/common'
-import { mongodbConfigSchema } from '@yikart/mongodb'
+import { AiLogChannel, mongodbConfigSchema } from '@yikart/mongodb'
 import z from 'zod'
 import { fireflycardConfigSchema } from './libs/fireflycard'
 
@@ -41,7 +41,7 @@ const aiModelsConfigSchema = z.object({
     generation: z.array(z.object({
       name: z.string(),
       description: z.string(),
-      channel: z.string(),
+      channel: z.enum(AiLogChannel),
       modes: z.array(z.enum(['text2video', 'image2video'])),
       resolutions: z.array(z.string()),
       durations: z.array(z.number()),

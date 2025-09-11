@@ -42,13 +42,13 @@ export class ImageController {
 
   @NatsMessagePattern('ai.md2card.generate')
   async md2Card(@Payload() data: UserMd2CardDto): Promise<Md2CardResponseVo> {
-    const response = await this.imageService.md2Card(data)
+    const response = await this.imageService.userMd2Card(data)
     return Md2CardResponseVo.create(response)
   }
 
   @NatsMessagePattern('ai.firefly-card.generate')
   async fireflyCard(@Payload() data: UserFireflyCardDto): Promise<FireflycardResponseVo> {
-    const response = await this.imageService.fireflyCard(data)
+    const response = await this.imageService.userFireFlyCard(data)
     return FireflycardResponseVo.create(response)
   }
 }
