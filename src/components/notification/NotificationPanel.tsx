@@ -235,7 +235,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
     
     try {
       // 第一步：接受任务
-      const response: any = await acceptTask(selectedTask.id, selectedTask.opportunityId);
+      const response: any = await acceptTask(selectedTask.id, selectedTask.opportunityId, account?.account);
       if (response && response.code === 0) {
         // 更新进度：第一步完成，开始第二步
         setTaskProgress(prev => ({

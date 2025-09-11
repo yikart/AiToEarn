@@ -760,7 +760,7 @@ export default function TaskPageCore() {
                         
                         <div style={{ marginBottom: '12px' }}>
                           <strong>{t('taskInfo.reward' as any)}：</strong>
-                          <span style={{ color: '#f50', fontWeight: 'bold' }}>¥{task.reward}</span>
+                          <span style={{ color: '#f50', fontWeight: 'bold' }}>¥ {task.reward/100}</span>
                         </div>
                         
                         {/* 发布账号信息 */}
@@ -878,7 +878,7 @@ export default function TaskPageCore() {
                         
                         <div style={{ marginBottom: '12px' }}>
                           <strong>{t('taskInfo.reward' as any)}：</strong>
-                          <span style={{ color: '#f50', fontWeight: 'bold' }}>¥{task.reward}</span>
+                          <span style={{ color: '#f50', fontWeight: 'bold' }}>¥ {task.reward/100}</span>
                         </div>
                         
                         {/* 发布账号信息 */}
@@ -1175,7 +1175,7 @@ export default function TaskPageCore() {
                         fontWeight: 'bold',
                         color: '#d63031'
                       }}>
-                        ¥{taskDetail.reward}
+                        ¥ {taskDetail.reward/100}
                       </div>
                     </div>
                     
@@ -1489,7 +1489,7 @@ export default function TaskPageCore() {
                         fontWeight: 'bold',
                         color: '#d63031'
                       }}>
-                        ¥{acceptedTaskDetail.reward}
+                        ¥ {acceptedTaskDetail.reward/100}
                       </div>
                     </div>
                     
