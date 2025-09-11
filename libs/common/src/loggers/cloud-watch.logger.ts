@@ -13,6 +13,8 @@ export interface CloudWatchLoggerOptions extends CloudWatchLogsClientConfig {
 
 export class CloudWatchLogger implements DestinationStream {
   private readonly client: CloudWatchLogsClient
+  private writeQueue: Promise<void> = Promise.resolve()
+  private readonly ready: Promise<void>
 
   constructor(private readonly options: CloudWatchLoggerOptions) {
     const credentials = options.accessKeyId && options.secretAccessKey
@@ -28,14 +30,14 @@ export class CloudWatchLogger implements DestinationStream {
 
     this.options.stream = options.stream || `${os.hostname()}-${process.pid}-${Date.now()}`
 
-    this.createLogGroup().then(() => this.createLogStream())
+    this.ready = this.createLogGroup().then(() => this.createLogStream())
   }
 
   async createLogGroup() {
     const command = new CreateLogGroupCommand({
       logGroupName: this.options.group,
     })
-    return await this.client.send(command)
+    await this.client.send(command)
       .catch((e) => {
         if (e.name !== 'ResourceAlreadyExistsException')
           throw e
@@ -47,7 +49,7 @@ export class CloudWatchLogger implements DestinationStream {
       logGroupName: this.options.group,
       logStreamName: this.options.stream,
     })
-    return await this.client.send(command)
+    await this.client.send(command)
       .catch((e) => {
         if (e.name !== 'ResourceAlreadyExistsException')
           throw e
@@ -55,18 +57,24 @@ export class CloudWatchLogger implements DestinationStream {
   }
 
   async write(msg: string): Promise<void> {
-    const command = new PutLogEventsCommand({
-      logGroupName: this.options.group,
-      logStreamName: this.options.stream,
-      entity: this.options.entity,
-      logEvents: [
-        {
-          timestamp: Date.now(),
-          message: msg,
-        },
-      ],
+    this.writeQueue = this.writeQueue.then(async () => {
+      await this.ready
+
+      const command = new PutLogEventsCommand({
+        logGroupName: this.options.group,
+        logStreamName: this.options.stream,
+        entity: this.options.entity,
+        logEvents: [
+          {
+            timestamp: Date.now(),
+            message: msg,
+          },
+        ],
+      })
+
+      await this.client.send(command)
     })
 
-    await this.client.send(command)
+    return this.writeQueue
   }
 }
