@@ -17,10 +17,10 @@
     "zod": "^4.0.0"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.879.0",
+    "@aws-sdk/client-s3": "^3.886.0",
     "@aws-sdk/lib-storage": "^3.886.0",
-    "@aws-sdk/s3-presigned-post": "^3.879.0",
-    "@aws-sdk/s3-request-presigner": "^3.879.0",
+    "@aws-sdk/s3-presigned-post": "^3.886.0",
+    "@aws-sdk/s3-request-presigner": "^3.886.0",
     "tslib": "^2.3.0"
   }
 }
