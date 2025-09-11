@@ -100,8 +100,8 @@ export const getTaskDetail = (opportunityId: string) => {
 };
 
 // 接受任务
-export const acceptTask = (taskId: string, opportunityId: string) => {
-  return http.post("task/accept", { taskId, opportunityId });
+export const acceptTask = (taskId: string, opportunityId: string, accountId?: string) => {
+  return http.post("task/accept", { taskId, opportunityId, accountId });
 };
 
 // 提交任务
