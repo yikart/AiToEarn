@@ -16,6 +16,7 @@ import {
   KlingVideoGenerationResponseVo,
   // Logs interfaces
   LogDetailQueryDto,
+  LogDetailVo,
   LogListQueryDto,
   LogVo,
   Md2CardResponseVo,
@@ -179,7 +180,7 @@ export class AitoearnAiClient {
   /**
    * 获取日志详情
    */
-  async getLogDetail(dto: LogDetailQueryDto): Promise<LogVo> {
+  async getLogDetail(dto: LogDetailQueryDto): Promise<LogDetailVo> {
     return this.natsClient.send('ai.logs.detail', dto)
   }
 }

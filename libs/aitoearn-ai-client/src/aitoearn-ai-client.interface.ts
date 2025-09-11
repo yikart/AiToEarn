@@ -1,5 +1,24 @@
 import { UserType } from '@yikart/common'
 
+export enum AiLogType {
+  Chat = 'chat',
+  Image = 'image',
+  Card = 'card',
+  Video = 'video',
+}
+
+export enum AiLogStatus {
+  Generating = 'generating',
+  Success = 'success',
+  Failed = 'failed',
+}
+
+export enum AiLogChannel {
+  NewApi = 'new-api',
+  Kling = 'kling',
+  Volcengine = 'volcengine',
+}
+
 // Fireflycard 模板类型枚举
 export enum FireflycardTempTypes {
   A = 'tempA',
@@ -570,11 +589,21 @@ export interface LogVo {
   id: string
   userId: string
   userType: UserType
-  action: string
+  taskId: string
+  type: AiLogType
   model: string
-  status: string
+  channel: AiLogChannel
+  action?: string
+  status: AiLogStatus
+  startedAt?: string
+  duration?: number
   points: number
-  errorMessage?: string
   createdAt: string
   updatedAt: string
+}
+
+// Logs VO 接口
+export interface LogDetailVo extends LogVo {
+  request?: Record<string, unknown>
+  response?: Record<string, unknown>
 }

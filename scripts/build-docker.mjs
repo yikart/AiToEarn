@@ -1,4 +1,4 @@
-#!/usr/bin/env zx
+#!/usr/bin/env node
 
 import { Command } from 'commander'
 import { $, chalk, fs, path } from 'zx'
