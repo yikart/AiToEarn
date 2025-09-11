@@ -140,6 +140,10 @@ export interface ImageResponseVo {
     output_tokens?: number
     total_tokens?: number
   }
+  background?: string
+  output_format?: string
+  quality?: string
+  size?: string
 }
 
 export interface Md2CardResponseVo {
@@ -239,6 +243,58 @@ export interface KlingText2VideoRequestDto {
   duration?: '5' | '10'
   external_task_id?: string
 }
+// 运镜配置接口
+export interface CameraControlConfig {
+  /** 水平运镜，控制摄像机在水平方向上的移动量（沿x轴平移） */
+  horizontal?: number
+  /** 垂直运镜，控制摄像机在垂直方向上的移动量（沿y轴平移） */
+  vertical?: number
+  /** 水平摇镜，控制摄像机在水平面上的旋转量（绕y轴旋转） */
+  pan?: number
+  /** 垂直摇镜，控制摄像机在垂直面上的旋转量（沿x轴旋转） */
+  tilt?: number
+  /** 旋转运镜，控制摄像机的滚动量（绕z轴旋转） */
+  roll?: number
+  /** 变焦，控制摄像机的焦距变化，影响视野的远近 */
+  zoom?: number
+}
+
+// 运镜类型枚举
+export enum CameraControlType {
+  /** 简单运镜 */
+  Simple = 'simple',
+  /** 镜头下压并后退 */
+  DownBack = 'down_back',
+  /** 镜头前进并上仰 */
+  ForwardUp = 'forward_up',
+  /** 先右旋转后前进 */
+  RightTurnForward = 'right_turn_forward',
+  /** 先左旋并前进 */
+  LeftTurnForward = 'left_turn_forward',
+}
+
+// 运镜控制接口
+export interface CameraControl {
+  /** 预定义的运镜类型 */
+  type?: CameraControlType
+  /** 运镜配置 */
+  config?: CameraControlConfig
+}
+// 动态笔刷轨迹点接口
+export interface TrajectoryPoint {
+  /** 轨迹点横坐标 */
+  x: number
+  /** 轨迹点纵坐标 */
+  y: number
+}
+
+// 动态笔刷配置接口
+export interface DynamicMask {
+  /** 动态笔刷涂抹区域 */
+  mask: string
+  /** 运动轨迹坐标序列 */
+  trajectories: TrajectoryPoint[]
+}
 
 export interface KlingImage2VideoRequestDto {
   userId: string
@@ -251,22 +307,26 @@ export interface KlingImage2VideoRequestDto {
   cfg_scale?: number
   mode?: KlingMode
   static_mask?: string
+  dynamic_masks?: DynamicMask[]
+  camera_control?: CameraControl
   duration?: '5' | '10'
   aspect_ratio?: AspectRatio
-  external_task_id?: string
 }
 
+export interface ImageListItem {
+  /** 图片URL */
+  image: string
+}
 export interface KlingMultiImage2VideoRequestDto {
   userId: string
   userType: UserType
   model_name: string
-  image_list: any[]
+  image_list: ImageListItem[]
   prompt: string
   negative_prompt?: string
   mode?: KlingMode
   duration?: '5' | '10'
   aspect_ratio?: AspectRatio
-  external_task_id?: string
 }
 
 export interface VolcengineGenerationRequestDto {
@@ -313,31 +373,6 @@ export interface KlingCallbackDto {
       url: string
       duration: string
     }>
-  }
-}
-
-export interface VolcengineCallbackDto {
-  id: string
-  model: string
-  status: VolcengineTaskStatus
-  created_at: number
-  updated_at: number
-  content?: {
-    video_url: string
-    last_frame_url?: string
-  }
-  error?: {
-    message: string
-    code: string
-  } | null
-  seed?: number
-  resolution?: string
-  ratio?: string
-  duration?: number
-  framespersecond?: number
-  usage?: {
-    completion_tokens: number
-    total_tokens: number
   }
 }
 

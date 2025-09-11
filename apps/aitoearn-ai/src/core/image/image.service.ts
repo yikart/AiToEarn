@@ -97,26 +97,25 @@ export class ImageService {
       delete params.style
     }
 
-    const imageResult = await this.openaiService.createImageGeneration({
+    const result = await this.openaiService.createImageGeneration({
       ...params,
     } as Omit<OpenAI.Images.ImageGenerateParams, 'user'> & { apiKey?: string })
 
-    for (const image of imageResult.data || []) {
+    for (const image of result.data || []) {
       if (image.url) {
         image.url = await this.uploadImageToS3(image.url, `ai/images/${request.model}`, user)
       }
       if (image.b64_json) {
-        const fullPath = path.join(`ai/images/${request.model}`, user || '', `${Date.now().toString(36)}.png`)
-        const result = await this.s3Service.putObject(fullPath, Buffer.from(image.b64_json, 'base64'))
-        image.url = result.path
+        const fullPath = path.join(`ai/images/${request.model}`, user || '', `${Date.now().toString(36)}.${result.output_format || 'png'}`)
+        const obj = await this.s3Service.putObject(fullPath, Buffer.from(image.b64_json, 'base64'))
+        image.url = obj.path
         delete image.b64_json
       }
     }
 
     return {
-      created: imageResult.created,
-      list: imageResult.data || [],
-      usage: imageResult.usage,
+      ...result,
+      list: result.data || [],
     }
   }
 

@@ -221,17 +221,17 @@ export type Text2VideoGetTasksResponseData = Text2VideoGetTaskResponseData[]
 // 动态笔刷轨迹点接口
 export interface TrajectoryPoint {
   /** 轨迹点横坐标 */
-  x: number
+  x?: number
   /** 轨迹点纵坐标 */
-  y: number
+  y?: number
 }
 
 // 动态笔刷配置接口
 export interface DynamicMask {
   /** 动态笔刷涂抹区域 */
-  mask: string
+  mask?: string
   /** 运动轨迹坐标序列 */
-  trajectories: TrajectoryPoint[]
+  trajectories?: TrajectoryPoint[]
 }
 
 // 图生视频创建任务请求接口

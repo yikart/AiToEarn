@@ -20,6 +20,10 @@ const userImageResponseSchema = z.object({
   created: z.number().describe('创建时间戳'),
   list: z.array(imageObjectSchema).describe('生成的图片列表'),
   usage: usageMetadataSchema.optional().describe('token使用情况'),
+  background: z.string().optional(),
+  output_format: z.string().optional(),
+  quality: z.string().optional(),
+  size: z.string().optional(),
 })
 
 export class ImageResponseVo extends createZodDto(userImageResponseSchema) {}

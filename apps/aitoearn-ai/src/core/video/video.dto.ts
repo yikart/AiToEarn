@@ -1,6 +1,6 @@
 import { createZodDto, UserType } from '@yikart/common'
 import { z } from 'zod'
-import { AspectRatio, TaskStatus as KlingTaskStatus, Mode } from '../../libs/kling'
+import { AspectRatio, CameraControlType, TaskStatus as KlingTaskStatus, Mode } from '../../libs/kling'
 import { ContentType, ImageRole, TaskStatus } from '../../libs/volcengine'
 // 移除了不必要的类型导入，因为现在使用zod schema
 
@@ -153,10 +153,25 @@ const klingImage2VideoRequestSchema = z.object({
   cfg_scale: z.number().optional().describe('生成视频的自由度'),
   mode: z.enum(Mode).optional().describe('生成视频的模式'),
   static_mask: z.string().optional().describe('静态笔刷涂抹区域'),
-  dynamic_masks: z.array(z.any()).optional().describe('动态笔刷配置列表'),
-  camera_control: z.any().optional().describe('控制摄像机运动的协议'),
+  dynamic_masks: z.array(z.object({
+    mask: z.string().optional(),
+    trajectories: z.array(z.object({
+      x: z.number().optional(),
+      y: z.number().optional(),
+    })),
+  })).optional().describe('动态笔刷配置列表'),
+  camera_control: z.object({
+    type: z.enum(CameraControlType).optional(),
+    config: z.object({
+      horizontal: z.number().optional(),
+      vertical: z.number().optional(),
+      pan: z.number().optional(),
+      tilt: z.number().optional(),
+      roll: z.number().optional(),
+      zoom: z.number().optional(),
+    }).optional(),
+  }).optional().describe('控制摄像机运动的协议'),
   duration: z.enum(['5', '10']).optional().describe('生成视频时长'),
-  external_task_id: z.string().optional().describe('自定义任务ID'),
 })
 
 export class KlingImage2VideoRequestDto extends createZodDto(klingImage2VideoRequestSchema) {}
@@ -166,13 +181,14 @@ const klingMultiImage2VideoRequestSchema = z.object({
   userId: z.string(),
   userType: z.enum(UserType),
   model_name: z.string().min(1).describe('模型名称'),
-  image_list: z.array(z.any()).describe('图片列表'),
+  image_list: z.array(z.object({
+    image: z.string(),
+  })).describe('图片列表'),
   prompt: z.string().describe('正向文本提示词'),
   negative_prompt: z.string().optional().describe('负向文本提示词'),
   mode: z.enum(Mode).optional().describe('生成视频的模式'),
   duration: z.enum(['5', '10']).optional().describe('生成视频时长'),
   aspect_ratio: z.enum(AspectRatio).optional().describe('生成图片的画面纵横比'),
-  external_task_id: z.string().optional().describe('自定义任务ID'),
 })
 
 export class KlingMultiImage2VideoRequestDto extends createZodDto(klingMultiImage2VideoRequestSchema) {}
