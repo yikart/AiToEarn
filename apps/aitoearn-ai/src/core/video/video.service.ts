@@ -149,7 +149,7 @@ export class VideoService {
   async getVideoTaskStatus(request: UserVideoTaskQueryDto) {
     const { taskId } = request
 
-    const aiLog = await this.aiLogRepo.getByTaskId(taskId)
+    const aiLog = await this.aiLogRepo.getById(taskId)
 
     if (aiLog == null || aiLog.type !== AiLogType.Video) {
       throw new AppException(ResponseCode.InvalidAiTaskId)
@@ -401,7 +401,7 @@ export class VideoService {
       content.video_url = result.path
     }
 
-    const duration = updated_at - aiLog.startedAt.getTime()
+    const duration = (updated_at * 1000) - aiLog.startedAt.getTime()
 
     await this.aiLogRepo.updateById(aiLog.id, {
       status: aiLogStatus,
