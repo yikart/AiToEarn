@@ -578,7 +578,7 @@ export interface LogVo {
   id: string
   userId: string
   userType: UserType
-  taskId: string
+  taskId?: string
   type: AiLogType
   model: string
   channel: AiLogChannel
@@ -593,6 +593,7 @@ export interface LogVo {
 
 // Logs VO 接口
 export interface LogDetailVo extends LogVo {
+  errorMessage?: string
   request?: Record<string, unknown>
   response?: Record<string, unknown>
 }
