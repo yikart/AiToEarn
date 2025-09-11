@@ -157,7 +157,7 @@ export default function IncomePage() {
       key: 'amount',
       render: (amount: number) => (
         <span style={{ color: '#52c41a', fontWeight: 'bold' }}>
-          ${amount.toFixed(2)}
+          ￥ {amount.toFixed(2)/100}
         </span>
       ),
     },
@@ -212,7 +212,7 @@ export default function IncomePage() {
       key: 'amount',
       render: (amount: number) => (
         <span style={{ color: '#1890ff', fontWeight: 'bold' }}>
-          ${amount.toFixed(2)}
+          ￥ {amount.toFixed(2)/100}
         </span>
       ),
     },
@@ -275,7 +275,7 @@ export default function IncomePage() {
               </div>
               <div className={styles.balanceInfo}>
                 <div className={styles.balanceLabel}>{t('currentBalance')}</div>
-                <div className={styles.balanceAmount}>${userInfo?.income || 0}</div>
+                <div className={styles.balanceAmount}>￥ {userInfo?.income || 0}</div>
               </div>
             </div>
           </div>
@@ -393,7 +393,7 @@ export default function IncomePage() {
               </div>
               <div className={styles.withdrawItem}>
                 <span className={styles.withdrawLabel}>{t('withdrawAmount')}：</span>
-                <span className={styles.withdrawAmount}>${selectedIncomeRecord.amount.toFixed(2)}</span>
+                <span className={styles.withdrawAmount}>￥ {selectedIncomeRecord.amount.toFixed(2)/100}</span>
               </div>
               <div className={styles.withdrawItem}>
                 <span className={styles.withdrawLabel}>{t('incomeType')}：</span>
