@@ -156,33 +156,17 @@ export interface FireflycardResponseVo {
 export interface ImageGenerationModelParamsVo {
   name: string
   description: string
-  supportedSizes: string[]
-  supportedQualities: string[]
-  supportedStyles: string[]
-  supportedFormats: string[]
-  maxPromptLength: number
-  pricing: {
-    size: string
-    quality: string
-    style: string
-    price: number
-  }[]
+  sizes: string[]
+  qualities: string[]
+  styles: string[]
+  pricing: string
 }
 
 export interface ImageEditModelParamsVo {
   name: string
   description: string
-  supportedSizes: string[]
-  supportedQualities: string[]
-  supportedStyles: string[]
-  supportedFormats: string[]
-  maxPromptLength: number
-  pricing: {
-    size: string
-    quality: string
-    style: string
-    price: number
-  }[]
+  sizes: string[]
+  pricing: string
 }
 
 // 画面纵横比枚举
