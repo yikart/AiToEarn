@@ -17,10 +17,7 @@ RUN apk add --no-cache curl gnupg openssh-client python3 py3-pip && \
 
 WORKDIR /app
 
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/package.json ./
-COPY --from=deps /app/pnpm-workspace.yaml ./
-COPY --from=deps /app/.npmrc ./
+COPY --from=deps /app/ ./
 
 COPY apps/ ./apps/
 COPY libs/ ./libs/
@@ -28,4 +25,4 @@ COPY libs/ ./libs/
 ENV NODE_ENV=production
 ENV APP_NAME=$APP_NAME
 
-CMD node apps/${APP_NAME}/main.js
+CMD node apps/${APP_NAME}/src/main.js

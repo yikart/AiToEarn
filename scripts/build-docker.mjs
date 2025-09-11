@@ -3,6 +3,16 @@
 import { Command } from 'commander'
 import { $, chalk, fs, path } from 'zx'
 
+async function cleanOutputDir(contextDir, verbose = false) {
+  if (await fs.pathExists(contextDir)) {
+    if (verbose)
+      console.info(chalk.yellow(`清理输出目录: ${contextDir}`))
+    await fs.remove(contextDir)
+    if (verbose)
+      console.info(chalk.green('输出目录清理完成'))
+  }
+}
+
 async function prepareContext(projectName, options = {}) {
   const { output = 'tmp/docker-context', verbose = false, contextOnly = false } = options
   const contextDir = path.resolve(output)
@@ -12,6 +22,9 @@ async function prepareContext(projectName, options = {}) {
     console.info(chalk.gray(`输出目录: ${contextDir}`))
     console.info(chalk.gray(`构建 Docker: ${contextOnly ? '否' : '是'}`))
   }
+
+  // 清理输出目录
+  await cleanOutputDir(contextDir, verbose)
 
   const { dependencies: projects, graph } = await getDependencies(projectName, verbose)
   await fs.ensureDir(contextDir)
