@@ -1,5 +1,4 @@
-import { ChatMessage } from '@langchain/core/dist/messages/chat'
-import { BaseMessage } from '@langchain/core/messages'
+import { BaseMessage, ChatMessage } from '@langchain/core/messages'
 import { OpenAIClient } from '@langchain/openai'
 import { Injectable, Logger } from '@nestjs/common'
 import { AitoearnUserClient } from '@yikart/aitoearn-user-client'

@@ -1,10 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
-import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
-import { S3Service } from '@yikart/aws-s3'
 import { AiLog, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import { VideoService } from '../core/video'
-import { KlingService } from '../libs/kling'
 import { VolcengineService } from '../libs/volcengine'
 
 @Injectable()
@@ -14,9 +11,6 @@ export class VideoTaskStatusScheduler {
   constructor(
     private readonly aiLogRepo: AiLogRepository,
     private readonly videoService: VideoService,
-    private readonly userClient: AitoearnUserClient,
-    private readonly s3Service: S3Service,
-    private readonly klingService: KlingService,
     private readonly volcengineService: VolcengineService,
   ) {}
 

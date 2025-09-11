@@ -10,7 +10,6 @@ export class S3Module {
   // 同步配置
   static forRoot(config: S3Config): DynamicModule {
     const providers: Provider[] = [
-      { provide: S3Config, useValue: config },
       {
         provide: S3Config,
         useValue: config,
@@ -22,9 +21,11 @@ export class S3Module {
         },
         inject: [S3Config],
       },
+      S3Service,
     ]
 
     return {
+      global: true,
       module: S3Module,
       providers,
       exports: [S3Service],

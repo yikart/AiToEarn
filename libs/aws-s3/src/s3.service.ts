@@ -1,4 +1,3 @@
-import type { S3Config } from './s3.config'
 import {
   CompleteMultipartUploadCommand,
   CreateMultipartUploadCommand,
@@ -13,6 +12,7 @@ import {
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 import { Injectable, Logger } from '@nestjs/common'
 import { AppException, ResponseCode } from '@yikart/common'
+import { S3Config } from './s3.config'
 
 @Injectable()
 export class S3Service {

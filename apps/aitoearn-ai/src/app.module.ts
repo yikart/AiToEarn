@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common'
+import { AitoearnUserClientModule } from '@yikart/aitoearn-user-client'
+import { S3Module } from '@yikart/aws-s3'
 import { MongodbModule } from '@yikart/mongodb'
 import { config } from './config'
 import { ChatModule } from './core/chat'
@@ -9,6 +11,8 @@ import { SchedulerModule } from './scheduler'
 
 @Module({
   imports: [
+    AitoearnUserClientModule.forRoot(config.nats),
+    S3Module.forRoot(config.s3),
     MongodbModule.forRoot(config.mongodb),
     OpenaiModule.forRoot(config.ai.openai),
     SchedulerModule,
