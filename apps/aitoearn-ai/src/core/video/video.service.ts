@@ -322,7 +322,7 @@ export class VideoService {
   async getKlingTask(userId: string, userType: UserType, taskId: string) {
     const aiLog = await this.aiLogRepo.getByIdAndUserId(taskId, userId, userType)
 
-    if (aiLog == null || aiLog.type !== AiLogType.Video || aiLog.channel !== AiLogChannel.Kling) {
+    if (aiLog == null || !aiLog.taskId || aiLog.type !== AiLogType.Video || aiLog.channel !== AiLogChannel.Kling) {
       throw new AppException(ResponseCode.InvalidAiTaskId)
     }
     if (aiLog.status === AiLogStatus.Generating) {
@@ -506,7 +506,7 @@ export class VideoService {
   async getVolcengineTask(userId: string, userType: UserType, taskId: string) {
     const aiLog = await this.aiLogRepo.getByIdAndUserId(taskId, userId, userType)
 
-    if (aiLog == null || aiLog.type !== AiLogType.Video || aiLog.channel !== AiLogChannel.Volcengine) {
+    if (aiLog == null || !aiLog.taskId || aiLog.type !== AiLogType.Video || aiLog.channel !== AiLogChannel.Volcengine) {
       throw new AppException(ResponseCode.InvalidAiTaskId)
     }
     if (aiLog.status === AiLogStatus.Generating) {

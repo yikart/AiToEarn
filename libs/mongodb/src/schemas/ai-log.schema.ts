@@ -27,10 +27,10 @@ export class AiLog extends WithTimestampSchema {
   userType: UserType
 
   @Prop({
-    required: true,
+    required: false,
     index: true,
   })
-  taskId: string
+  taskId?: string
 
   @Prop({
     required: true,
