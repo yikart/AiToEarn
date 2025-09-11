@@ -327,7 +327,7 @@ export default function TaskPageCore() {
     return taskTypeNames[type] || type;
   };
 
-  // 格式化时间
+  // 格式化时间（相对时间，如"3小时前"）
   const formatTime = (timeString: string) => {
     const date = new Date(timeString);
     const now = new Date();
@@ -341,6 +341,33 @@ export default function TaskPageCore() {
     if (hours < 24) return t('time.hoursAgo' as any, { hours });
     if (days < 7) return t('time.daysAgo' as any, { days });
     return date.toLocaleDateString();
+  };
+
+  // 格式化绝对时间（显示具体日期时间）
+  const formatAbsoluteTime = (timeString: string) => {
+    const date = new Date(timeString);
+    const now = new Date();
+    const diff = date.getTime() - now.getTime();
+    
+    // 如果是未来时间，显示剩余时间
+    if (diff > 0) {
+      const minutes = Math.floor(diff / (1000 * 60));
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      
+      if (minutes < 60) return `${minutes}分钟后`;
+      if (hours < 24) return `${hours}小时后`;
+      if (days < 7) return `${days}天后`;
+    }
+    
+    // 显示具体日期时间
+    return date.toLocaleString('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   // 获取任务状态标签
@@ -580,7 +607,7 @@ export default function TaskPageCore() {
     
     try {
       // 第一步：接受任务
-      const response: any = await acceptTask(task.id, task.opportunityId, account?.account);
+      const response: any = await acceptTask(task.id, task.opportunityId, account?.id);
       if (response && response.code === 0) {
         // 更新进度：第一步完成，开始第二步
         setTaskProgress(prev => ({
@@ -925,7 +952,7 @@ export default function TaskPageCore() {
                       <div className={styles.taskContent}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                           <span><strong>{t('taskInfo.publishTime' as any)}：</strong>{formatTime(task.createdAt)}</span>
-                          <span><strong>{t('taskInfo.endTime' as any)}：</strong>{formatTime(task.expiredAt)}</span>
+                          <span><strong>{t('taskInfo.endTime' as any)}：</strong>{formatAbsoluteTime(task.expiredAt)}</span>
                         </div>
                         
                         <div style={{ marginBottom: '12px' }}>
