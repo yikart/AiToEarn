@@ -1,0 +1,89 @@
+{
+  "title": "Notifications",
+  "detailTitle": "Notification Details",
+  "markAllAsRead": "Mark All as Read",
+  "markAsRead": "Mark as Read",
+  "delete": "Delete",
+  "close": "Close",
+  "noNotifications": "No notifications",
+  "confirmDelete": "Are you sure you want to delete this notification?",
+  "confirm": "Confirm",
+  "cancel": "Cancel",
+  "deleteSuccess": "Deleted successfully",
+  "deleteFailed": "Delete failed",
+  "markSuccess": "Marked successfully",
+  "markFailed": "Mark failed",
+  "markAllSuccess": "All marked successfully",
+  "getNotificationListFailed": "Failed to get notification list",
+  "getNotificationDetailFailed": "Failed to get notification details",
+  "createTime": "Create Time",
+  "readTime": "Read Time",
+  "taskDetail": "Task Details",
+  "acceptTask": "Accept Task",
+  "noTaskDetails": "No task details",
+  "taskProcessing": "Processing Task...",
+  "acceptingTask": "Accepting task...",
+  "publishingTask": "Publishing task...",
+  "submittingTask": "Submitting task...",
+  "taskCompleted": "Task Completed",
+  "taskProcessFailed": "Task processing failed",
+  "acceptTaskFailed": "Failed to accept task",
+  "publishTaskFailed": "Failed to publish task",
+  "submitTaskFailed": "Failed to submit task",
+  "getTaskDetailFailed": "Failed to get task details",
+  "accountInfoFailed": "Failed to get account information",
+  "appRequiredNotice": "⚠️ Notice:",
+  "appRequiredMessage": "Tasks from publisher account ({{platform}}) require mobile app operation. Please download the corresponding app to continue.",
+  "mediaPreview": "Media Preview",
+  "pageInfo": "{{start}}-{{end}} of {{total}} records",
+  "notificationTypes": {
+    "system": "System Notification",
+    "user": "User Notification",
+    "material": "Material Notification",
+    "task_reminder": "Task Reminder",
+    "other": "Other Notification"
+  },
+  "taskStatus": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "taskInfo": {
+    "description": "Description",
+    "publisherAccount": "Publisher Account",
+    "reward": "Reward",
+    "taskType": "Task Type"
+  },
+  "taskTypes": {
+    "video": "Video",
+    "article": "Article",
+    "article2": "Text Only"
+  },
+  "platforms": {
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "twitter": "Twitter",
+    "bilibili": "Bilibili",
+    "KWAI": "Kwai",
+    "douyin": "Douyin",
+    "xhs": "Xiaohongshu",
+    "wxSph": "WeChat Video",
+    "wxGzh": "WeChat Official Account",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "threads": "Threads",
+    "pinterest": "Pinterest"
+  },
+  "time": {
+    "justNow": "Just now",
+    "minutesAgo": "{{minutes}} minutes ago",
+    "hoursAgo": "{{hours}} hours ago",
+    "daysAgo": "{{days}} days ago"
+  },
+  "accountSelect": {
+    "title": "Select Publisher Account",
+    "description": "Please select an account to publish the task:",
+    "noAccounts": "No eligible accounts found, please add an account first",
+    "accountId": "Account ID",
+    "description": "Description"
+  }
+}
