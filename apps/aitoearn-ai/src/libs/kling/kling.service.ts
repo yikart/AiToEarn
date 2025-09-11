@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { AppException, ResponseCode } from '@yikart/common'
 import axios, { AxiosInstance, AxiosResponse } from 'axios'
+import jwt from 'jsonwebtoken'
 import { KlingConfig } from './kling.config'
 import {
   // 图生视频相关类型
@@ -67,11 +68,24 @@ export class KlingService {
   constructor(private readonly config: KlingConfig) {
     this.httpClient = axios.create({
       timeout: 30000,
+      baseURL: config.baseUrl,
     })
 
     // 添加请求拦截器
     this.httpClient.interceptors.request.use((config) => {
-      config.headers.Authorization = `Bearer ${this.config.apiKey}`
+      const now = Math.floor(Date.now() / 1000)
+      const token = jwt.sign(
+        {
+          iss: this.config.accessKey,
+          exp: now + 1800,
+          nbf: now - 5,
+        },
+        this.config.secretKey,
+        {
+          algorithm: 'HS256',
+        },
+      )
+      config.headers.Authorization = `Bearer ${token}`
       config.headers['Content-Type'] = 'application/json'
       return config
     })

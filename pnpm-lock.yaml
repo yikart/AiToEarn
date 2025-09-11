@@ -141,6 +141,9 @@ importers:
       data-urls:
         specifier: ^5.0.0
         version: 5.0.0
+      jsonwebtoken:
+        specifier: ^9.0.2
+        version: 9.0.2
       nats:
         specifier: ^2.29.3
         version: 2.29.3
@@ -160,6 +163,9 @@ importers:
       '@types/data-urls':
         specifier: ^3.0.4
         version: 3.0.4
+      '@types/jsonwebtoken':
+        specifier: ^9.0.10
+        version: 9.0.10
 
   apps/aitoearn-cloud-space:
     dependencies:

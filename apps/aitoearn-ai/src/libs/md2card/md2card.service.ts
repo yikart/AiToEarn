@@ -7,22 +7,22 @@ import { GenerateCardParams, GenerateCardResult } from './md2card.interface'
 @Injectable()
 export class Md2cardService {
   private readonly logger = new Logger(Md2cardService.name)
-  private readonly apiUrl: string
+  private readonly baseUrl: string
   private readonly apiKey: string
   private readonly timeout: number
 
   constructor(private readonly config: Md2cardConfig) {
-    this.apiUrl = config.apiUrl
+    this.baseUrl = config.baseUrl
     this.apiKey = config.apiKey
     this.timeout = config.timeout
   }
 
   async generateCard(params: GenerateCardParams): Promise<GenerateCardResult> {
-    this.logger.debug(`调用 MD2Card API: ${this.apiUrl}/api/generate`)
+    this.logger.debug(`调用 MD2Card API: ${this.baseUrl}/api/generate`)
 
     try {
       const response = await axios.post(
-        `${this.apiUrl}/api/generate`,
+        `${this.baseUrl}/api/generate`,
         params,
         {
           headers: {

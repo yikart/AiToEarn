@@ -6,7 +6,6 @@ import { fireflycardConfigSchema } from './libs/fireflycard'
 
 import { klingConfigSchema } from './libs/kling'
 import { md2cardConfigSchema } from './libs/md2card'
-import { newApiConfigSchema } from './libs/new-api'
 import { volcengineConfigSchema } from './libs/volcengine'
 
 const aiModelsConfigSchema = z.object({
@@ -68,7 +67,6 @@ export const aiConfigSchema = z.object({
   models: aiModelsConfigSchema,
   fireflycard: fireflycardConfigSchema,
   md2card: md2cardConfigSchema,
-  newApi: newApiConfigSchema,
   kling: z.object({
     ...klingConfigSchema.shape,
     callbackUrl: z.string().optional(),

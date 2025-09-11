@@ -21,7 +21,7 @@ export class VolcengineService {
    */
   private _createHttpClient(): AxiosInstance {
     return axios.create({
-      baseURL: this.config.baseURL,
+      baseURL: this.config.baseUrl,
       timeout: 30000,
       headers: {
         'Content-Type': 'application/json',
