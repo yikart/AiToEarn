@@ -17,6 +17,7 @@
     "i18next-resources-for-ts": "i18next-resources-for-ts interface -i ./src/app/i18n/locales/zh-CN -o ./@types/resources.d.ts"
   },
   "dependencies": {
+    "@svgr/webpack": "^6.5.1",
     "@ant-design/colors": "^7.2.1",
     "@ant-design/icons": "^6.0.0",
     "@ant-design/nextjs-registry": "^1.0.2",

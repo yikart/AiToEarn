@@ -4,26 +4,18 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat: 微调">
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/HotContentCore.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentSidebar/hotContentSidebar.module.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentSidebar/index.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/hotContent.module.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/useHotContent.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="refactor: 删除旧热门内容">
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/svgs/hotContent.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/svgs/hotEvent.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/svgs/hotFeatures.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/svgs/hotTitle.svg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hot-content/page.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hot-content/page.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/i18n/locales/en/translation.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/i18n/locales/en/translation.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/i18n/locales/zh-CN/translation.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/i18n/locales/zh-CN/translation.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/layout/routerData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout/routerData.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/hot-content/HotContent.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/hot-content/HotContent.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/hot-content/SideMenu.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/hot-content/SideMenu.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/notification/NotificationPanel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/notification/NotificationPanel.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/next.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/hot.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/hot.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/HotContentCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/HotContentCore.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentSidebar/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentSidebar/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,6 +57,9 @@
     &quot;accountId&quot;: &quot;f5430140-317f-4240-bde4-97758a52e360&quot;
   }
 }</component>
+  <component name="PackageJsonUpdateNotifier">
+    <dismissed value="$PROJECT_DIR$/package.json" />
+  </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="ProjectErrors" />
   </component>
@@ -133,6 +128,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\hotContent\svgs" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\components" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\api\plat" />
@@ -213,7 +209,7 @@
       <workItem from="1756993756933" duration="14000" />
       <workItem from="1757312591097" duration="83000" />
       <workItem from="1757409572449" duration="62000" />
-      <workItem from="1757502277189" duration="6689000" />
+      <workItem from="1757502277189" duration="19303000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -551,7 +547,15 @@
       <option name="project" value="LOCAL" />
       <updated>1756968908393</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="refactor: 删除旧热门内容">
+      <option name="closed" value="true" />
+      <created>1757510759441</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1757510759441</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -591,7 +595,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="fix(日历): 修复更新的问题" />
     <MESSAGE value="feat(发布)：b站添加标题参数" />
     <MESSAGE value="feat(发布)：发布记录添加账户筛选API" />
     <MESSAGE value="feat(发布)：1. b站添加是否转载、选择分区参数。 2. 发布记录展示时间修复，将后端返回的时间转为当前时区给用户展示。 3. b站添加强制拦截，分区、转载不选择会强制拦截用户。" />
@@ -616,6 +619,7 @@
     <MESSAGE value="fix: 默认空间国际化" />
     <MESSAGE value="fix: 校验修复" />
     <MESSAGE value="feat: 微调" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 微调" />
+    <MESSAGE value="refactor: 删除旧热门内容" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: 删除旧热门内容" />
   </component>
 </project>
