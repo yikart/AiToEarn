@@ -1,7 +1,7 @@
 {
   "name": "@yikart/aitoearn-ai-client",
   "type": "commonjs",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/yikart/aitoearn-monorepo.git"
@@ -11,11 +11,13 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@nestjs/common": "^11.0.0",
     "@yikart/common": "^0.0.6",
+    "zod": "^4.0.0"
+  },
+  "dependencies": {
     "@yikart/nats-client": "*",
-    "tslib": "^2.3.0",
-    "zod": "^4.0.17"
+    "tslib": "^2.3.0"
   }
 }

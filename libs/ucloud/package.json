@@ -1,7 +1,7 @@
 {
   "name": "@yikart/ucloud",
   "type": "commonjs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/yikart/aitoearn-monorepo.git"
@@ -11,11 +11,13 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@nestjs/common": "^11.0.0",
-    "@ucloud-sdks/ucloud-sdk-js": "^0.2.3",
     "@yikart/common": "*",
-    "tslib": "^2.3.0",
-    "zod": "^4.0.17"
+    "zod": "^4.0.0"
+  },
+  "dependencies": {
+    "@ucloud-sdks/ucloud-sdk-js": "^0.2.3",
+    "tslib": "^2.3.0"
   }
 }

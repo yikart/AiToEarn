@@ -255,7 +255,7 @@ importers:
         specifier: ^2.3.0
         version: 2.8.1
       zod:
-        specifier: ^4.0.17
+        specifier: ^4.0.0
         version: 4.1.4
 
   libs/aitoearn-user-client:
@@ -273,7 +273,7 @@ importers:
         specifier: ^2.3.0
         version: 2.8.1
       zod:
-        specifier: ^4.0.17
+        specifier: ^4.0.0
         version: 4.1.4
 
   libs/ansible:
@@ -291,7 +291,7 @@ importers:
         specifier: ^2.3.0
         version: 2.8.1
       zod:
-        specifier: ^4.0.17
+        specifier: ^4.0.0
         version: 4.1.4
 
   libs/aws-s3:
@@ -315,7 +315,7 @@ importers:
         specifier: ^2.3.0
         version: 2.8.1
       zod:
-        specifier: ^4.0.17
+        specifier: ^4.0.0
         version: 4.1.4
 
   libs/cloud-space-client:
@@ -333,7 +333,7 @@ importers:
         specifier: ^2.3.0
         version: 2.8.1
       zod:
-        specifier: ^4.0.17
+        specifier: ^4.0.0
         version: 4.1.4
 
   libs/common:
@@ -406,8 +406,8 @@ importers:
         specifier: ^11.0.3
         version: 11.0.3(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(mongoose@8.18.0)(rxjs@7.8.2)
       '@yikart/common':
-        specifier: '*'
-        version: 0.0.3(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(@nestjs/microservices@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.2)(pino-http@10.5.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.8.3)(zod@4.1.4)
+        specifier: ^0.0.6
+        version: 0.0.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(@nestjs/microservices@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.2)(express@5.1.0)(pino-http@10.5.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.8.3)(zod@4.1.4)
       mongodb:
         specifier: ~6.18.0
         version: 6.18.0
@@ -418,7 +418,7 @@ importers:
         specifier: ^2.3.0
         version: 2.8.1
       zod:
-        specifier: ^4.0.17
+        specifier: ^4.0.0
         version: 4.1.4
 
   libs/multilogin:
@@ -436,7 +436,7 @@ importers:
         specifier: ^11.0.0
         version: 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/microservices':
-        specifier: ^11.1.6
+        specifier: ^11.0.0
         version: 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(ioredis@5.7.0)(nats@2.29.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@yikart/common':
         specifier: '*'
@@ -448,7 +448,7 @@ importers:
         specifier: ^2.3.0
         version: 2.8.1
       zod:
-        specifier: ^4.0.17
+        specifier: ^4.0.0
         version: 4.1.4
 
   libs/redis:
@@ -466,7 +466,7 @@ importers:
         specifier: ^2.3.0
         version: 2.8.1
       zod:
-        specifier: ^4.0.17
+        specifier: ^4.0.0
         version: 4.1.4
 
   libs/redlock:
@@ -487,7 +487,7 @@ importers:
         specifier: ^2.3.0
         version: 2.8.1
       zod:
-        specifier: ^4.0.17
+        specifier: ^4.0.0
         version: 4.1.4
 
   libs/ucloud:
@@ -505,7 +505,7 @@ importers:
         specifier: ^2.3.0
         version: 2.8.1
       zod:
-        specifier: ^4.0.17
+        specifier: ^4.0.0
         version: 4.1.4
 
   tools/app-generator:

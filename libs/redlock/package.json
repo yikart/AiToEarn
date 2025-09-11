@@ -1,7 +1,7 @@
 {
   "name": "@yikart/redlock",
   "type": "commonjs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/yikart/aitoearn-monorepo.git"
@@ -11,12 +11,14 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@yikart/common": "*",
+    "zod": "^4.0.0"
+  },
+  "dependencies": {
     "ioredis": "^5.7.0",
-    "tslib": "^2.3.0",
-    "zod": "^4.0.17"
+    "tslib": "^2.3.0"
   }
 }

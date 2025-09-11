@@ -44,15 +44,16 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "@swc/core",
-      "nx",
       "@nestjs/core",
       "@parcel/watcher",
       "@scarf/scarf",
+      "@swc/core",
+      "msgpackr-extract",
       "nestjs-pino",
+      "nx",
+      "oxc-resolver",
       "simple-git-hooks",
-      "unrs-resolver",
-      "oxc-resolver"
+      "unrs-resolver"
     ],
     "peerDependencyRules": {
       "ignoreMissing": [
