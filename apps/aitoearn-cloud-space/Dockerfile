@@ -25,4 +25,4 @@ COPY libs/ ./libs/
 ENV NODE_ENV=production
 ENV APP_NAME=$APP_NAME
 
-CMD node apps/${APP_NAME}/src/main.js
+CMD node apps/${APP_NAME}/src/main.js -c config.js
