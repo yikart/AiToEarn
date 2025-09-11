@@ -83,6 +83,7 @@
     "title": "选择发布账号",
     "description": "请选择用于发布任务的账号：",
     "noAccounts": "没有符合条件的账号，请先添加账号",
+    "redirectingToAccounts": "正在跳转到账户界面，请添加符合条件的账号",
     "accountId": "账号ID",
     "description": "描述"
   }

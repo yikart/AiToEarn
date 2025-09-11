@@ -25,6 +25,7 @@ import { getTaskDetail, acceptTask, submitTask } from "@/api/notification";
 import { getDays, getUtcDays } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 import { Steps } from "antd";
 import http from "@/utils/request";
+import { useRouter, useParams } from "next/navigation";
 import styles from "./taskPageCore.module.scss";
 
 const { TabPane } = Tabs;
@@ -32,6 +33,9 @@ const { TabPane } = Tabs;
 export default function TaskPageCore() {
   const { t } = useTransClient("task" as any);
   const token = useUserStore((state) => state.token);
+  const router = useRouter();
+  const params = useParams();
+  const lng = params.lng as string;
   
   // 如果未登录，显示登录提示
   if (!token) {
@@ -111,6 +115,12 @@ export default function TaskPageCore() {
     downloadUrl: "",
     qrCodeUrl: "" as string | undefined
   });
+
+  // 账号选择弹窗状态
+  const [accountSelectVisible, setAccountSelectVisible] = useState(false);
+  const [availableAccounts, setAvailableAccounts] = useState<SocialAccount[]>([]);
+  const [selectedAccount, setSelectedAccount] = useState<SocialAccount | null>(null);
+  const [requiredAccountTypes, setRequiredAccountTypes] = useState<string[]>([]);
 
   // 获取待接受任务列表
   const fetchPendingTasks = async (page: number = 1, pageSize: number = 20) => {
@@ -350,6 +360,159 @@ export default function TaskPageCore() {
     return accountList.find(account => account.id === accountId) || null;
   };
 
+  // 获取符合条件的账号
+  const getAvailableAccounts = (accountTypes: string[]): SocialAccount[] => {
+    if (!accountTypes || accountTypes.length === 0) {
+      return accountList;
+    }
+    return accountList.filter(account => accountTypes.includes(account.type));
+  };
+
+  // 处理任务操作（接受任务）
+  const handleTaskAction = (task: any) => {
+    // 如果任务指定了账号ID，直接使用该账号
+    if (task.accountId) {
+      const publishAccount = getAccountById(task.accountId);
+      if (publishAccount) {
+        // 检查是否需要App操作
+        const appRequiredPlatforms = getTasksRequiringApp([publishAccount.type]);
+        if (appRequiredPlatforms.length > 0) {
+          const firstPlatform = appRequiredPlatforms[0];
+          const config = getAppDownloadConfig(firstPlatform);
+          
+          if (config) {
+            setDownloadAppConfig({
+              platform: config.platform,
+              appName: config.appName,
+              downloadUrl: config.downloadUrl,
+              qrCodeUrl: config.qrCodeUrl
+            });
+            setDownloadAppVisible(true);
+            return;
+          }
+        }
+        
+        // 使用指定账号接受任务
+        handleAcceptTaskFromDetail(task, publishAccount);
+        return;
+      }
+    }
+
+    // 如果没有指定账号，需要用户选择账号
+    const availableAccounts = getAvailableAccounts(task.accountTypes || []);
+    
+    if (availableAccounts.length === 0) {
+      // 没有符合条件的账号，跳转到账户界面并弹出授权界面
+      setRequiredAccountTypes(task.accountTypes || []);
+      setTaskDetailModalVisible(false); // 关闭任务详情弹窗
+      message.info(t('accountSelect.redirectingToAccounts' as any));
+      router.push(`/${lng}/accounts`); // 跳转到账户界面
+      return;
+    }
+    
+    if (availableAccounts.length === 1) {
+      // 只有一个符合条件的账号，直接使用
+      const account = availableAccounts[0];
+      
+      // 检查是否需要App操作
+      const appRequiredPlatforms = getTasksRequiringApp([account.type]);
+      if (appRequiredPlatforms.length > 0) {
+        const firstPlatform = appRequiredPlatforms[0];
+        const config = getAppDownloadConfig(firstPlatform);
+        
+        if (config) {
+          setDownloadAppConfig({
+            platform: config.platform,
+            appName: config.appName,
+            downloadUrl: config.downloadUrl,
+            qrCodeUrl: config.qrCodeUrl
+          });
+          setDownloadAppVisible(true);
+          return;
+        }
+      }
+      
+      // 直接使用这个账号接受任务
+      handleAcceptTaskFromDetail(task, account);
+      return;
+    }
+    
+    // 多个符合条件的账号，显示选择弹窗
+    setAvailableAccounts(availableAccounts);
+    setAccountSelectVisible(true);
+  };
+
+  // 处理账号选择
+  const handleAccountSelect = (account: SocialAccount) => {
+    setSelectedAccount(account);
+    setAccountSelectVisible(false);
+    
+    // 检查是否需要App操作
+    const appRequiredPlatforms = getTasksRequiringApp([account.type]);
+    if (appRequiredPlatforms.length > 0) {
+      const firstPlatform = appRequiredPlatforms[0];
+      const config = getAppDownloadConfig(firstPlatform);
+      
+      if (config) {
+        setDownloadAppConfig({
+          platform: config.platform,
+          appName: config.appName,
+          downloadUrl: config.downloadUrl,
+          qrCodeUrl: config.qrCodeUrl
+        });
+        setDownloadAppVisible(true);
+        return;
+      }
+    }
+    
+    // 使用选择的账号接受任务
+    if (taskDetail) {
+      handleAcceptTaskFromDetail(taskDetail, account);
+    }
+  };
+
+  // 检查是否有新添加的符合条件账号
+  const checkForNewAccounts = () => {
+    if (requiredAccountTypes.length > 0 && taskDetail) {
+      const newAvailableAccounts = getAvailableAccounts(requiredAccountTypes);
+      
+      if (newAvailableAccounts.length > 0) {
+        // 有新账号了，清除需求状态
+        setRequiredAccountTypes([]);
+        
+        if (newAvailableAccounts.length === 1) {
+          // 只有一个新账号，直接使用
+          const account = newAvailableAccounts[0];
+          
+          // 检查是否需要App操作
+          const appRequiredPlatforms = getTasksRequiringApp([account.type]);
+          if (appRequiredPlatforms.length > 0) {
+            const firstPlatform = appRequiredPlatforms[0];
+            const config = getAppDownloadConfig(firstPlatform);
+            
+            if (config) {
+              setDownloadAppConfig({
+                platform: config.platform,
+                appName: config.appName,
+                downloadUrl: config.downloadUrl,
+                qrCodeUrl: config.qrCodeUrl
+              });
+              setDownloadAppVisible(true);
+              return;
+            }
+          }
+          
+          // 直接使用这个账号接受任务
+          handleAcceptTaskFromDetail(taskDetail, account);
+        } else {
+          // 多个新账号，显示选择弹窗
+          setAvailableAccounts(newAvailableAccounts);
+          setAccountSelectVisible(true);
+        }
+      }
+    }
+  };
+
   // 获取平台图标
   const getPlatformIcon = (accountType: string) => {
     const platInfo = AccountPlatInfoMap.get(accountType as PlatType);
@@ -397,7 +560,7 @@ export default function TaskPageCore() {
   };
 
   // 从任务详情接受任务
-  const handleAcceptTaskFromDetail = async (task: any) => {
+  const handleAcceptTaskFromDetail = async (task: any, account?: SocialAccount) => {
     if (!task) return;
     
     // 关闭详情弹窗
@@ -417,7 +580,7 @@ export default function TaskPageCore() {
     
     try {
       // 第一步：接受任务
-      const response: any = await acceptTask(task.id, task.opportunityId);
+      const response: any = await acceptTask(task.id, task.opportunityId, account?.account);
       if (response && response.code === 0) {
         // 更新进度：第一步完成，开始第二步
         setTaskProgress(prev => ({
@@ -432,7 +595,7 @@ export default function TaskPageCore() {
         }));
 
         // 第二步：发布任务
-        const publishAccount = getAccountById(task.accountId);
+        const publishAccount = account || getAccountById(task.accountId);
         if (publishAccount) {
           // 处理素材链接，确保使用完整链接
           const processedMaterials = task.materials?.map((material: any) => ({
@@ -704,6 +867,13 @@ export default function TaskPageCore() {
       fetchAccountList();
     }
   }, [token]);
+
+  // 监听账号列表变化，检查是否有新添加的符合条件账号
+  useEffect(() => {
+    if (accountList.length > 0) {
+      checkForNewAccounts();
+    }
+  }, [accountList, requiredAccountTypes, taskDetail]);
 
   return (
     <div className={styles.taskPage}>
@@ -1254,7 +1424,7 @@ export default function TaskPageCore() {
                       <Button 
                         type="primary" 
                         size="large"
-                        onClick={() => handleAcceptTaskFromDetail(taskDetail)}
+                        onClick={() => handleTaskAction(taskDetail)}
                         style={{ marginTop: '12px' }}
                       >
                         {t('acceptTask')}
@@ -1726,6 +1896,85 @@ export default function TaskPageCore() {
                         index === 2 ? t('messages.taskProcessFailed') :
                         t('messages.taskProcessFailed')
           }))}
+        />
+      </Modal>
+
+      {/* 账号选择弹窗 */}
+      <Modal
+        title={t('accountSelect.title' as any)}
+        open={accountSelectVisible}
+        onCancel={() => setAccountSelectVisible(false)}
+        footer={null}
+        width={600}
+        zIndex={2000}
+        styles={{
+          header: {
+            borderBottom: '1px solid #f0f0f0',
+            paddingBottom: '16px'
+          },
+          body: {
+            padding: '24px'
+          }
+        }}
+      >
+        <div style={{ marginBottom: '16px' }}>
+          <p style={{ margin: 0, color: '#666' }}>
+            {t('accountSelect.description' as any)}
+          </p>
+        </div>
+        <List
+          dataSource={availableAccounts}
+          renderItem={(account) => (
+            <List.Item
+              style={{
+                padding: '16px',
+                border: '1px solid #f0f0f0',
+                borderRadius: '8px',
+                marginBottom: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#1890ff';
+                e.currentTarget.style.backgroundColor = '#f6ffed';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#f0f0f0';
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+              onClick={() => handleAccountSelect(account)}
+            >
+              <List.Item.Meta
+                avatar={
+                  <img
+                    src={account.avatar ? getOssUrl(account.avatar) : '/default-avatar.png'}
+                    alt="账号头像"
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '50%',
+                      objectFit: 'cover'
+                    }}
+                    onError={(e) => {
+                      e.currentTarget.src = '/default-avatar.png';
+                    }}
+                  />
+                }
+                title={
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontWeight: '500' }}>{account.nickname}</span>
+                    <Tag color="blue">{getPlatformName(account.type)}</Tag>
+                  </div>
+                }
+                description={
+                  <div style={{ color: '#666' }}>
+                    <div>{t('accountSelect.accountId' as any)}: {account.account}</div>
+                    {account.nickname && <div>{t('accountSelect.description' as any)}: {account.nickname}</div>}
+                  </div>
+                }
+              />
+            </List.Item>
+          )}
         />
       </Modal>
 

@@ -87,6 +87,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
   const [accountSelectVisible, setAccountSelectVisible] = useState(false);
   const [availableAccounts, setAvailableAccounts] = useState<SocialAccount[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<SocialAccount | null>(null);
+  const [requiredAccountTypes, setRequiredAccountTypes] = useState<string[]>([]);
 
   // 获取通知列表
   const fetchNotifications = async (page: number = 1, pageSize: number = 20) => {
@@ -235,7 +236,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
     
     try {
       // 第一步：接受任务
-      const response: any = await acceptTask(selectedTask.id, selectedTask.opportunityId, account?.account);
+      const response: any = await acceptTask(selectedTask.id, selectedTask.opportunityId, account?.id);
       if (response && response.code === 0) {
         // 更新进度：第一步完成，开始第二步
         setTaskProgress(prev => ({
@@ -377,10 +378,16 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
     const availableAccounts = getAvailableAccounts(task.accountTypes || []);
     
     if (availableAccounts.length === 0) {
-      message.error(t('accountSelect.noAccounts' as any));
+      // 没有符合条件的账号，跳转到账户界面并弹出授权界面
+      setRequiredAccountTypes(task.accountTypes || []);
+      setDetailModalVisible(false); // 关闭任务详情弹窗
+      message.info(t('accountSelect.redirectingToAccounts' as any));
+      router.push(`/${lng}/accounts`); // 跳转到账户界面
       return;
     }
-    
+
+ 
+   
     if (availableAccounts.length === 1) {
       // 只有一个符合条件的账号，直接使用
       const account = availableAccounts[0];
@@ -587,6 +594,48 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
     handleAcceptTask(account);
   };
 
+  // 检查是否有新添加的符合条件账号
+  const checkForNewAccounts = () => {
+    if (requiredAccountTypes.length > 0 && selectedTask) {
+      const newAvailableAccounts = getAvailableAccounts(requiredAccountTypes);
+      
+      if (newAvailableAccounts.length > 0) {
+        // 有新账号了，清除需求状态
+        setRequiredAccountTypes([]);
+        
+        if (newAvailableAccounts.length === 1) {
+          // 只有一个新账号，直接使用
+          const account = newAvailableAccounts[0];
+          
+          // 检查是否需要App操作
+          const appRequiredPlatforms = getTasksRequiringApp([account.type]);
+          if (appRequiredPlatforms.length > 0) {
+            const firstPlatform = appRequiredPlatforms[0];
+            const config = getAppDownloadConfig(firstPlatform);
+            
+            if (config) {
+              setDownloadAppConfig({
+                platform: config.platform,
+                appName: config.appName,
+                downloadUrl: config.downloadUrl,
+                qrCodeUrl: config.qrCodeUrl
+              });
+              setDownloadAppVisible(true);
+              return;
+            }
+          }
+          
+          // 直接使用这个账号接受任务
+          handleAcceptTask(account);
+        } else {
+          // 多个新账号，显示选择弹窗
+          setAvailableAccounts(newAvailableAccounts);
+          setAccountSelectVisible(true);
+        }
+      }
+    }
+  };
+
   useEffect(() => {
     if (visible) {
       fetchNotifications();
@@ -594,6 +643,13 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
       fetchAccountList();
     }
   }, [visible, token]);
+
+  // 监听账号列表变化，检查是否有新添加的符合条件账号
+  useEffect(() => {
+    if (accountList.length > 0) {
+      checkForNewAccounts();
+    }
+  }, [accountList, requiredAccountTypes, selectedTask]);
 
   return (
     <>
