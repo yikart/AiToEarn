@@ -997,23 +997,23 @@ function Hero() {
 function BrandBar() {
   const { t } = useTransClient('home');
   const { lng } = useParams();
-  
+
   // 平台数据配置
   const platforms = [
-    { name: 'YouTube', key: 'YouTube', hasIcon: true, iconPath: youtubeIcon.src },
-    { name: 'TikTok', key: 'TikTok', hasIcon: true, iconPath: tiktokIcon.src },
-    { name: '小红书', key: 'Rednote', hasIcon: true, iconPath: xhsIcon.src },
-    { name: '抖音', key: 'Douyin', hasIcon: true, iconPath: douyinIcon.src },
-    { name: '快手', key: 'Kwai', hasIcon: true, iconPath: ksIcon.src },
+    { name: 'YouTube', key: 'YouTube', hasIcon: true, iconPath: youtubeIcon },
+    { name: 'TikTok', key: 'TikTok', hasIcon: true, iconPath: tiktokIcon },
+    { name: '小红书', key: 'Rednote', hasIcon: true, iconPath: xhsIcon },
+    { name: '抖音', key: 'Douyin', hasIcon: true, iconPath: douyinIcon },
+    { name: '快手', key: 'Kwai', hasIcon: true, iconPath: ksIcon },
     { name: '公众号', key: 'Wechat Offical Account', hasIcon: true, iconPath: gongzhonghaoIcon.src },
-    { name: '视频号', key: 'Wechat Channels', hasIcon: true, iconPath: wxSphIcon.src },
-    { name: 'Bilibili', key: 'Bilibili', hasIcon: true, iconPath: bilibiliIcon.src },
-    { name: 'Facebook', key: 'Facebook', hasIcon: true, iconPath: FacebookIcon.src },
-    { name: 'Instagram', key: 'Instagram', hasIcon: true, iconPath: InstagramIcon.src },
-    { name: 'LinkedIn', key: 'LinkedIn', hasIcon: true, iconPath: LinkedInIcon.src },
-    { name: 'Pinterest', key: 'Pinterest', hasIcon: true, iconPath: PinterestIcon.src },
-    { name: 'Threads', key: 'Threads', hasIcon: true, iconPath: ThreadsIcon.src },
-    { name: 'X (Twitter)', key: 'X (Twitter)', hasIcon: true, iconPath: TwitterIcon.src },
+    { name: '视频号', key: 'Wechat Channels', hasIcon: true, iconPath: wxSphIcon },
+    { name: 'Bilibili', key: 'Bilibili', hasIcon: true, iconPath: bilibiliIcon },
+    { name: 'Facebook', key: 'Facebook', hasIcon: true, iconPath: FacebookIcon },
+    { name: 'Instagram', key: 'Instagram', hasIcon: true, iconPath: InstagramIcon },
+    { name: 'LinkedIn', key: 'LinkedIn', hasIcon: true, iconPath: LinkedInIcon },
+    { name: 'Pinterest', key: 'Pinterest', hasIcon: true, iconPath: PinterestIcon },
+    { name: 'Threads', key: 'Threads', hasIcon: true, iconPath: ThreadsIcon },
+    { name: 'X (Twitter)', key: 'X (Twitter)', hasIcon: true, iconPath: TwitterIcon },
   ];
 
   // 为了实现无缝滚动，复制一份数据
@@ -1037,8 +1037,8 @@ function BrandBar() {
               <div key={index} className={styles.platformItem}>
                 <div className={styles.platformIcon}>
                   {platform.hasIcon ? (
-                    <img 
-                      src={platform.iconPath} 
+                    <img
+                      src={platform.iconPath}
                       alt={`${getPlatformDisplayName(platform)} logo`}
                       className={styles.platformSvg}
                     />

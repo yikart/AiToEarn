@@ -75,7 +75,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.Xhs,
     {
       name: "小红书",
-      icon: xhsSvg.src,
+      icon: xhsSvg,
       url: "https://www.xiaohongshu.com/",
       themeColor: "red",
       pubTypes: new Set([]),
@@ -91,7 +91,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.KWAI,
     {
       name: "快手",
-      icon: ksSvg.src,
+      icon: ksSvg,
       url: "https://cp.kuaishou.com/profile",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
@@ -105,7 +105,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.BILIBILI,
     {
       name: "Bilibili",
-      icon: bilibiliSvg.src,
+      icon: bilibiliSvg,
       url: "https://cp.kuaishou.com/profile",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
@@ -136,7 +136,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.Douyin,
     {
       name: "抖音",
-      icon: douyinSvg.src,
+      icon: douyinSvg,
       url: "https://www.douyin.com/",
       pubTypes: new Set([]),
       commonPubParamsConfig: {
@@ -152,7 +152,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.WxSph,
     {
       name: "微信视频号",
-      icon: wxSphSvg.src, 
+      icon: wxSphSvg,
       url: "https://mp.weixin.qq.com/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
       commonPubParamsConfig: {
@@ -168,7 +168,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.Tiktok,
     {
       name: "TikTok",
-      icon: tiktokSvg.src,
+      icon: tiktokSvg,
       url: "https://www.tiktok.com/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
       commonPubParamsConfig: {
@@ -183,7 +183,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.YouTube,
     {
       name: "YouTube",
-      icon: youtubeSvg.src,
+      icon: youtubeSvg,
       url: "https://www.youtube.com/",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
@@ -198,7 +198,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.Twitter,
     {
       name: "Twitter",
-      icon: twitterSvg.src,
+      icon: twitterSvg,
       url: "https://x.com/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText, PubType.Article]),
       commonPubParamsConfig: {
@@ -213,7 +213,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.Facebook,
     {
       name: "Facebook",
-      icon: facebookSvg.src,
+      icon: facebookSvg,
       url: "https://www.facebook.com/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
       commonPubParamsConfig: {
@@ -229,7 +229,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.Instagram,
     {
       name: "Instagram",
-      icon: instagramSvg.src,
+      icon: instagramSvg,
       url: "https://www.instagram.com/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
       commonPubParamsConfig: {
@@ -245,7 +245,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.Threads,
     {
       name: "Threads",
-      icon: threadsSvg.src,
+      icon: threadsSvg,
       url: "https://www.threads.net/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText, PubType.Article]),
       commonPubParamsConfig: {
@@ -261,7 +261,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.Pinterest,
     {
       name: "Pinterest",
-      icon: pinterestSvg.src,
+      icon: pinterestSvg,
       url: "https://www.pinterest.com/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
       commonPubParamsConfig: {

@@ -1,9 +1,21 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
       use: ["@svgr/webpack"],
+      exclude: path.resolve(__dirname, 'src/assets/svgs/plat'),
+    });
+
+    config.module.rules.push({
+      test: /\.svg$/,
+      include: path.resolve(__dirname, 'src/assets/svgs/plat'),
+      type: 'asset/resource',
     });
 
     return config;

@@ -4,9 +4,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix: 校验修复">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat: 选择代理">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/hooks/usePubParamsVerify.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/hooks/usePubParamsVerify.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/next.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/config/platConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/config/platConfig.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,7 +33,7 @@
     <option name="PUSH_AUTO_UPDATE" value="true" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="hot" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -190,6 +194,9 @@
       <workItem from="1756218696332" duration="27000" />
       <workItem from="1756800029903" duration="29000" />
       <workItem from="1756968825319" duration="59000" />
+      <workItem from="1757578930648" duration="1505000" />
+      <workItem from="1757588797084" duration="46000" />
+      <workItem from="1757599699131" duration="2518000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -519,7 +526,23 @@
       <option name="project" value="LOCAL" />
       <updated>1755484449640</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="Revert &quot;refactor: 删除旧热门内容&quot;&#10;&#10;This reverts commit 7a0af7fb">
+      <option name="closed" value="true" />
+      <created>1757578439683</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1757578439683</updated>
+    </task>
+    <task id="LOCAL-00043" summary="feat: 选择代理">
+      <option name="closed" value="true" />
+      <created>1757600217030</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1757600217030</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -571,8 +594,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="chore(发布弹框): 拖动修改发布时间完成" />
-    <MESSAGE value="fix(日历): 修复更新的问题" />
     <MESSAGE value="feat(发布)：b站添加标题参数" />
     <MESSAGE value="feat(发布)：发布记录添加账户筛选API" />
     <MESSAGE value="feat(发布)：1. b站添加是否转载、选择分区参数。 2. 发布记录展示时间修复，将后端返回的时间转为当前时区给用户展示。 3. b站添加强制拦截，分区、转载不选择会强制拦截用户。" />
@@ -596,6 +617,8 @@
     <MESSAGE value="fix: 修复发布记录Dropdown报错" />
     <MESSAGE value="fix: 默认空间国际化" />
     <MESSAGE value="fix: 校验修复" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: 校验修复" />
+    <MESSAGE value="Revert &quot;refactor: 删除旧热门内容&quot;&#10;&#10;This reverts commit 7a0af7fb" />
+    <MESSAGE value="feat: 选择代理" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 选择代理" />
   </component>
 </project>
