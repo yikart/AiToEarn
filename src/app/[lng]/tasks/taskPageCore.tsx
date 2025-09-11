@@ -937,13 +937,22 @@ export default function TaskPageCore() {
                     >
                       <div className={styles.taskHeader}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <img 
-                            src={getPlatformIcon(task.accountType)} 
-                            alt="platform"
-                            style={{ width: '24px', height: '24px' }}
-                          />
+                          {/* 显示多个平台图标 */}
+                          <div style={{ display: 'flex', gap: '4px' }}>
+                            {(task.accountTypes && task.accountTypes.length > 0 ? task.accountTypes : [task.accountType]).map((platformType: string, index: number) => (
+                              <img 
+                                key={platformType}
+                                src={getPlatformIcon(platformType)} 
+                                alt="platform"
+                                style={{ width: '20px', height: '20px' }}
+                              />
+                            ))}
+                          </div>
                           <h3 style={{ margin: 0, fontSize: '16px' }}>
-{getPlatformName(task.accountType)}{t('taskInfo.type' as any)}
+                            {task.accountTypes && task.accountTypes.length > 0 
+                              ? `${task.accountTypes.map((type: string) => getPlatformName(type)).join('、')}任务`
+                              : `${getPlatformName(task.accountType)}任务`
+                            }
                           </h3>
                         </div>
                         <Tag color="orange">{t('taskStatus.pending' as any)}</Tag>
@@ -959,6 +968,7 @@ export default function TaskPageCore() {
                           <strong>{t('taskInfo.reward' as any)}：</strong>
                           <span style={{ color: '#f50', fontWeight: 'bold' }}>¥ {task.reward/100}</span>
                         </div>
+                        
                         
                         {/* 发布账号信息 */}
                         {publishAccount && (
@@ -1053,13 +1063,22 @@ export default function TaskPageCore() {
                     >
                       <div className={styles.taskHeader}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <img 
-                            src={getPlatformIcon(task.accountType)} 
-                            alt="platform"
-                            style={{ width: '24px', height: '24px' }}
-                          />
+                          {/* 显示多个平台图标 */}
+                          <div style={{ display: 'flex', gap: '4px' }}>
+                            {(task.accountTypes && task.accountTypes.length > 0 ? task.accountTypes : [task.accountType]).map((platformType: string, index: number) => (
+                              <img 
+                                key={platformType}
+                                src={getPlatformIcon(platformType)} 
+                                alt="platform"
+                                style={{ width: '20px', height: '20px' }}
+                              />
+                            ))}
+                          </div>
                           <h3 style={{ margin: 0, fontSize: '16px' }}>
-{getPlatformName(task.accountType)}{t('taskInfo.type' as any)}
+                            {task.accountTypes && task.accountTypes.length > 0 
+                              ? `${task.accountTypes.map((type: string) => getPlatformName(type)).join('、')}任务`
+                              : `${getPlatformName(task.accountType)}任务`
+                            }
                           </h3>
                         </div>
                         <Tag color={getTaskStatusTag(task.status).color}>
@@ -1286,6 +1305,7 @@ export default function TaskPageCore() {
                       {taskDetail.title}
                     </h2>
                     
+                    
                     {/* 发布账号信息 */}
                     {taskDetail.accountId && (() => {
                       const publishAccount = getAccountById(taskDetail.accountId);
@@ -1400,6 +1420,28 @@ export default function TaskPageCore() {
                       </div>
                     </div>
                   </div>
+
+                  {/* 支持的平台类型 */}
+                  {taskDetail.accountTypes && taskDetail.accountTypes.length > 0 && (
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px',
+                        marginBottom: '12px'
+                      }}>
+                        <span style={{ fontSize: '14px', color: '#666' }}>支持平台：</span>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          {taskDetail.accountTypes.map((platformType: string) => (
+                            <img 
+                              key={platformType}
+                              src={getPlatformIcon(platformType)} 
+                              alt={platformType}
+                              style={{ width: '25px', height: '25px' }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
                 </div>
               </div>
               
@@ -1912,7 +1954,7 @@ export default function TaskPageCore() {
 
       {/* 账号选择弹窗 */}
       <Modal
-        title={t('accountSelect.title' as any)}
+        title="选择账号"
         open={accountSelectVisible}
         onCancel={() => setAccountSelectVisible(false)}
         footer={null}
@@ -1930,7 +1972,7 @@ export default function TaskPageCore() {
       >
         <div style={{ marginBottom: '16px' }}>
           <p style={{ margin: 0, color: '#666' }}>
-            {t('accountSelect.description' as any)}
+            请选择要用于发布任务的账号
           </p>
         </div>
         <List
@@ -1979,8 +2021,8 @@ export default function TaskPageCore() {
                 }
                 description={
                   <div style={{ color: '#666' }}>
-                    <div>{t('accountSelect.accountId' as any)}: {account.account}</div>
-                    {account.nickname && <div>{t('accountSelect.description' as any)}: {account.nickname}</div>}
+                    <div>账号ID: {account.account}</div>
+                    {account.nickname && <div>昵称: {account.nickname}</div>}
                   </div>
                 }
               />
