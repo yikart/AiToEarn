@@ -1,19 +1,11 @@
 import { createZodDto } from '@yikart/common'
 import { z } from 'zod'
 
-const jimengTaskResultVoSchema = z.object({
-  taskId: z.string().describe('任务ID'),
-  status: z.enum(['pending', 'processing', 'success', 'failed', 'error']).describe('任务状态'),
-  images: z.array(z.string()).describe('图片URL列表'),
-})
-
-export class JimengTaskResultVo extends createZodDto(jimengTaskResultVoSchema) {}
-
 // 使用情况统计
 const usageMetadataSchema = z.object({
-  input_tokens: z.number().describe('输入token数').optional(),
-  output_tokens: z.number().describe('输出token数'),
-  total_tokens: z.number().describe('总token数'),
+  input_tokens: z.number().optional().describe('输入token数'),
+  output_tokens: z.number().optional().describe('输出token数'),
+  total_tokens: z.number().optional().describe('总token数'),
 })
 
 // 图片对象

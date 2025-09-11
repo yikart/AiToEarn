@@ -63,7 +63,7 @@ export interface Md2CardDto {
   themeMode?: string
   width?: number
   height?: number
-  splitMode?: boolean
+  splitMode?: string
   mdxMode?: boolean
   overHiddenMode?: boolean
 }
@@ -72,8 +72,39 @@ export interface FireflyCardDto {
   content: string
   temp: FireflycardTempTypes
   title?: string
-  style?: string
-  switchConfig?: any
+  style?: {
+    align?: string
+    backgroundName?: string
+    backShadow?: string
+    font?: string
+    width?: number
+    ratio?: string
+    height?: number
+    fontScale?: number
+    padding?: string
+    borderRadius?: string
+    color?: string
+    opacity?: number
+    blur?: number
+    backgroundAngle?: string
+    lineHeights?: {
+      content?: string
+    }
+    letterSpacings?: {
+      content?: string
+    }
+  }
+  switchConfig?: {
+    showIcon?: boolean
+    showDate?: boolean
+    showTitle?: boolean
+    showContent?: boolean
+    showAuthor?: boolean
+    showTextCount?: boolean
+    showQRCode?: boolean
+    showPageNum?: boolean
+    showWatermark?: boolean
+  }
 }
 
 // User Image DTO 接口
@@ -97,55 +128,29 @@ export interface UserFireflyCardDto extends FireflyCardDto {
   userType: UserType
 }
 
-// Image VO 接口
-export interface JimengTaskResultVo {
-  task_id: string
-  action: string
-  status: string
-  fail_reason?: string
-  submit_time: number
-  start_time: number
-  finish_time: number
-  progress: string
-  data: any
-}
-
 export interface ImageResponseVo {
   created: number
   list: Array<{
-    url: string
+    url?: string
     b64_json?: string
     revised_prompt?: string
   }>
   usage?: {
-    prompt_tokens?: number
-    completion_tokens?: number
+    input_tokens?: number
+    output_tokens?: number
     total_tokens?: number
   }
 }
 
 export interface Md2CardResponseVo {
-  images: string[]
+  images: {
+    url: string
+    fileName: string
+  }[]
 }
 
 export interface FireflycardResponseVo {
   image: string
-}
-
-export interface ImageModelParamsVo {
-  name: string
-  description: string
-  supportedSizes: string[]
-  supportedQualities: string[]
-  supportedStyles: string[]
-  supportedFormats: string[]
-  maxPromptLength: number
-  pricing: {
-    size: string
-    quality: string
-    style: string
-    price: number
-  }[]
 }
 
 export interface ImageGenerationModelParamsVo {
