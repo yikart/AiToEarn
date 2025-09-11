@@ -346,8 +346,8 @@ export default function TaskPageCore() {
   // 获取任务状态标签
   const getTaskStatusTag = (status: string) => {
     const statusMap: Record<string, { color: string; text: string }> = {
-      'pending': { color: 'orange', text: t('taskStatus.pending' as any) },
-      'doing': { color: 'green', text: t('taskStatus.doing' as any) },
+      'pending': { color: 'green', text: '已完成' }, // pending 是已完成
+      'doing': { color: 'orange', text: '待完成' }, // doing 是待完成
       'accepted': { color: 'blue', text: t('taskStatus.accepted' as any) },
       'completed': { color: 'green', text: t('taskStatus.completed' as any) },
       'rejected': { color: 'red', text: t('taskStatus.rejected' as any) },
@@ -1433,22 +1433,6 @@ export default function TaskPageCore() {
                   );
                 }
                 
-                // 如果是已接受任务且状态为pending，显示完成任务按钮
-                if (currentTaskId && acceptedTaskDetail?.status === 'pending') {
-                  return (
-                    <div style={{ textAlign: 'center' }}>
-                      <Button 
-                        type="primary" 
-                        size="large"
-                        onClick={handleCompleteTask}
-                        style={{ marginTop: '12px' }}
-                      >
-                        {t('completeTask')}
-                      </Button>
-                    </div>
-                  );
-                }
-                
                 return null;
               })()}
             </div>
@@ -1768,8 +1752,8 @@ export default function TaskPageCore() {
                     fontSize: '12px', 
                     color: '#666'
                   }}>
-                    {acceptedTaskDetail.status === 'pending' ? '任务待完成' : 
-                     acceptedTaskDetail.status === 'doing' ? '任务已完成' : 
+                    {acceptedTaskDetail.status === 'doing' ? '任务待完成' : 
+                     acceptedTaskDetail.status === 'pending' ? '任务已完成' : 
                      '任务状态：' + acceptedTaskDetail.status}
                   </span>
                 </div>
@@ -1786,8 +1770,8 @@ export default function TaskPageCore() {
               
               {/* 根据任务状态显示不同按钮 */}
               {(() => {
-                // 如果是已接受任务且状态为pending，显示完成任务按钮
-                if (acceptedTaskDetail.status === 'pending') {
+                // 如果是已接受任务且状态为doing（待完成），显示完成任务按钮
+                if (acceptedTaskDetail.status === 'doing') {
                   return (
                     <div style={{ textAlign: 'center', marginTop: '16px' }}>
                       <Button 
