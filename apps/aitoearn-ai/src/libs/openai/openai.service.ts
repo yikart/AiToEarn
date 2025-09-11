@@ -18,7 +18,7 @@ export class OpenaiService {
   private _createOpenAIClient(apiKey?: string): OpenAI {
     return new OpenAI({
       apiKey: apiKey ?? this.config.apiKey,
-      baseURL: this.config.baseURL,
+      baseURL: this.config.baseUrl,
     })
   }
 
@@ -30,7 +30,7 @@ export class OpenaiService {
       maxRetries: 1,
       apiKey: options.apiKey ?? this.config.apiKey,
       configuration: {
-        baseURL: this.config.baseURL,
+        baseURL: this.config.baseUrl,
       },
       streaming: true,
     })
