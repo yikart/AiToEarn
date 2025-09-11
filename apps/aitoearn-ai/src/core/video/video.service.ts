@@ -306,15 +306,22 @@ export class VideoService {
    * 查询Kling任务状态
    */
   async getKlingTaskResult(data: Text2VideoGetTaskResponseData) {
+    const status = {
+      [KlingTaskStatus.Succeed]: TaskStatus.Success,
+      [KlingTaskStatus.Submitted]: TaskStatus.Submitted,
+      [KlingTaskStatus.Processing]: TaskStatus.InProgress,
+      [KlingTaskStatus.Failed]: TaskStatus.Failure,
+    }[data.task_status]
+
     return {
       task_id: data.task_id,
-      action: 'text2video',
-      status: data.task_status,
-      fail_reason: data.task_status_msg || '',
+      action: 'video',
+      status,
+      fail_reason: data.task_result.videos[0].url || data.task_status_msg || '',
       submit_time: data.created_at,
       start_time: data.created_at,
       finish_time: data.updated_at,
-      progress: data.task_status === 'succeed' ? '100%' : '0%',
+      progress: data.task_status === KlingTaskStatus.Succeed ? '100%' : '0%',
       data: data.task_result || {},
     }
   }
@@ -490,15 +497,23 @@ export class VideoService {
    * 查询Volcengine任务状态
    */
   async getVolcengineTaskResult(result: GetVideoGenerationTaskResponse) {
+    const status = {
+      [VolcTaskStatus.Succeeded]: TaskStatus.Success,
+      [VolcTaskStatus.Queued]: TaskStatus.Submitted,
+      [VolcTaskStatus.Running]: TaskStatus.InProgress,
+      [VolcTaskStatus.Failed]: TaskStatus.Failure,
+      [VolcTaskStatus.Cancelled]: TaskStatus.Failure,
+    }[result.status]
+
     return {
       task_id: result.id,
-      action: 'generation',
-      status: result.status,
-      fail_reason: result.error?.message || '',
+      action: 'video',
+      status,
+      fail_reason: result.content?.video_url || result.error?.message || '',
       submit_time: result.created_at,
       start_time: result.created_at,
       finish_time: result.updated_at,
-      progress: result.status === 'succeeded' ? '100%' : '0%',
+      progress: result.status === VolcTaskStatus.Succeeded ? '100%' : '0%',
       data: result.content || {},
     }
   }
