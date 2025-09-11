@@ -2,13 +2,13 @@ import {
   CompleteMultipartUploadCommand,
   CreateMultipartUploadCommand,
   HeadObjectCommand,
-  PutObjectCommand,
   PutObjectCommandInput,
   S3Client,
   UploadPartCommand,
   UploadPartCommandInput,
   UploadPartCommandOutput,
 } from '@aws-sdk/client-s3'
+import { Upload } from '@aws-sdk/lib-storage'
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 import { Injectable, Logger } from '@nestjs/common'
 import { AppException, ResponseCode } from '@yikart/common'
@@ -27,12 +27,15 @@ export class S3Service {
     objectPath: string,
     file: PutObjectCommandInput['Body'],
   ) {
-    const command = new PutObjectCommand({
-      Bucket: this.config.bucketName,
-      Key: objectPath,
-      Body: file,
+    const upload = new Upload({
+      client: this.client,
+      params: {
+        Bucket: this.config.bucketName,
+        Key: objectPath,
+        Body: file,
+      },
     })
-    await this.client.send(command)
+    await upload.done()
     return { path: objectPath }
   }
 
