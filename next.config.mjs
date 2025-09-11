@@ -18,14 +18,19 @@ const nextConfig = {
   },
   output: 'standalone',
   productionBrowserSourceMaps: process.env.NEXT_PUBLIC_EVN === 'dev',
-  // rewrites: async () => ({
-  //   beforeFiles: [
-  //     {
-  //       source: `/api/:path*`,
-  //       destination: "http://127.0.0.1:8000/api/:path*",
-  //     },
-  //   ],
-  // }),
+  rewrites: async () => {
+    // 存在 NEXT_PUBLIC_PROXY_URL 则代理，本地直连用
+    // 如：NEXT_PUBLIC_PROXY_URL = http://localhost:8080
+    if (process.env.NEXT_PUBLIC_PROXY_URL) {
+      return [
+        {
+          source: `/api/:path*`,
+          destination: `${process.env.NEXT_PUBLIC_PROXY_URL}/api/:path*`,
+        },
+      ];
+    }
+    return [];
+  },
 };
 
 const CorsHeaders = [
