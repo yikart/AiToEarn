@@ -10,7 +10,7 @@ export const apiGetIncomeList = (page: {
 }, params: {
   type?: string
 }) => {
-  return request<{ list: IncomeRecord[], tatol: number }>({
+  return request<{ list: IncomeRecord[], total: number }>({
     url: `income/list/${page.pageNo}/${page.pageSize}`,
     method: 'GET',
     params
