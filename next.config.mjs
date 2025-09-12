@@ -29,7 +29,7 @@ const nextConfig = {
     forceSwcTransforms: true,
     outputFileTracingRoot: undefined,
   },
-  // output: 'standalone', // Temporarily disabled to avoid symlink issues on Windows
+  output: 'standalone', // Temporarily disabled to avoid symlink issues on Windows
   productionBrowserSourceMaps: process.env.NEXT_PUBLIC_EVN === 'dev',
   rewrites: async () => {
     // 存在 NEXT_PUBLIC_PROXY_URL 则代理，本地直连用
