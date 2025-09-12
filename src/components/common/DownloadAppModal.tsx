@@ -43,10 +43,10 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
     try {
       await navigator.clipboard.writeText(linkToCopy);
       setCopySuccess(true);
-      message.success(t('downloadApp.copy') + '成功');
+      message.success(t('downloadApp.copySuccess' as any));
       setTimeout(() => setCopySuccess(false), 2000);
     } catch (error) {
-      message.error('复制失败，请手动复制');
+      message.error(t('downloadApp.copyFailed' as any));
     }
   };
 
@@ -91,8 +91,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
         
         {/* 描述 */}
         <Paragraph style={{ color: '#6b7280', marginBottom: '32px', fontSize: '14px', lineHeight: '1.6' }}>
-          请在Aitoearn App中操作{platform}频道账号<br/>
-          为了更好的用户体验和完整性，请下载并安装Aitoearn App后继续操作。
+          <span dangerouslySetInnerHTML={{ __html: t('downloadApp.operationDescription' as any, { platform }) }} />
         </Paragraph>
 
         {/* 二维码区域 */}
@@ -138,7 +137,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
           border: '1px solid #d1d5db'
         }}>
           <Text type="secondary" style={{ fontSize: '12px', display: 'block', marginBottom: '8px' }}>
-            下载链接
+            {t('downloadApp.downloadLink')}
           </Text>
           <div style={{ 
             display: 'flex', 
@@ -163,7 +162,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
               onClick={handleCopyLink}
               type={copySuccess ? "primary" : "default"}
             >
-              {copySuccess ? '已复制' : '复制'}
+              {copySuccess ? t('downloadApp.copied' as any) : t('downloadApp.copy' as any)}
             </Button>
           </div>
         </div>
