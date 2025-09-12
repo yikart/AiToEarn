@@ -4,14 +4,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat: 创建数据统计header">
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/svgs/accountCount.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/useDataStatistics.ts" afterDir="false" />
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(数据统计): 1. 找不到空间的账号更改为默认账号的ID。 2. 完善swiper。 3. 添加过滤后的账号">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/DataStatisticsCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/DataStatisticsCore.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/dataStatisticsHeader.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/dataStatisticsHeader.module.scss" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/notification/NotificationPanel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/notification/NotificationPanel.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/AvatarPlat/avatarPlat.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/AvatarPlat/avatarPlat.module.scss" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,48 +63,48 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder0": "0",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder1": "1",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder2": "2",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder3": "3",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth0": "450",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth1": "450",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth2": "450",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth3": "449",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder0": "0",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder1": "1",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder2": "2",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder3": "3",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth0": "450",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth1": "450",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth2": "450",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth3": "449",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "E:/project-dev/web/艺咖/aitoearn-web/src/app/i18n/locales/zh-CN",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.standard": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.standard": "",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "show.migrate.to.gradle.popup": "false",
-    "ts.external.directory.path": "E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder0&quot;: &quot;0&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder1&quot;: &quot;1&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder2&quot;: &quot;2&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder3&quot;: &quot;3&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth0&quot;: &quot;450&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth1&quot;: &quot;450&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth2&quot;: &quot;450&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth3&quot;: &quot;449&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder0&quot;: &quot;0&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder1&quot;: &quot;1&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder2&quot;: &quot;2&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder3&quot;: &quot;3&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth0&quot;: &quot;450&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth1&quot;: &quot;450&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth2&quot;: &quot;450&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth3&quot;: &quot;449&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/project-dev/web/艺咖/aitoearn-web/src/app/i18n/locales/zh-CN&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="ReactBuddySettings">
     <option name="extensionsIgnore" value="true" />
   </component>
@@ -209,7 +206,7 @@
       <workItem from="1757646405605" duration="66000" />
       <workItem from="1757646484870" duration="466000" />
       <workItem from="1757647784882" duration="2426000" />
-      <workItem from="1757656251307" duration="7708000" />
+      <workItem from="1757656251307" duration="14862000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -579,7 +576,23 @@
       <option name="project" value="LOCAL" />
       <updated>1757661071307</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="feat(数据统计): 顶部筛选完成">
+      <option name="closed" value="true" />
+      <created>1757668733903</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1757668733903</updated>
+    </task>
+    <task id="LOCAL-00048" summary="feat(数据统计): 1. 找不到空间的账号更改为默认账号的ID。 2. 完善swiper。 3. 添加过滤后的账号">
+      <option name="closed" value="true" />
+      <created>1757674748578</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1757674748578</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -649,8 +662,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="fix(日历)：修复了单元格没有预期时间但是发布记录还是不会填满单元格的问题。" />
-    <MESSAGE value="fix(发布弹框): 修复右侧预览不正常隐藏的问题" />
     <MESSAGE value="feat(发布弹框): 立即发布接入API" />
     <MESSAGE value="fix(日历): 删除最佳时间" />
     <MESSAGE value="chore: 测试静态站点" />
@@ -674,6 +685,8 @@
     <MESSAGE value="fix: 修复因为 @svgr/webpack 受到的影响" />
     <MESSAGE value="feat: 创建数据统计页面" />
     <MESSAGE value="feat: 创建数据统计header" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 创建数据统计header" />
+    <MESSAGE value="feat(数据统计): 顶部筛选完成" />
+    <MESSAGE value="feat(数据统计): 1. 找不到空间的账号更改为默认账号的ID。 2. 完善swiper。 3. 添加过滤后的账号" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(数据统计): 1. 找不到空间的账号更改为默认账号的ID。 2. 完善swiper。 3. 添加过滤后的账号" />
   </component>
 </project>

@@ -72,6 +72,56 @@
         border-radius: 8px;
         margin-left: 20px;
 
+        .accounts-swiper-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          padding: 0 15px;
+          height: 100%;
+          box-sizing: border-box;
+          text-overflow: ellipsis;
+          &-info {
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 10px;
+            &-name {
+              margin-left: 10px;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              width: 100%;
+              overflow: hidden;
+            }
+          }
+          &-fans {
+            color: var(--grayColor8);
+            span {
+              display: inline-block;
+              margin-left: 20px;
+            }
+          }
+          &:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 0;
+            width: 2px;
+            height: 40%;
+            background: rgb(230, 230, 230);
+          }
+        }
+
+        .swiper-slide:nth-of-type(4n) .accounts-swiper-item::after,
+        .swiper-slide:last-of-type .accounts-swiper-item::after
+        {
+          display: none;
+        }
+
         button {
           width: 25px;
           height: 40px;
