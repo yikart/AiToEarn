@@ -53,7 +53,7 @@ export default function IncomePage() {
         setIncomePagination({
           current: page,
           pageSize,
-          total: response.data.total || 0
+          total: response?.data?.total || 0
         });
       } else {
         message.error(t('messages.getIncomeRecordsFailed'));
@@ -157,7 +157,7 @@ export default function IncomePage() {
       key: 'amount',
       render: (amount: number) => (
         <span style={{ color: '#52c41a', fontWeight: 'bold' }}>
-          ￥ {amount.toFixed(2)/100}
+          ￥ {amount/100}
         </span>
       ),
     },
@@ -212,7 +212,7 @@ export default function IncomePage() {
       key: 'amount',
       render: (amount: number) => (
         <span style={{ color: '#1890ff', fontWeight: 'bold' }}>
-          ￥ {amount.toFixed(2)/100}
+          ￥ {amount/100}
         </span>
       ),
     },
@@ -393,7 +393,7 @@ export default function IncomePage() {
               </div>
               <div className={styles.withdrawItem}>
                 <span className={styles.withdrawLabel}>{t('withdrawAmount')}：</span>
-                <span className={styles.withdrawAmount}>￥ {selectedIncomeRecord.amount.toFixed(2)/100}</span>
+                <span className={styles.withdrawAmount}>￥ {selectedIncomeRecord.amount/100}</span>
               </div>
               <div className={styles.withdrawItem}>
                 <span className={styles.withdrawLabel}>{t('incomeType')}：</span>
