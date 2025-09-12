@@ -13,6 +13,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { getStatisticsPeriodApi } from "@/api/dataStatistics";
 import { StatisticsPeriodModel } from "@/api/types/dataStatistics";
 import { message } from "antd";
+import drawDataStatisticsEchartLine from "@/app/[lng]/dataStatistics/echart/drawDataStatisticsEchartLine";
 
 export interface IDataStatisticsStore {
   // 当前选择的账户组IDs
@@ -218,7 +219,7 @@ export const useDataStatisticsStore = create(
             },
           });
 
-          console.log(get().echartData);
+          drawDataStatisticsEchartLine("dataStatisticsEchartLine");
         },
 
         // 设置 timeRangeValue
@@ -227,14 +228,12 @@ export const useDataStatisticsStore = create(
             timeRangeValue,
           });
         },
-
         // 设置 currentDetailType
         setCurrentDetailType(currentDetailType: string) {
           set({
             currentDetailType,
           });
         },
-
         // 设置选择账户组IDs
         setChoosedGroupIds(choosedGroupIds: string[]) {
           set({

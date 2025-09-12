@@ -78,6 +78,8 @@ const DataStatisticsDetails = memo(
               </div>
             ))}
           </div>
+
+          <div id="dataStatisticsEchartLine" />
         </div>
       );
     },
