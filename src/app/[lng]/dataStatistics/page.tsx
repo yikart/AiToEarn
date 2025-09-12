@@ -5,11 +5,11 @@ import { DataStatisticsCore } from "@/app/[lng]/dataStatistics/DataStatisticsCor
 
 export async function generateMetadata({ params }: PageParams) {
   const { lng } = await params;
-  const { t } = await useTranslation(lng, "account");
+  const { t } = await useTranslation(lng, "dataStatistics");
   return await getMetadata(
     {
       title: t("title"),
-      description: t("describe"),
+      description: t("description"),
     },
     lng,
   );
