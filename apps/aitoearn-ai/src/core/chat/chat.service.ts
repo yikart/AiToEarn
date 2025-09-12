@@ -88,6 +88,11 @@ export class ChatService {
 
     const { usage } = result
 
+    this.logger.debug({
+      usage,
+      modelConfig,
+    })
+
     const prompt = new BigNumber(usage.input_tokens).div('1000').times(modelConfig.pricing.prompt)
     const completion = new BigNumber(usage.output_tokens).div('1000').times(modelConfig.pricing.completion)
     const points = prompt.plus(completion).toNumber()
