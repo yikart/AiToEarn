@@ -18,7 +18,9 @@
     "doing": "Completed",
     "accepted": "Accepted",
     "completed": "Completed",
-    "rejected": "Rejected"
+    "rejected": "Rejected",
+    "active": "In Progress",
+    "inactive": "Ended"
   },
   "taskTypes": {
     "video": "Video",
@@ -71,7 +73,10 @@
     "noTaskDetails": "No task details",
     "loading": "Loading...",
     "totalRecords": "Total {{total}} records",
-    "pageInfo": "{{start}}-{{end}} of {{total}} records"
+    "pageInfo": "{{start}}-{{end}} of {{total}} records",
+    "taskInProgress": "Task is in progress, can be accepted",
+    "taskEnded": "Task has ended",
+    "acceptedCount": "Accepted {{current}}/{{max}} people"
   },
   "modal": {
     "submitTask": "Submit Task",

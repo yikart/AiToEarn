@@ -18,7 +18,9 @@
     "doing": "已完成",
     "accepted": "已接受",
     "completed": "已完成",
-    "rejected": "已拒绝"
+    "rejected": "已拒绝",
+    "active": "进行中",
+    "inactive": "已结束"
   },
   "taskTypes": {
     "video": "视频",
@@ -71,7 +73,10 @@
     "noTaskDetails": "暂无任务详情",
     "loading": "加载中...",
     "totalRecords": "共 {{total}} 条记录",
-    "pageInfo": "第 {{start}}-{{end}} 条，共 {{total}} 条"
+    "pageInfo": "第 {{start}}-{{end}} 条，共 {{total}} 条",
+    "taskInProgress": "任务正在进行中，可以接受",
+    "taskEnded": "任务已结束",
+    "acceptedCount": "已接受 {{current}}/{{max}} 人"
   },
   "modal": {
     "submitTask": "提交任务",

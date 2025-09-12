@@ -52,9 +52,13 @@
     "title": "下载{{appName}}",
     "operationInApp": "请在{{appName}}中操作添加",
     "description": "为了更好的用户体验和功能完整性，该操作需要在 {{appName}} 中完成账号添加。请下载并安装 {{appName}} 后继续操作。",
+    "operationDescription": "请在Aitoearn App中操作{{platform}}频道账号<br/>为了更好的用户体验和完整性，请下载并安装Aitoearn App后继续操作。",
     "scanQrCode": "扫描二维码下载",
     "downloadLink": "下载链接：",
     "copy": "复制",
+    "copySuccess": "复制成功",
+    "copyFailed": "复制失败，请手动复制",
+    "copied": "已复制",
     "close": "关闭",
     "downloadNow": "立即下载",
     "tip": "💡 提示：安装完成后，请在App中登录您的账号，然后重新尝试相关操作"
