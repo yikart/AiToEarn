@@ -88,19 +88,14 @@ export class ChatService {
 
     const { usage } = result
 
-    this.logger.debug({
-      usage,
-      modelConfig,
-    })
-
     const prompt = new BigNumber(usage.input_tokens).div('1000').times(modelConfig.pricing.prompt)
     const completion = new BigNumber(usage.output_tokens).div('1000').times(modelConfig.pricing.completion)
-    const price = prompt.plus(completion)
-    const points = price.toNumber()
+    const points = prompt.plus(completion).toNumber()
 
     this.logger.debug({
-      price,
       points,
+      usage,
+      modelConfig,
     })
 
     if (userType === UserType.User) {
@@ -120,7 +115,7 @@ export class ChatService {
       startedAt,
       duration,
       type: AiLogType.Chat,
-      points: pricing,
+      points,
       request: params,
       response: result,
       status: AiLogStatus.Success,
