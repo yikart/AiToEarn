@@ -55,7 +55,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
       title={
         <Space>
           <img src={logo.src} alt="Aitoearn" style={{ width: 20, height: 20, borderRadius: 4 }} />
-          <span>下载Aitoearn App</span>
+          <span>Download Aitoearn App</span>
         </Space>
       }
       open={visible}
@@ -70,7 +70,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
           icon={<DownloadOutlined />}
           onClick={handleDownload}
         >
-          立即下载Aitoearn App
+          {t('downloadApp.downloadNow' as any)}
         </Button>
       ]}
       width={520}
