@@ -42,6 +42,11 @@ export const routerData: IRouterDataItem[] = [
     translationKey: "tasks",
     path: "/tasks",
   },
+  {
+    name: "数据统计",
+    translationKey: "dataStatistics",
+    path: "/dataStatistics",
+  },
 ];
 
 const recursion = (

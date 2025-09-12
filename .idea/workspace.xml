@@ -4,13 +4,17 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat: 选择代理">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix: 修复因为 @svgr/webpack 受到的影响">
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/DataStatisticsCore.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/next.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.mjs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/config/platConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/config/platConfig.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/robots.txt" beforeDir="false" afterPath="$PROJECT_DIR$/public/robots.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/sitemap.xml" beforeDir="false" afterPath="$PROJECT_DIR$/public/sitemap.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/i18n/locales/en/route.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/i18n/locales/en/route.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/i18n/locales/zh-CN/route.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/i18n/locales/zh-CN/route.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/layout/routerData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout/routerData.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,8 +99,10 @@
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;E:/project-dev/web/艺咖/aitoearn-web/src/components&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
@@ -196,7 +202,11 @@
       <workItem from="1756968825319" duration="59000" />
       <workItem from="1757578930648" duration="1505000" />
       <workItem from="1757588797084" duration="46000" />
-      <workItem from="1757599699131" duration="2518000" />
+      <workItem from="1757599699131" duration="5402000" />
+      <workItem from="1757646069183" duration="322000" />
+      <workItem from="1757646405605" duration="66000" />
+      <workItem from="1757646484870" duration="466000" />
+      <workItem from="1757647784882" duration="1419000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -542,7 +552,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757600217030</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="fix: 修复因为 @svgr/webpack 受到的影响">
+      <option name="closed" value="true" />
+      <created>1757603685024</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1757603685024</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -555,6 +573,17 @@
   <component name="Vcs.Log.Tabs.Properties">
     <option name="RECENT_FILTERS">
       <map>
+        <entry key="Paths">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="file:$PROJECT_DIR$/next.config.mjs" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
         <entry key="User">
           <value>
             <list>
@@ -582,6 +611,13 @@
                       </list>
                     </value>
                   </entry>
+                  <entry key="structure">
+                    <value>
+                      <list>
+                        <option value="file:$PROJECT_DIR$/next.config.mjs" />
+                      </list>
+                    </value>
+                  </entry>
                 </map>
               </option>
             </State>
@@ -594,7 +630,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="feat(发布)：b站添加标题参数" />
     <MESSAGE value="feat(发布)：发布记录添加账户筛选API" />
     <MESSAGE value="feat(发布)：1. b站添加是否转载、选择分区参数。 2. 发布记录展示时间修复，将后端返回的时间转为当前时区给用户展示。 3. b站添加强制拦截，分区、转载不选择会强制拦截用户。" />
     <MESSAGE value="fix(日历)：修复了单元格没有预期时间但是发布记录还是不会填满单元格的问题。" />
@@ -619,6 +654,7 @@
     <MESSAGE value="fix: 校验修复" />
     <MESSAGE value="Revert &quot;refactor: 删除旧热门内容&quot;&#10;&#10;This reverts commit 7a0af7fb" />
     <MESSAGE value="feat: 选择代理" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 选择代理" />
+    <MESSAGE value="fix: 修复因为 @svgr/webpack 受到的影响" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: 修复因为 @svgr/webpack 受到的影响" />
   </component>
 </project>
