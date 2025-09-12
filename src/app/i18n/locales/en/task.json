@@ -88,5 +88,11 @@
     "minutesAgo": "{{minutes}} minutes ago",
     "hoursAgo": "{{hours}} hours ago",
     "daysAgo": "{{days}} days ago"
+  },
+  "accountSelect": {
+    "title": "Select Account",
+    "description": "Please select an account to use for publishing the task",
+    "accountId": "Account ID",
+    "redirectingToAccounts": "Redirecting to accounts page, please add channel account"
   }
 }

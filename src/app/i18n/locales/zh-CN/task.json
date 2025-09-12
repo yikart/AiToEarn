@@ -88,5 +88,11 @@
     "minutesAgo": "{{minutes}}分钟前",
     "hoursAgo": "{{hours}}小时前",
     "daysAgo": "{{days}}天前"
+  },
+  "accountSelect": {
+    "title": "选择账号",
+    "description": "请选择要用于发布任务的账号",
+    "accountId": "账号ID",
+    "redirectingToAccounts": "正在跳转到账户页面，请添加频道账号"
   }
 }

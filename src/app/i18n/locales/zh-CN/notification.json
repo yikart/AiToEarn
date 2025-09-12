@@ -51,7 +51,8 @@
     "description": "描述",
     "publisherAccount": "发布账号",
     "reward": "奖励",
-    "taskType": "任务类型"
+    "taskType": "任务类型",
+    "platformTypes": "支持平台"
   },
   "taskTypes": {
     "video": "视频",

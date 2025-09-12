@@ -51,7 +51,8 @@
     "description": "Description",
     "publisherAccount": "Publisher Account",
     "reward": "Reward",
-    "taskType": "Task Type"
+    "taskType": "Task Type",
+    "platformTypes": "Supported Platforms"
   },
   "taskTypes": {
     "video": "Video",
