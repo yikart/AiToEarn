@@ -397,13 +397,36 @@ export default function TaskPageCore() {
 
   // 处理任务操作（接受任务）
   const handleTaskAction = (task: any) => {
-    // 如果任务指定了账号ID，直接使用该账号
+    // 首先检查任务支持的所有平台是否都需要App操作
+    const taskPlatforms = task.accountTypes || [];
+    const appRequiredPlatforms = getTasksRequiringApp(taskPlatforms);
+    
+    // 如果所有平台都需要App操作，直接显示下载App提示
+    if (appRequiredPlatforms.length > 0 && appRequiredPlatforms.length === taskPlatforms.length) {
+      const firstPlatform = appRequiredPlatforms[0];
+      const config = getAppDownloadConfig(firstPlatform);
+      
+      if (config) {
+        setDownloadAppConfig({
+          platform: config.platform,
+          appName: config.appName,
+          downloadUrl: config.downloadUrl,
+          qrCodeUrl: config.qrCodeUrl
+        });
+        setDownloadAppVisible(true);
+        return;
+      }
+    }
+
+    // 如果任务指定了账号，使用指定账号的逻辑
     if (task.accountId) {
       const publishAccount = getAccountById(task.accountId);
       if (publishAccount) {
-        // 检查是否需要App操作
+        // 检查发布账号的平台是否需要App操作
         const appRequiredPlatforms = getTasksRequiringApp([publishAccount.type]);
+        
         if (appRequiredPlatforms.length > 0) {
+          // 有需要App操作的平台，显示第一个平台的下载提示
           const firstPlatform = appRequiredPlatforms[0];
           const config = getAppDownloadConfig(firstPlatform);
           
@@ -419,7 +442,7 @@ export default function TaskPageCore() {
           }
         }
         
-        // 使用指定账号接受任务
+        // 直接使用指定账号接受任务
         handleAcceptTaskFromDetail(task, publishAccount);
         return;
       }
@@ -432,11 +455,20 @@ export default function TaskPageCore() {
       // 没有符合条件的账号，跳转到账户界面并弹出授权界面
       setRequiredAccountTypes(task.accountTypes || []);
       setTaskDetailModalVisible(false); // 关闭任务详情弹窗
+      // 关闭消息通知弹窗  
       message.info(t('accountSelect.redirectingToAccounts' as any));
-      router.push(`/${lng}/accounts`); // 跳转到账户界面
+      
+      // 构建跳转URL，包含需要的平台类型参数
+      const accountTypes = task.accountTypes || [];
+      const platformParam = accountTypes.length > 0 ? accountTypes[0] : undefined;
+      const accountsUrl = platformParam 
+        ? `/${lng}/accounts?platform=${platformParam}`
+        : `/${lng}/accounts`;
+      
+      router.push(accountsUrl); // 跳转到账户界面并自动打开添加账号弹窗
       return;
     }
-    
+
     if (availableAccounts.length === 1) {
       // 只有一个符合条件的账号，直接使用
       const account = availableAccounts[0];
@@ -1204,6 +1236,7 @@ export default function TaskPageCore() {
           
         ]}
         width={800}
+        zIndex={2000}
         styles={{
           header: {
             borderBottom: '1px solid #f0f0f0',
@@ -1525,6 +1558,7 @@ export default function TaskPageCore() {
           
         ]}
         width={800}
+        zIndex={2000}
         styles={{
           header: {
             borderBottom: '1px solid #f0f0f0',
@@ -1954,12 +1988,12 @@ export default function TaskPageCore() {
 
       {/* 账号选择弹窗 */}
       <Modal
-        title="选择账号"
+        title={t('accountSelect.title' as any)}
         open={accountSelectVisible}
         onCancel={() => setAccountSelectVisible(false)}
         footer={null}
         width={600}
-        zIndex={2000}
+        zIndex={2500}
         styles={{
           header: {
             borderBottom: '1px solid #f0f0f0',
@@ -1972,7 +2006,7 @@ export default function TaskPageCore() {
       >
         <div style={{ marginBottom: '16px' }}>
           <p style={{ margin: 0, color: '#666' }}>
-            请选择要用于发布任务的账号
+            {t('accountSelect.description' as any)}
           </p>
         </div>
         <List
@@ -2021,7 +2055,7 @@ export default function TaskPageCore() {
                 }
                 description={
                   <div style={{ color: '#666' }}>
-                    <div>账号ID: {account.account}</div>
+                    <div>{t('accountSelect.accountId' as any)}: {account.account}</div>
                     {account.nickname && <div>昵称: {account.nickname}</div>}
                   </div>
                 }
@@ -2039,6 +2073,7 @@ export default function TaskPageCore() {
         appName={downloadAppConfig.appName}
         downloadUrl={downloadAppConfig.downloadUrl}
         qrCodeUrl={downloadAppConfig.qrCodeUrl}
+        zIndex={3000}
       />
     </div>
   );
