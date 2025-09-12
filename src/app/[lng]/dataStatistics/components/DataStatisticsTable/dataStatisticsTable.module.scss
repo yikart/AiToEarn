@@ -1,0 +1,10 @@
+.dataStatisticsTable {
+  margin-top: 20px;
+  :global {
+    .ant-table-thead {
+      .ant-table-cell {
+        padding: 10px 16px;
+      }
+    }
+  }
+}

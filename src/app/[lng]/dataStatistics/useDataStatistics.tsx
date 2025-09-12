@@ -127,10 +127,14 @@ export const useDataStatisticsStore = create(
           set({
             loading: true,
           });
+          // 过滤掉无效的account和account.type
+          const validAccounts = get().filteredAccountList.filter(
+            (account) => account && account.type && account.uid
+          );
           const res = await getStatisticsPeriodApi({
             startDate: get().timeRangeValue[0].format("YYYY-MM-DD"),
             endDate: get().timeRangeValue[1].format("YYYY-MM-DD"),
-            queries: get().filteredAccountList.map((account) => ({
+            queries: validAccounts.map((account) => ({
               platform: account.type,
               uid: account.uid,
             })),

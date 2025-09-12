@@ -1,4 +1,6 @@
 // getStatisticsPeriodApi 入参
+import { PlatType } from "@/app/config/platConfig";
+
 export interface StatisticsPeriodApiParams {
   startDate: string;
   endDate: string;
@@ -16,7 +18,7 @@ export interface StatisticsPeriodModel {
 }
 
 export interface StatisticsPeriodItems {
-  platform: string;
+  platform: PlatType;
   uid: string;
   items?: StatisticsPeriodItems2[];
 }

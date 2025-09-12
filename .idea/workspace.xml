@@ -4,8 +4,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(数据统计): 引入echarts">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(数据统计): echarts图接入API">
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsTable/dataStatisticsTable.module.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsTable/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/types/dataStatistics.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/types/dataStatistics.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/DataStatisticsCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/DataStatisticsCore.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/echart/drawDataStatisticsEchartLine.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/echart/drawDataStatisticsEchartLine.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/useDataStatistics.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/useDataStatistics.tsx" afterDir="false" />
@@ -23,8 +26,8 @@
       <list>
         <option value="vue3组件模板" />
         <option value="TypeScript JSX File" />
-        <option value="tsx组件模板" />
         <option value="TypeScript File" />
+        <option value="tsx组件模板" />
       </list>
     </option>
   </component>
@@ -209,15 +212,7 @@
       <workItem from="1757646484870" duration="466000" />
       <workItem from="1757647784882" duration="2426000" />
       <workItem from="1757656251307" duration="25699000" />
-      <workItem from="1757687709611" duration="257000" />
-    </task>
-    <task id="LOCAL-00004" summary="feat: 发布记录展示添加状态展示">
-      <option name="closed" value="true" />
-      <created>1752049408523</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1752049408523</updated>
+      <workItem from="1757687709611" duration="2157000" />
     </task>
     <task id="LOCAL-00005" summary="feat(发布弹框): 上传图片和上传视频完成">
       <option name="closed" value="true" />
@@ -603,7 +598,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757687087834</updated>
     </task>
-    <option name="localTasksCounter" value="53" />
+    <task id="LOCAL-00053" summary="feat(数据统计): echarts图接入API">
+      <option name="closed" value="true" />
+      <created>1757688007998</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1757688007999</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -666,7 +669,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="feat: 恢复选择账户弹框" />
     <MESSAGE value="feat: 尝试多语言SEO优化，添加静态站点配置" />
     <MESSAGE value="fix: 解决404问题" />
     <MESSAGE value="chore: b站校验优化" />
@@ -691,6 +693,7 @@
     <MESSAGE value="feat(数据统计): 数据明细完成" />
     <MESSAGE value="feat(数据统计): 接入数据API，并且分拣数据" />
     <MESSAGE value="feat(数据统计): 引入echarts" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(数据统计): 引入echarts" />
+    <MESSAGE value="feat(数据统计): echarts图接入API" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(数据统计): echarts图接入API" />
   </component>
 </project>

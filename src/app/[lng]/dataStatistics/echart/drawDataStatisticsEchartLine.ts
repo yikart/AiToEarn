@@ -5,6 +5,7 @@ type EChartsOption = echarts.EChartsOption;
 
 export default function drawDataStatisticsEchartLine(elId: string) {
   const chartDom = document.getElementById(elId)!;
+  const chartDomAny = chartDom as any;
   // 先销毁已有实例，防止重复初始化报错
   if (echarts.getInstanceByDom(chartDom)) {
     echarts.dispose(chartDom);
@@ -49,4 +50,14 @@ export default function drawDataStatisticsEchartLine(elId: string) {
   if (option) {
     myChart.setOption(option);
   }
+
+  // 先移除旧的resize事件监听，防止重复绑定
+  if (chartDomAny._resizeHandler) {
+    window.removeEventListener("resize", chartDomAny._resizeHandler);
+  }
+  function handleResize() {
+    myChart.resize();
+  }
+  window.addEventListener("resize", handleResize);
+  chartDomAny._resizeHandler = handleResize;
 }

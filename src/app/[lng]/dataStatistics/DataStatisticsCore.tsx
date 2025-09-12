@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { useAccountStore } from "@/store/account";
 import DataStatisticsDetails from "@/app/[lng]/dataStatistics/components/DataStatisticsDetails";
 import { Spin } from "antd";
+import DataStatisticsTable from "@/app/[lng]/dataStatistics/components/DataStatisticsTable";
 
 export const DataStatisticsCore = () => {
   const {
@@ -78,6 +79,7 @@ export const DataStatisticsCore = () => {
       <div className={styles.dataStatistics}>
         <DataStatisticsHeader />
         <DataStatisticsDetails />
+        <DataStatisticsTable />
       </div>
     </Spin>
   );
