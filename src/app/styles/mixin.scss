@@ -50,3 +50,28 @@
   -webkit-line-clamp: $line;
   overflow: hidden;
 }
+
+@mixin triangle-indicator($size: 12px, $color: #fff, $active-color: var(--colorPrimary5), $border-width: 1px) {
+  position: relative;
+
+  &:after,
+  &:before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 100%);
+    border: $size solid $color;
+    border-bottom: none;
+    border-right-color: transparent;
+    border-left-color: transparent;
+  }
+  &:before {
+    bottom: $border-width;
+    z-index: 2;
+  }
+  &:after {
+    border-top-color: $active-color;
+    bottom: 0;
+  }
+}

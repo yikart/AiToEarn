@@ -4,7 +4,7 @@ import AccountCount from "../../svgs/accountCount.svg";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useAccountStore } from "@/store/account";
 import { useShallow } from "zustand/react/shallow";
-import { Button, Input, Select, Tag, Tooltip } from "antd";
+import { Button, Input, Select, Skeleton, Tag, Tooltip } from "antd";
 import { useDataStatisticsStore } from "@/app/[lng]/dataStatistics/useDataStatistics";
 import {
   CheckCircleOutlined,
@@ -83,36 +83,42 @@ const DataStatisticsHeader = memo(
 
             <div className="dataStatisticsHeader-accounts-swiper">
               <Button className="swiper-prev" icon={<LeftOutlined />} />
-              <Swiper
-                modules={[Navigation]}
-                slidesPerView={4}
-                slidesPerGroup={4}
-                navigation={{
-                  prevEl: ".swiper-prev",
-                  nextEl: ".swiper-next",
-                }}
-              >
-                {filteredAccountList.map((account) => {
-                  return (
-                    <SwiperSlide key={account.id}>
-                      <div className="accounts-swiper-item">
-                        <div className="accounts-swiper-item-info">
-                          <AvatarPlat account={account} size="large" />
-                          <Tooltip title={account.nickname}>
-                            <div className="accounts-swiper-item-info-name">
-                              {account.nickname}
-                            </div>
-                          </Tooltip>
-                        </div>
 
-                        <div className="accounts-swiper-item-fans">
-                          粉丝数 <span>{account.fansCount}</span>
+              {accountGroupList.length === 0 ? (
+                <Skeleton active />
+              ) : (
+                <Swiper
+                  modules={[Navigation]}
+                  slidesPerView={4}
+                  slidesPerGroup={4}
+                  navigation={{
+                    prevEl: ".swiper-prev",
+                    nextEl: ".swiper-next",
+                  }}
+                >
+                  {filteredAccountList.map((account) => {
+                    return (
+                      <SwiperSlide key={account.id}>
+                        <div className="accounts-swiper-item">
+                          <div className="accounts-swiper-item-info">
+                            <AvatarPlat account={account} size="large" />
+                            <Tooltip title={account.nickname}>
+                              <div className="accounts-swiper-item-info-name">
+                                {account.nickname}
+                              </div>
+                            </Tooltip>
+                          </div>
+
+                          <div className="accounts-swiper-item-fans">
+                            粉丝数 <span>{account.fansCount}</span>
+                          </div>
                         </div>
-                      </div>
-                    </SwiperSlide>
-                  );
-                })}
-              </Swiper>
+                      </SwiperSlide>
+                    );
+                  })}
+                </Swiper>
+              )}
+
               <Button className="swiper-next" icon={<RightOutlined />} />
             </div>
           </div>

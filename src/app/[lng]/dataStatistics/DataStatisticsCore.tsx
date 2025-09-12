@@ -6,14 +6,16 @@ import { useDataStatisticsStore } from "@/app/[lng]/dataStatistics/useDataStatis
 import { useShallow } from "zustand/react/shallow";
 import { useEffect } from "react";
 import { useAccountStore } from "@/store/account";
+import DataStatisticsDetails from "@/app/[lng]/dataStatistics/components/DataStatisticsDetails";
 
 export const DataStatisticsCore = () => {
-  const { setChoosedGroupIds, setFilteredAccountList, choosedGroupIds } =
+  const { setChoosedGroupIds, setFilteredAccountList, choosedGroupIds, init } =
     useDataStatisticsStore(
       useShallow((state) => ({
         setChoosedGroupIds: state.setChoosedGroupIds,
         setFilteredAccountList: state.setFilteredAccountList,
         choosedGroupIds: state.choosedGroupIds,
+        init: state.init,
       })),
     );
   const { accountGroupList, accountList } = useAccountStore(
@@ -22,6 +24,10 @@ export const DataStatisticsCore = () => {
       accountList: state.accountList,
     })),
   );
+
+  useEffect(() => {
+    init();
+  }, []);
 
   useEffect(() => {
     if (accountGroupList.length > 0) {
@@ -41,6 +47,7 @@ export const DataStatisticsCore = () => {
   return (
     <div className={styles.dataStatistics}>
       <DataStatisticsHeader />
+      <DataStatisticsDetails />
     </div>
   );
 };
