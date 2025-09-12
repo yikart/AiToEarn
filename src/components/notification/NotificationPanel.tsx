@@ -29,6 +29,21 @@ import styles from "./NotificationPanel.module.scss";
 import { useParams, useRouter } from "next/navigation";
 import { getDays, getUtcDays } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 
+// 导入平台图标
+import douyinIcon from '@/assets/svgs/plat/douyin.svg';
+import tiktokIcon from '@/assets/svgs/plat/tiktok.svg';
+import youtubeIcon from '@/assets/svgs/plat/youtube.svg';
+import bilibiliIcon from '@/assets/svgs/plat/bilibili.svg';
+import xhsIcon from '@/assets/svgs/plat/xhs.svg';
+import ksIcon from '@/assets/svgs/plat/ks.svg';
+import wxSphIcon from '@/assets/svgs/plat/wx-sph.svg';
+import wxGzhIcon from '@/assets/svgs/plat/wx-gzh.svg';
+import facebookIcon from '@/assets/svgs/plat/facebook.svg';
+import instagramIcon from '@/assets/svgs/plat/instagram.svg';
+import threadsIcon from '@/assets/svgs/plat/xiancheng.svg';
+import pinterestIcon from '@/assets/svgs/plat/pinterest.svg';
+import twitterIcon from '@/assets/svgs/plat/twtter.svg';
+
 interface NotificationPanelProps {
   visible: boolean;
   onClose: () => void;
@@ -344,6 +359,27 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
 
   // 检查任务类型并显示相应的操作提示
   const handleTaskAction = (task: TaskItem) => {
+    // 首先检查任务支持的所有平台是否都需要App操作
+    const taskPlatforms = task.accountTypes || [];
+    const appRequiredPlatforms = getTasksRequiringApp(taskPlatforms);
+    
+    // 如果所有平台都需要App操作，直接显示下载App提示
+    if (appRequiredPlatforms.length > 0 && appRequiredPlatforms.length === taskPlatforms.length) {
+      const firstPlatform = appRequiredPlatforms[0];
+      const config = getAppDownloadConfig(firstPlatform);
+      
+      if (config) {
+        setDownloadAppConfig({
+          platform: config.platform,
+          appName: config.appName,
+          downloadUrl: config.downloadUrl,
+          qrCodeUrl: config.qrCodeUrl
+        });
+        setDownloadAppVisible(true);
+        return;
+      }
+    }
+
     // 如果任务指定了账号，使用指定账号的逻辑
     if (task.accountId) {
       const publishAccount = getAccountById(task.accountId);
@@ -382,12 +418,18 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
       setRequiredAccountTypes(task.accountTypes || []);
       setDetailModalVisible(false); // 关闭任务详情弹窗
       message.info(t('accountSelect.redirectingToAccounts' as any));
-      router.push(`/${lng}/accounts`); // 跳转到账户界面
+      
+      // 构建跳转URL，包含需要的平台类型参数
+      const accountTypes = task.accountTypes || [];
+      const platformParam = accountTypes.length > 0 ? accountTypes[0] : undefined;
+      const accountsUrl = platformParam 
+        ? `/${lng}/accounts?platform=${platformParam}`
+        : `/${lng}/accounts`;
+      
+      router.push(accountsUrl); // 跳转到账户界面并自动打开添加账号弹窗
       return;
     }
 
- 
-   
     if (availableAccounts.length === 1) {
       // 只有一个符合条件的账号，直接使用
       const account = availableAccounts[0];
@@ -507,6 +549,26 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
       'article2': t('taskTypes.article2' as any),
     };
     return taskTypeNames[type] || type;
+  };
+
+  // 获取平台图标
+  const getPlatformIcon = (type: string) => {
+    const iconMap: Record<string, any> = {
+      'douyin': douyinIcon,
+      'tiktok': tiktokIcon,
+      'youtube': youtubeIcon,
+      'bilibili': bilibiliIcon,
+      'xhs': xhsIcon,
+      'KWAI': ksIcon,
+      'wxSph': wxSphIcon,
+      'wxGzh': wxGzhIcon,
+      'facebook': facebookIcon,
+      'instagram': instagramIcon,
+      'threads': threadsIcon,
+      'pinterest': pinterestIcon,
+      'twitter': twitterIcon,
+    };
+    return iconMap[type] || null;
   };
 
   // 根据accountId获取账号信息
@@ -650,6 +712,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
       checkForNewAccounts();
     }
   }, [accountList, requiredAccountTypes, selectedTask]);
+
 
   return (
     <>
@@ -886,6 +949,29 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                              </p>
                            );
                          })()}
+
+                            {/* 任务平台类型显示 */}
+                            {selectedTask.accountTypes && selectedTask.accountTypes.length > 0 && (
+                           <p style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: 0, marginBottom: '6px' }}>
+                             <strong>{t('taskInfo.platformTypes' as any)}：</strong>
+                             {selectedTask.accountTypes.map(type => {
+                               const platformIcon = getPlatformIcon(type);
+                               return platformIcon ? (
+                                 <img
+                                   key={type}
+                                   src={platformIcon}
+                                   alt={`${type} icon`}
+                                   style={{
+                                     width: '20px',
+                                     height: '20px',
+                                     objectFit: 'contain'
+                                   }}
+                                 />
+                               ) : null;
+                             })}
+                           </p>
+                         )}
+
                          <p><strong>{t('taskInfo.reward' as any)}：</strong>¥{selectedTask.reward/100}</p>
                          {/* <p><strong>招募人数：</strong>{selectedTask.currentRecruits}/{selectedTask.maxRecruits}</p> */}
 
@@ -894,13 +980,8 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                               {getTaskTypeName(selectedTask.type)}
                             </Tag>
                           </p>
-                         {/* {selectedTask.accountTypes && selectedTask.accountTypes.length > 0 && (
-                           <p><strong>账号类型：</strong>
-                             {selectedTask.accountTypes.map(type => (
-                               <Tag key={type} style={{ marginLeft: '4px' }}>{getPlatformName(type)}</Tag>
-                             ))}
-                           </p>
-                         )} */}
+                         
+                      
                          
                          {/* 任务素材展示 */}
                          {selectedTask.materials && selectedTask.materials.length > 0 && (
@@ -1080,6 +1161,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
         appName={downloadAppConfig.appName}
         downloadUrl={downloadAppConfig.downloadUrl}
         qrCodeUrl={downloadAppConfig.qrCodeUrl}
+        zIndex={3000}
       />
 
       {/* 媒体预览弹窗 */}
