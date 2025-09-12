@@ -29,19 +29,19 @@ export const useNotification = () => {
 
   // @@.@@
 
-  // useEffect(() => {
-  //   // 初始获取
-  //   fetchUnreadCount();
+  useEffect(() => {
+    // 初始获取
+    fetchUnreadCount();
 
-  //   // 每10秒获取一次未读数量
-  //   const interval = setInterval(() => {
-  //     fetchUnreadCount();
-  //   }, 60000);
+    // 每10秒获取一次未读数量
+    const interval = setInterval(() => {
+      fetchUnreadCount();
+    }, 20000);
 
-  //   return () => {
-  //     clearInterval(interval);
-  //   };
-  // }, [fetchUnreadCount]);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [fetchUnreadCount]);
 
   return {
     unreadCount,

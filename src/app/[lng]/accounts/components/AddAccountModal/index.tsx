@@ -150,7 +150,7 @@ const AddAccountModal = memo(
       // 判断平台是否在当前属地可用
       const isPlatformAvailable = (platType: PlatType): boolean => {
         // TODO: 暂时屏蔽国内平台 @@.@@
-        return true;
+        // return true;
         if (isCnSpace === null) return true; // 未确定属地时显示所有平台
         
         const cnOnlyPlatforms = new Set<PlatType>([
