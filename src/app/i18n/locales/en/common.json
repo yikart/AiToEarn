@@ -52,9 +52,13 @@
     "title": "Download {{appName}}",
     "operationInApp": "Please operate in {{appName}} to add",
     "description": "For better user experience and complete functionality, this operation needs to be completed in {{appName}} to add accounts. Please download and install {{appName}} to continue.",
+    "operationDescription": "Please operate {{platform}} channel account in Aitoearn App<br/>For better user experience and completeness, please download and install Aitoearn App to continue.",
     "scanQrCode": "Scan QR code to download",
     "downloadLink": "Download link:",
     "copy": "Copy",
+    "copySuccess": "Copy successful",
+    "copyFailed": "Copy failed, please copy manually",
+    "copied": "Copied",
     "close": "Close",
     "downloadNow": "Download Now",
     "tip": "💡 Tip: After installation, please log in to your account in the App, then try the related operation again"
