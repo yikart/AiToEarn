@@ -14,6 +14,7 @@ interface DownloadAppModalProps {
   appName?: string; // app名称
   downloadUrl?: string; // 下载链接
   qrCodeUrl?: string; // 二维码图片URL
+  zIndex?: number; // 弹窗层级
 }
 
 /**
@@ -26,7 +27,8 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
   platform = "",
   appName = "Aitoearn App",
   downloadUrl,
-  qrCodeUrl = ''
+  qrCodeUrl = '',
+  zIndex = 1000
 }) => {
   const { t } = useTransClient("common");
   const [copySuccess, setCopySuccess] = useState(false);
@@ -53,7 +55,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
       title={
         <Space>
           <img src={logo.src} alt="Aitoearn" style={{ width: 20, height: 20, borderRadius: 4 }} />
-          <span>{t('downloadApp.title', { appName })}</span>
+          <span>下载Aitoearn App</span>
         </Space>
       }
       open={visible}
@@ -68,12 +70,13 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
           icon={<DownloadOutlined />}
           onClick={handleDownload}
         >
-          {t('downloadApp.downloadNow')}
+          立即下载Aitoearn App
         </Button>
       ]}
       width={520}
       centered
       destroyOnHidden
+      zIndex={zIndex}
     >
       <div style={{ textAlign: 'center', padding: '20px 0' }}>
         {/* App Logo */}
@@ -83,12 +86,13 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
         
         {/* 标题 */}
         <Typography.Title level={4} style={{ marginBottom: '16px', color: '#1f2937' }}>
-          {t('downloadApp.operationInApp', { appName })}
+          Aitoearn
         </Typography.Title>
         
         {/* 描述 */}
         <Paragraph style={{ color: '#6b7280', marginBottom: '32px', fontSize: '14px', lineHeight: '1.6' }}>
-          {t('downloadApp.description', { appName })}
+          请在Aitoearn App中操作{platform}频道账号<br/>
+          为了更好的用户体验和完整性，请下载并安装Aitoearn App后继续操作。
         </Paragraph>
 
         {/* 二维码区域 */}
