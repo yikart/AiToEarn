@@ -17,11 +17,73 @@
     }
 
     .dataStatisticsHeader-accounts {
+      display: flex;
+      margin-top: 15px;
+      height: 145px;
 
-    }
+      .dataStatisticsHeader-accountCount {
+        background: rgb(247, 250, 250);
+        width: 200px;
+        box-sizing: border-box;
+        padding: 10px 20px;
+        border-radius: 8px;
+        flex-shrink: 0;
 
-    .dataStatisticsHeader-accountCount {
+        &-title {
+          display: flex;
+          align-items: center;
+          svg {
+            margin-right: 5px;
+          }
+        }
+        &-number {
+          font-size: 26px;
+          font-weight: bold;
+          margin: 5px 0;
+        }
 
+        .ant-tag {
+          background: rgb(236, 240, 240);
+          &:nth-of-type(1) {
+            margin-bottom: 10px;
+            svg {
+              color: var(--success-color);
+            }
+          }
+          &:nth-of-type(2) {
+            svg {
+              color: var(--warning-color);
+            }
+          }
+          b {
+            margin-left: 5px;
+            display: inline-block;
+          }
+        }
+      }
+
+      &-swiper {
+        display: flex;
+        align-items: center;
+        background: rgb(247, 250, 250);
+        width: 100%;
+        min-width: 0;
+        height: 100%;
+        border-radius: 8px;
+        margin-left: 20px;
+
+        button {
+          width: 25px;
+          height: 40px;
+        }
+
+        .swiper {
+          width: 100%;
+          height: 100%;
+          padding: 15px;
+          box-sizing: border-box;
+        }
+      }
     }
   }
 }

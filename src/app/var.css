@@ -73,6 +73,8 @@
   --border-color: #e5e7eb;
   --background-color: #fff;
   --card-background: #fff;
+  /* 警告颜色 */
+  --warning-color: #f59e0b;
   /* 错误颜色 */
   --error-color: #ef4444;
   /* 成功色 */

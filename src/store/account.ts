@@ -3,7 +3,6 @@ import { combine } from "zustand/middleware";
 import lodash from "lodash";
 import { AccountGroupItem, SocialAccount } from "@/api/types/account.type";
 import { getAccountGroupApi, getAccountListApi } from "@/api/account";
-import { PlatType } from "@/app/config/platConfig";
 import { directTrans } from "@/app/i18n/client";
 
 export interface AccountGroup extends AccountGroupItem {
@@ -75,12 +74,6 @@ export const useAccountStore = create(
           const accountList: SocialAccount[] = [];
 
           for (const item of result.data) {
-            if (
-              item.type === PlatType.Xhs ||
-              item.type === PlatType.Douyin ||
-              item.type === PlatType.WxSph
-            )
-              continue;
             accountMap.set(item.id, item);
             accountAccountMap.set(item.account, item);
             accountList.push(item);
@@ -101,7 +94,7 @@ export const useAccountStore = create(
 
           if (!groupList) return;
           if (groupList.length === 0) return;
-          groupList.map((v:any) => {
+          groupList.map((v: any) => {
             v.name = v.isDefault
               ? directTrans("account", "defaultSpace")
               : v.name;
@@ -111,9 +104,9 @@ export const useAccountStore = create(
           // key=组ID，val=账户ID
           const accountGroupMap = new Map<string, AccountGroup>();
 
-          const defaultGroup = groupList.find((v:any) => v.isDefault)!;
+          const defaultGroup = groupList.find((v: any) => v.isDefault)!;
 
-          groupList.map((v:any) => {
+          groupList.map((v: any) => {
             const accountGroupItem = {
               ...v,
               children: [],
@@ -122,10 +115,12 @@ export const useAccountStore = create(
             accountGroupMap.set(v.id, accountGroupItem);
           });
           get().accountList.map((v) => {
-            (
-              accountGroupMap.get(v.groupId!) ||
-              accountGroupMap.get(defaultGroup.id)!
-            ).children?.push(v);
+            if (accountGroupMap.get(v.groupId!)) {
+              accountGroupMap.get(v.groupId!)!.children?.push(v);
+            } else {
+              accountGroupMap.get(defaultGroup.id)!.children?.push(v);
+              v.groupId = defaultGroup.id;
+            }
           });
 
           accountGroupList.sort((a, b) => {
