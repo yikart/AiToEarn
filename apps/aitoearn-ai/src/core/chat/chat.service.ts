@@ -95,7 +95,13 @@ export class ChatService {
 
     const prompt = new BigNumber(usage.input_tokens).div('1000').times(modelConfig.pricing.prompt)
     const completion = new BigNumber(usage.output_tokens).div('1000').times(modelConfig.pricing.completion)
-    const points = prompt.plus(completion).toNumber()
+    const price = prompt.plus(completion)
+    const points = price.toNumber()
+
+    this.logger.debug({
+      price,
+      points,
+    })
 
     if (userType === UserType.User) {
       await this.deductUserPoints(
