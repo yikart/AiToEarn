@@ -9,6 +9,10 @@ import {
   VideoCameraFilled,
   MessageFilled,
 } from "@ant-design/icons";
+import dayjs, { Dayjs } from "dayjs";
+import { getStatisticsPeriodApi } from "@/api/dataStatistics";
+import { StatisticsPeriodModel } from "@/api/types/dataStatistics";
+import { message } from "antd";
 
 export interface IDataStatisticsStore {
   // 当前选择的账户组IDs
@@ -27,6 +31,23 @@ export interface IDataStatisticsStore {
   }[];
   // 当前选择的明细类型
   currentDetailType: string;
+  // 日期范围
+  timeRangeValue: [Dayjs, Dayjs];
+  // 源数据
+  originData?: StatisticsPeriodModel;
+  // loading
+  loading: boolean;
+  // echart 数据
+  echartData: {
+    // 平台，格式：['抖音', '微信', '快手', '小红书']
+    platforms: string[];
+    // 日期，格式：['2023-10-01', '2023-10-02', ...]
+    dates: string[];
+    // 数据，格式：{'抖音': [100, 200, ...], '微信': [150, 250, ...], ...}
+    data: {
+      [key: string]: number[];
+    };
+  };
 }
 
 const state: IDataStatisticsStore = {
@@ -77,6 +98,14 @@ const state: IDataStatisticsStore = {
     },
   ],
   currentDetailType: "",
+  timeRangeValue: [dayjs().subtract(7, "day"), dayjs()],
+  loading: false,
+  originData: undefined,
+  echartData: {
+    platforms: [],
+    dates: [],
+    data: {},
+  },
 };
 
 export const useDataStatisticsStore = create(
@@ -86,9 +115,116 @@ export const useDataStatisticsStore = create(
     },
     (set, get) => {
       const methods = {
-        init() {
+        async init() {
           set({
             currentDetailType: get().dataDetails[0].value,
+          });
+        },
+
+        // 获取数据统计
+        async getStatistics() {
+          set({
+            loading: true,
+          });
+          const res = await getStatisticsPeriodApi({
+            startDate: get().timeRangeValue[0].format("YYYY-MM-DD"),
+            endDate: get().timeRangeValue[1].format("YYYY-MM-DD"),
+            queries: get().filteredAccountList.map((account) => ({
+              platform: account.type,
+              uid: account.uid,
+            })),
+          });
+          set({
+            loading: false,
+          });
+
+          if (!res || !res.data) {
+            message.error("获取数据统计失败，请稍后重试");
+            return;
+          }
+          set({
+            originData: res.data,
+          });
+
+          methods.sortingData();
+        },
+
+        // 分拣数据
+        sortingData() {
+          const data = get().originData;
+          if (!data) return;
+
+          // 1. 汇总各指标总数
+          const metrics = get().dataDetails.map((e) => e.value);
+          const totals: Record<string, number> = {};
+          metrics.forEach((m) => (totals[m] = 0));
+
+          data.groupedByDate.forEach((day) => {
+            day.records.forEach((rec) => {
+              metrics.forEach((m) => {
+                // @ts-ignore
+                totals[m] += rec[m] ?? 0;
+              });
+            });
+          });
+
+          set({
+            dataDetails: get().dataDetails.map((item) => ({
+              ...item,
+              total: totals[item.value] ?? 0,
+            })),
+          });
+
+          // 2. 生成折线图数据
+          const currentField = get().currentDetailType;
+
+          // 日期
+          const dates = Array.from(
+            new Set(data.groupedByDate.map((e) => e.date)),
+          ).sort();
+          const dateIndex: Record<string, number> = {};
+          dates.forEach((d, i) => (dateIndex[d] = i));
+
+          // 平台
+          const platformSet = new Set<string>();
+          data.groupedByDate.forEach((g) =>
+            g.records.forEach((r) => platformSet.add(r.platform)),
+          );
+          const platforms = Array.from(platformSet).sort();
+
+          // 初始化矩阵
+          const chartData: Record<string, number[]> = {};
+          platforms.forEach(
+            (p) => (chartData[p] = Array(dates.length).fill(0)),
+          );
+
+          // 填充数据
+          data.groupedByDate.forEach((g) => {
+            const dIdx = dateIndex[g.date];
+            g.records.forEach((r) => {
+              const p = r.platform;
+              if (chartData[p]) {
+                // @ts-ignore
+                chartData[p][dIdx] = r[currentField] ?? 0;
+              }
+            });
+          });
+
+          set({
+            echartData: {
+              platforms,
+              dates,
+              data: chartData,
+            },
+          });
+
+          console.log(get().echartData);
+        },
+
+        // 设置 timeRangeValue
+        setTimeRangeValue(timeRangeValue: [Dayjs, Dayjs]) {
+          set({
+            timeRangeValue,
           });
         },
 

@@ -1,19 +1,24 @@
 .dataStatisticsDetails {
   :global {
-    h3 {
+    .dataStatisticsDetails-head {
+      display: flex;
+      justify-content: space-between;
       margin: 30px 0;
-      position: relative;
-      padding-left: 20px;
-      &:after {
-        content: "";
-        display: block;
-        position: absolute;
-        top: 53%;
-        transform: translateY(-50%);
-        left: 0;
-        width: 2px;
-        height: 60%;
-        background: var(--colorPrimary5);
+
+      h3 {
+        position: relative;
+        padding-left: 20px;
+        &:after {
+          content: "";
+          display: block;
+          position: absolute;
+          top: 45%;
+          transform: translateY(-50%);
+          left: 0;
+          width: 2px;
+          height: 50%;
+          background: var(--colorPrimary5);
+        }
       }
     }
 

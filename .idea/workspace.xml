@@ -4,20 +4,14 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(数据统计): 顶部账号完成">
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsDetails/dataStatisticsDetails.module.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsDetails/index.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/svgs/collectCount.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/svgs/fansCount.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/svgs/forwardCount.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/useDataStatistics.tsx" afterDir="false" />
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(数据统计): 数据明细完成">
+      <change afterPath="$PROJECT_DIR$/src/api/dataStatistics.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/api/types/dataStatistics.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/DataStatisticsCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/DataStatisticsCore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/dataStatisticsHeader.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/dataStatisticsHeader.module.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/dataStatistics.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/dataStatistics.module.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/useDataStatistics.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/styles/mixin.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/styles/mixin.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsDetails/dataStatisticsDetails.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsDetails/dataStatisticsDetails.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsDetails/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsDetails/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/useDataStatistics.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/useDataStatistics.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -215,15 +209,7 @@
       <workItem from="1757646405605" duration="66000" />
       <workItem from="1757646484870" duration="466000" />
       <workItem from="1757647784882" duration="2426000" />
-      <workItem from="1757656251307" duration="21340000" />
-    </task>
-    <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
-      <option name="closed" value="true" />
-      <created>1751978595304</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1751978595304</updated>
+      <workItem from="1757656251307" duration="24213000" />
     </task>
     <task id="LOCAL-00002" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -609,7 +595,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757676377923</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="feat(数据统计): 数据明细完成">
+      <option name="closed" value="true" />
+      <created>1757683195377</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1757683195377</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -660,13 +654,6 @@
                       </list>
                     </value>
                   </entry>
-                  <entry key="structure">
-                    <value>
-                      <list>
-                        <option value="file:$PROJECT_DIR$/next.config.mjs" />
-                      </list>
-                    </value>
-                  </entry>
                 </map>
               </option>
             </State>
@@ -679,7 +666,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="fix(日历): 删除最佳时间" />
     <MESSAGE value="chore: 测试静态站点" />
     <MESSAGE value="选择用户弹框恢复" />
     <MESSAGE value="feat: 恢复选择账户弹框" />
@@ -704,6 +690,7 @@
     <MESSAGE value="feat(数据统计): 顶部筛选完成" />
     <MESSAGE value="feat(数据统计): 1. 找不到空间的账号更改为默认账号的ID。 2. 完善swiper。 3. 添加过滤后的账号" />
     <MESSAGE value="feat(数据统计): 顶部账号完成" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(数据统计): 顶部账号完成" />
+    <MESSAGE value="feat(数据统计): 数据明细完成" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(数据统计): 数据明细完成" />
   </component>
 </project>

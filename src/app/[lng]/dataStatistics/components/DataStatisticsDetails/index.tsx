@@ -3,6 +3,8 @@ import styles from "./dataStatisticsDetails.module.scss";
 import { useDataStatisticsStore } from "@/app/[lng]/dataStatistics/useDataStatistics";
 import { useShallow } from "zustand/react/shallow";
 import Icon from "@ant-design/icons";
+import { DatePicker } from "antd";
+import { Dayjs } from "dayjs";
 
 export interface IDataStatisticsDetailsRef {}
 
@@ -14,18 +16,38 @@ const DataStatisticsDetails = memo(
       {}: IDataStatisticsDetailsProps,
       ref: ForwardedRef<IDataStatisticsDetailsRef>,
     ) => {
-      const { currentDetailType, dataDetails, setCurrentDetailType } =
-        useDataStatisticsStore(
-          useShallow((state) => ({
-            dataDetails: state.dataDetails,
-            currentDetailType: state.currentDetailType,
-            setCurrentDetailType: state.setCurrentDetailType,
-          })),
-        );
+      const {
+        currentDetailType,
+        dataDetails,
+        setTimeRangeValue,
+        setCurrentDetailType,
+        timeRangeValue,
+      } = useDataStatisticsStore(
+        useShallow((state) => ({
+          dataDetails: state.dataDetails,
+          currentDetailType: state.currentDetailType,
+          setCurrentDetailType: state.setCurrentDetailType,
+          setTimeRangeValue: state.setTimeRangeValue,
+          timeRangeValue: state.timeRangeValue,
+        })),
+      );
 
       return (
         <div className={styles.dataStatisticsDetails}>
-          <h3>数据明细</h3>
+          <div className="dataStatisticsDetails-head">
+            <h3>数据明细</h3>
+            <div className="dataStatisticsDetails-head-rangePicker">
+              <label>时间范围：</label>
+              <DatePicker.RangePicker
+                value={timeRangeValue}
+                allowClear={false}
+                onChange={(e) => {
+                  const dates = e as [Dayjs, Dayjs];
+                  setTimeRangeValue(dates);
+                }}
+              />
+            </div>
+          </div>
 
           <div className="dataStatisticsDetails-content">
             {dataDetails.map((detail) => (

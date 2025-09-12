@@ -9,15 +9,29 @@ import { useAccountStore } from "@/store/account";
 import DataStatisticsDetails from "@/app/[lng]/dataStatistics/components/DataStatisticsDetails";
 
 export const DataStatisticsCore = () => {
-  const { setChoosedGroupIds, setFilteredAccountList, choosedGroupIds, init } =
-    useDataStatisticsStore(
-      useShallow((state) => ({
-        setChoosedGroupIds: state.setChoosedGroupIds,
-        setFilteredAccountList: state.setFilteredAccountList,
-        choosedGroupIds: state.choosedGroupIds,
-        init: state.init,
-      })),
-    );
+  const {
+    setChoosedGroupIds,
+    setFilteredAccountList,
+    choosedGroupIds,
+    getStatistics,
+    timeRangeValue,
+    init,
+    filteredAccountList,
+    currentDetailType,
+    sortingData,
+  } = useDataStatisticsStore(
+    useShallow((state) => ({
+      setChoosedGroupIds: state.setChoosedGroupIds,
+      setFilteredAccountList: state.setFilteredAccountList,
+      choosedGroupIds: state.choosedGroupIds,
+      init: state.init,
+      getStatistics: state.getStatistics,
+      timeRangeValue: state.timeRangeValue,
+      filteredAccountList: state.filteredAccountList,
+      currentDetailType: state.currentDetailType,
+      sortingData: state.sortingData,
+    })),
+  );
   const { accountGroupList, accountList } = useAccountStore(
     useShallow((state) => ({
       accountGroupList: state.accountGroupList,
@@ -29,6 +43,18 @@ export const DataStatisticsCore = () => {
     init();
   }, []);
 
+  // 数据明细切换，重新分拣数据
+  useEffect(() => {
+    sortingData();
+  }, [currentDetailType, sortingData]);
+
+  // 获取数据统计
+  useEffect(() => {
+    if (filteredAccountList.length == 0) return;
+    getStatistics();
+  }, [timeRangeValue, getStatistics, filteredAccountList]);
+
+  // 初始化选择所有账户组
   useEffect(() => {
     if (accountGroupList.length > 0) {
       setChoosedGroupIds(accountGroupList.map((group) => group.id));

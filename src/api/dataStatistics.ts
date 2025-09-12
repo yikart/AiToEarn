@@ -1,0 +1,13 @@
+import http from "@/utils/request";
+import {
+  StatisticsPeriodApiParams,
+  StatisticsPeriodModel,
+} from "@/api/types/dataStatistics";
+
+// 获取数据统计信息
+export const getStatisticsPeriodApi = (data: StatisticsPeriodApiParams) => {
+  return http.post<StatisticsPeriodModel>(
+    "statistics/channels/period-batch",
+    data,
+  );
+};
