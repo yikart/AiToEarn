@@ -1495,13 +1495,13 @@ export default function TaskPageCore() {
                       padding: '4px 8px'
                     }}
                   >
-                    {taskDetail.status === 'active' ? '进行中' : '已结束'}
+                    {taskDetail.status === 'active' ? t('taskStatus.active' as any) : t('taskStatus.inactive' as any)}
                   </Tag>
                   <span style={{ 
                     fontSize: '12px', 
                     color: '#666'
                   }}>
-                    {taskDetail.status === 'active' ? '任务正在进行中，可以接受' : '任务已结束'}
+                    {taskDetail.status === 'active' ? t('messages.taskInProgress' as any) : t('messages.taskEnded' as any)}
                   </span>
                 </div>
                 
@@ -1511,7 +1511,7 @@ export default function TaskPageCore() {
                 }}>
                   {taskDetail.currentRecruits && taskDetail.maxRecruits && (
                     <span>
-                      已接受 {taskDetail.currentRecruits}/{taskDetail.maxRecruits} 人
+                      {t('messages.acceptedCount' as any, { current: taskDetail.currentRecruits, max: taskDetail.maxRecruits })}
                     </span>
                   )}
                 </div>
