@@ -7,6 +7,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useEffect } from "react";
 import { useAccountStore } from "@/store/account";
 import DataStatisticsDetails from "@/app/[lng]/dataStatistics/components/DataStatisticsDetails";
+import { Spin } from "antd";
 
 export const DataStatisticsCore = () => {
   const {
@@ -19,6 +20,7 @@ export const DataStatisticsCore = () => {
     filteredAccountList,
     currentDetailType,
     sortingData,
+    loading,
   } = useDataStatisticsStore(
     useShallow((state) => ({
       setChoosedGroupIds: state.setChoosedGroupIds,
@@ -30,6 +32,7 @@ export const DataStatisticsCore = () => {
       filteredAccountList: state.filteredAccountList,
       currentDetailType: state.currentDetailType,
       sortingData: state.sortingData,
+      loading: state.loading,
     })),
   );
   const { accountGroupList, accountList } = useAccountStore(
@@ -71,9 +74,11 @@ export const DataStatisticsCore = () => {
   }, [choosedGroupIds, accountList]);
 
   return (
-    <div className={styles.dataStatistics}>
-      <DataStatisticsHeader />
-      <DataStatisticsDetails />
-    </div>
+    <Spin spinning={loading}>
+      <div className={styles.dataStatistics}>
+        <DataStatisticsHeader />
+        <DataStatisticsDetails />
+      </div>
+    </Spin>
   );
 };

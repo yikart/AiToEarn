@@ -38,16 +38,16 @@ export interface IDataStatisticsStore {
   originData?: StatisticsPeriodModel;
   // loading
   loading: boolean;
-  // echart 数据
+  // echart 数据，直接适配 ECharts 格式
   echartData: {
-    // 平台，格式：['抖音', '微信', '快手', '小红书']
-    platforms: string[];
-    // 日期，格式：['2023-10-01', '2023-10-02', ...]
-    dates: string[];
-    // 数据，格式：{'抖音': [100, 200, ...], '微信': [150, 250, ...], ...}
-    data: {
-      [key: string]: number[];
-    };
+    legend: string[];
+    xAxis: string[];
+    series: {
+      name: string;
+      type: string;
+      stack: string;
+      data: number[];
+    }[];
   };
 }
 
@@ -103,9 +103,9 @@ const state: IDataStatisticsStore = {
   loading: false,
   originData: undefined,
   echartData: {
-    platforms: [],
-    dates: [],
-    data: {},
+    legend: [],
+    xAxis: [],
+    series: [],
   },
 };
 
@@ -176,7 +176,7 @@ export const useDataStatisticsStore = create(
             })),
           });
 
-          // 2. 生成折线图数据
+          // 2. 生成 ECharts 适配数据
           const currentField = get().currentDetailType;
 
           // 日期
@@ -211,11 +211,21 @@ export const useDataStatisticsStore = create(
             });
           });
 
+          // 组装 ECharts 格式
+          const legend = platforms;
+          const xAxis = dates;
+          const series = platforms.map((p) => ({
+            name: p,
+            type: "line",
+            stack: "Total",
+            data: chartData[p],
+          }));
+
           set({
             echartData: {
-              platforms,
-              dates,
-              data: chartData,
+              legend,
+              xAxis,
+              series,
             },
           });
 

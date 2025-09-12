@@ -4,13 +4,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(数据统计): 接入数据API，并且分拣数据">
-      <change afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/echart/drawDataStatisticsEchartLine.ts" afterDir="false" />
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(数据统计): 引入echarts">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsDetails/dataStatisticsDetails.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsDetails/dataStatisticsDetails.module.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsDetails/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsDetails/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/DataStatisticsCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/DataStatisticsCore.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/echart/drawDataStatisticsEchartLine.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/echart/drawDataStatisticsEchartLine.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/useDataStatistics.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/useDataStatistics.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -211,15 +208,8 @@
       <workItem from="1757646405605" duration="66000" />
       <workItem from="1757646484870" duration="466000" />
       <workItem from="1757647784882" duration="2426000" />
-      <workItem from="1757656251307" duration="25080000" />
-    </task>
-    <task id="LOCAL-00003" summary="fix: platInfo添加一些非空判断">
-      <option name="closed" value="true" />
-      <created>1751986703860</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1751986703860</updated>
+      <workItem from="1757656251307" duration="25699000" />
+      <workItem from="1757687709611" duration="257000" />
     </task>
     <task id="LOCAL-00004" summary="feat: 发布记录展示添加状态展示">
       <option name="closed" value="true" />
@@ -605,7 +595,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757686166523</updated>
     </task>
-    <option name="localTasksCounter" value="52" />
+    <task id="LOCAL-00052" summary="feat(数据统计): 引入echarts">
+      <option name="closed" value="true" />
+      <created>1757687087834</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1757687087834</updated>
+    </task>
+    <option name="localTasksCounter" value="53" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -668,7 +666,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="选择用户弹框恢复" />
     <MESSAGE value="feat: 恢复选择账户弹框" />
     <MESSAGE value="feat: 尝试多语言SEO优化，添加静态站点配置" />
     <MESSAGE value="fix: 解决404问题" />
@@ -693,6 +690,7 @@
     <MESSAGE value="feat(数据统计): 顶部账号完成" />
     <MESSAGE value="feat(数据统计): 数据明细完成" />
     <MESSAGE value="feat(数据统计): 接入数据API，并且分拣数据" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(数据统计): 接入数据API，并且分拣数据" />
+    <MESSAGE value="feat(数据统计): 引入echarts" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(数据统计): 引入echarts" />
   </component>
 </project>
