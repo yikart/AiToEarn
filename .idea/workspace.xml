@@ -4,16 +4,14 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat: 创建数据统计页面">
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/dataStatisticsHeader.module.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/index.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/dataStatistics.module.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/i18n/locales/en/dataStatistics.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/i18n/locales/zh-CN/dataStatistics.json" afterDir="false" />
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat: 创建数据统计header">
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/svgs/accountCount.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/useDataStatistics.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/@types/resources.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/@types/resources.d.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/DataStatisticsCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/DataStatisticsCore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/dataStatisticsHeader.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/dataStatisticsHeader.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/notification/NotificationPanel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/notification/NotificationPanel.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -127,6 +125,7 @@
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\i18n\locales\zh-CN" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\dataStatistics\svgs" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\dataStatistics\components\DataStatisticsHeader" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\components" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\api\plat" />
@@ -210,7 +209,7 @@
       <workItem from="1757646405605" duration="66000" />
       <workItem from="1757646484870" duration="466000" />
       <workItem from="1757647784882" duration="2426000" />
-      <workItem from="1757656251307" duration="2730000" />
+      <workItem from="1757656251307" duration="7708000" />
     </task>
     <task id="LOCAL-00001" summary="feat(CalendarTiming): 优化发布记录列表展示&#10;- 调整日历记录项的样式和布局&#10;- 优化 RecordCore组件，添加平台图标和时间显示&#10;- 修改 CalendarTimingItem 组件，移除不必要的 Fragment&#10;-调整 index.tsx 中的日期格式化逻辑">
       <option name="closed" value="true" />
@@ -572,7 +571,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757653916005</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="feat: 创建数据统计header">
+      <option name="closed" value="true" />
+      <created>1757661071307</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1757661071307</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -642,7 +649,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="feat(发布)：1. b站添加是否转载、选择分区参数。 2. 发布记录展示时间修复，将后端返回的时间转为当前时区给用户展示。 3. b站添加强制拦截，分区、转载不选择会强制拦截用户。" />
     <MESSAGE value="fix(日历)：修复了单元格没有预期时间但是发布记录还是不会填满单元格的问题。" />
     <MESSAGE value="fix(发布弹框): 修复右侧预览不正常隐藏的问题" />
     <MESSAGE value="feat(发布弹框): 立即发布接入API" />
@@ -667,6 +673,7 @@
     <MESSAGE value="feat: 选择代理" />
     <MESSAGE value="fix: 修复因为 @svgr/webpack 受到的影响" />
     <MESSAGE value="feat: 创建数据统计页面" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 创建数据统计页面" />
+    <MESSAGE value="feat: 创建数据统计header" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 创建数据统计header" />
   </component>
 </project>
