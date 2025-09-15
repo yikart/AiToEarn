@@ -3,7 +3,6 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   padding: 10px 15px 15px 15px;
   box-sizing: border-box;
 
@@ -49,15 +48,20 @@
       .ant-tabs-content-holder {
         flex: 1;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
       }
 
       .ant-tabs-tabpane {
-        height: 100%;
-        overflow: hidden;
+        flex: 1;
+        overflow: visible;
+        display: flex;
+        flex-direction: column;
       }
 
       .ant-tabs-nav {
         margin-bottom: 12px;
+        flex-shrink: 0;
       }
 
       .ant-tabs-tab {
@@ -69,6 +73,14 @@
         font-weight: 600;
       }
     }
+  }
+
+  .tabContent {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 5px;
+    height: 100%;
   }
 
   .listContent {
@@ -156,7 +168,9 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 5px;
 
     .sentPostList {
       background: transparent;

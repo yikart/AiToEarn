@@ -89,7 +89,7 @@ const ListMode = memo(
       }
 
       const queueTabContent = (
-        <div className={styles.listContent}>
+        <div className={styles.tabContent}>
           <DndProvider backend={HTML5Backend}>
             {sortedRecords.length > 0 ? (
               <List
