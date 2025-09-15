@@ -5,14 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(数据统计): 添加昨日新增">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hot-content/page.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hot-content/page.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/layout/routerData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout/routerData.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/hot-content/HotContent.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/hot-content/HotContent.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/hot-content/SideMenu.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/hot-content/SideMenu.tsx" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/HotContentCore.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentSidebar/hotContentSidebar.module.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentSidebar/index.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/hotContent.module.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/useHotContent.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,48 +66,48 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder0": "0",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder1": "1",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder2": "2",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder3": "3",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth0": "450",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth1": "450",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth2": "450",
-    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth3": "449",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder0": "0",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder1": "1",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder2": "2",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder3": "3",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth0": "450",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth1": "450",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth2": "450",
-    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth3": "449",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "hot",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "E:/project-dev/web/艺咖/aitoearn-web/src/app/i18n/locales/zh-CN",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.standard": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.standard": "",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "show.migrate.to.gradle.popup": "false",
-    "ts.external.directory.path": "E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder0&quot;: &quot;0&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder1&quot;: &quot;1&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder2&quot;: &quot;2&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder3&quot;: &quot;3&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth0&quot;: &quot;450&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth1&quot;: &quot;450&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth2&quot;: &quot;450&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth3&quot;: &quot;449&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder0&quot;: &quot;0&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder1&quot;: &quot;1&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder2&quot;: &quot;2&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder3&quot;: &quot;3&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth0&quot;: &quot;450&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth1&quot;: &quot;450&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth2&quot;: &quot;450&quot;,
+    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth3&quot;: &quot;449&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;hot&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/project-dev/web/艺咖/aitoearn-web/src/app/i18n/locales/zh-CN&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="ReactBuddySettings">
     <option name="extensionsIgnore" value="true" />
   </component>
