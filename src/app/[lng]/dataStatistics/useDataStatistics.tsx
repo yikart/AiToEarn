@@ -49,7 +49,6 @@ export interface IDataStatisticsStore {
     series: {
       name: string;
       type: string;
-      stack: string;
       data: number[];
     }[];
   };
@@ -193,7 +192,38 @@ export const useDataStatisticsStore = create(
             })),
           });
 
-          // 2. 生成 ECharts 适配数据
+          // 2. 统计前一天数据
+          const endDate = get().timeRangeValue[1].format("YYYY-MM-DD");
+          const prevDay = dayjs(endDate)
+            .subtract(1, "day")
+            .format("YYYY-MM-DD");
+          const prevDayData = data.groupedByDate.find(
+            (d) => d.date === prevDay,
+          );
+          const yesterdayTotals: Record<string, number> = {};
+          if (prevDayData) {
+            const metrics = get().dataDetails.map((e) => e.value);
+            metrics.forEach((m) => (yesterdayTotals[m] = 0));
+            prevDayData.records.forEach((rec) => {
+              metrics.forEach((m) => {
+                // @ts-ignore
+                yesterdayTotals[m] += rec[m] ?? 0;
+              });
+            });
+          }
+
+          // 3. 更新 dataDetails
+          set({
+            dataDetails: get().dataDetails.map((item) => ({
+              ...item,
+              yesterday:
+                prevDayData && typeof yesterdayTotals[item.value] === "number"
+                  ? yesterdayTotals[item.value]
+                  : item.yesterday,
+            })),
+          });
+
+          // 4. 生成 ECharts 适配数据
           const currentField = get().currentDetailType;
 
           // 日期
@@ -236,7 +266,6 @@ export const useDataStatisticsStore = create(
           const series = platforms.map((p) => ({
             name: AccountPlatInfoMap.get(p)?.name || p,
             type: "line",
-            stack: "Total",
             data: chartData[p],
           }));
 
