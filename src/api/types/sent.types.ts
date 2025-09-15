@@ -19,9 +19,14 @@ export interface SentPost {
 }
 
 export interface SentPostsResponse {
-  total: number;
-  posts: SentPost[];
-  hasMore: boolean;
+  code: number;
+  message: string;
+  url: string;
+  data: {
+    total: number;
+    posts: SentPost[];
+    hasMore: boolean;
+  };
 }
 
 export interface SentPostsParams {

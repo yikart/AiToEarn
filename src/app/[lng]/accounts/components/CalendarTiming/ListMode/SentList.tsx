@@ -31,19 +31,36 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange }) => {
         pageSize: 20
       });
       
+      // 处理新的API响应格式
+      const responseData = response.data || response;
+      
+      console.log('SentList API Response:', {
+        code: response.code,
+        message: response.message,
+        data: responseData
+      });
+      
       if (append) {
-        setPosts(prev => [...prev, ...response.posts]);
+        setPosts(prev => [...prev, ...(responseData.posts || [])]);
       } else {
-        setPosts(response.posts);
+        setPosts(responseData.posts || []);
       }
-      setHasMore(response.hasMore);
+      setHasMore(responseData.hasMore || false);
       
       // 通知父组件数据变化
       if (onDataChange) {
-        onDataChange(response.total);
+        onDataChange(responseData.total || 0);
       }
     } catch (error) {
       console.error('Failed to load sent posts:', error);
+      // 发生错误时重置数据
+      if (!append) {
+        setPosts([]);
+        setHasMore(false);
+        if (onDataChange) {
+          onDataChange(0);
+        }
+      }
     } finally {
       setLoading(false);
     }
@@ -160,11 +177,11 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange }) => {
   if (loading && posts.length === 0) {
     return (
       <div className={styles.sentList}>
-        {[1, 2, 3].map((i) => (
-          <div key={i} className={styles.skeletonItem}>
-            <Skeleton active />
-          </div>
-        ))}
+        <div className={styles.loadingContainer}>
+          <Skeleton active paragraph={{ rows: 3 }} />
+          <Skeleton active paragraph={{ rows: 3 }} />
+          <Skeleton active paragraph={{ rows: 3 }} />
+        </div>
       </div>
     );
   }

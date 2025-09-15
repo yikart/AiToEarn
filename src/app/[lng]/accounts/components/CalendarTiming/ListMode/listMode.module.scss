@@ -418,5 +418,15 @@
       height: 100%;
       min-height: 200px;
     }
+
+    .loadingContainer {
+      padding: 16px 0;
+      
+      :global {
+        .ant-skeleton {
+          margin-bottom: 16px;
+        }
+      }
+    }
   }
 } 
