@@ -3,7 +3,6 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   padding: 10px 15px 15px 15px;
   box-sizing: border-box;
 
@@ -39,14 +38,115 @@
     }
   }
 
-  .listContent {
+  .listTabs {
     flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding-right: 5px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+
+    :global {
+      .ant-tabs {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .ant-tabs-content-holder {
+        flex: 1;
+        min-height: 0;
+        padding: 16px 0 0 0;
+      }
+
+      .ant-tabs-tabpane {
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .ant-tabs-nav {
+        margin-bottom: 0;
+        flex-shrink: 0;
+        background: transparent;
+        border-bottom: 1px solid #e8e8e8;
+        padding: 0;
+      }
+
+      .ant-tabs-tab {
+        font-weight: 500;
+        padding: 12px 16px;
+        border-radius: 0;
+        transition: all 0.2s ease;
+        margin: 0;
+        border: none;
+        background: transparent;
+        position: relative;
+        color: #666;
+      }
+
+      .ant-tabs-tab-active {
+        font-weight: 600;
+        color: #1890ff;
+        background: transparent;
+      }
+
+      .ant-tabs-tab-active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #1890ff;
+        border-radius: 1px;
+      }
+
+      .ant-tabs-tab:hover:not(.ant-tabs-tab-active) {
+        background: rgba(0, 0, 0, 0.04);
+        color: #333;
+      }
+
+      .ant-tabs-ink-bar {
+        display: none;
+      }
+    }
+  }
+
+  .tabLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+  }
+
+  .tabBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    background: #f0f0f0;
+    color: #666;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .tabContent {
+    height: 100%;
+    padding: 0 5px 0 0;
+  }
+
+  .listContent {
+    height: 100%;
+    padding: 0 5px 0 0;
 
     .recordList {
       background: transparent;
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
 
       :global {
         .ant-list-item {
@@ -115,6 +215,218 @@
 
     &:last-child {
       border-bottom: none;
+    }
+  }
+
+  // Sent列表相关样式
+  .sentList {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0 5px 0 0;
+
+    .sentPostList {
+      background: transparent;
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+
+      :global {
+        .ant-list-item {
+          padding: 0;
+          border-bottom: none;
+        }
+      }
+    }
+
+    .sentListItem {
+      margin-bottom: 16px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .sentPostCard {
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      border: 1px solid var(--grayColor8);
+      transition: all 0.2s ease;
+
+      &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        transform: translateY(-1px);
+      }
+
+      :global {
+        .ant-card-body {
+          padding: 16px;
+        }
+      }
+    }
+
+    .postHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+
+      .postTime {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        .postDate {
+          font-size: var(--fs-sm);
+          color: var(--grayColor6);
+          font-weight: 500;
+        }
+
+        .postTimeText {
+          font-size: var(--fs-lg);
+          color: var(--textColor);
+          font-weight: 600;
+        }
+      }
+
+      .mediaTypeTag {
+        margin: 0;
+        font-size: var(--fs-xs);
+        border-radius: 4px;
+      }
+    }
+
+    .postContent {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 12px;
+
+      .postInfo {
+        flex: 1;
+        min-width: 0;
+
+        .postTitle {
+          margin-bottom: 8px;
+
+          .titleText {
+            margin: 0;
+            font-size: var(--fs-md);
+            color: var(--textColor);
+            line-height: 1.4;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+          }
+        }
+
+        .postMeta {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+
+          .metaItem {
+            font-size: var(--fs-sm);
+            color: var(--grayColor6);
+
+            :global {
+              .anticon {
+                font-size: var(--fs-sm);
+              }
+            }
+          }
+        }
+      }
+
+      .postThumbnail {
+        flex-shrink: 0;
+        width: 120px;
+        height: 80px;
+
+        .thumbnailContainer {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          border-radius: 8px;
+          overflow: hidden;
+          background: var(--grayColor8);
+
+          .thumbnailImage {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+
+          .playButton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .playIcon {
+              color: white;
+              font-size: 12px;
+              margin-left: 2px;
+            }
+          }
+        }
+      }
+    }
+
+    .postActions {
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 8px;
+      border-top: 1px solid var(--grayColor8);
+
+      :global {
+        .ant-btn-link {
+          padding: 0;
+          height: auto;
+          font-size: var(--fs-sm);
+        }
+      }
+    }
+
+    .loadMoreContainer {
+      display: flex;
+      justify-content: center;
+      padding: 20px 0;
+      flex-shrink: 0;
+
+      .loadMoreButton {
+        border-radius: 20px;
+        padding: 8px 24px;
+        height: auto;
+      }
+    }
+
+    .emptyState {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      min-height: 200px;
+    }
+
+    .loadingContainer {
+      padding: 16px 0;
+      
+      :global {
+        .ant-skeleton {
+          margin-bottom: 16px;
+        }
+      }
     }
   }
 } 
