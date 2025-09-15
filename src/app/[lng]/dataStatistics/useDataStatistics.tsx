@@ -15,6 +15,7 @@ import { StatisticsPeriodModel } from "@/api/types/dataStatistics";
 import { message } from "antd";
 import drawDataStatisticsEchartLine from "@/app/[lng]/dataStatistics/echart/drawDataStatisticsEchartLine";
 import { directTrans } from "@/app/i18n/client";
+import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 
 export interface IDataStatisticsStore {
   // 当前选择的账户组IDs
@@ -207,7 +208,7 @@ export const useDataStatisticsStore = create(
           data.groupedByDate.forEach((g) =>
             g.records.forEach((r) => platformSet.add(r.platform)),
           );
-          const platforms = Array.from(platformSet).sort();
+          const platforms = Array.from(platformSet).sort() as PlatType[];
 
           // 初始化矩阵
           const chartData: Record<string, number[]> = {};
@@ -228,10 +229,12 @@ export const useDataStatisticsStore = create(
           });
 
           // 组装 ECharts 格式
-          const legend = platforms;
+          const legend = platforms.map(
+            (v) => AccountPlatInfoMap.get(v)?.name || v,
+          );
           const xAxis = dates;
           const series = platforms.map((p) => ({
-            name: p,
+            name: AccountPlatInfoMap.get(p)?.name || p,
             type: "line",
             stack: "Total",
             data: chartData[p],

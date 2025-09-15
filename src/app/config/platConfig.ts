@@ -8,11 +8,11 @@ import twitterSvg from "@/assets/svgs/plat/twtter.svg";
 import facebookSvg from "@/assets/svgs/plat/facebook.svg";
 import instagramSvg from "@/assets/svgs/plat/instagram.svg";
 import threadsSvg from "@/assets/svgs/plat/xiancheng.svg";
-import wxGzhSvg from "@/assets/svgs/plat/wx-gzh.svg";
 import wxSphSvg from "@/assets/svgs/plat/wx-sph.svg";
 import gongzhonghaoSvg from "@/assets/svgs/plat/gongzhonghao.png";
 import pinterestSvg from "@/assets/svgs/plat/pinterest.svg";
 import xhsSvg from "@/assets/svgs/plat/xhs.svg";
+import { directTrans } from "@/app/i18n/client";
 
 // 平台类型
 export enum PlatType {
@@ -70,11 +70,10 @@ export interface IAccountPlatInfo {
 
 // 各个平台的信息
 export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
-  
   [
     PlatType.Xhs,
     {
-      name: "小红书",
+      name: "rednote",
       icon: xhsSvg,
       url: "https://www.xiaohongshu.com/",
       themeColor: "red",
@@ -90,7 +89,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
   [
     PlatType.KWAI,
     {
-      name: "快手",
+      name: "kwai",
       icon: ksSvg,
       url: "https://cp.kuaishou.com/profile",
       pubTypes: new Set([PubType.VIDEO]),
@@ -104,7 +103,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
   [
     PlatType.BILIBILI,
     {
-      name: "Bilibili",
+      name: "bilibili",
       icon: bilibiliSvg,
       url: "https://cp.kuaishou.com/profile",
       pubTypes: new Set([PubType.VIDEO]),
@@ -119,7 +118,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
   [
     PlatType.WxGzh,
     {
-      name: "微信公众号",
+      name: "wxgzh",
       icon: gongzhonghaoSvg.src,
       url: "https://mp.weixin.qq.com/",
       pubTypes: new Set([PubType.ImageText, PubType.Article]),
@@ -135,7 +134,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
   [
     PlatType.Douyin,
     {
-      name: "抖音",
+      name: "douyin",
       icon: douyinSvg,
       url: "https://www.douyin.com/",
       pubTypes: new Set([]),
@@ -151,7 +150,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
   [
     PlatType.WxSph,
     {
-      name: "微信视频号",
+      name: "wxsph",
       icon: wxSphSvg,
       url: "https://mp.weixin.qq.com/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
@@ -275,3 +274,15 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
   ],
 ]);
 export const AccountPlatInfoArr = Array.from(AccountPlatInfoMap);
+
+// 遍历设置 name getter
+AccountPlatInfoMap.forEach((info) => {
+  const rawName = info.name;
+  Object.defineProperty(info, "name", {
+    get() {
+      return directTrans("account", rawName);
+    },
+    configurable: true,
+    enumerable: true,
+  });
+});

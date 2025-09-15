@@ -62,13 +62,13 @@ export function formatSeconds(seconds: number): string {
  */
 export function describeNumber(value: number): string {
   if (value > 10000) {
-    // 数值超过10000，返回'n万'
+    // 数值超过10000，返回'n w'
     const wan = Math.floor(value / 10000);
-    return `${wan}万`;
+    return `${wan}w`;
   } else if (value > 1000) {
-    // 数值超过1000，返回'n千'
+    // 数值超过1000，返回'n k'
     const qian = Math.floor(value / 1000);
-    return `${qian}千`;
+    return `${qian}k`;
   } else {
     // 数值不超过1000，直接返回数值的字符串形式
     return value.toString();

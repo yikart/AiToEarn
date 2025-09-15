@@ -1,5 +1,6 @@
 import * as echarts from "echarts";
-import { useDataStatisticsStore } from "../useDataStatistics"; // 引入store
+import { useDataStatisticsStore } from "../useDataStatistics";
+import { describeNumber } from "@/utils"; // 引入store
 
 type EChartsOption = echarts.EChartsOption;
 
@@ -42,6 +43,11 @@ export default function drawDataStatisticsEchartLine(elId: string) {
     },
     yAxis: {
       type: "value",
+      axisLabel: {
+        formatter: function (value: number) {
+          return describeNumber(value);
+        },
+      },
     },
     // @ts-ignore
     series: series,

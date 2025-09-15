@@ -367,8 +367,17 @@ interface Resources {
     "online": "在线",
     "offline": "离线",
     "fansCount": "粉丝数",
+    "growthFansCount": "涨粉数",
     "loginFailed": "登陆失败",
-    "relogin": "重新登录"
+    "relogin": "重新登录",
+    "dataDetails": "数据明细",
+    "timeRange": "时间范围：",
+    "yesterdayIncrease": "昨日新增",
+    "readCount": "播放数",
+    "commentCount": "评论数",
+    "likeCount": "点赞数",
+    "collectCount": "收藏数",
+    "forwardCount": "分享数"
   },
   "demo": {
     "demoText": "测试文字",

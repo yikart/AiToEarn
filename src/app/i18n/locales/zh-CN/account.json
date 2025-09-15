@@ -93,5 +93,11 @@
     "account": "账号",
     "platform": "平台",
     "space": "所属列表"
-  }
+  },
+  "rednote": "小红书",
+  "kwai": "快手",
+  "bilibili": "哔哩哔哩",
+  "wxgzh": "微信公众号",
+  "douyin": "抖音",
+  "wxsph": "微信视频号"
 }

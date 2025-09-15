@@ -93,5 +93,11 @@
     "account": "Account",
     "platform": "Platform",
     "space": "Space"
-  }
+  },
+  "rednote": "Rednote",
+  "kwai": "Kwai",
+  "bilibili": "Bilibili",
+  "wxgzh": "WeChat Official Account",
+  "douyin": "Douyin",
+  "wxsph": "WeChat Channels"
 }
