@@ -11,9 +11,10 @@ const { Text, Title } = Typography;
 interface SentListProps {
   platform: string;
   uid: string;
+  onDataChange?: (count: number) => void;
 }
 
-const SentList: React.FC<SentListProps> = ({ platform, uid }) => {
+const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange }) => {
   const { t } = useTransClient("account");
   const [posts, setPosts] = useState<SentPost[]>([]);
   const [loading, setLoading] = useState(false);
@@ -36,6 +37,11 @@ const SentList: React.FC<SentListProps> = ({ platform, uid }) => {
         setPosts(response.posts);
       }
       setHasMore(response.hasMore);
+      
+      // 通知父组件数据变化
+      if (onDataChange) {
+        onDataChange(response.total);
+      }
     } catch (error) {
       console.error('Failed to load sent posts:', error);
     } finally {
@@ -185,10 +191,11 @@ const SentList: React.FC<SentListProps> = ({ platform, uid }) => {
           )}
         </>
       ) : (
-        <Empty
-          description="暂无已发布的帖子"
-          className={styles.emptyState}
-        />
+        <div className={styles.emptyState}>
+          <Empty
+            description="暂无已发布的帖子"
+          />
+        </div>
       )}
     </div>
   );

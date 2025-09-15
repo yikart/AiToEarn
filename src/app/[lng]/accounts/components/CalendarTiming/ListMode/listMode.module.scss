@@ -54,6 +54,7 @@
       .ant-tabs-content-holder {
         flex: 1;
         min-height: 0;
+        padding: 16px 0 0 0;
       }
 
       .ant-tabs-tabpane {
@@ -63,33 +64,73 @@
       }
 
       .ant-tabs-nav {
-        margin-bottom: 12px;
+        margin-bottom: 0;
         flex-shrink: 0;
-        background: var(--bgColor);
-        border-radius: 8px;
-        padding: 4px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        background: transparent;
+        border-bottom: 1px solid #e8e8e8;
+        padding: 0;
       }
 
       .ant-tabs-tab {
         font-weight: 500;
-        padding: 8px 16px;
-        border-radius: 6px;
+        padding: 12px 16px;
+        border-radius: 0;
         transition: all 0.2s ease;
-        margin: 0 2px;
+        margin: 0;
+        border: none;
+        background: transparent;
+        position: relative;
+        color: #666;
       }
 
       .ant-tabs-tab-active {
         font-weight: 600;
-        background: var(--primaryColor);
-        color: white;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        color: #1890ff;
+        background: transparent;
+      }
+
+      .ant-tabs-tab-active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #1890ff;
+        border-radius: 1px;
       }
 
       .ant-tabs-tab:hover:not(.ant-tabs-tab-active) {
-        background: var(--grayColor8);
+        background: rgba(0, 0, 0, 0.04);
+        color: #333;
+      }
+
+      .ant-tabs-ink-bar {
+        display: none;
       }
     }
+  }
+
+  .tabLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+  }
+
+  .tabBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    background: #f0f0f0;
+    color: #666;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
   }
 
   .tabContent {

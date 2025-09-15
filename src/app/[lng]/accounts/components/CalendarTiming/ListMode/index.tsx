@@ -36,6 +36,8 @@ const ListMode = memo(
         })),
       );
 
+      const [sentCount, setSentCount] = useState(0);
+
       // 将所有记录转换为列表格式
       const allRecords = Array.from(recordMap.values()).flat();
 
@@ -110,7 +112,8 @@ const ListMode = memo(
       const sentTabContent = accountActive ? (
         <SentList 
           platform={accountActive.type} 
-          uid={accountActive.uid} 
+          uid={accountActive.uid}
+          onDataChange={setSentCount}
         />
       ) : (
         <Empty
@@ -122,40 +125,28 @@ const ListMode = memo(
       const tabItems = [
         {
           key: 'queue',
-          label: `Queue ${sortedRecords.length}`,
+          label: (
+            <div className={styles.tabLabel}>
+              <span>列表</span>
+              <span className={styles.tabBadge}>{sortedRecords.length}</span>
+            </div>
+          ),
           children: queueTabContent,
         },
         {
           key: 'sent',
-          label: 'Sent',
+          label: (
+            <div className={styles.tabLabel}>
+              <span>发布历史</span>
+              <span className={styles.tabBadge}>{sentCount}</span>
+            </div>
+          ),
           children: sentTabContent,
         },
       ];
 
       return (
         <div className={styles.listMode}>
-          <div className={styles.listHeader}>
-            <div className={styles.listHeaderLeft}>
-              <h3>{t('listMode.title' as any)}</h3>
-            </div>
-            <div className={styles.listHeaderRight}>
-              <Button
-                size="small"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  if (onClickPub) {
-                    const now = new Date();
-                    const tomorrow = new Date(now);
-                    tomorrow.setDate(tomorrow.getDate() + 1);
-                    tomorrow.setHours(10, 0, 0, 0);
-                    onClickPub(tomorrow.toISOString());
-                  }
-                }}
-              >
-                {t('listMode.newWork' as any)}
-              </Button>
-            </div>
-          </div>
           <Tabs
             items={tabItems}
             className={styles.listTabs}
