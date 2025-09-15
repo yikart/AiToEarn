@@ -1,6 +1,6 @@
 import { ForwardedRef, forwardRef, memo, useEffect, useState } from "react";
 import styles from "./listMode.module.scss";
-import { Button, List, Skeleton, Empty } from "antd";
+import { Button, List, Skeleton, Empty, Tabs } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useTransClient } from "@/app/i18n/client";
 import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";
@@ -10,6 +10,8 @@ import { getDays } from "@/app/[lng]/accounts/components/CalendarTiming/calendar
 import CalendarRecord from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarRecord";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
+import SentList from "./SentList";
+import { useAccountStore } from "@/store/account";
 
 export interface IListModeRef {}
 export interface IListModeProps {
@@ -25,6 +27,12 @@ const ListMode = memo(
           recordMap: state.recordMap,
           listLoading: state.listLoading,
           getPubRecord: state.getPubRecord,
+        })),
+      );
+
+      const { accountActive } = useAccountStore(
+        useShallow((state) => ({
+          accountActive: state.accountActive,
         })),
       );
 
@@ -80,14 +88,55 @@ const ListMode = memo(
         );
       }
 
+      const queueTabContent = (
+        <div className={styles.listContent}>
+          <DndProvider backend={HTML5Backend}>
+            {sortedRecords.length > 0 ? (
+              <List
+                dataSource={sortedRecords}
+                renderItem={renderRecordItem}
+                className={styles.recordList}
+              />
+            ) : (
+              <Empty
+                description={t('listMode.noRecords' as any)}
+                className={styles.emptyState}
+              />
+            )}
+          </DndProvider>
+        </div>
+      );
+
+      const sentTabContent = accountActive ? (
+        <SentList 
+          platform={accountActive.type} 
+          uid={accountActive.uid} 
+        />
+      ) : (
+        <Empty
+          description="请先选择一个账号"
+          className={styles.emptyState}
+        />
+      );
+
+      const tabItems = [
+        {
+          key: 'queue',
+          label: `Queue ${sortedRecords.length}`,
+          children: queueTabContent,
+        },
+        {
+          key: 'sent',
+          label: 'Sent',
+          children: sentTabContent,
+        },
+      ];
+
       return (
         <div className={styles.listMode}>
           <div className={styles.listHeader}>
             <div className={styles.listHeaderLeft}>
               <h3>{t('listMode.title' as any)}</h3>
-              <span className={styles.recordCount}>
-                {t('listMode.recordCount' as any, { count: sortedRecords.length })}
-              </span>
             </div>
             <div className={styles.listHeaderRight}>
               <Button
@@ -107,22 +156,11 @@ const ListMode = memo(
               </Button>
             </div>
           </div>
-          <div className={styles.listContent}>
-            <DndProvider backend={HTML5Backend}>
-              {sortedRecords.length > 0 ? (
-                <List
-                  dataSource={sortedRecords}
-                  renderItem={renderRecordItem}
-                  className={styles.recordList}
-                />
-              ) : (
-                <Empty
-                  description={t('listMode.noRecords' as any)}
-                  className={styles.emptyState}
-                />
-              )}
-            </DndProvider>
-          </div>
+          <Tabs
+            items={tabItems}
+            className={styles.listTabs}
+            size="small"
+          />
         </div>
       );
     },
