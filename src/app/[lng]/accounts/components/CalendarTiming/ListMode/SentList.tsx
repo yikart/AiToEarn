@@ -12,9 +12,14 @@ interface SentListProps {
   platform: string;
   uid: string;
   onDataChange?: (count: number) => void;
+  accountInfo?: {
+    avatar: string;
+    nickname: string;
+    account: string;
+  };
 }
 
-const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange }) => {
+const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accountInfo }) => {
   const { t } = useTransClient("account");
   const [posts, setPosts] = useState<SentPost[]>([]);
   const [loading, setLoading] = useState(false);
@@ -32,24 +37,24 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange }) => {
       });
       
       // 处理新的API响应格式
-      const responseData = response.data || response;
+      const responseData = (response as any)?.data || response;
       
       console.log('SentList API Response:', {
-        code: response.code,
-        message: response.message,
+        code: (response as any)?.code,
+        message: (response as any)?.message,
         data: responseData
       });
       
       if (append) {
-        setPosts(prev => [...prev, ...(responseData.posts || [])]);
+        setPosts(prev => [...prev, ...(responseData?.posts || [])]);
       } else {
-        setPosts(responseData.posts || []);
+        setPosts(responseData?.posts || []);
       }
-      setHasMore(responseData.hasMore || false);
+      setHasMore(responseData?.hasMore || false);
       
       // 通知父组件数据变化
       if (onDataChange) {
-        onDataChange(responseData.total || 0);
+        onDataChange(responseData?.total || 0);
       }
     } catch (error) {
       console.error('Failed to load sent posts:', error);
@@ -97,58 +102,52 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange }) => {
 
   const renderPostItem = (post: SentPost) => {
     const timeInfo = formatTime(post.publishTime);
-    const mediaTypeInfo = getMediaTypeTag(post.mediaType);
+    const daysAgo = Math.floor((Date.now() - post.publishTime) / (1000 * 60 * 60 * 24));
 
     return (
-      <List.Item key={post.postId} className={styles.sentListItem}>
-        <Card className={styles.sentPostCard}>
-          <div className={styles.postHeader}>
-            <div className={styles.postTime}>
-              <Text className={styles.postDate}>{timeInfo.date}</Text>
-              <Text className={styles.postTimeText}>{timeInfo.time}</Text>
+      <div key={post.postId} className={styles.sentPostItem}>
+        <div className={styles.postCard}>
+          {/* 日期时间头部 */}
+          <div className={styles.postDateHeader}>
+            <div className={styles.dateTime}>
+              <span className={styles.dateText}>{timeInfo.date}</span>
+              <span className={styles.timeText}>{timeInfo.time}</span>
             </div>
-            <Tag color={mediaTypeInfo.color} className={styles.mediaTypeTag}>
-              {mediaTypeInfo.text}
-            </Tag>
           </div>
 
+          {/* 帖子内容 */}
           <div className={styles.postContent}>
-            <div className={styles.postInfo}>
-              <div className={styles.postTitle}>
-                <Title level={5} className={styles.titleText}>{post.title}</Title>
+            {/* 用户信息 */}
+            <div className={styles.userInfo}>
+              <Avatar 
+                size={40} 
+                src={accountInfo?.avatar} 
+                className={styles.userAvatar}
+              >
+                {accountInfo?.nickname?.charAt(0) || post.title.charAt(0)}
+              </Avatar>
+              <div className={styles.userDetails}>
+                <div className={styles.username}>{accountInfo?.nickname || post.title}</div>
+                <div className={styles.userSubtitle}>{accountInfo?.account || post.content}</div>
               </div>
-              
-              <div className={styles.postMeta}>
-                <Space size="small" className={styles.metaItem}>
-                  <EyeOutlined />
-                  <Text>{post.viewCount}</Text>
-                </Space>
-                <Space size="small" className={styles.metaItem}>
-                  <LikeOutlined />
-                  <Text>{post.likeCount}</Text>
-                </Space>
-                <Space size="small" className={styles.metaItem}>
-                  <MessageOutlined />
-                  <Text>{post.commentCount}</Text>
-                </Space>
-                <Space size="small" className={styles.metaItem}>
-                  <ShareAltOutlined />
-                  <Text>{post.shareCount}</Text>
-                </Space>
-                <Space size="small" className={styles.metaItem}>
-                  <HeartOutlined />
-                  <Text>{post.favoriteCount}</Text>
-                </Space>
-              </div>
+              {/* <div className={styles.chatIcon}>💬</div> */}
             </div>
 
-            <div className={styles.postThumbnail}>
-              {post.thumbnail && (
-                <div className={styles.thumbnailContainer}>
+            {/* 帖子文本 */}
+            <div className={styles.postText}>
+              {post.content}
+            </div>
+
+           
+
+            {/* 媒体内容 */}
+            {post.thumbnail && (
+              <div className={styles.mediaContainer}>
+                <div className={styles.mediaWrapper}>
                   <img 
                     src={post.thumbnail} 
-                    alt={post.title}
-                    className={styles.thumbnailImage}
+                    alt={post.title || post.content}
+                    className={styles.mediaImage}
                   />
                   {post.mediaType === 'video' && (
                     <div className={styles.playButton}>
@@ -156,21 +155,67 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange }) => {
                     </div>
                   )}
                 </div>
-              )}
+              </div>
+            )}
+
+            {/* 互动数据 */}
+            <div className={styles.engagementMetrics}>
+              <div className={styles.metricsRow}>
+                <div className={styles.metricItem}>
+                  <div className={styles.metricIcon}>👍</div>
+                  <div className={styles.metricLabel}>Likes</div>
+                  <div className={styles.metricValue}>{post.likeCount}</div>
+                </div>
+                <div className={styles.metricItem}>
+                  <div className={styles.metricIcon}>🔄</div>
+                  <div className={styles.metricLabel}>Shares</div>
+                  <div className={styles.metricValue}>{post.shareCount}</div>
+                </div>
+                <div className={styles.metricItem}>
+                  <div className={styles.metricIcon}>👁️</div>
+                  <div className={styles.metricLabel}>Views</div>
+                  <div className={styles.metricValue}>{post.viewCount }</div>
+                </div>
+                <div className={styles.metricItem}>
+                  <div className={styles.metricIcon}>💬</div>
+                  <div className={styles.metricLabel}>Comments</div>
+                  <div className={styles.metricValue}>{post.commentCount }</div>
+                </div>
+                <div className={styles.metricItem}>
+                  <div className={styles.metricIcon}>❤️</div>
+                  <div className={styles.metricLabel}>Favorites</div>
+                  <div className={styles.metricValue}>{post.favoriteCount}</div>
+                </div>
+                <div className={styles.chartIcon}>📊</div>
+              </div>
+            </div>
+
+            {/* 底部信息 */}
+            <div className={styles.postFooter}>
+              <div className={styles.creationInfo}>
+                {t('listMode.createdDaysAgo' as any, { days: daysAgo })}
+              </div>
+              <div className={styles.actionButtons}>
+                <Button 
+                  type="link" 
+                  size="small"
+                  className={styles.viewPostBtn}
+                  onClick={() => window.open(post.permaLink, '_blank')}
+                >
+                  {t('listMode.viewPost' as any)} ↗️
+                </Button>
+                <Button 
+                  type="text" 
+                  size="small"
+                  className={styles.moreBtn}
+                >
+                  ⋮
+                </Button>
+              </div>
             </div>
           </div>
-
-          <div className={styles.postActions}>
-            <Button 
-              type="link" 
-              size="small"
-              onClick={() => window.open(post.permaLink, '_blank')}
-            >
-              查看帖子
-            </Button>
-          </div>
-        </Card>
-      </List.Item>
+        </div>
+      </div>
     );
   };
 
@@ -190,11 +235,9 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange }) => {
     <div className={styles.sentList}>
       {posts.length > 0 ? (
         <>
-          <List
-            dataSource={posts}
-            renderItem={renderPostItem}
-            className={styles.sentPostList}
-          />
+          <div className={styles.postsContainer}>
+            {posts.map(renderPostItem)}
+          </div>
           {hasMore && (
             <div className={styles.loadMoreContainer}>
               <Button 
@@ -210,7 +253,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange }) => {
       ) : (
         <div className={styles.emptyState}>
           <Empty
-            description="暂无已发布的帖子"
+            description={t('listMode.noSentPosts' as any)}
           />
         </div>
       )}

@@ -46,7 +46,13 @@
     "title": "Publish Plans",
     "recordCount": "{{count}} plans total",
     "newWork": "New Work",
-    "noRecords": "No publish plans"
+    "noRecords": "No publish plans",
+    "queue": "Queue",
+    "sent": "Sent",
+    "createdDaysAgo": "You created this {{days}} days ago",
+    "viewPost": "View Post",
+    "noSentPosts": "No sent posts",
+    "selectAccountFirst": "Please select an account first"
   },
   "chooseSpace": "Choose Space",
   "pleaseChooseSpace": "Please choose a space",
