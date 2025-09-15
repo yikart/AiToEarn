@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Button, Space, Typography, message } from 'antd';
 import { DownloadOutlined, QrcodeOutlined, CopyOutlined, CheckOutlined } from '@ant-design/icons';
 import { useTransClient } from '@/app/i18n/client';
+import { MAIN_APP_DOWNLOAD_URL } from '@/app/config/appDownloadConfig';
 import logo from '@/assets/images/logo.png';
 import { QRCode } from 'react-qrcode-logo';
 
@@ -34,12 +35,12 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
   const [copySuccess, setCopySuccess] = useState(false);
 
   const handleDownload = () => {
-    const linkToOpen = downloadUrl || "https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk";
+    const linkToOpen = downloadUrl || MAIN_APP_DOWNLOAD_URL;
     window.open(linkToOpen, '_blank');
   };
 
   const handleCopyLink = async () => {
-    const linkToCopy = downloadUrl || "https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk";
+    const linkToCopy = downloadUrl || MAIN_APP_DOWNLOAD_URL;
     try {
       await navigator.clipboard.writeText(linkToCopy);
       setCopySuccess(true);
@@ -115,7 +116,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
             />
           ) : (
             <QRCode
-              value={downloadUrl || "https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk"}
+              value={downloadUrl || MAIN_APP_DOWNLOAD_URL}
               size={120}
               logoImage={logo.src}
               logoWidth={30}
@@ -154,7 +155,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
                 textAlign: 'left'
               }}
             >
-              {downloadUrl || "https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk"}
+              {downloadUrl || MAIN_APP_DOWNLOAD_URL}
             </Text>
             <Button
               size="small"
