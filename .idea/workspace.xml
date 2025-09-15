@@ -4,13 +4,21 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(数据统计): 添加昨日新增">
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/HotContentCore.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentSidebar/hotContentSidebar.module.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentSidebar/index.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/hotContent.module.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/useHotContent.ts" afterDir="false" />
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(热门内容): 恢复新热门内容">
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContent/index.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentLabel/hotContentLabel.module.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentLabel/index.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/index.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotFeatures/index.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotTitle/index.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/hotContent.enum.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/HotContentCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/HotContentCore.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentSidebar/hotContentSidebar.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentSidebar/hotContentSidebar.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentSidebar/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentSidebar/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/hotContent.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/hotContent.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/useHotContent.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/useHotContent.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -213,14 +221,6 @@
       <workItem from="1757656251307" duration="25699000" />
       <workItem from="1757687709611" duration="2478000" />
       <workItem from="1757902659875" duration="8213000" />
-    </task>
-    <task id="LOCAL-00011" summary="feat(日历): 删除任务、修改任务时间接入API，删除任务完成">
-      <option name="closed" value="true" />
-      <created>1752153478814</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1752153478814</updated>
     </task>
     <task id="LOCAL-00012" summary="fix(发布): 默认返回快手参数">
       <option name="closed" value="true" />
@@ -606,7 +606,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757929872003</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="feat(热门内容): 恢复新热门内容">
+      <option name="closed" value="true" />
+      <created>1757930268660</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1757930268660</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -669,7 +677,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="fix: 账号过滤不支持的三个平台：视频号、小红书、抖音" />
     <MESSAGE value="feat: password 密码登录、重置密码，添加md5加密" />
     <MESSAGE value="fix: 将之前转发的逻辑改为直连" />
     <MESSAGE value="fix: 删除代理地址" />
@@ -694,6 +701,7 @@
     <MESSAGE value="feat(数据统计): 国际化处理完成" />
     <MESSAGE value="feat(数据统计): 1. echarts图优化。 2. 平台名称进行国际化。" />
     <MESSAGE value="feat(数据统计): 添加昨日新增" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(数据统计): 添加昨日新增" />
+    <MESSAGE value="feat(热门内容): 恢复新热门内容" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(热门内容): 恢复新热门内容" />
   </component>
 </project>

@@ -1,4 +1,8 @@
 .hotContentSidebar {
+  height: 100%;
   :global {
+    .ant-menu {
+      height: 100%;
+    }
   }
 }

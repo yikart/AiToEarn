@@ -1,0 +1,31 @@
+.hotContentLabelWrapper {
+  position: relative;
+
+  :global {
+    .hotContentLabel {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding-right: 35px;
+
+      .hotContentLabel-item {
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 6px;
+
+        &--active {
+          background: var(--colorPrimary1);
+          color: var(--colorPrimary5);
+        }
+        &:hover {
+          color: var(--colorPrimary5);
+        }
+      }
+    }
+    .hotContentLabel-toggle {
+      position: absolute;
+      right: 0;
+      top: 4px;
+    }
+  }
+}

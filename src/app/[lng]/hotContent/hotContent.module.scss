@@ -1,4 +1,19 @@
 .hotContent {
+  display: flex;
+  height: 100%;
+  border-top: 1px solid var(--grayColor1);
   :global {
+    .ant-spin-container {
+      display: flex;
+      flex: 1;
+      .hotContent-content {
+        padding: 15px 20px;
+        box-sizing: border-box;
+        flex: 1;
+        min-width: 0;
+        min-height: 0;
+        overflow: auto;
+      }
+    }
   }
 }
