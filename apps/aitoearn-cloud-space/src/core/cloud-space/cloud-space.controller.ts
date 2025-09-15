@@ -34,7 +34,7 @@ export class CloudSpaceController {
   @NatsMessagePattern('cloud-space.listByUserId')
   async listCloudSpacesByUserId(@Payload() dto: ListCloudSpacesByUserIdDto): Promise<CloudSpaceVo[]> {
     const cloudSpaces = await this.cloudSpaceService.listCloudSpacesByUserId(dto)
-    return cloudSpaces.map(CloudSpaceVo.create)
+    return cloudSpaces.map(c => CloudSpaceVo.create(c))
   }
 
   @NatsMessagePattern('cloud-space.status')
