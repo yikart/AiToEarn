@@ -138,7 +138,7 @@ const ListMode = memo(
           label: (
             <div className={styles.tabLabel}>
               <span>发布历史</span>
-              <span className={styles.tabBadge}>{sentCount}</span>
+              <span className={styles.tabBadge}>{sentCount>0?sentCount:''}</span>
             </div>
           ),
           children: sentTabContent,

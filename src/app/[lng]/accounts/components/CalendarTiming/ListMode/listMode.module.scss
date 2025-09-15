@@ -218,146 +218,153 @@
     }
   }
 
-  // Sent列表相关样式
+  // Sent列表相关样式 - 全新设计
   .sentList {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding: 0 5px 0 0;
+    padding: 0;
 
-    .sentPostList {
-      background: transparent;
+    .postsContainer {
       flex: 1;
       overflow-y: auto;
       overflow-x: hidden;
-
-      :global {
-        .ant-list-item {
-          padding: 0;
-          border-bottom: none;
-        }
-      }
+      padding: 0;
     }
 
-    .sentListItem {
-      margin-bottom: 16px;
+    .sentPostItem {
+      margin-bottom: 24px;
 
       &:last-child {
         margin-bottom: 0;
       }
     }
 
-    .sentPostCard {
+    .postCard {
+      background: white;
       border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-      border: 1px solid var(--grayColor8);
-      transition: all 0.2s ease;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      border: 1px solid #f0f0f0;
+      overflow: hidden;
+      transition: all 0.3s ease;
 
       &:hover {
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-        transform: translateY(-1px);
-      }
-
-      :global {
-        .ant-card-body {
-          padding: 16px;
-        }
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+        transform: translateY(-2px);
       }
     }
 
-    .postHeader {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 12px;
+    .postDateHeader {
+      padding: 16px 20px 12px 20px;
+      border-bottom: 1px solid #f5f5f5;
 
-      .postTime {
+      .dateTime {
         display: flex;
-        flex-direction: column;
-        gap: 2px;
+        align-items: center;
+        gap: 8px;
 
-        .postDate {
-          font-size: var(--fs-sm);
-          color: var(--grayColor6);
+        .dateText {
+          font-size: 14px;
+          color: #666;
           font-weight: 500;
         }
 
-        .postTimeText {
-          font-size: var(--fs-lg);
-          color: var(--textColor);
-          font-weight: 600;
+        .timeText {
+          font-size: 14px;
+          color: #666;
+          font-weight: 500;
         }
-      }
-
-      .mediaTypeTag {
-        margin: 0;
-        font-size: var(--fs-xs);
-        border-radius: 4px;
       }
     }
 
     .postContent {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 12px;
+      padding: 20px;
 
-      .postInfo {
-        flex: 1;
-        min-width: 0;
+      .userInfo {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 16px;
 
-        .postTitle {
-          margin-bottom: 8px;
+        .userAvatar {
+          flex-shrink: 0;
+          border: 2px solid #f0f0f0;
+        }
 
-          .titleText {
-            margin: 0;
-            font-size: var(--fs-md);
-            color: var(--textColor);
+        .userDetails {
+          flex: 1;
+          min-width: 0;
+
+          .username {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+            line-height: 1.3;
+          }
+
+          .userSubtitle {
+            font-size: 14px;
+            color: #666;
             line-height: 1.4;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            line-clamp: 2;
-            -webkit-box-orient: vertical;
           }
         }
 
-        .postMeta {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 12px;
+        .chatIcon {
+          font-size: 16px;
+          color: #999;
+          cursor: pointer;
+          padding: 4px;
+          border-radius: 4px;
+          transition: all 0.2s ease;
 
-          .metaItem {
-            font-size: var(--fs-sm);
-            color: var(--grayColor6);
-
-            :global {
-              .anticon {
-                font-size: var(--fs-sm);
-              }
-            }
+          &:hover {
+            background: #f5f5f5;
+            color: #666;
           }
         }
       }
 
-      .postThumbnail {
-        flex-shrink: 0;
-        width: 120px;
-        height: 80px;
+      .postText {
+        font-size: 16px;
+        color: #333;
+        line-height: 1.5;
+        margin-bottom: 16px;
+        word-wrap: break-word;
+      }
 
-        .thumbnailContainer {
+      .shareIcon {
+        font-size: 16px;
+        color: #999;
+        margin-bottom: 16px;
+        cursor: pointer;
+        display: inline-block;
+        padding: 4px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #f5f5f5;
+          color: #666;
+        }
+      }
+
+      .mediaContainer {
+        margin-bottom: 20px;
+
+        .mediaWrapper {
           position: relative;
-          width: 100%;
-          height: 100%;
           border-radius: 8px;
           overflow: hidden;
-          background: var(--grayColor8);
+          background: #f5f5f5;
+          max-width: 300px;
 
-          .thumbnailImage {
+          .mediaImage {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            height: auto;
+            display: block;
+            border-radius: 8px;
           }
 
           .playButton {
@@ -365,35 +372,131 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 32px;
-            height: 32px;
+            width: 48px;
+            height: 48px;
             background: rgba(0, 0, 0, 0.7);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+
+            &:hover {
+              background: rgba(0, 0, 0, 0.8);
+              transform: translate(-50%, -50%) scale(1.1);
+            }
 
             .playIcon {
               color: white;
-              font-size: 12px;
+              font-size: 16px;
               margin-left: 2px;
             }
           }
         }
       }
-    }
 
-    .postActions {
-      display: flex;
-      justify-content: flex-end;
-      padding-top: 8px;
-      border-top: 1px solid var(--grayColor8);
+      .engagementMetrics {
+        margin-bottom: 20px;
+        padding: 16px;
+        background: #fafafa;
+        border-radius: 8px;
 
-      :global {
-        .ant-btn-link {
-          padding: 0;
-          height: auto;
-          font-size: var(--fs-sm);
+        .metricsRow {
+          display: flex;
+          align-items: center;
+          gap: 24px;
+          flex-wrap: wrap;
+
+          .metricItem {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            min-width: 60px;
+
+            .metricIcon {
+              font-size: 16px;
+              color: #666;
+            }
+
+            .metricLabel {
+              font-size: 12px;
+              color: #999;
+              font-weight: 500;
+              text-align: center;
+            }
+
+            .metricValue {
+              font-size: 14px;
+              color: #666;
+              font-weight: 600;
+            }
+          }
+
+          .chartIcon {
+            margin-left: auto;
+            font-size: 16px;
+            color: #999;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+
+            &:hover {
+              background: #f0f0f0;
+              color: #666;
+            }
+          }
+        }
+      }
+
+      .postFooter {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 16px;
+        border-top: 1px solid #f0f0f0;
+
+        .creationInfo {
+          font-size: 14px;
+          color: #999;
+        }
+
+        .actionButtons {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .viewPostBtn {
+            font-size: 14px;
+            color: #1890ff;
+            padding: 4px 8px;
+            height: auto;
+            border-radius: 4px;
+            border: 1px solid #d9d9d9;
+            background: white;
+            transition: all 0.2s ease;
+
+            &:hover {
+              border-color: #1890ff;
+              background: #f6ffed;
+            }
+          }
+
+          .moreBtn {
+            font-size: 16px;
+            color: #999;
+            padding: 4px 8px;
+            height: auto;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+
+            &:hover {
+              background: #f5f5f5;
+              color: #666;
+            }
+          }
         }
       }
     }
@@ -401,13 +504,15 @@
     .loadMoreContainer {
       display: flex;
       justify-content: center;
-      padding: 20px 0;
+      padding: 24px 0;
       flex-shrink: 0;
 
       .loadMoreButton {
         border-radius: 20px;
-        padding: 8px 24px;
+        padding: 10px 32px;
         height: auto;
+        font-size: 14px;
+        font-weight: 500;
       }
     }
 
@@ -416,15 +521,15 @@
       align-items: center;
       justify-content: center;
       height: 100%;
-      min-height: 200px;
+      min-height: 300px;
     }
 
     .loadingContainer {
-      padding: 16px 0;
+      padding: 20px 0;
       
       :global {
         .ant-skeleton {
-          margin-bottom: 16px;
+          margin-bottom: 20px;
         }
       }
     }
