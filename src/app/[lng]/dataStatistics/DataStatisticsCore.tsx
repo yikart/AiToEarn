@@ -56,7 +56,6 @@ export const DataStatisticsCore = () => {
 
   // 获取数据统计
   useEffect(() => {
-    if (filteredAccountList.length == 0) return;
     getStatistics();
   }, [timeRangeValue, getStatistics, filteredAccountList]);
 

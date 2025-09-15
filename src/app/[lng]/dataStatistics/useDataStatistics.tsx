@@ -127,6 +127,10 @@ export const useDataStatisticsStore = create(
 
         // 获取数据统计
         async getStatistics() {
+          if (get().filteredAccountList.length === 0) {
+            return;
+          }
+
           set({
             loading: true,
           });
@@ -160,6 +164,7 @@ export const useDataStatisticsStore = create(
         // 分拣数据
         sortingData() {
           const data = get().originData;
+
           if (!data) return;
 
           // 1. 汇总各指标总数

@@ -88,36 +88,36 @@ const DataStatisticsHeader = memo(
           </div>
 
           <div className="dataStatisticsHeader-accounts">
-            <div className="dataStatisticsHeader-accountCount">
-              <div className="dataStatisticsHeader-accountCount-title">
-                <AccountCount />
-                累计账号数
-              </div>
-              <div className="dataStatisticsHeader-accountCount-number">
-                {filteredAccountList.length}
-              </div>
-              <Tag bordered={false} icon={<CheckCircleOutlined />}>
-                在线{" "}
-                <b>
-                  {filteredAccountList.filter((v) => v.status === 1).length}
-                </b>
-              </Tag>
-              <br />
-              <Tag bordered={false} icon={<WarningOutlined />}>
-                离线{" "}
-                <b>
-                  {filteredAccountList.filter((v) => v.status === 0).length}
-                </b>
-              </Tag>
-            </div>
+            {filteredAccountList.length === 0 ? (
+              <>
+                <Empty style={{ width: "100%", height: "100%" }} />
+              </>
+            ) : (
+              <>
+                <div className="dataStatisticsHeader-accountCount">
+                  <div className="dataStatisticsHeader-accountCount-title">
+                    <AccountCount />
+                    累计账号数
+                  </div>
+                  <div className="dataStatisticsHeader-accountCount-number">
+                    {filteredAccountList.length}
+                  </div>
+                  <Tag bordered={false} icon={<CheckCircleOutlined />}>
+                    在线{" "}
+                    <b>
+                      {filteredAccountList.filter((v) => v.status === 1).length}
+                    </b>
+                  </Tag>
+                  <br />
+                  <Tag bordered={false} icon={<WarningOutlined />}>
+                    离线{" "}
+                    <b>
+                      {filteredAccountList.filter((v) => v.status === 0).length}
+                    </b>
+                  </Tag>
+                </div>
 
-            <div className="dataStatisticsHeader-accounts-swiper">
-              {filteredAccountList.length === 0 ? (
-                <>
-                  <Empty style={{ width: "100%", height: "100%" }} />
-                </>
-              ) : (
-                <>
+                <div className="dataStatisticsHeader-accounts-swiper">
                   <Button className="swiper-prev" icon={<LeftOutlined />} />
 
                   {accountGroupList.length === 0 ? (
@@ -173,9 +173,9 @@ const DataStatisticsHeader = memo(
                   )}
 
                   <Button className="swiper-next" icon={<RightOutlined />} />
-                </>
-              )}
-            </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       );
