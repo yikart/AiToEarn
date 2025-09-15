@@ -193,7 +193,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
             {/* 底部信息 */}
             <div className={styles.postFooter}>
               <div className={styles.creationInfo}>
-                You created this {daysAgo} days ago
+                {t('listMode.createdDaysAgo' as any, { days: daysAgo })}
               </div>
               <div className={styles.actionButtons}>
                 <Button 
@@ -202,7 +202,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
                   className={styles.viewPostBtn}
                   onClick={() => window.open(post.permaLink, '_blank')}
                 >
-                  View Post ↗️
+                  {t('listMode.viewPost' as any)} ↗️
                 </Button>
                 <Button 
                   type="text" 
@@ -253,7 +253,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
       ) : (
         <div className={styles.emptyState}>
           <Empty
-            description="暂无已发布的帖子"
+            description={t('listMode.noSentPosts' as any)}
           />
         </div>
       )}

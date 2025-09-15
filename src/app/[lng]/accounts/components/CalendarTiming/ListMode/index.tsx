@@ -122,7 +122,7 @@ const ListMode = memo(
         />
       ) : (
         <Empty
-          description="请先选择一个账号"
+          description={t('listMode.selectAccountFirst' as any)}
           className={styles.emptyState}
         />
       );
@@ -132,7 +132,7 @@ const ListMode = memo(
           key: 'queue',
           label: (
             <div className={styles.tabLabel}>
-              <span>列表</span>
+              <span>{t('listMode.queue' as any)}</span>
               <span className={styles.tabBadge}>{sortedRecords.length}</span>
             </div>
           ),
@@ -142,7 +142,7 @@ const ListMode = memo(
           key: 'sent',
           label: (
             <div className={styles.tabLabel}>
-              <span>发布历史</span>
+              <span>{t('listMode.sent' as any)}</span>
               <span className={styles.tabBadge}>{sentCount>0?sentCount:''}</span>
             </div>
           ),
