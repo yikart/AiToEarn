@@ -1,3 +1,4 @@
+import { BullModule } from '@nestjs/bullmq'
 import { Module } from '@nestjs/common'
 import { AitoearnUserClientModule } from '@yikart/aitoearn-user-client'
 import { AnsibleModule } from '@yikart/ansible'
@@ -20,6 +21,9 @@ import { SchedulerModule } from './scheduler'
     RedlockModule.forRoot(config.redlock),
     AitoearnUserClientModule.forRoot(config.nats),
     AnsibleModule.forRoot(config.ansible),
+    BullModule.forRoot({
+      connection: config.redis,
+    }),
     HelpersModule,
     MultiloginAccountModule,
     CloudSpaceModule,

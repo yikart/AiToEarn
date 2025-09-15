@@ -15,6 +15,7 @@ import { CloudInstanceService } from '../cloud-instance'
 import { MultiloginAccountService } from '../multilogin-account'
 import {
   CreateCloudSpaceDto,
+  ListCloudSpacesByUserIdDto,
   ListCloudSpacesDto,
   RenewCloudSpaceDto,
 } from './cloud-space.dto'
@@ -60,6 +61,10 @@ export class CloudSpaceService {
 
   async listCloudSpaces(dto: ListCloudSpacesDto) {
     return await this.cloudSpaceRepository.listWithPagination(dto)
+  }
+
+  async listCloudSpacesByUserId(dto: ListCloudSpacesByUserIdDto) {
+    return await this.cloudSpaceRepository.listByUserId(dto)
   }
 
   async getCloudSpaceStatus(cloudSpaceId: string) {

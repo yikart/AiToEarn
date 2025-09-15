@@ -7,7 +7,7 @@ import z from 'zod'
 
 const jwtConfigSchema = z.object({
   secret: z.string().default(''),
-  expiresIn: z.number().optional(),
+  expiresIn: z.number().default(7 * 24 * 60 * 60),
 })
 
 export const appConfigSchema = z.object({

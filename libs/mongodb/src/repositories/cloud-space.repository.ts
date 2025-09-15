@@ -11,7 +11,13 @@ export interface ListCloudSpaceParams extends Pagination {
   status?: CloudSpaceStatus
 }
 
-export interface FindCloudSpacesByDateRangeParams {
+export interface ListCloudSpaceByUserIdParams {
+  userId: string
+  region?: CloudSpaceRegion
+  status?: CloudSpaceStatus
+}
+
+export interface ListCloudSpacesByStatusParams {
   status: CloudSpaceStatus
   expiredAt?: RangeFilter<Date>
 }
@@ -41,7 +47,7 @@ export class CloudSpaceRepository extends BaseRepository<CloudSpace> {
     })
   }
 
-  async listByStatus(params: FindCloudSpacesByDateRangeParams): Promise<CloudSpace[]> {
+  async listByStatus(params: ListCloudSpacesByStatusParams): Promise<CloudSpace[]> {
     const { status, expiredAt } = params
 
     const filter: FilterQuery<CloudSpace> = {
@@ -67,6 +73,22 @@ export class CloudSpaceRepository extends BaseRepository<CloudSpace> {
     return await this.model
       .find(filter)
       .sort({ expiredAt: 1 })
+      .exec()
+  }
+
+  async listByUserId(params: ListCloudSpaceByUserIdParams) {
+    const { userId, region, status } = params
+    const filter: FilterQuery<CloudSpace> = {
+      userId,
+    }
+    if (region)
+      filter.region = region
+    if (status)
+      filter.status = status
+
+    return await this.model
+      .find(filter)
+      .sort()
       .exec()
   }
 }

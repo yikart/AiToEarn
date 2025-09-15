@@ -16,6 +16,11 @@ export const listCloudSpacesSchema = z.object({
   status: z.enum(CloudSpaceStatus).optional(),
   ...PaginationDtoSchema.shape,
 })
+export const listCloudSpacesByUserIdSchema = z.object({
+  userId: z.string(),
+  region: z.enum(CloudSpaceRegion).optional(),
+  status: z.enum(CloudSpaceStatus).optional(),
+})
 
 export const getCloudSpaceStatusSchema = z.object({
   cloudSpaceId: z.string(),
@@ -32,6 +37,7 @@ export const renewCloudSpaceSchema = z.object({
 
 export class CreateCloudSpaceDto extends createZodDto(createCloudSpaceSchema) {}
 export class ListCloudSpacesDto extends createZodDto(listCloudSpacesSchema) {}
+export class ListCloudSpacesByUserIdDto extends createZodDto(listCloudSpacesByUserIdSchema) {}
 export class GetCloudSpaceStatusDto extends createZodDto(getCloudSpaceStatusSchema) {}
 export class DeleteCloudSpaceDto extends createZodDto(deleteCloudSpaceSchema) {}
 export class RenewCloudSpaceDto extends createZodDto(renewCloudSpaceSchema) {}

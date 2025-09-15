@@ -26,6 +26,7 @@ export enum ResponseCode {
   BrowserProfileNotFound = 11300,
 
   // 12000 (user)
+  UserNotFound = 12000,
   UserPointsInsufficient = 12001,
 
   // 13000 (ai)

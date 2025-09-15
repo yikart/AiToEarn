@@ -89,6 +89,7 @@ export class RedlockInjector implements OnModuleInit {
         const ttl = options.ttl ?? this.config.ttl
         const retryDelay = options.retryDelay ?? this.config.retryDelay
         const retryCount = options.retryCount ?? this.config.retryCount
+        const throwOnFailure = options.throwOnFailure ?? true
 
         let acquired = false
         let attempts = 0
@@ -106,8 +107,15 @@ export class RedlockInjector implements OnModuleInit {
         }
 
         if (!acquired) {
-          logger.debug(`Could not acquire lock ${lockKey} for ${className}.${methodName} after ${retryCount} attempts, skipping execution`)
-          return
+          const message = `Could not acquire lock ${lockKey} for ${className}.${methodName} after ${retryCount} attempts`
+          if (throwOnFailure) {
+            logger.error(message)
+            throw new Error(message)
+          }
+          else {
+            logger.debug(`${message}, skipping execution`)
+            return
+          }
         }
 
         logger.debug(`Acquired lock ${lockKey} for ${className}.${methodName}, executing method`)

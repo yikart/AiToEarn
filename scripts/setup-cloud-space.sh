@@ -9,7 +9,6 @@
 # ==============================================================================
 
 set -e
-
 # --- 配置变量 ---
 XVFB_SERVICE="mlx-xvfb.service"
 MLX_APP_SERVICE="mlx-app.service"
@@ -36,9 +35,8 @@ echo ""
 
 # --- 步骤 1: 安装依赖项和 MultiloginX ---
 echo "--- 步骤 1: 正在安装系统依赖和 MultiloginX ---"
-apt-get update
-# pwgen 包已移除
-apt-get install -y curl xvfb libayatana-appindicator3-1 xpra libavcodec-extra
+apt update
+apt install xfce4 xfce4-goodies xvfb x11-utils xpra xdg-utils -y
 
 MLX_DEB_URL="https://mlxdists.s3.eu-west-3.amazonaws.com/mlx/latest/multiloginx-amd64.deb"
 MLX_DEB_FILE="/tmp/mlxdeb.deb"
@@ -47,7 +45,7 @@ echo "正在下载最新的 MultiloginX..."
 curl -L -f -o "${MLX_DEB_FILE}" "${MLX_DEB_URL}"
 
 echo "正在安装 MultiloginX..."
-apt-get install -y --fix-broken "${MLX_DEB_FILE}"
+apt install -y --fix-broken "${MLX_DEB_FILE}"
 rm -f "${MLX_DEB_FILE}"
 echo "安装步骤完成。"
 echo ""
@@ -56,7 +54,6 @@ echo ""
 XVFB_PATH=$(which Xvfb)
 MLX_PATH=$(which mlx)
 XPRA_PATH=$(which xpra)
-DBUS_PATH=$(which dbus-run-session)
 
 # --- 步骤 2: 创建 systemd 服务 (无密码版) ---
 echo "--- 步骤 2: 正在配置 systemd 服务 ---"
@@ -86,10 +83,10 @@ Requires=${XVFB_SERVICE}
 After=${XVFB_SERVICE}
 
 [Service]
-Type=oneshot
+Type=simple
 RemainAfterExit=yes
 Environment=DISPLAY=${DISPLAY_NUM}
-ExecStart=/bin/sh -c '${MLX_PATH} &'
+ExecStart=${MLX_PATH}
 User=${RUN_USER}
 Group=${RUN_GROUP}
 
@@ -106,8 +103,7 @@ After=${MLX_APP_SERVICE}
 
 [Service]
 Type=simple
-Environment=DISPLAY=${DISPLAY_NUM}
-ExecStart=${DBUS_PATH} ${XPRA_PATH} start --use-display ${DISPLAY_NUM} --bind-tcp=0.0.0.0:10000 --no-daemon
+ExecStart=${XPRA_PATH} start --use-display ${DISPLAY_NUM} --bind-tcp=0.0.0.0:10000 --no-daemon
 Restart=always
 RestartSec=5
 User=${RUN_USER}

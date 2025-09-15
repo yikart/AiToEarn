@@ -5,6 +5,7 @@ import {
   CreateCloudSpaceDto,
   DeleteCloudSpaceDto,
   GetCloudSpaceStatusDto,
+  ListCloudSpacesByUserIdDto,
   ListCloudSpacesDto,
   RenewCloudSpaceDto,
 } from './cloud-space.dto'
@@ -28,6 +29,12 @@ export class CloudSpaceController {
   async listCloudSpaces(@Payload() dto: ListCloudSpacesDto): Promise<CloudSpaceListVo> {
     const [cloudSpaces, total] = await this.cloudSpaceService.listCloudSpaces(dto)
     return new CloudSpaceListVo(cloudSpaces, total, dto)
+  }
+
+  @NatsMessagePattern('cloud-space.listByUserId')
+  async listCloudSpacesByUserId(@Payload() dto: ListCloudSpacesByUserIdDto): Promise<CloudSpaceVo[]> {
+    const cloudSpaces = await this.cloudSpaceService.listCloudSpacesByUserId(dto)
+    return cloudSpaces.map(CloudSpaceVo.create)
   }
 
   @NatsMessagePattern('cloud-space.status')

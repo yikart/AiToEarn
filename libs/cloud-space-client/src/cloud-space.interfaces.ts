@@ -46,6 +46,12 @@ export interface ListCloudSpacesDto {
   pageSize?: number
 }
 
+export interface ListCloudSpacesByUserIdDto {
+  userId: string
+  region?: CloudSpaceRegion
+  status?: CloudSpaceStatus
+}
+
 export interface GetCloudSpaceStatusDto {
   cloudSpaceId: string
 }

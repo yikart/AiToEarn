@@ -136,7 +136,7 @@ export class MultiloginClient {
   /**
    * 刷新 automation token
    */
-  private async refreshAutomationToken(): Promise<void> {
+  async refreshAutomationToken(): Promise<void> {
     await this.signIn({
       email: this.email,
       password: this.password,

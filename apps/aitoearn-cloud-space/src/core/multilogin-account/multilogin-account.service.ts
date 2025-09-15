@@ -24,37 +24,23 @@ export class MultiloginAccountService {
   }
 
   /**
-   * 分页查询Multilogin账号列表
+   * 分页列出Multilogin账号列表
    */
-  async findWithPagination(dto: ListMultiloginAccountsDto) {
+  async listWithPagination(dto: ListMultiloginAccountsDto) {
     const [accounts, total] = await this.multiloginAccountRepository.listWithPagination(dto)
 
     return [accounts, total] as const
   }
 
   /**
-   * 分页列出Multilogin账号列表
+   * 根据ID获取Multilogin账号
    */
-  async listWithPagination(dto: ListMultiloginAccountsDto) {
-    return await this.findWithPagination(dto)
-  }
-
-  /**
-   * 根据ID查询Multilogin账号
-   */
-  async findById(id: string) {
+  async getById(id: string) {
     const account = await this.multiloginAccountRepository.getById(id)
     if (!account) {
       throw new AppException(ResponseCode.MultiloginAccountNotFound)
     }
     return account
-  }
-
-  /**
-   * 根据ID获取Multilogin账号
-   */
-  async getById(id: string) {
-    return await this.findById(id)
   }
 
   /**

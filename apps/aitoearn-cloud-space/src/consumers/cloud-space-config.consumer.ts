@@ -94,6 +94,10 @@ export class CloudSpaceConfigConsumer extends WorkerHost {
 
     const user = await this.userClient.getUserInfoById({ id: cloudSpace.userId })
 
+    if (!user) {
+      throw new AppException(ResponseCode.UserNotFound)
+    }
+
     const token = jwt.sign(
       {
         id: user.id,

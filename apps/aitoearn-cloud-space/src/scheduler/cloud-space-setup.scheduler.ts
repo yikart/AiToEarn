@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
 import { CloudSpace, CloudSpaceRegion, CloudSpaceRepository, CloudSpaceStatus } from '@yikart/mongodb'
 import { Redlock } from '@yikart/redlock'
-import { Queue } from 'bullmq'
+import { Job, Queue } from 'bullmq'
 import { CloudInstanceStatus, JobName, QueueName, RedlockKey } from '../common/enums'
 import { CloudInstanceService } from '../core/cloud-instance'
 
@@ -33,7 +33,7 @@ export class CloudSpaceSetupScheduler {
       return
     }
 
-    this.logger.log(`找到 ${cloudSpaces.length} 个Creating状态的环境`)
+    this.logger.debug(`找到 ${cloudSpaces.length} 个Creating状态的环境`)
 
     const regionGroups = new Map<CloudSpaceRegion, CloudSpace[]>()
     for (const cloudSpace of cloudSpaces) {
@@ -71,7 +71,7 @@ export class CloudSpaceSetupScheduler {
       return
     }
 
-    this.logger.log(`检查 ${configuringSpaces.length} 个Configuring状态的环境`)
+    this.logger.debug(`检查 ${configuringSpaces.length} 个Configuring状态的环境`)
 
     for (const cloudSpace of configuringSpaces) {
       await this.enqueueConfigurationTask(cloudSpace)
@@ -83,11 +83,27 @@ export class CloudSpaceSetupScheduler {
       await this.cloudSpaceRepository.updateById(cloudSpace.id, { ip: newIp })
       cloudSpace.ip = newIp
     }
+    this.logger.debug({
+      cloudSpace,
+      newIp,
+    })
 
-    await this.configQueue.add(
-      JobName.ConfigureCloudspace,
-      { cloudSpaceId: cloudSpace.id },
-      { jobId: cloudSpace.id }, // 使用cloudSpace.id作为jobId确保幂等性
-    )
+    const job = await this.configQueue.getJob(cloudSpace.id) as Job
+
+    this.logger.debug({ job })
+    if (job) {
+      const jobState = await job.getState()
+
+      if (jobState === 'failed') {
+        await job.retry()
+      }
+    }
+    else {
+      await this.configQueue.add(
+        JobName.ConfigureCloudspace,
+        { cloudSpaceId: cloudSpace.id },
+        { jobId: cloudSpace.id },
+      )
+    }
   }
 }

@@ -10,6 +10,7 @@ import {
   GetCloudSpaceStatusDto,
   IdDto,
   ListBrowserProfilesDto,
+  ListCloudSpacesByUserIdDto,
   ListCloudSpacesDto,
   ListMultiloginAccountsDto,
   MultiloginAccount,
@@ -28,6 +29,10 @@ export class CloudSpaceClient {
 
   async listCloudSpaces(dto: ListCloudSpacesDto): Promise<PaginationVo<CloudSpace>> {
     return this.natsClient.send<PaginationVo<CloudSpace>>('cloud-space.list', dto)
+  }
+
+  async listCloudSpacesByUserId(dto: ListCloudSpacesByUserIdDto): Promise<CloudSpace[]> {
+    return this.natsClient.send<CloudSpace[]>('cloud-space.listByUserId', dto)
   }
 
   async getCloudSpaceStatus(dto: GetCloudSpaceStatusDto): Promise<CloudSpace> {

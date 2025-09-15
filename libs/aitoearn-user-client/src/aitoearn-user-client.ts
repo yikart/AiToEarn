@@ -47,7 +47,7 @@ export class AitoearnUserClient {
   /**
    * 通过ID获取用户信息
    */
-  async getUserInfoById(dto: UserInfoDto): Promise<User> {
+  async getUserInfoById(dto: UserInfoDto): Promise<User | null> {
     return this.natsClient.send<User>('user.user.getUserInfoById', dto)
   }
 
