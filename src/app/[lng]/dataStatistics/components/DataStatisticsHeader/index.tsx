@@ -18,6 +18,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import AvatarPlat from "@/components/AvatarPlat";
 import AddAccountModal from "@/app/[lng]/accounts/components/AddAccountModal";
+import { useTransClient } from "@/app/i18n/client";
 
 export interface IDataStatisticsHeaderRef {}
 
@@ -48,6 +49,7 @@ const DataStatisticsHeader = memo(
         })),
       );
       const [addAccountModalOpen, setAddAccountModalOpen] = useState(false);
+      const { t } = useTransClient("dataStatistics");
 
       return (
         <div className={styles.dataStatisticsHeader}>
@@ -62,7 +64,7 @@ const DataStatisticsHeader = memo(
           />
 
           <div className="dataStatisticsHeader-top">
-            <h2>账号数据</h2>
+            <h2>{t("accountData")}</h2>
             <div className="dataStatisticsHeader-top-options">
               <Select
                 mode="multiple"
@@ -70,7 +72,7 @@ const DataStatisticsHeader = memo(
                 style={{ width: "220px" }}
                 options={accountGroupList}
                 fieldNames={{ value: "id", label: "name" }}
-                placeholder="选择空间"
+                placeholder={t("selectSpace")}
                 maxTagCount={1}
                 onChange={(value) => {
                   setChoosedGroupIds(value);
@@ -78,7 +80,7 @@ const DataStatisticsHeader = memo(
               />
               <Input.Search
                 style={{ width: "300px" }}
-                placeholder="请输入账号名称"
+                placeholder={t("inputAccountName")}
                 allowClear
                 onSearch={(value) => {
                   setAccountSearchValue(value);
@@ -90,27 +92,27 @@ const DataStatisticsHeader = memo(
           <div className="dataStatisticsHeader-accounts">
             {filteredAccountList.length === 0 ? (
               <>
-                <Empty style={{ width: "100%", height: "100%" }} />
+                <Empty style={{ width: "100%", height: "100%" }} description={t("noAccount")} />
               </>
             ) : (
               <>
                 <div className="dataStatisticsHeader-accountCount">
                   <div className="dataStatisticsHeader-accountCount-title">
                     <AccountCount />
-                    累计账号数
+                    {t("totalAccount")}
                   </div>
                   <div className="dataStatisticsHeader-accountCount-number">
                     {filteredAccountList.length}
                   </div>
                   <Tag bordered={false} icon={<CheckCircleOutlined />}>
-                    在线{" "}
+                    {t("online")}{" "}
                     <b>
                       {filteredAccountList.filter((v) => v.status === 1).length}
                     </b>
                   </Tag>
                   <br />
                   <Tag bordered={false} icon={<WarningOutlined />}>
-                    离线{" "}
+                    {t("offline")}{" "}
                     <b>
                       {filteredAccountList.filter((v) => v.status === 0).length}
                     </b>
@@ -147,13 +149,13 @@ const DataStatisticsHeader = memo(
 
                               {account.status === 1 ? (
                                 <div className="accounts-swiper-item-fans">
-                                  粉丝数 <span>{account.fansCount}</span>
+                                  {t("fansCount")} <span>{account.fansCount}</span>
                                 </div>
                               ) : (
                                 <div className="accounts-swiper-item-offline">
                                   <span>
                                     <ExclamationCircleOutlined />
-                                    登陆失败
+                                    {t("loginFailed")}
                                   </span>
                                   <a
                                     onClick={(e) => {
@@ -161,7 +163,7 @@ const DataStatisticsHeader = memo(
                                       setAddAccountModalOpen(true);
                                     }}
                                   >
-                                    重新登录
+                                    {t("relogin")}
                                   </a>
                                 </div>
                               )}

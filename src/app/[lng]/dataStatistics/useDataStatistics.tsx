@@ -14,6 +14,7 @@ import { getStatisticsPeriodApi } from "@/api/dataStatistics";
 import { StatisticsPeriodModel } from "@/api/types/dataStatistics";
 import { message } from "antd";
 import drawDataStatisticsEchartLine from "@/app/[lng]/dataStatistics/echart/drawDataStatisticsEchartLine";
+import { directTrans } from "@/app/i18n/client";
 
 export interface IDataStatisticsStore {
   // 当前选择的账户组IDs
@@ -57,50 +58,7 @@ const state: IDataStatisticsStore = {
   accountSearchValue: "",
   choosedGroupIds: [],
   filteredAccountList: [],
-  dataDetails: [
-    {
-      title: "涨粉数",
-      value: "fansCount",
-      icon: FansCount,
-      total: 0,
-      yesterday: 0,
-    },
-    {
-      title: "播放数",
-      value: "readCount",
-      icon: VideoCameraFilled,
-      total: 0,
-      yesterday: 0,
-    },
-    {
-      title: "评论数",
-      value: "commentCount",
-      icon: MessageFilled,
-      total: 0,
-      yesterday: 0,
-    },
-    {
-      title: "点赞数",
-      value: "likeCount",
-      icon: HeartFilled,
-      total: 0,
-      yesterday: 0,
-    },
-    {
-      title: "收藏数",
-      value: "collectCount",
-      icon: CollectCount,
-      total: 0,
-      yesterday: 0,
-    },
-    {
-      title: "分享数",
-      value: "forwardCount",
-      icon: ForwardCount,
-      total: 0,
-      yesterday: 0,
-    },
-  ],
+  dataDetails: [],
   currentDetailType: "",
   timeRangeValue: [dayjs().subtract(7, "day"), dayjs()],
   loading: false,
@@ -120,8 +78,54 @@ export const useDataStatisticsStore = create(
     (set, get) => {
       const methods = {
         async init() {
+          const dataDetails = [
+            {
+              title: directTrans("dataStatistics", "growthFansCount"),
+              value: "fansCount",
+              icon: FansCount,
+              total: 0,
+              yesterday: 0,
+            },
+            {
+              title: directTrans("dataStatistics", "readCount"),
+              value: "readCount",
+              icon: VideoCameraFilled,
+              total: 0,
+              yesterday: 0,
+            },
+            {
+              title: directTrans("dataStatistics", "commentCount"),
+              value: "commentCount",
+              icon: MessageFilled,
+              total: 0,
+              yesterday: 0,
+            },
+            {
+              title: directTrans("dataStatistics", "likeCount"),
+              value: "likeCount",
+              icon: HeartFilled,
+              total: 0,
+              yesterday: 0,
+            },
+            {
+              title: directTrans("dataStatistics", "collectCount"),
+              value: "collectCount",
+              icon: CollectCount,
+              total: 0,
+              yesterday: 0,
+            },
+            {
+              title: directTrans("dataStatistics", "forwardCount"),
+              value: "forwardCount",
+              icon: ForwardCount,
+              total: 0,
+              yesterday: 0,
+            },
+          ];
+
           set({
-            currentDetailType: get().dataDetails[0].value,
+            dataDetails,
+            currentDetailType: dataDetails[0].value,
           });
         },
 

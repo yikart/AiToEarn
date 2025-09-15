@@ -5,6 +5,7 @@ import { useShallow } from "zustand/react/shallow";
 import Icon from "@ant-design/icons";
 import { DatePicker } from "antd";
 import { Dayjs } from "dayjs";
+import { useTransClient } from "@/app/i18n/client";
 
 export interface IDataStatisticsDetailsRef {}
 
@@ -31,13 +32,14 @@ const DataStatisticsDetails = memo(
           timeRangeValue: state.timeRangeValue,
         })),
       );
+      const { t } = useTransClient("dataStatistics");
 
       return (
         <div className={styles.dataStatisticsDetails}>
           <div className="dataStatisticsDetails-head">
-            <h3>数据明细</h3>
+            <h3>{t("dataDetails")}</h3>
             <div className="dataStatisticsDetails-head-rangePicker">
-              <label>时间范围：</label>
+              <label>{t("timeRange")}</label>
               <DatePicker.RangePicker
                 value={timeRangeValue}
                 allowClear={false}
@@ -72,7 +74,7 @@ const DataStatisticsDetails = memo(
                   {detail.total}
                 </p>
                 <p className="dataStatisticsDetails-content-item-yesterday">
-                  昨日新增
+                  {t("yesterdayIncrease")}
                   <b>{detail.yesterday}</b>
                 </p>
               </div>

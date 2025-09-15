@@ -358,7 +358,17 @@ interface Resources {
   },
   "dataStatistics": {
     "title": "数据统计",
-    "description": "在这里查看和分析您的数据统计信息。"
+    "description": "在这里查看和分析您的数据统计信息。",
+    "accountData": "账号数据",
+    "selectSpace": "选择空间",
+    "inputAccountName": "请输入账号名称",
+    "noAccount": "暂无账号",
+    "totalAccount": "累计账号数",
+    "online": "在线",
+    "offline": "离线",
+    "fansCount": "粉丝数",
+    "loginFailed": "登陆失败",
+    "relogin": "重新登录"
   },
   "demo": {
     "demoText": "测试文字",

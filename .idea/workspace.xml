@@ -4,14 +4,14 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(数据统计): echarts图接入API">
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsTable/dataStatisticsTable.module.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsTable/index.tsx" afterDir="false" />
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(数据统计): 优化">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/types/dataStatistics.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/types/dataStatistics.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/DataStatisticsCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/DataStatisticsCore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/echart/drawDataStatisticsEchartLine.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/echart/drawDataStatisticsEchartLine.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/@types/resources.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/@types/resources.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsDetails/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsDetails/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/useDataStatistics.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/useDataStatistics.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/i18n/locales/en/dataStatistics.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/i18n/locales/en/dataStatistics.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/i18n/locales/zh-CN/dataStatistics.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/i18n/locales/zh-CN/dataStatistics.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -212,31 +212,8 @@
       <workItem from="1757646484870" duration="466000" />
       <workItem from="1757647784882" duration="2426000" />
       <workItem from="1757656251307" duration="25699000" />
-      <workItem from="1757687709611" duration="2157000" />
-    </task>
-    <task id="LOCAL-00005" summary="feat(发布弹框): 上传图片和上传视频完成">
-      <option name="closed" value="true" />
-      <created>1752057751552</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1752057751552</updated>
-    </task>
-    <task id="LOCAL-00006" summary="feat(发布弹框): 发布API接入完成">
-      <option name="closed" value="true" />
-      <created>1752066983987</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1752066983987</updated>
-    </task>
-    <task id="LOCAL-00007" summary="fix: 修复ts报错问题">
-      <option name="closed" value="true" />
-      <created>1752067126597</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1752067126597</updated>
+      <workItem from="1757687709611" duration="2478000" />
+      <workItem from="1757902659875" duration="5176000" />
     </task>
     <task id="LOCAL-00008" summary="fix(日历): 解决一个诡异的bug，日历，拖动发布记录时，拖到比当前时间小的日历正常显示，拖到比当前时间大的日历时间会盖住发布记录。">
       <option name="closed" value="true" />
@@ -606,7 +583,31 @@
       <option name="project" value="LOCAL" />
       <updated>1757688007999</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="feat(数据统计): 数据大体完成">
+      <option name="closed" value="true" />
+      <created>1757689928273</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1757689928273</updated>
+    </task>
+    <task id="LOCAL-00055" summary="feat(数据统计): 1. 添加账号搜索功能。 2. 添加账号离线状态和重新登录。">
+      <option name="closed" value="true" />
+      <created>1757925090335</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1757925090335</updated>
+    </task>
+    <task id="LOCAL-00056" summary="feat(数据统计): 优化">
+      <option name="closed" value="true" />
+      <created>1757925767099</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1757925767099</updated>
+    </task>
+    <option name="localTasksCounter" value="57" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -669,9 +670,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="feat: 尝试多语言SEO优化，添加静态站点配置" />
-    <MESSAGE value="fix: 解决404问题" />
-    <MESSAGE value="chore: b站校验优化" />
     <MESSAGE value="fix(发布): usePubParamsVerify参数校验优化" />
     <MESSAGE value="fix(seo): 站点地图修复" />
     <MESSAGE value="fix(日历)：发布时间格式修复" />
@@ -694,6 +692,9 @@
     <MESSAGE value="feat(数据统计): 接入数据API，并且分拣数据" />
     <MESSAGE value="feat(数据统计): 引入echarts" />
     <MESSAGE value="feat(数据统计): echarts图接入API" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(数据统计): echarts图接入API" />
+    <MESSAGE value="feat(数据统计): 数据大体完成" />
+    <MESSAGE value="feat(数据统计): 1. 添加账号搜索功能。 2. 添加账号离线状态和重新登录。" />
+    <MESSAGE value="feat(数据统计): 优化" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(数据统计): 优化" />
   </component>
 </project>
