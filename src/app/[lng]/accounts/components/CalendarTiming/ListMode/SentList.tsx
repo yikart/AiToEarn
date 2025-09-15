@@ -130,7 +130,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
                 <div className={styles.username}>{accountInfo?.nickname || post.title}</div>
                 <div className={styles.userSubtitle}>{accountInfo?.account || post.content}</div>
               </div>
-              <div className={styles.chatIcon}>💬</div>
+              {/* <div className={styles.chatIcon}>💬</div> */}
             </div>
 
             {/* 帖子文本 */}
