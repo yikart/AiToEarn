@@ -64,6 +64,16 @@ export interface PlatformRanking {
   items?: RankingItem[];
 }
 
+// 榜单日期
+export interface RankingDate {
+  originalQueryDate: string;
+  queryDate: string;
+  rankingId: string;
+  showDate: string;
+  spiderTime: string;
+  value: string;
+}
+
 export interface Author {
   id: string;
   name: string;
@@ -181,7 +191,7 @@ export const platformApi = {
 
   // 获取榜单日期
   getRankingDates(rankingId: string) {
-    return request<string[]>({
+    return request<RankingDate[]>({
       url: `hotdata/ranking/hotinfo/${rankingId}/dates`,
       method: "GET",
     });

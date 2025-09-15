@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 import lodash from "lodash";
-import { Platform, platformApi, PlatformRanking } from "@/api/hot";
+import { Platform, platformApi, PlatformRanking, RankingDate } from "@/api/hot";
 import { HotType } from "@/app/[lng]/hotContent/hotContent.enum";
 
 export interface IHotContentStore {
@@ -27,7 +27,7 @@ export interface IHotContentStore {
   };
   // 日期数据 key=平台ID，value=日期数据
   datesData: {
-    [key: string]: string[];
+    [key: string]: RankingDate[];
   };
 }
 
@@ -120,14 +120,14 @@ export const useHotContent = create(
 
           const rankingItem = get().rankingData[platformId];
           // 获取标签和日期数据
-          if (!get().labelData[rankingItem.type]) {
+          if (!get().labelData[platformId]) {
             await Promise.all([
               platformApi.getRankingLabel(rankingItem.id),
               platformApi.getRankingDates(rankingItem.id),
             ]).then(([labelRes, dateRes]) => {
               const newLabelData = {
                 ...get().labelData,
-                [rankingItem.type]: labelRes!.data,
+                [platformId]: labelRes!.data,
               };
               const newDatesData = {
                 ...get().datesData,
