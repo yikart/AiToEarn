@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./styles/difyHome.module.scss";
 import pricingStyles from "./styles/pricing.module.scss";
 import { useTransClient } from "../i18n/client";
+import { MAIN_APP_DOWNLOAD_URL } from "../config/appDownloadConfig";
 
 import logo from '@/assets/images/logo.png';
 
@@ -1833,7 +1834,7 @@ function DownloadSection() {
             </p>
             
             <div className={styles.downloadButtons}>
-              <a href="https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk" className={styles.downloadBtn} target="_blank" rel="noopener noreferrer">
+              <a href={MAIN_APP_DOWNLOAD_URL} className={styles.downloadBtn} target="_blank" rel="noopener noreferrer">
                 <div className={styles.downloadBtnContent}>
                   <AndroidOutlined className={styles.downloadIcon} style={{ fontSize: '24px' }} />
                   <div className={styles.downloadBtnText}>
@@ -1860,7 +1861,7 @@ function DownloadSection() {
             <div className={styles.qrCode}>
                 {/* <div className={styles.qrCodeImage}> */}
                   <QRCode
-                    value="https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk"
+                    value={MAIN_APP_DOWNLOAD_URL}
                     size={120}
                   />
                 {/* </div> */}
