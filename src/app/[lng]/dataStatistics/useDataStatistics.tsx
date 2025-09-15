@@ -32,6 +32,8 @@ export interface IDataStatisticsStore {
   }[];
   // 当前选择的明细类型
   currentDetailType: string;
+  // 账号搜索value
+  accountSearchValue: string;
   // 日期范围
   timeRangeValue: [Dayjs, Dayjs];
   // 源数据
@@ -52,6 +54,7 @@ export interface IDataStatisticsStore {
 }
 
 const state: IDataStatisticsStore = {
+  accountSearchValue: "",
   choosedGroupIds: [],
   filteredAccountList: [],
   dataDetails: [
@@ -129,7 +132,7 @@ export const useDataStatisticsStore = create(
           });
           // 过滤掉无效的account和account.type
           const validAccounts = get().filteredAccountList.filter(
-            (account) => account && account.type && account.uid
+            (account) => account && account.type && account.uid,
           );
           const res = await getStatisticsPeriodApi({
             startDate: get().timeRangeValue[0].format("YYYY-MM-DD"),
@@ -258,6 +261,12 @@ export const useDataStatisticsStore = create(
         setFilteredAccountList(filteredAccountList: SocialAccount[]) {
           set({
             filteredAccountList,
+          });
+        },
+        // 设置 accountSearchValue
+        setAccountSearchValue(accountSearchValue: string) {
+          set({
+            accountSearchValue,
           });
         },
       };

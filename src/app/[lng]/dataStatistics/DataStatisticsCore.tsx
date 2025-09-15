@@ -22,6 +22,7 @@ export const DataStatisticsCore = () => {
     currentDetailType,
     sortingData,
     loading,
+    accountSearchValue,
   } = useDataStatisticsStore(
     useShallow((state) => ({
       setChoosedGroupIds: state.setChoosedGroupIds,
@@ -34,6 +35,7 @@ export const DataStatisticsCore = () => {
       currentDetailType: state.currentDetailType,
       sortingData: state.sortingData,
       loading: state.loading,
+      accountSearchValue: state.accountSearchValue,
     })),
   );
   const { accountGroupList, accountList } = useAccountStore(
@@ -69,10 +71,13 @@ export const DataStatisticsCore = () => {
   useEffect(() => {
     setFilteredAccountList(
       accountList.filter((v) => {
-        return choosedGroupIds.includes(v.groupId);
+        return (
+          choosedGroupIds.includes(v.groupId) &&
+          v.nickname.includes(accountSearchValue)
+        );
       }),
     );
-  }, [choosedGroupIds, accountList]);
+  }, [choosedGroupIds, accountList, accountSearchValue]);
 
   return (
     <Spin spinning={loading}>

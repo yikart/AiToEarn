@@ -101,6 +101,19 @@
               margin-left: 20px;
             }
           }
+          &-offline {
+            background: rgb(237, 242, 242);
+            padding: 2px 5px;
+            font-size: var(--fs-xs);
+            border-radius: 8px;
+            .anticon {
+              color: red;
+              margin-right: 3px;
+            }
+            a {
+              margin-left: 15px;
+            }
+          }
           &:after {
             content: '';
             position: absolute;

@@ -1,13 +1,14 @@
-import { ForwardedRef, forwardRef, memo } from "react";
+import { ForwardedRef, forwardRef, memo, useState } from "react";
 import styles from "./dataStatisticsHeader.module.scss";
 import AccountCount from "../../svgs/accountCount.svg";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useAccountStore } from "@/store/account";
 import { useShallow } from "zustand/react/shallow";
-import { Button, Input, Select, Skeleton, Tag, Tooltip } from "antd";
+import { Button, Empty, Input, Select, Skeleton, Tag, Tooltip } from "antd";
 import { useDataStatisticsStore } from "@/app/[lng]/dataStatistics/useDataStatistics";
 import {
   CheckCircleOutlined,
+  ExclamationCircleOutlined,
   LeftOutlined,
   RightOutlined,
   WarningOutlined,
@@ -16,6 +17,7 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import AvatarPlat from "@/components/AvatarPlat";
+import AddAccountModal from "@/app/[lng]/accounts/components/AddAccountModal";
 
 export interface IDataStatisticsHeaderRef {}
 
@@ -32,17 +34,33 @@ const DataStatisticsHeader = memo(
           accountGroupList: state.accountGroupList,
         })),
       );
-      const { choosedGroupIds, setChoosedGroupIds, filteredAccountList } =
-        useDataStatisticsStore(
-          useShallow((state) => ({
-            setChoosedGroupIds: state.setChoosedGroupIds,
-            choosedGroupIds: state.choosedGroupIds,
-            filteredAccountList: state.filteredAccountList,
-          })),
-        );
+      const {
+        choosedGroupIds,
+        setChoosedGroupIds,
+        filteredAccountList,
+        setAccountSearchValue,
+      } = useDataStatisticsStore(
+        useShallow((state) => ({
+          setChoosedGroupIds: state.setChoosedGroupIds,
+          choosedGroupIds: state.choosedGroupIds,
+          filteredAccountList: state.filteredAccountList,
+          setAccountSearchValue: state.setAccountSearchValue,
+        })),
+      );
+      const [addAccountModalOpen, setAddAccountModalOpen] = useState(false);
 
       return (
         <div className={styles.dataStatisticsHeader}>
+          {/* 添加账号弹窗 */}
+          <AddAccountModal
+            open={addAccountModalOpen}
+            onClose={() => setAddAccountModalOpen(false)}
+            onAddSuccess={() => setAddAccountModalOpen(false)}
+            // targetGroupId={targetSpaceId}
+            // showSpaceSelector={!targetSpaceId}
+            // autoTriggerPlatform={targetPlatform}
+          />
+
           <div className="dataStatisticsHeader-top">
             <h2>账号数据</h2>
             <div className="dataStatisticsHeader-top-options">
@@ -61,6 +79,10 @@ const DataStatisticsHeader = memo(
               <Input.Search
                 style={{ width: "300px" }}
                 placeholder="请输入账号名称"
+                allowClear
+                onSearch={(value) => {
+                  setAccountSearchValue(value);
+                }}
               />
             </div>
           </div>
@@ -71,55 +93,88 @@ const DataStatisticsHeader = memo(
                 <AccountCount />
                 累计账号数
               </div>
-              <div className="dataStatisticsHeader-accountCount-number">4</div>
+              <div className="dataStatisticsHeader-accountCount-number">
+                {filteredAccountList.length}
+              </div>
               <Tag bordered={false} icon={<CheckCircleOutlined />}>
-                在线 <b>1</b>
+                在线{" "}
+                <b>
+                  {filteredAccountList.filter((v) => v.status === 1).length}
+                </b>
               </Tag>
               <br />
               <Tag bordered={false} icon={<WarningOutlined />}>
-                离线 <b>3</b>
+                离线{" "}
+                <b>
+                  {filteredAccountList.filter((v) => v.status === 0).length}
+                </b>
               </Tag>
             </div>
 
             <div className="dataStatisticsHeader-accounts-swiper">
-              <Button className="swiper-prev" icon={<LeftOutlined />} />
-
-              {accountGroupList.length === 0 ? (
-                <Skeleton active />
+              {filteredAccountList.length === 0 ? (
+                <>
+                  <Empty style={{ width: "100%", height: "100%" }} />
+                </>
               ) : (
-                <Swiper
-                  modules={[Navigation]}
-                  slidesPerView={4}
-                  slidesPerGroup={4}
-                  navigation={{
-                    prevEl: ".swiper-prev",
-                    nextEl: ".swiper-next",
-                  }}
-                >
-                  {filteredAccountList.map((account) => {
-                    return (
-                      <SwiperSlide key={account.id}>
-                        <div className="accounts-swiper-item">
-                          <div className="accounts-swiper-item-info">
-                            <AvatarPlat account={account} size="large" />
-                            <Tooltip title={account.nickname}>
-                              <div className="accounts-swiper-item-info-name">
-                                {account.nickname}
+                <>
+                  <Button className="swiper-prev" icon={<LeftOutlined />} />
+
+                  {accountGroupList.length === 0 ? (
+                    <Skeleton active />
+                  ) : (
+                    <Swiper
+                      modules={[Navigation]}
+                      slidesPerView={4}
+                      slidesPerGroup={4}
+                      navigation={{
+                        prevEl: ".swiper-prev",
+                        nextEl: ".swiper-next",
+                      }}
+                    >
+                      {filteredAccountList.map((account) => {
+                        return (
+                          <SwiperSlide key={account.id}>
+                            <div className="accounts-swiper-item">
+                              <div className="accounts-swiper-item-info">
+                                <AvatarPlat account={account} size="large" />
+                                <Tooltip title={account.nickname}>
+                                  <div className="accounts-swiper-item-info-name">
+                                    {account.nickname}
+                                  </div>
+                                </Tooltip>
                               </div>
-                            </Tooltip>
-                          </div>
 
-                          <div className="accounts-swiper-item-fans">
-                            粉丝数 <span>{account.fansCount}</span>
-                          </div>
-                        </div>
-                      </SwiperSlide>
-                    );
-                  })}
-                </Swiper>
+                              {account.status === 1 ? (
+                                <div className="accounts-swiper-item-fans">
+                                  粉丝数 <span>{account.fansCount}</span>
+                                </div>
+                              ) : (
+                                <div className="accounts-swiper-item-offline">
+                                  <span>
+                                    <ExclamationCircleOutlined />
+                                    登陆失败
+                                  </span>
+                                  <a
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      setAddAccountModalOpen(true);
+                                    }}
+                                  >
+                                    重新登录
+                                  </a>
+                                </div>
+                              )}
+                            </div>
+                          </SwiperSlide>
+                        );
+                      })}
+                    </Swiper>
+                  )}
+
+                  <Button className="swiper-next" icon={<RightOutlined />} />
+                </>
               )}
-
-              <Button className="swiper-next" icon={<RightOutlined />} />
             </div>
           </div>
         </div>
