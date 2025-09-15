@@ -114,6 +114,11 @@ const ListMode = memo(
           platform={accountActive.type} 
           uid={accountActive.uid}
           onDataChange={setSentCount}
+          accountInfo={{
+            avatar: accountActive.avatar,
+            nickname: accountActive.nickname,
+            account: accountActive.account
+          }}
         />
       ) : (
         <Empty

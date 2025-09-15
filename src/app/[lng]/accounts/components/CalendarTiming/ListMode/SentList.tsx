@@ -37,24 +37,24 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
       });
       
       // 处理新的API响应格式
-      const responseData = response.data || response;
+      const responseData = (response as any)?.data || response;
       
       console.log('SentList API Response:', {
-        code: response.code,
-        message: response.message,
+        code: (response as any)?.code,
+        message: (response as any)?.message,
         data: responseData
       });
       
       if (append) {
-        setPosts(prev => [...prev, ...(responseData.posts || [])]);
+        setPosts(prev => [...prev, ...(responseData?.posts || [])]);
       } else {
-        setPosts(responseData.posts || []);
+        setPosts(responseData?.posts || []);
       }
-      setHasMore(responseData.hasMore || false);
+      setHasMore(responseData?.hasMore || false);
       
       // 通知父组件数据变化
       if (onDataChange) {
-        onDataChange(responseData.total || 0);
+        onDataChange(responseData?.total || 0);
       }
     } catch (error) {
       console.error('Failed to load sent posts:', error);
@@ -121,14 +121,14 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
             <div className={styles.userInfo}>
               <Avatar 
                 size={40} 
-                src={post.thumbnail} 
+                src={accountInfo?.avatar} 
                 className={styles.userAvatar}
               >
-                {post.title.charAt(0)}
+                {accountInfo?.nickname?.charAt(0) || post.title.charAt(0)}
               </Avatar>
               <div className={styles.userDetails}>
-                <div className={styles.username}>{post.title}</div>
-                <div className={styles.userSubtitle}>{post.content}</div>
+                <div className={styles.username}>{accountInfo?.nickname || post.title}</div>
+                <div className={styles.userSubtitle}>{accountInfo?.account || post.content}</div>
               </div>
               <div className={styles.chatIcon}>💬</div>
             </div>
@@ -138,8 +138,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
               {post.content}
             </div>
 
-            {/* 分享图标 */}
-            <div className={styles.shareIcon}>↗️</div>
+           
 
             {/* 媒体内容 */}
             {post.thumbnail && (
@@ -147,7 +146,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
                 <div className={styles.mediaWrapper}>
                   <img 
                     src={post.thumbnail} 
-                    alt={post.title}
+                    alt={post.title || post.content}
                     className={styles.mediaImage}
                   />
                   {post.mediaType === 'video' && (
@@ -165,27 +164,27 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
                 <div className={styles.metricItem}>
                   <div className={styles.metricIcon}>👍</div>
                   <div className={styles.metricLabel}>Likes</div>
-                  <div className={styles.metricValue}>-</div>
+                  <div className={styles.metricValue}>{post.likeCount}</div>
                 </div>
                 <div className={styles.metricItem}>
                   <div className={styles.metricIcon}>🔄</div>
-                  <div className={styles.metricLabel}>Retweets</div>
-                  <div className={styles.metricValue}>-</div>
+                  <div className={styles.metricLabel}>Shares</div>
+                  <div className={styles.metricValue}>{post.shareCount}</div>
                 </div>
                 <div className={styles.metricItem}>
                   <div className={styles.metricIcon}>👁️</div>
-                  <div className={styles.metricLabel}>Impressions</div>
-                  <div className={styles.metricValue}>-</div>
+                  <div className={styles.metricLabel}>Views</div>
+                  <div className={styles.metricValue}>{post.viewCount }</div>
                 </div>
                 <div className={styles.metricItem}>
-                  <div className={styles.metricIcon}>🖱️</div>
-                  <div className={styles.metricLabel}>Clicks</div>
-                  <div className={styles.metricValue}>-</div>
+                  <div className={styles.metricIcon}>💬</div>
+                  <div className={styles.metricLabel}>Comments</div>
+                  <div className={styles.metricValue}>{post.commentCount }</div>
                 </div>
                 <div className={styles.metricItem}>
-                  <div className={styles.metricIcon}>📊</div>
-                  <div className={styles.metricLabel}>Eng. Rate</div>
-                  <div className={styles.metricValue}>-</div>
+                  <div className={styles.metricIcon}>❤️</div>
+                  <div className={styles.metricLabel}>Favorites</div>
+                  <div className={styles.metricValue}>{post.favoriteCount}</div>
                 </div>
                 <div className={styles.chartIcon}>📊</div>
               </div>
