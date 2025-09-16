@@ -402,6 +402,97 @@ export interface VolcengineTaskQueryDto {
   taskId: string
 }
 
+// ==================== Dashscope API DTO ====================
+
+// Dashscope文生视频请求DTO
+export interface DashscopeText2VideoRequestDto {
+  userId: string
+  userType: UserType
+  model: string
+  input: {
+    prompt: string
+    negative_prompt?: string
+  }
+  parameters?: {
+    size?: string
+    duration?: number
+    prompt_extend?: boolean
+  }
+}
+
+// Dashscope图生视频请求DTO
+export interface DashscopeImage2VideoRequestDto {
+  userId: string
+  userType: UserType
+  model: string
+  input: {
+    image_url: string
+    prompt?: string
+    negative_prompt?: string
+  }
+  parameters?: {
+    resolution?: string
+    prompt_extend?: boolean
+  }
+}
+
+// Dashscope首尾帧生视频请求DTO
+export interface DashscopeKeyFrame2VideoRequestDto {
+  userId: string
+  userType: UserType
+  model: string
+  input: {
+    first_frame_url: string
+    last_frame_url?: string
+    prompt?: string
+    negative_prompt?: string
+    template?: string
+  }
+  parameters?: {
+    resolution?: string
+    duration?: number
+    prompt_extend?: boolean
+  }
+}
+
+// Dashscope任务查询DTO
+export interface DashscopeTaskQueryDto {
+  userId: string
+  userType: UserType
+  taskId: string
+}
+
+// ==================== Dashscope API Response VO ====================
+
+// Dashscope视频生成响应VO
+export interface DashscopeVideoGenerationResponseVo {
+  task_id: string
+  task_status?: string
+}
+
+// Dashscope任务状态响应VO
+export interface DashscopeTaskStatusResponseVo {
+  status_code: number
+  request_id: string
+  code: string | null
+  message: string
+  output: {
+    task_id: string
+    task_status: string
+    video_url?: string
+    submit_time?: string
+    scheduled_time?: string
+    end_time?: string
+    orig_prompt?: string
+    actual_prompt?: string
+  }
+  usage?: {
+    video_count: number
+    video_duration: number
+    video_ratio: string
+  } | null
+}
+
 // Video VO 接口
 export interface KlingVideoGenerationResponseVo {
   task_id: string

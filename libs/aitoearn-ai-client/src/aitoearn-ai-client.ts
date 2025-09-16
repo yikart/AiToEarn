@@ -4,6 +4,12 @@ import { NatsClient } from '@yikart/nats-client'
 import {
   ChatCompletionVo,
   ChatModelConfigVo,
+  DashscopeImage2VideoRequestDto,
+  DashscopeKeyFrame2VideoRequestDto,
+  DashscopeTaskQueryDto,
+  DashscopeTaskStatusResponseVo,
+  DashscopeText2VideoRequestDto,
+  DashscopeVideoGenerationResponseVo,
   FireflycardResponseVo,
   ImageEditModelParamsVo,
   ImageGenerationModelParamsVo,
@@ -166,6 +172,34 @@ export class AitoearnAiClient {
    */
   async getVolcengineTaskStatus(data: VolcengineTaskQueryDto): Promise<VolcengineTaskStatusResponseVo> {
     return this.natsClient.send('ai.video.volcengine.task.query', data)
+  }
+
+  /**
+   * Dashscope 文生视频
+   */
+  async dashscopeText2Video(data: DashscopeText2VideoRequestDto): Promise<DashscopeVideoGenerationResponseVo> {
+    return this.natsClient.send('ai.video.dashscope.text2video', data)
+  }
+
+  /**
+   * Dashscope 图生视频
+   */
+  async dashscopeImage2Video(data: DashscopeImage2VideoRequestDto): Promise<DashscopeVideoGenerationResponseVo> {
+    return this.natsClient.send('ai.video.dashscope.image2video', data)
+  }
+
+  /**
+   * Dashscope 首尾帧生视频
+   */
+  async dashscopeKeyFrame2Video(data: DashscopeKeyFrame2VideoRequestDto): Promise<DashscopeVideoGenerationResponseVo> {
+    return this.natsClient.send('ai.video.dashscope.keyframe2video', data)
+  }
+
+  /**
+   * 查询 Dashscope 任务状态
+   */
+  async getDashscopeTaskStatus(data: DashscopeTaskQueryDto): Promise<DashscopeTaskStatusResponseVo> {
+    return this.natsClient.send('ai.video.dashscope.task.query', data)
   }
 
   // ==================== Logs Module Methods ====================
