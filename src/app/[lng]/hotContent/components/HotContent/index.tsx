@@ -12,7 +12,7 @@ import { useHotContent } from "@/app/[lng]/hotContent/useHotContent";
 import { useShallow } from "zustand/react/shallow";
 import HotContentLabel from "@/app/[lng]/hotContent/components/HotContentLabel";
 import styles from "./hotContent.module.scss";
-import { Avatar, Popover, Select, Spin, Table } from "antd";
+import { Avatar, Popover, Select, Skeleton, Spin, Table } from "antd";
 import Icon, { QuestionCircleOutlined } from "@ant-design/icons";
 import type { TableProps } from "antd";
 import { platformApi, RankingContent } from "@/api/hot";
@@ -250,10 +250,8 @@ const HotContent = memo(
     }, [selectedLabelInfo, dataSource]);
 
     const getTableData = useCallback(async () => {
-      console.log(selectedLabelInfo);
       if (loading) return;
 
-      setLoading(true);
       const res = await platformApi.getRankingContents(
         selectedLabelInfo.ranking.id,
         page.current,
@@ -261,7 +259,6 @@ const HotContent = memo(
         labelValue,
         dateValue,
       );
-      setLoading(false);
       page.current += 1;
       setDataSource((prevState) => {
         return [...prevState, ...(res?.data.items || [])];
@@ -283,7 +280,8 @@ const HotContent = memo(
       if (isReset && selectedLabelInfo.ranking?.id) {
         page.current = 1;
         setDataSource([]);
-        getTableData();
+        setLoading(true);
+        getTableData().then(() => setLoading(false));
         setIsReset(false);
       }
     }, [
@@ -348,7 +346,9 @@ const HotContent = memo(
               dataLength={dataSource.length}
               next={getTableData}
               hasMore={dataSource.length < total}
-              loader={<></>}
+              loader={
+                !loading ? <Skeleton active paragraph={{ rows: 1 }} /> : <></>
+              }
               endMessage={<></>}
               scrollableTarget="hotContent-table"
             >
