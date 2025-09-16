@@ -7,10 +7,16 @@ export interface MaterialMedia {
   content?: string;
 }
 
+export enum MaterialType {
+  VIDEO = 'video', // 视频
+  ARTICLE = 'article', // 文章
+}
+
 export interface NewMaterialTask {
   groupId: string;
   num: number;
   aiModelTag: string;
+  type: MaterialType;
   prompt: string;
   title?: string;
   desc?: string;
