@@ -73,9 +73,9 @@ export const updateMediaInfo = (
 };
 
 export const apiAddUseCount = (id: string) => {
-  return http.put(`media/addUseCount`, { data: id });
+  return http.put(`media/addUseCount`, { data: { id } });
 };
 
 export const apiAddUseCountOfList = (ids: string[]) => {
-  return http.put(`media/addUseCountOfList`, { data: ids });
+  return http.put(`media/addUseCountOfList`, { data: { ids } });
 };
