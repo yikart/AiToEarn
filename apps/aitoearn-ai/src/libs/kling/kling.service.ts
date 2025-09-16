@@ -73,18 +73,24 @@ export class KlingService {
 
     // 添加请求拦截器
     this.httpClient.interceptors.request.use((config) => {
-      const now = Math.floor(Date.now() / 1000)
-      const token = jwt.sign(
-        {
-          iss: this.config.accessKey,
-          exp: now + 1800,
-          nbf: now - 5,
-        },
-        this.config.secretKey,
-        {
-          algorithm: 'HS256',
-        },
-      )
+      let token
+      if (this.config.secretKey) {
+        const now = Math.floor(Date.now() / 1000)
+        token = jwt.sign(
+          {
+            iss: this.config.accessKey,
+            exp: now + 1800,
+            nbf: now - 5,
+          },
+          this.config.secretKey,
+          {
+            algorithm: 'HS256',
+          },
+        )
+      }
+      else {
+        token = this.config.accessKey
+      }
       config.headers.Authorization = `Bearer ${token}`
       config.headers['Content-Type'] = 'application/json'
       return config
