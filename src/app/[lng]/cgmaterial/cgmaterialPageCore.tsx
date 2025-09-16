@@ -25,6 +25,7 @@ import { PublishStatus } from "@/api/plat/types/publish.types";
 import { useTransClient } from "@/app/i18n/client";
 import { PubType } from "@/app/config/publishConfig";
 import { useParams } from "next/navigation";
+import { getChatModels } from "@/api/ai";
 
 const { TextArea } = Input;
 
@@ -71,6 +72,8 @@ export default function CgMaterialPageCore() {
   const [creating, setCreating] = useState(false);
   const [batchModal, setBatchModal] = useState(false);
   const [batchTaskLoading, setBatchTaskLoading] = useState(false);
+  const [chatModels, setChatModels] = useState<any[]>([]);
+  const [chatModelsLoading, setChatModelsLoading] = useState(false);
 
   // 批量生成草稿相关
   const [batchMediaGroups, setBatchMediaGroups] = useState<string[]>([]);
@@ -386,6 +389,17 @@ export default function CgMaterialPageCore() {
     // 拉取媒体组
     const res = await getMediaGroupList(1, 50);
     setMediaGroups(((res?.data as any)?.list as any[]) || []);
+    // 拉取聊天大模型
+    try {
+      setChatModelsLoading(true);
+      const chatRes = await getChatModels();
+      setChatModels(((chatRes?.data as any[]) || []));
+    } catch (e) {
+      // 忽略加载失败，不阻塞弹窗
+      setChatModels([]);
+    } finally {
+      setChatModelsLoading(false);
+    }
     // 获取地理位置
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -909,7 +923,7 @@ export default function CgMaterialPageCore() {
                           <EditOutlined /> {t('sidebar.edit')}
                         </span>
                         <span
-                          className={styles.groupActionBtn}
+                          className={styles.groupActionBtn} 
                           onClick={e => {
                             e.stopPropagation();
                             Modal.confirm({
@@ -1834,37 +1848,42 @@ export default function CgMaterialPageCore() {
       {/* 批量生成草稿弹窗 */}
       <Modal
         open={batchModal}
-        title="批量生成草稿"
+        title={t('batchGenerate.title')}
         onOk={handleBatchMaterial}
         onCancel={()=>setBatchModal(false)}
         confirmLoading={batchTaskLoading}
         footer={[
-          <Button key="preview" onClick={handlePreviewMaterial} loading={previewLoading} type="default">预览</Button>,
-          <Button key="submit" type="primary" onClick={handleBatchMaterial} loading={batchTaskLoading}>开始任务</Button>,
-          <Button key="cancel" onClick={()=>setBatchModal(false)}>取消</Button>,
+          <Button key="preview" onClick={handlePreviewMaterial} loading={previewLoading} type="default">{t('batchGenerate.preview')}</Button>,
+          <Button key="submit" type="primary" onClick={handleBatchMaterial} loading={batchTaskLoading}>{t('batchGenerate.startTask')}</Button>,
+          <Button key="cancel" onClick={()=>setBatchModal(false)}>{t('batchGenerate.cancel')}</Button>,
         ]}
       >
         <Form form={batchForm} layout="vertical">
-          <Form.Item label="大模型" name="model" rules={[{required:true,message:'请选择大模型'}]}>
-            <Select options={[{label:'阿里1.0',value:'ali'},]} style={{width:200}}/>
+          <Form.Item label={t('batchGenerate.model')} name="model" rules={[{required:true,message:t('batchGenerate.modelPlaceholder')}]}>
+            <Select
+              style={{width:200}}
+              loading={chatModelsLoading}
+              options={chatModels.map((m:any)=>({ label: m?.description || m?.name, value: m?.name }))}
+              placeholder={t('batchGenerate.modelPlaceholder')}
+            />
           </Form.Item>
-          <Form.Item label="提示词" name="prompt">
-            <Input/>
+          <Form.Item label={t('batchGenerate.prompt')} name="prompt">
+            <Input placeholder={t('batchGenerate.promptPlaceholder')}/>
           </Form.Item>
-          <Form.Item label="标题" name="title">
-            <Input/>
+          <Form.Item label={t('title')} name="title">
+            <Input placeholder={t('batchGenerate.titlePlaceholder')}/>
           </Form.Item>
-          <Form.Item label="简介" name="desc">
-            <TextArea rows={3}/>
+          <Form.Item label={t('description')} name="desc">
+            <TextArea rows={3} placeholder={t('batchGenerate.descPlaceholder')}/>
           </Form.Item>
-          <Form.Item label="封面组" name="coverGroup" rules={[{required:true,message:'请选择封面组'}]}>
+          <Form.Item label={t('batchGenerate.coverGroup')} name="coverGroup" rules={[{required:true,message:t('batchGenerate.coverGroupPlaceholder')}]}>
             <Select
               options={mediaGroups.map((g:any)=>({label:g.title,value:g._id}))}
               style={{width:200}}
               onChange={v=>setBatchCoverGroup(v)}
             />
           </Form.Item>
-          <Form.Item label="素材组" name="mediaGroups" rules={[{required:true,message:'请选择素材组'}]}>
+          <Form.Item label={t('batchGenerate.mediaGroups')} name="mediaGroups" rules={[{required:true,message:t('batchGenerate.mediaGroupsPlaceholder')}]}>
             <Select
               mode="multiple"
               options={mediaGroups.map((g:any)=>({label:g.title,value:g._id}))}
@@ -1872,12 +1891,12 @@ export default function CgMaterialPageCore() {
               onChange={v=>setBatchMediaGroups(v)}
             />
           </Form.Item>
-          <Form.Item label="生成数量" name="num" initialValue={4} rules={[{required:true}]}> 
+          <Form.Item label={t('batchGenerate.num')} name="num" initialValue={4} rules={[{required:true}]}> 
             <InputNumber min={1} max={20}/>
           </Form.Item>
-          <Form.Item label="地理位置" name="location">
+          {/* <Form.Item label="地理位置" name="location">
             <Input value={batchLocation.join(',')} disabled />
-          </Form.Item>
+          </Form.Item> */}
         </Form>
       </Modal>
       {/* 预览弹窗 */}
