@@ -1,4 +1,6 @@
 import { createZodDto } from '@yikart/common'
+import { AiLogChannel } from '@yikart/mongodb'
+
 import { z } from 'zod'
 
 // Kling视频生成响应
@@ -21,7 +23,6 @@ const videoGenerationResponseSchema = z.object({
 export class KlingVideoGenerationResponseVo extends createZodDto(klingVideoGenerationResponseSchema) {}
 export class VolcengineVideoGenerationResponseVo extends createZodDto(volcengineVideoGenerationResponseSchema) {}
 export class VideoGenerationResponseVo extends createZodDto(videoGenerationResponseSchema) {}
-
 // Kling 任务状态响应 VO
 const klingTaskStatusResponseSchema = z.object({
   task_id: z.string().describe('任务ID'),
@@ -99,7 +100,8 @@ export class VideoTaskStatusResponseVo extends createZodDto(videoTaskStatusRespo
 const videoGenerationModelSchema = z.object({
   name: z.string().describe('模型名称'),
   description: z.string().describe('模型描述'),
-  modes: z.array(z.string()).describe('支持的模式'),
+  channel: z.enum(AiLogChannel),
+  modes: z.array(z.enum(['text2video', 'image2video', 'flf2video', 'lf2video'])),
   resolutions: z.array(z.string()).describe('支持的尺寸'),
   durations: z.array(z.number()).describe('支持的时长'),
   supportedParameters: z.array(z.string()).describe('支持的参数'),
