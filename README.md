@@ -21,23 +21,35 @@ TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest
 
 ## Table of Contents
 
-1. [Quick Start (Web)](#quick-start-web)
-2. [Quick Start (Windows)](#quick-start-windows)
-3. [Key Features](#key-features)
-4. [MCP Service (Coming Soon)](#mcp-service-coming-soon)
-5. [Advanced Setup](#advanced-setup)
-6. [Contribution Guide](#contribution-guide)
-7. [Contact](#contact)
-8. [Milestones](#milestones)
-9. [FAQ](#faq)
-10. [Recommended](#recommended)
+1. [Quick Start](#quick-start)
+2. [Start Web Project](#start-web-project)
+3. [Start Electron Project](#start-electron-project)
+4. [Key Features](#key-features)
+5. [MCP Service](#mcp-service)
+6. [Advanced Setup](#advanced-setup)
+7. [Contribution Guide](#contribution-guide)
+8. [Contact](#contact)
+9. [Milestones](#milestones)
+10. [FAQ](#faq)
+11. [Recommended](#recommended)
 
 
-## Quick Start (Web)
+## Quick Start
 
+OS | Download
+-- | --
+Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.0.18-green?logo=android&logoColor=white)]((https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.18/app-release-1.0.18.apk))
+Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.0.18-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.18/AiToEarn+1.0.18.dmg)
+macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.0.18-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.18/AiToEarnSetup-1.0.18.exe)
+iOS |  **Coming soon!**
+
+[Google Play Download](https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app)
+
+[Use on Web](https://aitoearn.ai/en/accounts)
+
+
+## Start Web Project
 ### 1. Start the backend service
-
-[👉 Try the web version](https://aitoearn.ai)
 
 For local setup:
 Create a `local.config.js` file under the `config` directory (copy from `./aitoearn_web/server/aitoearn-user/config/dev.config.js` and adjust configs).
@@ -55,9 +67,7 @@ pnpm run dev
 ```
 
 
-## Quick Start (Windows)
-
-[⬇️ Download the latest Windows version (0.8.1)](https://github.com/yikart/AiToEarn/releases/download/0.8.1/AiToEarn-0.8.1.exe)
+## Start Electron Project
 
 ```sh
 # Clone the repo
@@ -163,7 +173,9 @@ From creative ideas, to multi-channel publishing, to analytics & monetization �
   **Let’s use AI to earn. Let’s earn money together!**
 
 
-## MCP Service (Coming Soon)
+## MCP Service
+https://www.modelscope.cn/mcp/servers/whh826219822/aitoearn
+https://www.npmjs.com/~aitoearn?activeTab=packages
 
 
 ## Advanced Setup
@@ -191,6 +203,7 @@ https://t.me/harryyyy2025
 * 2025.05.20 — Released win-0.8.0
 * 2025.08.08 — [Released win-0.8.1](https://github.com/yikart/AiToEarn/releases/tag/v0.8.1)
 * 2025.08.08 — [Released web-0.1-beta](./aitoearn_web/README.md)
+* 2025.09.16 — [Released v1.0.181](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18)
 
 ---
 
