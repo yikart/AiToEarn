@@ -1,5 +1,10 @@
 import http from "@/utils/request";
 
+// 获取聊天大模型列表
+export const getChatModels = () => {
+  return http.get("ai/models/chat");
+};
+
 // 文生图 - 新的接口
 export const generateImage = (data: {
   prompt: string;
