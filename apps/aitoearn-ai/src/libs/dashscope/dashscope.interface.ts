@@ -5,6 +5,7 @@ export enum TaskStatus {
   Succeeded = 'SUCCEEDED',
   Failed = 'FAILED',
   Canceled = 'CANCELED',
+  Unknown = 'UNKNOWN',
 }
 
 // 支持的模型

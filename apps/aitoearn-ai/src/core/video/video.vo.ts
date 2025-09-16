@@ -1,7 +1,9 @@
 import { createZodDto } from '@yikart/common'
 import { AiLogChannel } from '@yikart/mongodb'
-
 import { z } from 'zod'
+import {
+  TaskStatus as DashscopeTaskStatus,
+} from '../../libs/dashscope'
 
 // Kling视频生成响应
 const klingVideoGenerationResponseSchema = z.object({
@@ -121,3 +123,36 @@ const videoGenerationModelSchema = z.object({
 })
 
 export class VideoGenerationModelParamsVo extends createZodDto(videoGenerationModelSchema) {}
+
+// Dashscope 视频生成响应 VO
+const dashscopeVideoGenerationResponseSchema = z.object({
+  task_id: z.string().describe('任务ID'),
+  task_status: z.enum(DashscopeTaskStatus).optional().describe('任务状态'),
+})
+
+export class DashscopeVideoGenerationResponseVo extends createZodDto(dashscopeVideoGenerationResponseSchema) {}
+
+// Dashscope 任务状态响应 VO
+const dashscopeTaskStatusResponseSchema = z.object({
+  status_code: z.number().describe('HTTP状态码'),
+  request_id: z.string().describe('请求ID'),
+  code: z.string().nullable().describe('错误码'),
+  message: z.string().describe('错误消息'),
+  output: z.object({
+    task_id: z.string().describe('任务ID'),
+    task_status: z.enum(DashscopeTaskStatus).describe('任务状态'),
+    video_url: z.string().optional().describe('视频URL'),
+    submit_time: z.string().optional().describe('任务提交时间'),
+    scheduled_time: z.string().optional().describe('任务调度时间'),
+    end_time: z.string().optional().describe('任务结束时间'),
+    orig_prompt: z.string().optional().describe('原始提示词'),
+    actual_prompt: z.string().optional().describe('实际使用的提示词'),
+  }).describe('输出结果'),
+  usage: z.object({
+    video_count: z.number().describe('视频数量'),
+    video_duration: z.number().describe('视频时长'),
+    video_ratio: z.string().describe('视频分辨率'),
+  }).nullable().optional().describe('使用量统计'),
+})
+
+export class DashscopeTaskStatusResponseVo extends createZodDto(dashscopeTaskStatusResponseSchema) {}

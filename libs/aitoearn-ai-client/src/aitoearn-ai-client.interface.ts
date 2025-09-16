@@ -463,11 +463,19 @@ export interface DashscopeTaskQueryDto {
 }
 
 // ==================== Dashscope API Response VO ====================
+export enum DashscopeTaskStatus {
+  Pending = 'PENDING',
+  Running = 'RUNNING',
+  Succeeded = 'SUCCEEDED',
+  Failed = 'FAILED',
+  Canceled = 'CANCELED',
+  Unknown = 'UNKNOWN',
+}
 
 // Dashscope视频生成响应VO
 export interface DashscopeVideoGenerationResponseVo {
   task_id: string
-  task_status?: string
+  task_status?: DashscopeTaskStatus
 }
 
 // Dashscope任务状态响应VO
@@ -478,7 +486,7 @@ export interface DashscopeTaskStatusResponseVo {
   message: string
   output: {
     task_id: string
-    task_status: string
+    task_status: DashscopeTaskStatus
     video_url?: string
     submit_time?: string
     scheduled_time?: string

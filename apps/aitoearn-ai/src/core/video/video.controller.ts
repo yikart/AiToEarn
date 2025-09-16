@@ -19,7 +19,7 @@ import {
   VolcengineTaskQueryDto,
 } from './video.dto'
 import { VideoService } from './video.service'
-import { KlingTaskStatusResponseVo, KlingVideoGenerationResponseVo, VideoGenerationModelParamsVo, VideoGenerationResponseVo, VideoTaskStatusResponseVo, VolcengineTaskStatusResponseVo, VolcengineVideoGenerationResponseVo } from './video.vo'
+import { DashscopeTaskStatusResponseVo, DashscopeVideoGenerationResponseVo, KlingTaskStatusResponseVo, KlingVideoGenerationResponseVo, VideoGenerationModelParamsVo, VideoGenerationResponseVo, VideoTaskStatusResponseVo, VolcengineTaskStatusResponseVo, VolcengineVideoGenerationResponseVo } from './video.vo'
 
 @Controller('/video')
 export class VideoController {
@@ -96,27 +96,27 @@ export class VideoController {
   // ==================== Dashscope API 接口 ====================
 
   @NatsMessagePattern('ai.video.dashscope.text2video')
-  async dashscopeText2Video(@Payload() request: DashscopeText2VideoRequestDto) {
+  async dashscopeText2Video(@Payload() request: DashscopeText2VideoRequestDto): Promise<DashscopeVideoGenerationResponseVo> {
     const response = await this.videoService.dashscopeText2Video(request)
-    return response
+    return DashscopeVideoGenerationResponseVo.create(response)
   }
 
   @NatsMessagePattern('ai.video.dashscope.image2video')
-  async dashscopeImage2Video(@Payload() request: DashscopeImage2VideoRequestDto) {
+  async dashscopeImage2Video(@Payload() request: DashscopeImage2VideoRequestDto): Promise<DashscopeVideoGenerationResponseVo> {
     const response = await this.videoService.dashscopeImage2Video(request)
-    return response
+    return DashscopeVideoGenerationResponseVo.create(response)
   }
 
   @NatsMessagePattern('ai.video.dashscope.keyframe2video')
-  async dashscopeKeyFrame2Video(@Payload() request: DashscopeKeyFrame2VideoRequestDto) {
+  async dashscopeKeyFrame2Video(@Payload() request: DashscopeKeyFrame2VideoRequestDto): Promise<DashscopeVideoGenerationResponseVo> {
     const response = await this.videoService.dashscopeKeyFrame2Video(request)
-    return response
+    return DashscopeVideoGenerationResponseVo.create(response)
   }
 
   @NatsMessagePattern('ai.video.dashscope.task.query')
-  async getDashscopeTaskStatus(@Payload() data: DashscopeTaskQueryDto) {
+  async getDashscopeTaskStatus(@Payload() data: DashscopeTaskQueryDto): Promise<DashscopeTaskStatusResponseVo> {
     const response = await this.videoService.getDashscopeTask(data.userId, data.userType, data.taskId)
-    return response
+    return DashscopeTaskStatusResponseVo.create(response)
   }
 
   @Post('/dashscope/callback')
