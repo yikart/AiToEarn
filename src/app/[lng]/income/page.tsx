@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card, Table, Button, message, Modal, Tabs, Tag, Space, Popconfirm, Descriptions, Input, Select } from "antd";
 import { DollarOutlined, HistoryOutlined, WalletOutlined, CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user";
 import { apiGetIncomeList, apiSubmitWithdraw } from "@/api/income";
 import { apiGetWithdrawRecordList } from "@/api/withdraw";
@@ -17,6 +17,7 @@ const { Option } = Select;
 
 export default function IncomePage() {
   const router = useRouter();
+  const { lng } = useParams();
   const { userInfo, token } = useUserStore();
   const { t } = useTransClient('income');
   
@@ -277,6 +278,11 @@ export default function IncomePage() {
                 <div className={styles.balanceLabel}>{t('currentBalance')}</div>
                 <div className={styles.balanceAmount}>￥ {userInfo?.income || 0}</div>
               </div>
+            </div>
+            <div style={{ marginLeft: 12 }}>
+              <Button type="primary" onClick={() => router.push(`/${lng}/wallet`)}>
+                {t('myWallet')}
+              </Button>
             </div>
           </div>
         </div>

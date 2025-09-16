@@ -71,3 +71,11 @@ export const updateMediaInfo = (
 ) => {
   return http.put(`media/info/${id}`, data);
 };
+
+export const apiAddUseCount = (id: string) => {
+  return http.put(`media/addUseCount`, { data: { id } });
+};
+
+export const apiAddUseCountOfList = (ids: string[]) => {
+  return http.put(`media/addUseCountOfList`, { data: { ids } });
+};

@@ -41,5 +41,6 @@
     "noWithdrawRecords": "暂无提现记录",
     "loading": "加载中...",
     "totalRecords": "共 {{total}} 条记录"
-  }
+  },
+  "myWallet": "我的钱包"
 }
