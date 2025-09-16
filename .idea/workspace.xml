@@ -4,21 +4,15 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(热门内容): 恢复新热门内容">
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContent/index.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentLabel/hotContentLabel.module.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentLabel/index.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/index.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotFeatures/index.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotTitle/index.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/hotContent.enum.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(热门内容): 热门内容添加日期选择">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/HotContentCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/HotContentCore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentSidebar/hotContentSidebar.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentSidebar/hotContentSidebar.module.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentSidebar/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContentSidebar/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContent/hotContent.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContent/hotContent.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContent/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContent/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/hotContent.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/hotContent.module.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/useHotContent.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/useHotContent.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -221,22 +215,8 @@
       <workItem from="1757656251307" duration="25699000" />
       <workItem from="1757687709611" duration="2478000" />
       <workItem from="1757902659875" duration="8213000" />
-    </task>
-    <task id="LOCAL-00012" summary="fix(发布): 默认返回快手参数">
-      <option name="closed" value="true" />
-      <created>1752219562256</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1752219562256</updated>
-    </task>
-    <task id="LOCAL-00013" summary="feat(日历)：细节调整，1. 发布记录查看，添加图片、视频分别处理。 2. 发布API添加图片处理">
-      <option name="closed" value="true" />
-      <created>1752229429479</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1752229429479</updated>
+      <workItem from="1757990250575" duration="77000" />
+      <workItem from="1758007785895" duration="5213000" />
     </task>
     <task id="LOCAL-00014" summary="feat(日历)：日历在同一个单元格发布记录太多会自动隐藏，并且显示按钮让用户点击查看更多">
       <option name="closed" value="true" />
@@ -614,7 +594,23 @@
       <option name="project" value="LOCAL" />
       <updated>1757930268660</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="feat(热门内容): 添加侧边栏、标签数据、构建获取数据的基本逻辑及缓存逻辑">
+      <option name="closed" value="true" />
+      <created>1757947500152</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1757947500152</updated>
+    </task>
+    <task id="LOCAL-00062" summary="feat(热门内容): 热门内容添加日期选择">
+      <option name="closed" value="true" />
+      <created>1757949881878</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1757949881878</updated>
+    </task>
+    <option name="localTasksCounter" value="63" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -677,8 +673,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="feat: password 密码登录、重置密码，添加md5加密" />
-    <MESSAGE value="fix: 将之前转发的逻辑改为直连" />
     <MESSAGE value="fix: 删除代理地址" />
     <MESSAGE value="fix: 修复发布记录Dropdown报错" />
     <MESSAGE value="fix: 默认空间国际化" />
@@ -702,6 +696,8 @@
     <MESSAGE value="feat(数据统计): 1. echarts图优化。 2. 平台名称进行国际化。" />
     <MESSAGE value="feat(数据统计): 添加昨日新增" />
     <MESSAGE value="feat(热门内容): 恢复新热门内容" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(热门内容): 恢复新热门内容" />
+    <MESSAGE value="feat(热门内容): 添加侧边栏、标签数据、构建获取数据的基本逻辑及缓存逻辑" />
+    <MESSAGE value="feat(热门内容): 热门内容添加日期选择" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(热门内容): 热门内容添加日期选择" />
   </component>
 </project>

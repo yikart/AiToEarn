@@ -1,7 +1,14 @@
 .hotContent {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   :global {
     .hotContent-options {
       margin-top: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--grayColor6);
       &-select {
         display: flex;
         align-items: center;
@@ -19,6 +26,43 @@
         .ant-select-selector {
           border-bottom-left-radius: 0;
           border-top-left-radius: 0;
+        }
+      }
+
+      &-explain {
+        .anticon {
+          margin-left: 5px;
+        }
+      }
+    }
+
+    .hotContent-table {
+      height: 100%;
+      box-sizing: border-box;
+      overflow: auto;
+      margin-top: 15px;
+      position: relative;
+      @include table-flex-container-with-selectors;
+
+      scrollbar-width: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      thead {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        .ant-table-cell {
+          background: rgba(237, 242, 242);
+          padding: 10px 16px;
+
+          &:last-of-type {
+            border-bottom-right-radius: 8px;
+          }
+          &:first-of-type {
+            border-bottom-left-radius: 8px;
+          }
         }
       }
     }

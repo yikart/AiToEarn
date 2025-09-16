@@ -92,7 +92,10 @@ const DataStatisticsHeader = memo(
           <div className="dataStatisticsHeader-accounts">
             {filteredAccountList.length === 0 ? (
               <>
-                <Empty style={{ width: "100%", height: "100%" }} description={t("noAccount")} />
+                <Empty
+                  style={{ width: "100%", height: "100%" }}
+                  description={t("noAccount")}
+                />
               </>
             ) : (
               <>
@@ -149,7 +152,8 @@ const DataStatisticsHeader = memo(
 
                               {account.status === 1 ? (
                                 <div className="accounts-swiper-item-fans">
-                                  {t("fansCount")} <span>{account.fansCount}</span>
+                                  {t("fansCount")}{" "}
+                                  <span>{account.fansCount}</span>
                                 </div>
                               ) : (
                                 <div className="accounts-swiper-item-offline">

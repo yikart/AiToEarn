@@ -2,6 +2,7 @@ import {
   ForwardedRef,
   forwardRef,
   memo,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -10,11 +11,23 @@ import { useHotContent } from "@/app/[lng]/hotContent/useHotContent";
 import { useShallow } from "zustand/react/shallow";
 import HotContentLabel from "@/app/[lng]/hotContent/components/HotContentLabel";
 import styles from "./hotContent.module.scss";
-import { Select } from "antd";
+import { Popover, Select, Table } from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons";
+import type { TableProps } from "antd";
+import { platformApi, RankingContent } from "@/api/hot";
 
 export interface IHotContentRef {}
 
 export interface IHotContentProps {}
+
+const columns: TableProps<RankingContent>["columns"] = [
+  {
+    title: "排名",
+    dataIndex: "rankingPosition",
+    key: "rankingPosition",
+    render: (text, data, index) => <span>{index + 1}</span>,
+  },
+];
 
 const HotContent = memo(
   forwardRef(({}: IHotContentProps, ref: ForwardedRef<IHotContentRef>) => {
@@ -30,6 +43,10 @@ const HotContent = memo(
     const [labelValue, setLabelValue] = useState("全部");
     // 当前选中的日期
     const [dateValue, setDateValue] = useState("");
+    // 数据loading
+    const [loading, setLoading] = useState(false);
+    // 表格数据
+    const [dataSource, setDataSource] = useState<RankingContent[]>([]);
 
     // 获取当前选中的标签、日期、榜单
     const selectedLabelInfo = useMemo(() => {
@@ -55,8 +72,19 @@ const HotContent = memo(
     // 请求列表数据
     useEffect(() => {
       if (dateValue === "") return;
-      console.log("请求列表数据", { labelValue, dateValue });
+      getTableData();
     }, [labelValue, dateValue]);
+
+    const getTableData = useCallback(async () => {
+      const res = await platformApi.getRankingContents(
+        selectedLabelInfo.ranking.id,
+        1,
+        20,
+        labelValue,
+        dateValue,
+      );
+      setDataSource(res?.data.items || []);
+    }, [selectedLabelInfo, labelValue, dateValue]);
 
     return (
       <div className={styles.hotContent}>
@@ -78,6 +106,27 @@ const HotContent = memo(
               onChange={(e) => setDateValue(e)}
             ></Select>
           </div>
+
+          <Popover
+            content={
+              <>
+                <p>更新时间：{selectedLabelInfo.ranking.updateFrequency}</p>
+                <p>统计数据截止：{selectedLabelInfo.ranking.updateTime}</p>
+                <p>更新时间：按日</p>
+                <p>排序规则：统计当日点赞量前500名的作品推荐</p>
+              </>
+            }
+            placement="bottomLeft"
+          >
+            <div className="hotContent-options-explain">
+              数据说明
+              <QuestionCircleOutlined />
+            </div>
+          </Popover>
+        </div>
+
+        <div className="hotContent-table">
+          <Table dataSource={dataSource} columns={columns} pagination={false} />
         </div>
       </div>
     );

@@ -1,11 +1,13 @@
 .hotContent {
   display: flex;
   height: 100%;
+  width: 100%;
+  min-height: 0;
   border-top: 1px solid var(--grayColor1);
   :global {
-    .ant-spin-container {
+    .hotContent-wrapper {
       display: flex;
-      flex: 1;
+      height: 100%;
       .hotContent-content {
         padding: 15px 20px;
         box-sizing: border-box;
@@ -14,6 +16,12 @@
         min-height: 0;
         overflow: auto;
       }
+    }
+
+    .ant-spin-container {
+      height: 100%;
+      width: 100%;
+      min-height: 0;
     }
   }
 }

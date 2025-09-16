@@ -24,18 +24,20 @@ export const HotContentCore = () => {
       size="large"
       wrapperClassName={styles.hotContent}
     >
-      <HotContentSidebar />
+      <div className="hotContent-wrapper">
+        <HotContentSidebar />
 
-      <div className="hotContent-content">
-        {hotType === HotType.hotContent ? (
-          <HotContent />
-        ) : hotType === HotType.hotEvent ? (
-          <HotEvent />
-        ) : hotType === HotType.hotFeatures ? (
-          <HotFeatures />
-        ) : (
-          <HotTitle />
-        )}
+        <div className="hotContent-content">
+          {hotType === HotType.hotContent ? (
+            <HotContent />
+          ) : hotType === HotType.hotEvent ? (
+            <HotEvent />
+          ) : hotType === HotType.hotFeatures ? (
+            <HotFeatures />
+          ) : (
+            <HotTitle />
+          )}
+        </div>
       </div>
     </Spin>
   );
