@@ -1,54 +1,73 @@
-## [Aitoearn:最好用的开源内容营销AI Agent！](https://aitoearn.ai)
+
+# [Aitoearn：最佳开源 AI 内容营销智能体](https://aitoearn.ai)
+
 ![GitHub stars](https://img.shields.io/github/stars/yikart/AttAiToEarn?color=fa6470)
 ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
-[![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node&message=20.18.x%20&logo=node.js&color=3f893e)](https://nodejs.org/about/releases)
+[![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node\&message=20.18.x%20\&logo=node.js\&color=3f893e)](https://nodejs.org/about/releases)
 
-[English](README_EN.md) | 简体中文
+[简体中文](README_CN.md) | English
 
+**Create · Publish · Engage · Monetize —— 一站式平台。**
 
+AiToEarn 通过**AI 自动化**，帮助创作者、品牌与企业在全球主流平台上构建、分发并变现内容。
 
-AI内容制作，分发，互动，出售。
+支持渠道：  
+抖音（Douyin）、小红书（Rednote）、视频号（WeChat Channels）、快手（Kuaishou）、哔哩哔哩（Bilibili）、微信公众号（WeChat Official Accounts）、TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest
 
-支持平台：
-抖音、小红书、视频号、快手、bilibili、公众号、
-Tiktok、Youtube、Facebook、Instagram、Threads、Twitter、Pinterest
+<details>
+  <summary><h2 style="display:inline;margin:0">目录</h2></summary>
 
-## 目录
-1. [快速开始（Web 版）](#快速开始web-版)
-2. [快速开始（Windows 版）](#快速开始windows-版)
-3. [核心功能](#核心功能)
-4. [MCP 服务（即将上线）](#mcp-服务即将上线)
-5. [高级设置](#高级设置)
-6. [贡献指南](#贡献指南)
-7. [加我微信](#加我微信)
-8. [里程碑](#里程碑)
-9. [常见问题](#常见问题)
-10. [友情链接](#友情链接)
+  <br/>
 
-## 快速开始（Web 版）
-### 1. 启动后端服务模块
-[直接访问web网站](https://aitoearn.ai)
+  1. [快速开始](#quick-start)
+  2. [启动 Web 项目](#start-web-project)
+  3. [启动 Electron 项目](#start-electron-project)
+  4. [核心功能](#key-features)
+  5. [MCP 服务](#mcp-service)
+  6. [高级设置](#advanced-setup)
+  7. [贡献指南](#contribution-guide)
+  8. [联系](#contact)
+  9. [里程碑](#milestones)
+  10. [常见问题](#faq)
+  11. [推荐](#recommended)
+</details>
 
-本地启动：在 config 目录下创建 `local.config.js` 文件（复制 `./aitoearn_web/server/aitoearn-user/config/dev.config.js` 文件并修改配置）
+<h2 id="quick-start">快速开始</h2>
+
+操作系统 | 下载
+-- | --
+Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.0.18-green?logo=android&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.18/app-release-1.0.18.apk)
+Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.0.18-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.18/AiToEarnSetup-1.0.18.exe)
+macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.0.18-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.18/AiToEarn+1.0.18.dmg)
+iOS |  **即将推出！**
+
+[Google Play 下载](https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app)
+
+[立即在线使用](https://aitoearn.ai/en/accounts)
+
+<h2 id="start-web-project">启动 Web 项目</h2>
+
+### 1. 启动后端服务
+
+用于本地开发：  
+在 `config` 目录下创建 `local.config.js`（可从 `./aitoearn_web/server/aitoearn-user/config/dev.config.js` 复制并按需修改）。
 
 ```bash
 pnpm install
 pnpm run dev:local
-```
+````
 
-### 2. 启动前端项目 `aitoearn-web`
+### 2. 启动前端 `aitoearn-web`
 
 ```bash
 pnpm install
 pnpm run dev
 ```
 
-## 快速开始（Windows 版）
-[直接下载最新版本0.8.1(windows)](https://github.com/yikart/AiToEarn/releases/download/0.8.1/AiToEarn-0.8.1.exe)
-
+<h2 id="start-electron-project">启动 Electron 项目</h2>
 
 ```sh
-# 克隆项目
+# 克隆仓库
 git clone https://github.com/yikart/AttAiToEarn.git
 
 # 进入目录
@@ -57,38 +76,36 @@ cd AttAiToEarn
 # 安装依赖
 npm i
 
-# 编译sqlite, better-sqlite3对node-gyp有依赖，需要本地有python环境,请自行查阅node-gyp安装资料
+# 编译 sqlite（better-sqlite3 依赖 node-gyp，本地需安装 Python）
 npm run rebuild
 
-# develop
+# 启动开发
 npm run dev
 ```
 
-## 核心功能
+<h2 id="key-features">核心功能</h2>
 
-🚀Aitoearn 不只是一个内容管理工具，它是一整套 **AI 驱动的全链路内容增长与变现平台**。
-从创意灵感到多平台分发，再到数据分析和商业化，Aitoearn 让你的内容真正做到：
-**Create · Publish · Engage · Monetize**
+🚀 **AiToEarn 是一个全链条的 AI 驱动内容增长与变现平台。**
+从创意灵感，到多平台分发，再到数据分析与变现——AiToEarn 让你真正实现 **Create · Publish · Engage · Monetize**。
 
+### 1. 内容发布 —— 一键多平台
 
-### 1. Content Publishing — 一键发布 · 多平台触达
+* **全网分发**：覆盖最广的平台矩阵（Douyin、Kwai、WeChat、Bilibili、Rednote、Facebook、Instagram、TikTok、LinkedIn、Threads、Bluesky、YouTube Shorts、Pinterest、Google Business、Mastodon、X）。
+* **（即将推出）智能导入**：导入历史内容，快速二次编辑与再分发。
 
-* **多平台分发**：支持全球最多主流社交平台（Douyin, Kwai, Wechat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, Bluesky, YouTube Shorts, Pinterest, Google Business, Mastodon, X）。
-* **（即将上线）智能导入**：直接导入历史内容，快速编辑、二次分发。
+  * 例如：一键将你的小红书内容同步到 YouTube。
+* **日历排期**：像排日程一样统一规划所有平台的内容。
 
-  * 例如：小红书创作者可一键同步到 YouTube，让更多用户看到。
-* **日历编排**：像操作日历一样规划内容，实现多平台协同发布。
 <div style="display: flex; justify-content: space-around;">
   <img src="presentation/app-screenshot/1. content publish/calendar.jpeg" width="30%">
   <img src="presentation/app-screenshot/1. content publish/support_channels.jpeg" width="30%">
 </div>
 
+### 2. 热点灵感 —— 爆款灵感引擎
 
+* **案例库**：浏览 1 万＋点赞量级内容的创作方法。
+* **趋势雷达**：第一时间捕捉热点，缓解创作者焦虑。
 
-### 2. Content Hotspot — 爆款灵感引擎
-
-* **爆款案例库**：随时查看他人如何打造 10,000+ 点赞的内容。
-* **趋势捕捉**：快速发现流行趋势，降低创作焦虑。
 <div style="display: flex; justify-content: space-around;">
   <img src="presentation/app-screenshot/2. content hotspot/hotspot.jpg" width="22%">
   <img src="presentation/app-screenshot/2. content hotspot/hotspot2.jpeg" width="22%">
@@ -96,12 +113,11 @@ npm run dev
   <img src="presentation/app-screenshot/2. content hotspot/hotspot4.jpeg" width="22%">
 </div>
 
+### 3. 内容搜索 —— 品牌与市场洞察
 
+* **品牌监测**：实时追踪关于你品牌的讨论。
+* **内容发现**：按主题、话题与社区检索，以更精准地参与互动。
 
-### 3. Content Search — 品牌与市场洞察
-
-* **品牌监控**：实时追踪品牌相关讨论，第一时间响应。
-* **内容搜索**：找到目标帖子和话题，高效互动，精准拓展市场。
 <div style="display:flex; justify-content:space-between; align-items:center;">
   <img src="presentation/app-screenshot/3.%20content%20search/contentsearch.gif" width="22%">
   <img src="presentation/app-screenshot/3.%20content%20search/contentsearch1.jpeg" width="22%">
@@ -109,100 +125,93 @@ npm run dev
   <img src="presentation/app-screenshot/3.%20content%20search/contentsearch4.jpeg" width="22%">
 </div>
 
+### 4. 评论搜寻 —— 精准用户挖掘
 
-### 4. Comments Search — 精准用户挖掘
+* **智能评论检索**：识别“求链接”“怎么购买”等高转化信号。
+* **转化加速器**：快速回复，驱动更高互动与销量。
 
-* 用户真实需求往往藏在 **评论区**。
-* **智能评论搜索**：快速发现“求链接”“怎么购买”等高转化信号。
-* **精准转化**：主动回复，提升流量变现效率。
- <div style="display:flex; justify-content:space-between; align-items:center;">
+<div style="display:flex; justify-content:space-between; align-items:center;">
   <img src="presentation/app-screenshot/4. comments search/commentsearch.gif" width="30%">
   <img src="presentation/app-screenshot/4. comments search/commentfilter.jpeg" width="30%">
 </div>
 
+### 5. 互动运营 —— 增长引擎
 
-### 5. Content Engagement — 互动与增长引擎
+* **统一工作台**：在一个界面管理全部互动。
+* **主动参与**：跟进热点话题，连接潜在用户。
+  将**被动运营**转变为**主动引流**。
 
-* **统一后台**：集中管理所有内容，互动零遗漏。
-* **主动运营**：参与热门话题，与潜在用户双向互动。
-* 把 **“被动内容运营”** 变成 **“主动流量经营”**。
- <div style="display:flex; justify-content:space-between; align-items:center;">
+<div style="display:flex; justify-content:space-between; align-items:center;">
   <img src="presentation/app-screenshot/5. content engagement/commentfilter2.jpeg" width="30%">
 </div>
 
+### 6.（即将推出）数据分析 —— 全链路漏斗
 
-### 6. （即将上线）Content Analytics — 全景化数据视图
+* **跨平台对比**：某个平台限流？其他平台一样能打。
+* **端到端监控**：追踪表现，构建通往 100 万＋粉丝的路线图。
 
-* **多平台对比**：一个平台不给流量，不代表所有平台不给。
-* **全链路监控**：追踪内容表现，助力打造下一个百万博主。
-<img src="./presentation/data_center.png" alt="post" width="500"/>
+<img src="./presentation/data_center.png" alt="数据中心" width="500"/>
 
-### 7. （即将上线）AI Content Creation — 全流程 AI 助手
+### 7.（即将推出）AI 内容创作 —— 端到端助手
 
-* **AI 文案生成**：自动生成标题、描述，高效产出。
-* **AI 评论生成**：主动出击，获取流量。
-* **图文卡片生成**，全流程加速创作。
-* **支持主流 AI 视频模型**：Seedance, Kling, Hailuo, Veo, Medjourney, Sora, Pika, Runway。
-* **支持主流 AI 图片模型**：GPT, Flux。
-* **即将上线功能**：标签生成器、自动私信管理、智能剪辑、数字人生成、视频翻译 —— 助力多语言全球化内容分发。
+* **AI 文案**：自动生成标题、文案与描述。
+* **AI 评论**：主动互动，吸引流量。
+* **图片与卡片生成**：加速内容工作流。
+* **支持的视频模型**：Seedance、Kling、海螺（Hailuo）、Veo、Medjourney、Sora、Pika、Runway。
+* **支持的图像模型**：GPT、Flux。
+* **下一步**：标签生成、智能私信、视频剪辑、AI 数字人、全球分发多语种翻译等。
 
+### 8.（即将推出）内容交易市场 —— 创作即变现
 
+* **创作者**：直接出售你的内容，高效找到买家。
+* **品牌方**：即买即用的优质内容资源。
+* **AI 驱动增长**：
+  **让我们用 AI 赚钱，一起赚！**
 
-### 8. （即将上线）Content Marketplace — 内容交易与变现
+<h2 id="mcp-service">MCP 服务</h2>
 
-* **创作者变现**：在平台直接出售内容，让优质作品快速找到买家。
-* **品牌采购**：企业可直接购买现成内容，节省时间与成本。
-* **AI 赋能**：让创作变成收益 ——
-  **Let’s use AI to earn. Let’s earn money together!**
+[https://www.modelscope.cn/mcp/servers/whh826219822/aitoearn](https://www.modelscope.cn/mcp/servers/whh826219822/aitoearn)
+[https://www.npmjs.com/\~aitoearn?activeTab=packages](https://www.npmjs.com/~aitoearn?activeTab=packages)
 
+<h2 id="advanced-setup">高级设置</h2>
 
+AiToEarn 集成了多种官方 API。以下是开发者密钥配置指南：
 
+* [B 站（Bilibili）](./aitoearn_web/CHANNEL_Md/BILIBILI.md)
+* [微信公众号（WeChat Official Accounts）](./aitoearn_web/CHANNEL_Md/WXPLAT.md)
 
-## MCP 服务（即将上线！）
+<h2 id="contribution-guide">贡献指南</h2>
 
-## 高级设置
-Aitoearn使用了大量的官方开放接口，可以参考下述教程申请开发者key
-1. [Bilibili](./aitoearn_web/CHANNEL_Md/BILIBILI.md)
-1. [微信公众号](./aitoearn_web/CHANNEL_Md/WXPLAT.md)
+请查看 [贡献指南](./aitoearn_web/CONTRIBUTING.md) 开始参与。
 
+<h2 id="contact">联系</h2>
 
-## 贡献指南
-请查看 [贡献指南](./aitoearn_web/CONTRIBUTING.md) 了解如何参与项目开发。
+[https://t.me/harryyyy2025](https://t.me/harryyyy2025)
 
-## 加我微信
-辛苦备注一下 AiToEarn
+<h2 id="milestones">里程碑</h2>
 
-<img src="./wechat.jpg" alt="wechat" width="500"/>
+* 2025.02.26 — 发布 win-0.1.1
+* 2025.03.15 — 发布 win-0.2.0
+* 2025.04.18 — 发布 win-0.6.0
+* 2025.05.20 — 发布 win-0.8.0
+* 2025.08.08 — [发布 win-0.8.1](https://github.com/yikart/AiToEarn/releases/tag/v0.8.1)
+* 2025.08.08 — [发布 web-0.1-beta](./aitoearn_web/README.md)
+* 2025.09.16 — [发布 v1.0.181](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18)
 
-
-## 里程碑
-- 2025.2.26 发布win-0.1.1版本
-- 2025.3.15 发布win-0.2.0版本
-- 2025.4.18 发布win-0.6.0版本
-- 2025.5.20 发布win-0.8.0版本
-- 2025.8.8 [发布win-0.8.1版本](https://github.com/yikart/AiToEarn/releases/tag/v0.8.1)
-- 2025.8.8 [发布web-0.1-beta版本](./aitoearn_web/README.md)
-
-
-## [常见问题](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
-
-
-## 友情链接
-
-**[AWS云创计划](https://www.amazonaws.cn/en/campaign/ps-yunchuang/)**
+---
+## [常见问题](https://docs.aitoearn.ai)
 
 
-**[AI模型中转站](https://api.zyai.online/)**
+<h2 id="recommended">推荐</h2>
 
-https://github.com/TMElyralab/MuseTalk
+**[AWS Activate Program](https://www.amazonaws.cn/en/campaign/ps-yunchuang/)**
 
-https://github.com/5ime/video_spider
+**[AI Model Hub](https://api.zyai.online/)**
 
-https://github.com/FunAudioLLM/CosyVoice?tab=readme-ov-file
-
-https://github.com/facefusion/facefusion
-
-https://github.com/linyqh/NarratoAI
-
-https://github.com/harry0703/MoneyPrinterTurbo
+* [https://github.com/TMElyralab/MuseTalk](https://github.com/TMElyralab/MuseTalk)
+* [https://github.com/5ime/video\_spider](https://github.com/5ime/video_spider)
+* [https://github.com/FunAudioLLM/CosyVoice?tab=readme-ov-file](https://github.com/FunAudioLLM/CosyVoice?tab=readme-ov-file)
+* [https://github.com/facefusion/facefusion](https://github.com/facefusion/facefusion)
+* [https://github.com/linyqh/NarratoAI](https://github.com/linyqh/NarratoAI)
+* [https://github.com/harry0703/MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo)
 
