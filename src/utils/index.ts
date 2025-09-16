@@ -61,16 +61,13 @@ export function formatSeconds(seconds: number): string {
  * @returns 如果数值超过1000返回'n千'，超过10000返回'n万'
  */
 export function describeNumber(value: number): string {
-  if (value > 10000) {
-    // 数值超过10000，返回'n w'
-    const wan = Math.floor(value / 10000);
-    return `${wan}w`;
-  } else if (value > 1000) {
-    // 数值超过1000，返回'n k'
-    const qian = Math.floor(value / 1000);
-    return `${qian}k`;
+  if (!value) return `${value ?? 0}`;
+
+  if (value >= 10000) {
+    return `${(value / 10000).toFixed(2).replace(/\.?0+$/, "")}w`;
+  } else if (value >= 1000) {
+    return `${(value / 1000).toFixed(2).replace(/\.?0+$/, "")}k`;
   } else {
-    // 数值不超过1000，直接返回数值的字符串形式
     return value.toString();
   }
 }

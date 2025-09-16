@@ -99,6 +99,7 @@ export interface RankingContent {
   rankingPosition: number;
   category: string;
   publishTime: string;
+  subCategory: string;
   author: {
     name: string;
     avatar: string;
@@ -106,7 +107,7 @@ export interface RankingContent {
   };
   stats: Stats;
   anaAdd: {
-    addCollectedCunt: number;
+    addCollectCount: number;
     addCommentCount: number;
     addInteractiveCount: number;
     addLikeCount: number;

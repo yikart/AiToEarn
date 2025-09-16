@@ -1,7 +1,7 @@
 import "@/app/var.css";
 import "../globals.css";
 import { Providers } from "../layout/Providers";
-
+import Head from "next/head";
 import { dir } from "i18next";
 import { languages, fallbackLng } from "@/app/i18n/settings";
 import { useTranslation } from "@/app/i18n";
@@ -38,7 +38,7 @@ export default async function RootLayout({
               height: "100vh",
               display: "flex",
               flexDirection: "column",
-              minHeight: '0'
+              minHeight: "0",
             }}
           >
             <ConditionalHeader />

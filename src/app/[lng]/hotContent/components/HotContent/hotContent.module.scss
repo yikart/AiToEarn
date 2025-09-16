@@ -36,6 +36,10 @@
       }
     }
 
+    .infinite-scroll-component {
+      overflow: visible !important;
+    }
+
     .hotContent-table {
       height: 100%;
       box-sizing: border-box;
@@ -65,6 +69,121 @@
           }
         }
       }
+
+      tbody {
+        .ant-table-cell {
+          padding: 10px;
+        }
+        tr {
+          cursor: pointer;
+        }
+      }
+    }
+
+    .ant-spin-container, .ant-spin-nested-loading {
+      height: 100%;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hotContent--wechat, .hotContent--bilibili {
+      .baseInfo-cover {
+        width: 100px !important;
+        height: 60px !important;
+      }
+    }
+  }
+}
+
+.rankingTopthree {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  color: #fff;
+  background: url("../../../../../images/bg-rank-index.png") no-repeat center / cover;
+}
+
+.baseInfo {
+  display: flex;
+  & > img {
+    object-fit: cover;
+    width: 60px;
+    height: 80px;
+    flex-shrink: 0;
+    border-radius: 4px;
+    margin-right: 15px;
+  }
+
+  :global {
+    .baseInfo-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      &-title {
+        @include omitText(2);
+      }
+      &-noTitle {
+        color: var(--grayColor5);
+      }
+      &-author {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        font-size: var(--fs-xs);
+        &-avatar {
+        }
+        &-name {
+          margin: 0 10px 0 5px;
+        }
+        &-fans {
+          margin-right: 10px;
+          color: var(--grayColor7);
+        }
+        &-pubTime {
+          color: var(--grayColor7);
+        }
+      }
+    }
+
+    .baseInfo-cover {
+
+    }
+  }
+}
+
+.anaAddCall {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  :global {
+    .anaAddCall-add {
+      font-weight: 600;
+      white-space: nowrap;
+      .anticon {
+        font-size: 14px;
+        margin-right: 3px;
+        color: red;
+      }
+    }
+
+    .anaAddCall-total {
+      border: 1px solid var(--grayColor3);
+      color: var(--grayColor8);
+      padding: 1px 8px;
+      border-radius: 30px;
+      font-size: var(--fs-xs);
+      white-space: nowrap;
+    }
+  }
+}
+.anaAddCall-highlight {
+  color: var(--colorPrimary5);
+  :global {
+    .anaAddCall-total {
+      color: var(--colorPrimary5);
     }
   }
 }

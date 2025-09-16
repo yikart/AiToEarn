@@ -12,5 +12,9 @@ export async function generateMetadata({ params }: PageParams) {
 }
 
 export default function Page() {
-  return <HotContentCore />;
+  return (
+    <>
+      <HotContentCore />
+    </>
+  );
 }
