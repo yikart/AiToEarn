@@ -38,12 +38,17 @@ const chatModelSchema = z.object({
   description: z.string(),
   inputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])),
   outputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])),
-  pricing: z.object({
-    prompt: z.string(),
-    completion: z.string(),
-    image: z.string().optional(),
-    audio: z.string().optional(),
-  }),
+  pricing: z.union([
+    z.object({
+      prompt: z.string(),
+      completion: z.string(),
+      image: z.string().optional(),
+      audio: z.string().optional(),
+    }),
+    z.object({
+      price: z.string(),
+    }),
+  ]),
 })
 
 export class ChatModelConfigVo extends createZodDto(chatModelSchema) {}

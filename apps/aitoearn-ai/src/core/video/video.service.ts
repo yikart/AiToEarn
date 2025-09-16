@@ -4,8 +4,13 @@ import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
 import { S3Service } from '@yikart/aws-s3'
 import { AppException, ResponseCode, UserType } from '@yikart/common'
 import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
-import { KlingAction, TaskStatus } from '../../common/enums'
+import { DashscopeAction, KlingAction, TaskStatus } from '../../common/enums'
 import { config } from '../../config'
+import {
+  DashscopeService,
+  TaskStatus as DashscopeTaskStatus,
+  GetVideoTaskResponse,
+} from '../../libs/dashscope'
 import {
   Image2VideoCreateTaskResponseData,
   KlingService,
@@ -16,15 +21,21 @@ import {
   Text2VideoGetTaskResponseData,
 } from '../../libs/kling'
 import {
+  Content,
   ContentType,
   CreateVideoGenerationTaskResponse,
   GetVideoGenerationTaskResponse,
+  ImageRole,
   parseModelTextCommand,
   serializeModelTextCommand,
   VolcengineService,
   TaskStatus as VolcTaskStatus,
 } from '../../libs/volcengine'
 import {
+  DashscopeCallbackDto,
+  DashscopeImage2VideoRequestDto,
+  DashscopeKeyFrame2VideoRequestDto,
+  DashscopeText2VideoRequestDto,
   KlingCallbackDto,
   KlingImage2VideoRequestDto,
   KlingMultiImage2VideoRequestDto,
@@ -38,6 +49,7 @@ import {
 @Injectable()
 export class VideoService {
   constructor(
+    private readonly dashscopeService: DashscopeService,
     private readonly klingService: KlingService,
     private readonly volcengineService: VolcengineService,
     private readonly userClient: AitoearnUserClient,
@@ -85,7 +97,7 @@ export class VideoService {
    * 用户视频生成（通用接口）
    */
   async userVideoGeneration(request: UserVideoGenerationRequestDto) {
-    const { userId, userType, model, prompt, mode, duration, size } = request
+    const { model } = request
 
     // 查找模型配置以确定channel
     const modelConfig = config.ai.models.video.generation.find(m => m.name === model)
@@ -95,51 +107,170 @@ export class VideoService {
 
     const channel = modelConfig.channel
 
-    if (channel === 'kling') {
+    // 创建标准响应的辅助函数
+    const createTaskResponse = (taskId: string) => ({
+      task_id: taskId,
+      status: TaskStatus.Submitted,
+      message: '',
+    })
+
+    switch (channel) {
+      case AiLogChannel.Kling:
+        return this.handleKlingGeneration(request, createTaskResponse)
+      case AiLogChannel.Volcengine:
+        return this.handleVolcengineGeneration(request, createTaskResponse)
+      case AiLogChannel.Dashscope:
+        return this.handleDashscopeGeneration(request, createTaskResponse)
+      default:
+        throw new AppException(ResponseCode.InvalidModel)
+    }
+  }
+
+  /**
+   * 处理Kling渠道的视频生成
+   */
+  private async handleKlingGeneration<T>(
+    request: UserVideoGenerationRequestDto,
+    createTaskResponse: (taskId: string) => T,
+  ) {
+    const { userId, userType, model, prompt, mode, duration, image, image_tail } = request
+    const klingMode = mode === 'std' ? Mode.Std : mode === 'pro' ? Mode.Pro : undefined
+    const klingDuration = duration ? duration.toString() as '5' | '10' : undefined
+
+    if (image) {
+      const klingRequest: KlingImage2VideoRequestDto = {
+        userId,
+        userType,
+        model_name: model,
+        image,
+        image_tail,
+        prompt,
+        mode: klingMode,
+        duration: klingDuration,
+      }
+      const result = await this.klingImage2Video(klingRequest)
+      return createTaskResponse(result.task_id)
+    }
+    else {
       const klingRequest: KlingText2VideoRequestDto = {
         userId,
         userType,
         model_name: model,
         prompt,
-        mode: mode === 'std' ? Mode.Std : mode === 'pro' ? Mode.Pro : undefined,
-        duration: duration ? duration.toString() as '5' | '10' : undefined,
+        mode: klingMode,
+        duration: klingDuration,
       }
       const result = await this.klingText2Video(klingRequest)
-
-      return {
-        task_id: result.task_id,
-        status: TaskStatus.Submitted,
-        message: '',
-      }
+      return createTaskResponse(result.task_id)
     }
-    else if (channel === 'volcengine') {
-      const textCommand = parseModelTextCommand(prompt)
+  }
 
-      const volcengineRequest: VolcengineGenerationRequestDto = {
+  /**
+   * 处理Volcengine渠道的视频生成
+   */
+  private async handleVolcengineGeneration<T>(
+    request: UserVideoGenerationRequestDto,
+    createTaskResponse: (taskId: string) => T,
+  ) {
+    const { userId, userType, model, prompt, duration, size, image, image_tail } = request
+    const textCommand = parseModelTextCommand(prompt)
+    const content: Content[] = []
+
+    // 添加图片内容
+    if (image) {
+      content.push({
+        type: ContentType.ImageUrl,
+        image_url: { url: image },
+        role: ImageRole.FirstFrame,
+      })
+    }
+
+    if (image_tail) {
+      content.push({
+        type: ContentType.ImageUrl,
+        image_url: { url: image_tail },
+        role: ImageRole.LastFrame,
+      })
+    }
+
+    // 添加文本内容
+    content.push({
+      type: ContentType.Text,
+      text: `${textCommand.prompt} ${serializeModelTextCommand({
+        ...textCommand.params,
+        duration,
+        resolution: size,
+      })}`,
+    })
+
+    const volcengineRequest: VolcengineGenerationRequestDto = {
+      userId,
+      userType,
+      model,
+      content,
+    }
+    const result = await this.volcengineCreate(volcengineRequest)
+    return createTaskResponse(result.id)
+  }
+
+  /**
+   * 处理Dashscope渠道的视频生成
+   */
+  private async handleDashscopeGeneration<T>(
+    request: UserVideoGenerationRequestDto,
+    createTaskResponse: (taskId: string) => T,
+  ) {
+    const { userId, userType, model, prompt, duration, size, image, image_tail } = request
+
+    if (image && image_tail) {
+      const dashscopeRequest: DashscopeKeyFrame2VideoRequestDto = {
         userId,
         userType,
         model,
-        content: [
-          {
-            type: ContentType.Text,
-            text: `${textCommand.prompt} ${serializeModelTextCommand({
-              ...textCommand.params,
-              duration,
-              resolution: size,
-            })}`,
-          },
-        ],
+        input: {
+          first_frame_url: image,
+          last_frame_url: image_tail,
+          prompt,
+        },
+        parameters: {
+          resolution: size,
+          duration,
+        },
       }
-      const result = await this.volcengineCreate(volcengineRequest)
-
-      return {
-        task_id: result.id,
-        status: TaskStatus.Submitted,
-        message: '',
+      const result = await this.dashscopeKeyFrame2Video(dashscopeRequest)
+      return createTaskResponse(result.task_id)
+    }
+    else if (image && !image_tail) {
+      const dashscopeRequest: DashscopeImage2VideoRequestDto = {
+        userId,
+        userType,
+        model,
+        input: {
+          image_url: image,
+          prompt,
+        },
+        parameters: {
+          resolution: size,
+        },
       }
+      const result = await this.dashscopeImage2Video(dashscopeRequest)
+      return createTaskResponse(result.task_id)
     }
     else {
-      throw new AppException(ResponseCode.InvalidModel)
+      const dashscopeRequest: DashscopeText2VideoRequestDto = {
+        userId,
+        userType,
+        model,
+        input: {
+          prompt,
+        },
+        parameters: {
+          size,
+          duration,
+        },
+      }
+      const result = await this.dashscopeText2Video(dashscopeRequest)
+      return createTaskResponse(result.task_id)
     }
   }
 
@@ -158,7 +289,7 @@ export class VideoService {
     if (aiLog.status === AiLogStatus.Generating) {
       return {
         task_id: aiLog.id,
-        action: aiLog.channel === 'kling' ? 'text2video' : 'generation',
+        action: aiLog.action || '',
         status: TaskStatus.InProgress,
         fail_reason: '',
         submit_time: Math.floor(aiLog.startedAt.getTime() / 1000),
@@ -179,6 +310,9 @@ export class VideoService {
     else if (aiLog.channel === AiLogChannel.Volcengine) {
       return await this.getVolcengineTaskResult(aiLog.response as unknown as GetVideoGenerationTaskResponse)
     }
+    else if (aiLog.channel === AiLogChannel.Dashscope) {
+      return await this.getDashscopeTaskResult(aiLog.response as unknown as GetVideoTaskResponse)
+    }
     else {
       throw new AppException(ResponseCode.InvalidAiTaskId)
     }
@@ -194,6 +328,52 @@ export class VideoService {
   /**
    * Kling文生视频
    */
+  /**
+   * Dashscope文生视频
+   */
+  async dashscopeText2Video(request: DashscopeText2VideoRequestDto) {
+    const { userId, userType, model, parameters, ...restParams } = request
+    const pricing = await this.calculateVideoGenerationPrice({
+      model,
+      duration: parameters?.duration,
+    })
+
+    if (userType === UserType.User) {
+      const { balance } = await this.userClient.getPointsBalance({ userId })
+      if (balance < pricing) {
+        throw new AppException(ResponseCode.UserPointsInsufficient)
+      }
+      await this.userClient.deductPoints({
+        userId,
+        amount: pricing,
+        type: 'ai_service',
+        description: model,
+      })
+    }
+
+    const startedAt = new Date()
+    const result = await this.dashscopeService.createTextToVideoTask({ model, parameters, ...restParams })
+
+    const aiLog = await this.aiLogRepo.create({
+      userId,
+      userType,
+      taskId: result.output.task_id,
+      model,
+      channel: AiLogChannel.Dashscope,
+      action: DashscopeAction.Text2Video,
+      startedAt,
+      type: AiLogType.Video,
+      points: pricing,
+      request: { model, parameters, ...restParams },
+      status: AiLogStatus.Generating,
+    })
+
+    return {
+      ...result.output,
+      task_id: aiLog.id,
+    }
+  }
+
   async klingText2Video(request: KlingText2VideoRequestDto) {
     const { userId, userType, model_name, duration, mode, ...params } = request
     const pricing = await this.calculateVideoGenerationPrice({
@@ -550,6 +730,12 @@ export class VideoService {
       if (balance < pricing) {
         throw new AppException(ResponseCode.UserPointsInsufficient)
       }
+      await this.userClient.deductPoints({
+        userId,
+        amount: pricing,
+        type: 'ai_service',
+        description: model_name,
+      })
     }
 
     const startedAt = new Date()
@@ -596,6 +782,12 @@ export class VideoService {
       if (balance < pricing) {
         throw new AppException(ResponseCode.UserPointsInsufficient)
       }
+      await this.userClient.deductPoints({
+        userId,
+        amount: pricing,
+        type: 'ai_service',
+        description: model_name,
+      })
     }
 
     const startedAt = new Date()
@@ -624,5 +816,203 @@ export class VideoService {
       ...result.data,
       task_id: aiLog.id,
     } as MultiImage2VideoCreateTaskResponseData
+  }
+
+  /**
+   * Dashscope图生视频
+   */
+  async dashscopeImage2Video(request: DashscopeImage2VideoRequestDto) {
+    const { userId, userType, model, parameters, ...restParams } = request
+    const pricing = await this.calculateVideoGenerationPrice({
+      model,
+      resolution: parameters?.resolution,
+    })
+
+    if (userType === UserType.User) {
+      const { balance } = await this.userClient.getPointsBalance({ userId })
+      if (balance < pricing) {
+        throw new AppException(ResponseCode.UserPointsInsufficient)
+      }
+      await this.userClient.deductPoints({
+        userId,
+        amount: pricing,
+        type: 'ai_service',
+        description: model,
+      })
+    }
+
+    const startedAt = new Date()
+    const result = await this.dashscopeService.createImageToVideoTask({ model, parameters, ...restParams })
+
+    const aiLog = await this.aiLogRepo.create({
+      userId,
+      userType,
+      taskId: result.output.task_id,
+      model,
+      channel: AiLogChannel.Dashscope,
+      action: DashscopeAction.Image2Video,
+      startedAt,
+      type: AiLogType.Video,
+      points: pricing,
+      request: { model, parameters, ...restParams },
+      status: AiLogStatus.Generating,
+    })
+
+    return {
+      ...result.output,
+      task_id: aiLog.id,
+    }
+  }
+
+  /**
+   * Dashscope回调处理
+   */
+  async dashscopeCallback(callbackData: DashscopeCallbackDto) {
+    const { output } = callbackData
+    const { task_id, task_status, video_url, end_time } = output
+
+    const aiLog = await this.aiLogRepo.getByTaskId(task_id)
+    if (!aiLog || aiLog.channel !== AiLogChannel.Dashscope) {
+      throw new AppException(ResponseCode.InvalidAiTaskId)
+    }
+
+    if (task_status !== DashscopeTaskStatus.Succeeded && task_status !== DashscopeTaskStatus.Failed) {
+      return
+    }
+
+    let status: AiLogStatus
+    switch (task_status) {
+      case DashscopeTaskStatus.Succeeded:
+        status = AiLogStatus.Success
+        break
+      case DashscopeTaskStatus.Failed:
+        status = AiLogStatus.Failed
+        break
+      default:
+        status = AiLogStatus.Generating
+        break
+    }
+
+    const duration = end_time ? new Date(end_time).getTime() - aiLog.startedAt.getTime() : undefined
+
+    // 如果任务成功且有视频URL，保存到S3
+    if (status === AiLogStatus.Success && video_url) {
+      const filename = `${aiLog.id}.mp4`
+      const fullPath = path.join(`ai/video/${aiLog.model}`, aiLog.userId, filename)
+      const result = await this.s3Service.putObjectFromUrl(video_url, fullPath)
+      callbackData.output.video_url = result.path
+    }
+
+    await this.aiLogRepo.updateById(aiLog.id, {
+      status,
+      response: callbackData,
+      duration,
+      errorMessage: status === AiLogStatus.Failed ? callbackData.message : undefined,
+    })
+
+    if (status === AiLogStatus.Failed && aiLog.userType === UserType.User) {
+      await this.userClient.addPoints({
+        userId: aiLog.userId,
+        amount: aiLog.points,
+        type: 'ai_service',
+        description: aiLog.model,
+      })
+    }
+  }
+
+  /**
+   * Dashscope任务查询
+   */
+  async getDashscopeTask(userId: string, userType: UserType, taskId: string) {
+    const aiLog = await this.aiLogRepo.getByIdAndUserId(taskId, userId, userType)
+
+    if (aiLog == null || !aiLog.taskId || aiLog.type !== AiLogType.Video || aiLog.channel !== AiLogChannel.Dashscope) {
+      throw new AppException(ResponseCode.InvalidAiTaskId)
+    }
+    if (aiLog.status === AiLogStatus.Generating) {
+      const result = await this.dashscopeService.getVideoTask(aiLog.taskId)
+      if (result.output.task_status === DashscopeTaskStatus.Succeeded || result.output.task_status === DashscopeTaskStatus.Failed) {
+        await this.dashscopeCallback(result)
+      }
+      return result
+    }
+    return aiLog.response as unknown as GetVideoTaskResponse
+  }
+
+  async getDashscopeTaskResult(result: GetVideoTaskResponse) {
+    const { output } = result
+    const { task_status } = output
+
+    let status: TaskStatus
+    switch (task_status) {
+      case DashscopeTaskStatus.Succeeded:
+        status = TaskStatus.Success
+        break
+      case DashscopeTaskStatus.Failed:
+        status = TaskStatus.Failure
+        break
+      default:
+        status = TaskStatus.InProgress
+        break
+    }
+
+    return {
+      task_id: output.task_id,
+      action: DashscopeAction.Text2Video,
+      status,
+      fail_reason: status === TaskStatus.Failure ? result.message : '',
+      submit_time: output.submit_time ? Math.floor(new Date(output.submit_time).getTime() / 1000) : 0,
+      start_time: output.scheduled_time ? Math.floor(new Date(output.scheduled_time).getTime() / 1000) : 0,
+      finish_time: output.end_time ? Math.floor(new Date(output.end_time).getTime() / 1000) : 0,
+      progress: status === TaskStatus.Success ? '100%' : status === TaskStatus.Failure ? '0%' : '50%',
+      data: output,
+    }
+  }
+
+  /**
+   * Dashscope首尾帧生视频
+   */
+  async dashscopeKeyFrame2Video(request: DashscopeKeyFrame2VideoRequestDto) {
+    const { userId, userType, model, parameters, ...restParams } = request
+    const pricing = await this.calculateVideoGenerationPrice({
+      model,
+      resolution: parameters?.resolution,
+      duration: parameters?.duration,
+    })
+
+    if (userType === UserType.User) {
+      const { balance } = await this.userClient.getPointsBalance({ userId })
+      if (balance < pricing) {
+        throw new AppException(ResponseCode.UserPointsInsufficient)
+      }
+      await this.userClient.deductPoints({
+        userId,
+        amount: pricing,
+        type: 'ai_service',
+        description: model,
+      })
+    }
+
+    const startedAt = new Date()
+    const result = await this.dashscopeService.createKeyFrameToVideoTask({ model, parameters, ...restParams })
+
+    const aiLog = await this.aiLogRepo.create({
+      userId,
+      userType,
+      taskId: result.output.task_id,
+      model,
+      channel: AiLogChannel.Dashscope,
+      action: DashscopeAction.KeyFrame2Video,
+      startedAt,
+      type: AiLogType.Video,
+      points: pricing,
+      request: { model, parameters, ...restParams },
+      status: AiLogStatus.Generating,
+    })
+
+    return {
+      ...result.output,
+      task_id: aiLog.id,
+    }
   }
 }

@@ -17,4 +17,5 @@ export enum AiLogChannel {
   FireflyCard = 'fireflyCard',
   Kling = 'kling',
   Volcengine = 'volcengine',
+  Dashscope = 'dashscope',
 }

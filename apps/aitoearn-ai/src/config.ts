@@ -2,8 +2,8 @@ import { s3ConfigSchema } from '@yikart/aws-s3'
 import { baseConfig, createZodDto, selectConfig } from '@yikart/common'
 import { AiLogChannel, mongodbConfigSchema } from '@yikart/mongodb'
 import z from 'zod'
+import { dashscopeConfigSchema } from './libs/dashscope'
 import { fireflycardConfigSchema } from './libs/fireflycard'
-
 import { klingConfigSchema } from './libs/kling'
 import { md2cardConfigSchema } from './libs/md2card'
 import { openaiConfigSchema } from './libs/openai'
@@ -15,12 +15,17 @@ const aiModelsConfigSchema = z.object({
     description: z.string(),
     inputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])),
     outputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])),
-    pricing: z.object({
-      prompt: z.string(),
-      completion: z.string(),
-      image: z.string().optional(),
-      audio: z.string().optional(),
-    }),
+    pricing: z.union([
+      z.object({
+        prompt: z.string(),
+        completion: z.string(),
+        image: z.string().optional(),
+        audio: z.string().optional(),
+      }),
+      z.object({
+        price: z.string(),
+      }),
+    ]),
   })),
   image: z.object({
     generation: z.array(z.object({
@@ -43,7 +48,7 @@ const aiModelsConfigSchema = z.object({
       name: z.string(),
       description: z.string(),
       channel: z.enum(AiLogChannel),
-      modes: z.array(z.enum(['text2video', 'image2video'])),
+      modes: z.array(z.enum(['text2video', 'image2video', 'flf2video', 'lf2video'])),
       resolutions: z.array(z.string()),
       durations: z.array(z.number()),
       supportedParameters: z.array(z.string()),
@@ -75,6 +80,10 @@ export const aiConfigSchema = z.object({
   }),
   volcengine: z.object({
     ...volcengineConfigSchema.shape,
+    callbackUrl: z.string().optional(),
+  }),
+  dashscope: z.object({
+    ...dashscopeConfigSchema.shape,
     callbackUrl: z.string().optional(),
   }),
 })

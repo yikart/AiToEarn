@@ -15,8 +15,11 @@ export enum AiLogStatus {
 
 export enum AiLogChannel {
   NewApi = 'new-api',
+  Md2Card = 'md2card',
+  FireflyCard = 'fireflyCard',
   Kling = 'kling',
   Volcengine = 'volcengine',
+  Dashscope = 'dashscope',
 }
 
 // Fireflycard 模板类型枚举
@@ -481,10 +484,11 @@ export interface VideoTaskStatusResponseVo {
 export interface VideoGenerationModelParamsVo {
   name: string
   description: string
-  modes: string[]
+  modes: ('text2video' | 'image2video' | 'flf2video' | 'lf2video')[]
+  channel: AiLogChannel
   resolutions: string[]
   durations: number[]
-  supportedParameters: string[]
+  supportedParameters: ('image' | 'image_tail')[]
   defaults?: {
     resolution?: string
     aspectRatio?: string
@@ -589,6 +593,8 @@ export interface ChatModelConfigVo {
     completion: string
     image?: string
     audio?: string
+  } | {
+    price: string
   }
 }
 

@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
 import { AiLog, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import { VideoService } from '../core/video'
+import { DashscopeService } from '../libs/dashscope'
 import { VolcengineService } from '../libs/volcengine'
 
 @Injectable()
@@ -11,6 +12,7 @@ export class VideoTaskStatusScheduler {
   constructor(
     private readonly aiLogRepo: AiLogRepository,
     private readonly videoService: VideoService,
+    private readonly dashscopeService: DashscopeService,
     private readonly volcengineService: VolcengineService,
   ) {}
 
@@ -50,6 +52,10 @@ export class VideoTaskStatusScheduler {
 
     if (channel === 'kling') {
       await this.videoService.getKlingTask(task.userId, task.userType, task.id)
+    }
+    else if (channel === 'dashscope') {
+      const result = await this.dashscopeService.getVideoTask(taskId)
+      await this.videoService.dashscopeCallback(result)
     }
     else if (channel === 'volcengine') {
       const result = await this.volcengineService.getVideoGenerationTask(taskId)

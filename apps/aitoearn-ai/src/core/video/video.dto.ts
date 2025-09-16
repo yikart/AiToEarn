@@ -13,7 +13,7 @@ const videoGenerationRequestSchema = z.object({
   mode: z.string().optional().describe('生成模式'),
   size: z.string().optional().describe('尺寸'),
   duration: z.number().optional().describe('时长'),
-  metadata: z.record(z.string(), z.any()).optional().describe('其他参数'),
+  metadata: z.record(z.string(), z.unknown()).optional().describe('其他参数'),
 })
 
 export class VideoGenerationRequestDto extends createZodDto(videoGenerationRequestSchema) {}
@@ -210,3 +210,96 @@ const volcengineTaskQuerySchema = z.object({
 })
 
 export class VolcengineTaskQueryDto extends createZodDto(volcengineTaskQuerySchema) {}
+
+// ==================== Dashscope API DTO ====================
+
+// Dashscope文生视频请求DTO
+const dashscopeText2VideoRequestSchema = z.object({
+  userId: z.string(),
+  userType: z.enum(UserType),
+  model: z.string().min(1).describe('模型名称'),
+  input: z.object({
+    prompt: z.string().min(1).describe('正向文本提示词'),
+    negative_prompt: z.string().optional().describe('负向文本提示词'),
+  }),
+  parameters: z.object({
+    size: z.string().optional().describe('视频尺寸'),
+    duration: z.number().optional().describe('视频时长（秒）'),
+    prompt_extend: z.boolean().optional().describe('是否扩展提示词'),
+  }).optional(),
+})
+
+export class DashscopeText2VideoRequestDto extends createZodDto(dashscopeText2VideoRequestSchema) {}
+
+// Dashscope图生视频请求DTO
+const dashscopeImage2VideoRequestSchema = z.object({
+  userId: z.string(),
+  userType: z.enum(UserType),
+  model: z.string().min(1).describe('模型名称'),
+  input: z.object({
+    image_url: z.string().min(1).describe('图片URL'),
+    prompt: z.string().optional().describe('正向文本提示词'),
+    negative_prompt: z.string().optional().describe('负向文本提示词'),
+  }),
+  parameters: z.object({
+    resolution: z.string().optional().describe('分辨率'),
+    prompt_extend: z.boolean().optional().describe('是否扩展提示词'),
+  }).optional(),
+})
+
+export class DashscopeImage2VideoRequestDto extends createZodDto(dashscopeImage2VideoRequestSchema) {}
+
+// Dashscope首尾帧生视频请求DTO
+const dashscopeKeyFrame2VideoRequestSchema = z.object({
+  userId: z.string(),
+  userType: z.enum(UserType),
+  model: z.string().min(1).describe('模型名称'),
+  input: z.object({
+    first_frame_url: z.string().min(1).describe('首帧图片URL'),
+    last_frame_url: z.string().optional().describe('尾帧图片URL'),
+    prompt: z.string().optional().describe('正向文本提示词'),
+    negative_prompt: z.string().optional().describe('负向文本提示词'),
+    template: z.string().optional().describe('模板'),
+  }),
+  parameters: z.object({
+    resolution: z.string().optional().describe('分辨率'),
+    duration: z.number().optional().describe('视频时长（秒）'),
+    prompt_extend: z.boolean().optional().describe('是否扩展提示词'),
+  }).optional(),
+})
+
+export class DashscopeKeyFrame2VideoRequestDto extends createZodDto(dashscopeKeyFrame2VideoRequestSchema) {}
+
+// Dashscope回调DTO
+const dashscopeCallbackSchema = z.object({
+  status_code: z.number().describe('HTTP状态码'),
+  request_id: z.string().describe('请求ID'),
+  code: z.string().nullable().describe('错误码'),
+  message: z.string().describe('错误消息'),
+  output: z.object({
+    task_id: z.string().describe('任务ID'),
+    task_status: z.string().describe('任务状态'),
+    video_url: z.string().optional().describe('视频URL'),
+    submit_time: z.string().optional().describe('任务提交时间'),
+    scheduled_time: z.string().optional().describe('任务调度时间'),
+    end_time: z.string().optional().describe('任务结束时间'),
+    orig_prompt: z.string().optional().describe('原始提示词'),
+    actual_prompt: z.string().optional().describe('实际使用的提示词'),
+  }).describe('输出结果'),
+  usage: z.object({
+    video_count: z.number().describe('视频数量'),
+    video_duration: z.number().describe('视频时长'),
+    video_ratio: z.string().describe('视频分辨率'),
+  }).nullable().optional().describe('使用量统计'),
+})
+
+export class DashscopeCallbackDto extends createZodDto(dashscopeCallbackSchema) {}
+
+// Dashscope任务查询DTO
+const dashscopeTaskQuerySchema = z.object({
+  userId: z.string(),
+  userType: z.enum(UserType),
+  taskId: z.string().min(1).describe('任务ID'),
+})
+
+export class DashscopeTaskQueryDto extends createZodDto(dashscopeTaskQuerySchema) {}

@@ -72,11 +72,17 @@ export class ChatService {
     if (!modelConfig) {
       throw new AppException(ResponseCode.InvalidModel)
     }
-    const pricing = Number(modelConfig.pricing)
+    const pricing = modelConfig.pricing
     if (userType === UserType.User) {
       const { balance } = await this.userClient.getPointsBalance({ userId })
-      if (balance < pricing) {
+      if (balance <= 0) {
         throw new AppException(ResponseCode.UserPointsInsufficient)
+      }
+      if ('price' in pricing) {
+        const price = Number(pricing.price)
+        if (balance < price) {
+          throw new AppException(ResponseCode.UserPointsInsufficient)
+        }
       }
     }
 
@@ -88,9 +94,15 @@ export class ChatService {
 
     const { usage } = result
 
-    const prompt = new BigNumber(usage.input_tokens).div('1000').times(modelConfig.pricing.prompt)
-    const completion = new BigNumber(usage.output_tokens).div('1000').times(modelConfig.pricing.completion)
-    const points = prompt.plus(completion).toNumber()
+    let points = 0
+    if ('price' in pricing) {
+      points = Number(pricing.price)
+    }
+    else {
+      const prompt = new BigNumber(usage.input_tokens).div('1000').times(pricing.prompt)
+      const completion = new BigNumber(usage.output_tokens).div('1000').times(pricing.completion)
+      points = prompt.plus(completion).toNumber()
+    }
 
     this.logger.debug({
       points,

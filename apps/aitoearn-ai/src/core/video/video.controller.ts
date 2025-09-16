@@ -2,6 +2,11 @@ import { Body, Controller, Post } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
 import { NatsMessagePattern } from '@yikart/common'
 import {
+  DashscopeCallbackDto,
+  DashscopeImage2VideoRequestDto,
+  DashscopeKeyFrame2VideoRequestDto,
+  DashscopeTaskQueryDto,
+  DashscopeText2VideoRequestDto,
   KlingCallbackDto,
   KlingImage2VideoRequestDto,
   KlingMultiImage2VideoRequestDto,
@@ -86,5 +91,36 @@ export class VideoController {
   async klingMultiImage2Video(@Payload() request: KlingMultiImage2VideoRequestDto): Promise<KlingVideoGenerationResponseVo> {
     const response = await this.videoService.klingMultiImage2Video(request)
     return KlingVideoGenerationResponseVo.create(response)
+  }
+
+  // ==================== Dashscope API 接口 ====================
+
+  @NatsMessagePattern('ai.video.dashscope.text2video')
+  async dashscopeText2Video(@Payload() request: DashscopeText2VideoRequestDto) {
+    const response = await this.videoService.dashscopeText2Video(request)
+    return response
+  }
+
+  @NatsMessagePattern('ai.video.dashscope.image2video')
+  async dashscopeImage2Video(@Payload() request: DashscopeImage2VideoRequestDto) {
+    const response = await this.videoService.dashscopeImage2Video(request)
+    return response
+  }
+
+  @NatsMessagePattern('ai.video.dashscope.keyframe2video')
+  async dashscopeKeyFrame2Video(@Payload() request: DashscopeKeyFrame2VideoRequestDto) {
+    const response = await this.videoService.dashscopeKeyFrame2Video(request)
+    return response
+  }
+
+  @NatsMessagePattern('ai.video.dashscope.task.query')
+  async getDashscopeTaskStatus(@Payload() data: DashscopeTaskQueryDto) {
+    const response = await this.videoService.getDashscopeTask(data.userId, data.userType, data.taskId)
+    return response
+  }
+
+  @Post('/dashscope/callback')
+  async dashscopeCallback(@Body() data: DashscopeCallbackDto) {
+    await this.videoService.dashscopeCallback(data)
   }
 }
