@@ -695,6 +695,7 @@ interface Resources {
     "status": "状态",
     "updateTime": "更新时间",
     "confirmWithdraw": "确认提现申请",
+    "myWallet": "我的钱包",
     "cancel": "取消",
     "confirm": "确认提现",
     "withdrawAmount": "提现金额",
