@@ -18,20 +18,23 @@ Supported Channels:
 Douyin, Xiaohongshu (Rednote), WeChat Channels, Kuaishou, Bilibili, WeChat Official Accounts,
 TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest
 
+<details>
+  <summary><h2 style="display:inline;margin:0">Table of Contents</h2></summary>
 
-## Table of Contents
+  <br/>
 
-1. [Quick Start](#quick-start)
-2. [Start Web Project](#start-web-project)
-3. [Start Electron Project](#start-electron-project)
-4. [Key Features](#key-features)
-5. [MCP Service](#mcp-service)
-6. [Advanced Setup](#advanced-setup)
-7. [Contribution Guide](#contribution-guide)
-8. [Contact](#contact)
-9. [Milestones](#milestones)
-10. [FAQ](#faq)
-11. [Recommended](#recommended)
+  1. [Quick Start](#quick-start)
+  2. [Start Web Project](#start-web-project)
+  3. [Start Electron Project](#start-electron-project)
+  4. [Key Features](#key-features)
+  5. [MCP Service](#mcp-service)
+  6. [Advanced Setup](#advanced-setup)
+  7. [Contribution Guide](#contribution-guide)
+  8. [Contact](#contact)
+  9. [Milestones](#milestones)
+  10. [FAQ](#faq)
+  11. [Recommended](#recommended)
+</details>
 
 
 ## Quick Start
