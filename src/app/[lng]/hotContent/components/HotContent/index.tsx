@@ -357,6 +357,14 @@ const HotContent = memo(
                 rowKey={(record) => record.id}
                 columns={columns}
                 pagination={false}
+                onRow={(record) => {
+                  return {
+                    onClick: () => {
+                      if (!record.url) return;
+                      window.open(record.url, "_blank");
+                    },
+                  };
+                }}
               />
             </InfiniteScroll>
           </div>
