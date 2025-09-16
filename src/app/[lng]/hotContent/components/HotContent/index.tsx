@@ -299,7 +299,10 @@ const HotContent = memo(
         <HotContentLabel
           labels={["全部", ...(selectedLabelInfo.labelData ?? [])]}
           value={labelValue}
-          onChange={(value) => setLabelValue(value)}
+          onChange={(value) => {
+            setLabelValue(value);
+            setIsReset(true);
+          }}
         />
 
         <div className="hotContent-options">
@@ -311,7 +314,10 @@ const HotContent = memo(
                 value: v.value,
               }))}
               value={dateValue}
-              onChange={(e) => setDateValue(e)}
+              onChange={(e) => {
+                setDateValue(e);
+                setIsReset(true);
+              }}
             ></Select>
           </div>
 
