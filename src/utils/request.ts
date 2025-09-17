@@ -41,6 +41,14 @@ export async function request<T>(params: RequestParams) {
     const res = await fetchService.request(params);
     const data: ResponseType<T> = await res.json();
 
+    const lang = useUserStore.getState().lang || "zh-CN";
+    const isZh = (lang || "").toLowerCase().startsWith("zh");
+    const i18nText = {
+      networkBusy: isZh ? "网络繁忙，请稍后重试！" : "Network busy, please try again later!",
+      networkError: isZh ? "网络异常，请稍后重试！" : "Network error, please try again later!",
+      contact: isZh ? "如需帮助请联系客服：" : "Need help? Contact support:",
+    };
+
     if (res.status === 401) {
       // useUserStore.getState().logout();
       // message.error({
@@ -53,8 +61,9 @@ export async function request<T>(params: RequestParams) {
     if (data.code !== 0) {
       if (typeof window !== "undefined")
         message.warning({
-          content: data.message || "网络繁忙，请稍后重试！",
+          content: `${data.message || i18nText.networkBusy} ${i18nText.contact} https://t.me/harryyyy2025`,
           key: "apiErrorMessage",
+          duration: 6,
         });
       return null;
     }
@@ -62,6 +71,13 @@ export async function request<T>(params: RequestParams) {
     return data;
   } catch (e) {
     console.warn(e);
+    if (typeof window !== "undefined") {
+      message.error({
+        content: `${(useUserStore.getState().lang || "zh-CN").toLowerCase().startsWith("zh") ? "网络异常，请稍后重试！" : "Network error, please try again later!"} ${(useUserStore.getState().lang || "zh-CN").toLowerCase().startsWith("zh") ? "如需帮助请联系客服：" : "Need help? Contact support:"} https://t.me/harryyyy2025`,
+        key: "apiErrorMessage",
+        duration: 6,
+      });
+    }
     return null;
   }
 }
