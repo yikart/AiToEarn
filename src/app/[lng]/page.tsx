@@ -109,6 +109,8 @@ function Header({ currentModule, onModuleChange }: { currentModule: string, onMo
           <a href="https://status.aitoearn.ai/" target="_blank" rel="noopener noreferrer" className={styles.navLink} style={{ paddingTop: '3px' }}>{t('header.nav.status' as any)}</a>
           <a href="https://docs.aitoearn.ai/" target="_blank" rel="noopener noreferrer" className={styles.navLink} style={{ paddingTop: '3px' }}>{t('header.nav.docs' as any)}</a>
           <a href="https://blog.aitoearn.ai/" target="_blank" rel="noopener noreferrer" className={styles.navLink} style={{ paddingTop: '3px' }}>{t('header.nav.blog' as any)}</a>
+          <a href="https://docs.aitoearn.ai/zh/downloads" target="_blank" rel="noopener noreferrer" className={styles.navLink} style={{ paddingTop: '3px' }}>{t('header.nav.download' as any)}</a>
+
           {/* <a href="#docs" className={styles.navLink}>{t('header.nav.docs')}</a> */}
           {/* <a href="#blog" className={styles.navLink}>{t('header.nav.blog')}</a> */}
         </nav>

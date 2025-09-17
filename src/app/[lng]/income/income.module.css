@@ -83,6 +83,10 @@
 .headerRight {
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 
 .balanceCard {
@@ -95,6 +99,23 @@
   align-items: center;
   gap: 12px;
   min-width: 200px;
+}
+
+
+.walletLink {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 8px;
+  color: #ffffff;
+  opacity: 0.9;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.walletLink:hover {
+  background: rgba(255, 255, 255, 0.18);
+  opacity: 1;
 }
 
 .balanceIcon {

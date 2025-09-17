@@ -14,6 +14,8 @@ export interface IncomeRecord {
   type: IncomeType
   desc?: string
   metadata?: Record<string, unknown>
+  // 提现状态：1=可提现，0=已申请
+  status?: number
   createdAt: Date
   updatedAt: Date
 }

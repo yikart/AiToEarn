@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, Table, Button, message, Modal, Tabs, Tag, Space, Popconfirm, Descriptions, Input, Select } from "antd";
+import { Card, Table, Button, message, Modal, Tabs, Tag, Space, Popconfirm, Descriptions, Input, Select, Form } from "antd";
 import { DollarOutlined, HistoryOutlined, WalletOutlined, CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { useParams, useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user";
@@ -11,6 +11,7 @@ import { IncomeRecord } from "@/api/types/income";
 import { WithdrawRecord, WithdrawRecordStatus } from "@/api/types/withdraw";
 import { useTransClient } from "@/app/i18n/client";
 import styles from "./income.module.css";
+import WalletAccountSelect from "@/components/WalletAccountSelect";
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -95,12 +96,17 @@ export default function IncomePage() {
   };
 
   // 确认提现申请
+  const [form] = Form.useForm<{ userWalletAccountId: string }>();
+
   const handleConfirmWithdraw = async () => {
     if (!selectedIncomeRecord) return;
+    // 仅 status = 1 的收入记录可提现（按需求说明：1=可提现，0=已申请）
+    // 如果后端收入列表中没有 status 字段，这里按前端约定：仅当类型为 task 时允许（已有逻辑），并在提现接口前再行校验
     
     setWithdrawSubmitting(true);
     try {
-      const response = await apiSubmitWithdraw(selectedIncomeRecord._id);
+      const values = await form.validateFields();
+      const response = await apiSubmitWithdraw(selectedIncomeRecord._id, values.userWalletAccountId);
       if (response) {
         message.success(t('messages.withdrawSubmitted'));
         setWithdrawModalVisible(false);
@@ -185,14 +191,15 @@ export default function IncomePage() {
       key: 'action',
       render: (_: any, record: IncomeRecord) => (
         <Space>
-          <Button 
-            type="primary" 
-            size="small"
-            onClick={() => handleWithdraw(record)}
-            disabled={record.type !== 'task'} // 只有任务收入可以提现
-          >
-            {t('applyWithdraw')}
-          </Button>
+          {record.type === 'task' && record.status === 1 ? (
+            <Button 
+              type="primary" 
+              size="small"
+              onClick={() => handleWithdraw(record)}
+            >
+              {t('applyWithdraw')}
+            </Button>
+          ) : null}
         </Space>
       ),
     },
@@ -279,11 +286,13 @@ export default function IncomePage() {
                 <div className={styles.balanceAmount}>￥ {userInfo?.income || 0}</div>
               </div>
             </div>
-            <div style={{ marginLeft: 12 }}>
-              <Button type="primary" onClick={() => router.push(`/${lng}/wallet`)}>
-                {t('myWallet')}
-              </Button>
-            </div>
+            <span
+              className={styles.walletLink}
+              role="button"
+              onClick={() => router.push(`/${lng}/wallet`)}
+            >
+              {t('myWallet')}
+            </span>
           </div>
         </div>
       </div>
@@ -412,6 +421,13 @@ export default function IncomePage() {
                 </div>
               )}
             </div>
+
+            <Form form={form} layout="vertical">
+              <Form.Item name="userWalletAccountId" label={t('myWallet')} rules={[{ required: true, message: t('messages.pleaseLoginFirst') }]}> 
+                <WalletAccountSelect />
+              </Form.Item>
+            </Form>
+
             <div className={styles.withdrawWarning}>
               <p>{t('withdrawWarning')}</p>
               <p>{t('withdrawWarning2')}</p>
