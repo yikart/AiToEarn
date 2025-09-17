@@ -22,6 +22,7 @@ import { Spin, Table, type TableProps } from "antd";
 import { describeNumber } from "@/utils";
 import hotContentStyles from "../HotContent/hotContent.module.scss";
 import drawHotEventEchartLine from "@/app/[lng]/hotContent/components/HotEvent/echart/drawHotEventEchartLine";
+import Uparrow from "../../svgs/uparrow.svg";
 
 const material = [
   {
@@ -71,7 +72,7 @@ const HotTrendLine: React.FC<{ id: string; data: HotValueHistory[] }> = ({
     drawHotEventEchartLine(id, data);
   }, [id, data]);
 
-  return <div id={id} style={{ width: "180px", height: "50px" }}></div>;
+  return <div id={id} style={{ width: "180px", height: "25px" }}></div>;
 };
 
 const HotEvent = memo(
@@ -101,7 +102,7 @@ const HotEvent = memo(
           title: "排名",
           width: 60,
           render: (text, data, ind) => (
-            <>
+            <div className={styles.ranking}>
               {ind <= 2 ? (
                 <div
                   className={hotContentStyles.rankingTopthree}
@@ -112,7 +113,23 @@ const HotEvent = memo(
               ) : (
                 <p style={{ width: "20px", textAlign: "center" }}>{ind + 1}</p>
               )}
-            </>
+
+              {!data.rankChange ? null : data.rankChange > 0 ? (
+                <p className="rankingTopthree-rise">
+                  <Icon component={Uparrow} />
+                  <span className="rankingTopthree-name">
+                    {data.rankChange}
+                  </span>
+                </p>
+              ) : (
+                <p className="rankingTopthree-fall">
+                  <Icon component={Uparrow} />
+                  <span className="rankingTopthree-name">
+                    {Math.abs(data.rankChange)}
+                  </span>
+                </p>
+              )}
+            </div>
           ),
         },
         {
@@ -137,7 +154,11 @@ const HotEvent = memo(
           title: "热度值",
           align: "center",
           render: (text, record) => {
-            return <span>{describeNumber(record.hotValue)}</span>;
+            return (
+              <span style={{ fontFamily: "DIN" }}>
+                {describeNumber(record.hotValue)}
+              </span>
+            );
           },
         },
 
@@ -174,6 +195,7 @@ const HotEvent = memo(
                     columns={getColumns(topics)}
                     rowKey={(record) => record._id}
                     pagination={false}
+                    scroll={{ y: 400 }}
                   />
                 </div>
               </div>

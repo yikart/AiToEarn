@@ -18,11 +18,11 @@
         border-radius: 10px 10px 0 0;
       }
       &-content {
-        overflow: auto;
-        height: 400px;
-        scrollbar-width: none;
-        &::-webkit-scrollbar {
-          display: none;
+        .ant-table-body {
+          scrollbar-width: none;
+          &::-webkit-scrollbar {
+            display: none;
+          }
         }
         thead {
           .ant-table-cell {
@@ -55,5 +55,38 @@
   @include omitText(1);
   &:hover {
     color: var(--colorPrimary5);
+  }
+}
+
+.ranking {
+  position: relative;
+  display: flex;
+  align-items: center;
+  :global {
+    .rankingTopthree-rise, .rankingTopthree-fall {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      top: 50%;
+      right: 0;
+      transform: translate(40%, -50%);
+      .anticon {
+        font-size: 12px;
+      }
+    }
+    .rankingTopthree-name {
+      position: relative;
+      left: -10px;
+      font-size: var(--fs-xs);
+    }
+    .rankingTopthree-rise {
+      color: var(--error-color);
+    }
+    .rankingTopthree-fall {
+      color: var(--success-color);
+      .anticon {
+        transform: rotate(180deg);
+      }
+    }
   }
 }
