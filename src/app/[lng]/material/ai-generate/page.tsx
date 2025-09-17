@@ -828,7 +828,7 @@ export default function AIGeneratePage() {
                     </div>
                   ) : (
                     <div className={styles.result}>
-                      <video src={`https://videocdn.pollo.ai/web-cdn/pollo/production/cmdpciptx06gapw7fs1nlw1nv/wm/1755786765496-f4b85016-bcab-4c32-8214-f315609962b7.mp4`} controls style={{ maxWidth:'100%', borderRadius:8 }} />
+                      <video src={`https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/tempVideo.mp4`} controls style={{ width:'100%', maxWidth:'1200px', borderRadius:8 }} />
                     </div>
                   )}
                 </div>
