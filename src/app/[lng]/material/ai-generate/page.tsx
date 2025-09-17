@@ -360,14 +360,14 @@ export default function AIGeneratePage() {
         setCheckingStatus(true);
         const res: any = await getVideoTaskStatus(taskId);
         if (res.data) {
-          const { status, fail_reason, progress } = res.data;
+          const { status, fail_reason, video_url, progress } = res.data;
           const up = typeof status === "string" ? status.toUpperCase() : "";
           const normalized = up === "SUCCESS" ? "completed" : up === "FAILED" ? "failed" : up === "PROCESSING" ? "processing" : up === "NOT_START" || up === "NOT_STARTED" || up === "QUEUED" || up === "PENDING" ? "submitted" : (status || "").toString().toLowerCase();
           setVideoStatus(normalized);
           let percent = 0;
           if (typeof progress === "string") { const m = progress.match(/(\d+)/); percent = m ? Number(m[1]) : 0; }
           else if (typeof progress === "number") { percent = progress > -1 ? Math.round(progress) : Math.round(progress * 100); }
-          if (normalized === "completed") { setVideoResult(fail_reason); setVideoProgress(100); message.success(t("aiGenerate.videoGenerationSuccess")); return true; }
+          if (normalized === "completed") { setVideoResult(res.data?.data?.video_url); setVideoProgress(100); message.success(t("aiGenerate.videoGenerationSuccess")); return true; }
           if (normalized === "failed") { setVideoProgress(0); message.error(fail_reason || t("aiGenerate.videoGenerationFailed")); return true; }
           setVideoProgress(percent); return false;
         }
