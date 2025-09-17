@@ -15,6 +15,7 @@ import {
   ListMultiloginAccountsDto,
   MultiloginAccount,
   RenewCloudSpaceDto,
+  RetryCloudSpaceDto,
   UpdateMultiloginAccountDto,
 } from './cloud-space.interfaces'
 
@@ -41,6 +42,10 @@ export class CloudSpaceClient {
 
   async renewCloudSpace(dto: RenewCloudSpaceDto): Promise<void> {
     return this.natsClient.send<void>('cloud-space.renew', dto)
+  }
+
+  async retryCloudSpace(dto: RetryCloudSpaceDto) {
+    return this.natsClient.send<void>('cloud-space.retry', dto)
   }
 
   async deleteCloudSpace(dto: DeleteCloudSpaceDto): Promise<void> {

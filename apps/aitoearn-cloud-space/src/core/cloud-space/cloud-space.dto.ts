@@ -35,9 +35,14 @@ export const renewCloudSpaceSchema = z.object({
   month: z.int().min(1).default(1),
 })
 
+export const retryCloudSpaceSchema = z.object({
+  cloudSpaceId: z.string(),
+})
+
 export class CreateCloudSpaceDto extends createZodDto(createCloudSpaceSchema) {}
 export class ListCloudSpacesDto extends createZodDto(listCloudSpacesSchema) {}
 export class ListCloudSpacesByUserIdDto extends createZodDto(listCloudSpacesByUserIdSchema) {}
 export class GetCloudSpaceStatusDto extends createZodDto(getCloudSpaceStatusSchema) {}
 export class DeleteCloudSpaceDto extends createZodDto(deleteCloudSpaceSchema) {}
 export class RenewCloudSpaceDto extends createZodDto(renewCloudSpaceSchema) {}
+export class RetryCloudSpaceDto extends createZodDto(retryCloudSpaceSchema) {}

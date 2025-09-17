@@ -65,6 +65,10 @@ export interface RenewCloudSpaceDto {
   month: number
 }
 
+export interface RetryCloudSpaceDto {
+  cloudSpaceId: string
+}
+
 // 浏览器配置文件相关的数据类型定义
 export interface BrowserProfile {
   id: string

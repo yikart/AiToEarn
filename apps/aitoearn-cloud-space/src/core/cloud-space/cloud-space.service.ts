@@ -18,6 +18,7 @@ import {
   ListCloudSpacesByUserIdDto,
   ListCloudSpacesDto,
   RenewCloudSpaceDto,
+  RetryCloudSpaceDto,
 } from './cloud-space.dto'
 
 @Injectable()
@@ -86,6 +87,22 @@ export class CloudSpaceService {
 
     await this.cloudSpaceRepository.updateById(dto.cloudSpaceId, {
       expiredAt: dayjs(currentExpiredAt).add(dto.month, 'month').toDate(),
+    })
+  }
+
+  @Transactional()
+  async retryCloudSpace(dto: RetryCloudSpaceDto) {
+    const cloudSpace = await this.cloudSpaceRepository.getById(dto.cloudSpaceId)
+    if (!cloudSpace) {
+      throw new AppException(ResponseCode.CloudSpaceNotFound)
+    }
+
+    if (cloudSpace.status !== CloudSpaceStatus.Error) {
+      throw new AppException(ResponseCode.CloudSpaceNotInErrorStatus)
+    }
+
+    await this.cloudSpaceRepository.updateById(dto.cloudSpaceId, {
+      status: CloudSpaceStatus.Configuring,
     })
   }
 

@@ -8,6 +8,7 @@ import {
   ListCloudSpacesByUserIdDto,
   ListCloudSpacesDto,
   RenewCloudSpaceDto,
+  RetryCloudSpaceDto,
 } from './cloud-space.dto'
 import { CloudSpaceService } from './cloud-space.service'
 import {
@@ -46,6 +47,11 @@ export class CloudSpaceController {
   @NatsMessagePattern('cloud-space.renew')
   async renewCloudSpace(@Payload() dto: RenewCloudSpaceDto) {
     await this.cloudSpaceService.renewCloudSpace(dto)
+  }
+
+  @NatsMessagePattern('cloud-space.retry')
+  async retryCloudSpace(@Payload() dto: RetryCloudSpaceDto) {
+    await this.cloudSpaceService.retryCloudSpace(dto)
   }
 
   @NatsMessagePattern('cloud-space.delete')

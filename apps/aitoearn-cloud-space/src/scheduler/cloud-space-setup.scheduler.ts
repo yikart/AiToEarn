@@ -94,7 +94,7 @@ export class CloudSpaceSetupScheduler {
     if (job) {
       const jobState = await job.getState()
 
-      if (jobState === 'failed') {
+      if (jobState === 'failed' || jobState === 'completed') {
         await job.retry()
       }
     }

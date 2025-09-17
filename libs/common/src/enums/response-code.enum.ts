@@ -16,6 +16,7 @@ export enum ResponseCode {
   // 11100 (cloud-space)
   CloudSpaceNotFound = 11100,
   CloudSpaceCreationFailed = 11101,
+  CloudSpaceNotInErrorStatus = 11102,
 
   // 11200 (cloud-instance)
   UCloudInstanceCreationFailed = 11200,
