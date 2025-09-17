@@ -395,7 +395,8 @@ interface Resources {
         "pricing": "价格",
         "status": "状态",
         "docs": "问题",
-        "blog": "博客"
+        "blog": "博客",
+        "download": "下载"
       },
       "getStarted": "立即开始"
     },
@@ -600,6 +601,7 @@ interface Resources {
         "links": {
           "docs": "文档",
           "blog": "博客",
+          "download": "下载",
           "education": "教育",
           "partner": "合作伙伴",
           "support": "服务支持",
