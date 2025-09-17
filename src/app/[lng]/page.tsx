@@ -42,8 +42,6 @@ import contentSearch4 from '@/assets/images/app-screenshot/3. content search/con
 import commentFilter from '@/assets/images/app-screenshot/4. comments search/commentfilter.jpeg';
 import commentFilter2 from '@/assets/images/app-screenshot/5. content engagement/commentfilter2.jpeg';
 
-import dataCenter from '@/assets/images/data_center.png';
-
 
 import Link from "next/link";
 import Image from "next/image";
