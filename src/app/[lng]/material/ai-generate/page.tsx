@@ -15,10 +15,13 @@ import { md2CardTemplates, defaultMarkdown } from "./md2card";
 const { TextArea } = Input;
 const { Option } = Select;
 
-import shili21 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-1.webp';
-import shili22 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-2.jpeg';
-import shili23 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-3.jpeg';
-import shili24 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-4.jpeg';
+// 示例图片 URL 常量
+const SAMPLE_IMAGE_URLS = {
+  shili21: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-1.webp',
+  shili22: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-2.jpeg',
+  shili23: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-3.jpeg',
+  shili24: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-4.jpeg',
+};
 
 
 
@@ -158,7 +161,7 @@ export default function AIGeneratePage() {
   const [showVideoModelDropdown, setShowVideoModelDropdown] = useState(false);
 
   // 示例轮播
-  const sampleImages = [shili21 as any, shili22 as any, shili23 as any, shili24 as any];
+  const sampleImages = [SAMPLE_IMAGE_URLS.shili21, SAMPLE_IMAGE_URLS.shili22, SAMPLE_IMAGE_URLS.shili23, SAMPLE_IMAGE_URLS.shili24];
   const [sampleIdx, setSampleIdx] = useState(0);
   const handlePrevSample = () => setSampleIdx((p) => (p - 1 + sampleImages.length) % sampleImages.length);
   const handleNextSample = () => setSampleIdx((p) => (p + 1) % sampleImages.length);
@@ -508,7 +511,7 @@ export default function AIGeneratePage() {
                       ) : (
                         <div className={styles.sampleCarousel}>
                           <div className={styles.sampleStage}>
-                            <img src={sampleImages[sampleIdx].src || sampleImages[sampleIdx]} alt="sample" />
+                            <img src={sampleImages[sampleIdx]} alt="sample" />
                             <button className={styles.samplePrev} onClick={handlePrevSample}>‹</button>
                             <button className={styles.sampleNext} onClick={handleNextSample}>›</button>
                           </div>

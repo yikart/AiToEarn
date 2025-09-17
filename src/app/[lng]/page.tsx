@@ -29,18 +29,21 @@ import ThreadsIcon from '@/assets/svgs/plat/xiancheng.svg';
 import publish1 from '@/assets/images/publish1.png';
 
 
-import calendar from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/1. content publish/calendar.jpeg';
-import supportChannels from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/1. content publish/support_channels.jpeg';
-import hotspot from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/2. content hotspot/hotspot.jpg';
-import hotspot2 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/2. content hotspot/hotspot2.jpeg';
-import hotspot3 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/2. content hotspot/hotspot3.jpeg';
-import hotspot4 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/2. content hotspot/hotspot4.jpeg';
-import contentSearch from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/3. content search/contentsearch.gif';
-import contentSearch1 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/3. content search/contentsearch1.jpeg';
-import contentSearch2 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/3. content search/contentsearch2.jpeg';
-import contentSearch4 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/3. content search/contentsearch4.jpeg';
-import commentFilter from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/4. comments search/commentfilter.jpeg';
-import commentFilter2 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/5. content engagement/commentfilter2.jpeg';
+// 外部图片 URL 常量
+const IMAGE_URLS = {
+  calendar: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/1.%20content%20publish/calendar.jpeg',
+  supportChannels: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/1.%20content%20publish/support_channels.jpeg',
+  hotspot: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/2.%20content%20hotspot/hotspot.jpg',
+  hotspot2: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/2.%20content%20hotspot/hotspot2.jpeg',
+  hotspot3: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/2.%20content%20hotspot/hotspot3.jpeg',
+  hotspot4: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/2.%20content%20hotspot/hotspot4.jpeg',
+  contentSearch: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/3.%20content%20search/contentsearch.gif',
+  contentSearch1: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/3.%20content%20search/contentsearch1.jpeg',
+  contentSearch2: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/3.%20content%20search/contentsearch2.jpeg',
+  contentSearch4: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/3.%20content%20search/contentsearch4.jpeg',
+  commentFilter: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/4.%20comments%20search/commentfilter.jpeg',
+  commentFilter2: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/5.%20content%20engagement/commentfilter2.jpeg',
+};
 
 
 import Link from "next/link";
@@ -1060,7 +1063,7 @@ function ContentPublishingSection() {
   const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
-  const images = [calendar.src, supportChannels.src];
+  const images = [IMAGE_URLS.calendar, IMAGE_URLS.supportChannels];
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   
@@ -1199,7 +1202,7 @@ function ContentHotspotSection() {
   const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
-  const images = [hotspot.src, hotspot2.src, hotspot3.src, hotspot4.src];
+  const images = [IMAGE_URLS.hotspot, IMAGE_URLS.hotspot2, IMAGE_URLS.hotspot3, IMAGE_URLS.hotspot4];
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   
@@ -1338,7 +1341,7 @@ function ContentSearchSection() {
   const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
-  const images = [contentSearch.src, contentSearch1.src, contentSearch2.src, contentSearch4.src];
+  const images = [IMAGE_URLS.contentSearch, IMAGE_URLS.contentSearch1, IMAGE_URLS.contentSearch2, IMAGE_URLS.contentSearch4];
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   
@@ -1477,7 +1480,7 @@ function CommentsSearchSection() {
   const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
-  const images = [commentFilter.src];
+  const images = [IMAGE_URLS.commentFilter];
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   
@@ -1616,7 +1619,7 @@ function ContentEngagementSection() {
   const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
-  const images = [commentFilter2.src];
+  const images = [IMAGE_URLS.commentFilter2];
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   
@@ -2082,10 +2085,10 @@ function Footer() {
   const router = useRouter();
   // 背景图片数组
   const backgroundImages = [
-    hotspot.src,
-    hotspot2.src,
-    hotspot3.src,
-    hotspot4.src,
+    IMAGE_URLS.hotspot,
+    IMAGE_URLS.hotspot2,
+    IMAGE_URLS.hotspot3,
+    IMAGE_URLS.hotspot4,
   ];
   
   useEffect(() => {
