@@ -1996,6 +1996,55 @@ interface Resources {
       "year": "年度订阅"
     }
   },
+  "wallet": {
+    "title": "我的钱包账户",
+    "columns": {
+      "userName": "姓名",
+      "mail": "邮箱",
+      "account": "收款账号",
+      "type": "账户类型",
+      "phone": "手机号",
+      "cardNum": "卡号",
+      "actions": "操作"
+    },
+    "actions": {
+      "create": "新增账户",
+      "edit": "编辑",
+      "delete": "删除",
+      "deleteConfirm": "确定删除该账户吗？"
+    },
+    "dialogs": {
+      "createTitle": "新增提现账户",
+      "editTitle": "编辑提现账户"
+    },
+    "messages": {
+      "createSuccess": "创建成功",
+      "updateSuccess": "更新成功",
+      "deleteSuccess": "删除成功"
+    },
+    "form": {
+      "userId": "用户ID",
+      "userIdPlaceholder": "自动填充",
+      "required": "必填项",
+      "mail": "邮箱",
+      "mailPlaceholder": "请输入邮箱",
+      "mailInvalid": "请输入有效的邮箱地址",
+      "userName": "姓名",
+      "userNamePlaceholder": "请输入姓名",
+      "account": "收款账号",
+      "accountPlaceholder": "请输入收款账号",
+      "cardNum": "卡号",
+      "cardNumPlaceholder": "请输入卡号（可选）",
+      "phone": "手机号",
+      "phonePlaceholder": "请输入手机号（可选）",
+      "type": "账户类型",
+      "typePlaceholder": "请选择账户类型"
+    },
+    "types": {
+      "ZFB": "支付宝",
+      "WX_PAY": "微信支付"
+    }
+  },
   "youtube": {
     "youtubeAuth": "YouTube 授权",
     "authDescription": "请输入您的邮箱地址以获取 YouTube 授权",
