@@ -106,6 +106,8 @@ export interface RankingContent {
     fansCount: number;
   };
   stats: Stats;
+  collectCount?: number;
+  shareCount?: number;
   anaAdd: {
     addCollectCount: number;
     addCommentCount: number;

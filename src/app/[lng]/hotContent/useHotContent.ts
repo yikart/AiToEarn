@@ -23,12 +23,14 @@ export interface IHotContentStore {
   };
   // 热门内容的榜单数据 key=平台ID，value=榜单数据
   rankingData: {
-    [key: string]: PlatformRanking;
+    [key: string]: PlatformRanking[];
   };
   // 日期数据 key=平台ID，value=日期数据
   datesData: {
     [key: string]: RankingDate[];
   };
+  // 当前选择的榜单分类
+  currentRankCategory: string;
 }
 
 const store: IHotContentStore = {
@@ -41,6 +43,7 @@ const store: IHotContentStore = {
   labelData: {},
   rankingData: {},
   datesData: {},
+  currentRankCategory: "",
 };
 
 const getStore = () => {
@@ -57,6 +60,10 @@ export const useHotContent = create(
     },
     (set, get, storeApi) => {
       const methods = {
+        // 设置 currentRankCategory
+        setCurrentRankCategory(currentRankCategory: string) {
+          set({ currentRankCategory });
+        },
         // 设置 当前侧边栏二级菜单选择的ID
         setTwoMenuKey(twoMenuKey: string) {
           set({ twoMenuKey });
@@ -112,13 +119,19 @@ export const useHotContent = create(
             if (res?.data?.length) {
               const newRankingData = {
                 ...rankingData,
-                [platformId]: res.data[0],
+                [platformId]: res.data,
               };
               set({ rankingData: newRankingData });
             }
           }
 
-          const rankingItem = get().rankingData[platformId];
+          set({
+            currentRankCategory: get().rankingData[platformId]?.[0]?.id || "",
+          });
+
+          const rankingItem = get().rankingData[platformId].find(
+            (v) => v.id === get().currentRankCategory,
+          )!;
           // 获取标签和日期数据
           if (!get().labelData[platformId]) {
             await Promise.all([

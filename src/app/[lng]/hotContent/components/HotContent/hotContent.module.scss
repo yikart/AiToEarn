@@ -3,6 +3,27 @@
   display: flex;
   flex-direction: column;
   :global {
+    .hotContent-rankLabel {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      &-item {
+        padding: 4px 10px;
+        cursor: pointer;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        .anticon {
+          margin-right: 6px;
+          font-size: 16px;
+        }
+        &--active {
+          background: var(--colorPrimary5);
+          color: #fff;
+        }
+      }
+    }
+
     .hotContent-options {
       margin-top: 15px;
       display: flex;
@@ -60,6 +81,7 @@
         .ant-table-cell {
           background: rgba(237, 242, 242);
           padding: 10px 16px;
+          font-weight: 400 !important;
 
           &:last-of-type {
             border-bottom-right-radius: 8px;
@@ -160,7 +182,7 @@
   justify-content: center;
   :global {
     .anaAddCall-add {
-      font-weight: 600;
+      font-family: 'DIN';
       white-space: nowrap;
       .anticon {
         font-size: 14px;
@@ -175,6 +197,7 @@
       padding: 1px 8px;
       border-radius: 30px;
       font-size: var(--fs-xs);
+      font-family: 'DIN';
       white-space: nowrap;
     }
   }

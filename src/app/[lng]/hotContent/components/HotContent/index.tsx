@@ -15,14 +15,20 @@ import styles from "./hotContent.module.scss";
 import { Avatar, Popover, Select, Skeleton, Spin, Table } from "antd";
 import Icon, { QuestionCircleOutlined } from "@ant-design/icons";
 import type { TableProps } from "antd";
-import { platformApi, RankingContent } from "@/api/hot";
+import { platformApi, PlatformRanking, RankingContent } from "@/api/hot";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { describeNumber } from "@/utils";
 import Uparrow from "../../svgs/uparrow.svg";
+import HotSvg from "../../svgs/hotContent.svg";
+import ReadSvg from "./svgs/read.svg";
 
 export interface IHotContentRef {}
 
 export interface IHotContentProps {}
+
+const icons = {
+  wechat: [ReadSvg, HotSvg],
+};
 
 const AnaAddCall = ({
   add,
@@ -38,22 +44,59 @@ const AnaAddCall = ({
       className={`${styles.anaAddCall} ${highlight ? styles["anaAddCall-highlight"] : ""}`}
     >
       <div className="anaAddCall-add">
-        <Icon component={Uparrow} />
-        {describeNumber(add)}
+        {add ? (
+          <>
+            <Icon component={Uparrow} />
+            {describeNumber(add)}
+          </>
+        ) : (
+          "-"
+        )}
       </div>
       <div className="anaAddCall-total">总{describeNumber(total)}</div>
     </div>
   );
 };
 
+const SingleNumberCall = ({
+  total,
+  highlight = false,
+}: {
+  total: number;
+  highlight?: boolean;
+}) => {
+  return (
+    <p
+      style={{
+        textAlign: "center",
+        fontSize: "var(--fs-md)",
+        color: highlight ? "var(--colorPrimary5)" : "#3d4242",
+        fontFamily: "DIN",
+        fontWeight: 100,
+      }}
+    >
+      {describeNumber(total)}
+    </p>
+  );
+};
+
 const HotContent = memo(
   forwardRef(({}: IHotContentProps, ref: ForwardedRef<IHotContentRef>) => {
-    const { labelData, rankingData, datesData, twoMenuKey } = useHotContent(
+    const {
+      labelData,
+      rankingData,
+      currentRankCategory,
+      datesData,
+      twoMenuKey,
+      setCurrentRankCategory,
+    } = useHotContent(
       useShallow((state) => ({
         labelData: state.labelData,
         rankingData: state.rankingData,
         datesData: state.datesData,
         twoMenuKey: state.twoMenuKey,
+        currentRankCategory: state.currentRankCategory,
+        setCurrentRankCategory: state.setCurrentRankCategory,
       })),
     );
     // 当前选中的标签
@@ -73,11 +116,16 @@ const HotContent = memo(
     const selectedLabelInfo = useMemo(() => {
       const platId = twoMenuKey.split("_")[1];
       return {
-        ranking: rankingData[platId] ?? {},
+        // 所有榜单
+        allRanking: rankingData[platId] || [],
+        // 当前选择榜单
+        ranking: (rankingData[platId]?.find(
+          (v) => v.id === currentRankCategory,
+        ) ?? {}) as PlatformRanking,
         labelData: labelData[platId] || [],
         datesData: datesData[platId] || [],
       };
-    }, [labelData, rankingData, datesData, twoMenuKey]);
+    }, [labelData, rankingData, datesData, twoMenuKey, currentRankCategory]);
 
     const columns = useMemo(() => {
       const callParamsColumnsCommon = (title: string) => {
@@ -163,18 +211,74 @@ const HotContent = memo(
       // 视频号
       const wxSphColumns: TableProps<RankingContent>["columns"] = [
         {
-          ...callParamsColumnsCommon("评论增量"),
+          ...callParamsColumnsCommon("评论数"),
           render: (text, data) => (
-            <AnaAddCall
-              add={data.anaAdd.addShareCount}
-              total={data.anaAdd.useShareCount}
-            />
+            <SingleNumberCall total={data.stats.commentCount} />
+          ),
+        },
+        {
+          ...callParamsColumnsCommon("转发数"),
+          render: (text, data) => <SingleNumberCall total={data.shareCount!} />,
+        },
+        {
+          ...callParamsColumnsCommon("喜欢数"),
+          render: (text, data) => (
+            <SingleNumberCall total={data.stats.likeCount} />
+          ),
+        },
+        {
+          ...callParamsColumnsCommon("推荐数"),
+          render: (text, data) => (
+            <SingleNumberCall total={data.stats.likeCount} />
           ),
         },
       ];
-      const otherColumns: TableProps<RankingContent>["columns"] = [];
-
-      console.log(plat);
+      // 微信公众号
+      const wxGzhColumns: TableProps<RankingContent>["columns"] = [
+        ...(dataSource[1]?.stats.watchCount
+          ? [
+              {
+                ...callParamsColumnsCommon("在看数"),
+                render: (text: string, data: RankingContent) => (
+                  <SingleNumberCall total={data.stats.watchCount} />
+                ),
+              },
+            ]
+          : []),
+        ...(dataSource[1]?.stats.likeCount
+          ? [
+              {
+                ...callParamsColumnsCommon("点赞数"),
+                render: (text: string, data: RankingContent) => (
+                  <SingleNumberCall total={data.stats.likeCount} />
+                ),
+              },
+            ]
+          : []),
+        ...(dataSource[1]?.shareCount
+          ? [
+              {
+                ...callParamsColumnsCommon("转发数"),
+                render: (text: string, data: RankingContent) => (
+                  <SingleNumberCall total={data.shareCount!} />
+                ),
+              },
+            ]
+          : []),
+        ...(dataSource[1]?.stats.viewCount
+          ? [
+              {
+                ...callParamsColumnsCommon("阅读数"),
+                render: (text: string, data: RankingContent) => (
+                  <SingleNumberCall
+                    total={data.stats.viewCount}
+                    highlight={true}
+                  />
+                ),
+              },
+            ]
+          : []),
+      ];
 
       const columns: TableProps<RankingContent>["columns"] = [
         {
@@ -217,9 +321,11 @@ const HotContent = memo(
                     <p className="baseInfo-right-author-name">
                       {data.author.name}
                     </p>
-                    <p className="baseInfo-right-author-fans">
-                      粉丝数 {describeNumber(data.author.fansCount)}
-                    </p>
+                    {data.author.fansCount && (
+                      <p className="baseInfo-right-author-fans">
+                        粉丝数 {describeNumber(data.author.fansCount)}
+                      </p>
+                    )}
                     <p className="baseInfo-right-author-pubTime">
                       发布于{data.publishTime}
                     </p>
@@ -244,7 +350,11 @@ const HotContent = memo(
           ),
         },
 
-        ...(plat === "shipinhao" ? wxSphColumns : anaAddColumns),
+        ...(plat === "shipinhao"
+          ? wxSphColumns
+          : plat === "wechat"
+            ? wxGzhColumns
+            : anaAddColumns),
       ];
       return columns;
     }, [selectedLabelInfo, dataSource]);
@@ -290,10 +400,33 @@ const HotContent = memo(
       selectedLabelInfo.datesData,
       selectedLabelInfo.ranking?.id,
       isReset,
+      currentRankCategory,
     ]);
 
     return (
       <div className={`${styles.hotContent}`}>
+        {selectedLabelInfo.allRanking.length > 1 && (
+          <div className="hotContent-rankLabel">
+            {selectedLabelInfo.allRanking.map((v, i) => {
+              const icon = (icons[v.platform.type as "wechat"] ?? [])[i];
+
+              return (
+                <div
+                  className={`hotContent-rankLabel-item ${v.id === currentRankCategory ? "hotContent-rankLabel-item--active" : ""}`}
+                  key={v.id}
+                  onClick={() => {
+                    setCurrentRankCategory(v.id);
+                    setIsReset(true);
+                  }}
+                >
+                  <Icon component={icon} />
+                  {v.name}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         <HotContentLabel
           labels={["全部", ...(selectedLabelInfo.labelData ?? [])]}
           value={labelValue}
