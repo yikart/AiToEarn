@@ -15,10 +15,10 @@ import { md2CardTemplates, defaultMarkdown } from "./md2card";
 const { TextArea } = Input;
 const { Option } = Select;
 
-import shili21 from '@/assets/images/shili/image-ai-sample-2-1.webp';
-import shili22 from '@/assets/images/shili/image-ai-sample-2-2.jpeg';
-import shili23 from '@/assets/images/shili/image-ai-sample-2-3.jpeg';
-import shili24 from '@/assets/images/shili/image-ai-sample-2-4.jpeg';
+import shili21 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-1.webp';
+import shili22 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-2.jpeg';
+import shili23 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-3.jpeg';
+import shili24 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-4.jpeg';
 
 
 
