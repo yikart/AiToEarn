@@ -61,7 +61,6 @@ import {
 @Injectable()
 export class KlingService {
   private readonly logger = new Logger(KlingService.name)
-  private readonly baseURL = 'https://api-beijing.klingai.com'
 
   private readonly httpClient: AxiosInstance
 
@@ -121,7 +120,7 @@ export class KlingService {
   ): Promise<KlingResponse<Text2VideoCreateTaskResponseData>> {
     const response: AxiosResponse<KlingResponse<Text2VideoCreateTaskResponseData>>
       = await this.httpClient.post(
-        `${this.baseURL}/v1/videos/text2video`,
+        `/v1/videos/text2video`,
         request,
       )
 
@@ -137,7 +136,7 @@ export class KlingService {
   ): Promise<KlingResponse<Text2VideoGetTaskResponseData>> {
     const response: AxiosResponse<KlingResponse<Text2VideoGetTaskResponseData>>
       = await this.httpClient.get(
-        `${this.baseURL}/v1/videos/text2video/${taskId}`,
+        `/v1/videos/text2video/${taskId}`,
       )
 
     return response.data
@@ -153,7 +152,7 @@ export class KlingService {
   ): Promise<KlingResponse<Text2VideoGetTasksResponseData>> {
     const response: AxiosResponse<KlingResponse<Text2VideoGetTasksResponseData>>
       = await this.httpClient.get(
-        `${this.baseURL}/v1/videos/text2video?pageNum=${pageNum}&pageSize=${pageSize}`,
+        `/v1/videos/text2video?pageNum=${pageNum}&pageSize=${pageSize}`,
       )
 
     return response.data
@@ -170,7 +169,7 @@ export class KlingService {
   ): Promise<KlingResponse<Image2VideoCreateTaskResponseData>> {
     const response: AxiosResponse<KlingResponse<Image2VideoCreateTaskResponseData>>
       = await this.httpClient.post(
-        `${this.baseURL}/v1/videos/image2video`,
+        `/v1/videos/image2video`,
         request,
       )
 
@@ -186,7 +185,7 @@ export class KlingService {
   ): Promise<KlingResponse<Image2VideoGetTaskResponseData>> {
     const response: AxiosResponse<KlingResponse<Image2VideoGetTaskResponseData>>
       = await this.httpClient.get(
-        `${this.baseURL}/v1/videos/image2video/${taskId}`,
+        `/v1/videos/image2video/${taskId}`,
       )
 
     return response.data
@@ -202,7 +201,7 @@ export class KlingService {
   ): Promise<KlingResponse<Image2VideoGetTasksResponseData>> {
     const response: AxiosResponse<KlingResponse<Image2VideoGetTasksResponseData>>
       = await this.httpClient.get(
-        `${this.baseURL}/v1/videos/image2video?pageNum=${pageNum}&pageSize=${pageSize}`,
+        `/v1/videos/image2video?pageNum=${pageNum}&pageSize=${pageSize}`,
       )
 
     return response.data
@@ -219,7 +218,7 @@ export class KlingService {
   ): Promise<KlingResponse<MultiImage2VideoCreateTaskResponseData>> {
     const response: AxiosResponse<KlingResponse<MultiImage2VideoCreateTaskResponseData>>
       = await this.httpClient.post(
-        `${this.baseURL}/v1/videos/multi-image2video`,
+        `/v1/videos/multi-image2video`,
         request,
       )
 
@@ -235,7 +234,7 @@ export class KlingService {
   ): Promise<KlingResponse<MultiImage2VideoGetTaskResponseData>> {
     const response: AxiosResponse<KlingResponse<MultiImage2VideoGetTaskResponseData>>
       = await this.httpClient.get(
-        `${this.baseURL}/v1/videos/multi-image2video/${taskId}`,
+        `/v1/videos/multi-image2video/${taskId}`,
       )
 
     return response.data
@@ -251,7 +250,7 @@ export class KlingService {
   ): Promise<KlingResponse<MultiImage2VideoGetTasksResponseData>> {
     const response: AxiosResponse<KlingResponse<MultiImage2VideoGetTasksResponseData>>
       = await this.httpClient.get(
-        `${this.baseURL}/v1/videos/multi-image2video?pageNum=${pageNum}&pageSize=${pageSize}`,
+        `/v1/videos/multi-image2video?pageNum=${pageNum}&pageSize=${pageSize}`,
       )
 
     return response.data
@@ -268,7 +267,7 @@ export class KlingService {
   ): Promise<KlingResponse<MultiElementsInitSelectionResponseData>> {
     const response: AxiosResponse<KlingResponse<MultiElementsInitSelectionResponseData>>
       = await this.httpClient.post(
-        `${this.baseURL}/v1/videos/multi-elements/init-selection`,
+        `/v1/videos/multi-elements/init-selection`,
         request,
       )
 
@@ -284,7 +283,7 @@ export class KlingService {
   ): Promise<KlingResponse<MultiElementsSelectionResponseData>> {
     const response: AxiosResponse<KlingResponse<MultiElementsSelectionResponseData>>
       = await this.httpClient.post(
-        `${this.baseURL}/v1/videos/multi-elements/add-selection`,
+        `/v1/videos/multi-elements/add-selection`,
         request,
       )
 
@@ -300,7 +299,7 @@ export class KlingService {
   ): Promise<KlingResponse<MultiElementsSelectionResponseData>> {
     const response: AxiosResponse<KlingResponse<MultiElementsSelectionResponseData>>
       = await this.httpClient.post(
-        `${this.baseURL}/v1/videos/multi-elements/delete-selection`,
+        `/v1/videos/multi-elements/delete-selection`,
         request,
       )
 
@@ -316,7 +315,7 @@ export class KlingService {
   ): Promise<KlingResponse<{ status: number, session_id: string }>> {
     const response: AxiosResponse<KlingResponse<{ status: number, session_id: string }>>
       = await this.httpClient.post(
-        `${this.baseURL}/v1/videos/multi-elements/clear-selection`,
+        `/v1/videos/multi-elements/clear-selection`,
         request,
       )
 
@@ -332,7 +331,7 @@ export class KlingService {
   ): Promise<KlingResponse<MultiElementsPreviewSelectionResponseData>> {
     const response: AxiosResponse<KlingResponse<MultiElementsPreviewSelectionResponseData>>
       = await this.httpClient.post(
-        `${this.baseURL}/v1/videos/multi-elements/preview-selection`,
+        `/v1/videos/multi-elements/preview-selection`,
         request,
       )
 
@@ -348,7 +347,7 @@ export class KlingService {
   ): Promise<KlingResponse<MultiElementsCreateTaskResponseData>> {
     const response: AxiosResponse<KlingResponse<MultiElementsCreateTaskResponseData>>
       = await this.httpClient.post(
-        `${this.baseURL}/v1/videos/multi-elements`,
+        `/v1/videos/multi-elements`,
         request,
       )
 
@@ -364,7 +363,7 @@ export class KlingService {
   ): Promise<KlingResponse<MultiElementsGetTaskResponseData>> {
     const response: AxiosResponse<KlingResponse<MultiElementsGetTaskResponseData>>
       = await this.httpClient.get(
-        `${this.baseURL}/v1/videos/multi-elements/${taskId}`,
+        `/v1/videos/multi-elements/${taskId}`,
       )
 
     return response.data
@@ -380,7 +379,7 @@ export class KlingService {
   ): Promise<KlingResponse<MultiElementsGetTasksResponseData>> {
     const response: AxiosResponse<KlingResponse<MultiElementsGetTasksResponseData>>
       = await this.httpClient.get(
-        `${this.baseURL}/v1/videos/multi-elements?pageNum=${pageNum}&pageSize=${pageSize}`,
+        `/v1/videos/multi-elements?pageNum=${pageNum}&pageSize=${pageSize}`,
       )
 
     return response.data
@@ -397,7 +396,7 @@ export class KlingService {
   ): Promise<KlingResponse<LipSyncCreateTaskResponseData>> {
     const response: AxiosResponse<KlingResponse<LipSyncCreateTaskResponseData>>
       = await this.httpClient.post(
-        `${this.baseURL}/v1/videos/lip-sync`,
+        `/v1/videos/lip-sync`,
         request,
       )
 
@@ -413,7 +412,7 @@ export class KlingService {
   ): Promise<KlingResponse<LipSyncGetTaskResponseData>> {
     const response: AxiosResponse<KlingResponse<LipSyncGetTaskResponseData>>
       = await this.httpClient.get(
-        `${this.baseURL}/v1/videos/lip-sync/${taskId}`,
+        `/v1/videos/lip-sync/${taskId}`,
       )
 
     return response.data
@@ -429,7 +428,7 @@ export class KlingService {
   ): Promise<KlingResponse<LipSyncGetTasksResponseData>> {
     const response: AxiosResponse<KlingResponse<LipSyncGetTasksResponseData>>
       = await this.httpClient.get(
-        `${this.baseURL}/v1/videos/lip-sync?pageNum=${pageNum}&pageSize=${pageSize}`,
+        `/v1/videos/lip-sync?pageNum=${pageNum}&pageSize=${pageSize}`,
       )
 
     return response.data
@@ -446,7 +445,7 @@ export class KlingService {
   ): Promise<KlingResponse<VideoEffectsCreateTaskResponseData>> {
     const response: AxiosResponse<KlingResponse<VideoEffectsCreateTaskResponseData>>
       = await this.httpClient.post(
-        `${this.baseURL}/v1/videos/effects`,
+        `/v1/videos/effects`,
         request,
       )
 
@@ -462,7 +461,7 @@ export class KlingService {
   ): Promise<KlingResponse<VideoEffectsGetTaskResponseData>> {
     const response: AxiosResponse<KlingResponse<VideoEffectsGetTaskResponseData>>
       = await this.httpClient.get(
-        `${this.baseURL}/v1/videos/effects/${taskId}`,
+        `/v1/videos/effects/${taskId}`,
       )
 
     return response.data
@@ -478,7 +477,7 @@ export class KlingService {
   ): Promise<KlingResponse<VideoEffectsGetTasksResponseData>> {
     const response: AxiosResponse<KlingResponse<VideoEffectsGetTasksResponseData>>
       = await this.httpClient.get(
-        `${this.baseURL}/v1/videos/effects?pageNum=${pageNum}&pageSize=${pageSize}`,
+        `/v1/videos/effects?pageNum=${pageNum}&pageSize=${pageSize}`,
       )
 
     return response.data
@@ -495,7 +494,7 @@ export class KlingService {
   ): Promise<KlingResponse<VideoExtendCreateTaskResponseData>> {
     const response: AxiosResponse<KlingResponse<VideoExtendCreateTaskResponseData>>
       = await this.httpClient.post(
-        `${this.baseURL}/v1/videos/video-extend`,
+        `/v1/videos/video-extend`,
         request,
       )
 
@@ -511,7 +510,7 @@ export class KlingService {
   ): Promise<KlingResponse<VideoExtendGetTaskResponseData>> {
     const response: AxiosResponse<KlingResponse<VideoExtendGetTaskResponseData>>
       = await this.httpClient.get(
-        `${this.baseURL}/v1/videos/video-extend/${taskId}`,
+        `/v1/videos/video-extend/${taskId}`,
       )
 
     return response.data
@@ -527,7 +526,7 @@ export class KlingService {
   ): Promise<KlingResponse<VideoExtendGetTasksResponseData>> {
     const response: AxiosResponse<KlingResponse<VideoExtendGetTasksResponseData>>
       = await this.httpClient.get(
-        `${this.baseURL}/v1/videos/video-extend?pageNum=${pageNum}&pageSize=${pageSize}`,
+        `/v1/videos/video-extend?pageNum=${pageNum}&pageSize=${pageSize}`,
       )
 
     return response.data
