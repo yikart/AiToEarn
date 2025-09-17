@@ -15,10 +15,13 @@ import { md2CardTemplates, defaultMarkdown } from "./md2card";
 const { TextArea } = Input;
 const { Option } = Select;
 
-import shili21 from '@/assets/images/shili/image-ai-sample-2-1.webp';
-import shili22 from '@/assets/images/shili/image-ai-sample-2-2.jpeg';
-import shili23 from '@/assets/images/shili/image-ai-sample-2-3.jpeg';
-import shili24 from '@/assets/images/shili/image-ai-sample-2-4.jpeg';
+// 示例图片 URL 常量
+const SAMPLE_IMAGE_URLS = {
+  shili21: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-1.webp',
+  shili22: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-2.jpeg',
+  shili23: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-3.jpeg',
+  shili24: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-4.jpeg',
+};
 
 
 
@@ -158,7 +161,7 @@ export default function AIGeneratePage() {
   const [showVideoModelDropdown, setShowVideoModelDropdown] = useState(false);
 
   // 示例轮播
-  const sampleImages = [shili21 as any, shili22 as any, shili23 as any, shili24 as any];
+  const sampleImages = [SAMPLE_IMAGE_URLS.shili21, SAMPLE_IMAGE_URLS.shili22, SAMPLE_IMAGE_URLS.shili23, SAMPLE_IMAGE_URLS.shili24];
   const [sampleIdx, setSampleIdx] = useState(0);
   const handlePrevSample = () => setSampleIdx((p) => (p - 1 + sampleImages.length) % sampleImages.length);
   const handleNextSample = () => setSampleIdx((p) => (p + 1) % sampleImages.length);
@@ -194,6 +197,15 @@ export default function AIGeneratePage() {
 
   const getVideoModelCreditCost = (modelName: string, duration: number, size: string): number => {
     const m = videoModels.find((v) => v.name === modelName);
+    if (!m) return 0;
+    
+    // 如果是 kling 模型，使用 mode 字段匹配
+    if (m?.channel === 'kling' && m?.pricing) {
+      const item = m.pricing.find((p: any) => p.duration === duration && p.mode === size);
+      return item ? item.price : 0;
+    }
+    
+    // 其他模型使用 resolution 字段匹配
     const item = m?.pricing?.find((p: any) => p.duration === duration && p.resolution === size);
     return item ? item.price : 0;
   };
@@ -226,6 +238,21 @@ export default function AIGeneratePage() {
   };
   useEffect(() => { fetchImageModels(); fetchVideoModels(); }, []);
 
+  // 当模型切换时，自动设置合适的 quality 值
+  useEffect(() => {
+    if (!model || !imageModels.length) return;
+    
+    const selectedModel = imageModels.find((m: any) => m.name === model);
+    const qualities = selectedModel?.qualities || [];
+    
+    if (qualities.length > 0) {
+      // 如果当前 quality 不在模型的 qualities 列表中，则设置为第一个可用的 quality
+      if (!qualities.includes(quality)) {
+        setQuality(qualities[0]);
+      }
+    }
+  }, [model, imageModels, quality]);
+
   // 根据 URL ?tab=... 初始化/响应切换模块与子标签
   useEffect(() => {
     const tab = searchParams.get('tab') || '';
@@ -252,7 +279,22 @@ export default function AIGeneratePage() {
     if (!videoModel || !videoModels?.length) return;
     const current: any = (videoModels as any[]).find((m: any) => m.name === videoModel);
     if (!current) return;
-    const { durations = [], resolutions = [], supportedParameters = [] } = current || {};
+    
+    let durations: any[] = [];
+    let resolutions: any[] = [];
+    
+    // 如果是 kling 模型，从 pricing 获取选项
+    if (current?.channel === 'kling' && current?.pricing) {
+      durations = [...new Set(current.pricing.map((p: any) => p.duration))];
+      resolutions = [...new Set(current.pricing.map((p: any) => p.mode))];
+    } else {
+      // 其他模型从原有字段获取
+      durations = current?.durations || [];
+      resolutions = current?.resolutions || [];
+    }
+    
+    const { supportedParameters = [] } = current || {};
+    
     if (durations.length && !durations.includes(videoDuration)) setVideoDuration(durations[0]);
     if (resolutions.length && !resolutions.includes(videoSize)) setVideoSize(resolutions[0]);
     if (!supportedParameters.includes("image") && videoImage) setVideoImage("");
@@ -291,8 +333,16 @@ export default function AIGeneratePage() {
     }
     try {
       setLoadingVideo(true); setVideoStatus("submitted"); setVideoProgress(10);
-      const data: any = { model: videoModel, prompt: videoPrompt, size: videoSize, duration: videoDuration };
       const current: any = (filteredVideoModels as any[]).find((m: any) => m.name === videoModel) || {};
+      const data: any = { model: videoModel, prompt: videoPrompt, duration: videoDuration };
+      
+      // 如果是 kling 模型，传递 mode 参数而不是 size 参数
+      if (current?.channel === 'kling') {
+        data.mode = videoSize;
+      } else {
+        data.size = videoSize;
+      }
+      
       const supported: string[] = current?.supportedParameters || [];
       if (videoMode === "image2video") {
         if (supported.includes("image") && videoImage) data.image = videoImage;
@@ -310,14 +360,14 @@ export default function AIGeneratePage() {
         setCheckingStatus(true);
         const res: any = await getVideoTaskStatus(taskId);
         if (res.data) {
-          const { status, fail_reason, progress } = res.data;
+          const { status, fail_reason, video_url, progress } = res.data;
           const up = typeof status === "string" ? status.toUpperCase() : "";
           const normalized = up === "SUCCESS" ? "completed" : up === "FAILED" ? "failed" : up === "PROCESSING" ? "processing" : up === "NOT_START" || up === "NOT_STARTED" || up === "QUEUED" || up === "PENDING" ? "submitted" : (status || "").toString().toLowerCase();
           setVideoStatus(normalized);
           let percent = 0;
           if (typeof progress === "string") { const m = progress.match(/(\d+)/); percent = m ? Number(m[1]) : 0; }
           else if (typeof progress === "number") { percent = progress > -1 ? Math.round(progress) : Math.round(progress * 100); }
-          if (normalized === "completed") { setVideoResult(fail_reason); setVideoProgress(100); message.success(t("aiGenerate.videoGenerationSuccess")); return true; }
+          if (normalized === "completed") { setVideoResult(res.data?.data?.video_url); setVideoProgress(100); message.success(t("aiGenerate.videoGenerationSuccess")); return true; }
           if (normalized === "failed") { setVideoProgress(0); message.error(fail_reason || t("aiGenerate.videoGenerationFailed")); return true; }
           setVideoProgress(percent); return false;
         }
@@ -476,10 +526,24 @@ export default function AIGeneratePage() {
                         </div>
                 </div>
                 <div className={styles.options}>
-                        <Select value={quality} onChange={setQuality} style={{ width: '100%' }}>
-                    <Option value="standard">{t('aiGenerate.standard')}</Option>
-                    <Option value="hd">{t('aiGenerate.hd')}</Option>
-                  </Select>
+                        {(() => {
+                          const selectedModel = imageModels.find((m: any) => m.name === model);
+                          const qualities = selectedModel?.qualities || [];
+                          
+                          if (qualities.length === 0) return null;
+                          
+                          return (
+                            <Select value={quality} onChange={setQuality} style={{ width: '100%' }}>
+                              {qualities.map((q: string) => (
+                                <Option key={q} value={q}>
+                                  {q === 'high' ? t('aiGenerate.hd') : 
+                                   q === 'medium' ? t('aiGenerate.standard') : 
+                                   q === 'low' ? '低' : q}
+                                </Option>
+                              ))}
+                            </Select>
+                          );
+                        })()}
                         <Select value={style} onChange={setStyle} style={{ width: '100%' }}>
                     <Option value="vivid">{t('aiGenerate.vivid')}</Option>
                     <Option value="natural">{t('aiGenerate.natural')}</Option>
@@ -508,7 +572,7 @@ export default function AIGeneratePage() {
                       ) : (
                         <div className={styles.sampleCarousel}>
                           <div className={styles.sampleStage}>
-                            <img src={sampleImages[sampleIdx].src || sampleImages[sampleIdx]} alt="sample" />
+                            <img src={sampleImages[sampleIdx]} alt="sample" />
                             <button className={styles.samplePrev} onClick={handlePrevSample}>‹</button>
                             <button className={styles.sampleNext} onClick={handleNextSample}>›</button>
                           </div>
@@ -667,8 +731,37 @@ export default function AIGeneratePage() {
                   <TextArea placeholder={t('aiGenerate.videoPromptPlaceholder')} value={videoPrompt} onChange={(e)=>setVideoPrompt(e.target.value)} rows={4} />
 
                   <div className={styles.dimensions}>
-                    <Select value={videoSize} onChange={setVideoSize} style={{ width: "100%" }}>{(()=>{ const selected:any=(filteredVideoModels as any[]).find((m:any)=>m.name===videoModel)||{}; const sizes:string[]=selected?.resolutions||[]; return sizes.map((s)=> (<Option key={s} value={s}>{s}</Option>)); })()}</Select>
-                    <Select value={videoDuration} onChange={setVideoDuration} style={{ width: "100%" }}>{(()=>{ const selected:any=(filteredVideoModels as any[]).find((m:any)=>m.name===videoModel)||{}; const durs:number[]=selected?.durations||[]; return durs.map((d)=> (<Option key={d} value={d}>{d}{t('aiGenerate.seconds')}</Option>)); })()}</Select>
+                    <Select value={videoSize} onChange={setVideoSize} style={{ width: "100%" }}>{(()=>{ 
+                      const selected:any=(filteredVideoModels as any[]).find((m:any)=>m.name===videoModel)||{}; 
+                      
+                      // 如果是 kling 模型，从 pricing 的 mode 字段获取分辨率选项
+                      if (selected?.channel === 'kling' && selected?.pricing) {
+                        const modes = [...new Set(selected.pricing.map((p: any) => p.mode))] as string[];
+                        return modes.map((mode: string) => (
+                          <Option key={mode} value={mode}>{mode}</Option>
+                        ));
+                      }
+                      
+                      // 其他模型从 resolutions 字段获取
+                      const sizes:string[]=selected?.resolutions||[]; 
+                      return sizes.map((s)=> (<Option key={s} value={s}>{s}</Option>)); 
+                    })()}</Select>
+                    
+                    <Select value={videoDuration} onChange={setVideoDuration} style={{ width: "100%" }}>{(()=>{ 
+                      const selected:any=(filteredVideoModels as any[]).find((m:any)=>m.name===videoModel)||{}; 
+                      
+                      // 如果是 kling 模型，从 pricing 的 duration 字段获取时长选项
+                      if (selected?.channel === 'kling' && selected?.pricing) {
+                        const durations = [...new Set(selected.pricing.map((p: any) => p.duration))] as number[];
+                        return durations.map((d: number) => (
+                          <Option key={d} value={d}>{d}{t('aiGenerate.seconds')}</Option>
+                        ));
+                      }
+                      
+                      // 其他模型从 durations 字段获取
+                      const durs:number[]=selected?.durations||[]; 
+                      return durs.map((d)=> (<Option key={d} value={d}>{d}{t('aiGenerate.seconds')}</Option>)); 
+                    })()}</Select>
                   </div>
                   <div className={styles.options}>
                     {(()=>{ const selected:any=(filteredVideoModels as any[]).find((m:any)=>m.name===videoModel)||{}; const supported:string[]=selected?.supportedParameters||[]; return (<>
@@ -735,7 +828,7 @@ export default function AIGeneratePage() {
                     </div>
                   ) : (
                     <div className={styles.result}>
-                      <video src={`https://videocdn.pollo.ai/web-cdn/pollo/production/cmdpciptx06gapw7fs1nlw1nv/wm/1755786765496-f4b85016-bcab-4c32-8214-f315609962b7.mp4`} controls style={{ maxWidth:'100%', borderRadius:8 }} />
+                      <video src={`https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/tempVideo.mp4`} controls style={{ width:'100%', maxWidth:'1200px', borderRadius:8 }} />
                     </div>
                   )}
                 </div>
