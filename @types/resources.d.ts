@@ -395,7 +395,8 @@ interface Resources {
         "pricing": "价格",
         "status": "状态",
         "docs": "问题",
-        "blog": "博客"
+        "blog": "博客",
+        "download": "下载"
       },
       "getStarted": "立即开始"
     },
@@ -600,6 +601,7 @@ interface Resources {
         "links": {
           "docs": "文档",
           "blog": "博客",
+          "download": "下载",
           "education": "教育",
           "partner": "合作伙伴",
           "support": "服务支持",
@@ -1994,6 +1996,55 @@ interface Resources {
       "onceMonth": "一次性月度",
       "month": "月度订阅",
       "year": "年度订阅"
+    }
+  },
+  "wallet": {
+    "title": "我的钱包账户",
+    "columns": {
+      "userName": "姓名",
+      "mail": "邮箱",
+      "account": "收款账号",
+      "type": "账户类型",
+      "phone": "手机号",
+      "cardNum": "卡号",
+      "actions": "操作"
+    },
+    "actions": {
+      "create": "新增账户",
+      "edit": "编辑",
+      "delete": "删除",
+      "deleteConfirm": "确定删除该账户吗？"
+    },
+    "dialogs": {
+      "createTitle": "新增提现账户",
+      "editTitle": "编辑提现账户"
+    },
+    "messages": {
+      "createSuccess": "创建成功",
+      "updateSuccess": "更新成功",
+      "deleteSuccess": "删除成功"
+    },
+    "form": {
+      "userId": "用户ID",
+      "userIdPlaceholder": "自动填充",
+      "required": "必填项",
+      "mail": "邮箱",
+      "mailPlaceholder": "请输入邮箱",
+      "mailInvalid": "请输入有效的邮箱地址",
+      "userName": "姓名",
+      "userNamePlaceholder": "请输入姓名",
+      "account": "收款账号",
+      "accountPlaceholder": "请输入收款账号",
+      "cardNum": "卡号",
+      "cardNumPlaceholder": "请输入卡号（可选）",
+      "phone": "手机号",
+      "phonePlaceholder": "请输入手机号（可选）",
+      "type": "账户类型",
+      "typePlaceholder": "请选择账户类型"
+    },
+    "types": {
+      "ZFB": "支付宝",
+      "WX_PAY": "微信支付"
     }
   },
   "youtube": {

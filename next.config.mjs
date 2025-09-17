@@ -1,5 +1,5 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -9,19 +9,19 @@ const nextConfig = {
     config.module.rules.push({
       test: /\.svg$/,
       use: ["@svgr/webpack"],
-      exclude: path.resolve(__dirname, 'src/assets/svgs/plat'),
+      exclude: path.resolve(__dirname, "src/assets/svgs/plat"),
     });
 
     config.module.rules.push({
       test: /\.svg$/,
-      include: path.resolve(__dirname, 'src/assets/svgs/plat'),
-      type: 'asset/resource',
+      include: path.resolve(__dirname, "src/assets/svgs/plat"),
+      type: "asset/resource",
     });
 
     return config;
   },
   sassOptions: {
-    includePaths: ['./app', '*.scss'],
+    includePaths: ["./app", "*.scss"],
     prependData: `@import "@/app/styles/mixin.scss";`,
   },
   reactStrictMode: false,
@@ -29,8 +29,8 @@ const nextConfig = {
     forceSwcTransforms: true,
     outputFileTracingRoot: undefined,
   },
-  output: 'standalone', // Temporarily disabled to avoid symlink issues on Windows
-  productionBrowserSourceMaps: process.env.NEXT_PUBLIC_EVN === 'dev',
+  output: "standalone", // Temporarily disabled to avoid symlink issues on Windows
+  productionBrowserSourceMaps: process.env.NEXT_PUBLIC_EVN === "dev",
   rewrites: async () => {
     const rewrites = [
     ];

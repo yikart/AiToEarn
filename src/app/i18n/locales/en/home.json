@@ -10,7 +10,9 @@
       "pricing": "Pricing",
       "status": "Status",
       "docs": "Docs",
-      "blog": "Blog"
+      "blog": "Blog",
+      "download": "Downloads"
+
     },
     "getStarted": "Get Started"
   },
@@ -215,6 +217,7 @@
       "links": {
         "docs": "Documentation",
         "blog": "Blog",
+        "download": "Downloads",
         "education": "Education",
         "partner": "Partners",
         "support": "Support",

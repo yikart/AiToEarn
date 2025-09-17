@@ -8,6 +8,7 @@ import { DemoInteract } from "./demoInteract";
 import { DemoNotification } from "./demoNote";
 import { DemoTask } from "./demoTask";
 import { DemoIncome } from "./demoIncome";
+import { DemoContent } from "./demoContent";
 
 export async function generateMetadata({ params }: PageParams) {
   const { lng } = await params;
@@ -27,6 +28,7 @@ export default async function Page({ params }: PageParams) {
   return (
     <>
       <div>{t("demoText")} 1</div>
+      <DemoContent />
       <DemoIncome />
       <DemoTask />
       <DemoNotification />

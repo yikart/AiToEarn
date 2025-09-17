@@ -790,8 +790,9 @@ export default function ProfilePage() {
               </span>
               <span className={styles.incomeTitle}>我的余额</span>
             </div>
-            <span className={styles.incomeCount}>￥ {userInfo?.income || 0}</span>
+            <span className={styles.incomeCount}>CNY {userInfo?.income || 0}</span>
           </div>
+          <div style={{ textAlign: 'right', marginTop: '4px', fontSize: '12px', color: '#999' }}>累计收益：CNY {(userInfo as any)?.totalIncome ?? 0}</div>
           <p className={styles.incomeDescription}>
             通过完成任务获得的收入余额
           </p>
