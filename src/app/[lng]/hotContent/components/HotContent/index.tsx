@@ -12,15 +12,18 @@ import { useHotContent } from "@/app/[lng]/hotContent/useHotContent";
 import { useShallow } from "zustand/react/shallow";
 import HotContentLabel from "@/app/[lng]/hotContent/components/HotContentLabel";
 import styles from "./hotContent.module.scss";
-import { Avatar, Popover, Select, Skeleton, Spin, Table } from "antd";
+import { Popover, Select, Skeleton, Spin, Table } from "antd";
 import Icon, { QuestionCircleOutlined } from "@ant-design/icons";
 import type { TableProps } from "antd";
 import { platformApi, PlatformRanking, RankingContent } from "@/api/hot";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { describeNumber } from "@/utils";
-import Uparrow from "../../svgs/uparrow.svg";
 import HotSvg from "../../svgs/hotContent.svg";
 import ReadSvg from "./svgs/read.svg";
+import {
+  AnaAddCall,
+  HotContentBaseInfo,
+  SingleNumberCall,
+} from "@/app/[lng]/hotContent/components/HotContent/hotContentCommonWidget";
 
 export interface IHotContentRef {}
 
@@ -28,56 +31,6 @@ export interface IHotContentProps {}
 
 const icons = {
   wechat: [ReadSvg, HotSvg],
-};
-
-const AnaAddCall = ({
-  add,
-  total,
-  highlight = false,
-}: {
-  add: number;
-  total: number;
-  highlight?: boolean;
-}) => {
-  return (
-    <div
-      className={`${styles.anaAddCall} ${highlight ? styles["anaAddCall-highlight"] : ""}`}
-    >
-      <div className="anaAddCall-add">
-        {add ? (
-          <>
-            <Icon component={Uparrow} />
-            {describeNumber(add)}
-          </>
-        ) : (
-          "-"
-        )}
-      </div>
-      <div className="anaAddCall-total">总{describeNumber(total)}</div>
-    </div>
-  );
-};
-
-const SingleNumberCall = ({
-  total,
-  highlight = false,
-}: {
-  total: number;
-  highlight?: boolean;
-}) => {
-  return (
-    <p
-      style={{
-        textAlign: "center",
-        fontSize: "var(--fs-md)",
-        color: highlight ? "var(--colorPrimary5)" : "#3d4242",
-        fontFamily: "DIN",
-        fontWeight: 100,
-      }}
-    >
-      {describeNumber(total)}
-    </p>
-  );
 };
 
 const HotContent = memo(
@@ -301,37 +254,14 @@ const HotContent = memo(
           dataIndex: "baseInfo",
           render: (text, data) => {
             return (
-              <div className={styles.baseInfo}>
-                <img className="baseInfo-cover" src={data.cover} />
-                <div className="baseInfo-right">
-                  {data.title ? (
-                    <div className="baseInfo-right-title" title={data.title}>
-                      {data.title}
-                    </div>
-                  ) : (
-                    <div className="baseInfo-right-noTitle">暂无标题</div>
-                  )}
-
-                  <div className="baseInfo-right-author">
-                    <Avatar
-                      className="baseInfo-right-author-avatar"
-                      src={data.author.avatar}
-                      size="small"
-                    />
-                    <p className="baseInfo-right-author-name">
-                      {data.author.name}
-                    </p>
-                    {data.author.fansCount && (
-                      <p className="baseInfo-right-author-fans">
-                        粉丝数 {describeNumber(data.author.fansCount)}
-                      </p>
-                    )}
-                    <p className="baseInfo-right-author-pubTime">
-                      发布于{data.publishTime}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <HotContentBaseInfo
+                title={data.title}
+                avatar={data.author.avatar}
+                publishTime={data.publishTime}
+                fansCount={data.author.fansCount}
+                nickname={data.author.name}
+                cover={data.cover}
+              />
             );
           },
         },
@@ -472,7 +402,7 @@ const HotContent = memo(
 
         <Spin spinning={loading}>
           <div
-            className={`hotContent-table hotContent--${selectedLabelInfo?.ranking?.platform?.type}`}
+            className={`${styles["hotContent-table"]} hotContent--${selectedLabelInfo?.ranking?.platform?.type}`}
             id="hotContent-table"
           >
             <InfiniteScroll
