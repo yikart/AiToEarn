@@ -493,6 +493,22 @@ const HotContent = memo(
                 onRow={(record) => {
                   return {
                     onClick: () => {
+                      // if (
+                      //   selectedLabelInfo.ranking.platform.type === "wechat"
+                      // ) {
+                      //   const key = CryptoJS.enc.Utf8.parse("cdxbxhs147258369");
+                      //   const encrypted =
+                      //     "nOCQhzI/tHoSX6D36s0FkrfZUpyb6py4r4Axw4VZ76RwVzM3CIGn1WXurT8Lp2hIgQ5XCu+1FOb1YqgZE+UAaarktdb4TU/VkBJToEGA38e25dtieTQOZioVDgfPxkpBhKVEhPrljOvFCHWBR0fEsw==";
+                      //
+                      //   const decrypted = CryptoJS.AES.decrypt(encrypted, key, {
+                      //     mode: CryptoJS.mode.ECB,
+                      //     padding: CryptoJS.pad.Pkcs7,
+                      //   });
+                      //   const result = CryptoJS.enc.Utf8.stringify(decrypted);
+                      //   window.open(record.url, "_blank");
+                      //   return;
+                      // }
+
                       if (!record.url) return;
                       window.open(record.url, "_blank");
                     },
