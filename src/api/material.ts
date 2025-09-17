@@ -26,7 +26,7 @@ export interface NewMaterialTask {
   coverGroup: string;
   option?: Record<string, any>;
   textMax?: number;
-  language?: "中文" | "英文";
+  language?: string;
 }
 
 // 创建素材草稿组
