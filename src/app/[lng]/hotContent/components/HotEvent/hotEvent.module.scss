@@ -1,0 +1,59 @@
+.hotEvent {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  :global {
+    .hotEvent-item {
+      width: calc(50% - 15px);
+      margin-bottom: 30px;
+      .anticon {
+        font-size: 20px;
+        margin-right: 8px;
+      }
+      &-head {
+        box-sizing: border-box;
+        padding: 0 15px;
+        height: 45px;
+        line-height: 45px;
+        border-radius: 10px 10px 0 0;
+      }
+      &-content {
+        overflow: auto;
+        height: 400px;
+        scrollbar-width: none;
+        &::-webkit-scrollbar {
+          display: none;
+        }
+        thead {
+          .ant-table-cell {
+            background: #fff;
+            padding: 8px 10px;
+            font-weight: 400;
+            font-size: var(--fs-xs);
+            color: var(--grayColor7);
+            border: none;
+            &:before {
+              display: none;
+            }
+          }
+        }
+        tbody {
+          .ant-table-cell {
+            padding: 10px;
+            border: none;
+          }
+          tr {
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+}
+
+.hotEventTitle {
+  @include omitText(1);
+  &:hover {
+    color: var(--colorPrimary5);
+  }
+}

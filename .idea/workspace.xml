@@ -4,15 +4,21 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(热门内容): 热门内容添加日期选择">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(热门内容): 添加公众号逆向链接的代码">
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/echart/drawHotEventEchartLine.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/hotEvent.module.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/svgs/baidu.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/svgs/bibl.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/svgs/douyin.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/svgs/kwai.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/svgs/totiao.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/svgs/weibo.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/svgs/xhs.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/svgs/zhihu.svg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/dataStatistics/components/DataStatisticsHeader/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/HotContentCore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/HotContentCore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContent/hotContent.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContent/hotContent.module.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContent/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotContent/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/hotContent.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/hotContent.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/hot.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/hot.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/types/hotTopic.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/types/hotTopic.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +61,7 @@
   }
 }</component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="ProjectErrors" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
@@ -96,7 +102,7 @@
     &quot;git-widget-placeholder&quot;: &quot;hot&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/project-dev/web/艺咖/aitoearn-web/src/app/i18n/locales/zh-CN&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/project-dev/web/艺咖/aitoearn-web/src/app/[lng]/hotContent/components/HotEvent&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -124,14 +130,16 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\hotContent\components\HotEvent" />
+      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\assets\fonts" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\i18n\locales\zh-CN" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\hotContent\components\HotEvent\svgs" />
+      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\hotContent\components\HotContent\svgs" />
+      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\hotContent\svgs" />
+      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\images" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\dataStatistics\echart" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\dataStatistics\svgs" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\dataStatistics\components\DataStatisticsHeader" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\components" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\api\plat" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
@@ -216,63 +224,8 @@
       <workItem from="1757687709611" duration="2478000" />
       <workItem from="1757902659875" duration="8213000" />
       <workItem from="1757990250575" duration="77000" />
-      <workItem from="1758007785895" duration="5213000" />
-    </task>
-    <task id="LOCAL-00014" summary="feat(日历)：日历在同一个单元格发布记录太多会自动隐藏，并且显示按钮让用户点击查看更多">
-      <option name="closed" value="true" />
-      <created>1752236562804</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1752236562804</updated>
-    </task>
-    <task id="LOCAL-00015" summary="feat(发布弹框): 添加选择账户一系列逻辑： 1. 选择账户时，开启发布弹框会默认选择，右侧选择的账户。 2. 添加日历header选择用户展示的样式。">
-      <option name="closed" value="true" />
-      <created>1752239323126</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1752239323126</updated>
-    </task>
-    <task id="LOCAL-00016" summary="feat(发布弹框): 发布弹框对不支持上传 图片/视频 的平台做了限制">
-      <option name="closed" value="true" />
-      <created>1752240016715</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1752240016715</updated>
-    </task>
-    <task id="LOCAL-00017" summary="chore(发布弹框): daysjs 时区统一管理">
-      <option name="closed" value="true" />
-      <created>1752240837323</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1752240837323</updated>
-    </task>
-    <task id="LOCAL-00018" summary="chore(发布弹框): 拖动修改发布时间完成">
-      <option name="closed" value="true" />
-      <created>1752243765854</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1752243765854</updated>
-    </task>
-    <task id="LOCAL-00019" summary="fix(日历): 修复更新的问题">
-      <option name="closed" value="true" />
-      <created>1752244094407</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1752244094407</updated>
-    </task>
-    <task id="LOCAL-00020" summary="feat(发布)：b站添加标题参数">
-      <option name="closed" value="true" />
-      <created>1752247253122</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1752247253122</updated>
+      <workItem from="1758007785895" duration="36707000" />
+      <workItem from="1758107883444" duration="5630000" />
     </task>
     <task id="LOCAL-00021" summary="feat(发布)：发布记录添加账户筛选API">
       <option name="closed" value="true" />
@@ -610,7 +563,63 @@
       <option name="project" value="LOCAL" />
       <updated>1757949881878</updated>
     </task>
-    <option name="localTasksCounter" value="63" />
+    <task id="LOCAL-00063" summary="feat(热门内容): 热门内容添加表格">
+      <option name="closed" value="true" />
+      <created>1758015551273</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1758015551273</updated>
+    </task>
+    <task id="LOCAL-00064" summary="feat(热门内容): 热门内容，抖音、快手、b站、小红书优化完成。视频号数据需要对一下，微信公众号需要分两个，阅读榜、低粉爆文榜">
+      <option name="closed" value="true" />
+      <created>1758033777549</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1758033777549</updated>
+    </task>
+    <task id="LOCAL-00065" summary="fix(热门内容): 修复热门内容过滤条件更改后不会更新的bug">
+      <option name="closed" value="true" />
+      <created>1758034268520</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1758034268520</updated>
+    </task>
+    <task id="LOCAL-00066" summary="fix(热门内容): 上拉加载优化">
+      <option name="closed" value="true" />
+      <created>1758034949493</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1758034949493</updated>
+    </task>
+    <task id="LOCAL-00067" summary="fix(热门内容): 添加表格跳转到对于链接">
+      <option name="closed" value="true" />
+      <created>1758035262966</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1758035262966</updated>
+    </task>
+    <task id="LOCAL-00068" summary="fix(热门内容): 热门内容完成">
+      <option name="closed" value="true" />
+      <created>1758104032555</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1758104032555</updated>
+    </task>
+    <task id="LOCAL-00069" summary="feat(热门内容): 添加公众号逆向链接的代码">
+      <option name="closed" value="true" />
+      <created>1758105572256</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1758105572256</updated>
+    </task>
+    <option name="localTasksCounter" value="70" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -657,7 +666,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="main" />
+                        <option value="hot" />
                       </list>
                     </value>
                   </entry>
@@ -673,13 +682,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="fix: 删除代理地址" />
-    <MESSAGE value="fix: 修复发布记录Dropdown报错" />
-    <MESSAGE value="fix: 默认空间国际化" />
-    <MESSAGE value="fix: 校验修复" />
-    <MESSAGE value="Revert &quot;refactor: 删除旧热门内容&quot;&#10;&#10;This reverts commit 7a0af7fb" />
-    <MESSAGE value="feat: 选择代理" />
-    <MESSAGE value="fix: 修复因为 @svgr/webpack 受到的影响" />
     <MESSAGE value="feat: 创建数据统计页面" />
     <MESSAGE value="feat: 创建数据统计header" />
     <MESSAGE value="feat(数据统计): 顶部筛选完成" />
@@ -698,6 +700,13 @@
     <MESSAGE value="feat(热门内容): 恢复新热门内容" />
     <MESSAGE value="feat(热门内容): 添加侧边栏、标签数据、构建获取数据的基本逻辑及缓存逻辑" />
     <MESSAGE value="feat(热门内容): 热门内容添加日期选择" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(热门内容): 热门内容添加日期选择" />
+    <MESSAGE value="feat(热门内容): 热门内容添加表格" />
+    <MESSAGE value="feat(热门内容): 热门内容，抖音、快手、b站、小红书优化完成。视频号数据需要对一下，微信公众号需要分两个，阅读榜、低粉爆文榜" />
+    <MESSAGE value="fix(热门内容): 修复热门内容过滤条件更改后不会更新的bug" />
+    <MESSAGE value="fix(热门内容): 上拉加载优化" />
+    <MESSAGE value="fix(热门内容): 添加表格跳转到对于链接" />
+    <MESSAGE value="fix(热门内容): 热门内容完成" />
+    <MESSAGE value="feat(热门内容): 添加公众号逆向链接的代码" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(热门内容): 添加公众号逆向链接的代码" />
   </component>
 </project>

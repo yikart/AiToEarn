@@ -205,7 +205,7 @@ export const platformApi = {
     return request<
       {
         platform: Platform;
-        hotTopic: HotTopic;
+        topics: HotTopic[];
       }[]
     >({
       url: `hotdata/hot-topics/all`,
