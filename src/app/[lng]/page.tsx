@@ -29,18 +29,18 @@ import ThreadsIcon from '@/assets/svgs/plat/xiancheng.svg';
 import publish1 from '@/assets/images/publish1.png';
 
 
-import calendar from '@/assets/images/app-screenshot/1. content publish/calendar.jpeg';
-import supportChannels from '@/assets/images/app-screenshot/1. content publish/support_channels.jpeg';
-import hotspot from '@/assets/images/app-screenshot/2. content hotspot/hotspot.jpg';
-import hotspot2 from '@/assets/images/app-screenshot/2. content hotspot/hotspot2.jpeg';
-import hotspot3 from '@/assets/images/app-screenshot/2. content hotspot/hotspot3.jpeg';
-import hotspot4 from '@/assets/images/app-screenshot/2. content hotspot/hotspot4.jpeg';
-import contentSearch from '@/assets/images/app-screenshot/3. content search/contentsearch.gif';
-import contentSearch1 from '@/assets/images/app-screenshot/3. content search/contentsearch1.jpeg';
-import contentSearch2 from '@/assets/images/app-screenshot/3. content search/contentsearch2.jpeg';
-import contentSearch4 from '@/assets/images/app-screenshot/3. content search/contentsearch4.jpeg';
-import commentFilter from '@/assets/images/app-screenshot/4. comments search/commentfilter.jpeg';
-import commentFilter2 from '@/assets/images/app-screenshot/5. content engagement/commentfilter2.jpeg';
+import calendar from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/1. content publish/calendar.jpeg';
+import supportChannels from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/1. content publish/support_channels.jpeg';
+import hotspot from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/2. content hotspot/hotspot.jpg';
+import hotspot2 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/2. content hotspot/hotspot2.jpeg';
+import hotspot3 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/2. content hotspot/hotspot3.jpeg';
+import hotspot4 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/2. content hotspot/hotspot4.jpeg';
+import contentSearch from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/3. content search/contentsearch.gif';
+import contentSearch1 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/3. content search/contentsearch1.jpeg';
+import contentSearch2 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/3. content search/contentsearch2.jpeg';
+import contentSearch4 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/3. content search/contentsearch4.jpeg';
+import commentFilter from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/4. comments search/commentfilter.jpeg';
+import commentFilter2 from 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/5. content engagement/commentfilter2.jpeg';
 
 
 import Link from "next/link";
