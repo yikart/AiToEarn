@@ -439,7 +439,7 @@ export default function CgMaterialPageCore() {
   // 预览批量生成草稿
   async function handlePreviewMaterial() {
     const values = await batchForm.validateFields();
-    const params = getBatchTaskParams();
+    const params: any = getBatchTaskParams();
     // 判断参数是否变化
     if (!lastTaskParams || JSON.stringify(params) !== JSON.stringify(lastTaskParams)) {
       setCurrentTaskId(null);
@@ -471,7 +471,7 @@ export default function CgMaterialPageCore() {
   // 批量生成草稿
   async function handleBatchMaterial() {
     const values = await batchForm.validateFields();
-    const params = getBatchTaskParams();
+    const params: any = getBatchTaskParams();
     setBatchTaskLoading(true);
     try {
       let taskId = currentTaskId;
