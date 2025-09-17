@@ -90,6 +90,6 @@ export class AiLogRepository extends BaseRepository<AiLog> {
   }
 
   async getByIdAndUserId(id: string, userId: string, userType: UserType): Promise<AiLog | null> {
-    return await this.findOne({ id, userId, userType })
+    return await this.findOne({ _id: id, userId, userType })
   }
 }

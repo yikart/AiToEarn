@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
-import { AiLog, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
+import { AiLog, AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import { VideoService } from '../core/video'
 import { DashscopeService } from '../libs/dashscope'
 import { VolcengineService } from '../libs/volcengine'
@@ -50,14 +50,14 @@ export class VideoTaskStatusScheduler {
     }
     const channel = task.channel
 
-    if (channel === 'kling') {
+    if (channel === AiLogChannel.Kling) {
       await this.videoService.getKlingTask(task.userId, task.userType, task.id)
     }
-    else if (channel === 'dashscope') {
+    else if (channel === AiLogChannel.Dashscope) {
       const result = await this.dashscopeService.getVideoTask(taskId)
       await this.videoService.dashscopeCallback(result)
     }
-    else if (channel === 'volcengine') {
+    else if (channel === AiLogChannel.Volcengine) {
       const result = await this.volcengineService.getVideoGenerationTask(taskId)
       await this.videoService.volcengineCallback(result)
     }

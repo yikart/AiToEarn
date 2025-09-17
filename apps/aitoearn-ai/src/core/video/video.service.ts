@@ -1,5 +1,5 @@
 import path from 'node:path'
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
 import { S3Service } from '@yikart/aws-s3'
 import { AppException, ResponseCode, UserType } from '@yikart/common'
@@ -48,6 +48,7 @@ import {
 
 @Injectable()
 export class VideoService {
+  private readonly logger = new Logger(VideoService.name)
   constructor(
     private readonly dashscopeService: DashscopeService,
     private readonly klingService: KlingService,
@@ -398,6 +399,7 @@ export class VideoService {
     const startedAt = new Date()
     const result = await this.klingService.createText2VideoTask({
       ...params,
+      model_name,
       mode,
       duration,
       callback_url: config.ai.kling.callbackUrl,
@@ -413,7 +415,7 @@ export class VideoService {
       startedAt,
       type: AiLogType.Video,
       points: pricing,
-      request: { ...params, mode, duration },
+      request: { ...params, mode, duration, model_name },
       status: AiLogStatus.Generating,
     })
 
@@ -506,10 +508,16 @@ export class VideoService {
     }
   }
 
-  async getKlingTask(userId: string, userType: UserType, taskId: string) {
-    const aiLog = await this.aiLogRepo.getByIdAndUserId(taskId, userId, userType)
+  async getKlingTask(userId: string, userType: UserType, logId: string) {
+    const aiLog = await this.aiLogRepo.getByIdAndUserId(logId, userId, userType)
 
     if (aiLog == null || !aiLog.taskId || aiLog.type !== AiLogType.Video || aiLog.channel !== AiLogChannel.Kling) {
+      this.logger.debug({
+        userId,
+        userType,
+        logId,
+        aiLog,
+      }, 'InvalidAiTaskId')
       throw new AppException(ResponseCode.InvalidAiTaskId)
     }
     if (aiLog.status === AiLogStatus.Generating) {
@@ -741,6 +749,7 @@ export class VideoService {
     const startedAt = new Date()
     const result = await this.klingService.createImage2VideoTask({
       ...params,
+      model_name,
       mode,
       duration,
       callback_url: config.ai.kling.callbackUrl,
@@ -756,7 +765,7 @@ export class VideoService {
       startedAt,
       type: AiLogType.Video,
       points: pricing,
-      request: { ...params, mode, duration },
+      request: { ...params, mode, duration, model_name },
       status: AiLogStatus.Generating,
     })
 
@@ -793,6 +802,7 @@ export class VideoService {
     const startedAt = new Date()
     const result = await this.klingService.createMultiImage2VideoTask({
       ...params,
+      model_name,
       mode,
       duration,
       callback_url: config.ai.kling.callbackUrl,
@@ -808,7 +818,7 @@ export class VideoService {
       startedAt,
       type: AiLogType.Video,
       points: pricing,
-      request: { ...params, mode, duration },
+      request: { ...params, mode, duration, model_name },
       status: AiLogStatus.Generating,
     })
 

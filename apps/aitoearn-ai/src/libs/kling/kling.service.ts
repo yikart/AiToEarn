@@ -90,13 +90,18 @@ export class KlingService {
       else {
         token = this.config.accessKey
       }
+      this.logger.debug({
+        token,
+      })
       config.headers.Authorization = `Bearer ${token}`
       config.headers['Content-Type'] = 'application/json'
       return config
     })
 
-    // 添加响应拦截器
-    this.httpClient.interceptors.response.use((response) => {
+    const resInterceptor = (response: AxiosResponse) => {
+      this.logger.debug({
+        data: response.data,
+      })
       const klingResponse = response.data as KlingResponse<unknown>
       if (klingResponse.code !== 0) {
         this.logger.error({
@@ -106,7 +111,8 @@ export class KlingService {
         throw new AppException(ResponseCode.AiCallFailed, klingResponse.message)
       }
       return response
-    })
+    }
+    this.httpClient.interceptors.response.use(resInterceptor, resInterceptor)
   }
 
   // ==================== 文生视频相关方法 ====================
