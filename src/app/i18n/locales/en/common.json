@@ -27,6 +27,8 @@
   },
   "header": {
     "messages": "Messages",
+    "income": "Income Records",
+    "wallet": "My Wallet",
     "materialLibrary": "Material Library",
     "draftBox": "Draft Box"
   },
