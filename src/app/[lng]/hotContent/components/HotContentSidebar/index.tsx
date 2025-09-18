@@ -134,6 +134,9 @@ const HotContentSidebar = memo(
                 case HotType.hotContent:
                   changeHotContentPlatform(e.key);
                   break;
+                case HotType.hotTitle:
+                  changeHotContentPlatform(e.key);
+                  break;
               }
 
               if (e.keyPath.length === 2) {
