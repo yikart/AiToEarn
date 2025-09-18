@@ -472,8 +472,8 @@
 /* 互动卡片瀑布流 */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
 }
 
 .postCard {
@@ -488,7 +488,7 @@
 .thumb {
   position: relative;
   width: 100%;
-  padding-top: 66%;
+  padding-top: 75%;
   background: #fafafa;
 }
 .thumb img {
@@ -497,6 +497,19 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+.playIcon{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.25);
 }
 .thumbPlaceholder {
   position: absolute;
@@ -509,7 +522,7 @@
   left: 8px; bottom: 8px;
 }
 .postMeta {
-  padding: 10px;
+  padding: 12px;
 }
 .postFooter {
   display: flex;

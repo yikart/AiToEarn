@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Card, Button, message, Tag, Space, Select, Modal, Input, List, Avatar } from "antd";
-import { DollarOutlined, HistoryOutlined, WalletOutlined, CommentOutlined, LikeOutlined, EyeOutlined } from "@ant-design/icons";
+import { DollarOutlined, HistoryOutlined, WalletOutlined, CommentOutlined, LikeOutlined, EyeOutlined, PlayCircleOutlined } from "@ant-design/icons";
 import { useParams, useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user";
 import { apiGetEngagementPosts, apiGetEngagementComments, apiReplyEngagementComment, apiGetPostComments, apiPublishPostComment, apiPublishCommentReply, apiGetCommentReplies } from "@/api/engagement";
@@ -13,7 +13,7 @@ import WalletAccountSelect from "@/components/WalletAccountSelect";
 import { useAccountStore } from "@/store/account";
 import { useShallow } from "zustand/react/shallow";
 import AccountSidebar from "@/app/[lng]/accounts/components/AccountSidebar/AccountSidebar";
-import { NoSSR } from "@kwooshung/react-no-ssr";
+// import { NoSSR } from "@kwooshung/react-no-ssr";
 
 const { Option } = Select;
 
@@ -129,6 +129,11 @@ export default function InteractivePage() {
           ) : (
             <div className={styles.thumbPlaceholder}>No Image</div>
           )}
+          {/* {item.mediaType === 'video' && (
+            <span className={styles.playIcon}>
+              <PlayCircleOutlined style={{ fontSize: 40, color: 'rgba(255,255,255,0.95)' }} />
+            </span>
+          )} */}
           <span className={styles.mediaType}>
             <Tag color={item.mediaType==='video'?'blue':item.mediaType==='image'?'green':'purple'}>{item.mediaType}</Tag>
           </span>
@@ -289,7 +294,7 @@ export default function InteractivePage() {
   }, [loadMoreRef.current, hasMore, loading, pagination.current, pagination.pageSize]);
 
   return (
-    <NoSSR>
+    <>
     <div className={styles.container} style={{ display: 'flex', gap: 16 }}>
       {/* 左侧账户选择栏 */}
       <div >
@@ -307,8 +312,21 @@ export default function InteractivePage() {
 
       {/* 右侧内容 */}
       <div style={{ flex: 1, minWidth: 0 }}>
-
-      {/* 主要内容：互动帖子卡片瀑布流 */}
+      {!accountActive?.uid ? (
+        <Card style={{ height: '100%', minHeight: 360, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ textAlign: 'center', maxWidth: 520 }}>
+            <div style={{
+              width: 72, height: 72, borderRadius: 16, border: '1px solid #e5e7eb',
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16
+            }}>
+              <CommentOutlined style={{ fontSize: 36, color: '#9ca3af' }} />
+            </div>
+            <div style={{ fontSize: 18, fontWeight: 600, color: '#111827', marginBottom: 8 }}>请在左侧选择需要互动的频道</div>
+            <div style={{ color: '#6b7280' }}>选择一个账号后，将自动加载该频道的最新作品与评论互动功能。</div>
+          </div>
+        </Card>
+      ) : (
+      /* 主要内容：互动帖子卡片瀑布流 */
       <div className={styles.content}>
         <div className={styles.grid}>
           {posts.map((item) => (
@@ -330,9 +348,11 @@ export default function InteractivePage() {
         </div>
         <div ref={loadMoreRef} style={{ height: 1 }} />
       </div>
+      )}
+      </div>
 
-      {/* 评论弹窗 */}
-      <Modal
+            {/* 评论弹窗 */}
+            <Modal
         open={commentVisible}
         onCancel={() => setCommentVisible(false)}
         title={commentPost?.title || '评论'}
@@ -425,8 +445,7 @@ export default function InteractivePage() {
           </Button>
         </div>
       </Modal>
-      </div>
     </div>
-    </NoSSR>
+    </>
   );
 }
