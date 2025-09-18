@@ -24,12 +24,14 @@
   "incomeTypes": {
     "task": "Task Income",
     "task_back": "Task Refund",
-    "reward_back": "Reward Refund"
+    "reward_back": "Reward Refund",
+    "task_withdraw": "Task Withdrawal"
   },
   "withdrawStatus": {
     "wait": "Waiting",
     "success": "Withdrawal Successful",
-    "fail": "Withdrawal Failed"
+    "fail": "Withdrawal Failed",
+    "task_withdraw": "Task Withdrawal"
   },
   "messages": {
     "getIncomeRecordsFailed": "Failed to get income records",
