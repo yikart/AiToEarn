@@ -12,6 +12,8 @@ export interface Topic {
   shareCount: number;
   likeCount: number;
   watchingCount: number;
+  commentCount: number;
+  collectCount: number;
   readCount: number;
   publishTime?: string;
   fans: number;
