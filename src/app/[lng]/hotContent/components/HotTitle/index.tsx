@@ -39,8 +39,9 @@ const HotTitle = memo(
         setCurrentRankCategory: state.setCurrentRankCategory,
       })),
     );
+    const labelAll = useRef("全部");
     // 当前选中的标签
-    const [labelValue, setLabelValue] = useState("全部");
+    const [labelValue, setLabelValue] = useState(labelAll.current);
     const allDates = useRef(["近7天", "近30天", "近90天"]);
     // 当前选择的日期范围
     const [currDate, setCurrDate] = useState(allDates.current[0]);
@@ -52,6 +53,8 @@ const HotTitle = memo(
         titles: ViralTitle[];
       }[]
     >();
+    // 爆款标题数据详情
+    const [hotTitleData, setHotTitleData] = useState<ViralTitle[]>([]);
 
     // 获取当前选中的标签、日期、榜单
     const selectedLabelInfo = useMemo(() => {
@@ -70,23 +73,45 @@ const HotTitle = memo(
 
     // 获取所有爆款数据
     const getAllData = useCallback(async () => {
+      setLoading(true);
       const res = await platformApi.findTopByPlatformAndCategories(
         selectedLabelInfo.platId,
         currDate,
       );
-      console.log(res);
+      setLoading(false);
       setAllHotTitleData(res?.data);
     }, [currDate, selectedLabelInfo.platId]);
+
+    // 获取爆款数据详情
+    const getDetailData = useCallback(async () => {
+      if (labelValue === labelAll.current) return;
+      setLoading(true);
+      const res = await platformApi.findByPlatformAndCategory(
+        selectedLabelInfo.platId,
+        {
+          category: labelValue,
+          page: 1,
+          timeType: currDate,
+          pageSize: 50,
+        },
+      );
+      setHotTitleData(res?.data.items || []);
+      setLoading(false);
+    }, [labelValue, currDate, selectedLabelInfo.ranking.id]);
 
     useEffect(() => {
       getAllData();
     }, [twoMenuKey]);
 
+    useEffect(() => {
+      getDetailData();
+    }, [labelValue, currDate]);
+
     return (
       <div className={styles.hotTitle}>
         <HotContentLabel
           style={{ marginBottom: "15px" }}
-          labels={["全部", ...(selectedLabelInfo.labelData ?? [])]}
+          labels={[labelAll.current, ...(selectedLabelInfo.labelData ?? [])]}
           value={labelValue}
           onChange={(value) => {
             setLabelValue(value);
@@ -103,16 +128,57 @@ const HotTitle = memo(
         />
 
         <Spin wrapperClassName="hotTitle-content" spinning={loading}>
-          <div className="hotTitle-content-wrapper">
+          <div
+            className="hotTitle-content-wrapper"
+            style={{
+              display: labelValue === labelAll.current ? "flex" : "none",
+            }}
+          >
             {allHotTitleData?.map((v) => {
               return (
                 <HotTitleItem
                   data={v}
                   key={v.category}
                   style={{ width: "calc(50% - 15px)", marginBottom: "30px" }}
+                  onBottomLinkClick={() => {
+                    setLabelValue(v.category);
+                  }}
+                  bottomLinkText="查看更多"
                 />
               );
             })}
+          </div>
+
+          <div
+            className="hotTitle-content-wrapper-details"
+            style={{
+              display: labelValue !== labelAll.current ? "flex" : "none",
+            }}
+          >
+            <HotTitleItem
+              headRightElement={
+                <>
+                  <a
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setLabelValue(labelAll.current);
+                    }}
+                  >
+                    返回全部
+                  </a>
+                </>
+              }
+              data={{
+                category: labelValue,
+                titles: hotTitleData,
+              }}
+              key={labelValue}
+              style={{ width: "100%", marginBottom: "30px" }}
+              onBottomLinkClick={() => {
+                setLabelValue(labelAll.current);
+              }}
+              bottomLinkText="收起"
+            />
           </div>
         </Spin>
       </div>
