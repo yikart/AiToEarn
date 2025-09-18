@@ -110,7 +110,7 @@ export default function InteractivePage() {
   const PostCard = ({ item }: { item: EngagementPostItem }) => {
     return (
       <div className={styles.postCard}>
-        <div className={styles.thumb}>
+        <a href={item.permaLink} target="_blank" className={styles.thumb}>
           {item.thumbnail ? (
             <img src={item.thumbnail} alt={item.title} />
           ) : (
@@ -119,7 +119,7 @@ export default function InteractivePage() {
           <span className={styles.mediaType}>
             <Tag color={item.mediaType==='video'?'blue':item.mediaType==='image'?'green':'purple'}>{item.mediaType}</Tag>
           </span>
-        </div>
+        </a>
         <div className={styles.postMeta}>
           <div className={styles.postTitle} title={item.title}>{item.title || '-'}</div>
           <div className={styles.statsRow}>
@@ -128,7 +128,6 @@ export default function InteractivePage() {
             <span>👁️ {item.viewCount}</span>
           </div>
           <div className={styles.actionsRow}>
-            {item.permaLink ? <a href={item.permaLink} target="_blank">打开</a> : <span>-</span>}
             <Space size={8}>
               <Button size="small" onClick={() => openComments(item)}>评论</Button>
             </Space>
