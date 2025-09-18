@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Card, Button, message, Tag, Space, Select, Modal, Input, List, Avatar } from "antd";
-import { DollarOutlined, HistoryOutlined, WalletOutlined } from "@ant-design/icons";
+import { DollarOutlined, HistoryOutlined, WalletOutlined, CommentOutlined, LikeOutlined, EyeOutlined, PlayCircleOutlined } from "@ant-design/icons";
 import { useParams, useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user";
-import { apiGetEngagementPosts, apiGetEngagementComments, apiReplyEngagementComment, apiGetPostComments, apiPublishPostComment, apiPublishCommentReply } from "@/api/engagement";
+import { apiGetEngagementPosts, apiGetEngagementComments, apiReplyEngagementComment, apiGetPostComments, apiPublishPostComment, apiPublishCommentReply, apiGetCommentReplies } from "@/api/engagement";
 import { EngagementPostItem, EngagementPlatform } from "@/api/types/engagement";
 import { useTransClient } from "@/app/i18n/client";
 import styles from "./interactive.module.css";
@@ -13,7 +13,7 @@ import WalletAccountSelect from "@/components/WalletAccountSelect";
 import { useAccountStore } from "@/store/account";
 import { useShallow } from "zustand/react/shallow";
 import AccountSidebar from "@/app/[lng]/accounts/components/AccountSidebar/AccountSidebar";
-import { NoSSR } from "@kwooshung/react-no-ssr";
+// import { NoSSR } from "@kwooshung/react-no-ssr";
 
 const { Option } = Select;
 
@@ -37,7 +37,9 @@ export default function InteractivePage() {
   const [posts, setPosts] = useState<EngagementPostItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({ current: 1, pageSize: 20, total: 0 });
+  const [hasMore, setHasMore] = useState(true);
   const [platform, setPlatform] = useState<EngagementPlatform | undefined>(undefined);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
   // 评论状态
   const [commentVisible, setCommentVisible] = useState(false);
   const [commentLoading, setCommentLoading] = useState(false);
@@ -46,6 +48,10 @@ export default function InteractivePage() {
   const [commentsCursor, setCommentsCursor] = useState<{ before?: string; after?: string } | undefined>();
   const [commentsTotal, setCommentsTotal] = useState<number | undefined>(undefined);
   const [replyText, setReplyText] = useState('');
+  const [replyTarget, setReplyTarget] = useState<{ id: string; name: string } | null>(null);
+  const replyInputRef = useRef<any>(null);
+  // 二级回复：按评论ID存储
+  const [repliesByComment, setRepliesByComment] = useState<Record<string, { list: any[]; cursor?: { before?: string; after?: string }; loading: boolean; expanded: boolean }>>({});
 
   // 获取互动帖子
   const fetchEngagementPosts = async (page: number = 1, pageSize: number = 20) => {
@@ -59,8 +65,12 @@ export default function InteractivePage() {
         pageSize
       });
       if (res?.data) {
-        setPosts(res.data.posts || []);
-        setPagination({ current: page, pageSize, total: res.data.total || 0 });
+        const list = res.data.posts || [];
+        setPosts(prev => page === 1 ? list : [...prev, ...list]);
+        const total = res.data.total || 0;
+        setPagination({ current: page, pageSize, total });
+        const nextHasMore = typeof (res.data as any).hasMore === 'boolean' ? (res.data as any).hasMore : (page * pageSize) < total;
+        setHasMore(nextHasMore);
       }
     } finally {
       setLoading(false);
@@ -70,10 +80,13 @@ export default function InteractivePage() {
   // 账户或平台变化时刷新
   useEffect(() => {
     if (accountActive?.uid && platform) {
+      setPosts([]);
+      setHasMore(true);
       fetchEngagementPosts(1, pagination.pageSize);
     } else {
       setPosts([]);
       setPagination((prev) => ({ ...prev, total: 0, current: 1 }));
+      setHasMore(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountActive?.uid, platform]);
@@ -105,7 +118,7 @@ export default function InteractivePage() {
     }
     // 如果已有 platform 则不覆盖用户手动选择
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountActive?.id]);
+  }, [accountActive?.account]);
 
   const PostCard = ({ item }: { item: EngagementPostItem }) => {
     return (
@@ -116,20 +129,32 @@ export default function InteractivePage() {
           ) : (
             <div className={styles.thumbPlaceholder}>No Image</div>
           )}
+          {/* {item.mediaType === 'video' && (
+            <span className={styles.playIcon}>
+              <PlayCircleOutlined style={{ fontSize: 40, color: 'rgba(255,255,255,0.95)' }} />
+            </span>
+          )} */}
           <span className={styles.mediaType}>
             <Tag color={item.mediaType==='video'?'blue':item.mediaType==='image'?'green':'purple'}>{item.mediaType}</Tag>
           </span>
         </a>
         <div className={styles.postMeta}>
           <div className={styles.postTitle} title={item.title}>{item.title || '-'}</div>
-          <div className={styles.statsRow}>
-            <span>👍 {item.likeCount}</span>
-            <span>💬 {item.commentCount}</span>
-            <span>👁️ {item.viewCount}</span>
-          </div>
-          <div className={styles.actionsRow}>
+          {item.content && (
+            <div className={styles.postContent} title={item.content}>
+              {item.content}
+            </div>
+          )}
+          <div className={styles.postFooter}>
+            <div className={styles.statsRow}>
+              <span><LikeOutlined style={{ marginRight: 6 }} />{item.likeCount}</span>
+              <span><CommentOutlined style={{ marginRight: 6 }} />{item.commentCount}</span>
+              <span><EyeOutlined style={{ marginRight: 6 }} />{item.viewCount}</span>
+            </div>
             <Space size={8}>
-              <Button size="small" onClick={() => openComments(item)}>评论</Button>
+              <Button className={styles.commentBtn} type="text" onClick={() => openComments(item)}>
+                <CommentOutlined style={{ fontSize: 22 }} />
+              </Button>
             </Space>
           </div>
         </div>
@@ -141,15 +166,16 @@ export default function InteractivePage() {
     setCommentPost(item);
     setComments([]);
     setCommentVisible(true);
+    setReplyTarget(null);
     await loadCommentsV2(item.postId, undefined, undefined);
   };
 
   const loadCommentsV2 = async (postId: string, before?: string, after?: string) => {
-    if (!accountActive?.id || !platform) return;
+    if (!accountActive?.account || !platform) return;
     setCommentLoading(true);
     try {
       const res = await apiGetPostComments({
-        accountId: accountActive.id,
+        accountId: accountActive.account,
         platform: platform as any,
         postId,
         pagination: { before, after, limit: 20 }
@@ -165,21 +191,74 @@ export default function InteractivePage() {
     }
   };
 
+  const expandReplies = async (commentId: string) => {
+    if (!accountActive?.account || !platform) return;
+    setRepliesByComment((prev) => ({
+      ...prev,
+      [commentId]: { ...(prev[commentId] || { list: [], cursor: {}, expanded: true }), loading: true, expanded: true },
+    }));
+    const res = await apiGetCommentReplies({
+      accountId: accountActive.account,
+      platform: platform as any,
+      commentId,
+      pagination: { limit: 20 },
+    });
+    setRepliesByComment((prev) => ({
+      ...prev,
+      [commentId]: {
+        list: res?.data?.comments || [],
+        cursor: res?.data?.cursor,
+        loading: false,
+        expanded: true,
+      },
+    }));
+  };
+
+  const collapseReplies = (commentId: string) => {
+    setRepliesByComment((prev) => ({
+      ...prev,
+      [commentId]: { ...(prev[commentId] || { list: [], cursor: {} }), expanded: false, loading: false },
+    }));
+  };
+
+  const loadMoreReplies = async (commentId: string) => {
+    const state = repliesByComment[commentId];
+    if (!state?.cursor?.after || !accountActive?.account || !platform) return;
+    setRepliesByComment((prev) => ({ ...prev, [commentId]: { ...(prev[commentId] as any), loading: true } }));
+    const res = await apiGetCommentReplies({
+      accountId: accountActive.account,
+      platform: platform as any,
+      commentId,
+      pagination: { after: state.cursor.after, limit: 20 },
+    });
+    setRepliesByComment((prev) => ({
+      ...prev,
+      [commentId]: {
+        list: [ ...(prev[commentId]?.list || []), ...(res?.data?.comments || []) ],
+        cursor: res?.data?.cursor,
+        loading: false,
+        expanded: true,
+      },
+    }));
+  };
+
   const submitPostComment = async () => {
-    if (!commentPost || !replyText.trim() || !accountActive?.id || !platform) return;
-    const res = await apiPublishPostComment({ accountId: accountActive.id, platform: platform as any, postId: commentPost.postId, message: replyText.trim() });
+    if (!commentPost || !replyText.trim() || !accountActive?.account || !platform) return;
+    const res = await apiPublishPostComment({ accountId: accountActive.account, platform: platform as any, postId: commentPost.postId, message: replyText.trim() });
     if (res) {
       setReplyText('');
+      setReplyTarget(null);
       await loadCommentsV2(commentPost.postId);
       message.success('已评论');
     }
   };
 
   const submitReply = async (parentId?: string) => {
-    if (!commentPost || !replyText.trim() || !accountActive?.id || !platform) return;
-    const res = await apiPublishCommentReply({ accountId: accountActive.id, platform: platform as any, commentId: parentId || '', message: replyText.trim() });
+    if (!commentPost || !replyText.trim() || !accountActive?.account || !platform) return;
+    const res = await apiPublishCommentReply({ accountId: accountActive.account, platform: platform as any, commentId: parentId || '', message: replyText.trim() });
     if (res) {
       setReplyText('');
+      setReplyTarget(null);
       await loadCommentsV2(commentPost.postId);
       message.success('已回复');
     }
@@ -200,15 +279,29 @@ export default function InteractivePage() {
     accountInit();
   }, [token, router]);
 
+  // 底部自动加载更多（IntersectionObserver）
+  useEffect(() => {
+    if (!loadMoreRef.current) return;
+    const el = loadMoreRef.current;
+    const io = new IntersectionObserver((entries) => {
+      const first = entries[0];
+      if (first.isIntersecting && hasMore && !loading) {
+        fetchEngagementPosts(pagination.current + 1, pagination.pageSize);
+      }
+    }, { rootMargin: '200px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [loadMoreRef.current, hasMore, loading, pagination.current, pagination.pageSize]);
+
   return (
-    <NoSSR>
+    <>
     <div className={styles.container} style={{ display: 'flex', gap: 16 }}>
       {/* 左侧账户选择栏 */}
       <div >
         <AccountSidebar
-          activeAccountId={accountActive?.id || ''}
+          activeAccountId={accountActive?.account || ''}
           onAccountChange={(account) => {
-            if (account.id === accountActive?.id) {
+            if (account.id === accountActive?.account) {
               setAccountActive(undefined);
             } else {
               setAccountActive(account);
@@ -219,8 +312,21 @@ export default function InteractivePage() {
 
       {/* 右侧内容 */}
       <div style={{ flex: 1, minWidth: 0 }}>
-
-      {/* 主要内容：互动帖子卡片瀑布流 */}
+      {!accountActive?.uid ? (
+        <Card style={{ height: '100%', minHeight: 360, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ textAlign: 'center', maxWidth: 520 }}>
+            <div style={{
+              width: 72, height: 72, borderRadius: 16, border: '1px solid #e5e7eb',
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16
+            }}>
+              <CommentOutlined style={{ fontSize: 36, color: '#9ca3af' }} />
+            </div>
+            <div style={{ fontSize: 18, fontWeight: 600, color: '#111827', marginBottom: 8 }}>请在左侧选择需要互动的频道</div>
+            <div style={{ color: '#6b7280' }}>选择一个账号后，将自动加载该频道的最新作品与评论互动功能。</div>
+          </div>
+        </Card>
+      ) : (
+      /* 主要内容：互动帖子卡片瀑布流 */
       <div className={styles.content}>
         <div className={styles.grid}>
           {posts.map((item) => (
@@ -228,12 +334,25 @@ export default function InteractivePage() {
           ))}
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
-          <Button loading={loading} onClick={() => fetchEngagementPosts(pagination.current + 1, pagination.pageSize)} disabled={loading || posts.length >= pagination.total}>加载更多</Button>
+          {hasMore ? (
+            <Button 
+              loading={loading} 
+              onClick={() => fetchEngagementPosts(pagination.current + 1, pagination.pageSize)} 
+              disabled={loading}
+            >
+              加载更多
+            </Button>
+          ) : (
+            <span style={{ color: '#999' }}>没有更多作品</span>
+          )}
         </div>
+        <div ref={loadMoreRef} style={{ height: 1 }} />
+      </div>
+      )}
       </div>
 
-      {/* 评论弹窗 */}
-      <Modal
+            {/* 评论弹窗 */}
+            <Modal
         open={commentVisible}
         onCancel={() => setCommentVisible(false)}
         title={commentPost?.title || '评论'}
@@ -241,30 +360,92 @@ export default function InteractivePage() {
         width={600}
       >
         <List
+          itemLayout="vertical"
           loading={commentLoading}
           dataSource={comments}
-          renderItem={(c: any) => (
-            <List.Item
-              actions={[<a key="reply" onClick={() => submitReply(c.id)}>回复</a>]}
-            >
-              <List.Item.Meta
-                avatar={<Avatar src={c.author?.avatar} />}
-                title={<span>{c.author?.name || c.author?.id} · {new Date(c.createdAt).toLocaleString()}</span>}
-                description={c.message}
-              />
-            </List.Item>
-          )}
+          renderItem={(c: any) => {
+            const canExpand = !!c.hasReplies;
+            const replyState = repliesByComment[c.id];
+            const expanded = !!replyState?.expanded;
+            return (
+              <List.Item
+                style={{ alignItems: 'flex-start' }}
+                actions={[
+                  canExpand && !expanded ? (
+                    <a key="expand" onClick={() => expandReplies(c.id)}>展开回复</a>
+                  ) : canExpand && expanded ? (
+                    <a key="collapse" onClick={() => collapseReplies(c.id)}>收起回复</a>
+                  ) : null,
+                  <a
+                    key="reply"
+                    onClick={() => {
+                      const name = c.author?.username || c.author?.name || c.author?.id || '';
+                      setReplyTarget({ id: c.id, name });
+                      setTimeout(() => replyInputRef.current?.focus?.(), 0);
+                    }}
+                  >
+                    回复
+                  </a>,
+                ].filter(Boolean)}
+              >
+                <List.Item.Meta
+                  avatar={<Avatar src={c.author?.avatar} />}
+                  title={<span>{c.author?.username || c.author?.name} · {new Date(c.createdAt).toLocaleString()}</span>}
+                  description={c.message}
+                />
+                {expanded && (
+                  <div className={styles.replyBlock}>
+                    <List
+                      size="small"
+                      itemLayout="vertical"
+                      dataSource={replyState?.list || []}
+                      loading={replyState?.loading}
+                      renderItem={(r: any) => (
+                        <List.Item>
+                          <List.Item.Meta
+                            avatar={<Avatar src={r.author?.avatar} />}
+                            title={<span>{r.author?.username || r.author?.name} · {new Date(r.createdAt).toLocaleString()}</span>}
+                            description={r.message}
+                          />
+                        </List.Item>
+                      )}
+                    />
+                    <div style={{ display: 'flex', justifyContent: 'flex-start', paddingLeft: 40 }}>
+                      <Button size="small" type="link" onClick={() => loadMoreReplies(c.id)} disabled={!replyState?.cursor?.after} loading={replyState?.loading}>
+                        加载更多回复
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </List.Item>
+            );
+          }}
         />
+        {commentsCursor?.after && (
+          <div
+            style={{ textAlign: 'center', marginTop: 10, color: '#1677ff', cursor: 'pointer' }}
+            onClick={() => !commentLoading && loadCommentsV2(commentPost!.postId, undefined, commentsCursor?.after)}
+          >
+            {commentLoading ? '加载中…' : '加载更多评论'}
+          </div>
+        )}
         <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-          <Input.TextArea value={replyText} onChange={(e) => setReplyText(e.target.value)} rows={3} placeholder="输入评论..." />
-          <Button type="primary" onClick={submitPostComment}>发送</Button>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
-          <Button onClick={() => loadCommentsV2(commentPost!.postId, undefined, commentsCursor?.after)} loading={commentLoading} disabled={!commentsCursor?.after}>加载更多评论</Button>
+          <Input.TextArea
+            ref={replyInputRef}
+            value={replyText}
+            onChange={(e) => setReplyText(e.target.value)}
+            rows={3}
+            placeholder={replyTarget ? `回复@${replyTarget.name}` : '输入评论...'}
+          />
+          <Button
+            type="primary"
+            onClick={() => (replyTarget ? submitReply(replyTarget.id) : submitPostComment())}
+          >
+            发送
+          </Button>
         </div>
       </Modal>
-      </div>
     </div>
-    </NoSSR>
+    </>
   );
 }

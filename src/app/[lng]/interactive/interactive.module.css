@@ -472,8 +472,8 @@
 /* 互动卡片瀑布流 */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
 }
 
 .postCard {
@@ -488,7 +488,7 @@
 .thumb {
   position: relative;
   width: 100%;
-  padding-top: 66%;
+  padding-top: 75%;
   background: #fafafa;
 }
 .thumb img {
@@ -497,6 +497,19 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+.playIcon{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.25);
 }
 .thumbPlaceholder {
   position: absolute;
@@ -509,15 +522,47 @@
   left: 8px; bottom: 8px;
 }
 .postMeta {
-  padding: 10px;
+  padding: 12px;
+}
+.postFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
 }
 .postTitle {
   font-size: 14px; font-weight: 600; color: #111;
   line-height: 1.4; max-height: 3.2em; overflow: hidden;
 }
-.statsRow {
-  display: flex; gap: 10px; color: #666; font-size: 12px; margin-top: 6px;
+.postContent{
+  margin-top: 6px;
+  font-size: 12px;
+  color: #4b5563;
+  line-height: 1.6;
+  max-height: 4.8em;
+  overflow: hidden;
 }
-.actionsRow {
-  display: flex; align-items: center; justify-content: space-between; margin-top: 8px;
+.statsRow {
+  display: flex; gap: 12px; color: #666; font-size: 12px;
+}
+
+/* 评论弹窗布局修正 */
+.replyBlock {
+  width: 100%;
+  margin-top: 8px;
+  margin-left: 36px; /* 与头像宽度一致的缩进，避免错位 */
+}
+
+/* 评论按钮样式（图标按钮） */
+.commentBtn {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.commentBtn:hover {
+  border-color: #d1d5db;
 }

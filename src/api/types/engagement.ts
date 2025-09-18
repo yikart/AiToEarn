@@ -126,4 +126,23 @@ export interface PublishCommentReplyParams {
   message: string; // 1-500 chars
 }
 
+export interface CommentRepliesParams {
+  accountId: string;
+  platform: PostCommentPlatform;
+  commentId: string;
+  pagination?: {
+    before?: string;
+    after?: string;
+    limit?: number;
+  };
+}
+
+export interface CommentRepliesResponse {
+  comments: PostCommentItemV2[];
+  cursor?: {
+    before?: string;
+    after?: string;
+  };
+}
+
 
