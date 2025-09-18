@@ -2,6 +2,8 @@ import {
   ForwardedRef,
   forwardRef,
   memo,
+  useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -9,8 +11,11 @@ import {
 import styles from "./hotTitle.module.scss";
 import { useHotContent } from "@/app/[lng]/hotContent/useHotContent";
 import { useShallow } from "zustand/react/shallow";
-import { PlatformRanking } from "@/api/hot";
+import { platformApi, PlatformRanking } from "@/api/hot";
 import HotContentLabel from "@/app/[lng]/hotContent/components/HotContentLabel";
+import { Spin } from "antd";
+import { ViralTitle } from "@/api/types/viralTitles";
+import { HotTitleItem } from "@/app/[lng]/hotContent/components/HotTitle/components/HotTitleCommons";
 
 export interface IHotTitleRef {}
 
@@ -39,6 +44,14 @@ const HotTitle = memo(
     const allDates = useRef(["近7天", "近30天", "近90天"]);
     // 当前选择的日期范围
     const [currDate, setCurrDate] = useState(allDates.current[0]);
+    const [loading, setLoading] = useState(false);
+    // 所有爆款标题前五条数据
+    const [allHotTitleData, setAllHotTitleData] = useState<
+      {
+        category: string;
+        titles: ViralTitle[];
+      }[]
+    >();
 
     // 获取当前选中的标签、日期、榜单
     const selectedLabelInfo = useMemo(() => {
@@ -51,8 +64,23 @@ const HotTitle = memo(
           (v) => v.id === currentRankCategory,
         ) ?? {}) as PlatformRanking,
         labelData: labelData[platId] || [],
+        platId,
       };
     }, [labelData, rankingData, twoMenuKey, currentRankCategory]);
+
+    // 获取所有爆款数据
+    const getAllData = useCallback(async () => {
+      const res = await platformApi.findTopByPlatformAndCategories(
+        selectedLabelInfo.platId,
+        currDate,
+      );
+      console.log(res);
+      setAllHotTitleData(res?.data);
+    }, [currDate, selectedLabelInfo.platId]);
+
+    useEffect(() => {
+      getAllData();
+    }, [twoMenuKey]);
 
     return (
       <div className={styles.hotTitle}>
@@ -66,12 +94,27 @@ const HotTitle = memo(
         />
 
         <HotContentLabel
+          style={{ marginBottom: "15px" }}
           labels={allDates.current}
           value={currDate}
           onChange={(value) => {
             setCurrDate(value);
           }}
         />
+
+        <Spin wrapperClassName="hotTitle-content" spinning={loading}>
+          <div className="hotTitle-content-wrapper">
+            {allHotTitleData?.map((v) => {
+              return (
+                <HotTitleItem
+                  data={v}
+                  key={v.category}
+                  style={{ width: "calc(50% - 15px)", marginBottom: "30px" }}
+                />
+              );
+            })}
+          </div>
+        </Spin>
       </div>
     );
   }),

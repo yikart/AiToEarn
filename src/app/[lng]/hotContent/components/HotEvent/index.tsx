@@ -189,7 +189,7 @@ const HotEvent = memo(
                 >
                   <Icon component={material[i].icon} /> {platform.name} · 热点
                 </div>
-                <div className="hotEvent-item-content">
+                <div className={styles["hotEvent-item-content"]}>
                   <Table
                     dataSource={topics}
                     columns={getColumns(topics)}
