@@ -9,8 +9,13 @@ import HotEvent from "@/app/[lng]/hotContent/components/HotEvent";
 import HotFeatures from "@/app/[lng]/hotContent/components/HotFeatures";
 import HotTitle from "@/app/[lng]/hotContent/components/HotTitle";
 import { Spin } from "antd";
+import { RankingContentsResponse } from "@/api/hot";
 
-export const HotContentCore = () => {
+export const HotContentCore = ({
+  defaultHotContentData,
+}: {
+  defaultHotContentData?: RankingContentsResponse;
+}) => {
   const { hotType, pageLoading } = useHotContent(
     useShallow((state) => ({
       hotType: state.hotType,
@@ -29,7 +34,7 @@ export const HotContentCore = () => {
 
         <div className="hotContent-content">
           {hotType === HotType.hotContent ? (
-            <HotContent />
+            <HotContent defaultHotContentData={defaultHotContentData} />
           ) : hotType === HotType.hotEvent ? (
             <HotEvent />
           ) : hotType === HotType.hotFeatures ? (
