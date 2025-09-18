@@ -16,7 +16,7 @@ export const cloudSpaceVoSchema = z.object({
   updatedAt: z.date(),
   expiredAt: z.date(),
   remoteUrl: z.string().optional(),
-})
+}).transform(arg => Object.assign(arg, { remoteUrl: `http://${arg.ip}:10000` }))
 
 export class CloudSpaceVo extends createZodDto(cloudSpaceVoSchema, 'CloudSpaceVo') {}
 

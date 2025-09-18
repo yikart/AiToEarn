@@ -641,6 +641,7 @@ export interface ChatCompletionDto {
   maxCompletionTokens?: number
   modalities?: ('text' | 'audio' | 'image' | 'video')[]
   topP?: number
+  modelKwargs?: Record<string, any>
 }
 
 export interface UserChatCompletionDto extends ChatCompletionDto {

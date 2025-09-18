@@ -41,6 +41,7 @@ const chatCompletionDtoSchema = z.object({
   maxCompletionTokens: z.number().optional(),
   modalities: z.enum(['text', 'audio', 'image', 'video']).array().optional(),
   topP: z.number().optional(),
+  modelKwargs: z.record(z.string(), z.any()).optional(),
 })
 
 export class ChatCompletionDto extends createZodDto(chatCompletionDtoSchema) {}
