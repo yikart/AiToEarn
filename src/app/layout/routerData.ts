@@ -44,8 +44,8 @@ export const routerData: IRouterDataItem[] = [
   },
   {
     name: "互动数据",
-    translationKey: "engagement",
-    path: "/engagement",
+    translationKey: "interactive",
+    path: "/interactive",
   },
   {
     name: "数据统计",
