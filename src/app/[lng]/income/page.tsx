@@ -128,7 +128,8 @@ export default function IncomePage() {
     const typeMap: { [key: string]: { color: string; text: string } } = {
       'task': { color: 'green', text: t('incomeTypes.task') },
       'task_back': { color: 'orange', text: t('incomeTypes.task_back') },
-      'reward_back': { color: 'blue', text: t('incomeTypes.reward_back') }
+      'reward_back': { color: 'blue', text: t('incomeTypes.reward_back') },
+      'task_withdraw': { color: 'purple', text: t('incomeTypes.task_withdraw' as any) }
     };
     const config = typeMap[type] || { color: 'default', text: type };
     return <Tag color={config.color}>{config.text}</Tag>;
@@ -139,7 +140,8 @@ export default function IncomePage() {
     const statusMap = {
       [WithdrawRecordStatus.WAIT]: { color: 'orange', text: t('withdrawStatus.wait'), icon: <ClockCircleOutlined /> },
       [WithdrawRecordStatus.SUCCESS]: { color: 'green', text: t('withdrawStatus.success'), icon: <CheckCircleOutlined /> },
-      [WithdrawRecordStatus.FAIL]: { color: 'red', text: t('withdrawStatus.fail'), icon: <CloseCircleOutlined /> }
+      [WithdrawRecordStatus.FAIL]: { color: 'red', text: t('withdrawStatus.fail'), icon: <CloseCircleOutlined /> },
+      [WithdrawRecordStatus.TASK_WITHDRAW]: { color: 'blue', text: t('withdrawStatus.task_withdraw' as any), icon: <DollarOutlined /> }
     };
     const config = statusMap[status] || { color: 'default', text: '未知状态', icon: null };
     return (

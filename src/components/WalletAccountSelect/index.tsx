@@ -60,7 +60,7 @@ export default function WalletAccountSelect(props: Props) {
       style={{ width: "100%" }}
       onPopupScroll={onPopupScroll}
       notFoundContent={loading ? <Spin size="small" /> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无账户" />}
-      filterOption={(input, option) => (option?.children as string)?.toLowerCase().includes(input.toLowerCase())}
+      filterOption={(input, option) => (option?.children as unknown as string)?.toLowerCase().includes(input.toLowerCase())}
     >
       {list.map((item) => (
         <Option key={item._id} value={item._id}>

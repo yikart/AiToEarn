@@ -7,6 +7,7 @@ export enum WithdrawRecordStatus {
   WAIT = 0,
   SUCCESS = 1,
   FAIL = -1,
+  TASK_WITHDRAW = 2, // 任务提现
 }
 
 export interface WithdrawRecord {
