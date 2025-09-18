@@ -650,7 +650,7 @@ function PricingModule() {
     },
     {
       name: t('plans.plus.name'),
-      price: billingCycle === 'yearly' ? 10 : 15,
+      price: billingCycle === 'yearly' ? 12 : 19,
       originalPrice: billingCycle === 'yearly' ? 20 : 15,
       credits: t('plans.plus.credits'),
       videos: t('plans.plus.videos'),

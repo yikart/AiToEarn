@@ -151,12 +151,12 @@ export default function VipPage() {
           </span>
           <h4>月费会员</h4>
           <div>
-            <span className={styles.originalPrice}>$20</span>
+            <span className={styles.originalPrice}>$30</span>
             <span className={styles.discount}>
               {canUseTrial ? t('badge.month') : t('badge.monthOld')}
             </span>
           </div>
-          <p className={styles.currentPrice}>$<span>15</span>/月</p>
+          <p className={styles.currentPrice}>$<span>19</span>/月</p>
           {canUseTrial && (
             <p className={styles.trialText}>{t('trialText.month')}</p>
           )}
@@ -175,8 +175,8 @@ export default function VipPage() {
               {canUseTrial ? t('badge.year') : t('badge.yearOld')}
             </span>
           </div>
-          <p className={styles.currentPrice}>$<span>10</span>/月</p>
-          <p className={styles.monthlyPrice}>$120/年</p>
+          <p className={styles.currentPrice}>$<span>12</span>/月</p>
+          <p className={styles.monthlyPrice}>$144/年</p>
           {canUseTrial && (
             <p className={styles.trialText}>{t('trialText.year')}</p>
           )}
@@ -188,10 +188,10 @@ export default function VipPage() {
           <span className={styles.badge}>{t('badge.onceMonth')}</span>
           <h4>月度会员</h4>
           <div>
-            <span className={styles.originalPrice}>$20</span>
+            <span className={styles.originalPrice}>$30</span>
             <span className={styles.discount}>{t('badge.onceMonth')}</span>
           </div>
-          <p className={styles.currentPrice}>$<span>20</span></p>
+          <p className={styles.currentPrice}>$<span>25</span></p>
         </div>
       </div>
       
