@@ -521,3 +521,10 @@
 .actionsRow {
   display: flex; align-items: center; justify-content: space-between; margin-top: 8px;
 }
+
+/* 评论弹窗布局修正 */
+.replyBlock {
+  width: 100%;
+  margin-top: 8px;
+  margin-left: 36px; /* 与头像宽度一致的缩进，避免错位 */
+}

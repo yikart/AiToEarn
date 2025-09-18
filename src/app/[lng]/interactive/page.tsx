@@ -48,6 +48,8 @@ export default function InteractivePage() {
   const [replyText, setReplyText] = useState('');
   const [replyTarget, setReplyTarget] = useState<{ id: string; name: string } | null>(null);
   const replyInputRef = useRef<any>(null);
+  // 二级回复：按评论ID存储
+  const [repliesByComment, setRepliesByComment] = useState<Record<string, { list: any[]; cursor?: { before?: string; after?: string }; loading: boolean; expanded: boolean }>>({});
 
   // 获取互动帖子
   const fetchEngagementPosts = async (page: number = 1, pageSize: number = 20) => {
@@ -168,6 +170,57 @@ export default function InteractivePage() {
     }
   };
 
+  const expandReplies = async (commentId: string) => {
+    if (!accountActive?.account || !platform) return;
+    setRepliesByComment((prev) => ({
+      ...prev,
+      [commentId]: { ...(prev[commentId] || { list: [], cursor: {}, expanded: true }), loading: true, expanded: true },
+    }));
+    const res = await apiGetCommentReplies({
+      accountId: accountActive.account,
+      platform: platform as any,
+      commentId,
+      pagination: { limit: 20 },
+    });
+    setRepliesByComment((prev) => ({
+      ...prev,
+      [commentId]: {
+        list: res?.data?.comments || [],
+        cursor: res?.data?.cursor,
+        loading: false,
+        expanded: true,
+      },
+    }));
+  };
+
+  const collapseReplies = (commentId: string) => {
+    setRepliesByComment((prev) => ({
+      ...prev,
+      [commentId]: { ...(prev[commentId] || { list: [], cursor: {} }), expanded: false, loading: false },
+    }));
+  };
+
+  const loadMoreReplies = async (commentId: string) => {
+    const state = repliesByComment[commentId];
+    if (!state?.cursor?.after || !accountActive?.account || !platform) return;
+    setRepliesByComment((prev) => ({ ...prev, [commentId]: { ...(prev[commentId] as any), loading: true } }));
+    const res = await apiGetCommentReplies({
+      accountId: accountActive.account,
+      platform: platform as any,
+      commentId,
+      pagination: { after: state.cursor.after, limit: 20 },
+    });
+    setRepliesByComment((prev) => ({
+      ...prev,
+      [commentId]: {
+        list: [ ...(prev[commentId]?.list || []), ...(res?.data?.comments || []) ],
+        cursor: res?.data?.cursor,
+        loading: false,
+        expanded: true,
+      },
+    }));
+  };
+
   const submitPostComment = async () => {
     if (!commentPost || !replyText.trim() || !accountActive?.account || !platform) return;
     const res = await apiPublishPostComment({ accountId: accountActive.account, platform: platform as any, postId: commentPost.postId, message: replyText.trim() });
@@ -246,34 +299,21 @@ export default function InteractivePage() {
         width={600}
       >
         <List
+          itemLayout="vertical"
           loading={commentLoading}
           dataSource={comments}
           renderItem={(c: any) => {
             const canExpand = !!c.hasReplies;
+            const replyState = repliesByComment[c.id];
+            const expanded = !!replyState?.expanded;
             return (
               <List.Item
+                style={{ alignItems: 'flex-start' }}
                 actions={[
-                  canExpand ? (
-                    <a
-                      key="expand"
-                      onClick={async () => {
-                        if (!accountActive?.account || !platform) return;
-                        const res = await apiGetCommentReplies({
-                          accountId: accountActive.account,
-                          platform: platform as any,
-                          commentId: c.id,
-                          pagination: { limit: 20 },
-                        });
-                        if (res?.data?.comments?.length) {
-                          // 展开后简单 alert 展示; 可改为内嵌子列表
-                          message.info(`展开回复 ${res.data.comments.length} 条`);
-                        } else {
-                          message.info('暂无更多回复');
-                        }
-                      }}
-                    >
-                      展开回复
-                    </a>
+                  canExpand && !expanded ? (
+                    <a key="expand" onClick={() => expandReplies(c.id)}>展开回复</a>
+                  ) : canExpand && expanded ? (
+                    <a key="collapse" onClick={() => collapseReplies(c.id)}>收起回复</a>
                   ) : null,
                   <a
                     key="reply"
@@ -292,6 +332,30 @@ export default function InteractivePage() {
                   title={<span>{c.author?.username || c.author?.name} · {new Date(c.createdAt).toLocaleString()}</span>}
                   description={c.message}
                 />
+                {expanded && (
+                  <div className={styles.replyBlock}>
+                    <List
+                      size="small"
+                      itemLayout="vertical"
+                      dataSource={replyState?.list || []}
+                      loading={replyState?.loading}
+                      renderItem={(r: any) => (
+                        <List.Item>
+                          <List.Item.Meta
+                            avatar={<Avatar src={r.author?.avatar} />}
+                            title={<span>{r.author?.username || r.author?.name} · {new Date(r.createdAt).toLocaleString()}</span>}
+                            description={r.message}
+                          />
+                        </List.Item>
+                      )}
+                    />
+                    <div style={{ display: 'flex', justifyContent: 'flex-start', paddingLeft: 40 }}>
+                      <Button size="small" type="link" onClick={() => loadMoreReplies(c.id)} disabled={!replyState?.cursor?.after} loading={replyState?.loading}>
+                        加载更多回复
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </List.Item>
             );
           }}
