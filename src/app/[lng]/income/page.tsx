@@ -193,7 +193,7 @@ export default function IncomePage() {
       key: 'action',
       render: (_: any, record: IncomeRecord) => (
         <Space>
-          {record.type === 'task' && record.status === 1 ? (
+          {record.type === 'task' && record.status === 0 ? (
             <Button 
               type="primary" 
               size="small"
