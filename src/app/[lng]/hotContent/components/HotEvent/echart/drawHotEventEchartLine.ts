@@ -39,6 +39,7 @@ export default function drawHotEventEchartLine(
   const option: EChartsOption = {
     grid: { left: 0, right: 0, top: 0, bottom: 0, containLabel: false },
     tooltip: {
+      appendTo: "body",
       trigger: "axis",
       show: true,
       formatter: (params: any) => {
