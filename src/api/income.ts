@@ -20,7 +20,7 @@ export const apiGetIncomeList = (page: {
 /**
  * 提交提现
  */
-export const apiSubmitWithdraw = (incomeRecordId: string, userWalletAccountId: string, flowId?: string) => {
+export const apiSubmitWithdraw = (incomeRecordId: string, userWalletAccountId?: string, flowId?: string) => {
   return request<any>({
     url: `income/withdraw`,
     method: 'POST',
