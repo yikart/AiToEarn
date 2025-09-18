@@ -291,7 +291,7 @@ export class CloudSpaceConfigConsumer extends WorkerHost {
 
     const result = await this.ansibleService.runPlaybook(tempPlaybookPath, {
       inventory: tempInventoryPath,
-      sshCommonArgs: '-o ControlMaster=no',
+      sshCommonArgs: '-o ControlMaster=no -o StrictHostKeyChecking=no',
     })
 
     if (fs.existsSync(tempInventoryPath)) {
