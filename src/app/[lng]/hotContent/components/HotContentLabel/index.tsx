@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
   useLayoutEffect,
+  CSSProperties,
 } from "react";
 import styles from "./hotContentLabel.module.scss";
 
@@ -12,14 +13,16 @@ export interface IHotContentLabelRef {}
 
 export interface IHotContentLabelProps {
   labels: string[];
+  icons?: string[];
   value: string;
   onChange: (label: string) => void;
+  style?: CSSProperties;
 }
 
 const HotContentLabel = memo(
   forwardRef(
     (
-      { labels, value, onChange }: IHotContentLabelProps,
+      { labels, value, onChange, style, icons }: IHotContentLabelProps,
       ref: ForwardedRef<IHotContentLabelRef>,
     ) => {
       const listRef = useRef<HTMLUListElement>(null);
@@ -42,7 +45,7 @@ const HotContentLabel = memo(
       }, [labels]);
 
       return (
-        <div className={styles.hotContentLabelWrapper}>
+        <div className={styles.hotContentLabelWrapper} style={style}>
           <ul
             className="hotContentLabel"
             ref={listRef}
@@ -52,7 +55,7 @@ const HotContentLabel = memo(
               transition: "max-height 0.3s cubic-bezier(0.4,0,0.2,1)",
             }}
           >
-            {labels.map((label) => (
+            {labels.map((label, i) => (
               <li
                 key={label}
                 className={`hotContentLabel-item ${
@@ -61,6 +64,13 @@ const HotContentLabel = memo(
                 title={label}
                 onClick={() => onChange(label)}
               >
+                {icons && icons[i] && (
+                  <img
+                    src={icons[i]}
+                    alt={label}
+                    className="hotContentLabel-icon"
+                  />
+                )}
                 {label}
               </li>
             ))}

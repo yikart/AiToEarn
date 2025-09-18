@@ -9,9 +9,17 @@
       padding-right: 35px;
 
       .hotContentLabel-item {
+        display: flex;
+        align-items: center;
         cursor: pointer;
         padding: 4px 8px;
         border-radius: 6px;
+
+        .hotContentLabel-icon {
+          width: 18px;
+          border-radius: 3px;
+          margin-right: 4px;
+        }
 
         &--active {
           background: var(--colorPrimary1);
