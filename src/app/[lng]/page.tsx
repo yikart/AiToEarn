@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./styles/difyHome.module.scss";
 import pricingStyles from "./styles/pricing.module.scss";
-import { useTransClient } from "../i18n/client";
+import { directTrans, useTransClient } from "../i18n/client";
 import { MAIN_APP_DOWNLOAD_URL } from "../config/appDownloadConfig";
 
 import logo from '@/assets/images/logo.png';
@@ -51,14 +51,14 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button, Collapse } from "antd";
 import { GlobalOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import { useUserStore } from "@/store/user"; 
+import { useUserStore } from "@/store/user";
 import { useParams } from "next/navigation";
 import { AndroidOutlined } from '@ant-design/icons';
 
 // 版本发布横幅
 function ReleaseBanner() {
   const { t } = useTransClient('home');
-  
+
   return (
     <div className={styles.releaseBanner}>
       <div className={styles.bannerContent}>
@@ -90,7 +90,7 @@ function Header({ currentModule, onModuleChange }: { currentModule: string, onMo
   return (
     <header className={styles.header}>
       <div className={styles.headerContainer}>
-      <div 
+      <div
         className={styles.logo}
         onClick={() => onModuleChange('home')}
         style={{ cursor: 'pointer' }}
@@ -100,7 +100,7 @@ function Header({ currentModule, onModuleChange }: { currentModule: string, onMo
       </div>
         <nav className={styles.nav}>
           {/* <a href="#marketplace" className={styles.navLink}>{t('header.nav.marketplace')}</a> */}
-          <button 
+          <button
             className={`${styles.navLink} ${currentModule === 'pricing' ? styles.active : ''}`}
             onClick={() => onModuleChange('pricing')}
           >
@@ -109,7 +109,7 @@ function Header({ currentModule, onModuleChange }: { currentModule: string, onMo
           <a href="https://status.aitoearn.ai/" target="_blank" rel="noopener noreferrer" className={styles.navLink} style={{ paddingTop: '3px' }}>{t('header.nav.status' as any)}</a>
           <a href="https://docs.aitoearn.ai/" target="_blank" rel="noopener noreferrer" className={styles.navLink} style={{ paddingTop: '3px' }}>{t('header.nav.docs' as any)}</a>
           <a href="https://blog.aitoearn.ai/" target="_blank" rel="noopener noreferrer" className={styles.navLink} style={{ paddingTop: '3px' }}>{t('header.nav.blog' as any)}</a>
-          <a href="https://docs.aitoearn.ai/zh/downloads" target="_blank" rel="noopener noreferrer" className={styles.navLink} style={{ paddingTop: '3px' }}>{t('header.nav.download' as any)}</a>
+          <Link href="/hotContent" target="_blank" rel="noopener noreferrer" className={styles.navLink} style={{ paddingTop: '3px' }}>{directTrans('route', 'hotContent')}</Link>
 
           {/* <a href="#docs" className={styles.navLink}>{t('header.nav.docs')}</a> */}
           {/* <a href="#blog" className={styles.navLink}>{t('header.nav.blog')}</a> */}
@@ -131,7 +131,7 @@ function Header({ currentModule, onModuleChange }: { currentModule: string, onMo
               {t('header.getStarted')}
             </button>
         </div>
-        
+
       </div>
     </header>
   );
@@ -141,7 +141,7 @@ function Header({ currentModule, onModuleChange }: { currentModule: string, onMo
 function PricingModule() {
   const { t } = useTransClient('pricing');
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
-  
+
   // 直接使用 aaa.md 中的完整数据
   const fallbackPricingData = [
     {
@@ -712,7 +712,7 @@ function PricingModule() {
   return (
     <div className={pricingStyles.pricingPage}>
       <div className={pricingStyles.container}>
-        
+
         {/* Header */}
         <div className={pricingStyles.header}>
           <h1 className={pricingStyles.title}>{t('title')}</h1>
@@ -755,7 +755,7 @@ function PricingModule() {
                   {billingCycle === 'yearly' ? t('flashSale50') : t('mostPopular')}
                 </div>
               )}
-              
+
               <div className={pricingStyles.cardHeader}>
                 <h2 className={pricingStyles.planName}>{plan.name}</h2>
                 <div className={pricingStyles.priceContainer}>
@@ -832,7 +832,7 @@ function PricingModule() {
         {/* FAQ Section */}
         <div className={pricingStyles.faqSection}>
           <h2 className={pricingStyles.faqTitle}>{t('faq.title')}</h2>
-          <Collapse 
+          <Collapse
             className={pricingStyles.faqCollapse}
             items={faqItems.map((faq, index) => ({
               key: index,
@@ -900,20 +900,20 @@ function Hero() {
   const typingSpeed = 120; // 打字速度（毫秒）
   const initialDelay = 800; // 初始延迟（毫秒）
   const cursorHideDelay = 2000; // 打字完成后光标消失的延迟
-  
+
   useEffect(() => {
     // 初始延迟后开始打字
     const startTimer = setTimeout(() => {
       setStartTyping(true);
     }, initialDelay);
-    
+
     return () => clearTimeout(startTimer);
   }, []);
-  
+
   useEffect(() => {
     if (startTyping && currentIndex < fullText.length) {
       const currentChar = fullText[currentIndex];
-      
+
       // 根据字符类型调整打字速度
       let currentSpeed = typingSpeed;
       if (currentChar === '\n') {
@@ -926,12 +926,12 @@ function Hero() {
         // 添加一些随机性，使打字更自然
         currentSpeed = typingSpeed + Math.random() * 50 - 25;
       }
-      
+
       const timer = setTimeout(() => {
         setDisplayedText(prev => prev + fullText[currentIndex]);
         setCurrentIndex(prev => prev + 1);
       }, currentSpeed);
-      
+
       return () => clearTimeout(timer);
     } else if (currentIndex >= fullText.length && !isTypingComplete) {
       setIsTypingComplete(true);
@@ -941,7 +941,7 @@ function Hero() {
       }, cursorHideDelay);
     }
   }, [startTyping, currentIndex, fullText, typingSpeed, isTypingComplete, cursorHideDelay]);
-  
+
   // 将文本转换为JSX，处理换行
   const renderText = () => {
     return displayedText.split('\n').map((line, index, array) => (
@@ -962,16 +962,16 @@ function Hero() {
           <span className={styles.starText}>{t('hero.starsText')}</span>
           <span className={styles.githubText}>{t('hero.github')}</span>
         </div>
-        
+
         <h1 className={styles.heroTitle}>
           {renderText()}
           <span className={`${styles.cursor} ${hideCursor ? styles.cursorHidden : styles.cursorVisible}`}>|</span>
         </h1>
-        
+
         <p className={styles.heroSubtitle}>
           {t('hero.subtitle')}
         </p>
-        
+
         <button onClick={() => {
           router.push("/accounts");
         }} className={styles.heroBtn}>
@@ -1068,7 +1068,7 @@ function ContentPublishingSection() {
   const images = [IMAGE_URLS.calendar, IMAGE_URLS.supportChannels];
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
-  
+
   // 自动轮播
   useEffect(() => {
     if (autoRotate) {
@@ -1081,20 +1081,20 @@ function ContentPublishingSection() {
         autoRotateRef.current = null;
       }
     }
-    
+
     return () => {
       if (autoRotateRef.current) {
         clearInterval(autoRotateRef.current);
       }
     };
   }, [autoRotate, images.length]);
-  
+
   // 滚轮控制
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
         e.preventDefault();
-        
+
         if (e.deltaY > 0) {
           if (currentImageIndex < images.length - 1) {
             setCurrentImageIndex(prev => prev + 1);
@@ -1109,17 +1109,17 @@ function ContentPublishingSection() {
             setAutoRotate(false);
           }
         }
-        
+
         setTimeout(() => {
           setAutoRotate(true);
         }, 3000);
       }
     };
-    
+
     const carousel = carouselRef.current;
     if (carousel) {
       carousel.addEventListener('wheel', handleWheel, { passive: false });
-      
+
       return () => {
         carousel.removeEventListener('wheel', handleWheel);
       };
@@ -1133,29 +1133,29 @@ function ContentPublishingSection() {
           <div className={styles.badgeIcon}></div>
           <span>{t('buildSection.badge')}</span>
         </div>
-        
+
         <div className={styles.buildContent}>
           <div className={styles.buildLeft}>
             <h2 className={styles.buildTitle}>
               {t('buildSection.title')}
               <span className={styles.titleBlue}>{t('buildSection.titleBlue')}</span>
             </h2>
-            
+
                          <div className={styles.featureList}>
                <div className={styles.featureItem}>
                  <h3>{t('buildSection.features.hotTopic.title')}</h3>
                  <p>{t('buildSection.features.hotTopic.description')}</p>
                </div>
-               
+
                <div className={styles.featureItem}>
                  <h3>{t('buildSection.features.international.title')}</h3>
                  <p>{t('buildSection.features.international.description')}</p>
                </div>
              </div>
            </div>
-           
+
            <div className={styles.buildRight}>
-             <div 
+             <div
                className={styles.imageCarousel}
                ref={carouselRef}
              >
@@ -1165,15 +1165,15 @@ function ContentPublishingSection() {
                     key={index}
                     className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
                   >
-                                         <img 
-                       src={image} 
-                       alt={`Content Publishing ${index + 1}`} 
+                                         <img
+                       src={image}
+                       alt={`Content Publishing ${index + 1}`}
                        className={styles.mobileCarouselImage}
                      />
                   </div>
                 ))}
               </div>
-              
+
               <div className={styles.carouselIndicators}>
                 {images.map((_, index) => (
                   <button
@@ -1187,7 +1187,7 @@ function ContentPublishingSection() {
                   />
                 ))}
               </div>
-              
+
               <div className={styles.carouselHint}>
                 <span>使用滚轮切换图片</span>
               </div>
@@ -1207,7 +1207,7 @@ function ContentHotspotSection() {
   const images = [IMAGE_URLS.hotspot, IMAGE_URLS.hotspot2, IMAGE_URLS.hotspot3, IMAGE_URLS.hotspot4];
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
-  
+
   // 自动轮播
   useEffect(() => {
     if (autoRotate) {
@@ -1220,20 +1220,20 @@ function ContentHotspotSection() {
         autoRotateRef.current = null;
       }
     }
-    
+
     return () => {
       if (autoRotateRef.current) {
         clearInterval(autoRotateRef.current);
       }
     };
   }, [autoRotate, images.length]);
-  
+
   // 滚轮控制
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
         e.preventDefault();
-        
+
         if (e.deltaY > 0) {
           if (currentImageIndex < images.length - 1) {
             setCurrentImageIndex(prev => prev + 1);
@@ -1248,17 +1248,17 @@ function ContentHotspotSection() {
             setAutoRotate(false);
           }
         }
-        
+
         setTimeout(() => {
           setAutoRotate(true);
         }, 3000);
       }
     };
-    
+
     const carousel = carouselRef.current;
     if (carousel) {
       carousel.addEventListener('wheel', handleWheel, { passive: false });
-      
+
       return () => {
         carousel.removeEventListener('wheel', handleWheel);
       };
@@ -1272,29 +1272,29 @@ function ContentHotspotSection() {
           <div className={styles.badgeIcon}></div>
           <span>{t('hotspotSection.badge' as any)}</span>
         </div>
-        
+
         <div className={styles.buildContent}>
           <div className={styles.buildLeft}>
             <h2 className={styles.buildTitle}>
               {t('hotspotSection.title' as any)}
               <span className={styles.titleBlue}>{t('hotspotSection.titleBlue' as any)}</span>
             </h2>
-            
+
                          <div className={styles.featureList}>
                <div className={styles.featureItem}>
                  <h3>{t('hotspotSection.features.hotTopic.title' as any)}</h3>
                  <p>{t('hotspotSection.features.hotTopic.description' as any)}</p>
                </div>
-               
+
                <div className={styles.featureItem}>
                  <h3>{t('hotspotSection.features.international.title' as any)}</h3>
                  <p>{t('hotspotSection.features.international.description' as any)}</p>
                </div>
              </div>
            </div>
-           
+
            <div className={styles.buildRight}>
-             <div 
+             <div
                className={styles.imageCarousel}
                ref={carouselRef}
              >
@@ -1304,15 +1304,15 @@ function ContentHotspotSection() {
                     key={index}
                     className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
                   >
-                                         <img 
-                       src={image} 
-                       alt={`Content Hotspot ${index + 1}`} 
+                                         <img
+                       src={image}
+                       alt={`Content Hotspot ${index + 1}`}
                        className={styles.mobileCarouselImage}
                      />
                   </div>
                 ))}
               </div>
-              
+
               <div className={styles.carouselIndicators}>
                 {images.map((_, index) => (
                   <button
@@ -1326,7 +1326,7 @@ function ContentHotspotSection() {
                   />
                 ))}
               </div>
-              
+
               <div className={styles.carouselHint}>
                 <span>使用滚轮切换图片</span>
               </div>
@@ -1346,7 +1346,7 @@ function ContentSearchSection() {
   const images = [IMAGE_URLS.contentSearch, IMAGE_URLS.contentSearch1, IMAGE_URLS.contentSearch2, IMAGE_URLS.contentSearch4];
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
-  
+
   // 自动轮播
   useEffect(() => {
     if (autoRotate) {
@@ -1359,20 +1359,20 @@ function ContentSearchSection() {
         autoRotateRef.current = null;
       }
     }
-    
+
     return () => {
       if (autoRotateRef.current) {
         clearInterval(autoRotateRef.current);
       }
     };
   }, [autoRotate, images.length]);
-  
+
   // 滚轮控制
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
         e.preventDefault();
-        
+
         if (e.deltaY > 0) {
           if (currentImageIndex < images.length - 1) {
             setCurrentImageIndex(prev => prev + 1);
@@ -1387,17 +1387,17 @@ function ContentSearchSection() {
             setAutoRotate(false);
           }
         }
-        
+
         setTimeout(() => {
           setAutoRotate(true);
         }, 3000);
       }
     };
-    
+
     const carousel = carouselRef.current;
     if (carousel) {
       carousel.addEventListener('wheel', handleWheel, { passive: false });
-      
+
       return () => {
         carousel.removeEventListener('wheel', handleWheel);
       };
@@ -1411,29 +1411,29 @@ function ContentSearchSection() {
           <div className={styles.badgeIcon}></div>
           <span>{t('searchSection.badge' as any)}</span>
         </div>
-        
+
         <div className={styles.buildContent}>
           <div className={styles.buildLeft}>
             <h2 className={styles.buildTitle}>
               {t('searchSection.title' as any)}
               <span className={styles.titleBlue}>{t('searchSection.titleBlue' as any)}</span>
             </h2>
-            
+
                          <div className={styles.featureList}>
                <div className={styles.featureItem}>
                  <h3>{t('searchSection.features.hotTopic.title' as any)}</h3>
                  <p>{t('searchSection.features.hotTopic.description' as any)}</p>
                </div>
-               
+
                <div className={styles.featureItem}>
                  <h3>{t('searchSection.features.international.title' as any)}</h3>
                  <p>{t('searchSection.features.international.description' as any)}</p>
                </div>
              </div>
            </div>
-           
+
            <div className={styles.buildRight}>
-             <div 
+             <div
                className={styles.imageCarousel}
                ref={carouselRef}
              >
@@ -1443,15 +1443,15 @@ function ContentSearchSection() {
                     key={index}
                     className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
                   >
-                                         <img 
-                       src={image} 
-                       alt={`Content Search ${index + 1}`} 
+                                         <img
+                       src={image}
+                       alt={`Content Search ${index + 1}`}
                        className={styles.mobileCarouselImage}
                      />
                   </div>
                 ))}
               </div>
-              
+
               <div className={styles.carouselIndicators}>
                 {images.map((_, index) => (
                   <button
@@ -1465,7 +1465,7 @@ function ContentSearchSection() {
                   />
                 ))}
               </div>
-              
+
               <div className={styles.carouselHint}>
                 <span>使用滚轮切换图片</span>
               </div>
@@ -1485,7 +1485,7 @@ function CommentsSearchSection() {
   const images = [IMAGE_URLS.commentFilter];
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
-  
+
   // 自动轮播
   useEffect(() => {
     if (autoRotate) {
@@ -1498,20 +1498,20 @@ function CommentsSearchSection() {
         autoRotateRef.current = null;
       }
     }
-    
+
     return () => {
       if (autoRotateRef.current) {
         clearInterval(autoRotateRef.current);
       }
     };
   }, [autoRotate, images.length]);
-  
+
   // 滚轮控制
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
         e.preventDefault();
-        
+
         if (e.deltaY > 0) {
           if (currentImageIndex < images.length - 1) {
             setCurrentImageIndex(prev => prev + 1);
@@ -1526,17 +1526,17 @@ function CommentsSearchSection() {
             setAutoRotate(false);
           }
         }
-        
+
         setTimeout(() => {
           setAutoRotate(true);
         }, 3000);
       }
     };
-    
+
     const carousel = carouselRef.current;
     if (carousel) {
       carousel.addEventListener('wheel', handleWheel, { passive: false });
-      
+
       return () => {
         carousel.removeEventListener('wheel', handleWheel);
       };
@@ -1550,29 +1550,29 @@ function CommentsSearchSection() {
           <div className={styles.badgeIcon}></div>
           <span>{t('commentsSection.badge' as any)}</span>
         </div>
-        
+
         <div className={styles.buildContent}>
           <div className={styles.buildLeft}>
             <h2 className={styles.buildTitle}>
               {t('commentsSection.title' as any)}
               <span className={styles.titleBlue}>{t('commentsSection.titleBlue' as any)}</span>
             </h2>
-            
+
                          <div className={styles.featureList}>
                <div className={styles.featureItem}>
                  <h3>{t('commentsSection.features.hotTopic.title' as any)}</h3>
                  <p>{t('commentsSection.features.hotTopic.description' as any)}</p>
                </div>
-               
+
                <div className={styles.featureItem}>
                  <h3>{t('commentsSection.features.international.title' as any)}</h3>
                  <p>{t('commentsSection.features.international.description' as any)}</p>
                </div>
              </div>
            </div>
-           
+
            <div className={styles.buildRight}>
-             <div 
+             <div
                className={styles.imageCarousel}
                ref={carouselRef}
              >
@@ -1582,15 +1582,15 @@ function CommentsSearchSection() {
                     key={index}
                     className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
                   >
-                                         <img 
-                       src={image} 
-                       alt={`Comments Search ${index + 1}`} 
+                                         <img
+                       src={image}
+                       alt={`Comments Search ${index + 1}`}
                        className={styles.mobileCarouselImage}
                      />
                   </div>
                 ))}
               </div>
-              
+
               <div className={styles.carouselIndicators}>
                 {images.map((_, index) => (
                   <button
@@ -1604,7 +1604,7 @@ function CommentsSearchSection() {
                   />
                 ))}
               </div>
-              
+
               <div className={styles.carouselHint}>
                 <span>使用滚轮切换图片</span>
               </div>
@@ -1624,7 +1624,7 @@ function ContentEngagementSection() {
   const images = [IMAGE_URLS.commentFilter2];
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
-  
+
   // 自动轮播
   useEffect(() => {
     if (autoRotate) {
@@ -1637,20 +1637,20 @@ function ContentEngagementSection() {
         autoRotateRef.current = null;
       }
     }
-    
+
     return () => {
       if (autoRotateRef.current) {
         clearInterval(autoRotateRef.current);
       }
     };
   }, [autoRotate, images.length]);
-  
+
   // 滚轮控制
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
         e.preventDefault();
-        
+
         if (e.deltaY > 0) {
           if (currentImageIndex < images.length - 1) {
             setCurrentImageIndex(prev => prev + 1);
@@ -1665,17 +1665,17 @@ function ContentEngagementSection() {
             setAutoRotate(false);
           }
         }
-        
+
         setTimeout(() => {
           setAutoRotate(true);
         }, 3000);
       }
     };
-    
+
     const carousel = carouselRef.current;
     if (carousel) {
       carousel.addEventListener('wheel', handleWheel, { passive: false });
-      
+
       return () => {
         carousel.removeEventListener('wheel', handleWheel);
       };
@@ -1689,29 +1689,29 @@ function ContentEngagementSection() {
           <div className={styles.badgeIcon}></div>
           <span>{t('connectSection.badge' as any)}</span>
         </div>
-        
+
         <div className={styles.buildContent}>
           <div className={styles.buildLeft}>
             <h2 className={styles.buildTitle}>
               {t('connectSection.title' as any)}
               <span className={styles.titleBlue}>{t('connectSection.titleBlue' as any)}</span>
             </h2>
-            
+
                          <div className={styles.featureList}>
                <div className={styles.featureItem}>
                  <h3>{t('connectSection.features.creation.title' as any)}</h3>
                  <p>{t('connectSection.features.creation.description' as any)}</p>
                </div>
-               
+
                <div className={styles.featureItem}>
                  <h3>{t('connectSection.features.distribution.title' as any)}</h3>
                  <p>{t('connectSection.features.distribution.description' as any)}</p>
                </div>
              </div>
            </div>
-           
+
            <div className={styles.buildRight}>
-             <div 
+             <div
                className={styles.imageCarousel}
                ref={carouselRef}
              >
@@ -1721,15 +1721,15 @@ function ContentEngagementSection() {
                     key={index}
                     className={`${styles.carouselSlide} ${index === currentImageIndex ? styles.active : ''}`}
                   >
-                                         <img 
-                       src={image} 
-                       alt={`Content Engagement ${index + 1}`} 
+                                         <img
+                       src={image}
+                       alt={`Content Engagement ${index + 1}`}
                        className={styles.mobileCarouselImage}
                      />
                   </div>
                 ))}
               </div>
-              
+
               <div className={styles.carouselIndicators}>
                 {images.map((_, index) => (
                   <button
@@ -1743,7 +1743,7 @@ function ContentEngagementSection() {
                   />
                 ))}
               </div>
-              
+
               <div className={styles.carouselHint}>
                 <span>使用滚轮切换图片</span>
               </div>
@@ -1758,7 +1758,7 @@ function ContentEngagementSection() {
 // 6-8. 即将上线功能整合模块
 function UpcomingFeaturesSection() {
   const { t } = useTransClient('home');
-  
+
   return (
     <section className={styles.buildSection}>
       <div className={styles.buildContainer}>
@@ -1766,42 +1766,42 @@ function UpcomingFeaturesSection() {
           <div className={styles.badgeIcon}></div>
           <span>{t('upcomingSection.badge' as any)}</span>
         </div>
-        
+
         <div className={styles.buildContent}>
           <div className={styles.buildLeft}>
             <h2 className={styles.buildTitle}>
               {t('upcomingSection.title' as any)}
               <span className={styles.titleBlue}>{t('upcomingSection.titleBlue' as any)}</span>
             </h2>
-            
+
             <div className={styles.featureList}>
               <div className={styles.featureItem}>
                 <h3>{t('upcomingSection.features.smartImport.title' as any)}</h3>
                 <p>{t('upcomingSection.features.smartImport.description' as any)}</p>
               </div>
-              
+
               <div className={styles.featureItem}>
                 <h3>{t('upcomingSection.features.analytics.title' as any)}</h3>
                 <p>{t('upcomingSection.features.analytics.description' as any)}</p>
               </div>
-              
+
               <div className={styles.featureItem}>
                 <h3>{t('upcomingSection.features.aiCreation.title' as any)}</h3>
                 <p>{t('upcomingSection.features.aiCreation.description' as any)}</p>
               </div>
-              
+
               <div className={styles.featureItem}>
                 <h3>{t('upcomingSection.features.marketplace.title' as any)}</h3>
                 <p>{t('upcomingSection.features.marketplace.description' as any)}</p>
               </div>
             </div>
           </div>
-          
+
           <div className={styles.buildRight}>
             <div className={styles.imageCarousel}>
               <div className={styles.carouselContainer}>
                                  <div className={`${styles.carouselSlide} ${styles.active}`}>
-                   <video 
+                   <video
                      src={'https://aitoearn.s3.ap-southeast-1.amazonaws.com/production/temp/uploads/890044ad-c3a3-4a4c-8981-0eb72abff538.mp4'}
                      controls
                      className={styles.desktopCarouselImage}
@@ -1821,7 +1821,7 @@ function UpcomingFeaturesSection() {
 import { QRCode } from 'react-qrcode-logo';
 function DownloadSection() {
   const { t } = useTransClient('home');
-  
+
   return (
     <section className={styles.downloadSection} id="download">
       <div className={styles.downloadContainer}>
@@ -1831,11 +1831,11 @@ function DownloadSection() {
               {t('downloadSection.title')}<br />
               <span className={styles.titleBlue}>{t('downloadSection.titleBlue')}</span>
             </h2>
-            
+
             <p className={styles.downloadDescription}>
               {t('downloadSection.description')}
             </p>
-            
+
             <div className={styles.downloadButtons}>
               <a href={MAIN_APP_DOWNLOAD_URL} className={styles.downloadBtn} target="_blank" rel="noopener noreferrer">
                 <div className={styles.downloadBtnContent}>
@@ -1857,7 +1857,7 @@ function DownloadSection() {
               </a>
             </div>
           </div>
-          
+
           <div className={styles.downloadRight}>
             <div className={styles.phoneContainer}>
 
@@ -1881,13 +1881,13 @@ function DownloadSection() {
                       <div className={styles.phoneBattery}></div>
                     </div>
                   </div>
-                  
+
                   <div className={styles.phoneContent}>
                     <div className={styles.phoneHeader}>
                       <h3>Create</h3>
                       <span className={styles.phoneCounter}>280</span>
                     </div>
-                    
+
                     <div className={styles.phoneVideoCard}>
                       <span className={styles.phoneVideoTitle}>Example video</span>
                       <div className={styles.phoneVideoPreview}>
@@ -1898,7 +1898,7 @@ function DownloadSection() {
                         <span>⌚ 15</span>
                       </div>
                     </div>
-                    
+
                     <div className={styles.phoneCreatePrompt}>
                       <div className={styles.phoneAddBtn}>+</div>
                       <span>What do you want to create?</span>
@@ -1906,8 +1906,8 @@ function DownloadSection() {
                   </div>
                 </div>
               </div>
-              
-              
+
+
             </div>
           </div>
         </div>
@@ -1921,7 +1921,7 @@ function DownloadSection() {
 // Enterprise 区块
 function EnterpriseSection() {
   const { t } = useTransClient('home');
-  
+
   return (
     <section className={styles.enterpriseSection}>
       <div className={styles.enterpriseContainer}>
@@ -1929,12 +1929,12 @@ function EnterpriseSection() {
           <div className={styles.badgeIcon}></div>
           <span>{t('enterpriseSection.badge')}</span>
         </div>
-        
+
         <h2 className={styles.enterpriseTitle}>
           {t('enterpriseSection.title')}<br />
           <span className={styles.titleBlue}>{t('enterpriseSection.titleBlue')}</span>
         </h2>
-        
+
         <p className={styles.enterpriseSubtitle}>
           {t('enterpriseSection.subtitle')}
         </p>
@@ -1946,7 +1946,7 @@ function EnterpriseSection() {
 // 数据统计区
 function StatsSection() {
   const { t } = useTransClient('home');
-  
+
   return (
     <section className={styles.statsSection}>
       <div className={styles.statsContainer}>
@@ -1968,7 +1968,7 @@ function StatsSection() {
             <div className={styles.statLabel}>{t('statsSection.stats.content.label')}</div>
           </div>
         </div>
-        
+
         <div className={styles.testimonialCard}>
           <div className={styles.testimonialContent}>
             <p>"{t('statsSection.testimonial.quote')}"</p>
@@ -1978,7 +1978,7 @@ function StatsSection() {
             </div>
           </div>
         </div>
-        
+
         <div className={styles.caseStudies}>
           <div className={styles.caseStudy}>
             <div className={styles.caseTitle}>{t('statsSection.caseStudies.timeSaved.title')}</div>
@@ -1997,7 +1997,7 @@ function StatsSection() {
 function CommunitySection() {
   const { t } = useTransClient('home');
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
-  
+
   return (
     <section className={styles.communitySection}>
       <div className={styles.communityContainer}>
@@ -2005,19 +2005,19 @@ function CommunitySection() {
           <div className={styles.badgeIcon}></div>
           <span>{t('communitySection.badge')}</span>
         </div>
-        
+
         <h2 className={styles.communityTitle}>
           {t('communitySection.title')}<br />
           <span className={styles.titleBlue}>{t('communitySection.titleBlue')}</span>
         </h2>
-        
+
         <p className={styles.communitySubtitle}>
           {t('communitySection.subtitle')}
         </p>
-        
+
         <div className={styles.communityButtons}>
           <div className={styles.buttonWrapper}>
-            <button 
+            <button
               className={styles.githubBtn}
               onMouseEnter={() => setHoveredButton('wechat')}
               onMouseLeave={() => setHoveredButton(null)}
@@ -2034,9 +2034,9 @@ function CommunitySection() {
               </div>
             )}
           </div>
-          
+
           <div className={styles.buttonWrapper}>
-            <button 
+            <button
               className={styles.discordBtn}
               onMouseEnter={() => setHoveredButton('community')}
               onMouseLeave={() => setHoveredButton(null)}
@@ -2054,7 +2054,7 @@ function CommunitySection() {
             )}
           </div>
         </div>
-        
+
         <div className={styles.communityStats}>
           <div className={styles.communityStat}>
             <div className={styles.statNumber}>{t('communitySection.stats.downloads.number')}</div>
@@ -2069,7 +2069,7 @@ function CommunitySection() {
             <div className={styles.statLabel}>{t('communitySection.stats.creators.label')}</div>
           </div>
         </div>
-        
+
         <div className={styles.tweets}>
           {/* 用户分享卡片区域 */}
         </div>
@@ -2092,7 +2092,7 @@ function Footer() {
     IMAGE_URLS.hotspot3,
     IMAGE_URLS.hotspot4,
   ];
-  
+
   useEffect(() => {
     if (isHovered) {
       intervalRef.current = setInterval(() => {
@@ -2105,7 +2105,7 @@ function Footer() {
       }
       setCurrentImageIndex(0);
     }
-    
+
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -2128,7 +2128,7 @@ function Footer() {
               <a href="#support">{t('footer.resources.links.support')}</a>
               <a href="#roadmap">{t('footer.resources.links.roadmap')}</a>
             </div> */}
-            
+
             <div className={styles.footerColumn}>
               <h4>{t('footer.company.title')}</h4>
               <a onClick={() => {
@@ -2142,12 +2142,12 @@ function Footer() {
               }}>{t('footer.company.links.data')}</a>
             </div>
           </div>
-          
+
           <div className={styles.footerInfo}>
             <div className={styles.footerText}>
               {t('footer.description')}
             </div>
-            
+
             {/* <div className={styles.socialLinks}>
               <a href="#github">{t('footer.social.github')}</a>
               <a href="#discord">{t('footer.social.discord')}</a>
@@ -2157,16 +2157,16 @@ function Footer() {
             </div> */}
           </div>
         </div>
-        
+
         {/* 下半部分：imagine if */}
         <div className={styles.footerBottom}>
-          <div 
+          <div
             className={styles.bigText}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            {t('footer.bigText')} 
-            <span 
+            {t('footer.bigText')}
+            <span
               className={styles.ifText}
               style={{
                 marginLeft: '80px',
@@ -2182,20 +2182,20 @@ function Footer() {
               Earn
             </span>
           </div>
-          
+
           <div className={styles.footerCopyright}>
             <div className={styles.copyright}>{t('footer.copyright')}</div>
             <div className={styles.tagline}>{t('footer.tagline')}</div>
           </div>
-          
+
           {/* <div className={styles.dataDeletionDoc}>
             <h1>{t('footer.dataDeletion.title')}</h1>
-            
+
             <p><strong>Last Updated:</strong> 2025.6.27</p>
-            
+
             <h2>For Pre-Launch Users:</h2>
             <p>{t('footer.dataDeletion.prelaunch')}</p>
-            
+
             <h2>{t('footer.dataDeletion.standardTitle')}</h2>
             <ol>
                 <li>{t('footer.dataDeletion.standardSteps.0')}</li>
@@ -2203,7 +2203,7 @@ function Footer() {
                 <li>{t('footer.dataDeletion.standardSteps.2')}</li>
                 <li>{t('footer.dataDeletion.standardSteps.3')}</li>
             </ol>
-            
+
             <h2>{t('footer.dataDeletion.contactTitle')}</h2>
             <p>{t('footer.dataDeletion.contactEmail')}</p>
           </div> */}
