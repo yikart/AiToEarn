@@ -1,0 +1,28 @@
+{
+  "title": "Engagement",
+  "columns": {
+    "postId": "Post ID",
+    "platform": "Platform",
+    "title": "Title",
+    "mediaType": "Media Type",
+    "publishTime": "Publish Time",
+    "viewCount": "Views",
+    "likeCount": "Likes",
+    "commentCount": "Comments",
+    "shareCount": "Shares",
+    "clickCount": "Clicks",
+    "impressionCount": "Impressions",
+    "favoriteCount": "Favorites",
+    "permaLink": "Link",
+    "open": "Open"
+  },
+  "placeholders": {
+    "uid": "Enter account UID"
+  },
+  "actions": {
+    "search": "Search",
+    "reset": "Reset"
+  }
+}
+
+

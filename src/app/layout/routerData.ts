@@ -43,6 +43,11 @@ export const routerData: IRouterDataItem[] = [
     path: "/tasks",
   },
   {
+    name: "互动数据",
+    translationKey: "interactive",
+    path: "/interactive",
+  },
+  {
     name: "数据统计",
     translationKey: "dataStatistics",
     path: "/dataStatistics",
