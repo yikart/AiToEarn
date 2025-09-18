@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "@yikart/multilogin": "^0.0.3",
     "axios": "*",
     "commander": "^14.0.0",
     "playwright": "^1.40.0"

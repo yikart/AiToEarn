@@ -55,14 +55,16 @@ export class MultiloginClient {
   private email: string
   private password: string
   private isRefreshing = false
-  private refreshPromise?: Promise<void>
+  private refreshPromise?: Promise<any>
   private onTokenRefresh?: (token: string) => void | Promise<void>
+  private useAutomationTokenRefresh: boolean
 
   constructor(config: MultiloginClientConfig) {
     this.email = config.email
     this.password = config.password
     this.token = config.token
     this.onTokenRefresh = config.onTokenRefresh
+    this.useAutomationTokenRefresh = config.useAutomationTokenRefresh ?? true
 
     // 创建 Profile API 的 HTTP 客户端
     this.httpClient = this.createHttpClient(
@@ -134,19 +136,28 @@ export class MultiloginClient {
   }
 
   /**
-   * 刷新 automation token
+   * 刷新自动化令牌
+   * 根据配置决定是否执行完整的刷新流程
    */
-  async refreshAutomationToken(): Promise<void> {
+  async refreshAutomationToken(): Promise<string> {
+    if (!this.useAutomationTokenRefresh) {
+      const token = await this.signIn({
+        email: this.email,
+        password: this.password,
+      })
+      await this.setToken(token.data.token)
+      return token.data.token
+    }
+
     await this.signIn({
       email: this.email,
       password: this.password,
     })
 
-    // 获取 automation token
-    const automationTokenResponse: AxiosResponse<AutomationTokenResponse> = await this.httpClient.get(
-      '/workspace/automation_token?expiration_period=no_exp',
-    )
-    await this.setToken(automationTokenResponse.data.data.token)
+    const automationToken = await this.getAutomationToken('no_exp')
+    const token = automationToken.data.token
+    await this.setToken(token)
+    return token
   }
 
   /**

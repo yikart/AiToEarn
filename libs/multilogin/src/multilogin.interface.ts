@@ -594,4 +594,5 @@ export interface MultiloginClientConfig {
   password: string
   token?: string
   onTokenRefresh?: (token: string) => void | Promise<void>
+  useAutomationTokenRefresh?: boolean
 }

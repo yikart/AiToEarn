@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 import { readFileSync } from 'node:fs'
+import { MultiloginClient, MultiloginError } from '@yikart/multilogin'
 import { Command } from 'commander'
 import { chromium } from 'playwright'
 import { BrowserTaskConfig, Cookie } from './interfaces'
-import { MultiloginClient, MultiloginError } from './multilogin'
 
 const program = new Command()
 
@@ -50,7 +50,8 @@ async function main() {
     email: config.multilogin.email,
     password: config.multilogin.password,
     token: config.multilogin.token,
-    timeout: 6000000,
+    timeout: 600000,
+    useAutomationTokenRefresh: false,
   })
 
   console.log(`🌐 Starting browser profile: ${config.profileId}`)
