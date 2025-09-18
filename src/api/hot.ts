@@ -259,6 +259,7 @@ export const platformApi = {
     page?: number;
     pageSize?: number;
   }) {
+    console.log(params);
     return request<Pagination<Topic>>({
       url: `hotdata/topics`,
       method: "GET",

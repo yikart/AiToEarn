@@ -61,6 +61,7 @@ export const HotContentBaseInfo = ({
   nickname,
   fansCount,
   publishTime,
+  onClick,
 }: {
   cover: string;
   title: string;
@@ -68,6 +69,7 @@ export const HotContentBaseInfo = ({
   nickname: string;
   fansCount?: number;
   publishTime: string;
+  onClick?: () => void;
 }) => {
   return (
     <div className={styles.baseInfo}>
@@ -81,7 +83,12 @@ export const HotContentBaseInfo = ({
           <div className="baseInfo-right-noTitle">暂无标题</div>
         )}
 
-        <div className="baseInfo-right-author">
+        <div
+          className="baseInfo-right-author"
+          onClick={() => {
+            if (onClick) onClick();
+          }}
+        >
           <Avatar
             className="baseInfo-right-author-avatar"
             src={avatar}

@@ -1,3 +1,13 @@
 .hotFeatures {
-
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  :global {
+    .ant-spin-nested-loading, .hotFeatures-content, .ant-spin-container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+  }
 }

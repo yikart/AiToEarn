@@ -57,10 +57,6 @@
       }
     }
 
-    .infinite-scroll-component {
-      overflow: visible !important;
-    }
-
     .ant-spin-container, .ant-spin-nested-loading {
       height: 100%;
       min-height: 0;
@@ -90,8 +86,8 @@
   display: flex;
   & > img {
     object-fit: cover;
-    width: 60px;
-    height: 80px;
+    width: 74px;
+    height: 86px;
     flex-shrink: 0;
     border-radius: 4px;
     margin-right: 15px;
@@ -125,6 +121,12 @@
         &-pubTime {
           color: var(--grayColor7);
         }
+
+        &:hover {
+          .baseInfo-right-author-name {
+            color: var(--colorPrimary5);
+          }
+        }
       }
     }
 
@@ -148,6 +150,10 @@
   }
 
   :global {
+    .infinite-scroll-component {
+      overflow: visible !important;
+    }
+
     .ant-table-thead {
       position: sticky;
       top: 0;

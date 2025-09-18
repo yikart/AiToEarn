@@ -13,7 +13,11 @@ export interface Topic {
   likeCount: number;
   watchingCount: number;
   readCount: number;
-  publishTime?: Date;
+  publishTime?: string;
+  fans: number;
+  cover: string;
+  avatar: string;
   createTime: Date;
+  authorUrl: string;
   updateTime: Date;
 }

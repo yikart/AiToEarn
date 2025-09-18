@@ -1,8 +1,23 @@
-import { ForwardedRef, forwardRef, memo, useEffect, useRef, useState } from "react";
+import {
+  ForwardedRef,
+  forwardRef,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import styles from "./hotFeatures.module.scss";
 import HotContentLabel from "@/app/[lng]/hotContent/components/HotContentLabel";
 import { useHotContent } from "@/app/[lng]/hotContent/useHotContent";
 import { useShallow } from "zustand/react/shallow";
+import { Skeleton, Spin, Table, type TableProps } from "antd";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { Topic } from "@/api/types/topic";
+import { platformApi } from "@/api/hot";
+import hotContentStyles from "../HotContent/hotContent.module.scss";
+import { HotContentBaseInfo } from "@/app/[lng]/hotContent/components/HotContent/hotContentCommonWidget";
 
 export interface IHotFeaturesRef {}
 
@@ -19,15 +34,91 @@ const HotFeatures = memo(
     );
     const allDates = useRef(["近3天", "近7天", "近15天", "近30天"]);
     // 当前选择的日期范围
-    const [currDate, setCurrDate] = useState(allDates.current[2]);
+    const [currDate, setCurrDate] = useState(allDates.current[1]);
     // 当前选择的平台
     const [currPlat, setCurrPlat] = useState("");
     // 当前选择的分类
     const [labelValue, setLabelValue] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [total, setTotal] = useState(0);
+    const page = useRef(0);
+    const [isReset, setIsReset] = useState(true);
+    const [dataSource, setDataSource] = useState<Topic[]>([]);
 
     useEffect(() => {
       setCurrPlat(hotContentPlatformList[0]?.name || "");
     }, [hotContentPlatformList]);
+
+    const columns = useMemo(() => {
+      const columns: TableProps<Topic>["columns"] = [
+        {
+          title: "排名",
+          width: 60,
+          render: (text, data, ind) => (
+            <>
+              {ind <= 2 ? (
+                <div className={hotContentStyles.rankingTopthree}>
+                  {ind + 1}
+                </div>
+              ) : (
+                <p style={{ width: "30px", textAlign: "center" }}>{ind + 1}</p>
+              )}
+            </>
+          ),
+        },
+        {
+          title: "基本信息",
+          dataIndex: "baseInfo",
+          render: (text, data) => {
+            return (
+              <HotContentBaseInfo
+                title={data.title}
+                avatar={data.avatar!}
+                publishTime={data.publishTime!}
+                fansCount={data.fans}
+                nickname={data.author!}
+                cover={data.cover}
+                onClick={() => {
+                  window.open(data.authorUrl, "_blank");
+                }}
+              />
+            );
+          },
+        },
+      ];
+
+      return columns;
+    }, [dataSource]);
+
+    // 获取数据
+    const getTableData = useCallback(async () => {
+      if (loading) return;
+
+      const res = await platformApi.getAllTopics({
+        page: 1,
+        pageSize: 20,
+        platformId: hotContentPlatformList.find((v) => v.name === currPlat)?.id,
+        timeType: currDate,
+        msgType: labelValue === "" ? undefined : labelValue,
+      });
+
+      setTotal(res?.data.meta.totalItems || 0);
+      page.current = page.current + 1;
+      setDataSource((prevState) => {
+        return [...prevState, ...(res?.data.items || [])];
+      });
+    }, [currDate, currPlat, hotContentPlatformList, labelValue, loading]);
+
+    // 重置数据
+    useEffect(() => {
+      if (currPlat && isReset) {
+        page.current = 1;
+        setDataSource([]);
+        setLoading(true);
+        getTableData().then(() => setLoading(false));
+        setIsReset(false);
+      }
+    }, [isReset, currPlat, currDate, labelValue]);
 
     return (
       <div className={styles.hotFeatures}>
@@ -39,7 +130,8 @@ const HotFeatures = memo(
           )}
           value={currPlat}
           onChange={(value) => {
-            setCurrDate(value);
+            setIsReset(true);
+            setCurrPlat(value);
           }}
         />
         <HotContentLabel
@@ -59,15 +151,50 @@ const HotFeatures = memo(
             } else {
               setLabelValue(value);
             }
+            setIsReset(true);
           }}
         />
         <HotContentLabel
           labels={allDates.current}
           value={currDate}
           onChange={(value) => {
+            setIsReset(true);
             setCurrDate(value);
           }}
         />
+
+        <Spin spinning={loading}>
+          <div
+            className={`${hotContentStyles["hotContent-table"]}`}
+            id="hotContent-table"
+          >
+            <InfiniteScroll
+              dataLength={dataSource.length}
+              next={getTableData}
+              hasMore={dataSource.length < total}
+              loader={
+                !loading ? <Skeleton active paragraph={{ rows: 1 }} /> : <></>
+              }
+              endMessage={<></>}
+              scrollableTarget="hotContent-table"
+            >
+              <Table
+                dataSource={dataSource}
+                rowKey={(record) => record._id}
+                columns={columns}
+                pagination={false}
+                onRow={(record) => {
+                  return {
+                    onClick: () => {
+                      if (!record.url) return;
+                      window.open(record.url, "_blank");
+                    },
+                  };
+                }}
+              />
+            </InfiniteScroll>
+          </div>
+        </Spin>
       </div>
     );
   }),
