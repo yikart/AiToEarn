@@ -37,7 +37,9 @@ export default function InteractivePage() {
   const [posts, setPosts] = useState<EngagementPostItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({ current: 1, pageSize: 20, total: 0 });
+  const [hasMore, setHasMore] = useState(true);
   const [platform, setPlatform] = useState<EngagementPlatform | undefined>(undefined);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
   // 评论状态
   const [commentVisible, setCommentVisible] = useState(false);
   const [commentLoading, setCommentLoading] = useState(false);
@@ -63,8 +65,12 @@ export default function InteractivePage() {
         pageSize
       });
       if (res?.data) {
-        setPosts(res.data.posts || []);
-        setPagination({ current: page, pageSize, total: res.data.total || 0 });
+        const list = res.data.posts || [];
+        setPosts(prev => page === 1 ? list : [...prev, ...list]);
+        const total = res.data.total || 0;
+        setPagination({ current: page, pageSize, total });
+        const nextHasMore = typeof (res.data as any).hasMore === 'boolean' ? (res.data as any).hasMore : (page * pageSize) < total;
+        setHasMore(nextHasMore);
       }
     } finally {
       setLoading(false);
@@ -74,10 +80,13 @@ export default function InteractivePage() {
   // 账户或平台变化时刷新
   useEffect(() => {
     if (accountActive?.uid && platform) {
+      setPosts([]);
+      setHasMore(true);
       fetchEngagementPosts(1, pagination.pageSize);
     } else {
       setPosts([]);
       setPagination((prev) => ({ ...prev, total: 0, current: 1 }));
+      setHasMore(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountActive?.uid, platform]);
@@ -258,6 +267,20 @@ export default function InteractivePage() {
     accountInit();
   }, [token, router]);
 
+  // 底部自动加载更多（IntersectionObserver）
+  useEffect(() => {
+    if (!loadMoreRef.current) return;
+    const el = loadMoreRef.current;
+    const io = new IntersectionObserver((entries) => {
+      const first = entries[0];
+      if (first.isIntersecting && hasMore && !loading) {
+        fetchEngagementPosts(pagination.current + 1, pagination.pageSize);
+      }
+    }, { rootMargin: '200px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [loadMoreRef.current, hasMore, loading, pagination.current, pagination.pageSize]);
+
   return (
     <NoSSR>
     <div className={styles.container} style={{ display: 'flex', gap: 16 }}>
@@ -286,8 +309,19 @@ export default function InteractivePage() {
           ))}
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
-          <Button loading={loading} onClick={() => fetchEngagementPosts(pagination.current + 1, pagination.pageSize)} disabled={loading || posts.length >= pagination.total}>加载更多</Button>
+          {hasMore ? (
+            <Button 
+              loading={loading} 
+              onClick={() => fetchEngagementPosts(pagination.current + 1, pagination.pageSize)} 
+              disabled={loading}
+            >
+              加载更多
+            </Button>
+          ) : (
+            <span style={{ color: '#999' }}>没有更多作品</span>
+          )}
         </div>
+        <div ref={loadMoreRef} style={{ height: 1 }} />
       </div>
 
       {/* 评论弹窗 */}
