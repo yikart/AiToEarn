@@ -394,6 +394,14 @@ export default function InteractivePage() {
             );
           }}
         />
+        {commentsCursor?.after && (
+          <div
+            style={{ textAlign: 'center', marginTop: 10, color: '#1677ff', cursor: 'pointer' }}
+            onClick={() => !commentLoading && loadCommentsV2(commentPost!.postId, undefined, commentsCursor?.after)}
+          >
+            {commentLoading ? '加载中…' : '加载更多评论'}
+          </div>
+        )}
         <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
           <Input.TextArea
             ref={replyInputRef}
@@ -408,9 +416,6 @@ export default function InteractivePage() {
           >
             发送
           </Button>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
-          <Button onClick={() => loadCommentsV2(commentPost!.postId, undefined, commentsCursor?.after)} loading={commentLoading} disabled={!commentsCursor?.after}>加载更多评论</Button>
         </div>
       </Modal>
       </div>
