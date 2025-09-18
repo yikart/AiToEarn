@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Card, Button, message, Tag, Space, Select, Modal, Input, List, Avatar } from "antd";
-import { DollarOutlined, HistoryOutlined, WalletOutlined } from "@ant-design/icons";
+import { DollarOutlined, HistoryOutlined, WalletOutlined, CommentOutlined, LikeOutlined, EyeOutlined } from "@ant-design/icons";
 import { useParams, useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user";
 import { apiGetEngagementPosts, apiGetEngagementComments, apiReplyEngagementComment, apiGetPostComments, apiPublishPostComment, apiPublishCommentReply, apiGetCommentReplies } from "@/api/engagement";
@@ -135,14 +135,21 @@ export default function InteractivePage() {
         </a>
         <div className={styles.postMeta}>
           <div className={styles.postTitle} title={item.title}>{item.title || '-'}</div>
-          <div className={styles.statsRow}>
-            <span>👍 {item.likeCount}</span>
-            <span>💬 {item.commentCount}</span>
-            <span>👁️ {item.viewCount}</span>
-          </div>
-          <div className={styles.actionsRow}>
+          {item.content && (
+            <div className={styles.postContent} title={item.content}>
+              {item.content}
+            </div>
+          )}
+          <div className={styles.postFooter}>
+            <div className={styles.statsRow}>
+              <span><LikeOutlined style={{ marginRight: 6 }} />{item.likeCount}</span>
+              <span><CommentOutlined style={{ marginRight: 6 }} />{item.commentCount}</span>
+              <span><EyeOutlined style={{ marginRight: 6 }} />{item.viewCount}</span>
+            </div>
             <Space size={8}>
-              <Button size="small" onClick={() => openComments(item)}>评论</Button>
+              <Button className={styles.commentBtn} type="text" onClick={() => openComments(item)}>
+                <CommentOutlined style={{ fontSize: 22 }} />
+              </Button>
             </Space>
           </div>
         </div>
