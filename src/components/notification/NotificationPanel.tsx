@@ -236,7 +236,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
   // 接受任务
   const handleAcceptTask = async (account?: SocialAccount) => {
     if (!selectedTask) return;
-    
+
     // 显示进度弹窗
     setTaskProgressVisible(true);
     setTaskProgress({
@@ -1133,6 +1133,9 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                              return null;
                            })()}
                            
+                          {
+
+                            selectedTask.opportunityStatus == 'pending' && (
                            <Button 
                              type="primary" 
                              onClick={() => handleTaskAction(selectedTask)}
@@ -1140,6 +1143,8 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                            >
                              {t('acceptTask')}
                            </Button>
+                          )
+                          } 
                          </div>
                        )}
                      </div>

@@ -321,9 +321,7 @@ const PublishDialog = memo(
               });
             }
           }
-          console.log(draft);
 
-          console.log(nextParams);
           if (step === 1 && expandedPubItem) {
             setOnePubParams(nextParams, expandedPubItem.account.id);
           } else {
