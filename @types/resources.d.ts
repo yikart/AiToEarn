@@ -742,7 +742,9 @@ interface Resources {
     "last3days": "近3天",
     "last7days": "近7天",
     "last15days": "近15天",
-    "last30days": "近30天"
+    "last30days": "近30天",
+    "backToAll": "返回全部",
+    "last90days": "近90天"
   },
   "income": {
     "title": "我的收入",

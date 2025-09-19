@@ -54,5 +54,7 @@
   "last3days": "Last 3 days",
   "last7days": "Last 7 days",
   "last15days": "Last 15 days",
-  "last30days": "Last 30 days"
+  "last30days": "Last 30 days",
+  "backToAll": "Back to All",
+  "last90days": "Last 90 days"
 }

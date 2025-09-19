@@ -44,7 +44,11 @@ const HotTitle = memo(
     const labelAll = useRef<string>(t("all"));
     // 当前选中的标签
     const [labelValue, setLabelValue] = useState(labelAll.current);
-    const allDates = useRef(["近7天", "近30天", "近90天"]);
+    const allDates = useRef<string[]>([
+      t("last7days"),
+      t("last30days"),
+      t("last90days"),
+    ]);
     // 当前选择的日期范围
     const [currDate, setCurrDate] = useState(allDates.current[0]);
     const [loading, setLoading] = useState(false);
@@ -73,41 +77,59 @@ const HotTitle = memo(
       };
     }, [labelData, rankingData, twoMenuKey, currentRankCategory]);
 
+    const dateValue = useMemo(() => {
+      return currDate === t("last7days")
+        ? "近7天"
+        : currDate === t("last30days")
+          ? "近30天"
+          : currDate === t("last90days")
+            ? "近90天"
+            : "";
+    }, [currDate]);
+
     // 获取所有爆款数据
     const getAllData = useCallback(async () => {
+      if (labelValue !== labelAll.current) return;
+
       setLoading(true);
       const res = await platformApi.findTopByPlatformAndCategories(
         selectedLabelInfo.platId,
-        currDate,
+        dateValue,
       );
       setLoading(false);
       setAllHotTitleData(res?.data);
-    }, [currDate, selectedLabelInfo.platId]);
+    }, [dateValue, selectedLabelInfo.platId]);
 
     // 获取爆款数据详情
     const getDetailData = useCallback(async () => {
       if (labelValue === labelAll.current) return;
+
       setLoading(true);
       const res = await platformApi.findByPlatformAndCategory(
         selectedLabelInfo.platId,
         {
-          category: labelValue === labelAll.current ? "全部" : labelValue,
+          category: labelValue === labelAll.current ? t("all") : labelValue,
           page: 1,
-          timeType: currDate,
+          timeType: dateValue,
           pageSize: 50,
         },
       );
       setHotTitleData(res?.data.items || []);
       setLoading(false);
-    }, [labelValue, currDate, selectedLabelInfo.ranking.id]);
+    }, [
+      labelValue,
+      dateValue,
+      selectedLabelInfo.ranking.id,
+      selectedLabelInfo.platId,
+    ]);
 
     useEffect(() => {
       getAllData();
-    }, [twoMenuKey]);
+    }, [twoMenuKey, dateValue]);
 
     useEffect(() => {
       getDetailData();
-    }, [labelValue, currDate]);
+    }, [labelValue, dateValue]);
 
     return (
       <div className={styles.hotTitle}>
@@ -145,7 +167,7 @@ const HotTitle = memo(
                   onBottomLinkClick={() => {
                     setLabelValue(v.category);
                   }}
-                  bottomLinkText="查看更多"
+                  bottomLinkText={t("viewMore")}
                 />
               );
             })}
@@ -166,7 +188,7 @@ const HotTitle = memo(
                       setLabelValue(labelAll.current);
                     }}
                   >
-                    返回全部
+                    {t("backToAll")}
                   </a>
                 </>
               }
@@ -179,7 +201,7 @@ const HotTitle = memo(
               onBottomLinkClick={() => {
                 setLabelValue(labelAll.current);
               }}
-              bottomLinkText="收起"
+              bottomLinkText={t("collapse")}
             />
           </div>
         </Spin>
