@@ -55,6 +55,19 @@ module.exports = {
       }
     }
 
+    // 添加额外的静态页面
+    const extraRoute = [
+      "https://blog.aitoearn.ai/",
+      "https://docs.aitoearn.ai/",
+    ];
+    for (const url of extraRoute) {
+      result.push({
+        loc: url,
+        changefreq: "daily",
+        priority: 0.7,
+      });
+    }
+
     return result;
   },
 };
