@@ -96,6 +96,7 @@ export interface RankingContent {
   title: string;
   cover: string;
   url: string;
+  photoId: string;
   rankingPosition: number;
   category: string;
   publishTime: string;
@@ -395,6 +396,18 @@ export const platformApi = {
         ...data,
         pageSize: 100,
         area: +data.area,
+      },
+    });
+  },
+
+  // 获取热点数据 公众号 链接
+  getDetailUrl(photoId: string) {
+    return request<string>({
+      url: `hotdata/contents/query/getDetailUrl`,
+      method: "POST",
+      data: {
+        platform: 0,
+        photoId,
       },
     });
   },
