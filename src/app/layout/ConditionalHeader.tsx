@@ -8,12 +8,17 @@ import { removeLocalePrefix } from "@/app/layout/layout.utils";
 
 export default function ConditionalHeader() {
   const pathname = usePathname();
+  const currentPath = removeLocalePrefix(pathname).replace(/\/+$/, "") || "/";
 
-  if (
-    homeHeaderRouterData.value.some(
-      (v) => v.href === removeLocalePrefix(pathname),
-    )
-  ) {
+  const isActive = (href: string) => {
+    if (!href.startsWith("/")) return false;
+    const normalizedHref = href.replace(/\/+$/, "") || "/";
+    if (normalizedHref === "/") return currentPath === "/";
+    if (currentPath === normalizedHref) return true;
+    return currentPath.startsWith(normalizedHref + "/");
+  };
+
+  if (homeHeaderRouterData.value.some((v) => isActive(v.href))) {
     return <HomeHeader />;
   }
 

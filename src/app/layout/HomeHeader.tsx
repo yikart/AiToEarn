@@ -21,6 +21,7 @@ const HomeHeader = memo(
     const { t } = useTransClient("home");
     const router = useRouter();
     const userStore = useUserStore();
+    const currentPath = removeLocalePrefix(pathname).replace(/\/+$/, "") || "/";
 
     const toggleLanguage = () => {
       const newLng = userStore.lang === "zh-CN" ? "en" : "zh-CN";
@@ -28,6 +29,14 @@ const HomeHeader = memo(
       router.push(
         `/${newLng}${location.pathname.replace(`/${userStore.lang}`, "")}`,
       );
+    };
+
+    const isActive = (href: string) => {
+      if (!href.startsWith("/")) return false;
+      const normalizedHref = href.replace(/\/+$/, "") || "/";
+      if (normalizedHref === "/") return currentPath === "/";
+      if (currentPath === normalizedHref) return true;
+      return currentPath.startsWith(normalizedHref + "/");
     };
 
     return (
@@ -46,7 +55,7 @@ const HomeHeader = memo(
               return (
                 <Link
                   key={v.title}
-                  className={`${styles.navLink} ${removeLocalePrefix(pathname) === v.href ? styles.active : ""}`}
+                  className={`${styles.navLink} ${isActive(v.href) ? styles.active : ""}`}
                   href={v.href}
                   target="_blank"
                   rel="noopener noreferrer"
