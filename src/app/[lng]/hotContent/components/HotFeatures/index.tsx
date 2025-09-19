@@ -21,6 +21,7 @@ import {
   HotContentBaseInfo,
   SingleNumberCall,
 } from "@/app/[lng]/hotContent/components/HotContent/hotContentCommonWidget";
+import { useTransClient } from "@/app/i18n/client"; // 新增
 
 export interface IHotFeaturesRef {}
 
@@ -36,7 +37,13 @@ const HotFeatures = memo(
         twoMenuKey: state.twoMenuKey,
       })),
     );
-    const allDates = useRef(["近3天", "近7天", "近15天", "近30天"]);
+    const { t } = useTransClient("hot-content"); // 新增
+    const allDates = useRef<string[]>([
+      t("last3days"),
+      t("last7days"),
+      t("last15days"),
+      t("last30days"),
+    ]);
     // 当前选择的日期范围
     const [currDate, setCurrDate] = useState(allDates.current[1]);
     // 当前选择的平台
@@ -63,7 +70,7 @@ const HotFeatures = memo(
 
       const columns: TableProps<Topic>["columns"] = [
         {
-          title: "排名",
+          title: t("rank"),
           width: 60,
           render: (text, data, ind) => (
             <>
@@ -78,7 +85,7 @@ const HotFeatures = memo(
           ),
         },
         {
-          title: "基本信息",
+          title: t("baseInfo"),
           dataIndex: "baseInfo",
           render: (text, data) => {
             return (
@@ -97,7 +104,7 @@ const HotFeatures = memo(
           },
         },
         {
-          title: () => <p style={{ textAlign: "center" }}>作品分类</p>,
+          title: () => <p style={{ textAlign: "center" }}>{t("category")}</p>,
           dataIndex: "category",
           key: "category",
           width: 120,
@@ -114,7 +121,7 @@ const HotFeatures = memo(
         ...(dataSource[1]?.shareCount
           ? [
               {
-                ...callParamsColumnsCommon("分享数"),
+                ...callParamsColumnsCommon(t("shares")),
                 render: (text: any, data: Topic) => (
                   <SingleNumberCall total={data.shareCount} />
                 ),
@@ -124,7 +131,7 @@ const HotFeatures = memo(
         ...(dataSource[1]?.likeCount
           ? [
               {
-                ...callParamsColumnsCommon("点赞数"),
+                ...callParamsColumnsCommon(t("likes")),
                 render: (text: any, data: Topic) => (
                   <SingleNumberCall total={data.likeCount} />
                 ),
@@ -134,7 +141,7 @@ const HotFeatures = memo(
         ...(dataSource[1]?.commentCount
           ? [
               {
-                ...callParamsColumnsCommon("评论数"),
+                ...callParamsColumnsCommon(t("comments")),
                 render: (text: any, data: Topic) => (
                   <SingleNumberCall total={data.commentCount} />
                 ),
@@ -144,7 +151,7 @@ const HotFeatures = memo(
         ...(dataSource[1]?.collectCount
           ? [
               {
-                ...callParamsColumnsCommon("收藏数"),
+                ...callParamsColumnsCommon(t("collections")),
                 render: (text: any, data: Topic) => (
                   <SingleNumberCall
                     total={data.collectCount}
@@ -157,7 +164,7 @@ const HotFeatures = memo(
         ...(dataSource[1]?.readCount
           ? [
               {
-                ...callParamsColumnsCommon("阅读数"),
+                ...callParamsColumnsCommon(t("views")),
                 render: (text: any, data: Topic) => (
                   <SingleNumberCall total={data.readCount} highlight={true} />
                 ),
@@ -167,7 +174,7 @@ const HotFeatures = memo(
       ];
 
       return columns;
-    }, [dataSource]);
+    }, [dataSource, t]);
 
     // 获取数据
     const getTableData = useCallback(async () => {
@@ -177,7 +184,16 @@ const HotFeatures = memo(
         page: page.current,
         pageSize: 20,
         platformId: hotContentPlatformList.find((v) => v.name === currPlat)?.id,
-        timeType: currDate,
+        timeType:
+          currDate === t("last3days")
+            ? "近3天"
+            : currDate === t("last7days")
+              ? "近7天"
+              : currDate === t("last15days")
+                ? "近15天"
+                : currDate === t("last30days")
+                  ? "近30天"
+                  : "",
         msgType: twoMenuKey,
       });
       page.current = page.current + 1;

@@ -16,6 +16,7 @@ import HotContentLabel from "@/app/[lng]/hotContent/components/HotContentLabel";
 import { Spin } from "antd";
 import { ViralTitle } from "@/api/types/viralTitles";
 import { HotTitleItem } from "@/app/[lng]/hotContent/components/HotTitle/components/HotTitleCommons";
+import { useTransClient } from "@/app/i18n/client";
 
 export interface IHotTitleRef {}
 
@@ -39,7 +40,8 @@ const HotTitle = memo(
         setCurrentRankCategory: state.setCurrentRankCategory,
       })),
     );
-    const labelAll = useRef("全部");
+    const { t } = useTransClient("hot-content");
+    const labelAll = useRef<string>(t("all"));
     // 当前选中的标签
     const [labelValue, setLabelValue] = useState(labelAll.current);
     const allDates = useRef(["近7天", "近30天", "近90天"]);
@@ -89,7 +91,7 @@ const HotTitle = memo(
       const res = await platformApi.findByPlatformAndCategory(
         selectedLabelInfo.platId,
         {
-          category: labelValue,
+          category: labelValue === labelAll.current ? "全部" : labelValue,
           page: 1,
           timeType: currDate,
           pageSize: 50,

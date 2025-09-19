@@ -738,7 +738,11 @@ interface Resources {
     "shortDrama": "短剧",
     "cultureTourism": "文旅",
     "contentOverseas": "内容出海",
-    "hot": "热点"
+    "hot": "热点",
+    "last3days": "近3天",
+    "last7days": "近7天",
+    "last15days": "近15天",
+    "last30days": "近30天"
   },
   "income": {
     "title": "我的收入",
