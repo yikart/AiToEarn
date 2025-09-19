@@ -42,5 +42,13 @@
   "daily": "Daily",
   "sortRule": "Sort Rule",
   "sortRuleDesc": "Top 500 works by likes of the day are recommended",
-  "dataDescription": "Data Description"
+  "dataDescription": "Data Description",
+  "expand": "Expand",
+  "collapse": "Collapse",
+  "hotValue": "Hot Value",
+  "hotTrend": "Hot Trend",
+  "shortDrama": "Short Drama",
+  "cultureTourism": "Culture & Tourism",
+  "contentOverseas": "Content Overseas",
+  "hot": "Hot"
 }

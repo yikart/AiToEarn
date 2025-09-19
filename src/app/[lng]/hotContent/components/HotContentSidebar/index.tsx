@@ -11,6 +11,7 @@ import HotTitleSvg from "../../svgs/hotTitle.svg";
 import { HotType } from "@/app/[lng]/hotContent/hotContent.enum";
 import { useShallow } from "zustand/react/shallow";
 import { useHotContent } from "@/app/[lng]/hotContent/useHotContent";
+import { useTransClient } from "@/app/i18n/client";
 
 type MenuItem = GetProp<MenuProps, "items">[number];
 
@@ -44,13 +45,14 @@ const HotContentSidebar = memo(
           changeHotContentPlatform: state.changeHotContentPlatform,
         })),
       );
+      const { t } = useTransClient("hot-content");
 
       const items = useMemo(() => {
         const items: MenuItem[] = [
           {
             key: HotType.hotContent,
             icon: <Icon component={HotContentSvg} />,
-            label: <b>热门内容</b>,
+            label: <b>{t("hotContent")}</b>,
             children: hotContentPlatformList.map((platform) => ({
               key: `${HotType.hotContent}_${platform.id}`,
               label: platform.name,
@@ -65,12 +67,12 @@ const HotContentSidebar = memo(
           {
             key: HotType.hotEvent,
             icon: <Icon component={HotEventSvg} />,
-            label: <b>热点事件</b>,
+            label: <b>{t("hotEvents")}</b>,
           },
           {
             key: HotType.hotFeatures,
             icon: <Icon component={HotFeaturesSvg} />,
-            label: <b>热门专题</b>,
+            label: <b>{t("hotTopics")}</b>,
             children: [
               {
                 key: "AIGC",
@@ -78,22 +80,22 @@ const HotContentSidebar = memo(
               },
               {
                 key: "短剧",
-                label: "短剧",
+                label: t("shortDrama"),
               },
               {
                 key: "文旅",
-                label: "文旅",
+                label: t("cultureTourism"),
               },
               {
                 key: "内容出海",
-                label: "内容出海",
+                label: t("contentOverseas"),
               },
             ],
           },
           {
             key: HotType.hotTitle,
             icon: <Icon component={HotTitleSvg} />,
-            label: <b>爆款标题</b>,
+            label: <b>{t("viralTitles")}</b>,
             children: hotTitlePlatformList.map((platform) => ({
               key: `${HotType.hotTitle}_${platform.id}`,
               label: platform.name,
@@ -107,7 +109,7 @@ const HotContentSidebar = memo(
           },
         ];
         return items;
-      }, [hotContentPlatformList, hotTitlePlatformList]);
+      }, [hotContentPlatformList, hotTitlePlatformList, t]);
 
       useEffect(() => {
         init();

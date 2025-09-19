@@ -28,6 +28,7 @@ const HomeHeader = memo(
       router.push(
         `/${newLng}${location.pathname.replace(`/${userStore.lang}`, "")}`,
       );
+      location.reload();
     };
 
     return (

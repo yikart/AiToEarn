@@ -730,7 +730,15 @@ interface Resources {
     "daily": "按日",
     "sortRule": "排序规则",
     "sortRuleDesc": "统计当日点赞量前500名的作品推荐",
-    "dataDescription": "数据说明"
+    "dataDescription": "数据说明",
+    "expand": "展开",
+    "collapse": "收起",
+    "hotValue": "热度值",
+    "hotTrend": "热度趋势",
+    "shortDrama": "短剧",
+    "cultureTourism": "文旅",
+    "contentOverseas": "内容出海",
+    "hot": "热点"
   },
   "income": {
     "title": "我的收入",

@@ -8,6 +8,7 @@ import {
   CSSProperties,
 } from "react";
 import styles from "./hotContentLabel.module.scss";
+import { useTransClient } from "@/app/i18n/client";
 
 export interface IHotContentLabelRef {}
 
@@ -30,6 +31,7 @@ const HotContentLabel = memo(
       const [showToggle, setShowToggle] = useState(false);
       const [collapsedHeight, setCollapsedHeight] = useState(0);
       const [fullHeight, setFullHeight] = useState(0);
+      const { t } = useTransClient("hot-content");
 
       useLayoutEffect(() => {
         const ul = listRef.current;
@@ -83,7 +85,7 @@ const HotContentLabel = memo(
                 setExpanded((v) => !v);
               }}
             >
-              {expanded ? "收起" : "展开"}
+              {expanded ? t("collapse") : t("expand")}
             </a>
           )}
         </div>
