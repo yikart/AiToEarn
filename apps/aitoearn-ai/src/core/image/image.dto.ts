@@ -129,3 +129,19 @@ const userFireflyCardSchema = z.object({
 })
 
 export class UserFireflyCardDto extends createZodDto(userFireflyCardSchema) {}
+
+// 图片生成模型查询DTO
+const imageGenerationModelsQuerySchema = z.object({
+  userId: z.string().optional().describe('用户ID'),
+  userType: z.enum(UserType).optional().describe('用户类型'),
+})
+
+export class ImageGenerationModelsQueryDto extends createZodDto(imageGenerationModelsQuerySchema) {}
+
+// 图片编辑模型查询DTO
+const imageEditModelsQuerySchema = z.object({
+  userId: z.string().optional().describe('用户ID'),
+  userType: z.enum(UserType).optional().describe('用户类型'),
+})
+
+export class ImageEditModelsQueryDto extends createZodDto(imageEditModelsQuerySchema) {}

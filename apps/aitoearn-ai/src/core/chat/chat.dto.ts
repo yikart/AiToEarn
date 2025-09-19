@@ -53,3 +53,11 @@ const userChatCompletionDtoSchema = z.object({
 })
 
 export class UserChatCompletionDto extends createZodDto(userChatCompletionDtoSchema) {}
+
+// 聊天模型查询DTO
+const chatModelsQuerySchema = z.object({
+  userId: z.string().optional().describe('用户ID'),
+  userType: z.enum(UserType).optional().describe('用户类型'),
+})
+
+export class ChatModelsQueryDto extends createZodDto(chatModelsQuerySchema) {}

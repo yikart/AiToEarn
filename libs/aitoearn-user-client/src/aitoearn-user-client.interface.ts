@@ -17,6 +17,13 @@ export enum UserVipCycleType {
   EXPERIENCE = 3, // 体验
 }
 
+// 用户会员信息
+export class UserVipInfo {
+  cycleType: UserVipCycleType
+  expireTime: string
+  autoContinue: boolean
+}
+
 // 用户相关接口
 export interface User {
   id: string
@@ -33,6 +40,7 @@ export interface User {
   status?: UserStatus
   gender?: GenderEnum
   desc?: string
+  vipInfo?: UserVipInfo
 }
 
 // 基础DTO

@@ -603,6 +603,32 @@ export interface VideoGenerationModelParamsVo {
   }>
 }
 
+// ==================== Query DTO 接口 ====================
+
+// 聊天模型查询DTO
+export interface ChatModelsQueryDto {
+  userId?: string
+  userType?: UserType
+}
+
+// 图片生成模型查询DTO
+export interface ImageGenerationModelsQueryDto {
+  userId?: string
+  userType?: UserType
+}
+
+// 图片编辑模型查询DTO
+export interface ImageEditModelsQueryDto {
+  userId?: string
+  userType?: UserType
+}
+
+// 视频生成模型查询DTO
+export interface VideoGenerationModelsQueryDto {
+  userId?: string
+  userType?: UserType
+}
+
 // ==================== Chat 模块接口 ====================
 
 // 消息内容类型

@@ -4,6 +4,7 @@ import { NatsClient } from '@yikart/nats-client'
 import {
   ChatCompletionVo,
   ChatModelConfigVo,
+  ChatModelsQueryDto,
   DashscopeImage2VideoRequestDto,
   DashscopeKeyFrame2VideoRequestDto,
   DashscopeTaskQueryDto,
@@ -12,7 +13,9 @@ import {
   DashscopeVideoGenerationResponseVo,
   FireflycardResponseVo,
   ImageEditModelParamsVo,
+  ImageEditModelsQueryDto,
   ImageGenerationModelParamsVo,
+  ImageGenerationModelsQueryDto,
   ImageResponseVo,
   KlingImage2VideoRequestDto,
   KlingMultiImage2VideoRequestDto,
@@ -37,6 +40,7 @@ import {
   UserVideoGenerationRequestDto,
   UserVideoTaskQueryDto,
   VideoGenerationModelParamsVo,
+  VideoGenerationModelsQueryDto,
   VideoGenerationResponseVo,
   VideoTaskStatusResponseVo,
   VolcengineGenerationRequestDto,
@@ -61,8 +65,8 @@ export class AitoearnAiClient {
   /**
    * 获取聊天模型配置
    */
-  async getChatModels(): Promise<ChatModelConfigVo[]> {
-    return this.natsClient.send('ai.chat.models', {})
+  async getChatModels(data?: ChatModelsQueryDto): Promise<ChatModelConfigVo[]> {
+    return this.natsClient.send('ai.chat.models', data || {})
   }
 
   // ==================== Image Module Methods ====================
@@ -84,15 +88,15 @@ export class AitoearnAiClient {
   /**
    * 获取图片生成模型参数
    */
-  async getImageGenerationModels(): Promise<ImageGenerationModelParamsVo[]> {
-    return this.natsClient.send('ai.image.generation.models', {})
+  async getImageGenerationModels(data?: ImageGenerationModelsQueryDto): Promise<ImageGenerationModelParamsVo[]> {
+    return this.natsClient.send('ai.image.generation.models', data || {})
   }
 
   /**
    * 获取图片编辑模型参数
    */
-  async getImageEditModels(): Promise<ImageEditModelParamsVo[]> {
-    return this.natsClient.send('ai.image.edit.models', {})
+  async getImageEditModels(data?: ImageEditModelsQueryDto): Promise<ImageEditModelParamsVo[]> {
+    return this.natsClient.send('ai.image.edit.models', data || {})
   }
 
   /**
@@ -128,8 +132,8 @@ export class AitoearnAiClient {
   /**
    * 获取视频生成模型参数
    */
-  async getVideoGenerationModels(): Promise<VideoGenerationModelParamsVo[]> {
-    return this.natsClient.send('ai.video.generation.models', {})
+  async getVideoGenerationModels(data?: VideoGenerationModelsQueryDto): Promise<VideoGenerationModelParamsVo[]> {
+    return this.natsClient.send('ai.video.generation.models', data || {})
   }
 
   /**

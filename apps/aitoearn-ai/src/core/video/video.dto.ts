@@ -303,3 +303,11 @@ const dashscopeTaskQuerySchema = z.object({
 })
 
 export class DashscopeTaskQueryDto extends createZodDto(dashscopeTaskQuerySchema) {}
+
+// 视频生成模型查询DTO
+const videoGenerationModelsQuerySchema = z.object({
+  userId: z.string().optional().describe('用户ID'),
+  userType: z.enum(UserType).optional().describe('用户类型'),
+})
+
+export class VideoGenerationModelsQueryDto extends createZodDto(videoGenerationModelsQuerySchema) {}

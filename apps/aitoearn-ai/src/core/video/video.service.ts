@@ -42,6 +42,7 @@ import {
   KlingText2VideoRequestDto,
   UserVideoGenerationRequestDto,
   UserVideoTaskQueryDto,
+  VideoGenerationModelsQueryDto,
   VolcengineCallbackDto,
   VolcengineGenerationRequestDto,
 } from './video.dto'
@@ -60,15 +61,17 @@ export class VideoService {
 
   async calculateVideoGenerationPrice(params: {
     model: string
+    userId?: string
+    userType?: UserType
     resolution?: string
     aspectRatio?: string
     mode?: string
     duration?: number
   }): Promise<number> {
-    const { model } = params
+    const { model, userId, userType } = params
 
     // 查找对应的模型配置
-    const modelConfig = config.ai.models.video.generation.find(m => m.name === model)
+    const modelConfig = (await this.getVideoGenerationModelParams({ userId, userType })).find(m => m.name === model)
     if (!modelConfig) {
       throw new AppException(ResponseCode.InvalidModel)
     }
@@ -322,7 +325,8 @@ export class VideoService {
   /**
    * 获取视频生成模型参数
    */
-  async getVideoGenerationModelParams() {
+  async getVideoGenerationModelParams(_data: VideoGenerationModelsQueryDto) {
+    // 可以根据userId和userType进行个性化过滤，目前返回所有模型
     return config.ai.models.video.generation
   }
 

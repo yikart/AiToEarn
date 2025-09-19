@@ -5,9 +5,11 @@ import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
 import { AppException, ResponseCode, UserType } from '@yikart/common'
 import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import { BigNumber } from 'bignumber.js'
+import dayjs from 'dayjs'
+import _ from 'lodash'
 import { config } from '../../config'
 import { OpenaiService } from '../../libs/openai'
-import { ChatCompletionDto, UserChatCompletionDto } from './chat.dto'
+import { ChatCompletionDto, ChatModelsQueryDto, UserChatCompletionDto } from './chat.dto'
 
 @Injectable()
 export class ChatService {
@@ -68,14 +70,14 @@ export class ChatService {
   }
 
   async userChatCompletion({ userId, userType, ...params }: UserChatCompletionDto) {
-    const modelConfig = config.ai.models.chat.find(m => m.name === params.model)
+    const modelConfig = (await this.getChatModelConfig({ userId, userType })).find(m => m.name === params.model)
     if (!modelConfig) {
       throw new AppException(ResponseCode.InvalidModel)
     }
     const pricing = modelConfig.pricing
     if (userType === UserType.User) {
       const { balance } = await this.userClient.getPointsBalance({ userId })
-      if (balance <= 0) {
+      if (balance < 0) {
         throw new AppException(ResponseCode.UserPointsInsufficient)
       }
       if ('price' in pricing) {
@@ -143,9 +145,27 @@ export class ChatService {
   }
 
   /**
-   * 获取视频生成模型参数
+   * 获取聊天模型参数
+   * @param data 查询参数，包含可选的 userId 和 userType，可用于后续个性化模型推荐
    */
-  async getChatModelConfig() {
+  async getChatModelConfig(data: ChatModelsQueryDto) {
+    if (data.userType === UserType.User && data.userId) {
+      try {
+        const user = await this.userClient.getUserInfoById({ id: data.userId })
+        if (user && user.vipInfo && dayjs(user.vipInfo.expireTime).isAfter()) {
+          const models = _.cloneDeep(config.ai.models.chat)
+          // 查找 gemini-2.5-flash-image 模型并直接修改价格
+          const targetModel = models.find(model => model.name === 'gemini-2.5-flash-image')
+          if (targetModel) {
+            targetModel.pricing = { price: '0' }
+          }
+        }
+      }
+      catch (error) {
+        this.logger.warn({ error })
+      }
+    }
+
     return config.ai.models.chat
   }
 }

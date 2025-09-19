@@ -2,6 +2,8 @@ import { Controller } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
 import { NatsMessagePattern } from '@yikart/common'
 import {
+  ImageEditModelsQueryDto,
+  ImageGenerationModelsQueryDto,
   UserFireflyCardDto,
   UserImageEditDto,
   UserImageGenerationDto,
@@ -29,14 +31,14 @@ export class ImageController {
   }
 
   @NatsMessagePattern('ai.image.generation.models')
-  async getImageGenerationModels(): Promise<ImageGenerationModelParamsVo[]> {
-    const response = await this.imageService.generationModelConfig()
+  async getImageGenerationModels(@Payload() data: ImageGenerationModelsQueryDto): Promise<ImageGenerationModelParamsVo[]> {
+    const response = await this.imageService.generationModelConfig(data)
     return response.map(item => ImageGenerationModelParamsVo.create(item))
   }
 
   @NatsMessagePattern('ai.image.edit.models')
-  async getImageEditModels(): Promise<ImageEditModelParamsVo[]> {
-    const response = await this.imageService.editModelConfig()
+  async getImageEditModels(@Payload() data: ImageEditModelsQueryDto): Promise<ImageEditModelParamsVo[]> {
+    const response = await this.imageService.editModelConfig(data)
     return response.map(item => ImageEditModelParamsVo.create(item))
   }
 

@@ -15,7 +15,9 @@
     "axios": "^1.11.0",
     "bignumber.js": "^9.3.1",
     "data-urls": "^5.0.0",
+    "dayjs": "^1.11.14",
     "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
     "nats": "^2.29.3",
     "openai": "^5.18.1",
     "rxjs": "^7.8.0",
@@ -24,7 +26,8 @@
   },
   "devDependencies": {
     "@types/data-urls": "^3.0.4",
-    "@types/jsonwebtoken": "^9.0.10"
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/lodash": "^4.17.20"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

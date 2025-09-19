@@ -13,7 +13,9 @@ import { OpenaiService } from '../../libs/openai'
 import {
   FireflyCardDto,
   ImageEditDto,
+  ImageEditModelsQueryDto,
   ImageGenerationDto,
+  ImageGenerationModelsQueryDto,
   Md2CardDto,
   UserFireflyCardDto,
   UserImageEditDto,
@@ -220,8 +222,8 @@ export class ImageService {
   /**
    * 获取图片模型价格
    */
-  private getImageModelPricing(model: string, kind: 'generation' | 'edit'): number {
-    const list = kind === 'generation' ? config.ai.models.image.generation : config.ai.models.image.edit
+  private async getImageModelPricing(model: string, kind: 'generation' | 'edit', userId?: string, userType?: UserType): Promise<number> {
+    const list = kind === 'generation' ? await this.generationModelConfig({ userId, userType }) : await this.editModelConfig({ userId, userType })
     const modelConfig = list.find(m => m.name === model)
     if (!modelConfig) {
       throw new AppException(ResponseCode.InvalidModel)
@@ -284,7 +286,7 @@ export class ImageService {
   async userGeneration(request: UserImageGenerationDto) {
     const { userId, userType, ...params } = request
 
-    const pricing = this.getImageModelPricing(params.model, 'generation')
+    const pricing = await this.getImageModelPricing(params.model, 'generation')
 
     return await this.handleUserAiAction({
       userId,
@@ -303,7 +305,7 @@ export class ImageService {
   async userEdit(request: UserImageEditDto) {
     const { userId, userType, ...params } = request
 
-    const pricing = this.getImageModelPricing(params.model, 'edit')
+    const pricing = await this.getImageModelPricing(params.model, 'edit')
 
     return await this.handleUserAiAction({
       userId,
@@ -350,14 +352,20 @@ export class ImageService {
   /**
    * 获取图片生成模型参数
    */
-  async generationModelConfig() {
+  /**
+   * 获取图片生成模型参数
+   * @param _data 查询参数，包含可选的 userId 和 userType，可用于后续个性化模型推荐
+   */
+  async generationModelConfig(_data: ImageGenerationModelsQueryDto) {
+    // 目前返回所有模型，后续可根据 userId 和 userType 进行个性化过滤
     return config.ai.models.image.generation
   }
 
   /**
    * 获取图片编辑模型参数
+   * @param _data 查询参数，包含可选的 userId 和 userType，可用于后续个性化模型推荐
    */
-  async editModelConfig() {
+  async editModelConfig(_data: ImageEditModelsQueryDto) {
     return config.ai.models.image.edit
   }
 }

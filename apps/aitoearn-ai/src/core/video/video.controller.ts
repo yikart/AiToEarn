@@ -14,6 +14,7 @@ import {
   KlingText2VideoRequestDto,
   UserVideoGenerationRequestDto,
   UserVideoTaskQueryDto,
+  VideoGenerationModelsQueryDto,
   VolcengineCallbackDto,
   VolcengineGenerationRequestDto,
   VolcengineTaskQueryDto,
@@ -40,8 +41,8 @@ export class VideoController {
   }
 
   @NatsMessagePattern('ai.video.generation.models')
-  async getVideoGenerationModels(): Promise<VideoGenerationModelParamsVo[]> {
-    const response = await this.videoService.getVideoGenerationModelParams()
+  async getVideoGenerationModels(@Payload() data: VideoGenerationModelsQueryDto): Promise<VideoGenerationModelParamsVo[]> {
+    const response = await this.videoService.getVideoGenerationModelParams(data)
     return response.map(item => VideoGenerationModelParamsVo.create(item))
   }
 
