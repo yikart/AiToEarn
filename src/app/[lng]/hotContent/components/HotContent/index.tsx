@@ -31,6 +31,7 @@ import {
 } from "@/app/[lng]/hotContent/components/HotContent/hotContentCommonWidget";
 import { useTransClient } from "@/app/i18n/client";
 import CryptoJS from "crypto-js";
+import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 
 export interface IHotContentRef {}
 
@@ -115,12 +116,39 @@ const HotContent = memo(
             case "shipinhao":
               break;
           }
-          console.log(selectedLabelInfo.ranking.platform.type);
-
-          console.log(data);
         },
         [selectedLabelInfo],
       );
+
+      // 热门内容的平台类型转换到本地枚举
+      const getPlatEnum = (type: string) => {
+        switch (type) {
+          case "douyin":
+            return {
+              plat: PlatType.Douyin,
+            };
+          case "xiaohongshu":
+            return {
+              plat: PlatType.Xhs,
+            };
+          case "kuaishou":
+            return {
+              plat: PlatType.KWAI,
+            };
+          case "bilibili":
+            return {
+              plat: PlatType.BILIBILI,
+            };
+          case "shipinhao":
+            return {
+              plat: PlatType.WxSph,
+            };
+          case "wechat":
+            return {
+              plat: PlatType.WxGzh,
+            };
+        }
+      };
 
       const columns = useMemo(() => {
         const callParamsColumnsCommon = (title: string) => {
@@ -299,8 +327,21 @@ const HotContent = memo(
             title: t("baseInfo"),
             dataIndex: "baseInfo",
             render: (text, data) => {
+              const platInfo = getPlatEnum(
+                selectedLabelInfo.ranking.platform.type,
+              );
+              const platConfig = AccountPlatInfoMap.get(platInfo!.plat)!;
+              console.log(platConfig);
+
               return (
                 <HotContentBaseInfo
+                  // coverPopoverContent={
+                  //   <div className={styles.baseInfoPopver}>
+                  //     <div className="baseInfoPopver-head"></div>
+                  //     <div className="baseInfoPopver-content"></div>
+                  //     <div className="baseInfoPopver-footer"></div>
+                  //   </div>
+                  // }
                   title={data.title}
                   avatar={data.author.avatar}
                   publishTime={data.publishTime}

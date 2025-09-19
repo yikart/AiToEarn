@@ -2,7 +2,7 @@ import styles from "@/app/[lng]/hotContent/components/HotContent/hotContent.modu
 import Icon from "@ant-design/icons";
 import Uparrow from "@/app/[lng]/hotContent/svgs/uparrow.svg";
 import { describeNumber } from "@/utils";
-import { Avatar } from "antd";
+import { Avatar, Popover } from "antd";
 import { useTransClient } from "@/app/i18n/client";
 
 export const AnaAddCall = ({
@@ -67,6 +67,7 @@ export const HotContentBaseInfo = ({
   fansCount,
   publishTime,
   onClick,
+  coverPopoverContent,
 }: {
   cover: string;
   title: string;
@@ -74,12 +75,15 @@ export const HotContentBaseInfo = ({
   nickname: string;
   fansCount?: number;
   publishTime: string;
+  coverPopoverContent?: React.ReactNode;
   onClick?: () => void;
 }) => {
   const { t } = useTransClient("hot-content");
   return (
     <div className={styles.baseInfo}>
-      <img className="baseInfo-cover" src={cover} />
+      <Popover placement="right" content={coverPopoverContent}>
+        <img className="baseInfo-cover" src={cover} />
+      </Popover>
       <div className="baseInfo-right">
         {title ? (
           <div className="baseInfo-right-title" title={title}>
