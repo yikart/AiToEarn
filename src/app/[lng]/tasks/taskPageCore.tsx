@@ -61,12 +61,12 @@ export default function TaskPageCore() {
   // 分页状态
   const [pendingPagination, setPendingPagination] = useState({
     current: 1,
-    pageSize: 20,
+    pageSize: 15,
     total: 0
   });
   const [acceptedPagination, setAcceptedPagination] = useState({
     current: 1,
-    pageSize: 20,
+    pageSize: 15,
     total: 0
   });
   const [selectedTask, setSelectedTask] = useState<TaskOpportunity | null>(null);
@@ -123,7 +123,7 @@ export default function TaskPageCore() {
   const [requiredAccountTypes, setRequiredAccountTypes] = useState<string[]>([]);
 
   // 获取待接受任务列表
-  const fetchPendingTasks = async (page: number = 1, pageSize: number = 20) => {
+  const fetchPendingTasks = async (page: number = 1, pageSize: number = 15) => {
     if (!token) return;
     
     try {
@@ -149,7 +149,7 @@ export default function TaskPageCore() {
   };
 
   // 获取已接受任务列表
-  const fetchAcceptedTasks = async (page: number = 1, pageSize: number = 20) => {
+  const fetchAcceptedTasks = async (page: number = 1, pageSize: number = 15) => {
     if (!token) return;
     
     try {
