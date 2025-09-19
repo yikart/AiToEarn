@@ -61,30 +61,52 @@ export const useAccountStore = create(
           set({ accountGroupList });
         },
 
+        /**
+         * 异步获取账户列表（含稳健的loading与错误处理），避免阻塞UI
+         */
         async getAccountList() {
           if (get().accountLoading) return;
           set({ accountLoading: true });
 
-          const accountMap = new Map<string, SocialAccount>([]);
-          const accountAccountMap = new Map<string, SocialAccount>([]);
-          const result = await getAccountListApi();
-          set({ accountLoading: false });
+          try {
+            const accountMap = new Map<string, SocialAccount>([]);
+            const accountAccountMap = new Map<string, SocialAccount>([]);
 
-          if (result?.code !== 0) return;
-          const accountList: SocialAccount[] = [];
+            // 防卡死：给请求增加超时兜底（例如 15s），即使后端迟迟不返回也不会一直占用loading
+            const timeoutMs = 10000;
+            const timeoutPromise = new Promise<any>((resolve) => {
+              setTimeout(() => resolve({ code: -1, data: [] }), timeoutMs);
+            });
+            const result = await Promise.race([getAccountListApi(), timeoutPromise]);
 
-          for (const item of result.data) {
-            accountMap.set(item.id, item);
-            accountAccountMap.set(item.account, item);
-            accountList.push(item);
+            if (result?.code !== 0) return;
+
+            const accountList: SocialAccount[] = [];
+            for (const item of result.data) {
+              accountMap.set(item.id, item);
+              accountAccountMap.set(item.account, item);
+              accountList.push(item);
+            }
+
+            set({
+              accountList,
+              accountMap,
+              accountAccountMap,
+            });
+
+            // 后续分组数据获取不阻塞调用方
+            methods.getAccountGroup();
+          } finally {
+            set({ accountLoading: false });
           }
+        },
 
-          set({
-            accountList,
-            accountMap,
-            accountAccountMap,
-          });
-          await methods.getAccountGroup();
+        /**
+         * 后台异步启动账户列表加载（不等待，不阻塞首屏/刷新渲染）
+         */
+        getAccountListInBackground() {
+          // fire-and-forget，内部自行处理loading与错误
+          void methods.getAccountList();
         },
 
         // 获取用户组的数据并且将用户放到对应组下
@@ -135,7 +157,8 @@ export const useAccountStore = create(
 
         async accountInit() {
           if (get().accountList.length > 0) return;
-          await methods.getAccountList();
+          // 改为后台异步拉取，避免初始化时阻塞界面
+          methods.getAccountListInBackground();
         },
       };
       return methods;
