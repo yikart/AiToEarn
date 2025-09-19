@@ -113,7 +113,7 @@ export default function PricingPage() {
       notes: "不支持图片，不支持图片的不着急支持",
       credits: "",
       price: "",
-      channel: "暂不接入"
+      channel: "暂不接入 "
     },
     {
       model: "qwen3-235b-a22b-07-25",
