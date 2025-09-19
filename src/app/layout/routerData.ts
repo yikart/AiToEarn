@@ -1,5 +1,6 @@
 import { StaticImageData } from "next/image";
 import { MenuItemType } from "antd/es/menu/interface";
+import { directTrans } from "@/app/i18n/client";
 
 export interface IRouterDataItem {
   // 导航标题
@@ -27,11 +28,11 @@ export const routerData: IRouterDataItem[] = [
     translationKey: "accounts",
     path: "/accounts",
   },
-  {
-    name: "热门内容",
-    translationKey: "hotContent",
-    path: "/hotContent",
-  },
+  // {
+  //   name: "热门内容",
+  //   translationKey: "hotContent",
+  //   path: "/hotContent",
+  // },
   {
     name: "AI工具",
     translationKey: "aiTools",
@@ -68,3 +69,30 @@ const recursion = (
 };
 
 export const peRouterData = recursion(routerData);
+
+export const homeHeaderRouterData = {
+  get value() {
+    return [
+      {
+        href: "/",
+        title: directTrans("home", "header.nav.pricing"),
+      },
+      {
+        href: "https://status.aitoearn.ai/",
+        title: directTrans("home", "header.nav.status"),
+      },
+      {
+        href: "https://docs.aitoearn.ai/",
+        title: directTrans("home", "header.nav.docs"),
+      },
+      {
+        href: "https://blog.aitoearn.ai/",
+        title: directTrans("home", "header.nav.blog"),
+      },
+      {
+        href: "/hotContent",
+        title: directTrans("route", "hotContent"),
+      },
+    ];
+  },
+};

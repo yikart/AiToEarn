@@ -5,7 +5,7 @@ import Head from "next/head";
 import { dir } from "i18next";
 import { languages, fallbackLng } from "@/app/i18n/settings";
 import { useTranslation } from "@/app/i18n";
-import ConditionalHeader from "./ConditionalHeader";
+import ConditionalHeader from "../layout/ConditionalHeader";
 
 export async function generateMetadata({
   params,

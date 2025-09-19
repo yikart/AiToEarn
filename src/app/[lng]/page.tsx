@@ -72,71 +72,6 @@ function ReleaseBanner() {
   );
 }
 
-// Header 顶部导航
-function Header({ currentModule, onModuleChange }: { currentModule: string, onModuleChange: (module: string) => void }) {
-  const { t } = useTransClient('home');
-  const router = useRouter();
-  const userStore = useUserStore();
-
-  const userInfo = useUserStore((state) => state.userInfo)!;
-  const toggleLanguage = () => {
-    const newLng = userStore.lang === "zh-CN" ? "en" : "zh-CN";
-    userStore.setLang(newLng);
-    router.push(
-      `/${newLng}${location.pathname.replace(`/${userStore.lang}`, "")}`,
-    );
-  };
-
-  return (
-    <header className={styles.header}>
-      <div className={styles.headerContainer}>
-      <div
-        className={styles.logo}
-        onClick={() => onModuleChange('home')}
-        style={{ cursor: 'pointer' }}
-      >
-        <Image src={logo} alt="logo" width={50} />
-        <span className={styles.logoText}>{t('header.logo')}</span>
-      </div>
-        <nav className={styles.nav}>
-          {/* <a href="#marketplace" className={styles.navLink}>{t('header.nav.marketplace')}</a> */}
-          <button
-            className={`${styles.navLink} ${currentModule === 'pricing' ? styles.active : ''}`}
-            onClick={() => onModuleChange('pricing')}
-          >
-            {t('header.nav.pricing')}
-          </button>
-          <a href="https://status.aitoearn.ai/" target="_blank" rel="noopener noreferrer" className={styles.navLink} style={{ paddingTop: '3px' }}>{t('header.nav.status' as any)}</a>
-          <a href="https://docs.aitoearn.ai/" target="_blank" rel="noopener noreferrer" className={styles.navLink} style={{ paddingTop: '3px' }}>{t('header.nav.docs' as any)}</a>
-          <a href="https://blog.aitoearn.ai/" target="_blank" rel="noopener noreferrer" className={styles.navLink} style={{ paddingTop: '3px' }}>{t('header.nav.blog' as any)}</a>
-          <Link href="/hotContent" target="_blank" rel="noopener noreferrer" className={styles.navLink} style={{ paddingTop: '3px' }}>{directTrans('route', 'hotContent')}</Link>
-
-          {/* <a href="#docs" className={styles.navLink}>{t('header.nav.docs')}</a> */}
-          {/* <a href="#blog" className={styles.navLink}>{t('header.nav.blog')}</a> */}
-        </nav>
-
-        <div className={styles.headerRight}>
-        <Button
-              type="text"
-              icon={<GlobalOutlined />}
-              onClick={toggleLanguage}
-              className={styles.languageButton}
-            >
-              {userStore.lang === "zh-CN" ? "EN" : "中文"}
-            </Button>
-
-            <button onClick={() => {
-              router.push("/accounts");
-            }} className={styles.getStartedBtn}>
-              {t('header.getStarted')}
-            </button>
-        </div>
-
-      </div>
-    </header>
-  );
-}
-
 // Pricing 模块
 function PricingModule() {
   const { t } = useTransClient('pricing');
@@ -1819,6 +1754,7 @@ function UpcomingFeaturesSection() {
 
 // 移动应用下载区
 import { QRCode } from 'react-qrcode-logo';
+import HomeHeader from "@/app/layout/HomeHeader";
 function DownloadSection() {
   const { t } = useTransClient('home');
 
@@ -2242,7 +2178,6 @@ export default function Home() {
   return (
     <div className={styles.difyHome}>
       {/* <ReleaseBanner /> */}
-      <Header currentModule={currentModule} onModuleChange={handleModuleChange} />
       {currentModule === 'pricing' ? (
         <PricingModule />
       ) : (
