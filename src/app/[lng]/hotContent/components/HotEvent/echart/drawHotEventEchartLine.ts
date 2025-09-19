@@ -1,6 +1,7 @@
 import * as echarts from "echarts";
 import { HotValueHistory } from "@/api/types/hotTopic";
 import { describeNumber } from "@/utils";
+import { directTrans } from "@/app/i18n/client";
 
 type EChartsOption = echarts.EChartsOption;
 
@@ -44,7 +45,7 @@ export default function drawHotEventEchartLine(
       show: true,
       formatter: (params: any) => {
         const item = params[0];
-        return `${item.axisValue}<br/>热度值: ${describeNumber(item.data)}`;
+        return `${item.axisValue}<br/>${directTrans("hot-content", "hotValue")}: ${describeNumber(item.data)}`;
       },
     },
     xAxis: {
