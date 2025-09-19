@@ -143,7 +143,7 @@ function Hero() {
     <section className={styles.hero}>
       <div className={styles.heroContainer}>
         <div className={styles.githubStars} onClick={() => {
-          window.open('https://github.com/yikart/AiToEarn/releases/tag/v0.8.0', '_blank');
+          window.open('https://github.com/yikart/AiToEarn/releases', '_blank');
         }}>
           <img src={'https://img.shields.io/github/stars/yikart/AiToEarn.svg'} alt="logo" className={styles.logo} />
           <span className={styles.starText}>{t('hero.starsText')}</span>
