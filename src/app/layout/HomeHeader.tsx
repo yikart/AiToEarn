@@ -28,13 +28,16 @@ const HomeHeader = memo(
       router.push(
         `/${newLng}${location.pathname.replace(`/${userStore.lang}`, "")}`,
       );
-      location.reload();
     };
 
     return (
       <header className={styles.header}>
         <div className={styles.headerContainer}>
-          <div className={styles.logo} style={{ cursor: "pointer" }} onClick={() => router.push("/")}>
+          <div
+            className={styles.logo}
+            style={{ cursor: "pointer" }}
+            onClick={() => router.push("/")}
+          >
             <Image src={logo} alt="logo" width={50} />
             <span className={styles.logoText}>{t("header.logo")}</span>
           </div>
