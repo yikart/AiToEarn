@@ -47,7 +47,13 @@ interface Resources {
       "title": "发布计划列表",
       "recordCount": "共 {{count}} 条发布计划",
       "newWork": "新建作品",
-      "noRecords": "暂无发布计划"
+      "noRecords": "暂无发布计划",
+      "queue": "列表",
+      "sent": "发布历史",
+      "createdDaysAgo": "您于 {{days}} 天前创建",
+      "viewPost": "查看帖子",
+      "noSentPosts": "暂无已发布的帖子",
+      "selectAccountFirst": "请先选择一个账号"
     },
     "chooseSpace": "选择空间",
     "pleaseChooseSpace": "请选择空间",
@@ -94,7 +100,13 @@ interface Resources {
       "account": "账号",
       "platform": "平台",
       "space": "所属列表"
-    }
+    },
+    "rednote": "小红书",
+    "kwai": "快手",
+    "bilibili": "哔哩哔哩",
+    "wxgzh": "微信公众号",
+    "douyin": "抖音",
+    "wxsph": "微信视频号"
   },
   "cgmaterial": {
     "header": {
@@ -259,6 +271,8 @@ interface Resources {
     },
     "header": {
       "messages": "消息通知",
+      "income": "收入记录",
+      "wallet": "我的钱包",
       "materialLibrary": "素材库",
       "draftBox": "草稿箱"
     },
@@ -382,6 +396,32 @@ interface Resources {
   "demo": {
     "demoText": "测试文字",
     "title": "测试页面标题"
+  },
+  "engagement": {
+    "title": "互动数据",
+    "columns": {
+      "postId": "帖子ID",
+      "platform": "平台",
+      "title": "标题",
+      "mediaType": "媒体类型",
+      "publishTime": "发布时间",
+      "viewCount": "浏览数",
+      "likeCount": "点赞数",
+      "commentCount": "评论数",
+      "shareCount": "分享数",
+      "clickCount": "点击数",
+      "impressionCount": "曝光数",
+      "favoriteCount": "收藏数",
+      "permaLink": "外链",
+      "open": "打开"
+    },
+    "placeholders": {
+      "uid": "请输入账户UID"
+    },
+    "actions": {
+      "search": "查询",
+      "reset": "重置"
+    }
   },
   "home": {
     "releaseBanner": {
@@ -660,7 +700,7 @@ interface Resources {
     "comments": "评论数",
     "collections": "收藏数",
     "publishTime": "发布于",
-    "fans": "粉丝",
+    "fans": "粉丝数",
     "viewMore": "查看更多",
     "timeRange": "时间范围",
     "filter": "筛选",
@@ -672,13 +712,25 @@ interface Resources {
     "noHotTopics": "暂无热点数据",
     "noViralTitles": "暂无爆款标题数据",
     "noTopicData": "暂无专题数据",
-    "total": "共",
+    "total": "总",
     "items": "条",
     "video": "视频",
     "noImage": "暂无图片",
     "platform": "平台",
     "hotEvents": "热点事件",
-    "hotContent": "热点内容"
+    "hotContent": "热点内容",
+    "noTitle": "暂无标题",
+    "baseInfo": "基本信息",
+    "views": "播放数",
+    "recommend": "推荐数",
+    "watch": "在看数",
+    "dailyRank": "日榜",
+    "updateFrequency": "更新时间",
+    "statEndTime": "统计数据截止",
+    "daily": "按日",
+    "sortRule": "排序规则",
+    "sortRuleDesc": "统计当日点赞量前500名的作品推荐",
+    "dataDescription": "数据说明"
   },
   "income": {
     "title": "我的收入",
@@ -697,7 +749,6 @@ interface Resources {
     "status": "状态",
     "updateTime": "更新时间",
     "confirmWithdraw": "确认提现申请",
-    "myWallet": "我的钱包",
     "cancel": "取消",
     "confirm": "确认提现",
     "withdrawAmount": "提现金额",
@@ -707,12 +758,14 @@ interface Resources {
     "incomeTypes": {
       "task": "任务收入",
       "task_back": "任务回退",
-      "reward_back": "奖励回退"
+      "reward_back": "奖励回退",
+      "task_withdraw": "任务提现"
     },
     "withdrawStatus": {
       "wait": "等待处理",
       "success": "提现成功",
-      "fail": "提现失败"
+      "fail": "提现失败",
+      "task_withdraw": "任务提现"
     },
     "messages": {
       "getIncomeRecordsFailed": "获取收入记录失败",
@@ -724,7 +777,8 @@ interface Resources {
       "noWithdrawRecords": "暂无提现记录",
       "loading": "加载中...",
       "totalRecords": "共 {{total}} 条记录"
-    }
+    },
+    "myWallet": "我的钱包"
   },
   "login": {
     "welcomeBack": "哎呦赚",
@@ -1848,8 +1902,11 @@ interface Resources {
     "hotContent": "热门内容",
     "hotContentNew": "热门内容新",
     "aiTools": "AI工具",
-    "navigation": "导航",
-    "dataStatistics": "数据统计"
+    "tasks": "任务中心",
+    "interactive": "作品互动",
+    "engagement": "互动数据",
+    "dataStatistics": "数据统计",
+    "navigation": "导航"
   },
   "task": {
     "title": "任务中心",
@@ -1972,8 +2029,8 @@ interface Resources {
       "description": "选择连续包月或连续包年，可享受7天免费试用期！"
     },
     "trialText": {
-      "month": "前7天免费，之后$15/月",
-      "year": "前7天免费，之后$120/年"
+      "month": "前7天免费，之后$19/月",
+      "year": "前7天免费，之后$144/年"
     },
     "badge": {
       "onceMonth": "一次性",
@@ -1999,52 +2056,52 @@ interface Resources {
     }
   },
   "wallet": {
-    "title": "我的钱包账户",
+    "title": "我的钱包",
     "columns": {
-      "userName": "姓名",
+      "userName": "真实姓名",
       "mail": "邮箱",
-      "account": "收款账号",
-      "type": "账户类型",
+      "account": "账号",
+      "type": "类型",
       "phone": "手机号",
-      "cardNum": "卡号",
+      "cardNum": "身份证号",
       "actions": "操作"
+    },
+    "types": {
+      "ZFB": "支付宝",
+      "WX_PAY": "微信支付"
     },
     "actions": {
       "create": "新增账户",
       "edit": "编辑",
       "delete": "删除",
-      "deleteConfirm": "确定删除该账户吗？"
+      "deleteConfirm": "确认删除该钱包账户？"
     },
     "dialogs": {
-      "createTitle": "新增提现账户",
-      "editTitle": "编辑提现账户"
+      "createTitle": "新增钱包账户",
+      "editTitle": "编辑钱包账户"
+    },
+    "form": {
+      "userId": "用户ID",
+      "userIdPlaceholder": "自动填充当前用户ID",
+      "mail": "邮箱",
+      "mailPlaceholder": "请输入邮箱",
+      "mailInvalid": "请输入有效的邮箱地址",
+      "userName": "真实姓名",
+      "userNamePlaceholder": "请输入真实姓名（可选）",
+      "account": "账号",
+      "accountPlaceholder": "请输入收款账号",
+      "cardNum": "身份证号",
+      "cardNumPlaceholder": "请输入身份证号（可选）",
+      "phone": "手机号",
+      "phonePlaceholder": "请输入绑定手机号（可选）",
+      "type": "类型",
+      "typePlaceholder": "请选择类型",
+      "required": "必填项"
     },
     "messages": {
       "createSuccess": "创建成功",
       "updateSuccess": "更新成功",
       "deleteSuccess": "删除成功"
-    },
-    "form": {
-      "userId": "用户ID",
-      "userIdPlaceholder": "自动填充",
-      "required": "必填项",
-      "mail": "邮箱",
-      "mailPlaceholder": "请输入邮箱",
-      "mailInvalid": "请输入有效的邮箱地址",
-      "userName": "姓名",
-      "userNamePlaceholder": "请输入姓名",
-      "account": "收款账号",
-      "accountPlaceholder": "请输入收款账号",
-      "cardNum": "卡号",
-      "cardNumPlaceholder": "请输入卡号（可选）",
-      "phone": "手机号",
-      "phonePlaceholder": "请输入手机号（可选）",
-      "type": "账户类型",
-      "typePlaceholder": "请选择账户类型"
-    },
-    "types": {
-      "ZFB": "支付宝",
-      "WX_PAY": "微信支付"
     }
   },
   "youtube": {

@@ -12,7 +12,7 @@
   "comments": "Comments",
   "collections": "Collections",
   "publishTime": "Published at",
-  "fans": "fans",
+  "fans": "Fans",
   "viewMore": "View More",
   "timeRange": "Time Range",
   "filter": "Filter",
@@ -30,5 +30,17 @@
   "noImage": "No Image",
   "platform": "Platform",
   "hotEvents": "Hot Events",
-  "hotContent": "Hot Content"
-} 
+  "hotContent": "Hot Content",
+  "noTitle": "No Title",
+  "baseInfo": "Base Info",
+  "views": "Views",
+  "recommend": "Recommend",
+  "watch": "Watch",
+  "dailyRank": "Daily Rank",
+  "updateFrequency": "Update Frequency",
+  "statEndTime": "Stat End Time",
+  "daily": "Daily",
+  "sortRule": "Sort Rule",
+  "sortRuleDesc": "Top 500 works by likes of the day are recommended",
+  "dataDescription": "Data Description"
+}

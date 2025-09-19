@@ -3,6 +3,7 @@ import Icon from "@ant-design/icons";
 import Uparrow from "@/app/[lng]/hotContent/svgs/uparrow.svg";
 import { describeNumber } from "@/utils";
 import { Avatar } from "antd";
+import { useTransClient } from "@/app/i18n/client";
 
 export const AnaAddCall = ({
   add,
@@ -13,6 +14,7 @@ export const AnaAddCall = ({
   total: number;
   highlight?: boolean;
 }) => {
+  const { t } = useTransClient("hot-content");
   return (
     <div
       className={`${styles.anaAddCall} ${highlight ? styles["anaAddCall-highlight"] : ""}`}
@@ -27,7 +29,10 @@ export const AnaAddCall = ({
           "-"
         )}
       </div>
-      <div className="anaAddCall-total">总{describeNumber(total)}</div>
+      <div className="anaAddCall-total">
+        {t("total")}
+        {describeNumber(total)}
+      </div>
     </div>
   );
 };
@@ -71,6 +76,7 @@ export const HotContentBaseInfo = ({
   publishTime: string;
   onClick?: () => void;
 }) => {
+  const { t } = useTransClient("hot-content");
   return (
     <div className={styles.baseInfo}>
       <img className="baseInfo-cover" src={cover} />
@@ -80,7 +86,7 @@ export const HotContentBaseInfo = ({
             {title}
           </div>
         ) : (
-          <div className="baseInfo-right-noTitle">暂无标题</div>
+          <div className="baseInfo-right-noTitle">{t("noTitle")}</div>
         )}
 
         <div
@@ -97,10 +103,13 @@ export const HotContentBaseInfo = ({
           <p className="baseInfo-right-author-name">{nickname}</p>
           {fansCount && (
             <p className="baseInfo-right-author-fans">
-              粉丝数 {describeNumber(fansCount)}
+              {t("fans")} {describeNumber(fansCount)}
             </p>
           )}
-          <p className="baseInfo-right-author-pubTime">发布于{publishTime}</p>
+          <p className="baseInfo-right-author-pubTime">
+            {t("publishTime")}
+            {publishTime}
+          </p>
         </div>
       </div>
     </div>

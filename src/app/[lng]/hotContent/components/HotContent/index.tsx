@@ -109,7 +109,7 @@ const HotContent = memo(
           ...(dataSource[1]?.anaAdd?.addCollectCount
             ? [
                 {
-                  ...callParamsColumnsCommon("新增收藏"),
+                  ...callParamsColumnsCommon(t("collections")),
                   render: (text: string, data: RankingContent) => (
                     <AnaAddCall
                       add={data.anaAdd.addCollectCount!}
@@ -120,7 +120,7 @@ const HotContent = memo(
               ]
             : []),
           {
-            ...callParamsColumnsCommon("新增分享"),
+            ...callParamsColumnsCommon(t("shares")),
             render: (text, data) => (
               <AnaAddCall
                 add={data.anaAdd.addShareCount}
@@ -129,7 +129,7 @@ const HotContent = memo(
             ),
           },
           {
-            ...callParamsColumnsCommon("新增评论"),
+            ...callParamsColumnsCommon(t("comments")),
             render: (text, data) => (
               <AnaAddCall
                 add={data.anaAdd.addCommentCount}
@@ -140,7 +140,7 @@ const HotContent = memo(
           ...(dataSource[0]?.anaAdd?.addViewCount
             ? [
                 {
-                  ...callParamsColumnsCommon("新增播放"),
+                  ...callParamsColumnsCommon(t("views")),
                   render: (text: string, data: RankingContent) => (
                     <AnaAddCall
                       add={data.anaAdd.addViewCount!}
@@ -151,7 +151,7 @@ const HotContent = memo(
               ]
             : []),
           {
-            ...callParamsColumnsCommon("新增获赞"),
+            ...callParamsColumnsCommon(t("likes")),
             render: (text, data) => (
               <AnaAddCall
                 highlight={plat !== "xiaohongshu"}
@@ -163,7 +163,7 @@ const HotContent = memo(
           ...(plat === "xiaohongshu"
             ? [
                 {
-                  ...callParamsColumnsCommon("互动增量"),
+                  ...callParamsColumnsCommon(t("engagement")),
                   render: (text: string, data: RankingContent) => (
                     <AnaAddCall
                       highlight={true}
@@ -178,25 +178,25 @@ const HotContent = memo(
         // 视频号
         const wxSphColumns: TableProps<RankingContent>["columns"] = [
           {
-            ...callParamsColumnsCommon("评论数"),
+            ...callParamsColumnsCommon(t("comments")),
             render: (text, data) => (
               <SingleNumberCall total={data.stats.commentCount} />
             ),
           },
           {
-            ...callParamsColumnsCommon("转发数"),
+            ...callParamsColumnsCommon(t("shares")),
             render: (text, data) => (
               <SingleNumberCall total={data.shareCount!} />
             ),
           },
           {
-            ...callParamsColumnsCommon("喜欢数"),
+            ...callParamsColumnsCommon(t("likes")),
             render: (text, data) => (
               <SingleNumberCall total={data.stats.likeCount} />
             ),
           },
           {
-            ...callParamsColumnsCommon("推荐数"),
+            ...callParamsColumnsCommon(t("recommend")),
             render: (text, data) => (
               <SingleNumberCall total={data.stats.likeCount} />
             ),
@@ -207,7 +207,7 @@ const HotContent = memo(
           ...(dataSource[1]?.stats.watchCount
             ? [
                 {
-                  ...callParamsColumnsCommon("在看数"),
+                  ...callParamsColumnsCommon(t("watch")),
                   render: (text: string, data: RankingContent) => (
                     <SingleNumberCall total={data.stats.watchCount} />
                   ),
@@ -217,7 +217,7 @@ const HotContent = memo(
           ...(dataSource[1]?.stats.likeCount
             ? [
                 {
-                  ...callParamsColumnsCommon("点赞数"),
+                  ...callParamsColumnsCommon(t("likes")),
                   render: (text: string, data: RankingContent) => (
                     <SingleNumberCall total={data.stats.likeCount} />
                   ),
@@ -227,7 +227,7 @@ const HotContent = memo(
           ...(dataSource[1]?.shareCount
             ? [
                 {
-                  ...callParamsColumnsCommon("转发数"),
+                  ...callParamsColumnsCommon(t("shares")),
                   render: (text: string, data: RankingContent) => (
                     <SingleNumberCall total={data.shareCount!} />
                   ),
@@ -237,7 +237,7 @@ const HotContent = memo(
           ...(dataSource[1]?.stats.viewCount
             ? [
                 {
-                  ...callParamsColumnsCommon("阅读数"),
+                  ...callParamsColumnsCommon(t("views")),
                   render: (text: string, data: RankingContent) => (
                     <SingleNumberCall
                       total={data.stats.viewCount}
@@ -251,7 +251,7 @@ const HotContent = memo(
 
         const columns: TableProps<RankingContent>["columns"] = [
           {
-            title: "排名",
+            title: t("rank"),
             dataIndex: "rankingPosition",
             key: "rankingPosition",
             width: 60,
@@ -268,7 +268,7 @@ const HotContent = memo(
             ),
           },
           {
-            title: "基本信息",
+            title: t("baseInfo"),
             dataIndex: "baseInfo",
             render: (text, data) => {
               return (
@@ -284,7 +284,7 @@ const HotContent = memo(
             },
           },
           {
-            title: () => <p style={{ textAlign: "center" }}>作品分类</p>,
+            title: () => <p style={{ textAlign: "center" }}>{t("category")}</p>,
             dataIndex: "category",
             key: "category",
             width: 120,
@@ -305,7 +305,7 @@ const HotContent = memo(
               : anaAddColumns),
         ];
         return columns;
-      }, [selectedLabelInfo, dataSource]);
+      }, [selectedLabelInfo, dataSource, t]);
 
       const getTableData = useCallback(async () => {
         if (loading) return;
@@ -386,7 +386,9 @@ const HotContent = memo(
 
           <div className="hotContent-options">
             <div className="hotContent-options-select">
-              <div className="hotContent-options-select-label">日榜</div>
+              <div className="hotContent-options-select-label">
+                {t("dailyRank")}
+              </div>
               <Select
                 options={selectedLabelInfo.datesData.map((v) => ({
                   label: v.showDate,
@@ -403,16 +405,25 @@ const HotContent = memo(
             <Popover
               content={
                 <>
-                  <p>更新时间：{selectedLabelInfo.ranking.updateFrequency}</p>
-                  <p>统计数据截止：{selectedLabelInfo.ranking.updateTime}</p>
-                  <p>更新时间：按日</p>
-                  <p>排序规则：统计当日点赞量前500名的作品推荐</p>
+                  <p>
+                    {t("updateFrequency")}：
+                    {selectedLabelInfo.ranking.updateFrequency}
+                  </p>
+                  <p>
+                    {t("statEndTime")}：{selectedLabelInfo.ranking.updateTime}
+                  </p>
+                  <p>
+                    {t("updateFrequency")}：{t("daily")}
+                  </p>
+                  <p>
+                    {t("sortRule")}：{t("sortRuleDesc")}
+                  </p>
                 </>
               }
               placement="bottomLeft"
             >
               <div className="hotContent-options-explain">
-                数据说明
+                {t("dataDescription")}
                 <QuestionCircleOutlined />
               </div>
             </Popover>
