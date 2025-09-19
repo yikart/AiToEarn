@@ -328,10 +328,11 @@ const HotContent = memo(
             dataIndex: "baseInfo",
             render: (text, data) => {
               const platInfo = getPlatEnum(
-                selectedLabelInfo.ranking.platform.type,
+                selectedLabelInfo.ranking?.platform?.type,
               );
-              const platConfig = AccountPlatInfoMap.get(platInfo!.plat)!;
-              console.log(platConfig);
+              const platConfig = AccountPlatInfoMap.get(
+                platInfo?.plat ?? PlatType.Xhs,
+              )!;
 
               return (
                 <HotContentBaseInfo
