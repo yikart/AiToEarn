@@ -247,55 +247,6 @@ export default function TaskPageCore() {
     }
   };
 
-  // 提交任务
-  const handleSubmitTask = async (userTask: UserTask) => {
-    setSelectedTask(userTask as any);
-    setSubmissionUrl("");
-    setSubmitModalVisible(true);
-  };
-
-  // 确认提交任务
-  const confirmSubmitTask = async () => {
-    if (!selectedTask || !submissionUrl.trim()) {
-      message.error(t('modal.submitLink') + ' ' + t('messages.pleaseLoginFirst'));
-      return;
-    }
-
-    try {
-      setSubmittingTaskId(selectedTask.id);
-      
-      // 先发布任务
-      const publishResponse = await apiCreatePublish({
-        flowId: selectedTask.id,
-        type: 'video' as any, // 根据任务类型设置
-        accountId: selectedTask.accountId,
-        accountType: selectedTask.accountType as any,
-        desc: `任务提交: ${selectedTask.taskId}`,
-        title: `任务提交`,
-        topics: [],
-        option: {}
-      });
-
-      if (publishResponse && publishResponse.code === 0) {
-        // 发布成功后提交任务
-        const submitResponse = await apiSubmitTask(selectedTask.id, submissionUrl);
-        if (submitResponse && submitResponse.code === 0) {
-          message.success(t('messages.submitTaskSuccess'));
-          setSubmitModalVisible(false);
-          fetchAcceptedTasks();
-        } else {
-          message.error(t('messages.submitTaskFailed'));
-        }
-      } else {
-        message.error(t('messages.publishTaskFailed'));
-      }
-    } catch (error) {
-      message.error(t('messages.submitTaskFailed'));
-      console.error("任务提交失败:", error);
-    } finally {
-      setSubmittingTaskId(null);
-    }
-  };
 
   // 获取平台显示名称
   const getPlatformName = (type: string) => {
@@ -755,7 +706,7 @@ export default function TaskPageCore() {
     }
   };
 
-  // 完成任务
+  // 已经接受没有完成的任务 去完成
   const handleCompleteTask = async () => {
     if (!currentTaskId) return;
     
@@ -772,9 +723,6 @@ export default function TaskPageCore() {
     });
     
     try {
-      // 第一步：完成任务（这里可能需要调用特定的API，暂时使用submitTask）
-      const response: any = await submitTask(currentTaskId);
-      if (response && response.code === 0) {
         // 更新进度：第一步完成，开始第二步
         setTaskProgress(prev => ({
           ...prev,
@@ -818,7 +766,10 @@ export default function TaskPageCore() {
             ),
             option: {},
             topics: [],
-            publishTime: getUtcDays(getDays().add(6, "minute")).format()
+            publishTime: getUtcDays(getDays().add(6, "minute")).format(),
+            userTaskId: acceptedTaskDetail.task?.id,
+            taskMaterialId: acceptedTaskDetail.task?.materialIds[0]
+
           };
 
           const publishResponse: any = await apiCreatePublish(publishData);
@@ -836,8 +787,8 @@ export default function TaskPageCore() {
             }));
 
             // 第三步：提交任务
-            const userTaskId = response.data.id;
-            const submitResponse: any = await submitTask(userTaskId);
+            const userTaskId = acceptedTaskDetail.id;
+            const submitResponse: any = await submitTask(userTaskId, acceptedTaskDetail.task?.materialIds[0]);
             
             if (submitResponse && submitResponse.code === 0) {
               // 更新进度：第三步完成，开始第四步
@@ -869,9 +820,7 @@ export default function TaskPageCore() {
         } else {
           throw new Error('找不到发布账号信息');
         }
-      } else {
-        throw new Error('完成任务失败');
-      }
+
     } catch (error) {
       console.error("任务处理失败:", error);
       message.error("任务处理失败");
@@ -1215,7 +1164,6 @@ export default function TaskPageCore() {
         title={t('modal.submitTask')}
         open={submitModalVisible}
         onCancel={() => setSubmitModalVisible(false)}
-        onOk={confirmSubmitTask}
         confirmLoading={submittingTaskId !== null}
         okText={t('modal.confirmSubmit')}
         cancelText={t('modal.cancel')}
