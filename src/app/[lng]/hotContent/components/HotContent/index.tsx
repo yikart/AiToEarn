@@ -29,6 +29,7 @@ import {
   HotContentBaseInfo,
   SingleNumberCall,
 } from "@/app/[lng]/hotContent/components/HotContent/hotContentCommonWidget";
+import { useTransClient } from "@/app/i18n/client";
 
 export interface IHotContentRef {}
 
@@ -63,8 +64,10 @@ const HotContent = memo(
           setCurrentRankCategory: state.setCurrentRankCategory,
         })),
       );
+      const { t } = useTransClient("hot-content");
+      const all = useRef<string>(t("all"));
       // 当前选中的标签
-      const [labelValue, setLabelValue] = useState("全部");
+      const [labelValue, setLabelValue] = useState(all.current);
       // 当前选中的日期
       const [dateValue, setDateValue] = useState("");
       // 数据loading
@@ -311,7 +314,7 @@ const HotContent = memo(
           selectedLabelInfo.ranking.id,
           page.current,
           20,
-          labelValue,
+          labelValue === all.current ? "全部" : labelValue,
           dateValue,
         );
         page.current += 1;
@@ -325,7 +328,7 @@ const HotContent = memo(
       useEffect(() => {
         if (selectedLabelInfo.datesData.length > 0) {
           setDateValue(selectedLabelInfo.datesData[0].value);
-          setLabelValue("全部");
+          setLabelValue(all.current);
           setIsReset(true);
         }
       }, [selectedLabelInfo.datesData, twoMenuKey]);
@@ -373,7 +376,7 @@ const HotContent = memo(
           )}
 
           <HotContentLabel
-            labels={["全部", ...(selectedLabelInfo.labelData ?? [])]}
+            labels={[all.current, ...(selectedLabelInfo.labelData ?? [])]}
             value={labelValue}
             onChange={(value) => {
               setLabelValue(value);
