@@ -49,6 +49,7 @@ export default function InteractivePage() {
   const [commentsTotal, setCommentsTotal] = useState<number | undefined>(undefined);
   const [replyText, setReplyText] = useState('');
   const [replyTarget, setReplyTarget] = useState<{ id: string; name: string } | null>(null);
+  const [sending, setSending] = useState(false);
   const replyInputRef = useRef<any>(null);
   // 二级回复：按评论ID存储
   const [repliesByComment, setRepliesByComment] = useState<Record<string, { list: any[]; cursor?: { before?: string; after?: string }; loading: boolean; expanded: boolean }>>({});
@@ -242,25 +243,45 @@ export default function InteractivePage() {
     }));
   };
 
+  /**
+   * 提交帖子评论
+   */
   const submitPostComment = async () => {
-    if (!commentPost || !replyText.trim() || !accountActive?.account || !platform) return;
-    const res = await apiPublishPostComment({ accountId: accountActive.account, platform: platform as any, postId: commentPost.postId, message: replyText.trim() });
-    if (res) {
-      setReplyText('');
-      setReplyTarget(null);
-      await loadCommentsV2(commentPost.postId);
-      message.success('已评论');
+    if (!commentPost || !replyText.trim() || !accountActive?.account || !platform || sending) return;
+    setSending(true);
+    try {
+      const res = await apiPublishPostComment({ accountId: accountActive.account, platform: platform as any, postId: commentPost.postId, message: replyText.trim() });
+      if (res) {
+        setReplyText('');
+        setReplyTarget(null);
+        await loadCommentsV2(commentPost.postId);
+        message.success('已评论');
+      }
+    } catch (error) {
+      message.error('评论失败，请重试');
+    } finally {
+      setSending(false);
     }
   };
 
+  /**
+   * 提交评论回复
+   */
   const submitReply = async (parentId?: string) => {
-    if (!commentPost || !replyText.trim() || !accountActive?.account || !platform) return;
-    const res = await apiPublishCommentReply({ accountId: accountActive.account, platform: platform as any, commentId: parentId || '', message: replyText.trim() });
-    if (res) {
-      setReplyText('');
-      setReplyTarget(null);
-      await loadCommentsV2(commentPost.postId);
-      message.success('已回复');
+    if (!commentPost || !replyText.trim() || !accountActive?.account || !platform || sending) return;
+    setSending(true);
+    try {
+      const res = await apiPublishCommentReply({ accountId: accountActive.account, platform: platform as any, commentId: parentId || '', message: replyText.trim() });
+      if (res) {
+        setReplyText('');
+        setReplyTarget(null);
+        await loadCommentsV2(commentPost.postId);
+        message.success('已回复');
+      }
+    } catch (error) {
+      message.error('回复失败，请重试');
+    } finally {
+      setSending(false);
     }
   };
 
@@ -429,19 +450,22 @@ export default function InteractivePage() {
             {commentLoading ? '加载中…' : '加载更多评论'}
           </div>
         )}
-        <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+        <div style={{ display: 'flex', gap: 8, marginTop: 12, paddingBottom: 20 }}>
           <Input.TextArea
             ref={replyInputRef}
             value={replyText}
             onChange={(e) => setReplyText(e.target.value)}
-            rows={3}
+            rows={1}
             placeholder={replyTarget ? `回复@${replyTarget.name}` : '输入评论...'}
           />
           <Button
             type="primary"
+            loading={sending}
+            disabled={sending || !replyText.trim()}
             onClick={() => (replyTarget ? submitReply(replyTarget.id) : submitPostComment())}
+            style={{ width: 88, minWidth: 88 }}
           >
-            发送
+            {sending ? '发送中...' : '发送'}
           </Button>
         </div>
       </Modal>
