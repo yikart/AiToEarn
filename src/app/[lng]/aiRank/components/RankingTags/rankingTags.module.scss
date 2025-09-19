@@ -1,0 +1,23 @@
+.rankingTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  :global {
+    .rankingTags-tag {
+      cursor: pointer;
+      font-size: var(--fs-sm);
+      border-radius: 3px;
+      padding: 2px 8px;
+      color: #333;
+      background: transparent;
+      transition: 0.3s;
+      &:hover {
+        color: var(--colorPrimary6);
+      }
+      &--active {
+        background: var(--colorPrimary6);
+        color: #fff !important;
+      }
+    }
+  }
+}

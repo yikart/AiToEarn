@@ -75,7 +75,7 @@ export const homeHeaderRouterData = {
     return [
       {
         href: "/",
-        title: '',
+        title: "",
       },
       {
         href: "/pricing",
@@ -96,6 +96,10 @@ export const homeHeaderRouterData = {
       {
         href: "/hotContent",
         title: directTrans("route", "hotContent"),
+      },
+      {
+        href: "/aiRank",
+        title: directTrans("route", "aiRank"),
       },
     ];
   },

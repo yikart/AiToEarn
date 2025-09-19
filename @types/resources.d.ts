@@ -1920,7 +1920,8 @@ interface Resources {
     "interactive": "作品互动",
     "engagement": "互动数据",
     "dataStatistics": "数据统计",
-    "navigation": "导航"
+    "navigation": "导航",
+    "aiRank": "AI热榜"
   },
   "task": {
     "title": "任务中心",

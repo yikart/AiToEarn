@@ -4,21 +4,24 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(热门内容): 添加公众号逆向链接的代码">
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/echart/drawHotEventEchartLine.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/hotEvent.module.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/svgs/baidu.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/svgs/bibl.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/svgs/douyin.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/svgs/kwai.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/svgs/totiao.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/svgs/weibo.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/svgs/xhs.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/svgs/zhihu.svg" afterDir="false" />
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat(热门内容): 添加小红书作者跳转">
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/aiRank/aiRank.module.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/aiRank/aiRanking/aiRanking.module.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/aiRank/aiRanking/echarts-weekPie.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/aiRank/aiRanking/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/aiRank/components/CycleSelects/cycleSelects.module.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/aiRank/components/CycleSelects/index.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/aiRank/components/RankingTags/index.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/aiRank/components/RankingTags/rankingTags.module.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/aiRank/images/bg-rank-index.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/aiRank/layout.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/aiRank/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/[lng]/aiRank/svgs/ranking.svg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/hot.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/hot.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/types/hotTopic.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/types/hotTopic.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/hotContent/components/HotEvent/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/@types/resources.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/@types/resources.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/i18n/locales/en/route.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/i18n/locales/en/route.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/i18n/locales/zh-CN/route.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/i18n/locales/zh-CN/route.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/layout/routerData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout/routerData.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,48 +77,48 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder0&quot;: &quot;0&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder1&quot;: &quot;1&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder2&quot;: &quot;2&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder3&quot;: &quot;3&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth0&quot;: &quot;450&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth1&quot;: &quot;450&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth2&quot;: &quot;450&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth3&quot;: &quot;449&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder0&quot;: &quot;0&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder1&quot;: &quot;1&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder2&quot;: &quot;2&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder3&quot;: &quot;3&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth0&quot;: &quot;450&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth1&quot;: &quot;450&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth2&quot;: &quot;450&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth3&quot;: &quot;449&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;hot&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/project-dev/web/艺咖/aitoearn-web/src/app/[lng]/hotContent/components/HotEvent&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder0": "0",
+    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder1": "1",
+    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder2": "2",
+    "FileHistory.git4idea.history.GitHistoryProvider_flatOrder3": "3",
+    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth0": "450",
+    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth1": "450",
+    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth2": "450",
+    "FileHistory.git4idea.history.GitHistoryProvider_flatWidth3": "449",
+    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder0": "0",
+    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder1": "1",
+    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder2": "2",
+    "FileHistory.git4idea.history.GitHistoryProvider_treeOrder3": "3",
+    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth0": "450",
+    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth1": "450",
+    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth2": "450",
+    "FileHistory.git4idea.history.GitHistoryProvider_treeWidth3": "449",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "E:/project-dev/web/艺咖/aitoearn-web/src/app/[lng]/aiRank",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.standard": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.standard": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "show.migrate.to.gradle.popup": "false",
+    "ts.external.directory.path": "E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="ReactBuddySettings">
     <option name="extensionsIgnore" value="true" />
   </component>
@@ -130,16 +133,18 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\aiRank" />
+      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\aiRank\svgs" />
+      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\hotContent\components\HotEvent" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\assets\fonts" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\i18n\locales\zh-CN" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\aiRank" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\hotContent\components\HotEvent\svgs" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\hotContent\components\HotContent\svgs" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\hotContent\svgs" />
       <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\images" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\dataStatistics\echart" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
@@ -226,70 +231,6 @@
       <workItem from="1757990250575" duration="77000" />
       <workItem from="1758007785895" duration="36707000" />
       <workItem from="1758107883444" duration="5630000" />
-    </task>
-    <task id="LOCAL-00021" summary="feat(发布)：发布记录添加账户筛选API">
-      <option name="closed" value="true" />
-      <created>1752479070015</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1752479070015</updated>
-    </task>
-    <task id="LOCAL-00022" summary="feat(发布)：1. b站添加是否转载、选择分区参数。 2. 发布记录展示时间修复，将后端返回的时间转为当前时区给用户展示。 3. b站添加强制拦截，分区、转载不选择会强制拦截用户。">
-      <option name="closed" value="true" />
-      <created>1752488650807</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1752488650807</updated>
-    </task>
-    <task id="LOCAL-00023" summary="fix(日历)：修复了单元格没有预期时间但是发布记录还是不会填满单元格的问题。">
-      <option name="closed" value="true" />
-      <created>1752546046166</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1752546046166</updated>
-    </task>
-    <task id="LOCAL-00024" summary="fix(发布弹框): 修复右侧预览不正常隐藏的问题">
-      <option name="closed" value="true" />
-      <created>1752551524945</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1752551524945</updated>
-    </task>
-    <task id="LOCAL-00025" summary="feat(发布弹框): 立即发布接入API">
-      <option name="closed" value="true" />
-      <created>1752562558508</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1752562558508</updated>
-    </task>
-    <task id="LOCAL-00026" summary="fix(日历): 删除最佳时间">
-      <option name="closed" value="true" />
-      <created>1752567697244</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1752567697244</updated>
-    </task>
-    <task id="LOCAL-00027" summary="chore: 测试静态站点">
-      <option name="closed" value="true" />
-      <created>1752571476186</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1752571476186</updated>
-    </task>
-    <task id="LOCAL-00028" summary="feat: 恢复选择账户弹框">
-      <option name="closed" value="true" />
-      <created>1752571839374</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1752571839374</updated>
     </task>
     <task id="LOCAL-00029" summary="feat: 尝试多语言SEO优化，添加静态站点配置">
       <option name="closed" value="true" />
@@ -619,7 +560,71 @@
       <option name="project" value="LOCAL" />
       <updated>1758105572256</updated>
     </task>
-    <option name="localTasksCounter" value="70" />
+    <task id="LOCAL-00070" summary="feat(热点): 处理热门内容国际化：全部">
+      <option name="closed" value="true" />
+      <created>1758269543551</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1758269543551</updated>
+    </task>
+    <task id="LOCAL-00071" summary="feat(热点): 热门内容国际化处理中">
+      <option name="closed" value="true" />
+      <created>1758270366506</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1758270366506</updated>
+    </task>
+    <task id="LOCAL-00072" summary="feat(热点): 热点事件、侧边栏、标签组件国际化处理">
+      <option name="closed" value="true" />
+      <created>1758270721700</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1758270721700</updated>
+    </task>
+    <task id="LOCAL-00073" summary="feat(热点): 热点事件折线图国际化处理">
+      <option name="closed" value="true" />
+      <created>1758270857904</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1758270857904</updated>
+    </task>
+    <task id="LOCAL-00074" summary="feat(热点): 热门专题国际化处理">
+      <option name="closed" value="true" />
+      <created>1758271689870</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1758271689870</updated>
+    </task>
+    <task id="LOCAL-00075" summary="feat(热点): 1. 处理爆款标题国际化。 2. 修复爆款标题label在“全部”切换日期不会刷新数据的bug">
+      <option name="closed" value="true" />
+      <created>1758272347434</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1758272347434</updated>
+    </task>
+    <task id="LOCAL-00076" summary="feat: 国际化改回来">
+      <option name="closed" value="true" />
+      <created>1758273142974</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1758273142974</updated>
+    </task>
+    <task id="LOCAL-00077" summary="feat(热门内容): 添加小红书作者跳转">
+      <option name="closed" value="true" />
+      <created>1758275776107</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1758275776107</updated>
+    </task>
+    <option name="localTasksCounter" value="78" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -660,19 +665,7 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="FILTERS">
-                <map>
-                  <entry key="branch">
-                    <value>
-                      <list>
-                        <option value="hot" />
-                      </list>
-                    </value>
-                  </entry>
-                </map>
-              </option>
-            </State>
+            <State />
           </value>
         </entry>
       </map>
@@ -682,14 +675,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="feat: 创建数据统计页面" />
-    <MESSAGE value="feat: 创建数据统计header" />
-    <MESSAGE value="feat(数据统计): 顶部筛选完成" />
-    <MESSAGE value="feat(数据统计): 1. 找不到空间的账号更改为默认账号的ID。 2. 完善swiper。 3. 添加过滤后的账号" />
-    <MESSAGE value="feat(数据统计): 顶部账号完成" />
-    <MESSAGE value="feat(数据统计): 数据明细完成" />
-    <MESSAGE value="feat(数据统计): 接入数据API，并且分拣数据" />
-    <MESSAGE value="feat(数据统计): 引入echarts" />
     <MESSAGE value="feat(数据统计): echarts图接入API" />
     <MESSAGE value="feat(数据统计): 数据大体完成" />
     <MESSAGE value="feat(数据统计): 1. 添加账号搜索功能。 2. 添加账号离线状态和重新登录。" />
@@ -707,6 +692,14 @@
     <MESSAGE value="fix(热门内容): 添加表格跳转到对于链接" />
     <MESSAGE value="fix(热门内容): 热门内容完成" />
     <MESSAGE value="feat(热门内容): 添加公众号逆向链接的代码" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(热门内容): 添加公众号逆向链接的代码" />
+    <MESSAGE value="feat(热点): 处理热门内容国际化：全部" />
+    <MESSAGE value="feat(热点): 热门内容国际化处理中" />
+    <MESSAGE value="feat(热点): 热点事件、侧边栏、标签组件国际化处理" />
+    <MESSAGE value="feat(热点): 热点事件折线图国际化处理" />
+    <MESSAGE value="feat(热点): 热门专题国际化处理" />
+    <MESSAGE value="feat(热点): 1. 处理爆款标题国际化。 2. 修复爆款标题label在“全部”切换日期不会刷新数据的bug" />
+    <MESSAGE value="feat: 国际化改回来" />
+    <MESSAGE value="feat(热门内容): 添加小红书作者跳转" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(热门内容): 添加小红书作者跳转" />
   </component>
 </project>
