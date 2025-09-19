@@ -152,7 +152,8 @@ export class ChatService {
     if (data.userType === UserType.User && data.userId) {
       try {
         const user = await this.userClient.getUserInfoById({ id: data.userId })
-        if (user && user.vipInfo && dayjs(user.vipInfo.expireTime).isAfter()) {
+        this.logger.debug({ user })
+        if (user && user.vipInfo && dayjs(user.vipInfo.expireTime).isAfter(dayjs())) {
           const models = _.cloneDeep(config.ai.models.chat)
           // 查找 gemini-2.5-flash-image 模型并直接修改价格
           const targetModel = models.find(model => model.name === 'gemini-2.5-flash-image')
