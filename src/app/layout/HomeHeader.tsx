@@ -33,7 +33,7 @@ const HomeHeader = memo(
     return (
       <header className={styles.header}>
         <div className={styles.headerContainer}>
-          <div className={styles.logo} style={{ cursor: "pointer" }}>
+          <div className={styles.logo} style={{ cursor: "pointer" }} onClick={() => router.push("/")}>
             <Image src={logo} alt="logo" width={50} />
             <span className={styles.logoText}>{t("header.logo")}</span>
           </div>
