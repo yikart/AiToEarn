@@ -88,6 +88,7 @@ export interface TaskItem {
   opportunityStatus: string;
   expiredAt: string;
   accountId: string;
+  materialIds: string[];
 }
 
 export interface TaskResponse {
@@ -105,6 +106,6 @@ export const acceptTask = (taskId: string, opportunityId: string, accountId?: st
 };
 
 // 提交任务
-export const submitTask = (userTaskId: string) => {
-  return http.post("task/submit", { userTaskId: userTaskId });
+export const submitTask = (userTaskId: string, materialId: string) => {
+  return http.post("task/submit", { userTaskId: userTaskId, materialId });
 };

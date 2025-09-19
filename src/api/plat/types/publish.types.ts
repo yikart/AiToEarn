@@ -27,6 +27,8 @@ export interface PublishParams {
   topics?: string[];
   publishTime?: string;
   option?: any;
+  userTaskId?: string;
+  materialId?: string;
 }
 
 // 查询发布列表入参

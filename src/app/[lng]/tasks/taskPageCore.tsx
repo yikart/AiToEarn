@@ -620,6 +620,7 @@ export default function TaskPageCore() {
 
   // 从任务详情接受任务
   const handleAcceptTaskFromDetail = async (task: any, account?: SocialAccount) => {
+
     if (!task) return;
     
     // 关闭详情弹窗
@@ -640,7 +641,7 @@ export default function TaskPageCore() {
     try {
       // 第一步：接受任务
       const response: any = await acceptTask(task.id, task.opportunityId, account?.id);
-      if (response && response.code === 0) {
+      if (response && response.code === 0 && response.data.id) {
         // 更新进度：第一步完成，开始第二步
         setTaskProgress(prev => ({
           ...prev,
@@ -667,6 +668,8 @@ export default function TaskPageCore() {
             }))
           }));
 
+   
+
           const publishData = {
             flowId: publishAccount.uid, // 使用账号的uid作为flowId
             accountType: publishAccount.type,
@@ -684,10 +687,17 @@ export default function TaskPageCore() {
             ),
             option: {},
             topics: [],
-            publishTime: getUtcDays(getDays().add(6, "minute")).format()
+            publishTime: getUtcDays(getDays().add(6, "minute")).format(),
+            userTaskId: response.data.id,
+            taskMaterialId: task.materialIds[0]
           };
 
           const publishResponse: any = await apiCreatePublish(publishData);
+
+
+          console.log("publishResponse", publishResponse);
+          // return false;
+
           if (publishResponse && publishResponse.code === 0) {
             // 更新进度：第二步完成，开始第三步
             setTaskProgress(prev => ({
@@ -703,7 +713,7 @@ export default function TaskPageCore() {
 
             // 第三步：提交任务
             const userTaskId = response.data.id;
-            const submitResponse: any = await submitTask(userTaskId);
+            const submitResponse: any = await submitTask(userTaskId, task.materialIds[0]);
             
             if (submitResponse && submitResponse.code === 0) {
               // 更新进度：第三步完成，开始第四步

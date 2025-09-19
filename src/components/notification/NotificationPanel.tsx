@@ -296,7 +296,9 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
             ),
             option: {},
             topics: [],
-            publishTime: getUtcDays(getDays().add(6, "minute")).format()
+            publishTime: getUtcDays(getDays().add(6, "minute")).format(),
+            userTaskId: response.data.id,
+            taskMaterialId: selectedTask.materialIds[0]
           };
 
           const publishResponse: any = await apiCreatePublish(publishData);
@@ -316,7 +318,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
             // 第三步：提交任务
             // 从发布响应中获取userTaskId，如果没有则使用任务ID
             const userTaskId = response.data.id;
-            const submitResponse: any = await submitTask(userTaskId);
+            const submitResponse: any = await submitTask(userTaskId, selectedTask.materialIds[0]);
             
             if (submitResponse && submitResponse.code === 0) {
               // 更新进度：第三步完成，开始第四步
