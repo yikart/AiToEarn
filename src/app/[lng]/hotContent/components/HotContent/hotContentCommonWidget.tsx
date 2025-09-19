@@ -91,7 +91,8 @@ export const HotContentBaseInfo = ({
 
         <div
           className="baseInfo-right-author"
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             if (onClick) onClick();
           }}
         >

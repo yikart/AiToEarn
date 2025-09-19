@@ -94,6 +94,33 @@ const HotContent = memo(
         };
       }, [labelData, rankingData, datesData, twoMenuKey, currentRankCategory]);
 
+      // 跳转到作者主页
+      const goAuthorPage = useCallback(
+        (data: RankingContent) => {
+          switch (selectedLabelInfo.ranking.platform.type) {
+            case "douyin":
+              console.log(data);
+              break;
+            case "xiaohongshu":
+              window.open(
+                `https://www.xiaohongshu.com/user/profile/${data.author.id}`,
+                "_blank",
+              );
+              break;
+            case "kuaishou":
+              break;
+            case "bilibili":
+              break;
+            case "shipinhao":
+              break;
+          }
+          console.log(selectedLabelInfo.ranking.platform.type);
+
+          console.log(data);
+        },
+        [selectedLabelInfo],
+      );
+
       const columns = useMemo(() => {
         const callParamsColumnsCommon = (title: string) => {
           return {
@@ -279,6 +306,9 @@ const HotContent = memo(
                   fansCount={data.author.fansCount}
                   nickname={data.author.name}
                   cover={data.cover}
+                  onClick={() => {
+                    goAuthorPage(data);
+                  }}
                 />
               );
             },

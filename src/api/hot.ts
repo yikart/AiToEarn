@@ -104,6 +104,7 @@ export interface RankingContent {
     name: string;
     avatar: string;
     fansCount: number;
+    id: string;
   };
   stats: Stats;
   collectCount?: number;
