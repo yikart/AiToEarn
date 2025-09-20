@@ -206,7 +206,7 @@ https://t.me/harryyyy2025
 * 2025.05.20 — Released win-0.8.0
 * 2025.08.08 — [Released win-0.8.1](https://github.com/yikart/AiToEarn/releases/tag/v0.8.1)
 * 2025.08.08 — [Released web-0.1-beta](./aitoearn_web/README.md)
-* 2025.09.16 — [Released v1.0.181](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18)
+* 2025.09.16 — [Released v1.0.18](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18)
 
 ---
 
